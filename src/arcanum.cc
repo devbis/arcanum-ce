@@ -3497,45 +3497,6 @@ void sub_52D180(void* a1)
     off_62B2A4 = a1;
 }
 
-// 0x52DF80
-int tig_timer_init_()
-{
-    if (timeBeginPeriod(1u) != 0) {
-        return 16;
-    }
-
-    return 0;
-}
-
-// 0x52DF90
-void tig_timer_exit_()
-{
-    timeEndPeriod(1u);
-}
-
-// 0x52DFA0
-int tig_timer_start_(unsigned int* start)
-{
-    *start = timeGetTime();
-    return 0;
-}
-
-// 0x52DFB0
-int tig_timer_elapsed_(unsigned int start)
-{
-    return timeGetTime() - start;
-}
-
-// 0x52DFC0
-unsigned int tig_timer_between_(unsigned int start, unsigned int end)
-{
-    unsigned int diff = end - start;
-    if (diff > INT_MAX) {
-        diff = INT_MAX;
-    }
-    return diff;
-}
-
 // 0x52DFE0
 bool sub_52DFE0(int a1)
 {
