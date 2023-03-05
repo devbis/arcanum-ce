@@ -2,6 +2,7 @@
 
 #include "tig/debug.h"
 #include "tig/memory.h"
+#include "tig/movie.h"
 #include "tig/timer.h"
 
 typedef int(TigInitFunc)(TigContext* ctx);
@@ -14,6 +15,7 @@ static TigInitFunc* init_funcs[] = {
     tig_memory_init,
     tig_debug_init,
     tig_timer_init,
+    tig_movie_init,
 };
 
 #define TIG_INIT_FUNC_MAX (sizeof(init_funcs) / sizeof(init_funcs[0]))
@@ -23,6 +25,7 @@ static TigExitFunc* exit_funcs[] = {
     tig_memory_exit,
     tig_debug_exit,
     tig_timer_exit,
+    tig_movie_exit,
 };
 
 #define TIG_INIT_EXIT_FUNC_MAX (sizeof(exit_funcs) / sizeof(exit_funcs[0]))

@@ -3527,17 +3527,6 @@ void tio_destroy_(void* fp)
     free(fp);
 }
 
-// 0x531520
-void tig_movie_exit_()
-{
-}
-
-// 0x5317C0
-int sub_5317C0()
-{
-    return dword_62B2BC;
-}
-
 // 0x5318C0
 int tig_init_19_()
 {
