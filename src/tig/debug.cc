@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "tig/memory.h"
+#include "tig/tig.h"
 
 #define DEBUG_FUNC_MAX 8
 
@@ -63,7 +64,7 @@ int tig_debug_init(TigContext* ctx)
     tig_debug_read_settings();
     tig_memory_set_output_func(tig_debug_println);
     tig_debug_println("\n");
-    tig_debug_println(sub_51F260(0));
+    tig_debug_println(tig_get_executable(false));
 
     time_t now;
     time(&now);

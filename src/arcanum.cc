@@ -3223,12 +3223,6 @@ int sub_51E2D0(int a1)
     return a1;
 }
 
-// 0x51F250
-void sub_51F250()
-{
-    sub_51F220();
-}
-
 // 0x51F320
 int sub_51F320()
 {
