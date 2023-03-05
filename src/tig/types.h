@@ -3,6 +3,8 @@
 
 #include <windows.h>
 
+#define TIG_OK 0
+
 typedef struct TigContext {
     /* 0018 */ HINSTANCE instance;
 };

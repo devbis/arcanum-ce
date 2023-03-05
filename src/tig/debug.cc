@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "tig/memory.h"
+
 #define DEBUG_FUNC_MAX 8
 
 typedef struct BuiltInDebugFuncData {
@@ -59,7 +61,7 @@ static char* debug_mono_dest;
 int tig_debug_init(TigContext* ctx)
 {
     tig_debug_read_settings();
-    sub_4FE790(tig_debug_println);
+    tig_memory_set_output_func(tig_debug_println);
     tig_debug_println("\n");
     tig_debug_println(sub_51F260(0));
 
@@ -67,7 +69,7 @@ int tig_debug_init(TigContext* ctx)
     time(&now);
     tig_debug_println(asctime(localtime(&now)));
 
-    return 0;
+    return TIG_OK;
 }
 
 // 0x4FEB60
