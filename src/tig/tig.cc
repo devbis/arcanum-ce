@@ -1,6 +1,8 @@
 #include "tig/tig.h"
 
 #include "tig/debug.h"
+#include "tig/dxinput.h"
+#include "tig/kb.h"
 #include "tig/memory.h"
 #include "tig/movie.h"
 #include "tig/sound.h"
@@ -16,6 +18,8 @@ static TigInitFunc* init_funcs[] = {
     tig_memory_init,
     tig_debug_init,
     tig_timer_init,
+    tig_dxinput_init,
+    tig_kb_init,
     tig_sound_init,
     tig_movie_init,
 };
@@ -27,6 +31,8 @@ static TigExitFunc* exit_funcs[] = {
     tig_memory_exit,
     tig_debug_exit,
     tig_timer_exit,
+    tig_dxinput_exit,
+    tig_kb_exit,
     tig_sound_exit,
     tig_movie_exit,
 };
@@ -160,7 +166,7 @@ void tig_set_active(bool is_active)
 }
 
 // 0x51F320
-int tig_get_active_()
+int tig_get_active()
 {
     return tig_active;
 }
