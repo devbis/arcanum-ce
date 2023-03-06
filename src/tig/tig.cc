@@ -3,6 +3,7 @@
 #include "tig/debug.h"
 #include "tig/memory.h"
 #include "tig/movie.h"
+#include "tig/sound.h"
 #include "tig/timer.h"
 
 typedef int(TigInitFunc)(TigContext* ctx);
@@ -15,6 +16,7 @@ static TigInitFunc* init_funcs[] = {
     tig_memory_init,
     tig_debug_init,
     tig_timer_init,
+    tig_sound_init,
     tig_movie_init,
 };
 
@@ -25,6 +27,7 @@ static TigExitFunc* exit_funcs[] = {
     tig_memory_exit,
     tig_debug_exit,
     tig_timer_exit,
+    tig_sound_exit,
     tig_movie_exit,
 };
 
