@@ -19,7 +19,7 @@ typedef struct TigMouseState {
     int field_18;
     int x;
     int y;
-    int field_24;
+    int z;
 };
 
 // See 0x4FF9F0.
@@ -29,7 +29,7 @@ int tig_mouse_init(TigContext* ctx);
 void tig_mouse_exit();
 void tig_mouse_set_active(bool is_active);
 bool tig_mouse_ping();
-void tig_mouse_set_position(int x, int y, int modifiers);
+void tig_mouse_set_position(int x, int y, int z);
 void tig_mouse_set_button(int button, bool pressed);
 int tig_mouse_get_state(TigMouseState* mouse_state);
 int tig_mouse_hide();

@@ -13,6 +13,7 @@ static int tig_mouse_device_init();
 static int sub_4FF2A0();
 static void tig_mouse_exit();
 static void sub_4FF340();
+static bool tig_mouse_update_state();
 static bool tig_mouse_device_update_state();
 static void sub_4FFBF0();
 static bool sub_4FFD60(unsigned int art_id, int a2, int a3);
@@ -80,7 +81,7 @@ static unsigned int dword_604654;
 static int dword_604658;
 
 // 0x60465C
-static int dword_60465C;
+static unsigned int dword_60465C;
 
 // 0x604660
 static int dword_604660;
@@ -314,11 +315,11 @@ bool tig_mouse_ping()
         return true;
     }
 
-    return sub_4FF5A0();
+    return tig_mouse_update_state();
 }
 
 // 0x4FF3B0
-void tig_mouse_set_position(int x, int y, int modifiers)
+void tig_mouse_set_position(int x, int y, int z)
 {
     TigMessage message;
 
@@ -331,7 +332,7 @@ void tig_mouse_set_position(int x, int y, int modifiers)
     message.type = TIG_MESSAGE_TYPE_0;
     message.mouse.x = x;
     message.mouse.y = y;
-    message.mouse.modifiers = modifiers;
+    message.mouse.z = z;
     message.field_14 = 6;
     message.field_18 = 0;
     tig_message_enqueue(&message);
@@ -359,7 +360,7 @@ void tig_mouse_set_button(int button, bool pressed)
                 message.time = tig_ping_time;
                 message.mouse.x = tig_mouse_state.x;
                 message.mouse.y = tig_mouse_state.y;
-                message.mouse.modifiers = 0;
+                message.mouse.z = 0;
                 message.field_14 = dword_5BE864[button];
                 message.field_18 = 1;
                 tig_message_enqueue(&message);
@@ -372,7 +373,7 @@ void tig_mouse_set_button(int button, bool pressed)
             message.time = tig_ping_time;
             message.mouse.x = tig_mouse_state.x;
             message.mouse.y = tig_mouse_state.y;
-            message.mouse.modifiers = 0;
+            message.mouse.z = 0;
             message.field_14 = dword_5BE864[button];
             message.field_18 = 0;
             tig_message_enqueue(&message);
@@ -386,7 +387,7 @@ void tig_mouse_set_button(int button, bool pressed)
             message.time = tig_ping_time;
             message.mouse.x = tig_mouse_state.x;
             message.mouse.y = tig_mouse_state.y;
-            message.mouse.modifiers = 0;
+            message.mouse.z = 0;
             message.field_14 = dword_5BE870[button];
             message.field_18 = 0;
             tig_message_enqueue(&message);
@@ -399,9 +400,164 @@ void tig_mouse_set_button(int button, bool pressed)
 }
 
 // 0x4FF5A0
-bool sub_4FF5A0()
+bool tig_mouse_update_state()
 {
-    // TODO: Incomplete.
+    TigMessage message;
+
+    message.type = TIG_MESSAGE_TYPE_0;
+    message.time = tig_ping_time;
+
+    if (dword_6046B8 > 1) {
+        if (tig_timer_between(dword_60465C, tig_ping_time) >= dword_604654) {
+            sub_500520();
+            dword_60465C = tig_ping_time;
+        }
+    }
+
+    if (tig_timer_between(dword_6046D0, tig_ping_time) < 0) {
+        return false;
+    }
+
+    dword_6046D0 = tig_ping_time;
+
+    if (!tig_mouse_device_update_state()) {
+        return false;
+    }
+
+    if (tig_mouse_device_state.lX != 0 || tig_mouse_device_state.lY != 0) {
+        tig_window_set_needs_display_in_rect(&(tig_mouse_state.rect));
+
+        if (tig_mouse_device_state.lX != 0) {
+            tig_mouse_state.rect.x += tig_mouse_device_state.lX;
+
+            if (tig_mouse_state.rect.x < -tig_mouse_state.field_14) {
+                tig_mouse_state.rect.x = -tig_mouse_state.field_14;
+            } else if (tig_mouse_state.rect.x > dword_604650 - tig_mouse_state.field_14) {
+                tig_mouse_state.rect.x = dword_604650 - tig_mouse_state.field_14;
+            }
+
+            tig_mouse_state.x = tig_mouse_state.rect.x + tig_mouse_state.field_14;
+        }
+
+        if (tig_mouse_device_state.lY != 0) {
+            tig_mouse_state.rect.y += tig_mouse_device_state.lY;
+
+            if (tig_mouse_state.rect.y < -tig_mouse_state.field_18) {
+                tig_mouse_state.rect.y = -tig_mouse_state.field_18;
+            } else if (tig_mouse_state.rect.y > dword_60464C - tig_mouse_state.field_18) {
+                tig_mouse_state.rect.y = dword_60464C - tig_mouse_state.field_18;
+            }
+
+            tig_mouse_state.y = tig_mouse_state.rect.y + tig_mouse_state.field_18;
+        }
+    }
+
+    // TODO: Original code is slightly different, check.
+    if (tig_mouse_device_state.lX != 0 || tig_mouse_device_state.lY != 0) {
+        dword_60467C = tig_ping_time;
+        dword_604668 = false;
+
+        message.mouse.x = tig_mouse_state.x;
+        message.mouse.y = tig_mouse_state.y;
+        message.mouse.z = tig_mouse_device_state.lZ;
+        message.field_14 = 6;
+        tig_message_enqueue(&message);
+
+        tig_window_set_needs_display_in_rect(&(tig_mouse_state.rect));
+    } else {
+        if (!dword_604668 && tig_timer_between(dword_60467C, tig_ping_time) > 35) {
+            dword_604668 = true;
+
+            message.mouse.x = tig_mouse_state.x;
+            message.mouse.y = tig_mouse_state.y;
+            message.mouse.z = tig_mouse_device_state.lZ;
+            message.field_14 = 7;
+            tig_message_enqueue(&message);
+
+            tig_window_set_needs_display_in_rect(&(tig_mouse_state.rect));
+        }
+    }
+
+    if (tig_mouse_z_axis_enabled) {
+        if (tig_mouse_device_state.lZ != 0) {
+            message.mouse.x = tig_mouse_state.x;
+            message.mouse.y = tig_mouse_state.y;
+            message.mouse.z = tig_mouse_device_state.lZ;
+            message.field_14 = 8;
+            tig_message_enqueue(&message);
+        }
+    } else {
+        if (tig_mouse_device_state.lZ != tig_mouse_state.z) {
+            message.mouse.x = tig_mouse_state.x;
+            message.mouse.y = tig_mouse_state.y;
+            message.mouse.z = tig_mouse_device_state.lZ - tig_mouse_state.z;
+            message.field_14 = 8;
+            tig_message_enqueue(&message);
+            tig_mouse_state.z = tig_mouse_device_state.lZ;
+        }
+    }
+
+    unsigned int flags = tig_mouse_state.flags;
+    tig_mouse_state.flags = 0;
+
+    for (int button = 0; button < TIG_MOUSE_BUTTON_COUNT; button++) {
+        // TODO: Optimize without `continue`.
+        if ((tig_mouse_device_state.rgbButtons[button] & 0x80) == 0) {
+            if (((dword_5BE840[button] | dword_5BE84C[button]) & flags) != 0) {
+                dword_6046EC[button] = tig_ping_time;
+
+                tig_mouse_state.flags |= dword_5BE858[button];
+
+                message.time = tig_ping_time;
+                message.mouse.x = tig_mouse_state.x;
+                message.mouse.y = tig_mouse_state.y;
+                message.mouse.z = tig_mouse_device_state.lZ;
+                message.field_14 = dword_5BE870[button];
+                message.field_18 = 0;
+                tig_message_enqueue(&message);
+            }
+
+            continue;
+        } else {
+            if (((dword_5BE84C[button] | dword_5BE840[button]) & flags) == 0) {
+                dword_6046EC[button] = tig_ping_time;
+
+                tig_mouse_state.flags |= dword_5BE840[button];
+
+                message.time = tig_ping_time;
+                message.mouse.x = tig_mouse_state.x;
+                message.mouse.y = tig_mouse_state.y;
+                message.mouse.z = tig_mouse_device_state.lZ;
+                message.field_14 = dword_5BE864[button];
+                message.field_18 = 0;
+                tig_message_enqueue(&message);
+
+                continue;
+            }
+        }
+
+        tig_mouse_state.flags |= dword_5BE84C[button];
+
+        if (tig_timer_between(dword_6046EC[button], tig_ping_time) > 250) {
+            dword_6046EC[button] = tig_ping_time;
+
+            tig_mouse_state.flags |= dword_5BE840[button];
+
+            message.time = tig_ping_time;
+            message.mouse.x = tig_mouse_state.x;
+            message.mouse.y = tig_mouse_state.y;
+            message.mouse.z = tig_mouse_device_state.lZ;
+            message.field_14 = dword_5BE864[button];
+            message.field_18 = 1;
+            tig_message_enqueue(&message);
+        }
+    }
+
+    if ((flags & TIG_MOUSE_STATE_HIDDEN) != 0) {
+        tig_mouse_state.flags |= TIG_MOUSE_STATE_HIDDEN;
+    }
+
+    return true;
 }
 
 // 0x4FF9B0
@@ -625,7 +781,6 @@ bool sub_4FFEC0(unsigned int art_id, int a2, int a3)
     sub_4FFB40();
 
     return true;
-    // TODO: Incomplete.
 }
 
 // 0x4FFFE0

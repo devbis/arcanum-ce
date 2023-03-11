@@ -37,7 +37,7 @@ typedef struct TigMessage {
         struct {
             int x;
             int y;
-            int modifiers;
+            int z;
         } mouse;
     };
 };
