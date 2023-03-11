@@ -7,14 +7,14 @@ static LPDIRECTINPUTA direct_input;
 int tig_dxinput_init(TigContext* ctx)
 {
     if (direct_input != NULL) {
-        return 2;
+        return TIG_ALREADY_INITIALIZED;
     }
 
     if (FAILED(DirectInputCreateA(ctx->instance, DIRECTINPUT_VERSION, &direct_input, NULL))) {
-        return 7;
+        return TIG_ERR_7;
     }
 
-    return 0;
+    return TIG_OK;
 }
 
 // 0x537AC0
@@ -30,10 +30,10 @@ void tig_dxinput_exit()
 int tig_dxinput_get_instance(LPDIRECTINPUTA* out_direct_input)
 {
     if (direct_input == NULL) {
-        return 7;
+        return TIG_ERR_7;
     }
 
     *out_direct_input = direct_input;
 
-    return 0;
+    return TIG_OK;
 }

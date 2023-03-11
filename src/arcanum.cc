@@ -667,9 +667,6 @@ void* off_603DD0;
 // 0x6876D0
 int* off_6876D0;
 
-// 0x5BE87C
-int dword_5BE87C = 1;
-
 // 0x5BEA38
 float flt_5BEA38 = 0.3;
 
@@ -678,9 +675,6 @@ int dword_5C0648 = 127;
 
 // 0x5C064C
 int dword_5C064C = -1;
-
-// 0x5C22AC
-char byte_5C22AC = ',';
 
 // 0x5C26F8
 int dword_5C26F8 = -1;
@@ -739,17 +733,11 @@ void* off_603DE4;
 // 0x603E00
 int dword_603E00;
 
-// 0x604670
-int dword_604670;
-
 // 0x604744
 int dword_604744;
 
 // 0x60F244
 int dword_60F244;
-
-// 0x60F254
-HWND hWnd;
 
 // 0x62AC4C
 int dword_62AC4C;
@@ -781,26 +769,14 @@ int dword_62AC88;
 // 0x62B09C
 char byte_62B09C[29];
 
-// 0x62B270
-int dword_62B270;
-
 // 0x62B2A4
 void* off_62B2A4;
-
-// 0x62B2BC
-int dword_62B2BC;
 
 // 0x62B2C0
 int dword_62B2C0;
 
 // 0x6301F4
 int dword_6301F4;
-
-// 0x630200
-int dword_630200;
-
-// 0x630CFC
-int dword_630CFC;
 
 // 0x630D54
 void* off_630D54;
@@ -814,7 +790,375 @@ int dword_638BB0;
 // 0x638BB4
 int dword_638BB4;
 
-// ------
+// 0x59BEA8
+const char* object_field_names_[] = {
+    "obj_f_begin",
+    "obj_f_current_aid",
+    "obj_f_location",
+    "obj_f_offset_x",
+    "obj_f_offset_y",
+    "obj_f_shadow",
+    "obj_f_overlay_fore",
+    "obj_f_overlay_back",
+    "obj_f_underlay",
+    "obj_f_blit_flags",
+    "obj_f_blit_color",
+    "obj_f_blit_alpha",
+    "obj_f_blit_scale",
+    "obj_f_light_flags",
+    "obj_f_light_aid",
+    "obj_f_light_color",
+    "obj_f_overlay_light_flags",
+    "obj_f_overlay_light_aid",
+    "obj_f_overlay_light_color",
+    "obj_f_flags",
+    "obj_f_spell_flags",
+    "obj_f_blocking_mask",
+    "obj_f_name",
+    "obj_f_description",
+    "obj_f_aid",
+    "obj_f_destroyed_aid",
+    "obj_f_AC",
+    "obj_f_hp_pts",
+    "obj_f_hp_adj",
+    "obj_f_hp_damage",
+    "obj_f_material",
+    "obj_f_resistance_idx",
+    "obj_f_scripts_idx",
+    "obj_f_sound_effect",
+    "obj_f_category",
+    "obj_f_pad_ias_1",
+    "obj_f_pad_i64as_1",
+    "obj_f_end",
+    "obj_f_wall_begin",
+    "obj_f_wall_flags",
+    "obj_f_wall_pad_i_1",
+    "obj_f_wall_pad_i_2",
+    "obj_f_wall_pad_ias_1",
+    "obj_f_wall_pad_i64as_1",
+    "obj_f_wall_end",
+    "obj_f_portal_begin",
+    "obj_f_portal_flags",
+    "obj_f_portal_lock_difficulty",
+    "obj_f_portal_key_id",
+    "obj_f_portal_notify_npc",
+    "obj_f_portal_pad_i_1",
+    "obj_f_portal_pad_i_2",
+    "obj_f_portal_pad_ias_1",
+    "obj_f_portal_pad_i64as_1",
+    "obj_f_portal_end",
+    "obj_f_container_begin",
+    "obj_f_container_flags",
+    "obj_f_container_lock_difficulty",
+    "obj_f_container_key_id",
+    "obj_f_container_inventory_num",
+    "obj_f_container_inventory_list_idx",
+    "obj_f_container_inventory_source",
+    "obj_f_container_notify_npc",
+    "obj_f_container_pad_i_1",
+    "obj_f_container_pad_i_2",
+    "obj_f_container_pad_ias_1",
+    "obj_f_container_pad_i64as_1",
+    "obj_f_container_end",
+    "obj_f_scenery_begin",
+    "obj_f_scenery_flags",
+    "obj_f_scenery_whos_in_me",
+    "obj_f_scenery_respawn_delay",
+    "obj_f_scenery_pad_i_2",
+    "obj_f_scenery_pad_ias_1",
+    "obj_f_scenery_pad_i64as_1",
+    "obj_f_scenery_end",
+    "obj_f_projectile_begin",
+    "obj_f_projectile_flags_combat",
+    "obj_f_projectile_flags_combat_damage",
+    "obj_f_projectile_hit_loc",
+    "obj_f_projectile_parent_weapon",
+    "obj_f_projectile_pad_i_1",
+    "obj_f_projectile_pad_i_2",
+    "obj_f_projectile_pad_ias_1",
+    "obj_f_projectile_pad_i64as_1",
+    "obj_f_projectile_end",
+    "obj_f_item_begin",
+    "obj_f_item_flags",
+    "obj_f_item_parent",
+    "obj_f_item_weight",
+    "obj_f_item_magic_weight_adj",
+    "obj_f_item_worth",
+    "obj_f_item_mana_store",
+    "obj_f_item_inv_aid",
+    "obj_f_item_inv_location",
+    "obj_f_item_use_aid_fragment",
+    "obj_f_item_magic_tech_complexity",
+    "obj_f_item_discipline",
+    "obj_f_item_description_unknown",
+    "obj_f_item_description_effects",
+    "obj_f_item_spell_1",
+    "obj_f_item_spell_2",
+    "obj_f_item_spell_3",
+    "obj_f_item_spell_4",
+    "obj_f_item_spell_5",
+    "obj_f_item_spell_mana_store",
+    "obj_f_item_ai_action",
+    "obj_f_item_pad_i_1",
+    "obj_f_item_pad_ias_1",
+    "obj_f_item_pad_i64as_1",
+    "obj_f_item_end",
+    "obj_f_weapon_begin",
+    "obj_f_weapon_flags",
+    "obj_f_weapon_paper_doll_aid",
+    "obj_f_weapon_bonus_to_hit",
+    "obj_f_weapon_magic_hit_adj",
+    "obj_f_weapon_damage_lower_idx",
+    "obj_f_weapon_damage_upper_idx",
+    "obj_f_weapon_magic_damage_adj_idx",
+    "obj_f_weapon_speed_factor",
+    "obj_f_weapon_magic_speed_adj",
+    "obj_f_weapon_range",
+    "obj_f_weapon_magic_range_adj",
+    "obj_f_weapon_min_strength",
+    "obj_f_weapon_magic_min_strength_adj",
+    "obj_f_weapon_ammo_type",
+    "obj_f_weapon_ammo_consumption",
+    "obj_f_weapon_missile_aid",
+    "obj_f_weapon_visual_effect_aid",
+    "obj_f_weapon_crit_hit_chart",
+    "obj_f_weapon_magic_crit_hit_chance",
+    "obj_f_weapon_magic_crit_hit_effect",
+    "obj_f_weapon_crit_miss_chart",
+    "obj_f_weapon_magic_crit_miss_chance",
+    "obj_f_weapon_magic_crit_miss_effect",
+    "obj_f_weapon_pad_i_1",
+    "obj_f_weapon_pad_i_2",
+    "obj_f_weapon_pad_ias_1",
+    "obj_f_weapon_pad_i64as_1",
+    "obj_f_weapon_end",
+    "obj_f_ammo_begin",
+    "obj_f_ammo_flags",
+    "obj_f_ammo_quantity",
+    "obj_f_ammo_type",
+    "obj_f_ammo_pad_i_1",
+    "obj_f_ammo_pad_i_2",
+    "obj_f_ammo_pad_ias_1",
+    "obj_f_ammo_pad_i64as_1",
+    "obj_f_ammo_end",
+    "obj_f_armor_begin",
+    "obj_f_armor_flags",
+    "obj_f_armor_paper_doll_aid",
+    "obj_f_armor_ac_adj",
+    "obj_f_armor_magic_ac_adj",
+    "obj_f_armor_resistance_adj_idx",
+    "obj_f_armor_magic_resistance_adj_idx",
+    "obj_f_armor_silent_move_adj",
+    "obj_f_armor_magic_silent_move_adj",
+    "obj_f_armor_unarmed_bonus_damage",
+    "obj_f_armor_pad_i_2",
+    "obj_f_armor_pad_ias_1",
+    "obj_f_armor_pad_i64as_1",
+    "obj_f_armor_end",
+    "obj_f_gold_begin",
+    "obj_f_gold_flags",
+    "obj_f_gold_quantity",
+    "obj_f_gold_pad_i_1",
+    "obj_f_gold_pad_i_2",
+    "obj_f_gold_pad_ias_1",
+    "obj_f_gold_pad_i64as_1",
+    "obj_f_gold_end",
+    "obj_f_food_begin",
+    "obj_f_food_flags",
+    "obj_f_food_pad_i_1",
+    "obj_f_food_pad_i_2",
+    "obj_f_food_pad_ias_1",
+    "obj_f_food_pad_i64as_1",
+    "obj_f_food_end",
+    "obj_f_scroll_begin",
+    "obj_f_scroll_flags",
+    "obj_f_scroll_pad_i_1",
+    "obj_f_scroll_pad_i_2",
+    "obj_f_scroll_pad_ias_1",
+    "obj_f_scroll_pad_i64as_1",
+    "obj_f_scroll_end",
+    "obj_f_key_begin",
+    "obj_f_key_key_id",
+    "obj_f_key_pad_i_1",
+    "obj_f_key_pad_i_2",
+    "obj_f_key_pad_ias_1",
+    "obj_f_key_pad_i64as_1",
+    "obj_f_key_end",
+    "obj_f_key_ring_begin",
+    "obj_f_key_ring_flags",
+    "obj_f_key_ring_list_idx",
+    "obj_f_key_ring_pad_i_1",
+    "obj_f_key_ring_pad_i_2",
+    "obj_f_key_ring_pad_ias_1",
+    "obj_f_key_ring_pad_i64as_1",
+    "obj_f_key_ring_end",
+    "obj_f_written_begin",
+    "obj_f_written_flags",
+    "obj_f_written_subtype",
+    "obj_f_written_text_start_line",
+    "obj_f_written_text_end_line",
+    "obj_f_written_pad_i_1",
+    "obj_f_written_pad_i_2",
+    "obj_f_written_pad_ias_1",
+    "obj_f_written_pad_i64as_1",
+    "obj_f_written_end",
+    "obj_f_generic_begin",
+    "obj_f_generic_flags",
+    "obj_f_generic_usage_bonus",
+    "obj_f_generic_usage_count_remaining",
+    "obj_f_generic_pad_ias_1",
+    "obj_f_generic_pad_i64as_1",
+    "obj_f_generic_end",
+    "obj_f_critter_begin",
+    "obj_f_critter_flags",
+    "obj_f_critter_flags2",
+    "obj_f_critter_stat_base_idx",
+    "obj_f_critter_basic_skill_idx",
+    "obj_f_critter_tech_skill_idx",
+    "obj_f_critter_spell_tech_idx",
+    "obj_f_critter_fatigue_pts",
+    "obj_f_critter_fatigue_adj",
+    "obj_f_critter_fatigue_damage",
+    "obj_f_critter_crit_hit_chart",
+    "obj_f_critter_effects_idx",
+    "obj_f_critter_effect_cause_idx",
+    "obj_f_critter_fleeing_from",
+    "obj_f_critter_portrait",
+    "obj_f_critter_gold",
+    "obj_f_critter_arrows",
+    "obj_f_critter_bullets",
+    "obj_f_critter_power_cells",
+    "obj_f_critter_fuel",
+    "obj_f_critter_inventory_num",
+    "obj_f_critter_inventory_list_idx",
+    "obj_f_critter_inventory_source",
+    "obj_f_critter_description_unknown",
+    "obj_f_critter_follower_idx",
+    "obj_f_critter_teleport_dest",
+    "obj_f_critter_teleport_map",
+    "obj_f_critter_death_time",
+    "obj_f_critter_auto_level_scheme",
+    "obj_f_critter_pad_i_1",
+    "obj_f_critter_pad_i_2",
+    "obj_f_critter_pad_i_3",
+    "obj_f_critter_pad_ias_1",
+    "obj_f_critter_pad_i64as_1",
+    "obj_f_critter_end",
+    "obj_f_pc_begin",
+    "obj_f_pc_flags",
+    "obj_f_pc_flags_fate",
+    "obj_f_pc_reputation_idx",
+    "obj_f_pc_reputation_ts_idx",
+    "obj_f_pc_background",
+    "obj_f_pc_background_text",
+    "obj_f_pc_quest_idx",
+    "obj_f_pc_blessing_idx",
+    "obj_f_pc_blessing_ts_idx",
+    "obj_f_pc_curse_idx",
+    "obj_f_pc_curse_ts_idx",
+    "obj_f_pc_party_id",
+    "obj_f_pc_rumor_idx",
+    "obj_f_pc_pad_ias_2",
+    "obj_f_pc_schematics_found_idx",
+    "obj_f_pc_logbook_ego_idx",
+    "obj_f_pc_fog_mask",
+    "obj_f_pc_player_name",
+    "obj_f_pc_bank_money",
+    "obj_f_pc_global_flags",
+    "obj_f_pc_global_variables",
+    "obj_f_pc_pad_i_1",
+    "obj_f_pc_pad_i_2",
+    "obj_f_pc_pad_ias_1",
+    "obj_f_pc_pad_i64as_1",
+    "obj_f_pc_end",
+    "obj_f_npc_begin",
+    "obj_f_npc_flags",
+    "obj_f_npc_leader",
+    "obj_f_npc_ai_data",
+    "obj_f_npc_combat_focus",
+    "obj_f_npc_who_hit_me_last",
+    "obj_f_npc_experience_worth",
+    "obj_f_npc_experience_pool",
+    "obj_f_npc_waypoints_idx",
+    "obj_f_npc_waypoint_current",
+    "obj_f_npc_standpoint_day",
+    "obj_f_npc_standpoint_night",
+    "obj_f_npc_origin",
+    "obj_f_npc_faction",
+    "obj_f_npc_retail_price_multiplier",
+    "obj_f_npc_substitute_inventory",
+    "obj_f_npc_reaction_base",
+    "obj_f_npc_social_class",
+    "obj_f_npc_reaction_pc_idx",
+    "obj_f_npc_reaction_level_idx",
+    "obj_f_npc_reaction_time_idx",
+    "obj_f_npc_wait",
+    "obj_f_npc_generator_data",
+    "obj_f_npc_pad_i_1",
+    "obj_f_npc_damage_idx",
+    "obj_f_npc_shit_list_idx",
+    "obj_f_npc_end",
+    "obj_f_trap_begin",
+    "obj_f_trap_flags",
+    "obj_f_trap_difficulty",
+    "obj_f_trap_pad_i_2",
+    "obj_f_trap_pad_ias_1",
+    "obj_f_trap_pad_i64as_1",
+    "obj_f_trap_end",
+    "obj_f_total_normal",
+    "obj_f_transient_begin",
+    "obj_f_render_color",
+    "obj_f_render_colors",
+    "obj_f_render_palette",
+    "obj_f_render_scale",
+    "obj_f_render_alpha",
+    "obj_f_render_x",
+    "obj_f_render_y",
+    "obj_f_render_width",
+    "obj_f_render_height",
+    "obj_f_palette",
+    "obj_f_color",
+    "obj_f_colors",
+    "obj_f_render_flags",
+    "obj_f_temp_id",
+    "obj_f_light_handle",
+    "obj_f_overlay_light_handles",
+    "obj_f_shadow_handles",
+    "obj_f_internal_flags",
+    "obj_f_find_node",
+    "obj_f_transient_end",
+    "obj_f_type",
+    "obj_f_prototype_handle",
+    "obj_f_max",
+};
+
+int dword_59BE00[21] = {
+    0,
+    38,
+    45,
+    55,
+    68,
+    76,
+    86,
+    111,
+    140,
+    149,
+    163,
+    171,
+    178,
+    185,
+    192,
+    200,
+    210,
+    217,
+    252,
+    279,
+    306,
+};
+
+// -----------------------------------------------------------------------------
+// TINY FUNCTIONS (20 INSTRUCTIONS)
+// -----------------------------------------------------------------------------
 
 // 0x4027B0
 char* sub_4027B0()
@@ -3163,29 +3507,6 @@ void nullsub_34()
 {
 }
 
-// 0x500150
-int sub_500150()
-{
-    return dword_604670;
-}
-
-// 0x500560
-int sub_500560()
-{
-    return 0;
-}
-
-// 0x500570
-void nullsub_15()
-{
-}
-
-// 0x500580
-void sub_500580(int a1)
-{
-    dword_5BE87C = a1;
-}
-
 // 0x5006D0
 void nullsub_24()
 {
@@ -3227,17 +3548,6 @@ int sub_51E2D0(int a1)
 int sub_51F320()
 {
     return dword_60F244;
-}
-
-// 0x5242F0
-void sub_5242F0()
-{
-    hWnd = NULL;
-}
-
-// 0x524EF0
-void nullsub_35()
-{
 }
 
 // 0x526AB0
@@ -3448,42 +3758,6 @@ int sub_52B340(int a1)
     return byte_62B09C[a1] & 0x80;
 }
 
-// 0x52BD90
-void sub_52BD90(int a1)
-{
-    dword_62B270 = a1;
-}
-
-// 0x52C330
-int sub_52C330(int a1)
-{
-    return sub_52C760(a1, 1, 0);
-}
-
-// 0x52C350
-int sub_52C350(int a1)
-{
-    return sub_52C760(a1, 2, 0);
-}
-
-// 0x52C500
-int sub_52C500(int a1)
-{
-    return sub_52C760(a1, 0, 3);
-}
-
-// 0x52C520
-int sub_52C520(int a1)
-{
-    return sub_52C760(a1, 1, 3);
-}
-
-// 0x52C540
-int sub_52C540(int a1)
-{
-    return sub_52C760(a1, 2, 3);
-}
-
 // 0x52D0E0
 int tig_init_3_()
 {
@@ -3527,24 +3801,6 @@ void tio_destroy_(void* fp)
     free(fp);
 }
 
-// 0x5318C0
-int tig_init_19_()
-{
-    byte_5C22AC = 44;
-    return 0;
-}
-
-// 0x5318D0
-void tig_exit_19_()
-{
-}
-
-// 0x5318E0
-void sub_5318E0(char a1)
-{
-    byte_5C22AC = a1;
-}
-
 // 0x533000
 void sub_533000(int a1)
 {
@@ -3563,12 +3819,6 @@ void sub_533C30(int a1)
     dword_6301F4 = a1;
 }
 
-// 0x534290
-int sub_534290()
-{
-    return dword_630200 + 4;
-}
-
 // 0x534990
 int sub_534990(void* a1)
 {
@@ -3584,27 +3834,6 @@ void nullsub_17()
 void sub_535130(void* a1)
 {
     memset(a1, 0, 28);
-}
-
-// 0x5352C0
-void tig_exit_17_()
-{
-    sub_535380();
-    sub_535330(off_630D54);
-}
-
-// 0x535330
-void sub_535330(void* a1)
-{
-    free(a1);
-}
-
-// 0x535380
-void sub_535380()
-{
-    if (dword_630CFC > 0) {
-        dword_630CFC--;
-    }
 }
 
 // 0x537FC0
@@ -4874,4 +5103,288 @@ void sub_5898A0(int* a1, int* a2)
 {
     *a1 = sub_4D5180();
     *a2 = 1;
+}
+
+// -----------------------------------------------------------------------------
+// SMALL FUNCTIONS (50 INSTRUCTIONS)
+// -----------------------------------------------------------------------------
+
+// 0x402780
+void sub_402780(const char* a1)
+{
+    // #todo: is it strcpy unwrapped?
+    memcpy(arcanum, a1, strlen(a1) + 1);
+}
+
+// 0x402FC0
+void sub_402FC0()
+{
+    tig_window_fill(dword_5D0E8C, 0, 0);
+  tig_window_display();
+  sub_402D30(0);
+}
+
+// 0x403DB0
+int sub_403DB0(void* a1, void* a2)
+{
+    // #todo: why neg?
+    return -strnicmp(a1->field_4, a2->field_4, 8);
+}
+
+// 0x403FF0
+void sub_403FF0(void* a1)
+{
+    if (a1->field_318 != NULL) {
+        tig_video_buffer_destroy_(a1->field_318);
+    }
+}
+
+// 0x4044A0
+void sub_4044A0(int a1, int a2)
+{
+    dword_5D10C0 = a1;
+  dword_5D0D80 = a2;
+}
+
+// 0x404570
+void game_difficulty_changed_()
+{
+    game_difficulty_ = config_get_int_(game_config_, "difficulty");
+}
+
+// 0x4045A0
+void sub_4045A0()
+{
+  sub_4BBC80();
+  sub_4BB920();
+  sub_402D30(0);
+  sub_402E50();
+  sub_51E430(0);
+}
+
+// Plays logo movies.
+//
+// 0x404810
+int sub_404810()
+{
+  sub_40DEE0("movies\\SierraLogo.bik", 0, 0);
+  sub_40DEE0("movies\\TroikaLogo.bik", 0, 0);
+}
+
+// 0x405BC0
+bool sub_405BC0(int a1, int a2)
+{
+    // #unclear
+    void* v1 = sub_408720(a1, a2);
+    bool v2 = v1->field_20 == 0xFFFF;
+    sub_408740(a1, a2);
+    return v2;
+}
+
+// 0x4067C0
+int sub_4067C0(int a1, int a2)
+{
+    // #unclear
+    void* v1 = sub_408720(a1, a2);
+    sub_408740(a1, a2);
+    return v1->field_44;
+}
+
+// 0x406D10
+int sub_406D10(void *a1, int a2)
+{
+  return tig_debug_printf_("Error: Accessing non-existant field [%s : %d] in object type [%d].\n",
+           object_field_names_[a2],
+           a2,
+           a1->field_0);
+}
+
+// 0x40A790
+int sub_40A790(int a1)
+{
+    // #not-sure
+    for (int index = 0; index < 21; index++) {
+        if (dword_59BE00[index] == a1) {
+            return index;
+        }
+    }
+    return 0;
+}
+
+// 0x40C560
+int sub_40C560()
+{
+  word_5D10FC++;
+  dword_5D10F4++;
+  return 1;
+}
+
+// 0x40C580
+void sub_40C580(void* a1)
+{
+    int v1 = sub_40C030(a1->field_0);
+    // #not-sure
+    void* v2 = malloc(8 * v1);
+    a1->field_48 = v2;
+    a1->field_4C = v2 + 4 * v1;
+}
+
+// 0x40C610
+void sub_40C610(void* a1)
+{
+    int v1 = sub_40C030(a1->field_0);
+    a1->field_4C = malloc(4 * v1);
+}
+
+// 0x40C690
+void sub_40C690(void* a1)
+{
+    int v1 = sub_40C030(a1->field_0);
+    memset(a1->field_4C, 0, 4 * v1);
+}
+
+// #maybe-bool
+// 0x40C6B0
+int sub_40C6B0(void* a1)
+{
+    a1->field_50[dword_5D10F4++] = 0;
+    return 1;
+}
+
+// 0x40CB40
+int sub_40CB40(int a1, int a2)
+{
+    return off_5D1104[a2].field_0;
+}
+
+// 0x40D320
+int sub_40D320(void* a1, int a2)
+{
+    int v1 = off_5D1104[a2].field_8;
+    return off_5D1104[a2].field_C & a1->field_48[v1];
+}
+
+// 0x40D350
+bool sub_40D350(void* a1, int a2)
+{
+    return sub_40D320(a1, a2) != 0;
+}
+
+// 0x40D370
+void sub_40D370(int a1, int a2, int a3)
+{
+    sub_40D3A0(a1, &(off_5D1104[a2]), a3);
+}
+
+// 0x40D3A0
+void sub_40D3A0(void* a1, void* a2, int a3)
+{
+    if (a3) {
+        a1->field_48[a2->field_8] |= a2->field_C;
+    } else {
+        a1->field_48[a2->field_8] &= ~a2->field_C;
+    }
+}
+
+// 0x40D3D0
+int sub_40D3D0(void* a1, int a2)
+{
+    int v1 = off_5D1104[a2].field_8;
+    return off_5D1104[a2].field_C & a1->field_4C[v1];
+}
+
+// 0x40D450
+void sub_40D450(int a1, int a2)
+{
+    int v2 = sub_40D230(a1, a2);
+    sub_40D470(a1, v2);
+}
+
+// 0x40D560
+bool sub_40D560(int a1)
+{
+    int v1 = 119;
+    return sub_4E7010(&v1, sizeof(v1), a1) != 0;
+}
+
+// 0x40D5D0
+void sub_40D5D0(int a1)
+{
+    int v1 = 119;
+    sub_4E4C00(&v1, sizeof(v1), a1);
+}
+
+// 0x40D6C0
+int player_init_(void* a1)
+{
+    word_5D1138 = 0;
+  dword_739E5C = a1->field_0;
+  return 1;
+}
+
+typedef struct Zack {
+    int field_0;
+    void** field_4;
+    int size;
+    int field_C;
+};
+
+static_assert(sizeof(Zack) == 0x10, "wrong size");
+
+typedef struct Tim {
+    void* field_0;
+    Tim* next;
+    int field_8;
+};
+
+static_assert(sizeof(Tim) == 0xC, "wrong size");
+
+// 0x534320
+void sub_534320(Zack *a1, size_t size)
+{
+    a1->field_0 = 63;
+    a1->field_4 = (void**)malloc(sizeof(a1->field_4) * a1->field_0);
+
+    for (int index = 0; index < a1->field_0; index++) {
+        a1->field_4[index] = NULL;
+    }
+
+    a1->field_C = 0;
+    a1->size = size;
+}
+
+// 0x534370
+void sub_534370(Zack* a1)
+{
+    for (int index = 0; index < a1->field_0; index++) {
+        // TODO: Incomplete.
+    }
+}
+
+// 0x534840
+void sub_534840(Tim* a1)
+{
+    free(a1->field_0);
+    free(a1);
+}
+
+// 0x534860
+Tim* sub_534860(size_t size)
+{
+    Tim* v1 = (Tim*)malloc(sizeof(*v1));
+    v1->field_0 = malloc(size);
+    return v1;
+}
+
+// 0x534880
+Tim* sub_534880(Tim* src, size_t size)
+{
+    if (src == NULL) {
+        return NULL;
+    }
+
+    Tim* copy = sub_534860(size);
+    memcpy(copy->field_0, src->field_0, size);
+    copy->next = sub_534880(src->next, size);
+    return copy;
 }

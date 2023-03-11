@@ -1,25 +1,45 @@
 #include "tig/tig.h"
 
+#include "tig/art.h"
+#include "tig/button.h"
+#include "tig/color.h"
 #include "tig/debug.h"
 #include "tig/dxinput.h"
+#include "tig/felicity.h"
 #include "tig/kb.h"
 #include "tig/memory.h"
+#include "tig/message.h"
+#include "tig/mouse.h"
 #include "tig/movie.h"
+#include "tig/palette.h"
 #include "tig/sound.h"
+#include "tig/str_parse.h"
 #include "tig/timer.h"
+#include "tig/video.h"
+#include "tig/window.h"
 
 typedef int(TigInitFunc)(TigContext* ctx);
 typedef void(TigExitFunc)();
 
-static void tig_init_executable_file_path();
+static void tig_init_executable();
 
 // 0x5BF2D4
 static TigInitFunc* init_funcs[] = {
     tig_memory_init,
     tig_debug_init,
+    tig_color_init,
+    tig_video_init,
+    tig_palette_init,
+    tig_window_init,
     tig_timer_init,
     tig_dxinput_init,
     tig_kb_init,
+    tig_art_init,
+    tig_mouse_init,
+    tig_message_init,
+    tig_button_init,
+    tig_felicity_init,
+    tig_str_parse_init,
     tig_sound_init,
     tig_movie_init,
 };
@@ -30,9 +50,19 @@ static TigInitFunc* init_funcs[] = {
 static TigExitFunc* exit_funcs[] = {
     tig_memory_exit,
     tig_debug_exit,
+    tig_color_exit,
+    tig_video_exit,
+    tig_palette_exit,
+    tig_window_exit,
     tig_timer_exit,
     tig_dxinput_exit,
     tig_kb_exit,
+    tig_art_exit,
+    tig_mouse_exit,
+    tig_message_exit,
+    tig_button_exit,
+    tig_felicity_exit,
+    tig_str_parse_exit,
     tig_sound_exit,
     tig_movie_exit,
 };
@@ -82,7 +112,7 @@ int tig_init(TigContext* ctx)
     }
 
     atexit(tig_exit);
-    tig_init_executable_file_path();
+    tig_init_executable();
 
     tig_initialized = true;
 
@@ -131,7 +161,7 @@ void sub_51F250()
 const char* tig_get_executable(bool file_name_only)
 {
     if (!tig_initialized) {
-        tig_init_executable_file_path();
+        tig_init_executable();
     }
 
     if (file_name_only) {
@@ -142,7 +172,7 @@ const char* tig_get_executable(bool file_name_only)
 }
 
 // 0x51F290
-void tig_init_executable_file_path()
+void tig_init_executable()
 {
     if (GetModuleFileNameA(NULL, tig_executable_path, sizeof(tig_executable_path)) == 0) {
         tig_debug_println("GetModuleFileName failed.");
@@ -166,7 +196,7 @@ void tig_set_active(bool is_active)
 }
 
 // 0x51F320
-int tig_get_active()
+bool tig_get_active()
 {
     return tig_active;
 }

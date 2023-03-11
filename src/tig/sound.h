@@ -3,8 +3,6 @@
 
 #include "tig/types.h"
 
-#include <stdint.h>
-
 typedef enum TigSoundType {
     TIG_SOUND_TYPE_EFFECT,
     TIG_SOUND_TYPE_MUSIC,
