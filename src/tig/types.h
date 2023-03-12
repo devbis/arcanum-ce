@@ -28,6 +28,7 @@
 #define TIG_ERR_11 11
 #define TIG_ERR_12 12
 #define TIG_ERR_13 13
+#define TIG_ERR_14 14
 #define TIG_ERR_16 16
 
 typedef int(TigArtFilePathResolver)(unsigned int art_id, char* path);

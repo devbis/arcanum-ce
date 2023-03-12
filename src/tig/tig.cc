@@ -11,6 +11,7 @@
 #include "tig/message.h"
 #include "tig/mouse.h"
 #include "tig/movie.h"
+#include "tig/net.h"
 #include "tig/palette.h"
 #include "tig/sound.h"
 #include "tig/str_parse.h"
@@ -40,6 +41,7 @@ static TigInitFunc* init_funcs[] = {
     tig_button_init,
     tig_felicity_init,
     tig_str_parse_init,
+    tig_net_init,
     tig_sound_init,
     tig_movie_init,
 };
@@ -63,6 +65,7 @@ static TigExitFunc* exit_funcs[] = {
     tig_button_exit,
     tig_felicity_exit,
     tig_str_parse_exit,
+    tig_net_exit,
     tig_sound_exit,
     tig_movie_exit,
 };

@@ -670,12 +670,6 @@ int* off_6876D0;
 // 0x5BEA38
 float flt_5BEA38 = 0.3;
 
-// 0x5C0648
-int dword_5C0648 = 127;
-
-// 0x5C064C
-int dword_5C064C = -1;
-
 // 0x5C26F8
 int dword_5C26F8 = -1;
 
@@ -742,9 +736,6 @@ int dword_60F244;
 // 0x62AC4C
 int dword_62AC4C;
 
-// 0x62AC50
-int dword_62AC50;
-
 // 0x62AC54
 int dword_62AC54;
 
@@ -756,15 +747,6 @@ int dword_62AC60;
 
 // 0x62AC64
 int dword_62AC64;
-
-// 0x62AC68
-int dword_62AC68;
-
-// 0x62AC6C
-unsigned int dword_62AC6C;
-
-// 0x62AC88
-int dword_62AC88;
 
 // 0x62B09C
 char byte_62B09C[29];
@@ -3550,208 +3532,6 @@ int sub_51F320()
     return dword_60F244;
 }
 
-// 0x526AB0
-int sub_526AB0(int a1, int a2)
-{
-    return _WSAFDIsSet(a1, a2);
-}
-
-// 0x526AD0
-void nullsub_16()
-{
-}
-
-// 0x526B00
-bool sub_526B00(int a1)
-{
-    return a1 == stru_614848.field_0;
-}
-
-// 0x526E00
-void sub_526E00()
-{
-    // #check
-    dword_62AC6C &= 0xF4;
-}
-
-// 0x527170
-void nullsub_36()
-{
-}
-
-// 0x527280
-void sub_527280()
-{
-    // #check
-    dword_62AC6C |= 1;
-}
-
-// 0x5280E0
-void sub_5280E0()
-{
-    // #check
-    dword_62AC6C |= 2;
-}
-
-// 0x528710
-void sub_528710(int a1)
-{
-    dword_62AC54 = a1;
-}
-
-// 0x528720
-void sub_528720(int a1)
-{
-    dword_62AC58 = a1;
-}
-
-// 0x528740
-void sub_528740(int a1)
-{
-    dword_62AC60 = a1;
-}
-
-// 0x528750
-void sub_528750(int a1)
-{
-    dword_62AC64 = a1;
-}
-
-// 0x528760
-void sub_528760()
-{
-    dword_62AC6C |= 0x10;
-}
-
-// 0x528770
-void sub_528770()
-{
-    dword_62AC6C &= ~0x10;
-}
-
-// 0x528780
-int sub_528780()
-{
-    return dword_62AC6C & 0x10;
-}
-
-// 0x528790
-void sub_528790()
-{
-    dword_62AC4C++;
-}
-
-// 0x5287A0
-void sub_5287A0()
-{
-    dword_62AC4C--;
-}
-
-// 0x529330
-int sub_529330()
-{
-    return stru_6123C0.field_3C;
-}
-
-// 0x529430
-void sub_529430()
-{
-    sub_5293C0(0);
-}
-
-// 0x5294A0
-void sub_5294A0(int* a1)
-{
-    if (a1 != NULL) {
-        *a1 = stru_6123C0.field_30;
-    }
-}
-
-// 0x5294C0
-void sub_5294C0(int a1)
-{
-    stru_6123C0.field_30 = a1;
-}
-
-// 0x5294D0
-int sub_5294D0()
-{
-    return stru_6123C0.field_5C;
-}
-
-// 0x5294E0
-void sub_5294E0(int a1)
-{
-    stru_6123C0.field_5C |= a1;
-}
-
-// 0x52A4C0
-void sub_52A4C0()
-{
-    // #check
-    dword_62AC6C |= 8;
-}
-
-// 0x52A530
-int sub_52A530()
-{
-    return dword_5C064C;
-}
-
-// 0x52A7A0
-void sub_52A7A0(int a1)
-{
-    dword_5C0648 |= a1;
-}
-
-// 0x52A940
-void sub_52A940()
-{
-    dword_62AC88++;
-}
-
-// 0x52A950
-void sub_52A950()
-{
-    dword_62AC88--;
-}
-
-// 0x52AD80
-void sub_52AD80()
-{
-    dword_62AC6C |= 0x20;
-}
-
-// 0x52B1E0
-void sub_52B1E0(int a1)
-{
-    dword_62AC68 = a1;
-}
-
-// 0x52B1F0
-u_long sub_52B1F0(u_long a1)
-{
-    return ntohl(a1);
-}
-
-// 0x52B210
-void sub_52B210()
-{
-    tig_timer_start_(&stru_6123C0.field_60);
-}
-
-// 0x52B2C0
-void sub_52B2C0()
-{
-    dword_62AC50++;
-}
-
-// 0x52B2D0
-void sub_52B2D0()
-{
-    dword_62AC50--;
-}
-
 // 0x52B340
 int sub_52B340(int a1)
 {
@@ -3817,12 +3597,6 @@ int sub_533080(int a1, int a2)
 void sub_533C30(int a1)
 {
     dword_6301F4 = a1;
-}
-
-// 0x534990
-int sub_534990(void* a1)
-{
-    return a1->field_C;
 }
 
 // 0x534A40
@@ -5320,71 +5094,4 @@ int player_init_(void* a1)
     word_5D1138 = 0;
   dword_739E5C = a1->field_0;
   return 1;
-}
-
-typedef struct Zack {
-    int field_0;
-    void** field_4;
-    int size;
-    int field_C;
-};
-
-static_assert(sizeof(Zack) == 0x10, "wrong size");
-
-typedef struct Tim {
-    void* field_0;
-    Tim* next;
-    int field_8;
-};
-
-static_assert(sizeof(Tim) == 0xC, "wrong size");
-
-// 0x534320
-void sub_534320(Zack *a1, size_t size)
-{
-    a1->field_0 = 63;
-    a1->field_4 = (void**)malloc(sizeof(a1->field_4) * a1->field_0);
-
-    for (int index = 0; index < a1->field_0; index++) {
-        a1->field_4[index] = NULL;
-    }
-
-    a1->field_C = 0;
-    a1->size = size;
-}
-
-// 0x534370
-void sub_534370(Zack* a1)
-{
-    for (int index = 0; index < a1->field_0; index++) {
-        // TODO: Incomplete.
-    }
-}
-
-// 0x534840
-void sub_534840(Tim* a1)
-{
-    free(a1->field_0);
-    free(a1);
-}
-
-// 0x534860
-Tim* sub_534860(size_t size)
-{
-    Tim* v1 = (Tim*)malloc(sizeof(*v1));
-    v1->field_0 = malloc(size);
-    return v1;
-}
-
-// 0x534880
-Tim* sub_534880(Tim* src, size_t size)
-{
-    if (src == NULL) {
-        return NULL;
-    }
-
-    Tim* copy = sub_534860(size);
-    memcpy(copy->field_0, src->field_0, size);
-    copy->next = sub_534880(src->next, size);
-    return copy;
 }
