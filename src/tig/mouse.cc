@@ -185,13 +185,13 @@ int tig_mouse_device_init()
         return TIG_ERR_7;
     }
 
-    HWND hwnd;
-    if (tig_video_get_hwnd(&hwnd) != TIG_OK) {
+    HWND hWnd;
+    if (tig_video_handle(&hWnd) != TIG_OK) {
         tig_mouse_device_exit();
         return TIG_ERR_7;
     }
 
-    if (FAILED(IDirectInputDevice_SetCooperativeLevel(tig_mouse_device, hwnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND))) {
+    if (FAILED(IDirectInputDevice_SetCooperativeLevel(tig_mouse_device, hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND))) {
         tig_mouse_device_exit();
         return TIG_ERR_7;
     }

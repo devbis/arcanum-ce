@@ -72,7 +72,7 @@ static_assert(sizeof(TigVideoBufferBlitSpec) == 0x2C, "wrong size");
 
 int tig_video_init(TigContext* ctx);
 void tig_video_exit();
-int tig_video_get_hwnd(HWND* wnd);
+int tig_video_handle(HWND* hWnd);
 int tig_video_main_surface_get(LPDIRECTDRAWSURFACE7* surface_ptr);
 void tig_video_set_client_rect(LPRECT rect);
 void tig_video_display_fps();

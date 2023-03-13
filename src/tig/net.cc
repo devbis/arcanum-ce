@@ -833,7 +833,7 @@ bool sub_527BD0()
     }
 
     HWND hWnd;
-    if (tig_video_get_hwnd(&hWnd) != TIG_OK) {
+    if (tig_video_handle(&hWnd) != TIG_OK) {
         tig_debug_printf("TCP-NET: Error: Could not get tig_video_handle\n");
         return false;
     }
@@ -943,7 +943,7 @@ bool sub_527E80()
     }
 
     HWND hWnd;
-    if (!tig_video_get_hwnd(&hWnd)) {
+    if (!tig_video_handle(&hWnd)) {
         tig_debug_printf("TCP-NET: Error: Could not get tig_video_handle\n");
         tig_net_ws_impl.closesocket(tig_net_listen_socket);
         tig_net_listen_socket = -1;

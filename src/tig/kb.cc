@@ -169,13 +169,13 @@ bool tig_kb_device_init()
         return false;
     }
 
-    HWND wnd;
-    if (tig_video_get_hwnd(&wnd) != TIG_OK) {
+    HWND hWnd;
+    if (tig_video_handle(&hWnd) != TIG_OK) {
         tig_kb_device_exit();
         return false;
     }
 
-    if (FAILED(IDirectInputDevice_SetCooperativeLevel(tig_kb_keyboard_device, wnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND))) {
+    if (FAILED(IDirectInputDevice_SetCooperativeLevel(tig_kb_keyboard_device, hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND))) {
         tig_kb_device_exit();
         return false;
     }

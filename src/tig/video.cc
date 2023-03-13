@@ -98,7 +98,7 @@ static int tig_video_3d_extra_surface_caps;
 static int tig_video_3d_extra_surface_caps2;
 
 // 0x610334
-static TigVideoBuffer* off_610334;
+static TigVideoBuffer* tig_video_3d_viewport;
 
 // 0x610338
 static DDPIXELFORMAT tig_video_3d_pixel_format;
@@ -163,13 +163,13 @@ void tig_video_exit()
 }
 
 // 0x51F410
-int tig_video_get_hwnd(HWND* wnd)
+int tig_video_handle(HWND* hWnd)
 {
     if (!tig_video_initialized) {
         return TIG_NOT_INITIALIZED;
     }
 
-    *wnd = tig_video_state.wnd;
+    *hWnd = tig_video_state.wnd;
 
     return TIG_OK;
 }
@@ -641,8 +641,8 @@ int tig_video_buffer_destroy(TigVideoBuffer* video_buffer)
         return TIG_ERR_16;
     }
 
-    if (off_610334 == video_buffer) {
-        off_610334 = NULL;
+    if (tig_video_3d_viewport == video_buffer) {
+        tig_video_3d_viewport = NULL;
     }
 
     tig_video_surface_destroy(&(video_buffer->surface));
@@ -1092,7 +1092,7 @@ bool tig_video_d3d_init(TigContext* ctx)
     tig_video_3d_texture_must_be_square = false;
     tig_video_3d_extra_surface_caps = 0;
     tig_video_3d_extra_surface_caps2 = 0;
-    off_610334 = NULL;
+    tig_video_3d_viewport = NULL;
 
     tig_debug_printf("3D: Query for IID_IDirect3D7 interface ");
 
@@ -1535,4 +1535,46 @@ unsigned int tig_video_color_to_mask(COLORREF color)
 void tig_video_print_dd_result(HRESULT hr)
 {
     // TODO: Incomplete.
+}
+
+// 0x526450
+int tig_video_3d_set_viewport(TigVideoBuffer* video_buffer)
+{
+    HRESULT hr;
+
+    if (!tig_video_3d_initialized) {
+        return TIG_ERR_16;
+    }
+
+    if (tig_video_3d_viewport == video_buffer) {
+        return TIG_OK;
+    }
+
+    hr = IDirect3DDevice7_SetRenderTarget(tig_video_state.d3d_device, video_buffer->surface, 0);
+    if (FAILED(hr)) {
+        tig_debug_printf("3D: Error setting rendering target.\n");
+        tig_video_print_dd_result(hr);
+        return TIG_ERR_16;
+    }
+
+    tig_debug_printf("3D: Render target successfully set.\n");
+
+    D3DVIEWPORT7 viewport;
+    viewport.dwX = 0;
+    viewport.dwY = 0;
+    viewport.dwWidth = video_buffer->surface_desc.dwWidth;
+    viewport.dwHeight = video_buffer->surface_desc.dwHeight;
+    viewport.dvMinZ = 0.0;
+    viewport.dvMaxZ = 1.0;
+
+    hr = IDirect3DDevice7_SetViewport(tig_video_state.d3d_device, &viewport);
+    if (FAILED(hr)) {
+        tig_debug_printf("3D: Error setting viewport.\n");
+        tig_video_print_dd_result(hr);
+        return TIG_ERR_16;
+    }
+
+    tig_debug_printf("3D: Viewport successfully set.\n");
+
+    return TIG_OK;
 }
