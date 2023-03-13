@@ -751,9 +751,6 @@ int dword_62AC64;
 // 0x62B09C
 char byte_62B09C[29];
 
-// 0x62B2A4
-void* off_62B2A4;
-
 // 0x62B2C0
 int dword_62B2C0;
 
@@ -3536,19 +3533,6 @@ int sub_51F320()
 int sub_52B340(int a1)
 {
     return byte_62B09C[a1] & 0x80;
-}
-
-// 0x52D0E0
-int tig_init_3_()
-{
-    return 0;
-}
-
-// 0x52D180
-void sub_52D180(void* a1)
-{
-    a1->field_10 = off_62B2A4;
-    off_62B2A4 = a1;
 }
 
 // 0x52DFE0
