@@ -6,6 +6,7 @@
 #include "tig/debug.h"
 #include "tig/dxinput.h"
 #include "tig/felicity.h"
+#include "tig/file.h"
 #include "tig/kb.h"
 #include "tig/memory.h"
 #include "tig/message.h"
@@ -13,6 +14,7 @@
 #include "tig/movie.h"
 #include "tig/net.h"
 #include "tig/palette.h"
+#include "tig/rect.h"
 #include "tig/sound.h"
 #include "tig/str_parse.h"
 #include "tig/timer.h"
@@ -28,6 +30,8 @@ static void tig_init_executable();
 static TigInitFunc* init_funcs[] = {
     tig_memory_init,
     tig_debug_init,
+    tig_rect_init,
+    tig_file_init,
     tig_color_init,
     tig_video_init,
     tig_palette_init,
@@ -52,6 +56,8 @@ static TigInitFunc* init_funcs[] = {
 static TigExitFunc* exit_funcs[] = {
     tig_memory_exit,
     tig_debug_exit,
+    tig_rect_exit,
+    tig_file_exit,
     tig_color_exit,
     tig_video_exit,
     tig_palette_exit,

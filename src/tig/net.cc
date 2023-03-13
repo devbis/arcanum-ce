@@ -1403,7 +1403,7 @@ void send_generic(void* data, int size, uint8_t type, int client_id)
     static TigNetPacket packet;
 
     if (size + sizeof(TigNetPacketHeader) > TIG_NET_BUF_SIZE) {
-        tig_debug_pritnf("TCP-NET: send_generic(): too big a buffer requested %d!\n", size);
+        tig_debug_printf("TCP-NET: send_generic(): too big a buffer requested %d!\n", size);
         return;
     }
 

@@ -3541,30 +3541,6 @@ bool sub_52DFE0(int a1)
     return sub_52F100(a1) == 0;
 }
 
-// 0x530320
-char* tio_tmpnam(char* dest)
-{
-    return tmpnam(dest);
-}
-
-// 0x5304B0
-int sub_5304B0()
-{
-    return -1;
-}
-
-// 0x5304FD
-int sub_5304FD()
-{
-    return -1;
-}
-
-// 0x530BF0
-void tio_destroy_(void* fp)
-{
-    free(fp);
-}
-
 // 0x533000
 void sub_533000(int a1)
 {
@@ -3581,11 +3557,6 @@ int sub_533080(int a1, int a2)
 void sub_533C30(int a1)
 {
     dword_6301F4 = a1;
-}
-
-// 0x534A40
-void nullsub_17()
-{
 }
 
 // 0x535130
@@ -3689,42 +3660,6 @@ int sub_53AB00()
 int sub_53AB20(void)
 {
     return sub_53AB30();
-}
-
-// 0x53C1C0
-int sub_53C1C0(void* a1)
-{
-    return a1->field_8->field_8;
-}
-
-// 0x53C370
-int sub_53C370()
-{
-    return 1;
-}
-
-// 0x53C520
-int sub_53C520(int a1, int a2, int a3)
-{
-    return a3 - 1;
-}
-
-// 0x53C710
-void sub_53C710(int* a1)
-{
-    *a1 &= ~6u;
-}
-
-// 0x53C720
-int sub_53C720(int* a1)
-{
-    return *a1 & 2;
-}
-
-// 0x53C730
-int sub_53C730(int* a1)
-{
-    return *a1 & 4;
 }
 
 // 0x53EB00

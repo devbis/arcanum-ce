@@ -70,6 +70,9 @@ bool tig_net_local_client_set_name(const char* name);
 const char* tig_net_local_client_get_name();
 void tig_net_local_bookmark_set_name(const char* name);
 void tig_net_local_bookmark_get_name(char* dest, size_t size);
+int sub_529520();
+void send_generic(void* data, int size, uint8_t type, int client_id);
+int sub_52A530();
 void tig_net_no_broadcast_enable();
 void tig_net_no_broadcast_disable();
 
