@@ -141,34 +141,10 @@ int dword_5B5798[1] = {
 
 // 5B6---
 
-// 0x5B6F04
-int dword_5B6F04[12] = {
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    5,
-    5,
-    4,
-    6,
-    4,
-    7,
-};
-
 // #wrong
 // 0x5B6F44
 int dword_5B6F44[1] = {
     0,
-};
-
-// 0x5B6F34
-int dword_5B6F34[4] = {
-    4,
-    5,
-    1,
-    5,
 };
 
 // 5B7---
@@ -498,15 +474,6 @@ int dword_5FF484;
 
 // 0x5FF424
 int dword_5FF424[12];
-
-// 0x5FF454
-int dword_5FF454[12];
-
-// 0x5FF4E8
-int dword_5FF4E8[4];
-
-// 0x5FF488
-int dword_5FF488[4];
 
 // 0x5FF498
 int dword_5FF498[4];
@@ -2480,82 +2447,10 @@ int sub_4C51A0(int a1)
     return off_5FF418[a1 - 1000];
 }
 
-// 0x4C5DB0
-void skill_exit_()
-{
-    message_unload_(dword_5FF484);
-}
-
-// 0x4C62B0
-int sub_4C62B0(int a1)
-{
-    return dword_5FF454[a1];
-}
-
-// 0x4C62C0
-int sub_4C62C0(int a1)
-{
-    return dword_5FF424[a1];
-}
-
-// 0x4C62D0
-int sub_4C62D0(int a1, int a2, int a3)
-{
-    return (a3 + 1) * (a2 + 2);
-}
-
-// 0x4C64B0
-int sub_4C64B0()
-{
-    return 1;
-}
-
-// 0x4C64C0
-int sub_4C64C0()
-{
-    return 1;
-}
-
-// 0x4C64D0
-int sub_4C64D0(int a1)
-{
-    return dword_5B6F04[a1];
-}
-
-// 0x4C6510
-int sub_4C6510()
-{
-    return 100;
-}
-
-// 0x4C69A0
-int sub_4C69A0(int a1)
-{
-    return dword_5FF4E8[a1];
-}
-
-// 0x4C69B0
-int sub_4C69B0(int a1)
-{
-    return dword_5FF488[a1];
-}
-
 // 0x4C69C0
 int sub_4C69C0(int a1)
 {
     return dword_5B6F44[a1];
-}
-
-// 0x4C69D0
-int sub_4C69D0(int a1)
-{
-    return dword_5FF498[a1];
-}
-
-// 0x4C69E0
-int sub_4C69E0(int a1, int a2, int a3)
-{
-    return (a3 + 1) * (a2 + 2);
 }
 
 // 0x4C6AF0
@@ -2568,12 +2463,6 @@ int sub_4C6AF0()
 int sub_4C6B00()
 {
     return 1;
-}
-
-// 0x4C6B10
-int sub_4C6B10(int a1)
-{
-    return dword_5B6F34[a1];
 }
 
 // 0x4C9DE0
