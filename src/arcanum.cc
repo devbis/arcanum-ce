@@ -20,9 +20,6 @@ char arcanum[260] = "Arcanum";
 
 // 59F---
 
-// 0x59F050
-int dword_59F050 = 1000;
-
 // 5A3--
 
 // 0x5A3E90
@@ -1233,29 +1230,6 @@ void sub_40C5B0(void* a1)
 void sub_40C640(void* a1)
 {
     free(a1->field_4C);
-}
-
-// 0x40E000
-void scroll_exit_()
-{
-}
-
-// 0x40E010
-void scroll_reset_()
-{
-    dword_5D11C8 = 0;
-}
-
-// 0x40E890
-void sub_40E890(int a1)
-{
-    dword_59F050 = 1000 / a1;
-}
-
-// 0x40E8A0
-void sub_40E8A0(int a1)
-{
-    dword_5D11C4 = a1;
 }
 
 // 0x40E900

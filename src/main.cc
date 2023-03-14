@@ -1,6 +1,7 @@
 #ifndef ARCANUM_MAIN_H_
 #define ARCANUM_MAIN_H_
 
+#include "game/lib/scroll.h"
 #include "tig/dxinput.h"
 #include "tig/kb.h"
 #include "tig/net.h"
@@ -127,27 +128,27 @@ void handle_mouse_scroll()
 
     if (mouse_state.x == 0) {
         if (mouse_state.y == 0) {
-            sub_40E0A0(7);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_LEFT);
         } else if (mouse_state.y == 600 - 1) {
-            sub_40E0A0(5);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_LEFT);
         } else {
-            sub_40E0A0(6);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_LEFT);
         }
     } else if (mouse_state.x == 800 - 1) {
         if (mouse_state.y == 0) {
-            sub_40E0A0(1);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_RIGHT);
         } else if (mouse_state.y == 600 - 1) {
-            sub_40E0A0(3);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_RIGHT);
         } else {
-            sub_40E0A0(2);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_RIGHT);
         }
     } else {
         if (mouse_state.y == 0) {
-            sub_40E0A0(0);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP);
         } else if (mouse_state.y == 600 - 1) {
-            sub_40E0A0(4);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN);
         } else {
-            sub_40E610();
+            scroll_stop_scrolling();
         }
     }
 }
@@ -157,24 +158,24 @@ void handle_keyboard_scroll()
 {
     if (tig_kb_is_key_pressed(DIK_UP)) {
         if (tig_kb_is_key_pressed(DIK_LEFT)) {
-            sub_40E0A0(7);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_LEFT);
         } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
-            sub_40E0A0(1);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP_RIGHT);
         } else {
-            sub_40E0A0(0);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_UP);
         }
     } else if (tig_kb_is_key_pressed(DIK_DOWN)) {
         if (tig_kb_is_key_pressed(DIK_LEFT)) {
-            sub_40E0A0(5);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_LEFT);
         } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
-            sub_40E0A0(3);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN_RIGHT);
         } else {
-            sub_40E0A0(4);
+            scroll_start_scrolling_in_direction(SCROLL_DIRECTION_DOWN);
         }
     } else if (tig_kb_is_key_pressed(DIK_LEFT)) {
-        sub_40E0A0(6);
+        scroll_start_scrolling_in_direction(SCROLL_DIRECTION_LEFT);
     } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
-        sub_40E0A0(2);
+        scroll_start_scrolling_in_direction(SCROLL_DIRECTION_RIGHT);
     }
 }
 
