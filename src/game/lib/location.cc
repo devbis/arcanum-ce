@@ -137,5 +137,5 @@ void sub_4B97E0(int64_t* a1, int64_t* a2)
 // 0x4B9810
 int sub_4B9810()
 {
-  return qword_5FC2F0 >> 1;
+    return qword_5FC2F0 >> 1;
 }

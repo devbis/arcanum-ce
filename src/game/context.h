@@ -1,6 +1,7 @@
 #ifndef ARCANUM_GAME_CONTEXT_H_
 #define ARCANUM_GAME_CONTEXT_H_
 
+#include "tig/file.h"
 #include "tig/rect.h"
 
 typedef void(GameContextF8)();
