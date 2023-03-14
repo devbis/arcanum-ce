@@ -1,7 +1,9 @@
 #include "tig/tig.h"
 
+#include "tig/anna.h"
 #include "tig/art.h"
 #include "tig/button.h"
+#include "tig/cache.h"
 #include "tig/color.h"
 #include "tig/debug.h"
 #include "tig/dxinput.h"
@@ -43,9 +45,11 @@ static TigInitFunc* init_funcs[] = {
     tig_mouse_init,
     tig_message_init,
     tig_button_init,
+    tig_anna_init,
     tig_felicity_init,
     tig_str_parse_init,
     tig_net_init,
+    tig_cache_init,
     tig_sound_init,
     tig_movie_init,
 };
@@ -69,9 +73,11 @@ static TigExitFunc* exit_funcs[] = {
     tig_mouse_exit,
     tig_message_exit,
     tig_button_exit,
+    tig_anna_exit,
     tig_felicity_exit,
     tig_str_parse_exit,
     tig_net_exit,
+    tig_cache_exit,
     tig_sound_exit,
     tig_movie_exit,
 };

@@ -3584,29 +3584,6 @@ void sub_5387D0()
     dword_5C26FC = -1;
 }
 
-// 0x538A80
-int tig_init_21_()
-{
-    return 0;
-}
-
-// 0x538A90
-void tig_exit_21_()
-{
-}
-
-// 0x538D80
-int sub_538D80(int a1)
-{
-    return sub_538D90(a1);
-}
-
-// 0x538E90
-void sub_538E90(int a1, void* a2)
-{
-    a2->field_10++;
-}
-
 // 0x538EE0
 int tig_init_18_()
 {
@@ -3628,24 +3605,6 @@ void sub_538F40(void* a1)
 void sub_538F50(void* a1)
 {
     *a1 = dword_63650C;
-}
-
-// 0x539EC0
-int sub_539EC0(int a1)
-{
-    return a1;
-}
-
-// 0x539ED0
-int sub_539ED0(int a1)
-{
-    return a1;
-}
-
-// 0x53A020
-int sub_53A020(void* a1)
-{
-    return tig_window_destroy(a1->field_10);
 }
 
 // 0x53AB00

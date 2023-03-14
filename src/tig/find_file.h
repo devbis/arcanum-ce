@@ -4,7 +4,7 @@
 #include <io.h>
 
 typedef struct TigFindFileData {
-    _finddata32_t find_data;
+    _finddata_t find_data;
     intptr_t handle;
 };
 

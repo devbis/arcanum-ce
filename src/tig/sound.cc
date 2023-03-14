@@ -1,5 +1,6 @@
 #include "tig/sound.h"
 
+#include "tig/cache.h"
 #include "tig/debug.h"
 #include "tig/tig.h"
 
@@ -7,11 +8,6 @@
 #define FIRST_MUSIC_HANDLE 2
 #define FIRST_EFFECT_HANDLE 6
 #define SOUND_HANDLE_MAX 60
-
-typedef struct SoundF130 {
-    /* 0000 */ void* data;
-    /* 0004 */ size_t size;
-};
 
 typedef struct TigSound {
     /* 0000 */ unsigned char active; // boolean
@@ -26,7 +22,7 @@ typedef struct TigSound {
     /* 0124 */ int id;
     /* 0128 */ int volume;
     /* 012C */ int extra_volume;
-    /* 0130 */ SoundF130* field_130;
+    /* 0130 */ TigCacheEntry* cache_entry;
     /* 0134 */ bool field_134;
     /* 0138 */ int64_t field_138;
     /* 0140 */ int64_t field_140;
@@ -59,7 +55,7 @@ static int tig_sound_next_effect_handle;
 static bool tig_sound_initialized;
 
 // 0x6301F0
-static int dword_6301F0;
+static TigCache* tig_sound_cache;
 
 // 0x6301F4
 static int tig_sound_effects_volume;
@@ -82,7 +78,7 @@ int tig_sound_init(TigContext* ctx)
 
     tig_sound_set_path_func(ctx->sound_file_path_resolver);
 
-    dword_6301F0 = sub_538B50(20, 1000000);
+    tig_sound_cache = tig_cache_create(20, 1000000);
 
     return TIG_OK;
 }
@@ -93,7 +89,7 @@ void tig_sound_exit()
     if (tig_sound_initialized) {
         tig_sound_initialized = false;
         tig_sound_fade_out_all(0);
-        sub_538BA0(dword_6301F0);
+        tig_cache_destroy(tig_sound_cache);
         AIL_quick_shutdown();
     }
 }
@@ -320,7 +316,7 @@ void tig_sound_stop(int sound_handle)
                     tig_sounds[sound_handle].active = 0;
                 } else if ((tig_sounds[sound_handle].flags & TIG_SOUND_MEMORY) != 0) {
                     AIL_quick_unload(tig_sounds[sound_handle].audio_handle);
-                    sub_538EA0(dword_6301F0, tig_sounds[sound_handle].field_130);
+                    tig_cache_unref(tig_sound_cache, tig_sounds[sound_handle].cache_entry);
                     tig_sounds[sound_handle].active = 0;
                 } else {
                     tig_sounds[sound_handle].active = 0;
@@ -338,10 +334,10 @@ int tig_sound_play_by_path(int sound_handle, const char* path, int id)
         if (sound_handle >= 0) {
             TigSound* snd = &(tig_sounds[sound_handle]);
             strcpy(snd->path, path);
-            snd->field_130 = sub_538C90(dword_6301F0, path);
+            snd->cache_entry = tig_cache_ref(tig_sound_cache, path);
 
-            if (snd->field_130->data != NULL) {
-                snd->audio_handle = AIL_quick_load_mem(snd->field_130->data, snd->field_130->size);
+            if (snd->cache_entry->data != NULL) {
+                snd->audio_handle = AIL_quick_load_mem(snd->cache_entry->data, snd->cache_entry->size);
                 AIL_quick_set_volume(snd->audio_handle, snd->volume, snd->extra_volume);
                 AIL_quick_play(snd->audio_handle, snd->loops);
                 snd->flags |= TIG_SOUND_MEMORY;
