@@ -101,12 +101,6 @@ int dword_5B3FD8 = 10;
 
 // 5B5---
 
-// 0x5B5050
-int dword_5B5050 = -1;
-
-// 0x5B5054
-int dword_5B5054 = 1;
-
 // 0x5B5124
 int dword_5B5124[8] = {
     0,
@@ -472,12 +466,6 @@ int dword_5F0E10;
 
 // 0x5F5CA0
 void* off_5F5CA0;
-
-// 0x5F5CA4
-int dword_5F5CA4;
-
-// 0x5F5CA
-int dword_5F5CAC;
 
 // 5F8---
 
@@ -2264,42 +2252,6 @@ int sub_4A55F0()
 void sub_4A5600(int a1)
 {
     dword_5B3FD8 = a1;
-}
-
-// 0x4A7C80
-int light_scheme_reset_()
-{
-    return sub_4A7DD0(0, 12);
-}
-
-// 0x4A7CF0
-void light_scheme_exit_()
-{
-    free(off_5F5CA0);
-}
-
-// 0x4A7DC0
-int sub_4A7DC0()
-{
-    return dword_5B5054;
-}
-
-// 0x4A7EA0
-int sub_4A7EA0()
-{
-    return dword_5B5050;
-}
-
-// 0x4A7FA0
-int sub_4A7FA0()
-{
-    return dword_5F5CA4;
-}
-
-// 0x4A7FB0
-int sub_4A7FB0()
-{
-    return dword_5F5CAC;
 }
 
 // 0x4A83F0

@@ -77,6 +77,7 @@ TigCache* tig_cache_create(int capacity, int max_size)
     cache->signature = 'FILC';
     cache->capacity = capacity;
     cache->max_size = max_size;
+    // FIXME: Params should be swapped.
     cache->items = (TigCacheItem*)calloc(sizeof(*cache->items), capacity);
     cache->length = 0;
     cache->bytes = 0;

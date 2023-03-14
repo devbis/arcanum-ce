@@ -23,4 +23,11 @@ typedef struct ResizeContext {
 
 static_assert(sizeof(ResizeContext) == 0x24, "wrong size");
 
+typedef struct LoadContext {
+    int version;
+    TigFile* stream;
+};
+
+static_assert(sizeof(LoadContext) == 0x8, "wrong size");
+
 #endif /* ARCANUM_GAME_CONTEXT_H_ */
