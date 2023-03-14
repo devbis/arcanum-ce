@@ -137,38 +137,6 @@ int dword_5B5164[8] = {
     19,
 };
 
-// 0x5B5194
-int dword_5B5194[28] = {
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    300,
-    -50,
-    -9,
-    1,
-    0,
-    1,
-    -65,
-    1,
-    -100,
-    0,
-    0,
-    -1000,
-    0,
-    0,
-    0,
-    0,
-    0,
-    20,
-    0,
-    0,
-};
-
 // 0x5B55B0
 int dword_5B55B0[16] = {
     11,
@@ -483,21 +451,6 @@ int dword_5F85CC[8];
 
 // 0x5F85EC
 int dword_5F85EC[8];
-
-// 0x5F8610
-int dword_5F8610[2];
-
-// 0x5F8618
-int dword_5F8618[11];
-
-// 0x5F8644
-int dword_5F8644;
-
-// 0x5F8648
-int dword_5F8648[28];
-
-// 0x5F86B8
-int dword_5F86B8[28];
 
 // 0x5F8774
 int dword_5F8774[16];
@@ -2304,42 +2257,6 @@ int sub_4B00A0(int a1)
 int sub_4B0110(int a1)
 {
     return dword_5B5164[a1];
-}
-
-// 0x4B0440
-int stat_exit_()
-{
-    return message_unload_(dword_5F8644);
-}
-
-// 0x4B0F80
-int sub_4B0F80(int a1)
-{
-    return dword_5F8648[a1];
-}
-
-// 0x4B0F90
-int sub_4B0F90(int a1)
-{
-    return dword_5F86B8[a1];
-}
-
-// 0x4B0FA0
-int sub_4B0FA0(int a1)
-{
-    return dword_5F8610[a1];
-}
-
-// 0x4B0FB0
-int sub_4B0FB0(int a1)
-{
-    return dword_5F8618[a1];
-}
-
-// 0x4B0FC0
-int sub_4B0FC0(int a1, int a2, int a3)
-{
-    return dword_5B5194[a3];
 }
 
 // 0x4B1520
