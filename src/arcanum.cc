@@ -466,9 +466,6 @@ int dword_5FDC88;
 
 // 5FF---
 
-// 0x5FF418
-int* off_5FF418;
-
 // 0x5FF484
 int dword_5FF484;
 
@@ -2439,12 +2436,6 @@ int sub_4C1010(int a1)
 void sub_4C2EA0(int a1)
 {
     dword_5FDC88 = a1;
-}
-
-// 0x4C51A0
-int sub_4C51A0(int a1)
-{
-    return off_5FF418[a1 - 1000];
 }
 
 // 0x4C69C0
