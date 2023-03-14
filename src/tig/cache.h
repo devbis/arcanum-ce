@@ -3,8 +3,6 @@
 
 #include "tig/types.h"
 
-typedef struct TigCache;
-
 typedef struct TigCacheEntry {
     void* data;
     int size;
@@ -13,6 +11,25 @@ typedef struct TigCacheEntry {
 };
 
 static_assert(sizeof(TigCacheEntry) == 0x10, "wrong size");
+
+typedef struct TigCacheItem {
+    TigCacheEntry entry;
+    int refcount;
+    time_t timestamp;
+};
+
+static_assert(sizeof(TigCacheItem) == 0x18, "wrong size");
+
+typedef struct TigCache {
+    int signature;
+    int capacity;
+    int max_size;
+    int bytes;
+    int length;
+    TigCacheItem* items;
+};
+
+static_assert(sizeof(TigCache) == 0x18, "wrong size");
 
 int tig_cache_init(TigContext* ctx);
 void tig_cache_exit();

@@ -1,5 +1,7 @@
 #include "tig/sound.h"
 
+#include <stdio.h>
+
 #include "tig/cache.h"
 #include "tig/debug.h"
 #include "tig/tig.h"
@@ -587,6 +589,27 @@ bool tig_sound_is_active(int sound_handle)
     }
 
     return false;
+}
+
+// 0x533AC0
+void tig_sound_cache_flush()
+{
+    if (tig_sound_initialized) {
+        tig_cache_flush(tig_sound_cache);
+    }
+}
+
+// 0x533AE0
+const char* tig_sound_cache_stats()
+{
+    // 0x62B2C4
+    static char buffer[100];
+
+    sprintf(buffer,
+        "Sound Cache: %u items, %u bytes",
+        tig_sound_cache->length,
+        tig_sound_cache->bytes);
+    return buffer;
 }
 
 // 0x533B10

@@ -4,25 +4,6 @@
 
 #include "tig/file.h"
 
-typedef struct TigCacheItem {
-    TigCacheEntry entry;
-    int refcount;
-    time_t timestamp;
-};
-
-static_assert(sizeof(TigCacheItem) == 0x18, "wrong size");
-
-typedef struct TigCache {
-    int signature;
-    int capacity;
-    int max_size;
-    int bytes;
-    int length;
-    TigCacheItem* items;
-};
-
-static_assert(sizeof(TigCache) == 0x18, "wrong size");
-
 // 0x6364F8
 static int tig_cache_hit_count;
 
