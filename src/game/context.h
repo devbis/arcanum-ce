@@ -3,11 +3,14 @@
 
 #include "tig/rect.h"
 
+typedef void(GameContextF8)();
+typedef void(GameContextFC)();
+
 typedef struct GameContext {
     bool editor;
     int iso_window_handle;
-    int field_8;
-    int fiedl_C;
+    GameContextF8* field_8;
+    GameContextFC* field_C;
 };
 
 static_assert(sizeof(GameContext) == 0x10, "wrong size");

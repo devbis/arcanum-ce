@@ -2467,11 +2467,6 @@ int sub_4B80D0()
     return dword_5FC230;
 }
 
-// 0x4B8530
-void location_exit_()
-{
-}
-
 // 0x4B8D40
 void sub_4B8D40(int a1)
 {

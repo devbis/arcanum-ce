@@ -16,10 +16,16 @@ typedef void(TigWindowMessageFilterFunc)();
 
 typedef struct TigWindowData {
     int flags;
-    int x;
-    int y;
-    int width;
-    int height;
+    // TODO: Remove separate fields.
+    union {
+        struct {
+            int x;
+            int y;
+            int width;
+            int height;
+        };
+        TigRect rect;
+    };
     int field_14;
     int field_18;
     TigWindowMessageFilterFunc* message_filter_func;
