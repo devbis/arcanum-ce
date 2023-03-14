@@ -101,18 +101,6 @@ int dword_5B3FD8 = 10;
 
 // 5B5---
 
-// 0x5B5124
-int dword_5B5124[8] = {
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-};
-
 // 0x5B5144
 int dword_5B5144[8] = {
     0,
@@ -123,18 +111,6 @@ int dword_5B5144[8] = {
     65,
     80,
     100,
-};
-
-// 0x5B5164
-int dword_5B5164[8] = {
-    0,
-    5,
-    8,
-    11,
-    13,
-    15,
-    17,
-    19,
 };
 
 // 0x5B55B0
@@ -439,18 +415,6 @@ void* off_5F5CA0;
 
 // 0x5F85C8
 int dword_5F85C8;
-
-// 0x5F84A8
-int dword_5F84A8[8];
-
-// 0x5F84C8
-int dword_5F84C8[64];
-
-// 0x5F85CC
-int dword_5F85CC[8];
-
-// 0x5F85EC
-int dword_5F85EC[8];
 
 // 0x5F8774
 int dword_5F8774[16];
@@ -2215,48 +2179,6 @@ void ai_exit_()
 // 0x4A84C0
 void ai_mod_unload_()
 {
-}
-
-// 0x4AFDD0
-int tech_exit_()
-{
-    return message_unload_(dword_5F85C8);
-}
-
-// 0x4AFE10
-int sub_4AFE10(int a1)
-{
-    return dword_5F85EC[a1];
-}
-
-// 0x4AFE20
-int sub_4AFE20(int a1)
-{
-    return dword_5F85CC[a1];
-}
-
-// 0x4AFE30
-int sub_4AFE30(int a1)
-{
-    return dword_5F84A8[a1];
-}
-
-// 0x4AFE40
-int sub_4AFE40(int a1, int a2)
-{
-    return dword_5F84C8[8 * a2 + a1];
-}
-
-// 0x4B00A0
-int sub_4B00A0(int a1)
-{
-    return dword_5B5124[a1];
-}
-
-// 0x4B0110
-int sub_4B0110(int a1)
-{
-    return dword_5B5164[a1];
 }
 
 // 0x4B1520
