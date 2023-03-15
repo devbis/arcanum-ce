@@ -492,9 +492,6 @@ int dword_5FF610;
 // 0x601740
 int dword_601740;
 
-// 0x601778
-int dword_601778;
-
 // 0x601834
 int dword_601834;
 
@@ -2518,30 +2515,6 @@ int animfx_init_()
 {
     dword_601740 = 1;
     return 1;
-}
-
-// 0x4CEEB0
-int random_init_()
-{
-    sub_4CEEE0();
-    return 1;
-}
-
-// 0x4CEEC0
-void random_exit_()
-{
-}
-
-// 0x4CEED0
-void sub_4CEED0(int a1)
-{
-    sub_4CEF40(a1);
-}
-
-// 0x4CEF40
-void sub_4CEF40(int a1)
-{
-    dword_601778 = a1;
 }
 
 // 0x4CF0D0
