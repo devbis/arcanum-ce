@@ -37,7 +37,7 @@ static GameContextF8* dword_60355C;
 static char byte_603560[MAX_PATH];
 
 // 0x603668
-static int dword_603668;
+static ViewOptions jumppoint_view_options;
 
 // 0x603670
 static int dword_603670;
@@ -58,15 +58,15 @@ static int dword_603680;
 static int jumppoints_count;
 
 // 0x603688
-static bool dword_603688;
+static bool jumppoint_is_editor;
 
 // 0x4E2FB0
 bool jumppoint_init(GameContext* ctx)
 {
     jumppoint_iso_window_handle = ctx->iso_window_handle;
     dword_60355C = ctx->field_8;
-    dword_603688 = ctx->editor;
-    dword_603668 = 0;
+    jumppoint_is_editor = ctx->editor;
+    jumppoint_view_options.type = VIEW_TYPE_ISOMETRIC;
 
     tig_art_interface_id_create(350, 0, 0, 0, &dword_603678);
     tig_art_interface_id_create(351, 0, 0, 0, &dword_603558);
@@ -148,7 +148,7 @@ void jumppoint_close()
 
     jumppoints_count = 0;
 
-    if (dword_603688 == 1) {
+    if (jumppoint_is_editor == 1) {
         dword_60355C(0);
     }
 
@@ -176,12 +176,10 @@ bool sub_4E3270()
     return true;
 }
 
-// TODO: Type.
 // 0x4E32D0
-bool sub_4E32D0(void* a1)
+bool wall_update_view(ViewOptions* view_options)
 {
-    dword_603668 = a1->field_0;
-    dword_60366C = a1->field_4;
+    jumppoint_view_options = *view_options;
     return true;
 }
 

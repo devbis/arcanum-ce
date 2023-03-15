@@ -70,17 +70,17 @@ void gfade_resize(ResizeContext* ctx)
 void sub_4BDFA0(FadeData* fade_data)
 {
     if (fade_have_gamma_control) {
-        sub_51FCA0(fade_data->field_4, fade_data->field_8, fade_data->duration, fade_data.field_0);
+        sub_51FCA0(fade_data->field_4, fade_data->field_8, fade_data->duration, fade_data->field_0);
     } else {
         unsigned int time;
         tig_timer_start(&time);
         tig_window_fill(fade_iso_window_handle, 0, 0);
         tig_window_display();
 
-        while (fade_data->duration * 1000.0 > tig_timer_elapsed(&time)) {
+        while (fade_data->duration * 1000.0 > tig_timer_elapsed(time)) {
         }
 
-        dword_5FC4B0(0);
+        dword_5FC4B0(NULL);
     }
 }
 

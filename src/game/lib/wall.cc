@@ -20,10 +20,7 @@ static GameContextF8* dword_603438;
 static int wall_iso_window_handle;
 
 // 0x603440
-static int wall_view_type;
-
-// 0x603444
-static int wall_view_zoom;
+static ViewOptions wall_view_options;
 
 // 0x603448
 static int dword_603448;
@@ -44,7 +41,7 @@ bool wall_init(GameContext* ctx)
     stru_603420.width = window_data.rect.width;
     stru_603420.height = window_data.rect.height;
 
-    wall_view_type = VIEW_TYPE_ISOMETRIC;
+    wall_view_options.type = VIEW_TYPE_ISOMETRIC;
     wall_is_editor = ctx->editor;
     dword_603448 = 1;
     dword_603434 = tig_color_rgb_make(255, 0, 100);
@@ -67,17 +64,16 @@ void wall_resize(ResizeContext* ctx)
 }
 
 // 0x4DF4C0
-bool wall_update_view(ViewOptions* ctx)
+bool wall_update_view(ViewOptions* view_options)
 {
-    wall_view_type = ctx->type;
-    wall_view_zoom = ctx->zoom;
+    wall_view_options = *view_options;
     return true;
 }
 
 // 0x4DF500
 void sub_4DF500(int a1)
 {
-    if (wall_view_type == VIEW_TYPE_TOP_DOWN) {
+    if (wall_view_options.type == VIEW_TYPE_TOP_DOWN) {
         if (dword_603448) {
             sub_4E1C00(a1);
             sub_4E1EB0(a1);

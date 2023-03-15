@@ -18,7 +18,7 @@ bool scroll_init(GameContext* ctx);
 void scroll_exit();
 void scroll_reset();
 void scroll_resize(ResizeContext* ctx);
-bool sub_40E060(void* a1);
+bool scroll_update_view(ViewOptions* view_options);
 void scroll_start_scrolling_in_direction(int direction);
 void scroll_stop_scrolling();
 void scroll_set_fps(int fps);

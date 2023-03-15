@@ -24,10 +24,7 @@ static int dword_5D11A0;
 static int dword_5D11A4;
 
 // 0x5D11A8
-static int dword_5D11A8;
-
-// 0x5D11AC
-static int dword_5D11AC;
+static ViewOptions scroll_view_options;
 
 // 0x5D11C0
 static bool dword_5D11C0;
@@ -53,7 +50,7 @@ bool scroll_init(GameContext* ctx)
 
     scroll_game_context = *ctx;
 
-    dword_5D11A8 = 0;
+    scroll_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_5D1188 = 1;
 
     sub_40E940();
@@ -82,10 +79,9 @@ void scroll_resize(ResizeContext* ctx)
 
 // TODO: Review type.
 // 0x40E060
-bool sub_40E060(void* a1)
+bool scroll_update_view(ViewOptions* view_options)
 {
-    dword_5D11A8 = a1->field_0;
-    dword_5D11AC = a1->field_4;
+    scroll_view_options = *view_options;
     sub_40E940();
     return true;
 }
@@ -130,26 +126,7 @@ void sub_40E910(int a1, int a2)
 // 0x40E940
 void sub_40E940()
 {
-    if (dword_5D11A8) {
-        switch (dword_5D1188) {
-        case 0:
-            dword_5D11A4 = dword_5D11AC / 2;
-            dword_5D11A0 = dword_5D11AC / 4;
-            break;
-        case 1:
-            dword_5D11A4 = dword_5D11AC;
-            dword_5D11A0 = dword_5D11AC / 2;
-            break;
-        case 2:
-            dword_5D11A0 = dword_5D11AC;
-            dword_5D11A4 = 2 * dword_5D11AC;
-            break;
-        case 3:
-            dword_5D11A4 = 4 * dword_5D11AC;
-            dword_5D11A0 = 2 * dword_5D11AC;
-            break;
-        }
-    } else {
+    if (scroll_view_options.type == VIEW_TYPE_ISOMETRIC) {
         switch (dword_5D1188) {
         case 0:
             dword_5D11A4 = 8;
@@ -166,6 +143,25 @@ void sub_40E940()
         case 3:
             dword_5D11A4 = 56;
             dword_5D11A0 = 28;
+            break;
+        }
+    } else {
+        switch (dword_5D1188) {
+        case 0:
+            dword_5D11A4 = scroll_view_options.zoom / 2;
+            dword_5D11A0 = scroll_view_options.zoom / 4;
+            break;
+        case 1:
+            dword_5D11A4 = scroll_view_options.zoom;
+            dword_5D11A0 = scroll_view_options.zoom / 2;
+            break;
+        case 2:
+            dword_5D11A0 = scroll_view_options.zoom;
+            dword_5D11A4 = scroll_view_options.zoom * 2;
+            break;
+        case 3:
+            dword_5D11A4 = scroll_view_options.zoom * 4;
+            dword_5D11A0 = scroll_view_options.zoom * 2;
             break;
         }
     }

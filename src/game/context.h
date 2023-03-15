@@ -9,8 +9,8 @@ typedef enum ViewType {
     VIEW_TYPE_TOP_DOWN,
 };
 
-typedef void(GameContextF8)();
-typedef void(GameContextFC)();
+typedef void(GameContextF8)(TigRect* rect);
+typedef bool(GameContextFC)();
 
 typedef struct GameContext {
     bool editor;

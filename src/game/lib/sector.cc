@@ -103,10 +103,7 @@ static int sector_iso_window_handle;
 static char* dword_6017FC;
 
 // 0x601800
-static int dword_601800;
-
-// 0x601804
-static int dword_601804;
+static ViewOptions sector_view_options;
 
 // 0x601808
 static Sector601808* dword_601808;
@@ -138,7 +135,7 @@ bool sector_init(GameContext* ctx)
     dword_601820 = 0;
     sector_iso_window_handle = ctx->iso_window_handle;
     dword_6017B8 = ctx->field_8;
-    dword_601800 = 0;
+    sector_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_601830 = 0;
     dword_6017AC = tig_color_rgb_make(255, 255, 0);
     dword_601828 = tig_color_rgb_make(255, 255, 0);
@@ -190,13 +187,10 @@ void sub_4CF320()
     }
 }
 
-// TODO: Review type.
-//
 // 0x4CF340
-bool sub_4CF340(void* ctx)
+bool sector_update_view(ViewOptions* view_options)
 {
-    dword_601800 = ctx->field_0;
-    dword_601804 = ctx->field_4;
+    sector_view_options = *view_options;
     return true;
 }
 
