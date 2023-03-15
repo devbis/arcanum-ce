@@ -1,5 +1,6 @@
 #include "game/lib/brightness.h"
 
+#include "game/lib/settings.h"
 #include "tig/debug.h"
 #include "tig/video.h"
 
@@ -8,7 +9,7 @@
 // 0x4BE0B0
 bool brightness_init(GameContext* ctx)
 {
-    settings_register(&settings, BRIGHTNESS, "0", brightness_changed);
+    settings_add(&settings, BRIGHTNESS, "0", brightness_changed);
     brightness_changed();
     return true;
 }
@@ -27,7 +28,7 @@ void brightness_changed()
     if (!changing) {
         changing = true;
 
-        int brightness = settings_get(&settings, BRIGHTNESS);
+        int brightness = settings_get_value(&settings, BRIGHTNESS);
         if (sub_51FFE0(brightness * 0.1 + 1.0) != TIG_OK) {
             tig_debug_printf("brightness_changed: ERROR: Gamma out of Range!  Attempting to Correct bounds!\n");
 
