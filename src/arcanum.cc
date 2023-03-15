@@ -542,12 +542,6 @@ int dword_602EA8;
 // 0x603408
 int dword_603408;
 
-// 0x603674
-int dword_603674;
-
-// 0x603680
-int dword_603680;
-
 // 0x6036A8
 int dword_6036A8;
 
@@ -2672,25 +2666,6 @@ void sub_4DE7A0(void* a1)
 {
     a1->field_C = off_602E60;
     off_602E60 = a1;
-}
-
-// 0x4E3020
-void jumppoint_reset_()
-{
-    jumppoint_close_();
-}
-
-// 0x4E3030
-void jumppoint_exit_()
-{
-    jumppoint_close_();
-    dword_603680 = 0;
-}
-
-// 0x4E3040
-void jumppoint_resize_(void* a1)
-{
-    dword_603674 = a1->field_0;
 }
 
 // 0x4E3F90
