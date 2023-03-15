@@ -48,5 +48,6 @@ int tig_message_init(TigContext* ctx);
 void tig_message_exit();
 void tig_message_ping();
 int tig_message_enqueue(TigMessage* message);
+int tig_message_quit(int exit_code);
 
 #endif /* ARCANUM_TIG_MESSAGE_H_ */

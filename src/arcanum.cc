@@ -155,9 +155,6 @@ int dword_5B7CD0 = -1;
 // 0x5B7CD4
 int dword_5B7CD4 = -1;
 
-// 0x5B7CD8
-int dword_5B7CD8 = 1;
-
 // 5D0---
 
 // 0x5D0E9C
@@ -491,12 +488,6 @@ int dword_5FF610;
 
 // 0x601740
 int dword_601740;
-
-// 0x601834
-int dword_601834;
-
-// 0x6017F8
-int dword_6017F8;
 
 // 0x6017D8
 int dword_6017D8;
@@ -2517,35 +2508,10 @@ int animfx_init_()
     return 1;
 }
 
-// 0x4CF0D0
-void sector_reset_()
-{
-    sub_4D0B40();
-    dword_601834 = 0;
-}
-
-// 0x4CF2C0
-void sector_resize_(void* a1)
-{
-    dword_6017F8 = a1->field_0;
-}
-
 // 0x4D0F40
 void sub_4D0F40()
 {
     sub_4D0F70();
-}
-
-// 0x4D1040
-void sub_4D1040()
-{
-    dword_5B7CD8++;
-}
-
-// 0x4D1050
-void sub_4D1050()
-{
-    dword_5B7CD8--;
 }
 
 // 0x4D10C0
@@ -2565,12 +2531,6 @@ void gl_sector_reset_()
 void sub_4D2F80()
 {
     dword_6017D8 = 0;
-}
-
-// 0x4D2FB0
-int sub_4D2FB0(const void* a1, const void* a2)
-{
-    return a1->field_0 - a2->field_0;
 }
 
 // 0x4D3320
