@@ -4,6 +4,11 @@
 #include "tig/file.h"
 #include "tig/rect.h"
 
+typedef enum ViewType {
+    VIEW_TYPE_ISOMETRIC,
+    VIEW_TYPE_TOP_DOWN,
+};
+
 typedef void(GameContextF8)();
 typedef void(GameContextFC)();
 
@@ -30,5 +35,12 @@ typedef struct LoadContext {
 };
 
 static_assert(sizeof(LoadContext) == 0x8, "wrong size");
+
+typedef struct ViewOptions {
+    int type;
+    int zoom;
+};
+
+static_assert(sizeof(ViewOptions) == 0x8, "wrong size");
 
 #endif /* ARCANUM_GAME_CONTEXT_H_ */
