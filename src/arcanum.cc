@@ -518,9 +518,6 @@ void* off_603DD0;
 
 // 687---
 
-// 0x6876D0
-int* off_6876D0;
-
 // 0x5BEA38
 float flt_5BEA38 = 0.3;
 
@@ -2346,18 +2343,6 @@ void brightness_exit_()
 void townmap_init_()
 {
     sub_4BED00();
-}
-
-// 0x4BF0B0
-void newspaper_exit_()
-{
-    free(off_6876D0);
-}
-
-// 0x4BF200
-int sub_4BF200(int a1)
-{
-    return off_6876D0[a1];
 }
 
 // 0x4BFDA0
