@@ -3,6 +3,17 @@
 
 #include "game/context.h"
 
+typedef enum QuestState {
+    QUEST_STATE_UNKNOWN,
+    QUEST_STATE_MENTIONED,
+    QUEST_STATE_ACCEPTED,
+    QUEST_STATE_ACHIEVED,
+    QUEST_STATE_COMPLETED,
+    QUEST_STATE_OTHER_COMPLETED,
+    QUEST_STATE_BOTCHED,
+    QUEST_STATE_COUNT,
+};
+
 bool quest_init(GameContext* ctx);
 void quest_reset();
 void quest_exit();
@@ -10,7 +21,7 @@ bool quest_mod_load();
 void quest_mod_unload();
 bool quest_load(LoadContext* ctx);
 bool quest_save(TigFile* stream);
-int sub_4C51A0(int a1);
-int sub_4C53C0(int id);
+int quest_get_state(int id);
+int quest_get_xp(int xp_level);
 
 #endif /* ARCANUM_GAME_LIB_QUEST_H_ */
