@@ -3,6 +3,17 @@
 
 #include "tig/types.h"
 
+typedef struct TigFileListEntry {
+    char path[MAX_PATH];
+};
+
+typedef struct TigFileList {
+    int count;
+    TigFileListEntry* entries;
+};
+
+static_assert(sizeof(TigFileInfo) == 0x8, "wrong size");
+
 typedef struct TigFile;
 
 typedef struct TigFileInfo {
@@ -21,6 +32,8 @@ bool tig_file_repository_remove(const char* path);
 bool tig_file_repository_remove_all();
 bool tig_file_repository_guid(const char* path, GUID* guid);
 int tig_file_mkdir(const char* path);
+void tig_file_list_create(TigFileList* file_list, const char* pattern);
+void tig_file_list_destroy(TigFileList* file_list);
 int tig_file_filelength(TigFile* fp);
 bool tig_file_info(const char* path, TigFileInfo* info);
 int tig_file_remove(const char* path);

@@ -230,6 +230,23 @@ void sub_52F370(const char* path, unsigned int flags)
     }
 }
 
+// 0x52F760
+void tig_file_list_create(TigFileList* file_list, const char* pattern)
+{
+    // TODO: Incomplete.
+}
+
+// 0x52FB20
+void tig_file_list_destroy(TigFileList* file_list)
+{
+    if (file_list->entries != NULL) {
+        free(file_list->entries);
+    }
+
+    file_list->count = 0;
+    file_list->entries = NULL;
+}
+
 // 0x52FB40
 int tig_file_filelength(TigFile* fp)
 {
