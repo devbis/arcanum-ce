@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_LIB_SKILL_H_
 
 #include "game/context.h"
+#include "game/lib/object.h"
 
 typedef enum PrimarySkill {
     PRIMARY_SKILL_BOW,
@@ -64,6 +65,7 @@ void skill_set_callbacks(SkillCallbacks* callbacks);
 void skill_exit();
 bool skill_load(LoadContext* ctx);
 bool skill_save(TigFile* stream);
+void skill_set_defaults(object_id_t object_id);
 const char* primary_skill_get_name(int skill);
 const char* primary_skill_get_description(int skill);
 int sub_4C62D0(int a1, int a2, int a3);

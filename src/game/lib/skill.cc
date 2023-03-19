@@ -127,6 +127,18 @@ bool skill_save(TigFile* stream)
     return true;
 }
 
+// 0x4C5E00
+void skill_set_defaults(object_id_t object_id)
+{
+    for (int skill = 0; skill < PRIMARY_SKILL_COUNT; skill++) {
+        sub_407340(object_id, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, 0);
+    }
+
+    for (int skill = 0; skill < SECONDARY_SKILL_COUNT; skill++) {
+        sub_407340(object_id, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, 0);
+    }
+}
+
 // 0x4C62B0
 const char* primary_skill_get_name(int skill)
 {
