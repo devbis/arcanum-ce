@@ -1,6 +1,8 @@
 #include "game/lib/spell.h"
 
 #include "game/lib/message.h"
+#include "game/lib/object.h"
+#include "game/lib/stat.h"
 
 #define FIRST_COLLEGE_NAME_ID 500
 #define FIRST_SPELL_DESCRIPTION_ID 700
@@ -119,6 +121,16 @@ void spell_exit()
 {
 }
 
+// 0x4B1530
+void sub_4B1530(long long object_id)
+{
+    for (int college = 0; college < COLLEGE_COUNT; college++) {
+        sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);
+    }
+
+    sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, COLLEGE_COUNT, -1);
+}
+
 // 0x4B15A0
 size_t sub_4B15A0(int spell)
 {
@@ -153,6 +165,33 @@ const char* spell_get_description(int spell)
 int sub_4B1650()
 {
     return 1;
+}
+
+// 0x4B1660
+int sub_4B1660(int spell, long long object_id)
+{
+    int v1 = sub_450340(spell);
+    if (sub_4B0490(object_id, STAT_RACE) == RACE_DWARF) {
+        v1 *= 2;
+    }
+
+    if (sub_4B1CB0(object_id) == spell / 5) {
+        v1 /= 2;
+    }
+
+    return v1;
+}
+
+// 0x4B1740
+int sub_4B1740()
+{
+    return 100;
+}
+
+// 0x4B1750
+int sub_4B1750()
+{
+    return sub_4502E0();
 }
 
 // 0x4B1760
@@ -196,5 +235,69 @@ int sub_4B1A90(int college)
         return dword_5B55F0[college];
     } else {
         return dword_5B55F0[0];
+    }
+}
+
+// 0x4B1AB0
+int sub_4B1AB0(long long object_id, int a2)
+{
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+        return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2);
+    } else {
+        return 0;
+    }
+}
+
+// 0x4B1B00
+bool sub_4B1B00(long long object_id, int a2)
+{
+    if (object_id != 0) {
+        return sub_4B1AB0(object_id, a2) > 0;
+    } else {
+        return false;
+    }
+}
+
+// 0x4B1B30
+int sub_4B1B30(long long object_id, int a2, int a3)
+{
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+        object_field_set(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
+        return a3;
+    } else {
+        return 0;
+    }
+}
+
+// 0x4B1C70
+bool sub_4B1C70(long long object_id, int a2)
+{
+    if (sub_4B1CB0(object_id) == -1) {
+        return sub_4B1AB0(object_id, a2) >= 5;
+    } else {
+        return false;
+    }
+}
+
+// 0x4B1CB0
+int sub_4B1CB0(long long object_id)
+{
+    int type = object_field_get(object_id, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_15 || type == OBJ_TYPE_16) {
+        // TODO: Figure out constant meaning.
+        return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16);
+    } else {
+        return -1;
+    }
+}
+
+// 0x4B1CF0
+void sub_4B1CF0(long long object_id, int a2)
+{
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+        if (sub_4B1C70(object_id, a2)) {
+            // TODO: Figure out constant meaning.
+            sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16, a2);
+        }
     }
 }

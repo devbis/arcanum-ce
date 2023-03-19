@@ -1,37 +1,102 @@
 #include "game/lib/stat.h"
 
 #include "game/lib/message.h"
+#include "game/lib/object.h"
 
 // 0x5B5194
-int dword_5B5194[STAT_COUNT] = {
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    300,
-    -50,
-    -9,
-    1,
-    0,
-    1,
-    -65,
-    1,
-    -100,
-    0,
-    0,
-    -1000,
-    0,
-    0,
-    0,
-    0,
-    0,
-    20,
-    0,
-    0,
+int stat_min_values[STAT_COUNT] = {
+    /*             STRENGTH */ 1,
+    /*            DEXTERITY */ 1,
+    /*         CONSTITUTION */ 1,
+    /*               BEAUTY */ 1,
+    /*         INTELLIGENCE */ 1,
+    /*           PERCEPTION */ 1,
+    /*            WILLPOWER */ 1,
+    /*             CHARISMA */ 1,
+    /*         CARRY_WEIGHT */ 300,
+    /*         DAMAGE_BONUS */ -50,
+    /*        AC_ADJUSTMENT */ -9,
+    /*                SPEED */ 1,
+    /*            HEAL_RATE */ 0,
+    /*      POISON_RECOVERY */ 1,
+    /*    REACTION_MODIFIER */ -65,
+    /*        MAX_FOLLOWERS */ 1,
+    /* MAGICK_TECH_APTITUDE */ -100,
+    /*                LEVEL */ 0,
+    /*    EXPERIENCE_POINTS */ 0,
+    /*            ALIGNMENT */ -1000,
+    /*          FATE_POINTS */ 0,
+    /*       UNSPENT_POINTS */ 0,
+    /*        MAGICK_POINTS */ 0,
+    /*          TECH_POINTS */ 0,
+    /*         POISON_LEVEL */ 0,
+    /*                  AGE */ 20,
+    /*               GENDER */ 0,
+    /*                 RACE */ 0,
+};
+
+// 0x5B5204
+int stat_max_values[STAT_COUNT] = {
+    /*             STRENGTH */ 20,
+    /*            DEXTERITY */ 20,
+    /*         CONSTITUTION */ 20,
+    /*               BEAUTY */ 20,
+    /*         INTELLIGENCE */ 20,
+    /*           PERCEPTION */ 20,
+    /*            WILLPOWER */ 20,
+    /*             CHARISMA */ 20,
+    /*         CARRY_WEIGHT */ 10000,
+    /*         DAMAGE_BONUS */ 50,
+    /*        AC_ADJUSTMENT */ 95,
+    /*                SPEED */ 100,
+    /*            HEAL_RATE */ 6,
+    /*      POISON_RECOVERY */ 20,
+    /*    REACTION_MODIFIER */ 200,
+    /*        MAX_FOLLOWERS */ 7,
+    /* MAGICK_TECH_APTITUDE */ 100,
+    /*                LEVEL */ 51,
+    /*    EXPERIENCE_POINTS */ 2000000000,
+    /*            ALIGNMENT */ 1000,
+    /*          FATE_POINTS */ 100,
+    /*       UNSPENT_POINTS */ 56,
+    /*        MAGICK_POINTS */ 210,
+    /*          TECH_POINTS */ 210,
+    /*         POISON_LEVEL */ 1000,
+    /*                  AGE */ 1000,
+    /*               GENDER */ 1,
+    /*                 RACE */ 11,
+};
+
+// 0x5B5274
+int stat_default_values[STAT_COUNT] = {
+    /*             STRENGTH */ 8,
+    /*            DEXTERITY */ 8,
+    /*         CONSTITUTION */ 8,
+    /*               BEAUTY */ 8,
+    /*         INTELLIGENCE */ 8,
+    /*           PERCEPTION */ 8,
+    /*            WILLPOWER */ 8,
+    /*             CHARISMA */ 8,
+    /*         CARRY_WEIGHT */ 0,
+    /*         DAMAGE_BONUS */ 0,
+    /*        AC_ADJUSTMENT */ 0,
+    /*                SPEED */ 0,
+    /*            HEAL_RATE */ 0,
+    /*      POISON_RECOVERY */ 0,
+    /*    REACTION_MODIFIER */ 0,
+    /*        MAX_FOLLOWERS */ 0,
+    /* MAGICK_TECH_APTITUDE */ 0,
+    /*                LEVEL */ 1,
+    /*    EXPERIENCE_POINTS */ 0,
+    /*            ALIGNMENT */ 0,
+    /*          FATE_POINTS */ 0,
+    /*       UNSPENT_POINTS */ 5,
+    /*        MAGICK_POINTS */ 0,
+    /*          TECH_POINTS */ 0,
+    /*         POISON_LEVEL */ 0,
+    /*                  AGE */ 20,
+    /*               GENDER */ 1,
+    /*                 RACE */ 0,
 };
 
 // 0x5F8644
@@ -91,6 +156,14 @@ void stat_exit()
     message_unload(stat_msg_file);
 }
 
+// 0x4B0450
+void stat_set_defaults(object_id_t object_id)
+{
+    for (int stat = 0; stat < STAT_COUNT; stat++) {
+        sub_407340(object_id, OBJ_F_CRITTER_STAT_BASE_IDX, stat, stat_default_values[stat]);
+    }
+}
+
 // 0x4B0F80
 const char* stat_get_name(int stat)
 {
@@ -116,7 +189,65 @@ const char* race_get_name(int race)
 }
 
 // 0x4B0FC0
-int sub_4B0FC0(int a1, int a2, int a3)
+int stat_get_min_value(object_id_t object_id, int stat)
 {
-    return dword_5B5194[a3];
+    return stat_min_values[stat];
+}
+
+// 0x4B0FD0
+int stat_get_max_value(object_id_t object_id, int stat)
+{
+    int race;
+    if (object_id != 0) {
+        race = sub_4B0740(object_id, STAT_RACE);
+    } else {
+        race = RACE_HUMAN;
+    }
+
+    switch (race) {
+    case RACE_DWARF:
+    case RACE_HALF_ORC:
+        if (stat == STAT_STRENGTH || stat == STAT_UNSPENT_POINTS) {
+            return 21;
+        }
+        break;
+    case RACE_ELF:
+    case RACE_DARK_ELF:
+        if (stat == STAT_DEXTERITY || stat == STAT_BEAUTY || stat == STAT_WILLPOWER) {
+            return 21;
+        }
+        break;
+    case RACE_HALF_ELF:
+        if (stat == STAT_DEXTERITY) {
+            return 21;
+        }
+        break;
+    case RACE_GNOME:
+        if (stat == STAT_WILLPOWER) {
+            return 22;
+        }
+        break;
+    case RACE_HALFLING:
+        if (stat == STAT_DEXTERITY) {
+            return 22;
+        }
+        break;
+    case RACE_HALF_OGRE:
+        if (stat == STAT_STRENGTH) {
+            return 24;
+        }
+        break;
+    case RACE_OGRE:
+        if (stat == STAT_STRENGTH) {
+            return 26;
+        }
+        break;
+    case RACE_ORC:
+        if (stat == STAT_STRENGTH || stat == STAT_CONSTITUTION) {
+            return 22;
+        }
+        break;
+    }
+
+    return stat_max_values[stat];
 }

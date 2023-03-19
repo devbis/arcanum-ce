@@ -1,6 +1,10 @@
 #include "game/lib/tech.h"
 
 #include "game/lib/message.h"
+#include "game/lib/object.h"
+
+// TODO: Refactor.
+#define SEVENTEEN 17
 
 // 0x5B5124
 int dword_5B5124[8] = {
@@ -111,6 +115,26 @@ const char* degree_get_name(int degree)
 const char* degree_get_description(int degree, int tech)
 {
     return degree_descriptions[tech][degree];
+}
+
+// 0x4AFE60
+int sub_4AFE60(long long object_id, int tech)
+{
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+        return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
+    } else {
+        return 0;
+    }
+}
+
+// 0x4AFF90
+int sub_4AFF90(long long object_id, int tech, int value)
+{
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+        sub_4F0270(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
+    } else {
+        return 0;
+    }
 }
 
 // 0x4B00A0
