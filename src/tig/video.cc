@@ -55,6 +55,9 @@ typedef struct TigVideoState {
 
 static_assert(sizeof(TigVideoState) == 0x110C, "wrong size");
 
+static int tig_video_get_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
+static int tig_video_set_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
+
 // 0x5BF3D8
 static int dword_5BF3D8 = -1;
 
@@ -461,6 +464,68 @@ int tig_video_flip()
     return TIG_OK;
 }
 
+// 0x51FB10
+int tig_video_3d_check_initialized()
+{
+    if (!tig_video_initialized) {
+        return TIG_NOT_INITIALIZED;
+    }
+
+    if (!tig_video_3d_initialized) {
+        return TIG_ERR_16;
+    }
+
+    return TIG_OK;
+}
+
+// 0x51FB30
+int tig_video_3d_check_hardware()
+{
+    if (!tig_video_initialized) {
+        return TIG_NOT_INITIALIZED;
+    }
+
+    if (!tig_video_3d_is_hardware) {
+        return TIG_ERR_16;
+    }
+
+    return TIG_OK;
+}
+
+// 0x51FB50
+int tig_video_3d_begin_scene()
+{
+    if (sub_51F860() != TIG_OK) {
+        return TIG_ERR_16;
+    }
+
+    if (tig_video_3d_initialized) {
+        if (FAILED(IDirect3DDevice7_BeginScene(tig_video_state.d3d_device))) {
+            return TIG_ERR_16;
+        }
+    }
+
+    dword_610358 = true;
+    return TIG_OK;
+}
+
+// 0x51FBA0
+int tig_video_3d_end_scene()
+{
+    if (!dword_610358) {
+        return TIG_ERR_16;
+    }
+
+    if (tig_video_3d_initialized) {
+        if (FAILED(IDirect3DDevice7_EndScene(tig_video_state.d3d_device))) {
+            return TIG_ERR_16;
+        }
+    }
+
+    dword_610358 = false;
+    return TIG_OK;
+}
+
 // 0x51FBF0
 int tig_video_get_video_memory_status(size_t* total_memory, size_t* available_memory)
 {
@@ -487,6 +552,150 @@ int tig_video_get_video_memory_status(size_t* total_memory, size_t* available_me
 
     *total_memory = (size_t)total;
     *available_memory = (size_t)available;
+
+    return TIG_OK;
+}
+
+// 0x51FC90
+int tig_video_check_gamma_control()
+{
+    if (!tig_video_state.have_gamma_control) {
+        return TIG_ERR_16;
+    }
+
+    return TIG_OK;
+}
+
+// 0x51FCA0
+int tig_video_fade(int color, int steps, float duration, unsigned char flags)
+{
+    if (!tig_video_state.have_gamma_control) {
+        return TIG_ERR_16;
+    }
+
+    DDGAMMARAMP curr_gamma_ramp;
+    if (tig_video_get_gamma_ramp(&curr_gamma_ramp) != TIG_OK) {
+        return TIG_ERR_16;
+    }
+
+    LPDDGAMMARAMP dest_gamma_ramp;
+    DDGAMMARAMP temp_gamma_ramp;
+    if ((flags & 0x1) != 0) {
+        dest_gamma_ramp = &(tig_video_state.gamma_ramp2);
+    } else {
+        int red = tig_color_get_red(color) << 8;
+        int green = tig_color_get_green(color) << 8;
+        int blue = tig_color_get_blue(color) << 8;
+
+        for (int index = 0; index < 256; index++) {
+            temp_gamma_ramp.red[index] = red;
+            temp_gamma_ramp.green[index] = green;
+            temp_gamma_ramp.blue[index] = blue;
+        }
+
+        dest_gamma_ramp = &temp_gamma_ramp;
+    }
+
+    if (steps < 1 || duration < 1.0) {
+        if (tig_video_set_gamma_ramp(dest_gamma_ramp) != TIG_OK) {
+            return TIG_ERR_16;
+        }
+    } else {
+        int duration_per_step = (int)((double)duration / (double)steps);
+
+        for (int step = 0; step < steps; step++) {
+            unsigned int time;
+            tig_timer_start(&time);
+
+            // TODO: Unclear.
+            for (int index = 0; index < 256; index++) {
+                curr_gamma_ramp.red[index] = (dest_gamma_ramp->red[index] - curr_gamma_ramp.red[index]) / (steps - step);
+                curr_gamma_ramp.green[index] = (dest_gamma_ramp->green[index] - curr_gamma_ramp.green[index]) / (steps - step);
+                curr_gamma_ramp.blue[index] = (dest_gamma_ramp->blue[index] - curr_gamma_ramp.blue[index]) / (steps - step);
+
+                if (tig_video_set_gamma_ramp(&curr_gamma_ramp) != TIG_OK) {
+                    return TIG_ERR_16;
+                }
+            }
+
+            while (tig_timer_elapsed(time) < duration_per_step) {
+            }
+        }
+    }
+
+    return TIG_OK;
+}
+
+// 0x51FEC0
+int tig_video_get_gamma_ramp(LPDDGAMMARAMP gamma_ramp)
+{
+    if (!tig_video_state.have_gamma_control) {
+        return TIG_ERR_16;
+    }
+
+    if (FAILED(IDirectDrawGammaControl_GetGammaRamp(tig_video_state.gamma_control, 0, gamma_ramp))) {
+        return TIG_ERR_16;
+    }
+
+    // TODO: Unclear.
+    int v1;
+    for (int index = 0; index < 256; index++) {
+        v1 |= gamma_ramp->red[index] | gamma_ramp->green[index] | gamma_ramp->blue[index];
+    }
+
+    if (HIBYTE(v1) == 0) {
+        for (int index = 0; index < 256; index++) {
+            gamma_ramp->red[index] = LOBYTE(gamma_ramp->red[index]) << 8;
+            gamma_ramp->green[index] = LOBYTE(gamma_ramp->green[index]) << 8;
+            gamma_ramp->blue[index] = LOBYTE(gamma_ramp->blue[index]) << 8;
+        }
+    }
+}
+
+// 0x51FF60
+int tig_video_set_gamma_ramp(LPDDGAMMARAMP gamma_ramp)
+{
+    if (!tig_video_state.have_gamma_control) {
+        return TIG_ERR_16;
+    }
+
+    // TODO: Unclear.
+    for (int index = 0; index < 256; index++) {
+        gamma_ramp->red[index] = (HIBYTE(gamma_ramp->red[index]) << 8) | HIBYTE(gamma_ramp->red[index]);
+        gamma_ramp->green[index] = (HIBYTE(gamma_ramp->green[index]) << 8) | HIBYTE(gamma_ramp->green[index]);
+        gamma_ramp->blue[index] = (HIBYTE(gamma_ramp->blue[index]) << 8) | HIBYTE(gamma_ramp->blue[index]);
+    }
+
+    if (FAILED(IDirectDrawGammaControl_SetGammaRamp(tig_video_state.gamma_control, 0, gamma_ramp))) {
+        return TIG_ERR_16;
+    }
+
+    return TIG_OK;
+}
+
+// 0x51FFE0
+int tig_video_set_gamma(float gamma)
+{
+    if (!tig_video_state.have_gamma_control) {
+        return TIG_ERR_16;
+    }
+
+    if (gamma == tig_video_gamma) {
+        return TIG_OK;
+    }
+
+    if (gamma < 0.0 || gamma >= 2.0) {
+        return TIG_ERR_12;
+    }
+
+    for (int index = 0; index < 256; index++) {
+        tig_video_state.gamma_ramp2.red[index] = tig_video_state.gamma_ramp.red[index] * gamma;
+        tig_video_state.gamma_ramp2.green[index] = tig_video_state.gamma_ramp.green[index] * gamma;
+        tig_video_state.gamma_ramp2.blue[index] = tig_video_state.gamma_ramp.blue[index] * gamma;
+    }
+
+    tig_video_gamma = gamma;
+    tig_video_fade(0, 0, 0.0, 1);
 
     return TIG_OK;
 }
@@ -1268,7 +1477,7 @@ bool tig_video_d3d_init(TigContext* ctx)
 }
 
 // 0x524E90
-HRESULT tig_video_3d_check_pixel_format(LPDDPIXELFORMAT lpDDPixFmt, LPVOID lpContext)
+HRESULT CALLBACK tig_video_3d_check_pixel_format(LPDDPIXELFORMAT lpDDPixFmt, LPVOID lpContext)
 {
     if (lpDDPixFmt == NULL) {
         return S_FALSE;
