@@ -1,6 +1,7 @@
 #include "game/lib/quest.h"
 
 #include "game/lib/message.h"
+#include "game/lib/stat.h"
 
 #define MAX_QUEST 1000
 
@@ -185,6 +186,36 @@ bool quest_parse(const char* path, int start, int end)
 int quest_get_state(int id)
 {
     return quest_states[id - 1000];
+}
+
+// 0x4C51C0
+int quest_set_state(int id, int state)
+{
+    int old_state = quest_states[id - 1000];
+    if (old_state == QUEST_STATE_COMPLETED || old_state == QUEST_STATE_BOTCHED) {
+        return old_state;
+    }
+
+    if (!sub_4A2BA0()) {
+        // TODO: Incomplete.
+    }
+
+    if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_BOTCHED) {
+        quest_states[id - 1000] = state;
+        return state;
+    } else {
+        return QUEST_STATE_ACCEPTED;
+    }
+}
+
+// 0x4C5250
+void quest_copy_description(object_id_t object_id, int quest_id, char* buffer)
+{
+    if (quests[quest_id - 1000].dumb_description != NULL && sub_4B0490(object_id, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
+        strcpy(buffer, quests[quest_id - 1000].dumb_description);
+    } else if (quests[quest_id - 1000].normal_description != NULL) {
+        strcpy(buffer, quests[quest_id - 1000].normal_description);
+    }
 }
 
 // 0x4C53C0

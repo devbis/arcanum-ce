@@ -3,6 +3,8 @@
 
 #include "game/context.h"
 
+#define LOW_INTELLIGENCE 4
+
 typedef enum Stat {
     STAT_STRENGTH,
     STAT_DEXTERITY,

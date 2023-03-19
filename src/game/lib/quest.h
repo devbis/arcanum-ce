@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_LIB_QUEST_H_
 
 #include "game/context.h"
+#include "game/lib/object.h"
 
 typedef enum QuestState {
     QUEST_STATE_UNKNOWN,
@@ -22,6 +23,8 @@ void quest_mod_unload();
 bool quest_load(LoadContext* ctx);
 bool quest_save(TigFile* stream);
 int quest_get_state(int id);
+int quest_set_state(int id, int state);
+void quest_copy_description(object_id_t object_id, int quest_id, char* buffer);
 int quest_get_xp(int xp_level);
 
 #endif /* ARCANUM_GAME_LIB_QUEST_H_ */
