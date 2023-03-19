@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_LIB_RUMOR_H_
 
 #include "game/context.h"
+#include "game/lib/object.h"
 
 bool rumor_init(GameContext* ctx);
 void rumor_reset();
