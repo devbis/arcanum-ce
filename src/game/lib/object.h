@@ -349,11 +349,11 @@ typedef enum ObjectField {
 typedef enum ObjectType {
     OBJ_TYPE_0,
     OBJ_TYPE_1,
-    OBJ_TYPE_2,
+    OBJ_TYPE_CONTAINER,
     OBJ_TYPE_3,
     OBJ_TYPE_4,
-    OBJ_TYPE_5,
-    OBJ_TYPE_6,
+    OBJ_TYPE_WEAPON,
+    OBJ_TYPE_AMMO,
     OBJ_TYPE_7,
     OBJ_TYPE_8,
     OBJ_TYPE_9,
@@ -363,8 +363,10 @@ typedef enum ObjectType {
     OBJ_TYPE_13,
     OBJ_TYPE_14,
     OBJ_TYPE_15,
-    OBJ_TYPE_16,
+    OBJ_TYPE_CRITTER,
 };
+
+#define OBJECT_FLAG_0x1000 0x1000
 
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int a3, int a4);

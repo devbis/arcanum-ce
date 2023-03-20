@@ -120,7 +120,7 @@ const char* degree_get_description(int degree, int tech)
 // 0x4AFE60
 int sub_4AFE60(long long object_id, int tech)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
         return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
     } else {
         return 0;
@@ -130,7 +130,7 @@ int sub_4AFE60(long long object_id, int tech)
 // 0x4AFF90
 int sub_4AFF90(long long object_id, int tech, int value)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
         sub_4F0270(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
     } else {
         return 0;

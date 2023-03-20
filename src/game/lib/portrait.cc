@@ -75,7 +75,7 @@ bool sub_4CEAC0(object_id_t object_id, char* buffer)
             return true;
         }
 
-        if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_16) {
+        if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
             // FIXME: Always false with current implementation.
             if (strnicmp("NPC", buffer, 3) == 0) {
                 return true;

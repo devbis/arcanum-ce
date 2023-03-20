@@ -1853,24 +1853,6 @@ int sub_467E70()
     return v1;
 }
 
-// 0x468180
-void sub_468180()
-{
-    dword_5E8800++;
-}
-
-// 0x468190
-void sub_468190()
-{
-    dword_5E8800--;
-}
-
-// 0x4681A0
-int sub_4681A0()
-{
-    return dword_5E8800;
-}
-
 // 0x468600
 int sub_468600(int a1)
 {
