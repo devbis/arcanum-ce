@@ -2257,18 +2257,6 @@ void nullsub_11()
 {
 }
 
-// 0x4BBC00
-void sub_4BBC00()
-{
-    dword_5FC43C++;
-}
-
-// 0x4BBC10
-void sub_4BBC10()
-{
-    dword_5FC43C--;
-}
-
 // 0x4BDAB0
 void anti_teleport_mod_unload_()
 {
