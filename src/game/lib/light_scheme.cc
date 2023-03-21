@@ -227,12 +227,12 @@ void light_scheme_parse(int msg_file)
 
         if (message_find(msg_file, &message_list_item) && message_list_item.text[0] != '\0') {
             char* text = message_list_item.text;
-            tig_str_parse_simple_value(&text, &(outdoor.red));
-            tig_str_parse_simple_value(&text, &(outdoor.green));
-            tig_str_parse_simple_value(&text, &(outdoor.blue));
-            tig_str_parse_simple_value(&text, &(indoor.red));
-            tig_str_parse_simple_value(&text, &(indoor.green));
-            tig_str_parse_simple_value(&text, &(indoor.blue));
+            tig_str_parse_value(&text, &(outdoor.red));
+            tig_str_parse_value(&text, &(outdoor.green));
+            tig_str_parse_value(&text, &(outdoor.blue));
+            tig_str_parse_value(&text, &(indoor.red));
+            tig_str_parse_value(&text, &(indoor.green));
+            tig_str_parse_value(&text, &(indoor.blue));
 
             light_scheme_colors[index].outdoor = outdoor;
             light_scheme_colors[index].indoor = indoor;
