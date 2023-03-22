@@ -3,6 +3,13 @@
 
 #include "tig/types.h"
 
+typedef enum MovieFlags {
+    MOVIE_FLAG_0x01 = 0x01,
+    MOVIE_FADE_IN = 0x02,
+    MOVIE_FADE_OUT = 0x04,
+    MOVIE_FLAG_0x08 = 0x08,
+};
+
 int tig_movie_init(TigContext* ctx);
 void tig_movie_exit();
 int tig_movie_play(const char* path, unsigned int flags, int sound_track);
