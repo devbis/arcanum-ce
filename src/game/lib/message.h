@@ -1,6 +1,8 @@
 #ifndef ARCANUM_GAME_LIB_MESSAGE_H_
 #define ARCANUM_GAME_LIB_MESSAGE_H_
 
+#define MESSAGE_LIST_ITEM_TEXT_LENGTH 2000
+
 typedef struct MessageListItem {
     int num;
     char* text;

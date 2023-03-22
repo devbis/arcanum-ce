@@ -2671,35 +2671,6 @@ int sub_4E7A60(void* a1)
     return a1->field_0 * a1->field_4 + 12;
 }
 
-// 0x4E7B50
-void terrain_reset_()
-{
-}
-
-// 0x4E8DC0
-int sub_4E8DC0(int a1)
-{
-    return (a1 >> 11) & 0x1F;
-}
-
-// 0x4E8DD0
-int sub_4E8DD0(int a1)
-{
-    return (a1 >> 6) & 0x1F;
-}
-
-// 0x4E8DE0
-int sub_4E8DE0(int a1)
-{
-    return (a1 >> 2) & 0xF;
-}
-
-// 0x4E8DF0
-int sub_4E8DF0(char a1)
-{
-    return a1 & 3;
-}
-
 // 0x4E9920
 int object_node_init_()
 {
