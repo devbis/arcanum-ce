@@ -36,7 +36,7 @@ int gfade_init(GameContext* ctx)
         return false;
     }
 
-    if (sub_51FC90() != TIG_OK) {
+    if (tig_video_check_gamma_control() != TIG_OK) {
         fade_have_gamma_control = false;
 
         TigFont font;
@@ -70,7 +70,7 @@ void gfade_resize(ResizeContext* ctx)
 void sub_4BDFA0(FadeData* fade_data)
 {
     if (fade_have_gamma_control) {
-        sub_51FCA0(fade_data->field_4, fade_data->field_8, fade_data->duration, fade_data->field_0);
+        tig_video_fade(fade_data->color, fade_data->steps, fade_data->duration, fade_data->field_0);
     } else {
         unsigned int time;
         tig_timer_start(&time);
