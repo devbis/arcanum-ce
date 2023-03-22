@@ -350,7 +350,7 @@ typedef enum ObjectType {
     OBJ_TYPE_0,
     OBJ_TYPE_1,
     OBJ_TYPE_CONTAINER,
-    OBJ_TYPE_3,
+    OBJ_TYPE_SCENERY,
     OBJ_TYPE_4,
     OBJ_TYPE_WEAPON,
     OBJ_TYPE_AMMO,
@@ -364,6 +364,12 @@ typedef enum ObjectType {
     OBJ_TYPE_14,
     OBJ_TYPE_15,
     OBJ_TYPE_CRITTER,
+};
+
+typedef enum SceneryFlags {
+    SCENERY_FLAG_0x40 = 0x40,
+    SCENERY_FLAG_0x80 = 0x80,
+    SCENERY_FLAG_0x100 = 0x100,
 };
 
 #define OBJECT_FLAG_0x1000 0x1000
