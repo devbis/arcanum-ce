@@ -7,7 +7,7 @@
 #include "tig/color.h"
 #include "tig/debug.h"
 #include "tig/dxinput.h"
-#include "tig/felicity.h"
+#include "tig/font.h"
 #include "tig/file.h"
 #include "tig/kb.h"
 #include "tig/memory.h"
@@ -46,7 +46,7 @@ static TigInitFunc* init_funcs[] = {
     tig_message_init,
     tig_button_init,
     tig_anna_init,
-    tig_felicity_init,
+    tig_font_init,
     tig_str_parse_init,
     tig_net_init,
     tig_cache_init,
@@ -74,7 +74,7 @@ static TigExitFunc* exit_funcs[] = {
     tig_message_exit,
     tig_button_exit,
     tig_anna_exit,
-    tig_felicity_exit,
+    tig_font_exit,
     tig_str_parse_exit,
     tig_net_exit,
     tig_cache_exit,

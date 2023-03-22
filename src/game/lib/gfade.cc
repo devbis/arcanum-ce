@@ -2,7 +2,7 @@
 
 #include "tig/art.h"
 #include "tig/color.h"
-#include "tig/felicity.h"
+#include "tig/font.h"
 #include "tig/timer.h"
 #include "tig/video.h"
 #include "tig/window.h"
@@ -17,7 +17,7 @@ static GameContextF8* dword_5FC4B0;
 static TigVideoBuffer* fade_iso_video_buffer;
 
 // 0x5FC4B8
-static Felicity* dword_5FC4B8;
+static TigFont* dword_5FC4B8;
 
 // 0x5FC4BC
 static GameContextFC* dword_5FC4BC;
@@ -39,11 +39,11 @@ int gfade_init(GameContext* ctx)
     if (sub_51FC90() != TIG_OK) {
         fade_have_gamma_control = false;
 
-        Felicity v1;
-        v1.field_0 = 152;
-        tig_art_interface_id_create(229, 0, 0, 0, &(v1.art_id));
-        v1.field_8 = tig_color_rgb_make(255, 255, 255);
-        tig_felicity_create(&v1, &dword_5FC4B8);
+        TigFont font;
+        font.flags = 152;
+        tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
+        font.field_8 = tig_color_rgb_make(255, 255, 255);
+        tig_font_create(&font, &dword_5FC4B8);
     } else {
         fade_have_gamma_control = true;
     }
@@ -55,7 +55,7 @@ int gfade_init(GameContext* ctx)
 void gfade_exit()
 {
     if (!fade_have_gamma_control) {
-        tig_felicity_destroy(dword_5FC4B8);
+        tig_font_destroy(dword_5FC4B8);
     }
 }
 

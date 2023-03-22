@@ -4,7 +4,7 @@
 #include "tig/button.h"
 #include "tig/color.h"
 #include "tig/debug.h"
-#include "tig/felicity.h"
+#include "tig/font.h"
 #include "tig/rect.h"
 #include "tig/video.h"
 
@@ -71,7 +71,7 @@ static int tig_window_num_windows;
 static TigRectListNode* tig_window_dirty_rects;
 
 // 0x60F130
-static Felicity* off_60F130;
+static TigFont* off_60F130;
 
 // 0x51CAD0
 int tig_window_init(TigContext* ctx)
@@ -876,7 +876,7 @@ void sub_51ED40(TigRect* rect)
             if (dword_604764) {
                 sub_535340(dword_60F130);
                 tig_window_text_write(dword_5BED98, dword_604764, &text_rect);
-                sub_535380();
+                tig_font_pop();
             }
         }
     }
@@ -956,12 +956,12 @@ bool sub_51EE30(int type, int window_handle)
 // 0x51F050
 bool sub_51F050()
 {
-    Felicity felicity;
-    felicity.field_0 = 0;
-    tig_art_interface_id_create(229, 0, 0, 0, &(felicity.art_id));
-    felicity.field_1C = 0;
-    felicity.field_8 = tig_color_rgb_make(255, 255, 255);
-    tig_felicity_create(&felicity, &off_60F130);
+    TigFont font;
+    font.flags = 0;
+    tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
+    font.field_1C = 0;
+    font.field_8 = tig_color_rgb_make(255, 255, 255);
+    tig_font_create(&font, &off_60F130);
 
     dword_60F038[0] = -1;
     dword_60F038[1] = -1;
@@ -973,7 +973,7 @@ bool sub_51F050()
 void sub_51F0F0()
 {
     if (off_60F130 != NULL) {
-        tig_felicity_destroy(off_60F130);
+        tig_font_destroy(off_60F130);
         off_60F130 = NULL;
     }
 
