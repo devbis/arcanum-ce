@@ -40,6 +40,8 @@ typedef bool(TigContextMessageHandler)(LPMSG msg);
 
 typedef struct TigContext {
     /* 0000 */ unsigned int flags;
+    /* 0004 */ int x;
+    /* 0008 */ int y;
     /* 000C */ int width;
     /* 0010 */ int height;
     /* 0014 */ int bpp;
@@ -49,9 +51,13 @@ typedef struct TigContext {
     /* 0024 */ TigContextWindowProc* default_window_proc;
     /* 0028 */ TigContextMessageHandler* message_handler;
     /* 002C */ TigFilePathResolver* sound_file_path_resolver;
+    /* 0030 */ int field_30;
     /* 0034 */ unsigned int texture_width;
     /* 0038 */ unsigned int texture_height;
+    /* 003C */ int field_3C;
 };
+
+static_assert(sizeof(TigContext) == 0x40, "wrong size");
 
 typedef struct TigRect {
     int x;
