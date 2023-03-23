@@ -3,6 +3,11 @@
 
 #include "tig/types.h"
 
+typedef enum TigFontFlags {
+    TIG_FONT_FLAG_0x08 = 0x08,
+    TIG_FONT_FLAG_0x80 = 0x80,
+};
+
 typedef struct TigFont {
     unsigned int flags;
     unsigned int art_id;
