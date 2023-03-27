@@ -12,5 +12,7 @@ typedef enum GameMovieFlags {
 
 bool gmovie_mod_load();
 void gmovie_mod_unload();
+void gmovie_play(int movie, unsigned int flags, int sound_track);
+void gmovie_play_path(const char* path, unsigned int flags, int sound_track);
 
 #endif /* ARCANUM_GAMELIB_GMOVIE_H_ */

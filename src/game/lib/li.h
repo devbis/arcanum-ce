@@ -3,4 +3,6 @@
 
 #include "game/context.h"
 
+void sub_4BBC80();
+
 #endif /* ARCANUM_GAMELIB_LI_H_ */

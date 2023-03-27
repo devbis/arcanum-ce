@@ -26,6 +26,7 @@ static_assert(sizeof(Settings) == 0xC, "wrong size");
 void settings_init(Settings* settings, const char* path);
 void settings_exit(Settings* settings);
 void settings_load(Settings* settings);
+void settings_save(Settings* settings);
 void settings_add(Settings* settings, const char* key, const char* default, SettingsValueChangedFunc* value_changed_func);
 void settings_set_value(Settings* settings, const char* key, int value);
 int settings_get_value(Settings* settings, const char* key);
