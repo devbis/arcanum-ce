@@ -372,9 +372,12 @@ typedef enum SceneryFlags {
     SCENERY_FLAG_0x100 = 0x100,
 };
 
+#define OBJECT_FLAG_0x0008 0x0008
 #define OBJECT_FLAG_0x1000 0x1000
 
 int object_field_get(object_id_t object_id, int field);
-void object_field_set(object_id_t object_id, int field, int a3, int a4);
+void object_field_set(object_id_t object_id, int field, int value);
+long long object_field_get_64(object_id_t object_id, int field);
+void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4);
 
 #endif /* ARCANUM_GAME_LIB_OBJECT_H_ */

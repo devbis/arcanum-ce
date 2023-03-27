@@ -43,4 +43,14 @@ typedef struct ViewOptions {
 
 static_assert(sizeof(ViewOptions) == 0x8, "wrong size");
 
+typedef struct UnknownContext {
+    int field_0;
+    int field_4;
+    int field_8;
+    int field_C;
+    TigRectListNode* rects;
+};
+
+static_assert(sizeof(UnknownContext) == 0x14, "wrong size");
+
 #endif /* ARCANUM_GAME_CONTEXT_H_ */

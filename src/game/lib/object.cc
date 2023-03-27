@@ -349,8 +349,20 @@ int object_field_get(object_id_t object_id, int field)
 
 }
 
+// 0x406D40
+void object_field_set(object_id_t object_id, int field, int value)
+{
+    // TODO: Incomplete.
+}
+
+// 0x406DA0
+long long object_field_get_64(object_id_t object_id, int field)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4F0270
-void object_field_set(object_id_t object_id, int field, int a3, int a4)
+void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4)
 {
     // TODO: Incomplete.
 }

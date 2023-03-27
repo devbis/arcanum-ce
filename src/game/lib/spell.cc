@@ -262,7 +262,7 @@ bool sub_4B1B00(long long object_id, int a2)
 int sub_4B1B30(long long object_id, int a2, int a3)
 {
     if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
-        object_field_set(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
+        object_field_set_with_network(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
         return a3;
     } else {
         return 0;

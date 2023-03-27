@@ -5,6 +5,7 @@
 
 typedef enum TigFontFlags {
     TIG_FONT_FLAG_0x08 = 0x08,
+    TIG_FONT_FLAG_0x10 = 0x10,
     TIG_FONT_FLAG_0x80 = 0x80,
 };
 
