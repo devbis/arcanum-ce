@@ -70,6 +70,9 @@ static float tig_video_gamma;
 // 0x60FEFC
 static RECT tig_video_client_rect;
 
+// 0x60FF0C
+static int dword_60FF0C[256];
+
 // 0x61030C
 static int tig_video_bpp;
 
@@ -1526,7 +1529,35 @@ void tig_video_d3d_exit()
 // 0x524F00
 bool tig_video_ddraw_palette_create(LPDIRECTDRAW7 ddraw)
 {
-    // TODO: Incomplete.
+    tig_video_state.palette = NULL;
+
+    // NOTE: Why use heap?
+    PALETTEENTRY* entries = (PALETTEENTRY*)malloc(sizeof(*entries) * 256);
+    for (int index = 0; index < 256; index++) {
+        int red = tig_color_get_red(index);
+        int green = tig_color_get_green(index);
+        int blue = tig_color_get_blue(index);
+
+        entries[index].peRed = red;
+        entries[index].peGreen = green;
+        entries[index].peBlue = blue;
+        entries[index].peFlags = 0;
+
+        dword_60FF0C[index] = sub_52C610(red, green, blue);
+    }
+
+    if (FAILED(IDirectDraw7_CreatePalette(ddraw, DDPCAPS_8BIT | DDPCAPS_ALLOW256, entries, &(tig_video_state.palette), NULL))) {
+        free(entries);
+        return false;
+    }
+
+    if (FAILED(IDirectDrawSurface7_SetPalette(tig_video_state.primary_surface, tig_video_state.palette))) {
+        free(entries);
+        return false;
+    }
+
+    free(entries);
+    return true;
 }
 
 // 0x524FC0
