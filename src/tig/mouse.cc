@@ -430,25 +430,25 @@ bool tig_mouse_update_state()
         if (tig_mouse_device_state.lX != 0) {
             tig_mouse_state.rect.x += tig_mouse_device_state.lX;
 
-            if (tig_mouse_state.rect.x < -tig_mouse_state.field_14) {
-                tig_mouse_state.rect.x = -tig_mouse_state.field_14;
-            } else if (tig_mouse_state.rect.x > dword_604650 - tig_mouse_state.field_14) {
-                tig_mouse_state.rect.x = dword_604650 - tig_mouse_state.field_14;
+            if (tig_mouse_state.rect.x < -tig_mouse_state.offset_x) {
+                tig_mouse_state.rect.x = -tig_mouse_state.offset_x;
+            } else if (tig_mouse_state.rect.x > dword_604650 - tig_mouse_state.offset_x) {
+                tig_mouse_state.rect.x = dword_604650 - tig_mouse_state.offset_x;
             }
 
-            tig_mouse_state.x = tig_mouse_state.rect.x + tig_mouse_state.field_14;
+            tig_mouse_state.x = tig_mouse_state.rect.x + tig_mouse_state.offset_x;
         }
 
         if (tig_mouse_device_state.lY != 0) {
             tig_mouse_state.rect.y += tig_mouse_device_state.lY;
 
-            if (tig_mouse_state.rect.y < -tig_mouse_state.field_18) {
-                tig_mouse_state.rect.y = -tig_mouse_state.field_18;
-            } else if (tig_mouse_state.rect.y > dword_60464C - tig_mouse_state.field_18) {
-                tig_mouse_state.rect.y = dword_60464C - tig_mouse_state.field_18;
+            if (tig_mouse_state.rect.y < -tig_mouse_state.offset_y) {
+                tig_mouse_state.rect.y = -tig_mouse_state.offset_y;
+            } else if (tig_mouse_state.rect.y > dword_60464C - tig_mouse_state.offset_y) {
+                tig_mouse_state.rect.y = dword_60464C - tig_mouse_state.offset_y;
             }
 
-            tig_mouse_state.y = tig_mouse_state.rect.y + tig_mouse_state.field_18;
+            tig_mouse_state.y = tig_mouse_state.rect.y + tig_mouse_state.offset_y;
         }
     }
 
@@ -758,7 +758,7 @@ bool sub_4FFEC0(unsigned int art_id, int a2, int a3)
     }
 
     dword_6046B8 = art_data.field_10;
-    tig_mouse_state.field_18 = a3 + art_frame_data.field_C;
+    tig_mouse_state.offset_y = a3 + art_frame_data.field_C;
     dword_604670 = art_id;
     dword_604664 = a3;
     tig_mouse_state.rect.height = a3 + art_frame_data.height;
@@ -766,12 +766,12 @@ bool sub_4FFEC0(unsigned int art_id, int a2, int a3)
     dword_604648 = art_frame_data.width;
     dword_604654 = 1000 / art_data.field_4;
     dword_604660 = a2;
-    tig_mouse_state.field_14 = a2 + art_frame_data.field_8;
-    tig_mouse_state.rect.x = tig_mouse_state.x - tig_mouse_state.field_14;
+    tig_mouse_state.offset_x = a2 + art_frame_data.field_8;
+    tig_mouse_state.rect.x = tig_mouse_state.x - tig_mouse_state.offset_x;
     dword_604640 = art_frame_data.height;
     tig_mouse_state.rect.width = art_frame_data.width + a2;
     stru_6046D8.width = art_frame_data.width + a2;
-    tig_mouse_state.rect.y = tig_mouse_state.y - tig_mouse_state.field_18;
+    tig_mouse_state.rect.y = tig_mouse_state.y - tig_mouse_state.offset_y;
     stru_6046D8.x = 0;
     stru_6046D8.y = 0;
 
@@ -848,18 +848,18 @@ int sub_4FFFE0(unsigned int art_id)
 }
 
 // 0x5000F0
-void sub_5000F0(int a1, int a2)
+void mouse_set_offset(int x, int y)
 {
-    if (tig_mouse_state.field_14 != a1 || tig_mouse_state.field_18 != a2) {
+    if (tig_mouse_state.offset_x != x || tig_mouse_state.offset_y != y) {
         bool hidden = (tig_mouse_state.flags & TIG_MOUSE_STATE_HIDDEN) != 0;
         if (!hidden) {
             tig_mouse_hide();
         }
 
-        tig_mouse_state.field_14 = a1;
-        tig_mouse_state.field_18 = a2;
-        tig_mouse_state.rect.x = tig_mouse_state.x - a1;
-        tig_mouse_state.rect.y = tig_mouse_state.y - a2;
+        tig_mouse_state.offset_x = x;
+        tig_mouse_state.offset_y = y;
+        tig_mouse_state.rect.x = tig_mouse_state.x - x;
+        tig_mouse_state.rect.y = tig_mouse_state.y - y;
 
         if (!hidden) {
             tig_mouse_show();

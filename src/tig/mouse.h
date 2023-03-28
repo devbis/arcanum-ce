@@ -15,8 +15,8 @@ typedef enum TigMouseButton {
 typedef struct TigMouseState {
     unsigned int flags;
     TigRect rect;
-    int field_14;
-    int field_18;
+    int offset_x;
+    int offset_y;
     int x;
     int y;
     int z;
@@ -37,7 +37,7 @@ int tig_mouse_show();
 void tig_mouse_display();
 void sub_4FFB40();
 int sub_4FFFE0(unsigned int art_id);
-void sub_5000F0(int a1, int a2);
+void mouse_set_offset(int a1, int a2);
 int sub_500150();
 void sub_500160(unsigned int art_id, int a2, int a3);
 int sub_500560();

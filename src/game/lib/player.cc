@@ -84,7 +84,7 @@ bool player_load(LoadContext* ctx)
     }
 
     long long location = object_field_get_64(pcObj, OBJ_F_LOCATION);
-    sub_40E8E0(location);
+    scroll_set_center(location);
     sub_4B8CE0(location);
     sub_4604E0();
 

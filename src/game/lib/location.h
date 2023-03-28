@@ -3,6 +3,8 @@
 
 #include "game/context.h"
 
+typedef long long location_t;
+
 typedef void(LocationFunc5FC2F8)(int a1, int a2);
 
 bool location_init(GameContext* ctx);

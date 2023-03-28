@@ -94,6 +94,7 @@ int tig_video_set_gamma(float gamma);
 int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffer** video_buffer);
 int tig_video_buffer_destroy(TigVideoBuffer* video_buffer);
 int tig_video_buffer_data(TigVideoBuffer* video_buffer, TigVideoBufferData* video_buffer_data);
+int tig_video_buffer_set_color_key(TigVideoBuffer* video_buffer, int color_key);
 int tig_video_buffer_lock(TigVideoBuffer* video_buffer);
 int tig_video_buffer_unlock(TigVideoBuffer* video_buffer);
 int tig_video_buffer_fill(TigVideoBuffer* video_buffer, TigRect* rect, int color);

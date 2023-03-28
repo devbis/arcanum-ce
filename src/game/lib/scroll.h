@@ -14,6 +14,8 @@ typedef enum ScrollDirection {
     SCROLL_DIRECTION_UP_LEFT,
 };
 
+typedef void(ScrollFunc)(int direction);
+
 bool scroll_init(GameContext* ctx);
 void scroll_exit();
 void scroll_reset();
@@ -23,5 +25,8 @@ void scroll_start_scrolling_in_direction(int direction);
 void scroll_stop_scrolling();
 void scroll_set_fps(int fps);
 void scroll_set_distance(int distance);
+int scroll_get_distance();
+void scroll_set_center(location_t location);
+void scroll_set_scroll_func(ScrollFunc* func);
 
 #endif /* ARCANUM_GAME_LIB_SCROLL_H_ */
