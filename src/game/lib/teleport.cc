@@ -1,5 +1,7 @@
 #include "game/lib/teleport.h"
 
+#include "game/lib/player.h"
+
 typedef struct S6018B8 {
     int field_0;
     int field_4;
@@ -84,7 +86,7 @@ bool sub_4D3380(TeleportData* teleport_data)
     stru_601858 = *teleport_data;
     dword_601844 = true;
 
-    if (sub_40D9F0(teleport_data->field_8)) {
+    if (player_is_pc_obj(teleport_data->field_8)) {
         stru_601858.flags |= TELEPORT_FLAG_0x80000000;
 
         if ((stru_601858.flags & TELEPORT_FLAG_0x00000002) != 0) {

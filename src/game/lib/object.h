@@ -3,6 +3,8 @@
 
 #include "game/context.h"
 
+#define OBJECT_HANDLE_INVALID 0LL
+
 typedef long long object_id_t;
 
 typedef enum ObjectField {
@@ -376,6 +378,12 @@ typedef enum SceneryFlags {
 #define OBJECT_FLAG_0x1000 0x1000
 
 #define OBJECT_RENDER_FLAG_0x80000000 0x80000000
+
+typedef struct ObjectID {
+    uint16_t field_0;
+};
+
+static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);

@@ -3,6 +3,8 @@
 
 #include "tig/types.h"
 
+typedef unsigned int art_id_t;
+
 typedef enum TigArtType {
     TIG_ART_TYPE_TILE,
     TIG_ART_TYPE_WALL,
