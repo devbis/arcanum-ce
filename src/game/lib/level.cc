@@ -1,7 +1,10 @@
 #include "game/lib/level.h"
 
 #include "game/lib/message.h"
+#include "game/lib/skill.h"
+#include "game/lib/spell.h"
 #include "game/lib/stat.h"
+#include "game/lib/tech.h"
 
 #define LEVEL_MAX 51
 #define TEN 10
@@ -260,4 +263,47 @@ const char* level_advancement_scheme_get_rule(int scheme)
     }
 
     return msg.text;
+}
+
+// 0x4A6F00
+void level_set_level(object_id_t obj, int level)
+{
+    // NOTE: Unused.
+    int type = object_field_get(obj, OBJ_F_TYPE);
+
+    if (level < 0) {
+        level = 0;
+    } else if (level > LEVEL_MAX) {
+        level = LEVEL_MAX;
+    }
+
+    int gender = stat_get_value(obj, STAT_GENDER);
+    int race = stat_get_value(obj, STAT_RACE);
+    int alignment = stat_get_value(obj, STAT_ALIGNMENT);
+    int age = stat_get_value(obj, STAT_AGE);
+
+    stat_set_defaults(obj);
+    skill_set_defaults(obj);
+    spell_set_defaults(obj);
+    tech_set_defaults(obj);
+
+    stat_set_value(obj, STAT_GENDER, gender);
+    stat_set_value(obj, STAT_RACE, race);
+    stat_set_value(obj, STAT_ALIGNMENT, alignment);
+    stat_set_value(obj, STAT_AGE, age);
+    stat_set_value(obj, STAT_LEVEL, level);
+
+    sub_43D430(obj, 0);
+    sub_45D3E0(obj, 0);
+
+    if (level >= 1) {
+        stat_set_value(obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[level - 1]);
+
+        int unspent_points = stat_get_value(obj, STAT_UNSPENT_POINTS);
+        int bonus = sub_4A6980(1, level);
+        stat_set_value(obj, STAT_UNSPENT_POINTS, unspent_points + bonus);
+    }
+
+    sub_4A7030(obj, NULL);
+    sub_43D530(obj, 0);
 }

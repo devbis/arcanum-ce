@@ -12,5 +12,6 @@ int level_auto_level_scheme_get(object_id_t object_id);
 int level_auto_level_scheme_set(object_id_t object_id, int value);
 const char* level_advancement_scheme_get_name(int scheme);
 const char* level_advancement_scheme_get_rule(int scheme);
+void level_set_level(object_id_t obj, int level);
 
 #endif /* ARCANUM_GAMELIB_LEVEL_H_ */
