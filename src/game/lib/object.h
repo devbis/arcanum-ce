@@ -390,4 +390,10 @@ void object_field_set(object_id_t object_id, int field, int value);
 long long object_field_get_64(object_id_t object_id, int field);
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4);
 
+// NOTE: Seen in some assertions in `anim.c`.
+static inline bool obj_type_is_critter(int type)
+{
+    return type == OBJ_TYPE_15 || type == OBJ_TYPE_CRITTER;
+}
+
 #endif /* ARCANUM_GAME_LIB_OBJECT_H_ */
