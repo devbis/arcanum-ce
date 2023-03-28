@@ -93,6 +93,15 @@ void tech_exit()
     message_unload(tech_msg_file);
 }
 
+// 0x4AFDE0
+void tech_set_defaults(object_id_t obj)
+{
+    // TODO: Use enum.
+    for (int index = 17; index < 25; index++) {
+        sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, index, 0);
+    }
+}
+
 // 0x4AFE10
 const char* tech_get_name(int tech)
 {

@@ -33,6 +33,7 @@ static_assert(DEGREE_COUNT == 8, "wrong size");
 
 bool tech_init(GameContext* ctx);
 void tech_exit();
+void tech_set_defaults(object_id_t obj);
 const char* tech_get_name(int tech);
 const char* tech_get_description(int tech);
 const char* degree_get_name(int degree);

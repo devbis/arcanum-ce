@@ -122,7 +122,7 @@ void spell_exit()
 }
 
 // 0x4B1530
-void sub_4B1530(long long object_id)
+void spell_set_defaults(long long object_id)
 {
     for (int college = 0; college < COLLEGE_COUNT; college++) {
         sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);

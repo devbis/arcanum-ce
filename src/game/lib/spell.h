@@ -111,4 +111,27 @@ typedef enum Spell {
 
 static_assert(SPELL_COUNT == 80, "wrong size");
 
+bool spell_init(GameContext* ctx);
+void spell_exit();
+void spell_set_defaults(long long object_id);
+size_t sub_4B15A0(int spell);
+const char* spell_get_name(int spell);
+const char* spell_get_description(int spell);
+int sub_4B1650();
+int sub_4B1660(int spell, long long object_id);
+int sub_4B1740();
+int sub_4B1750();
+int sub_4B1760(int a1);
+int sub_4B1770(int a1);
+const char* college_get_name(int college);
+const char* college_get_description(int college);
+int sub_4B1A80(int college);
+int sub_4B1A90(int college);
+int sub_4B1AB0(long long object_id, int a2);
+bool sub_4B1B00(long long object_id, int a2);
+int sub_4B1B30(long long object_id, int a2, int a3);
+bool sub_4B1C70(long long object_id, int a2);
+int sub_4B1CB0(long long object_id);
+void sub_4B1CF0(long long object_id, int a2);
+
 #endif /* ARCANUM_GAME_LIB_SPELL_H_ */

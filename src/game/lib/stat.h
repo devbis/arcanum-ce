@@ -66,6 +66,7 @@ static_assert(RACE_COUNT == 11, "wrong size");
 
 bool stat_init(GameContext* ctx);
 void stat_exit();
+void stat_set_defaults(object_id_t object_id);
 const char* stat_get_name(int stat);
 const char* stat_get_short_name(int stat);
 const char* gender_get_name(int gender);
