@@ -3,7 +3,7 @@
 
 #include "game/context.h"
 
-#define OBJECT_HANDLE_INVALID 0LL
+#define OBJ_HANDLE_NULL 0LL
 
 typedef long long object_id_t;
 

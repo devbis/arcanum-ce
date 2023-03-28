@@ -221,7 +221,7 @@ int scroll_get_distance()
     }
 
     object_id_t pc = sub_40DA50();
-    if (pc == OBJECT_HANDLE_INVALID) {
+    if (pc == OBJ_HANDLE_NULL) {
         return 0;
     }
 

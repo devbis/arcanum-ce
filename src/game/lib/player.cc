@@ -28,22 +28,22 @@ bool player_init(GameContext* ctx)
 // 0x40D6E0
 void player_reset()
 {
-    if (pcObj != OBJECT_HANDLE_INVALID) {
-        pcObj = OBJECT_HANDLE_INVALID;
+    if (pcObj != OBJ_HANDLE_NULL) {
+        pcObj = OBJ_HANDLE_NULL;
         stru_5D1138.field_0 = 0;
     }
 
-    qword_5D1150 = OBJECT_HANDLE_INVALID;
+    qword_5D1150 = OBJ_HANDLE_NULL;
 }
 
 // 0x40D720
 void player_exit()
 {
-    if (pcObj != OBJECT_HANDLE_INVALID) {
-        pcObj = OBJECT_HANDLE_INVALID;
+    if (pcObj != OBJ_HANDLE_NULL) {
+        pcObj = OBJ_HANDLE_NULL;
     }
 
-    qword_5D1150 = OBJECT_HANDLE_INVALID;
+    qword_5D1150 = OBJ_HANDLE_NULL;
 }
 
 // 0x40D760
@@ -53,7 +53,7 @@ bool player_save(TigFile* stream)
         return false;
     }
 
-    if (pcObj == OBJECT_HANDLE_INVALID) {
+    if (pcObj == OBJ_HANDLE_NULL) {
         return false;
     }
 
@@ -79,7 +79,7 @@ bool player_load(LoadContext* ctx)
 
     stru_5D1138 = temp_object_id;
     pcObj = objp_perm_lookup(temp_object_id);
-    if (pcObj == OBJECT_HANDLE_INVALID) {
+    if (pcObj == OBJ_HANDLE_NULL) {
         return false;
     }
 
@@ -127,13 +127,13 @@ void player_create()
 // 0x40D9F0
 bool player_is_pc_obj(object_id_t object_id)
 {
-    return object_id != OBJECT_HANDLE_INVALID && object_id == pcObj;
+    return object_id != OBJ_HANDLE_NULL && object_id == pcObj;
 }
 
 // 0x40DA20
 bool sub_40DA20(object_id_t object_id)
 {
-    if (object_id != OBJECT_HANDLE_INVALID) {
+    if (object_id != OBJ_HANDLE_NULL) {
         return object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15;
     } else {
         return false;
@@ -145,7 +145,7 @@ object_id_t sub_40DA50()
 {
     object_id_t obj = pcObj;
 
-    if (obj != OBJECT_HANDLE_INVALID) {
+    if (obj != OBJ_HANDLE_NULL) {
         if (sub_4E5470(pcObj) || stru_5D1138.field_0 == 0) {
             obj = pcObj;
         } else {
@@ -160,12 +160,12 @@ object_id_t sub_40DA50()
 // 0x40DAB0
 bool sub_40DAB0()
 {
-    if (pcObj == OBJECT_HANDLE_INVALID) {
+    if (pcObj == OBJ_HANDLE_NULL) {
         return false;
     }
 
     sub_43CCA0(pcObj);
-    pcObj = OBJECT_HANDLE_INVALID;
+    pcObj = OBJ_HANDLE_NULL;
     stru_5D1138.field_0 = 0;
 
     return true;
@@ -175,7 +175,7 @@ bool sub_40DAB0()
 bool sub_40DAF0(object_id_t obj)
 {
     pcObj = obj;
-    if (obj != OBJECT_HANDLE_INVALID) {
+    if (obj != OBJ_HANDLE_NULL) {
         stru_5D1138 = sub_407EF0(obj);
         sub_4604E0();
     } else {
@@ -188,7 +188,7 @@ bool sub_40DAF0(object_id_t obj)
 // 0x40DB50
 void sub_40DB50(PlayerSpec* player_spec)
 {
-    player_spec->field_0 = OBJECT_HANDLE_INVALID;
+    player_spec->field_0 = OBJ_HANDLE_NULL;
     player_spec->field_20 = 0;
     player_spec->field_24 = 0;
     player_spec->field_28 = 0;
@@ -198,7 +198,7 @@ void sub_40DB50(PlayerSpec* player_spec)
 // 0x40DB70
 bool player_obj_create_player(PlayerSpec* player_spec)
 {
-    object_id_t current_handle = OBJECT_HANDLE_INVALID;
+    object_id_t current_handle = OBJ_HANDLE_NULL;
 
     if (player_spec->field_2C == -1) {
         qword_5D1160 = sub_468570(15);
