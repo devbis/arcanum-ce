@@ -154,8 +154,11 @@ int dword_5B5334[20] = {
     75,
 };
 
+// NOTE: This is definitely part of `stat.c` due it's order. However the only
+// place where it is used is `magictech.c`, implying public access.
+//
 // 0x5B5384
-static const char* off_5B5384[] = {
+const char* off_5B5384[] = {
     "stat_strength",
     "stat_dexterity",
     "stat_constitution",

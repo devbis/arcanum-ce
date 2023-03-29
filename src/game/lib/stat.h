@@ -67,6 +67,8 @@ typedef enum Race {
 
 static_assert(RACE_COUNT == 11, "wrong size");
 
+extern const char* off_5B5384[];
+
 bool stat_init(GameContext* ctx);
 void stat_exit();
 void stat_set_defaults(object_id_t object_id);
