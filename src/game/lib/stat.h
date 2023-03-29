@@ -35,6 +35,9 @@ typedef enum Stat {
     STAT_GENDER,
     STAT_RACE,
     STAT_COUNT,
+    LAST_PRIMARY_STAT = STAT_CHARISMA,
+    FIRST_DERIVED_STAT = STAT_CARRY_WEIGHT,
+    LAST_DERIVED_STAT = STAT_MAGICK_TECH_APTITUDE,
 };
 
 static_assert(STAT_COUNT == 28, "wrong size");
@@ -67,6 +70,9 @@ static_assert(RACE_COUNT == 11, "wrong size");
 bool stat_init(GameContext* ctx);
 void stat_exit();
 void stat_set_defaults(object_id_t object_id);
+int stat_level(object_id_t obj, int stat);
+int stat_get_base(object_id_t obj, int stat);
+int stat_set_base(object_id_t obj, int stat);
 const char* stat_get_name(int stat);
 const char* stat_get_short_name(int stat);
 const char* gender_get_name(int gender);

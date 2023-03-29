@@ -1,7 +1,9 @@
 #include "game/lib/tech.h"
 
+#include "game/lib/effect.h"
 #include "game/lib/message.h"
 #include "game/lib/object.h"
+#include "game/lib/stat.h"
 
 // TODO: Refactor.
 #define SEVENTEEN 17
@@ -18,8 +20,22 @@ int dword_5B5124[8] = {
     1,
 };
 
+// 0x5B5144
+int dword_5B5144[] = {
+    0,
+    10,
+    20,
+    35,
+    50,
+    65,
+    80,
+    100,
+};
+
+static_assert(sizeof(dword_5B5144) / sizeof(dword_5B5144[0]) == DEGREE_COUNT, "wrong size");
+
 // 0x5B5164
-int dword_5B5164[8] = {
+int tech_min_intelligence[] = {
     0,
     5,
     8,
@@ -29,6 +45,8 @@ int dword_5B5164[8] = {
     17,
     19,
 };
+
+static_assert(sizeof(tech_min_intelligence) / sizeof(tech_min_intelligence[0]) == DEGREE_COUNT, "wrong size");
 
 // 0x5F84A8
 static char* degree_names[DEGREE_COUNT];
@@ -152,8 +170,38 @@ int sub_4B00A0(int a1)
     return dword_5B5124[a1];
 }
 
-// 0x4B0110
-int sub_4B0110(int a1)
+// 0x4B00B0
+int sub_4B00B0(object_id_t obj, int tech)
 {
-    return dword_5B5164[a1];
+    int degree = sub_4AFE60(obj, tech);
+
+    int intelligence = stat_level(obj, STAT_INTELLIGENCE);
+    while (intelligence < tech_get_min_intelligence_for_degree(degree)) {
+        degree--;
+    }
+
+    return effect_adjust_tech_level(obj, tech, dword_5B5144[degree]);
+}
+
+// 0x4B0110
+int tech_get_min_intelligence_for_degree(int degree)
+{
+    return tech_min_intelligence[degree];
+}
+
+// 0x4B02B0
+bool sub_4B02B0(object_id_t obj, int intelligence)
+{
+    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_15 && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_CRITTER) {
+        return true;
+    }
+
+    for (int tech = 0; tech < TECH_COUNT; tech++) {
+        int degree = sub_4AFE60(obj, tech);
+        if (tech_get_min_intelligence_for_degree(degreee) > intelligence) {
+            return false;
+        }
+    }
+
+    return true;
 }
