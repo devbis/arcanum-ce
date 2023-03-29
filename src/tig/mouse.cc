@@ -197,7 +197,7 @@ int tig_mouse_device_init()
     }
 
     unsigned int art_id;
-    int rc = sub_501DD0(0, 0, &art_id);
+    int rc = tig_art_misc_id_create(0, 0, &art_id);
     if (rc != TIG_OK) {
         return rc;
     }

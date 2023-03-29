@@ -4,6 +4,7 @@
 #include "game/context.h"
 #include "game/lib/object.h"
 
+int sub_41A940(int sound_id, char* path);
 bool gsound_init(GameContext* ctx);
 void gsound_exit();
 void gsound_reset();

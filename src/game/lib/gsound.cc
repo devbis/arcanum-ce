@@ -124,6 +124,32 @@ static int64_t qword_5D55E0;
 // 0x5D55E8
 static int64_t qword_5D55E8;
 
+// 0x41A940
+int sub_41A940(int sound_id, char* path)
+{
+    if (dword_5D1A6C) {
+        MessageListItem msg;
+        msg.num = sound_id;
+
+        for (int index = 0; index < dword_5D55B0; index++) {
+            if (message_find(dword_5D1A68[index], &msg)) {
+                sprintf(path, "%s%s", gsound_base_sound_path, msg.text);
+                return TIG_OK;
+            }
+        }
+
+        if (dword_5D5598 != -1) {
+            if (message_find(dword_5D5598, &msg)) {
+                sprintf(path, "%s%s", gsound_base_sound_path, msg.text);
+                return TIG_OK;
+            }
+        }
+    }
+
+    path[0] = '\0';
+    return TIG_ERR_16;
+}
+
 // 0x41AA30
 bool gsound_init(GameContext* ctx)
 {

@@ -14,5 +14,7 @@ bool light_init(GameContext* ctx);
 void light_exit();
 void light_resize(ResizeContext* ctx);
 bool light_update_view(ViewOptions* view_options);
+void light_build_color(uint8_t red, uint8_t green, uint8_t blue, int* color);
+void light_get_color_components(int color, uint8_t* red, uint8_t* green, uint8_t* blue);
 
 #endif /* ARCANUM_GAMELIB_LIGHT_H_ */

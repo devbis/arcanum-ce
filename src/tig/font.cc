@@ -24,7 +24,7 @@ int tig_font_init(TigContext* ctx)
 
     TigFont font;
     font.flags = 8;
-    sub_501DD0(10, 0, &(font.art_id));
+    tig_art_misc_id_create(10, 0, &(font.art_id));
     dword_630D50 = tig_color_rgb_make(10, 10, 10);
     font.field_18 = 0x3FC00000;
     font.field_1C = 0;

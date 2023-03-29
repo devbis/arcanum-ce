@@ -310,17 +310,17 @@ void sub_4D8350(UnknownContext* ctx)
 }
 
 // 0x4D84B0
-void sub_4D84B0(uint8_t a1, uint8_t a2, uint8_t a3, int* a4)
+void light_build_color(uint8_t red, uint8_t green, uint8_t blue, int* color)
 {
-    *a4 = (a1 << 16) | (a2 << 8) | a3;
+    *color = (red << 16) | (green << 8) | blue;
 }
 
 // 0x4D84D0
-void sub_4D84D0(int a1, uint8_t* a2, uint8_t* a3, uint8_t* a4)
+void light_get_color_components(int color, uint8_t* red, uint8_t* green, uint8_t* blue)
 {
-    *a2 = (a1 >> 16) & 0xFF;
-    *a3 = (a1 >> 8) & 0xFF;
-    *a4 = a1 & 0xFF;
+    *red = (color >> 16) & 0xFF;
+    *green = (color >> 8) & 0xFF;
+    *blue = color & 0xFF;
 }
 
 // 0x4D8500

@@ -1,6 +1,7 @@
 #include "tig/art.h"
 
 #include "tig/debug.h"
+#include "tig/file.h"
 #include "tig/memory.h"
 #include "tig/video.h"
 
@@ -199,14 +200,14 @@ void tig_art_ping()
 }
 
 // 0x501DD0
-int sub_501DD0(unsigned int a1, unsigned int a2, unsigned int* art_id)
+int tig_art_misc_id_create(unsigned int a1, unsigned int palette, unsigned int* art_id)
 {
-    if (a1 >= 512 || a2 >= 4) {
+    if (a1 >= 512 || palette >= 4) {
         return TIG_ERR_12;
     }
 
     // TODO: Check.
-    *art_id = (8 << 28) | ((a1 & 0x1FF) << 19) | ((a2 & 3) << 4);
+    *art_id = (TIG_ART_TYPE_MISC << 28) | ((a1 & 0x1FF) << 19) | ((palette & 3) << 4);
 
     return TIG_OK;
 }
@@ -222,6 +223,21 @@ void tig_art_flush()
     }
 }
 
+// 0x502220
+int tig_art_exists(art_id_t art_id)
+{
+    char path[MAX_PATH];
+    if (tig_art_build_path(art_id, path) != TIG_OK) {
+        return TIG_ERR_16;
+    }
+
+    if (!tig_io_fileexists(path, NULL)) {
+        return TIG_ERR_16;
+    }
+
+    return TIG_OK;
+}
+
 // 0x502360
 int tig_art_blit(TigArtBlitSpec* blit_spec)
 {
@@ -235,7 +251,7 @@ int tig_art_type(unsigned int art_id)
 }
 
 // 0x502710
-int sub_502710(unsigned int art_id)
+int tig_art_num(unsigned int art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
@@ -328,7 +344,7 @@ int sub_502880(unsigned int art_id)
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
     case TIG_ART_TYPE_INTERFACE:
-    case TIG_ART_TYPE_8:
+    case TIG_ART_TYPE_MISC:
     case TIG_ART_TYPE_ROOF:
     case TIG_ART_TYPE_ITEM:
     case TIG_ART_TYPE_FACADE:
@@ -348,7 +364,7 @@ unsigned int sub_5028E0(unsigned int art_id)
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
     case TIG_ART_TYPE_INTERFACE:
-    case TIG_ART_TYPE_8:
+    case TIG_ART_TYPE_MISC:
     case TIG_ART_TYPE_ROOF:
     case TIG_ART_TYPE_ITEM:
     case TIG_ART_TYPE_FACADE:
@@ -367,7 +383,7 @@ int sub_502B50(unsigned int art_id)
     case TIG_ART_TYPE_ITEM:
         return 0;
     case TIG_ART_TYPE_INTERFACE:
-    case TIG_ART_TYPE_8:
+    case TIG_ART_TYPE_MISC:
         return (art_id >> 8) & 0xFF;
     case TIG_ART_TYPE_FACADE:
         return (art_id >> 1) & 0x3FF;
@@ -746,7 +762,7 @@ int sub_503F60(unsigned int art_id)
     int v1;
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
-        v1 = sub_502710(art_id);
+        v1 = tig_art_num(art_id);
         return dword_5BE980[v1];
     case TIG_ART_TYPE_MONSTER:
         v1 = sub_503F20(art_id);
@@ -1005,6 +1021,19 @@ int sub_504660(unsigned int art_id)
     }
 }
 
+// 0x504690
+int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int a3, int a4, art_id_t* art_id)
+{
+    if (a1 >= 512 || a2 >= 128 || a3 >= (a4 != 0 ? 32 : 8)) {
+        return TIG_ERR_12;
+    }
+
+    // TODO: Check.
+    *art_id = (TIG_ART_TYPE_LIGHT << 28) | ((a1 & 0x1FF) << 19) | ((a2 & 0x7F) << 12) | ((a3 & 7) << 9) | ((a3 & 0x1F) << 4) | (a4 & 1);
+
+    return TIG_OK;
+}
+
 // 0x504700
 int sub_504700(unsigned int art_id)
 {
@@ -1111,8 +1140,45 @@ int sub_504AC0(unsigned int art_id)
     }
 }
 
+// 0x504AE0
+int tig_art_eye_candy_id_create(unsigned int a1, unsigned int a2, int a3, int translucency, int type, unsigned int palette, int scale, art_id_t* art_id)
+{
+    if (a1 >= 512) {
+        return TIG_ERR_12;
+    }
+
+    if (a2 >= 128) {
+        return TIG_ERR_12;
+    }
+
+    if (a3 >= 8) {
+        return TIG_ERR_12;
+    }
+
+    if (translucency >= 2) {
+        return TIG_ERR_12;
+    }
+
+    if (type >= 4) {
+        return TIG_ERR_12;
+    }
+
+    if (palette >= 4) {
+        return TIG_ERR_12;
+    }
+
+    if (scale < 0 || scale > 7) {
+        return TIG_ERR_12;
+    }
+
+    // TODO: Check.
+    *art_id = (TIG_ART_TYPE_EYE_CANDY << 28) | ((a1 & 0x1FF) << 19) | ((a2 & 0x7F) << 12) | ((a3 & 7) << 9) | ((translucency & 1) << 8) | ((type & 3) << 6) | ((palette & 3) << 4) | ((scale & 7) << 1);
+
+    return TIG_OK;
+}
+
 // 0x504B90
-int sub_504B90(unsigned int art_id)
+int tig_art_eye_candy_id_type_get(art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_EYE_CANDY) {
         return (art_id >> 6) & 3;
@@ -1122,7 +1188,7 @@ int sub_504B90(unsigned int art_id)
 }
 
 // 0x504BC0
-unsigned int sub_504BC0(unsigned int art_id, int value)
+art_id_t tig_art_eye_candy_id_type_set(art_id_t art_id, int value)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_EYE_CANDY) {
         if (value >= 3) {
@@ -1137,7 +1203,7 @@ unsigned int sub_504BC0(unsigned int art_id, int value)
 }
 
 // 0x504C00
-int sub_504C00(unsigned int art_id)
+int tig_art_eye_candy_id_translucency_get(art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_EYE_CANDY) {
         return (art_id >> 8) & 1;
@@ -1146,8 +1212,18 @@ int sub_504C00(unsigned int art_id)
     }
 }
 
+// 0x504C30
+art_id_t tig_art_eye_candy_id_translucency_set(art_id_t art_id, int value)
+{
+    if (tig_art_type(art_id) == TIG_ART_TYPE_EYE_CANDY) {
+        return (art_id & ~0x100) | ((value & 1) << 8);
+    } else {
+        return art_id;
+    }
+}
+
 // 0x504C60
-int sub_504C60(unsigned int art_id)
+int tig_art_eye_candy_id_scale_get(art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_EYE_CANDY) {
         return (art_id >> 1) & 7;
@@ -1158,7 +1234,7 @@ int sub_504C60(unsigned int art_id)
 }
 
 // 0x504C90
-unsigned int sub_504C90(unsigned int art_id, int value)
+art_id_t tig_art_eye_candy_id_scale_set(art_id_t art_id, int value)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_EYE_CANDY) {
         return (art_id & ~0xE) | ((value & 7) << 1);
@@ -1200,8 +1276,8 @@ int sub_51AE00(const void* a1, const void* a2)
 // 0x51AE50
 int tig_art_build_path(unsigned int art_id, char* path)
 {
-    if (tig_art_type(art_id) == TIG_ART_TYPE_8) {
-        switch (sub_502710(art_id)) {
+    if (tig_art_type(art_id) == TIG_ART_TYPE_MISC) {
+        switch (tig_art_num(art_id)) {
         case 0:
             strcpy(path, "art\\mouse.art");
             return 0;
