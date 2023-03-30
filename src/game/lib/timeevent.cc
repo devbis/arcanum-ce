@@ -1,0 +1,1731 @@
+#include "game/lib/timeevent.h"
+
+#include <stdio.h>
+
+#include "game/lib/gfade.h"
+#include "game/lib/map.h"
+#include "tig/debug.h"
+#include "tig/net.h"
+#include "tig/timer.h"
+
+typedef enum TimeEventTypeFlags {
+    TIME_EVENT_TYPE_FLAG_0x0001 = 0x0001,
+    TIME_EVENT_TYPE_FLAG_0x0002 = 0x0002,
+    TIME_EVENT_TYPE_FLAG_0x0004 = 0x0004,
+    TIME_EVENT_TYPE_FLAG_0x0008 = 0x0008,
+    TIME_EVENT_TYPE_FLAG_0x0010 = 0x0010,
+    TIME_EVENT_TYPE_FLAG_0x0020 = 0x0020,
+    TIME_EVENT_TYPE_FLAG_0x0040 = 0x0040,
+    TIME_EVENT_TYPE_FLAG_0x0080 = 0x0080,
+    TIME_EVENT_TYPE_FLAG_0x0100 = 0x0100,
+    TIME_EVENT_TYPE_FLAG_0x0200 = 0x0200,
+    TIME_EVENT_TYPE_FLAG_0x0400 = 0x0400,
+    TIME_EVENT_TYPE_FLAG_0x0800 = 0x0800,
+    TIME_EVENT_TYPE_FLAG_0x1000 = 0x1000,
+    TIME_EVENT_TYPE_FLAG_0x2000 = 0x2000,
+    TIME_EVENT_TYPE_FLAG_0x4000 = 0x4000,
+    TIME_EVENT_TYPE_FLAG_0x8000 = 0x8000,
+};
+
+typedef struct TimeEventNodeF30 {
+    int field_0;
+    int field_4;
+    int field_8;
+    int field_C;
+    int field_10;
+    int field_14;
+    int field_18;
+    int field_1C;
+    int field_20;
+    int field_24;
+};
+
+static_assert(sizeof(TimeEventNodeF30) == 0x28, "wrong size");
+
+typedef struct TimeEventNode {
+    TimeEvent te;
+    TimeEventNodeF30 field_30[TIMEEVENT_PARAM_TYPE_COUNT];
+    TimeEventNode* next;
+    int field_D4;
+};
+
+// See 0x45BA20.
+static_assert(sizeof(TimeEventNode) == 0xD8, "wrong size");
+
+
+typedef void(TimeEventNodeExitFunc)(TimeEventNode* node);
+typedef bool(TimeEventNodeShouldSaveFunc)(TimeEventNode* node);
+
+typedef struct TimeEventTypeInfo {
+    char name[20];
+    bool saveable;
+    unsigned int flags;
+    int time_type;
+    TimeEventProcessFunc* process_func;
+    TimeEventNodeExitFunc* exit_func;
+    TimeEventNodeShouldSaveFunc* should_save_func;
+};
+
+static bool timeevent_do_nothing(TimeEvent* timeevent);
+static bool timeevent_save_node(TimeEventTypeInfo* timeevent_type_info, TimeEventNode* timeevent, TigFile* stream);
+static bool timeevent_load_node(TimeEvent* timeevent, TigFile* stream);
+static TimeEventNode* timeevent_node_create();
+static void timeevent_node_destroy(TimeEventNode* node);
+static bool debug_timeevent_process(TimeEventNode* timeevent);
+static void timeevent_debug_node(TimeEventNode* timeevent, int node);
+
+// 0x5B2178
+static const char* off_5B2178[] = {
+    "Real-Time",
+    "Game-Time",
+    "Game-Time2 (Animations)",
+};
+
+static_assert(sizeof(off_5B2178) / sizeof(off_5B2178[0]), "wrong size");
+
+// 0x5B2188
+static TimeEventTypeInfo stru_5B2188[] = {
+    { "Debug", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, debug_timeevent_process, NULL, NULL },
+    { "Anim", true, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_ANIMATIONS },
+    { "Bkg Anim", false, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
+    { "Fidget Anim", false, 0, TIME_TYPE_REAL_TIME },
+    { "Script", true, TIME_EVENT_TYPE_FLAG_0x0400 | TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
+    { "MagicTech", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
+    { "Poison", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0010 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
+    { "Resting", true, 10, TIME_TYPE_GAME_TIME },
+    { "Fatigue", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0010 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
+    { "Aging", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
+    { "AI", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Combat", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
+    { "TB Combat", true, 0, TIME_TYPE_REAL_TIME },
+    { "Ambient Lighting", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
+    { "WorldMap", true, 0, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
+    { "Sleeping", false, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
+    { "Clock", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
+    { "NPC Wait Here", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "MainMenu", false, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
+    { "Light", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_ANIMATIONS },
+    { "Multiplayer", false, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME },
+    { "Lock", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "NPC Respawn", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Recharge Magic-Item", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Decay Dead Bodie", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Item Decay", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Combat-Focus Wipe", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Newspapers", true, 0, TIME_TYPE_GAME_TIME },
+    { "Traps", true, TIME_EVENT_TYPE_FLAG_0x0080 | TIME_EVENT_TYPE_FLAG_0x0020 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
+    { "Fade", true, TIME_EVENT_TYPE_FLAG_0x4000 | TIME_EVENT_TYPE_FLAG_0x0200 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, gfade_timeevent_process, NULL, NULL },
+    { "MP Ctrl UI", false, 0, TIME_TYPE_REAL_TIME, NULL, NULL, NULL },
+    { "UI", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME },
+    { "Teleported", false, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Scenery Respawn", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "Random Encounter", true, 0, TIME_TYPE_GAME_TIME },
+};
+
+static_assert(sizeof(stru_5B2188) / sizeof(stru_5B2188[0]) == TIMEEVENT_TYPE_COUNT, "wrong size");
+
+// 0x5B278C
+static int datetime_start_year = 1885;
+
+// 0x5B2790
+static int datetime_start_time_in_milliseconds = 36000000;
+
+// 0x5B2794
+static unsigned int dword_5B2794[][TIMEEVENT_PARAM_TYPE_COUNT] = {
+    {
+        TIME_EVENT_TYPE_FLAG_0x0001,
+        TIME_EVENT_TYPE_FLAG_0x0002,
+        TIME_EVENT_TYPE_FLAG_0x0004,
+        TIME_EVENT_TYPE_FLAG_0x1000,
+    },
+    {
+        TIME_EVENT_TYPE_FLAG_0x0008,
+        TIME_EVENT_TYPE_FLAG_0x0010,
+        TIME_EVENT_TYPE_FLAG_0x0020,
+        TIME_EVENT_TYPE_FLAG_0x2000,
+    },
+    {
+        TIME_EVENT_TYPE_FLAG_0x0040,
+        TIME_EVENT_TYPE_FLAG_0x0080,
+        TIME_EVENT_TYPE_FLAG_0x0100,
+        TIME_EVENT_TYPE_FLAG_0x4000,
+    },
+    {
+        TIME_EVENT_TYPE_FLAG_0x0200,
+        TIME_EVENT_TYPE_FLAG_0x0400,
+        TIME_EVENT_TYPE_FLAG_0x0800,
+        TIME_EVENT_TYPE_FLAG_0x8000,
+    },
+};
+
+static_assert(sizeof(dword_5B2794) / sizeof(dword_5B2794[0]) == TIMEEVENT_PARAM_COUNT, "wrong size");
+
+// 0x5E7638
+static TimeEventNode* dword_5E7638[TIME_TYPE_COUNT];
+
+// 0x5E7E14
+static TimeEventNode* dword_5E7E14[TIME_TYPE_COUNT];
+
+// 0x5E85F0
+static int dword_5E85F0;
+
+// 0x5E85F8
+static DateTime stru_5E85F8;
+
+// 0x5E8600
+static DateTime stru_5E8600;
+
+// 0x5E8608
+static DateTime stru_5E8608;
+
+// 0x5E8610
+static unsigned int dword_5E8610;
+
+// 0x5E8614
+static bool timeevent_initialized;
+
+// 0x5E8618
+static int dword_5E8618;
+
+// 0x5E861C
+static bool timeevent_in_ping;
+
+// 0x5E8620
+static bool dword_5E8620;
+
+// 0x5E8628
+static int dword_5E8628;
+
+// 0x5DE6E0
+static bool dword_5DE6E0;
+
+// 0x45A7C0
+DateTime sub_45A7C0()
+{
+    return stru_5E8600;
+}
+
+// TODO: Check generated assembly (return value is eax:edx without first param?)
+// 0x45A7D0
+DateTime sub_45A7D0(DateTime* other)
+{
+    DateTime new_time;
+    new_time.days = stru_5E8600.days - other->days;
+    new_time.milliseconds = stru_5E8600.milliseconds - other->milliseconds;
+    return new_time;
+}
+
+// 0x45A7F0
+int sub_45A7F0()
+{
+    // NOTE: Uninline.
+    return datetime_seconds_since_reference_date(&stru_5E8600);
+}
+
+// 0x45A820
+int sub_45A820(unsigned int milliseconds)
+{
+    return datetime_seconds_since_reference_date(&stru_5E8600) - milliseconds;
+}
+
+// 0x45A840
+int datetime_seconds_since_reference_date(DateTime* datetime)
+{
+    return datetime->days * 86400 + datetime->milliseconds / 1000;
+}
+
+// 0x45A870
+int datetime_get_hour(DateTime* datetime)
+{
+    return datetime->milliseconds / 3600000 % 24;
+}
+
+// 0x45A890
+int datetime_get_hour_since_reference_date(DateTime* datetime)
+{
+    return datetime->milliseconds / 3600000 + 24 * datetime->days;
+}
+
+// 0x45A8B0
+int datetime_get_minute(DateTime* datetime)
+{
+    return datetime->milliseconds / 60000 % 60;
+}
+
+// 0x45A8D0
+int datetime_get_day_since_reference_date()
+{
+    return stru_5E8600.days + 1;
+}
+
+// 0x45A8E0
+int datetime_get_day(DateTime* datetime)
+{
+    return datetime->days % 30 + 1;
+}
+
+// 0x45A900
+int datetime_get_month(DateTime* datetime)
+{
+    return datetime->days / 30 % 12 + 1;
+}
+
+// 0x45A920
+int datetime_get_year(DateTime* datetime)
+{
+    return datetime_start_year + datetime->days / 360;
+}
+
+// 0x45A950
+void sub_45A950(DateTime* datetime, unsigned int milliseconds)
+{
+    datetime->days = 0;
+    if (milliseconds != 0) {
+        datetime->milliseconds = milliseconds;
+    } else {
+        datetime->milliseconds = 1;
+    }
+}
+
+// 0x45A970
+int datetime_compare(DateTime* datetime1, DateTime* datetime2)
+{
+    if (datetime2->days > datetime1->days) return -1;
+    if (datetime2->days < datetime1->days) return 1;
+    if (datetime2->milliseconds > datetime1->milliseconds) return -1;
+    if (datetime2->milliseconds < datetime1->milliseconds) return 1;
+    return 0;
+}
+
+// 0x45A9B0
+bool sub_45A9B0(DateTime* datetime, unsigned int milliseconds)
+{
+    DateTime other;
+    sub_45A950(&other, milliseconds);
+    return datetime_compare(datetime, &other) >= 0;
+}
+
+// 0x45A9E0
+void datetime_sub_milliseconds(DateTime* datetime, unsigned int milliseconds)
+{
+    if (datetime->milliseconds < milliseconds) {
+        datetime->milliseconds = milliseconds - datetime->milliseconds;
+        // TODO: Looks wrong, check.
+        datetime->days += datetime->milliseconds - milliseconds;
+    } else {
+        datetime->milliseconds -= milliseconds;
+    }
+}
+
+// 0x45AA10
+void datetime_add_milliseconds(DateTime* datetime, unsigned int milliseconds)
+{
+    datetime->milliseconds += milliseconds;
+    if (datetime->milliseconds > 86400000) {
+        datetime->days += datetime->milliseconds / 86400000;
+        datetime->milliseconds %= 86400000;
+    }
+}
+
+// 0x45AA50
+void datetime_add_datetime(DateTime* datetime, DateTime* other)
+{
+    datetime->days += other->days;
+    // NOTE: Uninline.
+    datetime_add_milliseconds(datetime, other->milliseconds);
+}
+
+// 0x45AAA0
+int datetime_current_hour()
+{
+    return stru_5E8600.milliseconds / 3600000 % 24;
+}
+
+// 0x45AAC0
+int datetime_current_minute()
+{
+    return stru_5E8600.milliseconds / 60000 % 60;
+}
+
+// 0x45AAE0
+int datetime_current_second()
+{
+    return stru_5E8600.milliseconds / 1000 % 60;
+}
+
+// 0x45AB00
+int datetime_current_day()
+{
+    return stru_5E8600.days / 30 % 12 + 1;
+}
+
+// 0x45AB20
+int datetime_current_month()
+{
+    return stru_5E8600.days % 30 + 1;
+}
+
+// 0x45AB40
+int datetime_current_year()
+{
+    return datetime_start_year + stru_5E8600.days / 360;
+}
+
+// 0x45AB70
+void datetime_format_datetime(DateTime* datetime, char* dest)
+{
+    if (dest != NULL) {
+        int year = datetime_get_year(datetime);
+        int month = datetime_get_month(datetime);
+        int day = datetime_get_day(datetime);
+        int hour = datetime_get_hour(datetime);
+        int minute = datetime_get_minute(datetime);
+        int second = datetime_seconds_since_reference_date(datetime) % 60;
+
+        char data[5];
+        int rc = GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_IDATE, data, sizeof(data));
+        if (rc == 0 || data[0] == '0') {
+            // Month/Day/Year (default)
+            sprintf(dest, "%02d:%02d:%02d %d/%d/%d", hour, minute, second, month, day, year);
+        } else if (data[1] == '1') {
+            // Day/Month/Year
+            sprintf(dest, "%02d:%02d:%02d %d/%d/%d", hour, minute, second, day, month, year);
+        } else {
+            // NOTE: Implying '2' - Year/Month/Day
+            sprintf(dest, "%02d:%02d:%02d %d/%d/%d", hour, minute, second, year, month, day);
+        }
+    }
+}
+
+// 0x45AC20
+void datetime_format_time(DateTime* time, char* dest)
+{
+    if (dest != NULL) {
+        int hour = datetime_get_hour(time);
+        int minute = datetime_get_minute(time);
+        int second = datetime_seconds_since_reference_date(time) % 60;
+        sprintf(dest, "%02d:%02d:%02d", hour, minute, second);
+    }
+}
+
+// 0x45AC70
+void datetime_format_date(DateTime* time, char* dest)
+{
+    if (dest != NULL) {
+        int year = datetime_get_year(time);
+        int month = datetime_get_month(time);
+        int day = datetime_get_day(time);
+
+        char data[5];
+        int rc = GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_IDATE, data, sizeof(data));
+        if (rc == 0 || data[0] == '0') {
+            // Month/Day/Year (default)
+            sprintf(dest, "%d/%d/%d", month, day, year);
+        } else if (data[1] == '1') {
+            // Day/Month/Year
+            sprintf(dest, "%d/%d/%d", day, month, year);
+        } else {
+            // NOTE: Implying '2' - Year/Month/Day
+            sprintf(dest, "%d/%d/%d", year, month, day);
+        }
+    }
+}
+
+// 0x45ACF0
+bool game_time_is_day()
+{
+    int hour = datetime_current_hour();
+    return hour >= 6 && hour < 18;
+}
+
+// 0x45AD10
+void datetime_set_start_year(int year)
+{
+    if (year >= 0) {
+        datetime_start_year = year;
+    }
+}
+
+// 0x45AD20
+void datetime_set_start_hour(int hour)
+{
+    if (hour >= 0) {
+        datetime_start_time_in_milliseconds = 3600000 * hour;
+        sub_45A950(&stru_5E8600, datetime_start_time_in_milliseconds);
+        sub_45A950(&stru_5E8608, datetime_start_time_in_milliseconds);
+    }
+}
+
+// 0x5B2790
+int sub_45AD70()
+{
+    return datetime_start_time_in_milliseconds;
+}
+
+// 0x45AD80
+static bool timeevent_do_nothing(TimeEvent* timeevent)
+{
+    return true;
+}
+
+// 0x45AD90
+bool timeevent_init(GameContext* ctx)
+{
+    dword_5E85F0 = ctx->editor;
+
+    if (!timeevent_initialized) {
+        dword_5E7638[0] = 0;
+        dword_5E7638[1] = 0;
+        dword_5E7638[2] = 0;
+        dword_5E7E14[0] = 0;
+        dword_5E7E14[1] = 0;
+        dword_5E7E14[2] = 0;
+
+        sub_45A950(&stru_5E85F8, 0);
+        sub_45A950(&stru_5E8600, datetime_start_time_in_milliseconds);
+        sub_45A950(&stru_5E8608, datetime_start_time_in_milliseconds);
+
+        tig_timer_start(&dword_5E8610);
+
+        sub_45B340();;
+
+        timeevent_initialized = true;
+    }
+
+    return true;
+}
+
+// 0x45AE20
+bool timeevent_set_funcs(TimeEventFuncs* funcs)
+{
+    if (timeevent_initialized) {
+        if (funcs != NULL) {
+            stru_5B2188[TIMEEVENT_TYPE_BKG_ANIM].process_func = funcs->bkg_anim_func;
+            stru_5B2188[TIMEEVENT_TYPE_WORLDMAP].process_func = funcs->worldmap_func;
+            stru_5B2188[TIMEEVENT_TYPE_AMBIENT_LIGHTING].process_func = funcs->ambient_lighting_func;
+            stru_5B2188[TIMEEVENT_TYPE_SLEEPING].process_func = funcs->sleeping_func;
+            stru_5B2188[TIMEEVENT_TYPE_CLOCK].process_func = funcs->clock_func;
+            stru_5B2188[TIMEEVENT_TYPE_MAINMENU].process_func = funcs->mainmenu_func;
+            stru_5B2188[TIMEEVENT_TYPE_MP_CTRL_UI].process_func = funcs->mp_ctrl_ui_func;
+        }
+    }
+
+    return true;
+}
+
+// 0x45AE80
+void timeevent_reset()
+{
+    timeevent_clear();
+    sub_45A950(&stru_5E85F8, 0);
+    sub_45A950(&stru_5E8600, datetime_start_time_in_milliseconds);
+    sub_45A950(&stru_5E8608, datetime_start_time_in_milliseconds);
+    tig_timer_start(&dword_5E8610);
+}
+
+// 0x45AEC0
+void timeevent_exit()
+{
+    timeevent_initialized = false;
+    timeevent_clear();
+}
+
+// 0x45AED0
+bool timeevent_save(TigFile* stream)
+{
+    if (!tig_file_fwrite(&stru_5E85F8, sizeof(stru_5E85F8), 1, stream) != 1) {
+        return false;
+    }
+
+    if (!tig_file_fwrite(&stru_5E8600, sizeof(stru_5E8600), 1, stream) != 1) {
+        return false;
+    }
+
+    if (!tig_file_fwrite(&stru_5E8608, sizeof(stru_5E8608), 1, stream) != 1) {
+        return false;
+    }
+
+    for (int index = 0; index < TIME_TYPE_COUNT; index++) {
+        long count_pos;
+        int count = 0;
+        if (tig_file_fgetpos(stream, &count_pos) != 0) {
+            return false;
+        }
+
+        if (tig_file_fwrite(&count, sizeof(count), 1, stream) != 1) {
+            return false;
+        }
+
+        TimeEventNode* timeevent = dword_5E7638[index];
+        while (timeevent != NULL) {
+            // NOTE: Original code is slightly different. It uses bitwise AND
+            // with 0x1 implying `saveable` is a bitfield.
+            if (stru_5B2188[timeevent->te.type].saveable) {
+                TimeEventNodeShouldSaveFunc* should_save_func = stru_5B2188[timeevent->te.type].should_save_func;
+                if (should_save_func == NULL || should_save_func(timeevent)) {
+                    if (!timeevent_save_node(&(stru_5B2188[timeevent->te.type]), timeevent, stream)) {
+                        return false;
+                    }
+
+                    count++;
+                }
+            }
+            timeevent = timeevent->next;
+        }
+
+        long pos;
+        if (tig_file_fgetpos(stream, &pos) != 0) {
+            return false;
+        }
+
+        if (tig_file_fsetpos(stream, &count_pos) != 0) {
+            return false;
+        }
+
+        if (tig_file_fwrite(&count, sizeof(count), 1, stream) != 1) {
+            return false;
+        }
+
+        if (tig_file_fsetpos(stream, &pos) != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// 0x45B050
+static bool timeevent_save_node(TimeEventTypeInfo* timeevent_type_info, TimeEventNode* node, TigFile* stream)
+{
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (tig_file_fwrite(&(node->te.datetime), sizeof(node->te.datetime), 1, stream) != 1) {
+        return false;
+    }
+
+    if (tig_file_fwrite(&(node->te.type), sizeof(node->te.type), 1, stream) != 1) {
+        return false;
+    }
+
+    for (int index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_INTEGER] & timeevent_type_info->flags) != 0) {
+            if (tig_file_fwrite(&(node->te.params[index].integer_value), sizeof(node->te.params[index].integer_value), 1, stream) != 1) {
+                return false;
+            }
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & timeevent_type_info->flags) != 0) {
+            if (!sub_4439D0(node->te.params[index].object_value, &(node->field_30[index]), stream)) {
+                return false;
+            }
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_LOCATION] & timeevent_type_info->flags) != 0) {
+            if (tig_file_fwrite(&(node->te.params[index].location_value), sizeof(node->te.params[index].location_value), 1, stream) != 1) {
+                return false;
+            }
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_FLOAT] & timeevent_type_info->flags) != 0) {
+            if (tig_file_fwrite(&(node->te.params[index].float_value), sizeof(node->te.params[index].float_value), 1, stream) != 1) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// 0x45B120
+bool timeevent_load(LoadContext* ctx)
+{
+    if (ctx->stream == NULL) {
+        return false;
+    }
+
+    if (tig_file_fread(&stru_5E85F8, sizeof(stru_5E85F8), 1, ctx->stream) != 1) {
+        return false;
+    }
+
+    if (tig_file_fread(&stru_5E8600, sizeof(stru_5E8600), 1, ctx->stream) != 1) {
+        return false;
+    }
+
+    if (tig_file_fread(&stru_5E8608, sizeof(stru_5E8608), 1, ctx->stream) != 1) {
+        return false;
+    }
+
+    for (int time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
+        int count;
+        if (tig_file_fread(&count, sizeof(count), 1, ctx->stream) != 1) {
+            return false;
+        }
+
+        for (int index = 0; index < count; index++) {
+            TimeEvent timeevent;
+            if (!timeevent_load_node(&timeevent, ctx->stream)) {
+                return false;
+            }
+
+            if (!sub_45BAF0(&timeevent)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// 0x45B200
+static bool timeevent_load_node(TimeEvent* timeevent, TigFile* stream)
+{
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (tig_file_fread(&(timeevent->datetime), sizeof(timeevent->datetime), 1, stream) != 1) {
+        return false;
+    }
+
+    if (tig_file_fread(&(timeevent->type), sizeof(timeevent->type), 1, stream) != 1) {
+        return false;
+    }
+
+    for (int index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_INTEGER] & stru_5B2188[timeevent->type]) != 0) {
+            if (tig_file_fread(&(timeevent->params[index].integer_value), sizeof(timeevent->params[index].integer_value), 1, stream) != 1) {
+                return false;
+            }
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[timeevent->type]) != 0) {
+            // NOTE: Not sure why it's read into temporary variable.
+            object_id_t obj;
+            if (!sub_443AD0(obj, 0, stream)) {
+                return false;
+            }
+            timeevent->params[index].object_value = obj;
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_LOCATION] & stru_5B2188[timeevent->type]) != 0) {
+            if (tig_file_fread(&(timeevent->params[index].location_value), sizeof(timeevent->params[index].location_value), 1, stream) != 1) {
+                return false;
+            }
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_FLOAT] & stru_5B2188[timeevent->type]) != 0) {
+            if (tig_file_fread(&(timeevent->params[index].float_value), sizeof(timeevent->params[index].float_value), 1, stream) != 1) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// 0x45B300
+bool sub_45B300()
+{
+    if (dword_5E8618 == 0) {
+        return sub_52A900();
+    } else {
+        return true;
+    }
+}
+
+// 0x45B320
+void sub_45B320()
+{
+    if (dword_5E8618 < 30) {
+        dword_5E8618++;
+        dword_5DE6E0 = true;
+    }
+}
+
+// 0x45B340
+void sub_45B340()
+{
+    if (dword_5E8618 > 0) {
+        dword_5E8618--;
+        if (dword_5E8618 == 0) {
+            dword_5DE6E0 = false;
+        }
+    }
+}
+
+// 0x45B360
+void sub_45B360()
+{
+    dword_5E8618 = 0;
+    dword_5DE6E0 = false;
+}
+
+// 0x45B600
+static void timeevent_node_destroy(TimeEventNode* node)
+{
+    free(node);
+}
+
+// 0x45B610
+int sub_45B610(TimeEventNode *timeevent)
+{
+    return sub_45B620(timeevent, false);
+}
+
+// 0x45B750
+void sub_45B750()
+{
+    for (int index = 0; index < TIME_TYPE_COUNT; index++) {
+        TimeEventNode** node_ptr = &(dword_5E7E14[index]);
+        while (*node_ptr != NULL) {
+            TimeEventNode* node = *node_ptr;
+            *node_ptr = node->next;
+            if (sub_45B7A0(node)) {
+                sub_45BB40(node);
+            } else {
+                timeevent_node_destroy(node);
+            }
+        }
+    }
+}
+
+// 0x45B7A0
+bool sub_45B7A0(TimeEventNode* node)
+{
+    TimeEventTypeInfo* timeevent_type_info = &(stru_5B2188[node->te.type]);
+
+    for (int index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & timeevent_type_info->flags) != 0) {
+            if (!sub_4E5470(node->te.params[index].object_value)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// 0x45B800
+bool sub_45B800(TimeEvent* timeevent, DateTime* datetime)
+{
+    return sub_45B8A0(timeevent, datetime, 0);
+}
+
+// 0x45B820
+bool sub_45B820(TimeEvent* timeevent)
+{
+    dword_5E8620 = true;
+
+    DateTime datetime;
+    sub_45A950(&datetime, 0);
+    bool success = sub_45B800(timeevent, &datetime);
+
+    dword_5E8620 = false;
+}
+
+// 0x45B860
+bool sub_0x45B860(TimeEvent* timeevent, DateTime* datetime)
+{
+    return timeevent_add_base_offset_at_func(timeevent, datetime, 0);
+}
+
+// 0x45B880
+bool sub_45B880(TimeEvent* timeevent, DateTime* datetime, DateTime* a3)
+{
+    return sub_45BA30(timeevent, datetime, NULL, a3);
+}
+
+// 0x45B8A0
+bool sub_45B8A0(TimeEvent* timeevent, DateTime* datetime, DateTime* a3)
+{
+    return sub_45BA30(timeevent, datetime, a3, NULL);
+}
+
+// 0x45B8C0
+bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime, DateTime* a3)
+{
+    if (timeevent == NULL) {
+        return false;
+    }
+
+    if (timeevent->type >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    if (dword_5E85F0 != 0) {
+        return false;
+    }
+
+    TimeEventNode* node = timeevent_node_create();
+    if (node == NULL) {
+        tig_debug_printf("timeevent_add_base_offset_at_func: Error: failed to malloc node!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    timeevent->datetime = *datetime;
+
+    TimeEventNode** node_ptr;
+    int time_type = stru_5B2188[timeevent->type].time_type;
+    if (!timeevent_in_ping || dword_5E8620) {
+        node_ptr = &(dword_5E7638[time_type]);
+    } else {
+        node_ptr = &(dword_5E7E14[time_type]);
+    }
+
+    while (*node_ptr != NULL) {
+        if (datetime_compare(&(timeevent->datetime), &((*node_ptr)->te.datetime)) <= 0) {
+            break;
+        }
+
+        node_ptr = &((*node_ptr)->next);
+    }
+
+    node->next = *node_ptr;
+    node->te = *timeevent;
+
+    for (int index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[timeevent->type].flags) != 0) {
+            sub_443EB0(timeevent->params[index].object_value, &(node->field_30[index]));
+        } else {
+            node->field_30[index].field_0 = 0;
+        }
+    }
+
+    *node_ptr = node;
+
+    if (a3 != NULL) {
+        *a3 = timeevent->datetime;
+    }
+
+    return true;
+}
+
+// 0x45BA20
+static TimeEventNode* timeevent_node_create()
+{
+    return (TimeEventNode*)malloc(sizeof(TimeEventNode));
+}
+
+// 0x45BA30
+bool sub_45BA30(TimeEvent* timeevent, DateTime* datetime, DateTime* a3, DateTime* a4)
+{
+    if (timeevent == NULL) {
+        return false;
+    }
+
+    if (timeevent->type >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    DateTime v1;
+    if (a3 != NULL && (a3->days != 0 || a3->milliseconds != 0)) {
+        v1 = *a3;
+    } else {
+        switch (stru_5B2188[timeevent->type].time_type) {
+        case TIME_TYPE_REAL_TIME:
+            v1 = stru_5E85F8;
+            break;
+        case TIME_TYPE_GAME_TIME:
+            v1 = stru_5E8600;
+            break;
+        default:
+            // FIXME: Use `TIME_TYPE_ANIMATIONS` explicitly.
+            v1 = stru_5E8608;
+            break;
+        }
+    }
+
+    datetime_add_datetime(&v1, datetime);
+    return timeevent_add_base_offset_at_func(timeevent, &v1, a4);
+}
+
+// 0x45BAF0
+bool sub_45BAF0(TimeEvent* timeevent)
+{
+    if (timeevent == NULL) {
+        return false;
+    }
+
+    if (timeevent->type >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    if (dword_5E85F0 != 0) {
+        return false;
+    }
+
+    TimeEventNode* node = timeevent_node_create();
+    memcpy(&(node->te), timeevent, sizeof(TimeEvent));
+    node->next = NULL;
+    // NOTE: Unsafe, leaking memory if underlying function fails.
+    return sub_45BB40(node);
+}
+
+// 0x45BB40
+bool sub_45BB40(TimeEventNode* node)
+{
+    if (node == NULL) {
+        return false;
+    }
+
+    TimeEventNode** node_ptr;
+
+    int time_type = stru_5B2188[node->te.type].time_type;
+    if (timeevent_in_ping) {
+        node_ptr = &(dword_5E7E14[time_type]);
+    } else {
+        node_ptr = &(dword_5E7638[time_type]);
+    }
+
+    while (*node_ptr != NULL) {
+        if (datetime_compare(&(node->te.datetime), &((*node_ptr)->te.datetime)) <= 0) {
+            break;
+        }
+        node_ptr = &((*node_ptr)->next);
+    }
+
+    node->next = *node_ptr;
+
+    for (int index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[node->te.type].flags) != 0) {
+            sub_443EB0(node->te.params[index].object_value, &(node->field_30[index]));
+        } else {
+            node->field_30[index].field_0 = 0;
+        }
+    }
+
+    *node_ptr = node;
+
+    return true;
+}
+
+// 0x45BC20
+void timeevent_clear()
+{
+    TimeEventNode* node;
+
+    for (int index = 0; index < TIME_TYPE_COUNT; index++) {
+        while (dword_5E7638[index] != NULL) {
+            node = dword_5E7638[index];
+            dword_5E7638[index] = node->next;
+
+            if (stru_5B2188[node->te.type].exit_func != NULL) {
+                stru_5B2188[node->te.type].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+        }
+
+        while (dword_5E7E14[index] != NULL) {
+            node = dword_5E7E14[index];
+            dword_5E7E14[index] = node->next;
+
+            if (stru_5B2188[node->te.type].exit_func != NULL) {
+                stru_5B2188[node->te.type].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+        }
+    }
+}
+
+// 0x45BCE0
+void timeevent_clear_for_map_close()
+{
+    sub_424250();
+
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_ANIM);
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_MAGICTECH);
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_AI);
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_COMBAT);
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_TB_COMBAT);
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_WORLDMAP);
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_TELEPORTED);
+
+    if (sub_4D3410()) {
+        char* name;
+        if (map_get_name(sub_40FF40(), &name)) {
+            timeevent_save_nodes_to_map(name);
+            anim_save_nodes_to_map(name);
+            magictech_save_nodes_to_map(name);
+        } else {
+            tig_debug_printf("TimeEvent: timeevent_clear_for_map_close: ERROR: Failed to find map name!\n");
+        }
+    }
+}
+
+// 0x45BD70
+bool timeevent_clear_all_typed(int list)
+{
+    TimeEventNode** node_ptr;
+
+    if (list >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+        } else {
+            node_ptr = &(node->next);
+        }
+    }
+
+    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+        } else {
+            node_ptr = &(node->next);
+        }
+    }
+
+    return true;
+}
+
+// 0x45BE40
+bool timeevent_clear_one_typed(int list)
+{
+    TimeEventNode** node_ptr;
+
+    if (list >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+
+            break;
+        }
+
+        node_ptr = &(node->next);
+    }
+
+    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+
+            break;
+        }
+
+        node_ptr = &(node->next);
+    }
+
+    return true;
+}
+
+// 0x45BF10
+bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback)
+{
+    TimeEventNode** node_ptr;
+
+    if (list >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list && callback(&(node->te))) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+        } else {
+            node_ptr = &(node->next);
+        }
+    }
+
+    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list && callback(&(node->te))) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+        } else {
+            node_ptr = &(node->next);
+        }
+    }
+
+    return true;
+}
+
+// 0x45BFF0
+bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback)
+{
+    TimeEventNode** node_ptr;
+
+    if (list >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list && callback(&(node->te))) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+
+            break;
+        }
+
+        node_ptr = &(node->next);
+    }
+
+    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    while (*node_ptr != NULL) {
+        TimeEventNode* node = *node_ptr;
+        if (node->te.type == list && callback(&(node->te))) {
+            *node_ptr = node->next;
+
+            if (stru_5B2188[list].exit_func != NULL) {
+                stru_5B2188[list].exit_func(node);
+            }
+
+            timeevent_node_destroy(node);
+
+            break;
+        }
+
+        node_ptr = &(node->next);
+    }
+
+    return true;
+}
+
+// 0x45C0E0
+bool sub_45C0E0(int list)
+{
+    TimeEventNode* node;
+
+    if (list >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    node = dword_5E7638[stru_5B2188[list].time_type];
+    while (node != NULL) {
+        if (node->te.type == list) {
+            return true;
+        }
+
+        node = node->next;
+    }
+
+    node = dword_5E7638[stru_5B2188[list].time_type];
+    while (node != NULL) {
+        if (node->te.type == list) {
+            return true;
+        }
+
+        node = node->next;
+    }
+
+    return false;
+}
+
+// 0x45C140
+bool sub_45C140(int list, TimeEventEnumerateFunc* callback)
+{
+    TimeEventNode* node;
+
+    if (list >= TIMEEVENT_TYPE_COUNT) {
+        return false;
+    }
+
+    node = dword_5E7638[stru_5B2188[list].time_type];
+    while (node != NULL) {
+        if (node->te.type == list && callback(&(node->te))) {
+            return true;
+        }
+
+        node = node->next;
+    }
+
+    node = dword_5E7638[stru_5B2188[list].time_type];
+    while (node != NULL) {
+        if (node->te.type == list && callback(&(node->te))) {
+            return true;
+        }
+
+        node = node->next;
+    }
+
+    return false;
+}
+
+// 0x45C1C0
+bool sub_45C1C0(unsigned int milliseconds)
+{
+    DateTime datetime;
+    sub_45A950(&datetime, milliseconds);
+    // NOTE: Uninline.
+    return sub_45C200(&datetime);
+}
+
+// 0x45C200
+bool sub_45C200(DateTime* datetime)
+{
+    datetime_add_datetime(&stru_5E8600, datetime);
+    datetime_add_datetime(&stru_5E8608, datetime);
+    return true;
+}
+
+// 0x45C230
+void sub_45C230(DateTime* datetime1, DateTime* datetime2)
+{
+    dword_5E8628 = 0;
+
+    if (datetime_compare(datetime1, &stru_5E8600) > 0) {
+        stru_5E8600 = *datetime1;
+    }
+
+    if (datetime_compare(datetime2, &stru_5E8608) > 0) {
+        stru_5E8608 = *datetime2;
+    }
+}
+
+// 0x45C2F0
+void timeevent_save_nodes_to_map(const char* name)
+{
+    char path[MAX_PATH];
+    sprintf(path, "Save\\Current\\maps\\%s\\TimeEvent.dat", name);
+
+    TigFile* stream;
+    bool exists = false;
+    if (tig_io_fileexists(path, NULL)) {
+        exists = true;
+        stream = tig_file_fopen(path, "r+b");
+    } else {
+        stream = tig_file_fopen(path, "wb");
+    }
+
+    if (stream == NULL) {
+        tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Couldn't create TimeEvent data file for map!\n");
+        return;
+    }
+
+    int count = 0;
+    if (exists) {
+        if (tig_file_fseek(stream, 0, SEEK_SET) != 0) {
+            tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Seeking to start of data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+
+        if (tig_file_fread(&count, sizeof(count), 1, stream) != 1) {
+            tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Reading Header to data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+
+        if (tig_file_fseek(stream, 0, SEEK_END) != 0) {
+            tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Seeking to end of data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+    } else {
+        if (tig_file_fwrite(&count, sizeof(count), 1, stream) != 1) {
+            tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+    }
+
+    for (int time_type = 0; time_type = TIME_TYPE_COUNT; time_type++) {
+        TimeEventNode** node_ptr = &(dword_5E7638[time_type]);
+        while (*node_ptr != NULL) {
+            TimeEventNode* node = *node_ptr;
+            if (sub_45C500(node) < 0) {
+                *node_ptr = node->next;
+
+                if (!timeevent_save_node(&(stru_5B2188[node->te.type]), node, stream)) {
+                    tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Failed to save out nodes!\n");
+                    tig_file_fclose(stream);
+
+                    // FIXME: Other error-handling code does not remove this
+                    // file.
+                    tig_remove(stream);
+
+                    return;
+                }
+
+                count++;
+
+                if (stru_5B2188[node->te.type].exit_func != NULL) {
+                    stru_5B2188[node->te.type].exit_func(node);
+                }
+
+                timeevent_node_destroy(node);
+            } else {
+                node_ptr = &(node->next);
+            }
+        }
+    }
+
+    if (tig_file_fseek(stream, 0, SEEK_SET) != 0) {
+        tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    if (tig_file_fwrite(&count, sizeof(count), 1, stream) != 1) {
+        tig_debug_printf("TimeEvent: timeevent_save_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    tig_file_fclose(stream);
+}
+
+// 0x45C500
+int sub_45C500(TimeEventNode* node)
+{
+    int count1 = 0;
+    int count2 = 0;
+    for (int index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[node->te.type].flags) != 0) {
+            if (sub_4D3420(node->te.params[index].object_value)) {
+                count1++;
+            } else {
+                count2++;
+            }
+        }
+    }
+
+    if (count2 > 0) {
+        return -1;
+    }
+
+    return count1 > 0 ? 1 : 0;
+}
+
+// 0x45C580
+void sub_45C580()
+{
+    for (int time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
+        TimeEventNode* node;
+
+        node = dword_5E7638[time_type];
+        while (node != NULL) {
+            sub_45B620(node, true);
+            node = node->next;
+        }
+
+        node = dword_5E7E14[time_type];
+        while (node != NULL) {
+            sub_45B620(node, true);
+            node = node->next;
+        }
+    }
+
+    char* name;
+    if (map_get_name(sub_40FF40(), &name)) {
+        timeevent_load_nodes_to_map(name);
+        anim_load_nodes_from_map(name);
+        magictech_load_nodes_from_map(name);
+    }
+}
+
+// 0x45C610
+void timeevent_load_nodes_to_map(const char* name)
+{
+    char path[MAX_PATH];
+    sprintf(path, "Save\\Current\\maps\\%s\\TimeEvent.dat", name);
+
+    if (!tig_io_fileexists(path, NULL)) {
+        return;
+    }
+
+    TigFile* stream = tig_file_fopen(path, "rb");
+    if (stream == NULL) {
+        tig_debug_printf("TimeEvent: timeevent_load_nodes_from_map: ERROR: Couldn't open TimeEvent data file for map!\n");
+        return;
+    }
+
+    int count = 0;
+    if (tig_file_fread(&count, sizeof(count), 1, stream) != 1) {
+        tig_debug_printf("TimeEvent: timeevent_load_nodes_to_map: ERROR: Reading Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    int index;
+    for (index = 0; index < count; index++) {
+        TimeEvent timeevent;
+        if (timeevent_load_node(&timeevent, stream)) {
+            break;
+        }
+
+        if (!sub_45BAF0(&timeevent)) {
+            break;
+        }
+    }
+
+    tig_file_fclose(stream);
+
+    if (index < count) {
+        tig_debug_printf("TimeEvent: timeevent_load_nodes_from_map: ERROR: Failed to load all nodes!\n");
+    }
+
+    tig_remove(path);
+}
+
+// 0x45C720
+void sub_45C720(int map)
+{
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_ANIM);
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_MAGICTECH);
+
+    char* name;
+    if (map_get_name(map, &name)) {
+        char path[MAX_PATH];
+        sprintf(path, "Save\\Current\\maps\\%s", name);
+
+        if (!sub_52E220(path)) {
+            sub_52DFE0(path);
+        }
+
+        magictech_break_nodes_to_map(name);
+        anim_break_nodes_to_map(name);
+        timeevent_break_nodes_to_map(name);
+    }
+}
+
+// 0x45C7B0
+void timeevent_break_nodes_to_map(const char* name)
+{
+    char path[MAX_PATH];
+    sprintf(path, "Save\\Current\\maps\\%s\\TimeEvent.dat", name);
+
+    TigFile* stream;
+    bool exists = false;
+    if (tig_io_fileexists(path, NULL)) {
+        exists = true;
+        stream = tig_file_fopen(path, "r+b");
+    } else {
+        stream = tig_file_fopen(path, "wb");
+    }
+
+    if (stream == NULL) {
+        tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Couldn't create TimeEvent data file for map!\n");
+        return;
+    }
+
+    int count = 0;
+    if (exists) {
+        if (tig_file_fseek(stream, 0, SEEK_SET) != 0) {
+            tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Seeking to start of data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+
+        if (tig_file_fread(&count, sizeof(count), 1, stream) != 1) {
+            tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Reading Header to data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+
+        if (tig_file_fseek(stream, 0, SEEK_END) != 0) {
+            tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Seeking to end of data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+    } else {
+        if (tig_file_fwrite(&count, sizeof(count), 1, stream) != 1) {
+            tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+    }
+
+    for (int time_type = 0; time_type = TIME_TYPE_COUNT; time_type++) {
+        TimeEventNode** node_ptr = &(dword_5E7638[time_type]);
+        while (*node_ptr != NULL) {
+            TimeEventNode* node = *node_ptr;
+            if (sub_45C500(node) > 0) {
+                *node_ptr = node->next;
+
+                if (!timeevent_save_node(&(stru_5B2188[node->te.type]), node, stream)) {
+                    tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Failed to save out nodes!\n");
+                    tig_file_fclose(stream);
+
+                    // FIXME: Other error-handling code does not remove this
+                    // file.
+                    tig_remove(stream);
+
+                    return;
+                }
+
+                count++;
+
+                if (stru_5B2188[node->te.type].exit_func != NULL) {
+                    stru_5B2188[node->te.type].exit_func(node);
+                }
+
+                timeevent_node_destroy(node);
+            } else {
+                node_ptr = &(node->next);
+            }
+        }
+    }
+
+    if (tig_file_fseek(stream, 0, SEEK_SET) != 0) {
+        tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    if (tig_file_fwrite(&count, sizeof(count), 1, stream) != 1) {
+        tig_debug_printf("TimeEvent: timeevent_break_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    tig_file_fclose(stream);
+}
+
+// 0x45CA00
+static bool debug_timeevent_process(TimeEvent* timeevent)
+{
+    unsigned int now;
+    tig_timer_start(&now);
+
+    int v1 = tig_timer_between(timeevent->params[0].integer_value, now);
+    tig_debug_printf("TimeEvent: t:%d(%d), deviation: %3.2f%%\n",
+        v1,
+        timeevent->params[1].integer_value,
+        ((double)v1 / (double)timeevent->params[1].integer_value - 1.0) * 100.0);
+
+    return true;
+}
+
+// 0x45CA60
+void timeevent_debug_lists()
+{
+    TimeEventNode* node;
+    int time_type_counts[TIME_TYPE_COUNT] = { 0 };
+    int timeevent_type_counts[TIMEEVENT_TYPE_COUNT] = { 0 };
+
+    tig_debug_printf("\n\nTimeEvent DEBUG Lists:\n");
+    tig_debug_printf("----------------------\n\n");
+
+    for (int type = 0; type < TIME_TYPE_COUNT; type++) {
+        DateTime time;
+
+        switch (type) {
+        case TIME_TYPE_REAL_TIME:
+            time = stru_5E85F8;
+            break;
+        case TIME_TYPE_GAME_TIME:
+            time = stru_5E8600;
+            break;
+        case TIME_TYPE_ANIMATIONS:
+            time = stru_5E8608;
+            break;
+        default:
+            // NOTE: Unreachable, switch is exhaustive.
+            tig_debug_printf("TimeEvent: timeevent_debug_lists: ERROR: Out-of-Bounds Time Type!\n");
+            time = stru_5E8600;
+            break;
+        }
+
+        char time_str[TIME_STR_LENGTH];
+        datetime_format_datetime(&time, time_str);
+        tig_debug_printf("\t[%s] Game Time: [%s]\n", off_5B2178[type], time_str);
+
+        node = dword_5E7638[type];
+        while (node != NULL) {
+            time_type_counts[type]++;
+            timeevent_type_counts[node->te.type]++;
+            timeevent_debug_node(node, time_type_counts[type]);
+            node = node->next;
+        }
+
+        node = dword_5E7638[type];
+        while (node != NULL) {
+            time_type_counts[type]++;
+            timeevent_type_counts[node->te.type]++;
+            timeevent_debug_node(node, time_type_counts[type]);
+            node = node->next;
+        }
+    }
+
+    tig_debug_printf("\n\nTimeEvent List Counts:\n");
+
+    for (int type = 0; type < TIME_TYPE_COUNT; type++) {
+        tig_debug_printf("   List [%s]: %d\n", off_5B2178[type], time_type_counts[type]);
+    }
+
+    tig_debug_printf("\nTimeEvent Type Counts:\n");
+
+    for (int type = 0; type < TIMEEVENT_TYPE_COUNT; type++) {
+        tig_debug_printf("   Type [%s]: %d\n", stru_5B2188[type].name, timeevent_type_counts[type]);
+    }
+}
+
+// 0x45CC10
+static void timeevent_debug_node(TimeEventNode* node, int node_index)
+{
+    char time_str[TIME_STR_LENGTH];
+    datetime_format_datetime(&(node->te.datetime), time_str);
+    tig_debug_printf("TimeEvent: DBG: Node(%d): Type: [%s], Time: [%s]", node_index, stru_5B2188[node->type].name, time_str);
+
+    for (int index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_INTEGER] & stru_5B2188[node->type].flags) != 0) {
+            tig_debug_printf(", D%d[%d]val", index, node->te.params[index].integer_value);
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[node->type].flags) != 0) {
+            // 0x5E7E20
+            static char object_name[2000];
+
+            if (sub_4E5470(node->te.params[index].object_value)) {
+                if (node->te.params[index].object_value != OBJ_HANDLE_NULL) {
+                    sub_441B60(node->te.params[index].object_value, node->te.params[index].object_value, object_name);
+                } else {
+                    strcpy(object_name, "<OBJ_HANDLE_NULL>");
+                }
+            } else {
+                strcpy(object_name, "<INVALIDATED OBJ>");
+            }
+            tig_debug_printf(", D%d[%s(%I64d)]obj", index, object_name, node->te.params[index].object_value);
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_LOCATION] & stru_5B2188[node->te.type].flags) != 0) {
+            tig_debug_printf(", D%d[%d x %d]loc", index, node->te.params[index].location_value, node->te.params[index].location_value);
+        } else if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_FLOAT] & stru_5B2188[node->te.type].flags) != 0) {
+            tig_debug_printf(", D%d[%f]loc", index, node->te.params[index].float_value);
+        }
+    }
+}

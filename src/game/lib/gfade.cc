@@ -1,5 +1,6 @@
 #include "game/lib/gfade.h"
 
+#include "game/lib/li.h"
 #include "tig/art.h"
 #include "tig/color.h"
 #include "tig/font.h"
@@ -85,7 +86,23 @@ void sub_4BDFA0(FadeData* fade_data)
 }
 
 // 0x4BE050
-void sub_4BE050()
+bool gfade_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    FadeData fade_data;
+    fade_data.field_0 = timeevent->params[0].integer_value;
+    fade_data.color = timeevent->params[1].integer_value;
+    fade_data.duration = timeevent->params[2].float_value;
+    fade_data.steps = timeevent->params[3].integer_value;
+    fade_data.field_10 = 0;
+
+    if ((fade_data.field_0 & 1) != 0) {
+        dword_5FC4B0(NULL);
+        dword_5FC4BC();
+        tig_window_display();
+        sub_4BBC00();
+    }
+
+    sub_4BDFA0(&fade_data);
+
+    return true;
 }

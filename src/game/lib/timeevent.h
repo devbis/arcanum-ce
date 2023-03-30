@@ -1,0 +1,154 @@
+#ifndef ARCANUM_GAMELIB_TIMEEVENT_H_
+#define ARCANUM_GAMELIB_TIMEEVENT_H_
+
+#include "game/context.h"
+#include "game/lib/location.h"
+#include "game/lib/object.h"
+
+#define TIME_STR_LENGTH 20
+
+typedef enum TimeType {
+    TIME_TYPE_REAL_TIME,
+    TIME_TYPE_GAME_TIME,
+    TIME_TYPE_ANIMATIONS,
+    TIME_TYPE_COUNT,
+};
+
+typedef enum TimeEventType {
+    TIMEEVENT_TYPE_DEBUG,
+    TIMEEVENT_TYPE_ANIM,
+    TIMEEVENT_TYPE_BKG_ANIM,
+    TIMEEVENT_TYPE_FIDGET_ANIM,
+    TIMEEVENT_TYPE_SCRIPT,
+    TIMEEVENT_TYPE_MAGICTECH,
+    TIMEEVENT_TYPE_POISON,
+    TIMEEVENT_TYPE_RESTING,
+    TIMEEVENT_TYPE_FATIGUE,
+    TIMEEVENT_TYPE_AGING,
+    TIMEEVENT_TYPE_AI,
+    TIMEEVENT_TYPE_COMBAT,
+    TIMEEVENT_TYPE_TB_COMBAT,
+    TIMEEVENT_TYPE_AMBIENT_LIGHTING,
+    TIMEEVENT_TYPE_WORLDMAP,
+    TIMEEVENT_TYPE_SLEEPING,
+    TIMEEVENT_TYPE_CLOCK,
+    TIMEEVENT_TYPE_NPC_WAIT_HERE,
+    TIMEEVENT_TYPE_MAINMENU,
+    TIMEEVENT_TYPE_LIGHT,
+    TIMEEVENT_TYPE_MULTIPLAYER,
+    TIMEEVENT_TYPE_LOCK,
+    TIMEEVENT_TYPE_NPC_RESPAWN,
+    TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM,
+    TIMEEVENT_TYPE_DECAY_DEAD_BODIE,
+    TIMEEVENT_TYPE_ITEM_DECAY,
+    TIMEEVENT_TYPE_COMBAT_FOCUS_WIPE,
+    TIMEEVENT_TYPE_NEWSPAPERS,
+    TIMEEVENT_TYPE_TRAPS,
+    TIMEEVENT_TYPE_FADE,
+    TIMEEVENT_TYPE_MP_CTRL_UI,
+    TIMEEVENT_TYPE_UI,
+    TIMEEVENT_TYPE_TELEPORTED,
+    TIMEEVENT_TYPE_SCENERY_RESPAWN,
+    TIMEEVENT_TYPE_RANDOM_ENCOUNTER,
+    TIMEEVENT_TYPE_COUNT,
+};
+
+typedef enum TimeEventParamType {
+    TIMEEVENT_PARAM_TYPE_INTEGER,
+    TIMEEVENT_PARAM_TYPE_OBJECT,
+    TIMEEVENT_PARAM_TYPE_LOCATION,
+    TIMEEVENT_PARAM_TYPE_FLOAT,
+    TIMEEVENT_PARAM_TYPE_COUNT,
+};
+
+typedef struct DateTime {
+    unsigned int days;
+    unsigned int milliseconds;
+};
+
+typedef union TimeEventParam {
+    int integer_value;
+    object_id_t object_value;
+    location_t location_value;
+    float float_value;
+};
+
+// Max number of params timeevent params.
+#define TIMEEVENT_PARAM_COUNT 4
+
+typedef struct TimeEvent {
+    DateTime datetime;
+    int type;
+    TimeEventParam params[TIMEEVENT_PARAM_COUNT];
+};
+
+static_assert(sizeof(TimeEvent) == 0x30, "wrong size");
+
+typedef bool(TimeEventProcessFunc)(TimeEvent* timeevent);
+typedef bool(TimeEventEnumerateFunc)(TimeEvent* timeevent);
+
+typedef struct TimeEventFuncs {
+    TimeEventProcessFunc* bkg_anim_func;
+    TimeEventProcessFunc* worldmap_func;
+    TimeEventProcessFunc* ambient_lighting_func;
+    TimeEventProcessFunc* sleeping_func;
+    TimeEventProcessFunc* clock_func;
+    TimeEventProcessFunc* mainmenu_func;
+    TimeEventProcessFunc* mp_ctrl_ui_func;
+};
+
+// See 0x45AE20.
+static_assert(sizeof(TimeEventFuncs) == 0x1C, "wrong size");
+
+DateTime sub_45A7C0();
+DateTime sub_45A7D0(DateTime* other);
+int sub_45A7F0();
+int sub_45A820(unsigned int milliseconds);
+int datetime_seconds_since_reference_date(DateTime* datetime);
+int datetime_get_hour(DateTime* datetime);
+int datetime_get_hour_since_reference_date(DateTime* datetime);
+int datetime_get_minute(DateTime* datetime);
+int datetime_get_day_since_reference_date();
+int datetime_get_day(DateTime* datetime);
+int datetime_get_month(DateTime* datetime);
+int datetime_get_year(DateTime* datetime);
+void sub_45A950(DateTime* datetime, unsigned int milliseconds);
+int datetime_compare(DateTime* datetime1, DateTime* datetime2);
+bool sub_45A9B0(DateTime* datetime, unsigned int milliseconds);
+void datetime_sub_milliseconds(DateTime* datetime, unsigned int milliseconds);
+void datetime_add_milliseconds(DateTime* datetime, unsigned int milliseconds);
+void datetime_add_datetime(DateTime* datetime, DateTime* other);
+int datetime_current_hour();
+int datetime_current_minute();
+int datetime_current_second();
+int datetime_current_day();
+int datetime_current_month();
+int datetime_current_year();
+void datetime_format_datetime(DateTime* datetime, char* dest);
+void datetime_format_time(DateTime* time, char* dest);
+void datetime_format_date(DateTime* time, char* dest);
+bool game_time_is_day();
+void datetime_set_start_year(int year);
+void datetime_set_start_hour(int ratio);
+int sub_45AD70();
+bool timeevent_init(GameContext* ctx);
+bool timeevent_set_funcs(TimeEventFuncs* funcs);
+void timeevent_reset();
+void timeevent_exit();
+bool timeevent_save(TigFile* stream);
+bool timeevent_load(LoadContext* ctx);
+bool sub_45B300();
+void sub_45B320();
+void sub_45B340();
+void sub_45B360();
+void timeevent_clear();
+void timeevent_clear_for_map_close();
+bool timeevent_clear_all_typed(int list);
+bool timeevent_clear_one_typed(int list);
+bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback);
+bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback);
+bool sub_45C0E0(int list);
+bool sub_45C140(int list, TimeEventEnumerateFunc* callback);
+void timeevent_debug_lists();
+
+#endif /* ARCANUM_GAMELIB_TIMEEVENT_H_ */

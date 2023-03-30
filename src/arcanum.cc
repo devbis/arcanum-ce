@@ -39,10 +39,10 @@ int dword_5A5978 = -1;
 // 5B2---
 
 // 0x5B278C
-int dword_5B278C;
+int datetime_start_year;
 
 // 0x5B2790
-int dword_5B2790;
+int datetime_start_time_in_milliseconds;
 
 // 5B3---
 
@@ -1486,7 +1486,7 @@ void j_mt_ai_reset_()
 }
 
 // 0x45A8D0
-int sub_45A8D0()
+int datetime_get_day_since_reference_date()
 {
     return dword_5E8600 + 1;
 }
@@ -1499,17 +1499,17 @@ int sub_45A8E0(void* a1)
 }
 
 // 0x45AD10
-void sub_45AD10(int a1)
+void datetime_set_start_year(int a1)
 {
     if (a1 >= 0) {
-        dword_5B278C = a1;
+        datetime_start_year = a1;
     }
 }
 
 // 0x45AD70
 int sub_45AD70()
 {
-    return dword_5B2790;
+    return datetime_start_time_in_milliseconds;
 }
 
 // 0x45AD80

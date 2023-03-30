@@ -6,6 +6,8 @@
 #include "tig/video.h"
 #include "tig/window.h"
 
+static void sub_4BBCE0();
+
 // 0x5FC3F8
 static unsigned int dword_5FC3F8;
 
@@ -120,6 +122,12 @@ void sub_4BBC10()
     dword_5FC43C--;
 }
 
+// 0x4BBC20
+int sub_4BBC20()
+{
+    return dword_5FC43C;
+}
+
 // 0x4BBC30
 void sub_4BBC30()
 {
@@ -139,7 +147,7 @@ void sub_4BBC80()
 }
 
 // 0x4BBCE0
-void sub_4BBCE0()
+static void sub_4BBCE0()
 {
     stru_5FC410.src_art_id = dword_5FC3F8;
     tig_art_blit(&stru_5FC410);

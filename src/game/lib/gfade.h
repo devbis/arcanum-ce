@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_LIB_GFADE_H_
 
 #include "game/context.h"
+#include "game/lib/timeevent.h"
 
 typedef struct FadeData {
     int field_0;
@@ -17,6 +18,6 @@ int gfade_init(GameContext* ctx);
 void gfade_exit();
 void gfade_resize(ResizeContext* ctx);
 void sub_4BDFA0(FadeData* fade_data);
-void sub_4BE050();
+bool gfade_timeevent_process(TimeEvent* timeevent);
 
 #endif /* ARCANUM_GAME_LIB_GFADE_H_ */
