@@ -379,8 +379,29 @@ typedef enum SceneryFlags {
 
 #define OBJECT_RENDER_FLAG_0x80000000 0x80000000
 
+typedef struct ObjectID_H {
+    long long field_8;
+};
+
+typedef struct ObjectID_A {
+    int field_8;
+};
+
+typedef struct ObjectID_P {
+    long long location;
+    int temp_id;
+    int map;
+};
+
 typedef struct ObjectID {
     uint16_t field_0;
+    int field_4;
+    union {
+        ObjectID_H h;
+        ObjectID_A a;
+        GUID g;
+        ObjectID_P p;
+    };
 };
 
 static_assert(sizeof(ObjectID) == 0x18, "wrong size");
