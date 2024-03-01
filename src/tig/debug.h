@@ -1,15 +1,21 @@
 #ifndef ARCANUM_TIG_DEBUG_H_
 #define ARCANUM_TIG_DEBUG_H_
 
+#include <stdbool.h>
+
 #include "tig/types.h"
 
-typedef void(TigDebugFunc)(const char* string);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int tig_debug_init(TigContext* ctx);
 void tig_debug_exit();
 void tig_debug_printf(const char* format, ...);
 void tig_debug_println(const char* string);
-bool tig_debug_add_func(TigDebugFunc* func);
-bool tig_debug_remove_func(TigDebugFunc* func);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ARCANUM_TIG_DEBUG_H_ */
