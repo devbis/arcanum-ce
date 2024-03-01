@@ -1,6 +1,8 @@
 #include "tig/str_parse.h"
 
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "tig/debug.h"
 
@@ -12,7 +14,10 @@ static char tig_str_parse_separator = DEFAULT_LIST_SEPARATOR;
 // 0x5318C0
 int tig_str_parse_init(TigContext* ctx)
 {
+    (void)ctx;
+
     tig_str_parse_separator = DEFAULT_LIST_SEPARATOR;
+
     return TIG_OK;
 }
 
@@ -22,9 +27,9 @@ void tig_str_parse_exit()
 }
 
 // 0x5318E0
-void tig_str_parse_set_separator(char sep)
+void tig_str_parse_set_separator(int sep)
 {
-    tig_str_parse_separator = sep;
+    tig_str_parse_separator = (unsigned char)sep;
 }
 
 // 0x5318F0
@@ -154,7 +159,7 @@ void tig_str_parse_complex_value(char** str, int delim, int* value1, int* value2
     *value1 = atoi(*str);
 
     if (pch != NULL) {
-        *pch = delim;
+        *pch = (unsigned char)delim;
         *value2 = atoi(pch + 1);
     } else {
         *value2 = *value1;
@@ -195,7 +200,7 @@ void tig_str_parse_complex_value3(char** str, int delim, int* value1, int* value
     *value1 = atoi(*str);
 
     if (pch != NULL) {
-        *pch = delim;
+        *pch = (unsigned char)delim;
         *value2 = atoi(pch + 1);
 
         pch = strchr(pch + 1, delim);
@@ -248,6 +253,10 @@ void tig_str_parse_complex_str_value(char** str, int delim, const char** list, i
 
     int index;
     for (index = 0; index < list_length; index++) {
+        // NOTE: This approach is slightly wrong. When the entry is malformed
+        // (identifier without value, i.e. "(foo)"), this approach consider
+        // closing paren to be part of the identifier.
+        // FIXME: See failing unit test.
         if (_stricmp(list[index], *str) == 0) {
             *value1 = index;
             break;
@@ -264,7 +273,7 @@ void tig_str_parse_complex_str_value(char** str, int delim, const char** list, i
     }
 
     if (pch != NULL) {
-        *pch = delim;
+        *pch = (unsigned char)delim;
         *value2 = atoi(pch + 1);
     } else {
         *value2 = *value1;

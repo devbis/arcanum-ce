@@ -1,11 +1,17 @@
 #ifndef ARCANUM_TIG_STR_PARSE_H_
 #define ARCANUM_TIG_STR_PARSE_H_
 
+#include <stdbool.h>
+
 #include "tig/types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int tig_str_parse_init(TigContext* ctx);
 void tig_str_parse_exit();
-void tig_str_parse_set_separator(char sep);
+void tig_str_parse_set_separator(int sep);
 void tig_str_parse_str_value(char** str, char* value);
 void tig_str_parse_value(char** str, int* value);
 void tig_str_parse_value_64(char** str, long long* value);
@@ -27,5 +33,9 @@ bool tig_str_parse_named_complex_str_value(char** str, const char* name, int del
 bool tig_str_parse_named_flag_list_64(char** str, const char* name, const char** keys, unsigned long long* values, int length, unsigned long long* value);
 bool tig_str_parse_named_flag_list_direct(char** str, const char* name, const char** keys, int length, unsigned int* value);
 void tig_str_parse_flag_list_direct(char** str, const char** keys, int length, unsigned int* value);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ARCANUM_TIG_STR_PARSE_H_ */
