@@ -1,51 +1,59 @@
 #ifndef ARCANUM_TIG_COLOR_H_
 #define ARCANUM_TIG_COLOR_H_
 
+#include <stdint.h>
+
 #include "tig/types.h"
 
-extern uint8_t* dword_739E88;
-extern unsigned int dword_739E8C;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef uint32_t color_t;
+
+extern uint8_t* tig_color_green_intensity_table;
+extern unsigned int tig_color_rgba_green_range_bit_length;
 extern unsigned int tig_color_blue_mask;
-extern unsigned int dword_739E94;
-extern uint8_t* dword_739E98;
-extern unsigned int dword_739E9C;
-extern uint8_t* dword_739EA0;
-extern uint8_t* dword_739EA4;
-extern uint8_t* dword_739EA8;
+extern unsigned int tig_color_green_range;
+extern uint8_t* tig_color_blue_index_table;
+extern unsigned int tig_color_rgba_alpha_range;
+extern uint8_t* tig_color_red_value_table;
+extern uint8_t* tig_color_blue_intensity_table;
+extern uint8_t* tig_color_rgba_red_table;
 extern unsigned int tig_color_blue_shift;
-extern unsigned int dword_739EB0;
-extern unsigned int dword_739EB4;
+extern unsigned int tig_color_red_range_bit_length;
+extern unsigned int tig_color_rgba_green_shift;
 extern unsigned int tig_color_green_mask;
-extern uint8_t* dword_739EBC;
-extern uint8_t* dword_739EC0;
-extern unsigned int dword_739EC4;
-extern unsigned int dword_739EC8;
-extern uint8_t* dword_739ECC;
-extern unsigned int dword_739ED0;
-extern unsigned int dword_739ED4;
-extern uint8_t* dword_739ED8;
-extern uint8_t* dword_739EDC;
-extern unsigned int dword_739EE0;
-extern unsigned int dword_739EE4;
-extern unsigned int dword_739EE8;
+extern uint8_t* tig_color_blue_value_table;
+extern uint8_t* tig_color_green_value_table;
+extern unsigned int tig_color_rgba_red_shift;
+extern unsigned int tig_color_rgba_blue_mask;
+extern uint8_t* tig_color_rgba_blue_table;
+extern unsigned int tig_color_blue_range;
+extern unsigned int tig_color_rgba_red_range_bit_length;
+extern uint8_t* tig_color_red_intensity_table;
+extern uint8_t* tig_color_rgba_green_table;
+extern unsigned int tig_color_rgba_alpha_mask;
+extern unsigned int tig_color_rgba_blue_range;
+extern unsigned int tig_color_rgba_alpha_shift;
 extern unsigned int tig_color_red_shift;
 extern unsigned int tig_color_green_shift;
-extern unsigned int dword_739EF4;
-extern unsigned int dword_739EF8;
-extern unsigned int dword_739EFC;
+extern unsigned int tig_color_blue_range_bit_length;
+extern unsigned int tig_color_rgba_green_mask;
+extern unsigned int tig_color_rgba_red_range;
 extern unsigned int tig_color_red_mask;
-extern unsigned int dword_739F04;
-extern unsigned int dword_739F08;
-extern unsigned int dword_739F0C;
-extern unsigned int dword_739F10;
-extern unsigned int dword_739F14;
-extern uint8_t* dword_739F18;
-extern unsigned int dword_739F1C;
-extern uint8_t* dword_739F20;
-extern unsigned int dword_739F24;
-extern uint8_t* dword_739F28;
-extern uint8_t* dword_739F2C;
-extern uint8_t* dword_739F30;
+extern unsigned int tig_color_rgba_blue_shift;
+extern unsigned int tig_color_rgba_red_mask;
+extern unsigned int tig_color_red_range;
+extern unsigned int tig_color_rgba_alpha_range_bit_length;
+extern unsigned int tig_color_green_range_bit_length;
+extern uint8_t* tig_color_blue_luminosity_table;
+extern unsigned int tig_color_rgba_green_range;
+extern uint8_t* tig_color_red_luminosity_table;
+extern unsigned int tig_color_rgba_blue_range_bit_length;
+extern uint8_t* tig_color_green_index_table;
+extern uint8_t* tig_color_red_index_table;
+extern uint8_t* tig_color_green_luminosity_table;
 
 int tig_color_init(TigContext* ctx);
 void tig_color_exit();
@@ -53,20 +61,24 @@ int tig_color_set_rgb_settings(unsigned int red_mask, unsigned int green_mask, u
 int tig_color_set_rgba_settings(unsigned int red_mask, unsigned int green_mask, unsigned int blue_mask, unsigned int alpha_mask);
 void tig_color_get_masks(unsigned int* red_mask, unsigned int* green_mask, unsigned int* blue_mask);
 void tig_color_get_shifts(unsigned int* red_shift, unsigned int* green_shift, unsigned int* blue_shift);
-int tig_color_get_red(int a1);
-int tig_color_get_green(int a1);
-int tig_color_get_blue(int a1);
-int sub_52C370(int a1);
-int sub_52C500(int a1);
-int sub_52C520(int a1);
-int sub_52C540(int a1);
-int sub_52C560(unsigned int a1);
-int sub_52C610(int red, int green, int blue);
+int tig_color_get_red(color_t color);
+int tig_color_get_green(color_t color);
+int tig_color_get_blue(color_t color);
+int sub_52C370(color_t color);
+int sub_52C500(color_t color);
+int sub_52C520(color_t color);
+int sub_52C540(color_t color);
+unsigned int tig_color_index_of(color_t color);
+unsigned int tig_color_to_24_bpp(int red, int green, int blue);
 
 // TODO: Not sure about the name.
 static inline int tig_color_rgb_make(int red, int green, int blue)
 {
-    return (dword_739F2C[red] << tig_color_red_shift) | (dword_739F28[green] << tig_color_green_shift) | (dword_739E98[blue] << tig_color_blue_shift);
+    return (tig_color_red_index_table[red] << tig_color_red_shift) | (tig_color_green_index_table[green] << tig_color_green_shift) | (tig_color_blue_index_table[blue] << tig_color_blue_shift);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ARCANUM_TIG_COLOR_H_ */
