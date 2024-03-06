@@ -5,14 +5,14 @@
 // 0x533CD0
 bool tig_find_first_file(const char* pattern, TigFindFileData* find_file_data)
 {
-    find_file_data->handle = _findfirst32(pattern, &(find_file_data->find_data));
+    find_file_data->handle = _findfirst(pattern, &(find_file_data->find_data));
     return find_file_data->handle != -1;
 }
 
 // 0x533D00
 bool tig_find_next_file(TigFindFileData* find_file_data)
 {
-    return _findnext32(find_file_data->handle, &(find_file_data->find_data)) != -1;
+    return _findnext(find_file_data->handle, &(find_file_data->find_data)) != -1;
 }
 
 // 0x533D20
