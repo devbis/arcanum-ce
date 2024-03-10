@@ -1,65 +1,102 @@
 #ifndef ARCANUM_TIG_FILE_H_
 #define ARCANUM_TIG_FILE_H_
 
+#include <stdbool.h>
+#include <stdlib.h>
+
+#include <guiddef.h>
+
 #include "tig/types.h"
 
-typedef struct TigFileListEntry {
-    char path[MAX_PATH];
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-typedef struct TigFileList {
-    int count;
-    TigFileListEntry* entries;
-};
+#define TIG_FILE_ATTRIBUTE_0x01 0x01
+#define TIG_FILE_ATTRIBUTE_READONLY 0x02
+#define TIG_FILE_ATTRIBUTE_HIDDEN 0x04
+#define TIG_FILE_ATTRIBUTE_0x08 0x08
+#define TIG_FILE_ATTRIBUTE_SYSTEM 0x10
+#define TIG_FILE_ATTRIBUTE_SUBDIR 0x20
+#define TIG_FILE_ATTRIBUTE_ARCHIVE 0x40
+#define TIG_FILE_ATTRIBUTE_0x80 0x80
 
-static_assert(sizeof(TigFileInfo) == 0x8, "wrong size");
-
-typedef struct TigFile;
+typedef struct TigFile TigFile;
 
 typedef struct TigFileInfo {
-    char path[MAX_PATH];
+    char path[_MAX_PATH];
     unsigned int attributes;
     size_t size;
     time_t modify_time;
-};
+} TigFileInfo;
 
 static_assert(sizeof(TigFileInfo) == 0x110, "wrong size");
 
+typedef struct TigFileList {
+    unsigned int count;
+    TigFileInfo* entries;
+} TigFileList;
+
+static_assert(sizeof(TigFileList) == 0x8, "wrong size");
+
+typedef void(TigFileOutputFunc)(const char*);
+
+bool tig_file_mkdir(const char* path);
+bool tig_file_rmdir(const char* path);
+bool tig_file_is_empty_directory(const char* path);
+bool tig_file_is_directory(const char* path);
+bool sub_52E260(const char* dst, const char* src);
+bool sub_52E430(const char* dst, const char* src);
+bool sub_52E550(const char* src, const char* dst);
 int tig_file_init(TigContext* ctx);
 void tig_file_exit();
 bool tig_file_repository_add(const char* path);
 bool tig_file_repository_remove(const char* path);
 bool tig_file_repository_remove_all();
 bool tig_file_repository_guid(const char* path, GUID* guid);
-int tig_file_mkdir(const char* path);
-void tig_file_list_create(TigFileList* file_list, const char* pattern);
+int tig_file_mkdir_ex(const char* path);
+int tig_file_rmdir_ex(const char* path);
+void tig_file_list_create(TigFileList* list, const char* pattern);
 void tig_file_list_destroy(TigFileList* file_list);
-int tig_file_filelength(TigFile* fp);
-bool tig_file_info(const char* path, TigFileInfo* info);
-int tig_file_remove(const char* path);
-int tig_file_rename(const char* old_path, const char* new_path);
+int tig_file_filelength(TigFile* stream);
+bool tig_file_exists(const char* file_name, TigFileInfo* info);
+bool tig_file_exists_in_path(const char* search_path, const char* file_name, TigFileInfo* info);
+int tig_file_remove(const char* file_name);
+int tig_file_rename(const char* old_file_name, const char* new_file_name);
+TigFile* tig_file_tmpfile();
 char* tig_file_tmpnam(char* buffer);
-int tig_file_fclose(TigFile* fp);
-int tig_file_fflush(TigFile* fp);
+int tig_file_fclose(TigFile* stream);
+int tig_file_fflush(TigFile* stream);
 TigFile* tig_file_fopen(const char* path, const char* mode);
-TigFile* tig_file_reopen(const char* path, const char* mode, TigFile* fp);
-int tig_file_setvbuf(TigFile* fp, char* buffer, int mode, size_t size);
-int tig_file_fprintf(TigFile* fp, const char* format, ...);
-int tig_file_vfprintf(TigFile* fp, const char* format, va_list args);
-int tig_file_fgetc(TigFile* fp);
-char* tig_file_fgets(char* buffer, int max_count, TigFile* fp);
-int tig_file_fputc(int ch, TigFile* fp);
-int tig_file_fputs(const char* buffer, TigFile* fp);
-int tig_file_fread(void* buffer, size_t size, size_t count, TigFile* fp);
-int tig_file_fwrite(const void* buffer, size_t size, size_t count, TigFile* fp);
-int tig_file_fgetpos(TigFile* fp, long* pos);
-int tig_file_fseek(TigFile* fp, long offset, int origin);
-int tig_file_fsetpos(TigFile* fp, long* pos);
-long tig_file_ftell(TigFile* fp);
-void tig_file_rewind(TigFile* fp);
-void tig_file_clearerr(TigFile* fp);
-int tig_file_feof(TigFile* fp);
-int tig_file_ferror(TigFile* fp);
+TigFile* tig_file_reopen(const char* path, const char* mode, TigFile* stream);
+int tig_file_setbuf(TigFile* stream, char* buffer);
+int tig_file_setvbuf(TigFile* stream, char* buffer, int mode, size_t size);
+int tig_file_fprintf(TigFile* stream, const char* format, ...);
+int sub_5304B0();
+int tig_file_vfprintf(TigFile* stream, const char* format, va_list args);
+int tig_file_fgetc(TigFile* stream);
+char* tig_file_fgets(char* buffer, int max_count, TigFile* stream);
+int tig_file_fputc(int ch, TigFile* stream);
+int tig_file_fputs(const char* str, TigFile* stream);
+int tig_file_ungetc(int ch, TigFile* stream);
+int tig_file_fread(void* buffer, size_t size, size_t count, TigFile* stream);
+int tig_file_fwrite(const void* buffer, size_t size, size_t count, TigFile* stream);
+int tig_file_fgetpos(TigFile* stream, int* pos_ptr);
+int tig_file_fseek(TigFile* stream, int offset, int origin);
+int tig_file_fsetpos(TigFile* stream, int* pos);
+int tig_file_ftell(TigFile* stream);
+void tig_file_rewind(TigFile* stream);
+void tig_file_clearerr(TigFile* stream);
+int tig_file_feof(TigFile* stream);
+int tig_file_ferror(TigFile* stream);
+void sub_530880(TigFileOutputFunc* error_func, TigFileOutputFunc* info_func);
+void sub_5308A0(int a1, int a2);
+void sub_5308C0(int a1, int a2);
+bool sub_530B90(const char* pattern);
 bool tig_file_copy(const char* src, const char* dst);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ARCANUM_TIG_FILE_H_ */
