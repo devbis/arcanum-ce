@@ -13,6 +13,7 @@ extern "C" {
 #define TIG_OK 0
 #define TIG_NOT_INITIALIZED 1
 #define TIG_ALREADY_INITIALIZED 2
+#define TIG_ERR_3 3
 #define TIG_ERR_4 4
 #define TIG_ERR_5 5
 #define TIG_ERR_6 6
