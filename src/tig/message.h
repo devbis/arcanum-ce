@@ -26,10 +26,24 @@ typedef enum TigMessageType {
     TIG_MESSAGE_TYPE_9,
 } TigMessageType;
 
+typedef enum TigMouseEvent {
+    TIG_MOUSE_MESSAGE_LEFT_BUTTON_DOWN,
+    TIG_MOUSE_MESSAGE_LEFT_BUTTON_UP,
+    TIG_MOUSE_MESSAGE_RIGHT_BUTTON_DOWN,
+    TIG_MOUSE_MESSAGE_RIGHT_BUTTON_UP,
+    TIG_MOUSE_MESSAGE_MIDDLE_BUTTON_DOWN,
+    TIG_MOUSE_MESSAGE_MIDDLE_BUTTON_UP,
+    TIG_MOUSE_MESSAGE_MOVE,
+    TIG_MOUSE_MESSAGE_IDLE,
+    TIG_MOUSE_MESSAGE_WHEEL,
+} TigMouseEvent;
+
 typedef struct TigMouseMessageData {
     int x;
     int y;
     int z;
+    unsigned int event;
+    bool repeat;
 } TigMouseMessageData;
 
 typedef struct TigQuitMessageData {

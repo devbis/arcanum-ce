@@ -160,31 +160,31 @@ void scroll_start_scrolling_in_direction(int direction)
         if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
             switch (direction) {
             case SCROLL_DIRECTION_UP:
-                mouse_set_offset(art_frame_data.width / 2, 0);
+                tig_mouse_cursor_set_offset(art_frame_data.width / 2, 0);
                 break;
             case SCROLL_DIRECTION_UP_RIGHT:
-                mouse_set_offset(art_frame_data.width - 1, 0);
+                tig_mouse_cursor_set_offset(art_frame_data.width - 1, 0);
                 break;
             case SCROLL_DIRECTION_RIGHT:
-                mouse_set_offset(art_frame_data.width - 1, art_frame_data.height / 2);
+                tig_mouse_cursor_set_offset(art_frame_data.width - 1, art_frame_data.height / 2);
                 break;
             case SCROLL_DIRECTION_DOWN_RIGHT:
-                mouse_set_offset(art_frame_data.width - 1, art_frame_data.height - 1);
+                tig_mouse_cursor_set_offset(art_frame_data.width - 1, art_frame_data.height - 1);
                 break;
             case SCROLL_DIRECTION_DOWN:
-                mouse_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
+                tig_mouse_cursor_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
                 break;
             case SCROLL_DIRECTION_DOWN_LEFT:
-                mouse_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
+                tig_mouse_cursor_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
                 break;
             case SCROLL_DIRECTION_LEFT:
-                mouse_set_offset(0, art_frame_data.height / 2);
+                tig_mouse_cursor_set_offset(0, art_frame_data.height / 2);
                 break;
             case SCROLL_DIRECTION_UP_LEFT:
-                mouse_set_offset(0, 0);
+                tig_mouse_cursor_set_offset(0, 0);
                 break;
             default:
-                mouse_set_offset(direction, direction);
+                tig_mouse_cursor_set_offset(direction, direction);
                 break;
             }
         }
@@ -295,11 +295,11 @@ void sub_40E940()
 // 0x40EA50
 bool sub_40EA50(unsigned int art_id)
 {
-    if (sub_41D510(art_id) == sub_41D510(sub_500150())) {
+    if (sub_41D510(art_id) == sub_41D510(tig_mouse_cursor_get_art_id())) {
         return true;
     }
 
-    if (sub_4FFFE0(art_id) == TIG_OK) {
+    if (tig_mouse_cursor_set_art_id(art_id) == TIG_OK) {
         return true;
     }
 

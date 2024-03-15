@@ -56,7 +56,6 @@ typedef struct TigVideoState {
 
 static_assert(sizeof(TigVideoState) == 0x110C, "wrong size");
 
-static void tig_video_set_client_rect(LPRECT rect);
 static void tig_video_display_fps();
 static int tig_video_get_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
 static int tig_video_set_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
@@ -457,7 +456,7 @@ int sub_51F880()
         return TIG_ERR_16;
     }
 
-    sub_4FFB40();
+    tig_mouse_cursor_refresh();
     tig_window_set_needs_display_in_rect(NULL);
 
     tig_timer_start(&(message.time));
