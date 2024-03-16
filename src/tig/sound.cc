@@ -318,7 +318,7 @@ void tig_sound_stop(int sound_handle)
                     tig_sounds[sound_handle].active = 0;
                 } else if ((tig_sounds[sound_handle].flags & TIG_SOUND_MEMORY) != 0) {
                     AIL_quick_unload(tig_sounds[sound_handle].audio_handle);
-                    tig_cache_unref(tig_sound_cache, tig_sounds[sound_handle].cache_entry);
+                    tig_cache_release(tig_sound_cache, tig_sounds[sound_handle].cache_entry);
                     tig_sounds[sound_handle].active = 0;
                 } else {
                     tig_sounds[sound_handle].active = 0;
@@ -336,7 +336,7 @@ int tig_sound_play_by_path(int sound_handle, const char* path, int id)
         if (sound_handle >= 0) {
             TigSound* snd = &(tig_sounds[sound_handle]);
             strcpy(snd->path, path);
-            snd->cache_entry = tig_cache_ref(tig_sound_cache, path);
+            snd->cache_entry = tig_cache_acquire(tig_sound_cache, path);
 
             if (snd->cache_entry->data != NULL) {
                 snd->audio_handle = AIL_quick_load_mem(snd->cache_entry->data, snd->cache_entry->size);
