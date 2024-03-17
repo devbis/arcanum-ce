@@ -553,14 +553,14 @@ void sub_4DE200()
 {
     if (!dword_60340C) {
         if (dword_602E40 == NULL) {
-            dword_602E40 = sub_533DF0();
+            dword_602E40 = tig_palette_create();
         }
-        sub_533E40(dword_602E40, dword_603408);
+        tig_palette_set_color(dword_602E40, dword_603408);
 
         if (dword_602E88 == NULL) {
-            dword_602E88 = sub_533DF0();
+            dword_602E88 = tig_palette_create();
         }
-        sub_533E40(dword_602E88, dword_602EA8);
+        tig_palette_set_color(dword_602E88, dword_602EA8);
     }
 }
 
@@ -568,10 +568,10 @@ void sub_4DE200()
 void sub_4DE250()
 {
     if (!dword_60340C) {
-        sub_533E20(dword_602E40);
+        tig_palette_destroy(dword_602E40);
         dword_602E40 = NULL;
 
-        sub_533E20(dword_602E88);
+        tig_palette_destroy(dword_602E88);
         dword_602E88 = NULL;
     }
 }

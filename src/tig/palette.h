@@ -3,12 +3,36 @@
 
 #include "tig/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/// Opaque pointer representing palette.
+typedef void* TigPalette;
+
+typedef enum TigPaletteAdjustFlags {
+    TIG_PALETTE_ADJUST_TINT = 0x1,
+    TIG_PALETTE_ADJUST_LUMINATE = 0x2,
+} TigPaletteAdjustFlags;
+
+typedef struct TigPaletteAdjustDesc {
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ unsigned int tint_color;
+    /* 0008 */ TigPalette src_palette;
+    /* 000C */ TigPalette dst_palette;
+} TigPaletteAdjustDesc;
+
 int tig_palette_init(TigContext* ctx);
 void tig_palette_exit();
-void* sub_533DF0();
-void sub_533E20(void* a1);
-void sub_533E40(void* a1, int a2);
-void sub_533E90(void* dest, const void* src);
-size_t sub_534290();
+TigPalette tig_palette_create();
+void tig_palette_destroy(TigPalette palette);
+void tig_palette_set_color(TigPalette palette, unsigned int color);
+void tig_palette_copy(TigPalette dest, const TigPalette src);
+void tig_palette_adjust(TigPaletteAdjustDesc* desc);
+size_t tig_palette_get_size();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ARCANUM_TIG_PALETTE_H_ */
