@@ -838,9 +838,13 @@ void tig_file_ignore(const char* path, unsigned int flags)
 }
 
 // 0x52F410
-void tig_file_extract()
+bool tig_file_extract(const char* file_name, char* path)
 {
     // TODO: Incomplete.
+    (void)file_name;
+    (void)path;
+
+    return false;
 }
 
 // 0x52F760

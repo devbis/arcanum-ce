@@ -37,7 +37,7 @@ extern "C" {
 #define TIG_CONTEXT_3D_SOFTWARE 0x0200
 #define TIG_CONTEXT_3D_HARDWARE 0x0400
 #define TIG_CONTEXT_3D_REF_DEVICE 0x0800
-#define TIG_CONTEXT_0x1000 0x1000
+#define TIG_CONTEXT_HAVE_MSS_REDIST_PATH 0x1000
 #define TIG_CONTEXT_NO_SOUND 0x2000
 #define TIG_CONTEXT_HAVE_WINDOW_NAME 0x4000
 
@@ -61,7 +61,7 @@ typedef struct TigContext {
     /* 0024 */ WNDPROC default_window_proc;
     /* 0028 */ TigContextMessageHandler* message_handler;
     /* 002C */ TigFilePathResolver* sound_file_path_resolver;
-    /* 0030 */ int field_30;
+    /* 0030 */ const char* mss_redist_path;
     /* 0034 */ unsigned int texture_width;
     /* 0038 */ unsigned int texture_height;
     /* 003C */ const char* window_name;
