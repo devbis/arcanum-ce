@@ -56,7 +56,6 @@ typedef struct TigVideoState {
 
 static_assert(sizeof(TigVideoState) == 0x110C, "wrong size");
 
-static void tig_video_display_fps();
 static int tig_video_get_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
 static int tig_video_set_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
 static bool tig_video_platform_window_init(TigContext* ctx);

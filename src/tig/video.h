@@ -101,6 +101,7 @@ int tig_video_platform_window_get(HWND* wnd_ptr);
 int tig_video_instance_get(HINSTANCE* instance_ptr);
 int tig_video_main_surface_get(LPDIRECTDRAWSURFACE7* surface_ptr);
 void tig_video_set_client_rect(LPRECT rect);
+void tig_video_display_fps();
 int tig_video_main_surface_lock(void** surface_data_ptr);
 int tig_video_main_surface_unlock();
 int tig_video_blit(TigVideoBuffer* src_video_buffer, TigRect* src_rect, TigRect* dst_rect, bool to_primary_surface);
