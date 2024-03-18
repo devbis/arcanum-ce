@@ -56,7 +56,7 @@ bool tig_file_repository_remove_all();
 bool tig_file_repository_guid(const char* path, GUID* guid);
 int tig_file_mkdir_ex(const char* path);
 int tig_file_rmdir_ex(const char* path);
-bool tig_file_extract(const char* file_name, char* path);
+bool tig_file_extract(const char* filename, char* path);
 void tig_file_list_create(TigFileList* list, const char* pattern);
 void tig_file_list_destroy(TigFileList* file_list);
 int tig_file_filelength(TigFile* stream);

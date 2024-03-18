@@ -838,11 +838,101 @@ void tig_file_ignore(const char* path, unsigned int flags)
 }
 
 // 0x52F410
-bool tig_file_extract(const char* file_name, char* path)
+bool tig_file_extract(const char* filename, char* path)
 {
-    // TODO: Incomplete.
-    (void)file_name;
-    (void)path;
+    TigDatabaseEntry* database_entry;
+    TigFile* in;
+    TigFile* out;
+    TigFileRepository* first_directory_repo;
+    TigFileRepository* repo;
+    TigFindFileData ffd;
+    char tmp[_MAX_PATH];
+    unsigned int ignored;
+
+    first_directory_repo = NULL;
+    if (filename[0] == '.' || filename[0] == '\\' || filename[1] == ':') {
+        strcpy(path, filename);
+        return true;
+    }
+
+    strcpy(path, CACHE_DIR_NAME);
+    strcat(path, '\\');
+    strcat(path, filename);
+
+    ignored = tig_file_ignored(filename);
+
+    repo = tig_file_repositories_head;
+    while (repo != NULL) {
+        if ((repo->type & TIG_FILE_REPOSITORY_DIRECTORY) != 0) {
+            if (first_directory_repo == NULL) {
+                first_directory_repo = repo;
+            }
+
+            if ((ignored & TIG_FILE_IGNORE_DIRECTORY) == 0) {
+                // Check if file exists in a directory bundle.
+                sprintf(tmp, "%s\\%s", repo->path, filename);
+                if (tig_find_first_file(tmp, &ffd)) {
+                    strcpy(path, tmp);
+                    tig_find_close(&ffd);
+                    return true;
+                }
+                tig_find_close(&ffd);
+
+                // Check if file is already expanded.
+                sprintf(tmp, "%s\\%s", repo->path, path);
+                if (tig_find_first_file(tmp, &ffd)) {
+                    strcpy(path, tmp);
+                    tig_find_close(&ffd);
+                    return true;
+                }
+                tig_find_close(&ffd);
+            }
+        } else if ((repo->type & TIG_FILE_REPOSITORY_DATABASE) != 0) {
+            if ((ignored & TIG_FILE_IGNORE_DATABASE) == 0) {
+                if (tig_database_get_entry(repo->database, filename, &database_entry)) {
+                    _splitpath(path, NULL, tmp, NULL, NULL);
+                    tig_file_mkdir_ex(tmp);
+
+                    out = tig_file_fopen(path, "wb");
+                    if (out == NULL) {
+                        return false;
+                    }
+
+                    in = tig_file_create();
+                    in->impl.database_file_stream = tig_database_fopen_entry(repo->database, database_entry, "rb");
+                    in->flags |= TIG_FILE_DATABASE;
+
+                    if (!tig_file_copy_internal(out, in)) {
+                        tig_file_fclose(out);
+                        tig_file_fclose(in);
+                        return false;
+                    }
+
+                    tig_file_fclose(out);
+                    tig_file_fclose(in);
+
+                    if (first_directory_repo == NULL) {
+                        // If we're here it means out file was sucessfully
+                        // created in the first directory repo, we just need it
+                        // to look deeper.
+                        while (repo != NULL) {
+                            if ((repo->type & TIG_FILE_REPOSITORY_DIRECTORY) != 0) {
+                                first_directory_repo = repo;
+                                break;
+                            }
+                            repo = repo->next;
+                        }
+                    }
+
+                    sprintf(tmp, "%s\\%s", first_directory_repo->path, path);
+                    strcpy(path, tmp);
+
+                    return true;
+                }
+            }
+        }
+        repo = repo->next;
+    }
 
     return false;
 }
