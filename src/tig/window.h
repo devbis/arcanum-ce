@@ -1,81 +1,113 @@
 #ifndef ARCANUM_TIG_WINDOW_H_
 #define ARCANUM_TIG_WINDOW_H_
 
-#include "tig/art.h"
+#include "tig/rect.h"
 #include "tig/types.h"
 
-#define TIG_WINDOW_FLAG_0x01 0x01
-#define TIG_WINDOW_FLAG_0x02 0x02
-#define TIG_WINDOW_FLAG_0x04 0x04
-#define TIG_WINDOW_FLAG_0x08 0x08
-#define TIG_WINDOW_FLAG_0x10 0x10
-#define TIG_WINDOW_FLAG_HIDDEN 0x20
-#define TIG_WINDOW_FLAG_0x40 0x40
+#define TIG_WINDOW_HANDLE_INVALID ((tig_window_handle_t)-1)
 
-typedef void(TigWindowMessageFilterFunc)();
+#define TIG_WINDOW_TOP (-2)
+
+typedef enum TigWindowFlags {
+    TIG_WINDOW_HAVE_TRANSPARENCY = 1 << 0,
+    TIG_WINDOW_FLAG_0x02 = 1 << 1,
+    TIG_WINDOW_FLAG_0x04 = 1 << 2,
+    TIG_WINDOW_FLAG_0x08 = 1 << 3,
+    TIG_WINDOW_VIDEO_MEMORY = 1 << 4,
+    TIG_WINDOW_HIDDEN = 1 << 5,
+    TIG_WINDOW_HAVE_FLUSH = 1 << 6,
+    TIG_WINDOW_FLAG_0x80 = 1 << 7,
+} TigWindowFlags;
+
+typedef bool(TigWindowMessageFilterFunc)(TigMessage* msg);
 
 typedef struct TigWindowData {
-    int flags;
-    // TODO: Remove separate fields.
-    union {
-        struct {
-            int x;
-            int y;
-            int width;
-            int height;
-        };
-        TigRect rect;
-    };
-    int field_14;
-    int field_18;
-    TigWindowMessageFilterFunc* message_filter_func;
-};
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ TigRect rect;
+    /* 0014 */ unsigned int background_color;
+    /* 0018 */ unsigned int color_key;
+    /* 001C */ TigWindowMessageFilterFunc* message_filter;
+} TigWindowData;
 
 static_assert(sizeof(TigWindowData) == 0x20, "wrong size");
 
-typedef struct TigWindowDialogSpec {
-    int field_0;
-    int field_4;
-    int field_8;
-    int field_C;
-    int field_10;
-    int field_14;
-    int field_18;
-};
+typedef enum TigWindowBltType {
+    TIG_WINDOW_BLT_1 = 1,
+    TIG_WINDOW_BLT_2 = 2,
+    TIG_WINDOW_BLT_3 = 3,
+} TigWindowBltType;
+
+typedef struct TigWindowBlt {
+    /* 0000 */ int type;
+    /* 0004 */ unsigned int video_buffer_blt_flags;
+    /* 0008 */ tig_window_handle_t src_window_handle;
+    /* 000C */ TigVideoBuffer* src_video_buffer;
+    /* 0010 */ TigRect* src_rect;
+    /* 0014 */ tig_window_handle_t dst_window_handle;
+    /* 0018 */ TigVideoBuffer* dst_video_buffer;
+    /* 001C */ TigRect* dst_rect;
+} TigWindowBlt;
+
+static_assert(sizeof(TigWindowBlt) == 0x20, "wrong size");
+
+typedef enum TigWindowModalDialogType {
+    TIG_WINDOW_MODAL_DIALOG_TYPE_0,
+    TIG_WINDOW_MODAL_DIALOG_TYPE_1,
+    TIG_WINDOW_MODAL_DIALOG_TYPE_2,
+} TigWindowModalDialogType;
+
+typedef bool(TigWindowDialogProcess)(int*);
+typedef void(TigWindowDialogPing)();
+
+typedef struct TigWindowModalDialogDesc {
+    /* 0000 */ int type;
+    /* 0004 */ int x;
+    /* 0008 */ int y;
+    /* 000C */ const char* text;
+    /* 0010 */ TigWindowDialogProcess* process;
+    /* 0014 */ unsigned char keys[2];
+    /* 0018 */ TigWindowDialogPing* ping;
+} TigWindowModalDialogDesc;
 
 // See 0x51EA60.
-static_assert(sizeof(TigWindowDialogSpec) == 0x1C, "wrong size");
+static_assert(sizeof(TigWindowModalDialogDesc) == 0x1C, "wrong size");
 
 int tig_window_init(TigContext* ctx);
 void tig_window_exit();
-int tig_window_create(TigWindowData* window_data, int* window_handle);
-int tig_window_destroy(int window_handle);
-int tig_window_button_destroy(int window_handle);
-int tig_window_message_filter_set(int window_handle, TigWindowMessageFilterFunc* func);
-int tig_window_data(int window_handle, TigWindowData* window_data);
+int tig_window_create(TigWindowData* window_data, tig_window_handle_t* window_handle_ptr);
+int tig_window_destroy(tig_window_handle_t window_handle);
+int tig_window_button_destroy(tig_window_handle_t window_handle);
+int tig_window_message_filter_set(tig_window_handle_t window_handle, TigWindowMessageFilterFunc* func);
+int tig_window_data(tig_window_handle_t window_handle, TigWindowData* window_data);
 int tig_window_display();
-void sub_51D050(TigRect* a1, int a2, TigVideoBuffer* a3, int a4, int a5, int a6);
-int tig_window_fill(int window_handle, TigRect* rect, int color);
-int tig_window_line(int window_handle, int a2, int a3);
-int tig_window_box(int window_handle, TigRect* rect, int color);
-int sub_51D8D0(int a1);
-int tig_window_blit_art(int window_handle, TigArtBlitSpec* blit_spec);
-int tig_window_scroll(int window_handle, int dx, int dy);
-int tig_window_scroll_rect(int window_handle, TigRect* rect, int dx, int dy);
-int tig_window_copy(int dst_window_handle, TigRect* dst_rect, int src_window_handle, TigRect* src_rect);
-int tig_window_copy_from_vbuffer(int dst_window_handle, TigRect* dst_rect, TigVideoBuffer* src_video_buffer, TigRect* src_rect);
-int tig_window_copy_to_vbuffer(int src_window_handle, TigRect* src_rect, TigVideoBuffer* dst_video_buffer, TigRect* dst_rect);
-int tig_window_copy_from_bmp(int a1, int a2, int a3, int a4);
-int tig_window_tint(int window_handle, TigRect* rect, int a3, int a4);
-int tig_window_text_write(int window_handle, int a2, TigRect* rect);
+void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_buffer, int dx, int dy, int top_window_index);
+int tig_window_fill(tig_window_handle_t window_handle, TigRect* rect, int color);
+int tig_window_line(tig_window_handle_t window_handle, TigLtrbRect* rect, int color);
+int tig_window_box(tig_window_handle_t window_handle, TigRect* rect, int color);
+int sub_51D8D0(TigWindowBlt* blt);
+int tig_window_blit_art(tig_window_handle_t window_handle, TigArtBlitSpec* blit_spec);
+int tig_window_scroll(tig_window_handle_t window_handle, int dx, int dy);
+int tig_window_scroll_rect(tig_window_handle_t window_handle, TigRect* rect, int dx, int dy);
+int tig_window_copy(tig_window_handle_t dst_window_handle, TigRect* dst_rect, tig_window_handle_t src_window_handle, TigRect* src_rect);
+int tig_window_copy_from_vbuffer(tig_window_handle_t dst_window_handle, TigRect* dst_rect, TigVideoBuffer* src_video_buffer, TigRect* src_rect);
+int tig_window_copy_to_vbuffer(tig_window_handle_t src_window_handle, TigRect* src_rect, TigVideoBuffer* dst_video_buffer, TigRect* dst_rect);
+int tig_window_copy_from_bmp(tig_window_handle_t window_handle, TigRect* dst_rect, TigBmp* bmp, TigRect* src_rect);
+int tig_window_tint(tig_window_handle_t window_handle, TigRect* rect, int a3, int a4);
+int tig_window_text_write(tig_window_handle_t window_handle, const char* text, TigRect* rect);
 void tig_window_set_needs_display_in_rect(TigRect* rect);
-int tig_window_button_add(int window_handle, int button_handle);
-int tig_window_button_remove(int window_handle, int button_handle);
-int tig_window_button_list(int window_handle, int** buttons);
-int sub_51E850(int window_handle);
-int tig_window_show(int window_handle);
-int tig_window_hide(int window_handle);
-bool tig_window_is_hidden(int window_handle);
-int tig_window_vbid_get(int window_handle, TigVideoBuffer** video_buffer);
+int tig_window_button_add(tig_window_handle_t window_handle, tig_button_handle_t button_handle);
+int tig_window_button_remove(tig_window_handle_t window_handle, tig_button_handle_t button_handle);
+int tig_window_button_list(tig_window_handle_t window_handle, tig_button_handle_t** buttons);
+int tig_window_get_at_position(int x, int y, tig_window_handle_t* window_handle_ptr);
+bool tig_window_filter_message(TigMessage* msg);
+int sub_51E850(tig_window_handle_t window_handle);
+int tig_window_move_on_top(tig_window_handle_t window_handle);
+int tig_window_show(tig_window_handle_t window_handle);
+int tig_window_hide(tig_window_handle_t window_handle);
+bool tig_window_is_hidden(tig_window_handle_t window_handle);
+int sub_51E9E0();
+bool sub_51EA00();
+int tig_window_vbid_get(tig_window_handle_t window_handle, TigVideoBuffer** video_buffer_ptr);
+int tig_window_modal_dialog(TigWindowModalDialogDesc* desc, int* choice_ptr);
 
 #endif /* ARCANUM_TIG_WINDOW_H_ */
