@@ -1700,7 +1700,7 @@ int tig_file_open_internal(const char* path, const char* mode, TigFile* stream)
         repo = tig_file_repositories_head;
         while (repo != NULL) {
             if ((repo->type & TIG_FILE_REPOSITORY_DATABASE) != 0
-                && (ignored & TIG_FILE_IGNORE_DATABASE) != 0
+                && (ignored & TIG_FILE_IGNORE_DATABASE) == 0
                 && tig_database_get_entry(repo->database, path, &database_entry)) {
                 if ((database_entry->flags & (TIG_DATABASE_ENTRY_0x100 | TIG_DATABASE_ENTRY_0x200)) != 0
                     && mode[0] == 'w') {
