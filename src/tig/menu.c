@@ -179,18 +179,18 @@ int tig_menu_set_colors(TigMenuColors* colors)
 // 0x539130
 int sub_539130(const char* title, const char** menu_items, int num_menu_items, int x, int y)
 {
-    TigArtFrameData black_art_frame_data;
-    TigArtFrameData interface_art_frame_data;
-    TigArtFrameData bar_art_frame_data;
+    TigArtFrameData up_art_frame_data;
+    TigArtFrameData down_art_frame_data;
+    TigArtFrameData cancel_art_frame_data;
     TigButtonData button_data;
     TigWindowData window_data;
     TigRect title_rect;
     TigRect box_rect;
     TigFont font_desc;
     TigFont* font;
-    tig_art_id_t black_art_id;
-    tig_art_id_t interface_art_id;
-    tig_art_id_t bar_art_id;
+    tig_art_id_t up_art_id;
+    tig_art_id_t down_art_id;
+    tig_art_id_t cancel_art_id;
     int item_width;
     int item_height;
     int width;
@@ -206,26 +206,26 @@ int sub_539130(const char* title, const char** menu_items, int num_menu_items, i
         return -1;
     }
 
-    tig_art_misc_id_create(2, 0, &black_art_id);
-    tig_art_misc_id_create(3, 0, &interface_art_id);
-    tig_art_misc_id_create(4, 0, &bar_art_id);
+    tig_art_misc_id_create(2, 0, &up_art_id);
+    tig_art_misc_id_create(3, 0, &down_art_id);
+    tig_art_misc_id_create(4, 0, &cancel_art_id);
 
-    if (tig_art_frame_data(black_art_id, &black_art_frame_data) != TIG_OK) {
+    if (tig_art_frame_data(up_art_id, &up_art_frame_data) != TIG_OK) {
         return -1;
     }
 
-    if (tig_art_frame_data(interface_art_id, &interface_art_frame_data) != TIG_OK) {
+    if (tig_art_frame_data(down_art_id, &down_art_frame_data) != TIG_OK) {
         return -1;
     }
 
-    if (tig_art_frame_data(bar_art_id, &bar_art_frame_data) != TIG_OK) {
+    if (tig_art_frame_data(cancel_art_id, &cancel_art_frame_data) != TIG_OK) {
         return -1;
     }
 
-    if (black_art_frame_data.width > interface_art_frame_data.width) {
-        width = black_art_frame_data.width + item_width;
+    if (up_art_frame_data.width > down_art_frame_data.width) {
+        width = up_art_frame_data.width + item_width;
     } else {
-        width = interface_art_frame_data.width + item_width;
+        width = down_art_frame_data.width + item_width;
     }
 
     width += 15;
@@ -234,7 +234,7 @@ int sub_539130(const char* title, const char** menu_items, int num_menu_items, i
         width = 100;
     }
 
-    height = bar_art_frame_data.height + 11 * item_height + 20;
+    height = cancel_art_frame_data.height + 11 * item_height + 20;
 
     window_data.rect.x = x;
     window_data.rect.y = y;
@@ -267,9 +267,9 @@ int sub_539130(const char* title, const char** menu_items, int num_menu_items, i
 
     button_data.window_handle = dword_636EEC;
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.x = width - black_art_frame_data.width - 5;
+    button_data.x = width - up_art_frame_data.width - 5;
     button_data.y = item_height + 10;
-    button_data.art_id = black_art_id;
+    button_data.art_id = up_art_id;
     button_data.field_1C = -1;
     button_data.field_20 = -1;
     button_data.field_24 = -1;
@@ -278,9 +278,9 @@ int sub_539130(const char* title, const char** menu_items, int num_menu_items, i
 
     button_data.window_handle = dword_636EEC;
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.x = width - interface_art_frame_data.width - 5;
-    button_data.y = 11 * item_height - interface_art_frame_data.height + 10;
-    button_data.art_id = interface_art_id;
+    button_data.x = width - down_art_frame_data.width - 5;
+    button_data.y = 11 * item_height - down_art_frame_data.height + 10;
+    button_data.art_id = down_art_id;
     button_data.field_1C = -1;
     button_data.field_20 = -1;
     button_data.field_24 = -1;
@@ -290,8 +290,8 @@ int sub_539130(const char* title, const char** menu_items, int num_menu_items, i
     button_data.window_handle = dword_636EEC;
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.x = 5;
-    button_data.y = height - bar_art_frame_data.height - 5;
-    button_data.art_id = bar_art_id;
+    button_data.y = height - cancel_art_frame_data.height - 5;
+    button_data.art_id = cancel_art_id;
     button_data.field_1C = -1;
     button_data.field_20 = -1;
     button_data.field_24 = -1;
@@ -310,7 +310,7 @@ int sub_539130(const char* title, const char** menu_items, int num_menu_items, i
         button_data.window_handle = dword_636EEC;
         button_data.x = 5;
         button_data.y = item_height * (index + 1) + 10;
-        button_data.art_id = -1;
+        button_data.art_id = TIG_ART_ID_INVALID;
         button_data.width = item_width;
         button_data.height = item_height;
         button_data.field_1C = -1;
