@@ -856,7 +856,7 @@ bool tig_file_extract(const char* filename, char* path)
     }
 
     strcpy(path, CACHE_DIR_NAME);
-    strcat(path, '\\');
+    strcat(path, "\\");
     strcat(path, filename);
 
     ignored = tig_file_ignored(filename);
