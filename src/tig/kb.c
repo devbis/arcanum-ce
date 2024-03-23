@@ -205,7 +205,7 @@ bool tig_kb_device_init()
     }
 
     dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-    dipdw.diph.dwSize = sizeof(DIPROPHEADER);
+    dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dipdw.diph.dwObj = 0;
     dipdw.diph.dwHow = DIPH_DEVICE;
     dipdw.dwData = KEYBOARD_DEVICE_DATA_CAPACITY;
