@@ -1703,18 +1703,20 @@ bool tig_video_d3d_init(TigContext* ctx)
         }
 
         if (!tig_video_3d_is_hardware) {
-            if ((ctx->flags & TIG_CONTEXT_3D_SOFTWARE) != 0) {
-                tig_debug_printf("3D: Checking for RGB software devices...");
+            if ((ctx->flags & TIG_CONTEXT_3D_SOFTWARE) == 0) {
+                return false;
+            }
 
-                if (SUCCEEDED(IDirect3D7_CreateDevice(tig_video_state.d3d, &IID_IDirect3DMMXDevice, tig_video_state.main_surface, &(tig_video_state.d3d_device)))) {
-                    tig_debug_printf("found IID_IDirect3DMMXDevice.\n");
-                } else if (SUCCEEDED(IDirect3D7_CreateDevice(tig_video_state.d3d, &IID_IDirect3DRGBDevice, tig_video_state.main_surface, &(tig_video_state.d3d_device)))) {
-                    tig_debug_printf("found IID_IDirect3DRGBDevice.\n");
-                } else {
-                    ctx->flags &= ~TIG_CONTEXT_3D_SOFTWARE;
-                    tig_debug_printf("none found.\n");
-                }
+            tig_debug_printf("3D: Checking for RGB software devices...");
+
+            if (SUCCEEDED(IDirect3D7_CreateDevice(tig_video_state.d3d, &IID_IDirect3DMMXDevice, tig_video_state.main_surface, &(tig_video_state.d3d_device)))) {
+                tig_debug_printf("found IID_IDirect3DMMXDevice.\n");
+            } else if (SUCCEEDED(IDirect3D7_CreateDevice(tig_video_state.d3d, &IID_IDirect3DRGBDevice, tig_video_state.main_surface, &(tig_video_state.d3d_device)))) {
+                tig_debug_printf("found IID_IDirect3DRGBDevice.\n");
             } else {
+                ctx->flags &= ~TIG_CONTEXT_3D_SOFTWARE;
+                tig_debug_printf("none found.\n");
+
                 return false;
             }
         }
