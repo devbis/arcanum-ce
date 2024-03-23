@@ -626,7 +626,7 @@ bool tig_file_repository_add(const char* path)
                         tig_file_repositories_head->next = repo;
                     } else {
                         repo->next = tig_file_repositories_head;
-                        tig_file_repositories_head->next = repo;
+                        tig_file_repositories_head = repo;
                         added = true;
                     }
 
