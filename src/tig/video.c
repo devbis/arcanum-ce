@@ -1464,8 +1464,7 @@ bool tig_video_ddraw_init_windowed(TigContext* ctx)
         return false;
     }
 
-    // TODO: Check.
-    if ((ddsd.dwFlags & DDSCAPS_VIDEOMEMORY) == 0
+    if ((ddsd.ddpfPixelFormat.dwFlags & DDPF_RGB) == 0
         || (ddsd.ddpfPixelFormat.dwRGBBitCount != 16
             && ddsd.ddpfPixelFormat.dwRGBBitCount != 24
             && ddsd.ddpfPixelFormat.dwRGBBitCount != 32)) {
