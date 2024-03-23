@@ -620,6 +620,7 @@ bool tig_file_repository_add(const char* path)
 
                     repo->path = STRDUP(path);
                     repo->type = TIG_FILE_REPOSITORY_DATABASE;
+                    repo->database = database;
 
                     if (added) {
                         repo->next = tig_file_repositories_head->next;
