@@ -84,7 +84,7 @@ TigPalette tig_palette_create()
     tig_palette_head = node->next;
 
     // Return "entries" area of the palette.
-    return (TigPalette)((unsigned char*)node->data + sizeof(TigPaletteListNode));
+    return (TigPalette)((unsigned char*)node->data + sizeof(TigPaletteListNode*));
 }
 
 // 0x533E20
@@ -92,7 +92,7 @@ void tig_palette_destroy(TigPalette palette)
 {
     TigPaletteListNode* node;
 
-    node = (TigPaletteListNode*)((unsigned char*)palette - sizeof(TigPaletteListNode));
+    node = (TigPaletteListNode*)((unsigned char*)palette - sizeof(TigPaletteListNode*));
     node->next = tig_palette_head;
     tig_palette_head = node;
 }
@@ -233,7 +233,7 @@ void tig_palette_adjust(TigPaletteAdjustDesc* desc)
 // 0x534290
 size_t tig_palette_get_size()
 {
-    return tig_palette_size + 4;
+    return tig_palette_size + sizeof(TigPaletteListNode*);
 }
 
 // 0x5342A0
