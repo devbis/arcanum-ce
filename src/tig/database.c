@@ -220,7 +220,7 @@ bool tig_database_close(TigDatabase* database)
     curr_file_handle = database->open_file_handles_head;
     while (curr_file_handle != NULL) {
         next_file_handle = curr_file_handle->next;
-        tig_database_fclose(next_file_handle);
+        tig_database_fclose(curr_file_handle);
         curr_file_handle = next_file_handle;
     }
 
