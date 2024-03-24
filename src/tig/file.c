@@ -956,7 +956,7 @@ void tig_file_list_create(TigFileList* list, const char* pattern)
 
     pattern_length = strlen(mutable_pattern);
     if (pattern_length > 2 && strcmp(&(mutable_pattern[pattern_length - 3]), "*.*") == 0) {
-        mutable_pattern[-3] = '\0';
+        mutable_pattern[pattern_length - 3] = '\0';
     }
 
     list->count = 0;
