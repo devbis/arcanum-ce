@@ -856,7 +856,7 @@ bool tig_database_fopen_internal(TigDatabase* database, TigDatabaseEntry* entry,
     }
 
     if ((entry->flags & TIG_DATABASE_ENTRY_COMPRESSED) != 0) {
-        stream->decompression_context = (DecompressionContext*)MALLOC(sizeof(stream->decompression_context));
+        stream->decompression_context = (DecompressionContext*)MALLOC(sizeof(DecompressionContext));
         stream->decompression_context->zstrm.next_in = stream->decompression_context->buffer;
         stream->decompression_context->zstrm.avail_in = 0;
         stream->decompression_context->zstrm.zalloc = Z_NULL;
