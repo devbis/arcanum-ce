@@ -27,6 +27,8 @@ static TigFont* tig_font_default_font;
 // 0x5351D0
 int tig_font_init(TigContext* ctx)
 {
+    (void)ctx;
+
     TigFont font;
 
     tig_font_stack_index = -1;
@@ -190,15 +192,16 @@ int tig_font_write(TigVideoBuffer* video_buffer, const char* str, const TigRect*
     int glyph_dy;
     int glyph_height;
     int glyph_width;
-    int height;
     int max_width;
     int max_y;
     int min_dx;
     int num_passes;
     int pass;
     bool shadow;
-    int width;
     int dst_rect_x;
+
+    // NOTE: Initialize to keep compiler happy.
+    max_y = 0;
 
     if (str == NULL) {
         return TIG_OK;
@@ -315,7 +318,7 @@ int tig_font_write(TigVideoBuffer* video_buffer, const char* str, const TigRect*
         dirty_rect->x = rect->x + min_dx;
         dirty_rect->y = rect->y;
         dirty_rect->width = max_width;
-        dirty_rect->height = height - rect->y + 1;
+        dirty_rect->height = max_y - rect->y + 1;
 
         if ((tig_font_stack[tig_font_stack_index]->flags & TIG_FONT_SHADOW) != 0) {
             ++dirty_rect->width;
@@ -338,6 +341,10 @@ int sub_535850(TigVideoBuffer* video_buffer, const char* str, int length, TigArt
     int glyph_width;
     int pos;
     int rc;
+
+    // NOTE: Initialize to make compiler happy.
+    glyph_dy = 0;
+    rc = TIG_OK;
 
     blt_dst_rect_x = blt->dst_rect->x;
     blt_dst_rect_y = blt->dst_rect->y;
