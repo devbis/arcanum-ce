@@ -274,7 +274,7 @@ int tig_window_button_destroy(tig_window_handle_t window_handle)
     TigWindow* win;
     int rc;
 
-    if (window_handle) {
+    if (window_handle == TIG_WINDOW_HANDLE_INVALID) {
         tig_debug_printf("tig_window_button_destroy: ERROR: Attempt to reference Empty WinID!\n");
         return TIG_ERR_12;
     }
