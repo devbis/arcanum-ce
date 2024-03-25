@@ -127,8 +127,10 @@ void tig_window_exit()
     TigRectListNode* curr;
 
     for (window_index = 0; window_index < TIG_WINDOW_MAX; window_index++) {
-        window_handle = tig_window_index_to_handle(window_index);
-        tig_window_destroy(window_handle);
+        if ((windows[window_index].flags & TIG_WINDOW_USAGE_FREE) == 0) {
+            window_handle = tig_window_index_to_handle(window_index);
+            tig_window_destroy(window_handle);
+        }
     }
 
     while (tig_window_dirty_rects != NULL) {
