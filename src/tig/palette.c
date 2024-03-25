@@ -39,11 +39,11 @@ int tig_palette_init(TigContext* ctx)
     case 8:
         break;
     case 16:
-        tig_palette_size = 512;
+        tig_palette_size = sizeof(uint16_t) * 256;
         break;
     case 24:
     case 32:
-        tig_palette_size = 1024;
+        tig_palette_size = sizeof(uint32_t) * 256;
         break;
     default:
         tig_debug_println("Unknown BPP in tig_palette_init()\n");
@@ -53,7 +53,7 @@ int tig_palette_init(TigContext* ctx)
     tig_palette_bpp = ctx->bpp;
     tig_palette_initialized = true;
 
-    // Warm cache palette cache.
+    // Warm palette cache.
     for (index = 0; index < 16; index++) {
         tig_palette_node_reserve();
     }
