@@ -261,6 +261,7 @@ void tig_video_display_fps()
     HDC hdc;
 
     if (tig_video_show_fps) {
+        ++counter;
         if (counter >= 10) {
             tig_timer_start(&curr_time);
             elapsed = tig_timer_between(prev_time, curr_time);
