@@ -74,7 +74,7 @@ static bool tig_video_surface_create(LPDIRECTDRAW7 ddraw, int width, int height,
 static void tig_video_surface_destroy(LPDIRECTDRAWSURFACE7* surface_ptr);
 static bool tig_video_surface_lock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 surface_desc, void** surface_data_ptr);
 static bool tig_video_surface_unlock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 surface_desc);
-static bool tig_video_surface_blt(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, int color);
+static bool tig_video_surface_fill(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, int color);
 static int tig_video_screenshot_make_internal(int a1);
 static unsigned int tig_video_color_to_mask(COLORREF color);
 static void tig_video_print_dd_result(HRESULT hr);
@@ -414,7 +414,7 @@ int tig_video_fill(TigRect* rect, int color)
         clamped_rect.y += tig_video_client_rect.top;
     }
 
-    if (tig_video_surface_blt(tig_video_state.main_surface, &clamped_rect, color) != TIG_OK) {
+    if (tig_video_surface_fill(tig_video_state.main_surface, &clamped_rect, color) != TIG_OK) {
         return TIG_ERR_16;
     }
 
@@ -998,7 +998,7 @@ int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffe
     video_buffer->background_color = video_buffer_spec->background_color;
 
     if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED) != 0) {
-        tig_video_surface_blt(video_buffer->surface, NULL, video_buffer_spec->background_color);
+        tig_video_surface_fill(video_buffer->surface, NULL, video_buffer_spec->background_color);
     }
 
     video_buffer->pitch = 0;
@@ -1155,8 +1155,7 @@ int tig_video_buffer_outline(TigVideoBuffer* video_buffer, TigRect* rect, int co
 // 0x520630
 int tig_video_buffer_fill(TigVideoBuffer* video_buffer, TigRect* rect, int color)
 {
-    // TODO: Check return value.
-    if (!tig_video_surface_blt(video_buffer->surface, rect, color)) {
+    if (!tig_video_surface_fill(video_buffer->surface, rect, color)) {
         return TIG_ERR_16;
     }
 
@@ -1437,10 +1436,10 @@ bool tig_video_ddraw_init(TigContext* ctx)
             return false;
         }
 
-        tig_video_surface_blt(tig_video_state.primary_surface, NULL, 0);
+        tig_video_surface_fill(tig_video_state.primary_surface, NULL, 0);
 
         if (tig_video_double_buffered) {
-            tig_video_surface_blt(tig_video_state.offscreen_surface, NULL, 0);
+            tig_video_surface_fill(tig_video_state.offscreen_surface, NULL, 0);
         }
     }
 
@@ -2025,7 +2024,7 @@ bool tig_video_surface_unlock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 sur
 }
 
 // 0x5251C0
-bool tig_video_surface_blt(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, int color)
+bool tig_video_surface_fill(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, int color)
 {
     DDBLTFX fx;
     fx.dwSize = sizeof(fx);
