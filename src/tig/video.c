@@ -997,7 +997,7 @@ int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffe
     video_buffer->texture_height = texture_height;
     video_buffer->background_color = video_buffer_spec->background_color;
 
-    if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED) != 0) {
+    if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED) == 0) {
         tig_video_surface_fill(video_buffer->surface, NULL, video_buffer_spec->background_color);
     }
 
