@@ -159,6 +159,8 @@ void sub_535390(TigFont* font)
                 } else {
                     width += glyph_width;
                 }
+
+                pos++;
             }
         }
 
