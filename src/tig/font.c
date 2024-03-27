@@ -352,7 +352,7 @@ int sub_535850(TigVideoBuffer* video_buffer, const char* str, int length, TigArt
     blt_dst_rect_y = blt->dst_rect->y;
 
     for (pos = 0; pos < length; pos++) {
-        if (str[pos] != '\0') {
+        if (str[pos] == '\0') {
             break;
         }
 
