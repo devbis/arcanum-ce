@@ -5,9 +5,9 @@
 #include <mss_compat.h>
 
 #include "tig/cache.h"
+#include "tig/core.h"
 #include "tig/debug.h"
 #include "tig/file.h"
-#include "tig/tig.h"
 #include "tig/timer.h"
 
 #define FIRST_VOICE_HANDLE 0
