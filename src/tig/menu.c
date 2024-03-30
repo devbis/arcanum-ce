@@ -596,14 +596,13 @@ void tig_menu_bar_on_click(tig_button_handle_t button_handle)
         return;
     }
 
+    drop_down_index = 0;
+    menu_item_index = 0;
     if (tig_menu_current_drop_down_index > 0) {
         drop_down_index = tig_menu_current_drop_down_index;
         for (index = 0; index < tig_menu_current_drop_down_index; index++) {
             menu_item_index += tig_menu_bars[tig_menu_current_menu_bar_index].num_menu_items[index];
         }
-    } else {
-        drop_down_index = 0;
-        menu_item_index = 0;
     }
 
     if (tig_menu_presenting_drop_down) {
