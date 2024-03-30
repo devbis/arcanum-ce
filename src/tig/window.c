@@ -416,12 +416,12 @@ int tig_window_display()
 }
 
 // 0x51D050
-void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_buffer, int dx, int dy, int top_window_index)
+void sub_51D050(TigRect* src_rect, TigRect* mouse_rect, TigVideoBuffer* dst_video_buffer, int dx, int dy, int top_window_index)
 {
     TigVideoBufferBlitSpec blt;
     TigRectListNode* head;
     TigRectListNode* node;
-    TigRect rect;
+    TigRect dirty_rect;
     TigRect clips[4];
     TigRect blt_src_rect;
     TigRect blt_dst_rect;
@@ -434,7 +434,7 @@ void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_
     int index;
     int v38 = 0;
 
-    rc = tig_rect_intersection(src_rect, &tig_window_screen_rect, &rect);
+    rc = tig_rect_intersection(src_rect, &tig_window_screen_rect, &dirty_rect);
     if (rc != TIG_OK) {
         return;
     }
@@ -447,8 +447,8 @@ void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_
         v47 = 0;
     }
 
-    if (dst_rect != NULL) {
-        num_clips = tig_rect_clip(&rect, dst_rect, clips);
+    if (mouse_rect != NULL) {
+        num_clips = tig_rect_clip(&dirty_rect, mouse_rect, clips);
         if (num_clips <= 0) {
             return;
         }
@@ -470,7 +470,7 @@ void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_
             return;
         }
 
-        head->rect = rect;
+        head->rect = dirty_rect;
         head->next = NULL;
     }
 
@@ -497,17 +497,17 @@ void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_
                     if ((win->flags & TIG_WINDOW_HAVE_TRANSPARENCY) == 0) {
                         cont = true;
                     } else if ((tig_window_ctx_flags & TIG_CONTEXT_0x0010) != 0) {
-                        sub_51D050(&rect,
-                            dst_rect,
+                        sub_51D050(&dirty_rect,
+                            mouse_rect,
                             win->secondary_video_buffer,
-                            rect.x - win->frame.x,
-                            rect.y - win->frame.y,
+                            dirty_rect.x - win->frame.x,
+                            dirty_rect.y - win->frame.y,
                             window_index - 1);
                         src_video_buffer = win->secondary_video_buffer;
                         cont = true;
                     } else if (v38 < 20) {
                         wins[v38] = win;
-                        rects[v38] = rect;
+                        rects[v38] = dirty_rect;
                         v38++;
                         cont = false;
                     } else {
@@ -567,12 +567,16 @@ void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_
                             tig_rect_node_destroy(curr);
                             curr = prev->next;
                         }
+
+                        continue;
                     }
                 }
                 prev = curr;
                 curr = curr->next;
             }
         }
+
+        top_window_index--;
     }
 
     while (head != NULL) {
