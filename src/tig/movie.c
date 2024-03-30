@@ -1,15 +1,12 @@
 #include "tig/movie.h"
 
-#define DIRECTDRAW_VERSION 0x700
-#include <ddraw.h>
-
 #include <bink_compat.h>
 #include <mss_compat.h>
 
 #include "tig/color.h"
+#include "tig/core.h"
 #include "tig/kb.h"
 #include "tig/message.h"
-#include "tig/tig.h"
 #include "tig/video.h"
 #include "tig/window.h"
 
@@ -31,7 +28,7 @@ int tig_movie_init(TigContext* ctx)
 
     HDIGDRIVER drvr;
 
-    // COMPAT: Load binkw32.dll.
+    // COMPAT: Load `binkw32.dll`.
     bink_compat_init();
 
     AIL_quick_handles(&drvr, NULL, NULL);
