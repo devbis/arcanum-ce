@@ -3,18 +3,20 @@
 
 #include "tig/types.h"
 
+#include <winsock2.h>
+
 #define TIG_NET_CLIENT_NAME_LENGTH 24
 #define TIG_NET_MAX_PLAYERS 8
 
 #define TIG_NET_MSG_0x401 (WM_USER + 1)
 #define TIG_NET_MSG_0x402 (WM_USER + 2)
 
-typedef struct TigNetStruct2 {
+typedef struct TigNetPlayer {
     char name[TIG_NET_CLIENT_NAME_LENGTH];
     int field_18;
-};
+} TigNetPlayer;
 
-static_assert(sizeof(TigNetStruct2) == 0x1C, "wrong size");
+static_assert(sizeof(TigNetPlayer) == 0x1C, "wrong size");
 
 typedef struct TigNetBookmark {
     char name[TIG_NET_CLIENT_NAME_LENGTH - 1];
@@ -23,11 +25,14 @@ typedef struct TigNetBookmark {
     int field_34;
     int field_38;
     int field_3C;
+    int field_40;
     struct sockaddr_in field_44;
+    int field_54;
+    int field_58;
     unsigned int flags;
     unsigned int time;
-    TigNetStruct2 field_64[TIG_NET_MAX_PLAYERS];
-};
+    TigNetPlayer field_64[TIG_NET_MAX_PLAYERS];
+} TigNetBookmark;
 
 // See 0x527B90.
 static_assert(sizeof(TigNetBookmark) == 0x144, "wrong size");
@@ -63,6 +68,8 @@ void tig_net_set_func_62AC64(TigNetFunc62AC64* func);
 void tig_net_auto_join_enable();
 void tig_net_auto_join_disable();
 bool tig_net_auto_join_is_enabled();
+void sub_528790();
+void sub_5287A0();
 void tig_net_ping();
 void sub_528E80(HWND hWnd, WPARAM wParam, LPARAM lParam);
 void sub_528FD0(HWND hWnd, WPARAM wParam, LPARAM lParam);
