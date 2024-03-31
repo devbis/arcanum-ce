@@ -1,9 +1,9 @@
 #include "tig/kb.h"
 
+#include "tig/core.h"
 #include "tig/debug.h"
 #include "tig/dxinput.h"
 #include "tig/message.h"
-#include "tig/tig.h"
 #include "tig/video.h"
 
 #define KEYBOARD_DEVICE_DATA_CAPACITY 64
