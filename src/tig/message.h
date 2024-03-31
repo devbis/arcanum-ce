@@ -15,7 +15,7 @@ typedef int(TigMessageKeyboardCallback)(int);
 
 typedef enum TigMessageType {
     TIG_MESSAGE_MOUSE,
-    TIG_MESSAGE_TYPE_1,
+    TIG_MESSAGE_BUTTON,
     TIG_MESSAGE_TYPE_2,
     TIG_MESSAGE_QUIT,
     TIG_MESSAGE_CHAR,
@@ -46,6 +46,13 @@ typedef struct TigMouseMessageData {
     bool repeat;
 } TigMouseMessageData;
 
+typedef struct TigButtonMessageData {
+    tig_button_handle_t button_handle;
+    int state;
+    int x;
+    int y;
+} TigButtonMessageData;
+
 typedef struct TigQuitMessageData {
     int exit_code;
 } TigQuitMessageData;
@@ -71,6 +78,7 @@ typedef struct TigMessage {
             int field_18;
         } unknown;
         TigMouseMessageData mouse;
+        TigButtonMessageData button;
         TigQuitMessageData quit;
         TigCharacterMessageData character;
         TigKeyboardMessageData keyboard;

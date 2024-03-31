@@ -1675,7 +1675,7 @@ bool tig_window_modal_dialog_message_filter(TigMessage* msg)
             }
         }
         break;
-    case TIG_MESSAGE_TYPE_BUTTON:
+    case TIG_MESSAGE_BUTTON:
         if (msg->data.button.state == TIG_BUTTON_STATE_1) {
             if (msg->data.button.button_handle == tig_window_modal_dialog_button_handles[0]) {
                 switch (tig_window_modal_dialog_desc.type) {

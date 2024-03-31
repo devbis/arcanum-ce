@@ -106,7 +106,7 @@ int tig_button_create(TigButtonData* button_data, tig_button_handle_t* button_ha
 
     btn->flags = button_data->flags;
 
-    if ((window_data.flags & TIG_WINDOW_FLAG_HIDDEN) != 0) {
+    if ((window_data.flags & TIG_WINDOW_HIDDEN) != 0) {
         btn->flags |= TIG_BUTTON_FLAG_HIDDEN;
         btn->usage |= TIG_BUTTON_USAGE_FORCE_HIDDEN;
     }
@@ -267,10 +267,10 @@ int tig_button_refresh_rect(int window_handle, TigRect* rect)
                 art_id = buttons[button_index].art_id;
                 if (art_id != TIG_ART_ID_INVALID) {
                     if (buttons[button_index].state != TIG_BUTTON_STATE_3) {
-                        art_id = sub_502BC0(art_id);
+                        art_id = tig_art_id_frame_inc(art_id);
 
                         if (buttons[button_index].state == TIG_BUTTON_STATE_2) {
-                            art_id = sub_502BC0(art_id);
+                            art_id = tig_art_id_frame_inc(art_id);
                         }
                     }
 
@@ -439,7 +439,7 @@ bool tig_button_process_mouse_msg(TigMouseMessageData* mouse)
         return false;
     }
 
-    msg.type = TIG_MESSAGE_TYPE_BUTTON;
+    msg.type = TIG_MESSAGE_BUTTON;
     msg.data.button.x = mouse->x;
     msg.data.button.y = mouse->y;
 

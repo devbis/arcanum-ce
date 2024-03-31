@@ -1,12 +1,14 @@
 #include "tig/menu.h"
 
+#include "tig/art.h"
 #include "tig/button.h"
 #include "tig/color.h"
+#include "tig/core.h"
 #include "tig/dxinput.h"
 #include "tig/font.h"
 #include "tig/kb.h"
 #include "tig/memory.h"
-#include "tig/tig.h"
+#include "tig/rect.h"
 #include "tig/window.h"
 
 /// The maximum number of menu bars.
@@ -355,13 +357,13 @@ bool sub_5395E0(TigMessage* msg)
     int index;
 
     switch (msg->type) {
-    case TIG_MESSAGE_TYPE_1:
-        if (msg->data.unknown.field_8 == dword_636EDC) {
-            if (msg->data.unknown.field_C == 1) {
+    case TIG_MESSAGE_BUTTON:
+        if (msg->data.button.button_handle == dword_636EDC) {
+            if (msg->data.button.state == TIG_BUTTON_STATE_1) {
                 dword_636EF8 = -1;
             }
-        } else if (msg->data.unknown.field_8 == dword_636ED8) {
-            if (msg->data.unknown.field_C == 0) {
+        } else if (msg->data.button.button_handle == dword_636ED8) {
+            if (msg->data.button.state == TIG_BUTTON_STATE_0) {
                 if (dword_636EFC > 0) {
                     --dword_636EFC;
                     sub_539C50(dword_636EEC,
@@ -375,8 +377,8 @@ bool sub_5395E0(TigMessage* msg)
                         NULL);
                 }
             }
-        } else if (msg->data.unknown.field_8 == dword_636540) {
-            if (msg->data.unknown.field_C == 0) {
+        } else if (msg->data.button.button_handle == dword_636540) {
+            if (msg->data.button.state == TIG_BUTTON_STATE_0) {
                 if (dword_636EFC < dword_636EE0 - 10) {
                     ++dword_636EFC;
                     sub_539C50(dword_636EEC,
@@ -392,12 +394,12 @@ bool sub_5395E0(TigMessage* msg)
             }
         } else {
             for (index = 0; index < dword_636548; index++) {
-                if (msg->data.unknown.field_8 == dword_636514[index]) {
-                    switch (msg->data.unknown.field_C) {
-                    case 1:
+                if (msg->data.button.button_handle == dword_636514[index]) {
+                    switch (msg->data.button.state) {
+                    case TIG_BUTTON_STATE_1:
                         dword_636EF8 = index + dword_636EFC;
                         break;
-                    case 2:
+                    case TIG_BUTTON_STATE_2:
                         sub_539C50(dword_636EEC,
                             5,
                             dword_636544 + 10,
@@ -408,7 +410,7 @@ bool sub_5395E0(TigMessage* msg)
                             dword_636544,
                             NULL);
                         break;
-                    case 3:
+                    case TIG_BUTTON_STATE_3:
                         sub_539C50(dword_636EEC,
                             5,
                             dword_636544 + 10,
@@ -499,9 +501,9 @@ int tig_menu_bar_create(TigMenuBarDesc* desc)
     height = font_desc.height;
 
     // Prepare drop down buttons template.
-    button_data.flags = 0x1000;
+    button_data.flags = TIG_BUTTON_MENU_BAR;
     button_data.window_handle = bar->window_handle;
-    button_data.art_id = -1;
+    button_data.art_id = TIG_ART_ID_INVALID;
     button_data.field_1C = -1;
     button_data.field_20 = -1;
     button_data.field_24 = -1;
@@ -694,6 +696,9 @@ int calculate_drop_down_item_size(const char* title, const char** menu_items, in
     TigFont font_desc;
     int index;
     int width;
+
+    // NOTE: Initialize to make compiler happy.
+    font_desc.height = 0;
 
     if (title != NULL) {
         font_desc.str = title;

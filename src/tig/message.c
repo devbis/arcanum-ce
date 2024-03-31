@@ -1,10 +1,11 @@
 #include "tig/message.h"
 
+#include "tig/button.h"
+#include "tig/core.h"
 #include "tig/kb.h"
 #include "tig/memory.h"
 #include "tig/mouse.h"
 #include "tig/movie.h"
-#include "tig/tig.h"
 #include "tig/timer.h"
 #include "tig/video.h"
 #include "tig/window.h"
@@ -362,8 +363,8 @@ int tig_message_dequeue(TigMessage* message)
         tig_message_queue_head = next;
 
         if (tig_movie_is_playing()
-            || (temp_message.type != TIG_MESSAGE_MOUSE || !sub_538220(&(temp_message.data.mouse)))
-                && (!sub_51E790(&temp_message) || temp_message.type == TIG_MESSAGE_TYPE_8)) {
+            || (temp_message.type != TIG_MESSAGE_MOUSE || !tig_button_process_mouse_msg(&(temp_message.data.mouse)))
+                && (!tig_window_filter_message(&temp_message) || temp_message.type == TIG_MESSAGE_TYPE_8)) {
             *message = temp_message;
 
             LeaveCriticalSection(&tig_message_critical_section);
