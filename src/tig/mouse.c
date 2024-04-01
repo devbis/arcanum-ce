@@ -2,9 +2,9 @@
 
 #include "tig/art.h"
 #include "tig/color.h"
+#include "tig/core.h"
 #include "tig/dxinput.h"
 #include "tig/message.h"
-#include "tig/tig.h"
 #include "tig/timer.h"
 #include "tig/video.h"
 #include "tig/window.h"
@@ -702,7 +702,7 @@ void tig_mouse_display()
         tig_mouse_cursor_opaque_video_buffer,
         0,
         0,
-        -2);
+        TIG_WINDOW_TOP);
 
     // Blit cursor over background.
     blt.flags = 0;
@@ -792,7 +792,7 @@ bool tig_mouse_cursor_create_video_buffers(unsigned int art_id, int dx, int dy)
         return false;
     }
 
-    if (sub_503510(art_id, &width, &height) != TIG_OK) {
+    if (tig_art_size(art_id, &width, &height) != TIG_OK) {
         return false;
     }
 
@@ -810,8 +810,8 @@ bool tig_mouse_cursor_create_video_buffers(unsigned int art_id, int dx, int dy)
     video_buffer_spec.width = width;
     video_buffer_spec.height = height;
     video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY | TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED;
-    video_buffer_spec.background_color = art_data.field_14;
-    video_buffer_spec.color_key = art_data.field_14;
+    video_buffer_spec.background_color = art_data.color_key;
+    video_buffer_spec.color_key = art_data.color_key;
     if (tig_video_buffer_create(&video_buffer_spec, &tig_mouse_cursor_trans_video_buffer) != TIG_OK) {
         tig_video_buffer_destroy(tig_mouse_cursor_opaque_video_buffer);
         return false;
@@ -852,9 +852,9 @@ bool tig_mouse_cursor_set_art_frame(unsigned int art_id, int x, int y)
     tig_mouse_cursor_art_y = y;
     tig_mouse_cursor_art_frame_width = art_frame_data.width;
     tig_mouse_cursor_art_frame_height = art_frame_data.height;
-    tig_mouse_cursor_art_number_of_frames = art_data.field_10;
-    tig_mouse_cursor_art_animation_delay = 1000 / art_data.field_4;
-    tig_mouse_cursor_art_color_key = art_data.field_14;
+    tig_mouse_cursor_art_number_of_frames = art_data.frames;
+    tig_mouse_cursor_art_animation_delay = 1000 / art_data.unk_4;
+    tig_mouse_cursor_art_color_key = art_data.color_key;
 
     tig_mouse_state.offset_x = x + art_frame_data.field_8;
     tig_mouse_state.offset_y = y + art_frame_data.field_C;
@@ -882,7 +882,7 @@ int tig_mouse_cursor_set_art_id(unsigned int art_id)
     if (!tig_mouse_is_hardware) {
         int width;
         int height;
-        int rc = sub_503510(art_id, &width, &height);
+        int rc = tig_art_size(art_id, &width, &height);
         if (rc != TIG_OK) {
             return rc;
         }
@@ -1032,7 +1032,7 @@ int tig_mouse_cursor_overlay(unsigned int art_id, int x, int y)
                 dst_rect.height = width + tig_mouse_cursor_art_frame_bounds.height;
                 tig_video_buffer_fill(tig_mouse_cursor_trans_video_buffer,
                     &dst_rect,
-                    art_data.field_14);
+                    art_data.color_key);
             }
 
             if (height != 0) {
@@ -1042,7 +1042,7 @@ int tig_mouse_cursor_overlay(unsigned int art_id, int x, int y)
                 dst_rect.height = height;
                 tig_video_buffer_fill(tig_mouse_cursor_trans_video_buffer,
                     &dst_rect,
-                    art_data.field_14);
+                    art_data.color_key);
             }
         }
     } else {
@@ -1155,7 +1155,7 @@ void tig_mouse_cursor_animate()
 {
     if (!tig_mouse_is_hardware) {
         tig_window_set_needs_display_in_rect(&(tig_mouse_state.frame));
-        tig_mouse_cursor_art_id = sub_502BC0(tig_mouse_cursor_art_id);
+        tig_mouse_cursor_art_id = tig_art_id_frame_inc(tig_mouse_cursor_art_id);
         tig_mouse_cursor_set_art_frame(tig_mouse_cursor_art_id, 0, 0);
         tig_window_set_needs_display_in_rect(&(tig_mouse_state.frame));
     }
