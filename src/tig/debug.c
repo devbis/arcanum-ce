@@ -8,8 +8,8 @@
 #include <windows.h>
 #endif
 
+#include "tig/core.h"
 #include "tig/memory.h"
-#include "tig/tig.h"
 
 #define VGA_PTR ((unsigned char*)0xB0000)
 #define VGA_WIDTH 160
