@@ -7,9 +7,6 @@
 extern "C" {
 #endif
 
-/// Opaque pointer representing palette.
-typedef void* TigPalette;
-
 typedef enum TigPaletteAdjustFlags {
     TIG_PALETTE_ADJUST_TINT = 0x1,
     TIG_PALETTE_ADJUST_LUMINATE = 0x2,

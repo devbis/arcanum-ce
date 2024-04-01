@@ -10,6 +10,23 @@
 extern "C" {
 #endif
 
+#define TIG_MAX_PATH 260
+
+typedef unsigned int tig_art_id_t;
+typedef unsigned int tig_button_handle_t;
+typedef unsigned int tig_color_t;
+typedef unsigned int tig_window_handle_t;
+
+typedef struct TigRect TigRect;
+typedef struct TigVideoBuffer TigVideoBuffer;
+typedef struct TigPaletteAdjustDesc TigPaletteAdjustDesc;
+typedef struct TigArtBlitSpec TigArtBlitSpec;
+typedef struct TigMessage TigMessage;
+typedef struct TigBmp TigBmp;
+
+/// Opaque pointer representing palette.
+typedef void* TigPalette;
+
 #define TIG_OK 0
 #define TIG_NOT_INITIALIZED 1
 #define TIG_ALREADY_INITIALIZED 2
@@ -45,7 +62,7 @@ extern "C" {
 
 typedef int(TigArtFilePathResolver)(unsigned int art_id, char* path);
 typedef void(TigFilePathResolver)(int a1, char* path);
-typedef int(TigContextF20)(unsigned int art_id);
+typedef tig_art_id_t(TigContextF20)(tig_art_id_t art_id);
 typedef bool(TigContextMessageHandler)(LPMSG msg);
 
 typedef struct TigContext {
