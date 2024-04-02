@@ -1604,20 +1604,26 @@ bool tig_video_ddraw_init_fullscreen(TigContext* ctx)
 // 0x524830
 bool sub_524830()
 {
-    for (int index = 0; index < 50; index++) {
-        unsigned int red_mask = tig_video_color_to_mask(RGB(255, 0, 0));
-        unsigned int green_mask = tig_video_color_to_mask(RGB(0, 255, 0));
-        unsigned int blue_mask = tig_video_color_to_mask(RGB(0, 0, 255));
+    DDPIXELFORMAT ddpf;
+    unsigned int red_mask;
+    unsigned int green_mask;
+    unsigned int blue_mask;
+    int attempt;
 
-        // TODO: What the hell is this?
-        if ((red_mask | green_mask | blue_mask) != 0) {
-            if (((red_mask & green_mask) | (blue_mask & (red_mask | green_mask))) == 0) {
-                tig_color_set_rgb_settings(red_mask, green_mask, blue_mask);
-                return true;
-            }
-        }
+    for (attempt = 0; attempt < 50; attempt++) {
+        // NOTE: This code causes screen to flicker once on init and exit.
+        // red_mask = tig_video_color_to_mask(RGB(255, 0, 0));
+        // green_mask = tig_video_color_to_mask(RGB(0, 255, 0));
+        // blue_mask = tig_video_color_to_mask(RGB(0, 0, 255));
 
-        DDPIXELFORMAT ddpf;
+        // // TODO: What the hell is this?
+        // if ((red_mask | green_mask | blue_mask) != 0) {
+        //     if (((red_mask & green_mask) | (blue_mask & (red_mask | green_mask))) == 0) {
+        //         tig_color_set_rgb_settings(red_mask, green_mask, blue_mask);
+        //         return true;
+        //     }
+        // }
+
         ddpf.dwSize = sizeof(ddpf);
         if (SUCCEEDED(IDirectDrawSurface7_GetPixelFormat(tig_video_state.primary_surface, &ddpf))) {
             if ((ddpf.dwFlags & DDPF_RGB) != 0) {
