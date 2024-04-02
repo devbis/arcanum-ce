@@ -8,11 +8,11 @@
 
 #include <fpattern.h>
 
+#include "tig/core.h"
 #include "tig/database.h"
 #include "tig/debug.h"
 #include "tig/find_file.h"
 #include "tig/memory.h"
-#include "tig/tig.h"
 
 #define CACHE_DIR_NAME "TIGCache"
 #define COPY_BUFFER_SIZE 0x8000
