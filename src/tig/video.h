@@ -134,6 +134,7 @@ int tig_video_buffer_fill(TigVideoBuffer* video_buffer, TigRect* rect, int color
 int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigRect* rect, int a3, unsigned int color);
 int tig_video_buffer_blit(TigVideoBufferBlitSpec* blit_spec);
 int tig_video_buffer_get_pixel_color(TigVideoBuffer* video_buffer, int x, int y, unsigned int* color);
+int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, int a3, int a4);
 
 #ifdef __cplusplus
 }

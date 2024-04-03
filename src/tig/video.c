@@ -1272,6 +1272,18 @@ int sub_5230C0(TigVideoBuffer* video_buffer, int x, int y, HDC dst, TigRect* rec
     return TIG_OK;
 }
 
+// 0x523120
+int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, int a3, int a4)
+{
+    // TODO: Incomplete.
+    (void)video_buffer;
+    (void)rect;
+    (void)a3;
+    (void)a4;
+
+    return TIG_OK;
+}
+
 // 0x524080
 bool tig_video_platform_window_init(TigContext* ctx)
 {
