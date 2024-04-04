@@ -5,12 +5,12 @@
 
 #include "tig/art.h"
 #include "tig/color.h"
+#include "tig/core.h"
 #include "tig/debug.h"
 #include "tig/file.h"
 #include "tig/memory.h"
 #include "tig/message.h"
 #include "tig/mouse.h"
-#include "tig/tig.h"
 #include "tig/timer.h"
 #include "tig/window.h"
 

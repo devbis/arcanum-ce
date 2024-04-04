@@ -50,8 +50,8 @@ typedef struct TigVideoBufferSpec {
     /* 0000 */ unsigned int flags;
     /* 0004 */ int width;
     /* 0008 */ int height;
-    /* 000C */ int background_color;
-    /* 0010 */ int color_key;
+    /* 000C */ unsigned int background_color;
+    /* 0010 */ unsigned int color_key;
 } TigVideoBufferSpec;
 
 static_assert(sizeof(TigVideoBufferSpec) == 0x14, "wrong size");
@@ -78,7 +78,10 @@ typedef struct TigVideoBufferBlitSpec {
     unsigned int flags;
     TigVideoBuffer* src_video_buffer;
     TigRect* src_rect;
-    int field_C;
+    unsigned char field_C;
+    unsigned char field_D;
+    unsigned char field_E;
+    unsigned char field_F;
     int field_10;
     int field_14;
     int field_18;
