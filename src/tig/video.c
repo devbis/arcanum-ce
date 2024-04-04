@@ -1175,6 +1175,30 @@ int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigLtrbRect* rect, TigRe
     return TIG_OK;
 }
 
+// 0x520FB0
+int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags)
+{
+    TigVideoBufferData data;
+
+    if ((flags & ~(TIG_VIDEO_BUFFER_BLIT_MIRRORLEFTRIGHT | TIG_VIDEO_BUFFER_BLIT_MIRRORUPDOWN)) == 0) {
+        return TIG_OK;
+    }
+
+    if (!tig_video_3d_initialized) {
+        return TIG_ERR_16;
+    }
+
+    if (tig_video_buffer_data(video_buffer, &data) != TIG_OK) {
+        return TIG_ERR_16;
+    }
+
+    if ((data.flags & TIG_VIDEO_BUFFER_CAN_FLUSH) == 0) {
+        return TIG_ERR_16;
+    }
+
+    return TIG_OK;
+}
+
 // NOTE: This function is pretty big, not sure if its possible to implement it
 // one-to-one.
 //
