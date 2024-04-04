@@ -1,16 +1,28 @@
-#ifndef ARCANUM_TIG_TIG_H_
-#define ARCANUM_TIG_TIG_H_
+#ifndef TIG_TIG_H_
+#define TIG_TIG_H_
 
-#include "tig/types.h"
+#include "tig/art.h"
+#include "tig/button.h"
+#include "tig/cache.h"
+#include "tig/color.h"
+#include "tig/core.h"
+#include "tig/debug.h"
+#include "tig/dxinput.h"
+#include "tig/file.h"
+#include "tig/font.h"
+#include "tig/kb.h"
+#include "tig/memory.h"
+#include "tig/menu.h"
+#include "tig/message.h"
+#include "tig/mouse.h"
+#include "tig/movie.h"
+#include "tig/net.h"
+#include "tig/palette.h"
+#include "tig/rect.h"
+#include "tig/sound.h"
+#include "tig/str_parse.h"
+#include "tig/timer.h"
+#include "tig/video.h"
+#include "tig/window.h"
 
-extern unsigned int tig_ping_time;
-
-int tig_init(TigContext* ctx);
-void tig_exit();
-void tig_ping();
-void sub_51F250();
-const char* tig_get_executable(bool file_name_only);
-void tig_set_active(bool is_active);
-bool tig_get_active();
-
-#endif /* ARCANUM_TIG_TIG_H_ */
+#endif /* TIG_TIG_H_ */
