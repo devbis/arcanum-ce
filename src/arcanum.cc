@@ -498,9 +498,6 @@ void* off_603DD0;
 
 // 687---
 
-// 0x5BEA38
-float flt_5BEA38 = 0.3;
-
 // 0x5C26F8
 int dword_5C26F8 = -1;
 
@@ -552,9 +549,6 @@ void* off_603DE4;
 // 0x603E00
 int dword_603E00;
 
-// 0x604744
-int dword_604744;
-
 // 0x60F244
 int dword_60F244;
 
@@ -581,9 +575,6 @@ int dword_62B2C0;
 
 // 0x6301F4
 int dword_6301F4;
-
-// 0x630D54
-void* off_630D54;
 
 // 0x63650C
 int dword_63650C;
@@ -2945,24 +2936,11 @@ void nullsub_24()
 {
 }
 
-// 0x5022B0
-void sub_5022B0(int a1)
-{
-    dword_604744 = a1;
-}
 
 // 0x502700
 unsigned int sub_502700(unsigned int a1)
 {
     return a1 >> 28;
-}
-
-// #check
-// 0x51AC00
-void sub_51AC00(int a1)
-{
-    // #check: probably / 100.0 or * 0.01
-    flt_5BEA38 = (double)a1 * 0.0099999998;
 }
 
 // 0x51E2C0

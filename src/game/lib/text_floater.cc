@@ -109,7 +109,7 @@ bool text_floater_init(GameContext* ctx)
     dword_6028C0 = tig_color_rgb_make(0, 0, 0);
 
     TigFont font;
-    font.flags = TIG_FONT_FLAG_0x80 | TIG_FONT_FLAG_0x08;
+    font.flags = TIG_FONT_0x80 | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
     TigArtFrameData art_frame_data;
@@ -117,7 +117,7 @@ bool text_floater_init(GameContext* ctx)
     dword_602898 = art_frame_data.height + 2;
 
     for (int index = 0; index < FIVE; index++) {
-        font.field_8 = tig_color_rgb_make(byte_5B8E6C[index][0], byte_5B8E6C[index][1], byte_5B8E6C[index][2]);
+        font.color = tig_color_rgb_make(byte_5B8E6C[index][0], byte_5B8E6C[index][1], byte_5B8E6C[index][2]);
         tig_font_create(&font, &(dword_602908[index]));
     }
 

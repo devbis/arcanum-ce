@@ -113,11 +113,11 @@ bool tb_init(GameContext* ctx)
     }
 
     TigFont font;
-    font.flags = TIG_FONT_FLAG_0x80 | TIG_FONT_FLAG_0x10 | TIG_FONT_FLAG_0x08;
+    font.flags = TIG_FONT_0x80 | TIG_FONT_CENTERED | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
     for (int index = 0; index < FOUR; index++) {
-        font.field_8 = tig_color_rgb_make(byte_5B8EA0[index][0], byte_5B8EA0[index][1], byte_5B8EA0[index][2]);
+        font.color = tig_color_rgb_make(byte_5B8EA0[index][0], byte_5B8EA0[index][1], byte_5B8EA0[index][2]);
         tig_font_create(&font, &(dword_602AD0[index]));
     }
 

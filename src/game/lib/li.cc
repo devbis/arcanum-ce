@@ -133,7 +133,7 @@ void sub_4BBC30()
 {
     if (dword_5FC43C <= 0) {
         tig_video_blit(off_5FC440, &stru_5FC448, &stru_5FC400, 1);
-        dword_5FC3F8 = sub_502BC0(dword_5FC3F8);
+        dword_5FC3F8 = tig_art_id_frame_inc(dword_5FC3F8);
         sub_4BBCE0();
         tig_window_set_needs_display_in_rect(&stru_5FC400);
     }

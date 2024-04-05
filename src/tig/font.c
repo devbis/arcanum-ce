@@ -357,7 +357,7 @@ int sub_535850(TigVideoBuffer* video_buffer, const char* str, int length, TigArt
         }
 
         if (str[pos] != '\n') {
-            glyph_art_id = sub_502C40(tig_font_stack[tig_font_stack_index]->art_id,
+            glyph_art_id = tig_art_id_frame_set(tig_font_stack[tig_font_stack_index]->art_id,
                 str[pos] - 31);
 
             if (!tig_font_glyph_data(glyph_art_id, str[pos], &glyph_width, &glyph_height, &glyph_dx, &glyph_dy)) {
@@ -528,7 +528,7 @@ bool tig_font_glyph_data(tig_art_id_t font_art_id, int ch, int* width_ptr, int* 
     TigArtFrameData glyph_frame_data;
     tig_art_id_t glyph_art_id;
 
-    glyph_art_id = sub_502C40(font_art_id, (unsigned char)ch - 31);
+    glyph_art_id = tig_art_id_frame_set(font_art_id, (unsigned char)ch - 31);
     if (tig_art_frame_data(glyph_art_id, &glyph_frame_data) != TIG_OK) {
         return false;
     }

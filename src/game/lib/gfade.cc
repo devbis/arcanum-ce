@@ -43,7 +43,7 @@ int gfade_init(GameContext* ctx)
         TigFont font;
         font.flags = 152;
         tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
-        font.field_8 = tig_color_rgb_make(255, 255, 255);
+        font.color = tig_color_rgb_make(255, 255, 255);
         tig_font_create(&font, &dword_5FC4B8);
     } else {
         fade_have_gamma_control = true;
