@@ -1818,6 +1818,27 @@ int sub_504260(unsigned int art_id)
     }
 }
 
+// 0x504290
+int sub_504290(unsigned int a1, int a2, unsigned int a3, int a4, unsigned int a5, tig_art_id_t* art_id_ptr)
+{
+    if (a1 >= 0x200
+        || a2 >= 32
+        || a3 >= 0x20
+        || a4 >= 8
+        || a5 >= 4) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = (TIG_ART_TYPE_SCENERY << 28)
+        | ((a1 & 0x1FF) << 19)
+        | ((a3 & 0x1F) << 14)
+        | ((a4 & 7) << 11)
+        | ((a2 & 0x1F) << 6)
+        | ((a5 & 3) << 4);
+
+    return TIG_OK;
+}
+
 // 0x504300
 int sub_504300(unsigned int art_id)
 {
