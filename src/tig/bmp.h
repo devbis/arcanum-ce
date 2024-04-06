@@ -15,6 +15,7 @@ typedef struct TigBmp {
 
 static_assert(sizeof(TigBmp) == 0x518, "wrong size");
 
+int tig_bmp_create(TigBmp* bmp);
 int tig_bmp_destroy(TigBmp* bmp);
 int tig_bmp_copy_to_video_buffer(TigBmp* bmp, const TigRect* src_rect, TigVideoBuffer* video_buffer, const TigRect* dst_rect);
 
