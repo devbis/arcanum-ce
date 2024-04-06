@@ -3,6 +3,7 @@
 #include "tig/color.h"
 #include "tig/file.h"
 #include "tig/memory.h"
+#include "tig/video.h"
 #include "tig/window.h"
 
 // 0x535D80
@@ -15,7 +16,7 @@ int tig_bmp_create(TigBmp* bmp)
     int data_size;
     int x;
     int y;
-    uint8_t color;
+    uint8_t byte;
     RGBQUAD palette[256];
     int index;
 
@@ -121,9 +122,9 @@ int tig_bmp_create(TigBmp* bmp)
 
     for (y = 0; y < bmp->height / 2; ++y) {
         for (x = 0; x < bmp->width; ++x) {
-            color = bmp->pixels[bmp->pitch * y + x];
-            bmp->pixels[bmp->pitch * y + x] = bmp->pixels[bmp->pitch * (bmp->height - y - 1) + x];
-            bmp->pixels[bmp->pitch * (bmp->height - y - 1) + x] = color;
+            byte = ((uint8_t*)bmp->pixels)[bmp->pitch * y + x];
+            ((uint8_t*)bmp->pixels)[bmp->pitch * y + x] = ((uint8_t*)bmp->pixels)[bmp->pitch * (bmp->height - y - 1) + x];
+            ((uint8_t*)bmp->pixels)[bmp->pitch * (bmp->height - y - 1) + x] = byte;
         }
     }
 
@@ -151,6 +152,72 @@ int tig_bmp_copy_to_video_buffer(TigBmp* bmp, const TigRect* src_rect, TigVideoB
     (void)dst_rect;
 
     return TIG_OK;
+}
+
+// 0x537520
+int tig_bmp_create_from_video_buffer(TigVideoBuffer* video_buffer, int a2, TigBmp* bmp)
+{
+    // NOTE: This param is not used and this function is never called. It's
+    // impossible to guess its meaning.
+    (void)a2;
+
+    TigVideoBufferData video_buffer_data;
+    int x;
+    int y;
+    int rc = TIG_ERR_16;
+
+    if (tig_video_buffer_lock(video_buffer) != TIG_OK) {
+        return TIG_ERR_7;
+    }
+
+    if (tig_video_buffer_data(video_buffer, &video_buffer_data) == TIG_OK) {
+        bmp->name[0] = '\0';
+        if (tig_video_get_bpp(&(bmp->bpp)) == TIG_OK
+            && tig_video_get_palette(bmp->palette) == TIG_OK) {
+            bmp->pitch = video_buffer_data.pitch;
+            bmp->width = video_buffer_data.width;
+            bmp->height = video_buffer_data.height;
+            bmp->pixels = MALLOC(video_buffer_data.height * video_buffer_data.pitch);
+            if (bmp->pixels != NULL) {
+                switch (bmp->bpp) {
+                case 8:
+                    for (y = 0; y < bmp->height; ++y) {
+                        for (x = 0; x < bmp->width; ++x) {
+                            *((uint8_t*)bmp->pixels + bmp->pitch * y + x) = *((uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch * y + x);
+                        }
+                    }
+                    break;
+                case 16:
+                    for (y = 0; y < bmp->height; ++y) {
+                        for (x = 0; x < bmp->width; ++x) {
+                            *((uint16_t*)bmp->pixels + bmp->pitch * y + x) = *((uint16_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch * y + x);
+                        }
+                    }
+                    break;
+                case 24:
+                    for (y = 0; y < bmp->height; ++y) {
+                        for (x = 0; x < bmp->width; ++x) {
+                            *((uint32_t*)bmp->pixels + bmp->pitch * y + x) = *((uint32_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch * y + x);
+                        }
+                    }
+                    break;
+                case 32:
+                    for (y = 0; y < bmp->height; ++y) {
+                        for (x = 0; x < bmp->width; ++x) {
+                            *((uint32_t*)bmp->pixels + bmp->pitch * y + x) = *((uint32_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch * y + x);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    if (tig_video_buffer_unlock(video_buffer) != TIG_OK) {
+        return TIG_ERR_7;
+    }
+
+    return rc;
 }
 
 // 0x5377A0
@@ -188,7 +255,7 @@ int tig_bmp_copy_to_bmp(TigBmp* src, TigBmp* dst)
 
     for (y = 0; y < dst->height; ++y) {
         for (x = 0; x < dst->width; ++x) {
-            dst->pixels[dst->pitch * y + x] = src->pixels[src->pitch * (int)(y * height_ratio) + (int)(x * width_ratio)];
+            ((uint8_t*)dst->pixels)[dst->pitch * y + x] = ((uint8_t*)src->pixels)[src->pitch * (int)(y * height_ratio) + (int)(x * width_ratio)];
         }
     }
 

@@ -571,7 +571,7 @@ int tig_video_get_bpp(int* bpp)
 }
 
 // 0x51FAA0
-int tig_video_get_palette(int* colors)
+int tig_video_get_palette(unsigned int* colors)
 {
     int index;
 

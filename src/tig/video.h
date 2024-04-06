@@ -116,7 +116,7 @@ int tig_video_screenshot_set_settings(TigVideoScreenshotSettings* settings);
 int tig_video_screenshot_make();
 int sub_51FA40(TigRect* rect);
 int tig_video_get_bpp(int* bpp);
-int tig_video_get_palette(int* colors);
+int tig_video_get_palette(unsigned int* colors);
 int tig_video_get_pitch(int* pitch);
 int tig_video_3d_check_initialized();
 int tig_video_3d_check_hardware();
