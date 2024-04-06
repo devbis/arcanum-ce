@@ -3,6 +3,7 @@
 #include "tig/color.h"
 #include "tig/file.h"
 #include "tig/memory.h"
+#include "tig/window.h"
 
 // 0x535D80
 int tig_bmp_create(TigBmp* bmp)
@@ -150,4 +151,16 @@ int tig_bmp_copy_to_video_buffer(TigBmp* bmp, const TigRect* src_rect, TigVideoB
     (void)dst_rect;
 
     return TIG_OK;
+}
+
+// 0x537900
+int tig_bmp_copy_to_window(TigBmp* bmp, const TigRect* src_rect, tig_window_handle_t window_handle, const TigRect* dst_rect)
+{
+    TigVideoBuffer* video_buffer;
+
+    if (tig_window_vbid_get(window_handle, &video_buffer)) {
+        return TIG_ERR_16;
+    }
+
+    return tig_bmp_copy_to_video_buffer(bmp, src_rect, video_buffer, dst_rect);
 }
