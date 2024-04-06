@@ -1573,6 +1573,31 @@ int sub_503CD0(int a1, int a2, unsigned int a3, unsigned int a4, int rotation, i
     return TIG_OK;
 }
 
+// 0x503D80
+int sub_503D80(int a1, unsigned int a2, unsigned int a3, int a4, int a5, int a6, unsigned int a7, tig_art_id_t* art_id_ptr)
+{
+    if (a1 >= 256
+        || a2 >= 2
+        || a3 >= 0x20
+        || a4 >= 8
+        || a5 >= 32
+        || a6 >= 16
+        || a7 >= 4) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = (TIG_ART_TYPE_UNIQUE_NPC << 28)
+        | ((a1 & 0xFF) << 20)
+        | ((a2 & 1) << 19)
+        | ((a3 & 0x1F) << 14)
+        | ((a4 & 7) << 11)
+        | ((a5 & 0x1F) << 6)
+        | ((a7 & 3) << 4)
+        | (a6 & 0xF);
+
+    return TIG_OK;
+}
+
 // 0x503E20
 int sub_503E20(unsigned int art_id)
 {
