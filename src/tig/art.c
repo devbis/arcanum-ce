@@ -1546,6 +1546,33 @@ int sub_503C00(unsigned int a1, int a2, int a3, unsigned int a4, unsigned int a5
     return TIG_OK;
 }
 
+// 0x503CD0
+int sub_503CD0(int a1, int a2, unsigned int a3, unsigned int a4, int rotation, int a6, int a7, unsigned int a8, tig_art_id_t* art_id_ptr)
+{
+    if (a1 >= 32
+        || a2 >= 8
+        || a3 >= 2
+        || a4 >= 0x20
+        || rotation >= 8
+        || a6 >= 32
+        || a7 >= 16
+        || a8 >= 4) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = (TIG_ART_TYPE_MONSTER << 28)
+        | ((a1 & 0x1F) << 23)
+        | ((a2 & 7) << 20)
+        | ((a3 & 1) << 19)
+        | ((a4 & 0x1F) << 12)
+        | ((rotation & 7) << 11)
+        | ((a6 & 0x1F) << 6)
+        | ((a8 & 3) << 4)
+        | (a7 & 0xF);
+
+    return TIG_OK;
+}
+
 // 0x503E20
 int sub_503E20(unsigned int art_id)
 {

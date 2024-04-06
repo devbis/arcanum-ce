@@ -187,6 +187,7 @@ unsigned int sub_503B30(unsigned int art_id, int value);
 int sub_503B70(unsigned int art_id);
 unsigned int sub_503BB0(unsigned int art_id, int value);
 int sub_503C00(unsigned int a1, int a2, int a3, unsigned int a4, unsigned int a5, int rotation, int a7, int a8, unsigned int a9, tig_art_id_t* art_id_ptr);
+int sub_503CD0(int a1, int a2, unsigned int a3, unsigned int a4, int rotation, int a6, int a7, unsigned int a8, tig_art_id_t* art_id_ptr);
 int sub_503E20(unsigned int art_id);
 unsigned int sub_503E50(unsigned int art_id, int value);
 int sub_503EA0(unsigned int art_id);
