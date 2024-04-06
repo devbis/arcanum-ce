@@ -170,6 +170,7 @@ int sub_502FD0(tig_art_id_t art_id, int x, int y);
 int tig_art_data(unsigned int art_id, TigArtData* data);
 int tig_art_frame_data(unsigned int art_id, TigArtFrameData* data);
 int sub_503340(tig_art_id_t art_id, uint8_t* dst, int pitch);
+int sub_5033E0(tig_art_id_t art_id, int a2, int a3);
 int tig_art_size(tig_art_id_t art_id, int* width_ptr, int* height_ptr);
 int sub_5036B0(unsigned int art_id);
 int sub_5036E0(unsigned int art_id);

@@ -1276,6 +1276,89 @@ int sub_503340(tig_art_id_t art_id, uint8_t* dst, int pitch)
     return TIG_OK;
 }
 
+// 0x5033E0
+int sub_5033E0(tig_art_id_t art_id, int a2, int a3)
+{
+    unsigned int cache_entry_index;
+    int rotation;
+    int frame;
+    int type;
+    int delta;
+    int v0;
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+
+    cache_entry_index = sub_51AA90(art_id);
+    if (cache_entry_index == -1) {
+        return 0;
+    }
+
+    rotation = tig_art_id_rotation_get(art_id);
+    frame = tig_art_id_frame_get(art_id);
+
+    // NOTE: Initialize to keep compiler happy.
+    delta = 0;
+
+    if (dword_5BEA14) {
+        delta = 1;
+
+        type = tig_art_type(art_id);
+        if ((type == TIG_ART_TYPE_CRITTER
+                || type == TIG_ART_TYPE_MONSTER
+                || type == TIG_ART_TYPE_UNIQUE_NPC)
+            && rotation > 0
+            && rotation < 4) {
+            delta = -1;
+            rotation = 8 - rotation;
+        }
+    }
+
+    v0 = 0;
+
+    if (a2 < 0) {
+        a2 = -a2;
+    }
+
+    if (a3 < 0) {
+        a3 = -a3;
+    }
+
+    v1 = 0;
+    v2 = 0;
+    while ((v1 < a2 || v2 < a3) && v0 < 100) {
+        frame++;
+        if (frame == tig_art_cache_entries[cache_entry_index].hdr.num_frames) {
+            frame = 0;
+        }
+
+        v3 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].field_14;
+        v4 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].field_18;
+
+        if (dword_5BEA14) {
+            v3 *= delta;
+            v4 *= delta;
+        }
+
+        if (v3 >= 0) {
+            v1 += v3;
+        } else {
+            v1 -= v3;
+        }
+
+        if (v4 >= 0) {
+            v2 += v4;
+        } else {
+            v2 -= v4;
+        }
+
+        v0++;
+    }
+
+    return v0;
+}
+
 // 0x503510
 int tig_art_size(tig_art_id_t art_id, int* width_ptr, int* height_ptr)
 {
