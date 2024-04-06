@@ -228,6 +228,7 @@ unsigned int sub_504900(unsigned int art_id, unsigned int value);
 int sub_504940(unsigned int art_id);
 unsigned int sub_504970(unsigned int art_id, unsigned int value);
 int sub_504A60(unsigned int art_id);
+int sub_504A90(tig_art_id_t art_id);
 int sub_504AC0(unsigned int art_id);
 int tig_art_eye_candy_id_create(unsigned int a1, unsigned int a2, int a3, int translucency, int type, unsigned int palette, int scale, tig_art_id_t* art_id);
 int tig_art_eye_candy_id_type_get(tig_art_id_t art_id);

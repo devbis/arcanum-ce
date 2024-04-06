@@ -2126,6 +2126,16 @@ int sub_504A60(unsigned int art_id)
     }
 }
 
+// 0x504A90
+int sub_504A90(tig_art_id_t art_id)
+{
+    if (tig_art_type(art_id) == TIG_ART_TYPE_FACADE) {
+        return (art_id >> 1) & 0x3FF;
+    } else {
+        return 0;
+    }
+}
+
 // 0x504AC0
 int sub_504AC0(unsigned int art_id)
 {
