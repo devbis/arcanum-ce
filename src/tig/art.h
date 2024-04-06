@@ -227,6 +227,7 @@ int sub_5048D0(unsigned int art_id);
 unsigned int sub_504900(unsigned int art_id, unsigned int value);
 int sub_504940(unsigned int art_id);
 unsigned int sub_504970(unsigned int art_id, unsigned int value);
+int sub_5049B0(unsigned int a1, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, tig_art_id_t* art_id_ptr);
 int sub_504A60(unsigned int art_id);
 int sub_504A90(tig_art_id_t art_id);
 int sub_504AC0(unsigned int art_id);

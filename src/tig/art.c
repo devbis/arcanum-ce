@@ -2112,6 +2112,30 @@ unsigned int sub_504970(unsigned int art_id, unsigned int value)
     }
 }
 
+// 0x5049B0
+int sub_5049B0(unsigned int a1, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, tig_art_id_t* art_id_ptr)
+{
+    if (a1 >= 0x200
+        || a2 >= 0x40
+        || a3 >= 2
+        || a4 >= 2
+        || a5 >= 0x400
+        || a6 >= 2) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = (TIG_ART_TYPE_FACADE << 28)
+        | (((a1 < 0x100 ? 0 : 1) & 1) << 27)
+        | ((a4 & 1) << 26)
+        | ((a3 & 1) << 25)
+        | ((a1 & 0xFF) << 17)
+        | ((a2 & 0x3F) << 11)
+        | ((a5 & 0x3FF) << 1)
+        | (a6 & 1);
+
+    return TIG_OK;
+}
+
 // 0x504A60
 int sub_504A60(unsigned int art_id)
 {
