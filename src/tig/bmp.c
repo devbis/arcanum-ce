@@ -153,6 +153,48 @@ int tig_bmp_copy_to_video_buffer(TigBmp* bmp, const TigRect* src_rect, TigVideoB
     return TIG_OK;
 }
 
+// 0x5377A0
+int tig_bmp_copy_to_bmp(TigBmp* src, TigBmp* dst)
+{
+    float width_ratio;
+    float height_ratio;
+    int x;
+    int y;
+
+    if (src->bpp != 8) {
+        return TIG_ERR_12;
+    }
+
+    if (dst->width <= 0) {
+        dst->width = src->width;
+    }
+
+    if (dst->height <= 0) {
+        dst->height = src->height;
+    }
+
+    dst->pitch = src->width;
+    if ((dst->width % 4) > 0) {
+        dst->pitch = dst->pitch - dst->pitch % 4 + 4;
+    }
+
+    dst->bpp = 8;
+    memcpy(dst->palette, src->palette, sizeof(src->palette));
+
+    dst->pixels = MALLOC(dst->pitch * dst->height);
+
+    width_ratio = (float)src->width / (float)dst->width;
+    height_ratio = (float)src->height / (float)dst->height;
+
+    for (y = 0; y < dst->height; ++y) {
+        for (x = 0; x < dst->width; ++x) {
+            dst->pixels[dst->pitch * y + x] = src->pixels[src->pitch * (int)(y * height_ratio) + (int)(x * width_ratio)];
+        }
+    }
+
+    return TIG_OK;
+}
+
 // 0x537900
 int tig_bmp_copy_to_window(TigBmp* bmp, const TigRect* src_rect, tig_window_handle_t window_handle, const TigRect* dst_rect)
 {
