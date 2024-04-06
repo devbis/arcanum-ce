@@ -1405,6 +1405,29 @@ int sub_503990(unsigned int art_id)
     return 0;
 }
 
+// 0x5039D0
+int sub_5039D0(unsigned int a1, int a2, int a3, int rotation, unsigned int a5, int a6, tig_art_id_t* art_id_ptr)
+{
+    if (a1 >= 256
+        || a2 >= 46
+        || a3 >= 4
+        || rotation >= 8
+        || a5 >= 4
+        || (a6 & ~0x480) != 0) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = tig_art_id_rotation_set((TIG_ART_TYPE_WALL << 28)
+        | ((a2 & 0x3F) << 14)
+        | ((rotation & 7) << 11)
+        | ((a3 & 3) << 8)
+        | ((a5 & 3) << 4)
+        | a6,
+        rotation);
+
+    return TIG_OK;
+}
+
 // 0x503A60
 int sub_503A60(unsigned int art_id)
 {
