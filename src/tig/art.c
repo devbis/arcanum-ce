@@ -1096,6 +1096,43 @@ int sub_502E50(tig_art_id_t art_id, int x, int y, unsigned int* color_ptr)
     return TIG_OK;
 }
 
+// 0x502FD0
+int sub_502FD0(tig_art_id_t art_id, int x, int y)
+{
+    unsigned int cache_entry_index;
+    int rotation;
+    int frame;
+    int type;
+    int index;
+
+    cache_entry_index = sub_51AA90(art_id);
+    if (cache_entry_index == -1) {
+        return TIG_ERR_13;
+    }
+
+    rotation = tig_art_id_rotation_get(art_id);
+    frame = tig_art_id_frame_get(art_id);
+
+    if (dword_5BEA14) {
+        type = tig_art_type(art_id);
+        if ((type == TIG_ART_TYPE_CRITTER
+                || type == TIG_ART_TYPE_MONSTER
+                || type == TIG_ART_TYPE_UNIQUE_NPC)
+            && rotation > 0
+            && rotation < 4) {
+            rotation = 8 - rotation;
+            x = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].width - x - 1;
+        }
+    }
+
+    index = y * tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].width + x;
+    if (tig_art_cache_entries[cache_entry_index].pixels_tbl[rotation][frame][index] < 2) {
+        return TIG_ERR_16;
+    }
+
+    return TIG_OK;
+}
+
 // 0x5030B0
 int tig_art_data(unsigned int art_id, TigArtData* data)
 {

@@ -166,6 +166,7 @@ int tig_art_palette(unsigned int art_id);
 unsigned int tig_art_set_palette(unsigned int art_id, int value);
 int sub_502E00(tig_art_id_t art_id);
 int sub_502E50(tig_art_id_t art_id, int x, int y, unsigned int* color_ptr);
+int sub_502FD0(tig_art_id_t art_id, int x, int y);
 int tig_art_data(unsigned int art_id, TigArtData* data);
 int tig_art_frame_data(unsigned int art_id, TigArtFrameData* data);
 int sub_503340(tig_art_id_t art_id, uint8_t* dst, int pitch);
