@@ -1831,19 +1831,17 @@ int sub_504300(unsigned int art_id)
 // 0x504330
 int tig_art_interface_id_create(unsigned int num, unsigned int a2, unsigned char a3, unsigned int palette, unsigned int* art_id)
 {
-    if (num >= 0x1000) {
+    if (num >= 0x1000
+        || a2 >= 0x100
+        || palette >= 4) {
         return TIG_ERR_12;
     }
 
-    if (a2 >= 0x100) {
-        return TIG_ERR_12;
-    }
-
-    if (palette >= 4) {
-        return TIG_ERR_12;
-    }
-
-    *art_id = (TIG_ART_TYPE_INTERFACE << 28) | ((num & 0xFFF) << 16) | ((a2 & 0xFF) << 8) | ((a3 & 1) << 7) | ((palette & 3) << 4);
+    *art_id = (TIG_ART_TYPE_INTERFACE << 28)
+        | ((num & 0xFFF) << 16)
+        | ((a2 & 0xFF) << 8)
+        | ((a3 & 1) << 7)
+        | ((palette & 3) << 4);
 
     return TIG_OK;
 }
