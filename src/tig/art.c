@@ -1425,6 +1425,34 @@ int tig_art_size(tig_art_id_t art_id, int* width_ptr, int* height_ptr)
     return TIG_OK;
 }
 
+// 0x503600
+int tig_art_tile_id_create(unsigned int a1, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, unsigned int a7, unsigned int a8, tig_art_id_t* art_id_ptr)
+{
+    if (a1 >= 0x40
+        || a2 >= 0x40
+        || a3 >= 0x10
+        || a4 >= 0x10
+        || a5 >= 2
+        || a6 >= 2
+        || a7 >= 2
+        || a8 >= 4) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = sub_503740((TIG_ART_TYPE_TILE << ART_ID_TYPE_SHIFT)
+        | ((a1 & 0x3F) << 22)
+        | ((a2 & 0x3F) << 16)
+        | ((a5 & 1) << 8)
+        | ((a6 & 1) << 7)
+        | ((a7 & 1) << 6)
+        | ((a8 & 3) << 4),
+        a3);
+
+    *art_id_ptr = sub_503800(*art_id_ptr, a4);
+
+    return TIG_OK;
+}
+
 // 0x5036B0
 int sub_5036B0(unsigned int art_id)
 {
