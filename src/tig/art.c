@@ -93,7 +93,7 @@ static int tig_art_cache_entry_compare_time(const void* a1, const void* a2);
 static int tig_art_cache_entry_compare_name(const void* a1, const void* a2);
 static int tig_art_build_path(unsigned int art_id, char* path);
 static bool tig_art_cache_find(const char* path, int* index);
-static bool sub_51B170(tig_art_id_t art_id, const char* path, int index);
+static bool tig_art_cache_entry_load(tig_art_id_t art_id, const char* path, int index);
 static void tig_art_cache_entry_unload(unsigned int cache_entry_index);
 static void sub_51B610(unsigned int cache_entry_index);
 static void sub_51B650(int cache_entry_index);
@@ -3723,10 +3723,10 @@ unsigned int sub_51AA90(tig_art_id_t art_id)
     sub_51AC20();
 
     if (!tig_art_cache_find(path, &cache_entry_index)) {
-        if (!sub_51B170(art_id, path, cache_entry_index)) {
+        if (!tig_art_cache_entry_load(art_id, path, cache_entry_index)) {
             tig_debug_printf("ART LOAD FAILURE!!! Trying to load %s\n", path);
 
-            if (!sub_51B170(art_id, "art\\badart.art", cache_entry_index)) {
+            if (!tig_art_cache_entry_load(art_id, "art\\badart.art", cache_entry_index)) {
                 tig_debug_printf("ART LOAD FAILURE!!! Trying to load badart.art\n");
                 return (unsigned int)-1;
             }
@@ -3859,7 +3859,7 @@ bool tig_art_cache_find(const char* path, int* index)
 }
 
 // 0x51B170
-bool sub_51B170(tig_art_id_t art_id, const char* path, int cache_entry_index)
+bool tig_art_cache_entry_load(tig_art_id_t art_id, const char* path, int cache_entry_index)
 {
     TigArtCacheEntry* art;
     int rc;
