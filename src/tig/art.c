@@ -2198,6 +2198,25 @@ int sub_504700(unsigned int art_id)
     }
 }
 
+// 0x504730
+tig_art_id_t sub_504730(tig_art_id_t art_id, int rotation)
+{
+    if (!sub_504790(art_id)) {
+        return tig_art_id_rotation_set(art_id, rotation);
+    }
+
+    if (rotation >= 32) {
+        rotation = 0;
+    } else if (rotation < 0) {
+        rotation = 31;
+    }
+
+    // TODO: Check.
+    return (art_id & ~0xFF0)
+        | ((rotation % 8) << 9)
+        | ((rotation & 0xF) << 4);
+}
+
 // 0x504790
 int sub_504790(unsigned int art_id)
 {
