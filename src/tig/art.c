@@ -13,8 +13,14 @@
 
 #define ART_ID_TYPE_SHIFT 28
 #define ART_ID_PALETTE_SHIFT 4
+#define ART_ID_ROTATION_SHIFT 11
+
+#define LIGHT_ID_ROTATION_SHIFT 9
+
+#define EYE_CANDY_ID_ROTATION_SHIFT 9
 
 #define MAX_PALETTES 4
+#define MAX_ROTATIONS 8
 
 typedef struct TigArtFileFrameData {
     /* 0000 */ int width;
@@ -35,9 +41,9 @@ typedef struct TigArtHeader {
     /* 000C */ uint32_t* palette_tbl[MAX_PALETTES];
     /* 001C */ int field_1C;
     /* 0020 */ int num_frames;
-    /* 0024 */ TigArtFileFrameData* frames_tbl[8];
-    /* 0044 */ int field_44[8];
-    /* 0064 */ uint8_t* pixels_tbl[8];
+    /* 0024 */ TigArtFileFrameData* frames_tbl[MAX_ROTATIONS];
+    /* 0044 */ int field_44[MAX_ROTATIONS];
+    /* 0064 */ uint8_t* pixels_tbl[MAX_ROTATIONS];
 } TigArtHeader;
 
 static_assert(sizeof(TigArtHeader) == 0x84, "wrong size");
@@ -48,9 +54,9 @@ typedef struct TigArtCacheEntry {
     /* 0108 */ timer_t time;
     /* 010C */ unsigned int art_id;
     /* 0110 */ TigArtHeader hdr;
-    /* 0194 */ uint8_t field_194[MAX_PALETTES][8];
-    /* 01B4 */ TigVideoBuffer** video_buffers[MAX_PALETTES][8];
-    /* 0234 */ uint8_t** pixels_tbl[8];
+    /* 0194 */ uint8_t field_194[MAX_PALETTES][MAX_ROTATIONS];
+    /* 01B4 */ TigVideoBuffer** video_buffers[MAX_PALETTES][MAX_ROTATIONS];
+    /* 0234 */ uint8_t** pixels_tbl[MAX_ROTATIONS];
     /* 0254 */ TigPalette field_254[MAX_PALETTES];
     /* 0264 */ size_t system_memory_usage;
     /* 0268 */ size_t video_memory_usage;
@@ -631,7 +637,7 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
                 || type == TIG_ART_TYPE_UNIQUE_NPC)) {
             int rotation = tig_art_id_rotation_get(mut_art_blt.art_id);
             if (rotation > 0 && rotation < 4) {
-                mut_art_blt.art_id = tig_art_id_rotation_set(mut_art_blt.art_id, 8 - rotation);
+                mut_art_blt.art_id = tig_art_id_rotation_set(mut_art_blt.art_id, MAX_ROTATIONS - rotation);
                 if ((mut_art_blt.flags & 0x1) != 0) {
                     mut_art_blt.flags &= ~0x1;
                 } else {
@@ -844,11 +850,11 @@ int tig_art_id_rotation_get(tig_art_id_t art_id)
     case TIG_ART_TYPE_FACADE:
         return 0;
     case TIG_ART_TYPE_LIGHT:
-        return (art_id >> 9) & 7;
+        return (art_id >> LIGHT_ID_ROTATION_SHIFT) & (MAX_ROTATIONS - 1);
     case TIG_ART_TYPE_EYE_CANDY:
-        return (art_id >> 9) & 7;
+        return (art_id >> EYE_CANDY_ID_ROTATION_SHIFT) & (MAX_ROTATIONS - 1);
     default:
-        return (art_id >> 11) & 7;
+        return (art_id >> ART_ID_ROTATION_SHIFT) & (MAX_ROTATIONS - 1);
     }
 }
 
@@ -1073,7 +1079,7 @@ int sub_502E50(tig_art_id_t art_id, int x, int y, unsigned int* color_ptr)
                 || type == TIG_ART_TYPE_UNIQUE_NPC)
             && rotation > 0
             && rotation < 4) {
-            rotation = 8 - rotation;
+            rotation = MAX_ROTATIONS - rotation;
             x = cache_entry->hdr.frames_tbl[rotation][frame].width - x - 1;
         }
     }
@@ -1126,7 +1132,7 @@ int sub_502FD0(tig_art_id_t art_id, int x, int y)
                 || type == TIG_ART_TYPE_UNIQUE_NPC)
             && rotation > 0
             && rotation < 4) {
-            rotation = 8 - rotation;
+            rotation = MAX_ROTATIONS - rotation;
             x = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].width - x - 1;
         }
     }
@@ -1216,7 +1222,7 @@ int tig_art_frame_data(unsigned int art_id, TigArtFrameData* data)
         && rotation > 0
         && rotation < 4) {
         mirrored = true;
-        rotation = 8 - rotation;
+        rotation = MAX_ROTATIONS - rotation;
     }
 
     cache_entry = &(tig_art_cache_entries[cache_index]);
@@ -1317,7 +1323,7 @@ int sub_5033E0(tig_art_id_t art_id, int a2, int a3)
             && rotation > 0
             && rotation < 4) {
             delta = -1;
-            rotation = 8 - rotation;
+            rotation = MAX_ROTATIONS - rotation;
         }
     }
 
@@ -1398,12 +1404,12 @@ int tig_art_size(tig_art_id_t art_id, int* width_ptr, int* height_ptr)
         num_rotations = 5;
     } else {
         rotation_offset = 0;
-        num_rotations = 8;
+        num_rotations = MAX_ROTATIONS;
     }
 
     for (frame = 0; frame < art->hdr.num_frames; ++frame) {
         for (rotation = 0; rotation < num_rotations; ++rotation) {
-            frm = &(art->hdr.frames_tbl[(rotation + rotation_offset) % 8][frame]);
+            frm = &(art->hdr.frames_tbl[(rotation + rotation_offset) % MAX_ROTATIONS][frame]);
             if (width < frm->width) {
                 width = frm->width;
             }
@@ -1537,7 +1543,7 @@ int tig_art_wall_id_create(unsigned int a1, int a2, int a3, int rotation, unsign
     if (a1 >= 256
         || a2 >= 46
         || a3 >= 4
-        || rotation >= 8
+        || rotation >= MAX_ROTATIONS
         || palette >= MAX_PALETTES
         || (a6 & ~0x480) != 0) {
         return TIG_ERR_12;
@@ -1545,7 +1551,7 @@ int tig_art_wall_id_create(unsigned int a1, int a2, int a3, int rotation, unsign
 
     *art_id_ptr = tig_art_id_rotation_set((TIG_ART_TYPE_WALL << ART_ID_TYPE_SHIFT)
         | ((a2 & 0x3F) << 14)
-        | ((rotation & 7) << 11)
+        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
         | ((a3 & 3) << 8)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
         | a6,
@@ -1652,7 +1658,7 @@ int tig_art_critter_id_create(unsigned int a1, int a2, int a3, unsigned int a4, 
         || a3 >= 16
         || a4 >= 2
         || a5 >= 0x20
-        || rotation >= 8
+        || rotation >= MAX_ROTATIONS
         || a7 >= 32
         || a8 >= 16
         || palette >= MAX_PALETTES) {
@@ -1664,7 +1670,7 @@ int tig_art_critter_id_create(unsigned int a1, int a2, int a3, unsigned int a4, 
         | ((a2 & 7) << 24)
         | ((a3 & 0xF) << 20)
         | ((a4 & 1) << 19)
-        | ((rotation & 7) << 11)
+        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
         | ((a7 & 0x1F) << 6)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
         | (a8 & 0xF);
@@ -1679,7 +1685,7 @@ int tig_art_monster_id_create(int a1, int a2, unsigned int a3, unsigned int a4, 
         || a2 >= 8
         || a3 >= 2
         || a4 >= 0x20
-        || rotation >= 8
+        || rotation >= MAX_ROTATIONS
         || a6 >= 32
         || a7 >= 16
         || palette >= MAX_PALETTES) {
@@ -1691,7 +1697,7 @@ int tig_art_monster_id_create(int a1, int a2, unsigned int a3, unsigned int a4, 
         | ((a2 & 7) << 20)
         | ((a3 & 1) << 19)
         | ((a4 & 0x1F) << 12)
-        | ((rotation & 7) << 11)
+        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
         | ((a6 & 0x1F) << 6)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
         | (a7 & 0xF);
@@ -1700,12 +1706,12 @@ int tig_art_monster_id_create(int a1, int a2, unsigned int a3, unsigned int a4, 
 }
 
 // 0x503D80
-int tig_art_unique_npc_id_create(int a1, unsigned int a2, unsigned int a3, int a4, int a5, int a6, unsigned int palette, tig_art_id_t* art_id_ptr)
+int tig_art_unique_npc_id_create(int a1, unsigned int a2, unsigned int a3, int rotation, int a5, int a6, unsigned int palette, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 256
         || a2 >= 2
         || a3 >= 0x20
-        || a4 >= 8
+        || rotation >= MAX_ROTATIONS
         || a5 >= 32
         || a6 >= 16
         || palette >= MAX_PALETTES) {
@@ -1716,7 +1722,7 @@ int tig_art_unique_npc_id_create(int a1, unsigned int a2, unsigned int a3, int a
         | ((a1 & 0xFF) << 20)
         | ((a2 & 1) << 19)
         | ((a3 & 0x1F) << 14)
-        | ((a4 & 7) << 11)
+        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
         | ((a5 & 0x1F) << 6)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
         | (a6 & 0xF);
@@ -1935,12 +1941,12 @@ unsigned int sub_504180(unsigned int art_id, int value)
 }
 
 // 0x5041D0
-int tig_art_portal_id_create(unsigned int a1, int a2, int a3, unsigned int a4, int a5, unsigned int palette, tig_art_id_t* art_id_ptr)
+int tig_art_portal_id_create(unsigned int a1, int a2, int a3, unsigned int a4, int rotation, unsigned int palette, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 0x200
         || a2 >= 2
         || a4 >= 0x20
-        || a5 >= 8
+        || rotation >= MAX_ROTATIONS
         || palette >= MAX_PALETTES
         || (a3 & ~0x200u) != 0) {
         return TIG_ERR_12;
@@ -1949,7 +1955,7 @@ int tig_art_portal_id_create(unsigned int a1, int a2, int a3, unsigned int a4, i
     *art_id_ptr = (TIG_ART_TYPE_PORTAL << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((a4 & 0x1F) << 14)
-        | ((a5 & 7) << 11)
+        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
         | ((a2 & 1) << 10)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
         | a3;
@@ -1968,12 +1974,12 @@ int sub_504260(unsigned int art_id)
 }
 
 // 0x504290
-int tig_art_scenery_id_create(unsigned int a1, int a2, unsigned int a3, int a4, unsigned int palette, tig_art_id_t* art_id_ptr)
+int tig_art_scenery_id_create(unsigned int a1, int a2, unsigned int a3, int rotation, unsigned int palette, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 0x200
         || a2 >= 32
         || a3 >= 0x20
-        || a4 >= 8
+        || rotation >= MAX_ROTATIONS
         || palette >= MAX_PALETTES) {
         return TIG_ERR_12;
     }
@@ -1981,7 +1987,7 @@ int tig_art_scenery_id_create(unsigned int a1, int a2, unsigned int a3, int a4, 
     *art_id_ptr = (TIG_ART_TYPE_SCENERY << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((a3 & 0x1F) << 14)
-        | ((a4 & 7) << 11)
+        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
         | ((a2 & 0x1F) << 6)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT);
 
@@ -2302,7 +2308,7 @@ int sub_504AC0(unsigned int art_id)
 }
 
 // 0x504AE0
-int tig_art_eye_candy_id_create(unsigned int a1, unsigned int a2, int a3, int translucency, int type, unsigned int palette, int scale, tig_art_id_t* art_id)
+int tig_art_eye_candy_id_create(unsigned int a1, unsigned int a2, int rotation, int translucency, int type, unsigned int palette, int scale, tig_art_id_t* art_id)
 {
     if (a1 >= 512) {
         return TIG_ERR_12;
@@ -2312,7 +2318,7 @@ int tig_art_eye_candy_id_create(unsigned int a1, unsigned int a2, int a3, int tr
         return TIG_ERR_12;
     }
 
-    if (a3 >= 8) {
+    if (rotation >= MAX_ROTATIONS) {
         return TIG_ERR_12;
     }
 
@@ -2336,7 +2342,7 @@ int tig_art_eye_candy_id_create(unsigned int a1, unsigned int a2, int a3, int tr
     *art_id = (TIG_ART_TYPE_EYE_CANDY << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((a2 & 0x7F) << 12)
-        | ((a3 & 7) << 9)
+        | ((rotation & (MAX_ROTATIONS - 1)) << EYE_CANDY_ID_ROTATION_SHIFT)
         | ((translucency & 1) << 8)
         | ((type & 3) << 6)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
@@ -3574,11 +3580,11 @@ bool sub_51B170(tig_art_id_t art_id, const char* path, int cache_entry_index)
         num_rotations = 5;
     } else {
         start = 0;
-        num_rotations = 8;
+        num_rotations = MAX_ROTATIONS;
     }
 
     for (index = 0; index < num_rotations; index++) {
-        rotation = (index + start) % 8;
+        rotation = (index + start) % MAX_ROTATIONS;
         art->pixels_tbl[rotation] = (uint8_t**)MALLOC(sizeof(uint8_t*) * art->hdr.num_frames);
         art->system_memory_usage += sizeof(uint8_t*) * art->hdr.num_frames;
 
@@ -3589,8 +3595,8 @@ bool sub_51B170(tig_art_id_t art_id, const char* path, int cache_entry_index)
         }
     }
 
-    for (index = 8 - num_rotations; index > 0; --index) {
-        rotation = (num_rotations + start) % 8;
+    for (index = MAX_ROTATIONS - num_rotations; index > 0; --index) {
+        rotation = (num_rotations + start) % MAX_ROTATIONS;
         art->pixels_tbl[rotation] = art->pixels_tbl[0];
     }
 
@@ -3614,7 +3620,7 @@ void sub_51B610(unsigned int cache_entry_index)
     int rotation;
 
     for (palette = 0; palette < MAX_PALETTES; palette++) {
-        for (rotation = 0; rotation < 8; rotation++) {
+        for (rotation = 0; rotation < MAX_ROTATIONS; rotation++) {
             tig_art_cache_entries[cache_entry_index].field_194[palette][rotation] = 1;
         }
     }
@@ -3638,7 +3644,7 @@ void sub_51B650(int cache_entry_index)
     }
 
     for (palette = 0; palette < MAX_PALETTES; palette++) {
-        for (rotation = 0; rotation < 8; rotation++) {
+        for (rotation = 0; rotation < MAX_ROTATIONS; rotation++) {
             if (art->video_buffers[palette][rotation] != NULL) {
                 for (frame = 0; frame < num_frames; frame++) {
                     tig_video_buffer_destroy(art->video_buffers[palette][rotation][frame]);
@@ -3659,7 +3665,7 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
     int palette;
     uint32_t* saved_palette_tbl[MAX_PALETTES];
     uint32_t temp_palette_entries[256];
-    int size_tbl[8];
+    int size_tbl[MAX_ROTATIONS];
     int index;
     int frame;
     int current_palette_index;
@@ -3672,7 +3678,7 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
 
     *size_ptr = 0;
 
-    for (rotation = 0; rotation < 8; rotation++) {
+    for (rotation = 0; rotation < MAX_ROTATIONS; rotation++) {
         hdr->frames_tbl[rotation] = NULL;
         hdr->pixels_tbl[rotation] = NULL;
     }
@@ -3829,7 +3835,7 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
         }
     }
 
-    while (index < 8) {
+    while (index < MAX_ROTATIONS) {
         hdr->frames_tbl[index] = hdr->frames_tbl[0];
         hdr->pixels_tbl[index] = hdr->pixels_tbl[0];
         index++;
