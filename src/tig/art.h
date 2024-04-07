@@ -3,6 +3,10 @@
 
 #include "tig/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define TIG_ART_ID_INVALID ((tig_art_id_t)-1)
 
 typedef enum TigArtType {
@@ -252,5 +256,9 @@ int sub_504FD0(unsigned int art_id);
 void sub_505000(tig_art_id_t art_id, TigPalette src_palette, TigPalette dst_palette);
 void sub_51AC00(int a1);
 tig_art_id_t sub_51B0A0(tig_art_id_t art_id);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ARCANUM_TIG_ART_H_ */
