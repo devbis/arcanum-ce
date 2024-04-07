@@ -58,8 +58,8 @@ typedef struct TigArtFrameData {
 static_assert(sizeof(TigArtFrameData) == 0x18, "wrong size");
 
 typedef enum TigArtBltFlags {
-    TIG_ART_BLT_MIRROR_0x1 = 1 << 0,
-    TIG_ART_BLT_MIRROR_0x2 = 1 << 1,
+    TIG_ART_BLT_MIRROR_LEFT_RIGHT = 1 << 0,
+    TIG_ART_BLT_MIRROR_UP_DOWN = 1 << 1,
 
     /// Forces to use base art palette.
     ///
@@ -99,7 +99,7 @@ typedef enum TigArtBltFlags {
 
     TIG_ART_BLT_0x20000 = 1 << 17,
 
-    TIG_ART_BLT_MIRROR_ANY = TIG_ART_BLT_MIRROR_0x1 | TIG_ART_BLT_MIRROR_0x2,
+    TIG_ART_BLT_MIRROR_ANY = TIG_ART_BLT_MIRROR_LEFT_RIGHT | TIG_ART_BLT_MIRROR_UP_DOWN,
 
     TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY = TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL
         | TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL

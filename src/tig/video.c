@@ -1180,7 +1180,7 @@ int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags)
 {
     TigVideoBufferData data;
 
-    if ((flags & ~(TIG_VIDEO_BUFFER_BLIT_MIRRORLEFTRIGHT | TIG_VIDEO_BUFFER_BLIT_MIRRORUPDOWN)) == 0) {
+    if ((flags & ~(TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT | TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN)) == 0) {
         return TIG_OK;
     }
 

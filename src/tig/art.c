@@ -2928,56 +2928,56 @@ int sub_505940(unsigned int art_blt_flags, unsigned int* vb_blt_flags_ptr)
 
     *vb_blt_flags_ptr = 0;
 
-    if ((art_blt_flags & 0x1) != 0) {
-        *vb_blt_flags_ptr |= 0x1;
+    if ((art_blt_flags & TIG_ART_BLT_MIRROR_LEFT_RIGHT) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT;
     }
 
-    if ((art_blt_flags & 0x2) != 0) {
-        *vb_blt_flags_ptr |= 0x2;
+    if ((art_blt_flags & TIG_ART_BLT_MIRROR_UP_DOWN) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN;
     }
 
-    if ((art_blt_flags & 0x10) != 0) {
-        *vb_blt_flags_ptr |= 0x4;
+    if ((art_blt_flags & TIG_ART_BLT_0x10) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x04;
     }
 
-    if ((art_blt_flags & 0x40) != 0) {
-        *vb_blt_flags_ptr |= 0x10;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x10;
     }
 
-    if ((art_blt_flags & 0x80) != 0) {
-        *vb_blt_flags_ptr |= 0x20;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x80) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x20;
     }
 
-    if ((art_blt_flags & 0x100) != 0) {
-        *vb_blt_flags_ptr |= 0x40;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x100) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x40;
     }
 
-    if ((art_blt_flags & 0x200) != 0) {
-        *vb_blt_flags_ptr |= 0x80;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x200) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x80;
     }
 
-    if ((art_blt_flags & 0x400) != 0) {
-        *vb_blt_flags_ptr |= 0x100;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x100;
     }
 
-    if ((art_blt_flags & 0x800) != 0) {
-        *vb_blt_flags_ptr |= 0x100;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x100;
     }
 
-    if ((art_blt_flags & 0x1000) != 0) {
-        *vb_blt_flags_ptr |= 0x100;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_DIAGONAL) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x100;
     }
 
-    if ((art_blt_flags & 0x2000) != 0) {
-        *vb_blt_flags_ptr |= 0x200;
+    if ((art_blt_flags & TIG_ART_BLT_0x2000) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x200;
     }
 
-    if ((art_blt_flags & 0x4000) != 0) {
-        *vb_blt_flags_ptr |= 0x400;
+    if ((art_blt_flags & TIG_ART_BLT_0x4000) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x400;
     }
 
-    if ((art_blt_flags & 0x20000) != 0) {
-        *vb_blt_flags_ptr |= 0x400;
+    if ((art_blt_flags & TIG_ART_BLT_0x20000) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x400;
     }
 
     return TIG_OK;
