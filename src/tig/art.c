@@ -11,6 +11,8 @@
 #include "tig/core.h"
 #include "tig/video.h"
 
+#define ART_ID_TYPE_SHIFT 28
+
 #define MAX_PALETTES 4
 
 typedef struct TigArtFileFrameData {
@@ -340,7 +342,9 @@ int tig_art_misc_id_create(unsigned int a1, unsigned int palette, unsigned int* 
     }
 
     // TODO: Check.
-    *art_id = (TIG_ART_TYPE_MISC << 28) | ((a1 & 0x1FF) << 19) | ((palette & 3) << 4);
+    *art_id = (TIG_ART_TYPE_MISC << ART_ID_TYPE_SHIFT)
+        | ((a1 & 0x1FF) << 19)
+        | ((palette & 3) << 4);
 
     return TIG_OK;
 }
@@ -735,7 +739,7 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
 // 0x502700
 int tig_art_type(unsigned int art_id)
 {
-    return art_id >> 28;
+    return art_id >> ART_ID_TYPE_SHIFT;
 }
 
 // 0x502710
@@ -1537,7 +1541,7 @@ int sub_5039D0(unsigned int a1, int a2, int a3, int rotation, unsigned int a5, i
         return TIG_ERR_12;
     }
 
-    *art_id_ptr = tig_art_id_rotation_set((TIG_ART_TYPE_WALL << 28)
+    *art_id_ptr = tig_art_id_rotation_set((TIG_ART_TYPE_WALL << ART_ID_TYPE_SHIFT)
         | ((a2 & 0x3F) << 14)
         | ((rotation & 7) << 11)
         | ((a3 & 3) << 8)
@@ -1653,7 +1657,7 @@ int sub_503C00(unsigned int a1, int a2, int a3, unsigned int a4, unsigned int a5
         return TIG_ERR_12;
     }
 
-    *art_id_ptr = (TIG_ART_TYPE_CRITTER << 28)
+    *art_id_ptr = (TIG_ART_TYPE_CRITTER << ART_ID_TYPE_SHIFT)
         | ((a1 & 1) << 27)
         | ((a2 & 7) << 24)
         | ((a3 & 0xF) << 20)
@@ -1680,7 +1684,7 @@ int sub_503CD0(int a1, int a2, unsigned int a3, unsigned int a4, int rotation, i
         return TIG_ERR_12;
     }
 
-    *art_id_ptr = (TIG_ART_TYPE_MONSTER << 28)
+    *art_id_ptr = (TIG_ART_TYPE_MONSTER << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1F) << 23)
         | ((a2 & 7) << 20)
         | ((a3 & 1) << 19)
@@ -1706,7 +1710,7 @@ int sub_503D80(int a1, unsigned int a2, unsigned int a3, int a4, int a5, int a6,
         return TIG_ERR_12;
     }
 
-    *art_id_ptr = (TIG_ART_TYPE_UNIQUE_NPC << 28)
+    *art_id_ptr = (TIG_ART_TYPE_UNIQUE_NPC << ART_ID_TYPE_SHIFT)
         | ((a1 & 0xFF) << 20)
         | ((a2 & 1) << 19)
         | ((a3 & 0x1F) << 14)
@@ -1940,7 +1944,7 @@ int sub_5041D0(unsigned int a1, int a2, int a3, unsigned int a4, int a5, unsigne
         return TIG_ERR_12;
     }
 
-    *art_id_ptr = (TIG_ART_TYPE_PORTAL << 28)
+    *art_id_ptr = (TIG_ART_TYPE_PORTAL << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((a4 & 0x1F) << 14)
         | ((a5 & 7) << 11)
@@ -1972,7 +1976,7 @@ int sub_504290(unsigned int a1, int a2, unsigned int a3, int a4, unsigned int a5
         return TIG_ERR_12;
     }
 
-    *art_id_ptr = (TIG_ART_TYPE_SCENERY << 28)
+    *art_id_ptr = (TIG_ART_TYPE_SCENERY << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((a3 & 0x1F) << 14)
         | ((a4 & 7) << 11)
@@ -2001,7 +2005,7 @@ int tig_art_interface_id_create(unsigned int num, unsigned int a2, unsigned char
         return TIG_ERR_12;
     }
 
-    *art_id = (TIG_ART_TYPE_INTERFACE << 28)
+    *art_id = (TIG_ART_TYPE_INTERFACE << ART_ID_TYPE_SHIFT)
         | ((num & 0xFFF) << 16)
         | ((a2 & 0xFF) << 8)
         | ((a3 & 1) << 7)
@@ -2145,7 +2149,12 @@ int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int a3, i
     }
 
     // TODO: Check.
-    *art_id = (TIG_ART_TYPE_LIGHT << 28) | ((a1 & 0x1FF) << 19) | ((a2 & 0x7F) << 12) | ((a3 & 7) << 9) | ((a3 & 0x1F) << 4) | (a4 & 1);
+    *art_id = (TIG_ART_TYPE_LIGHT << ART_ID_TYPE_SHIFT)
+        | ((a1 & 0x1FF) << 19)
+        | ((a2 & 0x7F) << 12)
+        | ((a3 & 7) << 9)
+        | ((a3 & 0x1F) << 4)
+        | (a4 & 1);
 
     return TIG_OK;
 }
@@ -2244,7 +2253,7 @@ int sub_5049B0(unsigned int a1, unsigned int a2, unsigned int a3, unsigned int a
         return TIG_ERR_12;
     }
 
-    *art_id_ptr = (TIG_ART_TYPE_FACADE << 28)
+    *art_id_ptr = (TIG_ART_TYPE_FACADE << ART_ID_TYPE_SHIFT)
         | (((a1 < 0x100 ? 0 : 1) & 1) << 27)
         | ((a4 & 1) << 26)
         | ((a3 & 1) << 25)
@@ -2322,7 +2331,14 @@ int tig_art_eye_candy_id_create(unsigned int a1, unsigned int a2, int a3, int tr
     }
 
     // TODO: Check.
-    *art_id = (TIG_ART_TYPE_EYE_CANDY << 28) | ((a1 & 0x1FF) << 19) | ((a2 & 0x7F) << 12) | ((a3 & 7) << 9) | ((translucency & 1) << 8) | ((type & 3) << 6) | ((palette & 3) << 4) | ((scale & 7) << 1);
+    *art_id = (TIG_ART_TYPE_EYE_CANDY << ART_ID_TYPE_SHIFT)
+        | ((a1 & 0x1FF) << 19)
+        | ((a2 & 0x7F) << 12)
+        | ((a3 & 7) << 9)
+        | ((translucency & 1) << 8)
+        | ((type & 3) << 6)
+        | ((palette & 3) << 4)
+        | ((scale & 7) << 1);
 
     return TIG_OK;
 }
