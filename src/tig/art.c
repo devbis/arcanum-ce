@@ -2125,6 +2125,27 @@ unsigned int sub_5045C0(unsigned int art_id, int value)
     return art_id;
 }
 
+// 0x5045F0
+int tig_art_container_id_create(unsigned int a1, int a2, unsigned int a3, int rotation, unsigned int a5, tig_art_id_t* art_id_ptr)
+{
+    if (a1 >= 0x200
+        || a2 >= 32
+        || a3 >= 0x20
+        || rotation >= MAX_ROTATIONS
+        || a5 >= 4) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = (TIG_ART_TYPE_CONTAINER << ART_ID_TYPE_SHIFT)
+        | ((a1 & 0x1FF) << 19)
+        | ((a3 & 0x1F) << 14)
+        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
+        | ((a2 & 0x1F) << 6)
+        | ((a5 & 3) << 4);
+
+    return TIG_OK;
+}
+
 // 0x504660
 int sub_504660(unsigned int art_id)
 {
