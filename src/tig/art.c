@@ -2208,6 +2208,39 @@ int sub_504790(unsigned int art_id)
     }
 }
 
+// 0x5047B0
+int tig_art_roof_id_create(unsigned int a1, int a2, unsigned int a3, unsigned int a4, tig_art_id_t* art_id_ptr)
+{
+    int v1;
+    int v2;
+
+    if (a1 >= 0x200
+        || a2 >= 13
+        || a3 > 1
+        || a4 > 1) {
+        return TIG_ERR_12;
+    }
+
+    if (a2 >= 9) {
+        a2 -= 9;
+        v1 = 1;
+        v2 = 1;
+    } else {
+        v1 = 0;
+        v2 = 0;
+    }
+
+    *art_id_ptr = sub_502D30((TIG_ART_TYPE_ROOF << ART_ID_TYPE_SHIFT)
+        | ((a1 & 0x1FF) << 19)
+        | ((a2 & 0x1F) << 14)
+        | ((a3 & 1) << 13)
+        | ((a4 & 1) << 12)
+        | ((v2 & 3) << 4),
+        v1);
+
+    return TIG_OK;
+}
+
 // 0x504840
 int sub_504840(unsigned int art_id)
 {
