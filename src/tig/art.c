@@ -207,6 +207,22 @@ static int dword_5BE994[32] = {
 // 0x5BEA14
 static int dword_5BEA14 = 1;
 
+// 0x5BEA18
+static int dword_5BEA18[4] = {
+    6,
+    1,
+    3,
+    2,
+};
+
+// 0x5BEA28
+static int dword_5BEA28[4] = {
+    2,
+    4,
+    1,
+    5,
+};
+
 // 0x5BEA38
 float flt_5BEA38 = 0.3f;
 
@@ -877,8 +893,105 @@ tig_art_id_t tig_art_id_rotation_inc(tig_art_id_t art_id)
 // 0x502930
 tig_art_id_t tig_art_id_rotation_set(tig_art_id_t art_id, int rotation)
 {
-    // TODO: Incomplete.
-    (void)rotation;
+    int type;
+    unsigned int mask;
+    int shift;
+    int old_rotation;
+    int old_cardinal_direction;
+    int cardinal_direction;
+    int v1;
+    int v2;
+    int v3;
+
+    type = tig_art_type(art_id);
+
+    switch (type) {
+    case TIG_ART_TYPE_TILE:
+    case TIG_ART_TYPE_INTERFACE:
+    case TIG_ART_TYPE_ITEM:
+    case TIG_ART_TYPE_MISC:
+    case TIG_ART_TYPE_ROOF:
+    case TIG_ART_TYPE_FACADE:
+        return art_id;
+    }
+
+    if (!sub_504790(art_id)) {
+        return art_id;
+    }
+
+    switch (type) {
+    case TIG_ART_TYPE_EYE_CANDY:
+        mask = 0xE00;
+        shift = EYE_CANDY_ID_ROTATION_SHIFT;
+        break;
+    case TIG_ART_TYPE_LIGHT:
+        mask = 0xE00;
+        shift = LIGHT_ID_ROTATION_SHIFT;
+        break;
+    default:
+        mask = 0x3800;
+        shift = ART_ID_ROTATION_SHIFT;
+        break;
+    }
+
+    if (rotation >= MAX_ROTATIONS) {
+        rotation = 0;
+    } else if (rotation < 0) {
+        rotation = MAX_ROTATIONS - 1;
+    }
+
+    old_rotation = tig_art_id_rotation_get(art_id);
+    art_id = (art_id & ~mask) | (rotation << shift);
+
+    if (type == TIG_ART_TYPE_WALL) {
+        v1 = sub_503A60(art_id);
+        old_cardinal_direction = old_rotation / 2;
+        cardinal_direction = rotation / 2;
+
+        if (old_cardinal_direction != cardinal_direction) {
+            if (dword_5BEA18[old_cardinal_direction] == v1) {
+                v1 = dword_5BEA18[cardinal_direction];
+            } else if (dword_5BEA28[old_cardinal_direction] == v1) {
+                v1 = dword_5BEA28[cardinal_direction];
+            } else if (dword_5BEA18[(old_cardinal_direction + 2) % 4] == v1) {
+                v1 = dword_5BEA18[(cardinal_direction + 2) % 4];
+            } else if (dword_5BEA28[(old_cardinal_direction + 2) % 4] == v1) {
+                v1 = dword_5BEA28[(cardinal_direction + 2) % 4];
+            }
+
+            art_id = sub_503A90(art_id, v1);
+            if ((old_cardinal_direction == 0 || old_cardinal_direction == 3)
+                && (cardinal_direction == 1 || cardinal_direction == 2)
+                || (old_cardinal_direction == 1 || old_cardinal_direction == 2)
+                && (cardinal_direction == 0 || cardinal_direction == 3)) {
+                v2 = sub_503B70(art_id);
+                v3 = 0;
+                if ((v2 & 0x400) != 0) {
+                    v3 |= 0x80;
+                }
+                if ((v2 & 0x80) != 0) {
+                    v3 |= 0x400;
+                }
+                art_id = sub_503BB0(art_id, v3);
+            }
+        }
+
+        if (cardinal_direction != 1 && cardinal_direction != 3) {
+            art_id = sub_502D30(art_id, 0);
+            art_id = tig_art_set_palette(art_id, 0);
+        } else {
+            art_id = sub_502D30(art_id, 1);
+            art_id = tig_art_set_palette(art_id, 1);
+        }
+    } else if (type == TIG_ART_TYPE_PORTAL) {
+        if (rotation / 2 != 1 && rotation / 2 != 3) {
+            art_id = sub_502D30(art_id, 0);
+            art_id = tig_art_set_palette(art_id, 0);
+        } else {
+            art_id = sub_502D30(art_id, 1);
+            art_id = tig_art_set_palette(art_id, 1);
+        }
+    }
 
     return art_id;
 }
