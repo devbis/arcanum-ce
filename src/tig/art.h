@@ -226,6 +226,7 @@ int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int a3, i
 int sub_504700(unsigned int art_id);
 int sub_504790(unsigned int art_id);
 int sub_504840(unsigned int art_id);
+tig_art_id_t sub_504880(tig_art_id_t art_id, int frame);
 int sub_5048D0(unsigned int art_id);
 unsigned int sub_504900(unsigned int art_id, unsigned int value);
 int sub_504940(unsigned int art_id);

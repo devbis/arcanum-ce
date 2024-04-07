@@ -2222,6 +2222,29 @@ int sub_504840(unsigned int art_id)
     }
 }
 
+// 0x504880
+tig_art_id_t sub_504880(tig_art_id_t art_id, int frame)
+{
+    int v0 = 0;
+    int palette = 0;
+
+    if (tig_art_type(art_id) != TIG_ART_TYPE_ROOF) {
+        return art_id;
+    }
+
+    if (frame >= 9) {
+        frame = frame - 9;
+        v0 = 1;
+        palette = 1;
+    }
+
+    art_id = tig_art_id_frame_set(art_id, frame);
+    art_id = sub_502D30(art_id, v0);
+    art_id = tig_art_set_palette(art_id, palette);
+
+    return art_id;
+}
+
 // 0x5048D0
 int sub_5048D0(unsigned int art_id)
 {
