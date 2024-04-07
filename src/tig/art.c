@@ -94,7 +94,7 @@ static int tig_art_cache_entry_compare_name(const void* a1, const void* a2);
 static int tig_art_build_path(unsigned int art_id, char* path);
 static bool tig_art_cache_find(const char* path, int* index);
 static bool sub_51B170(tig_art_id_t art_id, const char* path, int index);
-static void sub_51B490(int cache_entry_index);
+static void tig_art_cache_entry_unload(unsigned int cache_entry_index);
 static void sub_51B610(unsigned int cache_entry_index);
 static void sub_51B650(int cache_entry_index);
 static int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, void** palettes, int a5, int* size_ptr);
@@ -565,7 +565,7 @@ void tig_art_flush()
     }
 
     for (index = 0; index < tig_art_cache_entries_length; index++) {
-        sub_51B490(index);
+        tig_art_cache_entry_unload(index);
     }
 
     tig_art_cache_entries_length = 0;
@@ -3941,10 +3941,53 @@ bool sub_51B170(tig_art_id_t art_id, const char* path, int cache_entry_index)
 }
 
 // 0x51B490
-void sub_51B490(int cache_entry_index)
+void tig_art_cache_entry_unload(unsigned int cache_entry_index)
 {
-    // TODO: Incomplete.
-    (void)cache_entry_index;
+    TigArtCacheEntry* cache_entry;
+    int type;
+    int rotation_start;
+    int num_rotations;
+    int rotation;
+    int palette;
+
+    cache_entry = &(tig_art_cache_entries[cache_entry_index]);
+
+    tig_art_available_system_memory += cache_entry->system_memory_usage;
+    tig_art_available_video_memory += cache_entry->video_memory_usage;
+
+    sub_51B650(cache_entry_index);
+
+    type = tig_art_type(cache_entry->art_id);
+
+    if ((cache_entry->hdr.unk_0 & 1) != 0) {
+        rotation_start = 0;
+        num_rotations = 1;
+    } else if (dword_5BEA14
+        && (type == TIG_ART_TYPE_CRITTER
+            || type == TIG_ART_TYPE_MONSTER
+            || type == TIG_ART_TYPE_UNIQUE_NPC)) {
+        rotation_start = 4;
+        num_rotations = 5;
+    } else {
+        rotation_start = 0;
+        num_rotations = MAX_ROTATIONS;
+    }
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        FREE(cache_entry->pixels_tbl[rotation]);
+        FREE(cache_entry->hdr.pixels_tbl[rotation]);
+        FREE(cache_entry->hdr.frames_tbl[rotation]);
+    }
+
+    for (palette = 0; palette < MAX_PALETTES; ++palette) {
+        if (cache_entry->hdr.palette_tbl[palette] != NULL) {
+            tig_palette_destroy(cache_entry->hdr.palette_tbl[palette]);
+        }
+
+        if (cache_entry->field_254[palette] != NULL) {
+            tig_palette_destroy(cache_entry->field_254[palette]);
+        }
+    }
 }
 
 // 0x51B610
