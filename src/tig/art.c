@@ -1479,6 +1479,38 @@ int sub_5037B0(unsigned int art_id)
     return v1;
 }
 
+// 0x503800
+tig_art_id_t sub_503800(tig_art_id_t art_id, int value)
+{
+    int v1;
+
+    if (tig_art_type(art_id) != TIG_ART_TYPE_TILE) {
+        return art_id;
+    }
+
+    if (value >= 16) {
+        tig_debug_println("Range exceeded in art set.");
+        value = 0;
+    }
+
+    v1 = sub_503700(art_id);
+    if (value < 8) {
+        if (dword_5BE8C0[v1] == dword_5BE880[v1]) {
+            art_id = sub_502D30(art_id, sub_504FD0(art_id) & ~1);
+        }
+        art_id = (art_id & ~0xE00) | (value << 9);
+    } else {
+        if (dword_5BE8C0[v1] == dword_5BE880[v1]) {
+            if (sub_503900(art_id)) {
+                art_id = sub_502D30(art_id, sub_504FD0(art_id) | 1);
+            }
+        }
+        art_id = (art_id & ~0xE00) | ((value - 8) << 9);
+    }
+
+    return art_id;
+}
+
 // 0x5038C0
 int sub_5038C0(unsigned int art_id)
 {

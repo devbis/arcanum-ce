@@ -176,6 +176,7 @@ int sub_5036B0(unsigned int art_id);
 int sub_5036E0(unsigned int art_id);
 int sub_503700(unsigned int art_id);
 int sub_5037B0(unsigned int art_id);
+tig_art_id_t sub_503800(tig_art_id_t art_id, int value);
 int sub_5038C0(unsigned int art_id);
 int sub_503900(unsigned int art_id);
 int sub_503950(unsigned int art_id);
