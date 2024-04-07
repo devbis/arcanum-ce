@@ -48,6 +48,25 @@ typedef struct TigArtHeader {
 
 static_assert(sizeof(TigArtHeader) == 0x84, "wrong size");
 
+typedef struct TigArtFrameSave {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+} TigArtFrameSave;
+
+static_assert(sizeof(TigArtFrameSave) == 0x10, "wrong size");
+
+typedef struct TigArtHeaderSave {
+    /* 0000 */ int field_0;
+    /* 0004 */ int num_frames;
+    /* 0004 */ TigArtFrameSave* field_8[MAX_ROTATIONS];
+    /* 0028 */ int field_28[MAX_ROTATIONS];
+    /* 0048 */ void* field_48[MAX_ROTATIONS];
+} TigArtHeaderSave;
+
+static_assert(sizeof(TigArtHeaderSave) == 0x68, "wrong size");
+
 typedef struct TigArtCacheEntry {
     /* 0000 */ unsigned int flags;
     /* 0004 */ char path[MAX_PATH];
@@ -82,6 +101,7 @@ static int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* h
 static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
+static void sub_51BF60(TigArtHeaderSave* hdr_save);
 
 // 0x5BE880
 static int dword_5BE880[16] = {
@@ -4206,6 +4226,29 @@ void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl)
     }
 }
 
+// 0x51BEB0
+void sub_51BEB0(FILE* stream1, TigArtHeader* hdr1, const char* filename1, FILE* stream2, TigArtHeaderSave* hdr2, const char* filename2)
+{
+    if (stream1 != NULL) {
+        fclose(stream1);
+    }
+
+    if (filename1 != NULL) {
+        remove(filename1);
+    }
+
+    if (stream2 != NULL) {
+        fclose(stream2);
+    }
+
+    if (filename2 != NULL) {
+        remove(filename2);
+    }
+
+    sub_51BF60(hdr2);
+    sub_51BF20(hdr1);
+}
+
 // 0x51BF20
 void sub_51BF20(TigArtHeader* hdr)
 {
@@ -4219,6 +4262,23 @@ void sub_51BF20(TigArtHeader* hdr)
         }
         if (hdr->frames_tbl[rotation] != NULL) {
             FREE(hdr->frames_tbl[rotation]);
+        }
+    }
+}
+
+// 0x51BF60
+void sub_51BF60(TigArtHeaderSave* hdr)
+{
+    int num_rotations;
+    int rotation;
+
+    num_rotations = (hdr->field_0 & 1) != 0 ? 1 : 8;
+    for (rotation = 0; rotation < num_rotations; rotation++) {
+        if (hdr->field_48[rotation] != NULL) {
+            FREE(hdr->field_48[rotation]);
+        }
+        if (hdr->field_8[rotation] != NULL) {
+            FREE(hdr->field_8[rotation]);
         }
     }
 }
