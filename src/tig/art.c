@@ -2157,32 +2157,20 @@ int sub_504660(unsigned int art_id)
 }
 
 // 0x504690
-int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int a3, int a4, tig_art_id_t* art_id)
+int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int rotation, int a4, tig_art_id_t* art_id)
 {
-    if (a1 >= 512) {
+    if (a1 >= 512
+        || a2 >= 128
+        || (a4 ? rotation >= 32 : rotation >= 8)) {
         return TIG_ERR_12;
-    }
-
-    if (a2 >= 128) {
-        return TIG_ERR_12;
-    }
-
-    if (a4 == 0) {
-        if (a3 >= 8) {
-            return TIG_ERR_12;
-        }
-    } else {
-        if (a3 >= 32) {
-            return TIG_ERR_12;
-        }
     }
 
     // TODO: Check.
     *art_id = (TIG_ART_TYPE_LIGHT << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((a2 & 0x7F) << 12)
-        | ((a3 & 7) << 9)
-        | ((a3 & 0x1F) << 4)
+        | ((rotation & (MAX_ROTATIONS - 1)) << LIGHT_ID_ROTATION_SHIFT)
+        | ((rotation & 0x1F) << 4)
         | (a4 & 1);
 
     return TIG_OK;
