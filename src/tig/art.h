@@ -212,6 +212,7 @@ int tig_art_scenery_id_create(unsigned int a1, int a2, unsigned int a3, int a4, 
 int sub_504300(unsigned int art_id);
 int tig_art_interface_id_create(unsigned int a1, unsigned int a2, unsigned char a3, unsigned int a4, unsigned int* art_id);
 int sub_504390(unsigned int art_id);
+int tig_art_item_id_create(int a1, int a2, int a3, int a4, int a5, int a6, int a7, unsigned int a8, tig_art_id_t* art_id_ptr);
 int sub_504490(unsigned int art_id);
 unsigned int sub_5044C0(unsigned int art_id, int value);
 int sub_5044F0(unsigned int art_id);

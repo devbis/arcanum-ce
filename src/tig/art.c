@@ -2032,6 +2032,39 @@ int sub_504390(unsigned int art_id)
     }
 }
 
+// 0x5043C0
+int tig_art_item_id_create(int a1, int a2, int a3, int a4, int a5, int a6, int a7, unsigned int a8, tig_art_id_t* art_id_ptr)
+{
+    // NOTE: Unsigned compare
+    if ((unsigned int)a1 >= 0x3E8
+        || a2 >= 4
+        || (a3 & ~0x800) != 0
+        || (a4 & ~0x400) != 0
+        || a5 >= 16
+        || a6 >= 16
+        || a7 >= 8
+        || a8 >= 4) {
+        return TIG_ERR_12;
+    }
+
+    *art_id_ptr = (TIG_ART_TYPE_ITEM << ART_ID_TYPE_SHIFT)
+        | ((a1 & 0x7FF) << 17)
+        | ((a7 & 7) << 14)
+        | ((a2 & 3) << 12)
+        | ((a5 & 0xF) << 6)
+        | ((a8 & 3) << 4)
+        | (a6 & 0xF)
+        | a3
+        | a4;
+
+    // NOTE: Signed compare.
+    if ((int)a1 >= (int)sub_502830(*art_id_ptr)) {
+        return TIG_ERR_12;
+    }
+
+    return TIG_OK;
+}
+
 // 0x504490
 int sub_504490(unsigned int art_id)
 {
