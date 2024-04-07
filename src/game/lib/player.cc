@@ -113,7 +113,7 @@ void player_create()
     }
 
     art_id_t art_id;
-    if (sub_503C00(1, 0, 0, 0, 0, 4, 0, 0, 0, &art_id) != TIG_OK) {
+    if (tig_art_critter_id_create(1, 0, 0, 0, 0, 4, 0, 0, 0, &art_id) != TIG_OK) {
         tig_debug_printf("player_create: Error: failed to create player ART!\n");
         exit(EXIT_FAILURE);
     }

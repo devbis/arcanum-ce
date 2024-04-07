@@ -1530,7 +1530,7 @@ int sub_503990(unsigned int art_id)
 }
 
 // 0x5039D0
-int sub_5039D0(unsigned int a1, int a2, int a3, int rotation, unsigned int a5, int a6, tig_art_id_t* art_id_ptr)
+int tig_art_wall_id_create(unsigned int a1, int a2, int a3, int rotation, unsigned int a5, int a6, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 256
         || a2 >= 46
@@ -1643,7 +1643,7 @@ unsigned int sub_503BB0(unsigned int art_id, int value)
 }
 
 // 0x503C00
-int sub_503C00(unsigned int a1, int a2, int a3, unsigned int a4, unsigned int a5, int rotation, int a7, int a8, unsigned int a9, tig_art_id_t* art_id_ptr)
+int tig_art_critter_id_create(unsigned int a1, int a2, int a3, unsigned int a4, unsigned int a5, int rotation, int a7, int a8, unsigned int a9, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 2
         || a2 >= 8
@@ -1671,7 +1671,7 @@ int sub_503C00(unsigned int a1, int a2, int a3, unsigned int a4, unsigned int a5
 }
 
 // 0x503CD0
-int sub_503CD0(int a1, int a2, unsigned int a3, unsigned int a4, int rotation, int a6, int a7, unsigned int a8, tig_art_id_t* art_id_ptr)
+int tig_art_monster_id_create(int a1, int a2, unsigned int a3, unsigned int a4, int rotation, int a6, int a7, unsigned int a8, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 32
         || a2 >= 8
@@ -1698,7 +1698,7 @@ int sub_503CD0(int a1, int a2, unsigned int a3, unsigned int a4, int rotation, i
 }
 
 // 0x503D80
-int sub_503D80(int a1, unsigned int a2, unsigned int a3, int a4, int a5, int a6, unsigned int a7, tig_art_id_t* art_id_ptr)
+int tig_art_unique_npc_id_create(int a1, unsigned int a2, unsigned int a3, int a4, int a5, int a6, unsigned int a7, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 256
         || a2 >= 2
@@ -1933,7 +1933,7 @@ unsigned int sub_504180(unsigned int art_id, int value)
 }
 
 // 0x5041D0
-int sub_5041D0(unsigned int a1, int a2, int a3, unsigned int a4, int a5, unsigned int a6, tig_art_id_t* art_id_ptr)
+int tig_art_portal_id_create(unsigned int a1, int a2, int a3, unsigned int a4, int a5, unsigned int a6, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 0x200
         || a2 >= 2
@@ -1966,7 +1966,7 @@ int sub_504260(unsigned int art_id)
 }
 
 // 0x504290
-int sub_504290(unsigned int a1, int a2, unsigned int a3, int a4, unsigned int a5, tig_art_id_t* art_id_ptr)
+int tig_art_scenery_id_create(unsigned int a1, int a2, unsigned int a3, int a4, unsigned int a5, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 0x200
         || a2 >= 32
@@ -2242,7 +2242,7 @@ unsigned int sub_504970(unsigned int art_id, unsigned int value)
 }
 
 // 0x5049B0
-int sub_5049B0(unsigned int a1, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, tig_art_id_t* art_id_ptr)
+int tig_art_facade_id_create(unsigned int a1, unsigned int a2, unsigned int a3, unsigned int a4, unsigned int a5, unsigned int a6, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 0x200
         || a2 >= 0x40
