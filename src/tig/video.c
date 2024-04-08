@@ -1164,11 +1164,11 @@ int tig_video_buffer_fill(TigVideoBuffer* video_buffer, TigRect* rect, int color
 }
 
 // 0x520660
-int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigLtrbRect* rect, TigRect* a3, unsigned int color)
+int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigLine* line, TigRect* a3, unsigned int color)
 {
     // TODO: Incomplete.
     (void)video_buffer;
-    (void)rect;
+    (void)line;
     (void)a3;
     (void)color;
 

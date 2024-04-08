@@ -82,7 +82,7 @@ int tig_window_data(tig_window_handle_t window_handle, TigWindowData* window_dat
 int tig_window_display();
 void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_buffer, int dx, int dy, int top_window_index);
 int tig_window_fill(tig_window_handle_t window_handle, TigRect* rect, int color);
-int tig_window_line(tig_window_handle_t window_handle, TigLtrbRect* rect, int color);
+int tig_window_line(tig_window_handle_t window_handle, TigLine* line, int color);
 int tig_window_box(tig_window_handle_t window_handle, TigRect* rect, int color);
 int sub_51D8D0(TigWindowBlt* blt);
 int tig_window_blit_art(tig_window_handle_t window_handle, TigArtBlitSpec* blit_spec);

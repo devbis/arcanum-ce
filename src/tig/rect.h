@@ -25,19 +25,15 @@ typedef struct TigRectListNode {
 
 static_assert(sizeof(TigRectListNode) == 0x14, "wrong size");
 
-/// A 2D axis-aligned rectangle whose coordinates are specified using two
-/// points (left-top/right-bottom).
-///
-/// NOTE: I'm pretty much sure there was no such type and they simply used
-/// Windows' `RECT`.
-typedef struct TigLtrbRect {
-    /* 0000 */ int left;
-    /* 0004 */ int top;
-    /* 0008 */ int right;
-    /* 000C */ int bottom;
-} TigLtrbRect;
+// A 2D line whose coordinates are specified using points.
+typedef struct TigLine {
+    /* 0000 */ int x1;
+    /* 0004 */ int y1;
+    /* 0008 */ int x2;
+    /* 000C */ int y2;
+} TigLine;
 
-static_assert(sizeof(TigLtrbRect) == 0x10, "wrong size");
+static_assert(sizeof(TigLine) == 0x10, "wrong size");
 
 int tig_rect_init(TigContext* ctx);
 void tig_rect_exit();
@@ -56,7 +52,7 @@ int tig_rect_intersection(const TigRect* a, const TigRect* b, TigRect* r);
 ///
 /// Returns number of excluded rectangles.
 ///
-/// Slicing scheme:
+/// Scheme:
 ///     +-----------------+
 ///     | (1)             |
 ///     +-----+-----+-----+
@@ -71,10 +67,38 @@ int tig_rect_clip(const TigRect* a, const TigRect* b, TigRect* rects);
 /// Returns `TIG_OK` (its always possible to compute a union)
 int tig_rect_union(const TigRect* a, const TigRect* b, TigRect* r);
 
-int tig_rect_clamp(const TigRect* rect, TigLtrbRect* ltrb);
+// Computes an intersection of a rectangle and a line.
+//
+// NOTE: I'm not really sure about this function, it's implementation is a
+// little bit odd. This function works only when at least one line end is
+// located within the rect. Otherwise it assumes line is outside of the rect
+// even if has intersection. See tests.
+//
+// Scheme (yields correct results):
+//                    +
+//                   /
+//      +-----------/-----+
+//      |          /      |
+//      |         +       |
+//      |                 |
+//      +-----------------+
+//
+// Scheme (yields incorrect results):
+//                    +
+//                   /
+//      +-----------/-----+
+//      |          /      |
+//      |         /       |
+//      |        /        |
+//      +-------/---------+
+//             /
+//            +
+int tig_line_intersection(const TigRect* rect, TigLine* line);
 
-/// Convers LTRB-style rectangle to Origin/Size-style.
-int tig_rect_normalize(const TigLtrbRect* ltrb, TigRect* rect);
+// Computes a bounding box rectangle for a line.
+//
+// Returns `TIG_OK`.
+int tig_line_bounding_box(const TigLine* line, TigRect* rect);
 
 #ifdef __cplusplus
 }

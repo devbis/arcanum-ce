@@ -11,7 +11,7 @@
 #define MISS_LEFT 0x1
 
 static void tig_rect_node_reserve();
-static void sub_52DC90(float x, float y, TigLtrbRect* ltrb, unsigned int* flags);
+static void sub_52DC90(float x, float y, TigLine* line, unsigned int* flags);
 
 // 0x62B2A4
 static TigRectListNode* tig_rect_free_node_head;
@@ -225,54 +225,54 @@ int tig_rect_union(const TigRect* a, const TigRect* b, TigRect* r)
 }
 
 // 0x52DC90
-void sub_52DC90(float x, float y, TigLtrbRect* ltrb, unsigned int* flags)
+void sub_52DC90(float x, float y, TigLine* line, unsigned int* flags)
 {
     *flags = 0;
 
-    if (y > (float)ltrb->bottom) {
+    if (y > (float)line->y2) {
         *flags |= MISS_BOTTOM;
-    } else if (y < (float)ltrb->top) {
+    } else if (y < (float)line->y1) {
         *flags |= MISS_TOP;
     }
 
-    if (x > (float)ltrb->right) {
+    if (x > (float)line->x2) {
         *flags |= MISS_RIGHT;
-    } else if (x < (float)ltrb->left) {
+    } else if (x < (float)line->x1) {
         *flags |= MISS_LEFT;
     }
 }
 
 // 0x52DD00
-int tig_rect_clamp(const TigRect* rect, TigLtrbRect* ltrb)
+int tig_line_intersection(const TigRect* rect, TigLine* line)
 {
-    bool clamped = false;
+    bool intersects = false;
     float x1, y1;
     float x2, y2;
     float x3, y3;
-    TigLtrbRect temp_ltrb;
+    TigLine temp_line;
     unsigned int flags1;
     unsigned int flags2;
     unsigned int flags;
 
-    x1 = (float)ltrb->left;
-    y1 = (float)ltrb->top;
-    x2 = (float)ltrb->right;
-    y2 = (float)ltrb->bottom;
+    x1 = (float)line->x1;
+    y1 = (float)line->y1;
+    x2 = (float)line->x2;
+    y2 = (float)line->y2;
 
     x3 = x2;
     y3 = y2;
 
-    temp_ltrb.left = rect->x;
-    temp_ltrb.top = rect->y;
-    temp_ltrb.right = rect->x + rect->width;
-    temp_ltrb.bottom = rect->y + rect->height;
+    temp_line.x1 = rect->x;
+    temp_line.y1 = rect->y;
+    temp_line.x2 = rect->x + rect->width;
+    temp_line.y2 = rect->y + rect->height;
 
-    sub_52DC90(x1, y1, &temp_ltrb, &flags1);
-    sub_52DC90(x2, y2, &temp_ltrb, &flags2);
+    sub_52DC90(x1, y1, &temp_line, &flags1);
+    sub_52DC90(x2, y2, &temp_line, &flags2);
 
     while (1) {
         if (flags1 == 0 && flags2 == 0) {
-            clamped = true;
+            intersects = true;
             break;
         }
 
@@ -283,55 +283,59 @@ int tig_rect_clamp(const TigRect* rect, TigLtrbRect* ltrb)
         flags = flags1 != 0 ? flags1 : flags2;
 
         if ((flags & MISS_BOTTOM) != 0) {
-            y3 = (float)temp_ltrb.bottom;
+            y3 = (float)temp_line.y2;
             x3 = (y3 - y1) * (x2 - x1) / (y2 - y1) + x1;
         } else if ((flags & MISS_TOP) != 0) {
-            y3 = (float)temp_ltrb.top;
+            y3 = (float)temp_line.y1;
             x3 = (y3 - y1) * (x2 - x1) / (y2 - y1) + x1;
         } else if ((flags & MISS_RIGHT) != 0) {
-            x3 = (float)temp_ltrb.right;
+            x3 = (float)temp_line.x2;
             y3 = (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
         } else if ((flags & MISS_LEFT) != 0) {
-            x3 = (float)temp_ltrb.left;
+            x3 = (float)temp_line.x1;
             y3 = (x3 - x1) * (y2 - y1) / (x2 - x1) + y1;
         }
 
-        if (flags1 == flags2) {
+        if (flags == flags1) {
             x1 = x3;
             y1 = y3;
-            sub_52DC90(x1, y1, &temp_ltrb, &flags1);
+            sub_52DC90(x3, y3, &temp_line, &flags1);
         } else {
             x2 = x3;
             x2 = y3;
-            sub_52DC90(x2, y2, &temp_ltrb, &flags2);
+            sub_52DC90(x3, y3, &temp_line, &flags2);
         }
     }
 
-    ltrb->left = (int)x1;
-    ltrb->top = (int)y1;
-    ltrb->right = (int)x2;
-    ltrb->bottom = (int)y2;
+    line->x1 = (int)x1;
+    line->y1 = (int)y1;
+    line->x2 = (int)x2;
+    line->y2 = (int)y2;
 
-    return clamped ? TIG_OK : TIG_ERR_4;
+    if (!intersects) {
+        return TIG_ERR_4;
+    }
+
+    return TIG_OK;
 }
 
 // 0x52DF20
-int tig_rect_normalize(const TigLtrbRect* ltrb, TigRect* rect)
+int tig_line_bounding_box(const TigLine* line, TigRect* rect)
 {
-    if (ltrb->right <= ltrb->left) {
-        rect->x = ltrb->right;
-        rect->width = ltrb->left - ltrb->right;
+    if (line->x2 <= line->x1) {
+        rect->x = line->x2;
+        rect->width = line->x1 - line->x2;
     } else {
-        rect->x = ltrb->left;
-        rect->width = ltrb->right - ltrb->left;
+        rect->x = line->x1;
+        rect->width = line->x2 - line->x1;
     }
 
-    if (ltrb->bottom <= ltrb->top) {
-        rect->y = ltrb->bottom;
-        rect->height = ltrb->top - ltrb->bottom;
+    if (line->y2 <= line->y1) {
+        rect->y = line->y2;
+        rect->height = line->y1 - line->y2;
     } else {
-        rect->y = ltrb->top;
-        rect->height = ltrb->bottom - ltrb->top;
+        rect->y = line->y1;
+        rect->height = line->y2 - line->y1;
     }
 
     return TIG_OK;

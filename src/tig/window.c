@@ -666,7 +666,7 @@ int tig_window_fill(tig_window_handle_t window_handle, TigRect* rect, int color)
 }
 
 // 0x51D6B0
-int tig_window_line(tig_window_handle_t window_handle, TigLtrbRect* rect, int color)
+int tig_window_line(tig_window_handle_t window_handle, TigLine* line, int color)
 {
     int window_index;
     TigWindow* win;
@@ -685,15 +685,15 @@ int tig_window_line(tig_window_handle_t window_handle, TigLtrbRect* rect, int co
     window_index = tig_window_handle_to_index(window_handle);
     win = &(windows[window_index]);
 
-    if (tig_rect_clamp(&(win->bounds), rect) != TIG_OK) {
+    if (tig_line_intersection(&(win->bounds), line) != TIG_OK) {
         return TIG_OK;
     }
 
-    if (tig_rect_normalize(rect, &dirty_rect) != TIG_OK) {
+    if (tig_line_bounding_box(line, &dirty_rect) != TIG_OK) {
         return TIG_ERR_4;
     }
 
-    rc = tig_video_buffer_line(win->video_buffer, rect, &dirty_rect, color);
+    rc = tig_video_buffer_line(win->video_buffer, line, &dirty_rect, color);
 
     dirty_rect.x += win->frame.x;
     dirty_rect.y += win->frame.y;
