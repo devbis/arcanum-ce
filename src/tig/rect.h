@@ -35,7 +35,7 @@ typedef struct TigLine {
 
 static_assert(sizeof(TigLine) == 0x10, "wrong size");
 
-int tig_rect_init(TigContext* ctx);
+int tig_rect_init(TigInitializeInfo* init_info);
 void tig_rect_exit();
 TigRectListNode* tig_rect_node_create();
 void tig_rect_node_destroy(TigRectListNode* node);

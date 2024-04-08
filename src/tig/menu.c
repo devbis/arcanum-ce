@@ -136,9 +136,9 @@ static int tig_menu_current_menu_bar_index;
 static bool tig_menu_presenting_drop_down;
 
 // 0x538F60
-int tig_menu_init(TigContext* ctx)
+int tig_menu_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     TigMenuColors colors;
     int menu_bar_index;

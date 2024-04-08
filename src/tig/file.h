@@ -48,7 +48,7 @@ bool tig_file_is_directory(const char* path);
 bool sub_52E260(const char* dst, const char* src);
 bool sub_52E430(const char* dst, const char* src);
 bool sub_52E550(const char* src, const char* dst);
-int tig_file_init(TigContext* ctx);
+int tig_file_init(TigInitializeInfo* init_info);
 void tig_file_exit();
 bool tig_file_repository_add(const char* path);
 bool tig_file_repository_remove(const char* path);

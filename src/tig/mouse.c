@@ -169,24 +169,24 @@ static LPDIRECTINPUTDEVICEA tig_mouse_device;
 static bool tig_mouse_initialized;
 
 // 0x4FF020
-int tig_mouse_init(TigContext* ctx)
+int tig_mouse_init(TigInitializeInfo* init_info)
 {
     if (tig_mouse_initialized) {
         return TIG_ALREADY_INITIALIZED;
     }
 
-    tig_mouse_max_x = ctx->width - 1;
-    tig_mouse_max_y = ctx->height - 1;
+    tig_mouse_max_x = init_info->width - 1;
+    tig_mouse_max_y = init_info->height - 1;
 
-    tig_mouse_state.frame.x = ctx->width / 2;
-    tig_mouse_state.frame.y = ctx->height / 2;
+    tig_mouse_state.frame.x = init_info->width / 2;
+    tig_mouse_state.frame.y = init_info->height / 2;
     tig_mouse_state.frame.width = 0;
     tig_mouse_state.frame.height = 0;
-    tig_mouse_state.x = ctx->width / 2;
-    tig_mouse_state.y = ctx->height / 2;
+    tig_mouse_state.x = init_info->width / 2;
+    tig_mouse_state.y = init_info->height / 2;
     tig_mouse_state.flags = 0;
 
-    if ((ctx->flags & TIG_CONTEXT_0x0020) != 0) {
+    if ((init_info->flags & TIG_INITIALIZE_WINDOWED) != 0) {
         return tig_mouse_hardware_init();
     } else {
         return tig_mouse_device_init();

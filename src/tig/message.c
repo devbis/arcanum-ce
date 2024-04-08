@@ -36,7 +36,7 @@ static void tig_message_node_release(TigMessageListNode* node);
 static TigMessageKeyboardHandler tig_message_key_handlers[MAX_KEY_HANDLERS];
 
 // 0x62B1E8
-static TigContextMessageHandler* tig_message_handler;
+static TigMessageHandler* tig_message_handler;
 
 // 0x62B1EC
 static int dword_62B1EC;
@@ -60,7 +60,7 @@ static TigMessageListNode* tig_message_queue_head;
 static int tig_message_key_handlers_count;
 
 // 0x52B6D0
-int tig_message_init(TigContext* ctx)
+int tig_message_init(TigInitializeInfo* init_info)
 {
     InitializeCriticalSection(&tig_message_critical_section);
 
@@ -68,7 +68,7 @@ int tig_message_init(TigContext* ctx)
     tig_message_queue_head = NULL;
     dword_62B1EC = 1;
     tig_message_key_handlers_count = 0;
-    tig_message_should_process_mouse_events = (ctx->flags & TIG_CONTEXT_0x0020) != 0;
+    tig_message_should_process_mouse_events = (init_info->flags & TIG_INITIALIZE_WINDOWED) != 0;
 
     if (!tig_message_should_process_mouse_events) {
         tig_message_default_window_proc = NULL;
@@ -80,16 +80,16 @@ int tig_message_init(TigContext* ctx)
         return TIG_ERR_16;
     }
 
-    if ((ctx->flags & TIG_CONTEXT_0x0040) == 0) {
+    if ((init_info->flags & TIG_INITIALIZE_MESSAGE_HANDLER) == 0) {
         tig_message_handler = NULL;
         return TIG_OK;
     }
 
-    if (ctx->message_handler == NULL) {
+    if (init_info->message_handler == NULL) {
         return TIG_ERR_12;
     }
 
-    tig_message_handler = ctx->message_handler;
+    tig_message_handler = init_info->message_handler;
 
     return TIG_OK;
 }

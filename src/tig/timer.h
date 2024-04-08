@@ -25,7 +25,7 @@ typedef unsigned int timer_t;
 /// int).
 typedef int duration_t;
 
-int tig_timer_init(TigContext* ctx);
+int tig_timer_init(TigInitializeInfo* init_info);
 void tig_timer_exit();
 int tig_timer_start(timer_t* start);
 duration_t tig_timer_elapsed(timer_t start);

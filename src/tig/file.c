@@ -518,9 +518,9 @@ bool sub_52E9C0(const char* path, TigFile* stream1, TigFile* stream2)
 }
 
 // 0x52ECA0
-int tig_file_init(TigContext* ctx)
+int tig_file_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     TigFindFileData ffd;
 

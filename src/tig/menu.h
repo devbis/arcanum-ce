@@ -30,7 +30,7 @@ typedef struct TigMenuColors {
 
 static_assert(sizeof(TigMenuColors) == 0x14, "wrong size");
 
-int tig_menu_init(TigContext* ctx);
+int tig_menu_init(TigInitializeInfo* init_info);
 void tig_menu_exit();
 int tig_menu_set_colors(TigMenuColors* colors);
 int sub_539130(const char* title, const char** menu_items, int num_menu_items, int x, int y);

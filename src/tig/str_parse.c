@@ -12,9 +12,9 @@
 static char tig_str_parse_separator = DEFAULT_LIST_SEPARATOR;
 
 // 0x5318C0
-int tig_str_parse_init(TigContext* ctx)
+int tig_str_parse_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     tig_str_parse_separator = DEFAULT_LIST_SEPARATOR;
 

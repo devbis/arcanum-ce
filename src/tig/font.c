@@ -25,9 +25,9 @@ static unsigned int tig_font_shadow_color;
 static TigFont* tig_font_default_font;
 
 // 0x5351D0
-int tig_font_init(TigContext* ctx)
+int tig_font_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     TigFont font;
 

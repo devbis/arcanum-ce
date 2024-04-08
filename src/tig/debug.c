@@ -73,9 +73,9 @@ static DebugOutputFunc* tig_debug_funcs[MAX_DEBUG_FUNCS];
 static unsigned char* mono_dest;
 
 // 0x4FEB10
-int tig_debug_init(TigContext* ctx)
+int tig_debug_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     time_t now;
 

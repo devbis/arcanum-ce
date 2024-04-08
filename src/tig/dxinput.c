@@ -315,7 +315,7 @@ const DIDATAFORMAT c_dfDIKeyboard = {
 #endif /* HAVE_DINPUT */
 
 // 0x537A80
-int tig_dxinput_init(TigContext* ctx)
+int tig_dxinput_init(TigInitializeInfo* init_info)
 {
     HRESULT hr;
 
@@ -337,7 +337,7 @@ int tig_dxinput_init(TigContext* ctx)
     }
 #endif /* HAVE_DINPUT */
 
-    hr = DirectInputCreateA(ctx->instance, DIRECTINPUT_VERSION, &direct_input, NULL);
+    hr = DirectInputCreateA(init_info->instance, DIRECTINPUT_VERSION, &direct_input, NULL);
     if (FAILED(hr)) {
         return TIG_ERR_7;
     }

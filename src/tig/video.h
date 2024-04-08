@@ -99,7 +99,7 @@ typedef struct TigVideoScreenshotSettings {
     /* 0004 */ int field_4;
 } TigVideoScreenshotSettings;
 
-int tig_video_init(TigContext* ctx);
+int tig_video_init(TigInitializeInfo* init_info);
 void tig_video_exit();
 int tig_video_platform_window_get(HWND* wnd_ptr);
 int tig_video_instance_get(HINSTANCE* instance_ptr);

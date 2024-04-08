@@ -295,13 +295,13 @@ static art_size_t tig_art_total_video_memory;
 static int tig_art_bits_per_pixel;
 
 // 0x604750
-static TigContextF20* dword_604750;
+static TigArtNormalizeIdHandler* dword_604750;
 
 // 0x604754
 static int dword_604754;
 
 // 0x500590
-int tig_art_init(TigContext* ctx)
+int tig_art_init(TigInitializeInfo* init_info)
 {
     size_t total_memory;
     size_t available_memory;
@@ -326,10 +326,10 @@ int tig_art_init(TigContext* ctx)
     tig_art_total_video_memory = tig_art_available_video_memory;
     tig_debug_printf("Art mem vid avail is %d\n", tig_art_available_video_memory);
 
-    tig_art_bits_per_pixel = ctx->bpp;
+    tig_art_bits_per_pixel = init_info->bpp;
     tig_art_bytes_per_pixel = tig_art_bits_per_pixel / 8;
-    tig_art_file_path_resolver = ctx->art_file_path_resolver;
-    dword_604750 = ctx->field_20;
+    tig_art_file_path_resolver = init_info->art_file_path_resolver;
+    dword_604750 = init_info->art_normalize_id_handler;
 
     tig_art_initialized = true;
 
@@ -3912,7 +3912,7 @@ int tig_art_build_path(unsigned int art_id, char* path)
         }
     }
 
-    return 16;
+    return TIG_ERR_16;
 }
 
 // 0x51B0A0

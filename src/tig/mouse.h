@@ -43,7 +43,7 @@ typedef struct TigMouseState {
 /// @see 0x4FF9F0.
 static_assert(sizeof(TigMouseState) == 0x28, "wrong size");
 
-int tig_mouse_init(TigContext* ctx);
+int tig_mouse_init(TigInitializeInfo* init_info);
 void tig_mouse_exit();
 void tig_mouse_set_active(bool is_active);
 bool tig_mouse_ping();

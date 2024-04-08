@@ -425,7 +425,7 @@ bool tig_net_inet_addr(const char* cp, unsigned long* addr)
 }
 
 // 0x526E60
-int tig_net_init(TigContext* ctx)
+int tig_net_init(TigInitializeInfo* init_info)
 {
     tig_debug_printf("TIG-NET: Initializing...\n");
 

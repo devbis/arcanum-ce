@@ -34,7 +34,7 @@ typedef struct TigFont {
 // See 0x5352E0.
 static_assert(sizeof(TigFont) == 0x2C, "wrong size");
 
-int tig_font_init(TigContext* ctx);
+int tig_font_init(TigInitializeInfo* init_info);
 void tig_font_exit();
 void tig_font_create(TigFont* desc, TigFont** font_ptr);
 void tig_font_destroy(TigFont* font);

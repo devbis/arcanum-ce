@@ -94,7 +94,7 @@ typedef struct TigMessage {
 
 static_assert(sizeof(TigMessage) == 0x1C, "wrong size");
 
-int tig_message_init(TigContext* ctx);
+int tig_message_init(TigInitializeInfo* init_info);
 void tig_message_exit();
 void tig_message_ping();
 int tig_message_enqueue(TigMessage* message);

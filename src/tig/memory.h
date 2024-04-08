@@ -23,7 +23,7 @@ typedef enum TigMemoryPrintStatsOptions {
     TIG_MEMORY_STATS_PRINT_GROUPED_BLOCKS = 1 << 2,
 } TigMemoryPrintStatsOptions;
 
-int tig_memory_init(TigContext* ctx);
+int tig_memory_init(TigInitializeInfo* init_info);
 void tig_memory_exit(void);
 void* tig_memory_calloc(size_t count, size_t size, const char* file, int line);
 void tig_memory_free(void* ptr, const char* file, int line);

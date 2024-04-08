@@ -17,9 +17,9 @@ static void sub_52DC90(float x, float y, TigLine* line, unsigned int* flags);
 static TigRectListNode* tig_rect_free_node_head;
 
 // 0x52D0E0
-int tig_rect_init(TigContext* ctx)
+int tig_rect_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     return TIG_OK;
 }

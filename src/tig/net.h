@@ -56,7 +56,7 @@ int sub_526D60(int client_id);
 void sub_526E00();
 int tig_net_inet_string(unsigned long addr, char* dest);
 bool tig_net_inet_addr(const char* cp, unsigned long* addr);
-int tig_net_init(TigContext* ctx);
+int tig_net_init(TigInitializeInfo* init_info);
 int tig_net_reset();
 void tig_net_exit();
 int sub_5271D0();

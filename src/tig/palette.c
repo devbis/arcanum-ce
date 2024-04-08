@@ -27,7 +27,7 @@ static size_t tig_palette_size;
 static TigPaletteListNode* tig_palette_head;
 
 // 0x533D50
-int tig_palette_init(TigContext* ctx)
+int tig_palette_init(TigInitializeInfo* init_info)
 {
     int index;
 
@@ -35,7 +35,7 @@ int tig_palette_init(TigContext* ctx)
         return TIG_ALREADY_INITIALIZED;
     }
 
-    switch (ctx->bpp) {
+    switch (init_info->bpp) {
     case 8:
         break;
     case 16:
@@ -50,7 +50,7 @@ int tig_palette_init(TigContext* ctx)
         return TIG_ERR_12;
     }
 
-    tig_palette_bpp = ctx->bpp;
+    tig_palette_bpp = init_info->bpp;
     tig_palette_initialized = true;
 
     // Warm palette cache.

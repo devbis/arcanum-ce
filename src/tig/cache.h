@@ -46,7 +46,7 @@ static_assert(sizeof(TigCache) == 0x18, "wrong size");
 /// Initializes file cache system.
 ///
 /// NOTE: This function does nothing and always returns `TIG_OK`.
-int tig_cache_init(TigContext* ctx);
+int tig_cache_init(TigInitializeInfo* init_info);
 
 /// Shutdowns file cache system.
 ///

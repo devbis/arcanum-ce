@@ -26,13 +26,12 @@ typedef enum TigSoundFlags {
     TIG_SOUND_VOICE = 0x200,
 } TigSoundFlags;
 
-typedef void(TigSoundFileNameFunc)(int id, char* path);
 typedef void(TigSoundEnumerateFunc)(int sound_handle);
 
-int tig_sound_init(TigContext* ctx);
+int tig_sound_init(TigInitializeInfo* init_info);
 void tig_sound_exit();
 void tig_sound_ping();
-void tig_sound_set_path_func(TigSoundFileNameFunc* func);
+void tig_sound_set_file_path_resolver(TigSoundFilePathResolver* func);
 bool tig_sound_is_initialized();
 void tig_sound_fade_out(int sound_handle, int fade_duration);
 void tig_sound_fade_out_from_stop(int sound_handle, int fade_duration);

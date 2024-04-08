@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-int tig_debug_init(TigContext* ctx);
+int tig_debug_init(TigInitializeInfo* init_info);
 void tig_debug_exit();
 void tig_debug_printf(const char* format, ...);
 void tig_debug_println(const char* string);

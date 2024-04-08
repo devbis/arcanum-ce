@@ -19,7 +19,7 @@ typedef struct TigPaletteAdjustDesc {
     /* 000C */ TigPalette dst_palette;
 } TigPaletteAdjustDesc;
 
-int tig_palette_init(TigContext* ctx);
+int tig_palette_init(TigInitializeInfo* init_info);
 void tig_palette_exit();
 TigPalette tig_palette_create();
 void tig_palette_destroy(TigPalette palette);

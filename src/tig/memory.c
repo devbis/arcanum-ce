@@ -60,9 +60,9 @@ static bool tig_memory_initialized;
 static CRITICAL_SECTION tig_memory_crit_sect;
 
 // 0x4FE380
-int tig_memory_init(TigContext* ctx)
+int tig_memory_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     InitializeCriticalSection(&tig_memory_crit_sect);
 

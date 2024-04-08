@@ -13,7 +13,7 @@ static void handle_keyboard_scroll();
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-    TigContext ctx;
+    TigInitializeInfo ctx;
     ctx.texture_width = 1024;
     ctx.texture_height = 1024;
     ctx.flags = TIG_CONTEXT_FLAG_3D_HARDWARE | TIG_CONTEXT_FLAG_3D_SOFTWARE | TIG_CONTEXT_FLAG_0x04;

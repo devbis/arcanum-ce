@@ -22,9 +22,9 @@ static unsigned int tig_movie_flags;
 static HBINK tig_movie_bink;
 
 // 0x5314F0
-int tig_movie_init(TigContext* ctx)
+int tig_movie_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     HDIGDRIVER drvr;
 

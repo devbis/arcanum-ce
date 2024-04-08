@@ -216,7 +216,7 @@ uint8_t* tig_color_red_index_table;
 uint8_t* tig_color_green_luminosity_table;
 
 // 0x52BFC0
-int tig_color_init(TigContext* ctx)
+int tig_color_init(TigInitializeInfo* init_info)
 {
     int cc;
 
@@ -224,7 +224,7 @@ int tig_color_init(TigContext* ctx)
         return 2;
     }
 
-    tig_color_bpp = ctx->bpp;
+    tig_color_bpp = init_info->bpp;
 
     for (cc = 0; cc < CC_COUNT; cc++) {
         tig_color_masks_table[CS_CURRENT][cc] = tig_color_masks_table[tig_color_bpp / 8][cc];

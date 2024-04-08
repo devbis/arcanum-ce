@@ -49,7 +49,7 @@ static int tig_sound_type_flags[TIG_SOUND_TYPE_COUNT] = {
 };
 
 // 0x62B2C0
-static TigSoundFileNameFunc* tig_sound_path_func;
+static TigSoundFilePathResolver* tig_sound_file_path_resolver;
 
 // 0x62B328
 static TigSound tig_sounds[SOUND_HANDLE_MAX];
@@ -67,14 +67,14 @@ static TigCache* tig_sound_cache;
 static int tig_sound_effects_volume;
 
 // 0x532D40
-int tig_sound_init(TigContext* ctx)
+int tig_sound_init(TigInitializeInfo* init_info)
 {
     // COMPAT: Load `mss32.dll`.
     mss_compat_init();
 
-    if ((ctx->flags & TIG_CONTEXT_HAVE_MSS_REDIST_PATH) != 0
-        && ctx->mss_redist_path != NULL) {
-        AIL_set_redist_directory(ctx->mss_redist_path);
+    if ((init_info->flags & TIG_INITIALIZE_SET_MSS_REDIST_PATH) != 0
+        && init_info->mss_redist_path != NULL) {
+        AIL_set_redist_directory(init_info->mss_redist_path);
     }
 
     tig_sound_initialized = false;
@@ -84,7 +84,7 @@ int tig_sound_init(TigContext* ctx)
         tig_sound_initialized = true;
     }
 
-    tig_sound_set_path_func(ctx->sound_file_path_resolver);
+    tig_sound_set_file_path_resolver(init_info->sound_file_path_resolver);
 
     // Create a file cache for 20 files, approx. 1 MB total.
     tig_sound_cache = tig_cache_create(20, 1000000);
@@ -202,9 +202,9 @@ void tig_sound_update()
 }
 
 // 0x533000
-void tig_sound_set_path_func(TigSoundFileNameFunc* func)
+void tig_sound_set_file_path_resolver(TigSoundFilePathResolver* func)
 {
-    tig_sound_path_func = func;
+    tig_sound_file_path_resolver = func;
 }
 
 // 0x533010
@@ -414,7 +414,7 @@ int tig_sound_play_by_id(int sound_handle, int id)
         return TIG_OK;
     }
 
-    tig_sound_path_func(id, path);
+    tig_sound_file_path_resolver(id, path);
 
     return tig_sound_play_by_path(sound_handle, path, id);
 }

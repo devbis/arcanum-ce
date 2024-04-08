@@ -36,9 +36,9 @@ static bool tig_kb_initialized;
 int dword_62B1A8[16];
 
 // 0x52B2F0
-int tig_kb_init(TigContext* ctx)
+int tig_kb_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     if (tig_kb_initialized) {
         return TIG_ALREADY_INITIALIZED;

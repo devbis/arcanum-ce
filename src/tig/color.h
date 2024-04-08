@@ -55,7 +55,7 @@ extern uint8_t* tig_color_green_index_table;
 extern uint8_t* tig_color_red_index_table;
 extern uint8_t* tig_color_green_luminosity_table;
 
-int tig_color_init(TigContext* ctx);
+int tig_color_init(TigInitializeInfo* init_info);
 void tig_color_exit();
 int tig_color_set_rgb_settings(unsigned int red_mask, unsigned int green_mask, unsigned int blue_mask);
 int tig_color_set_rgba_settings(unsigned int red_mask, unsigned int green_mask, unsigned int blue_mask, unsigned int alpha_mask);

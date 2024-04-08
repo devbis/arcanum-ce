@@ -10,9 +10,9 @@
 #define RESOLUTION 1
 
 // 0x52DF80
-int tig_timer_init(TigContext* ctx)
+int tig_timer_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     if (timeBeginPeriod(RESOLUTION) != TIMERR_NOERROR) {
         return 16;

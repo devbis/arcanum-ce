@@ -9,7 +9,7 @@ extern "C" {
 
 extern unsigned int tig_ping_time;
 
-int tig_init(TigContext* ctx);
+int tig_init(TigInitializeInfo* init_info);
 void tig_exit(void);
 void tig_ping();
 void sub_51F250();

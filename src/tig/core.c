@@ -23,7 +23,7 @@
 #include "tig/video.h"
 #include "tig/window.h"
 
-typedef int(TigInitFunc)(TigContext* ctx);
+typedef int(TigInitFunc)(TigInitializeInfo* init_info);
 typedef void(TigExitFunc)();
 
 static void tig_init_executable();
@@ -105,7 +105,7 @@ static bool tig_active;
 unsigned int tig_ping_time;
 
 // 0x51F130
-int tig_init(TigContext* ctx)
+int tig_init(TigInitializeInfo* init_info)
 {
     int index;
     int rc;
@@ -117,12 +117,12 @@ int tig_init(TigContext* ctx)
     for (index = 0; index < NUM_INIT_FUNCS; ++index) {
         // NOTE: For unknown reason skipping sound is done this way instead
         // of checking for appropriate flag in `tig_sound_init`.
-        if ((ctx->flags & TIG_CONTEXT_NO_SOUND) != 0
+        if ((init_info->flags & TIG_INITIALIZE_NO_SOUND) != 0
             && init_funcs[index] == tig_sound_init) {
             continue;
         }
 
-        rc = init_funcs[index](ctx);
+        rc = init_funcs[index](init_info);
         if (rc != TIG_OK) {
             tig_debug_printf("Error initializing TIG init_func %d", index);
 

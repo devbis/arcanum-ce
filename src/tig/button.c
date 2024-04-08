@@ -53,9 +53,9 @@ static TigButton buttons[MAX_BUTTONS];
 static bool busy;
 
 // 0x537B00
-int tig_button_init(TigContext* ctx)
+int tig_button_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     int button_index;
 

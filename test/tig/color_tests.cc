@@ -24,10 +24,10 @@ protected:
     {
         TigColorTest::SetUp();
 
-        TigContext ctx;
-        ctx.bpp = 16;
+        TigInitializeInfo init_info;
+        init_info.bpp = 16;
 
-        ASSERT_EQ(tig_color_init(&ctx), TIG_OK);
+        ASSERT_EQ(tig_color_init(&init_info), TIG_OK);
         ASSERT_EQ(tig_color_set_rgb_settings(0xF800, 0x7E0, 0x1F), TIG_OK);
     }
 

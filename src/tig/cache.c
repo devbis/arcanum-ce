@@ -29,9 +29,9 @@ static int tig_cache_miss_bytes;
 static int tig_cache_removed_bytes;
 
 // 0x538A80
-int tig_cache_init(TigContext* ctx)
+int tig_cache_init(TigInitializeInfo* init_info)
 {
-    (void)ctx;
+    (void)init_info;
 
     return TIG_OK;
 }

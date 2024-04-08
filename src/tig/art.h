@@ -137,7 +137,7 @@ static_assert(sizeof(TigArtBlitSpec) == 0x2C, "wrong size");
 
 typedef bool(TigArtBlitPaletteAdjustCallback)(tig_art_id_t art_id, TigPaletteAdjustDesc* palette_adjust_desc);
 
-int tig_art_init(TigContext* ctx);
+int tig_art_init(TigInitializeInfo* init_info);
 void tig_art_exit();
 void tig_art_ping();
 int sub_5006E0(tig_art_id_t art_id, TigPalette palette);

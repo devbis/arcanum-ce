@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-int tig_dxinput_init(TigContext* ctx);
+int tig_dxinput_init(TigInitializeInfo* init_info);
 void tig_dxinput_exit();
 int tig_dxinput_get_instance(LPDIRECTINPUTA* direct_input_ptr);
 

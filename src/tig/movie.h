@@ -17,7 +17,7 @@ typedef enum TigMovieFlags {
 } TigMovieFlags;
 
 /// Initializes movie system.
-int tig_movie_init(TigContext* ctx);
+int tig_movie_init(TigInitializeInfo* init_info);
 
 /// Shutdowns movie system.
 void tig_movie_exit();

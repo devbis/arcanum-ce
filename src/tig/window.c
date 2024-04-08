@@ -96,7 +96,7 @@ static TigRectListNode* tig_window_dirty_rects;
 static TigFont* tig_window_modal_dialog_font;
 
 // 0x51CAD0
-int tig_window_init(TigContext* ctx)
+int tig_window_init(TigInitializeInfo* init_info)
 {
     int index;
 
@@ -105,15 +105,15 @@ int tig_window_init(TigContext* ctx)
 
     tig_window_screen_rect.x = 0;
     tig_window_screen_rect.y = 0;
-    tig_window_screen_rect.width = ctx->width;
-    tig_window_screen_rect.height = ctx->height;
+    tig_window_screen_rect.width = init_info->width;
+    tig_window_screen_rect.height = init_info->height;
 
     for (index = 0; index < TIG_WINDOW_MAX; index++) {
         windows[index].usage = TIG_WINDOW_USAGE_FREE;
     }
 
     dword_60F120 = 1;
-    tig_window_ctx_flags = ctx->flags;
+    tig_window_ctx_flags = init_info->flags;
     tig_window_initialized = true;
 
     return TIG_OK;
@@ -203,7 +203,7 @@ int tig_window_create(TigWindowData* window_data, tig_window_handle_t* window_ha
         return rc;
     }
 
-    if ((tig_window_ctx_flags & TIG_CONTEXT_0x0010) != 0) {
+    if ((tig_window_ctx_flags & TIG_INITIALIZE_SCRATCH_BUFFER) != 0) {
         if ((window_data->flags & TIG_WINDOW_HAVE_TRANSPARENCY) != 0) {
             vb_create_info.flags &= ~TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
 
@@ -257,7 +257,7 @@ int tig_window_destroy(tig_window_handle_t window_handle)
 
     tig_video_buffer_destroy(win->video_buffer);
 
-    if ((tig_window_ctx_flags & TIG_CONTEXT_0x0010) != 0
+    if ((tig_window_ctx_flags & TIG_INITIALIZE_SCRATCH_BUFFER) != 0
         && (win->flags & TIG_WINDOW_HAVE_TRANSPARENCY) != 0) {
         tig_video_buffer_destroy(win->secondary_video_buffer);
     }
@@ -408,7 +408,7 @@ int tig_window_display()
 
     tig_video_display_fps();
 
-    if ((tig_window_ctx_flags & TIG_CONTEXT_DOUBLE_BUFFER) != 0) {
+    if ((tig_window_ctx_flags & TIG_INITIALIZE_DOUBLE_BUFFER) != 0) {
         tig_video_flip();
     }
 
@@ -496,7 +496,7 @@ void sub_51D050(TigRect* src_rect, TigRect* mouse_rect, TigVideoBuffer* dst_vide
                     TigVideoBuffer* src_video_buffer = win->video_buffer;
                     if ((win->flags & TIG_WINDOW_HAVE_TRANSPARENCY) == 0) {
                         cont = true;
-                    } else if ((tig_window_ctx_flags & TIG_CONTEXT_0x0010) != 0) {
+                    } else if ((tig_window_ctx_flags & TIG_INITIALIZE_SCRATCH_BUFFER) != 0) {
                         sub_51D050(&dirty_rect,
                             mouse_rect,
                             win->secondary_video_buffer,
@@ -521,7 +521,7 @@ void sub_51D050(TigRect* src_rect, TigRect* mouse_rect, TigVideoBuffer* dst_vide
                         blt_src_rect.height = win_frame.height;
 
                         if ((win->flags & TIG_WINDOW_HAVE_TRANSPARENCY) != 0
-                            && (tig_window_ctx_flags & TIG_CONTEXT_0x0010) != 0) {
+                            && (tig_window_ctx_flags & TIG_INITIALIZE_SCRATCH_BUFFER) != 0) {
                             vb_blit_info.flags = 0;
                             vb_blit_info.src_video_buffer = win->video_buffer;
                             vb_blit_info.src_rect = &blt_src_rect;

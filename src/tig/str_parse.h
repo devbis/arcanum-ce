@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-int tig_str_parse_init(TigContext* ctx);
+int tig_str_parse_init(TigInitializeInfo* init_info);
 void tig_str_parse_exit();
 void tig_str_parse_set_separator(int sep);
 void tig_str_parse_str_value(char** str, char* value);

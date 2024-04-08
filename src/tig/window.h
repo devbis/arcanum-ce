@@ -81,7 +81,7 @@ typedef struct TigWindowModalDialogDesc {
 // See 0x51EA60.
 static_assert(sizeof(TigWindowModalDialogDesc) == 0x1C, "wrong size");
 
-int tig_window_init(TigContext* ctx);
+int tig_window_init(TigInitializeInfo* init_info);
 void tig_window_exit();
 int tig_window_create(TigWindowData* window_data, tig_window_handle_t* window_handle_ptr);
 int tig_window_destroy(tig_window_handle_t window_handle);

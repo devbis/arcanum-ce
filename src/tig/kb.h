@@ -9,7 +9,7 @@ extern "C" {
 
 extern int dword_62B1A8[16];
 
-int tig_kb_init(TigContext* ctx);
+int tig_kb_init(TigInitializeInfo* init_info);
 void tig_kb_exit();
 bool tig_kb_is_key_pressed(int key);
 bool tig_kb_get_modifier(int key);

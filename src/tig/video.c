@@ -58,14 +58,14 @@ static_assert(sizeof(TigVideoState) == 0x110C, "wrong size");
 
 static int tig_video_get_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
 static int tig_video_set_gamma_ramp(LPDDGAMMARAMP gamma_ramp);
-static bool tig_video_platform_window_init(TigContext* ctx);
+static bool tig_video_platform_window_init(TigInitializeInfo* init_info);
 static void tig_video_platform_window_exit();
-static bool tig_video_ddraw_init(TigContext* ctx);
-static bool tig_video_ddraw_init_windowed(TigContext* ctx);
-static bool tig_video_ddraw_init_fullscreen(TigContext* ctx);
+static bool tig_video_ddraw_init(TigInitializeInfo* init_info);
+static bool tig_video_ddraw_init_windowed(TigInitializeInfo* init_info);
+static bool tig_video_ddraw_init_fullscreen(TigInitializeInfo* init_info);
 static bool sub_524830();
 static int tig_video_ddraw_exit();
-static bool tig_video_d3d_init(TigContext* ctx);
+static bool tig_video_d3d_init(TigInitializeInfo* init_info);
 static HRESULT CALLBACK tig_video_3d_check_pixel_format(LPDDPIXELFORMAT lpDDPixFmt, LPVOID lpContext);
 static void tig_video_d3d_exit();
 static bool tig_video_ddraw_palette_create(LPDIRECTDRAW7 ddraw);
@@ -108,7 +108,7 @@ static bool tig_video_fullscreen;
 static bool tig_video_double_buffered;
 
 // 0x610318
-static bool dword_610318;
+static bool tig_video_can_use_video_memory;
 
 // 0x61031C
 static bool tig_video_3d_initialized;
@@ -153,33 +153,33 @@ static bool tig_video_show_fps;
 static int dword_6103A4;
 
 // 0x51F330
-int tig_video_init(TigContext* ctx)
+int tig_video_init(TigInitializeInfo* init_info)
 {
     memset(&tig_video_state, 0, sizeof(tig_video_state));
 
-    if ((ctx->flags & TIG_CONTEXT_0x0020) != 0) {
-        if (ctx->default_window_proc == NULL) {
+    if ((init_info->flags & TIG_INITIALIZE_WINDOWED) != 0) {
+        if (init_info->default_window_proc == NULL) {
             return TIG_ERR_12;
         }
 
-        tig_message_set_default_window_proc(ctx->default_window_proc);
+        tig_message_set_default_window_proc(init_info->default_window_proc);
     }
 
-    if (!tig_video_platform_window_init(ctx)) {
+    if (!tig_video_platform_window_init(init_info)) {
         return TIG_ERR_16;
     }
 
-    if (!tig_video_ddraw_init(ctx)) {
+    if (!tig_video_ddraw_init(init_info)) {
         tig_video_platform_window_exit();
         return TIG_ERR_16;
     }
 
-    tig_video_show_fps = (ctx->flags & TIG_CONTEXT_FPS) != 0;
-    dword_610318 = (ctx->flags & TIG_CONTEXT_0x0004) != 0;
-    tig_video_bpp = ctx->bpp;
+    tig_video_show_fps = (init_info->flags & TIG_INITIALIZE_FPS) != 0;
+    tig_video_can_use_video_memory = (init_info->flags & TIG_INITIALIZE_VIDEO_MEMORY) != 0;
+    tig_video_bpp = init_info->bpp;
     tig_video_main_surface_locked = false;
 
-    ShowCursor((ctx->flags & TIG_CONTEXT_0x0020) != 0 ? TRUE : FALSE);
+    ShowCursor((init_info->flags & TIG_INITIALIZE_WINDOWED) != 0 ? TRUE : FALSE);
 
     tig_video_screenshot_key = -1;
     dword_6103A4 = 0;
@@ -875,7 +875,7 @@ int tig_video_buffer_create(TigVideoBufferCreateInfo* vb_create_info, TigVideoBu
 
     caps = DDSCAPS_OFFSCREENPLAIN;
 
-    if (dword_610318) {
+    if (tig_video_can_use_video_memory) {
         if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY) != 0) {
             caps |= DDSCAPS_VIDEOMEMORY | DDSCAPS_LOCALVIDMEM;
         } else if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY) != 0) {
@@ -1309,7 +1309,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, int a3, i
 }
 
 // 0x524080
-bool tig_video_platform_window_init(TigContext* ctx)
+bool tig_video_platform_window_init(TigInitializeInfo* init_info)
 {
     WNDCLASSA window_class;
     RECT window_rect;
@@ -1320,14 +1320,14 @@ bool tig_video_platform_window_init(TigContext* ctx)
     DWORD style;
     DWORD ex_style;
 
-    tig_video_state.instance = ctx->instance;
+    tig_video_state.instance = init_info->instance;
 
     window_class.style = CS_DBLCLKS;
     window_class.lpfnWndProc = tig_message_wnd_proc;
     window_class.cbClsExtra = 0;
     window_class.cbWndExtra = 0;
-    window_class.hInstance = ctx->instance;
-    window_class.hIcon = LoadIconA(ctx->instance, "TIGIcon");
+    window_class.hInstance = init_info->instance;
+    window_class.hIcon = LoadIconA(init_info->instance, "TIGIcon");
     window_class.hCursor = LoadCursorA(NULL, MAKEINTRESOURCEA(0x7F00));
     window_class.hbrBackground = (HBRUSH)GetStockObject(4);
     window_class.lpszMenuName = NULL;
@@ -1340,26 +1340,26 @@ bool tig_video_platform_window_init(TigContext* ctx)
     screen_width = GetSystemMetrics(SM_CXFULLSCREEN);
     screen_height = GetSystemMetrics(SM_CYFULLSCREEN);
 
-    if ((ctx->flags & TIG_CONTEXT_0x0020) != 0) {
-        if ((ctx->flags & TIG_CONTEXT_0x0100) != 0) {
-            window_rect.left = ctx->x;
-            window_rect.top = ctx->y;
-            window_rect.right = window_rect.left + ctx->width;
-            window_rect.bottom = window_rect.top + ctx->height;
+    if ((init_info->flags & TIG_INITIALIZE_WINDOWED) != 0) {
+        if ((init_info->flags & TIG_INITIALIZE_POSITIONED) != 0) {
+            window_rect.left = init_info->x;
+            window_rect.top = init_info->y;
+            window_rect.right = window_rect.left + init_info->width;
+            window_rect.bottom = window_rect.top + init_info->height;
         } else {
-            window_rect.left = (screen_width - ctx->width) / 2;
-            window_rect.top = (screen_height - ctx->height) / 2;
-            window_rect.right = window_rect.left + ctx->width;
-            window_rect.bottom = window_rect.top + ctx->height;
+            window_rect.left = (screen_width - init_info->width) / 2;
+            window_rect.top = (screen_height - init_info->height) / 2;
+            window_rect.right = window_rect.left + init_info->width;
+            window_rect.bottom = window_rect.top + init_info->height;
         }
 
-        menu = LoadMenuA(ctx->instance, "TIGMenu");
+        menu = LoadMenuA(init_info->instance, "TIGMenu");
         style = WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_GROUP;
         ex_style = 0;
 
-        if ((ctx->flags & TIG_CONTEXT_0x0080) == 0) {
-            LONG offset_x = (window_rect.right - window_rect.left - ctx->width) / 2;
-            LONG offset_y = (window_rect.bottom - window_rect.top - ctx->height) / 2;
+        if ((init_info->flags & TIG_INITIALIZE_0x0080) == 0) {
+            LONG offset_x = (window_rect.right - window_rect.left - init_info->width) / 2;
+            LONG offset_y = (window_rect.bottom - window_rect.top - init_info->height) / 2;
 
             AdjustWindowRectEx(&window_rect,
                 style,
@@ -1386,11 +1386,11 @@ bool tig_video_platform_window_init(TigContext* ctx)
 
     stru_610388.x = 0;
     stru_610388.y = 0;
-    stru_610388.width = ctx->width;
-    stru_610388.height = ctx->height;
+    stru_610388.width = init_info->width;
+    stru_610388.height = init_info->height;
 
-    name = (ctx->flags & TIG_CONTEXT_HAVE_WINDOW_NAME) != 0
-        ? ctx->window_name
+    name = (init_info->flags & TIG_INITIALIZE_SET_WINDOW_NAME) != 0
+        ? init_info->window_name
         : tig_get_executable(true);
 
     tig_video_state.wnd = CreateWindowExA(
@@ -1404,7 +1404,7 @@ bool tig_video_platform_window_init(TigContext* ctx)
         window_rect.bottom - window_rect.top,
         NULL,
         menu,
-        ctx->instance,
+        init_info->instance,
         NULL);
     if (tig_video_state.wnd == NULL) {
         return false;
@@ -1420,7 +1420,7 @@ void tig_video_platform_window_exit()
 }
 
 // 0x524300
-bool tig_video_ddraw_init(TigContext* ctx)
+bool tig_video_ddraw_init(TigInitializeInfo* init_info)
 {
     HRESULT hr = DirectDrawCreateEx(NULL, (LPVOID*)&(tig_video_state.ddraw), &IID_IDirectDraw7, NULL);
     if (FAILED(hr)) {
@@ -1430,7 +1430,7 @@ bool tig_video_ddraw_init(TigContext* ctx)
     DDCAPS ddcaps = { 0 };
     ddcaps.dwSize = sizeof(ddcaps);
 
-    if ((ctx->flags & TIG_CONTEXT_ANY_3D) != 0) {
+    if ((init_info->flags & TIG_INITIALIZE_ANY_3D) != 0) {
         tig_debug_printf("3D: Checking DirectDraw object caps for 3D support...");
 
         IDirectDraw7_GetCaps(tig_video_state.ddraw, &ddcaps, NULL);
@@ -1438,18 +1438,18 @@ bool tig_video_ddraw_init(TigContext* ctx)
         if (ddcaps.dwCaps != 0) {
             tig_debug_printf("supported.\n");
         } else {
-            ctx->flags &= ~TIG_CONTEXT_3D_HARDWARE;
+            init_info->flags &= ~TIG_INITIALIZE_3D_HARDWARE_DEVICE;
             tig_debug_printf("unsupported.\n");
         }
     }
 
-    if ((ctx->flags & TIG_CONTEXT_0x0020) != 0) {
-        if (!tig_video_ddraw_init_windowed(ctx)) {
+    if ((init_info->flags & TIG_INITIALIZE_WINDOWED) != 0) {
+        if (!tig_video_ddraw_init_windowed(init_info)) {
             IDirectDraw7_Release(tig_video_state.ddraw);
             return false;
         }
     } else {
-        if (!tig_video_ddraw_init_fullscreen(ctx)) {
+        if (!tig_video_ddraw_init_fullscreen(init_info)) {
             IDirectDraw7_Release(tig_video_state.ddraw);
             return false;
         }
@@ -1460,14 +1460,14 @@ bool tig_video_ddraw_init(TigContext* ctx)
         return false;
     }
 
-    if ((ctx->flags & TIG_CONTEXT_ANY_3D) != 0) {
-        if (!tig_video_d3d_init(ctx)) {
+    if ((init_info->flags & TIG_INITIALIZE_ANY_3D) != 0) {
+        if (!tig_video_d3d_init(init_info)) {
             tig_debug_printf("Error initializing Direct3D.  3D support disabled.\n");
-            ctx->flags &= ~TIG_CONTEXT_ANY_3D;
+            init_info->flags &= ~TIG_INITIALIZE_ANY_3D;
         }
     }
 
-    if (ctx->bpp == 8) {
+    if (init_info->bpp == 8) {
         if (!tig_video_ddraw_palette_create(tig_video_state.ddraw)) {
             IDirectDraw7_Release(tig_video_state.ddraw);
             return false;
@@ -1484,7 +1484,7 @@ bool tig_video_ddraw_init(TigContext* ctx)
 }
 
 // 0x524480
-bool tig_video_ddraw_init_windowed(TigContext* ctx)
+bool tig_video_ddraw_init_windowed(TigInitializeInfo* init_info)
 {
     HRESULT hr;
 
@@ -1510,20 +1510,20 @@ bool tig_video_ddraw_init_windowed(TigContext* ctx)
             MB_ICONHAND);
     }
 
-    ctx->bpp = ddsd.ddpfPixelFormat.dwRGBBitCount;
+    init_info->bpp = ddsd.ddpfPixelFormat.dwRGBBitCount;
 
     unsigned int caps = DDSCAPS_PRIMARYSURFACE;
-    if ((ctx->flags & TIG_CONTEXT_ANY_3D) != 0) {
+    if ((init_info->flags & TIG_INITIALIZE_ANY_3D) != 0) {
         caps |= DDSCAPS_3DDEVICE;
     }
 
-    if (!tig_video_surface_create(tig_video_state.ddraw, ctx->width, ctx->height, caps, &(tig_video_state.primary_surface))) {
+    if (!tig_video_surface_create(tig_video_state.ddraw, init_info->width, init_info->height, caps, &(tig_video_state.primary_surface))) {
         return false;
     }
 
-    tig_video_double_buffered = (ctx->flags & TIG_CONTEXT_DOUBLE_BUFFER) != 0;
+    tig_video_double_buffered = (init_info->flags & TIG_INITIALIZE_DOUBLE_BUFFER) != 0;
     if (tig_video_double_buffered) {
-        if (!tig_video_surface_create(tig_video_state.ddraw, ctx->width, ctx->height, DDSCAPS_OFFSCREENPLAIN, &(tig_video_state.offscreen_surface))) {
+        if (!tig_video_surface_create(tig_video_state.ddraw, init_info->width, init_info->height, DDSCAPS_OFFSCREENPLAIN, &(tig_video_state.offscreen_surface))) {
             IDirectDrawSurface7_Release(tig_video_state.primary_surface);
             return false;
         }
@@ -1565,7 +1565,7 @@ bool tig_video_ddraw_init_windowed(TigContext* ctx)
 }
 
 // 0x524640
-bool tig_video_ddraw_init_fullscreen(TigContext* ctx)
+bool tig_video_ddraw_init_fullscreen(TigInitializeInfo* init_info)
 {
     HRESULT hr;
 
@@ -1574,22 +1574,22 @@ bool tig_video_ddraw_init_fullscreen(TigContext* ctx)
         return false;
     }
 
-    hr = IDirectDraw7_SetDisplayMode(tig_video_state.ddraw, ctx->width, ctx->height, ctx->bpp, 0, 0);
+    hr = IDirectDraw7_SetDisplayMode(tig_video_state.ddraw, init_info->width, init_info->height, init_info->bpp, 0, 0);
     if (FAILED(hr)) {
         return false;
     }
 
-    tig_video_double_buffered = (ctx->flags & TIG_CONTEXT_DOUBLE_BUFFER) != 0;
+    tig_video_double_buffered = (init_info->flags & TIG_INITIALIZE_DOUBLE_BUFFER) != 0;
 
     unsigned int caps = DDSCAPS_PRIMARYSURFACE;
     if (tig_video_double_buffered) {
         caps |= DDSCAPS_FLIP | DDSCAPS_COMPLEX;
     }
-    if ((ctx->flags & TIG_CONTEXT_ANY_3D) != 0) {
+    if ((init_info->flags & TIG_INITIALIZE_ANY_3D) != 0) {
         caps |= DDSCAPS_3DDEVICE;
     }
 
-    if (!tig_video_surface_create(tig_video_state.ddraw, ctx->width, ctx->height, caps, &(tig_video_state.primary_surface))) {
+    if (!tig_video_surface_create(tig_video_state.ddraw, init_info->width, init_info->height, caps, &(tig_video_state.primary_surface))) {
         return false;
     }
 
@@ -1700,7 +1700,7 @@ int tig_video_ddraw_exit()
 }
 
 // 0x524930
-bool tig_video_d3d_init(TigContext* ctx)
+bool tig_video_d3d_init(TigInitializeInfo* init_info)
 {
     tig_video_3d_initialized = false;
     tig_video_3d_is_hardware = false;
@@ -1719,7 +1719,7 @@ bool tig_video_d3d_init(TigContext* ctx)
 
     tig_debug_printf("succeeded.\n");
 
-    if ((ctx->flags & TIG_CONTEXT_3D_REF_DEVICE) != 0) {
+    if ((init_info->flags & TIG_INITIALIZE_3D_REF_DEVICE) != 0) {
         tig_debug_printf("3D: Checking for reference device...");
 
         if (FAILED(IDirect3D7_CreateDevice(tig_video_state.d3d, &IID_IDirect3DRefDevice, tig_video_state.main_surface, &(tig_video_state.d3d_device)))) {
@@ -1729,7 +1729,7 @@ bool tig_video_d3d_init(TigContext* ctx)
 
         tig_debug_printf("found IID_IDirect3DRefDevice\n");
     } else {
-        if ((ctx->flags & TIG_CONTEXT_3D_HARDWARE) != 0) {
+        if ((init_info->flags & TIG_INITIALIZE_3D_HARDWARE_DEVICE) != 0) {
             tig_debug_printf("3D: Checking for hardware devices...");
 
             if (SUCCEEDED(IDirect3D7_CreateDevice(tig_video_state.d3d, &IID_IDirect3DTnLHalDevice, tig_video_state.main_surface, &(tig_video_state.d3d_device)))) {
@@ -1739,13 +1739,13 @@ bool tig_video_d3d_init(TigContext* ctx)
                 tig_video_3d_is_hardware = true;
                 tig_debug_printf("found IID_IDirect3DHALDevice\n");
             } else {
-                ctx->flags &= ~TIG_CONTEXT_3D_HARDWARE;
+                init_info->flags &= ~TIG_INITIALIZE_3D_HARDWARE_DEVICE;
                 tig_debug_printf("none found.\n");
             }
         }
 
         if (!tig_video_3d_is_hardware) {
-            if ((ctx->flags & TIG_CONTEXT_3D_SOFTWARE) == 0) {
+            if ((init_info->flags & TIG_INITIALIZE_3D_SOFTWARE_DEVICE) == 0) {
                 return false;
             }
 
@@ -1756,7 +1756,7 @@ bool tig_video_d3d_init(TigContext* ctx)
             } else if (SUCCEEDED(IDirect3D7_CreateDevice(tig_video_state.d3d, &IID_IDirect3DRGBDevice, tig_video_state.main_surface, &(tig_video_state.d3d_device)))) {
                 tig_debug_printf("found IID_IDirect3DRGBDevice.\n");
             } else {
-                ctx->flags &= ~TIG_CONTEXT_3D_SOFTWARE;
+                init_info->flags &= ~TIG_INITIALIZE_3D_SOFTWARE_DEVICE;
                 tig_debug_printf("none found.\n");
 
                 return false;
@@ -1780,11 +1780,11 @@ bool tig_video_d3d_init(TigContext* ctx)
         tig_video_3d_extra_surface_caps2 = 0;
     }
 
-    if (ctx->texture_width > device_desc.dwMaxTextureWidth || ctx->texture_height > device_desc.dwMaxTextureHeight) {
+    if (init_info->texture_width > device_desc.dwMaxTextureWidth || init_info->texture_height > device_desc.dwMaxTextureHeight) {
         tig_debug_printf(
             "3D: Card cannot support %dx%d sized textures - max is %dx%d\n",
-            ctx->texture_width,
-            ctx->texture_height,
+            init_info->texture_width,
+            init_info->texture_height,
             device_desc.dwMaxTextureWidth,
             device_desc.dwMaxTextureHeight);
         return false;
@@ -1842,7 +1842,7 @@ bool tig_video_d3d_init(TigContext* ctx)
 
     memset(&tig_video_3d_pixel_format, 0, sizeof(tig_video_3d_pixel_format));
 
-    if (FAILED(IDirect3DDevice7_EnumTextureFormats(tig_video_state.d3d_device, tig_video_3d_check_pixel_format, (LPVOID)ctx->bpp))) {
+    if (FAILED(IDirect3DDevice7_EnumTextureFormats(tig_video_state.d3d_device, tig_video_3d_check_pixel_format, (LPVOID)init_info->bpp))) {
         tig_debug_printf("3D: Error enumerating texture formats.\n");
         return false;
     }
