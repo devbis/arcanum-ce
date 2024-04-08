@@ -384,15 +384,14 @@ int sub_5006E0(tig_art_id_t art_id, TigPalette palette)
 }
 
 // 0x501DD0
-int tig_art_misc_id_create(unsigned int a1, unsigned int palette, unsigned int* art_id)
+int tig_art_misc_id_create(unsigned int a1, unsigned int palette, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 512
         || palette >= MAX_PALETTES) {
         return TIG_ERR_12;
     }
 
-    // TODO: Check.
-    *art_id = (TIG_ART_TYPE_MISC << ART_ID_TYPE_SHIFT)
+    *art_id_ptr = (TIG_ART_TYPE_MISC << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT);
 
@@ -787,13 +786,13 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
 }
 
 // 0x502700
-int tig_art_type(unsigned int art_id)
+int tig_art_type(tig_art_id_t art_id)
 {
     return art_id >> ART_ID_TYPE_SHIFT;
 }
 
 // 0x502710
-int tig_art_num(unsigned int art_id)
+int tig_art_num(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
@@ -813,7 +812,7 @@ int tig_art_num(unsigned int art_id)
 }
 
 // 0x502780
-unsigned int sub_502780(unsigned int art_id, unsigned int value)
+tig_art_id_t sub_502780(tig_art_id_t art_id, unsigned int value)
 {
     unsigned int max;
     unsigned int mask;
@@ -857,7 +856,7 @@ unsigned int sub_502780(unsigned int art_id, unsigned int value)
 }
 
 // 0x502830
-unsigned int sub_502830(unsigned int art_id)
+unsigned int sub_502830(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) != TIG_ART_TYPE_ITEM) {
         return 0;
@@ -1023,7 +1022,7 @@ tig_art_id_t tig_art_id_rotation_set(tig_art_id_t art_id, int rotation)
 }
 
 // 0x502B50
-int tig_art_id_frame_get(unsigned int art_id)
+int tig_art_id_frame_get(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
@@ -1045,7 +1044,7 @@ int tig_art_id_frame_get(unsigned int art_id)
 }
 
 // 0x502BC0
-unsigned int tig_art_id_frame_inc(unsigned int art_id)
+tig_art_id_t tig_art_id_frame_inc(tig_art_id_t art_id)
 {
     int frame;
 
@@ -1061,7 +1060,7 @@ unsigned int tig_art_id_frame_inc(unsigned int art_id)
 }
 
 // 0x502C00
-unsigned int tig_art_id_frame_dec(unsigned int art_id)
+tig_art_id_t tig_art_id_frame_dec(tig_art_id_t art_id)
 {
     int frame;
 
@@ -1125,7 +1124,7 @@ tig_art_id_t tig_art_id_frame_set(tig_art_id_t art_id, int value)
 }
 
 // 0x502D30
-unsigned int sub_502D30(unsigned int art_id, int value)
+tig_art_id_t sub_502D30(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
@@ -1143,7 +1142,7 @@ unsigned int sub_502D30(unsigned int art_id, int value)
 }
 
 // 0x502D80
-int tig_art_palette(unsigned int art_id)
+int tig_art_palette(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_LIGHT:
@@ -1155,7 +1154,7 @@ int tig_art_palette(unsigned int art_id)
 }
 
 // 0x502DB0
-unsigned int tig_art_set_palette(unsigned int art_id, int value)
+tig_art_id_t tig_art_set_palette(tig_art_id_t art_id, int value)
 {
     if (value >= MAX_PALETTES) {
         tig_debug_println("Range exceeded in art set.");
@@ -1285,7 +1284,7 @@ int sub_502FD0(tig_art_id_t art_id, int x, int y)
 }
 
 // 0x5030B0
-int tig_art_data(unsigned int art_id, TigArtData* data)
+int tig_art_data(tig_art_id_t art_id, TigArtData* data)
 {
     unsigned int cache_index;
     TigArtCacheEntry* cache_entry;
@@ -1335,7 +1334,7 @@ int tig_art_data(unsigned int art_id, TigArtData* data)
 }
 
 // 0x5031C0
-int tig_art_frame_data(unsigned int art_id, TigArtFrameData* data)
+int tig_art_frame_data(tig_art_id_t art_id, TigArtFrameData* data)
 {
     unsigned int cache_index;
     TigArtCacheEntry* cache_entry;
@@ -1593,7 +1592,7 @@ int tig_art_tile_id_create(unsigned int a1, unsigned int a2, unsigned int a3, un
 }
 
 // 0x5036B0
-int sub_5036B0(unsigned int art_id)
+int sub_5036B0(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
@@ -1606,7 +1605,7 @@ int sub_5036B0(unsigned int art_id)
 }
 
 // 0x5036E0
-int sub_5036E0(unsigned int art_id)
+int sub_5036E0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_TILE) {
         return (art_id >> 16) & 0x3F;
@@ -1616,7 +1615,7 @@ int sub_5036E0(unsigned int art_id)
 }
 
 // 0x503700
-int sub_503700(unsigned int art_id)
+int sub_503700(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) != TIG_ART_TYPE_TILE) {
         return 0;
@@ -1654,7 +1653,7 @@ tig_art_id_t sub_503740(tig_art_id_t art_id, int value)
 }
 
 // 0x5037B0
-int sub_5037B0(unsigned int art_id)
+int sub_5037B0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) != TIG_ART_TYPE_TILE) {
         return 0;
@@ -1703,7 +1702,7 @@ tig_art_id_t sub_503800(tig_art_id_t art_id, int value)
 }
 
 // 0x5038C0
-int sub_5038C0(unsigned int art_id)
+int sub_5038C0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_TILE) {
         return (art_id >> 8) & 1;
@@ -1717,7 +1716,7 @@ int sub_5038C0(unsigned int art_id)
 }
 
 // 0x503900
-int sub_503900(unsigned int art_id)
+int sub_503900(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_FACADE) {
         return (art_id >> 26) & 1;
@@ -1733,7 +1732,7 @@ int sub_503900(unsigned int art_id)
 }
 
 // 0x503950
-int sub_503950(unsigned int art_id)
+int sub_503950(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_TILE) {
         return (art_id >> 7) & 1;
@@ -1747,7 +1746,7 @@ int sub_503950(unsigned int art_id)
 }
 
 // 0x503990
-int sub_503990(unsigned int art_id)
+int sub_503990(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_TILE) {
         return (art_id >> 6) & 1;
@@ -1784,7 +1783,7 @@ int tig_art_wall_id_create(unsigned int a1, int a2, int a3, int rotation, unsign
 }
 
 // 0x503A60
-int sub_503A60(unsigned int art_id)
+int sub_503A60(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_WALL) {
         return (art_id >> 14) & 0x3F;
@@ -1794,7 +1793,7 @@ int sub_503A60(unsigned int art_id)
 }
 
 // 0x503A90
-unsigned int sub_503A90(unsigned int art_id, int value)
+tig_art_id_t sub_503A90(tig_art_id_t art_id, int value)
 {
     if (tig_art_type(art_id) != TIG_ART_TYPE_WALL) {
         return art_id;
@@ -1809,7 +1808,7 @@ unsigned int sub_503A90(unsigned int art_id, int value)
 }
 
 // 0x503AD0
-int sub_503AD0(unsigned int art_id)
+int sub_503AD0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_WALL) {
         return (art_id >> 20) & 0xFF;
@@ -1819,7 +1818,7 @@ int sub_503AD0(unsigned int art_id)
 }
 
 // 0x503B00
-int sub_503B00(unsigned int art_id)
+int sub_503B00(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_WALL) {
         return (art_id >> 8) & 3;
@@ -1829,7 +1828,7 @@ int sub_503B00(unsigned int art_id)
 }
 
 // 0x503B30
-unsigned int sub_503B30(unsigned int art_id, int value)
+tig_art_id_t sub_503B30(tig_art_id_t art_id, int value)
 {
     if (tig_art_type(art_id) != TIG_ART_TYPE_WALL) {
         return art_id;
@@ -1844,7 +1843,7 @@ unsigned int sub_503B30(unsigned int art_id, int value)
 }
 
 // 0x503B70
-int sub_503B70(unsigned int art_id)
+int sub_503B70(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_WALL:
@@ -1859,7 +1858,7 @@ int sub_503B70(unsigned int art_id)
 }
 
 // 0x503BB0
-unsigned int sub_503BB0(unsigned int art_id, int value)
+tig_art_id_t sub_503BB0(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_WALL:
@@ -1954,7 +1953,7 @@ int tig_art_unique_npc_id_create(int a1, unsigned int a2, unsigned int a3, int r
 }
 
 // 0x503E20
-int sub_503E20(unsigned int art_id)
+int sub_503E20(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -1967,7 +1966,7 @@ int sub_503E20(unsigned int art_id)
 }
 
 // 0x503E50
-unsigned int sub_503E50(unsigned int art_id, int value)
+tig_art_id_t sub_503E50(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -1984,7 +1983,7 @@ unsigned int sub_503E50(unsigned int art_id, int value)
 }
 
 // 0x503EA0
-int sub_503EA0(unsigned int art_id)
+int sub_503EA0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_CRITTER) {
         return (art_id >> 24) & 7;
@@ -1994,7 +1993,7 @@ int sub_503EA0(unsigned int art_id)
 }
 
 // 0x503ED0
-unsigned int sub_503ED0(unsigned int art_id, int value)
+tig_art_id_t sub_503ED0(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2011,7 +2010,7 @@ unsigned int sub_503ED0(unsigned int art_id, int value)
 }
 
 // 0x503F20
-int sub_503F20(unsigned int art_id)
+int sub_503F20(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_MONSTER) {
         return (art_id >> 23) & 0x1F;
@@ -2027,7 +2026,7 @@ int sub_503F50(int a1)
 }
 
 // 0x503F60
-int sub_503F60(unsigned int art_id)
+int sub_503F60(tig_art_id_t art_id)
 {
     int v1;
     switch (tig_art_type(art_id)) {
@@ -2043,7 +2042,7 @@ int sub_503F60(unsigned int art_id)
 }
 
 // 0x503FB0
-int sub_503FB0(unsigned int art_id)
+int sub_503FB0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_CRITTER) {
         return (art_id >> 27) & 1;
@@ -2053,7 +2052,7 @@ int sub_503FB0(unsigned int art_id)
 }
 
 // 0x503FE0
-unsigned int sub_503FE0(unsigned int art_id, int value)
+tig_art_id_t sub_503FE0(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2070,7 +2069,7 @@ unsigned int sub_503FE0(unsigned int art_id, int value)
 }
 
 // 0x504030
-int sub_504030(unsigned int art_id)
+int sub_504030(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2083,7 +2082,7 @@ int sub_504030(unsigned int art_id)
 }
 
 // 0x504060
-unsigned int sub_504060(unsigned int art_id, int value)
+tig_art_id_t sub_504060(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2104,7 +2103,7 @@ unsigned int sub_504060(unsigned int art_id, int value)
 }
 
 // 0x5040D0
-int sub_5040D0(unsigned int art_id)
+int sub_5040D0(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2117,7 +2116,7 @@ int sub_5040D0(unsigned int art_id)
 }
 
 // 0x504100
-unsigned int sub_504100(unsigned int art_id, int value)
+tig_art_id_t sub_504100(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2134,7 +2133,7 @@ unsigned int sub_504100(unsigned int art_id, int value)
 }
 
 // 0x504150
-int sub_504150(unsigned int art_id)
+int sub_504150(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2147,7 +2146,7 @@ int sub_504150(unsigned int art_id)
 }
 
 // 0x504180
-unsigned int sub_504180(unsigned int art_id, int value)
+tig_art_id_t sub_504180(tig_art_id_t art_id, int value)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_CRITTER:
@@ -2187,7 +2186,7 @@ int tig_art_portal_id_create(unsigned int a1, int a2, int a3, unsigned int a4, i
 }
 
 // 0x504260
-int sub_504260(unsigned int art_id)
+int sub_504260(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_PORTAL) {
         return (art_id >> 10) & 1;
@@ -2218,7 +2217,7 @@ int tig_art_scenery_id_create(unsigned int a1, int a2, unsigned int a3, int rota
 }
 
 // 0x504300
-int sub_504300(unsigned int art_id)
+int sub_504300(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_SCENERY) {
         return (art_id >> 6) & 0x1F;
@@ -2228,7 +2227,7 @@ int sub_504300(unsigned int art_id)
 }
 
 // 0x504330
-int tig_art_interface_id_create(unsigned int num, unsigned int a2, unsigned char a3, unsigned int palette, unsigned int* art_id)
+int tig_art_interface_id_create(unsigned int num, unsigned int a2, unsigned char a3, unsigned int palette, tig_art_id_t* art_id_ptr)
 {
     if (num >= 0x1000
         || a2 >= 0x100
@@ -2236,7 +2235,7 @@ int tig_art_interface_id_create(unsigned int num, unsigned int a2, unsigned char
         return TIG_ERR_12;
     }
 
-    *art_id = (TIG_ART_TYPE_INTERFACE << ART_ID_TYPE_SHIFT)
+    *art_id_ptr = (TIG_ART_TYPE_INTERFACE << ART_ID_TYPE_SHIFT)
         | ((num & 0xFFF) << 16)
         | ((a2 & 0xFF) << 8)
         | ((a3 & 1) << 7)
@@ -2246,7 +2245,7 @@ int tig_art_interface_id_create(unsigned int num, unsigned int a2, unsigned char
 }
 
 // 0x504390
-int sub_504390(unsigned int art_id)
+int sub_504390(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_INTERFACE) {
         return (art_id >> 7) & 1;
@@ -2289,7 +2288,7 @@ int tig_art_item_id_create(int a1, int a2, int a3, int a4, int a5, int a6, int a
 }
 
 // 0x504490
-int sub_504490(unsigned int art_id)
+int sub_504490(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ITEM) {
         return (art_id >> 12) & 3;
@@ -2299,7 +2298,7 @@ int sub_504490(unsigned int art_id)
 }
 
 // 0x5044C0
-unsigned int sub_5044C0(unsigned int art_id, int value)
+tig_art_id_t sub_5044C0(tig_art_id_t art_id, int value)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ITEM) {
         if (value >= 4) {
@@ -2312,7 +2311,7 @@ unsigned int sub_5044C0(unsigned int art_id, int value)
 }
 
 // 0x5044F0
-int sub_5044F0(unsigned int art_id)
+int sub_5044F0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ITEM) {
         return (art_id >> 6) & 0x1F;
@@ -2336,7 +2335,7 @@ tig_art_id_t sub_504520(tig_art_id_t art_id, int value)
 }
 
 // 0x504550
-int sub_504550(unsigned int art_id)
+int sub_504550(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ITEM) {
         return art_id & 0xF;
@@ -2346,7 +2345,7 @@ int sub_504550(unsigned int art_id)
 }
 
 // 0x504570
-int sub_504570(unsigned int art_id)
+int sub_504570(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ITEM) {
         return (art_id >> 14) & 7;
@@ -2356,7 +2355,7 @@ int sub_504570(unsigned int art_id)
 }
 
 // 0x5045A0
-int sub_5045A0(unsigned int art_id)
+int sub_5045A0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ITEM) {
         return art_id & 0x400;
@@ -2366,7 +2365,7 @@ int sub_5045A0(unsigned int art_id)
 }
 
 // 0x5045C0
-unsigned int sub_5045C0(unsigned int art_id, int value)
+tig_art_id_t sub_5045C0(tig_art_id_t art_id, int value)
 {
     if (tig_art_type(art_id) != TIG_ART_TYPE_ITEM) {
         return art_id;
@@ -2403,7 +2402,7 @@ int tig_art_container_id_create(unsigned int a1, int a2, unsigned int a3, int ro
 }
 
 // 0x504660
-int sub_504660(unsigned int art_id)
+int sub_504660(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_CONTAINER) {
         return (art_id >> 6) & 0x1F;
@@ -2413,7 +2412,7 @@ int sub_504660(unsigned int art_id)
 }
 
 // 0x504690
-int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int rotation, int a4, tig_art_id_t* art_id)
+int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int rotation, int a4, tig_art_id_t* art_id_ptr)
 {
     if (a1 >= 512
         || a2 >= 128
@@ -2421,8 +2420,7 @@ int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int rotat
         return TIG_ERR_12;
     }
 
-    // TODO: Check.
-    *art_id = (TIG_ART_TYPE_LIGHT << ART_ID_TYPE_SHIFT)
+    *art_id_ptr = (TIG_ART_TYPE_LIGHT << ART_ID_TYPE_SHIFT)
         | ((a1 & 0x1FF) << 19)
         | ((a2 & 0x7F) << 12)
         | ((rotation & (MAX_ROTATIONS - 1)) << LIGHT_ID_ROTATION_SHIFT)
@@ -2433,7 +2431,7 @@ int tig_art_light_id_create(unsigned int a1, unsigned int a2, unsigned int rotat
 }
 
 // 0x504700
-int sub_504700(unsigned int art_id)
+int sub_504700(tig_art_id_t art_id)
 {
     if (sub_504790(art_id) != 0) {
         return (art_id >> 4) & 0x1F;
@@ -2462,7 +2460,7 @@ tig_art_id_t sub_504730(tig_art_id_t art_id, int rotation)
 }
 
 // 0x504790
-int sub_504790(unsigned int art_id)
+int sub_504790(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_LIGHT) {
         return art_id & 1;
@@ -2505,7 +2503,7 @@ int tig_art_roof_id_create(unsigned int a1, int a2, unsigned int a3, unsigned in
 }
 
 // 0x504840
-int sub_504840(unsigned int art_id)
+int sub_504840(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ROOF) {
         int v1 = tig_art_id_frame_get(art_id);
@@ -2542,7 +2540,7 @@ tig_art_id_t sub_504880(tig_art_id_t art_id, int frame)
 }
 
 // 0x5048D0
-int sub_5048D0(unsigned int art_id)
+int sub_5048D0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ROOF) {
         return (art_id >> 13) & 1;
@@ -2552,7 +2550,7 @@ int sub_5048D0(unsigned int art_id)
 }
 
 // 0x504900
-unsigned int sub_504900(unsigned int art_id, unsigned int value)
+tig_art_id_t sub_504900(tig_art_id_t art_id, unsigned int value)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ROOF) {
         if (value > 1) {
@@ -2566,7 +2564,7 @@ unsigned int sub_504900(unsigned int art_id, unsigned int value)
 }
 
 // 0x504940
-int sub_504940(unsigned int art_id)
+int sub_504940(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ROOF) {
         return (art_id >> 12) & 1;
@@ -2576,7 +2574,7 @@ int sub_504940(unsigned int art_id)
 }
 
 // 0x504970
-unsigned int sub_504970(unsigned int art_id, unsigned int value)
+tig_art_id_t sub_504970(tig_art_id_t art_id, unsigned int value)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_ROOF) {
         if (value > 1) {
@@ -2614,7 +2612,7 @@ int tig_art_facade_id_create(unsigned int a1, unsigned int a2, unsigned int a3, 
 }
 
 // 0x504A60
-int sub_504A60(unsigned int art_id)
+int sub_504A60(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_FACADE) {
         int v1 = (art_id >> 17) & 0xFF;
@@ -2638,7 +2636,7 @@ int sub_504A90(tig_art_id_t art_id)
 }
 
 // 0x504AC0
-int sub_504AC0(unsigned int art_id)
+int sub_504AC0(tig_art_id_t art_id)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_FACADE) {
         return art_id & 1;
@@ -2758,7 +2756,7 @@ tig_art_id_t tig_art_eye_candy_id_scale_set(tig_art_id_t art_id, int value)
 }
 
 // 0x504FD0
-int sub_504FD0(unsigned int art_id)
+int sub_504FD0(tig_art_id_t art_id)
 {
     switch (tig_art_type(art_id)) {
     case TIG_ART_TYPE_TILE:
