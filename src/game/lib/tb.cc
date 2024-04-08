@@ -94,17 +94,17 @@ bool tb_init(GameContext* ctx)
     dword_602AB4 = 1;
     dword_602AC4 = tig_color_rgb_make(0, 0, 255);
 
-    TigVideoBufferSpec video_buffer_spec;
-    video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED;
-    video_buffer_spec.width = 200;
-    video_buffer_spec.height = 200;
-    video_buffer_spec.background_color = dword_602AC4;
-    video_buffer_spec.color_key = dword_602AC4;
+    TigVideoBufferCreateInfo vb_create_info;
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
+    vb_create_info.width = 200;
+    vb_create_info.height = 200;
+    vb_create_info.background_color = dword_602AC4;
+    vb_create_info.color_key = dword_602AC4;
 
     dword_602AC0 = tig_color_rgb_make(0, 0, 0);
 
     for (int index = 0; index < EIGHT; index++) {
-        if (tig_video_buffer_create(&video_buffer_spec, &(stru_602930[index].video_buffer)) != TIG_OK) {
+        if (tig_video_buffer_create(&vb_create_info, &(stru_602930[index].video_buffer)) != TIG_OK) {
             while (--index >= 0) {
                 tig_video_buffer_destroy(stru_602930[index].video_buffer);
             }

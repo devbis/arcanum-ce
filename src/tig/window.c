@@ -147,7 +147,7 @@ int tig_window_create(TigWindowData* window_data, tig_window_handle_t* window_ha
 {
     int window_index;
     TigWindow* win;
-    TigVideoBufferSpec video_buffer_spec;
+    TigVideoBufferCreateInfo vb_create_info;
     int rc;
 
     if (!tig_window_initialized) {
@@ -177,37 +177,37 @@ int tig_window_create(TigWindowData* window_data, tig_window_handle_t* window_ha
     win->color_key = window_data->color_key;
     win->num_buttons = 0;
 
-    video_buffer_spec.flags = 0;
+    vb_create_info.flags = 0;
 
     if ((window_data->flags & TIG_WINDOW_HAVE_TRANSPARENCY) != 0) {
-        video_buffer_spec.flags |= TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED;
+        vb_create_info.flags |= TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
     }
 
     if ((window_data->flags & TIG_WINDOW_VIDEO_MEMORY) != 0) {
-        video_buffer_spec.flags |= TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY;
+        vb_create_info.flags |= TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
     } else {
-        video_buffer_spec.flags |= TIG_VIDEO_BUFFER_SPEC_SYSTEM_MEMORY;
+        vb_create_info.flags |= TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     }
 
     if ((window_data->flags & TIG_WINDOW_HAVE_FLUSH) != 0) {
-        video_buffer_spec.flags |= TIG_VIDEO_BUFFER_SPEC_FLUSH_ENABLED;
+        vb_create_info.flags |= TIG_VIDEO_BUFFER_CREATE_3D;
     }
 
-    video_buffer_spec.width = window_data->rect.width;
-    video_buffer_spec.height = window_data->rect.height;
-    video_buffer_spec.background_color = window_data->background_color;
-    video_buffer_spec.color_key = window_data->color_key;
+    vb_create_info.width = window_data->rect.width;
+    vb_create_info.height = window_data->rect.height;
+    vb_create_info.background_color = window_data->background_color;
+    vb_create_info.color_key = window_data->color_key;
 
-    rc = tig_video_buffer_create(&video_buffer_spec, &(win->video_buffer));
+    rc = tig_video_buffer_create(&vb_create_info, &(win->video_buffer));
     if (rc != TIG_OK) {
         return rc;
     }
 
     if ((tig_window_ctx_flags & TIG_CONTEXT_0x0010) != 0) {
         if ((window_data->flags & TIG_WINDOW_HAVE_TRANSPARENCY) != 0) {
-            video_buffer_spec.flags &= ~TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED;
+            vb_create_info.flags &= ~TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
 
-            rc = tig_video_buffer_create(&video_buffer_spec, &(win->secondary_video_buffer));
+            rc = tig_video_buffer_create(&vb_create_info, &(win->secondary_video_buffer));
             if (rc != TIG_OK) {
                 tig_video_buffer_destroy(win->video_buffer);
                 return rc;

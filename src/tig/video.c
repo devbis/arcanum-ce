@@ -108,7 +108,7 @@ static bool tig_video_fullscreen;
 static bool tig_video_double_buffered;
 
 // 0x610318
-static int dword_610318;
+static bool dword_610318;
 
 // 0x61031C
 static bool tig_video_3d_initialized;
@@ -117,7 +117,7 @@ static bool tig_video_3d_initialized;
 static bool tig_video_3d_is_hardware;
 
 // 0x610324
-static bool tig_video_3d_texture_must_power_of_two;
+static bool tig_video_3d_texture_must_be_power_of_two;
 
 // 0x610328
 static bool tig_video_3d_texture_must_be_square;
@@ -335,7 +335,7 @@ int tig_video_blit(TigVideoBuffer* src_video_buffer, TigRect* src_rect, TigRect*
 
     if (tig_video_fullscreen) {
         flags = DDBLTFAST_WAIT;
-        if ((src_video_buffer->flags & TIG_VIDEO_BUFFER_HAVE_TRANSPARENCY) != 0) {
+        if ((src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) != 0) {
             flags |= DDBLTFAST_SRCCOLORKEY;
         }
 
@@ -361,7 +361,7 @@ int tig_video_blit(TigVideoBuffer* src_video_buffer, TigRect* src_rect, TigRect*
         native_dst_rect.bottom = native_dst_rect.top + clamped_dst_rect.height;
 
         flags = DDBLT_WAIT;
-        if ((src_video_buffer->flags & TIG_VIDEO_BUFFER_HAVE_TRANSPARENCY) != 0) {
+        if ((src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) != 0) {
             flags |= DDBLT_KEYSRC;
         }
 
@@ -862,7 +862,7 @@ int tig_video_set_gamma(float gamma)
 }
 
 // 0x5200F0
-int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffer** video_buffer_ptr)
+int tig_video_buffer_create(TigVideoBufferCreateInfo* vb_create_info, TigVideoBuffer** video_buffer_ptr)
 {
     TigVideoBuffer* video_buffer;
     DWORD caps;
@@ -876,9 +876,9 @@ int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffe
     caps = DDSCAPS_OFFSCREENPLAIN;
 
     if (dword_610318) {
-        if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY) != 0) {
+        if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY) != 0) {
             caps |= DDSCAPS_VIDEOMEMORY | DDSCAPS_LOCALVIDMEM;
-        } else if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_SYSTEM_MEMORY) != 0) {
+        } else if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY) != 0) {
             caps |= DDSCAPS_SYSTEMMEMORY;
         }
     } else {
@@ -886,28 +886,28 @@ int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffe
     }
 
     if (tig_video_3d_initialized) {
-        if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_FLUSH_ENABLED) != 0) {
+        if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_3D) != 0) {
             caps |= DDSCAPS_3DDEVICE;
         }
 
-        if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED) != 0) {
+        if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_TEXTURE) != 0) {
             caps &= ~DDSCAPS_OFFSCREENPLAIN;
             caps |= DDSCAPS_TEXTURE;
         }
     }
 
-    texture_width = video_buffer_spec->width;
-    texture_height = video_buffer_spec->height;
+    texture_width = vb_create_info->width;
+    texture_height = vb_create_info->height;
 
     if ((caps & DDSCAPS_TEXTURE) != 0) {
-        if (tig_video_3d_texture_must_power_of_two) {
+        if (tig_video_3d_texture_must_be_power_of_two) {
             texture_width = 1;
-            while (texture_width < video_buffer_spec->width) {
+            while (texture_width < vb_create_info->width) {
                 texture_width *= 2;
             }
 
             texture_height = 1;
-            while (texture_height < video_buffer_spec->height) {
+            while (texture_height < vb_create_info->height) {
                 texture_height *= 2;
             }
         }
@@ -934,7 +934,7 @@ int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffe
         caps &= ~DDSCAPS_LOCALVIDMEM;
         caps |= DDSCAPS_NONLOCALVIDMEM;
         if (!tig_video_surface_create(tig_video_state.ddraw, texture_width, texture_height, caps, &(video_buffer->surface))) {
-            if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_FLUSH_ENABLED) != 0) {
+            if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_3D) != 0) {
                 tig_debug_printf("tig_video_buffer_create: Error trying to create surface for 3D, flushing...\n");
                 tig_art_flush();
 
@@ -974,32 +974,32 @@ int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffe
     if ((caps & DDSCAPS_VIDEOMEMORY) != 0) {
         video_buffer->flags |= TIG_VIDEO_BUFFER_VIDEO_MEMORY;
     } else if ((caps & (DDSCAPS_TEXTURE | DDSCAPS_3DDEVICE)) == 0) {
-        video_buffer->flags |= TIG_VIDEO_BUFFER_FLAG_0x08;
+        video_buffer->flags |= TIG_VIDEO_BUFFER_SYSTEM_MEMORY;
     }
 
-    if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED) != 0) {
-        video_buffer->flags |= TIG_VIDEO_BUFFER_HAVE_TRANSPARENCY;
-        tig_video_buffer_set_color_key(*video_buffer_ptr, video_buffer_spec->color_key);
+    if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_COLOR_KEY) != 0) {
+        video_buffer->flags |= TIG_VIDEO_BUFFER_COLOR_KEY;
+        tig_video_buffer_set_color_key(*video_buffer_ptr, vb_create_info->color_key);
     }
 
-    if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_FLUSH_ENABLED) != 0) {
-        video_buffer->flags |= TIG_VIDEO_BUFFER_CAN_FLUSH;
+    if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_3D) != 0) {
+        video_buffer->flags |= TIG_VIDEO_BUFFER_3D;
     }
 
-    if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED) != 0) {
-        video_buffer->flags |= TIG_VIDEO_BUFFER_HAVE_BACKGROUND_COLOR;
+    if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_TEXTURE) != 0) {
+        video_buffer->flags |= TIG_VIDEO_BUFFER_TEXTURE;
     }
 
     video_buffer->frame.x = 0;
     video_buffer->frame.y = 0;
-    video_buffer->frame.width = video_buffer_spec->width;
-    video_buffer->frame.height = video_buffer_spec->height;
+    video_buffer->frame.width = vb_create_info->width;
+    video_buffer->frame.height = vb_create_info->height;
     video_buffer->texture_width = texture_width;
     video_buffer->texture_height = texture_height;
-    video_buffer->background_color = video_buffer_spec->background_color;
+    video_buffer->background_color = vb_create_info->background_color;
 
-    if ((video_buffer_spec->flags & TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED) == 0) {
-        tig_video_surface_fill(video_buffer->surface, NULL, video_buffer_spec->background_color);
+    if ((vb_create_info->flags & TIG_VIDEO_BUFFER_CREATE_TEXTURE) == 0) {
+        tig_video_surface_fill(video_buffer->surface, NULL, vb_create_info->background_color);
     }
 
     video_buffer->pitch = 0;
@@ -1059,7 +1059,7 @@ int tig_video_buffer_data(TigVideoBuffer* video_buffer, TigVideoBufferData* vide
 // 0x520450
 int tig_video_buffer_set_color_key(TigVideoBuffer* video_buffer, int color_key)
 {
-    if ((video_buffer->flags & TIG_VIDEO_BUFFER_HAVE_TRANSPARENCY) == 0) {
+    if ((video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) == 0) {
         return TIG_ERR_16;
     }
 
@@ -1192,7 +1192,7 @@ int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags)
         return TIG_ERR_16;
     }
 
-    if ((data.flags & TIG_VIDEO_BUFFER_CAN_FLUSH) == 0) {
+    if ((data.flags & TIG_VIDEO_BUFFER_3D) == 0) {
         return TIG_ERR_16;
     }
 
@@ -1704,7 +1704,7 @@ bool tig_video_d3d_init(TigContext* ctx)
 {
     tig_video_3d_initialized = false;
     tig_video_3d_is_hardware = false;
-    tig_video_3d_texture_must_power_of_two = false;
+    tig_video_3d_texture_must_be_power_of_two = false;
     tig_video_3d_texture_must_be_square = false;
     tig_video_3d_extra_surface_caps = 0;
     tig_video_3d_extra_surface_caps2 = 0;
@@ -1791,7 +1791,7 @@ bool tig_video_d3d_init(TigContext* ctx)
     }
 
     if ((device_desc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_POW2) != 0) {
-        tig_video_3d_texture_must_power_of_two = true;
+        tig_video_3d_texture_must_be_power_of_two = true;
         tig_debug_printf("3D: Textures must be power of 2.\n");
     }
 

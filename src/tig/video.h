@@ -13,22 +13,21 @@
 extern "C" {
 #endif
 
-typedef enum TigVideoBufferSpecFlags {
-    TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED = 0x01,
-    TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY = 0x02,
-    TIG_VIDEO_BUFFER_SPEC_SYSTEM_MEMORY = 0x04,
-    TIG_VIDEO_BUFFER_SPEC_FLUSH_ENABLED = 0x08,
-    TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED = 0x10,
-} TigVideoBufferSpecFlags;
+typedef enum TigVideoBufferCreateFlags {
+    TIG_VIDEO_BUFFER_CREATE_COLOR_KEY = 0x00000001,
+    TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY = 0x00000002,
+    TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY = 0x00000004,
+    TIG_VIDEO_BUFFER_CREATE_3D = 0x00000008,
+    TIG_VIDEO_BUFFER_CREATE_TEXTURE = 0x00000010,
+} TigVideoBufferCreateFlags;
 
 typedef enum TigVideoBufferFlags {
-    // Specifies that the video buffer is currently locked.
-    TIG_VIDEO_BUFFER_LOCKED = 0x01,
-    TIG_VIDEO_BUFFER_HAVE_TRANSPARENCY = 0x02,
-    TIG_VIDEO_BUFFER_VIDEO_MEMORY = 0x04,
-    TIG_VIDEO_BUFFER_FLAG_0x08 = 0x08,
-    TIG_VIDEO_BUFFER_CAN_FLUSH = 0x10,
-    TIG_VIDEO_BUFFER_HAVE_BACKGROUND_COLOR = 0x20,
+    TIG_VIDEO_BUFFER_LOCKED = 0x00000001,
+    TIG_VIDEO_BUFFER_COLOR_KEY = 0x00000002,
+    TIG_VIDEO_BUFFER_VIDEO_MEMORY = 0x00000004,
+    TIG_VIDEO_BUFFER_SYSTEM_MEMORY = 0x00000008,
+    TIG_VIDEO_BUFFER_3D = 0x00000010,
+    TIG_VIDEO_BUFFER_TEXTURE = 0x00000020,
 } TigVideoBufferFlags;
 
 typedef enum TigVideoBufferBlitSpecFlags {
@@ -48,15 +47,15 @@ typedef enum TigVideoBufferBlitSpecFlags {
 // Opaque handle.
 typedef struct TigVideoBuffer TigVideoBuffer;
 
-typedef struct TigVideoBufferSpec {
+typedef struct TigVideoBufferCreateInfo {
     /* 0000 */ unsigned int flags;
     /* 0004 */ int width;
     /* 0008 */ int height;
     /* 000C */ unsigned int background_color;
     /* 0010 */ unsigned int color_key;
-} TigVideoBufferSpec;
+} TigVideoBufferCreateInfo;
 
-static_assert(sizeof(TigVideoBufferSpec) == 0x14, "wrong size");
+static_assert(sizeof(TigVideoBufferCreateInfo) == 0x14, "wrong size");
 
 typedef struct TigVideoBufferData {
     /* 0000 */ unsigned int flags;
@@ -128,7 +127,7 @@ int tig_video_get_video_memory_status(size_t* total, size_t* available);
 int tig_video_check_gamma_control();
 int tig_video_fade(int color, int steps, float duration, unsigned int flags);
 int tig_video_set_gamma(float gamma);
-int tig_video_buffer_create(TigVideoBufferSpec* video_buffer_spec, TigVideoBuffer** video_buffer);
+int tig_video_buffer_create(TigVideoBufferCreateInfo* vb_create_info, TigVideoBuffer** video_buffer);
 int tig_video_buffer_destroy(TigVideoBuffer* video_buffer);
 int tig_video_buffer_data(TigVideoBuffer* video_buffer, TigVideoBufferData* video_buffer_data);
 int tig_video_buffer_set_color_key(TigVideoBuffer* video_buffer, int color_key);

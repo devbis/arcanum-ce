@@ -207,12 +207,12 @@ void sub_4D79C0(ViewOptions* view_options)
 // 0x4D7A00
 void sub_4D7A00()
 {
-    TigVideoBufferSpec video_buffer_spec;
-    video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_SYSTEM_MEMORY;
-    video_buffer_spec.width = 80;
-    video_buffer_spec.height = 40;
-    video_buffer_spec.background_color = 0;
-    tig_video_buffer_create(&video_buffer_spec, &dword_602DE0);
+    TigVideoBufferCreateInfo vb_create_info;
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+    vb_create_info.width = 80;
+    vb_create_info.height = 40;
+    vb_create_info.background_color = 0;
+    tig_video_buffer_create(&vb_create_info, &dword_602DE0);
 
     dword_602E08 = true;
 }
@@ -222,15 +222,15 @@ void sub_4D7A40(int zoom)
 {
     sub_4D7A90();
 
-    TigVideoBufferSpec video_buffer_spec;
-    video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_SYSTEM_MEMORY;
-    video_buffer_spec.width = zoom;
-    video_buffer_spec.height = zoom;
-    video_buffer_spec.background_color = 0;
+    TigVideoBufferCreateInfo vb_create_info;
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+    vb_create_info.width = zoom;
+    vb_create_info.height = zoom;
+    vb_create_info.background_color = 0;
 
     for (int index = 0; index < TILE_CACHE_CAPACITY; index++) {
         stru_602AE0[index].art_id = -1;
-        tig_video_buffer_create(&video_buffer_spec, &(stru_602AE0[index].video_buffer));
+        tig_video_buffer_create(&vb_create_info, &(stru_602AE0[index].video_buffer));
     }
 }
 

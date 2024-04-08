@@ -2786,7 +2786,7 @@ void sub_505000(tig_art_id_t art_id, TigPalette src_palette, TigPalette dst_pale
 // 0x505060
 int art_get_video_buffer(unsigned int cache_entry_index, tig_art_id_t art_id, TigVideoBuffer** video_buffer_ptr)
 {
-    TigVideoBufferSpec desc;
+    TigVideoBufferCreateInfo vb_create_info;
     TigArtBlitSpec blt;
     TigRect rect;
     int type;
@@ -2854,21 +2854,21 @@ int art_get_video_buffer(unsigned int cache_entry_index, tig_art_id_t art_id, Ti
         system_memory_size = sizeof(TigVideoBuffer*) * tig_art_cache_entries[cache_entry_index].hdr.num_frames;
         tig_art_cache_entries[cache_entry_index].video_buffers[palette][rotation] = (TigVideoBuffer**)MALLOC(system_memory_size);
 
-        desc.color_key = tig_color_rgb_make(0, 0, 0);
-        desc.background_color = desc.color_key;
+        vb_create_info.color_key = tig_color_rgb_make(0, 0, 0);
+        vb_create_info.background_color = vb_create_info.color_key;
 
         if (dword_604718) {
-            desc.flags = TIG_VIDEO_BUFFER_SPEC_BACKGROUND_COLOR_ENABLED;
-            desc.color_key = 0;
+            vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_TEXTURE;
+            vb_create_info.color_key = 0;
         } else {
-            desc.flags = TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED | TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY;
+            vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
         }
 
         for (frame = 0; frame < tig_art_cache_entries[cache_entry_index].hdr.num_frames; frame++) {
-            desc.width = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].width;
-            desc.height = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].height;
-            video_memory_size += desc.width * desc.height * tig_art_bytes_per_pixel;
-            rc = tig_video_buffer_create(&desc, &(tig_art_cache_entries[cache_entry_index].video_buffers[palette][rotation][frame]));
+            vb_create_info.width = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].width;
+            vb_create_info.height = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].height;
+            video_memory_size += vb_create_info.width * vb_create_info.height * tig_art_bytes_per_pixel;
+            rc = tig_video_buffer_create(&vb_create_info, &(tig_art_cache_entries[cache_entry_index].video_buffers[palette][rotation][frame]));
             if (rc != TIG_OK) {
                 while (frame > 0) {
                     tig_video_buffer_destroy(tig_art_cache_entries[cache_entry_index].video_buffers[palette][rotation][frame - 1]);

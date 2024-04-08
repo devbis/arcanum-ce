@@ -786,7 +786,7 @@ bool tig_mouse_cursor_create_video_buffers(unsigned int art_id, int dx, int dy)
     TigArtData art_data;
     int width;
     int height;
-    TigVideoBufferSpec video_buffer_spec;
+    TigVideoBufferCreateInfo vb_create_info;
 
     if (tig_art_data(art_id, &art_data) != TIG_OK) {
         return false;
@@ -799,20 +799,20 @@ bool tig_mouse_cursor_create_video_buffers(unsigned int art_id, int dx, int dy)
     width += dx;
     height += dy;
 
-    video_buffer_spec.width = width;
-    video_buffer_spec.height = height;
-    video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY;
-    video_buffer_spec.background_color = tig_color_rgb_make(0, 0, 0);
-    if (tig_video_buffer_create(&video_buffer_spec, &tig_mouse_cursor_opaque_video_buffer) != TIG_OK) {
+    vb_create_info.width = width;
+    vb_create_info.height = height;
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
+    vb_create_info.background_color = tig_color_rgb_make(0, 0, 0);
+    if (tig_video_buffer_create(&vb_create_info, &tig_mouse_cursor_opaque_video_buffer) != TIG_OK) {
         return false;
     }
 
-    video_buffer_spec.width = width;
-    video_buffer_spec.height = height;
-    video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY | TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED;
-    video_buffer_spec.background_color = art_data.color_key;
-    video_buffer_spec.color_key = art_data.color_key;
-    if (tig_video_buffer_create(&video_buffer_spec, &tig_mouse_cursor_trans_video_buffer) != TIG_OK) {
+    vb_create_info.width = width;
+    vb_create_info.height = height;
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY | TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
+    vb_create_info.background_color = art_data.color_key;
+    vb_create_info.color_key = art_data.color_key;
+    if (tig_video_buffer_create(&vb_create_info, &tig_mouse_cursor_trans_video_buffer) != TIG_OK) {
         tig_video_buffer_destroy(tig_mouse_cursor_opaque_video_buffer);
         return false;
     }

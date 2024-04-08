@@ -512,18 +512,18 @@ bool sub_4DDF50()
     dword_602EA4 = stru_602E48.height + 160;
     dword_60341C = (int)((double)dword_602EA4 * 0.025 + (double)dword_602EA4 * 0.025 + 1.0);
 
-    TigVideoBufferSpec video_buffer_spec;
-    video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED;
-    video_buffer_spec.width = dword_603418;
-    video_buffer_spec.height = dword_60341C;
-    video_buffer_spec.color_key = tig_color_rgb_make(0, 255, 0);
-    video_buffer_spec.background_color = video_buffer_spec.color_key;
+    TigVideoBufferCreateInfo vb_create_info;
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
+    vb_create_info.width = dword_603418;
+    vb_create_info.height = dword_60341C;
+    vb_create_info.color_key = tig_color_rgb_make(0, 255, 0);
+    vb_create_info.background_color = vb_create_info.color_key;
 
-    if (tig_video_buffer_create(&video_buffer_spec, &dword_602E5C) != TIG_OK) {
+    if (tig_video_buffer_create(&vb_create_info, &dword_602E5C) != TIG_OK) {
         return false;
     }
 
-    if (tig_video_buffer_create(&video_buffer_spec, &dword_602E94) != TIG_OK) {
+    if (tig_video_buffer_create(&vb_create_info, &dword_602E94) != TIG_OK) {
         return false;
     }
 

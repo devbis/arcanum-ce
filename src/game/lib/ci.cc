@@ -43,13 +43,13 @@ bool ci_init(GameContext* ctx)
         return false;
     }
 
-    TigVideoBufferSpec video_buffer_spec;
-    video_buffer_spec.width = art_frame_data.width;
-    video_buffer_spec.height = art_frame_data.height;
-    video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED | TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY;
-    video_buffer_spec.color_key = tig_color_rgb_make(0, 0, 255);
-    video_buffer_spec.background_color = video_buffer_spec.color_key;
-    if (tig_video_buffer_create(&video_buffer_spec, &dword_5FC3E0) != TIG_OK) {
+    TigVideoBufferCreateInfo vb_create_info;
+    vb_create_info.width = art_frame_data.width;
+    vb_create_info.height = art_frame_data.height;
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
+    vb_create_info.color_key = tig_color_rgb_make(0, 0, 255);
+    vb_create_info.background_color = vb_create_info.color_key;
+    if (tig_video_buffer_create(&vb_create_info, &dword_5FC3E0) != TIG_OK) {
         return false;
     }
 

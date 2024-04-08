@@ -235,13 +235,13 @@ TextFloater6028F0* sub_4D5950()
         node = (TextFloater6028F0*)malloc(sizeof(*node));
         node->next = NULL;
 
-        TigVideoBufferSpec video_buffer_spec;
-        video_buffer_spec.flags = TIG_VIDEO_BUFFER_SPEC_TRANSPARENCY_ENABLED | TIG_VIDEO_BUFFER_SPEC_VIDEO_MEMORY;
-        video_buffer_spec.width = 200;
-        video_buffer_spec.height = dword_602898;
-        video_buffer_spec.background_color = dword_6028C8;
-        video_buffer_spec.color_key = dword_6028C8;
-        tig_video_buffer_create(&video_buffer_spec, &(node->video_buffer));
+        TigVideoBufferCreateInfo vb_create_info;
+        vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
+        vb_create_info.width = 200;
+        vb_create_info.height = dword_602898;
+        vb_create_info.background_color = dword_6028C8;
+        vb_create_info.color_key = dword_6028C8;
+        tig_video_buffer_create(&vb_create_info, &(node->video_buffer));
     }
 
     return node;
