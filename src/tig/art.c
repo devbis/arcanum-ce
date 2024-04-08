@@ -231,7 +231,7 @@ static int dword_5BE994[32] = {
 };
 
 // 0x5BEA14
-static int dword_5BEA14 = 1;
+static bool tig_art_mirroring_enabled = true;
 
 // 0x5BEA18
 static int dword_5BEA18[4] = {
@@ -672,7 +672,7 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
             mut_art_blt.art_id = sub_502D30(mut_art_blt.art_id, v1 & ~0x1);
         }
     } else {
-        if (dword_5BEA14 &&
+        if (tig_art_mirroring_enabled &&
             (type == TIG_ART_TYPE_CRITTER
                 || type == TIG_ART_TYPE_MONSTER
                 || type == TIG_ART_TYPE_UNIQUE_NPC)) {
@@ -1210,7 +1210,7 @@ int sub_502E50(tig_art_id_t art_id, int x, int y, unsigned int* color_ptr)
     rotation = tig_art_id_rotation_get(art_id);
     frame = tig_art_id_frame_get(art_id);
 
-    if (dword_5BEA14) {
+    if (tig_art_mirroring_enabled) {
         type = tig_art_type(art_id);
         if ((type == TIG_ART_TYPE_CRITTER
                 || type == TIG_ART_TYPE_MONSTER
@@ -1263,7 +1263,7 @@ int sub_502FD0(tig_art_id_t art_id, int x, int y)
     rotation = tig_art_id_rotation_get(art_id);
     frame = tig_art_id_frame_get(art_id);
 
-    if (dword_5BEA14) {
+    if (tig_art_mirroring_enabled) {
         type = tig_art_type(art_id);
         if ((type == TIG_ART_TYPE_CRITTER
                 || type == TIG_ART_TYPE_MONSTER
@@ -1353,7 +1353,7 @@ int tig_art_frame_data(tig_art_id_t art_id, TigArtFrameData* data)
     type = tig_art_type(art_id);
 
     mirrored = false;
-    if (dword_5BEA14
+    if (tig_art_mirroring_enabled
         && (type == TIG_ART_TYPE_CRITTER
             || type == TIG_ART_TYPE_MONSTER
             || type == TIG_ART_TYPE_UNIQUE_NPC)
@@ -1451,7 +1451,7 @@ int sub_5033E0(tig_art_id_t art_id, int a2, int a3)
     // NOTE: Initialize to keep compiler happy.
     delta = 0;
 
-    if (dword_5BEA14) {
+    if (tig_art_mirroring_enabled) {
         delta = 1;
 
         type = tig_art_type(art_id);
@@ -1486,7 +1486,7 @@ int sub_5033E0(tig_art_id_t art_id, int a2, int a3)
         v3 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].field_14;
         v4 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].field_18;
 
-        if (dword_5BEA14) {
+        if (tig_art_mirroring_enabled) {
             v3 *= delta;
             v4 *= delta;
         }
@@ -1534,7 +1534,7 @@ int tig_art_size(tig_art_id_t art_id, int* width_ptr, int* height_ptr)
     if ((art->hdr.unk_0 & 1) != 0) {
         rotation_offset = 0;
         num_rotations = 1;
-    } else if (dword_5BEA14 &&
+    } else if (tig_art_mirroring_enabled &&
         (type == TIG_ART_TYPE_CRITTER
             || type == TIG_ART_TYPE_MONSTER
             || type == TIG_ART_TYPE_UNIQUE_NPC)) {
@@ -2829,7 +2829,7 @@ int art_get_video_buffer(unsigned int cache_entry_index, tig_art_id_t art_id, Ti
     }
 
     rotation = tig_art_id_rotation_get(art_id);
-    if (dword_5BEA14
+    if (tig_art_mirroring_enabled
         && (type == TIG_ART_TYPE_CRITTER
             || type == TIG_ART_TYPE_MONSTER
             || type == TIG_ART_TYPE_UNIQUE_NPC)
@@ -4004,7 +4004,7 @@ bool tig_art_cache_entry_load(tig_art_id_t art_id, const char* path, int cache_e
     if ((art->hdr.unk_0 & 0x1) != 0) {
         start = 0;
         num_rotations = 1;
-    } else if (dword_5BEA14
+    } else if (tig_art_mirroring_enabled
         && (type == TIG_ART_TYPE_CRITTER
             || type == TIG_ART_TYPE_MONSTER
             || type == TIG_ART_TYPE_UNIQUE_NPC)) {
@@ -4060,7 +4060,7 @@ void tig_art_cache_entry_unload(unsigned int cache_entry_index)
     if ((cache_entry->hdr.unk_0 & 1) != 0) {
         rotation_start = 0;
         num_rotations = 1;
-    } else if (dword_5BEA14
+    } else if (tig_art_mirroring_enabled
         && (type == TIG_ART_TYPE_CRITTER
             || type == TIG_ART_TYPE_MONSTER
             || type == TIG_ART_TYPE_UNIQUE_NPC)) {
@@ -4318,7 +4318,7 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
 
     if (num_rotations > 1) {
         int type = tig_art_type(art_id);
-        if (dword_5BEA14) {
+        if (tig_art_mirroring_enabled) {
             if (type == TIG_ART_TYPE_CRITTER
                 || type == TIG_ART_TYPE_MONSTER
                 || type == TIG_ART_TYPE_UNIQUE_NPC) {
