@@ -4,6 +4,10 @@
 #include "tig/rect.h"
 #include "tig/types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define TIG_WINDOW_HANDLE_INVALID ((tig_window_handle_t)-1)
 
 #define TIG_WINDOW_TOP (-2)
@@ -114,5 +118,9 @@ int sub_51E9E0();
 bool sub_51EA00();
 int tig_window_vbid_get(tig_window_handle_t window_handle, TigVideoBuffer** video_buffer_ptr);
 int tig_window_modal_dialog(TigWindowModalDialogDesc* desc, int* choice_ptr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ARCANUM_TIG_WINDOW_H_ */
