@@ -22,6 +22,12 @@
 #define MAX_PALETTES 4
 #define MAX_ROTATIONS 8
 
+// Represents memory size used in art cache.
+//
+// The type is signed. When used in "available" memory variables the value below
+// zero denotes we've used too much memory and should evict something.
+typedef int art_size_t;
+
 typedef struct TigArtFileFrameData {
     /* 0000 */ int width;
     /* 0004 */ int height;
@@ -77,8 +83,8 @@ typedef struct TigArtCacheEntry {
     /* 01B4 */ TigVideoBuffer** video_buffers[MAX_PALETTES][MAX_ROTATIONS];
     /* 0234 */ uint8_t** pixels_tbl[MAX_ROTATIONS];
     /* 0254 */ TigPalette field_254[MAX_PALETTES];
-    /* 0264 */ size_t system_memory_usage;
-    /* 0268 */ size_t video_memory_usage;
+    /* 0264 */ art_size_t system_memory_usage;
+    /* 0268 */ art_size_t video_memory_usage;
 } TigArtCacheEntry;
 
 static_assert(sizeof(TigArtCacheEntry) == 0x26C, "wrong size");
@@ -88,7 +94,7 @@ static int sub_505940(unsigned int art_blt_flags, unsigned int* vb_blt_flags_ptr
 static int sub_5059F0(int cache_entry_index, TigArtBlitSpec* blt);
 static int art_blit(int cache_entry_index, TigArtBlitSpec* blt);
 static unsigned int sub_51AA90(tig_art_id_t art_id);
-static void sub_51AC20();
+static void tig_art_check_cache_fullness();
 static int tig_art_cache_entry_compare_time(const void* a1, const void* a2);
 static int tig_art_cache_entry_compare_name(const void* a1, const void* a2);
 static int tig_art_build_path(unsigned int art_id, char* path);
@@ -97,7 +103,7 @@ static bool tig_art_cache_entry_load(tig_art_id_t art_id, const char* path, int 
 static void tig_art_cache_entry_unload(unsigned int cache_entry_index);
 static void sub_51B610(unsigned int cache_entry_index);
 static void sub_51B650(int cache_entry_index);
-static int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, void** palettes, int a5, int* size_ptr);
+static int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, void** palettes, int a5, art_size_t* size_ptr);
 static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
@@ -262,13 +268,13 @@ static unsigned int tig_art_cache_entries_length;
 static TigArtCacheEntry* tig_art_cache_entries;
 
 // 0x604724
-static size_t tig_art_total_system_memory;
+static art_size_t tig_art_total_system_memory;
 
 // 0x60472C
 static unsigned int tig_art_cache_entries_capacity;
 
 // 0x604730
-static size_t tig_art_available_video_memory;
+static art_size_t tig_art_available_video_memory;
 
 // 0x604744
 static TigArtBlitPaletteAdjustCallback* dword_604744;
@@ -280,10 +286,10 @@ static int tig_art_bytes_per_pixel;
 static bool tig_art_initialized;
 
 // 0x604740
-static size_t tig_art_available_system_memory;
+static art_size_t tig_art_available_system_memory;
 
 // 0x604748
-static size_t tig_art_total_video_memory;
+static art_size_t tig_art_total_video_memory;
 
 // 0x60474C
 static int tig_art_bits_per_pixel;
@@ -309,14 +315,14 @@ int tig_art_init(TigContext* ctx)
     tig_art_cache_entries = (TigArtCacheEntry*)MALLOC(sizeof(TigArtCacheEntry) * tig_art_cache_entries_capacity);
 
     tig_memory_get_system_status(&total_memory, &available_memory);
-    tig_art_available_system_memory = total_memory >> 2;
-    tig_art_total_system_memory = total_memory >> 2;
+    tig_art_available_system_memory = (art_size_t)(total_memory >> 2);
+    tig_art_total_system_memory = (art_size_t)(total_memory >> 2);
 
     if (tig_video_get_video_memory_status(&total_memory, &available_memory) != TIG_OK) {
         available_memory = tig_art_total_system_memory;
     }
 
-    tig_art_available_video_memory = available_memory / 2;
+    tig_art_available_video_memory = (art_size_t)(available_memory / 2);
     tig_art_total_video_memory = tig_art_available_video_memory;
     tig_debug_printf("Art mem vid avail is %d\n", tig_art_available_video_memory);
 
@@ -358,7 +364,7 @@ void tig_art_ping()
 int sub_5006E0(tig_art_id_t art_id, TigPalette palette)
 {
     TigArtHeader hdr;
-    int size;
+    art_size_t size;
     TigPalette palette_tbl[MAX_PALETTES];
     char path[_MAX_PATH];
     int rc;
@@ -2790,8 +2796,8 @@ int art_get_video_buffer(unsigned int cache_entry_index, tig_art_id_t art_id, Ti
     int rotation;
     int frame;
     int rc;
-    size_t system_memory_size = 0;
-    size_t video_memory_size = 0;
+    art_size_t system_memory_size = 0;
+    art_size_t video_memory_size = 0;
 
     if (sub_51F860() != TIG_OK) {
         return TIG_ERR_16;
@@ -3719,8 +3725,9 @@ unsigned int sub_51AA90(tig_art_id_t art_id)
         return dword_604714;
     }
 
-    sub_51AC20();
-    sub_51AC20();
+    // Called twice to check both system and video memory.
+    tig_art_check_cache_fullness();
+    tig_art_check_cache_fullness();
 
     if (!tig_art_cache_find(path, &cache_entry_index)) {
         if (!tig_art_cache_entry_load(art_id, path, cache_entry_index)) {
@@ -3748,9 +3755,103 @@ void sub_51AC00(int a1)
 }
 
 // 0x51AC20
-void sub_51AC20()
+void tig_art_check_cache_fullness()
 {
-    // TODO: Incomplete.
+    // Flag that denotes if we should check video memory (true) or system memory
+    // (false). This flag alternates on every call.
+    //
+    // 0x604728
+    static bool vid_vs_sys;
+
+    art_size_t acc = 0;
+    art_size_t tgt;
+    unsigned int index;
+    unsigned int cnt;
+
+    if (vid_vs_sys) {
+        // NOTE: Signed compare.
+        if (tig_art_available_video_memory > 0) {
+            vid_vs_sys = !vid_vs_sys;
+            return;
+        }
+
+        tig_debug_printf("Art cache full (vid), making some room");
+
+        // Calculate target size we'd like to evict (30% of total video memory).
+        tgt = (art_size_t)((double)tig_art_total_video_memory * 0.3f);
+
+        // Sort cache entries by last access time, earliest first.
+        qsort(tig_art_cache_entries,
+            tig_art_cache_entries_length,
+            sizeof(TigArtCacheEntry),
+            tig_art_cache_entry_compare_time);
+
+        // Loop thru cache entries until we reach eviction target.
+        for (index = 0; index < tig_art_cache_entries_length; ++index) {
+            acc += tig_art_cache_entries[index].video_memory_usage;
+            if (acc >= tgt) {
+                break;
+            }
+        }
+    } else {
+        // NOTE: Signed compare.
+        if (tig_art_available_system_memory > 0) {
+            vid_vs_sys = !vid_vs_sys;
+            return;
+        }
+
+        tig_debug_printf("Art cache full (sys), making some room");
+
+        // Calculate target size we'd like to evict (30% of total system
+        // memory).
+        tgt = (size_t)((double)tig_art_total_system_memory * 0.3f);
+
+        // Sort cache entries by last access time, earliest first.
+        qsort(tig_art_cache_entries,
+            tig_art_cache_entries_length,
+            sizeof(TigArtCacheEntry),
+            tig_art_cache_entry_compare_time);
+
+        // Loop thru cache entries until we reach eviction target.
+        for (index = 0; index < tig_art_cache_entries_length; ++index) {
+            acc += tig_art_cache_entries[index].system_memory_usage;
+            if (acc >= tgt) {
+                break;
+            }
+        }
+    }
+
+    // NOTE: Signed compare.
+    if (acc < tgt) {
+        // We haven't reached eviction target, flush everything.
+        tig_art_flush();
+        tig_debug_printf("...\n");
+        return;
+    }
+
+    cnt = index + 1;
+
+    // Free cache entries.
+    for (; index >= 0; index--) {
+        tig_art_cache_entry_unload(index);
+    }
+
+    tig_art_cache_entries_length -= cnt;
+
+    // Move remaining cache entries on top.
+    memcpy(tig_art_cache_entries,
+        &(tig_art_cache_entries[cnt]),
+        sizeof(TigArtCacheEntry) * (tig_art_cache_entries_length));
+
+    // Sort back cache entries by name (as `tig_art_cache_find` uses binary
+    // search by name).
+    qsort(tig_art_cache_entries,
+        tig_art_cache_entries_length,
+        sizeof(TigArtCacheEntry),
+        tig_art_cache_entry_compare_name);
+
+    tig_debug_printf("...\n");
+    vid_vs_sys = !vid_vs_sys;
 }
 
 // 0x51ADE0
@@ -3863,7 +3964,7 @@ bool tig_art_cache_entry_load(tig_art_id_t art_id, const char* path, int cache_e
 {
     TigArtCacheEntry* art;
     int rc;
-    int size;
+    art_size_t size;
     int type;
     int start;
     int num_rotations;
@@ -4035,14 +4136,14 @@ void sub_51B650(int cache_entry_index)
 }
 
 // 0x51B710
-int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, void** palette_tbl, int a5, int* size_ptr)
+int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, void** palette_tbl, int a5, art_size_t* size_ptr)
 {
     TigFile* stream;
     int rotation;
     int palette;
     uint32_t* saved_palette_tbl[MAX_PALETTES];
     uint32_t temp_palette_entries[256];
-    int size_tbl[MAX_ROTATIONS];
+    art_size_t size_tbl[MAX_ROTATIONS];
     int index;
     int frame;
     int current_palette_index;
@@ -4153,7 +4254,7 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
 
     for (index = 0; index < num_rotations; index++) {
         uint8_t* bytes;
-        int total_size;
+        art_size_t total_size;
 
         // Calculate total size of pixels data.
         total_size = 0;
