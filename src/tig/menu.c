@@ -623,10 +623,10 @@ void tig_menu_bar_on_click(tig_button_handle_t button_handle)
             tig_menu_drop_down_destroy(&tig_menu_current_drop_down);
 
             if (selected != -1) {
-                msg.type = TIG_MESSAGE_TYPE_2;
-                msg.data.unknown.field_8 = tig_menu_bar_index_to_handle(tig_menu_current_menu_bar_index);
-                msg.data.unknown.field_C = tig_menu_current_drop_down_index;
-                msg.data.unknown.field_10 = selected;
+                msg.type = TIG_MESSAGE_MENU;
+                msg.data.menu.menu_bar_handle = tig_menu_bar_index_to_handle(tig_menu_current_menu_bar_index);
+                msg.data.menu.drop_down_index = tig_menu_current_drop_down_index;
+                msg.data.menu.menu_item_index = selected;
                 tig_message_enqueue(&msg);
             }
 
