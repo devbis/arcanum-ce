@@ -686,7 +686,7 @@ int tig_mouse_show()
 // 0x4FFAB0
 void tig_mouse_display()
 {
-    TigVideoBufferBlitSpec blt;
+    TigVideoBufferBlitInfo vb_blit_info;
 
     if (tig_mouse_is_hardware) {
         return;
@@ -705,12 +705,12 @@ void tig_mouse_display()
         TIG_WINDOW_TOP);
 
     // Blit cursor over background.
-    blt.flags = 0;
-    blt.src_video_buffer = tig_mouse_cursor_trans_video_buffer;
-    blt.src_rect = &tig_mouse_cursor_art_frame_bounds;
-    blt.dst_video_buffer = tig_mouse_cursor_opaque_video_buffer;
-    blt.dst_rect = &tig_mouse_cursor_art_frame_bounds;
-    tig_video_buffer_blit(&blt);
+    vb_blit_info.flags = 0;
+    vb_blit_info.src_video_buffer = tig_mouse_cursor_trans_video_buffer;
+    vb_blit_info.src_rect = &tig_mouse_cursor_art_frame_bounds;
+    vb_blit_info.dst_video_buffer = tig_mouse_cursor_opaque_video_buffer;
+    vb_blit_info.dst_rect = &tig_mouse_cursor_art_frame_bounds;
+    tig_video_buffer_blit(&vb_blit_info);
 
     // Blit composed cursor/background to screen.
     tig_video_blit(tig_mouse_cursor_opaque_video_buffer,

@@ -30,19 +30,19 @@ typedef enum TigVideoBufferFlags {
     TIG_VIDEO_BUFFER_TEXTURE = 0x00000020,
 } TigVideoBufferFlags;
 
-typedef enum TigVideoBufferBlitSpecFlags {
-    TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT = 0x01,
-    TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN = 0x02,
-    TIG_VIDEO_BUFFER_BLIT_0x04 = 0x04,
-    TIG_VIDEO_BUFFER_BLIT_0x10 = 0x10,
-    TIG_VIDEO_BUFFER_BLIT_0x20 = 0x20,
-    TIG_VIDEO_BUFFER_BLIT_0x40 = 0x40,
-    TIG_VIDEO_BUFFER_BLIT_0x80 = 0x80,
-    TIG_VIDEO_BUFFER_BLIT_0x100 = 0x100,
-    TIG_VIDEO_BUFFER_BLIT_0x200 = 0x200,
-    TIG_VIDEO_BUFFER_BLIT_0x400 = 0x400,
+typedef enum TigVideoBufferBlitFlags {
+    TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT = 0x00000001,
+    TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN = 0x00000002,
+    TIG_VIDEO_BUFFER_BLIT_0x0004 = 0x00000004,
+    TIG_VIDEO_BUFFER_BLIT_0x0010 = 0x00000010,
+    TIG_VIDEO_BUFFER_BLIT_0x0020 = 0x00000020,
+    TIG_VIDEO_BUFFER_BLIT_0x0040 = 0x00000040,
+    TIG_VIDEO_BUFFER_BLIT_0x0080 = 0x00000080,
+    TIG_VIDEO_BUFFER_BLIT_0x0100 = 0x00000100,
+    TIG_VIDEO_BUFFER_BLIT_0x0200 = 0x00000200,
+    TIG_VIDEO_BUFFER_BLIT_0x0400 = 0x00000400,
     TIG_VIDEO_BUFFER_BLIT_MIRRORANY = TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT | TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN,
-} TigVideoBufferBlitSpecFlags;
+} TigVideoBufferBlitFlags;
 
 // Opaque handle.
 typedef struct TigVideoBuffer TigVideoBuffer;
@@ -75,24 +75,24 @@ typedef struct TigVideoBufferData {
 
 static_assert(sizeof(TigVideoBufferData) == 0x20, "wrong size");
 
-typedef struct TigVideoBufferBlitSpec {
-    unsigned int flags;
-    TigVideoBuffer* src_video_buffer;
-    TigRect* src_rect;
-    unsigned char field_C;
-    unsigned char field_D;
-    unsigned char field_E;
-    unsigned char field_F;
-    int field_10;
-    int field_14;
-    int field_18;
-    int field_1C;
-    TigRect* field_20;
-    TigVideoBuffer* dst_video_buffer;
-    TigRect* dst_rect;
-} TigVideoBufferBlitSpec;
+typedef struct TigVideoBufferBlitInfo {
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ TigVideoBuffer* src_video_buffer;
+    /* 0008 */ TigRect* src_rect;
+    /* 000C */ unsigned char field_C;
+    /* 000D */ unsigned char field_D;
+    /* 000E */ unsigned char field_E;
+    /* 000F */ unsigned char field_F;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ TigRect* field_20;
+    /* 0024 */ TigVideoBuffer* dst_video_buffer;
+    /* 0028 */ TigRect* dst_rect;
+} TigVideoBufferBlitInfo;
 
-static_assert(sizeof(TigVideoBufferBlitSpec) == 0x2C, "wrong size");
+static_assert(sizeof(TigVideoBufferBlitInfo) == 0x2C, "wrong size");
 
 typedef struct TigVideoScreenshotSettings {
     /* 0000 */ int key;
@@ -137,7 +137,7 @@ int tig_video_buffer_outline(TigVideoBuffer* video_buffer, TigRect* rect, int co
 int tig_video_buffer_fill(TigVideoBuffer* video_buffer, TigRect* rect, int color);
 int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigLine* line, TigRect* a3, unsigned int color);
 int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags);
-int tig_video_buffer_blit(TigVideoBufferBlitSpec* blit_spec);
+int tig_video_buffer_blit(TigVideoBufferBlitInfo* vb_blit_info);
 int tig_video_buffer_get_pixel_color(TigVideoBuffer* video_buffer, int x, int y, unsigned int* color);
 int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, int a3, int a4);
 

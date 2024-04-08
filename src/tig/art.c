@@ -646,7 +646,7 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
     TigArtBlitSpec mut_art_blt;
     TigVideoBuffer* video_buffer;
     TigVideoBufferData video_buffer_data;
-    TigVideoBufferBlitSpec video_buffer_blt;
+    TigVideoBufferBlitInfo vb_blit_info;
     int rc;
     unsigned int cache_entry_index;
     unsigned int type;
@@ -688,49 +688,49 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
         }
     }
 
-    if (sub_505940(mut_art_blt.flags, &(video_buffer_blt.flags)) == TIG_OK
-        && sub_520FB0(mut_art_blt.dst_video_buffer, video_buffer_blt.flags) == TIG_OK
+    if (sub_505940(mut_art_blt.flags, &(vb_blit_info.flags)) == TIG_OK
+        && sub_520FB0(mut_art_blt.dst_video_buffer, vb_blit_info.flags) == TIG_OK
         && art_get_video_buffer(cache_entry_index, mut_art_blt.art_id, &video_buffer) == TIG_OK) {
         if ((mut_art_blt.flags & 0x2000) != 0) {
-            video_buffer_blt.field_10 = mut_art_blt.field_10;
+            vb_blit_info.field_10 = mut_art_blt.field_10;
         } else if ((mut_art_blt.flags & 0x20000) != 0) {
-            video_buffer_blt.field_10 = mut_art_blt.field_14[0];
-            video_buffer_blt.field_14 = mut_art_blt.field_14[1];
-            video_buffer_blt.field_18 = mut_art_blt.field_14[2];
-            video_buffer_blt.field_1C = mut_art_blt.field_14[3];
-            video_buffer_blt.field_20 = mut_art_blt.field_18;
+            vb_blit_info.field_10 = mut_art_blt.field_14[0];
+            vb_blit_info.field_14 = mut_art_blt.field_14[1];
+            vb_blit_info.field_18 = mut_art_blt.field_14[2];
+            vb_blit_info.field_1C = mut_art_blt.field_14[3];
+            vb_blit_info.field_20 = mut_art_blt.field_18;
         } else if ((mut_art_blt.flags & 0x4000) != 0) {
-            video_buffer_blt.field_10 = mut_art_blt.field_14[0];
-            video_buffer_blt.field_14 = mut_art_blt.field_14[1];
-            video_buffer_blt.field_18 = mut_art_blt.field_14[1];
-            video_buffer_blt.field_1C = mut_art_blt.field_14[0];
-            video_buffer_blt.field_20 = 0;
+            vb_blit_info.field_10 = mut_art_blt.field_14[0];
+            vb_blit_info.field_14 = mut_art_blt.field_14[1];
+            vb_blit_info.field_18 = mut_art_blt.field_14[1];
+            vb_blit_info.field_1C = mut_art_blt.field_14[0];
+            vb_blit_info.field_20 = 0;
         }
 
         if ((mut_art_blt.flags & 0x100) != 0) {
-            video_buffer_blt.field_C = mut_art_blt.field_1C & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
         } else if ((mut_art_blt.flags & 0x400) != 0) {
-            video_buffer_blt.field_C = mut_art_blt.field_1C & 0xFF;
-            video_buffer_blt.field_D = mut_art_blt.field_1C & 0xFF;
-            video_buffer_blt.field_E = (mut_art_blt.field_1C >> 8) & 0xFF;
-            video_buffer_blt.field_F = (mut_art_blt.field_1C >> 8) & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
+            vb_blit_info.field_D = mut_art_blt.field_1C & 0xFF;
+            vb_blit_info.field_E = (mut_art_blt.field_1C >> 8) & 0xFF;
+            vb_blit_info.field_F = (mut_art_blt.field_1C >> 8) & 0xFF;
         } else if ((mut_art_blt.flags & 0x800) != 0) {
-            video_buffer_blt.field_C = mut_art_blt.field_1C & 0xFF;
-            video_buffer_blt.field_D = mut_art_blt.field_1C & 0xFF;
-            video_buffer_blt.field_E = (mut_art_blt.field_1C >> 24) & 0xFF;
-            video_buffer_blt.field_F = (mut_art_blt.field_1C >> 24) & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
+            vb_blit_info.field_D = mut_art_blt.field_1C & 0xFF;
+            vb_blit_info.field_E = (mut_art_blt.field_1C >> 24) & 0xFF;
+            vb_blit_info.field_F = (mut_art_blt.field_1C >> 24) & 0xFF;
         } else if ((mut_art_blt.flags & 0x1000) != 0) {
-            video_buffer_blt.field_C = mut_art_blt.field_1C & 0xFF;
-            video_buffer_blt.field_D = (mut_art_blt.field_1C >> 8) & 0xFF;
-            video_buffer_blt.field_E = (mut_art_blt.field_1C >> 16) & 0xFF;
-            video_buffer_blt.field_F = (mut_art_blt.field_1C >> 24) & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
+            vb_blit_info.field_D = (mut_art_blt.field_1C >> 8) & 0xFF;
+            vb_blit_info.field_E = (mut_art_blt.field_1C >> 16) & 0xFF;
+            vb_blit_info.field_F = (mut_art_blt.field_1C >> 24) & 0xFF;
         }
 
-        video_buffer_blt.src_rect = mut_art_blt.src_rect;
-        video_buffer_blt.src_video_buffer = video_buffer;
-        video_buffer_blt.dst_rect = mut_art_blt.dst_rect;
-        video_buffer_blt.dst_video_buffer = mut_art_blt.dst_video_buffer;
-        return tig_video_buffer_blit(&video_buffer_blt);
+        vb_blit_info.src_rect = mut_art_blt.src_rect;
+        vb_blit_info.src_video_buffer = video_buffer;
+        vb_blit_info.dst_rect = mut_art_blt.dst_rect;
+        vb_blit_info.dst_video_buffer = mut_art_blt.dst_video_buffer;
+        return tig_video_buffer_blit(&vb_blit_info);
     }
 
     if ((mut_art_blt.flags & 0x3FFF0) != 0) {
@@ -748,12 +748,12 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
                     tig_debug_printf("Warning: using video memory surface as a scratch buffer.  This will cause slower performance.\n");
                 }
 
-                video_buffer_blt.flags = 0;
-                video_buffer_blt.src_rect = mut_art_blt.dst_rect;
-                video_buffer_blt.dst_rect = mut_art_blt.dst_rect;
-                video_buffer_blt.src_video_buffer = mut_art_blt.dst_video_buffer;
-                video_buffer_blt.dst_video_buffer = mut_art_blt.scratch_video_buffer;
-                rc = tig_video_buffer_blit(&video_buffer_blt);
+                vb_blit_info.flags = 0;
+                vb_blit_info.src_rect = mut_art_blt.dst_rect;
+                vb_blit_info.dst_rect = mut_art_blt.dst_rect;
+                vb_blit_info.src_video_buffer = mut_art_blt.dst_video_buffer;
+                vb_blit_info.dst_video_buffer = mut_art_blt.scratch_video_buffer;
+                rc = tig_video_buffer_blit(&vb_blit_info);
                 if (rc != TIG_OK) {
                     return rc;
                 }
@@ -773,12 +773,12 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
 
             mut_art_blt.dst_video_buffer = video_buffer;
 
-            video_buffer_blt.flags = 0;
-            video_buffer_blt.src_rect = mut_art_blt.dst_rect;
-            video_buffer_blt.src_video_buffer = mut_art_blt.scratch_video_buffer;
-            video_buffer_blt.dst_rect = mut_art_blt.dst_rect;
-            video_buffer_blt.dst_video_buffer = mut_art_blt.dst_video_buffer;
-            return tig_video_buffer_blit(&video_buffer_blt);
+            vb_blit_info.flags = 0;
+            vb_blit_info.src_rect = mut_art_blt.dst_rect;
+            vb_blit_info.src_video_buffer = mut_art_blt.scratch_video_buffer;
+            vb_blit_info.dst_rect = mut_art_blt.dst_rect;
+            vb_blit_info.dst_video_buffer = mut_art_blt.dst_video_buffer;
+            return tig_video_buffer_blit(&vb_blit_info);
         }
     }
 
@@ -2941,47 +2941,47 @@ int sub_505940(unsigned int art_blt_flags, unsigned int* vb_blt_flags_ptr)
     }
 
     if ((art_blt_flags & TIG_ART_BLT_0x10) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x04;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0004;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x10;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0010;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x80) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x20;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0020;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x100) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x40;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0040;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x200) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x80;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0080;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x100;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0100;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x100;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0100;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_DIAGONAL) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x100;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0100;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_0x2000) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x200;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0200;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_0x4000) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x400;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0400;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_0x20000) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x400;
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0400;
     }
 
     return TIG_OK;

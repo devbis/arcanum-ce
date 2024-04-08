@@ -1203,10 +1203,10 @@ int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags)
 // one-to-one.
 //
 // 0x521000
-int tig_video_buffer_blit(TigVideoBufferBlitSpec* blit_spec)
+int tig_video_buffer_blit(TigVideoBufferBlitInfo* vb_blit_info)
 {
     // TODO: Incomplete.
-    (void)blit_spec;
+    (void)vb_blit_info;
 
     return TIG_OK;
 }
