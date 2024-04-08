@@ -759,22 +759,22 @@ int tig_window_box(tig_window_handle_t window_handle, TigRect* rect, int color)
 }
 
 // 0x51D8D0
-int sub_51D8D0(TigWindowBlt* blt)
+int tig_window_blit(TigWindowBlitInfo* win_blit_info)
 {
     TigVideoBufferBlitInfo vb_blit_info;
     TigRect dirty_rect;
     unsigned int src_window_index;
     unsigned int dst_window_index;
 
-    switch (blt->type) {
-    case TIG_WINDOW_BLT_1:
-        src_window_index = tig_window_handle_to_index(blt->src_window_handle);
+    switch (win_blit_info->type) {
+    case TIG_WINDOW_BLIT_WINDOW_TO_WINDOW:
+        src_window_index = tig_window_handle_to_index(win_blit_info->src_window_handle);
         vb_blit_info.src_video_buffer = windows[src_window_index].video_buffer;
 
-        dst_window_index = tig_window_handle_to_index(blt->dst_window_handle);
+        dst_window_index = tig_window_handle_to_index(win_blit_info->dst_window_handle);
         vb_blit_info.dst_video_buffer = windows[dst_window_index].video_buffer;
 
-        dirty_rect = *blt->dst_rect;
+        dirty_rect = *win_blit_info->dst_rect;
         dirty_rect.x += windows[dst_window_index].frame.x;
         dirty_rect.y += windows[dst_window_index].frame.y;
 
@@ -782,13 +782,13 @@ int sub_51D8D0(TigWindowBlt* blt)
             tig_window_set_needs_display_in_rect(&dirty_rect);
         }
         break;
-    case TIG_WINDOW_BLT_2:
-        vb_blit_info.src_video_buffer = blt->src_video_buffer;
+    case TIG_WINDOW_BLIT_VIDEO_BUFFER_TO_WINDOW:
+        vb_blit_info.src_video_buffer = win_blit_info->src_video_buffer;
 
-        dst_window_index = tig_window_handle_to_index(blt->dst_window_handle);
+        dst_window_index = tig_window_handle_to_index(win_blit_info->dst_window_handle);
         vb_blit_info.dst_video_buffer = windows[dst_window_index].video_buffer;
 
-        dirty_rect = *blt->dst_rect;
+        dirty_rect = *win_blit_info->dst_rect;
         dirty_rect.x += windows[dst_window_index].frame.x;
         dirty_rect.y += windows[dst_window_index].frame.y;
 
@@ -796,17 +796,17 @@ int sub_51D8D0(TigWindowBlt* blt)
             tig_window_set_needs_display_in_rect(&dirty_rect);
         }
         break;
-    case TIG_WINDOW_BLT_3:
-        src_window_index = tig_window_handle_to_index(blt->dst_window_handle);
+    case TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER:
+        src_window_index = tig_window_handle_to_index(win_blit_info->src_window_handle);
         vb_blit_info.src_video_buffer = windows[src_window_index].video_buffer;
-        vb_blit_info.dst_video_buffer = blt->dst_video_buffer;
+        vb_blit_info.dst_video_buffer = win_blit_info->dst_video_buffer;
         break;
     default:
         return TIG_ERR_12;
     }
 
-    vb_blit_info.flags = blt->video_buffer_blt_flags;
-    vb_blit_info.src_rect = blt->src_rect;
+    vb_blit_info.flags = win_blit_info->vb_blit_flags;
+    vb_blit_info.src_rect = win_blit_info->src_rect;
 
     // TODO: Looks odd, investigate.
     // vb_blt_info.field_C = blt->field_14;
@@ -815,7 +815,7 @@ int sub_51D8D0(TigWindowBlt* blt)
     // vb_blt_info.field_18 = blt->field_20;
     // vb_blt_info.field_1C = blt->field_24;
 
-    vb_blit_info.dst_rect = blt->dst_rect;
+    vb_blit_info.dst_rect = win_blit_info->dst_rect;
     return tig_video_buffer_blit(&vb_blit_info);
 }
 

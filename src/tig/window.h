@@ -32,23 +32,28 @@ typedef struct TigWindowData {
 static_assert(sizeof(TigWindowData) == 0x20, "wrong size");
 
 typedef enum TigWindowBltType {
-    TIG_WINDOW_BLT_1 = 1,
-    TIG_WINDOW_BLT_2 = 2,
-    TIG_WINDOW_BLT_3 = 3,
+    // Blits `src_window_handle` to `dst_window_handle`.
+    TIG_WINDOW_BLIT_WINDOW_TO_WINDOW = 1,
+
+    // Blits `src_video_buffer` to `dst_window_handle`.
+    TIG_WINDOW_BLIT_VIDEO_BUFFER_TO_WINDOW = 2,
+
+    // Blits `src_window_handle` to `dst_window_buffer`.
+    TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER = 3,
 } TigWindowBltType;
 
-typedef struct TigWindowBlt {
+typedef struct TigWindowBlitInfo {
     /* 0000 */ int type;
-    /* 0004 */ unsigned int video_buffer_blt_flags;
+    /* 0004 */ unsigned int vb_blit_flags;
     /* 0008 */ tig_window_handle_t src_window_handle;
     /* 000C */ TigVideoBuffer* src_video_buffer;
     /* 0010 */ TigRect* src_rect;
     /* 0014 */ tig_window_handle_t dst_window_handle;
     /* 0018 */ TigVideoBuffer* dst_video_buffer;
     /* 001C */ TigRect* dst_rect;
-} TigWindowBlt;
+} TigWindowBlitInfo;
 
-static_assert(sizeof(TigWindowBlt) == 0x20, "wrong size");
+static_assert(sizeof(TigWindowBlitInfo) == 0x20, "wrong size");
 
 typedef enum TigWindowModalDialogType {
     TIG_WINDOW_MODAL_DIALOG_TYPE_0,
@@ -84,7 +89,7 @@ void sub_51D050(TigRect* src_rect, TigRect* dst_rect, TigVideoBuffer* dst_video_
 int tig_window_fill(tig_window_handle_t window_handle, TigRect* rect, int color);
 int tig_window_line(tig_window_handle_t window_handle, TigLine* line, int color);
 int tig_window_box(tig_window_handle_t window_handle, TigRect* rect, int color);
-int sub_51D8D0(TigWindowBlt* blt);
+int tig_window_blit(TigWindowBlitInfo* win_blit_info);
 int tig_window_blit_art(tig_window_handle_t window_handle, TigArtBlitSpec* blit_spec);
 int tig_window_scroll(tig_window_handle_t window_handle, int dx, int dy);
 int tig_window_scroll_rect(tig_window_handle_t window_handle, TigRect* rect, int dx, int dy);
