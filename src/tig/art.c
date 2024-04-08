@@ -250,7 +250,7 @@ static int dword_5BEA28[4] = {
 };
 
 // 0x5BEA38
-float flt_5BEA38 = 0.3f;
+float tig_art_cache_video_memory_fullness = 0.3f;
 
 // 0x604710
 static TigArtFilePathResolver* tig_art_file_path_resolver;
@@ -3746,10 +3746,9 @@ unsigned int sub_51AA90(tig_art_id_t art_id)
 }
 
 // 0x51AC00
-void sub_51AC00(int a1)
+void tig_art_cache_set_video_memory_fullness(int fullness)
 {
-    // TODO: Check, probably / 100.0 or * 0.01
-    flt_5BEA38 = (float)a1 * 0.0099999998f;
+    tig_art_cache_video_memory_fullness = (float)fullness / 100.0f;
 }
 
 // 0x51AC20
@@ -3775,8 +3774,8 @@ void tig_art_check_cache_fullness()
 
         tig_debug_printf("Art cache full (vid), making some room");
 
-        // Calculate target size we'd like to evict (30% of total video memory).
-        tgt = (art_size_t)((double)tig_art_total_video_memory * 0.3f);
+        // Calculate target size we'd like to evict.
+        tgt = (art_size_t)((double)tig_art_total_video_memory * tig_art_cache_video_memory_fullness);
 
         // Sort cache entries by last access time, earliest first.
         qsort(tig_art_cache_entries,

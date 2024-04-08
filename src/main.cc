@@ -49,7 +49,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     if (pch != NULL) {
         int value = atoi(pch + 8);
         if (value > 0) {
-            sub_51AC00(value);
+            tig_art_cache_set_video_memory_fullness(value);
         }
     }
 
