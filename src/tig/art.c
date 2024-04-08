@@ -94,7 +94,7 @@ static int sub_505940(unsigned int art_blt_flags, unsigned int* vb_blt_flags_ptr
 static int sub_5059F0(int cache_entry_index, TigArtBlitSpec* blt);
 static int art_blit(int cache_entry_index, TigArtBlitSpec* blt);
 static unsigned int sub_51AA90(tig_art_id_t art_id);
-static void tig_art_check_cache_fullness();
+static void tig_art_cache_check_fullness();
 static int tig_art_cache_entry_compare_time(const void* a1, const void* a2);
 static int tig_art_cache_entry_compare_name(const void* a1, const void* a2);
 static int tig_art_build_path(unsigned int art_id, char* path);
@@ -3724,8 +3724,8 @@ unsigned int sub_51AA90(tig_art_id_t art_id)
     }
 
     // Called twice to check both system and video memory.
-    tig_art_check_cache_fullness();
-    tig_art_check_cache_fullness();
+    tig_art_cache_check_fullness();
+    tig_art_cache_check_fullness();
 
     if (!tig_art_cache_find(path, &cache_entry_index)) {
         if (!tig_art_cache_entry_load(art_id, path, cache_entry_index)) {
@@ -3752,7 +3752,7 @@ void tig_art_cache_set_video_memory_fullness(int fullness)
 }
 
 // 0x51AC20
-void tig_art_check_cache_fullness()
+void tig_art_cache_check_fullness()
 {
     // Flag that denotes if we should check video memory (true) or system memory
     // (false). This flag alternates on every call.
