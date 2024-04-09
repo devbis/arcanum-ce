@@ -35,10 +35,10 @@ typedef enum TigArtType6Subtype {
 
 typedef struct TigArtData {
     int unk_0;
-    int unk_4;
+    int fps;
     int bpp;
-    int field_C;
-    int frames;
+    int action_frame;
+    int num_frames;
     unsigned int color_key;
     void* palette1;
     void* palette2;
@@ -49,10 +49,10 @@ static_assert(sizeof(TigArtData) == 0x20, "wrong size");
 typedef struct TigArtFrameData {
     /* 0000 */ int width;
     /* 0004 */ int height;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
+    /* 0008 */ int hot_x;
+    /* 000C */ int hot_y;
+    /* 0010 */ int offset_x;
+    /* 0014 */ int offset_y;
 } TigArtFrameData;
 
 static_assert(sizeof(TigArtFrameData) == 0x18, "wrong size");

@@ -535,8 +535,8 @@ bool tig_font_glyph_data(tig_art_id_t font_art_id, int ch, int* width_ptr, int* 
 
     *width_ptr = glyph_frame_data.width;
     *height_ptr = glyph_frame_data.height;
-    *dx_ptr = glyph_frame_data.field_8;
-    *dy_ptr = glyph_frame_data.field_C;
+    *dx_ptr = glyph_frame_data.hot_x;
+    *dy_ptr = glyph_frame_data.hot_y;
 
     if ((unsigned char)ch == '\t') {
         *dx_ptr += 20;

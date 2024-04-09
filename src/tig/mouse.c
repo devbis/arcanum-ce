@@ -77,7 +77,7 @@ static int tig_mouse_max_x;
 // The interval (in milliseconds) to display each animation frame.
 //
 // 0x604654
-static duration_t tig_mouse_cursor_art_animation_delay;
+static duration_t tig_mouse_cursor_art_fps;
 
 // A boolean value indicating mouse is in hardware mode.
 //
@@ -125,7 +125,7 @@ static timer_t tig_mouse_hardware_button_timestamps[TIG_MOUSE_BUTTON_COUNT];
 static TigMouseState tig_mouse_state;
 
 // 0x6046B8
-static int tig_mouse_cursor_art_number_of_frames;
+static int tig_mouse_cursor_art_num_frames;
 
 // Bounds of mouse cursor video buffers.
 //
@@ -452,8 +452,8 @@ bool tig_mouse_update_state()
     message.type = TIG_MESSAGE_MOUSE;
     message.time = tig_ping_time;
 
-    if (tig_mouse_cursor_art_number_of_frames > 1) {
-        if (tig_timer_between(tig_mouse_cursor_art_animation_time, tig_ping_time) >= tig_mouse_cursor_art_animation_delay) {
+    if (tig_mouse_cursor_art_num_frames > 1) {
+        if (tig_timer_between(tig_mouse_cursor_art_animation_time, tig_ping_time) >= tig_mouse_cursor_art_fps) {
             tig_mouse_cursor_animate();
             tig_mouse_cursor_art_animation_time = tig_ping_time;
         }
@@ -852,12 +852,12 @@ bool tig_mouse_cursor_set_art_frame(unsigned int art_id, int x, int y)
     tig_mouse_cursor_art_y = y;
     tig_mouse_cursor_art_frame_width = art_frame_data.width;
     tig_mouse_cursor_art_frame_height = art_frame_data.height;
-    tig_mouse_cursor_art_number_of_frames = art_data.frames;
-    tig_mouse_cursor_art_animation_delay = 1000 / art_data.unk_4;
+    tig_mouse_cursor_art_num_frames = art_data.num_frames;
+    tig_mouse_cursor_art_fps = 1000 / art_data.fps;
     tig_mouse_cursor_art_color_key = art_data.color_key;
 
-    tig_mouse_state.offset_x = x + art_frame_data.field_8;
-    tig_mouse_state.offset_y = y + art_frame_data.field_C;
+    tig_mouse_state.offset_x = x + art_frame_data.hot_x;
+    tig_mouse_state.offset_y = y + art_frame_data.hot_y;
     tig_mouse_state.frame.x = tig_mouse_state.x - tig_mouse_state.offset_x;
     tig_mouse_state.frame.y = tig_mouse_state.y - tig_mouse_state.offset_y;
     tig_mouse_state.frame.width = x + art_frame_data.width;

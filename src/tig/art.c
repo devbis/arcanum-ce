@@ -32,23 +32,23 @@ typedef struct TigArtFileFrameData {
     /* 0000 */ int width;
     /* 0004 */ int height;
     /* 0008 */ int data_size;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
+    /* 000C */ int hot_x;
+    /* 0010 */ int hot_y;
+    /* 0014 */ int offset_x;
+    /* 0018 */ int offset_y;
 } TigArtFileFrameData;
 
 static_assert(sizeof(TigArtFileFrameData) == 0x1C, "wrong size");
 
 typedef struct TigArtHeader {
     /* 0000 */ int unk_0;
-    /* 0004 */ int unk_4;
+    /* 0004 */ int fps;
     /* 0008 */ int field_8;
     /* 000C */ uint32_t* palette_tbl[MAX_PALETTES];
-    /* 001C */ int field_1C;
+    /* 001C */ int action_frame;
     /* 0020 */ int num_frames;
     /* 0024 */ TigArtFileFrameData* frames_tbl[MAX_ROTATIONS];
-    /* 0044 */ int field_44[MAX_ROTATIONS];
+    /* 0044 */ int data_size[MAX_ROTATIONS];
     /* 0064 */ uint8_t* pixels_tbl[MAX_ROTATIONS];
 } TigArtHeader;
 
@@ -408,7 +408,7 @@ int sub_501E10(tig_art_id_t art_id, int a2)
         return TIG_ERR_16;
     }
 
-    tig_art_cache_entries[index].hdr.unk_4 = a2;
+    tig_art_cache_entries[index].hdr.fps = a2;
     tig_art_cache_entries[index].flags |= 0x2;
 
     return TIG_OK;
@@ -424,7 +424,7 @@ int sub_501E60(tig_art_id_t art_id, short a2)
         return TIG_ERR_16;
     }
 
-    tig_art_cache_entries[index].hdr.field_1C = a2;
+    tig_art_cache_entries[index].hdr.action_frame = a2;
     tig_art_cache_entries[index].flags |= 0x02;
 
     return TIG_OK;
@@ -1098,7 +1098,7 @@ tig_art_id_t tig_art_id_frame_set(tig_art_id_t art_id, int value)
             return art_id;
         }
 
-        if (value >= art_data.frames) {
+        if (value >= art_data.num_frames) {
             value = 0;
         }
     } else if (value < 0) {
@@ -1106,7 +1106,7 @@ tig_art_id_t tig_art_id_frame_set(tig_art_id_t art_id, int value)
             return art_id;
         }
 
-        value = art_data.frames - 1;
+        value = art_data.num_frames - 1;
     }
 
     switch (type) {
@@ -1298,10 +1298,10 @@ int tig_art_data(tig_art_id_t art_id, TigArtData* data)
     cache_entry = &(tig_art_cache_entries[cache_index]);
 
     data->unk_0 = cache_entry->hdr.unk_0;
-    data->unk_4 = cache_entry->hdr.unk_4;
+    data->fps = cache_entry->hdr.fps;
     data->bpp = tig_art_bits_per_pixel;
-    data->frames = cache_entry->hdr.num_frames;
-    data->field_C = cache_entry->hdr.field_1C;
+    data->num_frames = cache_entry->hdr.num_frames;
+    data->action_frame = cache_entry->hdr.action_frame;
 
     palette = tig_art_palette(art_id);
 
@@ -1367,29 +1367,29 @@ int tig_art_frame_data(tig_art_id_t art_id, TigArtFrameData* data)
 
     data->width = cache_entry->hdr.frames_tbl[rotation][frame].width;
     data->height = cache_entry->hdr.frames_tbl[rotation][frame].height;
-    data->field_8 = cache_entry->hdr.frames_tbl[rotation][frame].field_C;
-    data->field_C = cache_entry->hdr.frames_tbl[rotation][frame].field_10;
-    data->field_10 = cache_entry->hdr.frames_tbl[rotation][frame].field_14;
-    data->field_14 = cache_entry->hdr.frames_tbl[rotation][frame].field_18;
+    data->hot_x = cache_entry->hdr.frames_tbl[rotation][frame].hot_x;
+    data->hot_y = cache_entry->hdr.frames_tbl[rotation][frame].hot_y;
+    data->offset_x = cache_entry->hdr.frames_tbl[rotation][frame].offset_x;
+    data->offset_y = cache_entry->hdr.frames_tbl[rotation][frame].offset_y;
 
     if ((type == TIG_ART_TYPE_WALL || type == TIG_ART_TYPE_PORTAL)
         && (rotation < 2 || rotation > 5)) {
-        data->field_8 -= 40;
-        data->field_C += 20;
+        data->hot_x -= 40;
+        data->hot_y += 20;
     }
 
     if (mirrored) {
-        data->field_8 = data->width - data->field_8 - 1;
-        data->field_10 = -data->field_10;
+        data->hot_x = data->width - data->hot_x - 1;
+        data->offset_x = -data->offset_x;
     }
 
     if ((sub_504FD0(art_id) & 0x1) != 0) {
         if (type == TIG_ART_TYPE_ROOF) {
-            data->field_8 = 0;
-            data->field_10 = 0;
+            data->hot_x = 0;
+            data->offset_x = 0;
         } else {
-            data->field_8 = cache_entry->hdr.frames_tbl[rotation][frame].width - data->field_8 - 2;
-            data->field_10 = -data->field_10;
+            data->hot_x = cache_entry->hdr.frames_tbl[rotation][frame].width - data->hot_x - 2;
+            data->offset_x = -data->offset_x;
         }
     }
 
@@ -1483,8 +1483,8 @@ int sub_5033E0(tig_art_id_t art_id, int a2, int a3)
             frame = 0;
         }
 
-        v3 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].field_14;
-        v4 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].field_18;
+        v3 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].offset_x;
+        v4 = tig_art_cache_entries[cache_entry_index].hdr.frames_tbl[rotation][frame].offset_y;
 
         if (tig_art_mirroring_enabled) {
             v3 *= delta;
@@ -2799,7 +2799,7 @@ bool sub_504CC0(const char* name)
 
     for (rotation = 0; rotation < num_rotations; ++rotation) {
         hdr.frames_tbl[rotation] = (TigArtFileFrameData*)MALLOC(sizeof(TigArtFileFrameData) * hdr.num_frames);
-        hdr.pixels_tbl[rotation] = (uint8_t*)MALLOC(hdr.field_44[rotation]);
+        hdr.pixels_tbl[rotation] = (uint8_t*)MALLOC(hdr.data_size[rotation]);
     }
 
     for (; rotation < MAX_ROTATIONS; ++rotation) {
@@ -2815,7 +2815,7 @@ bool sub_504CC0(const char* name)
     }
 
     for (rotation = 0; rotation < num_rotations; ++rotation) {
-        if (fread(hdr.pixels_tbl[rotation], hdr.field_44[rotation], 1, stream) != 1) {
+        if (fread(hdr.pixels_tbl[rotation], hdr.data_size[rotation], 1, stream) != 1) {
             fclose(stream);
             return false;
         }
@@ -2829,10 +2829,10 @@ bool sub_504CC0(const char* name)
     }
 
     hdr.num_frames = 1;
-    hdr.field_1C = 0;
+    hdr.action_frame = 0;
 
     for (rotation = 0; rotation < num_rotations; ++rotation) {
-        hdr.field_44[rotation] = hdr.frames_tbl[rotation]->data_size;
+        hdr.data_size[rotation] = hdr.frames_tbl[rotation]->data_size;
     }
 
     if (fwrite(&hdr, sizeof(hdr), 1, stream) != 1) {
@@ -2855,7 +2855,7 @@ bool sub_504CC0(const char* name)
     }
 
     for (rotation = 0; rotation < num_rotations; ++rotation) {
-        if (fwrite(hdr.pixels_tbl[rotation], hdr.field_44[rotation], 1, stream) != 1) {
+        if (fwrite(hdr.pixels_tbl[rotation], hdr.data_size[rotation], 1, stream) != 1) {
             fclose(stream);
             return false;
         }
