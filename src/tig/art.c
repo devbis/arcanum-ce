@@ -2755,6 +2755,122 @@ tig_art_id_t tig_art_eye_candy_id_scale_set(tig_art_id_t art_id, int value)
     }
 }
 
+// 0x504CC0
+bool sub_504CC0(const char* name)
+{
+    TigArtHeader hdr;
+    FILE* stream;
+    int num_rotations;
+    int rotation;
+    int palette;
+    char path[_MAX_PATH];
+    uint32_t palette_entries[MAX_PALETTES][256];
+
+    for (rotation = 0; rotation < MAX_ROTATIONS; ++rotation) {
+        hdr.frames_tbl[rotation] = NULL;
+        hdr.pixels_tbl[rotation] = NULL;
+    }
+
+    sprintf(path, "%s.art", name);
+
+    stream = fopen(path, "rb");
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (fread(&hdr, sizeof(hdr), 1, stream) != 1) {
+        fclose(stream);
+        return false;
+    }
+
+    if (hdr.field_8 != 8) {
+        fclose(stream);
+        return false;
+    }
+
+    for (palette = 0; palette < MAX_PALETTES; ++palette) {
+        if (fread(palette_entries[palette], sizeof(uint32_t), 256, stream) != 256) {
+            fclose(stream);
+            return false;
+        }
+    }
+
+    num_rotations = (hdr.unk_0 & 1) != 0 ? 1 : 8;
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        hdr.frames_tbl[rotation] = (TigArtFileFrameData*)MALLOC(sizeof(TigArtFileFrameData) * hdr.num_frames);
+        hdr.pixels_tbl[rotation] = (uint8_t*)MALLOC(hdr.field_44[rotation]);
+    }
+
+    for (; rotation < MAX_ROTATIONS; ++rotation) {
+        hdr.frames_tbl[rotation] = hdr.frames_tbl[0];
+        hdr.pixels_tbl[rotation] = hdr.pixels_tbl[0];
+    }
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        if (fread(hdr.frames_tbl[rotation], sizeof(TigArtFileFrameData), hdr.num_frames, stream) != (size_t)hdr.num_frames) {
+            fclose(stream);
+            return false;
+        }
+    }
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        if (fread(hdr.pixels_tbl[rotation], hdr.field_44[rotation], 1, stream) != 1) {
+            fclose(stream);
+            return false;
+        }
+    }
+
+    fclose(stream);
+
+    stream = fopen(path, "wb");
+    if (stream == NULL) {
+        return false;
+    }
+
+    hdr.num_frames = 1;
+    hdr.field_1C = 0;
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        hdr.field_44[rotation] = hdr.frames_tbl[rotation]->data_size;
+    }
+
+    if (fwrite(&hdr, sizeof(hdr), 1, stream) != 1) {
+        fclose(stream);
+        return false;
+    }
+
+    for (palette = 0; palette < MAX_PALETTES; ++palette) {
+        if (fwrite(palette_entries[palette], sizeof(uint32_t), 256, stream) != 256) {
+            fclose(stream);
+            return false;
+        }
+    }
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        if (fwrite(hdr.frames_tbl[rotation], sizeof(TigArtFileFrameData), hdr.num_frames, stream) != (size_t)hdr.num_frames) {
+            fclose(stream);
+            return false;
+        }
+    }
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        if (fwrite(hdr.pixels_tbl[rotation], hdr.field_44[rotation], 1, stream) != 1) {
+            fclose(stream);
+            return false;
+        }
+    }
+
+    fclose(stream);
+
+    for (rotation = 0; rotation < num_rotations; ++rotation) {
+        FREE(hdr.frames_tbl[rotation]);
+        FREE(hdr.pixels_tbl[rotation]);
+    }
+
+    return true;
+}
+
 // 0x504FD0
 int sub_504FD0(tig_art_id_t art_id)
 {
