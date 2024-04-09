@@ -73,6 +73,8 @@ typedef struct TigArtHeaderSave {
 
 static_assert(sizeof(TigArtHeaderSave) == 0x68, "wrong size");
 
+#define TIG_ART_CACHE_ENTRY_MODIFIED 0x02
+
 typedef struct TigArtCacheEntry {
     /* 0000 */ unsigned int flags;
     /* 0004 */ char path[MAX_PATH];
@@ -399,7 +401,7 @@ int tig_art_misc_id_create(unsigned int a1, unsigned int palette, tig_art_id_t* 
 }
 
 // 0x501E10
-int sub_501E10(tig_art_id_t art_id, int a2)
+int tig_art_set_fps(tig_art_id_t art_id, int fps)
 {
     int index;
 
@@ -408,14 +410,14 @@ int sub_501E10(tig_art_id_t art_id, int a2)
         return TIG_ERR_16;
     }
 
-    tig_art_cache_entries[index].hdr.fps = a2;
-    tig_art_cache_entries[index].flags |= 0x2;
+    tig_art_cache_entries[index].hdr.fps = fps;
+    tig_art_cache_entries[index].flags |= TIG_ART_CACHE_ENTRY_MODIFIED;
 
     return TIG_OK;
 }
 
 // 0x501E60
-int sub_501E60(tig_art_id_t art_id, short a2)
+int tig_art_set_action_frame(tig_art_id_t art_id, short action_frame)
 {
     int index;
 
@@ -424,8 +426,8 @@ int sub_501E60(tig_art_id_t art_id, short a2)
         return TIG_ERR_16;
     }
 
-    tig_art_cache_entries[index].hdr.action_frame = a2;
-    tig_art_cache_entries[index].flags |= 0x02;
+    tig_art_cache_entries[index].hdr.action_frame = action_frame;
+    tig_art_cache_entries[index].flags |= TIG_ART_CACHE_ENTRY_MODIFIED;
 
     return TIG_OK;
 }
@@ -441,11 +443,11 @@ int sub_501EB0(tig_art_id_t art_id, const char* filename)
         return TIG_ERR_16;
     }
 
-    if ((tig_art_cache_entries[index].flags & 0x02) == 0) {
+    if ((tig_art_cache_entries[index].flags & TIG_ART_CACHE_ENTRY_MODIFIED) == 0) {
         return TIG_ERR_16;
     }
 
-    tig_art_cache_entries[index].flags &= 0x02;
+    tig_art_cache_entries[index].flags &= ~TIG_ART_CACHE_ENTRY_MODIFIED;
 
     stream = fopen(filename, "r+b");
     if (stream == NULL) {
