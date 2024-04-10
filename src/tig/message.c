@@ -136,7 +136,7 @@ void tig_message_ping()
         }
     }
 
-    if (PeekMessageA(&msg, NULL, 0, 0, TRUE)) {
+    if (PeekMessageA(&msg, NULL, 0, 0, PM_REMOVE)) {
         if (msg.message == WM_QUIT) {
             tig_message_post_quit(msg.wParam);
         } else {
