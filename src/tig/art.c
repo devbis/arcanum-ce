@@ -3990,37 +3990,37 @@ int tig_art_build_path(unsigned int art_id, char* path)
 {
     if (tig_art_type(art_id) == TIG_ART_TYPE_MISC) {
         switch (tig_art_num(art_id)) {
-        case 0:
+        case TIG_ART_SYSTEM_MOUSE:
             strcpy(path, "art\\mouse.art");
             return TIG_OK;
-        case 1:
+        case TIG_ART_SYSTEM_BUTTON:
             strcpy(path, "art\\button.art");
             return TIG_OK;
-        case 2:
+        case TIG_ART_SYSTEM_UP:
             strcpy(path, "art\\up.art");
             return TIG_OK;
-        case 3:
+        case TIG_ART_SYSTEM_DOWN:
             strcpy(path, "art\\down.art");
             return TIG_OK;
-        case 4:
+        case TIG_ART_SYSTEM_CANCEL:
             strcpy(path, "art\\cancel.art");
             return TIG_OK;
-        case 5:
+        case TIG_ART_SYSTEM_LENS:
             strcpy(path, "art\\lens.art");
             return TIG_OK;
-        case 6:
+        case TIG_ART_SYSTEM_X:
             strcpy(path, "art\\x.art");
             return TIG_OK;
-        case 7:
+        case TIG_ART_SYSTEM_PLUS:
             strcpy(path, "art\\plus.art");
             return TIG_OK;
-        case 8:
+        case TIG_ART_SYSTEM_MINUS:
             strcpy(path, "art\\minus.art");
             return TIG_OK;
-        case 9:
+        case TIG_ART_SYSTEM_BLANK:
             strcpy(path, "art\\blank.art");
             return TIG_OK;
-        case 10:
+        case TIG_ART_SYSTEM_FONT:
             strcpy(path, "art\\morph15font.art");
             return TIG_OK;
         }

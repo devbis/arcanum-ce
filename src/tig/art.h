@@ -9,6 +9,18 @@ extern "C" {
 
 #define TIG_ART_ID_INVALID ((tig_art_id_t)-1)
 
+#define TIG_ART_SYSTEM_MOUSE 0
+#define TIG_ART_SYSTEM_BUTTON 1
+#define TIG_ART_SYSTEM_UP 2
+#define TIG_ART_SYSTEM_DOWN 3
+#define TIG_ART_SYSTEM_CANCEL 4
+#define TIG_ART_SYSTEM_LENS 5
+#define TIG_ART_SYSTEM_X 6
+#define TIG_ART_SYSTEM_PLUS 7
+#define TIG_ART_SYSTEM_MINUS 8
+#define TIG_ART_SYSTEM_BLANK 9
+#define TIG_ART_SYSTEM_FONT 10
+
 typedef enum TigArtType {
     TIG_ART_TYPE_TILE,
     TIG_ART_TYPE_WALL,

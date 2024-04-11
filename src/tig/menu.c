@@ -208,9 +208,9 @@ int sub_539130(const char* title, const char** menu_items, int num_menu_items, i
         return -1;
     }
 
-    tig_art_misc_id_create(2, 0, &up_art_id);
-    tig_art_misc_id_create(3, 0, &down_art_id);
-    tig_art_misc_id_create(4, 0, &cancel_art_id);
+    tig_art_misc_id_create(TIG_ART_SYSTEM_UP, 0, &up_art_id);
+    tig_art_misc_id_create(TIG_ART_SYSTEM_DOWN, 0, &down_art_id);
+    tig_art_misc_id_create(TIG_ART_SYSTEM_CANCEL, 0, &cancel_art_id);
 
     if (tig_art_frame_data(up_art_id, &up_art_frame_data) != TIG_OK) {
         return -1;

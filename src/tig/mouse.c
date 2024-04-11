@@ -228,7 +228,7 @@ int tig_mouse_device_init()
         return TIG_ERR_7;
     }
 
-    rc = tig_art_misc_id_create(0, 0, &art_id);
+    rc = tig_art_misc_id_create(TIG_ART_SYSTEM_MOUSE, 0, &art_id);
     if (rc != TIG_OK) {
         return rc;
     }

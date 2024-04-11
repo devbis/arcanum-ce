@@ -35,7 +35,7 @@ int tig_font_init(TigInitializeInfo* init_info)
     tig_font_shadow_color = tig_color_rgb_make(10, 10, 10);
 
     font.flags = TIG_FONT_SHADOW;
-    tig_art_misc_id_create(10, 0, &(font.art_id));
+    tig_art_misc_id_create(TIG_ART_SYSTEM_FONT, 0, &(font.art_id));
     font.scale = 1.5f;
     font.str = NULL;
     font.color = tig_color_rgb_make(255, 255, 255);
