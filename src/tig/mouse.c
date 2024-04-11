@@ -233,12 +233,13 @@ int tig_mouse_device_init()
         return rc;
     }
 
-    if (tig_mouse_cursor_create_video_buffers(art_id, 0, 0) != TIG_OK) {
+    if (!tig_mouse_cursor_create_video_buffers(art_id, 0, 0)) {
         tig_mouse_device_exit();
         return TIG_ERR_16;
     }
 
-    if (tig_mouse_cursor_set_art_frame(art_id, 0, 0) != TIG_OK) {
+    if (!tig_mouse_cursor_set_art_frame(art_id, 0, 0)) {
+        tig_mouse_cursor_destroy_video_buffers();
         tig_mouse_device_exit();
         return TIG_ERR_16;
     }
