@@ -1444,8 +1444,8 @@ bool tig_window_filter_message(TigMessage* msg)
     }
 
     for (index = 0; index < cnt; index++) {
-        if ((filters[index](msg) && msg->type != TIG_MESSAGE_TYPE_6)
-            || ((flags[index] & TIG_WINDOW_FLAG_0x04) != 0 && msg->type != TIG_MESSAGE_TYPE_6)) {
+        if ((filters[index](msg) && msg->type != TIG_MESSAGE_PING)
+            || ((flags[index] & TIG_WINDOW_FLAG_0x04) != 0 && msg->type != TIG_MESSAGE_PING)) {
             return true;
         }
     }

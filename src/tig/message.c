@@ -121,7 +121,7 @@ void tig_message_ping()
     MSG msg;
     int index;
 
-    message.type = TIG_MESSAGE_TYPE_6;
+    message.type = TIG_MESSAGE_PING;
     message.time = tig_ping_time;
     tig_message_enqueue(&message);
 
