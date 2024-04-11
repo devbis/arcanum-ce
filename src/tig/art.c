@@ -3992,37 +3992,37 @@ int tig_art_build_path(unsigned int art_id, char* path)
         switch (tig_art_num(art_id)) {
         case 0:
             strcpy(path, "art\\mouse.art");
-            return 0;
+            return TIG_OK;
         case 1:
             strcpy(path, "art\\button.art");
-            return 0;
+            return TIG_OK;
         case 2:
             strcpy(path, "art\\up.art");
-            return 0;
+            return TIG_OK;
         case 3:
             strcpy(path, "art\\down.art");
-            return 0;
+            return TIG_OK;
         case 4:
             strcpy(path, "art\\cancel.art");
-            return 0;
+            return TIG_OK;
         case 5:
             strcpy(path, "art\\lens.art");
-            return 0;
+            return TIG_OK;
         case 6:
             strcpy(path, "art\\x.art");
-            return 0;
+            return TIG_OK;
         case 7:
             strcpy(path, "art\\plus.art");
-            return 0;
+            return TIG_OK;
         case 8:
             strcpy(path, "art\\minus.art");
-            return 0;
+            return TIG_OK;
         case 9:
             strcpy(path, "art\\blank.art");
-            return 0;
+            return TIG_OK;
         case 10:
             strcpy(path, "art\\morph15font.art");
-            return 0;
+            return TIG_OK;
         }
     } else {
         if (tig_art_file_path_resolver != NULL) {
