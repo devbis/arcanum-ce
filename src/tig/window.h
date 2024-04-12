@@ -68,7 +68,7 @@ typedef enum TigWindowModalDialogType {
 typedef bool(TigWindowDialogProcess)(int*);
 typedef void(TigWindowDialogPing)();
 
-typedef struct TigWindowModalDialogDesc {
+typedef struct TigWindowModalDialogInfo {
     /* 0000 */ int type;
     /* 0004 */ int x;
     /* 0008 */ int y;
@@ -76,10 +76,10 @@ typedef struct TigWindowModalDialogDesc {
     /* 0010 */ TigWindowDialogProcess* process;
     /* 0014 */ unsigned char keys[2];
     /* 0018 */ TigWindowDialogPing* redraw;
-} TigWindowModalDialogDesc;
+} TigWindowModalDialogInfo;
 
 // See 0x51EA60.
-static_assert(sizeof(TigWindowModalDialogDesc) == 0x1C, "wrong size");
+static_assert(sizeof(TigWindowModalDialogInfo) == 0x1C, "wrong size");
 
 int tig_window_init(TigInitializeInfo* init_info);
 void tig_window_exit();
@@ -117,7 +117,7 @@ bool tig_window_is_hidden(tig_window_handle_t window_handle);
 int sub_51E9E0();
 bool sub_51EA00();
 int tig_window_vbid_get(tig_window_handle_t window_handle, TigVideoBuffer** video_buffer_ptr);
-int tig_window_modal_dialog(TigWindowModalDialogDesc* desc, int* choice_ptr);
+int tig_window_modal_dialog(TigWindowModalDialogInfo* modal_info, int* choice_ptr);
 
 #ifdef __cplusplus
 }

@@ -60,7 +60,7 @@ static tig_window_handle_t tig_window_modal_dialog_window_handle = TIG_WINDOW_HA
 static TigRect tig_window_modal_dialog_bounds = { 0, 0, 325, 136 };
 
 // 0x604758
-static TigWindowModalDialogDesc tig_window_modal_dialog_desc;
+static TigWindowModalDialogInfo tig_window_modal_dialog_info;
 
 // 0x604778
 static TigWindow windows[TIG_WINDOW_MAX];
@@ -1573,12 +1573,12 @@ int tig_window_vbid_get(tig_window_handle_t window_handle, TigVideoBuffer** vide
 }
 
 // 0x51EA60
-int tig_window_modal_dialog(TigWindowModalDialogDesc* desc, int* choice_ptr)
+int tig_window_modal_dialog(TigWindowModalDialogInfo* modal_info, int* choice_ptr)
 {
     TigMessage msg;
     TigWindowData window_data;
 
-    if (desc == NULL) {
+    if (modal_info == NULL) {
         return TIG_ERR_16;
     }
 
@@ -1586,21 +1586,21 @@ int tig_window_modal_dialog(TigWindowModalDialogDesc* desc, int* choice_ptr)
         return TIG_ERR_16;
     }
 
-    tig_window_modal_dialog_desc = *desc;
+    tig_window_modal_dialog_info = *modal_info;
 
     window_data.flags = TIG_WINDOW_FLAG_0x04 | TIG_WINDOW_FLAG_0x08;
     window_data.rect.width = 325;
     window_data.rect.height = 136;
     window_data.message_filter = tig_window_modal_dialog_message_filter;
     window_data.background_color = tig_color_rgb_make(0, 0, 0);
-    window_data.rect.x = desc->x;
-    window_data.rect.y = desc->y;
+    window_data.rect.x = modal_info->x;
+    window_data.rect.y = modal_info->y;
 
     if (tig_window_create(&window_data, &tig_window_modal_dialog_window_handle) != TIG_OK) {
         return TIG_ERR_16;
     }
 
-    tig_window_modal_dialog_create_buttons(desc->type, tig_window_modal_dialog_window_handle);
+    tig_window_modal_dialog_create_buttons(modal_info->type, tig_window_modal_dialog_window_handle);
     tig_window_modal_dialog_refresh(NULL);
 
     while (tig_window_modal_dialog_window_handle != TIG_WINDOW_HANDLE_INVALID) {
@@ -1614,15 +1614,15 @@ int tig_window_modal_dialog(TigWindowModalDialogDesc* desc, int* choice_ptr)
 
         while (tig_message_dequeue(&msg) == TIG_OK) {
             if (msg.type == TIG_MESSAGE_REDRAW) {
-                if (desc->redraw != NULL) {
-                    desc->redraw();
+                if (modal_info->redraw != NULL) {
+                    modal_info->redraw();
                 }
 
                 tig_window_set_needs_display_in_rect(NULL);
             }
         }
 
-        if (desc->process != NULL && desc->process(&tig_message_modal_dialog_choice)) {
+        if (modal_info->process != NULL && modal_info->process(&tig_message_modal_dialog_choice)) {
             tig_window_modal_dialog_close();
         }
 
@@ -1643,7 +1643,7 @@ bool tig_window_modal_dialog_message_filter(TigMessage* msg)
 {
     switch (msg->type) {
     case TIG_MESSAGE_CHAR:
-        switch (tig_window_modal_dialog_desc.type) {
+        switch (tig_window_modal_dialog_info.type) {
         case TIG_WINDOW_MODAL_DIALOG_TYPE_0:
             tig_message_modal_dialog_choice = 0;
             tig_window_modal_dialog_close();
@@ -1653,10 +1653,10 @@ bool tig_window_modal_dialog_message_filter(TigMessage* msg)
             tig_window_modal_dialog_close();
             break;
         case TIG_WINDOW_MODAL_DIALOG_TYPE_2:
-            if (toupper(msg->data.character.ch) == toupper(tig_window_modal_dialog_desc.keys[0])) {
+            if (toupper(msg->data.character.ch) == toupper(tig_window_modal_dialog_info.keys[0])) {
                 tig_message_modal_dialog_choice = 0;
                 tig_window_modal_dialog_close();
-            } else if (toupper(msg->data.character.ch) == toupper(tig_window_modal_dialog_desc.keys[1])) {
+            } else if (toupper(msg->data.character.ch) == toupper(tig_window_modal_dialog_info.keys[1])) {
                 tig_message_modal_dialog_choice = 1;
                 tig_window_modal_dialog_close();
             }
@@ -1664,7 +1664,7 @@ bool tig_window_modal_dialog_message_filter(TigMessage* msg)
         }
         break;
     case TIG_MESSAGE_KEYBOARD:
-        if (tig_window_modal_dialog_desc.type == TIG_WINDOW_MODAL_DIALOG_TYPE_2
+        if (tig_window_modal_dialog_info.type == TIG_WINDOW_MODAL_DIALOG_TYPE_2
             && msg->data.keyboard.pressed == 0) {
             if (msg->data.keyboard.key == DIK_RETURN || msg->data.keyboard.key == DIK_NUMPADENTER) {
                 tig_message_modal_dialog_choice = 0;
@@ -1678,7 +1678,7 @@ bool tig_window_modal_dialog_message_filter(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         if (msg->data.button.state == TIG_BUTTON_STATE_1) {
             if (msg->data.button.button_handle == tig_window_modal_dialog_button_handles[0]) {
-                switch (tig_window_modal_dialog_desc.type) {
+                switch (tig_window_modal_dialog_info.type) {
                 case TIG_WINDOW_MODAL_DIALOG_TYPE_0:
                 case TIG_WINDOW_MODAL_DIALOG_TYPE_2:
                     tig_message_modal_dialog_choice = 0;
@@ -1686,7 +1686,7 @@ bool tig_window_modal_dialog_message_filter(TigMessage* msg)
                     break;
                 }
             } else if (msg->data.button.button_handle == tig_window_modal_dialog_button_handles[1]) {
-                switch (tig_window_modal_dialog_desc.type) {
+                switch (tig_window_modal_dialog_info.type) {
                 case TIG_WINDOW_MODAL_DIALOG_TYPE_1:
                 case TIG_WINDOW_MODAL_DIALOG_TYPE_2:
                     tig_message_modal_dialog_choice = 1;
@@ -1736,10 +1736,10 @@ void tig_window_modal_dialog_refresh(TigRect* rect)
         blt.dst_rect = rect;
         tig_art_interface_id_create(822, 0, 0, 0, &(blt.art_id));
         if (tig_window_blit_art(tig_window_modal_dialog_window_handle, &blt) == TIG_OK) {
-            if (tig_window_modal_dialog_desc.text) {
+            if (tig_window_modal_dialog_info.text) {
                 tig_font_push(tig_window_modal_dialog_font);
                 tig_window_text_write(tig_window_modal_dialog_window_handle,
-                    tig_window_modal_dialog_desc.text,
+                    tig_window_modal_dialog_info.text,
                     &text_rect);
                 tig_font_pop();
             }
