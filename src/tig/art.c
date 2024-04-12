@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "tig/bmp.h"
 #include "tig/color.h"
 #include "tig/debug.h"
 #include "tig/file.h"
@@ -111,6 +112,7 @@ static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_t
 static void sub_51BF20(TigArtHeader* hdr);
 static void sub_51BF60(TigArtHeaderSave* hdr_save);
 static void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* content_rect);
+static int sub_51C890(int frame, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* width_ptr, int* height_ptr);
 static int sub_51CA80(uint8_t* pixels, int pitch, int height, int start);
 
 // 0x5BE880
@@ -4629,6 +4631,72 @@ void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* conten
         }
     }
     content_rect->width = tgt - content_rect->x + 1;
+}
+
+// 0x51C890
+int sub_51C890(int frame, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* width_ptr, int* height_ptr)
+{
+    TigRect r1;
+
+    *pitch_ptr = bmp->pitch;
+
+    if (frame == 0) {
+        TigRect r2;
+
+        r1.x = 0;
+        r1.y = 0;
+        r1.width = sub_51CA80(bmp->pixels, bmp->pitch, bmp->height, 0);
+        r1.height = bmp->height;
+
+        sub_51C6D0(bmp->pixels, &r1, *pitch_ptr, content_rect);
+        if (content_rect->width == 0 || content_rect->height == 0) {
+            return TIG_ERR_16;
+        }
+
+        *width_ptr = content_rect->width;
+        r1.x = content_rect->x + 1;
+        r1.y = content_rect->y;
+        r1.width = content_rect->width - 1;
+        r1.height = content_rect->height;
+        sub_51C6D0(bmp->pixels, &r1, *pitch_ptr, &r2);
+
+        *height_ptr = r2.y - r1.y;
+    } else {
+        int saved_y = content_rect->y;
+        int saved_height = content_rect->height;
+
+        r1.x = content_rect->width < *width_ptr ? content_rect->x + *width_ptr : content_rect->x + content_rect->width;
+        r1.y = 0;
+        r1.width = sub_51CA80(bmp->pixels, bmp->pitch, bmp->height, r1.x) - r1.x;
+        r1.height = bmp->height;
+
+        sub_51C6D0(bmp->pixels, &r1, *pitch_ptr, content_rect);
+        if (content_rect->width == 0 || content_rect->height == 0) {
+            return TIG_ERR_16;
+        }
+
+        *width_ptr = content_rect->width;
+
+        if (((uint8_t*)bmp->pixels)[*pitch_ptr * content_rect->y + content_rect->x] == 1) {
+            int x;
+
+            for (x = content_rect->x; x < content_rect->x + content_rect->width; ++x) {
+                if (((uint8_t*)bmp->pixels)[*pitch_ptr * content_rect->y + content_rect->x] != 1) {
+                    break;
+                }
+
+                ((uint8_t*)bmp->pixels)[*pitch_ptr * content_rect->y + content_rect->x] = 0;
+            }
+
+            *width_ptr = x - content_rect->x;
+            ++content_rect->y;
+        }
+
+        content_rect->y = saved_y;
+        content_rect->height = saved_height;
+    }
+
+    return TIG_OK;
 }
 
 // Calculate width of empty space.
