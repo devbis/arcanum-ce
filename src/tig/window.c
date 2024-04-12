@@ -1614,8 +1614,8 @@ int tig_window_modal_dialog(TigWindowModalDialogDesc* desc, int* choice_ptr)
 
         while (tig_message_dequeue(&msg) == TIG_OK) {
             if (msg.type == TIG_MESSAGE_REDRAW) {
-                if (desc->ping != NULL) {
-                    desc->ping();
+                if (desc->redraw != NULL) {
+                    desc->redraw();
                 }
 
                 tig_window_set_needs_display_in_rect(NULL);

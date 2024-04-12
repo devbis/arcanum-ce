@@ -75,7 +75,7 @@ typedef struct TigWindowModalDialogDesc {
     /* 000C */ const char* text;
     /* 0010 */ TigWindowDialogProcess* process;
     /* 0014 */ unsigned char keys[2];
-    /* 0018 */ TigWindowDialogPing* ping;
+    /* 0018 */ TigWindowDialogPing* redraw;
 } TigWindowModalDialogDesc;
 
 // See 0x51EA60.
