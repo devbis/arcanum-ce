@@ -45,8 +45,17 @@ typedef enum TigArtType6Subtype {
     TIG_ART_TYPE_6_SUBTYPE_2,
 } TigArtType6Subtype;
 
+typedef enum TigArtFlags {
+    TIG_ART_0x01 = 0x01,
+    TIG_ART_0x02 = 0x02,
+    TIG_ART_0x04 = 0x04,
+    TIG_ART_0x08 = 0x08,
+    TIG_ART_0x10 = 0x10,
+    TIG_ART_0x20 = 0x20,
+} TigArtFlags;
+
 typedef struct TigArtData {
-    int unk_0;
+    unsigned int flags;
     int fps;
     int bpp;
     int action_frame;

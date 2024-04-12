@@ -41,7 +41,7 @@ typedef struct TigArtFileFrameData {
 static_assert(sizeof(TigArtFileFrameData) == 0x1C, "wrong size");
 
 typedef struct TigArtHeader {
-    /* 0000 */ int unk_0;
+    /* 0000 */ unsigned int flags;
     /* 0004 */ int fps;
     /* 0008 */ int bpp;
     /* 000C */ uint32_t* palette_tbl[MAX_PALETTES];
@@ -1299,7 +1299,7 @@ int tig_art_data(tig_art_id_t art_id, TigArtData* data)
 
     cache_entry = &(tig_art_cache_entries[cache_index]);
 
-    data->unk_0 = cache_entry->hdr.unk_0;
+    data->flags = cache_entry->hdr.flags;
     data->fps = cache_entry->hdr.fps;
     data->bpp = tig_art_bits_per_pixel;
     data->num_frames = cache_entry->hdr.num_frames;
@@ -1533,7 +1533,7 @@ int tig_art_size(tig_art_id_t art_id, int* width_ptr, int* height_ptr)
     art = &(tig_art_cache_entries[cache_entry_index]);
     type = tig_art_type(art_id);
 
-    if ((art->hdr.unk_0 & 1) != 0) {
+    if ((art->hdr.flags & TIG_ART_0x01) != 0) {
         rotation_offset = 0;
         num_rotations = 1;
     } else if (tig_art_mirroring_enabled &&
@@ -2798,7 +2798,7 @@ bool sub_504CC0(const char* name)
         }
     }
 
-    num_rotations = (hdr.unk_0 & 1) != 0 ? 1 : 8;
+    num_rotations = (hdr.flags & TIG_ART_0x01) != 0 ? 1 : MAX_ROTATIONS;
 
     for (rotation = 0; rotation < num_rotations; ++rotation) {
         hdr.frames_tbl[rotation] = (TigArtFileFrameData*)MALLOC(sizeof(TigArtFileFrameData) * hdr.num_frames);
@@ -4120,7 +4120,7 @@ bool tig_art_cache_entry_load(tig_art_id_t art_id, const char* path, int cache_e
     art->system_memory_usage += size;
 
     type = tig_art_type(art_id);
-    if ((art->hdr.unk_0 & 0x1) != 0) {
+    if ((art->hdr.flags & TIG_ART_0x01) != 0) {
         start = 0;
         num_rotations = 1;
     } else if (tig_art_mirroring_enabled
@@ -4176,7 +4176,7 @@ void tig_art_cache_entry_unload(unsigned int cache_entry_index)
 
     type = tig_art_type(cache_entry->art_id);
 
-    if ((cache_entry->hdr.unk_0 & 1) != 0) {
+    if ((cache_entry->hdr.flags & TIG_ART_0x01) != 0) {
         rotation_start = 0;
         num_rotations = 1;
     } else if (tig_art_mirroring_enabled
@@ -4462,7 +4462,7 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
 // 0x51BE30
 int sub_51BE30(TigArtHeader* hdr)
 {
-    return (hdr->unk_0 & 1) != 0 ? 1 : 8;
+    return (hdr->flags & TIG_ART_0x01) != 0 ? 1 : MAX_ROTATIONS;
 }
 
 // 0x51BE50
