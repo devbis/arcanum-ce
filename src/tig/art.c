@@ -110,6 +110,7 @@ static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
 static void sub_51BF60(TigArtHeaderSave* hdr_save);
+static void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* content_rect);
 static int sub_51CA80(uint8_t* pixels, int pitch, int height, int start);
 
 // 0x5BE880
@@ -4543,6 +4544,91 @@ void sub_51BF60(TigArtHeaderSave* hdr)
             FREE(hdr->field_8[rotation]);
         }
     }
+}
+
+// 0x51C6D0
+void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* content_rect)
+{
+    int tgt;
+    uint8_t* stride;
+    int x;
+    int y;
+
+    *content_rect = *rect;
+    content_rect->width = 0;
+    content_rect->height = 0;
+
+    tgt = -1;
+    for (y = rect->y; y < rect->y + rect->height; ++y) {
+        if (tgt != -1) {
+            break;
+        }
+
+        stride = pixels + pitch * y;
+        for (x = rect->x; x < rect->x + rect->width; ++x) {
+            if (stride[x] != 0) {
+                tgt = y;
+                break;
+            }
+        }
+    }
+
+    // NOTE: Probably a bug - if it does not have empty space on top, it skips
+    // detecting empty space on other sides.
+    if (tgt == -1) {
+        return;
+    }
+    content_rect->y = tgt;
+
+    tgt = -1;
+    for (y = rect->y + rect->height - 1; y >= rect->y; --y) {
+        if (tgt != -1) {
+            break;
+        }
+
+        stride = pixels + pitch * y;
+        for (x = rect->x; x < rect->x + rect->width; ++x) {
+            if (stride[x] != 0) {
+                tgt = y;
+                break;
+            }
+        }
+    }
+    content_rect->height = tgt - content_rect->y + 1;
+
+    tgt = -1;
+    for (x = rect->x; x < rect->x + rect->width; ++x) {
+        if (tgt != -1) {
+            break;
+        }
+
+        stride = pixels + x;
+        for (y = rect->y; y < rect->y + rect->height; ++y) {
+            if (stride[0] != 0) {
+                tgt = x;
+                break;
+            }
+            stride += pitch;
+        }
+    }
+    content_rect->x = tgt;
+
+    tgt = -1;
+    for (x = rect->x + rect->width - 1; x >= rect->x; --x) {
+        if (tgt != -1) {
+            break;
+        }
+
+        stride = pixels + x;
+        for (y = rect->y; y < rect->y + rect->height; ++y) {
+            if (stride[0] != 0) {
+                tgt = x;
+                break;
+            }
+            stride += pitch;
+        }
+    }
+    content_rect->width = tgt - content_rect->x + 1;
 }
 
 // Calculate width of empty space.
