@@ -43,7 +43,7 @@ static_assert(sizeof(TigArtFileFrameData) == 0x1C, "wrong size");
 typedef struct TigArtHeader {
     /* 0000 */ int unk_0;
     /* 0004 */ int fps;
-    /* 0008 */ int field_8;
+    /* 0008 */ int bpp;
     /* 000C */ uint32_t* palette_tbl[MAX_PALETTES];
     /* 001C */ int action_frame;
     /* 0020 */ int num_frames;
@@ -2785,7 +2785,8 @@ bool sub_504CC0(const char* name)
         return false;
     }
 
-    if (hdr.field_8 != 8) {
+    // Only 8-bpp palette-indexed ART files are supported.
+    if (hdr.bpp != 8) {
         fclose(stream);
         return false;
     }
@@ -4286,7 +4287,8 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
         return TIG_ERR_16;
     }
 
-    if (hdr->field_8 != 8) {
+    // Only 8-bpp palette-indexed ART files are supported.
+    if (hdr->bpp != 8) {
         tig_file_fclose(stream);
         return TIG_ERR_16;
     }
