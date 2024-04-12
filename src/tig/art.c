@@ -110,6 +110,7 @@ static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
 static void sub_51BF60(TigArtHeaderSave* hdr_save);
+static int sub_51CA80(uint8_t* pixels, int pitch, int height, int start);
 
 // 0x5BE880
 static int dword_5BE880[16] = {
@@ -4542,4 +4543,33 @@ void sub_51BF60(TigArtHeaderSave* hdr)
             FREE(hdr->field_8[rotation]);
         }
     }
+}
+
+// Calculate width of empty space.
+//
+// 0x51CA80
+int sub_51CA80(uint8_t* pixels, int pitch, int height, int start)
+{
+    int x;
+    int y;
+    uint8_t* stride;
+    bool stop = false;
+
+    for (x = start; x < pitch; ++x) {
+        stride = pixels + x;
+        for (y = 0; y < height; ++y) {
+            if (*stride != 0) {
+                stop = true;
+                break;
+            }
+
+            stride += pitch;
+        }
+
+        if (y == height && stop) {
+            break;
+        }
+    }
+
+    return x;
 }
