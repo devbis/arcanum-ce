@@ -22,7 +22,7 @@ typedef enum TigMessageType {
     TIG_MESSAGE_KEYBOARD,
     TIG_MESSAGE_PING,
     TIG_MESSAGE_TYPE_7,
-    TIG_MESSAGE_TYPE_8,
+    TIG_MESSAGE_REDRAW,
 } TigMessageType;
 
 typedef enum TigMouseEvent {

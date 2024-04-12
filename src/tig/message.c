@@ -364,7 +364,7 @@ int tig_message_dequeue(TigMessage* message)
 
         if (tig_movie_is_playing()
             || (temp_message.type != TIG_MESSAGE_MOUSE || !tig_button_process_mouse_msg(&(temp_message.data.mouse)))
-                && (!tig_window_filter_message(&temp_message) || temp_message.type == TIG_MESSAGE_TYPE_8)) {
+                && (!tig_window_filter_message(&temp_message) || temp_message.type == TIG_MESSAGE_REDRAW)) {
             *message = temp_message;
 
             LeaveCriticalSection(&tig_message_critical_section);

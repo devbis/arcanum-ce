@@ -460,7 +460,7 @@ int sub_51F880()
     tig_window_set_needs_display_in_rect(NULL);
 
     tig_timer_start(&(message.time));
-    message.type = TIG_MESSAGE_TYPE_8;
+    message.type = TIG_MESSAGE_REDRAW;
     return tig_message_enqueue(&message);
 }
 
