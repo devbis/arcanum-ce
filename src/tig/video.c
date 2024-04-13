@@ -2025,6 +2025,42 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
     return TIG_OK;
 }
 
+// 0x523930
+int tig_video_buffer_save_to_bmp(TigVideoBufferSaveToBmpInfo* save_info)
+{
+    int rc;
+    TigVideoBufferData video_buffer_data;
+    TigRect rect;
+
+    rc = tig_video_buffer_lock(save_info->video_buffer);
+    if (rc != TIG_OK) {
+        return rc;
+    }
+
+    rc = tig_video_buffer_data(save_info->video_buffer, &video_buffer_data);
+    if (rc != TIG_OK) {
+        return rc;
+    }
+
+    if (save_info->rect != NULL) {
+        rect = *save_info->rect;
+    } else {
+        rect.x = 0;
+        rect.y = 0;
+        rect.width = video_buffer_data.width;
+        rect.height = video_buffer_data.height;
+    }
+
+    rc = sub_525ED0(&video_buffer_data,
+        &rect,
+        save_info->path,
+        (save_info->flags & 1) != 0);
+
+    tig_video_buffer_unlock(save_info->video_buffer);
+
+    return rc;
+}
+
 // 0x524080
 bool tig_video_platform_window_init(TigInitializeInfo* init_info)
 {

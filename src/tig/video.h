@@ -107,6 +107,15 @@ typedef enum TigVideoBufferTintMode {
     TIG_VIDEO_BUFFER_TINT_MODE_COUNT,
 } TigVideoBufferTintMode;
 
+typedef struct TigVideoBufferSaveToBmpInfo {
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ TigVideoBuffer* video_buffer;
+    /* 0008 */ char path[_MAX_PATH];
+    /* 010C */ TigRect* rect;
+} TigVideoBufferSaveToBmpInfo;
+
+static_assert(sizeof(TigVideoBufferSaveToBmpInfo) == 0x110, "wrong size");
+
 int tig_video_init(TigInitializeInfo* init_info);
 void tig_video_exit();
 int tig_video_platform_window_get(HWND* wnd_ptr);
@@ -148,6 +157,7 @@ int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags);
 int tig_video_buffer_blit(TigVideoBufferBlitInfo* vb_blit_info);
 int tig_video_buffer_get_pixel_color(TigVideoBuffer* video_buffer, int x, int y, unsigned int* color);
 int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned int color, TigVideoBufferTintMode mode);
+int tig_video_buffer_save_to_bmp(TigVideoBufferSaveToBmpInfo* save_info);
 
 #ifdef __cplusplus
 }
