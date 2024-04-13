@@ -64,7 +64,7 @@ void tig_color_get_shifts(unsigned int* red_shift, unsigned int* green_shift, un
 int tig_color_get_red(color_t color);
 int tig_color_get_green(color_t color);
 int tig_color_get_blue(color_t color);
-int sub_52C370(color_t color);
+unsigned int sub_52C370(color_t color);
 int sub_52C500(color_t color);
 int sub_52C520(color_t color);
 int sub_52C540(color_t color);
@@ -72,7 +72,7 @@ unsigned int tig_color_index_of(color_t color);
 unsigned int tig_color_to_24_bpp(int red, int green, int blue);
 
 // TODO: Not sure about the name.
-static inline int tig_color_rgb_make(int red, int green, int blue)
+static inline unsigned int tig_color_rgb_make(int red, int green, int blue)
 {
     return (tig_color_red_index_table[red] << tig_color_red_shift) | (tig_color_green_index_table[green] << tig_color_green_shift) | (tig_color_blue_index_table[blue] << tig_color_blue_shift);
 }

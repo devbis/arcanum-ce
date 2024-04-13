@@ -1769,14 +1769,259 @@ int sub_5230C0(TigVideoBuffer* video_buffer, int x, int y, HDC dst, TigRect* rec
 }
 
 // 0x523120
-int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, int a3, int a4)
+int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned int color, TigVideoBufferTintMode mode)
 {
-    // TODO: Incomplete.
-    (void)video_buffer;
-    (void)rect;
-    (void)a3;
-    (void)a4;
+    int rc;
+    TigRect frame;
+    int x;
+    int y;
 
+    if (mode >= TIG_VIDEO_BUFFER_TINT_MODE_COUNT) {
+        return TIG_ERR_12;
+    }
+
+    if (color == tig_color_rgb_make(0, 0, 0) && mode != TIG_VIDEO_BUFFER_TINT_MODE_3) {
+        return TIG_OK;
+    }
+
+    rc = tig_rect_intersection(rect, &(video_buffer->frame), &frame);
+    if (rc != TIG_OK) {
+        return rc;
+    }
+
+    rc = tig_video_buffer_lock(video_buffer);
+    if (rc != TIG_OK) {
+        return rc;
+    }
+
+    for (y = 0; y < frame.height; ++y) {
+        switch (tig_video_bpp) {
+        case 8:
+            break;
+        case 16:
+            if (1) {
+                uint16_t* dst = (uint16_t*)video_buffer->surface_data.pixels + (video_buffer->pitch / 2) * (y + frame.y) + frame.x;
+
+                switch (mode) {
+                case TIG_VIDEO_BUFFER_TINT_MODE_0:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint16_t rm1 = *dst & tig_color_red_mask;
+                        uint16_t gm1 = *dst & tig_color_green_mask;
+                        uint16_t bm1 = *dst & tig_color_blue_mask;
+
+                        uint16_t rm2 = (uint16_t)color & tig_color_red_mask;
+                        uint16_t gm2 = (uint16_t)color & tig_color_green_mask;
+                        uint16_t bm2 = (uint16_t)color & tig_color_blue_mask;
+
+                        *dst++ = (uint16_t)min((uint32_t)(rm1 + rm2), tig_color_red_mask)
+                            | (uint16_t)min((uint32_t)(gm1 + gm2), tig_color_green_mask)
+                            | (uint16_t)min((uint32_t)(bm1 + bm2), tig_color_blue_mask);
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_1:
+                    for (x = 0; x < frame.width; ++x) {
+                        if ((*dst & tig_color_red_mask) < ((uint16_t)color & tig_color_red_mask)) {
+                            *dst &= ~tig_color_red_mask;
+                            *dst |= (uint16_t)color & tig_color_red_mask;
+                        }
+                        if ((*dst & tig_color_green_mask) < ((uint16_t)color & tig_color_green_mask)) {
+                            *dst &= ~tig_color_green_mask;
+                            *dst |= (uint16_t)color & tig_color_green_mask;
+                        }
+                        if ((*dst & tig_color_blue_mask) < ((uint16_t)color & tig_color_blue_mask)) {
+                            *dst &= ~tig_color_blue_mask;
+                            *dst |= (uint16_t)color & tig_color_blue_mask;
+                        }
+                        *dst++ -= (uint16_t)color;
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_2:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint8_t r1 = (uint8_t)((*dst & tig_color_red_mask) >> tig_color_red_shift);
+                        uint8_t g1 = (uint8_t)((*dst & tig_color_green_mask) >> tig_color_green_shift);
+                        uint8_t b1 = (uint8_t)((*dst & tig_color_blue_mask) >> tig_color_blue_shift);
+
+                        uint8_t r2 = (uint8_t)(((uint16_t)color & tig_color_red_mask) >> tig_color_red_shift);
+                        uint8_t g2 = (uint8_t)(((uint16_t)color & tig_color_green_mask) >> tig_color_green_shift);
+                        uint8_t b2 = (uint8_t)(((uint16_t)color & tig_color_blue_mask) >> tig_color_blue_shift);
+
+                        uint8_t r3 = tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2];
+                        uint8_t g3 = tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2];
+                        uint8_t b3 = tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2];
+
+                        *dst++ = (r3 << tig_color_red_shift)
+                            | (g3 << tig_color_green_shift)
+                            | (b3 << tig_color_blue_shift);
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_3:
+                    for (x = 0; x < frame.width; ++x) {
+                        *dst = (uint16_t)sub_52C370(*dst);
+                        ++dst;
+                    }
+                    break;
+                }
+            }
+            break;
+        case 24:
+            if (1) {
+                uint8_t* dst = (uint8_t*)video_buffer->surface_data.pixels + (video_buffer->pitch / 3) * (y + frame.y) + frame.x;
+
+                switch (mode) {
+                case TIG_VIDEO_BUFFER_TINT_MODE_0:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint32_t src_color = dst[0] | (dst[1] << 8) | (dst[2] << 16);
+
+                        uint32_t rm1 = src_color & tig_color_red_mask;
+                        uint32_t gm1 = src_color & tig_color_green_mask;
+                        uint32_t bm1 = src_color & tig_color_blue_mask;
+
+                        uint32_t rm2 = (uint32_t)color & tig_color_red_mask;
+                        uint32_t gm2 = (uint32_t)color & tig_color_green_mask;
+                        uint32_t bm2 = (uint32_t)color & tig_color_blue_mask;
+
+                        uint32_t dst_color = min(rm1 + rm2, tig_color_red_mask)
+                            | min(gm1 + gm2, tig_color_green_mask)
+                            | min(bm1 + bm2, tig_color_blue_mask);
+
+                        dst[0] = (uint8_t)dst_color;
+                        dst[1] = (uint8_t)(dst_color >> 8);
+                        dst[2] = (uint8_t)(dst_color >> 16);
+                        dst += 3;
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_1:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint32_t temp_color = dst[0] | (dst[1] << 8) | (dst[2] << 16);
+
+                        if ((temp_color & tig_color_red_mask) < ((uint32_t)color & tig_color_red_mask)) {
+                            temp_color &= ~tig_color_red_mask;
+                            temp_color |= (uint32_t)color & tig_color_red_mask;
+                        }
+                        if ((temp_color & tig_color_green_mask) < ((uint32_t)color & tig_color_green_mask)) {
+                            temp_color &= ~tig_color_green_mask;
+                            temp_color |= (uint32_t)color & tig_color_green_mask;
+                        }
+                        if ((temp_color & tig_color_blue_mask) < ((uint32_t)color & tig_color_blue_mask)) {
+                            temp_color &= ~tig_color_blue_mask;
+                            temp_color |= (uint32_t)color & tig_color_blue_mask;
+                        }
+                        temp_color -= (uint32_t)color;
+
+                        dst[0] = (uint8_t)temp_color;
+                        dst[1] = (uint8_t)(temp_color >> 8);
+                        dst[2] = (uint8_t)(temp_color >> 16);
+                        dst += 3;
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_2:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint32_t src_color = dst[0] | (dst[1] << 8) | (dst[2] << 16);
+
+                        uint8_t r1 = (uint8_t)((src_color & tig_color_red_mask) >> tig_color_red_shift);
+                        uint8_t g1 = (uint8_t)((src_color & tig_color_green_mask) >> tig_color_green_shift);
+                        uint8_t b1 = (uint8_t)((src_color & tig_color_blue_mask) >> tig_color_blue_shift);
+
+                        uint8_t r2 = (uint8_t)(((uint16_t)color & tig_color_red_mask) >> tig_color_red_shift);
+                        uint8_t g2 = (uint8_t)(((uint16_t)color & tig_color_green_mask) >> tig_color_green_shift);
+                        uint8_t b2 = (uint8_t)(((uint16_t)color & tig_color_blue_mask) >> tig_color_blue_shift);
+
+                        uint8_t r3 = tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2];
+                        uint8_t g3 = tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2];
+                        uint8_t b3 = tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2];
+
+                        uint32_t dst_color = (r3 << tig_color_red_shift)
+                            | (g3 << tig_color_green_shift)
+                            | (b3 << tig_color_blue_shift);
+
+                        dst[0] = (uint8_t)dst_color;
+                        dst[1] = (uint8_t)(dst_color >> 8);
+                        dst[2] = (uint8_t)(dst_color >> 16);
+                        dst += 3;
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_3:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint32_t src_color = dst[0] | (dst[1] << 8) | (dst[2] << 16);
+                        uint32_t dst_color = sub_52C370(src_color);
+                        dst[0] = (uint8_t)dst_color;
+                        dst[1] = (uint8_t)(dst_color >> 8);
+                        dst[2] = (uint8_t)(dst_color >> 16);
+                        dst += 3;
+                    }
+                    break;
+                }
+            }
+            break;
+        case 32:
+            if (1) {
+                uint32_t* dst = (uint32_t*)video_buffer->surface_data.pixels + (video_buffer->pitch / 4) * (y + frame.y) + frame.x;
+
+                switch (mode) {
+                case TIG_VIDEO_BUFFER_TINT_MODE_0:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint32_t rm1 = *dst & tig_color_red_mask;
+                        uint32_t gm1 = *dst & tig_color_green_mask;
+                        uint32_t bm1 = *dst & tig_color_blue_mask;
+
+                        uint32_t rm2 = (uint32_t)color & tig_color_red_mask;
+                        uint32_t gm2 = (uint32_t)color & tig_color_green_mask;
+                        uint32_t bm2 = (uint32_t)color & tig_color_blue_mask;
+
+                        *dst++ = min(rm1 + rm2, tig_color_red_mask)
+                            | min(gm1 + gm2, tig_color_green_mask)
+                            | min(bm1 + bm2, tig_color_blue_mask);
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_1:
+                    for (x = 0; x < frame.width; ++x) {
+                        if ((*dst & tig_color_red_mask) < ((uint32_t)color & tig_color_red_mask)) {
+                            *dst &= ~tig_color_red_mask;
+                            *dst |= (uint32_t)color & tig_color_red_mask;
+                        }
+                        if ((*dst & tig_color_green_mask) < ((uint32_t)color & tig_color_green_mask)) {
+                            *dst &= ~tig_color_green_mask;
+                            *dst |= (uint32_t)color & tig_color_green_mask;
+                        }
+                        if ((*dst & tig_color_blue_mask) < ((uint32_t)color & tig_color_blue_mask)) {
+                            *dst &= ~tig_color_blue_mask;
+                            *dst |= (uint32_t)color & tig_color_blue_mask;
+                        }
+                        *dst++ -= (uint32_t)color;
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_2:
+                    for (x = 0; x < frame.width; ++x) {
+                        uint8_t r1 = (uint8_t)((*dst & tig_color_red_mask) >> tig_color_red_shift);
+                        uint8_t g1 = (uint8_t)((*dst & tig_color_green_mask) >> tig_color_green_shift);
+                        uint8_t b1 = (uint8_t)((*dst & tig_color_blue_mask) >> tig_color_blue_shift);
+
+                        uint8_t r2 = (uint8_t)(((uint32_t)color & tig_color_red_mask) >> tig_color_red_shift);
+                        uint8_t g2 = (uint8_t)(((uint32_t)color & tig_color_green_mask) >> tig_color_green_shift);
+                        uint8_t b2 = (uint8_t)(((uint32_t)color & tig_color_blue_mask) >> tig_color_blue_shift);
+
+                        uint8_t r3 = tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2];
+                        uint8_t g3 = tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2];
+                        uint8_t b3 = tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2];
+
+                        *dst++ = (r3 << tig_color_red_shift)
+                            | (g3 << tig_color_green_shift)
+                            | (b3 << tig_color_blue_shift);
+                    }
+                    break;
+                case TIG_VIDEO_BUFFER_TINT_MODE_3:
+                    for (x = 0; x < frame.width; ++x) {
+                        *dst = sub_52C370(*dst);
+                        ++dst;
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    tig_video_buffer_unlock(video_buffer);
     return TIG_OK;
 }
 

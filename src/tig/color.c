@@ -452,7 +452,7 @@ int tig_color_get_blue(color_t color)
 }
 
 // 0x52C370
-int sub_52C370(color_t color)
+unsigned int sub_52C370(color_t color)
 {
     int red_index;
     int green_index;

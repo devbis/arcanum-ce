@@ -99,6 +99,14 @@ typedef struct TigVideoScreenshotSettings {
     /* 0004 */ int field_4;
 } TigVideoScreenshotSettings;
 
+typedef enum TigVideoBufferTintMode {
+    TIG_VIDEO_BUFFER_TINT_MODE_0,
+    TIG_VIDEO_BUFFER_TINT_MODE_1,
+    TIG_VIDEO_BUFFER_TINT_MODE_2,
+    TIG_VIDEO_BUFFER_TINT_MODE_3,
+    TIG_VIDEO_BUFFER_TINT_MODE_COUNT,
+} TigVideoBufferTintMode;
+
 int tig_video_init(TigInitializeInfo* init_info);
 void tig_video_exit();
 int tig_video_platform_window_get(HWND* wnd_ptr);
@@ -139,7 +147,7 @@ int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigLine* line, TigRect* 
 int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags);
 int tig_video_buffer_blit(TigVideoBufferBlitInfo* vb_blit_info);
 int tig_video_buffer_get_pixel_color(TigVideoBuffer* video_buffer, int x, int y, unsigned int* color);
-int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, int a3, int a4);
+int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned int color, TigVideoBufferTintMode mode);
 
 #ifdef __cplusplus
 }
