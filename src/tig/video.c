@@ -49,9 +49,8 @@ typedef struct TigVideoState {
     /* 0024 */ DDSURFACEDESC2 current_surface_desc;
     /* 00A0 */ LPDIRECTDRAWGAMMACONTROL gamma_control;
     /* 00A4 */ bool have_gamma_control;
-    /* 00A8 */ DDGAMMARAMP gamma_ramp;
-    // TODO: Better name.
-    /* 06A8 */ DDGAMMARAMP gamma_ramp2;
+    /* 00A8 */ DDGAMMARAMP default_gamma_ramp;
+    /* 06A8 */ DDGAMMARAMP current_gamma_ramp;
     /* 0CA8 */ unsigned char field_CA8[1124];
 } TigVideoState;
 
@@ -723,7 +722,7 @@ int tig_video_fade(int color, int steps, float duration, unsigned int flags)
     }
 
     if ((flags & 0x1) != 0) {
-        dest_gamma_ramp = &(tig_video_state.gamma_ramp2);
+        dest_gamma_ramp = &(tig_video_state.current_gamma_ramp);
     } else {
         int index;
         unsigned int red = tig_color_get_red(color) << 8;
@@ -846,14 +845,14 @@ int tig_video_set_gamma(float gamma)
     }
 
     for (index = 0; index < 256; index++) {
-        red = (unsigned int)((float)tig_video_state.gamma_ramp.red[index] * gamma);
-        tig_video_state.gamma_ramp2.red[index] = (WORD)min(red, 0xFF00);
+        red = (unsigned int)((float)tig_video_state.default_gamma_ramp.red[index] * gamma);
+        tig_video_state.current_gamma_ramp.red[index] = (WORD)min(red, 0xFF00);
 
-        green = (unsigned int)((float)tig_video_state.gamma_ramp.green[index] * gamma);
-        tig_video_state.gamma_ramp2.green[index] = (WORD)min(green, 0xFF00);
+        green = (unsigned int)((float)tig_video_state.default_gamma_ramp.green[index] * gamma);
+        tig_video_state.current_gamma_ramp.green[index] = (WORD)min(green, 0xFF00);
 
-        blue = (unsigned int)((float)tig_video_state.gamma_ramp.blue[index] * gamma);
-        tig_video_state.gamma_ramp2.blue[index] = (WORD)min(blue, 0xFF00);
+        blue = (unsigned int)((float)tig_video_state.default_gamma_ramp.blue[index] * gamma);
+        tig_video_state.current_gamma_ramp.blue[index] = (WORD)min(blue, 0xFF00);
     }
 
     tig_video_gamma = gamma;
@@ -2385,8 +2384,8 @@ bool tig_video_ddraw_init_fullscreen(TigInitializeInfo* init_info)
     tig_debug_printf("supported.\n");
 
     if (tig_video_state.have_gamma_control) {
-        if (SUCCEEDED(IDirectDrawGammaControl_GetGammaRamp(tig_video_state.gamma_control, 0, &(tig_video_state.gamma_ramp)))) {
-            memcpy(&(tig_video_state.gamma_ramp2), &(tig_video_state.gamma_ramp), sizeof(DDGAMMARAMP));
+        if (SUCCEEDED(IDirectDrawGammaControl_GetGammaRamp(tig_video_state.gamma_control, 0, &(tig_video_state.default_gamma_ramp)))) {
+            memcpy(&(tig_video_state.current_gamma_ramp), &(tig_video_state.default_gamma_ramp), sizeof(DDGAMMARAMP));
             tig_video_gamma = 1.0;
         }
     }
