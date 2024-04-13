@@ -7,6 +7,7 @@
 #include "tig/color.h"
 #include "tig/core.h"
 #include "tig/debug.h"
+#include "tig/draw.h"
 #include "tig/dxinput.h"
 #include "tig/file.h"
 #include "tig/font.h"

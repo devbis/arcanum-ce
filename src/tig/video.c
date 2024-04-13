@@ -7,6 +7,7 @@
 #include "tig/color.h"
 #include "tig/core.h"
 #include "tig/debug.h"
+#include "tig/draw.h"
 #include "tig/file.h"
 #include "tig/memory.h"
 #include "tig/message.h"
@@ -1166,11 +1167,482 @@ int tig_video_buffer_fill(TigVideoBuffer* video_buffer, TigRect* rect, int color
 // 0x520660
 int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigLine* line, TigRect* a3, unsigned int color)
 {
-    // TODO: Incomplete.
-    (void)video_buffer;
-    (void)line;
     (void)a3;
-    (void)color;
+
+    int pattern = 0;
+    bool reversed;
+    TigDrawLineModeInfo mode_info;
+    TigDrawLineStyleInfo style_info;
+    int thick;
+    int thickness;
+    int dx;
+    int dy;
+    int step_x;
+    int step_y;
+    int error;
+    int error_y;
+    int error_x;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+    int x;
+    int y;
+
+    if (tig_video_buffer_lock(video_buffer) != TIG_OK) {
+        return TIG_ERR_7;
+    }
+
+    if (line->y2 <= line->y1) {
+        if (line->y2 < line->y1) {
+            reversed = true;
+        } else {
+            reversed = line->x1 >= line->x2;
+        }
+    } else {
+        reversed = false;
+    }
+
+    tig_draw_get_line_mode(&mode_info);
+    tig_draw_get_line_style(&style_info);
+
+    thickness = mode_info.thickness / 2 + 1;
+    dx = abs(line->x2 - line->x1);
+    dy = abs(line->y2 - line->y1);
+
+    if (reversed) {
+        if (dx < dy) {
+            error_y = 2 * dx;
+            error = 2 * dx - dy;
+            error_x = 2 * (dx - dy);
+        } else {
+            error_y = 2 * dy;
+            error = 2 * dy - dx;
+            error_x = 2 * (dy - dx);
+        }
+
+        x1 = line->x2;
+        y1 = line->y2;
+        x2 = line->x1;
+        y2 = line->y1;
+
+        if (line->x1 < line->x2) {
+            step_x = -1;
+        } else if (line->x1 > line->x2) {
+            step_x = 1;
+        } else {
+            step_x = 0;
+        }
+    } else {
+        if (dx < dy) {
+            error_y = 2 * dx;
+            error = 2 * dx - dy;
+            error_x = 2 * (dx - dy);
+        } else {
+            error_y = 2 * dy;
+            error = 2 * dy - dx;
+            error_x = 2 * (dy - dx);
+        }
+
+        x1 = line->x1;
+        y1 = line->y1;
+        x2 = line->x2;
+        y2 = line->y2;
+
+        if (line->x1 < line->x2) {
+            step_x = 1;
+        } else if (line->x1 > line->x2) {
+            step_x = -1;
+        } else {
+            step_x = 0;
+        }
+    }
+
+    switch (tig_video_bpp) {
+    case 8:
+        if (1) {
+            uint8_t* dst = (uint8_t*)video_buffer->surface_data.pixels + video_buffer->pitch * y1 + x1;
+            *dst = (uint8_t)color;
+
+            if (dx < dy) {
+                y = y1;
+                while (y != y2) {
+                    if (error > 0) {
+                        error += error_x;
+                        y++;
+                        dst += video_buffer->pitch + step_x;
+                    } else {
+                        error += error_y;
+                        y++;
+                        dst += video_buffer->pitch;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        *dst = (uint8_t)color;
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            *dst = (uint8_t)color;
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            *dst = (uint8_t)color;
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            } else {
+                if (line->y1 == line->y2) {
+                    step_y = step_x;
+                } else {
+                    step_y = step_x + video_buffer->pitch;
+                }
+
+                x = x1;
+                while (x != x2) {
+                    x += step_x;
+                    if (error > 0) {
+                        error += error_x;
+                        dst += step_y;
+                    } else {
+                        error += error_y;
+                        dst += step_x;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        *dst = (uint8_t)color;
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            *dst = (uint8_t)color;
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            *dst = (uint8_t)color;
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    case 16:
+        if (1) {
+            uint16_t* dst = (uint16_t*)video_buffer->surface_data.pixels + (video_buffer->pitch / 2) * y1 + x1;
+            *dst = (uint16_t)color;
+
+            // FIXME: This is the only video mode (16-bpp) where the game
+            // supports line thickness, but even in this mode there is a bug -
+            // the beginning of line (drawn above) is always 1 px thick. See
+            // thickness loop below to get the idea of what's missing.
+
+            if (dx < dy) {
+                y = y1;
+                while (y != y2) {
+                    if (error > 0) {
+                        error += error_x;
+                        y++;
+                        dst += video_buffer->pitch + step_x;
+                    } else {
+                        error += error_y;
+                        y++;
+                        dst += video_buffer->pitch;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        *dst = (uint16_t)color;
+                        if (mode_info.mode == TIG_DRAW_LINE_MODE_THICK) {
+                            for (thick = 1; thick < thickness; thick++) {
+                                dst[-thick] = (uint16_t)color;
+                                dst[thick] = (uint16_t)color;
+                            }
+                        }
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            *dst = (uint16_t)color;
+                            if (mode_info.mode == TIG_DRAW_LINE_MODE_THICK) {
+                                for (thick = 1; thick < thickness; thick++) {
+                                    dst[-thick] = (uint16_t)color;
+                                    dst[thick] = (uint16_t)color;
+                                }
+                            }
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            *dst = (uint16_t)color;
+                            if (mode_info.mode == TIG_DRAW_LINE_MODE_THICK) {
+                                for (thick = 1; thick < thickness; thick++) {
+                                    dst[-thick] = (uint16_t)color;
+                                    dst[thick] = (uint16_t)color;
+                                }
+                            }
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            } else {
+                if (line->y1 == line->y2) {
+                    step_y = step_x;
+                } else {
+                    step_y = step_x + video_buffer->pitch;
+                }
+
+                x = x1;
+                while (x != x2) {
+                    x += step_x;
+                    if (error > 0) {
+                        error += error_x;
+                        dst += step_y;
+                    } else {
+                        error += error_y;
+                        dst += step_x;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        *dst = (uint16_t)color;
+                        if (mode_info.mode == TIG_DRAW_LINE_MODE_THICK) {
+                            for (thick = 1; thick < thickness; thick++) {
+                                dst[-thick * (video_buffer->pitch / 2)] = (uint16_t)color;
+                                dst[thick * (video_buffer->pitch / 2)] = (uint16_t)color;
+                            }
+                        }
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            *dst = (uint16_t)color;
+                            if (mode_info.mode == TIG_DRAW_LINE_MODE_THICK) {
+                                for (thick = 1; thick < thickness; thick++) {
+                                    dst[-thick * (video_buffer->pitch / 2)] = (uint16_t)color;
+                                    dst[thick * (video_buffer->pitch / 2)] = (uint16_t)color;
+                                }
+                            }
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            *dst = (uint16_t)color;
+                            if (mode_info.mode == TIG_DRAW_LINE_MODE_THICK) {
+                                for (thick = 1; thick < thickness; thick++) {
+                                    dst[-thick * (video_buffer->pitch / 2)] = (uint16_t)color;
+                                    dst[thick * (video_buffer->pitch / 2)] = (uint16_t)color;
+                                }
+                            }
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    case 24:
+        if (1) {
+            uint8_t* dst = (uint8_t*)video_buffer->surface_data.pixels + (video_buffer->pitch / 3) * y1 + x1;
+            dst[0] = (uint8_t)color;
+            dst[1] = (uint8_t)(color >> 8);
+            dst[2] = (uint8_t)(color >> 16);
+
+            if (dx < dy) {
+                y = y1;
+                while (y != y2) {
+                    if (error > 0) {
+                        error += error_x;
+                        y++;
+                        dst += video_buffer->pitch / 3 + step_x;
+                    } else {
+                        error += error_y;
+                        y++;
+                        dst += video_buffer->pitch / 3;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        dst[0] = (uint8_t)color;
+                        dst[1] = (uint8_t)(color >> 8);
+                        dst[2] = (uint8_t)(color >> 16);
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            dst[0] = (uint8_t)color;
+                            dst[1] = (uint8_t)(color >> 8);
+                            dst[2] = (uint8_t)(color >> 16);
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            dst[0] = (uint8_t)color;
+                            dst[1] = (uint8_t)(color >> 8);
+                            dst[2] = (uint8_t)(color >> 16);
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            } else {
+                if (line->y1 == line->y2) {
+                    step_y = step_x;
+                } else {
+                    step_y = step_x + video_buffer->pitch / 3;
+                }
+
+                x = x1;
+                while (x != x2) {
+                    x += step_x;
+                    if (error > 0) {
+                        error += error_x;
+                        dst += step_y;
+                    } else {
+                        error += error_y;
+                        dst += step_x;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        dst[0] = (uint8_t)color;
+                        dst[1] = (uint8_t)(color >> 8);
+                        dst[2] = (uint8_t)(color >> 16);
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            dst[0] = (uint8_t)color;
+                            dst[1] = (uint8_t)(color >> 8);
+                            dst[2] = (uint8_t)(color >> 16);
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            dst[0] = (uint8_t)color;
+                            dst[1] = (uint8_t)(color >> 8);
+                            dst[2] = (uint8_t)(color >> 16);
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    case 32:
+        if (1) {
+            uint32_t* dst = (uint32_t*)video_buffer->surface_data.pixels + (video_buffer->pitch / 4) * y1 + x1;
+            *dst = color;
+
+            if (dx < dy) {
+                y = y1;
+                while (y != y2) {
+                    if (error > 0) {
+                        error += error_x;
+                        y++;
+                        dst += video_buffer->pitch / 4 + step_x;
+                    } else {
+                        error += error_y;
+                        y++;
+                        dst += video_buffer->pitch / 4;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        *dst = color;
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            *dst = color;
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            *dst = color;
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            } else {
+                if (line->y1 == line->y2) {
+                    step_y = step_x;
+                } else {
+                    step_y = step_x + video_buffer->pitch / 4;
+                }
+
+                x = x1;
+                while (x != x2) {
+                    x += step_x;
+                    if (error > 0) {
+                        error += error_x;
+                        dst += step_y;
+                    } else {
+                        error += error_y;
+                        dst += step_x;
+                    }
+
+                    switch (style_info.style) {
+                    case TIG_LINE_STYLE_SOLID:
+                        *dst = (uint32_t)color;
+                        break;
+                    case TIG_LINE_STYLE_DOTTED:
+                        if ((pattern & 1) != 0) {
+                            *dst = (uint32_t)color;
+                        }
+                        ++pattern;
+                        break;
+                    case TIG_LINE_STYLE_DASHED:
+                        if (pattern < 3) {
+                            *dst = (uint32_t)color;
+                        }
+                        ++pattern;
+                        if (pattern > 5) {
+                            pattern = 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        break;
+    }
+
+    if (tig_video_buffer_unlock(video_buffer) != TIG_OK) {
+        return TIG_ERR_16;
+    }
 
     return TIG_OK;
 }
