@@ -15,10 +15,10 @@ int tig_timer_init(TigInitializeInfo* init_info)
     (void)init_info;
 
     if (timeBeginPeriod(RESOLUTION) != TIMERR_NOERROR) {
-        return 16;
+        return TIG_ERR_16;
     }
 
-    return 0;
+    return TIG_OK;
 }
 
 // 0x52DF90
@@ -31,7 +31,7 @@ void tig_timer_exit()
 int tig_timer_start(timer_t* start)
 {
     *start = timeGetTime();
-    return 0;
+    return TIG_OK;
 }
 
 // 0x52DFB0
