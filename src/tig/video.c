@@ -2133,6 +2133,10 @@ bool tig_video_platform_window_init(TigInitializeInfo* init_info)
 // 0x5242F0
 void tig_video_platform_window_exit()
 {
+    // NOTE: For unknown reasons there is no `DestroyWindow` call in the
+    // original code. It makes integration testing somewhat difficult.
+    DestroyWindow(tig_video_state.wnd);
+
     tig_video_state.wnd = NULL;
 }
 
