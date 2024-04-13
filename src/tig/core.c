@@ -5,6 +5,7 @@
 #include "tig/cache.h"
 #include "tig/color.h"
 #include "tig/debug.h"
+#include "tig/draw.h"
 #include "tig/dxinput.h"
 #include "tig/file.h"
 #include "tig/font.h"
@@ -47,6 +48,7 @@ static TigInitFunc* init_funcs[] = {
     tig_button_init,
     tig_menu_init,
     tig_font_init,
+    tig_draw_init,
     tig_str_parse_init,
     // tig_net_init,
     tig_cache_init,
@@ -75,6 +77,7 @@ static TigExitFunc* exit_funcs[] = {
     tig_button_exit,
     tig_menu_exit,
     tig_font_exit,
+    tig_draw_exit,
     tig_str_parse_exit,
     // tig_net_exit,
     tig_cache_exit,
