@@ -2323,6 +2323,7 @@ bool tig_video_ddraw_init_windowed(TigInitializeInfo* init_info)
 // 0x524640
 bool tig_video_ddraw_init_fullscreen(TigInitializeInfo* init_info)
 {
+    DDCAPS ddcaps;
     HRESULT hr;
 
     hr = IDirectDraw7_SetCooperativeLevel(tig_video_state.ddraw, tig_video_state.wnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
@@ -2357,9 +2358,11 @@ bool tig_video_ddraw_init_fullscreen(TigInitializeInfo* init_info)
 
     tig_video_fullscreen = true;
 
-    DDCAPS ddcaps = { 0 };
-    ddcaps.dwSize = sizeof(&ddcaps);
-    if (FAILED(IDirectDraw7_GetCaps(tig_video_state.ddraw, &ddcaps, NULL))) {
+    memset(&ddcaps, 0, sizeof(ddcaps));
+    ddcaps.dwSize = sizeof(ddcaps);
+
+    hr = IDirectDraw7_GetCaps(tig_video_state.ddraw, &ddcaps, NULL);
+    if (FAILED(hr)) {
         tig_debug_printf("Error retrieving caps from DirectDraw object.\n");
         return false;
     }
