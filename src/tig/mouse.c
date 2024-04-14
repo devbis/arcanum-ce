@@ -325,7 +325,7 @@ void tig_mouse_set_active(bool is_active)
             IDirectInputDevice_Acquire(tig_mouse_device);
             tig_mouse_active = is_active;
         } else {
-            IDirectInputDevice_Release(tig_mouse_device);
+            IDirectInputDevice_Unacquire(tig_mouse_device);
             tig_mouse_active = is_active;
         }
     } else {
