@@ -3546,10 +3546,17 @@ int tig_video_3d_set_viewport(TigVideoBuffer* video_buffer)
 // 0x526530
 static void sub_526530(const TigRect* a1, const TigRect* a2, D3DCOLOR* alpha)
 {
-    // TODO: Incomplete.
-    (void)a1;
-    (void)a2;
-    (void)alpha;
+    float v1 = (float)(a2->x - a1->x);
+    float v2 = (float)(a2->y - a1->y);
+    float v3 = (float)(a2->width + v1 - 1);
+    float v4 = v2 * ((float)(alpha[3] - alpha[0]) / (float)a1->height) + (float)alpha[0];
+    float v5 = v2 * ((float)(alpha[2] - alpha[1]) / (float)a1->height) + (float)alpha[1];
+    float v6 = (v5 - v4) / (float)a1->width;
+
+    alpha[3] = (D3DCOLOR)(v1 * v6 + v4) & 0xFF;
+    alpha[2] = (D3DCOLOR)(v3 * v6 + v4) & 0xFF;
+    alpha[1] = (D3DCOLOR)(v3 * v6 + v4) & 0xFF;
+    alpha[0] = (D3DCOLOR)(v1 * v6 + v4) & 0xFF;
 }
 
 // 0x526690
