@@ -2060,6 +2060,228 @@ int tig_video_buffer_save_to_bmp(TigVideoBufferSaveToBmpInfo* save_info)
     return rc;
 }
 
+// 0x5239D0
+int tig_video_buffer_load_from_bmp(const char* filename, TigVideoBuffer** video_buffer_ptr, unsigned int flags)
+{
+    TigFile* stream;
+    BITMAPFILEHEADER file_hdr;
+    BITMAPINFOHEADER info_hdr;
+    RGBQUAD quads[256];
+    TigVideoBufferCreateInfo vb_create_info;
+    TigVideoBufferData vb_data;
+    int rc;
+    int v1 = 1;
+    int padding;
+    int x;
+    int y;
+    void* dst;
+    void* dst_base;
+    int dst_pitch;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t clr;
+
+    if (tig_video_bpp == 8) {
+        return TIG_ERR_16;
+    }
+
+    stream = tig_file_fopen(filename, "rb");
+    if (stream == NULL) {
+        return TIG_ERR_13;
+    }
+
+    if (tig_file_fread(&file_hdr, sizeof(file_hdr), 1, stream) != 1) {
+        tig_file_fclose(stream);
+        return TIG_ERR_13;
+    }
+
+    if (tig_file_fread(&info_hdr, sizeof(info_hdr), 1, stream) != 1) {
+        tig_file_fclose(stream);
+        return TIG_ERR_13;
+    }
+
+    if (info_hdr.biCompression != 0
+        || (info_hdr.biBitCount != 8 && info_hdr.biBitCount != 24)) {
+        // FIXME: Leaking `stream`.
+        return TIG_ERR_13;
+    }
+
+    if (info_hdr.biHeight < 0) {
+        info_hdr.biHeight = -info_hdr.biHeight;
+        v1 = -1;
+    }
+
+    if ((flags & 0x1) != 0) {
+        vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+        vb_create_info.width = info_hdr.biWidth;
+        vb_create_info.height = info_hdr.biHeight;
+        vb_create_info.color_key = 0;
+        vb_create_info.background_color = 0;
+
+        rc = tig_video_buffer_create(&vb_create_info, video_buffer_ptr);
+        if (rc != TIG_OK) {
+            tig_file_fclose(stream);
+            return rc;
+        }
+    }
+
+    rc = tig_video_buffer_lock(*video_buffer_ptr);
+    if (rc != TIG_OK) {
+        tig_video_buffer_unlock(*video_buffer_ptr);
+
+        if ((flags & 0x1) != 0) {
+            tig_video_buffer_destroy(*video_buffer_ptr);
+        }
+
+        tig_file_fclose(stream);
+        return rc;
+    }
+
+    rc = tig_video_buffer_data(*video_buffer_ptr, &vb_data);
+    if (rc != TIG_OK) {
+        tig_video_buffer_unlock(*video_buffer_ptr);
+
+        if ((flags & 0x1) != 0) {
+            tig_video_buffer_destroy(*video_buffer_ptr);
+        }
+
+        tig_file_fclose(stream);
+        return rc;
+    }
+
+    if (vb_data.width < info_hdr.biWidth || vb_data.height < info_hdr.biHeight) {
+        tig_video_buffer_unlock(*video_buffer_ptr);
+
+        if ((flags & 0x1) != 0) {
+            tig_video_buffer_destroy(*video_buffer_ptr);
+        }
+
+        tig_file_fclose(stream);
+        return TIG_ERR_12;
+    }
+
+    if (info_hdr.biBitCount == 8) {
+        if (info_hdr.biClrUsed == 0) {
+            info_hdr.biClrUsed = 256;
+        }
+
+        if (tig_file_fread(quads, sizeof(RGBQUAD), info_hdr.biClrUsed, stream) != (int)info_hdr.biClrUsed) {
+            tig_video_buffer_unlock(*video_buffer_ptr);
+
+            if ((flags & 0x1) != 0) {
+                tig_video_buffer_destroy(*video_buffer_ptr);
+            }
+
+            tig_file_fclose(stream);
+            return TIG_ERR_13;
+        }
+        padding = info_hdr.biWidth % 4;
+    } else {
+        padding = 3 * info_hdr.biWidth % 4;
+    }
+
+    if (padding != 0) {
+        padding = 4 - padding;
+    }
+
+    if (v1 == -1) {
+        dst = vb_data.surface_data.pixels;
+        dst_pitch = vb_data.pitch;
+    } else {
+        dst = (uint8_t*)vb_data.surface_data.pixels + vb_data.pitch * ((vb_data.height - info_hdr.biHeight) / 2 + info_hdr.biHeight - 1);
+        dst_pitch = -vb_data.pitch;
+    }
+
+    for (y = 0; y < info_hdr.biHeight; y++) {
+        dst_base = dst;
+
+        for (x = 0; x < info_hdr.biWidth; x++) {
+            switch (info_hdr.biBitCount) {
+            case 8:
+                if (tig_file_fread(&clr, sizeof(clr), 1, stream) != 1) {
+                    tig_video_buffer_unlock(*video_buffer_ptr);
+
+                    if ((flags & 0x1) != 0) {
+                        tig_video_buffer_destroy(*video_buffer_ptr);
+                    }
+
+                    // FIXME: Leaking `stream`.
+                    return TIG_ERR_13;
+                }
+
+                r = quads[clr].rgbRed;
+                g = quads[clr].rgbGreen;
+                b = quads[clr].rgbBlue;
+                break;
+            case 16:
+                // NOTE: Unreachable (see validation in the beginning).
+                tig_video_buffer_unlock(*video_buffer_ptr);
+
+                if ((flags & 0x1) != 0) {
+                    tig_video_buffer_destroy(*video_buffer_ptr);
+                }
+
+                // FIXME: Leaking `stream`.
+                return TIG_ERR_13;
+            case 24:
+                if (tig_file_fread(&r, sizeof(r), 1, stream) != 1
+                    || tig_file_fread(&g, sizeof(g), 1, stream) != 1
+                    || tig_file_fread(&b, sizeof(b), 1, stream) != 1) {
+                    tig_video_buffer_unlock(*video_buffer_ptr);
+
+                    if ((flags & 0x1) != 0) {
+                        tig_video_buffer_destroy(*video_buffer_ptr);
+                    }
+
+                    // FIXME: Leaking `stream`.
+                    return TIG_ERR_13;
+                }
+                break;
+            default:
+                __assume(0);
+            }
+
+            switch (tig_video_bpp) {
+            case 16:
+                *(uint16_t*)dst = (uint16_t)tig_color_rgb_make(r, g, b);
+                dst = (uint8_t*)dst + 2;
+                break;
+            case 24:
+                ((uint8_t*)dst)[0] = r;
+                ((uint8_t*)dst)[1] = g;
+                ((uint8_t*)dst)[2] = b;
+                dst = (uint8_t*)dst + 3;
+                break;
+            case 32:
+                *(uint32_t*)dst = (uint32_t)tig_color_rgb_make(r, g, b);
+                dst = (uint8_t*)dst + 4;
+                break;
+            }
+        }
+
+        for (x = 0; x < padding; x++) {
+            if (tig_file_fread(&b, 1, 1, stream) != 1) {
+                tig_video_buffer_unlock(*video_buffer_ptr);
+
+                if ((flags & 0x1) != 0) {
+                    tig_video_buffer_destroy(*video_buffer_ptr);
+                }
+
+                // FIXME: Leaking `stream`.
+                return TIG_ERR_13;
+            }
+        }
+
+        dst = (uint8_t*)dst_base + dst_pitch;
+    }
+
+    tig_video_buffer_unlock(*video_buffer_ptr);
+
+    tig_file_fclose(stream);
+    return TIG_OK;
+}
+
 // 0x524080
 bool tig_video_platform_window_init(TigInitializeInfo* init_info)
 {

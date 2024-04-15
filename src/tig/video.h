@@ -158,6 +158,7 @@ int tig_video_buffer_blit(TigVideoBufferBlitInfo* vb_blit_info);
 int tig_video_buffer_get_pixel_color(TigVideoBuffer* video_buffer, int x, int y, unsigned int* color);
 int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned int color, TigVideoBufferTintMode mode);
 int tig_video_buffer_save_to_bmp(TigVideoBufferSaveToBmpInfo* save_info);
+int tig_video_buffer_load_from_bmp(const char* filename, TigVideoBuffer** video_buffer_ptr, unsigned int flags);
 
 #ifdef __cplusplus
 }
