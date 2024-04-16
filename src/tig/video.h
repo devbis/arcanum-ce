@@ -154,7 +154,7 @@ int tig_video_buffer_outline(TigVideoBuffer* video_buffer, TigRect* rect, int co
 int tig_video_buffer_fill(TigVideoBuffer* video_buffer, TigRect* rect, int color);
 int tig_video_buffer_line(TigVideoBuffer* video_buffer, TigLine* line, TigRect* a3, unsigned int color);
 int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags);
-int tig_video_buffer_blit(TigVideoBufferBlitInfo* vb_blit_info);
+int tig_video_buffer_blit(TigVideoBufferBlitInfo* blit_info);
 int tig_video_buffer_get_pixel_color(TigVideoBuffer* video_buffer, int x, int y, unsigned int* color);
 int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned int color, TigVideoBufferTintMode mode);
 int tig_video_buffer_save_to_bmp(TigVideoBufferSaveToBmpInfo* save_info);

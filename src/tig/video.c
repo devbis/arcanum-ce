@@ -21,8 +21,8 @@ typedef struct TigVideoBuffer {
     /* 0014 */ int texture_width;
     /* 0018 */ int texture_height;
     /* 001C */ int pitch;
-    /* 0020 */ int background_color;
-    /* 0024 */ int color_key;
+    /* 0020 */ unsigned int background_color;
+    /* 0024 */ unsigned int color_key;
     /* 0028 */ LPDIRECTDRAWSURFACE7 surface;
     /* 002C */ DDSURFACEDESC2 surface_desc;
     /* 00A8 */ union {
@@ -1670,14 +1670,735 @@ int sub_520FB0(TigVideoBuffer* video_buffer, unsigned int flags)
     return TIG_OK;
 }
 
-// NOTE: This function is pretty big, not sure if its possible to implement it
-// one-to-one.
-//
 // 0x521000
-int tig_video_buffer_blit(TigVideoBufferBlitInfo* vb_blit_info)
+int tig_video_buffer_blit(TigVideoBufferBlitInfo* blit_info)
 {
-    // TODO: Incomplete.
-    (void)vb_blit_info;
+    bool stretched;
+    float width_ratio;
+    float height_ratio;
+    TigRect bounds;
+    TigRect blit_src_rect;
+    TigRect blit_dst_rect;
+    TigRect tmp_rect;
+    int rc;
+
+    if (blit_info->src_rect->width == blit_info->dst_rect->width
+        && blit_info->src_rect->height == blit_info->dst_rect->height) {
+        stretched = false;
+
+        // NOTE: Original code does not initialize these values, but we have
+        // to keep compiler happy.
+        width_ratio = 1;
+        height_ratio = 1;
+    } else {
+        stretched = true;
+        width_ratio = (float)blit_info->src_rect->width / (float)blit_info->dst_rect->width;
+        height_ratio = (float)blit_info->src_rect->height / (float)blit_info->dst_rect->height;
+    }
+
+    bounds.x = 0;
+    bounds.y = 0;
+    bounds.width = blit_info->src_video_buffer->frame.width;
+    bounds.height = blit_info->src_video_buffer->frame.height;
+
+    rc = tig_rect_intersection(blit_info->src_rect,
+        &bounds,
+        &blit_src_rect);
+    if (rc != TIG_OK) {
+        return TIG_OK;
+    }
+
+    tmp_rect = *blit_info->dst_rect;
+
+    if (stretched) {
+        tmp_rect.x += (int)((float)(blit_src_rect.x - blit_info->src_rect->x) / width_ratio);
+        tmp_rect.y += (int)((float)(blit_src_rect.y - blit_info->src_rect->y) / height_ratio);
+        tmp_rect.width -= (int)((float)(blit_info->src_rect->width - blit_src_rect.width) / width_ratio);
+        tmp_rect.height -= (int)((float)(blit_info->src_rect->height - blit_src_rect.height) / height_ratio);
+    } else {
+        tmp_rect.x += blit_src_rect.x - blit_info->src_rect->x;
+        tmp_rect.y += blit_src_rect.y - blit_info->src_rect->y;
+        tmp_rect.width -= blit_info->src_rect->width - blit_src_rect.width;
+        tmp_rect.height -= blit_info->src_rect->height - blit_src_rect.height;
+    }
+
+    bounds.x = 0;
+    bounds.y = 0;
+    bounds.width = blit_info->dst_video_buffer->frame.width;
+    bounds.height = blit_info->dst_video_buffer->frame.height;
+
+    rc = tig_rect_intersection(&tmp_rect,
+        &bounds,
+        &blit_dst_rect);
+    if (rc != TIG_OK) {
+        return TIG_OK;
+    }
+
+    if (stretched) {
+        blit_src_rect.x += (int)((float)(blit_dst_rect.x - tmp_rect.x) / width_ratio);
+        blit_src_rect.y += (int)((float)(blit_dst_rect.y - tmp_rect.y) / height_ratio);
+        blit_src_rect.width -= (int)((float)(tmp_rect.width - blit_dst_rect.width) / width_ratio);
+        blit_src_rect.height -= (int)((float)(tmp_rect.height - blit_dst_rect.height) / height_ratio);
+    } else {
+        blit_src_rect.x += blit_dst_rect.x - tmp_rect.x;
+        blit_src_rect.y += blit_dst_rect.y - tmp_rect.y;
+        blit_src_rect.width -= tmp_rect.width - blit_dst_rect.width;
+        blit_src_rect.height -= tmp_rect.height - blit_dst_rect.height;
+    }
+
+    if ((blit_info->dst_video_buffer->flags & TIG_VIDEO_BUFFER_3D) != 0
+        && (blit_info->src_video_buffer->flags & TIG_VIDEO_BUFFER_TEXTURE) != 0) {
+        DDSURFACEDESC2 ddsd;
+        HRESULT hr;
+        D3DCOLOR alpha[4];
+        D3DCOLOR color[4];
+        RECT tex_native_rect;
+        D3DTLVERTEX verts[4];
+
+        rc = tig_video_3d_set_viewport(blit_info->dst_video_buffer);
+        if (rc != TIG_OK) {
+            return rc;
+        }
+
+        ddsd.dwSize = sizeof(ddsd);
+        hr = IDirectDrawSurface7_GetSurfaceDesc(blit_info->src_video_buffer->surface, &ddsd);
+        if (FAILED(hr)) {
+            tig_video_print_dd_result(hr);
+            return TIG_ERR_16;
+        }
+
+        if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0004) != 0) {
+            alpha[3] = 0xFF000000;
+            alpha[2] = 0xFF000000;
+            alpha[1] = 0xFF000000;
+            alpha[0] = 0xFF000000;
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_SRCBLEND,
+                D3DBLEND_ONE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_DESTBLEND,
+                D3DBLEND_ONE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_ALPHABLENDENABLE,
+                TRUE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        } else if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0010) != 0) {
+            alpha[3] = 0xFF000000;
+            alpha[2] = 0xFF000000;
+            alpha[1] = 0xFF000000;
+            alpha[0] = 0xFF000000;
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_SRCBLEND,
+                D3DBLEND_ZERO);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_DESTBLEND,
+                D3DBLEND_SRCCOLOR);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_ALPHABLENDENABLE,
+                TRUE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        } else if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0040) != 0
+            || (blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0100) != 0) {
+            if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0100) != 0) {
+                alpha[0] = blit_info->field_C;
+                alpha[1] = blit_info->field_D;
+                alpha[2] = blit_info->field_E;
+                alpha[3] = blit_info->field_F;
+                sub_526530(&(blit_info->src_video_buffer->frame), &blit_src_rect, alpha);
+                alpha[0] <<= 24;
+                alpha[1] <<= 24;
+                alpha[2] <<= 24;
+                alpha[3] <<= 24;
+            } else {
+                alpha[3] = blit_info->field_C << 24;
+                alpha[2] = blit_info->field_C << 24;
+                alpha[1] = blit_info->field_C << 24;
+                alpha[0] = blit_info->field_C << 24;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_SRCBLEND,
+                D3DBLEND_SRCALPHA);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_DESTBLEND,
+                D3DBLEND_INVSRCALPHA);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_ALPHABLENDENABLE,
+                TRUE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_COLORVERTEX,
+                TRUE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        } else {
+            alpha[3] = 0xFF000000;
+            alpha[2] = 0xFF000000;
+            alpha[1] = 0xFF000000;
+            alpha[0] = 0xFF000000;
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_ALPHABLENDENABLE,
+                FALSE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_COLORVERTEX,
+                FALSE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        }
+
+        if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0200) != 0) {
+            D3DCOLOR clr = (tig_color_get_red(blit_info->field_10) << 16)
+                | (tig_color_get_green(blit_info->field_10) << 8)
+                | tig_color_get_blue(blit_info->field_10);
+            color[3] = clr;
+            color[2] = clr;
+            color[1] = clr;
+            color[0] = clr;
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_COLORVERTEX,
+                TRUE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        } else if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0400) != 0) {
+            color[0] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_10) >> tig_color_red_shift])
+                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_10) >> tig_color_green_shift])
+                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_10) >> tig_color_blue_shift]);
+
+            color[1] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_14) >> tig_color_red_shift])
+                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_14) >> tig_color_green_shift])
+                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_14) >> tig_color_blue_shift]);
+
+            color[2] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_18) >> tig_color_red_shift])
+                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_18) >> tig_color_green_shift])
+                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_18) >> tig_color_blue_shift]);
+
+            color[3] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_1C) >> tig_color_red_shift])
+                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_1C) >> tig_color_green_shift])
+                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_1C) >> tig_color_blue_shift]);
+
+            if (blit_info->field_20 != NULL) {
+                sub_526690(blit_info->field_20, &blit_src_rect, color);
+            } else {
+                sub_526690(&(blit_info->src_video_buffer->frame), &blit_src_rect, color);
+            }
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_COLORVERTEX,
+                TRUE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        } else {
+            color[3] = 0x00FFFFFF;
+            color[2] = 0x00FFFFFF;
+            color[1] = 0x00FFFFFF;
+            color[0] = 0x00FFFFFF;
+
+            hr = IDirect3DDevice7_SetRenderState(tig_video_state.d3d_device,
+                D3DRENDERSTATE_COLORVERTEX,
+                FALSE);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        }
+
+        tex_native_rect.left = blit_src_rect.x;
+        tex_native_rect.top = blit_src_rect.y;
+        tex_native_rect.right = blit_src_rect.x + blit_src_rect.width;
+        tex_native_rect.bottom = blit_src_rect.y + blit_src_rect.height;
+
+        if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT) != 0) {
+            tex_native_rect.left = blit_info->src_video_buffer->frame.width - tex_native_rect.left - 1;
+            tex_native_rect.right = blit_info->src_video_buffer->frame.width - tex_native_rect.right - 1;
+        }
+
+        if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN) != 0) {
+            tex_native_rect.top = blit_info->src_video_buffer->frame.height - tex_native_rect.top - 1;
+            tex_native_rect.bottom = blit_info->src_video_buffer->frame.height - tex_native_rect.bottom - 1;
+        }
+
+        verts[0].sx = (D3DVALUE)blit_dst_rect.x;
+        verts[0].sy = (D3DVALUE)blit_dst_rect.y;
+        verts[0].sz = 0.5f;
+        verts[0].rhw = 1.0f;
+        verts[0].color = alpha[0] | color[0];
+        verts[0].tu = ((D3DVALUE)tex_native_rect.left + 0.5f) / (D3DVALUE)blit_info->src_video_buffer->texture_width;
+        verts[0].tv = ((D3DVALUE)tex_native_rect.top + 0.5f) / (D3DVALUE)blit_info->src_video_buffer->texture_height;
+
+        verts[1].sx = (D3DVALUE)(blit_dst_rect.x + blit_dst_rect.width);
+        verts[1].sy = verts[0].sy;
+        verts[1].sz = 0.5f;
+        verts[1].rhw = 1.0f;
+        verts[1].color = alpha[1] | color[1];
+        verts[1].tu = ((D3DVALUE)tex_native_rect.right + 0.5f) / (D3DVALUE)blit_info->src_video_buffer->texture_width;
+        verts[1].tv = verts[0].tv;
+
+        verts[2].sx = verts[1].sx;
+        verts[2].sy = (D3DVALUE)(blit_dst_rect.y + blit_dst_rect.height);
+        verts[2].sz = 0.5f;
+        verts[2].rhw = 1.0f;
+        verts[2].color = alpha[2] | color[2];
+        verts[2].tu = verts[1].tu;
+        verts[2].tv = ((D3DVALUE)tex_native_rect.bottom + 0.5f) / (D3DVALUE)blit_info->src_video_buffer->texture_height;
+
+        verts[3].sx = verts[0].sx;
+        verts[3].sy = verts[2].sy;
+        verts[3].sz = 0.5f;
+        verts[3].rhw = 1.0f;
+        verts[3].color = alpha[3] | color[3];
+        verts[3].tu = verts[0].tu;
+        verts[3].tv = verts[2].tv;
+
+        hr = IDirect3DDevice7_SetTexture(tig_video_state.d3d_device, 0, blit_info->src_video_buffer->surface);
+        if (FAILED(hr)) {
+            tig_video_print_dd_result(hr);
+            return TIG_ERR_16;
+        }
+
+        hr = IDirect3DDevice7_DrawPrimitive(tig_video_state.d3d_device,
+            D3DPT_TRIANGLEFAN,
+            D3DFVF_TLVERTEX,
+            verts,
+            4,
+            0);
+        if (FAILED(hr)) {
+            tig_video_print_dd_result(hr);
+            return TIG_ERR_16;
+        }
+
+        return TIG_OK;
+    }
+
+    if ((blit_info->dst_video_buffer->flags & TIG_VIDEO_BUFFER_3D) != 0
+        && (blit_info->flags & (TIG_VIDEO_BUFFER_BLIT_0x0400 | TIG_VIDEO_BUFFER_BLIT_0x0040)) != 0) {
+        // NOTE: What for?
+        tig_debug_printf("$");
+    }
+
+    if ((blit_info->flags & (TIG_VIDEO_BUFFER_BLIT_0x0400 | TIG_VIDEO_BUFFER_BLIT_0x0040)) != 0) {
+        int bytes_per_pixel;
+        uint8_t* src;
+        int src_pitch;
+        int src_step;
+        uint8_t* dst;
+        int dst_skip;
+        int x;
+        int y;
+
+        rc = tig_video_buffer_lock(blit_info->src_video_buffer);
+        if (rc != TIG_OK) {
+            return rc;
+        }
+
+        rc = tig_video_buffer_lock(blit_info->dst_video_buffer);
+        if (rc != TIG_OK) {
+            tig_video_buffer_unlock(blit_info->src_video_buffer);
+            return rc;
+        }
+
+        switch (tig_video_bpp) {
+        case 8:
+            bytes_per_pixel = 1;
+            break;
+        case 16:
+            bytes_per_pixel = 2;
+            break;
+        case 24:
+            bytes_per_pixel = 3;
+            break;
+        case 32:
+            bytes_per_pixel = 4;
+            break;
+        default:
+            __assume(0);
+        }
+
+        dst = (uint8_t*)blit_info->dst_video_buffer->surface_data.pixels
+            + blit_info->dst_video_buffer->pitch * blit_dst_rect.y
+            + bytes_per_pixel * blit_dst_rect.x;
+        dst_skip = blit_info->dst_video_buffer->pitch
+            - bytes_per_pixel * blit_dst_rect.width;
+
+        src = (uint8_t*)blit_info->src_video_buffer->surface_data.pixels;
+        src_pitch = blit_info->src_video_buffer->pitch;
+        src_step = bytes_per_pixel;
+
+        switch (blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRRORANY) {
+        case TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT:
+            src = (uint8_t*)blit_info->src_video_buffer->surface_data.pixels
+                + blit_info->src_video_buffer->pitch * blit_src_rect.y
+                + bytes_per_pixel * (blit_info->src_video_buffer->surface_desc.dwWidth - blit_src_rect.x - 1);
+            if (!stretched) {
+                src_pitch += blit_src_rect.width * bytes_per_pixel;
+            }
+            src_step = -bytes_per_pixel;
+            break;
+        case TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN:
+            src = (uint8_t*)blit_info->src_video_buffer->surface_data.pixels
+                + blit_info->src_video_buffer->pitch * (blit_src_rect.height - blit_src_rect.y - 1)
+                + bytes_per_pixel * blit_src_rect.x;
+            src_pitch = -src_pitch;
+            if (!stretched) {
+                src_pitch -= blit_src_rect.width * bytes_per_pixel;
+            }
+            src_step = bytes_per_pixel;
+            break;
+        case TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT | TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN:
+            src = (uint8_t*)blit_info->src_video_buffer->surface_data.pixels
+                + blit_info->src_video_buffer->pitch * (blit_src_rect.height - blit_src_rect.y - 1)
+                + bytes_per_pixel * (blit_info->src_video_buffer->surface_desc.dwWidth - blit_src_rect.x - 1);
+            src_pitch = -src_pitch;
+            if (!stretched) {
+                src_pitch += blit_src_rect.width * bytes_per_pixel;
+            }
+            src_step = -bytes_per_pixel;
+            break;
+        default:
+            src = (uint8_t*)blit_info->src_video_buffer->surface_data.pixels
+                + blit_info->src_video_buffer->pitch * blit_src_rect.y
+                + bytes_per_pixel * blit_src_rect.x;
+            if (!stretched) {
+                src_pitch -= blit_src_rect.width * bytes_per_pixel;
+            }
+            src_step = bytes_per_pixel;
+            break;
+        }
+
+        if (stretched) {
+            uint8_t* src_base = src;
+            double height_err = 0.5;
+            double width_err;
+
+            if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0040) != 0) {
+                switch (tig_video_bpp) {
+                case 8:
+                    break;
+                case 16:
+                    // TODO: Incomplete.
+                    break;
+                case 24:
+                    // TODO: Incomplete.
+                    break;
+                case 32:
+                    for (y = 0; y < blit_dst_rect.height; ++y) {
+                        width_err = 0.5;
+                        for (x = 0; x < blit_dst_rect.width; ++x) {
+                            if ((blit_info->src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) == 0
+                                || *(uint32_t*)src != blit_info->src_video_buffer->color_key) {
+                                uint32_t src_rm = *(uint32_t*)src & tig_color_red_mask;
+                                uint32_t src_gm = *(uint32_t*)src & tig_color_green_mask;
+                                uint32_t src_bm = *(uint32_t*)src & tig_color_blue_mask;
+
+                                uint32_t dst_rm = *(uint32_t*)dst & tig_color_red_mask;
+                                uint32_t dst_gm = *(uint32_t*)dst & tig_color_green_mask;
+                                uint32_t dst_bm = *(uint32_t*)dst & tig_color_blue_mask;
+
+                                *(uint32_t*)dst = (dst_rm + ((blit_info->field_C * (src_rm - dst_rm)) >> 8))
+                                    | (dst_gm + ((blit_info->field_C * (src_gm - dst_gm)) >> 8))
+                                    | (dst_bm + ((blit_info->field_C * (src_bm - dst_bm)) >> 8));
+                            }
+
+                            width_err += width_ratio;
+                            src += src_step;
+
+                            while (width_err > 1.0) {
+                                width_err -= 1.0;
+                                src += src_step;
+                            }
+
+                            dst += 4;
+                        }
+
+                        height_err += height_ratio;
+
+                        while (height_err > 1.0) {
+                            height_err -= 1.0;
+                            src_base += src_pitch;
+                        }
+                        src = src_base;
+
+                        dst += 4 * dst_skip;
+                    }
+                    break;
+                }
+            } else {
+                tig_video_buffer_unlock(blit_info->dst_video_buffer);
+                tig_video_buffer_unlock(blit_info->src_video_buffer);
+                return TIG_ERR_12;
+            }
+        } else {
+            if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0400) != 0) {
+                // 0x5221A2
+                int r1 = tig_color_get_red(blit_info->field_10);
+                int g1 = tig_color_get_green(blit_info->field_10);
+                int b1 = tig_color_get_blue(blit_info->field_10);
+
+                int r2 = tig_color_get_red(blit_info->field_14);
+                int g2 = tig_color_get_green(blit_info->field_14);
+                int b2 = tig_color_get_blue(blit_info->field_14);
+
+                int r3 = tig_color_get_red(blit_info->field_18);
+                int g3 = tig_color_get_green(blit_info->field_18);
+                int b3 = tig_color_get_blue(blit_info->field_18);
+
+                int r4 = tig_color_get_red(blit_info->field_1C);
+                int g4 = tig_color_get_green(blit_info->field_1C);
+                int b4 = tig_color_get_blue(blit_info->field_1C);
+
+                float div = (float)blit_info->field_20->height;
+                float mult = (float)(blit_src_rect.y - blit_info->field_20->y);
+
+                float r_start = (float)(r4 - r1) / div * mult + (float)r1;
+                float r_end = (float)(r3 - r2) / div * mult + (float)r2;
+
+                float g_start = (float)(g4 - g1) / div * mult + (float)g1;
+                float g_end = (float)(g3 - g2) / div * mult + (float)g2;
+
+                float b_start = (float)(b4 - b1) / div * mult + (float)b1;
+                float b_end = (float)(b3 - b2) / div * mult + (float)b2;
+
+                float r_step;
+                float r_value;
+
+                float g_step;
+                float g_value;
+
+                float b_step;
+                float b_value;
+
+                switch (tig_video_bpp) {
+                case 8:
+                    break;
+                case 16:
+                    // TODO: Incomplete.
+                    break;
+                case 24:
+                    // TODO: Incomplete.
+                    break;
+                case 32:
+                    for (y = 0; y < blit_dst_rect.height; ++y) {
+                        r_step = (r_end - r_start) / (float)blit_info->field_20->width;
+                        r_value = r_step * (blit_src_rect.x - blit_info->field_20->x) + r_start;
+
+                        g_step = (g_end - g_start) / (float)blit_info->field_20->width;
+                        g_value = r_step * (blit_src_rect.x - blit_info->field_20->x) + g_start;
+
+                        b_step = (b_end - b_start) / (float)blit_info->field_20->width;
+                        b_value = b_step * (blit_src_rect.x - blit_info->field_20->x) + b_start;
+
+                        for (x = 0; x < blit_dst_rect.width; ++x) {
+                            if ((blit_info->src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) == 0
+                                || *(uint32_t*)src != blit_info->src_video_buffer->color_key) {
+                                uint32_t tint_color = (tig_color_red_index_table[(uint8_t)r_value] << tig_color_red_shift)
+                                    | (tig_color_green_index_table[(uint8_t)g_value] << tig_color_green_shift)
+                                    | (tig_color_blue_index_table[(uint8_t)b_value] << tig_color_blue_shift);
+
+                                uint8_t tint_r = (uint8_t)((tint_color & tig_color_red_mask) >> tig_color_red_shift);
+                                uint8_t tint_g = (uint8_t)((tint_color & tig_color_green_mask) >> tig_color_green_shift);
+                                uint8_t tint_b = (uint8_t)((tint_color & tig_color_blue_mask) >> tig_color_blue_shift);
+
+                                uint8_t src_r = (uint8_t)((*(uint32_t*)src & tig_color_red_mask) >> tig_color_red_shift);
+                                uint8_t src_g = (uint8_t)((*(uint32_t*)src & tig_color_green_mask) >> tig_color_green_shift);
+                                uint8_t src_b = (uint8_t)((*(uint32_t*)src & tig_color_blue_mask) >> tig_color_blue_mask);
+
+                                *(uint32_t*)dst = (tig_color_red_intensity_table[(tig_color_red_range + 1) * (src_r + tint_r)] << tig_color_red_shift)
+                                    | (tig_color_green_intensity_table[(tig_color_green_range + 1) * (src_g + tint_g)] << tig_color_green_shift)
+                                    | (tig_color_blue_intensity_table[(tig_color_blue_range + 1) * (src_b + tint_b)] << tig_color_blue_shift);
+                            }
+
+                            r_value += r_step;
+                            g_value += g_step;
+                            b_value += b_step;
+
+                            src += src_step;
+                            dst += 4;
+                        }
+                    }
+                    break;
+                }
+            } else if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0040) != 0) {
+                // 0x522A40
+                switch (tig_video_bpp) {
+                case 8:
+                    break;
+                case 16:
+                    // TODO: Incomplete.
+                    break;
+                case 24:
+                    // TODO: Incomplete.
+                    break;
+                case 32:
+                    for (y = 0; y < blit_dst_rect.height; y++) {
+                        uint8_t* src_base = src;
+
+                        for (x = 0; x < blit_dst_rect.width; x++) {
+                            if ((blit_info->src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) == 0
+                                || *(uint32_t*)src != blit_info->src_video_buffer->color_key) {
+                                uint32_t src_rm = *(uint32_t*)src & tig_color_red_mask;
+                                uint32_t src_gm = *(uint32_t*)src & tig_color_green_mask;
+                                uint32_t src_bm = *(uint32_t*)src & tig_color_blue_mask;
+
+                                uint32_t dst_rm = *(uint32_t*)dst & tig_color_red_mask;
+                                uint32_t dst_gm = *(uint32_t*)dst & tig_color_green_mask;
+                                uint32_t dst_bm = *(uint32_t*)dst & tig_color_blue_mask;
+
+                                *(uint32_t*)dst = (dst_rm + ((blit_info->field_C * (src_rm - dst_rm)) >> 8))
+                                    | (dst_gm + ((blit_info->field_C * (src_gm - dst_gm)) >> 8))
+                                    | (dst_bm + ((blit_info->field_C * (src_bm - dst_bm)) >> 8));
+                            }
+
+                            src += src_step;
+                            dst += 4;
+                        }
+
+                        src = src_base + src_pitch;
+                        dst += dst_skip;
+                    }
+                    break;
+                }
+            } else {
+                tig_video_buffer_unlock(blit_info->dst_video_buffer);
+                tig_video_buffer_unlock(blit_info->src_video_buffer);
+                return TIG_ERR_12;
+            }
+        }
+
+        tig_video_buffer_unlock(blit_info->dst_video_buffer);
+        tig_video_buffer_unlock(blit_info->src_video_buffer);
+    } else {
+        RECT src_native_rect;
+        RECT dst_native_rect;
+        HRESULT hr;
+
+        if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT) != 0) {
+            blit_src_rect.x = blit_info->src_video_buffer->frame.width - blit_src_rect.width - blit_src_rect.x;
+        }
+
+        if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN) != 0) {
+            blit_src_rect.y = blit_info->src_video_buffer->frame.height - blit_src_rect.height - blit_src_rect.y;
+        }
+
+        src_native_rect.left = blit_src_rect.x;
+        src_native_rect.top = blit_src_rect.y;
+        src_native_rect.right = blit_src_rect.x + blit_src_rect.width;
+        src_native_rect.bottom = blit_src_rect.y + blit_src_rect.height;
+
+        dst_native_rect.left = blit_dst_rect.x;
+        dst_native_rect.top = blit_dst_rect.y;
+        dst_native_rect.right = blit_dst_rect.x + blit_dst_rect.width;
+        dst_native_rect.bottom = blit_dst_rect.y + blit_dst_rect.height;
+
+        if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRRORANY) == 0
+            && !stretched
+            && (blit_info->dst_video_buffer->flags & TIG_VIDEO_BUFFER_SYSTEM_MEMORY) == 0) {
+            hr = IDirectDrawSurface7_BltFast(blit_info->dst_video_buffer->surface,
+                blit_dst_rect.x,
+                blit_dst_rect.y,
+                blit_info->src_video_buffer->surface,
+                &src_native_rect,
+                (blit_info->src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY)
+                    ? DDBLTFAST_SRCCOLORKEY | DDBLTFAST_WAIT
+                    : DDBLTFAST_WAIT);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        } else {
+            LPDDBLTFX pfx;
+            DDBLTFX fx;
+            DWORD flags = DDBLT_WAIT;
+
+            if ((blit_info->src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) != 0) {
+                flags |= DDBLT_KEYSRC;
+            }
+
+            if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRRORANY) != 0) {
+                flags |= DDBLT_DDFX;
+
+                fx.dwSize = sizeof(fx);
+                fx.dwDDFX = 0;
+                pfx = &fx;
+
+                if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRROR_LEFT_RIGHT) != 0) {
+                    fx.dwDDFX |= DDBLTFX_MIRRORLEFTRIGHT;
+                }
+
+                if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN) != 0) {
+                    fx.dwDDFX |= DDBLTFX_MIRRORUPDOWN;
+                }
+            } else {
+                pfx = NULL;
+            }
+
+            hr = IDirectDrawSurface7_Blt(blit_info->dst_video_buffer->surface,
+                &dst_native_rect,
+                blit_info->src_video_buffer->surface,
+                &src_native_rect,
+                flags,
+                pfx);
+            if (FAILED(hr)) {
+                tig_video_print_dd_result(hr);
+                return TIG_ERR_16;
+            }
+        }
+    }
 
     return TIG_OK;
 }
