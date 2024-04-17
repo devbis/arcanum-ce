@@ -1,5 +1,5 @@
-#ifndef TIG_UTILS_NET_UTILS_H_
-#define TIG_UTILS_NET_UTILS_H_
+#ifndef TIG_NET_UTILS_H_
+#define TIG_NET_UTILS_H_
 
 // NET UTILS
 // ---
@@ -25,4 +25,4 @@ bool sub_53ABF0(int a1, const char* a2);
 }
 #endif
 
-#endif /* TIG_UTILS_NET_UTILS_H_ */
+#endif /* TIG_NET_UTILS_H_ */
