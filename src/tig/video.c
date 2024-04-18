@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "tig/art.h"
+#include "tig/bmp_utils.h"
 #include "tig/color.h"
 #include "tig/core.h"
 #include "tig/debug.h"
@@ -78,7 +79,7 @@ static bool tig_video_surface_fill(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, 
 static int tig_video_screenshot_make_internal(int a1);
 static unsigned int tig_video_color_to_mask(COLORREF color);
 static void tig_video_print_dd_result(HRESULT hr);
-static int sub_525ED0(TigVideoBufferData* video_buffer_data, TigRect* rect, const char* file_name, bool a4);
+static int tig_video_buffer_data_to_bmp(TigVideoBufferData* video_buffer_data, TigRect* rect, const char* file_name, bool palette_indexed);
 static int tig_video_3d_set_viewport(TigVideoBuffer* video_buffer);
 static void sub_526530(const TigRect* a, const TigRect* b, D3DCOLOR* alpha);
 static void sub_526690(TigRect* a, TigRect* b, D3DCOLOR* color);
@@ -2771,7 +2772,7 @@ int tig_video_buffer_save_to_bmp(TigVideoBufferSaveToBmpInfo* save_info)
         rect.height = video_buffer_data.height;
     }
 
-    rc = sub_525ED0(&video_buffer_data,
+    rc = tig_video_buffer_data_to_bmp(&video_buffer_data,
         &rect,
         save_info->path,
         (save_info->flags & 1) != 0);
@@ -3840,7 +3841,7 @@ int tig_video_screenshot_make_internal(int a1)
     rect.width = tig_video_state.current_surface_desc.dwWidth;
     rect.height = tig_video_state.current_surface_desc.dwHeight;
 
-    rc = sub_525ED0(&video_buffer_data, &rect, path, false);
+    rc = tig_video_buffer_data_to_bmp(&video_buffer_data, &rect, path, false);
 
     tig_video_main_surface_unlock();
 
@@ -4211,15 +4212,218 @@ void tig_video_print_dd_result(HRESULT hr)
 }
 
 // 0x525ED0
-static int sub_525ED0(TigVideoBufferData* video_buffer_data, TigRect* rect, const char* file_name, bool a4)
+int tig_video_buffer_data_to_bmp(TigVideoBufferData* video_buffer_data, TigRect* rect, const char* file_name, bool palette_indexed)
 {
-    // TODO: Incomplete.
-    (void)video_buffer_data;
-    (void)rect;
-    (void)file_name;
-    (void)a4;
+    BITMAPFILEHEADER file_hdr;
+    BITMAPINFOHEADER info_hdr;
+    int size;
+    int padding;
+    TigFile* stream;
+    void* src;
+    uint16_t* src16;
+    uint8_t* src24;
+    uint32_t* src32;
+    uint32_t clr;
+    uint8_t b;
+    int x;
+    int y;
 
-    return 0;
+    if (palette_indexed) {
+        padding = rect->width % 4;
+        if (padding != 0) {
+            padding = 4 - padding;
+        }
+
+        size = rect->height * (rect->width + padding) + sizeof(RGBQUAD) * 256;
+        file_hdr.bfOffBits = sizeof(file_hdr) + sizeof(info_hdr) + sizeof(RGBQUAD) * 256;
+    } else {
+        padding = 3 * rect->width % 4;
+        if (padding != 0) {
+            padding = 4 - padding;
+        }
+        size = rect->height * (padding + 3 * rect->width);
+        file_hdr.bfOffBits = sizeof(file_hdr) + sizeof(info_hdr);
+    }
+
+    file_hdr.bfSize = size + sizeof(file_hdr) + sizeof(info_hdr);
+    file_hdr.bfType = 0x4D42;
+    file_hdr.bfReserved1 = 0;
+    file_hdr.bfReserved2 = 0;
+
+    info_hdr.biWidth = rect->width;
+    info_hdr.biHeight = rect->height;
+    info_hdr.biPlanes = 1;
+    info_hdr.biCompression = 0;
+    info_hdr.biSizeImage = 0;
+    info_hdr.biXPelsPerMeter = 2880;
+    info_hdr.biYPelsPerMeter = 2880;
+    info_hdr.biClrImportant = 0;
+    info_hdr.biClrUsed = 0;
+    info_hdr.biBitCount = palette_indexed ? 8 : 24;
+
+    stream = tig_file_fopen(file_name, "wb");
+    if (stream == NULL) {
+        return TIG_ERR_13;
+    }
+
+    if (tig_file_fwrite(&file_hdr, sizeof(file_hdr), 1, stream) != 1) {
+        tig_file_fclose(stream);
+        tig_file_remove(file_name);
+        return TIG_ERR_13;
+    }
+
+    if (tig_file_fwrite(&info_hdr, sizeof(info_hdr), 1, stream) != 1) {
+        tig_file_fclose(stream);
+        tig_file_remove(file_name);
+        return TIG_ERR_13;
+    }
+
+    src = (uint8_t*)video_buffer_data->surface_data.pixels
+        + video_buffer_data->pitch * (rect->y + rect->height - 1)
+        + rect->x * (tig_video_bpp / 8);
+    if (palette_indexed) {
+        int pixels_size = 3 * rect->width * rect->height;
+        uint8_t* pixels = (uint8_t*)MALLOC(pixels_size);
+        uint8_t* curr = pixels;
+        uint8_t palette[768];
+        int index;
+        RGBQUAD quad;
+
+        for (y = 0; y < rect->height; y++) {
+            for (x = 0; x < rect->height; x++) {
+                // NOTE: Rather ugly, but I'm almost 100% sure it was written like
+                // this in the first place (i.e. not a result of compiler
+                // optimization).
+                src16 = (uint16_t*)src;
+                src24 = (uint8_t*)src;
+                src32 = (uint32_t*)src;
+
+                switch (tig_video_bpp) {
+                case 16:
+                    clr = *src16;
+                    break;
+                case 24:
+                    clr = src24[0] | (src24[1] << 8) | (src24[1] << 16);
+                    break;
+                default:
+                    clr = *src32;
+                    break;
+                }
+
+                *curr++ = (uint8_t)tig_color_get_blue(clr);
+                *curr++ = (uint8_t)tig_color_get_green(clr);
+                *curr++ = (uint8_t)tig_color_get_red(clr);
+
+                src16++;
+                src24 += 3;
+                src32++;
+            }
+
+            src = (uint8_t*)src - video_buffer_data->pitch;
+        }
+
+        sub_53A2A0(pixels, pixels_size, 1);
+        sub_53A8B0();
+        sub_53A310();
+        sub_53A390(palette);
+
+        quad.rgbReserved = 0;
+
+        for (index = 0; index < 256; index++) {
+            quad.rgbBlue = palette[index * 3];
+            quad.rgbGreen = palette[index * 3 + 1];
+            quad.rgbRed = palette[index * 3 + 2];
+            if (tig_file_fwrite(&quad, sizeof(quad), 1, stream) != 1) {
+                // FIXME: Leaking `stream`.
+                free(pixels);
+                return TIG_ERR_13;
+            }
+        }
+
+        sub_53A3C0();
+
+        curr = pixels;
+        for (y = 0; y < rect->height; y++) {
+            for (x = 0; x < rect->width; x++) {
+                b = (uint8_t)sub_53A4D0(curr[0], curr[1], curr[2]);
+                if (tig_file_fwrite(&b, sizeof(b), 1, stream) != 1) {
+                    // FIXME: Leaks `stream`.
+                    free(pixels);
+                    return TIG_ERR_13;
+                }
+                curr += 3;
+            }
+
+            b = 0;
+            for (x = 0; x < padding; x++) {
+                if (tig_file_fwrite(&b, sizeof(b), 1, stream) != 1) {
+                    // FIXME: Leaks `stream`.
+                    free(pixels);
+                    return TIG_ERR_13;
+                }
+            }
+        }
+
+        free(pixels);
+    } else {
+        for (y = 0; y < rect->height; y++) {
+            // NOTE: Rather ugly, but I'm almost 100% sure it was written like
+            // this in the first place (i.e. not a result of compiler
+            // optimization).
+            src16 = (uint16_t*)src;
+            src24 = (uint8_t*)src;
+            src32 = (uint32_t*)src;
+
+            for (x = 0; x < rect->width; x++) {
+                switch (tig_video_bpp) {
+                case 16:
+                    clr = *src16;
+                    break;
+                case 24:
+                    clr = src24[0] | (src24[1] << 8) | (src24[2] << 16);
+                    break;
+                default:
+                    clr = *src32;
+                    break;
+                }
+
+                b = (uint8_t)tig_color_get_blue(clr);
+                if (tig_file_fwrite(&b, sizeof(b), 1, stream) != 1) {
+                    // FIXME: Leaks `stream`.
+                    return TIG_ERR_16;
+                }
+
+                b = (uint8_t)tig_color_get_green(clr);
+                if (tig_file_fwrite(&b, sizeof(b), 1, stream) != 1) {
+                    // FIXME: Leaks `stream`.
+                    return TIG_ERR_16;
+                }
+
+                b = (uint8_t)tig_color_get_red(clr);
+                if (tig_file_fwrite(&b, sizeof(b), 1, stream) != 1) {
+                    // FIXME: Leaks `stream`.
+                    return TIG_ERR_16;
+                }
+
+                src16++;
+                src24 += 3;
+                src32++;
+            }
+
+            b = 0;
+            for (x = 0; x < padding; x++) {
+                if (tig_file_fwrite(&b, sizeof(b), 1, stream) != 1) {
+                    // FIXME: Leaks `stream`.
+                    return TIG_ERR_16;
+                }
+            }
+
+            src = (uint8_t*)src - video_buffer_data->pitch;
+        }
+    }
+
+    tig_file_fclose(stream);
+    return TIG_OK;
 }
 
 // 0x526450
@@ -4265,7 +4469,7 @@ int tig_video_3d_set_viewport(TigVideoBuffer* video_buffer)
 }
 
 // 0x526530
-static void sub_526530(const TigRect* a1, const TigRect* a2, D3DCOLOR* alpha)
+void sub_526530(const TigRect* a1, const TigRect* a2, D3DCOLOR* alpha)
 {
     float v1 = (float)(a2->x - a1->x);
     float v2 = (float)(a2->y - a1->y);
@@ -4281,7 +4485,7 @@ static void sub_526530(const TigRect* a1, const TigRect* a2, D3DCOLOR* alpha)
 }
 
 // 0x526690
-static void sub_526690(TigRect* a, TigRect* b, D3DCOLOR* color)
+void sub_526690(TigRect* a, TigRect* b, D3DCOLOR* color)
 {
     // TODO: Incomplete.
     (void)a;
