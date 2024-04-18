@@ -1,4 +1,4 @@
-#include "tig/utils/net_utils.h"
+#include "tig/net_utils.h"
 
 #include <string.h>
 
@@ -83,6 +83,8 @@ bool sub_53AB90(const char* a1, const char* a2)
 // 0x53ABF0
 bool sub_53ABF0(int a1, const char* a2)
 {
+    (void)a1;
+
     S638BB0* node;
 
     node = off_638BB0;
