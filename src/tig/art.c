@@ -111,6 +111,7 @@ static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
 static void sub_51BF60(TigArtHeaderSave* hdr_save);
+static int sub_51C3C0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, int* a6);
 static int sub_51C4E0(int a1, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* a5, int* a6, int* a7, bool a8, bool a9);
 static void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* content_rect);
 static int sub_51C890(int frame, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* width_ptr, int* height_ptr);
@@ -4547,6 +4548,62 @@ void sub_51BF60(TigArtHeaderSave* hdr)
             FREE(hdr->field_8[rotation]);
         }
     }
+}
+
+// 0x51C3C0
+int sub_51C3C0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, int* a6)
+{
+    int x;
+    int y;
+    int index;
+    int v1;
+    int v2[4];
+    uint8_t* v3;
+    uint8_t* v4;
+
+    v1 = width / 4;
+
+    v2[0] = 6;
+    v2[1] = 4;
+    v2[2] = 2;
+    v2[0] = 0;
+
+    v3 = (uint8_t*)MALLOC(v1);
+
+    for (y = 0; y < height; ++y) {
+        index = 0;
+
+        if (v1 > 0) {
+            memset(v3, 0, v1);
+        }
+
+        v4 = v3;
+        for (x = 0; x < width; x++) {
+            if (pixels[x] >= 4) {
+                FREE(v2);
+                return TIG_ERR_16;
+            }
+
+            *v4 |= (pixels[x] << v2[index]);
+
+            if (++index == 4) {
+                index = 0;
+                v4++;
+            }
+        }
+
+        if (fwrite(v3, 1, v1, stream) != (size_t)v1) {
+            FREE(v2);
+            return TIG_ERR_16;
+        }
+
+        pixels += pitch;
+    }
+
+    *a6 += height * v1;
+
+    FREE(v2);
+    return TIG_OK;
 }
 
 // 0x51C4E0
