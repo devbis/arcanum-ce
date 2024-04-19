@@ -111,6 +111,8 @@ static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
 static void sub_51BF60(TigArtHeaderSave* hdr_save);
+static int sub_51BFB0(FILE* stream, uint8_t* pixels, int pitch, int width, int height, TigArtHeader* hdr, int rotation, int frame);
+static int sub_51C080(FILE* stream, uint8_t* pixels, int pitch, int width, int height);
 static int sub_51C3C0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, int* a6);
 static int sub_51C4E0(int a1, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* a5, int* a6, int* a7, bool a8, bool a9);
 static void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* content_rect);
@@ -4548,6 +4550,44 @@ void sub_51BF60(TigArtHeaderSave* hdr)
             FREE(hdr->field_8[rotation]);
         }
     }
+}
+
+// 0x51BFB0
+int sub_51BFB0(FILE* stream, uint8_t* pixels, int pitch, int width, int height, TigArtHeader* hdr, int rotation, int frame)
+{
+    int data_size;
+    int index;
+
+    data_size = sub_51C080(stream, pixels, pitch, width, height);
+    if (data_size == -1) {
+        return TIG_ERR_16;
+    }
+
+    if (data_size >= pitch * width) {
+        for (index = 0; index < width; ++index) {
+            if (fwrite(pixels, 1, pitch, stream) != (size_t)pitch) {
+                return TIG_ERR_16;
+            }
+        }
+
+        data_size = pitch * width;
+    }
+
+    hdr->data_size[rotation] += data_size;
+    hdr->frames_tbl[rotation][frame].data_size += data_size;
+
+    return TIG_OK;
+}
+
+// 0x51C080
+int sub_51C080(FILE* stream, uint8_t* pixels, int pitch, int width, int height)
+{
+    (void)stream;
+    (void)pixels;
+    (void)pitch;
+    (void)width;
+    (void)height;
+    return 0;
 }
 
 // 0x51C3C0
