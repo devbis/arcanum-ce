@@ -111,6 +111,7 @@ static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
 static void sub_51BF60(TigArtHeaderSave* hdr_save);
+static int sub_51C4E0(int a1, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* a5, int* a6, int* a7, bool a8, bool a9);
 static void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* content_rect);
 static int sub_51C890(int frame, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* width_ptr, int* height_ptr);
 static int sub_51CA80(uint8_t* pixels, int pitch, int height, int start);
@@ -4546,6 +4547,93 @@ void sub_51BF60(TigArtHeaderSave* hdr)
             FREE(hdr->field_8[rotation]);
         }
     }
+}
+
+// 0x51C4E0
+int sub_51C4E0(int a1, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* a5, int* a6, int* a7, bool a8, bool a9)
+{
+    TigRect rect;
+    bool v1;
+    int v2;
+    int v3;
+
+    *a7 = 0;
+
+    if (a8) {
+        v1 = false;
+    } else if (bmp->width > 0) {
+        int x;
+        int y;
+        int v4 = 0;
+        int v5;
+        int v6;
+        int v7;
+
+        for (x = 0; x < bmp->width; ++x) {
+            if (v4 >= 2) {
+                break;
+            }
+
+            for (y = 0; y < bmp->height; ++y) {
+                if (v4 >= 2) {
+                    break;
+                }
+
+                if (((uint8_t*)bmp->pixels)[bmp->pitch * y + x] == 1) {
+                    v4++;
+                    v2 = x;
+                    v3 = y;
+                }
+            }
+        }
+
+        v5 = 1;
+        if (v4 == 1) {
+            v1 = true;
+            v6 = v2 != 0 ? v2 - 1 : 1;
+            v7 = v3 != 0 ? v3 - 1 : 1;
+
+            if (a9) {
+                ((uint8_t*)bmp->pixels)[bmp->pitch * v3 + v2] = 0;
+            } else {
+                ((uint8_t*)bmp->pixels)[bmp->pitch * v3 + v2] = ((uint8_t*)bmp->pixels)[bmp->pitch * v7 + v6];
+            }
+
+            *a7 = 1;
+        }
+    }
+
+    if (*a7 == 0) {
+        if (a1 > 0) {
+            v1 = true;
+            v2 = *a5 + content_rect->x;
+            v3 = *a6 + content_rect->y;
+        } else {
+            v1 = false;
+        }
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = bmp->width;
+    rect.height = bmp->height;
+    sub_51C6D0(bmp->pixels, &rect, bmp->pitch, content_rect);
+
+    if (content_rect->width == 0 || content_rect->height == 0) {
+        return TIG_ERR_16;
+    }
+
+    *pitch_ptr = bmp->pitch;
+
+    if (v1) {
+        *a5 = v2 - content_rect->x;
+        *a6 = v3 - content_rect->y;
+    } else {
+        *a5 = content_rect->width / 2;
+        *a6 = content_rect->height - 1;
+    }
+
+    return TIG_OK;
 }
 
 // 0x51C6D0
