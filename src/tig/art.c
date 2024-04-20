@@ -111,8 +111,8 @@ static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
 static void sub_51BF20(TigArtHeader* hdr);
 static void sub_51BF60(TigArtHeaderSave* hdr_save);
-static int sub_51BFB0(FILE* stream, uint8_t* pixels, int pitch, int width, int height, TigArtHeader* hdr, int rotation, int frame);
-static int sub_51C080(FILE* stream, uint8_t* pixels, int pitch, int width, int height);
+static int sub_51BFB0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, TigArtHeader* hdr, int rotation, int frame);
+static int sub_51C080(FILE* stream, uint8_t* pixels, int width, int height, int pitch);
 static int sub_51C3C0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, int* a6);
 static int sub_51C4E0(int a1, TigBmp* bmp, TigRect* content_rect, int* pitch_ptr, int* a5, int* a6, int* a7, bool a8, bool a9);
 static void sub_51C6D0(uint8_t* pixels, const TigRect* rect, int pitch, TigRect* content_rect);
@@ -4553,24 +4553,26 @@ void sub_51BF60(TigArtHeaderSave* hdr)
 }
 
 // 0x51BFB0
-int sub_51BFB0(FILE* stream, uint8_t* pixels, int pitch, int width, int height, TigArtHeader* hdr, int rotation, int frame)
+int sub_51BFB0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, TigArtHeader* hdr, int rotation, int frame)
 {
     int data_size;
     int index;
 
-    data_size = sub_51C080(stream, pixels, pitch, width, height);
+    data_size = sub_51C080(stream, pixels, width, height, pitch);
     if (data_size == -1) {
         return TIG_ERR_16;
     }
 
-    if (data_size >= pitch * width) {
-        for (index = 0; index < width; ++index) {
-            if (fwrite(pixels, 1, pitch, stream) != (size_t)pitch) {
+    if (data_size >= width * height) {
+        for (index = 0; index < height; ++index) {
+            if (fwrite(pixels, 1, width, stream) != (size_t)width) {
                 return TIG_ERR_16;
             }
+
+            pixels += pitch;
         }
 
-        data_size = pitch * width;
+        data_size = width * height;
     }
 
     hdr->data_size[rotation] += data_size;
@@ -4580,14 +4582,144 @@ int sub_51BFB0(FILE* stream, uint8_t* pixels, int pitch, int width, int height, 
 }
 
 // 0x51C080
-int sub_51C080(FILE* stream, uint8_t* pixels, int pitch, int width, int height)
+int sub_51C080(FILE* stream, uint8_t* pixels, int width, int height, int pitch)
 {
-    (void)stream;
-    (void)pixels;
-    (void)pitch;
-    (void)width;
-    (void)height;
-    return 0;
+    long saved_offset;
+    bool start_new_block = true;
+    int size;
+    int x;
+    int y;
+    uint8_t px;
+    uint8_t run_length;
+    uint8_t buffer_length;
+    uint8_t buffer[128];
+
+    saved_offset = ftell(stream);
+    if (saved_offset == -1) {
+        return -1;
+    }
+
+    size = 0;
+    for (y = 0; y < height; y++) {
+        for (x = 0; x < width; x++) {
+            if (start_new_block) {
+                // Start a new block, which can be either run-length encoded
+                // extent (same color), or raw colors extent (different colors).
+                // It will be determined on the next iterations.
+                buffer[0] = *pixels;
+                buffer_length = 1;
+                run_length = 1;
+                start_new_block = false;
+            } else {
+                if (*pixels == px) {
+                    // Colors match - this color is a part of run-length
+                    // encoded extent.
+
+                    // Dump previous raw colors extent if it exists.
+                    if (buffer_length > 1) {
+                        if (fputc((buffer_length - 1) | 0x80, stream) == -1) {
+                            return -1;
+                        }
+
+                        if (fwrite(buffer, 1, buffer_length - 1, stream) != (size_t)(buffer_length - 1)) {
+                            return -1;
+                        }
+
+                        size += buffer_length;
+                    }
+
+                    buffer_length = 0;
+                    run_length++;
+
+                    // Check if run-length encoded extent reached max length.
+                    if (run_length == 127) {
+                        if (fputc(127, stream) == -1) {
+                            return -1;
+                        }
+
+                        if (fputc(px, stream) == -1) {
+                            return -1;
+                        }
+
+                        // Run-length
+                        size += 2;
+                        start_new_block = true;
+                    }
+                } else {
+                    // Colors are different, this color is a part of raw colors
+                    // extent.
+
+                    // Dump previous run-length encoded extent.
+                    if (run_length > 1) {
+                        if (fputc(run_length, stream) == -1) {
+                            return -1;
+                        }
+
+                        if (fputc(px, stream) == -1) {
+                            return -1;
+                        }
+
+                        run_length = 1;
+                        size += 2;
+                    }
+
+                    buffer[buffer_length++] = px;
+
+                    // Check of raw colors extent reached max length.
+                    if (buffer_length == 127) {
+                        if (fputc(buffer_length | 0x80, stream) == -1) {
+                            return -1;
+                        }
+
+                        if (fwrite(buffer, 1, buffer_length, stream) != (size_t)buffer_length) {
+                            return -1;
+                        }
+
+                        size += buffer_length + 1;
+                        start_new_block = true;
+                    }
+                }
+            }
+            px = *pixels++;
+        }
+        pixels += pitch - width;
+    }
+
+    if (!start_new_block) {
+        if (buffer_length > 1) {
+            // Dump final raw colors extent.
+            if (fputc(buffer_length | 0x80, stream) == -1) {
+                return -1;
+            }
+
+            if (fwrite(buffer, 1, buffer_length, stream) != (size_t)buffer_length) {
+                return -1;
+            }
+
+            size += buffer_length + 1;
+        } else {
+            // Dump final run-length encoded extent.
+            if (fputc(run_length, stream) == -1) {
+                return -1;
+            }
+
+            if (fputc(px, stream) == -1) {
+                return -1;
+            }
+
+            size += 2;
+        }
+    }
+
+    if (size < height * width) {
+        return size;
+    }
+
+    if (fseek(stream, saved_offset, SEEK_SET) != 0) {
+        return -1;
+    }
+
+    return height * width;
 }
 
 // 0x51C3C0
