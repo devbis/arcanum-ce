@@ -4,12 +4,12 @@
 
 #include "tig/bmp.h"
 #include "tig/color.h"
+#include "tig/core.h"
 #include "tig/debug.h"
 #include "tig/file.h"
 #include "tig/memory.h"
 #include "tig/palette.h"
 #include "tig/timer.h"
-#include "tig/core.h"
 #include "tig/video.h"
 
 #define ART_ID_TYPE_SHIFT 28
@@ -682,8 +682,8 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
             mut_art_blt.art_id = sub_502D30(mut_art_blt.art_id, v1 & ~0x1);
         }
     } else {
-        if (tig_art_mirroring_enabled &&
-            (type == TIG_ART_TYPE_CRITTER
+        if (tig_art_mirroring_enabled
+            && (type == TIG_ART_TYPE_CRITTER
                 || type == TIG_ART_TYPE_MONSTER
                 || type == TIG_ART_TYPE_UNIQUE_NPC)) {
             int rotation = tig_art_id_rotation_get(mut_art_blt.art_id);
@@ -996,9 +996,9 @@ tig_art_id_t tig_art_id_rotation_set(tig_art_id_t art_id, int rotation)
 
             art_id = sub_503A90(art_id, v1);
             if ((old_cardinal_direction == 0 || old_cardinal_direction == 3)
-                && (cardinal_direction == 1 || cardinal_direction == 2)
+                    && (cardinal_direction == 1 || cardinal_direction == 2)
                 || (old_cardinal_direction == 1 || old_cardinal_direction == 2)
-                && (cardinal_direction == 0 || cardinal_direction == 3)) {
+                    && (cardinal_direction == 0 || cardinal_direction == 3)) {
                 v2 = sub_503B70(art_id);
                 v3 = 0;
                 if ((v2 & 0x400) != 0) {
@@ -1544,8 +1544,8 @@ int tig_art_size(tig_art_id_t art_id, int* width_ptr, int* height_ptr)
     if ((art->hdr.flags & TIG_ART_0x01) != 0) {
         rotation_offset = 0;
         num_rotations = 1;
-    } else if (tig_art_mirroring_enabled &&
-        (type == TIG_ART_TYPE_CRITTER
+    } else if (tig_art_mirroring_enabled
+        && (type == TIG_ART_TYPE_CRITTER
             || type == TIG_ART_TYPE_MONSTER
             || type == TIG_ART_TYPE_UNIQUE_NPC)) {
         rotation_offset = 4;
@@ -1588,12 +1588,12 @@ int tig_art_tile_id_create(unsigned int a1, unsigned int a2, unsigned int a3, un
     }
 
     *art_id_ptr = sub_503740((TIG_ART_TYPE_TILE << ART_ID_TYPE_SHIFT)
-        | ((a1 & 0x3F) << 22)
-        | ((a2 & 0x3F) << 16)
-        | ((a5 & 1) << 8)
-        | ((a6 & 1) << 7)
-        | ((a7 & 1) << 6)
-        | ((a8 & 3) << 4),
+            | ((a1 & 0x3F) << 22)
+            | ((a2 & 0x3F) << 16)
+            | ((a5 & 1) << 8)
+            | ((a6 & 1) << 7)
+            | ((a7 & 1) << 6)
+            | ((a8 & 3) << 4),
         a3);
 
     *art_id_ptr = sub_503800(*art_id_ptr, a4);
@@ -1782,11 +1782,11 @@ int tig_art_wall_id_create(unsigned int a1, int a2, int a3, int rotation, unsign
     }
 
     *art_id_ptr = tig_art_id_rotation_set((TIG_ART_TYPE_WALL << ART_ID_TYPE_SHIFT)
-        | ((a2 & 0x3F) << 14)
-        | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
-        | ((a3 & 3) << 8)
-        | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
-        | a6,
+            | ((a2 & 0x3F) << 14)
+            | ((rotation & (MAX_ROTATIONS - 1)) << ART_ID_ROTATION_SHIFT)
+            | ((a3 & 3) << 8)
+            | ((palette & (MAX_PALETTES - 1)) << ART_ID_PALETTE_SHIFT)
+            | a6,
         rotation);
 
     return TIG_OK;
@@ -2502,11 +2502,11 @@ int tig_art_roof_id_create(unsigned int a1, int a2, unsigned int a3, unsigned in
     }
 
     *art_id_ptr = sub_502D30((TIG_ART_TYPE_ROOF << ART_ID_TYPE_SHIFT)
-        | ((a1 & 0x1FF) << 19)
-        | ((a2 & 0x1F) << 14)
-        | ((a3 & 1) << 13)
-        | ((a4 & 1) << 12)
-        | ((v2 & 3) << 4),
+            | ((a1 & 0x1FF) << 19)
+            | ((a2 & 0x1F) << 14)
+            | ((a3 & 1) << 13)
+            | ((a4 & 1) << 12)
+            | ((v2 & 3) << 4),
         v1);
 
     return TIG_OK;
