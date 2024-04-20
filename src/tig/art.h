@@ -104,11 +104,29 @@ typedef enum TigArtBltFlags {
 
     TIG_ART_BLT_BLEND_MODE_0x200 = 1 << 9,
 
+    // Blends dst with src applying left-to-right gradient mask.
+    //
+    // Use `opacity[0]` to specify start opacity (left edge) and `opacity[1]`
+    // to specify end opacity (right edge) where `255` is fully opaque (results
+    // in dst color) and `0` is fully transparent (result in src).
     TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL = 1 << 10,
 
+    // Blends dst with src applying top-to-bottom gradient mask.
+    //
+    // Use `opacity[0]` to specify start opacity (top edge) and `opacity[3]`
+    // to specify end opacity (bottom edge) where `255` is fully opaque and `0`
+    // is fully transparent.
     TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL = 1 << 11,
 
-    TIG_ART_BLT_BLEND_MODE_GRADIENT_DIAGONAL = 1 << 12,
+    // Blends dst with src applying gradient mask as follows:
+    //  - `opacity[0]` - top-left corner opacity,
+    //  - `opacity[1]` - top-right corner opacity,
+    //  - `opacity[2]` - bottom-right corner opacity,
+    //  - `opacity[3]` - bottom-left corner opacity.
+    //
+    // As with other gradient masks `255` is fully opaque and `0` is fully
+    // transparent.
+    TIG_ART_BLT_BLEND_MODE_GRADIENT_CORNERS = 1 << 12,
 
     TIG_ART_BLT_0x2000 = 1 << 13,
 
@@ -124,7 +142,7 @@ typedef enum TigArtBltFlags {
 
     TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY = TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL
         | TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL
-        | TIG_ART_BLT_BLEND_MODE_GRADIENT_DIAGONAL,
+        | TIG_ART_BLT_BLEND_MODE_GRADIENT_CORNERS,
 
     TIG_ART_BLT_0x26000 = TIG_ART_BLT_0x20000
         | TIG_ART_BLT_0x4000
@@ -132,7 +150,7 @@ typedef enum TigArtBltFlags {
 
     TIG_ART_BLT_0x19F80 = TIG_ART_BLT_0x10000
         | TIG_ART_BLT_0x8000
-        | TIG_ART_BLT_BLEND_MODE_GRADIENT_DIAGONAL
+        | TIG_ART_BLT_BLEND_MODE_GRADIENT_CORNERS
         | TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL
         | TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL
         | TIG_ART_BLT_BLEND_MODE_0x200
@@ -148,7 +166,7 @@ typedef struct TigArtBlitSpec {
     /* 0010 */ int field_10;
     /* 0014 */ int* field_14;
     /* 0018 */ TigRect* field_18;
-    /* 001C */ unsigned int field_1C;
+    /* 001C */ uint8_t opacity[4];
     /* 0020 */ TigVideoBuffer* dst_video_buffer;
     /* 0024 */ TigRect* dst_rect;
     /* 0028 */ TigVideoBuffer* scratch_video_buffer;
@@ -157,6 +175,13 @@ typedef struct TigArtBlitSpec {
 static_assert(sizeof(TigArtBlitSpec) == 0x2C, "wrong size");
 
 typedef bool(TigArtBlitPaletteAdjustCallback)(tig_art_id_t art_id, TigPaletteAdjustDesc* palette_adjust_desc);
+
+typedef struct TigArtPackInfo {
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ int fps;
+    /* 0008 */ int field_8;
+    /* 000C */ int action_frame;
+} TigArtPackInfo;
 
 int tig_art_init(TigInitializeInfo* init_info);
 void tig_art_exit();

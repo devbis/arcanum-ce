@@ -719,22 +719,22 @@ int tig_art_blit(TigArtBlitSpec* blit_spec)
         }
 
         if ((mut_art_blt.flags & 0x100) != 0) {
-            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.opacity[0];
         } else if ((mut_art_blt.flags & 0x400) != 0) {
-            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
-            vb_blit_info.field_D = mut_art_blt.field_1C & 0xFF;
-            vb_blit_info.field_E = (mut_art_blt.field_1C >> 8) & 0xFF;
-            vb_blit_info.field_F = (mut_art_blt.field_1C >> 8) & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.opacity[0];
+            vb_blit_info.field_D = mut_art_blt.opacity[0];
+            vb_blit_info.field_E = mut_art_blt.opacity[1];
+            vb_blit_info.field_F = mut_art_blt.opacity[1];
         } else if ((mut_art_blt.flags & 0x800) != 0) {
-            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
-            vb_blit_info.field_D = mut_art_blt.field_1C & 0xFF;
-            vb_blit_info.field_E = (mut_art_blt.field_1C >> 24) & 0xFF;
-            vb_blit_info.field_F = (mut_art_blt.field_1C >> 24) & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.opacity[0];
+            vb_blit_info.field_D = mut_art_blt.opacity[0];
+            vb_blit_info.field_E = mut_art_blt.opacity[3];
+            vb_blit_info.field_F = mut_art_blt.opacity[3];
         } else if ((mut_art_blt.flags & 0x1000) != 0) {
-            vb_blit_info.field_C = mut_art_blt.field_1C & 0xFF;
-            vb_blit_info.field_D = (mut_art_blt.field_1C >> 8) & 0xFF;
-            vb_blit_info.field_E = (mut_art_blt.field_1C >> 16) & 0xFF;
-            vb_blit_info.field_F = (mut_art_blt.field_1C >> 24) & 0xFF;
+            vb_blit_info.field_C = mut_art_blt.opacity[0];
+            vb_blit_info.field_D = mut_art_blt.opacity[1];
+            vb_blit_info.field_E = mut_art_blt.opacity[2];
+            vb_blit_info.field_F = mut_art_blt.opacity[3];
         }
 
         vb_blit_info.src_rect = mut_art_blt.src_rect;
@@ -3096,7 +3096,7 @@ int sub_505940(unsigned int art_blt_flags, unsigned int* vb_blt_flags_ptr)
         *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0100;
     }
 
-    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_DIAGONAL) != 0) {
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_CORNERS) != 0) {
         *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0100;
     }
 
@@ -3275,6 +3275,15 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
     float width_ratio;
     float height_ratio;
     // unsigned int color;
+    float start_opacity_vertical_step;
+    float end_opacity_vertical_step;
+    float start_opacity_x;
+    float end_opacity_x;
+    float opacity_range;
+    float start_opacity;
+    float end_opacity;
+    float current_opacity;
+    float opacity_horizontal_step;
 
     rc = tig_video_buffer_lock(blt->dst_video_buffer);
     if (rc != TIG_OK) {
@@ -3312,7 +3321,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
     bounds.height = height;
 
     if (tig_rect_intersection(blt->src_rect, &bounds, &src_rect) != TIG_OK) {
-        // Specifies source rectangle is out of bounds of the frame, there is
+        // Specified source rectangle is out of bounds of the frame, there is
         // nothing to blit.
         tig_video_buffer_unlock(blt->dst_video_buffer);
         return TIG_OK;
@@ -3509,7 +3518,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
                                 uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
-                                *(uint32_t*)dst_pixels = tig_color_make_7(color, *(uint32_t*)dst_pixels, blt->field_1C & 0xFF);
+                                *(uint32_t*)dst_pixels = tig_color_make_7(color, *(uint32_t*)dst_pixels, blt->opacity[0]);
                             }
                             src_pixels += delta;
                             dst_pixels += 4;
@@ -3734,7 +3743,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                *(uint32_t*)dst_pixels = tig_color_make_7(*((uint32_t*)plt + *src_pixels), *(uint32_t*)dst_pixels, blt->field_1C & 0xFF);
+                                *(uint32_t*)dst_pixels = tig_color_make_7(*((uint32_t*)plt + *src_pixels), *(uint32_t*)dst_pixels, blt->opacity[0]);
                             }
                             src_pixels += delta;
                             dst_pixels += 4;
@@ -3769,6 +3778,77 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                 }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY) != 0) {
                 // 0x507ECB
+                switch (blt->flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY) {
+                case TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL:
+                    start_opacity_vertical_step = 0.0;
+                    end_opacity_vertical_step = 0.0;
+                    start_opacity_x = (float)src_rect.x;
+                    end_opacity_x = (float)(art->hdr.frames_tbl[rotation][frame].width - src_rect.width - src_rect.x);
+                    opacity_range = ((float)blt->opacity[1] - (float)blt->opacity[0]) / art->hdr.frames_tbl[rotation][frame].width;
+                    start_opacity = (float)blt->opacity[0] + start_opacity_x * opacity_range;
+                    end_opacity = (float)blt->opacity[1] - end_opacity_x * opacity_range;
+                    break;
+                case TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL:
+                    start_opacity_vertical_step = ((float)blt->opacity[3] - (float)blt->opacity[0]) / art->hdr.frames_tbl[rotation][frame].height;
+                    end_opacity_vertical_step = start_opacity_vertical_step;
+                    start_opacity = src_rect.y * start_opacity_vertical_step + (float)blt->opacity[0];
+                    end_opacity = start_opacity;
+                    break;
+                default:
+                    start_opacity_vertical_step = ((float)blt->opacity[3] - (float)blt->opacity[0]) / art->hdr.frames_tbl[rotation][frame].height;
+                    end_opacity_vertical_step = ((float)(uint8_t)blt->opacity[2] - (float)blt->opacity[1]) / art->hdr.frames_tbl[rotation][frame].height;
+                    start_opacity_x = (float)src_rect.x;
+                    end_opacity_x = (float)(art->hdr.frames_tbl[rotation][frame].width - src_rect.width - src_rect.x);
+                    opacity_range = ((src_rect.y * end_opacity_vertical_step + (float)blt->opacity[1]) - (src_rect.y * start_opacity_vertical_step + (float)blt->opacity[0])) / art->hdr.frames_tbl[rotation][frame].width;
+                    start_opacity = (src_rect.y * start_opacity_vertical_step + (float)blt->opacity[0]) + start_opacity_x * opacity_range;
+                    end_opacity = (src_rect.y * end_opacity_vertical_step + (float)blt->opacity[1]) - end_opacity_x * opacity_range;
+                    break;
+                }
+
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        current_opacity = start_opacity;
+                        opacity_horizontal_step = (end_opacity - start_opacity) / src_rect.width;
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t dst_color = *(uint32_t*)dst_pixels;
+                                uint32_t src_color = ((uint32_t*)plt)[*src_pixels];
+
+                                uint32_t dst_rm = tig_color_red_mask & dst_color;
+                                uint32_t dst_gm = tig_color_green_mask & dst_color;
+                                uint32_t dst_bm = tig_color_blue_mask & dst_color;
+
+                                uint32_t src_rm = tig_color_red_mask & src_color;
+                                uint32_t src_gm = tig_color_green_mask & src_color;
+                                uint32_t src_bm = tig_color_blue_mask & src_color;
+
+                                *(uint32_t*)dst_pixels = ((dst_rm + (((uint8_t)current_opacity * (src_rm - dst_rm)) >> 8)) & tig_color_red_mask)
+                                    | ((dst_gm + (((uint8_t)current_opacity * (src_gm - dst_gm)) >> 8)) & tig_color_green_mask)
+                                    | ((dst_bm + (((uint8_t)current_opacity * (src_bm - dst_bm)) >> 8)) & tig_color_blue_mask);
+                            }
+
+                            current_opacity += opacity_horizontal_step;
+
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+
+                        start_opacity += start_opacity_vertical_step;
+                        end_opacity += end_opacity_vertical_step;
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_0x8000) != 0) {
                 // 0x50779F
                 switch (tig_art_bits_per_pixel) {
