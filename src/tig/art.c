@@ -1235,8 +1235,8 @@ int sub_502E50(tig_art_id_t art_id, int x, int y, unsigned int* color_ptr)
     byte = cache_entry->pixels_tbl[rotation][frame][y * cache_entry->hdr.frames_tbl[rotation][frame].width + x];
 
     palette = tig_art_palette(art_id);
-    if (cache_entry->hdr.palette_tbl[palette] == 0) {
-
+    if (cache_entry->hdr.palette_tbl[palette] == NULL) {
+        palette = 0;
     }
 
     if (tig_art_bits_per_pixel != 8) {
