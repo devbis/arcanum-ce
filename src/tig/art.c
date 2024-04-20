@@ -3377,9 +3377,10 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
 
     // TODO: Incomplete.
 
-    int checkerboard_start_x = src_rect.x;
-    int checkerboard_cur_x = src_rect.x;
-    int checkerboard_cur_y = src_rect.y;
+    int src_checkerboard_cur_x = src_rect.x;
+    int src_checkerboard_cur_y = src_rect.y;
+    int dst_checkerboard_cur_x = dst_rect.x;
+    int dst_checkerboard_cur_y = dst_rect.y;
 
     if ((sub_504FD0(blt->art_id) & 1) != 0) {
         src_pixels = src_pixels + width * height - 1;
@@ -3567,9 +3568,9 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                 }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY) != 0) {
                 // 0x50AF93
-            } else if ((blt->flags & TIG_ART_BLT_0x8000) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_SRC) != 0) {
                 // 0x50A2A6
-            } else if ((blt->flags & TIG_ART_BLT_0x10000) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_DST) != 0) {
                 // 0x50A739
             } else {
                 // 0x509647
@@ -3612,9 +3613,9 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                 // 0x50E3C4
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY) != 0) {
                 // 0x50E7CB
-            } else if ((blt->flags & TIG_ART_BLT_0x8000) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_SRC) != 0) {
                 // 0x50DA0F
-            } else if ((blt->flags & TIG_ART_BLT_0x10000) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_DST) != 0) {
                 // 0x50DEE7
             } else {
                 // 0x50CD1B
@@ -3849,7 +3850,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_0x8000) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_SRC) != 0) {
                 // 0x50779F
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -3863,7 +3864,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
-                            if (((checkerboard_cur_x ^ checkerboard_cur_y) & 1) != 0) {
+                            if (((src_checkerboard_cur_x ^ src_checkerboard_cur_y) & 1) != 0) {
                                 if (*src_pixels != 0) {
                                     *(uint32_t*)dst_pixels = *((uint32_t*)plt + *src_pixels);
                                 }
@@ -3871,17 +3872,46 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                             src_pixels += delta;
                             dst_pixels += 4;
 
-                            checkerboard_cur_x++;
+                            src_checkerboard_cur_x++;
                         }
                         dst_pixels += dst_skip;
 
-                        checkerboard_cur_x = checkerboard_start_x;
-                        checkerboard_cur_y++;
+                        src_checkerboard_cur_x = src_rect.x;
+                        src_checkerboard_cur_y++;
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_0x10000) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_DST) != 0) {
                 // 0x507955
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        for (x = 0; x < width; x++) {
+                            if (((dst_checkerboard_cur_x ^ dst_checkerboard_cur_y) & 1) != 0) {
+                                if (*src_pixels != 0) {
+                                    *(uint32_t*)dst_pixels = *((uint32_t*)plt + *src_pixels);
+                                }
+                            }
+                            src_pixels += delta;
+                            dst_pixels += 4;
+
+                            dst_checkerboard_cur_x++;
+                        }
+                        dst_pixels += dst_skip;
+
+                        dst_checkerboard_cur_x = dst_rect.x;
+                        dst_checkerboard_cur_y++;
+                    }
+                    break;
+                }
             } else {
                 // 0x506FC8
                 switch (tig_art_bits_per_pixel) {
