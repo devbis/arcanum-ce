@@ -64,15 +64,15 @@ typedef struct TigArtFrameSave {
 
 static_assert(sizeof(TigArtFrameSave) == 0x10, "wrong size");
 
-typedef struct TigArtHeaderSave {
-    /* 0000 */ int field_0;
+typedef struct TigShdHeader {
+    /* 0000 */ unsigned int flags;
     /* 0004 */ int num_frames;
     /* 0004 */ TigArtFrameSave* field_8[MAX_ROTATIONS];
     /* 0028 */ int field_28[MAX_ROTATIONS];
     /* 0048 */ void* field_48[MAX_ROTATIONS];
-} TigArtHeaderSave;
+} TigShdHeader;
 
-static_assert(sizeof(TigArtHeaderSave) == 0x68, "wrong size");
+static_assert(sizeof(TigShdHeader) == 0x68, "wrong size");
 
 #define TIG_ART_CACHE_ENTRY_MODIFIED 0x02
 
@@ -109,8 +109,9 @@ static void sub_51B650(int cache_entry_index);
 static int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, void** palettes, int a5, art_size_t* size_ptr);
 static int sub_51BE30(TigArtHeader* hdr);
 static void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl);
+static void sub_51BEB0(FILE* stream, TigArtHeader* hdr, const char* filename, FILE* shd_stream, TigShdHeader* shd, const char* shd_filename);
 static void sub_51BF20(TigArtHeader* hdr);
-static void sub_51BF60(TigArtHeaderSave* hdr_save);
+static void sub_51BF60(TigShdHeader* shd);
 static int sub_51BFB0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, TigArtHeader* hdr, int rotation, int frame);
 static int sub_51C080(FILE* stream, uint8_t* pixels, int width, int height, int pitch);
 static int sub_51C3C0(FILE* stream, uint8_t* pixels, int width, int height, int pitch, int* a6);
@@ -4496,26 +4497,26 @@ void sub_51BE50(TigFile* stream, TigArtHeader* hdr, TigPalette* palette_tbl)
 }
 
 // 0x51BEB0
-void sub_51BEB0(FILE* stream1, TigArtHeader* hdr1, const char* filename1, FILE* stream2, TigArtHeaderSave* hdr2, const char* filename2)
+void sub_51BEB0(FILE* stream, TigArtHeader* hdr, const char* filename, FILE* shd_stream, TigShdHeader* shd, const char* shd_filename)
 {
-    if (stream1 != NULL) {
-        fclose(stream1);
+    if (stream != NULL) {
+        fclose(stream);
     }
 
-    if (filename1 != NULL) {
-        remove(filename1);
+    if (filename != NULL) {
+        remove(filename);
     }
 
-    if (stream2 != NULL) {
-        fclose(stream2);
+    if (shd_stream != NULL) {
+        fclose(shd_stream);
     }
 
-    if (filename2 != NULL) {
-        remove(filename2);
+    if (shd_filename != NULL) {
+        remove(shd_filename);
     }
 
-    sub_51BF60(hdr2);
-    sub_51BF20(hdr1);
+    sub_51BF60(shd);
+    sub_51BF20(hdr);
 }
 
 // 0x51BF20
@@ -4536,18 +4537,18 @@ void sub_51BF20(TigArtHeader* hdr)
 }
 
 // 0x51BF60
-void sub_51BF60(TigArtHeaderSave* hdr)
+void sub_51BF60(TigShdHeader* shd)
 {
     int num_rotations;
     int rotation;
 
-    num_rotations = (hdr->field_0 & 1) != 0 ? 1 : 8;
+    num_rotations = (shd->flags & 1) != 0 ? 1 : 8;
     for (rotation = 0; rotation < num_rotations; rotation++) {
-        if (hdr->field_48[rotation] != NULL) {
-            FREE(hdr->field_48[rotation]);
+        if (shd->field_48[rotation] != NULL) {
+            FREE(shd->field_48[rotation]);
         }
-        if (hdr->field_8[rotation] != NULL) {
-            FREE(hdr->field_8[rotation]);
+        if (shd->field_8[rotation] != NULL) {
+            FREE(shd->field_8[rotation]);
         }
     }
 }
