@@ -4,7 +4,7 @@
 
 #include "tig/memory.h"
 
-class TigRectTest : public testing::Test {
+class TigRectNodeTest : public testing::Test {
 protected:
     void SetUp() override
     {
@@ -21,7 +21,7 @@ protected:
     }
 };
 
-TEST_F(TigRectTest, CreateDestroyNode)
+TEST_F(TigRectNodeTest, CreateDestroyNode)
 {
     TigRectListNode* ptrs[50];
 
@@ -35,7 +35,7 @@ TEST_F(TigRectTest, CreateDestroyNode)
     }
 }
 
-TEST_F(TigRectTest, Intersection)
+TEST(TigRectTest, Intersection)
 {
     TigRect a;
     TigRect b;
@@ -54,17 +54,43 @@ TEST_F(TigRectTest, Intersection)
     EXPECT_EQ(tig_rect_intersection(&a, &b, &c), TIG_ERR_4);
 }
 
-// baa
-// aaa
-// aaa
-TEST_F(TigRectTest, ClipTopLeft)
+
+TEST(TigRectTest, Union)
 {
     TigRect a;
     TigRect b;
+    TigRect c;
+
+    a = { 3, 7, 10, 10 };
+    b = { 5, 11, 10, 10 };
+    EXPECT_EQ(tig_rect_union(&a, &b, &c), TIG_OK);
+    EXPECT_EQ(c.x, 3);
+    EXPECT_EQ(c.y, 7);
+    EXPECT_EQ(c.width, 12);
+    EXPECT_EQ(c.height, 14);
+}
+
+// -----------------------------------------------------------------------------
+// CLIP TESTS
+// -----------------------------------------------------------------------------
+
+// The following tests check behaviour of `tig_rect_clip` function in various
+// configurations. The math behind clipping is very simple, these tests are
+// just illustrations.
+
+//  +-------+
+//  |       |
+//  |  (b)  |-------------+                          +-------------+
+//  |       |             |                          |     (0)     |
+//  +-------+   (a)       |          =>          +---+-------------+
+//      |                 |                      |         (1)     |
+//      +-----------------+                      +-----------------+
+TEST(TigRectTest, ClipTopLeft)
+{
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 7, 9, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 7, 9, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 2);
 
     EXPECT_EQ(r[0].x, 12);
@@ -78,17 +104,19 @@ TEST_F(TigRectTest, ClipTopLeft)
     EXPECT_EQ(r[1].height, 7);
 }
 
-// aba
-// aaa
-// aaa
-TEST_F(TigRectTest, ClipTopCenter)
+//          +---------+
+//          |         |
+//      +---|   (b)   |---+                      +---+         +---+
+//      |   |         |   |                      |(0)|         |(1)|
+//      |   +---------+   |          =>          +---+---------+---+
+//      |       (a)       |                      |       (2)       |
+//      +-----------------+                      +-----------------+
+TEST(TigRectTest, ClipTopCenter)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 12, 9, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 12, 9, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 3);
 
     EXPECT_EQ(r[0].x, 10);
@@ -107,17 +135,19 @@ TEST_F(TigRectTest, ClipTopCenter)
     EXPECT_EQ(r[2].height, 7);
 }
 
-// aab
-// aaa
-// aaa
-TEST_F(TigRectTest, ClipTopRight)
+//                    +-------+
+//                    |       |
+//      +-------------|  (b)  |                  +-------------+
+//      |             |       |                  |     (0)     |
+//      |       (a)   +-------+      =>          +-------------+---+
+//      |                 |                      |     (1)         |
+//      +-----------------+                      +-----------------+
+TEST(TigRectTest, ClipTopRight)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 18, 9, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 18, 9, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 2);
 
     EXPECT_EQ(r[0].x, 10);
@@ -131,17 +161,19 @@ TEST_F(TigRectTest, ClipTopRight)
     EXPECT_EQ(r[1].height, 7);
 }
 
-// aaa
-// baa
-// aaa
-TEST_F(TigRectTest, ClipCenterLeft)
+//      +-----------------+                      +-----------------+
+//      |                 |                      |       (0)       |
+//  +-------+             |                      +---+-------------+
+//  |  (b)  |   (a)       |          =>              |   (1)       |
+//  +-------+             |                      +---+-------------+
+//      |                 |                      |       (2)       |
+//      +-----------------+                      +-----------------+
+TEST(TigRectTest, ClipCenterLeft)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 7, 14, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 7, 14, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 3);
 
     EXPECT_EQ(r[0].x, 10);
@@ -160,17 +192,19 @@ TEST_F(TigRectTest, ClipCenterLeft)
     EXPECT_EQ(r[2].height, 2);
 }
 
-// aaa
-// aba
-// aaa
-TEST_F(TigRectTest, ClipCenter)
+//      +-----------------+                      +-----------------+
+//      |                 |                      |       (0)       |
+//      |   +---------+   |                      +---+---------+---+
+//      |   |   (b)   |   |          =>          |(1)|         |(2)|
+//      |   +---------+   |                      +---+---------+---+
+//      |       (a)       |                      |       (3)       |
+//      +-----------------+                      +-----------------+
+TEST(TigRectTest, ClipCenter)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 12, 14, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 12, 14, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 4);
 
     EXPECT_EQ(r[0].x, 10);
@@ -194,17 +228,19 @@ TEST_F(TigRectTest, ClipCenter)
     EXPECT_EQ(r[3].height, 2);
 }
 
-// aaa
-// aab
-// aaa
-TEST_F(TigRectTest, ClipCenterRight)
+//      +-----------------+                      +-----------------+
+//      |                 |                      |       (0)       |
+//      |             +-------+                  +-------------+---+
+//      |      (a)    |  (b)  |      =>          |       (1)   |
+//      |             +-------+                  +-------------+---+
+//      |                 |                      |       (2)       |
+//      +-----------------+                      +-----------------+
+TEST(TigRectTest, ClipCenterRight)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 18, 14, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 18, 14, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 3);
 
     EXPECT_EQ(r[0].x, 10);
@@ -223,17 +259,19 @@ TEST_F(TigRectTest, ClipCenterRight)
     EXPECT_EQ(r[2].height, 2);
 }
 
-// aaa
-// aaa
-// baa
-TEST_F(TigRectTest, ClipBottomRight)
+//      +-----------------+                      +-----------------+
+//      |                 |                      |         (0)     |
+//  +-------+   (a)       |          =>          +---+-------------+
+//  |       |             |                          |     (1)     |
+//  |  (b)  |-------------+                          +-------------+
+//  |       |
+//  +-------+
+TEST(TigRectTest, ClipBottomRight)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 7, 18, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 7, 18, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 2);
 
     EXPECT_EQ(r[0].x, 10);
@@ -247,17 +285,19 @@ TEST_F(TigRectTest, ClipBottomRight)
     EXPECT_EQ(r[1].height, 2);
 }
 
-// aaa
-// aaa
-// aba
-TEST_F(TigRectTest, ClipBottomCenter)
+//      +-----------------+                      +-----------------+
+//      |       (a)       |                      |       (0)       |
+//      |   +---------+   |          =>          +---+---------+---+
+//      |   |         |   |                      |(1)|         |(2)|
+//      +---|   (b)   |---+                      +---+         +---+
+//          |         |
+//          +---------+
+TEST(TigRectTest, ClipBottomCenter)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 12, 18, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 12, 18, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 3);
 
     EXPECT_EQ(r[0].x, 10);
@@ -276,17 +316,19 @@ TEST_F(TigRectTest, ClipBottomCenter)
     EXPECT_EQ(r[2].height, 2);
 }
 
-// aaa
-// aaa
-// aab
-TEST_F(TigRectTest, ClipBottomLeft)
+//      +-----------------+                      +-----------------+
+//      |                 |                      |       (0)       |
+//      |   (a)       +-------+      =>          +-------------+---+
+//      |             |       |                  |       (1)   |
+//      +-------------|  (b)  |                  +-------------+
+//                    |       |
+//                    +-------+
+TEST(TigRectTest, ClipBottomLeft)
 {
-    TigRect a;
-    TigRect b;
+    TigRect a = { 10, 10, 10, 10 };
+    TigRect b = { 18, 18, 5, 4 };
     TigRect r[4];
 
-    a = { 10, 10, 10, 10 };
-    b = { 18, 18, 5, 4 };
     EXPECT_EQ(tig_rect_clip(&a, &b, r), 2);
 
     EXPECT_EQ(r[0].x, 10);
@@ -300,17 +342,148 @@ TEST_F(TigRectTest, ClipBottomLeft)
     EXPECT_EQ(r[1].height, 2);
 }
 
-TEST_F(TigRectTest, Union)
-{
-    TigRect a;
-    TigRect b;
-    TigRect c;
+// -----------------------------------------------------------------------------
+// LINE TESTS
+// -----------------------------------------------------------------------------
 
-    a = { 3, 7, 10, 10 };
-    b = { 5, 11, 10, 10 };
-    EXPECT_EQ(tig_rect_union(&a, &b, &c), TIG_OK);
-    EXPECT_EQ(c.x, 3);
-    EXPECT_EQ(c.y, 7);
-    EXPECT_EQ(c.width, 12);
-    EXPECT_EQ(c.height, 14);
+// The following tests check behaviour of `tig_line_intersection` function in
+// various configurations. Some cases give strange results. All expected values
+// were taken by running the function in the original binary.
+
+//          + (1)
+//          |
+//      +---|-------------+
+//      |   |             |
+//      |   + (2)         |
+//      |                 |
+//      +-----------------+
+TEST(TigLineTest, LineIntersectionVerticalFromTop)
+{
+    TigRect a = { 3, 7, 10, 10 };
+    TigLine b = { 5, 3, 5, 15 };
+
+    EXPECT_EQ(tig_line_intersection(&a, &b), TIG_OK);
+    EXPECT_EQ(b.x1, 5);
+    EXPECT_EQ(b.y1, 7);
+    EXPECT_EQ(b.x2, 5);
+    EXPECT_EQ(b.y2, 15);
+}
+
+//      +-----------------+
+//      |                 |
+//      |   + (2)         |
+//      |   |             |
+//      +---|-------------+
+//          |
+//          + (1)
+TEST(TigLineTest, LineIntersectionVerticalFromBottom)
+{
+    TigRect a = { 3, 7, 10, 10 };
+    TigLine b = { 5, 19, 5, 9 };
+
+    EXPECT_EQ(tig_line_intersection(&a, &b), TIG_OK);
+    EXPECT_EQ(b.x1, 5);
+    EXPECT_EQ(b.y1, 17);
+    EXPECT_EQ(b.x2, 5);
+    EXPECT_EQ(b.y2, 9);
+}
+
+// FAIL DUE TO IMPLEMENTATION
+//          + (1)
+//          |
+//      +---|-------------+
+//      |   |             |
+//      |   |             |
+//      |   |             |
+//      +---|-------------+
+//          |
+//          + (2)
+TEST(TigLineTest, LineIntersectionVerticalLineThru)
+{
+    TigRect a = { 3, 7, 10, 10 };
+    TigLine b = { 5, 3, 5, 19 };
+
+    EXPECT_EQ(tig_line_intersection(&a, &b), TIG_ERR_4);
+    EXPECT_EQ(b.x1, 5);
+    EXPECT_EQ(b.y1, 3);
+    EXPECT_EQ(b.x2, 5);
+    EXPECT_EQ(b.y2, 19);
+}
+
+//      +-----------------+
+// (1)  |  (2)            |
+//  +-------+             |
+//      |                 |
+//      +-----------------+
+TEST(TigLineTest, LineIntersectionHorizontalFromLeft)
+{
+    TigRect a = { 3, 7, 10, 10 };
+    TigLine b = { 0, 10, 9, 10 };
+
+    EXPECT_EQ(tig_line_intersection(&a, &b), TIG_OK);
+    EXPECT_EQ(b.x1, 3);
+    EXPECT_EQ(b.y1, 10);
+    EXPECT_EQ(b.x2, 9);
+    EXPECT_EQ(b.y2, 10);
+}
+
+//      +-----------------+
+//      |            (2)  |  (1)
+//      |             +-------+
+//      |                 |
+//      +-----------------+
+TEST(TigLineTest, LineIntersectionHorizontalFromRight)
+{
+    TigRect a = { 3, 7, 10, 10 };
+    TigLine b = { 15, 9, 7, 9 };
+
+    EXPECT_EQ(tig_line_intersection(&a, &b), TIG_OK);
+    EXPECT_EQ(b.x1, 13);
+    EXPECT_EQ(b.y1, 9);
+    EXPECT_EQ(b.x2, 7);
+    EXPECT_EQ(b.y2, 9);
+}
+
+// FAIL DUE TO IMPLEMENTATION
+//      +-----------------+
+// (1)  |                 |  (2)
+//  +-------------------------+
+//      |                 |
+//      +-----------------+
+TEST(TigLineTest, LineIntersectionHorizontalLineThru)
+{
+    TigRect a = { 3, 7, 10, 10 };
+    TigLine b = { 0, 10, 15, 10 };
+
+    EXPECT_EQ(tig_line_intersection(&a, &b), TIG_ERR_4);
+    EXPECT_EQ(b.x1, 0);
+    EXPECT_EQ(b.y1, 10);
+    EXPECT_EQ(b.x2, 15);
+    EXPECT_EQ(b.y2, 10);
+}
+
+TEST(TigLineTest, LineBoundingBoxNegative)
+{
+    TigLine a;
+    TigRect b;
+
+    a = { 13, 17, 3, 7 };
+    EXPECT_EQ(tig_line_bounding_box(&a, &b), TIG_OK);
+    EXPECT_EQ(b.x, 3);
+    EXPECT_EQ(b.y, 7);
+    EXPECT_EQ(b.width, 10);
+    EXPECT_EQ(b.height, 10);
+}
+
+TEST(TigLineTest, LineBoundingBoxPositive)
+{
+    TigLine a;
+    TigRect b;
+
+    a = { 3, 7, 13, 17 };
+    EXPECT_EQ(tig_line_bounding_box(&a, &b), TIG_OK);
+    EXPECT_EQ(b.x, 3);
+    EXPECT_EQ(b.y, 7);
+    EXPECT_EQ(b.width, 10);
+    EXPECT_EQ(b.height, 10);
 }
