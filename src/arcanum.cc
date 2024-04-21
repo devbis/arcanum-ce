@@ -579,12 +579,6 @@ int dword_6301F4;
 // 0x63650C
 int dword_63650C;
 
-// 0x638BB0
-int dword_638BB0;
-
-// 0x638BB4
-int dword_638BB4;
-
 // 0x59BEA8
 const char* object_field_names_[] = {
     "obj_f_begin",
@@ -3037,20 +3031,6 @@ void sub_538F40(void* a1)
 void sub_538F50(void* a1)
 {
     *a1 = dword_63650C;
-}
-
-// 0x53AB00
-int sub_53AB00()
-{
-    dword_638BB0 = 0;
-    dword_638BB4 = 0;
-    return 1;
-}
-
-// 0x53AB20
-int sub_53AB20(void)
-{
-    return sub_53AB30();
 }
 
 // 0x53EB00
