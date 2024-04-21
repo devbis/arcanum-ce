@@ -3284,6 +3284,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
     float end_opacity;
     float current_opacity;
     float opacity_horizontal_step;
+    uint32_t* mask;
 
     rc = tig_video_buffer_lock(blt->dst_video_buffer);
     if (rc != TIG_OK) {
@@ -3730,24 +3731,377 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
             // 0x50BAEF
             if ((blt->flags & TIG_ART_BLT_0x10) != 0) {
                 // 0x50BAFB
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                *(uint32_t*)dst_pixels = tig_color_make_4(*(uint32_t*)dst_pixels, color);
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x20) != 0) {
                 // 0x50C06F
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t color1 = *((uint32_t*)plt + *src_pixels);
+                                uint32_t color2 = *(uint32_t*)dst_pixels;
+                                uint32_t color3 = *mask;
+
+                                unsigned int red2 = (color2 & tig_color_red_mask);
+                                unsigned int green2 = (color2 & tig_color_green_mask);
+                                unsigned int blue2 = (color2 & tig_color_blue_mask);
+                                unsigned int red3 = (color3 & tig_color_red_mask);
+                                unsigned int green3 = (color3 & tig_color_green_mask);
+                                unsigned int blue3 = (color3 & tig_color_blue_mask);
+                                unsigned int v1 = tig_color_red_value_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
+
+                                *(uint32_t*)dst_pixels = ((red2 + ((v1 * (red3 - red2)) >> 8)) & tig_color_red_mask)
+                                    | ((green2 + ((v1 * (green3 - green2)) >> 8)) & tig_color_green_mask)
+                                    | ((blue2 + ((v1 * (blue3 - blue2)) >> 8)) & tig_color_blue_mask);
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
                 // 0x50C646
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                *(uint32_t*)dst_pixels = tig_color_make_5(color, *(uint32_t*)dst_pixels);
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x80) != 0) {
                 // 0x50CD23
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                *(uint32_t*)dst_pixels = tig_color_make_6(color, *(uint32_t*)dst_pixels);
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x100) != 0) {
                 // 0x50D3F9
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                *(uint32_t*)dst_pixels = tig_color_make_7(color, *(uint32_t*)dst_pixels, blt->opacity[0]);
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x200) != 0) {
                 // 0x50E3C4
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t color1 = *((uint32_t*)plt + *src_pixels);
+                                uint32_t color2 = *(uint32_t*)dst_pixels;
+                                uint32_t color3 = blt->field_10;
+
+                                unsigned int red2 = (color2 & tig_color_red_mask);
+                                unsigned int green2 = (color2 & tig_color_green_mask);
+                                unsigned int blue2 = (color2 & tig_color_blue_mask);
+                                unsigned int red3 = (color3 & tig_color_red_mask);
+                                unsigned int green3 = (color3 & tig_color_green_mask);
+                                unsigned int blue3 = (color3 & tig_color_blue_mask);
+                                unsigned int v1 = tig_color_red_value_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
+
+                                *(uint32_t*)dst_pixels = ((red2 + ((v1 * (red3 - red2)) >> 8)) & tig_color_red_mask)
+                                    | ((green2 + ((v1 * (green3 - green2)) >> 8)) & tig_color_green_mask)
+                                    | ((blue2 + ((v1 * (blue3 - blue2)) >> 8)) & tig_color_blue_mask);
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY) != 0) {
                 // 0x50E7CB
+                switch (blt->flags & TIG_ART_BLT_BLEND_MODE_GRADIENT_ANY) {
+                case TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL:
+                    start_opacity_vertical_step = 0.0;
+                    end_opacity_vertical_step = 0.0;
+                    start_opacity_x = (float)src_rect.x;
+                    end_opacity_x = (float)(art->hdr.frames_tbl[rotation][frame].width - src_rect.width - src_rect.x);
+                    opacity_range = ((float)blt->opacity[1] - (float)blt->opacity[0]) / art->hdr.frames_tbl[rotation][frame].width;
+                    start_opacity = (float)blt->opacity[0] + start_opacity_x * opacity_range;
+                    end_opacity = (float)blt->opacity[1] - end_opacity_x * opacity_range;
+                    break;
+                case TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL:
+                    start_opacity_vertical_step = ((float)blt->opacity[3] - (float)blt->opacity[0]) / art->hdr.frames_tbl[rotation][frame].height;
+                    end_opacity_vertical_step = start_opacity_vertical_step;
+                    start_opacity = src_rect.y * start_opacity_vertical_step + (float)blt->opacity[0];
+                    end_opacity = start_opacity;
+                    break;
+                default:
+                    start_opacity_vertical_step = ((float)blt->opacity[3] - (float)blt->opacity[0]) / art->hdr.frames_tbl[rotation][frame].height;
+                    end_opacity_vertical_step = ((float)(uint8_t)blt->opacity[2] - (float)blt->opacity[1]) / art->hdr.frames_tbl[rotation][frame].height;
+                    start_opacity_x = (float)src_rect.x;
+                    end_opacity_x = (float)(art->hdr.frames_tbl[rotation][frame].width - src_rect.width - src_rect.x);
+                    opacity_range = ((src_rect.y * end_opacity_vertical_step + (float)blt->opacity[1]) - (src_rect.y * start_opacity_vertical_step + (float)blt->opacity[0])) / art->hdr.frames_tbl[rotation][frame].width;
+                    start_opacity = (src_rect.y * start_opacity_vertical_step + (float)blt->opacity[0]) + start_opacity_x * opacity_range;
+                    end_opacity = (src_rect.y * end_opacity_vertical_step + (float)blt->opacity[1]) - end_opacity_x * opacity_range;
+                    break;
+                }
+
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        current_opacity = start_opacity;
+                        opacity_horizontal_step = (end_opacity - start_opacity) / src_rect.width;
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                uint32_t dst_color = *(uint32_t*)dst_pixels;
+                                uint32_t src_color = tig_color_make_3(((uint32_t*)plt)[*src_pixels], *mask);
+
+                                uint32_t dst_rm = tig_color_red_mask & dst_color;
+                                uint32_t dst_gm = tig_color_green_mask & dst_color;
+                                uint32_t dst_bm = tig_color_blue_mask & dst_color;
+
+                                uint32_t src_rm = tig_color_red_mask & src_color;
+                                uint32_t src_gm = tig_color_green_mask & src_color;
+                                uint32_t src_bm = tig_color_blue_mask & src_color;
+
+                                *(uint32_t*)dst_pixels = ((dst_rm + (((uint8_t)current_opacity * (src_rm - dst_rm)) >> 8)) & tig_color_red_mask)
+                                    | ((dst_gm + (((uint8_t)current_opacity * (src_gm - dst_gm)) >> 8)) & tig_color_green_mask)
+                                    | ((dst_bm + (((uint8_t)current_opacity * (src_bm - dst_bm)) >> 8)) & tig_color_blue_mask);
+                            }
+
+                            current_opacity += opacity_horizontal_step;
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+
+                        start_opacity += start_opacity_vertical_step;
+                        end_opacity += end_opacity_vertical_step;
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_SRC) != 0) {
                 // 0x50DA0F
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (((src_checkerboard_cur_x ^ src_checkerboard_cur_y) & 1) != 0) {
+                                if (*src_pixels != 0) {
+                                    *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                }
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+
+                            src_checkerboard_cur_x++;
+                        }
+                        dst_pixels += dst_skip;
+
+                        src_checkerboard_cur_x = src_rect.x;
+                        src_checkerboard_cur_y++;
+                    }
+                    break;
+                }
             } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_DST) != 0) {
                 // 0x50DEE7
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (((dst_checkerboard_cur_x ^ dst_checkerboard_cur_y) & 1) != 0) {
+                                if (*src_pixels != 0) {
+                                    *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                }
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+
+                            dst_checkerboard_cur_x++;
+                        }
+                        dst_pixels += dst_skip;
+
+                        dst_checkerboard_cur_x = dst_rect.x;
+                        dst_checkerboard_cur_y++;
+                    }
+                    break;
+                }
             } else {
                 // 0x50CD1B
+                switch (tig_art_bits_per_pixel) {
+                case 32:
+                    if (delta > 0) {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels;
+                        dst_skip = video_buffer_data.pitch - width * 4;
+                    } else {
+                        dst_pixels = (uint8_t*)video_buffer_data.surface_data.pixels + video_buffer_data.pitch / 4 * (height - 1);
+                        dst_skip = -width * 4 - video_buffer_data.pitch;
+                    }
+                    dst_pixels += video_buffer_data.pitch * blt->dst_rect->y + blt->dst_rect->x * 4;
+                    for (y = 0; y < height; y++) {
+                        mask = &(blt->field_14[src_rect.x]);
+
+                        for (x = 0; x < width; x++) {
+                            if (*src_pixels != 0) {
+                                *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                            }
+
+                            mask++;
+                            src_pixels += delta;
+                            dst_pixels += 4;
+                        }
+                        dst_pixels += dst_skip;
+                    }
+                    break;
+                }
             }
         } else if ((blt->flags & TIG_ART_BLT_0x20000) != 0) {
             // 0x50F3B4

@@ -172,8 +172,8 @@ typedef struct TigArtBlitSpec {
     /* 0004 */ tig_art_id_t art_id;
     /* 0008 */ TigRect* src_rect;
     /* 000C */ TigPalette field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int* field_14;
+    /* 0010 */ uint32_t field_10;
+    /* 0014 */ uint32_t* field_14;
     /* 0018 */ TigRect* field_18;
     /* 001C */ uint8_t opacity[4];
     /* 0020 */ TigVideoBuffer* dst_video_buffer;
