@@ -75,13 +75,6 @@ typedef struct TigMessage {
     timer_t time;
     int type;
     union {
-        struct {
-            int field_8;
-            int field_C;
-            int field_10;
-            int field_14;
-            int field_18;
-        } unknown;
         TigMouseMessageData mouse;
         TigButtonMessageData button;
         TigMenuMessageData menu;

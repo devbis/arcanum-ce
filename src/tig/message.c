@@ -462,7 +462,7 @@ bool sub_52BF90(TigMessage* message)
     if (dword_62B1EC == 0) {
         switch (message->type) {
         case TIG_MESSAGE_MOUSE:
-            if (message->data.unknown.field_14 != 6) {
+            if (message->data.mouse.event != TIG_MOUSE_MESSAGE_MOVE) {
                 return false;
             }
             break;
