@@ -3760,7 +3760,9 @@ bool tig_video_surface_lock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 surfa
 // 0x525190
 bool tig_video_surface_unlock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 surface_desc)
 {
-    HRESULT hr = IDirectDrawSurface7_Unlock(surface, surface_desc->lpSurface);
+    HRESULT hr;
+
+    hr = IDirectDrawSurface7_Unlock(surface, surface_desc->lpSurface);
     if (FAILED(hr)) {
         tig_video_print_dd_result(hr);
         return false;
