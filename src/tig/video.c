@@ -76,7 +76,7 @@ static void tig_video_surface_destroy(LPDIRECTDRAWSURFACE7* surface_ptr);
 static bool tig_video_surface_lock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 surface_desc, void** surface_data_ptr);
 static bool tig_video_surface_unlock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 surface_desc);
 static bool tig_video_surface_fill(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, int color);
-static int tig_video_screenshot_make_internal(int a1);
+static int tig_video_screenshot_make_internal(int key);
 static unsigned int tig_video_color_to_mask(COLORREF color);
 static void tig_video_print_dd_result(HRESULT hr);
 static int tig_video_buffer_data_to_bmp(TigVideoBufferData* video_buffer_data, TigRect* rect, const char* file_name, bool palette_indexed);
@@ -3806,16 +3806,18 @@ bool tig_video_surface_fill(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, int col
 }
 
 // 0x525250
-int tig_video_screenshot_make_internal(int a1)
+int tig_video_screenshot_make_internal(int key)
 {
     int rc;
-
-    if (tig_video_screenshot_key != a1) {
-        return TIG_ERR_16;
-    }
-
     int index;
     char path[MAX_PATH];
+    void* surface_data;
+    TigVideoBufferData video_buffer_data;
+    TigRect rect;
+
+    if (tig_video_screenshot_key != key) {
+        return TIG_ERR_16;
+    }
 
     for (index = 0; index < INT_MAX; index++) {
         sprintf(path, "screen%04d.bmp", index);
@@ -3828,13 +3830,11 @@ int tig_video_screenshot_make_internal(int a1)
         return TIG_ERR_13;
     }
 
-    void* surface_data;
     rc = tig_video_main_surface_lock(&surface_data);
     if (rc != TIG_OK) {
         return rc;
     }
 
-    TigVideoBufferData video_buffer_data;
     video_buffer_data.pitch = tig_video_state.current_surface_desc.lPitch;
     video_buffer_data.width = tig_video_state.current_surface_desc.dwWidth;
     video_buffer_data.height = tig_video_state.current_surface_desc.dwHeight;
@@ -3843,7 +3843,6 @@ int tig_video_screenshot_make_internal(int a1)
     video_buffer_data.background_color = 0;
     video_buffer_data.color_key = 0;
 
-    TigRect rect;
     rect.x = 0;
     rect.y = 0;
     rect.width = tig_video_state.current_surface_desc.dwWidth;
