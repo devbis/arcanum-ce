@@ -3773,22 +3773,25 @@ bool tig_video_surface_unlock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 sur
 bool tig_video_surface_fill(LPDIRECTDRAWSURFACE7 surface, TigRect* rect, int color)
 {
     DDBLTFX fx;
+    RECT native_rect;
+    HRESULT hr;
+
     fx.dwSize = sizeof(fx);
     fx.dwFillColor = color;
 
-    RECT win_rect;
-    LPRECT win_rect_ptr;
     if (rect != NULL) {
-        win_rect.left = rect->x;
-        win_rect.top = rect->y;
-        win_rect.right = win_rect.left + rect->width;
-        win_rect.bottom = win_rect.top + rect->height;
-        win_rect_ptr = &win_rect;
-    } else {
-        win_rect_ptr = NULL;
+        native_rect.left = rect->x;
+        native_rect.top = rect->y;
+        native_rect.right = native_rect.left + rect->width;
+        native_rect.bottom = native_rect.top + rect->height;
     }
 
-    HRESULT hr = IDirectDrawSurface_Blt(surface, win_rect_ptr, 0, 0, DDBLT_WAIT | DDBLT_COLORFILL, &fx);
+    hr = IDirectDrawSurface_Blt(surface,
+        rect != NULL ? &native_rect : NULL,
+        0,
+        0,
+        DDBLT_WAIT | DDBLT_COLORFILL,
+        &fx);
     if (FAILED(hr)) {
         tig_video_print_dd_result(hr);
         return false;
