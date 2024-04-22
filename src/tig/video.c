@@ -3681,8 +3681,9 @@ void tig_video_ddraw_palette_destroy()
 bool tig_video_surface_create(LPDIRECTDRAW7 ddraw, int width, int height, unsigned int caps, LPDIRECTDRAWSURFACE7* surface_ptr)
 {
     HRESULT hr;
+    DDSURFACEDESC2 ddsd;
 
-    DDSURFACEDESC2 ddsd = { 0 };
+    memset(&ddsd, 0, sizeof(ddsd));
     ddsd.dwSize = sizeof(ddsd);
 
     if ((caps & DDSCAPS_PRIMARYSURFACE) != 0) {
