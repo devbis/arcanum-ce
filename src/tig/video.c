@@ -3743,10 +3743,12 @@ void tig_video_surface_destroy(LPDIRECTDRAWSURFACE7* surface_ptr)
 // 0x525140
 bool tig_video_surface_lock(LPDIRECTDRAWSURFACE7 surface, LPDDSURFACEDESC2 surface_desc, void** surface_data_ptr)
 {
+    HRESULT hr;
+
     memset(surface_desc, 0, sizeof(*surface_desc));
     surface_desc->dwSize = sizeof(*surface_desc);
 
-    HRESULT hr = IDirectDrawSurface7_Lock(surface, NULL, surface_desc, DDLOCK_OKTOSWAP | DDLOCK_WAIT, NULL);
+    hr = IDirectDrawSurface7_Lock(surface, NULL, surface_desc, DDLOCK_OKTOSWAP | DDLOCK_WAIT, NULL);
     if (FAILED(hr)) {
         tig_video_print_dd_result(hr);
         return false;
