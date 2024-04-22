@@ -3405,6 +3405,8 @@ int tig_video_ddraw_exit()
 // 0x524930
 bool tig_video_d3d_init(TigInitializeInfo* init_info)
 {
+    D3DDEVICEDESC7 device_desc;
+
     tig_video_3d_initialized = false;
     tig_video_3d_is_hardware = false;
     tig_video_3d_texture_must_be_power_of_two = false;
@@ -3469,7 +3471,6 @@ bool tig_video_d3d_init(TigInitializeInfo* init_info)
 
     tig_debug_printf("3D: Retrieving caps from device...\n");
 
-    D3DDEVICEDESC7 device_desc;
     if (FAILED(IDirect3DDevice7_GetCaps(tig_video_state.d3d_device, &device_desc))) {
         tig_debug_printf("3D: Error retrieving caps from device.\n");
         return false;
