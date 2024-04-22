@@ -3638,14 +3638,21 @@ void tig_video_d3d_exit()
 // 0x524F00
 bool tig_video_ddraw_palette_create(LPDIRECTDRAW7 ddraw)
 {
+    PALETTEENTRY* entries;
+    int index;
+    int red;
+    int green;
+    int blue;
+    HRESULT hr;
+
     tig_video_state.palette = NULL;
 
     // NOTE: Why use heap?
-    PALETTEENTRY* entries = (PALETTEENTRY*)MALLOC(sizeof(*entries) * 256);
-    for (int index = 0; index < 256; index++) {
-        int red = tig_color_get_red(index);
-        int green = tig_color_get_green(index);
-        int blue = tig_color_get_blue(index);
+    entries = (PALETTEENTRY*)MALLOC(sizeof(*entries) * 256);
+    for (index = 0; index < 256; index++) {
+        red = tig_color_get_red(index);
+        green = tig_color_get_green(index);
+        blue = tig_color_get_blue(index);
 
         entries[index].peRed = (uint8_t)red;
         entries[index].peGreen = (uint8_t)green;
@@ -3655,12 +3662,19 @@ bool tig_video_ddraw_palette_create(LPDIRECTDRAW7 ddraw)
         tig_video_palette[index] = tig_color_to_24_bpp(red, green, blue);
     }
 
-    if (FAILED(IDirectDraw7_CreatePalette(ddraw, DDPCAPS_8BIT | DDPCAPS_ALLOW256, entries, &(tig_video_state.palette), NULL))) {
+    hr = IDirectDraw7_CreatePalette(ddraw,
+        DDPCAPS_8BIT | DDPCAPS_ALLOW256,
+        entries,
+        &(tig_video_state.palette),
+        NULL);
+    if (FAILED(hr)) {
         FREE(entries);
         return false;
     }
 
-    if (FAILED(IDirectDrawSurface7_SetPalette(tig_video_state.primary_surface, tig_video_state.palette))) {
+    hr = IDirectDrawSurface7_SetPalette(tig_video_state.primary_surface,
+        tig_video_state.palette);
+    if (FAILED(hr)) {
         FREE(entries);
         return false;
     }
