@@ -914,9 +914,9 @@ TEST_F(TigColorTestRGB565, Grayscale)
     EXPECT_EQ(memcmp(tig_color_blue_grayscale_table, blue_luminosity_table, 32), 0);
 }
 
-TEST_F(TigColorTestRGB565, ColorTable)
+TEST_F(TigColorTestRGB565, RgbToPlatformColorTable)
 {
-    uint8_t red_index_table[256] = {
+    uint8_t red_platform_table[256] = {
         // clang-format off
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
@@ -953,9 +953,9 @@ TEST_F(TigColorTestRGB565, ColorTable)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_red_index_table, red_index_table, 256), 0);
+    EXPECT_EQ(memcmp(tig_color_red_rgb_to_platform_table, red_platform_table, 256), 0);
 
-    uint8_t green_index_table[256] = {
+    uint8_t green_platform_table[256] = {
         // clang-format off
         0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
         0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03,
@@ -992,9 +992,9 @@ TEST_F(TigColorTestRGB565, ColorTable)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_green_index_table, green_index_table, 256), 0);
+    EXPECT_EQ(memcmp(tig_color_green_rgb_to_platform_table, green_platform_table, 256), 0);
 
-    uint8_t blue_index_table[256] = {
+    uint8_t blue_platform_table[256] = {
         // clang-format off
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
@@ -1031,12 +1031,12 @@ TEST_F(TigColorTestRGB565, ColorTable)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_blue_index_table, blue_index_table, 256), 0);
+    EXPECT_EQ(memcmp(tig_color_blue_rgb_to_platform_table, blue_platform_table, 256), 0);
 }
 
-TEST_F(TigColorTestRGB565, ValueTable)
+TEST_F(TigColorTestRGB565, PlatformToRgbColorTable)
 {
-    uint8_t red_value_table[32] = {
+    uint8_t red_rgb_table[32] = {
         // clang-format off
         0x00, 0x08, 0x10, 0x18, 0x20, 0x29, 0x31, 0x39,
         0x41, 0x4A, 0x52, 0x5A, 0x62, 0x6A, 0x73, 0x7B,
@@ -1045,9 +1045,9 @@ TEST_F(TigColorTestRGB565, ValueTable)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_red_value_table, red_value_table, 32), 0);
+    EXPECT_EQ(memcmp(tig_color_red_platform_to_rgb_table, red_rgb_table, 32), 0);
 
-    uint8_t green_value_table[64] = {
+    uint8_t green_rgb_table[64] = {
         // clang-format off
         0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C,
         0x20, 0x24, 0x28, 0x2C, 0x30, 0x34, 0x38, 0x3C,
@@ -1060,9 +1060,9 @@ TEST_F(TigColorTestRGB565, ValueTable)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_green_value_table, green_value_table, 64), 0);
+    EXPECT_EQ(memcmp(tig_color_green_platform_to_rgb_table, green_rgb_table, 64), 0);
 
-    uint8_t blue_value_table[32] = {
+    uint8_t blue_rgb_table[32] = {
         // clang-format off
         0x00, 0x08, 0x10, 0x18, 0x20, 0x29, 0x31, 0x39,
         0x41, 0x4A, 0x52, 0x5A, 0x62, 0x6A, 0x73, 0x7B,
@@ -1071,7 +1071,7 @@ TEST_F(TigColorTestRGB565, ValueTable)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_blue_value_table, blue_value_table, 32), 0);
+    EXPECT_EQ(memcmp(tig_color_blue_platform_to_rgb_table, blue_rgb_table, 32), 0);
 }
 
 class TigColorTestRGBA5551to565 : public TigColorTestRGB565 {

@@ -1916,21 +1916,21 @@ int tig_video_buffer_blit(TigVideoBufferBlitInfo* blit_info)
                 return TIG_ERR_16;
             }
         } else if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0400) != 0) {
-            color[0] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_10) >> tig_color_red_shift])
-                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_10) >> tig_color_green_shift])
-                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_10) >> tig_color_blue_shift]);
+            color[0] = (tig_color_red_platform_to_rgb_table[(tig_color_red_mask & blit_info->field_10) >> tig_color_red_shift])
+                | (tig_color_green_platform_to_rgb_table[(tig_color_green_mask & blit_info->field_10) >> tig_color_green_shift])
+                | (tig_color_blue_platform_to_rgb_table[(tig_color_blue_mask & blit_info->field_10) >> tig_color_blue_shift]);
 
-            color[1] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_14) >> tig_color_red_shift])
-                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_14) >> tig_color_green_shift])
-                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_14) >> tig_color_blue_shift]);
+            color[1] = (tig_color_red_platform_to_rgb_table[(tig_color_red_mask & blit_info->field_14) >> tig_color_red_shift])
+                | (tig_color_green_platform_to_rgb_table[(tig_color_green_mask & blit_info->field_14) >> tig_color_green_shift])
+                | (tig_color_blue_platform_to_rgb_table[(tig_color_blue_mask & blit_info->field_14) >> tig_color_blue_shift]);
 
-            color[2] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_18) >> tig_color_red_shift])
-                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_18) >> tig_color_green_shift])
-                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_18) >> tig_color_blue_shift]);
+            color[2] = (tig_color_red_platform_to_rgb_table[(tig_color_red_mask & blit_info->field_18) >> tig_color_red_shift])
+                | (tig_color_green_platform_to_rgb_table[(tig_color_green_mask & blit_info->field_18) >> tig_color_green_shift])
+                | (tig_color_blue_platform_to_rgb_table[(tig_color_blue_mask & blit_info->field_18) >> tig_color_blue_shift]);
 
-            color[3] = (tig_color_red_value_table[(tig_color_red_mask & blit_info->field_1C) >> tig_color_red_shift])
-                | (tig_color_green_value_table[(tig_color_green_mask & blit_info->field_1C) >> tig_color_green_shift])
-                | (tig_color_blue_value_table[(tig_color_blue_mask & blit_info->field_1C) >> tig_color_blue_shift]);
+            color[3] = (tig_color_red_platform_to_rgb_table[(tig_color_red_mask & blit_info->field_1C) >> tig_color_red_shift])
+                | (tig_color_green_platform_to_rgb_table[(tig_color_green_mask & blit_info->field_1C) >> tig_color_green_shift])
+                | (tig_color_blue_platform_to_rgb_table[(tig_color_blue_mask & blit_info->field_1C) >> tig_color_blue_shift]);
 
             if (blit_info->field_20 != NULL) {
                 sub_526690(blit_info->field_20, &blit_src_rect, color);
@@ -2247,9 +2247,9 @@ int tig_video_buffer_blit(TigVideoBufferBlitInfo* blit_info)
                         for (x = 0; x < blit_dst_rect.width; ++x) {
                             if ((blit_info->src_video_buffer->flags & TIG_VIDEO_BUFFER_COLOR_KEY) == 0
                                 || *(uint32_t*)src != blit_info->src_video_buffer->color_key) {
-                                uint32_t tint_color = (tig_color_red_index_table[(uint8_t)r_value] << tig_color_red_shift)
-                                    | (tig_color_green_index_table[(uint8_t)g_value] << tig_color_green_shift)
-                                    | (tig_color_blue_index_table[(uint8_t)b_value] << tig_color_blue_shift);
+                                uint32_t tint_color = (tig_color_red_rgb_to_platform_table[(uint8_t)r_value] << tig_color_red_shift)
+                                    | (tig_color_green_rgb_to_platform_table[(uint8_t)g_value] << tig_color_green_shift)
+                                    | (tig_color_blue_rgb_to_platform_table[(uint8_t)b_value] << tig_color_blue_shift);
 
                                 uint8_t tint_r = (uint8_t)((tint_color & tig_color_red_mask) >> tig_color_red_shift);
                                 uint8_t tint_g = (uint8_t)((tint_color & tig_color_green_mask) >> tig_color_green_shift);

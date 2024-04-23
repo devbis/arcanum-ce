@@ -26,8 +26,8 @@ static void tig_color_table_1_init();
 static void tig_color_table_1_exit();
 static void tig_color_grayscale_table_init();
 static void tig_color_grayscale_table_exit();
-static void tig_color_table_3_init();
-static void tig_color_table_3_exit();
+static void tig_color_rgb_conversion_tables_init();
+static void tig_color_rgb_conversion_tables_exit();
 static void tig_color_table_4_init();
 static void tig_color_table_4_exit();
 
@@ -99,13 +99,13 @@ unsigned int tig_color_blue_mask;
 unsigned int tig_color_green_range;
 
 // 0x739E98
-uint8_t* tig_color_blue_index_table;
+uint8_t* tig_color_blue_rgb_to_platform_table;
 
 // 0x739E9C
 unsigned int tig_color_rgba_alpha_range;
 
 // 0x739EA0
-uint8_t* tig_color_red_value_table;
+uint8_t* tig_color_red_platform_to_rgb_table;
 
 // 0x739EA4
 uint8_t* tig_color_blue_intensity_table;
@@ -126,10 +126,10 @@ unsigned int tig_color_rgba_green_shift;
 unsigned int tig_color_green_mask;
 
 // 0x739EBC
-uint8_t* tig_color_blue_value_table;
+uint8_t* tig_color_blue_platform_to_rgb_table;
 
 // 0x739EC0
-uint8_t* tig_color_green_value_table;
+uint8_t* tig_color_green_platform_to_rgb_table;
 
 // 0x739EC4
 unsigned int tig_color_rgba_red_shift;
@@ -207,10 +207,10 @@ uint8_t* tig_color_red_grayscale_table;
 unsigned int tig_color_rgba_blue_range_bit_length;
 
 // 0x739F28
-uint8_t* tig_color_green_index_table;
+uint8_t* tig_color_green_rgb_to_platform_table;
 
 // 0x739F2C
-uint8_t* tig_color_red_index_table;
+uint8_t* tig_color_red_rgb_to_platform_table;
 
 // 0x739F30
 uint8_t* tig_color_green_grayscale_table;
@@ -242,7 +242,7 @@ void tig_color_exit()
 {
     if (tig_color_initialized) {
         tig_color_table_4_exit();
-        tig_color_table_3_exit();
+        tig_color_rgb_conversion_tables_exit();
         tig_color_grayscale_table_exit();
         tig_color_table_1_exit();
         tig_color_initialized = false;
@@ -293,7 +293,7 @@ int tig_color_set_rgb_settings(unsigned int red_mask, unsigned int green_mask, u
 
     tig_color_table_1_init();
     tig_color_grayscale_table_init();
-    tig_color_table_3_init();
+    tig_color_rgb_conversion_tables_init();
 
     return 0;
 }
@@ -467,9 +467,9 @@ color_t tig_color_rgb_to_grayscale(color_t color)
         + tig_color_green_grayscale_table[green]
         + tig_color_blue_grayscale_table[blue];
 
-    return (tig_color_red_index_table[gray] << tig_color_red_shift)
-        | (tig_color_green_index_table[gray] << tig_color_green_shift)
-        | (tig_color_blue_index_table[gray] << tig_color_blue_shift);
+    return (tig_color_red_rgb_to_platform_table[gray] << tig_color_red_shift)
+        | (tig_color_green_rgb_to_platform_table[gray] << tig_color_green_shift)
+        | (tig_color_blue_rgb_to_platform_table[gray] << tig_color_blue_shift);
 }
 
 // 0x52C410
@@ -497,7 +497,7 @@ int sub_52C490(unsigned int color)
     green_index = (color >> 8) & 0xFF;
     blue_index = (color >> 16) & 0xFF;
 
-    return (tig_color_red_index_table[red_index] << tig_color_red_shift) | (tig_color_green_index_table[green_index] << tig_color_green_shift) | (tig_color_blue_index_table[blue_index] << tig_color_blue_shift);
+    return (tig_color_red_rgb_to_platform_table[red_index] << tig_color_red_shift) | (tig_color_green_rgb_to_platform_table[green_index] << tig_color_green_shift) | (tig_color_blue_rgb_to_platform_table[blue_index] << tig_color_blue_shift);
 }
 
 // 0x52C500
@@ -529,7 +529,7 @@ unsigned int tig_color_index_of(color_t color)
     green_index = 255 * ((color & tig_color_masks_table[CS_24][CC_GREEN]) >> tig_color_shifts_table[CS_24][CC_GREEN]) / tig_color_range_table[CS_24][CC_GREEN];
     blue_index = 255 * ((color & tig_color_masks_table[CS_24][CC_BLUE]) >> tig_color_shifts_table[CS_24][CC_BLUE]) / tig_color_range_table[CS_24][CC_BLUE];
 
-    return (tig_color_red_index_table[red_index] << tig_color_red_shift) | (tig_color_green_index_table[green_index] << tig_color_green_shift) | (tig_color_blue_index_table[blue_index] << tig_color_blue_shift);
+    return (tig_color_red_rgb_to_platform_table[red_index] << tig_color_red_shift) | (tig_color_green_rgb_to_platform_table[green_index] << tig_color_green_shift) | (tig_color_blue_rgb_to_platform_table[blue_index] << tig_color_blue_shift);
 }
 
 // 0x52C610
@@ -730,103 +730,116 @@ void tig_color_grayscale_table_exit()
     }
 }
 
+// Creates color lookup tables to convert video mode specific colors to RGB and
+// vice versa.
+//
+// This function creates two sets of tables for each color channel:
+//
+// - `from`: these are used to reduce 0-255 RGB color channel value to video
+// mode specific value (which is based on available bits per channel). These
+// tables have 256 elements each.
+//
+// - `to`: these are used to remap video mode specific color channel value to
+// it's closest RGB value. The number of elements in these tables are dependent
+// on number of bits available for each color channel.
+//
 // 0x52CB20
-void tig_color_table_3_init()
+void tig_color_rgb_conversion_tables_init()
 {
     unsigned int index;
 
-    tig_color_table_3_exit();
+    tig_color_rgb_conversion_tables_exit();
 
-    tig_color_red_index_table = (uint8_t*)MALLOC(256);
+    tig_color_red_rgb_to_platform_table = (uint8_t*)MALLOC(256);
     for (index = 0; index < 256; index++) {
-        tig_color_red_index_table[index] = (uint8_t)(index >> (8 - tig_color_red_range_bit_length));
+        tig_color_red_rgb_to_platform_table[index] = (uint8_t)(index >> (8 - tig_color_red_range_bit_length));
     }
 
     if (tig_color_green_mask >> tig_color_green_shift == tig_color_red_mask >> tig_color_red_shift) {
-        tig_color_green_index_table = tig_color_red_index_table;
+        tig_color_green_rgb_to_platform_table = tig_color_red_rgb_to_platform_table;
     } else {
-        tig_color_green_index_table = (uint8_t*)MALLOC(256);
+        tig_color_green_rgb_to_platform_table = (uint8_t*)MALLOC(256);
         for (index = 0; index < 256; index++) {
-            tig_color_green_index_table[index] = (uint8_t)(index >> (8 - tig_color_green_range_bit_length));
+            tig_color_green_rgb_to_platform_table[index] = (uint8_t)(index >> (8 - tig_color_green_range_bit_length));
         }
     }
 
     if (tig_color_blue_mask >> tig_color_blue_shift == tig_color_red_mask >> tig_color_red_shift) {
-        tig_color_blue_index_table = tig_color_red_index_table;
+        tig_color_blue_rgb_to_platform_table = tig_color_red_rgb_to_platform_table;
     } else if (tig_color_blue_mask >> tig_color_blue_shift == tig_color_green_mask >> tig_color_green_shift) {
-        tig_color_blue_index_table = tig_color_green_index_table;
+        tig_color_blue_rgb_to_platform_table = tig_color_green_rgb_to_platform_table;
     } else {
-        tig_color_blue_index_table = (uint8_t*)MALLOC(256);
+        tig_color_blue_rgb_to_platform_table = (uint8_t*)MALLOC(256);
         for (index = 0; index < 256; index++) {
-            tig_color_blue_index_table[index] = (uint8_t)(index >> (8 - tig_color_blue_range_bit_length));
+            tig_color_blue_rgb_to_platform_table[index] = (uint8_t)(index >> (8 - tig_color_blue_range_bit_length));
         }
     }
 
-    tig_color_red_value_table = (uint8_t*)MALLOC(tig_color_red_range + 1);
+    tig_color_red_platform_to_rgb_table = (uint8_t*)MALLOC(tig_color_red_range + 1);
     for (index = 0; index <= tig_color_red_range; index++) {
-        tig_color_red_value_table[index] = (uint8_t)((double)index / (double)tig_color_red_range * 255.0);
+        tig_color_red_platform_to_rgb_table[index] = (uint8_t)((double)index / (double)tig_color_red_range * 255.0);
     }
 
     if (tig_color_green_mask >> tig_color_green_shift == tig_color_red_mask >> tig_color_red_shift) {
-        tig_color_green_value_table = tig_color_red_value_table;
+        tig_color_green_platform_to_rgb_table = tig_color_red_platform_to_rgb_table;
     } else {
-        tig_color_green_value_table = (uint8_t*)MALLOC(tig_color_green_range + 1);
+        tig_color_green_platform_to_rgb_table = (uint8_t*)MALLOC(tig_color_green_range + 1);
         for (index = 0; index <= tig_color_green_range; index++) {
-            tig_color_green_value_table[index] = (uint8_t)((double)index / (double)tig_color_green_range * 255.0);
+            tig_color_green_platform_to_rgb_table[index] = (uint8_t)((double)index / (double)tig_color_green_range * 255.0);
         }
     }
 
     if (tig_color_blue_mask >> tig_color_blue_shift == tig_color_red_mask >> tig_color_red_shift) {
-        tig_color_blue_value_table = tig_color_red_value_table;
+        tig_color_blue_platform_to_rgb_table = tig_color_red_platform_to_rgb_table;
     } else if (tig_color_blue_mask >> tig_color_blue_shift == tig_color_green_mask >> tig_color_green_shift) {
-        tig_color_blue_value_table = tig_color_green_value_table;
+        tig_color_blue_platform_to_rgb_table = tig_color_green_platform_to_rgb_table;
     } else {
-        tig_color_blue_value_table = (uint8_t*)MALLOC(tig_color_blue_range + 1);
+        tig_color_blue_platform_to_rgb_table = (uint8_t*)MALLOC(tig_color_blue_range + 1);
         for (index = 0; index <= tig_color_blue_range; index++) {
-            tig_color_blue_value_table[index] = (uint8_t)((double)index / (double)tig_color_blue_range * 255.0);
+            tig_color_blue_platform_to_rgb_table[index] = (uint8_t)((double)index / (double)tig_color_blue_range * 255.0);
         }
     }
 }
 
 // 0x52CDE0
-void tig_color_table_3_exit()
+void tig_color_rgb_conversion_tables_exit()
 {
-    if (tig_color_blue_value_table != NULL) {
-        if (tig_color_blue_value_table != tig_color_green_value_table && tig_color_blue_value_table != tig_color_red_value_table) {
-            FREE(tig_color_blue_value_table);
+    if (tig_color_blue_platform_to_rgb_table != NULL) {
+        if (tig_color_blue_platform_to_rgb_table != tig_color_green_platform_to_rgb_table && tig_color_blue_platform_to_rgb_table != tig_color_red_platform_to_rgb_table) {
+            FREE(tig_color_blue_platform_to_rgb_table);
         }
-        tig_color_blue_value_table = NULL;
+        tig_color_blue_platform_to_rgb_table = NULL;
     }
 
-    if (tig_color_green_value_table != NULL) {
-        if (tig_color_green_value_table != tig_color_red_value_table) {
-            FREE(tig_color_green_value_table);
+    if (tig_color_green_platform_to_rgb_table != NULL) {
+        if (tig_color_green_platform_to_rgb_table != tig_color_red_platform_to_rgb_table) {
+            FREE(tig_color_green_platform_to_rgb_table);
         }
-        tig_color_green_value_table = NULL;
+        tig_color_green_platform_to_rgb_table = NULL;
     }
 
-    if (tig_color_red_value_table != NULL) {
-        FREE(tig_color_red_value_table);
-        tig_color_red_value_table = NULL;
+    if (tig_color_red_platform_to_rgb_table != NULL) {
+        FREE(tig_color_red_platform_to_rgb_table);
+        tig_color_red_platform_to_rgb_table = NULL;
     }
 
-    if (tig_color_blue_index_table != NULL) {
-        if (tig_color_blue_index_table != tig_color_green_index_table && tig_color_blue_index_table != tig_color_red_index_table) {
-            FREE(tig_color_blue_index_table);
+    if (tig_color_blue_rgb_to_platform_table != NULL) {
+        if (tig_color_blue_rgb_to_platform_table != tig_color_green_rgb_to_platform_table && tig_color_blue_rgb_to_platform_table != tig_color_red_rgb_to_platform_table) {
+            FREE(tig_color_blue_rgb_to_platform_table);
         }
-        tig_color_blue_index_table = NULL;
+        tig_color_blue_rgb_to_platform_table = NULL;
     }
 
-    if (tig_color_green_index_table != NULL) {
-        if (tig_color_green_index_table != tig_color_red_index_table) {
-            FREE(tig_color_green_index_table);
+    if (tig_color_green_rgb_to_platform_table != NULL) {
+        if (tig_color_green_rgb_to_platform_table != tig_color_red_rgb_to_platform_table) {
+            FREE(tig_color_green_rgb_to_platform_table);
         }
-        tig_color_green_index_table = NULL;
+        tig_color_green_rgb_to_platform_table = NULL;
     }
 
-    if (tig_color_red_index_table) {
-        FREE(tig_color_red_index_table);
-        tig_color_red_index_table = NULL;
+    if (tig_color_red_rgb_to_platform_table) {
+        FREE(tig_color_red_rgb_to_platform_table);
+        tig_color_red_rgb_to_platform_table = NULL;
     }
 }
 

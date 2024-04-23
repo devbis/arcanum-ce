@@ -15,17 +15,17 @@ extern uint8_t* tig_color_green_intensity_table;
 extern unsigned int tig_color_rgba_green_range_bit_length;
 extern unsigned int tig_color_blue_mask;
 extern unsigned int tig_color_green_range;
-extern uint8_t* tig_color_blue_index_table;
+extern uint8_t* tig_color_blue_rgb_to_platform_table;
 extern unsigned int tig_color_rgba_alpha_range;
-extern uint8_t* tig_color_red_value_table;
+extern uint8_t* tig_color_red_platform_to_rgb_table;
 extern uint8_t* tig_color_blue_intensity_table;
 extern uint8_t* tig_color_rgba_red_table;
 extern unsigned int tig_color_blue_shift;
 extern unsigned int tig_color_red_range_bit_length;
 extern unsigned int tig_color_rgba_green_shift;
 extern unsigned int tig_color_green_mask;
-extern uint8_t* tig_color_blue_value_table;
-extern uint8_t* tig_color_green_value_table;
+extern uint8_t* tig_color_blue_platform_to_rgb_table;
+extern uint8_t* tig_color_green_platform_to_rgb_table;
 extern unsigned int tig_color_rgba_red_shift;
 extern unsigned int tig_color_rgba_blue_mask;
 extern uint8_t* tig_color_rgba_blue_table;
@@ -51,8 +51,8 @@ extern uint8_t* tig_color_blue_grayscale_table;
 extern unsigned int tig_color_rgba_green_range;
 extern uint8_t* tig_color_red_grayscale_table;
 extern unsigned int tig_color_rgba_blue_range_bit_length;
-extern uint8_t* tig_color_green_index_table;
-extern uint8_t* tig_color_red_index_table;
+extern uint8_t* tig_color_green_rgb_to_platform_table;
+extern uint8_t* tig_color_red_rgb_to_platform_table;
 extern uint8_t* tig_color_green_grayscale_table;
 
 int tig_color_init(TigInitializeInfo* init_info);
@@ -74,7 +74,7 @@ unsigned int tig_color_to_24_bpp(int red, int green, int blue);
 // TODO: Not sure about the name.
 static inline unsigned int tig_color_rgb_make(int red, int green, int blue)
 {
-    return (tig_color_red_index_table[red] << tig_color_red_shift) | (tig_color_green_index_table[green] << tig_color_green_shift) | (tig_color_blue_index_table[blue] << tig_color_blue_shift);
+    return (tig_color_red_rgb_to_platform_table[red] << tig_color_red_shift) | (tig_color_green_rgb_to_platform_table[green] << tig_color_green_shift) | (tig_color_blue_rgb_to_platform_table[blue] << tig_color_blue_shift);
 }
 
 static inline unsigned int tig_color_16_to_32(uint32_t color)
@@ -169,9 +169,9 @@ static inline unsigned int tig_color_make_8(uint32_t color1, uint32_t color2)
     unsigned int green2 = (color2 & tig_color_green_mask);
     unsigned int blue2 = (color2 & tig_color_blue_mask);
 
-    return ((red2 + ((tig_color_red_value_table[red1 >> tig_color_red_shift] * (red1 - red2)) >> 8)) & tig_color_red_mask)
-        | ((green2 + ((tig_color_red_value_table[red1 >> tig_color_red_shift] * (green1 - green2)) >> 8)) & tig_color_green_mask)
-        | ((blue2 + ((tig_color_red_value_table[red1 >> tig_color_red_shift] * (blue1 - blue2)) >> 8)) & tig_color_blue_mask);
+    return ((red2 + ((tig_color_red_platform_to_rgb_table[red1 >> tig_color_red_shift] * (red1 - red2)) >> 8)) & tig_color_red_mask)
+        | ((green2 + ((tig_color_red_platform_to_rgb_table[red1 >> tig_color_red_shift] * (green1 - green2)) >> 8)) & tig_color_green_mask)
+        | ((blue2 + ((tig_color_red_platform_to_rgb_table[red1 >> tig_color_red_shift] * (blue1 - blue2)) >> 8)) & tig_color_blue_mask);
 }
 
 #ifdef __cplusplus

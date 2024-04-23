@@ -3554,7 +3554,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                                 unsigned int red3 = (color3 & tig_color_red_mask);
                                 unsigned int green3 = (color3 & tig_color_green_mask);
                                 unsigned int blue3 = (color3 & tig_color_blue_mask);
-                                unsigned int v1 = tig_color_red_value_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
+                                unsigned int v1 = tig_color_red_platform_to_rgb_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
 
                                 *(uint32_t*)dst_pixels = ((red2 + ((v1 * (red3 - red2)) >> 8)) & tig_color_red_mask)
                                     | ((green2 + ((v1 * (green3 - green2)) >> 8)) & tig_color_green_mask)
@@ -3785,7 +3785,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                                 unsigned int red3 = (color3 & tig_color_red_mask);
                                 unsigned int green3 = (color3 & tig_color_green_mask);
                                 unsigned int blue3 = (color3 & tig_color_blue_mask);
-                                unsigned int v1 = tig_color_red_value_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
+                                unsigned int v1 = tig_color_red_platform_to_rgb_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
 
                                 *(uint32_t*)dst_pixels = ((red2 + ((v1 * (red3 - red2)) >> 8)) & tig_color_red_mask)
                                     | ((green2 + ((v1 * (green3 - green2)) >> 8)) & tig_color_green_mask)
@@ -3914,7 +3914,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                                 unsigned int red3 = (color3 & tig_color_red_mask);
                                 unsigned int green3 = (color3 & tig_color_green_mask);
                                 unsigned int blue3 = (color3 & tig_color_blue_mask);
-                                unsigned int v1 = tig_color_red_value_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
+                                unsigned int v1 = tig_color_red_platform_to_rgb_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
 
                                 *(uint32_t*)dst_pixels = ((red2 + ((v1 * (red3 - red2)) >> 8)) & tig_color_red_mask)
                                     | ((green2 + ((v1 * (green3 - green2)) >> 8)) & tig_color_green_mask)
