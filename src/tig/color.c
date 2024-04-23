@@ -452,19 +452,24 @@ int tig_color_get_blue(color_t color)
 }
 
 // 0x52C370
-unsigned int sub_52C370(color_t color)
+color_t tig_color_rgb_to_grayscale(color_t color)
 {
-    int red_index;
-    int green_index;
-    int blue_index;
-    int luminosity;
+    unsigned int red;
+    unsigned int green;
+    unsigned int blue;
+    unsigned int gray;
 
-    red_index = (color & tig_color_red_mask) >> tig_color_red_shift;
-    green_index = (color & tig_color_green_mask) >> tig_color_green_shift;
-    blue_index = (color & tig_color_blue_mask) >> tig_color_blue_shift;
-    luminosity = tig_color_red_grayscale_table[red_index] + tig_color_green_grayscale_table[green_index] + tig_color_blue_grayscale_table[blue_index];
+    red = (color & tig_color_red_mask) >> tig_color_red_shift;
+    green = (color & tig_color_green_mask) >> tig_color_green_shift;
+    blue = (color & tig_color_blue_mask) >> tig_color_blue_shift;
 
-    return (tig_color_red_index_table[luminosity] << tig_color_red_shift) | (tig_color_green_index_table[luminosity] << tig_color_green_shift) | (tig_color_blue_index_table[luminosity] << tig_color_blue_shift);
+    gray = tig_color_red_grayscale_table[red]
+        + tig_color_green_grayscale_table[green]
+        + tig_color_blue_grayscale_table[blue];
+
+    return (tig_color_red_index_table[gray] << tig_color_red_shift)
+        | (tig_color_green_index_table[gray] << tig_color_green_shift)
+        | (tig_color_blue_index_table[gray] << tig_color_blue_shift);
 }
 
 // 0x52C410

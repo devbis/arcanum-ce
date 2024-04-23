@@ -64,7 +64,7 @@ void tig_color_get_shifts(unsigned int* red_shift, unsigned int* green_shift, un
 int tig_color_get_red(color_t color);
 int tig_color_get_green(color_t color);
 int tig_color_get_blue(color_t color);
-unsigned int sub_52C370(color_t color);
+color_t tig_color_rgb_to_grayscale(color_t color);
 int sub_52C500(color_t color);
 int sub_52C520(color_t color);
 int sub_52C540(color_t color);

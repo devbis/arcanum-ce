@@ -152,7 +152,7 @@ void tig_palette_adjust(TigPaletteAdjustDesc* desc)
 
         if ((desc->flags & TIG_PALETTE_ADJUST_LUMINATE) != 0) {
             for (index = 0; index < 256; index++) {
-                p16[index] = (uint16_t)sub_52C370(p16[index]);
+                p16[index] = (uint16_t)tig_color_rgb_to_grayscale(p16[index]);
             }
         }
 
@@ -179,7 +179,7 @@ void tig_palette_adjust(TigPaletteAdjustDesc* desc)
 
         if ((desc->flags & TIG_PALETTE_ADJUST_LUMINATE) != 0) {
             for (index = 0; index < 256; index++) {
-                p32[index] = sub_52C370(p32[index]);
+                p32[index] = tig_color_rgb_to_grayscale(p32[index]);
             }
         }
 
@@ -208,7 +208,7 @@ void tig_palette_adjust(TigPaletteAdjustDesc* desc)
 
         if ((desc->flags & TIG_PALETTE_ADJUST_LUMINATE) != 0) {
             for (index = 0; index < 256; index++) {
-                p32[index] = sub_52C370(p32[index]);
+                p32[index] = tig_color_rgb_to_grayscale(p32[index]);
             }
         }
 

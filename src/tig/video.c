@@ -2577,7 +2577,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                     break;
                 case TIG_VIDEO_BUFFER_TINT_MODE_3:
                     for (x = 0; x < frame.width; ++x) {
-                        *dst = (uint16_t)sub_52C370(*dst);
+                        *dst = (uint16_t)tig_color_rgb_to_grayscale(*dst);
                         ++dst;
                     }
                     break;
@@ -2664,7 +2664,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                 case TIG_VIDEO_BUFFER_TINT_MODE_3:
                     for (x = 0; x < frame.width; ++x) {
                         uint32_t src_color = dst[0] | (dst[1] << 8) | (dst[2] << 16);
-                        uint32_t dst_color = sub_52C370(src_color);
+                        uint32_t dst_color = tig_color_rgb_to_grayscale(src_color);
                         dst[0] = (uint8_t)dst_color;
                         dst[1] = (uint8_t)(dst_color >> 8);
                         dst[2] = (uint8_t)(dst_color >> 16);
@@ -2732,7 +2732,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                     break;
                 case TIG_VIDEO_BUFFER_TINT_MODE_3:
                     for (x = 0; x < frame.width; ++x) {
-                        *dst = sub_52C370(*dst);
+                        *dst = tig_color_rgb_to_grayscale(*dst);
                         ++dst;
                     }
                     break;
