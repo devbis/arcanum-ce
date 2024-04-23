@@ -911,7 +911,7 @@ TEST_F(TigColorTestRGB565, Grayscale)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_blue_grayscale_table, blue_luminosity_table, 32), 0);
+    EXPECT_EQ(memcmp(tig_color_blue_grayscale_table, blue_grayscale_table, 32), 0);
 }
 
 TEST_F(TigColorTestRGB565, RgbToPlatformColorTable)
