@@ -2501,7 +2501,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
         return TIG_ERR_12;
     }
 
-    if (color == tig_color_rgb_make(0, 0, 0) && mode != TIG_VIDEO_BUFFER_TINT_MODE_3) {
+    if (color == tig_color_rgb_make(0, 0, 0) && mode != TIG_VIDEO_BUFFER_TINT_MODE_GRAYSCALE) {
         return TIG_OK;
     }
 
@@ -2575,7 +2575,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                             | (b3 << tig_color_blue_shift);
                     }
                     break;
-                case TIG_VIDEO_BUFFER_TINT_MODE_3:
+                case TIG_VIDEO_BUFFER_TINT_MODE_GRAYSCALE:
                     for (x = 0; x < frame.width; ++x) {
                         *dst = (uint16_t)tig_color_rgb_to_grayscale(*dst);
                         ++dst;
@@ -2661,7 +2661,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                         dst += 3;
                     }
                     break;
-                case TIG_VIDEO_BUFFER_TINT_MODE_3:
+                case TIG_VIDEO_BUFFER_TINT_MODE_GRAYSCALE:
                     for (x = 0; x < frame.width; ++x) {
                         uint32_t src_color = dst[0] | (dst[1] << 8) | (dst[2] << 16);
                         uint32_t dst_color = tig_color_rgb_to_grayscale(src_color);
@@ -2730,7 +2730,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                             | (b3 << tig_color_blue_shift);
                     }
                     break;
-                case TIG_VIDEO_BUFFER_TINT_MODE_3:
+                case TIG_VIDEO_BUFFER_TINT_MODE_GRAYSCALE:
                     for (x = 0; x < frame.width; ++x) {
                         *dst = tig_color_rgb_to_grayscale(*dst);
                         ++dst;
