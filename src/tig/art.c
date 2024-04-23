@@ -3495,7 +3495,9 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
                                 uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
-                                *(uint32_t*)dst_pixels = tig_color_make_6(color, *(uint32_t*)dst_pixels);
+                                *(uint32_t*)dst_pixels = tig_color_blend(color,
+                                    *(uint32_t*)dst_pixels,
+                                    tig_color_rgb_to_grayscale(color));
                             }
                             src_pixels += delta;
                             dst_pixels += 4;
@@ -3847,7 +3849,9 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
                                 uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
-                                *(uint32_t*)dst_pixels = tig_color_make_6(color, *(uint32_t*)dst_pixels);
+                                *(uint32_t*)dst_pixels = tig_color_blend(color,
+                                    *(uint32_t*)dst_pixels,
+                                    tig_color_rgb_to_grayscale(color));
                             }
 
                             mask++;
@@ -4203,7 +4207,9 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                *(uint32_t*)dst_pixels = tig_color_make_6(*((uint32_t*)plt + *src_pixels), *(uint32_t*)dst_pixels);
+                                *(uint32_t*)dst_pixels = tig_color_blend(*((uint32_t*)plt + *src_pixels),
+                                    *(uint32_t*)dst_pixels,
+                                    tig_color_rgb_to_grayscale(*((uint32_t*)plt + *src_pixels)));
                             }
                             src_pixels += delta;
                             dst_pixels += 4;

@@ -122,23 +122,6 @@ static inline color_t tig_color_plus(color_t color1, color_t color2)
         | min(b1 + b2, tig_color_blue_mask);
 }
 
-static inline unsigned int tig_color_make_6(uint32_t color1, uint32_t color2)
-{
-    unsigned int red1 = (color1 & tig_color_red_mask);
-    unsigned int green1 = (color1 & tig_color_green_mask);
-    unsigned int blue1 = (color1 & tig_color_blue_mask);
-    unsigned int red2 = (color2 & tig_color_red_mask);
-    unsigned int green2 = (color2 & tig_color_green_mask);
-    unsigned int blue2 = (color2 & tig_color_blue_mask);
-    unsigned int luminosity = tig_color_red_grayscale_table[red1 >> tig_color_red_shift]
-        + tig_color_green_grayscale_table[green1 >> tig_color_green_shift]
-        + tig_color_blue_grayscale_table[blue1 >> tig_color_blue_shift];
-
-    return ((red2 + ((luminosity * (red1 - red2)) >> 8)) & tig_color_red_mask)
-        | ((green2 + ((luminosity * (green1 - green2)) >> 8)) & tig_color_green_mask)
-        | ((blue2 + ((luminosity * (blue1 - blue2)) >> 8)) & tig_color_blue_mask);
-}
-
 // Blends two colors using standard alpha blending rules (src over dst).
 //
 // The `opacity` specifies amount of src in blended color:
