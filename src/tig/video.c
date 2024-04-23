@@ -2259,9 +2259,9 @@ int tig_video_buffer_blit(TigVideoBufferBlitInfo* blit_info)
                                 uint8_t src_g = (uint8_t)((*(uint32_t*)src & tig_color_green_mask) >> tig_color_green_shift);
                                 uint8_t src_b = (uint8_t)((*(uint32_t*)src & tig_color_blue_mask) >> tig_color_blue_mask);
 
-                                *(uint32_t*)dst = (tig_color_red_intensity_table[(tig_color_red_range + 1) * (src_r + tint_r)] << tig_color_red_shift)
-                                    | (tig_color_green_intensity_table[(tig_color_green_range + 1) * (src_g + tint_g)] << tig_color_green_shift)
-                                    | (tig_color_blue_intensity_table[(tig_color_blue_range + 1) * (src_b + tint_b)] << tig_color_blue_shift);
+                                *(uint32_t*)dst = (tig_color_red_mult_table[(tig_color_red_range + 1) * (src_r + tint_r)] << tig_color_red_shift)
+                                    | (tig_color_green_mult_table[(tig_color_green_range + 1) * (src_g + tint_g)] << tig_color_green_shift)
+                                    | (tig_color_blue_mult_table[(tig_color_blue_range + 1) * (src_b + tint_b)] << tig_color_blue_shift);
                             }
 
                             r_value += r_step;
@@ -2566,9 +2566,9 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                         uint8_t g2 = (uint8_t)(((uint16_t)color & tig_color_green_mask) >> tig_color_green_shift);
                         uint8_t b2 = (uint8_t)(((uint16_t)color & tig_color_blue_mask) >> tig_color_blue_shift);
 
-                        uint8_t r3 = tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2];
-                        uint8_t g3 = tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2];
-                        uint8_t b3 = tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2];
+                        uint8_t r3 = tig_color_red_mult_table[(tig_color_red_range + 1) * r1 + r2];
+                        uint8_t g3 = tig_color_green_mult_table[(tig_color_green_range + 1) * g1 + g2];
+                        uint8_t b3 = tig_color_blue_mult_table[(tig_color_blue_range + 1) * b1 + b2];
 
                         *dst++ = (r3 << tig_color_red_shift)
                             | (g3 << tig_color_green_shift)
@@ -2647,9 +2647,9 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                         uint8_t g2 = (uint8_t)(((uint16_t)color & tig_color_green_mask) >> tig_color_green_shift);
                         uint8_t b2 = (uint8_t)(((uint16_t)color & tig_color_blue_mask) >> tig_color_blue_shift);
 
-                        uint8_t r3 = tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2];
-                        uint8_t g3 = tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2];
-                        uint8_t b3 = tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2];
+                        uint8_t r3 = tig_color_red_mult_table[(tig_color_red_range + 1) * r1 + r2];
+                        uint8_t g3 = tig_color_green_mult_table[(tig_color_green_range + 1) * g1 + g2];
+                        uint8_t b3 = tig_color_blue_mult_table[(tig_color_blue_range + 1) * b1 + b2];
 
                         uint32_t dst_color = (r3 << tig_color_red_shift)
                             | (g3 << tig_color_green_shift)
@@ -2721,9 +2721,9 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
                         uint8_t g2 = (uint8_t)(((uint32_t)color & tig_color_green_mask) >> tig_color_green_shift);
                         uint8_t b2 = (uint8_t)(((uint32_t)color & tig_color_blue_mask) >> tig_color_blue_shift);
 
-                        uint8_t r3 = tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2];
-                        uint8_t g3 = tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2];
-                        uint8_t b3 = tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2];
+                        uint8_t r3 = tig_color_red_mult_table[(tig_color_red_range + 1) * r1 + r2];
+                        uint8_t g3 = tig_color_green_mult_table[(tig_color_green_range + 1) * g1 + g2];
+                        uint8_t b3 = tig_color_blue_mult_table[(tig_color_blue_range + 1) * b1 + b2];
 
                         *dst++ = (r3 << tig_color_red_shift)
                             | (g3 << tig_color_green_shift)

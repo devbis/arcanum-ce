@@ -11,14 +11,14 @@ extern "C" {
 
 typedef uint32_t color_t;
 
-extern uint8_t* tig_color_green_intensity_table;
+extern uint8_t* tig_color_green_mult_table;
 extern unsigned int tig_color_rgba_green_range_bit_length;
 extern unsigned int tig_color_blue_mask;
 extern unsigned int tig_color_green_range;
 extern uint8_t* tig_color_blue_rgb_to_platform_table;
 extern unsigned int tig_color_rgba_alpha_range;
 extern uint8_t* tig_color_red_platform_to_rgb_table;
-extern uint8_t* tig_color_blue_intensity_table;
+extern uint8_t* tig_color_blue_mult_table;
 extern uint8_t* tig_color_rgba_red_table;
 extern unsigned int tig_color_blue_shift;
 extern unsigned int tig_color_red_range_bit_length;
@@ -31,7 +31,7 @@ extern unsigned int tig_color_rgba_blue_mask;
 extern uint8_t* tig_color_rgba_blue_table;
 extern unsigned int tig_color_blue_range;
 extern unsigned int tig_color_rgba_red_range_bit_length;
-extern uint8_t* tig_color_red_intensity_table;
+extern uint8_t* tig_color_red_mult_table;
 extern uint8_t* tig_color_rgba_green_table;
 extern unsigned int tig_color_rgba_alpha_mask;
 extern unsigned int tig_color_rgba_blue_range;
@@ -101,9 +101,9 @@ static inline color_t tig_color_mult(color_t color1, color_t color2)
     unsigned int g2 = (color2 & tig_color_green_mask) >> tig_color_green_shift;
     unsigned int b2 = (color2 & tig_color_blue_mask) >> tig_color_blue_shift;
 
-    return (tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2] << tig_color_red_shift)
-        | (tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2] << tig_color_green_shift)
-        | (tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2] << tig_color_blue_shift);
+    return (tig_color_red_mult_table[(tig_color_red_range + 1) * r1 + r2] << tig_color_red_shift)
+        | (tig_color_green_mult_table[(tig_color_green_range + 1) * g1 + g2] << tig_color_green_shift)
+        | (tig_color_blue_mult_table[(tig_color_blue_range + 1) * b1 + b2] << tig_color_blue_shift);
 }
 
 // Sum the components of two platform-specific colors.
@@ -131,9 +131,9 @@ static inline unsigned int tig_color_make_5(uint32_t color1, uint32_t color2)
     unsigned int green2 = (color2 & tig_color_green_mask) >> tig_color_green_shift;
     unsigned int blue2 = (color2 & tig_color_blue_mask) >> tig_color_blue_shift;
 
-    return (tig_color_red_intensity_table[(tig_color_red_range + 1) * red2 + red1] << tig_color_red_shift)
-        | (tig_color_green_intensity_table[(tig_color_green_range + 1) * green2 + green1] << tig_color_green_shift)
-        | (tig_color_blue_intensity_table[(tig_color_blue_range + 1) * blue2 + blue1] << tig_color_blue_shift);
+    return (tig_color_red_mult_table[(tig_color_red_range + 1) * red2 + red1] << tig_color_red_shift)
+        | (tig_color_green_mult_table[(tig_color_green_range + 1) * green2 + green1] << tig_color_green_shift)
+        | (tig_color_blue_mult_table[(tig_color_blue_range + 1) * blue2 + blue1] << tig_color_blue_shift);
 }
 
 static inline unsigned int tig_color_make_6(uint32_t color1, uint32_t color2)

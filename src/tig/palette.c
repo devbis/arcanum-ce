@@ -158,13 +158,13 @@ void tig_palette_adjust(TigPaletteAdjustDesc* desc)
 
         if ((desc->flags & TIG_PALETTE_ADJUST_TINT) != 0) {
             for (index = 0; index < 256; index++) {
-                r16 = *(tig_color_red_intensity_table
+                r16 = *(tig_color_red_mult_table
                     + (tig_color_red_range + 1) * ((tig_color_red_mask & p16[index]) >> tig_color_red_shift)
                     + ((tig_color_red_mask & desc->tint_color) >> tig_color_red_shift));
-                g16 = *(tig_color_green_intensity_table
+                g16 = *(tig_color_green_mult_table
                     + (tig_color_green_range + 1) * ((tig_color_green_mask & p16[index]) >> tig_color_green_shift)
                     + ((tig_color_green_mask & desc->tint_color) >> tig_color_green_shift));
-                b16 = *(tig_color_blue_intensity_table
+                b16 = *(tig_color_blue_mult_table
                     + (tig_color_blue_range + 1) * ((tig_color_blue_mask & p16[index]) >> tig_color_blue_shift)
                     + ((tig_color_blue_mask & desc->tint_color) >> tig_color_blue_shift));
                 p16[index] = (r16 << tig_color_red_shift) | (g16 << tig_color_green_shift) | (b16 << tig_color_blue_shift);
@@ -185,13 +185,13 @@ void tig_palette_adjust(TigPaletteAdjustDesc* desc)
 
         if ((desc->flags & TIG_PALETTE_ADJUST_TINT) != 0) {
             for (index = 0; index < 256; index++) {
-                r32 = *(tig_color_red_intensity_table
+                r32 = *(tig_color_red_mult_table
                     + (tig_color_red_range + 1) * ((tig_color_red_mask & p32[index]) >> tig_color_red_shift)
                     + ((tig_color_red_mask & desc->tint_color) >> tig_color_red_shift));
-                g32 = *(tig_color_green_intensity_table
+                g32 = *(tig_color_green_mult_table
                     + (tig_color_green_range + 1) * ((tig_color_green_mask & p32[index]) >> tig_color_green_shift)
                     + ((tig_color_green_mask & desc->tint_color) >> tig_color_green_shift));
-                b32 = *(tig_color_blue_intensity_table
+                b32 = *(tig_color_blue_mult_table
                     + (tig_color_blue_range + 1) * ((tig_color_blue_mask & p32[index]) >> tig_color_blue_shift)
                     + ((tig_color_blue_mask & desc->tint_color) >> tig_color_blue_shift));
                 p32[index] = (r32 << tig_color_red_shift) | (g32 << tig_color_green_shift) | (b32 << tig_color_blue_shift);
@@ -214,13 +214,13 @@ void tig_palette_adjust(TigPaletteAdjustDesc* desc)
 
         if ((desc->flags & TIG_PALETTE_ADJUST_TINT) != 0) {
             for (index = 0; index < 256; index++) {
-                r32 = *(tig_color_red_intensity_table
+                r32 = *(tig_color_red_mult_table
                     + (tig_color_red_range + 1) * ((tig_color_red_mask & p32[index]) >> tig_color_red_shift)
                     + ((tig_color_red_mask & desc->tint_color) >> tig_color_red_shift));
-                g32 = *(tig_color_green_intensity_table
+                g32 = *(tig_color_green_mult_table
                     + (tig_color_green_range + 1) * ((tig_color_green_mask & p32[index]) >> tig_color_green_shift)
                     + ((tig_color_green_mask & desc->tint_color) >> tig_color_green_shift));
-                b32 = *(tig_color_blue_intensity_table
+                b32 = *(tig_color_blue_mult_table
                     + (tig_color_blue_range + 1) * ((tig_color_blue_mask & p32[index]) >> tig_color_blue_shift)
                     + ((tig_color_blue_mask & desc->tint_color) >> tig_color_blue_shift));
                 p32[index] = (r32 << tig_color_red_shift) | (g32 << tig_color_green_shift) | (b32 << tig_color_blue_shift);

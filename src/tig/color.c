@@ -22,8 +22,8 @@ typedef enum ColorSettings {
 
 static void tig_color_set_mask(int color_component, unsigned int mask);
 static int sub_52C760(color_t color, int color_component, int color_setting);
-static void tig_color_table_1_init();
-static void tig_color_table_1_exit();
+static void tig_color_mult_tables_init();
+static void tig_color_mult_tables_exit();
 static void tig_color_grayscale_table_init();
 static void tig_color_grayscale_table_exit();
 static void tig_color_rgb_conversion_tables_init();
@@ -87,7 +87,7 @@ static int tig_color_bpp;
 static bool tig_color_initialized;
 
 // 0x739E88
-uint8_t* tig_color_green_intensity_table;
+uint8_t* tig_color_green_mult_table;
 
 // 0x739E8C
 unsigned int tig_color_rgba_green_range_bit_length;
@@ -108,7 +108,7 @@ unsigned int tig_color_rgba_alpha_range;
 uint8_t* tig_color_red_platform_to_rgb_table;
 
 // 0x739EA4
-uint8_t* tig_color_blue_intensity_table;
+uint8_t* tig_color_blue_mult_table;
 
 // 0x739EA8
 uint8_t* tig_color_rgba_red_table;
@@ -147,7 +147,7 @@ unsigned int tig_color_blue_range;
 unsigned int tig_color_rgba_red_range_bit_length;
 
 // 0x739ED8
-uint8_t* tig_color_red_intensity_table;
+uint8_t* tig_color_red_mult_table;
 
 // 0x739EDC
 uint8_t* tig_color_rgba_green_table;
@@ -244,7 +244,7 @@ void tig_color_exit()
         tig_color_table_4_exit();
         tig_color_rgb_conversion_tables_exit();
         tig_color_grayscale_table_exit();
-        tig_color_table_1_exit();
+        tig_color_mult_tables_exit();
         tig_color_initialized = false;
     }
 }
@@ -291,7 +291,7 @@ int tig_color_set_rgb_settings(unsigned int red_mask, unsigned int green_mask, u
         bits >>= 1;
     }
 
-    tig_color_table_1_init();
+    tig_color_mult_tables_init();
     tig_color_grayscale_table_init();
     tig_color_rgb_conversion_tables_init();
 
@@ -613,72 +613,72 @@ int sub_52C760(color_t color, int color_component, int color_setting)
 }
 
 // 0x52C7C0
-void tig_color_table_1_init()
+void tig_color_mult_tables_init()
 {
     unsigned int x;
     unsigned int y;
     unsigned int index;
 
-    tig_color_table_1_exit();
+    tig_color_mult_tables_exit();
 
-    tig_color_red_intensity_table = (uint8_t*)MALLOC((tig_color_red_range + 1) * (tig_color_red_range + 1));
+    tig_color_red_mult_table = (uint8_t*)MALLOC((tig_color_red_range + 1) * (tig_color_red_range + 1));
     for (y = 0; y <= tig_color_red_range; y++) {
         for (x = 0; x <= tig_color_red_range; x++) {
             // NOTE: Original code is slightly different.
             index = x * (tig_color_red_range + 1) + y;
-            tig_color_red_intensity_table[index] = (uint8_t)(y * x / tig_color_red_range);
+            tig_color_red_mult_table[index] = (uint8_t)(y * x / tig_color_red_range);
         }
     }
 
     if (tig_color_green_mask >> tig_color_green_shift == tig_color_red_mask >> tig_color_red_shift) {
-        tig_color_green_intensity_table = tig_color_red_intensity_table;
+        tig_color_green_mult_table = tig_color_red_mult_table;
     } else {
-        tig_color_green_intensity_table = (uint8_t*)MALLOC((tig_color_green_range + 1) * (tig_color_green_range + 1));
+        tig_color_green_mult_table = (uint8_t*)MALLOC((tig_color_green_range + 1) * (tig_color_green_range + 1));
         for (y = 0; y <= tig_color_green_range; y++) {
             for (x = 0; x <= tig_color_green_range; x++) {
                 // NOTE: Original code is slightly different.
                 index = x * (tig_color_green_range + 1) + y;
-                tig_color_green_intensity_table[index] = (uint8_t)(y * x / tig_color_green_range);
+                tig_color_green_mult_table[index] = (uint8_t)(y * x / tig_color_green_range);
             }
         }
     }
 
     if (tig_color_blue_mask >> tig_color_blue_shift == tig_color_red_mask >> tig_color_red_shift) {
-        tig_color_blue_intensity_table = tig_color_red_intensity_table;
+        tig_color_blue_mult_table = tig_color_red_mult_table;
     } else if (tig_color_blue_mask >> tig_color_blue_shift == tig_color_green_mask >> tig_color_green_shift) {
-        tig_color_blue_intensity_table = tig_color_green_intensity_table;
+        tig_color_blue_mult_table = tig_color_green_mult_table;
     } else {
-        tig_color_blue_intensity_table = (uint8_t*)MALLOC((tig_color_blue_range + 1) * (tig_color_blue_range + 1));
+        tig_color_blue_mult_table = (uint8_t*)MALLOC((tig_color_blue_range + 1) * (tig_color_blue_range + 1));
         for (y = 0; y <= tig_color_blue_range; y++) {
             for (x = 0; x <= tig_color_blue_range; x++) {
                 // NOTE: Original code is slightly different.
                 index = x * (tig_color_blue_range + 1) + y;
-                tig_color_blue_intensity_table[index] = (uint8_t)(y * x / tig_color_blue_range);
+                tig_color_blue_mult_table[index] = (uint8_t)(y * x / tig_color_blue_range);
             }
         }
     }
 }
 
 // 0x52C940
-void tig_color_table_1_exit()
+void tig_color_mult_tables_exit()
 {
-    if (tig_color_blue_intensity_table != NULL) {
-        if (tig_color_blue_intensity_table != tig_color_green_intensity_table && tig_color_blue_intensity_table != tig_color_red_intensity_table) {
-            FREE(tig_color_blue_intensity_table);
+    if (tig_color_blue_mult_table != NULL) {
+        if (tig_color_blue_mult_table != tig_color_green_mult_table && tig_color_blue_mult_table != tig_color_red_mult_table) {
+            FREE(tig_color_blue_mult_table);
         }
-        tig_color_blue_intensity_table = NULL;
+        tig_color_blue_mult_table = NULL;
     }
 
-    if (tig_color_green_intensity_table != NULL) {
-        if (tig_color_green_intensity_table != tig_color_red_intensity_table) {
-            FREE(tig_color_green_intensity_table);
+    if (tig_color_green_mult_table != NULL) {
+        if (tig_color_green_mult_table != tig_color_red_mult_table) {
+            FREE(tig_color_green_mult_table);
         }
-        tig_color_green_intensity_table = NULL;
+        tig_color_green_mult_table = NULL;
     }
 
-    if (tig_color_red_intensity_table != NULL) {
-        FREE(tig_color_red_intensity_table);
-        tig_color_red_intensity_table = NULL;
+    if (tig_color_red_mult_table != NULL) {
+        FREE(tig_color_red_mult_table);
+        tig_color_red_mult_table = NULL;
     }
 }
 
