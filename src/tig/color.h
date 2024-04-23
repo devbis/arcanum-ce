@@ -122,20 +122,6 @@ static inline color_t tig_color_plus(color_t color1, color_t color2)
         | min(b1 + b2, tig_color_blue_mask);
 }
 
-static inline unsigned int tig_color_make_5(uint32_t color1, uint32_t color2)
-{
-    unsigned int red1 = (color1 & tig_color_red_mask) >> tig_color_red_shift;
-    unsigned int green1 = (color1 & tig_color_green_mask) >> tig_color_green_shift;
-    unsigned int blue1 = (color1 & tig_color_blue_mask) >> tig_color_blue_shift;
-    unsigned int red2 = (color2 & tig_color_red_mask) >> tig_color_red_shift;
-    unsigned int green2 = (color2 & tig_color_green_mask) >> tig_color_green_shift;
-    unsigned int blue2 = (color2 & tig_color_blue_mask) >> tig_color_blue_shift;
-
-    return (tig_color_red_mult_table[(tig_color_red_range + 1) * red2 + red1] << tig_color_red_shift)
-        | (tig_color_green_mult_table[(tig_color_green_range + 1) * green2 + green1] << tig_color_green_shift)
-        | (tig_color_blue_mult_table[(tig_color_blue_range + 1) * blue2 + blue1] << tig_color_blue_shift);
-}
-
 static inline unsigned int tig_color_make_6(uint32_t color1, uint32_t color2)
 {
     unsigned int red1 = (color1 & tig_color_red_mask);
