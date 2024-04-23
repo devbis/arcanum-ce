@@ -139,18 +139,24 @@ static inline unsigned int tig_color_make_6(uint32_t color1, uint32_t color2)
         | ((blue2 + ((luminosity * (blue1 - blue2)) >> 8)) & tig_color_blue_mask);
 }
 
-static inline unsigned int tig_color_make_7(uint32_t color1, uint32_t color2, unsigned int intensity)
+// Blends two colors using standard alpha blending rules (src over dst).
+//
+// The `opacity` specifies amount of src in blended color:
+// - `0`: src is completely transparent
+// - `255`: src is completely opaque
+static inline color_t tig_color_blend(color_t src, color_t dst, int opacity)
 {
-    unsigned int red1 = (color1 & tig_color_red_mask);
-    unsigned int green1 = (color1 & tig_color_green_mask);
-    unsigned int blue1 = (color1 & tig_color_blue_mask);
-    unsigned int red2 = (color2 & tig_color_red_mask);
-    unsigned int green2 = (color2 & tig_color_green_mask);
-    unsigned int blue2 = (color2 & tig_color_blue_mask);
+    unsigned int r1 = (src & tig_color_red_mask);
+    unsigned int g1 = (src & tig_color_green_mask);
+    unsigned int b1 = (src & tig_color_blue_mask);
 
-    return ((red2 + ((intensity * (red1 - red2)) >> 8)) & tig_color_red_mask)
-        | ((green2 + ((intensity * (green1 - green2)) >> 8)) & tig_color_green_mask)
-        | ((blue2 + ((intensity * (blue1 - blue2)) >> 8)) & tig_color_blue_mask);
+    unsigned int r2 = (dst & tig_color_red_mask);
+    unsigned int g2 = (dst & tig_color_green_mask);
+    unsigned int b2 = (dst & tig_color_blue_mask);
+
+    return ((r2 + ((opacity * (r1 - r2)) >> 8)) & tig_color_red_mask)
+        | ((g2 + ((opacity * (g1 - g2)) >> 8)) & tig_color_green_mask)
+        | ((b2 + ((opacity * (b1 - b2)) >> 8)) & tig_color_blue_mask);
 }
 
 static inline unsigned int tig_color_make_8(uint32_t color1, uint32_t color2)
