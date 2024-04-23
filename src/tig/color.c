@@ -24,8 +24,8 @@ static void tig_color_set_mask(int color_component, unsigned int mask);
 static int sub_52C760(color_t color, int color_component, int color_setting);
 static void tig_color_table_1_init();
 static void tig_color_table_1_exit();
-static void tig_color_table_2_init();
-static void tig_color_table_2_exit();
+static void tig_color_grayscale_table_init();
+static void tig_color_grayscale_table_exit();
 static void tig_color_table_3_init();
 static void tig_color_table_3_exit();
 static void tig_color_table_4_init();
@@ -195,13 +195,13 @@ unsigned int tig_color_rgba_alpha_range_bit_length;
 unsigned int tig_color_green_range_bit_length;
 
 // 0x739F18
-uint8_t* tig_color_blue_luminosity_table;
+uint8_t* tig_color_blue_grayscale_table;
 
 // 0x739F1C
 unsigned int tig_color_rgba_green_range;
 
 // 0x739F20
-uint8_t* tig_color_red_luminosity_table;
+uint8_t* tig_color_red_grayscale_table;
 
 // 0x739F24
 unsigned int tig_color_rgba_blue_range_bit_length;
@@ -213,7 +213,7 @@ uint8_t* tig_color_green_index_table;
 uint8_t* tig_color_red_index_table;
 
 // 0x739F30
-uint8_t* tig_color_green_luminosity_table;
+uint8_t* tig_color_green_grayscale_table;
 
 // 0x52BFC0
 int tig_color_init(TigInitializeInfo* init_info)
@@ -243,7 +243,7 @@ void tig_color_exit()
     if (tig_color_initialized) {
         tig_color_table_4_exit();
         tig_color_table_3_exit();
-        tig_color_table_2_exit();
+        tig_color_grayscale_table_exit();
         tig_color_table_1_exit();
         tig_color_initialized = false;
     }
@@ -292,7 +292,7 @@ int tig_color_set_rgb_settings(unsigned int red_mask, unsigned int green_mask, u
     }
 
     tig_color_table_1_init();
-    tig_color_table_2_init();
+    tig_color_grayscale_table_init();
     tig_color_table_3_init();
 
     return 0;
@@ -462,7 +462,7 @@ unsigned int sub_52C370(color_t color)
     red_index = (color & tig_color_red_mask) >> tig_color_red_shift;
     green_index = (color & tig_color_green_mask) >> tig_color_green_shift;
     blue_index = (color & tig_color_blue_mask) >> tig_color_blue_shift;
-    luminosity = tig_color_red_luminosity_table[red_index] + tig_color_green_luminosity_table[green_index] + tig_color_blue_luminosity_table[blue_index];
+    luminosity = tig_color_red_grayscale_table[red_index] + tig_color_green_grayscale_table[green_index] + tig_color_blue_grayscale_table[blue_index];
 
     return (tig_color_red_index_table[luminosity] << tig_color_red_shift) | (tig_color_green_index_table[luminosity] << tig_color_green_shift) | (tig_color_blue_index_table[luminosity] << tig_color_blue_shift);
 }
@@ -677,45 +677,51 @@ void tig_color_table_1_exit()
     }
 }
 
+// Creates grayscale lookup tables for each color channel.
+//
+// NOTE: The math behind conversion is 30% red, 59% green, 11% blue. I haven't
+// found if this mix is some kind of standard or not, but it does mentioned very
+// often when googling for grayscale conversion.
+//
 // 0x52C9B0
-void tig_color_table_2_init()
+void tig_color_grayscale_table_init()
 {
     unsigned int index;
 
     // FIXME: Missing call to exit routine which is seen in other initializers.
 
-    tig_color_red_luminosity_table = (uint8_t*)MALLOC(tig_color_red_range + 1);
+    tig_color_red_grayscale_table = (uint8_t*)MALLOC(tig_color_red_range + 1);
     for (index = 0; index <= tig_color_red_range; index++) {
-        tig_color_red_luminosity_table[index] = (uint8_t)((double)index / (double)tig_color_red_range * 76.5);
+        tig_color_red_grayscale_table[index] = (uint8_t)((double)index / (double)tig_color_red_range * 76.5);
     }
 
-    tig_color_green_luminosity_table = (uint8_t*)MALLOC(tig_color_green_range + 1);
+    tig_color_green_grayscale_table = (uint8_t*)MALLOC(tig_color_green_range + 1);
     for (index = 0; index <= tig_color_green_range; index++) {
-        tig_color_green_luminosity_table[index] = (uint8_t)((double)index / (double)tig_color_green_range * 150.45);
+        tig_color_green_grayscale_table[index] = (uint8_t)((double)index / (double)tig_color_green_range * 150.45);
     }
 
-    tig_color_blue_luminosity_table = (uint8_t*)MALLOC(tig_color_blue_range + 1);
+    tig_color_blue_grayscale_table = (uint8_t*)MALLOC(tig_color_blue_range + 1);
     for (index = 0; index <= tig_color_blue_range; index++) {
-        tig_color_blue_luminosity_table[index] = (uint8_t)((double)index / (double)tig_color_blue_range * 28.05);
+        tig_color_blue_grayscale_table[index] = (uint8_t)((double)index / (double)tig_color_blue_range * 28.05);
     }
 }
 
 // 0x52CAC0
-void tig_color_table_2_exit()
+void tig_color_grayscale_table_exit()
 {
-    if (tig_color_blue_luminosity_table != NULL) {
-        FREE(tig_color_blue_luminosity_table);
-        tig_color_blue_luminosity_table = NULL;
+    if (tig_color_blue_grayscale_table != NULL) {
+        FREE(tig_color_blue_grayscale_table);
+        tig_color_blue_grayscale_table = NULL;
     }
 
-    if (tig_color_green_luminosity_table != NULL) {
-        FREE(tig_color_green_luminosity_table);
-        tig_color_green_luminosity_table = NULL;
+    if (tig_color_green_grayscale_table != NULL) {
+        FREE(tig_color_green_grayscale_table);
+        tig_color_green_grayscale_table = NULL;
     }
 
-    if (tig_color_red_luminosity_table != NULL) {
-        FREE(tig_color_red_luminosity_table);
-        tig_color_red_luminosity_table = NULL;
+    if (tig_color_red_grayscale_table != NULL) {
+        FREE(tig_color_red_grayscale_table);
+        tig_color_red_grayscale_table = NULL;
     }
 }
 

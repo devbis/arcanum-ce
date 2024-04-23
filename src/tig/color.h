@@ -47,13 +47,13 @@ extern unsigned int tig_color_rgba_red_mask;
 extern unsigned int tig_color_red_range;
 extern unsigned int tig_color_rgba_alpha_range_bit_length;
 extern unsigned int tig_color_green_range_bit_length;
-extern uint8_t* tig_color_blue_luminosity_table;
+extern uint8_t* tig_color_blue_grayscale_table;
 extern unsigned int tig_color_rgba_green_range;
-extern uint8_t* tig_color_red_luminosity_table;
+extern uint8_t* tig_color_red_grayscale_table;
 extern unsigned int tig_color_rgba_blue_range_bit_length;
 extern uint8_t* tig_color_green_index_table;
 extern uint8_t* tig_color_red_index_table;
-extern uint8_t* tig_color_green_luminosity_table;
+extern uint8_t* tig_color_green_grayscale_table;
 
 int tig_color_init(TigInitializeInfo* init_info);
 void tig_color_exit();
@@ -137,9 +137,9 @@ static inline unsigned int tig_color_make_6(uint32_t color1, uint32_t color2)
     unsigned int red2 = (color2 & tig_color_red_mask);
     unsigned int green2 = (color2 & tig_color_green_mask);
     unsigned int blue2 = (color2 & tig_color_blue_mask);
-    unsigned int luminosity = tig_color_red_luminosity_table[red1 >> tig_color_red_shift]
-        + tig_color_green_luminosity_table[green1 >> tig_color_green_shift]
-        + tig_color_blue_luminosity_table[blue1 >> tig_color_blue_shift];
+    unsigned int luminosity = tig_color_red_grayscale_table[red1 >> tig_color_red_shift]
+        + tig_color_green_grayscale_table[green1 >> tig_color_green_shift]
+        + tig_color_blue_grayscale_table[blue1 >> tig_color_blue_shift];
 
     return ((red2 + ((luminosity * (red1 - red2)) >> 8)) & tig_color_red_mask)
         | ((green2 + ((luminosity * (green1 - green2)) >> 8)) & tig_color_green_mask)

@@ -874,9 +874,9 @@ TEST_F(TigColorTestRGB565, Intensity)
     EXPECT_EQ(memcmp(tig_color_blue_intensity_table, blue_intensity_table, 1024), 0);
 }
 
-TEST_F(TigColorTestRGB565, Luminosity)
+TEST_F(TigColorTestRGB565, Grayscale)
 {
-    uint8_t red_luminosity_table[32] = {
+    uint8_t red_grayscale_table[32] = {
         // clang-format off
         0x00, 0x02, 0x04, 0x07, 0x09, 0x0C, 0x0E, 0x11,
         0x13, 0x16, 0x18, 0x1B, 0x1D, 0x20, 0x22, 0x25,
@@ -885,9 +885,9 @@ TEST_F(TigColorTestRGB565, Luminosity)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_red_luminosity_table, red_luminosity_table, 32), 0);
+    EXPECT_EQ(memcmp(tig_color_red_grayscale_table, red_grayscale_table, 32), 0);
 
-    uint8_t green_luminosity_table[64] = {
+    uint8_t green_grayscale_table[64] = {
         // clang-format off
         0x00, 0x02, 0x04, 0x07, 0x09, 0x0B, 0x0E, 0x10,
         0x13, 0x15, 0x17, 0x1A, 0x1C, 0x1F, 0x21, 0x23,
@@ -900,9 +900,9 @@ TEST_F(TigColorTestRGB565, Luminosity)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_green_luminosity_table, green_luminosity_table, 64), 0);
+    EXPECT_EQ(memcmp(tig_color_green_grayscale_table, green_grayscale_table, 64), 0);
 
-    uint8_t blue_luminosity_table[32] = {
+    uint8_t blue_grayscale_table[32] = {
         // clang-format off
         0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
         0x07, 0x08, 0x09, 0x09, 0x0A, 0x0B, 0x0C, 0x0D,
@@ -911,7 +911,7 @@ TEST_F(TigColorTestRGB565, Luminosity)
         // clang-format on
     };
 
-    EXPECT_EQ(memcmp(tig_color_blue_luminosity_table, blue_luminosity_table, 32), 0);
+    EXPECT_EQ(memcmp(tig_color_blue_grayscale_table, blue_luminosity_table, 32), 0);
 }
 
 TEST_F(TigColorTestRGB565, ColorTable)
