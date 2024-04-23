@@ -142,18 +142,15 @@ static inline color_t tig_color_blend(color_t src, color_t dst, int opacity)
         | ((b2 + ((opacity * (b1 - b2)) >> 8)) & tig_color_blue_mask);
 }
 
-static inline unsigned int tig_color_make_8(uint32_t color1, uint32_t color2)
+// NOTE: I'm not sure what this blending mode means. It uses 32-bpp src red
+// channel (0-255 range) as opacity. It could be used to blend some specifically
+// formatted sprites.
+static inline color_t tig_color_blend_red_opacity(color_t src, color_t dst)
 {
-    unsigned int red1 = (color1 & tig_color_red_mask);
-    unsigned int green1 = (color1 & tig_color_green_mask);
-    unsigned int blue1 = (color1 & tig_color_blue_mask);
-    unsigned int red2 = (color2 & tig_color_red_mask);
-    unsigned int green2 = (color2 & tig_color_green_mask);
-    unsigned int blue2 = (color2 & tig_color_blue_mask);
+    unsigned int r = (src & tig_color_red_mask) >> tig_color_red_shift;
+    int opacity = tig_color_red_platform_to_rgb_table[r];
 
-    return ((red2 + ((tig_color_red_platform_to_rgb_table[red1 >> tig_color_red_shift] * (red1 - red2)) >> 8)) & tig_color_red_mask)
-        | ((green2 + ((tig_color_red_platform_to_rgb_table[red1 >> tig_color_red_shift] * (green1 - green2)) >> 8)) & tig_color_green_mask)
-        | ((blue2 + ((tig_color_red_platform_to_rgb_table[red1 >> tig_color_red_shift] * (blue1 - blue2)) >> 8)) & tig_color_blue_mask);
+    return tig_color_blend(src, dst, opacity);
 }
 
 #ifdef __cplusplus

@@ -4257,7 +4257,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                *(uint32_t*)dst_pixels = tig_color_make_8(*((uint32_t*)plt + *src_pixels), *(uint32_t*)dst_pixels);
+                                *(uint32_t*)dst_pixels = tig_color_blend_red_opacity(*((uint32_t*)plt + *src_pixels), *(uint32_t*)dst_pixels);
                             }
                             src_pixels += delta;
                             dst_pixels += 4;
