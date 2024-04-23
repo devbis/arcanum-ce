@@ -104,17 +104,20 @@ static inline unsigned int tig_color_make_3(uint32_t color1, uint32_t color2)
         | (tig_color_blue_intensity_table[(tig_color_blue_range + 1) * blue1 + blue2] << tig_color_blue_shift);
 }
 
-static inline unsigned int tig_color_make_4(uint32_t color1, uint32_t color2)
+// Sum the components of two platform-specific colors.
+static inline color_t tig_color_plus(color_t color1, color_t color2)
 {
-    unsigned int red1 = color1 & tig_color_red_mask;
-    unsigned int green1 = color1 & tig_color_green_mask;
-    unsigned int blue1 = color1 & tig_color_blue_mask;
-    unsigned int red2 = color2 & tig_color_red_mask;
-    unsigned int green2 = color2 & tig_color_green_mask;
-    unsigned int blue2 = color2 & tig_color_blue_mask;
-    return min(red1 + red2, tig_color_red_mask)
-        | min(green1 + green2, tig_color_green_mask)
-        | min(blue1 + blue2, tig_color_blue_mask);
+    unsigned int r1 = color1 & tig_color_red_mask;
+    unsigned int g1 = color1 & tig_color_green_mask;
+    unsigned int b1 = color1 & tig_color_blue_mask;
+
+    unsigned int r2 = color2 & tig_color_red_mask;
+    unsigned int g2 = color2 & tig_color_green_mask;
+    unsigned int b2 = color2 & tig_color_blue_mask;
+
+    return min(r1 + r2, tig_color_red_mask)
+        | min(g1 + g2, tig_color_green_mask)
+        | min(b1 + b2, tig_color_blue_mask);
 }
 
 static inline unsigned int tig_color_make_5(uint32_t color1, uint32_t color2)
