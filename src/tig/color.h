@@ -90,18 +90,20 @@ static inline unsigned int tig_color_16_to_32(uint32_t color)
         | ((tig_color_rgba_blue_table[blue]) << tig_color_rgba_blue_shift);
 }
 
-static inline unsigned int tig_color_make_3(uint32_t color1, uint32_t color2)
+// Multiply the components of two platform-specific colors.
+static inline color_t tig_color_mult(color_t color1, color_t color2)
 {
-    unsigned int red1 = (color1 & tig_color_red_mask) >> tig_color_red_shift;
-    unsigned int green1 = (color1 & tig_color_green_mask) >> tig_color_green_shift;
-    unsigned int blue1 = (color1 & tig_color_blue_mask) >> tig_color_blue_shift;
-    unsigned int red2 = (color2 & tig_color_red_mask) >> tig_color_red_shift;
-    unsigned int green2 = (color2 & tig_color_green_mask) >> tig_color_green_shift;
-    unsigned int blue2 = (color2 & tig_color_blue_mask) >> tig_color_blue_shift;
+    unsigned int r1 = (color1 & tig_color_red_mask) >> tig_color_red_shift;
+    unsigned int g1 = (color1 & tig_color_green_mask) >> tig_color_green_shift;
+    unsigned int b1 = (color1 & tig_color_blue_mask) >> tig_color_blue_shift;
 
-    return (tig_color_red_intensity_table[(tig_color_red_range + 1) * red1 + red2] << tig_color_red_shift)
-        | (tig_color_green_intensity_table[(tig_color_green_range + 1) * green1 + green2] << tig_color_green_shift)
-        | (tig_color_blue_intensity_table[(tig_color_blue_range + 1) * blue1 + blue2] << tig_color_blue_shift);
+    unsigned int r2 = (color2 & tig_color_red_mask) >> tig_color_red_shift;
+    unsigned int g2 = (color2 & tig_color_green_mask) >> tig_color_green_shift;
+    unsigned int b2 = (color2 & tig_color_blue_mask) >> tig_color_blue_shift;
+
+    return (tig_color_red_intensity_table[(tig_color_red_range + 1) * r1 + r2] << tig_color_red_shift)
+        | (tig_color_green_intensity_table[(tig_color_green_range + 1) * g1 + g2] << tig_color_green_shift)
+        | (tig_color_blue_intensity_table[(tig_color_blue_range + 1) * b1 + b2] << tig_color_blue_shift);
 }
 
 // Sum the components of two platform-specific colors.

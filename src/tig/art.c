@@ -3410,7 +3410,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                                 *(uint32_t*)dst_pixels = tig_color_plus(*(uint32_t*)dst_pixels, color);
                             }
                             src_pixels += delta;
@@ -3435,7 +3435,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                                 if ((*(uint32_t*)dst_pixels & tig_color_red_mask) < (color & tig_color_red_mask)) {
                                     *(uint32_t*)dst_pixels = (*(uint32_t*)dst_pixels & ~tig_color_red_mask) | (color & tig_color_red_mask);
                                 }
@@ -3469,7 +3469,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                                 *(uint32_t*)dst_pixels = tig_color_make_5(color, *(uint32_t*)dst_pixels);
                             }
                             src_pixels += delta;
@@ -3494,7 +3494,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                                 *(uint32_t*)dst_pixels = tig_color_make_6(color, *(uint32_t*)dst_pixels);
                             }
                             src_pixels += delta;
@@ -3519,7 +3519,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                                 *(uint32_t*)dst_pixels = tig_color_make_7(color, *(uint32_t*)dst_pixels, blt->opacity[0]);
                             }
                             src_pixels += delta;
@@ -3613,7 +3613,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
                                 uint32_t dst_color = *(uint32_t*)dst_pixels;
-                                uint32_t src_color = tig_color_make_3(((uint32_t*)plt)[*src_pixels], blt->field_10);
+                                uint32_t src_color = tig_color_mult(((uint32_t*)plt)[*src_pixels], blt->field_10);
 
                                 uint32_t dst_rm = tig_color_red_mask & dst_color;
                                 uint32_t dst_gm = tig_color_green_mask & dst_color;
@@ -3656,7 +3656,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (((src_checkerboard_cur_x ^ src_checkerboard_cur_y) & 1) != 0) {
                                 if (*src_pixels != 0) {
-                                    *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                    *(uint32_t*)dst_pixels = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                                 }
                             }
                             src_pixels += delta;
@@ -3687,7 +3687,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (((dst_checkerboard_cur_x ^ dst_checkerboard_cur_y) & 1) != 0) {
                                 if (*src_pixels != 0) {
-                                    *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                    *(uint32_t*)dst_pixels = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                                 }
                             }
                             src_pixels += delta;
@@ -3717,7 +3717,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), blt->field_10);
+                                *(uint32_t*)dst_pixels = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
                             }
                             src_pixels += delta;
                             dst_pixels += 4;
@@ -3746,7 +3746,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
 
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
                                 *(uint32_t*)dst_pixels = tig_color_plus(*(uint32_t*)dst_pixels, color);
                             }
 
@@ -3817,7 +3817,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
 
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
                                 *(uint32_t*)dst_pixels = tig_color_make_5(color, *(uint32_t*)dst_pixels);
                             }
 
@@ -3846,7 +3846,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
 
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
                                 *(uint32_t*)dst_pixels = tig_color_make_6(color, *(uint32_t*)dst_pixels);
                             }
 
@@ -3875,7 +3875,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
 
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
                                 *(uint32_t*)dst_pixels = tig_color_make_7(color, *(uint32_t*)dst_pixels, blt->opacity[0]);
                             }
 
@@ -3976,7 +3976,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
                                 uint32_t dst_color = *(uint32_t*)dst_pixels;
-                                uint32_t src_color = tig_color_make_3(((uint32_t*)plt)[*src_pixels], *mask);
+                                uint32_t src_color = tig_color_mult(((uint32_t*)plt)[*src_pixels], *mask);
 
                                 uint32_t dst_rm = tig_color_red_mask & dst_color;
                                 uint32_t dst_gm = tig_color_green_mask & dst_color;
@@ -4022,7 +4022,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (((src_checkerboard_cur_x ^ src_checkerboard_cur_y) & 1) != 0) {
                                 if (*src_pixels != 0) {
-                                    *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                    *(uint32_t*)dst_pixels = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
                                 }
                             }
 
@@ -4057,7 +4057,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                         for (x = 0; x < width; x++) {
                             if (((dst_checkerboard_cur_x ^ dst_checkerboard_cur_y) & 1) != 0) {
                                 if (*src_pixels != 0) {
-                                    *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                    *(uint32_t*)dst_pixels = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
                                 }
                             }
 
@@ -4091,7 +4091,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
 
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                *(uint32_t*)dst_pixels = tig_color_make_3(*((uint32_t*)plt + *src_pixels), *mask);
+                                *(uint32_t*)dst_pixels = tig_color_mult(*((uint32_t*)plt + *src_pixels), *mask);
                             }
 
                             mask++;

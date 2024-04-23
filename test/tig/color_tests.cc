@@ -1146,3 +1146,40 @@ TEST_F(TigColorTestRGBA5551to565, ColorTable)
 
     EXPECT_EQ(memcmp(tig_color_rgba_blue_table, blue_table, 32), 0);
 }
+
+class TigColorTestRGB888 : public TigColorTest {
+protected:
+    void SetUp() override
+    {
+        TigColorTest::SetUp();
+
+        TigInitializeInfo init_info;
+        init_info.bpp = 32;
+
+        ASSERT_EQ(tig_color_init(&init_info), TIG_OK);
+        ASSERT_EQ(tig_color_set_rgb_settings(0xFF0000, 0xFF00, 0xFF), TIG_OK);
+    }
+
+    void TearDown() override
+    {
+        tig_color_exit();
+
+        TigColorTest::TearDown();
+    }
+};
+
+TEST_F(TigColorTestRGB888, Plus)
+{
+    color_t color1 = tig_color_make(128, 0, 0);
+    color_t color2 = tig_color_make(32, 0, 0);
+
+    ASSERT_EQ(tig_color_plus(color1, color2), tig_color_make(160, 0, 0));
+}
+
+TEST_F(TigColorTestRGB888, Mult)
+{
+    color_t color1 = tig_color_make(128, 0, 0);
+    color_t color2 = tig_color_make(32, 0, 0);
+
+    ASSERT_EQ(tig_color_mult(color1, color2), tig_color_make(16, 0, 0));
+}
