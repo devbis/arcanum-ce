@@ -92,7 +92,7 @@ bool tb_init(GameContext* ctx)
     dword_602AB0 = ctx->field_8;
     tb_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_602AB4 = 1;
-    dword_602AC4 = tig_color_rgb_make(0, 0, 255);
+    dword_602AC4 = tig_color_make(0, 0, 255);
 
     TigVideoBufferCreateInfo vb_create_info;
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
@@ -101,7 +101,7 @@ bool tb_init(GameContext* ctx)
     vb_create_info.background_color = dword_602AC4;
     vb_create_info.color_key = dword_602AC4;
 
-    dword_602AC0 = tig_color_rgb_make(0, 0, 0);
+    dword_602AC0 = tig_color_make(0, 0, 0);
 
     for (int index = 0; index < EIGHT; index++) {
         if (tig_video_buffer_create(&vb_create_info, &(stru_602930[index].video_buffer)) != TIG_OK) {
@@ -117,7 +117,7 @@ bool tb_init(GameContext* ctx)
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
     for (int index = 0; index < FOUR; index++) {
-        font.color = tig_color_rgb_make(byte_5B8EA0[index][0], byte_5B8EA0[index][1], byte_5B8EA0[index][2]);
+        font.color = tig_color_make(byte_5B8EA0[index][0], byte_5B8EA0[index][1], byte_5B8EA0[index][2]);
         tig_font_create(&font, &(dword_602AD0[index]));
     }
 

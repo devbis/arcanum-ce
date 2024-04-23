@@ -80,7 +80,7 @@ int tig_movie_play(const char* path, unsigned int movie_flags, int sound_track)
     }
 
     // Reset to black.
-    tig_video_fill(NULL, tig_color_rgb_make(0, 0, 0));
+    tig_video_fill(NULL, tig_color_make(0, 0, 0));
     tig_video_flip();
 
     tig_video_fade(0, 0, 0.0f, 1);
@@ -125,7 +125,7 @@ int tig_movie_play(const char* path, unsigned int movie_flags, int sound_track)
     }
 
     if ((movie_flags & TIG_MOVIE_BLACK_OUT) != 0) {
-        tig_video_fill(NULL, tig_color_rgb_make(0, 0, 0));
+        tig_video_fill(NULL, tig_color_make(0, 0, 0));
         tig_video_flip();
     }
 

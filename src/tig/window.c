@@ -1592,7 +1592,7 @@ int tig_window_modal_dialog(TigWindowModalDialogInfo* modal_info, int* choice_pt
     window_data.rect.width = 325;
     window_data.rect.height = 136;
     window_data.message_filter = tig_window_modal_dialog_message_filter;
-    window_data.background_color = tig_color_rgb_make(0, 0, 0);
+    window_data.background_color = tig_color_make(0, 0, 0);
     window_data.rect.x = modal_info->x;
     window_data.rect.y = modal_info->y;
 
@@ -1824,7 +1824,7 @@ bool tig_window_modal_dialog_init()
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = 0;
-    font.color = tig_color_rgb_make(255, 255, 255);
+    font.color = tig_color_make(255, 255, 255);
     tig_font_create(&font, &tig_window_modal_dialog_font);
 
     tig_window_modal_dialog_button_handles[0] = TIG_BUTTON_HANDLE_INVALID;

@@ -2501,7 +2501,7 @@ int tig_video_buffer_tint(TigVideoBuffer* video_buffer, TigRect* rect, unsigned 
         return TIG_ERR_12;
     }
 
-    if (color == tig_color_rgb_make(0, 0, 0) && mode != TIG_VIDEO_BUFFER_TINT_MODE_GRAYSCALE) {
+    if (color == tig_color_make(0, 0, 0) && mode != TIG_VIDEO_BUFFER_TINT_MODE_GRAYSCALE) {
         return TIG_OK;
     }
 
@@ -2966,7 +2966,7 @@ int tig_video_buffer_load_from_bmp(const char* filename, TigVideoBuffer** video_
 
             switch (tig_video_bpp) {
             case 16:
-                *(uint16_t*)dst = (uint16_t)tig_color_rgb_make(r, g, b);
+                *(uint16_t*)dst = (uint16_t)tig_color_make(r, g, b);
                 dst = (uint8_t*)dst + 2;
                 break;
             case 24:
@@ -2976,7 +2976,7 @@ int tig_video_buffer_load_from_bmp(const char* filename, TigVideoBuffer** video_
                 dst = (uint8_t*)dst + 3;
                 break;
             case 32:
-                *(uint32_t*)dst = (uint32_t)tig_color_rgb_make(r, g, b);
+                *(uint32_t*)dst = (uint32_t)tig_color_make(r, g, b);
                 dst = (uint8_t*)dst + 4;
                 break;
             }

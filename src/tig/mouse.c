@@ -766,14 +766,14 @@ void sub_4FFBF0()
             // TODO: Check.
             switch (video_buffer_data.bpp) {
             case 8:
-                *video_buffer_data.surface_data.p8 = (uint8_t)tig_color_rgb_make(255, 255, 255);
+                *video_buffer_data.surface_data.p8 = (uint8_t)tig_color_make(255, 255, 255);
                 break;
             case 16:
-                *video_buffer_data.surface_data.p16 = (uint16_t)tig_color_rgb_make(255, 255, 255);
+                *video_buffer_data.surface_data.p16 = (uint16_t)tig_color_make(255, 255, 255);
                 break;
             case 24:
             case 32:
-                *video_buffer_data.surface_data.p32 = (uint32_t)tig_color_rgb_make(255, 255, 255);
+                *video_buffer_data.surface_data.p32 = (uint32_t)tig_color_make(255, 255, 255);
                 break;
             }
         }
@@ -803,7 +803,7 @@ bool tig_mouse_cursor_create_video_buffers(unsigned int art_id, int dx, int dy)
     vb_create_info.width = width;
     vb_create_info.height = height;
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
-    vb_create_info.background_color = tig_color_rgb_make(0, 0, 0);
+    vb_create_info.background_color = tig_color_make(0, 0, 0);
     if (tig_video_buffer_create(&vb_create_info, &tig_mouse_cursor_opaque_video_buffer) != TIG_OK) {
         return false;
     }

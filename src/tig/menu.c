@@ -147,11 +147,11 @@ int tig_menu_init(TigInitializeInfo* init_info)
         tig_menu_bars[menu_bar_index].usage = TIG_MENU_BAR_UNUSED;
     }
 
-    colors.text_color = tig_color_rgb_make(255, 255, 255);
-    colors.background_color = tig_color_rgb_make(64, 64, 64);
-    colors.selected_text_color = tig_color_rgb_make(255, 0, 0);
-    colors.disabled_text_color = tig_color_rgb_make(128, 128, 128);
-    colors.selected_menu_item_outline_color = tig_color_rgb_make(255, 255, 255);
+    colors.text_color = tig_color_make(255, 255, 255);
+    colors.background_color = tig_color_make(64, 64, 64);
+    colors.selected_text_color = tig_color_make(255, 0, 0);
+    colors.disabled_text_color = tig_color_make(128, 128, 128);
+    colors.selected_menu_item_outline_color = tig_color_make(255, 255, 255);
     tig_menu_set_colors(&colors);
 
     return TIG_OK;

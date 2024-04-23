@@ -44,7 +44,7 @@ bool wall_init(GameContext* ctx)
     wall_view_options.type = VIEW_TYPE_ISOMETRIC;
     wall_is_editor = ctx->editor;
     dword_603448 = 1;
-    dword_603434 = tig_color_rgb_make(255, 0, 100);
+    dword_603434 = tig_color_make(255, 0, 100);
 
     return true;
 }

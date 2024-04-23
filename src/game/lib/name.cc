@@ -370,7 +370,7 @@ void sub_41F240()
     dst_rect.width = 80;
     dst_rect.height = 80;
 
-    tig_window_fill(dword_739E48, &dst_rect, tig_color_rgb_make(0, 0, 60));
+    tig_window_fill(dword_739E48, &dst_rect, tig_color_make(0, 0, 60));
 
     if (dword_739E54 != -1) {
         if (tig_art_frame_data(dword_739E54, &art_frame_data) == TIG_OK) {

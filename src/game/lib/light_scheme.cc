@@ -187,8 +187,8 @@ bool light_scheme_set_hour(int hour)
     light_scheme_changing = true;
 
     LightSchemeData* light_scheme_data = &(light_scheme_colors[hour]);
-    int indoor_color = tig_color_rgb_make(light_scheme_data->indoor.red, light_scheme_data->indoor.green, light_scheme_data->indoor.blue);
-    int outdoor_color = tig_color_rgb_make(light_scheme_data->outdoor.red, light_scheme_data->outdoor.green, light_scheme_data->outdoor.blue);
+    int indoor_color = tig_color_make(light_scheme_data->indoor.red, light_scheme_data->indoor.green, light_scheme_data->indoor.blue);
+    int outdoor_color = tig_color_make(light_scheme_data->outdoor.red, light_scheme_data->outdoor.green, light_scheme_data->outdoor.blue);
     sub_4D8560(indoor_color, outdoor_color);
 
     light_scheme_changing = false;

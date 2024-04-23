@@ -137,8 +137,8 @@ bool sector_init(GameContext* ctx)
     dword_6017B8 = ctx->field_8;
     sector_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_601830 = 0;
-    dword_6017AC = tig_color_rgb_make(255, 255, 0);
-    dword_601828 = tig_color_rgb_make(255, 255, 0);
+    dword_6017AC = tig_color_make(255, 255, 0);
+    dword_601828 = tig_color_make(255, 255, 0);
     sector_is_in_editor = ctx->editor;
 
     if (sector_is_in_editor) {

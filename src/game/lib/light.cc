@@ -188,8 +188,8 @@ bool light_init(GameContext* ctx)
         return false;
     }
 
-    dword_602EA8 = tig_color_rgb_make(255, 255, 255);
-    dword_603408 = tig_color_rgb_make(255, 255, 255);
+    dword_602EA8 = tig_color_make(255, 255, 255);
+    dword_603408 = tig_color_make(255, 255, 255);
 
     sub_4DE200();
     sub_5022B0(sub_4DE0B0);
@@ -516,7 +516,7 @@ bool sub_4DDF50()
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
     vb_create_info.width = dword_603418;
     vb_create_info.height = dword_60341C;
-    vb_create_info.color_key = tig_color_rgb_make(0, 255, 0);
+    vb_create_info.color_key = tig_color_make(0, 255, 0);
     vb_create_info.background_color = vb_create_info.color_key;
 
     if (tig_video_buffer_create(&vb_create_info, &dword_602E5C) != TIG_OK) {

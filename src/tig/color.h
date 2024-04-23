@@ -71,10 +71,12 @@ int sub_52C540(color_t color);
 unsigned int tig_color_index_of(color_t color);
 unsigned int tig_color_to_24_bpp(int red, int green, int blue);
 
-// TODO: Not sure about the name.
-static inline unsigned int tig_color_rgb_make(int red, int green, int blue)
+// Creates platform-specific color from RGB components (0-255).
+static inline color_t tig_color_make(int red, int green, int blue)
 {
-    return (tig_color_red_rgb_to_platform_table[red] << tig_color_red_shift) | (tig_color_green_rgb_to_platform_table[green] << tig_color_green_shift) | (tig_color_blue_rgb_to_platform_table[blue] << tig_color_blue_shift);
+    return (tig_color_red_rgb_to_platform_table[red] << tig_color_red_shift)
+        | (tig_color_green_rgb_to_platform_table[green] << tig_color_green_shift)
+        | (tig_color_blue_rgb_to_platform_table[blue] << tig_color_blue_shift);
 }
 
 static inline unsigned int tig_color_16_to_32(uint32_t color)

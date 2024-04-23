@@ -32,13 +32,13 @@ int tig_font_init(TigInitializeInfo* init_info)
     TigFont font;
 
     tig_font_stack_index = -1;
-    tig_font_shadow_color = tig_color_rgb_make(10, 10, 10);
+    tig_font_shadow_color = tig_color_make(10, 10, 10);
 
     font.flags = TIG_FONT_SHADOW;
     tig_art_misc_id_create(TIG_ART_SYSTEM_FONT, 0, &(font.art_id));
     font.scale = 1.5f;
     font.str = NULL;
-    font.color = tig_color_rgb_make(255, 255, 255);
+    font.color = tig_color_make(255, 255, 255);
     font.underline_color = font.color;
     font.strike_through_color = font.color;
     tig_font_create(&font, &tig_font_default_font);
@@ -411,7 +411,7 @@ int sub_535850(TigVideoBuffer* video_buffer, const char* str, int length, TigArt
             --blt->dst_rect->width;
             tig_video_buffer_fill(video_buffer,
                 blt->dst_rect,
-                tig_color_rgb_make(10, 10, 10));
+                tig_color_make(10, 10, 10));
             --blt->dst_rect->x;
             --blt->dst_rect->y;
             ++blt->dst_rect->width;
@@ -445,7 +445,7 @@ int sub_535850(TigVideoBuffer* video_buffer, const char* str, int length, TigArt
             --blt->dst_rect->width;
             rc = tig_video_buffer_fill(video_buffer,
                 blt->dst_rect,
-                tig_color_rgb_make(10, 10, 10));
+                tig_color_make(10, 10, 10));
             --blt->dst_rect->x;
             --blt->dst_rect->y;
             ++blt->dst_rect->width;
