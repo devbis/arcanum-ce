@@ -1176,6 +1176,36 @@ TEST_F(TigColorTestRGB888, Plus)
     ASSERT_EQ(tig_color_plus(color1, color2), tig_color_make(160, 0, 0));
 }
 
+// Tests `difference` blending mode where src color component is smaller than
+// dst.
+TEST_F(TigColorTestRGB888, DifferenceWithSrcSmallerThanDst)
+{
+    color_t color1 = tig_color_make(32, 0, 0);
+    color_t color2 = tig_color_make(128, 0, 0);
+
+    ASSERT_EQ(tig_color_difference(color1, color2), tig_color_make(96, 0, 0));
+}
+
+// Tests `difference` blending mode where dst color component is bigger than
+// dst. This might be result of a bug. See for `tig_color_difference` for
+// explanation.
+TEST_F(TigColorTestRGB888, DifferenceWithSrcBiggerThanDst)
+{
+    color_t color1 = tig_color_make(128, 0, 0);
+    color_t color2 = tig_color_make(32, 0, 0);
+
+    ASSERT_EQ(tig_color_difference(color1, color2), tig_color_make(0, 0, 0));
+}
+
+// Tests `difference` blending with white color which should invert src colors.
+TEST_F(TigColorTestRGB888, DifferenceWithWhite)
+{
+    color_t color1 = tig_color_make(128, 0, 0);
+    color_t color2 = tig_color_make(255, 255, 255);
+
+    ASSERT_EQ(tig_color_difference(color1, color2), tig_color_make(127, 255, 255));
+}
+
 TEST_F(TigColorTestRGB888, Mult)
 {
     color_t color1 = tig_color_make(128, 0, 0);

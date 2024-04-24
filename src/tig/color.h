@@ -122,6 +122,37 @@ static inline color_t tig_color_plus(color_t color1, color_t color2)
         | min(b1 + b2, tig_color_blue_mask);
 }
 
+// Subtract the components of `src` color from `dst` color.
+//
+// NOTE: This blending algorithm is not bi-directional. That means there is a
+// clear separation between src and dst color. If dst component is smaller than
+// src the resulting blended component would be 0:
+//
+// SRC          DST         RESULT
+// 0x200000     0x800000    0x600000
+// 0x800000     0x200000    0x000000
+//
+// I have checked a couple of `difference` blend mode implementations in the
+// wild (Figma and Flutter), they do not exhibit such behaviour. In these
+// implementations the blended color is 0x600000 in both examples. I'm not sure
+// this was intentional.
+//
+// NOTE: The implementation is different. Check 0x506AD8 for original algorithm.
+static inline color_t tig_color_difference(color_t src, color_t dst)
+{
+    unsigned int r1 = src & tig_color_red_mask;
+    unsigned int g1 = src & tig_color_green_mask;
+    unsigned int b1 = src & tig_color_blue_mask;
+
+    unsigned int r2 = dst & tig_color_red_mask;
+    unsigned int g2 = dst & tig_color_green_mask;
+    unsigned int b2 = dst & tig_color_blue_mask;
+
+    return ((r2 < r1 ? r1 : r2) - r1)
+        | ((g2 < g1 ? g1 : g2) - g1)
+        | ((b2 < b1 ? b1 : b2) - b1);
+}
+
 // Blends two colors using standard alpha blending rules (src over dst).
 //
 // The `opacity` specifies amount of src in blended color:

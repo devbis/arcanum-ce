@@ -3420,7 +3420,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x20) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_DIFFERENCE) != 0) {
                 // 0x508A1C
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -3435,17 +3435,8 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color = tig_color_mult(*((uint32_t*)plt + *src_pixels), blt->field_10);
-                                if ((*(uint32_t*)dst_pixels & tig_color_red_mask) < (color & tig_color_red_mask)) {
-                                    *(uint32_t*)dst_pixels = (*(uint32_t*)dst_pixels & ~tig_color_red_mask) | (color & tig_color_red_mask);
-                                }
-                                if ((*(uint32_t*)dst_pixels & tig_color_green_mask) < (color & tig_color_green_mask)) {
-                                    *(uint32_t*)dst_pixels = (*(uint32_t*)dst_pixels & ~tig_color_green_mask) | (color & tig_color_green_mask);
-                                }
-                                if ((*(uint32_t*)dst_pixels & tig_color_blue_mask) < (color & tig_color_blue_mask)) {
-                                    *(uint32_t*)dst_pixels = (*(uint32_t*)dst_pixels & ~tig_color_blue_mask) | (color & tig_color_blue_mask);
-                                }
-                                *(uint32_t*)dst_pixels -= color;
+                                *(uint32_t*)dst_pixels = tig_color_difference(tig_color_mult(((uint32_t*)plt)[*src_pixels], blt->field_10),
+                                    *(uint32_t*)dst_pixels);
                             }
                             src_pixels += delta;
                             dst_pixels += 4;
@@ -3760,7 +3751,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x20) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_DIFFERENCE) != 0) {
                 // 0x50C06F
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -3777,21 +3768,8 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
 
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                uint32_t color1 = *((uint32_t*)plt + *src_pixels);
-                                uint32_t color2 = *(uint32_t*)dst_pixels;
-                                uint32_t color3 = *mask;
-
-                                unsigned int red2 = (color2 & tig_color_red_mask);
-                                unsigned int green2 = (color2 & tig_color_green_mask);
-                                unsigned int blue2 = (color2 & tig_color_blue_mask);
-                                unsigned int red3 = (color3 & tig_color_red_mask);
-                                unsigned int green3 = (color3 & tig_color_green_mask);
-                                unsigned int blue3 = (color3 & tig_color_blue_mask);
-                                unsigned int v1 = tig_color_red_platform_to_rgb_table[(color1 & tig_color_red_mask) >> tig_color_red_shift];
-
-                                *(uint32_t*)dst_pixels = ((red2 + ((v1 * (red3 - red2)) >> 8)) & tig_color_red_mask)
-                                    | ((green2 + ((v1 * (green3 - green2)) >> 8)) & tig_color_green_mask)
-                                    | ((blue2 + ((v1 * (blue3 - blue2)) >> 8)) & tig_color_blue_mask);
+                                *(uint32_t*)dst_pixels = tig_color_difference(tig_color_mult(((uint32_t*)plt)[*src_pixels], *mask),
+                                    *(uint32_t*)dst_pixels);
                             }
 
                             mask++;
@@ -4135,7 +4113,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x20) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_DIFFERENCE) != 0) {
                 // 0x506838
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -4150,16 +4128,8 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     for (y = 0; y < height; y++) {
                         for (x = 0; x < width; x++) {
                             if (*src_pixels != 0) {
-                                if ((*(uint32_t*)dst_pixels & tig_color_red_mask) < ((*((uint32_t*)plt + *src_pixels)) & tig_color_red_mask)) {
-                                    *(uint32_t*)dst_pixels = (*(uint32_t*)dst_pixels & ~tig_color_red_mask) | ((*((uint32_t*)plt + *src_pixels)) & tig_color_red_mask);
-                                }
-                                if ((*(uint32_t*)dst_pixels & tig_color_green_mask) < ((*((uint32_t*)plt + *src_pixels)) & tig_color_green_mask)) {
-                                    *(uint32_t*)dst_pixels = (*(uint32_t*)dst_pixels & ~tig_color_green_mask) | ((*((uint32_t*)plt + *src_pixels)) & tig_color_green_mask);
-                                }
-                                if ((*(uint32_t*)dst_pixels & tig_color_blue_mask) < ((*((uint32_t*)plt + *src_pixels)) & tig_color_blue_mask)) {
-                                    *(uint32_t*)dst_pixels = (*(uint32_t*)dst_pixels & ~tig_color_blue_mask) | ((*((uint32_t*)plt + *src_pixels)) & tig_color_blue_mask);
-                                }
-                                *(uint32_t*)dst_pixels -= *((uint32_t*)plt + *src_pixels);
+                                *(uint32_t*)dst_pixels = tig_color_difference(((uint32_t*)plt)[*src_pixels],
+                                    *(uint32_t*)dst_pixels);
                             }
                             src_pixels += delta;
                             dst_pixels += 4;
