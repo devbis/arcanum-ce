@@ -1183,3 +1183,11 @@ TEST_F(TigColorTestRGB888, Mult)
 
     ASSERT_EQ(tig_color_mult(color1, color2), tig_color_make(16, 0, 0));
 }
+
+TEST_F(TigColorTestRGB888, BlendRedOpacity)
+{
+    color_t color1 = tig_color_make(70, 0, 0);
+    color_t color2 = tig_color_make(247, 0, 0);
+
+    ASSERT_EQ(tig_color_blend_red_opacity(color1, color2), tig_color_make(198, 0, 0));
+}
