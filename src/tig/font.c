@@ -231,13 +231,13 @@ int tig_font_write(TigVideoBuffer* video_buffer, const char* str, const TigRect*
         blt.flags = 0;
 
         if (!shadow) {
-            blt.flags |= 0x2000;
+            blt.flags |= TIG_ART_BLT_0x2000;
             if ((tig_font_stack[tig_font_stack_index]->flags & TIG_FONT_0x100) != 0) {
-                blt.flags |= 0x10;
+                blt.flags |= TIG_ART_BLT_0x10;
             }
 
             if ((tig_font_stack[tig_font_stack_index]->flags & TIG_FONT_0x80) != 0) {
-                blt.flags |= 0x200;
+                blt.flags |= TIG_ART_BLT_BLEND_MODE_0x200;
             }
 
             blt.field_10 = tig_font_stack[tig_font_stack_index]->color;
@@ -247,7 +247,7 @@ int tig_font_write(TigVideoBuffer* video_buffer, const char* str, const TigRect*
         dst_rect.y = rect->y;
 
         if (shadow) {
-            blt.flags |= 0x2000;
+            blt.flags |= TIG_ART_BLT_0x2000;
             ++dst_rect.x;
             ++dst_rect.y;
             blt.field_10 = tig_font_shadow_color;
