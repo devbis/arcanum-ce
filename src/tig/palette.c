@@ -106,13 +106,13 @@ void tig_palette_set_color(TigPalette palette, unsigned int color)
         switch (tig_palette_bpp) {
         case 16:
             for (index = 0; index < 256; index++) {
-                ((uint16_t*)desc->dst_palette)[index] = (uint16_t)color;
+                ((uint16_t*)palette)[index] = (uint16_t)color;
             }
             break;
         case 24:
         case 32:
             for (index = 0; index < 256; index++) {
-                ((uint32_t*)desc->dst_palette)[index] = color;
+                ((uint32_t*)palette)[index] = color;
             }
             break;
         }
