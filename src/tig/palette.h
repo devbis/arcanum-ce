@@ -53,7 +53,8 @@ void tig_palette_copy(TigPalette dst, const TigPalette src);
 // `TIG_PALETTE_MODIFY_TINT`). For the latter you need to specify `tint_color`.
 //
 // Both `src_palette` and `dst_palette` must not be NULL, but might be the same
-// palette object (in this case operation is performed in-place)
+// palette object, in this case the operation is performed in-place. Otherwise
+// `src_palette` is copied into `dst_palette`.
 void tig_palette_modify(const TigPaletteModifyInfo* modify_info);
 
 // Returns amount of system memory required for palette (including overhead).
