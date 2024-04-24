@@ -3068,8 +3068,8 @@ int sub_505940(unsigned int art_blt_flags, unsigned int* vb_blt_flags_ptr)
         *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_MIRROR_UP_DOWN;
     }
 
-    if ((art_blt_flags & TIG_ART_BLT_0x10) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0004;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_PLUS) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_BLEND_MODE_PLUS;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
@@ -3395,7 +3395,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
     } else {
         if ((blt->flags & TIG_ART_BLT_0x2000) != 0) {
             // 0x5084E9
-            if ((blt->flags & TIG_ART_BLT_0x10) != 0) {
+            if ((blt->flags & TIG_ART_BLT_BLEND_MODE_PLUS) != 0) {
                 // 0x5084F5
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -3731,7 +3731,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
             }
         } else if ((blt->flags & TIG_ART_BLT_0x4000) != 0) {
             // 0x50BAEF
-            if ((blt->flags & TIG_ART_BLT_0x10) != 0) {
+            if ((blt->flags & TIG_ART_BLT_BLEND_MODE_PLUS) != 0) {
                 // 0x50BAFB
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -4111,7 +4111,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
             // 0x50F3B4
         } else {
             // 0x50655B
-            if ((blt->flags & TIG_ART_BLT_0x10) != 0) {
+            if ((blt->flags & TIG_ART_BLT_BLEND_MODE_PLUS) != 0) {
                 // 0x506566
                 switch (tig_art_bits_per_pixel) {
                 case 32:

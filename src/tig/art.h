@@ -92,7 +92,8 @@ typedef enum TigArtBltFlags {
     /// Mutually exclusive with `TIG_ART_BLT_PALETTE_NORMAL`.
     TIG_ART_BLT_PALETTE_CUSTOM = 0x00000008,
 
-    TIG_ART_BLT_0x10 = 0x00000010,
+    // Sum the components of source (art) and destination (video buffer).
+    TIG_ART_BLT_BLEND_MODE_PLUS = 0x00000010,
 
     TIG_ART_BLT_BLEND_MODE_0x20 = 0x00000020,
 
@@ -162,7 +163,7 @@ typedef enum TigArtBltFlags {
     TIG_ART_BLT_0x00019FF0 = TIG_ART_BLT_0x19F80
         | TIG_ART_BLT_BLEND_MODE_0x40
         | TIG_ART_BLT_BLEND_MODE_0x20
-        | TIG_ART_BLT_0x10,
+        | TIG_ART_BLT_BLEND_MODE_PLUS,
 
     TIG_ART_BLT_0x0003FFF0 = TIG_ART_BLT_0x26000 | TIG_ART_BLT_0x00019FF0,
 } TigArtBltFlags;

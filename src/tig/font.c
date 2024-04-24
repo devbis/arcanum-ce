@@ -233,7 +233,7 @@ int tig_font_write(TigVideoBuffer* video_buffer, const char* str, const TigRect*
         if (!shadow) {
             blt.flags |= TIG_ART_BLT_0x2000;
             if ((tig_font_stack[tig_font_stack_index]->flags & TIG_FONT_0x100) != 0) {
-                blt.flags |= TIG_ART_BLT_0x10;
+                blt.flags |= TIG_ART_BLT_BLEND_MODE_PLUS;
             }
 
             if ((tig_font_stack[tig_font_stack_index]->flags & TIG_FONT_0x80) != 0) {
