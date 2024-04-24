@@ -19,12 +19,14 @@ typedef unsigned int tig_window_handle_t;
 
 typedef struct TigRect TigRect;
 typedef struct TigVideoBuffer TigVideoBuffer;
-typedef struct TigPaletteAdjustDesc TigPaletteAdjustDesc;
+typedef struct TigPaletteModifyInfo TigPaletteModifyInfo;
 typedef struct TigArtBlitSpec TigArtBlitSpec;
 typedef struct TigMessage TigMessage;
 typedef struct TigBmp TigBmp;
 
-/// Opaque pointer representing palette.
+// Palette is rare case of non-opaque pointer. It is an array of 256 elements,
+// either `uint16_t` (in 16 bpp video mode), or `uint32_t` (in 24 and 32 bpp
+// video mode). Be sure to cast appropriately.
 typedef void* TigPalette;
 
 #define TIG_OK 0

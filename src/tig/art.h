@@ -183,7 +183,7 @@ typedef struct TigArtBlitSpec {
 
 static_assert(sizeof(TigArtBlitSpec) == 0x2C, "wrong size");
 
-typedef bool(TigArtBlitPaletteAdjustCallback)(tig_art_id_t art_id, TigPaletteAdjustDesc* palette_adjust_desc);
+typedef bool(TigArtBlitPaletteAdjustCallback)(tig_art_id_t art_id, TigPaletteModifyInfo* modify_info);
 
 typedef struct TigArtPackInfo {
     /* 0000 */ unsigned int flags;

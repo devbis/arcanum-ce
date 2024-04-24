@@ -4,6 +4,8 @@
 #include "tig/debug.h"
 #include "tig/memory.h"
 
+#define GROW 16
+
 typedef struct TigPaletteListNode {
     void* data;
     struct TigPaletteListNode* next;
@@ -53,12 +55,12 @@ int tig_palette_init(TigInitializeInfo* init_info)
     tig_palette_bpp = init_info->bpp;
     tig_palette_initialized = true;
 
-    // Warm palette cache.
-    for (index = 0; index < 16; index++) {
+    // Warm palette cache (preallocated 256 palettes).
+    for (index = 0; index < GROW; index++) {
         tig_palette_node_reserve();
     }
 
-    return 0;
+    return TIG_OK;
 }
 
 // 0x533DD0
@@ -137,6 +139,7 @@ void tig_palette_modify(const TigPaletteModifyInfo* modify_info)
     switch (tig_palette_bpp) {
     case 16:
         if (modify_info->dst_palette != modify_info->src_palette) {
+            // NOTE: Does not reuse `tig_palette_copy`.
             memcpy(modify_info->dst_palette, modify_info->src_palette, sizeof(uint16_t) * 256);
         }
 
@@ -154,6 +157,7 @@ void tig_palette_modify(const TigPaletteModifyInfo* modify_info)
         break;
     case 24:
         if (modify_info->dst_palette != modify_info->src_palette) {
+            // NOTE: Does not reuse `tig_palette_copy`.
             memcpy(modify_info->dst_palette, modify_info->src_palette, sizeof(uint32_t) * 256);
         }
 
@@ -173,6 +177,7 @@ void tig_palette_modify(const TigPaletteModifyInfo* modify_info)
         // NOTE: The code in this branch is binary identical to 24 bpp, but for
         // unknown reason the generated assembly is not collapsed.
         if (modify_info->dst_palette != modify_info->src_palette) {
+            // NOTE: Does not reuse `tig_palette_copy`.
             memcpy(modify_info->dst_palette, modify_info->src_palette, sizeof(uint32_t) * 256);
         }
 
@@ -203,7 +208,7 @@ void tig_palette_node_reserve()
     int index;
     TigPaletteListNode* node;
 
-    for (index = 0; index < 16; index++) {
+    for (index = 0; index < GROW; index++) {
         node = (TigPaletteListNode*)MALLOC(sizeof(*node));
         node->data = MALLOC(tig_palette_size + sizeof(TigPaletteListNode*));
         // Link back from palette to node.
