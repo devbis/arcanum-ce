@@ -101,19 +101,18 @@ void tig_palette_destroy(TigPalette palette)
 void tig_palette_set_color(TigPalette palette, unsigned int color)
 {
     int index;
-    unsigned int* entries = (unsigned int*)palette;
 
     if (tig_palette_bpp != 8) {
         switch (tig_palette_bpp) {
         case 16:
-            for (index = 0; index < 128; index++) {
-                entries[index] = (color & 0xFFFF) & ((color & 0xFFFF) << 16);
+            for (index = 0; index < 256; index++) {
+                ((uint16_t*)desc->dst_palette)[index] = (uint16_t)color;
             }
             break;
         case 24:
         case 32:
             for (index = 0; index < 256; index++) {
-                entries[index] = color;
+                ((uint32_t*)desc->dst_palette)[index] = color;
             }
             break;
         }
