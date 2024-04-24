@@ -192,7 +192,7 @@ void tig_palette_modify(const TigPaletteModifyInfo* modify_info)
 }
 
 // 0x534290
-size_t tig_palette_get_size()
+size_t tig_palette_system_memory_size()
 {
     return tig_palette_size + sizeof(TigPaletteListNode*);
 }

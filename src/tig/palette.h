@@ -26,7 +26,7 @@ void tig_palette_destroy(TigPalette palette);
 void tig_palette_set_color(TigPalette palette, unsigned int color);
 void tig_palette_copy(TigPalette dst, const TigPalette src);
 void tig_palette_modify(const TigPaletteModifyInfo* modify_info);
-size_t tig_palette_get_size();
+size_t tig_palette_system_memory_size();
 
 #ifdef __cplusplus
 }

@@ -26,9 +26,9 @@ protected:
     }
 };
 
-TEST_F(TigPaletteTest, Size)
+TEST_F(TigPaletteTest, SystemMemorySize)
 {
-    ASSERT_EQ(tig_palette_get_size(), 516);
+    ASSERT_EQ(tig_palette_system_memory_size(), 516);
 }
 
 TEST_F(TigPaletteTest, CreateDestroy)

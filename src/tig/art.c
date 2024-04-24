@@ -4935,7 +4935,7 @@ int sub_51B710(tig_art_id_t art_id, const char* filename, TigArtHeader* hdr, voi
             } else {
                 hdr->palette_tbl[palette] = tig_palette_create();
                 palette_tbl[palette] = tig_palette_create();
-                *size_ptr += 2 * tig_palette_get_size();
+                *size_ptr += 2 * tig_palette_system_memory_size();
 
                 switch (tig_art_bits_per_pixel) {
                 case 8:
