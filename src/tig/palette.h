@@ -38,7 +38,7 @@ TigPalette tig_palette_create();
 void tig_palette_destroy(TigPalette palette);
 
 // Fill palette object with specified color.
-void tig_palette_set_color(TigPalette palette, unsigned int color);
+void tig_palette_fill(TigPalette palette, unsigned int color);
 
 // Copy `src` palette into `dst`.
 //

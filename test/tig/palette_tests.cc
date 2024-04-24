@@ -42,7 +42,7 @@ TEST_F(TigPaletteTest, SetColor)
 {
     TigPalette palette = tig_palette_create();
     ASSERT_NE(palette, nullptr);
-    tig_palette_set_color(palette, tig_color_make(64, 128, 192));
+    tig_palette_fill(palette, tig_color_make(64, 128, 192));
     for (int index = 0; index < 256; index++) {
         ASSERT_EQ(((uint16_t*)palette)[index], tig_color_make(64, 128, 192));
     }
@@ -53,7 +53,7 @@ TEST_F(TigPaletteTest, ModifyGrayscale)
 {
     TigPalette src_palette = tig_palette_create();
     ASSERT_NE(src_palette, nullptr);
-    tig_palette_set_color(src_palette, tig_color_make(192, 64, 128));
+    tig_palette_fill(src_palette, tig_color_make(192, 64, 128));
 
     TigPalette dst_palette = tig_palette_create();
     ASSERT_NE(dst_palette, nullptr);
@@ -77,7 +77,7 @@ TEST_F(TigPaletteTest, ModifyTint)
 {
     TigPalette src_palette = tig_palette_create();
     ASSERT_NE(src_palette, nullptr);
-    tig_palette_set_color(src_palette, tig_color_make(192, 64, 128));
+    tig_palette_fill(src_palette, tig_color_make(192, 64, 128));
 
     TigPalette dst_palette = tig_palette_create();
 

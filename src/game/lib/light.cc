@@ -555,12 +555,12 @@ void sub_4DE200()
         if (dword_602E40 == NULL) {
             dword_602E40 = tig_palette_create();
         }
-        tig_palette_set_color(dword_602E40, dword_603408);
+        tig_palette_fill(dword_602E40, dword_603408);
 
         if (dword_602E88 == NULL) {
             dword_602E88 = tig_palette_create();
         }
-        tig_palette_set_color(dword_602E88, dword_602EA8);
+        tig_palette_fill(dword_602E88, dword_602EA8);
     }
 }
 

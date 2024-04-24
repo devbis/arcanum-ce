@@ -100,7 +100,7 @@ void tig_palette_destroy(TigPalette palette)
 }
 
 // 0x533E40
-void tig_palette_set_color(TigPalette palette, unsigned int color)
+void tig_palette_fill(TigPalette palette, unsigned int color)
 {
     int index;
 
