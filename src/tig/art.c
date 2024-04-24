@@ -2900,12 +2900,12 @@ int sub_504FD0(tig_art_id_t art_id)
 // 0x505000
 void sub_505000(tig_art_id_t art_id, TigPalette src_palette, TigPalette dst_palette)
 {
-    TigPaletteAdjustDesc palette_adjust_desc;
+    TigPaletteModifyInfo modify_info;
 
-    if (dword_604744 != NULL && dword_604744(art_id, &palette_adjust_desc)) {
-        palette_adjust_desc.src_palette = src_palette;
-        palette_adjust_desc.dst_palette = dst_palette;
-        tig_palette_adjust(&palette_adjust_desc);
+    if (dword_604744 != NULL && dword_604744(art_id, &modify_info)) {
+        modify_info.src_palette = src_palette;
+        modify_info.dst_palette = dst_palette;
+        tig_palette_modify(&modify_info);
     } else {
         tig_palette_copy(dst_palette, src_palette);
     }

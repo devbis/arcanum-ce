@@ -126,65 +126,65 @@ void tig_palette_copy(TigPalette dst, const TigPalette src)
 }
 
 // 0x533EC0
-void tig_palette_adjust(TigPaletteAdjustDesc* desc)
+void tig_palette_modify(const TigPaletteModifyInfo* modify_info)
 {
     int index;
 
-    if (desc->flags == 0) {
+    if (modify_info->flags == 0) {
         return;
     }
 
     switch (tig_palette_bpp) {
     case 16:
-        if (desc->dst_palette != desc->src_palette) {
-            memcpy(desc->dst_palette, desc->src_palette, sizeof(uint16_t) * 256);
+        if (modify_info->dst_palette != modify_info->src_palette) {
+            memcpy(modify_info->dst_palette, modify_info->src_palette, sizeof(uint16_t) * 256);
         }
 
-        if ((desc->flags & TIG_PALETTE_ADJUST_GRAYSCALE) != 0) {
+        if ((modify_info->flags & TIG_PALETTE_MODIFY_GRAYSCALE) != 0) {
             for (index = 0; index < 256; index++) {
-                ((uint16_t*)desc->dst_palette)[index] = (uint16_t)tig_color_rgb_to_grayscale(((uint16_t*)desc->dst_palette)[index]);
+                ((uint16_t*)modify_info->dst_palette)[index] = (uint16_t)tig_color_rgb_to_grayscale(((uint16_t*)modify_info->dst_palette)[index]);
             }
         }
 
-        if ((desc->flags & TIG_PALETTE_ADJUST_TINT) != 0) {
+        if ((modify_info->flags & TIG_PALETTE_MODIFY_TINT) != 0) {
             for (index = 0; index < 256; index++) {
-                ((uint16_t*)desc->dst_palette)[index] = (uint16_t)tig_color_mult(((uint16_t*)desc->dst_palette)[index], desc->tint_color);
+                ((uint16_t*)modify_info->dst_palette)[index] = (uint16_t)tig_color_mult(((uint16_t*)modify_info->dst_palette)[index], modify_info->tint_color);
             }
         }
         break;
     case 24:
-        if (desc->dst_palette != desc->src_palette) {
-            memcpy(desc->dst_palette, desc->src_palette, sizeof(uint32_t) * 256);
+        if (modify_info->dst_palette != modify_info->src_palette) {
+            memcpy(modify_info->dst_palette, modify_info->src_palette, sizeof(uint32_t) * 256);
         }
 
-        if ((desc->flags & TIG_PALETTE_ADJUST_GRAYSCALE) != 0) {
+        if ((modify_info->flags & TIG_PALETTE_MODIFY_GRAYSCALE) != 0) {
             for (index = 0; index < 256; index++) {
-                ((uint32_t*)desc->dst_palette)[index] = tig_color_rgb_to_grayscale(((uint32_t*)desc->dst_palette)[index]);
+                ((uint32_t*)modify_info->dst_palette)[index] = tig_color_rgb_to_grayscale(((uint32_t*)modify_info->dst_palette)[index]);
             }
         }
 
-        if ((desc->flags & TIG_PALETTE_ADJUST_TINT) != 0) {
+        if ((modify_info->flags & TIG_PALETTE_MODIFY_TINT) != 0) {
             for (index = 0; index < 256; index++) {
-                ((uint32_t*)desc->dst_palette)[index] = tig_color_mult(((uint32_t*)desc->dst_palette)[index], desc->tint_color);
+                ((uint32_t*)modify_info->dst_palette)[index] = tig_color_mult(((uint32_t*)modify_info->dst_palette)[index], modify_info->tint_color);
             }
         }
         break;
     case 32:
         // NOTE: The code in this branch is binary identical to 24 bpp, but for
         // unknown reason the generated assembly is not collapsed.
-        if (desc->dst_palette != desc->src_palette) {
-            memcpy(desc->dst_palette, desc->src_palette, sizeof(uint32_t) * 256);
+        if (modify_info->dst_palette != modify_info->src_palette) {
+            memcpy(modify_info->dst_palette, modify_info->src_palette, sizeof(uint32_t) * 256);
         }
 
-        if ((desc->flags & TIG_PALETTE_ADJUST_GRAYSCALE) != 0) {
+        if ((modify_info->flags & TIG_PALETTE_MODIFY_GRAYSCALE) != 0) {
             for (index = 0; index < 256; index++) {
-                ((uint32_t*)desc->dst_palette)[index] = tig_color_rgb_to_grayscale(((uint32_t*)desc->dst_palette)[index]);
+                ((uint32_t*)modify_info->dst_palette)[index] = tig_color_rgb_to_grayscale(((uint32_t*)modify_info->dst_palette)[index]);
             }
         }
 
-        if ((desc->flags & TIG_PALETTE_ADJUST_TINT) != 0) {
+        if ((modify_info->flags & TIG_PALETTE_MODIFY_TINT) != 0) {
             for (index = 0; index < 256; index++) {
-                ((uint32_t*)desc->dst_palette)[index] = tig_color_mult(((uint32_t*)desc->dst_palette)[index], desc->tint_color);
+                ((uint32_t*)modify_info->dst_palette)[index] = tig_color_mult(((uint32_t*)modify_info->dst_palette)[index], modify_info->tint_color);
             }
         }
         break;
