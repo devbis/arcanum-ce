@@ -3072,8 +3072,8 @@ int sub_505940(unsigned int art_blt_flags, unsigned int* vb_blt_flags_ptr)
         *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_BLEND_MODE_PLUS;
     }
 
-    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
-        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_0x0010;
+    if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_MULT) != 0) {
+        *vb_blt_flags_ptr |= TIG_VIDEO_BUFFER_BLIT_BLEND_MODE_MULT;
     }
 
     if ((art_blt_flags & TIG_ART_BLT_BLEND_MODE_0x80) != 0) {
@@ -3454,7 +3454,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_MULT) != 0) {
                 // 0x508FB6
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -3802,7 +3802,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_MULT) != 0) {
                 // 0x50C646
                 switch (tig_art_bits_per_pixel) {
                 case 32:
@@ -4168,7 +4168,7 @@ int art_blit(int cache_entry_index, TigArtBlitSpec* blt)
                     }
                     break;
                 }
-            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_0x40) != 0) {
+            } else if ((blt->flags & TIG_ART_BLT_BLEND_MODE_MULT) != 0) {
                 // 0x506B87
                 switch (tig_art_bits_per_pixel) {
                 case 32:

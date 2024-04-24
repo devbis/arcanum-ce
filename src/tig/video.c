@@ -1797,7 +1797,7 @@ int tig_video_buffer_blit(TigVideoBufferBlitInfo* blit_info)
                 tig_video_print_dd_result(hr);
                 return TIG_ERR_16;
             }
-        } else if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_0x0010) != 0) {
+        } else if ((blit_info->flags & TIG_VIDEO_BUFFER_BLIT_BLEND_MODE_MULT) != 0) {
             alpha[3] = 0xFF000000;
             alpha[2] = 0xFF000000;
             alpha[1] = 0xFF000000;

@@ -97,7 +97,8 @@ typedef enum TigArtBltFlags {
 
     TIG_ART_BLT_BLEND_MODE_0x20 = 0x00000020,
 
-    TIG_ART_BLT_BLEND_MODE_0x40 = 0x00000040,
+    // Multiply the components of source (art) and destination (video buffer).
+    TIG_ART_BLT_BLEND_MODE_MULT = 0x00000040,
 
     TIG_ART_BLT_BLEND_MODE_0x80 = 0x00000080,
 
@@ -161,7 +162,7 @@ typedef enum TigArtBltFlags {
         | TIG_ART_BLT_BLEND_MODE_0x80,
 
     TIG_ART_BLT_0x00019FF0 = TIG_ART_BLT_0x19F80
-        | TIG_ART_BLT_BLEND_MODE_0x40
+        | TIG_ART_BLT_BLEND_MODE_MULT
         | TIG_ART_BLT_BLEND_MODE_0x20
         | TIG_ART_BLT_BLEND_MODE_PLUS,
 
