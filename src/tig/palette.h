@@ -9,7 +9,7 @@ extern "C" {
 
 typedef enum TigPaletteAdjustFlags {
     TIG_PALETTE_ADJUST_TINT = 0x1,
-    TIG_PALETTE_ADJUST_LUMINATE = 0x2,
+    TIG_PALETTE_ADJUST_GRAYSCALE = 0x2,
 } TigPaletteAdjustFlags;
 
 typedef struct TigPaletteAdjustDesc {
