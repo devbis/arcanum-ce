@@ -120,9 +120,9 @@ void tig_palette_set_color(TigPalette palette, unsigned int color)
 }
 
 // 0x533E90
-void tig_palette_copy(TigPalette dest, const TigPalette* src)
+void tig_palette_copy(TigPalette dst, const TigPalette src)
 {
-    memcpy(dest, src, tig_palette_size);
+    memcpy(dst, src, tig_palette_size);
 }
 
 // 0x533EC0

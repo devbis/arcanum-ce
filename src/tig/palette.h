@@ -24,7 +24,7 @@ void tig_palette_exit();
 TigPalette tig_palette_create();
 void tig_palette_destroy(TigPalette palette);
 void tig_palette_set_color(TigPalette palette, unsigned int color);
-void tig_palette_copy(TigPalette dest, const TigPalette src);
+void tig_palette_copy(TigPalette dst, const TigPalette src);
 void tig_palette_adjust(TigPaletteAdjustDesc* desc);
 size_t tig_palette_get_size();
 
