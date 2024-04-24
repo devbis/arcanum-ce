@@ -79,44 +79,44 @@ typedef struct TigArtFrameData {
 static_assert(sizeof(TigArtFrameData) == 0x18, "wrong size");
 
 typedef enum TigArtBltFlags {
-    TIG_ART_BLT_MIRROR_LEFT_RIGHT = 1 << 0,
-    TIG_ART_BLT_MIRROR_UP_DOWN = 1 << 1,
+    TIG_ART_BLT_MIRROR_LEFT_RIGHT = 0x00000001,
+    TIG_ART_BLT_MIRROR_UP_DOWN = 0x00000002,
 
     /// Forces to use base art palette.
     ///
     /// Mutually exclusive with `TIG_ART_BLT_PALETTE_CUSTOM`.
-    TIG_ART_BLT_PALETTE_NORMAL = 1 << 2,
+    TIG_ART_BLT_PALETTE_NORMAL = 0x00000004,
 
     /// Forces to use custom palette specified in `custom_palette`.
     ///
     /// Mutually exclusive with `TIG_ART_BLT_PALETTE_NORMAL`.
-    TIG_ART_BLT_PALETTE_CUSTOM = 1 << 3,
+    TIG_ART_BLT_PALETTE_CUSTOM = 0x00000008,
 
-    TIG_ART_BLT_0x10 = 1 << 4,
+    TIG_ART_BLT_0x10 = 0x00000010,
 
-    TIG_ART_BLT_BLEND_MODE_0x20 = 1 << 5,
+    TIG_ART_BLT_BLEND_MODE_0x20 = 0x00000020,
 
-    TIG_ART_BLT_BLEND_MODE_0x40 = 1 << 6,
+    TIG_ART_BLT_BLEND_MODE_0x40 = 0x00000040,
 
-    TIG_ART_BLT_BLEND_MODE_0x80 = 1 << 7,
+    TIG_ART_BLT_BLEND_MODE_0x80 = 0x00000080,
 
-    TIG_ART_BLT_BLEND_MODE_0x100 = 1 << 8,
+    TIG_ART_BLT_BLEND_MODE_0x100 = 0x00000100,
 
-    TIG_ART_BLT_BLEND_MODE_0x200 = 1 << 9,
+    TIG_ART_BLT_BLEND_MODE_0x200 = 0x00000200,
 
     // Blends dst with src applying left-to-right gradient mask.
     //
     // Use `opacity[0]` to specify start opacity (left edge) and `opacity[1]`
     // to specify end opacity (right edge) where `255` is fully opaque (results
     // in dst color) and `0` is fully transparent (result in src).
-    TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL = 1 << 10,
+    TIG_ART_BLT_BLEND_MODE_GRADIENT_HORIZONTAL = 0x00000400,
 
     // Blends dst with src applying top-to-bottom gradient mask.
     //
     // Use `opacity[0]` to specify start opacity (top edge) and `opacity[3]`
     // to specify end opacity (bottom edge) where `255` is fully opaque and `0`
     // is fully transparent.
-    TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL = 1 << 11,
+    TIG_ART_BLT_BLEND_MODE_GRADIENT_VERTICAL = 0x00000800,
 
     // Blends dst with src applying gradient mask as follows:
     //  - `opacity[0]` - top-left corner opacity,
@@ -126,17 +126,17 @@ typedef enum TigArtBltFlags {
     //
     // As with other gradient masks `255` is fully opaque and `0` is fully
     // transparent.
-    TIG_ART_BLT_BLEND_MODE_GRADIENT_CORNERS = 1 << 12,
+    TIG_ART_BLT_BLEND_MODE_GRADIENT_CORNERS = 0x00001000,
 
-    TIG_ART_BLT_0x2000 = 1 << 13,
+    TIG_ART_BLT_0x2000 = 0x00002000,
 
-    TIG_ART_BLT_0x4000 = 1 << 14,
+    TIG_ART_BLT_0x4000 = 0x00004000,
 
-    TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_SRC = 1 << 15,
+    TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_SRC = 0x00008000,
 
-    TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_DST = 1 << 16,
+    TIG_ART_BLT_BLEND_MODE_CHECKERBOARD_DST = 0x00010000,
 
-    TIG_ART_BLT_0x20000 = 1 << 17,
+    TIG_ART_BLT_0x20000 = 0x00020000,
 
     TIG_ART_BLT_0x01000000 = 0x01000000,
 
