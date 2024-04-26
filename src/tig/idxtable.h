@@ -9,47 +9,47 @@ extern "C" {
 
 typedef struct TigFile TigFile;
 
-typedef struct TigMap TigMap;
-typedef struct TigMapEntry TigMapEntry;
+typedef struct TigIdxTable TigIdxTable;
+typedef struct TigIdxTableEntry TigIdxTableEntry;
 
-/// A key/value pair representing entry in a `TigMap`.
-///
-/// This type is private (visible for testing).
-typedef struct TigMapEntry {
+// A key/value pair representing entry in a `TigIdxTable`.
+//
+// This type is private (visible for testing).
+typedef struct TigIdxTableEntry {
     /* 0000 */ void* value;
-    /* 0004 */ TigMapEntry* next;
+    /* 0004 */ TigIdxTableEntry* next;
     /* 0008 */ int key;
-} TigMapEntry;
+} TigIdxTableEntry;
 
-static_assert(sizeof(TigMapEntry) == 0xC, "wrong size");
+static_assert(sizeof(TigIdxTableEntry) == 0xC, "wrong size");
 
-/// A collection whose elements are key/value pairs.
-typedef struct TigMap {
+// A collection whose elements are key/value pairs.
+typedef struct TigIdxTable {
     /* 0000 */ int buckets_count;
-    /* 0004 */ TigMapEntry** buckets;
+    /* 0004 */ TigIdxTableEntry** buckets;
     /* 0008 */ int value_size;
     /* 000C */ int count;
-} TigMap;
+} TigIdxTable;
 
-static_assert(sizeof(TigMap) == 0x10, "wrong size");
+static_assert(sizeof(TigIdxTable) == 0x10, "wrong size");
 
-/// Signature of a callback used by `tig_map_enumerate`.
-///
-/// The callback should return `true` to continue enumeration, or `false` to
-/// stop it.
-typedef bool(TigMapEnumerateCallback)(void* value, int key, void* context);
+// Signature of a callback used by `tig_idxtable_enumerate`.
+//
+// The callback should return `true` to continue enumeration, or `false` to
+// stop it.
+typedef bool(TigIdxTableEnumerateCallback)(void* value, int key, void* context);
 
-void tig_map_init(TigMap* map, int value_size);
-void tig_map_exit(TigMap* map);
-void tig_map_copy(TigMap* dst, TigMap* src);
-int tig_map_write(TigMap* map, TigFile* stream);
-bool tig_map_read(TigMap* map, TigFile* stream);
-bool tig_map_enumerate(TigMap* map, TigMapEnumerateCallback* callback, void* context);
-void tig_map_set(TigMap* map, int key, void* value);
-bool tig_map_get(TigMap* map, int key, void* value);
-bool tig_map_contains(TigMap* map, int key);
-void tig_map_remove(TigMap* map, int key);
-int tig_map_count(TigMap* map);
+void tig_idxtable_init(TigIdxTable* idxtable, int value_size);
+void tig_idxtable_exit(TigIdxTable* idxtable);
+void tig_idxtable_copy(TigIdxTable* dst, TigIdxTable* src);
+int tig_idxtable_write(TigIdxTable* idxtable, TigFile* stream);
+bool tig_idxtable_read(TigIdxTable* idxtable, TigFile* stream);
+bool tig_idxtable_enumerate(TigIdxTable* idxtable, TigIdxTableEnumerateCallback* callback, void* context);
+void tig_idxtable_set(TigIdxTable* idxtable, int key, void* value);
+bool tig_idxtable_get(TigIdxTable* idxtable, int key, void* value);
+bool tig_idxtable_contains(TigIdxTable* idxtable, int key);
+void tig_idxtable_remove(TigIdxTable* idxtable, int key);
+int tig_idxtable_count(TigIdxTable* idxtable);
 
 #ifdef __cplusplus
 }
