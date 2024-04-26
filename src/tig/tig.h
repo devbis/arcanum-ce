@@ -11,6 +11,7 @@
 #include "tig/dxinput.h"
 #include "tig/file.h"
 #include "tig/font.h"
+#include "tig/idxtable.h"
 #include "tig/kb.h"
 #include "tig/memory.h"
 #include "tig/menu.h"

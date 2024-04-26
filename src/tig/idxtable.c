@@ -1,4 +1,4 @@
-#include "tig/map.h"
+#include "tig/idxtable.h"
 
 #include <string.h>
 
