@@ -1,5 +1,5 @@
-#ifndef ARCANUM_TIG_MAP_H_
-#define ARCANUM_TIG_MAP_H_
+#ifndef TIG_IDXTABLE_H_
+#define TIG_IDXTABLE_H_
 
 // IDXTABLE
 // ---
@@ -75,4 +75,4 @@ int tig_idxtable_count(TigIdxTable* idxtable);
 }
 #endif
 
-#endif /* ARCANUM_TIG_MAP_H_ */
+#endif /* TIG_IDXTABLE_H_ */
