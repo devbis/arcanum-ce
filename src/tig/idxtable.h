@@ -1,6 +1,26 @@
 #ifndef ARCANUM_TIG_MAP_H_
 #define ARCANUM_TIG_MAP_H_
 
+// IDXTABLE
+// ---
+//
+// The IDXTABLE module provides `IdxTable` object which resembles
+// `std::unordered_map<int, T>` from C++ STL.
+//
+// NOTES
+//
+// - The `IdxTable` uses integers as keys. Negative integer keys are the same as
+// positive, that is:
+//
+// ```
+// idxtable[100] == idxtable[-100];
+// ```
+//
+// - Internally `IdxTable` uses a number of buckets to make lookup a little bit
+// more efficient in large collections. The number of buckets is considered
+// implementation detail and should not be changed. FYI it's 63 in Arcanum and
+// 256 in ToEE.
+
 #include <stdbool.h>
 
 #ifdef __cplusplus
