@@ -1,4 +1,4 @@
-#include "tig/cache.h"
+#include "tig/file_cache.h"
 
 #include "tig/file.h"
 #include "tig/memory.h"

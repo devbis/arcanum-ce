@@ -4,9 +4,9 @@
 
 #include <mss_compat.h>
 
-#include "tig/cache.h"
 #include "tig/core.h"
 #include "tig/debug.h"
+#include "tig/file_cache.h"
 #include "tig/file.h"
 #include "tig/timer.h"
 

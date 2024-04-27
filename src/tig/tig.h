@@ -3,12 +3,12 @@
 
 #include "tig/art.h"
 #include "tig/button.h"
-#include "tig/cache.h"
 #include "tig/color.h"
 #include "tig/core.h"
 #include "tig/debug.h"
 #include "tig/draw.h"
 #include "tig/dxinput.h"
+#include "tig/file_cache.h"
 #include "tig/file.h"
 #include "tig/font.h"
 #include "tig/idxtable.h"
