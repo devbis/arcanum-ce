@@ -3,33 +3,33 @@
 #include "tig/file.h"
 #include "tig/memory.h"
 
-static void tig_cache_entry_remove(TigCache* cache, TigCacheItem* entry);
-static bool tig_cache_read_contents_into(const char* path, void** data, int* size);
-static bool tig_cache_prepare_item(TigCache* cache, TigCacheItem* item, const char* path);
-static TigCacheItem* sub_538D80(TigCache* cache);
-static TigCacheItem* sub_538D90(TigCache* cache);
-static TigCacheItem* sub_538E00(TigCache* cache);
-static void tig_cache_shrink(TigCache* cache, int size);
-static TigCacheEntry* tig_cache_acquire_internal(TigCache* cache, TigCacheItem* item);
-static void tig_cache_release_internal(TigCache* cache, TigCacheItem* entry);
+static void tig_file_cache_entry_remove(TigFileCache* cache, TigFileCacheItem* entry);
+static bool tig_file_cache_read_contents_into(const char* path, void** data, int* size);
+static bool tig_file_cache_prepare_item(TigFileCache* cache, TigFileCacheItem* item, const char* path);
+static TigFileCacheItem* sub_538D80(TigFileCache* cache);
+static TigFileCacheItem* sub_538D90(TigFileCache* cache);
+static TigFileCacheItem* sub_538E00(TigFileCache* cache);
+static void tig_file_cache_shrink(TigFileCache* cache, int size);
+static TigFileCacheEntry* tig_file_cache_acquire_internal(TigFileCache* cache, TigFileCacheItem* item);
+static void tig_file_cache_release_internal(TigFileCache* cache, TigFileCacheItem* entry);
 
 // 0x6364F8
-static int tig_cache_hit_count;
+static int tig_file_cache_hit_count;
 
 // 0x6364FC
-static int tig_cache_miss_count;
+static int tig_file_cache_miss_count;
 
 // 0x636500
-static int tig_cache_hit_bytes;
+static int tig_file_cache_hit_bytes;
 
 // 0x636504
-static int tig_cache_miss_bytes;
+static int tig_file_cache_miss_bytes;
 
 // 0x636508
-static int tig_cache_removed_bytes;
+static int tig_file_cache_removed_bytes;
 
 // 0x538A80
-int tig_cache_init(TigInitializeInfo* init_info)
+int tig_file_cache_init(TigInitializeInfo* init_info)
 {
     (void)init_info;
 
@@ -37,29 +37,29 @@ int tig_cache_init(TigInitializeInfo* init_info)
 }
 
 // 0x538A90
-void tig_cache_exit()
+void tig_file_cache_exit()
 {
 }
 
 // 0x538AA0
-void tig_cache_flush(TigCache* cache)
+void tig_file_cache_flush(TigFileCache* cache)
 {
     int index;
 
     for (index = 0; index < cache->capacity; index++) {
         if (cache->items[index].refcount == 0) {
-            tig_cache_entry_remove(cache, &(cache->items[index]));
+            tig_file_cache_entry_remove(cache, &(cache->items[index]));
         }
     }
 }
 
 // 0x538AE0
-void tig_cache_entry_remove(TigCache* cache, TigCacheItem* item)
+void tig_file_cache_entry_remove(TigFileCache* cache, TigFileCacheItem* item)
 {
     if (item->entry.data != NULL) {
         cache->items_count--;
         cache->bytes -= item->entry.size;
-        tig_cache_removed_bytes += item->entry.size;
+        tig_file_cache_removed_bytes += item->entry.size;
 
         if (item->entry.path) {
             FREE(item->entry.path);
@@ -74,30 +74,30 @@ void tig_cache_entry_remove(TigCache* cache, TigCacheItem* item)
 }
 
 // 0x538B50
-TigCache* tig_cache_create(int capacity, int max_size)
+TigFileCache* tig_file_cache_create(int capacity, int max_size)
 {
-    TigCache* cache;
+    TigFileCache* cache;
 
-    cache = (TigCache*)MALLOC(sizeof(*cache));
+    cache = (TigFileCache*)MALLOC(sizeof(*cache));
     cache->signature = 'FILC';
     cache->capacity = capacity;
     cache->max_size = max_size;
-    cache->items = (TigCacheItem*)CALLOC(sizeof(*cache->items), capacity);
+    cache->items = (TigFileCacheItem*)CALLOC(sizeof(*cache->items), capacity);
     cache->items_count = 0;
     cache->bytes = 0;
     return cache;
 }
 
 // 0x538BA0
-void tig_cache_destroy(TigCache* cache)
+void tig_file_cache_destroy(TigFileCache* cache)
 {
-    tig_cache_flush(cache);
+    tig_file_cache_flush(cache);
     FREE(cache->items);
     FREE(cache);
 }
 
 // 0x538BC0
-bool tig_cache_read_contents_into(const char* path, void** data, int* size)
+bool tig_file_cache_read_contents_into(const char* path, void** data, int* size)
 {
     TigFile* stream;
 
@@ -115,9 +115,9 @@ bool tig_cache_read_contents_into(const char* path, void** data, int* size)
 }
 
 // 0x538C20
-bool tig_cache_prepare_item(TigCache* cache, TigCacheItem* item, const char* path)
+bool tig_file_cache_prepare_item(TigFileCache* cache, TigFileCacheItem* item, const char* path)
 {
-    if (!tig_cache_read_contents_into(path, &(item->entry.data), &(item->entry.size))) {
+    if (!tig_file_cache_read_contents_into(path, &(item->entry.data), &(item->entry.size))) {
         return false;
     }
 
@@ -131,23 +131,23 @@ bool tig_cache_prepare_item(TigCache* cache, TigCacheItem* item, const char* pat
 }
 
 // 0x538C90
-TigCacheEntry* tig_cache_acquire(TigCache* cache, const char* path)
+TigFileCacheEntry* tig_file_cache_acquire(TigFileCache* cache, const char* path)
 {
     // 0x6364E8
-    static TigCacheEntry null_entry;
+    static TigFileCacheEntry null_entry;
 
     int index;
-    TigCacheItem* item;
-    TigCacheItem* new_item = NULL;
-    TigCacheEntry* entry;
+    TigFileCacheItem* item;
+    TigFileCacheItem* new_item = NULL;
+    TigFileCacheEntry* entry;
 
     for (index = 0; index < cache->capacity; index++) {
         item = &(cache->items[index]);
         if (item->entry.data != NULL) {
             if (_strcmpi(item->entry.path, path) == 0) {
-                tig_cache_hit_count++;
-                tig_cache_hit_bytes += item->entry.size;
-                return tig_cache_acquire_internal(cache, item);
+                tig_file_cache_hit_count++;
+                tig_file_cache_hit_bytes += item->entry.size;
+                return tig_file_cache_acquire_internal(cache, item);
             }
         } else {
             if (new_item == NULL) {
@@ -163,34 +163,34 @@ TigCacheEntry* tig_cache_acquire(TigCache* cache, const char* path)
         }
     }
 
-    if (!tig_cache_prepare_item(cache, new_item, path)) {
+    if (!tig_file_cache_prepare_item(cache, new_item, path)) {
         return &null_entry;
     }
 
-    tig_cache_miss_count++;
-    tig_cache_miss_bytes += new_item->entry.size;
+    tig_file_cache_miss_count++;
+    tig_file_cache_miss_bytes += new_item->entry.size;
 
-    entry = tig_cache_acquire_internal(cache, new_item);
+    entry = tig_file_cache_acquire_internal(cache, new_item);
 
     if (cache->bytes > cache->max_size) {
-        tig_cache_shrink(cache, cache->bytes - cache->max_size);
+        tig_file_cache_shrink(cache, cache->bytes - cache->max_size);
     }
 
     return entry;
 }
 
 // 0x538D80
-TigCacheItem* sub_538D80(TigCache* cache)
+TigFileCacheItem* sub_538D80(TigFileCache* cache)
 {
     return sub_538D90(cache);
 }
 
 // 0x538D90
-TigCacheItem* sub_538D90(TigCache* cache)
+TigFileCacheItem* sub_538D90(TigFileCache* cache)
 {
     int attempt;
     int index;
-    TigCacheItem* entry;
+    TigFileCacheItem* entry;
 
     for (attempt = 0; attempt < 4 * cache->capacity; attempt++) {
         index = rand() % cache->capacity;
@@ -200,7 +200,7 @@ TigCacheItem* sub_538D90(TigCache* cache)
         }
 
         if (entry->refcount == 0) {
-            tig_cache_entry_remove(cache, entry);
+            tig_file_cache_entry_remove(cache, entry);
             return entry;
         }
     }
@@ -209,10 +209,10 @@ TigCacheItem* sub_538D90(TigCache* cache)
 }
 
 // 0x538E00
-TigCacheItem* sub_538E00(TigCache* cache)
+TigFileCacheItem* sub_538E00(TigFileCache* cache)
 {
     int index;
-    TigCacheItem* entry;
+    TigFileCacheItem* entry;
 
     for (index = 0; index < cache->capacity; index++) {
         entry = &(cache->items[index]);
@@ -221,7 +221,7 @@ TigCacheItem* sub_538E00(TigCache* cache)
         }
 
         if (entry->refcount == 0) {
-            tig_cache_entry_remove(cache, entry);
+            tig_file_cache_entry_remove(cache, entry);
             return entry;
         }
     }
@@ -230,18 +230,18 @@ TigCacheItem* sub_538E00(TigCache* cache)
 }
 
 // 0x538E40
-void tig_cache_shrink(TigCache* cache, int size)
+void tig_file_cache_shrink(TigFileCache* cache, int size)
 {
     int attempt;
 
     if (size > cache->bytes) {
-        tig_cache_flush(cache);
+        tig_file_cache_flush(cache);
     } else {
-        tig_cache_removed_bytes = 0;
+        tig_file_cache_removed_bytes = 0;
 
         for (attempt = 0; attempt < 4 * cache->capacity; attempt++) {
             sub_538D90(cache);
-            if (tig_cache_removed_bytes >= size) {
+            if (tig_file_cache_removed_bytes >= size) {
                 break;
             }
         }
@@ -249,7 +249,7 @@ void tig_cache_shrink(TigCache* cache, int size)
 }
 
 // 0x538E90
-TigCacheEntry* tig_cache_acquire_internal(TigCache* cache, TigCacheItem* item)
+TigFileCacheEntry* tig_file_cache_acquire_internal(TigFileCache* cache, TigFileCacheItem* item)
 {
     (void)cache;
 
@@ -258,13 +258,13 @@ TigCacheEntry* tig_cache_acquire_internal(TigCache* cache, TigCacheItem* item)
 }
 
 // 0x538EA0
-void tig_cache_release(TigCache* cache, TigCacheEntry* entry)
+void tig_file_cache_release(TigFileCache* cache, TigFileCacheEntry* entry)
 {
-    tig_cache_release_internal(cache, &(cache->items[entry->index]));
+    tig_file_cache_release_internal(cache, &(cache->items[entry->index]));
 }
 
 // 0x538EC0
-void tig_cache_release_internal(TigCache* cache, TigCacheItem* item)
+void tig_file_cache_release_internal(TigFileCache* cache, TigFileCacheItem* item)
 {
     (void)cache;
 

@@ -51,7 +51,7 @@ static TigInitFunc* init_funcs[] = {
     tig_draw_init,
     tig_str_parse_init,
     // tig_net_init,
-    tig_cache_init,
+    tig_file_cache_init,
     tig_sound_init,
     tig_movie_init,
 };
@@ -80,7 +80,7 @@ static TigExitFunc* exit_funcs[] = {
     tig_draw_exit,
     tig_str_parse_exit,
     // tig_net_exit,
-    tig_cache_exit,
+    tig_file_cache_exit,
     tig_sound_exit,
     tig_movie_exit,
 };

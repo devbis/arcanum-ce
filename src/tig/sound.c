@@ -28,7 +28,7 @@ typedef struct TigSound {
     /* 0124 */ int id;
     /* 0128 */ int volume;
     /* 012C */ int extra_volume;
-    /* 0130 */ TigCacheEntry* cache_entry;
+    /* 0130 */ TigFileCacheEntry* file_cache_entry;
     /* 0134 */ bool field_134;
     /* 0138 */ int64_t field_138;
     /* 0140 */ int64_t field_140;
@@ -61,7 +61,7 @@ static int tig_sound_next_effect_handle;
 static bool tig_sound_initialized;
 
 // 0x6301F0
-static TigCache* tig_sound_cache;
+static TigFileCache* tig_sound_cache;
 
 // 0x6301F4
 static int tig_sound_effects_volume;
@@ -87,7 +87,7 @@ int tig_sound_init(TigInitializeInfo* init_info)
     tig_sound_set_file_path_resolver(init_info->sound_file_path_resolver);
 
     // Create a file cache for 20 files, approx. 1 MB total.
-    tig_sound_cache = tig_cache_create(20, 1000000);
+    tig_sound_cache = tig_file_cache_create(20, 1000000);
 
     return TIG_OK;
 }
@@ -98,7 +98,7 @@ void tig_sound_exit()
     if (tig_sound_initialized) {
         tig_sound_initialized = false;
         tig_sound_fade_out_all(0);
-        tig_cache_destroy(tig_sound_cache);
+        tig_file_cache_destroy(tig_sound_cache);
         AIL_quick_shutdown();
     }
 
@@ -366,7 +366,7 @@ void tig_sound_stop(int sound_handle)
             snd->active = 0;
         } else if ((snd->flags & TIG_SOUND_MEMORY) != 0) {
             AIL_quick_unload(snd->audio_handle);
-            tig_cache_release(tig_sound_cache, snd->cache_entry);
+            tig_file_cache_release(tig_sound_cache, snd->file_cache_entry);
             snd->active = 0;
         } else {
             snd->active = 0;
@@ -390,10 +390,10 @@ int tig_sound_play_by_path(int sound_handle, const char* path, int id)
 
     snd = &(tig_sounds[sound_handle]);
     strcpy(snd->path, path);
-    snd->cache_entry = tig_cache_acquire(tig_sound_cache, path);
+    snd->file_cache_entry = tig_file_cache_acquire(tig_sound_cache, path);
 
-    if (snd->cache_entry->data != NULL) {
-        snd->audio_handle = AIL_quick_load_mem(snd->cache_entry->data, snd->cache_entry->size);
+    if (snd->file_cache_entry->data != NULL) {
+        snd->audio_handle = AIL_quick_load_mem(snd->file_cache_entry->data, snd->file_cache_entry->size);
         AIL_quick_set_volume(snd->audio_handle, (float)snd->volume, (float)snd->extra_volume);
         AIL_quick_play(snd->audio_handle, snd->loops);
         snd->flags |= TIG_SOUND_MEMORY;
@@ -758,7 +758,7 @@ bool tig_sound_is_active(int sound_handle)
 void tig_sound_cache_flush()
 {
     if (tig_sound_initialized) {
-        tig_cache_flush(tig_sound_cache);
+        tig_file_cache_flush(tig_sound_cache);
     }
 }
 
