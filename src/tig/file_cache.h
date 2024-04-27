@@ -1,6 +1,30 @@
 #ifndef TIG_FILE_CACHE_H_
 #define TIG_FILE_CACHE_H_
 
+// FILECACHE
+//
+// The FILECACHE subsystem provides `TigFileCache` object used to cache files
+// loaded from FILE module.
+//
+// Implements a least-recently-used cache. The maximum number of files and
+// maximum the cache can hold is provided during creation.
+//
+// NOTES
+//
+// - Unlike many other subsystems which track allocations, file cache objects
+// are not tracked at subsystem level. Which in turn means `tig_file_cache_exit`
+// does not release existing cache objects. You're responsible for releasing of
+// file cache objects with `tig_file_cache_destroy` before calling
+// `tig_file_cache_exit`.
+//
+// - The `TigFileCache` resembles `Cache` object from Fallouts, but it`s API
+// and implementation is much simpler.
+//
+// - There is only one use case in both Arcanum and ToEE - caching sound files
+// (see SOUND subsystem). This is different from Fallouts where `Cache` was also
+// used for art files. In TIG the ART subsystem has it's own cache, which is
+// considered implementation detail and have no public API.
+
 #include <time.h>
 
 #include "tig/types.h"
@@ -29,9 +53,6 @@ typedef struct TigFileCacheItem {
 static_assert(sizeof(TigFileCacheItem) == 0x18, "wrong size");
 
 // A collection of cached files.
-//
-// Implements a least-recently-used cache of up to `capacity` files, up to
-// `max_size` size (provided during creation).
 typedef struct TigFileCache {
     int signature;
     int capacity;
@@ -44,16 +65,9 @@ typedef struct TigFileCache {
 static_assert(sizeof(TigFileCache) == 0x18, "wrong size");
 
 // Initializes file cache system.
-//
-// NOTE: This function does nothing and always returns `TIG_OK`.
 int tig_file_cache_init(TigInitializeInfo* init_info);
 
 // Shutdowns file cache system.
-//
-// NOTE: This function does nothing. Unlike many other systems which track
-// allocations, file cache objects are not tracked. Which in turn means it
-// does not release existing cache objects. You're responsible for releasing
-// of file cache objects with `tig_file_cache_destroy`.
 void tig_file_cache_exit();
 
 // Evicts ununsed entries from cache.
