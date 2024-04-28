@@ -2,7 +2,7 @@
 
 #include "tig/memory.h"
 
-/// Size of batch during node allocation.
+// Size of batch during node allocation.
 #define GROW 20
 
 #define MISS_BOTTOM 0x8

@@ -1,5 +1,17 @@
-#ifndef ARCANUM_TIG_RECT_H_
-#define ARCANUM_TIG_RECT_H_
+#ifndef TIG_RECT_H_
+#define TIG_RECT_H_
+
+// RECT
+// ---
+//
+// The RECT subsystem provides `TigRect` object, memory-efficient management of
+// `TigRect` lists with `TigRectNode` (intended for short-lived arbitrary long
+// lists) and a set of utility geometry functions to deal with rectangles.
+//
+// NOTES
+//
+// - Unlike Fallouts where it's `Rect` was modelled after Windows' RECT (that is
+// followed LTRB style), the `TigRect` uses LTWH style.
 
 #include "tig/types.h"
 
@@ -7,8 +19,8 @@
 extern "C" {
 #endif
 
-/// A 2D axis-aligned rectangle whose coordinates are specified using origin and
-/// size.
+// A 2D axis-aligned rectangle whose coordinates are specified using origin and
+// size.
 typedef struct TigRect {
     /* 0000 */ int x;
     /* 0004 */ int y;
@@ -35,36 +47,43 @@ typedef struct TigLine {
 
 static_assert(sizeof(TigLine) == 0x10, "wrong size");
 
+// Initializes RECT subsystem.
 int tig_rect_init(TigInitializeInfo* init_info);
+
+// Shutdowns RECT subsystem.
 void tig_rect_exit();
+
+// Allocates a new `TigRectNode`.
 TigRectListNode* tig_rect_node_create();
+
+// Destroyes the `TigRectNode` node.
 void tig_rect_node_destroy(TigRectListNode* node);
 
-/// Computes an intersection of two given rectangles.
-///
-/// If the two rectangles overlap returns `TIG_OK` and the resulting rect is
-/// available in `r`. If the two rectangles do not overlap returns `TIG_ERR_4`
-/// and the resulting rect is undefined.
+// Computes an intersection of two given rectangles.
+//
+// If the two rectangles overlap returns `TIG_OK` and the resulting rect is
+// available in `r`. If the two rectangles do not overlap returns `TIG_ERR_4`
+// and the resulting rect is undefined.
 int tig_rect_intersection(const TigRect* a, const TigRect* b, TigRect* r);
 
-/// Slices given rectangle `a` with `b` producing at most 4 excluded rectangles,
-/// one per side.
-///
-/// Returns number of excluded rectangles.
-///
-/// Scheme:
-///     +-----------------+
-///     | (1)             |
-///     +-----+-----+-----+
-///     | (2) | (b) | (3) |
-///     +-----+-----+-----+
-///     | (4)             |
-///     +-----------------+
+// Slices given rectangle `a` with `b` producing at most 4 excluded rectangles,
+// one per side.
+//
+// Returns number of excluded rectangles.
+//
+// Scheme:
+//     +-----------------+
+//     | (1)             |
+//     +-----+-----+-----+
+//     | (2) | (b) | (3) |
+//     +-----+-----+-----+
+//     | (4)             |
+//     +-----------------+
 int tig_rect_clip(const TigRect* a, const TigRect* b, TigRect* rects);
 
-/// Computes a union of two rectangles.
-///
-/// Returns `TIG_OK` (its always possible to compute a union)
+// Computes a union of two rectangles.
+//
+// Returns `TIG_OK` (its always possible to compute a union)
 int tig_rect_union(const TigRect* a, const TigRect* b, TigRect* r);
 
 // Computes an intersection of a rectangle and a line.
@@ -104,4 +123,4 @@ int tig_line_bounding_box(const TigLine* line, TigRect* rect);
 }
 #endif
 
-#endif /* ARCANUM_TIG_RECT_H_ */
+#endif /* TIG_RECT_H_ */
