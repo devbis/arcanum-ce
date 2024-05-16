@@ -357,6 +357,12 @@ const char* object_field_names[] = {
 // 0x5D1104
 static ObjectFieldInfo* object_fields;
 
+// 0x5D1128
+static void* dword_5D1128;
+
+// 0x5D112C
+static void* dword_5D112C;
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
@@ -918,6 +924,20 @@ void sub_40A8A0()
     object_fields[333].field_18 = 3;
     object_fields[335].field_18 = 3;
     object_fields[336].field_18 = 12;
+}
+
+// 0x40BBB0
+void sub_40BBB0()
+{
+    if (dword_5D1128 != NULL) {
+        free(dword_5D1128);
+        dword_5D1128 = NULL;
+    }
+
+    if (dword_5D112C != NULL) {
+        free(dword_5D112C);
+        dword_5D112C = NULL;
+    }
 }
 
 // 0x4F0270
