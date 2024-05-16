@@ -241,7 +241,7 @@ int sub_4B1A90(int college)
 // 0x4B1AB0
 int sub_4B1AB0(long long object_id, int a2)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2);
     } else {
         return 0;
@@ -261,7 +261,7 @@ bool sub_4B1B00(long long object_id, int a2)
 // 0x4B1B30
 int sub_4B1B30(long long object_id, int a2, int a3)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         object_field_set_with_network(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
         return a3;
     } else {
@@ -283,7 +283,7 @@ bool sub_4B1C70(long long object_id, int a2)
 int sub_4B1CB0(long long object_id)
 {
     int type = object_field_get(object_id, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_15 || type == OBJ_TYPE_CRITTER) {
+    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
         // TODO: Figure out constant meaning.
         return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16);
     } else {
@@ -294,7 +294,7 @@ int sub_4B1CB0(long long object_id)
 // 0x4B1CF0
 void sub_4B1CF0(long long object_id, int a2)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15 || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         if (sub_4B1C70(object_id, a2)) {
             // TODO: Figure out constant meaning.
             sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16, a2);

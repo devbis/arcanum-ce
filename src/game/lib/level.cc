@@ -191,7 +191,7 @@ int level_auto_level_scheme_get(object_id_t object_id)
     }
 
     int type = object_field_get(object_id, OBJ_F_TYPE);
-    if (type != OBJ_TYPE_15 && type != OBJ_TYPE_CRITTER) {
+    if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return -1;
     }
 
@@ -206,7 +206,7 @@ int level_auto_level_scheme_set(object_id_t object_id, int value)
     }
 
     int type = object_field_get(object_id, OBJ_F_TYPE);
-    if (type != OBJ_TYPE_15 && type != OBJ_TYPE_CRITTER) {
+    if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return -1;
     }
 

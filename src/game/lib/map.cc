@@ -632,7 +632,7 @@ void map_gender_check()
         int v1;
         if (sub_4082C0(&obj, &v1)) {
             do {
-                if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
+                if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
                     const int description = object_field_get(obj, OBJ_F_DESCRIPTION);
                     if (description >= DESCRIPTION_FIRST_CRITTER_NAME && description <= DESCRIPTION_LAST_CRITTER_NAME) {
                         const int actual_gender = stat_get_base(obj, STAT_GENDER);

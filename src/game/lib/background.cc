@@ -133,7 +133,7 @@ void background_obj_clear(object_id_t obj)
 int background_obj_get_background(object_id_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_15) {
+        if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             return object_field_get(obj, OBJ_F_PC_BACKGROUND);
         }
     }

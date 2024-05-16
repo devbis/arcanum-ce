@@ -129,7 +129,7 @@ bool item_is_item(object_id_t object_id)
 {
     if (object_id != 0) {
         int type = object_field_get(object_id, OBJ_F_TYPE);
-        if (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_14) {
+        if (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC) {
             return true;
         }
     }
@@ -148,7 +148,7 @@ int sub_461340(object_id_t object_id)
 // 0x461370
 int sub_461370(object_id_t item_id, object_id_t owner_id)
 {
-    if (object_field_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_8) {
+    if (object_field_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GOLD) {
         return 0;
     }
 
@@ -196,7 +196,7 @@ int sub_4614A0(object_id_t item_id, object_id_t owner_id)
     int complexity = item_magic_tech_complexity(item_id);
 
     int owner_type = object_field_get(owner_id, OBJ_F_TYPE);
-    if (owner_type != OBJ_TYPE_15 && owner_type != OBJ_TYPE_CRITTER) {
+    if (owner_type != OBJ_TYPE_PC && owner_type != OBJ_TYPE_NPC) {
         return complexity;
     }
 
@@ -306,7 +306,7 @@ int sub_462410(object_id_t item_id, int* quantity_field_ptr)
     int ammo_type;
 
     switch (object_field_get(item_id, OBJ_F_TYPE)) {
-    case OBJ_TYPE_8:
+    case OBJ_TYPE_ITEM_GOLD:
         rc = OBJ_F_CRITTER_GOLD;
         quantity_field = OBJ_F_GOLD_QUANTITY;
         break;
@@ -386,7 +386,7 @@ int item_inventory_source(object_id_t item_id)
         switch (object_field_get(item_id, OBJ_F_TYPE)) {
         case OBJ_TYPE_CONTAINER:
             return object_field_get(item_id, OBJ_F_CONTAINER_INVENTORY_SOURCE);
-        case OBJ_TYPE_CRITTER:
+        case OBJ_TYPE_NPC:
             return object_field_get(item_id, OBJ_F_CRITTER_INVENTORY_SOURCE);
         }
     }
@@ -427,8 +427,8 @@ int item_ammo_quantity(object_id_t item_id, int a2)
 int sub_465870(object_id_t item_id, int ammo_type)
 {
     switch (object_field_get(item_id, OBJ_F_TYPE)) {
-    case OBJ_TYPE_15:
-    case OBJ_TYPE_CRITTER:
+    case OBJ_TYPE_PC:
+    case OBJ_TYPE_NPC:
         return sub_406E80(item_id, dword_5B32A0[ammo_type]);
     case OBJ_TYPE_CONTAINER:
         return sub_462540(item_id, dword_5B32B0[ammo_type], 0);

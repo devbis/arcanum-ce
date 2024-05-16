@@ -1,7 +1,19 @@
 #include "game/lib/object.h"
 
+typedef struct ObjectFieldInfo {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+} ObjectFieldInfo;
+
+static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
+
 // 0x59BEA8
-const char object_field_names[] = {
+const char* object_field_names[] = {
     "obj_f_begin",
     "obj_f_current_aid",
     "obj_f_location",
@@ -342,6 +354,9 @@ const char object_field_names[] = {
     "obj_f_max",
 };
 
+// 0x5D1104
+static ObjectFieldInfo* object_fields;
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
@@ -359,6 +374,74 @@ void object_field_set(object_id_t object_id, int field, int value)
 long long object_field_get_64(object_id_t object_id, int field)
 {
     // TODO: Incomplete.
+}
+
+// 0x40C260
+bool sub_40C260(ObjectType object_type, ObjectField field)
+{
+    if (object_fields[field].field_18 <= 2) {
+        return false;
+    }
+
+    if ((field > OBJ_F_BEGIN && field < OBJ_F_END)
+        || (field > OBJ_F_TRANSIENT_BEGIN && field < OBJ_F_TRANSIENT_END)
+        || field == OBJ_F_TYPE
+        || field == OBJ_F_PROTOTYPE_HANDLE) {
+        return true;
+    }
+
+    switch (object_type) {
+    case OBJ_TYPE_WALL:
+        return field > OBJ_F_WALL_BEGIN && field < OBJ_F_WALL_END;
+    case OBJ_TYPE_PORTAL:
+        return field > OBJ_F_PORTAL_BEGIN && field < OBJ_F_PORTAL_END;
+    case OBJ_TYPE_CONTAINER:
+        return field > OBJ_F_CONTAINER_BEGIN && field < OBJ_F_CONTAINER_END;
+    case OBJ_TYPE_SCENERY:
+        return field > OBJ_F_SCENERY_BEGIN && field < OBJ_F_SCENERY_END;
+    case OBJ_TYPE_PROJECTILE:
+        return field > OBJ_F_PROJECTILE_BEGIN && field < OBJ_F_PROJECTILE_END;
+    case OBJ_TYPE_WEAPON:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_WEAPON_BEGIN && field < OBJ_F_WEAPON_END);
+    case OBJ_TYPE_AMMO:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_AMMO_BEGIN && field < OBJ_F_AMMO_END);
+    case OBJ_TYPE_ITEM_ARMOR:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_ARMOR_BEGIN && field < OBJ_F_ARMOR_END);
+    case OBJ_TYPE_ITEM_GOLD:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_GOLD_BEGIN && field < OBJ_F_GOLD_END);
+    case OBJ_TYPE_ITEM_FOOD:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_FOOD_BEGIN && field < OBJ_F_FOOD_END);
+    case OBJ_TYPE_ITEM_SCROLL:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_SCROLL_BEGIN && field < OBJ_F_SCROLL_END);
+    case OBJ_TYPE_ITEM_KEY:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_KEY_BEGIN && field < OBJ_F_KEY_END);
+    case OBJ_TYPE_ITEM_KEY_RING:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_KEY_RING_BEGIN && field < OBJ_F_KEY_RING_END);
+    case OBJ_TYPE_ITEM_WRITTEN:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_WRITTEN_BEGIN && field < OBJ_F_WRITTEN_END);
+    case OBJ_TYPE_ITEM_GENERIC:
+        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
+            || (field > OBJ_F_GENERIC_BEGIN && field < OBJ_F_GENERIC_END);
+    case OBJ_TYPE_PC:
+        return (field > OBJ_F_CRITTER_BEGIN && field < OBJ_F_CRITTER_END)
+            || (field > OBJ_F_PC_BEGIN && field < OBJ_F_PC_END);
+    case OBJ_TYPE_NPC:
+        return (field > OBJ_F_CRITTER_BEGIN && field < OBJ_F_CRITTER_END)
+            || (field > OBJ_F_NPC_BEGIN && field < OBJ_F_NPC_END);
+    case OBJ_TYPE_TRAP:
+        return field > OBJ_F_TRAP_BEGIN && field < OBJ_F_TRAP_END;
+    }
+
+    return false;
 }
 
 // 0x4F0270

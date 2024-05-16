@@ -598,7 +598,7 @@ void sub_41C4D0(object_id_t object_id)
 {
     if (!dword_5D55D8) {
         if (object_id != 0) {
-            if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_CRITTER) {
+            if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
                 for (int index = 0; index < TWO; index++) {
                     if (stru_5D1A98[index].field_0) {
                         dword_5D1A30[index] = stru_5D1A98[index].field_4;
@@ -625,7 +625,7 @@ void sub_41C5A0(object_id_t object_id)
 {
     if (dword_5D55D8) {
         if (object_id != 0) {
-            if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15) {
+            if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                 tig_sound_stop(dword_5D1A4C);
                 tig_sound_stop(dword_5D1A48);
 

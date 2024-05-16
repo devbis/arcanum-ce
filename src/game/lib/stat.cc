@@ -259,7 +259,7 @@ void stat_set_defaults(object_id_t object_id)
 // 0x4B0490
 int stat_level(object_id_t obj, int stat)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_15 && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_CRITTER) {
+    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
 
@@ -435,7 +435,7 @@ int stat_level(object_id_t obj, int stat)
 // 0x4B0740
 int stat_get_base(object_id_t obj, int stat)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_15 && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_CRITTER) {
+    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
 
@@ -513,7 +513,7 @@ int stat_set_base(object_id_t obj, int stat)
 // 0x4B0EE0
 bool stat_is_maximized(object_id_t obj, int stat)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_15 && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_CRITTER) {
+    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return false;
     }
 

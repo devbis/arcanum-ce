@@ -152,7 +152,7 @@ void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, 
 // 0x4C58D0
 bool sub_4C58D0(object_id_t object_id, int rumor)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_15) {
+    if (object_field_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return false;
     }
 

@@ -134,7 +134,7 @@ bool player_is_pc_obj(object_id_t object_id)
 bool sub_40DA20(object_id_t object_id)
 {
     if (object_id != OBJ_HANDLE_NULL) {
-        return object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_15;
+        return object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC;
     } else {
         return false;
     }

@@ -349,23 +349,24 @@ typedef enum ObjectField {
 };
 
 typedef enum ObjectType {
-    OBJ_TYPE_0,
-    OBJ_TYPE_1,
+    OBJ_TYPE_WALL,
+    OBJ_TYPE_PORTAL,
     OBJ_TYPE_CONTAINER,
     OBJ_TYPE_SCENERY,
-    OBJ_TYPE_4,
+    OBJ_TYPE_PROJECTILE,
     OBJ_TYPE_WEAPON,
     OBJ_TYPE_AMMO,
-    OBJ_TYPE_7,
-    OBJ_TYPE_8,
-    OBJ_TYPE_9,
-    OBJ_TYPE_10,
-    OBJ_TYPE_11,
-    OBJ_TYPE_12,
-    OBJ_TYPE_13,
-    OBJ_TYPE_14,
-    OBJ_TYPE_15,
-    OBJ_TYPE_CRITTER,
+    OBJ_TYPE_ITEM_ARMOR,
+    OBJ_TYPE_ITEM_GOLD,
+    OBJ_TYPE_ITEM_FOOD,
+    OBJ_TYPE_ITEM_SCROLL,
+    OBJ_TYPE_ITEM_KEY,
+    OBJ_TYPE_ITEM_KEY_RING,
+    OBJ_TYPE_ITEM_WRITTEN,
+    OBJ_TYPE_ITEM_GENERIC,
+    OBJ_TYPE_PC,
+    OBJ_TYPE_NPC,
+    OBJ_TYPE_TRAP,
 };
 
 typedef enum SceneryFlags {
@@ -409,12 +410,13 @@ static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);
 long long object_field_get_64(object_id_t object_id, int field);
+bool sub_40C260(ObjectType object_type, ObjectField field);
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4);
 
 // NOTE: Seen in some assertions in `anim.c`.
 static inline bool obj_type_is_critter(int type)
 {
-    return type == OBJ_TYPE_15 || type == OBJ_TYPE_CRITTER;
+    return type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC;
 }
 
 #endif /* ARCANUM_GAME_LIB_OBJECT_H_ */
