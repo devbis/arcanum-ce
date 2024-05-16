@@ -376,6 +376,115 @@ long long object_field_get_64(object_id_t object_id, int field)
     // TODO: Incomplete.
 }
 
+// 0x40C030
+int sub_40C030(ObjectType object_type)
+{
+    int v1;
+
+    switch (object_type) {
+    case OBJ_TYPE_WALL:
+        v1 = object_fields[OBJ_F_WALL_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_PORTAL:
+        v1 = object_fields[OBJ_F_PORTAL_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_CONTAINER:
+        v1 = object_fields[OBJ_F_CONTAINER_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_SCENERY:
+        v1 = object_fields[OBJ_F_SCENERY_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_PROJECTILE:
+        v1 = object_fields[OBJ_F_PROJECTILE_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_WEAPON:
+        v1 = object_fields[OBJ_F_WEAPON_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_AMMO:
+        v1 = object_fields[OBJ_F_AMMO_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        v1 = object_fields[OBJ_F_ARMOR_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GOLD:
+        v1 = object_fields[OBJ_F_GOLD_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_FOOD:
+        v1 = object_fields[OBJ_F_FOOD_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_SCROLL:
+        v1 = object_fields[OBJ_F_SCROLL_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY:
+        v1 = object_fields[OBJ_F_KEY_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        v1 = object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_WRITTEN:
+        v1 = object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GENERIC:
+        v1 = object_fields[OBJ_F_GENERIC_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_PC:
+        v1 = object_fields[OBJ_F_PC_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_NPC:
+        // NOTE: Probably wrong.
+        v1 = object_fields[OBJ_F_NPC_SHIT_LIST_IDX].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_TRAP:
+        v1 = object_fields[OBJ_F_TRAP_PAD_I64AS_1].field_8;
+        break;
+    default:
+        // NOTE: Original code returns `object_type`.
+        __assume(0);
+    }
+
+    if (v1 == -1) {
+        v1 = object_fields[OBJ_F_PAD_I64AS_1].field_8;
+    }
+
+    return v1 + 1;
+}
+
 // 0x40C260
 bool sub_40C260(ObjectType object_type, ObjectField field)
 {
