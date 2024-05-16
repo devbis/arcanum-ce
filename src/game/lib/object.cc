@@ -553,6 +553,32 @@ bool sub_40C260(ObjectType object_type, ObjectField field)
     return false;
 }
 
+// 0x40A7B0
+void sub_40A7B0()
+{
+    int index;
+
+    for (index = OBJ_F_BEGIN; index <= OBJ_F_TOTAL_NORMAL; index++) {
+        object_fields[index].field_14 = object_fields[index].field_18 <= 0 || object_fields[index].field_14 > 2;
+    }
+
+    for (index = OBJ_F_TOTAL_NORMAL; index < OBJ_F_END; index++) {
+        object_fields[index].field_14 = false;
+    }
+
+    object_fields[OBJ_F_RESISTANCE_IDX].field_14 = 5;
+    object_fields[OBJ_F_WEAPON_DAMAGE_LOWER_IDX].field_14 = 5;
+    object_fields[OBJ_F_WEAPON_DAMAGE_UPPER_IDX].field_14 = 5;
+    object_fields[OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX].field_14 = 5;
+    object_fields[OBJ_F_ARMOR_RESISTANCE_ADJ_IDX].field_14 = 5;
+    object_fields[OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX].field_14 = 5;
+    object_fields[OBJ_F_CRITTER_STAT_BASE_IDX].field_14 = 28;
+    object_fields[OBJ_F_CRITTER_BASIC_SKILL_IDX].field_14 = 12;
+    object_fields[OBJ_F_CRITTER_TECH_SKILL_IDX].field_14 = 4;
+    object_fields[OBJ_F_RENDER_ALPHA].field_14 = 4;
+    object_fields[OBJ_F_SHADOW_HANDLES].field_14 = 5;
+}
+
 // 0x4F0270
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4)
 {
