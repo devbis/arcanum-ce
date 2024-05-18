@@ -188,12 +188,6 @@ int sub_468600(ObjectType object_type)
     return dword_5B37FC[object_type];
 }
 
-// 0x468660
-void sub_468660(bool* error_ptr)
-{
-    // TODO: Incomplete.
-}
-
 // 0x468610
 bool sub_468610(int description)
 {
@@ -209,6 +203,32 @@ bool sub_468610(int description)
     }
 
     return description >= dword_5B37FC[object_type] && description < dword_5B384C[object_type];
+}
+
+// 0x468660
+void sub_468660(bool* error_ptr)
+{
+    int object_type;
+    int description;
+    ObjectId object_id;
+    const char* name;
+    char path[TIG_MAX_PATH];
+
+    tig_debug_printf("Reading prototypes...\n");
+
+    for (object_type = 0; object_type < 20; object_type++) {
+        for (description = dword_5B37FC[object_type]; description < dword_5B384C[object_type]; description++) {
+            object_id = sub_468860(description);
+            name = sub_4E7400(sub_468720(object_type));
+            sprintf(path, "proto\\%06d - %s.pro", object_id.d.index, name);
+            if (!tig_file_exists(path, NULL)) {
+                sub_468890(description);
+                *error_ptr = true;
+            }
+        }
+    }
+
+    tig_debug_printf("Reading prototypes completed.\n");
 }
 
 // 0x468800
