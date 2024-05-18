@@ -220,3 +220,9 @@ void sub_468800()
         }
     }
 }
+
+// 0x468860
+ObjectId sub_468860(int a1)
+{
+    return sub_4E6540(a1 + 20);
+}
