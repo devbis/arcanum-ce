@@ -404,3 +404,16 @@ int sub_49B290(long long obj)
 
     return object_id.d.a.field_8 - 20;
 }
+
+// 0x49B2E0
+void sub_49B2E0(long long obj)
+{
+    int complexity;
+    int worth;
+
+    complexity = obj_f_get_int32(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+    if (complexity != 0) {
+        worth = obj_f_get_int32(obj, OBJ_F_ITEM_WORTH);
+        obj_f_set_int32(obj, OBJ_F_ITEM_WORTH, worth + 3 * complexity * complexity / 10);
+    }
+}
