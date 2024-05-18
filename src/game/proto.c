@@ -1,0 +1,119 @@
+#include "game/lib/object.h"
+
+// 0x5B37FC
+static int dword_5B37FC[OBJ_TYPE_COUNT] = {
+    /*          OBJ_TYPE_WALL */ 1000,
+    /*        OBJ_TYPE_PORTAL */ 2008,
+    /*     OBJ_TYPE_CONTAINER */ 3023,
+    /*       OBJ_TYPE_SCENERY */ 4006,
+    /*    OBJ_TYPE_PROJECTILE */ 5028,
+    /*        OBJ_TYPE_WEAPON */ 6029,
+    /*          OBJ_TYPE_AMMO */ 7038,
+    /*    OBJ_TYPE_ITEM_ARMOR */ 8042,
+    /*     OBJ_TYPE_ITEM_GOLD */ 9056,
+    /*     OBJ_TYPE_ITEM_FOOD */ 10057,
+    /*   OBJ_TYPE_ITEM_SCROLL */ 11059,
+    /*      OBJ_TYPE_ITEM_KEY */ 12060,
+    /* OBJ_TYPE_ITEM_KEY_RING */ 13061,
+    /*  OBJ_TYPE_ITEM_WRITTEN */ 14062,
+    /*  OBJ_TYPE_ITEM_GENERIC */ 15065,
+    /*            OBJ_TYPE_PC */ 16066,
+    /*           OBJ_TYPE_NPC */ 17067,
+    /*          OBJ_TYPE_TRAP */ 26000,
+    /*       OBJ_TYPE_MONSTER */ 27309,
+    /*    OBJ_TYPE_UNIQUE_NPC */ 28310,
+};
+
+// 0x5B384C
+static int dword_5B384C[OBJ_TYPE_COUNT] = {
+    /*          OBJ_TYPE_WALL */ 1008,
+    /*        OBJ_TYPE_PORTAL */ 2023,
+    /*     OBJ_TYPE_CONTAINER */ 3061,
+    /*       OBJ_TYPE_SCENERY */ 4051,
+    /*    OBJ_TYPE_PROJECTILE */ 5029,
+    /*        OBJ_TYPE_WEAPON */ 6179,
+    /*          OBJ_TYPE_AMMO */ 7042,
+    /*    OBJ_TYPE_ITEM_ARMOR */ 8293,
+    /*     OBJ_TYPE_ITEM_GOLD */ 9057,
+    /*     OBJ_TYPE_ITEM_FOOD */ 10145,
+    /*   OBJ_TYPE_ITEM_SCROLL */ 11143,
+    /*      OBJ_TYPE_ITEM_KEY */ 12063,
+    /* OBJ_TYPE_ITEM_KEY_RING */ 13062,
+    /*  OBJ_TYPE_ITEM_WRITTEN */ 14130,
+    /*  OBJ_TYPE_ITEM_GENERIC */ 15213,
+    /*            OBJ_TYPE_PC */ 16079,
+    /*           OBJ_TYPE_NPC */ 17317,
+    /*          OBJ_TYPE_TRAP */ 26008,
+    /*       OBJ_TYPE_MONSTER */ 27394,
+    /*    OBJ_TYPE_UNIQUE_NPC */ 28472,
+};
+
+// 0x5E882C
+static ObjectId* dword_5E882C;
+
+// 0x5E8830
+static bool initialized;
+
+// 0x4681B0
+int proto_init(GameInitInfo* init_info)
+{
+    unsigned int index;
+    bool error;
+    TigFileList file_list;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    long long obj;
+
+    if (initialized) {
+        return true;
+    }
+
+    dword_5E882C = CALLOC(OBJ_TYPE_COUNT, sizeof(ObjectId));
+
+    tig_file_mkdir("proto");
+
+    for (index = 0; index < OBJ_TYPE_COUNT; index++) {
+        dword_5E882C[index] = sub_468860(sub_468600(index));
+    }
+
+    error = false;
+    sub_468660(&error);
+
+    if (error) {
+        FREE(dword_5E882C);
+        return false;
+    }
+
+    obj_exit();
+    if (!obj_init(init_info)) {
+        FREE(dword_5E882C);
+        return false;
+    }
+
+    tig_file_list_create(&file_list, "proto\\*.pro");
+    for (index = 0; index < file_list.count; index++) {
+        sprintf(path, "proto\\%s", file_list.entries[index].path);
+        stream = tig_file_fopen(path, "rb");
+        if (stream != NULL) {
+            obj_read(stream, &obj);
+            tig_file_fclose(stream);
+        }
+    }
+    tig_file_list_destroy(&file_list);
+
+    initialized = true;
+
+    return true;
+}
+
+// 0x468600
+int sub_468600(ObjectType object_type)
+{
+    return dword_5B37FC[object_type];
+}
+
+// 0x468660
+void sub_468660(bool* error_ptr)
+{
+    // TODO: Incomplete.
+}
