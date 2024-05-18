@@ -48,6 +48,9 @@ static int dword_5B384C[OBJ_TYPE_COUNT] = {
     /*    OBJ_TYPE_UNIQUE_NPC */ 28472,
 };
 
+// 0x5E8828
+static bool in_proto_save;
+
 // 0x5E882C
 static ObjectId* dword_5E882C;
 
@@ -225,4 +228,21 @@ void sub_468800()
 ObjectId sub_468860(int a1)
 {
     return sub_4E6540(a1 + 20);
+}
+
+// 0x468890
+void sub_468890(int description)
+{
+    ObjectType object_type;
+    long long obj;
+
+    object_type = sub_4685D0(description);
+    sub_405800(object_type, &obj);
+    obj_f_set_int32(obj, OBJ_F_NAME, sub_468720(object_type));
+    sub_408020(obj, description + 20);
+    sub_468930(obj, description);
+    in_proto_save = true;
+    proto_save(obj);
+    in_proto_save = false;
+    sub_405BF0(obj);
 }
