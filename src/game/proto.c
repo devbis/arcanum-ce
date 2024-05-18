@@ -93,17 +93,17 @@ static int dword_5B384C[OBJ_TYPE_COUNT] = {
 
 // 0x5B389C
 static int dword_5B389C[RACE_COUNT] = {
-    0,
-    1,
-    4,
-    4,
-    2,
-    2,
-    0,
-    3,
-    4,
-    3,
-    0,
+    /*     RACE_HUMAN */ 0,
+    /*     RACE_DWARF */ 1,
+    /*       RACE_ELF */ 4,
+    /*  RACE_HALF_ELF */ 4,
+    /*     RACE_GNOME */ 2,
+    /*  RACE_HALFLING */ 2,
+    /*  RACE_HALF_ORC */ 0,
+    /* RACE_HALF_OGRE */ 3,
+    /*  RACE_DARK_ELF */ 4,
+    /*      RACE_OGRE */ 3,
+    /*       RACE_ORC */ 0,
 };
 
 // 0x5B38C8
