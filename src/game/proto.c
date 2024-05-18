@@ -904,6 +904,231 @@ int sub_49BF10(const char* str, const char** identifiers, int size)
     return 0;
 }
 
+// 0x49C060
+void sub_49C060(long long obj, TigFile* stream, int type)
+{
+    char description[2000];
+    int value;
+    tig_art_id_t art_id;
+    int stat;
+    int college;
+    int num_spl;
+    int spl;
+    int index;
+    int scr[3];
+    int min_damage;
+    int max_damage;
+
+    sub_441B60(obj, obj, description);
+    tig_file_fprintf(stream, "%s: %d   // %s\n",
+        off_5B38C8[PROTO_F_DESCRIPTION],
+        obj_f_get_int32(obj, OBJ_F_DESCRIPTION),
+        description);
+
+    value = obj_f_get_int32(obj, OBJ_F_NAME);
+    if (value != 0) {
+        tig_file_fprintf(stream, "%s: %d\n",
+            off_5B38C8[PROTO_F_INTERNAL_NAME],
+            value);
+    }
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_LEVEL],
+        stat_level(obj, STAT_LEVEL));
+
+    art_id = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    switch (type) {
+    case 1:
+        tig_file_fprintf(stream, "%s: %d %d\n",
+            off_5B38C8[PROTO_F_ART_NUMBER_AND_PALETTE],
+            tig_art_num_get(art_id),
+            tig_art_palette_get(art_id));
+        break;
+    case 2:
+        tig_file_fprintf(stream, "%s: %d %d\n",
+            off_5B38C8[PROTO_F_ART_NUMBER_AND_PALETTE],
+            sub_503F20(art_id),
+            tig_art_palette_get(art_id));
+        break;
+    default:
+        tig_file_fprintf(stream, "%s: %s %d\n",
+            off_5B38C8[PROTO_F_BASIC_STAT],
+            stat_get_name(STAT_GENDER),
+            stat_get_base(STAT_GENDER));
+        tig_file_fprintf(stream, "%s: %s %d\n",
+            off_5B38C8[PROTO_F_BASIC_STAT],
+            stat_get_name(STAT_RACE),
+            stat_get_base(STAT_RACE));
+        break;
+    }
+
+    value = obj_f_get_int32(obj, OBJ_F_BLIT_SCALE);
+    if (value != 100) {
+        tig_file_fprintf(stream, "%s: %d\n",
+            off_5B38C8[PROTO_F_SCALE],
+            value);
+    }
+
+    value = stat_level(obj, STAT_ALIGNMENT);
+    if (value != 0) {
+        tig_file_fprintf(stream, "%s: %d\n",
+            off_5B38C8[PROTO_F_ALIGNMENT],
+            value);
+    }
+
+    sub_49C610(stream,
+        off_5B38C8[PROTO_F_CRITTER_FLAG],
+        obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS),
+        off_5BA348,
+        sizeof(off_5BA348) / sizeof(off_5BA348[0]));
+
+    sub_49C610(stream,
+        off_5B38C8[PROTO_F_CRITTER2_FLAG],
+        obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS2),
+        off_5BA3C8,
+        sizeof(off_5BA3C8) / sizeof(off_5BA3C8[0]));
+
+    sub_49C610(stream,
+        off_5B38C8[PROTO_F_NPC_FLAG],
+        obj_f_get_int32(obj, OBJ_F_NPC_FLAGS),
+        off_5BA44C,
+        sizeof(off_5BA44C) / sizeof(off_5BA44C[0]));
+
+    sub_49C610(stream,
+        off_5B38C8[PROTO_F_BLIT_FLAG],
+        obj_f_get_int32(obj, OBJ_F_BLIT_FLAGS),
+        off_5B395C,
+        sizeof(off_5B395C) / sizeof(off_5B395C[0]));
+
+    sub_49C610(stream,
+        off_5B38C8[PROTO_F_SPELL_FLAG],
+        obj_f_get_int32(obj, OBJ_F_SPELL_FLAGS),
+        off_5BA188,
+        sizeof(off_5BA188) / sizeof(off_5BA188[0]));
+
+    value = obj_f_get_int32(obj, OBJ_F_CRITTER_CRIT_HIT_CHART);
+    if (value != 0) {
+        tig_file_fprintf(stream, "%s: %d\n",
+            off_5B38C8[PROTO_F_HIT_CHART],
+            value);
+    }
+
+    for (stat = STAT_STRENGTH; stat <= STAT_CHARISMA; stat++) {
+        value = stat_get_base(obj, stat);
+        if (value != 8) {
+            tig_file_fprintf(stream, "%s: %s %d\n",
+                off_5B38C8[PROTO_F_BASIC_STAT],
+                stat_get_name(stat),
+                value);
+        }
+    }
+
+    // FIXME: Does not include STAT_MAGICK_POINTS - STAT_RACE range which is
+    // parsed.
+
+    for (college = 0; college < COLLEGE_COUNT; college++) {
+        num_spl = sub_4B1AB0(obj, college);
+        for (spl = 0; spl < num_spl; spl++) {
+            tig_file_fprintf(stream, "%s: %s\n",
+                off_5B38C8[PROTO_F_SPELL],
+                spell_get_name(college * 5 + spl));
+        }
+    }
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_FACTION],
+        obj_f_get_int32(obj, OBJ_F_NPC_FACTION));
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_AI_PACKET],
+        obj_f_get_int32(obj, OBJ_F_NPC_AI_DATA));
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_MATERIAL],
+        obj_f_get_int32(obj, OBJ_F_MATERIAL));
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_HIT_POINTS],
+        sub_43D5A0(obj));
+
+    for (index = 0; index < 36; index++) {
+        sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, scr);
+        if (scr[2] != 0) {
+            tig_file_fprintf(stream, "%s: %d %d %d %d %d %d\n",
+                off_5B38C8[PROTO_F_SCRIPT],
+                index,
+                scr[2],
+                scr[1] & 0xFF,
+                (scr[1] >> 8) & 0xFF,
+                (scr[1] >> 16) & 0xFF,
+                (scr[1] >> 24) & 0xFF);
+        }
+    }
+
+    for (index = PROTO_F_DAMAGE_RESISTANCE; index <= PROTO_F_MAGIC_RESISTANCE; index++) {
+        value = obj_f_get_int32_idx(obj, OBJ_F_RESISTANCE_IDX, index);
+        if (value != 0) {
+            tig_file_fprintf(stream, "%s: %d\n",
+                off_5B38C8[index],
+                value);
+        }
+    }
+
+    for (index = PROTO_F_NORMAL_DAMAGE; index <= PROTO_F_FATIGUE_DAMAGE; index++) {
+        min_damage = sub_407470(obj, OBJ_F_NPC_DAMAGE_IDX, index * 2);
+        max_damage = sub_407470(obj, OBJ_F_NPC_DAMAGE_IDX, index * 2 + 1);
+        if (min_damage != 0 || max_damage != 0) {
+            tig_file_fprintf(stream, "%s: %d %d\n",
+                off_5B38C8[index],
+                min_damage,
+                max_damage);
+        }
+    }
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_SOUND_BANK],
+        obj_f_get_int32(obj, OBJ_F_SOUND_EFFECT));
+
+    value = obj_f_get_int32(obj, OBJ_F_CRITTER_INVENTORY_SOURCE);
+    if (value != 0) {
+        tig_file_fprintf(stream, "%s: %d\n",
+            off_5B38C8[PROTO_F_INVENTORY_SOURCE],
+            value);
+    }
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_PORTRAIT],
+        obj_f_get_int32(obj, OBJ_F_CRITTER_PORTRAIT));
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_RETAIL_PRICE_MULTIPLIER],
+        obj_f_get_int32(obj, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER));
+
+    tig_file_fprintf(stream, "%s: %d\n",
+        off_5B38C8[PROTO_F_SOCIAL_CLASS],
+        critter_get_social_class(obj));
+
+    sub_49C610(stream,
+        off_5B38C8[PROTO_F_OBJECT_FLAG],
+        obj_f_get_int32(obj, OBJ_F_FLAGS),
+        off_5BA10C,
+        sizeof(off_5BA10C) / sizeof(off_5BA10C[0]));
+
+    value = obj_f_get_int32(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME);
+    if (value != 0) {
+        tig_file_fprintf(stream, "%s: %d\n",
+            off_5B38C8[PROTO_F_AUTO_LEVEL_SCHEME],
+            value);
+    }
+
+    value = obj_f_get_int32(obj, OBJ_F_CATEGORY);
+    if (value != 0) {
+        tig_file_fprintf(stream, "%s: %d\n",
+            off_5B38C8[PROTO_F_CATEGORY],
+            value);
+    }
+}
+
 // 0x49C610
 void sub_49C610(TigFile* stream, const char* name, int value, const char** identifiers, int size)
 {
