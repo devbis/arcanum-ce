@@ -377,3 +377,9 @@ void sub_49B010(long long obj, int description)
     obj_f_set_int32(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
     sub_43D530(obj, 0);
 }
+
+// 0x49B220
+void sub_49B220(long long obj, int description)
+{
+    sub_49B340(obj, description);
+}
