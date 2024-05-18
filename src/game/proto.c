@@ -106,6 +106,14 @@ int proto_init(GameInitInfo* init_info)
     return true;
 }
 
+// 0x468310
+void proto_exit()
+{
+    sub_468800();
+    FREE(dword_5E882C);
+    initialized = false;
+}
+
 // 0x468600
 int sub_468600(ObjectType object_type)
 {
