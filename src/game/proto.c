@@ -888,3 +888,18 @@ bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
         return true;
     }
 }
+
+// 0x49BF10
+int sub_49BF10(const char* str, const char** identifiers, int size)
+{
+    int index;
+
+    for (index = 0; index < size; index++) {
+        if (strnicmp(str, identifiers[index], strlen(identifiers[index])) == 0) {
+            return 1 << index;
+        }
+    }
+
+    tig_debug_printf("Proto read: unknown flag %s\n", str);
+    return 0;
+}
