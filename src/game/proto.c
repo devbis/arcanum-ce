@@ -507,3 +507,166 @@ void sub_49B340(long long obj, int description)
 
     tig_file_fclose(stream);
 }
+
+// 0x49B5A0
+int sub_49B5A0(TigFile* stream, long long obj, int type)
+{
+    tig_art_id_t art_id;
+    char str[1000];
+    int scr[3];
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+
+    if (obj != 0) {
+        obj_f_set_int32(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
+        obj_f_set_int32(obj, OBJ_F_MATERIAL, 4);
+        obj_f_set_int32(obj, OBJ_F_NPC_REACTION_BASE, 50);
+        obj_f_set_int32(obj, OBJ_F_NPC_WAIT, 2);
+        tig_art_light_id_create_(6u, 0, 0, 1, &art_id);
+        obj_f_set_int32(obj, OBJ_F_SHADOW, art_id);
+        obj_f_set_int32(obj, OBJ_F_SOUND_EFFECT, 250);
+    }
+
+    while (tig_file_fgets(str, sizeof(str), stream) != NULL) {
+        if (sub_49BB70(str, &v1, &v2, &v3, &v4)) {
+            if (v1 == 0) {
+                return v2;
+            }
+
+            if (obj != 0) {
+                switch (v1) {
+                case 1:
+                    obj_f_set_int32(obj, OBJ_F_NAME, v2);
+                    break;
+                case 2:
+                    stat_set_base(obj, STAT_LEVEL, v2);
+                    break;
+                case 3:
+                    switch (type) {
+                    case 1:
+                        tig_art_unique_npc_id_create(v2, 0, 0, 4, 0, 0, v3, &art_id);
+                        obj_f_set_int32(obj, OBJ_F_AID, art_id);
+                        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+                        break;
+                    case 2:
+                        tig_art_monster_id_create(v2, 0, 0, 0, 4, 0, 0, v3, &art_id);
+                        obj_f_set_int32(obj, OBJ_F_AID, art_id);
+                        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+                        break;
+                    }
+                    break;
+                case 4:
+                    obj_f_set_int32(obj, OBJ_F_BLIT_SCALE, v2);
+                    break;
+                case 5:
+                    stat_set_base(obj, STAT_ALIGNMENT, v2);
+                    break;
+                case 6:
+                    obj_f_set_int32(obj, OBJ_F_CRITTER_FLAGS, obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) | v2);
+                    break;
+                case 7:
+                    obj_f_set_int32(obj, OBJ_F_CRITTER_FLAGS2, obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS2) | v2);
+                    break;
+                case 8:
+                    obj_f_set_int32(obj, OBJ_F_NPC_FLAGS, obj_f_get_int32(obj, OBJ_F_NPC_FLAGS) | v2);
+                    break;
+                case 9:
+                    obj_f_set_int32(obj, OBJ_F_BLIT_FLAGS, obj_f_get_int32(obj, OBJ_F_BLIT_FLAGS) | v2);
+                    break;
+                case 10:
+                    obj_f_set_int32(obj, OBJ_F_SPELL_FLAGS, obj_f_get_int32(obj, OBJ_F_SPELL_FLAGS) | v2);
+                    break;
+                case 11:
+                    obj_f_set_int32(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, v2);
+                    break;
+                case 12:
+                    stat_set_base(obj, v2, v3);
+                    break;
+                case 13:
+                    sub_4B1790(obj, v2, 1);
+                    break;
+                case 14:
+                    obj_f_set_int32(obj, OBJ_F_NPC_FACTION, v2);
+                    break;
+                case 15:
+                    obj_f_set_int32(obj, OBJ_F_NPC_AI_DATA, v2);
+                    break;
+                case 16:
+                    obj_f_set_int32(obj, OBJ_F_MATERIAL, v2);
+                    break;
+                case 17:
+                    sub_49BB40(obj, v2);
+                    break;
+                case 18:
+                    scr[2] = v3;
+                    scr[1] = v4;
+                    sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, v2, scr);
+                    break;
+                case 19:
+                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 0, v2);
+                    break;
+                case 20:
+                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 1, v2);
+                    break;
+                case 21:
+                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 2, v2);
+                    break;
+                case 22:
+                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 3, v2);
+                    break;
+                case 23:
+                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 4, v2);
+                    break;
+                case 24:
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 0, v2);
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 1, v3);
+                    break;
+                case 25:
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 2, v2);
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 3, v3);
+                    break;
+                case 26:
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 4, v2);
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 5, v3);
+                    break;
+                case 27:
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 6, v2);
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 7, v3);
+                    break;
+                case 28:
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 8, v2);
+                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 9, v3);
+                    break;
+                case 29:
+                    obj_f_set_int32(obj, OBJ_F_SOUND_EFFECT, v2);
+                    break;
+                case 30:
+                    obj_f_set_int32(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, v2);
+                    break;
+                case 31:
+                    obj_f_set_int32(obj, OBJ_F_CRITTER_PORTRAIT, v2);
+                    break;
+                case 32:
+                    obj_f_set_int32(obj, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER, v2);
+                    break;
+                case 33:
+                    sub_45D030(obj, v2);
+                    break;
+                case 34:
+                    obj_f_set_int32(obj, OBJ_F_FLAGS, obj_f_get_int32(obj, OBJ_F_FLAGS) | v2);
+                    break;
+                case 35:
+                    obj_f_set_int32(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, v2);
+                    break;
+                case 36:
+                    obj_f_set_int32(obj, OBJ_F_CATEGORY, v2);
+                    break;
+                }
+            }
+        }
+    }
+
+    return -1;
+}
