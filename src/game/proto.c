@@ -1,5 +1,47 @@
 #include "game/lib/object.h"
+#include "game/lib/spell.h"
 #include "game/lib/stat.h"
+
+typedef enum ProtoField {
+    PROTO_F_DESCRIPTION,
+    PROTO_F_INTERNAL_NAME,
+    PROTO_F_LEVEL,
+    PROTO_F_ART_NUMBER_AND_PALETTE,
+    PROTO_F_SCALE,
+    PROTO_F_ALIGNMENT,
+    PROTO_F_CRITTER_FLAG,
+    PROTO_F_CRITTER2_FLAG,
+    PROTO_F_NPC_FLAG,
+    PROTO_F_BLIT_FLAG,
+    PROTO_F_SPELL_FLAG,
+    PROTO_F_HIT_CHART,
+    PROTO_F_BASIC_STAT,
+    PROTO_F_SPELL,
+    PROTO_F_FACTION,
+    PROTO_F_AI_PACKET,
+    PROTO_F_MATERIAL,
+    PROTO_F_HIT_POINTS,
+    PROTO_F_SCRIPT,
+    PROTO_F_DAMAGE_RESISTANCE,
+    PROTO_F_FIRE_RESISTANCE,
+    PROTO_F_ELECTRICAL_RESISTANCE,
+    PROTO_F_POISON_RESISTANCE,
+    PROTO_F_MAGIC_RESISTANCE,
+    PROTO_F_NORMAL_DAMAGE,
+    PROTO_F_POISON_DAMAGE,
+    PROTO_F_ELECTRICAL_DAMAGE,
+    PROTO_F_FIRE_DAMAGE,
+    PROTO_F_FATIGUE_DAMAGE,
+    PROTO_F_SOUND_BANK,
+    PROTO_F_INVENTORY_SOURCE,
+    PROTO_F_PORTRAIT,
+    PROTO_F_RETAIL_PRICE_MULTIPLIER,
+    PROTO_F_SOCIAL_CLASS,
+    PROTO_F_OBJECT_FLAG,
+    PROTO_F_AUTO_LEVEL_SCHEME,
+    PROTO_F_CATEGORY,
+    PROTO_F_COUNT,
+} ProtoField;
 
 // 0x5B37FC
 static int dword_5B37FC[OBJ_TYPE_COUNT] = {
@@ -62,6 +104,73 @@ static int dword_5B389C[RACE_COUNT] = {
     4,
     3,
     0,
+};
+
+// 0x5B38C8
+static const char* off_5B38C8[] = {
+    "Description",
+    "Internal Name",
+    "Level",
+    "Art Number and Palette",
+    "Scale",
+    "Alignment",
+    "Critter Flag",
+    "Critter2 Flag",
+    "NPC Flag",
+    "Blit Flag",
+    "Spell Flag",
+    "Hit Chart",
+    "Basic Stat",
+    "Spell",
+    "Faction",
+    "AI Packet",
+    "Material",
+    "Hit Points",
+    "Script",
+    "Damage Resistance",
+    "Fire Resistance",
+    "Electrical Resistance",
+    "Poison Resistance",
+    "Magic Resistance",
+    "Normal Damage",
+    "Poison Damage",
+    "Electrical Damage",
+    "Fire Damage",
+    "Fatigue Damage",
+    "Sound Bank",
+    "Inventory Source",
+    "Portrait",
+    "Retail Price Multiplier",
+    "Social Class",
+    "Object Flag",
+    "Auto Level Scheme",
+    "Category",
+};
+
+// 0x5B395C
+static const char* off_5B395C[] = {
+    "TAB_FLIP_X",
+    "TAB_FLIP_Y",
+    "TAB_PALETTE_ORIGINAL",
+    "TAB_PALETTE_OVERRIDE",
+    "TAB_BLEND_ADD",
+    "TAB_BLEND_SUB",
+    "TAB_BLEND_MUL",
+    "TAB_BLEND_ALPHA_AVG",
+    "TAB_BLEND_ALPHA_CONST",
+    "TAB_BLEND_ALPHA_SRC",
+    "TAB_BLEND_ALPHA_LERP_X",
+    "TAB_BLEND_ALPHA_LERP_Y",
+    "TAB_BLEND_ALPHA_LERP_BOTH",
+    "TAB_BLEND_COLOR_CONST",
+    "TAB_BLEND_COLOR_ARRAY",
+    "TAB_BLEND_ALPHA_STIPPLE_S",
+    "TAB_BLEND_ALPHA_STIPPLE_D",
+    "TAB_BLEND_COLOR_LERP",
+    "TAB_SCRATCH_VALID",
+    "TAB_PALETTE_MASK",
+    "TAB_BLEND_ALPHA_MASK",
+    "TAB_BLEND_COLOR_MASK",
 };
 
 // 0x5E8828
@@ -514,7 +623,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
     tig_art_id_t art_id;
     char str[1000];
     int scr[3];
-    int v1;
+    int fld;
     int v2;
     int v3;
     int v4;
@@ -530,20 +639,20 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
     }
 
     while (tig_file_fgets(str, sizeof(str), stream) != NULL) {
-        if (sub_49BB70(str, &v1, &v2, &v3, &v4)) {
-            if (v1 == 0) {
+        if (sub_49BB70(str, &fld, &v2, &v3, &v4)) {
+            if (fld == PROTO_F_DESCRIPTION) {
                 return v2;
             }
 
             if (obj != 0) {
-                switch (v1) {
-                case 1:
+                switch (fld) {
+                case PROTO_F_INTERNAL_NAME:
                     obj_f_set_int32(obj, OBJ_F_NAME, v2);
                     break;
-                case 2:
+                case PROTO_F_LEVEL:
                     stat_set_base(obj, STAT_LEVEL, v2);
                     break;
-                case 3:
+                case PROTO_F_ART_NUMBER_AND_PALETTE:
                     switch (type) {
                     case 1:
                         tig_art_unique_npc_id_create(v2, 0, 0, 4, 0, 0, v3, &art_id);
@@ -557,110 +666,110 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                         break;
                     }
                     break;
-                case 4:
+                case PROTO_F_SCALE:
                     obj_f_set_int32(obj, OBJ_F_BLIT_SCALE, v2);
                     break;
-                case 5:
+                case PROTO_F_ALIGNMENT:
                     stat_set_base(obj, STAT_ALIGNMENT, v2);
                     break;
-                case 6:
+                case PROTO_F_CRITTER_FLAG:
                     obj_f_set_int32(obj, OBJ_F_CRITTER_FLAGS, obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) | v2);
                     break;
-                case 7:
+                case PROTO_F_CRITTER2_FLAG:
                     obj_f_set_int32(obj, OBJ_F_CRITTER_FLAGS2, obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS2) | v2);
                     break;
-                case 8:
+                case PROTO_F_NPC_FLAG:
                     obj_f_set_int32(obj, OBJ_F_NPC_FLAGS, obj_f_get_int32(obj, OBJ_F_NPC_FLAGS) | v2);
                     break;
-                case 9:
+                case PROTO_F_BLIT_FLAG:
                     obj_f_set_int32(obj, OBJ_F_BLIT_FLAGS, obj_f_get_int32(obj, OBJ_F_BLIT_FLAGS) | v2);
                     break;
-                case 10:
+                case PROTO_F_SPELL_FLAG:
                     obj_f_set_int32(obj, OBJ_F_SPELL_FLAGS, obj_f_get_int32(obj, OBJ_F_SPELL_FLAGS) | v2);
                     break;
-                case 11:
+                case PROTO_F_HIT_CHART:
                     obj_f_set_int32(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, v2);
                     break;
-                case 12:
+                case PROTO_F_BASIC_STAT:
                     stat_set_base(obj, v2, v3);
                     break;
-                case 13:
+                case PROTO_F_SPELL:
                     sub_4B1790(obj, v2, 1);
                     break;
-                case 14:
+                case PROTO_F_FACTION:
                     obj_f_set_int32(obj, OBJ_F_NPC_FACTION, v2);
                     break;
-                case 15:
+                case PROTO_F_AI_PACKET:
                     obj_f_set_int32(obj, OBJ_F_NPC_AI_DATA, v2);
                     break;
-                case 16:
+                case PROTO_F_MATERIAL:
                     obj_f_set_int32(obj, OBJ_F_MATERIAL, v2);
                     break;
-                case 17:
+                case PROTO_F_HIT_POINTS:
                     sub_49BB40(obj, v2);
                     break;
-                case 18:
+                case PROTO_F_SCRIPT:
                     scr[2] = v3;
                     scr[1] = v4;
                     sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, v2, scr);
                     break;
-                case 19:
+                case PROTO_F_DAMAGE_RESISTANCE:
                     obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 0, v2);
                     break;
-                case 20:
+                case PROTO_F_FIRE_RESISTANCE:
                     obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 1, v2);
                     break;
-                case 21:
+                case PROTO_F_ELECTRICAL_RESISTANCE:
                     obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 2, v2);
                     break;
-                case 22:
+                case PROTO_F_POISON_RESISTANCE:
                     obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 3, v2);
                     break;
-                case 23:
+                case PROTO_F_MAGIC_RESISTANCE:
                     obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 4, v2);
                     break;
-                case 24:
+                case PROTO_F_NORMAL_DAMAGE:
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 0, v2);
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 1, v3);
                     break;
-                case 25:
+                case PROTO_F_POISON_DAMAGE:
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 2, v2);
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 3, v3);
                     break;
-                case 26:
+                case PROTO_F_ELECTRICAL_DAMAGE:
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 4, v2);
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 5, v3);
                     break;
-                case 27:
+                case PROTO_F_FIRE_DAMAGE:
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 6, v2);
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 7, v3);
                     break;
-                case 28:
+                case PROTO_F_FATIGUE_DAMAGE:
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 8, v2);
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 9, v3);
                     break;
-                case 29:
+                case PROTO_F_SOUND_BANK:
                     obj_f_set_int32(obj, OBJ_F_SOUND_EFFECT, v2);
                     break;
-                case 30:
+                case PROTO_F_INVENTORY_SOURCE:
                     obj_f_set_int32(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, v2);
                     break;
-                case 31:
+                case PROTO_F_PORTRAIT:
                     obj_f_set_int32(obj, OBJ_F_CRITTER_PORTRAIT, v2);
                     break;
-                case 32:
+                case PROTO_F_RETAIL_PRICE_MULTIPLIER:
                     obj_f_set_int32(obj, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER, v2);
                     break;
-                case 33:
+                case PROTO_F_SOCIAL_CLASS:
                     sub_45D030(obj, v2);
                     break;
-                case 34:
+                case PROTO_F_OBJECT_FLAG:
                     obj_f_set_int32(obj, OBJ_F_FLAGS, obj_f_get_int32(obj, OBJ_F_FLAGS) | v2);
                     break;
-                case 35:
+                case PROTO_F_AUTO_LEVEL_SCHEME:
                     obj_f_set_int32(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, v2);
                     break;
-                case 36:
+                case PROTO_F_CATEGORY:
                     obj_f_set_int32(obj, OBJ_F_CATEGORY, v2);
                     break;
                 }
@@ -675,4 +784,107 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 void sub_49BB40(long long obj, int a2)
 {
     sub_43D4E0(obj, sub_43D4C0(obj) + a2 - sub_43D5A0(obj));
+}
+
+// 0x49BB70
+bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
+{
+    int fld;
+    size_t pos;
+    int stat;
+    int spl;
+    const char* name;
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+
+    for (fld = 0; fld < PROTO_F_COUNT; fld++) {
+        pos = strlen(off_5B38C8[fld]) + 1;
+        if (strnicmp(str, off_5B38C8[fld], pos - 1) == 0) {
+            break;
+        }
+    }
+
+    if (fld == PROTO_F_COUNT) {
+        return false;
+    }
+
+    *fld_ptr = fld;
+
+    while (str[pos] == ':' || str[pos] == ' ') {
+        pos++;
+    }
+
+    if (str[pos] == '\0') {
+        tig_debug_printf("Proto read: field with no data %s\n", str);
+    }
+
+    str += pos;
+
+    switch (fld) {
+    case PROTO_F_ART_NUMBER_AND_PALETTE:
+    case PROTO_F_NORMAL_DAMAGE:
+    case PROTO_F_POISON_DAMAGE:
+    case PROTO_F_ELECTRICAL_DAMAGE:
+    case PROTO_F_FIRE_DAMAGE:
+    case PROTO_F_FATIGUE_DAMAGE:
+        sscanf(str, "%d %d", a3, a4);
+        return true;
+    case PROTO_F_CRITTER_FLAG:
+        *a3 = sub_49BF10(str, off_5BA348, 32);
+        return true;
+    case PROTO_F_CRITTER2_FLAG:
+        *a3 = sub_49BF10(str, off_5BA3C8, 27);
+        return true;
+    case PROTO_F_NPC_FLAG:
+        *a3 = sub_49BF10(str, off_5BA44C, 31);
+        return true;
+    case PROTO_F_BLIT_FLAG:
+        *a3 = sub_49BF10(str, off_5B395C, sizeof(off_5B395C) / sizeof(off_5B395C[0]));
+        return true;
+    case PROTO_F_BASIC_STAT:
+        for (stat = STAT_STRENGTH; stat <= STAT_CHARISMA; stat++) {
+            name = stat_get_name(stat);
+            pos = strlen(name);
+            if (strnicmp(str, name, pos) == 0) {
+                *a3 = stat;
+                *a4 = atoi(str + pos);
+                return true;
+            }
+        }
+        for (stat = STAT_MAGICK_POINTS; stat <= STAT_RACE; stat++) {
+            name = stat_get_name(stat);
+            pos = strlen(name);
+            if (strnicmp(str, name, pos) == 0) {
+                *a3 = stat;
+                *a4 = atoi(str + pos);
+                return true;
+            }
+        }
+        tig_debug_printf("Proto read: unknown stat %s\n", str);
+        return true;
+    case PROTO_F_SPELL:
+        for (spl = 0; spl < SPELL_COUNT; spl++) {
+            name = spell_get_name(spl);
+            pos = strlen(name);
+            if (strnicmp(str, name, pos) == 0) {
+                *a3 = stat;
+                *a4 = atoi(str + pos);
+                return true;
+            }
+        }
+        tig_debug_printf("Proto read: unknown spell %s\n", str);
+        return true;
+    case PROTO_F_SCRIPT:
+        sscanf(str, "%d %d %d %d %d %d", a3, a4, &v1, &v2, &v3, &v4);
+        *a5 = v1 | (v2 << 8) | (v3 << 16) | (v4 << 24);
+        return true;
+    case PROTO_F_OBJECT_FLAG:
+        *a3 = sub_49BF10(str, off_5BA10C, 31);
+        return true;
+    default:
+        *a3 = atoi(str);
+        return true;
+    }
 }
