@@ -207,3 +207,16 @@ bool sub_468610(int description)
 
     return description >= dword_5B37FC[object_type] && description < dword_5B384C[object_type];
 }
+
+// 0x468800
+void sub_468800()
+{
+    ObjectType object_type;
+    int description;
+
+    for (object_type = 0; object_type < OBJ_TYPE_COUNT; object_type++) {
+        for (description = dword_5B37FC[object_type]; description < dword_5B384C[object_type]; description++) {
+            sub_405BF0(objp_perm_lookup(sub_468860(description)));
+        }
+    }
+}
