@@ -314,3 +314,9 @@ void sub_468890(int description)
     in_proto_save = false;
     sub_405BF0(obj);
 }
+
+// 0x49AFF0
+void sub_49AFF0(long long obj, int description)
+{
+    sub_49B340(obj, description);
+}
