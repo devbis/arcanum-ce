@@ -154,6 +154,12 @@ long long sub_468570(ObjectType object_type)
     return objp_perm_lookup(dword_5E882C[object_type]);
 }
 
+// 0x4685A0
+long long sub_4685A0(int a1)
+{
+    return  objp_perm_lookup(sub_468860(a1));
+}
+
 // 0x468600
 int sub_468600(ObjectType object_type)
 {
