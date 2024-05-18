@@ -392,3 +392,15 @@ void sub_49B240(long long obj, int f, int percent)
     value = obj_f_get_int32(obj, f);
     obj_f_set_int32(obj, f, value + value * percent / 100);
 }
+
+// 0x49B290
+int sub_49B290(long long obj)
+{
+    long long prototype_handle;
+    ObjectId object_id;
+
+    prototype_handle = obj_f_get_handle(obj, OBJ_F_PROTOTYPE_HANDLE);
+    object_id = sub_407EF0(prototype_handle);
+
+    return object_id.d.a.field_8 - 20;
+}
