@@ -1,4 +1,5 @@
 #include "game/lib/object.h"
+#include "game/lib/stat.h"
 
 // 0x5B37FC
 static int dword_5B37FC[OBJ_TYPE_COUNT] = {
@@ -46,6 +47,21 @@ static int dword_5B384C[OBJ_TYPE_COUNT] = {
     /*          OBJ_TYPE_TRAP */ 26008,
     /*       OBJ_TYPE_MONSTER */ 27394,
     /*    OBJ_TYPE_UNIQUE_NPC */ 28472,
+};
+
+// 0x5B389C
+static int dword_5B389C[RACE_COUNT] = {
+    0,
+    1,
+    4,
+    4,
+    2,
+    2,
+    0,
+    3,
+    4,
+    3,
+    0,
 };
 
 // 0x5E8828
@@ -416,4 +432,78 @@ void sub_49B2E0(long long obj)
         worth = obj_f_get_int32(obj, OBJ_F_ITEM_WORTH);
         obj_f_set_int32(obj, OBJ_F_ITEM_WORTH, worth + 3 * complexity * complexity / 10);
     }
+}
+
+// 0x49B340
+void sub_49B340(long long obj, int description)
+{
+    TigFile* stream;
+    int type;
+    int v1;
+    int exp;
+    tig_art_id_t art_id;
+    int rgb;
+    int gender;
+    int race;
+
+    if (description >= 28310 && description < 28472) {
+        // FIXME: Probably wrong, the 28310-28472 range is for UNIQUE NPC.
+        stream = tig_file_fopen("rules\\monster.txt", "rt");
+        type = 2;
+    } else if (description >= 27309 && description < 27394) {
+        // FIXME: Probably wrong, the 27309-27394 range is for MONSTER.
+        stream = tig_file_fopen("rules\\unique.txt", "rt");
+        type = 1;
+    } else if (description >= 17067 && description < 17317) {
+        stream = tig_file_fopen("rules\\npc.txt", "rt");
+        type = 0;
+    } else {
+        return;
+    }
+
+    if (stream == NULL) {
+        return;
+    }
+
+    v1 = sub_49B5A0(stream, 0, type);
+    while (v1 != description && v1 != -1) {
+        v1 = sub_49B5A0(stream, 0, type);
+    }
+
+    if (v1 != -1) {
+        obj_f_set_int32(obj, OBJ_F_DESCRIPTION, description);
+        obj_f_set_int32(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, description);
+        sub_49B5A0(stream, obj, type);
+
+        exp = sub_45F0B0(obj);
+        obj_f_set_int32(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
+        obj_f_set_int32(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
+        sub_43D530(obj, 0);
+
+        art_id = sub_45FA70(obj, &rgb);
+        obj_f_set_int32(obj, OBJ_F_LIGHT_AID, art_id);
+        obj_f_set_int32(obj, OBJ_F_LIGHT_COLOR, rgb);
+
+        if (type == 0) {
+            gender = stat_get_base(obj, STAT_GENDER);
+            race = stat_get_base(obj, STAT_RACE);
+            obj_f_set_int32(obj, OBJ_F_SOUND_EFFECT, 10 * (gender + 2 * race + 1));
+            if (race == RACE_ORC) {
+                tig_art_monster_id_create(2, 0, 0, 0, 4, 0, 0, 0, &art_id);
+            } else {
+                tig_art_critter_id_create(gender, dword_5B389C[race], 0, 0, 0, 4, 0, 0, 0, &art_id);
+            }
+            obj_f_set_int32(obj, OBJ_F_AID, art_id);
+            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+        }
+
+        if ((obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) & 0x1) != 0) {
+            art_id = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+            art_id = sub_45EFA0(art_id);
+            obj_f_set_int32(obj, OBJ_F_AID, art_id);
+            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+        }
+    }
+
+    tig_file_fclose(stream);
 }
