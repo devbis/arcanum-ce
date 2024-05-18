@@ -160,6 +160,25 @@ long long sub_4685A0(int a1)
     return  objp_perm_lookup(sub_468860(a1));
 }
 
+// 0x4685D0
+ObjectType sub_4685D0(int description)
+{
+    ObjectType object_type;
+
+    for (object_type = OBJ_TYPE_WALL; object_type < OBJ_TYPE_COUNT - 1; object_type++) {
+        if (description < dword_5B37FC[object_type + 1]) {
+            break;
+        }
+    }
+
+    // NOTE: Should unique NPC be normalized to NPC?
+    if (object_type == OBJ_TYPE_MONSTER) {
+        object_type = OBJ_TYPE_NPC;
+    }
+
+    return object_type;
+}
+
 // 0x468600
 int sub_468600(ObjectType object_type)
 {
