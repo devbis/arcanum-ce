@@ -148,6 +148,12 @@ bool proto_save(long long obj)
     return true;
 }
 
+// 0x468570
+long long sub_468570(ObjectType object_type)
+{
+    return objp_perm_lookup(dword_5E882C[object_type]);
+}
+
 // 0x468600
 int sub_468600(ObjectType object_type)
 {
