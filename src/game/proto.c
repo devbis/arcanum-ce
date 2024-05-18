@@ -903,3 +903,19 @@ int sub_49BF10(const char* str, const char** identifiers, int size)
     tig_debug_printf("Proto read: unknown flag %s\n", str);
     return 0;
 }
+
+// 0x49C610
+void sub_49C610(TigFile* stream, const char* name, int value, const char** identifiers, int size)
+{
+    int index;
+
+    if (value == 0) {
+        return;
+    }
+
+    for (index = 0; index < size; index++) {
+        if (((1 << index) & value) != 0) {
+            tig_file_fprintf(stream, "%s: %s\n", name, identifiers[index]);
+        }
+    }
+}
