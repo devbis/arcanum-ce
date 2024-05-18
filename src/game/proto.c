@@ -114,6 +114,40 @@ void proto_exit()
     initialized = false;
 }
 
+// 0x468330
+bool proto_save(long long obj)
+{
+    ObjectId object_id;
+    char* name = NULL;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+
+    object_id = sub_407EF0(obj);
+    obj_f_get_string(obj, OBJ_F_NAME, &name);
+
+    if (object_id.type != 1) {
+        return false;
+    }
+
+    sprintf(path, "proto\\%06d - %s.pro", object_id.d.a.field_8, name);
+    FREE(name);
+
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        tig_debug_printf("Error - unable to open file %s in proto_save()\n", path);
+        return false;
+    }
+
+    if (!obj_write(stream, obj)) {
+        tig_debug_printf("Error - obj_write() returned 0 in proto_save() while trying to save %s\n", path);
+        tig_file_fclose(stream);
+        return false;
+    }
+
+    tig_file_fclose(stream);
+    return true;
+}
+
 // 0x468600
 int sub_468600(ObjectType object_type)
 {
