@@ -320,3 +320,60 @@ void sub_49AFF0(long long obj, int description)
 {
     sub_49B340(obj, description);
 }
+
+// 0x49B010
+void sub_49B010(long long obj, int description)
+{
+    tig_art_id_t art_id;
+    int scr[3];
+    int exp;
+
+    obj_f_set_int32(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
+
+    switch (description) {
+    case 27309:
+        sub_49AFF0(obj, 17081);
+        obj_f_set_int32(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27309);
+        tig_art_unique_npc_id_create(11, 0, 0, 4, 0, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_AID, art_id);
+        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+        break;
+    case 27310:
+        sub_49AFF0(obj, 17082);
+        obj_f_set_int32(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27310);
+        tig_art_unique_npc_id_create(2, 0, 0, 4, 0, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_AID, art_id);
+        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+        break;
+    case 27311:
+        sub_49AFF0(obj, 17082);
+        obj_f_set_int32(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27311);
+        scr[2] = 1498;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 9, scr);
+        scr[2] = 1499;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 10, scr);
+        break;
+    case 27319:
+        sub_49AFF0(obj, 17082);
+        scr[2] = 30117;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 19, scr);
+        scr[2] = 30118;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 12, scr);
+        break;
+    case 27320:
+        sub_49AFF0(obj, 17082);
+        scr[2] = 30119;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 19, scr);
+        scr[2] = 30120;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 12, scr);
+        break;
+    default:
+        sub_49B220(obj, description);
+        break;
+    }
+
+    exp = sub_45F0B0(obj);
+    obj_f_set_int32(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
+    obj_f_set_int32(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
+    sub_43D530(obj, 0);
+}
