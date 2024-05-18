@@ -190,3 +190,20 @@ void sub_468660(bool* error_ptr)
 {
     // TODO: Incomplete.
 }
+
+// 0x468610
+bool sub_468610(int description)
+{
+    ObjectType object_type;
+
+    object_type = sub_4685D0(description);
+    if (object_type == OBJ_TYPE_NPC) {
+        if (description >= 28310) {
+            object_type = OBJ_TYPE_UNIQUE_NPC;
+        } else if (description >= 27309) {
+            object_type = OBJ_TYPE_MONSTER;
+        }
+    }
+
+    return description >= dword_5B37FC[object_type] && description < dword_5B384C[object_type];
+}
