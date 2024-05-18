@@ -383,3 +383,12 @@ void sub_49B220(long long obj, int description)
 {
     sub_49B340(obj, description);
 }
+
+// 0x49B240
+void sub_49B240(long long obj, int f, int percent)
+{
+    int value;
+
+    value = obj_f_get_int32(obj, f);
+    obj_f_set_int32(obj, f, value + value * percent / 100);
+}
