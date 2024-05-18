@@ -231,6 +231,54 @@ void sub_468660(bool* error_ptr)
     tig_debug_printf("Reading prototypes completed.\n");
 }
 
+// 0x468720
+int sub_468720(ObjectType object_type)
+{
+    switch (object_type) {
+    case OBJ_TYPE_WALL:
+        return 400;
+    case OBJ_TYPE_PORTAL:
+        return 800;
+    case OBJ_TYPE_CONTAINER:
+        return 1200;
+    case OBJ_TYPE_SCENERY:
+        return 1600;
+    case OBJ_TYPE_PROJECTILE:
+        return 1980;
+    case OBJ_TYPE_WEAPON:
+        return 2000;
+    case OBJ_TYPE_AMMO:
+        return 2400;
+    case OBJ_TYPE_ITEM_ARMOR:
+        return 2800;
+    case OBJ_TYPE_ITEM_GOLD:
+        return 3200;
+    case OBJ_TYPE_ITEM_FOOD:
+        return 3600;
+    case OBJ_TYPE_ITEM_SCROLL:
+        return 4000;
+    case OBJ_TYPE_ITEM_KEY:
+        return 4400;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        return 4800;
+    case OBJ_TYPE_ITEM_WRITTEN:
+        return 5200;
+    case OBJ_TYPE_ITEM_GENERIC:
+        return 5600;
+    case OBJ_TYPE_PC:
+        return 6000;
+    case OBJ_TYPE_NPC:
+        return 6400;
+    case OBJ_TYPE_TRAP:
+        return 10001;
+    case OBJ_TYPE_MONSTER:
+        return 6401;
+    case OBJ_TYPE_UNIQUE_NPC:
+        return 6402;
+    }
+    return 0;
+}
+
 // 0x468800
 void sub_468800()
 {
