@@ -670,3 +670,9 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 
     return -1;
 }
+
+// 0x49BB40
+void sub_49BB40(long long obj, int a2)
+{
+    sub_43D4E0(obj, sub_43D4C0(obj) + a2 - sub_43D5A0(obj));
+}
