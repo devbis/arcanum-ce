@@ -250,9 +250,14 @@ void sub_5814E0()
 }
 
 // 0x581550
-void sub_581550()
+float sub_581550(int id)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+
+    ctrl = &(scrollbar_ui_controls[id]);
+    return (float)(ctrl->info.field_10 - scrollbar_ui_button_down_height - scrollbar_ui_button_up_height)
+        / (float)(ctrl->info.field_2C + ctrl->info.field_24 - ctrl->info.field_28)
+        * (float)ctrl->info.field_2C;
 }
 
 // 0x5815A0
@@ -272,7 +277,7 @@ int sub_5815D0(int id)
 {
     return scrollbar_ui_button_up_height
         + scrollbar_ui_controls[id].info.field_8
-        + (int)((float)sub_581550(id)
+        + (int)(sub_581550(id)
             * (float)(scrollbar_ui_controls[id].info.field_38 - scrollbar_ui_controls[id].info.field_28)
             / (float)(scrollbar_ui_controls[id].info.field_2C));
 }
@@ -282,8 +287,8 @@ int sub_581660(int id)
 {
     int v1;
 
-    v1 = sub_581550(id);
-    return sub_5815D0(id); + (v1 >= 12 ? v1 : 12);
+    v1 = (int)sub_581550(id);
+    return sub_5815D0(id) + (v1 >= 12 ? v1 : 12);
 }
 
 // 0x5816A0
