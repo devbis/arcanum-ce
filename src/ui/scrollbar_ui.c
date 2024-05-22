@@ -103,9 +103,25 @@ void sub_5806F0()
 }
 
 // 0x580720
-void sub_580720()
+bool scrollbar_ui_control_show(ScrollbarId id)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+
+    if (!sub_5812E0(&id, &ctrl)) {
+        return false;
+    }
+
+    if ((ctrl->flags & 0x2) == 0) {
+        return false;
+    }
+
+    ctrl->flags &= ~0x2;
+
+    tig_button_show(ctrl->button_down);
+    tig_button_show(ctrl->button_up);
+    sub_5807F0(ctrl->id.index, 0);
+
+    return true;
 }
 
 // 0x580780
