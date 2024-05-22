@@ -2,7 +2,7 @@
 
 #include <tig/tig.h>
 
-#define MAX_SCROLLBARS 8
+#define MAX_CONTROLS 8
 
 // 0x5CBF48
 static TigRect stru_5CBF48 = { 0, 0, 11, 5 };
@@ -26,7 +26,7 @@ static bool initialized;
 static tig_art_id_t scrollbar_ui_top_art_id;
 
 // 0x684268
-static Scrollbar scrollbars[MAX_SCROLLBARS];
+static Scrollbar scrollbar_ui_controls[MAX_CONTROLS];
 
 // 0x684668
 static tig_art_id_t scrollbar_ui_bottom_art_id;
@@ -75,8 +75,8 @@ void scrollbar_ui_reset()
 {
     int index;
 
-    for (index = 0; index < MAX_SCROLLBARS; index++) {
-        scrollbar_obj_reset(&(scrollbars[index]));
+    for (index = 0; index < MAX_CONTROLS; index++) {
+        scrollbar_ui_control_reset(&(scrollbar_ui_controls[index]));
     }
 
     dword_684678 = random_between(0, 8192);
@@ -157,9 +157,15 @@ void sub_5811B0()
 }
 
 // 0x5811C0
-void scrollbar_entry_reset()
+void scrollbar_ui_control_reset(ScrollbarUiControl* ctrl)
 {
-    // TODO: Incomplete.
+    ctrl->field_4 = -1;
+    ctrl->field_0 = -1;
+    ctrl->field_8 = 0;
+    memset(&(ctrl->info), 0, sizeof(ctrl->info));
+    ctrl->window_handle = TIG_WINDOW_HANDLE_INVALID;
+    ctrl->button_up = TIG_BUTTON_HANDLE_INVALID;
+    ctrl->button_down = TIG_BUTTON_HANDLE_INVALID;
 }
 
 // 0x5811F0
