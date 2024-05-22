@@ -97,9 +97,15 @@ void scrollbar_destroy()
 }
 
 // 0x5806F0
-void sub_5806F0()
+void sub_5806F0(ScrollbarId id)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+
+    if (!sub_5812E0(&id, &ctrl)) {
+        return;
+    }
+
+    sub_5807F0(ctrl->id.index, 0);
 }
 
 // 0x580720
