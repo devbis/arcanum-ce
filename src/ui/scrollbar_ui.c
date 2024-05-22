@@ -212,11 +212,11 @@ bool scrollbar_ui_control_show(ScrollbarId id)
         return false;
     }
 
-    if ((ctrl->flags & 0x2) == 0) {
+    if ((ctrl->flags & SB_HIDDEN) == 0) {
         return false;
     }
 
-    ctrl->flags &= ~0x2;
+    ctrl->flags &= ~SB_HIDDEN;
 
     tig_button_show(ctrl->button_down);
     tig_button_show(ctrl->button_up);
@@ -234,9 +234,11 @@ void scrollbar_ui_control_hide(ScrollbarId id)
         return false;
     }
 
-    if ((ctrl->flags & 0x2) != 0) {
+    if ((ctrl->flags & SB_HIDDEN) != 0) {
         return false;
     }
+
+    ctrl->flags |= SB_HIDDEN;
 
     tig_button_hide(ctrl->button_down);
     tig_button_hide(ctrl->button_up);
@@ -353,11 +355,11 @@ bool sub_581280(ScrollbarId* id)
     int index;
 
     for (index = 0; index < MAX_CONTROLS; index++) {
-        if ((scrollbar_ui_controls[index].flags & 0x1) == 0) {
+        if ((scrollbar_ui_controls[index].flags & SB_IN_USE) == 0) {
             id->index = index;
             id->global_index = dword_684678++;
             scrollbar_ui_controls[index].id = *id;
-            scrollbar_ui_controls[index].flags = 0x1;
+            scrollbar_ui_controls[index].flags = SB_IN_USE;
             return true;
         }
     }
@@ -372,14 +374,14 @@ bool sub_5812E0(const ScrollbarId* id, ScrollbarUiControl** ctrl_ptr)
 
     if (id->index >= 0 && id->index < MAX_CONTROLS
         && scrollbar_ui_controls[id->index].id.global_index == id->global_index
-        && (scrollbar_ui_controls[id->index].flags & 0x1) != 0) {
+        && (scrollbar_ui_controls[id->index].flags & SB_IN_USE) != 0) {
         *ctrl_ptr = &(scrollbar_ui_controls[id->index]);
         return true;
     }
 
     for (index = 0; index < MAX_CONTROLS; index++) {
         if (scrollbar_ui_controls[index].id.global_index == id->global_index
-            && (scrollbar_ui_controls[id->index].flags & 0x1) != 0) {
+            && (scrollbar_ui_controls[id->index].flags & SB_IN_USE) != 0) {
             *ctrl_ptr = &(scrollbar_ui_controls[id->index]);
             return true;
         }
