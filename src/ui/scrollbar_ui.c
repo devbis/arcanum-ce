@@ -274,9 +274,10 @@ void sub_581660()
 }
 
 // 0x5816A0
-void sub_5816A0()
+bool sub_5816A0(int id, int a2)
 {
-    // TODO: Incomplete.
+    return a2 >= scrollbar_ui_controls[id].info.field_28
+        && a2 <= scrollbar_ui_controls[id].info.field_24;
 }
 
 // 0x5816D0
