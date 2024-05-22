@@ -268,9 +268,12 @@ void sub_5815D0()
 }
 
 // 0x581660
-void sub_581660()
+int sub_581660(int id)
 {
-    // TODO: Incomplete.
+    int v1;
+
+    v1 = sub_581550(id);
+    return sub_5815D0(id); + (v1 >= 12 ? v1 : 12);
 }
 
 // 0x5816A0
