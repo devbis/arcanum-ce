@@ -226,13 +226,22 @@ void sub_5812E0()
 }
 
 // 0x581360
-void sub_581360()
+bool sub_581360(int id, int x, int y)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+    TigWindowData window_data;
+
+    ctrl = &(scrollbar_ui_controls[id]);
+    tig_window_data(ctrl->window_handle, &window_data);
+
+    return x - window_data.rect.x >= ctrl->info.field_4.x
+        && x - window_data.rect.x <= ctrl.info.field_4.x + ctrl->info.field_4.width
+        && y - window_data.rect.y >= sub_5815D0(id)
+        && y - window_data.rect.y <= sub_581660(id);
 }
 
 // 0x5813E0
-void sub_5813E0(int id, int x, int y)
+bool sub_5813E0(int id, int x, int y)
 {
     ScrollbarUiControl* ctrl;
     TigWindowData window_data;
@@ -247,7 +256,7 @@ void sub_5813E0(int id, int x, int y)
 }
 
 // 0x581460
-void sub_581460(int id, int x, int y)
+bool sub_581460(int id, int x, int y)
 {
     ScrollbarUiControl* ctrl;
     TigWindowData window_data;
