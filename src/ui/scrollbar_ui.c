@@ -113,9 +113,63 @@ void scrollbar_ui_reset()
 }
 
 // 0x5804E0
-void scrollbar_create()
+bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, tig_window_handle_t window_handle)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+    TigArtFrameData art_frame_data;
+    TigButtonData button_data;
+
+    if ((info->flags & 1) == 0
+        || !sub_581280(id)
+        || !sub_5812E0(id, &ctrl)) {
+        return false;
+    }
+
+    ctrl->id = *id;
+    sub_5811F0(ctrl, info);
+
+    if (ctrl->info.field_38 < ctrl->info.field_28
+        || ctrl->info.field_38 > ctrl->info.field_24) {
+        ctrl->info.field_38 = ctrl->info.field_28;
+    }
+
+    ctrl->window_handle = window_handle;
+    tig_window_data(ctrl->window_handle, &(ctrl->window_data));
+
+    if (tig_art_interface_id_create(317, 0, 0, 0, &(button_data.art_id)) != TIG_OK) {
+        return false;
+    }
+
+    tig_art_frame_data(button_data.art_id, &art_frame_data);
+    scrollbar_ui_button_up_height = art_frame_data.height;
+    scrollbar_ui_button_up_width = art_frame_data.width;
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.window_handle = ctrl->window_handle;
+    button_data.x = ctrl->info.field_4.x + (ctrl->info.field_4.width - art_frame_data.width) / 2;
+    button_data.y = ctrl->info.field_4.y;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+    button_data.mouse_down_snd_id = 3014;
+    button_data.mouse_up_snd_id = 3015;
+    tig_button_create(&button_data, &(ctrl->button_up));
+
+    if (tig_art_interface_id_create(318, 0, 0, 0, &(button_data.art_id)) != TIG_OK) {
+        return false;
+    }
+
+    tig_art_frame_data(button_data.art_id, &art_frame_data);
+    scrollbar_ui_button_down_height = art_frame_data.height;
+    scrollbar_ui_button_down_width = art_frame_data.width;
+
+    button_data.y = ctrl->info.field_4.y + ctrl->info.field_4.height - art_frame_data.height;
+    tig_button_create(&button_data, &(ctrl->button_down));
+
+    if (ctrl->info.field_3C != NULL) {
+        ctrl->info.field_3C(ctrl->info.field_38);
+    }
+
+    return true;
 }
 
 // 0x580690
