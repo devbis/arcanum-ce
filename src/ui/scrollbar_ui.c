@@ -91,9 +91,22 @@ void scrollbar_create()
 }
 
 // 0x580690
-void scrollbar_destroy()
+void scrollbar_ui_control_destroy(ScrollbarId id)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+
+    if (!sub_5812E0(&id, &ctrl)) {
+        return;
+    }
+
+    tig_button_destroy(ctrl->button_up);
+    tig_button_destroy(ctrl->button_down);
+
+    if (dword_5CBF78 == ctrl->id.index) {
+        dword_5CBF78 = -1;
+    }
+
+    scrollbar_ui_control_reset(ctrl);
 }
 
 // 0x5806F0
