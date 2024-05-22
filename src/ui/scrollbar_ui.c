@@ -169,9 +169,48 @@ void scrollbar_ui_control_reset(ScrollbarUiControl* ctrl)
 }
 
 // 0x5811F0
-void sub_5811F0()
+void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info)
 {
-    // TODO: Incomplete.
+    ctrl->info = *info;
+
+    if ((ctrl->info.flags & 0x2) == 0) {
+        ctrl->info.field_14 = 0;
+        ctrl->info.field_18 = 0;
+        ctrl->info.field_1C = 0;
+        ctrl->info.field_20 = 0;
+    }
+
+    if ((ctrl->info.flags & 0x4) == 0) {
+        ctrl->info.field_24 = 10;
+    }
+
+    if ((ctrl->info.flags & 0x8) == 0) {
+        ctrl->info.field_28 = 0;
+    }
+
+    if ((ctrl->info.flags & 0x10) == 0) {
+        ctrl->info.field_2C = 1;
+    }
+
+    if ((ctrl->info.flags & 0x20) == 0) {
+        ctrl->info.field_30 = 5;
+    }
+
+    if ((ctrl->info.flags & 0x40) == 0) {
+        ctrl->info.field_34 = 3;
+    }
+
+    if ((ctrl->info.flags & 0x80) == 0) {
+        ctrl->info.field_38 = 0;
+    }
+
+    if ((ctrl->info.flags & 0x100) == 0) {
+        ctrl->info.field_3C = 0;
+    }
+
+    if ((ctrl->info.flags & 0x200) == 0) {
+        ctrl->info.field_40 = 0;
+    }
 }
 
 // 0x581280
