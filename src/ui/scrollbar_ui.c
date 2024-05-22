@@ -125,9 +125,26 @@ bool scrollbar_ui_control_show(ScrollbarId id)
 }
 
 // 0x580780
-void sub_580780()
+void scrollbar_ui_control_hide(ScrollbarId id)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+
+    if (!sub_5812E0(&id, &ctrl)) {
+        return false;
+    }
+
+    if ((ctrl->flags & 0x2) != 0) {
+        return false;
+    }
+
+    tig_button_hide(ctrl->button_down);
+    tig_button_hide(ctrl->button_up);
+
+    if (ctrl->info.field_40 != NULL) {
+        ctrl->info.field_40(&(ctrl->info.field_4));
+    }
+
+    return true;
 }
 
 // 0x5807F0
