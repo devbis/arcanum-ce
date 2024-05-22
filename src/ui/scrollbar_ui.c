@@ -214,9 +214,21 @@ void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info)
 }
 
 // 0x581280
-void sub_581280()
+bool sub_581280(ScrollbarId* id)
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < MAX_CONTROLS; index++) {
+        if ((scrollbar_ui_controls[index].flags & 0x1) == 0) {
+            id->index = index;
+            id->seed = dword_684678++;
+            scrollbar_ui_controls[index].id = *id;
+            scrollbar_ui_controls[index].flags = 0x1;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x5812E0
