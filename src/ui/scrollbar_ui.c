@@ -256,9 +256,15 @@ void sub_581550()
 }
 
 // 0x5815A0
-void sub_5815A0()
+int sub_5815A0(int id)
 {
-    // TODO: Incomplete.
+    float v1;
+
+    v1 = sub_581550(id);
+    if (v1 > 12.0f) {
+        return (int)v1;
+    }
+    return 12;
 }
 
 // 0x5815D0
