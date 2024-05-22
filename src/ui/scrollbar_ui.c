@@ -232,9 +232,26 @@ bool sub_581280(ScrollbarId* id)
 }
 
 // 0x5812E0
-void sub_5812E0()
+bool sub_5812E0(const ScrollbarId* id, ScrollbarUiControl** ctrl_ptr)
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (id->index >= 0 && id->index < MAX_CONTROLS
+        && scrollbar_ui_controls[id->index].id.seed == id->seed
+        && (scrollbar_ui_controls[id->index].flags & 0x1) != 0) {
+        *ctrl_ptr = &(scrollbar_ui_controls[id->index]);
+        return true;
+    }
+
+    for (index = 0; index < MAX_CONTROLS; index++) {
+        if (scrollbar_ui_controls[index].id.seed == id->seed
+            && (scrollbar_ui_controls[id->index].flags & 0x1) != 0) {
+            *ctrl_ptr = &(scrollbar_ui_controls[id->index]);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x581360
