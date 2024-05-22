@@ -262,9 +262,13 @@ void sub_5815A0()
 }
 
 // 0x5815D0
-void sub_5815D0()
+int sub_5815D0(int id)
 {
-    // TODO: Incomplete.
+    return scrollbar_ui_button_up_height
+        + scrollbar_ui_controls[id].info.field_8
+        + (int)((float)sub_581550(id)
+            * (float)(scrollbar_ui_controls[id].info.field_38 - scrollbar_ui_controls[id].info.field_28)
+            / (float)(scrollbar_ui_controls[id].info.field_2C));
 }
 
 // 0x581660
