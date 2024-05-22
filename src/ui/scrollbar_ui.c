@@ -1,8 +1,24 @@
 #include "ui/scrollbar_ui.h"
 
-#include <tig/tig.h>
-
 #define MAX_CONTROLS 8
+
+typedef enum ScrollbarUiControlFlags {
+    SB_IN_USE = 0x1,
+    SB_HIDDEN = 0x2,
+} ScrollbarUiControlFlags;
+
+typedef struct ScrollbarUiControl {
+    /* 0000 */ ScrollbarId id;
+    /* 0008 */ ScrollbarUiControlFlags flags;
+    /* 000C */ ScrollbarUiControlInfo info;
+    /* 0050 */ tig_window_handle_t window_handle;
+    /* 0054 */ TigWindowData window_data;
+    /* 0074 */ tig_button_handle_t button_up;
+    /* 0078 */ tig_button_handle_t button_down;
+    /* 007C */ int field_7C;
+} ScrollbarUiControl;
+
+static_assert(sizeof(ScrollbarUiControl) == 0x80, "wrong size");
 
 // 0x5CBF48
 static TigRect stru_5CBF48 = { 0, 0, 11, 5 };
@@ -16,8 +32,14 @@ static TigRect stru_5CBF68 = { 0, 0, 11, 1 };
 // 0x5CBF78
 static int dword_5CBF78 = -1;
 
+// 0x684250
+static int scrollbar_ui_button_down_width;
+
 // 0x684254
 static tig_art_id_t scrollbar_ui_middle_art_id;
+
+// 0x684258
+static int scrollbar_ui_button_up_height;
 
 // 0x68425C
 static bool initialized;
@@ -26,10 +48,16 @@ static bool initialized;
 static tig_art_id_t scrollbar_ui_top_art_id;
 
 // 0x684268
-static Scrollbar scrollbar_ui_controls[MAX_CONTROLS];
+static ScrollbarUiControl scrollbar_ui_controls[MAX_CONTROLS];
 
 // 0x684668
 static tig_art_id_t scrollbar_ui_bottom_art_id;
+
+// 0x68466C
+static int scrollbar_ui_button_up_width;
+
+// 0x684670
+static int scrollbar_ui_button_down_height;
 
 // 0x684674
 static int dword_684674;
@@ -211,9 +239,9 @@ void sub_5811B0()
 // 0x5811C0
 void scrollbar_ui_control_reset(ScrollbarUiControl* ctrl)
 {
-    ctrl->field_4 = -1;
-    ctrl->field_0 = -1;
-    ctrl->field_8 = 0;
+    ctrl->id.index = -1;
+    ctrl->id.index = -1;
+    ctrl->flags = 0;
     memset(&(ctrl->info), 0, sizeof(ctrl->info));
     ctrl->window_handle = TIG_WINDOW_HANDLE_INVALID;
     ctrl->button_up = TIG_BUTTON_HANDLE_INVALID;
@@ -226,10 +254,10 @@ void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info)
     ctrl->info = *info;
 
     if ((ctrl->info.flags & 0x2) == 0) {
-        ctrl->info.field_14 = 0;
-        ctrl->info.field_18 = 0;
-        ctrl->info.field_1C = 0;
-        ctrl->info.field_20 = 0;
+        ctrl->info.rect.x = 0;
+        ctrl->info.rect.y = 0;
+        ctrl->info.rect.width = 0;
+        ctrl->info.rect.height = 0;
     }
 
     if ((ctrl->info.flags & 0x4) == 0) {
@@ -273,7 +301,7 @@ bool sub_581280(ScrollbarId* id)
     for (index = 0; index < MAX_CONTROLS; index++) {
         if ((scrollbar_ui_controls[index].flags & 0x1) == 0) {
             id->index = index;
-            id->seed = dword_684678++;
+            id->global_index = dword_684678++;
             scrollbar_ui_controls[index].id = *id;
             scrollbar_ui_controls[index].flags = 0x1;
             return true;
@@ -289,14 +317,14 @@ bool sub_5812E0(const ScrollbarId* id, ScrollbarUiControl** ctrl_ptr)
     int index;
 
     if (id->index >= 0 && id->index < MAX_CONTROLS
-        && scrollbar_ui_controls[id->index].id.seed == id->seed
+        && scrollbar_ui_controls[id->index].id.global_index == id->global_index
         && (scrollbar_ui_controls[id->index].flags & 0x1) != 0) {
         *ctrl_ptr = &(scrollbar_ui_controls[id->index]);
         return true;
     }
 
     for (index = 0; index < MAX_CONTROLS; index++) {
-        if (scrollbar_ui_controls[index].id.seed == id->seed
+        if (scrollbar_ui_controls[index].id.global_index == id->global_index
             && (scrollbar_ui_controls[id->index].flags & 0x1) != 0) {
             *ctrl_ptr = &(scrollbar_ui_controls[id->index]);
             return true;
@@ -316,7 +344,7 @@ bool sub_581360(int id, int x, int y)
     tig_window_data(ctrl->window_handle, &window_data);
 
     return x - window_data.rect.x >= ctrl->info.field_4.x
-        && x - window_data.rect.x <= ctrl.info.field_4.x + ctrl->info.field_4.width
+        && x - window_data.rect.x <= ctrl->info.field_4.x + ctrl->info.field_4.width
         && y - window_data.rect.y >= sub_5815D0(id)
         && y - window_data.rect.y <= sub_581660(id);
 }
@@ -331,7 +359,7 @@ bool sub_5813E0(int id, int x, int y)
     tig_window_data(ctrl->window_handle, &window_data);
 
     return x - window_data.rect.x >= ctrl->info.field_4.x
-        && x - window_data.rect.x <= ctrl.info.field_4.x + ctrl->info.field_4.width
+        && x - window_data.rect.x <= ctrl->info.field_4.x + ctrl->info.field_4.width
         && y - window_data.rect.y >= ctrl->info.rect.y + scrollbar_ui_button_up_height
         && y - window_data.rect.y <= sub_5815D0(id);
 }
@@ -346,7 +374,7 @@ bool sub_581460(int id, int x, int y)
     tig_window_data(ctrl->window_handle, &window_data);
 
     return x - window_data.rect.x >= ctrl->info.field_4.x
-        && x - window_data.rect.x <= ctrl.info.field_4.x + ctrl->info.field_4.width
+        && x - window_data.rect.x <= ctrl->info.field_4.x + ctrl->info.field_4.width
         && y - window_data.rect.y >= sub_581660(id)
         && y - window_data.rect.y <= ctrl->info.rect.y + ctrl->info.rect.height - scrollbar_ui_button_down_height;
 }
@@ -361,7 +389,7 @@ bool sub_5814E0(int id, int x, int y)
     tig_window_data(ctrl->window_handle, &window_data);
 
     return x - window_data.rect.x >= ctrl->info.rect.x
-        && x - window_data.rect.x <= ctrl.info.rect.x + ctrl->info.rect.width
+        && x - window_data.rect.x <= ctrl->info.rect.x + ctrl->info.rect.width
         && y - window_data.rect.y >= ctrl->info.rect.y
         && y - window_data.rect.y <= ctrl->info.rect.y + ctrl->info.rect.height;
 }
@@ -372,7 +400,7 @@ float sub_581550(int id)
     ScrollbarUiControl* ctrl;
 
     ctrl = &(scrollbar_ui_controls[id]);
-    return (float)(ctrl->info.field_10 - scrollbar_ui_button_down_height - scrollbar_ui_button_up_height)
+    return (float)(ctrl->info.field_4.height - scrollbar_ui_button_down_height - scrollbar_ui_button_up_height)
         / (float)(ctrl->info.field_2C + ctrl->info.field_24 - ctrl->info.field_28)
         * (float)ctrl->info.field_2C;
 }
@@ -393,7 +421,7 @@ int sub_5815A0(int id)
 int sub_5815D0(int id)
 {
     return scrollbar_ui_button_up_height
-        + scrollbar_ui_controls[id].info.field_8
+        + scrollbar_ui_controls[id].info.field_4.y
         + (int)(sub_581550(id)
             * (float)(scrollbar_ui_controls[id].info.field_38 - scrollbar_ui_controls[id].info.field_28)
             / (float)(scrollbar_ui_controls[id].info.field_2C));
