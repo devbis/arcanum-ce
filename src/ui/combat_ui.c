@@ -1,0 +1,446 @@
+#include "ui/combat_ui.h"
+
+#include <tig/tig.h>
+
+#define THREE 3
+#define TWENTY 20
+
+// 0x5CAA20
+static TigRect stru_5CAA20 = { 617, 577, 124, 14 };
+
+// 0x5CAA30
+static tig_art_id_t dword_5CAA30 = TIG_ART_ID_INVALID;
+
+// 0x5CAA38
+static UiButtonInfo stru_5CAA38 = { 320, 9, 297, TIG_BUTTON_HANDLE_INVALID };
+
+// 0x5CAA48
+static int dword_5CAA48[TWENTY] = {
+    22,
+    35,
+    48,
+    61,
+    74,
+    93,
+    106,
+    119,
+    132,
+    145,
+    164,
+    177,
+    190,
+    203,
+    216,
+    235,
+    248,
+    261,
+    274,
+    287,
+};
+
+// 0x5CAA18
+static tig_window_handle_t dword_5CAA18 = TIG_WINDOW_HANDLE_INVALID;
+
+// 0x5CAA1C
+static tig_window_handle_t dword_5CAA1C = TIG_WINDOW_HANDLE_INVALID;
+
+// 0x5CAA98
+static int dword_5CAA98[THREE] = { 295, 296, 315 };
+
+// 0x680EA8
+static int dword_680EA8[THREE];
+
+// 0x680EB4
+static int dword_680EB4;
+
+// 0x680EB8
+static bool combat_ui_initialized;
+
+// 0x680EBC
+static bool combat_ui_created;
+
+// 0x680EC0
+static TigRect stru_680EC0;
+
+// 0x56EA90
+bool combat_ui_init(GameInitInfo* init_info)
+{
+    CombatCallbacks callbacks;
+    int index;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigWindowData window_data;
+
+    callbacks.field_0 = sub_56ECE0;
+    callbacks.field_4 = sub_56ED00;
+    callbacks.field_8 = sub_56EF40;
+    callbacks.field_C = sub_56F430;
+    callbacks.field_10 = sub_56F990;
+
+    if (!sub_4B6C40(&callbacks)) {
+        return false;
+    }
+
+    for (index = 0; index < THREE; index++) {
+        if (tig_art_interface_id_create(dword_5CAA98[index], 0, 0, 0, &(dword_680EA8[index])) != TIG_OK) {
+            return false;
+        }
+    }
+
+    tig_art_interface_id_create(601, 0, 0, 0, &art_id);
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    if (tig_window_data(init_info->window_handle, &window_data) != TIG_OK) {
+        return false;
+    }
+
+    stru_680EC0.x = window_data.rect.x + window_data.rect.width - art_frame_data.width - 2;
+    stru_680EC0.y = window_data.rect.y + art_frame_data.height + 2;
+
+    tig_art_interface_id_create(601, 0, 0, 0, &dword_5CAA30);
+
+    if (tig_art_frame_data(dword_5CAA30, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    stru_680EC0.width = art_frame_data.width;
+    stru_680EC0.height = art_frame_data.height;
+
+    combat_ui_initialized = true;
+
+    return true;
+}
+
+// 0x56EBE0
+void combat_ui_exit()
+{
+    combat_ui_initialized = false;
+}
+
+// 0x56EBF0
+void combat_ui_reset()
+{
+    sub_56EF40();
+}
+
+// 0x56EC00
+void combat_ui_resize(GameResizeInfo* resize_info)
+{
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+
+    tig_art_interface_id_create(601, 0, 0, 0, &art_id);
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        tig_debug_printf("combat_ui_resize: ERROR: tig_art_frame_data failed!\n");
+        return;
+    }
+
+    stru_680EC0.x = resize_info->field_4.x + resize_info->field_4.width - art_frame_data.width - 2;
+    stru_680EC0.y = resize_info->field_4.y + art_frame_data.height + 4;
+
+    if (combat_ui_created) {
+        if (sub_5578C0()) {
+            tig_window_hide(dword_5CAA18);
+        } else {
+            tig_window_show(dword_5CAA18);
+        }
+
+        if (combat_ui_created) {
+            if (sub_5578C0()) {
+                tig_window_show(dword_5CAA1C);
+            } else {
+                tig_window_hide(dword_5CAA1C);
+            }
+        }
+    }
+}
+
+// 0x56ECE0
+void sub_56ECE0(int a1)
+{
+    sub_553990();
+    if (a1) {
+        sub_560F40();
+    }
+}
+
+// 0x56ED00
+void sub_56ED00()
+{
+    if (combat_ui_created) {
+        sub_56EF40();
+    }
+    sub_56ED20();
+    sub_56F430(0);
+}
+
+// 0x56ED20
+void combat_ui_create()
+{
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtData art_data;
+    TigRect rect;
+    TigWindowData window_data;
+    TigArtBlitSpec blit_info;
+
+    if (tig_art_interface_id_create(294u, 0, 0, 0, &art_id) != TIG_OK) {
+        return;
+    }
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    if (tig_art_data(art_id, &art_data) != TIG_OK) {
+        return;
+    }
+
+    rect.x = 222;
+    rect.y = 412;
+    rect.width = art_frame_data.width;
+    rect.height = art_frame_data.height;
+
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.rect = rect;
+    window_data.background_color = art_data.color_key;
+    window_data.color_key = art_data.color_key;
+    window_data.message_filter = sub_56F9B0;
+
+    if (tig_window_create(&window_data, &dword_5CAA18) != TIG_OK) {
+        return;
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+
+    blit_info.flags = 0;
+    blit_info.art_id = art_id;
+    blit_info.src_rect = &rect;
+    blit_info.dst_rect = &rect;
+    tig_window_blit_art(dword_5CAA18, &blit_info);
+
+    if (!sub_54AA60(dword_5CAA18, &rect, &stru_5CAA38, TIG_BUTTON_FLAG_0x01)) {
+        return;
+    }
+
+    combat_ui_created = true;
+    dword_680EB4 = 0;
+
+    sub_56F660();
+    sub_56F430(0);
+
+    if (sub_5578C0()) {
+        tig_window_hide(dword_5CAA18);
+    }
+
+    window_data.flags = TIG_WINDOW_HAVE_TRANSPARENCY | TIG_WINDOW_FLAG_0x02;
+    window_data.rect = stru_5CAA20;
+    window_data.background_color = art_data.color_key;
+    window_data.color_key = tig_color_make(0, 0, 255);
+    window_data.message_filter = sub_56F9B0;
+
+    if (tig_window_create(&window_data, &dword_5CAA1C) != TIG_OK) {
+        return;
+    }
+
+    sub_56EFA0(0);
+
+    if (!sub_5578C0()) {
+        tig_window_hide(dword_5CAA1C);
+    }
+}
+
+// 0x56EF40
+void sub_56EF40()
+{
+    combat_ui_destroy();
+}
+
+// 0x56EF50
+void combat_ui_destroy()
+{
+    if (!combat_ui_created) {
+        return;
+    }
+
+    if (tig_window_destroy(dword_5CAA18) == TIG_OK) {
+        dword_5CAA18 = TIG_WINDOW_HANDLE_INVALID;
+    }
+
+    if (dword_5CAA1C != TIG_WINDOW_HANDLE_INVALID) {
+        tig_window_destroy(dword_5CAA1C);
+        dword_5CAA1C = TIG_WINDOW_HANDLE_INVALID;
+    }
+
+    combat_ui_created = false;
+}
+
+// 0x56EFA0
+void sub_56EFA0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x56F2F0
+void sub_56F2F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x56F430
+void sub_56F430()
+{
+    // TODO: Incomplete.
+}
+
+// 0x56F660
+void sub_56F660()
+{
+    long long obj;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtData art_anim_data;
+    TigRect rect;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigArtBlitSpec blit_info;
+
+    if (!combat_ui_created) {
+        return;
+    }
+
+    sub_56F840();
+
+    obj = sub_4B6D80();
+    if (!player_is_pc_obj(obj)) {
+        if (dword_680EB4 >= TWENTY) {
+            dword_680EB4 = 0;
+        }
+
+        if (tig_art_interface_id_create(294, 0, 0, 0, &art_id) == TIG_OK
+            && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK
+            && tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = art_frame_data.width;
+            rect.height = art_frame_data.height;
+
+            blit_info.flags = 0;
+            blit_info.art_id = art_id;
+            blit_info.src_rect = &rect;
+            blit_info.dst_rect = &rect;
+            tig_window_blit_art(dword_5CAA18, &blit_info);
+        }
+
+        if (tig_art_frame_data(art_id, &art_frame_data)) {
+            src_rect.x = 0;
+            src_rect.y = 0;
+            src_rect.width = art_frame_data.width;
+            src_rect.height = art_frame_data.height;
+
+            dst_rect.x = dword_5CAA48[dword_680EB4];
+            dst_rect.y = 10;
+            dst_rect.width = art_frame_data.width;
+            dst_rect.height = art_frame_data.height;
+
+            blit_info.flags = 0;
+            blit_info.art_id = dword_680EA8[0];
+            blit_info.src_rect = &src_rect;
+            blit_info.dst_rect = &dst_rect;
+            tig_window_blit_art(dword_5CAA18, &blit_info);
+
+            dst_rect.x = dword_5CAA48[dword_680EB4 - 7 < 0 ? dword_680EB4 + TWENTY - 7 : dword_680EB4 - 7];
+            tig_window_blit_art(dword_5CAA18, &blit_info);
+
+            dst_rect.x = dword_5CAA48[dword_680EB4 + 7 >= TWENTY ? dword_680EB4 - TWENTY + 7 : dword_680EB4 + 7];
+            tig_window_blit_art(dword_5CAA18, &blit_info);
+        }
+
+        dword_680EB4++;
+    }
+
+    if (combat_ui_created) {
+        sub_57D370(12, -1, 100);
+    }
+}
+
+// 0x56F840
+void sub_56F840()
+{
+    long long obj;
+    TigRect rect;
+
+    if (dword_5CAA1C == TIG_WINDOW_HANDLE_INVALID) {
+        return;
+    }
+
+    obj = sub_4B6D80();
+    if (player_is_pc_obj(obj)) {
+        return;
+    }
+
+    rect.x = 2;
+    rect.y = 2;
+    rect.width = stru_5CAA20.width - 4;
+    rect.height = stru_5CAA20.height - 4;
+    tig_window_fill(dword_5CAA1C, &rect, tig_color_make(0, 0, 0));
+
+    rect.x = 120 * dword_680EB4 / 25;
+    rect.width = 4;
+    rect.height += 4;
+    sub_56F2F0(dword_5CAA1C, &rect, tig_color_make(0, 255, 0));
+}
+
+// 0x56F990
+void sub_56F990(long long obj)
+{
+    if (obj != 0) {
+        sub_40DA50();
+    }
+}
+
+// 0x56F9B0
+bool sub_56F9B0(TigMessage* msg)
+{
+    long long obj;
+    AnimId anim_id_1;
+    AnimId anim_id_2;
+
+    switch (msg->type) {
+    case TIG_MESSAGE_BUTTON:
+        if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
+            && msg->data.button.button_handle == stru_5CAA38.button_handle) {
+            obj = sub_4B6D80();
+            if (obj != 0
+                && player_is_pc_obj(obj)
+                && (!sub_423300(obj, &anim_id_1)
+                    || sub_44E830(obj, 2, &anim_id_2)
+                    && sub_421D60(anim_id_1, &anim_id_2))) {
+                combat_turn_based_next_subturn();
+            }
+            return true;
+        }
+        break;
+    case TIG_MESSAGE_KEYBOARD:
+        if (!sub_566EF0()
+            && !msg->data.keyboard.pressed
+            && msg->data.keyboard.key == DIK_E) {
+            obj = sub_4B6D80();
+            if (obj != 0
+                && player_is_pc_obj(obj)
+                && (!sub_423300(obj, &anim_id_1)
+                    || sub_44E830(obj, 2, &anim_id_2)
+                    && sub_421D60(anim_id_1, &anim_id_2))) {
+                combat_turn_based_next_subturn();
+            }
+        }
+        break;
+    }
+
+    return false;
+}
