@@ -367,7 +367,10 @@ typedef enum ObjectType {
     OBJ_TYPE_PC,
     OBJ_TYPE_NPC,
     OBJ_TYPE_TRAP,
-};
+    OBJ_TYPE_MONSTER,
+    OBJ_TYPE_UNIQUE_NPC,
+    OBJ_TYPE_COUNT,
+} ObjectType;
 
 typedef enum SceneryFlags {
     SCENERY_FLAG_0x40 = 0x40,
