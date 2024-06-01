@@ -10,7 +10,7 @@ typedef struct FadeData {
     int steps;
     float duration;
     int field_10;
-};
+} FadeData;
 
 static_assert(sizeof(FadeData) == 0x14, "wrong size");
 
