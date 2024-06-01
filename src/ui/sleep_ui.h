@@ -1,0 +1,4 @@
+#ifndef ARCANUM_UI_SLEEP_UI_H_
+#define ARCANUM_UI_SLEEP_UI_H_
+
+#endif /* ARCANUM_UI_SLEEP_UI_H_ */
