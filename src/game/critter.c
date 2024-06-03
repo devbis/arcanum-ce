@@ -621,9 +621,27 @@ bool sub_45F730(long long obj)
 }
 
 // 0x45F790
-void sub_45F790()
+int sub_45F790(long long obj)
 {
-    // TODO: Incomplete.
+    int current_weight;
+    int max_weight;
+    int encumbrance_level;
+
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return ENCUMBRANCE_LEVEL_SEVERE;
+    }
+
+    current_weight = item_total_weight(obj);
+    max_weight = stat_level(obj, STAT_CARRY_WEIGHT);
+
+    for (encumbrance_level = 0; encumbrance_level < MAX_ENCUMBRANCE_LEVEL; encumbrance_level++) {
+        if (current_weight < max_weight * critter_encumbrance_level_ratio(encumbrance_level) / 100) {
+            return encumbrance_level;
+        }
+    }
+
+    return ENCUMBRANCE_LEVEL_SEVERE;
 }
 
 // 0x45F820
