@@ -532,9 +532,21 @@ int sub_45F550(long long obj)
 }
 
 // 0x45F570
-void sub_45F570()
+bool sub_45F570(long long obj)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    int type;
+
+    art_id = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    type = tig_art_type(art_id);
+    switch (type) {
+    case TIG_ART_TYPE_CRITTER:
+        return true;
+    case TIG_ART_TYPE_MONSTER:
+        return sub_503F20(art_id) == 2;
+    default:
+        return false;
+    }
 }
 
 // 0x45F5C0
