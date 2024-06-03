@@ -601,9 +601,23 @@ void sub_45F710(long long obj)
 }
 
 // 0x45F730
-void sub_45F730()
+bool sub_45F730(long long obj)
 {
-    // TODO: Incomplete.
+    if (obj == 0) {
+        return false;
+    }
+
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    // TODO: Use constants.
+    if ((obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) & 0x2000800C) == 0) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x45F790
