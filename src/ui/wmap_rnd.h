@@ -1,0 +1,4 @@
+#ifndef ARCANUM_UI_WMAP_RND_H_
+#define ARCANUM_UI_WMAP_RND_H_
+
+#endif /* ARCANUM_UI_WMAP_RND_H_ */
