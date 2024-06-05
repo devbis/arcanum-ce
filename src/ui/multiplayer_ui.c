@@ -1,0 +1,382 @@
+#include "ui/multiplayer_ui.h"
+
+#include <tig/tig.h>
+
+#include "ui/textedit_ui.h"
+
+// 0x599458
+static char byte_599458[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+// 0x680FD0
+static TigArtFrameData stru_680FD0[2];
+
+// 0x681030
+static int multiplayer_ui_mes_file;
+
+// 0x681034
+static bool multiplayer_ui_initialized;
+
+// 0x56FF80
+bool multiplayer_ui_init(GameInitInfo* init_info)
+{
+    int index;
+    tig_art_id_t art_id;
+
+    (void)init_info;
+
+    if (!message_load("mes\\MultiPlayer.mes", &multiplayer_ui_mes_file)) {
+        sub_549B10();
+        return true;
+    }
+
+    for (index = 0; index < 2; index++) {
+        if (tig_art_interface_id_create(index == 0 ? 640 : 643, 0, 0, 0, &art_id) != TIG_OK
+            || tig_art_exists(art_id) != TIG_OK
+            || tig_art_frame_data(art_id, &(stru_680FD0[index])) != TIG_OK) {
+            sub_549B10();
+            return true;
+        }
+    }
+
+    off_681000 = (S681000*)MALLOC(sizeof(S681000) * 10);
+    for (index = 0; index < 10; index++) {
+        off_681000[index].field_0 = NULL;
+        off_681000[index].field_4 = -1;
+    }
+
+    multiplayer_ui_initialized = true;
+
+    return true;
+}
+
+// 0x570050
+void multiplayer_ui_exit()
+{
+    int index;
+
+    message_unload(multiplayer_ui_mes_file);
+
+    if (off_681000 != NULL) {
+        for (index = 0; index < 10; index++) {
+            if (off_681000[index].field_0 != NULL) {
+                FREE(off_681000[index].field_0);
+            }
+        }
+        FREE(off_681000);
+    }
+
+    multiplayer_ui_initialized = false;
+}
+
+// 0x5700B0
+void mutliplayer_ui_reset()
+{
+}
+
+// 0x5700C0
+void sub_5700C0()
+{
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    if (dword_681038) {
+        sub_570130();
+        return;
+    }
+
+    dword_68103C = 0;
+    sub_5706D0();
+    dword_681038 = 1;
+    sub_570E10();
+
+    datetime.days = 0;
+    datetime.milliseconds = 10000;
+
+    timeevent.type = TIMEEVENT_TYPE_MP_CTRL_UI;
+    timeevent.params[0].integer_value = 0;
+    sub_45B800(&timeevent, &datetime);
+    sub_569DA0();
+}
+
+// 0x570130
+void sub_570130()
+{
+    int index;
+
+    if (dword_681038) {
+        if (dword_5CABE8 != TIG_WINDOW_HANDLE_INVALID) {
+            for (index = 0; index < dword_68103C; index++) {
+                tig_button_destroy(dword_681004[index]);
+                tig_button_destroy(dword_680EF0[index]);
+            }
+            tig_window_destroy(dword_5CABE8);
+            dword_5CABE8 = TIG_WINDOW_HANDLE_INVALID;
+        }
+        dword_681038 = false;
+    }
+    sub_569DA0();
+}
+
+// 0x5701A0
+bool sub_5701A0(tig_window_handle_t window_handle, const TigRect* rect)
+{
+    TigButtonData button_data;
+
+    button_data.window_handle = window_handle;
+    button_data.flags = TIG_BUTTON_FLAG_HIDDEN;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
+    button_data.x = 286 - rect->x;
+    button_data.y = 524 - rect->y;
+    tig_art_interface_id_create(843, 0, 0, 0, &(button_data.art_id));
+    tig_button_create(&button_data, &dword_68102C);
+
+    button_data.x = 455 - rect->x;
+    button_data.y = 524 - rect->y;
+    tig_art_interface_id_create(844, 0, 0, 0, &(button_data.art_id));
+    tig_button_create(&button_data, &dword_680FCC);
+
+    return true;
+}
+
+// 0x570260
+void sub_570260()
+{
+    // TODO: Incomplete.
+}
+
+// 0x5703B0
+bool sub_5703B0()
+{
+    tig_button_hide(dword_68102C);
+    tig_button_hide(dword_680FCC);
+    return true;
+}
+
+// 0x5703D0
+void sub_5703D0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x5704E0
+void sub_5704E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x5706D0
+void sub_5706D0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x570890
+void sub_570890()
+{
+    // TODO: Incomplete.
+}
+
+// 0x5708B0
+void sub_5708B0()
+{
+    if (dword_681038) {
+        sub_570130();
+        sub_5700C0();
+    }
+}
+
+// 0x5708C0
+bool sub_5708C0(tig_window_handle_t window_handle, const TigRect* rect)
+{
+    TigButtonData button_data;
+
+    button_data.window_handle = window_handle;
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.x = 574 - rect->x;
+    button_data.y = 506 - rect->y;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+    tig_art_interface_id_create(641, 0, 0, 0, &(button_data.art_id));
+
+    if (tig_button_create(&button_data, &dword_680F98) != TIG_OK) {
+        return false;
+    }
+
+    return true;
+}
+
+// 0x570940
+void sub_570940()
+{
+    // TODO: Incomplete.
+}
+
+// 0x5709E0
+bool sub_5709E0()
+{
+    tig_button_hide(dword_680F98);
+    textedit_ui_unfocus();
+    dword_5CABF0 = -1;
+    dword_5CABEC = -1;
+    return true;
+}
+
+// 0x570A10
+bool sub_570A10(TigMessage* msg)
+{
+    switch (msg->type) {
+    case TIG_MESSAGE_BUTTON:
+        if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
+            && msg->data.button.button_handle == dword_680F98) {
+            sub_5506C0(3);
+            return true;
+        }
+        break;
+    }
+
+    return false;
+}
+
+// 0x570A40
+void sub_570A40()
+{
+    // TODO: Incomplete.
+}
+
+// 0x570BC0
+void sub_570BC0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x570E10
+void sub_570E10()
+{
+    if (dword_681038) {
+        sub_570E40();
+        sub_570EF0();
+        sub_571100();
+    }
+}
+
+// 0x570E40
+void sub_570E40()
+{
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigArtBlitSpec blit_info;
+    int index;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = stru_680FD0[0].width;
+    src_rect.height = stru_680FD0[0].height;
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = stru_680FD0[0].width;
+    dst_rect.height = stru_680FD0[0].height;
+
+    for (index = 0; index < dword_68103C; index++) {
+        blit_info.flags = 0;
+        blit_info.dst_rect = &dst_rect;
+        blit_info.src_rect = &src_rect;
+        blit_info.art_id = dword_680F9C[index % 2];
+        tig_window_blit_art(dword_5CABE8, &blit_info);
+        dst_rect.y += stru_680FD0[index % 2].height;
+    }
+}
+
+// 0x570EF0
+void sub_570EF0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x571100
+void sub_571100()
+{
+    // TODO: Incomplete.
+}
+
+// 0x5713F0
+void sub_5713F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x571570
+void sub_571570(int a1, int a2, int* a3, int* a4)
+{
+    if (a3 != NULL) {
+        *a3 = a1 - 566;
+    }
+
+    if (a4 != NULL) {
+        *a4 = a2 - 41;
+    }
+}
+
+// 0x5715A0
+bool sub_5715A0(int a1, int a2, int* a3)
+{
+    // TODO: Incomplete.
+}
+
+// 0x571610
+char sub_571610(int a1)
+{
+    return byte_599458[a1 % 10];
+}
+
+// 0x571630
+int sub_571630(int a1)
+{
+    return sub_549940(3, (a1 + a1 / 10) % 10);
+}
+
+// 0x571660
+void sub_571660(TextEdit* textedit)
+{
+    tig_color_t color;
+
+    color = tig_color_make(2, 0, 116);
+    if (*textedit->buffer != '\0') {
+        intgame_text_edit_refresh_color(textedit->buffer, sub_549940(0, 0), color, 1);
+    } else {
+        intgame_text_edit_refresh_color("", sub_549940(0, 0), color, 1);
+    }
+}
+
+// 0x571730
+void sub_571730(TextEdit* textedit)
+{
+    MultiplayerPacket83 pkt;
+
+    if (*textedit->buffer != '\0') {
+        pkt.type = 83;
+        pkt.field_4 = sub_529520();
+        pkt.field_8 = dword_5CABF0;
+        strncpy(pkt.field_C, textedit->buffer, 128);
+
+        if (pkt.field_8 != pkt.field_4) {
+            if ((tig_net_flags & TIG_NET_HOST) != 0 && pkt.field_8 != 0) {
+                tig_net_send_app(&pkt, sizeof(pkt), pkt.field_8);
+            } else {
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+            }
+        }
+
+        sub_5703D0(textedit->buffer, sub_529520());
+        *textedit->buffer = '\0';
+
+        sub_571660(textedit);
+        textedit_ui_focus(textedit);
+    }
+}
