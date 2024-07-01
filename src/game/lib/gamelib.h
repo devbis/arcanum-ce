@@ -9,4 +9,6 @@ extern unsigned int gamelib_ping_time;
 extern Settings settings;
 extern TigVideoBuffer* dword_739E7C;
 
+bool gamelib_mod_guid(GUID* guid_ptr);
+
 #endif /* ARCANUM_GAMELIB_GAMELIB_H_ */

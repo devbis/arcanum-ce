@@ -211,6 +211,18 @@ void gamelib_ping()
     }
 }
 
+// 0x402C20
+bool gamelib_mod_guid(GUID* guid_ptr)
+{
+    if (!dword_5D10C4) {
+        return false;
+    }
+
+    *guid_ptr = stru_5D10B0;
+
+    return true;
+}
+
 // 0x402C60
 void gamelib_mod_unload()
 {
