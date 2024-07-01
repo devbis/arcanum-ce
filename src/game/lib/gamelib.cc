@@ -115,6 +115,15 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
     { "gameinit" },
 };
 
+// 0x59ADD8
+int dword_59ADD8 = 1;
+
+// 0x59ADDC
+char arcanum1[260] = "Arcanum";
+
+// 0x59AEDC
+char arcanum[260] = "Arcanum";
+
 // 0x5CFF08
 static char byte_5CFF08[MAX_PATH];
 
@@ -211,6 +220,18 @@ void gamelib_ping()
     }
 }
 
+// 0x402780
+void sub_402780(const char* name)
+{
+    strcpy(arcanum2, name);
+}
+
+// 0x4027B0
+char* sub_4027B0()
+{
+    return arcanum2;
+}
+
 // 0x402C20
 bool gamelib_mod_guid(GUID* guid_ptr)
 {
@@ -271,6 +292,40 @@ void gamelib_update_view(ViewOptions* view_options)
 void gamelib_get_view_options(ViewOptions* view_options)
 {
     *view_options = gamelib_view_options;
+}
+
+// 0x402F90
+void sub_402F90()
+{
+    dword_59ADD8--;
+}
+
+// 0x402FA0
+void sub_402FA0()
+{
+    dword_59ADD8++;
+}
+
+// 0x402FC0
+void sub_402FC0()
+{
+    tig_window_fill(stru_5D0E88.iso_window_handle, NULL, 0);
+    tig_window_display();
+    sub_402D30(NULL);
+}
+
+// 0x402FE0
+char* sub_402FE0()
+{
+    return arcanum1;
+}
+
+// 0x402FF0
+void sub_402FF0(const char* name)
+{
+    if (name != NULL && *name != '\0') {
+        strcpy(arcanum1, name);
+    }
 }
 
 // 0x403790

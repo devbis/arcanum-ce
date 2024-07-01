@@ -7,17 +7,6 @@
 #include <timeapi.h>
 #include <windows.h>
 
-// 59A---
-
-// 0x59ADD8
-int dword_59ADD8 = 1;
-
-// 0x59ADDC
-char byte_59ADDC[260] = "Arcanum";
-
-// 0x59AEDC
-char arcanum[260] = "Arcanum";
-
 // 59F---
 
 // 5A3--
@@ -949,12 +938,6 @@ int dword_59BE00[21] = {
 // TINY FUNCTIONS (20 INSTRUCTIONS)
 // -----------------------------------------------------------------------------
 
-// 0x4027B0
-char* sub_4027B0()
-{
-    return arcanum;
-}
-
 // 0x402CA0
 bool gamelib_in_reset_()
 {
@@ -966,24 +949,6 @@ bool gamelib_in_reset_()
 int sub_402CB0()
 {
     return 0;
-}
-
-// 0x402F90
-void sub_402F90()
-{
-    dword_59ADD8--;
-}
-
-// 0x402FA0
-void sub_402FA0()
-{
-    dword_59ADD8++;
-}
-
-// 0x402FE0
-char* sub_402FE0()
-{
-    return byte_59ADDC;
 }
 
 // 0x4038D0
@@ -4172,21 +4137,6 @@ void sub_5898A0(int* a1, int* a2)
 // -----------------------------------------------------------------------------
 // SMALL FUNCTIONS (50 INSTRUCTIONS)
 // -----------------------------------------------------------------------------
-
-// 0x402780
-void sub_402780(const char* a1)
-{
-    // #todo: is it strcpy unwrapped?
-    memcpy(arcanum, a1, strlen(a1) + 1);
-}
-
-// 0x402FC0
-void sub_402FC0()
-{
-    tig_window_fill(dword_5D0E8C, 0, 0);
-  tig_window_display();
-  sub_402D30(0);
-}
 
 // 0x403DB0
 int sub_403DB0(void* a1, void* a2)
