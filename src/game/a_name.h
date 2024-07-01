@@ -3,6 +3,9 @@
 
 #include <tig/tig.h>
 
+bool a_name_light_init();
+void a_name_light_exit();
+bool a_name_light_aid_to_fname(tig_art_id_t aid, char* fname);
 bool a_name_roof_init();
 void a_name_roof_exit();
 bool a_name_roof_aid_to_fname(tig_art_id_t aid, char* fname);
