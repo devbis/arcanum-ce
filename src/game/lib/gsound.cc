@@ -725,6 +725,22 @@ void sub_41C690(int64_t a1, int64_t a2)
     }
 }
 
+// 0x41C6D0
+void sub_41C6D0(int64_t location)
+{
+    int64_t x;
+    int64_t y;
+    if (dword_5D1A6C) {
+        sub_4B8680(location, &x, &y);
+
+        if (qword_5D1A28 != 0) {
+            sub_4B8680(qword_5D1A28, &qword_5D55E8, &qword_5D55E0);
+        }
+
+        sub_41C690(x - qword_5D55E8, y - qword_5D55E0);
+    }
+}
+
 // 0x41C850
 void sub_41C850(int a1, int a2, int a3, int a4)
 {
