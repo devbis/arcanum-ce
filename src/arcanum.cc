@@ -1046,12 +1046,6 @@ int j_sound_game_reset_()
     return sound_game_reset_();
 }
 
-// 0x41B3A0
-int sub_41B3A0()
-{
-    return sub_533BF0(sub_41B3B0);
-}
-
 // 0x41C8A0
 int get_effects_volume_()
 {

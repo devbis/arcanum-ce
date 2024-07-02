@@ -315,6 +315,28 @@ int gsound_play_sfx(const char* path, int loops, int volume, int extra_volume, i
     return sound_handle;
 }
 
+// 0x41B3A0
+int sub_41B3A0()
+{
+    return tig_sound_enumerate_positional(sub_41B3B0);
+}
+
+// 0x41B3B0
+void sub_41B3B0(tig_sound_handle_t sound_handle)
+{
+    int64_t x;
+    int64_t y;
+    TigSoundPositionalSize size;
+    int volume;
+    int extra_volume;
+
+    tig_sound_get_position(sound_handle, &x, &y);
+    size = tig_sound_get_positional_size(sound_handle);
+    sub_41B420(x, y, &volume, &extra_volume, size);
+    tig_sound_set_volume(sound_handle, sub_41C9D0(sound_handle, volume));
+    tig_sound_set_extra_volume(sound_handle, extra_volume);
+}
+
 // 0x41B720
 int gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
 {
