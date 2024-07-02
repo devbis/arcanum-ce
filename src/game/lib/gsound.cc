@@ -379,6 +379,13 @@ int sub_41B980(object_id_t object_id)
     return 3;
 }
 
+// 0x41B9E0
+int sub_41B9E0(object_id_t obj)
+{
+    int v1 = sub_41B980(obj);
+    return (int)sound_maximum_radius[v1] / 40;
+}
+
 // 0x41BAC0
 void sub_41BAC0(int a1)
 {
