@@ -63,3 +63,15 @@ int sub_4189C0(const char* a1, int a2)
         return -1;
     }
 }
+
+// 0x418A00
+int sub_418A00(int a1, int* a2, int* a3)
+{
+    if (a1 != -1) {
+        *a2 = (a1 >> 16) & 0x7FFF;
+        *a3 = a1 & 0xFFFF;
+    } else {
+        *a2 = 0;
+        *a3 = 0;
+    }
+}
