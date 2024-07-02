@@ -741,6 +741,25 @@ void sub_41C6D0(int64_t location)
     }
 }
 
+// 0x41C780
+void sub_41C780(tig_sound_handle_t sound_handle, int64_t location)
+{
+    int64_t x;
+    int64_t y;
+    TigSoundPositionalSize size;
+    int volume;
+    int extra_volume;
+
+    sub_4B8680(location, &x, &y);
+    x -= qword_5D55E8;
+    y -= qword_5D55E0;
+    tig_sound_set_position(sound_handle, x, y);
+    size = tig_sound_get_size(sound_handle);
+    sub_41B420(x, y, &volume, &extra_volume, size);
+    tig_sound_set_volume(sound_handle, sub_41C9D0(sound_handle, volume));
+    tig_sound_set_extra_volume(sound_handle, extra_volume);
+}
+
 // 0x41C850
 void sub_41C850(int a1, int a2, int a3, int a4)
 {
