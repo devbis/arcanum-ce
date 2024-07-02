@@ -5,6 +5,12 @@
 // 0x5D19F4
 static int* dword_5D19F4;
 
+// 0x5D19F8
+static int dword_5D19F8;
+
+// 0x5D19FC
+static int dword_5D19FC;
+
 // 0x412D40
 bool dialog_init()
 {
@@ -16,4 +22,12 @@ bool dialog_init()
     }
 
     return true;
+}
+
+// 0x417D60
+TigFile* sub_417D60(const char* fname, const char* mode)
+{
+    dword_5D19FC = 0;
+    dword_5D19F8 = 0;
+    return tig_file_fopen(fname, mode);
 }
