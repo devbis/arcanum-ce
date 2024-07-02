@@ -426,6 +426,22 @@ const char* gamelib_get_locale()
     return "en";
 }
 
+// 0x4046F0
+void sub_4046F0(void* info)
+{
+    if (tig_video_3d_begin_scene() == TIG_OK) {
+        sub_4D8350(info);
+        sub_4D6950(info);
+        sub_43C690(info);
+        sub_43B390(info);
+        sub_439140(info);
+        sub_4D5F10(info);
+        sub_4D5310(info);
+        sub_4C95F0(info);
+        tig_video_3d_end_scene();
+    }
+}
+
 // 0x404810
 void gamelib_logo()
 {
