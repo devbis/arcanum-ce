@@ -277,6 +277,20 @@ bool gsound_save(TigFile* stream)
     }
 }
 
+// 0x41B2A0
+void gsound_ping(int a1)
+{
+    int delta;
+
+    if (dword_5D1A6C) {
+        delta = abs(a1 - dword_5D548C);
+        if (delta > 250) {
+            dword_5D548C = a1;
+            sub_41BAF0();
+        }
+    }
+}
+
 // 0x41B2E0
 int gsound_play_sfx(const char* path, int loops, int volume, int extra_volume, int id)
 {
