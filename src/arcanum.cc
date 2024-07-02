@@ -1039,12 +1039,6 @@ int sub_410270()
     return dword_5D11FC;
 }
 
-// 0x417D80
-int sub_417D80(void* fp)
-{
-    return tio_fclose(fp);
-}
-
 // #maybe-void
 // 0x41B2D0
 int j_sound_game_reset_()

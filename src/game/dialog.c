@@ -31,3 +31,9 @@ TigFile* sub_417D60(const char* fname, const char* mode)
     dword_5D19F8 = 0;
     return tig_file_fopen(fname, mode);
 }
+
+// 0x417D80
+int sub_417D80(TigFile* stream)
+{
+    return tig_file_fclose(stream);
+}
