@@ -46,3 +46,10 @@ void sub_4182C0()
 {
     dword_5D1A0C = true;
 }
+
+// 0x418460
+void sub_418460(int a1, int a2)
+{
+    int v1 = sub_445090();
+    sub_4182D0(a1, a2, v1 + 1700, v1 + 1700);
+}
