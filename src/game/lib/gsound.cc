@@ -778,6 +778,22 @@ int gsound_effects_volume_get()
     return gsound_effects_volume;
 }
 
+// 0x41C8B0
+void gsound_effects_volume_changed()
+{
+    object_id_t obj;
+    int64_t location;
+
+    gsound_effects_volume = 80 * (127 * settings_get_value(&settings, "effects volume") / 10) / 100;
+    tig_sound_set_volume_by_type(TIG_SOUND_TYPE_EFFECT, gsound_effects_volume);
+
+    obj = player_get_pc_obj();
+    if (obj != OBJ_HANDLE_NULL) {
+        location = obj_f_get_int64(obj, OBJ_F_LOCATION);
+        sub_41C6D0(location);
+    }
+}
+
 // 0x41C920
 int gsound_voice_volume_get()
 {
