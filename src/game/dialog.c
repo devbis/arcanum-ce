@@ -11,6 +11,9 @@ static int dword_5D19F8;
 // 0x5D19FC
 static int dword_5D19FC;
 
+// 0x5D1A0C
+static bool dword_5D1A0C;
+
 // 0x412D40
 bool dialog_init()
 {
@@ -36,4 +39,10 @@ TigFile* sub_417D60(const char* fname, const char* mode)
 int sub_417D80(TigFile* stream)
 {
     return tig_file_fclose(stream);
+}
+
+// 0x4182C0
+void sub_4182C0()
+{
+    dword_5D1A0C = true;
 }

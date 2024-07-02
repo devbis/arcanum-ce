@@ -1,4 +1,6 @@
 #ifndef ARCANUM_GAME_DIALOG_H_
 #define ARCANUM_GAME_DIALOG_H_
 
+void sub_4182C0();
+
 #endif /* ARCANUM_GAME_DIALOG_H_ */
