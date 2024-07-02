@@ -35,6 +35,9 @@ static int dword_5D11A4;
 // 0x5D11A8
 static ViewOptions scroll_view_options;
 
+// 0x5D11B8
+static long long qword_5D11B8;
+
 // 0x5D11C0
 static bool dword_5D11C0;
 
@@ -241,10 +244,11 @@ void scroll_set_scroll_func(ScrollFunc* func)
 }
 
 // 0x40E910
-void sub_40E910(int a1, int a2)
+void sub_40E910(long long a1)
 {
     if (!scroll_game_context.editor) {
-        // TODO: Incomplete.
+        sub_41C6D0(a1);
+        qword_5D11B8 = a1;
     }
 }
 
