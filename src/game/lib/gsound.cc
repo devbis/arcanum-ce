@@ -70,6 +70,12 @@ static int dword_5D1A48;
 // 0x5D1A4C
 static int dword_5D1A4C;
 
+// 0x5D1A50
+static int64_t qword_5D1A50;
+
+// 0x5D1A58
+static int64_t qword_5D1A58;
+
 // 0x5D1A68
 static int* dword_5D1A68;
 
@@ -706,6 +712,16 @@ void sub_41C660()
         if (dword_5D1A70 == 0) {
             sub_41BD50(dword_5D5484[0], dword_5D5484[1]);
         }
+    }
+}
+
+// 0x41C690
+void sub_41C690(int64_t a1, int64_t a2)
+{
+    if (dword_5D1A6C) {
+        qword_5D1A50 = a1;
+        qword_5D1A58 = a2;
+        sub_41B3A0();
     }
 }
 
