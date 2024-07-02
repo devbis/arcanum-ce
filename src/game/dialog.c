@@ -53,3 +53,13 @@ void sub_418460(int a1, int a2)
     int v1 = sub_445090();
     sub_4182D0(a1, a2, v1 + 1700, v1 + 1700);
 }
+
+// 0x4189C0
+int sub_4189C0(const char* a1, int a2)
+{
+    if (a1 != NULL && a2 != 0) {
+        return ((a2 & 0x7FFF) << 16) | (atoi(a1) & 0xFFFF);
+    } else {
+        return -1;
+    }
+}
