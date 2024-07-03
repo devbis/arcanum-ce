@@ -33,3 +33,14 @@ void sub_439EA0(int64_t a1)
 {
     sub_43A1A0(sub_4395E0(a1), 0, -1);
 }
+
+// 0x439EE0
+void sub_439EE0(int64_t a1)
+{
+    tig_art_id_t aid;
+
+    aid = sub_4396A0(a1);
+    if (sub_504940(aid) == 0) {
+        sub_439700(a1, sub_504970(aid, 1));
+    }
+}
