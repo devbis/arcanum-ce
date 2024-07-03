@@ -5,6 +5,9 @@
 // 0x5E2E34
 static GameContextF8* dword_5E2E34;
 
+// 0x5E2E40
+static bool dword_5E2E40;
+
 // 0x5E2E44
 static tig_window_handle_t dword_5E2E44;
 
@@ -54,4 +57,21 @@ void sub_439F20(int64_t a1)
     if (sub_504940(aid) != 0) {
         sub_439700(a1, sub_504970(aid, 0));
     }
+}
+
+// 0x439FA0
+bool sub_439FA0(int64_t a1)
+{
+    tig_art_id_t aid;
+
+    if (dword_5E2E40) {
+        aid = sub_4396A0(a1);
+        if (aid != TIG_ART_ID_INVALID
+            && sub_5048D0(aid) == 0
+            && sub_504940(aid) != 0) {
+            return true;
+        }
+    }
+
+    return false;
 }
