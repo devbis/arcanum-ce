@@ -136,3 +136,17 @@ int object_get_ac(object_id_t obj, bool a2)
 
     return ac;
 }
+
+// 0x43D940
+bool sub_43D940(object_id_t obj)
+{
+    int type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_PROJECTILE
+        || type == OBJ_TYPE_CONTAINER
+        || type == OBJ_TYPE_PC
+        || type == OBJ_TYPE_NPC
+        || (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC)) {
+        return false;
+    }
+    return true;
+}
