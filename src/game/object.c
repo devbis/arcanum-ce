@@ -73,6 +73,12 @@ int sub_43D5A0(object_id_t obj)
     return value;
 }
 
+// 0x43D600
+int sub_43D600(object_id_t obj)
+{
+    return sub_43D5A0(obj) - object_get_hp_damage(obj);
+}
+
 // 0x43D630
 int sub_43D630(object_id_t obj)
 {
