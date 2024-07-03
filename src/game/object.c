@@ -56,3 +56,16 @@ int object_set_hp_damage(object_id_t obj, int value)
 
     return value;
 }
+
+// 0x43D690
+int sub_43D690(object_id_t obj)
+{
+    int type;
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+        return 4 * object_get_hp_pts(obj);
+    }
+
+    return object_get_hp_pts(obj);
+}
