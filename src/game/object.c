@@ -3,6 +3,7 @@
 #include <tig/tig.h>
 
 #include "game/lib/object.h"
+#include "game/lib/stat.h"
 
 // 0x43D410
 int object_get_hp_pts(object_id_t obj)
@@ -55,6 +56,21 @@ int object_set_hp_damage(object_id_t obj, int value)
     sub_4EE1D0(obj);
 
     return value;
+}
+
+// 0x43D630
+int sub_43D630(object_id_t obj)
+{
+    int type;
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+        return stat_level(obj, STAT_WILLPOWER)
+            + 2 * (stat_level(obj, STAT_STRENGTH) + stat_level(obj, STAT_LEVEL))
+            + 4;
+    }
+
+    return 0;
 }
 
 // 0x43D690
