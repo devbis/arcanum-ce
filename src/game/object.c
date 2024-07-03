@@ -189,3 +189,22 @@ void object_set_current_aid(object_id_t obj, tig_art_id_t aid)
         sub_43F710(obj);
     }
 }
+
+// 0x43EBD0
+void object_set_light(object_id_t obj, unsigned int flags, tig_art_id_t aid, tig_color_t color)
+{
+    int light_handle;
+
+    if (aid == TIG_ART_ID_INVALID) {
+        light_handle = obj_f_get_int32(obj, OBJ_F_LIGHT_HANDLE);
+        if (light_handle != 0) {
+            sub_4D8620(light_handle);
+        }
+    }
+
+    obj_f_set_int32(obj, OBJ_F_LIGHT_FLAGS, flags);
+    obj_f_set_int32(obj, OBJ_F_LIGHT_AID, aid);
+    obj_f_set_int32(obj, OBJ_F_LIGHT_COLOR, color);
+    obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+    sub_4D9590(obj, true);
+}
