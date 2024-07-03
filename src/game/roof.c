@@ -2,6 +2,9 @@
 
 #include <tig/tig.h>
 
+// 0x5A53A0
+static int dword_5A53A0 = 256;
+
 // 0x5E2E34
 static GameContextF8* dword_5E2E34;
 
@@ -83,4 +86,13 @@ bool sub_439FF0(int64_t a1, int64_t a2, int a3)
 
     sub_4B8730(a1, a2, &v1);
     return sub_43A030(v1, a3);
+}
+
+// 0x43A110
+void sub_43A110(int a1)
+{
+    dword_5A53A0 = a1;
+    if (dword_5E2E34 != NULL) {
+        dword_5E2E34(0);
+    }
 }
