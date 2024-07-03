@@ -2,6 +2,7 @@
 
 #include <tig/tig.h>
 
+#include "game/lib/effect.h"
 #include "game/lib/object.h"
 #include "game/lib/stat.h"
 
@@ -55,6 +56,20 @@ int object_set_hp_damage(object_id_t obj, int value)
 
     sub_4EE1D0(obj);
 
+    return value;
+}
+
+// 0x43D5A0
+int sub_43D5A0(object_id_t obj)
+{
+    int value;
+    int type;
+
+    value = object_get_hp_adj(obj) + sub_43D690(obj);
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+        value = effect_adjust_max_hit_points(obj, sub_43D630(obj) + value);
+    }
     return value;
 }
 
