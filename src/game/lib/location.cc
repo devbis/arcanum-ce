@@ -65,7 +65,7 @@ bool location_init(GameContext* ctx)
     qword_5FC2E0 = 0;
     qword_5FC2E8 = 0;
 
-    sub_4B9760(0x100000000, 0x100000000);
+    location_set_limits(0x100000000, 0x100000000);
     sub_4B8CE0(sub_4B9810());
 
     dword_5FC2D0 = 0;
@@ -112,26 +112,26 @@ void sub_4B93F0(int a1, int a2, int* a3, int* a4)
 }
 
 // 0x4B9760
-bool sub_4B9760(int64_t a1, int64_t a2)
+bool location_set_limits(int64_t x, int64_t y)
 {
-    if (a1 > 0x100000000 || a2 > 0x100000000) {
+    if (x > 0x100000000 || y > 0x100000000) {
         return false;
     }
 
     qword_5FC2E0 = 0;
     qword_5FC2E8 = 0;
-    qword_5FC2F0 = a1;
-    qword_5FC288 = a2;
-    qword_5FC2D8 = 20 * a2;
+    qword_5FC2F0 = x;
+    qword_5FC288 = y;
+    qword_5FC2D8 = 20 * y;
 
     return true;
 }
 
 // 0x4B97E0
-void sub_4B97E0(int64_t* a1, int64_t* a2)
+void location_get_limits(int64_t* x, int64_t* y)
 {
-    *a1 = qword_5FC2F0;
-    *a2 = qword_5FC288;
+    *x = qword_5FC2F0;
+    *y = qword_5FC288;
 }
 
 // 0x4B9810
