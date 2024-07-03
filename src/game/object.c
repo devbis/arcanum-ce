@@ -21,3 +21,9 @@ int object_set_hp_adj(object_id_t obj, int value)
     sub_460240(obj);
     return value;
 }
+
+// 0x43D510
+int object_get_hp_damage(object_id_t obj)
+{
+    return obj_f_get_int32(obj, OBJ_F_HP_DAMAGE);
+}
