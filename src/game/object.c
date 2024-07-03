@@ -164,3 +164,11 @@ bool sub_43D990(object_id_t obj)
     }
     return (obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0;
 }
+
+// 0x43EAF0
+void object_set_offset(object_id_t obj, int offset_x, int offset_y)
+{
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+        sub_4423E0(obj, offset_x, offset_y);
+    }
+}
