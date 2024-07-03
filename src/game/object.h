@@ -1,0 +1,4 @@
+#ifndef ARCANUM_GAME_OBJECT_H_
+#define ARCANUM_GAME_OBJECT_H_
+
+#endif /* ARCANUM_GAME_OBJECT_H_ */
