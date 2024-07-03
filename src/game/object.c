@@ -172,3 +172,20 @@ void object_set_offset(object_id_t obj, int offset_x, int offset_y)
         sub_4423E0(obj, offset_x, offset_y);
     }
 }
+
+// 0x43EB30
+void object_set_current_aid(object_id_t obj, tig_art_id_t aid)
+{
+    TigRect dirty_rect;
+    TigRect update_rect;
+
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+        object_get_rect(obj, 0x7, &dirty_rect);
+        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
+        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+        object_get_rect(obj, 0x7, &update_rect);
+        tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
+        dword_5E2EB4(&dirty_rect);
+        sub_43F710(obj);
+    }
+}
