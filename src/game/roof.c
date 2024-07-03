@@ -27,3 +27,9 @@ int64_t sub_4395E0(int64_t a1)
     return ((a1 & 0xFFFFFFFF) - (a1 & 0xFFFFFFFF) % 4 + 2)
         | (((a1 >> 32) - (a1 >> 32) % 4 + 2) << 32);
 }
+
+// 0x439EA0
+void sub_439EA0(int64_t a1)
+{
+    sub_43A1A0(sub_4395E0(a1), 0, -1);
+}
