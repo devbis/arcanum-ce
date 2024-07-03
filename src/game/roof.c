@@ -75,3 +75,12 @@ bool sub_439FA0(int64_t a1)
 
     return false;
 }
+
+// 0x439FF0
+bool sub_439FF0(int64_t a1, int64_t a2, int a3)
+{
+    int64_t v1;
+
+    sub_4B8730(a1, a2, &v1);
+    return sub_43A030(v1, a3);
+}
