@@ -96,3 +96,9 @@ void sub_43A110(int a1)
         dword_5E2E34(0);
     }
 }
+
+// 0x43A130
+int sub_43A130()
+{
+    return dword_5A53A0;
+}
