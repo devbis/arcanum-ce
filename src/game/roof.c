@@ -20,3 +20,10 @@ int sub_4395C0(int a1)
 {
     return ((a1 >> 2) & 0xF) + ((a1 >> 8) << 4);
 }
+
+// 0x4395E0
+int64_t sub_4395E0(int64_t a1)
+{
+    return ((a1 & 0xFFFFFFFF) - (a1 & 0xFFFFFFFF) % 4 + 2)
+        | (((a1 >> 32) - (a1 >> 32) % 4 + 2) << 32);
+}
