@@ -106,3 +106,33 @@ int sub_43D690(object_id_t obj)
 
     return object_get_hp_pts(obj);
 }
+
+// 0x43D880
+int object_get_ac(object_id_t obj, bool a2)
+{
+    int ac;
+    int type;
+    int index;
+    object_id_t item_obj;
+
+    ac = obj_f_get_int32(obj, OBJ_F_AC);
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+        for (index = 1000; index <= 1008; index++) {
+            item_obj = item_wield_get(obj, index);
+            if (item_obj != OBJ_HANDLE_NULL) {
+                ac += sub_465BA0(obj, item_obj, a2);
+            }
+        }
+    } else if (type == OBJ_TYPE_ITEM_ARMOR) {
+        ac += sub_465BA0(obj, OBJ_HANDLE_NULL, a2);
+    }
+
+    if (ac < 0) {
+        ac = 0;
+    } else if (ac > 95) {
+        ac = 95;
+    }
+
+    return ac;
+}
