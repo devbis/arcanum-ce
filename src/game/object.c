@@ -208,3 +208,22 @@ void object_set_light(object_id_t obj, unsigned int flags, tig_art_id_t aid, tig
     obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
     sub_4D9590(obj, true);
 }
+
+// 0x43EE10
+void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, tig_art_id_t aid, tig_color_t color)
+{
+    int light_handle;
+
+    if (aid == TIG_ART_ID_INVALID) {
+        light_handle = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+        if (light_handle != 0) {
+            sub_4D8620(light_handle);
+        }
+    }
+
+    sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_FLAGS, flags);
+    sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_AID, aid);
+    sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_COLOR, color);
+    obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+    sub_4D9590(obj, true);
+}
