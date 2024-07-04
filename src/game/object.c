@@ -513,3 +513,23 @@ void sub_43FCB0(object_id_t obj, int index)
         sub_4DD830(light_handle);
     }
 }
+
+// 0x43FCE0
+void sub_43FCE0(object_id_t obj)
+{
+    tig_art_id_t current_aid;
+    tig_art_id_t next_aid;
+    TigRect dirty_rect;
+
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+        object_get_rect(obj, 0x7, &dirty_rect);
+        current_aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        next_aid = tig_art_id_rotation_inc(current_aid);
+        if (current_aid != next_aid) {
+            dword_5E2EB4(&dirty_rect);
+            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, next_aid);
+            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            sub_4423E0(obj, 0, 0);
+        }
+    }
+}
