@@ -247,7 +247,7 @@ void object_add_flags(object_id_t obj, unsigned int flags)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
         sub_43D0E0(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
@@ -263,7 +263,7 @@ void object_remove_flags(object_id_t obj, unsigned int flags)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
         sub_43D280(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
@@ -278,7 +278,7 @@ void sub_43F030(object_id_t obj)
 {
     TigRect rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &rect);
         dword_5E2EB4(&rect);
         obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x7000000);
@@ -291,7 +291,7 @@ void sub_43F090(object_id_t obj)
     tig_art_id_t aid;
     TigRect rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
         aid = tig_art_palette_set(tig_art_palette_get(aid) + 1);
         if (sub_502E00(aid) == TIG_OK) {
@@ -310,7 +310,7 @@ void sub_43F130(object_id_t obj, int palette)
     tig_art_id_t aid;
     TigRect rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
         aid = tig_art_palette_set(aid, palette);
         // NOTE: Looks wrong.
@@ -326,7 +326,7 @@ void sub_43F130(object_id_t obj, int palette)
 // 0x43F630
 bool object_is_destroyed(object_id_t obj)
 {
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
         return false;
     }
 
