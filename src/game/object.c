@@ -5,6 +5,7 @@
 #include "game/lib/effect.h"
 #include "game/lib/object.h"
 #include "game/lib/stat.h"
+#include "game/lib/timeevent.h"
 
 // 0x43D410
 int object_get_hp_pts(object_id_t obj)
@@ -619,4 +620,34 @@ bool object_is_locked(object_id_t obj)
     }
 
     return (flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED)) != 0;
+}
+
+// 0x441DD0
+bool sub_441DD0(object_id_t obj, bool a2)
+{
+    int type;
+    unsigned int flags;
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    if (!object_is_lockable(obj)) {
+        return false;
+    }
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    flags = obj_f_get_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED)) != 0 && !a2) {
+        timeevent.type = TIMEEVENT_TYPE_LOCK;
+        timeevent.params[0].object_value = obj;
+        sub_45A950(&datetime, 3600000);
+        sub_45B800(&timeevent, &datetime);
+    }
+
+    flags &= ~(type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED);
+    if (a2) {
+        flags |= (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED);
+    }
+    obj_f_set_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
+
+    return object_is_locked(obj);
 }
