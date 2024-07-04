@@ -256,3 +256,19 @@ void object_add_flags(object_id_t obj, unsigned int flags)
         obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
     }
 }
+
+// 0x43EFA0
+void object_remove_flags(object_id_t obj, unsigned int flags)
+{
+    TigRect dirty_rect;
+    TigRect update_rect;
+
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+        object_get_rect(obj, 0x7, &dirty_rect);
+        sub_43D280(obj, flags);
+        object_get_rect(obj, 0x7, &update_rect);
+        tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
+        dword_5E2EB4(&dirty_rect);
+        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
+    }
+}
