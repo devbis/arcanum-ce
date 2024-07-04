@@ -491,3 +491,14 @@ void sub_43FBF0(object_id_t obj, int index)
         }
     }
 }
+
+// 0x43FC80
+void sub_43FC80(object_id_t obj, int index)
+{
+    int light_handle;
+
+    light_handle = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+    if (light_handle != 0) {
+        sub_4DD720(light_handle);
+    }
+}
