@@ -227,3 +227,16 @@ void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, ti
     obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
     sub_4D9590(obj, true);
 }
+
+// 0x43EEB0
+void object_set_blit_scale(object_id_t obj, int value)
+{
+    TigRect dirty_rect;
+    TigRect update_rect;
+
+    object_get_rect(obj, 0x7, &dirty_rect);
+    obj_f_set_int32(obj, OBJ_F_BLIT_SCALE, value);
+    object_get_rect(obj, 0x7, &update_rect);
+    tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
+    dword_5E2EB4(&dirty_rect);
+}
