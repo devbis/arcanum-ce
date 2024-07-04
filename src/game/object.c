@@ -322,3 +322,35 @@ void sub_43F130(object_id_t obj, int palette)
         }
     }
 }
+
+// 0x43F630
+bool object_is_destroyed(object_id_t obj)
+{
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
+        return false;
+    }
+
+    switch (obj_f_get_int32(obj, OBJ_F_TYPE)) {
+    case OBJ_TYPE_PORTAL:
+        return (obj_f_get_int32(obj, OBJ_F_PORTAL_FLAGS) & OPF_BUSTED) != 0;
+    case OBJ_TYPE_CONTAINER:
+        return (obj_f_get_int32(obj, OBJ_F_CONTAINER_FLAGS) & OCOF_BUSTED) != 0;
+    case OBJ_TYPE_SCENERY:
+        return (obj_f_get_int32(obj, OBJ_F_SCENERY_FLAGS) & OSCF_BUSTED) != 0;
+    case OBJ_TYPE_WEAPON:
+    case OBJ_TYPE_AMMO:
+    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_ITEM_GENERIC:
+        return tig_art_item_id_destroyed_get(obj_f_get_int32(obj)) != 0;
+    case OBJ_TYPE_TRAP:
+        return (obj_f_get_int32(obj, OBJ_F_TRAP_FLAGS) & OTF_BUSTED) != 0;
+    }
+
+    return false;
+}
