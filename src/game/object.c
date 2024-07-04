@@ -584,3 +584,39 @@ bool sub_441CF0(object_id_t obj)
     type = obj_f_get_int32(obj, OBJ_F_TYPE);
     return type == OBJ_TYPE_CONTAINER || type == OBJ_TYPE_PORTAL;
 }
+
+// 0x441D40
+bool object_is_locked(object_id_t obj)
+{
+    int type;
+    unsigned int flags;
+    int hour;
+
+    if (!sub_441CF0(obj)) {
+        return false;
+    }
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    flags = obj_f_get_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_BUSTED : OCOF_BUSTED)) != 0) {
+        return false;
+    }
+
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_NEVER_LOCKED : OCOF_NEVER_LOCKED)) != 0) {
+        return false;
+    }
+
+    hour = game_time_hour();
+
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED_DAY : OCOF_LOCKED_DAY)) != 0
+        && (hour < 7 || hour > 21)) {
+        return false;
+    }
+
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED_NIGHT : OCOF_LOCKED_NIGHT)) != 0
+        && (hour >= 7 && hour <= 21)) {
+        return false;
+    }
+
+    return (flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED)) != 0;
+}
