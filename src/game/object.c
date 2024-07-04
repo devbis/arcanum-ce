@@ -555,3 +555,19 @@ int sub_441B20(object_id_t obj1, object_id_t obj2)
     location2 = obj_f_get_int64(obj2, OBJ_F_LOCATION);
     return sub_4B8D50(location1, location2);
 }
+
+// 0x441C70
+void sub_441C70(object_id_t obj, int a2, int gender, int race)
+{
+    tig_art_id_t aid;
+
+    stat_set_base(obj, STAT_RACE, race);
+    stat_set_base(obj, STAT_GENDER, gender);
+
+    aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    aid = sub_503ED0(aid, a2);
+    aid = sub_503FE0(aid, gender);
+    obj_f_set_int32(obj, OBJ_F_AID, aid);
+    obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
+    obj_f_set_int32(obj, OBJ_F_SOUND_EFFECT, 10 * (gender + 2 * race + 1));
+}
