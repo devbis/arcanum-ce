@@ -284,3 +284,22 @@ void sub_43F030(object_id_t obj)
         obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x7000000);
     }
 }
+
+// 0x43F090
+void sub_43F090(object_id_t obj)
+{
+    tig_art_id_t aid;
+    TigRect rect;
+
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+        aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        aid = tig_art_palette_set(tig_art_palette_get(aid) + 1);
+        if (sub_502E00(aid) == TIG_OK) {
+            aid = tig_art_palette_set(aid, 0);
+        }
+        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
+        object_get_rect(obj, 0, &rect);
+        dword_5E2EB4(&rect);
+        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x3000000);
+    }
+}
