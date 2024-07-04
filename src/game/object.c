@@ -474,3 +474,20 @@ void sub_43FB80(object_id_t obj, int index)
         sub_4D9590(obj, true);
     }
 }
+
+// 0x43FBF0
+void sub_43FBF0(object_id_t obj, int index)
+{
+    tig_art_id_t aid;
+    TigArtAnimData art_anim_data;
+
+    aid = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+    if (tig_art_anim_data(aid, &art_anim_data) == TIG_OK) {
+        if (tig_art_id_frame_get(aid) != art_anim_data.num_frames - 1) {
+            aid = tig_art_id_frame_set(aid, art_anim_data.num_frames - 1);
+            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
+            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+            sub_4D9590(obj, true);
+        }
+    }
+}
