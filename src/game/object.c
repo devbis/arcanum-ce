@@ -303,3 +303,22 @@ void sub_43F090(object_id_t obj)
         obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x3000000);
     }
 }
+
+// 0x43F130
+void sub_43F130(object_id_t obj, int palette)
+{
+    tig_art_id_t aid;
+    TigRect rect;
+
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+        aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        aid = tig_art_palette_set(aid, palette);
+        // NOTE: Looks wrong.
+        if (sub_502E00(aid) != TIG_OK) {
+            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
+            object_get_rect(obj, 0, &rect);
+            dword_5E2EB4(&rect);
+            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x2000000);
+        }
+    }
+}
