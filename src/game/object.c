@@ -573,7 +573,7 @@ void sub_441C70(object_id_t obj, int a2, int gender, int race)
 }
 
 // 0x441CF0
-bool sub_441CF0(object_id_t obj)
+bool object_is_lockable(object_id_t obj)
 {
     int type;
 
@@ -592,7 +592,7 @@ bool object_is_locked(object_id_t obj)
     unsigned int flags;
     int hour;
 
-    if (!sub_441CF0(obj)) {
+    if (!object_is_lockable(obj)) {
         return false;
     }
 
