@@ -533,3 +533,14 @@ void sub_43FCE0(object_id_t obj)
         }
     }
 }
+
+// 0x441AE0
+int sub_441AE0(object_id_t obj1, object_id_t obj2)
+{
+    int64_t location1;
+    int64_t location2;
+
+    location1 = obj_f_get_int64(obj1, OBJ_F_LOCATION);
+    location2 = obj_f_get_int64(obj2, OBJ_F_LOCATION);
+    return sub_4B96F0(location1, location2);
+}
