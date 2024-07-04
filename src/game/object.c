@@ -460,3 +460,17 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
         }
     }
 }
+
+// 0x43FB80
+void sub_43FB80(object_id_t obj, int index)
+{
+    tig_art_id_t aid;
+
+    aid = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+    if (tig_art_id_frame_get(aid) != 0) {
+        aid = tig_art_id_frame_set(aid, 0);
+        sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
+        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+        sub_4D9590(obj, true);
+    }
+}
