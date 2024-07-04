@@ -651,3 +651,26 @@ bool sub_441DD0(object_id_t obj, bool a2)
 
     return object_is_locked(obj);
 }
+
+// 0x441E90
+bool object_lock_timeevent_process(TimeEvent* timeevent)
+{
+    object_id_t obj;
+    tig_art_id_t aid;
+
+    obj = timeevent->params[0].object_value;
+    sub_441DD0(obj, true);
+    sub_441F10(obj, false);
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PORTAL) {
+        if (sub_4F08C0(obj)) {
+            sub_4F08F0(obj);
+        }
+    } else {
+        aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        if (tig_art_id_frame_get(aid) == 1) {
+            object_dec_current_aid(obj);
+        }
+    }
+
+    return true;
+}
