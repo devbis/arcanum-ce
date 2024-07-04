@@ -354,3 +354,33 @@ bool object_is_destroyed(object_id_t obj)
 
     return false;
 }
+
+// 0x43F7F0
+void object_inc_current_aid(object_id_t obj)
+{
+    tig_art_id_t current_aid;
+    tig_art_id_t next_aid;
+    TigArtFrameData art_frame_data;
+    TigRect dirty_rect;
+    TigRect update_rect;
+
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+        object_get_rect(obj, 0x7, &dirty_rect);
+        current_aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        next_aid = tig_art_id_frame_inc(current_aid);
+        if (current_aid != next_aid) {
+            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, next_aid);
+            if (tig_art_frame_data(next_aid, &art_frame_data) == TIG_OK) {
+                if (art_frame_data.offset_x != 0 || art_frame_data.offset_y != 0) {
+                    sub_4423E0(next_aid,
+                        art_frame_data.offset_x + obj_f_get_int32(OBJ_F_OFFSET_X),
+                        art_frame_data.offset_y + obj_f_get_int32(OBJ_F_OFFSET_Y));
+                }
+            }
+            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            object_get_rect(obj, 0x7, &update_rect);
+            tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
+            dword_5E2EB4(&dirty_rect);
+        }
+    }
+}
