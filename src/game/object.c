@@ -571,3 +571,16 @@ void sub_441C70(object_id_t obj, int a2, int gender, int race)
     obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
     obj_f_set_int32(obj, OBJ_F_SOUND_EFFECT, 10 * (gender + 2 * race + 1));
 }
+
+// 0x441CF0
+bool sub_441CF0(object_id_t obj)
+{
+    int type;
+
+    if (sub_49B290(obj) == 3023) {
+        return false;
+    }
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    return type == OBJ_TYPE_CONTAINER || type == OBJ_TYPE_PORTAL;
+}
