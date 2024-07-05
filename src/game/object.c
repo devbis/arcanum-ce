@@ -678,6 +678,16 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x443770
+void sub_443770(object_id_t obj)
+{
+    sub_4D9A90(obj);
+    sub_4437C0(obj);
+    sub_442D50(obj);
+    sub_442FA0(obj);
+    obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x76000000);
+}
+
 // 0x4437C0
 void sub_4437C0(object_id_t obj)
 {
