@@ -4,6 +4,7 @@
 
 #include "game/lib/effect.h"
 #include "game/lib/object.h"
+#include "game/lib/player.h"
 #include "game/lib/stat.h"
 #include "game/lib/timeevent.h"
 
@@ -679,6 +680,16 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     }
 
     return true;
+}
+
+// 0x442010
+void sub_442010(int a1)
+{
+    dword_5A54AC = a1;
+    if (dword_5E2EB4 != NULL) {
+        dword_5E2EB4(NULL);
+        sub_438530(player_get_pc_obj());
+    }
 }
 
 // 0x442040
