@@ -678,6 +678,32 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x442F10
+void sub_442F10(object_id_t obj, const tig_color_t* colors)
+{
+    tig_color_t* render_colors;
+    tig_art_id_t aid;
+    TigArtFrameData art_frame_data;
+    tig_color_t color;
+
+    render_colors = obj_f_get_int32(obj, OBJ_F_RENDER_COLORS);
+    if (render_colors == NULL) {
+        render_colors = sub_442FE0();
+        obj_f_set_int32(obj, OBJ_F_RENDER_COLORS, render_colors);
+    }
+
+    memcpy(render_colors, colors, sizeof(tig_color_t) * 160);
+
+    aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    if (tig_art_frame_data(aid, &art_frame_data) == TIG_OK) {
+        color = render_colors[art_frame_data.width / 2];
+    } else {
+        color = render_colors[40];
+    }
+
+    obj_f_set_int32(obj, OBJ_F_COLOR, color);
+}
+
 // 0x442FA0
 void sub_442FA0(object_id_t obj)
 {
