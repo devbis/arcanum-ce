@@ -682,6 +682,34 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x441F10
+bool sub_441F10(object_id_t obj, bool a2)
+{
+    int type;
+    unsigned int flags;
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    if (!object_is_lockable(obj)) {
+        return false;
+    }
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    flags = obj_f_get_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED)) == 0 && a2) {
+        timeevent.type = TIMEEVENT_TYPE_LOCK;
+        timeevent.params[0].object_value = obj;
+        sub_45A950(&datetime, 86400000);
+        sub_45B800(&timeevent, &datetime);
+    }
+
+    flags &= ~(type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED);
+    if (a2) {
+        flags |= (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED);
+    }
+    obj_f_set_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
+}
+
 // 0x441FC0
 void sub_441FC0(object_id_t obj, int a2)
 {
