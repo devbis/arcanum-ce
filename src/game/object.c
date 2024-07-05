@@ -678,6 +678,18 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x442D50
+void object_clear_render_palette(object_id_t obj)
+{
+    TigPalette palette;
+
+    palette = obj_f_get_int32(obj, OBJ_F_RENDER_PALETTE);
+    if (palette != NULL) {
+        tig_palette_destroy(palette);
+        obj_f_set_int32(obj, OBJ_F_RENDER_PALETTE, NULL);
+    }
+}
+
 // 0x442ED0
 int object_get_render_palette(object_id_t obj)
 {
