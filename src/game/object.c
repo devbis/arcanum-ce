@@ -682,6 +682,17 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x441FC0
+void sub_441FC0(object_id_t obj, int a2)
+{
+    if (!dword_5E2F58) {
+        if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+            && (obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+            sub_4AD790(obj, a2);
+        }
+    }
+}
+
 // 0x442010
 void sub_442010(int a1)
 {
