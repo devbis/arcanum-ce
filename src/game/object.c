@@ -331,6 +331,19 @@ void sub_43F130(object_id_t obj, int palette)
     }
 }
 
+// 0x43F5F0
+bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
+{
+    object_id_t obj;
+
+    obj = timeevent->params[0].object_value;
+    // TODO: 0x400 is not in OSCF enum.
+    obj_f_set_int32(obj,
+        OBJ_F_SCENERY_FLAGS,
+        obj_f_get_int32(obj, OBJ_F_SCENERY_FLAGS) & ~0x400);
+    sub_43D280(obj, OF_OFF);
+}
+
 // 0x43F630
 bool object_is_destroyed(object_id_t obj)
 {
