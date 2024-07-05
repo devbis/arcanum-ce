@@ -1304,12 +1304,6 @@ int sub_441960(void* a1)
     return 1;
 }
 
-// 0x442040
-int sub_442040()
-{
-    return dword_5A54AC;
-}
-
 // 0x4437C0
 int sub_4437C0(int a1, int a2)
 {

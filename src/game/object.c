@@ -7,6 +7,9 @@
 #include "game/lib/stat.h"
 #include "game/lib/timeevent.h"
 
+// 0x5A54AC
+static int dword_5A54AC = 256;
+
 // 0x5E2F2C
 static bool object_lighting;
 
@@ -676,6 +679,12 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     }
 
     return true;
+}
+
+// 0x442040
+int sub_442040()
+{
+    return dword_5A54AC;
 }
 
 // 0x442D50
