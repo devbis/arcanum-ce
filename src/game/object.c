@@ -678,6 +678,12 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x4437C0
+void sub_4437C0(object_id_t obj)
+{
+    sub_4DA310(obj);
+}
+
 // 0x444690
 void object_lighting_changed()
 {
