@@ -678,6 +678,19 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x442ED0
+int object_get_render_palette(object_id_t obj)
+{
+    TigPalette palette;
+
+    palette = obj_f_get_int32(obj, OBJ_F_RENDER_PALETTE);
+    if (palette == NULL) {
+        palette = tig_palette_create();
+        obj_f_set_int32(obj, OBJ_F_RENDER_PALETTE, palette);
+    }
+    return palette;
+}
+
 // 0x442F10
 void sub_442F10(object_id_t obj, const tig_color_t* colors)
 {
