@@ -678,6 +678,18 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     return true;
 }
 
+// 0x442FA0
+void sub_442FA0(object_id_t obj)
+{
+    int colors;
+
+    colors = obj_f_get_int32(obj, OBJ_F_RENDER_COLORS);
+    if (colors != 0) {
+        sub_443010(colors);
+        obj_f_set_int32(obj, OBJ_F_RENDER_COLORS, 0);
+    }
+}
+
 // 0x443770
 void sub_443770(object_id_t obj)
 {
