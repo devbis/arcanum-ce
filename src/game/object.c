@@ -7,6 +7,9 @@
 #include "game/lib/stat.h"
 #include "game/lib/timeevent.h"
 
+// 0x5E2F2C
+static bool object_lighting;
+
 // 0x43D410
 int object_get_hp_pts(object_id_t obj)
 {
@@ -673,4 +676,16 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     }
 
     return true;
+}
+
+// 0x444690
+void object_lighting_changed()
+{
+    object_lighting = settings_get_value(&settings, "object lighting");
+    if (object_lighting < 0) {
+        object_lighting = 0;
+    } else if (object_lighting > 1) { {
+        object_lighting = 1;
+    }
+    dword_5E2EB4(NULL);
 }
