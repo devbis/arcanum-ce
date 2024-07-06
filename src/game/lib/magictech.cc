@@ -1159,6 +1159,27 @@ bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech)
     return sub_450420(obj, cost, false, magictech);
 }
 
+// 0x450A50
+int64_t sub_450A50(object_id_t obj)
+{
+    int type;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return 0;
+    }
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    if (type != OBJ_TYPE_PC
+        && type != OBJ_TYPE_NPC
+        && type >= OBJ_TYPE_WEAPON
+        && type <= OBJ_TYPE_ITEM_GENERIC
+        && (obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
+        return obj_f_get_handle(obj, OBJ_F_ITEM_PARENT);
+    }
+
+    return obj;
+}
+
 // 0x450B90
 int sub_450B90(object_id_t obj)
 {
