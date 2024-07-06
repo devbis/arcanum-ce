@@ -11,6 +11,9 @@
 // 0x5A54AC
 static int dword_5A54AC = 256;
 
+// 0x5E2ED4
+static int dword_5E2ED4[18];
+
 // 0x5E2F28
 static bool dword_5E2F28;
 
@@ -22,6 +25,12 @@ static int dword_5E2F88;
 
 // 0x5E2EC8
 static int dword_5E2EC8;
+
+// 0x43AA80
+void sub_43AA80(int a1)
+{
+    dword_5E2ED4[a1] = 1 - dword_5E2ED4[a1];
+}
 
 // 0x43AAA0
 bool sub_43AAA0()
