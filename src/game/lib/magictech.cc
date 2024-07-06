@@ -1445,3 +1445,9 @@ bool sub_459F60(int magictech)
 {
     return (magictech_spells[magictech].flags & 8) != 0;
 }
+
+// 0x459F90
+bool sub_459F90(int magictech)
+{
+    return (magictech_spells[magictech].flags & 4) == 0;
+}
