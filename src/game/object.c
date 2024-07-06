@@ -14,6 +14,26 @@ static int dword_5A54AC = 256;
 // 0x5E2F2C
 static bool object_lighting;
 
+// 0x43CFF0
+void sub_43CFF0(object_id_t obj)
+{
+    unsigned int flags;
+
+    flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+    if ((flags & OF_TEXT) != 0) {
+        sub_4D62B0(obj);
+    }
+    if ((flags & OF_TEXT_FLOATER) != 0) {
+        sub_4D56C0(obj);
+    }
+    sub_423FF0(obj);
+    sub_459740(obj);
+    sub_4AD7D0(obj);
+    sub_4601D0(obj);
+    sub_443770(obj);
+    sub_405BF0(obj);
+}
+
 // 0x43D410
 int object_get_hp_pts(object_id_t obj)
 {
