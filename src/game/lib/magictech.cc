@@ -3,6 +3,7 @@
 #include "game/lib/animfx.h"
 #include "game/lib/message.h"
 #include "game/lib/stat.h"
+#include "game/lib/timeevent.h"
 #include "tig/str_parse.h"
 
 typedef enum MagicTechFlagCollection {
@@ -1431,6 +1432,29 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
     if (tig_str_parse_named_value(&curr, "No_Reflect:", &value1)) {
         info->flags |= 0x400;
     }
+}
+
+// 0x459590
+bool sub_459590(object_id_t obj, int a2, bool a3)
+{
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    dword_5E7608 = a2;
+    qword_5E7610 = obj;
+    dword_5E760C = sub_45A7F0();
+
+    if (a3 && sub_45C140(TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM, sub_459640)) {
+        return true;
+    }
+
+    timeevent.type = TIMEEVENT_TYPE_RECHARGE_MAGIC_ITEM;
+    timeevent.params[0].object_value = obj;
+    timeevent.params[1].integer_value = dword_5E760C;
+    timeevent.params[2].integer_value = dword_5E7608;
+    sub_45A950(&datetime, 60000);
+    datetime.milliseconds *= 8;
+    return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x459F20
