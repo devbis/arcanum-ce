@@ -23,6 +23,12 @@ static int dword_5E2F88;
 // 0x5E2EC8
 static int dword_5E2EC8;
 
+// 0x43AAA0
+bool sub_43AAA0()
+{
+    return dword_5E2F28;
+}
+
 // 0x43AAB0
 void sub_43AAB0()
 {
