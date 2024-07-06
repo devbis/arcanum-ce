@@ -88,8 +88,8 @@ static bool dword_5D1A6C;
 // 0x5D1A70
 static int dword_5D1A70;
 
-// 0x5D1A88
-static int64_t qword_5D1A88;
+// 0x5D1A78
+static int64_t sound_minimum_radius[TIG_SOUND_SIZE_COUNT];
 
 // 0x5D1A98
 static SoundSchemeList stru_5D1A98[TWO];
@@ -112,11 +112,14 @@ static int dword_5D5598;
 // 0x5D559C
 static int gsound_effects_volume;
 
-// 0x5D55C8
-static int64_t qword_5D55C8;
+// 0x5D55A0
+static int sound_maximum_volume[TIG_SOUND_SIZE_COUNT];
 
 // 0x5D55B0
 static int dword_5D55B0;
+
+// 0x5D55B8
+static int64_t sound_maximum_radius[TIG_SOUND_SIZE_COUNT];
 
 // NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
 // compatibility.
@@ -362,34 +365,33 @@ int gsound_play_sfx_id(int id, int loops)
 }
 
 // 0x41B980
-int sub_41B980(object_id_t object_id)
+TigSoundPositionalSize gsound_get_positional_size(object_id_t object_id)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_SCENERY) {
-        return 2;
+    unsigned int flags;
+
+    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
+        flags = object_field_get(object_id, OBJ_F_SCENERY_FLAGS);
+        if ((flags & OSCF_SOUND_SMALL) != 0) {
+            return TIG_SOUND_SIZE_SMALL;
+        }
+        if ((flags & OSCF_SOUND_MEDIUM) != 0) {
+            return TIG_SOUND_SIZE_MEDIUM;
+        }
+        if ((flags & OSCF_SOUND_EXTRA_LARGE) != 0) {
+            return TIG_SOUND_SIZE_EXTRA_LARGE;
+        }
     }
 
-    unsigned int flags = object_field_get(object_id, OBJ_F_SCENERY_FLAGS);
-
-    if ((flags & SCENERY_FLAG_0x40) != 0) {
-        return 0;
-    }
-
-    if ((flags & SCENERY_FLAG_0x80) != 0) {
-        return 1;
-    }
-
-    if ((flags & SCENERY_FLAG_0x100) != 0) {
-        return 2;
-    }
-
-    return 3;
+    return TIG_SOUND_SIZE_LARGE;
 }
 
 // 0x41B9E0
 int sub_41B9E0(object_id_t obj)
 {
-    int v1 = sub_41B980(obj);
-    return (int)sound_maximum_radius[v1] / 40;
+    TigSoundPositionalSize size;
+
+    size = gsound_get_positional_size(obj);
+    return (int)sound_maximum_radius[size] / 40;
 }
 
 // 0x41BAC0
@@ -764,8 +766,8 @@ void sub_41C780(tig_sound_handle_t sound_handle, int64_t location)
 void sub_41C850(int a1, int a2, int a3, int a4)
 {
     if (dword_5D1A6C) {
-        qword_5D1A88 = a1;
-        qword_5D55C8 = a2;
+        sound_minimum_radius[TIG_SOUND_SIZE_LARGE] = a1;
+        sound_maximum_radius[TIG_SOUND_SIZE_LARGE] = a2;
         qword_5D1A60 = a3;
         qword_5D1A20 = a4;
         sub_41B3A0();
