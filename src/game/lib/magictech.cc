@@ -79,6 +79,7 @@ typedef struct MagicTechInfo {
     int end_callback_target;
     int missile;
     int casting_anim;
+    int field_70;
     int field_80;
     MagicTech_EC field_EC[5];
     int no_stack;
@@ -1430,4 +1431,11 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
     if (tig_str_parse_named_value(&curr, "No_Reflect:", &value1)) {
         info->flags |= 0x400;
     }
+}
+
+// 0x459F20
+bool sub_459F20(int magictech, int* a2)
+{
+    *a2 = magictech_spells[magictech].field_70;
+    return true;
 }
