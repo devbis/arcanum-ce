@@ -258,9 +258,13 @@ bool sub_45D730(long long obj)
 }
 
 // 0x45D790
-void sub_45D790()
+bool sub_45D790(long long obj)
 {
-    // TODO: Incomplete.
+    return (obj_f_get_int32(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0
+        && !sub_45D8D0(obj)
+        && !sub_45D800(obj)
+        && (obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) & (OCF_STUNNED | OCF_PARALYZED)) == 0
+        && (obj_f_get_int32(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0;
 }
 
 // 0x45D800
