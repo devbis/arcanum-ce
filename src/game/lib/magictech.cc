@@ -1439,3 +1439,9 @@ bool sub_459F20(int magictech, int* a2)
     *a2 = magictech_spells[magictech].field_70;
     return true;
 }
+
+// 0x459F60
+bool sub_459F60(int magictech)
+{
+    return (magictech_spells[magictech].flags & 8) != 0;
+}
