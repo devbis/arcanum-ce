@@ -1487,3 +1487,20 @@ bool sub_45A030(int magictech)
 {
     return magictech_spells[magictech].item_triggers != 0;
 }
+
+// 0x45A760
+void sub_45A760(object_id_t obj, const char* msg)
+{
+    // 0x5E6D94
+    static char buffer[2000];
+
+    if (obj != OBJ_HANDLE_NULL) {
+        sub_441B60(obj, obj, buffer);
+        tig_debug_printf("\t%s: %s(%I64d), Loc: [%I64d x %I64d]\n",
+            msg,
+            buffer,
+            obj,
+            obj_f_get_int64(obj, OBJ_F_LOCATION),
+            obj_f_get_int64(obj, OBJ_F_LOCATION));
+    }
+}
