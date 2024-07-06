@@ -236,7 +236,25 @@ int sub_45D700(long long obj)
 // 0x45D730
 bool sub_45D730(long long obj)
 {
-    // TODO: Incomplete.
+    int type;
+    tig_art_id_t aid;
+
+    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return false;
+    }
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    // NOTE: Looks wrong, `sub_503E20` always returns 0 for pc/npc.
+    aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    if (sub_503E20(aid) != 7) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x45D790
