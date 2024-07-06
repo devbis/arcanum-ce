@@ -1457,3 +1457,9 @@ bool sub_459FC0(int magictech)
 {
     return (magictech_spells[magictech].flags & 4) != 0;
 }
+
+// 0x45A030
+bool sub_45A030(int magictech)
+{
+    return magictech_spells[magictech].item_triggers != 0;
+}
