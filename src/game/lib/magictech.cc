@@ -1135,6 +1135,30 @@ bool sub_4507D0(object_id_t obj, int magictech)
     return sub_450420(obj, cost, true, magictech);
 }
 
+// 0x4508A0
+bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech)
+{
+    int cost;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        tig_debug_printf("\tMagicTech: magictech_can_charge_spell_fatigue: Maintain cannot charge!\n");
+        return false;
+    }
+
+    cost = magictech_spells[magictech].cost;
+    if (dword_5E75FC) {
+        cost = 1;
+    }
+
+    if ((obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+            || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+        && stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        cost *= 2;
+    }
+
+    return sub_450420(obj, cost, false, magictech);
+}
+
 // 0x450B90
 int sub_450B90(object_id_t obj)
 {
