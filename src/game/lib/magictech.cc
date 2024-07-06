@@ -1105,6 +1105,36 @@ void sub_4507B0(object_id_t obj, int magictech)
     sub_4507D0(obj, magictech);
 }
 
+// 0x4507D0
+bool sub_4507D0(object_id_t obj, int magictech)
+{
+    int cost;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    cost = magictech_spells[magictech].cost;
+    if (magictech >= 0 && magictech < MT_80 && sub_4B1CB0(obj) == magictech / 5) {
+        cost /= 2;
+        if ((cost & 1) != 0) {
+            cost++;
+        }
+    }
+
+    if (dword_5E75FC) {
+        cost = 1;
+    }
+
+    if ((obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+            || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+        && stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        cost *= 2;
+    }
+
+    return sub_450420(obj, cost, true, magictech);
+}
+
 // 0x450B90
 int sub_450B90(object_id_t obj)
 {
