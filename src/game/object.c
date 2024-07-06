@@ -11,8 +11,30 @@
 // 0x5A54AC
 static int dword_5A54AC = 256;
 
+// 0x5E2F28
+static bool dword_5E2F28;
+
 // 0x5E2F2C
 static bool object_lighting;
+
+// 0x5E2F88
+static int dword_5E2F88;
+
+// 0x5E2EC8
+static int dword_5E2EC8;
+
+// 0x43AAB0
+void sub_43AAB0()
+{
+    dword_5E2F28 = 1 - dword_5E2F28;
+    if (dword_5E2F28) {
+        dword_5E2F88 = 3;
+        dword_5E2EC8 = 256;
+    } else {
+        dword_5E2F88 = 0;
+        dword_5E2EC8 = 0;
+    }
+}
 
 // 0x43CFF0
 void sub_43CFF0(object_id_t obj)
