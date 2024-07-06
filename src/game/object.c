@@ -26,6 +26,12 @@ static int dword_5E2F88;
 // 0x5E2EC8
 static int dword_5E2EC8;
 
+// 0x43AA70
+bool sub_43AA70(int a1)
+{
+    return dword_5E2ED4[a1];
+}
+
 // 0x43AA80
 void sub_43AA80(int a1)
 {
