@@ -1099,6 +1099,12 @@ int magictech_get_duration1(int magictech)
     return magictech_spells[magictech].duration1;
 }
 
+// 0x4507B0
+void sub_4507B0(object_id_t obj, int magictech)
+{
+    sub_4507D0(obj, magictech);
+}
+
 // 0x450B90
 int sub_450B90(object_id_t obj)
 {
