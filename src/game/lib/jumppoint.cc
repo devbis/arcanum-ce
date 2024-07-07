@@ -199,6 +199,15 @@ bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint)
     return false;
 }
 
+// 0x4E36A0
+void sub_4E36A0(int jumppoint)
+{
+    TigRect rect;
+
+    jumppoint_get_rect(jumppoint, &rect);
+    dword_60355C(&rect);
+}
+
 // 0x4E3800
 bool jumppoint_read_all(TigFile* stream)
 {
