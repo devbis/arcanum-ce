@@ -11,6 +11,6 @@ bool sub_4E3050(void* a1);
 bool jumppoint_open(const char* a1, const char* a2);
 void jumppoint_close();
 bool sub_4E3270();
-bool wall_update_view(ViewOptions* view_options);
+bool jumppoint_update_view(ViewOptions* view_options);
 
 #endif /* ARCANUM_GAME_LIB_JUMPPOINT_H_ */

@@ -177,7 +177,7 @@ bool sub_4E3270()
 }
 
 // 0x4E32D0
-bool wall_update_view(ViewOptions* view_options)
+bool jumppoint_update_view(ViewOptions* view_options)
 {
     jumppoint_view_options = *view_options;
     return true;
