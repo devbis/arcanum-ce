@@ -8,8 +8,7 @@
 typedef struct JumpPoint {
     int field_0;
     int field_4;
-    int field_8;
-    int field_C;
+    int64_t location;
     int field_10;
     int field_14;
     int field_18;
@@ -181,6 +180,23 @@ bool jumppoint_update_view(ViewOptions* view_options)
 {
     jumppoint_view_options = *view_options;
     return true;
+}
+
+// 0x4E3450
+bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint)
+{
+    int index;
+
+    for (index = 0; index < jumppoints_count; index++) {
+        if (jumppoints[index].location == location) {
+            if (jumppoint != NULL) {
+                *jumppoint = jumppoints[index];
+            }
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x4E3800
