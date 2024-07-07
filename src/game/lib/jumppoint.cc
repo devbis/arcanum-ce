@@ -220,6 +220,39 @@ void sub_4E36A0(int jumppoint)
     dword_60355C(&rect);
 }
 
+// 0x4E36D0
+void jumppoint_get_rect(int jumppoint, TigRect* rect)
+{
+    int64_t x;
+    int64_t y;
+    TigArtFrameData art_frame_data;
+
+    sub_4B8680(jumppoints[jumppoint].location, &x, &y);
+    if (x >= INT_MIN && x < INT_MAX
+        && y >= INT_MIN && y < INT_MAX) {
+        if (jumppoint_view_options.type == 1) {
+            rect->x = (int)x;
+            rect->y = (int)y;
+            rect->width = jumppoint_view_options.zoom;
+            rect->height = jumppoint_view_options.zoom;
+            return;
+        }
+
+        if (tig_art_frame_data(dword_603678, &art_frame_data) == TIG_OK) {
+            rect->x = (int)x - art_frame_data.hot_x + 40;
+            rect->y = (int)y - (40 - art_frame_data.height) / 2 - art_frame_data.hot_y + 40;
+            rect->width = art_frame_data.width;
+            rect->height = art_frame_data.height;
+            return;
+        }
+    }
+
+    rect->x = 0;
+    rect->y = 0;
+    rect->width = 0;
+    rect->height = 0;
+}
+
 // 0x4E3800
 bool jumppoint_read_all(TigFile* stream)
 {
