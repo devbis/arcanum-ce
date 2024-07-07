@@ -569,7 +569,7 @@ void sub_40A7B0()
     }
 
     for (index = OBJ_F_TOTAL_NORMAL; index < OBJ_F_END; index++) {
-        object_fields[index].field_14 = false;
+        object_fields[index].field_14 = 0;
     }
 
     object_fields[OBJ_F_RESISTANCE_IDX].field_14 = 5;
