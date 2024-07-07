@@ -39,7 +39,7 @@ static char byte_603560[MAX_PATH];
 static ViewOptions jumppoint_view_options;
 
 // 0x603670
-static int dword_603670;
+static bool dword_603670;
 
 // 0x603674
 static int jumppoint_iso_window_handle;
@@ -72,7 +72,7 @@ bool jumppoint_init(GameContext* ctx)
 
     dword_603680 = 1;
     dword_60367C = 0;
-    dword_603670 = 1;
+    dword_603670 = true;
 
     return true;
 }
@@ -180,6 +180,18 @@ bool jumppoint_update_view(ViewOptions* view_options)
 {
     jumppoint_view_options = *view_options;
     return true;
+}
+
+// 0x4E32F0
+bool sub_4E32F0()
+{
+    return dword_603670;
+}
+
+// 0x4E3300
+void sub_4E3300()
+{
+    dword_603670 = !dword_603670;
 }
 
 // 0x4E3450
