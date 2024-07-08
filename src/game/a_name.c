@@ -1,5 +1,9 @@
 #include "game/a_name.h"
 
+#include <stdio.h>
+
+#include "game/mes.h"
+
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -7,13 +11,13 @@ static bool load_roof_data();
 static bool light_initialized;
 
 // 0x603B70
-static int light_mes_file;
+static mes_file_handle_t light_mes_file;
 
 // 0x603B74
 static char **roof_file_names;
 
 // 0x603B78
-static int roofname_mes_file;
+static mes_file_handle_t roofname_mes_file;
 
 // 0x603B7C
 static int num_roof_file_names;
@@ -53,15 +57,15 @@ bool a_name_light_aid_to_fname(tig_art_id_t aid, char* fname)
         return false;
     }
 
-    mes_file_entry.key = tig_art_num(aid);
+    mes_file_entry.num = tig_art_num_get(aid);
     if (!mes_search(light_mes_file, &mes_file_entry)) {
         return false;
     }
 
     if (sub_504790(aid)) {
-        sprintf(fname, "art\\light\\%s_s%d.art", mes_file_entry.text, sub_504700(aid) / 8);
+        sprintf(fname, "art\\light\\%s_s%d.art", mes_file_entry.str, sub_504700(aid) / 8);
     } else {
-        sprintf(fname, "art\\light\\%s.art", mes_file_entry.text);
+        sprintf(fname, "art\\light\\%s.art", mes_file_entry.str);
     }
 
     return true;
@@ -96,7 +100,7 @@ bool a_name_roof_aid_to_fname(tig_art_id_t aid, char* fname)
         return false;
     }
 
-    return build_roof_file_name(tig_art_num(aid), fname);
+    return build_roof_file_name(tig_art_num_get(aid), fname);
 }
 
 // 0x4ED3A0
@@ -152,8 +156,9 @@ bool load_roof_data()
     }
 
     roof_file_names = MALLOC(sizeof(char*) * num_roof_file_names);
+    index = 0;
     do {
-        roof_file_names[index] = mes_file_entry.text;
+        roof_file_names[index++] = mes_file_entry.str;
     } while (mes_find_next(roofname_mes_file, &mes_file_entry));
 
     return true;
