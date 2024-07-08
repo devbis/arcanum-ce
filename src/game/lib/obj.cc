@@ -1,4 +1,4 @@
-#include "game/lib/object.h"
+#include "game/lib/obj.h"
 
 typedef struct ObjectFieldInfo {
     /* 0000 */ int field_0;
