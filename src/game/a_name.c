@@ -113,6 +113,36 @@ bool a_name_tile_init()
     return true;
 }
 
+// 0x4EAD50
+void a_name_tile_exit()
+{
+    mes_unload(tilename_mes_file);
+
+    FREE(dword_603AF8);
+    FREE(outdoor_flippable_tile_names);
+    FREE(outdoor_non_flippable_tile_names);
+    FREE(indoor_flippable_tile_names);
+    FREE(indoor_non_flippable_tile_names);
+    FREE(outdoor_flippable_tile_flags);
+    FREE(outdoor_non_flippable_tile_flags);
+    FREE(indoor_flippable_tile_flags);
+    FREE(indoor_non_flippable_tile_flags);
+    FREE(outdoor_flippable_tile_sounds);
+    FREE(outdoor_non_flippable_tile_sounds);
+    FREE(indoor_flippable_tile_sounds);
+    FREE(indoor_non_flippable_tile_sounds);
+
+    if (dword_603AE4) {
+        int index;
+
+        for (index = 0; index < 7; index++) {
+            FREE(dword_687660[index]);
+        }
+
+        dword_603AE4 = false;
+    }
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
