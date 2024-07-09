@@ -527,6 +527,21 @@ void a_name_facade_exit()
     }
 }
 
+// 0x4EC3F0
+bool a_name_facade_aid_to_fname(tig_art_id_t aid, char* fname)
+{
+    int num;
+
+    if (tig_art_type(aid) != TIG_ART_TYPE_FACADE) {
+        tig_debug_println("Asking for facade name with non facade art ID.");
+        fname[0] = '\0';
+        return false;
+    }
+
+    num = tig_art_facade_id_num_get(aid);
+    return build_facade_file_name(num, fname);
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
