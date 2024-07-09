@@ -6,6 +6,7 @@
 
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
+static bool count_tile_names();
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -276,6 +277,16 @@ bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr)
         }
     }
     return false;
+}
+
+// 0x4EB270
+bool count_tile_names()
+{
+    num_outdoor_flippable_names = mes_entries_count_in_range(tilename_mes_file, 0, 99);
+    num_outdoor_non_flippable_names = mes_entries_count_in_range(tilename_mes_file, 100, 199);
+    num_indoor_flippable_names = mes_entries_count_in_range(tilename_mes_file, 200, 299);
+    num_indoor_non_flippable_names = mes_entries_count_in_range(tilename_mes_file, 300, 399);
+    return true;
 }
 
 // 0x4ED1E0
