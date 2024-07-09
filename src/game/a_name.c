@@ -80,6 +80,18 @@ static mes_file_handle_t item_ground_mes_file;
 // 0x603B38
 static mes_file_handle_t item_schematic_mes_file;
 
+// 0x603B3C
+static mes_file_handle_t facadename_mes_file;
+
+// 0x603B40
+static char** facade_names;
+
+// 0x603B44
+static int num_facade_names;
+
+// 0x603B48
+static bool facade_initialized;
+
 // 0x603B6C
 static bool light_initialized;
 
@@ -489,6 +501,18 @@ bool a_name_item_aid_to_fname(tig_art_id_t aid, char* fname)
     }
 
     sprintf(fname, "art\\item\\%s", mes_file_entry.str);
+
+    return true;
+}
+
+// 0x4EC370
+bool a_name_facade_init()
+{
+    if (!sub_4EC4B0()) {
+        return false;
+    }
+
+    facade_initialized = true;
 
     return true;
 }

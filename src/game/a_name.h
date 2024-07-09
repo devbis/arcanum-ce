@@ -9,6 +9,7 @@ bool a_name_tile_aid_to_fname(tig_art_id_t aid, char* fname);
 bool a_name_item_init();
 void a_name_item_exit();
 bool a_name_item_aid_to_fname(tig_art_id_t aid, char* fname);
+bool a_name_facade_init();
 bool a_name_light_init();
 void a_name_light_exit();
 bool a_name_light_aid_to_fname(tig_art_id_t aid, char* fname);
