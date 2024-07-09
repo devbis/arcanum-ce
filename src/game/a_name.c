@@ -5,6 +5,7 @@
 #include "game/mes.h"
 
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
+static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -244,6 +245,37 @@ bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, 
             a4 + 'a');
     }
     return true;
+}
+
+// 0x4EB0C0
+bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr)
+{
+    if (flippable) {
+        if (type) {
+            if (num < num_outdoor_flippable_names) {
+                *name_ptr = outdoor_flippable_tile_names[num];
+                return true;
+            }
+        } else {
+            if (num < num_indoor_flippable_names) {
+                *name_ptr = indoor_flippable_tile_names[num];
+                return true;
+            }
+        }
+    } else {
+        if (type) {
+            if (num < num_outdoor_non_flippable_names) {
+                *name_ptr = outdoor_non_flippable_tile_names[num];
+                return true;
+            }
+        } else {
+            if (num < num_indoor_non_flippable_names) {
+                *name_ptr = indoor_non_flippable_tile_names[num];
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // 0x4ED1E0
