@@ -68,6 +68,18 @@ static uint8_t* outdoor_non_flippable_tile_flags;
 // 0x603B28
 static int num_indoor_non_flippable_names;
 
+// 0x603B2C
+static mes_file_handle_t item_paper_mes_file;
+
+// 0x603B30
+static mes_file_handle_t item_inven_mes_file;
+
+// 0x603B34
+static mes_file_handle_t item_ground_mes_file;
+
+// 0x603B38
+static mes_file_handle_t item_schematic_mes_file;
+
 // 0x603B6C
 static bool light_initialized;
 
@@ -394,6 +406,34 @@ bool load_tile_names()
             index++;
         }
     } while (mes_find_next(tilename_mes_file, &mes_file_entry));
+
+    return true;
+}
+
+// 0x4EC190
+bool a_name_item_init()
+{
+    if (!mes_load("art\\item\\item_ground.mes", &item_ground_mes_file)) {
+        return false;
+    }
+
+    if (!mes_load("art\\item\\item_inven.mes", &item_inven_mes_file)) {
+        mes_unload(item_ground_mes_file);
+        return false;
+    }
+
+    if (!mes_load("art\\item\\item_paper.mes", &item_paper_mes_file)) {
+        mes_unload(item_inven_mes_file);
+        mes_unload(item_ground_mes_file);
+        return false;
+    }
+
+    if (!mes_load("art\\item\\item_schematic.mes", &item_schematic_mes_file)) {
+        mes_unload(item_paper_mes_file);
+        mes_unload(item_inven_mes_file);
+        mes_unload(item_ground_mes_file);
+        return false;
+    }
 
     return true;
 }
