@@ -7,6 +7,7 @@
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool count_tile_names();
+static bool load_tile_names();
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -286,6 +287,114 @@ bool count_tile_names()
     num_outdoor_non_flippable_names = mes_entries_count_in_range(tilename_mes_file, 100, 199);
     num_indoor_flippable_names = mes_entries_count_in_range(tilename_mes_file, 200, 299);
     num_indoor_non_flippable_names = mes_entries_count_in_range(tilename_mes_file, 300, 399);
+    return true;
+}
+
+// 0x4EB2E0
+bool load_tile_names()
+{
+    MesFileEntry mes_file_entry;
+    uint8_t flags;
+    char* pch;
+    int sound_type;
+    int index;
+
+    outdoor_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_outdoor_flippable_names);
+    outdoor_non_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_outdoor_non_flippable_names);
+    indoor_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_indoor_flippable_names);
+    indoor_non_flippable_tile_names = (char **)MALLOC(sizeof(char*) * num_indoor_non_flippable_names);
+
+    outdoor_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_outdoor_flippable_names);
+    outdoor_non_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_outdoor_non_flippable_names);
+    indoor_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_indoor_flippable_names);
+    indoor_non_flippable_tile_flags = (uint8_t *)MALLOC(sizeof(uint8_t*) * num_indoor_non_flippable_names);
+
+    outdoor_flippable_tile_sounds = (int *)MALLOC(sizeof(int*) * num_outdoor_flippable_names);
+    outdoor_non_flippable_tile_sounds = (int *)MALLOC(sizeof(char*) * num_outdoor_non_flippable_names);
+    indoor_flippable_tile_sounds = (int *)MALLOC(sizeof(char*) * num_indoor_flippable_names);
+    indoor_non_flippable_tile_sounds = (int *)MALLOC(sizeof(char*) * num_indoor_non_flippable_names);
+
+    mes_file_entry.num = 0;
+    if (!mes_search(tilename_mes_file, &mes_file_entry)) {
+        return false;
+    }
+
+    index = 0;
+    do {
+        flags = 0;
+
+        pch = strchr(mes_file_entry.str, '/');
+        if (pch != NULL) {
+            *pch++ = '\0';
+            while (*pch != '\0' && *pch != ' ') {
+                switch (*pch) {
+                case 's':
+                    flags |= 0x02;
+                    break;
+                case 'b':
+                    flags |= 0x01;
+                    break;
+                case 'f':
+                    flags |= 0x05;
+                    break;
+                case 'i':
+                    flags |= 0x08;
+                    break;
+                case 'n':
+                    flags |= 0x10;
+                    break;
+                case 'p':
+                    flags |= 0x20;
+                    break;
+                }
+            }
+
+            sound_type = atoi(pch);
+        } else {
+            if (strlen(pch) < 3) {
+                return false;
+            }
+
+            mes_file_entry.str[3] = '\0';
+
+            sound_type = atoi(mes_file_entry.str + 3);
+        }
+
+        if (mes_file_entry.num < 100) {
+            outdoor_flippable_tile_flags[index] = flags;
+            outdoor_flippable_tile_names[index] = mes_file_entry.str;
+            outdoor_flippable_tile_sounds[index] = sound_type;
+            index++;
+        } else if (mes_file_entry.num < 200) {
+            if (mes_file_entry.num == 100) {
+                index = 0;
+            }
+
+            outdoor_non_flippable_tile_flags[index] = flags;
+            outdoor_non_flippable_tile_names[index] = mes_file_entry.str;
+            outdoor_non_flippable_tile_sounds[index] = sound_type;
+            index++;
+        } else if (mes_file_entry.num < 300) {
+            if (mes_file_entry.num == 200) {
+                index = 0;
+            }
+
+            indoor_flippable_tile_flags[index] = flags;
+            indoor_flippable_tile_names[index] = mes_file_entry.str;
+            indoor_flippable_tile_sounds[index] = sound_type;
+            index++;
+        } else if (mes_file_entry.num < 400) {
+            if (mes_file_entry.num == 300) {
+                index = 0;
+            }
+
+            indoor_non_flippable_tile_flags[index] = flags;
+            indoor_non_flippable_tile_names[index] = mes_file_entry.str;
+            indoor_non_flippable_tile_sounds[index] = sound_type;
+            index++;
+        }
+    } while (mes_find_next(tilename_mes_file, &mes_file_entry));
+
     return true;
 }
 
