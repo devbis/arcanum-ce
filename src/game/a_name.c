@@ -143,6 +143,41 @@ void a_name_tile_exit()
     }
 }
 
+// 0x4EAE90
+bool a_name_tile_aid_to_fname(tig_art_id_t aid, char* fname)
+{
+    int num1;
+    int num2;
+    int v1;
+    int v2;
+    int type;
+    int flippable1;
+    int flippable2;
+    char* name1;
+    char* name2;
+
+    if (tig_art_type(aid) != TIG_ART_TYPE_TILE) {
+        tig_debug_println("Asking for tile name with non tile art ID.");
+        fname[0] = '\0';
+        return false;
+    }
+
+    num1 = tig_art_tile_id_num1_get(aid);
+    num2 = tig_art_tile_id_num2_get(aid);
+    v1 = sub_503700(aid);
+    v2 = sub_5037B0(aid);
+    type = tig_art_tile_id_type_get(aid);
+    flippable1 = tig_art_tile_id_flippable1_get(aid);
+    flippable2 = tig_art_tile_id_flippable2_get(aid);
+
+    if (!sub_4EB0C0(num1, type, flippable1, &name1)
+        || !sub_4EB0C0(num2, type, flippable2, &name2)) {
+        return false;
+    }
+
+    return build_tile_file_name(name1, name2, v1, v2, fname);
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
