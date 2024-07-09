@@ -8,6 +8,7 @@ static bool build_tile_file_name(const char* name1, const char* name2, int a3, i
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool count_tile_names();
 static bool load_tile_names();
+static bool build_facade_file_name(int num, char* fname);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -540,6 +541,13 @@ bool a_name_facade_aid_to_fname(tig_art_id_t aid, char* fname)
 
     num = tig_art_facade_id_num_get(aid);
     return build_facade_file_name(num, fname);
+}
+
+// 0x4EC430
+bool build_facade_file_name(int num, char* fname)
+{
+    sprintf(fname, "art\\Facade\\%s.art", facade_names[num]);
+    return true;
 }
 
 // 0x4ED1E0
