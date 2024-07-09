@@ -7,6 +7,63 @@
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
+// 0x603AE0
+static char** outdoor_non_flippable_tile_names;
+
+// 0x603AE4
+static bool dword_603AE4;
+
+// 0x603AE8
+static uint8_t* outdoor_flippable_tile_flags;
+
+// 0x603AEC
+static int* indoor_non_flippable_tile_sounds;
+
+// 0x603AF0
+static int* outdoor_non_flippable_tile_sounds;
+
+// 0x603AF4
+static uint8_t* indoor_non_flippable_tile_flags;
+
+// 0x603AF8
+static int* dword_603AF8;
+
+// 0x603AFC
+static uint8_t* indoor_flippable_tile_flags;
+
+// 0x603B00
+static mes_file_handle_t tilename_mes_file;
+
+// 0x603B04
+static char** indoor_flippable_tile_names;
+
+// 0x603B08
+static int num_indoor_flippable_names;
+
+// 0x603B0C
+static int* outdoor_flippable_tile_sounds;
+
+// 0x603B10
+static char** indoor_non_flippable_tile_names;
+
+// 0x603B14
+static char** outdoor_flippable_tile_names;
+
+// 0x603B18
+static int num_outdoor_non_flippable_names;
+
+// 0x603B1C
+static int num_outdoor_flippable_names;
+
+// 0x603B20
+static int* indoor_flippable_tile_sounds;
+
+// 0x603B24
+static uint8_t* outdoor_non_flippable_tile_flags;
+
+// 0x603B28
+static int num_indoor_non_flippable_names;
+
 // 0x603B6C
 static bool light_initialized;
 
@@ -24,6 +81,37 @@ static int num_roof_file_names;
 
 // 0x603B80
 static int roof_initialized;
+
+// 0x687660
+static int* dword_687660[7];
+
+// 0x687680
+static int dword_687680[7];
+
+// 0x4EAC80
+bool a_name_tile_init()
+{
+    if (!mes_load("art\\tile\\tilename.mes", &tilename_mes_file)) {
+        return false;
+    }
+
+    if (!count_tile_names()
+        || !load_tile_names()
+        || !load_tile_edges()) {
+        mes_unload(tilename_mes_file);
+        return false;
+    }
+
+    dword_687680[0] = 16 * (num_outdoor_flippable_names + 4);
+    dword_687680[1] = 16 * (num_outdoor_non_flippable_names + 4);
+    dword_687680[2] = 16 * (num_indoor_flippable_names + 4);
+    dword_687680[3] = 16 * (num_indoor_non_flippable_names + 4);
+    dword_687680[4] = 16 * (num_outdoor_flippable_names * num_outdoor_flippable_names + 4);
+    dword_687680[5] = 16 * (num_outdoor_flippable_names * num_outdoor_non_flippable_names + 4);
+    dword_687680[6] = 16 * (num_outdoor_non_flippable_names * num_outdoor_non_flippable_names + 4);
+
+    return true;
+}
 
 // 0x4ED1E0
 bool a_name_light_init()
