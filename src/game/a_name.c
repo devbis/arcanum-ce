@@ -447,6 +447,52 @@ void a_name_item_exit()
     mes_unload(item_schematic_mes_file);
 }
 
+// 0x4EC290
+bool a_name_item_aid_to_fname(tig_art_id_t aid, char* fname)
+{
+    MesFileEntry mes_file_entry;
+    int type;
+    int subtype;
+    int armor_coverage;
+    int disposition;
+    mes_file_handle_t mes_file;
+
+    subtype = tig_art_item_id_subtype_get(aid);
+    type = tig_art_item_id_type_get(aid);
+
+    mes_file_entry.num = tig_art_num_get(aid) + 20 * (subtype + 50 * type);
+    if (type == TIG_ART_ITEM_TYPE_ARMOR) {
+        armor_coverage = tig_art_item_id_armor_coverage_get(aid);
+        if (armor_coverage != TIG_ART_ARMOR_COVERAGE_TORSO) {
+            mes_file_entry.num += 20 * (5 * armor_coverage + 10);
+        }
+    }
+
+    disposition = tig_art_item_id_disposition_get(aid);
+    switch (disposition) {
+    case TIG_ART_ITEM_DISPOSITION_GROUND:
+        mes_file = item_ground_mes_file;
+        break;
+    case TIG_ART_ITEM_DISPOSITION_INVENTORY:
+        mes_file = item_inven_mes_file;
+        break;
+    case TIG_ART_ITEM_DISPOSITION_PAPERDOLL:
+        mes_file = item_paper_mes_file;
+        break;
+    case TIG_ART_ITEM_DISPOSITION_SCHEMATIC:
+        mes_file = item_schematic_mes_file;
+        break;
+    }
+
+    if (!mes_search(mes_file, &mes_file_entry)) {
+        return false;
+    }
+
+    sprintf(fname, "art\\item\\%s", mes_file_entry.str);
+
+    return true;
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
