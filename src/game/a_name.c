@@ -4,6 +4,7 @@
 
 #include "game/mes.h"
 
+static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -176,6 +177,73 @@ bool a_name_tile_aid_to_fname(tig_art_id_t aid, char* fname)
     }
 
     return build_tile_file_name(name1, name2, v1, v2, fname);
+}
+
+// 0x4EAF70
+bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname)
+{
+    // 0x5BB4E4
+    static const char off_5BB4E4[] = "06b489237ea5dc10";
+
+    int v1;
+    int v2;
+
+    if (a4 >= 8) {
+        a4 -= 8;
+    }
+
+    if (a3 == 15 || strcmpi(name1, name2) == 0) {
+        sprintf(fname,
+            "art\\tile\\%sbse%c%c.art",
+            name1,
+            off_5BB4E4[a3],
+            a4 + 'a');
+        return true;
+    }
+
+    if (a3 == 0) {
+        sprintf(fname,
+            "art\\tile\\%sbse%c%c.art",
+            name2,
+            off_5BB4E4[0],
+            a4 + 'a');
+        return true;
+    }
+
+    if (!sub_4EB7D0(name1, &v1)) {
+        sprintf(fname,
+            "art\\tile\\%sbse%c%c.art",
+            name1,
+            off_5BB4E4[a3],
+            a4 + 'a');
+        return true;
+    }
+
+    if (!sub_4EB7D0(name2, &v2)) {
+        sprintf(fname,
+            "art\\tile\\%sbse%c%c.art",
+            name2,
+            off_5BB4E4[15 - a3],
+            a4 + 'a');
+        return true;
+    }
+
+    if (v1 < v2) {
+        sprintf(fname,
+            "art\\tile\\%s%s%c%c.art",
+            name1,
+            name2,
+            off_5BB4E4[a3],
+            a4 + 'a');
+    } else {
+        sprintf(fname,
+            "art\\tile\\%s%s%c%c.art",
+            name2,
+            name1,
+            off_5BB4E4[15 - a3],
+            a4 + 'a');
+    }
+    return true;
 }
 
 // 0x4ED1E0
