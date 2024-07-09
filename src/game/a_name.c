@@ -9,6 +9,7 @@ static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool count_tile_names();
 static bool load_tile_names();
 static bool build_facade_file_name(int num, char* fname);
+static bool sub_4EC4B0();
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -547,6 +548,42 @@ bool a_name_facade_aid_to_fname(tig_art_id_t aid, char* fname)
 bool build_facade_file_name(int num, char* fname)
 {
     sprintf(fname, "art\\Facade\\%s.art", facade_names[num]);
+    return true;
+}
+
+// 0x4EC4B0
+bool sub_4EC4B0()
+{
+    MesFileEntry mes_file_entry;
+    int index;
+
+    num_facade_names = 0;
+    facade_names = NULL;
+
+    if (!mes_load("art\\facade\\facadename.mes", &facadename_mes_file)) {
+        return false;
+    }
+
+    num_facade_names = mes_entries_count(facadename_mes_file);
+    if (num_facade_names == 0 || num_facade_names >= 512) {
+        mes_unload(facadename_mes_file);
+        return false;
+    }
+
+    mes_file_entry.num = 0;
+    if (!mes_search(facadename_mes_file, &mes_file_entry)) {
+        num_facade_names = 0;
+        mes_unload(facadename_mes_file);
+        return false;
+    }
+
+    facade_names = (char**)MALLOC(sizeof(char*) * num_facade_names);
+
+    index = 0;
+    do {
+        facade_names[index++] = mes_file_entry.str;
+    } while (mes_find_next(facadename_mes_file, &mes_file_entry));
+
     return true;
 }
 
