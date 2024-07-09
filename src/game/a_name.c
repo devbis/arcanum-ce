@@ -517,6 +517,16 @@ bool a_name_facade_init()
     return true;
 }
 
+// 0x4EC390
+void a_name_facade_exit()
+{
+    if (facade_initialized) {
+        mes_unload(facadename_mes_file);
+        FREE(facade_names);
+        facade_initialized = false;
+    }
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
