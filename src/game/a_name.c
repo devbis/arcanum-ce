@@ -438,6 +438,15 @@ bool a_name_item_init()
     return true;
 }
 
+// 0x4EC250
+void a_name_item_exit()
+{
+    mes_unload(item_ground_mes_file);
+    mes_unload(item_inven_mes_file);
+    mes_unload(item_paper_mes_file);
+    mes_unload(item_schematic_mes_file);
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
