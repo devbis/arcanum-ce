@@ -629,6 +629,21 @@ bool a_name_portal_aid_to_fname(tig_art_id_t aid, char* fname)
     return true;
 }
 
+// 0x4EC830
+tig_art_id_t sub_4EC830(tig_art_id_t aid)
+{
+    if (sub_504260(aid)) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    if (!tig_art_id_damaged_get(aid)) {
+        aid = tig_art_id_damaged_set(aid, 0x200);
+        aid = tig_art_id_frame_set(aid, 0);
+    }
+
+    return aid;
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
