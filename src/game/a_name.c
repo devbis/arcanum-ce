@@ -94,6 +94,9 @@ static int num_facade_names;
 // 0x603B48
 static bool facade_initialized;
 
+// 0x603B4C
+static mes_file_handle_t portal_mes_file;
+
 // 0x603B6C
 static bool light_initialized;
 
@@ -583,6 +586,27 @@ bool sub_4EC4B0()
     do {
         facade_names[index++] = mes_file_entry.str;
     } while (mes_find_next(facadename_mes_file, &mes_file_entry));
+
+    return true;
+}
+
+// 0x4EC5A0
+bool a_name_portal_init()
+{
+    MesFileEntry mes_file_entry;
+    char* pch;
+
+    if (!mes_load("art\\portal\\portal.mes", &portal_mes_file)) {
+        return false;
+    }
+
+    mes_file_entry.num = 0;
+    mes_get_msg(portal_mes_file, &mes_file_entry);
+    do {
+        pch = strchr(mes_file_entry.str, ' ');
+        // FIXME: Unsafe dereference.
+        *pch = '\0';
+    } while (mes_find_next(portal_mes_file, &mes_file_entry));
 
     return true;
 }
