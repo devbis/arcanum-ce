@@ -10,6 +10,7 @@ static bool count_tile_names();
 static bool load_tile_names();
 static bool build_facade_file_name(int num, char* fname);
 static bool sub_4EC4B0();
+static char* sub_4EC8F0(tig_art_id_t aid);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -642,6 +643,21 @@ tig_art_id_t sub_4EC830(tig_art_id_t aid)
     }
 
     return aid;
+}
+
+// 0x4EC8F0
+char* sub_4EC8F0(tig_art_id_t aid)
+{
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = tig_art_num_get(aid);
+    if (!sub_504260(aid)) {
+        mes_file_entry.num += 1001;
+    }
+
+    mes_get_msg(portal_mes_file, &mes_file_entry);
+
+    return mes_file_entry.str;
 }
 
 // 0x4ED1E0
