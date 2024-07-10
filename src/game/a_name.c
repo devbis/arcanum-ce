@@ -617,6 +617,18 @@ void a_name_portal_exit()
     mes_unload(portal_mes_file);
 }
 
+// 0x4EC620
+bool a_name_portal_aid_to_fname(tig_art_id_t aid, char* fname)
+{
+    sprintf(fname, "art\\portal\\%s", sub_4EC8F0(aid));
+
+    if (tig_art_id_damaged_get(aid)) {
+        fname[strlen(fname) - 6] = 'D';
+    }
+
+    return true;
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {
