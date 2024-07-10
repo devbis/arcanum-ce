@@ -961,6 +961,12 @@ void sub_4ED180(int index, WallStructure* wallstructure)
     *wallstructure = wall_structures[index];
 }
 
+// 0x4ED1A0
+int a_name_num_wall_structures()
+{
+    return num_wall_structures;
+}
+
 // 0x4ECD10
 void sub_4ECD10(char* str, int index)
 {
