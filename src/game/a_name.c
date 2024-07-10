@@ -11,6 +11,7 @@ static bool load_tile_names();
 static bool build_facade_file_name(int num, char* fname);
 static bool sub_4EC4B0();
 static char* sub_4EC8F0(tig_art_id_t aid);
+static int sub_4EC940(const char* fname);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -658,6 +659,22 @@ char* sub_4EC8F0(tig_art_id_t aid)
     mes_get_msg(portal_mes_file, &mes_file_entry);
 
     return mes_file_entry.str;
+}
+
+// 0x4EC940
+int sub_4EC940(const char* fname)
+{
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = 0;
+    mes_get_msg(portal_mes_file, &mes_file_entry);
+    do {
+        if (strcmpi(mes_file_entry.str, fname) == 0) {
+            return mes_file_entry.num;
+        }
+    } while (mes_find_next(portal_mes_file, &mes_file_entry));
+
+    return -1;
 }
 
 // 0x4ED1E0
