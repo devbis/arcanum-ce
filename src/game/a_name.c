@@ -105,6 +105,21 @@ static int num_wall_structures;
 // 0x603B54
 static int num_wall_file_names;
 
+// 0x603B58
+static WallStructure* wall_structures;
+
+// 0x603B5C
+static mes_file_handle_t wall_structure_mes_file;
+
+// 0x603B60
+static int* wall_proto_file_names;
+
+// 0x603B64
+static mes_file_handle_t wallname_mes_file;
+
+// 0x603B68
+static char** wall_file_names;
+
 // 0x603B6C
 static bool light_initialized;
 
@@ -695,6 +710,33 @@ bool a_name_wall_init()
     }
 
     return true;
+}
+
+// 0x4EC9E0
+void a_name_wall_exit()
+{
+    if (num_wall_structures > 0) {
+        mes_unload(wall_structure_mes_file);
+    }
+
+    if (num_wall_file_names > 0) {
+        mes_unload(wallname_mes_file);
+    }
+
+    if (wall_file_names != NULL) {
+        FREE(wall_file_names);
+    }
+
+    if (wall_proto_file_names != NULL) {
+        FREE(wall_proto_file_names);
+    }
+
+    if (wall_structures != NULL) {
+        FREE(wall_structures);
+    }
+
+    num_wall_file_names = 0;
+    num_wall_structures = 0;
 }
 
 // 0x4ED1E0
