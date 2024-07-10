@@ -99,6 +99,12 @@ static bool facade_initialized;
 // 0x603B4C
 static mes_file_handle_t portal_mes_file;
 
+// 0x603B50
+static int num_wall_structures;
+
+// 0x603B54
+static int num_wall_file_names;
+
 // 0x603B6C
 static bool light_initialized;
 
@@ -675,6 +681,20 @@ int sub_4EC940(const char* fname)
     } while (mes_find_next(portal_mes_file, &mes_file_entry));
 
     return -1;
+}
+
+// 0x4EC9B0
+bool a_name_wall_init()
+{
+    init_wall_names();
+    init_wall_structures();
+
+    if (num_wall_file_names == 0 || num_wall_structures == 0) {
+        a_name_wall_exit();
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4ED1E0
