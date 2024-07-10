@@ -4,14 +4,18 @@
 
 #include "game/mes.h"
 
+#define WS_NOWINDOWS 0x01
+#define WS_NODOORS 0x02
+#define WS_FENCE 0x04
+
 typedef struct WallStructure {
-    /* 0000 */ int field_0;
+    /* 0000 */ unsigned int flags;
     /* 0004 */ int field_4;
     /* 0008 */ int field_8;
     /* 000C */ int field_C;
     /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
+    /* 0014 */ tig_art_id_t tile_art_id;
+    /* 0018 */ tig_art_id_t roof_art_id;
     /* 001C */ int field_1C;
 } WallStructure;
 
@@ -29,6 +33,7 @@ static void init_wall_names();
 static void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int index);
 static int sub_4ECC00(int index);
 static void init_wall_structure();
+static void sub_4ECD10(char* str, int index);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -836,17 +841,62 @@ void init_wall_structure()
 
     do {
         wall_structures = (WallStructure*)REALLOC(wall_structures, sizeof(WallStructure) * num_wall_structures);
-        wall_structures[num_wall_structures].field_0 = 0;
+        wall_structures[num_wall_structures].flags = 0;
         wall_structures[num_wall_structures].field_4 = 4;
         wall_structures[num_wall_structures].field_8 = 0;
         wall_structures[num_wall_structures].field_C = 0;
         wall_structures[num_wall_structures].field_10 = 0;
-        wall_structures[num_wall_structures].field_14 = -1;
-        wall_structures[num_wall_structures].field_18 = -1;
+        wall_structures[num_wall_structures].tile_art_id = TIG_ART_ID_INVALID;
+        wall_structures[num_wall_structures].roof_art_id = TIG_ART_ID_INVALID;
         wall_structures[num_wall_structures].field_1C = 0;
         sub_4ECD10(mes_file_entry.str, num_wall_structures);
         num_wall_structures++;
     } while (mes_find_next(wall_structure_mes_file, &mes_file_entry) && mes_file_entry.num < 1000);
+}
+
+// 0x4ECD10
+void sub_4ECD10(char* str, int index)
+{
+    char* tok;
+
+    tok = strtok(str, " ");
+    wall_structures[index].field_8 = atoi(tok + 3);
+
+    tok[3] = '\0';
+    wall_structures[index].field_4 = sub_4ED030(tok);
+
+    tok = strtok(NULL, " ");
+    wall_structures[index].field_10 = atoi(tok + 3);
+
+    tok[3] = '\0';
+    wall_structures[index].field_C = sub_4ED030(tok);
+
+    tok = strtok(NULL, " ");
+    if (strcmpi(tok, "nul") != 0) {
+        sub_4EB160(tok, &(wall_structures[index].tile_art_id));
+    } else {
+        wall_structures[index].tile_art_id = TIG_ART_ID_INVALID;
+    }
+
+    tok = strtok(NULL, " ");
+    if (strcmpi(tok, "nul") != 0) {
+        a_name_roof_fname_to_aid(tok, &(wall_structures[index].roof_art_id));
+    } else {
+        wall_structures[index].roof_art_id = TIG_ART_ID_INVALID;
+    }
+
+    wall_structures[index].field_1C = sub_4ECC00(wall_structures[index].field_C);
+
+    tok = strtok(NULL, " ");
+    while (tok != NULL) {
+        if (strcmpi(tok, "/nowindows") == 0) {
+            wall_structures[index].flags |= WS_NOWINDOWS;
+        } else if (strcmpi(tok, "/nodoors") == 0) {
+            wall_structures[index].flags |= WS_NODOORS;
+        } else if (strcmpi(tok, "/fence") == 0) {
+            wall_structures[index].flags |= WS_FENCE;
+        }
+    }
 }
 
 // 0x4ED1E0
