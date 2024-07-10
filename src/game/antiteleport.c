@@ -4,10 +4,18 @@
 
 #include "game/mes.h"
 
-typedef struct S5FC490 {
-    void* field_0;
-    int field_4;
-} S5FC490;
+typedef struct MapEntry {
+    int map;
+} MapEntry;
+
+static_assert(sizeof(MapEntry) == 0x4, "wrong size");
+
+typedef struct AntiTeleportMapList {
+    MapEntry* entries;
+    int cnt;
+} AntiTeleportMapList;
+
+static_assert(sizeof(AntiTeleportMapList) == 0x8, "wrong size");
 
 typedef struct RegionEntry {
     int64_t location;
@@ -26,10 +34,11 @@ static_assert(sizeof(AntiteleportRegionList) == 0x8, "wrong size");
 static void sub_4BDAC0();
 static void antiteleport_region_list_init(AntiteleportRegionList* region_list);
 static bool antiteleport_region_list_load(mes_file_handle_t mes_file, AntiteleportRegionList* region_list, int num);
-static void sub_4BDC40(S5FC490* a1);
+static void antiteleport_map_list_init(AntiTeleportMapList* map_list);
+static bool antiteleport_map_list_load(mes_file_handle_t mes_file, AntiTeleportMapList* map_list, int num);
 
 // 0x5FC490
-static S5FC490 stru_5FC490;
+static AntiTeleportMapList stru_5FC490;
 
 // 0x5FC498
 static AntiteleportRegionList antiteleport_region_list;
@@ -53,7 +62,7 @@ bool antiteleport_init(GameInitInfo* init_info)
     }
 
     antiteleport_region_list_init(&antiteleport_region_list);
-    sub_4BDC40(&stru_5FC490);
+    antiteleport_map_list_init(&stru_5FC490);
 
     antiteleport_initialized = true;
 
@@ -93,7 +102,7 @@ bool antiteleport_mod_load()
         return true;
     }
 
-    if (!sub_4BDC60(antiteleport_mes_file, &stru_5FC490, 1000)) {
+    if (!antiteleport_map_list_load(antiteleport_mes_file, &stru_5FC490, 1000)) {
         tig_debug_println("Disabling Anti-Teleport Regions because of bad message file (Map List).");
         mes_unload(antiteleport_mes_file);
         antiteleport_disabled = true;
@@ -122,10 +131,10 @@ void sub_4BDAC0()
         antiteleport_region_list.cnt = 0;
     }
 
-    if (stru_5FC490.field_0 != NULL) {
-        free(stru_5FC490.field_0);
-        stru_5FC490.field_0 = NULL;
-        stru_5FC490.field_4 = 0;
+    if (stru_5FC490.entries != NULL) {
+        FREE(stru_5FC490.entries);
+        stru_5FC490.entries = NULL;
+        stru_5FC490.cnt = 0;
     }
 }
 
@@ -182,8 +191,52 @@ bool antiteleport_region_list_load(mes_file_handle_t mes_file, AntiteleportRegio
 }
 
 // 0x4BDC40
-void sub_4BDC40(S5FC490* a1)
+void antiteleport_map_list_init(AntiTeleportMapList* map_list)
 {
-    a1->field_0 = NULL;
-    a1->field_4 = 0;
+    map_list->entries = NULL;
+    map_list->cnt = 0;
+}
+
+// 0x4BDC60
+bool antiteleport_map_list_load(mes_file_handle_t mes_file, AntiTeleportMapList* map_list, int num)
+{
+    MesFileEntry mes_file_entry;
+    int cnt;
+    MapEntry* map_entry;
+    char* str;
+    int map;
+
+    cnt = 0;
+    mes_file_entry.num = num;
+    if (mes_search(mes_file, &mes_file_entry)) {
+        do {
+            mes_file_entry.num++;
+            cnt++;
+        } while (mes_search(mes_file, &mes_file_entry));
+
+        if (cnt != 0) {
+            map_list->entries = (MapEntry*)MALLOC(sizeof(MapEntry) * cnt);
+
+            mes_file_entry.num = num;
+            while (cnt > 0) {
+                map_entry = &(map_list->entries[map_list->cnt]);
+                mes_get_msg(mes_file, &mes_file_entry);
+
+                str = mes_file_entry.str;
+                tig_str_parse_value(&str, &map);
+                if (map > 5000) {
+                    map -= 4999;
+                } else {
+                    map += 1;
+                }
+                map_entry->map = map;
+
+                mes_file_entry.num++;
+                map_list->cnt++;
+                cnt--;
+            }
+        }
+    }
+
+    return true;
 }
