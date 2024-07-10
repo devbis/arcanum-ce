@@ -1,18 +1,22 @@
-#include "game/lib/antiteleport.h"
+#include "game/antiteleport.h"
 
-#include "game/lib/message.h"
-#include "tig/debug.h"
-#include "tig/str_parse.h"
+#include <tig/tig.h>
+
+#include "game/mes.h"
 
 typedef struct S5FC490 {
     void* field_0;
     int field_4;
-};
+} S5FC490;
 
 typedef struct S5FC498 {
     void* field_0;
     int field_4;
-};
+} S5FC498;
+
+static void sub_4BDAC0();
+static void sub_4BDB10(S5FC498* a1);
+static void sub_4BDC40(S5FC490* a1);
 
 // 0x5FC490
 static S5FC490 stru_5FC490;
@@ -21,17 +25,19 @@ static S5FC490 stru_5FC490;
 static S5FC498 stru_5FC498;
 
 // 0x5FC4A0
-static bool dword_5FC4A0;
+static bool antiteleport_initialized;
 
 // 0x5FC4A4
 static bool dword_5FC4A4;
 
 // 0x5FC4A8
-static bool dword_5FC4A8;
+static bool antiteleport_mod_loaded;
 
 // 0x4BD980
-bool antiteleport_init(GameContext* ctx)
+bool antiteleport_init(GameInitInfo* init_info)
 {
+    (void)init_info;
+
     if (dword_5FC4A4) {
         return true;
     }
@@ -39,7 +45,7 @@ bool antiteleport_init(GameContext* ctx)
     sub_4BDB10(&stru_5FC498);
     sub_4BDC40(&stru_5FC490);
 
-    dword_5FC4A0 = true;
+    antiteleport_initialized = true;
 
     return true;
 }
@@ -49,19 +55,20 @@ void antiteleport_exit()
 {
     if (!dword_5FC4A4) {
         sub_4BDAC0();
-        dword_5FC4A0 = false;
+        antiteleport_initialized = false;
     }
 }
 
 // 0x4BD9E0
 bool antiteleport_mod_load()
 {
+    mes_file_handle_t antiteleport_mes_file;
+
     if (dword_5FC4A4) {
         return true;
     }
 
-    int antiteleport_msg_file;
-    if (!message_load("Rules\\AntiTeleport.mes", &antiteleport_msg_file)) {
+    if (!mes_load("Rules\\AntiTeleport.mes", &antiteleport_mes_file)) {
         // FIXME: Typo in function name.
         tig_debug_printf("AntiTeleport: antiteleport_init: Note: No Message File Detected.\n");
         return true;
@@ -69,22 +76,22 @@ bool antiteleport_mod_load()
 
     tig_str_parse_set_separator(',');
 
-    if (!sub_4BDB30(antiteleport_msg_file, &stru_5FC498, 100)) {
+    if (!sub_4BDB30(antiteleport_mes_file, &stru_5FC498, 100)) {
         tig_debug_println("Disabling Anti-Teleport Regions because of bad message file (Region List).");
-        message_unload(antiteleport_msg_file);
+        mes_unload(antiteleport_mes_file);
         dword_5FC4A4 = true;
         return true;
     }
 
-    if (!sub_4BDC60(antiteleport_msg_file, &stru_5FC490, 100)) {
-        tig_debug_println("Disabling Anti-Teleport Regions because of bad message file (Region List).");
-        message_unload(antiteleport_msg_file);
+    if (!sub_4BDC60(antiteleport_mes_file, &stru_5FC490, 1000)) {
+        tig_debug_println("Disabling Anti-Teleport Regions because of bad message file (Map List).");
+        mes_unload(antiteleport_mes_file);
         dword_5FC4A4 = true;
         return true;
     }
 
-    message_unload(antiteleport_msg_file);
-    dword_5FC4A8 = true;
+    mes_unload(antiteleport_mes_file);
+    antiteleport_mod_loaded = true;
 
     return true;
 }
@@ -93,7 +100,7 @@ bool antiteleport_mod_load()
 void antiteleport_mod_unload()
 {
     sub_4BDAC0();
-    dword_5FC4A8 = 0;
+    antiteleport_mod_loaded = false;
 }
 
 // 0x4BDAC0
