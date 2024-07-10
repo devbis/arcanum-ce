@@ -36,6 +36,7 @@ static void init_wall_structure();
 static void sub_4ECD10(char* str, int index);
 static bool build_wall_file_name(const char* name, int piece, int damage, int variation, char* fname);
 static int sub_4ED030(const char* str);
+static void sub_4ED180(int index, WallStructure* wallstructure);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -952,6 +953,12 @@ int sub_4ED030(const char* str)
     }
 
     return -1;
+}
+
+// 0x4ED180
+void sub_4ED180(int index, WallStructure* wallstructure)
+{
+    *wallstructure = wall_structures[index];
 }
 
 // 0x4ECD10
