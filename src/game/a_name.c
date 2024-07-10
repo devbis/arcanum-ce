@@ -12,6 +12,7 @@ static bool build_facade_file_name(int num, char* fname);
 static bool sub_4EC4B0();
 static char* sub_4EC8F0(tig_art_id_t aid);
 static int sub_4EC940(const char* fname);
+static void init_wall_names();
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -737,6 +738,49 @@ void a_name_wall_exit()
 
     num_wall_file_names = 0;
     num_wall_structures = 0;
+}
+
+// 0x4ECA60
+void init_wall_names()
+{
+    MesFileEntry mes_file_entry;
+    mes_file_handle_t wallproto_mes_file;
+    int index;
+
+    num_wall_file_names = 0;
+    wall_file_names = NULL;
+    wall_proto_file_names = NULL;
+
+    if (!mes_load("art\\wall\\wallname.mes", &wallname_mes_file)) {
+        return;
+    }
+
+    num_wall_file_names = mes_entries_count(wallname_mes_file);
+
+    mes_file_entry.num = 0;
+    if (!mes_search(wallname_mes_file, &mes_file_entry)) {
+        num_wall_file_names = 0;
+        mes_unload(wallname_mes_file);
+        return;
+    }
+
+    if (!mes_load("art\\wall\\wallproto.mes", &wallproto_mes_file)) {
+        num_wall_file_names = 0;
+        mes_unload(wallname_mes_file);
+        return;
+    }
+
+    wall_file_names = (char**)MALLOC(sizeof(char*) * num_wall_file_names);
+    wall_proto_file_names = (int*)MALLOC(sizeof(int) * num_wall_file_names);
+
+    index = 0;
+    do {
+        sub_4ECB80(wallproto_mes_file, mes_file_entry.str, index++);
+    } while (mes_find_next(wallname_mes_file, &mes_file_entry));
+
+    mes_unload(wallproto_mes_file);
+
+    return true;
 }
 
 // 0x4ED1E0
