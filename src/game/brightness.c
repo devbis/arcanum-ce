@@ -1,16 +1,21 @@
-#include "game/lib/brightness.h"
+#include "game/brightness.h"
 
-#include "game/lib/settings.h"
-#include "tig/debug.h"
-#include "tig/video.h"
+#include <tig/tig.h>
+
+#include "game/gamelib.h"
 
 #define BRIGHTNESS "brightness"
 
+static void brightness_changed();
+
 // 0x4BE0B0
-bool brightness_init(GameContext* ctx)
+bool brightness_init(GameInitInfo* init_info)
 {
+    (void)init_info;
+
     settings_add(&settings, BRIGHTNESS, "0", brightness_changed);
     brightness_changed();
+
     return true;
 }
 
@@ -25,22 +30,19 @@ void brightness_changed()
     // 0x5FC4C4
     static bool changing;
 
+    int brightness;
+
     if (!changing) {
         changing = true;
 
-        int brightness = settings_get_value(&settings, BRIGHTNESS);
-        if (sub_51FFE0(brightness * 0.1 + 1.0) != TIG_OK) {
+        brightness = settings_get_value(&settings, BRIGHTNESS);
+        if (tig_video_set_gamma(brightness * 0.1 + 1.0f) == TIG_OK) {
             tig_debug_printf("brightness_changed: ERROR: Gamma out of Range!  Attempting to Correct bounds!\n");
 
-            int corrected_brightness;
-            if (brightness > 9) {
-                corrected_brightness = 9;
-            } else {
-                corrected_brightness = 1;
-            }
-            settings_set_value(&settings, BRIGHTNESS, corrected_brightness);
+            brightness = brightness > 9 ? 9 : 1;
+            settings_set_value(&settings, BRIGHTNESS, brightness);
 
-            if (sub_51FFE0(corrected_brightness * 0.1 + 1.0) != TIG_OK) {
+            if (tig_video_set_gamma(brightness * 0.1f + 1.0f) != TIG_OK) {
                 tig_debug_printf("brightness_changed: ERROR: CORRECTION FAILED: Gamma STILL out of Range!\n");
             }
         }
