@@ -967,6 +967,19 @@ int a_name_num_wall_structures()
     return num_wall_structures;
 }
 
+// 0x4ED1B0
+char* a_name_wall_get_structure(int index)
+{
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = index + 1000;
+    if (!mes_search(&wall_structure_mes_file, &mes_file_entry)) {
+        return NULL;
+    }
+
+    return mes_file_entry.str;
+}
+
 // 0x4ECD10
 void sub_4ECD10(char* str, int index)
 {

@@ -19,6 +19,7 @@ tig_art_id_t sub_4EC830(tig_art_id_t aid);
 bool a_name_wall_init();
 void a_name_wall_exit();
 int a_name_num_wall_structures();
+char* a_name_wall_get_structure(int index);
 bool a_name_light_init();
 void a_name_light_exit();
 bool a_name_light_aid_to_fname(tig_art_id_t aid, char* fname);
