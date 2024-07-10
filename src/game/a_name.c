@@ -34,6 +34,7 @@ static void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int inde
 static int sub_4ECC00(int index);
 static void init_wall_structure();
 static void sub_4ECD10(char* str, int index);
+static bool build_wall_file_name(const char* name, int piece, int damage, int variation, char* fname);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -852,6 +853,90 @@ void init_wall_structure()
         sub_4ECD10(mes_file_entry.str, num_wall_structures);
         num_wall_structures++;
     } while (mes_find_next(wall_structure_mes_file, &mes_file_entry) && mes_file_entry.num < 1000);
+}
+
+// 0x4ECFC0
+bool build_wall_file_name(const char* name, int piece, int damage, int variation, char* fname)
+{
+    // 0x5BB6AC
+    static const char off_5BB6AC[] = {
+        'U',
+        'L',
+        'R'
+    };
+
+    // 0x5BB6B0
+    static const char* off_5BB6B0[] = {
+        "bse",
+        "lfc",
+        "bse",
+        "bcl",
+        "bcr",
+        "tcl",
+        "tcr",
+        "uec",
+        "lec",
+        "w3l",
+        "w3a",
+        "w3r",
+        "w4l",
+        "w4a",
+        "w4b",
+        "w4r",
+        "w5l",
+        "w5a",
+        "w5b",
+        "w5c",
+        "w5r",
+        "d3l",
+        "d3a",
+        "d3r",
+        "d4l",
+        "d4a",
+        "d4b",
+        "d4r",
+        "d6l",
+        "d6a",
+        "d6b",
+        "d6c",
+        "d6d",
+        "d6r",
+        "p3l",
+        "p3a",
+        "p3r",
+        "p4l",
+        "p4a",
+        "p4b",
+        "p4r",
+        "p5l",
+        "p5a",
+        "p5b",
+        "p5c",
+        "p5r",
+    };
+
+    int index;
+
+    if ((damage & 0x400) != 0) {
+        index = 1;
+    } else if ((damage & 0x80) != 0) {
+        if (piece >= 2 && piece <= 6) {
+            index = 1;
+        } else {
+            index = 2;
+        }
+    } else {
+        index = 0;
+    }
+
+    sprintf(fname,
+        "art\\wall\\%s%s%c%c.art",
+        name,
+        off_5BB6B0[piece],
+        off_5BB6AC[index],
+        variation + '0');
+
+    return true;
 }
 
 // 0x4ECD10
