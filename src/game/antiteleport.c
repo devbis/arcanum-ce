@@ -38,7 +38,7 @@ static void antiteleport_map_list_init(AntiTeleportMapList* map_list);
 static bool antiteleport_map_list_load(mes_file_handle_t mes_file, AntiTeleportMapList* map_list, int num);
 
 // 0x5FC490
-static AntiTeleportMapList stru_5FC490;
+static AntiTeleportMapList antiteleport_map_list;
 
 // 0x5FC498
 static AntiteleportRegionList antiteleport_region_list;
@@ -62,7 +62,7 @@ bool antiteleport_init(GameInitInfo* init_info)
     }
 
     antiteleport_region_list_init(&antiteleport_region_list);
-    antiteleport_map_list_init(&stru_5FC490);
+    antiteleport_map_list_init(&antiteleport_map_list);
 
     antiteleport_initialized = true;
 
@@ -102,7 +102,7 @@ bool antiteleport_mod_load()
         return true;
     }
 
-    if (!antiteleport_map_list_load(antiteleport_mes_file, &stru_5FC490, 1000)) {
+    if (!antiteleport_map_list_load(antiteleport_mes_file, &antiteleport_map_list, 1000)) {
         tig_debug_println("Disabling Anti-Teleport Regions because of bad message file (Map List).");
         mes_unload(antiteleport_mes_file);
         antiteleport_disabled = true;
@@ -131,10 +131,10 @@ void sub_4BDAC0()
         antiteleport_region_list.cnt = 0;
     }
 
-    if (stru_5FC490.entries != NULL) {
-        FREE(stru_5FC490.entries);
-        stru_5FC490.entries = NULL;
-        stru_5FC490.cnt = 0;
+    if (antiteleport_map_list.entries != NULL) {
+        FREE(antiteleport_map_list.entries);
+        antiteleport_map_list.entries = NULL;
+        antiteleport_map_list.cnt = 0;
     }
 }
 
