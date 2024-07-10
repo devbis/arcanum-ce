@@ -13,6 +13,7 @@ static bool sub_4EC4B0();
 static char* sub_4EC8F0(tig_art_id_t aid);
 static int sub_4EC940(const char* fname);
 static void init_wall_names();
+static void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int index);
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -781,6 +782,18 @@ void init_wall_names()
     mes_unload(wallproto_mes_file);
 
     return true;
+}
+
+// 0x4ECB80
+void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int index)
+{
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = atoi(&(str[3]));
+    mes_get_msg(wallproto_mes_file, &mes_file_entry);
+    wall_proto_file_names[index] = atoi(mes_file_entry.str);
+    str[3] = '\0';
+    wall_file_names[index] = str;
 }
 
 // 0x4ED1E0
