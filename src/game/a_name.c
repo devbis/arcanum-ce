@@ -4,6 +4,19 @@
 
 #include "game/mes.h"
 
+typedef struct WallStructure {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+} WallStructure;
+
+static_assert(sizeof(WallStructure) == 0x20, "wrong size");
+
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool count_tile_names();
@@ -15,6 +28,7 @@ static int sub_4EC940(const char* fname);
 static void init_wall_names();
 static void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int index);
 static int sub_4ECC00(int index);
+static void init_wall_structure();
 static bool build_roof_file_name(int index, char* buffer);
 static bool load_roof_data();
 
@@ -801,6 +815,38 @@ void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int index)
 int sub_4ECC00(int index)
 {
     return wall_proto_file_names[index];
+}
+
+// 0x4ECC10
+void init_wall_structure()
+{
+    MesFileEntry mes_file_entry;
+
+    num_wall_structures = 0;
+    wall_structures = NULL;
+
+    if (!mes_load("art\\wall\\structure.mes", &wall_structure_mes_file)) {
+        return;
+    }
+
+    mes_file_entry.num = 0;
+    if (!mes_search(wall_structure_mes_file, &mes_file_entry)) {
+        return;
+    }
+
+    do {
+        wall_structures = (WallStructure*)REALLOC(wall_structures, sizeof(WallStructure) * num_wall_structures);
+        wall_structures[num_wall_structures].field_0 = 0;
+        wall_structures[num_wall_structures].field_4 = 4;
+        wall_structures[num_wall_structures].field_8 = 0;
+        wall_structures[num_wall_structures].field_C = 0;
+        wall_structures[num_wall_structures].field_10 = 0;
+        wall_structures[num_wall_structures].field_14 = -1;
+        wall_structures[num_wall_structures].field_18 = -1;
+        wall_structures[num_wall_structures].field_1C = 0;
+        sub_4ECD10(mes_file_entry.str, num_wall_structures);
+        num_wall_structures++;
+    } while (mes_find_next(wall_structure_mes_file, &mes_file_entry) && mes_file_entry.num < 1000);
 }
 
 // 0x4ED1E0
