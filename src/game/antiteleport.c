@@ -240,3 +240,11 @@ bool antiteleport_map_list_load(mes_file_handle_t mes_file, AntiTeleportMapList*
 
     return true;
 }
+
+// 0x4BDD30
+bool sub_4BDD30(int64_t a1, int64_t a2)
+{
+    // TODO: Incomplete.
+
+    return false;
+}
