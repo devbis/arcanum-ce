@@ -611,6 +611,12 @@ bool a_name_portal_init()
     return true;
 }
 
+// 0x4EC610
+void a_name_portal_exit()
+{
+    mes_unload(portal_mes_file);
+}
+
 // 0x4ED1E0
 bool a_name_light_init()
 {

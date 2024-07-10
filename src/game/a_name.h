@@ -13,6 +13,7 @@ bool a_name_facade_init();
 void a_name_facade_exit();
 bool a_name_facade_aid_to_fname(tig_art_id_t aid, char* fname);
 bool a_name_portal_init();
+void a_name_portal_exit();
 bool a_name_light_init();
 void a_name_light_exit();
 bool a_name_light_aid_to_fname(tig_art_id_t aid, char* fname);
