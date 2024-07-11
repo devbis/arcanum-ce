@@ -71,6 +71,26 @@ int sub_4C3D50(object_id_t obj, CurseInfo* curses)
     return cnt;
 }
 
+// 0x4C3DD0
+bool curse_is_added_to(object_id_t obj, int curse)
+{
+    int cnt;
+    int index;
+
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return false;
+    }
+
+    cnt = sub_4079C0(obj, OBJ_F_PC_CURSE_IDX);
+    for (index = 0; index < cnt; index++) {
+        if (sub_407470(obj, OBJ_F_PC_CURSE_IDX, index) == curse) {
+            return true;
+        }
+    }
+
+    return true;
+}
+
 // 0x4C3F70
 int curse_get_effect(int curse)
 {

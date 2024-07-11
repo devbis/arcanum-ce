@@ -16,6 +16,7 @@ void curse_mod_unload();
 void curse_copy_name(int curse, char* buffer);
 void curse_copy_description(int curse, char* buffer);
 int sub_4C3D50(object_id_t obj, CurseInfo* curses);
+bool curse_is_added_to(object_id_t obj, int curse);
 int curse_get_effect(int curse);
 
 #endif /* ARCANUM_GAME_CURSE_H_ */
