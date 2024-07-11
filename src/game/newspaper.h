@@ -9,7 +9,7 @@ void newspaper_exit();
 bool newspaper_load(GameLoadInfo* load_info);
 bool newspaper_save(TigFile* stream);
 void newspaper_queue(int num, bool priority);
-bool sub_4BF1D0(int a1);
+bool newspaper_is_queued(int num);
 int sub_4BF200(int index);
 
 #endif /* ARCANUM_GAME_NEWSPAPER_H_ */

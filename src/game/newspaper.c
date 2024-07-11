@@ -62,7 +62,7 @@ void newspaper_queue(int num, bool priority)
 {
     int index;
 
-    if (num >= GENERIC_NEWSPAPER_NUM || !sub_4BF1D0(num)) {
+    if (num >= GENERIC_NEWSPAPER_NUM || !newspaper_is_queued(num)) {
         if (priority) {
             for (index = TWENTY_FIVE - 1; index > 4; index--) {
                 off_6876D0[index] = off_6876D0[index - 1];
@@ -84,7 +84,7 @@ void newspaper_queue(int num, bool priority)
 }
 
 // 0x4BF1D0
-bool sub_4BF1D0(int num)
+bool newspaper_is_queued(int num)
 {
     int index;
 
