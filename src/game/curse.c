@@ -91,6 +91,20 @@ bool curse_is_added_to(object_id_t obj, int curse)
     return true;
 }
 
+// 0x4C3E40
+void curse_add(object_id_t obj, int curse)
+{
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    if (curse_is_added_to(obj, curse)) {
+        return;
+    }
+
+    // TODO: Incomplete.
+}
+
 // 0x4C3F70
 int curse_get_effect(int curse)
 {

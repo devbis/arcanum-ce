@@ -98,6 +98,10 @@ void bless_add(object_id_t obj, int bless)
         return;
     }
 
+    if (bless_is_added_to(obj, bless)) {
+        return;
+    }
+
     // TODO: Incomplete.
 }
 
