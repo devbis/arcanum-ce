@@ -1,9 +1,12 @@
 #include "game/newspaper.h"
 
+#include "game/random.h"
+
 #define TWENTY_FIVE 25
 #define GENERIC_NEWSPAPER_NUM 5000
 
 static void sub_4BF2C0();
+static int sub_4BF330();
 
 // 0x6876CC
 static int dword_6876CC;
@@ -153,4 +156,20 @@ void sub_4BF2C0()
         off_6876D0[4] = sub_4BF330();
         dword_6876CC = 5;
     }
+}
+
+// 0x4BF330
+int sub_4BF330()
+{
+    int cnt = 0;
+    int v2 = GENERIC_NEWSPAPER_NUM;
+    char str[MAX_STRING];
+
+    do {
+        cnt++;
+        v2 += 10;
+        sub_460800(v2, str);
+    } while (str[0] != '\0');
+
+    return 10 * (random_between(0, cnt - 1) + 500);
 }
