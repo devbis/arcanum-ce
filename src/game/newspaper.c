@@ -1,26 +1,30 @@
-#include "game/lib/newspaper.h"
+#include "game/newspaper.h"
 
 #define TWENTY_FIVE 25
 
 // 0x6876CC
 static int dword_6876CC;
 
-// TODO: Type.
 // 0x6876D0
 static int* off_6876D0;
 
 // 0x4BF060
-bool newspaper_init(GameContext* ctx)
+bool newspaper_init(GameContext* init_info)
 {
-    off_6876D0 = (int*)calloc(TWENTY_FIVE, sizeof(*off_6876D0));
+    (void)init_info;
+
+    off_6876D0 = (int*)CALLOC(TWENTY_FIVE, sizeof(*off_6876D0));
     newspaper_reset();
+
     return true;
 }
 
 // 0x4BF080
 void newspaper_reset()
 {
-    for (int index = 0; index < 4; index++) {
+    int index;
+
+    for (index = 0; index < 4; index++) {
         off_6876D0[index] = -1;
     }
 
@@ -31,15 +35,14 @@ void newspaper_reset()
 // 0x4BF0B0
 void newspaper_exit()
 {
-    free(off_6876D0);
+    FREE(off_6876D0);
 }
 
 // 0x4BF0C0
-bool newspaper_load(LoadContext* ctx)
+bool newspaper_load(GameLoadInfo* load_info)
 {
-    // TODO: Use equation.
-    if (tig_file_fread(off_6876D0, 100, 1, ctx->stream) != 1) return false;
-    if (tig_file_fread(&dword_6876CC, sizeof(dword_6876CC), 1, ctx->stream) != 1) return false;
+    if (tig_file_fread(off_6876D0, sizeof(TWENTY_FIVE) * sizeof(off_6876D0[0]), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&dword_6876CC, sizeof(dword_6876CC), 1, load_info->stream) != 1) return false;
 
     return true;
 }
@@ -47,7 +50,6 @@ bool newspaper_load(LoadContext* ctx)
 // 0x4BF100
 bool newspaper_save(TigFile* stream)
 {
-    // TODO: Use equation.
     if (tig_file_fwrite(off_6876D0, 100, 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_6876CC, sizeof(dword_6876CC), 1, stream) != 1) return false;
 
@@ -57,7 +59,9 @@ bool newspaper_save(TigFile* stream)
 // 0x4BF1D0
 bool sub_4BF1D0(int a1)
 {
-    for (int index = 0; index < TWENTY_FIVE; index++) {
+    int index;
+
+    for (index = 0; index < TWENTY_FIVE; index++) {
         if (off_6876D0[index] == a1) {
             return true;
         }
