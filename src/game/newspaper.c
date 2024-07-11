@@ -3,6 +3,8 @@
 #define TWENTY_FIVE 25
 #define GENERIC_NEWSPAPER_NUM 5000
 
+static void sub_4BF2C0();
+
 // 0x6876CC
 static int dword_6876CC;
 
@@ -134,4 +136,21 @@ bool newspaper_timeevent_process(TimeEvent* timeevent)
     }
 
     return true;
+}
+
+// 0x4BF2C0
+void sub_4BF2C0()
+{
+    int index;
+
+    index = off_6876D0[4] < GENERIC_NEWSPAPER_NUM ? 0 : 4;
+    while (index < dword_6876CC - 1) {
+        off_6876D0[index] = off_6876D0[index + 1];
+        index++;
+    }
+
+    if (dword_6876CC < 5) {
+        off_6876D0[4] = sub_4BF330();
+        dword_6876CC = 5;
+    }
 }
