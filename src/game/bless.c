@@ -1,60 +1,120 @@
-#include "game/lib/bless.h"
+#include "game/bless.h"
 
-#include "game/lib/message.h"
+#include "game/mes.h"
 
-#define BLESS_FIELD_NAME 0
-#define BLESS_FIELD_EFFECT 1
-#define BLESS_FIELD_DESCRIPTION 2
+#define BLESS_F_NAME 0
+#define BLESS_F_EFFECT 1
+#define BLESS_F_DESCRIPTION 2
 
-static void bless_copy_field(int bless, int field, char* dest);
+static void bless_copy_field(int bless, int field, char* buffer);
 
 // 0x5FF410
-static int bless_msg_file;
+static mes_file_handle_t bless_mes_file;
 
 // 0x4C4110
 bool bless_mod_load()
 {
-    message_load("mes\\gamebless.mes", &bless_msg_file);
+    mes_load("mes\\gamebless.mes", &bless_mes_file);
     return true;
 }
 
 // 0x4C4130
 void bless_mod_unload()
 {
-    message_unload(bless_msg_file);
-    bless_msg_file = -1;
+    mes_unload(bless_mes_file);
+    bless_mes_file = MES_FILE_HANDLE_INVALID;
 }
 
 // 0x4C4150
-void bless_copy_name(int bless, char* dest)
+void bless_copy_name(int bless, char* buffer)
 {
-    bless_copy_field(bless, BLESS_FIELD_NAME, dest);
+    bless_copy_field(bless, BLESS_F_NAME, buffer);
 }
 
 // 0x4C4170
-void bless_copy_field(int bless, int field, char* dest)
+void bless_copy_field(int bless, int field, char* buffer)
 {
-    dest[0] = '\0';
+    MesFileEntry mes_file_entry;
+
+    buffer[0] = '\0';
 
     if (bless >= 50) {
-        MessageListItem message_list_item;
-        message_list_item.num = bless * 10 + field;
-        if (message_find(bless_msg_file, &message_list_item)) {
-            strcpy(dest, message_list_item.text);
+        mes_file_entry.num = bless * 10 + field;
+        if (mes_search(bless_mes_file, &mes_file_entry)) {
+            strcpy(buffer, mes_file_entry.str);
         }
     }
 }
 
 // 0x4C41E0
-void bless_copy_description(int bless, char* dest)
+void bless_copy_description(int bless, char* buffer)
 {
-    bless_copy_field(bless, BLESS_FIELD_DESCRIPTION, dest);
+    bless_copy_field(bless, BLESS_F_DESCRIPTION, buffer);
+}
+
+// 0x4C4200
+int sub_4C4200(object_id_t obj, BlessInfo* blessings)
+{
+    int cnt;
+    int index;
+
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return 0;
+    }
+
+    cnt = sub_4079C0(obj, OBJ_F_PC_BLESSING_IDX);
+    for (index = 0; index < cnt; index++) {
+        blessings[index].id = sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index);
+        blessings[index].ts = sub_407540(obj, OBJ_F_PC_BLESSING_TS_IDX, index);
+    }
+
+    return cnt;
+}
+
+// 0x4C4280
+bool bless_is_added_to(object_id_t obj, int bless)
+{
+    int cnt;
+    int index;
+
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return false;
+    }
+
+    cnt = sub_4079C0(obj, OBJ_F_PC_BLESSING_IDX);
+    for (index = 0; index < cnt; index++) {
+        if (sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index) == bless) {
+            return true;
+        }
+    }
+
+    return true;
+}
+
+// 0x4C42F0
+void bless_add(object_id_t obj, int bless)
+{
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    // TODO: Incomplete.
 }
 
 // 0x4C4420
 int bless_get_effect(int bless)
 {
     char buffer[80];
-    bless_copy_field(bless, BLESS_FIELD_EFFECT, buffer);
+    bless_copy_field(bless, BLESS_F_EFFECT, buffer);
     return atoi(buffer);
+}
+
+// 0x4C4450
+void bless_remove(object_id_t obj, int bless)
+{
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    // TODO: Incomplete.
 }
