@@ -4146,7 +4146,7 @@ void game_difficulty_changed_()
 void sub_4045A0()
 {
   sub_4BBC80();
-  sub_4BB920();
+  ci_redraw();
   sub_402D30(0);
   sub_402E50();
   sub_51E430(0);

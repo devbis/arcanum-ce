@@ -1,74 +1,74 @@
-#include "game/lib/ci.h"
+#include "game/ci.h"
 
-#include "tig/art.h"
-#include "tig/color.h"
-#include "tig/video.h"
-#include "tig/window.h"
+#include <tig/tig.h>
 
-static int sub_4BB980();
+static int ci_blit();
 
 // 0x5FC398
-static unsigned int dword_5FC398;
+static tig_art_id_t ci_indicator_art_id;
 
 // 0x5FC3A0
-static TigRect stru_5FC3A0;
+static TigRect ci_indicator_frame;
 
 // 0x5FC3B0
-static TigArtBlitSpec stru_5FC3B0;
+static TigArtBlitSpec ci_indicator_blit_info;
 
 // 0x5FC3DC
 static int dword_5FC3DC;
 
 // 0x5FC3E0
-static TigVideoBuffer* dword_5FC3E0;
+static TigVideoBuffer* ci_indicator_vb;
 
 // 0x5FC3E8
-static TigRect stru_5FC3E8;
+static TigRect ci_indicator_bounds;
 
 // 0x4BB720
-bool ci_init(GameContext* ctx)
+bool ci_init(GameContext* init_info)
 {
-    tig_art_interface_id_create(601, 0, 0, 0, &dword_5FC398);
-
     TigArtFrameData art_frame_data;
-    if (tig_art_frame_data(dword_5FC398, &art_frame_data) != TIG_OK) {
-        return false;
-    }
-
-    // TODO: There is a strange repetition of the above code, omitting for now,
-    // needs testing.
-
     TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data) != TIG_OK) {
+    TigVideoBufferCreateInfo vb_create_info;
+
+    tig_art_interface_id_create(601, 0, 0, 0, &ci_indicator_art_id);
+
+    if (tig_art_frame_data(ci_indicator_art_id, &art_frame_data) != TIG_OK) {
         return false;
     }
 
-    TigVideoBufferCreateInfo vb_create_info;
+    // FIXME: Does the same thing as above.
+    if (tig_art_frame_data(ci_indicator_art_id, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
+        return false;
+    }
+
     vb_create_info.width = art_frame_data.width;
     vb_create_info.height = art_frame_data.height;
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
     vb_create_info.color_key = tig_color_make(0, 0, 255);
     vb_create_info.background_color = vb_create_info.color_key;
-    if (tig_video_buffer_create(&vb_create_info, &dword_5FC3E0) != TIG_OK) {
+    if (tig_video_buffer_create(&vb_create_info, &ci_indicator_vb) != TIG_OK) {
         return false;
     }
 
-    stru_5FC3E8.x = 0;
-    stru_5FC3E8.y = 0;
-    stru_5FC3E8.width = art_frame_data.width;
-    stru_5FC3E8.height = art_frame_data.height;
+    ci_indicator_bounds.x = 0;
+    ci_indicator_bounds.y = 0;
+    ci_indicator_bounds.width = art_frame_data.width;
+    ci_indicator_bounds.height = art_frame_data.height;
 
-    stru_5FC3A0.x = window_data.rect.width - art_frame_data.width + window_data.rect.x - 2;
-    stru_5FC3A0.y = window_data.rect.y + art_frame_data.height + 2 + 2;
-    stru_5FC3A0.width = art_frame_data.width;
-    stru_5FC3A0.height = art_frame_data.height;
+    ci_indicator_frame.x = window_data.rect.width - art_frame_data.width + window_data.rect.x - 2;
+    ci_indicator_frame.y = window_data.rect.y + art_frame_data.height + 2 + 2;
+    ci_indicator_frame.width = art_frame_data.width;
+    ci_indicator_frame.height = art_frame_data.height;
 
-    stru_5FC3B0.field_0 = 0;
-    stru_5FC3B0.src_rect = &stru_5FC3E8;
-    stru_5FC3B0.dst_video_buffer = dword_5FC3E0;
-    stru_5FC3B0.dst_rect = &stru_5FC3E8;
+    ci_indicator_blit_info.flags = 0;
+    ci_indicator_blit_info.src_rect = &ci_indicator_bounds;
+    ci_indicator_blit_info.dst_video_buffer = ci_indicator_vb;
+    ci_indicator_blit_info.dst_rect = &ci_indicator_bounds;
 
-    sub_4BB980();
+    ci_blit();
 
     return true;
 }
@@ -76,9 +76,9 @@ bool ci_init(GameContext* ctx)
 // 0x4BB8C0
 void ci_exit()
 {
-    if (dword_5FC3E0 != NULL) {
-        tig_video_buffer_destroy(dword_5FC3E0);
-        dword_5FC3E0 = NULL;
+    if (ci_indicator_vb != NULL) {
+        tig_video_buffer_destroy(ci_indicator_vb);
+        ci_indicator_vb = NULL;
     }
 }
 
@@ -101,20 +101,20 @@ int sub_4BB900()
 }
 
 // 0x4BB910
-void nullsub_11()
+void sub_4BB910()
 {
 }
 
 // 0x4BB920
-void sub_4BB920()
+void ci_redraw()
 {
-    tig_video_buffer_fill(dword_5FC3E0, &stru_5FC3E8, tig_color_make(0, 0, 255));
-    sub_4BB980();
+    tig_video_buffer_fill(ci_indicator_vb, &ci_indicator_bounds, tig_color_make(0, 0, 255));
+    ci_blit();
 }
 
 // 0x4BB980
-int sub_4BB980()
+int ci_blit()
 {
-    stru_5FC3B0.src_art_id = dword_5FC398;
-    tig_art_blit(&stru_5FC3B0);
+    ci_indicator_blit_info.art_id = ci_indicator_art_id;
+    tig_art_blit(&ci_indicator_blit_info);
 }
