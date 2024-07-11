@@ -116,3 +116,22 @@ object_id_t sub_4BF210(int start, int64_t a2)
 
     return obj;
 }
+
+// 0x4BF270
+bool newspaper_timeevent_process(TimeEvent* timeevent)
+{
+    TimeEvent next_timeevent;
+    DateTime datetime;
+
+    (void)timeevent;
+
+    if ((tig_new_flags & 0x1) == 0 || (tig_net_flags & 0x2) != 0) {
+        sub_4BF2C0();
+
+        next_timeevent.type = TIMEEVENT_TYPE_NEWSPAPERS;
+        sub_45A950(&datetime, 86400000);
+        sub_45B800(&next_timeevent, &datetime);
+    }
+
+    return true;
+}

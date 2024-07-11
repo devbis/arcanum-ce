@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 #include "game/obj.h"
+#include "game/timeevent.h"
 
 bool newspaper_init(GameInitInfo* init_info);
 void newspaper_reset();
@@ -13,5 +14,6 @@ void newspaper_queue(int num, bool priority);
 bool newspaper_is_queued(int num);
 int sub_4BF200(int index);
 object_id_t sub_4BF210(int start, int64_t a2);
+bool newspaper_timeevent_process(TimeEvent* timeevent);
 
 #endif /* ARCANUM_GAME_NEWSPAPER_H_ */
