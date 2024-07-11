@@ -52,6 +52,25 @@ void curse_copy_description(int curse, char* buffer)
     curse_copy_field(curse, CURSE_F_DESCRIPTION, buffer);
 }
 
+// 0x4C3D50
+int sub_4C3D50(object_id_t obj, CurseInfo* curses)
+{
+    int cnt;
+    int index;
+
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return 0;
+    }
+
+    cnt = sub_4079C0(obj, OBJ_F_PC_CURSE_IDX);
+    for (index = 0; index < cnt; index++) {
+        curses[index].id = sub_407470(obj, OBJ_F_PC_CURSE_IDX, index);
+        curses[index].ts = sub_407540(obj, OBJ_F_PC_CURSE_TS_IDX, index);
+    }
+
+    return cnt;
+}
+
 // 0x4C3F70
 int curse_get_effect(int curse)
 {
