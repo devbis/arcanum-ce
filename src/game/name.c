@@ -1,12 +1,14 @@
-#include "game/lib/name.h"
+#include "game/name.h"
 
 #include <stdio.h>
 
-#include "game/lib/message.h"
-#include "tig/art.h"
-#include "tig/color.h"
-#include "tig/file.h"
-#include "tig/window.h"
+#include "game/a_name.h"
+#include "game/mes.h"
+
+static bool sub_41D1F0();
+static bool sub_41D2C0();
+static int sub_41D390();
+static void sub_41F240();
 
 // 0x5A1064
 static const char* off_5A1064 = "art";
@@ -24,19 +26,19 @@ static int dword_5A15C4 = 250;
 static int dword_5D55F0;
 
 // 0x5D55F4
-static int name_monster_msg_file;
+static mes_file_handle_t name_monster_mes_file;
 
 // 0x5D55F8
-static int name_eye_candy_msg_file;
+static mes_file_handle_t name_eye_candy_mes_file;
 
 // 0x5D55FC
-static int name_unique_npc_msg_file;
+static mes_file_handle_t name_unique_npc_mes_file;
 
 // 0x5D5600
 static int dword_5D5600;
 
 // 0x5D5604
-static int name_container_msg_file;
+static mes_file_handle_t name_container_mes_file;
 
 // 0x5D5608
 static int* dword_5D5608;
@@ -48,16 +50,16 @@ static int* dword_5D560C;
 static int* dword_5D5610;
 
 // 0x5D5614
-static int name_interface_msg_file;
+static mes_file_handle_t name_interface_mes_file;
 
 // 0x5D5618
 static int dword_5D5618;
 
 // 0x5D561C
-static int name_scenery_msg_file;
+static mes_file_handle_t name_scenery_mes_file;
 
 // 0x5D5620
-static bool dword_5D5620;
+static bool name_initialized;
 
 // 0x5D5624
 static bool dword_5D5624;
@@ -69,143 +71,145 @@ static int dword_739E48;
 static int dword_739E54;
 
 // 0x41CA40
-bool name_init(GameContext* ctx)
+bool name_init(GameInitInfo* init_info)
 {
-    if (dword_5D5620) {
+    (void)init_info;
+
+    if (name_initialized) {
         return true;
     }
 
-    if (!message_load("art\\scenery\\scenery.mes", &name_scenery_msg_file)) {
+    if (!mes_load("art\\scenery\\scenery.mes", &name_scenery_mes_file)) {
         return false;
     }
 
-    if (!message_load("art\\interface\\interface.mes", &name_interface_msg_file)) {
-        message_unload(name_scenery_msg_file);
+    if (!mes_load("art\\interface\\interface.mes", &name_interface_mes_file)) {
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!message_load("art\\unique_npc\\unique_npc.mes", &name_unique_npc_msg_file)) {
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!mes_load("art\\unique_npc\\unique_npc.mes", &name_unique_npc_mes_file)) {
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!message_load("art\\monster\\monster.mes", &name_monster_msg_file)) {
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!mes_load("art\\monster\\monster.mes", &name_monster_mes_file)) {
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!message_load("art\\eye_candy\\eye_candy.mes", &name_eye_candy_msg_file)) {
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!mes_load("art\\eye_candy\\eye_candy.mes", &name_eye_candy_mes_file)) {
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!message_load("art\\container\\container.mes", &name_container_msg_file)) {
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!mes_load("art\\container\\container.mes", &name_container_mes_file)) {
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!sub_4ED1E0()) {
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!a_name_light_init()) {
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!sub_4EAC80()) {
-        sub_4ED220();
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!a_name_tile_init()) {
+        a_name_light_exit();
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!sub_4ED2F0()) {
-        sub_4EAD50();
-        sub_4ED220();
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!a_name_roof_init()) {
+        a_name_tile_exit();
+        a_name_light_exit();
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!sub_4EC9B0()) {
-        sub_4ED310();
-        sub_4EAD50();
-        sub_4ED220();
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!a_name_wall_init()) {
+        a_name_roof_exit();
+        a_name_tile_exit();
+        a_name_light_exit();
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!sub_4EC5A0()) {
-        sub_4EC9E0();
-        sub_4ED310();
-        sub_4EAD50();
-        sub_4ED220();
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!a_name_portal_init()) {
+        a_name_wall_exit();
+        a_name_roof_exit();
+        a_name_tile_exit();
+        a_name_light_exit();
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!sub_4EC190()) {
-        sub_4EC610();
-        sub_4EC9E0();
-        sub_4ED310();
-        sub_4EAD50();
-        sub_4ED220();
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!a_name_item_init()) {
+        a_name_portal_exit();
+        a_name_wall_exit();
+        a_name_roof_exit();
+        a_name_tile_exit();
+        a_name_light_exit();
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    if (!sub_4EC370()) {
-        sub_4EC250();
-        sub_4EC610();
-        sub_4EC9E0();
-        sub_4ED310();
-        sub_4EAD50();
-        sub_4ED220();
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+    if (!a_name_facade_init()) {
+        a_name_item_exit();
+        a_name_portal_exit();
+        a_name_wall_exit();
+        a_name_roof_exit();
+        a_name_tile_exit();
+        a_name_light_exit();
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
         return false;
     }
 
-    dword_5D5620 = true;
+    name_initialized = true;
 
     sub_4EBC40();
     sub_41CE60();
@@ -216,27 +220,27 @@ bool name_init(GameContext* ctx)
 // 0x41CDA0
 void name_exit()
 {
-    if (dword_5D5620) {
+    if (name_initialized) {
         free(dword_5D560C);
         free(dword_5D5608);
         free(dword_5D5610);
 
-        sub_4EC390();
-        sub_4EC250();
-        sub_4EC610();
-        sub_4EC9E0();
-        sub_4ED310();
-        sub_4EAD50();
-        sub_4ED220();
+        a_name_facade_exit();
+        a_name_item_exit();
+        a_name_portal_exit();
+        a_name_wall_exit();
+        a_name_roof_exit();
+        a_name_tile_exit();
+        a_name_light_exit();
 
-        message_unload(name_container_msg_file);
-        message_unload(name_eye_candy_msg_file);
-        message_unload(name_monster_msg_file);
-        message_unload(name_unique_npc_msg_file);
-        message_unload(name_interface_msg_file);
-        message_unload(name_scenery_msg_file);
+        mes_unload(name_container_mes_file);
+        mes_unload(name_eye_candy_mes_file);
+        mes_unload(name_monster_mes_file);
+        mes_unload(name_unique_npc_mes_file);
+        mes_unload(name_interface_mes_file);
+        mes_unload(name_scenery_mes_file);
 
-        dword_5D5620 = false;
+        name_initialized = false;
         dword_5D5624 = false;
     }
 }
@@ -244,20 +248,23 @@ void name_exit()
 // 0x41D1F0
 bool sub_41D1F0()
 {
-    TigFile* stream = tig_file_fopen(off_5A1068, "rb");
+    TigFile* stream;
+    int expected_cnt;
+    int actual_cnt;
+
+    stream = tig_file_fopen(off_5A1068, "rb");
     if (stream == NULL) {
         return false;
     }
 
-    int expected_count = sub_41D390();
+    expected_cnt = sub_41D390();
 
-    int count;
-    if (tig_file_fread(&count, sizeof(count), 1, stream) != 1) {
+    if (tig_file_fread(&actual_cnt, sizeof(actual_cnt), 1, stream) != 1) {
         tig_file_fclose(stream);
         return false;
     }
 
-    if (expected_count != count) {
+    if (expected_cnt != actual_cnt) {
         tig_file_fclose(stream);
         return false;
     }
@@ -276,20 +283,27 @@ bool sub_41D1F0()
         tig_file_fclose(stream);
         return false;
     }
+
+    tig_file_fclose(stream);
+
+    return true;
 }
 
 // 0x41D2C0
 bool sub_41D2C0()
 {
-    int count = sub_41D390();
+    int cnt;
+    TigFile* stream;
+
+    cnt = sub_41D390();
     sub_52DFE0(off_5A1064);
 
-    TigFile* stream = tig_file_fopen(off_5A1068, "wb");
+    stream = tig_file_fopen(off_5A1068, "wb");
     if (stream == NULL) {
         return false;
     }
 
-    if (tig_file_fwrite(&count, sizeof(count), 1, stream) != 1) {
+    if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
         tig_file_fclose(stream);
         return false;
     }
@@ -310,51 +324,53 @@ bool sub_41D2C0()
     }
 
     tig_file_fclose(stream);
+
     return true;
 }
 
 // 0x41D390
 int sub_41D390()
 {
-    int count = 0;
-    TigFileList directory_list;
+    int cnt = 0;
+    TigFileList dir_list;
     TigFileList file_list;
     char path[MAX_PATH];
+    unsigned int index;
 
-    tig_file_list_create(&directory_list, "art\\critter\\*.*");
-    for (int index = 0; index < directory_list.count; index++) {
-        if (directory_list.entries[index].path[0] != '.') {
-            sprintf(path, "art\\critter\\%s\\*.art", directory_list.entries[index].path);
+    tig_file_list_create(&dir_list, "art\\critter\\*.*");
+    for (index = 0; index < dir_list.count; index++) {
+        if (dir_list.entries[index].path[0] != '.') {
+            sprintf(path, "art\\critter\\%s\\*.art", dir_list.entries[index].path);
             tig_file_list_create(&file_list, path);
-            count += file_list.count;
+            cnt += file_list.count;
             tig_file_list_destroy(&file_list);
         }
     }
-    tig_file_list_destroy(&directory_list);
+    tig_file_list_destroy(&dir_list);
 
-    tig_file_list_create(&directory_list, "art\\monster\\*.*");
-    for (int index = 0; index < directory_list.count; index++) {
-        if (directory_list.entries[index].path[0] != '.') {
-            sprintf(path, "art\\monster\\%s\\*.art", directory_list.entries[index].path);
+    tig_file_list_create(&dir_list, "art\\monster\\*.*");
+    for (index = 0; index < dir_list.count; index++) {
+        if (dir_list.entries[index].path[0] != '.') {
+            sprintf(path, "art\\monster\\%s\\*.art", dir_list.entries[index].path);
             tig_file_list_create(&file_list, path);
-            count += file_list.count;
+            cnt += file_list.count;
             tig_file_list_destroy(&file_list);
         }
     }
-    tig_file_list_destroy(&directory_list);
+    tig_file_list_destroy(&dir_list);
 
-    tig_file_list_create(&directory_list, "art\\unique_npc\\*.*");
-    for (int index = 0; index < directory_list.count; index++) {
-        if (directory_list.entries[index].path[0] != '.') {
-            sprintf(path, "art\\unique_npc\\%s\\*.art", directory_list.entries[index].path);
+    tig_file_list_create(&dir_list, "art\\unique_npc\\*.*");
+    for (index = 0; index < dir_list.count; index++) {
+        if (dir_list.entries[index].path[0] != '.') {
+            sprintf(path, "art\\unique_npc\\%s\\*.art", dir_list.entries[index].path);
             tig_file_list_create(&file_list, path);
-            count += file_list.count;
+            cnt += file_list.count;
             tig_file_list_destroy(&file_list);
         }
     }
-    tig_file_list_destroy(&directory_list);
+    tig_file_list_destroy(&dir_list);
 
-    return count;
+    return cnt;
 }
 
 // 0x41F240
@@ -372,7 +388,7 @@ void sub_41F240()
 
     tig_window_fill(dword_739E48, &dst_rect, tig_color_make(0, 0, 60));
 
-    if (dword_739E54 != -1) {
+    if (dword_739E54 != TIG_ART_ID_INVALID) {
         if (tig_art_frame_data(dword_739E54, &art_frame_data) == TIG_OK) {
             src_rect.x = 0;
             src_rect.y = 0;
@@ -393,8 +409,8 @@ void sub_41F240()
             dst_rect.x += (80 - dst_rect.width) / 2;
             dst_rect.y += (80 - dst_rect.height) / 2;
 
-            art_blit_spec.field_0 = 4;
-            art_blit_spec.src_art_id = dword_739E54;
+            art_blit_spec.flags = TIG_ART_BLT_PALETTE_ORIGINAL;
+            art_blit_spec.art_id = dword_739E54;
             art_blit_spec.src_rect = &src_rect;
             art_blit_spec.dst_rect = &dst_rect;
             tig_window_blit_art(dword_739E48, &art_blit_spec);
