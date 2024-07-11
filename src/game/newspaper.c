@@ -102,3 +102,17 @@ int sub_4BF200(int index)
 {
     return off_6876D0[index];
 }
+
+// 0x4BF210
+object_id_t sub_4BF210(int start, int64_t a2)
+{
+    object_id_t obj;
+
+    if (!object_create(sub_4685A0(14064), a2, &obj)) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    obj_f_set_int32(obj, OBJ_F_WRITTEN_TEXT_START_LINE, start);
+
+    return obj;
+}
