@@ -112,3 +112,13 @@ int curse_get_effect(int curse)
     curse_copy_field(curse, CURSE_F_EFFECT, buffer);
     return atoi(buffer);
 }
+
+// 0x4C3FA0
+void curse_remove(object_id_t obj, int curse)
+{
+    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    // TODO: Incomplete.
+}

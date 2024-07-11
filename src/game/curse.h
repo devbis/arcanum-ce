@@ -19,5 +19,6 @@ int sub_4C3D50(object_id_t obj, CurseInfo* curses);
 bool curse_is_added_to(object_id_t obj, int curse);
 void curse_add(object_id_t obj, int curse);
 int curse_get_effect(int curse);
+void curse_remove(object_id_t obj, int curse);
 
 #endif /* ARCANUM_GAME_CURSE_H_ */
