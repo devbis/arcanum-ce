@@ -1,6 +1,7 @@
 #include "game/newspaper.h"
 
 #define TWENTY_FIVE 25
+#define GENERIC_NEWSPAPER_NUM 5000
 
 // 0x6876CC
 static int dword_6876CC;
@@ -41,7 +42,7 @@ void newspaper_exit()
 // 0x4BF0C0
 bool newspaper_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(off_6876D0, sizeof(TWENTY_FIVE) * sizeof(off_6876D0[0]), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(off_6876D0, sizeof(TWENTY_FIVE) * sizeof(*off_6876D0), 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_6876CC, sizeof(dword_6876CC), 1, load_info->stream) != 1) return false;
 
     return true;
@@ -50,19 +51,45 @@ bool newspaper_load(GameLoadInfo* load_info)
 // 0x4BF100
 bool newspaper_save(TigFile* stream)
 {
-    if (tig_file_fwrite(off_6876D0, 100, 1, stream) != 1) return false;
+    if (tig_file_fwrite(off_6876D0, sizeof(TWENTY_FIVE) * sizeof(*off_6876D0), 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_6876CC, sizeof(dword_6876CC), 1, stream) != 1) return false;
 
     return true;
 }
 
+// 0x4BF140
+void newspaper_queue(int num, bool priority)
+{
+    int index;
+
+    if (num >= GENERIC_NEWSPAPER_NUM || !sub_4BF1D0(num)) {
+        if (priority) {
+            for (index = TWENTY_FIVE - 1; index > 4; index--) {
+                off_6876D0[index] = off_6876D0[index - 1];
+            }
+
+            off_6876D0[5] = num;
+
+            if (dword_6876CC < TWENTY_FIVE) {
+                dword_6876CC++;
+            }
+        } else {
+            if (dword_6876CC < TWENTY_FIVE) {
+                off_6876D0[dword_6876CC++] = num;
+            } else {
+                off_6876D0[TWENTY_FIVE - 1] = num;
+            }
+        }
+    }
+}
+
 // 0x4BF1D0
-bool sub_4BF1D0(int a1)
+bool sub_4BF1D0(int num)
 {
     int index;
 
     for (index = 0; index < TWENTY_FIVE; index++) {
-        if (off_6876D0[index] == a1) {
+        if (off_6876D0[index] == num) {
             return true;
         }
     }
