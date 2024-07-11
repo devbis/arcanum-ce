@@ -1,5 +1,6 @@
 #include "game/newspaper.h"
 
+#include "game/mes.h"
 #include "game/random.h"
 
 #define TWENTY_FIVE 25
@@ -130,7 +131,7 @@ bool newspaper_timeevent_process(TimeEvent* timeevent)
 
     (void)timeevent;
 
-    if ((tig_new_flags & 0x1) == 0 || (tig_net_flags & 0x2) != 0) {
+    if ((tig_net_flags & 0x1) == 0 || (tig_net_flags & 0x2) != 0) {
         sub_4BF2C0();
 
         next_timeevent.type = TIMEEVENT_TYPE_NEWSPAPERS;
