@@ -628,6 +628,24 @@ void sub_4064B0(int64_t obj_handle)
     }
 }
 
+// 0x406520
+void sub_406520(int64_t obj_handle)
+{
+    Object* object;
+    unsigned int flags;
+
+    object = obj_lock(obj_handle);
+    sub_408A20(object, OBJ_F_INTERNAL_FLAGS, &flags);
+    if ((flags & 0x1) != 0) {
+        sub_40BDB0(object);
+        sub_40BE70(object);
+        sub_408760(object, OBJ_F_INTERNAL_FLAGS, flags & ~0x1);
+        // NOTE: Probably should be outside of this condition block, otherwise
+        // object might remain locked.
+        obj_unlock(obj_handle);
+    }
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
