@@ -16,6 +16,7 @@ static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
 static bool sub_40C560();
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
+static int sub_40CB40(Object* object, int fld);
 static bool obj_check_version_stream(TigFile* stream);
 static void sub_40D5D0(void* mem);
 static bool obj_check_version_memory(void* mem);
@@ -1163,6 +1164,14 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
     }
 
     return true;
+}
+
+// 0x40CB40
+int sub_40CB40(Object* object, int fld)
+{
+    (void)object;
+
+    return object_fields[fld].field_0;
 }
 
 // 0x40D590

@@ -4233,12 +4233,6 @@ int sub_40C6B0(void* a1)
     return 1;
 }
 
-// 0x40CB40
-int sub_40CB40(int a1, int a2)
-{
-    return off_5D1104[a2].field_0;
-}
-
 // 0x40D320
 int sub_40D320(void* a1, int a2)
 {
