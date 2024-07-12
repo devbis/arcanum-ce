@@ -778,6 +778,7 @@ typedef bool (ObjEnumerateCallback)(Object* object, int fld);
 
 bool obj_init(GameInitInfo* init_info);
 void obj_exit();
+void sub_405250();
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);
 long long object_field_get_64(object_id_t object_id, int field);

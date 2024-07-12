@@ -442,6 +442,17 @@ void obj_exit()
     obj_initialized = false;
 }
 
+// 0x405250
+void sub_405250()
+{
+    sub_4E4DB0();
+    sub_4E3F90();
+    sub_4E5A50();
+    sub_4E59B0();
+    sub_4E4CD0(sizeof(Object), obj_is_editor);
+    sub_4E3F80();
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
