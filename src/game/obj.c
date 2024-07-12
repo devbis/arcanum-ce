@@ -17,6 +17,7 @@ static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 static bool sub_40C560();
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
 static bool obj_check_version_stream(TigFile* stream);
+static bool obj_check_version_memory(void* mem);
 
 // 0x59BEA8
 const char* object_field_names[] = {
@@ -1170,8 +1171,21 @@ bool obj_check_version_stream(TigFile* stream)
 
     if (!obj_read_raw(version, sizeof(version), stream)
         || version != OBJ_FILE_VERSION) {
-        tig_debug_printf("Object file format version mismatch (read: %d, expected: %d).\n", OBJ_FILE_VERSION);
+        tig_debug_printf("Object file format version mismatch (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
         return false;
+    }
+
+    return true;
+}
+
+// 0x40D5F0
+bool obj_check_version_memory(void* mem)
+{
+    int version;
+
+    sub_4E4C50(version, sizeof(version, mem));
+    if (version != OBJ_FILE_VERSION) {
+        tig_debug_printf("Object file format version mismatch: (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
     }
 
     return true;
