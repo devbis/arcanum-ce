@@ -978,6 +978,142 @@ bool sub_40C560(Obj* obj, int fld)
     return true;
 }
 
+// 0x40C880
+bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
+{
+    if (!obj_enumerate_fields_in_range(object, OBJ_F_BEGIN, OBJ_F_END)) {
+        return false;
+    }
+
+    switch (object->type) {
+    case OBJ_TYPE_WALL:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_WALL_BEGIN, OBJ_F_WALL_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_PORTAL:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_PORTAL_BEGIN, OBJ_F_PORTAL_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_CONTAINER:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_CONTAINER_BEGIN, OBJ_F_CONTAINER_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_SCENERY:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_SCENERY_BEGIN, OBJ_F_SCENERY_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_PROJECTILE:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_PROJECTILE_BEGIN, OBJ_F_PROJECTILE_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_WEAPON:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_WEAPON_BEGIN, OBJ_F_WEAPON_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_AMMO:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_AMMO_BEGIN, OBJ_F_AMMO_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ARMOR_BEGIN, OBJ_F_ARMOR_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GOLD:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_GOLD_BEGIN, OBJ_F_GOLD_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_FOOD:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_FOOD_BEGIN, OBJ_F_FOOD_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_SCROLL:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_SCROLL_BEGIN, OBJ_F_SCROLL_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_KEY_BEGIN, OBJ_F_KEY_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_KEY_RING_BEGIN, OBJ_F_KEY_RING_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_WRITTEN:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_WRITTEN_BEGIN, OBJ_F_WRITTEN_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GENERIC:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_GENERIC_BEGIN, OBJ_F_GENERIC_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_PC:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_CRITTER_BEGIN, OBJ_F_CRITTER_END)) {
+            return false;
+        }
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_PC_BEGIN, OBJ_F_PC_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_NPC:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_NPC_BEGIN, OBJ_F_NPC_END)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_TRAP:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_TRAP_BEGIN, OBJ_F_TRAP_END)) {
+            return false;
+        }
+        break;
+    }
+
+    return true;
+}
+
 // 0x40CB00
 bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback)
 {

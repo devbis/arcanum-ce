@@ -752,12 +752,15 @@ typedef struct ObjectID {
 
 static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 
+typedef bool (ObjEnumerateCallback)(Object* object, int fld);
+
 void obj_exit();
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);
 long long object_field_get_64(object_id_t object_id, int field);
 int sub_40C030(ObjectType object_type);
 bool sub_40C260(ObjectType object_type, ObjectField field);
+bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback);
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4);
 
 // NOTE: Seen in some assertions in `anim.c`.
