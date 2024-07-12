@@ -567,6 +567,49 @@ void sub_405CC0(int64_t obj)
     sub_4E4FB0(obj);
 }
 
+// 0x405D60
+void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
+{
+    int64_t new_obj_handle;
+    Object* new_object;
+    Object* object;
+    int fld;
+
+    object = obj_lock(obj_handle);
+    new_object = sub_408710(&new_obj_handle);
+
+    new_object->type = object->type;
+    new_object->field_8 = object->field_8;
+    new_object->field_20 = object->field_20;
+    new_object->field_44 = object->field_44;
+    new_object->field_46 = object->field_46;
+    new_object->field_50 = (int*)CALLOC(4 * object->field_46, 1);
+
+    if (object->field_20.field_0 != -1) {
+        sub_40C5C0(new_object, object);
+
+        dword_5D1108 = object;
+        sub_40CBA0(new_object, sub_40C7A0);
+
+        memset(new_object->transient_properties, 0, sizeof(new_object->transient_properties));
+        for (fld = OBJ_F_TRANSIENT_BEGIN + 1; fld < OBJ_F_TRANSIENT_END; fld++) {
+            sub_40C7F0(new_object, object, fld);
+        }
+    } else {
+        sub_40C650(new_object, object);
+
+        dword_5D10F4 = 0;
+        dword_5D1110 = object;
+        obj_enumerate_fields(new_object, sub_40C730);
+    }
+
+    obj_unlock(obj_handle);
+    obj_unlock(new_obj_handle);
+    sub_464470(new_obj_handle, NULL, NULL);
+
+    *new_obj_handle_ptr = new_obj_handle;
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
