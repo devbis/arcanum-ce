@@ -1,5 +1,7 @@
 #include "game/lib/obj.h"
 
+#define OBJ_FILE_VERSION 119
+
 typedef struct ObjectFieldInfo {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
@@ -14,6 +16,7 @@ static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
 static bool sub_40C560();
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
+static bool obj_check_version_stream(TigFile* stream);
 
 // 0x59BEA8
 const char* object_field_names[] = {
@@ -1155,6 +1158,20 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
+    }
+
+    return true;
+}
+
+// 0x40D590
+bool obj_check_version_stream(TigFile* stream)
+{
+    int version;
+
+    if (!obj_read_raw(version, sizeof(version), stream)
+        || version != OBJ_FILE_VERSION) {
+        tig_debug_printf("Object file format version mismatch (read: %d, expected: %d).\n", OBJ_FILE_VERSION);
+        return false;
     }
 
     return true;
