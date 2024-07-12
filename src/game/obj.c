@@ -1438,6 +1438,21 @@ int sub_40CB40(Object* object, int fld)
     return object_fields[fld].field_0;
 }
 
+// 0x40CB00
+bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback)
+{
+    int index;
+
+    // +1 to skip `OBJ_F_{TYPE}_BEGIN`.
+    for (index = begin + 1; index < end; index++) {
+        if (!callback(obj, index)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // 0x40D590
 bool obj_check_version_stream(TigFile* stream)
 {
@@ -1467,21 +1482,6 @@ bool obj_check_version_memory(void* mem)
     sub_4E4C50(version, sizeof(version, mem));
     if (version != OBJ_FILE_VERSION) {
         tig_debug_printf("Object file format version mismatch: (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
-    }
-
-    return true;
-}
-
-// 0x40CB00
-bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback)
-{
-    int index;
-
-    // +1 to skip `OBJ_F_{TYPE}_BEGIN`.
-    for (index = begin + 1; index < end; index++) {
-        if (!callback(obj, index)) {
-            return false;
-        }
     }
 
     return true;
