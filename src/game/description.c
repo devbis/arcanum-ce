@@ -1,36 +1,38 @@
-#include "game/lib/description.h"
+#include "game/description.h"
 
-#include "game/lib/message.h"
+#include "game/mes.h"
 
 // 0x6018CC
-static int game_key_msg_file;
+static mes_file_handle_t gamekey_mes_file;
 
 // 0x6018D0
-static int game_description_msg_file;
+static mes_file_handle_t gamedesc_mes_file;
 
 // 0x6018D4
-static int description_msg_file;
+static mes_file_handle_t description_mes_file;
 
 // 0x6018D8
 static int dword_6018D8;
 
 // 0x4D40D0
-bool description_init(GameContext* ctx)
+bool description_init(GameInitInfo* init_info)
 {
-    if (!message_load("mes\\description.mes", &description_msg_file)) {
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    if (!mes_load("mes\\description.mes", &description_mes_file)) {
         return false;
     }
 
-    int count = message_count(description_msg_file);
-    if (count != 0) {
-        MessageListItem msg;
-        sub_4D4500(description_msg_file, count - 1, &msg);
-        dword_6018D8 = msg.num;
+    cnt = mes_entries_count(description_mes_file);
+    if (cnt != 0) {
+        mes_get_entry(description_mes_file, cnt - 1, &mes_file_entry);
+        dword_6018D8 = mes_file_entry.num;
     } else {
         dword_6018D8 = 0;
     }
 
-    game_description_msg_file = -1;
+    gamedesc_mes_file = MES_FILE_HANDLE_INVALID;
 
     return true;
 }
@@ -38,22 +40,24 @@ bool description_init(GameContext* ctx)
 // 0x4D4150
 void description_exit()
 {
-    message_unload(description_msg_file);
+    message_unload(description_mes_file);
 }
 
 // 0x4D4160
 bool description_mod_load()
 {
-    if (message_load("mes\\gamedesc.mes", &game_description_msg_file)) {
-        int count = message_count(game_description_msg_file);
-        if (count != 0) {
-            MessageListItem msg;
-            sub_4D4500(game_description_msg_file, count - 1, &msg);
-            dword_6018D8 = msg.num;
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    if (mes_load("mes\\gamedesc.mes", &gamedesc_mes_file)) {
+        cnt = message_count(gamedesc_mes_file);
+        if (cnt != 0) {
+            mes_get_entry(gamedesc_mes_file, cnt - 1, &mes_file_entry);
+            dword_6018D8 = mes_file_entry.num;
         }
     }
 
-    message_load("mes\\gamekey.mes", &game_key_msg_file);
+    mes_load("mes\\gamekey.mes", &gamekey_mes_file);
 
     return true;
 }
@@ -61,47 +65,49 @@ bool description_mod_load()
 // 0x4D41D0
 int description_mod_unload()
 {
-    message_unload(game_description_msg_file);
-    game_description_msg_file = -1;
+    message_unload(gamedesc_mes_file);
+    gamedesc_mes_file = MES_FILE_HANDLE_INVALID;
 
-    message_unload(game_key_msg_file);
-    game_key_msg_file = -1;
+    message_unload(gamekey_mes_file);
+    gamekey_mes_file = MES_FILE_HANDLE_INVALID;
 }
 
 // 0x4D4210
 const char* description_get_name(int num)
 {
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+
     if (num < 0 || num > dword_6018D8) {
         return NULL;
     }
 
-    int msg_file;
     if (num < 30000) {
-        msg_file = description_msg_file;
+        mes_file = description_mes_file;
     } else {
-        msg_file = game_description_msg_file;
-        if (msg_file == -1) {
+        mes_file = gamedesc_mes_file;
+        if (mes_file == MES_FILE_HANDLE_INVALID) {
             return NULL;
         }
     }
 
-    MessageListItem msg;
-    msg.num = num;
-    if (!message_find(msg_file, &msg)) {
+    mes_file_entry.num = num;
+    if (!mes_search(mes_file, &mes_file_entry)) {
         return NULL;
     }
 
-    return msg.text;
+    return mes_file_entry.str;
 }
 
 // 0x4D4260
 const char* description_get_key_name(int num)
 {
-    MessageListItem msg;
-    msg.num = num;
-    if (!message_find(game_key_msg_file, &msg)) {
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = num;
+    if (!message_find(gamekey_mes_file, &mes_file_entry)) {
         return NULL;
     }
 
-    return msg.text;
+    return mes_file_entry.str;
 }
