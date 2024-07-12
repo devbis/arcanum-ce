@@ -668,6 +668,26 @@ bool obj_write(TigFile* stream, int64_t obj_handle)
     }
 }
 
+// 0x406600
+bool obj_read(TigFile* stream, int64_t obj_handle_ptr)
+{
+    ObjectID object_id;
+
+    if (!obj_check_version_stream(stream)) {
+        return false;
+    }
+
+    if (!obj_read_raw(&object_id, sizeof(ObjectID), stream)) {
+        return false;
+    }
+
+    if (object_id.field_0 == -1) {
+        return sub_4097B0(stream, obj_handle_ptr, object_id);
+    } else {
+        return sub_409AA0(stream, obj_handle_ptr);
+    }
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
