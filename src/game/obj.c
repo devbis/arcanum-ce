@@ -12,6 +12,8 @@ typedef struct ObjectFieldInfo {
 
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
+static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
+
 // 0x59BEA8
 const char* object_field_names[] = {
     "obj_f_begin",
@@ -961,4 +963,19 @@ void sub_40BBB0()
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4)
 {
     // TODO: Incomplete.
+}
+
+// 0x40CB00
+bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback)
+{
+    int index;
+
+    // +1 to skip `OBJ_F_{TYPE}_BEGIN`.
+    for (index = begin + 1; index < end; index++) {
+        if (!callback(obj, index)) {
+            return false;
+        }
+    }
+
+    return true;
 }
