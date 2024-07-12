@@ -17,6 +17,7 @@ static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 static bool sub_40C560();
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
 static bool obj_check_version_stream(TigFile* stream);
+static void sub_40D5D0(void* mem);
 static bool obj_check_version_memory(void* mem);
 
 // 0x59BEA8
@@ -1176,6 +1177,13 @@ bool obj_check_version_stream(TigFile* stream)
     }
 
     return true;
+}
+
+// 0x40D5D0
+void sub_40D5D0(void* mem)
+{
+    int version = OBJ_FILE_VERSION;
+    sub_4E4C00(&version, sizeof(version), mem);
 }
 
 // 0x40D5F0
