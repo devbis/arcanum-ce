@@ -357,14 +357,60 @@ const char* object_field_names[] = {
     "obj_f_max",
 };
 
+// 0x5D10F0
+static int* dword_5D10F0;
+
+// 0x5D10F4
+static int dword_5D10F4;
+
+// 0x5D10F8
+static bool obj_is_editor;
+
+// 0x5D10FC
+static int16_t word_5D10FC;
+
+// 0x5D1100
+static int* dword_5D1100;
+
 // 0x5D1104
 static ObjectFieldInfo* object_fields;
+
+// 0x5D1120
+static int16_t* dword_5D1120;
 
 // 0x5D1128
 static void* dword_5D1128;
 
 // 0x5D112C
 static void* dword_5D112C;
+
+// 0x405110
+bool obj_init(GameInitInfo* init_info)
+{
+    int index;
+    Object object;
+
+    obj_fields = (ObjField*)CALLOC(OBJ_F_MAX, sizeof(ObjField));
+    dword_5D10F0 = (int*)CALLOC(21, sizeof(int));
+    dword_5D1100 = (int*)CALLOC(21, sizeof(int));
+    dword_5D1120 = (int16_t*)CALLOC(18, sizeof(int16_t));
+    obj_is_editor = init_info->editor;
+    sub_4E59B0();
+    sub_4E4CD0(160, obj_is_editor);
+    sub_4E3F80();
+    sub_4E3900();
+    sub_40A400();
+    sub_40BAC0();
+
+    object.field_20 = -1;
+    for (index = 0; index < 18; index++) {
+        object.type = index;
+        word_5D10FC = 0;
+        dword_5D10F4 = 0;
+        obj_enumerate_fields(&object, sub_40C560);
+        dword_5D1120[index] = word_5D10FC;
+    }
+}
 
 // 0x4051F0
 void obj_exit()

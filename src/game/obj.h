@@ -754,6 +754,7 @@ static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 
 typedef bool (ObjEnumerateCallback)(Object* object, int fld);
 
+bool obj_init(GameInitInfo* init_info);
 void obj_exit();
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);
