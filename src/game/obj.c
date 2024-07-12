@@ -646,6 +646,28 @@ void sub_406520(int64_t obj_handle)
     }
 }
 
+// 0x406590
+bool obj_write(TigFile* stream, int64_t obj_handle)
+{
+    Object* object;
+    bool v1;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40D560(stream)) {
+        // FIXME: Object not unlocked.
+        return false;
+    }
+
+    v1 = object->field_20.field_0 == -1;
+    obj_unlock(obj_handle);
+
+    if (v1) {
+        return sub_4096B0(stream, obj_handle);
+    } else {
+        return sub_409980(stream, obj_handle);
+    }
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
