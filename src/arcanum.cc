@@ -4201,14 +4201,6 @@ int sub_40A790(int a1)
     return 0;
 }
 
-// 0x40C560
-int sub_40C560()
-{
-  word_5D10FC++;
-  dword_5D10F4++;
-  return 1;
-}
-
 // 0x40C580
 void sub_40C580(void* a1)
 {

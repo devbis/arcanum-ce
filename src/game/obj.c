@@ -12,6 +12,7 @@ typedef struct ObjectFieldInfo {
 
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
+static bool sub_40C560();
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
 
 // 0x59BEA8
@@ -963,6 +964,18 @@ void sub_40BBB0()
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4)
 {
     // TODO: Incomplete.
+}
+
+// 0x40C560
+bool sub_40C560(Obj* obj, int fld)
+{
+    (void)obj;
+    (void)fld;
+
+    word_5D10FC++;
+    dword_5D10F4++;
+
+    return true;
 }
 
 // 0x40CB00
