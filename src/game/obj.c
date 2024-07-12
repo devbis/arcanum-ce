@@ -1174,3 +1174,13 @@ bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerate
 
     return true;
 }
+
+// 0x40D630
+int64_t obj_get_prototype_handle(Object* object)
+{
+    if (object->prototype_handle == OBJ_HANDLE_NULL) {
+        object->prototype_handle = objp_perm_lookup(object->field_20);
+    }
+
+    return object->prototype_handle;
+}
