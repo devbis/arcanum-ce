@@ -20,6 +20,8 @@ bool description_init(GameInitInfo* init_info)
     int cnt;
     MesFileEntry mes_file_entry;
 
+    (void)init_info;
+
     if (!mes_load("mes\\description.mes", &description_mes_file)) {
         return false;
     }
