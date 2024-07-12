@@ -490,6 +490,19 @@ void sub_405800(int type, int64_t* obj_ptr)
     *obj_ptr = handle;
 }
 
+// 0x405BC0
+bool sub_405BC0(int64_t obj)
+{
+    Object* object;
+    bool ret;
+
+    object = obj_lock(obj);
+    ret = object->field_20.field_0 == -1;
+    obj_unlock(obj);
+
+    return ret;
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
