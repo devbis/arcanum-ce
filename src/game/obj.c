@@ -539,6 +539,34 @@ void sub_405BF0(int64_t obj)
     sub_4E4FB0(obj);
 }
 
+// 0x405CC0
+void sub_405CC0(int64_t obj)
+{
+    Object* object;
+    int fld;
+
+    object = obj_lock(obj);
+    if (object->field_20.field_0 != -1) {
+        sub_40CBA0(object, sub_40CB60);
+        sub_40C5B0(object);
+
+        for (fld = OBJ_F_TRANSIENT_BEGIN + 1; fld < OBJ_F_TRANSIENT_END; fld++) {
+            sub_40C840(object, fld);
+        }
+    } else {
+        dword_5D10F4 = 0;
+        obj_enumerate_fields(object, sub_40C6E0);
+        sub_40C640(object);
+    }
+
+    if (object->field_50 != NULL) {
+        FREE(object->field_50);
+    }
+
+    obj_unlock(obj);
+    sub_4E4FB0(obj);
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
