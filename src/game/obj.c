@@ -363,6 +363,23 @@ static void* dword_5D1128;
 // 0x5D112C
 static void* dword_5D112C;
 
+// 0x4051F0
+void obj_exit()
+{
+    sub_40BBB0();
+    sub_4E3950();
+    sub_4E4DB0();
+    sub_4E3F90();
+    sub_4E5A50();
+
+    FREE(obj_fields);
+    FREE(dword_5D10F0);
+    FREE(dword_5D1100);
+    FREE(dword_5D1120);
+
+    obj_initialized = false;
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {
