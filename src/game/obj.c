@@ -23,6 +23,7 @@ static int sub_40CB40(Object* object, int fld);
 static bool obj_check_version_stream(TigFile* stream);
 static void sub_40D5D0(void* mem);
 static bool obj_check_version_memory(void* mem);
+static bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info);
 
 // 0x59BEA8
 const char* object_field_names[] = {
@@ -1494,4 +1495,13 @@ int64_t obj_get_prototype_handle(Object* object)
     }
 
     return object->prototype_handle;
+}
+
+// 0x40D670
+bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info)
+{
+    if ((object->field_4C[field_info->field_8] & field_info->field_C) != 0) {
+        tig_debug_printf("\t #%d", field_info - object_fields);
+    }
+    return true;
 }
