@@ -1,5 +1,7 @@
 #include "game/obj.h"
 
+#include "game/obj_private.h"
+
 #define OBJ_FILE_VERSION 119
 
 typedef struct ObjectFieldInfo {
@@ -15,6 +17,7 @@ typedef struct ObjectFieldInfo {
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
 static bool sub_40C560();
+static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
 static int sub_40CB40(Object* object, int fld);
 static bool obj_check_version_stream(TigFile* stream);
@@ -411,7 +414,7 @@ bool obj_init(GameInitInfo* init_info)
     sub_40A400();
     sub_40BAC0();
 
-    object.field_20 = -1;
+    object.field_20.field_0 = -1;
     for (index = 0; index < 18; index++) {
         object.type = index;
         word_5D10FC = 0;
@@ -451,6 +454,40 @@ void sub_405250()
     sub_4E59B0();
     sub_4E4CD0(sizeof(Object), obj_is_editor);
     sub_4E3F80();
+}
+
+// 0x405800
+void sub_405800(int type, int64_t* obj_ptr)
+{
+    int64_t handle;
+    Object* object;
+    int index;
+
+    object = sub_408710(&handle);
+    object->type = type;
+    sub_4E62A0(&(object->field_8));
+    sub_4E4FD0(object->field_8, handle);
+    object->field_20.field_0 = -1;
+    object->prototype_handle = OBJ_HANDLE_NULL;
+    object->field_40 = 0;
+    sub_40C610(&object);
+
+    for (index = 0; index < 19; index++) {
+        object->transient_properties[index] = -1;
+    }
+
+    object->field_46 = dword_5D1120[type];
+    object->field_50 = MALLOC(4 * object->field_46);
+
+    dword_5D10F4 = 0;
+    obj_enumerate_fields(object, sub_40C6B0);
+
+    obj_unlock(handle);
+
+    sub_409000(handle);
+    sub_40C690(object);
+
+    *obj_ptr = handle;
 }
 
 // 0x406CA0
@@ -1044,6 +1081,16 @@ bool sub_40C560(Object* object, int fld)
 
     word_5D10FC++;
     dword_5D10F4++;
+
+    return true;
+}
+
+// 0x40C6B0
+bool sub_40C6B0(Object* object, int fld)
+{
+    (void)fld;
+
+    object->field_50[dword_5D10F4++] = 0;
 
     return true;
 }

@@ -4225,14 +4225,6 @@ void sub_40C690(void* a1)
     memset(a1->field_4C, 0, 4 * v1);
 }
 
-// #maybe-bool
-// 0x40C6B0
-int sub_40C6B0(void* a1)
-{
-    a1->field_50[dword_5D10F4++] = 0;
-    return 1;
-}
-
 // 0x40D320
 int sub_40D320(void* a1, int a2)
 {

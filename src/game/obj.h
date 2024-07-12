@@ -755,12 +755,7 @@ static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 typedef struct Object {
     /* 0000 */ int type;
     /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0008 */ ObjectID field_8;
     /* 0020 */ ObjectID field_20;
     /* 0038 */ int64_t prototype_handle;
     /* 0040 */ int field_40;
@@ -768,7 +763,7 @@ typedef struct Object {
     /* 0046 */ int16_t field_46;
     /* 0048 */ int field_48;
     /* 004C */ int field_4C;
-    /* 0050 */ int field_50;
+    /* 0050 */ int* field_50;
     /* 0054 */ int transient_properties[19];
 } Object;
 
@@ -779,6 +774,7 @@ typedef bool (ObjEnumerateCallback)(Object* object, int fld);
 bool obj_init(GameInitInfo* init_info);
 void obj_exit();
 void sub_405250();
+void sub_405800(int type, int64_t* obj_ptr);
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);
 long long object_field_get_64(object_id_t object_id, int field);
