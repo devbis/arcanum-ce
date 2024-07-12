@@ -1,4 +1,4 @@
-#include "game/lib/obj.h"
+#include "game/obj.h"
 
 #define OBJ_FILE_VERSION 119
 
@@ -384,6 +384,9 @@ static ObjectFieldInfo* object_fields;
 // 0x5D1120
 static int16_t* dword_5D1120;
 
+// 0x5D1124
+static bool obj_initialized;
+
 // 0x5D1128
 static void* dword_5D1128;
 
@@ -396,13 +399,13 @@ bool obj_init(GameInitInfo* init_info)
     int index;
     Object object;
 
-    obj_fields = (ObjField*)CALLOC(OBJ_F_MAX, sizeof(ObjField));
+    object_fields = (ObjectFieldInfo*)CALLOC(OBJ_F_MAX, sizeof(ObjectFieldInfo));
     dword_5D10F0 = (int*)CALLOC(21, sizeof(int));
     dword_5D1100 = (int*)CALLOC(21, sizeof(int));
     dword_5D1120 = (int16_t*)CALLOC(18, sizeof(int16_t));
     obj_is_editor = init_info->editor;
     sub_4E59B0();
-    sub_4E4CD0(160, obj_is_editor);
+    sub_4E4CD0(sizeof(Object), obj_is_editor);
     sub_4E3F80();
     sub_4E3900();
     sub_40A400();
@@ -416,6 +419,10 @@ bool obj_init(GameInitInfo* init_info)
         obj_enumerate_fields(&object, sub_40C560);
         dword_5D1120[index] = word_5D10FC;
     }
+
+    obj_initialized = true;
+
+    return true;
 }
 
 // 0x4051F0
@@ -427,7 +434,7 @@ void obj_exit()
     sub_4E3F90();
     sub_4E5A50();
 
-    FREE(obj_fields);
+    FREE(object_fields);
     FREE(dword_5D10F0);
     FREE(dword_5D1100);
     FREE(dword_5D1120);
@@ -564,68 +571,68 @@ int sub_40C030(ObjectType object_type)
 }
 
 // 0x40C260
-bool sub_40C260(ObjectType object_type, ObjectField field)
+bool sub_40C260(int type, int fld)
 {
-    if (object_fields[field].type <= 2) {
+    if (object_fields[fld].type <= 2) {
         return false;
     }
 
-    if ((field > OBJ_F_BEGIN && field < OBJ_F_END)
-        || (field > OBJ_F_TRANSIENT_BEGIN && field < OBJ_F_TRANSIENT_END)
-        || field == OBJ_F_TYPE
-        || field == OBJ_F_PROTOTYPE_HANDLE) {
+    if ((fld > OBJ_F_BEGIN && fld < OBJ_F_END)
+        || (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END)
+        || fld == OBJ_F_TYPE
+        || fld == OBJ_F_PROTOTYPE_HANDLE) {
         return true;
     }
 
-    switch (object_type) {
+    switch (type) {
     case OBJ_TYPE_WALL:
-        return field > OBJ_F_WALL_BEGIN && field < OBJ_F_WALL_END;
+        return fld > OBJ_F_WALL_BEGIN && fld < OBJ_F_WALL_END;
     case OBJ_TYPE_PORTAL:
-        return field > OBJ_F_PORTAL_BEGIN && field < OBJ_F_PORTAL_END;
+        return fld > OBJ_F_PORTAL_BEGIN && fld < OBJ_F_PORTAL_END;
     case OBJ_TYPE_CONTAINER:
-        return field > OBJ_F_CONTAINER_BEGIN && field < OBJ_F_CONTAINER_END;
+        return fld > OBJ_F_CONTAINER_BEGIN && fld < OBJ_F_CONTAINER_END;
     case OBJ_TYPE_SCENERY:
-        return field > OBJ_F_SCENERY_BEGIN && field < OBJ_F_SCENERY_END;
+        return fld > OBJ_F_SCENERY_BEGIN && fld < OBJ_F_SCENERY_END;
     case OBJ_TYPE_PROJECTILE:
-        return field > OBJ_F_PROJECTILE_BEGIN && field < OBJ_F_PROJECTILE_END;
+        return fld > OBJ_F_PROJECTILE_BEGIN && fld < OBJ_F_PROJECTILE_END;
     case OBJ_TYPE_WEAPON:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_WEAPON_BEGIN && field < OBJ_F_WEAPON_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_WEAPON_BEGIN && fld < OBJ_F_WEAPON_END);
     case OBJ_TYPE_AMMO:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_AMMO_BEGIN && field < OBJ_F_AMMO_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_AMMO_BEGIN && fld < OBJ_F_AMMO_END);
     case OBJ_TYPE_ITEM_ARMOR:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_ARMOR_BEGIN && field < OBJ_F_ARMOR_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_ARMOR_BEGIN && fld < OBJ_F_ARMOR_END);
     case OBJ_TYPE_ITEM_GOLD:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_GOLD_BEGIN && field < OBJ_F_GOLD_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_GOLD_BEGIN && fld < OBJ_F_GOLD_END);
     case OBJ_TYPE_ITEM_FOOD:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_FOOD_BEGIN && field < OBJ_F_FOOD_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_FOOD_BEGIN && fld < OBJ_F_FOOD_END);
     case OBJ_TYPE_ITEM_SCROLL:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_SCROLL_BEGIN && field < OBJ_F_SCROLL_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_SCROLL_BEGIN && fld < OBJ_F_SCROLL_END);
     case OBJ_TYPE_ITEM_KEY:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_KEY_BEGIN && field < OBJ_F_KEY_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_KEY_BEGIN && fld < OBJ_F_KEY_END);
     case OBJ_TYPE_ITEM_KEY_RING:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_KEY_RING_BEGIN && field < OBJ_F_KEY_RING_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_KEY_RING_BEGIN && fld < OBJ_F_KEY_RING_END);
     case OBJ_TYPE_ITEM_WRITTEN:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_WRITTEN_BEGIN && field < OBJ_F_WRITTEN_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_WRITTEN_BEGIN && fld < OBJ_F_WRITTEN_END);
     case OBJ_TYPE_ITEM_GENERIC:
-        return (field > OBJ_F_ITEM_BEGIN && field < OBJ_F_ITEM_END)
-            || (field > OBJ_F_GENERIC_BEGIN && field < OBJ_F_GENERIC_END);
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_GENERIC_BEGIN && fld < OBJ_F_GENERIC_END);
     case OBJ_TYPE_PC:
-        return (field > OBJ_F_CRITTER_BEGIN && field < OBJ_F_CRITTER_END)
-            || (field > OBJ_F_PC_BEGIN && field < OBJ_F_PC_END);
+        return (fld > OBJ_F_CRITTER_BEGIN && fld < OBJ_F_CRITTER_END)
+            || (fld > OBJ_F_PC_BEGIN && fld < OBJ_F_PC_END);
     case OBJ_TYPE_NPC:
-        return (field > OBJ_F_CRITTER_BEGIN && field < OBJ_F_CRITTER_END)
-            || (field > OBJ_F_NPC_BEGIN && field < OBJ_F_NPC_END);
+        return (fld > OBJ_F_CRITTER_BEGIN && fld < OBJ_F_CRITTER_END)
+            || (fld > OBJ_F_NPC_BEGIN && fld < OBJ_F_NPC_END);
     case OBJ_TYPE_TRAP:
-        return field > OBJ_F_TRAP_BEGIN && field < OBJ_F_TRAP_END;
+        return fld > OBJ_F_TRAP_BEGIN && fld < OBJ_F_TRAP_END;
     }
 
     return false;
@@ -634,14 +641,14 @@ bool sub_40C260(ObjectType object_type, ObjectField field)
 // 0x40A7B0
 void sub_40A7B0()
 {
-    int index;
+    int fld;
 
-    for (index = OBJ_F_BEGIN; index <= OBJ_F_TOTAL_NORMAL; index++) {
-        object_fields[index].field_14 = object_fields[index].type <= 0 || object_fields[index].field_14 > 2;
+    for (fld = OBJ_F_BEGIN; fld <= OBJ_F_TOTAL_NORMAL; fld++) {
+        object_fields[fld].field_14 = object_fields[fld].type <= 0 || object_fields[fld].field_14 > 2;
     }
 
-    for (index = OBJ_F_TOTAL_NORMAL; index < OBJ_F_END; index++) {
-        object_fields[index].field_14 = 0;
+    for (fld = OBJ_F_TOTAL_NORMAL; fld < OBJ_F_END; fld++) {
+        object_fields[fld].field_14 = 0;
     }
 
     object_fields[OBJ_F_RESISTANCE_IDX].field_14 = 5;
@@ -1019,9 +1026,9 @@ void object_field_set_with_network(object_id_t object_id, int field, int a3, int
 }
 
 // 0x40C560
-bool sub_40C560(Obj* obj, int fld)
+bool sub_40C560(Object* object, int fld)
 {
-    (void)obj;
+    (void)object;
     (void)fld;
 
     word_5D10FC++;
@@ -1033,131 +1040,131 @@ bool sub_40C560(Obj* obj, int fld)
 // 0x40C880
 bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
 {
-    if (!obj_enumerate_fields_in_range(object, OBJ_F_BEGIN, OBJ_F_END)) {
+    if (!obj_enumerate_fields_in_range(object, OBJ_F_BEGIN, OBJ_F_END, callback)) {
         return false;
     }
 
     switch (object->type) {
     case OBJ_TYPE_WALL:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_WALL_BEGIN, OBJ_F_WALL_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_WALL_BEGIN, OBJ_F_WALL_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_PORTAL:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_PORTAL_BEGIN, OBJ_F_PORTAL_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_PORTAL_BEGIN, OBJ_F_PORTAL_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_CONTAINER:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_CONTAINER_BEGIN, OBJ_F_CONTAINER_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_CONTAINER_BEGIN, OBJ_F_CONTAINER_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_SCENERY:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_SCENERY_BEGIN, OBJ_F_SCENERY_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_SCENERY_BEGIN, OBJ_F_SCENERY_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_PROJECTILE:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_PROJECTILE_BEGIN, OBJ_F_PROJECTILE_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_PROJECTILE_BEGIN, OBJ_F_PROJECTILE_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_WEAPON:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_WEAPON_BEGIN, OBJ_F_WEAPON_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_WEAPON_BEGIN, OBJ_F_WEAPON_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_AMMO:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_AMMO_BEGIN, OBJ_F_AMMO_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_AMMO_BEGIN, OBJ_F_AMMO_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_ARMOR:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ARMOR_BEGIN, OBJ_F_ARMOR_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ARMOR_BEGIN, OBJ_F_ARMOR_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_GOLD:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_GOLD_BEGIN, OBJ_F_GOLD_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_GOLD_BEGIN, OBJ_F_GOLD_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_FOOD:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_FOOD_BEGIN, OBJ_F_FOOD_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_FOOD_BEGIN, OBJ_F_FOOD_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_SCROLL:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_SCROLL_BEGIN, OBJ_F_SCROLL_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_SCROLL_BEGIN, OBJ_F_SCROLL_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_KEY:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_KEY_BEGIN, OBJ_F_KEY_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_KEY_BEGIN, OBJ_F_KEY_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_KEY_RING:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_KEY_RING_BEGIN, OBJ_F_KEY_RING_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_KEY_RING_BEGIN, OBJ_F_KEY_RING_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_WRITTEN:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_WRITTEN_BEGIN, OBJ_F_WRITTEN_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_WRITTEN_BEGIN, OBJ_F_WRITTEN_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_ITEM_GENERIC:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_GENERIC_BEGIN, OBJ_F_GENERIC_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_GENERIC_BEGIN, OBJ_F_GENERIC_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_PC:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_CRITTER_BEGIN, OBJ_F_CRITTER_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_CRITTER_BEGIN, OBJ_F_CRITTER_END, callback)) {
             return false;
         }
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_PC_BEGIN, OBJ_F_PC_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_PC_BEGIN, OBJ_F_PC_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_NPC:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_NPC_BEGIN, OBJ_F_NPC_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_NPC_BEGIN, OBJ_F_NPC_END, callback)) {
             return false;
         }
         break;
     case OBJ_TYPE_TRAP:
-        if (!obj_enumerate_fields_in_range(object, OBJ_F_TRAP_BEGIN, OBJ_F_TRAP_END)) {
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_TRAP_BEGIN, OBJ_F_TRAP_END, callback)) {
             return false;
         }
         break;

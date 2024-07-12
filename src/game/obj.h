@@ -727,17 +727,17 @@ typedef enum SceneryFlags {
 
 typedef struct ObjectID_H {
     long long field_8;
-};
+} ObjectID_H;
 
 typedef struct ObjectID_A {
     int field_8;
-};
+} ObjectID_A;
 
 typedef struct ObjectID_P {
     long long location;
     int temp_id;
     int map;
-};
+} ObjectID_P;
 
 typedef struct ObjectID {
     uint16_t field_0;
@@ -748,9 +748,31 @@ typedef struct ObjectID {
         GUID g;
         ObjectID_P p;
     };
-};
+} ObjectID;
 
 static_assert(sizeof(ObjectID) == 0x18, "wrong size");
+
+typedef struct Object {
+    /* 0000 */ int type;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ ObjectID field_20;
+    /* 0038 */ int64_t prototype_handle;
+    /* 0040 */ int field_40;
+    /* 0044 */ int16_t field_44;
+    /* 0046 */ int16_t field_46;
+    /* 0048 */ int field_48;
+    /* 004C */ int field_4C;
+    /* 0050 */ int field_50;
+    /* 0054 */ int transient_properties[19];
+} Object;
+
+static_assert(sizeof(Object) == 0xA0, "wrong size");
 
 typedef bool (ObjEnumerateCallback)(Object* object, int fld);
 
