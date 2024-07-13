@@ -415,7 +415,7 @@ bool obj_init(GameInitInfo* init_info)
     sub_4E59B0();
     sub_4E4CD0(sizeof(Object), obj_is_editor);
     sub_4E3F80();
-    sub_4E3900();
+    obj_find_init();
     sub_40A400();
     sub_40BAC0();
 
@@ -437,7 +437,7 @@ bool obj_init(GameInitInfo* init_info)
 void obj_exit()
 {
     sub_40BBB0();
-    sub_4E3950();
+    obj_find_exit();
     sub_4E4DB0();
     sub_4E3F90();
     sub_4E5A50();

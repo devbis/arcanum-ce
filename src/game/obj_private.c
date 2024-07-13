@@ -1,27 +1,42 @@
-#include "obj_private.h"
+#include "game/obj_private.h"
 
 #include <stdio.h>
 
-#include "game/lib/map.h"
-#include "tig/debug.h"
-#include "tig/message.h"
+#include "game/map.h"
 
 #define ONE_TWO_EIGHT 128
 
 typedef struct FindNode {
-    unsigned int flags;
-    FindNode* next;
-};
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ FindNode* next;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+} FindNode;
 
 // See 0x4E3BE0.
 static_assert(sizeof(FindNode) == 0x20, "wrong size");
 
 typedef struct S60369C {
-
-};
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+} S60369C;
 
 // See 0x4E3DD0.
-static_assert(sizeof(S60369C) == 0x16, "wrong size");
+static_assert(sizeof(S60369C) == 0x10, "wrong size");
+
+static void sub_4E3BE0();
+static void obj_find_node_allocate(FindNode** obj_find_node);
+static void obj_find_node_deallocate(FindNode* obj_find_node);
+static void sub_4E3DD0();
+static bool objid_compare(ObjectID a, ObjectID b);
+static bool sub_4E67A0(GUID* guid, char* str);
+static bool sub_4E6AA0(int* value_ptr, char* str, size_t length);
 
 // 0x60368C
 static FindNode* dword_60368C;
@@ -42,15 +57,15 @@ static S60369C* dword_60369C;
 static int dword_6036A0;
 
 // 0x6036A4
-static bool dword_6036A4;
+static bool obj_find_initialized;
 
 // 0x6036A8
 static bool dword_6036A8;
 
 // 0x4E3900
-void sub_4E3900()
+void obj_find_init()
 {
-    if (!dword_6036A4) {
+    if (!obj_find_initialized) {
         dword_6036A0 = 0;
         dword_603694 = NULL;
         dword_60368C = NULL;
@@ -61,27 +76,29 @@ void sub_4E3900()
         dword_60369C = NULL;
         sub_4E3DD0();
 
-        dword_6036A4 = true;
+        obj_find_initialized = true;
     }
 }
 
 // 0x4E3950
-void sub_4E3950()
+void obj_find_exit()
 {
-    if (dword_6036A4) {
+    if (obj_find_initialized) {
         sub_4E3C60();
 
         if (dword_60369C != NULL) {
             free(dword_60369C);
         }
 
-        dword_6036A4 = false;
+        obj_find_initialized = false;
     }
 }
 
 // 0x4E3BE0
 void sub_4E3BE0()
 {
+    int index;
+
     dword_6036A0++;
 
     if (dword_603694 == NULL) {
@@ -92,7 +109,7 @@ void sub_4E3BE0()
 
     dword_603694[dword_6036A0 - 1] = (FindNode*)malloc(sizeof(FindNode) * ONE_TWO_EIGHT);
 
-    for (int index = 0; index < ONE_TWO_EIGHT; index++) {
+    for (index = 0; index < ONE_TWO_EIGHT; index++) {
         obj_find_node_deallocate(&(dword_603694[dword_6036A0 - 1][index]));
     }
 }
@@ -173,7 +190,6 @@ void objid_id_perm_by_load_order(ObjectID* object_id, object_id_t obj)
     }
 }
 
-// TODO: Check generated assembly - should be one parameter.
 // 0x4E6340
 bool objid_is_valid(ObjectID a)
 {
@@ -213,7 +229,7 @@ bool objid_is_equal(ObjectID a, ObjectID b)
         case 1:
             return a.a.field_8 == b.a.field_8;
         case 2:
-            return InlineIsEqualGUID(a.g, b.g);
+            return InlineIsEqualGUID(&(a.g), &(b.g));
         case 3:
             return a.p.location == b.p.location
                 && a.p.temp_id == b.p.temp_id
@@ -381,19 +397,21 @@ bool sub_4E67A0(GUID* guid, char* str)
 }
 
 // 0x4E6AA0
-bool sub_4E6AA0(int* value, char* str, size_t length)
+bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
 {
     char temp[12];
+    char* end;
+    int value;
+
     if (!sub_4E6B00(temp, str, length)) {
         return false;
     }
 
-    char* end;
-    unsigned long parsed = strtoul(temp, &end, 16);
+    value = (int)strtoul(temp, &end, 16);
     if (&(temp[length]) != end) {
         return false;
     }
 
-    *value = parsed;
+    *value_ptr = value;
     return true;
 }
