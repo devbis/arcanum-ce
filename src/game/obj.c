@@ -385,6 +385,9 @@ static int* dword_5D1100;
 // 0x5D1104
 static ObjectFieldInfo* object_fields;
 
+// 0x5D110C
+static TigFile* dword_5D110C;
+
 // 0x5D1120
 static int16_t* dword_5D1120;
 
@@ -687,6 +690,60 @@ bool obj_read(TigFile* stream, int64_t obj_handle_ptr)
     } else {
         return sub_409AA0(stream, obj_handle_ptr);
     }
+}
+
+// 0x4067F0
+bool obj_dif_write(TigFile* stream, int64_t obj_handle)
+{
+    Object* object;
+    int marker;
+    int index;
+    int cnt;
+    bool written;
+
+    object = obj_lock(obj_handle);
+    if (object->field_44 == 0) {
+        // FIXME: Object not unlocked.
+        return false;
+    }
+
+    // FIXME: Unused.
+    obj_f_get_int32(obj_handle, OBJ_F_FLAGS);
+
+    if (!sub_40D560(stream)) {
+        obj_unlock(obj_handle);
+        return false;
+    }
+
+    marker = 0x12344321;
+    if (!obj_write_raw(&marker, sizeof(marker), stream)) {
+        obj_unlock(obj_handle);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+        obj_unlock(obj_handle);
+        return false;
+    }
+
+    cnt = sub_40C030(object->type);
+    for (index = 0; index < cnt; index++) {
+        if (!obj_write_raw(&(object->field_4C[index]), sizeof(object->field_4C[0]), stream)) {
+            obj_unlock(obj_handle);
+            return false;
+        }
+    }
+
+    dword_5D110C = stream;
+    written = sub_40CBA0(object, object_field_write_if_dif);
+    obj_unlock(obj_handle);
+
+    marker = 0x23455432;
+    if (!obj_write_raw(&marker, sizeof(marker), stream)) {
+        return false;
+    }
+
+    return written;
 }
 
 // 0x406CA0
