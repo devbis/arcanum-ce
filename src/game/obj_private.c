@@ -30,6 +30,7 @@ typedef struct S60369C {
 static_assert(sizeof(S60369C) == 0x10, "wrong size");
 
 static void sub_4E3BE0();
+static void sub_4E3C60();
 static void obj_find_node_allocate(FindNode** obj_find_node);
 static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
@@ -181,6 +182,17 @@ void sub_4E3BE0()
     for (index = 0; index < ONE_TWO_EIGHT; index++) {
         obj_find_node_deallocate(&(dword_603694[dword_6036A0 - 1][index]));
     }
+}
+
+// 0x4E3C60
+void sub_4E3C60()
+{
+    while (dword_6036A0 != 0) {
+        FREE(dword_603694[--dword_6036A0]);
+    }
+
+    FREE(dword_603694);
+    dword_603694 = NULL;
 }
 
 // 0x4E3CB0
