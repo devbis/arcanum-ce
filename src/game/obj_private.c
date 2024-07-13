@@ -131,6 +131,38 @@ void obj_find_remove(int64_t obj)
     obj_f_set_int32(obj, OBJ_F_FIND_NODE, NULL);
 }
 
+// 0x4E3A70
+void obj_find_move(int64_t obj)
+{
+    int64_t location;
+    int64_t v1;
+    FindNode* find_node;
+    S60369C* v2;
+
+    location = obj_f_get_int64(obj, OBJ_F_LOCATION);
+    v1 = sub_4CFC50(location);
+    find_node = (FindNode*)obj_f_get_int32(obj, OBJ_F_FIND_NODE);
+    if (find_node == NULL) {
+        return;
+    }
+
+    if ((find_node->flags & 0x02) == 0) {
+        tig_debug_println("Error: Node already released in obj_find_move.");
+        return;
+    }
+
+    if (find_node->obj != obj) {
+        tig_debug_println("Error: Node already reassigned to different handlein obj_find_move");
+        return;
+    }
+
+    if (find_node->field_18 != v1) {
+        obj_find_node_detach(find_node);
+        sub_4E3E90(v1, &v2);
+        sub_4E3D30(v2, find_node);
+    }
+}
+
 // 0x4E3BE0
 void sub_4E3BE0()
 {
