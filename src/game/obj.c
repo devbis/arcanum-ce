@@ -746,6 +746,23 @@ bool obj_dif_write(TigFile* stream, int64_t obj_handle)
     return written;
 }
 
+// 0x406B80
+void sub_406B80(int64_t obj_handle)
+{
+    Object* object;
+    int cnt;
+    int index;
+
+    object = obj_lock(obj_handle);
+    if (object->field_44 != 0) {
+        cnt = sub_40C030(object->type);
+        for (index = 0; index < cnt; index++) {
+            object->field_4C[index] = 0;
+        }
+        object->field_44 = 0;
+    }
+}
+
 // 0x406CA0
 int object_field_get(object_id_t object_id, int field)
 {

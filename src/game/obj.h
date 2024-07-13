@@ -784,6 +784,7 @@ void sub_406520(int64_t obj_handle);
 bool obj_write(TigFile* stream, int64_t obj_handle);
 bool obj_read(TigFile* stream, int64_t obj_handle_ptr);
 bool obj_dif_write(TigFile* stream, int64_t obj_handle);
+void sub_406B80(int64_t obj_handle);
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);
 long long object_field_get_64(object_id_t object_id, int field);
