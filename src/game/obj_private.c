@@ -110,6 +110,27 @@ void obj_find_add(int64_t obj)
     obj_f_set_int32(obj, OBJ_F_FIND_NODE, find_node);
 }
 
+// 0x4E39F0
+void obj_find_remove(int64_t obj)
+{
+    FindNode* find_node;
+
+    find_node = obj_f_get_int32(obj, OBJ_F_FIND_NODE);
+    if ((find_node->flags & 0x02) == 0) {
+        tig_debug_println("Error: Node already released in obj_find_remove.");
+        return;
+    }
+
+    if (find_node->obj != obj) {
+        tig_debug_println("Error: Node already reassigned to different handlein obj_find_remove.");
+        return;
+    }
+
+    obj_find_node_detach(find_node);
+    obj_find_node_deallocate(find_node);
+    obj_f_set_int32(obj, OBJ_F_FIND_NODE, NULL);
+}
+
 // 0x4E3BE0
 void sub_4E3BE0()
 {
