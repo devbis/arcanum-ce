@@ -9,8 +9,7 @@
 typedef struct FindNode {
     /* 0000 */ unsigned int flags;
     /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
+    /* 0008 */ int64_t obj;
     /* 0010 */ int field_10;
     /* 0014 */ FindNode* next;
     /* 0018 */ int field_18;
@@ -92,6 +91,23 @@ void obj_find_exit()
 
         obj_find_initialized = false;
     }
+}
+
+// 0x4E3980
+void obj_find_add(int64_t obj)
+{
+    int64_t location;
+    int64_t v1;
+    FindNode* find_node;
+    S60369C* v2;
+
+    location = obj_f_get_int64(obj, OBJ_F_LOCATION);
+    v1 = sub_4CFC50(location);
+    obj_find_node_allocate(&find_node);
+    find_node->obj = obj;
+    sub_4E3E90(v1, &v2);
+    sub_4E3D30(v2, find_node);
+    obj_f_set_int32(obj, OBJ_F_FIND_NODE, find_node);
 }
 
 // 0x4E3BE0

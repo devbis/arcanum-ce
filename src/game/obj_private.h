@@ -5,6 +5,7 @@
 
 void obj_find_init();
 void obj_find_exit();
+void obj_find_add(int64_t obj);
 void sub_4E3F80();
 void sub_4E3F90();
 void sub_4E62A0(ObjectID* object_id);
