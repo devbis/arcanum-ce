@@ -4268,13 +4268,6 @@ void sub_40D450(int a1, int a2)
     sub_40D470(a1, v2);
 }
 
-// 0x40D560
-bool sub_40D560(int a1)
-{
-    int v1 = 119;
-    return sub_4E7010(&v1, sizeof(v1), a1) != 0;
-}
-
 // 0x40D6C0
 int player_init_(void* a1)
 {

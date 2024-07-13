@@ -20,6 +20,7 @@ static bool sub_40C560();
 static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
 static int sub_40CB40(Object* object, int fld);
+static bool sub_40D560(TigFile* stream);
 static bool obj_check_version_stream(TigFile* stream);
 static void sub_40D5D0(void* mem);
 static bool obj_check_version_memory(void* mem);
@@ -1525,6 +1526,13 @@ bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerate
     }
 
     return true;
+}
+
+// 0x40D560
+bool sub_40D560(TigFile* stream)
+{
+    int version = OBJ_FILE_VERSION;
+    return sub_4E7010(&version, sizeof(version), stream);
 }
 
 // 0x40D590
