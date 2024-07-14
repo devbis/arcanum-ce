@@ -500,6 +500,12 @@ bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
     return true;
 }
 
+// 0x4E7010
+bool obj_write_raw(void* buffer, size_t size, TigFile* stream)
+{
+    return tig_file_fwrite(buffer, size, 1, stream) == 1;
+}
+
 // 0x4E7030
 bool obj_read_raw(void* buffer, size_t size, TigFile* stream)
 {
