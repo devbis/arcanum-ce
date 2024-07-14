@@ -36,7 +36,8 @@ static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
 static bool objid_compare(ObjectID a, ObjectID b);
 static bool sub_4E67A0(GUID* guid, char* str);
-static bool sub_4E6AA0(int* value_ptr, char* str, size_t length);
+static bool sub_4E6A60(int* value_ptr, const char* str);
+static bool sub_4E6AA0(int* value_ptr, const char* str, size_t length);
 static bool sub_4E6B00(char* dst, const char* src, int size);
 static bool sub_4E7050(int64_t handle, char* path);
 static TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ext);
@@ -481,8 +482,25 @@ bool sub_4E67A0(GUID* guid, char* str)
     return true;
 }
 
+// 0x4E6A60
+bool sub_4E6A60(int* value_ptr, const char* str)
+{
+    int value;
+
+    if (str[0] != 'A' || str[1] != '_') {
+        return false;
+    }
+
+    if (!sub_4E6AA0(value, str + 2, 8)) {
+        return false;
+    }
+
+    *value_ptr = value;
+    return true;
+}
+
 // 0x4E6AA0
-bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
+bool sub_4E6AA0(int* value_ptr, const char* str, size_t length)
 {
     char temp[12];
     char* end;
