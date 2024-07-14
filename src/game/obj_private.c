@@ -36,6 +36,7 @@ static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
 static bool objid_compare(ObjectID a, ObjectID b);
 static bool sub_4E67A0(GUID* guid, char* str);
+static bool sub_4E6970(ObjectID_P* p, const char* str);
 static bool sub_4E6A60(int* value_ptr, const char* str);
 static bool sub_4E6AA0(int* value_ptr, const char* str, size_t length);
 static bool sub_4E6B00(char* dst, const char* src, int size);
@@ -478,6 +479,41 @@ bool sub_4E67A0(GUID* guid, char* str)
     if (str[0] != '_') return false;
     if (!sub_4E6AA0(&value, str, 2)) return false;
     guid->Data4[7] = value;
+
+    return true;
+}
+
+// 0x4E6970
+bool sub_4E6970(ObjectID_P* p, const char* str)
+{
+    int x;
+    int y;
+    int temp_id;
+    int map;
+
+    if (str[0] != 'P' || str[1] != '_') {
+        return false;
+    }
+
+    str += 2;
+    if (!sub_4E6AA0(&x, str, 8)) {
+        return false;
+    }
+
+    str += 8;
+    if (str[0] != '_') return false;
+    if (!sub_4E6AA0(&y, str, 8)) return false;
+    p->location = (x << 32) | y;
+
+    str += 8;
+    if (str[0] != '_') return false;
+    if (!sub_4E6AA0(&temp_id, str, 8)) return false;
+    p->temp_id = temp_id;
+
+    str += 8;
+    if (str[0] != '_') return false;
+    if (!sub_4E6AA0(&map, str, 8)) return false;
+    p->map = map;
 
     return true;
 }
