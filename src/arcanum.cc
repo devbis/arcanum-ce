@@ -2573,12 +2573,6 @@ int sub_4E59A0(int* a1)
     return *a1 >> 8;
 }
 
-// 0x4E61E0
-int sub_4E61E0(int a1)
-{
-    return a1 / 32;
-}
-
 // 0x4E77A0
 int sub_4E77A0(void* a1)
 {

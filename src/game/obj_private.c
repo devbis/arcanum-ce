@@ -34,6 +34,7 @@ static void sub_4E3C60();
 static void obj_find_node_allocate(FindNode** obj_find_node);
 static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
+static int sub_4E61E0(int a1);
 static int sub_4E61F0(int a1);
 static bool objid_compare(ObjectID a, ObjectID b);
 static bool sub_4E67A0(GUID* guid, char* str);
@@ -251,6 +252,12 @@ void sub_4E3F80()
 void sub_4E3F90()
 {
     dword_6036A8 = false;
+}
+
+// 0x4E61E0
+int sub_4E61E0(int a1)
+{
+    return a1 / 32;
 }
 
 // 0x4E61F0
