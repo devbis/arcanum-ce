@@ -500,6 +500,25 @@ bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
     return true;
 }
 
+// 0x4E6B60
+bool objf_solitary_write(int64_t handle, const char* dir, const char* ext)
+{
+    TigFile* stream;
+
+    stream = open_solitary_for_write(handle, dir, ext);
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (!obj_write(stream, handle)) {
+        tig_file_fclose(stream);
+        return false;
+    }
+
+    tig_file_fclose(stream);
+    return true;
+}
+
 // 0x4E6BC0
 bool objf_solitary_read(int64_t* handle_ptr, const char* path)
 {

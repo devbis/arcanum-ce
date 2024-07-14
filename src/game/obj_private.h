@@ -17,6 +17,7 @@ bool objid_is_equal(ObjectID a, ObjectID b);
 ObjectID sub_4E6540(int a1);
 void objid_id_to_str(char* buffer, ObjectID object_id);
 bool objid_id_from_str(ObjectID* object_id, const char* str);
+bool objf_solitary_write(int64_t handle, const char* dir, const char* ext);
 bool objf_solitary_read(int64_t* handle_ptr, const char* path);
 void objf_solitary_delete(int64_t handle, const char* dir, const char* ext);
 bool obj_write_raw(void* buffer, size_t size, TigFile* stream);
