@@ -37,7 +37,8 @@ static void sub_4E3DD0();
 static bool objid_compare(ObjectID a, ObjectID b);
 static bool sub_4E67A0(GUID* guid, char* str);
 static bool sub_4E6AA0(int* value_ptr, char* str, size_t length);
-static bool sub_4E7050(int64_t handle, char* path)
+static bool sub_4E6B00(char* dst, const char* src, int size);
+static bool sub_4E7050(int64_t handle, char* path);
 static TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ext);
 static bool handle_from_fname(int64_t* handle_ptr, const char* path);
 
@@ -497,6 +498,25 @@ bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
     }
 
     *value_ptr = value;
+    return true;
+}
+
+// 0x4E6B00
+bool sub_4E6B00(char* dst, const char* src, int size)
+{
+    int index;
+
+    for (index = 0; index < size; index++) {
+        if (!((src[index] >= '0' && src[index] <= '9')
+            || (src[index] >= 'A' && src[index] <= 'F')
+            || (src[index] >= 'a' && src[index] <= 'f'))) {
+            return false;
+        }
+
+        dst[index] = src[index];
+    }
+
+    dst[index] = '\0';
     return true;
 }
 
