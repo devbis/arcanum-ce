@@ -37,6 +37,7 @@ static void sub_4E3DD0();
 static bool objid_compare(ObjectID a, ObjectID b);
 static bool sub_4E67A0(GUID* guid, char* str);
 static bool sub_4E6AA0(int* value_ptr, char* str, size_t length);
+static bool handle_from_fname(int64_t* handle_ptr, const char* path);
 
 // 0x60368C
 static FindNode* dword_60368C;
@@ -494,5 +495,37 @@ bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
     }
 
     *value_ptr = value;
+    return true;
+}
+
+// 0x4E71B0
+bool handle_from_fname(int64_t* handle_ptr, const char* path)
+{
+    char fname[MAX_PATH];
+    ObjectID object_id;
+
+    _splitpath(path, NULL, NULL, fname, NULL);
+
+    if (fname[0] == '\0') {
+        tig_debug_printf("handle_from_fname found empty base_name infilename [%s]", path);
+        return false;
+    }
+
+    if (!objid_id_from_str(&object_id, fname)) {
+        tig_debug_printf("Unable to extract id from filename [%s]\n", path);
+        return false;
+    }
+
+    if (object_id.field_0 <= 0 || object_id.field_0 > 3) {
+        tig_debug_printf("Wrong id type in filename [%s]\n", path);
+        return false;
+    }
+
+    *handle_ptr = objp_perm_lookup(object_id);
+    if (*handle_ptr == OBJ_HANDLE_NULL) {
+        tig_debug_printf("ID not loaded, can't convert to handle in ObjFile,handle_from_fname: [%s]", fname);
+        return false;
+    }
+
     return true;
 }
