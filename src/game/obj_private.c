@@ -500,6 +500,12 @@ bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
     return true;
 }
 
+// 0x4E7030
+bool obj_read_raw(void* buffer, size_t size, TigFile* stream)
+{
+    return tig_file_fread(buffer, size, 1, stream) == 1;
+}
+
 // 0x4E7050
 bool sub_4E7050(int64_t handle, char* path)
 {

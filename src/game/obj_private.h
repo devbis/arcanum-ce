@@ -17,5 +17,6 @@ bool objid_is_equal(ObjectID a, ObjectID b);
 ObjectID sub_4E6540(int a1);
 void objid_id_to_str(char* buffer, ObjectID object_id);
 bool objid_id_from_str(ObjectID* object_id, const char* str);
+bool obj_read_raw(void* buffer, size_t size, TigFile* stream);
 
 #endif /* ARCANUM_GAME_OBJ_PRIVATE_H_ */
