@@ -500,6 +500,55 @@ bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
     return true;
 }
 
+// 0x4E6D10
+void objf_solitary_delete(int64_t handle, const char* dir, const char* ext)
+{
+    char path[MAX_PATH];
+    int length;
+    char* dot;
+    TigFile* stream;
+
+    strcpy(path, dir);
+
+    if (!sub_4E7050(handle, path)) {
+        tig_debug_println("Can't generate filename in ObjFile, objf_solitary_delete");
+        return;
+    }
+
+    strcat(path, ext);
+
+    length = (int)strlen(path);
+    if (length > MAX_PATH) {
+        tig_debug_println("Filename too long in ObjFile, objf_solitary_delete.");
+        return;
+    }
+
+    if (tig_file_exists(path, NULL) && tig_file_remove(path) != 0) {
+        tig_debug_printf("Unable to delete [%s] in ObjFile, objf_solitary_delete\n", path);
+        return;
+    }
+
+    dot = strchr(path, '.');
+    if (dot == NULL) {
+        tig_debug_printf("Unable to find the dot in [%s] in ObjFile, objf_solitary_delete\n", path);
+        return;
+    }
+
+    strcpy(dot, ".del");
+
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        tig_debug_printf("Unable to open [%s] in ObjFile, objf_solitary_delete\n", path);
+        return;
+    }
+
+    if (!obj_write_raw(&length, sizeof(length), stream)) {
+        tig_debug_println("Write failed in ObjFile, objf_solitary_delete");
+    }
+
+    tig_file_fclose(stream);
+}
+
 // 0x4E7010
 bool obj_write_raw(void* buffer, size_t size, TigFile* stream)
 {
@@ -532,6 +581,7 @@ bool sub_4E7050(int64_t handle, char* path)
 TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ext)
 {
     char path[MAX_PATH];
+    int length;
     TigFile* stream;
 
     strcpy(path, dir);
@@ -541,7 +591,9 @@ TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ex
     }
 
     strcat(path, ext);
-    if (strlen(path) > MAX_PATH) {
+
+    length = (int)strlen(path);
+    if (length > MAX_PATH) {
         tig_debug_println("Filename too long in ObjFile, open_solitary_for_write.");
         return NULL;
     }
