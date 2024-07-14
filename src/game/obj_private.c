@@ -37,6 +37,7 @@ static void sub_4E3DD0();
 static bool objid_compare(ObjectID a, ObjectID b);
 static bool sub_4E67A0(GUID* guid, char* str);
 static bool sub_4E6AA0(int* value_ptr, char* str, size_t length);
+static TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ext);
 static bool handle_from_fname(int64_t* handle_ptr, const char* path);
 
 // 0x60368C
@@ -496,6 +497,33 @@ bool sub_4E6AA0(int* value_ptr, char* str, size_t length)
 
     *value_ptr = value;
     return true;
+}
+
+// 0x4E70C0
+TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ext)
+{
+    char path[MAX_PATH];
+    TigFile* stream;
+
+    strcpy(path, dir);
+
+    if (!sub_4E7050(handle, path)) {
+        return NULL;
+    }
+
+    strcat(path, ext);
+    if (strlen(path) > MAX_PATH) {
+        tig_debug_println("Filename too long in ObjFile, open_solitary_for_write.");
+        return NULL;
+    }
+
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        tig_debug_printf("Unable to open [%s] in ObjFile, open_solitary_for_write\n", path);
+        return NULL;
+    }
+
+    return stream;
 }
 
 // 0x4E71B0
