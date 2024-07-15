@@ -29,6 +29,19 @@ static int dword_5E2F88;
 // 0x5E2EC8
 static int dword_5E2EC8;
 
+// 0x43A570
+void object_resize(ResizeInfo* resize_info)
+{
+    dword_5E2F24 = resize_info->iso_window_handle;
+    stru_5E2E98 = resize_info->field_14;
+    stru_5E2F30.x = stru_5E2E98.x - 256;
+    stru_5E2F30.y = stru_5E2E98.y - 256;
+    stru_5E2F30.width = stru_5E2E98.width + 512;
+    stru_5E2F30.height = stru_5E2E98.height + 512;
+    qword_5E2F50 = stru_5E2E98.width / 40 / 2 + 2;
+    qword_5E2E60 = stru_5E2E98.height / 20 / 2 + 2;
+}
+
 // 0x43A650
 void object_reset()
 {
