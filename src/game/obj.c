@@ -21,6 +21,7 @@ static void sub_409640(int64_t obj, int subtype);
 static bool sub_4096B0(TigFile* stream, int64_t obj);
 static bool sub_409980(TigFile* stream, int64_t obj);
 static void sub_409CB0(void* mem, int64_t obj);
+static void sub_409E80(void* mem, int64_t obj);
 static bool sub_40C560();
 static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
@@ -915,6 +916,24 @@ void sub_409CB0(void* mem, int64_t obj)
     dword_5D10F4 = 0;
     dword_5D1118 = mem;
     obj_enumerate_fields(object, sub_40A0E0);
+    obj_unlock(obj);
+}
+
+// 0x409E80
+void sub_409E80(void* mem, int64_t obj)
+{
+    Object* object;
+    int cnt;
+
+    object = obj_lock(obj);
+    sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
+    sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
+    sub_4E4C00(&(object->type), sizeof(object->type), mem);
+    sub_4E4C00(&(object->field_46), sizeof(object->field_46), mem);
+    cnt = sub_40C030(object->type);
+    sub_4E4C00(object->field_48, sizeof(object->field_48[0]) * cnt, mem);
+    dword_5D1118 = mem;
+    sub_40CBA0(object, sub_40A250);
     obj_unlock(obj);
 }
 
