@@ -16,6 +16,7 @@ typedef struct ObjectFieldInfo {
 
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
+static void sub_409000(int64_t obj);
 static bool sub_40C560();
 static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
@@ -579,6 +580,202 @@ bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr)
     *a3 = &(proto->field_50[sub_40CB40(proto, fld)]);
 
     return true;
+}
+
+// 0x409000
+void sub_409000(int64_t obj)
+{
+    int index;
+    int type;
+    unsigned int flags;
+    tig_art_id_t art_id = TIG_ART_ID_INVALID;
+
+    obj_f_set_int32(obj, OBJ_F_SHADOW, -1);
+    obj_f_set_int32(obj, OBJ_F_AID, TIG_ART_ID_INVALID);
+    obj_f_set_int32(obj, OBJ_F_DESTROYED_AID, TIG_ART_ID_INVALID);
+    obj_f_set_int32(obj, OBJ_F_CURRENT_AID, TIG_ART_ID_INVALID);
+    obj_f_set_int32(obj, OBJ_F_BLIT_COLOR, tig_color_make(255, 255, 255));
+    obj_f_set_int32(obj, OBJ_F_BLIT_ALPHA, 255);
+    obj_f_set_int32(obj, OBJ_F_BLIT_SCALE, 100);
+    obj_f_set_int32(obj, OBJ_F_LIGHT_AID, TIG_ART_ID_INVALID);
+    obj_f_set_int32(obj, OBJ_F_LIGHT_COLOR, tig_color_make(255, 255, 255));
+
+    for (index = 0; index < 7; index++) {
+        sub_4074E0(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
+        sub_4074E0(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
+    }
+
+    for (index = 0; index < 4; index++) {
+        sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
+    }
+
+    for (index = 0; index < 4; index++) {
+        sub_4074E0(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
+    }
+
+    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    switch (type) {
+    case OBJ_TYPE_WEAPON:
+    case OBJ_TYPE_AMMO:
+    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_ITEM_GENERIC:
+        if (type == OBJ_TYPE_ITEM_KEY) {
+            obj_f_set_int32(obj, OBJ_F_ITEM_WEIGHT, 0);
+        } else if (type == OBJ_TYPE_ITEM_GOLD) {
+            obj_f_set_int32(obj, OBJ_F_ITEM_WEIGHT, 1);
+        } else {
+            obj_f_set_int32(obj, OBJ_F_ITEM_WEIGHT, 10);
+        }
+
+        obj_f_set_int32(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, TIG_ART_ID_INVALID);
+        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_1, 10000);
+        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_2, 10000);
+        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_3, 10000);
+        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_4, 10000);
+        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_5, 10000);
+
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x434;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        break;
+    case OBJ_TYPE_PC:
+    case OBJ_TYPE_NPC:
+        stat_set_defaults(obj);
+        skill_set_defaults(obj);
+        spell_set_defaults(obj);
+        tech_set_defaults(obj);
+
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x4030;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        break;
+    }
+
+    switch (type) {
+    case OBJ_TYPE_WALL:
+        obj_f_set_int32(obj, OBJ_F_HP_PTS, 500);
+
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x4000;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_wall_id_create(0, 0, 0, 6, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_PORTAL:
+        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x4000;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_portal_id_create(0, 1, 0, 0, 6, 0, &art_id);
+        break;
+    case OBJ_TYPE_CONTAINER:
+        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x4030;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_container_id_create(0, 1, 0, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_SCENERY:
+        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x4830;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_PROJECTILE:
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x430;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_WEAPON:
+        sub_409640(obj, 0);
+        obj_f_set_int32(obj, OBJ_F_WEAPON_AMMO_TYPE, 10000);
+        obj_f_set_int32(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
+        sub_407340(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+        sub_407340(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+        tig_art_item_id_create(0, 1, 0, 0, 3, 0, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
+        tig_art_item_id_create(0, 2, 0, 0, 3, 0, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
+        tig_art_item_id_create(0, 0, 0, 0, 3, 0, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
+        obj_f_set_int32(obj, OBJ_F_WEAPON_MISSILE_AID, TIG_ART_ID_INVALID);
+        obj_f_set_int32(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, TIG_ART_ID_INVALID);
+        break;
+    case OBJ_TYPE_AMMO:
+        sub_409640(obj, 1);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 1, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        sub_409640(obj, 2);
+        tig_art_item_id_create(0, 1, 0, 0, 4, 2, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
+        tig_art_item_id_create(0, 2, 0, 0, 4, 2, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
+        tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
+        obj_f_set_int32(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
+        obj_f_set_int32(obj, OBJ_F_ARMOR_FLAGS, OARF_SIZE_MEDIUM);
+        break;
+    case OBJ_TYPE_ITEM_GOLD:
+        sub_409640(obj, 3);
+        obj_f_set_int32(obj, OBJ_F_GOLD_QUANTITY, 1);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 3, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_ITEM_FOOD:
+        sub_409640(obj, 4);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 4, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_ITEM_SCROLL:
+        sub_409640(obj, 5);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 5, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_ITEM_KEY:
+        sub_409640(obj, 6);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 6, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        sub_409640(obj, 7);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 7, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_ITEM_WRITTEN:
+        sub_409640(obj, 8);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 8, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_ITEM_GENERIC:
+        sub_409640(obj, 9);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_PC:
+    case OBJ_TYPE_NPC:
+        tig_art_critter_id_create(1, 0, 0, 0, 0, 4, 0, 0, 0, &art_id);
+        break;
+    case OBJ_TYPE_TRAP:
+        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags |= 0x100434;
+        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
+        break;
+    }
+
+    obj_f_set_int32(obj, OBJ_F_AID, art_id);
+    obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
 }
 
 // 0x405BC0
