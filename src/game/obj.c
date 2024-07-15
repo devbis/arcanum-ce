@@ -495,6 +495,34 @@ void sub_405800(int type, int64_t* obj_ptr)
     *obj_ptr = handle;
 }
 
+// 0x408F40
+bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr)
+{
+    Object* proto;
+
+    if (object->field_20.field_0 == -1) {
+        *a3 = &(object->field_50[sub_40CB40(object, fld)]);
+        return false;
+    }
+
+    if (fld > OBJ_F_TRANSIENT_BEGIN && fld <= OBJ_F_TRANSIENT_END) {
+        *a3 = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+        return false;
+    }
+
+    if (sub_40D320(object, fld)) {
+        *a3 = &(object->field_50[sub_40D230(object, fld)]);
+        return false;
+    }
+
+    *proto_handle_ptr = obj_get_prototype_handle(object);
+
+    proto = obj_lock(*proto_handle_ptr);
+    *a3 = &(proto->field_50[sub_40CB40(proto, fld)]);
+
+    return true;
+}
+
 // 0x405BC0
 bool sub_405BC0(int64_t obj)
 {
