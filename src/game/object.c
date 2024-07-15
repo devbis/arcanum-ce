@@ -29,6 +29,23 @@ static int dword_5E2F88;
 // 0x5E2EC8
 static int dword_5E2EC8;
 
+// 0x43A650
+void object_reset()
+{
+    TigRectListNode* next;
+    int index;
+
+    while (dword_5E2E70 != NULL) {
+        next = dword_5E2E70->next;
+        tig_rect_node_destroy(dword_5E2E70);
+        dword_5E2E70 = next;
+    }
+
+    for (index = 0; index < 18; index++) {
+        dword_5E2ED4[index] = 1;
+    }
+}
+
 // 0x43AA70
 bool sub_43AA70(int a1)
 {
