@@ -60,6 +60,28 @@ void sub_43AAB0()
     }
 }
 
+// 0x43CB10
+TigRect* sub_43CB10(TigRect* rect)
+{
+    TigRect* ret;
+
+    if (rect == NULL) {
+        rect = &stru_5E2E98;
+    }
+
+    if (dword_5E2E70 != NULL) {
+        ret = sub_52D480(&dword_5E2E70, rect);
+    } else {
+        dword_5E2E70 = tig_rect_node_create();
+        dword_5E2E70->rect = rect;
+        ret = dword_5E2E70;
+    }
+
+    dword_5E2ED0 = 1;
+
+    return ret;
+}
+
 // 0x43CB70
 void sub_43CB70()
 {
