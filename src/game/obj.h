@@ -775,6 +775,7 @@ bool obj_init(GameInitInfo* init_info);
 void obj_exit();
 void sub_405250();
 void sub_405800(int type, int64_t* obj_ptr);
+void sub_408E70(Object* object, int fld, int value);
 bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr);
 bool sub_405BC0(int64_t obj);
 void sub_405BF0(int64_t obj);

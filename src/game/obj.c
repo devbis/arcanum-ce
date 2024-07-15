@@ -495,6 +495,33 @@ void sub_405800(int type, int64_t* obj_ptr)
     *obj_ptr = handle;
 }
 
+// 0x408E70
+void sub_408E70(Object* object, int fld, int value)
+{
+    Unknown1 v1;
+
+    if (object->field_20.field_0 == -1) {
+        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        sub_40D400(object, fld, true);
+    } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld <= OBJ_F_TRANSIENT_END) {
+        v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+    } else {
+        if (!sub_40D350(object, fld)) {
+            if (!sub_40D320(object, fld)) {
+                sub_40D2A0(object, fld);
+            }
+        }
+
+        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        sub_40D400(object, fld, true);
+        object->field_44 = 1;
+    }
+
+    v1.type = object_fields[fld].type;
+    v1.value = value;
+    sub_4E4B70(&v1);
+}
+
 // 0x408F40
 bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr)
 {
