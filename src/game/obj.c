@@ -18,6 +18,7 @@ static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
 static void sub_409000(int64_t obj);
 static void sub_409640(int64_t obj, int subtype);
+static bool sub_4096B0(TigFile* stream, int64_t obj);
 static bool sub_40C560();
 static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
@@ -808,6 +809,46 @@ void sub_409640(int64_t obj, int subtype)
     obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
     obj_f_set_int32(obj, OBJ_F_ITEM_WORTH, obj_item_defaults[subtype].worth);
     obj_f_set_int32(obj, OBJ_F_HP_PTS, obj_item_defaults[subtype].hp);
+}
+
+// 0x4096B0
+bool sub_4096B0(TigFile* stream, int64_t obj)
+{
+    Object* object;
+    int cnt;
+
+    object = obj_lock(obj);
+
+    if (!obj_write_raw(&(object->field_20), sizeof(object->field_20), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->type), sizeof(object->type), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    cnt = sub_40C030(object->type);
+    if (!obj_write_raw(object->field_4C, sizeof(object->field_4C[0]) * cnt, stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    dword_5D10F4 = 0;
+    dword_5D110C = stream;
+    if (!obj_enumerate_fields(object, sub_40A070)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    obj_unlock(obj);
+    return true;
 }
 
 // 0x405BC0
