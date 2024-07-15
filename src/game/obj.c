@@ -17,6 +17,7 @@ typedef struct ObjectFieldInfo {
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
 static void sub_409000(int64_t obj);
+static void sub_409640(int64_t obj, int subtype);
 static bool sub_40C560();
 static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
@@ -26,6 +27,23 @@ static bool obj_check_version_stream(TigFile* stream);
 static void sub_40D5D0(void* mem);
 static bool obj_check_version_memory(void* mem);
 static bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info);
+
+// 0x59BE58
+static struct {
+    int hp;
+    int worth;
+} obj_item_defaults[] = {
+    { 8, 8 },
+    { 5, 1 },
+    { 8, 8 },
+    { 10, 1 },
+    { 2, 2 },
+    { 1, 6 },
+    { 3, 2 },
+    { 3, 2 },
+    { 1, 1 },
+    { 3, 2 },
+};
 
 // 0x59BEA8
 const char* object_field_names[] = {
@@ -702,7 +720,7 @@ void sub_409000(int64_t obj)
         tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
         break;
     case OBJ_TYPE_WEAPON:
-        sub_409640(obj, 0);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_WEAPON);
         obj_f_set_int32(obj, OBJ_F_WEAPON_AMMO_TYPE, 10000);
         obj_f_set_int32(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
         sub_407340(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
@@ -717,11 +735,11 @@ void sub_409000(int64_t obj)
         obj_f_set_int32(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, TIG_ART_ID_INVALID);
         break;
     case OBJ_TYPE_AMMO:
-        sub_409640(obj, 1);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_AMMO);
         tig_art_item_id_create(0, 0, 0, 0, 0, 1, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_ARMOR:
-        sub_409640(obj, 2);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_ARMOR);
         tig_art_item_id_create(0, 1, 0, 0, 4, 2, 0, 0, &art_id);
         obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
         tig_art_item_id_create(0, 2, 0, 0, 4, 2, 0, 0, &art_id);
@@ -731,32 +749,32 @@ void sub_409000(int64_t obj)
         obj_f_set_int32(obj, OBJ_F_ARMOR_FLAGS, OARF_SIZE_MEDIUM);
         break;
     case OBJ_TYPE_ITEM_GOLD:
-        sub_409640(obj, 3);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_GOLD);
         obj_f_set_int32(obj, OBJ_F_GOLD_QUANTITY, 1);
         tig_art_item_id_create(0, 0, 0, 0, 0, 3, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_FOOD:
-        sub_409640(obj, 4);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_FOOD);
         tig_art_item_id_create(0, 0, 0, 0, 0, 4, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_SCROLL:
-        sub_409640(obj, 5);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_SCROLL);
         tig_art_item_id_create(0, 0, 0, 0, 0, 5, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_KEY:
-        sub_409640(obj, 6);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_KEY);
         tig_art_item_id_create(0, 0, 0, 0, 0, 6, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_KEY_RING:
-        sub_409640(obj, 7);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_KEY_RING);
         tig_art_item_id_create(0, 0, 0, 0, 0, 7, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_WRITTEN:
-        sub_409640(obj, 8);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_WRITTEN);
         tig_art_item_id_create(0, 0, 0, 0, 0, 8, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_GENERIC:
-        sub_409640(obj, 9);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_GENERIC);
         tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
         break;
     case OBJ_TYPE_PC:
@@ -776,6 +794,20 @@ void sub_409000(int64_t obj)
 
     obj_f_set_int32(obj, OBJ_F_AID, art_id);
     obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+}
+
+// 0x409640
+void sub_409640(int64_t obj, int subtype)
+{
+    tig_art_id_t art_id;
+
+    if (tig_art_item_id_create(0, 1, 0, 0, 0, subtype, 0, 0, &art_id) != TIG_OK) {
+        art_id = TIG_ART_ID_INVALID;
+    }
+
+    obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
+    obj_f_set_int32(obj, OBJ_F_ITEM_WORTH, obj_item_defaults[subtype].worth);
+    obj_f_set_int32(obj, OBJ_F_HP_PTS, obj_item_defaults[subtype].hp);
 }
 
 // 0x405BC0
