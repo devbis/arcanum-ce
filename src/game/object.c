@@ -11,6 +11,9 @@
 // 0x5A54AC
 static int dword_5A54AC = 256;
 
+// 0x5E2E70
+static TigRectListNode* dword_5E2E70;
+
 // 0x5E2ED4
 static int dword_5E2ED4[18];
 
@@ -54,6 +57,18 @@ void sub_43AAB0()
     } else {
         dword_5E2F88 = 0;
         dword_5E2EC8 = 0;
+    }
+}
+
+// 0x43CB70
+void sub_43CB70()
+{
+    TigRectListNode* next;
+
+    while (dword_5E2E70 != NULL) {
+        next = dword_5E2E70->next;
+        tig_rect_node_destroy(dword_5E2E70);
+        dword_5E2E70 = next;
     }
 }
 
