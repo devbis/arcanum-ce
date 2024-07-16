@@ -4,6 +4,7 @@
 
 static void sub_589540(int* a1, bool* a2);
 static void sub_589560(int* value_ptr, bool* a2);
+static void sub_589580(int value);
 
 // 0x589530
 int sub_589530(int a1)
@@ -23,4 +24,10 @@ void sub_589560(int* value_ptr, bool* a2)
 {
     *value_ptr = settings_get_value(&settings, "difficulty");
     *a2 = true;
+}
+
+// 0x589580
+void sub_589580(int value)
+{
+    settings_set_value(&settings, "difficulty", value);
 }
