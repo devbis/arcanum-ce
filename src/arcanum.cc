@@ -1284,12 +1284,6 @@ void roof_resize_(void* a1)
     dword_5E2E44 = a1->field_0;
 }
 
-// 0x43AA60
-void object_close_()
-{
-    object_reset_();
-}
-
 // 0x441780
 int sub_441780(void* a1)
 {

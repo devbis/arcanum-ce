@@ -59,6 +59,12 @@ void object_reset()
     }
 }
 
+// 0x43AA60
+void object_close()
+{
+    object_reset();
+}
+
 // 0x43AA70
 bool sub_43AA70(int a1)
 {
