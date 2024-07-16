@@ -2438,12 +2438,6 @@ int sub_4D5160(int a1)
     return dword_6028EC;
 }
 
-// 0x4D5180
-int sub_4D5180()
-{
-    return dword_6028EC;
-}
-
 // 0x4D5850
 void sub_4D5850(void* a1)
 {

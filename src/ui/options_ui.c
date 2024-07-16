@@ -2,6 +2,7 @@
 
 #include "game/gamelib.h"
 #include "game/player.h"
+#include "game/text_floater.h"
 
 static void sub_589540(int* a1, bool* enabled_ptr);
 static void sub_589560(int* value_ptr, bool* enabled_ptr);
@@ -21,7 +22,8 @@ static void sub_589800(int value);
 static void sub_589810(int* value_ptr, bool* enabled_ptr);
 static void sub_589840(int value);
 static void sub_589860(int* value_ptr, bool* enabled_ptr);
-static void sub_589880(int value)
+static void sub_589880(int value);
+static void sub_5898A0(int* value_ptr, int* enabled_ptr);
 
 // 0x589530
 int sub_589530(int a1)
@@ -180,4 +182,11 @@ void sub_589860(int* value_ptr, bool* enabled_ptr)
 void sub_589880(int value)
 {
     settings_set_value(&settings, "text duration", value);
+}
+
+// 0x5898A0
+void sub_5898A0(int* value_ptr, int* enabled_ptr)
+{
+    *value_ptr = text_floaters_get();
+    *enabled_ptr = true;
 }
