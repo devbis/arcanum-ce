@@ -34,6 +34,7 @@ static void sub_589980(int value);
 static void sub_5899A0(int* value_ptr, bool* enabled_ptr);
 static void sub_5899C0(int value);
 static void sub_5899E0(int* value_ptr, bool* enabled_ptr);
+static void sub_589A00(int value);
 
 // 0x589530
 int sub_589530(int a1)
@@ -266,4 +267,10 @@ void sub_5899E0(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "music volume");
     *enabled_ptr = true;
+}
+
+// 0x589A00
+void sub_589A00(int value)
+{
+    settings_set_value(&settings, "music volume", value);
 }
