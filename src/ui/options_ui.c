@@ -7,6 +7,7 @@ static void sub_589560(int* value_ptr, bool* a2);
 static void sub_589580(int value);
 static void sub_5895A0(int* value_ptr, bool* a2);
 static void sub_5895D0(int value);
+static void sub_589610(int* value_ptr, bool* a2);
 
 // 0x589530
 int sub_589530(int a1)
@@ -45,4 +46,25 @@ void sub_5895A0(int* value_ptr, bool* a2)
 void sub_5895D0(int value)
 {
     settings_set_value(&settings, "difficulty", value ? 1 : 0);
+}
+
+// 0x589610
+void sub_589610(int* value_ptr, bool* a2)
+{
+    if ((tig_net_flags & 0x1) != 0) {
+        if (combat_is_turn_based()) {
+            settings_set_value(&settings, "turn-based", 0);
+            settings_set_value(&settings, "fast turn-based", 0);
+        }
+
+        *value_ptr = 0;
+        *a2 = false;
+    } else {
+        if (combat_is_turn_based()) {
+            *value_ptr = settings_get_value(&settings, "fast turn-based") ? 2 : 1;
+        } else {
+            *value_ptr = 0;
+        }
+        *a2 = true;
+    }
 }
