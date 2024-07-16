@@ -24,6 +24,7 @@ static void sub_589840(int value);
 static void sub_589860(int* value_ptr, bool* enabled_ptr);
 static void sub_589880(int value);
 static void sub_5898A0(int* value_ptr, int* enabled_ptr);
+static void sub_5898C0(int value);
 
 // 0x589530
 int sub_589530(int a1)
@@ -189,4 +190,12 @@ void sub_5898A0(int* value_ptr, int* enabled_ptr)
 {
     *value_ptr = text_floaters_get();
     *enabled_ptr = true;
+}
+
+// 0x5898C0
+void sub_5898C0(int value)
+{
+    if (text_floaters_get() != value) {
+        text_floaters_set(value);
+    }
 }
