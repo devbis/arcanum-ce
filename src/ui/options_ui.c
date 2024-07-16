@@ -16,6 +16,7 @@ static void sub_589750(int* value_ptr, bool* a2);
 static void sub_589780(int value);
 static void sub_589790(int* value_ptr, bool* a2);
 static void sub_5897C0(int value);
+static void sub_5897D0(int* value_ptr, bool* a2);
 
 // 0x589530
 int sub_589530(int a1)
@@ -135,4 +136,11 @@ void sub_589790(int* value_ptr, bool* a2)
 void sub_5897C0(int value)
 {
     sub_430580(value);
+}
+
+// 0x5897D0
+void sub_5897D0(int* value_ptr, bool* a2)
+{
+    *value_ptr = sub_4C8FA0(player_get_pc_obj()) != 0;
+    *a2 = true;
 }
