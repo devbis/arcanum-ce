@@ -1,12 +1,11 @@
 #include "game/object.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/effect.h"
-#include "game/lib/object.h"
-#include "game/lib/player.h"
-#include "game/lib/stat.h"
-#include "game/lib/timeevent.h"
+#include "game/effect.h"
+#include "game/gamelib.h"
+#include "game/obj.h"
+#include "game/player.h"
+#include "game/stat.h"
+#include "game/timeevent.h"
 
 // 0x5A54AC
 static int dword_5A54AC = 256;
@@ -14,14 +13,38 @@ static int dword_5A54AC = 256;
 // 0x5E2E70
 static TigRectListNode* dword_5E2E70;
 
+// 0x5E2E98
+static TigRect stru_5E2E98;
+
+// 0x5E2EB4
+static GameContextF8* dword_5E2EB4;
+
+// 0x5E2ED0
+static bool object_dirty;
+
 // 0x5E2ED4
 static int dword_5E2ED4[18];
+
+// 0x5E2F24
+static tig_window_handle_t object_window;
 
 // 0x5E2F28
 static bool dword_5E2F28;
 
 // 0x5E2F2C
 static bool object_lighting;
+
+// 0x5E2F30
+static TigRect stru_5E2F30;
+
+// 0x5E2F50
+static int64_t qword_5E2F50;
+
+// 0x5E2F58
+static bool object_editor;
+
+// 0x5E2E60
+static int64_t qword_5E2E60;
 
 // 0x5E2F88
 static int dword_5E2F88;
@@ -32,7 +55,7 @@ static int dword_5E2EC8;
 // 0x43A570
 void object_resize(ResizeInfo* resize_info)
 {
-    dword_5E2F24 = resize_info->iso_window_handle;
+    object_window = resize_info->iso_window_handle;
     stru_5E2E98 = resize_info->field_14;
     stru_5E2F30.x = stru_5E2E98.x - 256;
     stru_5E2F30.y = stru_5E2E98.y - 256;
@@ -97,7 +120,7 @@ void sub_43AAB0()
 }
 
 // 0x43CB10
-TigRect* sub_43CB10(TigRect* rect)
+TigRect* object_invalidate_rect(TigRect* rect)
 {
     TigRect* ret;
 
@@ -109,11 +132,11 @@ TigRect* sub_43CB10(TigRect* rect)
         ret = sub_52D480(&dword_5E2E70, rect);
     } else {
         dword_5E2E70 = tig_rect_node_create();
-        dword_5E2E70->rect = rect;
+        dword_5E2E70->rect = *rect;
         ret = dword_5E2E70;
     }
 
-    dword_5E2ED0 = 1;
+    object_dirty = true;
 
     return ret;
 }
@@ -862,7 +885,7 @@ bool sub_441F10(object_id_t obj, bool a2)
 // 0x441FC0
 void sub_441FC0(object_id_t obj, int a2)
 {
-    if (!dword_5E2F58) {
+    if (!object_editor) {
         if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
             && (obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
             sub_4AD790(obj, a2);
