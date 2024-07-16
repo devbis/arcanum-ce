@@ -29,6 +29,7 @@ static void sub_5898E0(int* value_ptr, bool* enabled_ptr);
 static void sub_589900(int value);
 static void sub_589920(int* value_ptr, bool* enabled_ptr);
 static void sub_589940(int value);
+static void sub_589960(int* value_ptr, bool* enabled_ptr);
 
 // 0x589530
 int sub_589530(int a1)
@@ -228,4 +229,11 @@ void sub_589920(int* value_ptr, bool* enabled_ptr)
 void sub_589940(int value)
 {
     settings_set_value(&settings, "combat taunts", value);
+}
+
+// 0x589960
+void sub_589960(int* value_ptr, bool* enabled_ptr)
+{
+    *value_ptr = settings_get_value(&settings, "effects volume");
+    *enabled_ptr = true;
 }
