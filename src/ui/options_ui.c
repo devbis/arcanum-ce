@@ -3,20 +3,20 @@
 #include "game/gamelib.h"
 #include "game/player.h"
 
-static void sub_589540(int* a1, bool* a2);
-static void sub_589560(int* value_ptr, bool* a2);
+static void sub_589540(int* a1, bool* enabled_ptr);
+static void sub_589560(int* value_ptr, bool* enabled_ptr);
 static void sub_589580(int value);
-static void sub_5895A0(int* value_ptr, bool* a2);
+static void sub_5895A0(int* value_ptr, bool* enabled_ptr);
 static void sub_5895D0(int value);
-static void sub_589610(int* value_ptr, bool* a2);
+static void sub_589610(int* value_ptr, bool* enabled_ptr);
 static void sub_5896A0(int value);
-static void sub_589710(int* value_ptr, bool* a2);
+static void sub_589710(int* value_ptr, bool* enabled_ptr);
 static void sub_589740(int value);
-static void sub_589750(int* value_ptr, bool* a2);
+static void sub_589750(int* value_ptr, bool* enabled_ptr);
 static void sub_589780(int value);
-static void sub_589790(int* value_ptr, bool* a2);
+static void sub_589790(int* value_ptr, bool* enabled_ptr);
 static void sub_5897C0(int value);
-static void sub_5897D0(int* value_ptr, bool* a2);
+static void sub_5897D0(int* value_ptr, bool* enabled_ptr);
 static void sub_589800(int value);
 static void sub_589810(int* value_ptr, bool* enabled_ptr);
 
@@ -27,17 +27,17 @@ int sub_589530(int a1)
 }
 
 // 0x589540
-void sub_589540(int* a1, bool* a2)
+void sub_589540(int* a1, bool* enabled_ptr)
 {
     *a1 = dword_68726C;
-    *a2 = dword_687260 == 0;
+    *enabled_ptr = dword_687260 == 0;
 }
 
 // 0x589560
-void sub_589560(int* value_ptr, bool* a2)
+void sub_589560(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "difficulty");
-    *a2 = true;
+    *enabled_ptr = true;
 }
 
 // 0x589580
@@ -47,10 +47,10 @@ void sub_589580(int value)
 }
 
 // 0x5895A0
-void sub_5895A0(int* value_ptr, bool* a2)
+void sub_5895A0(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "violence filter");
-    *a2 = true;
+    *enabled_ptr = true;
 }
 
 // 0x5895D0
@@ -60,7 +60,7 @@ void sub_5895D0(int value)
 }
 
 // 0x589610
-void sub_589610(int* value_ptr, bool* a2)
+void sub_589610(int* value_ptr, bool* enabled_ptr)
 {
     if ((tig_net_flags & 0x1) != 0) {
         if (combat_is_turn_based()) {
@@ -69,14 +69,14 @@ void sub_589610(int* value_ptr, bool* a2)
         }
 
         *value_ptr = 0;
-        *a2 = false;
+        *enabled_ptr = false;
     } else {
         if (combat_is_turn_based()) {
             *value_ptr = settings_get_value(&settings, "fast turn-based") ? 2 : 1;
         } else {
             *value_ptr = 0;
         }
-        *a2 = true;
+        *enabled_ptr = true;
     }
 }
 
@@ -102,10 +102,10 @@ void sub_5896A0(int value)
 }
 
 // 0x589710
-void sub_589710(int* value_ptr, bool* a2)
+void sub_589710(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = sub_4B8230(player_get_pc_obj()) != 0;
-    *a2 = true;
+    *enabled_ptr = true;
 }
 
 // 0x589740
@@ -115,10 +115,10 @@ void sub_589740(int value)
 }
 
 // 0x589750
-void sub_589750(int* value_ptr, bool* a2)
+void sub_589750(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = sub_4B8330(player_get_pc_obj()) != 0;
-    *a2 = true;
+    *enabled_ptr = true;
 }
 
 // 0x589780
@@ -128,10 +128,10 @@ void sub_589780(int value)
 }
 
 // 0x589790
-void sub_589790(int* value_ptr, bool* a2)
+void sub_589790(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = sub_4304C0(player_get_pc_obj()) != 0;
-    *a2 = true;
+    *enabled_ptr = true;
 }
 
 // 0x5897C0
@@ -141,10 +141,10 @@ void sub_5897C0(int value)
 }
 
 // 0x5897D0
-void sub_5897D0(int* value_ptr, bool* a2)
+void sub_5897D0(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = sub_4C8FA0(player_get_pc_obj()) != 0;
-    *a2 = true;
+    *enabled_ptr = true;
 }
 
 // 0x589800
