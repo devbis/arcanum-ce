@@ -4061,12 +4061,6 @@ void nullsub_69()
 {
 }
 
-// 0x589800
-int sub_589800(int a1)
-{
-    return sub_4C8FF0(a1);
-}
-
 // 0x5898A0
 void sub_5898A0(int* a1, int* a2)
 {
