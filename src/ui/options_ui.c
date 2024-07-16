@@ -21,6 +21,7 @@ static void sub_589800(int value);
 static void sub_589810(int* value_ptr, bool* enabled_ptr);
 static void sub_589840(int value);
 static void sub_589860(int* value_ptr, bool* enabled_ptr);
+static void sub_589880(int value)
 
 // 0x589530
 int sub_589530(int a1)
@@ -173,4 +174,10 @@ void sub_589860(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "text duration");
     *enabled_ptr = true;
+}
+
+// 0x589880
+void sub_589880(int value)
+{
+    settings_set_value(&settings, "text duration", value);
 }
