@@ -18,6 +18,7 @@ static void sub_589790(int* value_ptr, bool* a2);
 static void sub_5897C0(int value);
 static void sub_5897D0(int* value_ptr, bool* a2);
 static void sub_589800(int value);
+static void sub_589810(int* value_ptr, bool* enabled_ptr);
 
 // 0x589530
 int sub_589530(int a1)
@@ -150,4 +151,11 @@ void sub_5897D0(int* value_ptr, bool* a2)
 void sub_589800(int value)
 {
     sub_4C8FF0(value);
+}
+
+// 0x589810
+void sub_589810(int* value_ptr, bool* enabled_ptr)
+{
+    *value_ptr = settings_get_value(&settings, "brightness");
+    *enabled_ptr = tig_video_check_gamma_control() == TIG_OK;
 }
