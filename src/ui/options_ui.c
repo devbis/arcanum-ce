@@ -20,6 +20,7 @@ static void sub_5897D0(int* value_ptr, bool* enabled_ptr);
 static void sub_589800(int value);
 static void sub_589810(int* value_ptr, bool* enabled_ptr);
 static void sub_589840(int value);
+static void sub_589860(int* value_ptr, bool* enabled_ptr);
 
 // 0x589530
 int sub_589530(int a1)
@@ -165,4 +166,11 @@ void sub_589810(int* value_ptr, bool* enabled_ptr)
 void sub_589840(int value)
 {
     settings_set_value(&settings, "brightness", value);
+}
+
+// 0x589860
+void sub_589860(int* value_ptr, bool* enabled_ptr)
+{
+    *value_ptr = settings_get_value(&settings, "text duration");
+    *enabled_ptr = true;
 }
