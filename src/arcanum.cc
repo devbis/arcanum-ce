@@ -4061,12 +4061,6 @@ void nullsub_69()
 {
 }
 
-// 0x589740
-int sub_589740(int a1)
-{
-    return sub_4B8280(a1);
-}
-
 // 0x589780
 int sub_589780(int a1)
 {
