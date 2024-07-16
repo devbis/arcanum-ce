@@ -8,6 +8,7 @@ static void sub_589580(int value);
 static void sub_5895A0(int* value_ptr, bool* a2);
 static void sub_5895D0(int value);
 static void sub_589610(int* value_ptr, bool* a2);
+static void sub_5896A0(int value);
 
 // 0x589530
 int sub_589530(int a1)
@@ -66,5 +67,26 @@ void sub_589610(int* value_ptr, bool* a2)
             *value_ptr = 0;
         }
         *a2 = true;
+    }
+}
+
+// 0x5896A0
+void sub_5896A0(int value)
+{
+    if ((tig_net_flags & 0x1) == 0) {
+        switch (value) {
+        case 0:
+            settings_set_value(&settings, "turn-based", 0);
+            settings_set_value(&settings, "fast turn-based", 0);
+            break;
+        case 1:
+            settings_set_value(&settings, "turn-based", 1);
+            settings_set_value(&settings, "fast turn-based", 0);
+            break;
+        case 2:
+            settings_set_value(&settings, "turn-based", 1);
+            settings_set_value(&settings, "fast turn-based", 1);
+            break;
+        }
     }
 }
