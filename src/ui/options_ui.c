@@ -32,6 +32,7 @@ static void sub_589940(int value);
 static void sub_589960(int* value_ptr, bool* enabled_ptr);
 static void sub_589980(int value);
 static void sub_5899A0(int* value_ptr, bool* enabled_ptr);
+static void sub_5899C0(int value);
 
 // 0x589530
 int sub_589530(int a1)
@@ -251,4 +252,10 @@ void sub_5899A0(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = settings_get_value(&settings, "voice volume");
     *enabled_ptr = true;
+}
+
+// 0x5899C0
+void sub_5899C0(int value)
+{
+    settings_set_value(&settings, "voice volume", value);
 }
