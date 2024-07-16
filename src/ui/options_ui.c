@@ -1,6 +1,9 @@
 #include "ui/options_ui.h"
 
+#include "game/gamelib.h"
+
 static void sub_589540(int* a1, bool* a2);
+static void sub_589560(int* value_ptr, bool* a2);
 
 // 0x589530
 int sub_589530(int a1)
@@ -13,4 +16,11 @@ void sub_589540(int* a1, bool* a2)
 {
     *a1 = dword_68726C;
     *a2 = dword_687260 == 0;
+}
+
+// 0x589560
+void sub_589560(int* value_ptr, bool* a2)
+{
+    *value_ptr = settings_get_value(&settings, "difficulty");
+    *a2 = true;
 }
