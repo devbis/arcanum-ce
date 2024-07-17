@@ -116,6 +116,9 @@ static OptionsUiControlInfo stru_5CCD78[3][8] = {
     },
 };
 
+// 0x687260
+static bool dword_687260;
+
 // 0x687268
 static ModuleList options_ui_modlist;
 
@@ -130,6 +133,31 @@ static bool options_ui_initialized;
 
 // 0x6872BC
 static bool options_ui_modlist_initialized;
+
+// 0x589430
+bool sub_589430()
+{
+    int selected;
+
+    if (!options_ui_initialized
+        || !options_ui_modlist_initialized
+        || dword_687260) {
+        return true;
+    }
+
+    selected = cyclic_ui_control_get(stru_687278[0].id);
+    if (selected == options_ui_modlist.selected) {
+        return true;
+    }
+
+    if (!gamelib_mod_load(options_ui_modlist.names[selected])
+        || !gameuilib_mod_load()) {
+        tig_debug_printf("Can't load module %s\n", options_ui_modlist.names[selected]);
+        return false;
+    }
+
+    return true;
+}
 
 // 0x5894C0
 void options_ui_exit()
@@ -167,7 +195,7 @@ int sub_589530(int a1)
 void options_ui_module_get(int* value_ptr, bool* enabled_ptr)
 {
     *value_ptr = options_ui_modlist.selected;
-    *enabled_ptr = dword_687260 == 0;
+    *enabled_ptr = !dword_687260;
 }
 
 // 0x589560
