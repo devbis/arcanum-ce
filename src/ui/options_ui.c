@@ -1,7 +1,9 @@
 #include "ui/options_ui.h"
 
 #include "game/gamelib.h"
+#include "game/location.h"
 #include "game/mes.h"
+#include "game/obj.h"
 #include "game/player.h"
 #include "game/text_floater.h"
 #include "ui/cyclic_ui.h"
@@ -133,6 +135,79 @@ static bool options_ui_initialized;
 
 // 0x6872BC
 static bool options_ui_modlist_initialized;
+
+// 0x589280
+void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
+{
+    int index;
+    CyclicUiControlInfo control_info;
+    OptionsUiControlInfo* meta;
+    MesFileEntry mes_file_entry;
+    int value;
+
+    if (options_ui_initialized) {
+        optiosn_ui_exit();
+    }
+
+    dword_687260 = a3;
+
+    mes_load("mes\\options_ui.mes", &options_ui_mes_file);
+
+    for (index = 0; index < 8; index++) {
+        meta = &(stru_5CCD78[type][index]);
+        if (!meta->field_0) {
+            continue;
+        }
+
+        sub_57F720(&control_info);
+
+        if (type == 0 && index == 0) {
+            if (dword_687260) {
+                options_ui_modlist_initialized = false;
+                continue;
+            }
+
+            gamelib_modlist_create(&options_ui_modlist, 0);
+            control_info.text_array = options_ui_modlist.names;
+            control_info.text_array_size = options_ui_modlist.cnt;
+            options_ui_modlist_initialized = true;
+        }
+
+        control_info.type = meta->field_4;
+        control_info.window_handle = window_handle;
+        control_info.field_10 = meta->field_8;
+
+        mes_file_entry.num = index + 20 * (5 * type + 5);
+        control_info.text = mes_search(options_ui_mes_file, &mes_file_entry)
+            ? mes_file_entry.str
+            : NULL;
+
+        control_info.mes_file_path = meta->mes;
+        control_info.value_changed_callback = meta->setter;
+        control_info.x = dword_5CCD38[index];
+        control_info.y = dword_5CCD58[index];
+
+        if (meta->getter != NULL) {
+            meta->getter(&value, &(control_info.enabled));
+        } else {
+            value = 0;
+            control_info.enabled = false;
+        }
+
+        if (cyclic_ui_control_create(&control_info, &(stru_687278[index].id))) {
+            stru_687278[index].initialized = true;
+            cyclic_ui_control_set(stru_687278[index].id, value);
+        } else {
+            stru_687278[index].initialized = false;
+        }
+    }
+
+    if (dword_687260) {
+        sub_4B8CE0(obj_f_get_int64(player_get_pc_obj(), OBJ_F_LOCATION));
+    }
+
+    options_ui_initialized = true;
+}
 
 // 0x589430
 bool sub_589430()
