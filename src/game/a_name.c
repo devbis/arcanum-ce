@@ -477,6 +477,23 @@ bool load_tile_names()
     return true;
 }
 
+// 0x4EBA30
+bool sub_4EBA30(tig_art_id_t a, tig_art_id_t b)
+{
+    tig_art_id_t c;
+    int num;
+    int flippable;
+
+    c = sub_4EB970(a, b);
+    num = tig_art_tile_id_num1_get(c);
+    flippable = tig_art_tile_id_flippable1_get(c);
+
+    return (num == tig_art_tile_id_num1_get(b)
+            && flippable == tig_art_file_id_flippable1_get(b))
+        || (num == tig_art_tile_id_num1_get(a)
+            && flippable == tig_art_file_id_flippable1_get(a));
+}
+
 // 0x4EBAB0
 bool sub_4EBAB0(tig_art_id_t aid)
 {
