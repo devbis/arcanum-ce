@@ -24,6 +24,7 @@ static_assert(sizeof(WallStructure) == 0x20, "wrong size");
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool count_tile_names();
+static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static int sub_4EC160();
 static bool load_tile_names();
 static bool build_facade_file_name(int num, char* fname);
@@ -474,6 +475,32 @@ bool load_tile_names()
     } while (mes_find_next(tilename_mes_file, &mes_file_entry));
 
     return true;
+}
+
+// 0x4EBAD0
+uint8_t sub_4EBAD0(tig_art_id_t aid)
+{
+    int type;
+    int num;
+    int flippable;
+
+    type = tig_art_tile_id_type_get(aid);
+    num = tig_art_tile_id_num1_get(aid);
+    flippable = tig_art_tile_id_flippable1_get(aid);
+
+    if (type) {
+        if (flippable) {
+            return outdoor_flippable_tile_flags[num];
+        } else {
+            return outdoor_non_flippable_tile_flags[num];
+        }
+    } else {
+        if (flippable) {
+            return indoor_flippable_tile_flags[num];
+        } else {
+            return indoor_non_flippable_tile_flags[num];
+        }
+    }
 }
 
 // 0x4EBB30
