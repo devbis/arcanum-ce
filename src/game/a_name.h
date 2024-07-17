@@ -6,6 +6,7 @@
 bool a_name_tile_init();
 void a_name_tile_exit();
 bool a_name_tile_aid_to_fname(tig_art_id_t aid, char* fname);
+int sub_4EBBE0(tig_art_id_t aid);
 bool a_name_item_init();
 void a_name_item_exit();
 bool a_name_item_aid_to_fname(tig_art_id_t aid, char* fname);

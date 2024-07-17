@@ -476,6 +476,32 @@ bool load_tile_names()
     return true;
 }
 
+// 0x4EBBE0
+int sub_4EBBE0(tig_art_id_t aid)
+{
+    int type;
+    int num;
+    int flippable;
+
+    type = tig_art_tile_id_type_get(aid);
+    num = tig_art_tile_id_num1_get(aid);
+    flippable = tig_art_tile_id_flippable1_get(aid);
+
+    if (type) {
+        if (flippable) {
+            return outdoor_flippable_tile_sounds[num];
+        } else {
+            return outdoor_non_flippable_tile_sounds[num];
+        }
+    } else {
+        if (flippable) {
+            return indoor_flippable_tile_sounds[num];
+        } else {
+            return indoor_non_flippable_tile_sounds[num];
+        }
+    }
+}
+
 // 0x4EC160
 int sub_4EC160()
 {
