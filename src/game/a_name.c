@@ -476,6 +476,14 @@ bool load_tile_names()
     return true;
 }
 
+// 0x4EBBC0
+bool sub_4EBBC0(tig_art_id_t aid)
+{
+    return aid != TIG_ART_ID_INVALID
+        ? (sub_4EBAD0(aid) & 0x20) != 0
+        : false;
+}
+
 // 0x4EBBE0
 int sub_4EBBE0(tig_art_id_t aid)
 {
