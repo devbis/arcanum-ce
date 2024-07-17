@@ -24,6 +24,7 @@ static_assert(sizeof(WallStructure) == 0x20, "wrong size");
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
 static bool count_tile_names();
+static int sub_4EC160();
 static bool load_tile_names();
 static bool build_facade_file_name(int num, char* fname);
 static bool sub_4EC4B0();
@@ -473,6 +474,19 @@ bool load_tile_names()
     } while (mes_find_next(tilename_mes_file, &mes_file_entry));
 
     return true;
+}
+
+// 0x4EC160
+int sub_4EC160()
+{
+    TigFileList list;
+    int cnt;
+
+    tig_file_list_create(&list, "art\\tile\\*.art");
+    cnt = list.count;
+    tig_file_list_destroy(&list);
+
+    return cnt;
 }
 
 // 0x4EC190
