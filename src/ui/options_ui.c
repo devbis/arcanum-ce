@@ -1,8 +1,10 @@
 #include "ui/options_ui.h"
 
 #include "game/gamelib.h"
+#include "game/mes.h"
 #include "game/player.h"
 #include "game/text_floater.h"
+#include "ui/cyclic_ui.h"
 
 typedef void(OptionsUiControlValueGetter)(int* value_ptr, bool* enabled_ptr);
 typedef void(OptionsUiControlValueSetter)(int value);
@@ -18,6 +20,11 @@ typedef struct OptionsUiControlInfo {
 } OptionsUiControlInfo;
 
 static_assert(sizeof(OptionsUiControlInfo) == 0x1C, "wrong size");
+
+typedef struct OptionsUiControlData {
+    int id;
+    bool initialized;
+} OptionsUiControlData;
 
 static void options_ui_module_get(int* value_ptr, bool* enabled_ptr);
 static void options_ui_difficulty_get(int* value_ptr, bool* enabled_ptr);
@@ -109,6 +116,47 @@ static OptionsUiControlInfo stru_5CCD78[3][8] = {
     },
 };
 
+// 0x687268
+static ModuleList options_ui_modlist;
+
+// 0x687274
+static mes_file_handle_t options_ui_mes_file;
+
+// 0x687278
+static OptionsUiControlData stru_687278[8];
+
+// 0x6872B8
+static bool options_ui_initialized;
+
+// 0x6872BC
+static bool options_ui_modlist_initialized;
+
+// 0x5894C0
+void options_ui_exit()
+{
+    int index;
+
+    if (!options_ui_initialized) {
+        return;
+    }
+
+    for (index = 0; index < 8; index++) {
+        if (stru_687278[index].initialized) {
+            cyclic_ui_control_destroy(stru_687278[index].id, false);
+            stru_687278[index].initialized = false;
+        }
+    }
+
+    if (options_ui_modlist_initialized) {
+        gamelib_modlist_destroy(&options_ui_modlist);
+        options_ui_modlist_initialized = false;
+    }
+
+    mes_unload(options_ui_mes_file);
+
+    options_ui_initialized = false;
+}
+
 // 0x589530
 int sub_589530(int a1)
 {
@@ -116,9 +164,9 @@ int sub_589530(int a1)
 }
 
 // 0x589540
-void options_ui_module_get(int* a1, bool* enabled_ptr)
+void options_ui_module_get(int* value_ptr, bool* enabled_ptr)
 {
-    *a1 = dword_68726C;
+    *value_ptr = options_ui_modlist.selected;
     *enabled_ptr = dword_687260 == 0;
 }
 
