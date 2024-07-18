@@ -92,3 +92,11 @@ char* sub_4CAEB0(int index)
         ? dword_5FF5D8[index]
         : NULL;
 }
+
+// 0x4CAED0
+int64_t sub_4CAED0(int index)
+{
+    return index >= 0 && index < dword_5FF5A8
+        ? dword_5FF5AC[index]
+        : 0;
+}
