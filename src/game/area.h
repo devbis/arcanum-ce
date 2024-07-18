@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 
+bool area_init(GameInitInfo* init_info);
 void area_exit();
 void area_mod_unload();
 
