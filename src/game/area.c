@@ -76,3 +76,11 @@ int sub_4CAE80()
 {
   return dword_5FF5A8;
 }
+
+// 0x4CAE90
+char* sub_4CAE90(int index)
+{
+    return index >= 0 && index < dword_5FF5A8
+        ? dword_5FF5B0[index]
+        : NULL;
+}

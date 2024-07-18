@@ -7,5 +7,6 @@ bool area_init(GameInitInfo* init_info);
 void area_exit();
 void area_mod_unload();
 int sub_4CAE80();
+char* sub_4CAE90(int index);
 
 #endif /* ARCANUM_GAME_AREA_H_ */
