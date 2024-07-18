@@ -2318,13 +2318,6 @@ void area_exit_()
 {
 }
 
-// #maybe-size_t
-// 0x4CAE80
-int sub_4CAE80()
-{
-    return dword_5FF5A8;
-}
-
 // 0x4CB720
 int mt_item_init_()
 {

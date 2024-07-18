@@ -70,3 +70,9 @@ void area_mod_unload()
         dword_5FF5B4 = MES_FILE_HANDLE_INVALID;
     }
 }
+
+// 0x4CAE80
+int sub_4CAE80()
+{
+  return dword_5FF5A8;
+}
