@@ -1,6 +1,7 @@
 #include "game/area.h"
 
 #include "game/mes.h"
+#include "game/obj.h"
 
 // 0x5FF5A8
 static int dword_5FF5A8;
@@ -31,6 +32,12 @@ static int* dword_5FF5E4;
 
 // 0x5FF5E8
 static uint8_t* dword_5FF5E8;
+
+// 0x5FF5EC
+static int dword_5FF5EC;
+
+// 0x5FF5F0
+static int dword_5FF5F0[8];
 
 // 0x4CA940
 bool area_init(GameInitInfo* init_info)
@@ -107,4 +114,26 @@ void sub_4CAF00(int index, int* a2, int* a3)
     // FIXME: No overflow precondition.
     *a2 = dword_5FF5DC[index];
     *a3 = dword_5FF5E0[index];
+}
+
+// 0x4CB100
+int sub_4CB100(int64_t obj_handle)
+{
+    int v1;
+
+    if (obj_handle != OBJ_HANDLE_NULL
+        && obj_f_get_int32(obj_handle, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        if ((tig_net_flags & 0x1) != 0) {
+            v1 = sub_4A2B10(obj_handle);
+            if (v1 != -1) {
+                return dword_5FF5F0[v1];
+            }
+        } else {
+            if (obj_handle == player_get_pc_obj()) {
+                return dword_5FF5EC;
+            }
+        }
+    }
+
+    return 0;
 }
