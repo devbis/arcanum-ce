@@ -100,3 +100,11 @@ int64_t sub_4CAED0(int index)
         ? dword_5FF5AC[index]
         : 0;
 }
+
+// 0x4CAF00
+void sub_4CAF00(int index, int* a2, int* a3)
+{
+    // FIXME: No overflow precondition.
+    *a2 = dword_5FF5DC[index];
+    *a3 = dword_5FF5E0[index];
+}
