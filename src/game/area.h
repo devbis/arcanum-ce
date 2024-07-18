@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 
+void area_exit();
 void area_mod_unload();
 
 #endif /* ARCANUM_GAME_AREA_H_ */

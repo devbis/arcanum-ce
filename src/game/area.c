@@ -29,6 +29,12 @@ static int* dword_5FF5E4;
 // 0x5FF5E8
 static uint8_t* dword_5FF5E8;
 
+// 0x4CA9A0
+void area_exit()
+{
+}
+
+// 0x4CACB0
 void area_mod_unload()
 {
     int index;
