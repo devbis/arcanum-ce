@@ -12,3 +12,11 @@ bool mt_item_init(GameInitInfo* init_info)
 
     return true;
 }
+
+// 0x4CB730
+void mt_item_exit()
+{
+    if (mt_item_initialized) {
+        mt_item_initialized = false;
+    }
+}
