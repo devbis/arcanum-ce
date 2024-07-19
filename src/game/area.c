@@ -16,7 +16,7 @@ static char** dword_5FF5B0;
 static mes_file_handle_t dword_5FF5B4;
 
 // 0x5FF5B8
-static void* dword_5FF5B8[8];
+static unsigned char* dword_5FF5B8[8];
 
 // 0x5FF5D8
 static char** dword_5FF5D8;
@@ -47,6 +47,23 @@ bool area_init(GameInitInfo* init_info)
     dword_5FF5A8 = 0;
 
     return true;
+}
+
+// 0x4CA950
+void area_reset()
+{
+    int index;
+    int player;
+
+    for (index = 0; index < dword_5FF5A8; index++) {
+        dword_5FF5E8[index] = 0;
+    }
+
+    for (player = 0; player < 8; player++) {
+        for (index = 0; index < dword_5FF5A8; index++) {
+            dword_5FF5B8[player][index] = 0;
+        }
+    }
 }
 
 // 0x4CA9A0
@@ -81,14 +98,14 @@ void area_mod_unload()
 // 0x4CAD50
 bool area_load(GameLoadInfo* load_info)
 {
-    int index;
+    int player;
 
     if (tig_file_fread(dword_5FF5E8, dword_5FF5A8, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_5FF5EC, sizeof(dword_5FF5EC), 1, load_info->stream) != 1) return false;
 
-    for (index = 0; index < 8; index++) {
-        if (tig_file_fread(dword_5FF5B8[index], dword_5FF5A8, 1, load_info->stream) != 1) return false;
-        if (tig_file_fread(&(dword_5FF5F0[index]), sizeof(dword_5FF5F0[0]), 1, load_info->stream) != 1) return false;
+    for (player = 0; player < 8; player++) {
+        if (tig_file_fread(dword_5FF5B8[player], dword_5FF5A8, 1, load_info->stream) != 1) return false;
+        if (tig_file_fread(&(dword_5FF5F0[player]), sizeof(dword_5FF5F0[0]), 1, load_info->stream) != 1) return false;
     }
 
     return true;
@@ -97,14 +114,14 @@ bool area_load(GameLoadInfo* load_info)
 // 0x4CADF0
 bool area_save(TigFile* stream)
 {
-    int index;
+    int player;
 
     if (tig_file_fwrite(dword_5FF5E8, dword_5FF5A8, 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_5FF5EC, sizeof(dword_5FF5EC), 1, stream) != 1) return false;
 
-    for (index = 0; index < 8; index++) {
-        if (tig_file_fwrite(dword_5FF5B8[index], dword_5FF5A8, 1, stream) != 1) return false;
-        if (tig_file_fwrite(&(dword_5FF5F0[index]), sizeof(dword_5FF5F0[0]), 1, stream) != 1) return false;
+    for (player = 0; player < 8; player++) {
+        if (tig_file_fwrite(dword_5FF5B8[player], dword_5FF5A8, 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(dword_5FF5F0[player]), sizeof(dword_5FF5F0[0]), 1, stream) != 1) return false;
     }
 
     return true;
