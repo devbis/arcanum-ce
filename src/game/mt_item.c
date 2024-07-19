@@ -233,3 +233,20 @@ void sub_4CBE70(int64_t a1, int64_t a2, int64_t a3)
         }
     }
 }
+
+// 0x4CBF70
+void sub_4CBF70(int64_t a1, int64_t a2)
+{
+    int type;
+    int64_t parent_obj;
+
+    if (a1 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    type = obj_f_get_int32(a1, OBJ_F_TYPE);
+    if (obj_type_is_item(type)) {
+        parent_obj = obj_f_get_handle(a1, OBJ_F_ITEM_PARENT);
+        sub_4CB800(a1, parent_obj, a2, 0x1000);
+    }
+}
