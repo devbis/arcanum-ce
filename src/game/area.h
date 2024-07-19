@@ -7,6 +7,7 @@ bool area_init(GameInitInfo* init_info);
 void area_exit();
 void area_mod_unload();
 bool area_load(GameLoadInfo* load_info);
+bool area_save(TigFile* stream);
 int sub_4CAE80();
 char* sub_4CAE90(int index);
 char* sub_4CAEB0(int index);

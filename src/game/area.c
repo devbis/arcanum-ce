@@ -94,6 +94,22 @@ bool area_load(GameLoadInfo* load_info)
     return true;
 }
 
+// 0x4CADF0
+bool area_save(TigFile* stream)
+{
+    int index;
+
+    if (tig_file_fwrite(dword_5FF5E8, dword_5FF5A8, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5FF5EC, sizeof(dword_5FF5EC), 1, stream) != 1) return false;
+
+    for (index = 0; index < 8; index++) {
+        if (tig_file_fwrite(dword_5FF5B8[index], dword_5FF5A8, 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(dword_5FF5F0[index]), sizeof(dword_5FF5F0[0]), 1, stream) != 1) return false;
+    }
+
+    return true;
+}
+
 // 0x4CAE80
 int sub_4CAE80()
 {
