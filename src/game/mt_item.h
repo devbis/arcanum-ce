@@ -19,5 +19,6 @@ void sub_4CBE00(int64_t a1, int64_t a2);
 void sub_4CBE70(int64_t a1, int64_t a2, int64_t a3);
 void sub_4CBF70(int64_t a1, int64_t a2);
 void sub_4CBFC0(int64_t a1, int64_t a2);
+void sub_4CC130(int64_t a1, int64_t a2);
 
 #endif /* ARCANUM_GAME_MT_ITEM_H_ */

@@ -5,6 +5,7 @@
 
 static void sub_4CB800(int64_t a1, int64_t a2, int64_t a3, unsigned int flags);
 static void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int flags);
+static void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags);
 
 // 0x5FF610
 static bool mt_item_initialized;
@@ -255,4 +256,16 @@ void sub_4CBF70(int64_t a1, int64_t a2)
 void sub_4CBFC0(int64_t a1, int64_t a2)
 {
     sub_4CBFF0(a1, a2, MTIT_UNWEAR);
+}
+
+// 0x4CBFF0
+void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4CC130
+void sub_4CC130(int64_t a1, int64_t a2)
+{
+    sub_4CBFF0(a1, a2, MTIT_DROP);
 }
