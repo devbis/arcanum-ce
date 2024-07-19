@@ -9,6 +9,9 @@ static void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned 
 // 0x5FF610
 static bool mt_item_initialized;
 
+// 0x5FF618
+static int64_t qword_5FF618;
+
 // 0x4CB720
 bool mt_item_init(GameInitInfo* init_info)
 {
@@ -144,6 +147,27 @@ void sub_4CBC60(int64_t a1, int64_t a2)
         item_obj = item_wield_get(a2, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
             sub_4CB800(item_obj, a2, a1, MTIT_PARENT_DYING);
+        }
+    }
+}
+
+// 0x4CBD40
+void sub_4CBD40(int64_t a1, int64_t a2)
+{
+    int type;
+    int index;
+    int64_t item_obj;
+
+    type = obj_f_get_int32(a1, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        return;
+    }
+
+    qword_5FF618 = a1;
+    for (index = 0; index < 9; index++) {
+        item_obj = item_wield_get(a2, 1000 + index);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            sub_4CB800(item_obj, a1, a2, MTIT_PARENT_ATKS_OPPONENT);
         }
     }
 }
