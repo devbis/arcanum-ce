@@ -127,3 +127,23 @@ void sub_4CBBF0(int64_t a1, int64_t a2)
         }
     }
 }
+
+// 0x4CBC60
+void sub_4CBC60(int64_t a1, int64_t a2)
+{
+    int type;
+    int index;
+    int64_t item_obj;
+
+    type = obj_f_get_int32(a2, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        return;
+    }
+
+    for (index = 0; index < 9; index++) {
+        item_obj = item_wield_get(a2, 1000 + index);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            sub_4CB800(item_obj, a2, a1, MTIT_PARENT_DYING);
+        }
+    }
+}
