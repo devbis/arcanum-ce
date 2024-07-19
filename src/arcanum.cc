@@ -2325,13 +2325,6 @@ int mt_item_init_()
     return 1;
 }
 
-// #signness
-// 0x4CB790
-int sub_4CB790(int a1)
-{
-    return a1 & 0xFF;
-}
-
 // 0x4CC210
 void mt_ai_reset_()
 {

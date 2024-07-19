@@ -28,3 +28,9 @@ int mt_item_triggers(int index)
 {
     return index != 10000 ? magictech_spells[index].item_triggers : 0;
 }
+
+// 0x4CB790
+int sub_4CB790(int a1)
+{
+    return a1 & 0xFF;
+}
