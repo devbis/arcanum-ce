@@ -269,3 +269,34 @@ void sub_4CC130(int64_t a1, int64_t a2)
 {
     sub_4CBFF0(a1, a2, MTIT_DROP);
 }
+
+// 0x4CC160
+bool sub_4CC160(int64_t item_obj)
+{
+    int spl;
+
+    // FIXME: Unused, probably should validate if item_obj is of item type.
+    obj_f_get_int32(item_obj, OBJ_F_TYPE);
+
+    if (obj_f_get_int32(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE) == 0) {
+        return false;
+    }
+
+    spl = obj_f_get_int32(item_obj, OBJ_F_ITEM_SPELL_1);
+    if (spl == 10000) {
+        return true;
+    }
+
+    if (magictech_spells[spl].item_triggers != 0) {
+        return true;
+    }
+
+    if ((obj_f_get_int32(item_obj, OBJ_F_ITEM_FLAGS) & OIF_VALID_AI_ACTION) == 0) {
+        return false;
+    }
+
+    // FIXME: Unused.
+    obj_f_get_int32(item_obj, OBJ_F_ITEM_AI_ACTION);
+
+    return true;
+}
