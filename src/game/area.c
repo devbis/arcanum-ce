@@ -78,6 +78,22 @@ void area_mod_unload()
     }
 }
 
+// 0x4CAD50
+bool area_load(GameLoadInfo* load_info)
+{
+    int index;
+
+    if (tig_file_fread(dword_5FF5E8, dword_5FF5A8, 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&dword_5FF5EC, sizeof(dword_5FF5EC), 1, load_info->stream) != 1) return false;
+
+    for (index = 0; index < 8; index++) {
+        if (tig_file_fread(dword_5FF5B8[index], dword_5FF5A8, 1, load_info->stream) != 1) return false;
+        if (tig_file_fread(&(dword_5FF5F0[index]), sizeof(dword_5FF5F0[0]), 1, load_info->stream) != 1) return false;
+    }
+
+    return true;
+}
+
 // 0x4CAE80
 int sub_4CAE80()
 {
