@@ -1,5 +1,7 @@
 #include "game/mt_item.h"
 
+#include "game/magictech.h"
+
 // 0x5FF610
 static bool mt_item_initialized;
 
@@ -19,4 +21,10 @@ void mt_item_exit()
     if (mt_item_initialized) {
         mt_item_initialized = false;
     }
+}
+
+// 0x4CB760
+int mt_item_triggers(int index)
+{
+    return index != 10000 ? magictech_spells[index].item_triggers : 0;
 }
