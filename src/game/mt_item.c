@@ -171,3 +171,14 @@ void sub_4CBD40(int64_t a1, int64_t a2)
         }
     }
 }
+
+// 0x4CBDB0
+void sub_4CBDB0(int64_t a1, int64_t a2, int64_t a3)
+{
+    if (a2 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    qword_5FF618 = a1;
+    sub_4CB830(a2, a1, OBJ_HANDLE_NULL, a3, MTIT_PARENT_ATKS_LOCATION);
+}
