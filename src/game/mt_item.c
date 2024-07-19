@@ -250,3 +250,9 @@ void sub_4CBF70(int64_t a1, int64_t a2)
         sub_4CB800(a1, parent_obj, a2, 0x1000);
     }
 }
+
+// 0x4CBFC0
+void sub_4CBFC0(int64_t a1, int64_t a2)
+{
+    sub_4CBFF0(a1, a2, MTIT_UNWEAR);
+}
