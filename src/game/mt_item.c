@@ -3,6 +3,9 @@
 #include "game/magictech.h"
 #include "game/obj.h"
 
+static void sub_4CB800(int64_t a1, int64_t a2, int64_t a3, unsigned int flags);
+static void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int flags);
+
 // 0x5FF610
 static bool mt_item_initialized;
 
@@ -51,4 +54,76 @@ int mt_item_spell(int64_t obj_handle, int index)
     }
 
     return spl;
+}
+
+// 0x4CB7D0
+void sub_4CB7D0(int64_t a1, int64_t a2)
+{
+    sub_4CB800(a1, a2, OBJ_HANDLE_NULL, MTIT_WEAR);
+}
+
+// 0x4CB800
+void sub_4CB800(int64_t a1, int64_t a2, int64_t a3, unsigned int flags)
+{
+    sub_4CB830(a1, a2, a3, OBJ_HANDLE_NULL, flags);
+}
+
+// 0x4CB830
+void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int flags)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4CBAA0
+void sub_4CBAA0(int64_t a1, int64_t a2)
+{
+    sub_4CB800(a1, a2, OBJ_HANDLE_NULL, MTIT_PICKUP);
+}
+
+// 0x4CBB80
+void sub_4CBB80(int64_t a1, int64_t a2)
+{
+    int type;
+    int index;
+    int64_t item_obj;
+
+    if (a2 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    type = obj_f_get_int32(a2, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        return;
+    }
+
+    for (index = 0; index < 9; index++) {
+        item_obj = item_wield_get(a2, 1000 + index);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            sub_4CB800(item_obj, a2, a1, MTIT_PARENT_STUNNED);
+        }
+    }
+}
+
+// 0x4CBBF0
+void sub_4CBBF0(int64_t a1, int64_t a2)
+{
+    int type;
+    int index;
+    int64_t item_obj;
+
+    if (a2 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    type = obj_f_get_int32(a2, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        return;
+    }
+
+    for (index = 0; index < 9; index++) {
+        item_obj = item_wield_get(a2, 1000 + index);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            sub_4CB800(item_obj, a2, a1, MTIT_PARENT_GOING_UNCONSCIOUS);
+        }
+    }
 }

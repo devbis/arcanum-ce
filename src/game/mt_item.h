@@ -8,5 +8,9 @@ void mt_item_exit();
 int mt_item_triggers(int index);
 int sub_4CB790(int a1);
 int mt_item_spell(int64_t obj_handle, int index);
+void sub_4CB7D0(int64_t a1, int64_t a2);
+void sub_4CBAA0(int64_t a1, int64_t a2);
+void sub_4CBB80(int64_t a1, int64_t a2);
+void sub_4CBBF0(int64_t a1, int64_t a2);
 
 #endif /* ARCANUM_GAME_MT_ITEM_H_ */
