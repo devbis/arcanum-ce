@@ -206,3 +206,30 @@ void sub_4CBE00(int64_t a1, int64_t a2)
         }
     }
 }
+
+// 0x4CBE70
+void sub_4CBE70(int64_t a1, int64_t a2, int64_t a3)
+{
+    int type;
+    int index;
+    int64_t item_obj;
+
+    type = obj_f_get_int32(a1, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        if (obj_type_is_item(type)) {
+            sub_4CB800(a1, a3, a1, MTIT_TARGET_HIT);
+        }
+        return;
+    }
+
+    for (index = 0; index < 9; index++) {
+        item_obj = item_wield_get(a1, 1000 + index);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            sub_4CB800(item_obj, a1, a3, MTIT_PARENT_DMGS_OPPONENT);
+            sub_4CB800(item_obj, a1, a3, MTIT_TARGET_HIT);
+            if (item_obj == a2) {
+                sub_4CB800(item_obj, a1, a3, MTIT_PARENT_DMGS_OPPONENT_W_ITEM);
+            }
+        }
+    }
+}
