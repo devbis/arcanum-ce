@@ -1715,6 +1715,22 @@ void sub_407840(int64_t obj_handle, int fld, int index, void* value)
     obj_unlock(obj_handle);
 }
 
+// 0x4078A0
+void sub_4078A0(int64_t obj_handle, int fld, int index, void* value)
+{
+    Object* object;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    sub_4088B0(object, fld, index, value);
+    obj_unlock(obj_handle);
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {
