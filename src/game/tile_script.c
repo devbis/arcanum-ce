@@ -10,7 +10,7 @@ static bool tile_script_editor;
 static GameContextF8* dword_5FC870;
 
 // 0x5FC874
-static int dword_5FC874;
+static bool tile_script_initialized;
 
 // 0x5FC878
 static int dword_5FC878;
@@ -35,7 +35,7 @@ bool tile_script_init(GameInitInfo* init_info)
     tig_art_interface_id_create(475, 0, 0, 0, &dword_5FC868);
     tig_art_interface_id_create(476, 0, 0, 0, &dword_5FC888);
 
-    dword_5FC874 = 1;
+    tile_script_initialized = true;
     dword_5FC878 = 1;
 
     sub_4F6310();
@@ -53,7 +53,7 @@ void tile_script_exit()
 {
     void* next;
 
-    dword_5FC874 = 0;
+    tile_script_initialized = false;
 
     while (off_603DD0 != NULL) {
         next = curr->field_14;
