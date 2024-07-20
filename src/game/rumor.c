@@ -19,6 +19,8 @@ typedef enum RumorInteractionType {
     RUMOR_INTERACTION_TYPE_COUNT,
 } RumorInteractionType;
 
+static int rumor_compare(void const* a, void const* b);
+
 // 0x5B6E98
 static const char* off_5B6E98[FIVE] = {
     "game_rd_npc_m2m",
@@ -215,10 +217,40 @@ void sub_4C59D0(int rumor, char* buffer)
     }
 }
 
+// 0x4C5A40
+int sub_4C5A40(int64_t obj, RumorInfo* rumors)
+{
+    int index;
+    int64_t timestamps[2000];
+    int cnt;
+
+    sub_407BA0(obj, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
+
+    cnt = 0;
+    for (index = 0; index < 2000; index++) {
+        if (timestamps[index] != 0) {
+            rumors[cnt].num = 1000 + index;
+            rumors[cnt].timestamp = timestamps[index];
+            rumors[cnt].known = rumor_is_known(1000 + index);
+            cnt++;
+        }
+    }
+
+    qsort(rumors, cnt, sizeof(*rumors), rumor_compare);
+
+    return cnt;
+}
+
+// 0x4C5AF0
+int rumor_compare(void const* a, void const* b)
+{
+    return datetime_compare(((RumorInfo*)a)->timestamp, ((RumorInfo*)b)->timestamp);
+}
+
 // 0x4C5B10
 bool sub_4C5B10(int64_t a1, int64_t a2)
 {
-    int rumor;
+    int index;
     int64_t timestamps[2000];
 
     if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC
@@ -228,9 +260,9 @@ bool sub_4C5B10(int64_t a1, int64_t a2)
 
     sub_407BA0(a1, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
 
-    for (rumor = 0; rumor < 2000; rumor++) {
-        if (timestamps[rumor] != 0) {
-            sub_4C57E0(a2, rumor);
+    for (index = 0; index < 2000; index++) {
+        if (timestamps[index] != 0) {
+            sub_4C57E0(a2, index);
         }
     }
 
