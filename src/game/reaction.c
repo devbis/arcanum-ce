@@ -11,6 +11,7 @@ static char* reaction_names[REACTION_COUNT];
 
 static int sub_4C1290(int64_t a1, int64_t a2);
 static int reaction_get_base(int64_t obj);
+static bool sub_4C12F0(int64_t a1, int64_t a2, bool a3, int* a4);
 
 // 0x4C0BD0
 bool reaction_init(GameInitInfo* init_info)
@@ -172,4 +173,20 @@ int sub_4C1290(int64_t a1, int64_t a2)
 int reaction_get_base(int64_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_NPC_REACTION_BASE);
+}
+
+// 0x4C12F0
+bool sub_4C12F0(int64_t a1, int64_t a2, bool a3, int* a4)
+{
+    int index;
+
+    for (index = 0; index < 10; index++) {
+        if ((index != 0 || a3)
+            && a2 == obj_arrayfield_handle_get(a1, OBJ_F_NPC_REACTION_PC_IDX, index)) {
+            *a4 = sub_407470(a1, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
+            return true;
+        }
+    }
+
+    return false;
 }
