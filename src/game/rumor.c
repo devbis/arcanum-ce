@@ -1,11 +1,10 @@
-#include "game/lib/rumor.h"
+#include "game/rumor.h"
 
 #include <stdio.h>
 
-#include "game/lib/critter.h"
-#include "game/lib/message.h"
-#include "game/lib/stat.h"
-#include "tig/net.h"
+#include "game/critter.h"
+#include "game/mes.h"
+#include "game/stat.h"
 
 #define TWO_FIVE_ONE 251
 
@@ -18,7 +17,7 @@ typedef enum RumorInteractionType {
     RUMOR_INTERACTION_TYPE_FEMALE_TO_MALE,
     RUMOR_INTERACTION_TYPE_DUMB,
     RUMOR_INTERACTION_TYPE_COUNT,
-};
+} RumorInteractionType;
 
 // 0x5B6E98
 static const char* off_5B6E98[FIVE] = {
@@ -36,17 +35,22 @@ static int* dword_5FF420;
 static uint8_t* dword_6876C8;
 
 // 0x4C5500
-bool rumor_init(GameContext* ctx)
+bool rumor_init(GameContext* init_info)
 {
-    dword_6876C8 = (uint8_t*)calloc(TWO_FIVE_ONE, sizeof(*dword_6876C8));
-    dword_5FF420 = (int*)calloc(FIVE, sizeof(*dword_5FF420));
+    (void)init_info;
+
+    dword_6876C8 = (uint8_t*)CALLOC(TWO_FIVE_ONE, sizeof(*dword_6876C8));
+    dword_5FF420 = (int*)CALLOC(FIVE, sizeof(*dword_5FF420));
+
     return true;
 }
 
 // 0x4C5530
 void rumor_reset()
 {
-    for (int index = 0; index < TWO_FIVE_ONE; index++) {
+    int index;
+
+    for (index = 0; index < TWO_FIVE_ONE; index++) {
         dword_6876C8[index] = 0;
     }
 }
@@ -54,17 +58,19 @@ void rumor_reset()
 // 0x4C5550
 void rumor_exit()
 {
-    free(dword_6876C8);
-    free(dword_5FF420);
+    FREE(dword_6876C8);
+    FREE(dword_5FF420);
 }
 
 // 0x4C5570
 bool rumor_mod_load()
 {
-    for (int index = 0; index < FIVE; index++) {
-        char path[MAX_PATH];
+    int index;
+    char path[MAX_PATH];
+
+    for (index = 0; index < FIVE; index++) {
         sprintf(path, "mes\\%s.mes", off_5B6E98[index]);
-        message_load(path, &(dword_5FF420[index]));
+        mes_load(path, &(dword_5FF420[index]));
     }
 
     rumor_reset();
@@ -75,16 +81,18 @@ bool rumor_mod_load()
 // 0x4C55C0
 void rumor_mod_unload()
 {
-    for (int index = 0; index < FIVE; index++) {
-        message_unload(dword_5FF420[index]);
+    int index;
+
+    for (index = 0; index < FIVE; index++) {
+        mes_unload(dword_5FF420[index]);
         dword_5FF420[index] = -1;
     }
 }
 
 // 0x4C55F0
-bool rumor_load(LoadContext* ctx)
+bool rumor_load(LoadContext* load_info)
 {
-    if (tig_file_fread(dword_6876C8, TWO_FIVE_ONE, 1, ctx->stream) != 1) return false;
+    if (tig_file_fread(dword_6876C8, TWO_FIVE_ONE, 1, load_info->stream) != 1) return false;
 
     return true;
 }
@@ -108,12 +116,15 @@ bool rumor_is_known(int rumor)
 // 0x4C5690
 void rumor_set_known(int rumor)
 {
+    int v1;
+    int v2;
+
     if (!sub_4A2BA0()) {
         // TODO: Incomplete.
     }
 
-    int v1 = (rumor - 1000) / 8;
-    int v2 = (rumor - 1000) % 8;
+    v1 = (rumor - 1000) / 8;
+    v2 = (rumor - 1000) % 8;
     dword_6876C8[v1] |= 1 << v2;
 }
 
@@ -121,6 +132,8 @@ void rumor_set_known(int rumor)
 void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, char* buffer)
 {
     int interaction_type;
+    MesFileEntry mes_file_entry;
+
     if (sub_4B0490(npc_object_id, STAT_GENDER) == GENDER_MALE) {
         if (sub_4B0490(pc_object_id, STAT_GENDER) == GENDER_MALE) {
             interaction_type = RUMOR_INTERACTION_TYPE_MALE_TO_MALE;
@@ -135,16 +148,13 @@ void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, 
         }
     }
 
-    MessageListItem msg;
-    msg.num = critter_social_class_get(npc_object_id) + 20 * rumor + 1;
-    if (message_find(dword_5FF420[interaction_type], &msg)) {
-        // FIXME: Why not `strcpy`?
-        memcpy(buffer, msg.text, strlen(msg.text) + 1);
+    mes_file_entry.num = critter_social_class_get(npc_object_id) + 20 * rumor + 1;
+    if (mes_search(dword_5FF420[interaction_type], &mes_file_entry)) {
+        strcpy(buffer, mes_file_entry.str);
     } else {
-        msg.num = 20 * rumor + 1;
-        if (message_find(dword_5FF420[interaction_type], &msg)) {
-            // FIXME: Why not `strcpy`?
-            memcpy(buffer, msg.text, strlen(msg.text) + 1);
+        mes_file_entry.num = 20 * rumor + 1;
+        if (mes_search(dword_5FF420[interaction_type], &mes_file_entry)) {
+            strcpy(buffer, mes_file_entry.str);
         }
     }
 }
@@ -176,10 +186,11 @@ void sub_4C5920(object_id_t object_id, int rumor, char* buffer)
 // 0x4C5960
 void sub_4C5960(int rumor, char* buffer)
 {
-    MessageListItem msg;
-    msg.num = 20 * rumor;
-    if (message_find(dword_5FF420[RUMOR_INTERACTION_TYPE_MALE_TO_MALE], &msg)) {
-        strcpy(buffer, msg.text);
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = 20 * rumor;
+    if (message_find(dword_5FF420[RUMOR_INTERACTION_TYPE_MALE_TO_MALE], &mes_file_entry)) {
+        strcpy(buffer, mes_file_entry.str);
     } else {
         buffer[0] = '\0';
     }
@@ -188,10 +199,11 @@ void sub_4C5960(int rumor, char* buffer)
 // 0x4C59D0
 void sub_4C59D0(int rumor, char* buffer)
 {
-    MessageListItem msg;
-    msg.num = 20 * rumor;
-    if (message_find(dword_5FF420[RUMOR_INTERACTION_TYPE_DUMB], &msg)) {
-        strcpy(buffer, msg.text);
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = 20 * rumor;
+    if (message_find(dword_5FF420[RUMOR_INTERACTION_TYPE_DUMB], &mes_file_entry)) {
+        strcpy(buffer, mes_file_entry.str);
     } else {
         buffer[0] = '\0';
     }
