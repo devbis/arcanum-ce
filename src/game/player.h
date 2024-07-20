@@ -2,7 +2,7 @@
 #define ARCANUM_GAMELIB_PLAYER_H_
 
 #include "game/context.h"
-#include "game/lib/object.h"
+#include "game/obj.h"
 #include "tig/file.h"
 
 #define PLAYER_SPEC_FLAG_0x1 0x1
