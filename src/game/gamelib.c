@@ -364,10 +364,11 @@ int gamelib_get_game_difficulty()
     return gamelib_game_difficulty;
 }
 
+// 0x4045A0
 void sub_4045A0()
 {
-    sub_4BBC80();
-    sub_4BB920();
+    li_redraw();
+    ci_redraw();
     sub_402D30(NULL);
     sub_402E50();
     tig_window_set_needs_display_in_rect(NULL);
