@@ -16,6 +16,7 @@ typedef struct ObjectFieldInfo {
 
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
+static Object* sub_408710(int64_t* obj_handle_ptr);
 static void sub_409000(int64_t obj);
 static void sub_409640(int64_t obj, int subtype);
 static bool sub_4096B0(TigFile* stream, int64_t obj);
@@ -519,6 +520,24 @@ void sub_405800(int type, int64_t* obj_ptr)
     sub_40C690(object);
 
     *obj_ptr = handle;
+}
+
+// 0x408710
+Object* sub_408710(int64_t* obj_handle_ptr)
+{
+    return sub_4E4E60(obj_handle_ptr);
+}
+
+// 0x408720
+Object* obj_lock(int64_t obj_handle)
+{
+    return sub_4E4F80(obj_handle);
+}
+
+// 0x408740
+void obj_unlock(int64_t obj_handle)
+{
+    sub_4E4FA0(obj_handle);
 }
 
 // 0x408D60

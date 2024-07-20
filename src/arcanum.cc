@@ -980,24 +980,6 @@ void nullsub_1()
 {
 }
 
-// 0x408710
-int sub_408710(int a1)
-{
-    return sub_4E4E60(a1);
-}
-
-// 0x408720
-int sub_408720(int a1, int a2)
-{
-    return sub_4E4F80(a1, a2);
-}
-
-// 0x408740
-int sub_408740(int a1, int a2)
-{
-    return nullsub_13(a1, a2);
-}
-
 // 0x40C5B0
 void sub_40C5B0(void* a1)
 {

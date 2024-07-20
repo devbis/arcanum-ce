@@ -791,6 +791,8 @@ void sub_406B80(int64_t obj_handle);
 int object_field_get(object_id_t object_id, int field);
 void object_field_set(object_id_t object_id, int field, int value);
 long long object_field_get_64(object_id_t object_id, int field);
+Object* obj_lock(int64_t obj_handle);
+void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);
 bool sub_40C260(int type, int fld);
 bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback);
@@ -801,6 +803,12 @@ void object_field_set_with_network(object_id_t object_id, int field, int a3, int
 static inline bool obj_type_is_critter(int type)
 {
     return type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC;
+}
+
+// If `obj_type_is_critter` exists, `obj_type_is_item` should also be there.
+static inline bool obj_type_is_item(int type)
+{
+    return type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC;
 }
 
 #endif /* ARCANUM_GAME_LIB_OBJECT_H_ */
