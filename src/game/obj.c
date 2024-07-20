@@ -16,6 +16,8 @@ typedef struct ObjectFieldInfo {
 
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
+typedef bool (ObjEnumerateCallbackEx)(Object* object, int fld, ObjectFieldInfo* field_info);
+
 static void object_field_not_exists(Object* object, int fld);
 static void sub_408430(tig_art_id_t aid);
 static Object* sub_408710(int64_t* obj_handle_ptr);
@@ -28,6 +30,7 @@ static void sub_409E80(void* mem, int64_t obj);
 static bool sub_40C560();
 static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
+static bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback);
 static int sub_40CB40(Object* object, int fld);
 static bool sub_40D560(TigFile* stream);
 static bool obj_check_version_stream(TigFile* stream);
@@ -2404,6 +2407,145 @@ bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerate
         if (!callback(obj, index)) {
             return false;
         }
+    }
+
+    return true;
+}
+
+// 0x40CBA0
+bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
+{
+    if (!sub_40CE20(object, OBJ_F_BEGIN, OBJ_F_END, callback)) {
+        return false;
+    }
+
+    switch (object->type) {
+    case OBJ_TYPE_WALL:
+        if (!sub_40CE20(object, OBJ_F_WALL_BEGIN, OBJ_F_WALL_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_PORTAL:
+        if (!sub_40CE20(object, OBJ_F_PORTAL_BEGIN, OBJ_F_PORTAL_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_CONTAINER:
+        if (!sub_40CE20(object, OBJ_F_CONTAINER_BEGIN, OBJ_F_CONTAINER_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_SCENERY:
+        if (!sub_40CE20(object, OBJ_F_SCENERY_BEGIN, OBJ_F_SCENERY_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_PROJECTILE:
+        if (!sub_40CE20(object, OBJ_F_PROJECTILE_BEGIN, OBJ_F_PROJECTILE_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_WEAPON:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_WEAPON_BEGIN, OBJ_F_WEAPON_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_AMMO:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_AMMO_BEGIN, OBJ_F_AMMO_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_ARMOR_BEGIN, OBJ_F_ARMOR_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GOLD:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_GOLD_BEGIN, OBJ_F_GOLD_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_FOOD:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_FOOD_BEGIN, OBJ_F_FOOD_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_SCROLL:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_SCROLL_BEGIN, OBJ_F_SCROLL_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_KEY_BEGIN, OBJ_F_KEY_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_KEY_RING_BEGIN, OBJ_F_KEY_RING_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_WRITTEN:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_WRITTEN_BEGIN, OBJ_F_WRITTEN_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GENERIC:
+        if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_GENERIC_BEGIN, OBJ_F_GENERIC_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_PC:
+        if (!sub_40CE20(object, OBJ_F_CRITTER_BEGIN, OBJ_F_CRITTER_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_PC_BEGIN, OBJ_F_PC_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_NPC:
+        if (!sub_40CE20(object, OBJ_F_CRITTER_BEGIN, OBJ_F_CRITTER_END, callback)) {
+            return false;
+        }
+        if (!sub_40CE20(object, OBJ_F_NPC_BEGIN, OBJ_F_NPC_END, callback)) {
+            return false;
+        }
+        break;
+    case OBJ_TYPE_TRAP:
+        if (!sub_40CE20(object, OBJ_F_TRAP_BEGIN, OBJ_F_TRAP_END, callback)) {
+            return false;
+        }
+        break;
     }
 
     return true;
