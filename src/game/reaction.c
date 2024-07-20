@@ -1,6 +1,6 @@
-#include "game/lib/reaction.h"
+#include "game/reaction.h"
 
-#include "game/lib/message.h"
+#include "game/mes.h"
 
 // 0x5FC88C
 static int reaction_msg_file;
@@ -9,17 +9,21 @@ static int reaction_msg_file;
 static char* reaction_names[REACTION_COUNT];
 
 // 0x4C0BD0
-bool reaction_init(GameContext* ctx)
+bool reaction_init(GameInitInfo* init_info)
 {
+    MesFileEntry mes_file_entry;
+    int index;
+
+    (void)init_info;
+
     if (!message_load("mes\\reaction.mes", &reaction_msg_file)) {
         return false;
     }
 
-    MessageListItem message_list_item;
-    for (int index = 0; index < REACTION_COUNT; index++) {
-        message_list_item.num = index;
-        sub_4D43A0(reaction_msg_file, &message_list_item);
-        reaction_names[index] = message_list_item.text;
+    for (index = 0; index < REACTION_COUNT; index++) {
+        mes_file_entry.num = index;
+        mes_get_msg(reaction_msg_file, &mes_file_entry);
+        reaction_names[index] = mes_file_entry.str;
     }
 
     return true;

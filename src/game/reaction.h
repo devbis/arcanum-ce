@@ -1,5 +1,5 @@
-#ifndef ARCANUM_GAME_LIB_REACTION_H_
-#define ARCANUM_GAME_LIB_REACTION_H_
+#ifndef ARCANUM_GAME_REACTION_H_
+#define ARCANUM_GAME_REACTION_H_
 
 #include "game/context.h"
 
@@ -12,11 +12,11 @@ typedef enum Reaction {
     REACTION_DISLIKE,
     REACTION_HATRED,
     REACTION_COUNT,
-};
+} Reaction;
 
-bool reaction_init(GameContext* ctx);
+bool reaction_init(GameInitInfo* init_info);
 void reaction_exit();
 int reaction_translate(int value);
 const char* reaction_get_name(int reaction);
 
-#endif /* ARCANUM_GAME_LIB_REACTION_H_ */
+#endif /* ARCANUM_GAME_REACTION_H_ */
