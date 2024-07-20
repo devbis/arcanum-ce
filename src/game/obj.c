@@ -1561,6 +1561,22 @@ int sub_407470(int64_t obj_handle, int fld, int index)
     return value;
 }
 
+// 0x4074E0
+void sub_4074E0(int64_t obj_handle, int fld, int index, int value)
+{
+    Object* object;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    sub_4088B0(object, fld, index, &value);
+    obj_unlock(obj_handle);
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {
