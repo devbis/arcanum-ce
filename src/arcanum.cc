@@ -1871,32 +1871,6 @@ void sector_script_exit_()
 {
 }
 
-// 0x4C05B0
-void tile_script_reset_()
-{
-}
-
-// 0x4C05C0
-void tile_script_exit_()
-{
-    dword_5FC874 = 0;
-
-    void* curr = off_603DD0;
-    while (curr != NULL) {
-        void* next = curr->field_14;
-        free(curr);
-        curr = next;
-    }
-
-    off_603DD0 = NULL;
-}
-
-// 0x4C05D0
-void tile_script_resize_(void* a1)
-{
-    dword_5FC87C = a1->field_0;
-}
-
 // 0x4C0C30
 void reaction_exit_()
 {
