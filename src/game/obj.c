@@ -1763,6 +1763,25 @@ void sub_407960(int64_t obj_handle, int fld, int index, void* value)
     obj_unlock(obj_handle);
 }
 
+// 0x4079C0
+int object_field_array_length_get(int64_t obj_handle, int fld)
+{
+    Object* object;
+    int length;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return 0;
+    }
+
+    sub_408D60(object, fld, &length);
+    obj_unlock(obj_handle);
+
+    return length;
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {

@@ -816,6 +816,7 @@ void sub_407840(int64_t obj_handle, int fld, int index, void* value);
 void sub_4078A0(int64_t obj_handle, int fld, int index, void* value);
 void sub_407900(int64_t obj_handle, int fld, int index, void* value);
 void sub_407960(int64_t obj_handle, int fld, int index, void* value);
+int object_field_array_length_get(int64_t obj_handle, int fld);
 Object* obj_lock(int64_t obj_handle);
 void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);
