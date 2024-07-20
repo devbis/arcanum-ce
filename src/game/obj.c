@@ -1612,6 +1612,29 @@ void object_field_indexed_int64_set(int64_t obj_handle, int fld, int index, int6
     obj_unlock(obj_handle);
 }
 
+// 0x407610
+int64_t object_field_indexed_handle_get(int64_t obj_handle, int fld, int index)
+{
+    Object* object;
+    ObjectID oid;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return 0;
+    }
+
+    sub_408BB0(object, fld, index, &oid);
+    obj_unlock(obj_handle);
+
+    if (oid.type == 0 || oid.type != -2) {
+        return 0;
+    }
+
+    return oid.h.field_8;
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {
