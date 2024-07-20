@@ -9,6 +9,9 @@ static mes_file_handle_t reaction_mes_file;
 // 0x5FC890
 static char* reaction_names[REACTION_COUNT];
 
+static int sub_4C1290(int64_t a1, int64_t a2);
+static int reaction_get_base(int64_t obj);
+
 // 0x4C0BD0
 bool reaction_init(GameInitInfo* init_info)
 {
@@ -151,4 +154,22 @@ int sub_4C1150(int64_t a1, int64_t a2, int a3)
 
     v2 = 120 - 2 * v1 / 5;
     return a3 * v2 / 100;
+}
+
+// 0x4C1290
+int sub_4C1290(int64_t a1, int64_t a2)
+{
+    int v1;
+
+    if (sub_4C12F0(a1, a2, 1, &v1)) {
+        return v1;
+    }
+
+    return reaction_get_base(a1);
+}
+
+// 0x4C12D0
+int reaction_get_base(int64_t obj)
+{
+    return obj_field_int32_get(obj, OBJ_F_NPC_REACTION_BASE);
 }

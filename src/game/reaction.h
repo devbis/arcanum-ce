@@ -24,6 +24,6 @@ const char* reaction_get_name(int reaction);
 void sub_4C1020(int64_t pc, int64_t npc);
 void sub_4C10A0(int64_t pc, int64_t npc);
 int64_t sub_4C1110(int64_t npc);
-int sub_4C1150(int64_t a1, int64_t a2, int a3)
+int sub_4C1150(int64_t a1, int64_t a2, int a3);
 
 #endif /* ARCANUM_GAME_REACTION_H_ */
