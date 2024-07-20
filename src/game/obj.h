@@ -814,6 +814,7 @@ bool object_field_indexed_obj_get(int64_t obj_handle, int fld, int index, int64_
 void object_field_indexed_obj_set(int64_t obj_handle, int fld, int index, int64_t value);
 void sub_407840(int64_t obj_handle, int fld, int index, void* value);
 void sub_4078A0(int64_t obj_handle, int fld, int index, void* value);
+void sub_407900(int64_t obj_handle, int fld, int index, void* value);
 Object* obj_lock(int64_t obj_handle);
 void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);
