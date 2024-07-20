@@ -36,6 +36,23 @@ void reaction_exit()
     mes_unload(reaction_mes_file);
 }
 
+// 0x4C0C40
+bool sub_4C0C40(int64_t pc, int64_t npc)
+{
+    int v1;
+
+    if (pc == npc) {
+        return true;
+    }
+
+    if (obj_field_int32_get(pc, OBJ_F_TYPE) != OBJ_TYPE_PC
+        || obj_field_int32_get(npc, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    return sub_4C12F0(pc, npc, false, &v1);
+}
+
 // 0x4C0FC0
 int reaction_translate(int value)
 {
