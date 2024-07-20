@@ -86,3 +86,13 @@ void sub_4C10A0(int64_t pc, int64_t npc)
     sub_4C1490(pc, 0, v1, 0);
     sub_4C1360(pc, npc, v1);
 }
+
+// 0x4C1110
+int64_t sub_4C1110(int64_t npc)
+{
+    if (obj_field_int32_get(npc, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return 0;
+    }
+
+    return obj_arrayfield_handle_get(npc, OBJ_F_NPC_REACTION_PC_IDX, 0);
+}
