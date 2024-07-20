@@ -214,3 +214,25 @@ void sub_4C59D0(int rumor, char* buffer)
         buffer[0] = '\0';
     }
 }
+
+// 0x4C5B10
+bool sub_4C5B10(int64_t a1, int64_t a2)
+{
+    int rumor;
+    int64_t timestamps[2000];
+
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC
+        || obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return false;
+    }
+
+    sub_407BA0(a1, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
+
+    for (rumor = 0; rumor < 2000; rumor++) {
+        if (timestamps[rumor] != 0) {
+            sub_4C57E0(a2, rumor);
+        }
+    }
+
+    return true;
+}
