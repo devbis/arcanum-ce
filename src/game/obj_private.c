@@ -110,13 +110,13 @@ void obj_find_add(int64_t obj)
     FindNode* find_node;
     S60369C* v2;
 
-    location = obj_f_get_int64(obj, OBJ_F_LOCATION);
+    location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     v1 = sub_4CFC50(location);
     obj_find_node_allocate(&find_node);
     find_node->obj = obj;
     sub_4E3E90(v1, &v2);
     sub_4E3D30(v2, find_node);
-    obj_f_set_int32(obj, OBJ_F_FIND_NODE, find_node);
+    obj_field_int32_set(obj, OBJ_F_FIND_NODE, find_node);
 }
 
 // 0x4E39F0
@@ -124,7 +124,7 @@ void obj_find_remove(int64_t obj)
 {
     FindNode* find_node;
 
-    find_node = obj_f_get_int32(obj, OBJ_F_FIND_NODE);
+    find_node = obj_field_int32_get(obj, OBJ_F_FIND_NODE);
     if ((find_node->flags & 0x02) == 0) {
         tig_debug_println("Error: Node already released in obj_find_remove.");
         return;
@@ -137,7 +137,7 @@ void obj_find_remove(int64_t obj)
 
     obj_find_node_detach(find_node);
     obj_find_node_deallocate(find_node);
-    obj_f_set_int32(obj, OBJ_F_FIND_NODE, NULL);
+    obj_field_int32_set(obj, OBJ_F_FIND_NODE, NULL);
 }
 
 // 0x4E3A70
@@ -148,9 +148,9 @@ void obj_find_move(int64_t obj)
     FindNode* find_node;
     S60369C* v2;
 
-    location = obj_f_get_int64(obj, OBJ_F_LOCATION);
+    location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     v1 = sub_4CFC50(location);
-    find_node = (FindNode*)obj_f_get_int32(obj, OBJ_F_FIND_NODE);
+    find_node = (FindNode*)obj_field_int32_get(obj, OBJ_F_FIND_NODE);
     if (find_node == NULL) {
         return;
     }
@@ -281,8 +281,8 @@ void sub_4E62A0(ObjectID* object_id)
 void objid_id_perm_by_load_order(ObjectID* object_id, object_id_t obj)
 {
     if (sub_43D990(obj)) {
-        object_id->p.location = object_field_get_64(obj, OBJ_F_LOCATION);
-        object_id->p.temp_id = object_field_get(obj, OBJ_F_TEMP_ID);
+        object_id->p.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        object_id->p.temp_id = obj_field_int32_get(obj, OBJ_F_TEMP_ID);
         object_id->p.map = sub_40FF40();
         object_id->field_0 = 3;
     } else {

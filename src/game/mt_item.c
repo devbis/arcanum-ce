@@ -52,7 +52,7 @@ int mt_item_spell(int64_t obj_handle, int index)
         return -1;
     }
 
-    spl = obj_f_get_int32(obj_handle, OBJ_F_ITEM_SPELL_1 + index);
+    spl = obj_field_int32_get(obj_handle, OBJ_F_ITEM_SPELL_1 + index);
     if (spl == 10000) {
         return -1;
     }
@@ -95,7 +95,7 @@ void sub_4CBB80(int64_t a1, int64_t a2)
         return;
     }
 
-    type = obj_f_get_int32(a2, OBJ_F_TYPE);
+    type = obj_field_int32_get(a2, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
@@ -119,7 +119,7 @@ void sub_4CBBF0(int64_t a1, int64_t a2)
         return;
     }
 
-    type = obj_f_get_int32(a2, OBJ_F_TYPE);
+    type = obj_field_int32_get(a2, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
@@ -139,7 +139,7 @@ void sub_4CBC60(int64_t a1, int64_t a2)
     int index;
     int64_t item_obj;
 
-    type = obj_f_get_int32(a2, OBJ_F_TYPE);
+    type = obj_field_int32_get(a2, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
@@ -159,7 +159,7 @@ void sub_4CBD40(int64_t a1, int64_t a2)
     int index;
     int64_t item_obj;
 
-    type = obj_f_get_int32(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(a1, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
@@ -195,7 +195,7 @@ void sub_4CBE00(int64_t a1, int64_t a2)
         return;
     }
 
-    type = obj_f_get_int32(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(a1, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
@@ -215,7 +215,7 @@ void sub_4CBE70(int64_t a1, int64_t a2, int64_t a3)
     int index;
     int64_t item_obj;
 
-    type = obj_f_get_int32(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(a1, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         if (obj_type_is_item(type)) {
             sub_4CB800(a1, a3, a1, MTIT_TARGET_HIT);
@@ -245,7 +245,7 @@ void sub_4CBF70(int64_t a1, int64_t a2)
         return;
     }
 
-    type = obj_f_get_int32(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(a1, OBJ_F_TYPE);
     if (obj_type_is_item(type)) {
         parent_obj = obj_f_get_handle(a1, OBJ_F_ITEM_PARENT);
         sub_4CB800(a1, parent_obj, a2, 0x1000);
@@ -276,13 +276,13 @@ bool sub_4CC160(int64_t item_obj)
     int spl;
 
     // FIXME: Unused, probably should validate if item_obj is of item type.
-    obj_f_get_int32(item_obj, OBJ_F_TYPE);
+    obj_field_int32_get(item_obj, OBJ_F_TYPE);
 
-    if (obj_f_get_int32(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE) == 0) {
+    if (obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE) == 0) {
         return false;
     }
 
-    spl = obj_f_get_int32(item_obj, OBJ_F_ITEM_SPELL_1);
+    spl = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1);
     if (spl == 10000) {
         return true;
     }
@@ -291,12 +291,12 @@ bool sub_4CC160(int64_t item_obj)
         return true;
     }
 
-    if ((obj_f_get_int32(item_obj, OBJ_F_ITEM_FLAGS) & OIF_VALID_AI_ACTION) == 0) {
+    if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_VALID_AI_ACTION) == 0) {
         return false;
     }
 
     // FIXME: Unused.
-    obj_f_get_int32(item_obj, OBJ_F_ITEM_AI_ACTION);
+    obj_field_int32_get(item_obj, OBJ_F_ITEM_AI_ACTION);
 
     return true;
 }

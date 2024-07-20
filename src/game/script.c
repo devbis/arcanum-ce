@@ -241,7 +241,7 @@ void script_gl_flag_set(int index, int value)
 // 0x444DB0
 int script_pc_gl_var_get(long long obj, int index)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         return sub_407470(obj, OBJ_F_PC_GLOBAL_VARIABLES, index);
     }
 
@@ -251,7 +251,7 @@ int script_pc_gl_var_get(long long obj, int index)
 // 0x444DF0
 void script_pc_gl_var_set(long long obj, int index, int value)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         obj_f_set_int32_with_network(obj, OBJ_F_PC_GLOBAL_VARIABLES, index, value);
     }
 }
@@ -261,7 +261,7 @@ int script_pc_gl_flag_get(long long obj, int index)
 {
     int flags;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         flags = sub_407470(obj, OBJ_F_PC_GLOBAL_FLAGS, index / 32);
         return (flags >> (index % 32)) & 1;
     }
@@ -274,7 +274,7 @@ void script_pc_gl_flag_set(long long obj, int index, int value)
 {
     int flags;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         flags = sub_407470(obj, OBJ_F_PC_GLOBAL_FLAGS, index / 32);
         flags &= ~(1 << (index % 32));
         flags |= value << (index % 32);

@@ -190,12 +190,12 @@ int level_auto_level_scheme_get(object_id_t object_id)
         return -1;
     }
 
-    int type = object_field_get(object_id, OBJ_F_TYPE);
+    int type = obj_field_int32_get(object_id, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return -1;
     }
 
-    return object_field_get(object_id, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME);
+    return obj_field_int32_get(object_id, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME);
 }
 
 // 0x4A6D90
@@ -205,12 +205,12 @@ int level_auto_level_scheme_set(object_id_t object_id, int value)
         return -1;
     }
 
-    int type = object_field_get(object_id, OBJ_F_TYPE);
+    int type = obj_field_int32_get(object_id, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return -1;
     }
 
-    sub_406D40(object_id, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, value);
+    obj_field_int32_set(object_id, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, value);
 
     return value;
 }
@@ -269,7 +269,7 @@ const char* level_advancement_scheme_get_rule(int scheme)
 void level_set_level(object_id_t obj, int level)
 {
     // NOTE: Unused.
-    int type = object_field_get(obj, OBJ_F_TYPE);
+    int type = obj_field_int32_get(obj, OBJ_F_TYPE);
 
     if (level < 0) {
         level = 0;

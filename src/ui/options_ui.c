@@ -203,7 +203,7 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
     }
 
     if (dword_687260) {
-        sub_4B8CE0(obj_f_get_int64(player_get_pc_obj(), OBJ_F_LOCATION));
+        sub_4B8CE0(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION));
     }
 
     options_ui_initialized = true;

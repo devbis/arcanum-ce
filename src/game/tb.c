@@ -278,9 +278,9 @@ void sub_4D62B0(object_id_t object_id)
         }
     }
 
-    unsigned int flags = object_field_get(object_id, OBJ_F_FLAGS);
+    unsigned int flags = obj_field_int32_get(object_id, OBJ_F_FLAGS);
     flags &= ~OBJECT_FLAG_0x0008;
-    object_field_set(object_id, OBJ_F_FLAGS, flags);
+    obj_field_int32_set(object_id, OBJ_F_FLAGS, flags);
 }
 
 // 0x4D6320
@@ -300,9 +300,9 @@ static void sub_4D6350(S602930* a1)
     sub_4D63B0(a1, &rect);
     dword_602AB0(&rect);
 
-    unsigned int flags = object_field_get(a1->object_id, OBJ_F_FLAGS);
+    unsigned int flags = obj_field_int32_get(a1->object_id, OBJ_F_FLAGS);
     flags &= ~OBJECT_FLAG_0x0008;
-    object_field_set(a1->object_id, OBJ_F_FLAGS, flags);
+    obj_field_int32_set(a1->object_id, OBJ_F_FLAGS, flags);
 
     a1->flags = 0;
     a1->object_id = 0;
@@ -311,9 +311,9 @@ static void sub_4D6350(S602930* a1)
 // 0x4D63B0
 static void sub_4D63B0(S602930* a1, TigRect* rect)
 {
-    long long location = object_field_get_64(a1->object_id, OBJ_F_LOCATION);
-    int offset_x = object_field_get(a1->object_id, OBJ_F_OFFSET_X);
-    int offset_y = object_field_get(a1->object_id, OBJ_F_OFFSET_Y);
+    long long location = obj_field_int64_get(a1->object_id, OBJ_F_LOCATION);
+    int offset_x = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_X);
+    int offset_y = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_Y);
     sub_4D6410(a1, location, offset_x, offset_y, rect);
 }
 

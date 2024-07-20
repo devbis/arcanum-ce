@@ -130,8 +130,8 @@ void sub_57A320()
 // 0x57A5E0
 bool sub_57A5E0(long long obj)
 {
-    return (obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_PICKPOCKET) != 0
-        || (obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) & OCF_MECHANICAL) != 0;
+    return (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_PICKPOCKET) != 0
+        || (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_MECHANICAL) != 0;
 }
 
 // 0x57A620
@@ -170,7 +170,7 @@ bool sub_57A710(long long a1, long long a2)
     int type;
 
     if (a1 != a2) {
-        type = obj_f_get_int32(a2, OBJ_F_TYPE);
+        type = obj_field_int32_get(a2, OBJ_F_TYPE);
         sub_572240(a1, a2, type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC ? 3 : 2);
     }
 

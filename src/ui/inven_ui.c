@@ -98,11 +98,11 @@ void inven_ui_destroy()
     sub_4A53B0(qword_6814F8, 0);
 
     if ((dword_683464 == 2 || dword_683464 == 4)
-        && obj_f_get_int32(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
         if (dword_683464 == 2) {
-            art_id = obj_f_get_int32(qword_6813A8, OBJ_F_CURRENT_AID);
+            art_id = obj_field_int32_get(qword_6813A8, OBJ_F_CURRENT_AID);
             if (tig_art_id_frame_get(art_id) == 1
-                && (obj_f_get_int32(qword_6813A8, OBJ_F_CONTAINER_FLAGS) & OCOF_STICKY) == 0) {
+                && (obj_field_int32_get(qword_6813A8, OBJ_F_CONTAINER_FLAGS) & OCOF_STICKY) == 0) {
                 sub_43F8F0(qword_6813A8);
 
                 sound_id = sub_4F0FD0(qword_6813A8, 1);
@@ -173,9 +173,9 @@ void sub_573630(long long obj)
 
     qword_681450 = qword_6814F8;
     qword_6810E0 = obj;
-    dword_6810E8 = obj_f_get_int32(obj, OBJ_F_ITEM_INV_LOCATION);
+    dword_6810E8 = obj_field_int32_get(obj, OBJ_F_ITEM_INV_LOCATION);
 
-    inv_art_id = obj_f_get_int32(qword_6810E0, OBJ_F_ITEM_INV_AID);
+    inv_art_id = obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_INV_AID);
     sub_553990();
     mouse_art_id = tig_mouse_get_cursor_art_id();
     tig_mouse_hide();
@@ -195,7 +195,7 @@ void sub_5736E0()
         return;
     }
 
-    inv_art_id = obj_f_get_int32(qword_6810E0, OBJ_F_ITEM_INV_AID);
+    inv_art_id = obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_INV_AID);
     mouse_art_id = tig_mouse_get_cursor_art_id();
     tig_mouse_hide();
     tig_mouse_cursor_set_art_id(inv_art_id);
@@ -300,7 +300,7 @@ void sub_575BE0()
     location_t location;
     int sound_id;
 
-    location = obj_f_get_int64(qword_681450, OBJ_F_LOCATION);
+    location = obj_field_int64_get(qword_681450, OBJ_F_LOCATION);
     sub_466E50(qword_6810E0, location);
 
     sound_id = sub_4F0BF0(qword_6810E0, qword_681450, 0, 1);

@@ -318,7 +318,7 @@ void sub_56D130(long long a1, long long a2)
     qword_680E70 = a1;
     qword_680E60 = a2;
 
-    if (obj_f_get_int32(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         sub_56D0D0();
     }
 
@@ -327,7 +327,7 @@ void sub_56D130(long long a1, long long a2)
         schematic_ui_num_found_schematics_by_tech[tech] = 0;
     }
 
-    if (obj_f_get_int32(a1, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         schematic_ui_num_found_schematics = obj_f_idx_size(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
         if (schematic_ui_num_found_schematics > 0) {
             schematic_ui_found_schematics = (int*)MALLOC(sizeof(int) * schematic_ui_num_found_schematics);
@@ -405,7 +405,7 @@ void schematic_ui_create()
 
     sub_56DDC0();
 
-    sub_4B8CE0(obj_f_get_int64(qword_680E70, OBJ_F_LOCATION));
+    sub_4B8CE0(obj_field_int64_get(qword_680E70, OBJ_F_LOCATION));
 
     v1.window_handle = schematic_ui_window;
     v1.dst_rect = &stru_5CA840;
@@ -640,7 +640,7 @@ int sub_56DB00(int schematic)
     if (schematic >= 4000) {
         sub_56DBD0(schematic, &schematic_info);
         obj = sub_4685A0(schematic_info.prod[0]);
-        return obj_f_get_int32(obj, OBJ_F_ITEM_DISCIPLINE);
+        return obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE);
     }
 
     if (schematic >= 2000) {
@@ -830,7 +830,7 @@ void sub_56DDC0()
 
     //
     obj = sub_4685A0(schematic_info.prod[0]);
-    discipline[0] = obj_f_get_int32(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
+    discipline[0] = obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
     discipline[1] = '\0';
 
     tig_font_push(dword_680E8C);

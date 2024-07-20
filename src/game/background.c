@@ -124,8 +124,8 @@ const char* background_description_get_name(int num)
 // 0x4C2650
 void background_obj_clear(object_id_t obj)
 {
-    object_field_set(obj, OBJ_F_PC_BACKGROUND, 0);
-    object_field_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 0);
+    obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 0);
+    obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 0);
     sub_4EA2E0(obj, 1);
 }
 
@@ -133,8 +133,8 @@ void background_obj_clear(object_id_t obj)
 int background_obj_get_background(object_id_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            return object_field_get(obj, OBJ_F_PC_BACKGROUND);
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
         }
     }
 
@@ -144,7 +144,7 @@ int background_obj_get_background(object_id_t obj)
 // 0x4C26D0
 int background_obj_get_background_text(object_id_t obj)
 {
-    return object_field_get(obj, OBJ_F_PC_BACKGROUND_TEXT);
+    return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND_TEXT);
 }
 
 // 0x4C2A70

@@ -134,7 +134,7 @@ void sub_560EE0()
 void sub_560EF0()
 {
     dword_66D880 = 0;
-    dword_66D874 = sub_4BE380(sub_4CFC50(obj_f_get_int64(player_get_pc_obj(), OBJ_F_LOCATION)));
+    dword_66D874 = sub_4BE380(sub_4CFC50(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION)));
     if (sub_40FF40() == dword_66D87C) {
         if (dword_66D874 == 0) {
             dword_66D880 = 1;

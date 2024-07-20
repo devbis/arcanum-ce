@@ -171,7 +171,7 @@ int sub_4CB100(int64_t obj_handle)
     int v1;
 
     if (obj_handle != OBJ_HANDLE_NULL
-        && obj_f_get_int32(obj_handle, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        && obj_field_int32_get(obj_handle, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if ((tig_net_flags & 0x1) != 0) {
             v1 = sub_4A2B10(obj_handle);
             if (v1 != -1) {

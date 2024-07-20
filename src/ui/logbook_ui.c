@@ -305,7 +305,7 @@ void logbook_ui_create()
     }
     tig_button_radio_group_create(7, button_handles, dword_648978);
 
-    sub_4B8CE0(obj_f_get_int64(qword_63FAD8, OBJ_F_LOCATION));
+    sub_4B8CE0(obj_field_int64_get(qword_63FAD8, OBJ_F_LOCATION));
 
     v1.window_handle = logbook_ui_window;
     v1.rect = &stru_5C3418;

@@ -1275,7 +1275,7 @@ void sub_549A80()
     if (!dword_5C3620) {
         obj = objp_perm_lookup(sub_407EF0(sub_4685A0(16075)));
         if (obj != OBJ_HANDLE_NULL
-            && tig_art_exists(obj_f_get_int32(obj, OBJ_F_CURRENT_AID)) == TIG_OK) {
+            && tig_art_exists(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == TIG_OK) {
             dword_5C3620 = false;
             dword_5C361C = 13;
             stru_5C4E28.num_buttons = 10;

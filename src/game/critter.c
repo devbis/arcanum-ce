@@ -70,14 +70,14 @@ void critter_exit()
 // 0x45D010
 int critter_social_class_get(long long obj)
 {
-    return obj_f_get_int32(obj, OBJ_F_NPC_SOCIAL_CLASS);
+    return obj_field_int32_get(obj, OBJ_F_NPC_SOCIAL_CLASS);
 }
 
 // 0x45D030
 int critter_social_class_set(long long obj, int value)
 {
     sub_4EA2E0(obj, 2);
-    obj_f_set_int32(obj, OBJ_F_NPC_SOCIAL_CLASS, value);
+    obj_field_int32_set(obj, OBJ_F_NPC_SOCIAL_CLASS, value);
     sub_4E9F70(obj, value + 75, 2);
     return value;
 }
@@ -91,8 +91,8 @@ const char* critter_social_class_name(int social_class)
 // 0x45D080
 int critter_faction_get(long long obj)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_f_get_int32(obj, OBJ_F_NPC_FACTION);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        return obj_field_int32_get(obj, OBJ_F_NPC_FACTION);
     } else {
         return 0;
     }
@@ -101,8 +101,8 @@ int critter_faction_get(long long obj)
 // 0x45D0C0
 int critter_faction_set(long long obj, int value)
 {
-    if (obj != 0 && obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        obj_f_set_int32(obj, OBJ_F_NPC_FACTION, value);
+    if (obj != 0 && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        obj_field_int32_set(obj, OBJ_F_NPC_FACTION, value);
     }
     return value;
 }
@@ -116,8 +116,8 @@ bool critter_faction_same(long long a, long long b)
 // 0x45D290
 int critter_origin_get(long long obj)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_f_get_int32(obj, OBJ_F_NPC_ORIGIN);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        return obj_field_int32_get(obj, OBJ_F_NPC_ORIGIN);
     } else {
         return 0;
     }
@@ -126,8 +126,8 @@ int critter_origin_get(long long obj)
 // 0x45D2D0
 int critter_origin_set(long long obj, int value)
 {
-    if (obj != 0 && obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        obj_f_set_int32(obj, OBJ_F_NPC_ORIGIN, value);
+    if (obj != 0 && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        obj_field_int32_set(obj, OBJ_F_NPC_ORIGIN, value);
     }
     return value;
 }
@@ -141,15 +141,15 @@ bool critter_origin_same(long long a, long long b)
 // 0x45D360
 bool critter_is_pc(long long obj)
 {
-    return obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC;
+    return obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC;
 }
 
 // 0x45D390
 int critter_fatigue_pts_get(long long obj)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_f_get_int32(obj, OBJ_F_CRITTER_FATIGUE_PTS);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_PTS);
     } else {
         return 0;
     }
@@ -164,9 +164,9 @@ int critter_fatigue_pts_set(long long obj, int value)
 // 0x45D4A0
 int critter_fatigue_adj_get(long long obj)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_f_get_int32(obj, OBJ_F_CRITTER_FATIGUE_ADJ);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_ADJ);
     } else {
         return 0;
     }
@@ -175,9 +175,9 @@ int critter_fatigue_adj_get(long long obj)
 // 0x45D4F0
 int critter_fatigue_adj_set(long long obj, int value)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        obj_f_set_int32(obj, OBJ_F_CRITTER_FATIGUE_ADJ, value);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_ADJ, value);
         sub_460260(obj);
     } else {
         return 0;
@@ -187,9 +187,9 @@ int critter_fatigue_adj_set(long long obj, int value)
 // 0x45D550
 int critter_fatigue_damage_get(long long obj)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_f_get_int32(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE);
     } else {
         return 0;
     }
@@ -210,8 +210,8 @@ int sub_45D670(long long obj)
     int cn;
     int wp;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         fatigue_pts = critter_fatigue_pts_get(obj);
         fatigue_adj = critter_fatigue_adj_get(obj);
         level = stat_level(obj, STAT_LEVEL);
@@ -239,17 +239,17 @@ bool sub_45D730(long long obj)
     int type;
     tig_art_id_t aid;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
         return false;
     }
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return false;
     }
 
     // NOTE: Looks wrong, `sub_503E20` always returns 0 for pc/npc.
-    aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (sub_503E20(aid) != 7) {
         return false;
     }
@@ -260,11 +260,11 @@ bool sub_45D730(long long obj)
 // 0x45D790
 bool sub_45D790(long long obj)
 {
-    return (obj_f_get_int32(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0
+    return (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0
         && !sub_45D8D0(obj)
         && !sub_45D800(obj)
-        && (obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) & (OCF_STUNNED | OCF_PARALYZED)) == 0
-        && (obj_f_get_int32(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0;
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_STUNNED | OCF_PARALYZED)) == 0
+        && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0;
 }
 
 // 0x45D800
@@ -318,7 +318,7 @@ long long critter_leader_get(long long obj)
 {
     long long leader_obj;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         obj_f_get_obj(obj, OBJ_F_NPC_LEADER, &leader_obj);
         return obj;
     } else {
@@ -329,7 +329,7 @@ long long critter_leader_get(long long obj)
 // 0x45DE50
 void critter_leader_set(long long follower_obj, long long leader_obj)
 {
-    if (obj_f_get_int32(follower_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(follower_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         obj_f_set_obj(follower_obj, OBJ_F_NPC_LEADER, leader_obj);
     }
 }
@@ -559,7 +559,7 @@ bool sub_45F570(long long obj)
     tig_art_id_t art_id;
     int type;
 
-    art_id = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     type = tig_art_type(art_id);
     switch (type) {
     case TIG_ART_TYPE_CRITTER:
@@ -576,10 +576,10 @@ void sub_45F5C0(long long obj)
 {
     int flags;
 
-    flags = obj_f_get_int32(obj, OBJ_F_NPC_FLAGS);
+    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
     if ((flags & ONF_AI_SPREAD_OUT) != 0) {
         flags &= ~ONF_AI_SPREAD_OUT;
-        obj_f_set_int32(obj, OBJ_F_NPC_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
     }
 }
 
@@ -588,10 +588,10 @@ void sub_45F600(long long obj)
 {
     int flags;
 
-    flags = obj_f_get_int32(obj, OBJ_F_NPC_FLAGS);
+    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
     if ((flags & ONF_AI_SPREAD_OUT) == 0) {
         flags |= ONF_AI_SPREAD_OUT;
-        obj_f_set_int32(obj, OBJ_F_NPC_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
         sub_436960(obj, critter_leader_get(obj));
     }
 }
@@ -607,10 +607,10 @@ int critter_teleport_map_get(long long obj)
 {
     int map;
 
-    map = obj_f_get_int32(obj, OBJ_F_CRITTER_TELEPORT_MAP);
+    map = obj_field_int32_get(obj, OBJ_F_CRITTER_TELEPORT_MAP);
     if (map == 0) {
         map = sub_40FF40();
-        obj_f_set_int32(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
+        obj_field_int32_set(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
     }
 
     return map;
@@ -629,13 +629,13 @@ bool sub_45F730(long long obj)
         return false;
     }
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return false;
     }
 
     // TODO: Use constants.
-    if ((obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS) & 0x2000800C) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & 0x2000800C) == 0) {
         return false;
     }
 
@@ -649,8 +649,8 @@ int sub_45F790(long long obj)
     int max_weight;
     int encumbrance_level;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return ENCUMBRANCE_LEVEL_SEVERE;
     }
 
@@ -705,9 +705,9 @@ int critter_encumbrance_level_ratio(int level)
 int critter_description_get(long long a, long long b)
 {
     if (a == b || b != NULL && sub_4C0C40(a, b)) {
-        return obj_f_get_int32(a, OBJ_F_DESCRIPTION);
+        return obj_field_int32_get(a, OBJ_F_DESCRIPTION);
     } else {
-        return obj_f_get_int32(a, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN);
+        return obj_field_int32_get(a, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN);
     }
 }
 
@@ -723,7 +723,7 @@ tig_art_id_t sub_45FA70(long long obj, unsigned int* rgb)
     tig_art_id_t art_id;
     int flags;
 
-    flags = obj_f_get_int32(obj, OBJ_F_CRITTER_FLAGS);
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
     if ((flags & OCF_LIGHT_XLARGE) != 0) {
         tig_art_light_id_create(1, 0, 0, 0, &art_id);
         light_build_color(244, 255, 255, rgb);
@@ -762,7 +762,7 @@ void critter_debug_obj(object_id_t obj)
     char name[1000];
 
     if (obj != OBJ_HANDLE_NULL) {
-        if (obj_type_is_critter(object_field_get(obj, OBJ_F_TYPE))) {
+        if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
             tig_debug_println("\n\n--------------------------------------");
             tig_debug_println("Critter Debug Obj:\n\n");
             sub_441B60(obj, obj, name);

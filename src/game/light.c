@@ -355,9 +355,9 @@ void sub_4D8560(int a1, int a2)
 // 0x4D9A90
 void sub_4D9A90(object_id_t object_id)
 {
-    unsigned int render_flags = object_field_get(object_id, OBJ_F_RENDER_FLAGS);
+    unsigned int render_flags = obj_field_int32_get(object_id, OBJ_F_RENDER_FLAGS);
     if ((render_flags & OBJECT_RENDER_FLAG_0x80000000) != 0) {
-        light_handle_t light_handle = object_field_get(object_id, OBJ_F_LIGHT_HANDLE);
+        light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
         if (light_handle != LIGHT_HANDLE_INVALID) {
             sub_4D93B0(light_handle);
         }
@@ -369,7 +369,7 @@ void sub_4D9A90(object_id_t object_id)
             }
         }
 
-        object_field_set(object_id, OBJ_F_RENDER_FLAGS, render_flags & ~OBJECT_RENDER_FLAG_0x80000000);
+        obj_field_int32_set(object_id, OBJ_F_RENDER_FLAGS, render_flags & ~OBJECT_RENDER_FLAG_0x80000000);
     }
 }
 
@@ -377,26 +377,26 @@ void sub_4D9A90(object_id_t object_id)
 void sub_4DA310(object_id_t object_id)
 {
     for (int index = 0; index < 5; index++) {
-        shadow_handle_t shadow_handle = sub_4072D0(object_id, OBJ_F_SHADOW_HANDLES, index);
+        shadow_handle_t shadow_handle = obj_arrayfield_int32_get(object_id, OBJ_F_SHADOW_HANDLES, index);
         if (shadow_handle == SHADOW_HANDLE_INVALID) {
             break;
         }
 
         sub_4DE7A0(shadow_handle);
-        sub_407340(object_id, OBJ_F_SHADOW_HANDLES, index, SHADOW_HANDLE_INVALID);
+        obj_arrayfield_int32_set(object_id, OBJ_F_SHADOW_HANDLES, index, SHADOW_HANDLE_INVALID);
     }
 }
 
 // 0x4DCEA0
 void sub_4DCEA0(object_id_t object_id, int a2)
 {
-    light_handle_t light_handle = object_field_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD150(light_handle, a2);
     } else {
-        if (object_field_get(object_id, OBJ_F_LIGHT_AID) != -1) {
-            unsigned int light_flags = object_field_get(object_id, OBJ_F_LIGHT_FLAGS);
-            object_field_set(object_id, OBJ_F_LIGHT_FLAGS, light_flags | a2);
+        if (obj_field_int32_get(object_id, OBJ_F_LIGHT_AID) != -1) {
+            unsigned int light_flags = obj_field_int32_get(object_id, OBJ_F_LIGHT_FLAGS);
+            obj_field_int32_set(object_id, OBJ_F_LIGHT_FLAGS, light_flags | a2);
         }
     }
 
@@ -416,13 +416,13 @@ void sub_4DCEA0(object_id_t object_id, int a2)
 // 0x4DCF60
 void sub_4DCF60(object_id_t object_id, int a2)
 {
-    light_handle_t light_handle = object_field_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD230(light_handle, a2);
     } else {
-        if (object_field_get(object_id, OBJ_F_LIGHT_AID) != -1) {
-            unsigned int light_flags = object_field_get(object_id, OBJ_F_LIGHT_FLAGS);
-            object_field_set(object_id, OBJ_F_LIGHT_FLAGS, light_flags & ~a2);
+        if (obj_field_int32_get(object_id, OBJ_F_LIGHT_AID) != -1) {
+            unsigned int light_flags = obj_field_int32_get(object_id, OBJ_F_LIGHT_FLAGS);
+            obj_field_int32_set(object_id, OBJ_F_LIGHT_FLAGS, light_flags & ~a2);
         }
     }
 
@@ -442,7 +442,7 @@ void sub_4DCF60(object_id_t object_id, int a2)
 // 0x4DD020
 void sub_4DD020(object_id_t object_id, int a2, int a3, int a4, int a5)
 {
-    light_handle_t light_handle = object_field_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD320(light_handle, a2, a3, a4, a5);
     }
@@ -458,7 +458,7 @@ void sub_4DD020(object_id_t object_id, int a2, int a3, int a4, int a5)
 // 0x4DD0A0
 void sub_4DD0A0(object_id_t object_id, int a2, int a3)
 {
-    light_handle_t light_handle = object_field_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD500(light_handle, a2, a3);
     }

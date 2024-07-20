@@ -147,7 +147,7 @@ const char* degree_get_description(int degree, int tech)
 // 0x4AFE60
 int sub_4AFE60(long long object_id, int tech)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
     } else {
         return 0;
@@ -157,7 +157,7 @@ int sub_4AFE60(long long object_id, int tech)
 // 0x4AFF90
 int sub_4AFF90(long long object_id, int tech, int value)
 {
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         sub_4F0270(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
     } else {
         return 0;
@@ -192,7 +192,7 @@ int tech_get_min_intelligence_for_degree(int degree)
 // 0x4B02B0
 bool sub_4B02B0(object_id_t obj, int intelligence)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return true;
     }
 

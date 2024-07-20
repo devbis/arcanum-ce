@@ -131,11 +131,11 @@ bool skill_save(TigFile* stream)
 void skill_set_defaults(object_id_t object_id)
 {
     for (int skill = 0; skill < PRIMARY_SKILL_COUNT; skill++) {
-        sub_407340(object_id, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, 0);
+        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, 0);
     }
 
     for (int skill = 0; skill < SECONDARY_SKILL_COUNT; skill++) {
-        sub_407340(object_id, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, 0);
+        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, 0);
     }
 }
 

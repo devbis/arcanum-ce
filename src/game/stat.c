@@ -252,14 +252,14 @@ void stat_exit()
 void stat_set_defaults(object_id_t object_id)
 {
     for (int stat = 0; stat < STAT_COUNT; stat++) {
-        sub_407340(object_id, OBJ_F_CRITTER_STAT_BASE_IDX, stat, stat_default_values[stat]);
+        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_STAT_BASE_IDX, stat, stat_default_values[stat]);
     }
 }
 
 // 0x4B0490
 int stat_level(object_id_t obj, int stat)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
 
@@ -271,14 +271,14 @@ int stat_level(object_id_t obj, int stat)
     switch (stat) {
     case STAT_SPEED:
         if (sub_458A80(0x4000000)) {
-            if ((object_field_get(obj, OBJ_F_SPELL_FLAGS) & 0x4000000) != 0) {
+            if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & 0x4000000) != 0) {
                 value += 10;
             } else {
                 value -= 10;
             }
         }
 
-        if ((object_field_get(obj, OBJ_F_CRITTER_FLAGS) & 0x400) != 0) {
+        if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & 0x400) != 0) {
             value -= 5;
         }
 
@@ -304,7 +304,7 @@ int stat_level(object_id_t obj, int stat)
             // - Willpower -2
             // - Strength +2
             if (true) {
-                location_t location = object_field_get_64(obj, OBJ_F_LOCATION);
+                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 art_id_t art_id = sub_4D70B0(location);
                 if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
                     if (stat == STAT_INTELLIGENCE) {
@@ -331,7 +331,7 @@ int stat_level(object_id_t obj, int stat)
             //
             // NOTE: Persuation bonus is applied via effects.
             if (true) {
-                location_t location = object_field_get_64(obj, OBJ_F_LOCATION);
+                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 art_id_t art_id = sub_4D70B0(location);
                 if (sub_4EBB30(art_id)) {
                     if (stat == STAT_STRENGTH) {
@@ -393,7 +393,7 @@ int stat_level(object_id_t obj, int stat)
             break;
         case BACKGROUND_SKY_MAGE:
             if (1) {
-                location_t location = object_field_get_64(obj, OBJ_F_LOCATION);
+                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 art_id_t art_id = sub_4D70B0(location);
                 if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
                     value -= 4;
@@ -404,7 +404,7 @@ int stat_level(object_id_t obj, int stat)
             break;
         case BACKGROUND_NATURE_MAGE:
             if (1) {
-                location_t location = object_field_get_64(obj, OBJ_F_LOCATION);
+                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 art_id_t art_id = sub_4D70B0(location);
                 if (!sub_4EBBA0(art_id)) {
                     value -= 4;
@@ -435,7 +435,7 @@ int stat_level(object_id_t obj, int stat)
 // 0x4B0740
 int stat_get_base(object_id_t obj, int stat)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
 
@@ -492,13 +492,13 @@ int stat_get_base(object_id_t obj, int stat)
         case STAT_MAGICK_TECH_APTITUDE:
             if (1) {
                 int bonus = (50 * stat_level(obj, STAT_MAGICK_POINTS) - 55 * stat_level(obj, STAT_TECH_POINTS)) / 10;
-                location_t location = object_field_get_64(obj, OBJ_F_LOCATION);
+                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 value = sub_45A060(sub_4CFC50(location)) + bonus;
             }
             break;
         }
     } else {
-        value = sub_4072D0(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat);
+        value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat);
     }
 
     return value;
@@ -513,7 +513,7 @@ int stat_set_base(object_id_t obj, int stat)
 // 0x4B0EE0
 bool stat_is_maximized(object_id_t obj, int stat)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return false;
     }
 

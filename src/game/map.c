@@ -632,15 +632,15 @@ void map_gender_check()
         int v1;
         if (sub_4082C0(&obj, &v1)) {
             do {
-                if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-                    const int description = object_field_get(obj, OBJ_F_DESCRIPTION);
+                if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+                    const int description = obj_field_int32_get(obj, OBJ_F_DESCRIPTION);
                     if (description >= DESCRIPTION_FIRST_CRITTER_NAME && description <= DESCRIPTION_LAST_CRITTER_NAME) {
                         const int actual_gender = stat_get_base(obj, STAT_GENDER);
                         const int expected_gender = description % GENDER_COUNT;
                         if (actual_gender == GENDER_MALE && expected_gender == GENDER_FEMALE) {
                             sub_441B60(obj, obj, name);
 
-                            location = object_field_get_64(obj, OBJ_F_LOCATION);
+                            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                             tig_debug_printf("Male character with female description: %s at location %I64d %I64d\n",
                                 name,
                                 location);
@@ -648,21 +648,21 @@ void map_gender_check()
                             // FIXME: Wrong condition above.
                             sub_441B60(obj, obj, name);
 
-                            location = object_field_get_64(obj, OBJ_F_LOCATION);
+                            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                             tig_debug_printf("Female character with male description: %s at location %I64d %I64d\n",
                                 name,
                                 location);
                         }
                     }
 
-                    const int unknown_description = object_field_get(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN);
+                    const int unknown_description = obj_field_int32_get(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN);
                     if (unknown_description >= DESCRIPTION_FIRST_CRITTER_NAME && unknown_description <= DESCRIPTION_LAST_CRITTER_NAME) {
                         const int actual_gender = stat_get_base(obj, STAT_GENDER);
                         const int expected_gender = unknown_description % GENDER_COUNT;
                         if (actual_gender == GENDER_MALE && expected_gender == GENDER_FEMALE) {
                             sub_441B60(obj, obj, name);
 
-                            location = object_field_get_64(obj, OBJ_F_LOCATION);
+                            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                             tig_debug_printf("Male character with female unknown description: %s at location %I64d %I64d\n",
                                 name,
                                 location);
@@ -670,7 +670,7 @@ void map_gender_check()
                             // FIXME: Wrong condition above.
                             sub_441B60(obj, obj, name);
 
-                            location = object_field_get_64(obj, OBJ_F_LOCATION);
+                            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                             tig_debug_printf("Female character with male unknown description: %s at location %I64d %I64d\n",
                                 name,
                                 location);

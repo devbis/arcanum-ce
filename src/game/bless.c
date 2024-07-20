@@ -58,14 +58,14 @@ int sub_4C4200(object_id_t obj, BlessInfo* blessings)
     int cnt;
     int index;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return 0;
     }
 
-    cnt = sub_4079C0(obj, OBJ_F_PC_BLESSING_IDX);
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_BLESSING_IDX);
     for (index = 0; index < cnt; index++) {
         blessings[index].id = sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index);
-        blessings[index].ts = sub_407540(obj, OBJ_F_PC_BLESSING_TS_IDX, index);
+        blessings[index].ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_BLESSING_TS_IDX, index);
     }
 
     return cnt;
@@ -77,11 +77,11 @@ bool bless_is_added_to(object_id_t obj, int bless)
     int cnt;
     int index;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return false;
     }
 
-    cnt = sub_4079C0(obj, OBJ_F_PC_BLESSING_IDX);
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_BLESSING_IDX);
     for (index = 0; index < cnt; index++) {
         if (sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index) == bless) {
             return true;
@@ -94,7 +94,7 @@ bool bless_is_added_to(object_id_t obj, int bless)
 // 0x4C42F0
 void bless_add(object_id_t obj, int bless)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 
@@ -116,7 +116,7 @@ int bless_get_effect(int bless)
 // 0x4C4450
 void bless_remove(object_id_t obj, int bless)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 

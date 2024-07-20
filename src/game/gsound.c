@@ -369,8 +369,8 @@ TigSoundPositionalSize gsound_get_positional_size(object_id_t object_id)
 {
     unsigned int flags;
 
-    if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
-        flags = object_field_get(object_id, OBJ_F_SCENERY_FLAGS);
+    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
+        flags = obj_field_int32_get(object_id, OBJ_F_SCENERY_FLAGS);
         if ((flags & OSCF_SOUND_SMALL) != 0) {
             return TIG_SOUND_SIZE_SMALL;
         }
@@ -649,7 +649,7 @@ void sub_41C4D0(object_id_t object_id)
 {
     if (!dword_5D55D8) {
         if (object_id != 0) {
-            if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
                 for (int index = 0; index < TWO; index++) {
                     if (stru_5D1A98[index].field_0) {
                         dword_5D1A30[index] = stru_5D1A98[index].field_4;
@@ -676,7 +676,7 @@ void sub_41C5A0(object_id_t object_id)
 {
     if (dword_5D55D8) {
         if (object_id != 0) {
-            if (object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                 tig_sound_stop(dword_5D1A4C);
                 tig_sound_stop(dword_5D1A48);
 
@@ -791,7 +791,7 @@ void gsound_effects_volume_changed()
 
     obj = player_get_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
-        location = obj_f_get_int64(obj, OBJ_F_LOCATION);
+        location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         sub_41C6D0(location);
     }
 }

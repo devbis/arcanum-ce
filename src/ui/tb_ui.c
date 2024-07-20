@@ -147,10 +147,10 @@ void sub_57CB10(long long a1, long long a2)
 {
     int type;
 
-    if ((obj_f_get_int32(a2, OBJ_F_SPELL_FLAGS) & 0x10000) == 0) {
-        type = obj_f_get_int32(a2, OBJ_F_TYPE);
+    if ((obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & 0x10000) == 0) {
+        type = obj_field_int32_get(a2, OBJ_F_TYPE);
         if ((type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC)
-            && obj_f_get_int32(a2, OBJ_F_CRITTER_INVENTORY_NUM) == 0) {
+            && obj_field_int32_get(a2, OBJ_F_CRITTER_INVENTORY_NUM) == 0) {
             sub_557670();
         } else {
             sub_572240(a1, a2, 2);

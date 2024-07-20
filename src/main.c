@@ -234,7 +234,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     tig_debug_printf("[Beginning Game]\n");
 
-    pc_starting_location = obj_f_get_int64(player_get_pc_obj());
+    pc_starting_location = obj_field_int64_get(player_get_pc_obj());
     sprintf(msg, "Player Start Position: x: %d, y: %d",
         pc_starting_location & 0xFFFFFFFF,
         pc_starting_location >> 32);
@@ -278,7 +278,7 @@ void main_loop()
     sub_43E770(pc_obj, location, 0, 0);
     sub_4B8CE0(location);
 
-    art_id = obj_f_get_int32(pc_obj, OBJ_F_CURRENT_AID);
+    art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
     art_id = tig_art_id_frame_set(art_id, 0);
     art_id = sub_503E50(art_id, 0);
     object_set_current_aid(art_id);

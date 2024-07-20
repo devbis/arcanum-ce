@@ -158,7 +158,7 @@ void sub_43CFF0(object_id_t obj)
 {
     unsigned int flags;
 
-    flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
     if ((flags & OF_TEXT) != 0) {
         sub_4D62B0(obj);
     }
@@ -176,19 +176,19 @@ void sub_43CFF0(object_id_t obj)
 // 0x43D410
 int object_get_hp_pts(object_id_t obj)
 {
-    return obj_f_get_int32(obj, OBJ_F_HP_PTS);
+    return obj_field_int32_get(obj, OBJ_F_HP_PTS);
 }
 
 // 0x43D4C0
 int object_get_hp_adj(object_id_t obj)
 {
-    return obj_f_get_int32(obj, OBJ_F_HP_ADJ);
+    return obj_field_int32_get(obj, OBJ_F_HP_ADJ);
 }
 
 // 0x43D4E0
 int object_set_hp_adj(object_id_t obj, int value)
 {
-    obj_f_set_int32(obj, OBJ_F_HP_ADJ, value);
+    obj_field_int32_set(obj, OBJ_F_HP_ADJ, value);
     sub_460240(obj);
     return value;
 }
@@ -196,7 +196,7 @@ int object_set_hp_adj(object_id_t obj, int value)
 // 0x43D510
 int object_get_hp_damage(object_id_t obj)
 {
-    return obj_f_get_int32(obj, OBJ_F_HP_DAMAGE);
+    return obj_field_int32_get(obj, OBJ_F_HP_DAMAGE);
 }
 
 // 0x43D530
@@ -215,7 +215,7 @@ int object_set_hp_damage(object_id_t obj, int value)
     sub_4EFDD0(obj, OBJ_F_HP_DAMAGE, value);
 
     if (value > 0) {
-        type = obj_f_get_int32(obj, OBJ_F_TYPE);
+        type = obj_field_int32_get(obj, OBJ_F_TYPE);
         if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
             sub_45EAB0(obj);
         }
@@ -233,7 +233,7 @@ int sub_43D5A0(object_id_t obj)
     int type;
 
     value = object_get_hp_adj(obj) + sub_43D690(obj);
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
         value = effect_adjust_max_hit_points(obj, sub_43D630(obj) + value);
     }
@@ -251,7 +251,7 @@ int sub_43D630(object_id_t obj)
 {
     int type;
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
         return stat_level(obj, STAT_WILLPOWER)
             + 2 * (stat_level(obj, STAT_STRENGTH) + stat_level(obj, STAT_LEVEL))
@@ -266,7 +266,7 @@ int sub_43D690(object_id_t obj)
 {
     int type;
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
         return 4 * object_get_hp_pts(obj);
     }
@@ -282,8 +282,8 @@ int object_get_ac(object_id_t obj, bool a2)
     int index;
     object_id_t item_obj;
 
-    ac = obj_f_get_int32(obj, OBJ_F_AC);
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    ac = obj_field_int32_get(obj, OBJ_F_AC);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
         for (index = 1000; index <= 1008; index++) {
             item_obj = item_wield_get(obj, index);
@@ -307,7 +307,7 @@ int object_get_ac(object_id_t obj, bool a2)
 // 0x43D940
 bool sub_43D940(object_id_t obj)
 {
-    int type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    int type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PROJECTILE
         || type == OBJ_TYPE_CONTAINER
         || type == OBJ_TYPE_PC
@@ -321,7 +321,7 @@ bool sub_43D940(object_id_t obj)
 // 0x43D990
 bool sub_43D990(object_id_t obj)
 {
-    int type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    int type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PROJECTILE
         || type == OBJ_TYPE_CONTAINER
         || type == OBJ_TYPE_PC
@@ -329,13 +329,13 @@ bool sub_43D990(object_id_t obj)
         || (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC)) {
         return false;
     }
-    return (obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0;
+    return (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0;
 }
 
 // 0x43EAF0
 void object_set_offset(object_id_t obj, int offset_x, int offset_y)
 {
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         sub_4423E0(obj, offset_x, offset_y);
     }
 }
@@ -346,10 +346,10 @@ void object_set_current_aid(object_id_t obj, tig_art_id_t aid)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
-        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+        obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
+        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
         dword_5E2EB4(&dirty_rect);
@@ -363,16 +363,16 @@ void object_set_light(object_id_t obj, unsigned int flags, tig_art_id_t aid, tig
     int light_handle;
 
     if (aid == TIG_ART_ID_INVALID) {
-        light_handle = obj_f_get_int32(obj, OBJ_F_LIGHT_HANDLE);
+        light_handle = obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE);
         if (light_handle != 0) {
             sub_4D8620(light_handle);
         }
     }
 
-    obj_f_set_int32(obj, OBJ_F_LIGHT_FLAGS, flags);
-    obj_f_set_int32(obj, OBJ_F_LIGHT_AID, aid);
-    obj_f_set_int32(obj, OBJ_F_LIGHT_COLOR, color);
-    obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+    obj_field_int32_set(obj, OBJ_F_LIGHT_FLAGS, flags);
+    obj_field_int32_set(obj, OBJ_F_LIGHT_AID, aid);
+    obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, color);
+    obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
     sub_4D9590(obj, true);
 }
 
@@ -391,7 +391,7 @@ void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, ti
     sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_FLAGS, flags);
     sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_AID, aid);
     sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_COLOR, color);
-    obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+    obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
     sub_4D9590(obj, true);
 }
 
@@ -402,7 +402,7 @@ void object_set_blit_scale(object_id_t obj, int value)
     TigRect update_rect;
 
     object_get_rect(obj, 0x7, &dirty_rect);
-    obj_f_set_int32(obj, OBJ_F_BLIT_SCALE, value);
+    obj_field_int32_set(obj, OBJ_F_BLIT_SCALE, value);
     object_get_rect(obj, 0x7, &update_rect);
     tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
     dword_5E2EB4(&dirty_rect);
@@ -414,13 +414,13 @@ void object_add_flags(object_id_t obj, unsigned int flags)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
         sub_43D0E0(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
         dword_5E2EB4(&dirty_rect);
-        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
+        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
     }
 }
 
@@ -430,13 +430,13 @@ void object_remove_flags(object_id_t obj, unsigned int flags)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
         sub_43D280(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
         dword_5E2EB4(&dirty_rect);
-        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
+        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
     }
 }
 
@@ -445,10 +445,10 @@ void sub_43F030(object_id_t obj)
 {
     TigRect rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &rect);
         dword_5E2EB4(&rect);
-        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x7000000);
+        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x7000000);
     }
 }
 
@@ -458,16 +458,16 @@ void sub_43F090(object_id_t obj)
     tig_art_id_t aid;
     TigRect rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
-        aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+        aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         aid = tig_art_palette_set(tig_art_palette_get(aid) + 1);
         if (sub_502E00(aid) == TIG_OK) {
             aid = tig_art_palette_set(aid, 0);
         }
-        obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
+        obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
         object_get_rect(obj, 0, &rect);
         dword_5E2EB4(&rect);
-        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x3000000);
+        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x3000000);
     }
 }
 
@@ -477,15 +477,15 @@ void sub_43F130(object_id_t obj, int palette)
     tig_art_id_t aid;
     TigRect rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
-        aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+        aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         aid = tig_art_palette_set(aid, palette);
         // NOTE: Looks wrong.
         if (sub_502E00(aid) != TIG_OK) {
-            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
+            obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
             object_get_rect(obj, 0, &rect);
             dword_5E2EB4(&rect);
-            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x2000000);
+            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x2000000);
         }
     }
 }
@@ -497,26 +497,26 @@ bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
 
     obj = timeevent->params[0].object_value;
     // TODO: 0x400 is not in OSCF enum.
-    obj_f_set_int32(obj,
+    obj_field_int32_set(obj,
         OBJ_F_SCENERY_FLAGS,
-        obj_f_get_int32(obj, OBJ_F_SCENERY_FLAGS) & ~0x400);
+        obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & ~0x400);
     sub_43D280(obj, OF_OFF);
 }
 
 // 0x43F630
 bool object_is_destroyed(object_id_t obj)
 {
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
         return false;
     }
 
-    switch (obj_f_get_int32(obj, OBJ_F_TYPE)) {
+    switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
     case OBJ_TYPE_PORTAL:
-        return (obj_f_get_int32(obj, OBJ_F_PORTAL_FLAGS) & OPF_BUSTED) != 0;
+        return (obj_field_int32_get(obj, OBJ_F_PORTAL_FLAGS) & OPF_BUSTED) != 0;
     case OBJ_TYPE_CONTAINER:
-        return (obj_f_get_int32(obj, OBJ_F_CONTAINER_FLAGS) & OCOF_BUSTED) != 0;
+        return (obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & OCOF_BUSTED) != 0;
     case OBJ_TYPE_SCENERY:
-        return (obj_f_get_int32(obj, OBJ_F_SCENERY_FLAGS) & OSCF_BUSTED) != 0;
+        return (obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & OSCF_BUSTED) != 0;
     case OBJ_TYPE_WEAPON:
     case OBJ_TYPE_AMMO:
     case OBJ_TYPE_ITEM_ARMOR:
@@ -527,9 +527,9 @@ bool object_is_destroyed(object_id_t obj)
     case OBJ_TYPE_ITEM_KEY_RING:
     case OBJ_TYPE_ITEM_WRITTEN:
     case OBJ_TYPE_ITEM_GENERIC:
-        return tig_art_item_id_destroyed_get(obj_f_get_int32(obj)) != 0;
+        return tig_art_item_id_destroyed_get(obj_field_int32_get(obj)) != 0;
     case OBJ_TYPE_TRAP:
-        return (obj_f_get_int32(obj, OBJ_F_TRAP_FLAGS) & OTF_BUSTED) != 0;
+        return (obj_field_int32_get(obj, OBJ_F_TRAP_FLAGS) & OTF_BUSTED) != 0;
     }
 
     return false;
@@ -544,20 +544,20 @@ void object_inc_current_aid(object_id_t obj)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        current_aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         next_aid = tig_art_id_frame_inc(current_aid);
         if (current_aid != next_aid) {
-            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, next_aid);
+            obj_field_int32_set(obj, OBJ_F_CURRENT_AID, next_aid);
             if (tig_art_frame_data(next_aid, &art_frame_data) == TIG_OK) {
                 if (art_frame_data.offset_x != 0 || art_frame_data.offset_y != 0) {
                     sub_4423E0(next_aid,
-                        art_frame_data.offset_x + obj_f_get_int32(OBJ_F_OFFSET_X),
-                        art_frame_data.offset_y + obj_f_get_int32(OBJ_F_OFFSET_Y));
+                        art_frame_data.offset_x + obj_field_int32_get(OBJ_F_OFFSET_X),
+                        art_frame_data.offset_y + obj_field_int32_get(OBJ_F_OFFSET_Y));
                 }
             }
-            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
             dword_5E2EB4(&dirty_rect);
@@ -574,20 +574,20 @@ void object_dec_current_aid(object_id_t obj)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        current_aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         prev_aid = tig_art_id_frame_dec(current_aid);
         if (current_aid != prev_aid) {
-            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, prev_aid);
+            obj_field_int32_set(obj, OBJ_F_CURRENT_AID, prev_aid);
             if (tig_art_frame_data(prev_aid, &art_frame_data) == TIG_OK) {
                 if (art_frame_data.offset_x != 0 || art_frame_data.offset_y != 0) {
                     sub_4423E0(prev_aid,
-                        art_frame_data.offset_x + obj_f_get_int32(OBJ_F_OFFSET_X),
-                        art_frame_data.offset_y + obj_f_get_int32(OBJ_F_OFFSET_Y));
+                        art_frame_data.offset_x + obj_field_int32_get(OBJ_F_OFFSET_X),
+                        art_frame_data.offset_y + obj_field_int32_get(OBJ_F_OFFSET_Y));
                 }
             }
-            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
             dword_5E2EB4(&dirty_rect);
@@ -603,13 +603,13 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
         current_aid = sub_407470(obj, fld, index);
         next_aid = tig_art_id_frame_inc(current_aid);
         if (current_aid != next_aid) {
             sub_4074E0(obj, fld, index, next_aid);
-            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
             dword_5E2EB4(&dirty_rect);
@@ -625,7 +625,7 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
     TigRect dirty_rect;
     TigRect update_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
         current_aid = sub_407470(obj, fld, index);
         prev_aid = tig_art_id_frame_get(current_aid) > 0
@@ -633,7 +633,7 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
             : current_aid;
         if (current_aid != prev_aid) {
             sub_4074E0(obj, fld, index, prev_aid);
-            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
             dword_5E2EB4(&dirty_rect);
@@ -650,7 +650,7 @@ void sub_43FB80(object_id_t obj, int index)
     if (tig_art_id_frame_get(aid) != 0) {
         aid = tig_art_id_frame_set(aid, 0);
         sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
-        obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
         sub_4D9590(obj, true);
     }
 }
@@ -666,7 +666,7 @@ void sub_43FBF0(object_id_t obj, int index)
         if (tig_art_id_frame_get(aid) != art_anim_data.num_frames - 1) {
             aid = tig_art_id_frame_set(aid, art_anim_data.num_frames - 1);
             sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
-            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
             sub_4D9590(obj, true);
         }
     }
@@ -701,14 +701,14 @@ void sub_43FCE0(object_id_t obj)
     tig_art_id_t next_aid;
     TigRect dirty_rect;
 
-    if ((obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        current_aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         next_aid = tig_art_id_rotation_inc(current_aid);
         if (current_aid != next_aid) {
             dword_5E2EB4(&dirty_rect);
-            obj_f_set_int32(obj, OBJ_F_CURRENT_AID, next_aid);
-            obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj, OBJ_F_CURRENT_AID, next_aid);
+            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             sub_4423E0(obj, 0, 0);
         }
     }
@@ -720,8 +720,8 @@ int sub_441AE0(object_id_t obj1, object_id_t obj2)
     int64_t location1;
     int64_t location2;
 
-    location1 = obj_f_get_int64(obj1, OBJ_F_LOCATION);
-    location2 = obj_f_get_int64(obj2, OBJ_F_LOCATION);
+    location1 = obj_field_int64_get(obj1, OBJ_F_LOCATION);
+    location2 = obj_field_int64_get(obj2, OBJ_F_LOCATION);
     return sub_4B96F0(location1, location2);
 }
 
@@ -731,8 +731,8 @@ int sub_441B20(object_id_t obj1, object_id_t obj2)
     int64_t location1;
     int64_t location2;
 
-    location1 = obj_f_get_int64(obj1, OBJ_F_LOCATION);
-    location2 = obj_f_get_int64(obj2, OBJ_F_LOCATION);
+    location1 = obj_field_int64_get(obj1, OBJ_F_LOCATION);
+    location2 = obj_field_int64_get(obj2, OBJ_F_LOCATION);
     return sub_4B8D50(location1, location2);
 }
 
@@ -744,12 +744,12 @@ void sub_441C70(object_id_t obj, int a2, int gender, int race)
     stat_set_base(obj, STAT_RACE, race);
     stat_set_base(obj, STAT_GENDER, gender);
 
-    aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     aid = sub_503ED0(aid, a2);
     aid = sub_503FE0(aid, gender);
-    obj_f_set_int32(obj, OBJ_F_AID, aid);
-    obj_f_set_int32(obj, OBJ_F_CURRENT_AID, aid);
-    obj_f_set_int32(obj, OBJ_F_SOUND_EFFECT, 10 * (gender + 2 * race + 1));
+    obj_field_int32_set(obj, OBJ_F_AID, aid);
+    obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
+    obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 10 * (gender + 2 * race + 1));
 }
 
 // 0x441CF0
@@ -761,7 +761,7 @@ bool object_is_lockable(object_id_t obj)
         return false;
     }
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     return type == OBJ_TYPE_CONTAINER || type == OBJ_TYPE_PORTAL;
 }
 
@@ -776,8 +776,8 @@ bool object_is_locked(object_id_t obj)
         return false;
     }
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
-    flags = obj_f_get_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    flags = obj_field_int32_get(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
     if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_BUSTED : OCOF_BUSTED)) != 0) {
         return false;
     }
@@ -813,8 +813,8 @@ bool sub_441DD0(object_id_t obj, bool a2)
         return false;
     }
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
-    flags = obj_f_get_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    flags = obj_field_int32_get(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
     if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED)) != 0 && !a2) {
         timeevent.type = TIMEEVENT_TYPE_LOCK;
         timeevent.params[0].object_value = obj;
@@ -826,7 +826,7 @@ bool sub_441DD0(object_id_t obj, bool a2)
     if (a2) {
         flags |= (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED);
     }
-    obj_f_set_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
+    obj_field_int32_set(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
 
     return object_is_locked(obj);
 }
@@ -840,12 +840,12 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
     obj = timeevent->params[0].object_value;
     sub_441DD0(obj, true);
     sub_441F10(obj, false);
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PORTAL) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PORTAL) {
         if (sub_4F08C0(obj)) {
             sub_4F08F0(obj);
         }
     } else {
-        aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+        aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         if (tig_art_id_frame_get(aid) == 1) {
             object_dec_current_aid(obj);
         }
@@ -866,8 +866,8 @@ bool sub_441F10(object_id_t obj, bool a2)
         return false;
     }
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
-    flags = obj_f_get_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    flags = obj_field_int32_get(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
     if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED)) == 0 && a2) {
         timeevent.type = TIMEEVENT_TYPE_LOCK;
         timeevent.params[0].object_value = obj;
@@ -879,15 +879,15 @@ bool sub_441F10(object_id_t obj, bool a2)
     if (a2) {
         flags |= (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED);
     }
-    obj_f_set_int32(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
+    obj_field_int32_set(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
 }
 
 // 0x441FC0
 void sub_441FC0(object_id_t obj, int a2)
 {
     if (!object_editor) {
-        if (obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-            && (obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+            && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
             sub_4AD790(obj, a2);
         }
     }
@@ -914,10 +914,10 @@ void object_clear_render_palette(object_id_t obj)
 {
     TigPalette palette;
 
-    palette = obj_f_get_int32(obj, OBJ_F_RENDER_PALETTE);
+    palette = obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE);
     if (palette != NULL) {
         tig_palette_destroy(palette);
-        obj_f_set_int32(obj, OBJ_F_RENDER_PALETTE, NULL);
+        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, NULL);
     }
 }
 
@@ -926,10 +926,10 @@ int object_get_render_palette(object_id_t obj)
 {
     TigPalette palette;
 
-    palette = obj_f_get_int32(obj, OBJ_F_RENDER_PALETTE);
+    palette = obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE);
     if (palette == NULL) {
         palette = tig_palette_create();
-        obj_f_set_int32(obj, OBJ_F_RENDER_PALETTE, palette);
+        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, palette);
     }
     return palette;
 }
@@ -942,22 +942,22 @@ void sub_442F10(object_id_t obj, const tig_color_t* colors)
     TigArtFrameData art_frame_data;
     tig_color_t color;
 
-    render_colors = obj_f_get_int32(obj, OBJ_F_RENDER_COLORS);
+    render_colors = obj_field_int32_get(obj, OBJ_F_RENDER_COLORS);
     if (render_colors == NULL) {
         render_colors = sub_442FE0();
-        obj_f_set_int32(obj, OBJ_F_RENDER_COLORS, render_colors);
+        obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, render_colors);
     }
 
     memcpy(render_colors, colors, sizeof(tig_color_t) * 160);
 
-    aid = obj_f_get_int32(obj, OBJ_F_CURRENT_AID);
+    aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_frame_data(aid, &art_frame_data) == TIG_OK) {
         color = render_colors[art_frame_data.width / 2];
     } else {
         color = render_colors[40];
     }
 
-    obj_f_set_int32(obj, OBJ_F_COLOR, color);
+    obj_field_int32_set(obj, OBJ_F_COLOR, color);
 }
 
 // 0x442FA0
@@ -965,10 +965,10 @@ void sub_442FA0(object_id_t obj)
 {
     int colors;
 
-    colors = obj_f_get_int32(obj, OBJ_F_RENDER_COLORS);
+    colors = obj_field_int32_get(obj, OBJ_F_RENDER_COLORS);
     if (colors != 0) {
         sub_443010(colors);
-        obj_f_set_int32(obj, OBJ_F_RENDER_COLORS, 0);
+        obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, 0);
     }
 }
 
@@ -979,7 +979,7 @@ void sub_443770(object_id_t obj)
     sub_4437C0(obj);
     sub_442D50(obj);
     sub_442FA0(obj);
-    obj_f_set_int32(obj, obj_f_get_int32(obj, OBJ_F_RENDER_FLAGS) & ~0x76000000);
+    obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x76000000);
 }
 
 // 0x4437C0

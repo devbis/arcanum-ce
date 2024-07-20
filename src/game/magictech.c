@@ -1128,8 +1128,8 @@ bool sub_4507D0(object_id_t obj, int magictech)
         cost = 1;
     }
 
-    if ((obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-            || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+    if ((obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+            || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
         && stat_level(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
@@ -1152,8 +1152,8 @@ bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech)
         cost = 1;
     }
 
-    if ((obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-            || obj_f_get_int32(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+    if ((obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+            || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
         && stat_level(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
@@ -1170,12 +1170,12 @@ int64_t sub_450A50(object_id_t obj)
         return 0;
     }
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC
         && type != OBJ_TYPE_NPC
         && type >= OBJ_TYPE_WEAPON
         && type <= OBJ_TYPE_ITEM_GENERIC
-        && (obj_f_get_int32(obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
+        && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
         return obj_f_get_handle(obj, OBJ_F_ITEM_PARENT);
     }
 
@@ -1191,7 +1191,7 @@ int sub_450B90(object_id_t obj)
 // 0x450C10
 void sub_450C10(object_id_t obj, unsigned int flags)
 {
-    object_field_set(obj, OBJ_F_SPELL_FLAGS, object_field_get(obj, OBJ_F_SPELL_FLAGS) | flags);
+    obj_field_int32_set(obj, OBJ_F_SPELL_FLAGS, obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) | flags);
 }
 
 // 0x455710
@@ -1500,7 +1500,7 @@ void sub_45A760(object_id_t obj, const char* msg)
             msg,
             buffer,
             obj,
-            obj_f_get_int64(obj, OBJ_F_LOCATION),
-            obj_f_get_int64(obj, OBJ_F_LOCATION));
+            obj_field_int64_get(obj, OBJ_F_LOCATION),
+            obj_field_int64_get(obj, OBJ_F_LOCATION));
     }
 }

@@ -83,7 +83,7 @@ bool player_load(LoadContext* ctx)
         return false;
     }
 
-    long long location = object_field_get_64(pcObj, OBJ_F_LOCATION);
+    long long location = obj_field_int64_get(pcObj, OBJ_F_LOCATION);
     scroll_set_center(location);
     sub_4B8CE0(location);
     sub_4604E0();
@@ -118,8 +118,8 @@ void player_create()
         exit(EXIT_FAILURE);
     }
 
-    object_field_set(pcObj, OBJ_F_AID, art_id);
-    object_field_set(pcObj, OBJ_F_CURRENT_AID, art_id);
+    obj_field_int32_set(pcObj, OBJ_F_AID, art_id);
+    obj_field_int32_set(pcObj, OBJ_F_CURRENT_AID, art_id);
 
     stru_5D1138 = sub_407EF0(pcObj);
 }
@@ -134,7 +134,7 @@ bool player_is_pc_obj(object_id_t object_id)
 bool sub_40DA20(object_id_t object_id)
 {
     if (object_id != OBJ_HANDLE_NULL) {
-        return object_field_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC;
+        return obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC;
     } else {
         return false;
     }
@@ -220,8 +220,8 @@ bool player_obj_create_player(PlayerSpec* player_spec)
     }
 
     tig_debug_printf("player_obj_create_player: StartLoc: X: %d, Y: %d\n", x, y);
-    sub_406E10(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_DEST, x, y);
-    object_field_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
+    obj_field_int64_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_DEST, x, y);
+    obj_field_int32_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
 
     if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x4) == 0) {
         pcObj = player_spec->field_0;
@@ -231,7 +231,7 @@ bool player_obj_create_player(PlayerSpec* player_spec)
 
     level_set_level(player_spec->field_0, 1);
     sub_463E20(player_spec->field_0);
-    object_field_set(player_spec->field_0, OBJ_F_CRITTER_INVENTORY_SOURCE, 0);
+    obj_field_int32_set(player_spec->field_0, OBJ_F_CRITTER_INVENTORY_SOURCE, 0);
     sub_4604E0();
 
     return true;

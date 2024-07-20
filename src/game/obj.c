@@ -501,7 +501,7 @@ void sub_405790(int64_t obj_handle)
 
     object = obj_lock(obj_handle);
     tig_debug_pritnf("{{ Difs on object w/ aid:");
-    sub_408430(obj_f_get_int32(obj_handle, OBJ_F_AID));
+    sub_408430(obj_field_int32_get(obj_handle, OBJ_F_AID));
     if (object->field_44 != 0) {
         sub_40CBA0(object, sub_40D670);
         obj_unlock(obj_handle);
@@ -658,15 +658,15 @@ void sub_409000(int64_t obj)
     unsigned int flags;
     tig_art_id_t art_id = TIG_ART_ID_INVALID;
 
-    obj_f_set_int32(obj, OBJ_F_SHADOW, -1);
-    obj_f_set_int32(obj, OBJ_F_AID, TIG_ART_ID_INVALID);
-    obj_f_set_int32(obj, OBJ_F_DESTROYED_AID, TIG_ART_ID_INVALID);
-    obj_f_set_int32(obj, OBJ_F_CURRENT_AID, TIG_ART_ID_INVALID);
-    obj_f_set_int32(obj, OBJ_F_BLIT_COLOR, tig_color_make(255, 255, 255));
-    obj_f_set_int32(obj, OBJ_F_BLIT_ALPHA, 255);
-    obj_f_set_int32(obj, OBJ_F_BLIT_SCALE, 100);
-    obj_f_set_int32(obj, OBJ_F_LIGHT_AID, TIG_ART_ID_INVALID);
-    obj_f_set_int32(obj, OBJ_F_LIGHT_COLOR, tig_color_make(255, 255, 255));
+    obj_field_int32_set(obj, OBJ_F_SHADOW, -1);
+    obj_field_int32_set(obj, OBJ_F_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_CURRENT_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_BLIT_COLOR, tig_color_make(255, 255, 255));
+    obj_field_int32_set(obj, OBJ_F_BLIT_ALPHA, 255);
+    obj_field_int32_set(obj, OBJ_F_BLIT_SCALE, 100);
+    obj_field_int32_set(obj, OBJ_F_LIGHT_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, tig_color_make(255, 255, 255));
 
     for (index = 0; index < 7; index++) {
         sub_4074E0(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
@@ -681,7 +681,7 @@ void sub_409000(int64_t obj)
         sub_4074E0(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
     }
 
-    type = obj_f_get_int32(obj, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     switch (type) {
     case OBJ_TYPE_WEAPON:
     case OBJ_TYPE_AMMO:
@@ -694,23 +694,23 @@ void sub_409000(int64_t obj)
     case OBJ_TYPE_ITEM_WRITTEN:
     case OBJ_TYPE_ITEM_GENERIC:
         if (type == OBJ_TYPE_ITEM_KEY) {
-            obj_f_set_int32(obj, OBJ_F_ITEM_WEIGHT, 0);
+            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 0);
         } else if (type == OBJ_TYPE_ITEM_GOLD) {
-            obj_f_set_int32(obj, OBJ_F_ITEM_WEIGHT, 1);
+            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
         } else {
-            obj_f_set_int32(obj, OBJ_F_ITEM_WEIGHT, 10);
+            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
         }
 
-        obj_f_set_int32(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, TIG_ART_ID_INVALID);
-        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_1, 10000);
-        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_2, 10000);
-        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_3, 10000);
-        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_4, 10000);
-        obj_f_set_int32(obj, OBJ_F_ITEM_SPELL_5, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, TIG_ART_ID_INVALID);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_2, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_3, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_4, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_5, 10000);
 
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x434;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
         break;
     case OBJ_TYPE_PC:
     case OBJ_TYPE_NPC:
@@ -719,70 +719,70 @@ void sub_409000(int64_t obj)
         spell_set_defaults(obj);
         tech_set_defaults(obj);
 
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x4030;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
         break;
     }
 
     switch (type) {
     case OBJ_TYPE_WALL:
-        obj_f_set_int32(obj, OBJ_F_HP_PTS, 500);
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 500);
 
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x4000;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 
         tig_art_wall_id_create(0, 0, 0, 6, 0, 0, &art_id);
         break;
     case OBJ_TYPE_PORTAL:
-        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
 
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x4000;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 
         tig_art_portal_id_create(0, 1, 0, 0, 6, 0, &art_id);
         break;
     case OBJ_TYPE_CONTAINER:
-        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
 
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x4030;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 
         tig_art_container_id_create(0, 1, 0, 0, 0, &art_id);
         break;
     case OBJ_TYPE_SCENERY:
-        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
 
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x4830;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 
         tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
         break;
     case OBJ_TYPE_PROJECTILE:
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x430;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 
         tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
         break;
     case OBJ_TYPE_WEAPON:
         sub_409640(obj, TIG_ART_ITEM_TYPE_WEAPON);
-        obj_f_set_int32(obj, OBJ_F_WEAPON_AMMO_TYPE, 10000);
-        obj_f_set_int32(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
-        sub_407340(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-        sub_407340(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 10000);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
+        obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+        obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
         tig_art_item_id_create(0, 1, 0, 0, 3, 0, 0, 0, &art_id);
-        obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
+        obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
         tig_art_item_id_create(0, 2, 0, 0, 3, 0, 0, 0, &art_id);
-        obj_f_set_int32(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
         tig_art_item_id_create(0, 0, 0, 0, 3, 0, 0, 0, &art_id);
-        obj_f_set_int32(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
-        obj_f_set_int32(obj, OBJ_F_WEAPON_MISSILE_AID, TIG_ART_ID_INVALID);
-        obj_f_set_int32(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, TIG_ART_ID_INVALID);
+        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, TIG_ART_ID_INVALID);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, TIG_ART_ID_INVALID);
         break;
     case OBJ_TYPE_AMMO:
         sub_409640(obj, TIG_ART_ITEM_TYPE_AMMO);
@@ -791,16 +791,16 @@ void sub_409000(int64_t obj)
     case OBJ_TYPE_ITEM_ARMOR:
         sub_409640(obj, TIG_ART_ITEM_TYPE_ARMOR);
         tig_art_item_id_create(0, 1, 0, 0, 4, 2, 0, 0, &art_id);
-        obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
+        obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
         tig_art_item_id_create(0, 2, 0, 0, 4, 2, 0, 0, &art_id);
-        obj_f_set_int32(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
+        obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
         tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
-        obj_f_set_int32(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
-        obj_f_set_int32(obj, OBJ_F_ARMOR_FLAGS, OARF_SIZE_MEDIUM);
+        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
+        obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, OARF_SIZE_MEDIUM);
         break;
     case OBJ_TYPE_ITEM_GOLD:
         sub_409640(obj, TIG_ART_ITEM_TYPE_GOLD);
-        obj_f_set_int32(obj, OBJ_F_GOLD_QUANTITY, 1);
+        obj_field_int32_set(obj, OBJ_F_GOLD_QUANTITY, 1);
         tig_art_item_id_create(0, 0, 0, 0, 0, 3, 0, 0, &art_id);
         break;
     case OBJ_TYPE_ITEM_FOOD:
@@ -832,18 +832,18 @@ void sub_409000(int64_t obj)
         tig_art_critter_id_create(1, 0, 0, 0, 0, 4, 0, 0, 0, &art_id);
         break;
     case OBJ_TYPE_TRAP:
-        obj_f_set_int32(obj, OBJ_F_HP_PTS, 100);
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
 
-        flags = obj_f_get_int32(obj, OBJ_F_FLAGS);
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
         flags |= 0x100434;
-        obj_f_set_int32(obj, OBJ_F_FLAGS, flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 
         tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
         break;
     }
 
-    obj_f_set_int32(obj, OBJ_F_AID, art_id);
-    obj_f_set_int32(obj, OBJ_F_CURRENT_AID, art_id);
+    obj_field_int32_set(obj, OBJ_F_AID, art_id);
+    obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
 }
 
 // 0x409640
@@ -855,9 +855,9 @@ void sub_409640(int64_t obj, int subtype)
         art_id = TIG_ART_ID_INVALID;
     }
 
-    obj_f_set_int32(obj, OBJ_F_ITEM_INV_AID, art_id);
-    obj_f_set_int32(obj, OBJ_F_ITEM_WORTH, obj_item_defaults[subtype].worth);
-    obj_f_set_int32(obj, OBJ_F_HP_PTS, obj_item_defaults[subtype].hp);
+    obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
+    obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, obj_item_defaults[subtype].worth);
+    obj_field_int32_set(obj, OBJ_F_HP_PTS, obj_item_defaults[subtype].hp);
 }
 
 // 0x4096B0
@@ -1194,7 +1194,7 @@ bool obj_dif_write(TigFile* stream, int64_t obj_handle)
     }
 
     // FIXME: Unused.
-    obj_f_get_int32(obj_handle, OBJ_F_FLAGS);
+    obj_field_int32_get(obj_handle, OBJ_F_FLAGS);
 
     if (!sub_40D560(stream)) {
         obj_unlock(obj_handle);
@@ -1250,7 +1250,7 @@ void sub_406B80(int64_t obj_handle)
 }
 
 // 0x406CA0
-int object_field_get(object_id_t obj_handle, int fld)
+int obj_field_int32_get(object_id_t obj_handle, int fld)
 {
     Object* object;
     int value;
@@ -1283,7 +1283,7 @@ void object_field_not_exists(Object* object, int fld)
 }
 
 // 0x406D40
-void object_field_set(object_id_t obj_handle, int fld, int value)
+void obj_field_int32_set(object_id_t obj_handle, int fld, int value)
 {
     Object* object;
 
@@ -1299,7 +1299,7 @@ void object_field_set(object_id_t obj_handle, int fld, int value)
 }
 
 // 0x406DA0
-int64_t object_field_get_64(object_id_t obj_handle, int fld)
+int64_t obj_field_int64_get(object_id_t obj_handle, int fld)
 {
     Object* object;
     int64_t value;
@@ -1318,7 +1318,7 @@ int64_t object_field_get_64(object_id_t obj_handle, int fld)
 }
 
 // 0x406E10
-void object_field_set_64(object_id_t obj_handle, int fld, int64_t value)
+void obj_field_int64_set(object_id_t obj_handle, int fld, int64_t value)
 {
     Object* object;
 
@@ -1338,7 +1338,7 @@ void object_field_set_64(object_id_t obj_handle, int fld, int64_t value)
 }
 
 // 0x406E80
-int64_t object_field_get_handle(int64_t obj_handle, int fld)
+int64_t obj_field_handle_get(int64_t obj_handle, int fld)
 {
     Object* object;
     ObjectID oid;
@@ -1366,7 +1366,7 @@ int64_t object_field_get_handle(int64_t obj_handle, int fld)
 }
 
 // 0x406F20
-void object_field_set_handle(int64_t obj_handle, int fld, int64_t value)
+void obj_field_handle_set(int64_t obj_handle, int fld, int64_t value)
 {
     Object* object;
     ObjectID oid;
@@ -1390,7 +1390,7 @@ void object_field_set_handle(int64_t obj_handle, int fld, int64_t value)
 }
 
 // 0x406FB0
-bool object_field_get_obj(int64_t obj_handle, int fld, int64_t* value_ptr)
+bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr)
 {
     Object* object;
     ObjectID oid;
@@ -1465,7 +1465,7 @@ ObjectID sub_407100(int64_t obj_handle, int fld)
 }
 
 // 0x4071A0
-void object_field_get_string(int64_t obj_handle, int fld, char** value_ptr)
+void obj_field_string_get(int64_t obj_handle, int fld, char** value_ptr)
 {
     Object* object;
     int name_num;
@@ -1492,7 +1492,7 @@ void object_field_get_string(int64_t obj_handle, int fld, char** value_ptr)
 }
 
 // 0x407270
-void object_field_set_string(int64_t obj_handle, int fld, const char* value)
+void obj_field_string_set(int64_t obj_handle, int fld, const char* value)
 {
     Object* object;
 
@@ -1508,7 +1508,7 @@ void object_field_set_string(int64_t obj_handle, int fld, const char* value)
 }
 
 // 0x4072D0
-int object_field_indexed_int32_get(int64_t obj_handle, int fld, int index)
+int obj_arrayfield_int32_get(int64_t obj_handle, int fld, int index)
 {
     Object* object;
     int value;
@@ -1527,7 +1527,7 @@ int object_field_indexed_int32_get(int64_t obj_handle, int fld, int index)
 }
 
 // 0x407340
-void object_field_indexed_int32_set(int64_t obj_handle, int fld, int index, int value)
+void obj_arrayfield_int32_set(int64_t obj_handle, int fld, int index, int value)
 {
     Object* object;
 
@@ -1578,7 +1578,7 @@ void sub_4074E0(int64_t obj_handle, int fld, int index, int value)
 }
 
 // 0x407540
-int64_t object_field_indexed_int64_get(int64_t obj_handle, int fld, int index)
+int64_t obj_arrayfield_int64_get(int64_t obj_handle, int fld, int index)
 {
     Object* object;
     int64_t value;
@@ -1597,7 +1597,7 @@ int64_t object_field_indexed_int64_get(int64_t obj_handle, int fld, int index)
 }
 
 // 0x4075B0
-void object_field_indexed_int64_set(int64_t obj_handle, int fld, int index, int64_t value)
+void obj_arrayfield_int64_set(int64_t obj_handle, int fld, int index, int64_t value)
 {
     Object* object;
 
@@ -1613,7 +1613,7 @@ void object_field_indexed_int64_set(int64_t obj_handle, int fld, int index, int6
 }
 
 // 0x407610
-int64_t object_field_indexed_handle_get(int64_t obj_handle, int fld, int index)
+int64_t obj_arrayfield_handle_get(int64_t obj_handle, int fld, int index)
 {
     Object* object;
     ObjectID oid;
@@ -1636,7 +1636,7 @@ int64_t object_field_indexed_handle_get(int64_t obj_handle, int fld, int index)
 }
 
 // 0x4076A0
-bool object_field_indexed_obj_get(int64_t obj_handle, int fld, int index, int64_t* value_ptr)
+bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* value_ptr)
 {
     Object* object;
     ObjectID oid;
@@ -1676,7 +1676,7 @@ bool object_field_indexed_obj_get(int64_t obj_handle, int fld, int index, int64_
 }
 
 // 0x4077B0
-void object_field_indexed_obj_set(int64_t obj_handle, int fld, int index, int64_t value)
+void obj_arrayfield_obj_set(int64_t obj_handle, int fld, int index, int64_t value)
 {
     Object* object;
     ObjectID oid;
@@ -1764,7 +1764,7 @@ void sub_407960(int64_t obj_handle, int fld, int index, void* value)
 }
 
 // 0x4079C0
-int object_field_array_length_get(int64_t obj_handle, int fld)
+int obj_arrayfield_length_get(int64_t obj_handle, int fld)
 {
     Object* object;
     int length;
@@ -1783,7 +1783,7 @@ int object_field_array_length_get(int64_t obj_handle, int fld)
 }
 
 // 0x407A20
-void object_field_array_length_set(int64_t obj_handle, int fld, int length)
+void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length)
 {
     Object* object;
 

@@ -353,8 +353,8 @@ int sub_4EA4A0(object_id_t obj, int effect_id)
 {
     int count = 0;
 
-    if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC && object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        int effects_count = sub_4079C0(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        int effects_count = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
         for (int index = 0; index < effects_count; index++) {
             if (sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect_id) {
                 count++;
@@ -464,8 +464,8 @@ int effect_adjust_xp_gain(object_id_t obj, int value)
 // 0x4EABF0
 void effect_debug_obj(object_id_t obj)
 {
-    if (object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC || object_field_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        int effect_count = sub_4079C0(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        int effect_count = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
         tig_debug_println("\tEffect Debug Obj:\n");
         tig_debug_printf("\tEffect Count: %d\n", effect_count);
 

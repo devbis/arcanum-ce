@@ -496,7 +496,7 @@ void sub_56B970(int a1)
         mes_file_entry.num = index;
         if (message_find(follower_ui_mes_file, &mes_file_entry)) {
             if ((index == 6 && sub_575080(qword_67BC20, qword_67BC50))
-                || (index != 5 || (obj_f_get_int32(qword_67BC50, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0)) {
+                || (index != 5 || (obj_field_int32_get(qword_67BC50, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0)) {
                 if (index == a1) {
                     tig_font_push(dword_67BB5C);
                 } else {

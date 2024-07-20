@@ -183,7 +183,7 @@ void written_ui_create()
     sub_56C590(494, 0, 0);
 
     obj = sub_40DA50();
-    location = obj_f_get_int64(obj, OBJ_F_LOCATION);
+    location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     sub_4B8CE0(location);
 
     v1.window_handle = written_ui_window;

@@ -118,7 +118,7 @@ object_id_t sub_4BF210(int start, int64_t a2)
         return OBJ_HANDLE_NULL;
     }
 
-    obj_f_set_int32(obj, OBJ_F_WRITTEN_TEXT_START_LINE, start);
+    obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, start);
 
     return obj;
 }

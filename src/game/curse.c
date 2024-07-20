@@ -58,14 +58,14 @@ int sub_4C3D50(object_id_t obj, CurseInfo* curses)
     int cnt;
     int index;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return 0;
     }
 
-    cnt = sub_4079C0(obj, OBJ_F_PC_CURSE_IDX);
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     for (index = 0; index < cnt; index++) {
         curses[index].id = sub_407470(obj, OBJ_F_PC_CURSE_IDX, index);
-        curses[index].ts = sub_407540(obj, OBJ_F_PC_CURSE_TS_IDX, index);
+        curses[index].ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_CURSE_TS_IDX, index);
     }
 
     return cnt;
@@ -77,11 +77,11 @@ bool curse_is_added_to(object_id_t obj, int curse)
     int cnt;
     int index;
 
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return false;
     }
 
-    cnt = sub_4079C0(obj, OBJ_F_PC_CURSE_IDX);
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     for (index = 0; index < cnt; index++) {
         if (sub_407470(obj, OBJ_F_PC_CURSE_IDX, index) == curse) {
             return true;
@@ -94,7 +94,7 @@ bool curse_is_added_to(object_id_t obj, int curse)
 // 0x4C3E40
 void curse_add(object_id_t obj, int curse)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 
@@ -116,7 +116,7 @@ int curse_get_effect(int curse)
 // 0x4C3FA0
 void curse_remove(object_id_t obj, int curse)
 {
-    if (obj_f_get_int32(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 
