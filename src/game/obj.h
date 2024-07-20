@@ -778,6 +778,7 @@ typedef bool (ObjEnumerateCallback)(Object* object, int fld);
 bool obj_init(GameInitInfo* init_info);
 void obj_exit();
 void sub_405250();
+void sub_405790(int64_t obj_handle);
 void sub_405800(int type, int64_t* obj_ptr);
 void sub_408D60(Object* object, int fld, int* value_ptr);
 void sub_408E70(Object* object, int fld, int value);

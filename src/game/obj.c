@@ -490,6 +490,24 @@ void sub_405250()
     sub_4E3F80();
 }
 
+// 0x405790
+void sub_405790(int64_t obj_handle)
+{
+    Object* object;
+
+    object = obj_lock(obj_handle);
+    tig_debug_pritnf("{{ Difs on object w/ aid:");
+    sub_408430(obj_f_get_int32(obj_handle, OBJ_F_AID));
+    if (object->field_44 != 0) {
+        sub_40CBA0(object, sub_40D670);
+        obj_unlock(obj_handle);
+        tig_debug_println(" }}");
+    } else {
+        // FIXME: Object not unlocked.
+        tig_debug_println("No difs }}");
+    }
+}
+
 // 0x405800
 void sub_405800(int type, int64_t* obj_ptr)
 {
