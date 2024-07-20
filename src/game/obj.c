@@ -1782,6 +1782,22 @@ int object_field_array_length_get(int64_t obj_handle, int fld)
     return length;
 }
 
+// 0x407A20
+void object_field_array_length_set(int64_t obj_handle, int fld, int length)
+{
+    Object* object;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    sub_408E70(object, fld, length);
+    obj_unlock(obj_handle);
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {
