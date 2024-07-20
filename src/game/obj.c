@@ -1675,6 +1675,30 @@ bool object_field_indexed_obj_get(int64_t obj_handle, int fld, int index, int64_
     return false;
 }
 
+// 0x4077B0
+void object_field_indexed_obj_set(int64_t obj_handle, int fld, int index, int64_t value)
+{
+    Object* object;
+    ObjectID oid;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    if (value != OBJ_HANDLE_NULL) {
+        oid.type = -2;
+        oid.h.field_8 = value;
+    } else {
+        oid.type = 0;
+    }
+
+    sub_4088B0(obj_handle, fld, index, &oid);
+    obj_unlock(obj_handle);
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {
