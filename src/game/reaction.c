@@ -71,3 +71,18 @@ void sub_4C1020(int64_t pc, int64_t npc)
 
     sub_4C1490(pc, npc, v1, 0);
 }
+
+// 0x4C10A0
+void sub_4C10A0(int64_t pc, int64_t npc)
+{
+    int v1;
+
+    if (obj_field_int32_get(pc, OBJ_F_TYPE) != OBJ_TYPE_PC
+        || obj_field_int32_get(npc, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
+
+    v1 = sub_4C1290(pc, npc);
+    sub_4C1490(pc, 0, v1, 0);
+    sub_4C1360(pc, npc, v1);
+}
