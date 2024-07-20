@@ -1,6 +1,7 @@
 #include "game/reaction.h"
 
 #include "game/mes.h"
+#include "game/obj.h"
 
 // 0x5FC88C
 static int reaction_msg_file;
@@ -51,4 +52,22 @@ int reaction_translate(int value)
 const char* reaction_get_name(int reaction)
 {
     return reaction_names[reaction];
+}
+
+// 0x4C1020
+void sub_4C1020(int64_t pc, int64_t npc)
+{
+    int v1;
+
+    if (obj_field_int32_get(pc, OBJ_F_TYPE) != OBJ_TYPE_PC
+        || obj_field_int32_get(npc, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
+
+    v1 = sub_4C1290(pc, npc);
+    if (v1 < 100 && sub_4F5270(npc, 1)) {
+        v1 = 100;
+    }
+
+    sub_4C1490(pc, npc, v1, 0);
 }
