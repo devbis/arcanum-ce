@@ -1,9 +1,9 @@
-#ifndef ARCANUM_GAMELIB_TIMEEVENT_H_
-#define ARCANUM_GAMELIB_TIMEEVENT_H_
+#ifndef ARCANUM_GAME_TIMEEVENT_H_
+#define ARCANUM_GAME_TIMEEVENT_H_
 
 #include "game/context.h"
-#include "game/lib/location.h"
-#include "game/lib/object.h"
+#include "game/location.h"
+#include "game/obj.h"
 
 #define TIME_STR_LENGTH 20
 
@@ -12,7 +12,7 @@ typedef enum TimeType {
     TIME_TYPE_GAME_TIME,
     TIME_TYPE_ANIMATIONS,
     TIME_TYPE_COUNT,
-};
+} TimeType;
 
 typedef enum TimeEventType {
     TIMEEVENT_TYPE_DEBUG,
@@ -51,7 +51,7 @@ typedef enum TimeEventType {
     TIMEEVENT_TYPE_SCENERY_RESPAWN,
     TIMEEVENT_TYPE_RANDOM_ENCOUNTER,
     TIMEEVENT_TYPE_COUNT,
-};
+} TimeEventType;
 
 typedef enum TimeEventParamType {
     TIMEEVENT_PARAM_TYPE_INTEGER,
@@ -59,19 +59,19 @@ typedef enum TimeEventParamType {
     TIMEEVENT_PARAM_TYPE_LOCATION,
     TIMEEVENT_PARAM_TYPE_FLOAT,
     TIMEEVENT_PARAM_TYPE_COUNT,
-};
+} TimeEventParamType;
 
 typedef struct DateTime {
     unsigned int days;
     unsigned int milliseconds;
-};
+} DateTime;
 
 typedef union TimeEventParam {
     int integer_value;
     object_id_t object_value;
     location_t location_value;
     float float_value;
-};
+} TimeEventParam;
 
 // Max number of params timeevent params.
 #define TIMEEVENT_PARAM_COUNT 4
@@ -80,7 +80,7 @@ typedef struct TimeEvent {
     DateTime datetime;
     int type;
     TimeEventParam params[TIMEEVENT_PARAM_COUNT];
-};
+} TimeEvent;
 
 static_assert(sizeof(TimeEvent) == 0x30, "wrong size");
 
@@ -95,7 +95,7 @@ typedef struct TimeEventFuncs {
     TimeEventProcessFunc* clock_func;
     TimeEventProcessFunc* mainmenu_func;
     TimeEventProcessFunc* mp_ctrl_ui_func;
-};
+} TimeEventFuncs;
 
 // See 0x45AE20.
 static_assert(sizeof(TimeEventFuncs) == 0x1C, "wrong size");
@@ -151,4 +151,4 @@ bool sub_45C0E0(int list);
 bool sub_45C140(int list, TimeEventEnumerateFunc* callback);
 void timeevent_debug_lists();
 
-#endif /* ARCANUM_GAMELIB_TIMEEVENT_H_ */
+#endif /* ARCANUM_GAME_TIMEEVENT_H_ */
