@@ -1520,11 +1520,6 @@ int object_field_indexed_int32_get(int64_t obj_handle, int fld, int index)
         return 0;
     }
 
-    if (fld == OBJ_F_TYPE) {
-        // FIXME: Object not unlocked.
-        return object->type;
-    }
-
     sub_408BB0(object, fld, index, &value);
     obj_unlock(obj_handle);
 
@@ -1545,6 +1540,25 @@ void object_field_indexed_int32_set(int64_t obj_handle, int fld, int index, int 
 
     sub_4088B0(object, fld, index, &value);
     obj_unlock(obj_handle);
+}
+
+// 0x407470
+int sub_407470(int64_t obj_handle, int fld, int index)
+{
+    Object* object;
+    int64_t value;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return 0;
+    }
+
+    sub_408BB0(object, fld, index, &value);
+    obj_unlock(obj_handle);
+
+    return value;
 }
 
 // 0x408430
