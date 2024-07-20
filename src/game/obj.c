@@ -1507,6 +1507,30 @@ void object_field_set_string(int64_t obj_handle, int fld, const char* value)
     obj_unlock(obj_handle);
 }
 
+// 0x4072D0
+int object_field_indexed_int32_get(int64_t obj_handle, int fld, int index)
+{
+    Object* object;
+    int value;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return 0;
+    }
+
+    if (fld == OBJ_F_TYPE) {
+        // FIXME: Object not unlocked.
+        return object->type;
+    }
+
+    sub_408BB0(object, fld, index, &value);
+    obj_unlock(obj_handle);
+
+    return value;
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {
