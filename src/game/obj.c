@@ -2375,6 +2375,9 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
         }
         break;
     case OBJ_TYPE_NPC:
+        if (!obj_enumerate_fields_in_range(object, OBJ_F_CRITTER_BEGIN, OBJ_F_CRITTER_END, callback)) {
+            return false;
+        }
         if (!obj_enumerate_fields_in_range(object, OBJ_F_NPC_BEGIN, OBJ_F_NPC_END, callback)) {
             return false;
         }
