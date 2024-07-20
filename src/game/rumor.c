@@ -159,6 +159,12 @@ void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, 
     }
 }
 
+// 0x4C58A0
+void sub_4C58A0(object_id_t obj, int rumor, int64_t timestamp)
+{
+    obj_arrayfield_int64_set(obj, OBJ_F_PC_RUMOR_IDX, rumor - 1000, timestamp);
+}
+
 // 0x4C58D0
 bool sub_4C58D0(object_id_t object_id, int rumor)
 {
