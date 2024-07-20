@@ -17,6 +17,7 @@ typedef struct ObjectFieldInfo {
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
 static void object_field_not_exists(Object* object, int fld);
+static void sub_408430(tig_art_id_t aid);
 static Object* sub_408710(int64_t* obj_handle_ptr);
 static void sub_409000(int64_t obj);
 static void sub_409640(int64_t obj, int subtype);
@@ -1482,6 +1483,167 @@ void object_field_set_string(int64_t obj_handle, int fld, const char* value)
 
     sub_408760(object, fld, &value);
     obj_unlock(obj_handle);
+}
+
+// 0x408430
+void sub_408430(tig_art_id_t aid)
+{
+    int type;
+    int palette;
+    int item_type;
+    int item_subtype;
+    int item_damage;
+    int item_destroyed;
+    int item_num;
+    int item_disposition;
+
+    if (aid == TIG_ART_ID_INVALID) {
+        tig_debug_println("Empty Art ID");
+        return;
+    }
+
+    type = tig_art_type(aid);
+
+    palette = tig_art_id_palette_get(aid);
+    tig_debug_printf("Palette: %d  ", palette);
+
+    switch (type) {
+    case TIG_ART_TYPE_TILE:
+        tig_debug_printf("List: Tile  ");
+        break;
+    case TIG_ART_TYPE_WALL:
+        tig_debug_printf("List: Wall  ");
+        break;
+    case TIG_ART_TYPE_CRITTER:
+        tig_debug_printf("List: Critter  ");
+        break;
+    case TIG_ART_TYPE_PORTAL:
+        tig_debug_printf("List: Portal  ");
+        break;
+    case TIG_ART_TYPE_SCENERY:
+        tig_debug_printf("List: Scenery  ");
+        break;
+    case TIG_ART_TYPE_INTERFACE:
+        tig_debug_printf("List: Interface  ");
+        break;
+    case TIG_ART_TYPE_ITEM:
+        tig_debug_printf("List: Item  ");
+        item_type = tig_art_item_id_type_get(aid);
+        item_subtype = tig_art_item_id_subtype_get(aid);
+        item_damage = tig_art_id_damaged_get(aid);
+        item_destroyed = tig_art_item_id_destroyed_get(aid);
+        item_num = tig_art_num_get(aid);
+        item_disposition = tig_art_item_id_disposition_get(aid);
+        tig_debug_printf("Num: %d  Image: %d  Damage: %d  Destroyed: %d  ",
+            item_num,
+            item_disposition,
+            item_damage,
+            item_destroyed);
+        switch (item_type) {
+        case TIG_ART_ITEM_TYPE_WEAPON:
+            tig_debug_printf("Type: Weapon  ");
+            switch (item_subtype) {
+            case TIG_ART_WEAPON_TYPE_NO_WEAPON:
+                tig_debug_printf("Subtype: No Weapon  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_UNARMED:
+                tig_debug_printf("Subtype: Unarmed  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_DAGGER:
+                tig_debug_printf("Subtype: Dagger  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_SWORD:
+                tig_debug_printf("Subtype: Sword  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_AXE:
+                tig_debug_printf("Subtype: Axe  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_MACE:
+                tig_debug_printf("Subtype: Mace  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_PISTOL:
+                tig_debug_printf("Subtype: Pistol  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD:
+                tig_debug_printf("Subtype: Two Handed Sword  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_BOW:
+                tig_debug_printf("Subtype: Bow  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_UNUSED:
+                tig_debug_printf("Subtype: Unused Weapon  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_RIFLE:
+                tig_debug_printf("Subtype: Hi Tech Gun  ");
+                break;
+            case TIG_ART_WEAPON_TYPE_STAFF:
+                tig_debug_printf("Subtype: Staff  ");
+                break;
+            default:
+                tig_debug_printf("Subtype: *Invalid*  ");
+                break;
+            }
+            break;
+        case TIG_ART_ITEM_TYPE_AMMO:
+            tig_debug_printf("Type: Ammo  ");
+            break;
+        case TIG_ART_ITEM_TYPE_ARMOR:
+            tig_debug_printf("Type: Armor  ");
+            break;
+        case TIG_ART_ITEM_TYPE_GOLD:
+            tig_debug_printf("Type: Gold  ");
+            break;
+        case TIG_ART_ITEM_TYPE_FOOD:
+            tig_debug_printf("Type: Food  ");
+            break;
+        case TIG_ART_ITEM_TYPE_SCROLL:
+            tig_debug_printf("Type: Scroll  ");
+            break;
+        case TIG_ART_ITEM_TYPE_KEY:
+            tig_debug_printf("Type: Key  ");
+            break;
+        case TIG_ART_ITEM_TYPE_KEY_RING:
+            tig_debug_printf("Type: Key Ring  ");
+            break;
+        case TIG_ART_ITEM_TYPE_WRITTEN:
+            tig_debug_printf("Type: Written  ");
+            break;
+        case TIG_ART_ITEM_TYPE_GENERIC:
+            tig_debug_printf("Type: Generic  ");
+            break;
+        default:
+            tig_debug_printf("Type: *Invalid*  ");
+            break;
+        }
+        break;
+    case TIG_ART_TYPE_CONTAINER:
+        tig_debug_printf("List: Container  ");
+        break;
+    case TIG_ART_TYPE_MISC:
+        tig_debug_printf("List: Internal  ");
+        break;
+    case TIG_ART_TYPE_LIGHT:
+        tig_debug_printf("List: Light  ");
+        break;
+    case TIG_ART_TYPE_ROOF:
+        tig_debug_printf("List: Roof  ");
+        break;
+    case TIG_ART_TYPE_FACADE:
+        tig_debug_printf("List: Facade  ");
+        break;
+    case TIG_ART_TYPE_MONSTER:
+        tig_debug_printf("List: Monster  ");
+        break;
+    case TIG_ART_TYPE_UNIQUE_NPC:
+        tig_debug_printf("List: NPC  ");
+        break;
+    // FIXME: Missing TIG_ART_TYPE_EYE_CANDY.
+    default:
+        tig_debug_printf("List: *Invalid*  ");
+        break;
+    }
+
+    tig_debug_printf("\n");
 }
 
 // 0x40C030
