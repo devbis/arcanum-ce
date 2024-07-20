@@ -53,6 +53,12 @@ bool sub_4C0C40(int64_t pc, int64_t npc)
     return sub_4C12F0(pc, npc, false, &v1);
 }
 
+// 0x4C0CC0
+int sub_4C0CC0(int64_t a1, int64_t a2)
+{
+    return sub_4C0D00(a1, a2, 0);
+}
+
 // 0x4C0FC0
 int reaction_translate(int value)
 {
