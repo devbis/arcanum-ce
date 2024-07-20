@@ -740,7 +740,11 @@ typedef struct ObjectID_P {
 } ObjectID_P;
 
 typedef struct ObjectID {
-    uint16_t field_0;
+    union {
+        // TODO: Remove.
+        uint16_t field_0;
+        uint16_t type;
+    };
     int field_4;
     union {
         ObjectID_H h;
@@ -788,9 +792,16 @@ bool obj_write(TigFile* stream, int64_t obj_handle);
 bool obj_read(TigFile* stream, int64_t obj_handle_ptr);
 bool obj_dif_write(TigFile* stream, int64_t obj_handle);
 void sub_406B80(int64_t obj_handle);
-int object_field_get(object_id_t object_id, int field);
-void object_field_set(object_id_t object_id, int field, int value);
-long long object_field_get_64(object_id_t object_id, int field);
+int object_field_get(object_id_t obj_handle, int field);
+void object_field_set(object_id_t obj_handle, int field, int value);
+int64_t object_field_get_64(object_id_t obj_handle, int field);
+void object_field_set_64(object_id_t obj_handle, int fld, int64_t value);
+int64_t object_field_get_handle(int64_t obj_handle, int fld);
+void object_field_set_handle(int64_t obj_handle, int fld, int64_t value);
+bool object_field_get_obj(int64_t obj_handle, int fld, int64_t* value_ptr);
+ObjectID sub_407100(int64_t obj_handle, int fld);
+void object_field_get_string(int64_t obj_handle, int fld, char** value_ptr);
+void object_field_set_string(int64_t obj_handle, int fld, const char* value);
 Object* obj_lock(int64_t obj_handle);
 void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);

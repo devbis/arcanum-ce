@@ -1227,10 +1227,27 @@ void sub_406B80(int64_t obj_handle)
 }
 
 // 0x406CA0
-int object_field_get(object_id_t object_id, int field)
+int object_field_get(object_id_t obj_handle, int fld)
 {
-    // TODO: Incomplete.
+    Object* object;
+    int value;
 
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return 0;
+    }
+
+    if (fld == OBJ_F_TYPE) {
+        // FIXME: Object not unlocked.
+        return object->type;
+    }
+
+    sub_408A20(object, fld, &value);
+    obj_unlock(obj_handle);
+
+    return value;
 }
 
 // 0x406D10
@@ -1243,15 +1260,228 @@ void object_field_not_exists(Object* object, int fld)
 }
 
 // 0x406D40
-void object_field_set(object_id_t object_id, int field, int value)
+void object_field_set(object_id_t obj_handle, int fld, int value)
 {
-    // TODO: Incomplete.
+    Object* object;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    sub_408760(object, fld, &value);
+    obj_unlock(obj_handle);
 }
 
 // 0x406DA0
-long long object_field_get_64(object_id_t object_id, int field)
+int64_t object_field_get_64(object_id_t obj_handle, int fld)
 {
-    // TODO: Incomplete.
+    Object* object;
+    int64_t value;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return 0;
+    }
+
+    sub_408A20(object, fld, &value);
+    obj_unlock(obj_handle);
+
+    return value;
+}
+
+// 0x406E10
+void object_field_set_64(object_id_t obj_handle, int fld, int64_t value)
+{
+    Object* object;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    sub_408760(object, fld, &value);
+    obj_unlock(obj_handle);
+
+    if (fld == OBJ_F_LOCATION) {
+        obj_find_move(obj_handle);
+    }
+}
+
+// 0x406E80
+int64_t object_field_get_handle(int64_t obj_handle, int fld)
+{
+    Object* object;
+    ObjectID oid;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return 0;
+    }
+
+    if (fld == OBJ_F_PROTOTYPE_HANDLE) {
+        // FIXME: Object not unlocked.
+        return obj_get_prototype_handle(object);
+    }
+
+    sub_408A20(object, fld, &oid);
+    obj_unlock(obj_handle);
+
+    if (oid.type == 0 || oid.type != -2) {
+        return 0;
+    }
+
+    return oid.h.field_8;
+}
+
+// 0x406F20
+void object_field_set_handle(int64_t obj_handle, int fld, int64_t value)
+{
+    Object* object;
+    ObjectID oid;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    if (value != OBJ_HANDLE_NULL) {
+        oid.type = -2;
+        oid.h.field_8 = value;
+    } else {
+        oid.type = 0;
+    }
+
+    sub_408760(object, fld, &oid);
+    obj_unlock(obj_handle);
+}
+
+// 0x406FB0
+bool object_field_get_obj(int64_t obj_handle, int fld, int64_t* value_ptr)
+{
+    Object* object;
+    ObjectID oid;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        *value_ptr = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    if (fld == OBJ_F_PROTOTYPE_HANDLE) {
+        *value_ptr = obj_get_prototype_handle(object);
+        if (!sub_4E5470(*value_ptr)) {
+            *value_ptr = OBJ_HANDLE_NULL;
+            return false; // FIXME: Object not unlocked.
+        }
+
+        return true; // FIXME: Object not unlocked.
+    }
+
+    sub_408A20(object, fld, &oid);
+
+    if (oid.type == 0) {
+        obd_unlock(obj_handle);
+        *value_ptr = OBJ_HANDLE_NULL;
+        return true;
+    }
+
+    if (oid.type == -2) {
+        if (!sub_4E5470(oid.h.field_8)) {
+            oid.type = 0;
+            sub_408760(object, fld, &oid);
+            obj_unlock(obj_handle);
+            *value_ptr = OBJ_HANDLE_NULL;
+            return false;
+        }
+
+        obj_unlock(obj_handle);
+        *value_ptr = oid.h.field_8;
+        return true;
+    }
+
+    *value_ptr = OBJ_HANDLE_NULL;
+    return false;
+}
+
+// 0x407100
+ObjectID sub_407100(int64_t obj_handle, int fld)
+{
+    Object* object;
+    ObjectID oid;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        oid.type = -1;
+        return oid;
+    }
+
+    if (fld == OBJ_F_PROTOTYPE_HANDLE) {
+        // FIXME: Object not unlocked.
+        return object->field_20;
+    }
+
+    sub_408A20(object, fld, &oid);
+    obj_unlock(obj_handle);
+
+    return oid;
+}
+
+// 0x4071A0
+void object_field_get_string(int64_t obj_handle, int fld, char** value_ptr)
+{
+    Object* object;
+    int name_num;
+    char* name_str;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        *value_ptr = NULL;
+        return;
+    }
+
+    if (fld == OBJ_F_NAME) {
+        sub_408A20(obj_handle, OBJ_F_NAME, &name_num);
+        name_str = sub_4E7400(name_num);
+        *value_ptr = (char*)MALLOC(strlen(name_str) + 1);
+        strcpy(*value_ptr, name_str);
+    } else {
+        sub_408A20(obj_handle, fld, value_ptr);
+    }
+
+    obj_unlock(obj_handle);
+}
+
+// 0x407270
+void object_field_set_string(int64_t obj_handle, int fld, const char* value)
+{
+    Object* object;
+
+    object = obj_lock(obj_handle);
+    if (!sub_40C260(object->type, fld)) {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj_handle);
+        return;
+    }
+
+    sub_408760(object, fld, &value);
+    obj_unlock(obj_handle);
 }
 
 // 0x40C030
