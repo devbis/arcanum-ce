@@ -59,6 +59,12 @@ int sub_4C0CC0(int64_t a1, int64_t a2)
     return sub_4C0D00(a1, a2, 0);
 }
 
+// 0x4C0CE0
+int sub_4C0CE0(int64_t a1, int64_t a2)
+{
+    return sub_4C0D00(a1, a2, 1);
+}
+
 // 0x4C0FC0
 int reaction_translate(int value)
 {
