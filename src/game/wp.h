@@ -1,0 +1,14 @@
+#ifndef ARCANUM_GAME_WP_H_
+#define ARCANUM_GAME_WP_H_
+
+#include "game/context.h"
+
+bool wp_init(GameInitInfo* init_info);
+void wp_exit();
+void wp_resize(ResizeInfo* resize_info);
+bool sub_4BFDB0(ViewOptions* view_options);
+bool sub_4BFDD0();
+void sub_4BFDE0();
+void sub_4BFE00(void* a1);
+
+#endif /* ARCANUM_GAME_WP_H_ */
