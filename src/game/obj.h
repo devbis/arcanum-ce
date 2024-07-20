@@ -804,6 +804,7 @@ ObjectID sub_407100(int64_t obj_handle, int fld);
 void object_field_get_string(int64_t obj_handle, int fld, char** value_ptr);
 void object_field_set_string(int64_t obj_handle, int fld, const char* value);
 int object_field_indexed_int32_get(int64_t obj_handle, int fld, int index);
+void object_field_indexed_int32_set(int64_t obj_handle, int fld, int index, int value);
 Object* obj_lock(int64_t obj_handle);
 void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);
