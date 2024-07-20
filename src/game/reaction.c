@@ -125,3 +125,30 @@ int64_t sub_4C1110(int64_t npc)
 
     return obj_arrayfield_handle_get(npc, OBJ_F_NPC_REACTION_PC_IDX, 0);
 }
+
+// TODO: Figure out the math.
+//
+// 0x4C1150
+int sub_4C1150(int64_t a1, int64_t a2, int a3)
+{
+    int v1;
+    int v2;
+
+    v1 = sub_4C0CC0(a1, a2);
+    if (v1 > 100) {
+        v1 = 100;
+    } else {
+        if (v1 < 0) {
+            v2 = 200;
+            return a3 * v2 / 100;
+        }
+
+        if (v1 < 50) {
+            v2 = 2 * (100 - v1);
+            return a3 * v2 / 100;
+        }
+    }
+
+    v2 = 120 - 2 * v1 / 5;
+    return a3 * v2 / 100;
+}
