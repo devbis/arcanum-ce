@@ -16,6 +16,7 @@ typedef struct ObjectFieldInfo {
 
 static_assert(sizeof(ObjectFieldInfo) == 0x1C, "wrong size");
 
+static void object_field_not_exists(Object* object, int fld);
 static Object* sub_408710(int64_t* obj_handle_ptr);
 static void sub_409000(int64_t obj);
 static void sub_409640(int64_t obj, int subtype);
@@ -1230,6 +1231,15 @@ int object_field_get(object_id_t object_id, int field)
 {
     // TODO: Incomplete.
 
+}
+
+// 0x406D10
+void object_field_not_exists(Object* object, int fld)
+{
+  tig_debug_printf("Error: Accessing non-existant field [%s : %d] in object type [%d].\n",
+           object_field_names[fld],
+           fld,
+           object->type);
 }
 
 // 0x406D40

@@ -4100,15 +4100,6 @@ int sub_4067C0(int a1, int a2)
     return v1->field_44;
 }
 
-// 0x406D10
-int sub_406D10(void *a1, int a2)
-{
-  return tig_debug_printf_("Error: Accessing non-existant field [%s : %d] in object type [%d].\n",
-           object_field_names_[a2],
-           a2,
-           a1->field_0);
-}
-
 // 0x40A790
 int sub_40A790(int a1)
 {
