@@ -5,6 +5,7 @@
 #include "game/mes.h"
 #include "game/obj.h"
 #include "game/object_node.h"
+#include "game/player.h"
 #include "game/random.h"
 
 static void turn_based_changed();
@@ -13,6 +14,7 @@ static int sub_4B2810(int64_t obj);
 static void sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
 static void combat_turn_based_subturn_start();
+static void combat_turn_based_subturn_end();
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -493,9 +495,14 @@ void combat_turn_based_subturn_start()
 }
 
 // 0x4B7630
-void sub_4B7630()
+void combat_turn_based_subturn_end()
 {
-    // TODO: Incomplete.
+    combat_debug(dword_5FC240->obj, "SubTurn End");
+    if (player_is_pc_obj(dword_5FC240->obj)) {
+        dword_5FC1EC(0);
+    } else {
+        sub_441980(dword_5FC240->obj, dword_5FC240->obj, OBJ_HANDLE_NULL, 16, 0);
+    }
 }
 
 // 0x4B7690
