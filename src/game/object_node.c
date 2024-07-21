@@ -1,4 +1,4 @@
-#include "game/lib/object_node.h"
+#include "game/object_node.h"
 
 #define OBJECT_NODE_LIST_GROW_SIZE 64
 
@@ -9,8 +9,10 @@ static void object_node_remove_all();
 static ObjectNode* object_node_head;
 
 // 0x4E9920
-bool object_node_init(GameContext* ctx)
+bool object_node_init(GameContext* init_info)
 {
+    (void)init_info;
+
     return true;
 }
 
@@ -23,7 +25,9 @@ void object_node_exit()
 // 0x4E9940
 ObjectNode* object_node_create()
 {
-    ObjectNode* node = object_node_head;
+    ObjectNode* node;
+
+    node = object_node_head;
     if (node == NULL) {
         object_node_reserve();
         node = object_node_head;
@@ -43,11 +47,14 @@ void object_node_destroy(ObjectNode* node)
 }
 
 // 0x4E9990
-static void object_node_reserve()
+void object_node_reserve()
 {
+    int index;
+    ObjectNode* node;
+
     if (object_node_head != NULL) {
-        for (int index = 0; index < OBJECT_NODE_LIST_GROW_SIZE; index++) {
-            ObjectNode* node = (ObjectNode*)malloc(sizeof(*node));
+        for (index = 0; index < OBJECT_NODE_LIST_GROW_SIZE; index++) {
+            node = (ObjectNode*)MALLOC(sizeof(*node));
             node->next = object_node_head;
             object_node_head = node;
         }
@@ -55,13 +62,13 @@ static void object_node_reserve()
 }
 
 // 0x4E99C0
-static void object_node_remove_all()
+void object_node_remove_all()
 {
-    ObjectNode* curr = object_node_head;
-    while (curr != NULL) {
-        ObjectNode* next = curr->next;
-        free(curr);
-        curr = next;
+    ObjectNode* next;
+
+    while (object_node_head != NULL) {
+        next = object_node_head->next;
+        FREE(object_node_head);
+        object_node_head = next;
     }
-    object_node_head = NULL;
 }
