@@ -47,6 +47,7 @@ int critter_fatigue_adj_get(long long obj);
 int critter_fatigue_adj_set(long long obj, int value);
 int critter_fatigue_damage_get(long long obj);
 int critter_fatigue_damage_set(long long obj, int value);
+bool critter_is_sleeping(int64_t obj);
 void critter_debug_obj(object_id_t obj);
 
 #endif /* ARCANUM_GAME_CRITTER_H_ */

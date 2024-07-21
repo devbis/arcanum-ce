@@ -614,7 +614,7 @@ void sub_4B7CD0()
 bool sub_4B7DC0(int64_t obj)
 {
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DONTDRAW) != 0) {
-        return !sub_45D870(obj);
+        return !critter_is_sleeping(obj);
     } else {
         return false;
     }

@@ -274,9 +274,11 @@ void sub_45D800()
 }
 
 // 0x45D870
-void sub_45D870()
+bool critter_is_sleeping(int64_t obj)
 {
-    // TODO: Incomplete.
+    return obj != OBJ_HANDLE_NULL
+        && obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_SLEEPING) != 0;
 }
 
 // 0x45D8D0
