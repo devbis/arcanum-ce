@@ -16,6 +16,7 @@ static int sub_4B65A0();
 static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
+static bool sub_4B7DC0(int64_t obj);
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -610,9 +611,13 @@ void sub_4B7CD0()
 }
 
 // 0x4B7DC0
-void sub_4B7DC0()
+bool sub_4B7DC0(int64_t obj)
 {
-    // TODO: Incomplete.
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DONTDRAW) != 0) {
+        return !sub_45D870(obj);
+    } else {
+        return false;
+    }
 }
 
 // 0x4B7E00
