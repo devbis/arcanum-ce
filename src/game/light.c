@@ -1,14 +1,6 @@
-#include "game/lib/light.h"
+#include "game/light.h"
 
-#include "game/lib/gamelib.h"
-#include "game/lib/settings.h"
-#include "tig/art.h"
-#include "tig/color.h"
-#include "tig/debug.h"
-#include "tig/palette.h"
-#include "tig/rect.h"
-#include "tig/video.h"
-#include "tig/window.h"
+#include "game/gamelib.h"
 
 #define SHADOWS_KEY "shadows"
 
@@ -25,7 +17,7 @@ typedef struct Light30 {
     int field_24;
     int field_28;
     int field_2C;
-};
+} Light30;
 
 // See 0x4DDD20.
 static_assert(sizeof(Light30) == 0x30, "wrong size");
@@ -35,7 +27,7 @@ typedef struct Light602E60 {
     int field_4;
     int field_8;
     Light602E60* next;
-};
+} Light602E60;
 
 // See 4DE7C0.
 static_assert(sizeof(Light602E60) == 0x10, "wrong size");
@@ -113,10 +105,10 @@ static bool dword_602EB8;
 static int dword_602EBC;
 
 // 0x602EC0
-static bool dword_602EC0;
+static bool light_editor;
 
 // 0x602EC4
-static int dword_602EC4;
+static tig_window_handle_t light_iso_window_handle;
 
 // 0x602EC8
 static int dword_602EC8;
@@ -146,25 +138,26 @@ static int dword_603418;
 static int dword_60341C;
 
 // 0x4D7F30
-bool light_init(GameContext* ctx)
+bool light_init(GameInitInfo* init_info)
 {
-    dword_602E58 = (void**)calloc(7, sizeof(*dword_602E58));
+    TigWindowData window_data;
+
+    dword_602E58 = (void**)CALLOC(7, sizeof(*dword_602E58));
     nullsub_33();
-    dword_602EC4 = ctx->iso_window_handle;
-    dword_602E8C = ctx->field_8;
-    dword_602EC0 = ctx->editor;
+    light_iso_window_handle = init_info->iso_window_handle;
+    dword_602E8C = init_info->field_8;
+    light_editor = init_info->editor;
     light_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_602ECC = 1;
     dword_602EB8 = 1;
 
     if (sub_51FA80(&light_bpp) != TIG_OK) {
-        free(dword_602E58);
+        FREE(dword_602E58);
         return false;
     }
 
-    TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data) != TIG_OK) {
-        free(dword_602E58);
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
+        FREE(dword_602E58);
         return false;
     }
 
@@ -179,12 +172,12 @@ bool light_init(GameContext* ctx)
     light_shadows_enabled = settings_get_value(&settings, SHADOWS_KEY);
 
     if (!sub_4DDF50()) {
-        free(dword_602E58);
+        FREE(dword_602E58);
         return false;
     }
 
     if (!sub_4DE5D0()) {
-        free(dword_602E58);
+        FREE(dword_602E58);
         return false;
     }
 
@@ -204,17 +197,17 @@ void light_exit()
     sub_4DE730();
     sub_4DE250();
     sub_4DE060();
-    dword_602EC4 = -1;
+    light_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
     dword_602E8C = NULL;
     sub_4F8340();
-    free(dword_602E58);
+    FREE(dword_602E58);
 }
 
 // 0x4D8160
-void light_resize(ResizeContext* ctx)
+void light_resize(ResizeContext* resize_info)
 {
-    dword_602EC4 = ctx->iso_window_handle;
-    stru_602E48 = ctx->field_14;
+    light_iso_window_handle = resize_info->iso_window_handle;
+    stru_602E48 = resize_info->field_14;
     sub_4DE060();
 
     if (!sub_4DDF50()) {
@@ -638,6 +631,6 @@ void sub_4DF310(TigRect* rect, bool a2)
     dword_602E8C(&dirty_rect);
 
     if (a2) {
-        sub_43CB10(&dirty_rect);
+        object_invalidate_rect(&dirty_rect);
     }
 }
