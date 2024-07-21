@@ -4,6 +4,8 @@
 #include "game/gamelib.h"
 #include "game/mes.h"
 
+static void turn_based_changed();
+
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
 
@@ -100,7 +102,14 @@ int64_t sub_4B23B0(int64_t obj)
 // 0x4B23D0
 void turn_based_changed()
 {
-    // TODO: Incomplete.
+    int value;
+
+    value = settings_get_value(&settings, "turn-based");
+    if (value && (tig_net_flags & 0x1) != 0) {
+        settings_set_value(&settings, "turn-based", 0);
+    } else {
+        sub_4B6C90(value);
+    }
 }
 
 // 0x4B2410
