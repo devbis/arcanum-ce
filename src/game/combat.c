@@ -55,7 +55,11 @@ bool combat_init(GameInitInfo* init_info)
 // 0x4B1E50
 void combat_exit()
 {
-    // TODO: Incomplete.
+    mes_unload(combat_mes_file);
+    sub_4B7330();
+    if (!combat_editor) {
+        animfx_list_exit(&stru_5FC1F8);
+    }
 }
 
 // 0x4B1E80
