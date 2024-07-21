@@ -4,6 +4,7 @@
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/object_node.h"
 #include "game/random.h"
 
 static void turn_based_changed();
@@ -11,6 +12,7 @@ static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
 static void sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
+static void combat_turn_based_subturn_start();
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -26,6 +28,9 @@ static bool combat_turn_based;
 
 // 0x5FC228
 static bool combat_fast_turn_based;
+
+// 0x5FC240
+static ObjectNode* dword_5FC240;
 
 // 0x5FC268
 static bool in_combat_reset;
@@ -477,7 +482,14 @@ void sub_4B7580()
 // 0x4B75D0
 void combat_turn_based_subturn_start()
 {
-    // TODO: Incomplete.
+    if (dword_5FC240 != NULL) {
+        combat_debug(dword_5FC240->obj, "SubTurn Start");
+        sub_4B6E70(dword_5FC240->obj);
+        sub_4B7790(dword_5FC240->obj, 0);
+    } else {
+        tig_debug_printf("Combat: combat_turn_based_subturn_start: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");
+        sub_4B7330();
+    }
 }
 
 // 0x4B7630
