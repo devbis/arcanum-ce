@@ -1,8 +1,8 @@
 #include "game/critter.h"
 
-#include "game/lib/effect.h"
-#include "game/lib/stat.h"
-#include "tig/debug.h"
+#include "game/effect.h"
+#include "game/mes.h"
+#include "game/stat.h"
 
 // 0x5B306C
 static int dword_5B306C[MAX_ENCUMBRANCE_LEVEL] = {
@@ -16,7 +16,7 @@ static int dword_5B306C[MAX_ENCUMBRANCE_LEVEL] = {
 };
 
 // 0x5E8630
-static int xp_mes_file;
+static mes_file_handle_t xp_mes_file;
 
 // 0x5E8634
 static char** social_class_names;
@@ -25,10 +25,10 @@ static char** social_class_names;
 static int dword_5E8638;
 
 // 0x5E863C
-static int dword_5E863C;
+static bool critter_editor;
 
 // 0x5E8640
-static int critter_mes_file;
+static mes_file_handle_t critter_mes_file;
 
 // 0x45CF30
 bool critter_init(GameInitInfo* init_info)
@@ -36,13 +36,13 @@ bool critter_init(GameInitInfo* init_info)
     int index;
     MesFileEntry mes_file_entry;
 
-    dword_5E863C = init_info->app;
+    critter_editor = init_info->editor;
 
-    if (!message_load("Rules\\xp_critter.mes", &xp_mes_file)) {
+    if (!mes_load("Rules\\xp_critter.mes", &xp_mes_file)) {
         return false;
     }
 
-    if (!message_load("mes\\critter.mes", &critter_mes_file)) {
+    if (!mes_load("mes\\critter.mes", &critter_mes_file)) {
         return false;
     }
 
@@ -51,7 +51,7 @@ bool critter_init(GameInitInfo* init_info)
     for (index = 0; index < MAX_SOCIAL_CLASS; index++) {
         mes_file_entry.num = index;
         sub_4D43A0(critter_mes_file, &mes_file_entry);
-        social_class_names[index] = mes_file_entry.text;
+        social_class_names[index] = mes_file_entry.str;
     }
 
     dword_5E8638 = 1;
@@ -63,8 +63,8 @@ bool critter_init(GameInitInfo* init_info)
 void critter_exit()
 {
     FREE(social_class_names);
-    message_unload(critter_mes_file);
-    message_unload(xp_mes_file);
+    mes_unload(critter_mes_file);
+    mes_unload(xp_mes_file);
 }
 
 // 0x45D010
@@ -494,7 +494,7 @@ void sub_45EE90()
 tig_art_id_t sub_45EFA0(tig_art_id_t art_id)
 {
     tig_art_id_t new_art_id;
-    TigArtData art_anim_data;
+    TigArtAnimData art_anim_data;
 
     new_art_id = sub_503E50(art_id, 5);
     if (tig_art_exists(new_art_id) == TIG_OK
@@ -692,7 +692,7 @@ const char* critter_encumbrance_level_name(int level)
     mes_file_entry.num = level + 18;
     sub_4D43A0(critter_mes_file, &mes_file_entry);
 
-    return mes_file_entry.text;
+    return mes_file_entry.str;
 }
 
 // 0x45F960

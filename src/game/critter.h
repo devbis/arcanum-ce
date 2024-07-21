@@ -1,7 +1,7 @@
 #ifndef ARCANUM_GAME_CRITTER_H_
 #define ARCANUM_GAME_CRITTER_H_
 
-#include "game/lib/object.h"
+#include "game/context.h"
 
 typedef enum SocialClass {
     SOCIAL_CLASS_NOBLE,
@@ -29,6 +29,24 @@ typedef enum EncumbranceLevel {
     MAX_ENCUMBRANCE_LEVEL,
 } EncumbranceLevel;
 
+bool critter_init(GameInitInfo* init_info);
+void critter_exit();
+int critter_social_class_get(long long obj);
+int critter_social_class_set(long long obj, int value);
+const char* critter_social_class_name(int social_class);
+int critter_faction_get(long long obj);
+int critter_faction_set(long long obj, int value);
+bool critter_faction_same(long long a, long long b);
+int critter_origin_get(long long obj);
+int critter_origin_set(long long obj, int value);
+bool critter_origin_same(long long a, long long b);
+bool critter_is_pc(long long obj);
+int critter_fatigue_pts_get(long long obj);
+int critter_fatigue_pts_set(long long obj, int value);
+int critter_fatigue_adj_get(long long obj);
+int critter_fatigue_adj_set(long long obj, int value);
+int critter_fatigue_damage_get(long long obj);
+int critter_fatigue_damage_set(long long obj, int value);
 void critter_debug_obj(object_id_t obj);
 
 #endif /* ARCANUM_GAME_CRITTER_H_ */
