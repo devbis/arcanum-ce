@@ -19,6 +19,9 @@ static bool combat_turn_based;
 // 0x5FC228
 static bool combat_fast_turn_based;
 
+// 0x5FC268
+static bool in_combat_reset;
+
 // 0x4B1D50
 bool combat_init(GameInitInfo* init_info)
 {
@@ -65,7 +68,9 @@ void combat_exit()
 // 0x4B1E80
 void combat_reset()
 {
-    // TODO: Incomplete.
+    in_combat_reset = true;
+    sub_4B7330();
+    in_combat_reset = false;
 }
 
 // 0x4B1EA0
