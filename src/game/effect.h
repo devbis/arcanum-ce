@@ -1,10 +1,10 @@
-#ifndef ARCANUM_GAMELIB_EFFECT_H_
-#define ARCANUM_GAMELIB_EFFECT_H_
+#ifndef ARCANUM_GAME_EFFECT_H_
+#define ARCANUM_GAME_EFFECT_H_
 
 #include "game/context.h"
-#include "game/lib/object.h"
+#include "game/obj.h"
 
-bool effect_init(GameContext* ctx);
+bool effect_init(GameInitInfo* init_info);
 void effect_exit();
 bool effect_mod_load();
 void effect_mod_unload();
@@ -26,4 +26,4 @@ int effect_adjust_crit_fail_effect(object_id_t obj, int value);
 int effect_adjust_xp_gain(object_id_t obj, int value);
 void effect_debug_obj(object_id_t obj);
 
-#endif /* ARCANUM_GAMELIB_EFFECT_H_ */
+#endif /* ARCANUM_GAME_EFFECT_H_ */

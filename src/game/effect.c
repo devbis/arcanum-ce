@@ -1,9 +1,9 @@
-#include "game/lib/effect.h"
+#include "game/effect.h"
 
-#include "game/lib/message.h"
-#include "game/lib/skill.h"
-#include "game/lib/stat.h"
-#include "game/lib/tech.h"
+#include "game/mes.h"
+#include "game/skill.h"
+#include "game/stat.h"
+#include "game/tech.h"
 #include "tig/debug.h"
 
 #define EFFECT_LIST_CAPACITY 400
@@ -20,7 +20,7 @@ typedef enum EffectSpecial {
     EFFECT_SPECIAL_GOOD_REACTION_ADJUSTMENT,
     EFFECT_SPECIAL_XP_GAIN,
     EFFECT_SPECIAL_COUNT,
-};
+} EffectSpecial;
 
 typedef enum EffectOperator {
     EFFECT_OPERATOR_ADD,
@@ -29,14 +29,14 @@ typedef enum EffectOperator {
     EFFECT_OPERATOR_MIN,
     EFFECT_OPERATOR_MAX,
     EFFECT_OPERATOR_PERCENT,
-};
+} EffectOperator;
 
 typedef struct Effect {
     int count;
     int ids[7];
     int params[7];
     int operators[7];
-};
+} Effect;
 
 // See 0x4E99F0.
 static_assert(sizeof(Effect) == 0x58, "wrong size");
@@ -172,27 +172,27 @@ static Effect* effect_special_effects;
 // 0x4E99F0
 bool effect_init(GameContext* ctx)
 {
-    int msg_file;
-    MessageListItem msg;
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
 
-    if (!message_load("rules\\effect.mes", &msg_file)) {
+    if (!mes_load("rules\\effect.mes", &mes_file)) {
         return false;
     }
 
-    effect_stat_effects = (Effect*)calloc(EFFECT_LIST_CAPACITY, sizeof(*effect_stat_effects));
-    effect_basic_skill_effects = (Effect*)calloc(EFFECT_LIST_CAPACITY, sizeof(*effect_basic_skill_effects));
-    effect_tech_skill_effects = (Effect*)calloc(EFFECT_LIST_CAPACITY, sizeof(*effect_tech_skill_effects));
-    effect_resistance_effects = (Effect*)calloc(EFFECT_LIST_CAPACITY, sizeof(*effect_resistance_effects));
-    effect_tech_effects = (Effect*)calloc(EFFECT_LIST_CAPACITY, sizeof(*effect_tech_effects));
-    effect_special_effects = (Effect*)calloc(EFFECT_LIST_CAPACITY, sizeof(*effect_special_effects));
+    effect_stat_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_stat_effects));
+    effect_basic_skill_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_basic_skill_effects));
+    effect_tech_skill_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_tech_skill_effects));
+    effect_resistance_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_resistance_effects));
+    effect_tech_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_tech_effects));
+    effect_special_effects = (Effect*)CALLOC(EFFECT_LIST_CAPACITY, sizeof(*effect_special_effects));
 
-    for (msg.num = 50; msg.num < 400; msg.num++) {
-        if (message_find(msg_file, &msg)) {
-            effect_parse(msg.num, msg.text);
+    for (mes_file_entry.num = 50; mes_file_entry.num < 400; mes_file_entry.num++) {
+        if (mes_search(mes_file, &mes_file_entry)) {
+            effect_parse(mes_file_entry.num, mes_file_entry.str);
         }
     }
 
-    message_unload(msg_file);
+    mes_unload(mes_file);
     effect_initialized = true;
 
     return true;
@@ -201,29 +201,29 @@ bool effect_init(GameContext* ctx)
 // 0x4E9AE0
 void effect_exit()
 {
-    free(effect_stat_effects);
-    free(effect_basic_skill_effects);
-    free(effect_tech_skill_effects);
-    free(effect_resistance_effects);
-    free(effect_tech_effects);
-    free(effect_special_effects);
+    FREE(effect_stat_effects);
+    FREE(effect_basic_skill_effects);
+    FREE(effect_tech_skill_effects);
+    FREE(effect_resistance_effects);
+    FREE(effect_tech_effects);
+    FREE(effect_special_effects);
     effect_initialized = false;
 }
 
 // 0x004E9B40
 bool effect_mod_load()
 {
-    int msg_file;
-    MessageListItem msg;
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
 
-    if (message_load("rules\\gameeffect.mes", &msg_file)) {
-        for (msg.num = 0; msg.num < 50; msg.num++) {
-            if (message_find(msg_file, &msg)) {
-                effect_parse(msg.num, msg.text);
+    if (message_load("rules\\gameeffect.mes", &mes_file)) {
+        for (mes_file_entry.num = 0; mes_file_entry.num < 50; mes_file_entry.num++) {
+            if (mes_search(mes_file, &mes_file_entry)) {
+                effect_parse(mes_file_entry.num, mes_file_entry.str);
             }
         }
 
-        message_unload(msg_file);
+        message_unload(mes_file);
     }
 
     return true;
@@ -232,7 +232,9 @@ bool effect_mod_load()
 // 0x4E9BB0
 void effect_mod_unload()
 {
-    for (int index = 0; index < 50; index++) {
+    int index;
+
+    for (index = 0; index < 50; index++) {
         effect_stat_effects[index].count = 0;
         effect_basic_skill_effects[index].count = 0;
         effect_tech_skill_effects[index].count = 0;
@@ -245,42 +247,47 @@ void effect_mod_unload()
 // 0x4E9C20
 static void effect_parse(int num, char* text)
 {
-    char* tok = strtok(text, " ,");
+    char* tok;
+    Effect* effect_info;
+    int type;
+    int index;
+
+    tok = strtok(text, " ,");
     while (tok != NULL) {
         // NOTE: Original code is different. Probably uses an inlined routine or
         // a tree of loops.
-        Effect* effect_info = NULL;
-        for (int type = 0; type < 6 && effect_info == NULL; type++) {
+        effect_info = NULL;
+        for (type = 0; type < 6 && effect_info == NULL; type++) {
             switch (type) {
             case 0:
-                for (int stat = 0; stat < STAT_COUNT; stat++) {
-                    if (_strcmpi(tok, off_5B9BA8[stat]) == 0) {
+                for (index = 0; index < STAT_COUNT; index++) {
+                    if (_strcmpi(tok, off_5B9BA8[index]) == 0) {
                         effect_info = &(effect_stat_effects[num]);
-                        effect_info->ids[effect_info->count] = stat;
+                        effect_info->ids[effect_info->count] = index;
                         break;
                     }
                 }
                 break;
             case 1:
-                for (int skill = 0; skill < PRIMARY_SKILL_COUNT; skill++) {
-                    if (_strcmpi(tok, off_5B9C18[skill]) == 0) {
+                for (index = 0; index < PRIMARY_SKILL_COUNT; index++) {
+                    if (_strcmpi(tok, off_5B9C18[index]) == 0) {
                         effect_info = &(effect_basic_skill_effects[num]);
-                        effect_info->ids[effect_info->count] = skill;
+                        effect_info->ids[effect_info->count] = index;
                         break;
                     }
                 }
                 break;
             case 2:
-                for (int skill = 0; skill < SECONDARY_SKILL_COUNT; skill++) {
-                    if (_strcmpi(tok, off_5B9C48[skill]) == 0) {
+                for (index = 0; index < SECONDARY_SKILL_COUNT; index++) {
+                    if (_strcmpi(tok, off_5B9C48[index]) == 0) {
                         effect_info = &(effect_tech_skill_effects[num]);
-                        effect_info->ids[effect_info->count] = skill;
+                        effect_info->ids[effect_info->count] = index;
                         break;
                     }
                 }
                 break;
             case 3:
-                for (int index = 0; index < 5; index++) {
+                for (index = 0; index < 5; index++) {
                     if (_strcmpi(tok, off_5B9C58[index]) == 0) {
                         effect_info = &(effect_resistance_effects[num]);
                         effect_info->ids[effect_info->count] = index;
@@ -289,16 +296,16 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 4:
-                for (int tech = 0; tech < TECH_COUNT; tech++) {
-                    if (_strcmpi(tok, off_5B9C6C[tech]) == 0) {
+                for (index = 0; index < TECH_COUNT; index++) {
+                    if (_strcmpi(tok, off_5B9C6C[index]) == 0) {
                         effect_info = &(effect_tech_effects[num]);
-                        effect_info->ids[effect_info->count] = tech;
+                        effect_info->ids[effect_info->count] = index;
                         break;
                     }
                 }
                 break;
             case 5:
-                for (int index = 0; index < EFFECT_SPECIAL_COUNT; index++) {
+                for (index = 0; index < EFFECT_SPECIAL_COUNT; index++) {
                     if (_strcmpi(tok, off_5B9C8C[index]) == 0) {
                         effect_info = &(effect_special_effects[num]);
                         effect_info->ids[effect_info->count] = index;
@@ -329,8 +336,7 @@ static void effect_parse(int num, char* text)
             effect_info->operators[effect_info->count] = EFFECT_OPERATOR_ADD;
             effect_info->params[effect_info->count] = atoi(tok);
 
-            size_t tok_length = strlen(tok);
-            if (tok[tok_length - 1] == '%') {
+            if (tok[strlen(tok) - 1] == '%') {
                 effect_info->operators[effect_info->count] = EFFECT_OPERATOR_PERCENT;
             }
         } else if (tok[0] == '*') {
@@ -351,18 +357,21 @@ static void effect_parse(int num, char* text)
 // 0x4EA4A0
 int sub_4EA4A0(object_id_t obj, int effect_id)
 {
-    int count = 0;
+    int effect_count = 0;
+    int index;
+    int cnt;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        int effects_count = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
-        for (int index = 0; index < effects_count; index++) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+        for (index = 0; index < cnt; index++) {
             if (sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect_id) {
-                count++;
+                effect_count++;
             }
         }
     }
 
-    return count;
+    return effect_count;
 }
 
 // 0x4EA690
@@ -464,14 +473,18 @@ int effect_adjust_xp_gain(object_id_t obj, int value)
 // 0x4EABF0
 void effect_debug_obj(object_id_t obj)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        int effect_count = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
-        tig_debug_println("\tEffect Debug Obj:\n");
-        tig_debug_printf("\tEffect Count: %d\n", effect_count);
+    int cnt;
+    int index;
 
-        for (int index = 0; index < effect_count; index++) {
-            int effect_id = sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index);
-            tig_debug_printf("\t\tEffect %d: ID: %d\n", index, effect_id);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+        tig_debug_println("\tEffect Debug Obj:\n");
+        tig_debug_printf("\tEffect Count: %d\n", cnt);
+
+        for (index = 0; index < cnt; index++) {
+            tig_debug_printf("\t\tEffect %d: ID: %d\n",
+                index,
+                sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index));
         }
     }
 }
