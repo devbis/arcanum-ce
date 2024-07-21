@@ -1,9 +1,55 @@
 #include "game/combat.h"
 
+#include "game/animfx.h"
+#include "game/gamelib.h"
+#include "game/mes.h"
+
+// 0x5FC178
+static mes_file_handle_t combat_mes_file;
+
+// 0x5FC1D8
+static bool combat_editor;
+
+// 0x5FC1F8
+static AnimFxList stru_5FC1F8;
+
+// 0x5FC224
+static bool combat_turn_based;
+
+// 0x5FC228
+static bool combat_fast_turn_based;
+
 // 0x4B1D50
-void combat_init()
+bool combat_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    combat_editor = init_info->editor;
+
+    if (!mes_load("mes\\combat.mes", &combat_mes_file)) {
+        return false;
+    }
+
+    if (!combat_editor) {
+        if (!animfx_list_init(&stru_5FC1F8)) {
+            return false;
+        }
+
+        stru_5FC1F8.path = "Rules\\CombatEyeCandy.mes";
+        stru_5FC1F8.field_18 = 1;
+        if (!animfx_list_load(&stru_5FC1F8)) {
+            return false;
+        }
+    }
+
+    settings_add(&settings, "turn-based", "0", turn_based_changed);
+    combat_turn_based = settings_get_value(&settings, "turn-based");
+
+    settings_add(&settings, "fast turn-based", "0", fast_turn_based_changed);
+    combat_fast_turn_based = settings_get_value(&settings, "fast turn-based");
+
+    settings_add(&settings, "auto attack", "0", NULL);
+    settings_add(&settings, "combat taunts", "0", NULL);
+
+    return true;
 }
 
 // 0x4B1E50
