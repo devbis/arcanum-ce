@@ -643,13 +643,24 @@ void combat_taunts_set()
 }
 
 // 0x4B8330
-void combat_auto_switch_weapons_get()
+bool combat_auto_switch_weapons_get(int64_t obj)
 {
-    // TODO: Incomplete.
+    int player;
+
+    if ((tig_net_flags & 0x1) == 0) {
+        return settings_get_value(&settings, "auto switch");
+    }
+
+    player = sub_4A2B10(obj);
+    if (player == -1) {
+        return false;
+    }
+
+    return (sub_4A55D0(player) & 0x400) != 0;
 }
 
 // 0x4B8380
-void combat_auto_switch_weapons_set(int value)
+void combat_auto_switch_weapons_set(bool value)
 {
     int player;
 
@@ -659,9 +670,9 @@ void combat_auto_switch_weapons_set(int value)
         player = sub_4A2B10(player_get_pc_obj());
         if (player != -1) {
             if (value) {
-                sub_4A5510(player, 1024);
+                sub_4A5510(player, 0x400);
             } else {
-                sub_4A5570(player, 1024);
+                sub_4A5570(player, 0x400);
             }
         }
     }
