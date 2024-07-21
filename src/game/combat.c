@@ -619,9 +619,24 @@ void sub_4B81B0()
 }
 
 // 0x4B8230
-void combat_auto_attack_get()
+bool combat_auto_attack_get(int64_t obj)
 {
-    // TODO: Incomplete.
+    int player;
+
+    if (sub_4B6D70()) {
+        return false;
+    }
+
+    if ((tig_net_flags & 0x1) == 0) {
+        return settings_get_value(&settings, "auto attack");
+    }
+
+    player = sub_4A2B10(obj);
+    if (player == -1) {
+        return false;
+    }
+
+    return (sub_4A55D0(player) & 0x200) != 0;
 }
 
 // 0x4B8280
