@@ -5,6 +5,7 @@
 #include "game/mes.h"
 
 static void turn_based_changed();
+static void fast_turn_based_changed();
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -115,7 +116,7 @@ void turn_based_changed()
 // 0x4B2410
 void fast_turn_based_changed()
 {
-    // TODO: Incomplete.
+    combat_fast_turn_based = settings_get_value(&settings, "fast turn-based");
 }
 
 // 0x4B24F0
