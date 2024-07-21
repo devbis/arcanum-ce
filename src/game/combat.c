@@ -649,9 +649,22 @@ void combat_auto_switch_weapons_get()
 }
 
 // 0x4B8380
-void combat_auto_switch_weapons_set()
+void combat_auto_switch_weapons_set(int value)
 {
-    // TODO: Incomplete.
+    int player;
+
+    settings_set_value(&settings, "auto switch", value);
+
+    if ((tig_net_flags & 0x1) != 0) {
+        player = sub_4A2B10(player_get_pc_obj());
+        if (player != -1) {
+            if (value) {
+                sub_4A5510(player, 1024);
+            } else {
+                sub_4A5570(player, 1024);
+            }
+        }
+    }
 }
 
 // 0x4B83E0
