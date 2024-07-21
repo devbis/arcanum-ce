@@ -92,9 +92,9 @@ void sub_4B2210()
 }
 
 // 0x4B23B0
-void sub_4B23B0()
+int64_t sub_4B23B0(int64_t obj)
 {
-    // TODO: Incomplete.
+    return item_wield_get(obj, 1004);
 }
 
 // 0x4B23D0
