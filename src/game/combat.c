@@ -360,9 +360,16 @@ void sub_4B6A00()
 }
 
 // 0x4B6B10
-void sub_4B6B10()
+tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2)
 {
-    // TODO: Incomplete.
+    if (tig_art_type(aid) == TIG_ART_TYPE_ITEM) {
+        aid = tig_art_id_rotation_set(aid, v2 / 4);
+    } else {
+        aid = sub_502780(aid, tig_art_num(aid) + v2 / 8);
+        aid = tig_art_id_rotation_set(aid, v2 % 8);
+    }
+
+    return aid;
 }
 
 // 0x4B6B90
