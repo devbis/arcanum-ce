@@ -8,5 +8,6 @@ void combat_exit();
 void combat_reset();
 int64_t sub_4B23B0(int64_t obj);
 bool combat_critter_is_combat_mode_active(int64_t obj);
+void combat_critter_activate_combat_mode(int64_t obj);
 
 #endif /* ARCANUM_GAME_COMBAT_H_ */

@@ -226,9 +226,11 @@ void sub_4B3F20()
 }
 
 // 0x4B3F50
-void sub_4B3F50()
+void combat_critter_activate_combat_mode(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (!combat_critter_is_combat_mode_active(obj)) {
+        combat_critter_toggle_combat_mode(obj);
+    }
 }
 
 // 0x4B3F80
