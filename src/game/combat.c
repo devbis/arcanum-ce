@@ -13,6 +13,7 @@ static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
 static void sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
+static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
 
@@ -476,9 +477,22 @@ void combat_turn_based_begin_turn()
 }
 
 // 0x4B7580
-void sub_4B7580()
+bool sub_4B7580(ObjectNode* object_node)
 {
-    // TODO: Incomplete.
+    if (dword_5FC240 == NULL) {
+        return true;
+    }
+
+    if (!sub_45D790(object_node->obj)) {
+        sub_427000(object_node->obj);
+        return true;
+    }
+
+    if (sub_4B7DC0(object_node->obj)) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x4B75D0
