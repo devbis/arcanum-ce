@@ -631,9 +631,13 @@ void combat_auto_attack_set()
 }
 
 // 0x4B82E0
-void combat_taunts_get()
+bool combat_taunts_get()
 {
-    // TODO: Incomplete.
+    if ((tig_net_flags & 0x1) == 0) {
+        return settings_get_value(&settings, "combat taunts");
+    } else {
+        return false;
+    }
 }
 
 // 0x4B8300
