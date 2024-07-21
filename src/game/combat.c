@@ -637,9 +637,11 @@ void combat_taunts_get()
 }
 
 // 0x4B8300
-void combat_taunts_set()
+void combat_taunts_set(bool value)
 {
-    // TODO: Incomplete.
+    if ((tig_net_flags & 0x1) == 0) {
+        settings_set_value(&settings, "combat taunts", value);
+    }
 }
 
 // 0x4B8330
