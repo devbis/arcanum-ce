@@ -204,9 +204,13 @@ void sub_4B3C00()
 }
 
 // 0x4B3D50
-void sub_4B3D50()
+bool combat_critter_is_combat_mode_active(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_COMBAT_MODE_ACTIVE) != 0;
+    } else {
+        return false;
+    }
 }
 
 // 0x4B3D90
