@@ -8,6 +8,7 @@
 static void turn_based_changed();
 static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
+static void sub_4B54B0(int64_t obj, int a2);
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -254,9 +255,18 @@ void sub_4B4390()
 }
 
 // 0x4B54B0
-void sub_4B54B0()
+void sub_4B54B0(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    switch (a2) {
+    case 1:
+        return item_wield_get(obj, 1000);
+    case 2:
+        return item_wield_get(obj, 1007);
+    case 3:
+        return item_wield_get(obj, 1008);
+    default:
+        return item_wield_get(obj, 1006);
+    }
 }
 
 // 0x4B5520
