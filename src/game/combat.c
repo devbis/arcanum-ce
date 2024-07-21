@@ -7,6 +7,7 @@
 #include "game/object_node.h"
 #include "game/player.h"
 #include "game/random.h"
+#include "game/timeevent.h"
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
@@ -16,6 +17,7 @@ static int sub_4B65A0();
 static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
+static void combat_turn_based_end_turn();
 static bool sub_4B7DC0(int64_t obj);
 
 // 0x5FC178
@@ -527,9 +529,14 @@ void combat_turn_based_next_subturn()
 }
 
 // 0x4B7740
-void sub_4B7740()
+void combat_turn_based_end_turn()
 {
-    // TODO: Incomplete.
+    DateTime datetime;
+
+    combat_debug(OBJ_HANDLE_NULL, "TB End Turn");
+    sub_45A950(&datetime, 1000);
+    sub_45C200(&datetime);
+    combat_turn_based_begin_turn();
 }
 
 // 0x4B7780
