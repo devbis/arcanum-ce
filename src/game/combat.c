@@ -4,11 +4,13 @@
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/random.h"
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
 static void sub_4B54B0(int64_t obj, int a2);
+static int sub_4B65A0();
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -318,9 +320,13 @@ void sub_4B6410()
 }
 
 // 0x4B65A0
-void sub_4B65A0()
+int sub_4B65A0()
 {
-    // TODO: Incomplete.
+    int value = random_between(1, 100);
+    if (value <= 70) return 0;
+    if (value <= 85) return 1;
+    if (value <= 95) return 2;
+    return 3;
 }
 
 // 0x4B65D0
