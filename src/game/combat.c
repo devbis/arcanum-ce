@@ -35,6 +35,9 @@ static bool combat_turn_based;
 // 0x5FC228
 static bool combat_fast_turn_based;
 
+// 0x5FC234
+static int combat_action_points;
+
 // 0x5FC240
 static ObjectNode* dword_5FC240;
 
@@ -540,9 +543,9 @@ void combat_turn_based_end_turn()
 }
 
 // 0x4B7780
-void sub_4B7780()
+int combat_get_action_points()
 {
-    // TODO: Incomplete.
+    return combat_action_points;
 }
 
 // 0x4B7790

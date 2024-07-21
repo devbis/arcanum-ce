@@ -1705,12 +1705,6 @@ int sub_4B6D70()
     return dword_5FC22C;
 }
 
-// 0x4B7780
-int sub_4B7780()
-{
-    return dword_5FC234;
-}
-
 // 0x4B7C20
 int sub_4B7C20()
 {
