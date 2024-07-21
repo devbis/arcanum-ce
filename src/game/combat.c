@@ -3,9 +3,11 @@
 #include "game/animfx.h"
 #include "game/gamelib.h"
 #include "game/mes.h"
+#include "game/obj.h"
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
+static int sub_4B2810(int64_t obj);
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -138,9 +140,25 @@ void sub_4B2690()
 }
 
 // 0x4B2810
-void sub_4B2810()
+int sub_4B2810(int64_t obj)
 {
-    // TODO: Incomplete.
+    int flags;
+
+    if (obj == OBJ_HANDLE_NULL
+        || obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_WEAPON) {
+        return 1;
+    }
+
+    flags = obj_field_int32_get(obj, OBJ_F_WEAPON_FLAGS);
+    if ((flags & OWF_LOUD) != 0) {
+        return 2;
+    }
+
+    if ((flags & OWF_SILENT) != 0) {
+        return 0;
+    }
+
+    return 1;
 }
 
 // 0x4B2870
