@@ -121,9 +121,24 @@ bool sub_412E10(const char* path, int* a2)
 }
 
 // 0x412F40
-void sub_412F40(int index)
+void sub_412F40(int dlg)
 {
-    dword_5D1A08[index].refcount--;
+    dword_5D1A08[dlg].refcount--;
+}
+
+// 0x412F60
+void sub_412F60(int dlg)
+{
+    int index;
+
+    for (index = 0; index < dword_5D1A08[dlg].entries_length; index++) {
+        sub_417F40(&(dword_5D1A08[dlg].entries[index]));
+    }
+
+    FREE(dword_5D1A08[dlg].entries);
+    dword_5D1A08[dlg].path[0] = '\0';
+
+    dword_5D1A00--;
 }
 
 // 0x417D60
