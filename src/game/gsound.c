@@ -404,6 +404,16 @@ void sub_41BAC0(int a1)
     }
 }
 
+// 0x41BCD0
+void sub_41BCD0(const char* name, char* buffer)
+{
+    if (name[0] == '#') {
+        gsound_path_resolver(atoi(name + 1), buffer);
+    } else {
+        sprintf(buffer, "%s%s", gsound_base_sound_path, name);
+    }
+}
+
 // 0x41BD10
 bool sub_41BD10(int a1, int* a2)
 {
