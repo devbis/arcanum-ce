@@ -15,9 +15,11 @@ static int dword_5D19FC;
 static bool dword_5D1A0C;
 
 // 0x412D40
-bool dialog_init()
+bool dialog_init(GameInitInfo* init_info)
 {
     int index;
+
+    (void)init_info;
 
     dword_5D19F4 = CALLOC(32, sizeof(int));
     for (index = 0; index < 32; index++) {
