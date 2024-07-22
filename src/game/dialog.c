@@ -19,7 +19,7 @@ static_assert(sizeof(Dialog) == 0x1C, "wrong size");
 
 typedef struct Dialog {
     /* 0000 */ char path[TIG_MAX_PATH];
-    /* 0104 */ int field_104;
+    /* 0104 */ int refcount;
     /* 0108 */ DateTime timestamp;
     /* 0110 */ int entries_length;
     /* 0114 */ int entries_capacity;
@@ -37,6 +37,9 @@ static int dword_5D19F8;
 
 // 0x5D19FC
 static int dword_5D19FC;
+
+// 0x5D1A00
+static int dword_5D1A00;
 
 // 0x5D1A04
 static int dword_5D1A04;
@@ -84,6 +87,37 @@ void dialog_exit()
         dword_5D1A08 = NULL;
         dword_5D1A04 = 0;
     }
+}
+
+// 0x412E10
+bool sub_412E10(const char* path, int* a2)
+{
+    int index;
+    Dialog dialog;
+
+    if (sub_4175D0(path, &index)) {
+        dword_5D1A08[index].refcount++;
+        dword_5D1A08[index].timestamp = sub_45A7C0();
+    } else {
+        strcpy(dialog.path, path);
+        dialog.refcount = 1;
+        dialog.timestamp = sub_45A7C0();
+        dialog.entries_length = 0;
+        dialog.entries_capacity = 0;
+        dialog.entries = NULL;
+        sub_417720(&dialog);
+
+        if (dialog.entries_length == 0) {
+            return false;
+        }
+
+        dword_5D1A08[index] = dialog;
+        dword_5D1A00++;
+    }
+
+    *a2 = index;
+
+    return true;
 }
 
 // 0x417D60
