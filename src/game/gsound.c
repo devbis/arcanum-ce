@@ -1,12 +1,10 @@
-#include "game/lib/gsound.h"
+#include "game/gsound.h"
 
 #include <stdio.h>
 
-#include "game/lib/message.h"
-#include "game/lib/random.h"
-#include "game/lib/settings.h"
-#include "tig/file.h"
-#include "tig/sound.h"
+#include "game/gamelib.h"
+#include "game/mes.h"
+#include "game/random.h"
 
 #define TWO 2
 #define TWENTY_FIVE 25
@@ -24,7 +22,7 @@ typedef struct SoundScheme {
     int volume_max;
     int field_20;
     char path[MAX_PATH];
-};
+} SoundScheme;
 
 // See 0x41BF70.
 static_assert(sizeof(SoundScheme) == 0x128, "wrong size");
@@ -34,7 +32,7 @@ typedef struct SoundSchemeList {
     int field_4;
     int field_8;
     SoundScheme field_C[TWENTY_FIVE];
-};
+} SoundSchemeList;
 
 static_assert(sizeof(SoundSchemeList) == 0x1CF4, "wrong size");
 
@@ -59,7 +57,7 @@ static int dword_5D1A30[TWO];
 static int dword_5D1A38[TWO];
 
 // 0x5D1A40
-static int dword_5D1A40;
+static mes_file_handle_t dword_5D1A40;
 
 // 0x5D1A44
 static int gsound_music_volume;
@@ -77,7 +75,7 @@ static int64_t qword_5D1A50;
 static int64_t qword_5D1A58;
 
 // 0x5D1A68
-static int* dword_5D1A68;
+static mes_file_handle_t* dword_5D1A68;
 
 // 0x5D1A60
 static int64_t qword_5D1A60;
@@ -95,10 +93,13 @@ static int64_t sound_minimum_radius[TIG_SOUND_SIZE_COUNT];
 static SoundSchemeList stru_5D1A98[TWO];
 
 // 0x5D5480
-static int dword_5D5480;
+static mes_file_handle_t dword_5D5480;
 
 // 0x5D5484
 static int dword_5D5484[TWO];
+
+// 0x5D548C
+static int dword_5D548C;
 
 // NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
 // compatibility.
@@ -107,7 +108,7 @@ static int dword_5D5484[TWO];
 static int dword_5D5594;
 
 // 0x5D5598
-static int dword_5D5598;
+static mes_file_handle_t dword_5D5598;
 
 // 0x5D559C
 static int gsound_effects_volume;
@@ -136,20 +137,22 @@ static int64_t qword_5D55E8;
 // 0x41A940
 int sub_41A940(int sound_id, char* path)
 {
-    if (dword_5D1A6C) {
-        MessageListItem msg;
-        msg.num = sound_id;
+    MesFileEntry mes_file_entry;
+    int index;
 
-        for (int index = 0; index < dword_5D55B0; index++) {
-            if (message_find(dword_5D1A68[index], &msg)) {
-                sprintf(path, "%s%s", gsound_base_sound_path, msg.text);
+    if (dword_5D1A6C) {
+        mes_file_entry.num = sound_id;
+
+        for (index = 0; index < dword_5D55B0; index++) {
+            if (mes_search(dword_5D1A68[index], &mes_file_entry)) {
+                sprintf(path, "%s%s", gsound_base_sound_path, mes_file_entry.str);
                 return TIG_OK;
             }
         }
 
-        if (dword_5D5598 != -1) {
-            if (message_find(dword_5D5598, &msg)) {
-                sprintf(path, "%s%s", gsound_base_sound_path, msg.text);
+        if (dword_5D5598 != MES_FILE_HANDLE_INVALID) {
+            if (mes_search(dword_5D5598, &mes_file_entry)) {
+                sprintf(path, "%s%s", gsound_base_sound_path, mes_file_entry.str);
                 return TIG_OK;
             }
         }
@@ -160,7 +163,7 @@ int sub_41A940(int sound_id, char* path)
 }
 
 // 0x41AA30
-bool gsound_init(GameContext* ctx)
+bool gsound_init(GameInitInfo* init_info)
 {
     // TODO: Incomplete.
 }
@@ -179,19 +182,21 @@ const char* gsound_build_sound_path(const char* name)
 // 0x41AFF0
 void gsound_exit()
 {
+    int index;
+
     dword_5D1A6C = false;
 
-    for (int index = 0; index < dword_5D55B0; index++) {
-        message_unload(dword_5D1A68[index]);
+    for (index = 0; index < dword_5D55B0; index++) {
+        mes_unload(dword_5D1A68[index]);
     }
 
-    free(dword_5D1A68);
+    FREE(dword_5D1A68);
     dword_5D1A68 = NULL;
 
     dword_5D55B0 = 0;
 
-    message_unload(dword_5D5480);
-    message_unload(dword_5D1A40);
+    mes_unload(dword_5D5480);
+    mes_unload(dword_5D1A40);
 }
 
 // 0x41B060
@@ -208,44 +213,45 @@ void gsound_reset()
 // 0x41B0A0
 bool gsound_mod_load()
 {
-    message_load(gsound_build_sound_path("snd_user.mes"), &dword_5D5598);
+    mes_load(gsound_build_sound_path("snd_user.mes"), &dword_5D5598);
     return true;
 }
 
 // 0x41B0D0
 void gsound_mod_unload()
 {
-    message_unload(dword_5D5598);
-    dword_5D5598 = -1;
+    mes_unload(dword_5D5598);
+    dword_5D5598 = MES_FILE_HANDLE_INVALID;
 }
 
 // 0x41B0F0
-bool gsound_load(LoadContext* ctx)
+bool gsound_load(GameLoadInfo* load_info)
 {
     int temp[TWO];
+    int index;
 
-    for (int index = 0; index < TWO; index++) {
-        if (tig_file_fread(&(temp[index]), sizeof(*temp), 1, ctx->stream) != 1) {
+    for (index = 0; index < TWO; index++) {
+        if (tig_file_fread(&(temp[index]), sizeof(*temp), 1, load_info->stream) != 1) {
             return false;
         }
     }
 
-    if (tig_file_fread(&dword_5D5594, sizeof(dword_5D5594), 1, ctx->stream) != 1) {
+    if (tig_file_fread(&dword_5D5594, sizeof(dword_5D5594), 1, load_info->stream) != 1) {
         return false;
     }
 
-    for (int index = 0; index < TWO; index++) {
-        if (tig_file_fread(&(dword_5D1A38[index]), sizeof(*dword_5D1A38), 1, ctx->stream) != 1) {
+    for (index = 0; index < TWO; index++) {
+        if (tig_file_fread(&(dword_5D1A38[index]), sizeof(*dword_5D1A38), 1, load_info->stream) != 1) {
             return false;
         }
     }
 
-    if (tig_file_fread(&dword_5D55D8, sizeof(dword_5D55D8), 1, ctx->stream) != 1) {
+    if (tig_file_fread(&dword_5D55D8, sizeof(dword_5D55D8), 1, load_info->stream) != 1) {
         return false;
     }
 
-    for (int index = 0; index < TWO; index++) {
-        if (tig_file_fread(&(dword_5D1A30[index]), sizeof(*dword_5D1A30), 1, ctx->stream) != 1) {
+    for (index = 0; index < TWO; index++) {
+        if (tig_file_fread(&(dword_5D1A30[index]), sizeof(*dword_5D1A30), 1, load_info->stream) != 1) {
             return false;
         }
     }
@@ -258,8 +264,11 @@ bool gsound_load(LoadContext* ctx)
 // 0x41B1D0
 bool gsound_save(TigFile* stream)
 {
-    for (int index = 0; index < TWO; index++) {
-        int v1 = stru_5D1A98[index].field_0 ? stru_5D1A98[index].field_4 : 0;
+    int index;
+    int v1;
+
+    for (index = 0; index < TWO; index++) {
+        v1 = stru_5D1A98[index].field_0 ? stru_5D1A98[index].field_4 : 0;
         if (tig_file_fwrite(&v1, sizeof(v1), 1, stream) != 1) {
             return false;
         }
@@ -269,7 +278,7 @@ bool gsound_save(TigFile* stream)
         return false;
     }
 
-    for (int index = 0; index < TWO; index++) {
+    for (index = 0; index < TWO; index++) {
         if (tig_file_fwrite(&(dword_5D1A38[index]), sizeof(*dword_5D1A38), 1, stream) != 1) {
             return false;
         }
@@ -279,7 +288,7 @@ bool gsound_save(TigFile* stream)
         return false;
     }
 
-    for (int index = 0; index < TWO; index++) {
+    for (index = 0; index < TWO; index++) {
         if (tig_file_fwrite(&(dword_5D1A30[index]), sizeof(*dword_5D1A30), 1, stream) != 1) {
             return false;
         }
@@ -301,33 +310,34 @@ void gsound_ping(int a1)
 }
 
 // 0x41B2E0
-int gsound_play_sfx(const char* path, int loops, int volume, int extra_volume, int id)
+tig_sound_handle_t gsound_play_sfx(const char* path, int loops, int volume, int extra_volume, int id)
 {
+    tig_sound_handle_t sound_handle;
+
     if (!dword_5D1A6C) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
     if (dword_5D1A70) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
-    int sound_handle;
     tig_sound_allocate(&sound_handle, TIG_SOUND_TYPE_EFFECT);
     tig_sound_set_loops(sound_handle, loops);
     tig_sound_set_volume(sound_handle, volume * gsound_effects_volume / 100);
     tig_sound_set_extra_volume(sound_handle, extra_volume);
     tig_sound_play_by_path(sound_handle, path, id);
     if (!tig_sound_is_active(sound_handle)) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
     return sound_handle;
 }
 
 // 0x41B3A0
-int sub_41B3A0()
+void sub_41B3A0()
 {
-    return tig_sound_enumerate_positional(sub_41B3B0);
+    tig_sound_enumerate_positional(sub_41B3B0);
 }
 
 // 0x41B3B0
@@ -349,11 +359,12 @@ void sub_41B3B0(tig_sound_handle_t sound_handle)
 // 0x41B720
 int gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
 {
+    char path[MAX_PATH];
+
     if (!dword_5D1A6C) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
-    char path[MAX_PATH];
     sub_41A940(id, path);
     return gsound_play_sfx(path, loops, volume, extra_volume, id);
 }
@@ -397,8 +408,10 @@ int sub_41B9E0(object_id_t obj)
 // 0x41BAC0
 void sub_41BAC0(int a1)
 {
+    int index;
+
     if (dword_5D1A6C) {
-        for (int index = 0; index < TWO; index++) {
+        for (index = 0; index < TWO; index++) {
             sub_41BA20(a1, index);
         }
     }
@@ -417,7 +430,9 @@ void sub_41BCD0(const char* name, char* buffer)
 // 0x41BD10
 bool sub_41BD10(int a1, int* a2)
 {
-    for (int index = 0; index < TWO; index++) {
+    int index;
+
+    for (index = 0; index < TWO; index++) {
         if (stru_5D1A98[index].field_0 != 0) {
             if (stru_5D1A98[index].field_4 == a1) {
                 *a2 = index;
@@ -433,8 +448,12 @@ bool sub_41BD10(int a1, int* a2)
 SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
 {
     SoundScheme* scheme = NULL;
+    char* copy;
+    char* pch;
+    int v1;
+    int v2;
 
-    char* copy = _strdup(path);
+    copy = STRDUP(path);
     if (copy != NULL) {
         if (a1->field_8 < TWENTY_FIVE) {
             scheme = &(a1->field_C[a1->field_8++]);
@@ -453,7 +472,7 @@ SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
             scheme->path[0] = '\0';
             sub_41C260(copy);
 
-            char* pch = strchr(copy, ' ');
+            pch = strchr(copy, ' ');
             if (pch != NULL) {
                 *pch++ = '\0';
             }
@@ -479,8 +498,8 @@ SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
                     sub_41C290(pch, "/time:", &(scheme->time_start), &(scheme->time_end));
                     sub_41C290(pch, "/bal:", &(scheme->balance_left), &(scheme->balance_right));
 
-                    int v1 = -1;
-                    int v2 = -1;
+                    v1 = -1;
+                    v2 = -1;
                     sub_41C290(pch, "/scatter:", &v1, &v2);
 
                     if (v1 >= 0) {
@@ -493,7 +512,7 @@ SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
             }
         }
 
-        free(copy);
+        FREE(copy);
 
         if (scheme->volume_max < scheme->volume_min) {
             scheme->volume_max = scheme->volume_min;
@@ -559,11 +578,16 @@ void sub_41C260(char* str)
 // 0x41C290
 void sub_41C290(const char* str, const char* key, int* value1, int* value2)
 {
-    const char* pch = strstr(str, key);
+    const char* pch;
+    char* copy;
+    char* space;
+    char* sep;
+
+    pch = strstr(str, key);
     if (pch != NULL) {
-        char* copy = _strdup(pch + strlen(key));
+        copy = STRDUP(pch + strlen(key));
         if (copy != NULL) {
-            char* space = strchr(copy, ' ');
+            space = strchr(copy, ' ');
             if (space != NULL) {
                 *space = '\0';
             }
@@ -572,7 +596,7 @@ void sub_41C290(const char* str, const char* key, int* value1, int* value2)
                 *value1 = atoi(copy);
 
                 if (value2 != NULL) {
-                    char* sep = strchr(copy, ',');
+                    sep = strchr(copy, ',');
                     if (sep == NULL) {
                         sep = strchr(copy, '-');
                     }
@@ -585,7 +609,7 @@ void sub_41C290(const char* str, const char* key, int* value1, int* value2)
                 }
             }
 
-            free(copy);
+            FREE(copy);
         }
     }
 }
@@ -603,16 +627,17 @@ void sub_41C340(int duration)
 // 0x41C370
 int gsound_play_voice(const char* path, int fade_duration)
 {
+    tig_sound_handle_t sound_handle;
+
     if (dword_5D1A70) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
-    int sound_handle;
     tig_sound_allocate(&sound_handle, TIG_SOUND_TYPE_VOICE);
     tig_sound_set_volume(sound_handle, gsound_voice_volume);
     tig_sound_play_streamed_once(sound_handle, path, fade_duration, -1);
     if (!tig_sound_is_active(sound_handle)) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
     return sound_handle;
@@ -621,16 +646,17 @@ int gsound_play_voice(const char* path, int fade_duration)
 // 0x41C3D0
 int gsound_play_music_once(const char* path, int fade_duration)
 {
+    tig_sound_handle_t sound_handle;
+
     if (dword_5D1A70) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
-    int sound_handle;
     tig_sound_allocate(&sound_handle, TIG_SOUND_TYPE_MUSIC);
     tig_sound_set_volume(sound_handle, 100 * gsound_music_volume / 100);
     tig_sound_play_streamed_once(sound_handle, path, fade_duration, -1);
     if (!tig_sound_is_active(sound_handle)) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
     return sound_handle;
@@ -639,16 +665,17 @@ int gsound_play_music_once(const char* path, int fade_duration)
 // 0x41C450
 int gsound_play_music_indefinitely(const char* path, int fade_duration)
 {
+    tig_sound_handle_t sound_handle;
+
     if (dword_5D1A70) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
-    int sound_handle;
     tig_sound_allocate(&sound_handle, TIG_SOUND_TYPE_MUSIC);
     tig_sound_set_volume(sound_handle, 100 * gsound_music_volume / 100);
     tig_sound_play_streamed_indefinitely(sound_handle, path, fade_duration, -1);
     if (!tig_sound_is_active(sound_handle)) {
-        return -1;
+        return TIG_SOUND_HANDLE_INVALID;
     }
 
     return sound_handle;
@@ -657,6 +684,8 @@ int gsound_play_music_indefinitely(const char* path, int fade_duration)
 // 0x41C4D0
 void sub_41C4D0(object_id_t object_id)
 {
+    char path[MAX_PATH];
+
     if (!dword_5D55D8) {
         if (object_id != 0) {
             if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
@@ -672,7 +701,6 @@ void sub_41C4D0(object_id_t object_id)
 
                 dword_5D55D8 = true;
 
-                char path[MAX_PATH];
                 sprintf(path, "sound\\music\\combat %d.mp3", random_between(1, 6));
                 dword_5D1A4C = gsound_play_music_once(path, 0);
                 dword_5D1A48 = gsound_play_music_indefinitely("sound\\music\\combatmusic.mp3", 0);
@@ -687,8 +715,8 @@ void sub_41C5A0(object_id_t object_id)
     if (dword_5D55D8) {
         if (object_id != 0) {
             if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                tig_sound_stop(dword_5D1A4C);
-                tig_sound_stop(dword_5D1A48);
+                tig_sound_destroy(dword_5D1A4C);
+                tig_sound_destroy(dword_5D1A48);
 
                 dword_5D55D8 = false;
 
@@ -701,8 +729,10 @@ void sub_41C5A0(object_id_t object_id)
 // 0x41C610
 void sub_41C610()
 {
+    int index;
+
     if (dword_5D1A70 == 0) {
-        for (int index = 0; index < TWO; index++) {
+        for (index = 0; index < TWO; index++) {
             if (stru_5D1A98[index].field_0) {
                 dword_5D5484[index] = stru_5D1A98[index].field_4;
             } else {
