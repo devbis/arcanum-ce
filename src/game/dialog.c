@@ -1,15 +1,48 @@
 #include "game/dialog.h"
 
-#include <tig/tig.h>
+#include "game/mes.h"
+#include "game/timeevent.h"
+
+#define THIRTY_TWO 32
+
+typedef struct DialogEntry {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+} DialogEntry;
+
+static_assert(sizeof(Dialog) == 0x1C, "wrong size");
+
+typedef struct Dialog {
+    /* 0000 */ char path[TIG_MAX_PATH];
+    /* 0104 */ int field_104;
+    /* 0108 */ DateTime timestamp;
+    /* 0110 */ int entries_length;
+    /* 0114 */ int entries_capacity;
+    /* 0118 */ DialogEntry* entries;
+    /* 011C */ int field_11C:
+} Dialog;
+
+static_assert(sizeof(Dialog) == 0x120, "wrong size");
 
 // 0x5D19F4
-static int* dword_5D19F4;
+static mes_file_handle_t* dword_5D19F4;
 
 // 0x5D19F8
 static int dword_5D19F8;
 
 // 0x5D19FC
 static int dword_5D19FC;
+
+// 0x5D1A04
+static int dword_5D1A04;
+
+// 0x5D1A08
+static Dialog* dword_5D1A08;
 
 // 0x5D1A0C
 static bool dword_5D1A0C;
@@ -21,12 +54,36 @@ bool dialog_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    dword_5D19F4 = CALLOC(32, sizeof(int));
-    for (index = 0; index < 32; index++) {
-        dword_5D19F4[index] = -1;
+    dword_5D19F4 = (mes_file_handle_t*)CALLOC(THIRTY_TWO, sizeof(mes_file_handle_t));
+    for (index = 0; index < THIRTY_TWO; index++) {
+        dword_5D19F4[index] = MES_FILE_HANDLE_INVALID;
     }
 
     return true;
+}
+
+// 0x412D80
+void dialog_exit()
+{
+    int index;
+
+    for (index = 0; index < THIRTY_TWO; index++) {
+        if (dword_5D19F4[index] != MES_FILE_HANDLE_INVALID) {
+            mes_unload(dword_5D19F4[index]);
+        }
+    }
+
+    for (index = 0; index < dword_5D1A04; index++) {
+        if (dword_5D1A08[index].path[0] != '\0') {
+            sub_412F60(index);
+        }
+    }
+
+    if (dword_5D1A04 > 0) {
+        FREE(dword_5D1A08);
+        dword_5D1A08 = NULL;
+        dword_5D1A04 = 0;
+    }
 }
 
 // 0x417D60
