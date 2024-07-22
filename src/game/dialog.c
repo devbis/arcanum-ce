@@ -120,6 +120,12 @@ bool sub_412E10(const char* path, int* a2)
     return true;
 }
 
+// 0x412F40
+void sub_412F40(int index)
+{
+    dword_5D1A08[index].refcount--;
+}
+
 // 0x417D60
 TigFile* sub_417D60(const char* fname, const char* mode)
 {
