@@ -498,9 +498,35 @@ bool sub_45EA80(TimeEvent* timeevent)
 }
 
 // 0x45EAB0
-void sub_45EAB0()
+bool sub_45EAB0(int64_t obj)
 {
-    // TODO: Incomplete.
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return true;
+    }
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    if (sub_405BC0(obj)) {
+        return true;
+    }
+
+    qword_5E8648 = obj;
+
+    if (sub_45C140(TIMEEVENT_TYPE_RESTING, sub_45EA80)) {
+        return true;
+    }
+
+    timeevent.type = TIMEEVENT_TYPE_RESTING;
+    timeevent.params[0].object_value = obj;
+    timeevent.params[1].integer_value = sub_45A7F0();
+    sub_45A950(&datetime, 3600000);
+    return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x45EB50
