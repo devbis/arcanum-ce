@@ -46,8 +46,14 @@ static bool object_editor;
 // 0x5E2E60
 static int64_t qword_5E2E60;
 
+// 0x5E2E74
+static void* dword_5E2E74;
+
 // 0x5E2F88
 static int dword_5E2F88;
+
+// 0x5E2F8C
+static void* dword_5E2F8C;
 
 // 0x5E2EC8
 static int dword_5E2EC8;
@@ -80,6 +86,21 @@ void object_reset()
     for (index = 0; index < 18; index++) {
         dword_5E2ED4[index] = 1;
     }
+}
+
+// 0x43A690
+void object_exit()
+{
+    if (dword_5E2E74 != NULL) {
+        FREE(dword_5E2E74);
+        FREE(dword_5E2F8C);
+    }
+
+    object_reset();
+    sub_443070();
+
+    object_window = TIG_WINDOW_HANDLE_INVALID;
+    dword_5E2EB4 = NULL;
 }
 
 // 0x43AA60
