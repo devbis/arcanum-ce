@@ -752,15 +752,19 @@ tig_art_id_t sub_45FA70(long long obj, unsigned int* rgb)
 }
 
 // 0x45FB90
-void sub_45FB90()
+bool sub_45FB90(int64_t obj)
 {
-    // TODO: Incomplete.
-}
+    if (obj == OBJ_HANDLE_NULL
+        || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return false;
+    }
 
-// 0x45FC00
-void sub_45FC00()
-{
-    // TODO: Incomplete.
+    if (background_obj_get_background(obj) == 78
+        || (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_DARK_SIGHT) != 0) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x45FC00

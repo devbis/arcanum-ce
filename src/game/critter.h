@@ -49,6 +49,7 @@ int critter_fatigue_damage_get(long long obj);
 int critter_fatigue_damage_set(long long obj, int value);
 bool sub_45D800(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
+bool sub_45FB90(int64_t obj);
 bool sub_45FC00(int64_t obj);
 void critter_debug_obj(object_id_t obj);
 
