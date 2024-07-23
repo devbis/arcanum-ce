@@ -7,6 +7,7 @@
 
 static bool sub_45E8D0(TimeEvent* timeevent);
 static bool sub_45EA80(TimeEvent* timeevent);
+static bool sub_45ECB0(TimeEvent* timeevent);
 
 // 0x5B304C
 static int dword_5B304C = -1;
@@ -39,6 +40,9 @@ static mes_file_handle_t critter_mes_file;
 
 // 0x5E8648
 static int64_t qword_5E8648;
+
+// 0x5E8650
+static int64_t qword_5E8650;
 
 // 0x45CF30
 bool critter_init(GameInitInfo* init_info)
@@ -577,15 +581,16 @@ bool sub_45EBE0(int64_t obj)
 }
 
 // 0x45EC80
-void sub_45EC80()
+void sub_45EC80(int64_t obj)
 {
-    // TODO: Incomplete.
+    qword_5E8650 = obj;
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_DECAY_DEAD_BODIE, sub_45ECB0);
 }
 
 // 0x45ECB0
-void sub_45ECB0()
+bool sub_45ECB0(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent->params[0].object_value == qword_5E8650;
 }
 
 // 0x45ECE0
