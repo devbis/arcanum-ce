@@ -50,6 +50,7 @@ int critter_fatigue_damage_get(long long obj);
 int critter_fatigue_damage_set(long long obj, int value);
 bool sub_45D800(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
+bool sub_45E820(int64_t obj, int a2, int a3);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool critter_decay_timeevent_process(TimeEvent* timeevent);
 bool sub_45FB90(int64_t obj);

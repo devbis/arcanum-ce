@@ -416,9 +416,37 @@ void critter_fatigue_timeevent_process()
 }
 
 // 0x45E820
-void sub_45E820()
+bool sub_45E820(int64_t obj, int a2, int a3)
 {
-    // TODO: Incomplete.
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return true;
+    }
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    if (sub_405BC0(obj)) {
+        return true;
+    }
+
+    qword_5E8648 = obj;
+    dword_5B304C = a2;
+
+    if (sub_45C140(TIMEEVENT_TYPE_FATIGUE, sub_45E8D0)) {
+        return true;
+    }
+
+    timeevent.type = TIMEEVENT_TYPE_FATIGUE;
+    timeevent.params[0].integer_value = a2;
+    timeevent.params[1].object_value = obj;
+    timeevent.params[2].integer_value = sub_45A7F0();
+    sub_45A950(&datetime, a3);
+    return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x45E8D0
