@@ -638,9 +638,11 @@ bool sub_45ED70(int64_t obj)
 }
 
 // 0x45EDE0
-void sub_45EDE0()
+bool critter_is_concealed(int64_t obj)
 {
-    // TODO: Incomplete.
+    return obj != OBJ_HANDLE_NULL
+        && obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_IS_CONCEALED) != 0;
 }
 
 // 0x45EE30
