@@ -1,5 +1,6 @@
 #include "game/critter.h"
 
+#include "game/background.h"
 #include "game/effect.h"
 #include "game/mes.h"
 #include "game/stat.h"
@@ -760,6 +761,30 @@ void sub_45FB90()
 void sub_45FC00()
 {
     // TODO: Incomplete.
+}
+
+// 0x45FC00
+bool sub_45FC00(int64_t obj)
+{
+    int background;
+
+    if (obj == OBJ_HANDLE_NULL
+        || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return false;
+    }
+
+    if (stat_level(obj, STAT_INTELLIGENCE) <= 4) {
+        return true;
+    }
+
+    background = background_obj_get_background(obj);
+    if (background == 55
+        || background == 74
+        || background == 75) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x45FC70
