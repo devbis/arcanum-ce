@@ -594,9 +594,29 @@ bool sub_45ECB0(TimeEvent* timeevent)
 }
 
 // 0x45ECE0
-void sub_45ECE0()
+void critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int64_t focus_obj;
+
+    obj = timeevent->params[0].object_value;
+    if (obj == OBJ_HANDLE_NULL
+        || !sub_45D8D0(obj)) {
+        return true;
+    }
+
+    obj_field_obj_get(obj, OBJ_F_NPC_COMBAT_FOCUS, &focus_obj);
+    if (focus_obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    if (sub_441AE0(obj, focus_obj) >= 30) {
+        obj_field_handle_set(obj, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
+    } else {
+        sub_45ED70(obj);
+    }
+
+    return true;
 }
 
 // 0x45ED70
