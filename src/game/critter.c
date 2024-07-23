@@ -426,9 +426,31 @@ void sub_45E910()
 }
 
 // 0x45EA00
-void critter_resting_timeevent_process()
+bool critter_resting_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int hours;
+
+    if (timeevent == NULL) {
+        return true;
+    }
+
+    obj = timeevent->params[0].object_value;
+    if (obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    hours = sub_45A820(timeevent->params[1].integer_value) / 3600;
+    if (hours < 1) {
+        hours = 1;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+        && !sub_45DDA0(obj)) {
+        sub_45E910(obj, hours);
+    }
+
+    return true;
 }
 
 // 0x45EA80
