@@ -332,6 +332,18 @@ bool sub_43D990(object_id_t obj)
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0;
 }
 
+// 0x43EAC0
+bool sub_43EAC0(TimeEvent* timeevent)
+{
+    if (timeevent->params[0].object_value == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    sub_444270(timeevent->params[0].object_value, 2);
+
+    return true;
+}
+
 // 0x43EAF0
 void object_set_offset(object_id_t obj, int offset_x, int offset_y)
 {
