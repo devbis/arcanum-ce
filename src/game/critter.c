@@ -552,9 +552,28 @@ bool critter_decay_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x45EBE0
-void sub_45EBE0()
+bool sub_45EBE0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int type;
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    if (obj == OBJ_HANDLE_NULL
+        || sub_405BC0(obj)) {
+        return false;
+    }
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+
+    timeevent.type = TIMEEVENT_TYPE_DECAY_DEAD_BODIE;
+    timeevent.params[0].object_value = obj;
+    timeevent.params[1].integer_value = sub_45A7F0();
+    if (obj_type_is_critter(type)) {
+        sub_45A950(&datetime, 86400000);
+    } else {
+        sub_45A950(&datetime, 172800000);
+    }
+    return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x45EC80

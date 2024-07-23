@@ -54,6 +54,7 @@ bool sub_45E820(int64_t obj, int a2, int a3);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool sub_45EAB0(int64_t obj);
 bool critter_decay_timeevent_process(TimeEvent* timeevent);
+bool sub_45EBE0(int64_t obj);
 bool sub_45FB90(int64_t obj);
 bool sub_45FC00(int64_t obj);
 void critter_debug_obj(object_id_t obj);
