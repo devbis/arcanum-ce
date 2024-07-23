@@ -7,5 +7,6 @@ bool tile_init(GameContext* ctx);
 void tile_exit();
 void tile_resize(ResizeContext* ctx);
 bool tile_update_view(ViewOptions* view_options);
+int sub_4D7090(int a1, int a2);
 
 #endif /* ARCANUM_GAMELIB_TILE_H_ */

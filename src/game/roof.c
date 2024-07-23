@@ -1,5 +1,7 @@
 #include "game/roof.h"
 
+#include "game/tile.h"
+
 static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
 
 // 0x5A53A0
@@ -35,6 +37,12 @@ bool sub_439100(ViewOptions* view_options)
 {
     roof_view_options = *view_options;
     return true;
+}
+
+// 0x4395A0
+int sub_4395A0(int a1, int a2)
+{
+    return sub_4395C0(sub_4D7090(a1, a2));
 }
 
 // 0x4395C0
