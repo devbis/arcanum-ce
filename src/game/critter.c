@@ -5,6 +5,11 @@
 #include "game/mes.h"
 #include "game/stat.h"
 
+static bool sub_45E8D0(TimeEvent* timeevent);
+
+// 0x5B304C
+static int dword_5B304C = -1;
+
 // 0x5B306C
 static int dword_5B306C[MAX_ENCUMBRANCE_LEVEL] = {
     15,
@@ -30,6 +35,9 @@ static bool critter_editor;
 
 // 0x5E8640
 static mes_file_handle_t critter_mes_file;
+
+// 0x5E8648
+static int64_t qword_5E8648;
 
 // 0x45CF30
 bool critter_init(GameInitInfo* init_info)
@@ -414,9 +422,10 @@ void sub_45E820()
 }
 
 // 0x45E8D0
-void sub_45E8D0()
+bool sub_45E8D0(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent->params[0].integer_value == dword_5B304C
+        && timeevent->params[1].object_value == qword_5E8648;
 }
 
 // 0x45E910
