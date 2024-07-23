@@ -552,7 +552,7 @@ bool object_is_destroyed(object_id_t obj)
     case OBJ_TYPE_ITEM_KEY_RING:
     case OBJ_TYPE_ITEM_WRITTEN:
     case OBJ_TYPE_ITEM_GENERIC:
-        return tig_art_item_id_destroyed_get(obj_field_int32_get(obj)) != 0;
+        return tig_art_item_id_destroyed_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) != 0;
     case OBJ_TYPE_TRAP:
         return (obj_field_int32_get(obj, OBJ_F_TRAP_FLAGS) & OTF_BUSTED) != 0;
     }
