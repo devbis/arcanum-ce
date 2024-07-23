@@ -332,6 +332,19 @@ bool sub_43D990(object_id_t obj)
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0;
 }
 
+// 0x43EA20
+void sub_43EA20(int64_t a1, int64_t a2)
+{
+    int64_t v1;
+
+    if (a1 != OBJ_HANDLE_NULL) {
+        if (!sub_4B99C0(a2, &v1)) {
+            v1 = a2;
+        }
+        sub_4EDF20(a1, v1, 0, 0, 0);
+    }
+}
+
 // 0x43EAC0
 bool sub_43EAC0(TimeEvent* timeevent)
 {
