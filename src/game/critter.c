@@ -3,6 +3,7 @@
 #include "game/background.h"
 #include "game/effect.h"
 #include "game/mes.h"
+#include "game/random.h"
 #include "game/stat.h"
 
 static bool sub_45E8D0(TimeEvent* timeevent);
@@ -691,9 +692,17 @@ bool sub_45EFF0(int64_t a, int64_t b)
 }
 
 // 0x45F060
-void sub_45F060()
+bool sub_45F060(int64_t obj, int stat, int mod)
 {
-    // TODO: Incomplete.
+    int value;
+    int lower;
+    int upper;
+
+    value = stat_level(obj, stat);
+    upper = stat_get_max_value(obj, stat);
+    lower = stat_get_min_value(obj, stat);
+
+    return random_between(lower, upper) <= value;
 }
 
 // 0x45F0B0
