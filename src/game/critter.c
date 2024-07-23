@@ -268,9 +268,13 @@ bool sub_45D790(long long obj)
 }
 
 // 0x45D800
-void sub_45D800()
+bool sub_45D800(int64_t obj)
 {
-    // TODO: Incomplete.
+    return obj == OBJ_HANDLE_NULL
+        || (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+            && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC)
+        || ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_UNDEAD) == 0
+            && sub_45D700(obj) <= 0);
 }
 
 // 0x45D870
