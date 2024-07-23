@@ -444,9 +444,25 @@ void sub_45EAB0()
 }
 
 // 0x45EB50
-void critter_decay_timeevent_process()
+bool critter_decay_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    int64_t obj = timeevent->params[0].object_value;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        tig_debug_printf("Critter: Error: Attempt to decay a NULL object!\n");
+        return true;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && sub_45D8D0(obj)) {
+        tig_debug_printf("Critter: critter_decay_timeevent_process: ERROR: Attempt to Decay a LIVE critter!\n");
+        return false;
+    }
+
+    sub_463860(obj, 1);
+    sub_43CCA0(obj);
+
+    return true;
 }
 
 // 0x45EBE0
