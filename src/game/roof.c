@@ -1,5 +1,6 @@
 #include "game/roof.h"
 
+#include "game/mes.h"
 #include "game/tile.h"
 
 static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
@@ -7,8 +8,20 @@ static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
 // 0x5A53A0
 static int dword_5A53A0 = 256;
 
+// 0x5E2E30
+static uint8_t roof_partial_opacity;
+
+// 0x5E2E31
+static uint8_t roof_full_transparency;
+
 // 0x5E2E34
 static GameContextF8* dword_5E2E34;
+
+// 0x5E2E38
+static bool dword_5E2E38;
+
+// 0x5E2E3C
+static bool roof_editor;
 
 // 0x5E2E40
 static bool dword_5E2E40;
@@ -16,8 +29,58 @@ static bool dword_5E2E40;
 // 0x5E2E44
 static tig_window_handle_t roof_window_handle;
 
+// 0x5E2E48
+static uint8_t roof_full_opacity;
+
 // 0x5E2E50
 static ViewOptions roof_view_options;
+
+// 0x438F90
+bool roof_init(GameInitInfo* init_info)
+{
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+
+    roof_window_handle = init_info->iso_window_handle;
+    dword_5E2E34 = init_info->field_8;
+    roof_view_options.type = VIEW_TYPE_ISOMETRIC;
+    roof_editor = init_info->editor;
+    dword_5E2E40 = true;
+
+    if (!mes_load("art\\roof\\roofshade.mes", &mes_file)) {
+        return false;
+    }
+
+    mes_file_entry.num = 0;
+    if (!mes_search(mes_file, &mes_file_entry)) {
+        mes_unload(mes_file);
+        return false;
+    }
+    roof_full_opacity = (uint8_t)atoi(mes_file_entry.str);
+
+    mes_file_entry.num = 1;
+    if (!mes_search(mes_file, &mes_file_entry)) {
+        mes_unload(mes_file);
+        return false;
+    }
+    roof_partial_opacity = (uint8_t)atoi(mes_file_entry.str);
+
+    mes_file_entry.num = 2;
+    if (!mes_search(mes_file, &mes_file_entry)) {
+        mes_unload(mes_file);
+        return false;
+    }
+    roof_full_transparency = (uint8_t)atoi(mes_file_entry.str);
+
+    mes_unload(mes_file);
+
+    dword_5E2E38 = tig_video_3d_check_initialized() == TIG_OK;
+    if (!dword_5E2E38) {
+        dword_5A53A0 = TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D;
+    }
+
+    return true;
+}
 
 // 0x4390D0
 void roof_exit()

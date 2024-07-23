@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 
+bool roof_init(GameInitInfo* init_info);
 void roof_exit();
 void roof_resize(ResizeInfo* resize_info);
 bool sub_439100(ViewOptions* view_options);
