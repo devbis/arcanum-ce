@@ -10,14 +10,26 @@
 // 0x5A54AC
 static int dword_5A54AC = 256;
 
+// 0x5E2E60
+static int64_t qword_5E2E60;
+
 // 0x5E2E70
 static TigRectListNode* dword_5E2E70;
+
+// 0x5E2E74
+static void* dword_5E2E74;
 
 // 0x5E2E98
 static TigRect stru_5E2E98;
 
 // 0x5E2EB4
 static GameContextF8* dword_5E2EB4;
+
+// 0x5E2EB8
+static ViewOptions object_view_options;
+
+// 0x5E2EC8
+static int dword_5E2EC8;
 
 // 0x5E2ED0
 static bool object_dirty;
@@ -43,20 +55,11 @@ static int64_t qword_5E2F50;
 // 0x5E2F58
 static bool object_editor;
 
-// 0x5E2E60
-static int64_t qword_5E2E60;
-
-// 0x5E2E74
-static void* dword_5E2E74;
-
 // 0x5E2F88
 static int dword_5E2F88;
 
 // 0x5E2F8C
 static void* dword_5E2F8C;
-
-// 0x5E2EC8
-static int dword_5E2EC8;
 
 // 0x43A570
 void object_resize(ResizeInfo* resize_info)
@@ -101,6 +104,13 @@ void object_exit()
 
     object_window = TIG_WINDOW_HANDLE_INVALID;
     dword_5E2EB4 = NULL;
+}
+
+// 0x43AA40
+bool sub_43AA40(ViewOptions* view_options)
+{
+    object_view_options = *view_options;
+    return true;
 }
 
 // 0x43AA60
