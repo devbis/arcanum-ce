@@ -61,6 +61,7 @@ bool sub_45ED70(int64_t obj);
 bool critter_is_concealed(int64_t obj);
 bool sub_45EFF0(int64_t a, int64_t b);
 bool sub_45F060(int64_t obj, int stat, int mod);
+int sub_45F0B0(int64_t obj);
 bool sub_45FB90(int64_t obj);
 bool sub_45FC00(int64_t obj);
 void critter_debug_obj(object_id_t obj);

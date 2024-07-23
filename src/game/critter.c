@@ -706,9 +706,20 @@ bool sub_45F060(int64_t obj, int stat, int mod)
 }
 
 // 0x45F0B0
-void sub_45F0B0()
+int sub_45F0B0(int64_t obj)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return 0;
+    }
+
+    mes_file_entry.num = stat_level(obj, STAT_LEVEL);
+    if (!mes_search(xp_mes_file, &mes_file_entry)) {
+        return 0;
+    }
+
+    return atoi(mes_file_entry.str);
 }
 
 // 0x45F110
