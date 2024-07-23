@@ -1,5 +1,7 @@
 #include "game/roof.h"
 
+static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
+
 // 0x5A53A0
 static int dword_5A53A0 = 256;
 
@@ -115,4 +117,22 @@ void sub_43A110(int a1)
 int sub_43A130()
 {
     return dword_5A53A0;
+}
+
+// 0x43A140
+void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect)
+{
+    TigArtFrameData art_frame_data;
+
+    rect->x = 0;
+    rect->y = 0;
+    rect->width = 0;
+    rect->height = 0;
+
+    if (tig_art_frame_data(aid, &art_frame_data) == TIG_OK) {
+        rect->x = x - art_frame_data.hot_x;
+        rect->y = y - art_frame_data.hot_y;
+        rect->width = art_frame_data.width;
+        rect->height = art_frame_data.height;
+    }
 }
