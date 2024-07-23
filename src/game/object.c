@@ -560,6 +560,33 @@ bool object_is_destroyed(object_id_t obj)
     return false;
 }
 
+// 0x43F710
+void sub_43F710(object_id_t obj)
+{
+    TigArtAnimData art_anim_data;
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0
+        || obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_SCENERY) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & OSCF_NO_AUTO_ANIMATE) != 0) {
+        if (!sub_44CB60()) {
+            sub_423FF0(obj);
+        }
+    } else {
+        if (tig_art_anim_data(obj_field_int32_get(obj, OBJ_F_CURRENT_AID), &art_anim_data) == TIG_OK) {
+            if (art_anim_data.num_frames <= 1 && sub_4F1050(obj, 2) == -1) {
+                if (!sub_44CB60()) {
+                    sub_423FF0(obj);
+                }
+            } else {
+                sub_433580(obj);
+            }
+        }
+    }
+}
+
 // 0x43F7F0
 void object_inc_current_aid(object_id_t obj)
 {
