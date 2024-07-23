@@ -6,6 +6,7 @@
 #include "game/stat.h"
 
 static bool sub_45E8D0(TimeEvent* timeevent);
+static bool sub_45EA80(TimeEvent* timeevent);
 
 // 0x5B304C
 static int dword_5B304C = -1;
@@ -491,9 +492,9 @@ bool critter_resting_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x45EA80
-void sub_45EA80()
+bool sub_45EA80(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent != NULL && timeevent->params[0].object_value == qword_5E8648;
 }
 
 // 0x45EAB0
