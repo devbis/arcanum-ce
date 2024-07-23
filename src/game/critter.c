@@ -620,9 +620,21 @@ void critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x45ED70
-void sub_45ED70()
+bool sub_45ED70(int64_t obj)
 {
-    // TODO: Incomplete.
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    if (obj == OBJ_HANDLE_NULL
+        || !sub_405BC0(obj)) {
+        return false;
+    }
+
+    timeevent.type = TIMEEVENT_TYPE_COMBAT_FOCUS_WIPE;
+    timeevent.params[0].object_value = obj;
+    timeevent.params[1].integer_value = sub_45A7F0();
+    sub_45A950(&datetime, 600000);
+    return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x45EDE0
