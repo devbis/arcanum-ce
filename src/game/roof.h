@@ -1,6 +1,10 @@
 #ifndef ARCANUM_GAME_ROOF_H_
 #define ARCANUM_GAME_ROOF_H_
 
+#include "game/context.h"
+
 void roof_exit();
+void roof_resize(ResizeInfo* resize_info);
+bool sub_439100(ViewOptions* view_options);
 
 #endif /* ARCANUM_GAME_ROOF_H_ */
