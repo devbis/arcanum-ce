@@ -673,9 +673,21 @@ tig_art_id_t sub_45EFA0(tig_art_id_t art_id)
 }
 
 // 0x45EFF0
-void sub_45EFF0()
+bool sub_45EFF0(int64_t a, int64_t b)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int v3;
+
+    v1 = sub_441B20(a, b);
+    v2 = tig_art_id_rotation_get(obj_field_int32_get(a, OBJ_F_CURRENT_AID));
+    v3 = (v1 - v2 + 8) % 8;
+
+    return v3 == 0
+        || v3 == 1
+        || v3 == 7
+        || v3 == 2
+        || v3 == 6;
 }
 
 // 0x45F060
