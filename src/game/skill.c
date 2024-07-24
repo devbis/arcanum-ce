@@ -246,6 +246,18 @@ int sub_4C5F70(int value)
     return dword_5B6FA4[value];
 }
 
+// 0x4C5FA0
+int sub_4C5FA0(int64_t obj, int skill)
+{
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= BASIC_SKILL_COUNT) {
+        return 0;
+    }
+
+    return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill) & 63;
+}
+
 // 0x4C62B0
 const char* basic_skill_get_name(int skill)
 {
