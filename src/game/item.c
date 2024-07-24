@@ -16,6 +16,7 @@ static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466BD0(int64_t key_ring_obj);
+static bool sub_468110(int64_t obj);
 static bool sub_468150(TimeEvent* timeevent);
 
 // 0x5B32A0
@@ -863,6 +864,19 @@ bool sub_468090(int64_t obj, int ms)
     timeevent.params[1].integer_value = sub_45A7F0();
     sub_45A950(&datetime, ms);
     return sub_45B800(&timeevent, &datetime);
+}
+
+// 0x468110
+bool sub_468110(int64_t obj)
+{
+    if (item_can_decay(obj)) {
+        return false;
+    }
+
+    qword_5E87F0 = obj;
+    timeevent_clear_all_ex(TIMEEVENT_TYPE_ITEM_DECAY, sub_468150);
+
+    return true;
 }
 
 // 0x468150
