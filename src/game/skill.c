@@ -362,7 +362,7 @@ int sub_4C6000(int64_t obj, int skill, int value)
 }
 
 // 0x4C60C0
-int sub_4C60C0(int64_t obj, int skill)
+int basic_skill_get_training(int64_t obj, int skill)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
         || skill < 0
@@ -486,7 +486,7 @@ int sub_4C6520(int64_t obj)
     gambling = basic_skill_level(obj, BASIC_SKILL_GAMBLING);
     amount = dword_5B7090[gambling];
 
-    if (sub_4C60C0(obj, BASIC_SKILL_GAMBLING) >= TRAINING_APPRENTICE) {
+    if (basic_skill_get_training(obj, BASIC_SKILL_GAMBLING) >= TRAINING_APPRENTICE) {
         amount *= 2;
     }
 
