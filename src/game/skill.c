@@ -546,6 +546,18 @@ int tech_skill_level(int64_t obj, int skill)
     return skill_level;
 }
 
+// 0x4C6680
+int tech_skill_get_base(int64_t obj, int skill)
+{
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= TECH_SKILL_COUNT) {
+        return 0;
+    }
+
+    return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill) & 63;
+}
+
 // 0x4C69A0
 const char* tech_skill_get_name(int skill)
 {
