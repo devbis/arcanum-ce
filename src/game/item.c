@@ -325,6 +325,31 @@ bool sub_462230(int64_t a1, int64_t a2, int64_t a3)
             && (sub_461340(a1) < 1000 || sub_461340(a1) > 1008));
 }
 
+// 0x4622A0
+int item_throwing_distance(int64_t item_obj, int64_t critter_obj)
+{
+    int distance;
+    int weight;
+
+    distance = 50 * stat_level(critter_obj, STAT_STRENGTH);
+    if (sub_4C60C0(critter_obj, PRIMARY_SKILL_THROWING) >= 2) {
+        distance += distance / 2;
+    }
+
+    weight = item_weight(item_obj, critter_obj) / 10;
+    if (weight < 1) {
+        weight = 1;
+    }
+
+    distance /= weight;
+    distance /= 5;
+    if (distance < 1) {
+        distance = 1;
+    }
+
+    return distance;
+}
+
 // 0x462410
 int sub_462410(object_id_t item_id, int* quantity_field_ptr)
 {
