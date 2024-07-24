@@ -823,6 +823,19 @@ void sub_466BD0(int64_t key_ring_obj)
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
 }
 
+// 0x466E00
+void item_remove(int64_t obj)
+{
+    int64_t owner_obj;
+
+    if (!item_parent(obj, &owner_obj)) {
+        tig_debug_printf("Warning: item_remove called on item that doesn't think it has a parent.");
+        return;
+    }
+
+    item_force_remove(owner_obj, obj);
+}
+
 // 0x4673B0
 const char* item_cannot_msg(int reason)
 {
