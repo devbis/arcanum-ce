@@ -505,6 +505,18 @@ int item_inventory_source(object_id_t obj)
     return 0;
 }
 
+// 0x464370
+bool item_is_identified(int64_t obj)
+{
+    if (obj == OBJ_HANDLE_NULL
+        || !obj_type_is_item(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return false;
+    }
+
+    return obj_field_int32_get(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) <= 0
+        || (obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0;
+}
+
 // 0x4657D0
 const char* ammunition_type_get_name(int ammo_type)
 {
