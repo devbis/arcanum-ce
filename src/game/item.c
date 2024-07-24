@@ -594,6 +594,41 @@ bool sub_4655C0()
     return dword_5E87E8;
 }
 
+// 0x4655D0
+int item_inventory_slot(int64_t obj)
+{
+    int type;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_ITEM_ARMOR) {
+        switch (sub_465C30(obj)) {
+        case TIG_ART_ARMOR_COVERAGE_HELMET:
+            return 1000;
+        case TIG_ART_ARMOR_COVERAGE_RING:
+            return 1001;
+        case TIG_ART_ARMOR_COVERAGE_MEDALLION:
+            return 1003;
+        case TIG_ART_ARMOR_COVERAGE_SHIELD:
+            return 1005;
+        case TIG_ART_ARMOR_COVERAGE_TORSO:
+            return 1006;
+        case TIG_ART_ARMOR_COVERAGE_GAUNTLETS:
+            return 1007;
+        case TIG_ART_ARMOR_COVERAGE_BOOTS:
+            return 1008;
+        }
+    } else {
+        if (type == OBJ_TYPE_WEAPON) {
+            return 1004;
+        }
+        if (type == OBJ_TYPE_ITEM_GENERIC
+            && (obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) & OGF_USES_TORCH_SHIELD_LOCATION) != 0) {
+            return 1005;
+        }
+    }
+    return -1;
+}
+
 // 0x4657D0
 const char* ammunition_type_get_name(int ammo_type)
 {
