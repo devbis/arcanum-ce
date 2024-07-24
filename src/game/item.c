@@ -11,6 +11,7 @@
 
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
+static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 
 // 0x5B32A0
 static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
@@ -652,35 +653,47 @@ size_t ammunition_type_get_name_length(int ammo_type)
 }
 
 // 0x465820
-int item_ammo_quantity(object_id_t item_id, int a2)
+int item_ammo_quantity_get(object_id_t obj, int ammo_type)
 {
-    object_id_t ammo_id;
+    object_id_t ammo_obj;
 
-    if (obj_field_int32_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
-        ammo_id = item_id;
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
+        ammo_obj = obj;
     } else {
-        ammo_id = sub_465870(item_id, a2);
+        ammo_obj = item_ammo_obj(obj, ammo_type);
     }
 
-    if (ammo_id != 0) {
-        return obj_field_int32_get(ammo_id, OBJ_F_AMMO_QUANTITY);
+    if (ammo_obj != OBJ_HANDLE_NULL) {
+        return obj_field_int32_get(ammo_obj, OBJ_F_AMMO_QUANTITY);
     } else {
         return 0;
     }
 }
 
 // 0x465870
-int sub_465870(object_id_t item_id, int ammo_type)
+int64_t item_ammo_obj(object_id_t obj, int ammo_type)
 {
-    switch (obj_field_int32_get(item_id, OBJ_F_TYPE)) {
+    switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
     case OBJ_TYPE_PC:
     case OBJ_TYPE_NPC:
-        return obj_field_handle_get(item_id, dword_5B32A0[ammo_type]);
+        return obj_field_handle_get(obj, dword_5B32A0[ammo_type]);
     case OBJ_TYPE_CONTAINER:
-        return sub_462540(item_id, dword_5B32B0[ammo_type], 0);
+        return sub_462540(obj, dword_5B32B0[ammo_type], 0);
     default:
-        return 0;
+        return OBJ_HANDLE_NULL;
     }
+}
+
+// 0x465A40
+int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj)
+{
+    int64_t ammo_obj;
+
+    if (sub_4ED8B0(dword_5B32B0[ammo_type], obj, &ammo_obj)) {
+        sub_4EFDD0(ammo_obj, OBJ_F_AMMO_QUANTITY, quantity);
+    }
+
+    return ammo_obj;
 }
 
 // 0x465A90

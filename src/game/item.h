@@ -39,5 +39,7 @@ void sub_465530(int64_t obj);
 bool sub_4655C0();
 int item_location_get(int64_t obj);
 void item_location_set(int64_t obj, int location);
+int item_ammo_quantity_get(object_id_t obj, int ammo_type);
+int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj);
 
 #endif /* ARCANUM_GAME_ITEM_H_ */
