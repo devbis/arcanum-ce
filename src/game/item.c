@@ -588,6 +588,12 @@ void sub_465530(int64_t obj)
     }
 }
 
+// 0x4655C0
+bool sub_4655C0()
+{
+    return dword_5E87E8;
+}
+
 // 0x4657D0
 const char* ammunition_type_get_name(int ammo_type)
 {

@@ -1384,12 +1384,6 @@ int sub_465010()
     return 0;
 }
 
-// 0x4655C0
-int sub_4655C0()
-{
-    return dword_5E87E8;
-}
-
 // 0x4657D0
 int sub_4657D0(int a1)
 {
