@@ -22,6 +22,7 @@ static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
+static int sub_465010(int64_t obj);
 static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
@@ -600,6 +601,12 @@ int64_t item_gold_set(int amount, int64_t obj)
     return gold_obj;
 }
 
+// 0x465010
+int sub_465010(int64_t obj)
+{
+    return ITEM_CANNOT_OK;
+}
+
 // 0x4654F0
 void sub_4654F0(int64_t a, int64_t b)
 {
@@ -821,6 +828,20 @@ void sub_466BD0(int64_t key_ring_obj)
     }
 
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
+}
+
+// 0x466DA0
+int sub_466DA0(int64_t obj)
+{
+    if ((obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_NO_DROP) != 0) {
+        return ITEM_CANNOT_NOT_DROPPABLE;
+    }
+
+    if (sub_461340(obj) < 1000 || sub_461340(obj) > 1008) {
+        return ITEM_CANNOT_OK;
+    }
+
+    return sub_465010(obj);
 }
 
 // 0x466E00

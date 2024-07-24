@@ -23,6 +23,29 @@ typedef enum ArmorCoverageType {
     ARMOR_COVERAGE_TYPE_COUNT,
 } ArmorCoverageType;
 
+typedef enum ItemCannot {
+    ITEM_CANNOT_OK,
+    ITEM_CANNOT_TOO_HEAVY, // The item is too heavy.
+    ITEM_CANNOT_NO_ROOM, // There is no room for that item.
+    ITEM_CANNOT_WRONG_TYPE, // The item is the wrong type for that slot.
+    ITEM_CANNOT_NO_FREE_HAND, // There is no free hand to use that item.
+    ITEM_CANNOT_CRIPPLED, // A crippled arm prevents the wielding of that item.
+    ITEM_CANNOT_NOT_USABLE, // The item cannot be used.
+    ITEM_CANNOT_BROKEN, // The item is broken.
+    ITEM_CANNOT_WRONG_WEARABLE_SIZE, // The clothing or armor is the wrong size and cannot be worn.
+    ITEM_CANNOT_NOT_WIELDABLE, // The item cannot be wielded.
+    ITEM_CANNOT_WRONG_WEARABLE_GENDER, // The clothing or armor is for the opposite gender and cannot be worn.
+    ITEM_CANNOT_NOT_DROPPABLE, // The item cannot be dropped.
+    ITEM_CANNOT_HEXED, // The item is hexed and cannot be unwielded.
+    ITEM_CANNOT_DUMB, // The scroll requires an Intelligence of 5 or more to use.
+    ITEM_CANNOT_PICKUP_MAGIC_ITEMS, // You cannot pick up magickal items.
+    ITEM_CANNOT_PICKUP_TECH_ITEMS, // You cannot pick up technological items.
+    ITEM_CANNOT_USE_MAGIC_ITEMS, // You cannot use magickal items.
+    ITEM_CANNOT_USE_TECH_ITEMS, // You cannot use technological items.
+    ITEM_CANNOT_WIELD_MAGIC_ITEMS, // You cannot wield magickal items.
+    ITEM_CANNOT_WIELD_TECH_ITEMS, // You cannot wield technological items.
+} ItemCannot;
+
 bool item_init(GameInitInfo* init_info);
 void item_exit();
 void item_resize(ResizeInfo *resize_info);
@@ -42,6 +65,7 @@ void item_location_set(int64_t obj, int location);
 int item_ammo_quantity_get(object_id_t obj, int ammo_type);
 int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj);
 int sub_465C90(int race);
+int sub_466DA0(int64_t obj);
 void item_remove(int64_t obj);
 void item_decay_timeevent_process(TimeEvent* timeevent);
 bool item_can_decay(int64_t obj);
