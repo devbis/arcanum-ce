@@ -802,6 +802,23 @@ void sub_466BD0(int64_t key_ring_obj)
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
 }
 
+// 0x467FC0
+void item_decay_timeevent_process(TimeEvent* timeevent)
+{
+    int64_t obj;
+
+    obj = timeevent->params[0].object_value;
+    if (dword_5E8800 > 0) {
+        if (sub_468010(obj)) {
+            sub_43CCA0(obj);
+        }
+    } else {
+        sub_468090(obj, 60000);
+    }
+
+    return true;
+}
+
 // 0x468180
 void sub_468180()
 {
