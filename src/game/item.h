@@ -29,5 +29,6 @@ void item_resize(ResizeInfo *resize_info);
 bool item_parent(object_id_t object_id, object_id_t* parent_object_id);
 bool item_is_item(object_id_t object_id);
 int item_throwing_distance(int64_t item_obj, int64_t critter_obj);
+int sub_462C30(int64_t a1, int64_t a2);
 
 #endif /* ARCANUM_GAME_ITEM_H_ */

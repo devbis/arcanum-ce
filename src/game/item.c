@@ -436,6 +436,17 @@ void sub_462920(object_id_t* list)
     }
 }
 
+// 0x462C30
+int sub_462C30(int64_t a1, int64_t a2)
+{
+    if (a2 == OBJ_HANDLE_NULL
+        || (obj_field_int32_get(a2, OBJ_F_ITEM_FLAGS) & OIF_CAN_USE_BOX) == 0) {
+        return 6;
+    }
+
+    return 0;
+}
+
 // 0x4641A0
 int item_inventory_source(object_id_t obj)
 {
