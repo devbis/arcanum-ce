@@ -570,6 +570,24 @@ void sub_4654F0(int64_t a, int64_t b)
     }
 }
 
+// 0x465530
+void sub_465530(int64_t obj)
+{
+    int index;
+    int64_t item_obj;
+
+    for (index = 1000; index <= 1008; index++) {
+        item_obj = item_wield_get(obj, index);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            dword_5E87E8 = true;
+            sub_467E80(item_obj, obj);
+            sub_441980(obj, item_obj, OBJ_HANDLE_NULL, 25, 0);
+            sub_441980(obj, item_obj, OBJ_HANDLE_NULL, 24, 0);
+            dword_5E87E8 = false;
+        }
+    }
+}
+
 // 0x4657D0
 const char* ammunition_type_get_name(int ammo_type)
 {
