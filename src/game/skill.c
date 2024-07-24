@@ -421,8 +421,10 @@ int sub_4C6410(int64_t obj, int skill, int64_t other_obj)
 }
 
 // 0x4C64B0
-int sub_4C64B0()
+int sub_4C64B0(int64_t obj, int skill)
 {
+    (void)obj;
+    (void)skill;
     return 1;
 }
 
