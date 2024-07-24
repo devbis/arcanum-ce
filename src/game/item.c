@@ -4,9 +4,12 @@
 #include "game/random.h"
 #include "game/skill.h"
 #include "game/stat.h"
+#include "game/timeevent.h"
 
 #define FIRST_AMMUNITION_TYPE_ID 0
 #define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
+
+static bool sub_464150(TimeEvent* timeevent);
 
 // 0x5B32A0
 static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
@@ -44,6 +47,9 @@ static int dword_5E8800;
 
 // 0x5E8808
 static TigRect stru_5E8808;
+
+// 0x5E8818
+static int64_t qword_5E8818;
 
 // 0x5E8820
 static bool dword_5E8820;
@@ -445,6 +451,37 @@ int sub_462C30(int64_t a1, int64_t a2)
     }
 
     return 0;
+}
+
+// 0x4640C0
+void sub_4640C0(int64_t obj)
+{
+    int64_t inven_source_obj;
+    TimeEvent timeevent;
+    DateTime datetime;
+    int ms;
+
+    inven_source_obj = item_inventory_source(obj);
+    if (inven_source_obj != NULL) {
+        qword_5E8818 = obj;
+        timeevent_clear_all_ex(TIMEEVENT_TYPE_NPC_RESPAWN, sub_464150);
+        timeevent.type = TIMEEVENT_TYPE_NPC_RESPAWN;
+        timeevent.params[0].object_value = obj;
+
+        ms = random_between(43200000, 86400000);
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            ms /= 4;
+        }
+
+        sub_45A950(&datetime, ms);
+        sub_45B800(&timeevent, &datetime);
+    }
+}
+
+// 0x464150
+bool sub_464150(TimeEvent* timeevent)
+{
+    return timeevent != NULL && timeevent->params[0].object_value == qword_5E8818;
 }
 
 // 0x4641A0
