@@ -517,6 +517,35 @@ int sub_4C6580(int64_t obj, int skill)
     return 4 * sub_4C6680(obj, skill);
 }
 
+// 0x4C65E0
+int tech_skill_level(int64_t obj, int skill)
+{
+    int v1;
+    int skill_level;
+    int key_stat_level;
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= TECH_SKILL_COUNT) {
+        return 0;
+    }
+
+    v1 = sub_4C6580(obj, skill);
+    skill_level = effect_adjust_tech_skill_level(obj, skill, v1);
+    if (skill_level < 0) {
+        skill_level = 0;
+    } else if (skill_level > 20) {
+        skill_level = 20;
+    }
+
+    key_stat_level = stat_level(obj, tech_skill_get_stat(skill));
+    if (skill_level > sub_4C5F70(key_stat_level)) {
+        skill_level = sub_4C5F70(key_stat_level);
+    }
+
+    return skill_level;
+}
+
 // 0x4C69A0
 const char* tech_skill_get_name(int skill)
 {
