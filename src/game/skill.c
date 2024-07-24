@@ -12,6 +12,7 @@
 #define FIRST_TECH_SKILL_DESC_ID (FIRST_BASIC_SKILL_DESC_ID + BASIC_SKILL_COUNT)
 
 static int sub_4C5F70(int value);
+static int sub_4C6560();
 
 // 0x5B6F04
 static int basic_skill_stats[BASIC_SKILL_COUNT] = {
@@ -491,6 +492,17 @@ int sub_4C6520(int64_t obj)
     }
 
     return amount;
+}
+
+// 0x4C6560
+int sub_4C6560()
+{
+    int value;
+
+    value = dword_6876C4;
+    dword_6876C4 = random_between(1, 100);
+
+    return value;
 }
 
 // 0x4C69A0
