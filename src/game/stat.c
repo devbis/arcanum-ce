@@ -284,7 +284,7 @@ int stat_level(object_id_t obj, int stat)
 
         break;
     case STAT_MAX_FOLLOWERS:
-        if (sub_4C60C0(obj, PRIMARY_SKILL_PERSUATION) >= 2) {
+        if (sub_4C60C0(obj, BASIC_SKILL_PERSUATION) >= 2) {
             value += 1;
         }
         break;

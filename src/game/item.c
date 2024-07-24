@@ -377,7 +377,7 @@ bool sub_462230(int64_t a1, int64_t a2, int64_t a3)
 {
     (void)a2;
 
-    return sub_4C60C0(a3, PRIMARY_SKILL_HAGGLE) >= 3
+    return sub_4C60C0(a3, BASIC_SKILL_HAGGLE) >= 3
         || ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) == 0
             && (sub_461340(a1) < 1000 || sub_461340(a1) > 1008));
 }
@@ -389,7 +389,7 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj)
     int weight;
 
     distance = 50 * stat_level(critter_obj, STAT_STRENGTH);
-    if (sub_4C60C0(critter_obj, PRIMARY_SKILL_THROWING) >= 2) {
+    if (sub_4C60C0(critter_obj, BASIC_SKILL_THROWING) >= 2) {
         distance += distance / 2;
     }
 

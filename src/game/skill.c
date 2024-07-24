@@ -1,16 +1,16 @@
-#include "game/lib/skill.h"
+#include "game/skill.h"
 
-#include "game/lib/message.h"
-#include "game/lib/stat.h"
+#include "game/mes.h"
+#include "game/stat.h"
 
-#define FIRST_PRIMARY_SKILL_NAME_ID 0
-#define FIRST_SECONDARY_SKILL_NAME_ID (FIRST_PRIMARY_SKILL_NAME_ID + PRIMARY_SKILL_COUNT)
-#define FIRST_TRAINING_NAME_ID (FIRST_SECONDARY_SKILL_NAME_ID + SECONDARY_SKILL_COUNT)
-#define FIRST_PRIMARY_SKILL_DESC_ID (FIRST_TRAINING_NAME_ID + TRAINING_COUNT)
-#define FIRST_SECONDARY_SKILL_DESC_ID (FIRST_PRIMARY_SKILL_DESC_ID + PRIMARY_SKILL_COUNT)
+#define FIRST_BASIC_SKILL_NAME_ID 0
+#define FIRST_TECH_SKILL_NAME_ID (FIRST_BASIC_SKILL_NAME_ID + BASIC_SKILL_COUNT)
+#define FIRST_TRAINING_NAME_ID (FIRST_TECH_SKILL_NAME_ID + TECH_SKILL_COUNT)
+#define FIRST_BASIC_SKILL_DESC_ID (FIRST_TRAINING_NAME_ID + TRAINING_COUNT)
+#define FIRST_TECH_SKILL_DESC_ID (FIRST_BASIC_SKILL_DESC_ID + BASIC_SKILL_COUNT)
 
 // 0x5B6F04
-static int primary_skill_stats[PRIMARY_SKILL_COUNT] = {
+static int basic_skill_stats[BASIC_SKILL_COUNT] = {
     STAT_DEXTERITY,
     STAT_DEXTERITY,
     STAT_DEXTERITY,
@@ -26,7 +26,7 @@ static int primary_skill_stats[PRIMARY_SKILL_COUNT] = {
 };
 
 // 0x5B6F34
-int secondary_skill_stats[SECONDARY_SKILL_COUNT] = {
+int tech_skill_stats[TECH_SKILL_COUNT] = {
     STAT_INTELLIGENCE,
     STAT_PERCEPTION,
     STAT_DEXTERITY,
@@ -34,22 +34,22 @@ int secondary_skill_stats[SECONDARY_SKILL_COUNT] = {
 };
 
 // 0x5FF424
-static char* primary_skill_descriptions[PRIMARY_SKILL_COUNT];
+static char* basic_skill_descriptions[BASIC_SKILL_COUNT];
 
 // 0x5FF454
-static char* primary_skill_names[PRIMARY_SKILL_COUNT];
+static char* basic_skill_names[BASIC_SKILL_COUNT];
 
 // 0x5FF484
-static int skill_msg_file;
+static mes_file_handle_t skill_mes_file;
 
 // 0x5FF488
-static char* secondary_skill_descriptions[SECONDARY_SKILL_COUNT];
+static char* tech_skill_descriptions[TECH_SKILL_COUNT];
 
 // 0x5FF498
 static char* training_names[TRAINING_COUNT];
 
 // 0x5FF4E8
-static char* secondary_skill_names[SECONDARY_SKILL_COUNT];
+static char* tech_skill_names[TECH_SKILL_COUNT];
 
 // 0x6876A0
 static SkillCallbacks skill_callbacks;
@@ -58,45 +58,50 @@ static SkillCallbacks skill_callbacks;
 static int dword_6876C4;
 
 // 0x4C5BD0
-bool skill_init(GameContext* ctx)
+bool skill_init(GameInitInfo* init_info)
 {
-    MessageListItem message_list_item;
+    MesFileEntry mes_file_entry;
+    int index;
 
     // TODO: Incomplete.
 
-    if (!message_load("mes\\skill.mes", &skill_msg_file)) {
+    if (!mes_load("mes\\skill.mes", &skill_mes_file)) {
         return false;
     }
 
-    for (int skill = 0; skill < PRIMARY_SKILL_COUNT; skill++) {
-        message_list_item.num = skill + FIRST_PRIMARY_SKILL_NAME_ID;
-        sub_4D43A0(skill_msg_file, &message_list_item);
-        primary_skill_names[skill] = message_list_item.text;
+    for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+        mes_file_entry.num = index + FIRST_BASIC_SKILL_NAME_ID;
+        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        basic_skill_names[index] = mes_file_entry.str;
     }
 
-    for (int skill = 0; skill < SECONDARY_SKILL_COUNT; skill++) {
-        message_list_item.num = skill + FIRST_SECONDARY_SKILL_NAME_ID;
-        sub_4D43A0(skill_msg_file, &message_list_item);
-        secondary_skill_names[skill] = message_list_item.text;
+    for (index = 0; index < TECH_SKILL_COUNT; index++) {
+        mes_file_entry.num = index + FIRST_TECH_SKILL_NAME_ID;
+        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        tech_skill_names[index] = mes_file_entry.str;
     }
 
-    for (int training = 0; training < TRAINING_COUNT; training++) {
-        message_list_item.num = training + FIRST_TRAINING_NAME_ID;
-        sub_4D43A0(skill_msg_file, &message_list_item);
-        training_names[training] = message_list_item.text;
+    for (index = 0; index < TRAINING_COUNT; index++) {
+        mes_file_entry.num = index + FIRST_TRAINING_NAME_ID;
+        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        training_names[index] = mes_file_entry.str;
     }
 
-    for (int skill = 0; skill < PRIMARY_SKILL_COUNT; skill++) {
-        message_list_item.num = skill + FIRST_PRIMARY_SKILL_DESC_ID;
-        sub_4D43A0(skill_msg_file, &message_list_item);
-        primary_skill_descriptions[skill] = message_list_item.text;
+    for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+        mes_file_entry.num = index + FIRST_BASIC_SKILL_DESC_ID;
+        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        basic_skill_descriptions[index] = mes_file_entry.str;
     }
 
-    for (int skill = 0; skill < SECONDARY_SKILL_COUNT; skill++) {
-        message_list_item.num = skill + FIRST_SECONDARY_SKILL_DESC_ID;
-        sub_4D43A0(skill_msg_file, &message_list_item);
-        secondary_skill_descriptions[skill] = message_list_item.text;
+    for (index = 0; index < TECH_SKILL_COUNT; index++) {
+        mes_file_entry.num = index + FIRST_TECH_SKILL_DESC_ID;
+        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        tech_skill_descriptions[index] = mes_file_entry.str;
     }
+
+    sub_4C6560();
+
+    return true;
 }
 
 // 0x4C5D50
@@ -108,13 +113,15 @@ void skill_set_callbacks(SkillCallbacks* callbacks)
 // 0x4C5DB0
 void skill_exit()
 {
-    message_unload(skill_msg_file);
+    message_unload(skill_mes_file);
 }
 
 // 0x4C5DC0
-bool skill_load(LoadContext* ctx)
+bool skill_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(&dword_6876C4, sizeof(dword_6876C4), 1, ctx->stream) != 1) return false;
+    if (tig_file_fread(&dword_6876C4, sizeof(dword_6876C4), 1, load_info->stream) != 1) {
+        return false;
+    }
 
     return true;
 }
@@ -122,7 +129,9 @@ bool skill_load(LoadContext* ctx)
 // 0x4C5DE0
 bool skill_save(TigFile* stream)
 {
-    if (tig_file_fwrite(&dword_6876C4, sizeof(dword_6876C4), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_6876C4, sizeof(dword_6876C4), 1, stream) != 1) {
+        return false;
+    }
 
     return true;
 }
@@ -130,25 +139,27 @@ bool skill_save(TigFile* stream)
 // 0x4C5E00
 void skill_set_defaults(object_id_t object_id)
 {
-    for (int skill = 0; skill < PRIMARY_SKILL_COUNT; skill++) {
-        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, 0);
+    int index;
+
+    for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_BASIC_SKILL_IDX, index, 0);
     }
 
-    for (int skill = 0; skill < SECONDARY_SKILL_COUNT; skill++) {
-        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, 0);
+    for (index = 0; index < TECH_SKILL_COUNT; index++) {
+        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_TECH_SKILL_IDX, index, 0);
     }
 }
 
 // 0x4C62B0
-const char* primary_skill_get_name(int skill)
+const char* basic_skill_get_name(int skill)
 {
-    return primary_skill_names[skill];
+    return basic_skill_names[skill];
 }
 
 // 0x4C62C0
-const char* primary_skill_get_description(int skill)
+const char* basic_skill_get_description(int skill)
 {
-    return primary_skill_descriptions[skill];
+    return basic_skill_descriptions[skill];
 }
 
 // 0x4C62D0
@@ -170,9 +181,9 @@ int sub_4C64C0()
 }
 
 // 0x4C64D0
-int primary_skill_get_stat(int skill)
+int basic_skill_get_stat(int skill)
 {
-    return primary_skill_stats[skill];
+    return basic_skill_stats[skill];
 }
 
 // 0x4C6510
@@ -182,15 +193,15 @@ int sub_4C6510()
 }
 
 // 0x4C69A0
-const char* secondary_skill_get_name(int skill)
+const char* tech_skill_get_name(int skill)
 {
-    return secondary_skill_names[skill];
+    return tech_skill_names[skill];
 }
 
 // 0x4C69B0
-const char* secondary_skill_get_description(int skill)
+const char* tech_skill_get_description(int skill)
 {
-    return secondary_skill_descriptions[skill];
+    return tech_skill_descriptions[skill];
 }
 
 // 0x4C69D0
@@ -218,7 +229,7 @@ int sub_4C6B00()
 }
 
 // 0x4C6B10
-int secondary_skill_get_stat(int skill)
+int tech_skill_get_stat(int skill)
 {
-    return secondary_skill_stats[skill];
+    return tech_skill_stats[skill];
 }

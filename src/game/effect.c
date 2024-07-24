@@ -93,7 +93,7 @@ static const char* off_5B9C18[] = {
     "persuasion",
 };
 
-static_assert(sizeof(off_5B9C18) / sizeof(off_5B9C18[0]) == PRIMARY_SKILL_COUNT, "wrong size");
+static_assert(sizeof(off_5B9C18) / sizeof(off_5B9C18[0]) == BASIC_SKILL_COUNT, "wrong size");
 
 // 0x5B9C48
 static const char* off_5B9C48[] = {
@@ -103,7 +103,7 @@ static const char* off_5B9C48[] = {
     "armtrap",
 };
 
-static_assert(sizeof(off_5B9C48) / sizeof(off_5B9C48[0]) == SECONDARY_SKILL_COUNT, "wrong size");
+static_assert(sizeof(off_5B9C48) / sizeof(off_5B9C48[0]) == TECH_SKILL_COUNT, "wrong size");
 
 // 0x5B9C58
 static const char* off_5B9C58[] = {
@@ -269,7 +269,7 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 1:
-                for (index = 0; index < PRIMARY_SKILL_COUNT; index++) {
+                for (index = 0; index < BASIC_SKILL_COUNT; index++) {
                     if (_strcmpi(tok, off_5B9C18[index]) == 0) {
                         effect_info = &(effect_basic_skill_effects[num]);
                         effect_info->ids[effect_info->count] = index;
@@ -278,7 +278,7 @@ static void effect_parse(int num, char* text)
                 }
                 break;
             case 2:
-                for (index = 0; index < SECONDARY_SKILL_COUNT; index++) {
+                for (index = 0; index < TECH_SKILL_COUNT; index++) {
                     if (_strcmpi(tok, off_5B9C48[index]) == 0) {
                         effect_info = &(effect_tech_skill_effects[num]);
                         effect_info->ids[effect_info->count] = index;
