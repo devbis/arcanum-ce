@@ -445,8 +445,10 @@ int basic_skill_get_stat(int skill)
 }
 
 // 0x4C6510
-int sub_4C6510()
+int sub_4C6510(int64_t obj)
 {
+    (void)obj;
+
     return 100;
 }
 
