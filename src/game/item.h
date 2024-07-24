@@ -1,8 +1,8 @@
-#ifndef ARCANUM_GAME_LIB_ITEM_H_
-#define ARCANUM_GAME_LIB_ITEM_H_
+#ifndef ARCANUM_GAME_ITEM_H_
+#define ARCANUM_GAME_ITEM_H_
 
 #include "game/context.h"
-#include "game/lib/object.h"
+#include "game/obj.h"
 
 typedef enum AmmunitionType {
     AMMUNITION_TYPE_ARROW,
@@ -10,7 +10,7 @@ typedef enum AmmunitionType {
     AMMUNITION_TYPE_BATTERY,
     AMMUNITION_TYPE_FUEL,
     AMMUNITION_TYPE_COUNT,
-};
+} AmmunitionType;
 
 typedef enum ArmorCoverageType {
     ARMOR_COVERAGE_TYPE_TORSO,
@@ -21,8 +21,12 @@ typedef enum ArmorCoverageType {
     ARMOR_COVERAGE_TYPE_RING,
     ARMOR_COVERAGE_TYPE_MEDALLION,
     ARMOR_COVERAGE_TYPE_COUNT,
-};
+} ArmorCoverageType;
 
-bool item_init(GameContext* ctx);
+bool item_init(GameInitInfo* init_info);
+void item_exit();
+void item_resize(ResizeInfo *resize_info);
+bool item_parent(object_id_t object_id, object_id_t* parent_object_id);
+bool item_is_item(object_id_t object_id);
 
-#endif /* ARCANUM_GAME_LIB_ITEM_H_ */
+#endif /* ARCANUM_GAME_ITEM_H_ */

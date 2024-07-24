@@ -1,11 +1,8 @@
-#include "game/lib/item.h"
+#include "game/item.h"
 
-#include "game/lib/message.h"
-#include "game/lib/random.h"
-#include "game/lib/stat.h"
-#include "tig/art.h"
-#include "tig/debug.h"
-#include "tig/window.h"
+#include "game/mes.h"
+#include "game/random.h"
+#include "game/stat.h"
 
 #define FIRST_AMMUNITION_TYPE_ID 0
 #define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
@@ -32,11 +29,14 @@ static char** item_ammunition_type_names;
 // 0x5E87E4
 static bool dword_5E87E4;
 
+// 0x5E87E8
+static bool dword_5E87E8;
+
 // 0x5E87F8
 static char** item_armor_coverage_type_names;
 
 // 0x5E87FC
-static int item_msg_file;
+static mes_file_handle_t item_mes_file;
 
 // 0x5E8800
 static int dword_5E8800;
@@ -44,11 +44,17 @@ static int dword_5E8800;
 // 0x5E8808
 static TigRect stru_5E8808;
 
+// 0x5E8820
+static bool dword_5E8820;
+
 // 0x460E70
-bool item_init(GameContext* ctx)
+bool item_init(GameInitInfo* init_info)
 {
     TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data) != TIG_OK) {
+    MesFileEntry msg;
+    int index;
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
         return false;
     }
 
@@ -57,27 +63,25 @@ bool item_init(GameContext* ctx)
     stru_5E8808.width = window_data.rect.width;
     stru_5E8808.height = window_data.rect.height;
 
-    dword_5E87E4 = ctx->editor;
+    dword_5E87E4 = init_info->editor;
 
-    if (!message_load("mes\\item.mes", &item_msg_file)) {
+    if (!mes_load("mes\\item.mes", &item_mes_file)) {
         return false;
     }
 
-    item_ammunition_type_names = (char**)calloc(AMMUNITION_TYPE_COUNT, sizeof(*item_ammunition_type_names));
-    item_armor_coverage_type_names = (char**)calloc(ARMOR_COVERAGE_TYPE_COUNT, sizeof(*item_armor_coverage_type_names));
+    item_ammunition_type_names = (char**)CALLOC(AMMUNITION_TYPE_COUNT, sizeof(*item_ammunition_type_names));
+    item_armor_coverage_type_names = (char**)CALLOC(ARMOR_COVERAGE_TYPE_COUNT, sizeof(*item_armor_coverage_type_names));
 
-    MessageListItem msg;
-
-    for (int index = 0; index < AMMUNITION_TYPE_COUNT; index++) {
+    for (index = 0; index < AMMUNITION_TYPE_COUNT; index++) {
         msg.num = index + FIRST_AMMUNITION_TYPE_ID;
-        sub_4D43A0(item_msg_file, &msg);
-        item_ammunition_type_names[index] = msg.text;
+        sub_4D43A0(item_mes_file, &msg);
+        item_ammunition_type_names[index] = msg.str;
     }
 
-    for (int index = 0; index < ARMOR_COVERAGE_TYPE_COUNT; index++) {
+    for (index = 0; index < ARMOR_COVERAGE_TYPE_COUNT; index++) {
         msg.num = index + FIRST_ARMOR_COVERAGE_TYPE_ID;
-        sub_4D43A0(item_msg_file, &msg);
-        item_armor_coverage_type_names[index] = msg.text;
+        sub_4D43A0(item_mes_file, &msg);
+        item_armor_coverage_type_names[index] = msg.str;
     }
 
     dword_5E87E8 = 0;
@@ -90,15 +94,15 @@ bool item_init(GameContext* ctx)
 // 0x460F90
 void item_exit()
 {
-    free(item_ammunition_type_names);
-    free(item_armor_coverage_type_names);
-    message_unload(item_msg_file);
+    FREE(item_ammunition_type_names);
+    FREE(item_armor_coverage_type_names);
+    mes_unload(item_mes_file);
 }
 
 // 0x460FC0
-void item_resize(ResizeContext *ctx)
+void item_resize(ResizeInfo *resize_info)
 {
-    stru_5E8808 = *ctx->field_14;
+    stru_5E8808 = resize_info->field_14;
 }
 
 // 0x4612A0
@@ -110,10 +114,10 @@ bool item_parent(object_id_t object_id, object_id_t* parent_object_id)
     }
 
     if (parent_object_id != NULL) {
-        *parent_object_id = 0;
+        *parent_object_id = OBJ_HANDLE_NULL;
     }
 
-    if ((obj_field_int32_get(object_id, OBJ_F_FLAGS) & OBJECT_FLAG_0x1000) == 0) {
+    if ((obj_field_int32_get(object_id, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
         return false;
     }
 
@@ -146,33 +150,41 @@ int sub_461340(object_id_t object_id)
 }
 
 // 0x461370
-int sub_461370(object_id_t item_id, object_id_t owner_id)
+int sub_461370(object_id_t item_obj, object_id_t owner_obj)
 {
-    if (obj_field_int32_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GOLD) {
+    int weight;
+    int weight_adj;
+    int quantity_fld;
+
+    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GOLD) {
         return 0;
     }
 
-    int weight = obj_field_int32_get(item_id, OBJ_F_ITEM_WEIGHT);
+    weight = obj_field_int32_get(item_obj, OBJ_F_ITEM_WEIGHT);
 
-    if (owner_id != 0) {
-        int v1 = obj_field_int32_get(owner_id, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ);
-        weight += sub_461590(item_id, owner_id, v1);
+    if (owner_obj != OBJ_HANDLE_NULL) {
+        weight_adj = obj_field_int32_get(owner_obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ);
+        weight += sub_461590(item_obj, owner_obj, weight_adj);
     }
 
-    int field;
-    if (sub_462410(item_id, &field) != -1) {
-        weight *= obj_field_int32_get(item_id, field) / 4;
+    if (sub_462410(item_obj, &quantity_fld) != -1) {
+        weight *= obj_field_int32_get(item_obj, quantity_fld) / 4;
     }
 
     return weight;
 }
 
 // 0x461410
-int sub_461410(object_id_t object_id)
+int sub_461410(object_id_t obj)
 {
     int inventory_num_field;
     int inventory_list_idx_field;
-    if (object_get_field(object_id, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+    int index;
+    int count;
+    int weight;
+    int64_t item_obj;
+
+    if (object_get_field(obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
         inventory_num_field = OBJ_F_CONTAINER_INVENTORY_NUM;
         inventory_list_idx_field = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
     } else {
@@ -180,11 +192,11 @@ int sub_461410(object_id_t object_id)
         inventory_list_idx_field = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
     }
 
-    int count = obj_field_int32_get(object_id, inventory_num_field);
-    int weight = 0;
-    for (int index = 0; index < count; index++) {
-        object_id_t item_object_id = obj_arrayfield_handle_get(object_id, inventory_list_idx_field, 0);
-        weight += sub_461370(item_object_id, object_id);
+    count = obj_field_int32_get(obj, inventory_num_field);
+    weight = 0;
+    for (index = 0; index < count; index++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_idx_field, index);
+        weight += sub_461370(item_obj, obj);
     }
 
     return weight;
@@ -255,16 +267,18 @@ int sub_461590(object_id_t item_id, object_id_t owner_id, int a3)
 // 0x461780
 void sub_461780(object_id_t item_id, int* width, int* height)
 {
-    unsigned int inventory_art_id = obj_field_int32_get(item_id, OBJ_F_ITEM_INV_AID);
-
+    tig_art_id_t aid;
     TigArtFrameData art_frame_data;
-    if (tig_art_frame_data(inventory_art_id, &art_frame_data) == TIG_OK) {
+
+    aid = obj_field_int32_get(item_id, OBJ_F_ITEM_INV_AID);
+
+    if (tig_art_frame_data(aid, &art_frame_data) == TIG_OK) {
         if (width != NULL) {
             *width = (art_frame_data.width - 1) / 32 + 1;
         }
 
         if (height != NULL) {
-            *height = (art_frame_data - 1) / 32 + 1;
+            *height = (art_frame_data.height - 1) / 32 + 1;
         }
     } else {
         if (width != NULL) {
@@ -280,14 +294,17 @@ void sub_461780(object_id_t item_id, int* width, int* height)
 // 0x461F20
 int item_worth(object_id_t item_id)
 {
+    int worth;
+
     if (!sub_464370(item_id)) {
         return 300;
     }
 
-    int worth = obj_field_int32_get(item_id, OBJ_F_ITEM_WORTH);
+    worth = obj_field_int32_get(item_id, OBJ_F_ITEM_WORTH);
     if (worth < 2) {
         worth = 2;
     }
+
     return worth;
 }
 
@@ -331,6 +348,7 @@ int sub_462820(object_id_t item_id)
 {
     int inventory_count_field;
     int inventory_list_field;
+
     if (obj_field_int32_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
         inventory_count_field = OBJ_F_CONTAINER_INVENTORY_NUM;
         inventory_list_field = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
@@ -340,20 +358,23 @@ int sub_462820(object_id_t item_id)
     }
 
     if (obj_field_int32_get(item_id, inventory_count_field) > 0) {
-        return obj_arrayfield_handle_get(item_id, inventory_list_field);
+        return obj_arrayfield_handle_get(item_id, inventory_list_field, 0);
     } else {
         return 0;
     }
 }
 
 // 0x462880
-int sub_462880(object_id_t item_id, object_id_t** child_item_ids_ptr)
+int sub_462880(object_id_t obj, object_id_t** list_ptr)
 {
-    *child_item_ids_ptr = NULL;
-
     int inventory_count_field;
     int inventory_list_field;
-    if (obj_field_int32_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+    int index;
+    int count;
+
+    *list_ptr = NULL;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
         inventory_count_field = OBJ_F_CONTAINER_INVENTORY_NUM;
         inventory_list_field = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
     } else {
@@ -361,33 +382,33 @@ int sub_462880(object_id_t item_id, object_id_t** child_item_ids_ptr)
         inventory_list_field = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
     }
 
-    int count = obj_field_int32_get(item_id, inventory_count_field);
+    count = obj_field_int32_get(obj, inventory_count_field);
     if (count > 0) {
-        *child_item_ids_ptr = (object_id_t*)malloc(sizeof(**child_item_ids_ptr));
-        for (int index = 0; index < count; index++) {
-            child_item_ids_ptr[index] = obj_arrayfield_handle_get(item_id, inventory_list_field, index);
+        *list_ptr = (object_id_t*)MALLOC(sizeof(**list_ptr));
+        for (index = 0; index < count; index++) {
+            list_ptr[index] = obj_arrayfield_handle_get(obj, inventory_list_field, index);
         }
     }
     return count;
 }
 
 // 0x462920
-void sub_462920(object_id_t* child_item_ids)
+void sub_462920(object_id_t* list)
 {
-    if (child_item_ids != NULL) {
-        free(child_item_ids);
+    if (list != NULL) {
+        FREE(list);
     }
 }
 
 // 0x4641A0
-int item_inventory_source(object_id_t item_id)
+int item_inventory_source(object_id_t obj)
 {
-    if (item_id != 0) {
-        switch (obj_field_int32_get(item_id, OBJ_F_TYPE)) {
+    if (obj != 0) {
+        switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
         case OBJ_TYPE_CONTAINER:
-            return obj_field_int32_get(item_id, OBJ_F_CONTAINER_INVENTORY_SOURCE);
+            return obj_field_int32_get(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE);
         case OBJ_TYPE_NPC:
-            return obj_field_int32_get(item_id, OBJ_F_CRITTER_INVENTORY_SOURCE);
+            return obj_field_int32_get(obj, OBJ_F_CRITTER_INVENTORY_SOURCE);
         }
     }
     return 0;
@@ -452,25 +473,26 @@ size_t armor_coverage_type_get_name_length(int coverage_type)
 // 0x465CA0
 int item_weapon_ammo_type(object_id_t item_id)
 {
-    if (item_id != 0) {
-        if (obj_field_int32_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-            return obj_field_int32_get(item_id, OBJ_F_WEAPON_AMMO_TYPE);
-        }
+    if (item_id == OBJ_HANDLE_NULL
+        || obj_field_int32_get(item_id, OBJ_F_TYPE) != OBJ_TYPE_WEAPON) {
+        return 10000;
     }
 
-    return 10000;
+    return obj_field_int32_get(item_id, OBJ_F_WEAPON_AMMO_TYPE);
 }
 
 // 0x465E30
 int item_weapon_range(object_id_t item_id, object_id_t critter_id)
 {
-    if (item_id != 0) {
-        if (obj_field_int32_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-            int magic_range_adj = obj_field_int32_get(item_id, OBJ_F_WEAPON_MAGIC_RANGE_ADJ);
-            return obj_field_int32_get(item_id, OBJ_F_WEAPON_RANGE) + sub_461590(item_id, critter_id, magic_range_adj);
+    int magic_range_adj;
+
+    if (item_id == OBJ_HANDLE_NULL
+        || obj_field_int32_get(item_id, OBJ_F_TYPE) != OBJ_TYPE_WEAPON) {
+        return 1;
     }
 
-    return 1;
+    magic_range_adj = obj_field_int32_get(item_id, OBJ_F_WEAPON_MAGIC_RANGE_ADJ);
+    return obj_field_int32_get(item_id, OBJ_F_WEAPON_RANGE) + sub_461590(item_id, critter_id, magic_range_adj);
 }
 
 // 0x468180
