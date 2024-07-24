@@ -10,6 +10,7 @@
 #define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
 
 static bool sub_464150(TimeEvent* timeevent);
+static int64_t sub_4647D0(int64_t obj);
 
 // 0x5B32A0
 static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
@@ -515,6 +516,22 @@ bool item_is_identified(int64_t obj)
 
     return obj_field_int32_get(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) <= 0
         || (obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0;
+}
+
+// 0x4647D0
+int64_t sub_4647D0(int64_t obj)
+{
+    int type;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(type)) {
+        return obj_field_handle_get(obj, OBJ_F_CRITTER_GOLD);
+    }
+    if (type == OBJ_TYPE_CONTAINER) {
+        return sub_462540(obj, 9056, 0);
+    }
+
+    return 0;
 }
 
 // 0x4657D0
