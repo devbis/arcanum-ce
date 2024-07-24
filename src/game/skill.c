@@ -37,6 +37,12 @@ static int tech_skill_stats[TECH_SKILL_COUNT] = {
     STAT_PERCEPTION,
 };
 
+// 0x5B6F48
+static int dword_5B6F48[3] = { 1, 9, 18 };
+
+// 0x5B6F58
+static int dword_5B6F58[3] = { 10, 20, 30 };
+
 // 0x5B6FA4
 static int dword_5B6FA4[20] = {
     3,
@@ -281,6 +287,39 @@ int sub_4C6000(int64_t obj, int skill, int value)
     sub_4F0150(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, value | current_value & ~63);
 
     return value;
+}
+
+// 0x4C60C0
+int sub_4C60C0(int64_t obj, int skill)
+{
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= BASIC_SKILL_COUNT) {
+        return 0;
+    }
+
+    if (skill == BASIC_SKILL_MELEE && sub_45F730(obj)) {
+        int melee;
+        int level;
+        int index;
+
+        melee = basic_skill_level(obj, BASIC_SKILL_MELEE);
+        level = stat_level(obj, STAT_LEVEL);
+
+        for (index = 0; index < 3; index++) {
+            if (melee < dword_5B6F48[index]) {
+                break;
+            }
+
+            if (level < dword_5B6F58[index]) {
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    return (obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill) >> 6) & 3;
 }
 
 // 0x4C62B0
