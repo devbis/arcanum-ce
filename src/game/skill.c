@@ -1,5 +1,6 @@
 #include "game/skill.h"
 
+#include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/stat.h"
@@ -171,6 +172,40 @@ int sub_4C5E50(int64_t obj, int skill)
     } else {
         return 0;
     }
+}
+
+// 0x4C5EB0
+int basic_skill_level(int64_t obj, int skill)
+{
+    int v1;
+    int skill_level;
+    int key_stat_level;
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= BASIC_SKILL_COUNT) {
+        return 0;
+    }
+
+    if (skill == BASIC_SKILL_MELEE && sub_45F730(obj)) {
+        v1 = 20;
+    } else {
+        v1 = sub_4C5E50(obj, skill);
+    }
+
+    skill_level = effect_adjust_basic_skill_level(obj, skill, v1);
+    if (skill_level < 0) {
+        skill_level = 0;
+    } else if (skill_level > 20) {
+        skill_level = 20;
+    }
+
+    key_stat_level = stat_level(obj, basic_skill_get_stat(skill));
+    if (skill_level > sub_4C5F70(key_stat_level)) {
+        skill_level = sub_4C5F70(key_stat_level);
+    }
+
+    return skill_level;
 }
 
 // 0x4C62B0

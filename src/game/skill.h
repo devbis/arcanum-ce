@@ -67,6 +67,7 @@ bool skill_load(GameLoadInfo* load_info);
 bool skill_save(TigFile* stream);
 void skill_set_defaults(object_id_t object_id);
 int sub_4C5E50(int64_t obj, int skill);
+int basic_skill_level(int64_t obj, int skill);
 const char* basic_skill_get_name(int skill);
 const char* basic_skill_get_description(int skill);
 int sub_4C62D0(int a1, int a2, int a3);
