@@ -484,6 +484,13 @@ bool sub_464150(TimeEvent* timeevent)
     return timeevent != NULL && timeevent->params[0].object_value == qword_5E8818;
 }
 
+// 0x464180
+bool npc_respawn_timevent_process(TimeEvent* timeevent)
+{
+    sub_463C60(timeevent->params[0].object_value);
+    return true;
+}
+
 // 0x4641A0
 int item_inventory_source(object_id_t obj)
 {
