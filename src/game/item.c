@@ -1,5 +1,6 @@
 #include "game/item.h"
 
+#include "game/description.h"
 #include "game/mes.h"
 #include "game/random.h"
 #include "game/skill.h"
@@ -809,7 +810,7 @@ void item_decay_timeevent_process(TimeEvent* timeevent)
 
     obj = timeevent->params[0].object_value;
     if (dword_5E8800 > 0) {
-        if (sub_468010(obj)) {
+        if (item_can_decay(obj)) {
             sub_43CCA0(obj);
         }
     } else {
@@ -817,6 +818,27 @@ void item_decay_timeevent_process(TimeEvent* timeevent)
     }
 
     return true;
+}
+
+// 0x468010
+bool item_can_decay(int64_t obj)
+{
+    int64_t owner_obj;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (dword_5E87E4 != 0) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_NO_DECAY) != 0) {
+        return false;
+    }
+
+    return !item_parent(obj, &owner_obj)
+        || sub_49B290(owner_obj) == DESCRIPTION_JUNK_PILE;
 }
 
 // 0x468180

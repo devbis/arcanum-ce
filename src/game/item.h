@@ -43,5 +43,6 @@ int item_ammo_quantity_get(object_id_t obj, int ammo_type);
 int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj);
 int sub_465C90(int race);
 void item_decay_timeevent_process(TimeEvent* timeevent);
+bool item_can_decay(int64_t obj);
 
 #endif /* ARCANUM_GAME_ITEM_H_ */
