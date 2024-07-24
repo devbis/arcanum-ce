@@ -10,7 +10,7 @@
 #define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
 
 static bool sub_464150(TimeEvent* timeevent);
-static int64_t sub_4647D0(int64_t obj);
+static int64_t item_gold_obj(int64_t obj);
 
 // 0x5B32A0
 static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
@@ -518,8 +518,22 @@ bool item_is_identified(int64_t obj)
         || (obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0;
 }
 
+// 0x464780
+int item_gold_amount(int64_t obj)
+{
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_ITEM_GOLD) {
+        obj = item_gold_obj(obj);
+    }
+
+    if (obj != OBJ_HANDLE_NULL) {
+        return obj_field_int32_get(obj, OBJ_F_GOLD_QUANTITY);
+    }
+
+    return 0;
+}
+
 // 0x4647D0
-int64_t sub_4647D0(int64_t obj)
+int64_t item_gold_obj(int64_t obj)
 {
     int type;
 
@@ -531,7 +545,7 @@ int64_t sub_4647D0(int64_t obj)
         return sub_462540(obj, 9056, 0);
     }
 
-    return 0;
+    return OBJ_HANDLE_NULL;
 }
 
 // 0x4657D0
