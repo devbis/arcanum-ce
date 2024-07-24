@@ -505,6 +505,18 @@ int sub_4C6560()
     return value;
 }
 
+// 0x4C6580
+int sub_4C6580(int64_t obj, int skill)
+{
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= TECH_SKILL_COUNT) {
+        return 0;
+    }
+
+    return 4 * sub_4C6680(obj, skill);
+}
+
 // 0x4C69A0
 const char* tech_skill_get_name(int skill)
 {

@@ -80,6 +80,7 @@ int sub_4C64C0(int64_t obj, int skill);
 int basic_skill_get_stat(int skill);
 int sub_4C6510(int64_t obj);
 int sub_4C6520(int64_t obj);
+int sub_4C6580(int64_t obj, int skill);
 const char* tech_skill_get_name(int skill);
 const char* tech_skill_get_description(int skill);
 const char* training_get_name(int training);
