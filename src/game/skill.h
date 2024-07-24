@@ -51,11 +51,11 @@ typedef struct SkillCallbacks {
     SkillCallbacksF4* field_4;
     SkillCallbacksF8* field_8;
     SkillCallbacksFC* field_C;
-    SkillCallbacksF10* field_10;
+    SkillCallbacksF10* trap_output_func;
     SkillCallbacksF14* field_14;
-    SkillCallbacksF18* field_18;
-    SkillCallbacksF1C* field_1C;
-    SkillCallbacksF20* field_20;
+    SkillCallbacksF18* lock_no_repair;
+    SkillCallbacksF1C* lock_pick_output_func;
+    SkillCallbacksF20* no_lock_output_func;
 } SkillCallbacks;
 
 static_assert(sizeof(SkillCallbacks) == 0x24, "wrong size");

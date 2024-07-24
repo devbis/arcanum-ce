@@ -1,5 +1,6 @@
 #include "game/skill.h"
 
+#include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/stat.h"
 
@@ -63,7 +64,17 @@ bool skill_init(GameInitInfo* init_info)
     MesFileEntry mes_file_entry;
     int index;
 
-    // TODO: Incomplete.
+    settings_add(&settings, "follower skills", "1", NULL);
+
+    skill_callbacks.field_0 = NULL;
+    skill_callbacks.field_4 = NULL;
+    skill_callbacks.field_8 = NULL;
+    skill_callbacks.field_C = NULL;
+    skill_callbacks.trap_output_func = NULL;
+    skill_callbacks.field_14 = NULL;
+    skill_callbacks.lock_no_repair = NULL;
+    skill_callbacks.lock_pick_output_func = NULL;
+    skill_callbacks.no_lock_output_func = NULL;
 
     if (!mes_load("mes\\skill.mes", &skill_mes_file)) {
         return false;
