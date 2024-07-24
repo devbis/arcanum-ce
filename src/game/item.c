@@ -2,6 +2,7 @@
 
 #include "game/mes.h"
 #include "game/random.h"
+#include "game/skill.h"
 #include "game/stat.h"
 
 #define FIRST_AMMUNITION_TYPE_ID 0
@@ -312,6 +313,16 @@ int item_worth(object_id_t item_id)
 bool sub_461F60(object_id_t item_id)
 {
     return obj_field_int32_get(item_id, OBJ_F_ITEM_WORTH) == 0;
+}
+
+// 0x462230
+bool sub_462230(int64_t a1, int64_t a2, int64_t a3)
+{
+    (void)a2;
+
+    return sub_4C60C0(a3, PRIMARY_SKILL_HAGGLE) >= 3
+        || ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) == 0
+            && (sub_461340(a1) < 1000 || sub_461340(a1) > 1008));
 }
 
 // 0x462410
