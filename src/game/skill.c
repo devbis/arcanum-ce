@@ -43,6 +43,30 @@ static int dword_5B6F48[3] = { 1, 9, 18 };
 // 0x5B6F58
 static int dword_5B6F58[3] = { 10, 20, 30 };
 
+// 0x5B6F64
+static int dword_5B6F64[BASIC_SKILL_COUNT] = {
+    0x58F,
+    0xE80,
+    0x58D,
+    0x58F,
+    0x880,
+    0x998,
+    0x298,
+    0x884,
+    0x8C0,
+    0x800,
+    0x980,
+    0x820,
+};
+
+// 0x5B6F94
+static int dword_5B6F94[TECH_SKILL_COUNT] = {
+    0x980,
+    0x58F,
+    0x984,
+    0x984,
+};
+
 // 0x5B6FA4
 static int dword_5B6FA4[20] = {
     3,
@@ -65,6 +89,29 @@ static int dword_5B6FA4[20] = {
     20,
     20,
     20,
+};
+
+// 0x5B7044
+static int dword_5B7044[19] = {
+    55,
+    66,
+    78,
+    91,
+    105,
+    120,
+    136,
+    153,
+    171,
+    190,
+    209,
+    227,
+    244,
+    260,
+    275,
+    289,
+    302,
+    314,
+    325,
 };
 
 // 0x5FF424
@@ -338,6 +385,39 @@ const char* basic_skill_get_description(int skill)
 int sub_4C62D0(int a1, int a2, int a3)
 {
     return (a3 + 1) * (a2 + 2);
+}
+
+// 0x4C6410
+int sub_4C6410(int64_t obj, int skill, int64_t other_obj)
+{
+    int skill_level;
+    int difficulty;
+    int delta;
+
+    if (other_obj == OBJ_HANDLE_NULL) {
+        return 100;
+    }
+
+    skill_level = basic_skill_level(obj, skill);
+
+    if ((dword_5B6F64[skill] & 0x10) != 0) {
+        difficulty = stat_level(other_obj, STAT_PERCEPTION);
+    } else if ((dword_5B6F64[skill] & 0x20) != 0) {
+        difficulty = stat_level(other_obj, STAT_INTELLIGENCE);
+    } else {
+        difficulty = basic_skill_level(other_obj, skill);
+    }
+
+    delta = skill_level - difficulty;
+    if (delta >= 10) {
+        return 100;
+    }
+
+    if (delta <= -10) {
+        return 0;
+    }
+
+    return dword_5B7044[delta + 9] / 4;
 }
 
 // 0x4C64B0

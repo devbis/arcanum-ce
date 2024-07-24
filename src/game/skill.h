@@ -74,6 +74,7 @@ int sub_4C60C0(int64_t obj, int skill);
 const char* basic_skill_get_name(int skill);
 const char* basic_skill_get_description(int skill);
 int sub_4C62D0(int a1, int a2, int a3);
+int sub_4C6410(int64_t obj, int skill, int64_t other_obj);
 int sub_4C64B0();
 int sub_4C64C0();
 int basic_skill_get_stat(int skill);
