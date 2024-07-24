@@ -16,6 +16,7 @@ static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466BD0(int64_t key_ring_obj);
+static bool sub_468150(TimeEvent* timeevent);
 
 // 0x5B32A0
 static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
@@ -56,6 +57,9 @@ static bool dword_5E87E4;
 
 // 0x5E87E8
 static bool dword_5E87E8;
+
+// 0x5E87F0
+static int64_t qword_5E87F0;
 
 // 0x5E87F8
 static char** item_armor_coverage_type_names;
@@ -839,6 +843,32 @@ bool item_can_decay(int64_t obj)
 
     return !item_parent(obj, &owner_obj)
         || sub_49B290(owner_obj) == DESCRIPTION_JUNK_PILE;
+}
+
+// 0x468090
+bool sub_468090(int64_t obj, int ms)
+{
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    if (!item_can_decay(obj)) {
+        return false;
+    }
+
+    qword_5E87F0 = obj;
+    timeevent_clear_all_ex(TIMEEVENT_TYPE_ITEM_DECAY, sub_468150);
+
+    timeevent.type = TIMEEVENT_TYPE_ITEM_DECAY;
+    timeevent.params[0].object_value = obj;
+    timeevent.params[1].integer_value = sub_45A7F0();
+    sub_45A950(&datetime, ms);
+    return sub_45B800(&timeevent, &datetime);
+}
+
+// 0x468150
+bool sub_468150(TimeEvent* timeevent)
+{
+    return timeevent != NULL && timeevent->params[0].object_value == qword_5E87F0;
 }
 
 // 0x468180
