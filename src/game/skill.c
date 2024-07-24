@@ -258,6 +258,31 @@ int sub_4C5FA0(int64_t obj, int skill)
     return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill) & 63;
 }
 
+// 0x4C6000
+int sub_4C6000(int64_t obj, int skill, int value)
+{
+    int key_stat_level;
+    int current_value;
+
+    if (value < 0
+        || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= BASIC_SKILL_COUNT) {
+        return 0;
+    }
+
+    key_stat_level = stat_level(obj, basic_skill_get_stat(skill));
+    current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill);
+
+    if (4 * value > sub_4C5F70(key_stat_level)) {
+        return current_value & 63;
+    }
+
+    sub_4F0150(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, value | current_value & ~63);
+
+    return value;
+}
+
 // 0x4C62B0
 const char* basic_skill_get_name(int skill)
 {
