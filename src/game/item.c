@@ -10,12 +10,20 @@
 #define FIRST_AMMUNITION_TYPE_ID 0
 #define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
 
+typedef struct ItemRemoveInfo {
+    /* 0000 */ int64_t field_0;
+    /* 0008 */ int64_t field_8;
+} ItemRemoveInfo;
+
+static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
+
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
 static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466BD0(int64_t key_ring_obj);
+static bool item_force_remove_failure(ItemRemoveInfo* item_remove_info);
 static bool sub_467E70();
 static bool sub_468110(int64_t obj);
 static bool sub_468150(TimeEvent* timeevent);
@@ -807,6 +815,22 @@ void sub_466BD0(int64_t key_ring_obj)
     }
 
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
+}
+
+// 0x467E00
+bool item_force_remove_failure(ItemRemoveInfo* item_remove_info)
+{
+    char name[256];
+    unsigned int flags;
+
+    sub_441B60(item_remove_info->field_0, item_remove_info->field_0, name);
+    tig_debug_printf("MP: Item: item_force_remove_failure: adding to %s OIF_MP_INSERTED.\n", name);
+    flags = obj_field_int32_get(item_remove_info->field_0, OBJ_F_ITEM_FLAGS);
+    flags |= OIF_MP_INSERTED;
+    obj_field_int32_set(item_remove_info->field_0, OBJ_F_ITEM_FLAGS, flags);
+    FREE(item_remove_info);
+
+    return true;
 }
 
 // 0x467E70
