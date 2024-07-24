@@ -830,6 +830,22 @@ void sub_466BD0(int64_t key_ring_obj)
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
 }
 
+// 0x466D60
+void sub_466D60(int64_t obj)
+{
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    sub_436FA0(obj);
+
+    if (player_is_pc_obj(obj)) {
+        sub_4605D0();
+    }
+
+    sub_4601F0(obj);
+}
+
 // 0x466DA0
 int sub_466DA0(int64_t obj)
 {
