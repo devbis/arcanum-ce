@@ -26,6 +26,7 @@ static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466BD0(int64_t key_ring_obj);
+static const char* item_cannot_msg(int reason);
 static void sub_4677B0(int64_t a1, int64_t a2, int a3);
 static void sub_467CB0(int64_t a1, int64_t a2, int a3);
 static bool item_force_remove_failure(ItemRemoveInfo* item_remove_info);
@@ -820,6 +821,21 @@ void sub_466BD0(int64_t key_ring_obj)
     }
 
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
+}
+
+// 0x4673B0
+const char* item_cannot_msg(int reason)
+{
+    MesFileEntry mes_file_entry;
+
+    if (reason <= 0) {
+        return NULL;
+    }
+
+    mes_file_entry.num = reason + 100;
+    mes_get_msg(item_mes_file, &mes_file_entry);
+
+    return mes_file_entry.str;
 }
 
 // 0x4677B0
