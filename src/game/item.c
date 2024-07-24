@@ -519,7 +519,7 @@ bool item_is_identified(int64_t obj)
 }
 
 // 0x464780
-int item_gold_amount(int64_t obj)
+int item_gold_get(int64_t obj)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_ITEM_GOLD) {
         obj = item_gold_obj(obj);
@@ -546,6 +546,18 @@ int64_t item_gold_obj(int64_t obj)
     }
 
     return OBJ_HANDLE_NULL;
+}
+
+// 0x464970
+int64_t item_gold_set(int amount, int64_t obj)
+{
+    int64_t gold_obj;
+
+    if (sub_4ED8B0(9056, obj, &gold_obj)) {
+        sub_4EFDD0(obj, OBJ_F_GOLD_QUANTITY, amount);
+    }
+
+    return gold_obj;
 }
 
 // 0x4657D0

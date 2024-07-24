@@ -32,6 +32,7 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj);
 int sub_462C30(int64_t a1, int64_t a2);
 bool npc_respawn_timevent_process(TimeEvent* timeevent);
 bool item_is_identified(int64_t obj);
-int item_gold_amount(int64_t obj);
+int item_gold_get(int64_t obj);
+int64_t item_gold_set(int amount, int64_t obj);
 
 #endif /* ARCANUM_GAME_ITEM_H_ */
