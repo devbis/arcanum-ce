@@ -1375,23 +1375,6 @@ int sub_4657D0(int a1)
     return off_5E87E0[a1];
 }
 
-// 0x467E70
-int sub_467E70()
-{
-    int v1;
-
-    v1 = dword_5E8820;
-    dword_5E8820 = 0;
-
-    return v1;
-}
-
-// 0x468600
-int sub_468600(int a1)
-{
-    return dword_5B37FC[a1];
-}
-
 // 0x49CB50
 int multiplayer_mod_load_()
 {

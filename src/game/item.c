@@ -16,6 +16,7 @@ static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466BD0(int64_t key_ring_obj);
+static bool sub_467E70();
 static bool sub_468110(int64_t obj);
 static bool sub_468150(TimeEvent* timeevent);
 
@@ -806,6 +807,17 @@ void sub_466BD0(int64_t key_ring_obj)
     }
 
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
+}
+
+// 0x467E70
+bool sub_467E70()
+{
+    bool ret;
+
+    ret = dword_5E8820;
+    dword_5E8820 = false;
+
+    return ret;
 }
 
 // 0x467FC0
