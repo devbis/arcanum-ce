@@ -114,6 +114,31 @@ static int dword_5B7044[19] = {
     325,
 };
 
+// 0x5B7090
+static int dword_5B7090[21] = {
+    0,
+    25,
+    50,
+    75,
+    100,
+    150,
+    200,
+    250,
+    300,
+    400,
+    500,
+    600,
+    700,
+    900,
+    1100,
+    1300,
+    1500,
+    2000,
+    3000,
+    4000,
+    5000,
+};
+
 // 0x5FF424
 static char* basic_skill_descriptions[BASIC_SKILL_COUNT];
 
@@ -450,6 +475,22 @@ int sub_4C6510(int64_t obj)
     (void)obj;
 
     return 100;
+}
+
+// 0x4C6520
+int sub_4C6520(int64_t obj)
+{
+    int gambling;
+    int amount;
+
+    gambling = basic_skill_level(obj, BASIC_SKILL_GAMBLING);
+    amount = dword_5B7090[gambling];
+
+    if (sub_4C60C0(obj, BASIC_SKILL_GAMBLING) >= TRAINING_APPRENTICE) {
+        amount *= 2;
+    }
+
+    return amount;
 }
 
 // 0x4C69A0
