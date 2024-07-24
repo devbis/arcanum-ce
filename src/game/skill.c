@@ -609,14 +609,20 @@ int sub_4C69E0(int a1, int a2, int a3)
 }
 
 // 0x4C6AF0
-int sub_4C6AF0()
+int sub_4C6AF0(int64_t obj, int skill)
 {
+    (void)obj;
+    (void)skill;
+
     return 1;
 }
 
 // 0x4C6B00
-int sub_4C6B00()
+int sub_4C6B00(int64_t obj, int skill)
 {
+    (void)obj;
+    (void)skill;
+
     return 1;
 }
 
