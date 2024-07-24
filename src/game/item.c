@@ -560,6 +560,16 @@ int64_t item_gold_set(int amount, int64_t obj)
     return gold_obj;
 }
 
+// 0x4654F0
+void sub_4654F0(int64_t a, int64_t b)
+{
+    int index;
+
+    for (index = 1000; index <= 1008; index++) {
+        sub_465170(a, index, b);
+    }
+}
+
 // 0x4657D0
 const char* ammunition_type_get_name(int ammo_type)
 {

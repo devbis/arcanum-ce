@@ -34,5 +34,6 @@ bool npc_respawn_timevent_process(TimeEvent* timeevent);
 bool item_is_identified(int64_t obj);
 int item_gold_get(int64_t obj);
 int64_t item_gold_set(int amount, int64_t obj);
+void sub_4654F0(int64_t a, int64_t b);
 
 #endif /* ARCANUM_GAME_ITEM_H_ */
