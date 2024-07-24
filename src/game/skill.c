@@ -11,6 +11,8 @@
 #define FIRST_BASIC_SKILL_DESC_ID (FIRST_TRAINING_NAME_ID + TRAINING_COUNT)
 #define FIRST_TECH_SKILL_DESC_ID (FIRST_BASIC_SKILL_DESC_ID + BASIC_SKILL_COUNT)
 
+static int sub_4C5F70(int value);
+
 // 0x5B6F04
 static int basic_skill_stats[BASIC_SKILL_COUNT] = {
     STAT_DEXTERITY,
@@ -28,11 +30,35 @@ static int basic_skill_stats[BASIC_SKILL_COUNT] = {
 };
 
 // 0x5B6F34
-int tech_skill_stats[TECH_SKILL_COUNT] = {
+static int tech_skill_stats[TECH_SKILL_COUNT] = {
     STAT_INTELLIGENCE,
     STAT_PERCEPTION,
     STAT_DEXTERITY,
     STAT_PERCEPTION,
+};
+
+// 0x5B6FA4
+static int dword_5B6FA4[20] = {
+    3,
+    3,
+    3,
+    3,
+    3,
+    7,
+    7,
+    7,
+    11,
+    11,
+    11,
+    15,
+    15,
+    15,
+    19,
+    19,
+    19,
+    20,
+    20,
+    20,
 };
 
 // 0x5FF424
@@ -206,6 +232,18 @@ int basic_skill_level(int64_t obj, int skill)
     }
 
     return skill_level;
+}
+
+// 0x4C5F70
+int sub_4C5F70(int value)
+{
+    if (value < 1) {
+        value = 1;
+    } else if (value > 20) {
+        value = 20;
+    }
+
+    return dword_5B6FA4[value];
 }
 
 // 0x4C62B0
