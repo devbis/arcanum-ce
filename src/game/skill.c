@@ -38,6 +38,14 @@ static int tech_skill_stats[TECH_SKILL_COUNT] = {
     STAT_PERCEPTION,
 };
 
+// 0x5B6F44
+static int dword_5B6F44[TECH_SKILL_COUNT] = {
+    0,
+    1,
+    9,
+    18,
+};
+
 // 0x5B6F48
 static int dword_5B6F48[3] = { 1, 9, 18 };
 
@@ -580,6 +588,12 @@ const char* tech_skill_get_name(int skill)
 const char* tech_skill_get_description(int skill)
 {
     return tech_skill_descriptions[skill];
+}
+
+// 0x4C69C0
+int sub_4C69C0(int skill)
+{
+    return dword_5B6F44[skill];
 }
 
 // 0x4C69D0

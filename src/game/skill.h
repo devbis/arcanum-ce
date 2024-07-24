@@ -86,6 +86,7 @@ int tech_skill_get_base(int64_t obj, int skill);
 int tech_skill_get_training(int64_t obj, int skill);
 const char* tech_skill_get_name(int skill);
 const char* tech_skill_get_description(int skill);
+int sub_4C69C0(int skill);
 const char* training_get_name(int training);
 int sub_4C69E0(int a1, int a2, int a3);
 int sub_4C6AF0();
