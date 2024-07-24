@@ -595,7 +595,7 @@ bool sub_4655C0()
 }
 
 // 0x4655D0
-int item_inventory_slot(int64_t obj)
+int item_location_get(int64_t obj)
 {
     int type;
 
@@ -627,6 +627,16 @@ int item_inventory_slot(int64_t obj)
         }
     }
     return -1;
+}
+
+// 0x465760
+void item_location_set(int64_t obj, int location)
+{
+    int64_t owner_obj;
+
+    item_parent(obj, &owner_obj);
+    item_remove(obj);
+    item_insert(obj, owner_obj, location);
 }
 
 // 0x4657D0
