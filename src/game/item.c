@@ -12,6 +12,7 @@
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
 static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
+static void sub_466BD0(int64_t obj);
 
 // 0x5B32A0
 static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
@@ -752,6 +753,20 @@ int item_weapon_range(object_id_t item_id, object_id_t critter_id)
 
     magic_range_adj = obj_field_int32_get(item_id, OBJ_F_WEAPON_MAGIC_RANGE_ADJ);
     return obj_field_int32_get(item_id, OBJ_F_WEAPON_RANGE) + sub_461590(item_id, critter_id, magic_range_adj);
+}
+
+// 0x466BD0
+void sub_466BD0(int64_t obj)
+{
+    tig_art_id_t aid;
+
+    if (obj_arrayfield_length_get(obj, OBJ_F_KEY_RING_LIST_IDX) != 0) {
+        tig_art_item_id_create(0, 1, 0, 0, 0, 7, 0, 0, &aid);
+    } else {
+        tig_art_item_id_create(1, 1, 0, 0, 0, 7, 0, 0, &aid);
+    }
+
+    obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, aid);
 }
 
 // 0x468180
