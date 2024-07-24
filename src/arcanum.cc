@@ -46,21 +46,6 @@ int dword_5B306C[7] = {
     100,
 };
 
-// 0x5B32C0
-int dword_5B32C0[11] = {
-    2,
-    1,
-    2,
-    2,
-    1,
-    1,
-    2,
-    4,
-    2,
-    4,
-    2,
-};
-
 // 0x5B37FC
 int dword_5B37FC[20] = {
     1000,
@@ -1388,12 +1373,6 @@ int sub_465010()
 int sub_4657D0(int a1)
 {
     return off_5E87E0[a1];
-}
-
-// 0x465C90
-int sub_465C90(int a1)
-{
-    return dword_5B32C0[a1];
 }
 
 // 0x467E70

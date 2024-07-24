@@ -29,6 +29,21 @@ static int dword_5B32B0[AMMUNITION_TYPE_COUNT] = {
     7041,
 };
 
+// 0x5B32C0
+int dword_5B32C0[RACE_COUNT] = {
+    2,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    4,
+    2,
+    4,
+    2,
+};
+
 // 0x5E87E0
 static char** item_ammunition_type_names;
 
@@ -706,6 +721,12 @@ const char* armor_coverage_type_get_name(int coverage_type)
 size_t armor_coverage_type_get_name_length(int coverage_type)
 {
     return strlen(item_armor_coverage_type_names[coverage_type]);
+}
+
+// 0x465C90
+int sub_465C90(int race)
+{
+    return dword_5B32C0[race];
 }
 
 // 0x465CA0
