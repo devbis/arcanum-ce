@@ -1,7 +1,5 @@
 #include "game/brightness.h"
 
-#include <tig/tig.h>
-
 #include "game/gamelib.h"
 
 #define BRIGHTNESS "brightness"
@@ -36,7 +34,7 @@ void brightness_changed()
         changing = true;
 
         brightness = settings_get_value(&settings, BRIGHTNESS);
-        if (tig_video_set_gamma(brightness * 0.1 + 1.0f) == TIG_OK) {
+        if (tig_video_set_gamma((float)brightness * 0.1f + 1.0f) == TIG_OK) {
             tig_debug_printf("brightness_changed: ERROR: Gamma out of Range!  Attempting to Correct bounds!\n");
 
             brightness = brightness > 9 ? 9 : 1;
