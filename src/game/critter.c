@@ -2,9 +2,14 @@
 
 #include "game/background.h"
 #include "game/effect.h"
+#include "game/item.h"
+#include "game/light.h"
+#include "game/map.h"
 #include "game/mes.h"
+#include "game/object.h"
 #include "game/random.h"
 #include "game/stat.h"
+#include "game/ui.h"
 
 static bool sub_45E8D0(TimeEvent* timeevent);
 static bool sub_45EA80(TimeEvent* timeevent);
@@ -65,7 +70,7 @@ bool critter_init(GameInitInfo* init_info)
 
     for (index = 0; index < MAX_SOCIAL_CLASS; index++) {
         mes_file_entry.num = index;
-        sub_4D43A0(critter_mes_file, &mes_file_entry);
+        mes_get_msg(critter_mes_file, &mes_file_entry);
         social_class_names[index] = mes_file_entry.str;
     }
 
@@ -303,7 +308,7 @@ bool critter_is_sleeping(int64_t obj)
 // 0x45D8D0
 bool sub_45D8D0(long long obj)
 {
-    if (obj != 0) {
+    if (obj != OBJ_HANDLE_NULL) {
         return sub_43D600(obj) <= 0;
     } else {
         return true;
@@ -329,7 +334,7 @@ void sub_45DC90()
 }
 
 // 0x45DDA0
-void sub_45DDA0()
+int64_t sub_45DDA0(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -340,10 +345,10 @@ long long critter_leader_get(long long obj)
     long long leader_obj;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        obj_f_get_obj(obj, OBJ_F_NPC_LEADER, &leader_obj);
+        obj_field_obj_get(obj, OBJ_F_NPC_LEADER, &leader_obj);
         return obj;
     } else {
-        return 0;
+        return OBJ_HANDLE_NULL;
     }
 }
 
@@ -351,7 +356,7 @@ long long critter_leader_get(long long obj)
 void critter_leader_set(long long follower_obj, long long leader_obj)
 {
     if (obj_field_int32_get(follower_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        obj_f_set_obj(follower_obj, OBJ_F_NPC_LEADER, leader_obj);
+        mp_obj_field_obj_set(follower_obj, OBJ_F_NPC_LEADER, leader_obj);
     }
 }
 
@@ -595,7 +600,7 @@ bool sub_45ECB0(TimeEvent* timeevent)
 }
 
 // 0x45ECE0
-void critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent)
+bool critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent)
 {
     int64_t obj;
     int64_t focus_obj;
@@ -666,7 +671,7 @@ tig_art_id_t sub_45EFA0(tig_art_id_t art_id)
 
     new_art_id = sub_503E50(art_id, 5);
     if (tig_art_exists(new_art_id) == TIG_OK
-        && tig_art_data(new_art_id, &art_anim_data) == TIG_OK) {
+        && tig_art_anim_data(new_art_id, &art_anim_data) == TIG_OK) {
         return tig_art_id_frame_set(new_art_id, art_anim_data.num_frames - 1);
     } else {
         return art_id;
@@ -889,7 +894,7 @@ const char* critter_encumbrance_level_name(int level)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = level + 18;
-    sub_4D43A0(critter_mes_file, &mes_file_entry);
+    mes_get_msg(critter_mes_file, &mes_file_entry);
 
     return mes_file_entry.str;
 }
@@ -903,7 +908,7 @@ int critter_encumbrance_level_ratio(int level)
 // 0x45F970
 int critter_description_get(long long a, long long b)
 {
-    if (a == b || b != NULL && sub_4C0C40(a, b)) {
+    if (a == b || b != OBJ_HANDLE_NULL && sub_4C0C40(a, b)) {
         return obj_field_int32_get(a, OBJ_F_DESCRIPTION);
     } else {
         return obj_field_int32_get(a, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN);
