@@ -1,17 +1,16 @@
-#include "game/lib/stat.h"
+#include "game/stat.h"
 
-#include "game/lib/background.h"
-#include "game/lib/effect.h"
-#include "game/lib/light.h"
-#include "game/lib/location.h"
-#include "game/lib/message.h"
-#include "game/lib/object.h"
-#include "game/lib/sector.h"
-#include "game/lib/skill.h"
-#include "tig/art.h"
+#include "game/background.h"
+#include "game/effect.h"
+#include "game/light.h"
+#include "game/location.h"
+#include "game/mes.h"
+#include "game/object.h"
+#include "game/sector.h"
+#include "game/skill.h"
 
 // 0x5B5194
-int stat_min_values[STAT_COUNT] = {
+static int stat_min_values[STAT_COUNT] = {
     /*             STRENGTH */ 1,
     /*            DEXTERITY */ 1,
     /*         CONSTITUTION */ 1,
@@ -43,7 +42,7 @@ int stat_min_values[STAT_COUNT] = {
 };
 
 // 0x5B5204
-int stat_max_values[STAT_COUNT] = {
+static int stat_max_values[STAT_COUNT] = {
     /*             STRENGTH */ 20,
     /*            DEXTERITY */ 20,
     /*         CONSTITUTION */ 20,
@@ -75,7 +74,7 @@ int stat_max_values[STAT_COUNT] = {
 };
 
 // 0x5B5274
-int stat_default_values[STAT_COUNT] = {
+static int stat_default_values[STAT_COUNT] = {
     /*             STRENGTH */ 8,
     /*            DEXTERITY */ 8,
     /*         CONSTITUTION */ 8,
@@ -107,7 +106,7 @@ int stat_default_values[STAT_COUNT] = {
 };
 
 // 0x5B52E4
-int dword_5B52E4[20] = {
+static int dword_5B52E4[20] = {
     0,
     1,
     1,
@@ -131,7 +130,7 @@ int dword_5B52E4[20] = {
 };
 
 // 0x5B5334
-int dword_5B5334[20] = {
+static int dword_5B5334[20] = {
     -65,
     -52,
     -42,
@@ -192,7 +191,7 @@ const char* off_5B5384[] = {
 static_assert(sizeof(off_5B5384) / sizeof(off_5B5384[0]) == STAT_COUNT, "wrong size");
 
 // 0x5F8644
-static int stat_msg_file;
+static mes_file_handle_t stat_msg_file;
 
 // 0x5F8610
 static char* gender_names[GENDER_COUNT];
@@ -207,36 +206,39 @@ static char* stat_names[STAT_COUNT];
 static char* stat_short_names[STAT_COUNT];
 
 // 0x4B0340
-bool stat_init(GameContext* ctx)
+bool stat_init(GameContext* init_info)
 {
-    MessageListItem message_list_item;
+    MesFileEntry mes_file_entry;
+    int index;
 
-    if (!message_load("mes\\stat.mes", &stat_msg_file)) {
+    (void)init_info;
+
+    if (!mes_load("mes\\stat.mes", &stat_msg_file)) {
         return false;
     }
 
-    for (int stat = 0; stat < STAT_COUNT; stat++) {
-        message_list_item.num = stat;
-        sub_4D43A0(stat_msg_file, &message_list_item);
-        stat_names[stat] = message_list_item.text;
+    for (index = 0; index < STAT_COUNT; index++) {
+        mes_file_entry.num = index;
+        mes_get_msg(stat_msg_file, &mes_file_entry);
+        stat_names[index] = mes_file_entry.str;
     }
 
-    for (int stat = 0; stat < STAT_COUNT; stat++) {
-        message_list_item.num = stat + 500;
-        sub_4D43A0(stat_msg_file, &message_list_item);
-        stat_short_names[stat] = message_list_item.text;
+    for (index = 0; index < STAT_COUNT; index++) {
+        mes_file_entry.num = index + 500;
+        mes_get_msg(stat_msg_file, &mes_file_entry);
+        stat_short_names[index] = mes_file_entry.str;
     }
 
-    for (int gender = 0; gender < GENDER_COUNT; gender++) {
-        message_list_item.num = gender + 28;
-        sub_4D43A0(stat_msg_file, &message_list_item);
-        gender_names[gender] = message_list_item.text;
+    for (index = 0; index < GENDER_COUNT; index++) {
+        mes_file_entry.num = index + 28;
+        mes_get_msg(stat_msg_file, &mes_file_entry);
+        gender_names[index] = mes_file_entry.str;
     }
 
-    for (int race = 0; race < RACE_COUNT; race++) {
-        message_list_item.num = race + 30;
-        sub_4D43A0(stat_msg_file, &message_list_item);
-        race_names[race] = message_list_item.text;
+    for (index = 0; index < RACE_COUNT; index++) {
+        mes_file_entry.num = index + 30;
+        mes_get_msg(stat_msg_file, &mes_file_entry);
+        race_names[index] = mes_file_entry.str;
     }
 
     return true;
@@ -245,21 +247,31 @@ bool stat_init(GameContext* ctx)
 // 0x4B0440
 void stat_exit()
 {
-    message_unload(stat_msg_file);
+    mes_unload(stat_msg_file);
 }
 
 // 0x4B0450
 void stat_set_defaults(object_id_t object_id)
 {
-    for (int stat = 0; stat < STAT_COUNT; stat++) {
-        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_STAT_BASE_IDX, stat, stat_default_values[stat]);
+    int index;
+
+    for (index = 0; index < STAT_COUNT; index++) {
+        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_STAT_BASE_IDX, index, stat_default_values[index]);
     }
 }
 
 // 0x4B0490
 int stat_level(object_id_t obj, int stat)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    int value;
+    location_t location;
+    tig_art_id_t art_id;
+    int poison;
+    int min_value;
+    int max_value;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
 
@@ -267,18 +279,19 @@ int stat_level(object_id_t obj, int stat)
         return 0;
     }
 
-    int value = stat_get_base(obj, stat);
+    value = stat_get_base(obj, stat);
+
     switch (stat) {
     case STAT_SPEED:
         if (sub_458A80(0x4000000)) {
-            if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & 0x4000000) != 0) {
+            if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_TEMPUS_FUGIT) != 0) {
                 value += 10;
             } else {
                 value -= 10;
             }
         }
 
-        if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & 0x400) != 0) {
+        if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_CRIPPLED_LEGS_BOTH) != 0) {
             value -= 5;
         }
 
@@ -303,19 +316,17 @@ int stat_level(object_id_t obj, int stat)
             // - Intelligence -2
             // - Willpower -2
             // - Strength +2
-            if (true) {
-                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                art_id_t art_id = sub_4D70B0(location);
-                if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
-                    if (stat == STAT_INTELLIGENCE) {
-                        value += 2;
-                    }
+            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = sub_4D70B0(location);
+            if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
+                if (stat == STAT_INTELLIGENCE) {
+                    value += 2;
+                }
+            } else {
+                if (stat == STAT_STRENGTH) {
+                    value += 2;
                 } else {
-                    if (stat == STAT_STRENGTH) {
-                        value += 2;
-                    } else {
-                        value -= 2;
-                    }
+                    value -= 2;
                 }
             }
             break;
@@ -330,15 +341,13 @@ int stat_level(object_id_t obj, int stat)
             // - Strength +2
             //
             // NOTE: Persuation bonus is applied via effects.
-            if (true) {
-                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                art_id_t art_id = sub_4D70B0(location);
-                if (sub_4EBB30(art_id)) {
-                    if (stat == STAT_STRENGTH) {
-                        value += 2;
-                    } else {
-                        value -= 2;
-                    }
+            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = sub_4D70B0(location);
+            if (sub_4EBB30(art_id)) {
+                if (stat == STAT_STRENGTH) {
+                    value += 2;
+                } else {
+                    value -= 2;
                 }
             }
             break;
@@ -353,20 +362,18 @@ int stat_level(object_id_t obj, int stat)
             // - Strength +2
             //
             // NOTE: Perception bonus is applied via effects.
-            if (true) {
-                if (sub_4DCE10(obj) < 128) {
-                    if (stat == STAT_STRENGTH) {
-                        value += 2;
-                    } else {
-                        value -= 2;
-                    }
+            if (sub_4DCE10(obj) < 128) {
+                if (stat == STAT_STRENGTH) {
+                    value += 2;
+                } else {
+                    value -= 2;
                 }
             }
             break;
         }
 
         if (stat == STAT_STRENGTH || stat == STAT_DEXTERITY) {
-            int poison = stat_level(obj, STAT_POISON_LEVEL) / 100;
+            poison = stat_level(obj, STAT_POISON_LEVEL) / 100;
             if (poison > 3) {
                 value -= 3;
             } else if (poison > 0) {
@@ -392,49 +399,49 @@ int stat_level(object_id_t obj, int stat)
             }
             break;
         case BACKGROUND_SKY_MAGE:
-            if (1) {
-                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                art_id_t art_id = sub_4D70B0(location);
-                if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
-                    value -= 4;
-                } else {
-                    value += 4;
-                }
+            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = sub_4D70B0(location);
+            if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
+                value -= 4;
+            } else {
+                value += 4;
             }
             break;
         case BACKGROUND_NATURE_MAGE:
-            if (1) {
-                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                art_id_t art_id = sub_4D70B0(location);
-                if (!sub_4EBBA0(art_id)) {
-                    value -= 4;
-                } else {
-                    value += 4;
-                }
+            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = sub_4D70B0(location);
+            if (!sub_4EBBA0(art_id)) {
+                value -= 4;
+            } else {
+                value += 4;
             }
             break;
         }
         break;
     }
 
-    int adjusted_value = effect_adjust_stat_level(obj, stat, value);
-    int min_value = stat_get_min_value(obj, stat);
-    int max_value = stat_get_max_value(obj, stat);
+    value = effect_adjust_stat_level(obj, stat, value);
+    min_value = stat_get_min_value(obj, stat);
+    max_value = stat_get_max_value(obj, stat);
 
-    if (adjusted_value < min_value) {
+    if (value < min_value) {
         return min_value;
     }
 
-    if (adjusted_value > max_value) {
+    if (value > max_value) {
         return max_value;
     }
 
-    return adjusted_value;
+    return value;
 }
 
 // 0x4B0740
 int stat_get_base(object_id_t obj, int stat)
 {
+    int value;
+    int bonus;
+    location_t location;
+
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
@@ -443,7 +450,6 @@ int stat_get_base(object_id_t obj, int stat)
         return 0;
     }
 
-    int value;
     if (stat >= FIRST_DERIVED_STAT && stat <= LAST_DERIVED_STAT) {
         switch (stat) {
         case STAT_CARRY_WEIGHT:
@@ -490,11 +496,9 @@ int stat_get_base(object_id_t obj, int stat)
             value = stat_level(obj, STAT_CHARISMA) / 4;
             break;
         case STAT_MAGICK_TECH_APTITUDE:
-            if (1) {
-                int bonus = (50 * stat_level(obj, STAT_MAGICK_POINTS) - 55 * stat_level(obj, STAT_TECH_POINTS)) / 10;
-                location_t location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                value = sub_45A060(sub_4CFC50(location)) + bonus;
-            }
+            bonus = (50 * stat_level(obj, STAT_MAGICK_POINTS) - 55 * stat_level(obj, STAT_TECH_POINTS)) / 10;
+            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            value = sub_45A060(sub_4CFC50(location)) + bonus;
             break;
         }
     } else {
@@ -513,7 +517,8 @@ int stat_set_base(object_id_t obj, int stat)
 // 0x4B0EE0
 bool stat_is_maximized(object_id_t obj, int stat)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return false;
     }
 
@@ -569,17 +574,20 @@ const char* race_get_name(int race)
 }
 
 // 0x4B0FC0
-int stat_get_min_value(object_id_t object_id, int stat)
+int stat_get_min_value(object_id_t obj, int stat)
 {
+    (void)obj;
+
     return stat_min_values[stat];
 }
 
 // 0x4B0FD0
-int stat_get_max_value(object_id_t object_id, int stat)
+int stat_get_max_value(object_id_t obj, int stat)
 {
     int race;
-    if (object_id != 0) {
-        race = sub_4B0740(object_id, STAT_RACE);
+
+    if (obj != OBJ_HANDLE_NULL) {
+        race = stat_get_base(obj, STAT_RACE);
     } else {
         race = RACE_HUMAN;
     }

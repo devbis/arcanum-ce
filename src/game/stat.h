@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_LIB_STAT_H_
 
 #include "game/context.h"
+#include "game/obj.h"
 
 #define LOW_INTELLIGENCE 4
 
@@ -38,7 +39,7 @@ typedef enum Stat {
     LAST_PRIMARY_STAT = STAT_CHARISMA,
     FIRST_DERIVED_STAT = STAT_CARRY_WEIGHT,
     LAST_DERIVED_STAT = STAT_MAGICK_TECH_APTITUDE,
-};
+} Stat;
 
 static_assert(STAT_COUNT == 28, "wrong size");
 
@@ -46,7 +47,7 @@ typedef enum Gender {
     GENDER_FEMALE,
     GENDER_MALE,
     GENDER_COUNT,
-};
+} Gender;
 
 static_assert(GENDER_COUNT == 2, "wrong size");
 
@@ -63,13 +64,13 @@ typedef enum Race {
     RACE_OGRE,
     RACE_ORC,
     RACE_COUNT,
-};
+} Race;
 
 static_assert(RACE_COUNT == 11, "wrong size");
 
 extern const char* off_5B5384[];
 
-bool stat_init(GameContext* ctx);
+bool stat_init(GameInitInfo* init_info);
 void stat_exit();
 void stat_set_defaults(object_id_t object_id);
 int stat_level(object_id_t obj, int stat);
@@ -79,6 +80,8 @@ const char* stat_get_name(int stat);
 const char* stat_get_short_name(int stat);
 const char* gender_get_name(int gender);
 const char* race_get_name(int race);
+int stat_get_min_value(object_id_t object_id, int stat);
+int stat_get_max_value(object_id_t object_id, int stat);
 int sub_4B0FC0(int a1, int a2, int a3);
 
 #endif /* ARCANUM_GAME_LIB_STAT_H_ */
