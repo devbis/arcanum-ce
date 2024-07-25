@@ -522,7 +522,7 @@ int sub_4C6580(int64_t obj, int skill)
         return 0;
     }
 
-    return 4 * sub_4C6680(obj, skill);
+    return 4 * tech_skill_get_base(obj, skill);
 }
 
 // 0x4C65E0
