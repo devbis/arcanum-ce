@@ -205,3 +205,9 @@ bool sub_4B02B0(object_id_t obj, int intelligence)
 
     return true;
 }
+
+// 0x4B0320
+int sub_4B0320(int a1, int a2)
+{
+    return 10 * (a2 + 20 * a1 + 199);
+}
