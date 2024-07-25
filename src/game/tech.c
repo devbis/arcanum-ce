@@ -1,9 +1,9 @@
-#include "game/lib/tech.h"
+#include "game/tech.h"
 
-#include "game/lib/effect.h"
-#include "game/lib/message.h"
-#include "game/lib/object.h"
-#include "game/lib/stat.h"
+#include "game/effect.h"
+#include "game/mes.h"
+#include "game/object.h"
+#include "game/stat.h"
 
 // TODO: Refactor.
 #define SEVENTEEN 17
@@ -55,7 +55,7 @@ static char* degree_names[DEGREE_COUNT];
 static char* degree_descriptions[TECH_COUNT][DEGREE_COUNT];
 
 // 0x5F85C8
-static int tech_msg_file;
+static mes_file_handle_t tech_msg_file;
 
 // 0x5F85CC
 static char* tech_descriptions[TECH_COUNT];
@@ -64,41 +64,45 @@ static char* tech_descriptions[TECH_COUNT];
 static char* tech_names[TECH_COUNT];
 
 // 0x4AFCD0
-bool tech_init(GameContext* ctx)
+bool tech_init(GameInitInfo* init_info)
 {
-    MessageListItem message_list_item;
+    MesFileEntry mes_file_entry;
+    int tech;
+    int degree;
 
-    if (!message_load("mes\\tech.mes", &tech_msg_file)) {
+    (void)init_info;
+
+    if (!mes_load("mes\\tech.mes", &tech_msg_file)) {
         return false;
     }
 
-    for (int tech = 0; tech < TECH_COUNT; tech++) {
-        message_list_item.num = tech;
-        sub_4D43A0(tech_msg_file, &message_list_item);
-        tech_names[tech] = message_list_item.text;
+    for (tech = 0; tech < TECH_COUNT; tech++) {
+        mes_file_entry.num = tech;
+        mes_get_msg(tech_msg_file, &mes_file_entry);
+        tech_names[tech] = mes_file_entry.str;
     }
 
-    for (int degree = 0; degree < DEGREE_COUNT; degree++) {
-        message_list_item.num = degree + 8;
-        sub_4D43A0(tech_msg_file, &message_list_item);
-        degree_names[degree] = message_list_item.text;
+    for (degree = 0; degree < DEGREE_COUNT; degree++) {
+        mes_file_entry.num = degree + 8;
+        mes_get_msg(tech_msg_file, &mes_file_entry);
+        degree_names[degree] = mes_file_entry.str;
     }
 
-    for (int tech = 0; tech < TECH_COUNT; tech++) {
-        message_list_item.num = tech + 16;
-        sub_4D43A0(tech_msg_file, &message_list_item);
-        tech_descriptions[tech] = message_list_item.text;
+    for (tech = 0; tech < TECH_COUNT; tech++) {
+        mes_file_entry.num = tech + 16;
+        mes_get_msg(tech_msg_file, &mes_file_entry);
+        tech_descriptions[tech] = mes_file_entry.str;
     }
 
     // NOTE: Original code is slightly different. It does not use nested loop,
     // instead it simply runs 64 iterations, implying `degree_descriptions`
     // is one-dimensional array. Making it two-dimensional slightly increase
     // code readability.
-    for (int tech = 0; tech < TECH_COUNT; tech++) {
-        for (int degree = 0; degree < DEGREE_COUNT; degree++) {
-            message_list_item.num = tech * DEGREE_COUNT + degree + 24;
-            sub_4D43A0(tech_msg_file, &message_list_item);
-            degree_descriptions[tech][degree] = message_list_item.text;
+    for (tech = 0; tech < TECH_COUNT; tech++) {
+        for (degree = 0; degree < DEGREE_COUNT; degree++) {
+            mes_file_entry.num = tech * DEGREE_COUNT + degree + 24;
+            mes_get_msg(tech_msg_file, &mes_file_entry);
+            degree_descriptions[tech][degree] = mes_file_entry.str;
         }
     }
 
@@ -108,14 +112,16 @@ bool tech_init(GameContext* ctx)
 // 0x4AFDD0
 void tech_exit()
 {
-    message_unload(tech_msg_file);
+    mes_unload(tech_msg_file);
 }
 
 // 0x4AFDE0
 void tech_set_defaults(object_id_t obj)
 {
+    int index;
+
     // TODO: Use enum.
-    for (int index = 17; index < 25; index++) {
+    for (index = 17; index < 25; index++) {
         sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, index, 0);
     }
 }
@@ -147,7 +153,8 @@ const char* degree_get_description(int degree, int tech)
 // 0x4AFE60
 int sub_4AFE60(long long object_id, int tech)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
     } else {
         return 0;
@@ -157,7 +164,8 @@ int sub_4AFE60(long long object_id, int tech)
 // 0x4AFF90
 int sub_4AFF90(long long object_id, int tech, int value)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         sub_4F0270(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
     } else {
         return 0;
@@ -173,9 +181,11 @@ int sub_4B00A0(int a1)
 // 0x4B00B0
 int sub_4B00B0(object_id_t obj, int tech)
 {
-    int degree = sub_4AFE60(obj, tech);
+    int degree;
+    int intelligence;
 
-    int intelligence = stat_level(obj, STAT_INTELLIGENCE);
+    degree = sub_4AFE60(obj, tech);
+    intelligence = stat_level(obj, STAT_INTELLIGENCE);
     while (intelligence < tech_get_min_intelligence_for_degree(degree)) {
         degree--;
     }
@@ -192,13 +202,17 @@ int tech_get_min_intelligence_for_degree(int degree)
 // 0x4B02B0
 bool sub_4B02B0(object_id_t obj, int intelligence)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    int tech;
+    int degree;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return true;
     }
 
-    for (int tech = 0; tech < TECH_COUNT; tech++) {
-        int degree = sub_4AFE60(obj, tech);
-        if (tech_get_min_intelligence_for_degree(degreee) > intelligence) {
+    for (tech = 0; tech < TECH_COUNT; tech++) {
+        degree = sub_4AFE60(obj, tech);
+        if (tech_get_min_intelligence_for_degree(degree) > intelligence) {
             return false;
         }
     }

@@ -1,7 +1,8 @@
-#ifndef ARCANUM_GAME_LIB_TECH_H_
-#define ARCANUM_GAME_LIB_TECH_H_
+#ifndef ARCANUM_GAME_TECH_H_
+#define ARCANUM_GAME_TECH_H_
 
 #include "game/context.h"
+#include "game/obj.h"
 
 typedef enum Tech {
     TECH_HERBOLOGY,
@@ -31,7 +32,7 @@ typedef enum Degree {
 
 static_assert(DEGREE_COUNT == 8, "wrong size");
 
-bool tech_init(GameContext* ctx);
+bool tech_init(GameInitInfo* init_info);
 void tech_exit();
 void tech_set_defaults(object_id_t obj);
 const char* tech_get_name(int tech);
@@ -44,4 +45,4 @@ int tech_get_min_intelligence_for_degree(int degree);
 bool sub_4B02B0(object_id_t obj, int intelligence);
 int sub_4B0320(int a1, int a2);
 
-#endif /* ARCANUM_GAME_LIB_TECH_H_ */
+#endif /* ARCANUM_GAME_TECH_H_ */
