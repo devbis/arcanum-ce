@@ -34,7 +34,7 @@ static int sub_4EC940(const char* fname);
 static void init_wall_names();
 static void sub_4ECB80(mes_file_handle_t wallproto_mes_file, char* str, int index);
 static int sub_4ECC00(int index);
-static void init_wall_structure();
+static void init_wall_structures();
 static void sub_4ECD10(char* str, int index);
 static bool build_wall_file_name(const char* name, int piece, int damage, int variation, char* fname);
 static int sub_4ED030(const char* str);
@@ -489,9 +489,9 @@ bool sub_4EBA30(tig_art_id_t a, tig_art_id_t b)
     flippable = tig_art_tile_id_flippable1_get(c);
 
     return (num == tig_art_tile_id_num1_get(b)
-            && flippable == tig_art_file_id_flippable1_get(b))
+            && flippable == tig_art_tile_id_flippable1_get(b))
         || (num == tig_art_tile_id_num1_get(a)
-            && flippable == tig_art_file_id_flippable1_get(a));
+            && flippable == tig_art_tile_id_flippable1_get(a));
 }
 
 // 0x4EBAB0
@@ -927,8 +927,6 @@ void init_wall_names()
     } while (mes_find_next(wallname_mes_file, &mes_file_entry));
 
     mes_unload(wallproto_mes_file);
-
-    return true;
 }
 
 // 0x4ECB80
@@ -950,7 +948,7 @@ int sub_4ECC00(int index)
 }
 
 // 0x4ECC10
-void init_wall_structure()
+void init_wall_structures()
 {
     MesFileEntry mes_file_entry;
 
@@ -1097,7 +1095,7 @@ char* a_name_wall_get_structure(int index)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = index + 1000;
-    if (!mes_search(&wall_structure_mes_file, &mes_file_entry)) {
+    if (!mes_search(wall_structure_mes_file, &mes_file_entry)) {
         return NULL;
     }
 
