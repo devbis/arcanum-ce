@@ -37,4 +37,10 @@ typedef enum MagicTechItemTriggers {
     MTIT_RANDOM_CHANCE_FREQUENT = 0x10,
 } MagicTechItemTriggers;
 
+bool magictech_init(GameInitInfo* init_info);
+void magictech_reset();
+bool magictech_post_init(GameInitInfo* init_info);
+void magictech_exit();
+void sub_44FDC0(MesFileEntry *mes_file_entry);
+
 #endif /* ARCANUM_GAME_MAGICTECH_H_ */
