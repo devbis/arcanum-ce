@@ -319,11 +319,11 @@ int object_get_ac(object_id_t obj, bool a2)
         for (index = 1000; index <= 1008; index++) {
             item_obj = item_wield_get(obj, index);
             if (item_obj != OBJ_HANDLE_NULL) {
-                ac += sub_465BA0(obj, item_obj, a2);
+                ac += item_armor_ac_adj(obj, item_obj, a2);
             }
         }
     } else if (type == OBJ_TYPE_ITEM_ARMOR) {
-        ac += sub_465BA0(obj, OBJ_HANDLE_NULL, a2);
+        ac += item_armor_ac_adj(obj, OBJ_HANDLE_NULL, a2);
     }
 
     if (ac < 0) {

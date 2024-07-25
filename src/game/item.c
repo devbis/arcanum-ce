@@ -791,6 +791,31 @@ bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr)
     return true;
 }
 
+// 0x465BA0
+int item_armor_ac_adj(int64_t item_obj, int64_t owner_obj, bool a3)
+{
+    int ac_adj;
+    int magic_ac_adj;
+
+    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) != OBJ_TYPE_ITEM_ARMOR) {
+        return 0;
+    }
+
+    ac_adj = obj_field_int32_get(item_obj, OBJ_F_ARMOR_AC_ADJ);
+
+    if (!a3
+        || -obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0
+        || item_is_identified(item_obj)) {
+        magic_ac_adj = obj_field_int32_get(item_obj, OBJ_F_ARMOR_MAGIC_AC_ADJ);
+        if (owner_obj != OBJ_HANDLE_NULL) {
+            magic_ac_adj = sub_461590(item_obj, owner_obj, magic_ac_adj);
+        }
+        ac_adj += magic_ac_adj;
+    }
+
+    return ac_adj;
+}
+
 // 0x465C90
 int sub_465C90(int race)
 {

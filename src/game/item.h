@@ -64,6 +64,7 @@ int item_location_get(int64_t obj);
 void item_location_set(int64_t obj, int location);
 int item_ammo_quantity_get(object_id_t obj, int ammo_type);
 int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj);
+int item_armor_ac_adj(int64_t item_obj, int64_t owner_obj, bool a3);
 int sub_465C90(int race);
 void sub_466D60(int64_t obj);
 int sub_466DA0(int64_t obj);
