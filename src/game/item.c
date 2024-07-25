@@ -763,6 +763,34 @@ size_t armor_coverage_type_get_name_length(int coverage_type)
     return strlen(item_armor_coverage_type_names[coverage_type]);
 }
 
+// 0x465AE0
+bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr)
+{
+    tig_art_id_t current_aid;
+    tig_art_id_t use_aid_fragment;
+    int subtype;
+    tig_art_id_t aid;
+
+    if (a1 != OBJ_HANDLE_NULL) {
+        current_aid = obj_field_int32_get(a2, OBJ_F_CURRENT_AID);
+        use_aid_fragment = obj_field_int32_get(a1, OBJ_F_ITEM_USE_AID_FRAGMENT);
+        subtype = tig_art_item_id_subtype_get(use_aid_fragment);
+        aid = sub_504060(current_aid, subtype);
+        if (sub_504030(aid) != subtype) {
+            return false;
+        }
+
+        *art_id_ptr = tig_art_id_palette_set(aid, tig_art_id_palette_get(use_aid_fragment));
+        return true;
+    }
+
+    current_aid = obj_field_int32_get(a2, OBJ_F_CURRENT_AID);
+    use_aid_fragment = obj_field_int32_get(a2, OBJ_F_AID);
+    aid = sub_504060(current_aid, 0);
+    *art_id_ptr = tig_art_id_palette_set(aid, tig_art_id_palette_get(use_aid_fragment));
+    return true;
+}
+
 // 0x465C90
 int sub_465C90(int race)
 {
