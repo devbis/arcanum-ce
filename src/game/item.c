@@ -780,13 +780,42 @@ int item_weapon_ammo_type(object_id_t item_id)
     return obj_field_int32_get(item_id, OBJ_F_WEAPON_AMMO_TYPE);
 }
 
+// 0x465CF0
+int item_weapon_magic_speed(int64_t item_obj, int64_t owner_obj)
+{
+    int speed_adj;
+    int skill;
+    int training;
+
+    if (item_obj == OBJ_HANDLE_NULL) {
+        return 10;
+    }
+
+    speed_adj = obj_field_int32_get(item_obj, OBJ_F_WEAPON_MAGIC_SPEED_ADJ);
+
+    if (owner_obj != OBJ_HANDLE_NULL) {
+        speed_adj = sub_461590(item_obj, owner_obj, speed_adj);
+        skill = item_weapon_skill(item_obj);
+        if (IS_TECH_SKILL(skill)) {
+            training = tech_skill_get_training(owner_obj, GET_TECH_SKILL(skill));
+        } else {
+            training = basic_skill_get_training(owner_obj, GET_BASIC_SKILL(skill));
+        }
+        if (training >= TRAINING_APPRENTICE) {
+            speed_adj += 5;
+        }
+    }
+
+    return speed_adj + obj_field_int32_get(item_obj, OBJ_F_WEAPON_SPEED_FACTOR);
+}
+
 // 0x465D80
 int item_weapon_skill(int64_t obj)
 {
     int tech_complexity;
     int ammo_type;
 
-    if (obj == NULL) {
+    if (obj == OBJ_HANDLE_NULL) {
         return SKILL_MELEE;
     }
 
