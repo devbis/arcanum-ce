@@ -72,7 +72,7 @@ const char* background_description_get_text(int num)
     }
 
     mes_file_entry.num = num;
-    if (!message_find(background_description_mes_file, &mes_file_entry)) {
+    if (!mes_search(background_description_mes_file, &mes_file_entry)) {
         return NULL;
     }
 
@@ -96,7 +96,7 @@ const char* background_description_get_body(int num)
     }
 
     mes_file_entry.num = num;
-    if (!message_find(background_description_mes_file, &mes_file_entry)) {
+    if (!mes_search(background_description_mes_file, &mes_file_entry)) {
         return NULL;
     }
 
