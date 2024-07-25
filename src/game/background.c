@@ -1,8 +1,7 @@
-#include "game/lib/background.h"
+#include "game/background.h"
 
-#include "game/lib/effect.h"
-#include "game/lib/message.h"
-#include "tig/debug.h"
+#include "game/effect.h"
+#include "game/mes.h"
 
 #define FIRST_DESCRIPTION_ID 1000
 #define BACKGROUND_BLOCK_SIZE 10
@@ -18,24 +17,26 @@ static int background_get_base_money();
 static char* background_description_name;
 
 // 0x5FD85C
-static int background_msg_file;
+static mes_file_handle_t background_mes_file;
 
 // 0x5FD860
-static int background_description_msg_file;
+static mes_file_handle_t background_description_mes_file;
 
 // 0x4C2270
-bool background_init(GameContext* ctx)
+bool background_init(GameInitInfo* init_info)
 {
-    if (!message_load("rules\\backgrnd.mes", &background_msg_file)) {
+    (void)init_info;
+
+    if (!mes_load("rules\\backgrnd.mes", &background_mes_file)) {
         return false;
     }
 
-    if (!message_load("mes\\gameback.mes", &background_description_msg_file)) {
-        message_unload(background_msg_file);
+    if (!mes_load("mes\\gameback.mes", &background_description_mes_file)) {
+        mes_unload(background_mes_file);
         return false;
     }
 
-    background_description_name = (char*)calloc(BACKGROUND_NAME_LENGTH, sizeof(*background_description_name));
+    background_description_name = (char*)CALLOC(BACKGROUND_NAME_LENGTH, sizeof(*background_description_name));
 
     return true;
 }
@@ -43,24 +44,25 @@ bool background_init(GameContext* ctx)
 // 0x4C22D0
 void background_exit()
 {
-    free(background_description_name);
-    message_unload(background_msg_file);
-    message_unload(background_description_msg_file);
+    FREE(background_description_name);
+    mes_unload(background_mes_file);
+    mes_unload(background_description_mes_file);
 }
 
 // 0x4C24B0
 int background_get_description(int background)
 {
-    MessageListItem msg;
-    msg.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_DESCRIPTION;
-    sub_4D43A0(background_msg_file, &msg);
-    return atoi(msg.text);
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_DESCRIPTION;
+    mes_get_msg(background_mes_file, &mes_file_entry);
+    return atoi(mes_file_entry.str);
 }
 
 // 0x4C24E0
 const char* background_description_get_text(int num)
 {
-    MessageListItem msg;
+    MesFileEntry mes_file_entry;
 
     if (num < FIRST_DESCRIPTION_ID) {
         if (num != 0) {
@@ -69,12 +71,12 @@ const char* background_description_get_text(int num)
         num = FIRST_DESCRIPTION_ID;
     }
 
-    msg.num = num;
-    if (!message_find(background_description_msg_file, &msg)) {
+    mes_file_entry.num = num;
+    if (!message_find(background_description_mes_file, &mes_file_entry)) {
         return NULL;
     }
 
-    return msg.text;
+    return mes_file_entry.str;
 }
 
 // NOTE: Why this function does not use `background_description_get_text` under
@@ -83,7 +85,8 @@ const char* background_description_get_text(int num)
 // 0x4C2530
 const char* background_description_get_body(int num)
 {
-    MessageListItem msg;
+    MesFileEntry mes_file_entry;
+    char* pch;
 
     if (num < FIRST_DESCRIPTION_ID) {
         if (num != 0) {
@@ -92,26 +95,29 @@ const char* background_description_get_body(int num)
         num = FIRST_DESCRIPTION_ID;
     }
 
-    msg.num = num;
-    if (!message_find(background_description_msg_file, &msg)) {
+    mes_file_entry.num = num;
+    if (!message_find(background_description_mes_file, &mes_file_entry)) {
         return NULL;
     }
 
-    char* pch = strchr(msg.text, '\n');
+    pch = strchr(mes_file_entry.str, '\n');
     if (pch != NULL) {
         return pch + 1;
     } else {
-        return msg.text;
+        return mes_file_entry.str;
     }
 }
 
 // 0x4C2590
 const char* background_description_get_name(int num)
 {
-    const char* text = background_description_get_text(num);
+    const char* text;
+    char* pch;
+
+    text = background_description_get_text(num);
     strncpy(background_description_name, text, BACKGROUND_NAME_LENGTH);
 
-    char* pch = strchr(background_description_name, '\n');
+    pch = strchr(background_description_name, '\n');
     if (pch != NULL) {
         *pch = '\0';
     } else {
@@ -132,10 +138,9 @@ void background_obj_clear(object_id_t obj)
 // 0x4C2690
 int background_obj_get_background(object_id_t obj)
 {
-    if (obj != OBJ_HANDLE_NULL) {
-        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
-        }
+    if (obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
     }
 
     return 0;
@@ -150,26 +155,31 @@ int background_obj_get_background_text(object_id_t obj)
 // 0x4C2A70
 static int background_get_base_money()
 {
-    MessageListItem msg;
-    msg.num = BACKGROUND_FIELD_MONEY;
-    sub_4D43A0(background_msg_file, &msg);
-    return atoi(msg.text);
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = BACKGROUND_FIELD_MONEY;
+    mes_get_msg(background_mes_file, &mes_file_entry);
+    return atoi(mes_file_entry.str);
 }
 
 // 0x4C2AA0
 int background_adjust_money(int amount, int background)
 {
-    MessageListItem msg;
-    msg.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_MONEY;
-    sub_4D43A0(background_msg_file, &msg);
-    return amount * (100 * atoi(msg.text) / background_get_base_money()) / 100;
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_MONEY;
+    mes_get_msg(background_mes_file, &mes_file_entry);
+
+    return amount * (100 * atoi(mes_file_entry.str) / background_get_base_money()) / 100;
 }
 
 // 0x4C2B10
 bool background_get_items(char* dest, size_t size, int background)
 {
-    MessageListItem msg;
-    msg.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_ITEMS;
-    strncpy(dest, msg.text, size);
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_ITEMS;
+    strncpy(dest, mes_file_entry.str, size);
+
     return true;
 }

@@ -1,8 +1,8 @@
-#ifndef ARCANUM_GAME_LIB_BACKGROUND_H_
-#define ARCANUM_GAME_LIB_BACKGROUND_H_
+#ifndef ARCANUM_GAME_BACKGROUND_H_
+#define ARCANUM_GAME_BACKGROUND_H_
 
 #include "game/context.h"
-#include "game/lib/object.h"
+#include "game/obj.h"
 
 #define BACKGROUND_DAY_MAGE 62
 #define BACKGROUND_NIGHT_MAGE 63
@@ -12,7 +12,7 @@
 #define BACKGROUND_HYDROPHOBIC 67
 #define BACKGROUND_AFRAID_OF_THE_DARK 68
 
-bool background_init(GameContext* ctx);
+bool background_init(GameInitInfo* init_info);
 void background_exit();
 int background_get_description(int background);
 const char* background_description_get_text(int num);
@@ -24,4 +24,4 @@ int background_obj_get_background_text(object_id_t obj);
 int background_adjust_money(int amount, int background);
 bool background_get_items(char* dest, size_t size, int background);
 
-#endif /* ARCANUM_GAME_LIB_BACKGROUND_H_ */
+#endif /* ARCANUM_GAME_BACKGROUND_H_ */
