@@ -68,7 +68,7 @@ bool skill_save(TigFile* stream);
 void skill_set_defaults(object_id_t object_id);
 int sub_4C5E50(int64_t obj, int skill);
 int basic_skill_level(int64_t obj, int skill);
-int sub_4C5FA0(int64_t obj, int skill);
+int basic_skill_get_base(int64_t obj, int skill);
 int sub_4C6000(int64_t obj, int skill, int value);
 int basic_skill_get_training(int64_t obj, int skill);
 const char* basic_skill_get_name(int skill);

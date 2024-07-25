@@ -278,13 +278,13 @@ void skill_set_defaults(object_id_t object_id)
 // 0x4C5E50
 int sub_4C5E50(int64_t obj, int skill)
 {
-    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        && skill >= 0
-        && skill < BASIC_SKILL_COUNT) {
-        return 4 * sub_4C5FA0(obj, skill);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        || skill < 0
+        || skill >= BASIC_SKILL_COUNT) {
         return 0;
     }
+
+    return 4 * basic_skill_get_base(obj, skill);
 }
 
 // 0x4C5EB0
@@ -334,7 +334,7 @@ int sub_4C5F70(int value)
 }
 
 // 0x4C5FA0
-int sub_4C5FA0(int64_t obj, int skill)
+int basic_skill_get_base(int64_t obj, int skill)
 {
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
         || skill < 0
