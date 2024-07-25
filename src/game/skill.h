@@ -28,6 +28,29 @@ typedef enum TechSkill {
     TECH_SKILL_COUNT,
 } TechSkill;
 
+typedef enum Skill {
+    SKILL_BOW,
+    SKILL_DODGE,
+    SKILL_MELEE,
+    SKILL_THROWING,
+    SKILL_BACKSTAB,
+    SKILL_PICK_POCKET,
+    SKILL_PROWLING,
+    SKILL_SPOT_TRAP,
+    SKILL_GAMBLING,
+    SKILL_HAGGLE,
+    SKILL_HEAL,
+    SKILL_PERSUATION,
+    SKILL_REPAIR,
+    SKILL_FIREARMS,
+    SKILL_PICK_LOCKS,
+    SKILL_DISARM_TRAPS,
+    SKILL_COUNT,
+} Skill;
+
+#define IS_TECH_SKILL(sk) ((sk) >= BASIC_SKILL_COUNT)
+#define GET_TECH_SKILL(sk) ((sk) - BASIC_SKILL_COUNT)
+
 typedef enum Training {
     TRAINING_NONE,
     TRAINING_APPRENTICE,

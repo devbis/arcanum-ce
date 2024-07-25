@@ -780,6 +780,41 @@ int item_weapon_ammo_type(object_id_t item_id)
     return obj_field_int32_get(item_id, OBJ_F_WEAPON_AMMO_TYPE);
 }
 
+// 0x465D80
+int item_weapon_skill(int64_t obj)
+{
+    int tech_complexity;
+    int ammo_type;
+
+    if (obj == NULL) {
+        return SKILL_MELEE;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_WEAPON) {
+        return SKILL_THROWING;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_WEAPON_FLAGS) & OWF_BOOMERANGS) != 0) {
+        return SKILL_THROWING;
+    }
+
+    tech_complexity = -obj_field_int32_get(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+    ammo_type = item_weapon_ammo_type(obj);
+    if (tech_complexity > 0
+        && obj_field_int32_get(obj, OBJ_F_WEAPON_RANGE) >= 3
+        && (ammo_type == AMMUNITION_TYPE_BULLET
+            || ammo_type == AMMUNITION_TYPE_FUEL
+            || ammo_type == AMMUNITION_TYPE_BATTERY)) {
+        return SKILL_FIREARMS;
+    }
+
+    if (ammo_type == AMMUNITION_TYPE_ARROW) {
+        return SKILL_BOW;
+    }
+
+    return SKILL_MELEE;
+}
+
 // 0x465E30
 int item_weapon_range(object_id_t item_id, object_id_t critter_id)
 {
