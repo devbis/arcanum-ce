@@ -170,10 +170,12 @@ static Effect* effect_basic_skill_effects;
 static Effect* effect_special_effects;
 
 // 0x4E99F0
-bool effect_init(GameContext* ctx)
+bool effect_init(GameInitInfo* init_info)
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
+
+    (void)init_info;
 
     if (!mes_load("rules\\effect.mes", &mes_file)) {
         return false;
@@ -216,14 +218,14 @@ bool effect_mod_load()
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
 
-    if (message_load("rules\\gameeffect.mes", &mes_file)) {
+    if (mes_load("rules\\gameeffect.mes", &mes_file)) {
         for (mes_file_entry.num = 0; mes_file_entry.num < 50; mes_file_entry.num++) {
             if (mes_search(mes_file, &mes_file_entry)) {
                 effect_parse(mes_file_entry.num, mes_file_entry.str);
             }
         }
 
-        message_unload(mes_file);
+        mes_unload(mes_file);
     }
 
     return true;
