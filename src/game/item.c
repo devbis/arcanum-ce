@@ -816,6 +816,21 @@ int item_armor_ac_adj(int64_t item_obj, int64_t owner_obj, bool a3)
     return ac_adj;
 }
 
+// 0x465C30
+int item_armor_coverage(int64_t obj)
+{
+    tig_art_id_t inv_aid;
+
+    if (obj == OBJ_HANDLE_NULL
+        || !item_is_item(obj)
+        || obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_ITEM_ARMOR) {
+        return -1;
+    }
+
+    inv_aid = obj_field_int32_get(obj, OBJ_F_ITEM_INV_AID);
+    return tig_art_item_id_armor_coverage_get(inv_aid);
+}
+
 // 0x465C90
 int sub_465C90(int race)
 {
