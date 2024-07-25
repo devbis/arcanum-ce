@@ -346,7 +346,7 @@ int basic_skill_get_base(int64_t obj, int skill)
 }
 
 // 0x4C6000
-int sub_4C6000(int64_t obj, int skill, int value)
+int basic_skill_set_base(int64_t obj, int skill, int value)
 {
     int key_stat_level;
     int current_value;
