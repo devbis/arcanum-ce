@@ -926,6 +926,16 @@ int item_weapon_range(object_id_t item_id, object_id_t critter_id)
     return obj_field_int32_get(item_id, OBJ_F_WEAPON_RANGE) + sub_461590(item_id, critter_id, magic_range_adj);
 }
 
+// 0x466230
+int sub_466230(int64_t obj)
+{
+    if (obj_field_int32_get(obj, OBJ_F_ITEM_SPELL_1) != 10000) {
+        return 0;
+    }
+
+    return sub_4502B0(sub_4CB790(10000));
+}
+
 // 0x466A00
 bool sub_466A00(int64_t a1, int64_t key_obj)
 {
