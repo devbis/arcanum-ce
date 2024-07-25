@@ -39,6 +39,7 @@ const char* tech_get_name(int tech);
 const char* tech_get_description(int tech);
 const char* degree_get_name(int degree);
 const char* degree_get_description(int degree, int tech);
+int sub_4AFFF0(int64_t obj, int tech);
 int sub_4B00A0(int a1);
 int sub_4B00B0(object_id_t obj, int tech);
 int tech_get_min_intelligence_for_degree(int degree);

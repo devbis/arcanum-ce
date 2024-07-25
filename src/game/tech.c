@@ -172,6 +172,36 @@ int sub_4AFF90(long long object_id, int tech, int value)
     }
 }
 
+// 0x4AFFF0
+int sub_4AFFF0(int64_t obj, int tech)
+{
+    int v1;
+    int cost;
+    int tech_points;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return 0;
+    }
+
+    v1 = sub_4AFE60(obj, tech);
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0
+        && !sub_4A2BA0()) {
+            return v1;
+    }
+
+    if (v1 <= 0) {
+        return v1;
+    }
+
+    cost = sub_4B00A0(v1);
+    tech_points = stat_get_base(obj, STAT_TECH_POINTS);
+    stat_set_base(obj, STAT_TECH_POINTS, tech_points - cost);
+
+    return sub_4AFF90(obj, tech, v1 - 1);
+}
+
 // 0x4B00A0
 int sub_4B00A0(int a1)
 {
