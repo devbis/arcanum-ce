@@ -560,6 +560,79 @@ void gamelib_modlist_destroy(GameModuleList* module_list)
     module_list->paths = NULL;
 }
 
+// 0x402A50
+bool gamelib_mod_load(const char* path)
+{
+    TigFileList file_list;
+    unsigned int file_index;
+    int module_index;
+
+    gamelib_mod_unload();
+
+    if (!sub_404C10(path)) {
+        return false;
+    }
+
+    if (byte_5D0FA8[0] != '\0') {
+        tig_file_repository_guid(byte_5D0FA8, &stru_5D10B0);
+    }
+
+    dword_5D10C4 = true;
+
+    if (tig_file_is_directory("Save\\Current")) {
+        if (!tig_file_is_empty_directory("Save\\Current")) {
+            if (!sub_52E040("Save\\Current")) {
+                tig_debug_printf("gamelib_mod_load(): error emptying folder %s\n", "Save\\Current");
+                sub_405070();
+                return false;
+            }
+        }
+    }
+
+    if (!stru_5D0E88.editor) {
+        tig_file_list_create(&file_list, "maps\\*.*");
+
+        for (file_index = 0; file_index < file_list.count; file_index++) {
+            if ((file_list.entries[file_index].attributes & TIG_FILE_ATTRIBUTE_SUBDIR) != 0
+                && file_list.entries[file_index].path[0] != '.') {
+                if (sub_4102F0(file_list.entries[file_index].path)) {
+                    tig_debug_printf("gamelib_mod_load(): error preprocessing mobile object data for map %s\n",
+                        file_list.entries[file_index].path);
+                    sub_405070();
+                    return false;
+                }
+            }
+        }
+
+        tig_file_list_destroy(&file_list);
+    }
+
+    for (module_index = 0; module_index < MODULE_COUNT; module_index++) {
+        if (gamelib_modules[module_index].mod_load_func != NULL) {
+            if (!gamelib_modules[module_index].mod_load_func()) {
+                tig_debug_printf("gamelib_load(): mod load function %d (%s) failed\n",
+                    module_index,
+                    gamelib_modules[module_index].name);
+
+                while (--module_index >= 0) {
+                    if (gamelib_modules[module_index].mod_unload_func != NULL) {
+                        gamelib_modules[module_index].mod_unload_func();
+                    }
+                }
+
+                sub_405070();
+
+                return false;
+            }
+        }
+    }
+
+    strcpy(byte_5D0EA4, path);
+    dword_5D0EA0 = true;
+
+    return true;
+}
+
 // 0x402C20
 bool gamelib_mod_guid(GUID* guid_ptr)
 {
