@@ -216,7 +216,7 @@ static GameExtraLoadFunc* gamelib_extra_load_func;
 static bool dword_5D10DC;
 
 // 0x5D10E4
-static int dword_5D10E4;
+static bool in_load;
 
 // 0x5D10E8
 static bool in_reset;
@@ -892,9 +892,9 @@ const char* sub_403850()
 }
 
 // 0x4038D0
-int sub_4038D0()
+bool gamelib_in_load()
 {
-    return dword_5D10E4;
+    return in_load;
 }
 
 // 0x4038E0

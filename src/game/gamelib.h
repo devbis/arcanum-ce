@@ -35,7 +35,7 @@ void gamelib_mod_unload();
 void sub_402D30(TigRect* rect);
 bool sub_402E50();
 const char* sub_403850();
-int sub_4038D0();
+bool gamelib_in_load();
 void gamelib_set_extra_save_func(GameExtraSaveFunc* func);
 void gamelib_set_extra_load_func(GameExtraLoadFunc* func);
 void gamelib_savlist_create(GameSaveList* save_list);

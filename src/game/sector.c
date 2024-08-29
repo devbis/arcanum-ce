@@ -182,7 +182,7 @@ void sector_resize(ResizeContext* ctx)
 void sub_4CF320()
 {
     sub_4D0B40();
-    if (!sub_4038D0()) {
+    if (!gamelib_in_load()) {
         dword_601834 = 0;
     }
 }
