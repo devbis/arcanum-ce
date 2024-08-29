@@ -11,6 +11,12 @@ typedef struct GameModuleList {
     char** paths;
 } GameModuleList;
 
+typedef struct GameSaveList {
+    char* module;
+    unsigned int count;
+    char** paths;
+} GameSaveList;
+
 extern unsigned int gamelib_ping_time;
 extern Settings settings;
 extern TigVideoBuffer* dword_739E7C;
@@ -28,5 +34,6 @@ bool sub_402E50();
 int sub_4038D0();
 void sub_4038E0(int a1);
 void sub_4038F0(int a1);
+void gamelist_savlist_create(GameSaveList* save_list);
 
 #endif /* ARCANUM_GAME_GAMELIB_H_ */
