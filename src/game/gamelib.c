@@ -215,6 +215,9 @@ static GameExtraLoadFunc* gamelib_extra_load_func;
 // 0x5D10DC
 static bool dword_5D10DC;
 
+// 0x5D10E0
+static bool in_save;
+
 // 0x5D10E4
 static bool in_load;
 
@@ -889,6 +892,12 @@ const char* sub_403850()
     }
 
     return byte_5D0D88;
+}
+
+// 0x4038C0
+bool gamelib_in_save()
+{
+    return in_save;
 }
 
 // 0x4038D0
