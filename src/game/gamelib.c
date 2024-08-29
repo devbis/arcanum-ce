@@ -46,6 +46,9 @@ typedef struct GameLibModule {
 
 static_assert(sizeof(GameLibModule) == 0x2C, "wrong size");
 
+static void sub_4046F0(void* info);
+static void sub_404740(UnknownContext* info);
+
 // 0x59A330
 static GameLibModule gamelib_modules[MODULE_COUNT] = {
     { "Description" },
@@ -177,6 +180,9 @@ static char byte_5D0EA4[MAX_PATH];
 
 // 0x5D0FA8
 static char byte_5D0FA8[MAX_PATH];
+
+// 0x5D10AC
+static void(*dword_5D10AC)(UnknownContext* info);
 
 // 0x5D10B0
 static GUID stru_5D10B0;
@@ -706,6 +712,36 @@ void sub_4046F0(void* info)
         sub_4D5F10(info);
         sub_4D5310(info);
         sub_4C95F0(info);
+        tig_video_3d_end_scene();
+    }
+}
+
+// 0x404740
+void sub_404740(UnknownContext* info)
+{
+    TigRectListNode* node;
+    tig_color_t color;
+
+    color = tig_color_make(0, 0, 255);
+    node = *info->rects;
+    while (node != NULL) {
+        tig_window_fill(stru_5D0E88.iso_window_handle, &(node->rect), color);
+        node = node->next;
+    }
+
+    if (tig_video_3d_begin_scene() == TIG_OK) {
+        sub_4D8350(info);
+        sub_4D6950(info);
+        sub_4C9E70(info);
+        sub_4E3320(info);
+        sub_4C0630(info);
+        sub_4BB0C0(info);
+        sub_43B390(info);
+        sub_4CF390(info);
+        sub_4DF500(info);
+        sub_4BFE00(info);
+        sub_439140(info);
+        sub_4D5F10(info);
         tig_video_3d_end_scene();
     }
 }
