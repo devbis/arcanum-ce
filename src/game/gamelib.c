@@ -46,6 +46,7 @@ typedef struct GameLibModule {
 
 static_assert(sizeof(GameLibModule) == 0x2C, "wrong size");
 
+static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
 
@@ -227,8 +228,8 @@ bool gamelib_init(GameInitInfo* init_info)
 
     settings_load(&settings);
 
-    settings_add(&settings, "difficulty", "1", gamelib_game_difficulty_changed);
-    gamelib_game_difficulty_changed();
+    settings_add(&settings, "difficulty", "1", difficulty_changed);
+    difficulty_changed();
 
     gamelib_mod_loaded = false;
     sub_404930();
@@ -847,7 +848,7 @@ bool sub_403790(const char* name)
 }
 
 // 0x404570
-void gamelib_game_difficulty_changed()
+void difficulty_changed()
 {
     gamelib_game_difficulty = settings_get_value(&settings, "difficulty");
 }
