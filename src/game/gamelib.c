@@ -49,6 +49,7 @@ static_assert(sizeof(GameLibModule) == 0x2C, "wrong size");
 static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
+static void sub_404930();
 
 // 0x59A330
 static GameLibModule gamelib_modules[MODULE_COUNT] = {
@@ -151,6 +152,9 @@ static char byte_5D0C5C[MAX_PATH];
 
 // 0x5D0D60
 static TigRect stru_5D0D60;
+
+// 0x5D0D70
+static bool dword_5D0D70;
 
 // 0x5D0D74
 static bool dword_5D0D74;
@@ -1005,6 +1009,39 @@ void gamelib_splash(int window_handle)
         } else {
             tig_file_list_destroy(&file_list);
         }
+    }
+}
+
+// 0x404930
+void sub_404930()
+{
+    BYTE data[260];
+    DWORD dwSize = sizeof(data);
+    DWORD dwType;
+    HKEY hKey;
+
+    dword_5D0D70 = true;
+
+    if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Troika\\Arcanum", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        dwType = REG_SZ;
+        if (RegQueryValueExA(hKey, "installed_mode", NULL, &dwType, data, &dwSize) == ERROR_SUCCESS
+            && strcmpi(data, "partial") == 0) {
+            dword_5D0D70 = false;
+        } else {
+            // NOTE: Purpose? (We already know it's true)
+            if (dword_5D0D70 == true) {
+                return;
+            }
+        }
+
+        dwType = REG_SZ;
+        if (RegQueryValueExA(hKey, "installed_from", NULL, &dwType, data, &dwSize) == ERROR_SUCCESS) {
+            strcpy(byte_5D0C5C, data);
+        } else {
+            dword_5D0D70 = true;
+        }
+
+        // FIXME: Missing RegCloseKey.
     }
 }
 
