@@ -648,8 +648,10 @@ bool gamelib_mod_guid(GUID* guid_ptr)
 // 0x402C60
 void gamelib_mod_unload()
 {
+    int index;
+
     if (dword_5D0EA0) {
-        for (int index = MODULE_COUNT - 1; index >= 0; index--) {
+        for (index = MODULE_COUNT - 1; index >= 0; index--) {
             if (gamelib_modules[index].mod_unload_func != NULL) {
                 gamelib_modules[index].mod_unload_func();
             }
