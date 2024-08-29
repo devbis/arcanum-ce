@@ -46,6 +46,13 @@ typedef struct GameLibModule {
 
 static_assert(sizeof(GameLibModule) == 0x2C, "wrong size");
 
+typedef struct GameSaveEntry {
+    time_t modify_time;
+    char* path;
+} GameSaveEntry;
+
+static int sub_403D40(GameSaveEntry* a, GameSaveEntry* b);
+static int sub_403DB0(GameSaveEntry* a, GameSaveEntry* b);
 static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
@@ -204,6 +211,9 @@ static int dword_5D10D4;
 
 // 0x5D10D8
 static int dword_5D10D8;
+
+// 0x5D10DC
+static bool dword_5D10DC;
 
 // 0x5D10E4
 static int dword_5D10E4;
@@ -972,6 +982,81 @@ void gamelib_savlist_destroy(GameSaveList* save_list)
     }
 
     save_list->module = NULL;
+}
+
+// 0x403C10
+void sub_403C10(GameSaveList* save_list, int a2, int a3)
+{
+    GameSaveEntry* entries;
+    unsigned int index;
+    char path[TIG_MAX_PATH];
+    TigFileInfo file_info;
+
+    dword_5D10DC = a3 == 0;
+
+    entries = (GameSaveEntry*)MALLOC(sizeof(*entries) * save_list->count);
+
+    for (index = 0; index < save_list->count; index++) {
+        entries[index].path = save_list->paths[index];
+        if (save_list->module != NULL) {
+            snprintf(path, sizeof(path),
+                ".\\Modules\\%s\\save\\%s.gsi",
+                save_list->module,
+                save_list->paths[index]);
+        } else {
+            snprintf(path, sizeof(path),
+                "save\\%s.gsi",
+                save_list->paths[index]);
+        }
+
+        if (!tig_file_exists(path, &file_info)) {
+            tig_debug_printf("GameLib: : ERROR: Couldn't find file!\n");
+            // FIXME: Leaks `entries`.
+            return;
+        }
+
+        entries[index].modify_time = file_info.modify_time;
+    }
+
+    if (a2 == 1) {
+        qsort(entries, save_list->count, sizeof(*entries), sub_403DB0);
+    } else {
+        qsort(entries, save_list->count, sizeof(*entries), sub_403D40);
+    }
+
+    for (index = 0; index < save_list->count; index++) {
+        save_list->paths[index] = entries[index].path;
+    }
+
+    FREE(entries);
+}
+
+// 0x403D40
+int sub_403D40(GameSaveEntry* a, GameSaveEntry* b)
+{
+    if (dword_5D10DC) {
+        if (toupper(a->path[4]) == 'A') {
+            return -1;
+        }
+
+        if (toupper(b->path[4]) == 'A') {
+            return 1;
+        }
+    }
+
+    if (a->modify_time < b->modify_time) {
+        return 1;
+    } else if (a->modify_time > b->modify_time) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
+// 0x403DB0
+int sub_403DB0(GameSaveEntry* a, GameSaveEntry* b)
+{
+    return -strnicmp(a->path, b->path, 8);
 }
 
 // 0x404570
