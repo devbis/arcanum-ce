@@ -505,6 +505,62 @@ void sub_402D30(TigRect* rect)
     }
 }
 
+// 0x402E50
+bool sub_402E50()
+{
+    bool ret = false;
+    TigRectListNode* node;
+    TigRectListNode* next;
+    TigRect rect;
+    int64_t v1[4];
+    int v2[68];
+    Sector601808* v3;
+    UnknownContext v4;
+
+    if (dword_59ADD8 > 0 && dword_5D0010) {
+        dword_5D0D74 = true;
+
+        if (sub_4B9130(&stru_5D0D60, v1)) {
+            if (gamelib_view_options.type == VIEW_TYPE_ISOMETRIC) {
+                sub_4D0090(v1, v2);
+            }
+
+            v3 = sub_4D02E0(v1);
+            v4.field_0 = &stru_5D0D60;
+            v4.field_4 = v1;
+            v4.field_8 = v2;
+            v4.field_C = v3;
+            v4.rects = &dword_5D0E98;
+            dword_5D10AC(&v4);
+            sub_4D0400(v3);
+
+            node = dword_5D0E98;
+            while (node != NULL) {
+                next = node->next;
+                rect = node->rect;
+                rect.x += dword_5D0D78;
+                rect.y += dword_5D0D7C;
+                tig_window_set_needs_display_in_rect(&rect);
+                tig_rect_node_destroy(node);
+                node = next;
+            }
+            ret = true;
+        }
+
+        node = dword_5D000C;
+        dword_5D000C = NULL;
+        dword_5D0E98 = node;
+
+        if (node == NULL) {
+            dword_5D0010 = false;
+        }
+
+        dword_5D0D74 = false;
+    }
+
+    return ret;
+}
+
 // 0x402F90
 void sub_402F90()
 {
