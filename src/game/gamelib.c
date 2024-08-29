@@ -880,7 +880,7 @@ void sub_4038F0(int a1)
 }
 
 // 0x403900
-void gamelist_savlist_create(GameSaveList* save_list)
+void gamelib_savlist_create(GameSaveList* save_list)
 {
     TigFileList file_list;
     unsigned int index;
@@ -905,7 +905,7 @@ void gamelist_savlist_create(GameSaveList* save_list)
 }
 
 // 0x4039E0
-void gamelist_modsavlist_create(const char* module, GameSaveList* save_list)
+void gamelib_modsavlist_create(const char* module, GameSaveList* save_list)
 {
     TigFileList file_list;
     unsigned int index;
