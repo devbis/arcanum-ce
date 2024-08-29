@@ -931,6 +931,29 @@ void gamelist_modsavlist_create(const char* module, GameSaveList* save_list)
     tig_file_list_destroy(&file_list);
 }
 
+// 0x403BB0
+void gamelib_savlist_destroy(GameSaveList* save_list)
+{
+    unsigned int index;
+
+    for (index = 0; index < save_list->count; index++) {
+        FREE(save_list->paths[index]);
+    }
+
+    if (save_list->paths != NULL) {
+        FREE(save_list->paths);
+    }
+
+    save_list->count = 0;
+    save_list->paths = NULL;
+
+    if (save_list->module != NULL) {
+        FREE(save_list->module);
+    }
+
+    save_list->module = NULL;
+}
+
 // 0x404570
 void difficulty_changed()
 {
