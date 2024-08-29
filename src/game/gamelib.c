@@ -394,9 +394,11 @@ void gamelib_exit()
 // 0x402580
 void gamelib_ping()
 {
+    int index;
+
     tig_timer_start(&gamelib_ping_time);
 
-    for (int index = 0; index < MODULE_COUNT; index++) {
+    for (index = 0; index < MODULE_COUNT; index++) {
         if (gamelib_modules[index].ping_func != NULL) {
             gamelib_modules[index].ping_func(gamelib_ping_time);
         }
