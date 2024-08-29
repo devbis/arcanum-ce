@@ -545,6 +545,21 @@ void gamelib_modlist_create(GameModuleList* module_list, int type)
     tig_file_list_destroy(&file_list);
 }
 
+// 0x402A10
+void gamelib_modlist_destroy(GameModuleList* module_list)
+{
+    unsigned int index;
+
+    for (index = 0; index < module_list->count; index++) {
+        FREE(module_list->paths[index]);
+    }
+    FREE(module_list->paths);
+
+    module_list->count = 0;
+    module_list->selected = 0;
+    module_list->paths = NULL;
+}
+
 // 0x402C20
 bool gamelib_mod_guid(GUID* guid_ptr)
 {
