@@ -172,6 +172,97 @@ Settings settings;
 // 0x739E7C
 TigVideoBuffer* dword_739E7C;
 
+// 0x4020F0
+bool gamelib_init(GameInitInfo* init_info)
+{
+    char version[40];
+    TigWindowData window_data;
+    TigVideoBufferCreateInfo vb_create_info;
+    int index;
+
+    gamelib_copy_version(version, NULL, NULL);
+    tig_debug_printf("\n%s\n", version);
+
+    if (init_info->editor) {
+        settings_init(&settings, "worlded.cfg");
+    } else {
+        settings_init(&settings, "arcanum.cfg");
+    }
+
+    settings_load(&settings);
+
+    settings_add(&settings, "difficulty", "1", game_difficulty_changed);
+    game_difficulty_changed();
+
+    dword_5D0EA0 = 0;
+    sub_404930();
+    sub_404A20();
+
+    if (!init_info->editor) {
+        gamelib_logo();
+        gamelib_splash(init_info->iso_window_handle);
+    }
+
+    init_info->field_8 = sub_402D30;
+    init_info->field_C = sub_402E50;
+
+    stru_5D0E88 = *init_info;
+
+    tig_window_data(init_info->iso_window_handle, &window_data);
+
+    dword_5D0D78 = window_data.rect.x;
+    dword_5D0D7C = window_data.rect.y;
+    dword_5D10C0 = window_data.rect.width / 4;
+    dword_5D0D80 = window_data.rect.height / 4;
+
+    stru_5D0018.x = 0;
+    stru_5D0018.y = 0;
+    stru_5D0018.width = window_data.rect.width;
+    stru_5D0018.height = window_data.rect.height;
+
+    stru_5D0D60.x = -256;
+    stru_5D0D60.y = -256;
+    stru_5D0D60.width = window_data.rect.width + 512;
+    stru_5D0D60.height = window_data.rect.height + 512;
+
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+    vb_create_info.width = window_data.rect.width;
+    vb_create_info.height = window_data.rect.height;
+    vb_create_info.color_key = tig_color_make(0, 255, 0);
+    vb_create_info.background_color = vb_create_info.color_key;
+    if (tig_video_buffer_create(&vb_create_info, &dword_739E7C) != TIG_OK) {
+        return false;
+    }
+
+    if (init_info->editor) {
+        dword_5D10AC = sub_404740;
+    } else {
+        dword_5D10AC = sub_4046F0;
+    }
+
+    dword_5D0B50 = 0;
+
+    for (index = 0; index < MODULE_COUNT; index++) {
+        if (gamelib_modules[index].init_func != NULL) {
+            if (!gamelib_modules[index].init_func(init_info)) {
+                tig_debug_printf("gamelib_init(): init function %d (%s) failed\n",
+                    index,
+                    gamelib_modules[index].name);
+
+                while (--index >= 0) {
+                    if (gamelib_modules[index].exit_func != NULL) {
+                        gamelib_modules[index].exit_func();
+                    }
+                }
+
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 // 0x402380
 void gamelib_reset()
 {
