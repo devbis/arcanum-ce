@@ -405,6 +405,56 @@ void gamelib_ping()
     }
 }
 
+// 0x4025C0
+void gamelib_resize(ResizeInfo* resize_info)
+{
+    TigVideoBufferCreateInfo vb_create_info;
+    int index;
+    TigRect bounds;
+    TigRect frame;
+
+    stru_5D0E88.iso_window_handle = resize_info->iso_window_handle;
+    stru_5D0018 = resize_info->field_14;
+
+    dword_5D0D78 = resize_info->field_4.x;
+    dword_5D0D7C = resize_info->field_4.y;
+
+    stru_5D0D60.x = stru_5D0018.x - 256;
+    stru_5D0D60.y = stru_5D0018.y - 256;
+    stru_5D0D60.width = stru_5D0018.width + 512;
+    stru_5D0D60.height = stru_5D0018.height + 512;
+
+    if (dword_739E7C != NULL) {
+        tig_video_buffer_destroy(dword_739E7C);
+        dword_739E7C = NULL;
+    }
+
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+    vb_create_info.width = stru_5D0018.width;
+    vb_create_info.height = stru_5D0018.height;
+    vb_create_info.color_key = tig_color_make(0, 255, 0);
+    vb_create_info.background_color = vb_create_info.color_key;
+    if (tig_video_buffer_create(&vb_create_info, &dword_739E7C) != TIG_OK) {
+        tig_debug_printf("gamelib_resize: ERROR: Failed to rebuild scratch buffer!\n");
+        return;
+    }
+
+    for (index = 0; index < MODULE_COUNT; index++) {
+        if (gamelib_modules[index].resize_func != NULL) {
+            gamelib_modules[index].resize_func(resize_info);
+        }
+    }
+
+    if (dword_5D0E98 != NULL) {
+        bounds = resize_info->field_4;
+        bounds.x = 0;
+        bounds.y = 0;
+        if (tig_rect_intersection(&(dword_5D0E98->rect), &bounds, &frame) == TIG_OK) {
+            dword_5D0E98->rect = frame;
+        }
+    }
+}
+
 // 0x402780
 void sub_402780(const char* name)
 {
