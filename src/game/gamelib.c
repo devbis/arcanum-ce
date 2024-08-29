@@ -172,6 +172,62 @@ Settings settings;
 // 0x739E7C
 TigVideoBuffer* dword_739E7C;
 
+// 0x402380
+void gamelib_reset()
+{
+    tig_timestamp_t reset_started_at;
+    tig_timestamp_t module_started_at;
+    tig_duration_t duration;
+    TigRectNode* node;
+    TigRectNode* next;
+    int index;
+
+    tig_debug_printf("gamelib_reset: Resetting.\n");
+    tig_timer_now(&reset_started_at);
+
+    in_gamelib_reset = true;
+    strcpy(arcanum1, "Arcanum");
+    sub_4D1050();
+
+    if (tig_file_is_directory("Save\\Current")) {
+        tig_debug_printf("gamelib_reset: Begin Removing Files...");
+        tig_timer_now(&module_started_at);
+
+        if (!sub_52E040("Save\\Current")) {
+            tig_debug_printf("gamelib_init(): error emptying folder %s\n", "Save\\Current");
+        }
+
+        duration = tig_timer_elapsed(module_started_at);
+        tig_debug_printf("done. Time (ms): %d\n", duration);
+    }
+
+    node = dword_5D0E98;
+    while (node != NULL) {
+        next = node->next;
+        tig_rect_node_destroy(node);
+        node = next;
+    }
+    dword_5D0E98 = NULL;
+
+    for (index = 0; index < MODULE_COUNT; index++) {
+        if (gamelib_modules[index].reset_func != NULL) {
+            tig_debug_printf("gamelib_reset: Processing Reset Function: %d", index);
+            tig_timer_now(&module_started_at);
+
+            gamelib_modules[index].reset_func();
+
+            duration = tig_timer_elapsed(module_started_at);
+            tig_timer_printf(" done. Time (ms): %d.\n", duration);
+        }
+    }
+
+    sub_4D1040();
+    in_gamelib_reset = false;
+
+    duration = tig_timer_elapsed(reset_started_at);
+    tig_debug_printf("gamelib_reset(): Done.  Total time: %f seconds.\n", duration);
+}
+
 // 0x4024D0
 void gamelib_exit()
 {

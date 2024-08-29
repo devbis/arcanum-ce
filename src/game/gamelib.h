@@ -1,14 +1,15 @@
-#ifndef ARCANUM_GAMELIB_GAMELIB_H_
-#define ARCANUM_GAMELIB_GAMELIB_H_
+#ifndef ARCANUM_GAME_GAMELIB_H_
+#define ARCANUM_GAME_GAMELIB_H_
 
 #include "game/context.h"
-#include "game/lib/settings.h"
+#include "game/settings.h"
 #include "tig/video.h"
 
 extern unsigned int gamelib_ping_time;
 extern Settings settings;
 extern TigVideoBuffer* dword_739E7C;
 
+void gamelib_reset();
 bool gamelib_mod_guid(GUID* guid_ptr);
 
-#endif /* ARCANUM_GAMELIB_GAMELIB_H_ */
+#endif /* ARCANUM_GAME_GAMELIB_H_ */
