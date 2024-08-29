@@ -199,6 +199,15 @@ static int dword_5D10C0;
 // 0x5D10C4
 static bool dword_5D10C4;
 
+// 0x5D10D4
+static int dword_5D10D4;
+
+// 0x5D10D8
+static int dword_5D10D8;
+
+// 0x5D10E4
+static int dword_5D10E4;
+
 // 0x5D10E8
 static bool in_reset;
 
@@ -850,6 +859,24 @@ bool sub_403790(const char* name)
     tig_file_remove(path);
 
     return true;
+}
+
+// 0x4038D0
+int sub_4038D0()
+{
+    return dword_5D10E4;
+}
+
+// 0x4038E0
+void sub_4038E0(int a1)
+{
+    dword_5D10D4 = a1;
+}
+
+// 0x4038F0
+void sub_4038F0(int a1)
+{
+    dword_5D10D8 = a1;
 }
 
 // 0x404570

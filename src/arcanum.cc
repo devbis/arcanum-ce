@@ -119,15 +119,6 @@ int game_difficulty_;
 // 0x5D10E8
 bool in_gamelib_reset_;
 
-// 0x5D10D4
-int dword_5D10D4;
-
-// 0x5D10D8
-int dword_5D10D8;
-
-// 0x5D10E4
-int dword_5D10E4;
-
 // 0x5D1A18
 int voice_volume_;
 
@@ -592,24 +583,6 @@ bool gamelib_in_reset_()
 int sub_402CB0()
 {
     return 0;
-}
-
-// 0x4038D0
-int sub_4038D0()
-{
-    return dword_5D10E4;
-}
-
-// 0x4038E0
-void sub_4038E0(int a1)
-{
-    dword_5D10D4 = a1;
-}
-
-// 0x4038F0
-void sub_4038F0(int a1)
-{
-    dword_5D10D8 = a1;
 }
 
 // 0x404590

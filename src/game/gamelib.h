@@ -25,5 +25,8 @@ bool gamelib_mod_guid(GUID* guid_ptr);
 void gamelib_mod_unload();
 void sub_402D30(TigRect* rect);
 bool sub_402E50();
+int sub_4038D0();
+void sub_4038E0(int a1);
+void sub_4038F0(int a1);
 
 #endif /* ARCANUM_GAME_GAMELIB_H_ */
