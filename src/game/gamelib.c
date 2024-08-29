@@ -1,14 +1,11 @@
-#include "game/lib/gamelib.h"
+#include "game/gamelib.h"
 
 #include <stdio.h>
 
-#include "game/lib/ci.h"
-#include "game/lib/gmovie.h"
-#include "game/lib/li.h"
-#include "game/lib/message.h"
-#include "tig/debug.h"
-#include "tig/timer.h"
-#include "tig/window.h"
+#include "game/ci.h"
+#include "game/gmovie.h"
+#include "game/li.h"
+#include "game/mes.h"
 
 #define GAMELIB_LONG_VERSION_LENGTH 40
 #define GAMELIB_SHORT_VERSION_LENGTH 36
@@ -45,7 +42,7 @@ typedef struct GameLibModule {
     GameSaveFunc* save_func;
     GameLoadFunc* load_func;
     GameResizeFunc* resize_func;
-};
+} GameLibModule;
 
 static_assert(sizeof(GameLibModule) == 0x2C, "wrong size");
 
@@ -116,16 +113,19 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
 };
 
 // 0x59ADD8
-int dword_59ADD8 = 1;
+static int dword_59ADD8 = 1;
 
 // 0x59ADDC
-char arcanum1[260] = "Arcanum";
+static char arcanum1[260] = "Arcanum";
 
 // 0x59AEDC
-char arcanum[260] = "Arcanum";
+static char arcanum2[260] = "Arcanum";
 
 // 0x5CFF08
 static char byte_5CFF08[MAX_PATH];
+
+// 0x5D0018
+static TigRect stru_5D0018;
 
 // 0x5D0028
 static char byte_5D0028[TEN][MAX_PATH];
@@ -138,6 +138,21 @@ static char byte_5D0B58[MAX_PATH];
 
 // 0x5D0C5C
 static char byte_5D0C5C[MAX_PATH];
+
+// 0x5D0D60
+static TigRect stru_5D0D60;
+
+// 0x5D0D78
+static int dword_5D0D78;
+
+// 0x5D0D7C
+static int dword_5D0D7C;
+
+// 0x5D0D80
+static int dword_5D0D80;
+
+// 0x5D0E88
+static GameInitInfo stru_5D0E88;
 
 // 0x5D0E98
 static TigRectListNode* dword_5D0E98;
@@ -156,6 +171,12 @@ static char byte_5D0FA8[MAX_PATH];
 
 // 0x5D10B0
 static GUID stru_5D10B0;
+
+// 0x5D10C0
+static int dword_5D10C0;
+
+// 0x5D10C4
+static bool dword_5D10C4;
 
 // 0x5D10E8
 static bool in_reset;
@@ -191,8 +212,8 @@ bool gamelib_init(GameInitInfo* init_info)
 
     settings_load(&settings);
 
-    settings_add(&settings, "difficulty", "1", game_difficulty_changed);
-    game_difficulty_changed();
+    settings_add(&settings, "difficulty", "1", gamelib_game_difficulty_changed);
+    gamelib_game_difficulty_changed();
 
     dword_5D0EA0 = 0;
     sub_404930();
@@ -240,7 +261,7 @@ bool gamelib_init(GameInitInfo* init_info)
         dword_5D10AC = sub_4046F0;
     }
 
-    dword_5D0B50 = 0;
+    gamelib_view_options.type = VIEW_TYPE_ISOMETRIC;
 
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gamelib_modules[index].init_func != NULL) {
@@ -269,14 +290,14 @@ void gamelib_reset()
     tig_timestamp_t reset_started_at;
     tig_timestamp_t module_started_at;
     tig_duration_t duration;
-    TigRectNode* node;
-    TigRectNode* next;
+    TigRectListNode* node;
+    TigRectListNode* next;
     int index;
 
     tig_debug_printf("gamelib_reset: Resetting.\n");
     tig_timer_now(&reset_started_at);
 
-    in_gamelib_reset = true;
+    in_reset = true;
     strcpy(arcanum1, "Arcanum");
     sub_4D1050();
 
@@ -313,7 +334,7 @@ void gamelib_reset()
     }
 
     sub_4D1040();
-    in_gamelib_reset = false;
+    in_reset = false;
 
     duration = tig_timer_elapsed(reset_started_at);
     tig_debug_printf("gamelib_reset(): Done.  Total time: %f seconds.\n", duration);
@@ -556,19 +577,19 @@ const char* gamelib_get_locale()
     // 0x5D0D84
     static char locale[GAMELIB_LOCALE_LENGTH];
 
-    int msg_file;
-    MessageListItem msg;
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
 
-    if (message_load("mes\\language.mes", &msg_file)) {
-        msg.num = 1;
-        if (message_find(msg_file, &msg)) {
-            sub_4D43A0(msg_file, &msg);
-            strcpy(locale, msg.text);
-            message_unload(msg_file);
+    if (mes_load("mes\\language.mes", &mes_file)) {
+        mes_file_entry.num = 1;
+        if (mes_search(mes_file, &mes_file_entry)) {
+            mes_get_msg(mes_file, &mes_file_entry);
+            strcpy(locale, mes_file_entry.str);
+            mes_unload(mes_file);
             return locale;
         }
 
-        message_unload(msg_file);
+        mes_unload(mes_file);
     }
 
     return "en";
@@ -726,13 +747,15 @@ bool sub_404C10(const char* module_name)
 // 0x405070
 void sub_405070()
 {
+    int index;
+
     tig_file_repository_remove(byte_5CFF08);
 
     if (byte_5D0B58[0] != '\0') {
         tig_file_repository_remove(byte_5D0B58);
     }
 
-    for (int index = TEN - 1; index >= 0; index--) {
+    for (index = TEN - 1; index >= 0; index--) {
         if (byte_5D0028[index][0] != '\0') {
             tig_file_repository_remove(byte_5D0028[index]);
             byte_5D0028[index][0] = '\0';
