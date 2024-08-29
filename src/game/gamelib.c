@@ -124,6 +124,12 @@ static char arcanum2[260] = "Arcanum";
 // 0x5CFF08
 static char byte_5CFF08[MAX_PATH];
 
+// 0x5D000C
+static TigRectListNode* dword_5D000C;
+
+// 0x5D0010
+static bool dword_5D0010;
+
 // 0x5D0018
 static TigRect stru_5D0018;
 
@@ -141,6 +147,9 @@ static char byte_5D0C5C[MAX_PATH];
 
 // 0x5D0D60
 static TigRect stru_5D0D60;
+
+// 0x5D0D74
+static bool dword_5D0D74;
 
 // 0x5D0D78
 static int dword_5D0D78;
@@ -460,6 +469,40 @@ void gamelib_update_view(ViewOptions* view_options)
 void gamelib_get_view_options(ViewOptions* view_options)
 {
     *view_options = gamelib_view_options;
+}
+
+// 0x402D30
+void sub_402D30(TigRect* rect)
+{
+    TigRect dirty_rect;
+
+    if (rect != NULL) {
+        dirty_rect = *rect;
+
+        if (tig_rect_intersection(&dirty_rect, &stru_5D0018, &dirty_rect) != TIG_OK) {
+            return;
+        }
+    } else {
+        dirty_rect = stru_5D0018;
+    }
+
+    if (dword_5D0D74) {
+        if (dword_5D000C != NULL) {
+            sub_52D480(dword_5D000C, &dirty_rect);
+        } else {
+            dword_5D000C = tig_rect_node_create();
+            dword_5D000C->rect = dirty_rect;
+        }
+    } else {
+        if (dword_5D0E98 != NULL) {
+            sub_52D480(dword_5D0E98, &dirty_rect);
+        } else {
+            dword_5D0E98 = tig_rect_node_create();
+            dword_5D0E98->rect = dirty_rect;
+        }
+
+        dword_5D0010 = true;
+    }
 }
 
 // 0x402F90

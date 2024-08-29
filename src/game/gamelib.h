@@ -12,5 +12,6 @@ extern TigVideoBuffer* dword_739E7C;
 bool gamelib_init(GameInitInfo* init_info);
 void gamelib_reset();
 bool gamelib_mod_guid(GUID* guid_ptr);
+void sub_402D30(TigRect* rect);
 
 #endif /* ARCANUM_GAME_GAMELIB_H_ */
