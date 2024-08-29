@@ -50,6 +50,7 @@ static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
 static void sub_404930();
+static void sub_404A20();
 
 // 0x59A330
 static GameLibModule gamelib_modules[MODULE_COUNT] = {
@@ -1043,6 +1044,52 @@ void sub_404930()
 
         // FIXME: Missing RegCloseKey.
     }
+}
+
+// 0x404A20
+void sub_404A20()
+{
+    TigFileList file_list;
+    TigFileList remote_file_list;
+    char path[TIG_MAX_PATH];
+    unsigned int index;
+    unsigned int remote_index;
+    bool found;
+
+    tig_file_list_create(&file_list, "arcanum*.dat");
+
+    if (!dword_5D0D70) {
+        strcpy(path, byte_5D0C5C);
+        strcat(path, "\\Sierra\\Arcanum\\arcanum*.dat");
+        tig_file_list_create(&remote_file_list, path);
+
+        for (remote_index = 0; remote_index < remote_file_list.count; remote_index++) {
+            found = false;
+            for (index = 0; index < file_list.count; index++) {
+                if (strcmpi(remote_file_list.entries[remote_index].path, file_list.entries[index].path) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                strcpy(path, byte_5D0C5C);
+                strcat(path, "\\Sierra\\Arcanum\\");
+                strcat(path, remote_file_list.entries[remote_index].path);
+                tig_file_repository_add(path);
+            }
+        }
+
+        tig_file_list_destroy(&remote_file_list);
+    }
+
+    for (index = 0; index < file_list.count; index++) {
+        tig_file_repository_add(file_list.entries[index].path);
+    }
+
+    tig_file_list_destroy(&file_list);
+
+    tig_file_mkdir("data");
+    tig_file_repository_add("data");
 }
 
 // 0x404C10
