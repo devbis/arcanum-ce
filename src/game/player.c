@@ -1,8 +1,6 @@
-#include "game/lib/player.h"
+#include "game/player.h"
 
-#include "game/lib/level.h"
-#include "tig/art.h"
-#include "tig/debug.h"
+#include "game/level.h"
 
 // 0x5D1138
 static ObjectID stru_5D1138;
@@ -10,18 +8,18 @@ static ObjectID stru_5D1138;
 // 0x5D1150
 static object_id_t qword_5D1150;
 
-// #original-name
 // 0x5D1158
 static object_id_t pcObj;
 
 // 0x739E5C
-bool dword_739E5C;
+bool player_editor;
 
 // 0x40D6C0
-bool player_init(GameContext* ctx)
+bool player_init(GameInitInfo* init_info)
 {
-    stru_5D1138.field_0 = 0;
-    dword_739E5C = ctx->editor;
+    stru_5D1138.type = 0;
+    player_editor = init_info->editor;
+
     return true;
 }
 
@@ -49,6 +47,8 @@ void player_exit()
 // 0x40D760
 bool player_save(TigFile* stream)
 {
+    ObjectID temp_object_id;
+
     if (stream == NULL) {
         return false;
     }
@@ -57,7 +57,7 @@ bool player_save(TigFile* stream)
         return false;
     }
 
-    ObjectID temp_object_id = sub_407EF0(pcObj);
+    temp_object_id = sub_407EF0(pcObj);
     if (tig_file_fwrite(&temp_object_id, sizeof(temp_object_id), 1, stream) != 1) {
         return false;
     }
@@ -66,14 +66,16 @@ bool player_save(TigFile* stream)
 }
 
 // 0x40D7C0
-bool player_load(LoadContext* ctx)
+bool player_load(GameLoadInfo* load_info)
 {
-    if (ctx->stream == NULL) {
+    ObjectID temp_object_id;
+    long long location;
+
+    if (load_info->stream == NULL) {
         return false;
     }
 
-    ObjectID temp_object_id;
-    if (tig_file_fread(&temp_object_id, sizeof(temp_object_id), 1, ctx->stream) != 1) {
+    if (tig_file_fread(&temp_object_id, sizeof(temp_object_id), 1, load_info->stream) != 1) {
         return false;
     }
 
@@ -83,7 +85,7 @@ bool player_load(LoadContext* ctx)
         return false;
     }
 
-    long long location = obj_field_int64_get(pcObj, OBJ_F_LOCATION);
+    location = obj_field_int64_get(pcObj, OBJ_F_LOCATION);
     scroll_set_center(location);
     sub_4B8CE0(location);
     sub_4604E0();
@@ -102,6 +104,8 @@ void sub_40D860()
 // 0x40D8A0
 void player_create()
 {
+    tig_art_id_t art_id;
+
     qword_5D1150 = sub_468570(15);
 
     // TODO: Incomplete.
@@ -112,7 +116,6 @@ void player_create()
         exit(EXIT_FAILURE);
     }
 
-    art_id_t art_id;
     if (tig_art_critter_id_create(1, 0, 0, 0, 0, 4, 0, 0, 0, &art_id) != TIG_OK) {
         tig_debug_printf("player_create: Error: failed to create player ART!\n");
         exit(EXIT_FAILURE);

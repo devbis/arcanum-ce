@@ -1,9 +1,8 @@
-#ifndef ARCANUM_GAMELIB_PLAYER_H_
-#define ARCANUM_GAMELIB_PLAYER_H_
+#ifndef ARCANUM_GAME_PLAYER_H_
+#define ARCANUM_GAME_PLAYER_H_
 
 #include "game/context.h"
 #include "game/obj.h"
-#include "tig/file.h"
 
 #define PLAYER_SPEC_FLAG_0x1 0x1
 #define PLAYER_SPEC_FLAG_0x2 0x2
@@ -16,15 +15,15 @@ typedef struct PlayerSpec {
     int field_24;
     int field_28;
     int field_2C;
-};
+} PlayerSpec;
 
 static_assert(sizeof(PlayerSpec) == 0x30, "wrong size");
 
-bool player_init(GameContext* ctx);
+bool player_init(GameInitInfo* init_info);
 void player_reset();
 void player_exit();
 bool player_save(TigFile* stream);
-bool player_load(LoadContext* ctx);
+bool player_load(GameLoadInfo* load_info);
 void sub_40D860();
 void player_create();
 bool player_is_pc_obj(object_id_t object_id);
@@ -33,6 +32,6 @@ object_id_t sub_40DA50();
 bool sub_40DAB0();
 bool sub_40DAF0(object_id_t obj);
 void sub_40DB50(PlayerSpec* player_spec);
-bool player_obj_create_player(PlayerSpec* player_spec)
+bool player_obj_create_player(PlayerSpec* player_spec);
 
-#endif /* ARCANUM_GAMELIB_PLAYER_H_ */
+#endif /* ARCANUM_GAME_PLAYER_H_ */
