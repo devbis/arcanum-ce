@@ -5,6 +5,9 @@
 #include "game/settings.h"
 #include "tig/video.h"
 
+typedef bool(GameExtraSaveFunc)();
+typedef bool(GameExtraLoadFunc)();
+
 typedef struct GameModuleList {
     unsigned int count;
     unsigned int selected;
@@ -33,8 +36,8 @@ void sub_402D30(TigRect* rect);
 bool sub_402E50();
 const char* sub_403850();
 int sub_4038D0();
-void sub_4038E0(int a1);
-void sub_4038F0(int a1);
+void gamelib_set_extra_save_func(GameExtraSaveFunc* func);
+void gamelib_set_extra_load_func(GameExtraLoadFunc* func);
 void gamelib_savlist_create(GameSaveList* save_list);
 void gamelib_modsavlist_create(const char* module, GameSaveList* save_list);
 void gamelib_savlist_destroy(GameSaveList* save_list);

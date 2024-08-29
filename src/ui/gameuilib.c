@@ -98,8 +98,8 @@ bool gameuilib_init(GameContext* ctx)
 
     gameuilib_initialized = true;
 
-    sub_4038E0(gameuilib_save);
-    sub_4038F0(gameuilib_load);
+    gamelib_set_extra_save_func(gameuilib_save);
+    gamelib_set_extra_load_func(gameuilib_load);
 
     return true;
 }

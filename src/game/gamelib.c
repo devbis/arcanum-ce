@@ -207,10 +207,10 @@ static int dword_5D10C0;
 static bool dword_5D10C4;
 
 // 0x5D10D4
-static int dword_5D10D4;
+static GameExtraSaveFunc* gamelib_extra_save_func;
 
 // 0x5D10D8
-static int dword_5D10D8;
+static GameExtraLoadFunc* gamelib_extra_load_func;
 
 // 0x5D10DC
 static bool dword_5D10DC;
@@ -898,15 +898,15 @@ int sub_4038D0()
 }
 
 // 0x4038E0
-void sub_4038E0(int a1)
+void gamelib_set_extra_save_func(GameExtraSaveFunc* func)
 {
-    dword_5D10D4 = a1;
+    gamelib_extra_save_func = func;
 }
 
 // 0x4038F0
-void sub_4038F0(int a1)
+void gamelib_set_extra_load_func(GameExtraLoadFunc* func)
 {
-    dword_5D10D8 = a1;
+    gamelib_extra_load_func = func;
 }
 
 // 0x403900
