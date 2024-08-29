@@ -467,6 +467,84 @@ char* sub_4027B0()
     return arcanum2;
 }
 
+// 0x4027C0
+void gamelib_modlist_create(GameModuleList* module_list, int type)
+{
+    TigFileList file_list;
+    unsigned int file_index;
+    char* dot;
+    bool is_file;
+    bool cont;
+    bool found;
+    unsigned int module_index;
+    bool have_mp;
+    char path[TIG_MAX_PATH];
+
+    module_list->count = 0;
+    module_list->selected = 0;
+    module_list->paths = NULL;
+
+    if (type != 0 && type != 1) {
+        tig_debug_printf("Invalid type passed into gamelib_modlist_create()\n");
+        return;
+    }
+
+    tig_file_list_create(&file_list, "Modules\\*.*");
+
+    for (file_index = 0; file_index < file_list.count; file_index++) {
+        cont = false;
+        is_file = false;
+        dot = strrchr(file_list.entries[file_index].path, '.');
+        if (dot != NULL) {
+            if (strcmpi(dot, ".dat") == 0
+                && (file_list.entries[file_index].attributes & TIG_FILE_ATTRIBUTE_SUBDIR) == 0) {
+                *dot = '\0';
+                is_file = true;
+                cont = true;
+            }
+        } else if ((file_list.entries[file_index].attributes & TIG_FILE_ATTRIBUTE_SUBDIR) != 0) {
+            cont = true;
+        }
+
+        if (cont) {
+            found = false;
+            module_index = module_list->count;
+            while (module_index > 0) {
+                if (strcmpi(file_list.entries[file_index].path, module_list->paths[module_index - 1]) == 0) {
+                    found = true;
+                    break;
+                }
+                module_index--;
+            }
+
+            if (!found) {
+                strcpy(path, "Modules\\");
+                strcat(path, file_list.entries[file_index].path);
+                if (is_file) {
+                    strcat(path, ".dat");
+                }
+
+                tig_file_repository_add(path);
+                have_mp = tig_file_exists_in_path(path, "mp.txt", NULL);
+                tig_file_repository_remove(path);
+
+                if (have_mp && type == 1 || type == 0) {
+                    module_list->paths = (char**)REALLOC(module_list->paths, sizeof(module_list->paths) * (module_list->count + 1));
+                    module_list->paths[module_list->count] = STRDUP(file_list.entries[file_index].path);
+
+                    if (strcmpi(byte_5D0EA4, file_list.entries[file_index].path) == 0) {
+                        module_list->selected = module_list->count;
+                    }
+
+                    module_list->count++;
+                }
+            }
+        }
+    }
+
+    tig_file_list_destroy(&file_list);
+}
+
 // 0x402C20
 bool gamelib_mod_guid(GUID* guid_ptr)
 {
