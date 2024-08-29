@@ -173,7 +173,7 @@ static TigRectListNode* dword_5D0E98;
 static int gamelib_game_difficulty;
 
 // 0x5D0EA0
-static bool dword_5D0EA0;
+static bool gamelib_mod_loaded;
 
 // 0x5D0EA4
 static char byte_5D0EA4[MAX_PATH];
@@ -230,7 +230,7 @@ bool gamelib_init(GameInitInfo* init_info)
     settings_add(&settings, "difficulty", "1", gamelib_game_difficulty_changed);
     gamelib_game_difficulty_changed();
 
-    dword_5D0EA0 = 0;
+    gamelib_mod_loaded = false;
     sub_404930();
     sub_404A20();
 
@@ -628,7 +628,7 @@ bool gamelib_mod_load(const char* path)
     }
 
     strcpy(byte_5D0EA4, path);
-    dword_5D0EA0 = true;
+    gamelib_mod_loaded = true;
 
     return true;
 }
@@ -650,12 +650,13 @@ void gamelib_mod_unload()
 {
     int index;
 
-    if (dword_5D0EA0) {
+    if (gamelib_mod_loaded) {
         for (index = MODULE_COUNT - 1; index >= 0; index--) {
             if (gamelib_modules[index].mod_unload_func != NULL) {
                 gamelib_modules[index].mod_unload_func();
             }
         }
+        gamelib_mod_loaded = false;
     }
 }
 
