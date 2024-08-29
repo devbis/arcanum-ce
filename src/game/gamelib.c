@@ -861,6 +861,26 @@ bool sub_403790(const char* name)
     return true;
 }
 
+// 0x403850
+const char* sub_403850()
+{
+    // 0x5D0D88
+    static char byte_5D0D88[256];
+
+    // 0x5D10C8
+    static GameSaveList save_list;
+
+    byte_5D0D88[0] = '\0';
+    gamelist_savlist_create(&save_list);
+    sub_403C10(&save_list, 0, 1);
+
+    if (save_list.count > 0) {
+        return strcpy(byte_5D0D88, save_list.paths[0]);
+    }
+
+    return byte_5D0D88;
+}
+
 // 0x4038D0
 int sub_4038D0()
 {
