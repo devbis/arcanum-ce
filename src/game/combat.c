@@ -61,6 +61,9 @@ static int dword_5FC244;
 // 0x5FC250
 static int dword_5FC250;
 
+// 0x5FC264
+static bool dword_5FC264;
+
 // 0x5FC268
 static bool in_combat_reset;
 
@@ -522,9 +525,28 @@ void sub_4B7080()
 }
 
 // 0x4B7150
-void combat_tb_timeevent_process()
+bool combat_tb_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    combat_debug(OBJ_HANDLE_NULL, "TimeEvent Process");
+
+    if (dword_5FC22C) {
+        if (dword_5FC240 != NULL
+            && sub_40DA20(dword_5FC240->obj)
+            && combat_action_points > 0) {
+            return true;
+        }
+
+        if (dword_5FC264) {
+            dword_5FC264 = false;
+            sub_4B7CD0(dword_5FC240->obj, combat_action_points);
+        }
+
+        if (combat_get_action_points() <= 0) {
+            combat_turn_based_next_subturn();
+        }
+    }
+
+    return true;
 }
 
 // 0x4B71E0
