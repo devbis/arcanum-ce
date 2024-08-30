@@ -8,6 +8,7 @@
 #include "game/object_node.h"
 #include "game/player.h"
 #include "game/random.h"
+#include "game/stat.h"
 #include "game/timeevent.h"
 
 static void turn_based_changed();
@@ -15,12 +16,16 @@ static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
 static void sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
+static void sub_4B7300();
 static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
 static void combat_turn_based_end_turn();
 static bool sub_4B7DC0(int64_t obj);
 static void sub_4B83E0(int64_t obj, int64_t a2);
+
+// 0x5B57B8
+static int dword_5B57B8 = 15;
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -524,7 +529,10 @@ void sub_4B71E0()
 // 0x4B7300
 void sub_4B7300()
 {
-    // TODO: Incomplete.
+    dword_5B57B8 = stat_level(player_get_pc_obj(), STAT_PERCEPTION) / 2 + 5;
+    if (dword_5B57B8 < 10) {
+        dword_5B57B8 = 10;
+    }
 }
 
 // 0x4B7330
