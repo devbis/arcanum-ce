@@ -1,6 +1,12 @@
 #include "game/ai.h"
 
+#include "game/critter.h"
 #include "game/obj.h"
+#include "game/stat.h"
+
+#define CLOCKWORK_DECOY 6719
+
+static bool sub_4AF800(int64_t obj, int64_t a2);
 
 // 0x4A8320
 void ai_init()
@@ -655,9 +661,11 @@ void sub_4AF640()
 }
 
 // 0x4AF800
-void sub_4AF800()
+bool sub_4AF800(int64_t obj, int64_t a2)
 {
-    // TODO: Incomplete.
+    return !sub_45D8D0(a2)
+        && stat_level(obj, STAT_INTELLIGENCE) < 5
+        && obj_field_int32_get(a2, OBJ_F_NAME) == CLOCKWORK_DECOY;
 }
 
 // 0x4AF860
