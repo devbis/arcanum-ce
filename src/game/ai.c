@@ -200,9 +200,32 @@ void sub_4AA8C0()
 }
 
 // 0x4AA990
-void ai_npc_wait_here_timeevent_process()
+bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int64_t leader_obj;
+    unsigned int flags;
+    int max_charisma;
+    int charisma;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
+        obj = timeevent->params[0].object_value;
+        leader_obj = critter_leader_get(obj);
+        if (leader_obj != NULL) {
+            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+            flags &= ~ONF_AI_WAIT_HERE;
+            flags |= ONF_JILTED;
+            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+
+            max_charisma = stat_get_max_value(leader_obj, STAT_CHARISMA);
+            charisma = stat_level(leader_obj, STAT_CHARISMA);
+            sub_4C0DE0(obj, leader_obj, 2 * (charisma - max_charisma));
+            critter_leader_set(obj, OBJ_HANDLE_NULL);
+        }
+    }
+
+    return true;
 }
 
 // 0x4AAA30
