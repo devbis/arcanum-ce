@@ -410,9 +410,43 @@ bool combat_is_turn_based()
 }
 
 // 0x4B6C90
-void sub_4B6C90()
+bool sub_4B6C90(bool turn_based)
 {
-    // TODO: Incomplete.
+    int64_t pc;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0 && turn_based) {
+        return false;
+    }
+
+    if (combat_turn_based == turn_based) {
+        return true;
+    }
+
+    pc = player_get_pc_obj();
+    if (!sub_424070(pc, 3, 0, 1)) {
+        return false;
+    }
+
+    if (!combat_critter_is_combat_mode_active(pc)) {
+        combat_turn_based = turn_based;
+        return true;
+    }
+
+    if (!turn_based) {
+        dword_5FC1E8();
+        sub_4B7330();
+        combat_turn_based = turn_based;
+        return true;
+    }
+
+    dword_5FC1E4();
+    if (sub_4B71E0()) {
+        combat_turn_based = turn_based;
+        return true;
+    }
+
+    dword_5FC1E8();
+    return 1;
 }
 
 // 0x4B6D20

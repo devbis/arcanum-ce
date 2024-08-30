@@ -12,6 +12,7 @@ void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
 bool combat_is_turn_based();
+bool sub_4B6C90(bool turn_based);
 void sub_4B6D20();
 bool sub_4B6D70();
 int64_t sub_4B6D80();
