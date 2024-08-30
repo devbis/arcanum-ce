@@ -703,9 +703,23 @@ void sub_4AFBB0()
 }
 
 // 0x4AFBD0
-void sub_4AFBD0()
+void ai_target_lock(int64_t obj, int64_t tgt)
 {
-    // TODO: Incomplete.
+    int v1;
+    int64_t v2;
+    unsigned int flags;
+
+    if (obj != OBJ_HANDLE_NULL
+        && tgt != OBJ_HANDLE_NULL
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        ai_target_unlock(obj);
+        sub_4AABE0(obj, 1, tgt, 0);
+        sub_4AAB00(obj, &v1, &v2);
+        if (v1 == 1 && v2 == tgt) {
+            flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+            obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags | OCF2_TARGET_LOCK);
+        }
+    }
 }
 
 // 0x4AFC70
