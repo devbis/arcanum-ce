@@ -33,6 +33,7 @@ bool sub_4B7790(int64_t obj, int a2);
 bool sub_4B7AA0(int64_t obj);
 bool sub_4B7AE0(int64_t obj);
 int sub_4B7C20();
+void sub_4B7C90(int64_t obj);
 void combat_turn_based_add_critter(int64_t obj);
 bool sub_4B8040(int64_t obj);
 bool combat_set_blinded(int64_t obj);

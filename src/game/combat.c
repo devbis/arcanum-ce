@@ -759,9 +759,13 @@ void sub_4B7C30()
 }
 
 // 0x4B7C90
-void sub_4B7C90()
+void sub_4B7C90(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (dword_5FC22C
+        && dword_5FC240->obj == obj) {
+        combat_action_points = 0;
+        combat_turn_based_next_subturn();
+    }
 }
 
 // 0x4B7CD0
