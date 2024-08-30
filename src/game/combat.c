@@ -513,9 +513,20 @@ void sub_4B6E70()
 }
 
 // 0x4B7010
-void sub_4B7010()
+void sub_4B7010(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (obj == dword_5FC240->obj
+        && !sub_40DA20(obj)
+        && !gamelib_in_load()) {
+        if (sub_441980(obj, obj, OBJ_HANDLE_NULL, 19, 0) == 1) {
+            sub_4A84F0(obj);
+        }
+
+        if (!sub_423300(obj, NULL)) {
+            combat_action_points = 0;
+            sub_4B7080();
+        }
+    }
 }
 
 // 0x4B7080
