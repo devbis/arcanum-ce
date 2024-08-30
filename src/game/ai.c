@@ -691,9 +691,24 @@ void sub_4AFA90()
 }
 
 // 0x4AFB30
-void sub_4AFB30()
+bool sub_4AFB30(int64_t obj, int64_t a2)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int index;
+    int64_t v1;
+
+    if (obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        cnt = obj_arrayfield_length_get(obj, OBJ_F_NPC_SHIT_LIST_IDX);
+        for (index = 0; index < cnt; index++) {
+            obj_arrayfield_obj_get(obj, OBJ_F_NPC_SHIT_LIST_IDX, index, &v1);
+            if (v1 == a2) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 // 0x4AFBB0
