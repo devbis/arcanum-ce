@@ -662,9 +662,27 @@ void sub_4B80E0()
 }
 
 // 0x4B81B0
-void sub_4B81B0()
+bool combat_set_blinded(int64_t obj)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+    int color;
+    MesFileEntry mes_file_entry;
+
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    if ((flags & OCF_BLINDED) != 0) {
+        return false;
+    }
+
+    flags |= OCF_BLINDED;
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
+
+    color = obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC ? 1 : 0;
+
+    mes_file_entry.num = 4; // "Blinded"
+    mes_get_msg(combat_mes_file, &mes_file_entry);
+    sub_4D5450(obj, color, mes_file_entry.str);
+
+    return true;
 }
 
 // 0x4B8230
