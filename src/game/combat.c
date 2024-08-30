@@ -19,6 +19,7 @@ static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
 static void combat_turn_based_end_turn();
 static bool sub_4B7DC0(int64_t obj);
+static void sub_4B83E0(int64_t obj, int64_t a2);
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -761,7 +762,13 @@ void combat_auto_switch_weapons_set(bool value)
 }
 
 // 0x4B83E0
-void sub_4B83E0()
+void sub_4B83E0(int64_t obj, int64_t a2)
 {
-    // TODO: Incomplete.
+    if (obj != OBJ_HANDLE_NULL
+        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0)
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && combat_auto_switch_weapons_get(obj)) {
+        sub_465170(obj, 1004, a2);
+    }
 }
