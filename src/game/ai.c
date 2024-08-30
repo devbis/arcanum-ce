@@ -194,9 +194,30 @@ void sub_4AA7A0()
 }
 
 // 0x4AA8C0
-void sub_4AA8C0()
+void sub_4AA8C0(int64_t obj, bool force)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+    unsigned int flags;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        leader_obj = critter_leader_get(obj);
+        if (leader_obj != OBJ_HANDLE_NULL
+            && (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0
+            && (force || !sub_4AD950(obj, leader_obj, false))) {
+            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+            flags &= ~ONF_AI_WAIT_HERE;
+            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+
+            critter_leader_set(obj, OBJ_HANDLE_NULL);
+
+            qword_5F8490 = obj;
+            timeevent_clear_one_ex(TIMEEVENT_TYPE_NPC_WAIT_HERE, sub_4AAA30);
+
+            critter_follow(obj, leader_obj, force);
+        }
+    }
 }
 
 // 0x4AA990
@@ -212,7 +233,7 @@ bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent)
         || (tig_net_flags & TIG_NET_HOST) != 0) {
         obj = timeevent->params[0].object_value;
         leader_obj = critter_leader_get(obj);
-        if (leader_obj != NULL) {
+        if (leader_obj != OBJ_HANDLE_NULL) {
             flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
             flags &= ~ONF_AI_WAIT_HERE;
             flags |= ONF_JILTED;
