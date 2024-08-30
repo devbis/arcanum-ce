@@ -650,9 +650,34 @@ int combat_get_action_points()
 }
 
 // 0x4B7790
-void sub_4B7790()
+bool sub_4B7790(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    bool is_pc;
+
+    if (!dword_5FC22C) {
+        return true;
+    }
+
+    if (dword_5FC240->obj != obj) {
+        return true;
+    }
+
+    dword_5FC244 = a2;
+
+    is_pc = player_is_pc_obj(obj);
+    if (is_pc) {
+        dword_5FC1EC(combat_action_points);
+    }
+
+    if (combat_action_points >= a2) {
+        return true;
+    }
+
+    if (combat_action_points > 0 && is_pc && sub_45D700(obj) > 1) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x4B7830
