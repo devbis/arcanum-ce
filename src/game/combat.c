@@ -404,9 +404,9 @@ void sub_4B6C40()
 }
 
 // 0x4B6C80
-void combat_is_turn_based()
+bool combat_is_turn_based()
 {
-    // TODO: Incomplete.
+    return combat_turn_based;
 }
 
 // 0x4B6C90
