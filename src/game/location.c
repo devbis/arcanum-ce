@@ -177,13 +177,13 @@ void sub_4B98B0(int64_t a1, int64_t a2, int64_t* a3, int64_t* a4)
     int v1;
     int v2;
 
-    if (dword_5FC2D0) {
-        *a3 = (qword_5FC2E0 + dword_5FC2D4 - a1 - 1) / dword_5FC2D4;
-        *a4 = (a2 - qword_5FC2E8) / dword_5FC2D4;
-    } else {
+    if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
         v1 = (a1 - qword_5FC2E0) >> 1;
         v2 = a2 - qword_5FC2E8;
         *a3 = (v2 - v1) / 40;
         *a4 = (v1 + v2) / 40;
+    } else {
+        *a3 = (qword_5FC2E0 + location_view_options.zoom - a1 - 1) / location_view_options.zoom;
+        *a4 = (a2 - qword_5FC2E8) / location_view_options.zoom;
     }
 }
