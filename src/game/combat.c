@@ -49,6 +49,9 @@ static ObjectNode* dword_5FC240;
 // 0x5FC268
 static bool in_combat_reset;
 
+// 0x5FC1E0
+static CombatCallbacks combat_callbacks;
+
 // 0x4B1D50
 bool combat_init(GameInitInfo* init_info)
 {
@@ -398,9 +401,11 @@ void sub_4B6B90()
 }
 
 // 0x4B6C40
-void sub_4B6C40()
+bool combat_set_callbacks(CombatCallbacks* callbacks)
 {
-    // TODO: Incomplete.
+    combat_callbacks = *callbacks;
+
+    return true;
 }
 
 // 0x4B6C80

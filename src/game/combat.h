@@ -3,6 +3,16 @@
 
 #include "game/context.h"
 
+typedef struct CombatCallbacks {
+    int field_0;
+    int field_4;
+    int field_8;
+    int field_C;
+    int field_10;
+} CombatCallbacks;
+
+static_assert(sizeof(CombatCallbacks) == 0x14, "wrong size");
+
 bool combat_init(GameInitInfo* init_info);
 void combat_exit();
 void combat_reset();
@@ -11,6 +21,7 @@ bool combat_critter_is_combat_mode_active(int64_t obj);
 void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
+bool combat_set_callbacks(CombatCallbacks* callbacks);
 bool combat_is_turn_based();
 bool sub_4B6C90(bool turn_based);
 void sub_4B6D20();
