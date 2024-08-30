@@ -5,5 +5,6 @@
 
 void ai_exit();
 void ai_mod_unload();
+void ai_target_unlock(int64_t obj);
 
 #endif /* ARCANUM_GAME_AI_H_ */

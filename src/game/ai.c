@@ -1,5 +1,7 @@
 #include "game/ai.h"
 
+#include "game/obj.h"
+
 // 0x4A8320
 void ai_init()
 {
@@ -707,7 +709,15 @@ void sub_4AFBD0()
 }
 
 // 0x4AFC70
-void sub_4AFC70()
+void ai_target_unlock(int64_t obj)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+
+    if (obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+        if ((flags & OCF2_TARGET_LOCK) != 0) {
+            obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags & ~OCF2_TARGET_LOCK);
+        }
+    }
 }
