@@ -3,12 +3,17 @@
 #include "game/critter.h"
 #include "game/obj.h"
 #include "game/stat.h"
+#include "game/timeevent.h"
 
 #define CLOCKWORK_DECOY 6719
 
+static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
+
+// 0x5F8490
+static int64_t qword_5F8490;
 
 // 0x4A8320
 void ai_init()
@@ -201,9 +206,9 @@ void ai_npc_wait_here_timeevent_process()
 }
 
 // 0x4AAA30
-void sub_4AAA30()
+bool sub_4AAA30(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent->params[0].object_value == qword_5F8490;
 }
 
 // 0x4AAA60
