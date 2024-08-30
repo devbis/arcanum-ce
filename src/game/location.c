@@ -124,6 +124,13 @@ bool location_update_view(ViewOptions* view_options)
     return false;
 }
 
+// 0x4B8AD0
+void sub_4B8AD0(int64_t* a1, int64_t* a2)
+{
+    *a1 = qword_5FC2E0;
+    *a2 = qword_5FC2E8;
+}
+
 // 0x4B8D40
 void location_set_func_5FC2F8(LocationFunc5FC2F8* func)
 {
