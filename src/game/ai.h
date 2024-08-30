@@ -5,6 +5,7 @@
 
 void ai_exit();
 void ai_mod_unload();
+void sub_4AA4A0(int64_t obj);
 void sub_4AA580(int64_t obj);
 void sub_4AA8C0(int64_t obj, bool force);
 bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent);

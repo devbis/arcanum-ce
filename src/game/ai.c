@@ -171,9 +171,41 @@ void sub_4AA420()
 }
 
 // 0x4AA4A0
-void sub_4AA4A0()
+void sub_4AA4A0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int type;
+    int64_t combat_focus_obj;
+    unsigned int flags;
+    ObjectNodeList obj_list;
+    ObjectNode* node;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    switch (type) {
+    case OBJ_TYPE_NPC:
+        combat_focus_obj = obj_field_handle_get(obj, OBJ_F_NPC_COMBAT_FOCUS);
+        if (combat_focus_obj != NULL) {
+            combat_focus_obj(obj, combat_focus_obj);
+            sub_424070(obj, 3, 0, 0);
+        }
+        if (sub_45DDA0(obj)) {
+            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+            flags |= ONF_NO_ATTACK;
+            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+        }
+        ai_target_unlock(obj);
+        break;
+    case OBJ_TYPE_PC:
+        sub_441260(obj, &obj_list);
+
+        node = obj_list.head;
+        while (node != NULL) {
+            sub_4AA4A0(node->obj);
+            node = node->next;
+        }
+
+        object_list_destroy(&obj_list);
+        break;
+    }
 }
 
 // 0x4AA580
