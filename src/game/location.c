@@ -131,6 +131,20 @@ void sub_4B8AD0(int64_t* a1, int64_t* a2)
     *a2 = qword_5FC2E8;
 }
 
+// 0x4B8CE0
+void sub_4B8CE0(int64_t a1)
+{
+    int64_t v1;
+    int64_t v2;
+
+    sub_4B8940(a1, &v1, &v2);
+    sub_4B8B30(v1, v2);
+    dword_5FC298(&stru_5FC278);
+    if (dword_5FC2F8 != NULL) {
+        dword_5FC2F8(a1);
+    }
+}
+
 // 0x4B8D40
 void location_set_func_5FC2F8(LocationFunc5FC2F8* func)
 {

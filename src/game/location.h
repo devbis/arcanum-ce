@@ -5,7 +5,7 @@
 
 typedef long long location_t;
 
-typedef void(LocationFunc5FC2F8)(int a1, int a2);
+typedef void(LocationFunc5FC2F8)(int64_t);
 
 bool location_init(GameInitInfo* init_info);
 void location_exit();
