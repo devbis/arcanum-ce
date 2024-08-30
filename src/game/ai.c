@@ -6,6 +6,7 @@
 
 #define CLOCKWORK_DECOY 6719
 
+static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
 // 0x4A8320
@@ -637,9 +638,15 @@ void sub_4AF210()
 }
 
 // 0x4AF240
-void sub_4AF240()
+int sub_4AF240(int value)
 {
-    // TODO: Incomplete.
+    if (value < 1) {
+        return 1;
+    }
+    if (value > 10) {
+        return 10;
+    }
+    return value;
 }
 
 // 0x4AF260
