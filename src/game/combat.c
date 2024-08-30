@@ -285,9 +285,15 @@ void combat_critter_toggle_combat_mode()
 }
 
 // 0x4B4320
-void sub_4B4320()
+void sub_4B4320(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (obj != OBJ_HANDLE_NULL
+        && (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+            || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+        && ((!dword_5FC22C && combat_critter_is_combat_mode_active(obj))
+            || (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_AUTO_ANIMATES) != 0)) {
+        sub_435BD0(obj);
+    }
 }
 
 // 0x4B4390
