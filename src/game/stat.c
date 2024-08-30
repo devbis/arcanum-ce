@@ -8,6 +8,9 @@
 #include "game/object.h"
 #include "game/sector.h"
 #include "game/skill.h"
+#include "game/timeevent.h"
+
+static bool sub_4B1310(TimeEvent* timeevent);
 
 // 0x5B5194
 static int stat_min_values[STAT_COUNT] = {
@@ -190,6 +193,9 @@ const char* off_5B5384[] = {
 
 static_assert(sizeof(off_5B5384) / sizeof(off_5B5384[0]) == STAT_COUNT, "wrong size");
 
+// 0x5B53F4
+static int dword_5B53F4 = -1;
+
 // 0x5F8644
 static mes_file_handle_t stat_msg_file;
 
@@ -204,6 +210,9 @@ static char* stat_names[STAT_COUNT];
 
 // 0x5F86B8
 static char* stat_short_names[STAT_COUNT];
+
+// 0x5F8728
+static int64_t qword_5F8728;
 
 // 0x4B0340
 bool stat_init(GameContext* init_info)
@@ -638,4 +647,11 @@ int stat_get_max_value(object_id_t obj, int stat)
     }
 
     return stat_max_values[stat];
+}
+
+// 0x4B1310
+bool sub_4B1310(TimeEvent* timeevent)
+{
+    return timeevent->params[1].object_value == qword_5F8728
+        && timeevent->params[0].integer_value == dword_5B53F4;
 }
