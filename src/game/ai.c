@@ -213,9 +213,13 @@ void sub_4AAA60()
 }
 
 // 0x4AAAA0
-void sub_4AAAA0()
+bool ai_is_fighting(int64_t obj)
 {
-    // TODO: Incomplete.
+    int type;
+
+    ai_danger_source(obj, &type, NULL);
+
+    return type == 1;
 }
 
 // 0x4AAB00
@@ -233,7 +237,7 @@ void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr)
         *type_ptr = 3;
     } else if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_FIGHTING) != 0) {
         if (danger_source_ptr != NULL) {
-            obj_field_obj_get(obj, OBJ_F_CRITTER_FLEEING_FROM, danger_source_ptr);
+            obj_field_obj_get(obj, OBJ_F_NPC_COMBAT_FOCUS, danger_source_ptr);
         }
         *type_ptr = 1;
     } else {
