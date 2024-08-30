@@ -15,5 +15,6 @@ void location_set_func_5FC2F8(LocationFunc5FC2F8* func);
 bool location_set_limits(int64_t x, int64_t y);
 void location_get_limits(int64_t* x, int64_t* y);
 int64_t sub_4B9810();
+void sub_4B98B0(int64_t a1, int64_t a2, int64_t* a3, int64_t* a4);
 
 #endif /* ARCANUM_GAME_LOCATION_H_ */
