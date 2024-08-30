@@ -421,9 +421,9 @@ void sub_4B6D20()
 }
 
 // 0x4B6D70
-void sub_4B6D70()
+bool sub_4B6D70()
 {
-    // TODO: Incomplete.
+    return dword_5FC22C;
 }
 
 // 0x4B6D80
