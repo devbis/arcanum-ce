@@ -2,6 +2,7 @@
 
 #include "game/critter.h"
 #include "game/obj.h"
+#include "game/object_node.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 
@@ -176,9 +177,34 @@ void sub_4AA4A0()
 }
 
 // 0x4AA580
-void sub_4AA580()
+void sub_4AA580(int64_t obj)
 {
-    // TODO: Incomplete.
+    int type;
+    unsigned int flags;
+    ObjectNodeList obj_list;
+    ObjectNode* node;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    switch (type) {
+    case OBJ_TYPE_NPC:
+        if (sub_45DDA0(obj)) {
+            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+            flags &= ~ONF_NO_ATTACK;
+            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+        }
+        break;
+    case OBJ_TYPE_PC:
+        sub_441260(obj, &obj_list);
+
+        node = obj_list.head;
+        while (node != NULL) {
+            sub_4AA580(node->obj);
+            node = node->next;
+        }
+
+        object_list_destroy(&obj_list);
+        break;
+    }
 }
 
 // 0x4AA620
