@@ -715,9 +715,13 @@ bool sub_4B7AA0(int64_t obj)
 }
 
 // 0x4B7AE0
-void sub_4B7AE0()
+bool sub_4B7AE0(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (dword_5FC22C) {
+        return sub_4B7790(obj, 4);
+    } else {
+        return sub_4B7790(obj, 0);
+    }
 }
 
 // 0x4B7BA0
