@@ -30,6 +30,9 @@ static int dword_5B57B8 = 15;
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
 
+// 0x5FC1D0
+static ObjectNode* dword_5FC1D0;
+
 // 0x5FC1D8
 static bool combat_editor;
 
@@ -729,9 +732,43 @@ bool sub_4B7DC0(int64_t obj)
 }
 
 // 0x4B7E00
-void combat_turn_based_add_critter()
+void combat_turn_based_add_critter(int64_t obj)
 {
-    // TODO: Incomplete.
+    ObjectNode* prev = NULL;
+    ObjectNode* curr;
+
+    if (!dword_5FC22C) {
+        return;
+    }
+
+    curr = dword_5FC1D0;
+    while (curr != NULL && curr->obj != obj) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr != NULL) {
+        // Already added.
+        return;
+    }
+
+    if (sub_4B7DC0(obj)) {
+        tig_debug_printf("Combat: combat_turn_based_add_critter: WARNING: Attempt to add critter that is OF_DONTDRAW!\n");
+    }
+
+    curr = object_node_create();
+    curr->obj = obj;
+    curr->next = NULL;
+    combat_debug(obj, "Adding Critter to List");
+
+    if (prev != NULL) {
+        prev->next = curr;
+    } else {
+        tig_debug_printf("Combat: combat_turn_based_add_critter: ERROR: Base list is EMPTY!\n");
+        dword_5FC1D0 = curr;
+    }
+
+    sub_4B7EB0();
 }
 
 // 0x4B7EB0

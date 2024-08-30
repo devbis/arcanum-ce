@@ -29,6 +29,7 @@ bool sub_4B6D70();
 int64_t sub_4B6D80();
 void combat_turn_based_next_subturn();
 int combat_get_action_points();
+void combat_turn_based_add_critter(int64_t obj);
 bool sub_4B8040(int64_t obj);
 bool combat_set_blinded(int64_t obj);
 bool combat_auto_attack_get(int64_t obj);
