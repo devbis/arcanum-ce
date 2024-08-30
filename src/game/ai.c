@@ -6,6 +6,7 @@
 
 #define CLOCKWORK_DECOY 6719
 
+static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -218,9 +219,29 @@ void sub_4AAAA0()
 }
 
 // 0x4AAB00
-void sub_4AAB00()
+void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr)
 {
-    // TODO: Incomplete.
+    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_FLEEING) != 0) {
+        if (danger_source_ptr != NULL) {
+            obj_field_obj_get(obj, OBJ_F_CRITTER_FLEEING_FROM, danger_source_ptr);
+        }
+        *type_ptr = 2;
+    } else if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_SURRENDERED) != 0) {
+        if (danger_source_ptr != NULL) {
+            obj_field_obj_get(obj, OBJ_F_CRITTER_FLEEING_FROM, danger_source_ptr);
+        }
+        *type_ptr = 3;
+    } else if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_FIGHTING) != 0) {
+        if (danger_source_ptr != NULL) {
+            obj_field_obj_get(obj, OBJ_F_CRITTER_FLEEING_FROM, danger_source_ptr);
+        }
+        *type_ptr = 1;
+    } else {
+        if (danger_source_ptr != NULL) {
+            *danger_source_ptr = OBJ_HANDLE_NULL;
+        }
+        *type_ptr = 0;
+    }
 }
 
 // 0x4AABE0
@@ -735,8 +756,8 @@ void sub_4AFBB0()
 // 0x4AFBD0
 void ai_target_lock(int64_t obj, int64_t tgt)
 {
-    int v1;
-    int64_t v2;
+    int danger_type;
+    int64_t danger_source;
     unsigned int flags;
 
     if (obj != OBJ_HANDLE_NULL
@@ -744,8 +765,8 @@ void ai_target_lock(int64_t obj, int64_t tgt)
         && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         ai_target_unlock(obj);
         sub_4AABE0(obj, 1, tgt, 0);
-        sub_4AAB00(obj, &v1, &v2);
-        if (v1 == 1 && v2 == tgt) {
+        ai_danger_source(obj, &danger_type, &danger_source);
+        if (danger_type == 1 && danger_source == tgt) {
             flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
             obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags | OCF2_TARGET_LOCK);
         }
