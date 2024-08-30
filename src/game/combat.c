@@ -55,6 +55,9 @@ static int combat_action_points;
 // 0x5FC240
 static ObjectNode* dword_5FC240;
 
+// 0x5FC244
+static int dword_5FC244;
+
 // 0x5FC250
 static int dword_5FC250;
 
@@ -744,9 +747,9 @@ int sub_4B7BA0(int64_t obj, int64_t a2, bool a3)
 }
 
 // 0x4B7C20
-void sub_4B7C20()
+int sub_4B7C20()
 {
-    // TODO: Incomplete.
+    return dword_5FC244;
 }
 
 // 0x4B7C30
