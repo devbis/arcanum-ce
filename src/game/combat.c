@@ -427,9 +427,13 @@ bool sub_4B6D70()
 }
 
 // 0x4B6D80
-void sub_4B6D80()
+int64_t sub_4B6D80()
 {
-    // TODO: Incomplete.
+    if (dword_5FC240 != NULL) {
+        return dword_5FC240->obj;
+    } else {
+        return OBJ_HANDLE_NULL;
+    }
 }
 
 // 0x4B6DA0
