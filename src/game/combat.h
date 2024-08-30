@@ -11,6 +11,7 @@ bool combat_critter_is_combat_mode_active(int64_t obj);
 void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
+void sub_4B6D20();
 bool sub_4B6D70();
 int64_t sub_4B6D80();
 int combat_get_action_points();

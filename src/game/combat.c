@@ -1,6 +1,7 @@
 #include "game/combat.h"
 
 #include "game/animfx.h"
+#include "game/critter.h"
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/obj.h"
@@ -417,7 +418,13 @@ void sub_4B6C90()
 // 0x4B6D20
 void sub_4B6D20()
 {
-    // TODO: Incomplete.
+    if (combat_is_turn_based()) {
+        settings_set_value(&settings, "turn-based", 0);
+    } else {
+        if (sub_45D790(player_get_pc_obj())) {
+            settings_set_value(&settings, "turn-based", 1);
+        }
+    }
 }
 
 // 0x4B6D70
