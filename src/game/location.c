@@ -1,4 +1,4 @@
-#include "game/lib/location.h"
+#include "game/location.h"
 
 #include "tig/debug.h"
 #include "tig/rect.h"
@@ -8,7 +8,7 @@
 static TigRect stru_5FC278;
 
 // 0x5FC288
-static int64_t qword_5FC288;
+static int64_t location_limit_y;
 
 // 0x5FC290
 static int64_t qword_5FC290;
@@ -41,26 +41,28 @@ static int64_t qword_5FC2E0;
 static int64_t qword_5FC2E8;
 
 // 0x5FC2F0
-static int64_t qword_5FC2F0;
+static int64_t location_limit_x;
 
 // 0x5FC2F8
 static LocationFunc5FC2F8* dword_5FC2F8;
 
 // 0x4B8440
-bool location_init(GameContext* ctx)
+bool location_init(GameInitInfo* init_info)
 {
     TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data)) {
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data)) {
         tig_debug_printf("location_init: ERROR: couldn't grab window data!\n");
         exit(EXIT_SUCCESS);
     }
 
-    dword_5FC298 = ctx->field_8;
+    location_iso_window_handle = init_info->iso_window_handle;
+    dword_5FC298 = init_info->field_8;
 
+    stru_5FC278.x = 0;
+    stru_5FC278.y = 0;
     stru_5FC278.width = window_data.rect.width;
     stru_5FC278.height = window_data.rect.height;
-    stru_5FC278.y = 0;
-    stru_5FC278.x = 0;
 
     qword_5FC2E0 = 0;
     qword_5FC2E8 = 0;
@@ -69,7 +71,7 @@ bool location_init(GameContext* ctx)
     sub_4B8CE0(sub_4B9810());
 
     dword_5FC2D0 = 0;
-    location_is_in_editor = ctx->editor;
+    location_is_in_editor = init_info->editor;
 
     return true;
 }
@@ -80,10 +82,10 @@ void location_exit()
 }
 
 // 0x4B8540
-void location_resize(ResizeContext* ctx)
+void location_resize(ResizeContext* resize_info)
 {
-    stru_5FC278 = ctx->field_14;
-    location_iso_window_handle = ctx->iso_window_handle;
+    stru_5FC278 = resize_info->field_14;
+    location_iso_window_handle = resize_info->iso_window_handle;
     qword_5FC2A0 = stru_5FC278.width / 2;
     qword_5FC290 = stru_5FC278.height / 2;
 }
@@ -104,9 +106,11 @@ void location_set_func_5FC2F8(LocationFunc5FC2F8* func)
 // 0x4B93F0
 void sub_4B93F0(int a1, int a2, int* a3, int* a4)
 {
-    // TODO: Strange math, check.
-    int v1 = (a1 - 40) / 2;
-    int v2 = 2 * (a2 / 2);
+    int v1;
+    int v2;
+
+    v1 = (a1 - 40) / 2;
+    v2 = 2 * (a2 / 2);
     *a3 = v2 - v1;
     *a4 = v1 + v2;
 }
@@ -120,8 +124,8 @@ bool location_set_limits(int64_t x, int64_t y)
 
     qword_5FC2E0 = 0;
     qword_5FC2E8 = 0;
-    qword_5FC2F0 = x;
-    qword_5FC288 = y;
+    location_limit_x = x;
+    location_limit_y = y;
     qword_5FC2D8 = 20 * y;
 
     return true;
@@ -130,12 +134,12 @@ bool location_set_limits(int64_t x, int64_t y)
 // 0x4B97E0
 void location_get_limits(int64_t* x, int64_t* y)
 {
-    *x = qword_5FC2F0;
-    *y = qword_5FC288;
+    *x = location_limit_x;
+    *y = location_limit_y;
 }
 
 // 0x4B9810
-int sub_4B9810()
+int64_t sub_4B9810()
 {
-    return qword_5FC2F0 >> 1;
+    return (location_limit_x >> 1) | ((location_limit_y >> 1) << 32);
 }
