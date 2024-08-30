@@ -46,6 +46,9 @@ static int combat_action_points;
 // 0x5FC240
 static ObjectNode* dword_5FC240;
 
+// 0x5FC250
+static int dword_5FC250;
+
 // 0x5FC268
 static bool in_combat_reset;
 
@@ -582,7 +585,40 @@ void combat_turn_based_subturn_end()
 // 0x4B7690
 void combat_turn_based_next_subturn()
 {
-    // TODO: Incomplete.
+    combat_debug(dword_5FC240->obj, "Next SubTurn");
+
+    dword_5FC250++;
+    combat_turn_based_subturn_end();
+
+    dword_5FC240 = dword_5FC240->next;
+    if (dword_5FC240 == NULL) {
+        combat_turn_based_end_turn();
+        return;
+    }
+
+    if (sub_4B7580(dword_5FC240)) {
+        while (dword_5FC240 != NULL) {
+            dword_5FC240 = dword_5FC240->next;
+            dword_5FC250++;
+            if (dword_5FC240 == NULL) {
+                break;
+            }
+            if (!sub_4B7580(dword_5FC240)) {
+                break;
+            }
+        }
+        if (dword_5FC240 == NULL) {
+            combat_turn_based_end_turn();
+        }
+    }
+
+    if (dword_5FC240 != NULL) {
+        combat_turn_based_subturn_start();
+        return;
+    }
+
+    tig_debug_printf("Combat: combat_turn_based_next_subturn: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");
+    sub_4B7330();
 }
 
 // 0x4B7740
