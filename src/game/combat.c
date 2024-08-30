@@ -21,6 +21,7 @@ static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
 static void combat_turn_based_subturn_end();
 static void combat_turn_based_end_turn();
+static int sub_4B7BA0(int64_t obj, int64_t a2, bool a3);
 static bool sub_4B7DC0(int64_t obj);
 static void sub_4B83E0(int64_t obj, int64_t a2);
 
@@ -725,9 +726,21 @@ bool sub_4B7AE0(int64_t obj)
 }
 
 // 0x4B7BA0
-void sub_4B7BA0()
+int sub_4B7BA0(int64_t obj, int64_t a2, bool a3)
 {
-    // TODO: Incomplete.
+    int v1;
+
+    v1 = 2;
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && sub_4304C0(obj)) {
+        v1 = 1;
+    }
+
+    if (a3) {
+        return v1 * sub_426250(obj, a2);
+    } else {
+        return v1 * sub_4261E0(obj, a2);
+    }
 }
 
 // 0x4B7C20
