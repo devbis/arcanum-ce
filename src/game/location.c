@@ -26,10 +26,7 @@ static bool location_is_in_editor;
 static int location_iso_window_handle;
 
 // 0x5FC2D0
-static int dword_5FC2D0;
-
-// 0x5FC2D4
-static int dword_5FC2D4;
+static ViewOptions location_view_options;
 
 // 0x5FC2D8
 static int64_t qword_5FC2D8;
@@ -70,7 +67,7 @@ bool location_init(GameInitInfo* init_info)
     location_set_limits(0x100000000, 0x100000000);
     sub_4B8CE0(sub_4B9810());
 
-    dword_5FC2D0 = 0;
+    location_view_options.type = VIEW_TYPE_ISOMETRIC;
     location_is_in_editor = init_info->editor;
 
     return true;
@@ -90,11 +87,41 @@ void location_resize(ResizeContext* resize_info)
     qword_5FC290 = stru_5FC278.height / 2;
 }
 
-// TODO: Review type.
 // 0x4B85A0
-bool sub_4B85A0(void* a1)
+bool location_update_view(ViewOptions* view_options)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+
+    if (!sub_4B8730(qword_5FC2A0, qword_5FC290, &v1)) {
+        return false;
+    }
+
+    if (view_options->type == location_view_options.type) {
+        if (view_options->type == VIEW_TYPE_ISOMETRIC) {
+            return true;
+        }
+        if (view_options->zoom == location_view_options.zoom) {
+            return true;
+        }
+    }
+
+    if (view_options->type == VIEW_TYPE_ISOMETRIC) {
+        qword_5FC2E0 = 0;
+        qword_5FC2E8 = 0;
+        location_view_options = *view_options;
+        sub_4B8CE0(v1);
+        return true;
+    }
+
+    if (view_options->zoom >= 12 && view_options->zoom <= 64) {
+        qword_5FC2E0 = stru_5FC278.width;
+        qword_5FC2E8 = 0;
+        location_view_options = *view_options;
+        sub_4B8CE0(v1);
+        return true;
+    }
+
+    return false;
 }
 
 // 0x4B8D40
