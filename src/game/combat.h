@@ -12,6 +12,7 @@ void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
 int combat_get_action_points();
+bool sub_4B8040(int64_t obj);
 bool combat_set_blinded(int64_t obj);
 bool combat_auto_attack_get(int64_t obj);
 void combat_auto_attack_set(bool value);

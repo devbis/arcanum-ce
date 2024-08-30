@@ -36,6 +36,9 @@ static bool combat_turn_based;
 // 0x5FC228
 static bool combat_fast_turn_based;
 
+// 0x5FC22C
+static bool dword_5FC22C;
+
 // 0x5FC234
 static int combat_action_points;
 
@@ -644,9 +647,37 @@ void sub_4B7EB0()
 }
 
 // 0x4B8040
-void sub_4B8040()
+bool sub_4B8040(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (!dword_5FC22C) {
+        return false;
+    }
+
+    if (sub_4B6D80() != obj) {
+        return false;
+    }
+
+    if (combat_fast_turn_based) {
+        return true;
+    }
+
+    if (sub_40DA20(obj)) {
+        return false;
+    }
+
+    if (combat_critter_is_combat_mode_active(obj)) {
+        return false;
+    }
+
+    if (sub_44E830(obj, 18, 0)) {
+        return false;
+    }
+
+    if ((obj_field_in32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) != 0) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4B80D0
