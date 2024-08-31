@@ -803,9 +803,9 @@ void sub_4AD6B0()
 }
 
 // 0x4AD6E0
-void sub_4AD6E0()
+void sub_4AD6E0(int64_t obj)
 {
-    // TODO: Incomplete.
+    sub_4AD700(obj, sub_4AD5D0(obj));
 }
 
 // 0x4AD700
