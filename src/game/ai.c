@@ -41,6 +41,7 @@ static bool ai_is_day();
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
 static int sub_4AD5D0(int64_t obj);
+static bool sub_4AD6B0(TimeEvent* timeevent);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -52,6 +53,9 @@ static Func5F848C* dword_5F848C;
 
 // 0x5F8490
 static int64_t qword_5F8490;
+
+// 0x5F84A0
+static int64_t qword_5F84A0;
 
 // 0x4A8320
 void ai_init()
@@ -797,9 +801,9 @@ void sub_4AD610()
 }
 
 // 0x4AD6B0
-void sub_4AD6B0()
+bool sub_4AD6B0(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent->params[0].object_value == qword_5F84A0;
 }
 
 // 0x4AD6E0
@@ -827,9 +831,10 @@ void sub_4AD790()
 }
 
 // 0x4AD7D0
-void sub_4AD7D0()
+void sub_4AD7D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    qword_5F84A0 = obj;
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_AI, sub_4AD6B0);
 }
 
 // 0x4AD800
