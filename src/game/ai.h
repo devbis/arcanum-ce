@@ -22,6 +22,7 @@ void sub_4AD6E0(int64_t obj);
 void sub_4AD7D0(int64_t obj);
 void sub_4ADFF0(int64_t obj);
 void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
+void sub_4AEAB0(int64_t a1, int64_t a2);
 bool sub_4AEB10(int64_t obj);
 int sub_4AEB70(int64_t obj, int64_t portal, int a3);
 bool sub_4AFB30(int64_t obj, int64_t a2);

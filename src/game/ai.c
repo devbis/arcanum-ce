@@ -986,9 +986,13 @@ void sub_4AE9E0()
 }
 
 // 0x4AEAB0
-void sub_4AEAB0()
+void sub_4AEAB0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    char str[1000];
+    int v1;
+
+    sub_414490(a1, a2, str, &v1);
+    dword_5F8488(a1, a2, str, v1);
 }
 
 // 0x4AEB10
