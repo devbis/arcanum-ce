@@ -895,9 +895,23 @@ void sub_4ADFF0(int64_t obj)
 }
 
 // 0x4AE020
-void sub_4AE020()
+void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        sub_4AE0A0(obj, cnt_ptr, lvl_ptr);
+        return;
+    }
+
+    leader_obj = critter_leader_get(obj);
+    if (leader_obj != OBJ_HANDLE_NULL) {
+        sub_4AE0A0(leader_obj, cnt_ptr, lvl_ptr);
+        return;
+    }
+
+    *cnt_ptr = 1;
+    *lvl_ptr = stat_level(obj, STAT_LEVEL);
 }
 
 // 0x4AE0A0
