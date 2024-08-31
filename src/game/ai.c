@@ -31,6 +31,7 @@ static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
+static void sub_4ABC20(Ai* ai);
 static bool sub_4ABEB0(int64_t obj, int64_t tgt);
 static void sub_4AC180(Ai* ai);
 static int sub_4AF240(int value);
@@ -544,9 +545,13 @@ int64_t sub_4ABBC0(int64_t obj)
 }
 
 // 0x4ABC20
-void sub_4ABC20()
+void sub_4ABC20(Ai* ai)
 {
-    // TODO: Incomplete.
+    if ((obj_field_int32_get(ai->obj, OBJ_F_FLAGS) & OF_INVULNERABLE) != 0
+        || (obj_field_int32_get(ai->obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NIGH_INVULNERABLE) != 0
+        || !sub_4ABC70(ai)) {
+        ai->field_14 = 0;
+    }
 }
 
 // 0x4ABC70
