@@ -1091,9 +1091,17 @@ void sub_4AF130(int64_t a1, int64_t a2)
 }
 
 // 0x4AF170
-void sub_4AF170()
+void sub_4AF170(int64_t obj)
 {
-    // TODO: Incomplete.
+    int danger_type;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        ai_danger_source(obj, &danger_type, NULL);
+        if (danger_type == 2) {
+            sub_4AABE0(obj, 0, OBJ_HANDLE_NULL, 0);
+        }
+        sub_44E4D0(obj, 25, -1);
+    }
 }
 
 // 0x4AF1D0
