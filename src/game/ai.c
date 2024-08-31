@@ -42,6 +42,7 @@ static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
 static int sub_4AD5D0(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
+static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
@@ -814,9 +815,12 @@ void sub_4AD6E0(int64_t obj)
 }
 
 // 0x4AD700
-void sub_4AD700()
+void sub_4AD700(int64_t obj, int millis)
 {
-    // TODO: Incomplete.
+    DateTime datetime;
+
+    sub_45A950(&datetime, millis);
+    sub_4AD730(obj, &datetime);
 }
 
 // 0x4AD730
