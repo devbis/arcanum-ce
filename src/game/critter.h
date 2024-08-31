@@ -56,6 +56,7 @@ int64_t critter_leader_get(int64_t obj);
 void critter_leader_set(int64_t follower_obj, int64_t leader_obj);
 bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force);
 bool critter_disband(int64_t obj, bool force);
+bool sub_45E180(int64_t obj);
 bool sub_45E820(int64_t obj, int a2, int a3);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool sub_45EAB0(int64_t obj);

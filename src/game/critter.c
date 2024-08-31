@@ -450,9 +450,22 @@ void sub_45E040()
 }
 
 // 0x45E180
-void sub_45E180()
+bool sub_45E180(int64_t obj)
 {
-    // TODO: Incomplete.
+    int type;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    switch (type) {
+    case OBJ_TYPE_PC:
+        sub_4BA1E0(obj);
+        return true;
+    case OBJ_TYPE_NPC:
+        sub_4AA8C0(obj, true);
+        sub_45E040(obj);
+        return true;
+    default:
+        return false;
+    }
 }
 
 // 0x45E1E0
