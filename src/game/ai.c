@@ -31,6 +31,7 @@ static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
+static void sub_4AC180(Ai* ai);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -572,9 +573,41 @@ void sub_4ABF10()
 }
 
 // 0x4AC180
-void sub_4AC180()
+void sub_4AC180(Ai* ai)
 {
-    // TODO: Incomplete.
+    if (!sub_4B6D70() || sub_4B6D80() == ai->obj) {
+        if ((obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) != 0) {
+             sub_4AC7B0(ai);
+             return;
+        }
+
+        switch (ai->field_14) {
+        case 1:
+            sub_4AC250(ai);
+            return;
+        case 2:
+            sub_4AC320(ai);
+            return;
+        case 3:
+            sub_4AC350(ai);
+            return;
+        }
+
+        switch (ai->danger_type) {
+        case 0:
+            sub_4AC380(ai);
+            return;
+        case 1:
+            sub_4AC6E0(ai);
+            return;
+        case 2:
+            sub_4AC620(ai);
+            return;
+        case 3:
+            sub_4AC660(ai);
+            return;
+        }
+    }
 }
 
 // 0x4AC250
