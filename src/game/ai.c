@@ -16,8 +16,7 @@ typedef struct Ai {
     /* 0014 */ int field_14;
     /* 0018 */ int field_18;
     /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
+    /* 0020 */ int64_t field_20;
     /* 0028 */ int64_t leader_obj;
     /* 0030 */ int field_30;
     /* 0034 */ int field_34;
@@ -34,6 +33,7 @@ static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_
 static void sub_4ABC20(Ai* ai);
 static bool sub_4ABEB0(int64_t obj, int64_t tgt);
 static void sub_4AC180(Ai* ai);
+static void sub_4AC320(Ai* ai);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -637,9 +637,12 @@ void sub_4AC250()
 }
 
 // 0x4AC320
-void sub_4AC320()
+void sub_4AC320(Ai* ai)
 {
-    // TODO: Incomplete.
+    sub_435450(ai->obj,
+        ai->danger_source,
+        ai->field_20,
+        0);
 }
 
 // 0x4AC350
