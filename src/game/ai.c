@@ -1083,9 +1083,11 @@ void sub_4AEE50()
 }
 
 // 0x4AF130
-void sub_4AF130()
+void sub_4AF130(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        sub_4AABE0(a1, 2, a2, 0);
+    }
 }
 
 // 0x4AF170

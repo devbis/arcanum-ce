@@ -25,6 +25,7 @@ void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 void sub_4AEAB0(int64_t a1, int64_t a2);
 bool sub_4AEB10(int64_t obj);
 int sub_4AEB70(int64_t obj, int64_t portal, int a3);
+void sub_4AF130(int64_t a1, int64_t a2);
 bool sub_4AFB30(int64_t obj, int64_t a2);
 void ai_target_lock(int64_t obj, int64_t tgt);
 void ai_target_unlock(int64_t obj);
