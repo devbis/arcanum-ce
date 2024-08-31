@@ -44,6 +44,7 @@ static int sub_4AD5D0(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
+static int sub_4AE3A0(int64_t a1, int64_t a2);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -927,9 +928,31 @@ void sub_4AE120()
 }
 
 // 0x4AE3A0
-void sub_4AE3A0()
+int sub_4AE3A0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+
+    if (a1 == a2) {
+        return 4;
+    }
+
+    leader_obj = critter_leader_get(a1);
+    if (leader_obj != OBJ_HANDLE_NULL && leader_obj == a2) {
+        return 3;
+    }
+
+    if ((obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0) {
+        if (critter_faction_same(a1, a2)) {
+            return 1;
+        }
+
+        if (critter_social_class_get(a1) == SOCIAL_CLASS_GUARD
+            && critter_origin_same(a1, a2)) {
+            return 2;
+        }
+    }
+
+    return 0;
 }
 
 // 0x4AE450
