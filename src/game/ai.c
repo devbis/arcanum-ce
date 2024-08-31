@@ -505,9 +505,9 @@ void sub_4AB400()
 }
 
 // 0x4AB430
-void sub_4AB430()
+int sub_4AB430(int64_t obj)
 {
-    // TODO: Incomplete.
+    return 100 * sub_45D700(obj) / sub_45D670(obj);
 }
 
 // 0x4AB460
