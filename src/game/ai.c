@@ -39,6 +39,7 @@ static void sub_4AC620(Ai* ai);
 static void sub_4AC660(Ai* ai);
 static bool ai_is_day();
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
+static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -755,9 +756,13 @@ void sub_4AD140()
 }
 
 // 0x4AD1B0
-void sub_4AD1B0()
+void sub_4AD1B0(int64_t a1, int64_t a2, int a3)
 {
-    // TODO: Incomplete.
+    if (a3 != 0) {
+        sub_4341C0(a1, a2, a3);
+    } else {
+        sub_433640(a1, a2);
+    }
 }
 
 // 0x4AD200
