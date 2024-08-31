@@ -858,13 +858,38 @@ void sub_45F110()
 }
 
 // 0x45F2D0
-void sub_45F2D0()
+bool critter_enter_bed(int64_t obj, int64_t bed)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+    int64_t obj_location;
+    int64_t bed_location;
+    int64_t location;
+
+    if (obj_field_handle_get(bed, OBJ_F_SCENERY_WHOS_IN_ME) != OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    flags |= OCF_SLEEPING;
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
+
+    obj_field_handle_set(bed, OBJ_F_SCENERY_WHOS_IN_ME, obj);
+    object_inc_current_aid(bed);
+
+    sub_43D0E0(obj, OF_DONTDRAW);
+
+    bed_location = obj_field_int64_get(bed, OBJ_F_LOCATION);
+    obj_location = obj_field_int64_get(bed, OBJ_F_LOCATION);
+    if (bed_location == obj_location
+        && sub_4B8FF0(obj_location, 4, &location)) {
+        sub_43E770(obj, location, 0, 0);
+    }
+
+    return true;
 }
 
 // 0x45F3A0
-void sub_45F3A0(int64_t obj, int64_t bed)
+void critter_leave_bed(int64_t obj, int64_t bed)
 {
     unsigned int flags;
 
