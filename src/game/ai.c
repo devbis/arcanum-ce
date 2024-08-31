@@ -1117,9 +1117,13 @@ void sub_4AF1D0(int64_t obj)
 }
 
 // 0x4AF210
-void sub_4AF210()
+bool sub_4AF210(int64_t obj, int64_t* danger_source_ptr)
 {
-    // TODO: Incomplete.
+    int danger_type;
+
+    ai_danger_source(obj, &danger_type, &danger_source_ptr);
+
+    return danger_type == 3;
 }
 
 // 0x4AF240
