@@ -37,6 +37,7 @@ static void sub_4AC320(Ai* ai);
 static void sub_4AC350(Ai* ai);
 static void sub_4AC620(Ai* ai);
 static void sub_4AC660(Ai* ai);
+static bool ai_is_day();
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -710,9 +711,12 @@ void sub_4ACBB0()
 }
 
 // 0x4ACD90
-void sub_4ACD90()
+bool ai_is_day()
 {
-    // TODO: Incomplete.
+    int hour;
+
+    hour = game_time_hour();
+    return hour >= 6 && hour < 21;
 }
 
 // 0x4ACDB0
