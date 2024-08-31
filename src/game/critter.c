@@ -8,6 +8,7 @@
 #include "game/map.h"
 #include "game/mes.h"
 #include "game/object.h"
+#include "game/object_node.h"
 #include "game/random.h"
 #include "game/stat.h"
 #include "game/ui.h"
@@ -722,9 +723,21 @@ bool critter_is_concealed(int64_t obj)
 }
 
 // 0x45EE30
-void sub_45EE30()
+void sub_45EE30(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    ObjectNodeList list;
+    ObjectNode* node;
+
+    sub_45EE90(obj, a2);
+    sub_441260(obj, &list);
+
+    node = list.head;
+    while (node != NULL) {
+        sub_45EE90(obj, a2);
+        node = node->next;
+    }
+
+    object_list_destroy(&list);
 }
 
 // 0x45EE90
