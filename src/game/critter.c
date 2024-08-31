@@ -372,9 +372,51 @@ void critter_leader_set(int64_t follower_obj, int64_t leader_obj)
 }
 
 // 0x45DE90
-void critter_follow()
+bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (obj_field_int32_get(follower_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+            return false;
+        }
+
+        if (!force) {
+            if (sub_4AD950(follower_obj, leader_obj, false) != 0) {
+                return false;
+            }
+        }
+
+        if (critter_leader_get(follower_obj) != OBJ_HANDLE_NULL) {
+            critter_disband(follower_obj, true);
+        }
+
+        sub_4F0070(leader_obj,
+            OBJ_F_CRITTER_FOLLOWER_IDX,
+            obj_arrayfield_length_get(leader_obj, OBJ_F_CRITTER_FOLLOWER_IDX),
+            follower_obj);
+        critter_leader_set(follower_obj, leader_obj);
+
+        flags = obj_field_int32_get(follower_obj, OBJ_F_NPC_FLAGS);
+        flags &= ~ONF_JILTED;
+        if (force) {
+            flags |= ONF_FORCED_FOLLOWER;
+        }
+        sub_4EFDD0(follower_obj, OBJ_F_NPC_FLAGS, flags);
+
+        sub_436FA0(follower_obj);
+        sub_4EE190();
+        sub_45EE30(follower_obj, critter_is_concealed(leader_obj));
+
+        if ((obj_field_int32_get(leader_obj, OBJ_F_SPELL_FLAGS) & OSF_TEMPUS_FUGIT) != 0) {
+            flags = obj_field_int32_get(follower_obj, OBJ_F_SPELL_FLAGS);
+            flags |= OSF_TEMPUS_FUGIT;
+            obj_field_int32_set(follower_obj, OBJ_F_SPELL_FLAGS, flags);
+        }
+    }
+
+    return true;
 }
 
 // 0x45DFC0
