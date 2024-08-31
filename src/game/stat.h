@@ -76,6 +76,7 @@ void stat_set_defaults(object_id_t object_id);
 int stat_level(object_id_t obj, int stat);
 int stat_get_base(object_id_t obj, int stat);
 int stat_set_base(object_id_t obj, int stat);
+bool stat_is_maximized(object_id_t obj, int stat);
 const char* stat_get_name(int stat);
 const char* stat_get_short_name(int stat);
 const char* gender_get_name(int gender);
