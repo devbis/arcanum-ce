@@ -42,6 +42,7 @@ static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
 static int sub_4AD5D0(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
+static void sub_4AD730(int64_t obj, DateTime* datetime);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -819,9 +820,19 @@ void sub_4AD700()
 }
 
 // 0x4AD730
-void sub_4AD730()
+void sub_4AD730(int64_t obj, DateTime* datetime)
 {
-    // TODO: Incomplete.
+    TimeEvent timeevent;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4AD7D0(obj);
+
+        timeevent.type = TIMEEVENT_TYPE_AI;
+        timeevent.params[0].object_value = obj;
+        timeevent.params[1].integer_value = 0;
+        sub_45B800(&timeevent, datetime);
+    }
 }
 
 // 0x4AD790
