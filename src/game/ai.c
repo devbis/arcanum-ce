@@ -14,6 +14,12 @@ static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
+// 0x5F8488
+static Func5F8488* dword_5F8488;
+
+// 0x5F848C
+static Func5F848C* dword_5F848C;
+
 // 0x5F8490
 static int64_t qword_5F8490;
 
@@ -40,9 +46,10 @@ void ai_mod_unload()
 }
 
 // 0x4A84D0
-void sub_4A84D0()
+void sub_4A84D0(Func5F848C* a1, Func5F8488* a2)
 {
-    // TODO: Incomplete.
+    dword_5F848C = a1;
+    dword_5F8488 = a2;
 }
 
 // 0x4A84F0
@@ -118,9 +125,28 @@ void sub_4A9650()
 }
 
 // 0x4A9AD0
-void sub_4A9AD0()
+void sub_4A9AD0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    if (a1 != a2) {
+        if (dword_5F848C != NULL) {
+            dword_5F848C(a1, 0);
+        }
+
+        if (!combat_critter_is_combat_mode_active(a1)) {
+            combat_critter_activate_combat_mode(a1);
+            if (sub_4B6D70()) {
+                sub_4B6E70(a2);
+            }
+        }
+
+        if (!sub_423300(a1, 0) || sub_423470(a1)) {
+            if (combat_auto_attack_get(a1)) {
+                if (!sub_44E830(a1, 19, 0)) {
+                    sub_434AE0(a1, a2);
+                }
+            }
+        }
+    }
 }
 
 // 0x4A9B80

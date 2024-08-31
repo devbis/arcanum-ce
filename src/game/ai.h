@@ -3,8 +3,12 @@
 
 #include "game/context.h"
 
+typedef void(Func5F8488)(int64_t, int64_t, const char*, int);
+typedef void(Func5F848C)(int64_t, int);
+
 void ai_exit();
 void ai_mod_unload();
+void sub_4A84D0(Func5F848C* a1, Func5F8488* a2);
 void sub_4AA4A0(int64_t obj);
 void sub_4AA580(int64_t obj);
 void sub_4AA8C0(int64_t obj, bool force);
