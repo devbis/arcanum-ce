@@ -487,9 +487,13 @@ void sub_4AB0B0()
 }
 
 // 0x4AB2A0
-void sub_4AB2A0()
+void sub_4AB2A0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    if (sub_4AB2F0(a1, a2)) {
+        sub_4AABE0(a1, 2, a2, 0);
+    } else {
+        sub_4AABE0(a1, 1, a2, 0);
+    }
 }
 
 // 0x4AB2F0
@@ -523,9 +527,18 @@ void sub_4AB990()
 }
 
 // 0x4ABBC0
-void sub_4ABBC0()
+int64_t sub_4ABBC0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t combat_focus_obj;
+
+    obj_field_obj_get(obj, OBJ_F_NPC_COMBAT_FOCUS, &combat_focus_obj);
+    if (sub_4AB990(obj, combat_focus_obj)) {
+        return combat_focus_obj;
+    }
+
+    ai_target_unlock(obj);
+
+    return sub_4AB460(obj);
 }
 
 // 0x4ABC20

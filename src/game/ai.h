@@ -17,6 +17,7 @@ bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent);
 bool ai_is_fighting(int64_t obj);
 int sub_4AB400(int64_t obj);
 int sub_4AB430(int64_t obj);
+int64_t sub_4ABBC0(int64_t obj);
 bool sub_4AFB30(int64_t obj, int64_t a2);
 void ai_target_lock(int64_t obj, int64_t tgt);
 void ai_target_unlock(int64_t obj);
