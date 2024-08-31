@@ -35,6 +35,7 @@ static bool sub_4ABEB0(int64_t obj, int64_t tgt);
 static void sub_4AC180(Ai* ai);
 static void sub_4AC320(Ai* ai);
 static void sub_4AC350(Ai* ai);
+static void sub_4AC620(Ai* ai);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -663,9 +664,10 @@ void sub_4AC380()
 }
 
 // 0x4AC620
-void sub_4AC620()
+void sub_4AC620(Ai* ai)
 {
-    // TODO: Incomplete.
+    sub_4AABE0(ai->obj, 3, ai->danger_source, 0);
+    sub_434980(ai->obj, ai->danger_source);
 }
 
 // 0x4AC660
