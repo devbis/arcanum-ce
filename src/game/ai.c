@@ -992,9 +992,24 @@ void sub_4AEAB0()
 }
 
 // 0x4AEB10
-void sub_4AEB10()
+bool sub_4AEB10(int64_t obj)
 {
-    // TODO: Incomplete.
+    int type;
+    int v1[17];
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_PC) {
+        return true;
+    }
+    if (type == OBJ_TYPE_NPC) {
+        sub_4AAA60(obj, v1);
+        return v1[16];
+    }
+    return false;
 }
 
 // 0x4AEB70
