@@ -25,6 +25,7 @@ typedef struct Ai {
 
 static_assert(sizeof(Ai) == 0x38, "wrong size");
 
+static void sub_4A88D0(Ai* ai, int64_t obj);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
@@ -94,9 +95,18 @@ void sub_4A8570()
 }
 
 // 0x4A88D0
-void sub_4A88D0()
+void sub_4A88D0(Ai* ai, int64_t obj)
 {
-    // TODO: Incomplete.
+    ai->obj = obj;
+    ai->danger_source = OBJ_HANDLE_NULL;
+    ai->danger_type = 0;
+    ai->field_14 = 0;
+    ai->field_18 = 10000;
+    ai->field_1C = -1;
+    ai->field_24 = 0;
+    ai->leader_obj = critter_leader_get(obj);
+    ai_danger_source(obj, &(ai->danger_type), &(ai->danger_source));
+    ai->field_30 = -1;
 }
 
 // 0x4A8940
