@@ -40,6 +40,7 @@ static void sub_4AC660(Ai* ai);
 static bool ai_is_day();
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
+static int sub_4AD5D0(int64_t obj);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -784,9 +785,9 @@ void sub_4AD4D0()
 }
 
 // 0x4AD5D0
-void sub_4AD5D0()
+int sub_4AD5D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    return 4750 * sub_4AD610(obj) / 30 + 250;
 }
 
 // 0x4AD610
