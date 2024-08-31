@@ -1,5 +1,6 @@
 #include "game/critter.h"
 
+#include "game/ai.h"
 #include "game/background.h"
 #include "game/effect.h"
 #include "game/item.h"
@@ -377,9 +378,26 @@ void critter_follow()
 }
 
 // 0x45DFC0
-void critter_disband()
+bool critter_disband(int64_t obj, bool force)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+    int64_t v1;
+
+    leader_obj = critter_leader_get(obj);
+    if (leader_obj != OBJ_HANDLE_NULL) {
+        if (!force) {
+            if (stat_is_maximized(leader_obj, STAT_CHARISMA)) {
+                return false;
+            }
+            if (sub_459040(obj, OSF_MIND_CONTROLLED, &v1)) {
+                return false;
+            }
+        }
+        sub_4AA8C0(obj, force);
+        sub_45E040(obj);
+    }
+
+    return true;
 }
 
 // 0x45E040
