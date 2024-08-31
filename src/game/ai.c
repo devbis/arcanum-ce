@@ -36,6 +36,7 @@ static void sub_4AC180(Ai* ai);
 static void sub_4AC320(Ai* ai);
 static void sub_4AC350(Ai* ai);
 static void sub_4AC620(Ai* ai);
+static void sub_4AC660(Ai* ai);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -671,9 +672,17 @@ void sub_4AC620(Ai* ai)
 }
 
 // 0x4AC660
-void sub_4AC660()
+void sub_4AC660(Ai* ai)
 {
-    // TODO: Incomplete.
+    int64_t fleeing_from_obj;
+
+    obj_field_obj_get(ai->obj, OBJ_F_CRITTER_FLEEING_FROM, &fleeing_from_obj);
+
+    if (fleeing_from_obj == OBJ_HANDLE_NULL
+        || sub_45D8D0(fleeing_from_obj)
+        || sub_45D800(fleeing_from_obj)) {
+        ai->danger_type = sub_4AABE0(ai->obj, 0, OBJ_HANDLE_NULL, 0);
+    }
 }
 
 // 0x4AC6E0
