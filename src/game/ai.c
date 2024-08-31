@@ -1097,9 +1097,15 @@ void sub_4AF170()
 }
 
 // 0x4AF1D0
-void sub_4AF1D0()
+void sub_4AF1D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+
+    sub_4AF170(obj);
+
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    flags |= OCF_NO_FLEE;
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
 }
 
 // 0x4AF210
