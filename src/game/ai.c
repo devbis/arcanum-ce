@@ -38,6 +38,7 @@ static void sub_4AC350(Ai* ai);
 static void sub_4AC620(Ai* ai);
 static void sub_4AC660(Ai* ai);
 static bool ai_is_day();
+static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 
@@ -726,9 +727,19 @@ void sub_4ACDB0()
 }
 
 // 0x4AD060
-void sub_4AD060()
+bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr)
 {
-    // TODO: Incomplete.
+    if (critter_leader_get(obj) != OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (ai_is_day()) {
+        *standpoint_ptr = obj_field_int64_get(obj, OBJ_F_NPC_STANDPOINT_DAY);
+    } else {
+        *standpoint_ptr = obj_field_int64_get(obj, OBJ_F_NPC_STANDPOINT_NIGHT);
+    }
+
+    return true;
 }
 
 // 0x4AD0B0
