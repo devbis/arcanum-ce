@@ -220,7 +220,34 @@ int critter_fatigue_damage_get(long long obj)
 // 0x45D5A0
 int critter_fatigue_damage_set(long long obj, int value)
 {
-    // TODO: Incomplete.
+    bool v1;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    if (value < 0) {
+        value = 0;
+    }
+
+    v1 = sub_45D800(obj);
+
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE, value);
+    sub_460260(obj);
+
+    if (value != 0 && !sub_405BC0(obj)) {
+        sub_45E820(obj, 0, 80000);
+
+        if (!v1 && sub_45D800(obj)) {
+            sub_457450(obj);
+            sub_4CBBF0(OBJ_HANDLE_NULL, obj);
+            sub_435A90(obj);
+            sub_4B7C90(obj);
+        }
+    }
+
+    return value;
 }
 
 // 0x45D670
