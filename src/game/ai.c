@@ -8,6 +8,7 @@
 
 #define CLOCKWORK_DECOY 6719
 
+static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
 static int sub_4AF240(int value);
@@ -165,9 +166,15 @@ void sub_4AA300()
 }
 
 // 0x4AA420
-void sub_4AA420()
+void sub_4AA420(int64_t obj, int64_t a2)
 {
-    // TODO: Incomplete.
+    if (obj_field_handle_get(obj, OBJ_F_NPC_COMBAT_FOCUS) == a2) {
+        obj_field_handle_set(obj, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
+    }
+    if (obj_field_handle_get(obj, OBJ_F_NPC_WHO_HIT_ME_LAST) == a2) {
+        obj_field_handle_set(obj, OBJ_F_NPC_WHO_HIT_ME_LAST, OBJ_HANDLE_NULL);
+    }
+    sub_4AF9D0(obj, a2);
 }
 
 // 0x4AA4A0
