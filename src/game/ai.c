@@ -26,6 +26,7 @@ typedef struct Ai {
 static_assert(sizeof(Ai) == 0x38, "wrong size");
 
 static void sub_4A88D0(Ai* ai, int64_t obj);
+static void sub_4A94C0(int64_t obj, int64_t tgt);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
@@ -140,9 +141,13 @@ void sub_4A92D0()
 }
 
 // 0x4A94C0
-void sub_4A94C0()
+void sub_4A94C0(int64_t obj, int64_t tgt)
 {
-    // TODO: Incomplete.
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC && obj != tgt) {
+        sub_4A9650(obj, tgt, 0, 0);
+        obj_field_handle_set(tgt, OBJ_F_NPC_COMBAT_FOCUS, obj);
+        obj_field_handle_set(tgt, OBJ_F_NPC_WHO_HIT_ME_LAST, obj);
+    }
 }
 
 // 0x4A9530
