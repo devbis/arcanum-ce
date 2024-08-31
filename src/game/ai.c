@@ -31,6 +31,7 @@ static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
+static bool sub_4ABEB0(int64_t obj, int64_t tgt);
 static void sub_4AC180(Ai* ai);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
@@ -561,9 +562,23 @@ void sub_4ABE20()
 }
 
 // 0x4ABEB0
-void sub_4ABEB0()
+bool sub_4ABEB0(int64_t obj, int64_t tgt)
 {
-    // TODO: Incomplete.
+    int obj_level;
+    int tgt_level;
+
+    tgt_level = stat_level(tgt, STAT_LEVEL);
+    obj_level = stat_level(obj, STAT_LEVEL);
+
+    if (tgt_level < 20 && tgt_level >= obj_level + 10) {
+        return true;
+    } else if (tgt_level < 40 && tgt_level >= obj_level + 5) {
+        return true;
+    } else if (tgt_level >= obj_level) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x4ABF10
