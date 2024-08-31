@@ -10,6 +10,7 @@
 #include "game/object.h"
 #include "game/object_node.h"
 #include "game/random.h"
+#include "game/skill.h"
 #include "game/stat.h"
 #include "game/ui.h"
 
@@ -1039,9 +1040,37 @@ int critter_description_get(long long a, long long b)
 }
 
 // 0x45F9D0
-void sub_45F9D0()
+bool critter_can_backstab(int64_t obj, int64_t tgt)
 {
-    // TODO: Incomplete.
+    int64_t weapon_obj;
+    int weapon_type;
+
+    if (basic_skill_get_training(obj, BASIC_SKILL_BACKSTAB) == 0) {
+        return false;
+    }
+
+    if (sub_45EFF0(tgt, obj)) {
+        return false;
+    }
+
+    weapon_obj = sub_4B23B0(obj);
+    if (weapon_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    weapon_type = tig_art_item_id_subtype_get(obj_field_int32_get(weapon_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
+    if (weapon_type == TIG_ART_WEAPON_TYPE_DAGGER) {
+        return true;
+    }
+
+    if (basic_skill_get_training(obj, BASIC_SKILL_BACKSTAB) >= TRAINING_EXPERT
+        && (weapon_type == TIG_ART_WEAPON_TYPE_SWORD
+            || weapon_type == TIG_ART_WEAPON_TYPE_AXE
+            || weapon_type == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD)) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x45FA70

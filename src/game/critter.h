@@ -73,6 +73,7 @@ int sub_45F0B0(int64_t obj);
 const char* critter_encumbrance_level_name(int level);
 int critter_encumbrance_level_ratio(int level);
 int critter_description_get(long long a, long long b);
+bool critter_can_backstab(int64_t obj, int64_t tgt);
 bool sub_45FB90(int64_t obj);
 bool sub_45FC00(int64_t obj);
 void critter_debug_obj(object_id_t obj);
