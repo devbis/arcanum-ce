@@ -1,12 +1,29 @@
 #include "game/ai.h"
 
 #include "game/critter.h"
+#include "game/map.h"
 #include "game/obj.h"
 #include "game/object_node.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 
 #define CLOCKWORK_DECOY 6719
+
+typedef struct Ai {
+    /* 0000 */ int64_t obj;
+    /* 0008 */ int64_t danger_source;
+    /* 0010 */ int danger_type;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ int field_20;
+    /* 0024 */ int field_24;
+    /* 0028 */ int64_t leader_obj;
+    /* 0030 */ int field_30;
+    /* 0034 */ int field_34;
+} Ai;
+
+static_assert(sizeof(Ai) == 0x38, "wrong size");
 
 static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
@@ -53,9 +70,21 @@ void sub_4A84D0(Func5F848C* a1, Func5F8488* a2)
 }
 
 // 0x4A84F0
-void sub_4A84F0()
+void sub_4A84F0(int64_t obj)
 {
-    // TODO: Incomplete.
+    Ai ai;
+
+    if (!map_is_clearing_objects()
+        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        sub_4A88D0(&ai, obj);
+        if (sub_4A8570(&ai)) {
+            if (!sub_4A8940(&ai) && !sub_4A8E70(&ai)) {
+                sub_4A92D0(&ai);
+            }
+            sub_4AC180(&ai);
+        }
+    }
 }
 
 // 0x4A8570
