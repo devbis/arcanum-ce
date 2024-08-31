@@ -883,9 +883,15 @@ void sub_4ADE00()
 }
 
 // 0x4ADFF0
-void sub_4ADFF0()
+void sub_4ADFF0(int64_t obj)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+
+    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    flags |= ONF_CHECK_WEAPON;
+    flags |= ONF_LOOK_FOR_WEAPON;
+    flags |= ONF_LOOK_FOR_AMMO;
+    obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
 }
 
 // 0x4AE020
