@@ -27,6 +27,7 @@ static_assert(sizeof(Ai) == 0x38, "wrong size");
 
 static void sub_4A88D0(Ai* ai, int64_t obj);
 static void sub_4A94C0(int64_t obj, int64_t tgt);
+static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
@@ -212,9 +213,38 @@ void sub_4A9E10()
 }
 
 // 0x4A9F10
-void sub_4A9F10()
+void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+
+    if ((obj_field_int32_get(a1, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0) {
+        leader_obj = OBJ_HANDLE_NULL;
+    } else {
+        leader_obj = critter_leader_get(a1);
+    }
+
+    if (a1 != a3 && a1 != a2 && leader_obj != a2 && leader_obj != a3) {
+        if (critter_is_sleeping(a1)) {
+            sub_4AD0B0(a1);
+        }
+
+        if (sub_4AE3A0(a1, a3)) {
+            if (!sub_4AF260(a1, a3) || !sub_4AF470(a1, a3, a4)) {
+                sub_4AA620(a1, a2);
+            }
+        } else if (sub_4AE3A0(a1, a2)) {
+            if (!sub_4AF260(a1, a3) || !sub_4AF470(a1, a3, a4)) {
+                sub_4AA620(a1, a3);
+            }
+        } else if (critter_social_class_get(a1) != SOCIAL_CLASS_GUARD
+            && (obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0) {
+            ai_danger_source(a1, &danger_type, NULL);
+            if (danger_type == 0
+                && (!sub_4AF260(a1, a3) || !sub_4AF470(a1, a3, a4))) {
+                    sub_4AABE0(a1, 2, a2, 0);
+                }
+        }
+    }
 }
 
 // 0x4AA0D0
