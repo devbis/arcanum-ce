@@ -350,9 +350,9 @@ int64_t sub_45DDA0(int64_t obj)
 }
 
 // 0x45DE00
-long long critter_leader_get(long long obj)
+int64_t critter_leader_get(int64_t obj)
 {
-    long long leader_obj;
+    int64_t leader_obj;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         obj_field_obj_get(obj, OBJ_F_NPC_LEADER, &leader_obj);
@@ -363,7 +363,7 @@ long long critter_leader_get(long long obj)
 }
 
 // 0x45DE50
-void critter_leader_set(long long follower_obj, long long leader_obj)
+void critter_leader_set(int64_t follower_obj, int64_t leader_obj)
 {
     if (obj_field_int32_get(follower_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         mp_obj_field_obj_set(follower_obj, OBJ_F_NPC_LEADER, leader_obj);

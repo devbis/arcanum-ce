@@ -52,6 +52,8 @@ bool sub_45D800(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
 bool sub_45D8D0(long long obj);
 int64_t sub_45DDA0(int64_t obj);
+int64_t critter_leader_get(int64_t obj);
+void critter_leader_set(int64_t follower_obj, int64_t leader_obj);
 bool sub_45E820(int64_t obj, int a2, int a3);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool sub_45EAB0(int64_t obj);
