@@ -70,6 +70,7 @@ void sub_45EE30(int64_t obj, bool a2);
 bool sub_45EFF0(int64_t a, int64_t b);
 bool sub_45F060(int64_t obj, int stat, int mod);
 int sub_45F0B0(int64_t obj);
+void sub_45F3A0(int64_t obj, int64_t bed);
 const char* critter_encumbrance_level_name(int level);
 int critter_encumbrance_level_ratio(int level);
 int critter_description_get(long long a, long long b);

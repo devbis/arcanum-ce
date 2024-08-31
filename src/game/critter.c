@@ -864,9 +864,29 @@ void sub_45F2D0()
 }
 
 // 0x45F3A0
-void sub_45F3A0()
+void sub_45F3A0(int64_t obj, int64_t bed)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+
+    if (obj_field_handle_get(bed, OBJ_F_SCENERY_WHOS_IN_ME) != obj) {
+        tig_debug_printf("Someone is trying to make a critter leave a bed that he isn't in!\n");
+        return;
+    }
+
+    sub_43D280(obj, OF_DONTDRAW);
+
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    flags &= ~OCF_SLEEPING;
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+        flags &= ~ONF_WAYPOINTS_BED;
+        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+    }
+
+    obj_field_handle_set(bed, OBJ_F_SCENERY_WHOS_IN_ME, OBJ_HANDLE_NULL);
+    object_dec_current_aid(bed);
 }
 
 // 0x45F460
