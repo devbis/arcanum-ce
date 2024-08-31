@@ -998,9 +998,51 @@ void sub_4AEB10()
 }
 
 // 0x4AEB70
-void sub_4AEB70()
+int sub_4AEB70(int64_t obj, int64_t portal, int a3)
 {
-    // TODO: Incomplete.
+    int type;
+    unsigned int flags;
+
+    if (object_is_destroyed(portal)) {
+        return 0;
+    }
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
+        return 5;
+    }
+
+    if (!sub_441980(obj, portal, OBJ_HANDLE_NULL, 3, 0)) {
+        return 4;
+    }
+
+    if (obj_field_int32_get(portal, OBJ_F_TYPE) != OBJ_TYPE_PORTAL) {
+        return 0;
+    }
+
+    flags = obj_field_int32_get(portal, OBJ_F_PORTAL_FLAGS);
+    if ((flags & OPF_JAMMED) != 0) {
+        return 2;
+    }
+    if ((flags & OPF_MAGICALLY_HELD) != 0) {
+        return 3;
+    }
+    if ((flags & OPF_ALWAYS_LOCKED) == 0) {
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            if (!sub_45DDA0(obj) || sub_4AECA0(portal, a3)) {
+                return 0;
+            }
+        } else if (sub_4AECA0(portal, a3)) {
+            return 0;
+        }
+    }
+
+    if (object_is_locked(portal)) {
+        // TODO: Review (convert from bool to int).
+        return !sub_463370(obj, obj_field_int32_get(portal, OBJ_F_PORTAL_KEY_ID));
+    }
+
+    return 0;
 }
 
 // 0x4AECA0
