@@ -336,7 +336,17 @@ void sub_45DC90()
 // 0x45DDA0
 int64_t sub_45DDA0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj = obj;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    do {
+        leader_obj = critter_leader_get(leader_obj);
+    } while (leader_obj != OBJ_HANDLE_NULL && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC);
+
+    return leader_obj;
 }
 
 // 0x45DE00
