@@ -45,7 +45,7 @@ static tig_font_handle_t dword_5FF54C;
 static tig_window_handle_t tc_iso_window_handle;
 
 // 0x5FF554
-static int dword_5FF554[5];
+static const char* dword_5FF554[5];
 
 // 0x5FF568
 static bool dword_5FF568;
@@ -208,11 +208,11 @@ void sub_4C9720()
             &stru_5FF508,
             tig_color_make(0, 0, 0));
 
-        dword_5FF554[0] = 0;
-        dword_5FF554[1] = 0;
-        dword_5FF554[2] = 0;
-        dword_5FF554[3] = 0;
-        dword_5FF554[4] = 0;
+        dword_5FF554[0] = NULL;
+        dword_5FF554[1] = NULL;
+        dword_5FF554[2] = NULL;
+        dword_5FF554[3] = NULL;
+        dword_5FF554[4] = NULL;
 
         dword_5FF534(&stru_5FF4F8);
 
@@ -232,9 +232,65 @@ void sub_4C9720()
 }
 
 // 0x4C9810
-void sub_4C9810()
+void sub_4C9810(int index, const char* str)
 {
-    // TODO: Incomplete.
+    TigRect rect;
+    TigRect dirty_rect;
+    TigMouseState mouse_state;
+    bool mouse_inside;
+
+    if (!tc_editor) {
+        dword_5FF554[index] = str;
+
+        rect.x = 6;
+        rect.y = index * (dword_5FF540 + 3) + 3;
+        rect.width = stru_5FF508.width - 12;
+        rect.height = dword_5FF540;
+
+        tig_video_buffer_fill(dword_5FF518,
+            &rect,
+            tig_color_make(0, 0, 0));
+
+        mouse_inside = false;
+        // TODO: Probably missing horizontal rect constraints.
+        if (tig_mouse_get_state(&mouse_state) == TIG_OK
+            && mouse_state.x - tc_iso_window_rect.x >= stru_5FF4F8.x
+            && mouse_state.y - tc_iso_window_rect.y >= stru_5FF4F8.y
+            && mouse_state.x - tc_iso_window_rect.x < stru_5FF4F8.x + stru_5FF4F8.width
+            && mouse_state.y - tc_iso_window_rect.y < stru_5FF4F8.y + stru_5FF4F8.height
+            && mouse_state.y - tc_iso_window_rect.y - stru_5FF4F8.y >= rect.y
+            && mouse_state.y - tc_iso_window_rect.y - stru_5FF4F8.y < rect.y + rect.height) {
+            mouse_inside = true;
+            if (dword_5FF544) {
+                tig_font_push(dword_5FF54C);
+            } else {
+                tig_font_push(dword_5FF530);
+            }
+        } else {
+            tig_font_push(dword_5FF538);
+        }
+
+        tig_font_write(dword_5FF518, str, &rect, &dirty_rect);
+        tig_font_pop();
+
+        if (stru_5FF4F8.width < dirty_rect.width + 12) {
+            stru_5FF4F8.width = dirty_rect.width + 12;
+            stru_5FF4F8.x = (tc_iso_window_rect.width - stru_5FF4F8.width) / 2;
+        }
+
+        if (dword_5FF568) {
+            dword_5FF534(&stru_5FF4F8);
+        }
+
+        if (mouse_inside && dword_5B7218 != index) {
+            if (dword_5B7218 != -1) {
+                if (dword_5FF554[dword_5B7218] != NULL) {
+                    sub_4C9810(dword_5B7218, dword_5FF554[dword_5B7218]);
+                }
+            }
+            dword_5B7218 = index;
+        }
+    }
 }
 
 // 0x4C9A10
