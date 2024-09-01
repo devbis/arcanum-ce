@@ -153,12 +153,12 @@ const char* degree_get_description(int degree, int tech)
 // 0x4AFE60
 int sub_4AFE60(long long object_id, int tech)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
-    } else {
+    if (obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
+
+    return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
 }
 
 // 0x4AFEC0
@@ -198,12 +198,12 @@ int sub_4AFEC0(int64_t obj, int tech)
 // 0x4AFF90
 int sub_4AFF90(long long object_id, int tech, int value)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        sub_4F0270(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
-    } else {
+    if (obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
+
+    return sub_4F0270(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
 }
 
 // 0x4AFFF0
