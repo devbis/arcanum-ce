@@ -1,10 +1,39 @@
 #include "ui/tb_ui.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/object.h"
-#include "game/lib/player.h"
+#include "game/gamelib.h"
+#include "game/mes.h"
+#include "game/object.h"
+#include "game/player.h"
 #include "game/ui.h"
+
+static void sub_57CC70(int64_t a1, int64_t a2);
+
+// 0x5E2E6C
+static int dword_5E2E6C;
+
+// 0x5E2E68
+static int dword_5E2E68;
+
+// 0x5E2E94
+static int dword_5E2E94;
+
+// 0x5E2EA8
+static tig_art_id_t dword_5E2EA8;
+
+// 0x5E2EAC
+static tig_color_t dword_5E2EAC;
+
+// 0x5E2ECC
+static tig_art_id_t dword_5E2ECC;
+
+// 0x5E2F60
+static ObjectID stru_5E2F60;
+
+// 0x5E2F90
+static int64_t qword_5E2F90;
+
+// 0x64E018
+static bool dword_64E018;
 
 // 0x57C6E0
 bool tb_ui_init(GameInitInfo* init_info)
@@ -194,9 +223,17 @@ void sub_57CC10(long long obj)
 }
 
 // 0x57CC70
-void sub_57CC70()
+void sub_57CC70(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+
+    if (sub_441980(a1, a2, OBJ_HANDLE_NULL, 9, 0) == 1) {
+        if (sub_4AF210(a2, &v1) && sub_45E2E0(v1, a1)) {
+            sub_4AF130(a2, a1);
+        } else {
+            sub_5681C0(a1, a2);
+        }
+    }
 }
 
 // 0x57CCF0
@@ -257,14 +294,14 @@ void sub_57CE10()
     sub_551A80(0);
     sub_551A80(0);
 
-    if (qword_5E2F90 != 0) {
+    if (qword_5E2F90 != OBJ_HANDLE_NULL) {
         dword_5E2E94 = 0;
-        qword_5E2F90 = 0;
+        qword_5E2F90 = OBJ_HANDLE_NULL;
 
         dword_5E2EAC = tig_color_make(255, 255, 255);
         tig_art_interface_id_create(467, dword_5E2E6C, 1, 0, &dword_5E2EA8);
         tig_art_interface_id_create(468, dword_5E2E68, 1, 0, &dword_5E2ECC);
-        sub_443EB0(0, &stru_5E2F60);
+        sub_443EB0(OBJ_HANDLE_NULL, &stru_5E2F60);
     }
 }
 
@@ -340,25 +377,25 @@ void sub_57CFA0()
 // 0x57CFB0
 void sub_57CFB0()
 {
-    MesFile mes_file;
+    mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_info;
     TigWindowModalDialogChoice choice;
 
     message_load("mes\\MultiPlayer.mes", &mes_file);
 
-    mes_file_entry.key = 1900;
+    mes_file_entry.num = 1900;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.text;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
 
-    mes_file_entry.key = 1901;
+    mes_file_entry.num = 1901;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.text;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
 
     // Do you wish to save your character?
-    mes_file_entry.key = 1902;
+    mes_file_entry.num = 1902;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.text = mes_file_entry.text;
+    modal_info.text = mes_file_entry.str;
 
     modal_info.process = NULL;
     modal_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
@@ -375,25 +412,25 @@ void sub_57CFB0()
 // 0x57D080
 void sub_57D080()
 {
-    MesFile mes_file;
+    mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_info;
     TigWindowModalDialogChoice choice;
 
     message_load("mes\\MultiPlayer.mes", &mes_file);
 
-    mes_file_entry.key = 1900;
+    mes_file_entry.num = 1900;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.text;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
 
-    mes_file_entry.key = 1901;
+    mes_file_entry.num = 1901;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.text;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
 
     // Do you wish to export your character to Multiplayer?
-    mes_file_entry.key = 1903;
+    mes_file_entry.num = 1903;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.text = mes_file_entry.text;
+    modal_info.text = mes_file_entry.str;
 
     modal_info.process = NULL;
     modal_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
@@ -410,7 +447,7 @@ void sub_57D080()
 // 0x57D150
 void sub_57D150(const char* name)
 {
-    MesFile mes_file;
+    mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
     char buffer[260];
     TigWindowModalDialogInfo modal_info;
@@ -418,18 +455,18 @@ void sub_57D150(const char* name)
 
     message_load("mes\\MultiPlayer.mes", &mes_file);
 
-    mes_file_entry.key = 1900;
+    mes_file_entry.num = 1900;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.text;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
 
-    mes_file_entry.key = 1901;
+    mes_file_entry.num = 1901;
     sub_4D43A0(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.text;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
 
     // The character %s already exists. Do you wish to overwrite the file?
-    mes_file_entry.key = 1902;
+    mes_file_entry.num = 1902;
     sub_4D43A0(mes_file, &mes_file_entry);
-    snprintf(buffer, sizeof(buffer), mes_file_entry.text, name);
+    snprintf(buffer, sizeof(buffer), mes_file_entry.str, name);
     modal_info.text = buffer;
 
     modal_info.process = NULL;
