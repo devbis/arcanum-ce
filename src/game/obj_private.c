@@ -29,6 +29,11 @@ typedef struct S60369C {
 // See 0x4E3DD0.
 static_assert(sizeof(S60369C) == 0x10, "wrong size");
 
+typedef struct S603710 {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+} S603710;
+
 static void sub_4E3BE0();
 static void sub_4E3C60();
 static void obj_find_node_allocate(FindNode** obj_find_node);
@@ -69,6 +74,44 @@ static bool obj_find_initialized;
 
 // 0x6036A8
 static bool dword_6036A8;
+
+// 0x603700
+static int dword_603700;
+
+// 0x603704
+static int dword_603704;
+
+// 0x603708
+static int dword_603708;
+
+// Capacity: 0x603704
+// Size: 0x603714
+//
+// 0x60370C
+static int* dword_60370C;
+
+// Capacity: 0x603700
+// Size: 0x603724
+//
+// 0x603710
+static S603710* dword_603710;
+
+// 0x603714
+static int dword_603714;
+
+// Capacity: 0x60371C
+//
+// 0x603718
+static int* dword_603718;
+
+// 0x60371C
+static int dword_60371C;
+
+// 0x603724
+static int dword_603724;
+
+// 0x603728
+static bool dword_603728;
 
 // 0x4E3900
 void obj_find_init()
@@ -252,6 +295,261 @@ void sub_4E3F80()
 void sub_4E3F90()
 {
     dword_6036A8 = false;
+}
+
+// 0x4E59B0
+void sub_4E59B0()
+{
+    dword_603724 = 0;
+    dword_603700 = 4096;
+    dword_603714 = 0;
+    dword_603704 = 4096;
+    dword_603708 = 0;
+    dword_60371C = 8192;
+    dword_603710 = (S603710*)MALLOC(sizeof(*dword_603710) * dword_603700);
+    dword_60370C = (int*)MALLOC(sizeof(*dword_60370C) * dword_603704);
+    dword_603718 = (int*)MALLOC(sizeof(*dword_603718) * dword_60371C);
+    dword_6036FC = MALLOC(0x10000);
+    dword_603720 = MALLOC(0x84);
+    sub_4E6210();
+    sub_4E6240();
+    dword_603728 = true;
+}
+
+// 0x4E5A50
+void sub_4E5A50()
+{
+    FREE(dword_603720);
+    FREE(dword_6036FC);
+    FREE(dword_603718);
+    FREE(dword_60370C);
+    FREE(dword_603710);
+    dword_603728 = false;
+}
+
+// 0x4E5AA0
+int sub_4E5AA0()
+{
+    int index;
+
+    if (dword_603714 != 0) {
+        return dword_60370C[--dword_603714];
+    }
+
+    if (dword_603724 == dword_603700) {
+        dword_603700 += 4096;
+        dword_603710 = (S603710*)REALLOC(dword_603710, sizeof(S603710) * dword_603700);
+    }
+
+    index = dword_603724++;
+    if (index == 0) {
+        dword_603710[0].field_4 = index;
+    } else {
+        dword_603710[index].field_4 = dword_603710[index - 1].field_0 + dword_603710[index - 1].field_4;
+    }
+
+    dword_603710[index].field_0 = 0;
+    sub_4E6040(index, 2);
+
+    return index;
+}
+
+// 0x4E5B40
+int sub_4E5B40(int a1)
+{
+    S603710* v1;
+    int index;
+
+    v1 = &(dword_603710[a1]);
+    if (v1->field_0 != 2) {
+        sub_4E6130(a1, v1->field_0 - 2);
+    }
+
+    for (index = v1->field_4; index < index + v1->field_0; index++) {
+        dword_603718[index++] = 0;
+    }
+
+    if (dword_603714 == dword_603704) {
+        dword_603704 += 4096;
+        dword_60370C = (int *)REALLOC(dword_60370C, sizeof(int) * dword_603704);
+    }
+
+    dword_60370C[dword_603714] = a1;
+
+    return ++dword_603714;
+}
+
+// 0x4E5BF0
+int sub_4E5BF0(int a1)
+{
+    int v1;
+    int v2;
+    int index;
+
+    v1 = sub_4E5AA0();
+    v2 = dword_603710[a1].field_0 - dword_603710[v1].field_0;
+    if (v2 != 0) {
+        sub_4E6040(v1, v2);
+    }
+
+    for (index = 0; index < dword_603710[a1].field_0; index++) {
+        dword_603718[dword_603710[v1].field_4 + index] = dword_603718[dword_603710[a1].field_4 + index];
+    }
+
+    return v1;
+}
+
+// 0x4E5C60
+void sub_4E5C60(int a1, int a2, bool a3)
+{
+    int v1;
+    int v2;
+
+    v1 = sub_4E61E0(a2);
+    if (v1 > dword_603710[a1].field_0) {
+        if (!a3) {
+            return;
+        }
+
+        sub_4E6040(a1, v1 - dword_603710[a1].field_0 + 1);
+    }
+
+    v2 = sub_4E61F0(a2);
+    if (a3) {
+        dword_603718[v1 + dword_603710[a1].field_4] |= v2;
+    } else {
+        dword_603718[v1 + dword_603710[a1].field_4] &= ~v2;
+    }
+}
+
+// 0x4E5CE0
+int sub_4E5CE0(int a1, int a2)
+{
+    int v1;
+    int v2;
+
+    v1 = sub_4E61E0(a2);
+    if (v1 > dword_603710[a1].field_0 - 1) {
+        return 0;
+    }
+
+    v2 = sub_4E61F0(a2);
+    return v2 & dword_603718[v1 + dword_603710[a1].field_4];
+}
+
+// 0x4E5D30
+int sub_4E5D30(int a1, int a2)
+{
+    int v1 = 0;
+    int v2;
+    int v3;
+    int v4;
+
+    v2 = dword_603710[a1].field_4;
+    v3 = sub_4E61E0(a2);
+    v4 = v2 + v3;
+    if (v3 < dword_603710[a1].field_0) {
+        v1 += sub_4E5FE0(dword_603718[v4], a2 % 32);
+    } else {
+        v4 = v2 + dword_603710[a1].field_0;
+    }
+
+    while (v2 < v4) {
+        v1 += sub_4E5FE0(dword_603718[v2++], 32);
+    }
+
+    return v1;
+}
+
+// 0x4E5DB0
+void sub_4E5DB0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E5E20
+bool sub_4E5E20(int a1, TigFile* stream)
+{
+    if (!tig_file_fwrite(&(dword_603710[a1].field_0), sizeof(int), 1, stream) != 1) {
+        return false;
+    }
+
+    if (!tig_file_fwrite(&(dword_603718[dword_603710[a1].field_4]), sizeof(int) * dword_603710[a1].field_0, 1, stream) != 1) {
+        return false;
+    }
+
+    return true;
+}
+
+// 0x4E5E80
+bool sub_4E5E80(int* a1, TigFile* stream)
+{
+    int v1;
+    int v2;
+
+    v1 = sub_4E5AA0();
+
+    if (tig_file_fread(&v2, sizeof(v2), 1, stream) != 1) {
+        return 0;
+    }
+
+    if (v2 != dword_603710[v1].field_0 && v2 - dword_603710[v1].field_0 > 0) {
+        sub_4E6040(v1, v2 - dword_603710[v1].field_0);
+    }
+
+    if (tig_file_fread(&(dword_603718[dword_603710[v1].field_4]), 4 * v2, 1, stream) != 1) {
+        return 0;
+    }
+
+    *a1 = v1;
+
+    return true;
+}
+
+// 0x4E5F10
+void sub_4E5F10(int a1)
+{
+    return 4 * (dword_603710[a1].field_0 + 1);
+}
+
+// 0x4E5F30
+void sub_4E5F30()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E5F70
+void sub_4E5F70()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E5FE0
+void sub_4E5FE0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E6040
+void sub_4E6040()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E6130
+void sub_4E6130()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E61B0
+void sub_4E61B0(int start, int end, int inc)
+{
+    int index;
+
+    for (index = start; index <= end; index++) {
+        dword_603710[index].field_4 += inc;
+    }
 }
 
 // 0x4E61E0
