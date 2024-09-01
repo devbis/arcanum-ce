@@ -306,8 +306,8 @@ void sub_56D130(long long a1, long long a2)
         return;
     }
 
-    if (a1 == 0
-        || a2 == 0
+    if (a1 == OBJ_HANDLE_NULL
+        || a2 == OBJ_HANDLE_NULL
         || sub_45D8D0(a1)
         || sub_45D8D0(a2)
         || !sub_551A80(0)
@@ -323,7 +323,7 @@ void sub_56D130(long long a1, long long a2)
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        dword_680DE4[tech] = sub_4AFE60(a1, tech);
+        dword_680DE4[tech] = tech_get_degree(a1, tech);
         schematic_ui_num_found_schematics_by_tech[tech] = 0;
     }
 

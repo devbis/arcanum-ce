@@ -8,8 +8,10 @@
 // TODO: Refactor.
 #define SEVENTEEN 17
 
+static int tech_set_degree(long long object_id, int tech, int value);
+
 // 0x5B5124
-int dword_5B5124[8] = {
+int dword_5B5124[DEGREE_COUNT] = {
     0,
     1,
     1,
@@ -21,7 +23,7 @@ int dword_5B5124[8] = {
 };
 
 // 0x5B5144
-int dword_5B5144[] = {
+int dword_5B5144[DEGREE_COUNT] = {
     0,
     10,
     20,
@@ -35,7 +37,7 @@ int dword_5B5144[] = {
 static_assert(sizeof(dword_5B5144) / sizeof(dword_5B5144[0]) == DEGREE_COUNT, "wrong size");
 
 // 0x5B5164
-int tech_min_intelligence[] = {
+int tech_min_intelligence[DEGREE_COUNT] = {
     0,
     5,
     8,
@@ -151,7 +153,7 @@ const char* degree_get_description(int degree, int tech)
 }
 
 // 0x4AFE60
-int sub_4AFE60(long long object_id, int tech)
+int tech_get_degree(long long object_id, int tech)
 {
     if (obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_PC
         && obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
@@ -162,41 +164,41 @@ int sub_4AFE60(long long object_id, int tech)
 }
 
 // 0x4AFEC0
-int sub_4AFEC0(int64_t obj, int tech)
+int tech_inc_degree(int64_t obj, int tech)
 {
     int degree;
-    int next_degree;
+    int cost;
+    int tech_points;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
         && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
         return 0;
     }
 
-    degree = sub_4AFE60(obj, tech);
+    degree = tech_get_degree(obj, tech);
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
         && !sub_4A2BA0()) {
         return degree;
     }
 
-    next_degree = degree + 1;
-    if (next_degree >= DEGREE_COUNT) {
+    if (degree + 1 >= DEGREE_COUNT) {
         return degree;
     }
 
-    if (tech_get_min_intelligence_for_degree(next_degree) > stat_level(obj, STAT_INTELLIGENCE)) {
+    if (tech_get_min_intelligence_for_degree(degree + 1) > stat_level(obj, STAT_INTELLIGENCE)) {
         return degree;
     }
 
-    stat_set_base(obj,
-        STAT_TECH_POINTS,
-        stat_get_base(obj, STAT_TECH_POINTS) + sub_4B00A0(next_degree));
+    cost = tech_get_cost_for_degree(degree);
+    tech_points = stat_get_base(obj, STAT_TECH_POINTS);
+    stat_set_base(obj, STAT_TECH_POINTS, tech_points + cost);
 
-    return sub_4AFF90(obj, tech, next_degree);
+    return tech_set_degree(obj, tech, degree + 1);
 }
 
 // 0x4AFF90
-int sub_4AFF90(long long object_id, int tech, int value)
+int tech_set_degree(long long object_id, int tech, int value)
 {
     if (obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_PC
         && obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
@@ -207,9 +209,9 @@ int sub_4AFF90(long long object_id, int tech, int value)
 }
 
 // 0x4AFFF0
-int sub_4AFFF0(int64_t obj, int tech)
+int tech_dec_degree(int64_t obj, int tech)
 {
-    int v1;
+    int degree;
     int cost;
     int tech_points;
 
@@ -218,28 +220,28 @@ int sub_4AFFF0(int64_t obj, int tech)
         return 0;
     }
 
-    v1 = sub_4AFE60(obj, tech);
+    degree = tech_get_degree(obj, tech);
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
         && !sub_4A2BA0()) {
-            return v1;
+            return degree;
     }
 
-    if (v1 <= 0) {
-        return v1;
+    if (degree <= 0) {
+        return degree;
     }
 
-    cost = sub_4B00A0(v1);
+    cost = tech_get_cost_for_degree(degree);
     tech_points = stat_get_base(obj, STAT_TECH_POINTS);
     stat_set_base(obj, STAT_TECH_POINTS, tech_points - cost);
 
-    return sub_4AFF90(obj, tech, v1 - 1);
+    return tech_set_degree(obj, tech, degree - 1);
 }
 
 // 0x4B00A0
-int sub_4B00A0(int a1)
+int tech_get_cost_for_degree(int degree)
 {
-    return dword_5B5124[a1];
+    return dword_5B5124[degree];
 }
 
 // 0x4B00B0
@@ -248,7 +250,7 @@ int sub_4B00B0(object_id_t obj, int tech)
     int degree;
     int intelligence;
 
-    degree = sub_4AFE60(obj, tech);
+    degree = tech_get_degree(obj, tech);
     intelligence = stat_level(obj, STAT_INTELLIGENCE);
     while (intelligence < tech_get_min_intelligence_for_degree(degree)) {
         degree--;
@@ -275,7 +277,7 @@ bool sub_4B02B0(object_id_t obj, int intelligence)
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        degree = sub_4AFE60(obj, tech);
+        degree = tech_get_degree(obj, tech);
         if (tech_get_min_intelligence_for_degree(degree) > intelligence) {
             return false;
         }
