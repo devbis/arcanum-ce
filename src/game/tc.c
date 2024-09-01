@@ -71,7 +71,12 @@ void sub_4C9620()
 // 0x4C96C0
 void sub_4C96C0()
 {
-    // TODO: Incomplete.
+    if (!tc_editor) {
+        if (!dword_5FF568) {
+            dword_5FF568 = true;
+            dword_5FF534(&stru_5FF4F8);
+        }
+    }
 }
 
 // 0x4C96F0
