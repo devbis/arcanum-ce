@@ -6,6 +6,7 @@
 bool tc_init(GameInitInfo* init_info);
 void tc_exit();
 void tc_resize(ResizeInfo* resize_info);
+void sub_4C95F0(UnknownContext* info);
 void sub_4C96C0();
 void sub_4C96F0();
 int sub_4C9B90(const char* str);

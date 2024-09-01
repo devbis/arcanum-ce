@@ -134,9 +134,13 @@ void tc_resize(ResizeInfo* resize_info)
 }
 
 // 0x4C95F0
-void sub_4C95F0()
+void sub_4C95F0(UnknownContext* info)
 {
-    // TODO: Incomplete.
+    if (!tc_editor) {
+        if (dword_5FF568) {
+            sub_4C9BE0(*info->rects);
+        }
+    }
 }
 
 // 0x4C9620
