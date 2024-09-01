@@ -40,6 +40,9 @@ static void sub_4A3780();
 static bool sub_4A40D0(int player);
 static void sub_4A5670(int64_t obj);
 
+// 0x5B3FD8
+static int dword_5B3FD8 = 10;
+
 // 0x5B3FEC
 static int dword_5B3FEC = -1;
 
@@ -944,15 +947,15 @@ void sub_4A55D0()
 }
 
 // 0x4A55F0
-void sub_4A55F0()
+int sub_4A55F0()
 {
-    // TODO: Incomplete.
+    return dword_5B3FD8;
 }
 
 // 0x4A5600
-void sub_4A5600()
+void sub_4A5600(int a1)
 {
-    // TODO: Incomplete.
+    dword_5B3FD8 = a1;
 }
 
 // 0x4A5610
