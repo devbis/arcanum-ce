@@ -49,6 +49,7 @@ typedef enum Skill {
 } Skill;
 
 #define IS_TECH_SKILL(sk) ((sk) >= BASIC_SKILL_COUNT)
+#define GET_BASIC_SKILL(sk) (sk)
 #define GET_TECH_SKILL(sk) ((sk) - BASIC_SKILL_COUNT)
 
 typedef enum Training {
