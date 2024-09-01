@@ -153,9 +153,29 @@ void sub_4C95F0(UnknownContext* info)
 }
 
 // 0x4C9620
-void sub_4C9620()
+void sub_4C9620(int dx, int dy)
 {
-    // TODO: Incomplete.
+    TigRect rect;
+
+    if (!tc_editor && dword_5FF568) {
+        rect = stru_5FF4F8;
+
+        if (dx < 0) {
+            rect.x += dx;
+            rect.width -= dx;
+        } else if (dx > 0) {
+            rect.width += dx;
+        }
+
+        if (dy < 0) {
+            rect.y += dy;
+            rect.height -= dy;
+        } else if (dy > 0) {
+            rect.height += dy;
+        }
+
+        dword_5FF534(&rect);
+    }
 }
 
 // 0x4C96C0
