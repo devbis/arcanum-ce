@@ -396,7 +396,7 @@ void sub_4A2BD0()
 }
 
 // 0x4A2BE0
-int64_t sub_4A2BE0()
+int64_t multiplayer_find_first_player_obj()
 {
     int64_t obj;
 
@@ -418,9 +418,23 @@ int64_t sub_4A2BE0()
 }
 
 // 0x4A2C60
-void sub_4A2C60()
+int64_t multiplayer_find_next_player_obj()
 {
-    // TODO: Incomplete.
+    int64_t obj;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    for (; dword_5B40D8 < NUM_PLAYERS; dword_5B40D8++) {
+        if (tig_net_client_is_active(dword_5B40D8)
+            && sub_4A1F60(dword_5B40D8, &obj)) {
+            dword_5B40D8++;
+            return obj;
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
 }
 
 // 0x4A2CD0

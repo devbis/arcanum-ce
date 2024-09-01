@@ -18,6 +18,7 @@ int64_t sub_4A2B60(int player);
 bool sub_4A2BA0();
 void sub_4A2BC0();
 void sub_4A2BD0();
-int64_t sub_4A2BE0();
+int64_t multiplayer_find_first_player_obj();
+int64_t multiplayer_find_next_player_obj();
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */
