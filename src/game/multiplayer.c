@@ -360,9 +360,16 @@ int sub_4A2B10(int64_t obj)
 }
 
 // 0x4A2B60
-void sub_4A2B60()
+int64_t sub_4A2B60(int player)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+
+    if (tig_net_client_is_active(player)
+        && sub_4A1F60(player, &obj)) {
+        return obj;
+    }
+
+    return OBJ_HANDLE_NULL;
 }
 
 // 0x4A2BA0
