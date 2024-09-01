@@ -33,7 +33,8 @@ static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
 
 static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t a1, int64_t a2, int a3, int a4);
-static bool sub_4A1F60(int player, int64_t* obj_ptr);;
+static bool sub_4A1F60(int player, int64_t* obj_ptr);
+static void sub_4A2A30();
 
 // 0x5B4070
 static int dword_5B4070 = -1;
@@ -55,6 +56,9 @@ static void* dword_5F0DEC;
 
 // 0x5F0E00
 static bool dword_5F0E00;
+
+// 0x5F0E04
+static void(*off_5F0E04)();
 
 // 0x5F0E0C
 static int dword_5F0E0C;
@@ -303,7 +307,11 @@ void sub_4A2070()
 // 0x4A2A30
 void sub_4A2A30()
 {
-    // TODO: Incomplete.
+    if (off_5F0E04 != NULL) {
+        off_5F0E04();
+    } else {
+        sub_4606E0();
+    }
 }
 
 // 0x4A2A40
