@@ -1,12 +1,6 @@
-#include "game/lib/gfade.h"
+#include "game/gfade.h"
 
-#include "game/lib/li.h"
-#include "tig/art.h"
-#include "tig/color.h"
-#include "tig/font.h"
-#include "tig/timer.h"
-#include "tig/video.h"
-#include "tig/window.h"
+#include "game/li.h"
 
 // 0x5FC4AC
 static bool fade_have_gamma_control;
@@ -27,11 +21,13 @@ static GameContextFC* dword_5FC4BC;
 static int fade_iso_window_handle;
 
 // 0x4BDE70
-int gfade_init(GameContext* ctx)
+int gfade_init(GameContext* init_info)
 {
-    fade_iso_window_handle = ctx->iso_window_handle;
-    dword_5FC4B0 = ctx->field_8;
-    dword_5FC4BC = ctx->field_C;
+    TigFont font;
+
+    fade_iso_window_handle = init_info->iso_window_handle;
+    dword_5FC4B0 = init_info->field_8;
+    dword_5FC4BC = init_info->field_C;
 
     if (tig_window_vbid_get(fade_iso_window_handle, &fade_iso_video_buffer) != TIG_OK) {
         return false;
@@ -40,8 +36,7 @@ int gfade_init(GameContext* ctx)
     if (tig_video_check_gamma_control() != TIG_OK) {
         fade_have_gamma_control = false;
 
-        TigFont font;
-        font.flags = 152;
+        font.flags = TIG_FONT_SHADOW | TIG_FONT_CENTERED | TIG_FONT_BLEND_ALPHA_SRC;
         tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
         font.color = tig_color_make(255, 255, 255);
         tig_font_create(&font, &dword_5FC4B8);
@@ -61,20 +56,21 @@ void gfade_exit()
 }
 
 // 0x4BDF80
-void gfade_resize(ResizeContext* ctx)
+void gfade_resize(ResizeInfo* resize_info)
 {
-    fade_iso_window_handle = ctx->iso_window_handle;
+    fade_iso_window_handle = resize_info->iso_window_handle;
     tig_window_vbid_get(fade_iso_window_handle, &fade_iso_video_buffer);
 }
 
 // 0x4BDFA0
 void sub_4BDFA0(FadeData* fade_data)
 {
+    tig_timestamp_t time;
+
     if (fade_have_gamma_control) {
         tig_video_fade(fade_data->color, fade_data->steps, fade_data->duration, fade_data->field_0);
     } else {
-        unsigned int time;
-        tig_timer_start(&time);
+        tig_timer_now(&time);
         tig_window_fill(fade_iso_window_handle, 0, 0);
         tig_window_display();
 
@@ -89,6 +85,7 @@ void sub_4BDFA0(FadeData* fade_data)
 bool gfade_timeevent_process(TimeEvent* timeevent)
 {
     FadeData fade_data;
+
     fade_data.field_0 = timeevent->params[0].integer_value;
     fade_data.color = timeevent->params[1].integer_value;
     fade_data.duration = timeevent->params[2].float_value;

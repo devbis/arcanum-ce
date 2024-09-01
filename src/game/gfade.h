@@ -1,8 +1,8 @@
-#ifndef ARCANUM_GAME_LIB_GFADE_H_
-#define ARCANUM_GAME_LIB_GFADE_H_
+#ifndef ARCANUM_GAME_GFADE_H_
+#define ARCANUM_GAME_GFADE_H_
 
 #include "game/context.h"
-#include "game/lib/timeevent.h"
+#include "game/timeevent.h"
 
 typedef struct FadeData {
     int field_0;
@@ -14,10 +14,10 @@ typedef struct FadeData {
 
 static_assert(sizeof(FadeData) == 0x14, "wrong size");
 
-int gfade_init(GameContext* ctx);
+int gfade_init(GameInitInfo* init_info);
 void gfade_exit();
-void gfade_resize(ResizeContext* ctx);
+void gfade_resize(ResizeInfo* resize_info);
 void sub_4BDFA0(FadeData* fade_data);
 bool gfade_timeevent_process(TimeEvent* timeevent);
 
-#endif /* ARCANUM_GAME_LIB_GFADE_H_ */
+#endif /* ARCANUM_GAME_GFADE_H_ */
