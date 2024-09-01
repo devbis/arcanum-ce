@@ -44,6 +44,12 @@ static void* off_5F0BC8[NUM_PLAYERS];
 // 0x5F0DEC
 static void* dword_5F0DEC;
 
+// 0x5F0E00
+static bool dword_5F0E00;
+
+// 0x5F0E0C
+static int dword_5F0E0C;
+
 // 0x5F0E14
 static bool dword_5F0E14;
 
@@ -138,9 +144,20 @@ void sub_49CB80()
 }
 
 // 0x49CBD0
-void sub_49CBD0()
+bool sub_49CBD0()
 {
-    // TODO: Incomplete.
+    dword_5F0E0C = 0;
+    if (tig_net_start_client() != TIG_OK) {
+        return FALSE;
+    }
+
+    sub_4A2AE0(0);
+    tig_net_on_message(sub_49D690);
+    tig_net_on_message_validation(sub_4A2020);
+    tig_net_on_network_event(sub_4A2070);
+    dword_5F0E00 = false;
+
+    return true;
 }
 
 // 0x49CC20
