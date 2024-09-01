@@ -2,6 +2,7 @@
 
 #include "game/map.h"
 #include "game/mes.h"
+#include "game/obj_private.h"
 #include "game/timeevent.h"
 
 #define NUM_PLAYERS 8
@@ -9,12 +10,7 @@
 typedef struct S5E8AD0 {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0008 */ ObjectID field_8;
     /* 0020 */ int field_20;
     /* 0024 */ int field_24;
     /* 0028 */ int field_28;
@@ -37,6 +33,7 @@ static bool sub_4A1F60(int player, int64_t* obj_ptr);
 static void sub_4A2A30();
 static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
+static void sub_4A3780();
 
 // 0x5B4070
 static int dword_5B4070 = -1;
@@ -523,7 +520,32 @@ void sub_4A3660(int player)
 // 0x4A3780
 void sub_4A3780()
 {
-    // TODO: Incomplete.
+    char prefix[40];
+    char name[TIG_MAX_PATH];
+    char src[TIG_MAX_PATH];
+    char dst[TIG_MAX_PATH];
+    int player;
+    const char* exts[] = {
+        ".mpc",
+        ".bmp",
+        "_b.bmp",
+    };
+    int index;
+
+    player = sub_529520();
+    objid_id_to_str(prefix, stru_5E8AD0[player].field_8);
+
+    for (index = 0; index < sizeof(exts) / sizeof(exts[0]); index++) {
+        sprintf(name, "%s%s", prefix, exts[index]);
+        sprintf(src, "Players\\%s", name);
+        sprintf(dst, "%s\\Players", ".\\data\\temp");
+        if (!tig_file_is_directory(dst)) {
+            tig_file_mkdir(dst);
+        }
+        sprintf(dst, "%s\\Players\\%s", ".\\data\\temp", name);
+        tig_file_copy(src, dst);
+        tig_net_xfer_send_as(dst, dst, 0, NULL);
+    }
 }
 
 // 0x4A3890
