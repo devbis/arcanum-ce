@@ -1,10 +1,10 @@
-#ifndef ARCANUM_GAMELIB_LEVEL_H_
-#define ARCANUM_GAMELIB_LEVEL_H_
+#ifndef ARCANUM_GAME_LEVEL_H_
+#define ARCANUM_GAME_LEVEL_H_
 
 #include "game/context.h"
-#include "game/lib/object.h"
+#include "game/obj.h"
 
-bool level_init(GameContext* ctx);
+bool level_init(GameInitInfo* init_info);
 void level_exit();
 int level_get_experience_points_to_next_level(object_id_t object_id);
 int level_get_experience_points_to_next_level_in_percent(object_id_t object_id);
@@ -14,4 +14,4 @@ const char* level_advancement_scheme_get_name(int scheme);
 const char* level_advancement_scheme_get_rule(int scheme);
 void level_set_level(object_id_t obj, int level);
 
-#endif /* ARCANUM_GAMELIB_LEVEL_H_ */
+#endif /* ARCANUM_GAME_LEVEL_H_ */
