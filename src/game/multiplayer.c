@@ -1,5 +1,6 @@
 #include "game/multiplayer.h"
 
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/timeevent.h"
 
@@ -211,9 +212,40 @@ bool sub_49D570(TimeEvent* timeevent)
 }
 
 // 0x49D590
-void multiplayer_map_open_by_name()
+bool multiplayer_map_open_by_name(const char* name)
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    char save_path[TIG_MAX_PATH];
+
+    sprintf(path, ".\\%s.dat", name);
+    if (tig_file_exists(path, NULL)) {
+        tig_file_repository_add(path);
+    }
+
+    sub_52A940();
+    map_flush(0);
+
+    if (!obj_validate_system(1)) {
+        tig_debug_prinln("Object system validate failed pre-load in multiplayer_map_open_by_name.");
+        tig_message_post_quit(0);
+    }
+
+    sprintf(path, "maps\\%s", name);
+    sprintf(save_path, "%s\\maps\\%s", "Save\\Current", name);
+    tig_debug_printf("MP: Loading Map: %s\n", path);
+    if (!map_open(path, save_path, 1)) {
+        return false;
+    }
+
+    sub_52A950();
+    sub_4605C0();
+
+    if (!obj_validate_system(1)) {
+        tig_debug_prinln("Object system validate failed post-load in multiplayer_map_open_by_name.");
+        tig_message_post_quit(0);
+    }
+
+    return true;
 }
 
 // 0x49D690
