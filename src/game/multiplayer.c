@@ -387,7 +387,9 @@ void sub_4A2BC0()
 // 0x4A2BD0
 void sub_4A2BD0()
 {
-    // TODO: Incomplete.
+    if (dword_5F0E0C > 0) {
+        dword_5F0E0C--;
+    }
 }
 
 // 0x4A2BE0
