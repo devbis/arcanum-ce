@@ -4,5 +4,6 @@
 #include "game/context.h"
 
 bool multiplayer_init(GameInitInfo* init_info);
+bool multiplayer_mod_load();
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */

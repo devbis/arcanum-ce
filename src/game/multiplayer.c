@@ -118,9 +118,9 @@ void mutliplayer_load()
 }
 
 // 0x49CB50
-void multiplayer_mod_load()
+bool multiplayer_mod_load()
 {
-    // TODO: Incomplete.
+    return true;
 }
 
 // 0x49CB60
