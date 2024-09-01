@@ -1,5 +1,29 @@
 #include "game/tc.h"
 
+// 0x5FF518
+static TigVideoBuffer* dword_5FF518;
+
+// 0x5FF530
+static tig_font_handle_t dword_5FF530;
+
+// 0x5FF534
+static GameContextF8* dword_5FF534;
+
+// 0x5FF538
+static tig_font_handle_t dword_5FF538;
+
+// 0x5FF53C
+static TigVideoBuffer* dword_5FF53C;
+
+// 0x5FF548
+static bool tc_editor;
+
+// 0x5FF54C
+static tig_font_handle_t dword_5FF54C;
+
+// 0x5FF550
+static tig_window_handle_t dword_5FF550;
+
 // 0x4C9280
 void tc_init()
 {
@@ -9,7 +33,15 @@ void tc_init()
 // 0x4C9540
 void tc_exit()
 {
-    // TODO: Incomplete.
+    if (!tc_editor) {
+        tig_font_destroy(dword_5FF54C);
+        tig_font_destroy(dword_5FF530);
+        tig_font_destroy(dword_5FF538);
+        tig_video_buffer_destroy(dword_5FF53C);
+        tig_video_buffer_destroy(dword_5FF518);
+        dword_5FF550 = TIG_WINDOW_HANDLE_INVALID;
+        dword_5FF534 = NULL;
+    }
 }
 
 // 0x4C95A0
