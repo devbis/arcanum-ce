@@ -5,14 +5,14 @@ static void sub_4C9BE0(TigRectListNode* node);
 // 0x5FF4F8
 static TigRect stru_5FF4F8;
 
-// 0x5FF510
-static int dword_5FF510;
+// 0x5FF508
+static TigRect stru_5FF508;
 
 // 0x5FF518
 static TigVideoBuffer* dword_5FF518;
 
 // 0x5FF520
-static TigRect stru_5FF520;
+static TigRect tc_iso_window_rect;
 
 // 0x5FF530
 static tig_font_handle_t dword_5FF530;
@@ -26,6 +26,9 @@ static tig_font_handle_t dword_5FF538;
 // 0x5FF53C
 static TigVideoBuffer* dword_5FF53C;
 
+// 0x5FF540
+static int dword_5FF540;
+
 // 0x5FF548
 static bool tc_editor;
 
@@ -33,15 +36,69 @@ static bool tc_editor;
 static tig_font_handle_t dword_5FF54C;
 
 // 0x5FF550
-static tig_window_handle_t dword_5FF550;
+static tig_window_handle_t tc_iso_window_handle;
 
 // 0x5FF568
 static bool dword_5FF568;
 
 // 0x4C9280
-void tc_init()
+bool tc_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    TigWindowData window_data;
+    TigVideoBufferCreateInfo vb_create_info;
+    tig_art_id_t art_id;
+    TigFont font;
+
+    tc_editor = init_info;
+    if (!tc_editor) {
+        if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
+            return false;
+        }
+
+        tc_iso_window_handle = init_info->iso_window_handle;
+        tc_iso_window_rect = window_data.rect;
+        dword_5FF534 = init_info->field_8;
+
+        stru_5FF508.x = 0;
+        stru_5FF508.y = 0;
+        stru_5FF508.width = window_data.rect.width;
+        stru_5FF508.height = 100;
+
+        vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+        vb_create_info.width = window_data.rect.width;
+        vb_create_info.height = 100;
+        vb_create_info.color_key = tig_color_make(0, 0, 0);
+        vb_create_info.background_color = vb_create_info.color_key;
+        if (tig_video_buffer_create(&vb_create_info, &dword_5FF518) != TIG_OK) {
+            return false;
+        }
+
+        vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+        vb_create_info.width = stru_5FF508.width;
+        vb_create_info.height = stru_5FF508.height;
+        vb_create_info.background_color = 0;
+        if (tig_video_buffer_create(&vb_create_info, &dword_5FF53C) != TIG_OK) {
+            tig_video_buffer_destroy(dword_5FF518);
+            return false;
+        }
+
+        tig_art_interface_id_create(229, 0, 0, 0, &art_id);
+
+        font.flags = TIG_FONT_SHADOW;
+        font.art_id = art_id;
+        font.color = tig_color_make(255, 255, 255);
+        tig_font_create(&font, &dword_5FF538);
+
+        font.color = tig_color_make(255, 255, 0);
+        tig_font_create(&font, &dword_5FF530);
+
+        font.color = tig_color_make(255, 0, 0);
+        tig_font_create_(&font, &dword_5FF54C);
+
+        dword_5FF540 = (stru_5FF508.height - 18) / 5;
+    }
+
+    return true;
 }
 
 // 0x4C9540
@@ -53,7 +110,7 @@ void tc_exit()
         tig_font_destroy(dword_5FF538);
         tig_video_buffer_destroy(dword_5FF53C);
         tig_video_buffer_destroy(dword_5FF518);
-        dword_5FF550 = TIG_WINDOW_HANDLE_INVALID;
+        tc_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
         dword_5FF534 = NULL;
     }
 }
@@ -68,8 +125,8 @@ void tc_resize(ResizeInfo* resize_info)
         sub_4C96F0();
     }
 
-    dword_5FF550 = resize_info->iso_window_handle;
-    stru_5FF520 = resize_info->field_4;
+    tc_iso_window_handle = resize_info->iso_window_handle;
+    tc_iso_window_rect = resize_info->field_4;
 
     if (v1) {
         sub_4C96C0();
@@ -141,7 +198,7 @@ int sub_4C9B90(const char* str)
     sub_535390(&font);
     tig_font_pop();
 
-    width = font.width - dword_5FF510 + 12;
+    width = font.width - stru_5FF508.width + 12;
     if (width < 0) {
         width = 0;
     }
@@ -161,7 +218,7 @@ void sub_4C9BE0(TigRectListNode* node)
 
     win_to_vb_blt.type = TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER;
     win_to_vb_blt.vb_blit_flags = 0;
-    win_to_vb_blt.src_window_handle = dword_5FF550;
+    win_to_vb_blt.src_window_handle = tc_iso_window_handle;
     win_to_vb_blt.src_video_buffer = dword_5FF53C;
     win_to_vb_blt.src_rect = &src_rect;
     win_to_vb_blt.dst_video_buffer = dword_5FF53C;
@@ -173,7 +230,7 @@ void sub_4C9BE0(TigRectListNode* node)
     vb_to_win_blt.vb_blit_flags = 0;
     vb_to_win_blt.src_video_buffer = dword_5FF53C;
     vb_to_win_blt.src_rect = &dst_rect;
-    vb_to_win_blt.dst_window_handle = dword_5FF550;
+    vb_to_win_blt.dst_window_handle = tc_iso_window_handle;
     vb_to_win_blt.dst_rect = &src_rect;
 
     while (node != NULL) {
