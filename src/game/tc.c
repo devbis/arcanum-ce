@@ -6,6 +6,9 @@ static TigRect stru_5FF4F8;
 // 0x5FF518
 static TigVideoBuffer* dword_5FF518;
 
+// 0x5FF520
+static TigRect stru_5FF520;
+
 // 0x5FF530
 static tig_font_handle_t dword_5FF530;
 
@@ -51,9 +54,21 @@ void tc_exit()
 }
 
 // 0x4C95A0
-void tc_resize()
+void tc_resize(ResizeInfo* resize_info)
 {
-    // TODO: Incomplete.
+    bool v1;
+
+    v1 = dword_5FF568;
+    if (v1) {
+        sub_4C96F0();
+    }
+
+    dword_5FF550 = resize_info->iso_window_handle;
+    stru_5FF520 = resize_info->field_4;
+
+    if (v1) {
+        sub_4C96C0();
+    }
 }
 
 // 0x4C95F0

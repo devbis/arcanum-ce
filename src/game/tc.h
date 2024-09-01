@@ -4,6 +4,7 @@
 #include "game/context.h"
 
 void tc_exit();
+void tc_resize(ResizeInfo* resize_info);
 void sub_4C96C0();
 void sub_4C96F0();
 
