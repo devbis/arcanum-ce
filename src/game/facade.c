@@ -1,12 +1,30 @@
 #include "game/facade.h"
 
+// 0x5FF580
+static int dword_5FF580;
+
+// 0x5FF584
+static bool facade_editor;
+
+// 0x5FF58C
+static tig_window_handle_t facade_iso_window_handle;
+
 // 0x5FF590
 static bool facade_initialized;
 
+// 0x5FF598
+static int dword_5FF598;
+
 // 0x4C9DA0
-void facade_init()
+bool facade_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    facade_iso_window_handle = init_info->iso_window_handle;
+    dword_5FF580 = init_info->field_8;
+    facade_editor = init_info->editor;
+    dword_5FF598 = 0;
+    facade_initialized = true;
+
+    return true;
 }
 
 // 0x4C9DE0
