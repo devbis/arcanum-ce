@@ -5,6 +5,9 @@ static void sub_4C9BE0(TigRectListNode* node);
 // 0x5FF4F8
 static TigRect stru_5FF4F8;
 
+// 0x5FF510
+static int dword_5FF510;
+
 // 0x5FF518
 static TigVideoBuffer* dword_5FF518;
 
@@ -126,9 +129,24 @@ void sub_4C9A10()
 }
 
 // 0x4C9B90
-void sub_4C9B90()
+int sub_4C9B90(const char* str)
 {
-    // TODO: Incomplete.
+    TigFont font;
+    int width;
+
+    font.width = 0;
+    font.str = str;
+
+    tig_font_push(dword_5FF538);
+    sub_535390(&font);
+    tig_font_pop();
+
+    width = font.width - dword_5FF510 + 12;
+    if (width < 0) {
+        width = 0;
+    }
+
+    return width;
 }
 
 // 0x4C9BE0
