@@ -126,7 +126,9 @@ bool multiplayer_mod_load()
 // 0x49CB60
 void multiplayer_mod_unload()
 {
-    // TODO: Incomplete.
+    sub_4A2BC0();
+    sub_4A3D00(1);
+    sub_4A2BD0();
 }
 
 // 0x49CB80
