@@ -915,7 +915,9 @@ void sub_4A5460()
 // 0x4A5490
 void multiplayer_ping()
 {
-    // TODO: Incomplete.
+    if (sub_4A4ED0()) {
+        sub_4A4EE0();
+    }
 }
 
 // 0x4A54A0
