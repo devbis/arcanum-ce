@@ -35,9 +35,9 @@ void facade_exit()
 }
 
 // 0x4C9DF0
-void facade_resize()
+void facade_resize(ResizeInfo* resize_info)
 {
-    // TODO: Incomplete.
+    facade_iso_window_handle = resize_info->iso_window_handle;
 }
 
 // 0x4C9E00
