@@ -38,6 +38,7 @@ static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
+static void sub_4A5670(int64_t obj);
 
 // 0x5B3FEC
 static int dword_5B3FEC = -1;
@@ -964,9 +965,22 @@ void sub_4A5610()
 }
 
 // 0x4A5670
-void sub_4A5670()
+void sub_4A5670(int64_t obj)
 {
-    // TODO: Incomplete.
+    mes_file_handle_t mes_file;
+
+    if (mes_load("Rules\\AutoEquip.mes", &mes_file)) {
+        if ((tig_net_local_server_get_options() & TIG_NET_SERVER_AUTO_EQUIP) == 0) {
+            tig_str_parse_set_separator(' ');
+            sub_4A5710(obj, mes_file);
+            sub_4A57F0(obj);
+            sub_4A5EE0(obj);
+            sub_4A5CA0(obj, mes_file);
+            sub_4A59F0(obj, mes_file);
+            sub_4A5840(obj, mes_file);
+            sub_4654F0(obj, OBJ_HANDLE_NULL);
+        }
+    }
 }
 
 // 0x4A5710
