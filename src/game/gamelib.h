@@ -43,5 +43,6 @@ void gamelib_savlist_create(GameSaveList* save_list);
 void gamelib_modsavlist_create(const char* module, GameSaveList* save_list);
 void gamelib_savlist_destroy(GameSaveList* save_list);
 void sub_403C10(GameSaveList* save_list, int a2, int a3);
+void sub_4045A0();
 
 #endif /* ARCANUM_GAME_GAMELIB_H_ */
