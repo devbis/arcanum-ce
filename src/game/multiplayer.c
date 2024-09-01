@@ -161,9 +161,16 @@ bool sub_49CBD0()
 }
 
 // 0x49CC20
-void sub_49CC20()
+bool sub_49CC20()
 {
-    // TODO: Incomplete.
+    bool v1;
+
+    sub_4A2AE0(0);
+    tig_net_on_message(NULL);
+    v1 = sub_5280F0();
+    dword_5F0E00 = false;
+    dword_5F0E0C = 0;
+    return !v1;
 }
 
 // 0x49CC50
