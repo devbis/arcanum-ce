@@ -40,6 +40,9 @@ static void sub_4A2AE0(int player);
 // 0x5B4070
 static int dword_5B4070 = -1;
 
+// 0x5B40D8
+static int dword_5B40D8 = -1;
+
 // 0x5E8940
 static TigIdxTable stru_5E8940;
 
@@ -393,9 +396,25 @@ void sub_4A2BD0()
 }
 
 // 0x4A2BE0
-void sub_4A2BE0()
+int64_t sub_4A2BE0()
 {
-    // TODO: Incomplete.
+    int64_t obj;
+
+    dword_5B40D8 = -1;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        return player_get_pc_obj();
+    }
+
+    for (dword_5B40D8 = 0; dword_5B40D8 < NUM_PLAYERS; dword_5B40D8++) {
+        if (tig_net_client_is_active(dword_5B40D8)
+            && sub_4A1F60(dword_5B40D8, &obj)) {
+            dword_5B40D8++;
+            return obj;
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
 }
 
 // 0x4A2C60

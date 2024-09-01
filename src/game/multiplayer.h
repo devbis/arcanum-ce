@@ -18,5 +18,6 @@ int64_t sub_4A2B60(int player);
 bool sub_4A2BA0();
 void sub_4A2BC0();
 void sub_4A2BD0();
+int64_t sub_4A2BE0();
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */
