@@ -373,9 +373,9 @@ int64_t sub_4A2B60(int player)
 }
 
 // 0x4A2BA0
-void sub_4A2BA0()
+bool sub_4A2BA0()
 {
-    // TODO: Incomplete.
+    return (tig_net_flags & TIG_NET_CONNECTED) != 0 ? dword_5F0E0C > 0 : true;
 }
 
 // 0x4A2BC0
