@@ -32,6 +32,7 @@ typedef struct S5E8AD0 {
 static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
 
 static bool sub_49D570(TimeEvent* timeevent);
+static void sub_4A1F30(int64_t a1, int64_t a2, int a3, int a4);
 
 // 0x5B4070
 static int dword_5B4070 = -1;
@@ -255,9 +256,11 @@ void sub_49D690()
 }
 
 // 0x4A1F30
-void sub_4A1F30()
+void sub_4A1F30(int64_t a1, int64_t a2, int a3, int a4)
 {
-    // TODO: Incomplete.
+    if (a2 != 0) {
+        sub_43E770(a1, a2, a3, a4);
+    }
 }
 
 // 0x4A1F60
