@@ -174,9 +174,9 @@ bool sub_49CC20()
 }
 
 // 0x49CC50
-void j_tig_net_create_host()
+void sub_49CC50()
 {
-    // TODO: Incomplete.
+    tig_net_start_server();
 }
 
 // 0x49CC70

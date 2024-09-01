@@ -8,5 +8,6 @@ bool multiplayer_mod_load();
 void multiplayer_mod_unload();
 bool sub_49CBD0();
 bool sub_49CC20();
+void sub_49CC50();
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */
