@@ -381,7 +381,7 @@ bool sub_4A2BA0()
 // 0x4A2BC0
 void sub_4A2BC0()
 {
-    // TODO: Incomplete.
+    dword_5F0E0C++;
 }
 
 // 0x4A2BD0
