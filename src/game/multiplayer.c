@@ -1,9 +1,96 @@
 #include "game/multiplayer.h"
 
+#include "game/mes.h"
+
+#define NUM_PLAYERS 8
+
+typedef struct S5E8AD0 {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ int field_20;
+    /* 0024 */ int field_24;
+    /* 0028 */ int field_28;
+    /* 002C */ int field_2C;
+    /* 0030 */ int field_30;
+    /* 0034 */ int field_34;
+    /* 0038 */ int field_38;
+    /* 003C */ int field_3C;
+    /* 0040 */ int field_40;
+    /* 0044 */ int field_44;
+    /* 0048 */ int field_48;
+    /* 004C */ int field_4C;
+} S5E8AD0;
+
+static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
+
+// 0x5E8940
+static TigIdxTable stru_5E8940;
+
+// 0x5E8AD0
+static S5E8AD0 stru_5E8AD0[NUM_PLAYERS];
+
+// 0x5F0BE8
+static mes_file_handle_t multiplayer_mes_file;
+
+// 0x5F0BC8
+static void* off_5F0BC8[NUM_PLAYERS];
+
+// 0x5F0DEC
+static void* dword_5F0DEC;
+
+// 0x5F0E14
+static bool dword_5F0E14;
+
 // 0x49C670
-void multiplayer_init()
+bool multiplayer_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    TigFileInfo file_info;
+    int index;
+
+    (void)init_info;
+
+    if (tig_file_exists("Players", &file_info)) {
+        if ((file_info.attributes & TIG_FILE_ATTRIBUTE_SUBDIR) == 0) {
+            tig_debug_printf("MP: init: ERROR: players folder (%s) could not be made (already a file).\n", "Players");
+            return false;
+        }
+    } else {
+        tig_file_mkdir_ex("Players");
+    }
+
+    dword_5F0E14 = false;
+
+    if (!tig_net_local_client_set_name("Player")) {
+        return false;
+    }
+
+    if (!tig_net_local_server_set_max_players(NUM_PLAYERS)) {
+        return false;
+    }
+
+    if (!tig_net_local_server_set_description("Description")) {
+        return false;
+    }
+
+    for (index = 0; index < NUM_PLAYERS; index++) {
+        sub_49CB80(&(stru_5E8AD0[index]));
+    }
+
+    mes_load("mes\\MultiPlayer.mes", &multiplayer_mes_file);
+    tig_idxtable_init(&stru_5E8940, 16);
+    dword_5F0DEC = NULL;
+    memset(off_5F0BC8, 0, sizeof(off_5F0BC8));
+    sub_4A5290();
+    sub_4A5380();
+    sub_4A2E90();
+
+    return true;
 }
 
 // 0x49C780
