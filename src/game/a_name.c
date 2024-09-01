@@ -23,8 +23,12 @@ static_assert(sizeof(WallStructure) == 0x20, "wrong size");
 
 static bool build_tile_file_name(const char* name1, const char* name2, int a3, int a4, char* fname);
 static bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr);
+static bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr);
 static bool count_tile_names();
 static bool load_tile_names();
+static bool load_tile_edges();
+static bool sub_4EB7D0(const char* name, int* index_ptr);
+static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static int sub_4EC160();
 static bool build_facade_file_name(int num, char* fname);
@@ -359,6 +363,16 @@ bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr)
     return false;
 }
 
+// 0x4EB160
+bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr)
+{
+    // TODO: Incomplete.
+    (void)name;
+    (void)art_id_ptr;
+
+    return false;
+}
+
 // 0x4EB270
 bool count_tile_names()
 {
@@ -475,6 +489,34 @@ bool load_tile_names()
     } while (mes_find_next(tilename_mes_file, &mes_file_entry));
 
     return true;
+}
+
+// 0x4EB5E0
+bool load_tile_edges()
+{
+    // TODO: Incomplete.
+
+    return false;
+}
+
+// 0x4EB7D0
+bool sub_4EB7D0(const char* name, int* index_ptr)
+{
+    // TODO: Incomplete.
+    (void)name;
+    (void)index_ptr;
+
+    return false;
+}
+
+// 0x4EB970
+tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b)
+{
+    // TODO: Incomplete.
+    (void)a;
+    (void)b;
+
+    return TIG_ART_ID_INVALID;
 }
 
 // 0x4EBA30
@@ -662,14 +704,14 @@ bool a_name_item_aid_to_fname(tig_art_id_t aid, char* fname)
     case TIG_ART_ITEM_DISPOSITION_GROUND:
         mes_file = item_ground_mes_file;
         break;
-    case TIG_ART_ITEM_DISPOSITION_INVENTORY:
-        mes_file = item_inven_mes_file;
-        break;
     case TIG_ART_ITEM_DISPOSITION_PAPERDOLL:
         mes_file = item_paper_mes_file;
         break;
     case TIG_ART_ITEM_DISPOSITION_SCHEMATIC:
         mes_file = item_schematic_mes_file;
+        break;
+    default:
+        mes_file = item_inven_mes_file;
         break;
     }
 
