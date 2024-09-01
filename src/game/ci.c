@@ -2,7 +2,7 @@
 
 #include <tig/tig.h>
 
-static int ci_blit();
+static void ci_blit();
 
 // 0x5FC398
 static tig_art_id_t ci_indicator_art_id;
@@ -113,7 +113,7 @@ void ci_redraw()
 }
 
 // 0x4BB980
-int ci_blit()
+void ci_blit()
 {
     ci_indicator_blit_info.art_id = ci_indicator_art_id;
     tig_art_blit(&ci_indicator_blit_info);
