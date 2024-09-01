@@ -245,6 +245,8 @@ bool antiteleport_map_list_load(mes_file_handle_t mes_file, AntiTeleportMapList*
 bool sub_4BDD30(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
+    (void)a1;
+    (void)a2;
 
     return false;
 }
