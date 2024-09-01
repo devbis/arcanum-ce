@@ -27,5 +27,6 @@ void sub_4A39D0(Func5F0DF8* func, int ctx);
 void* sub_4A4230(int player);
 void sub_4A4270();
 void sub_4A4280();
+void sub_4A5610();
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */

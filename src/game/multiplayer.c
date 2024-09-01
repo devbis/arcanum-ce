@@ -1,8 +1,11 @@
 #include "game/multiplayer.h"
 
+#include "game/combat.h"
+#include "game/gamelib.h"
 #include "game/map.h"
 #include "game/mes.h"
 #include "game/obj_private.h"
+#include "game/skill.h"
 #include "game/timeevent.h"
 
 #define NUM_PLAYERS 8
@@ -954,7 +957,10 @@ void sub_4A5600()
 // 0x4A5610
 void sub_4A5610()
 {
-    // TODO: Incomplete.
+    set_always_run(settings_get_value(&settings, "always run"));
+    combat_auto_attack_set(settings_get_value(&settings, "auto attack"));
+    combat_auto_switch_weapons_set(settings_get_value(&settings, "auto switch"));
+    set_follower_skills(settings_get_value(&settings, "follower skills"));
 }
 
 // 0x4A5670
