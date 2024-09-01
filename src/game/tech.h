@@ -14,7 +14,7 @@ typedef enum Tech {
     TECH_SMITHY,
     TECH_THERAPEUTICS,
     TECH_COUNT,
-};
+} Tech;
 
 static_assert(TECH_COUNT == 8, "wrong size");
 
@@ -28,7 +28,7 @@ typedef enum Degree {
     DEGREE_PROFESSOR,
     DEGREE_DOCTORATE,
     DEGREE_COUNT,
-};
+} Degree;
 
 static_assert(DEGREE_COUNT == 8, "wrong size");
 
@@ -39,6 +39,7 @@ const char* tech_get_name(int tech);
 const char* tech_get_description(int tech);
 const char* degree_get_name(int degree);
 const char* degree_get_description(int degree, int tech);
+int sub_4AFEC0(int64_t obj, int tech);
 int sub_4AFFF0(int64_t obj, int tech);
 int sub_4B00A0(int a1);
 int sub_4B00B0(object_id_t obj, int tech);
