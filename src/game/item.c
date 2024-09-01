@@ -233,7 +233,7 @@ int sub_461370(object_id_t item_obj, object_id_t owner_obj)
 }
 
 // 0x461410
-int sub_461410(object_id_t obj)
+int item_total_weight(object_id_t obj)
 {
     int inventory_num_field;
     int inventory_list_idx_field;
