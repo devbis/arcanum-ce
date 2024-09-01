@@ -2,6 +2,7 @@
 
 #include "game/combat.h"
 #include "game/gamelib.h"
+#include "game/magictech.h"
 #include "game/map.h"
 #include "game/mes.h"
 #include "game/obj_private.h"
@@ -38,6 +39,7 @@ static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
+static void sub_4A54E0();
 static void sub_4A5670(int64_t obj);
 
 // 0x5B3FD8
@@ -925,7 +927,13 @@ void sub_4A54A0()
 // 0x4A54E0
 void sub_4A54E0()
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < 512; index++) {
+        if ((magictech_locks[index].field_13C & 0x1) != 0) {
+            sub_459500(index);
+        }
+    }
 }
 
 // 0x4A5510
