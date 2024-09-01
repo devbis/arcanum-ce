@@ -9,6 +9,7 @@ void tc_resize(ResizeInfo* resize_info);
 void sub_4C95F0(UnknownContext* info);
 void sub_4C96C0();
 void sub_4C96F0();
+void sub_4C9720();
 int sub_4C9B90(const char* str);
 
 #endif /* ARCANUM_GAME_TC_H_ */
