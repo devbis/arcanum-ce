@@ -1,6 +1,7 @@
 #include "game/multiplayer.h"
 
 #include "game/mes.h"
+#include "game/timeevent.h"
 
 #define NUM_PLAYERS 8
 
@@ -28,6 +29,11 @@ typedef struct S5E8AD0 {
 } S5E8AD0;
 
 static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
+
+static bool sub_49D570(TimeEvent* timeevent);
+
+// 0x5B4070
+static int dword_5B4070 = -1;
 
 // 0x5E8940
 static TigIdxTable stru_5E8940;
@@ -198,9 +204,10 @@ void multiplayer_timeevent_process()
 }
 
 // 0x49D570
-void sub_49D570()
+bool sub_49D570(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent->params[0].integer_value == 2
+        && timeevent->params[1].integer_value == dword_5B4070;
 }
 
 // 0x49D590
