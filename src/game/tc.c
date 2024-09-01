@@ -1,5 +1,8 @@
 #include "game/tc.h"
 
+// 0x5FF4F8
+static TigRect stru_5FF4F8;
+
 // 0x5FF518
 static TigVideoBuffer* dword_5FF518;
 
@@ -23,6 +26,9 @@ static tig_font_handle_t dword_5FF54C;
 
 // 0x5FF550
 static tig_window_handle_t dword_5FF550;
+
+// 0x5FF568
+static bool dword_5FF568;
 
 // 0x4C9280
 void tc_init()
@@ -71,7 +77,12 @@ void sub_4C96C0()
 // 0x4C96F0
 void sub_4C96F0()
 {
-    // TODO: Incomplete.
+    if (!tc_editor) {
+        if (dword_5FF568) {
+            dword_5FF568 = false;
+            dword_5FF534(&stru_5FF4F8);
+        }
+    }
 }
 
 // 0x4C9720
