@@ -1,11 +1,11 @@
-#include "game/lib/settings.h"
+#include "game/settings.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "tig/find_file.h"
+#include <tig/tig.h>
 
 static SettingsEntry* settings_find(Settings* settings, const char* key);
 static void settings_trim(char* str);
@@ -20,12 +20,15 @@ void settings_init(Settings* settings, const char* path)
 // 0x438B00
 void settings_exit(Settings* settings)
 {
-    SettingsEntry* curr = settings->entries;
+    SettingsEntry* curr;
+    SettingsEntry* next;
+
+    curr = settings->entries;
     while (curr != NULL) {
-        SettingsEntry* next = curr->next;
-        free(curr->key);
-        free(curr->value);
-        free(curr);
+        next = curr->next;
+        FREE(curr->key);
+        FREE(curr->value);
+        FREE(curr);
         curr = next;
     }
 
@@ -37,12 +40,15 @@ void settings_exit(Settings* settings)
 void settings_load(Settings* settings)
 {
     TigFindFileData find_file_data;
+    FILE* stream;
+    char buffer[256];
+    char* sep;
+
     if (tig_find_first_file(settings->path, &find_file_data)) {
-        FILE* stream = fopen(settings->path, "rt");
+        stream = fopen(settings->path, "rt");
         if (stream != NULL) {
-            char buffer[256];
             while (fgets(buffer, sizeof(buffer), stream) != NULL) {
-                char* sep = strchr(buffer, '=');
+                sep = strchr(buffer, '=');
                 if (sep != NULL) {
                     *sep++ = '\0';
                     settings_trim(buffer);
@@ -60,11 +66,14 @@ void settings_load(Settings* settings)
 // 0x438C20
 void settings_save(Settings* settings)
 {
+    FILE* stream;
+    SettingsEntry* curr;
+
     if (settings->entries != NULL) {
         if ((settings->flags & SETTINGS_CHANGED) != 0) {
-            FILE* stream = fopen(settings->path, "wt");
+            stream = fopen(settings->path, "wt");
             if (stream != NULL) {
-                SettingsEntry* curr = settings->entries;
+                curr = settings->entries;
                 while (curr != NULL) {
                     fprintf(stream, "%s=%s\n", curr->key, curr->value);
                     curr = curr->next;
@@ -80,7 +89,9 @@ void settings_save(Settings* settings)
 // 0x438C80
 void settings_add(Settings* settings, const char* key, const char* default_value, SettingsValueChangedFunc* value_changed_func)
 {
-    SettingsEntry* entry = settings_find(settings, key);
+    SettingsEntry* entry;
+
+    entry = settings_find(settings, key);
     if (entry != NULL) {
         entry->value_changed_func = value_changed_func;
     } else {
@@ -97,6 +108,7 @@ void settings_add(Settings* settings, const char* key, const char* default_value
 void settings_set_value(Settings* settings, const char* key, int value)
 {
     char buffer[48];
+
     _itoa(value, buffer, 10);
     settings_set_str_value(settings, key, buffer);
 }
@@ -104,7 +116,9 @@ void settings_set_value(Settings* settings, const char* key, int value)
 // 0x438D10
 int settings_get_value(Settings* settings, const char* key)
 {
-    const char* str = settings_get_str_value(settings, key);
+    const char* str;
+
+    str = settings_get_str_value(settings, key);
     if (str != NULL) {
         return atoi(str);
     } else {
@@ -115,9 +129,11 @@ int settings_get_value(Settings* settings, const char* key)
 // 0x438DF0
 void settings_set_str_value(Settings* settings, const char* key, const char* value)
 {
+    SettingsEntry* entry;
+
     settings->flags |= SETTINGS_CHANGED;
 
-    SettingsEntry* entry = settings_find(settings, key);
+    entry = settings_find(settings, key);
     if (entry == NULL) {
         settings_add(settings, key, value, NULL);
     } else {
@@ -137,7 +153,9 @@ void settings_set_str_value(Settings* settings, const char* key, const char* val
 // 0x438E90
 const char* settings_get_str_value(Settings* settings, const char* key)
 {
-    SettingsEntry* entry = settings_find(settings, key);
+    SettingsEntry* entry;
+
+    entry = settings_find(settings, key);
     if (entry != NULL) {
         return entry->value;
     } else {
@@ -148,7 +166,9 @@ const char* settings_get_str_value(Settings* settings, const char* key)
 // 0x438EB0
 SettingsEntry* settings_find(Settings* settings, const char* key)
 {
-    SettingsEntry* curr = settings->entries;
+    SettingsEntry* curr;
+
+    curr = settings->entries;
     while (curr != NULL) {
         if (_strcmpi(curr->key, key) == 0) {
             return curr;
