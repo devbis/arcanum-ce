@@ -291,3 +291,22 @@ int sub_4B0320(int a1, int a2)
 {
     return 10 * (a2 + 20 * a1 + 199);
 }
+
+// 0x4C8FF0
+void set_follower_skills(bool enabled)
+{
+    int player;
+
+    settings_set_value(&settings, "follower skills", enabled);
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        player = sub_4A2B10(player_get_pc_obj());
+        if (player != -1) {
+            if (enabled) {
+                sub_4A5510(player, 0x800);
+            } else {
+                sub_4A5570(player, 0x800);
+            }
+        }
+    }
+}

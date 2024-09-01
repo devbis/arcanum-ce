@@ -47,5 +47,6 @@ int sub_4B00B0(object_id_t obj, int tech);
 int tech_get_min_intelligence_for_degree(int degree);
 bool sub_4B02B0(object_id_t obj, int intelligence);
 int sub_4B0320(int a1, int a2);
+void set_follower_skills(bool enabled);
 
 #endif /* ARCANUM_GAME_TECH_H_ */
