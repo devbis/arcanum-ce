@@ -1,5 +1,13 @@
 #include "game/facade.h"
 
+static void sub_4CA240();
+
+// 0x5FF570
+static int dword_5FF570;
+
+// 0x5FF574
+static int dword_5FF574;
+
 // 0x5FF578
 static int64_t qword_5FF578;
 
@@ -23,6 +31,9 @@ static ViewOptions facade_view_options;
 
 // 0x5FF5A0
 static void* dword_5FF5A0;
+
+// 0x5FF5A4
+static TigVideoBuffer** dword_5FF5A4;
 
 // 0x4C9DA0
 bool facade_init(GameInitInfo* init_info)
@@ -84,7 +95,22 @@ void sub_4CA0F0()
 // 0x4CA240
 void sub_4CA240()
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (dword_5FF5A4 != NULL) {
+        for (index = 0; index < dword_5FF574 * dword_5FF570; index++) {
+            if (dword_5FF5A4[index] != NULL) {
+                tig_video_buffer_destroy(dword_5FF5A4[index]);
+            }
+        }
+        FREE(dword_5FF5A4);
+        dword_5FF5A4 = NULL;
+    }
+
+    if (dword_5FF5A0 != NULL) {
+        FREE(dword_5FF5A0);
+        dword_5FF5A0 = NULL;
+    }
 }
 
 // 0x4CA2C0
