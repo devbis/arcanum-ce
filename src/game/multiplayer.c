@@ -35,6 +35,7 @@ static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t a1, int64_t a2, int a3, int a4);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
 static void sub_4A2A30();
+static void sub_4A2AE0(int player);
 
 // 0x5B4070
 static int dword_5B4070 = -1;
@@ -59,6 +60,9 @@ static bool dword_5F0E00;
 
 // 0x5F0E04
 static void(*off_5F0E04)();
+
+// 0x5F0E08
+static Func5F0E08* dword_5F0E08;
 
 // 0x5F0E0C
 static int dword_5F0E0C;
@@ -327,21 +331,32 @@ void sub_4A2A90()
 }
 
 // 0x4A2AE0
-void sub_4A2AE0()
+void sub_4A2AE0(int player)
 {
-    // TODO: Incomplete.
+    sub_49CB80(&stru_5E8AD0[player]);
 }
 
 // 0x4A2B00
-void sub_4A2B00()
+void sub_4A2B00(Func5F0E08* func)
 {
-    // TODO: Incomplete.
+    dword_5F0E08 = func;
 }
 
 // 0x4A2B10
-void sub_4A2B10()
+int sub_4A2B10(int64_t obj)
 {
-    // TODO: Incomplete.
+    int player;
+    int64_t player_obj;
+
+    for (player = 0; player < NUM_PLAYERS; player++) {
+        if (tig_net_client_is_active(player)
+            && sub_4A1F60(player, player_obj)
+            && player_obj == obj) {
+            return player;
+        }
+    }
+
+    return -1;
 }
 
 // 0x4A2B60
