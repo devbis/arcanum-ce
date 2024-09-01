@@ -42,7 +42,7 @@ bool description_init(GameInitInfo* init_info)
 // 0x4D4150
 void description_exit()
 {
-    message_unload(description_mes_file);
+    mes_unload(description_mes_file);
 }
 
 // 0x4D4160
@@ -52,7 +52,7 @@ bool description_mod_load()
     MesFileEntry mes_file_entry;
 
     if (mes_load("mes\\gamedesc.mes", &gamedesc_mes_file)) {
-        cnt = message_count(gamedesc_mes_file);
+        cnt = mes_entries_count(gamedesc_mes_file);
         if (cnt != 0) {
             mes_get_entry(gamedesc_mes_file, cnt - 1, &mes_file_entry);
             dword_6018D8 = mes_file_entry.num;
@@ -65,12 +65,12 @@ bool description_mod_load()
 }
 
 // 0x4D41D0
-int description_mod_unload()
+void description_mod_unload()
 {
-    message_unload(gamedesc_mes_file);
+    mes_unload(gamedesc_mes_file);
     gamedesc_mes_file = MES_FILE_HANDLE_INVALID;
 
-    message_unload(gamekey_mes_file);
+    mes_unload(gamekey_mes_file);
     gamekey_mes_file = MES_FILE_HANDLE_INVALID;
 }
 
@@ -107,7 +107,7 @@ const char* description_get_key_name(int num)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = num;
-    if (!message_find(gamekey_mes_file, &mes_file_entry)) {
+    if (!mes_search(gamekey_mes_file, &mes_file_entry)) {
         return NULL;
     }
 
