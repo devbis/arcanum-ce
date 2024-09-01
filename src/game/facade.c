@@ -1,10 +1,16 @@
 #include "game/facade.h"
 
+// 0x5FF578
+static int64_t qword_5FF578;
+
 // 0x5FF580
-static int dword_5FF580;
+static GameContextF8* dword_5FF580;
 
 // 0x5FF584
 static bool facade_editor;
+
+// 0x5FF588
+static int dword_5FF588;
 
 // 0x5FF58C
 static tig_window_handle_t facade_iso_window_handle;
@@ -13,7 +19,10 @@ static tig_window_handle_t facade_iso_window_handle;
 static bool facade_initialized;
 
 // 0x5FF598
-static int dword_5FF598;
+static ViewOptions facade_view_options;
+
+// 0x5FF5A0
+static void* dword_5FF5A0;
 
 // 0x4C9DA0
 bool facade_init(GameInitInfo* init_info)
@@ -21,7 +30,7 @@ bool facade_init(GameInitInfo* init_info)
     facade_iso_window_handle = init_info->iso_window_handle;
     dword_5FF580 = init_info->field_8;
     facade_editor = init_info->editor;
-    dword_5FF598 = 0;
+    facade_view_options.type = VIEW_TYPE_ISOMETRIC;
     facade_initialized = true;
 
     return true;
@@ -41,9 +50,23 @@ void facade_resize(ResizeInfo* resize_info)
 }
 
 // 0x4C9E00
-void sub_4C9E00()
+void sub_4C9E00(ViewOptions* view_options)
 {
-    // TODO: Incomplete.
+    int v1;
+    int64_t v2;
+
+    if (dword_5FF5A0 != NULL) {
+        v1 = dword_5FF588;
+        v2 = qword_5FF578;
+        sub_4CA240();
+        facade_view_options = *view_options;
+        sub_4CA0F0(v1, v2);
+        dword_5FF580(NULL);
+    } else {
+        facade_view_options = *view_options;
+    }
+
+    return true;
 }
 
 // 0x4C9E70

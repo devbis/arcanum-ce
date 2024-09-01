@@ -6,5 +6,6 @@
 bool facade_init(GameInitInfo* init_info);
 void facade_exit();
 void facade_resize(ResizeInfo* resize_info);
+void sub_4C9E00(ViewOptions* view_options);
 
 #endif /* ARCANUM_GAME_FACADE_H_ */
