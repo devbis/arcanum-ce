@@ -63,10 +63,10 @@ void sub_460240(long long a1)
 }
 
 // 0x460260
-void sub_460260(int a1, int a2)
+void sub_460260(long long a1)
 {
     if (ui_callbacks.field_14 != NULL) {
-        ui_callbacks.field_14(a1, a2);
+        ui_callbacks.field_14(a1);
     }
 }
 
