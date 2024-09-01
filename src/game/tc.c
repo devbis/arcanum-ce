@@ -1,5 +1,7 @@
 #include "game/tc.h"
 
+static void sub_4C9BE0(TigRectListNode* node);
+
 // 0x5FF4F8
 static TigRect stru_5FF4F8;
 
@@ -130,7 +132,66 @@ void sub_4C9B90()
 }
 
 // 0x4C9BE0
-void sub_4C9BE0()
+void sub_4C9BE0(TigRectListNode* node)
 {
-    // TODO: Incomplete.
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigWindowBlitInfo win_to_vb_blt;
+    TigWindowBlitInfo vb_to_win_blt;
+    TigRectListNode* new_head;
+    TigRectListNode* new_node;
+
+    win_to_vb_blt.type = TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER;
+    win_to_vb_blt.vb_blit_flags = 0;
+    win_to_vb_blt.src_window_handle = dword_5FF550;
+    win_to_vb_blt.src_video_buffer = dword_5FF53C;
+    win_to_vb_blt.src_rect = &src_rect;
+    win_to_vb_blt.dst_video_buffer = dword_5FF53C;
+    win_to_vb_blt.dst_rect = &dst_rect;
+
+    new_head = NULL;
+
+    vb_to_win_blt.type = TIG_WINDOW_BLIT_VIDEO_BUFFER_TO_WINDOW;
+    vb_to_win_blt.vb_blit_flags = 0;
+    vb_to_win_blt.src_video_buffer = dword_5FF53C;
+    vb_to_win_blt.src_rect = &dst_rect;
+    vb_to_win_blt.dst_window_handle = dword_5FF550;
+    vb_to_win_blt.dst_rect = &src_rect;
+
+    while (node != NULL) {
+        if (tig_rect_intersection(&stru_5FF4F8, &(node->rect), &src_rect) == TIG_OK) {
+            dst_rect.x = src_rect.x - stru_5FF4F8.x;
+            dst_rect.y = src_rect.y - stru_5FF4F8.y;
+            dst_rect.width = src_rect.width;
+            dst_rect.height = src_rect.height;
+
+            tig_window_blit(&win_to_vb_blt);
+            tig_video_buffer_tint(dword_5FF53C,
+                &dst_rect,
+                tig_color_make(18, 18, 18),
+                TIG_VIDEO_BUFFER_TINT_MODE_SUB);
+            tig_window_blit(&vb_to_win_blt);
+
+            new_node = tig_rect_node_create();
+            new_node->rect = dst_rect;
+            new_node->next = new_head;
+            new_head = new_node;
+        }
+        node = node->next;
+    }
+
+    vb_to_win_blt.src_video_buffer = dword_5FF518;
+
+    while (new_head != NULL) {
+        vb_to_win_blt.src_rect = &(new_head->rect);
+
+        src_rect = new_head->rect;
+        src_rect.x += stru_5FF4F8.x;
+        src_rect.y += stru_5FF4F8.y;
+        tig_window_blit(&vb_to_win_blt);
+
+        new_node = new_head->next;
+        tig_rect_node_destroy(new_head);
+        new_head = new_node;
+    }
 }
