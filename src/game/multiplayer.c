@@ -36,6 +36,7 @@ static void sub_4A1F30(int64_t a1, int64_t a2, int a3, int a4);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
 static void sub_4A2A30();
 static void sub_4A2AE0(int player);
+static void sub_4A3660(int player);
 
 // 0x5B4070
 static int dword_5B4070 = -1;
@@ -498,9 +499,25 @@ void sub_4A33F0()
 }
 
 // 0x4A3660
-void sub_4A3660()
+void sub_4A3660(int player)
 {
-    // TODO: Incomplete.
+    char pattern[TIG_MAX_PATH];
+    char path[TIG_MAX_PATH];
+    TigFileList file_list;
+    unsigned int index;
+
+    sprintf(pattern, "%s\\Players\\*.*", ".\\data\\temp");
+    tig_file_list_create(&file_list, pattern);
+
+    for (index = 0; index < file_list.count; index++) {
+        if (strcmp(file_list.entries[index].path, ".") != 0
+            && strcmp(file_list.entries[index].path, "..") != 0) {
+            sprintf(path, "%s\\Players\\%s", ".\\data\\temp", file_list.entries[index].path);
+            tig_net_xfer_send(path, player, NULL);
+        }
+    }
+
+    tig_file_list_destroy(&file_list);
 }
 
 // 0x4A3780
