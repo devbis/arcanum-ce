@@ -649,6 +649,40 @@ int stat_get_max_value(object_id_t obj, int stat)
     return stat_max_values[stat];
 }
 
+// 0x4B10A0
+bool sub_4B10A0(int64_t obj, int stat, int value)
+{
+    int max_value;
+    int base_value;
+    int iter = 1;
+
+    max_value = stat_get_max_value(obj, stat);
+
+    base_value = stat_get_base(obj, stat);
+    stat_set_base(obj, stat, base_value + 1);
+
+    while (value > stat_level(obj, stat)) {
+        if (stat_get_base(obj, stat) == base_value) {
+            break;
+        }
+
+        if (stat_level(obj, stat) >= max_value) {
+            break;
+        }
+
+        if (iter >= 100) {
+            break;
+        }
+
+        iter++;
+
+        base_value = stat_get_base(obj, stat);
+        stat_set_base(obj, stat, base_value + 1);
+    }
+
+    return value <= stat_level(obj, stat);
+}
+
 // 0x4B1310
 bool sub_4B1310(TimeEvent* timeevent)
 {

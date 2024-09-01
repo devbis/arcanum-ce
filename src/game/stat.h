@@ -83,6 +83,7 @@ const char* gender_get_name(int gender);
 const char* race_get_name(int race);
 int stat_get_min_value(object_id_t object_id, int stat);
 int stat_get_max_value(object_id_t object_id, int stat);
+bool sub_4B10A0(int64_t obj, int stat, int value);
 int sub_4B0FC0(int a1, int a2, int a3);
 
 #endif /* ARCANUM_GAME_STAT_H_ */
