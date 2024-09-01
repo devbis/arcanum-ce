@@ -11,7 +11,7 @@
 #define NUM_PLAYERS 8
 
 typedef struct S5E8AD0 {
-    /* 0000 */ int field_0;
+    /* 0000 */ unsigned int flags;
     /* 0004 */ int field_4;
     /* 0008 */ ObjectID field_8;
     /* 0020 */ int field_20;
@@ -941,9 +941,9 @@ void sub_4A5570()
 }
 
 // 0x4A55D0
-void sub_4A55D0()
+int sub_4A55D0(int player)
 {
-    // TODO: Incomplete.
+    return stru_5E8AD0[player].flags & 0xFF00;
 }
 
 // 0x4A55F0
