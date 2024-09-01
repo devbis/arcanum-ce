@@ -4,6 +4,7 @@
 #include "game/context.h"
 
 typedef void(Func5F0E08)();
+typedef void(Func5F0DF8)(int);
 
 bool multiplayer_init(GameInitInfo* init_info);
 bool multiplayer_mod_load();
@@ -20,5 +21,11 @@ void sub_4A2BC0();
 void sub_4A2BD0();
 int64_t multiplayer_find_first_player_obj();
 int64_t multiplayer_find_next_player_obj();
+void sub_4A3890();
+int sub_4A38A0();
+void sub_4A39D0(Func5F0DF8* func, int ctx);
+void* sub_4A4230(int player);
+void sub_4A4270();
+void sub_4A4280();
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */

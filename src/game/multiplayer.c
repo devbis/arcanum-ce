@@ -34,6 +34,10 @@ static void sub_4A2A30();
 static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
 static void sub_4A3780();
+static bool sub_4A40D0(int player);
+
+// 0x5B3FEC
+static int dword_5B3FEC = -1;
 
 // 0x5B4070
 static int dword_5B4070 = -1;
@@ -53,8 +57,14 @@ static mes_file_handle_t multiplayer_mes_file;
 // 0x5F0BC8
 static void* off_5F0BC8[NUM_PLAYERS];
 
+// 0x5F0DE0
+static int dword_5F0DE0;
+
 // 0x5F0DEC
 static void* dword_5F0DEC;
+
+// 0x5F0DF8
+static Func5F0DF8* dword_5F0DF8;
 
 // 0x5F0E00
 static bool dword_5F0E00;
@@ -67,6 +77,9 @@ static Func5F0E08* dword_5F0E08;
 
 // 0x5F0E0C
 static int dword_5F0E0C;
+
+// 0x5F0E10
+static int dword_5F0E10;
 
 // 0x5F0E14
 static bool dword_5F0E14;
@@ -549,15 +562,14 @@ void sub_4A3780()
 }
 
 // 0x4A3890
-void nullsub_39()
+void sub_4A3890()
 {
-    // TODO: Incomplete.
 }
 
 // 0x4A38A0
-void sub_4A38A0()
+int sub_4A38A0()
 {
-    // TODO: Incomplete.
+    return dword_5F0DE0;
 }
 
 // 0x4A38B0
@@ -567,9 +579,10 @@ void sub_4A38B0()
 }
 
 // 0x4A39D0
-void sub_4A39D0()
+void sub_4A39D0(Func5F0DF8* func, int ctx)
 {
-    // TODO: Incomplete.
+    dword_5F0DF8 = func;
+    dword_5B3FEC = ctx;
 }
 
 // 0x4A39F0
@@ -597,9 +610,9 @@ void sub_4A3F40()
 }
 
 // 0x4A40D0
-void sub_4A40D0()
+bool sub_4A40D0(int player)
 {
-    // TODO: Incomplete.
+    return off_5F0BC8[player] != NULL;
 }
 
 // 0x4A40F0
@@ -627,9 +640,9 @@ void sub_4A41E0()
 }
 
 // 0x4A4230
-void sub_4A4230()
+void* sub_4A4230(int player)
 {
-    // TODO: Incomplete.
+    return off_5F0BC8[player];
 }
 
 // 0x4A4240
@@ -641,13 +654,13 @@ void sub_4A4240()
 // 0x4A4270
 void sub_4A4270()
 {
-    // TODO: Incomplete.
+    dword_5F0E10++;
 }
 
 // 0x4A4280
 void sub_4A4280()
 {
-    // TODO: Incomplete.
+    dword_5F0E10--;
 }
 
 // 0x4A4320
