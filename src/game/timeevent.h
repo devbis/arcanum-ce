@@ -141,6 +141,7 @@ bool sub_45B300();
 void sub_45B320();
 void sub_45B340();
 void sub_45B360();
+bool sub_45B800(TimeEvent* timeevent, DateTime* datetime);
 void timeevent_clear();
 void timeevent_clear_for_map_close();
 bool timeevent_clear_all_typed(int list);
