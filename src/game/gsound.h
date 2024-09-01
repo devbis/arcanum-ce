@@ -17,5 +17,7 @@ tig_sound_handle_t gsound_play_sfx(const char* path, int loops, int volume, int 
 int gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume);
 int gsound_play_sfx_id(int id, int loops);
 int gsound_get_positional_size(object_id_t object_id);
+void sub_41C610();
+void sub_41C660();
 
 #endif /* ARCANUM_GAME_GSOUND_H_ */
