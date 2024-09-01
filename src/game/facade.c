@@ -1,5 +1,8 @@
 #include "game/facade.h"
 
+// 0x5FF590
+static bool facade_initialized;
+
 // 0x4C9DA0
 void facade_init()
 {
@@ -9,7 +12,8 @@ void facade_init()
 // 0x4C9DE0
 void facade_exit()
 {
-    // TODO: Incomplete.
+    sub_4CA240();
+    facade_initialized = false;
 }
 
 // 0x4C9DF0
