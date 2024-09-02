@@ -124,6 +124,18 @@ bool location_update_view(ViewOptions* view_options)
     return false;
 }
 
+// 0x4B8680
+void sub_4B8680(int64_t location, int64_t* x, int64_t* y)
+{
+    if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
+        *x = qword_5FC2E0 + 40 * (LOCATION_GET_Y(location) - LOCATION_GET_X(location) - 1);
+        *y = qword_5FC2E8 + 20 * (LOCATION_GET_X(location) + LOCATION_GET_Y(location));
+    } else {
+        *x = qword_5FC2E0 - location_view_options.zoom * LOCATION_GET_X(location);
+        *y = qword_5FC2E8 + location_view_options.zoom * LOCATION_GET_Y(location);
+    }
+}
+
 // 0x4B8AD0
 void sub_4B8AD0(int64_t* a1, int64_t* a2)
 {
