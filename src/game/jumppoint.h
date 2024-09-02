@@ -1,17 +1,30 @@
-#ifndef ARCANUM_GAME_LIB_JUMPPOINT_H_
-#define ARCANUM_GAME_LIB_JUMPPOINT_H_
+#ifndef ARCANUM_GAME_JUMPPOINT_H_
+#define ARCANUM_GAME_JUMPPOINT_H_
 
 #include "game/context.h"
 
-bool jumppoint_init(GameContext* ctx);
+typedef struct JumpPoint {
+    int field_0;
+    int field_4;
+    int64_t location;
+    int field_10;
+    int field_14;
+    int field_18;
+    int field_1C;
+} JumpPoint;
+
+// See 0x4E3800.
+static_assert(sizeof(JumpPoint) == 0x20, "wrong size");
+
+bool jumppoint_init(GameInitInfo* init_info);
 void jumppoint_reset();
 void jumppoint_exit();
-void jumppoint_resize(ResizeContext* ctx);
-bool sub_4E3050(void* a1);
+void jumppoint_resize(ResizeInfo* resize_info);
+void sub_4E3050(const char** a1);
 bool jumppoint_open(const char* a1, const char* a2);
 void jumppoint_close();
-bool sub_4E3270();
+bool jumppoint_flush();
 bool jumppoint_update_view(ViewOptions* view_options);
 bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint);
 
-#endif /* ARCANUM_GAME_LIB_JUMPPOINT_H_ */
+#endif /* ARCANUM_GAME_JUMPPOINT_H_ */
