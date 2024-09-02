@@ -199,9 +199,48 @@ void nullsub_69()
 }
 
 // 0x588F10
-void sub_588F10()
+void sub_588F10(int a1)
 {
-    // TODO: Incomplete.
+    switch (a1) {
+    case 0:
+        tig_net_reset_connection();
+        sub_5417A0(0);
+        sub_583200();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        break;
+    case 1:
+        tig_net_reset_connection();
+        sub_5417A0(0);
+        multiplayer_hub_ui_init();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        break;
+    case 2:
+        tig_net_reset_connection();
+        sub_5417A0(0);
+        sub_584AE0();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        break;
+    case 3:
+        sub_5883E0(dword_5CCB94, sub_549820());
+        break;
+    case 4:
+        sub_588650();
+        break;
+    case 5:
+        sub_5887F0();
+        break;
+    case 6:
+        sub_588990();
+        break;
+    }
+
+    return 0;
 }
 
 // 0x588FF0
