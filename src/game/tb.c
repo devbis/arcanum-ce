@@ -1,14 +1,6 @@
-#include "game/lib/tb.h"
+#include "game/tb.h"
 
-#include "game/lib/gamelib.h"
-#include "game/lib/settings.h"
-#include "tig/art.h"
-#include "tig/color.h"
-#include "tig/font.h"
-#include "tig/rect.h"
-#include "tig/timer.h"
-#include "tig/video.h"
-#include "tig/window.h"
+#include "game/gamelib.h"
 
 #define TEXT_DURATION_KEY "text duration"
 #define FOUR 4
@@ -29,7 +21,7 @@ typedef struct S602930 {
     int field_24;
     int field_28;
     int field_2C;
-};
+} S602930;
 
 static_assert(sizeof(S602930) == 0x30, "wrong size");
 
@@ -62,7 +54,7 @@ static bool dword_602AB4;
 static int tb_text_duration;
 
 // 0x602ABC
-static int dword_602ABC;
+static tig_window_handle_t tb_iso_window_handle;
 
 // 0x602AC0
 static int dword_602AC0;
@@ -74,27 +66,30 @@ static int dword_602AC4;
 static ViewOptions tb_view_options;
 
 // 0x602AD0
-static TigFont* dword_602AD0[FOUR];
+static tig_font_handle_t dword_602AD0[FOUR];
 
 // 0x4D5B80
-bool tb_init(GameContext* ctx)
+bool tb_init(GameInitInfo* init_info)
 {
     TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data) != TIG_OK) {
+    TigVideoBufferCreateInfo vb_create_info;
+    int index;
+    TigFont font;
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
         return false;
     }
 
-    dword_602ABC = ctx->iso_window_handle;
+    tb_iso_window_handle = init_info->iso_window_handle;
     stru_602920.x = 0;
     stru_602920.y = 0;
     stru_602920.width = window_data.rect.width;
     stru_602920.height = window_data.rect.height;
-    dword_602AB0 = ctx->field_8;
+    dword_602AB0 = init_info->field_8;
     tb_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_602AB4 = 1;
     dword_602AC4 = tig_color_make(0, 0, 255);
 
-    TigVideoBufferCreateInfo vb_create_info;
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
     vb_create_info.width = 200;
     vb_create_info.height = 200;
@@ -103,7 +98,7 @@ bool tb_init(GameContext* ctx)
 
     dword_602AC0 = tig_color_make(0, 0, 0);
 
-    for (int index = 0; index < EIGHT; index++) {
+    for (index = 0; index < EIGHT; index++) {
         if (tig_video_buffer_create(&vb_create_info, &(stru_602930[index].video_buffer)) != TIG_OK) {
             while (--index >= 0) {
                 tig_video_buffer_destroy(stru_602930[index].video_buffer);
@@ -112,11 +107,10 @@ bool tb_init(GameContext* ctx)
         }
     }
 
-    TigFont font;
-    font.flags = TIG_FONT_0x80 | TIG_FONT_CENTERED | TIG_FONT_SHADOW;
+    font.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_CENTERED | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
-    for (int index = 0; index < FOUR; index++) {
+    for (index = 0; index < FOUR; index++) {
         font.color = tig_color_make(byte_5B8EA0[index][0], byte_5B8EA0[index][1], byte_5B8EA0[index][2]);
         tig_font_create(&font, &(dword_602AD0[index]));
     }
@@ -136,25 +130,27 @@ void tb_reset()
 // 0x4D5DC0
 void tb_exit()
 {
+    int index;
+
     sub_4D6320();
 
-    for (int index = 0; index < FOUR; index++) {
+    for (index = 0; index < FOUR; index++) {
         tig_font_destroy(dword_602AD0[index]);
     }
 
-    for (int index = 0; index < EIGHT; index++) {
+    for (index = 0; index < EIGHT; index++) {
         tig_video_buffer_destroy(stru_602930[index].video_buffer);
     }
 
-    dword_602ABC = -1;
+    tb_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
     dword_602AB0 = NULL;
 }
 
 // 0x4D5E20
-void tb_resize(ResizeContext* ctx)
+void tb_resize(ResizeInfo* resize_info)
 {
-    stru_602920 = ctx->field_14;
-    dword_602ABC = ctx->iso_window_handle;
+    stru_602920 = resize_info->field_14;
+    tb_iso_window_handle = resize_info->iso_window_handle;
 }
 
 // 0x4D5E60
@@ -179,10 +175,12 @@ void sub_4D5E90()
 // 0x4D5EB0
 void tb_ping(unsigned int time)
 {
-    for (int index = 0; index < EIGHT; index++) {
+    int index;
+    TigRect rect;
+
+    for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0 && (stru_602930[index].flags & S602930_FLAG_0x2) == 0) {
             if (tig_timer_between(stru_602930[index].time, time) > stru_602930[index].duration) {
-                TigRect rect;
                 sub_4D63B0(&(stru_602930[index]), &rect);
                 dword_602AB0(&rect);
                 sub_4D6350(&(stru_602930[index]));
@@ -194,23 +192,26 @@ void tb_ping(unsigned int time)
 // 0x4D5F10
 void sub_4D5F10(UnknownContext* ctx)
 {
+    int index;
+    TigRect rect;
+    TigRectListNode* node;
+    TigRect intersection;
+    TigRect src_rect;
+
     if (dword_602AB4) {
         if (tb_view_options.type == VIEW_TYPE_ISOMETRIC) {
-            for (int index = 0; index < EIGHT; index++) {
+            for (index = 0; index < EIGHT; index++) {
                 if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-                    TigRect rect;
                     sub_4D63B0(&(stru_602930[index]), &rect);
 
-                    TigRectListNode* node = ctx->rects;
+                    node = *ctx->rects;
                     while (node != NULL) {
-                        TigRect intersection;
                         if (tig_rect_intersection(&rect, &(node->rect), &intersection) == TIG_OK) {
-                            TigRect src_rect;
                             src_rect.x = intersection.x + stru_602930[index].field_1C - rect.x;
                             src_rect.y = intersection.y + stru_602930[index].field_20 - rect.y;
                             src_rect.width = intersection.width;
                             src_rect.height = intersection.height;
-                            tig_window_copy_from_vbuffer(dword_602ABC, &intersection, stru_602930[index].video_buffer, &src_rect);
+                            tig_window_copy_from_vbuffer(tb_iso_window_handle, &intersection, stru_602930[index].video_buffer, &src_rect);
                         }
                         node = node->next;
                     }
@@ -229,7 +230,9 @@ void sub_4D5FE0(object_id_t object_id, int font, const char* text)
 // 0x4D6160
 void sub_4D6160(object_id_t object_id, int a2)
 {
-    for (int index = 0; index < EIGHT; index++) {
+    int index;
+
+    for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
             if (stru_602930[index].object_id == object_id) {
                 if (a2 == -2) {
@@ -248,13 +251,15 @@ void sub_4D6160(object_id_t object_id, int a2)
 // 0x4D6210
 void sub_4D6210(object_id_t object_id, long long location, int offset_x, int offset_y)
 {
-    for (int index = 0; index < EIGHT; index++) {
+    int index;
+    TigRect rect;
+    TigRect temp_rect;
+
+    for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
             if (stru_602930[index].object_id == object_id) {
-                TigRect rect;
                 sub_4D63B0(&(stru_602930[index]), &rect);
 
-                TigRect temp_rect;
                 sub_4D6410(&(stru_602930[index]), location, offset_x, offset_y, &temp_rect);
 
                 tig_rect_union(&rect, &temp_rect, &rect);
@@ -269,7 +274,10 @@ void sub_4D6210(object_id_t object_id, long long location, int offset_x, int off
 // 0x4D62B0
 void sub_4D62B0(object_id_t object_id)
 {
-    for (int index = 0; index < EIGHT; index++) {
+    int index;
+    unsigned int flags;
+
+    for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
             if (stru_602930[index].object_id == object_id) {
                 sub_4D6350(&(stru_602930[index]));
@@ -278,15 +286,17 @@ void sub_4D62B0(object_id_t object_id)
         }
     }
 
-    unsigned int flags = obj_field_int32_get(object_id, OBJ_F_FLAGS);
-    flags &= ~OBJECT_FLAG_0x0008;
+    flags = obj_field_int32_get(object_id, OBJ_F_FLAGS);
+    flags &= ~OF_TEXT;
     obj_field_int32_set(object_id, OBJ_F_FLAGS, flags);
 }
 
 // 0x4D6320
 void sub_4D6320()
 {
-    for (int index = 0; index < EIGHT; index++) {
+    int index;
+
+    for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
             sub_4D6350(&(stru_602930[index]));
         }
@@ -297,23 +307,29 @@ void sub_4D6320()
 static void sub_4D6350(S602930* a1)
 {
     TigRect rect;
+    unsigned int flags;
+
     sub_4D63B0(a1, &rect);
     dword_602AB0(&rect);
 
-    unsigned int flags = obj_field_int32_get(a1->object_id, OBJ_F_FLAGS);
-    flags &= ~OBJECT_FLAG_0x0008;
+     flags = obj_field_int32_get(a1->object_id, OBJ_F_FLAGS);
+    flags &= ~OF_TEXT;
     obj_field_int32_set(a1->object_id, OBJ_F_FLAGS, flags);
 
     a1->flags = 0;
-    a1->object_id = 0;
+    a1->object_id = OBJ_HANDLE_NULL;
 }
 
 // 0x4D63B0
 static void sub_4D63B0(S602930* a1, TigRect* rect)
 {
-    long long location = obj_field_int64_get(a1->object_id, OBJ_F_LOCATION);
-    int offset_x = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_X);
-    int offset_y = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_Y);
+    int64_t location;
+    int offset_x;
+    int offset_y;
+
+    location = obj_field_int64_get(a1->object_id, OBJ_F_LOCATION);
+    offset_x = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_Y);
     sub_4D6410(a1, location, offset_x, offset_y, rect);
 }
 
@@ -326,9 +342,11 @@ static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset
 // 0x4D67F0
 static void tb_text_duration_changed()
 {
+    int index;
+
     tb_text_duration = settings_get_value(&settings, TEXT_DURATION_KEY) * 125 * 8;
 
-    for (int index = 0; index < EIGHT; index++) {
+    for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0 && (stru_602930[index].flags & S602930_FLAG_0x2) == 0) {
             stru_602930[index].duration = 1000 * tb_text_duration;
         }

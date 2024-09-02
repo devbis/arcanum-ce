@@ -1,13 +1,13 @@
-#ifndef ARCANUM_GAMELIB_TB_H_
-#define ARCANUM_GAMELIB_TB_H_
+#ifndef ARCANUM_GAME_TB_H_
+#define ARCANUM_GAME_TB_H_
 
 #include "game/context.h"
-#include "game/lib/object.h"
+#include "game/obj.h"
 
-bool tb_init(GameContext* ctx);
+bool tb_init(GameInitInfo* init_info);
 void tb_reset();
 void tb_exit();
-void tb_resize(ResizeContext* ctx);
+void tb_resize(ResizeInfo* resize_info);
 bool tb_update_view(ViewOptions* view_options);
 void tb_close();
 void tb_ping(unsigned int time);
@@ -18,4 +18,4 @@ void sub_4D6210(object_id_t object_id, long long location, int offset_x, int off
 void sub_4D62B0(object_id_t object_id);
 void sub_4D6320();
 
-#endif /* ARCANUM_GAMELIB_TB_H_ */
+#endif /* ARCANUM_GAME_TB_H_ */
