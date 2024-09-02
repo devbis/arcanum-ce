@@ -1,5 +1,7 @@
 #include "ui/server_list_ui.h"
 
+static void sub_588EF0();
+
 // 0x585BC0
 void serverlist_ui_init()
 {
@@ -189,7 +191,9 @@ void sub_588EC0()
 // 0x588EF0
 void sub_588EF0()
 {
-    // TODO: Incomplete.
+    if (sub_541680()) {
+        sub_5412D0();
+    }
 }
 
 // 0x588F00
