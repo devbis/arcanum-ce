@@ -193,9 +193,8 @@ void sub_588EF0()
 }
 
 // 0x588F00
-void nullsub_69()
+void sub_588F00()
 {
-    // TODO: Incomplete.
 }
 
 // 0x588F10

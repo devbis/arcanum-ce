@@ -1,6 +1,7 @@
 #ifndef ARCANUM_UI_SERVER_LIST_UI_H_
 #define ARCANUM_UI_SERVER_LIST_UI_H_
 
+void sub_588F00();
 void sub_588F10(int a1);
 
 #endif /* ARCANUM_UI_SERVER_LIST_UI_H_ */
