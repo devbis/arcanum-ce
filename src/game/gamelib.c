@@ -6,6 +6,8 @@
 #include "game/gmovie.h"
 #include "game/li.h"
 #include "game/mes.h"
+#include "game/tb.h"
+#include "game/tc.h"
 
 #define GAMELIB_LONG_VERSION_LENGTH 40
 #define GAMELIB_SHORT_VERSION_LENGTH 36
@@ -51,13 +53,17 @@ typedef struct GameSaveEntry {
     char* path;
 } GameSaveEntry;
 
-static int sub_403D40(GameSaveEntry* a, GameSaveEntry* b);
-static int sub_403DB0(GameSaveEntry* a, GameSaveEntry* b);
+static int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b);
+static int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b);
 static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
+static void gamelib_logo();
+static void gamelib_splash(tig_window_handle_t window_handle);
 static void sub_404930();
 static void sub_404A20();
+static bool sub_404C10(const char* module_name);
+static void sub_405070();
 
 // 0x59A330
 static GameLibModule gamelib_modules[MODULE_COUNT] = {
@@ -372,7 +378,7 @@ void gamelib_reset()
             gamelib_modules[index].reset_func();
 
             duration = tig_timer_elapsed(module_started_at);
-            tig_timer_printf(" done. Time (ms): %d.\n", duration);
+            tig_debug_printf(" done. Time (ms): %d.\n", duration);
         }
     }
 
@@ -394,7 +400,7 @@ void gamelib_exit()
         }
     }
 
-    message_stats();
+    mes_stats();
 
     TigRectListNode* node = dword_5D0E98;
     while (node != NULL) {
@@ -408,7 +414,7 @@ void gamelib_exit()
         dword_739E7C = NULL;
     }
 
-    if (sub_52E220("Save\\Current")) {
+    if (tig_file_is_directory("Save\\Current")) {
         if (!sub_52E040("Save\\Current")) {
             // FIXME: Typo in function name, this is definitely not
             // `gamelib_init`.
@@ -424,7 +430,7 @@ void gamelib_ping()
 {
     int index;
 
-    tig_timer_start(&gamelib_ping_time);
+    tig_timer_now(&gamelib_ping_time);
 
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gamelib_modules[index].ping_func != NULL) {
@@ -884,7 +890,7 @@ const char* sub_403850()
     static GameSaveList save_list;
 
     byte_5D0D88[0] = '\0';
-    gamelist_savlist_create(&save_list);
+    gamelib_savlist_create(&save_list);
     sub_403C10(&save_list, 0, 1);
 
     if (save_list.count > 0) {
@@ -1041,7 +1047,7 @@ void sub_403C10(GameSaveList* save_list, int a2, int a3)
 }
 
 // 0x403D40
-int sub_403D40(GameSaveEntry* a, GameSaveEntry* b)
+int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b)
 {
     if (dword_5D10DC) {
         if (toupper(a->path[4]) == 'A') {
@@ -1063,7 +1069,7 @@ int sub_403D40(GameSaveEntry* a, GameSaveEntry* b)
 }
 
 // 0x403DB0
-int sub_403DB0(GameSaveEntry* a, GameSaveEntry* b)
+int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b)
 {
     return -strnicmp(a->path, b->path, 8);
 }
@@ -1197,24 +1203,26 @@ void gamelib_logo()
 }
 
 // 0x404830
-void gamelib_splash(int window_handle)
+void gamelib_splash(tig_window_handle_t window_handle)
 {
-    settings_add(&settings, SPLASH_KEY, "0", NULL);
-    int splash = settings_get_value(&settings, SPLASH_KEY);
-
+    int splash;
     TigVideoBuffer* video_buffer;
+    TigFileList file_list;
+    int value;
+    char path[TIG_MAX_PATH];
+    int index;
+
+    settings_add(&settings, SPLASH_KEY, "0", NULL);
+    splash = settings_get_value(&settings, SPLASH_KEY);
+
     if (tig_window_vbid_get(window_handle, &video_buffer) == TIG_OK) {
-        TigFileList file_list;
         tig_file_list_create(&file_list, "art\\splash\\*.bmp");
 
         if (file_list.count != 0) {
-            int value;
-            char path[MAX_PATH];
-
-            for (int index = 0; index < 3; index++) {
+            for (index = 0; index < 3; index++) {
                 value = (index + splash) % file_list.count;
                 sprintf(path, "art\\splash\\%s", file_list.entries[value].path);
-                if (tig_video_buffer_load_from_bmp(path, video_buffer, 0) == TIG_OK) {
+                if (tig_video_buffer_load_from_bmp(path, &video_buffer, 0) == TIG_OK) {
                     break;
                 }
             }
@@ -1232,7 +1240,7 @@ void gamelib_splash(int window_handle)
 // 0x404930
 void sub_404930()
 {
-    BYTE data[260];
+    char data[260];
     DWORD dwSize = sizeof(data);
     DWORD dwType;
     HKEY hKey;
@@ -1241,7 +1249,7 @@ void sub_404930()
 
     if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Troika\\Arcanum", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
         dwType = REG_SZ;
-        if (RegQueryValueExA(hKey, "installed_mode", NULL, &dwType, data, &dwSize) == ERROR_SUCCESS
+        if (RegQueryValueExA(hKey, "installed_mode", NULL, &dwType, (LPBYTE)data, &dwSize) == ERROR_SUCCESS
             && strcmpi(data, "partial") == 0) {
             dword_5D0D70 = false;
         } else {
@@ -1313,6 +1321,8 @@ bool sub_404C10(const char* module_name)
 {
     char path1[MAX_PATH];
     char path2[MAX_PATH];
+    size_t end;
+    int index;
 
     if (module_name[0] == '\\' || module_name[0] == '.' || module_name == ':') {
         path1[0] = '\0';
@@ -1321,10 +1331,10 @@ bool sub_404C10(const char* module_name)
     }
 
     strcat(path1, module_name);
-    size_t end = strlen(path1);
+    end = strlen(path1);
 
     strcat(path1, ".dat");
-    if (tig_file_info(path1, NULL)) {
+    if (tig_file_exists(path1, NULL)) {
         if (!tig_file_repository_add(path1)) {
             return false;
         }
@@ -1333,9 +1343,9 @@ bool sub_404C10(const char* module_name)
 
         path1[end] = '\0';
 
-        for (int index = 0; index < TEN; index++) {
+        for (index = 0; index < TEN; index++) {
             _snprintf(path2, MAX_PATH, "%s.patch%d", path1, index);
-            if (tig_file_info(path2, NULL)) {
+            if (tig_file_exists(path2, NULL)) {
                 if (!tig_file_repository_add(path2)) {
                     return false;
                 }
@@ -1352,7 +1362,7 @@ bool sub_404C10(const char* module_name)
 
             // FIXME: Probably broken: previous code builds `path2`, but
             // attempts to load `path1`.
-            if (tig_file_info(path1, NULL)) {
+            if (tig_file_exists(path1, NULL)) {
                 if (!tig_file_repository_add(path1)) {
                     return false;
                 }
@@ -1368,19 +1378,19 @@ bool sub_404C10(const char* module_name)
         strcpy(path2, byte_5D0C5C);
         strcat(path2, "\\Sierra\\Arcanum\\Modules\\");
         strcat(path2, module_name);
-        if (sub_52E220(path2)) {
+        if (tig_file_is_directory(path2)) {
             tig_file_repository_add(path2);
             strcpy(byte_5D0B58, path2);
         }
     }
 
-    if (sub_52E220(path1)) {
+    if (tig_file_is_directory(path1)) {
         tig_file_repository_add(path1);
         strcpy(byte_5CFF08, path1);
         return true;
     }
 
-    if (sub_52DFE0(path1)) {
+    if (tig_file_mkdir(path1)) {
         if (stru_5D0E88.editor == 1) {
             if (byte_5D0FA8[0] == '\0') {
                 sub_52E260(path1, "Module template");

@@ -44,5 +44,7 @@ void gamelib_modsavlist_create(const char* module, GameSaveList* save_list);
 void gamelib_savlist_destroy(GameSaveList* save_list);
 void sub_403C10(GameSaveList* save_list, int a2, int a3);
 void sub_4045A0();
+bool gamelib_copy_version(char* long_version, char* short_version, char* locale);
+const char* gamelib_get_locale();
 
 #endif /* ARCANUM_GAME_GAMELIB_H_ */
