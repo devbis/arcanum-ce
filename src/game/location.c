@@ -1,9 +1,5 @@
 #include "game/location.h"
 
-#include "tig/debug.h"
-#include "tig/rect.h"
-#include "tig/window.h"
-
 // 0x5FC278
 static TigRect stru_5FC278;
 
@@ -133,6 +129,36 @@ void sub_4B8680(int64_t location, int64_t* x, int64_t* y)
     } else {
         *x = qword_5FC2E0 - location_view_options.zoom * LOCATION_GET_X(location);
         *y = qword_5FC2E8 + location_view_options.zoom * LOCATION_GET_Y(location);
+    }
+}
+
+// 0x4B8940
+void sub_4B8940(int64_t location, int64_t* x, int64_t* y)
+{
+    int64_t saved_x;
+    int64_t saved_y;
+    int64_t x1;
+    int64_t y1;
+    int64_t x2;
+    int64_t y2;
+
+    if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
+        saved_x = qword_5FC2E0;
+        saved_y = qword_5FC2E8;
+
+        qword_5FC2E0 = 0;
+        qword_5FC2E8 = 0;
+        sub_4B8680(0, &x1, &y1);
+        sub_4B8680(location, &x2, &y2);
+        *x = x1 + stru_5FC278.width / 2 - x2 - saved_x;
+        *y = y1 + stru_5FC278.height / 2 - y2 - saved_y;
+
+        qword_5FC2E0 = saved_x;
+        qword_5FC2E8 = saved_y;
+    } else {
+        sub_4B8680(location, &x1, &y1);
+        *x = qword_5FC2A0 - (location_view_options.zoom / 2 + x1);
+        *y = qword_5FC290 - (location_view_options.zoom / 2 + y1);
     }
 }
 
