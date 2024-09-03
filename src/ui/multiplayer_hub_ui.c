@@ -1,5 +1,7 @@
 #include "ui/multiplayer_hub_ui.h"
 
+#include <stdio.h>
+
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "ui/scrollbar_ui.h"
@@ -8,6 +10,7 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static void sub_582D60(TigRect* rect);
 static void sub_5830F0();
 static void sub_5837A0(TigRect* rect);
 static const char* sub_584A40(int value);
@@ -355,9 +358,34 @@ void sub_582D50()
 }
 
 // 0x582D60
-void sub_582D60()
+void sub_582D60(TigRect* rect)
 {
-    // TODO: Incomplete.
+    TigRect text_rect;
+    TigFont font;
+    char str[80];
+
+    if (rect == NULL
+        || rect->x < stru_5CBFF8.x + stru_5CBFF8.width
+        && rect->y < stru_5CBFF8.y + stru_5CBFF8.height
+        && stru_5CBFF8.x < rect->x + rect->width
+        && stru_5CBFF8.y < rect->y + rect->height) {
+        sub_582790(&stru_5CBFF8);
+        tig_font_push(sub_549940(0, 3));
+
+        text_rect.x = 354;
+        text_rect.y = 536;
+
+        snprintf(str, sizeof(str), "%s|", byte_6861F8);
+        font.str = str;
+        font.width = 0;
+        sub_535390(&font);
+
+        text_rect.width = font.width;
+        text_rect.height = font.height;
+        tig_window_text_write(sub_549820(), str, text_rect);
+
+        tig_font_pop();
+    }
 }
 
 // 0x582E50
