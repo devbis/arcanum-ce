@@ -50,9 +50,33 @@ void sub_581950()
 }
 
 // 0x5819D0
-void sub_5819D0()
+bool sub_5819D0(int a1)
 {
-    // TODO: Incomplete.
+    switch (a1) {
+    case 0:
+        sub_5417A0(false);
+        sub_583200();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        break;
+    case 1:
+        sub_5417A0(false);
+        sub_585D50();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        break;
+    case 2:
+        sub_5417A0(false);
+        sub_584AE0();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        break;
+    }
+
+    return false;
 }
 
 // 0x581A60

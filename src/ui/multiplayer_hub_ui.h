@@ -3,5 +3,6 @@
 
 void multiplayer_hub_ui_exit();
 void sub_581910(TigRect* rect);
+bool sub_5819D0(int a1);
 
 #endif /* ARCANUM_UI_MULTIPLAYER_HUB_UI_H_ */
