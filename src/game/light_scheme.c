@@ -1,10 +1,9 @@
-#include "game/lib/light_scheme.h"
+#include "game/light_scheme.h"
 
 #include <stdio.h>
 
-#include "game/lib/message.h"
-#include "tig/color.h"
-#include "tig/str_parse.h"
+#include "game/light.h"
+#include "game/mes.h"
 
 // A lighting scheme contains exactly 24 values - for each hour of the day.
 #define LIGHT_SCHEME_HOURS 24
@@ -16,15 +15,17 @@ typedef struct LightSchemeColorComponents {
     int red;
     int green;
     int blue;
-};
+} LightSchemeColorComponents;
 
 typedef struct LightSchemeData {
     LightSchemeColorComponents indoor;
     LightSchemeColorComponents outdoor;
-};
+} LightSchemeData;
 
 // See 0x4A7C60.
 static_assert(sizeof(LightSchemeData) == 0x18, "wrong size");
+
+static void light_scheme_parse(int msg_file);
 
 // 0x5B5050
 static int light_scheme_current_light_scheme_id = -1;
@@ -44,13 +45,13 @@ static int light_schemes_msg_file;
 // 0x5F5CAC
 static bool light_scheme_changing;
 
-static void light_scheme_parse(int msg_file);
-
 // 0x4A7C60
-bool light_scheme_init(GameContext* ctx)
+bool light_scheme_init(GameInitInfo* init_info)
 {
+    (void)init_info;
+
     // FIXME: Params should be swapped.
-    light_scheme_colors = (LightSchemeData*)calloc(sizeof(*light_scheme_colors), LIGHT_SCHEME_HOURS);
+    light_scheme_colors = (LightSchemeData*)CALLOC(sizeof(*light_scheme_colors), LIGHT_SCHEME_HOURS);
 
     return true;
 }
@@ -64,7 +65,7 @@ void light_scheme_reset()
 // 0x4A7C90
 bool light_scheme_mod_load()
 {
-    if (!message_load("Rules\\Lighting Schemes.mes", &light_schemes_msg_file)) {
+    if (!mes_load("Rules\\Lighting Schemes.mes", &light_schemes_msg_file)) {
         return false;
     }
 
@@ -77,7 +78,7 @@ bool light_scheme_mod_load()
 void light_scheme_mod_unload()
 {
     if (light_schemes_msg_file != -1) {
-        message_unload(light_schemes_msg_file);
+        mes_unload(light_schemes_msg_file);
         light_schemes_msg_file = -1;
     }
 
@@ -87,7 +88,7 @@ void light_scheme_mod_unload()
 // 0x4A7CF0
 void light_scheme_exit()
 {
-    free(light_scheme_colors);
+    FREE(light_scheme_colors);
 }
 
 // 0x4A7D00
@@ -100,13 +101,13 @@ bool light_scheme_save(TigFile* stream)
 }
 
 // 0x4A7D40
-bool light_scheme_load(LoadContext* ctx)
+bool light_scheme_load(GameLoadInfo* load_info)
 {
     int light_scheme;
     int hour;
 
-    if (tig_file_fread(&light_scheme, sizeof(&light_scheme), 1, ctx->stream) != 1) return false;
-    if (tig_file_fread(&hour, sizeof(&hour), 1, ctx->stream) != 1) return false;
+    if (tig_file_fread(&light_scheme, sizeof(&light_scheme), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&hour, sizeof(&hour), 1, load_info->stream) != 1) return false;
 
     light_scheme_set(light_scheme, hour);
 
@@ -133,6 +134,10 @@ int light_scheme_get_map_default()
 // 0x4A7DD0
 bool light_scheme_set(int light_scheme, int hour)
 {
+    MesFileEntry mes_file_entry;
+    char path[MAX_PATH];
+    mes_file_handle_t mes_file;
+
     if (light_schemes_msg_file == -1) {
         return false;
     }
@@ -142,17 +147,14 @@ bool light_scheme_set(int light_scheme, int hour)
     }
 
     if (light_scheme != light_scheme_current_light_scheme_id) {
-        MessageListItem message_list_item;
-        message_list_item.num = light_scheme;
+        mes_file_entry.num = light_scheme;
 
-        if (message_find(light_schemes_msg_file, &message_list_item)) {
-            char path[MAX_PATH];
-            sprintf(path, "Rules\\%s.mes", message_list_item.text);
+        if (mes_search(light_schemes_msg_file, &mes_file_entry)) {
+            sprintf(path, "Rules\\%s.mes", mes_file_entry.str);
 
-            int message_list_handle;
-            if (message_load(path, &message_list_handle)) {
-                light_scheme_parse(message_list_handle);
-                message_unload(message_list_handle);
+            if (mes_load(path, &mes_file)) {
+                light_scheme_parse(mes_file);
+                mes_unload(mes_file);
                 light_scheme_current_light_scheme_id = light_scheme;
             }
         }
@@ -174,6 +176,10 @@ int light_scheme_get()
 // 0x4A7EB0
 bool light_scheme_set_hour(int hour)
 {
+    LightSchemeData* light_scheme_data;
+    int indoor_color;
+    int outdoor_color;
+
     if (light_schemes_msg_file == -1) {
         return false;
     }
@@ -186,9 +192,9 @@ bool light_scheme_set_hour(int hour)
 
     light_scheme_changing = true;
 
-    LightSchemeData* light_scheme_data = &(light_scheme_colors[hour]);
-    int indoor_color = tig_color_make(light_scheme_data->indoor.red, light_scheme_data->indoor.green, light_scheme_data->indoor.blue);
-    int outdoor_color = tig_color_make(light_scheme_data->outdoor.red, light_scheme_data->outdoor.green, light_scheme_data->outdoor.blue);
+    light_scheme_data = &(light_scheme_colors[hour]);
+    indoor_color = tig_color_make(light_scheme_data->indoor.red, light_scheme_data->indoor.green, light_scheme_data->indoor.blue);
+    outdoor_color = tig_color_make(light_scheme_data->outdoor.red, light_scheme_data->outdoor.green, light_scheme_data->outdoor.blue);
     sub_4D8560(indoor_color, outdoor_color);
 
     light_scheme_changing = false;
@@ -213,20 +219,21 @@ void light_scheme_parse(int msg_file)
 {
     bool interpolate = false;
     int prev_index = 0;
-
     LightSchemeColorComponents outdoor;
     LightSchemeColorComponents indoor;
     LightSchemeColorComponents prev_outdoor;
     LightSchemeColorComponents prev_indoor;
+    int index;
+    MesFileEntry mes_file_entry;
+    char* text;
 
     tig_str_parse_set_separator(',');
 
-    for (int index = 0; index < LIGHT_SCHEME_HOURS; index++) {
-        MessageListItem message_list_item;
-        message_list_item.num = index;
+    for (index = 0; index < LIGHT_SCHEME_HOURS; index++) {
+        mes_file_entry.num = index;
 
-        if (message_find(msg_file, &message_list_item) && message_list_item.text[0] != '\0') {
-            char* text = message_list_item.text;
+        if (mes_search(msg_file, &mes_file_entry) && mes_file_entry.str[0] != '\0') {
+            text = mes_file_entry.str;
             tig_str_parse_value(&text, &(outdoor.red));
             tig_str_parse_value(&text, &(outdoor.green));
             tig_str_parse_value(&text, &(outdoor.blue));
@@ -244,11 +251,12 @@ void light_scheme_parse(int msg_file)
                 int indoor_red_step = (indoor.red - prev_indoor.red) / (index - prev_index);
                 int indoor_green_step = (indoor.green - prev_indoor.green) / (index - prev_index);
                 int indoor_blue_step = (indoor.blue - prev_indoor.blue) / (index - prev_index);
+                int prev;
 
                 outdoor = prev_outdoor;
                 indoor = prev_indoor;
 
-                for (int prev = prev_index; prev < index; prev++) {
+                for (prev = prev_index; prev < index; prev++) {
                     light_scheme_colors[prev].outdoor = outdoor;
                     light_scheme_colors[prev].indoor = indoor;
 
