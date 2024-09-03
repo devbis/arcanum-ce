@@ -406,9 +406,51 @@ void sub_583540()
 }
 
 // 0x583560
-void sub_583560()
+bool mainmenu_ui_execute_multiplayer_hub(int button)
 {
-    // TODO: Incomplete.
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+
+    switch (button) {
+    case 0:
+        sub_5417A0(1);
+        return false;
+    case 1:
+        sub_5836A0();
+        sub_5417A0(false);
+        sub_585D50();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        return false;
+    case 2:
+        sub_5836A0();
+        sub_5417A0(false);
+        sub_584AE0();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        return false;
+    case 5:
+        if (mes_load("mes\\urls.mes", &mes_file)) {
+            mes_file_entry.num = 1;
+            mes_get_msg(mes_file, &mes_file_entry);
+            sub_595A60(mes_file_entry.str);
+            mes_unload(mes_file);
+        }
+        return false;
+    case 6:
+        if (mes_load("mes\\urls.mes", &mes_file)) {
+            mes_file_entry.num = 2;
+            mes_get_msg(mes_file, &mes_file_entry);
+            sub_595A60(mes_file_entry.str);
+            mes_unload(mes_file);
+        }
+        return false;
+    }
+
+    tig_debug_printf("MainMenuUI: mainmenu_ui_execute_multiplayer_hub unknown button Idx %d.\n", button);
+    return true;
 }
 
 // 0x5836A0
