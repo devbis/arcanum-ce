@@ -280,27 +280,29 @@ void sub_5825B0()
 }
 
 // 0x582650
-void sub_582650()
+void sub_582650(const char* a1, const char* a2)
 {
-    // TODO: Incomplete.
+    sub_5826D0(a1, 0, a2);
+    sub_582AD0(NULL);
 }
 
 // 0x582670
-void sub_582670()
+void sub_582670(const char* a1, const char* a2)
 {
-    // TODO: Incomplete.
+    sub_5826D0(a1, 1, a2);
+    sub_582AD0(NULL);
 }
 
 // 0x582690
-void sub_582690()
+void sub_582690(const char* a1, const char* a2)
 {
-    // TODO: Incomplete.
+    sub_5826D0(a1, 6, a2);
+    sub_582AD0(NULL);
 }
 
 // 0x5826B0
-void nullsub_38()
+void sub_5826B0()
 {
-    // TODO: Incomplete.
 }
 
 // 0x5826C0
