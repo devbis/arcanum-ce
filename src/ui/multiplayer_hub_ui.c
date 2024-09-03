@@ -90,7 +90,64 @@ static int dword_686964;
 // 0x581700
 void multiplayer_hub_ui_init()
 {
-    // TODO: Incomplete.
+    ScrollbarUiControlInfo sb_create_info;
+
+    sub_549830(23);
+
+    if (!mes_load("mes\\Multiplayer.mes", &dword_6862D8)) {
+        tig_debug_printf("MultiplayerHUB: could not '%s', aborting create.\n", "mes\\Multiplayer.mes");
+        exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
+    }
+
+    stru_6861D8.num = 3000;
+    mes_get_msg(dword_6862D8, &stru_6861D8);
+
+    sub_546330();
+    sub_581F30();
+
+    sb_create_info.flags = 0xFFFF;
+    sb_create_info.field_4.x = 288;
+    sb_create_info.field_4.y = 182;
+    sb_create_info.field_4.width = 13;
+    sb_create_info.field_4.height = 389;
+    sb_create_info.rect.x = 37;
+    sb_create_info.rect.y = 188;
+    sb_create_info.rect.width = 259;
+    sb_create_info.rect.height = 368;
+    sb_create_info.field_24 = 0;
+    sb_create_info.field_28 = 0;
+    sb_create_info.field_2C = 1;
+    sb_create_info.field_30 = 1;
+    sb_create_info.field_34 = 1;
+    sb_create_info.field_38 = 0;
+    sb_create_info.field_3C = 0;
+    sb_create_info.field_40 = sub_582E50;
+    scrollbar_ui_control_create(&stru_686248, &sb_create_info, sub_549820());
+
+    sb_create_info.field_4.x = 771;
+    sb_create_info.field_4.y = 95;
+    sb_create_info.field_4.width = 13;
+    sb_create_info.field_4.height = 408;
+    sb_create_info.rect.x = 336;
+    sb_create_info.rect.y = 99;
+    sb_create_info.rect.width = 440;
+    sb_create_info.rect.height = 1170;
+    sb_create_info.field_24 = 52;
+    sb_create_info.field_38 = 52;
+    sb_create_info.field_3C = sub_581F90;
+    scrollbar_ui_control_create(&stru_6862D0, &sb_create_info, sub_549820());
+
+    stru_6861E0.flags = 0;
+    stru_6861E0.size = 80;
+    stru_6861E0.on_enter = sub_581FC0;
+    stru_6861E0.on_change = sub_581FB0;
+    stru_6861E0.on_tab = 0;
+    stru_6861E0.buffer = byte_6861F8;
+    textedit_ui_focus(&stru_6861E0);
+
+    sub_582E80();
+    sub_581910(NULL);
+    sub_549990(dword_599484, 3);
 }
 
 // 0x5818C0
