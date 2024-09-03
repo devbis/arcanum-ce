@@ -396,7 +396,8 @@ void sub_583200()
 // 0x583510
 void sub_583510()
 {
-    // TODO: Incomplete.
+    scrollbar_ui_control_destroy(stru_686520);
+    mes_unload(dword_686528);
 }
 
 // 0x583540
