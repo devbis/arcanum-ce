@@ -7,5 +7,6 @@ bool sub_5819D0(int a1);
 void sub_581A60();
 void sub_581A80();
 void sub_581E60(int x, int y);
+void sub_581F10();
 
 #endif /* ARCANUM_UI_MULTIPLAYER_HUB_UI_H_ */

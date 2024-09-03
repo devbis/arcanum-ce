@@ -42,6 +42,9 @@ static ScrollbarId stru_686248;
 // 0x6862D0
 static ScrollbarId stru_6862D0;
 
+// 0x6862DC
+static void* dword_6862DC;
+
 // 0x581700
 void multiplayer_hub_ui_init()
 {
@@ -153,7 +156,10 @@ void sub_581E60(int x, int y)
 // 0x581F10
 void sub_581F10()
 {
-    // TODO: Incomplete.
+    if (dword_6862DC) {
+        sub_4A5040(dword_6862DC);
+        dword_6862DC = NULL;
+    }
 }
 
 // 0x581F30
