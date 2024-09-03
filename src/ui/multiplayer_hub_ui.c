@@ -10,6 +10,7 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static void sub_582790(TigRect* rect);
 static void sub_5829D0(TigRect* rect);
 static bool sub_582D10(const char* str);
 static bool sub_582D20(const char* a, const char* b);
@@ -315,9 +316,35 @@ void sub_5826D0()
 }
 
 // 0x582790
-void sub_582790()
+void sub_582790(TigRect* rect)
 {
-    // TODO: Incomplete.
+    TigArtBlitSpec blt;
+    TigRect screen_rect;
+
+    tig_art_interface_id_create(754, 0, 0, 0, &(blt.art_id));
+    blt.flags = 0;
+
+    if (rect != NULL) {
+        blt.src_rect = rect;
+        blt.dst_rect = rect;
+    } else {
+        screen_rect.x = 0;
+        screen_rect.y = 0;
+        screen_rect.width = 800;
+        screen_rect.height = 600;
+        blt.src_rect = &screen_rect;
+        blt.dst_rect = &screen_rect;
+    }
+
+    tig_window_blit_art(sub_549820(), &blt);
+
+    if (rect == NULL
+        || (rect->x < stru_5CC008.x + stru_5CC008.width
+            && rect->y < stru_5CC008.y + stru_5CC008.height
+            && stru_5CC008.x < rect->x + rect->width
+            && stru_5CC008.y < rect->y + rect->height)) {
+        sub_549960();
+    }
 }
 
 // 0x582860
