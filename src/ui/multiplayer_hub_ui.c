@@ -10,6 +10,7 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static void sub_5829D0(TigRect* rect);
 static bool sub_582D10(const char* str);
 static bool sub_582D20(const char* a, const char* b);
 static const char* sub_582D40(const char* str);
@@ -326,9 +327,35 @@ void sub_582860()
 }
 
 // 0x5829D0
-void sub_5829D0()
+void sub_5829D0(TigRect* rect)
 {
-    // TODO: Incomplete.
+    TigRect text_rect;
+    TigFont font;
+    MesFileEntry mes_file_entry;
+
+    if (rect == NULL
+        || rect->x < stru_5CC018.x + stru_5CC018.width
+        && rect->y < stru_5CC018.y + stru_5CC018.height
+        && stru_5CC018.x < rect->x + rect->width
+        && stru_5CC018.y < rect->y + rect->height) {
+        sub_582790(&stru_5CC018);
+        tig_font_push(sub_549940(0, 2));
+
+        mes_file_entry.num = 2400;
+        mes_get_msg(sub_549840(), &mes_file_entry);
+
+        font.str = mes_file_entry.str;
+        font.width = 0;
+        sub_535390(&font);
+
+        text_rect.x = (166 - font.width) / 2 + 77;
+        text_rect.y = 562;
+        text_rect.width = font.width;
+        text_rect.height = font.height;
+        tig_window_text_write(sub_549820(), str, text_rect);
+
+        tig_font_pop();
+    }
 }
 
 // 0x582AD0
