@@ -443,13 +443,25 @@ void sub_583A80()
 // 0x583A90
 void sub_583A90()
 {
-    // TODO: Incomplete.
+    dword_68673C = 0;
+    won_password[0] = 0;
+    if (!mes_load("mes\\Multiplayer.mes", &dword_686538)) {
+        tig_debug_printf("MultiplayerHUB: could not '%s', aborting create.\n", "mes\\Multiplayer.mes");
+        exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
+    }
+
+    stru_686530.num = 3000;
+    mes_get_msg(dword_686538, &stru_686530);
+
+    sub_549830(20);
+    sub_546330();
+    sub_549990(dword_5994A0, 2);
 }
 
 // 0x583B10
 void sub_583B10()
 {
-    // TODO: Incomplete.
+    mes_unload(dword_686538);
 }
 
 // 0x583B20
