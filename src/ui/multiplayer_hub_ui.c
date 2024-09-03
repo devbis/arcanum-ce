@@ -4,6 +4,8 @@
 #include "ui/scrollbar_ui.h"
 #include "ui/textedit_ui.h"
 
+static void sub_582E50(TigRect* rect);
+
 // 0x6862D8
 static mes_file_handle_t dword_6862D8;
 
@@ -238,9 +240,13 @@ void sub_582D60()
 }
 
 // 0x582E50
-void sub_582E50()
+void sub_582E50(TigRect* rect)
 {
-    // TODO: Incomplete.
+    sub_582790(rect);
+    sub_582860(rect);
+    sub_5829D0(rect);
+    sub_582AD0(rect);
+    sub_582D60(rect);
 }
 
 // 0x582E80
