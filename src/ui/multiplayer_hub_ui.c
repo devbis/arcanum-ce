@@ -400,9 +400,11 @@ void sub_583510()
 }
 
 // 0x583540
-void sub_583540()
+void sub_583540(TigRect* rect)
 {
-    // TODO: Incomplete.
+    sub_5837A0(rect);
+    sub_5482A0(rect);
+    sub_583830(rect);
 }
 
 // 0x583560

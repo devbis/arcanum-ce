@@ -8,6 +8,7 @@ void sub_581A60();
 void sub_581A80();
 void sub_581E60(int x, int y);
 void sub_581F10();
+void sub_583540(TigRect* rect);
 bool mainmenu_ui_execute_multiplayer_hub(int button)
 void sub_583A00();
 void sub_583A80();
