@@ -7,6 +7,7 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static void sub_585970(char* buffer);
 static void sub_585A20();
 static void sub_585BA0();
 static void sub_585BB0();
@@ -535,9 +536,31 @@ void sub_585630()
 }
 
 // 0x585970
-void sub_585970()
+void sub_585970(char* buffer)
 {
-    // TODO: Incomplete.
+    if (!dword_686960) {
+        if (byte_68674C[0] != '\0') {
+            strcpy(byte_6867A8, buffer);
+        }
+
+        switch (dword_5CC6AC) {
+        case 2303:
+        case 2306:
+        case 2305:
+            stru_5CC6B0.flags = 0;
+            break;
+        case 2309:
+            stru_5CC6B0.flags = TEXTEDIT_0x01 | TEXTEDIT_0x02;
+            break;
+        }
+
+        stru_5CC6B0.size = 23;
+        stru_5CC6B0.buffer = buffer;
+        textedit_ui_focus(&stru_5CC6B0);
+        dword_686960 = true;
+        sub_584CB0(0);
+        sub_549A40();
+    }
 }
 
 // 0x585A20

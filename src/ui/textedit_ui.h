@@ -1,7 +1,10 @@
 #ifndef ARCANUM_UI_TEXTEDIT_UI_H_
 #define ARCANUM_UI_TEXTEDIT_UI_H_
 
-#include <tig/tig.h>
+#include "game/context.h"
+
+#define TEXTEDIT_0x01 0x01
+#define TEXTEDIT_0x02 0x02
 
 struct TextEdit;
 
@@ -16,7 +19,7 @@ typedef struct TextEdit {
     /* 0014 */ TextEditCallback* on_tab;
 } TextEdit;
 
-static_assert(sizeof(TextEdit) == 0x14, "wrong size");
+static_assert(sizeof(TextEdit) == 0x18, "wrong size");
 
 bool textedit_ui_init(GameInitInfo* init_info);
 void textedit_ui_reset();

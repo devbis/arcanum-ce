@@ -193,12 +193,12 @@ bool textedit_ui_process_message(TigMessage* msg)
 // 0x5671E0
 bool sub_5671E0(char ch)
 {
-    if ((textedit_ui_current_textedit->flags & 1) == 0
-        && (textedit_ui_current_textedit->flags & 2) == 0) {
+    if ((textedit_ui_current_textedit->flags & TEXTEDIT_0x01) == 0
+        && (textedit_ui_current_textedit->flags & TEXTEDIT_0x02) == 0) {
         return true;
     }
 
-    if ((textedit_ui_current_textedit->flags & 1) != 0) {
+    if ((textedit_ui_current_textedit->flags & TEXTEDIT_0x01) != 0) {
         switch (ch) {
         case '"':
         case '\'':
