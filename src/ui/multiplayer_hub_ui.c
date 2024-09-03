@@ -6,6 +6,30 @@
 
 static void sub_582E50(TigRect* rect);
 
+// 0x5CBFD8
+static TigRect stru_5CBFD8 = { 37, 188, 246, 368 };
+
+// 0x5CBFE8
+static TigRect stru_5CBFE8 = { 336, 99, 427, 1170 };
+
+// 0x5CBFF8
+static TigRect stru_5CBFF8 = { 354, 536, 406, 35 };
+
+// 0x5CC008
+static TigRect stru_5CC008 = { 35, 32, 254, 258 };
+
+// 0x5CC018
+static TigRect stru_5CC018 = { 77, 562, 166, 15 };
+
+// 0x5CC028
+static TigRect stru_5CC028 = { 19, 178, 286, 394 };
+
+// 0x5CC038
+static TigRect stru_5CC038 = { 69, 274, 183, 18 };
+
+// 0x5CC048
+static TigRect stru_5CC048 = { 69, 365, 183, 108 };
+
 // 0x6862D8
 static mes_file_handle_t dword_6862D8;
 
@@ -105,9 +129,25 @@ void sub_581B10()
 }
 
 // 0x581E60
-void sub_581E60()
+void sub_581E60(int x, int y)
 {
-    // TODO: Incomplete.
+    MainMenuWIndowInfo* window_info;
+
+    window_info = sub_5496C0(sub_5496D0());
+    x += window_info->field_5C.x;
+    y += window_info->field_5C.y;
+
+    if (x >= stru_5CC038.x
+        && y >= stru_5CC038.y
+        && x < stru_5CC038.x + stru_5CC038.width
+        && y < stru_5CC038.y + stru_5CC038.height) {
+        sub_5493C0(byte_686250, 23);
+    } else if (x >= stru_5CC048.x
+        && y >= stru_5CC048.y
+        && x < stru_5CC048.x + stru_5CC048.width
+        && y < stru_5CC048.y + stru_5CC048.height) {
+        sub_5493C0(byte_684688, 23);
+    }
 }
 
 // 0x581F10

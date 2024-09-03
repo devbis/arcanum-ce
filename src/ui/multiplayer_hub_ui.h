@@ -6,5 +6,6 @@ void sub_581910(TigRect* rect);
 bool sub_5819D0(int a1);
 void sub_581A60();
 void sub_581A80();
+void sub_581E60(int x, int y);
 
 #endif /* ARCANUM_UI_MULTIPLAYER_HUB_UI_H_ */
