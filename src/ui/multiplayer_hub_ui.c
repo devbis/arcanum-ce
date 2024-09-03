@@ -82,7 +82,9 @@ bool sub_5819D0(int a1)
 // 0x581A60
 void sub_581A60()
 {
-    // TODO: Incomplete.
+    sub_549830(24);
+    sub_546330();
+    sub_581B10(NULL);
 }
 
 // 0x581A80
