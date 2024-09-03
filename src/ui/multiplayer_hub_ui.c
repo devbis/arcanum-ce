@@ -10,6 +10,10 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static bool sub_582D10(const char* str);
+static bool sub_582D20(const char* a, const char* b);
+static const char* sub_582D40(const char* str);
+static const char* sub_582D50(const char* str);
 static void sub_582D60(TigRect* rect);
 static void sub_5830F0();
 static void sub_5837A0(TigRect* rect);
@@ -334,27 +338,27 @@ void sub_582AD0()
 }
 
 // 0x582D10
-void sub_582D10()
+bool sub_582D10(const char* str)
 {
-    // TODO: Incomplete.
+    return str == NULL;
 }
 
 // 0x582D20
-void sub_582D20()
+bool sub_582D20(const char* a, const char* b)
 {
-    // TODO: Incomplete.
+    return strcmpi(a, b) == 0;
 }
 
 // 0x582D40
-void sub_582D40()
+const char* sub_582D40(const char* str)
 {
-    // TODO: Incomplete.
+    return str;
 }
 
 // 0x582D50
-void sub_582D50()
+const char* sub_582D50(const char* str)
 {
-    // TODO: Incomplete.
+    return str;
 }
 
 // 0x582D60
