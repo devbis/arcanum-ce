@@ -8,6 +8,11 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static const char* sub_584A40(int value);
+static const char* sub_584A80();
+static const char* sub_584A90();
+static void sub_584AA0(const char* str)
+static void sub_584AC0(const char* str);
 static void sub_584C30(TigRect* rect);
 static void sub_585970(char* buffer);
 static void sub_585A20();
@@ -37,6 +42,18 @@ static TigRect stru_5CC038 = { 69, 274, 183, 18 };
 
 // 0x5CC048
 static TigRect stru_5CC048 = { 69, 365, 183, 108 };
+
+// 0x68653C
+static char won_account[128];
+
+// 0x6865BC
+static char char won_password[128];
+
+// 0x68663C
+static char byte_68663C[128];
+
+// 0x6866BC
+static char byte_6866BC[128];
 
 // 0x6862D8
 static mes_file_handle_t dword_6862D8;
@@ -472,33 +489,41 @@ void sub_5847D0()
 }
 
 // 0x584A40
-void sub_584A40()
+const char* sub_584A40(int value)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+
+    if (value == 0) {
+        return NULL;
+    }
+
+    mes_file_entry.num = value + 2010;
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    return mes_file_entry.str;
 }
 
 // 0x584A80
-void sub_584A80()
+const char* sub_584A80()
 {
-    // TODO: Incomplete.
+    return won_account;
 }
 
 // 0x584A90
-void sub_584A90()
+const char* sub_584A90()
 {
-    // TODO: Incomplete.
+    return won_password;
 }
 
 // 0x584AA0
-void sub_584AA0()
+void sub_584AA0(const char* str)
 {
-    // TODO: Incomplete.
+    strncpy(won_account, str, sizeof(won_account));
 }
 
 // 0x584AC0
-void sub_584AC0()
+void sub_584AC0(const char* str)
 {
-    // TODO: Incomplete.
+    strncpy(won_password, str, sizeof(won_password));
 }
 
 // 0x584AE0
