@@ -8,6 +8,7 @@ void sub_581A60();
 void sub_581A80();
 void sub_581E60(int x, int y);
 void sub_581F10();
+void sub_582510(const char* name);
 void sub_5825B0(const char* name);
 void sub_582650(const char* a1, const char* a2);
 void sub_582670(const char* a1, const char* a2);

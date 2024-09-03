@@ -268,9 +268,28 @@ void sub_5824C0()
 }
 
 // 0x582510
-void sub_582510()
+void sub_582510(const char* name)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    char str[80];
+
+    mes_file_entry.num = 10054; // "%s has entered the room."
+    mes_get_msg(sub_549840(), &mes_file_entry);
+
+    snprintf(str, sizeof(str), mes_file_entry.str, name);
+    sub_5826D0(NULL, 9, str);
+    sub_582AD0(NULL);
+
+    if (dword_6862DC != NULL) {
+        sub_4A5040(dword_6862DC);
+    }
+
+    if (!sub_4A5020(&dword_6862DC, (int)&dword_6862E0)
+        && sub_5499B0(dword_6861DC)) {
+        dword_6862DC = NULL;
+    }
+
+    sub_582860(NULL);
 }
 
 // 0x5825B0
