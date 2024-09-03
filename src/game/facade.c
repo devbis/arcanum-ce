@@ -81,7 +81,7 @@ void sub_4C9E00(ViewOptions* view_options)
 }
 
 // 0x4C9E70
-void sub_4C9E70()
+void sub_4C9E70(UnknownContext* info)
 {
     // TODO: Incomplete.
 }
