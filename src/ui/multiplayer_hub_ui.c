@@ -1,5 +1,21 @@
 #include "ui/multiplayer_hub_ui.h"
 
+#include "game/mes.h"
+#include "ui/scrollbar_ui.h"
+#include "ui/textedit_ui.h"
+
+// 0x6862D8
+static mes_file_handle_t dword_6862D8;
+
+// 0x6861E0
+static TextEdit stru_6861E0;
+
+// 0x686248
+static ScrollbarId stru_686248;
+
+// 0x6862D0
+static ScrollbarId stru_6862D0;
+
 // 0x581700
 void multiplayer_hub_ui_init()
 {
@@ -9,7 +25,12 @@ void multiplayer_hub_ui_init()
 // 0x5818C0
 void multiplayer_hub_ui_exit()
 {
-    // TODO: Incomplete.
+    mes_unload(dword_6862D8);
+    scrollbar_ui_control_destroy(stru_686248);
+    scrollbar_ui_control_destroy(stru_6862D0);
+    textedit_ui_unfocus(&stru_6861E0);
+    stru_6861E0.buffer = NULL;
+    sub_581F80();
 }
 
 // 0x581910
