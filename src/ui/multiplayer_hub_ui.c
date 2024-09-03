@@ -7,6 +7,9 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static void sub_585A20();
+static void sub_585BA0();
+static void sub_585BB0();
 
 // 0x5CBFD8
 static TigRect stru_5CBFD8 = { 37, 188, 246, 368 };
@@ -540,17 +543,65 @@ void sub_585970()
 // 0x585A20
 void sub_585A20()
 {
-    // TODO: Incomplete.
+    int value;
+    int min_level;
+    int max_level;
+
+    if (dword_686960) {
+        if (stru_5CC6B0.buffer[0] == '\0') {
+            strcpy(stru_5CC6B0.buffer, byte_6867A8);
+        }
+
+        dword_686960 = false;
+        textedit_ui_unfocus(&stru_5CC6B0);
+
+        switch (dword_5CC6AC) {
+        case 2300:
+            tig_net_local_server_set_name(byte_686948);
+            break;
+        case 2303:
+            value = atoi(byte_686948);
+            tig_net_local_server_set_max_players(value);
+            break;
+        case 2305:
+            value = atoi(byte_686948);
+            tig_net_local_server_get_level_range(NULL, max_level);
+            if (value >= 0) {
+                tig_net_local_server_set_level_range(value, max_level);
+            }
+            break;
+        case 2306:
+            value = atoi(byte_686948);
+            tig_net_local_server_get_level_range(&min_level, NULL);
+            if (value > 0) {
+                tig_net_local_server_set_level_range(min_level, value);
+            }
+            break;
+        case 2307:
+            tig_net_local_server_set_password(byte_686948);
+            break;
+        case 2309:
+            value = atoi(byte_686948);
+            if (value >= tig_net_local_server_get_max_players()) {
+                sub_4A5600(value);
+            }
+            break;
+        }
+
+        dword_5CC6AC = -1;
+        sub_584CB0(NULL);
+        sub_549A50();
+    }
 }
 
 // 0x585BA0
 void sub_585BA0()
 {
-    // TODO: Incomplete.
+    sub_585A20();
 }
 
 // 0x585BB0
 void sub_585BB0()
 {
-    // TODO: Incomplete.
+    sub_584CB0(NULL);
 }
