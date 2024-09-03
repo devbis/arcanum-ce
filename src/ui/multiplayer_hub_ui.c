@@ -88,9 +88,8 @@ void sub_581A60()
 }
 
 // 0x581A80
-void nullsub_71()
+void sub_581A80()
 {
-    // TODO: Incomplete.
 }
 
 // 0x581A90
