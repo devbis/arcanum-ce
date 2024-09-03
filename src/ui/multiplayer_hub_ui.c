@@ -1,5 +1,6 @@
 #include "ui/multiplayer_hub_ui.h"
 
+#include "game/gamelib.h"
 #include "game/mes.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/textedit_ui.h"
@@ -51,6 +52,12 @@ static ScrollbarId stru_6862D0;
 
 // 0x6862DC
 static void* dword_6862DC;
+
+// 0x686740
+static GameModuleList stru_686740;
+
+// 0x686964
+static int dword_686964;
 
 // 0x581700
 void multiplayer_hub_ui_init()
@@ -503,7 +510,10 @@ void sub_584AE0()
 // 0x584C00
 void sub_584C00()
 {
-    // TODO: Incomplete.
+    mes_unload(dword_5CC5F0);
+    gamelib_modlist_destroy(&stru_686740);
+    stru_686740.names = NULL;
+    dword_686964 = 0;
 }
 
 // 0x584C30
