@@ -8,6 +8,7 @@
 static void sub_582E50(TigRect* rect);
 static void sub_581F80();
 static void sub_581FC0(TextEdit* textedit);
+static void sub_5830F0();
 static void sub_5837A0(TigRect* rect);
 static const char* sub_584A40(int value);
 static const char* sub_584A80();
@@ -378,7 +379,16 @@ void sub_582E80()
 // 0x5830F0
 void sub_5830F0()
 {
-    // TODO: Incomplete.
+    if (dword_6862DC != NULL) {
+        sub_4A5040(dword_6862DC);
+        dword_6862DC = NULL;
+    }
+
+    if (sub_4A5020(&dword_6862DC, &dword_6862E0)) {
+        if (sub_5496D0() == 23) {
+            sub_582860(NULL);
+        }
+    }
 }
 
 // 0x583140
