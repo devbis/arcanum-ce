@@ -36,9 +36,11 @@ void multiplayer_hub_ui_exit()
 }
 
 // 0x581910
-void sub_581910()
+void sub_581910(TigRect* rect)
 {
-    // TODO: Incomplete.
+    sub_582E50(rect);
+    sub_5806F0(stru_686248);
+    sub_5806F0(stru_6862D0);
 }
 
 // 0x581950
