@@ -5,6 +5,8 @@
 #include "ui/textedit_ui.h"
 
 static void sub_582E50(TigRect* rect);
+static void sub_581F80();
+static void sub_581FC0(TextEdit* textedit);
 
 // 0x5CBFD8
 static TigRect stru_5CBFD8 = { 37, 188, 246, 368 };
@@ -169,27 +171,42 @@ void sub_581F30()
 }
 
 // 0x581F80
-void nullsub_70()
+void sub_581F80()
 {
-    // TODO: Incomplete.
 }
 
 // 0x581F90
-void sub_581F90()
+void sub_581F90(int a1)
 {
-    // TODO: Incomplete.
+    dword_5CBF80 = a1;
+    sub_582AD0(NULL);
 }
 
 // 0x581FB0
 void sub_581FB0()
 {
-    // TODO: Incomplete.
+    sub_582D60(NULL);
 }
 
 // 0x581FC0
-void sub_581FC0()
+void sub_581FC0(TextEdit* textedit)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+
+    if (byte_6861F8[0] == '\0') {
+        sub_5826D0(NULL, 3, NULL);
+    } else if (!sub_4A50C0(byte_6861F8)) {
+        if (byte_6861F8[0] == '/') {
+            sub_582060(&(byte_6861F8[1]));
+        } else {
+            mes_file_entry.num = 10053;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            sub_5826D0(NULL, 2, mes_file_entry.str)
+        }
+    }
+
+    sub_582AD0(NULL);
+    sub_5672A0();
 }
 
 // 0x582060
