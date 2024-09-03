@@ -504,7 +504,39 @@ void sub_584AC0()
 // 0x584AE0
 void sub_584AE0()
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    char name[80];
+
+    dword_686960 = false;
+    memset(byte_68674C, 0, sizeof(byte_68674C));
+    sub_549830(18);
+
+    if (!mes_load("mes\\multiplayer.mes", &dword_5CC5F0)) {
+        tig_debug_printf("ServerList_UI: init: ERROR could not load '%s'. Aborting init.\n", "mes\\multiplayer.mes");
+        exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
+    }
+
+    stru_6867A0.num = 3000;
+    mes_get_msg(dword_5CC5F0, &stru_6867A0);
+
+    mes_file_entry.num = 2333;
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    strncpy(byte_6868F8, mes_file_entry.str, sizeof(byte_6868F8));
+
+    tig_net_local_server_clear_password();
+    gamelib_modlist_create(&stru_686740, 1);
+    dword_686964 = 0;
+
+    tig_net_local_server_get_name(name, sizeof(name));
+    mainmenu_ui_create_window_func(false);
+    if (sub_4A4ED0()) {
+        tig_button_show(stru_5CC6C8[2].field_C);
+    } else {
+        tig_button_hide(stru_5CC6C8[2].field_C);
+    }
+    tig_net_local_server_set_name(name);
+    sub_549990(dword_5994AC, 3);
+    sub_584CB0(NULL);
 }
 
 // 0x584C00

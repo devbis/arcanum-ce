@@ -8,6 +8,7 @@ void sub_581A60();
 void sub_581A80();
 void sub_581E60(int x, int y);
 void sub_581F10();
+void sub_584AE0();
 void sub_584C00();
 
 #endif /* ARCANUM_UI_MULTIPLAYER_HUB_UI_H_ */
