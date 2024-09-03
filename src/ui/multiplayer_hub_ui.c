@@ -453,9 +453,39 @@ void sub_583B10()
 }
 
 // 0x583B20
-void sub_583B20()
+void sub_583B20(int x, int y)
 {
-    // TODO: Incomplete.
+    MainMenuWindowInfo* window_info;
+
+    window_info = sub_5496C0(sub_5496D0());
+    x += window_info->field_5C.x;
+    y += window_info->field_5C.y;
+
+    if (x >= stru_5CC470.x
+        && y >= stru_5CC470.y
+        && x < stru_5CC470.x + stru_5CC470.width
+        && y < stru_5CC470.y + stru_5CC470.height) {
+        dword_68673C = 0;
+        sub_5493C0(won_account, 128);
+    } else if (x >= stru_5CC480.x
+        && y >= stru_5CC480.y
+        && x < stru_5CC480.x + stru_5CC480.width
+        && y < stru_5CC480.y + stru_5CC480.height) {
+        dword_68673C = 0;
+        sub_5493C0(won_password, 128);
+    } else if (x >= stru_5CC490.x
+        && y >= stru_5CC490.y
+        && x < stru_5CC490.x + stru_5CC490.width
+        && y < stru_5CC490.y + stru_5CC490.height) {
+        dword_68673C = 0;
+        sub_5493C0(byte_68663C, 128);
+    } else if (x >= stru_5CC4A0.x
+        && y >= stru_5CC4A0.y
+        && x < stru_5CC4A0.x + stru_5CC4A0.width
+        && y < stru_5CC4A0.y + stru_5CC4A0.height) {
+        dword_68673C = 0;
+        sub_5493C0(byte_6866BC, 128);
+    }
 }
 
 // 0x583C80
