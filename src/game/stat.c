@@ -518,9 +518,13 @@ int stat_get_base(object_id_t obj, int stat)
 }
 
 // 0x4B0980
-int stat_set_base(object_id_t obj, int stat)
+int stat_set_base(object_id_t obj, int stat, int value)
 {
     // TODO: Incomplete.
+    (void)obj;
+    (void)stat;
+
+    return value;
 }
 
 // 0x4B0EE0
