@@ -391,7 +391,8 @@ void sub_54AF10()
 // 0x54B3A0
 void sub_54B3A0()
 {
-    // TODO: Incomplete.
+    sub_54AEE0(0);
+    sub_54AEE0(1);
 }
 
 // 0x54B3C0
