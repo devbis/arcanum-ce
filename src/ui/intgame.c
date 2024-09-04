@@ -1,5 +1,31 @@
 #include "ui/intgame.h"
 
+#include "game/mes.h"
+
+// 0x64C470
+static tig_font_handle_t dword_64C470;
+
+// 0x64C498
+static tig_font_handle_t dword_64C498;
+
+// 0x64C49C
+static tig_font_handle_t dword_64C49C;
+
+// 0x64C4A0
+static tig_font_handle_t dword_64C4A0;
+
+// 0x64C500
+static tig_font_handle_t dword_64C500;
+
+// 0x64C504
+static mes_file_handle_t intgame_mes_file;
+
+// 0x64C538
+static tig_font_handle_t dword_64C538;
+
+// 0x739F88
+static tig_font_handle_t dword_739F88;
+
 // 0x549B70
 void intgame_init()
 {
@@ -21,7 +47,15 @@ void intgame_resize()
 // 0x54A130
 void intgame_exit()
 {
-    // TODO: Incomplete.
+    tig_font_destroy(dword_739F88);
+    tig_font_destroy(dword_64C470);
+    tig_font_destroy(dword_64C538);
+    tig_font_destroy(dword_64C498);
+    tig_font_destroy(dword_64C49C);
+    tig_font_destroy(dword_64C500);
+    tig_font_destroy(dword_64C4A0);
+    intgame_big_window_destroy();
+    mes_unload(intgame_mes_file);
 }
 
 // 0x54A1A0
