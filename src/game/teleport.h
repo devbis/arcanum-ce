@@ -1,8 +1,8 @@
-#ifndef ARCANUM_GAME_LIB_TELEPORT_H_
-#define ARCANUM_GAME_LIB_TELEPORT_H_
+#ifndef ARCANUM_GAME_TELEPORT_H_
+#define ARCANUM_GAME_TELEPORT_H_
 
 #include "game/context.h"
-#include "game/lib/gfade.h"
+#include "game/gfade.h"
 
 #define TELEPORT_FLAG_0x00000002 0x00000002
 #define TELEPORT_FLAG_0x00000020 0x00000020
@@ -28,14 +28,16 @@ typedef struct TeleportData {
     int field_54;
     int field_58;
     int field_5C;
-};
+} TeleportData;
 
 // See 0x4D3380.
 static_assert(sizeof(TeleportData) == 0x60, "wrong size");
 
-bool teleport_init(GameContext* ctx);
+bool teleport_init(GameInitInfo* init_info);
 bool teleport_reset();
 void teleport_exit();
 void teleport_ping();
+bool sub_4D3380(TeleportData* teleport_data);
+bool sub_4D3410();
 
-#endif /* ARCANUM_GAME_LIB_TELEPORT_H_ */
+#endif /* ARCANUM_GAME_TELEPORT_H_ */

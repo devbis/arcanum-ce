@@ -1,18 +1,24 @@
-#include "game/lib/teleport.h"
+#include "game/teleport.h"
 
-#include "game/lib/player.h"
+#include "game/player.h"
 
 typedef struct S6018B8 {
     int field_0;
     int field_4;
     int field_8;
     int field_C;
-    S6018B8* next;
+    struct S6018B8* next;
     int field_14;
-};
+} S6018B8;
 
 // See 0x4D3F00.
 static_assert(sizeof(S6018B8) == 0x18, "wrong size");
+
+static void sub_4D3E80();
+static S6018B8* sub_4D3EB0();
+static void sub_4D3EE0(S6018B8* node);
+static void sub_4D3F00();
+static void sub_4D3F30();
 
 // 0x601840
 static S6018B8* dword_601840;
@@ -36,11 +42,12 @@ static TeleportData stru_601858;
 static S6018B8* off_6018B8;
 
 // 0x4D32D0
-bool teleport_init(GameContext* ctx)
+bool teleport_init(GameInitInfo* init_info)
 {
-    dword_601848 = ctx->field_8;
-    dword_601850 = ctx->field_C;
+    dword_601848 = init_info->field_8;
+    dword_601850 = init_info->field_C;
     dword_601844 = false;
+
     return true;
 }
 
@@ -68,7 +75,8 @@ void teleport_ping()
 
         dword_601844 = false;
 
-        if ((stru_601858.flags & TELEPORT_FLAG_0x80000000) != 0 && (stru_601858.flags & TELEPORT_FLAG_0x00000020) != 0) {
+        if ((stru_601858.flags & TELEPORT_FLAG_0x80000000) != 0
+            && (stru_601858.flags & TELEPORT_FLAG_0x00000020) != 0) {
             sub_402FA0();
         }
     }
@@ -111,8 +119,10 @@ bool sub_4D3410()
 // 0x4D3E80
 void sub_4D3E80()
 {
+    S6018B8* next;
+
     while (dword_601840 != NULL) {
-        S6018B8* next = dword_601840->next;
+        next = dword_601840->next;
         sub_4D3EE0(dword_601840);
         dword_601840 = next;
     }
@@ -121,7 +131,9 @@ void sub_4D3E80()
 // 0x4D3EB0
 S6018B8* sub_4D3EB0()
 {
-    S6018B8* node = off_6018B8;
+    S6018B8* node;
+
+    node = off_6018B8;
     if (node == NULL) {
         sub_4D3F00();
         node = off_6018B8;
@@ -143,9 +155,12 @@ void sub_4D3EE0(S6018B8* node)
 // 0x4D3F00
 void sub_4D3F00()
 {
+    int index;
+    S6018B8* node;
+
     if (off_6018B8 == NULL) {
-        for (int index = 0; index < 32; index++) {
-            S6018B8* node = (S6018B8*)malloc(sizeof(*node));
+        for (index = 0; index < 32; index++) {
+            node = (S6018B8*)MALLOC(sizeof(*node));
             node->next = off_6018B8;
             off_6018B8 = node;
         }
@@ -155,10 +170,13 @@ void sub_4D3F00()
 // 0x4D3F30
 void sub_4D3F30()
 {
-    S6018B8* curr = off_6018B8;
+    S6018B8* curr;
+    S6018B8* next;
+
+    curr = off_6018B8;
     while (curr != NULL) {
-        S6018B8* next = curr->next;
-        free(curr);
+        next = curr->next;
+        FREE(curr);
         curr = next;
     }
     off_6018B8 = NULL;
