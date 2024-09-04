@@ -2,8 +2,20 @@
 
 #include "game/mes.h"
 
+// 0x5C6524
+static int dword_5C6524[5] = {
+    169,
+    187,
+    193,
+    194,
+    186,
+};
+
 // 0x64C470
 static tig_font_handle_t dword_64C470;
+
+// 0x64C484
+static int dword_64C484[5];
 
 // 0x64C498
 static tig_font_handle_t dword_64C498;
@@ -17,25 +29,107 @@ static tig_font_handle_t dword_64C4A0;
 // 0x64C500
 static tig_font_handle_t dword_64C500;
 
+// 0x64C534
+static int dword_64C534;
+
 // 0x64C504
 static mes_file_handle_t intgame_mes_file;
 
 // 0x64C538
 static tig_font_handle_t dword_64C538;
 
+// 0x64C674
+static int dword_64C674;
+
+// 0x64C6D8
+static int dword_64C6D8;
+
 // 0x739F88
 static tig_font_handle_t dword_739F88;
 
 // 0x549B70
-void intgame_init()
+bool intgame_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    TigFont font;
+
+    (void)init_info;
+
+    if (!mes_load("mes\\intgame.mes", &intgame_mes_file)) {
+        return false;
+    }
+
+    if (!intgame_big_window_create()) {
+        mes_unload(intgame_mes_file);
+        return false;
+    }
+
+    font.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(255, 255, 255);
+    tig_font_create_(&font, &dword_739F88);
+
+    font.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(100, 100, 255);
+    tig_font_create_(&font, &dword_64C470);
+
+    font.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(255, 114, 0);
+    tig_font_create_(&font, &dword_64C538);
+
+    font.flags = 0;
+    tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(255, 255, 255);
+    tig_font_create_(&font, &dword_64C498);
+
+    font.flags = 0;
+    tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(255, 0, 0);
+    tig_font_create_(&font, &dword_64C49C);
+
+    font.flags = 0;
+    tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(0, 0, 255);
+    tig_font_create_(&font, &dword_64C500);
+
+    font.flags = 0;
+    tig_art_interface_id_create(230, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(255, 255, 255);
+    tig_font_create_(&font, &dword_64C4A0);
+
+    memcpy(dword_64C484, dword_5C6524, sizeof(dword_64C484));
+    dword_64C534 = 2;
+    dword_64C674 = -1;
+
+    return true;
 }
 
 // 0x549F00
 void intgame_reset()
 {
-    // TODO: Incomplete.
+    int index;
+
+    dword_64C6D8 = 0;
+    sub_553990();
+    sub_57DAB0();
+    intgame_clock_process_callback();
+    sub_552130(0);
+
+    for (index = 0; index < 10; index++) {
+        sub_57F210(index);
+    }
+
+    dword_64C534 = 2;
+    memcpy(dword_64C484, dword_5C6524, sizeof(dword_64C484));
+    sub_54AA30();
 }
 
 // 0x549F60
