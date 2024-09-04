@@ -95,6 +95,9 @@ static int dword_64C6AC;
 // 0x64C6B4
 static bool dword_64C6B4;
 
+// 0x64C6D4
+static void(*dword_64C6D4)(int);
+
 // 0x64C6D8
 static int dword_64C6D8;
 
@@ -568,7 +571,13 @@ void sub_5506C0(int a1)
 // 0x550720
 void sub_550720()
 {
-    // TODO: Incomplete.
+    if (dword_64C6B4 && dword_64C6A8 == 0) {
+        if (dword_64C6D4 != NULL) {
+            dword_64C6D4(0);
+        } else {
+            sub_550930();
+        }
+    }
 }
 
 // 0x550750

@@ -17,5 +17,6 @@ bool sub_54AAE0(UiButtonInfo* button_info);
 void sub_54AEE0(int a1);
 void sub_54B3A0();
 void sub_5506C0(int a1);
+void sub_550720();
 
 #endif /* ARCANUM_UI_INTGAME_H_ */
