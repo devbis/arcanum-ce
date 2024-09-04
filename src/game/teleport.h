@@ -39,5 +39,6 @@ void teleport_exit();
 void teleport_ping();
 bool sub_4D3380(TeleportData* teleport_data);
 bool sub_4D3410();
+bool sub_4D3420(int64_t obj);
 
 #endif /* ARCANUM_GAME_TELEPORT_H_ */

@@ -116,6 +116,22 @@ bool sub_4D3410()
     return dword_60184C;
 }
 
+// 0x4D3420
+bool sub_4D3420(int64_t obj)
+{
+    S6018B8* node;
+
+    node = dword_601840;
+    while (node != NULL) {
+        if (node->field_8 == obj) {
+            return true;
+        }
+        node = node->next;
+    }
+
+    return false;
+}
+
 // 0x4D3E80
 void sub_4D3E80()
 {
