@@ -1,6 +1,8 @@
 #include "ui/intgame.h"
 
 #include "game/mes.h"
+#include "game/obj.h"
+#include "game/stat.h"
 
 // 0x5C6524
 static int dword_5C6524[5] = {
@@ -165,16 +167,46 @@ bool intgame_save(TigFile* stream)
     if (tig_file_fwrite(&dword_64C6A8, sizeof(dword_64C6A8), 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_64C530, sizeof(dword_64C530), 1, stream) != 1) return false;
     if (!sub_57DB40(stream)) return false;
-    if (tig_file_fwrite(dword_64C484, sizeof(*dword_64C484), 5, stream) != 1) return false;
+    if (tig_file_fwrite(dword_64C484, sizeof(*dword_64C484), 5, stream) != 5) return false;
     if (tig_file_fwrite(&dword_64C534, sizeof(dword_64C534), 1, stream) != 1) return false;
 
     return true;
 }
 
 // 0x54A220
-void intgame_load()
+bool intgame_load(GameLoadInfo* load_info)
 {
-    // TODO: Incomplete.
+    int v1;
+    int index;
+    int64_t obj;
+
+    if (load_info->stream == NULL) return false;
+    if (tig_file_fread(&v1, sizeof(v1), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&dword_64C530, sizeof(dword_64C530), 1, load_info->stream) != 1) return false;
+
+    if (dword_64C6A8 == 1) {
+        tig_button_state_change(stru_5C6618[dword_64C530].button_handle, TIG_BUTTON_STATE_PRESSED);
+    }
+
+    if (!sub_57DBA0(load_info)) return false;
+    if (tig_file_fread(dword_64C484, sizeof(*dword_64C484), 5, load_info->stream) != 5) return false;
+    if (tig_file_fread(&dword_64C534, sizeof(dword_64C534), 1, load_info->stream) != 1) return false;
+
+    for (index = 0; index < 5; index++) {
+        sub_556B90(index);
+    }
+
+    sub_54B3C0();
+    sub_553990();
+    sub_556EF0();
+
+    obj = player_get_pc_obj();
+    if (obj != OBJ_HANDLE_NULL) {
+        sub_556C20(obj);
+        sub_54AD00(2, stat_level(obj, STAT_FATE_POINTS), 2);
+    }
+
+    return true;
 }
 
 // 0x54A330
