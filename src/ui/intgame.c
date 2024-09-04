@@ -4,6 +4,15 @@
 #include "game/obj.h"
 #include "game/stat.h"
 
+// 0x5C6378
+static tig_window_handle_t dword_5C6378[5] = {
+    TIG_WINDOW_HANDLE_INVALID,
+    TIG_WINDOW_HANDLE_INVALID,
+    TIG_WINDOW_HANDLE_INVALID,
+    TIG_WINDOW_HANDLE_INVALID,
+    TIG_WINDOW_HANDLE_INVALID,
+};
+
 // 0x5C6524
 static int dword_5C6524[5] = {
     169,
@@ -15,6 +24,9 @@ static int dword_5C6524[5] = {
 
 // 0x64C470
 static tig_font_handle_t dword_64C470;
+
+// 0x64C474
+static TigVideoBuffer* dword_64C474;
 
 // 0x64C484
 static int dword_64C484[5];
@@ -28,8 +40,14 @@ static tig_font_handle_t dword_64C49C;
 // 0x64C4A0
 static tig_font_handle_t dword_64C4A0;
 
+// 0x64C4F8
+static tig_window_handle_t dword_64C4F8[2];
+
 // 0x64C500
 static tig_font_handle_t dword_64C500;
+
+// 0x64C504
+static mes_file_handle_t intgame_mes_file;
 
 // 0x64C530
 static int dword_64C530;
@@ -37,17 +55,20 @@ static int dword_64C530;
 // 0x64C534
 static int dword_64C534;
 
-// 0x64C504
-static mes_file_handle_t intgame_mes_file;
-
 // 0x64C538
 static tig_font_handle_t dword_64C538;
+
+// 0x64C670
+static tig_font_handle_t dword_64C670;
 
 // 0x64C674
 static int dword_64C674;
 
 // 0x64C6A8
 static int dword_64C6A8;
+
+// 0x64C6B4
+static bool dword_64C6B4;
 
 // 0x64C6D8
 static int dword_64C6D8;
@@ -210,7 +231,7 @@ bool intgame_load(GameLoadInfo* load_info)
 }
 
 // 0x54A330
-void iso_interface_create()
+bool iso_interface_create(tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
@@ -218,7 +239,28 @@ void iso_interface_create()
 // 0x54A9A0
 void iso_interface_destroy()
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (dword_64C6B4) {
+        for (index = 0; index < 2; index++) {
+            tig_window_destroy(dword_64C4F8[index]);
+        }
+
+        tig_font_destroy(dword_64C670);
+
+        for (index = 0; index < 10; index++) {
+            FREE(stru_64C540[index].field_4);
+        }
+
+        for (index = 0; index < 5; index++) {
+            if (dword_5C6378[index] != TIG_WINDOW_HANDLE_INVALID) {
+                tig_window_destroy(dword_5C6378[index]);
+                dword_5C6378[index] = TIG_WINDOW_HANDLE_INVALID;
+            }
+        }
+    }
+
+    tig_video_buffer_destroy(dword_64C474);
 }
 
 // 0x54AA30
