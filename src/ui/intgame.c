@@ -6,6 +6,7 @@
 
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
+static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 
 // 0x5C6378
 static tig_window_handle_t dword_5C6378[5] = {
@@ -27,6 +28,9 @@ static TigRect stru_5C63D8 = { 14, 472, 28, 88 };
 
 // 0x5C63E8
 static TigRect stru_5C63E8 = { 754, 473, 28, 88 };
+
+// 0x5C6470
+static TigRect stru_5C6470 = { 61, 509, 251, -1 };
 
 // 0x5C6524
 static int dword_5C6524[5] = {
@@ -402,9 +406,37 @@ void sub_54B3C0()
 }
 
 // 0x54B500
-void intgame_ammo_icon_refresh()
+void intgame_ammo_icon_refresh(tig_art_id_t art_id)
 {
-    // TODO: Incomplete.
+    int index;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigArtFrameData art_frame_data;
+    TigArtBlitSpec blt;
+
+    index = sub_551740(stru_5C6470.x, stru_5C6470.y);
+    if (index == -1) {
+        tig_debug_printf("intgame_ammo_icon_refresh: ERROR: couldn't find iwid match!\n");
+        exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
+    }
+
+    blt.art_id = art_id;
+    tig_art_frame_data(art_id, &art_frame_data);
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = stru_5C6470.x - stru_5C6390[index].x;
+    dst_rect.y = stru_5C6470.y - stru_5C6390[index].y;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    blt.flags = 0;
+    blt.src_rect = &src_rect;
+    blt.dst_rect = &dst_rect;
+    tig_window_blit_art(dword_64C4F8[index], &blt);
 }
 
 // 0x54B5D0
