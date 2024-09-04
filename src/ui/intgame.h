@@ -1,0 +1,4 @@
+#ifndef ARCANUM_UI_INTGAME_H_
+#define ARCANUM_UI_INTGAME_H_
+
+#endif /* ARCANUM_UI_INTGAME_H_ */
