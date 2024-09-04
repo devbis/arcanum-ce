@@ -6,5 +6,6 @@
 bool intgame_init(GameInitInfo* init_info);
 void intgame_reset();
 void intgame_exit();
+bool intgame_save(TigFile* stream);
 
 #endif /* ARCANUM_UI_INTGAME_H_ */

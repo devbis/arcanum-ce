@@ -29,6 +29,9 @@ static tig_font_handle_t dword_64C4A0;
 // 0x64C500
 static tig_font_handle_t dword_64C500;
 
+// 0x64C530
+static int dword_64C530;
+
 // 0x64C534
 static int dword_64C534;
 
@@ -40,6 +43,9 @@ static tig_font_handle_t dword_64C538;
 
 // 0x64C674
 static int dword_64C674;
+
+// 0x64C6A8
+static int dword_64C6A8;
 
 // 0x64C6D8
 static int dword_64C6D8;
@@ -153,9 +159,16 @@ void intgame_exit()
 }
 
 // 0x54A1A0
-void intgame_save()
+bool intgame_save(TigFile* stream)
 {
-    // TODO: Incomplete.
+    if (stream == NULL) return false;
+    if (tig_file_fwrite(&dword_64C6A8, sizeof(dword_64C6A8), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_64C530, sizeof(dword_64C530), 1, stream) != 1) return false;
+    if (!sub_57DB40(stream)) return false;
+    if (tig_file_fwrite(dword_64C484, sizeof(*dword_64C484), 5, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_64C534, sizeof(dword_64C534), 1, stream) != 1) return false;
+
+    return true;
 }
 
 // 0x54A220
