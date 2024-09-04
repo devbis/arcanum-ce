@@ -1,20 +1,20 @@
 #include "game/teleport.h"
 
 #include "game/combat.h"
+#include "game/map.h"
 #include "game/player.h"
 
 typedef struct S6018B8 {
     int field_0;
     int field_4;
-    int field_8;
-    int field_C;
+    int64_t obj;
     struct S6018B8* next;
-    int field_14;
 } S6018B8;
 
 // See 0x4D3F00.
 static_assert(sizeof(S6018B8) == 0x18, "wrong size");
 
+static bool sub_4D39A0(TeleportData* teleport_data);
 static void sub_4D3D60(int64_t obj);
 static void sub_4D3E20(int64_t obj);
 static void sub_4D3E80();
@@ -126,13 +126,99 @@ bool sub_4D3420(int64_t obj)
 
     node = dword_601840;
     while (node != NULL) {
-        if (node->field_8 == obj) {
+        if (node->obj == obj) {
             return true;
         }
         node = node->next;
     }
 
     return false;
+}
+
+// 0x4D39A0
+bool sub_4D39A0(TeleportData* teleport_data)
+{
+    int curr_map;
+    char* curr_map_name;
+    char curr_map_path[TIG_MAX_PATH];
+    char* dst_map_name;
+    char dst_map_path[TIG_MAX_PATH];
+    S6018B8* node;
+    unsigned int flags;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+
+    curr_map = sub_40FF40();
+    if (curr_map != teleport_data->map) {
+        if (!map_get_name(curr_map, &curr_map_name)) {
+            return false;
+        }
+
+        strcpy(curr_map_path, "Save\\Current");
+        strcat(curr_map_path, "\\maps\\");
+        strcat(curr_map_path, curr_map_name);
+
+        if (!map_get_name(teleport_data->map, &dst_map_name)) {
+            return false;
+        }
+
+        strcpy(dst_map_path, "Save\\Current");
+        strcat(dst_map_path, "\\maps\\");
+        strcat(dst_map_path, dst_map_name);
+        tig_file_mkdir_ex(dst_map_path);
+
+        node = dword_601840;
+        while (node != NULL) {
+            sub_4D3E20(node->obj);
+            node = node->next;
+        }
+
+        node = dword_601840;
+        while (node != NULL) {
+            sub_4064B0(node->obj);
+            node = node->next;
+        }
+
+        node = dword_601840;
+        while (node != NULL) {
+            flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
+            flags |= OF_DYNAMIC;
+            flags |= OF_TELEPORTED;
+            obj_field_int32_set(node->obj, OBJ_F_FLAGS, flags);
+            obj_field_int64_set(node->obj, OBJ_F_LOCATION, teleport_data->field_10);
+            obj_field_int32_set(node->obj, OBJ_F_OFFSET_X, 0);
+            obj_field_int32_set(node->obj, OBJ_F_OFFSET_Y, 0);
+
+            sprintf(path, "%s\\mobile.mdy", dst_map_path);
+            stream = tig_file_fopen(path, "ab");
+            if (stream == NULL) {
+                return false;
+            }
+
+            if (!obj_write(stream, node->obj)) {
+                // FIXME: Leaking file.
+                return false;
+            }
+
+            tig_file_fclose(stream);
+            flags &= ~OF_DYNAMIC;
+            flags &= ~OF_TELEPORTED;
+            flags |= OF_DESTROYED;
+            flags |= OF_EXTINCT;
+            obj_field_int32_set(node->obj, OBJ_F_FLAGS, flags);
+
+            node = node->next;
+        }
+
+        node = dword_601840;
+        while (node != NULL) {
+            sub_406520(node->obj);
+            node = node->next;
+        }
+
+        sub_4D3E80();
+        return true;
+    }
 }
 
 // 0x4D3D60
