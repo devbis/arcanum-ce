@@ -1,5 +1,6 @@
 #include "game/teleport.h"
 
+#include "game/combat.h"
 #include "game/player.h"
 
 typedef struct S6018B8 {
@@ -14,6 +15,7 @@ typedef struct S6018B8 {
 // See 0x4D3F00.
 static_assert(sizeof(S6018B8) == 0x18, "wrong size");
 
+static void sub_4D3E20(int64_t obj);
 static void sub_4D3E80();
 static S6018B8* sub_4D3EB0();
 static void sub_4D3EE0(S6018B8* node);
@@ -130,6 +132,19 @@ bool sub_4D3420(int64_t obj)
     }
 
     return false;
+}
+
+// 0x4D3E20
+void sub_4D3E20(int64_t obj)
+{
+    sub_4D3D60(obj);
+    combat_critter_deactivate_combat_mode(obj);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        sub_45F710(obj);
+    }
+    sub_4AD7D0(obj);
+    sub_4601D0(obj);
+    sub_43CF70(obj);
 }
 
 // 0x4D3E80
