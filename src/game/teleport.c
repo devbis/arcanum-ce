@@ -15,6 +15,7 @@ typedef struct S6018B8 {
 // See 0x4D3F00.
 static_assert(sizeof(S6018B8) == 0x18, "wrong size");
 
+static void sub_4D3D60(int64_t obj);
 static void sub_4D3E20(int64_t obj);
 static void sub_4D3E80();
 static S6018B8* sub_4D3EB0();
@@ -132,6 +133,33 @@ bool sub_4D3420(int64_t obj)
     }
 
     return false;
+}
+
+// 0x4D3D60
+void sub_4D3D60(int64_t obj)
+{
+    int type;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    sub_424070(obj, 5, 0, 1);
+
+    // NOTE: Conditions looks odd, check (note fallthrough from npc block).
+    switch (type) {
+    case OBJ_TYPE_NPC:
+        sub_45F710(obj);
+        mp_obj_field_obj_set(obj, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
+        mp_obj_field_obj_set(obj, OBJ_F_NPC_WHO_HIT_ME_LAST, OBJ_HANDLE_NULL);
+        sub_4F0500(obj, 0x130);
+        mp_obj_field_obj_set(obj, OBJ_F_NPC_SUBSTITUTE_INVENTORY, OBJ_HANDLE_NULL);
+    case OBJ_TYPE_PC:
+        mp_obj_field_obj_set(obj, OBJ_F_CRITTER_FLEEING_FROM, OBJ_HANDLE_NULL);
+        if (player_is_pc_obj(obj)) {
+            sub_460B20();
+        }
+    }
+
+    sub_4D9990(obj);
+    sub_4D9A90(obj);
 }
 
 // 0x4D3E20
