@@ -4,6 +4,9 @@
 #include "game/obj.h"
 #include "game/stat.h"
 
+static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
+static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
+
 // 0x5C6378
 static tig_window_handle_t dword_5C6378[5] = {
     TIG_WINDOW_HANDLE_INVALID,
@@ -11,6 +14,12 @@ static tig_window_handle_t dword_5C6378[5] = {
     TIG_WINDOW_HANDLE_INVALID,
     TIG_WINDOW_HANDLE_INVALID,
     TIG_WINDOW_HANDLE_INVALID,
+};
+
+// 0x5C6390
+static TigRect stru_5C6390[2] = {
+    { 0, 0, 800, 41 },
+    { 0, 441, 800, 159 },
 };
 
 // 0x5C6524
@@ -266,37 +275,86 @@ void iso_interface_destroy()
 // 0x54AA30
 void sub_54AA30()
 {
-    // TODO: Incomplete.
+    dword_64C6B8 = 0;
+    dword_64C630[1] = 0;
+    dword_64C6C0 = 0;
+    dword_64C6C4 = 0;
+    dword_64C6C8 = 0;
 }
 
 // 0x54AA60
-void sub_54AA60()
+bool sub_54AA60(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* button_info, unsigned int flags)
 {
-    // TODO: Incomplete.
+    TigButtonData button_data;
+
+    button_data.flags = flags;
+    button_data.window_handle = window_handle;
+    button_data.x = button_info->x - rect->x;
+    button_data.y = button_info->y - rect->y;
+    tig_art_interface_id_create(button_info->art_num, 0, 0, 0, &(button_data.art_id));
+    button_data.mouse_down_snd_id = 3000;
+    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_enter_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_exit_snd_id = TIG_SOUND_HANDLE_INVALID;
+    return tig_button_create(&button_data, &(button_info->button_handle)) == TIG_OK;
 }
 
 // 0x54AAE0
-void sub_54AAE0()
+bool sub_54AAE0(UiButtonInfo* button_info)
 {
-    // TODO: Incomplete.
+    int index;
+
+    index = sub_551740(button_info->x, button_info->y);
+    if (index == -1) {
+        return false;
+    }
+
+    return sub_54AA60(dword_64C4F8[index], &(stru_5C6390[index]), button_info, TIG_BUTTON_FLAG_0x01);
 }
 
 // 0x54AB20
-void sub_54AB20()
+bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags)
 {
-    // TODO: Incomplete.
+    int index;
+
+    index = sub_551740(button_info->x, button_info->y);
+    if (index == -1) {
+        return false;
+    }
+
+    return sub_54AA60(dword_64C4F8[index], &(stru_5C6390[index]), button_info, flags);
 }
 
 // 0x54ABD0
-void sub_54ABD0()
+bool sub_54ABD0(UiButtonInfo* button_info, int width, int height)
 {
-    // TODO: Incomplete.
+    int index;
+    TigButtonData button_data;
+
+    index = sub_551740(button_info->x, button_info->y);
+    if (index == -1) {
+        return false;
+    }
+
+    button_data.window_handle = dword_64C4F8[index];
+    button_data.x = button_info->x - stru_5C6390[index].x;
+    button_data.y = button_info->y - stru_5C6390[index].y;
+    button_data.width = width;
+    button_data.height = height;
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.art_id = TIG_ART_ID_INVALID;
+    button_data.mouse_down_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_up_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_enter_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_exit_snd_id = TIG_SOUND_HANDLE_INVALID;
+    return tig_button_create(&button_data, &(button_info->button_handle)) == TIG_OK;
 }
 
 // 0x54AC70
-void sub_54AC70()
+void sub_54AC70(UiButtonInfo* button_info)
 {
-    // TODO: Incomplete.
+    tig_button_destroy(button_info->button_handle);
+    button_info->button_handle = TIG_BUTTON_HANDLE_INVALID;
 }
 
 // 0x54AD00
