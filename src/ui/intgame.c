@@ -41,6 +41,9 @@ static int dword_5C6524[5] = {
     186,
 };
 
+// 0x5C6F78
+static int dword_5C6F78 = 6;
+
 // 0x64C470
 static tig_font_handle_t dword_64C470;
 
@@ -85,6 +88,9 @@ static int dword_64C674;
 
 // 0x64C6A8
 static int dword_64C6A8;
+
+// 0x64C6AC
+static int dword_64C6AC;
 
 // 0x64C6B4
 static bool dword_64C6B4;
@@ -542,9 +548,21 @@ void iso_interface_window_disable()
 }
 
 // 0x5506C0
-void sub_5506C0()
+void sub_5506C0(int a1)
 {
-    // TODO: Incomplete.
+    sub_571910();
+    if (dword_64C6A8 == 9) {
+        sub_551A80(0);
+    }
+
+    dword_5C6F78 = 6;
+    if (dword_64C6A8 == a1) {
+        dword_64C6AC = 0;
+        sub_552130(0);
+    } else {
+        dword_64C6AC = a1;
+        sub_552130(a1);
+    }
 }
 
 // 0x550720
