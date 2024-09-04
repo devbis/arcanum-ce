@@ -14,5 +14,6 @@ void iso_interface_destroy();
 void sub_54AA30();
 bool sub_54AA60(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* button_info, unsigned int flags);
 bool sub_54AAE0(UiButtonInfo* button_info);
+void sub_54AEE0(int a1);
 
 #endif /* ARCANUM_UI_INTGAME_H_ */

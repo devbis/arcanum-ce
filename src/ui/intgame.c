@@ -22,6 +22,12 @@ static TigRect stru_5C6390[2] = {
     { 0, 441, 800, 159 },
 };
 
+// 0x5C63D8
+static TigRect stru_5C63D8 = { 14, 472, 28, 88 };
+
+// 0x5C63E8
+static TigRect stru_5C63E8 = { 754, 473, 28, 88 };
+
 // 0x5C6524
 static int dword_5C6524[5] = {
     169,
@@ -364,9 +370,16 @@ void sub_54AD00()
 }
 
 // 0x54AEE0
-void sub_54AEE0()
+void sub_54AEE0(int a1)
 {
-    // TODO: Incomplete.
+    switch (a1) {
+    case 0:
+        sub_54AF10(&stru_5C63D8);
+        break;
+    case 1:
+        sub_54AF10(&stru_5C63E8);
+        break;
+    }
 }
 
 // 0x54AF10
