@@ -7,6 +7,7 @@
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static void intgame_big_window_destroy();
 static bool intgame_big_window_message_filter(TigMessage* msg);
 
 // 0x5C6378
@@ -83,6 +84,9 @@ static int dword_64C534;
 
 // 0x64C538
 static tig_font_handle_t dword_64C538;
+
+// 0x64C630
+static bool intgame_big_window_locked;
 
 // 0x64C670
 static tig_font_handle_t dword_64C670;
@@ -299,7 +303,7 @@ void iso_interface_destroy()
 void sub_54AA30()
 {
     dword_64C6B8 = 0;
-    dword_64C630[1] = 0;
+    dword_64C634[0] = 0;
     dword_64C6C0 = 0;
     dword_64C6C4 = 0;
     dword_64C6C8 = 0;
@@ -1155,9 +1159,19 @@ bool intgame_big_window_message_filter(TigMessage* msg)
 }
 
 // 0x5572D0
-void intgame_big_window_lock()
+bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr)
 {
-    // TODO: Incomplete.
+    if (intgame_big_window_locked) {
+        return false;
+    }
+
+    intgame_big_window_locked = true;
+    tig_window_message_filter_set(intgame_big_window_handle, func);
+    tig_window_show(intgame_big_window_handle);
+    sub_51E850(intgame_big_window_handle);
+    *window_handle_ptr = intgame_big_window_handle;
+
+    return true;
 }
 
 // 0x557330
