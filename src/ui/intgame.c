@@ -1,8 +1,11 @@
 #include "ui/intgame.h"
 
+#include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/obj.h"
 #include "game/stat.h"
+#include "ui/compact_ui.h"
+#include "ui/gameuilib.h"
 
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
@@ -25,6 +28,15 @@ static TigRect stru_5C6390[2] = {
     { 0, 441, 800, 159 },
 };
 
+// 0x5C63B0
+static TigRect stru_5C63B0 = { 311, 96, 178, 178 };
+
+// 0x5C63C0
+static TigRect stru_5C63C0 = { 311, 196, 178, 178 };
+
+// 0x5C63D0
+static int dword_5C63D0 = -1;
+
 // 0x5C63D8
 static TigRect stru_5C63D8 = { 14, 472, 28, 88 };
 
@@ -45,6 +57,15 @@ static int dword_5C6524[5] = {
 
 // 0x5C6F78
 static int dword_5C6F78 = 6;
+
+// 0x5C739C
+static int intgame_iso_window_width = 800;
+
+// 0x5C73A0
+static int intgame_iso_window_height = 600;
+
+// 0x5C73A4
+static tig_window_handle_t intgame_iso_window = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x64C470
 static tig_font_handle_t dword_64C470;
@@ -76,6 +97,12 @@ static mes_file_handle_t intgame_mes_file;
 // 0x64C508
 static tig_window_handle_t intgame_big_window_handle;
 
+// 0x64C510
+static TigRect stru_64C510;
+
+// 0x64C52C
+static tig_window_handle_t dword_64C52C;
+
 // 0x64C530
 static int dword_64C530;
 
@@ -94,6 +121,12 @@ static tig_font_handle_t dword_64C670;
 // 0x64C674
 static int dword_64C674;
 
+// 0x64C67C
+static bool intgame_compact_interface;
+
+// 0x64C680
+static bool intgame_fullscreen;
+
 // 0x64C6A8
 static int dword_64C6A8;
 
@@ -108,6 +141,9 @@ static void(*dword_64C6D4)(int);
 
 // 0x64C6D8
 static int dword_64C6D8;
+
+// 0x64C6F0
+static unsigned int intgame_iso_window_flags;
 
 // 0x739F88
 static tig_font_handle_t dword_739F88;
@@ -1232,63 +1268,141 @@ void sub_557790(int64_t obj)
 }
 
 // 0x5577D0
-void sub_5577D0()
+unsigned int intgame_get_iso_window_flags()
 {
-    // TODO: Incomplete.
+    return intgame_iso_window_flags;
 }
 
 // 0x5577E0
-void sub_5577E0()
+void intgame_set_iso_window_flags(unsigned int flags)
 {
-    // TODO: Incomplete.
+    intgame_iso_window_flags = flags;
 }
 
 // 0x5577F0
-void intgame_set_width()
+void intgame_set_iso_window_width(int width)
 {
-    // TODO: Incomplete.
+    intgame_iso_window_width = width;
 }
 
 // 0x557800
-void intgame_set_height()
+void intgame_set_iso_window_height(int height)
 {
-    // TODO: Incomplete.
+    intgame_iso_window_height = height;
 }
 
 // 0x557810
-void intgame_create_iso_window()
+bool intgame_create_iso_window(tig_window_handle_t* window_handle_ptr)
 {
-    // TODO: Incomplete.
+    TigWindowData window_data;
+
+    window_data.flags = intgame_iso_window_flags | TIG_WINDOW_FLAG_0x80 | TIG_WINDOW_VIDEO_MEMORY;
+    window_data.rect.x = 0;
+    window_data.rect.width = intgame_iso_window_width;
+
+    if (intgame_is_compact_interface()) {
+        window_data.rect.y = 0;
+        window_data.rect.height = intgame_iso_window_height;
+    } else {
+        window_data.rect.y = 41;
+        window_data.rect.height = 400;
+    }
+
+    window_data.background_color = 0;
+
+    if (tig_window_create(&window_data, window_handle_ptr) != TIG_OK) {
+        tig_debug_printf("intgame_create_iso_window: ERROR: window create failed!\n");
+        tig_exit();
+        return false;
+    }
+
+    intgame_iso_window = *window_handle_ptr;
+    return true;
 }
 
 // 0x5578C0
-void sub_5578C0()
+bool intgame_is_compact_interface()
 {
-    // TODO: Incomplete.
+    return intgame_compact_interface;
 }
 
 // 0x5578D0
 void intgame_set_fullscreen()
 {
-    // TODO: Incomplete.
+    intgame_fullscreen = true;
 }
 
 // 0x5578E0
 void intgame_toggle_interface()
 {
-    // TODO: Incomplete.
+    TigWindowData window_data;
+    ResizeInfo resize_info;
+    int index;
+
+    if (!intgame_fullscreen) {
+        return;
+    }
+
+    tig_debug_printf("Resizing Iso View...");
+
+    resize_info.iso_window_handle = dword_64C52C;
+    intgame_compact_interface = !intgame_compact_interface;
+
+    if (intgame_iso_window != TIG_WINDOW_HANDLE_INVALID) {
+        if (tig_window_data(dword_64C52C, &window_data) != TIG_OK) {
+            tig_debug_printf("intgame_toggle_interface: ERROR: tig_window_data failed!\n");
+            exit(EXIT_FAILURE);
+        }
+
+        resize_info.field_4 = window_data.rect;
+        resize_info.field_14 = window_data.rect;
+
+        if (!intgame_is_compact_interface()) {
+            resize_info.field_14.x = 0;
+            resize_info.field_14.y = 41;
+        }
+
+        if (intgame_compact_interface) {
+            stru_64C510 = stru_5C63C0;
+
+            for (index = 0; index < 2; index++) {
+                tig_window_hide(dword_64C4F8[index]);
+            }
+
+            gamelib_resize(&resize_info);
+            gameuilib_resize(&resize_info);
+
+            compact_ui_create();
+        } else {
+            stru_64C510 = stru_5C63B0;
+
+            resize_info.field_4.height = 400;
+            resize_info.field_14.height = 400;
+
+            gamelib_resize(&resize_info);
+            gameuilib_resize(&resize_info);
+
+            for (index = 0; index < 2; index++) {
+                tig_window_show(dword_64C4F8[index]);
+            }
+
+            compat_ui_destroy();
+        }
+    }
+
+    tig_debug_printf("completed.\n");
 }
 
 // 0x557AA0
-void sub_557AA0()
+int sub_557AA0()
 {
-    // TODO: Incomplete.
+    return dword_64C6A8;
 }
 
 // 0x557AB0
-void sub_557AB0()
+int sub_557AB0()
 {
-    // TODO: Incomplete.
+    return dword_64C530;
 }
 
 // 0x557AC0

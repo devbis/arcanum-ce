@@ -22,5 +22,15 @@ bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle
 void intgame_big_window_unlock();
 void sub_5576B0();
 void sub_557790(int64_t obj);
+unsigned int intgame_get_iso_window_flags();
+void intgame_set_iso_window_flags(unsigned int flags);
+void intgame_set_iso_window_width(int width);
+void intgame_set_iso_window_height(int height);
+bool intgame_create_iso_window(tig_window_handle_t* window_handle_ptr);
+bool intgame_is_compact_interface();
+void intgame_set_fullscreen();
+void intgame_toggle_interface();
+int sub_557AA0();
+int sub_557AB0();
 
 #endif /* ARCANUM_UI_INTGAME_H_ */
