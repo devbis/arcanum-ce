@@ -71,6 +71,9 @@ static tig_font_handle_t dword_64C500;
 // 0x64C504
 static mes_file_handle_t intgame_mes_file;
 
+// 0x64C508
+static tig_window_handle_t intgame_big_window_handle;
+
 // 0x64C530
 static int dword_64C530;
 
@@ -1141,7 +1144,7 @@ void intgame_big_window_create()
 // 0x5572B0
 void intgame_big_window_destroy()
 {
-    // TODO: Incomplete.
+    tig_window_destroy(intgame_big_window_handle);
 }
 
 // 0x5572C0

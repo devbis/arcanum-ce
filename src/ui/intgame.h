@@ -18,5 +18,6 @@ void sub_54AEE0(int a1);
 void sub_54B3A0();
 void sub_5506C0(int a1);
 void sub_550720();
+void intgame_big_window_destroy();
 
 #endif /* ARCANUM_UI_INTGAME_H_ */
