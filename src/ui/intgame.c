@@ -10,6 +10,7 @@
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static bool intgame_big_window_create();
 static void intgame_big_window_destroy();
 static bool intgame_big_window_message_filter(TigMessage* msg);
 
@@ -1177,9 +1178,25 @@ void sub_5571C0()
 }
 
 // 0x557230
-void intgame_big_window_create()
+bool intgame_big_window_create()
 {
-    // TODO: Incomplete.
+    TigWindowData window_data;
+
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.rect.x = 0;
+    window_data.rect.y = 0;
+    window_data.rect.width = 0;
+    window_data.rect.height = 0;
+    window_data.background_color = 0;
+    window_data.message_filter = intgame_big_window_message_filter;
+    if (tig_window_create(&window_data, &intgame_big_window_handle) != TIG_OK) {
+        return false;
+    }
+
+    tig_window_hide(intgame_big_window_handle);
+    intgame_big_window_locked = false;
+
+    return true;
 }
 
 // 0x5572B0
