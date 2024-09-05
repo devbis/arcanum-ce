@@ -1442,9 +1442,34 @@ void sub_557B50()
 }
 
 // 0x557B60
-void sub_557B60()
+int sub_557B60()
 {
-    // TODO: Incomplete.
+    TigMouseState mouse_state;
+    TigButtonData button_data;
+    int x;
+    int y;
+    int index;
+
+    if (dword_64C6A8 == 2) {
+        tig_mouse_get_state(&mouse_state);
+        x = mouse_state.x - stru_5C6390[1].x;
+        y = mouse_state.y - stru_5C6390[1].y;
+
+        for (index = 0; index < 4; index++) {
+            if (tig_button_data(stru_5C6C68[index].button_handle, &button_data) != TIG_OK) {
+                break;
+            }
+
+            if (x >= button_data.x
+                && y >= button_data.y
+                && x < button_data.x + button_data.width
+                && y < button_data.y + button_data.height) {
+                return index;
+            }
+        }
+    }
+
+    return 4;
 }
 
 // 0x557C00

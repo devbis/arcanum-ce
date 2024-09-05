@@ -32,5 +32,6 @@ void intgame_set_fullscreen();
 void intgame_toggle_interface();
 int sub_557AA0();
 int sub_557AB0();
+int sub_557B60();
 
 #endif /* ARCANUM_UI_INTGAME_H_ */
