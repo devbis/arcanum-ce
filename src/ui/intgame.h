@@ -20,5 +20,6 @@ void sub_5506C0(int a1);
 void sub_550720();
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();
+void sub_5576B0();
 
 #endif /* ARCANUM_UI_INTGAME_H_ */

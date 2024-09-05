@@ -1198,7 +1198,22 @@ void sub_557670()
 // 0x5576B0
 void sub_5576B0()
 {
-    // TODO: Incomplete.
+    TigRect rect;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &rect;
+    art_blit_info.dst_rect = &rect;
+    tig_art_interface_id_create(185, 0, 0, 0, &(art_blit_info.art_id));
+
+    tig_art_frame_data(art_blit_info.art_id, &art_frame_data);
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = art_frame_data.width;
+    rect.height = art_frame_data.height;
+    tig_window_blit_art(dword_64C4F8[0], &art_blit_info);
 }
 
 // 0x557730
