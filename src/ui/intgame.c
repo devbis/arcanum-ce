@@ -10,6 +10,7 @@
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
 static bool intgame_big_window_create();
@@ -132,6 +133,9 @@ static bool intgame_compact_interface;
 
 // 0x64C680
 static bool intgame_fullscreen;
+
+// 0x64C688
+static int64_t qword_64C688;
 
 // 0x64C6A8
 static int dword_64C6A8;
@@ -1147,9 +1151,14 @@ void sub_556E60()
 }
 
 // 0x556EA0
-void sub_556EA0()
+void sub_556EA0(int64_t item_obj)
 {
-    // TODO: Incomplete.
+    if (item_obj != OBJ_HANDLE_NULL) {
+        qword_64C688 = item_obj;
+    } else {
+        qword_64C688 = item_wield_get(player_get_pc_obj(), 1004);
+    }
+    sub_5506C0(8);
 }
 
 // 0x556EF0
