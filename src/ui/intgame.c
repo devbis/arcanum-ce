@@ -1177,7 +1177,10 @@ bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle
 // 0x557330
 void intgame_big_window_unlock()
 {
-    // TODO: Incomplete.
+    intgame_big_window_locked = false;
+    tig_window_button_destroy(intgame_big_window_handle);
+    tig_window_message_filter_set(intgame_big_window_handle, intgame_big_window_message_filter);
+    tig_window_hide(intgame_big_window_handle);
 }
 
 // 0x557370
