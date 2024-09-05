@@ -3,6 +3,7 @@
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/player.h"
 #include "game/stat.h"
 #include "ui/compact_ui.h"
 #include "ui/gameuilib.h"
@@ -1147,7 +1148,14 @@ void sub_556C20()
 // 0x556E60
 void sub_556E60()
 {
-    // TODO: Incomplete.
+    int64_t parent_obj;
+
+    if (qword_64C688 != OBJ_HANDLE_NULL) {
+        parent_obj = obj_field_handle_get(qword_64C688, OBJ_F_ITEM_PARENT);
+        if (parent_obj == OBJ_HANDLE_NULL || !player_is_pc_obj(parent_obj)) {
+            qword_64C688 = OBJ_HANDLE_NULL;
+        }
+    }
 }
 
 // 0x556EA0
