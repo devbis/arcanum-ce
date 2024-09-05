@@ -10,6 +10,7 @@
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static void intgame_mt_button_enable();
 static bool intgame_big_window_create();
 static void intgame_big_window_destroy();
 static bool intgame_big_window_message_filter(TigMessage* msg);
@@ -55,6 +56,9 @@ static int dword_5C6524[5] = {
     194,
     186,
 };
+
+// 0x5C6F74
+static tig_button_handle_t intgame_mt_button_handle;
 
 // 0x5C6F78
 static int dword_5C6F78 = 6;
@@ -292,7 +296,7 @@ bool intgame_load(GameLoadInfo* load_info)
 
     sub_54B3C0();
     sub_553990();
-    sub_556EF0();
+    intgame_mt_button_enable();
 
     obj = player_get_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
@@ -1148,9 +1152,26 @@ void sub_556EA0()
 }
 
 // 0x556EF0
-void sub_556EF0()
+void intgame_mt_button_enable()
 {
-    // TODO: Incomplete.
+    bool hidden;
+    int64_t obj;
+    int64_t item_obj;
+    int mana_store;
+    unsigned int flags;
+
+    if (tig_button_is_hidden(intgame_mt_button_handle, &hidden) == TIG_OK) {
+        obj = player_get_pc_obj();
+        item_obj = item_wield_get(obj, 1004);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            mana_store = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE);
+            flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+            if ((mana_store != 0 || (flags & OIF_IS_MAGICAL) != 0)
+                && obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0) {
+                tig_button_show(intgame_mt_button_handle);
+            }
+        }
+    }
 }
 
 // 0x556F80
