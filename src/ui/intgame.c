@@ -7,6 +7,7 @@
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static bool intgame_big_window_message_filter(TigMessage* msg);
 
 // 0x5C6378
 static tig_window_handle_t dword_5C6378[5] = {
@@ -1148,9 +1149,9 @@ void intgame_big_window_destroy()
 }
 
 // 0x5572C0
-void intgame_big_window_message_filter()
+bool intgame_big_window_message_filter(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    return false;
 }
 
 // 0x5572D0
