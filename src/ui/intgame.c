@@ -1223,9 +1223,12 @@ void sub_557730()
 }
 
 // 0x557790
-void sub_557790()
+void sub_557790(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (obj != OBJ_HANDLE_NULL
+        && obj == sub_43C570()) {
+        sub_57CCF0(player_get_pc_obj(), obj);
+    }
 }
 
 // 0x5577D0
