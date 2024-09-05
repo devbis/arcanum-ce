@@ -11,6 +11,7 @@ static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static void intgame_mt_button_enable();
+static void intgame_mt_button_disable();
 static bool intgame_big_window_create();
 static void intgame_big_window_destroy();
 static bool intgame_big_window_message_filter(TigMessage* msg);
@@ -57,8 +58,8 @@ static int dword_5C6524[5] = {
     186,
 };
 
-// 0x5C6F74
-static tig_button_handle_t intgame_mt_button_handle;
+// 0x5C6F68
+static UiButtonInfo intgame_mt_button_info = { 161, 443, 563, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5C6F78
 static int dword_5C6F78 = 6;
@@ -1160,7 +1161,7 @@ void intgame_mt_button_enable()
     int mana_store;
     unsigned int flags;
 
-    if (tig_button_is_hidden(intgame_mt_button_handle, &hidden) == TIG_OK) {
+    if (tig_button_is_hidden(intgame_mt_button_info.button_handle, &hidden) == TIG_OK && hidden) {
         obj = player_get_pc_obj();
         item_obj = item_wield_get(obj, 1004);
         if (item_obj != OBJ_HANDLE_NULL) {
@@ -1168,7 +1169,7 @@ void intgame_mt_button_enable()
             flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
             if ((mana_store != 0 || (flags & OIF_IS_MAGICAL) != 0)
                 && obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0) {
-                tig_button_show(intgame_mt_button_handle);
+                tig_button_show(intgame_mt_button_info.button_handle);
             }
         }
     }
@@ -1177,7 +1178,37 @@ void intgame_mt_button_enable()
 // 0x556F80
 void intgame_mt_button_disable()
 {
-    // TODO: Incomplete.
+    bool hidden;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect rect;
+
+    if (tig_button_is_hidden(intgame_mt_button_info.button_handle, &hidden) == TIG_OK && !hidden) {
+        tig_button_hide(intgame_mt_button_info.button_handle);
+
+        if (tig_art_interface_id_create(intgame_mt_button_info.art_num, 0, 0, 0, &art_id) != TIG_OK) {
+            tig_debug_printf("Intgame: intgame_mt_button_disable: ERROR: Can't find Interface Art: %d!\n", intgame_mt_button_info.art_num);
+            return;
+        }
+
+        tig_art_frame_data(art_id, &art_frame_data);
+
+        if (tig_art_interface_id(184, 0, 0, 0, &art_id) != TIG_OK) {
+            tig_debug_printf("Intgame: intgame_mt_button_disable: ERROR: Can't find Interface Art: %d!\n", 184);
+        }
+
+        rect.x = intgame_mt_button_info.x - stru_5C6390[1].x;
+        rect.y = intgame_mt_button_info.y - stru_5C6390[1].y;
+        rect.width = art_frame_data.width;
+        rect.height = art_frame_data.height;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &rect;
+        art_blit_info.dst_rect = &rect;
+        tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
+    }
 }
 
 // 0x5570A0
