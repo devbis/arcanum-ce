@@ -1,7 +1,7 @@
 #ifndef ARCANUM_UI_CYCLIC_UI_H_
 #define ARCANUM_UI_CYCLIC_UI_H_
 
-#include <tig/tig.h>
+#include "game/context.h"
 
 typedef void CyclicUiControlValueChanged(int value);
 
@@ -21,5 +21,16 @@ typedef struct CyclicUiControlInfo {
 } CyclicUiControlInfo;
 
 static_assert(sizeof(CyclicUiControlInfo) == 0x2C, "wrong size");
+
+bool cyclic_ui_init(GameInitInfo* init_info);
+void cyclic_ui_exit();
+bool sub_57F6D0(tig_button_handle_t button_handle);
+void sub_57F720(CyclicUiControlInfo* info);
+bool cyclic_ui_control_create(CyclicUiControlInfo* info, int* id_ptr);
+void cyclic_ui_control_destroy(int id, bool a2);
+void cyclic_ui_control_show(int id, bool visible);
+void cyclic_ui_control_enable(int id, bool enabled);
+void cyclic_ui_control_set(int id, int value);
+int cyclic_ui_control_get(int id);
 
 #endif /* ARCANUM_UI_CYCLIC_UI_H_ */

@@ -1,12 +1,14 @@
 #include "ui/cyclic_ui.h"
 
+#include "game/mes.h"
+
 #define MAX_CONTROLS 32
 
 typedef struct CyclicUiControl {
     /* 0000 */ CyclicUiControlInfo info;
     /* 002C */ tig_button_handle_t left_button_handle;
     /* 0030 */ tig_button_handle_t right_button_handle;
-    /* 0034 */ int mes_file;
+    /* 0034 */ mes_file_handle_t mes_file;
     /* 0038 */ int value;
     /* 003C */ int max_value;
     /* 0040 */ unsigned char in_use; // boolean
@@ -14,13 +16,38 @@ typedef struct CyclicUiControl {
 
 static_assert(sizeof(CyclicUiControl) == 0x44, "wrong size");
 
+static bool sub_57FA70(CyclicUiControl** ctrl_ptr, int id, const char* function_name);
+static bool sub_57FAD0(CyclicUiControl* ctrl);
+static bool sub_57FB20(CyclicUiControl* ctrl);
+static bool cyclic_ui_draw_base(CyclicUiControl* ctrl);
+static bool cyclic_ui_base_aid(CyclicUiControl* ctrl, tig_art_id_t* art_id_ptr);
+static bool cyclic_ui_draw_empty_slot(CyclicUiControl* ctrl);
+static bool cyclic_ui_draw_title(CyclicUiControl* ctrl);
+static bool cyclic_ui_buttons_create(CyclicUiControl* ctrl);
+static void cyclic_ui_buttons_destroy(CyclicUiControl* ctrl);
+static bool cyclic_ui_refresh_level(CyclicUiControl* ctrl);
+static bool cyclic_ui_draw_bar(CyclicUiControl* ctrl);
+static bool cyclic_ui_draw_text(CyclicUiControl* ctrl);
+static void sub_580390(CyclicUiControl* ctrl);
+static void sub_5803D0(CyclicUiControl* ctrl);
+
+// 0x6839B8
+static tig_font_handle_t dword_6839B8;
+
+// 0x6839C0
 static CyclicUiControl cyclic_ui_controls[MAX_CONTROLS];
+
+// 0x684240
+static tig_font_handle_t dword_684240;
+
+// 0x684244
+static tig_font_handle_t dword_684244;
 
 // 0x68424C
 static bool cyclic_ui_initialized;
 
 // 0x57F4D0
-void cyclic_ui_init(GameInitInfo* init_info)
+bool cyclic_ui_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
@@ -94,7 +121,7 @@ void sub_57F720(CyclicUiControlInfo* info)
 }
 
 // 0x57F750
-void cyclic_ui_control_create()
+bool cyclic_ui_control_create(CyclicUiControlInfo* info, int* id_ptr)
 {
     // TODO: Incomplete.
 }
@@ -109,7 +136,7 @@ void cyclic_ui_control_destroy(int id, bool a2)
     }
 
     if (ctrl->info.type == 1) {
-        message_unload(ctrl->mes_file);
+        mes_unload(ctrl->mes_file);
     }
 
     if (a2) {
@@ -197,7 +224,7 @@ void cyclic_ui_control_set(int id, int value)
 
     ctrl->value = value;
 
-    if (ctrl->field_28) {
+    if (ctrl->info.visible) {
         cyclic_ui_refresh_level(ctrl);
     }
 }
@@ -258,7 +285,7 @@ bool sub_57FAD0(CyclicUiControl* ctrl)
 }
 
 // 0x57FB20
-void sub_57FB20(CyclicUiControl* ctrl)
+bool sub_57FB20(CyclicUiControl* ctrl)
 {
     if (ctrl->info.enabled) {
         cyclic_ui_buttons_destroy(ctrl);
@@ -272,7 +299,7 @@ bool cyclic_ui_draw_base(CyclicUiControl* ctrl)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
     TigRect src_rect;
     TigRect dst_rect;
 
@@ -295,7 +322,7 @@ bool cyclic_ui_draw_base(CyclicUiControl* ctrl)
     dst_rect.width = art_frame_data.width;
     dst_rect.height = art_frame_data.height;
 
-    tig_art_itnerface_id_create(669, 0, 0, 0, &art_id);
+    tig_art_interface_id_create(669, 0, 0, 0, &art_id);
 
     blit_info.flags = 0;
     blit_info.art_id = art_id;
@@ -343,7 +370,7 @@ bool cyclic_ui_draw_empty_slot(CyclicUiControl* ctrl)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
     TigRect src_rect;
     TigRect dst_rect;
 
@@ -426,8 +453,8 @@ bool cyclic_ui_buttons_create(CyclicUiControl* ctrl)
 {
     TigButtonData button_data;
 
-    button_data.flags = TIG_BUTTON_0x01;
-    button_data.window_handle = ctr->info.window_handle;
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.window_handle = ctrl->info.window_handle;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
     button_data.mouse_enter_snd_id = -1;
@@ -441,7 +468,7 @@ bool cyclic_ui_buttons_create(CyclicUiControl* ctrl)
     button_data.x = ctrl->info.x + 6;
     button_data.y = ctrl->info.y + 21;
 
-    if (tig_button_create(&button_info, &(info->left_button_handle)) != TIG_OK) {
+    if (tig_button_create(&button_data, &(ctrl->left_button_handle)) != TIG_OK) {
         tig_debug_println("Error, cyclic_ui_buttons_create:  Failed to create left button");
         return false;
     }
@@ -454,7 +481,7 @@ bool cyclic_ui_buttons_create(CyclicUiControl* ctrl)
     button_data.x = ctrl->info.x + 6;
     button_data.y = ctrl->info.y + 21;
 
-    if (tig_button_create(&button_info, &(info->right_button_handle)) != TIG_OK) {
+    if (tig_button_create(&button_data, &(ctrl->right_button_handle)) != TIG_OK) {
         tig_debug_println("Error, cyclic_ui_buttons_create:  Failed to create right button");
         return false;
     }
@@ -487,13 +514,13 @@ bool cyclic_ui_refresh_level(CyclicUiControl* ctrl)
 }
 
 // 0x580000
-bool cyclic_ui_draw_bar()
+bool cyclic_ui_draw_bar(CyclicUiControl* ctrl)
 {
     // TODO: Incomplete.
 }
 
 // 0x580190
-bool cyclic_ui_draw_text()
+bool cyclic_ui_draw_text(CyclicUiControl* ctrl)
 {
     // TODO: Incomplete.
 }
