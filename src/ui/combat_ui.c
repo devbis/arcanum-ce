@@ -1,9 +1,24 @@
 #include "ui/combat_ui.h"
 
-#include <tig/tig.h>
+#include "game/combat.h"
+#include "game/obj.h"
+#include "game/player.h"
+#include "ui/anim_ui.h"
+#include "ui/intgame.h"
 
 #define THREE 3
 #define TWENTY 20
+
+static void sub_56ECE0(int a1);
+static void sub_56ED00();
+static void combat_ui_create();
+static void sub_56EF40();
+static void combat_ui_destroy();
+static void sub_56F430();
+static void sub_56F660();
+static void sub_56F840();
+static void sub_56F990(int64_t obj);
+static bool sub_56F9B0(TigMessage* msg);
 
 // 0x5CAA20
 static TigRect stru_5CAA20 = { 617, 577, 124, 14 };
@@ -77,7 +92,7 @@ bool combat_ui_init(GameInitInfo* init_info)
     callbacks.field_C = sub_56F430;
     callbacks.field_10 = sub_56F990;
 
-    if (!sub_4B6C40(&callbacks)) {
+    if (!combat_set_callbacks(&callbacks)) {
         return false;
     }
 
@@ -93,7 +108,7 @@ bool combat_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    if (tig_window_data(init_info->window_handle, &window_data) != TIG_OK) {
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
         return false;
     }
 
@@ -127,7 +142,7 @@ void combat_ui_reset()
 }
 
 // 0x56EC00
-void combat_ui_resize(GameResizeInfo* resize_info)
+void combat_ui_resize(ResizeInfo* resize_info)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -143,14 +158,14 @@ void combat_ui_resize(GameResizeInfo* resize_info)
     stru_680EC0.y = resize_info->field_4.y + art_frame_data.height + 4;
 
     if (combat_ui_created) {
-        if (sub_5578C0()) {
+        if (intgame_is_compact_interface()) {
             tig_window_hide(dword_5CAA18);
         } else {
             tig_window_show(dword_5CAA18);
         }
 
         if (combat_ui_created) {
-            if (sub_5578C0()) {
+            if (intgame_is_compact_interface()) {
                 tig_window_show(dword_5CAA1C);
             } else {
                 tig_window_hide(dword_5CAA1C);
@@ -174,7 +189,7 @@ void sub_56ED00()
     if (combat_ui_created) {
         sub_56EF40();
     }
-    sub_56ED20();
+    combat_ui_create();
     sub_56F430(0);
 }
 
@@ -183,10 +198,10 @@ void combat_ui_create()
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
-    TigArtData art_data;
+    TigArtAnimData art_anim_data;
     TigRect rect;
     TigWindowData window_data;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
 
     if (tig_art_interface_id_create(294u, 0, 0, 0, &art_id) != TIG_OK) {
         return;
@@ -196,7 +211,7 @@ void combat_ui_create()
         return;
     }
 
-    if (tig_art_data(art_id, &art_data) != TIG_OK) {
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
         return;
     }
 
@@ -207,8 +222,8 @@ void combat_ui_create()
 
     window_data.flags = TIG_WINDOW_FLAG_0x02;
     window_data.rect = rect;
-    window_data.background_color = art_data.color_key;
-    window_data.color_key = art_data.color_key;
+    window_data.background_color = art_anim_data.color_key;
+    window_data.color_key = art_anim_data.color_key;
     window_data.message_filter = sub_56F9B0;
 
     if (tig_window_create(&window_data, &dword_5CAA18) != TIG_OK) {
@@ -234,13 +249,13 @@ void combat_ui_create()
     sub_56F660();
     sub_56F430(0);
 
-    if (sub_5578C0()) {
+    if (intgame_is_compact_interface()) {
         tig_window_hide(dword_5CAA18);
     }
 
     window_data.flags = TIG_WINDOW_HAVE_TRANSPARENCY | TIG_WINDOW_FLAG_0x02;
     window_data.rect = stru_5CAA20;
-    window_data.background_color = art_data.color_key;
+    window_data.background_color = art_anim_data.color_key;
     window_data.color_key = tig_color_make(0, 0, 255);
     window_data.message_filter = sub_56F9B0;
 
@@ -250,7 +265,7 @@ void combat_ui_create()
 
     sub_56EFA0(0);
 
-    if (!sub_5578C0()) {
+    if (!intgame_is_compact_interface()) {
         tig_window_hide(dword_5CAA1C);
     }
 }
@@ -304,11 +319,11 @@ void sub_56F660()
     long long obj;
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
-    TigArtData art_anim_data;
+    TigArtAnimData art_anim_data;
     TigRect rect;
     TigRect src_rect;
     TigRect dst_rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
 
     if (!combat_ui_created) {
         return;
@@ -397,9 +412,9 @@ void sub_56F840()
 }
 
 // 0x56F990
-void sub_56F990(long long obj)
+void sub_56F990(int64_t obj)
 {
-    if (obj != 0) {
+    if (obj != OBJ_HANDLE_NULL) {
         sub_40DA50();
     }
 }
@@ -407,7 +422,7 @@ void sub_56F990(long long obj)
 // 0x56F9B0
 bool sub_56F9B0(TigMessage* msg)
 {
-    long long obj;
+    int64_t obj;
     AnimId anim_id_1;
     AnimId anim_id_2;
 
@@ -416,7 +431,7 @@ bool sub_56F9B0(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
             && msg->data.button.button_handle == stru_5CAA38.button_handle) {
             obj = sub_4B6D80();
-            if (obj != 0
+            if (obj != OBJ_HANDLE_NULL
                 && player_is_pc_obj(obj)
                 && (!sub_423300(obj, &anim_id_1)
                     || sub_44E830(obj, 2, &anim_id_2)
@@ -431,7 +446,7 @@ bool sub_56F9B0(TigMessage* msg)
             && !msg->data.keyboard.pressed
             && msg->data.keyboard.key == DIK_E) {
             obj = sub_4B6D80();
-            if (obj != 0
+            if (obj != OBJ_HANDLE_NULL
                 && player_is_pc_obj(obj)
                 && (!sub_423300(obj, &anim_id_1)
                     || sub_44E830(obj, 2, &anim_id_2)
