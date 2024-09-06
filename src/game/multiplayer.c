@@ -4,6 +4,7 @@
 #include "game/gamelib.h"
 #include "game/magictech.h"
 #include "game/map.h"
+#include "game/matchmaker.h"
 #include "game/mes.h"
 #include "game/obj_private.h"
 #include "game/skill.h"
@@ -721,147 +722,147 @@ void sub_4A4D60()
 }
 
 // 0x4A4EB0
-void sub_4A4EB0()
+int multiplayer_mm_init(int a1)
 {
-    // TODO: Incomplete.
+    return matchmaker_init(a1);
 }
 
 // 0x4A4EC0
-void sub_4A4EC0()
+void multiplayer_mm_exit()
 {
-    // TODO: Incomplete.
+    matchmaker_exit();
 }
 
 // 0x4A4ED0
-void sub_4A4ED0()
+int multiplayer_mm_is_active()
 {
-    // TODO: Incomplete.
+    return matchmaker_is_active();
 }
 
 // 0x4A4EE0
-void sub_4A4EE0()
+int multiplayer_mm_ping()
 {
-    // TODO: Incomplete.
+    return matchmaker_ping();
 }
 
 // 0x4A4EF0
-void sub_4A4EF0()
+int multiplayer_mm_motd_get(int a1, int a2, int a3, int a4)
 {
-    // TODO: Incomplete.
+    return matchmaker_motd_get(a1, a2, a3, a4);;
 }
 
 // 0x4A4F10
-void sub_4A4F10()
+int multiplayer_mm_login(int a1, int a2)
 {
-    // TODO: Incomplete.
+    return matchmaker_login(a1, a2);
 }
 
 // 0x4A4F30
-void sub_4A4F30()
+int multiplayer_mm_create_account(int a1, int a2, int a3)
 {
-    // TODO: Incomplete.
+    return matchmaker_create_account(a1, a2, a3);
 }
 
 // 0x4A4F50
-void sub_4A4F50()
+int multiplayer_mm_version_needs_upgrade(int a1)
 {
-    // TODO: Incomplete.
+    return matchmaker_version_needs_upgrade(a1);
 }
 
 // 0x4A4F60
-void sub_4A4F60()
+int multiplayer_mm_ad_rgb_get(int a1, int a2, int a3)
 {
-    // TODO: Incomplete.
+    return matchmaker_ad_rgb_get(a1, a2, a3);
 }
 
 // 0x4A4F80
-void sub_4A4F80()
+int multiplayer_mm_ad_release()
 {
-    // TODO: Incomplete.
+    return matchmaker_ad_release();
 }
 
 // 0x4A4F90
-void sub_4A4F90()
+int multiplayer_mm_ad_clicked()
 {
-    // TODO: Incomplete.
+    return matchmaker_ad_clicked();
 }
 
 // 0x4A4FA0
-void sub_4A4FA0()
+int multiplayer_mm_register(int a1)
 {
-    // TODO: Incomplete.
+    return matchmaker_register(a1);
 }
 
 // 0x4A4FB0
-void sub_4A4FB0()
+int multiplayer_mm_gamelist_get(void** games, int* count)
 {
-    // TODO: Incomplete.
+    return matchmaker_gamelist_get(games, count);
 }
 
 // 0x4A4FD0
-void sub_4A4FD0()
+int multiplayer_mm_gamelist_free(void* games)
 {
-    // TODO: Incomplete.
+    return matchmaker_gamelist_free(games);
 }
 
 // 0x4A4FE0
-void sub_4A4FE0()
+int multiplayer_mm_chatserver_list_get(void** chatservers, int* count)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatserver_list_get(chatservers, count);
 }
 
 // 0x4A5000
-void sub_4A5000()
+int multiplayer_mm_chatserver_list_free(void* chatservers)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatserver_list_free(chatservers);
 }
 
 // 0x4A5010
-void sub_4A5010()
+int multiplayer_mm_chatserver_join(int a1)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatserver_join(a1);
 }
 
 // 0x4A5020
-void sub_4A5020()
+int multiplayer_mm_chatroom_list_get(void** chatrooms, int* count)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatroom_list_get(chatrooms, count);
 }
 
 // 0x4A5040
-void sub_4A5040()
+int multiplayer_mm_chatroom_list_free(void* chatrooms)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatroom_list_free(chatrooms);
 }
 
 // 0x4A5050
-void sub_4A5050()
+int multiplayer_mm_chatroom_join(int a1, int a2)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatroom_join(a1, a2);
 }
 
 // 0x4A5070
-void sub_4A5070()
+int multiplayer_mm_chatroom_members_get(void** members, int* count)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatroom_members_get(members, count);
 }
 
 // 0x4A5090
-void sub_4A5090()
+int multiplayer_mm_chatroom_members_free(void* members)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatroom_members_free(members);
 }
 
 // 0x4A50A0
-void sub_4A50A0()
+int multiplayer_mm_chatroom_create(const char* a1, const char* a2)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatroom_create(a1, a2);
 }
 
 // 0x4A50C0
-void sub_4A50C0()
+int multiplayer_mm_chatroom_mesg(const char* msg)
 {
-    // TODO: Incomplete.
+    return matchmaker_chatroom_mesg(msg);
 }
 
 // 0x4A50D0
@@ -915,8 +916,8 @@ void sub_4A5460()
 // 0x4A5490
 void multiplayer_ping()
 {
-    if (sub_4A4ED0()) {
-        sub_4A4EE0();
+    if (multiplayer_mm_is_active()) {
+        multiplayer_mm_ping();
     }
 }
 
