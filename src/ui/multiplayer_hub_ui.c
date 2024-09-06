@@ -4,6 +4,7 @@
 
 #include "game/gamelib.h"
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/textedit_ui.h"
 
@@ -22,13 +23,33 @@ static void sub_5837A0(TigRect* rect);
 static const char* sub_584A40(int value);
 static const char* sub_584A80();
 static const char* sub_584A90();
-static void sub_584AA0(const char* str)
+static void sub_584AA0(const char* str);
 static void sub_584AC0(const char* str);
 static void sub_584C30(TigRect* rect);
 static void sub_585970(char* buffer);
 static void sub_585A20();
 static void sub_585BA0();
 static void sub_585BB0();
+
+// 0x599484
+static int dword_599484[3] = {
+    2,
+    16,
+    21,
+};
+
+// 0x5994A0
+static int dword_5994A0[2] = {
+    2,
+    16,
+};
+
+// 0x5994AC
+static int dword_5994AC[3] = {
+    2,
+    16,
+    21,
+};
 
 // 0x5CBFD8
 static TigRect stru_5CBFD8 = { 37, 188, 246, 368 };
@@ -54,11 +75,45 @@ static TigRect stru_5CC038 = { 69, 274, 183, 18 };
 // 0x5CC048
 static TigRect stru_5CC048 = { 69, 365, 183, 108 };
 
+// 0x5CC470
+static TigRect stru_5CC470 = { 327, 120, 165, 15 };
+
+// 0x5CC480
+static TigRect stru_5CC480 = { 327, 175, 165, 15 };
+
+// 0x5CC490
+static TigRect stru_5CC490 = { 327, 230, 165, 15 };
+
+// 0x5CC4A0
+static TigRect stru_5CC4A0 = { 327, 338, 165, 15 };
+
+// 0x5CC4B0
+static TigRect stru_5CC4B0 = { 327, 310, 164, 14 };
+
+// 0x5CC5F0
+static mes_file_handle_t dword_5CC5F0 = MES_FILE_HANDLE_INVALID;
+
+// 0x5CC6AC
+static int dword_5CC6AC = -1;
+
+// 0x5CC6B0
+static TextEdit stru_5CC6B0 = {
+    0,
+    byte_68674C,
+    sizeof(byte_68674C),
+    sub_585BA0,
+    sub_585BB0,
+    NULL,
+};
+
+// 0x684688
+static char byte_684688[128];
+
 // 0x68653C
 static char won_account[128];
 
 // 0x6865BC
-static char char won_password[128];
+static char won_password[128];
 
 // 0x68663C
 static char byte_68663C[128];
@@ -69,11 +124,20 @@ static char byte_6866BC[128];
 // 0x6862D8
 static mes_file_handle_t dword_6862D8;
 
+// 0x6861D8
+static MesFileEntry stru_6861D8;
+
 // 0x6861E0
 static TextEdit stru_6861E0;
 
+// 0x6861F8
+static char byte_6861F8[80];
+
 // 0x686248
 static ScrollbarId stru_686248;
+
+// 0x686250
+static char byte_686250[128];
 
 // 0x6862D0
 static ScrollbarId stru_6862D0;
@@ -81,8 +145,44 @@ static ScrollbarId stru_6862D0;
 // 0x6862DC
 static void* dword_6862DC;
 
+// 0x6862E0
+static int dword_6862E0;
+
+// 0x686520
+static ScrollbarId stru_686520;
+
+// 0x686528
+static mes_file_handle_t dword_686528;
+
+// 0x686530
+static MesFileEntry stru_686530;
+
+// 0x686538
+static mes_file_handle_t dword_686538;
+
+// 0x68673C
+static int dword_68673C;
+
 // 0x686740
 static GameModuleList stru_686740;
+
+// 0x68674C
+static char byte_68674C[80];
+
+// 0x6867A0
+static MesFileEntry stru_6867A0;
+
+// 0x6867A8
+static char byte_6867A8[80];
+
+// 0x6868F8
+static char byte_6868F8[80];
+
+// 0x686948
+static char byte_686948[24];
+
+// 0x686960
+static bool dword_686960;
 
 // 0x686964
 static int dword_686964;
@@ -256,7 +356,7 @@ void sub_581E60(int x, int y)
 void sub_581F10()
 {
     if (dword_6862DC) {
-        sub_4A5040(dword_6862DC);
+        multiplayer_mm_chatroom_list_free(dword_6862DC);
         dword_6862DC = NULL;
     }
 }
@@ -292,13 +392,18 @@ void sub_581FC0(TextEdit* textedit)
 
     if (byte_6861F8[0] == '\0') {
         sub_5826D0(NULL, 3, NULL);
-    } else if (!sub_4A50C0(byte_6861F8)) {
+        sub_582AD0(NULL);
+        sub_5672A0();
+        return;
+    }
+
+    if (!multiplayer_mm_chatroom_mesg(byte_6861F8)) {
         if (byte_6861F8[0] == '/') {
             sub_582060(&(byte_6861F8[1]));
         } else {
             mes_file_entry.num = 10053;
             mes_get_msg(sub_549840(), &mes_file_entry);
-            sub_5826D0(NULL, 2, mes_file_entry.str)
+            sub_5826D0(NULL, 2, mes_file_entry.str);
         }
     }
 
@@ -338,11 +443,11 @@ void sub_582510(const char* name)
     sub_582AD0(NULL);
 
     if (dword_6862DC != NULL) {
-        sub_4A5040(dword_6862DC);
+        multiplayer_mm_chatroom_list_free(dword_6862DC);
     }
 
-    if (!sub_4A5020(&dword_6862DC, (int)&dword_6862E0)
-        && sub_5499B0(dword_6861DC)) {
+    if (!multiplayer_mm_chatroom_list_get(&dword_6862DC, &dword_6862E0)
+        && sub_5499B0(stru_6861D8.str)) {
         dword_6862DC = NULL;
     }
 
@@ -363,11 +468,11 @@ void sub_5825B0(const char* name)
     sub_582AD0(NULL);
 
     if (dword_6862DC != NULL) {
-        sub_4A5040(dword_6862DC);
+        multiplayer_mm_chatroom_list_free(dword_6862DC);
     }
 
-    if (!sub_4A5020(&dword_6862DC, (int)&dword_6862E0)
-        && sub_5499B0(dword_6861DC)) {
+    if (!multiplayer_mm_chatroom_list_get(&dword_6862DC, &dword_6862E0)
+        && sub_5499B0(stru_6861D8.str)) {
         dword_6862DC = NULL;
     }
 
@@ -415,7 +520,7 @@ void sub_5826D0()
 // 0x582790
 void sub_582790(TigRect* rect)
 {
-    TigArtBlitSpec blt;
+    TigArtBlitInfo blt;
     TigRect screen_rect;
 
     tig_art_interface_id_create(754, 0, 0, 0, &(blt.art_id));
@@ -476,7 +581,7 @@ void sub_5829D0(TigRect* rect)
         text_rect.y = 562;
         text_rect.width = font.width;
         text_rect.height = font.height;
-        tig_window_text_write(sub_549820(), str, text_rect);
+        tig_window_text_write(sub_549820(), mes_file_entry.str, &text_rect);
 
         tig_font_pop();
     }
@@ -537,7 +642,7 @@ void sub_582D60(TigRect* rect)
 
         text_rect.width = font.width;
         text_rect.height = font.height;
-        tig_window_text_write(sub_549820(), str, text_rect);
+        tig_window_text_write(sub_549820(), str, &text_rect);
 
         tig_font_pop();
     }
@@ -563,11 +668,11 @@ void sub_582E80()
 void sub_5830F0()
 {
     if (dword_6862DC != NULL) {
-        sub_4A5040(dword_6862DC);
+        multiplayer_mm_chatroom_list_free(dword_6862DC);
         dword_6862DC = NULL;
     }
 
-    if (sub_4A5020(&dword_6862DC, &dword_6862E0)) {
+    if (multiplayer_mm_chatroom_list_get(&dword_6862DC, &dword_6862E0)) {
         if (sub_5496D0() == 23) {
             sub_582860(NULL);
         }
@@ -658,7 +763,7 @@ void sub_5836A0()
 // 0x5837A0
 void sub_5837A0(TigRect* rect)
 {
-    TigArtBlitSpec blt;
+    TigArtBlitInfo blt;
     TigRect screen_rect;
 
     tig_art_interface_id_create(759, 0, 0, 0, &(blt.art_id));
@@ -893,7 +998,7 @@ void sub_584AE0()
 
     tig_net_local_server_get_name(name, sizeof(name));
     mainmenu_ui_create_window_func(false);
-    if (sub_4A4ED0()) {
+    if (multiplayer_mm_is_active()) {
         tig_button_show(stru_5CC6C8[2].field_C);
     } else {
         tig_button_hide(stru_5CC6C8[2].field_C);
@@ -908,14 +1013,14 @@ void sub_584C00()
 {
     mes_unload(dword_5CC5F0);
     gamelib_modlist_destroy(&stru_686740);
-    stru_686740.names = NULL;
+    stru_686740.paths = NULL;
     dword_686964 = 0;
 }
 
 // 0x584C30
 void sub_584C30(TigRect* rect)
 {
-    TigArtBlitSpec blt;
+    TigArtBlitInfo blt;
     TigRect screen_rect;
 
     tig_art_interface_id_create(798, 0, 0, 0, &(blt.art_id));
