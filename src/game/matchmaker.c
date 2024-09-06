@@ -16,7 +16,7 @@ typedef int(MatchmakerChatServerListFree)(void*);
 typedef int(MatchmakerChatServerJoin)(int);
 typedef int(MatchmakerChatRoomListGet)(void**, int*);
 typedef int(MatchmakerChatRoomListFree)(void*);
-typedef int(MatchmakerChatRoomJoin)(int);
+typedef int(MatchmakerChatRoomJoin)(int, int);
 typedef int(MatchmakerChatRoomGet)(int);
 typedef int(MatchmakerChatRoomMembersGet)(void**, int*);
 typedef int(MatchmakerChatRoomMembersFree)(void*);
@@ -86,7 +86,7 @@ int matchmaker_init(int a1)
         return 0;
     }
 
-    mm.init = GetProcAddress(mm.module, "matchmaker_init");
+    mm.init = (MatchmakerInit*)GetProcAddress(mm.module, "matchmaker_init");
     if (mm.init == NULL) {
         err = GetLastError();
         tig_debug_printf("MM: Could not find matchmaker_init, aborting (%s:%d).\n",
@@ -116,7 +116,7 @@ void matchmaker_exit()
     }
 
     if (mm.exit == NULL) {
-        mm.exit = GetProcAddress(mm.module, "matchmaker_exit");
+        mm.exit = (MatchmakerExit*)GetProcAddress(mm.module, "matchmaker_exit");
     }
 
     if (mm.exit != NULL) {
@@ -140,7 +140,7 @@ int matchmaker_is_active()
         return mm.is_active();
     }
 
-    mm.is_active = GetProcAddress(mm.module, "matchmaker_is_active");
+    mm.is_active = (MatchmakerIsActive*)GetProcAddress(mm.module, "matchmaker_is_active");
     if (mm.is_active != NULL) {
         return mm.is_active();
     }
@@ -158,7 +158,7 @@ int matchmaker_motd_get(int a1, int a2, int a3, int a4)
         return mm.motd_get(a1, a2, a3, a4);
     }
 
-    mm.motd_get = GetProcAddress(mm.module, "matchmaker_motd_get");
+    mm.motd_get = (MatchmakerMotdGet*)GetProcAddress(mm.module, "matchmaker_motd_get");
     if (mm.motd_get != NULL) {
         return mm.motd_get(a1, a2, a3, a4);
     }
@@ -176,7 +176,7 @@ int matchmaker_login(int a1, int a2)
         return mm.login(a1, a2);
     }
 
-    mm.login = GetProcAddress(mm.module, "matchmaker_login");
+    mm.login = (MatchmakerLogin*)GetProcAddress(mm.module, "matchmaker_login");
     if (mm.login != NULL) {
         return mm.login(a1, a2);
     }
@@ -194,7 +194,7 @@ int matchmaker_create_account(int a1, int a2, int a3)
         return mm.create_account(a1, a2, a3);
     }
 
-    mm.create_account = GetProcAddress(mm.module, "matchmaker_create_account");
+    mm.create_account = (MatchmakerCreateAccount*)GetProcAddress(mm.module, "matchmaker_create_account");
     if (mm.create_account != NULL) {
         return mm.create_account(a1, a2, a3);
     }
@@ -212,7 +212,7 @@ int matchmaker_version_needs_upgrade(int a1)
         return mm.version_needs_upgrade(a1);
     }
 
-    mm.version_needs_upgrade = GetProcAddress(mm.module, "matchmaker_version_needs_upgrade");
+    mm.version_needs_upgrade = (MatchmakerVersionNeedsUpgrade*)GetProcAddress(mm.module, "matchmaker_version_needs_upgrade");
     if (mm.version_needs_upgrade != NULL) {
         return mm.version_needs_upgrade(a1);
     }
@@ -230,7 +230,7 @@ int matchmaker_ad_rgb_get(int a1, int a2, int a3)
         return mm.ad_rgb_get(a1, a2, a3);
     }
 
-    mm.ad_rgb_get = GetProcAddress(mm.module, "matchmaker_ad_rgb_get");
+    mm.ad_rgb_get = (MatchmakerAdRgbGet*)GetProcAddress(mm.module, "matchmaker_ad_rgb_get");
     if (mm.ad_rgb_get != NULL) {
         return mm.ad_rgb_get(a1, a2, a3);
     }
@@ -248,7 +248,7 @@ int matchmaker_ad_release()
         return mm.ad_release();
     }
 
-    mm.ad_release = GetProcAddress(mm.module, "matchmaker_ad_release");
+    mm.ad_release = (MatchmakerAdRelease*)GetProcAddress(mm.module, "matchmaker_ad_release");
     if (mm.ad_release != NULL) {
         return mm.ad_release();
     }
@@ -266,7 +266,7 @@ int matchmaker_ad_clicked()
         return mm.ad_clicked();
     }
 
-    mm.ad_clicked = GetProcAddress(mm.module, "matchmaker_ad_clicked");
+    mm.ad_clicked = (MatchmakerAdClicked*)GetProcAddress(mm.module, "matchmaker_ad_clicked");
     if (mm.ad_clicked != NULL) {
         return mm.ad_clicked();
     }
@@ -284,7 +284,7 @@ int matchmaker_gamelist_get(void** games, int* count)
         return mm.gamelist_get(games, count);
     }
 
-    mm.gamelist_get = GetProcAddress(mm.module, "matchmaker_gamelist_get");
+    mm.gamelist_get = (MatchmakerGameListGet*)GetProcAddress(mm.module, "matchmaker_gamelist_get");
     if (mm.gamelist_get != NULL) {
         return mm.gamelist_get(games, count);
     }
@@ -302,7 +302,7 @@ int matchmaker_gamelist_free(void* games)
         return mm.gamelist_free(games);
     }
 
-    mm.gamelist_free = GetProcAddress(mm.module, "matchmaker_gamelist_free");
+    mm.gamelist_free = (MatchmakerGameListFree*)GetProcAddress(mm.module, "matchmaker_gamelist_free");
     if (mm.gamelist_free != NULL) {
         return mm.gamelist_free(games);
     }
@@ -320,7 +320,7 @@ int matchmaker_chatserver_list_get(void** chatservers, int* count)
         return mm.chatserver_list_get(chatservers, count);
     }
 
-    mm.chatserver_list_get = GetProcAddress(mm.module, "matchmaker_chatserver_list_get");
+    mm.chatserver_list_get = (MatchmakerChatServerListGet*)GetProcAddress(mm.module, "matchmaker_chatserver_list_get");
     if (mm.chatserver_list_get != NULL) {
         return mm.chatserver_list_get(chatservers, count);
     }
@@ -338,7 +338,7 @@ int matchmaker_chatserver_list_free(void* chatservers)
         return mm.chatserver_list_free(chatservers);
     }
 
-    mm.chatserver_list_free = GetProcAddress(mm.module, "matchmaker_chatserver_list_free");
+    mm.chatserver_list_free = (MatchmakerChatServerListFree*)GetProcAddress(mm.module, "matchmaker_chatserver_list_free");
     if (mm.chatserver_list_free != NULL) {
         return mm.chatserver_list_free(chatservers);
     }
@@ -356,7 +356,7 @@ int matchmaker_chatserver_join(int a1)
         return mm.chatserver_join(a1);
     }
 
-    mm.chatserver_join = GetProcAddress(mm.module, "matchmaker_chatserver_join");
+    mm.chatserver_join = (MatchmakerChatServerJoin*)GetProcAddress(mm.module, "matchmaker_chatserver_join");
     if (mm.chatserver_join != NULL) {
         return mm.chatserver_join(a1);
     }
@@ -374,7 +374,7 @@ int matchmaker_chatroom_list_get(void** chatrooms, int* count)
         return mm.chatroom_list_get(chatrooms, count);
     }
 
-    mm.chatroom_list_get = GetProcAddress(mm.module, "matchmaker_chatroom_list_get");
+    mm.chatroom_list_get = (MatchmakerChatRoomListGet*)GetProcAddress(mm.module, "matchmaker_chatroom_list_get");
     if (mm.chatroom_list_get != NULL) {
         return mm.chatroom_list_get(chatrooms, count);
     }
@@ -392,7 +392,7 @@ int matchmaker_chatroom_list_free(void* chatrooms)
         return mm.chatroom_list_free(chatrooms);
     }
 
-    mm.chatroom_list_free = GetProcAddress(mm.module, "matchmaker_chatroom_list_free");
+    mm.chatroom_list_free = (MatchmakerChatRoomListFree*)GetProcAddress(mm.module, "matchmaker_chatroom_list_free");
     if (mm.chatroom_list_free != NULL) {
         return mm.chatroom_list_free(chatrooms);
     }
@@ -407,12 +407,12 @@ int matchmaker_chatroom_list_free(void* chatrooms)
 int matchmaker_chatroom_join(int a1, int a2)
 {
     if (mm.chatroom_join != NULL) {
-        return mm.chatroom_join(a1);
+        return mm.chatroom_join(a1, a2);
     }
 
-    mm.chatroom_join = GetProcAddress(mm.module, "matchmaker_chatroom_join");
+    mm.chatroom_join = (MatchmakerChatRoomJoin*)GetProcAddress(mm.module, "matchmaker_chatroom_join");
     if (mm.chatroom_join != NULL) {
-        return mm.chatroom_join(a1);
+        return mm.chatroom_join(a1, a2);
     }
 
     tig_debug_printf("MM: Could not find matchmaker_chatroom_join, aborting.\n");
@@ -428,7 +428,7 @@ int matchmaker_chatroom_get(int a1)
         return mm.chatroom_get(a1);
     }
 
-    mm.chatroom_get = GetProcAddress(mm.module, "matchmaker_chatroom_get");
+    mm.chatroom_get = (MatchmakerChatRoomGet*)GetProcAddress(mm.module, "matchmaker_chatroom_get");
     if (mm.chatroom_get != NULL) {
         return mm.chatroom_get(a1);
     }
@@ -446,7 +446,7 @@ int matchmaker_chatroom_members_get(void** members, int* count)
         return mm.chatroom_members_get(members, count);
     }
 
-    mm.chatroom_members_get = GetProcAddress(mm.module, "matchmaker_chatroom_members_get");
+    mm.chatroom_members_get = (MatchmakerChatRoomMembersGet*)GetProcAddress(mm.module, "matchmaker_chatroom_members_get");
     if (mm.chatroom_members_get != NULL) {
         return mm.chatroom_members_get(members, count);
     }
@@ -464,7 +464,7 @@ int matchmaker_chatroom_members_free(void* members)
         return mm.chatroom_members_free(members);
     }
 
-    mm.chatroom_members_free = GetProcAddress(mm.module, "matchmaker_chatroom_members_free");
+    mm.chatroom_members_free = (MatchmakerChatRoomMembersFree*)GetProcAddress(mm.module, "matchmaker_chatroom_members_free");
     if (mm.chatroom_members_free != NULL) {
         return mm.chatroom_members_free(members);
     }
@@ -482,7 +482,7 @@ int matchmaker_chatroom_create(const char* a1, const char* a2)
         return mm.chatroom_create(a1, a2);
     }
 
-    mm.chatroom_create = GetProcAddress(mm.module, "matchmaker_chatroom_create");
+    mm.chatroom_create = (MatchmakerChatRoomCreate*)GetProcAddress(mm.module, "matchmaker_chatroom_create");
     if (mm.chatroom_create != NULL) {
         return mm.chatroom_create(a1, a2);
     }
@@ -500,7 +500,7 @@ int matchmaker_chatroom_mesg(const char* str)
         return mm.chatroom_mesg(str);
     }
 
-    mm.chatroom_mesg = GetProcAddress(mm.module, "matchmaker_chatroom_mesg");
+    mm.chatroom_mesg = (MatchmakerChatRoomMesg*)GetProcAddress(mm.module, "matchmaker_chatroom_mesg");
     if (mm.chatroom_mesg != NULL) {
         return mm.chatroom_mesg(str);
     }
@@ -518,7 +518,7 @@ int matchmaker_register(int a1)
         return mm.reg(a1);
     }
 
-    mm.reg = GetProcAddress(mm.module, "matchmaker_register");
+    mm.reg = (MatchmakerRegister*)GetProcAddress(mm.module, "matchmaker_register");
     if (mm.reg != NULL) {
         return mm.reg(a1);
     }
@@ -536,7 +536,7 @@ int matchmaker_ping()
         return mm.ping();
     }
 
-    mm.ping = GetProcAddress(mm.module, "matchmaker_ping");
+    mm.ping = (MatchmakerPing*)GetProcAddress(mm.module, "matchmaker_ping");
     if (mm.ping != NULL) {
         return mm.ping();
     }
