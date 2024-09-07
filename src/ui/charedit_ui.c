@@ -1,11 +1,20 @@
 #include "ui/charedit_ui.h"
 
 #include "game/mes.h"
+#include "ui/scrollbar_ui.h"
 
 static void sub_55EBA0();
+static void sub_55EFE0();
+static void sub_55EFF0();
+
+// 0x5C8F40
+static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
 
 // 0x64C7A0
 static tig_font_handle_t dword_64C7A0;
+
+// 0x64C7A8
+static ScrollbarId stru_64C7A8;
 
 // 0x64C7B0
 static tig_window_handle_t dword_64C7B0;
@@ -49,6 +58,9 @@ static tig_font_handle_t dword_64CDBC;
 // 0x64CDC0
 static tig_font_handle_t dword_64CDC0;
 
+// 0x64CDC8
+static int dword_64CDC8;
+
 // 0x64CDD0
 static tig_font_handle_t dword_64CDD0;
 
@@ -70,8 +82,14 @@ static tig_font_handle_t dword_64D3BC;
 // 0x64D420
 static tig_font_handle_t dword_64D420;
 
+// 0x64D424
+static int dword_64D424;
+
 // 0x64D42C
 static tig_font_handle_t dword_64D42C;
+
+// 0x64DEE4
+static bool dword_64DEE4;
 
 // 0x64DF0C
 static tig_font_handle_t dword_64DF0C;
@@ -380,13 +398,35 @@ void sub_55EFB0()
 // 0x55EFE0
 void sub_55EFE0()
 {
-    // TODO: Incomplete.
+    sub_55EFF0();
 }
 
 // 0x55EFF0
 void sub_55EFF0()
 {
-    // TODO: Incomplete.
+    ScrollbarUiControlInfo sb;
+
+    if (!dword_64DEE4) {
+        sb.flags = 0x39F;
+        sb.field_38 = dword_64D424;
+        sb.field_3C = sub_55F0E0;
+        if (dword_64CDC8 > 15) {
+            sb.field_24 = dword_64CDC8 - 15;
+        } else {
+            sb.field_24 = 0;
+        }
+        sb.field_4 = stru_5C8F40;
+        sb.field_28 = 0;
+        sb.rect.width = stru_5C8F40.width + 160;
+        sb.rect.x = 23;
+        sb.rect.y = 66;
+        sb.rect.height = 240;
+        sb.field_40 = sub_55F110;
+        sb.field_2C = 1;
+        scrollbar_ui_control_create(&stru_64C7A8, &sb, dword_64CA60);
+        sub_5806F0(stru_64C7A8);
+        dword_64DEE4 = true;
+    }
 }
 
 // 0x55F0D0
