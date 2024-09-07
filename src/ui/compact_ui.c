@@ -1,6 +1,9 @@
 #include "ui/compact_ui.h"
 
-#include <tig/tig.h>
+#include "game/player.h"
+#include "ui/anim_ui.h"
+#include "ui/dialog_ui.h"
+#include "ui/intgame.h"
 
 #define MAX_COMPONENTS 2
 
@@ -13,7 +16,7 @@ typedef struct CompactUiComponent {
     /* 0000 */ const char* name;
     /* 0004 */ tig_window_handle_t window_handle;
     /* 0008 */ CompactUiComponentInit* init;
-    /* 000C */ int field_C;
+    /* 000C */ void* field_C;
     /* 0010 */ TigWindowMessageFilterFunc* message_filter;
     /* 0014 */ CompactUiComponentDraw* draw;
     /* 0018 */ TigRect rect;
@@ -24,6 +27,16 @@ typedef struct CompactUiComponent {
 } CompactUiComponent;
 
 static_assert(sizeof(CompactUiComponent) == 0x38, "wrong size");
+
+static bool compact_ui_health_bar_init(CompactUiComponent* comp);
+static void sub_569050();
+static bool compact_ui_health_bar_message_filter(TigMessage* msg);
+static void compact_ui_health_bar_draw(int a1);
+static void sub_569550(tig_window_handle_t window_handle, TigRect* rect, int color);
+static bool compact_ui_hotkey_bar_init(CompactUiComponent* comp);
+static void sub_569580();
+static bool compact_ui_hotkey_bar_message_filter(TigMessage* msg);
+static void compact_ui_hotkey_bar_draw(int a1);
 
 // 0x5CA198
 static tig_window_handle_t dword_5CA198 = TIG_WINDOW_HANDLE_INVALID;
@@ -269,8 +282,10 @@ void sub_568F40()
 }
 
 // 0x569040
-bool compact_ui_health_bar_init()
+bool compact_ui_health_bar_init(CompactUiComponent* comp)
 {
+    (void)comp;
+
     return true;
 }
 
@@ -298,8 +313,10 @@ void sub_569550(tig_window_handle_t window_handle, TigRect* rect, int color)
 }
 
 // 0x569570
-bool compact_ui_hotkey_bar_init()
+bool compact_ui_hotkey_bar_init(CompactUiComponent* comp)
 {
+    (void)comp;
+
     return true;
 }
 
@@ -315,6 +332,7 @@ bool compact_ui_hotkey_bar_message_filter(TigMessage* msg)
 }
 
 // 0x5695A0
-void compact_ui_hotkey_bar_draw()
+void compact_ui_hotkey_bar_draw(int a1)
 {
+    (void)a1;
 }

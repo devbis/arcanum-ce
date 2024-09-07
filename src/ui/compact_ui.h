@@ -1,6 +1,8 @@
 #ifndef ARCANUM_UI_COMPACT_UI_H_
 #define ARCANUM_UI_COMPACT_UI_H_
 
+#include "game/context.h"
+
 bool compact_ui_init(GameInitInfo* init_info);
 void compact_ui_exit();
 void compact_ui_reset();
