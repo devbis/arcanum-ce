@@ -1,16 +1,80 @@
 #include "ui/charedit_ui.h"
 
+#include "game/mes.h"
+
+static void sub_55EBA0();
+
+// 0x64C7A0
+static tig_font_handle_t dword_64C7A0;
+
 // 0x64C7B0
 static tig_window_handle_t dword_64C7B0;
+
+// 0x64C828
+static tig_font_handle_t dword_64C828;
+
+// 0x64C840
+static tig_font_handle_t dword_64C840;
+
+// 0x64C848
+static tig_font_handle_t dword_64C848;
+
+// 0x64C9D0
+static tig_font_handle_t dword_64C9D0;
 
 // 0x64CA60
 static tig_window_handle_t dword_64CA60;
 
+// 0x64CA68
+static tig_font_handle_t dword_64CA68;
+
 // 0x64CA6C
 static tig_window_handle_t dword_64CA6C;
 
+// 0x64CA70
+static mes_file_handle_t charedit_mes_file;
+
 // 0x64CA8C
 static tig_window_handle_t dword_64CA8C;
+
+// 0x64CDB0
+static tig_font_handle_t dword_64CDB0;
+
+// 0x64CDB8
+static tig_font_handle_t dword_64CDB8;
+
+// 0x64CDBC
+static tig_font_handle_t dword_64CDBC;
+
+// 0x64CDC0
+static tig_font_handle_t dword_64CDC0;
+
+// 0x64CDD0
+static tig_font_handle_t dword_64CDD0;
+
+// 0x64CFE0
+static tig_font_handle_t dword_64CFE0;
+
+// 0x64D3A4
+static tig_font_handle_t dword_64D3A4;
+
+// 0x64D3A8
+static tig_font_handle_t dword_64D3A8;
+
+// 0x64D3B0
+static tig_font_handle_t dword_64D3B0;
+
+// 0x64D3BC
+static tig_font_handle_t dword_64D3BC;
+
+// 0x64D420
+static tig_font_handle_t dword_64D420;
+
+// 0x64D42C
+static tig_font_handle_t dword_64D42C;
+
+// 0x64DF0C
+static tig_font_handle_t dword_64DF0C;
 
 // 0x64E018
 static bool dword_64E018;
@@ -279,7 +343,26 @@ void sub_55E110()
 // 0x55EBA0
 void sub_55EBA0()
 {
-    // TODO: Incomplete.
+    mes_unload(charedit_mes_file);
+    tig_font_destroy(dword_64CDBC);
+    tig_font_destroy(dword_64D3A8);
+    tig_font_destroy(dword_64CDD0);
+    tig_font_destroy(dword_64C828);
+    tig_font_destroy(dword_64C7A0);
+    tig_font_destroy(dword_64D3BC);
+    tig_font_destroy(dword_64DF0C);
+    tig_font_destroy(dword_64D420);
+    tig_font_destroy(dword_64CDB0);
+    tig_font_destroy(dword_64C848);
+    tig_font_destroy(dword_64D3A4);
+    tig_font_destroy(dword_64CFE0);
+    tig_font_destroy(dword_64CDC0);
+    tig_font_destroy(dword_64D3B0);
+    tig_font_destroy(dword_64CA68);
+    tig_font_destroy(dword_64C9D0);
+    tig_font_destroy(dword_64C840);
+    tig_font_destroy(dword_64CDB8);
+    tig_font_destroy(dword_64D42C);
 }
 
 // 0x55EC90
