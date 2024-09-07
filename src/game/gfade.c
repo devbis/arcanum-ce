@@ -12,7 +12,7 @@ static GameContextF8* dword_5FC4B0;
 static TigVideoBuffer* fade_iso_video_buffer;
 
 // 0x5FC4B8
-static TigFont* dword_5FC4B8;
+static tig_font_handle_t dword_5FC4B8;
 
 // 0x5FC4BC
 static GameContextFC* dword_5FC4BC;
