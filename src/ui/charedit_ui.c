@@ -3,6 +3,7 @@
 #include "game/mes.h"
 #include "ui/scrollbar_ui.h"
 
+static void sub_55C2E0(int a1);
 static void sub_55EBA0();
 static void sub_55EFB0();
 static void sub_55EFE0();
@@ -13,6 +14,40 @@ static void sub_55F110(TigRect* rect);
 
 // 0x5C8F40
 static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
+
+// 0x5C8F70
+static int dword_5C8F70[] = {
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+};
+
+// 0x5C8F8C
+static int dword_5C8F8C[] = {
+    96,
+    129,
+    162,
+    195,
+    228,
+    261,
+    294,
+};
+
+// 0x5C8FA8
+static int dword_5C8FA8[] = {
+    653,
+    649,
+    650,
+    651,
+    652,
+    654,
+    655,
+    656,
+}:
 
 // 0x64C7A0
 static tig_font_handle_t dword_64C7A0;
@@ -103,6 +138,9 @@ static bool dword_64E018;
 
 // 0x64E01C
 static int dword_64E01C;
+
+// 0x64E028
+static int dword_64E028;
 
 // 0x559690
 bool charedit_init(GameInitInfo* init_info)
@@ -288,9 +326,32 @@ void sub_55C110()
 }
 
 // 0x55C2E0
-void sub_55C2E0()
+void sub_55C2E0(int a1)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    tig_art_interface_id_create(dword_5C8FA8[dword_64E028], 0, 0, 0, &art_id);
+    tig_art_frame_data(art_id, &art_frame_data);
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = dword_5C8F8C[a1];
+    dst_rect.y = dword_5C8F70[a1];
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(dword_64CA8C, &art_blit_info);
 }
 
 // 0x55C3A0
