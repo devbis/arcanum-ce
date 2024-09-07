@@ -9,6 +9,7 @@ static void sub_55EFE0();
 static void sub_55EFF0();
 static void sub_55F0D0();
 static void sub_55F0E0(int value);
+static void sub_55F110(TigRect* rect);
 
 // 0x5C8F40
 static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
@@ -456,9 +457,17 @@ void sub_55F0E0(int value)
 }
 
 // 0x55F110
-void sub_55F110()
+void sub_55F110(TigRect* rect)
 {
-    // TODO: Incomplete.
+    TigArtBlitInfo blit_info;
+
+    if (dword_64DEE4) {
+        tig_art_interface_id_create(567, 0, 0, 0, &(blit_info.art_id));
+        blit_info.flags = 0;
+        blit_info.src_rect = rect;
+        blit_info.dst_rect = rect;
+        tig_window_blit_art(dword_64CA60, &blit_info);
+    }
 }
 
 // 0x55F160
