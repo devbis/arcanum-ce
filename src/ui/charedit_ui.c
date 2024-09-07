@@ -1,9 +1,58 @@
 #include "ui/charedit_ui.h"
 
+// 0x64C7B0
+static tig_window_handle_t dword_64C7B0;
+
+// 0x64CA60
+static tig_window_handle_t dword_64CA60;
+
+// 0x64CA6C
+static tig_window_handle_t dword_64CA6C;
+
+// 0x64CA8C
+static tig_window_handle_t dword_64CA8C;
+
 // 0x559690
-void charedit_init()
+bool charedit_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    (void)init_info;
+
+    if (!sub_55E110()) {
+        return false;
+    }
+
+    if (!sub_55D060()) {
+        sub_55EBA0();
+        return false;
+    }
+
+    if (!sub_55C890()) {
+        sub_55EBA0();
+        tig_window_destroy(dword_64CA60);
+        return false;
+    }
+
+    if (!sub_55C110()) {
+        sub_55EBA0();
+        tig_window_destroy(dword_64C7B0);
+        tig_window_destroy(dword_64CA60);
+        return false;
+    }
+
+    if (!sub_55BAB0()) {
+        sub_55EBA0();
+        tig_window_destroy(dword_64C7B0);
+        tig_window_destroy(dword_64CA8C);
+        tig_window_destroy(dword_64CA60);
+        return false;
+    }
+
+    tig_window_hide(dword_64CA6C);
+    tig_window_hide(dword_64C7B0);
+    tig_window_hide(dword_64CA8C);
+    tig_window_hide(dword_64CA60);
+
+    return true;
 }
 
 // 0x559770
