@@ -66,6 +66,9 @@ static UiButtonInfo intgame_mt_button_info = { 161, 443, 563, TIG_BUTTON_HANDLE_
 // 0x5C6F78
 static int dword_5C6F78 = 6;
 
+// 0x5C72B0
+static int dword_5C72B0 = 1;
+
 // 0x5C739C
 static int intgame_iso_window_width = 800;
 
@@ -108,6 +111,15 @@ static tig_window_handle_t intgame_big_window_handle;
 // 0x64C510
 static TigRect stru_64C510;
 
+// 0x64C520
+static tig_window_handle_t dword_64C520;
+
+// 0x64C524
+static TigRect* dword_64C524;
+
+// 0x64C528
+static tig_art_id_t dword_64C528;
+
 // 0x64C52C
 static tig_window_handle_t dword_64C52C;
 
@@ -122,6 +134,9 @@ static tig_font_handle_t dword_64C538;
 
 // 0x64C630
 static bool intgame_big_window_locked;
+
+// 0x64C660
+static TigRect stru_64C660;
 
 // 0x64C670
 static tig_font_handle_t dword_64C670;
@@ -138,6 +153,9 @@ static bool intgame_fullscreen;
 // 0x64C688
 static int64_t qword_64C688;
 
+// 0x64C698
+static TigRect stru_64C698;
+
 // 0x64C6A8
 static int dword_64C6A8;
 
@@ -147,11 +165,17 @@ static int dword_64C6AC;
 // 0x64C6B4
 static bool dword_64C6B4;
 
+// 0x64C6BC
+static int dword_64C6BC;
+
 // 0x64C6D4
 static void(*dword_64C6D4)(int);
 
 // 0x64C6D8
 static int dword_64C6D8;
+
+// 0x64C6E4
+static TigVideoBuffer* dword_64C6E4;
 
 // 0x64C6F0
 static unsigned int intgame_iso_window_flags;
@@ -476,7 +500,7 @@ void intgame_ammo_icon_refresh(tig_art_id_t art_id)
     TigRect src_rect;
     TigRect dst_rect;
     TigArtFrameData art_frame_data;
-    TigArtBlitSpec blt;
+    TigArtBlitInfo blt;
 
     index = sub_551740(stru_5C6470.x, stru_5C6470.y);
     if (index == -1) {
@@ -720,9 +744,89 @@ void sub_550D60()
 }
 
 // 0x550DA0
-void sub_550DA0()
+void sub_550DA0(int a1, S550DA0* a2)
 {
-    // TODO: Incomplete.
+    TigVideoBufferCreateInfo vb_create_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigArtBlitInfo blit_info;
+
+    if (dword_64C6BC == a1) {
+        return;
+    }
+
+    switch (dword_64C6BC) {
+    case 1:
+        if (tig_video_buffer_destroy(dword_64C6E4) == TIG_OK) {
+            dword_64C6E4 = NULL;
+        }
+        break;
+    case 2:
+        sub_4D81F0();
+        break;
+    }
+
+    switch (a1) {
+    case 0:
+        dword_64C520 = TIG_WINDOW_HANDLE_INVALID;
+        sub_558130(NULL);
+        iso_redraw();
+        break;
+    case 1:
+        sub_551A10(player_get_pc_obj());
+        vb_create_info.width = stru_64C510.width;
+        vb_create_info.height = stru_64C510.height;
+        vb_create_info.flags = 0;
+        vb_create_info.background_color = 0;
+        dword_64C520 = a2->window_handle;
+        dword_64C528 = a2->art_id;
+        dword_64C524 = &stru_64C660;
+        stru_64C660 = *a2->rect;
+        if (tig_video_buffer_create(&vb_create_info, &dword_64C6E4) == TIG_OK) {
+            sub_551080();
+        }
+        sub_558130(&stru_64C510);
+        break;
+    case 2:
+        sub_4D81F0();
+        dword_64C520 = a2->window_handle;
+        dword_64C528 = a2->art_id;
+        dword_64C524 = &stru_64C660;
+        stru_64C660 = *a2->rect;
+
+        tig_window_fill(dword_64C520,
+            &stru_64C660,
+            tig_color_make(0, 0, 0));
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = stru_64C660.width;
+        src_rect.height = stru_64C660.height;
+
+        dst_rect.x = dword_64C524->x;
+        dst_rect.y = dword_64C524->y;
+        dst_rect.width = stru_64C660.width;
+        dst_rect.height = stru_64C660.height;
+
+        blit_info.flags = 0;
+        blit_info.art_id = dword_64C528;
+        blit_info.src_rect = &src_rect;
+        blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(dword_64C520, &blit_info);
+
+        sub_558130(&stru_64C698);
+        sub_402F90();
+        dword_64C6BC = 2;
+        dword_5C72B0--;
+        return;
+    }
+
+    if (dword_5C72B0 < 1) {
+        sub_402FA0();
+        dword_5C72B0++;
+    }
+
+    dword_64C6BC = a1;
 }
 
 // 0x551000
