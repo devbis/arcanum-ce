@@ -1,5 +1,7 @@
 #include "ui/textedit_ui.h"
 
+static bool sub_5671E0(char ch);
+
 // 0x66DAA4
 static int dword_66DAA4;
 
@@ -58,8 +60,10 @@ void textedit_ui_focus(TextEdit* textedit)
 }
 
 // 0x566ED0
-void textedit_ui_unfocus()
+void textedit_ui_unfocus(TextEdit* textedit)
 {
+    (void)textedit;
+
     textedit_ui_current_textedit = NULL;
     dword_66DAAC = 0;
     dword_66DAA4 = false;

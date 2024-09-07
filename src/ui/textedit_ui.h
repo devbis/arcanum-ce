@@ -25,7 +25,7 @@ bool textedit_ui_init(GameInitInfo* init_info);
 void textedit_ui_reset();
 void textedit_ui_exit();
 void textedit_ui_focus(TextEdit* textedit);
-void textedit_ui_unfocus();
+void textedit_ui_unfocus(TextEdit* textedit);
 bool textedit_ui_is_focused();
 bool textedit_ui_process_message(TigMessage* msg);
 void textedit_ui_clear();
