@@ -5,5 +5,6 @@
 
 bool charedit_init(GameInitInfo* init_info);
 void charedit_exit();
+void charedit_reset();
 
 #endif /* ARCANUM_UI_CHAREDIT_UI_H_ */

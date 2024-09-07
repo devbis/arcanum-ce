@@ -68,7 +68,9 @@ void charedit_exit()
 // 0x5597B0
 void charedit_reset()
 {
-    // TODO: Incomplete.
+    if (sub_55A220()) {
+        sub_55A150();
+    }
 }
 
 // 0x5597C0
