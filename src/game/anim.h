@@ -3,4 +3,6 @@
 
 #include "game/context.h"
 
+void anim_exit();
+
 #endif /* ARCANUM_GAME_ANIM_H_ */

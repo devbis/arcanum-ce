@@ -1,5 +1,16 @@
 #include "game/anim.h"
 
+#include "game/animfx.h"
+
+// 0x5DE610
+static AnimFxList stru_5DE610;
+
+// 0x5DE670
+static AnimFxList stru_5DE670;
+
+// 0x5DE6D4
+static bool anim_editor;
+
 // 0x421B00
 void anim_init()
 {
@@ -9,7 +20,10 @@ void anim_init()
 // 0x421BF0
 void anim_exit()
 {
-    // TODO: Incomplete.
+    if (!anim_editor) {
+        animfx_list_exit_(&stru_5DE610);
+        animfx_list_exit_(&stru_5DE670);
+    }
 }
 
 // 0x421C20
