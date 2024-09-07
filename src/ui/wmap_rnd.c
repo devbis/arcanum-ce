@@ -1,10 +1,14 @@
 #include "ui/wmap_rnd.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/random.h"
-#include "game/lib/timeevent.h"
+#include "game/random.h"
+#include "game/timeevent.h"
 #include "ui/sleep_ui.h"
+
+// 0x64C790
+static bool dword_64C790;
+
+// 0x64C794
+static bool dword_64C794;
 
 // 0x5581B0
 bool wmap_rnd_init(GameInitInfo* init_info)
@@ -33,7 +37,13 @@ void wmap_rnd_mod_load()
 // 0x558700
 void wmap_rnd_mod_unload()
 {
-    // TODO: Incomplete.
+    if (!dword_64C794) {
+        if (dword_64C790) {
+            sub_558AF0();
+            sub_558B50();
+            dword_64C790 = false;
+        }
+    }
 }
 
 // 0x558730
