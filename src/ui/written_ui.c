@@ -1,12 +1,24 @@
 #include "ui/written_ui.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/object.h"
+#include "game/critter.h"
+#include "game/gsound.h"
+#include "game/obj.h"
+#include "game/mes.h"
+#include "game/proto.h"
+#include "game/tech.h"
+#include "ui/types.h"
 
 #define TWO 2
 #define FIVE 5
 #define TEN 10
+
+static void written_ui_create();
+static void written_ui_destroy();
+static bool written_ui_message_filter(TigMessage* msg);
+static void sub_56C050();
+static void sub_56C590(int num, int x, int y);
+static void sub_56C630(const char* str, int num, int x, int y, int alignment);
+static void sub_56C750(const char* str, int num, TigRect* rect);
 
 // 0x5CA478
 static tig_window_handle_t written_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -22,14 +34,68 @@ static const char* off_5CA490[FIVE] = {
     "mes\\gameplaque.mes",
 };
 
+// 0x5CA4A8
+static TigRect stru_5CA4A8 = { 25, 24, 89, 89 };
+
+// 0x5CA4B8
+static int dword_5CA4B8[8] = {
+    477,
+    489,
+    487,
+    491,
+    0,
+    0,
+    633,
+    0,
+};
+
+// 0x5CA4D8
+static UiButtonInfo stru_5CA4D8[2] = {
+    { 213, 77, 495, TIG_BUTTON_HANDLE_INVALID },
+    { 675, 77, 496, TIG_BUTTON_HANDLE_INVALID },
+};
+
+// 0x5CA4F8
+static TigRect stru_5CA4F8 = { 349, 49, 215, 300 };
+
+// 0x5CA508
+static TigRect stru_5CA508 = { 327, 126, 250, 240 };
+
+// 0x5CA518
+static TigRect stru_5CA518 = { 335, 90, 234, 20 };
+
+// 0x67BC68
+static int dword_67BC68;
+
+// 0x67BC6C
+static int dword_67BC6C;
+
+// 0x67BC70
+static int dword_67BC70[100];
+
 // 0x67BE00
 static char written_ui_text[20000];
+
+// 0x680C20
+static int dword_680C20[100];
 
 // 0x680DB0
 static bool dword_680DB0;
 
+// 0x680DB4
+static int dword_680DB4;
+
 // 0x680DB8
-static int dword_680DB8[FIVE];
+static mes_file_handle_t dword_680DB8[FIVE];
+
+// 0x680DCC
+static int dword_680DCC;
+
+// 0x680DD0
+static int dword_680DD0;
+
+// 0x680DD4
+static int dword_680DD4;
 
 // 0x680DD8
 static bool written_ui_mod_loaded;
@@ -47,7 +113,7 @@ bool written_ui_mod_load()
     }
 
     for (index = 0; index < FIVE; index++) {
-        message_load(off_5CA490[index], &(dword_680DB8[index]));
+        mes_load(off_5CA490[index], &(dword_680DB8[index]));
     }
 
     written_ui_mod_loaded = true;
@@ -55,7 +121,7 @@ bool written_ui_mod_load()
     dword_680DB0 = false;
 
     if (dword_680DB8[2] != -1) {
-        dword_67BC68 = message_count_in_range(dword_680DB8[2], 10, 999);
+        dword_67BC68 = mes_entries_count_in_range(dword_680DB8[2], 10, 999);
     } else {
         dword_67BC68 = 0;
     }
@@ -73,15 +139,15 @@ void written_ui_mod_unload()
     }
 
     for (index = 0; index < FIVE; index++) {
-        message_unload(dword_680DB8[index]);
-        dword_680DB8[index] = -1;
+        mes_unload(dword_680DB8[index]);
+        dword_680DB8[index] = MES_FILE_HANDLE_INVALID;
     }
 
     written_ui_mod_loaded = false;
 }
 
 // 0x56BB60
-void sub_56BB60(long long a1, long long a2)
+void sub_56BB60(int64_t a1, int64_t a2)
 {
     int subtype;
     int start;
@@ -94,8 +160,8 @@ void sub_56BB60(long long a1, long long a2)
         return;
     }
 
-    subtype = obj_f_get_int(a1, OBJ_F_WRITTEN_SUBTYPE);
-    start = obj_f_get_int(a1, OBJ_F_WRITTEN_TEXT_START_LINE);
+    subtype = obj_field_int32_get(a1, OBJ_F_WRITTEN_SUBTYPE);
+    start = obj_field_int32_get(a1, OBJ_F_WRITTEN_TEXT_START_LINE);
 
     if (subtype == 5) {
         sub_4B0120(a2, a1);
@@ -173,7 +239,7 @@ void written_ui_create()
 
     window_data.flags = TIG_WINDOW_FLAG_0x02;
     window_data.rect = stru_5CA480;
-    window_data.message_filter_func = written_ui_message_filter;
+    window_data.message_filter = written_ui_message_filter;
 
     if (tig_window_create(&window_data, &written_ui_window) != TIG_OK) {
         tig_debug_printf("written_ui_create: ERROR: window create failed!\n");
@@ -182,7 +248,7 @@ void written_ui_create()
 
     sub_56C590(494, 0, 0);
 
-    obj = sub_40DA50();
+    obj = player_get_pc_obj();
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     sub_4B8CE0(location);
 
@@ -198,30 +264,30 @@ void written_ui_create()
         }
         dword_680DD0 = 0;
         dword_680DD4 = 0;
-        dword_67BC70 = dword_67BC6C;
-        dword_680C20 = 0;
+        dword_67BC70[0] = dword_67BC6C;
+        dword_680C20[0] = 0;
         break;
     case 1:
         for (index = 0; index < TEN; index++) {
             mes_file_entry.num = index + dword_67BC6C;
-            if (!message_find(dword_680DB4, &mes_file_entry)) {
+            if (!mes_search(dword_680DB4, &mes_file_entry)) {
                 break;
             }
-            strcat(written_ui_text, mes_file_entry.text);
+            strcat(written_ui_text, mes_file_entry.str);
             strcat(written_ui_text, "\n");
         }
         break;
     case 3:
         for (index = 0; index < TEN; index++) {
             mes_file_entry.num = index + dword_67BC6C;
-            if (!message_find(dword_680DB4, &mes_file_entry)) {
+            if (!mes_search(dword_680DB4, &mes_file_entry)) {
                 break;
             }
-            strcat(written_ui_text, mes_file_entry.text);
+            strcat(written_ui_text, mes_file_entry.str);
 
             mes_file_entry.num = index + dword_67BC6C;
-            sub_4D43A0(dword_680DB8[3], &mes_file_entry);
-            strcat(written_ui_text, mes_file_entry.text);
+            mes_get_msg(dword_680DB8[3], &mes_file_entry);
+            strcat(written_ui_text, mes_file_entry.str);
         }
     }
 
@@ -253,7 +319,7 @@ bool written_ui_message_filter(TigMessage* msg)
 {
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
-        if (msg->data.mouse.event == TIG_MOUSE_MESSAGE_LEFT_BUTTON_UP
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
             sub_56BC90();
             return true;
@@ -292,7 +358,7 @@ void sub_56C590(int num, int x, int y)
 {
     TigRect src_rect;
     TigRect dst_rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
 
     src_rect.x = 0;
     src_rect.y = 0;
