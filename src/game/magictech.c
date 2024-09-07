@@ -1,7 +1,11 @@
 #include "game/magictech.h"
 
 #include "game/animfx.h"
+#include "game/combat.h"
 #include "game/mes.h"
+#include "game/mt_item.h"
+#include "game/object.h"
+#include "game/spell.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 
@@ -53,139 +57,91 @@ typedef struct MagicTechInfoAI {
 static_assert(sizeof(MagicTechInfoAI) == 0x2C, "wrong size");
 
 typedef struct MagicTechInfo {
-    int iq;
-    int cost;
-    int resist_stat;
-    int resist_value;
-    int maintain1;
-    int maintain2;
-    int duration1;
-    int duration2;
-    int duration_stat;
-    int duration_stat_value;
-    int duration_trigger_count;
-    int range;
-    unsigned int flags;
-    unsigned int item_triggers;
-    int begin_caster;
-    int begin_target;
-    int maintain_caster;
-    int maintain_target;
-    int end_caster;
-    int end_target;
-    int callback_caster;
-    int callback_target;
-    int end_callback_caster;
-    int end_callback_target;
-    int missile;
-    int casting_anim;
-    int field_70;
-    int field_80;
-    MagicTech_EC field_EC[5];
-    int no_stack;
-    int field_114;
-    unsigned int cancels_sf;
-    unsigned int disallowed_sf;
-    unsigned int disallowed_tsf;
-    unsigned int disallowed_tcf;
-    unsigned int cancels_envsf;
-    MagicTechInfoAI ai;
+    /* 0000 */ const char* field_0;
+    /* 0004 */ int iq;
+    /* 0008 */ int cost;
+    /* 000C */ int resist_stat;
+    /* 0010 */ int resist_value;
+    /* 0014 */ int maintain[2];
+    /* 001C */ int duration1;
+    /* 0020 */ int duration2;
+    /* 0024 */ int duration_stat;
+    /* 0028 */ int duration_stat_value;
+    /* 002C */ int duration_trigger_count;
+    /* 0030 */ int range;
+    /* 0034 */ unsigned int flags;
+    /* 0038 */ unsigned int item_triggers;
+    /* 003C */ int begin_caster;
+    /* 0040 */ int begin_target;
+    /* 0044 */ int maintain_caster;
+    /* 0048 */ int maintain_target;
+    /* 004C */ int end_caster;
+    /* 0050 */ int end_target;
+    /* 0054 */ int callback_caster;
+    /* 0058 */ int callback_target;
+    /* 005C */ int end_callback_caster;
+    /* 0060 */ int end_callback_target;
+    /* 0064 */ int missile;
+    /* 0068 */ int casting_anim;
+    /* 006C */ int field_6C;
+    /* 0070 */ int field_70;
+    /* 0074 */ int field_74;
+    /* 0078 */ int field_78;
+    /* 007C */ int field_7C;
+    /* 0080 */ int field_80;
+    /* 0084 */ int field_84;
+    /* 0088 */ int field_88;
+    /* 008C */ int field_8C;
+    /* 0090 */ int field_90;
+    /* 0094 */ int field_94;
+    /* 0098 */ int field_98;
+    /* 009C */ int field_9C;
+    /* 00A0 */ int field_A0;
+    /* 00A4 */ int field_A4;
+    /* 00A8 */ int field_A8;
+    /* 00AC */ int field_AC;
+    /* 00B0 */ int field_B0;
+    /* 00B4 */ int field_B4;
+    /* 00B8 */ int field_B8;
+    /* 00BC */ int field_BC;
+    /* 00C0 */ int field_C0;
+    /* 00C4 */ int field_C4;
+    /* 00C8 */ int field_C8;
+    /* 00CC */ int field_CC;
+    /* 00D0 */ int field_D0;
+    /* 00D4 */ int field_D4;
+    /* 00D8 */ int field_D8;
+    /* 00DC */ int field_DC;
+    /* 00E0 */ int field_E0;
+    /* 00E4 */ int field_E4;
+    /* 00E8 */ int field_E8;
+    /* 00EC */ MagicTech_EC field_EC[5];
+    /* 0110 */ int no_stack;
+    /* 0114 */ int field_114;
+    /* 0118 */ unsigned int cancels_sf;
+    /* 011C */ unsigned int disallowed_sf;
+    /* 0120 */ unsigned int disallowed_tsf;
+    /* 0124 */ unsigned int disallowed_tcf;
+    /* 0128 */ unsigned int cancels_envsf;
+    /* 012C */ MagicTechInfoAI ai;
 } MagicTechInfo;
 
 static_assert(sizeof(MagicTechInfo) == 0x158, "wrong size");
 
-typedef struct MagicTechLock {
-    int field_0;
-    int field_4;
-    int field_8;
-    int field_C;
-    int field_10;
-    int field_14;
-    int field_18;
-    int field_1C;
-    int field_20;
-    int field_24;
-    int field_28;
-    int field_2C;
-    int field_30;
-    int field_34;
-    int field_38;
-    int field_3C;
-    int field_40;
-    int field_44;
-    int field_48;
-    int field_4C;
-    int field_50;
-    int field_54;
-    int field_58;
-    int field_5C;
-    int field_60;
-    int field_64;
-    int field_68;
-    int field_6C;
-    int field_70;
-    int field_74;
-    int field_78;
-    int field_7C;
-    int field_80;
-    int field_84;
-    int field_88;
-    int field_8C;
-    int field_90;
-    int field_94;
-    int field_98;
-    int field_9C;
-    int field_A0;
-    int field_A4;
-    int field_A8;
-    int field_AC;
-    int field_B0;
-    int field_B4;
-    int field_B8;
-    int field_BC;
-    int field_C0;
-    int field_C4;
-    int field_C8;
-    int field_CC;
-    int field_D0;
-    int field_D4;
-    int field_D8;
-    int field_DC;
-    int field_E0;
-    int field_E4;
-    int field_E8;
-    int field_EC;
-    int field_F0;
-    int field_F4;
-    int field_F8;
-    int field_FC;
-    int field_100;
-    int field_104;
-    int field_108;
-    int field_10C;
-    int field_110;
-    int field_114;
-    int field_118;
-    int field_11C;
-    int field_120;
-    int field_124;
-    int field_128;
-    int field_12C;
-    int field_130;
-    int field_134;
-    int field_138;
-    int field_13C;
-    int field_140;
-    int field_144;
-    int field_148;
-    int field_14C;
-    int field_150;
-    int field_154;
-} MagicTechLock;
-
-static_assert(sizeof(MagicTechLock) == 0x158, "wrong size");
-
+static bool sub_44FE30(int a1, const char* path, int a3);
+static bool sub_44FFA0(int a1, const char* a2, int a3);
+static void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech);
+static void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech);
+static void sub_450240();
+static bool sub_4507D0(object_id_t obj, int magictech);
+static void sub_455710();
+static void sub_4578F0(MagicTechInfo* info, char* str);
+static void sub_457B20(MagicTechInfo* info, char* str);
+static void sub_457D00(MagicTechInfo* info, char* str);
+static void magictech_build_ai_info(MagicTechInfo* info, char* str);
+static bool sub_4594D0(TimeEvent* timeevent);
 static bool sub_459640(TimeEvent* timeevent);
+static void sub_45A760(object_id_t obj, const char* msg);
 
 // 0x5B0C20
 static const char* off_5B0C20[] = {
@@ -221,6 +177,9 @@ static int dword_5B0DE0[] = {
     15,
     18,
 };
+
+// 0x5B0F20
+static int dword_5B0F20 = -1;
 
 // 0x5B72AC
 static const char* off_5B72AC[] = {
@@ -745,6 +704,9 @@ static bool magictech_initialized;
 // 0x5E7628
 static int dword_5E7628;
 
+// 0x5E7634
+static int dword_5E7634;
+
 // 0x6876D8
 static MagicTechInfo* magictech_spells;
 
@@ -860,21 +822,39 @@ void magictech_exit()
         mes_unload(magictech_spell_mes_file);
         mes_unload(magictech_mes_file);
 
-        if (magictech_spells) {
+        if (magictech_spells != NULL) {
             FREE(magictech_spells);
             magictech_spells = NULL;
         }
 
-        if (magictech_component_names) {
+        if (magictech_component_names != NULL) {
             FREE(magictech_component_names);
         }
 
-        if (magictech_locks) {
+        if (magictech_locks != NULL) {
             FREE(magictech_locks);
         }
 
         magictech_initialized = false;
     }
+}
+
+// 0x44F7A0
+void magictech_break_nodes_to_map(const char* map)
+{
+    // TODO: Incomplete.
+}
+
+// 0x44FA70
+void magictech_save_nodes_to_map(const char* map)
+{
+    // TODO: Incomplete.
+}
+
+// 0x44FC30
+void magictech_load_nodes_from_map(const char* map)
+{
+    // TODO: Incomplete.
 }
 
 // 0x44FDC0
@@ -906,7 +886,7 @@ void sub_44FE20()
 // 0x44FE30
 bool sub_44FE30(int a1, const char* path, int a3)
 {
-    int index = 0;
+    int magictech = 0;
     int v1;
 
     (void)a1;
@@ -915,35 +895,36 @@ bool sub_44FE30(int a1, const char* path, int a3)
         return false;
     }
 
-    for (index = 0; index < MT_SPELL_COUNT; index++) {
+    for (magictech = 0; magictech < MT_SPELL_COUNT; magictech++) {
         for (v1 = 0; v1 < 5; v1++) {
-            magictech_spells[index].field_EC[v1].field_0 = 0;
-            magictech_spells[index].field_EC[v1].field_4 = 0;
+            magictech_spells[magictech].field_EC[v1].field_0 = 0;
+            magictech_spells[magictech].field_EC[v1].field_4 = 0;
         }
     }
 
-    while (index < MT_80) {
-        sub_450090(dword_5E6D20, &(magictech_spells[index]), a3, index);
-        index++;
+    while (magictech < MT_80) {
+        sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
+        magictech++;
     }
 
-    while (index < MT_140) {
-        sub_450090(dword_5E6D20, &(magictech_spells[index]), a3, index);
-        magictech_spells[index].iq = 0;
-        index++;
+    while (magictech < MT_140) {
+        sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
+        magictech_spells[magictech].iq = 0;
+        magictech++;
     }
 
-    while (index < MT_SPELL_COUNT) {
-        sub_450090(dword_5E6D20, &(magictech_spells[index]), a3 + 2000, index);
-        magictech_spells[index].flags |= 0x04;
-        magictech_spells[index].iq = 0;
-        index++;
+    while (magictech < MT_SPELL_COUNT) {
+        sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3 + 2000, magictech);
+        magictech_spells[magictech].flags |= 0x04;
+        magictech_spells[magictech].iq = 0;
+        magictech++;
     }
 
-    while (index < MT_SPELL_COUNT) {
-        sub_450090(dword_5E6D20, &(magictech_spells[index]), a3, index);
-        magictech_spells[index].iq = 0;
-        index++;
+    // NOTE: Meaningless?
+    while (magictech < MT_SPELL_COUNT) {
+        sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
+        magictech_spells[magictech].iq = 0;
+        magictech++;
     }
 
     return true;
@@ -952,24 +933,26 @@ bool sub_44FE30(int a1, const char* path, int a3)
 // 0x44FFA0
 bool sub_44FFA0(int a1, const char* a2, int a3)
 {
-    int index = 0;
+    int magictech = 0;
 
-    while (index < MT_80) {
-        sub_4501D0(dword_5E6D20, &(magictech_spells[index]), a3, index);
-        index++;
+    (void)a1;
+
+    while (magictech < MT_80) {
+        sub_4501D0(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
+        magictech++;
     }
 
-    while (index < MT_140) {
-        sub_4501D0(dword_5E6D20, &(magictech_spells[index]), a3, index);
-        magictech_spells[index].iq = 0;
-        index++;
+    while (magictech < MT_140) {
+        sub_4501D0(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
+        magictech_spells[magictech].iq = 0;
+        magictech++;
     }
 
-    while (index < MT_SPELL_COUNT) {
-        sub_4501D0(dword_5E6D20, &(magictech_spells[index]), a3 + 2000, index);
-        magictech_spells[index].flags |= 0x04;
-        magictech_spells[index].iq = 0;
-        index++;
+    while (magictech < MT_SPELL_COUNT) {
+        sub_4501D0(dword_5E6D20, &(magictech_spells[magictech]), a3 + 2000, magictech);
+        magictech_spells[magictech].flags |= 0x04;
+        magictech_spells[magictech].iq = 0;
+        magictech++;
     }
 
     mes_unload(dword_5E6D20);
@@ -978,19 +961,19 @@ bool sub_44FFA0(int a1, const char* a2, int a3)
 }
 
 // 0x450090
-void sub_450090(int msg_file, MagicTechInfo* info, int num, int index)
+void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech)
 {
     MesFileEntry mes_file_entry;
 
-    dword_5E7628 = index;
+    dword_5E7628 = magictech;
 
-    sub_457580(info, index);
+    sub_457580(info, magictech);
 
     mes_file_entry.num = num;
     mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
-    info->iq = mes_file_entry.str;
+    info->field_0 = mes_file_entry.str;
 
-    mes_file_entry.num = num + 50 * index;
+    mes_file_entry.num = num + 50 * magictech;
     mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
     magictech_build_aoe_info(info, mes_file_entry.str);
 
@@ -1021,12 +1004,12 @@ void sub_450090(int msg_file, MagicTechInfo* info, int num, int index)
 }
 
 // 0x4501D0
-void sub_4501D0(int msg_file, MagicTechInfo* info, int num, int index)
+void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech)
 {
     MesFileEntry mes_file_entry;
     int index;
 
-    mes_file_entry.num = num + 50 * index + 5;
+    mes_file_entry.num = num + 50 * magictech + 5;
     for (index = 0; index < 44; index++) {
         if (!mes_search(msg_file, &mes_file_entry)) {
             return;
@@ -1085,13 +1068,13 @@ int magictech_get_iq(int magictech)
 {
     if (magictech_initialized) {
         return magictech_spells[magictech].iq;
-    } else {
-        if (magictech >= 0 && magictech < MT_80) {
-            return dword_5B0DE0[magictech % 5];
-        } else {
-            dword_5B0DE0[1];
-        }
     }
+
+    if (magictech >= 0 && magictech < MT_80) {
+        return dword_5B0DE0[magictech % 5];
+    }
+
+    return dword_5B0DE0[1];
 }
 
 // 0x450340
@@ -1118,16 +1101,16 @@ bool sub_450370(int magictech)
 bool sub_4503A0(int magictech)
 {
     if (magictech_initialized) {
-        return magictech_spells[magictech].maintain2 > 0;
+        return magictech_spells[magictech].maintain[1] > 0;
     } else {
         return false;
     }
 }
 
 // 0x4503E0
-int magictech_get_maintain1(int magictech)
+int* magictech_get_maintain1(int magictech)
 {
-    return magictech_spells[magictech].maintain1;
+    return magictech_spells[magictech].maintain;
 }
 
 // 0x450400
@@ -1211,7 +1194,7 @@ int64_t sub_450A50(object_id_t obj)
         && type >= OBJ_TYPE_WEAPON
         && type <= OBJ_TYPE_ITEM_GENERIC
         && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
-        return obj_f_get_handle(obj, OBJ_F_ITEM_PARENT);
+        return obj_field_handle_get(obj, OBJ_F_ITEM_PARENT);
     }
 
     return obj;
@@ -1262,8 +1245,8 @@ void sub_4578F0(MagicTechInfo* info, char* str)
     }
 
     if (tig_str_parse_named_complex_value(&curr, "Maintain:", '@', &value1, &value2)) {
-        info->maintain1 = value1;
-        info->maintain2 = value2;
+        info->maintain[0] = value1;
+        info->maintain[1] = value2;
     }
 
     if (tig_str_parse_named_complex_value(&curr, "Duration:", '@', &value1, &value2)) {
@@ -1472,6 +1455,35 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
     }
 }
 
+// 0x4594D0
+bool sub_4594D0(TimeEvent* timeevent)
+{
+    return timeevent->params[0].integer_value == dword_5B0F20
+        && timeevent->params[2].integer_value == dword_5E7634;
+}
+
+// 0x459500
+bool sub_459500(int index)
+{
+    MagicTechLock* v1;
+    TimeEvent timeevent;
+
+    if (index == -1
+        || !sub_4557C0(index, &v1)
+        || (v1->field_13C & 0x1) == 0) {
+        return false;
+    }
+
+    dword_5B0F20 = index;
+    dword_5E7634 = 1;
+    timeevent_clear_one_ex(TIMEEVENT_TYPE_MAGICTECH, sub_4594D0);
+
+    timeevent.type = TIMEEVENT_TYPE_MAGICTECH;
+    timeevent.params[0].integer_value = v1->field_0;
+    timeevent.params[2].integer_value = 1;
+    return sub_45B860(&timeevent, &(v1->field_148));
+}
+
 // 0x459590
 bool sub_459590(object_id_t obj, int a2, bool a3)
 {
@@ -1507,11 +1519,46 @@ bool sub_459640(TimeEvent* timeevent)
     return true;
 }
 
+// 0x459A20
+void sub_459A20(int64_t obj)
+{
+}
+
+// 0x459EA0
+void sub_459EA0(int64_t obj)
+{
+    unsigned int flags;
+    int64_t leader_obj;
+
+    if (obj != OBJ_HANDLE_NULL) {
+        flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
+        if ((flags & OSF_TEMPUS_FUGIT) != 0) {
+            flags &= ~OSF_TEMPUS_FUGIT;
+        }
+        sub_4EFDD0(obj, OBJ_F_SPELL_FLAGS, flags);
+
+        if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_FAMILIAR) != 0) {
+            leader_obj = critter_leader_get(obj);
+            if (leader_obj != OBJ_HANDLE_NULL) {
+                flags = obj_field_int32_get(leader_obj, OBJ_F_SPELL_FLAGS);
+                flags &= ~OSF_FAMILIAR;
+                sub_4EFDD0(leader_obj, OBJ_F_SPELL_FLAGS, flags);
+            }
+        }
+    }
+}
+
 // 0x459F20
 bool sub_459F20(int magictech, int* a2)
 {
     *a2 = magictech_spells[magictech].field_70;
     return true;
+}
+
+// 0x459F50
+void sub_459F50()
+{
+    mt_ai_reset();
 }
 
 // 0x459F60
@@ -1532,10 +1579,116 @@ bool sub_459FC0(int magictech)
     return (magictech_spells[magictech].flags & 4) != 0;
 }
 
+// 0x459FF0
+bool sub_459FF0(int magictech)
+{
+    MagicTechLock* v1;
+
+    if (!sub_4557C0(magictech, &v1)) {
+        return false;
+    }
+
+    return v1->spell >= 0 && v1->spell < MT_SPELL_COUNT;
+}
+
 // 0x45A030
 bool sub_45A030(int magictech)
 {
     return magictech_spells[magictech].item_triggers != 0;
+}
+
+// 0x45A4F0
+void sub_45A4F0(int64_t a1, int a2, int a3)
+{
+    animfx_remove(&stru_5E7568, a1, a2, a3);
+}
+
+// 0x45A520
+void sub_45A520(int a1, int a2, int a3, int a4)
+{
+    sub_456E60(a3, a4, 643);
+}
+
+// 0x45A540
+void sub_45A540(int a1, int a2)
+{
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = 605;
+    sub_44FDC0(&mes_file_entry);
+    sub_460610(mes_file_entry.str);
+    sub_456E60(a1, a2, 643);
+}
+
+// 0x45A580
+bool sub_45A580(int64_t a1, int64_t a2)
+{
+    if ((obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) == 0
+        || (obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_INVISIBLE) != 0) {
+        return true;
+    }
+
+    if ((obj_field_int32_get(a2, OBJ_F_FLAGS) & OF_INVISIBLE) != 0) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC)) {
+        return true;
+    }
+
+    if (sub_44E830(a2, 19, 0)) {
+        return true;
+    }
+
+    if (sub_44E830(a2, 27, 0)) {
+        return true;
+    }
+
+    if (combat_critter_is_combat_mode_active(a2)) {
+        return true;
+    }
+
+    return false;
+}
+
+// 0x45A620
+void magictech_debug_lists()
+{
+    int index;
+    MagicTechLock* v1;
+    void* node;
+
+    tig_debug_printf("\n\nMagicTech DEBUG Lists:\n");
+    tig_debug_printf("----------------------\n\n");
+
+    for (index = 0; index < 512; index++) {
+        v1 = &(magictech_locks[index]);
+        if ((v1->field_13C & 0x1) != 0) {
+            tig_debug_printf("mtID: [%d], Spell: %s(%d)\n",
+                index,
+                magictech_spell_name(v1->spell),
+                v1->spell);
+            tig_debug_printf("\tAction: %s\n", off_5B0C0C[v1->action]);
+            sub_45A760(v1->parent_obj, "Parent");
+            sub_45A760(v1->source_obj, "Source");
+            sub_45A760(v1->target_obj, "Target");
+            node = v1->summoned_obj;
+            while (node != NULL) {
+                sub_45A760(node->obj, "SummonedObj");
+                node = node->next;
+            }
+            node = v1->objlist;
+            while (node != NULL) {
+                sub_45A760(node->obj, "ObjList");
+                node = node->next;
+            }
+            tig_debug_printf("\n");
+        }
+    }
+
+    tig_debug_printf("Local PC Has %d Maintained Spells\n",
+        sub_450AC0(player_get_pc_obj()));
+    tig_debug_printf("\n\n");
 }
 
 // 0x45A760
