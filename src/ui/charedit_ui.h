@@ -4,5 +4,6 @@
 #include "game/context.h"
 
 bool charedit_init(GameInitInfo* init_info);
+void charedit_exit();
 
 #endif /* ARCANUM_UI_CHAREDIT_UI_H_ */

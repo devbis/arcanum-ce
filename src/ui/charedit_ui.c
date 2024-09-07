@@ -58,7 +58,11 @@ bool charedit_init(GameInitInfo* init_info)
 // 0x559770
 void charedit_exit()
 {
-    // TODO: Incomplete.
+    sub_55EBA0();
+    tig_window_destroy(dword_64CA6C);
+    tig_window_destroy(dword_64C7B0);
+    tig_window_destroy(dword_64CA8C);
+    tig_window_destroy(dword_64CA60);
 }
 
 // 0x5597B0
