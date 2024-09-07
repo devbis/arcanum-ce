@@ -1,6 +1,9 @@
 #include "game/anim.h"
 
 #include "game/animfx.h"
+#include "game/gamelib.h"
+
+static void violence_filter_changed();
 
 // 0x5E3500
 static int dword_5E3500;
@@ -10,6 +13,9 @@ static AnimFxList stru_5DE610;
 
 // 0x5DE670
 static AnimFxList stru_5DE670;
+
+// 0x5DE6A4
+static int violence_filter;
 
 // 0x5DE6D4
 static bool anim_editor;
@@ -74,7 +80,7 @@ void anim_save()
 // 0x4221A0
 void violence_filter_changed()
 {
-    // TODO: Incomplete.
+    violence_filter = settings_get_value(&settings, "violence filter");
 }
 
 // 0x4221C0
