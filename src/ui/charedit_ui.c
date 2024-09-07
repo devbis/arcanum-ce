@@ -10,6 +10,7 @@ typedef struct S5C87D0 {
     int field_C;
 } S5C87D0;
 
+static void sub_55B150();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
 static void sub_55EBA0();
@@ -281,7 +282,27 @@ void sub_55B0E0()
 // 0x55B150
 void sub_55B150()
 {
-    // TODO: Incomplete.
+    sub_55B280();
+    sub_55B1B0();
+    switch (dword_64E01C) {
+    case 0:
+        sub_55BF20();
+        break;
+    case 1:
+        sub_55C3A0();
+        break;
+    case 2:
+        spells_print_all();
+        break;
+    default:
+        sub_55D210();
+        break;
+    }
+    sub_55EC90();
+    sub_55A240();
+    sub_551160();
+    sub_54AEE0(0);
+    sub_54AEE0(1);
 }
 
 // 0x55B1B0
