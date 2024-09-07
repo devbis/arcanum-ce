@@ -12,6 +12,9 @@ static tig_window_handle_t dword_64CA6C;
 // 0x64CA8C
 static tig_window_handle_t dword_64CA8C;
 
+// 0x64E018
+static bool dword_64E018;
+
 // 0x559690
 bool charedit_init(GameInitInfo* init_info)
 {
@@ -86,15 +89,17 @@ void sub_55A150()
 }
 
 // 0x55A220
-void sub_55A220()
+bool sub_55A220()
 {
-    // TODO: Incomplete.
+    return dword_64E018;
 }
 
 // 0x55A230
 void sub_55A230()
 {
-    // TODO: Incomplete.
+    if (dword_64E018) {
+        sub_55B150();
+    }
 }
 
 // 0x55A240
