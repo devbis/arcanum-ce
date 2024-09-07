@@ -1,8 +1,21 @@
 #include "ui/follower_ui.h"
 
-#include <tig/tig.h>
+#include "game/critter.h"
+#include "game/mes.h"
+#include "game/obj.h"
+#include "game/player.h"
+#include "ui/intgame.h"
 
-#include "game/lib/object.h"
+static void sub_56A6E0(int index);
+static bool sub_56A9D0(TigMessage* msg);
+static void sub_56AFD0(int a1);
+static void sub_56B0F0();
+static void sub_56B110(bool a1);
+static void sub_56B510(tig_window_handle_t window_handle, int num, int x, int y, int src_scale, int dst_scale);
+static void sub_56B620();
+static void sub_56B850();
+static void sub_56B880();
+static void sub_56B970(int a1);
 
 // 0x5CA360
 static TigRect stru_5CA360[9] = {
@@ -38,7 +51,7 @@ static TigRect stru_5CA450 = { 10, 3, 118, 15 };
 static tig_button_handle_t dword_67BB38[9];
 
 // 0x67BB5C
-static TigFont* dword_67BB5C;
+static tig_font_handle_t dword_67BB5C;
 
 // 0x67BB60
 static tig_window_handle_t dword_67BB60[9];
@@ -49,6 +62,9 @@ static int dword_67BB84;
 // 0x67BB88
 static TigRect stru_67BB88[8];
 
+// 0x67BC08
+static FollowerInfo* dword_67BC08;
+
 // 0x67BC10
 static int dword_67BC10;
 
@@ -56,13 +72,13 @@ static int dword_67BC10;
 static int dword_67BC14;
 
 // 0x67BC18
-static TigFont* dword_67BC18;
+static tig_font_handle_t dword_67BC18;
 
 // 0x67BC20
 static long long qword_67BC20;
 
 // 0x67BC28
-static TigFont* dword_67BC28;
+static tig_font_handle_t dword_67BC28;
 
 // 0x67BC2C
 static int follower_ui_mes_file;
@@ -83,7 +99,7 @@ static bool follower_ui_initialized;
 static bool dword_67BC60;
 
 // 0x67BC0C
-static int dword_67BC0C;
+static tig_window_handle_t dword_67BC0C;
 
 // 0x56A4A0
 bool follower_ui_init(GameInitInfo* init_info)
@@ -95,7 +111,7 @@ bool follower_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    if (!message_load("mes\\follower_ui.mes", &follower_ui_mes_file)) {
+    if (!mes_load("mes\\follower_ui.mes", &follower_ui_mes_file)) {
         return false;
     }
 
@@ -116,7 +132,7 @@ bool follower_ui_init(GameInitInfo* init_info)
     dword_67BC14 = 10;
     dword_67BC58 = 0;
     dword_67BC10 = 0;
-    dword_67BC08 = MALLOC(0x1E0u);
+    dword_67BC08 = (FollowerInfo*)MALLOC(sizeof(*dword_67BC08) * dword_67BC14);
 
     font_desc.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
@@ -138,7 +154,7 @@ bool follower_ui_init(GameInitInfo* init_info)
 
     follower_ui_initialized = true;
     dword_67BC60 = true;
-    dword_67BC0C = -1;
+    dword_67BC0C = TIG_WINDOW_HANDLE_INVALID;
 
     return true;
 }
@@ -161,10 +177,10 @@ void sub_56A6E0(int index)
     tig_window_create(&window_data, &(dword_67BB60[index]));
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.mouse_down_snd_id = -1;
-    button_data.mouse_up_snd_id = -1;
-    button_data.mouse_enter_snd_id = -1;
-    button_data.mouse_exit_snd_id = -1;
+    button_data.mouse_down_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_up_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_enter_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_exit_snd_id = TIG_SOUND_HANDLE_INVALID;
     button_data.x = 0;
     button_data.y = 0;
 
@@ -194,7 +210,7 @@ void follower_ui_exit()
 {
     int index;
 
-    message_unload(follower_ui_mes_file);
+    mes_unload(follower_ui_mes_file);
 
     for (index = 0; index < 9; index++) {
         tig_window_destroy(dword_67BB60[index]);
@@ -202,7 +218,7 @@ void follower_ui_exit()
 
     FREE(dword_67BC08);
 
-    if (dword_67BC0C != -1) {
+    if (dword_67BC0C != TIG_WINDOW_HANDLE_INVALID) {
         sub_56B0F0();
     }
 
@@ -222,20 +238,20 @@ void follower_ui_reset()
         tig_window_hide(dword_67BB60[index]);
     }
 
-    if (dword_67BC0C != -1) {
+    if (dword_67BC0C != TIG_WINDOW_HANDLE_INVALID) {
         sub_56B0F0();
     }
 }
 
 // 0x56A8D0
-void follower_ui_resize(GameResizeInfo* resize_info)
+void follower_ui_resize(ResizeInfo* resize_info)
 {
     TigRect* rects;
     int index;
 
     (void)resize_info;
 
-    rects = sub_5578C0() ? stru_5CA420 : stru_5CA3F0;
+    rects = intgame_is_compact_interface() ? stru_5CA420 : stru_5CA3F0;
     for (index = 6; index < 9; index++) {
         stru_5CA360[index] = rects[index];
     }
@@ -274,7 +290,7 @@ bool follower_ui_save(TigFile* stream)
 }
 
 // 0x56A9D0
-void sub_56A9D0()
+bool sub_56A9D0(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
@@ -286,7 +302,7 @@ void sub_56AFD0(int a1)
     TigButtonData button_data;
     int index;
 
-    qword_67BC20 = sub_40DA50();
+    qword_67BC20 = player_get_pc_obj();
     sub_444130(&(dword_67BC08[a1 + dword_67BC10]));
     qword_67BC50 = dword_67BC08[dword_67BC10 + a1].field_0;
 
@@ -298,12 +314,12 @@ void sub_56AFD0(int a1)
 
     button_data.x = stru_5CA450.x;
     button_data.y = stru_5CA450.y;
-    button_data.mouse_down_snd_id = -1;
-    button_data.mouse_up_snd_id = -1;
-    button_data.mouse_enter_snd_id = -1;
-    button_data.mouse_exit_snd_id = -1;
-    button_data.art_id = -1;
-    button_data.flags = 1;
+    button_data.mouse_down_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_up_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_enter_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_exit_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.art_id = TIG_ART_ID_INVALID;
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.width = stru_5CA450.width;
     button_data.height = stru_5CA450.height;
     button_data.window_handle = dword_67BC0C;
@@ -332,7 +348,7 @@ void sub_56B110(bool a1)
         return;
     }
 
-    if (tig_kb_is_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+    if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
         sub_4F25B0(0x10000004, 0x200);
         return;
     }
@@ -359,10 +375,10 @@ void sub_56B290()
 }
 
 // 0x56B4D0
-void sub_56B4D0(long long obj)
+void sub_56B4D0(int64_t obj)
 {
     if (dword_67BC60) {
-        if (sub_45DDA0(obj) == sub_40DA50()) {
+        if (sub_45DDA0(obj) == player_get_pc_obj()) {
             sub_56B290();
         }
     }
@@ -375,7 +391,7 @@ void sub_56B510(tig_window_handle_t window_handle, int num, int x, int y, int sr
     TigArtFrameData art_frame_data;
     TigRect src_rect;
     TigRect dst_rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
 
     if (src_scale <= 0) {
         return;
@@ -494,7 +510,7 @@ void sub_56B970(int a1)
     rect = stru_5CA450;
     for (index = 0; index < 8; index++) {
         mes_file_entry.num = index;
-        if (message_find(follower_ui_mes_file, &mes_file_entry)) {
+        if (mes_search(follower_ui_mes_file, &mes_file_entry)) {
             if ((index == 6 && sub_575080(qword_67BC20, qword_67BC50))
                 || (index != 5 || (obj_field_int32_get(qword_67BC50, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0)) {
                 if (index == a1) {
@@ -505,7 +521,7 @@ void sub_56B970(int a1)
             } else {
                 tig_font_push(dword_67BC18);
             }
-            tig_window_text_write(dword_67BC0C, mes_file_entry.text, &rect);
+            tig_window_text_write(dword_67BC0C, mes_file_entry.str, &rect);
             tig_font_pop();
         }
         rect.y += 18;
