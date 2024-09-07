@@ -8,6 +8,7 @@ static void sub_55EFB0();
 static void sub_55EFE0();
 static void sub_55EFF0();
 static void sub_55F0D0();
+static void sub_55F0E0(int value);
 
 // 0x5C8F40
 static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
@@ -98,6 +99,9 @@ static tig_font_handle_t dword_64DF0C;
 
 // 0x64E018
 static bool dword_64E018;
+
+// 0x64E01C
+static int dword_64E01C;
 
 // 0x559690
 bool charedit_init(GameInitInfo* init_info)
@@ -441,9 +445,14 @@ void sub_55F0D0()
 }
 
 // 0x55F0E0
-void sub_55F0E0()
+void sub_55F0E0(int value)
 {
-    // TODO: Incomplete.
+    if (dword_64DEE4) {
+        dword_64D424 = value;
+        if (dword_64E01C == 3) {
+            sub_55D210();
+        }
+    }
 }
 
 // 0x55F110
