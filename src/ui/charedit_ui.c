@@ -4,8 +4,10 @@
 #include "ui/scrollbar_ui.h"
 
 static void sub_55EBA0();
+static void sub_55EFB0();
 static void sub_55EFE0();
 static void sub_55EFF0();
+static void sub_55F0D0();
 
 // 0x5C8F40
 static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
@@ -392,7 +394,10 @@ void sub_55EC90()
 // 0x55EFB0
 void sub_55EFB0()
 {
-    // TODO: Incomplete.
+    if (dword_64DEE4) {
+        scrollbar_ui_control_destroy(stru_64C7A8);
+        dword_64DEE4 = false;
+    }
 }
 
 // 0x55EFE0
@@ -432,7 +437,7 @@ void sub_55EFF0()
 // 0x55F0D0
 void sub_55F0D0()
 {
-    // TODO: Incomplete.
+    sub_55EFB0();
 }
 
 // 0x55F0E0
