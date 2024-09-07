@@ -11,6 +11,7 @@
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static int sub_551740(int x, int y);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -860,9 +861,20 @@ void sub_551660()
 }
 
 // 0x551740
-void sub_551740()
+int sub_551740(int x, int y)
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < 2; index++) {
+        if (x >= stru_5C6390[index].x
+            && y >= stru_5C6390[index].y
+            && x < stru_5C6390[index].x + stru_5C6390[index].width
+            && y < stru_5C6390[index].y + stru_5C6390[index].height) {
+            return index;
+        }
+    }
+
+    return -1;
 }
 
 // 0x5517A0
