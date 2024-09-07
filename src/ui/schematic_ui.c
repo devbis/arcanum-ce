@@ -1,9 +1,9 @@
 #include "ui/schematic_ui.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/object.h"
-#include "game/lib/tech.h"
+#include "game/mes.h"
+#include "game/obj.h"
+#include "game/tech.h"
+#include "ui/types.h"
 
 #define SCHEMATIC_F_NAME 0
 #define SCHEMATIC_F_DESCRIPTION 1
@@ -116,8 +116,6 @@ static TigFont* schematic_ui_name_font;
 // 0x680E38
 static TigFont* schematic_ui_description_font;
 
-// FIXME: Should be initialized with `TIG_BUTTON_HANDLE_INVALID`.
-//
 // 0x680E3C
 static tig_button_handle_t dword_680E3C;
 
@@ -367,7 +365,7 @@ void schematic_ui_create()
     int index;
     tig_button_handle_t buttons[TECH_COUNT];
     TigButtonData button_data;
-    Jack v1;
+    S550DA0 v1;
 
     if (schematic_ui_created) {
         return;
@@ -408,7 +406,7 @@ void schematic_ui_create()
     sub_4B8CE0(obj_field_int64_get(qword_680E70, OBJ_F_LOCATION));
 
     v1.window_handle = schematic_ui_window;
-    v1.dst_rect = &stru_5CA840;
+    v1.rect = &stru_5CA840;
     tig_art_interface_id_create(231, 0, 0, 0, &(v1.art_id));
     sub_550DA0(1, &v1);
 
@@ -440,7 +438,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
-        if (msg->data.mouse.event == TIG_MOUSE_MESSAGE_LEFT_BUTTON_UP
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
                 sub_56D2D0();
             return true;
@@ -466,27 +464,27 @@ bool schematic_ui_message_filter(TigMessage* msg)
 
             if (msg->data.button.button_handle == stru_5CA850[2].button_handle) {
                 mes_file_entry.num = 3;
-                sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+                mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                 v1.field_0 = 6;
-                v1.field_4 = mes_file_entry.text;
+                v1.field_4 = mes_file_entry.str;
                 sub_550750(&v1);
                 return true;
             }
 
             if (msg->data.button.button_handle == stru_5CA850[3].button_handle) {
                 mes_file_entry.num = 4;
-                sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+                mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                 v1.field_0 = 6;
-                v1.field_4 = mes_file_entry.text;
+                v1.field_4 = mes_file_entry.str;
                 sub_550750(&v1);
                 return true;
             }
 
             if (msg->data.button.button_handle == stru_5CA850[4].button_handle) {
                 mes_file_entry.num = 5;
-                sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+                mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                 v1.field_0 = 6;
-                v1.field_4 = mes_file_entry.text;
+                v1.field_4 = mes_file_entry.str;
                 sub_550750(&v1);
                 return true;
             }
@@ -589,8 +587,8 @@ bool schematic_ui_message_filter(TigMessage* msg)
                         struct {
                             int field_0;
                             int field_4;
-                            ObjectId field_8;
-                            ObjectId field_20;
+                            ObjectID field_8;
+                            ObjectID field_20;
                         } packet;
 
                         static_assert(sizeof(packet) == 0x40, "wrong size");
@@ -608,16 +606,16 @@ bool schematic_ui_message_filter(TigMessage* msg)
                     break;
                 case 1:
                     mes_file_entry.num = 0;
-                    sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+                    mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                     v1.field_0 = 4;
-                    v1.field_4 = mes_file_entry.text;
+                    v1.field_4 = mes_file_entry.str;
                     sub_550750(&v1);
                     break;
                 case 2:
                     mes_file_entry.num = 1;
-                    sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+                    mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
                     v1.field_0 = 4;
-                    v1.field_4 = mes_file_entry.text;
+                    v1.field_4 = mes_file_entry.str;
                     sub_550750(&v1);
                     break;
                 }
@@ -666,20 +664,20 @@ void sub_56DBD0(int schematic, SchematicInfo* schematic_info)
     }
 
     mes_file_entry.num = schematic + SCHEMATIC_F_NAME;
-    sub_4D43A0(schematic_ui_rules_mes_file, &mes_file_entry);
-    schematic_info->name = atoi(mes_file_entry.text);
+    mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
+    schematic_info->name = atoi(mes_file_entry.str);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_DESCRIPTION;
-    sub_4D43A0(schematic_ui_rules_mes_file, &mes_file_entry);
-    schematic_info->description = atoi(mes_file_entry.text);
+    mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
+    schematic_info->description = atoi(mes_file_entry.str);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_ART_NUM;
-    sub_4D43A0(schematic_ui_rules_mes_file, &mes_file_entry);
-    schematic_info->art_num = atoi(mes_file_entry.text);
+    mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
+    schematic_info->art_num = atoi(mes_file_entry.str);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_ITEM_1;
-    sub_4D43A0(schematic_ui_rules_mes_file, &mes_file_entry);
-    sub_56DD20(mes_file_entry.text, schematic_info->item1);
+    mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
+    sub_56DD20(mes_file_entry.str, schematic_info->item1);
 
     tig_debug_printf("Read line schematic.mes line %d: %d %d %d\n",
         mes_file_entry.num,
@@ -688,16 +686,16 @@ void sub_56DBD0(int schematic, SchematicInfo* schematic_info)
         schematic_info->item1[2]);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_ITEM_2;
-    sub_4D43A0(schematic_ui_rules_mes_file, &mes_file_entry);
-    sub_56DD20(mes_file_entry.text, schematic_info->item2);
+    mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
+    sub_56DD20(mes_file_entry.str, schematic_info->item2);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_PROD;
-    sub_4D43A0(schematic_ui_rules_mes_file, &mes_file_entry);
-    sub_56DD20(mes_file_entry.text, schematic_info->prod);
+    mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
+    sub_56DD20(mes_file_entry.str, schematic_info->prod);
 
     mes_file_entry.num = schematic + SCHEMATIC_F_QTY;
-    sub_4D43A0(schematic_ui_rules_mes_file, &mes_file_entry);
-    schematic_info->qty = atoi(mes_file_entry.text);
+    mes_get_msg(schematic_ui_rules_mes_file, &mes_file_entry);
+    schematic_info->qty = atoi(mes_file_entry.str);
 }
 
 // 0x56DD20
@@ -731,7 +729,7 @@ void sub_56DDC0()
 {
     TigRect src_rect;
     TigRect dst_rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
     TigArtFrameData art_frame_data;
     TigFont font;
     MesFileEntry mes_file_entry;
@@ -796,10 +794,10 @@ void sub_56DDC0()
 
     // Render name.
     mes_file_entry.num = schematic_info.name;
-    sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+    mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
 
     tig_font_push(schematic_ui_name_font);
-    font.str = mes_file_entry.text;
+    font.str = mes_file_entry.str;
     font.width = 0;
     sub_535390(&font);
 
@@ -808,15 +806,15 @@ void sub_56DDC0()
     src_rect.width = font.width;
     src_rect.height = font.height;
 
-    tig_window_text_write(schematic_ui_window, mes_file_entry.text, &src_rect);
+    tig_window_text_write(schematic_ui_window, mes_file_entry.str, &src_rect);
     tig_font_pop();
 
     // Render description.
     mes_file_entry.num = schematic_info.description;
-    sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+    mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
 
     tig_font_push(schematic_ui_description_font);
-    font.str = mes_file_entry.text;
+    font.str = mes_file_entry.str;
     font.width = 0;
     sub_535390(&font);
 
@@ -825,7 +823,7 @@ void sub_56DDC0()
     src_rect.width = 466;
     src_rect.height = 75;
 
-    tig_window_text_write(schematic_ui_window, mes_file_entry.text, &src_rect);
+    tig_window_text_write(schematic_ui_window, mes_file_entry.str, &src_rect);
     tig_font_pop();
 
     //
@@ -840,7 +838,7 @@ void sub_56DDC0()
     src_rect.width = 100;
     src_rect.height = 100;
 
-    tig_window_text_write(schematic_ui_window, mes_file_entry.text, &src_rect);
+    tig_window_text_write(schematic_ui_window, mes_file_entry.str, &src_rect);
     tig_font_pop();
 
     //
@@ -895,9 +893,9 @@ bool sub_56E950(int a1, int a2, int a3, long long obj)
 
     if (a1 && player_is_pc_obj(obj)) {
         mes_file_entry.num = 2;
-        sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
+        mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
         v1.field_0 = 4;
-        v1.field_4 = mes_file_entry.text;
+        v1.field_4 = mes_file_entry.str;
         sub_550750(&v1);
         sub_56DDC0();
         gsound_play_sfx_id(dword_680E6C + 3018, 1);
@@ -906,7 +904,7 @@ bool sub_56E950(int a1, int a2, int a3, long long obj)
 }
 
 // 0x56E9D0
-void sub_56E9D0(int schematic)
+const char* sub_56E9D0(int schematic)
 {
     SchematicInfo schematic_info;
     MesFileEntry mes_file_entry;
@@ -914,12 +912,12 @@ void sub_56E9D0(int schematic)
     sub_56DBD0(schematic, &schematic_info);
 
     mes_file_entry.num = schematic_info.name;
-    sub_4D43A0(schematic_ui_text_mes_file, &mes_file_entry);
-    return mes_file_entry.text;
+    mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
+    return mes_file_entry.str;
 }
 
 // 0x56EA10
-char* sub_56EA10(int a1, int a2)
+const char* sub_56EA10(int a1, int a2)
 {
     return sub_56E9D0(sub_4B0320(a1, a2));
 }
