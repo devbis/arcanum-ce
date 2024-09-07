@@ -2,6 +2,9 @@
 
 #include "game/animfx.h"
 
+// 0x5E3500
+static int dword_5E3500;
+
 // 0x5DE610
 static AnimFxList stru_5DE610;
 
@@ -29,7 +32,7 @@ void anim_exit()
 // 0x421C20
 void anim_reset()
 {
-    // TODO: Incomplete.
+    dword_5E3500 = 0;
 }
 
 // 0x421C30
