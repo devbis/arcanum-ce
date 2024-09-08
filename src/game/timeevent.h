@@ -142,6 +142,9 @@ void sub_45B320();
 void sub_45B340();
 void sub_45B360();
 bool sub_45B800(TimeEvent* timeevent, DateTime* datetime);
+void sub_45B820(TimeEvent* timeevent);
+bool sub_45B860(TimeEvent* timeevent, DateTime* datetime);
+bool sub_45B880(TimeEvent* timeevent, DateTime* datetime, DateTime* a3);
 void timeevent_clear();
 void timeevent_clear_for_map_close();
 bool timeevent_clear_all_typed(int list);
@@ -150,6 +153,9 @@ bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback);
 bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback);
 bool sub_45C0E0(int list);
 bool sub_45C140(int list, TimeEventEnumerateFunc* callback);
+bool sub_45C1C0(unsigned int milliseconds);
+bool sub_45C200(DateTime* datetime);
+void sub_45C580();
 void timeevent_debug_lists();
 
 #endif /* ARCANUM_GAME_TIMEEVENT_H_ */
