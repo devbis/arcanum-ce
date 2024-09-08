@@ -1,8 +1,11 @@
 #include "game/tech.h"
 
 #include "game/effect.h"
+#include "game/gamelib.h"
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "game/object.h"
+#include "game/player.h"
 #include "game/stat.h"
 
 // TODO: Refactor.
