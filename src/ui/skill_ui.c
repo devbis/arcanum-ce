@@ -1,8 +1,22 @@
 #include "ui/skill_ui.h"
 
-#include "game/lib/object.h"
+#include "game/mes.h"
+#include "game/obj.h"
+#include "game/skill.h"
+#include "ui/intgame.h"
+#include "ui/types.h"
 
 #define FOUR 4
+
+static bool sub_57A5E0(int64_t obj);
+static bool sub_57A710(int64_t a1, int64_t a2);
+static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
+static bool sub_57A990(int64_t obj, int a2, int a3, bool success);
+static bool skill_ui_trap(int64_t obj, int a2, int a3, bool success);
+static bool sub_57AA90(int64_t obj, int a2, int a3, bool success);
+static bool skill_ui_no_repair(int64_t obj);
+static bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success);
+static bool skill_ui_no_lock(int64_t obj);
 
 // 0x5CB220
 static int dword_5CB220[] = { 279, 280, 282, 278 };
@@ -28,10 +42,10 @@ static int dword_5CB270 = -1;
 static const char* dword_683478[FOUR];
 
 // 0x683488
-static int skill_ui_mes_file;
+static mes_file_handle_t skill_ui_mes_file;
 
 // 0x683490
-static long long qword_683490;
+static int64_t qword_683490;
 
 // 0x579E80
 bool skill_ui_init(GameInitInfo* init_info)
@@ -46,21 +60,21 @@ bool skill_ui_init(GameInitInfo* init_info)
     callbacks.field_4 = sub_57A7F0;
     callbacks.field_8 = sub_57A8C0;
     callbacks.field_C = sub_57A990;
-    callbacks.field_10 = skill_ui_trap;
+    callbacks.trap_output_func = skill_ui_trap;
     callbacks.field_14 = sub_57AA90;
-    callbacks.field_18 = skill_ui_no_repair;
-    callbacks.field_1C = skill_ui_lock_pick;
-    callbacks.field_20 = skill_ui_no_lock;
+    callbacks.lock_no_repair = skill_ui_no_repair;
+    callbacks.lock_pick_output_func = skill_ui_lock_pick;
+    callbacks.no_lock_output_func = skill_ui_no_lock;
     skill_set_callbacks(&callbacks);
 
-    if (!message_load("mes\\skill_ui.mes", &skill_ui_mes_file)) {
+    if (!mes_load("mes\\skill_ui.mes", &skill_ui_mes_file)) {
         return false;
     }
 
     for (index = 0; index < FOUR; index++) {
         mes_file_entry.num = 100 + index;
-        sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
-        dword_683478[index] = mes_file_entry.text;
+        mes_get_msg(skill_ui_mes_file, &mes_file_entry);
+        dword_683478[index] = mes_file_entry.str;
     }
 
     return true;
@@ -75,7 +89,7 @@ void skill_ui_reset()
 // 0x579F40
 void skill_ui_exit()
 {
-    message_unload(skill_ui_mes_file);
+    mes_unload(skill_ui_mes_file);
 }
 
 // 0x579F50
@@ -128,7 +142,7 @@ void sub_57A320()
 }
 
 // 0x57A5E0
-bool sub_57A5E0(long long obj)
+bool sub_57A5E0(int64_t obj)
 {
     return (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_PICKPOCKET) != 0
         || (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_MECHANICAL) != 0;
@@ -165,7 +179,7 @@ const char* sub_57A700(int index)
 }
 
 // 0x57A710
-bool sub_57A710(long long a1, long long a2)
+bool sub_57A710(int64_t a1, int64_t a2)
 {
     int type;
 
@@ -178,7 +192,7 @@ bool sub_57A710(long long a1, long long a2)
 }
 
 // 0x57A770
-bool sub_57A770(long long obj, int a2, int a3, bool success)
+bool sub_57A770(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
@@ -194,13 +208,13 @@ bool sub_57A770(long long obj, int a2, int a3, bool success)
         font = 1;
     }
 
-    sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.field_0 = 6;
-    v1.field_4 = mes_file_entry.text;
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.text);
+    sub_4D5450(obj, font, mes_file_entry.str);
 
     return true;
 }
@@ -218,7 +232,7 @@ void sub_57A8C0()
 }
 
 // 0x57A990
-bool sub_57A990(long long obj, int a2, int a3, bool success)
+bool sub_57A990(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
@@ -234,19 +248,19 @@ bool sub_57A990(long long obj, int a2, int a3, bool success)
         font = 1;
     }
 
-    sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.field_0 = 6;
-    v1.field_4 = mes_file_entry.text;
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.text);
+    sub_4D5450(obj, font, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AA10
-bool skill_ui_trap(long long obj, int a2, int a3, bool success)
+bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
@@ -262,19 +276,19 @@ bool skill_ui_trap(long long obj, int a2, int a3, bool success)
         font = 1;
     }
 
-    sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.field_0 = 6;
-    v1.field_4 = mes_file_entry.text;
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.text);
+    sub_4D5450(obj, font, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AA90
-bool sub_57AA90(long long obj, int a2, int a3, bool success)
+bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
@@ -290,38 +304,38 @@ bool sub_57AA90(long long obj, int a2, int a3, bool success)
         font = 1;
     }
 
-    sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.field_0 = 6;
-    v1.field_4 = mes_file_entry.text;
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.text);
+    sub_4D5450(obj, font, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AB10
-bool skill_ui_no_repair(long long obj)
+bool skill_ui_no_repair(int64_t obj)
 {
     MesFileEntry mes_file_entry;
     John v1;
 
     // That is not in need of repair.
     mes_file_entry.num = 505;
-    sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.field_0 = 6;
-    v1.field_4 = mes_file_entry.text;
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, 1, mes_file_entry.text);
+    sub_4D5450(obj, 1, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AB70
-void skill_ui_lock_pick(long long obj, int a2, int a3, bool success)
+bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
@@ -337,67 +351,67 @@ void skill_ui_lock_pick(long long obj, int a2, int a3, bool success)
         font = 1;
     }
 
-    sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.field_0 = 6;
-    v1.field_4 = mes_file_entry.text;
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.text);
+    sub_4D5450(obj, font, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57ABF0
-bool skill_ui_no_lock(long long obj)
+bool skill_ui_no_lock(int64_t obj)
 {
     MesFileEntry mes_file_entry;
     John v1;
 
     // That has no lock.
     mes_file_entry.num = 512;
-    sub_4D43A0(skill_ui_mes_file, &mes_file_entry);
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.field_0 = 6;
-    v1.field_4 = mes_file_entry.text;
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, 1, mes_file_entry.text);
+    sub_4D5450(obj, 1, mes_file_entry.str);
 
     return true;
 }
 
 // 0x57AC50
-void sub_57AC50(long long obj, int a2, int a3)
+void sub_57AC50(int64_t obj, int skill, int a3)
 {
     switch (a3) {
     case 1:
-        sub_57ACD0(obj, a2);
+        sub_57ACD0(obj, skill);
         break;
     case -1:
-        sub_57AEB0(obj, a2);
+        sub_57AEB0(obj, skill);
         break;
     }
 }
 
 // 0x57AC90
-void sub_57AC90(long long obj, int a2, int a3)
+void sub_57AC90(int64_t obj, int skill, int a3)
 {
-    if (a2 > 12) {
-        sub_4C6850(obj, a2 - 12, a3);
+    if (IS_TECH_SKILL(skill)) {
+        sub_4C6850(obj, GET_TECH_SKILL(skill), a3);
     } else {
-        sub_4C6170(obj, a2, a3);
+        sub_4C6170(obj, GET_BASIC_SKILL(skill), a3);
     }
 }
 
 // 0x57ACD0
-void sub_57ACD0()
+void sub_57ACD0(int64_t obj, int skill)
 {
     // TODO: Incomplete.
 }
 
 // 0x57AEB0
-void sub_57AEB0()
+void sub_57AEB0(int64_t obj, int skill)
 {
     // TODO: Incomplete.
 }

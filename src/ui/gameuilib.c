@@ -17,6 +17,7 @@
 #include "ui/roller_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
+#include "ui/skill_ui.h"
 #include "ui/spell_ui.h"
 #include "ui/tb_ui.h"
 #include "ui/textedit_ui.h"
@@ -68,7 +69,7 @@ static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "LogBook-UI", logbook_ui_init, logbook_ui_reset, NULL, NULL, logbook_ui_exit, NULL, NULL, NULL },
     { "Spell-UI", spell_ui_init, spell_ui_reset, NULL, NULL, spell_ui_exit, spell_ui_save, spell_ui_load, NULL },
     { "Sleep-UI" },
-    { "Skill_UI" },
+    { "Skill_UI", skill_ui_init, skill_ui_reset, NULL, NULL, skill_ui_exit, NULL, NULL, NULL },
     { "Char-Edit", charedit_init, charedit_reset, NULL, NULL, charedit_exit, NULL, NULL, NULL },
     { "Inven-UI" },
     { "Item-UI", item_ui_init, NULL, NULL, NULL, item_ui_exit, NULL, NULL, NULL },
