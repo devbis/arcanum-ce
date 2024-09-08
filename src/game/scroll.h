@@ -1,7 +1,8 @@
-#ifndef ARCANUM_GAME_LIB_SCROLL_H_
-#define ARCANUM_GAME_LIB_SCROLL_H_
+#ifndef ARCANUM_GAME_SCROLL_H_
+#define ARCANUM_GAME_SCROLL_H_
 
 #include "game/context.h"
+#include "game/location.h"
 
 typedef enum ScrollDirection {
     SCROLL_DIRECTION_UP,
@@ -12,14 +13,14 @@ typedef enum ScrollDirection {
     SCROLL_DIRECTION_DOWN_LEFT,
     SCROLL_DIRECTION_LEFT,
     SCROLL_DIRECTION_UP_LEFT,
-};
+} ScrollDirection;
 
 typedef void(ScrollFunc)(int direction);
 
-bool scroll_init(GameContext* ctx);
+bool scroll_init(GameInitInfo* init_info);
 void scroll_exit();
 void scroll_reset();
-void scroll_resize(ResizeContext* ctx);
+void scroll_resize(ResizeInfo* resize_info);
 bool scroll_update_view(ViewOptions* view_options);
 void scroll_start_scrolling_in_direction(int direction);
 void scroll_stop_scrolling();
@@ -29,4 +30,4 @@ int scroll_get_distance();
 void scroll_set_center(location_t location);
 void scroll_set_scroll_func(ScrollFunc* func);
 
-#endif /* ARCANUM_GAME_LIB_SCROLL_H_ */
+#endif /* ARCANUM_GAME_SCROLL_H_ */

@@ -1,21 +1,23 @@
-#include "game/lib/scroll.h"
+#include "game/scroll.h"
 
-#include "game/lib/gamelib.h"
-#include "game/lib/location.h"
-#include "game/lib/object.h"
-#include "game/lib/player.h"
-#include "game/lib/stat.h"
-#include "tig/art.h"
-#include "tig/mouse.h"
-#include "tig/rect.h"
-#include "tig/timer.h"
-#include "tig/window.h"
+#include "game/gamelib.h"
+#include "game/gsound.h"
+#include "game/location.h"
+#include "game/name.h"
+#include "game/object.h"
+#include "game/player.h"
+#include "game/stat.h"
+#include "game/ui.h"
+
+static void sub_40E910(int64_t a1);
+static void sub_40E940();
+static bool sub_40EA50(tig_art_id_t art_id);
 
 // 0x59F050
 static unsigned int scroll_fps = 1000;
 
 // 0x5D1168
-static GameContext scroll_game_context;
+static GameContext scroll_init_info;
 
 // 0x5D1180
 static location_t scroll_center;
@@ -36,7 +38,7 @@ static int dword_5D11A4;
 static ViewOptions scroll_view_options;
 
 // 0x5D11B8
-static long long qword_5D11B8;
+static int64_t qword_5D11B8;
 
 // 0x5D11C0
 static bool dword_5D11C0;
@@ -48,19 +50,20 @@ static int scroll_distance;
 static ScrollFunc* scroll_func;
 
 // 0x40DF50
-bool scroll_init(GameContext* ctx)
+bool scroll_init(GameInitInfo* init_info)
 {
     TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data) != TIG_OK) {
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
         return false;
     }
 
-    scroll_rect.width = window_data.width;
-    scroll_rect.height = window_data.height;
+    scroll_rect.width = window_data.rect.width;
+    scroll_rect.height = window_data.rect.height;
     scroll_rect.y = 0;
     scroll_rect.x = 0;
 
-    scroll_game_context = *ctx;
+    scroll_init_info = *init_info;
 
     scroll_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_5D1188 = 1;
@@ -86,10 +89,9 @@ void scroll_reset()
 void scroll_resize(ResizeContext* ctx)
 {
     scroll_rect = ctx->field_14;
-    scroll_game_context.iso_window_handle = ctx->iso_window_handle;
+    scroll_init_info.iso_window_handle = ctx->iso_window_handle;
 }
 
-// TODO: Review type.
 // 0x40E060
 bool scroll_update_view(ViewOptions* view_options)
 {
@@ -105,8 +107,13 @@ void scroll_start_scrolling_in_direction(int direction)
     // 0x5D117C
     static unsigned int dword_5D117C;
 
-    if (!scroll_game_context.editor) {
-        if (tig_timer_between(dword_5D117C, gamelib_ping_time) < scroll_fps) {
+    int dx;
+    int dy;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+
+    if (!scroll_init_info.editor) {
+        if ((unsigned int)tig_timer_between(dword_5D117C, gamelib_ping_time) < scroll_fps) {
             return;
         }
 
@@ -118,8 +125,8 @@ void scroll_start_scrolling_in_direction(int direction)
         return;
     }
 
-    int dx = 0;
-    int dy = 0;
+    dx = 0;
+    dy = 0;
 
     switch (direction) {
     case SCROLL_DIRECTION_UP:
@@ -154,12 +161,15 @@ void scroll_start_scrolling_in_direction(int direction)
         break;
     }
 
+    if (scroll_init_info.editor) {
+        sub_40E630(dx, dy);
+        return;
+    }
+
     // TODO: Incomplete.
 
-    art_id_t art_id;
     tig_art_interface_id_create(678, 0, 0, 0, &art_id);
     if (sub_40EA50(art_id)) {
-        TigArtFrameData art_frame_data;
         if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
             switch (direction) {
             case SCROLL_DIRECTION_UP:
@@ -223,12 +233,12 @@ int scroll_get_distance()
         return 0;
     }
 
-    object_id_t pc = sub_40DA50();
+    object_id_t pc = player_get_pc_obj();
     if (pc == OBJ_HANDLE_NULL) {
         return 0;
     }
 
-    return sub_4B0490(pc, STAT_PERCEPTION) / 2 + 3;
+    return stat_level(pc, STAT_PERCEPTION) / 2 + 3;
 }
 
 // 0x40E8E0
@@ -244,9 +254,9 @@ void scroll_set_scroll_func(ScrollFunc* func)
 }
 
 // 0x40E910
-void sub_40E910(long long a1)
+void sub_40E910(int64_t a1)
 {
-    if (!scroll_game_context.editor) {
+    if (!scroll_init_info.editor) {
         sub_41C6D0(a1);
         qword_5D11B8 = a1;
     }
@@ -297,7 +307,7 @@ void sub_40E940()
 }
 
 // 0x40EA50
-bool sub_40EA50(unsigned int art_id)
+bool sub_40EA50(tig_art_id_t art_id)
 {
     if (sub_41D510(art_id) == sub_41D510(tig_mouse_cursor_get_art_id())) {
         return true;
