@@ -1,7 +1,5 @@
 #include "game/ci.h"
 
-#include <tig/tig.h>
-
 static void ci_blit();
 
 // 0x5FC398
@@ -11,7 +9,7 @@ static tig_art_id_t ci_indicator_art_id;
 static TigRect ci_indicator_frame;
 
 // 0x5FC3B0
-static TigArtBlitSpec ci_indicator_blit_info;
+static TigArtBlitInfo ci_indicator_blit_info;
 
 // 0x5FC3DC
 static int dword_5FC3DC;
