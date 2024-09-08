@@ -1,44 +1,44 @@
-#include "game/lib/script_name.h"
+#include "game/script_name.h"
 
 #include <stdio.h>
 
-#include "tig/debug.h"
-#include "tig/file.h"
-#include "tig/list.h"
-
 // 0x601750
-static TigList stru_601750;
+static TigIdxTable script_name_mod_idxtable;
 
 // 0x601760
-static TigList stru_601760;
+static TigIdxTable script_name_idxtable;
 
 // 0x601770
-static bool dword_601770;
+static bool script_name_initialized;
 
 // 0x601774
-static bool dword_601774;
+static bool script_name_mod_loaded;
 
 // 0x4CEC10
-bool script_name_init(GameContext* ctx)
+bool script_name_init(GameInitInfo* init_info)
 {
-    tig_list_init(&stru_601760, MAX_PATH);
-
     TigFileList file_list;
+    unsigned int index;
+    int num;
+
+    (void)init_info;
+
+    tig_idxtable_init(&script_name_idxtable, TIG_MAX_PATH);
     tig_file_list_create(&file_list, "scr\\*.scr");
 
-    for (int index = 0; index < file_list.count; index++) {
-        int num = atoi(file_list.entries[index].path);
+    for (index = 0; index < file_list.count; index++) {
+        num = atoi(file_list.entries[index].path);
         if (num >= 1000) {
-            if (tig_list_has_value(&stru_601760, num)) {
+            if (tig_idxtable_contains(&script_name_idxtable, num)) {
                 tig_debug_printf("Error! Multiple script files numbered %.5d\n", num);
             }
-            tig_list_set_value(&stru_601760, num, file_list.entries[index].path);
+            tig_idxtable_set(&script_name_idxtable, num, file_list.entries[index].path);
         }
     }
 
     tig_file_list_destroy(&file_list);
 
-    dword_601770 = true;
+    script_name_initialized = true;
 
     return true;
 }
@@ -46,31 +46,33 @@ bool script_name_init(GameContext* ctx)
 // 0x4CECC0
 void script_name_exit()
 {
-    tig_list_exit(&stru_601760);
-    dword_601770 = false;
+    tig_idxtable_exit(&script_name_idxtable);
+    script_name_initialized = false;
 }
 
 // 0x4CECE0
 bool script_name_mod_load()
 {
-    tig_list_init(&stru_601750, MAX_PATH);
-
     TigFileList file_list;
+    unsigned int index;
+    int num;
+
+    tig_idxtable_init(&script_name_mod_idxtable, TIG_MAX_PATH);
     tig_file_list_create(&file_list, "scr\\*.scr");
 
-    for (int index = 0; index < file_list.count; index++) {
-        int num = atoi(file_list.entries[index].path);
-        if (num >= 1000) {
-            if (tig_list_has_value(&stru_601750, num)) {
+    for (index = 0; index < file_list.count; index++) {
+        num = atoi(file_list.entries[index].path);
+        if (num >= 1 && num >= 1000) {
+            if (tig_idxtable_contains(&script_name_mod_idxtable, num)) {
                 tig_debug_printf("Error! Multiple script files numbered %.5d\n", num);
             }
-            tig_list_set_value(&stru_601750, num, file_list.entries[index].path);
+            tig_idxtable_set(&script_name_mod_idxtable, num, file_list.entries[index].path);
         }
     }
 
     tig_file_list_destroy(&file_list);
 
-    dword_601774 = true;
+    script_name_mod_loaded = true;
 
     return true;
 }
@@ -78,28 +80,28 @@ bool script_name_mod_load()
 // 0x4CEDA0
 void script_name_mod_unload()
 {
-    tig_list_exit(&stru_601750);
-    dword_601774 = false;
+    tig_idxtable_exit(&script_name_mod_idxtable);
+    script_name_mod_loaded = false;
 }
 
 // 0x4CEDC0
 bool script_name_build_scr_name(int index, char* buffer)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
 
     if (index != 0) {
-        if (dword_601770) {
-            if (index < 1000) {
-                if (tig_list_get_value(&stru_601760, index, path)) {
+        if (script_name_initialized) {
+            if (index >= 1000) {
+                if (tig_idxtable_get(&script_name_idxtable, index, path)) {
                     sprintf(buffer, "scr\\%s", path);
                     return true;
                 }
             }
         }
 
-        if (dword_601774) {
+        if (script_name_mod_loaded) {
             if (index >= 1 && index < 1000) {
-                if (tig_list_get_value(&stru_601750, index, path)) {
+                if (tig_idxtable_get(&script_name_mod_idxtable, index, path)) {
                     sprintf(buffer, "scr\\%s", path);
                     return true;
                 }
