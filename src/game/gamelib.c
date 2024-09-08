@@ -3,11 +3,15 @@
 #include <stdio.h>
 
 #include "game/ci.h"
+#include "game/facade.h"
 #include "game/gmovie.h"
 #include "game/li.h"
 #include "game/mes.h"
+#include "game/sector.h"
 #include "game/tb.h"
 #include "game/tc.h"
+#include "game/tile_block.h"
+#include "game/wall.h"
 
 #define GAMELIB_LONG_VERSION_LENGTH 40
 #define GAMELIB_SHORT_VERSION_LENGTH 36
@@ -1260,7 +1264,7 @@ void sub_404930()
         }
 
         dwType = REG_SZ;
-        if (RegQueryValueExA(hKey, "installed_from", NULL, &dwType, data, &dwSize) == ERROR_SUCCESS) {
+        if (RegQueryValueExA(hKey, "installed_from", NULL, &dwType, (LPBYTE)data, &dwSize) == ERROR_SUCCESS) {
             strcpy(byte_5D0C5C, data);
         } else {
             dword_5D0D70 = true;
@@ -1324,7 +1328,7 @@ bool sub_404C10(const char* module_name)
     size_t end;
     int index;
 
-    if (module_name[0] == '\\' || module_name[0] == '.' || module_name == ':') {
+    if (module_name[0] == '\\' || module_name[0] == '.' || module_name[1] == ':') {
         path1[0] = '\0';
     } else {
         strcpy(path1, ".\\Modules\\");
