@@ -3,6 +3,7 @@
 #include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/mes.h"
+#include "game/random.h"
 #include "game/stat.h"
 
 #define FIRST_BASIC_SKILL_NAME_ID 0
@@ -178,6 +179,8 @@ bool skill_init(GameInitInfo* init_info)
     MesFileEntry mes_file_entry;
     int index;
 
+    (void)init_info;
+
     settings_add(&settings, "follower skills", "1", NULL);
 
     skill_callbacks.field_0 = NULL;
@@ -196,31 +199,31 @@ bool skill_init(GameInitInfo* init_info)
 
     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
         mes_file_entry.num = index + FIRST_BASIC_SKILL_NAME_ID;
-        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        mes_get_msg(skill_mes_file, &mes_file_entry);
         basic_skill_names[index] = mes_file_entry.str;
     }
 
     for (index = 0; index < TECH_SKILL_COUNT; index++) {
         mes_file_entry.num = index + FIRST_TECH_SKILL_NAME_ID;
-        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        mes_get_msg(skill_mes_file, &mes_file_entry);
         tech_skill_names[index] = mes_file_entry.str;
     }
 
     for (index = 0; index < TRAINING_COUNT; index++) {
         mes_file_entry.num = index + FIRST_TRAINING_NAME_ID;
-        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        mes_get_msg(skill_mes_file, &mes_file_entry);
         training_names[index] = mes_file_entry.str;
     }
 
     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
         mes_file_entry.num = index + FIRST_BASIC_SKILL_DESC_ID;
-        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        mes_get_msg(skill_mes_file, &mes_file_entry);
         basic_skill_descriptions[index] = mes_file_entry.str;
     }
 
     for (index = 0; index < TECH_SKILL_COUNT; index++) {
         mes_file_entry.num = index + FIRST_TECH_SKILL_DESC_ID;
-        sub_4D43A0(skill_mes_file, &mes_file_entry);
+        mes_get_msg(skill_mes_file, &mes_file_entry);
         tech_skill_descriptions[index] = mes_file_entry.str;
     }
 
@@ -238,7 +241,7 @@ void skill_set_callbacks(SkillCallbacks* callbacks)
 // 0x4C5DB0
 void skill_exit()
 {
-    message_unload(skill_mes_file);
+    mes_unload(skill_mes_file);
 }
 
 // 0x4C5DC0
@@ -418,6 +421,8 @@ const char* basic_skill_get_description(int skill)
 // 0x4C62D0
 int sub_4C62D0(int a1, int a2, int a3)
 {
+    (void)a1;
+
     return (a3 + 1) * (a2 + 2);
 }
 
@@ -605,6 +610,8 @@ const char* training_get_name(int training)
 // 0x4C69E0
 int sub_4C69E0(int a1, int a2, int a3)
 {
+    (void)a1;
+
     return (a3 + 1) * (a2 + 2);
 }
 
