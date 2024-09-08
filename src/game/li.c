@@ -1,11 +1,5 @@
 #include "game/li.h"
 
-#include "tig/art.h"
-#include "tig/color.h"
-#include "tig/debug.h"
-#include "tig/video.h"
-#include "tig/window.h"
-
 static void li_blit();
 
 // 0x5FC3F8
@@ -15,7 +9,7 @@ static tig_art_id_t li_indicator_art_id;
 static TigRect li_indicator_frame;
 
 // 0x5FC410
-static TigArtBlitSpec li_indicator_blit_info;
+static TigArtBlitInfo li_indicator_blit_info;
 
 // 0x5FC43C
 static int dword_5FC43C;
