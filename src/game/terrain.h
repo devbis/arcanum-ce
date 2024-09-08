@@ -1,6 +1,14 @@
-#ifndef ARCANUM_GAMELIB_TERRAIN_H_
-#define ARCANUM_GAMELIB_TERRAIN_H_
+#ifndef ARCANUM_GAME_TERRAIN_H_
+#define ARCANUM_GAME_TERRAIN_H_
 
 #include "game/context.h"
 
-#endif /* ARCANUM_GAMELIB_TERRAIN_H_ */
+bool terrain_init(GameInitInfo* init_info);
+void terrain_reset();
+void terrain_exit();
+int sub_4E8DC0(uint16_t a1);
+int sub_4E8DD0(uint16_t a1);
+int sub_4E8DE0(uint16_t a1);
+int sub_4E8DF0(uint16_t a1);
+
+#endif /* ARCANUM_GAME_TERRAIN_H_ */

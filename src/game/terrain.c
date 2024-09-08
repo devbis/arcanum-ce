@@ -1,13 +1,25 @@
-#include "game/lib/terrain.h"
+#include "game/terrain.h"
 
-#include "game/lib/message.h"
-#include "game/lib/random.h"
-#include "tig/file.h"
+#include "game/mes.h"
+#include "game/random.h"
 
 #define FIRST_TERRAIN_COLOR_ID 100
 #define FIRST_TERRAIN_TRANSITION_ID 200
 
 #define TERRAIN_TYPE_MAX 32
+
+static const char* terrain_base_name(int terrain_type);
+static int terrain_match_base_name(const char* base_name);
+static void terrain_color(int terrain_type, int* red, int* green, int* blue);
+static void sub_4E8CE0(int a1, int a2, int a3, int a4, uint16_t* value);
+static int64_t sub_4E8E60(int a1);
+static bool terrain_init_types();
+static bool sub_4E8F40();
+static bool terrain_init_transitions();
+static bool terrain_parse_transition(char* str, int* from_terrain_type, int* to_terrain_type);
+static bool sub_4E92B0(int from, int to, bool* transitions, int* a4);
+static uint16_t sub_4E93A0(int from, int to);
+static bool sub_4E93E0(int from, int to);
 
 // 0x603748
 static int dword_603748[TERRAIN_TYPE_MAX];
@@ -22,15 +34,15 @@ static int* dword_6039E8;
 static int dword_603A14;
 
 // 0x603A1C
-static int terrain_msg_file;
+static mes_file_handle_t terrain_mes_file;
 
 // 0x603A20
 static bool dword_603A20[TERRAIN_TYPE_MAX];
 
 // 0x4E7B00
-bool terrain_init(GameContext* ctx)
+bool terrain_init(GameInitInfo* init_info)
 {
-    if (!message_load("terrain\\terrain.mes", &terrain_msg_file)) {
+    if (!mes_load("terrain\\terrain.mes", &terrain_mes_file)) {
         return false;
     }
 
@@ -46,7 +58,7 @@ bool terrain_init(GameContext* ctx)
         return false;
     }
 
-    terrain_is_editor = ctx->editor;
+    terrain_is_editor = init_info->editor;
 
     return true;
 }
@@ -60,22 +72,23 @@ void terrain_reset()
 void terrain_exit()
 {
     if (dword_6039E8 != NULL) {
-        free(dword_6039E8);
+        FREE(dword_6039E8);
         dword_6039E8 = NULL;
     }
 
-    message_unload(terrain_msg_file);
+    mes_unload(terrain_mes_file);
 }
 
 // 0x4E8B20
 const char* terrain_base_name(int terrain_type)
 {
-    if (terrain_type >= 0 && terrain_type < dword_603A14) {
-        MessageListItem msg;
-        msg.num = terrain_type;
+    MesFileEntry mes_file_entry;
 
-        if (message_find(terrain_msg_file, &msg)) {
-            return msg.text;
+    if (terrain_type >= 0 && terrain_type < dword_603A14) {
+        mes_file_entry.num = terrain_type;
+
+        if (mes_search(terrain_mes_file, &mes_file_entry)) {
+            return mes_file_entry.str;
         }
     }
 
@@ -85,14 +98,15 @@ const char* terrain_base_name(int terrain_type)
 // 0x4E8B60
 int terrain_match_base_name(const char* base_name)
 {
-    MessageListItem msg;
-    msg.num = 0;
-    if (message_find(terrain_msg_file, &msg)) {
+    MesFileEntry mes_file_entry;
+
+    mes_file_entry.num = 0;
+    if (mes_search(terrain_mes_file, &mes_file_entry)) {
         do {
-            if (_strcmpi(base_name, msg.text) == 0) {
-                return msg.num;
+            if (_strcmpi(base_name, mes_file_entry.str) == 0) {
+                return mes_file_entry.num;
             }
-        } while (sub_4D4460(terrain_msg_file, &msg));
+        } while (mes_find_next(terrain_mes_file, &mes_file_entry));
     }
 
     return -1;
@@ -101,19 +115,20 @@ int terrain_match_base_name(const char* base_name)
 // 0x4E8BE0
 void terrain_color(int terrain_type, int* red, int* green, int* blue)
 {
-    MessageListItem msg;
-    char buffer[MESSAGE_LIST_ITEM_TEXT_LENGTH];
+    MesFileEntry mes_file_entry;
+    char buffer[MAX_STRING];
+    char* tok;
 
     *red = 255;
     *green = 0;
     *blue = 0;
 
     if (terrain_type >= 0 && terrain_type < dword_603A14) {
-        msg.num = terrain_type + FIRST_TERRAIN_COLOR_ID;
-        if (message_find(terrain_msg_file, &msg)) {
-            strcpy(buffer, msg.text);
+        mes_file_entry.num = terrain_type + FIRST_TERRAIN_COLOR_ID;
+        if (mes_search(terrain_mes_file, &mes_file_entry)) {
+            strcpy(buffer, mes_file_entry.str);
 
-            char* tok = strtok(buffer, ",");
+            tok = strtok(buffer, ",");
             if (tok != NULL) {
                 *red = atoi(tok);
 
@@ -140,7 +155,7 @@ void sub_4E8CE0(int a1, int a2, int a3, int a4, uint16_t* value)
     a4 = __min(__max(a4, 0), 3);
 
     // TODO: Check.
-    *value = a4 | (a3 << 2) | (a2 << 4) | (a1 << 11);
+    *value = (uint16_t)(a4 | (a3 << 2) | (a2 << 4) | (a1 << 11));
 }
 
 // 0x4E8DC0
@@ -178,15 +193,17 @@ int64_t sub_4E8E60(int a1)
 // 0x4E8EA0
 bool terrain_init_types()
 {
-    MessageListItem msg;
+    MesFileEntry mes_file_entry;
+    int index;
+    char* pch;
 
-    for (int index = 0; index < TERRAIN_TYPE_MAX; index++) {
-        msg.num = index;
-        if (!message_find(terrain_msg_file, &msg)) {
+    for (index = 0; index < TERRAIN_TYPE_MAX; index++) {
+        mes_file_entry.num = index;
+        if (!mes_search(terrain_mes_file, &mes_file_entry)) {
             break;
         }
 
-        char* pch = strstr(msg.text, "/b");
+        pch = strstr(mes_file_entry.str, "/b");
         if (pch != NULL) {
             dword_603A20[index] = true;
 
@@ -204,25 +221,25 @@ bool terrain_init_types()
 // 0x4E8F40
 bool sub_4E8F40()
 {
-    MessageListItem msg;
-    char path[MAX_PATH];
-
+    MesFileEntry msg;
+    char path[TIG_MAX_PATH];
     int index;
+    int k;
+
     for (index = 0; index < TERRAIN_TYPE_MAX; index++) {
         msg.num = index;
-        if (!message_find(terrain_msg_file, &msg)) {
+        if (!mes_search(terrain_mes_file, &msg)) {
             break;
         }
 
-        int k;
         for (k = 0; k <= 3; k++) {
             strcpy(path, "terrain\\");
-            strcat(path, msg.text);
+            strcat(path, msg.str);
             strcat(path, "\\");
             _i64toa(sub_4E8E60(k), path + strlen(path), 10);
             strcat(path, ".sec");
 
-            if (!tig_file_info(path, NULL)) {
+            if (!tig_file_exists(path, NULL)) {
                 break;
             }
 
@@ -246,38 +263,41 @@ bool sub_4E8F40()
 // 0x4E90B0
 bool terrain_init_transitions()
 {
-    MessageListItem msg;
+    MesFileEntry mes_file_entry;
+    int transition_count;
+    bool* transitions;
+    int index;
+    int from;
+    int to;
+    int v1;
 
-    msg.num = FIRST_TERRAIN_TRANSITION_ID;
-    if (!message_find(terrain_msg_file, &msg)) {
+    mes_file_entry.num = FIRST_TERRAIN_TRANSITION_ID;
+    if (!mes_search(terrain_mes_file, &mes_file_entry)) {
         return false;
     }
 
-    int transition_count = dword_603A14 * dword_603A14;
-    bool* transitions = (bool*)malloc(sizeof(*transitions) * transition_count);
-    for (int index = 0; index < transition_count; index++) {
+    transition_count = dword_603A14 * dword_603A14;
+    transitions = (bool*)MALLOC(sizeof(*transitions) * transition_count);
+    for (index = 0; index < transition_count; index++) {
         transitions[index] = false;
     }
 
     do {
-        int from;
-        int to;
-        if (!terrain_parse_transition(msg.text, &from, &to)) {
-            free(transitions);
+        if (!terrain_parse_transition(mes_file_entry.str, &from, &to)) {
+            FREE(transitions);
             return false;
         }
 
         transitions[to + from * dword_603A14] = true;
         transitions[from + to * dword_603A14] = true;
-    } while (sub_4D4460(terrain_msg_file, &msg));
+    } while (mes_find_next(terrain_mes_file, &mes_file_entry));
 
-    dword_6039E8 = (int*)malloc(sizeof(*dword_6039E8) * transition_count);
+    dword_6039E8 = (int*)MALLOC(sizeof(*dword_6039E8) * transition_count);
 
-    for (int from = 0; from < dword_603A14; from++) {
-        for (int to = 0; to < dword_603A14; to++) {
-            int v1;
+    for (from = 0; from < dword_603A14; from++) {
+        for (to = 0; to < dword_603A14; to++) {
             if (!sub_4E92B0(from, to, transitions, &v1)) {
-                free(transitions);
+                FREE(transitions);
                 return false;
             }
 
@@ -285,21 +305,25 @@ bool terrain_init_transitions()
         }
     }
 
-    free(transitions);
+    FREE(transitions);
     return true;
 }
 
 // 0x4E9240
 bool terrain_parse_transition(char* str, int* from_terrain_type, int* to_terrain_type)
 {
-    char* pch = strstr(str, " to ");
+    char* pch;
+    int from;
+    int to;
+
+    pch = strstr(str, " to ");
     if (pch == NULL) {
         return false;
     }
 
     *pch = '\0';
 
-    int from = terrain_match_base_name(str);
+    from = terrain_match_base_name(str);
     if (from == -1) {
         // FIXME: `str` not restored to previous state.
         return false;
@@ -307,7 +331,7 @@ bool terrain_parse_transition(char* str, int* from_terrain_type, int* to_terrain
 
     *pch = ' ';
 
-    int to = terrain_match_base_name(pch + 4);
+    to = terrain_match_base_name(pch + 4);
     if (to = -1) {
         return false;
     }
@@ -321,18 +345,21 @@ bool terrain_parse_transition(char* str, int* from_terrain_type, int* to_terrain
 // 0x4E92B0
 bool sub_4E92B0(int from, int to, bool* transitions, int* a4)
 {
+    int* v1;
+    bool result;
+
     if (from == to) {
         *a4 = from;
         return true;
     }
 
-    int* v1 = (int*)malloc(sizeof(*v1) * dword_603A14);
+    v1 = (int*)MALLOC(sizeof(*v1) * dword_603A14);
     v1[0] = from;
 
-    bool result = sub_4E9310(v1, 0, to, transitions);
+    result = sub_4E9310(v1, 0, to, transitions);
 
     *a4 = v1[1];
-    free(v1);
+    FREE(v1);
 
     return result;
 }
@@ -341,8 +368,9 @@ bool sub_4E92B0(int from, int to, bool* transitions, int* a4)
 uint16_t sub_4E93A0(int from, int to)
 {
     uint16_t value;
+    int v1;
 
-    int v1 = dword_6039E8[to + from * dword_603A14];
+    v1 = dword_6039E8[to + from * dword_603A14];
     sub_4E8CE0(v1, v1, 15, 0, &value);
 
     return value;
@@ -351,6 +379,8 @@ uint16_t sub_4E93A0(int from, int to)
 // 0x4E93E0
 bool sub_4E93E0(int from, int to)
 {
-    int terrain_type = sub_4E8DC0(sub_4E93A0(from, to));
+    int terrain_type;
+
+    terrain_type = sub_4E8DC0(sub_4E93A0(from, to));
     return terrain_type == from || terrain_type == to;
 }
