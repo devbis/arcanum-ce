@@ -21,7 +21,7 @@ typedef enum College {
     COLLEGE_SUMMONING,
     COLLEGE_TEMPORAL,
     COLLEGE_COUNT,
-};
+} College;
 
 static_assert(COLLEGE_COUNT == 16, "wrong size");
 
@@ -107,31 +107,34 @@ typedef enum Spell {
     SPELL_STASIS,
     SPELL_TEMPUS_FUGIT,
     SPELL_COUNT,
-};
+} Spell;
 
 static_assert(SPELL_COUNT == 80, "wrong size");
 
-bool spell_init(GameContext* ctx);
+bool spell_init(GameInitInfo* init_info);
 void spell_exit();
-void spell_set_defaults(long long object_id);
+void spell_set_defaults(int64_t obj);
 size_t sub_4B15A0(int spell);
 const char* spell_get_name(int spell);
 const char* spell_get_description(int spell);
-int sub_4B1650();
-int sub_4B1660(int spell, long long object_id);
-int sub_4B1740();
-int sub_4B1750();
-int sub_4B1760(int a1);
-int sub_4B1770(int a1);
+int sub_4B1650(int spell);
+int sub_4B1660(int spell, int64_t obj);
+int sub_4B16C0(int spell, int64_t obj, int* a3);
+int sub_4B1740(int spell);
+int sub_4B1750(int spell);
+int spell_get_iq(int spell);
+int spell_get_minimum_level(int spell);
+bool sub_4B1950(int64_t obj, int spell);
+bool sub_4B19B0(int64_t obj, int spell);
 const char* college_get_name(int college);
 const char* college_get_description(int college);
-int sub_4B1A80(int college);
-int sub_4B1A90(int college);
-int sub_4B1AB0(long long object_id, int a2);
-bool sub_4B1B00(long long object_id, int a2);
-int sub_4B1B30(long long object_id, int a2, int a3);
-bool sub_4B1C70(long long object_id, int a2);
-int sub_4B1CB0(long long object_id);
-void sub_4B1CF0(long long object_id, int a2);
+int college_get_art_num(int college);
+int college_get_icon(int college);
+int sub_4B1AB0(int64_t obj, int a2);
+bool sub_4B1B00(int64_t obj, int a2);
+int sub_4B1B30(int64_t obj, int a2, int a3);
+bool sub_4B1C70(int64_t obj, int a2);
+int sub_4B1CB0(int64_t obj);
+void sub_4B1CF0(int64_t obj, int a2);
 
 #endif /* ARCANUM_GAME_LIB_SPELL_H_ */

@@ -1,8 +1,10 @@
-#include "game/lib/spell.h"
+#include "game/spell.h"
 
-#include "game/lib/message.h"
-#include "game/lib/object.h"
-#include "game/lib/stat.h"
+#include "game/magictech.h"
+#include "game/mes.h"
+#include "game/object.h"
+#include "game/player.h"
+#include "game/stat.h"
 
 #define FIRST_COLLEGE_NAME_ID 500
 #define FIRST_SPELL_DESCRIPTION_ID 700
@@ -11,15 +13,59 @@
 
 #define FIVE 5
 
-typedef struct SpellData {
-    char* field_0;
-    char* description;
-};
+typedef struct SpellInfo {
+    /* 0000 */ char* field_0;
+    /* 0004 */ char* description;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ int field_20;
+    /* 0024 */ int field_24;
+    /* 0028 */ int field_28;
+    /* 002C */ int field_2C;
+    /* 0030 */ int field_30;
+    /* 0034 */ int field_34;
+    /* 0038 */ int field_38;
+    /* 003C */ int field_3C;
+    /* 0040 */ int field_40;
+    /* 0044 */ int field_44;
+    /* 0048 */ int field_48;
+    /* 004C */ int field_4C;
+    /* 0050 */ int field_50;
+    /* 0054 */ int field_54;
+    /* 0058 */ int field_58;
+    /* 005C */ int field_5C;
+    /* 0060 */ int field_60;
+    /* 0064 */ int field_64;
+    /* 0068 */ int field_68;
+    /* 006C */ int field_6C;
+    /* 0070 */ int field_70;
+    /* 0074 */ int field_74;
+    /* 0078 */ int field_78;
+    /* 007C */ int field_7C;
+    /* 0080 */ int field_80;
+    /* 0084 */ int field_84;
+    /* 0088 */ int field_88;
+    /* 008C */ int field_8C;
+    /* 0090 */ int field_90;
+    /* 0094 */ int field_94;
+    /* 0098 */ int field_98;
+    /* 009C */ int field_9C;
+    /* 00A0 */ int field_A0;
+    /* 00A4 */ int field_A4;
+    /* 00A8 */ int field_A8;
+    /* 00AC */ int field_AC;
+    /* 00B0 */ int field_B0;
+    /* 00B4 */ int field_B4;
+} SpellInfo;
 
-static_assert(sizeof(SpellData) == 0xB8, "wrong size");
+static_assert(sizeof(SpellInfo) == 0xB8, "wrong size");
 
 // 0x5B5770
-static int dword_5B5770[FIVE] = {
+static int spell_minimum_levels[FIVE] = {
     1,
     1,
     5,
@@ -28,7 +74,7 @@ static int dword_5B5770[FIVE] = {
 };
 
 // 0x5B55B0
-int dword_5B55B0[COLLEGE_COUNT] = {
+static int college_art_nums[COLLEGE_COUNT] = {
     11,
     44,
     38,
@@ -48,7 +94,7 @@ int dword_5B55B0[COLLEGE_COUNT] = {
 };
 
 // 0x5B55F0
-int dword_5B55F0[COLLEGE_COUNT] = {
+static int college_icons[COLLEGE_COUNT] = {
     446,
     447,
     448,
@@ -67,6 +113,90 @@ int dword_5B55F0[COLLEGE_COUNT] = {
     461,
 };
 
+// 0x5B5630
+static int dword_5B5630[SPELL_COUNT] = {
+    12,
+    13,
+    14,
+    15,
+    16,
+    45,
+    46,
+    47,
+    48,
+    49,
+    39,
+    40,
+    41,
+    42,
+    43,
+    93,
+    94,
+    95,
+    96,
+    97,
+    51,
+    52,
+    53,
+    54,
+    55,
+    87,
+    88,
+    89,
+    90,
+    91,
+    57,
+    58,
+    59,
+    60,
+    61,
+    99,
+    100,
+    101,
+    102,
+    103,
+    63,
+    64,
+    65,
+    66,
+    67,
+    69,
+    70,
+    71,
+    72,
+    73,
+    75,
+    76,
+    77,
+    78,
+    79,
+    105,
+    106,
+    107,
+    108,
+    109,
+    111,
+    112,
+    113,
+    114,
+    115,
+    81,
+    82,
+    83,
+    84,
+    85,
+    117,
+    118,
+    119,
+    120,
+    121,
+    123,
+    124,
+    125,
+    126,
+    127,
+};
+
 // 0x5F8730
 static GameContextF8* dword_5F8730;
 
@@ -80,37 +210,38 @@ static char* college_names[COLLEGE_COUNT];
 static char* college_descriptions[COLLEGE_COUNT];
 
 // 0x5F87F8
-static SpellData spells[SPELL_COUNT];
+static SpellInfo spells[SPELL_COUNT];
 
 // 0x4B1440
-bool spell_init(GameContext* ctx)
+bool spell_init(GameInitInfo* init_info)
 {
-    MessageListItem msg;
+    MesFileEntry mes_file_entry;
+    int index;
 
-    dword_5F8730 = ctx->field_8;
+    dword_5F8730 = init_info->field_8;
 
-    for (int college = 0; college < COLLEGE_COUNT; college++) {
-        msg.num = college;
-        sub_44FDC0(&msg);
-        college_names[college] = msg.text;
+    for (index = 0; index < COLLEGE_COUNT; index++) {
+        mes_file_entry.num = index;
+        sub_44FDC0(&mes_file_entry);
+        college_names[index] = mes_file_entry.str;
     }
 
-    for (int spell = 0; spell < SPELL_COUNT; spell++) {
-        msg.num = spell;
-        sub_44FDC0(&msg);
-        spells[spell].description = msg.text;
+    for (index = 0; index < SPELL_COUNT; index++) {
+        mes_file_entry.num = index;
+        sub_44FDC0(&mes_file_entry);
+        spells[index].description = mes_file_entry.str;
     }
 
-    for (int college = 0; college < COLLEGE_COUNT; college++) {
-        msg.num = college + FIRST_COLLEGE_DESCRIPTION_ID;
-        sub_44FDC0(&msg);
-        college_descriptions[college] = msg.text;
+    for (index = 0; index < COLLEGE_COUNT; index++) {
+        mes_file_entry.num = index + FIRST_COLLEGE_DESCRIPTION_ID;
+        sub_44FDC0(&mes_file_entry);
+        college_descriptions[index] = mes_file_entry.str;
     }
 
-    for (int college = 0; college < COLLEGE_COUNT; college++) {
-        msg.num = college + FIRST_COLLEGE_MASTERY_DESCRIPTION_ID;
-        sub_44FDC0(&msg);
-        college_mastery_descriptions[college] = msg.text;
+    for (index = 0; index < COLLEGE_COUNT; index++) {
+        mes_file_entry.num = index + FIRST_COLLEGE_MASTERY_DESCRIPTION_ID;
+        sub_44FDC0(&mes_file_entry);
+        college_mastery_descriptions[index] = mes_file_entry.str;
     }
 
     return true;
@@ -122,13 +253,25 @@ void spell_exit()
 }
 
 // 0x4B1530
-void spell_set_defaults(long long object_id)
+void spell_set_defaults(int64_t obj)
 {
-    for (int college = 0; college < COLLEGE_COUNT; college++) {
-        sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);
+    int college;
+
+    for (college = 0; college < COLLEGE_COUNT; college++) {
+        sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);
     }
 
-    sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, COLLEGE_COUNT, -1);
+    sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, COLLEGE_COUNT, -1);
+}
+
+// 0x4B1570
+int sub_4B1570(int spell)
+{
+    if (spell >= 0 && spell < SPELL_COUNT) {
+        return dword_5B5630[spell];
+    }
+
+    return sub_459F90(spell) ? 36 : 35;
 }
 
 // 0x4B15A0
@@ -147,7 +290,7 @@ const char* spell_get_name(int spell)
     if (spell == 10000 || spell == -1) {
         return "";
     } else {
-        return sub_44FDE0(spell);
+        return magictech_spell_name(spell);
     }
 }
 
@@ -162,48 +305,103 @@ const char* spell_get_description(int spell)
 }
 
 // 0x4B1650
-int sub_4B1650()
+int sub_4B1650(int spell)
 {
+    (void)spell;
+
     return 1;
 }
 
 // 0x4B1660
-int sub_4B1660(int spell, long long object_id)
+int sub_4B1660(int spell, int64_t object_id)
 {
-    int v1 = sub_450340(spell);
-    if (sub_4B0490(object_id, STAT_RACE) == RACE_DWARF) {
-        v1 *= 2;
+    int cost;
+
+    cost = magictech_get_cost(spell);
+    if (stat_level(object_id, STAT_RACE) == RACE_DWARF) {
+        cost *= 2;
     }
 
     if (sub_4B1CB0(object_id) == spell / 5) {
-        v1 /= 2;
+        cost /= 2;
     }
 
-    return v1;
+    return cost;
+}
+
+// 0x4B16C0
+int sub_4B16C0(int spell, int64_t obj, int* a3)
+{
+    int* maintain;
+    int value;
+
+    maintain = magictech_get_maintain1(spell);
+
+    value = maintain[0];
+    if (stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        value *= 2;
+    }
+
+    if (a3 != NULL) {
+        *a3 = maintain[1];
+        if (sub_4B1CB0(obj) == spell / 5) {
+            *a3 *= 2;
+        }
+    }
+
+    return value;
 }
 
 // 0x4B1740
-int sub_4B1740()
+int sub_4B1740(int spell)
 {
+    (void)spell;
+
     return 100;
 }
 
 // 0x4B1750
-int sub_4B1750()
+int sub_4B1750(int spell)
 {
-    return sub_4502E0();
+    return sub_4502E0(spell);
 }
 
 // 0x4B1760
-int sub_4B1760(int a1)
+int spell_get_iq(int spell)
 {
-    return sub_4502F0(a1);
+    return magictech_get_iq(spell);
 }
 
 // 0x4B1770
-int sub_4B1770(int a1)
+int spell_get_minimum_level(int spell)
 {
-    return dword_5B5770[a1 % FIVE];
+    return spell_minimum_levels[spell % FIVE];
+}
+
+bool sub_4B1950(int64_t obj, int spell)
+{
+    return obj != OBJ_HANDLE_NULL
+        && spell >= 0 && spell < SPELL_COUNT
+        && spell % 5 + 1 <= sub_4B1AB0(obj, spell / 5);
+}
+
+// 0x4B19B0
+bool sub_4B19B0(int64_t obj, int spell)
+{
+    int cost;
+    int magic_points;
+
+    if (sub_4B1AB0(obj, spell / 5) != spell % 5 + 1) {
+        return false;
+    }
+
+    cost = sub_4B1650(spell);
+    magic_points = stat_get_base(obj, STAT_MAGICK_POINTS);
+    stat_set_base(obj, STAT_MAGICK_POINTS, magic_points - cost);
+
+    sub_4B1B30(obj, spell, spell % 5 - 1);
+
+    return true;
 }
 
 // 0x4B1A40
@@ -215,7 +413,7 @@ const char* college_get_name(int college)
 // 0x4B1A50
 const char* college_get_description(int college)
 {
-    if (sub_4B1CB0(sub_40DA50()) == college) {
+    if (sub_4B1CB0(player_get_pc_obj()) == college) {
         return college_mastery_descriptions[college];
     } else {
         return college_descriptions[college];
@@ -223,46 +421,48 @@ const char* college_get_description(int college)
 }
 
 // 0x4B1A80
-int sub_4B1A80(int college)
+int college_get_art_num(int college)
 {
-    return dword_5B55B0[college];
+    return college_art_nums[college];
 }
 
 // 0x4B1A90
-int sub_4B1A90(int college)
+int college_get_icon(int college)
 {
-    if (college >= 0 && college < 16) {
-        return dword_5B55F0[college];
+    if (college >= 0 && college < COLLEGE_COUNT) {
+        return college_icons[college];
     } else {
-        return dword_5B55F0[0];
+        return college_icons[0];
     }
 }
 
 // 0x4B1AB0
-int sub_4B1AB0(long long object_id, int a2)
+int sub_4B1AB0(int64_t obj, int a2)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        return sub_407470(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2);
     } else {
         return 0;
     }
 }
 
 // 0x4B1B00
-bool sub_4B1B00(long long object_id, int a2)
+bool sub_4B1B00(int64_t obj, int a2)
 {
-    if (object_id != 0) {
-        return sub_4B1AB0(object_id, a2) > 0;
+    if (obj != OBJ_HANDLE_NULL) {
+        return sub_4B1AB0(obj, a2) > 0;
     } else {
         return false;
     }
 }
 
 // 0x4B1B30
-int sub_4B1B30(long long object_id, int a2, int a3)
+int sub_4B1B30(int64_t obj, int a2, int a3)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        object_field_set_with_network(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        object_field_set_with_network(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
         return a3;
     } else {
         return 0;
@@ -270,7 +470,7 @@ int sub_4B1B30(long long object_id, int a2, int a3)
 }
 
 // 0x4B1C70
-bool sub_4B1C70(long long object_id, int a2)
+bool sub_4B1C70(int64_t object_id, int a2)
 {
     if (sub_4B1CB0(object_id) == -1) {
         return sub_4B1AB0(object_id, a2) >= 5;
@@ -280,9 +480,11 @@ bool sub_4B1C70(long long object_id, int a2)
 }
 
 // 0x4B1CB0
-int sub_4B1CB0(long long object_id)
+int sub_4B1CB0(int64_t object_id)
 {
-    int type = obj_field_int32_get(object_id, OBJ_F_TYPE);
+    int type;
+
+    type = obj_field_int32_get(object_id, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
         // TODO: Figure out constant meaning.
         return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16);
@@ -292,12 +494,13 @@ int sub_4B1CB0(long long object_id)
 }
 
 // 0x4B1CF0
-void sub_4B1CF0(long long object_id, int a2)
+void sub_4B1CF0(int64_t obj, int a2)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC || obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        if (sub_4B1C70(object_id, a2)) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        if (sub_4B1C70(obj, a2)) {
             // TODO: Figure out constant meaning.
-            sub_4074E0(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16, a2);
+            sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, 16, a2);
         }
     }
 }
