@@ -102,7 +102,7 @@ bool tc_init(GameInitInfo* init_info)
         tig_font_create(&font, &dword_5FF530);
 
         font.color = tig_color_make(255, 0, 0);
-        tig_font_create_(&font, &dword_5FF54C);
+        tig_font_create(&font, &dword_5FF54C);
 
         dword_5FF540 = (stru_5FF508.height - 18) / 5;
     }
