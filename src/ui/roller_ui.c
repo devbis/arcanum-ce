@@ -1,18 +1,27 @@
 #include "ui/roller_ui.h"
 
-#include <tig/tig.h>
+#include <stdio.h>
 
 // 0x67BB18
 static tig_font_handle_t dword_67BB18;
+
+// 0x67BB1C
+static int dword_67BB1C;
 
 // 0x67BB20
 static tig_font_handle_t dword_67BB20;
 
 // 0x67BB24
-static tig_vb_handle_t roller_ui_video_buffer;
+static TigVideoBuffer* roller_ui_video_buffer;
 
 // 0x67BB28
 static tig_font_handle_t dword_67BB28;
+
+// 0x67BB2C
+static int dword_67BB2C;
+
+// 0x67BB30
+static int dword_67BB30;
 
 // 0x67BB34
 static bool roller_ui_initialized;
@@ -23,7 +32,7 @@ bool roller_ui_init(GameInitInfo* init_info)
     TigFont font_desc;
     TigVideoBufferCreateInfo vb_create_info;
     TigRect rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
 
     (void)init_info;
 
@@ -42,12 +51,12 @@ bool roller_ui_init(GameInitInfo* init_info)
 
     tig_font_push(dword_67BB20);
 
-    font_desc.str = '+';
+    font_desc.str = "+";
     font_desc.width = 0;
     sub_535390(&font_desc);
     dword_67BB1C = font_desc.width;
 
-    font_desc.str = '0';
+    font_desc.str = "0";
     font_desc.width = 0;
     sub_535390(&font_desc);
     dword_67BB2C = font_desc.width;
@@ -127,7 +136,7 @@ void roller_ui_draw(int value, tig_window_handle_t window_handle, int x, int y, 
     dst_rect.y = y;
 
     if ((flags & 0x1) != 0) {
-        sign = value >= 0 ? '+' : '-';
+        sign = value >= 0 ? "+" : "-";
         dst_rect.width = dword_67BB1C;
         dst_rect.height = dword_67BB30;
 
@@ -152,7 +161,7 @@ void roller_ui_draw(int value, tig_window_handle_t window_handle, int x, int y, 
     src_rect.height = dword_67BB30;
 
     for (dig = 0; dig < max_digits; dig++) {
-        snprintf(buffer, sizeof(buffer), value % 10);
+        snprintf(buffer, sizeof(buffer), "%d", value % 10);
         tig_window_copy_from_vbuffer(window_handle,
             &dst_rect,
             roller_ui_video_buffer,

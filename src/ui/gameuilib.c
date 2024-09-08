@@ -14,6 +14,7 @@
 #include "ui/item_ui.h"
 #include "ui/logbook_ui.h"
 #include "ui/mainmenu_ui.h"
+#include "ui/roller_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/spell_ui.h"
@@ -79,7 +80,7 @@ static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "Schematic-UI", schematic_ui_init, schematic_ui_reset, NULL, NULL, schematic_ui_exit, NULL, NULL, NULL },
     { "Written-UI", NULL, NULL, written_ui_mod_load, written_ui_mod_unload, NULL, NULL, NULL, NULL },
     { "Follower-UI", follower_ui_init, follower_ui_reset, NULL, NULL, follower_ui_exit, follower_ui_save, follower_ui_load, follower_ui_resize },
-    { "Roller-UI" },
+    { "Roller-UI", roller_ui_init, NULL, NULL, NULL, roller_ui_exit, NULL, NULL, NULL },
     { "MP-Ctrl-UI" },
     { "Matchmaker-UI" },
     { "Slide-UI" },
