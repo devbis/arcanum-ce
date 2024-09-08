@@ -4,6 +4,7 @@
 
 #include "game/critter.h"
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "game/stat.h"
 
 #define TWO_FIVE_ONE 251
@@ -19,7 +20,9 @@ typedef enum RumorInteractionType {
     RUMOR_INTERACTION_TYPE_COUNT,
 } RumorInteractionType;
 
-static int rumor_compare(void const* a, void const* b);
+static void sub_4C5960(int rumor, char* buffer);
+static void sub_4C59D0(int rumor, char* buffer);
+static int rumor_compare(const RumorInfo* a, const RumorInfo* b);
 
 // 0x5B6E98
 static const char* off_5B6E98[FIVE] = {
@@ -112,7 +115,7 @@ bool rumor_is_known(int rumor)
 {
     int v1 = (rumor - 1000) / 8;
     int v2 = (rumor - 1000) % 8;
-    return (dword_6876C8[v1] >> v2) & 1 != 0;
+    return ((dword_6876C8[v1] >> v2) & 1) != 0;
 }
 
 // 0x4C5690
@@ -136,14 +139,14 @@ void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, 
     int interaction_type;
     MesFileEntry mes_file_entry;
 
-    if (sub_4B0490(npc_object_id, STAT_GENDER) == GENDER_MALE) {
-        if (sub_4B0490(pc_object_id, STAT_GENDER) == GENDER_MALE) {
+    if (stat_level(npc_object_id, STAT_GENDER) == GENDER_MALE) {
+        if (stat_level(pc_object_id, STAT_GENDER) == GENDER_MALE) {
             interaction_type = RUMOR_INTERACTION_TYPE_MALE_TO_MALE;
         } else {
             interaction_type = RUMOR_INTERACTION_TYPE_MALE_TO_FEMALE;
         }
     } else {
-        if (sub_4B0490(pc_object_id, STAT_GENDER) == GENDER_MALE) {
+        if (stat_level(pc_object_id, STAT_GENDER) == GENDER_MALE) {
             interaction_type = RUMOR_INTERACTION_TYPE_FEMALE_TO_MALE;
         } else {
             interaction_type = RUMOR_INTERACTION_TYPE_FEMALE_TO_FEMALE;
@@ -184,7 +187,7 @@ bool sub_4C58D0(object_id_t object_id, int rumor)
 // 0x4C5920
 void sub_4C5920(object_id_t object_id, int rumor, char* buffer)
 {
-    if (sub_4B0490(object_id, STAT_INTELLIGENCE) > 4) {
+    if (stat_level(object_id, STAT_INTELLIGENCE) > 4) {
         sub_4C5960(rumor, buffer);
     } else {
         sub_4C59D0(rumor, buffer);
@@ -197,7 +200,7 @@ void sub_4C5960(int rumor, char* buffer)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = 20 * rumor;
-    if (message_find(dword_5FF420[RUMOR_INTERACTION_TYPE_MALE_TO_MALE], &mes_file_entry)) {
+    if (mes_search(dword_5FF420[RUMOR_INTERACTION_TYPE_MALE_TO_MALE], &mes_file_entry)) {
         strcpy(buffer, mes_file_entry.str);
     } else {
         buffer[0] = '\0';
@@ -210,7 +213,7 @@ void sub_4C59D0(int rumor, char* buffer)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = 20 * rumor;
-    if (message_find(dword_5FF420[RUMOR_INTERACTION_TYPE_DUMB], &mes_file_entry)) {
+    if (mes_search(dword_5FF420[RUMOR_INTERACTION_TYPE_DUMB], &mes_file_entry)) {
         strcpy(buffer, mes_file_entry.str);
     } else {
         buffer[0] = '\0';
@@ -242,9 +245,9 @@ int sub_4C5A40(int64_t obj, RumorInfo* rumors)
 }
 
 // 0x4C5AF0
-int rumor_compare(void const* a, void const* b)
+int rumor_compare(const RumorInfo* a, const RumorInfo* b)
 {
-    return datetime_compare(((RumorInfo*)a)->timestamp, ((RumorInfo*)b)->timestamp);
+    return datetime_compare(&(a->timestamp), &(b->timestamp));
 }
 
 // 0x4C5B10
