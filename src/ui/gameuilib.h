@@ -1,5 +1,5 @@
-#ifndef ARCANUM_GAMEUILIB_GAMEUILIB_H_
-#define ARCANUM_GAMEUILIB_GAMEUILIB_H_
+#ifndef ARCANUM_UI_GAMEUILIB_H_
+#define ARCANUM_UI_GAMEUILIB_H_
 
 #include "game/context.h"
 
@@ -15,4 +15,4 @@ bool sub_53EAD0();
 void sub_53EAF0();
 void sub_53EB00();
 
-#endif /* ARCANUM_GAMEUILIB_GAMEUILIB_H_ */
+#endif /* ARCANUM_UI_GAMEUILIB_H_ */
