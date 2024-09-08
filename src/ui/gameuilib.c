@@ -12,6 +12,7 @@
 #include "ui/intgame.h"
 #include "ui/iso.h"
 #include "ui/item_ui.h"
+#include "ui/logbook_ui.h"
 #include "ui/mainmenu_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
@@ -63,7 +64,7 @@ static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "TextEdit-UI", textedit_ui_init, textedit_ui_reset, NULL, NULL, textedit_ui_exit, NULL, NULL, NULL },
     { "WMap-UI" },
     { "WMap-Rnd" },
-    { "LogBook-UI" },
+    { "LogBook-UI", logbook_ui_init, logbook_ui_reset, NULL, NULL, logbook_ui_exit, NULL, NULL, NULL },
     { "Spell-UI", spell_ui_init, spell_ui_reset, NULL, NULL, spell_ui_exit, spell_ui_save, spell_ui_load, NULL },
     { "Sleep-UI" },
     { "Skill_UI" },
