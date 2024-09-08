@@ -1,6 +1,7 @@
 #include "game/quest.h"
 
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "game/stat.h"
 
 #define MAX_QUEST 1000
@@ -206,13 +207,29 @@ int quest_get_state(int num)
 // 0x4C51C0
 int quest_set_state(int num, int state)
 {
-    int old_state = quest_states[num - 1000];
+    int old_state;
+    struct {
+        int type;
+        int field_4;
+        int field_8;
+    } packet;
+
+    static_assert(sizeof(packet) == 0xC, "wrong size");
+
+    old_state = quest_states[num - 1000];
     if (old_state == QUEST_STATE_COMPLETED || old_state == QUEST_STATE_BOTCHED) {
         return old_state;
     }
 
     if (!sub_4A2BA0()) {
-        // TODO: Incomplete.
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return state;
+        }
+
+        packet.type = 41;
+        packet.field_4 = num;
+        packet.field_8 = state;
+        tig_net_send_app_all(&packet, sizeof(packet));
     }
 
     if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_BOTCHED) {
@@ -226,7 +243,8 @@ int quest_set_state(int num, int state)
 // 0x4C5250
 void quest_copy_description(object_id_t obj, int num, char* buffer)
 {
-    if (quests[num - 1000].dumb_description != NULL && sub_4B0490(obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
+    if (quests[num - 1000].dumb_description != NULL
+        && stat_level(obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
         strcpy(buffer, quests[num - 1000].dumb_description);
     } else if (quests[num - 1000].normal_description != NULL) {
         strcpy(buffer, quests[num - 1000].normal_description);
