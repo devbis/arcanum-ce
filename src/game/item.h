@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 #include "game/obj.h"
+#include "game/timeevent.h"
 
 typedef enum AmmunitionType {
     AMMUNITION_TYPE_ARROW,
@@ -68,11 +69,15 @@ int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj);
 int item_armor_ac_adj(int64_t item_obj, int64_t owner_obj, bool a3);
 int item_armor_coverage(int64_t obj);
 int sub_465C90(int race);
+int item_weapon_ammo_type(object_id_t item_id);
+int item_weapon_magic_speed(int64_t item_obj, int64_t owner_obj);
+int item_weapon_skill(int64_t obj);
+int item_weapon_range(object_id_t item_id, object_id_t critter_id);
 int sub_466230(int64_t obj);
 void sub_466D60(int64_t obj);
 int sub_466DA0(int64_t obj);
 void item_remove(int64_t obj);
-void item_decay_timeevent_process(TimeEvent* timeevent);
+bool item_decay_timeevent_process(TimeEvent* timeevent);
 bool item_can_decay(int64_t obj);
 bool sub_468090(int64_t obj, int ms);
 

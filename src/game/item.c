@@ -1,14 +1,17 @@
 #include "game/item.h"
 
 #include "game/description.h"
+#include "game/magictech.h"
 #include "game/mes.h"
 #include "game/mt_item.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/proto.h"
 #include "game/random.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
+#include "game/ui.h"
 
 #define FIRST_AMMUNITION_TYPE_ID 0
 #define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
@@ -16,7 +19,7 @@
 typedef struct ItemInsertInfo {
     /* 0000 */ int64_t field_0;
     /* 0008 */ int64_t field_8;
-    /* 0010 */ int64_t field_0;
+    /* 0010 */ int64_t field_10;
 } ItemInsertInfo;
 
 static_assert(sizeof(ItemInsertInfo) == 0x18, "wrong size");
@@ -132,13 +135,13 @@ bool item_init(GameInitInfo* init_info)
 
     for (index = 0; index < AMMUNITION_TYPE_COUNT; index++) {
         msg.num = index + FIRST_AMMUNITION_TYPE_ID;
-        sub_4D43A0(item_mes_file, &msg);
+        mes_get_msg(item_mes_file, &msg);
         item_ammunition_type_names[index] = msg.str;
     }
 
     for (index = 0; index < ARMOR_COVERAGE_TYPE_COUNT; index++) {
         msg.num = index + FIRST_ARMOR_COVERAGE_TYPE_ID;
-        sub_4D43A0(item_mes_file, &msg);
+        mes_get_msg(item_mes_file, &msg);
         item_armor_coverage_type_names[index] = msg.str;
     }
 
@@ -354,7 +357,7 @@ int item_worth(object_id_t item_id)
 {
     int worth;
 
-    if (!sub_464370(item_id)) {
+    if (!item_is_identified(item_id)) {
         return 300;
     }
 
@@ -657,7 +660,7 @@ int item_location_get(int64_t obj)
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type == OBJ_TYPE_ITEM_ARMOR) {
-        switch (sub_465C30(obj)) {
+        switch (item_armor_coverage(obj)) {
         case TIG_ART_ARMOR_COVERAGE_HELMET:
             return 1000;
         case TIG_ART_ARMOR_COVERAGE_RING:
@@ -1137,7 +1140,7 @@ bool sub_467E70()
 }
 
 // 0x467FC0
-void item_decay_timeevent_process(TimeEvent* timeevent)
+bool item_decay_timeevent_process(TimeEvent* timeevent)
 {
     int64_t obj;
 
