@@ -1,8 +1,16 @@
 #include "ui/mp_ctrl_ui.h"
 
-#include <tig/tig.h>
+#include "game/gsound.h"
+#include "ui/multiplayer_ui.h"
+#include "ui/server_list_ui.h"
 
-#include "game/lib/timeevent.h"
+static void sub_569D60();
+static bool sub_569DC0(TimeEvent* timeevent);
+static bool sub_569F40(int num);
+static void sub_56A000();
+
+// 0x5CA350
+static int dword_5CA350 = -1;
 
 // 0x67BB14
 static bool mp_ctrl_ui_initialized;
@@ -79,22 +87,19 @@ bool sub_569DC0(TimeEvent* timeevent)
 // 0x569DD0
 bool mp_ctrl_ui_process_callback(TimeEvent* timeevent)
 {
-    long long v1;
-    long long v2;
-    long long v3;
     TimeEvent next_timeevent;
     DateTime next_datetime;
 
-    switch (timeevent.params[0].integer_value) {
+    switch (timeevent->params[0].integer_value) {
     case 0:
         sub_5708B0(0);
         break;
     case 1:
-        if (sub_4E5470(timeevent.params[1].object_value)
-            && sub_4E5470(timeevent.params[2].object_value)) {
-            sub_5704E0(timeevent.params[1].object_value,
-                timeevent.params[2].object_value,
-                timeevent.params[3].integer_value);
+        if (sub_4E5470(timeevent->params[1].object_value)
+            && sub_4E5470(timeevent->params[2].object_value)) {
+            sub_5704E0(timeevent->params[1].object_value,
+                timeevent->params[2].object_value,
+                timeevent->params[3].integer_value);
         }
         break;
     case 2:
@@ -104,7 +109,7 @@ bool mp_ctrl_ui_process_callback(TimeEvent* timeevent)
 
             next_datetime.days = 0;
 
-            switch (timeevent.params[1].integer_value) {
+            switch (timeevent->params[1].integer_value) {
             case 0:
                 sub_56A000();
                 next_timeevent.params[1].integer_value = 1;
@@ -156,7 +161,7 @@ bool sub_569F40(int num)
     TigArtFrameData art_frame_data;
     TigRect src_rect;
     TigRect dst_rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
 
     if ((tig_net_flags & 0x1) == 0) {
         return false;
