@@ -54,7 +54,9 @@ tig_art_id_t sub_554BE0(int64_t obj);
 void sub_556E60();
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();
+void sub_557670();
 void sub_5576B0();
+void sub_557730(int index);
 void sub_557790(int64_t obj);
 unsigned int intgame_get_iso_window_flags();
 void intgame_set_iso_window_flags(unsigned int flags);
@@ -66,6 +68,12 @@ void intgame_set_fullscreen();
 void intgame_toggle_interface();
 int sub_557AA0();
 int sub_557AB0();
+void sub_557AC0(int group, int index, UiButtonInfo* button_info);
+int64_t sub_557B00();
+mes_file_handle_t sub_557B10();
+UiButtonInfo* sub_557B20(int index);
+void sub_557B30(int index, int x, int y);
+int sub_557B50(int index);
 int sub_557B60();
 
 #endif /* ARCANUM_UI_INTGAME_H_ */

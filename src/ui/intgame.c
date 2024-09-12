@@ -57,6 +57,7 @@ static void intgame_mt_button_disable();
 static bool intgame_big_window_create();
 static void intgame_big_window_destroy();
 static bool intgame_big_window_message_filter(TigMessage* msg);
+static void sub_557AC0(int group, int index, UiButtonInfo* button_info);
 
 // 0x5C6378
 static tig_window_handle_t dword_5C6378[5] = {
@@ -324,6 +325,21 @@ static UiButtonInfo stru_5C6E90[] = {
     { 381, 3, 190, TIG_BUTTON_HANDLE_INVALID },
     { 431, 3, 191, TIG_BUTTON_HANDLE_INVALID },
     { 481, 3, 192, TIG_BUTTON_HANDLE_INVALID },
+};
+
+// 0x5C6F30
+static UiButtonInfo stru_5C6F30 = { 616, 455, 182, TIG_BUTTON_HANDLE_INVALID };
+
+// 0x5C6F40
+static UiButtonInfo stru_5C6F40[] = {
+    { 69, 548, -1, TIG_BUTTON_HANDLE_INVALID },
+    { 114, 548, -1, TIG_BUTTON_HANDLE_INVALID },
+};
+
+// 0x5C6F60
+static int dword_5C6F60[] = {
+    1,
+    0,
 };
 
 // 0x5C6F68
@@ -2225,7 +2241,7 @@ void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y)
         y -= 59;
     }
 
-    tig_art_interface_id_create(art_num 0, 0, 0, &art_id);
+    tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
     tig_art_frame_data(art_id, &art_frame_data);
 
     src_rect.x = 0;
@@ -2732,7 +2748,15 @@ void sub_557370()
 // 0x557670
 void sub_557670()
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    John v1;
+
+    mes_file_entry.num = 2000;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
+    sub_550750(&v1);
 }
 
 // 0x5576B0
@@ -2757,9 +2781,19 @@ void sub_5576B0()
 }
 
 // 0x557730
-void sub_557730()
+void sub_557730(int index)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    John v1;
+
+    mes_file_entry.num = index + 3000;
+    if (mes_search(intgame_mes_file, &mes_file_entry)) {
+        mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+        v1.type = 6;
+        v1.str = mes_file_entry.str;
+        sub_550750(&v1);
+    }
 }
 
 // 0x557790
@@ -2910,39 +2944,42 @@ int sub_557AB0()
 }
 
 // 0x557AC0
-void sub_557AC0()
+void sub_557AC0(int group, int index, UiButtonInfo* button_info)
 {
-    // TODO: Incomplete.
+    if (button_info != NULL) {
+        *button_info = stru_5C6718[group * 5 + index];
+    }
 }
 
 // 0x557B00
-void sub_557B00()
+int64_t sub_557B00()
 {
-    // TODO: Incomplete.
+    return qword_64C688;
 }
 
 // 0x557B10
-void sub_557B10()
+mes_file_handle_t sub_557B10()
 {
-    // TODO: Incomplete.
+    return intgame_mes_file;
 }
 
 // 0x557B20
-void sub_557B20()
+UiButtonInfo* sub_557B20(int index)
 {
-    // TODO: Incomplete.
+    return &(stru_5C6F40[index]);
 }
 
 // 0x557B30
-void sub_557B30()
+void sub_557B30(int index, int x, int y)
 {
-    // TODO: Incomplete.
+    stru_5C6F40[index].x = x;
+    stru_5C6F40[index].y = y;
 }
 
 // 0x557B50
-void sub_557B50()
+int sub_557B50(int index)
 {
-    // TODO: Incomplete.
+    return dword_5C6F60[index];
 }
 
 // 0x557B60
