@@ -11,6 +11,13 @@
 #include "ui/compact_ui.h"
 #include "ui/gameuilib.h"
 
+typedef struct IntgameIsoWindowTypeInfo {
+    /* 0000 */ TigRect rect;
+    /* 0010 */ tig_window_handle_t window_handle;
+} IntgameIsoWindowTypeInfo;
+
+static_assert(sizeof(IntgameIsoWindowTypeInfo) == 0x14, "wrong size");
+
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
@@ -261,6 +268,21 @@ static UiButtonInfo stru_5C6D08[] = {
 
 // 0x5C6D58
 static int dword_5C6D58 = -1;
+
+// 0x5C6D60
+struct IntgameIsoWindowTypeInfo stru_5C6D60[] = {
+    { { 211, 503, 383, 82 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 208, 574, 387, 18 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 208, 567, 387, 18 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 291, 566, 268, 19 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 208, 574, 387, 18 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 211, 507, 383, 84 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 262, 508, 303, 24 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 220, 503, 350, 82 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 355, 506, 227, 18 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 0, 0, 0, 0 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 0, 0, 0, 0 }, TIG_WINDOW_HANDLE_INVALID },
+};
 
 // 0x5C6F68
 static UiButtonInfo intgame_mt_button_info = { 161, 443, 563, TIG_BUTTON_HANDLE_INVALID };
@@ -957,9 +979,19 @@ void sub_550750(John* a1)
 }
 
 // 0x550770
-void sub_550770()
+void sub_550770(int a1, const char* str)
 {
-    // TODO: Incomplete.
+    John v1;
+
+    (void)a1;
+
+    if (dword_64C6D4 != NULL) {
+        v1.type = 6;
+        v1.str = str;
+        dword_64C6D4(&v1);
+    } else if (dword_64C6B4) {
+        sub_5509C0(str, &(stru_5C6D60[intgame_iso_window_type].rect));
+    }
 }
 
 // 0x5507D0
