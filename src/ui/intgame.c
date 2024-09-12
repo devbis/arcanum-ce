@@ -49,6 +49,7 @@ static void sub_554560(tig_window_handle_t window_handle, int art_num);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_555910(int64_t obj, char* buffer);
+static void sub_555B50(int64_t obj, char* buffer);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -2272,12 +2273,12 @@ void sub_554F10()
 }
 
 // 0x555780
-void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6)
+void sub_555780(char* buffer, int num, int min, int max, int adj, bool a6)
 {
     MesFileEntry mes_file_entry;
     char tmp[80];
 
-    if (min == 0 && max == 0 && a5 == 0) {
+    if (min == 0 && max == 0 && adj == 0) {
         return;
     }
 
@@ -2299,8 +2300,8 @@ void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6)
         strcat(buffer, tmp);
     }
 
-    if (a5 != 0) {
-        sprintf(tmp, "(%+d", a5);
+    if (adj != 0) {
+        sprintf(tmp, "(%+d)", adj);
         strcat(buffer, tmp);
     }
 
@@ -2343,13 +2344,17 @@ void sub_555910(int64_t obj, char* buffer)
     min = obj_field_int32_get(obj, OBJ_F_WEAPON_BONUS_TO_HIT);
     if (identified) {
         adj = obj_field_int32_get(obj, OBJ_F_WEAPON_MAGIC_HIT_ADJ);
+    } else {
+        adj = 0;
     }
-    sub_555780(buffer, 45, min, 0, adj, false);
+    sub_555780(buffer, 45, min, 0, adj, true);
 
     // RNG
     min = obj_field_int32_get(obj, OBJ_F_WEAPON_RANGE);
     if (identified) {
         adj = obj_field_int32_get(obj, OBJ_F_WEAPON_MAGIC_RANGE_ADJ);
+    } else {
+        adj = 0;
     }
     sub_555780(buffer, 46, min, 0, adj, false);
 
@@ -2385,9 +2390,86 @@ void sub_555910(int64_t obj, char* buffer)
 }
 
 // 0x555B50
-void sub_555B50()
+void sub_555B50(int64_t obj, char* buffer)
 {
-    // TODO: Incomplete.
+    bool identified;
+    int value;
+    int adj;
+
+    identified = obj_field_int32_get(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0
+        && item_is_identified(obj);
+    buffer[0] = '\0';
+
+    // AC
+    value = obj_field_int32_get(obj, OBJ_F_ARMOR_AC_ADJ);
+    if (identified) {
+        adj = obj_field_int32_get(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 50, value, 0, adj, false);
+
+    // DR
+    value = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 51, value, 0, adj, true);
+
+    // PR
+    value = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 3);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 52, value, 0, adj, true);
+
+    // FR
+    value = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 53, value, 0, adj, true);
+
+    // ER
+    value = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 54, value, 0, adj, true);
+
+    // MR
+    value = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 4);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 55, value, 0, adj, true);
+
+    // NP
+    value = obj_field_int32_get(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ);
+    if (identified) {
+        adj = obj_field_int32_get(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 56, value, 0, adj, true);
+
+    // D
+    if (item_armor_coverage(obj) == TIG_ART_ARMOR_COVERAGE_GAUNTLETS) {
+        value = obj_field_int32_get(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE);
+    } else {
+        value = 0;
+    }
+    sub_555780(buffer, 43, value, 0, 0, true);
 }
 
 // 0x555D80
