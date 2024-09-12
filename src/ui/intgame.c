@@ -23,6 +23,8 @@ static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static void sub_54DBF0(int btn, int window_type);
 static void sub_5509C0(const char* str, TigRect* rect);
+static void sub_550A10(tig_window_handle_t window_handle, const char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
+static void sub_550CD0(int group);
 static void iso_interface_window_enable(int window_type);
 static void sub_551660();
 static int sub_551740(int x, int y);
@@ -148,7 +150,7 @@ static UiButtonInfo stru_5C6618[] = {
 };
 
 // 0x5C6718
-static UiButtonInfo stru_5C6718[] = {
+static UiButtonInfo stru_5C6718[80] = {
     { 284, 528, -1, TIG_BUTTON_HANDLE_INVALID },
     { 334, 528, -1, TIG_BUTTON_HANDLE_INVALID },
     { 384, 528, -1, TIG_BUTTON_HANDLE_INVALID },
@@ -1079,7 +1081,7 @@ void sub_5509C0(const char* str, TigRect* rect)
 }
 
 // 0x550A10
-void sub_550A10()
+void sub_550A10(tig_window_handle_t window_handle, const char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags)
 {
     // TODO: Incomplete.
 }
@@ -1097,9 +1099,20 @@ void sub_550C60()
 }
 
 // 0x550CD0
-void sub_550CD0()
+void sub_550CD0(int group)
 {
-    // TODO: Incomplete.
+    int global_index;
+    int index;
+
+    global_index = group * 5;
+    for (index = 0; index < 5; index++) {
+        if (stru_5C6718[global_index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_hide(stru_5C6718[global_index].button_handle);
+        }
+        global_index++;
+    }
+
+    sub_5503F0(intgame_iso_window_type, 100);
 }
 
 // 0x550D20
