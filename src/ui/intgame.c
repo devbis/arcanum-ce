@@ -41,6 +41,7 @@ static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void sub_552740(int64_t obj, int a2);
 static void sub_5528E0();
+static void sub_552930();
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -465,8 +466,23 @@ static int dword_64C6B8;
 // 0x64C6BC
 static int dword_64C6BC;
 
+// 0x64C6C0
+static int dword_64C6C0;
+
+// 0x64C6C4
+static int dword_64C6C4;
+
+// 0x64C6C8
+static int dword_64C6C8;
+
+// 0x64C6CC
+static void(*dword_64C6CC)(TigMessage* msg);
+
+// 0x64C6D0
+static int dword_64C6D0;
+
 // 0x64C6D4
-static void(*dword_64C6D4)(int);
+static void(*dword_64C6D4)(John* a1);
 
 // 0x64C6D8
 static int dword_64C6D8;
@@ -1811,7 +1827,13 @@ void sub_5528E0()
 // 0x552930
 void sub_552930()
 {
-    // TODO: Incomplete.
+    if (intgame_iso_window_type == 0) {
+        if (dword_64C6C8 != dword_64C6C4) {
+            dword_64C6C8 = (dword_64C6C8 + 1) % 10;
+        }
+    }
+
+    sub_552960(0);
 }
 
 // 0x552960
