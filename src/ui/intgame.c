@@ -26,6 +26,7 @@ static void sub_5509C0(const char* str, TigRect* rect);
 static void sub_550A10(tig_window_handle_t window_handle, const char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static void sub_550C60(int group);
 static void sub_550CD0(int group);
+static void sub_550D20();
 static void iso_interface_window_enable(int window_type);
 static void sub_551660();
 static int sub_551740(int x, int y);
@@ -1135,7 +1136,19 @@ void sub_550CD0(int group)
 // 0x550D20
 void sub_550D20()
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < 5; index++) {
+        stru_5C6C18[index].art_num = sub_4B1570(0);
+        if (stru_5C6C18[index].art_num != -1) {
+            if (!sub_54AAE0(&(stru_5C6C18[index]))) {
+                return false;
+            }
+        }
+    }
+
+    sub_550D60();
+    return true;
 }
 
 // 0x550D60
