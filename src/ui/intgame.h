@@ -32,6 +32,7 @@ bool sub_551000(int x, int y);
 void sub_551080();
 void sub_551160();
 bool sub_5517A0(TigMessage* msg);
+int sub_551A00();
 void sub_551A80(int a1);
 void sub_552070();
 void sub_552080(int window_type);

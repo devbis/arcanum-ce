@@ -3,6 +3,7 @@
 #include "game/gamelib.h"
 #include "game/item.h"
 #include "game/magictech.h"
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/obj.h"
 #include "game/player.h"
@@ -386,6 +387,9 @@ static tig_font_handle_t dword_64C538;
 // 0x64C630
 static bool intgame_big_window_locked;
 
+// 0x64C634
+static int dword_64C634[11];
+
 // 0x64C660
 static TigRect stru_64C660;
 
@@ -421,6 +425,9 @@ static int dword_64C6AC;
 
 // 0x64C6B4
 static bool dword_64C6B4;
+
+// 0x64C6B8
+static int dword_64C6B8;
 
 // 0x64C6BC
 static int dword_64C6BC;
@@ -1586,9 +1593,9 @@ void sub_551910()
 }
 
 // 0x551A00
-void sub_551A00()
+int sub_551A00()
 {
-    // TODO: Incomplete.
+    return dword_64C634[dword_64C6B8];
 }
 
 // 0x551A10
