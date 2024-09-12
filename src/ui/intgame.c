@@ -1278,7 +1278,32 @@ bool sub_551000(int x, int y)
 // 0x551080
 void sub_551080()
 {
-    // TODO: Incomplete.
+    TigArtBlitInfo blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    if (dword_64C6E4 != NULL) {
+        tig_window_copy(dword_64C520,
+            dword_64C524, dword_64C52C,
+            &stru_64C510);
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = dword_64C524->width;
+        src_rect.height = dword_64C524->height;
+
+        if (tig_window_copy_to_vbuffer(dword_64C52C, &stru_64C510, dword_64C6E4, &src_rect) == TIG_OK) {
+            dst_rect = src_rect;
+            dst_rect.x = dword_64C524->x;
+            dst_rect.y = dword_64C524->y;
+
+            blit_info.art_id = dword_64C528;
+            blit_info.flags = 0;
+            blit_info.src_rect = &src_rect;
+            blit_info.dst_rect = &dst_rect;
+            tig_window_blit_art(dword_64C520, &blit_info);
+        }
+    }
 }
 
 // 0x551160

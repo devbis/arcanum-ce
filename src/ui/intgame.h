@@ -29,6 +29,7 @@ void sub_5508C0(int value);
 void sub_550930();
 void sub_550DA0(int a1, S550DA0* a2);
 bool sub_551000(int x, int y);
+void sub_551080();
 void sub_551160();
 void sub_551A80(int a1);
 void sub_552070();
