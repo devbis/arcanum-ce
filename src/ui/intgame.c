@@ -1943,9 +1943,18 @@ void intgame_spell_maintain_refresh_func()
 }
 
 // 0x553910
-void sub_553910()
+void sub_553910(int index, bool a2)
 {
-    // TODO: Incomplete.
+    intgame_spell_maintain_refresh_func(stru_5C6E40[index].button_handle,
+        &(stru_5C6E40[index]),
+        index,
+        a2,
+        dword_64C4F8[0]);
+    intgame_spell_maintain_refresh_func(stru_5C6E90[index].button_handle,
+        &(stru_5C6E90[index]),
+        index,
+        a2,
+        dword_5C6378[index]);
 }
 
 // 0x553960
