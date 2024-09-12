@@ -1759,9 +1759,20 @@ void intgame_clock_refresh()
 }
 
 // 0x5526F0
-void intgame_clock_process_callback()
+bool intgame_clock_process_callback()
 {
-    // TODO: Incomplete.
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    if (dword_64C6B4) {
+        intgame_clock_refresh();
+        timeevent.type = TIMEEVENT_TYPE_CLOCK;
+        sub_45A950(&datetime, 3600000);
+        timeevent_clear_one_typed(TIMEEVENT_TYPE_CLOCK);
+        sub_45B800(&timeevent, &datetime);
+    }
+
+    return true;
 }
 
 // 0x552740
