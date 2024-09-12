@@ -17,7 +17,7 @@ bool sub_54AA60(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* 
 bool sub_54AAE0(UiButtonInfo* button_info);
 void sub_54AEE0(int a1);
 void sub_54B3A0();
-void sub_5506C0(int a1);
+void sub_5506C0(int window_type);
 void sub_550720();
 void sub_550750(John* a1);
 void sub_550DA0(int a1, S550DA0* a2);

@@ -13,6 +13,7 @@
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static void sub_54DBF0(int btn, int window_type);
 static void iso_interface_window_enable(int window_type);
 static void sub_551660();
 static int sub_551740(int x, int y);
@@ -57,6 +58,32 @@ static TigRect stru_5C63E8 = { 754, 473, 28, 88 };
 
 // 0x5C6470
 static TigRect stru_5C6470 = { 61, 509, 251, -1 };
+
+// 0x5C6480
+static UiButtonInfo stru_5C6480[] = {
+    { 693, 456, 472, TIG_BUTTON_HANDLE_INVALID },
+    { 649, 494, 473, TIG_BUTTON_HANDLE_INVALID },
+    { 86, 457, 470, TIG_BUTTON_HANDLE_INVALID },
+    { 693, 539, 471, TIG_BUTTON_HANDLE_INVALID },
+};
+
+// 0x5C64C0
+static UiButtonInfo stru_5C64C0[] = {
+    { 41, 2, 187, TIG_BUTTON_HANDLE_INVALID },
+    { 4, 2, 169, TIG_BUTTON_HANDLE_INVALID },
+    { 115, 2, 186, TIG_BUTTON_HANDLE_INVALID },
+    { 78, 2, 193, TIG_BUTTON_HANDLE_INVALID },
+    { 157, 9, 137, TIG_BUTTON_HANDLE_INVALID },
+};
+
+// 0x5C6510
+static int dword_5C6510[] = {
+    561,
+    560,
+    558,
+    195,
+    559,
+};
 
 // 0x5C6524
 static int dword_5C6524[5] = {
@@ -729,9 +756,21 @@ void sub_54C8E0()
 }
 
 // 0x54DBF0
-void sub_54DBF0()
+void sub_54DBF0(int btn, int window_type)
 {
-    // TODO: Incomplete.
+    int state;
+
+    tig_button_state_get(stru_5C6480[btn].button_handle, &state);
+    if (state != TIG_BUTTON_STATE_PRESSED) {
+        tig_button_state_change(stru_5C6480[btn != 1 ? 1 : 0].button_handle, TIG_BUTTON_STATE_RELEASED);
+        sub_551F20();
+        tig_button_state_change(stru_5C6480[btn].button_handle, TIG_BUTTON_STATE_PRESSED);
+        sub_5506C0(window_type);
+    } else {
+        sub_5506C0(0);
+        tig_button_state_change(stru_5C6480[btn].button_handle, TIG_BUTTON_STATE_RELEASED);
+        sub_551F40();
+    }
 }
 
 // 0x54DC80
@@ -819,7 +858,7 @@ void iso_interface_window_disable()
 }
 
 // 0x5506C0
-void sub_5506C0(int a1)
+void sub_5506C0(int window_type)
 {
     sub_571910();
     if (intgame_iso_window_type == 9) {
@@ -827,12 +866,12 @@ void sub_5506C0(int a1)
     }
 
     dword_5C6F78 = 6;
-    if (intgame_iso_window_type == a1) {
+    if (intgame_iso_window_type == window_type) {
         dword_64C6AC = 0;
         sub_552130(0);
     } else {
-        dword_64C6AC = a1;
-        sub_552130(a1);
+        dword_64C6AC = window_type;
+        sub_552130(window_type);
     }
 }
 
