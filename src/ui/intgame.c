@@ -42,6 +42,7 @@ static void sub_552130(int window_type);
 static void sub_552740(int64_t obj, int a2);
 static void sub_5528E0();
 static void sub_552930();
+static void sub_552960(bool play_sound);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -1386,10 +1387,10 @@ void sub_551160()
                 } else if ((obj = sub_43C570()) != OBJ_HANDLE_NULL) {
                     sub_57CCF0(pc_obj, obj);
                 } else {
-                    sub_552960(0);
+                    sub_552960(false);
                 }
             } else {
-                sub_552960(0);
+                sub_552960(false);
             }
         }
 
@@ -1821,7 +1822,7 @@ void sub_5528E0()
         }
     }
 
-    sub_552960(0);
+    sub_552960(false);
 }
 
 // 0x552930
@@ -1833,13 +1834,24 @@ void sub_552930()
         }
     }
 
-    sub_552960(0);
+    sub_552960(false);
 }
 
 // 0x552960
-void sub_552960()
+void sub_552960(bool play_sound)
 {
-    // TODO: Incomplete.
+    if (dword_64C6B4) {
+        sub_5506C0(0);
+
+        if (intgame_iso_window_type == 0) {
+            if (dword_64C6C0 > 0) {
+                sub_550930();
+                sub_5529C0(stru_5C6D60[intgame_iso_window_type].window_handle,
+                    &(stru_64C540[dword_64C6C8]),
+                    play_sound);
+            }
+        }
+    }
 }
 
 // 0x5529C0
