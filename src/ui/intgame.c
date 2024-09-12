@@ -40,6 +40,7 @@ static void sub_551F40();
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void sub_552740(int64_t obj, int a2);
+static void sub_5528E0();
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -1795,7 +1796,16 @@ void sub_552770()
 // 0x5528E0
 void sub_5528E0()
 {
-    // TODO: Incomplete.
+    int v1;
+
+    if (intgame_iso_window_type == 0) {
+        v1 = (dword_64C6C8 + 9) % 10;
+        if (v1 != dword_64C6C4 && (dword_64C6C4 - v1 + 10) % 10 < dword_64C6C0) {
+             dword_64C6C8 = v1;
+        }
+    }
+
+    sub_552960(0);
 }
 
 // 0x552930
