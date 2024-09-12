@@ -2244,9 +2244,17 @@ void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y)
 }
 
 // 0x554BE0
-void sub_554BE0()
+tig_art_id_t sub_554BE0(int64_t obj)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id = TIG_ART_ID_INVALID;
+    int art_num;
+
+    if (obj != OBJ_HANDLE_NULL) {
+        art_num = sub_554C20(obj);
+        tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
+    }
+
+    return art_id;
 }
 
 // 0x554C20
