@@ -50,6 +50,7 @@ static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, in
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
+static void sub_555D80(int64_t a1, int64_t a2, const char* str);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -2473,9 +2474,39 @@ void sub_555B50(int64_t obj, char* buffer)
 }
 
 // 0x555D80
-void sub_555D80()
+void sub_555D80(int64_t a1, int64_t a2, const char* str)
 {
-    // TODO: Incomplete.
+    int art_num;
+    char buffer[2000];
+
+    if (str[0] != '\0') {
+        sub_550930();
+
+        if (sub_553D10(a1, a2, &art_num)) {
+            sub_5561D0(a2, art_num, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+        } else {
+            sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, art_num);
+        }
+
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            str,
+            &stru_5C7118,
+            dword_739F88,
+            1);
+
+        if ((obj_field_int32_get(a2, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
+            sprintf(buffer, sub_43D600(a2), sub_43D5A0(a2));
+            sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+                buffer,
+                &stru_5C70F8,
+                dword_64C49C,
+                2);
+        }
+
+        if ((obj_field_int32_get(a2, OBJ_F_SCENERY_FLAGS) & OSCF_MARKS_TOWNMAP) != 0) {
+            sub_564AF0(a2);
+        }
+    }
 }
 
 // 0x555EC0
