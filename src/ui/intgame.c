@@ -1050,7 +1050,16 @@ void sub_5508C0(int value)
 // 0x550930
 void sub_550930()
 {
-    // TODO: Incomplete.
+    if (dword_64C6B4) {
+        if (intgame_is_compact_interface()) {
+            sub_568D20();
+            sub_568F40();
+        } else {
+            tig_window_fill(stru_5C6D60[intgame_iso_window_type].window_handle,
+                &(stru_5C6D60[intgame_iso_window_type].rect),
+                tig_color_make(0, 0, 0));
+        }
+    }
 }
 
 // 0x5509C0
