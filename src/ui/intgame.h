@@ -6,6 +6,7 @@
 
 bool intgame_init(GameInitInfo* init_info);
 void intgame_reset();
+void intgame_resize(ResizeInfo* resize_info);
 void intgame_exit();
 bool intgame_save(TigFile* stream);
 bool intgame_load(GameLoadInfo* load_info);
@@ -18,7 +19,9 @@ void sub_54AEE0(int a1);
 void sub_54B3A0();
 void sub_5506C0(int a1);
 void sub_550720();
+void sub_550750(John* a1);
 void sub_550DA0(int a1, S550DA0* a2);
+void sub_551A80(int a1);
 void sub_556E60();
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();
