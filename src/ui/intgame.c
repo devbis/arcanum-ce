@@ -2095,9 +2095,51 @@ void sub_553A70()
 }
 
 // 0x553BE0
-void sub_553BE0()
+void sub_553BE0(int64_t a1, int64_t a2, const char* str)
 {
-    // TODO: Incomplete.
+    int type;
+
+    if (intgame_iso_window_type != 3) {
+        if (intgame_iso_window_type != 0) {
+            sub_550770(-1, str);
+        } else {
+            type = obj_field_int32_get(a2, OBJ_F_TYPE);
+            switch (type) {
+            case OBJ_TYPE_WALL:
+                break;
+            case OBJ_TYPE_PORTAL:
+                sub_555EC0(a1, a2, str);
+                break;
+            case OBJ_TYPE_CONTAINER:
+                sub_556040(a1, a2, str);
+                break;
+            case OBJ_TYPE_SCENERY:
+                sub_555D80(a1, a2, str);
+                break;
+            case OBJ_TYPE_PROJECTILE:
+                break;
+            case OBJ_TYPE_WEAPON:
+            case OBJ_TYPE_AMMO:
+            case OBJ_TYPE_ITEM_ARMOR:
+            case OBJ_TYPE_ITEM_GOLD:
+            case OBJ_TYPE_ITEM_FOOD:
+            case OBJ_TYPE_ITEM_SCROLL:
+            case OBJ_TYPE_ITEM_KEY:
+            case OBJ_TYPE_ITEM_KEY_RING:
+            case OBJ_TYPE_ITEM_WRITTEN:
+            case OBJ_TYPE_ITEM_GENERIC:
+                sub_554F10(a1, a2, str);
+                break;
+            case OBJ_TYPE_PC:
+            case OBJ_TYPE_NPC:
+                sub_553F70(a1, a2, str);
+                break;
+            default:
+                sub_550770(-1, str);
+                break;
+            }
+        }
+    }
 }
 
 // 0x553D10
