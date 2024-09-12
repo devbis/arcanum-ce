@@ -1,6 +1,7 @@
 #include "ui/intgame.h"
 
 #include "game/gamelib.h"
+#include "game/item.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/obj.h"
@@ -266,6 +267,19 @@ static UiButtonInfo intgame_mt_button_info = { 161, 443, 563, TIG_BUTTON_HANDLE_
 
 // 0x5C6F78
 static int dword_5C6F78 = 6;
+
+// 0x5C728C
+static int dword_5C728C[] = {
+    250,
+    251,
+    252,
+    253,
+    0,
+    199,
+    495,
+    80,
+    48,
+};
 
 // 0x5C72B0
 static int dword_5C72B0 = 1;
@@ -706,7 +720,53 @@ void sub_54B3A0()
 // 0x54B3C0
 void sub_54B3C0()
 {
-    // TODO: Incomplete.
+    int qty;
+    int art_num;
+    int64_t pc_obj;
+    int64_t item_obj;
+    int ammo_type;
+    tig_art_id_t art_id;
+    int mana;
+
+    qty = 0;
+    art_num = 474;
+    pc_obj = player_get_pc_obj();
+
+    if (pc_obj != OBJ_HANDLE_NULL) {
+        item_obj = item_wield_get(pc_obj, 1004);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            ammo_type = item_weapon_ammo_type(item_obj);
+            if (ammo_type != 10000) {
+                qty = item_ammo_quantity_get(pc_obj, ammo_type);
+                art_num = dword_5C728C[ammo_type];
+            } else {
+                qty = obj_field_int32_get(item_obj, OBJ_F_ITEM_MANA_STORE);
+                art_num = 469;
+            }
+        }
+
+        if (qty <= 0) {
+            qty = item_gold_get(pc_obj);
+        }
+    }
+
+    sub_54AD00(3, qty, 6);
+    tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
+    intgame_ammo_icon_refresh(art_id);
+
+    if (qword_64C688 != OBJ_HANDLE_NULL
+        && intgame_iso_window_type == 8) {
+        if ((obj_field_in32_get(qword_64C688, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0) {
+            mana = obj_field_int32_get(qword_64C688, OBJ_F_ITEM_SPELL_MANA_STORE);
+            if (mana >= 0) {
+                sub_54AD00(4, mana, 3);
+            } else {
+                sub_54AD00(4, -1, 3);
+            }
+        } else {
+            sub_54AD00(4, -2, 3);
+        }
+    }
 }
 
 // 0x54B500
