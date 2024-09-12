@@ -300,6 +300,24 @@ struct IntgameIsoWindowTypeInfo stru_5C6D60[] = {
     { { 0, 0, 0, 0 }, TIG_WINDOW_HANDLE_INVALID },
 };
 
+// 0x5C6E40
+static UiButtonInfo stru_5C6E40[] = {
+    { 281, 3, 188, TIG_BUTTON_HANDLE_INVALID },
+    { 331, 3, 189, TIG_BUTTON_HANDLE_INVALID },
+    { 381, 3, 190, TIG_BUTTON_HANDLE_INVALID },
+    { 431, 3, 191, TIG_BUTTON_HANDLE_INVALID },
+    { 481, 3, 192, TIG_BUTTON_HANDLE_INVALID },
+};
+
+// 0x5C6E90
+static UiButtonInfo stru_5C6E90[] = {
+    { 281, 3, 188, TIG_BUTTON_HANDLE_INVALID },
+    { 331, 3, 189, TIG_BUTTON_HANDLE_INVALID },
+    { 381, 3, 190, TIG_BUTTON_HANDLE_INVALID },
+    { 431, 3, 191, TIG_BUTTON_HANDLE_INVALID },
+    { 481, 3, 192, TIG_BUTTON_HANDLE_INVALID },
+};
+
 // 0x5C6F68
 static UiButtonInfo intgame_mt_button_info = { 161, 443, 563, TIG_BUTTON_HANDLE_INVALID };
 
@@ -1882,25 +1900,25 @@ void sub_553350()
 // 0x553370
 void sub_553370()
 {
-    // TODO: Incomplete.
+    sub_4C9720();
 }
 
 // 0x553380
-void sub_553380()
+void sub_553380(int a1, const char* str)
 {
-    // TODO: Incomplete.
+    sub_4C9810(a1, str);
 }
 
 // 0x5533A0
-void sub_5533A0()
+void sub_5533A0(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    sub_4C9A10(msg);
 }
 
 // 0x5533B0
-void sub_5533B0()
+int sub_5533B0()
 {
-    // TODO: Incomplete.
+    return intgame_iso_window_type;
 }
 
 // 0x5533C0
@@ -1910,9 +1928,12 @@ void sub_5533C0()
 }
 
 // 0x553620
-void sub_553620()
+void sub_553620(int index, tig_art_id_t art_id)
 {
-    // TODO: Incomplete.
+    if (dword_64C6B4) {
+        sub_5533C0(&(stru_5C6E40[index]), index, art_id, dword_64C4F8[0]);
+        sub_5533C0(&(stru_5C6E90[index]), index, art_id, dword_5C6378[index]);
+    }
 }
 
 // 0x553670
