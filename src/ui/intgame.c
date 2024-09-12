@@ -32,6 +32,7 @@ static void iso_interface_window_enable(int window_type);
 static void sub_551660();
 static int sub_551740(int x, int y);
 static void sub_5517F0();
+static void sub_5518C0(int x, int y);
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void sub_556EA0(int64_t item_obj);
@@ -1560,9 +1561,22 @@ void sub_551830()
 }
 
 // 0x5518C0
-void sub_5518C0()
+void sub_5518C0(int x, int y)
 {
-    // TODO: Incomplete.
+    tig_window_handle_t window_handle;
+    TigWindowData window_data;
+
+    if (tig_window_get_at_position(x, y, &window_handle) != TIG_OK) {
+        return false;
+    }
+
+    if (window_handle != dword_64C52C) {
+        // FIXME: Meaningless.
+        tig_window_data(window_handle, &window_data);
+        return false;
+    }
+
+    return true;
 }
 
 // 0x551910
