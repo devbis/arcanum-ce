@@ -26,7 +26,8 @@ static void sub_5509C0(const char* str, TigRect* rect);
 static void sub_550A10(tig_window_handle_t window_handle, const char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static void sub_550C60(int group);
 static void sub_550CD0(int group);
-static void sub_550D20();
+static bool sub_550D20();
+static void sub_550D60();
 static void iso_interface_window_enable(int window_type);
 static void sub_551660();
 static int sub_551740(int x, int y);
@@ -1134,7 +1135,7 @@ void sub_550CD0(int group)
 }
 
 // 0x550D20
-void sub_550D20()
+bool sub_550D20()
 {
     int index;
 
@@ -1154,7 +1155,15 @@ void sub_550D20()
 // 0x550D60
 void sub_550D60()
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < 5; index++) {
+        if (stru_5C6C18[index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_hide(stru_5C6C18[index].button_handle]);
+        }
+    }
+
+    sub_5503F0(intgame_iso_window_type, 100);
 }
 
 // 0x550DA0
