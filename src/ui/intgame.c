@@ -950,7 +950,10 @@ void sub_550720()
 // 0x550750
 void sub_550750(John* a1)
 {
-    // TODO: Incomplete.
+    sub_552770(a1);
+    if (dword_64C6D4 != NULL) {
+        dword_64C6D4(a1);
+    }
 }
 
 // 0x550770
