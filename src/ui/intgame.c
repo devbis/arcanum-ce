@@ -35,6 +35,8 @@ static int sub_551740(int x, int y);
 static void sub_5517F0();
 static void sub_5518C0(int x, int y);
 static void sub_551A10(int64_t obj);
+static void sub_551F20();
+static void sub_551F40();
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void sub_556EA0(int64_t item_obj);
@@ -316,6 +318,34 @@ static int dword_5C728C[] = {
 // 0x5C72B0
 static int dword_5C72B0 = 1;
 
+// 0x5C72B4
+static int dword_5C72B4[] = {
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+};
+
+// 0x5C7308
+static int dword_5C7308 = -1;
+
 // 0x5C739C
 static int intgame_iso_window_width = 800;
 
@@ -438,6 +468,9 @@ static void(*dword_64C6D4)(int);
 
 // 0x64C6D8
 static int dword_64C6D8;
+
+// 0x64C6DC
+static bool dword_64C6DC;
 
 // 0x64C6E0
 static bool dword_64C6E0;
@@ -1625,19 +1658,27 @@ void sub_551A80(int a1)
 // 0x551F20
 void sub_551F20()
 {
-    // TODO: Incomplete.
+    if (intgame_is_compact_interface()) {
+        intgame_toggle_interface();
+        dword_64C6DC = true;
+    }
 }
 
 // 0x551F40
 void sub_551F40()
 {
-    // TODO: Incomplete.
+    if (dword_64C6DC) {
+        if (!intgame_is_compact_interface()) {
+            intgame_toggle_interface();
+            dword_64C6DC = false;
+        }
+    }
 }
 
 // 0x551F70
-void sub_551F70()
+int sub_551F70(int a1)
 {
-    // TODO: Incomplete.
+    return dword_5C72B4[a1];
 }
 
 // 0x551F80

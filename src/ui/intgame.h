@@ -34,6 +34,7 @@ void sub_551160();
 bool sub_5517A0(TigMessage* msg);
 int sub_551A00();
 void sub_551A80(int a1);
+int sub_551F70(int a1);
 void sub_552070();
 void sub_552080(int window_type);
 void sub_552160(const char* str, tig_font_handle_t font);
