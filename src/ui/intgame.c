@@ -24,6 +24,7 @@ static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static void sub_54DBF0(int btn, int window_type);
 static void sub_5509C0(const char* str, TigRect* rect);
 static void sub_550A10(tig_window_handle_t window_handle, const char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
+static void sub_550C60(int group);
 static void sub_550CD0(int group);
 static void iso_interface_window_enable(int window_type);
 static void sub_551660();
@@ -1093,23 +1094,39 @@ void sub_550BD0()
 }
 
 // 0x550C60
-void sub_550C60()
+void sub_550C60(int group)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int spl;
+    int index;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj != OBJ_HANDLE_NULL) {
+        spl = group * 5;
+        for (index = 0; index < 5; index++) {
+            if (!sub_4B1950(pc_obj, spl)) {
+                break;
+            }
+
+            if (stru_5C6718[spl].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+                tig_button_show(stru_5C6718[spl].button_handle);
+            }
+        }
+    }
 }
 
 // 0x550CD0
 void sub_550CD0(int group)
 {
-    int global_index;
+    int spl;
     int index;
 
-    global_index = group * 5;
+    spl = group * 5;
     for (index = 0; index < 5; index++) {
-        if (stru_5C6718[global_index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
-            tig_button_hide(stru_5C6718[global_index].button_handle);
+        if (stru_5C6718[spl].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_hide(stru_5C6718[spl].button_handle);
         }
-        global_index++;
+        spl++;
     }
 
     sub_5503F0(intgame_iso_window_type, 100);
