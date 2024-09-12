@@ -11,6 +11,7 @@
 #include "game/stat.h"
 #include "ui/compact_ui.h"
 #include "ui/gameuilib.h"
+#include "ui/roller_ui.h"
 
 typedef struct IntgameIsoWindowTypeInfo {
     /* 0000 */ TigRect rect;
@@ -43,6 +44,7 @@ static void sub_552740(int64_t obj, int a2);
 static void sub_5528E0();
 static void sub_552930();
 static void sub_552960(bool play_sound);
+static void sub_553960();
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -1960,7 +1962,7 @@ void sub_553910(int index, bool a2)
 // 0x553960
 void sub_553960()
 {
-    // TODO: Incomplete.
+    roller_ui_draw(dword_64C678, dword_64C4F8[1], 404, 104, 6, 0);
 }
 
 // 0x553990
