@@ -995,9 +995,9 @@ void sub_550770(int a1, const char* str)
 }
 
 // 0x5507D0
-void sub_5507D0()
+void sub_5507D0(void(*func)(John* a1))
 {
-    // TODO: Incomplete.
+    dword_64C6D4 = func;
 }
 
 // 0x5507E0
