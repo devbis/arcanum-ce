@@ -48,6 +48,7 @@ static void sub_553960();
 static void sub_554560(tig_window_handle_t window_handle, int art_num);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
+static void sub_555910(int64_t obj, char* buffer);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -2307,9 +2308,80 @@ void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6)
 }
 
 // 0x555910
-void sub_555910()
+void sub_555910(int64_t obj, char* buffer)
 {
-    // TODO: Incomplete.
+    bool identified;
+    int min;
+    int max;
+    int adj;
+
+    identified = obj_field_int32_get(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0
+        && item_is_identified(obj);
+    buffer[0] = '\0';
+
+    // D
+    min = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0);
+    max = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 43, min, max, adj, false);
+
+    // FT
+    min = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4);
+    max = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 44, min, max, adj, false);
+
+    // TH
+    min = obj_field_int32_get(obj, OBJ_F_WEAPON_BONUS_TO_HIT);
+    if (identified) {
+        adj = obj_field_int32_get(obj, OBJ_F_WEAPON_MAGIC_HIT_ADJ);
+    }
+    sub_555780(buffer, 45, min, 0, adj, false);
+
+    // RNG
+    min = obj_field_int32_get(obj, OBJ_F_WEAPON_RANGE);
+    if (identified) {
+        adj = obj_field_int32_get(obj, OBJ_F_WEAPON_MAGIC_RANGE_ADJ);
+    }
+    sub_555780(buffer, 46, min, 0, adj, false);
+
+    // PD
+    min = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1);
+    max = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 1);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 47, min, max, adj, false);
+
+    // FD
+    min = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3);
+    max = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 3);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 48, min, max, adj, false);
+
+    // ED
+    min = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2);
+    max = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2);
+    if (identified) {
+        adj = obj_arrayfield_int32_get(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 2);
+    } else {
+        adj = 0;
+    }
+    sub_555780(buffer, 49, min, max, adj, false);
 }
 
 // 0x555B50
