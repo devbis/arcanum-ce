@@ -1874,7 +1874,9 @@ bool sub_553320(void(*func)(TigMessage* msg))
 // 0x553350
 void sub_553350()
 {
-    // TODO: Incomplete.
+    dword_64C6CC = NULL;
+    sub_4C96F0();
+    sub_551A80(0);
 }
 
 // 0x553370
