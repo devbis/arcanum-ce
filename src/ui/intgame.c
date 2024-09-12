@@ -47,6 +47,7 @@ static void sub_552960(bool play_sound);
 static void sub_553960();
 static void sub_554560(tig_window_handle_t window_handle, int art_num);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
+static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -2270,9 +2271,39 @@ void sub_554F10()
 }
 
 // 0x555780
-void sub_555780()
+void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    char tmp[80];
+
+    if (min == 0 && max == 0 && a5 == 0) {
+        return;
+    }
+
+    mes_file_entry.num = num;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    strcat(buffer, mes_file_entry.str);
+    strcat(buffer, ":");
+
+    if (max != 0) {
+        sprintf(tmp, "%d-%d", min, max);
+        strcat(buffer, tmp);
+    } else if (min != 0) {
+        if (a6) {
+            sprintf(tmp, "%+d", min);
+        } else {
+            sprintf("%d", min);
+        }
+        strcat(buffer, tmp);
+    }
+
+    if (a5 != 0) {
+        sprintf(tmp, "(%+d", a5);
+        strcat(buffer, tmp);
+    }
+
+    strcat(buffer, "  ");
 }
 
 // 0x555910
