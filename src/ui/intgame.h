@@ -25,6 +25,7 @@ void sub_551160();
 void sub_551A80(int a1);
 void sub_552070();
 void sub_552080(int window_type);
+void sub_552160(const char* str, tig_font_handle_t font);
 void sub_556E60();
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();

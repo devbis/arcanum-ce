@@ -1339,9 +1339,12 @@ void sub_552130(int window_type)
 }
 
 // 0x552160
-void sub_552160()
+void sub_552160(const char* str, tig_font_handle_t font)
 {
-    // TODO: Incomplete.
+    intgame_text_edit_refresh_color(str,
+        font,
+        tig_color_make(0, 0, 0),
+        0);
 }
 
 // 0x5521B0
