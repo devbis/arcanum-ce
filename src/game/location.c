@@ -170,16 +170,16 @@ void sub_4B8AD0(int64_t* a1, int64_t* a2)
 }
 
 // 0x4B8CE0
-void sub_4B8CE0(int64_t a1)
+void sub_4B8CE0(int64_t location)
 {
-    int64_t v1;
-    int64_t v2;
+    int64_t x;
+    int64_t y;
 
-    sub_4B8940(a1, &v1, &v2);
-    sub_4B8B30(v1, v2);
+    sub_4B8940(location, &x, &y);
+    sub_4B8B30(x, y);
     dword_5FC298(&stru_5FC278);
     if (dword_5FC2F8 != NULL) {
-        dword_5FC2F8(a1);
+        dword_5FC2F8(location);
     }
 }
 
