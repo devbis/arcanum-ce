@@ -1861,9 +1861,14 @@ void sub_5529C0()
 }
 
 // 0x553320
-void sub_553320()
+bool sub_553320(void(*func)(TigMessage* msg))
 {
-    // TODO: Incomplete.
+    dword_64C6CC = func;
+    sub_4C96C0();
+    sub_551A80(0);
+    sub_551A80(3);
+
+    return true;
 }
 
 // 0x553350
