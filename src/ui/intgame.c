@@ -1018,9 +1018,18 @@ void sub_5507E0(int spl)
 }
 
 // 0x550860
-void sub_550860()
+void sub_550860(int college)
 {
-    // TODO: Incomplete.
+    John v1;
+
+    if (intgame_iso_window_type != 0) {
+        sub_5509C0(college_get_name(college), &(stru_5C6D60[intgame_iso_window_type].rect));
+    } else {
+        v1.type = 9;
+        v1.field_8 = college;
+        sub_550750(&v1);
+        sub_552770(&v1);
+    }
 }
 
 // 0x5508C0

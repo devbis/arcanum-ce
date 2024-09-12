@@ -24,6 +24,7 @@ void sub_550750(John* a1);
 void sub_550770(int a1, const char* str);
 void sub_5507D0(void(*func)(John* a1));
 void sub_5507E0(int spl);
+void sub_550860(int college);
 void sub_550DA0(int a1, S550DA0* a2);
 void sub_551160();
 void sub_551A80(int a1);
