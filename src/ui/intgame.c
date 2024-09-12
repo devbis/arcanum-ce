@@ -46,6 +46,7 @@ static void sub_552930();
 static void sub_552960(bool play_sound);
 static void sub_553960();
 static void sub_554560(tig_window_handle_t window_handle, int art_num);
+static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -2206,9 +2207,40 @@ void sub_554830()
 }
 
 // 0x554B00
-void sub_554B00()
+void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    if (intgame_is_compact_interface()) {
+        window_handle = sub_568D20();
+        x -= 210;
+        y -= 59;
+    }
+
+    tig_art_interface_id_create(art_num 0, 0, 0, &art_id);
+    tig_art_frame_data(art_id, &art_frame_data);
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = x;
+    dst_rect.y = y;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    blit_info.art_id = art_id;
+    blit_info.flags = 0;
+    blit_info.src_rect = &src_rect;
+    blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(window_handle, &blit_info);
+
+    sub_568E70();
 }
 
 // 0x554BE0
