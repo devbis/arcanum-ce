@@ -14,6 +14,7 @@ static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static void iso_interface_window_enable(int window_type);
 static int sub_551740(int x, int y);
+static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
@@ -1276,9 +1277,17 @@ void sub_552080()
 }
 
 // 0x5520D0
-void sub_5520D0()
+void sub_5520D0(int window_type, int a2)
 {
-    // TODO: Incomplete.
+    if (intgame_iso_window_type != window_type) {
+        if (a2 == 0) {
+            iso_interface_window_disable(intgame_iso_window_type);
+        } else if (a2 == 6) {
+            iso_interface_window_enable(window_type);
+        } else {
+            sub_5503F0(window_type, 100 * a2 / 6);
+        }
+    }
 }
 
 // 0x552130
