@@ -34,6 +34,7 @@ static void sub_551660();
 static int sub_551740(int x, int y);
 static void sub_5517F0();
 static void sub_5518C0(int x, int y);
+static void sub_551A10(int64_t obj);
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void sub_556EA0(int64_t item_obj);
@@ -1599,9 +1600,20 @@ int sub_551A00()
 }
 
 // 0x551A10
-void sub_551A10()
+void sub_551A10(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t location;
+    int64_t x;
+    int64_t y;
+
+    if (obj != OBJ_HANDLE_NULL) {
+        location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        sub_4B8940(location, &x, &y);
+        if (x != 0 || y != 0) {
+            sub_4B8CE0(location);
+            iso_redraw();
+        }
+    }
 }
 
 // 0x551A80
