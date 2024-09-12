@@ -1253,9 +1253,26 @@ void sub_550DA0(int a1, S550DA0* a2)
 }
 
 // 0x551000
-void sub_551000()
+bool sub_551000(int x, int y)
 {
-    // TODO: Incomplete.
+    TigWindowData window_data;
+
+    if (dword_64C520 == TIG_WINDOW_HANDLE_INVALID) {
+        return false;
+    }
+
+    if (tig_window_data(dword_64C520, &window_data) != TIG_OK) {
+        return false;
+    }
+
+    if (dword_64C524 == NULL) {
+        return false;
+    }
+
+    return x >= window_data.rect.x + dword_64C524->x
+        && x < window_data.rect.x + dword_64C524->x + dword_64C524->width
+        && y >= window_data.rect.y + dword_64C524->y
+        && y < window_data.rect.y + dword_64C524->y + dword_64C524->height;
 }
 
 // 0x551080
