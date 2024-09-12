@@ -48,6 +48,7 @@ int sub_5533B0();
 void sub_553620(int index, tig_art_id_t art_id);
 void sub_553910(int index, bool a2);
 void sub_553990();
+void sub_553A60(int art_num);
 void sub_556E60();
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();

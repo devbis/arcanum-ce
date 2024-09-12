@@ -2083,9 +2083,9 @@ void sub_553990()
 }
 
 // 0x553A60
-void sub_553A60()
+void sub_553A60(int art_num)
 {
-    // TODO: Incomplete.
+    dword_5C7178[16] = art_num;
 }
 
 // 0x553A70
