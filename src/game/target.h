@@ -41,6 +41,7 @@ void target_reset();
 void target_resize(ResizeInfo* resize_info);
 void sub_4F25E0(S603D20* a1);
 void sub_4F2600(S603CB8 *a1, S603D20 *a2, int64_t a3);
+void sub_4F2C60(int64_t* obj_ptr);
 int64_t sub_4F2D10();
 bool sub_4F5090(int64_t obj, int index);
 void sub_4F5270(int64_t obj, int index);

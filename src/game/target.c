@@ -157,9 +157,21 @@ void sub_4F28A0()
 }
 
 // 0x4F2C60
-void sub_4F2C60()
+void sub_4F2C60(int64_t* obj_ptr)
 {
-    // TODO: Incomplete.
+    int type;
+    int64_t whos_in_me_obj;
+
+    type = obj_field_int32_get(*obj_ptr, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_SCENERY) {
+        whos_in_me_obj = obj_field_int32_get(*obj_ptr, OBJ_F_SCENERY_WHOS_IN_ME);
+        if (whos_in_me_obj != OBJ_HANDLE_NULL) {
+            *obj_ptr = whos_in_me_obj;
+            return OBJ_TYPE_NPC;
+        }
+    }
+
+    return type;
 }
 
 // 0x4F2CB0
