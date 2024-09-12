@@ -1001,9 +1001,20 @@ void sub_5507D0()
 }
 
 // 0x5507E0
-void sub_5507E0()
+void sub_5507E0(int spl)
 {
-    // TODO: Incomplete.
+    John v1;
+
+    if (intgame_iso_window_type != 0) {
+        sub_5509C0(spell_get_name(spl), &(stru_5C6D60[intgame_iso_window_type].rect));
+    } else {
+        v1.type = 8;
+        v1.field_8 = spl;
+        v1.field_C = 0;
+        v1.field_10 = player_get_pc_obj();
+        sub_550750(&v1);
+        sub_552770(&v1);
+    }
 }
 
 // 0x550860
