@@ -114,6 +114,7 @@ static_assert(SPELL_COUNT == 80, "wrong size");
 bool spell_init(GameInitInfo* init_info);
 void spell_exit();
 void spell_set_defaults(int64_t obj);
+int sub_4B1570(int spell);
 size_t sub_4B15A0(int spell);
 const char* spell_get_name(int spell);
 const char* spell_get_description(int spell);

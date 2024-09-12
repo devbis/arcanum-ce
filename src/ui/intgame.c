@@ -1,6 +1,7 @@
 #include "ui/intgame.h"
 
 #include "game/gamelib.h"
+#include "game/magictech.h"
 #include "game/mes.h"
 #include "game/obj.h"
 #include "game/player.h"
@@ -13,6 +14,7 @@ static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static void iso_interface_window_enable(int window_type);
+static void sub_551660();
 static int sub_551740(int x, int y);
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
@@ -1196,7 +1198,31 @@ void iso_interface_window_enable(int window_type)
 // 0x551660
 void sub_551660()
 {
-    // TODO: Incomplete.
+    int index;
+    int spl;
+    tig_art_id_t art_id;
+
+    if (player_get_pc_obj() == OBJ_HANDLE_NULL
+        || qword_64C688 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if ((obj_field_int32_get(qword_64C688, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0
+        && obj_field_int32_get(qword_64C688, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0) {
+        for (index = 0; index < 5; index++) {
+            spl = mt_item_spell(qword_64C688, index);
+            if (spl != -1
+                && !sub_459FC0(spl)
+                && stru_5C6C18[index].art_num != -1) {
+                stru_5C6C18[index].art_num = sub_4B1570(spl);
+                tig_art_interface_id_create(stru_5C6C18[index].art_num, 0, 0, 0, &art_id);
+                tig_button_set_art(stru_5C6C18[index].button_handle, art_id);
+                tig_button_show(stru_5C6C18[index].button_handle);
+            }
+        }
+    }
+
+    sub_54B3C0();
 }
 
 // 0x551740
