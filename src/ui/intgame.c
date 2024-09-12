@@ -1297,7 +1297,7 @@ void sub_552050()
 // 0x552070
 void sub_552070()
 {
-    // TODO: Incomplete.
+    return intgame_iso_window_type;
 }
 
 // 0x552080
