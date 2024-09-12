@@ -39,6 +39,7 @@ static void sub_551F20();
 static void sub_551F40();
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
+static void sub_552740(int64_t obj, int a2);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -1776,9 +1777,13 @@ bool intgame_clock_process_callback()
 }
 
 // 0x552740
-void sub_552740()
+void sub_552740(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    if (dword_64C6B4) {
+        if (obj != OBJ_HANDLE_NULL) {
+            sub_5597C0(obj, a2);
+        }
+    }
 }
 
 // 0x552770
