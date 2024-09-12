@@ -334,6 +334,9 @@ static bool intgame_fullscreen;
 // 0x64C688
 static int64_t qword_64C688;
 
+// 0x64C690
+static int64_t qword_64C690;
+
 // 0x64C698
 static TigRect stru_64C698;
 
@@ -1028,7 +1031,34 @@ void sub_551080()
 // 0x551160
 void sub_551160()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t obj;
+
+    if (dword_64C6B4) {
+        pc_obj = player_get_pc_obj();
+
+        iso_interface_window_disable(intgame_iso_window_type);
+        iso_interface_window_enable(intgame_iso_window_type);
+
+        if (intgame_iso_window_type == 0) {
+            if (pc_obj != OBJ_HANDLE_NULL) {
+                if (qword_64C690 != OBJ_HANDLE_NULL) {
+                    sub_57CCF0(pc_obj, qword_64C690);
+                } else if ((obj = sub_43C570()) != OBJ_HANDLE_NULL) {
+                    sub_57CCF0(pc_obj, obj);
+                } else {
+                    sub_552960(0);
+                }
+            } else {
+                sub_552960(0);
+            }
+        }
+
+        if (pc_obj != OBJ_HANDLE_NULL) {
+            sub_54AD00(2, stat_level(pc_obj, STAT_FATE_POINTS), 2);
+            sub_556C20(pc_obj);
+        }
+    }
 }
 
 // 0x551210
