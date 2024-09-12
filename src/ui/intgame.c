@@ -31,6 +31,7 @@ static void sub_550D60();
 static void iso_interface_window_enable(int window_type);
 static void sub_551660();
 static int sub_551740(int x, int y);
+static void sub_5517F0();
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
 static void sub_556EA0(int64_t item_obj);
@@ -1540,7 +1541,16 @@ bool sub_5517A0(TigMessage* msg)
 // 0x5517F0
 void sub_5517F0()
 {
-    // TODO: Incomplete.
+    TigMouseState mouse_state;
+    TigMessage msg;
+
+    if (tig_mouse_get_state(&mouse_state) == TIG_OK) {
+        // NOTE: Fake TigMessage object, albeit incomplete - underlying code
+        // is only interested in mouse coordinates.
+        msg.data.mouse.x = mouse_state.x;
+        msg.data.mouse.y = mouse_state.y;
+        sub_551910(&msg);
+    }
 }
 
 // 0x551830
