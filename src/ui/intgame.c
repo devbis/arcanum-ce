@@ -1301,9 +1301,18 @@ void sub_552070()
 }
 
 // 0x552080
-void sub_552080()
+void sub_552080(int window_type)
 {
-    // TODO: Incomplete.
+    if (window_type != -1) {
+        sub_5520D0(window_type, dword_5C6F78);
+
+        if (dword_5C6F78 < 6) {
+            dword_5C6F78++;
+            sub_57D350(8, window_type);
+        } else {
+            dword_5C6D58 = intgame_iso_window_type;
+        }
+    }
 }
 
 // 0x5520D0
