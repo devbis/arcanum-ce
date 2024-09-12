@@ -1519,9 +1519,22 @@ int sub_551740(int x, int y)
 }
 
 // 0x5517A0
-void sub_5517A0()
+bool sub_5517A0(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    tig_window_handle_t window_handle;
+    TigWindowData window_data;
+
+    if (tig_window_get_at_position(msg->data.mouse.x, msg->data.mouse.y, &window_handle) != TIG_OK) {
+        return false;
+    }
+
+    if (window_handle != dword_64C52C) {
+        // FIXME: Meaningless.
+        tig_window_data(window_handle, &window_data);
+        return false;
+    }
+
+    return true;
 }
 
 // 0x5517F0
