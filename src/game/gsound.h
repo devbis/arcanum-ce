@@ -19,5 +19,6 @@ int gsound_play_sfx_id(int id, int loops);
 int gsound_get_positional_size(object_id_t object_id);
 void sub_41C610();
 void sub_41C660();
+void sub_41C6D0(int64_t location);
 
 #endif /* ARCANUM_GAME_GSOUND_H_ */
