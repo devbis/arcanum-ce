@@ -1303,7 +1303,20 @@ void sub_545E80()
 // 0x545F60
 void sub_545F60()
 {
-    // TODO: Incomplete.
+    dword_64C414 = 16;
+    sub_546330();
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (dword_64C41C != NULL) {
+            FREE(dword_64C41C);
+            dword_64C420 = 0;
+        }
+        sub_49CC20();
+    }
+
+    settings_set_value(&settings, "turn-based", 0);
+    sub_49CBD0();
+    sub_4A3D70(&dword_64C41C, &dword_64C420);
 }
 
 // 0x545FD0
