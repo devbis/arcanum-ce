@@ -1279,9 +1279,19 @@ void sub_545E30()
 }
 
 // 0x545E40
-void sub_545E40()
+bool sub_545E40(tig_button_handle_t button_handle)
 {
-    // TODO: Incomplete.
+    if (button_handle == stru_5C5408[0].button_handle) {
+        sub_5412D0();
+        return true;
+    }
+
+    if (button_handle == stru_5C5408[1].button_handle) {
+        sub_5417A0(1);
+        return true;
+    }
+
+    return false
 }
 
 // 0x545E80
