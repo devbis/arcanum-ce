@@ -1,9 +1,10 @@
 #include "ui/mainmenu_ui.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/object.h"
+#include "game/gamelib.h"
+#include "game/mes.h"
+#include "game/obj.h"
 #include "ui/scrollbar_ui.h"
+#include "ui/server_list_ui.h"
 #include "ui/textedit_ui.h"
 
 // 0x5993D0
@@ -28,6 +29,48 @@ static int dword_5993E0[10][3] = {
     { 128, 128, 128 },
 };
 
+// 0x5C3FB4
+static mes_file_handle_t mainmenu_ui_mainmenu_mes_file = MES_FILE_HANDLE_INVALID;
+
+// 0x5C402C
+static mes_file_handle_t mainmenu_ui_multiplayer_mes_file = MES_FILE_HANDLE_INVALID;
+
+// 0x64BC04
+static tig_font_handle_t dword_64BC04[3];
+
+// 0x64BC10
+static tig_font_handle_t dword_64BC10[3];
+
+// 0x64C0CC
+static tig_font_handle_t dword_64C0CC[3];
+
+// 0x64C0D8
+static tig_font_handle_t dword_64C0D8[3];
+
+// 0x64C210
+static tig_font_handle_t dword_64C210[2];
+
+// 0x64C218
+static tig_font_handle_t dword_64C218[2];
+
+// 0x64C228
+static tig_font_handle_t dword_64C228[3];
+
+// 0x64C234
+static tig_font_handle_t dword_64C234[3];
+
+// 0x64C248
+static ObjectID stru_64C248;
+
+// 0x64C2F4
+static mes_file_handle_t mainmenu_ui_rules_mainmenu_mes_file;
+
+// 0x64C380
+static bool mainmenu_ui_initialized;
+
+// 0x64C41C
+static void* dword_64C41C;
+
 // 0x540930
 void mainmenu_ui_init()
 {
@@ -37,7 +80,36 @@ void mainmenu_ui_init()
 // 0x541050
 void mainmenu_ui_exit()
 {
-    // TODO: Incomplete.
+    int index;
+
+    sub_5412E0(1);
+    settings_set_obj_value(&settings, "selected_char_id", stru_64C248);
+    serverlist_ui_exit();
+    sub_549910();
+
+    for (index = 0; index < 3; index++) {
+        tig_font_destroy(dword_64C228[index]);
+        tig_font_destroy(dword_64C234[index]);
+        tig_font_destroy(dword_64C0CC[index]);
+        tig_font_destroy(dword_64C0D8[index]);
+        tig_font_destroy(dword_64BC04[index]);
+        tig_font_destroy(dword_64BC10[index]);
+    }
+
+    for (index = 0; index < 2; index++) {
+        tig_font_destroy(dword_64C210[index]);
+        tig_font_destroy(dword_64C218[index]);
+    }
+
+    mes_unload(mainmenu_ui_rules_mainmenu_mes_file);
+    mes_unload(mainmenu_ui_mainmenu_mes_file);
+    mes_unload(mainmenu_ui_multiplayer_mes_file);
+
+    if (dword_64C41C != NULL) {
+        FREE(dword_64C41C);
+    }
+
+    mainmenu_ui_initialized = false;
 }
 
 // 0x541150
@@ -98,7 +170,7 @@ TigWindowModalDialogChoice sub_5416A0(int num)
     TigWindowModalDialogChoice choice;
 
     mes_file_entry.num = num;
-    sub_4D43A0(dword_5C3FB4, &mes_file_entry);
+    mes_get_msg(dword_5C3FB4, &mes_file_entry);
 
     modal_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
     modal_info.x = 237;
@@ -988,7 +1060,7 @@ void sub_5494C0(TextEdit* textedit)
 
     if (textedit->buffer[0] == '\0' && dword_64C414 != 8) {
         mes_file_entry.num = 500;
-        sub_4D43A0(dword_5C3FB4, &mes_file_entry);
+        mes_get_msg(dword_5C3FB4, &mes_file_entry);
         strncpy(&byte_64C2F8, mes_file_entry.text, 23);
     }
 
@@ -1097,7 +1169,7 @@ void sub_5496F0(int num)
 
     mes_file_entry.num = num;
     if (message_find(dword_5C3FB4, &mes_file_entry)) {
-        sub_4D43A0(dword_5C3FB4, &mes_file_entry);
+        mes_get_msg(dword_5C3FB4, &mes_file_entry);
         v1.field_0 = 6;
         v1.field_4 = mes_file_entry.text;
         sub_550750(&v1);
@@ -1167,7 +1239,7 @@ void sub_549850()
             font_info.color = tig_color_make(dword_5993E0[index][0],
                 dword_5993E0[index][1],
                 dword_5993E0[index][2]);
-            tig_font_create(&(dword_64C170[group][index]));
+            tig_font_create(&font_info, &(dword_64C170[group][index]));
         }
     }
 }
@@ -1229,7 +1301,7 @@ bool sub_5499B0(const char* text)
 // 0x549A10
 bool sub_549A10(bool* a1)
 {
-    switch (sub_4A4EE0()) {
+    switch (multiplayer_mm_ping()) {
     case 2:
         return false;
     case 1:
