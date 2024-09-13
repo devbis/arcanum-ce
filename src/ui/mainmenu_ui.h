@@ -5,6 +5,7 @@
 
 bool mainmenu_ui_init(GameInitInfo* init_info);
 void mainmenu_ui_exit();
+void mainmenu_ui_start(int window_type);
 void sub_541680();
 void sub_549A70();
 

@@ -32,6 +32,12 @@ static int dword_5993E0[10][3] = {
 // 0x5C3FB4
 static mes_file_handle_t mainmenu_ui_mainmenu_mes_file = MES_FILE_HANDLE_INVALID;
 
+// 0x5C4000
+static bool dword_5C4000 = true;
+
+// 0x5C4004
+static bool dword_5C4004 = true;
+
 // 0x5C402C
 static mes_file_handle_t mainmenu_ui_multiplayer_mes_file = MES_FILE_HANDLE_INVALID;
 
@@ -98,6 +104,9 @@ static tig_font_handle_t dword_64C234[3];
 // 0x64C240
 static tig_font_handle_t dword_64C240;
 
+// 0x64C244
+static bool dword_64C244;
+
 // 0x64C248
 static ObjectID stru_64C248;
 
@@ -113,8 +122,14 @@ static bool mainmenu_ui_initialized;
 // 0x64C37C
 static char* dword_64C37C;
 
+// 0x64C384
+static bool dword_64C384;
+
 // 0x64C388
 static bool dword_64C388;
+
+// 0x64C390
+static int dword_64C390;
 
 // 0x64C414
 static int dword_64C414;
@@ -298,13 +313,67 @@ void sub_541150()
 // 0x541170
 void sub_541170()
 {
-    dword_5C4000 = 1;
+    dword_5C4000 = true;
 }
 
 // 0x541180
-void mainmenu_ui_start()
+void mainmenu_ui_start(int window_type)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+
+    if (!dword_64C384) {
+        dword_64C390 = 0;
+
+        if (window_type != 4 && (tig_net_flags & TIG_NET_CONNECTED) == 0) {
+            sub_45B320();
+        }
+
+        tig_art_interface_id_create(0, 0, 0, 0, &art_id);
+        tig_mouse_cursor_set_art_id(art_id);
+        inven_ui_destroy();
+        sub_570130();
+
+        if (window_type == 0 && !dword_5C4000) {
+            window_type = 1;
+        }
+
+        switch (window_type) {
+        case 2:
+            dword_64C414 = 3;
+            dword_5C4004 = false;
+            sub_541740();
+            sub_43C270(OBJ_HANDLE_NULL);
+            break;
+        case 3:
+            dword_64C414 = 4;
+            dword_5C4004 = false;
+            sub_541740();
+            sub_43C270(OBJ_HANDLE_NULL);
+            break;
+        case 4:
+            dword_64C414 = 6;
+            dword_5C4004 = false;
+            sub_541740();
+            sub_43C270(OBJ_HANDLE_NULL);
+            break;
+        case 5:
+            dword_64C414 = 26;
+            dword_5C4004 = false;
+            sub_541740();
+            sub_43C270(OBJ_HANDLE_NULL);
+            break;
+        default:
+            if (tig_mouse_hide() != TIG_OK) {
+                tig_debug_printf("mainmenu_ui_start: ERROR: tig_mouse_hide failed!\n");
+                exit(EXIT_FAILURE);
+            }
+            dword_64C414 = 0;
+            dword_5C4004 = true;
+            sub_541740();
+            sub_43C270(OBJ_HANDLE_NULL);
+            break;
+        }
+    }
 }
 
 // 0x5412D0
@@ -1164,7 +1233,7 @@ bool sub_549310(tig_button_handle_t button_handle)
         sub_5417A0(0);
         dword_64C414 = 2;
         dword_64C390 = 0;
-        dword_64C244 = dword_5C4000 == 0;
+        dword_64C244 = !dword_5C4000;
         sub_541740();
     } else {
         sub_53EAF0();
