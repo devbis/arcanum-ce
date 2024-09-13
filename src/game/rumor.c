@@ -20,8 +20,6 @@ typedef enum RumorInteractionType {
     RUMOR_INTERACTION_TYPE_COUNT,
 } RumorInteractionType;
 
-static void sub_4C5960(int rumor, char* buffer);
-static void sub_4C59D0(int rumor, char* buffer);
 static int rumor_compare(const RumorInfo* a, const RumorInfo* b);
 
 // 0x5B6E98

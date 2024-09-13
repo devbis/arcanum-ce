@@ -21,6 +21,14 @@ bool rumor_mod_load();
 void rumor_mod_unload();
 bool rumor_load(GameLoadInfo* load_info);
 bool rumor_save(TigFile* stream);
+bool rumor_is_known(int rumor);
+void rumor_set_known(int rumor);
+void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, char* buffer);
+void sub_4C58A0(object_id_t obj, int rumor, int64_t timestamp);
+bool sub_4C58D0(object_id_t object_id, int rumor);
+void sub_4C5920(object_id_t object_id, int rumor, char* buffer);
+void sub_4C5960(int rumor, char* buffer);
+void sub_4C59D0(int rumor, char* buffer);
 int sub_4C5A40(int64_t obj, RumorInfo* rumors);
 bool sub_4C5B10(int64_t a1, int64_t a2);
 
