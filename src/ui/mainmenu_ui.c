@@ -143,6 +143,9 @@ static void* dword_64C41C;
 // 0x64C42C
 static int dword_64C42C[3];
 
+// 0x64C438
+static bool mainmenu_ui_was_compact_interface;
+
 // 0x540930
 bool mainmenu_ui_init(GameInitInfo* init_info)
 {
@@ -389,9 +392,53 @@ void sub_5412E0()
 }
 
 // 0x541590
-void mainmenu_ui_handle()
+bool mainmenu_ui_handle()
 {
-    // TODO: Incomplete.
+    tig_timestamp_t timestamp;
+    TigMessage msg;
+
+    mainmenu_ui_was_compact_interface = intgame_is_compact_interface();
+    if (mainmenu_ui_was_compact_interface) {
+        intgame_toggle_interface();
+    }
+
+    if (dword_64C414 < 2) {
+        sub_5417A0(0);
+        dword_64C414 = 2;
+        sub_541740();
+
+        if (tig_mouse_show() != TIG_OK) {
+            tig_debug_printf("mainmenu_ui_handle: ERROR: tig_mouse_show failed!\n");
+        }
+    }
+
+    sub_571910();
+
+    while (dword_64C384) {
+        tig_ping();
+        tig_timer_now(&timestamp);
+        timeevent_ping(timestamp);
+        gamelib_ping();
+        iso_redraw();
+        tig_window_display();
+
+        while (tig_message_dequeue(&msg) == TIG_OK) {
+            switch (msg.type) {
+            case TIG_MESSAGE_QUIT:
+                if (!sub_541690()) {
+                    return false;
+                }
+                break;
+            case TIG_MESSAGE_REDRAW:
+                sub_4045A0();
+                break;
+            }
+        }
+
+        tig_window_display();
+    }
+
+    return true;
 }
 
 // 0x541680
