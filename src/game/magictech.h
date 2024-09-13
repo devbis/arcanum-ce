@@ -156,6 +156,7 @@ void magictech_break_nodes_to_map(const char* map);
 void magictech_save_nodes_to_map(const char* map);
 void magictech_load_nodes_from_map(const char* map);
 void sub_44FDC0(MesFileEntry *mes_file_entry);
+const char* magictech_spell_name(int num);
 int magictech_get_range(int magictech);
 int sub_4502B0(int magictech);
 int sub_4502E0(int a1);
