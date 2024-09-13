@@ -30,6 +30,22 @@ typedef enum EncumbranceLevel {
     MAX_ENCUMBRANCE_LEVEL,
 } EncumbranceLevel;
 
+typedef struct FollowerInfo {
+    /* 0000 */ int64_t field_0;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ int field_20;
+    /* 0024 */ int field_24;
+    /* 0028 */ int field_28;
+    /* 002C */ int field_2C;
+} FollowerInfo;
+
+static_assert(sizeof(FollowerInfo) == 0x30, "wrong size");
+
 bool critter_init(GameInitInfo* init_info);
 void critter_exit();
 int critter_social_class_get(long long obj);
@@ -72,6 +88,7 @@ bool sub_45F060(int64_t obj, int stat, int mod);
 int sub_45F0B0(int64_t obj);
 bool critter_enter_bed(int64_t obj, int64_t bed);
 void critter_leave_bed(int64_t obj, int64_t bed);
+bool sub_45F730(long long obj);
 const char* critter_encumbrance_level_name(int level);
 int critter_encumbrance_level_ratio(int level);
 int critter_description_get(long long a, long long b);
