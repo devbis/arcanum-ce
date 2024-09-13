@@ -1,11 +1,16 @@
 #include "ui/mainmenu_ui.h"
 
 #include "game/gamelib.h"
+#include "game/gfade.h"
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/teleport.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/server_list_ui.h"
 #include "ui/textedit_ui.h"
+
+static void sub_5412E0(bool a1);
 
 // 0x5993D0
 static int dword_5993D0[4] = {
@@ -27,6 +32,16 @@ static int dword_5993E0[10][3] = {
     { 60, 160, 255 },
     { 255, 128, 0 },
     { 128, 128, 128 },
+};
+
+// 0x5C36B0
+static bool stru_5C36B0[6][2] = {
+    { false, true },
+    { false, true },
+    { true, false },
+    { true, false },
+    { true, false },
+    { false, false },
 };
 
 // 0x5C3FB4
@@ -139,6 +154,9 @@ static bool dword_64C418;
 
 // 0x64C41C
 static void* dword_64C41C;
+
+// 0x64C424
+static bool dword_64C424;
 
 // 0x64C42C
 static int dword_64C42C[3];
@@ -274,7 +292,7 @@ void mainmenu_ui_exit()
 {
     int index;
 
-    sub_5412E0(1);
+    sub_5412E0(true);
     settings_set_obj_value(&settings, "selected_char_id", stru_64C248);
     serverlist_ui_exit();
     sub_549910();
@@ -310,7 +328,7 @@ void sub_541150()
 {
     dword_64C414 = 2;
     dword_64C418 = 0;
-    dword_64C424 = 0;
+    dword_64C424 = false;
 }
 
 // 0x541170
@@ -382,13 +400,103 @@ void mainmenu_ui_start(int window_type)
 // 0x5412D0
 void sub_5412D0()
 {
-    sub_5412E0(0);
+    sub_5412E0(false);
 }
 
 // 0x5412E0
-void sub_5412E0()
+void sub_5412E0(bool a1)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int map;
+    int64_t x;
+    int64_t y;
+    FadeData fade_data;
+    TeleportData teleport_data;
+    MesFileEntry mes_file_entry;
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    if (dword_64C384) {
+        sub_53EB00();
+
+        pc_obj = player_get_pc_obj();
+        if (dword_64C424) {
+            if (item_wield_get(pc_obj, 1004) == OBJ_HANDLE_NULL) {
+                sub_465170(pc_obj, 1004, OBJ_HANDLE_NULL);
+            }
+            if (item_wield_get(pc_obj, 1006) == OBJ_HANDLE_NULL) {
+                sub_465170(pc_obj, 1006, OBJ_HANDLE_NULL);
+            }
+            dword_64C424 = false;
+        }
+
+        if (dword_64C414 || !stru_5C36B0[dword_64C244][1]) {
+            if (!dword_64C418 || (tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                if (dword_5C4004) {
+                    sub_40FED0();
+                }
+                sub_402E50();
+            } else {
+                dword_64C418 = false;
+
+                map = sub_40FF50(1);
+                if (map == 0) {
+                    tig_debug_printf("MMUI: ERROR: Teleport/World Loc Failure!\n");
+                    exit(EXIT_FAILURE);
+                }
+                if (!map_get_starting_location(map, &x, &y)) {
+                    tig_debug_printf("MMUI: ERROR: Teleport/World Loc Failure!\n");
+                    exit(EXIT_FAILURE);
+                }
+
+                fade_data.field_0 = 0;
+                fade_data.color = 0;
+                fade_data.steps = 64;
+                fade_data.duration = 3.0f;
+                fade_data.field_10 - 0;
+                sub_4BDFA0(&fade_data);
+
+                teleport_data.map = map;
+                teleport_data.field_10 = x | y;
+                teleport_data.field_40 = 1;
+                teleport_data.flags = 0x45;
+                teleport_data.field_8 = pc_obj;
+                teleport_data.movie1 = 1;
+                teleport_data.movie_flags1 = 0;
+                teleport_data.movie2 = 7;
+                teleport_data.movie_flags2 = 0;
+                teleport_data.field_48 = 64;
+                teleport_data.field_4C = 0x40400000;
+                teleport_data.field_44 = tig_color_make(0, 0, 0);
+                sub_4D3380(&teleport_data);
+
+                sub_41C340(0);
+
+                mes_file_entry.num = 6000;
+                mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                sub_557FD0(mes_file_entry.str);
+
+                timeevent.type = TIMEEVENT_TYPE_NEWSPAPERS;
+                sub_45A950(&datetime, 86400000 - sub_45AD70());
+                sub_45B800(&timeevent, &datetime);
+                sub_559640();
+            }
+        }
+
+        sub_5417A0(0);
+    }
+
+    sub_553990();
+    sub_5507D0(0);
+    if (!a1) {
+        sub_54B3A0();
+
+        if (mainmenu_ui_was_compact_interface) {
+            intgame_toggle_interface();
+            mainmenu_ui_was_compact_interface = false;
+        }
+    }
+    sub_45B340();
 }
 
 // 0x541590
