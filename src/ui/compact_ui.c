@@ -1,6 +1,7 @@
 #include "ui/compact_ui.h"
 
 #include "game/player.h"
+#include "game/timeevent.h"
 #include "ui/anim_ui.h"
 #include "ui/dialog_ui.h"
 #include "ui/intgame.h"
@@ -228,8 +229,8 @@ tig_window_handle_t sub_568D20()
         }
     }
 
-    sub_57D3E0(14, -1);
-    sub_57D370(14, -1, 3000);
+    sub_57D3E0(TIMEEVENT_TYPE_WORLDMAP, -1);
+    sub_57D370(TIMEEVENT_TYPE_WORLDMAP, -1, 3000);
 
     return dword_5CA198;
 }
