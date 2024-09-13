@@ -35,6 +35,39 @@ static mes_file_handle_t mainmenu_ui_mainmenu_mes_file = MES_FILE_HANDLE_INVALID
 // 0x5C402C
 static mes_file_handle_t mainmenu_ui_multiplayer_mes_file = MES_FILE_HANDLE_INVALID;
 
+// 0x5C4030
+static int dword_5C4030[2] = {
+    229,
+    27,
+};
+
+// 0x5C4038
+static int dword_5C4038 = 171;
+
+// 0x5C403C
+static int dword_5C403C = 327;
+
+// 0x5C4040
+static int dword_5C4040[3][3] = {
+    { 0, 0, 0 },
+    { 97, 61, 42 },
+    { 100, 0, 0 },
+};
+
+// 0x5C4064
+static int dword_5C4064[3] = {
+    200,
+    200,
+    200,
+};
+
+// 0x5C4070
+static int dword_5C4070[3] = {
+    -1,
+    2,
+    -1,
+};
+
 // 0x64BC04
 static tig_font_handle_t dword_64BC04[3];
 
@@ -46,6 +79,9 @@ static tig_font_handle_t dword_64C0CC[3];
 
 // 0x64C0D8
 static tig_font_handle_t dword_64C0D8[3];
+
+// 0x64C0E8
+static MesFileEntry stru_64C0E8;
 
 // 0x64C210
 static tig_font_handle_t dword_64C210[2];
@@ -59,22 +95,160 @@ static tig_font_handle_t dword_64C228[3];
 // 0x64C234
 static tig_font_handle_t dword_64C234[3];
 
+// 0x64C240
+static tig_font_handle_t dword_64C240;
+
 // 0x64C248
 static ObjectID stru_64C248;
 
 // 0x64C2F4
 static mes_file_handle_t mainmenu_ui_rules_mainmenu_mes_file;
 
+// 0x64C2F8
+static char byte_64C2F8[128];
+
 // 0x64C380
 static bool mainmenu_ui_initialized;
+
+// 0x64C37C
+static char* dword_64C37C;
+
+// 0x64C388
+static bool dword_64C388;
+
+// 0x64C414
+static int dword_64C414;
+
+// 0x64C418
+static bool dword_64C418;
 
 // 0x64C41C
 static void* dword_64C41C;
 
+// 0x64C42C
+static int dword_64C42C[3];
+
 // 0x540930
-void mainmenu_ui_init()
+bool mainmenu_ui_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    int index;
+    TigFont font_desc;
+    MesFileEntry mes_file_entry;
+
+    (void)init_info;
+
+    if (mainmenu_ui_mainmenu_mes_file == MES_FILE_HANDLE_INVALID) {
+        if (!mes_load("mes\\mainmenu.mes", &mainmenu_ui_mainmenu_mes_file)) {
+            return false;
+        }
+    }
+
+    if (!mes_load("rules\\mainmenu.mes", &mainmenu_ui_rules_mainmenu_mes_file)) {
+        return false;
+    }
+
+    if (!mes_load("mes\\multiplayer.mes", &mainmenu_ui_multiplayer_mes_file)) {
+        return false;
+    }
+
+    stru_64C0E8.num = 3000;
+    mes_get_msg(mainmenu_ui_multiplayer_mes_file, &stru_64C0E8);
+
+    settings_add(&settings, "won_account", "", won_account_changed);
+    settings_add(&settings, "won_password", "", won_password_changed);
+    settings_add(&settings, "show version", "0", NULL);
+    won_account_changed();
+    won_password_changed();
+
+    settings_add(&settings, "selected_char_id", "", selected_char_id_changed);
+    selected_char_id_changed();
+
+    sub_549850();
+
+    for (index = 0; index < 3; index++) {
+        font_desc.flags = 0;
+        if (index == 1) {
+            font_desc.flags = TIG_FONT_BLEND_ADD;
+        }
+        tig_art_interface_id_create(dword_5C403C, 0, 0, 0, &(font_desc.art_id));
+        font_desc.str = NULL;
+        font_desc.color = tig_color_make(dword_5C4040[index][0], dword_5C4040[index][1], dword_5C4040[index][2]);
+        tig_font_create(&font_desc, &(dword_64C228[index]));
+
+        tig_art_interface_id_create(dword_5C403C, 0, 0, 0, &(font_desc.art_id));
+        font_desc.color = index < 2
+            ? tig_color_make(dword_5C4040[index][0], dword_5C4040[index][1], dword_5C4040[index][2])
+            : tig_color_make(240, 15, 15);
+        tig_font_create(&font_desc, &(dword_64C234[index]));
+    }
+
+    for (index = 0; index < 3; index++) {
+        font_desc.flags = 0;
+        tig_art_interface_id_create(dword_5C4038, 0, 0, 0, &(font_desc.art_id));
+        font_desc.str = NULL;
+        font_desc.color = tig_color_make(dword_64C42C[index], dword_64C42C[index], dword_64C42C[index]);
+        tig_font_create(&font_desc, &(dword_64C0CC[index]));
+
+        tig_art_interface_id_create(dword_5C4038, 0, 0, 0, &(font_desc.art_id));
+        font_desc.color = index < 2
+            ? tig_color_make(dword_64C42C[index], dword_64C42C[index], dword_64C42C[index])
+            : tig_color_make(240, 15, 15);
+        tig_font_create(&font_desc, &(dword_64C0D8[index]));
+    }
+
+    for (index = 0; index < 3; index++) {
+        font_desc.flags = 0;
+        tig_art_interface_id_create(dword_5C4038, 0, 0, 0, &(font_desc.art_id));
+        font_desc.str = NULL;
+        font_desc.color = tig_color_make(dword_5C4064[index], dword_5C4064[index], dword_5C4064[index]);
+        tig_font_create(&font_desc, &(dword_64BC04[index]));
+
+        tig_art_interface_id_create(dword_5C4038, 0, 0, 0, &(font_desc.art_id));
+        font_desc.color = index < 2
+            ? tig_color_make(dword_5C4064[index], dword_5C4064[index], dword_5C4064[index])
+            : tig_color_make(240, 15, 15);
+        tig_font_create(&font_desc, &(dword_64BC10[index]));
+    }
+
+    for (index = 0; index < 2; index++) {
+        font_desc.flags = 0;
+        tig_art_interface_id_create(dword_5C4030[index], 0, 0, 0, &(font_desc.art_id));
+        font_desc.str = NULL;
+        font_desc.color = tig_color_make(250, 250, 250);
+        tig_font_create(&font_desc, &(dword_64C210[index]));
+
+        font_desc.flags = 0;
+        tig_art_interface_id_create(dword_5C4030[index], 0, 0, 0, &(font_desc.art_id));
+        font_desc.str = NULL;
+        font_desc.color = tig_color_make(255, 50, 50);
+        tig_font_create(&font_desc, &(dword_64C218[index]));
+    }
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(dword_5C4030[0], 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 210, 0);
+    tig_font_create(&font_desc, &dword_64C240);
+
+    mes_file_entry.num = 500;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+    strncpy(byte_64C2F8, mes_file_entry.str, 23);
+
+    mainmenu_ui_initialized = true;
+    dword_64C414 = 0;
+
+    dword_64C388 = true;
+    mainmenu_ui_start(0);
+    dword_64C388 = false;
+
+    sub_4044A0(468, 300);
+    dword_64C418 = 0;
+    serverlist_ui_init();
+    stru_64C248.type = 0;
+    sub_549A80();
+    dword_64C37C = NULL;
+
+    return true;
 }
 
 // 0x541050
@@ -101,6 +275,7 @@ void mainmenu_ui_exit()
         tig_font_destroy(dword_64C218[index]);
     }
 
+    tig_font_destroy(dword_64C240);
     mes_unload(mainmenu_ui_rules_mainmenu_mes_file);
     mes_unload(mainmenu_ui_mainmenu_mes_file);
     mes_unload(mainmenu_ui_multiplayer_mes_file);
