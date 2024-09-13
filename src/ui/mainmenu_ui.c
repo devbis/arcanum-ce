@@ -1,10 +1,16 @@
 #include "ui/mainmenu_ui.h"
 
+#include "game/background.h"
 #include "game/gamelib.h"
 #include "game/gfade.h"
+#include "game/gmovie.h"
 #include "game/map.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/object.h"
+#include "game/player.h"
+#include "game/portrait.h"
+#include "game/stat.h"
 #include "game/teleport.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/server_list_ui.h"
@@ -33,6 +39,9 @@ static int dword_5993E0[10][3] = {
     { 255, 128, 0 },
     { 128, 128, 128 },
 };
+
+// 0x5C3624
+static tig_window_handle_t dword_5C3624 = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5C36B0
 static bool stru_5C36B0[6][2] = {
@@ -89,6 +98,27 @@ static int dword_5C4070[3] = {
     -1,
 };
 
+// 0x5C4ED0
+static TigRect stru_5C4ED0 = { 46, 183, 228, 19 };
+
+// 0x5C5170
+static struct {
+    int field_0;
+    int field_4;
+} stru_5C5170[] = {
+    { 0, 1 },
+    { 1, 0 },
+    { 4, 1 },
+    { 0, 1 },
+    { 2, 0 },
+    { 2, 0 },
+    { 0, 1 },
+    { 3, 0 },
+};
+
+// 0x5C5308
+static int dword_5C5308 = 1;
+
 // 0x64BC04
 static tig_font_handle_t dword_64BC04[3];
 
@@ -143,6 +173,9 @@ static bool dword_64C384;
 // 0x64C388
 static bool dword_64C388;
 
+// 0x64C38C
+static int dword_64C38C;
+
 // 0x64C390
 static int dword_64C390;
 
@@ -163,6 +196,12 @@ static int dword_64C42C[3];
 
 // 0x64C438
 static bool mainmenu_ui_was_compact_interface;
+
+// 0x64C454
+static int dword_64C454;
+
+// 0x64C460
+static int64_t qword_64C460;
 
 // 0x540930
 bool mainmenu_ui_init(GameInitInfo* init_info)
@@ -613,13 +652,20 @@ void sub_5417A0()
 // 0x5417E0
 void sub_5417E0()
 {
-    // TODO: Incomplete.
+    if (dword_64C390 > 0) {
+        if (--dword_64C390 > 0) {
+            return dword_64C004[--dword_64C390];
+        }
+    } else {
+        dword_64C390 = 0;
+    }
+    return 0;
 }
 
 // 0x541810
-void sub_541810()
+void sub_541810(int a1)
 {
-    // TODO: Incomplete.
+    dword_64C004[dword_64C390++] = a1;
 }
 
 // 0x541830
@@ -654,7 +700,7 @@ void sub_541AC0()
     rect.width = 400;
     rect.height = 20;
 
-    if (settings_get_value(game_config, "show version") != 0
+    if (settings_get_value(&settings, "show version") != 0
         && gamelib_copy_version(version, 0, 0)) {
         tig_font_push(dword_64BC04[0]);
         if (tig_window_text_write(dword_5C3624, version, &rect) != TIG_OK) {
@@ -926,7 +972,14 @@ void sub_544440()
 // 0x5445F0
 void sub_5445F0()
 {
-    // TODO: Incomplete.
+    dword_64C414 = 10;
+    gmovie_play(1, 0, 0);
+    gmovie_play(7, 0, 0);
+    dword_64C390++;
+    sub_5417E0();
+    dword_64C414 = 5;
+    sub_541740();
+    dword_64C38C = 1;
 }
 
 // 0x544640
@@ -944,7 +997,14 @@ void nullsub_68()
 // 0x5446A0
 void sub_5446A0()
 {
-    // TODO: Incomplete.
+    dword_64C414 = 5;
+    sub_546330();
+    sub_541AC0();
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        sub_49CC20();
+        sub_5280F0();
+    }
+    sub_5576B0();
 }
 
 // 0x5446D0
@@ -959,7 +1019,27 @@ void sub_5446D0()
 // 0x5446F0
 void sub_5446F0()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    PlayerSpec player_create_info;
+
+    dword_64C458 = 0;
+    dword_64C414 = 12;
+    sub_4A2BC0();
+
+    pc_obj = player_get_pc_obj();
+
+    sub_40DB50(&player_create_info);
+    player_create_info.field_20 = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
+    player_create_info.field_2C = 16066;
+    if (!player_obj_create_player(&player_create_info)) {
+        tig_debug_printf("MainMenu-UI: mainmenu_ui_create_pick_new_or_pregen: ERROR: Player Creation Failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    sub_546330();
+    if (!main_menu_button_create(&stru_5C50A0, dword_5C4EE8 + 2, dword_5C4EEC + 2)) {
+        tig_debug_printf("MainMenu-UI: mainmenu_ui_create_new_char: ERROR: Failed to create button.\n");
+    }
 }
 
 // 0x5447B0
@@ -993,21 +1073,53 @@ void sub_545300()
 }
 
 // 0x545350
-void sub_545350()
+void sub_545350(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+        background_obj_clear(obj);
+        return sub_5453A0(obj, GENDER_MALE);
+    } else {
+        background_obj_clear(obj);
+        return sub_5453A0(obj, GENDER_FEMALE);
+    }
 }
 
 // 0x5453A0
-void sub_5453A0()
+void sub_5453A0(int64_t obj, int gender)
 {
-    // TODO: Incomplete.
+    int race;
+    int portrait;
+
+    if (stat_level(obj, STAT_GENDER) == gender) {
+        return false;
+    }
+
+    race = stat_level(obj, STAT_RACE);
+    if (gender == GENDER_FEMALE
+        && !stru_5C5170[race].field_4) {
+        return false;
+    }
+
+    sub_441C70(obj, stru_5C5170[race].field_0, gender, race);
+    object_set_current_aid(obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
+
+    if (sub_4CE6B0(obj, &portrait)) {
+        obj_field_int32_set(obj, OBJ_F_CRITTER_PORTRAIT, portrait);
+    }
+
+    return true;
 }
 
 // 0x545440
-void sub_545440()
+void sub_545440(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (stat_level(obj, STAT_GENDER) == GENDER_MALE) {
+        background_obj_clear(obj);
+        return sub_5453A0(obj, GENDER_FEMALE);
+    } else {
+        background_obj_clear(obj);
+        return sub_5453A0(obj, GENDER_MALE);
+    }
 }
 
 // 0x545490
@@ -1017,9 +1129,22 @@ void sub_545490()
 }
 
 // 0x545550
-void sub_545550()
+void sub_545550(int64_t obj, int race)
 {
-    // TODO: Incomplete.
+    int gender;
+    int portrait;
+
+    gender = stat_level(obj, STAT_GENDER);
+    if (gender == GENDER_FEMALE) {
+        gender = stru_5C5170[race].field_4 == 0;
+    }
+
+    sub_441C70(obj, stru_5C5170[race].field_0, gender, race);
+    object_set_current_aid(obj, obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
+
+    if (sub_4CE6B0(obj, &portrait)) {
+        obj_field_int32_set(obj, OBJ_F_CRITTER_PORTRAIT, portrait);
+    }
 }
 
 // 0x5455D0
@@ -1047,21 +1172,62 @@ void sub_5456B0()
 }
 
 // 0x545780
-void sub_545780()
+bool sub_545780()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    MesFileEntry mes_file_entry;
+
+    pc_obj = player_get_pc_obj();
+
+    mes_file_entry.num = 500;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+    if (byte_64C2F8[0] != '\0') {
+        strcpy(byte_64C2F8, mes_file_entry.str);
+    }
+
+    if (strcmp(byte_64C2F8, mes_file_entry.str) == 0) {
+        mes_file_entry.num = 506;
+        mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+        sub_550770(-1, mes_file_entry.str);
+        return false;
+    } else {
+        obj_field_string_set(pc_obj, OBJ_F_PC_PLAYER_NAME, byte_64C2F8);
+        sub_4604E0();
+        dword_64C424 = 1;
+        return true;
+    }
 }
 
 // 0x545870
 void sub_545870()
 {
-    // TODO: Incomplete.
+    dword_64C414 = 13;
+    dword_5C5308 = 1;
+    qword_64C460 = objp_perm_lookup(sub_407EF0(sub_4685A0(16067)));
+    sub_546330();
 }
 
 // 0x5458D0
-void sub_5458D0()
+void sub_5458D0(TigRect* rect)
 {
-    // TODO: Incomplete.
+    char* name;
+
+    mmUINewCharRefreshFunc(qword_64C460, rect);
+    if (rect == NULL
+        || (stru_5C4ED0.x < rect->x + rect->width
+            && stru_5C4ED0.y < rect->y + rect->height
+            && rect->x < stru_5C4ED0.x + stru_5C4ED0.width
+            && rect->y < stru_5C4ED0.y + stru_5C4ED0.height)) {
+        tig_font_push(dword_64C218[1]);
+        if (tig_window_fill(dword_5C3624, &stru_5C4ED0, tig_color_make(0, 0, 0)) == TIG_OK) {
+            obj_field_string_get(qword_64C460, OBJ_F_PC_PLAYER_NAME, &name);
+            if (name != NULL) {
+                sub_542DF0(name, &stru_5C4ED0, dword_64C218[1]);
+                FREE(name);
+            }
+        }
+        tig_font_pop();
+    }
 }
 
 // 0x5459F0
