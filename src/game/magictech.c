@@ -82,24 +82,65 @@ typedef struct MagicTechEffectInfo {
         struct {
             /* 0040 */ int goal;
             /* 0044 */ int subgoal;
-        };
+        } agoal;
+        struct {
+            /* 0040 */ int goal;
+        } agoal_terminate;
         struct {
             /* 0040 */ unsigned int critter_flags;
             /* 0044 */ int min_iq;
-        };
+        } ai_redirect;
         struct {
             /* 0040 */ int spell;
-        };
+        } cast;
         struct {
             /* 0040 */ int cost;
             /* 0044 */ int branch;
-        };
+        } charge_branch;
         struct {
             /* 0040 */ int damage_min;
             /* 0044 */ int damage_max;
             /* 0048 */ int damage_type;
             /* 004C */ unsigned int damage_flags;
-        };
+        } damage;
+        struct {
+            /* 0040 */ int num;
+            /* 0044 */ int add_remove;
+            /* 0048 */ int count;
+            /* 004C */ int cause;
+            /* 0050 */ int scaled;
+        } effect;
+        struct {
+            /* 0040 */ unsigned int flags;
+            /* 0044 */ int state;
+        } env_flags;
+        struct {
+            /* 0040 */ int num;
+            /* 0044 */ int add_remove;
+            /* 0048 */ unsigned int flags;
+        } eye_candy;
+        struct {
+            /* 0040 */ int damage_min;
+            /* 0044 */ int damage_max;
+            /* 0048 */ int damage_type;
+            /* 004C */ unsigned int damage_flags;
+        } heal;
+        struct {
+            /* 0040 */ int magictech;
+        } interrupt;
+        struct {
+            /* 0040 */ int move_location;
+            /* 0044 */ int tile_radius;
+        } movement;
+        struct {
+            /* 0040 */ int flags_fld;
+            /* 0044 */ unsigned int value;
+            /* 0048 */ int state;
+        } obj_flag;
+        struct {
+            /* 0040 */ int num;
+            /* 0044 */ int max;
+        } recharge;
         struct {
             /* 0040 */ ObjectID oid;
             /* 0058 */ int clear_faction;
@@ -111,14 +152,28 @@ typedef struct MagicTechEffectInfo {
             /* 0044 */ int field_44;
             /* 0048 */ int field_48;
             /* 004C */ int field_4C;
+        } test_in_branch;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+            /* 0048 */ int field_48;
+            /* 004C */ int field_4C;
             /* 0050 */ int field_50;
             /* 0054 */ int field_54;
-            /* 0058 */ int field_58;
-            /* 005C */ int field_5C;
-            /* 0060 */ int field_60;
-            /* 0064 */ int field_64;
-        };
-    };
+        } trait;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+            /* 0048 */ int field_48;
+            /* 004C */ int field_4C;
+            /* 0050 */ int field_50;
+            /* 0054 */ int field_54;
+        } trait_idx;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+        } trait64;
+    } data;
 } MagicTechEffectInfo;
 
 // See 0x4580C6.
@@ -388,10 +443,10 @@ static const char* off_5B0CAC[] = {
 
 // 0x5B0CBC
 static int dword_5B0CBC[] = {
-    1,
-    242,
-    230,
-    29,
+    OBJ_F_CURRENT_AID,
+    OBJ_F_CRITTER_TELEPORT_DEST,
+    OBJ_F_CRITTER_FLEEING_FROM,
+    OBJ_F_HP_DAMAGE,
 };
 
 // 0x5B0CCC
@@ -1896,114 +1951,115 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
         switch (effect_info->type) {
         case MTC_AGOAL:
             tig_str_match_str_to_list(&str, off_5B0C40, 6, &value);
-            effect_info->goal = dword_5B0C58[value];
+            effect_info->data.agoal.goal = dword_5B0C58[value];
             if (tig_str_parse_named_value(&str, "SubGoal:", &value)) {
-                effect_info->subgoal = value;
+                effect_info->data.agoal.subgoal = value;
             } else {
-                effect_info->subgoal = 0;
+                effect_info->data.agoal.subgoal = 0;
             }
             break;
         case MTC_AGOALTERMINATE:
             tig_str_match_str_to_list(&str, off_5B0C40, 6, &value);
-            effect_info->goal = dword_5B0C58[value];
+            effect_info->data.agoal_terminate.goal = dword_5B0C58[value];
             break;
         case MTC_AIREDIRECT:
             tig_str_match_str_to_list(&str, off_5BA348, 32, &value);
-            effect_info->critter_flags = 1 << value;
+            effect_info->data.ai_redirect.critter_flags = 1 << value;
             if (tig_str_parse_named_value(&str, "MinIQ:", &value)) {
-                effect_info->min_iq = value;
+                effect_info->data.ai_redirect.min_iq = value;
             } else {
-                effect_info->min_iq = -1;
+                effect_info->data.ai_redirect.min_iq = -1;
             }
             break;
         case MTC_CAST:
             if (tig_parse_named_value(&str, "Spell:", &value)) {
-                effect_info->spell = value;
+                effect_info->data.cast.spell = value;
             } else {
-                effect_info->spell = 10000;
+                effect_info->data.cast.spell = 10000;
                 tig_debug_printf("MagicTech: ERROR: Cast Component has no spell!\n");
             }
             break;
         case MTC_CHARGENBRANCH:
-            effect_info->field_44 = -1;
-            effect_info->cost = 0;
-            tig_str_parse_named_value(&str, "Cost:", &(effect_info->cost));
+            effect_info->data.charge_branch.branch = -1;
+            effect_info->data.charge_branch.cost = 0;
+            tig_str_parse_named_value(&str, "Cost:", &(effect_info->data.charge_branch.cost));
             if (tig_str_parse_named_value(&str, "Branch:", &value)) {
-                effect_info->branch = value;
+                effect_info->data.charge_branch.branch = value;
             }
             break;
         case MTC_DAMAGE:
-            tig_str_match_named_str_to_list(&str, "DmgType:", off_5B0C70, 6, &(effect_info->damage_type));
-            tig_str_parse_named_range(&str, "Dmg:", &(effect_info->damage_min), &(effect_info->damage_max));
-            effect_info->damage_flags = 0;
-            tig_str_parse_named_flag_list(&str, "Dmg_Flags:", off_5B0D14, dword_5B0D3C, 10, &(effect_info->damage_flags));
-            effect_info->damage_flags |= 0x80;
+            tig_str_match_named_str_to_list(&str, "DmgType:", off_5B0C70, 6, &(effect_info->data.damage.damage_type));
+            tig_str_parse_named_range(&str, "Dmg:", &(effect_info->data.damage.damage_min), &(effect_info->data.damage.damage_max));
+            effect_info->data.damage.damage_flags = 0;
+            tig_str_parse_named_flag_list(&str, "Dmg_Flags:", off_5B0D14, dword_5B0D3C, 10, &(effect_info->data.damage.damage_flags));
+            effect_info->data.damage.damage_flags |= 0x80;
             break;
         case MTC_EFFECT:
-            tig_str_parse_value(&str, &(effect_info->field_40));
-            tig_str_match_str_to_list(&str, off_5B0C88, 2, &(effect_info->field_44));
+            tig_str_parse_value(&str, &(effect_info->data.effect.num));
+            tig_str_match_str_to_list(&str, off_5B0C88, 2, &(effect_info->data.effect.add_remove));
             if (tig_str_parse_named_value(&str, "Count:", &value)) {
-                effect_info->field_48 = value;
+                effect_info->data.effect.count = value;
             } else {
-                effect_info->field_48 = 1;
+                effect_info->data.effect.count = 1;
             }
 
             if (tig_str_match_named_str_to_list(&str, "Cause:", off_5B9CB4, 10, &value)) {
-                effect_info->field_4C = value;
+                effect_info->data.effect.cause = value;
             } else {
-                effect_info->field_4C = 6;
+                effect_info->data.effect.cause = 6;
             }
 
             if (tig_str_parse_named_value(&str, "Scaled:", &value)) {
-                effect_info->field_50 = value;
+                effect_info->data.effect.scaled = value;
             } else {
-                effect_info->field_50 = 0;
+                effect_info->data.effect.scaled = 0;
             }
             break;
         case MTC_ENVFLAG:
             tig_str_match_str_to_list(&str, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &value);
-            effect_info->field_40 = 1 << value;
-            tig_str_match_str_to_list(&str, off_5B0C90, 2, &(effect_info->field_44));
+            effect_info->data.env_flags.flags = 1 << value;
+            tig_str_match_str_to_list(&str, off_5B0C90, 2, &(effect_info->data.env_flags.state));
             break;
         case MTC_EYECANDY:
-            tig_str_parse_value(&str, &(effect_info->field_40));
-            tig_str_match_str_to_list(&str, off_5B0C88, 2, &(effect_info->field_44));
-            tig_str_parse_named_flag_list(&str, "Play:", off_5B7658, dword_5B7680, 10, &(effect_info->field_48));
+            tig_str_parse_value(&str, &(effect_info->data.eye_candy.num));
+            tig_str_match_str_to_list(&str, off_5B0C88, 2, &(effect_info->data.eye_candy.add_remove));
+            tig_str_parse_named_flag_list(&str, "Play:", off_5B7658, dword_5B7680, 10, &(effect_info->data.eye_candy.flags));
             break;
         case MTC_HEAL:
-            tig_str_match_str_to_list(&str, "DmgType:", off_5B0C70, &(effect_info->field_48));
-            tig_str_parse_named_range(&str, "Dmg:", &(effect_info->field_40), &(effect_info->field_44));
-            effect_info->field_4C = 0;
-            tig_str_parse_named_flag_list(&str, "Dmg_Flags:", off_5B0D14, dword_5B0D3C, 10, &(effect_info->field_4C));
+            tig_str_match_str_to_list(&str, "DmgType:", off_5B0C70, &(effect_info->data.heal.damage_type));
+            tig_str_parse_named_range(&str, "Dmg:", &(effect_info->data.heal.damage_min), &(effect_info->data.heal.damage_max));
+            effect_info->data.heal.damage_flags = 0;
+            tig_str_parse_named_flag_list(&str, "Dmg_Flags:", off_5B0D14, dword_5B0D3C, 10, &(effect_info->data.heal.damage_flags));
             break;
         case MTC_INTERRUPT:
             if (tig_str_parse_named_value(&str, "MagicTech:", &value)) {
-                effect_info->field_40 = value;
+                effect_info->data.interrupt.magictech = value;
             } else {
-                effect_info->field_40 = 10000;
+                effect_info->data.interrupt.magictech = 10000;
                 tig_debug_printf("MagicTech: ERROR: Interrupt Component has no spell!\n");
             }
             break;
         case MTC_MOVEMENT:
-            if (tig_str_match_named_str_to_list(&str, "Move_Location:", off_5B0D04, 4, &(effect_info->field_40))
-                && effect_info->field_40 == 1) {
-                tig_str_parse_named_value(&str, "Tile_Radius:", &(effect_info->field_44));
+            if (tig_str_match_named_str_to_list(&str, "Move_Location:", off_5B0D04, 4, &(effect_info->data.movement.move_location))
+                && effect_info->data.movement.move_location == 1) {
+                tig_str_parse_named_value(&str, "Tile_Radius:", &(effect_info->data.movement.tile_radius));
             }
             break;
         case MTC_OBJFLAG:
             tig_str_match_str_to_list(&str, off_5B9FBC, 21, &value);
-            effect_info->field_40 = dword_5BA010[value];
+            effect_info->data.obj_flag.flags_fld = dword_5BA010[value];
             tig_str_match_str_to_list(&str, off_5BA064[value], dword_5BA0B8[value], &value);
-            effect_info->field_44 = 1 << value;
-            tig_str_match_str_to_list(&str, off_5B0C90, 2, &(effect_info->field_48));
-            if (effect_info->field_40 == 20 && effect_info->field_48) {
-                info->field_114 |= effect_info->field_44;
+            effect_info->data.obj_flag.value = 1 << value;
+            tig_str_match_str_to_list(&str, off_5B0C90, 2, &(effect_info->data.obj_flag.state));
+            if (effect_info->data.obj_flag.flags_fld == OBJ_F_SPELL_FLAGS
+                && effect_info->data.obj_flag.state) {
+                info->field_114 |= effect_info->data.obj_flag.value;
             }
             break;
         case MTC_RECHARGE:
-            tig_str_parse_value(&str, &(effect_info->field_40));
-            if (!tig_str_parse_named_value(&str, "Max:", &(effect_info->field_44))) {
-                effect_info->field_44 = 9999;
+            tig_str_parse_value(&str, &(effect_info->data.recharge.num));
+            if (!tig_str_parse_named_value(&str, "Max:", &(effect_info->data.recharge.max))) {
+                effect_info->data.recharge.max = 9999;
             }
             break;
         case MTC_SUMMON:
@@ -2012,69 +2068,69 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
             }
 
             if (value > 0) {
-                effect_info->summon.oid = sub_407EF0(value);
+                effect_info->data.summon.oid = sub_407EF0(value);
             } else {
-                effect_info->summon.oid.type = 0;
+                effect_info->data.summon.oid.type = 0;
             }
 
             if (tig_str_parse_named_value(&str, "Clear_Faction:", &value)) {
-                effect_info->summon.clear_faction = value;
+                effect_info->data.summon.clear_faction = value;
             } else {
-                effect_info->summon.clear_faction = 0;
+                effect_info->data.summon.clear_faction = 0;
             }
 
             if (tig_str_parse_named_value(&str, "Palette:", &value)) {
-                effect_info->summon.palette = value;
+                effect_info->data.summon.palette = value;
             } else {
-                effect_info->summon.palette = 0;
+                effect_info->data.summon.palette = 0;
             }
 
             if (tig_str_parse_named_value(&str, "List:", &value)) {
-                effect_info->summon.list = value;
+                effect_info->data.summon.list = value;
             } else {
-                effect_info->summon.list = -1;
+                effect_info->data.summon.list = -1;
             }
             break;
         case MTC_TESTNBRANCH:
-            effect_info->field_48 = 0;
-            effect_info->field_4C = -1;
+            effect_info->data.test_in_branch.field_48 = 0;
+            effect_info->data.test_in_branch.field_4C = -1;
             tig_str_match_str_to_list(&str, off_5B0CAC, 4, &value);
-            effect_info->field_40 = dword_5B0CBC[value];
+            effect_info->data.test_in_branch.field_40 = dword_5B0CBC[value];
             tig_str_match_str_to_list(&str, off_5B0C98, 5, &value);
-            effect_info->field_44 = value;
+            effect_info->data.test_in_branch.field_44 = value;
             if (tig_str_parse_named_value(&str, "TestVal:", &value)) {
-                effect_info->field_48 = value;
+                effect_info->data.test_in_branch.field_48 = value;
             }
             if (tig_str_parse_named_value(&str, "Branch:", &value)) {
-                effect_info->field_4C = value;
+                effect_info->data.test_in_branch.field_4C = value;
             }
             break;
         case MTC_TRAIT:
             tig_str_match_str_to_list(&str, off_5B0CAC, 4, &value);
-            effect_info->field_40 = dword_5B0CBC[value];
-            effect_info->field_44 = 0;
+            effect_info->data.trait.field_40 = dword_5B0CBC[value];
+            effect_info->data.trait.field_44 = 0;
             tig_str_parse_value(&str, &value);
-            effect_info->field_50 = value;
-            effect_info->field_4C = 1;
-            effect_info->field_48 = 1;
-            tig_str_parse_named_value(&str, "Palette:", &(effect_info->field_54));
+            effect_info->data.trait.field_50 = value;
+            effect_info->data.trait.field_4C = 1;
+            effect_info->data.trait.field_48 = 1;
+            tig_str_parse_named_value(&str, "Palette:", &(effect_info->data.trait.field_54));
             break;
         case MTC_TRAITIDX:
             tig_str_match_str_to_list(&str, off_5B0CCC, 2, &value);
-            effect_info->field_44 = dword_5B0CD4[value];
+            effect_info->data.trait_idx.field_44 = dword_5B0CD4[value];
             tig_str_match_str_to_list(&str, off_5B0CDC[value], dword_5B0CE4[value], &value);
-            effect_info->field_40 = value;
-            effect_info->field_48 = 0;
+            effect_info->data.trait_idx.field_40 = value;
+            effect_info->data.trait_idx.field_48 = 0;
             tig_str_parse_value(&str, &value);
-            effect_info->field_54 = value;
-            effect_info->field_50 = 1;
-            effect_info->field_4C = 1;
+            effect_info->data.trait_idx.field_54 = value;
+            effect_info->data.trait_idx.field_50 = 1;
+            effect_info->data.trait_idx.field_4C = 1;
             break;
         case MTC_TRAIT64:
             tig_str_match_str_to_list(&str, off_5B0CAC, 4, &value);
-            effect_info->field_40 = dword_5B0CBC[value];
+            effect_info->data.trait64.field_40 = dword_5B0CBC[value];
             tig_str_match_str_to_list(&str, off_5B0CF8, 3, &value);
-            effect_info->field_44 = value;
+            effect_info->data.trait64.field_44 = value;
             break;
         }
     }
