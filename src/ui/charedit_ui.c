@@ -1,8 +1,9 @@
 #include "ui/charedit_ui.h"
 
+#include "game/level.h"
 #include "game/mes.h"
-#include "game/stat.h"
 #include "game/skill.h"
+#include "game/stat.h"
 #include "ui/scrollbar_ui.h"
 
 typedef struct S5C8150 {
@@ -22,6 +23,7 @@ typedef struct S5C87D0 {
 static void sub_55B150();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
+static bool sub_55D060();
 static bool sub_55E110();
 static void sub_55EBA0();
 static void sub_55EFB0();
@@ -105,6 +107,25 @@ static S5C87D0 stru_5C87D0[8] = {
     { 198, 29, TIG_BUTTON_HANDLE_INVALID, 7 },
 };
 
+// 0x5C8E50
+static S5C8150 stru_5C8E50[15] = {
+    { NULL, 526, 170, 0 },
+    { NULL, 526, 186, 0 },
+    { NULL, 526, 202, 0 },
+    { NULL, 526, 218, 0 },
+    { NULL, 526, 234, 0 },
+    { NULL, 526, 250, 0 },
+    { NULL, 526, 266, 0 },
+    { NULL, 526, 282, 0 },
+    { NULL, 526, 298, 0 },
+    { NULL, 526, 314, 0 },
+    { NULL, 526, 330, 0 },
+    { NULL, 526, 346, 0 },
+    { NULL, 526, 362, 0 },
+    { NULL, 526, 378, 0 },
+    { NULL, 526, 394, 0 },
+};
+
 // 0x5C8F40
 static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
 
@@ -151,6 +172,9 @@ static ScrollbarId stru_64C7A8;
 // 0x64C7B0
 static tig_window_handle_t dword_64C7B0;
 
+// 0x64C7E8
+static tig_button_handle_t dword_64C7E8[15];
+
 // 0x64C828
 static tig_font_handle_t dword_64C828;
 
@@ -190,6 +214,9 @@ static const char* charedit_second_str;
 // 0x64CA8C
 static tig_window_handle_t dword_64CA8C;
 
+// 0x64CA90
+static const char* dword_64CA90[200];
+
 // 0x64CDB0
 static tig_font_handle_t dword_64CDB0;
 
@@ -213,6 +240,9 @@ static tig_font_handle_t dword_64CDD0;
 
 // 0x64CFE0
 static tig_font_handle_t dword_64CFE0;
+
+// 0x64CFE4
+static int dword_64CFE4[200];
 
 // 0x64D3A4
 static tig_font_handle_t dword_64D3A4;
@@ -575,9 +605,68 @@ void spells_print_all()
 }
 
 // 0x55D060
-void sub_55D060()
+bool sub_55D060()
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigWindowData window_data;
+    TigButtonData button_data;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    int index;
+
+    tig_art_interface_id_create(567, 0, 0, 0, &art_id);
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.rect.x = 503;
+    window_data.rect.y = 104;
+    window_data.rect.width = art_frame_data.width;
+    window_data.rect.height = art_frame_data.height;
+    window_data.background_color = 0;
+    window_data.message_filter = sub_55DF90;
+    if (tig_window_create(&window_data, &dword_64CA60) != TIG_OK) {
+        return false;
+    }
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &(window_data.rect);
+    art_blit_info.dst_rect = &(window_data.rect);
+    if (tig_window_blit_art(dword_64CA60, &art_blit_info) != TIG_OK) {
+        tig_window_destroy(dword_64CA60);
+        return false;
+    }
+
+    dword_64CDC8 = 0;
+    for (index = 0; index < 200; index++) {
+        dword_64CFE4[dword_64CDC8] = index;
+        dword_64CA90[dword_64CDC8] = level_advancement_scheme_get_name(index);
+        if (dword_64CA90[dword_64CDC8] != NULL) {
+            dword_64CDC8++;
+        }
+    }
+
+    dword_64D424 = 0;
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.window_handle = dword_64CA60;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.art_id = TIG_ART_ID_INVALID;
+
+    for (index = 0; index < 15; index++) {
+        button_data.x = stru_5C8E50[index].x - 503;
+        button_data.y = stru_5C8E50[index].y - 104;
+        button_data.width = 160;
+        button_data.height = 16;
+        tig_button_create(&button_data, &(dword_64C7E8[index]));
+    }
+
+    return true;
 }
 
 // 0x55D210
