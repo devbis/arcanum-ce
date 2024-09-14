@@ -2,12 +2,41 @@
 
 #include "game/animfx.h"
 #include "game/combat.h"
+#include "game/effect.h"
 #include "game/mes.h"
 #include "game/mt_item.h"
 #include "game/object.h"
 #include "game/spell.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
+
+typedef enum MagicTechComponent {
+    MTC_NOOP,
+    MTC_AGOAL,
+    MTC_AGOALTERMINATE,
+    MTC_AIREDIRECT,
+    MTC_CAST,
+    MTC_CHARGENBRANCH,
+    MTC_DAMAGE,
+    MTC_DESTROY,
+    MTC_DISPEL,
+    MTC_EFFECT,
+    MTC_ENVFLAG,
+    MTC_EYECANDY,
+    MTC_HEAL,
+    MTC_IDENTIFY,
+    MTC_INTERRUPT,
+    MTC_MOVEMENT,
+    MTC_OBJFLAG,
+    MTC_RECHARGE,
+    MTC_SUMMON,
+    MTC_TERMINATE,
+    MTC_TESTNBRANCH,
+    MTC_TRAIT,
+    MTC_TRAITIDX,
+    MTC_TRAIT64,
+    MTC_USE,
+} MagicTechComponent;
 
 typedef enum MagicTechFlagCollection {
     MTFC_FLAGS,
@@ -34,10 +63,71 @@ typedef enum MagicTechFlagCollection {
     MTFC_COUNT,
 } MagicTechFlagCollection;
 
-typedef struct MagicTech_EC {
-    void* field_0;
-    int field_4;
-} MagicTech_EC;
+typedef struct MagicTechEffectInfo {
+    /* 0000 */ int type;
+    /* 0004 */ int field_4;
+    /* 0008 */ uint64_t aoe;
+    /* 0010 */ unsigned int aoe_spell_flags;
+    /* 0014 */ unsigned int aoe_no_spell_flags;
+    /* 0018 */ int radius;
+    /* 001C */ int count;
+    /* 0020 */ uint64_t apply_aoe;
+    /* 0028 */ int field_28;
+    /* 002C */ int field_2C;
+    /* 0030 */ int field_30;
+    /* 0034 */ int field_34;
+    /* 0038 */ unsigned int item_triggers;
+    /* 003C */ int field_3C;
+    union {
+        struct {
+            /* 0040 */ int goal;
+            /* 0044 */ int subgoal;
+        };
+        struct {
+            /* 0040 */ unsigned int critter_flags;
+            /* 0044 */ int min_iq;
+        };
+        struct {
+            /* 0040 */ int spell;
+        };
+        struct {
+            /* 0040 */ int cost;
+            /* 0044 */ int branch;
+        };
+        struct {
+            /* 0040 */ int damage_min;
+            /* 0044 */ int damage_max;
+            /* 0048 */ int damage_type;
+            /* 004C */ unsigned int damage_flags;
+        };
+        struct {
+            /* 0040 */ ObjectID oid;
+            /* 0058 */ int clear_faction;
+            /* 005C */ int list;
+            /* 0060 */ int palette;
+        } summon;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+            /* 0048 */ int field_48;
+            /* 004C */ int field_4C;
+            /* 0050 */ int field_50;
+            /* 0054 */ int field_54;
+            /* 0058 */ int field_58;
+            /* 005C */ int field_5C;
+            /* 0060 */ int field_60;
+            /* 0064 */ int field_64;
+        };
+    };
+} MagicTechEffectInfo;
+
+// See 0x4580C6.
+static_assert(sizeof(MagicTechEffectInfo) == 0x68, "wrong size");
+
+typedef struct MagicTechE8 {
+    int field_0;
+    MagicTechEffectInfo* field_4;
+} MagicTechE8;
 
 typedef struct MagicTechInfoAI {
     /* 0000 */ int flee;
@@ -114,8 +204,7 @@ typedef struct MagicTechInfo {
     /* 00DC */ int field_DC;
     /* 00E0 */ int field_E0;
     /* 00E4 */ int field_E4;
-    /* 00E8 */ int field_E8;
-    /* 00EC */ MagicTech_EC field_EC[5];
+    /* 00E8 */ MagicTechE8 field_E8[5];
     /* 0110 */ int no_stack;
     /* 0114 */ int field_114;
     /* 0118 */ unsigned int cancels_sf;
@@ -139,9 +228,88 @@ static void sub_4578F0(MagicTechInfo* info, char* str);
 static void sub_457B20(MagicTechInfo* info, char* str);
 static void sub_457D00(MagicTechInfo* info, char* str);
 static void magictech_build_ai_info(MagicTechInfo* info, char* str);
+static void magictech_build_effect_info(MagicTechInfo* info, char* str);
 static bool sub_4594D0(TimeEvent* timeevent);
 static bool sub_459640(TimeEvent* timeevent);
 static void sub_45A760(object_id_t obj, const char* msg);
+
+// 0x596140
+static uint64_t qword_596140[] = {
+    0x00,
+    0x01,
+    0x02,
+    0x04,
+    0x0C,
+    0x10,
+    0x24,
+    0x44,
+    0x0C4,
+    0x144,
+    0x244,
+    0x444,
+    0x844,
+    0x1044,
+    0x2044,
+    0x4044,
+    0x8044,
+    0x10004,
+    0x20004,
+    0x40004,
+    0x80004,
+    0x100004,
+    0x200004,
+    0x400004,
+    0x800004,
+    0x1000004,
+    0x2000004,
+    0x4000004,
+    0x8000004,
+    0x10000004,
+    0x20000004,
+    0x40000044,
+    0x80000004,
+    0x100000044,
+    0x200000044,
+    0x400000044,
+    0x800000044,
+    0x1000000044,
+    0x2000000044,
+    0x4000000044,
+    0x8000000004,
+    0x10000000004,
+    0x20000000004,
+    0x40000000004,
+    0x80000000004,
+    0x100000000004,
+    0x200000000004,
+    0x400000000004,
+    0x800000000000,
+    0x1000000000000,
+    0x2800000000000,
+    0x4800000000000,
+    0x8800000000000,
+    0x10800000000000,
+    0x20800000000000,
+    0x40800000000000,
+    0x80800000000000,
+    0x100800000000000,
+    0x200000000000000,
+    0x400000000000044,
+    0x800000000000044,
+    0x1000000000000004,
+    0x2000000000000004,
+    0x4000000000000004,
+    0x8000000000000000,
+};
+
+// 0x5B0C0C
+static const char* off_5B0C0C[] = {
+    "[Begin]",
+    "[Maintain]",
+    "[End]",
+    "[Callback]",
+    "[EndCallback]",
+};
 
 // 0x5B0C20
 static const char* off_5B0C20[] = {
@@ -157,6 +325,140 @@ static int dword_5B0C30[] = {
     1,
     2,
     3,
+};
+
+// 0x5B0C40
+static const char* off_5B0C40[] = {
+    "anim_goal_animate",
+    "anim_goal_knockback",
+    "anim_goal_follow",
+    "anim_goal_floating",
+    "anim_goal_destroy_obj",
+    "anim_goal_knock_down",
+};
+
+// 0x5B0C58
+static int dword_5B0C58[6] = {
+    0,
+    43,
+    24,
+    44,
+    32,
+    62,
+};
+
+// 0x5B0C70
+static const char* off_5B0C70[] = {
+    "Dmg_Normal",
+    "Dmg_Poison",
+    "Dmg_Electrical",
+    "Dmg_Fire",
+    "Dmg_Magic",
+    "Dmg_Acid",
+};
+
+// 0x5B0C88
+static const char* off_5B0C88[] = {
+    "Remove",
+    "Add",
+};
+
+// 0x5B0C90
+static const char* off_5B0C90[] = {
+    "FLAG_OFF",
+    "FLAG_ON",
+};
+
+// 0x5B0C98
+static const char* off_5B0C98[] = {
+    "Equal",
+    "GreaterThan",
+    "GreaterThanOrEqual",
+    "LessThan",
+    "LessThanOrEqual",
+};
+
+// 0x5B0CAC
+static const char* off_5B0CAC[] = {
+    "art_num",
+    "Teleport_Tile",
+    "obj_f_critter_fleeing_from",
+    "HP_Damage",
+};
+
+// 0x5B0CBC
+static int dword_5B0CBC[] = {
+    1,
+    242,
+    230,
+    29,
+};
+
+// 0x5B0CCC
+static const char* off_5B0CCC[] = {
+    "obj_f_critter_stat_base_idx",
+    "obj_f_resistance_idx",
+};
+
+// 0x5B0CD4
+static int dword_5B0CD4[] = {
+    OBJ_F_CRITTER_STAT_BASE_IDX,
+    OBJ_F_RESISTANCE_IDX,
+};
+
+// 0x5B0CDC
+static const char* off_5B0CDC[] = {
+    "stat_strength",
+    "resist_damage",
+};
+
+// 0x5B0CE4
+static int dword_5B0CE4[] = {
+    28,
+    5,
+};
+
+// 0x5B0CF8
+static const char* off_5B0CF8[] = {
+    "Target_Tile",
+    "Caster_Obj",
+    "Caster_Owner_Obj",
+};
+
+// 0x5B0D04
+static const char* off_5B0D04[] = {
+    "Target_Tile",
+    "Random_Tile_In_Radius_Self",
+    "Teleport_Tile",
+    "Teleport_Area_Portal",
+};
+
+// 0x5B0D14
+static const char* off_5B0D14[] = {
+    "None",
+    "Full",
+    "Resurrect",
+    "Reanimate",
+    "Death",
+    "Stunned",
+    "Scars",
+    "Scaled",
+    "Weap_Dropped",
+    "Crippling",
+};
+
+// 0x5B0D3C
+static int dword_5B0D3C[] = {
+    0,
+    1,
+    2,
+    0x400002,
+    4,
+    0x40,
+    0x1000,
+    0x800000,
+    0x2000,
+    0x0E00,
 };
 
 // 0x5B0DC8
@@ -665,6 +967,75 @@ const char* off_5BA4C8[] = {
     "OTF_BUSTED",
 };
 
+// 0x5BBD70
+const char* off_5BBD70[] = {
+    "Tgt_None",
+    "Tgt_Self",
+    "Tgt_Source",
+    "Tgt_Object",
+    "Tgt_Obj_Self",
+    "Tgt_Obj_Radius",
+    "Tgt_Obj_T_PC",
+    "Tgt_Obj_T_Critter",
+    "Tgt_Obj_ST_Critter_Animal",
+    "Tgt_Obj_ST_Critter_Dead",
+    "Tgt_Obj_ST_Critter_Undead",
+    "Tgt_Obj_ST_Critter_Demon",
+    "Tgt_Obj_ST_Critter_Mechanical",
+    "Tgt_Obj_ST_Critter_Good",
+    "Tgt_Obj_ST_Critter_Evil",
+    "Tgt_Obj_ST_Critter_Unrevivifiable",
+    "Tgt_Obj_ST_Critter_Unresurrectable",
+    "Tgt_Obj_T_Portal",
+    "Tgt_Obj_T_Container",
+    "Tgt_Obj_ST_Openable_Locked",
+    "Tgt_Obj_T_Wall",
+    "Tgt_Obj_Damaged",
+    "Tgt_Obj_Damaged_Poisoned",
+    "Tgt_Obj_Poisoned",
+    "Tgt_Obj_M_Stone",
+    "Tgt_Obj_M_Flesh",
+    "Tgt_Obj_Inven",
+    "Tgt_Obj_Weight_Below_5",
+    "Tgt_Obj_In_Wall",
+    "Tgt_Obj_No_Self",
+    "Tgt_Obj_No_T_PC",
+    "Tgt_Obj_No_ST_Critter_Animal",
+    "Tgt_Obj_No_ST_Critter_Dead",
+    "Tgt_Obj_No_ST_Critter_Undead",
+    "Tgt_Obj_No_ST_Critter_Demon",
+    "Tgt_Obj_No_ST_Critter_Mechanical",
+    "Tgt_Obj_No_ST_Critter_Good",
+    "Tgt_Obj_No_ST_Critter_Evil",
+    "Tgt_Obj_No_ST_Critter_Unrevivifiable",
+    "Tgt_Obj_No_ST_Critter_Unresurrectable",
+    "Tgt_Obj_No_ST_Openable_Locked",
+    "Tgt_Obj_No_ST_Magically_Held",
+    "Tgt_Obj_No_T_Wall",
+    "Tgt_Obj_No_Damaged",
+    "Tgt_Obj_No_M_Stone",
+    "Tgt_Obj_No_Inven",
+    "Tgt_Obj_No_Invulnerable",
+    "Tgt_Summoned",
+    "Tgt_Tile",
+    "Tgt_Tile_Self",
+    "Tgt_Tile_Pathable_To",
+    "Tgt_Tile_Empty",
+    "Tgt_Tile_Empty_Immobiles",
+    "Tgt_Tile_No_Empty",
+    "Tgt_Tile_Radius",
+    "Tgt_Tile_Radius_Wall",
+    "Tgt_Tile_Offscreen",
+    "Tgt_Tile_Indoor_Or_Outdoor_Match",
+    "Tgt_Cone",
+    "Tgt_All_Party_Critters",
+    "Tgt_Party_Critter",
+    "Tgt_Non_Party_Critters",
+    "Tgt_Parent_Obj",
+    "Tgt_Attacker_Obj",
+    "Tgt_List",
+};
+
 // 0x5E3510
 static bool magictech_editor;
 
@@ -897,8 +1268,8 @@ bool sub_44FE30(int a1, const char* path, int a3)
 
     for (magictech = 0; magictech < MT_SPELL_COUNT; magictech++) {
         for (v1 = 0; v1 < 5; v1++) {
-            magictech_spells[magictech].field_EC[v1].field_0 = 0;
-            magictech_spells[magictech].field_EC[v1].field_4 = 0;
+            magictech_spells[magictech].field_E8[v1].field_0 = 0;
+            magictech_spells[magictech].field_E8[v1].field_4 = NULL;
         }
     }
 
@@ -1016,7 +1387,7 @@ void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int ma
         }
 
         mes_get_msg(msg_file, &mes_file_entry);
-        magictech_build_effect_info(msg_file, mes_file_entry.str);
+        magictech_build_effect_info(info, mes_file_entry.str);
 
         mes_file_entry.num++;
     }
@@ -1030,8 +1401,8 @@ void sub_450240()
 
     for (index = 0; index < MT_SPELL_COUNT; index++) {
         for (v1 = 0; v1 < 5; v1++) {
-            if (magictech_spells[index].field_EC[v1].field_0 != NULL) {
-                FREE(magictech_spells[index].field_EC[v1].field_0);
+            if (magictech_spells[index].field_E8[v1].field_4 != NULL) {
+                FREE(magictech_spells[index].field_E8[v1].field_4);
             }
         }
     }
@@ -1452,6 +1823,260 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
 
     if (tig_str_parse_named_value(&curr, "No_Reflect:", &value1)) {
         info->flags |= 0x400;
+    }
+}
+
+// 0x458060
+void magictech_build_effect_info(MagicTechInfo* info, char* str)
+{
+    int type;
+    MagicTechE8* v1;
+    MagicTechEffectInfo* effect_info;
+    uint64_t aoe;
+    unsigned int flags;
+    int value;
+
+    tig_str_parse_set_separator(',');
+
+    tig_str_match_str_to_list(&str, off_5B0C0C, 5, &type);
+
+    v1 = &(info->field_E8[type]);
+    if (v1->field_4 != NULL) {
+        v1->field_4 = REALLOC(v1->field_4, sizeof(*v1->field_4) * (v1->field_0 + 1));
+        if (v1->field_4 == NULL) {
+            tig_debug_printf("magictech_build_effect_info: Error: failed realloc component list!\n");
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        v1->field_4 = MALLOC(sizeof(*v1->field_4));
+    }
+
+    effect_info = &(v1->field_4[v1->field_0++]);
+    effect_info->aoe = 0;
+    effect_info->aoe_spell_flags = 0;
+    effect_info->aoe_no_spell_flags = 0;
+    effect_info->radius = 0;
+    effect_info->count = -1;
+
+    if (tig_str_parse_named_flag_list_64(&str, "AoE:", off_5BBD70, qword_596140, 65, &aoe)) {
+        effect_info->aoe = aoe;
+    }
+
+    if (tig_str_parse_named_flag_list_direct(&str, "AoE_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
+        effect_info->aoe_spell_flags |= flags;
+    }
+
+    if (tig_str_parse_named_flag_list_direct(&str, "AoE_NO_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
+        effect_info->aoe_no_spell_flags |= flags;
+    }
+
+    if (tig_str_parse_named_value(&str, "Radius:", &value)) {
+        effect_info->radius = value;
+    }
+
+    if (tig_str_parse_named_value(&str, "Count:", &value)) {
+        effect_info->count = value;
+    }
+
+    effect_info->apply_aoe = 0;
+    effect_info->field_28 = 0;
+    effect_info->field_2C = 0;
+    effect_info->field_30 = 0;
+    effect_info->field_34 = -1;
+
+    tig_str_parse_named_flag_list_64(&str, "Apply_AoE:", off_5BBD70, qword_596140, 65, &(effect_info->apply_aoe));
+
+    if (tig_str_parse_named_flag_list(&str, "ItemTriggers:", off_5B72AC, dword_5B7314, 26, &flags)) {
+        effect_info->item_triggers = flags;
+    } else {
+        effect_info->item_triggers = 0;
+    }
+
+    if (tig_str_match_named_str_to_list(&str, "Type:", magictech_component_names, 25, &(effect_info->type))) {
+        switch (effect_info->type) {
+        case MTC_AGOAL:
+            tig_str_match_str_to_list(&str, off_5B0C40, 6, &value);
+            effect_info->goal = dword_5B0C58[value];
+            if (tig_str_parse_named_value(&str, "SubGoal:", &value)) {
+                effect_info->subgoal = value;
+            } else {
+                effect_info->subgoal = 0;
+            }
+            break;
+        case MTC_AGOALTERMINATE:
+            tig_str_match_str_to_list(&str, off_5B0C40, 6, &value);
+            effect_info->goal = dword_5B0C58[value];
+            break;
+        case MTC_AIREDIRECT:
+            tig_str_match_str_to_list(&str, off_5BA348, 32, &value);
+            effect_info->critter_flags = 1 << value;
+            if (tig_str_parse_named_value(&str, "MinIQ:", &value)) {
+                effect_info->min_iq = value;
+            } else {
+                effect_info->min_iq = -1;
+            }
+            break;
+        case MTC_CAST:
+            if (tig_parse_named_value(&str, "Spell:", &value)) {
+                effect_info->spell = value;
+            } else {
+                effect_info->spell = 10000;
+                tig_debug_printf("MagicTech: ERROR: Cast Component has no spell!\n");
+            }
+            break;
+        case MTC_CHARGENBRANCH:
+            effect_info->field_44 = -1;
+            effect_info->cost = 0;
+            tig_str_parse_named_value(&str, "Cost:", &(effect_info->cost));
+            if (tig_str_parse_named_value(&str, "Branch:", &value)) {
+                effect_info->branch = value;
+            }
+            break;
+        case MTC_DAMAGE:
+            tig_str_match_named_str_to_list(&str, "DmgType:", off_5B0C70, 6, &(effect_info->damage_type));
+            tig_str_parse_named_range(&str, "Dmg:", &(effect_info->damage_min), &(effect_info->damage_max));
+            effect_info->damage_flags = 0;
+            tig_str_parse_named_flag_list(&str, "Dmg_Flags:", off_5B0D14, dword_5B0D3C, 10, &(effect_info->damage_flags));
+            effect_info->damage_flags |= 0x80;
+            break;
+        case MTC_EFFECT:
+            tig_str_parse_value(&str, &(effect_info->field_40));
+            tig_str_match_str_to_list(&str, off_5B0C88, 2, &(effect_info->field_44));
+            if (tig_str_parse_named_value(&str, "Count:", &value)) {
+                effect_info->field_48 = value;
+            } else {
+                effect_info->field_48 = 1;
+            }
+
+            if (tig_str_match_named_str_to_list(&str, "Cause:", off_5B9CB4, 10, &value)) {
+                effect_info->field_4C = value;
+            } else {
+                effect_info->field_4C = 6;
+            }
+
+            if (tig_str_parse_named_value(&str, "Scaled:", &value)) {
+                effect_info->field_50 = value;
+            } else {
+                effect_info->field_50 = 0;
+            }
+            break;
+        case MTC_ENVFLAG:
+            tig_str_match_str_to_list(&str, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &value);
+            effect_info->field_40 = 1 << value;
+            tig_str_match_str_to_list(&str, off_5B0C90, 2, &(effect_info->field_44));
+            break;
+        case MTC_EYECANDY:
+            tig_str_parse_value(&str, &(effect_info->field_40));
+            tig_str_match_str_to_list(&str, off_5B0C88, 2, &(effect_info->field_44));
+            tig_str_parse_named_flag_list(&str, "Play:", off_5B7658, dword_5B7680, 10, &(effect_info->field_48));
+            break;
+        case MTC_HEAL:
+            tig_str_match_str_to_list(&str, "DmgType:", off_5B0C70, &(effect_info->field_48));
+            tig_str_parse_named_range(&str, "Dmg:", &(effect_info->field_40), &(effect_info->field_44));
+            effect_info->field_4C = 0;
+            tig_str_parse_named_flag_list(&str, "Dmg_Flags:", off_5B0D14, dword_5B0D3C, 10, &(effect_info->field_4C));
+            break;
+        case MTC_INTERRUPT:
+            if (tig_str_parse_named_value(&str, "MagicTech:", &value)) {
+                effect_info->field_40 = value;
+            } else {
+                effect_info->field_40 = 10000;
+                tig_debug_printf("MagicTech: ERROR: Interrupt Component has no spell!\n");
+            }
+            break;
+        case MTC_MOVEMENT:
+            if (tig_str_match_named_str_to_list(&str, "Move_Location:", off_5B0D04, 4, &(effect_info->field_40))
+                && effect_info->field_40 == 1) {
+                tig_str_parse_named_value(&str, "Tile_Radius:", &(effect_info->field_44));
+            }
+            break;
+        case MTC_OBJFLAG:
+            tig_str_match_str_to_list(&str, off_5B9FBC, 21, &value);
+            effect_info->field_40 = dword_5BA010[value];
+            tig_str_match_str_to_list(&str, off_5BA064[value], dword_5BA0B8[value], &value);
+            effect_info->field_44 = 1 << value;
+            tig_str_match_str_to_list(&str, off_5B0C90, 2, &(effect_info->field_48));
+            if (effect_info->field_40 == 20 && effect_info->field_48) {
+                info->field_114 |= effect_info->field_44;
+            }
+            break;
+        case MTC_RECHARGE:
+            tig_str_parse_value(&str, &(effect_info->field_40));
+            if (!tig_str_parse_named_value(&str, "Max:", &(effect_info->field_44))) {
+                effect_info->field_44 = 9999;
+            }
+            break;
+        case MTC_SUMMON:
+            if (!tig_str_parse_named_value(&str, "Proto:", &value)) {
+                tig_debug_printf("magictech_build_effect_info: MTComponentSummon: Error: failed to find proto #!\n");
+            }
+
+            if (value > 0) {
+                effect_info->summon.oid = sub_407EF0(value);
+            } else {
+                effect_info->summon.oid.type = 0;
+            }
+
+            if (tig_str_parse_named_value(&str, "Clear_Faction:", &value)) {
+                effect_info->summon.clear_faction = value;
+            } else {
+                effect_info->summon.clear_faction = 0;
+            }
+
+            if (tig_str_parse_named_value(&str, "Palette:", &value)) {
+                effect_info->summon.palette = value;
+            } else {
+                effect_info->summon.palette = 0;
+            }
+
+            if (tig_str_parse_named_value(&str, "List:", &value)) {
+                effect_info->summon.list = value;
+            } else {
+                effect_info->summon.list = -1;
+            }
+            break;
+        case MTC_TESTNBRANCH:
+            effect_info->field_48 = 0;
+            effect_info->field_4C = -1;
+            tig_str_match_str_to_list(&str, off_5B0CAC, 4, &value);
+            effect_info->field_40 = dword_5B0CBC[value];
+            tig_str_match_str_to_list(&str, off_5B0C98, 5, &value);
+            effect_info->field_44 = value;
+            if (tig_str_parse_named_value(&str, "TestVal:", &value)) {
+                effect_info->field_48 = value;
+            }
+            if (tig_str_parse_named_value(&str, "Branch:", &value)) {
+                effect_info->field_4C = value;
+            }
+            break;
+        case MTC_TRAIT:
+            tig_str_match_str_to_list(&str, off_5B0CAC, 4, &value);
+            effect_info->field_40 = dword_5B0CBC[value];
+            effect_info->field_44 = 0;
+            tig_str_parse_value(&str, &value);
+            effect_info->field_50 = value;
+            effect_info->field_4C = 1;
+            effect_info->field_48 = 1;
+            tig_str_parse_named_value(&str, "Palette:", &(effect_info->field_54));
+            break;
+        case MTC_TRAITIDX:
+            tig_str_match_str_to_list(&str, off_5B0CCC, 2, &value);
+            effect_info->field_44 = dword_5B0CD4[value];
+            tig_str_match_str_to_list(&str, off_5B0CDC[value], dword_5B0CE4[value], &value);
+            effect_info->field_40 = value;
+            effect_info->field_48 = 0;
+            tig_str_parse_value(&str, &value);
+            effect_info->field_54 = value;
+            effect_info->field_50 = 1;
+            effect_info->field_4C = 1;
+            break;
+        case MTC_TRAIT64:
+            tig_str_match_str_to_list(&str, off_5B0CAC, 4, &value);
+            effect_info->field_40 = dword_5B0CBC[value];
+            tig_str_match_str_to_list(&str, off_5B0CF8, 3, &value);
+            effect_info->field_44 = value;
+            break;
+        }
     }
 }
 
