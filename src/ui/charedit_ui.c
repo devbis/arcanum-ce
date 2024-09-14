@@ -18,10 +18,20 @@ typedef struct S5C87D0 {
     int x;
     int y;
     tig_button_handle_t button_handle;
-    int field_C;
+    int art_num;
 } S5C87D0;
 
+typedef struct S5C8CA8 {
+    int x;
+    int y;
+    int width;
+    int height;
+    int field_10;
+    tig_button_handle_t button_handle;
+} S5C8CA8;
+
 static void sub_55B150();
+static bool sub_55BAB0();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
 static bool sub_55C890();
@@ -65,6 +75,14 @@ static S5C8150 stru_5C81E0[] = {
     { NULL, 322, 406, 2 },
 };
 
+// 0x5C82B0
+static S5C87D0 stru_5C82B0[4] = {
+    { 21, 17, TIG_BUTTON_HANDLE_INVALID, 302 },
+    { 75, 17, TIG_BUTTON_HANDLE_INVALID, 303 },
+    { 129, 17, TIG_BUTTON_HANDLE_INVALID, 304 },
+    { 185, 17, TIG_BUTTON_HANDLE_INVALID, 305 },
+};
+
 // 0x5C82F0
 static S5C8150 stru_5C82F0[BASIC_SKILL_COUNT] = {
     { NULL, 520, 167, BASIC_SKILL_BOW },
@@ -95,6 +113,46 @@ static S5C8150 stru_5C83F0[4] = {
     { NULL, 517, 261, -1 },
     { NULL, 517, 316, -1 },
     { NULL, 517, 371, -1 },
+};
+
+// 0x5C8430
+static S5C87D0 stru_5C8430[16] = {
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 0 },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 1 },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 2 },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 3 },
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 4 },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 5 },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 6 },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 7 },
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 8 },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 9 },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 10 },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 11 },
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 0 },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 1 },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 2 },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 3 },
+};
+
+// 0x5C8530
+static S5C87D0 stru_5C8530[16] = {
+    { 18, 84, TIG_BUTTON_HANDLE_INVALID, 0 },
+    { 18, 150, TIG_BUTTON_HANDLE_INVALID, 1 },
+    { 18, 216, TIG_BUTTON_HANDLE_INVALID, 2 },
+    { 18, 282, TIG_BUTTON_HANDLE_INVALID, 3 },
+    { 18, 84, TIG_BUTTON_HANDLE_INVALID, 4 },
+    { 18, 150, TIG_BUTTON_HANDLE_INVALID, 5 },
+    { 18, 216, TIG_BUTTON_HANDLE_INVALID, 6 },
+    { 18, 282, TIG_BUTTON_HANDLE_INVALID, 7 },
+    { 18, 84, TIG_BUTTON_HANDLE_INVALID, 8 },
+    { 18, 150, TIG_BUTTON_HANDLE_INVALID, 9 },
+    { 18, 216, TIG_BUTTON_HANDLE_INVALID, 10 },
+    { 18, 282, TIG_BUTTON_HANDLE_INVALID, 11 },
+    { 18, 84, TIG_BUTTON_HANDLE_INVALID, 0 },
+    { 18, 150, TIG_BUTTON_HANDLE_INVALID, 1 },
+    { 18, 216, TIG_BUTTON_HANDLE_INVALID, 2 },
+    { 18, 282, TIG_BUTTON_HANDLE_INVALID, 3 },
 };
 
 // 0x5C87D0
@@ -146,6 +204,14 @@ static S5C87D0 stru_5C8630[COLLEGE_COUNT] = {
     { 652, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_PHANTASM },
     { 677, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_SUMMONING },
     { 702, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_TEMPORAL },
+};
+
+// 0x5C8CA8
+static S5C8CA8 stru_5C8CA8[4] = {
+    { 520, 126, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
+    { 520, 192, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
+    { 520, 258, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
+    { 520, 324, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5C8F40
@@ -313,6 +379,9 @@ static bool dword_64E018;
 
 // 0x64E01C
 static int dword_64E01C;
+
+// 0x64E020
+static int dword_64E020;
 
 // 0x64E024
 static int dword_64E024;
@@ -503,9 +572,86 @@ void sub_55B880()
 }
 
 // 0x55BAB0
-void sub_55BAB0()
+bool sub_55BAB0()
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigWindowData window_data;
+    TigButtonData button_data;
+    TigArtFrameData art_frame_data;
+    int index;
+    tig_button_handle_t button_handles[4];
+
+    tig_art_interface_id_create(29, 0, 0, 0, &art_id);
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.rect.x = 503;
+    window_data.rect.y = 104;
+    window_data.rect.width = art_frame_data.width;
+    window_data.rect.height = art_frame_data.height;
+    window_data.background_color = 0;
+    window_data.message_filter = sub_55D3A0;
+    if (tig_window_create(&window_data, &dword_64CA6C) != TIG_OK) {
+        return false;
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01 | TIG_BUTTON_FLAG_HIDDEN;
+    button_data.window_handle = dword_64CA6C;
+    button_data.mouse_down_snd_id = 3000;
+    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
+    tig_art_interface_id_create(624, 0, 0, 0, &(button_data.art_id));
+    for (index = 0; index < 16; index++) {
+        button_data.x = stru_5C8430[index].x;
+        button_data.y = stru_5C8430[index].y;
+        if (tig_button_create(&button_data, &(stru_5C8430[index].button_handle)) != TIG_OK) {
+            tig_window_destroy(dword_64CA6C);
+            return false;
+        }
+    }
+
+    tig_art_interface_id_create(625, 0, 0, 0, &(button_data.art_id));
+    for (index = 0; index < 16; index++) {
+        button_data.x = stru_5C8530[index].x;
+        button_data.y = stru_5C8530[index].y;
+        if (tig_button_create(&button_data, &(stru_5C8530[index].button_handle)) != TIG_OK) {
+            tig_window_destroy(dword_64CA6C);
+            return false;
+        }
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
+    for (index = 0; index < 4; index++) {
+        button_data.x = stru_5C82B0[index].x;
+        button_data.y = stru_5C82B0[index].y;
+        tig_art_interface_id_create(stru_5C82B0[index].art_num, 0, 0, 0, &(button_data.art_id));
+        if (tig_button_create(&button_data, &(stru_5C82B0[index].button_handle)) != TIG_OK) {
+            tig_window_destroy(dword_64CA6C);
+            return false;
+        }
+    }
+
+    tig_button_radio_group_create(4, button_handles, dword_64E020);
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.art_id = -1;
+
+    for (index = 0; index < 4; index++) {
+        button_data.x = stru_5C8CA8[index].x - 503;
+        button_data.y = stru_5C8CA8[index].y - 63;
+        button_data.width = stru_5C8CA8[index].width;
+        button_data.height = stru_5C8CA8[index].height;
+        tig_button_create(&button_data, &(stru_5C8CA8[index].button_handle));
+        // FIXME: No error checking as seen above.
+    }
+
+    return true;
 }
 
 // 0x55BD10
@@ -536,7 +682,7 @@ bool sub_55C110()
         return false;
     }
 
-    window_data.flags = 2;
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
     window_data.rect.x = 503;
     window_data.rect.y = 104;
     window_data.rect.width = art_frame_data.width;
@@ -560,8 +706,8 @@ bool sub_55C110()
     button_data.window_handle = dword_64CA8C;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
-    button_data.mouse_enter_snd_id = TIG_SOUND_HANDLE_INVALID;
-    button_data.mouse_exit_snd_id = TIG_SOUND_HANDLE_INVALID;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
 
     for (index = 0; index < 8; index++) {
         tig_art_interface_id_create(306 + index, 0, 0, 0, &(button_data.art_id));
