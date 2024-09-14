@@ -1,7 +1,16 @@
 #include "ui/charedit_ui.h"
 
 #include "game/mes.h"
+#include "game/stat.h"
+#include "game/skill.h"
 #include "ui/scrollbar_ui.h"
+
+typedef struct S5C8150 {
+    const char* str;
+    int x;
+    int y;
+    int value;
+} S5C8150;
 
 typedef struct S5C87D0 {
     int x;
@@ -13,6 +22,7 @@ typedef struct S5C87D0 {
 static void sub_55B150();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
+static bool sub_55E110();
 static void sub_55EBA0();
 static void sub_55EFB0();
 static void sub_55EFE0();
@@ -21,6 +31,69 @@ static void sub_55F0D0();
 static void sub_55F0E0(int value);
 static void sub_55F110(TigRect* rect);
 
+// 0x5C8150
+static S5C8150 stru_5C8150[] = {
+    { NULL, 212, 94, 0 },
+    { NULL, 212, 75, 0 },
+    { NULL, 212, 113, 0 },
+    { NULL, 212, 56, 0 },
+    { NULL, 337, 75, 0 },
+    { NULL, 337, 94, 0 },
+    { NULL, 337, 113, 0 },
+    { NULL, -178, 323, 0 },
+    { NULL, -383, 323, 0 },
+};
+
+// 0x5C81E0
+static S5C8150 stru_5C81E0[] = {
+    { NULL, 49, 349, STAT_CARRY_WEIGHT },
+    { NULL, 49, 367, STAT_DAMAGE_BONUS },
+    { NULL, 49, 385, STAT_AC_ADJUSTMENT },
+    { NULL, 49, 403, STAT_SPEED },
+    { NULL, 178, 349, STAT_HEAL_RATE },
+    { NULL, 178, 367, STAT_POISON_RECOVERY },
+    { NULL, 178, 385, STAT_REACTION_MODIFIER },
+    { NULL, 178, 403, STAT_MAX_FOLLOWERS },
+    { NULL, 322, 342, 0 },
+    { NULL, 322, 358, 4 },
+    { NULL, 322, 374, 1 },
+    { NULL, 322, 390, 3 },
+    { NULL, 322, 406, 2 },
+};
+
+// 0x5C82F0
+static S5C8150 stru_5C82F0[BASIC_SKILL_COUNT] = {
+    { NULL, 520, 167, BASIC_SKILL_BOW },
+    { NULL, 520, 233, BASIC_SKILL_DODGE },
+    { NULL, 520, 299, BASIC_SKILL_MELEE },
+    { NULL, 520, 365, BASIC_SKILL_THROWING },
+    { NULL, 520, 167, BASIC_SKILL_BACKSTAB },
+    { NULL, 520, 233, BASIC_SKILL_PICK_POCKET },
+    { NULL, 520, 299, BASIC_SKILL_PROWLING },
+    { NULL, 520, 365, BASIC_SKILL_SPOT_TRAP },
+    { NULL, 520, 167, BASIC_SKILL_GAMBLING },
+    { NULL, 520, 233, BASIC_SKILL_HAGGLE },
+    { NULL, 520, 299, BASIC_SKILL_HEAL },
+    { NULL, 520, 365, BASIC_SKILL_PERSUATION },
+};
+
+// 0x5C83B0
+static S5C8150 stru_5C83B0[TECH_SKILL_COUNT] = {
+    { NULL, 520, 167, TECH_SKILL_REPAIR },
+    { NULL, 520, 233, TECH_SKILL_FIREARMS },
+    { NULL, 520, 299, TECH_SKILL_PICK_LOCKS },
+    { NULL, 520, 365, TECH_SKILL_DISARM_TRAPS },
+};
+
+// 0x5C83F0
+static S5C8150 stru_5C83F0[4] = {
+    { NULL, 517, 206, -1 },
+    { NULL, 517, 261, -1 },
+    { NULL, 517, 316, -1 },
+    { NULL, 517, 371, -1 },
+};
+
+// 0x5C87D0
 static S5C87D0 stru_5C87D0[8] = {
     { 8, 7, TIG_BUTTON_HANDLE_INVALID, 0 },
     { 34, 29, TIG_BUTTON_HANDLE_INVALID, 1 },
@@ -67,7 +140,7 @@ static int dword_5C8FA8[] = {
     654,
     655,
     656,
-}:
+};
 
 // 0x64C7A0
 static tig_font_handle_t dword_64C7A0;
@@ -83,6 +156,9 @@ static tig_font_handle_t dword_64C828;
 
 // 0x64C840
 static tig_font_handle_t dword_64C840;
+
+// 0x64C844
+static const char* charedit_fatigue_str;
 
 // 0x64C848
 static tig_font_handle_t dword_64C848;
@@ -101,6 +177,15 @@ static tig_window_handle_t dword_64CA6C;
 
 // 0x64CA70
 static mes_file_handle_t charedit_mes_file;
+
+// 0x64CA74
+static const char* dword_64CA74[TRAINING_COUNT];
+
+// 0x64CA84
+static const char* charedit_seconds_str;
+
+// 0x64CA88
+static const char* charedit_second_str;
 
 // 0x64CA8C
 static tig_window_handle_t dword_64CA8C;
@@ -144,6 +229,12 @@ static int dword_64D3B4;
 // 0x64D3BC
 static tig_font_handle_t dword_64D3BC;
 
+// 0x64D3C0
+static const char* charedit_quest_str;
+
+// 0x64D3C4
+static const char* dword_64D3C4[23];
+
 // 0x64D420
 static tig_font_handle_t dword_64D420;
 
@@ -167,6 +258,9 @@ static int dword_64E01C;
 
 // 0x64E028
 static int dword_64E028;
+
+// 0x64DEE8
+static const char* charedit_minimum_level_str;
 
 // 0x559690
 bool charedit_init(GameInitInfo* init_info)
@@ -523,9 +617,197 @@ void sub_55DF90()
 }
 
 // 0x55E110
-void sub_55E110()
+bool sub_55E110()
 {
-    // TODO: Incomplete.
+    int num;
+    int index;
+    MesFileEntry mes_file_entry;
+    TigFont font_desc;
+
+    if (!mes_load("mes\\charedit.mes", &charedit_mes_file)) {
+        return false;
+    }
+
+    num = 0;
+
+    for (index = 0; index < 9; index++) {
+        mes_file_entry.num = num++;
+        mes_get_msg(charedit_mes_file, &mes_file_entry);
+        stru_5C8150[index].str = mes_file_entry.str;
+    }
+
+    for (index = 0; index < 2; index++) {
+        mes_file_entry.num = num++;
+        mes_get_msg(charedit_mes_file, &mes_file_entry);
+    }
+
+    for (index = 0; index < 13; index++) {
+        if (index < 8) {
+            stru_5C81E0[index].str = stat_get_name(stru_5C81E0[index].value);
+        } else {
+            mes_file_entry.num = num++;
+            mes_get_msg(charedit_mes_file, &mes_file_entry);
+            stru_5C81E0[index].str = mes_file_entry.str;
+        }
+    }
+
+    for (index = 0; index < 23; index++) {
+        mes_file_entry.num = num++;
+        mes_get_msg(charedit_mes_file, &mes_file_entry);
+        dword_64D3C4[index] = mes_file_entry.str;
+    }
+
+    mes_file_entry.num = num++;
+    mes_get_msg(charedit_mes_file, &mes_file_entry);
+    charedit_fatigue_str = mes_file_entry.str;
+
+    mes_file_entry.num = num++;
+    mes_get_msg(charedit_mes_file, &mes_file_entry);
+    charedit_quest_str = mes_file_entry.str;
+
+    mes_file_entry.num = num++;
+    mes_get_msg(charedit_mes_file, &mes_file_entry);
+    charedit_second_str = mes_file_entry.str;
+
+    mes_file_entry.num = num++;
+    mes_get_msg(charedit_mes_file, &mes_file_entry);
+    charedit_seconds_str = mes_file_entry.str;
+
+    mes_file_entry.num = num++;
+    mes_get_msg(charedit_mes_file, &mes_file_entry);
+    charedit_minimum_level_str = mes_file_entry.str;
+
+    for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+        stru_5C82F0[index].str = basic_skill_get_name(index);
+    }
+
+    for (index = 0; index < TECH_SKILL_COUNT; index++) {
+        stru_5C83B0[index].str = tech_skill_get_name(index);
+    }
+
+    for (index = 0; index < TRAINING_COUNT; index++) {
+        dword_64CA74[index] = training_get_name(index);
+    }
+
+    for (index = 0; index < 4; index++) {
+        stru_5C83F0[index].str = stru_5C8150[0].str;
+    }
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(26, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64CDBC);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64D3A8);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 210, 0);
+    tig_font_create(&font_desc, &dword_64CDD0);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(128, 128, 128);
+    tig_font_create(&font_desc, &dword_64C828);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(0, 255, 0);
+    tig_font_create(&font_desc, &dword_64C7A0);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 0, 0);
+    tig_font_create(&font_desc, &dword_64D3BC);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(28, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64DF0C);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(28, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 0);
+    tig_font_create(&font_desc, &dword_64D420);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(28, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(128, 128, 128);
+    tig_font_create(&font_desc, &dword_64CDB0);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(171, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64C848);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(300, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64D3A4);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(301, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64CFE0);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(301, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 0);
+    tig_font_create(&font_desc, &dword_64CDC0);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(301, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(128, 128, 128);
+    tig_font_create(&font_desc, &dword_64D3B0);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(0, 0, 255);
+    tig_font_create(&font_desc, &dword_64CA68);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64C9D0);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(483, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_64C840);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(483, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 255, 0);
+    tig_font_create(&font_desc, &dword_64CDB8);
+
+    font_desc.flags = 0;
+    tig_art_interface_id_create(483, 0, 0, 0, &(font_desc.art_id));
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(128, 128, 128);
+    tig_font_create(&font_desc, &dword_64D42C);
+
+    return true;
 }
 
 // 0x55EBA0
