@@ -1,6 +1,6 @@
 include(FetchContent)
 FetchContent_Declare(tig
-    GIT_REPOSITORY "https://github.com/alexbatalov/tig-dev"
+    GIT_REPOSITORY "https://github.com/alexbatalov/tig"
     GIT_TAG "main"
 )
 
