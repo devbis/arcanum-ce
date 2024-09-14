@@ -3,6 +3,7 @@
 #include "game/level.h"
 #include "game/mes.h"
 #include "game/skill.h"
+#include "game/spell.h"
 #include "game/stat.h"
 #include "ui/scrollbar_ui.h"
 
@@ -23,6 +24,7 @@ typedef struct S5C87D0 {
 static void sub_55B150();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
+static bool sub_55C890();
 static bool sub_55D060();
 static bool sub_55E110();
 static void sub_55EBA0();
@@ -124,6 +126,26 @@ static S5C8150 stru_5C8E50[15] = {
     { NULL, 526, 362, 0 },
     { NULL, 526, 378, 0 },
     { NULL, 526, 394, 0 },
+};
+
+// 0x5C8630
+static S5C87D0 stru_5C8630[COLLEGE_COUNT] = {
+    { 516, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_CONVEYANCE },
+    { 541, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_DIVINATION },
+    { 566, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_AIR },
+    { 591, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_EARTH },
+    { 616, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_FIRE },
+    { 641, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_WATER },
+    { 665, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_FORCE },
+    { 690, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_MENTAL },
+    { 528, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_META },
+    { 553, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_MORPH },
+    { 578, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_NATURE },
+    { 603, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_NECROMANTIC_BLACK },
+    { 627, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_NECROMANTIC_WHITE },
+    { 652, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_PHANTASM },
+    { 677, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_SUMMONING },
+    { 702, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_TEMPORAL },
 };
 
 // 0x5C8F40
@@ -238,6 +260,9 @@ static int dword_64CDC8;
 // 0x64CDD0
 static tig_font_handle_t dword_64CDD0;
 
+// 0x64CDD4
+static tig_button_handle_t spell_plus_bid;
+
 // 0x64CFE0
 static tig_font_handle_t dword_64CFE0;
 
@@ -274,6 +299,9 @@ static int dword_64D424;
 // 0x64D42C
 static tig_font_handle_t dword_64D42C;
 
+// 0x64D430
+static tig_button_handle_t spell_minus_bid;
+
 // 0x64DEE4
 static bool dword_64DEE4;
 
@@ -285,6 +313,9 @@ static bool dword_64E018;
 
 // 0x64E01C
 static int dword_64E01C;
+
+// 0x64E024
+static int dword_64E024;
 
 // 0x64E028
 static int dword_64E028;
@@ -587,9 +618,73 @@ void sub_55C3A0()
 }
 
 // 0x55C890
-void sub_55C890()
+bool sub_55C890()
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigWindowData window_data;
+    TigButtonData button_data;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    int index;
+    int art_num;
+    tig_button_handle_t button_handles[COLLEGE_COUNT];
+
+    tig_art_interface_id_create(31, 0, 0, 0, &art_id);
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.rect.x = 503;
+    window_data.rect.y = 104;
+    window_data.rect.width = art_frame_data.width;
+    window_data.rect.height = art_frame_data.height;
+    window_data.background_color = 0;
+    window_data.message_filter = sub_55DC60;
+    if (tig_window_create(&window_data, &dword_64C7B0) != TIG_OK) {
+        return false;
+    }
+
+    window_data.rect.x = 0;
+    window_data.rect.y = 0;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &(window_data.rect);
+    art_blit_info.dst_rect = &(window_data.rect);
+    if (tig_window_blit_art(dword_64C7B0, &art_blit_info) != TIG_OK) {
+        tig_window_destroy(dword_64C7B0);
+        return false;
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
+    button_data.window_handle = dword_64C7B0;
+    button_data.mouse_down_snd_id = 3000;
+    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
+    for (index = 0; index < COLLEGE_COUNT; index++) {
+        art_num = college_get_art_num(index);
+        if (art_num != -1) {
+            tig_art_interface_id_create(art_num, 0, 0, 0, &(button_data.art_id));
+            button_data.x = stru_5C8630[index].x - 503;
+            button_data.y = stru_5C8630[index].y - 104;
+            if (tig_button_create(&button_data, &(stru_5C8630[index].button_handle)) != TIG_OK) {
+                tig_window_destroy(dword_64C7B0);
+                return false;
+            }
+
+            button_handles[index] = stru_5C8630[index].button_handle;
+        }
+    }
+
+    tig_button_radio_group_create(COLLEGE_COUNT, button_handles, dword_64E024);
+
+    spell_plus_bid = TIG_BUTTON_HANDLE_INVALID;
+    spell_minus_bid = TIG_BUTTON_HANDLE_INVALID;
+
+    return true;
 }
 
 // 0x55CA70
@@ -630,6 +725,9 @@ bool sub_55D060()
         return false;
     }
 
+    window_data.rect.x = 0;
+    window_data.rect.y = 0;
+
     art_blit_info.flags = 0;
     art_blit_info.art_id = art_id;
     art_blit_info.src_rect = &(window_data.rect);
@@ -653,9 +751,9 @@ bool sub_55D060()
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = dword_64CA60;
     button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
-    button_data.mouse_up_snd_id = -1;
     button_data.art_id = TIG_ART_ID_INVALID;
 
     for (index = 0; index < 15; index++) {
