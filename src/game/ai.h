@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_AI_H_
 
 #include "game/context.h"
+#include "game/timeevent.h"
 
 typedef void(Func5F8488)(int64_t, int64_t, const char*, int);
 typedef void(Func5F848C)(int64_t, int);
@@ -29,6 +30,7 @@ void sub_4AF130(int64_t a1, int64_t a2);
 void sub_4AF170(int64_t obj);
 void sub_4AF1D0(int64_t obj);
 bool sub_4AF210(int64_t obj, int64_t* danger_source_ptr);
+void sub_4AF860();
 bool sub_4AFB30(int64_t obj, int64_t a2);
 void ai_target_lock(int64_t obj, int64_t tgt);
 void ai_target_unlock(int64_t obj);
