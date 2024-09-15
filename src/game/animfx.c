@@ -20,6 +20,34 @@ static void animfx_build_eye_candy_effect(int index, char* str);
 static bool sub_4CE1A0(tig_art_id_t art_id, unsigned int flags, int index, const char* str);
 static void sub_4CE2A0(int index);
 
+// 0x5B7658
+const char* off_5B7658[] = {
+    "reverse",
+    "stack",
+    "destroy",
+    "callback",
+    "end_callback",
+    "random_start",
+    "fire_dmg",
+    "check_already",
+    "no_id",
+    "ice_dmg",
+};
+
+// 0x5B7680
+int dword_5B7680[] = {
+    0x01,
+    0x02,
+    0x04,
+    0x08,
+    0x10,
+    0x20,
+    0x40,
+    0x80,
+    0x100,
+    0x240,
+};
+
 // 0x5B76A8
 static const char* off_5B76A8[] = {
     "overlay_f",
@@ -267,7 +295,7 @@ bool animfx_list_load_internal(AnimFxList* list)
             sub_4CE2A0(list->field_14);
 
             if (mes_search(dword_601734, &mes_file_entry)) {
-                sub_4D43A0(dword_601734, &mes_file_entry);
+                mes_get_msg(dword_601734, &mes_file_entry);
                 animfx_build_eye_candy_effect(list->field_14, mes_file_entry.str);
             }
 

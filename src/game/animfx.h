@@ -46,6 +46,9 @@ typedef struct AnimFxList {
 
 static_assert(sizeof(AnimFxList) == 0x2C, "wrong size");
 
+extern const char* off_5B7658[];
+extern int dword_5B7680[];
+
 bool animfx_init(GameInitInfo* init_info);
 void animfx_exit();
 bool animfx_list_init(AnimFxList* list);
