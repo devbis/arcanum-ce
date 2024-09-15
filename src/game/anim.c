@@ -2,6 +2,7 @@
 
 #include "game/animfx.h"
 #include "game/gamelib.h"
+#include "game/timeevent.h"
 
 static void violence_filter_changed();
 
@@ -16,6 +17,9 @@ static AnimFxList stru_5DE670;
 
 // 0x5DE6A4
 static int violence_filter;
+
+// 0x5DE6D0
+static bool dword_5DE6D0;
 
 // 0x5DE6D4
 static bool anim_editor;
@@ -132,19 +136,19 @@ void sub_422A50()
 }
 
 // 0x422B10
-void anim_break_nodes_to_map()
+void anim_break_nodes_to_map(const char* map)
 {
     // TODO: Incomplete.
 }
 
 // 0x422DF0
-void anim_save_nodes_to_map()
+void anim_save_nodes_to_map(const char* map)
 {
     // TODO: Incomplete.
 }
 
 // 0x4230A0
-void anim_load_nodes_from_map()
+void anim_load_nodes_from_map(const char* map)
 {
     // TODO: Incomplete.
 }
@@ -152,7 +156,6 @@ void anim_load_nodes_from_map()
 // 0x4232F0
 void sub_4232F0()
 {
-    // TODO: Incomplete.
 }
 
 // 0x423300
@@ -236,7 +239,7 @@ void sub_423FB0()
 // 0x423FC0
 void sub_423FC0()
 {
-    // TODO: Incomplete.
+    dword_5DE6D0 = true;
 }
 
 // 0x423FE0
@@ -258,7 +261,7 @@ void sub_424070()
 }
 
 // 0x424250
-void sub_424250()
+bool sub_424250()
 {
     // TODO: Incomplete.
 }
@@ -1418,7 +1421,12 @@ void sub_4303D0()
 // 0x430460
 void sub_430460()
 {
-    // TODO: Incomplete.
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    sub_45A950(&datetime, 4000);
+    timeevent.type = TIMEEVENT_TYPE_FIDGET_ANIM;
+    sub_45B800(&timeevent, &datetime);
 }
 
 // 0x430490
