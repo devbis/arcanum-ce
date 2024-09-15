@@ -494,13 +494,13 @@ void gamelib_resize(ResizeInfo* resize_info)
 }
 
 // 0x402780
-void sub_402780(const char* name)
+void gamelib_default_module_name_set(const char* name)
 {
     strcpy(arcanum2, name);
 }
 
 // 0x4027B0
-char* sub_4027B0()
+const char* gamelib_default_module_name_get()
 {
     return arcanum2;
 }
@@ -860,6 +860,18 @@ void sub_402FF0(const char* name)
     }
 }
 
+// 0x403030
+bool gamelib_save(const char* name, const char* description)
+{
+    // TODO: Incomplete.
+}
+
+// 0x403410
+bool gamelib_load(const char* name)
+{
+    // TODO: Incomplete.
+}
+
 // 0x403790
 bool sub_403790(const char* name)
 {
@@ -1127,6 +1139,11 @@ bool gamelib_copy_version(char* long_version, char* short_version, char* locale)
     if (locale != NULL) {
         strncpy(locale, gamelib_get_locale(), GAMELIB_LOCALE_LENGTH - 1);
     }
+}
+
+// 0x404640
+void sub_404640()
+{
 }
 
 // 0x404650

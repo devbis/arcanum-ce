@@ -26,14 +26,21 @@ extern TigVideoBuffer* dword_739E7C;
 
 bool gamelib_init(GameInitInfo* init_info);
 void gamelib_reset();
+void gamelib_exit();
+void gamelib_ping();
 void gamelib_resize(ResizeInfo* resize_info);
+void gamelib_default_module_name_set(const char* name);
+const char* gamelib_default_module_name_get();
 void gamelib_modlist_create(GameModuleList* module_list, int type);
 void gamelib_modlist_destroy(GameModuleList* module_list);
 bool gamelib_mod_load(const char* path);
 bool gamelib_mod_guid(GUID* guid_ptr);
 void gamelib_mod_unload();
+int sub_402CB0();
 void sub_402D30(TigRect* rect);
 bool sub_402E50();
+bool gamelib_save(const char* name, const char* description);
+bool gamelib_load(const char* name);
 const char* sub_403850();
 bool gamelib_in_save();
 bool gamelib_in_load();
@@ -45,6 +52,7 @@ void gamelib_savlist_destroy(GameSaveList* save_list);
 void sub_403C10(GameSaveList* save_list, int a2, int a3);
 void sub_4045A0();
 bool gamelib_copy_version(char* long_version, char* short_version, char* locale);
+void sub_404640();
 const char* gamelib_get_locale();
 
 #endif /* ARCANUM_GAME_GAMELIB_H_ */
