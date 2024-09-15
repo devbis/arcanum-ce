@@ -2,16 +2,35 @@
 
 #include "game/effect.h"
 #include "game/mes.h"
+#include "game/stat.h"
 
 #define FIRST_DESCRIPTION_ID 1000
 #define BACKGROUND_BLOCK_SIZE 10
-#define BACKGROUND_FIELD_DESCRIPTION 0
-#define BACKGROUND_FIELD_MONEY 3
-#define BACKGROUND_FIELD_ITEMS 4
+#define BACKGROUND_F_DESCRIPTION 0
+#define BACKGROUND_F_EFFECT 1
+#define BACKGROUND_F_CONDITIONS 2
+#define BACKGROUND_F_MONEY 3
+#define BACKGROUND_F_ITEMS 4
 
 #define BACKGROUND_NAME_LENGTH 32
 
 static int background_get_base_money();
+static bool sub_4C2B50(int64_t obj, char* str);
+
+// 0x5B6AEC
+static const char* off_5B6AEC[] = {
+    "HU",
+    "DW",
+    "EL",
+    "HE",
+    "GN",
+    "HA",
+    "HO",
+    "HG",
+};
+
+// 0x5B6B0C
+static const char* off_5B6B0C = "FM";
 
 // 0x5FD858
 static char* background_description_name;
@@ -49,12 +68,69 @@ void background_exit()
     mes_unload(background_description_mes_file);
 }
 
+// 0x4C2300
+bool background_find_first(int64_t obj, int* background_ptr)
+{
+    MesFileEntry mes_file_entry;
+    int background = 0;
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_CONDITIONS;
+    while (mes_search(background_mes_file, &mes_file_entry)) {
+        if (sub_4C2B50(obj, mes_file_entry.str)) {
+            *background_ptr = background;
+            return true;
+        }
+        background++;
+        mes_file_entry.num += BACKGROUND_BLOCK_SIZE;
+    }
+
+    return false;
+}
+
+// 0x4C2390
+bool background_find_next(int64_t obj, int* background_ptr)
+{
+    MesFileEntry mes_file_entry;
+    int background = *background_ptr + 1;
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_CONDITIONS;
+    while (mes_search(background_mes_file, &mes_file_entry)) {
+        if (sub_4C2B50(obj, mes_file_entry.str)) {
+            *background_ptr = background;
+            return true;
+        }
+        background++;
+        mes_file_entry.num += BACKGROUND_BLOCK_SIZE;
+    }
+
+    return false;
+}
+
+// 0x4C2420
+bool background_find_prev(int64_t obj, int* background_ptr)
+{
+    MesFileEntry mes_file_entry;
+    int background = *background_ptr - 1;
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_CONDITIONS;
+    while (mes_search(background_mes_file, &mes_file_entry)) {
+        if (sub_4C2B50(obj, mes_file_entry.str)) {
+            *background_ptr = background;
+            return true;
+        }
+        background--;
+        mes_file_entry.num -= BACKGROUND_BLOCK_SIZE;
+    }
+
+    return false;
+}
+
 // 0x4C24B0
 int background_get_description(int background)
 {
     MesFileEntry mes_file_entry;
 
-    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_DESCRIPTION;
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_DESCRIPTION;
     mes_get_msg(background_mes_file, &mes_file_entry);
     return atoi(mes_file_entry.str);
 }
@@ -127,6 +203,21 @@ const char* background_description_get_name(int num)
     return background_description_name;
 }
 
+// 0x4C25E0
+void sub_4C25E0(int64_t obj, int background, int background_text)
+{
+    MesFileEntry mes_file_entry;
+
+    obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, background);
+    obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, background_text);
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_EFFECT;
+    if (mes_file_entry.num != 0) {
+        mes_get_msg(background_mes_file, &mes_file_entry);
+        sub_4E9F70(obj, atoi(mes_file_entry.str), 1);
+    }
+}
+
 // 0x4C2650
 void background_obj_clear(object_id_t obj)
 {
@@ -157,7 +248,7 @@ static int background_get_base_money()
 {
     MesFileEntry mes_file_entry;
 
-    mes_file_entry.num = BACKGROUND_FIELD_MONEY;
+    mes_file_entry.num = BACKGROUND_F_MONEY;
     mes_get_msg(background_mes_file, &mes_file_entry);
     return atoi(mes_file_entry.str);
 }
@@ -167,7 +258,7 @@ int background_adjust_money(int amount, int background)
 {
     MesFileEntry mes_file_entry;
 
-    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_MONEY;
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_MONEY;
     mes_get_msg(background_mes_file, &mes_file_entry);
 
     return amount * (100 * atoi(mes_file_entry.str) / background_get_base_money()) / 100;
@@ -178,8 +269,31 @@ bool background_get_items(char* dest, size_t size, int background)
 {
     MesFileEntry mes_file_entry;
 
-    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_FIELD_ITEMS;
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_ITEMS;
     strncpy(dest, mes_file_entry.str, size);
+
+    return true;
+}
+
+// 0x4C2B50
+bool sub_4C2B50(int64_t obj, char* str)
+{
+    int gender;
+    int race;
+    char buffer[4];
+
+    if (str != NULL && *str != NULL) {
+        race = stat_get_base(obj, STAT_RACE);
+        gender = stat_get_base(obj, STAT_GENDER);
+        sprintf(buffer, "%s%c", off_5B6AEC[race], off_5B6B0C[gender]);
+        str = strupr(str);
+        if (strstr(str, buffer) == NULL
+            && strstr(str, "ANY") == NULL
+            && ((obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
+                || strstr(str, "NPC") == NULL))) {
+            return false;
+        }
+    }
 
     return true;
 }

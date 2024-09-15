@@ -14,10 +14,14 @@
 
 bool background_init(GameInitInfo* init_info);
 void background_exit();
+bool background_find_first(int64_t obj, int* background_ptr);
+bool background_find_next(int64_t obj, int* background_ptr);
+bool background_find_prev(int64_t obj, int* background_ptr);
 int background_get_description(int background);
 const char* background_description_get_text(int num);
 const char* background_description_get_body(int num);
 const char* background_description_get_name(int num);
+void sub_4C25E0(int64_t obj, int background, int background_text);
 void background_obj_clear(object_id_t obj);
 int background_obj_get_background(object_id_t obj);
 int background_obj_get_background_text(object_id_t obj);
