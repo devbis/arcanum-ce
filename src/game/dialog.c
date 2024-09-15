@@ -15,7 +15,7 @@ typedef struct DialogEntry {
     /* 0018 */ int field_18;
 } DialogEntry;
 
-static_assert(sizeof(Dialog) == 0x1C, "wrong size");
+static_assert(sizeof(DialogEntry) == 0x1C, "wrong size");
 
 typedef struct Dialog {
     /* 0000 */ char path[TIG_MAX_PATH];
@@ -24,7 +24,7 @@ typedef struct Dialog {
     /* 0110 */ int entries_length;
     /* 0114 */ int entries_capacity;
     /* 0118 */ DialogEntry* entries;
-    /* 011C */ int field_11C:
+    /* 011C */ int field_11C;
 } Dialog;
 
 static_assert(sizeof(Dialog) == 0x120, "wrong size");
@@ -155,6 +155,11 @@ int sub_417D80(TigFile* stream)
     return tig_file_fclose(stream);
 }
 
+// 0x418030
+void sub_418030()
+{
+    // TODO: Incomplete.
+}
 // 0x4182C0
 void sub_4182C0()
 {
