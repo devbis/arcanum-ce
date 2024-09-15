@@ -1,7 +1,5 @@
 #include "game/ui.h"
 
-#include <tig/tig.h>
-
 // 0x5E8658
 static UiCallbacks ui_callbacks;
 
@@ -47,10 +45,10 @@ void sub_4601D0(int a1, int a2)
 }
 
 // 0x4601F0
-void sub_4601F0(int a1, int a2)
+void sub_4601F0(int64_t obj)
 {
     if (ui_callbacks.field_8 != NULL) {
-        ui_callbacks.field_8(a1, a2);
+        ui_callbacks.field_8(obj);
     }
 }
 

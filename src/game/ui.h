@@ -1,9 +1,11 @@
 #ifndef ARCANUM_GAME_UI_H_
 #define ARCANUM_GAME_UI_H_
 
+#include "game/context.h"
+
 typedef void(UI_CALLBACKS_FUNC_0)();
 typedef void(UI_CALLBACKS_FUNC_4)(int a1, int a2);
-typedef void(UI_CALLBACKS_FUNC_8)(int a1, int a2);
+typedef void(UI_CALLBACKS_FUNC_8)(int64_t obj);
 typedef void(UI_CALLBACKS_FUNC_C)();
 typedef void(UI_CALLBACKS_FUNC_10)(long long a1);
 typedef void(UI_CALLBACKS_FUNC_14)(long long a1);
@@ -194,7 +196,7 @@ void ui_exit();
 void ui_timeevent_process();
 void sub_4601C0();
 void sub_4601D0(int a1, int a2);
-void sub_4601F0(int a1, int a2);
+void sub_4601F0(int64_t obj);
 void sub_460240(long long a1);
 void sub_460260(long long a1);
 void sub_460280(int a1, int a2);
