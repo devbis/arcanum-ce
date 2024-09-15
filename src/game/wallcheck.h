@@ -3,4 +3,7 @@
 
 #include "game/context.h"
 
+void sub_438500(bool enabled);
+bool sub_438520();
+
 #endif /* ARCANUM_GAME_WALLCHECK_H_ */

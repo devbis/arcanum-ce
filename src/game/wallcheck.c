@@ -1,5 +1,8 @@
 #include "game/wallcheck.h"
 
+// 0x5A3E90
+static bool dword_5A3E90 = true;
+
 // 0x437D90
 void wallcheck_init()
 {
@@ -37,15 +40,17 @@ void wallcheck_flush()
 }
 
 // 0x438500
-void sub_438500()
+void sub_438500(bool enabled)
 {
-    // TODO: Incomplete.
+    if (dword_5A3E90 != enabled) {
+        dword_5A3E90 = enabled;
+    }
 }
 
 // 0x438520
-void sub_438520()
+bool sub_438520()
 {
-    // TODO: Incomplete.
+    return dword_5A3E90;
 }
 
 // 0x438530
