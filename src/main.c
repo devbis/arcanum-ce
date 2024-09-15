@@ -1,12 +1,42 @@
 #include <tig/tig.h>
 
+#include <stdio.h>
+
+#include "game/ai.h"
+#include "game/anim.h"
+#include "game/combat.h"
+#include "game/critter.h"
+#include "game/dialog.h"
+#include "game/gamelib.h"
 #include "game/gmovie.h"
+#include "game/level.h"
 #include "game/light_scheme.h"
 #include "game/location.h"
+#include "game/magictech.h"
+#include "game/map.h"
+#include "game/multiplayer.h"
+#include "game/name.h"
 #include "game/obj.h"
+#include "game/object.h"
 #include "game/player.h"
+#include "game/roof.h"
+#include "game/roof.h"
+#include "game/script.h"
 #include "game/scroll.h"
+#include "game/spell.h"
 #include "game/stat.h"
+#include "game/tech.h"
+#include "game/wallcheck.h"
+#include "ui/charedit_ui.h"
+#include "ui/dialog_ui.h"
+#include "ui/gameuilib.h"
+#include "ui/intgame.h"
+#include "ui/iso.h"
+#include "ui/logbook_ui.h"
+#include "ui/mainmenu_ui.h"
+#include "ui/textedit_ui.h"
+#include "ui/wmap_rnd.h"
+#include "ui/wmap_ui.h"
 
 static void main_loop();
 static void handle_mouse_scroll();
@@ -36,7 +66,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     pch = lpCmdLine;
     while (*pch != '\0') {
-        *pch = tolower(*pch);
+        *pch = (unsigned char)tolower(*(unsigned char*)pch);
         pch++;
     }
 
@@ -100,7 +130,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     pch = strstr(lpCmdLine, "-pathtimelimit");
     if (pch != NULL) {
         // FIXME: Length is wrong, should be 14.
-        int value = atoi(pch + 10);
+        value = atoi(pch + 10);
         if (value > 0) {
             sub_421AE0(value);
         }
@@ -140,11 +170,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     tig_video_screenshot_set_settings(&screenshotter);
 
     if ((init_info.flags & TIG_INITIALIZE_ANY_3D) != 0) {
-        sub_5577E0(sub_5577D0() | 0x40);
+        intgame_set_iso_window_flags(intgame_get_iso_window_flags() | TIG_WINDOW_HAVE_FLUSH);
     }
 
-    intgame_set_window_width(init_info.width);
-    intgame_set_window_height(init_info.height);
+    intgame_set_iso_window_width(init_info.width);
+    intgame_set_iso_window_height(init_info.height);
     if (!intgame_create_iso_window(&(game_init_info.iso_window_handle))) {
         tig_exit();
         return EXIT_SUCCESS; // FIXME: Should be `EXIT_FAILURE`.
@@ -153,8 +183,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     tig_mouse_hide();
 
     game_init_info.editor = false;
-    game_init_info.invalidate_rect_func = sub_5581A0;
-    game_init_info.refresh_func = iso_redraw;
+    game_init_info.invalidate_func = sub_5581A0;
+    game_init_info.redraw_func = iso_redraw;
 
     if (!gamelib_init(&game_init_info)) {
         tig_window_destroy(game_init_info.iso_window_handle);
@@ -218,7 +248,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         return EXIT_SUCCESS; // FIXME: Should be `EXIT_FAILURE`.
     }
 
-    gmovie_play(8, GAME_MOVIE_FLAG_0x08, 0);
+    gmovie_play(8, GAME_MOVIE_BLACK_OUT, 0);
 
     if (!mainmenu_ui_handle()) {
         gameuilib_exit();
@@ -234,10 +264,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     tig_debug_printf("[Beginning Game]\n");
 
-    pc_starting_location = obj_field_int64_get(player_get_pc_obj());
+    pc_starting_location = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
     sprintf(msg, "Player Start Position: x: %d, y: %d",
-        pc_starting_location & 0xFFFFFFFF,
-        pc_starting_location >> 32);
+        (int)(pc_starting_location & 0xFFFFFFFF),
+        (int)(pc_starting_location >> 32));
     tig_debug_printf("%s\n", msg);
 
     main_loop();
@@ -281,7 +311,7 @@ void main_loop()
     art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
     art_id = tig_art_id_frame_set(art_id, 0);
     art_id = sub_503E50(art_id, 0);
-    object_set_current_aid(art_id);
+    object_set_current_aid(pc_obj, art_id);
 
     sub_43D280(pc_obj, OF_OFF);
     sub_430460();
@@ -423,6 +453,7 @@ void main_loop()
                         for (index = 0; index < 8; index++) {
                             sub_526D20(index);
                         }
+                        break;
                     }
 
                     if (!textedit_ui_is_focused()) {
@@ -440,7 +471,7 @@ void main_loop()
                             case DIK_GRAVE:
                                 stat_set_base(pc_obj, STAT_INTELLIGENCE, 20);
                                 for (index = 0; index < 8; index++) {
-                                    sub_4AFEC0(pc_obj, index);
+                                    tech_inc_degree(pc_obj, index);
                                 }
                                 sub_55A230();
                                 break;
@@ -464,10 +495,10 @@ void main_loop()
                                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
                                     sub_45F110(pc_obj, level_get_experience_points_to_next_level(pc_obj));
                                 } else if ((tig_net_flags & TIG_NET_HOST) != 0) {
-                                    party_member_obj = sub_4A2BE0();
+                                    party_member_obj = multiplayer_find_first_player_obj();
                                     while (party_member_obj != OBJ_HANDLE_NULL) {
                                         sub_45F110(party_member_obj, level_get_experience_points_to_next_level(party_member_obj));
-                                        party_member_obj = sub_4A2C60();
+                                        party_member_obj = multiplayer_find_next_player_obj();
                                     }
                                 }
                                 break;
@@ -537,7 +568,7 @@ void main_loop()
                                 settings_set_value(&settings, "shadows", 1 - settings_get_value(&settings, "shadows"));
                                 break;
                             case DIK_BACKSLASH:
-                                sub_438500(1 - sub_438520());
+                                sub_438500(!sub_438520());
                                 break;
                             case DIK_NUMPAD7:
                                 if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
