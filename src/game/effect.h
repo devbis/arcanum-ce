@@ -4,6 +4,8 @@
 #include "game/context.h"
 #include "game/obj.h"
 
+extern const char* off_5B9CB4[];
+
 bool effect_init(GameInitInfo* init_info);
 void effect_exit();
 bool effect_mod_load();

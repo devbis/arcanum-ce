@@ -145,6 +145,20 @@ static const char* off_5B9C8C[] = {
     "xpgain",
 };
 
+// 0x5B9CB4
+const char* off_5B9CB4[] = {
+    "Race",
+    "Background",
+    "Class",
+    "Bless",
+    "Curse",
+    "Item",
+    "Spell",
+    "Injury",
+    "Tech",
+    "Gender",
+};
+
 // TODO: Figure out proper enum.
 static_assert(sizeof(off_5B9C8C) / sizeof(off_5B9C8C[0]) == EFFECT_SPECIAL_COUNT, "wrong size");
 
