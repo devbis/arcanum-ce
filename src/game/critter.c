@@ -852,7 +852,7 @@ int sub_45F0B0(int64_t obj)
 }
 
 // 0x45F110
-void sub_45F110()
+void sub_45F110(int64_t obj, int a2)
 {
     // TODO: Incomplete.
 }

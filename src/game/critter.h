@@ -86,6 +86,7 @@ void sub_45EE30(int64_t obj, bool a2);
 bool sub_45EFF0(int64_t a, int64_t b);
 bool sub_45F060(int64_t obj, int stat, int mod);
 int sub_45F0B0(int64_t obj);
+void sub_45F110(int64_t obj, int a2);
 bool critter_enter_bed(int64_t obj, int64_t bed);
 void critter_leave_bed(int64_t obj, int64_t bed);
 bool sub_45F730(long long obj);
