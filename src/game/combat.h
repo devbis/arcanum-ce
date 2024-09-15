@@ -2,13 +2,14 @@
 #define ARCANUM_GAME_COMBAT_H_
 
 #include "game/context.h"
+#include "game/timeevent.h"
 
 typedef struct CombatCallbacks {
-    int field_0;
-    int field_4;
-    int field_8;
-    int field_C;
-    int field_10;
+    void* field_0;
+    void* field_4;
+    void* field_8;
+    void* field_C;
+    void* field_10;
 } CombatCallbacks;
 
 static_assert(sizeof(CombatCallbacks) == 0x14, "wrong size");

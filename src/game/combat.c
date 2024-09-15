@@ -9,13 +9,13 @@
 #include "game/player.h"
 #include "game/random.h"
 #include "game/stat.h"
-#include "game/timeevent.h"
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
 static void sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
+static bool combat_turn_based_start();
 static void sub_4B7300();
 static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
@@ -469,7 +469,7 @@ bool sub_4B6C90(bool turn_based)
     }
 
     dword_5FC1E4();
-    if (sub_4B71E0()) {
+    if (combat_turn_based_start()) {
         combat_turn_based = turn_based;
         return true;
     }
@@ -567,7 +567,7 @@ bool combat_tb_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x4B71E0
-void sub_4B71E0()
+bool combat_turn_based_start()
 {
     // TODO: Incomplete.
 }
