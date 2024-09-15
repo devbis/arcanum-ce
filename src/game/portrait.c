@@ -1,9 +1,32 @@
-#include "game/lib/portrait.h"
+#include "game/portrait.h"
 
 #include <stdio.h>
 
-#include "game/lib/message.h"
-#include "game/lib/stat.h"
+#include "game/mes.h"
+#include "game/stat.h"
+
+static bool sub_4CEAC0(object_id_t object_id, const char* str);
+
+// 0x5B7C0C
+static const char* portrait_race_specifiers[RACE_COUNT] = {
+    /*     HUMAN */ "HU",
+    /*     DWARF */ "DW",
+    /*       ELF */ "EL",
+    /*  HALF_ELF */ "HE",
+    /*     GNOME */ "GN",
+    /*  HALFLING */ "HA",
+    /*  HALF_ORC */ "HO",
+    /* HALF_OGRE */ "HG",
+    /*  DARK_ELF */ "EL",
+    /*      OGRE */ "HG",
+    /*       ORC */ "HO",
+};
+
+// 0x5B7C38
+static char portrait_gender_specifiers[GENDER_COUNT] = {
+    /* FEMALE */ 'F',
+    /*   MALE */ 'M',
+};
 
 // 0x601744
 static int portrait_user_msg_file;
@@ -15,13 +38,15 @@ static bool portrait_user_msg_file_loaded;
 static int portrait_msg_file;
 
 // 0x4CE350
-bool portait_init(GameContext* ctx)
+bool portait_init(GameInitInfo* init_info)
 {
-    if (!message_load("portrait\\gameport.mes", &portrait_msg_file)) {
+    (void)init_info;
+
+    if (!mes_load("portrait\\gameport.mes", &portrait_msg_file)) {
         return false;
     }
 
-    portrait_user_msg_file_loaded = message_load("portrait\\userport.mes", &portrait_user_msg_file);
+    portrait_user_msg_file_loaded = mes_load("portrait\\userport.mes", &portrait_user_msg_file);
 
     return true;
 }
@@ -29,57 +54,38 @@ bool portait_init(GameContext* ctx)
 // 0x4CE390
 void portrait_exit()
 {
-    message_unload(portrait_msg_file);
+    mes_unload(portrait_msg_file);
 
     if (portrait_user_msg_file_loaded) {
-        message_unload(portrait_user_msg_file);
+        mes_unload(portrait_user_msg_file);
     }
 }
 
 // 0x4CEAC0
-bool sub_4CEAC0(object_id_t object_id, char* buffer)
+bool sub_4CEAC0(int64_t obj, const char* str)
 {
-    // 0x5B7C0C
-    static const char* race_specifiers[RACE_COUNT] = {
-        /*     HUMAN */ "HU",
-        /*     DWARF */ "DW",
-        /*       ELF */ "EL",
-        /*  HALF_ELF */ "HE",
-        /*     GNOME */ "GN",
-        /*  HALFLING */ "HA",
-        /*  HALF_ORC */ "HO",
-        /* HALF_OGRE */ "HG",
-        /*  DARK_ELF */ "EL",
-        /*      OGRE */ "HG",
-        /*       ORC */ "HO",
-    };
+    int race;
+    int gender;
+    char buffer[4];
 
-    // 0x5B7C38
-    static char gender_specifiers[GENDER_COUNT] = {
-        /* FEMALE */ 'F',
-        /*   MALE */ 'M',
-    };
+    if (str != NULL) {
+        race = stat_get_base(obj, STAT_RACE);
+        gender = stat_get_base(obj, STAT_GENDER);
+        sprintf(buffer, "%s%c",
+            portrait_race_specifiers[race],
+            portrait_gender_specifiers[gender]);
 
-    if (buffer != NULL) {
-        int race = sub_4B0740(object_id, STAT_RACE);
-        int gender = sub_4B0740(object_id, STAT_GENDER);
-        sprintf(buffer, "%s%c", race_specifiers[race], gender_specifiers[gender]);
-
-        // FIXME: What for?
-        if (strnicmp(buffer, buffer, 3) == 0) {
+        if (strnicmp(buffer, str, 3) == 0) {
             return true;
         }
 
-        // FIXME: Always false with current implementation.
-        if (strnicmp("ANY", buffer, 3) == 0) {
+        if (strnicmp("ANY", str, 3) == 0) {
             return true;
         }
 
-        if (obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            // FIXME: Always false with current implementation.
-            if (strnicmp("NPC", buffer, 3) == 0) {
-                return true;
-            }
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+            && strnicmp("NPC", str, 3) == 0) {
+            return true;
         }
     }
 
