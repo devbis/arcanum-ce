@@ -3,10 +3,10 @@
 
 #include "game/context.h"
 
-bool gameuilib_init(GameContext* ctx);
+bool gameuilib_init(GameInitInfo* init_info);
 void gameuilib_exit();
 void gameuilib_reset();
-void gameuilib_resize(ResizeContext* ctx);
+void gameuilib_resize(ResizeInfo* resize_info);
 bool gameuilib_mod_load();
 void gameuilib_mod_unload();
 bool gameuilib_save();

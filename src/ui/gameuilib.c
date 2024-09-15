@@ -10,10 +10,12 @@
 #include "ui/fate_ui.h"
 #include "ui/follower_ui.h"
 #include "ui/intgame.h"
+#include "ui/inven_ui.h"
 #include "ui/iso.h"
 #include "ui/item_ui.h"
 #include "ui/logbook_ui.h"
 #include "ui/mainmenu_ui.h"
+#include "ui/mp_ctrl_ui.h"
 #include "ui/roller_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
@@ -71,7 +73,7 @@ static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "Sleep-UI" },
     { "Skill_UI", skill_ui_init, skill_ui_reset, NULL, NULL, skill_ui_exit, NULL, NULL, NULL },
     { "Char-Edit", charedit_init, charedit_reset, NULL, NULL, charedit_exit, NULL, NULL, NULL },
-    { "Inven-UI" },
+    { "Inven-UI", inven_ui_init, inven_ui_reset, NULL, NULL, inven_ui_exit, NULL, NULL, NULL },
     { "Item-UI", item_ui_init, NULL, NULL, NULL, item_ui_exit, NULL, NULL, NULL },
     { "Broadcast-UI", broadcast_ui_init, broadcast_ui_reset, NULL, NULL, broadcast_ui_exit, NULL, NULL, NULL },
     { "Dialog-UI" },
@@ -82,7 +84,7 @@ static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "Written-UI", NULL, NULL, written_ui_mod_load, written_ui_mod_unload, NULL, NULL, NULL, NULL },
     { "Follower-UI", follower_ui_init, follower_ui_reset, NULL, NULL, follower_ui_exit, follower_ui_save, follower_ui_load, follower_ui_resize },
     { "Roller-UI", roller_ui_init, NULL, NULL, NULL, roller_ui_exit, NULL, NULL, NULL },
-    { "MP-Ctrl-UI" },
+    { "MP-Ctrl-UI", mp_ctrl_ui_init, NULL, NULL, NULL, mp_ctrl_ui_exit, NULL, NULL, NULL },
     { "Matchmaker-UI" },
     { "Slide-UI" },
     { "Compact-UI", compact_ui_init, compact_ui_reset, NULL, NULL, compact_ui_exit, NULL, NULL, NULL },
