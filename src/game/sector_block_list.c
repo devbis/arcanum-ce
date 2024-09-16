@@ -55,7 +55,7 @@ bool sector_block_list_save(SectorBlockList* list, TigFile* stream)
 }
 
 // 0x4F82D0
-void sector_block_list_load_with_dif(SectorBlockList* list, TigFile* stream)
+bool sector_block_list_load_with_dif(SectorBlockList* list, TigFile* stream)
 {
     if (!sector_block_list_load(list, stream)) {
         return false;
@@ -67,7 +67,7 @@ void sector_block_list_load_with_dif(SectorBlockList* list, TigFile* stream)
 }
 
 // 0x4F8300
-void sector_block_list_save_with_dif(SectorBlockList* list, TigFile* stream)
+bool sector_block_list_save_with_dif(SectorBlockList* list, TigFile* stream)
 {
     if (!sector_block_list_save(list, stream)) {
         return false;
