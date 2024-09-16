@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game/mes.h"
+#include "game/sector.h"
 
 typedef struct TownMapIndexEntry {
     int map;
@@ -125,9 +126,18 @@ void townmap_flush()
 }
 
 // 0x4BE380
-void sub_4BE380()
+int sub_4BE380(int64_t sector_id)
 {
-    // TODO: Incomplete.
+    Sector* sector;
+    int num;
+
+    if (sector_lock(sector_id, &sector)) {
+        num = sector->townmap_info;
+        sector_unlock(sector_id);
+        return num;
+    }
+
+    return 0;
 }
 
 // 0x4BE400

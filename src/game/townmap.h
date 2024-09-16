@@ -24,6 +24,7 @@ void townmap_init();
 void townmap_reset();
 void townmap_mod_load();
 void townmap_flush();
+int sub_4BE380(int64_t sector_id);
 void townmap_count();
 const char* townmap_name(int map);
 bool townmap_info(int map, TownMapInfo* tmi);
