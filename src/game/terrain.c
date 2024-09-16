@@ -79,6 +79,19 @@ void terrain_exit()
     mes_unload(terrain_mes_file);
 }
 
+// 0x4E86F0
+void sub_4E86F0(Sector* sector)
+{
+    tig_art_id_t art_id;
+    int index;
+
+    tig_art_tile_id_create(7, 7, 15, 0, 0, 0, 0, 0, &art_id);
+
+    for (index = 0; index < 4096; index++) {
+        sector->tiles.field_0[index] = sub_4D7480(art_id, 7, 0, 15);
+    }
+}
+
 // 0x4E8B20
 const char* terrain_base_name(int terrain_type)
 {
