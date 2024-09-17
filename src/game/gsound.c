@@ -39,6 +39,7 @@ static_assert(sizeof(SoundSchemeList) == 0x1CF4, "wrong size");
 static const char* gsound_build_sound_path(const char* name);
 static void sub_41AFB0(SoundSchemeList* scheme);
 static void sub_41BA20(int fade_duration, int index);
+static void sub_41BE20(int num);
 
 // 0x5A0F38
 static const char* gsound_base_sound_path = "sound\\";
@@ -741,6 +742,68 @@ void sub_41BD50(int a1, int a2)
                     sub_41BAC0(25);
                     sub_41BE20(a1);
                     sub_41BE20(a2);
+                }
+            }
+        }
+    }
+}
+
+// 0x41BE20
+void sub_41BE20(int num)
+{
+    SoundSchemeList* scheme;
+    int index;
+    MesFileEntry mes_file_entry;
+    char* hash;
+    SoundScheme* sound;
+
+    if (num == 0) {
+        return;
+    }
+
+    for (index = 0; index < TWO; index++) {
+        if (stru_5D1A98[index].field_0 == 0) {
+            break;
+        }
+    }
+
+    if (index == TWO) {
+        return;
+    }
+
+    scheme = &(stru_5D1A98[index]);
+    sub_41AFB0(scheme);
+
+    scheme->field_4 = num;
+
+    mes_file_entry.num = num;
+    if (!mes_search(dword_5D5480, &mes_file_entry)) {
+        return;
+    }
+
+    hash = strchr(mes_file_entry.str, '#');
+    if (hash == NULL) {
+        return;
+    }
+
+    scheme->field_0 = atoi(hash + 1);
+    scheme->field_8 = 0;
+
+    for (index = 0; index < 100; index++) {
+        mes_file_entry.num = scheme->field_0 + index;
+        if (mes_search(dword_5D1A40, &mes_file_entry)) {
+            sound = sub_41BF70(scheme, mes_file_entry.str);
+            if (sound != NULL) {
+                if (sound->field_0
+                    && !sound->field_4) {
+                    sub_41BCD0(sound->path, path);
+                    tig_sound_create(&(sound->sound_handle), TIG_SOUND_TYPE_MUSIC);
+                    tig_sound_set_volume(sound->sound_handle, gsound_music_volume * sound->volume_min / 100);
+                    tig_sound_play_streamed_once(sound->sound_handle, path, 25, TIG_SOUND_HANDLE_INVALID);
+                }
+
+                if (sound->field_2) {
+                    dword_5D5594 = true;
                 }
             }
         }
