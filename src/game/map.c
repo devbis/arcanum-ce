@@ -52,6 +52,7 @@ typedef struct MapListInfo {
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
+static void map_load_postprocess();
 static bool sub_411450(const char* name);
 static void map_disable_objects();
 
@@ -559,6 +560,33 @@ void sub_4102C0(char** name, char** folder)
 
     if (folder != NULL) {
         *folder = map_folder;
+    }
+}
+
+// 0x410C50
+void map_load_postprocess()
+{
+    int64_t obj;
+    int v1;
+    unsigned int flags;
+    TimeEvent timeevent;
+
+    if (sub_4082C0(&obj, &v1)) {
+        do {
+            if (!sub_43D990(obj)) {
+                sub_406520(obj);
+            }
+
+            flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+            if ((flags & OF_TELEPORTED) != 0) {
+                timeevent.type = TIMEEVENT_TYPE_TELEPORTED;
+                timeevent.params[0].object_value = obj;
+                sub_45B820(&timeevent);
+
+                flags &= ~OF_TELEPORTED;
+                obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+            }
+        } while (sub_408390(&obj, &v1));
     }
 }
 
