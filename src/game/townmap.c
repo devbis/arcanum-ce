@@ -15,7 +15,7 @@ static void sub_4BED90(int map, int index);
 static bool sub_4BEDD0(int map, int index);
 static bool sub_4BEE60(int map);
 static void sub_4BEF40(int map);
-static void sub_4BEFB0();
+static bool sub_4BEFB0();
 
 // 0x5B6450
 static mes_file_handle_t townmap_mes_file = MES_FILE_HANDLE_INVALID;
@@ -50,6 +50,9 @@ void townmap_init()
     sub_4BED00();
 }
 
+// NOTE: For unknown reason this function returns `1` in all code paths which
+// breaks function signature.
+//
 // 0x4BE1C0
 void townmap_reset()
 {
@@ -60,7 +63,7 @@ void townmap_reset()
 
     if (!mes_load("rules\\townmap.mes", &townmap_mes_file)) {
         townmap_mes_file = MES_FILE_HANDLE_INVALID;
-        return true;
+        return;
     }
 
     townmap_entries_cnt = mes_num_entries(townmap_mes_file);
@@ -94,8 +97,6 @@ void townmap_reset()
             index++;
         } while (mes_find_next(townmap_mes_file, &mes_file_entry));
     }
-
-    return true;
 }
 
 // 0x4BE310
@@ -141,7 +142,7 @@ int sub_4BE380(int64_t sector_id)
 }
 
 // 0x4BE400
-void townmap_count()
+int townmap_count()
 {
     if (townmap_mes_file == MES_FILE_HANDLE_INVALID) {
         return 0;
@@ -201,7 +202,7 @@ bool townmap_info(int map, TownMapInfo* tmi)
         return false;
     }
 
-    if (tig_file_fseek(stream, -sizeof(version), SEEK_CUR) != 0
+    if (tig_file_fseek(stream, -(int)(sizeof(version)), SEEK_CUR) != 0
         || tig_file_fread(tmi, sizeof(*tmi), 1, stream) != 1) {
         tig_file_fclose(stream);
         return false;
@@ -305,7 +306,7 @@ void sub_4BED90(int map, int index)
 // 0x4BEDD0
 bool sub_4BEDD0(int map, int index)
 {
-    char* name;
+    const char* name;
     char path[TIG_MAX_PATH];
 
     if (!sub_4BEE60(map)) {
@@ -373,27 +374,26 @@ void sub_4BEF40(int map)
 }
 
 // 0x4BEFB0
-void sub_4BEFB0()
+bool sub_4BEFB0()
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    if (!dword_5FC50C) {
-        return;
-    }
+    if (dword_5FC50C) {
+        sprintf(path, "%s\\%s.tmf", "Save\\Current", townmap_name(dword_5FC518));
+        stream = tig_file_fopen(path, "wb");
+        if (stream == NULL) {
+            return false;
+        }
 
-    sprintf(path, "%s\\%s.tmf", "Save\\Current", townmap_name(dword_5FC518));
-    stream = tig_file_fopen(path, "wb");
-    if (stream == NULL) {
-        return;
-    }
+        if (tig_file_fwrite(dword_5FC510, 1, dword_5FC514, stream) != dword_5FC514) {
+            tig_file_fclose(stream);
+            tig_file_remove(path);
+            return false;
+        }
 
-    if (tig_file_fwrite(dword_5FC510, 1, dword_5FC514, stream) != dword_5FC514) {
         tig_file_fclose(stream);
-        tig_file_remove(stream);
-        return false;
     }
 
-    tig_file_fclose(stream);
     return true;
 }
