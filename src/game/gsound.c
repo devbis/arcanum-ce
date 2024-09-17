@@ -596,6 +596,44 @@ bool sub_41BD10(int a1, int* a2)
     return false;
 }
 
+// 0x41BD50
+void sub_41BD50(int a1, int a2)
+{
+    bool v1;
+    int v2;
+    bool v3;
+    int v4;
+
+    if (dword_5D1A6C && !dword_5D1A70) {
+        if (a1 == a2) {
+            a2 = 0;
+        }
+
+        if (dword_5D55D8) {
+            dword_5D1A30[1] = a2;
+            dword_5D1A30[0] = a1;
+        } else {
+            v1 = sub_41BD10(a1, &v2);
+            v3 =  sub_41BD10(a2, &v4);
+            if (v1) {
+                if (!v3) {
+                    sub_41BA20(25, 1 - v2);
+                    sub_41BE20(a2);
+                }
+            } else {
+                if (v3) {
+                    sub_41BA20(25, 1 - v4);
+                    sub_41BE20(a1);
+                } else {
+                    sub_41BAC0(25);
+                    sub_41BE20(a1);
+                    sub_41BE20(a2);
+                }
+            }
+        }
+    }
+}
+
 // 0x41BF70
 SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
 {
