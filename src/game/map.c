@@ -6,6 +6,8 @@
 #include "game/location.h"
 #include "game/mes.h"
 #include "game/object.h"
+#include "game/player.h"
+#include "game/sector.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 
@@ -49,6 +51,8 @@ typedef struct MapListInfo {
 
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
+
+static void map_disable_objects();
 
 // 0x59F058
 static const char* off_59F058[MAP_TYPE_COUNT] = {
@@ -629,6 +633,32 @@ void sub_4115D0(const char* name)
 void map_enable_gender_check()
 {
     map_gender_check_enabled = true;
+}
+
+// 0x411750
+void map_disable_objects()
+{
+    int64_t obj;
+    int v1;
+    int64_t location;
+    int sector;
+    unsigned int flags;
+
+    if (sub_4082C0(&obj, &v1)) {
+        do {
+            if (!sub_43D990(obj)) {
+                location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+                sector = sub_4CFC50(location);
+                if (!sub_4D0DE0(sector) && !player_is_pc_obj(obj)) {
+                    if (sub_45DDA0() != player_get_pc_obj()) {
+                        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+                        flags |= OF_OFF;
+                        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+                    }
+                }
+            }
+        } while (sub_408390(&obj, &v1));
+    }
 }
 
 // 0x412390
