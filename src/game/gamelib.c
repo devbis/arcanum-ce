@@ -871,7 +871,137 @@ void sub_402FF0(const char* name)
 // 0x403030
 bool gamelib_save(const char* name, const char* description)
 {
-    // TODO: Incomplete.
+    int start_pos = 0;
+    int pos;
+    tig_timestamp_t start_time;
+    tig_timestamp_t time;
+    tig_duration_t duration;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    int index;
+    unsigned int sentinel = 0xBEEFCAFE;
+    int version;
+    GameSaveInfo save_info;
+
+    tig_debug_printf("\ngamelib_save(): Saving to File: %s.\n", name);
+    tig_timer_now(&start_time);
+
+    in_save = true;
+
+    sub_460870(64);
+
+    if (!tig_file_is_directory("Save\\Current")) {
+        tig_debug_printf("gamelib_save(): Error finding folder %s\n", "Save\\Current");
+        in_save = false;
+        return false;
+    }
+
+    strcpy(path, "Save\\Current");
+    strcat(path, "\\data.sav");
+
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        tig_debug_printf("gamelib_save(): Error creating %s\n", path);
+        in_save = false;
+        return false;
+    }
+
+    version = 25;
+    if (tig_file_fwrite(&version, sizeof(version), 1, stream) != 1) {
+        tig_debug_printf("gamelib_save(): Error writing version\n");
+        tig_file_fclose(stream);
+        tig_file_remove(path);
+        in_save = false;
+        return false;
+    }
+
+    tig_file_fgetpos(stream, &start_pos);
+    tig_debug_printf("gamelib_save: Start Pos: %lu\n", start_pos);
+
+    sub_460890(1);
+
+    for (index = 0; index < MODULE_COUNT; index++) {
+        if (gamelib_modules[index].save_func != NULL) {
+            tig_debug_printf("gamelib_save: Function %d (%s)", index, gamelib_modules[index].name);
+            tig_timer_now(&time);
+
+            if (!gamelib_modules[index].save_func(stream)) {
+                tig_debug_printf("gamelib_save(): save function %d (%s) failed\n", index, gamelib_modules[index].name);
+                break;
+            }
+
+            duration = tig_timer_elapsed(time);
+            tig_file_fgetpos(stream, &pos);
+            tig_debug_printf(" wrote to: %lu, Total: (%lu), Time (ms): %d\n",
+                pos,
+                pos - start_pos,
+                duration);
+            start_pos = pos;
+
+            if (tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
+                tig_debug_printf("gamelib_save(): ERROR: Sentinel Failed to Save!\n");
+                break;
+            }
+
+            sub_460890(index + 1);
+        }
+    }
+
+    tig_file_fclose(stream);
+
+    if (index < MODULE_COUNT) {
+        tig_file_remove(path);
+        in_save = false;
+        return false;
+    }
+
+    if (gamelib_extra_save_func != NULL) {
+        tig_debug_printf("gamelib_save: Begin gamelib_extra_save_func()...");
+        tig_timer_now(&time);
+        if (!gamelib_extra_save_func()) {
+            tig_file_remove(path);
+            in_save = false;
+            return false;
+        }
+        duration = tig_timer_elapsed(time);
+        tig_debug_printf("done. Time (ms): %d\n", duration);
+    }
+
+    if (!gamelib_saveinfo_init(name, description, &save_info)) {
+        tig_debug_printf("gamelib_save(): error creating saveinfo\n");
+        in_save = false;
+        return false;
+    }
+
+    if (!gamelib_saveinfo_save(&save_info)) {
+        tig_debug_printf("gamelib_save(): error saving saveinfo\n");
+        gamelib_saveinfo_exit(&save_info);
+        in_save = false;
+        return false;
+    }
+
+    gamelib_saveinfo_exit(&save_info);
+
+    sprintf(path, "save\\%s", name);
+    tig_debug_printf("gamelib_save: creating folder archive...");
+
+    tig_timer_now(&time);
+    if (!sub_52E430(path, "Save\\Current")) {
+        tig_debug_printf("gamelib_save(): error archiving folder to %s\n", path);
+        in_save = false;
+        return false;
+    }
+    duration = tig_timer_elapsed(time);
+    tig_debug_printf("done. Time (ms): %d\n", duration);
+
+    sub_460890(64);
+
+    in_save = false;
+
+    duration = tig_timer_elapsed(start_time);
+    tig_debug_printf("gamelib_save(): Save Complete.  Total time: %f seconds.\n", (float)duration / 1000.0f);
+
+    return true;
 }
 
 // 0x403410
