@@ -509,7 +509,7 @@ void sub_41B3B0(tig_sound_handle_t sound_handle)
 }
 
 // 0x41B720
-int gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
+tig_sound_handle_t gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
 {
     char path[MAX_PATH];
 
@@ -522,9 +522,77 @@ int gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
 }
 
 // 0x41B780
-int gsound_play_sfx_id(int id, int loops)
+tig_sound_handle_t gsound_play_sfx_id(int id, int loops)
 {
     return gsound_play_sfx_id_ex(id, loops, 127, 64);
+}
+
+// 0x41B7A0
+tig_sound_handle_t sub_41B7A0(int id, int loops, int64_t x, int64_t y)
+{
+    return sub_41B7D0(id, loops, x, y, TIG_SOUND_SIZE_LARGE);
+}
+
+// 0x41B7D0
+tig_sound_handle_t sub_41B7D0(int id, int loops, int64_t x, int64_t y, int size)
+{
+    int volume;
+    int extra_volume;
+    tig_sound_handle_t sound_handle;
+
+    if (!dword_5D1A6C) {
+        return -1;
+    }
+
+    sub_41B420(x, y, &volume, &extra_volume, size);
+
+    sound_handle = gsound_play_sfx_id_ex(id, loops, volume, extra_volume);
+    tig_sound_set_position(sound_handle, x, y);
+    tig_sound_set_positional_size(sound_handle, size);
+
+    return sound_handle;
+}
+
+// 0x41B850
+tig_sound_handle_t sub_41B850(int id, int loops, int64_t location)
+{
+    return sub_41B870(id, loops, location, TIG_SOUND_SIZE_LARGE);
+}
+
+// 0x41B870
+tig_sound_handle_t sub_41B870(int id, int loops, int64_t location, int size)
+{
+    int64_t x;
+    int64_t y;
+
+    if (!dword_5D1A6C) {
+        return TIG_SOUND_HANDLE_INVALID;
+    }
+
+    if (qword_5D1A28 == OBJ_HANDLE_NULL) {
+        qword_5D1A28 = location;
+        sub_4B8680(location, &qword_5D55E8, &qword_5D55E0);
+    }
+
+    sub_4B8680(location, &x, &y);
+
+    return sub_41B7D0(id, loops, x - qword_5D55E8, y - qword_5D55E0, size);
+}
+
+// 0x41B930
+tig_sound_handle_t sub_41B930(int id, int loops, int64_t obj)
+{
+    int64_t location;
+    int size;
+
+    if (!dword_5D1A6C) {
+        return TIG_SOUND_HANDLE_INVALID;
+    }
+
+    location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    size = gsound_get_positional_size(obj);
+
+    return sub_41B870(id, loops, location, size);
 }
 
 // 0x41B980
