@@ -38,6 +38,7 @@ static_assert(sizeof(SoundSchemeList) == 0x1CF4, "wrong size");
 
 static const char* gsound_build_sound_path(const char* name);
 static void sub_41AFB0(SoundSchemeList* scheme);
+static void sub_41BA20(int fade_duration, int index);
 
 // 0x5A0F38
 static const char* gsound_base_sound_path = "sound\\";
@@ -629,6 +630,35 @@ TigSoundPositionalSize gsound_get_positional_size(object_id_t object_id)
     }
 
     return TIG_SOUND_SIZE_LARGE;
+}
+
+// 0x41BA20
+void sub_41BA20(int fade_duration, int index)
+{
+    SoundSchemeList* scheme;
+    SoundScheme* sound;
+    int index;
+
+    scheme = &(stru_5D1A98[index]);
+    if (scheme->field_0) {
+        if (!dword_5D5594) {
+            dword_5D1A38[index] = scheme->field_4;
+        }
+
+        for (index = 0; index < TWENTY_FIVE; index++) {
+            sound = &(scheme->field_C[index]);
+            if (sound->field_0) {
+                if (sound->sound_handle != TIG_SOUND_HANDLE_INVALID) {
+                    tig_sound_stop(sound->sound_handle, fade_duration);
+                    sound->sound_handle = TIG_SOUND_HANDLE_INVALID;
+                }
+            }
+        }
+    } else {
+        if (!dword_5D5594) {
+            dword_5D1A38[index] = 0;
+        }
+    }
 }
 
 // 0x41B9E0
