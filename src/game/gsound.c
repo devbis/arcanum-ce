@@ -20,7 +20,7 @@ typedef struct SoundScheme {
     int balance_right;
     int volume_min;
     int volume_max;
-    int field_20;
+    tig_sound_handle_t sound_handle;
     char path[MAX_PATH];
 } SoundScheme;
 
@@ -37,6 +37,7 @@ typedef struct SoundSchemeList {
 static_assert(sizeof(SoundSchemeList) == 0x1CF4, "wrong size");
 
 static const char* gsound_build_sound_path(const char* name);
+static void sub_41AFB0(SoundSchemeList* scheme);
 
 // 0x5A0F38
 static const char* gsound_base_sound_path = "sound\\";
@@ -323,6 +324,20 @@ const char* gsound_build_sound_path(const char* name)
     sprintf(path, "%s%s", gsound_base_sound_path, name);
 
     return path;
+}
+
+// 0x41AFB0
+void sub_41AFB0(SoundSchemeList* scheme)
+{
+    int index;
+
+    scheme->field_0 = 0;
+    scheme->field_8 = 0;
+
+    for (index = 0; index < TWENTY_FIVE; index++) {
+        memset(&(scheme->sounds[index]), 0, sizeof(Sound));
+        scheme->sounds[index].sound_handle = TIG_SOUND_HANDLE_INVALID;
+    }
 }
 
 // 0x41AFF0
@@ -726,7 +741,7 @@ SoundScheme* sub_41BF70(SoundSchemeList* a1, const char* path)
             scheme->time_end = 23;
             scheme->volume_min = 100;
             scheme->volume_max = 100;
-            scheme->field_20 = -1;
+            scheme->field_20 = TIG_SOUND_HANDLE_INVALID;
             scheme->path[0] = '\0';
             sub_41C260(copy);
 
