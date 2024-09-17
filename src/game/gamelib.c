@@ -62,8 +62,6 @@ typedef struct GameSaveEntry {
 
 static int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b);
 static int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b);
-static bool sub_403DD0(const char* name, const char* description, GameSaveInfo* save_info);
-static bool sub_404010(GameSaveInfo* save_info);
 static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
@@ -163,6 +161,11 @@ static TigRect stru_5D0018;
 
 // 0x5D0028
 static char byte_5D0028[TEN][MAX_PATH];
+
+// FIXME: Should be of TIG_MAX_PATH (260), not 256.
+//
+// 0x5D0A50
+static char byte_5D0A50[256];
 
 // 0x5D0B50
 static ViewOptions gamelib_view_options;
@@ -1219,7 +1222,7 @@ int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b)
 }
 
 // 0x403DD0
-bool sub_403DD0(const char* name, const char* description, GameSaveInfo* save_info)
+bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveInfo* save_info)
 {
     int64_t pc_obj;
     TigVideoBufferCreateInfo vb_create_info;
@@ -1281,8 +1284,16 @@ bool sub_403DD0(const char* name, const char* description, GameSaveInfo* save_in
     return true;
 }
 
+// 0x403FF0
+void gamelib_saveinfo_exit(GameSaveInfo* save_info)
+{
+    if (save_info->version != NULL) {
+        tig_video_buffer_destroy(save_info->thumbnail_video_buffer);
+    }
+}
+
 // 0x404010
-bool sub_404010(GameSaveInfo* save_info)
+bool gamelib_saveinfo_save(GameSaveInfo* save_info)
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
@@ -1337,7 +1348,54 @@ bool sub_404010(GameSaveInfo* save_info)
 
     tig_file_fclose(stream);
 
-    return success
+    return success;
+}
+
+// 0x404270
+bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info)
+{
+    TigFile* stream;
+    int size;
+    bool success = false;
+
+    sprintf(byte_5D0A50, "save\\%s.gsi", name);
+
+    stream = tig_file_fopen(byte_5D0A50, "rb");
+    if (stream == NULL) {
+        return false;
+    }
+
+    save_info->thumbnail_video_buffer = NULL;
+
+    strcpy(byte_5D0A50, "save\\");
+    strncpy(&(byte_5D0A50[5]), name, 8);
+    strcpy(&(byte_5D0A50[13]), ".bmp");
+
+    do {
+        if (tig_video_buffer_load_from_bmp(byte_5D0A50, &save_info->thumbnail_video_buffer, 0x1) != TIG_OK) break;
+
+        if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) break;
+        if (tig_file_fread(save_info->module_name, size, 1, stream) != 1) break;
+
+        if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) break;
+        if (tig_file_fread(save_info->pc_name, size, 1, stream) != 1) break;
+
+        if (tig_file_read(&(save_info->field_340), sizeof(save_info->field_340), 1, stream) != 1) break;
+        if (tig_file_read(&(save_info->datetime), sizeof(save_info->datetime), 1, stream) != 1) break;
+        if (tig_file_read(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
+        if (tig_file_read(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;
+        if (tig_file_read(&(save_info->pc_location), sizeof(save_info->pc_location), 1, stream) != 1) break;
+        if (tig_file_read(&(save_info->field_35C), sizeof(save_info->field_35C), 1, stream) != 1) break;
+
+        if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) break;
+        if (size != 0 && tig_file_fread(save_info->description, size, 1, stream) != 1) break;
+
+        success = true;
+    } while (0);
+
+    tig_file_fclose(stream);
+
+    return success;
 }
 
 // 0x404570
