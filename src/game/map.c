@@ -53,6 +53,7 @@ typedef struct MapListInfo {
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
+static bool map_save_preprocess();
 static bool map_save_objects();
 static bool map_save_difs();
 static bool map_save_dynamic();
@@ -565,6 +566,23 @@ void sub_4102C0(char** name, char** folder)
     if (folder != NULL) {
         *folder = map_folder;
     }
+}
+
+// 0x410720
+bool map_save_preprocess()
+{
+    int64_t obj;
+    int v1;
+
+    if (sub_4082C0(&obj, &v1)) {
+        do {
+            if (!sub_43D990(obj)) {
+                sub_4064B0(obj);
+            }
+        } while (sub_408390(&obj, v1));
+    }
+
+    return true;
 }
 
 // 0x410780
