@@ -554,6 +554,56 @@ bool map_is_clearing_objects()
     return map_in_map_clear_objects;
 }
 
+// 0x410070
+void map_flush(unsigned int flags)
+{
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+
+    wallcheck_flush();
+
+    if (!map_save_preprocess()) {
+        tig_debug_println("Error: map_save_preprocess failed in map_flush.");
+    }
+
+    if (dword_5D1200) {
+        if (!map_save_objects()) {
+            tig_debug_println("Error: map_save_objects failed in map_flush.");
+        }
+    } else {
+        if (!map_save_difs()) {
+            tig_debug_println("Error: map_save_difs failed in map_flush.");
+        }
+
+        if (!map_save_dynamic()) {
+            tig_debug_println("Error: map_save_dynamic failed in map_flush.");
+        }
+    }
+
+    map_load_postprocess();
+    sector_flush(flags);
+    jumppoints_flush();
+    terrain_flush();
+    townmap_flush();
+
+    if (dword_5D1200) {
+        sprintf(path, "%s\\startloc.txt", map_folder);
+        if (qword_5D11E0 != 0) {
+            stream = tig_file_fopen(path, "wt");
+            if (stream != NULL) {
+                tig_file_fprintf(stream,
+                    "%I64d\n%I64d\n",
+                    LOCATION_GET_X(qword_5D11E0),
+                    LOCATION_GET_Y(qword_5D11E0));
+            } else {
+                tig_debug_printf("Error could not open map start location file for writing %s\n", path);
+            }
+        } else {
+            tig_file_remove(path);
+        }
+    }
+}
+
 // 0x4101D0
 void sub_4101D0(int64_t location, int64_t a2)
 {

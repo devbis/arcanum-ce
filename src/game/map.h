@@ -27,6 +27,7 @@ bool map_get_starting_location(int map, long long* x, long long* y);
 bool map_get_area(int map, int* area);
 bool map_get_worldmap(int map, int* worldmap);
 bool map_is_clearing_objects();
+void map_flush(unsigned int flags);
 void sub_4101D0(int64_t location, int64_t a2);
 int sub_410270();
 void sub_410280(long long* location);
