@@ -1,5 +1,7 @@
 #include "game/map.h"
 
+#include <stdio.h>
+
 #include "game/description.h"
 #include "game/gsound.h"
 #include "game/jumppoint.h"
@@ -12,6 +14,7 @@
 #include "game/sector.h"
 #include "game/stat.h"
 #include "game/teleport.h"
+#include "game/terrain.h"
 #include "game/timeevent.h"
 #include "game/wallcheck.h"
 
@@ -57,6 +60,17 @@ typedef struct MapListInfo {
 
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
+
+typedef struct MapProperties {
+    int field_0;
+    int field_4;
+    int field_8;
+    int field_C;
+    int field_10;
+    int field_14;
+} MapProperties;
+
+static_assert(sizeof(MapProperties) == 0x18, "wrong size");
 
 static void map_close();
 static bool map_save_preprocess();
@@ -480,6 +494,204 @@ void map_update_view(ViewOptions* view_options)
             }
         }
     }
+}
+
+// 0x40F4E0
+bool map_open(const char* a1, const char* a2, bool a3)
+{
+    tig_timestamp_t start_timestamp;
+    tig_timestamp_t timestamp;
+    tig_duration_t duration;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    MapProperties map_properties;
+    char tmp[80];
+    char* pch;
+    int map;
+    MapResetInfo reset_info;
+
+    if (!dword_5D11F0) {
+        return false;
+    }
+
+    tig_debug_printf("map_open: map_close()...");
+    tig_timer_now(&timestamp);
+    map_close();
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    if (!tig_file_is_directory(a1)) {
+        tig_debug_printf("Error opening map %s: folder does not exist\n", a1);
+        return false;
+    }
+
+    tig_file_mkdir(a2);
+    if (!a3) {
+        sub_52E040(a2);
+    }
+
+    tig_debug_printf("map_open: reading properties file...");
+    tig_timer_now(&timestamp);
+    sprintf(path, "%s\\map.prp", a1);
+    stream = tig_file_fopen(path, "rb");
+    if (stream == NULL) {
+        tig_debug_printf("Error opening map properties file %s\n", path);
+        return false;
+    }
+    if (tig_file_fread(&map_properties, sizeof(map_properties), 1, stream) != 1) {
+        tig_debug_printf("Error reading map properties file %s\n", path);
+        tig_file_fclose(stream);
+        return false;
+    }
+    tig_file_fclose(stream);
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: reading start location...");
+    sprintf(path, "%s\\startloc.txt", a1);
+    if (tig_file_exists(path, NULL)) {
+        int64_t x;
+        int64_t y;
+
+        stream = tig_file_fopen(path, "rt");
+        if (stream == NULL) {
+            tig_debug_printf("Error opening map start location (file exists, can't open): %s\n", path);
+            return false;
+        }
+
+        if (tig_file_fgets(tmp, 80, stream) == NULL) {
+            // FIXME: Leaking stream.
+            tig_debug_printf("Error reading map start location (x) file %s\n", path);
+            return false;
+        }
+        x = _atoi64(tmp);
+
+        if (tig_file_fgets(tmp, 80, stream) == NULL) {
+            // FIXME: Leaking stream.
+            tig_debug_printf("Error reading map start location (y) file %s\n", path);
+            return false;
+        }
+        y = _atoi64(tmp);
+
+        qword_5D11E0 = x | y;
+
+        tig_file_fclose(stream);
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: loading mobile objects...");
+    tig_timer_now(&timestamp);
+    if (!sub_410D10(a1, a2)) {
+        tig_debug_println("Error reading mobile objects");
+        map_close();
+        return false;
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: map_load_postprocess()...");
+    tig_timer_now(&timestamp);
+    map_load_postprocess();
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    strcpy(map_name, a1);
+    strcpy(map_folder, a2);
+    tig_file_mkdir(map_folder);
+    if (!a3) {
+        sub_52E040(map_folder);
+    }
+
+    tig_debug_printf("map_open: loading terrain...");
+    tig_timer_now(&timestamp);
+    if (!terrain_open(map_name, map_folder)) {
+        reset_info.name = map_name;
+        reset_info.folder = map_name; // FIXME: Using name as folder.
+        reset_info.field_8 = map_properties.field_0;
+        reset_info.field_10 = map_properties.field_8 >> 6;
+        reset_info.field_18 = map_properties.field_10 >> 6;
+        sub_4E7B90(&reset_info);
+
+        if (!terrain_open(map_name, map_folder)) {
+            tig_debug_println("Error: terrain_open failed even after creating a new terrain");
+            map_close();
+            return false;
+        }
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: loading jump points...");
+    tig_timer_now(&timestamp);
+    if (!jumppoint_open(map_name, map_folder)) {
+        reset_info.name = map_name;
+        reset_info.folder = map_folder;
+        reset_info.field_8 = map_properties.field_0;
+        reset_info.field_10 = map_properties.field_8 >> 6;
+        reset_info.field_18 = map_properties.field_10 >> 6;
+        sub_4E3050(&reset_info);
+
+        if (!jumppoint_open(map_name, map_folder)) {
+            tig_debug_println("Error: jumppoint_open failed even after creating a new file");
+            map_close();
+            return false;
+        }
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: sector blocking...");
+    tig_timer_now(&timestamp);
+    if (!sub_4D0F50(map_name, map_folder)) {
+        sub_4D0F40();
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: setting initial map location and state...");
+    tig_timer_now(&timestamp);
+    location_set_limits(map_properties.field_8, map_properties.field_10);
+    sub_4CF790(map_properties.field_8 / 64, map_properties.field_10 / 64);
+    sub_4D0440(a1, a2);
+    sub_4B8CE0(sub_4B9810());
+    dword_5D1210 = 0;
+    pch = strrchr(a1, '\\');
+    map = map_list_info_find(pch != NULL ? pch + 1 : a1);
+    if (map != -1) {
+        dword_5D1210 = map + 1;
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: parsing extension file...");
+    tig_timer_now(&timestamp);
+    sub_4115D0(a1);
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: map_disable_objects()...");
+    tig_timer_now(&timestamp);
+    map_disable_objects();
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: map_gender_check()...");
+    tig_timer_now(&timestamp);
+    map_gender_check();
+    dword_5D11EC = 0;
+    if (dword_5D1210 != 0 && dword_5D1214[MAP_TYPE_START_MAP] == dword_5D1210) {
+        dword_5D11EC = 1;
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open(): Done.  Total time: %f seconds.\n", (float)start_timestamp / 1000.0f);
+
+    dword_5D11E8 = 0;
+    dword_5D11FC = 1;
+
+    return true;
 }
 
 // 0x40FC70
