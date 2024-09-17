@@ -63,6 +63,7 @@ typedef struct GameSaveEntry {
 static int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b);
 static int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b);
 static bool sub_403DD0(const char* name, const char* description, GameSaveInfo* save_info);
+static bool sub_404010(GameSaveInfo* save_info);
 static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
@@ -1278,6 +1279,65 @@ bool sub_403DD0(const char* name, const char* description, GameSaveInfo* save_in
     save_info->datetime = sub_45A7C0();
 
     return true;
+}
+
+// 0x404010
+bool sub_404010(GameSaveInfo* save_info)
+{
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    TigVideoBufferSaveToBmpInfo to_bmp_info;
+    TigRect rect;
+    bool success = false;
+    int size;
+
+    sprintf(path, "save\\%s%s.gsi", save_info->name, save_info->description);
+
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        return false;
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = dword_5D10C0;
+    rect.height = dword_5D0D80;
+
+    to_bmp_info.flags = 0;
+    to_bmp_info.video_buffer = save_info->thumbnail_video_buffer;
+    to_bmp_info.rect = &rect;
+    sprintf(to_bmp_info.path, "save\\%s.bmp", save_info->name);
+
+    if (tig_video_buffer_save_to_bmp(&to_bmp_info) == TIG_OK) {
+        do {
+            if (tig_file_fwrite(&(save_info->version), sizeof(save_info->version), 1, stream) != 1) break;
+
+            size = strlen(save_info->module_name);
+            if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
+            if (tig_file_fwrite(save_info->module_name, size, 1, stream) != 1) break;
+
+            size = strlen(save_info->pc_name);
+            if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
+            if (tig_file_fwrite(save_info->pc_name, size, 1, stream) != 1) break;
+
+            if (tig_file_fwrite(&(save_info->field_340), sizeof(save_info->field_340), 1, stream) != 1) break;
+            if (tig_file_fwrite(&(save_info->datetime), sizeof(save_info->datetime), 1, stream) != 1) break;
+            if (tig_file_fwrite(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
+            if (tig_file_fwrite(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;
+            if (tig_file_fwrite(&(save_info->pc_location), sizeof(save_info->pc_location), 1, stream) != 1) break;
+            if (tig_file_fwrite(&(save_info->field_35C), sizeof(save_info->field_35C), 1, stream) != 1) break;
+
+            size = strlen(save_info->description);
+            if (tig_file_fwrite(&size, sizeof(size), 1, stream) != 1) break;
+            if (size != 0 && tig_file_fwrite(save_info->description, size, 1, stream) != 1) break;
+
+            success = true;
+        } while (0);
+    }
+
+    tig_file_fclose(stream);
+
+    return success
 }
 
 // 0x404570
