@@ -52,6 +52,7 @@ typedef struct MapListInfo {
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
+static bool map_save_difs();
 static bool map_save_dynamic();
 static void map_load_postprocess();
 static bool sub_411450(const char* name);
@@ -562,6 +563,88 @@ void sub_4102C0(char** name, char** folder)
     if (folder != NULL) {
         *folder = map_folder;
     }
+}
+
+// 0x410830
+bool map_save_difs()
+{
+    int cnt = 0;
+    char path1[TIG_MAX_PATH];
+    char path2[TIG_MAX_PATH];
+    TigFile* stream1;
+    TigFile* stream2;
+    int size;
+    int64_t obj;
+    int v1;
+    ObjectID oid;
+
+    sprintf(path1, "%s\\mobile.md", map_folder);
+    stream1 = tig_file_fopen(path1, "wb");
+    if (stream1 == NULL) {
+        tig_debug_printf("Error opening file %s for writing...\n", path1);
+        tig_debug_printf("Cannot save mobile object differences\n");
+        return false;
+    }
+
+    sprintf(path2, "%s\\mobile.des", map_folder);
+    stream2 = tig_file_fopen(path2, "ab");
+    if (stream2 == NULL) {
+        tig_file_fclose(stream1);
+        tig_debug_printf("Error opening file %s for writing...\n", path2);
+        tig_debug_printf("Cannot save mobile object differences\n");
+        return false;
+    }
+
+    size = tig_file_filelength(stream2);
+
+    if (sub_4082C0(&obj, &v1)) {
+        do {
+            if (!sub_43D990(obj)
+                && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC)
+                && sub_4067C0(obj)) {
+                oid = sub_407EF0(obj);
+                if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_EXTINCT | OF_DESTROYED)) != 0) {
+                    if (tig_file_fwrite(&oid, sizeof(oid), 1, stream2) != 1) {
+                        tig_file_fclose(stream2);
+                        tig_file_fclose(stream1);
+                        tig_debug_printf("Error writing object id to file %s\n", path2);
+                        tig_debug_printf("Cannot save mobile object differences\n");
+                        return false;
+                    }
+                    size += sizeof(oid);
+                } else {
+                    if (tig_file_fwrite(&oid, sizeof(oid), 1, stream1) != 1) {
+                        tig_file_fclose(stream2);
+                        tig_file_fclose(stream1);
+                        tig_debug_printf("Error writing object id to file %s\n", path1);
+                        tig_debug_printf("Cannot save mobile object differences\n");
+                        return false;
+                    }
+
+                    if (!obj_dif_write(stream1, obj)) {
+                        tig_file_fclose(stream2);
+                        tig_file_fclose(stream1);
+                        tig_debug_printf("Error writing object differences to file %s\n", path1);
+                        tig_debug_printf("Cannot save mobile object differences\n");
+                        return false;
+                    }
+                }
+            }
+        } while (sub_408390(&obj, &v1));
+    }
+
+    if (size < 24) {
+        tig_file_fclose(stream2);
+        tig_file_remove(path2);
+    }
+
+    tig_file_fclose(stream1);
+
+    if (cnt == 0) {
+        tig_file_remove(path1);
+    }
+
+    return tru1;
 }
 
 // 0x410B20
