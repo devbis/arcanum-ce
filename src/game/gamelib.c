@@ -869,7 +869,130 @@ bool gamelib_save(const char* name, const char* description)
 // 0x403410
 bool gamelib_load(const char* name)
 {
-    // TODO: Incomplete.
+    int start_pos = 0;
+    int pos;
+    tig_timestamp_t start_time;
+    tig_timestamp_t time;
+    tig_duration_t duration;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    GameLoadInfo load_info;
+    int index;
+    unsigned int sentinel;
+
+    tig_debug_printf("\ngamelib_load: Loading from File: %s.\n", name);
+    tig_timer_now(&start_time);
+
+    in_load = true;
+
+    sub_460870(64);
+
+    if (!tig_file_is_directory("Save\\Current")) {
+        tig_debug_printf("gamelib_load(): Error finding folder %s\n", "Save\\Current");
+        in_load = false;
+        return false;
+    }
+
+    sprintf(path, "save\\%s", name);
+
+    tig_debug_printf("gamelib_load: begin removing files...");
+    tig_timer_now(&time);
+    if (!sub_52E040("Save\\Current")) {
+        tig_debug_printf("gamelib_load(): Error clearing folder %s\n", "Save\\Current");
+        in_load = false;
+        return false;
+    }
+    duration = tig_timer_elapsed(time);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("gamelib_load: begin restoring folder archive...");
+    tig_timer_now(&time);
+    if (!sub_52E550(path, "Save\\Current")) {
+        tig_debug_printf("gamelib_load(): error restoring archive %s to save\\test\n", path);
+        in_load = false;
+        return false;
+    }
+    duration = tig_timer_elapsed(time);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    stream = tig_file_fopen("Save\\Current\\data.sav", "rb");
+    if (stream == NULL) {
+        tig_debug_printf("gamelib_load(): Error reading data.sav\n");
+        in_load = false;
+        return false;
+    }
+
+    if (tig_file_fread(&(load_info.version), sizeof(load_info.version), 1, stream) != 1) {
+        tig_debug_printf("gamelib_load(): Error reading version\n");
+        in_load = false;
+        return false;
+    }
+
+    load_info.stream = stream;
+
+    tig_file_fgetpos(stream, &start_pos);
+    tig_debug_printf("gamelib_load: Start Pos: %lu\n", start_pos);
+
+    sub_460890(1);
+
+    for (index = 0; index < MODULE_COUNT; index++) {
+        if (gamelib_modules[index].load_func != NULL) {
+            tig_debug_printf("gamelib_load: Function %d (%s)", index, gamelib_modules[index].name);
+            tig_timer_now(&time);
+
+            if (!gamelib_modules[index].load_func(&load_info)) {
+                tig_debug_printf("gamelib_load(): load function %d (%s) failed\n", index, gamelib_modules[index].name);
+                break;
+            }
+
+            duration = tig_timer_elapsed(time);
+            tig_file_fgetpos(stream, &pos);
+            tig_debug_printf(" read to: %lu, Total: (%lu), Time (ms): %d\n",
+                pos,
+                pos - start_pos,
+                duration);
+            start_pos = pos;
+
+            if (tig_file_fread(&sentinel, sizeof(sentinel), 1, load_info.stream) != 1) {
+                tig_debug_printf("gamelib_load(): ERROR: Load Sentinel Failed to Load!\n");
+                break;
+            }
+
+            if (sentinel != 0xBEEFCAFE) {
+                tig_debug_printf("gamelib_load(): ERROR: Load Sentinel Failed to Match!\n");
+                break;
+            }
+
+            sub_460890(index + 1);
+        }
+    }
+
+    tig_file_fclose(stream);
+
+    if (index < MODULE_COUNT) {
+        in_load = false;
+        return false;
+    }
+
+    if (gamelib_extra_load_func != NULL) {
+        tig_debug_printf("gamelib_load: Begin gamelib_extra_load_func()...");
+        tig_timer_now(&time);
+        if (!gamelib_extra_load_func()) {
+            in_load = false;
+            return false;
+        }
+        duration = tig_timer_elapsed(time);
+        tig_debug_printf("done. Time (ms): %d\n", duration);
+    }
+
+    sub_460890(64);
+
+    in_load = false;
+
+    duration = tig_timer_elapsed(&start_time);
+    tig_debug_printf("gamelib_load: Load Complete.  Total time: %f seconds.\n", (float)duration / 1000.0f);
+
+    return true;
 }
 
 // 0x403790
