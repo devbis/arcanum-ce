@@ -1,5 +1,5 @@
-#ifndef ARCANUM_GAMELIB_MAP_H_
-#define ARCANUM_GAMELIB_MAP_H_
+#ifndef ARCANUM_GAME_MAP_H_
+#define ARCANUM_GAME_MAP_H_
 
 #include "game/context.h"
 
@@ -8,7 +8,7 @@ typedef enum MapType {
     MAP_TYPE_START_MAP,
     MAP_TYPE_SHOPPING_MAP,
     MAP_TYPE_COUNT,
-};
+} MapType;
 
 bool map_init(GameContext* ctx);
 void map_reset();
@@ -27,6 +27,7 @@ bool map_get_starting_location(int map, long long* x, long long* y);
 bool map_get_area(int map, int* area);
 bool map_get_worldmap(int map, int* worldmap);
 bool map_is_clearing_objects();
+int sub_410270();
 void sub_410280(long long* location);
 void sub_4102C0(char** name, char** folder);
 void map_clear_objects();
@@ -39,4 +40,4 @@ bool map_list_info_set(int index, const char* name, long long x, long long y, bo
 bool map_list_info_add(const char* name, long long x, long long y, bool is_start_map);
 bool map_list_info_add_internal(const char* name, long long x, long long y, bool is_start_map);
 
-#endif /* ARCANUM_GAMELIB_MAP_H_ */
+#endif /* ARCANUM_GAME_MAP_H_ */

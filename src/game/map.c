@@ -1,15 +1,13 @@
-#include "game/lib/map.h"
+#include "game/map.h"
 
-#include "game/lib/description.h"
-#include "game/lib/gsound.h"
-#include "game/lib/light_scheme.h"
-#include "game/lib/location.h"
-#include "game/lib/message.h"
-#include "game/lib/object.h"
-#include "game/lib/stat.h"
-#include "tig/debug.h"
-#include "tig/str_parse.h"
-#include "tig/timer.h"
+#include "game/description.h"
+#include "game/gsound.h"
+#include "game/light_scheme.h"
+#include "game/location.h"
+#include "game/mes.h"
+#include "game/object.h"
+#include "game/stat.h"
+#include "game/timeevent.h"
 
 #define MAP_LIST_CAPACITY 200
 #define MAP_NAME_LENGTH 256
@@ -39,7 +37,7 @@ typedef struct MapModule {
     MapSaveFunc* save_func;
     MapLoadFunc* load_func;
     MapResizeFunc* resize_func;
-};
+} MapModule;
 
 typedef struct MapListInfo {
     char name[MAP_NAME_LENGTH];
@@ -47,7 +45,7 @@ typedef struct MapListInfo {
     long long y;
     int worldmap;
     int area;
-};
+} MapListInfo;
 
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
@@ -106,6 +104,9 @@ static char* map_folder;
 // 0x5D11F8
 static char* map_name;
 
+// 0x5D11FC
+static int dword_5D11FC;
+
 // 0x5D1200
 static bool dword_5D1200;
 
@@ -117,6 +118,9 @@ static bool map_in_map_clear_objects;
 
 // 0x5D120C
 static int map_list_info_count;
+
+// 0x5D1210
+static int dword_5D1210;
 
 // 0x5D1214
 static int dword_5D1214[MAP_TYPE_COUNT];
@@ -168,20 +172,20 @@ void map_reset()
 
     if (dword_5D11F0) {
         tig_debug_printf("\nmap_reset: Resetting...\n");
-        tig_timer_start(&reset_start);
+        tig_timer_now(&reset_start);
 
         tig_debug_printf("map_reset: clearing magictech...");
-        tig_timer_start(&start);
+        tig_timer_now(&start);
         sub_457100();
         tig_debug_printf("done. Time (ms): %d\n", tig_timer_elapsed(start));
 
         tig_debug_printf("map_reset: interrupting anims...");
-        tig_timer_start(&start);
+        tig_timer_now(&start);
         sub_424250();
         tig_debug_printf("done. Time (ms): %d\n", tig_timer_elapsed(start));
 
         tig_debug_printf("map_reset: closing map...");
-        tig_timer_start(&start);
+        tig_timer_now(&start);
         map_close();
         dword_5D1210 = 0;
         tig_debug_printf("done. Time (ms): %d\n", tig_timer_elapsed(start));
@@ -189,7 +193,7 @@ void map_reset()
         for (int index = 0; index < MAP_MODULE_COUNT; index++) {
             if (map_modules[index].reset_func != NULL) {
                 tig_debug_printf("map_reset: Processing Reset Function: %d", index);
-                tig_timer_start(&start);
+                tig_timer_now(&start);
                 map_modules[index].reset_func();
                 tig_debug_printf(" done. Time (ms): %d.\n", tig_timer_elapsed(start));
             }
@@ -289,19 +293,19 @@ bool map_save(TigFile* stream)
     long start_pos = 0;
 
     tig_debug_printf("\nmap_save()\n");
-    tig_timer_start(&save_start);
+    tig_timer_now(&save_start);
 
     if (!dword_5D11F0) {
         return false;
     }
 
     tig_debug_printf("map_save: flushing map...");
-    tig_timer_start(&start);
+    tig_timer_now(&start);
     map_flush(1);
     tig_debug_printf("done.  Time (ms): %d\n", tig_timer_elapsed(start));
 
     tig_debug_printf("map_save: saving map names...");
-    tig_timer_start(&start);
+    tig_timer_now(&start);
 
     if (tig_file_fputs(map_name, stream) == -1) {
         tig_debug_printf("map_save(): error writing map name.\n");
@@ -331,7 +335,7 @@ bool map_save(TigFile* stream)
     for (int index = 0; index < MAP_MODULE_COUNT; index++) {
         if (map_modules[index].save_func != NULL) {
             tig_debug_printf("map_save: Function %d (%s)", index, map_modules[index].name);
-            tig_timer_start(&start);
+            tig_timer_now(&start);
 
             if (!map_modules[index].save_func(stream)) {
                 tig_debug_printf("map_save: save function %d (%s) failed\n", index, map_modules[index].name);
@@ -367,14 +371,14 @@ bool map_load(LoadContext* ctx)
     long start_pos = 0;
 
     tig_debug_printf("\nmap_load\n");
-    tig_timer_start(&load_start);
+    tig_timer_now(&load_start);
 
     if (!dword_5D11F0) {
         return false;
     }
 
     tig_debug_printf("map_load: retrieving map names...");
-    tig_timer_start(&start);
+    tig_timer_now(&start);
 
     char name[MAX_PATH];
     if (tig_file_fgets(name, sizeof(name), ctx->stream) == NULL) {
@@ -403,7 +407,7 @@ bool map_load(LoadContext* ctx)
     for (int index = 0; index < MAP_MODULE_COUNT; index++) {
         if (map_modules[index].load_func != NULL) {
             tig_debug_printf("map_load: Function %d (%s)", index, map_modules[index].name);
-            tig_timer_start(&start);
+            tig_timer_now(&start);
 
             if (!map_modules[index].load_func(ctx)) {
                 tig_debug_printf("map_load(): error calling map load func %d (%s)\n", index, map_modules[index].name);
@@ -434,7 +438,7 @@ bool map_load(LoadContext* ctx)
     }
 
     tig_debug_printf("map_load: opening map...");
-    tig_timer_start(&start);
+    tig_timer_now(&start);
     bool success = map_open(name, folder, 1);
     tig_debug_printf("done.  Time (ms): %d\n", tig_timer_elapsed(start));
 
@@ -525,6 +529,12 @@ bool map_get_worldmap(int map, int* worldmap)
 bool map_is_clearing_objects()
 {
     return map_in_map_clear_objects;
+}
+
+// 0x410270
+int sub_410270()
+{
+    return dword_5D11FC;
 }
 
 // 0x410280
@@ -685,28 +695,28 @@ void map_gender_check()
 // 0x4125C0
 bool map_list_info_load()
 {
-    MessageListItem msg;
+    MesFileEntry mes_file_entry;
 
-    if (!message_load("Rules\\MapList.mes", &dword_5D11D8)) {
+    if (!mes_load("Rules\\MapList.mes", &dword_5D11D8)) {
         return false;
     }
 
     tig_str_parse_set_separator(',');
 
-    msg.num = 5000;
-    while (message_find(dword_5D11D8, &msg)) {
-        char* str = msg.text;
+    mes_file_entry.num = 5000;
+    while (mes_search(dword_5D11D8, &mes_file_entry)) {
+        char* str = mes_file_entry.str;
         tig_str_parse_str_value(&str, map_list_info[map_list_info_count].name);
 
         // NOTE: This check is silly. When string it long enough it will easly
         // overrun `MAP_NAME_LENGTH` and crash before this check
-        if (strlen(map_list_info[map_list_info_count].name) >= MAP_NAME_LENGTH)) {
+        if (strlen(map_list_info[map_list_info_count].name) >= MAP_NAME_LENGTH) {
             tig_debug_println("ERROR: Map name is too long");
-            message_unload(dword_5D11D8);
+            mes_unload(dword_5D11D8);
             return false;
         }
 
-        tig_str_parse_value_64(&str, &(dword_5D1204[dword_5D120C].field_100));
+        tig_str_parse_value_64(&str, &(map_list_info[map_list_info_count].x));
         tig_str_parse_value_64(&str, &(map_list_info[map_list_info_count].y));
 
         if (str != NULL) {
@@ -736,10 +746,10 @@ bool map_list_info_load()
             break;
         }
 
-        msg.num++;
+        mes_file_entry.num++;
     }
 
-    message_unload(dword_5D11D8);
+    mes_unload(dword_5D11D8);
     return true;
 }
 
