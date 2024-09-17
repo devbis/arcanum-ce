@@ -52,6 +52,7 @@ typedef struct MapListInfo {
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
+static bool sub_411450(const char* name);
 static void map_disable_objects();
 
 // 0x59F058
@@ -559,6 +560,37 @@ void sub_4102C0(char** name, char** folder)
     if (folder != NULL) {
         *folder = map_folder;
     }
+}
+
+// 0x411450
+bool sub_411450(const char* name)
+{
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    int64_t obj;
+
+    sprintf(path, "%s\\mobile.mdy", name);
+
+    if (tig_file_exists(path, NULL)) {
+        stream = tig_file_fopen(path, "rb");
+        if (stream == NULL) {
+            tig_debug_printf("Error opening mobile dynamic objects file %s for reading.\n", path);
+            return false;
+        }
+
+        while (obj_read(stream, &obj)) {
+            // Noop.
+        }
+
+        if (tig_file_feof(stream) == 0) {
+            tig_file_fclose(stream);
+            tig_debug_printf("Error reading mobile dynamic objects from file %s\n", path);
+        }
+
+        tig_file_fclose(stream);
+    }
+
+    return true;
 }
 
 // 0x411520
