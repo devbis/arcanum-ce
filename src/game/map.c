@@ -482,6 +482,65 @@ void map_update_view(ViewOptions* view_options)
     }
 }
 
+// 0x40FC70
+bool map_open_in_game(int map, bool a2, bool a3)
+{
+    MapListInfo* info;
+    char path1[TIG_MAX_PATH];
+    char path2[TIG_MAX_PATH];
+
+    if (!dword_5D11F0) {
+        return false;
+    }
+
+    if (map > map_list_info_count || map == 0) {
+        return false;
+    }
+
+    info = &(map_list_info[map]);
+    if (dword_5D11FC && !a3) {
+        map_flush(0);
+    }
+
+    if (obj_validate_system(1)) {
+        tig_debug_println("Object system validate failed pre-load in map_open_in_game.");
+        tig_message_post_quit(0);
+        // FIXME: Execution continues after quit.
+    }
+
+    sprintf(path1, "maps\\%s", info->name);
+    sprintf(path2, "%s\\maps\\%s", "Save\\Current", info->name);
+
+    tig_debug_printf("Loading Map: %s\n", path1);
+    sub_41C340(0);
+
+    if (!map_open(path1, path2, 1)) {
+        return false;
+    }
+
+    qword_5D11E0 = info->x | (info->y << 32);
+    sub_4B8CE0(qword_5D11E0);
+
+    if (a2) {
+        sub_40FE00(qword_5D11E0);
+    }
+
+    sub_45C580();
+    sub_4605C0();
+
+    if (!obj_validate_system(1)) {
+        tig_debug_println("Object system validate failed post-load in map_open_in_game.");
+        tig_message_post_quit(0);
+    }
+
+    return true;
+}
+
+// 0x40FED0
+void sub_40FED0()
+{
+}
+
 // 0x40FEE0
 bool map_get_name(int map, char** name)
 {
