@@ -165,7 +165,153 @@ int gsound_resolve_path(int sound_id, char* path)
 // 0x41AA30
 bool gsound_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    mes_file_handle_t tmp_mes_file;
+    MesFileEntry mes_file_entry;
+    int index;
+    int cnt;
+
+    (void)init_info;
+
+    mes_load(gsound_build_sound_path("snd_00index.mes"), &tmp_mes_file);
+    dword_5D55B0 = mes_num_entries(tmp_mes_file);
+    if (dword_5D55B0 == 0) {
+        return false;
+    }
+
+    dword_5D1A68 = CALLOC(dword_5D55B0, sizeof(*dword_5D1A68));
+
+    mes_file_entry.num = 0;
+    for (index = 0; index < dword_5D55B0; index++) {
+        dword_5D1A68[index] = MES_FILE_HANDLE_INVALID;
+        mes_find_next(tmp_mes_file, &mes_file_entry);
+        mes_load(gsound_build_sound_path(mes_file_entry.str), &(dword_5D1A68[index]));
+    }
+
+    mes_unload(tmp_mes_file);
+
+    mes_load(gsound_build_sound_path("SchemeIndex.mes"), &dword_5D5480);
+    mes_load(gsound_build_sound_path("SchemeList.mes"), &dword_5D1A40);
+
+    for (index = 0; index < 2; index++) {
+        sub_41AFB0(&(stru_5D1A98[index]));
+    }
+
+    dword_5D1A6C = 1;
+
+    sub_41C690(400, 300);
+    sub_41C850(150, 800, 150, 400);
+
+    sound_maximum_volume[TIG_SOUND_SIZE_LARGE] = 100;
+
+    mes_load(gsound_build_sound_path("soundparams.mes"), &tmp_mes_file);
+
+    if (tmp_mes_file != MES_FILE_HANDLE_INVALID) {
+        cnt = 0;
+
+        mes_file_entry.num = 1;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_minimum_radius[TIG_SOUND_SIZE_LARGE] = atoi(mes_file_entry.str);
+            cnt++;
+        }
+
+        mes_file_entry.num = 2;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_maximum_radius[TIG_SOUND_SIZE_LARGE] = atoi(mes_file_entry.str);
+            cnt++;
+        }
+
+        mes_file_entry.num = 3;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            qword_5D1A60 = atoi(mes_file_entry.str);
+            cnt++;
+        }
+
+        mes_file_entry.num = 4;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            qword_5D1A20 = atoi(mes_file_entry.str);
+            cnt++;
+        }
+
+        mes_file_entry.num = 10;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_minimum_radius[TIG_SOUND_SIZE_SMALL] = atoi(mes_file_entry.str);
+        } else {
+            sound_minimum_radius[TIG_SOUND_SIZE_SMALL] = 50;
+        }
+
+        mes_file_entry.num = 11;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_maximum_radius[TIG_SOUND_SIZE_SMALL] = atoi(mes_file_entry.str);
+        } else {
+            sound_maximum_radius[TIG_SOUND_SIZE_SMALL] = 150;
+        }
+
+        mes_file_entry.num = 12;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_maximum_volume[TIG_SOUND_SIZE_MEDIUM] = atoi(mes_file_entry.str);
+        } else {
+            sound_maximum_volume[TIG_SOUND_SIZE_MEDIUM] = 40;
+        }
+
+        mes_file_entry.num = 20;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_minimum_radius[TIG_SOUND_SIZE_MEDIUM] = atoi(mes_file_entry.str);
+        } else {
+            sound_minimum_radius[TIG_SOUND_SIZE_MEDIUM] = 50;
+        }
+
+        mes_file_entry.num = 21;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_maximum_radius[TIG_SOUND_SIZE_MEDIUM] = atoi(mes_file_entry.str);
+        } else {
+            sound_maximum_radius[TIG_SOUND_SIZE_MEDIUM] = 400;
+        }
+
+        mes_file_entry.num = 22;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_maximum_volume[TIG_SOUND_SIZE_MEDIUM] = atoi(mes_file_entry.str);
+        } else {
+            sound_maximum_volume[TIG_SOUND_SIZE_MEDIUM] = 70;
+        }
+
+        mes_file_entry.num = 30;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_minimum_radius[TIG_SOUND_SIZE_EXTRA_LARGE] = atoi(mes_file_entry.str);
+        } else {
+            sound_minimum_radius[TIG_SOUND_SIZE_EXTRA_LARGE] = 50;
+        }
+
+        mes_file_entry.num = 31;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_maximum_radius[TIG_SOUND_SIZE_EXTRA_LARGE] = atoi(mes_file_entry.str);
+        } else {
+            sound_maximum_radius[TIG_SOUND_SIZE_EXTRA_LARGE] = 1500;
+        }
+
+        mes_file_entry.num = 32;
+        if (mes_search(tmp_mes_file, &mes_file_entry)) {
+            sound_maximum_volume[TIG_SOUND_SIZE_EXTRA_LARGE] = atoi(mes_file_entry.str);
+        } else {
+            sound_maximum_volume[TIG_SOUND_SIZE_EXTRA_LARGE] = 100;
+        }
+
+        if (cnt != 0) {
+            sub_41B3A0();
+        }
+
+        mes_unload(tmp_mes_file);
+    }
+
+    settings_add(&settings, "effects volume", "5", gsound_effects_volume_changed);
+    settings_add(&settings, "voice volume", "5", gsound_voice_volume_changed);
+    settings_add(&settings, "music volume", "5", gsound_music_volume_changed);
+    gsound_effects_volume_changed();
+    gsound_voice_volume_changed();
+    gsound_music_volume_changed();
+    dword_5D55D8 = 0;
+    dword_5D1A70 = 0;
+
+    return true;
 }
 
 // 0x41AF80
