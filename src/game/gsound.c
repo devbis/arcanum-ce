@@ -135,7 +135,7 @@ static int64_t qword_5D55E0;
 static int64_t qword_5D55E8;
 
 // 0x41A940
-int sub_41A940(int sound_id, char* path)
+int gsound_resolve_path(int sound_id, char* path)
 {
     MesFileEntry mes_file_entry;
     int index;
@@ -309,6 +309,12 @@ void gsound_ping(int a1)
     }
 }
 
+// 0x41B2D0
+void gsound_flush()
+{
+    gsound_reset();
+}
+
 // 0x41B2E0
 tig_sound_handle_t gsound_play_sfx(const char* path, int loops, int volume, int extra_volume, int id)
 {
@@ -365,7 +371,7 @@ int gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
         return TIG_SOUND_HANDLE_INVALID;
     }
 
-    sub_41A940(id, path);
+    gsound_resolve_path(id, path);
     return gsound_play_sfx(path, loops, volume, extra_volume, id);
 }
 

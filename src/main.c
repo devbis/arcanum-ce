@@ -9,6 +9,7 @@
 #include "game/dialog.h"
 #include "game/gamelib.h"
 #include "game/gmovie.h"
+#include "game/gsound.h"
 #include "game/level.h"
 #include "game/light_scheme.h"
 #include "game/location.h"
@@ -159,7 +160,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     init_info.instance = hInstance;
     init_info.art_file_path_resolver = gamelib_art_file_path_resolver;
     init_info.art_id_reset_func = gamelib_art_id_reset;
-    init_info.sound_file_path_resolver = gsound_file_path_resolver;
+    init_info.sound_file_path_resolver = gsound_resolve_path;
 
     if (tig_init(&init_info) != TIG_OK) {
         return EXIT_SUCCESS; // FIXME: Should be `EXIT_FAILURE`.
