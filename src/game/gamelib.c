@@ -7,7 +7,10 @@
 #include "game/gmovie.h"
 #include "game/li.h"
 #include "game/mes.h"
+#include "game/player.h"
+#include "game/portrait.h"
 #include "game/sector.h"
+#include "game/stat.h"
 #include "game/tb.h"
 #include "game/tc.h"
 #include "game/tile_block.h"
@@ -59,6 +62,7 @@ typedef struct GameSaveEntry {
 
 static int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b);
 static int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b);
+static bool sub_403DD0(const char* name, const char* description, GameSaveInfo* save_info);
 static void difficulty_changed();
 static void sub_4046F0(void* info);
 static void sub_404740(UnknownContext* info);
@@ -1211,6 +1215,69 @@ int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b)
 int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b)
 {
     return -strnicmp(a->path, b->path, 8);
+}
+
+// 0x403DD0
+bool sub_403DD0(const char* name, const char* description, GameSaveInfo* save_info)
+{
+    int64_t pc_obj;
+    TigVideoBufferCreateInfo vb_create_info;
+    TigWindowBlitInfo win_blit_info;
+    TigRect dst_rect;
+    char* pc_name;
+
+    if (save_info == NULL) {
+        return false;
+    }
+
+    pc_obj = player_get_pc_obj();
+
+    save_info->version = 25;
+    strcpy(save_info->name, name);
+    strcpy(save_info->module_name, sub_402FE0());
+
+    save_info->thumbnail_video_buffer = NULL;
+    vb_create_info.width = dword_5D10C0;
+    vb_create_info.height = dword_5D0D80;
+    vb_create_info.flags = 0;
+    vb_create_info.background_color = 0;
+    if (tig_video_buffer_create(&vb_create_info, &(save_info->thumbnail_video_buffer)) != TIG_OK) {
+        return false;
+    }
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = dword_5D10C0;
+    dst_rect.height = dword_5D0D80;
+
+    win_blit_info.type = TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER;
+    win_blit_info.src_window_handle = stru_5D0E88.iso_window_handle;
+    win_blit_info.src_rect = &stru_5D0018;
+    win_blit_info.dst_video_buffer = save_info->thumbnail_video_buffer;
+    win_blit_info.dst_rect = &dst_rect;
+    win_blit_info.vb_blit_flags = 0;
+    if (tig_window_blit(&win_blit_info) != TIG_OK) {
+        tig_debug_printf("gamelib: ERROR: Build thumbnail FAILED to Blit!\n");
+        if (tig_video_buffer_destroy(save_info->thumbnail_video_buffer) != TIG_OK) {
+            tig_debug_printf("gamelib: ERROR: Build thumbnail FAILED to destroy VBid!\n");
+        }
+        save_info->thumbnail_video_buffer = NULL;
+        return false;
+    }
+
+    obj_field_string_get(pc_obj, OBJ_F_PC_PLAYER_NAME, &pc_name);
+    strcpy(save_info->pc_name, pc_name);
+    FREE(pc_name);
+
+    save_info->field_340 = sub_40FF40();
+    save_info->pc_portrait = sub_4CEB80(pc_obj);
+    save_info->pc_level = stat_level(pc_obj, STAT_LEVEL);
+    save_info->pc_location = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
+    save_info->field_35C = sub_445090();
+    strcpy(save_info->description, description);
+    save_info->datetime = sub_45A7C0();
+
+    return true;
 }
 
 // 0x404570

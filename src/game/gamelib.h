@@ -3,7 +3,7 @@
 
 #include "game/context.h"
 #include "game/settings.h"
-#include "tig/video.h"
+#include "game/timeevent.h"
 
 typedef bool(GameExtraSaveFunc)();
 typedef bool(GameExtraLoadFunc)();
@@ -19,6 +19,31 @@ typedef struct GameSaveList {
     unsigned int count;
     char** paths;
 } GameSaveList;
+
+typedef struct GameSaveInfo {
+    /* 0000 */ int version;
+    /* 0004 */ char name[256];
+    /* 0104 */ char module_name[256];
+    /* 0204 */ int pc_portrait;
+    /* 0208 */ int pc_level;
+    /* 020C */ int field_20C;
+    /* 0210 */ int64_t pc_location;
+    /* 0218 */ char description[256];
+    /* 0318 */ TigVideoBuffer* thumbnail_video_buffer;
+    /* 031C */ int field_31C;
+    /* 0320 */ DateTime datetime;
+    /* 0328 */ char pc_name[24];
+    /* 0340 */ int field_340;
+    /* 0344 */ int field_344;
+    /* 0348 */ int field_348;
+    /* 034C */ int field_34C;
+    /* 0350 */ int field_350;
+    /* 0354 */ int field_354;
+    /* 0358 */ int field_358;
+    /* 035C */ int field_35C;
+} GameSaveInfo;
+
+static_assert(sizeof(GameSaveInfo) == 0x360, "wrong size");
 
 extern unsigned int gamelib_ping_time;
 extern Settings settings;
