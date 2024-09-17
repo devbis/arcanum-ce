@@ -11,6 +11,7 @@
 #include "game/sector.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
+#include "game/wallcheck.h"
 
 #define MAP_LIST_CAPACITY 200
 #define MAP_NAME_LENGTH 256
@@ -26,6 +27,7 @@ typedef void(MapPingFunc)(unsigned int time);
 typedef void(MapUpdateViewFunc)(ViewOptions* view_options);
 typedef bool(MapSaveFunc)(TigFile* stream);
 typedef bool(MapLoadFunc)(LoadContext* ctx);
+typedef void(MapCloseFunc)();
 typedef void(MapResizeFunc)(ResizeContext* ctx);
 
 typedef struct MapModule {
@@ -39,6 +41,7 @@ typedef struct MapModule {
     MapUpdateViewFunc* update_view_func;
     MapSaveFunc* save_func;
     MapLoadFunc* load_func;
+    MapCloseFunc* close_func;
     MapResizeFunc* resize_func;
 } MapModule;
 
@@ -53,6 +56,7 @@ typedef struct MapListInfo {
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
+static void map_close();
 static bool map_save_preprocess();
 static bool map_save_objects();
 static bool map_save_difs();
@@ -96,6 +100,9 @@ static char off_59F3DC[] = "*** Deleted Map ***";
 
 // 0x5D11E0
 static long long qword_5D11E0;
+
+// 0x5D11E8
+static bool dword_5D11E8;
 
 // 0x5D11EC
 static int dword_5D11EC;
@@ -565,6 +572,29 @@ void sub_4102C0(char** name, char** folder)
 
     if (folder != NULL) {
         *folder = map_folder;
+    }
+}
+
+// 0x4106D0
+void map_close()
+{
+    int index;
+
+    if (!dword_5D11E8) {
+        dword_5D11E8 = true;
+
+        wallcheck_flush();
+        sound_game_flush();
+
+        dword_5D11FC = false;
+
+        for (index = 0; index < MAP_MODULE_COUNT; index++) {
+            if (map_modules[index].close_func != NULL) {
+                map_modules[index].close_func();
+            }
+        }
+
+        map_clear_objects();
     }
 }
 
