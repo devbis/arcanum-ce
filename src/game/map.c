@@ -2,14 +2,16 @@
 
 #include "game/description.h"
 #include "game/gsound.h"
+#include "game/jumppoint.h"
 #include "game/light_scheme.h"
 #include "game/location.h"
 #include "game/mes.h"
-#include "game/object.h"
 #include "game/obj_private.h"
+#include "game/object.h"
 #include "game/player.h"
 #include "game/sector.h"
 #include "game/stat.h"
+#include "game/teleport.h"
 #include "game/timeevent.h"
 #include "game/wallcheck.h"
 
@@ -142,6 +144,9 @@ static int dword_5D1210;
 
 // 0x5D1214
 static int dword_5D1214[MAP_TYPE_COUNT];
+
+// 0x5D1220
+static int dword_5D1220;
 
 // 0x40EA90
 bool map_init(GameContext* ctx)
@@ -547,6 +552,27 @@ bool map_get_worldmap(int map, int* worldmap)
 bool map_is_clearing_objects()
 {
     return map_in_map_clear_objects;
+}
+
+// 0x4101D0
+void sub_4101D0(int64_t location, int64_t a2)
+{
+    JumpPoint jumppoint;
+    TeleportData teleport_data;
+
+    if (dword_5D1220 < 9) {
+        if (jumppoint_find_by_location(location, &jumppoint)) {
+            dword_5D1220++;
+
+            teleport_data.map = jumppoint.field_10;
+            teleport_data.field_8 = a2;
+            teleport_data.flags = 0;
+            teleport_data.field_10 = jumppoint.field_18;
+            sub_4D3380(&teleport_data);
+
+            dword_5D1220--;
+        }
+    }
 }
 
 // 0x410270
