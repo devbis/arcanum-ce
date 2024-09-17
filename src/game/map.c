@@ -6,6 +6,7 @@
 #include "game/location.h"
 #include "game/mes.h"
 #include "game/object.h"
+#include "game/obj_private.h"
 #include "game/player.h"
 #include "game/sector.h"
 #include "game/stat.h"
@@ -52,6 +53,7 @@ typedef struct MapListInfo {
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
+static bool map_save_objects();
 static bool map_save_difs();
 static bool map_save_dynamic();
 static void map_load_postprocess();
@@ -565,6 +567,27 @@ void sub_4102C0(char** name, char** folder)
     }
 }
 
+// 0x410780
+bool map_save_objects()
+{
+    int64_t obj;
+    int v1;
+
+    if (sub_4082C0(&obj, &v1)) {
+        do {
+            if (!sub_43D990(obj)
+                && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC)
+                && sub_4067C0(obj)) {
+                if (!objf_solitary_write(obj, map_folder, ".mob")) {
+                    return false;
+                }
+            }
+        } while (sub_408390(&obj, v1));
+    }
+
+    return true;
+}
+
 // 0x410830
 bool map_save_difs()
 {
@@ -644,7 +667,7 @@ bool map_save_difs()
         tig_file_remove(path1);
     }
 
-    return tru1;
+    return true;
 }
 
 // 0x410B20
