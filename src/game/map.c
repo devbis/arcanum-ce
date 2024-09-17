@@ -52,6 +52,7 @@ typedef struct MapListInfo {
 // See 0x40EA90.
 static_assert(sizeof(MapListInfo) == 0x118, "wrong size");
 
+static bool map_save_dynamic();
 static void map_load_postprocess();
 static bool sub_411450(const char* name);
 static void map_disable_objects();
@@ -561,6 +562,49 @@ void sub_4102C0(char** name, char** folder)
     if (folder != NULL) {
         *folder = map_folder;
     }
+}
+
+// 0x410B20
+bool map_save_dynamic()
+{
+    int cnt = 0;
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    int64_t obj;
+    int v1;
+    unsigned int flags;
+
+    sprintf(path, "%s\\mobile.mdy", map_folder);
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        tig_debug_printf("Error opening mobile dynamic objects file %s to write.\n", path);
+        return false;
+    }
+
+    if (sub_4082C0(&obj, &v1)) {
+        do {
+            if (!sub_43D990(obj)) {
+                flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+                if ((flags & OF_DYNAMIC) != 0 && (flags & (OF_EXTINCT | OF_DESTROYED)) == 0) {
+                    if (!obj_write(stream, obj)) {
+                        tig_debug_printf("Error saving object to mobile dynamic objects file %s.\n", path);
+                        tig_file_fclose(stream);
+                        tig_file_remove(path);
+                        return false;
+                    }
+                    cnt++;
+                }
+            }
+        } while (sub_408390(&obj, &v1));
+    }
+
+    tig_file_fclose(stream);
+
+    if (cnt == 0) {
+        tig_file_remove(path);
+    }
+
+    return true;
 }
 
 // 0x410C50
