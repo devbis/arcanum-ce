@@ -451,7 +451,7 @@ bool cyclic_ui_base_aid(CyclicUiControl* ctrl, tig_art_id_t* art_id_ptr)
         return false;
     }
 
-    if (tig_art_itnerface_id_create(num, 0, 0, 0, art_id) != TIG_OK) {
+    if (tig_art_interface_id_create(num, 0, 0, 0, art_id) != TIG_OK) {
         tig_debug_println("Error, cyclic_ui_base_aid:  Can't get aid");
         return false;
     }
