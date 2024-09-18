@@ -617,7 +617,87 @@ bool cyclic_ui_draw_bar(CyclicUiControl* ctrl)
 // 0x580190
 bool cyclic_ui_draw_text(CyclicUiControl* ctrl)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigRect text_rect;
+    MesFileEntry mes_file_entry;
+    const char* str;
+
+    if (tig_art_interface_id_create(623, 0, 0, 0, &art_id) != TIG_OK) {
+        tig_debug_println("Error, cyclic_ui_draw_text:  Unable to get liquid aid for size reference");
+        return false;
+    }
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        tig_debug_println("Error, cyclic_ui_draw_text:  Unable to get liquid frame data for size reference");
+        return false;
+    }
+
+    if (!cyclic_ui_base_aid(ctrl, &art_id)) {
+        return false;
+    }
+
+    src_rect.x = 47;
+    src_rect.y = 24;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = ctrl->info.x + 47;
+    dst_rect.y = ctrl->info.y + 24;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    if (tig_window_blit_art(ctrl->info.window_handle, &art_blit_info) != TIG_OK) {
+        tig_debug_println("Error, cyclic_ui_draw_text:  Erase blit failed");
+        return false;
+    }
+
+    switch (ctrl->info.type) {
+    case 1:
+        mes_file_entry.num = ctrl->value;
+        if (mes_search(ctrl->mes_file, &mes_file_entry)) {
+            mes_get_msg(ctrl->mes_file, &mes_file_entry);
+            str = mes_file_entry.str;
+        } else {
+            str = NULL;
+        }
+        break;
+    case 2:
+        str = ctrl->info.text_array[ctrl->value];
+        if (str != NULL && *str == '\0') {
+            str = NULL;
+        }
+        break;
+    }
+
+    if (str == NULL) {
+        tig_debug_printf("Warning, cyclic_ui_draw_text:  [%s] is missing line %d\n",
+            ctrl->info.mes_file_path,
+            ctrl->value);
+        return true;
+    }
+
+    text_rect.x = ctrl->info.x + 47;
+    text_rect.y = ctrl->info.y + 30;
+    text_rect.width = art_frame_data.width;
+    text_rect.height = art_frame_data.height;
+
+    tig_font_push(dword_684244);
+    if (tig_window_text_write(ctrl->info.window_handle, str, &text_rect) != TIG_OK) {
+        tig_debug_println("Error, cyclic_ui_draw_text:  Text write failed");
+        tig_font_pop();
+        return false;
+    }
+
+    tig_font_pop();
+    return true;
 }
 
 // 0x580390
