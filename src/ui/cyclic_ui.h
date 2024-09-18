@@ -10,14 +10,14 @@ typedef struct CyclicUiControlInfo {
     /* 0004 */ int x;
     /* 0008 */ int y;
     /* 000C */ int type;
-    /* 0010 */ int field_10;
+    /* 0010 */ int max_value;
     /* 0014 */ const char* text;
     /* 0018 */ const char* mes_file_path;
     /* 001C */ const char** text_array;
     /* 0020 */ int text_array_size;
     /* 0024 */ CyclicUiControlValueChanged* value_changed_callback;
     /* 0028 */ unsigned char visible; // boolean
-    /* 0029 */ unsigned char enabled;
+    /* 0029 */ unsigned char enabled; // boolean
 } CyclicUiControlInfo;
 
 static_assert(sizeof(CyclicUiControlInfo) == 0x2C, "wrong size");

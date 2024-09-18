@@ -175,7 +175,7 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
 
         control_info.type = meta->field_4;
         control_info.window_handle = window_handle;
-        control_info.field_10 = meta->field_8;
+        control_info.max_value = meta->field_8;
 
         mes_file_entry.num = index + 20 * (5 * type + 5);
         control_info.text = mes_search(options_ui_mes_file, &mes_file_entry)

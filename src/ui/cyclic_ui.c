@@ -44,7 +44,7 @@ static tig_font_handle_t dword_684240;
 static tig_font_handle_t dword_684244;
 
 // 0x684248
-static int dword_684248;
+static int cyclic_ui_prev_id;
 
 // 0x68424C
 static bool cyclic_ui_initialized;
@@ -68,7 +68,7 @@ bool cyclic_ui_init(GameInitInfo* init_info)
         cyclic_ui_controls[index].mes_file = MES_FILE_HANDLE_INVALID;
     }
 
-    dword_684248 = MAX_CONTROLS - 1;
+    cyclic_ui_prev_id = MAX_CONTROLS - 1;
 
     if (tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id)) != TIG_OK) {
         return false;
@@ -141,7 +141,7 @@ void sub_57F720(CyclicUiControlInfo* info)
     info->x = 0;
     info->y = 0;
     info->type = 0;
-    info->field_10 = 0;
+    info->max_value = 0;
     info->text = NULL;
     info->mes_file_path = NULL;
     info->text_array = NULL;
@@ -155,7 +155,70 @@ void sub_57F720(CyclicUiControlInfo* info)
 // 0x57F750
 bool cyclic_ui_control_create(CyclicUiControlInfo* info, int* id_ptr)
 {
-    // TODO: Incomplete.
+    int index;
+    CyclicUiControl* ctrl;
+
+    index = cyclic_ui_prev_id + 1;
+    if (index >= MAX_CONTROLS) {
+        index = 0;
+    }
+
+    while (index != cyclic_ui_prev_id && cyclic_ui_controls[index].in_use) {
+        index++;
+        if (index == MAX_CONTROLS) {
+            index = 0;
+        }
+    }
+
+    if (index == cyclic_ui_prev_id) {
+        tig_debug_println("Error, cyclic_ui_control_create:  Too many cyclic ui controls.");
+        return false;
+    }
+
+    ctrl = &(cyclic_ui_controls[index]);
+    ctrl->info = *info;
+    ctrl->value = 0;
+
+    switch (ctrl->info.type) {
+    case 0:
+        ctrl->max_value = 10;
+        break;
+    case 1:
+        if (!mes_load(ctrl->info.mes_file_path, &(ctrl->mes_file))) {
+            tig_debug_printf("Error, cyclic_ui_control_create:  Unable to load message file [%s]\n", ctrl->info.mes_file_path);
+            return false;
+        }
+        ctrl->max_value = mes_num_entries(ctrl->mes_file) - 1;
+        break;
+    case 2:
+        if (ctrl->info.text_array == NULL) {
+            tig_debug_println("Error, cyclic_ui_control_create:  Control type is cui_text_array, but text_array is NULL");
+            return false;
+        }
+        ctrl->max_value = ctrl->info.text_array_size - 1;
+        break;
+    default:
+        tig_debug_println("Error, cyclic_ui_control_create:  Invalid control type");
+        return false;
+    }
+
+    if (ctrl->info.max_value != 0) {
+        ctrl->max_value = ctrl->info.max_value;
+    }
+
+    ctrl->in_use = true;
+
+    if (ctrl->info.visible) {
+        if (!sub_57FAD0(ctrl)) {
+            ctrl->in_use = false;
+            return false;
+        }
+    }
+
+    cyclic_ui_prev_id = index;
+    *id_ptr = index;
+
+    return true;
 }
 
 // 0x57F8A0
