@@ -611,7 +611,65 @@ bool cyclic_ui_refresh_level(CyclicUiControl* ctrl)
 // 0x580000
 bool cyclic_ui_draw_bar(CyclicUiControl* ctrl)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int width;
+
+    if (tig_art_interface_id_create(623, 0, 0, 0, &art_id) != TIG_OK) {
+        tig_debug_println("Error, cyclic_ui_draw_bar:  Unable to get liquid aid");
+        return false;
+    }
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        tig_debug_println("Error, cyclic_ui_draw_bar:  Unable to get liquid frame data");
+        return false;
+    }
+
+    width = art_frame_data.width * ctrl->value / ctrl->max_value;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = ctrl->info.x + 47;
+    dst_rect.y = ctrl->info.y + 24;
+    dst_rect.width = width;
+    dst_rect.height = art_frame_data.height;
+
+    if (width != 0) {
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        if (tig_window_blit_art(ctrl->info.window_handle, &art_blit_info) != TIG_OK) {
+            tig_debug_println("Error, cyclic_ui_draw_bar:  Liquid blit failed");
+            return false;
+        }
+    }
+
+    if (!cyclic_ui_base_aid(ctrl, &art_id)) {
+        return false;
+    }
+
+    src_rect.x = width + 47;
+    src_rect.y = 24;
+    src_rect.width = art_frame_data.width - width;
+
+    dst_rect.x = ctrl->info.x + width + 47;
+    dst_rect.y = ctrl->info.y + 24;
+    dst_rect.width = art_frame_data.width - width;
+
+    art_blit_info.art_id = art_id;
+    if (tig_window_blit_art(ctrl->info.window_handle, &art_blit_info) != TIG_OK) {
+        tig_debug_println("Error, cyclic_ui_draw_bar:  Base blit failed");
+        return false;
+    }
+
+    return true;
 }
 
 // 0x580190
