@@ -25,9 +25,36 @@ static bool dword_5DE6D0;
 static bool anim_editor;
 
 // 0x421B00
-void anim_init()
+bool anim_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    anim_editor = init_info->editor;
+
+    if (!anim_editor) {
+        stru_5DE670.path = "Rules\\AnimEyeCandy.mes";
+        stru_5DE670.field_18 = 11;
+        if (!animfx_list_load(&stru_5DE670)) {
+            return false;
+        }
+
+        if (!animfx_list_init(&stru_5DE670)) {
+            return false;
+        }
+
+        stru_5DE610.path = "Rules\\WeaponEyeCandy.mes";
+        stru_5DE610.field_18 = 750;
+        stru_5DE610.field_8 = 1;
+        stru_5DE610.field_C = 5;
+        stru_5DE610.field_10 = 10;
+        if (!animfx_list_load(&stru_5DE610)) {
+            return false;
+        }
+    }
+
+    settings_add(&settings, "violence filter", "0", violence_filter_changed);
+    violence_filter = settings_get_value(&settings, "violence filter");
+    settings_add(&settings, "always run", "0", NULL);
+
+    return true;
 }
 
 // 0x421BF0

@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 
+bool anim_init(GameInitInfo* init_info);
 void anim_exit();
 void anim_reset();
 void anim_break_nodes_to_map(const char* map);
