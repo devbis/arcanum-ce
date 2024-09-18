@@ -122,7 +122,7 @@ static OptionsUiControlInfo stru_5CCD78[3][8] = {
 static bool dword_687260;
 
 // 0x687268
-static ModuleList options_ui_modlist;
+static GameModuleList options_ui_modlist;
 
 // 0x687274
 static mes_file_handle_t options_ui_mes_file;
@@ -168,8 +168,8 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
             }
 
             gamelib_modlist_create(&options_ui_modlist, 0);
-            control_info.text_array = options_ui_modlist.names;
-            control_info.text_array_size = options_ui_modlist.cnt;
+            control_info.text_array = options_ui_modlist.paths;
+            control_info.text_array_size = options_ui_modlist.count;
             options_ui_modlist_initialized = true;
         }
 
@@ -225,9 +225,9 @@ bool sub_589430()
         return true;
     }
 
-    if (!gamelib_mod_load(options_ui_modlist.names[selected])
+    if (!gamelib_mod_load(options_ui_modlist.paths[selected])
         || !gameuilib_mod_load()) {
-        tig_debug_printf("Can't load module %s\n", options_ui_modlist.names[selected]);
+        tig_debug_printf("Can't load module %s\n", options_ui_modlist.paths[selected]);
         return false;
     }
 
