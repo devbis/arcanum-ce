@@ -43,19 +43,51 @@ static tig_font_handle_t dword_684240;
 // 0x684244
 static tig_font_handle_t dword_684244;
 
+// 0x684248
+static int dword_684248;
+
 // 0x68424C
 static bool cyclic_ui_initialized;
 
 // 0x57F4D0
 bool cyclic_ui_init(GameInitInfo* init_info)
 {
+    int index;
+    TigFont font_desc;
+
     (void)init_info;
 
     if (cyclic_ui_initialized) {
         return true;
     }
 
-    // TODO: Incomplete.
+    for (index = 0; index < MAX_CONTROLS; index++) {
+        cyclic_ui_controls[index].in_use = false;
+        cyclic_ui_controls[index].left_button_handle = TIG_BUTTON_HANDLE_INVALID;
+        cyclic_ui_controls[index].right_button_handle = TIG_BUTTON_HANDLE_INVALID;
+        cyclic_ui_controls[index].mes_file = MES_FILE_HANDLE_INVALID;
+    }
+
+    dword_684248 = MAX_CONTROLS - 1;
+
+    if (tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id)) != TIG_OK) {
+        return false;
+    }
+
+    font_desc.flags = TIG_FONT_CENTERED;
+    font_desc.str = NULL;
+    font_desc.color = tig_color_make(255, 0, 0);
+    tig_font_create(&font_desc, &dword_684244);
+
+    if (tig_art_interface_id_create(27, 0, 0, 0, &(font_desc.art_id)) != TIG_OK) {
+        return false;
+    }
+
+    font_desc.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font_desc, &dword_6839B8);
+
+    font_desc.color = tig_color_make(130, 130, 130);
+    tig_font_create(&font_desc, &dword_684240);
 
     cyclic_ui_initialized = true;
 
