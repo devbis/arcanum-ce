@@ -157,6 +157,50 @@ void animfx_exit()
 }
 
 // 0x4CCD20
+void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5)
+{
+    node->list = list;
+    node->obj = obj;
+    node->field_18 = a5;
+    node->field_10 = 0;
+    node->field_28 = a4;
+    node->field_1C = 0;
+    node->field_20 = -1;
+    node->field_14 = 0;
+    node->field_2C = 0;
+    node->field_30 = 0;
+    node->field_34 = 0;
+    node->field_24 = 0;
+    node->field_44 = -1;
+    node->rotation = 0;
+    node->field_4C = 4;
+}
+
+// 0x4CD940
+void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4)
+{
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    dword_601738 = list;
+
+    if (index >= list->field_14) {
+        tig_debug_printf("AnimFX: animfx_id_get: Warning: Weapon AnimFXID Out of Range: %d.\n", index);
+        return;
+    }
+
+    if (list->entries[index].eye_candy_art_id == TIG_ART_ID_INVALID) {
+        tig_debug_printf("AnimFX: animfx_remove: Note: Attempting to remove EMPTY Art!\n");
+        return;
+    }
+
+    if ((list->entries[index].flags & 0x20) != 0) {
+        sub_4243E0(obj, list->entries[index].eye_candy_art_id, a4);
+    } else {
+        sub_4CD9C0(&(list->entries[index]), obj);
+    }
+}
 
 // 0x4CDB30
 bool animfx_list_init(AnimFxList* list)
@@ -374,7 +418,7 @@ void animfx_build_eye_candy_effect(int index, char* str)
                         entry->sound = dword_601738->field_24[base_index] + base_sound;
 
                         char path[MAX_PATH];
-                        if (sub_41A940(entry->sound, path) != TIG_OK) {
+                        if (gsound_resolve_path(entry->sound, path) != TIG_OK) {
                             entry->sound = -1;
                         }
                     }
