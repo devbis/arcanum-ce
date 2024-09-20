@@ -95,6 +95,7 @@ int basic_skill_level(int64_t obj, int skill);
 int basic_skill_get_base(int64_t obj, int skill);
 int basic_skill_set_base(int64_t obj, int skill, int value);
 int basic_skill_get_training(int64_t obj, int skill);
+int basic_skill_set_training(int64_t obj, int skill, int training);
 const char* basic_skill_get_name(int skill);
 const char* basic_skill_get_description(int skill);
 int sub_4C62D0(int a1, int a2, int a3);

@@ -3,6 +3,7 @@
 #include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/random.h"
 #include "game/stat.h"
 
@@ -376,6 +377,10 @@ int basic_skill_set_base(int64_t obj, int skill, int value)
 // 0x4C60C0
 int basic_skill_get_training(int64_t obj, int skill)
 {
+    int melee;
+    int level;
+    int index;
+
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
         || skill < 0
         || skill >= BASIC_SKILL_COUNT) {
@@ -383,10 +388,6 @@ int basic_skill_get_training(int64_t obj, int skill)
     }
 
     if (skill == BASIC_SKILL_MELEE && sub_45F730(obj)) {
-        int melee;
-        int level;
-        int index;
-
         melee = basic_skill_level(obj, BASIC_SKILL_MELEE);
         level = stat_level(obj, STAT_LEVEL);
 
@@ -404,6 +405,58 @@ int basic_skill_get_training(int64_t obj, int skill)
     }
 
     return (obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill) >> 6) & 3;
+}
+
+// 0x4C6170
+int basic_skill_set_training(int64_t obj, int skill, int training)
+{
+    Packet56 pkt;
+    int skill_value;
+    int current_training;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return 0;
+    }
+
+    if (skill < 0 || skill >= BASIC_SKILL_COUNT) {
+        return 0;
+    }
+
+    if (training < 0 || training >= TRAINING_COUNT) {
+        return 0;
+    }
+
+    skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill);
+    current_training = (skill_value >> 6) & 3;
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return current_training;
+        }
+
+        pkt.type = 56;
+        sub_4440E0(obj, &(pkt.field_8));
+        pkt.skill = skill;
+        pkt.training = training;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (training > current_training && current_training != training - 1) {
+        return current_training;
+    }
+
+    if (basic_skill_level(obj, skill) < dword_5B6F44[skill]) {
+        return current_training;
+    }
+
+    obj_arrayfield_int32_set(obj,
+        OBJ_F_CRITTER_BASIC_SKILL_IDX,
+        skill,
+        (skill_value & ~(3 << 6)) | (training << 6));
+
+    sub_4C2950(obj);
+
+    return training;
 }
 
 // 0x4C62B0
