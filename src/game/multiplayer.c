@@ -1008,9 +1008,13 @@ void sub_4A5710()
 }
 
 // 0x4A57F0
-void sub_4A57F0()
+int sub_4A57F0(int64_t obj)
 {
-    // TODO: Incomplete.
+    char buffer[2000];
+
+    background_get_items(buffer, sizeof(buffer), background_obj_get_background(obj));
+
+    return sub_4A5E10(obj, buffer);
 }
 
 // 0x4A5840
