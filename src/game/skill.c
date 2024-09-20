@@ -4,6 +4,7 @@
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
+#include "game/player.h"
 #include "game/random.h"
 #include "game/stat.h"
 
@@ -477,6 +478,81 @@ int sub_4C62D0(int a1, int a2, int a3)
     (void)a1;
 
     return (a3 + 1) * (a2 + 2);
+}
+
+// 0x4C62E0
+int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
+{
+    int value;
+    int level;
+    int game_difficulty;
+
+    if ((dword_5B6F64[skill] & 0x70) != 0) {
+        value = sub_4C6410(obj, skill, other_obj);
+    } else {
+        level = basic_skill_level(obj, skill);
+        switch (skill) {
+        case BASIC_SKILL_BOW:
+            value = 5 * level + 25;
+            break;
+        case BASIC_SKILL_DODGE:
+            value = 5 * level;
+            break;
+        case BASIC_SKILL_MELEE:
+            value = 5 * level + 25;
+            break;
+        case BASIC_SKILL_THROWING:
+            value = 7 * level + 25;
+            break;
+        case BASIC_SKILL_PROWLING:
+            if (level != 0) {
+                value = 5 * level + 25;
+            } else {
+                value = 0;
+            }
+            break;
+        case BASIC_SKILL_SPOT_TRAP:
+            value = 4 * level;
+            break;
+        case BASIC_SKILL_HAGGLE:
+            value = 4 * level + 10;
+            break;
+        case BASIC_SKILL_HEAL:
+            value = 5 * level;
+            break;
+        default:
+            value = 0;
+            break;
+        }
+    }
+
+    if (stat_is_maximized(obj, STAT_INTELLIGENCE)) {
+        value += 10;
+    }
+
+    if (obj == player_get_pc_obj()) {
+        game_difficulty = gamelib_get_game_difficulty();
+        switch (game_difficulty) {
+        case 0:
+            value += value / 2;
+            break;
+        case 2:
+            value -= value / 4;
+            break;
+        }
+    }
+
+    if ((dword_5B6F64[skill] & 0x800) != 0) {
+        if (value > 95) {
+            value = 95;
+        }
+    }
+
+    if (value < 0) {
+        value = 0;
+    }
+
+    return value;
 }
 
 // 0x4C6410
