@@ -1002,9 +1002,31 @@ void sub_4A5670(int64_t obj)
 }
 
 // 0x4A5710
-void sub_4A5710()
+int sub_4A5710(int64_t obj, mes_file_handle_t mes_file)
 {
-    // TODO: Incomplete.
+    int64_t location;
+    int level;
+    MesFileEntry mes_file_entry;
+    int money_amt;
+    int64_t money_obj;
+
+    location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    level = stat_level(obj, STAT_LEVEL);
+
+    mes_file_entry.num = (level + 9) / 10;
+    if (!mes_search(mes_file, &mes_file_entry)) {
+        return 0;
+    }
+
+    mes_get_msg(mes_file, &mes_file_entry);
+    money_amt = atoi(mes_file_entry.str);
+    money_amt = background_adjust_money(money_amt, background_obj_get_background(obj));
+    if (money_amt > 0) {
+        sub_4ED8B0(9056, location, &money_obj);
+        sub_4EFDD0(money_obj, OBJ_F_GOLD_QUANTITY, money_amt);
+        sub_4617F0(money_obj, obj);
+    }
+    return money_amt;
 }
 
 // 0x4A57F0
