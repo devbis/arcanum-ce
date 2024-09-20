@@ -44,6 +44,7 @@ static void sub_41B3B0(tig_sound_handle_t sound_handle);
 static void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, TigSoundPositionalSize size);
 static void sub_41BA20(int fade_duration, int index);
 static void sub_41BAC0(int fade_duration);
+static void sub_41BAF0();
 static void sub_41BCD0(const char* name, char* buffer);
 static bool sub_41BD10(int a1, int* a2);
 static void sub_41BE20(int num);
@@ -703,6 +704,12 @@ void sub_41BAC0(int fade_duration)
             sub_41BA20(fade_duration, index);
         }
     }
+}
+
+// 0x41BAF0
+void sub_41BAF0()
+{
+    // TODO: Incomplete.
 }
 
 // 0x41BCD0
