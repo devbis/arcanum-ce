@@ -1,6 +1,9 @@
 #include "game/level.h"
 
+#include "game/critter.h"
 #include "game/mes.h"
+#include "game/obj.h"
+#include "game/object.h"
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
@@ -8,6 +11,123 @@
 
 #define LEVEL_MAX 51
 #define TEN 10
+
+#define STANDARD_PC_SCHEME 70
+
+#define LEVEL_SCHEME_STATS_MAX 8
+#define LEVEL_SCHEME_BASIC_SKILLS_MAX BASIC_SKILL_COUNT
+#define LEVEL_SCHEME_TECH_SKILLS_MAX TECH_SKILL_COUNT
+#define LEVEL_SCHEME_SPELLS_MAX COLLEGE_COUNT
+#define LEVEL_SCHEME_TECH_MAX TECH_COUNT
+#define LEVEL_SCHEME_MISC_MAX 2
+
+typedef int(MiscGetter)(int64_t obj);
+typedef int(MiscSetter)(int64_t obj, int value);
+
+static bool sub_4A7030(int64_t obj, char* str);
+static bool sub_4A7340(int64_t obj, const char* str);
+static int sub_4A75E0(int64_t obj, int stat, int value);
+static int sub_4A76B0(int64_t obj, int skill, int value);
+static int sub_4A77A0(int64_t obj, int skill, int score);
+static int sub_4A7890(int64_t obj, int college, int score);
+static int sub_4A79C0(int64_t obj, int tech, int degree);
+static int sub_4A7AA0(int64_t obj, int type, int score);
+static void sub_4A7B90(const char* str, int score);
+
+// 0x5B4CE8
+static const char* level_scheme_stats[LEVEL_SCHEME_STATS_MAX] = {
+    "st",
+    "dx",
+    "cn",
+    "be",
+    "in",
+    "pe",
+    "wp",
+    "ch",
+};
+
+// 0x5B4D08
+static const char* level_scheme_basic_skills[LEVEL_SCHEME_BASIC_SKILLS_MAX] = {
+    "bow",
+    "dodge",
+    "melee",
+    "throwing",
+    "backstab",
+    "pickpocket",
+    "prowling",
+    "spottrap",
+    "gambling",
+    "haggle",
+    "heal",
+    "persuasion",
+};
+
+// 0x5B4D38
+static const char* level_scheme_tech_skills[LEVEL_SCHEME_TECH_SKILLS_MAX] = {
+    "repair",
+    "firearms",
+    "picklock",
+    "armtrap",
+};
+
+// 0x5B4D48
+static const char* level_scheme_spells[LEVEL_SCHEME_SPELLS_MAX] = {
+    "conveyance",
+    "divination",
+    "air",
+    "earth",
+    "fire",
+    "water",
+    "force",
+    "mental",
+    "meta",
+    "morph",
+    "nature",
+    "necro_evil",
+    "necro_good",
+    "phantasm",
+    "summoning",
+    "temporal",
+};
+
+// 0x5B4D88
+static const char* level_scheme_tech[LEVEL_SCHEME_TECH_MAX] = {
+    "anatomical",
+    "chemistry",
+    "electric",
+    "explosives",
+    "gun_smithy",
+    "mechanical",
+    "smithy",
+    "therapeutics",
+};
+
+// 0x5B4DA8
+static const char* level_scheme_misc[LEVEL_SCHEME_MISC_MAX] = {
+    "maxhps",
+    "maxfatigue",
+};
+
+// 0x4A7ABE
+static MiscGetter* off_4A7ABE[LEVEL_SCHEME_MISC_MAX] = {
+    sub_43D5A0,
+    sub_45D670,
+};
+
+// 0x4A7AF3
+static MiscGetter* off_4A7AF3[LEVEL_SCHEME_MISC_MAX] = {
+    object_get_hp_pts,
+    critter_fatigue_pts_get,
+};
+
+// 0x4A7AFE
+static MiscSetter* off_4A7AFE[LEVEL_SCHEME_MISC_MAX] = {
+    object_hp_pts_set ,
+    critter_fatigue_pts_set,
+};
+
+// 0x5F0E60
+static char byte_5F0E60[10][2000];
 
 // 0x5F5C80
 static int* dword_5F5C80;
@@ -29,6 +149,9 @@ static int* dword_5F5C94;
 
 // 0x5F5C98
 static mes_file_handle_t level_mes_file;
+
+// 0x5F5C9C
+static int dword_5F5C9C;
 
 // 0x4A6620
 bool level_init(GameInitInfo* init_info)
@@ -113,31 +236,31 @@ void level_exit()
 }
 
 // 0x4A68B0
-int level_get_experience_points_to_next_level(object_id_t object_id)
+int level_get_experience_points_to_next_level(int64_t obj)
 {
     int level;
 
-    level = stat_level(object_id, STAT_LEVEL);
+    level = stat_level(obj, STAT_LEVEL);
     if (level >= LEVEL_MAX) {
         return 999999;
     }
 
-    return dword_5F5C94[level] - stat_level(object_id, STAT_EXPERIENCE_POINTS);
+    return dword_5F5C94[level] - stat_level(obj, STAT_EXPERIENCE_POINTS);
 }
 
 // 0x4A6900
-int level_get_experience_points_to_next_level_in_percent(object_id_t object_id)
+int level_get_experience_points_to_next_level_in_percent(int64_t obj)
 {
     int level;
     int xp;
 
-    level = stat_level(object_id, STAT_LEVEL);
+    level = stat_level(obj, STAT_LEVEL);
     if (level >= LEVEL_MAX) {
         return 0;
     }
 
     if (level != 0 && dword_5F5C94[level] != 0) {
-        xp = level_get_experience_points_to_next_level(object_id);
+        xp = level_get_experience_points_to_next_level(obj);
         if (xp >= 0) {
             return 1000 - 1000 * xp / (dword_5F5C94[level] - dword_5F5C94[level - 1]);
         }
@@ -164,8 +287,14 @@ int sub_4A6980(int old_level, int new_level)
     return points;
 }
 
+// 0x4A69C0
+void sub_4A69C0(int64_t obj)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4A6CB0
-void sub_4A6CB0(object_id_t object_id, int a3, int a4)
+void sub_4A6CB0(int64_t obj, int a3, int a4)
 {
     int curr_level;
     int max_level;
@@ -173,8 +302,8 @@ void sub_4A6CB0(object_id_t object_id, int a3, int a4)
     int bonus_points;
     int curr_points;
 
-    curr_level = stat_get_base(object_id, STAT_LEVEL);
-    max_level = stat_get_max_value(object_id, STAT_LEVEL);
+    curr_level = stat_get_base(obj, STAT_LEVEL);
+    max_level = stat_get_max_value(obj, STAT_LEVEL);
     if (curr_level < max_level) {
         if (curr_level <= a3) {
             new_level = a4 + curr_level - a3;
@@ -187,48 +316,48 @@ void sub_4A6CB0(object_id_t object_id, int a3, int a4)
         }
 
         if (new_level > curr_level) {
-            stat_set_base(object_id, STAT_LEVEL, new_level);
+            stat_set_base(obj, STAT_LEVEL, new_level);
 
             bonus_points = sub_4A6980(curr_level, new_level);
-            curr_points = stat_get_base(object_id, STAT_UNSPENT_POINTS);
-            stat_set_base(object_id, bonus_points + curr_points);
-            sub_4A7030(object_id, NULL);
+            curr_points = stat_get_base(obj, STAT_UNSPENT_POINTS);
+            stat_set_base(obj, STAT_UNSPENT_POINTS, bonus_points + curr_points);
+            sub_4A7030(obj, NULL);
         }
     }
 }
 
 // 0x4A6D40
-int level_auto_level_scheme_get(object_id_t object_id)
+int level_auto_level_scheme_get(int64_t obj)
 {
     int type;
 
-    if (object_id == OBJ_HANDLE_NULL) {
+    if (obj == OBJ_HANDLE_NULL) {
         return -1;
     }
 
-    type = obj_field_int32_get(object_id, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return -1;
     }
 
-    return obj_field_int32_get(object_id, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME);
+    return obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME);
 }
 
 // 0x4A6D90
-int level_auto_level_scheme_set(object_id_t object_id, int value)
+int level_auto_level_scheme_set(int64_t obj, int value)
 {
     int type;
 
-    if (object_id == OBJ_HANDLE_NULL) {
+    if (obj == OBJ_HANDLE_NULL) {
         return -1;
     }
 
-    type = obj_field_int32_get(object_id, OBJ_F_TYPE);
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return -1;
     }
 
-    obj_field_int32_set(object_id, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, value);
+    obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, value);
 
     return value;
 }
@@ -284,7 +413,7 @@ const char* level_advancement_scheme_get_rule(int scheme)
 }
 
 // 0x4A6F00
-void level_set_level(object_id_t obj, int level)
+void level_set_level(int64_t obj, int level)
 {
     int type;
     int gender;
@@ -319,7 +448,7 @@ void level_set_level(object_id_t obj, int level)
     stat_set_value(obj, STAT_AGE, age);
     stat_set_value(obj, STAT_LEVEL, level);
 
-    sub_43D430(obj, 0);
+    object_hp_pts_set(obj, 0);
     sub_45D3E0(obj, 0);
 
     if (level >= 1) {
@@ -332,4 +461,405 @@ void level_set_level(object_id_t obj, int level)
 
     sub_4A7030(obj, NULL);
     sub_43D530(obj, 0);
+}
+
+// 0x4A7030
+bool sub_4A7030(int64_t obj, char* str)
+{
+    int scheme;
+    MesFileEntry mes_file_entry;
+    char buffer[2000];
+    char* rule;
+    int index;
+    bool ret;
+
+    scheme = level_auto_level_scheme_get(obj);
+    if (scheme == 0) {
+        return false;
+    }
+
+    if (str != NULL) {
+        mes_file_entry.num = 2;
+        mes_get_msg(level_mes_file, &mes_file_entry);
+        strcpy(str, mes_file_entry.str);
+        dword_5F5C9C = 0;
+    } else {
+        dword_5F5C9C = -1;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && (obj_field_int32_get(obj, OBJ_F_PC_FLAGS) & OPCF_USE_ALT_DATA) != 0) {
+        if (!sub_4A47D0(obj, buffer)) {
+            return false;
+        }
+        rule = buffer;
+    } else {
+        rule = level_advancement_scheme_get_rule(scheme);
+    }
+
+    if (rule == NULL) {
+        if (str != NULL) {
+            mes_file_entry.num = 4;
+            mes_get_msg(level_mes_file, &mes_file_entry);
+            strcat(str, mes_file_entry.str);
+        }
+        return false;
+    }
+
+    ret = sub_4A7340(obj, rule);
+    if (ret) {
+        rule = level_advancement_scheme_get_rule(STANDARD_PC_SCHEME);
+        if (rule != NULL) {
+            ret = sub_4A7340(obj, rule);
+        }
+    }
+
+    if (dword_5F5C9C == 0) {
+        // FIXME: No `str != NULL` check as seen above.
+        mes_file_entry.num = 3;
+        mes_get_msg(level_mes_file, &mes_file_entry);
+        strcat(str, mes_file_entry.str);
+    } else {
+        for (index = 0; index < dword_5F5C9C; index++) {
+            strcat(str, byte_5F0E60[index]);
+            if (dword_5F5C80[index] > 0) {
+                sprintf(&(str[strlen(str)]), " %d", dword_5F5C80[index]);
+            } else if (dword_5F5C80[index] < 0) {
+                // Special case - negative value indicates degree level.
+                strcat(str, " ");
+                strcat(str, degree_get_name(-dword_5F5C80[index]));
+            }
+            strcat(str, ", ");
+        }
+
+        // Replace final comma with dot.
+        str[strlen(str) - 2] = '.';
+    }
+
+    return ret;
+}
+
+// 0x4A7340
+bool sub_4A7340(int64_t obj, const char* str)
+{
+    char buffer[2000];
+    char* tok;
+    int score;
+    int index;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return false;
+    }
+
+    strcpy(buffer, str);
+
+    for (;;) {
+        tok = strtok(buffer, " ");
+        if (tok == NULL) {
+            return true;
+        }
+
+        score = atoi(strtok(NULL, ","));
+
+        for (index = 0; index < LEVEL_SCHEME_STATS_MAX; index++) {
+            if (strcmpi(tok, level_scheme_stats[index]) == 0) {
+                if (sub_4A75E0(obj, index, score) == 1) {
+                    return false;
+                }
+                break;
+            }
+        }
+        if (index < LEVEL_SCHEME_STATS_MAX) continue;
+
+        for (index = 0; index < LEVEL_SCHEME_BASIC_SKILLS_MAX; index++) {
+            if (strcmpi(tok, level_scheme_basic_skills[index]) == 0) {
+                if (sub_4A76B0(obj, index, score) == 1) {
+                    return false;
+                }
+                break;
+            }
+        }
+        if (index < LEVEL_SCHEME_BASIC_SKILLS_MAX) continue;
+
+        for (index = 0; index < LEVEL_SCHEME_TECH_SKILLS_MAX; index++) {
+            if (strcmpi(tok, level_scheme_tech_skills[index]) == 0) {
+                if (sub_4A77A0(obj, index, score) == 1) {
+                    return false;
+                }
+                break;
+            }
+        }
+        if (index < LEVEL_SCHEME_TECH_SKILLS_MAX) continue;
+
+        for (index = 0; index < LEVEL_SCHEME_SPELLS_MAX; index++) {
+            if (strcmpi(tok, level_scheme_spells[index]) == 0) {
+                if (sub_4A7890(obj, index, score) == 1) {
+                    return false;
+                }
+                break;
+            }
+        }
+        if (index < LEVEL_SCHEME_SPELLS_MAX) continue;
+
+        for (index = 0; index < LEVEL_SCHEME_TECH_MAX; index++) {
+            if (strcmpi(tok, level_scheme_tech[index]) == 0) {
+                if (sub_4A79C0(obj, index, score) == 1) {
+                    return false;
+                }
+                break;
+            }
+        }
+        if (index < LEVEL_SCHEME_TECH_MAX) continue;
+
+        for (index = 0; index < LEVEL_SCHEME_MISC_MAX; index++) {
+            if (strcmpi(tok, level_scheme_misc[index]) == 0) {
+                if (sub_4A7AA0(obj, index, score) == 1) {
+                    return false;
+                }
+                break;
+            }
+        }
+        if (index < LEVEL_SCHEME_MISC_MAX) continue;
+
+        tug_debug_printf("Error processing auto level scheme, cannot find match for: %s\n", tok);
+        return false;
+    }
+
+    return true;
+}
+
+// 0x4A75E0
+int sub_4A75E0(int64_t obj, int stat, int value)
+{
+    int current_value;
+    int cost;
+    int unspent_points;
+    int new_value;
+
+    current_value = stat_get_base(obj, stat);
+    while (current_value < value) {
+        cost = sub_4B0F50(current_value + 1);
+        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > unspent_points) {
+            return 1;
+        }
+
+        stat_set_base(obj, stat, current_value + 1);
+        new_value = stat_get_base(obj, stat);
+        if (new_value < current_value + 1) {
+            return 2;
+        }
+
+        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+
+        current_value = stat_level(obj, stat);
+        sub_4A7B90(stat_get_name(stat), stat_level(obj, stat));
+    }
+
+    return 0;
+}
+
+// 0x4A76B0
+int sub_4A76B0(int64_t obj, int skill, int value)
+{
+    int current_value;
+    int cost;
+    int unspent_points;
+    int new_value;
+    int stat;
+    int rc;
+
+    current_value = basic_skill_level(obj, skill);
+    while (current_value < value) {
+        cost = sub_4C64B0(obj, skill);
+        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > unspent_points) {
+            return 1;
+        }
+
+        new_value = basic_skill_get_base(obj, skill) + cost;
+        if (basic_skill_set_base(obj, skill, new_value) == new_value) {
+            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            current_value = basic_skill_level(obj, skill);
+            sub_4A7B90(basic_skill_get_name(skill), obj);
+        } else {
+            stat = basic_skill_get_stat(skill);
+
+            rc = sub_4A75E0(obj, stat, stat_get_base(obj, stat) + 1);
+            if (rc != 0) {
+                return rc;
+            }
+        }
+    }
+
+    return 0;
+}
+
+// 0x4A77A0
+int sub_4A77A0(int64_t obj, int skill, int score)
+{
+    int level;
+    int cost;
+    int unspent_points;
+    int new_level;
+    int stat;
+
+    level = tech_skill_level(obj, skill);
+    while (level < score) {
+        cost = sub_4C6AF0(obj, skill);
+        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > unspent_points) {
+            return 1;
+        }
+
+        new_level = tech_skill_get_base(obj, skill) + cost;
+        if (tech_skill_set_base(obj, skill, new_level) == new_level) {
+            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            level = tech_skill_level(obj, skill);
+            sub_4A7B90(tech_skill_get_name(skill), obj);
+        } else {
+            stat = tech_skill_get_stat(skill);
+            if (sub_4A75E0(obj, stat, stat_get_base(obj, stat) + 1)) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+// 0x4A7890
+int sub_4A7890(int64_t obj, int college, int score)
+{
+    int current_value;
+    int spl;
+    int cost;
+    int unspent_points;
+    int intelligence;
+    int willpower;
+    int rc;
+
+    current_value = sub_4B1AB0(obj, college);
+    while (current_value < score) {
+        spl = current_value + 5 * college;
+        cost = sub_4B1650(spl);
+        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > unspent_points) {
+            return 1;
+        }
+
+        if (sub_4B1790(obj, spl, 0)) {
+            stat_ste_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            current_value++;
+            spl++;
+        } else {
+            if (spell_get_minimum_level(spl) > stat_level(obj, STAT_LEVEL)) {
+                return 2;
+            }
+
+            if (sub_4B1750(spl) > stat_level(obj, STAT_INTELLIGENCE)) {
+                intelligence = stat_get_base(obj, STAT_INTELLIGENCE);
+                rc = sub_4A75E0(obj, STAT_INTELLIGENCE, intelligence + 1);
+            } else {
+                willpower = stat_get_base(obj, STAT_WILLPOWER);
+                rc = sub_4A75E0(obj, STAT_WILLPOWER, willpower + 1);
+            }
+
+            if (rc != 0) {
+                return rc;
+            }
+        }
+    }
+
+    return 0;
+}
+
+// 0x4A79C0
+int sub_4A79C0(int64_t obj, int tech, int degree)
+{
+    int current_degree;
+    int cost;
+    int unspent_points;
+    int new_degree;
+    int intelligence;
+    int rc;
+
+    current_degree = tech_get_degree(obj, tech);
+    while (current_degree < degree) {
+        cost = tech_get_cost_for_degree(current_degree + 1);
+        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > unspent_points) {
+            return 1;
+        }
+
+        new_degree = tech_inc_degree(obj, tech);
+        if (new_degree == degree) {
+            intelligence = stat_get_base(obj, STAT_INTELLIGENCE);
+            rc = sub_4A75E0(obj, STAT_INTELLIGENCE, intelligence + 1);
+            if (rc != 0) {
+                return rc;
+            }
+        } else {
+            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            current_degree = new_degree;
+            sub_4A7B90(tech_get_name(tech), -new_degree);
+        }
+    }
+
+    return 0;
+}
+
+// 0x4A7AA0
+int sub_4A7AA0(int64_t obj, int type, int score)
+{
+    int current_value;
+    int unspent_points;
+    int new_value;
+    MesFileEntry mes_file_entry;
+
+    current_value = off_4A7ABE[type](obj);
+    while (current_value < score) {
+        unspent_points = stat_get_base(obj, STAT_UNSPENT_POINTS);
+        if (unspent_points < 1) {
+            return 1;
+        }
+
+        off_4A7AFE[type](obj, off_4A7AF3[type](obj) + 1);
+        new_value = off_4A7ABE[type](obj);
+        if (new_value < current_value + 1) {
+            return 2;
+        }
+
+        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - 1);
+
+        mes_file_entry.num = 5 + type;
+        mes_get_msg(level_mes_file, &mes_file_entry);
+        sub_4A7B90(mes_file_entry.str, new_value);
+
+        current_value = new_value;
+    }
+
+    return 0;
+}
+
+// 0x4A7B90
+void sub_4A7B90(const char* str, int score)
+{
+    int index;
+
+    if (dword_5F5C9C != -1) {
+        for (index = 0; index < dword_5F5C9C; index++) {
+            if (strcmp(byte_5F0E60[index], str) == 0) {
+                dword_5F5C80[index] = score;
+                return;
+            }
+        }
+
+        if (dword_5F5C9C < 10) {
+            strcpy(byte_5F0E60[dword_5F5C9C], str);
+            dword_5F5C80[dword_5F5C9C] = score;
+            dword_5F5C9C++;
+        }
+    }
 }
