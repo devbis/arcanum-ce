@@ -112,6 +112,7 @@ int tech_skill_level(int64_t obj, int skill);
 int tech_skill_get_base(int64_t obj, int skill);
 int tech_skill_set_base(int64_t obj, int skill, int value);
 int tech_skill_get_training(int64_t obj, int skill);
+int tech_skill_set_training(int64_t obj, int skill, int training);
 const char* tech_skill_get_name(int skill);
 const char* tech_skill_get_description(int skill);
 int sub_4C69C0(int skill);
@@ -121,7 +122,20 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj);
 int sub_4C6AF0(int64_t obj, int skill);
 int sub_4C6B00(int64_t obj, int skill);
 int tech_skill_get_stat(int skill);
+int sub_4C6B20(int a1);
+bool sub_4C6B50(int64_t obj, int stat, int value);
+bool sub_4C6F90(int64_t a1, int a2, int64_t a3, int a4);
+bool sub_4C6FD0(int64_t a1, int64_t a2, int64_t a3);
+bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3);
+bool sub_4C7050(int64_t a1, int a2, int64_t a3);
+void sub_4C7090(Tanya* a1);
+bool sub_4C7120(Tanya* a1);
+bool sub_4C7160(Tanya* a1);
+int sub_4C8430(Tanya* a1);
+void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4);
 bool get_follower_skills(int64_t obj);
 void set_follower_skills(bool enabled);
+void sub_4C9050(Tanya* a1);
+int64_t sub_4C91F0(int64_t obj, int a2);
 
 #endif /* ARCANUM_GAME_SKILL_H_ */

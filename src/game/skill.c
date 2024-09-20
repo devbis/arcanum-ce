@@ -16,6 +16,9 @@
 
 static int sub_4C5F70(int value);
 static int sub_4C6560();
+static bool sub_4C81A0(int a1, int a2, Tanya* a3);
+static bool sub_4C82E0(int a1, int a2, Tanya* a3);
+static bool sub_4C83E0(int64_t obj);
 
 // 0x5B6F04
 static int basic_skill_stats[BASIC_SKILL_COUNT] = {
@@ -767,6 +770,58 @@ int tech_skill_get_training(int64_t obj, int skill)
     return (obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill) >> 6) & 3;
 }
 
+// 0x4C6850
+int tech_skill_set_training(int64_t obj, int skill, int training)
+{
+    Packet56 pkt;
+    int skill_value;
+    int current_training;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return 0;
+    }
+
+    if (skill < 0 || skill >= TECH_SKILL_COUNT) {
+        return 0;
+    }
+
+    if (training < 0 || training >= TRAINING_COUNT) {
+        return 0;
+    }
+
+    skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill);
+    current_training = (skill_value >> 6) & 3;
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return current_training;
+        }
+
+        pkt.type = 56;
+        sub_4440E0(obj, &(pkt.field_8));
+        pkt.skill = BASIC_SKILL_COUNT + skill;
+        pkt.training = training;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (training > current_training && current_training != training - 1) {
+        return current_training;
+    }
+
+    if (tech_skill_level(obj, skill) < dword_5B6F44[skill]) {
+        return current_training;
+    }
+
+    obj_arrayfield_int32_set(obj,
+        OBJ_F_CRITTER_TECH_SKILL_IDX,
+        skill,
+        (skill_value & ~(3 << 6)) | (training << 6));
+
+    sub_4C2950(obj);
+
+    return training;
+}
+
 // 0x4C69A0
 const char* tech_skill_get_name(int skill)
 {
@@ -886,6 +941,156 @@ int tech_skill_get_stat(int skill)
     return tech_skill_stats[skill];
 }
 
+// 0x4C6B20
+int sub_4C6B20(int a1)
+{
+    int value;
+
+    for (value = 0; value < 20; value++) {
+        if (sub_4C5F70(value + 1) >= a1) {
+            return value + 1;
+        }
+    }
+
+    return 0;
+}
+
+// 0x4C6B50
+bool sub_4C6B50(int64_t obj, int stat, int value)
+{
+    int skill;
+
+    for (skill = 0; skill < BASIC_SKILL_COUNT; skill++) {
+        if (basic_skill_stats[skill] == stat) {
+            if (sub_4C5E50(obj, skill) > sub_4C5F70(value)) {
+                return false;
+            }
+        }
+    }
+
+    for (skill = 0; skill < TECH_SKILL_COUNT; skill++) {
+        if (tech_skill_stats[skill] == stat) {
+            if (sub_4C6580(obj, skill) > sub_4C5F70(value)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// 0x4C6F90
+bool sub_4C6F90(int64_t a1, int a2, int64_t a3, int a4)
+{
+    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, a4);
+}
+
+// 0x4C6FD0
+bool sub_4C6FD0(int64_t a1, int64_t a2, int64_t a3)
+{
+    return sub_4350F0(a1, a2, a3, 5, 0);
+}
+
+// 0x4C7010
+bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3)
+{
+    return sub_4350F0(a1, a2, a3, 5, 1);
+}
+
+// 0x4C7050
+bool sub_4C7050(int64_t a1, int a2, int64_t a3)
+{
+    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, 2 << a2);
+}
+
+// 0x4C7090
+void sub_4C7090(Tanya* a1)
+{
+    a1->field_98 = 0;
+    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_68));
+    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_0));
+    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_30));
+    a1->field_60 = 0;
+    a1->field_64 = 0;
+    a1->field_A0 = 0;
+    a1->field_9C = -1;
+}
+
+// 0x4C7120
+bool sub_4C7120(Tanya* a1)
+{
+    return sub_444130(&(a1->field_0))
+        && sub_444130(&(a1->field_30))
+        && sub_444130(&(a1->field_68));
+}
+
+// 0x4C7160
+bool sub_4C7160(Tanya* a1)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C81A0
+bool sub_4C81A0(int a1, int a2, Tanya* a3)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C82E0
+bool sub_4C82E0(int a1, int a2, Tanya* a3)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C83E0
+bool sub_4C83E0(int64_t obj)
+{
+    int64_t leader_obj;
+
+    if (player_is_pc_obj(obj)) {
+        return true;
+    }
+
+    leader_obj = critter_leader_get(obj);
+    if (leader_obj != NULL && player_is_pc_obj(leader_obj)) {
+        return true;
+    }
+
+    return false;
+}
+
+// 0x4C8430
+int sub_4C8430(Tanya* a1)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C8E60
+void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4)
+{
+    Tanya v1;
+    Packet126 pkt;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4C7090(&v1);
+        v1.field_98 |= 0x1000;
+        v1.field_9C = 12;
+        sub_4440E0(a2, &(v1.field_0));
+        sub_4440E0(a1, &(v1.field_30));
+        sub_4C7160(&v1);
+        sub_464830(a3, a2, a4, 0);
+        sub_4EE3A0(a3, a1);
+    } else {
+        pkt.type = 126;
+        sub_4F0640(a1, &(pkt.field_8));
+        sub_4F0640(a2, &(pkt.field_20));
+        sub_4F0640(a3, &(pkt.field_38));
+        pkt.field_50 = a4;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+}
+
 // 0x4C8FA0
 bool get_follower_skills(int64_t obj)
 {
@@ -920,4 +1125,36 @@ void set_follower_skills(bool enabled)
             }
         }
     }
+}
+
+// 0x4C9050
+void sub_4C9050(Tanya* a1)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C91F0
+int64_t sub_4C91F0(int64_t obj, int a2)
+{
+    int64_t v1 = OBJ_HANDLE_NULL;
+
+    if (a2 == 10) {
+        v1 = sub_462760(obj, 8);
+        if (v1 == OBJ_HANDLE_NULL) {
+            obj = sub_45F650(obj);
+            if (obj != OBJ_HANDLE_NULL) {
+                v1 = sub_462760(obj, 8);
+            }
+        }
+    } else if (a2 == 14) {
+        v1 = sub_462760(obj, 2);
+        if (v1 == OBJ_HANDLE_NULL) {
+            obj = sub_45F650(obj);
+            if (obj != OBJ_HANDLE_NULL) {
+                v1 = sub_462760(obj, 2);
+            }
+        }
+    }
+
+    return v1;
 }
