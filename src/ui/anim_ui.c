@@ -1,14 +1,21 @@
 #include "ui/anim_ui.h"
 
+#include "game/critter.h"
+#include "game/gamelib.h"
+#include "game/gfade.h"
 #include "game/light_scheme.h"
+#include "game/player.h"
 #include "game/timeevent.h"
+#include "ui/gameuilib.h"
 #include "ui/intgame.h"
 #include "ui/mainmenu_ui.h"
 #include "ui/mp_ctrl_ui.h"
 #include "ui/sleep_ui.h"
+#include "ui/slide_ui.h"
 #include "ui/wmap_ui.h"
 
 static bool sub_57D3B0(TimeEvent* timeevent);
+static bool anim_ui_bkg_process_callback(TimeEvent* timeevent);
 
 // 0x5CB408
 static bool dword_5CB408;
@@ -119,9 +126,96 @@ void sub_57D3E0(int list, int a2)
 }
 
 // 0x57D410
-void anim_ui_bkg_process_callback()
+bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    FadeData fade_data;
+
+    switch (timeevent->params[0].integer_value) {
+    case 0:
+        sub_54AEE0(0);
+        break;
+    case 1:
+        sub_54AEE0(1);
+        break;
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+        break;
+    case 8:
+        sub_552080(timeevent->params[1].integer_value);
+        break;
+    case 10:
+        if (sub_45D8D0(player_get_pc_obj())) {
+            if (sub_573620() != OBJ_HANDLE_NULL) {
+                sub_575770();
+            }
+            if (sub_541680()) {
+                sub_5412D0();
+                sub_57D370(10, -1, 300);
+            } else {
+                sub_569600(1);
+
+                tig_debug_printf("DEATH: Resetting game!\n");
+                gamelib_reset();
+                gameuilib_reset();
+                mainmenu_ui_start(0);
+
+                fade_data.field_0 = 1;
+                fade_data.duration = 2.0f;
+                fade_data.steps = 48;
+                sub_4BDFA0(&fade_data);
+            }
+        }
+        break;
+    case 11:
+        if (sub_573620() != OBJ_HANDLE_NULL) {
+            sub_575770();
+        }
+        if (sub_541680()) {
+            sub_5412D0();
+            sub_57D370(11, -1, 300);
+        } else {
+            sub_569600(0);
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                fade_data.field_0 = 1;
+                fade_data.duration = 2.0f;
+                fade_data.steps = 48;
+                sub_4BDFA0(&fade_data);
+
+                if (sub_460BB0()) {
+                    sub_4A4320();
+                }
+            }
+
+            tig_debug_printf("EndGame: Resetting game!\n");
+            gamelib_reset();
+            gameuilib_reset();
+            mainmenu_ui_start(0);
+
+            fade_data.field_0 = 1;
+            fade_data.duration = 2.0f;
+            fade_data.steps = 48;
+            sub_4BDFA0(&fade_data);
+        }
+        break;
+    case 12:
+        sub_56F660();
+        break;
+    case 13:
+        sub_560750();
+        break;
+    case 14:
+        sub_568F20();
+        break;
+    default:
+        tig_debug_printf("AnimUI: anim_ui_bkg_process_callback: ERROR: Failed to match event type!\n");
+        break;
+    }
+
+    return true;
 }
 
 // 0x57D620
