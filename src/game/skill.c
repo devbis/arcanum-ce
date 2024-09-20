@@ -612,6 +612,20 @@ int basic_skill_get_stat(int skill)
     return basic_skill_stats[skill];
 }
 
+// 0x4C64E0
+int sub_4C64E0(int a1)
+{
+    int value;
+
+    for (value = 0; value < 20; value++) {
+        if (sub_4C5F70(value + 1) >= a1) {
+            return value + 1;
+        }
+    }
+
+    return 0;
+}
+
 // 0x4C6510
 int sub_4C6510(int64_t obj)
 {

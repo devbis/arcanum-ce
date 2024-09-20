@@ -104,6 +104,7 @@ int sub_4C6410(int64_t obj, int skill, int64_t other_obj);
 int sub_4C64B0(int64_t obj, int skill);
 int sub_4C64C0(int64_t obj, int skill);
 int basic_skill_get_stat(int skill);
+int sub_4C64E0(int a1);
 int sub_4C6510(int64_t obj);
 int sub_4C6520(int64_t obj);
 int sub_4C6580(int64_t obj, int skill);
