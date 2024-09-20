@@ -1014,9 +1014,30 @@ void sub_4A57F0()
 }
 
 // 0x4A5840
-void sub_4A5840()
+int sub_4A5840(int64_t obj, mes_file_handle_t mes_file)
 {
-    // TODO: Incomplete.
+    int v1 = 0;
+    int level;
+    int value;
+
+    level = stat_level(obj, STAT_LEVEL);
+
+    value = tech_skill_level(obj, TECH_SKILL_PICK_LOCKS);
+    if (value > 0) {
+        v1 += sub_4A5920(obj, mes_file, (value + level + 29) / 30 + 1100);
+    }
+
+    value = basic_skill_level(obj, BASIC_SKILL_HEAL);
+    if (value > 0) {
+        v1 += sub_4A5920(obj, mes_file, (value + level + 29) / 30 + 1200);
+    }
+
+    value = basic_skill_level(obj, BASIC_SKILL_BACKSTAB);
+    if (value > 0) {
+        v1 += sub_4A5920(obj, mes_file, (value + level + 29) / 30 + 1300);
+    }
+
+    return v1;
 }
 
 // 0x4A5920
