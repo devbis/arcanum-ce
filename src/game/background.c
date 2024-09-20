@@ -1,5 +1,7 @@
 #include "game/background.h"
 
+#include <stdio.h>
+
 #include "game/effect.h"
 #include "game/mes.h"
 #include "game/stat.h"
@@ -282,7 +284,7 @@ bool sub_4C2B50(int64_t obj, char* str)
     int race;
     char buffer[4];
 
-    if (str != NULL && *str != NULL) {
+    if (str != NULL && *str != '\0') {
         race = stat_get_base(obj, STAT_RACE);
         gender = stat_get_base(obj, STAT_GENDER);
         sprintf(buffer, "%s%c", off_5B6AEC[race], off_5B6B0C[gender]);
