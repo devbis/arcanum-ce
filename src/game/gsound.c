@@ -41,6 +41,7 @@ static const char* gsound_build_sound_path(const char* name);
 static void sub_41AFB0(SoundSchemeList* scheme);
 static void sub_41B3A0();
 static void sub_41B3B0(tig_sound_handle_t sound_handle);
+static void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, TigSoundPositionalSize size);
 static void sub_41BA20(int fade_duration, int index);
 static void sub_41BAC0(int fade_duration);
 static void sub_41BCD0(const char* name, char* buffer);
@@ -538,6 +539,12 @@ void sub_41B3B0(tig_sound_handle_t sound_handle)
     sub_41B420(x, y, &volume, &extra_volume, size);
     tig_sound_set_volume(sound_handle, adjust_volume(sound_handle, volume));
     tig_sound_set_extra_volume(sound_handle, extra_volume);
+}
+
+// 0x41B420
+void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, TigSoundPositionalSize size)
+{
+    // TODO: Incomplete.
 }
 
 // 0x41B720
