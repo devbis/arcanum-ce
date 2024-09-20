@@ -799,6 +799,69 @@ int sub_4C69E0(int a1, int a2, int a3)
     return (a3 + 1) * (a2 + 2);
 }
 
+// 0x4C69F0
+int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
+{
+    int value;
+    int level;
+    int game_difficulty;
+
+    level = tech_skill_level(obj, skill);
+    switch (skill) {
+    case TECH_SKILL_REPAIR:
+    value = 4 * level;
+        break;
+    case TECH_SKILL_FIREARMS:
+        value = 5 * level + 25;
+        if (other_obj != NULL
+            && (obj_field_int32_get(other_obj, OBJ_F_SPELL_FLAGS) & OSF_MAGNETIC_INVERSION) != 0) {
+            value -= 20;
+        }
+        break;
+    case TECH_SKILL_PICK_LOCKS:
+        value = 6 * level;
+        break;
+    case TECH_SKILL_DISARM_TRAPS:
+        if (level != 0) {
+            value = 4 * level + 20;
+        } else {
+            value = 0;
+        }
+        break;
+    default:
+        value = 0;
+        break;
+    }
+
+    if (stat_is_maximized(obj, STAT_INTELLIGENCE)) {
+        value += 10;
+    }
+
+    if (obj == player_get_pc_obj()) {
+        game_difficulty = gamelib_get_game_difficulty();
+        switch (game_difficulty) {
+        case 0:
+            value += value / 2;
+            break;
+        case 2:
+            value -= value / 4;
+            break;
+        }
+    }
+
+    if ((dword_5B6F94[skill] & 0x800) != 0) {
+        if (value > 95) {
+            value = 95;
+        }
+    }
+
+    if (value < 0) {
+        value = 0;
+    }
+
+    return value;
+}
+
 // 0x4C6AF0
 int sub_4C6AF0(int64_t obj, int skill)
 {
