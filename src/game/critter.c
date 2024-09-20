@@ -970,9 +970,32 @@ void sub_45F600(long long obj)
 }
 
 // 0x45F650
-void sub_45F650()
+int64_t sub_45F650(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t substitute_inventory_obj;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    if (critter_leader_get(obj) != OBJ_HANDLE_NULL) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    substitute_inventory_obj = obj_fiedl_handle_get(obj, OBJ_F_NPC_SUBSTITUTE_INVENTORY);
+    if (substitute_inventory_obj == OBJ_HANDLE_NULL) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    if (sub_441AE0(obj, substitute_inventory_obj) > 20) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    return substitute_inventory_obj;
 }
 
 // 0x45F6D0
