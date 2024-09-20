@@ -714,6 +714,47 @@ int tech_skill_get_base(int64_t obj, int skill)
     return obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill) & 63;
 }
 
+// 0x4C66E0
+int tech_skill_set_base(int64_t obj, int skill, int value)
+{
+    int key_stat_level;
+    int current_value;
+    int tech_points;
+
+    if (value < 0) {
+        return 0;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0
+        && !sub_4A2BA0()) {
+        return 0;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return 0;
+    }
+
+    if (skill < 0 || skill >= TECH_SKILL_COUNT) {
+        return 0;
+    }
+
+    key_stat_level = stat_level(obj, tech_skill_get_stat(skill));
+    current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill);
+
+    if (4 * value > sub_4C5F70(key_stat_level)) {
+        return current_value & 63;
+    }
+
+    sub_4F0150(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, value | current_value & ~63);
+
+    tech_points = stat_get_base(obj, STAT_TECH_POINTS);
+    tech_points += value - (current_value & 63);
+    stat_set_base(obj, STAT_TECH_POINTS, tech_points);
+
+    return value;
+}
+
 // 0x4C67F0
 int tech_skill_get_training(int64_t obj, int skill)
 {
