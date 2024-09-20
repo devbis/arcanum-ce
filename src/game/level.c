@@ -1,7 +1,10 @@
 #include "game/level.h"
 
+#include <stdio.h>
+
 #include "game/critter.h"
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/skill.h"
@@ -169,14 +172,14 @@ bool level_init(GameInitInfo* init_info)
 
     for (index = 0; index < LEVEL_MAX; index++) {
         msg.num = index + 1;
-        if (message_find(xp_level_mes_file, &msg)) {
+        if (mes_search(xp_level_mes_file, &msg)) {
             dword_5F5C94[index] = atoi(msg.str);
         } else {
             dword_5F5C94[index] = 0;
         }
     }
 
-    message_unload(xp_level_mes_file);
+    mes_unload(xp_level_mes_file);
 
     dword_5F5C94[0] = 0;
 
@@ -187,34 +190,34 @@ bool level_init(GameInitInfo* init_info)
     }
 
     if (!mes_load("rules\\userlevel.mes", &user_level_mes_file)) {
-        message_unload(game_level_mes_file);
+        mes_unload(game_level_mes_file);
         FREE(dword_5F5C94);
         FREE(dword_5F5C80);
         return false;
     }
 
     if (!mes_load("mes\\gamelevelname.mes", &game_level_name_mes_file)) {
-        message_unload(user_level_mes_file);
-        message_unload(game_level_mes_file);
+        mes_unload(user_level_mes_file);
+        mes_unload(game_level_mes_file);
         FREE(dword_5F5C94);
         FREE(dword_5F5C80);
         return false;
     }
 
     if (!mes_load("mes\\userlevelname.mes", &user_level_name_mes_file)) {
-        message_unload(game_level_name_mes_file);
-        message_unload(user_level_mes_file);
-        message_unload(game_level_mes_file);
+        mes_unload(game_level_name_mes_file);
+        mes_unload(user_level_mes_file);
+        mes_unload(game_level_mes_file);
         FREE(dword_5F5C94);
         FREE(dword_5F5C80);
         return false;
     }
 
     if (!mes_load("mes\\level.mes", &level_mes_file)) {
-        message_unload(user_level_name_mes_file);
-        message_unload(game_level_name_mes_file);
-        message_unload(user_level_mes_file);
-        message_unload(game_level_mes_file);
+        mes_unload(user_level_name_mes_file);
+        mes_unload(game_level_name_mes_file);
+        mes_unload(user_level_mes_file);
+        mes_unload(game_level_mes_file);
         FREE(dword_5F5C94);
         FREE(dword_5F5C80);
         return false;
@@ -226,11 +229,11 @@ bool level_init(GameInitInfo* init_info)
 // 0x4A6850
 void level_exit()
 {
-    message_unload(game_level_mes_file);
-    message_unload(user_level_mes_file);
-    message_unload(game_level_name_mes_file);
-    message_unload(user_level_name_mes_file);
-    message_unload(level_mes_file);
+    mes_unload(game_level_mes_file);
+    mes_unload(user_level_mes_file);
+    mes_unload(game_level_name_mes_file);
+    mes_unload(user_level_name_mes_file);
+    mes_unload(level_mes_file);
     FREE(dword_5F5C94);
     FREE(dword_5F5C80);
 }
@@ -381,7 +384,7 @@ const char* level_advancement_scheme_get_name(int scheme)
     }
 
     mes_file_entry.num = scheme;
-    if (!message_find(mes_file, &mes_file_entry)) {
+    if (!mes_search(mes_file, &mes_file_entry)) {
         return NULL;
     }
 
@@ -405,7 +408,7 @@ const char* level_advancement_scheme_get_rule(int scheme)
     }
 
     mes_file_entry.num = scheme;
-    if (!message_find(mes_file, &mes_file_entry)) {
+    if (!mes_search(mes_file, &mes_file_entry)) {
         return NULL;
     }
 
@@ -432,35 +435,35 @@ void level_set_level(int64_t obj, int level)
         level = LEVEL_MAX;
     }
 
-    gender = stat_get_value(obj, STAT_GENDER);
-    race = stat_get_value(obj, STAT_RACE);
-    alignment = stat_get_value(obj, STAT_ALIGNMENT);
-    age = stat_get_value(obj, STAT_AGE);
+    gender = stat_get_base(obj, STAT_GENDER);
+    race = stat_get_base(obj, STAT_RACE);
+    alignment = stat_get_base(obj, STAT_ALIGNMENT);
+    age = stat_get_base(obj, STAT_AGE);
 
     stat_set_defaults(obj);
     skill_set_defaults(obj);
     spell_set_defaults(obj);
     tech_set_defaults(obj);
 
-    stat_set_value(obj, STAT_GENDER, gender);
-    stat_set_value(obj, STAT_RACE, race);
-    stat_set_value(obj, STAT_ALIGNMENT, alignment);
-    stat_set_value(obj, STAT_AGE, age);
-    stat_set_value(obj, STAT_LEVEL, level);
+    stat_set_base(obj, STAT_GENDER, gender);
+    stat_set_base(obj, STAT_RACE, race);
+    stat_set_base(obj, STAT_ALIGNMENT, alignment);
+    stat_set_base(obj, STAT_AGE, age);
+    stat_set_base(obj, STAT_LEVEL, level);
 
     object_hp_pts_set(obj, 0);
-    sub_45D3E0(obj, 0);
+    critter_fatigue_pts_set(obj, 0);
 
     if (level >= 1) {
-        stat_set_value(obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[level - 1]);
+        stat_set_base(obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[level - 1]);
 
-        unspent_points = stat_get_value(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_get_base(obj, STAT_UNSPENT_POINTS);
         bonus = sub_4A6980(1, level);
-        stat_set_value(obj, STAT_UNSPENT_POINTS, unspent_points + bonus);
+        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + bonus);
     }
 
     sub_4A7030(obj, NULL);
-    sub_43D530(obj, 0);
+    object_set_hp_damage(obj, 0);
 }
 
 // 0x4A7030
@@ -469,7 +472,7 @@ bool sub_4A7030(int64_t obj, char* str)
     int scheme;
     MesFileEntry mes_file_entry;
     char buffer[2000];
-    char* rule;
+    const char* rule;
     int index;
     bool ret;
 
@@ -622,7 +625,7 @@ bool sub_4A7340(int64_t obj, const char* str)
         }
         if (index < LEVEL_SCHEME_MISC_MAX) continue;
 
-        tug_debug_printf("Error processing auto level scheme, cannot find match for: %s\n", tok);
+        tig_debug_printf("Error processing auto level scheme, cannot find match for: %s\n", tok);
         return false;
     }
 
@@ -682,7 +685,7 @@ int sub_4A76B0(int64_t obj, int skill, int value)
         if (basic_skill_set_base(obj, skill, new_value) == new_value) {
             stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_value = basic_skill_level(obj, skill);
-            sub_4A7B90(basic_skill_get_name(skill), obj);
+            sub_4A7B90(basic_skill_get_name(skill), new_value);
         } else {
             stat = basic_skill_get_stat(skill);
 
@@ -717,7 +720,7 @@ int sub_4A77A0(int64_t obj, int skill, int score)
         if (tech_skill_set_base(obj, skill, new_level) == new_level) {
             stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             level = tech_skill_level(obj, skill);
-            sub_4A7B90(tech_skill_get_name(skill), obj);
+            sub_4A7B90(tech_skill_get_name(skill), new_level);
         } else {
             stat = tech_skill_get_stat(skill);
             if (sub_4A75E0(obj, stat, stat_get_base(obj, stat) + 1)) {
@@ -750,7 +753,7 @@ int sub_4A7890(int64_t obj, int college, int score)
         }
 
         if (sub_4B1790(obj, spl, 0)) {
-            stat_ste_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_value++;
             spl++;
         } else {
