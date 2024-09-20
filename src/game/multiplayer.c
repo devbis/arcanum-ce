@@ -7,8 +7,12 @@
 #include "game/matchmaker.h"
 #include "game/mes.h"
 #include "game/obj_private.h"
+#include "game/object.h"
 #include "game/skill.h"
+#include "game/stat.h"
+#include "game/tech.h"
 #include "game/timeevent.h"
+#include "game/ui.h"
 
 #define NUM_PLAYERS 8
 
@@ -33,7 +37,7 @@ typedef struct S5E8AD0 {
 static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
 
 static bool sub_49D570(TimeEvent* timeevent);
-static void sub_4A1F30(int64_t a1, int64_t a2, int a3, int a4);
+static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
 static void sub_4A2A30();
 static void sub_4A2AE0(int player);
@@ -260,7 +264,7 @@ bool multiplayer_map_open_by_name(const char* name)
     map_flush(0);
 
     if (!obj_validate_system(1)) {
-        tig_debug_prinln("Object system validate failed pre-load in multiplayer_map_open_by_name.");
+        tig_debug_println("Object system validate failed pre-load in multiplayer_map_open_by_name.");
         tig_message_post_quit(0);
     }
 
@@ -289,10 +293,10 @@ void sub_49D690()
 }
 
 // 0x4A1F30
-void sub_4A1F30(int64_t a1, int64_t a2, int a3, int a4)
+void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy)
 {
-    if (a2 != 0) {
-        sub_43E770(a1, a2, a3, a4);
+    if (location != 0) {
+        sub_43E770(obj, location, dx, dy);
     }
 }
 
@@ -710,7 +714,7 @@ void sub_4A49E0()
 }
 
 // 0x4A4C40
-void sub_4A4C40()
+bool sub_4A4C40(int64_t obj, int size, char* path)
 {
     // TODO: Incomplete.
 }
@@ -940,13 +944,13 @@ void sub_4A54E0()
 }
 
 // 0x4A5510
-void sub_4A5510()
+void sub_4A5510(int64_t obj, int value)
 {
     // TODO: Incomplete.
 }
 
 // 0x4A5570
-void sub_4A5570()
+void sub_4A5570(int64_t obj, int value)
 {
     // TODO: Incomplete.
 }
@@ -1052,9 +1056,57 @@ void sub_4A5EE0()
 }
 
 // 0x4A6010
-void sub_4A6010()
+void sub_4A6010(int64_t obj)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+    int poison;
+    int index;
+
+    object_set_hp_damage(obj, 0);
+    sub_4ED720(obj, 0);
+    sub_4EFEE0(obj, 2);
+    sub_4EFEE0(obj, 4);
+
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    flags &= ~0xFC03D0FF;
+    sub_4EFDD0(obj, OBJ_F_CRITTER_FLAGS, flags);
+
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+    flags &= ~0x3FFFFF;
+    sub_4EFDD0(obj, OBJ_F_CRITTER_FLAGS2, flags);
+
+    if (combat_critter_is_combat_mode_active(obj)) {
+        combat_critter_deactivate_combat_mode(obj);
+    }
+
+    poison = stat_get_base(obj, STAT_POISON_LEVEL);
+    if (poison != 0) {
+        stat_set_base(obj, STAT_POISON_LEVEL, poison);
+    }
+
+    for (index = 0; index < 10; index++) {
+        if (index < 0 || index > 2) {
+            sub_4EA2E0(obj, index);
+        }
+    }
+
+    sub_4F0500(obj, OBJ_F_PC_QUEST_IDX);
+    sub_4F0500(obj, OBJ_F_PC_RUMOR_IDX);
+    sub_4F0500(obj, OBJ_F_PC_BLESSING_IDX);
+    sub_4F0500(obj, OBJ_F_PC_BLESSING_TS_IDX);
+    sub_4F0500(obj, OBJ_F_PC_CURSE_IDX);
+    sub_4F0500(obj, OBJ_F_PC_CURSE_TS_IDX);
+    sub_4F0500(obj, OBJ_F_PC_REPUTATION_IDX);
+    sub_4F0500(obj, OBJ_F_PC_REPUTATION_TS_IDX);
+    sub_4F0500(obj, OBJ_F_CRITTER_FOLLOWER_IDX);
+    sub_4F0500(obj, OBJ_F_PC_GLOBAL_FLAGS);
+    sub_4F0500(obj, OBJ_F_PC_GLOBAL_VARIABLES);
+    sub_4F0500(obj, OBJ_F_SPELL_FLAGS);
+
+    for (index = 0; index < 7; index++) {
+        sub_4F0360(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
+        sub_4F0360(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
+    }
 }
 
 // 0x4A6190

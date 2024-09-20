@@ -27,6 +27,7 @@ void sub_4A39D0(Func5F0DF8* func, int ctx);
 void* sub_4A4230(int player);
 void sub_4A4270();
 void sub_4A4280();
+bool sub_4A4C40(int64_t obj, int size, char* path);
 int multiplayer_mm_init(int a1);
 void multiplayer_mm_exit();
 int multiplayer_mm_is_active();
@@ -52,6 +53,8 @@ int multiplayer_mm_chatroom_members_free(void* members);
 int multiplayer_mm_chatroom_create(const char* a1, const char* a2);
 int multiplayer_mm_chatroom_mesg(const char* msg);
 void multiplayer_ping();
+void sub_4A5510(int64_t obj, int value);
+void sub_4A5570(int64_t obj, int value);
 int sub_4A55D0(int player);
 void sub_4A5610();
 
