@@ -1026,9 +1026,87 @@ void sub_4A5920()
 }
 
 // 0x4A59F0
-void sub_4A59F0()
+void sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
 {
-    // TODO: Incomplete.
+    int v1 = 0;
+    int level;
+    int value;
+    MesFileEntry mes_file_entry;
+
+    level = stat_level(obj, STAT_LEVEL);
+
+    // Melee Weapons
+    value = basic_skill_level(obj, BASIC_SKILL_MELEE);
+    if (value > 0) {
+        mes_file_entry.num = 600;
+        if (mes_search(mes_file, &mes_file_entry)) {
+            mes_get_msg(mes_file, &mes_file_entry);
+            v1 += sub_4A5E10(obj, mes_file_entry.str);
+        }
+        v1 += sub_4A5920(obj, mes_file, (value + level + 9) / 10 + 600);
+    }
+
+    // Bows
+    value = basic_skill_level(obj, BASIC_SKILL_BOW);
+    if (value > 0) {
+        mes_file_entry.num = 700;
+        if (mes_search(mes_file, &mes_file_entry)) {
+            mes_get_msg(mes_file, &mes_file_entry);
+            v1 += sub_4A5E10(obj, mes_file_entry.str);
+        }
+        v1 += sub_4A5920(obj, mes_file, (value + level + 9) / 10 + 700);
+    }
+
+    // Throwing
+    value = basic_skill_level(obj, BASIC_SKILL_THROWING);
+    if (value > 0) {
+        mes_file_entry.num = 800;
+        if (mes_search(mes_file, &mes_file_entry)) {
+            mes_get_msg(mes_file, &mes_file_entry);
+            v1 += sub_4A5E10(obj, mes_file_entry.str);
+        }
+        v1 += sub_4A5920(obj, mes_file, (value + level + 9) / 10 + 800);
+    }
+
+    // Firearms
+    value = tech_skill_level(obj, TECH_SKILL_FIREARMS);
+    if (value > 0) {
+        mes_file_entry.num = 900;
+        if (mes_search(mes_file, &mes_file_entry)) {
+            mes_get_msg(mes_file, &mes_file_entry);
+            v1 += sub_4A5E10(obj, mes_file_entry.str);
+        }
+        v1 += sub_4A5920(obj, mes_file, (value + level + 9) / 10 + 900);
+    }
+
+    if (v1 != 0) {
+        return v1;
+    }
+
+
+    // Fail safe weapons (if you didn't get any of the above).
+    if (level <= 20) {
+        // {6029} Dagger
+        mes_file_entry.num = 1001;
+    } else {
+        if (stat_level(obj, STAT_MAGICK_POINTS) >= 75) {
+            // {6163} Mage's Staff
+            mes_file_entry.num = 1002;
+        } else if (stat_level(obj, STAT_MAGICK_POINTS) >= 20) {
+            // {6054} Magic Dagger
+            mes_file_entry.num = 1003;
+        } else if (stat_level(obj, STAT_TECH_POINTS) >= 75) {
+            // {6053} Mechanical Dagger
+            mes_file_entry.num = 1004;
+        } else {
+            // {6051} Quality Dagger
+            mes_file_entry.num = 1005;
+        }
+    }
+
+    mes_get_msg(mes_file, &mes_file_entry);
+
+    return sub_4A5E10(obj, mes_file_entry.str);
 }
 
 // 0x4A5CA0
