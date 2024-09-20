@@ -294,39 +294,3 @@ int sub_4B0320(int a1, int a2)
 {
     return 10 * (a2 + 20 * a1 + 199);
 }
-
-// 0x4C8FA0
-bool get_follower_skills(int64_t obj)
-{
-    int player;
-
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
-        return settings_get_value(&settings, "follower skills");
-    }
-
-    player = sub_4A2B10(obj);
-    if (player == -1) {
-        return false;
-    }
-
-    return (sub_4A55D0(player) & 0x800) != 0;
-}
-
-// 0x4C8FF0
-void set_follower_skills(bool enabled)
-{
-    int player;
-
-    settings_set_value(&settings, "follower skills", enabled);
-
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        player = sub_4A2B10(player_get_pc_obj());
-        if (player != -1) {
-            if (enabled) {
-                sub_4A5510(player, 0x800);
-            } else {
-                sub_4A5570(player, 0x800);
-            }
-        }
-    }
-}

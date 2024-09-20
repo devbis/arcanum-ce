@@ -121,5 +121,7 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj);
 int sub_4C6AF0(int64_t obj, int skill);
 int sub_4C6B00(int64_t obj, int skill);
 int tech_skill_get_stat(int skill);
+bool get_follower_skills(int64_t obj);
+void set_follower_skills(bool enabled);
 
 #endif /* ARCANUM_GAME_SKILL_H_ */
