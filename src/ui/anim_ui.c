@@ -1,7 +1,23 @@
 #include "ui/anim_ui.h"
 
-#include "game/lib/light_scheme.h"
-#include "game/lib/timeevent.h"
+#include "game/light_scheme.h"
+#include "game/timeevent.h"
+#include "ui/intgame.h"
+#include "ui/mainmenu_ui.h"
+#include "ui/mp_ctrl_ui.h"
+#include "ui/sleep_ui.h"
+#include "ui/wmap_ui.h"
+
+static bool sub_57D3B0(TimeEvent* timeevent);
+
+// 0x5CB408
+static bool dword_5CB408;
+
+// 0x5CB40C
+static int dword_5CB40C;
+
+// 0x5CB410
+static int dword_5CB410;
 
 // 0x57D240
 bool anim_ui_init(GameInitInfo* init_info)
@@ -45,13 +61,15 @@ void anim_ui_reset()
 }
 
 // 0x57D300
-bool anim_ui_save()
+bool anim_ui_save(TigFile* stream)
 {
+    (void)stream;
+
     return true;
 }
 
 // 0x57D310
-bool anim_ui_load()
+bool anim_ui_load(GameLoadInfo* load_info)
 {
     DateTime datetime;
     TimeEvent timeevent;
@@ -118,11 +136,11 @@ void sub_57D620()
 // 0x57D640
 void sub_57D640()
 {
-    dword_5CB408 = 0;
+    dword_5CB408 = false;
 }
 
 // 0x57D650
-void sub_57D650()
+bool sub_57D650()
 {
     return dword_5CB408;
 }
