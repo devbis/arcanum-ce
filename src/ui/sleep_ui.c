@@ -1,15 +1,47 @@
 #include "ui/sleep_ui.h"
 
-#include <tig/tig.h>
+#include "game/critter.h"
+#include "game/gfade.h"
+#include "game/mes.h"
+#include "game/timeevent.h"
+#include "ui/types.h"
 
-#include "game/lib/gfade.h"
-#include "game/lib/timeevent.h"
+static bool sleep_ui_create();
+static void sleep_ui_destroy();
+static bool sleep_ui_message_filter(TigMessage* msg);
+static void sub_57B9E0();
+static void sub_57BA70();
+static void sub_57BAC0();
 
 // 0x5CB2B8
 static tig_window_handle_t sleep_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
+// 0x5CB2C0
+static UiButtonInfo stru_5CB2C0[8] = {
+    { 8, 3, 293, TIG_BUTTON_HANDLE_INVALID },
+    { 8, 21, 293, TIG_BUTTON_HANDLE_INVALID },
+    { 8, 39, 293, TIG_BUTTON_HANDLE_INVALID },
+    { 8, 57, 293, TIG_BUTTON_HANDLE_INVALID },
+    { 8, 75, 293, TIG_BUTTON_HANDLE_INVALID },
+    { 8, 93, 293, TIG_BUTTON_HANDLE_INVALID },
+    { 8, 111, 293, TIG_BUTTON_HANDLE_INVALID },
+    { 8, 129, 293, TIG_BUTTON_HANDLE_INVALID },
+};
+
+// 0x6834A0
+static tig_font_handle_t dword_6834A0;
+
+// 0x6834A8
+static int64_t qword_6834A8;
+
+// 0x6834B0
+static bool dword_6834B0;
+
+// 0x6834E0
+static bool dword_6834E0;
+
 // 0x6834E4
-static int sleep_ui_mes_file;
+static mes_file_handle_t sleep_ui_mes_file;
 
 // 0x6834E8
 static int dword_6834E8;
@@ -20,25 +52,24 @@ static bool sleep_ui_initialized;
 // 0x6834F0
 static bool sleep_ui_created;
 
-// 0x6834A0
-static tig_font_handle_t dword_6834A0;
-
 // 0x57B080
 bool sleep_ui_init(GameInitInfo* init_info)
 {
-    TigFont font_info;
+    TigFont font;
 
-    if (!message_load("mes\\sleepUI.mes", &sleep_ui_mes_file)) {
+    (void)init_info;
+
+    if (!mes_load("mes\\sleepUI.mes", &sleep_ui_mes_file)) {
         return false;
     }
 
-    font_info.flags = 0;
-    tig_art_interface_id_create(229, 0, 0, 0, &(font_info.art_id));
-    font_info.str = NULL;
-    font_info.color = tig_color_make(255, 255, 255);
-    tig_font_create(&font_info, &dword_6834A0);
+    font.flags = 0;
+    tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
+    font.str = NULL;
+    font.color = tig_color_make(255, 255, 255);
+    tig_font_create(&font, &dword_6834A0);
 
-    dword_6834E0 = 0;
+    dword_6834E0 = false;
     dword_6834B0 = 0;
     sleep_ui_initialized = true;
 
@@ -48,10 +79,10 @@ bool sleep_ui_init(GameInitInfo* init_info)
 // 0x57B140
 void sleep_ui_exit()
 {
-    message_unload(sleep_ui_mes_file);
+    mes_unload(sleep_ui_mes_file);
     tig_font_destroy(dword_6834A0);
     sleep_ui_initialized = 0;
-    dword_6834E0 = 0;
+    dword_6834E0 = false;
     dword_6834B0 = 0;
 }
 
@@ -64,7 +95,7 @@ void sleep_ui_reset()
 }
 
 // 0x57B180
-void sub_57B180()
+void sub_57B180(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -84,8 +115,8 @@ void sub_57B450()
         sleep_ui_destroy();
 
         if (dword_6834E8) {
-            if (sub_443F80(&obj, &stru_6834B8) && obj != 0) {
-                sub_45F3A0(qword_6834A8, obj);
+            if (sub_443F80(&obj, &stru_6834B8) && obj != OBJ_HANDLE_NULL) {
+                critter_leave_bed(qword_6834A8, obj);
             }
         }
     }
@@ -102,9 +133,76 @@ bool sleep_ui_is_created()
 }
 
 // 0x57B4F0
-void sleep_ui_create()
+bool sleep_ui_create()
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigWindowData window_data;
+    TigRect rect;
+    TigRect text_rect;
+    int cnt;
+    int index;
+    MesFileEntry mes_file_entry;
+
+    if (sleep_ui_created) {
+        return false;
+    }
+
+    if (tig_art_interface_id_create(565, 0, 0, 0, &art_id) != TIG_OK) {
+        return false;
+    }
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    rect.x = 573;
+    rect.y = 42;
+    rect.width = art_frame_data.width;
+    rect.height = art_frame_data.height;
+
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.message_filter = sleep_ui_message_filter;
+    window_data.rect = rect;
+    if (tig_window_create(&window_data, &sleep_ui_window) != TIG_OK) {
+        tig_debug_printf("sleep_ui_create: ERROR: window create failed!\n");
+        exit(EXIT_SUCCESS); // FIXME: Shoule be EXIT_FAILURE
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+
+    art_blit_info.art_id = art_id;
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &rect;
+    art_blit_info.dst_rect = &rect;
+    tig_window_blit_art(sleep_ui_window, &art_blit_info);
+
+    tig_font_push(dword_6834A0);
+
+    text_rect.x = 36;
+    text_rect.y = 2;
+    text_rect.width = rect.width - 36;
+    text_rect.height = 18;
+
+    cnt = dword_6834B0 ? 7 : 8;
+    for (index = 0; index < cnt; index++) {
+        mes_file_entry.num = dword_6834B0 ? index + 12 : index;
+        mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
+        tig_window_text_write(sleep_ui_window, mes_file_entry.str, &text_rect);
+        text_rect.y += text_rect.height;
+    }
+
+    tig_font_pop();
+
+    for (index = 0; index < cnt; index++) {
+        sub_54AA60(sleep_ui_window, &rect, &(stru_5CB2C0[index]), true);
+    }
+
+    sleep_ui_created = true;
+
+    return true;
 }
 
 // 0x57B6E0
@@ -119,13 +217,13 @@ void sleep_ui_destroy()
 }
 
 // 0x57B710
-void sleep_ui_message_filter()
+bool sleep_ui_message_filter(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
 
 // 0x57B7F0
-void sleep_ui_process_callback()
+bool sleep_ui_process_callback(TimeEvent* timeevent)
 {
     // TODO: Incomplete.
 }
