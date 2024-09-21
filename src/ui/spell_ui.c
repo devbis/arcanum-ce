@@ -245,7 +245,7 @@ void sub_57C4B0()
         v1 = stat_level(obj, STAT_INTELLIGENCE) / 4;
         if (v1 != dword_5CB3D0) {
             v2 = 0;
-            while (v2 < v1)
+            while (v2 < v1) {
                 sub_553910(v2++, true);
             }
             while (v2 < FIVE) {
@@ -269,7 +269,7 @@ void sub_57C540(int64_t obj, int index)
     int cost;
     int unspent_points;
 
-    cost = sub_4B1650();
+    cost = sub_4B1650(index);
     unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
 
     if (cost > unspent_points) {
@@ -327,7 +327,7 @@ void sub_57C670(int64_t obj, int index)
     int cost;
     int unspent_points;
 
-    cost = sub_4B1650();
+    cost = sub_4B1650(index);
     unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
     if (sub_4B19B0(obj, index)) {
         sub_57F340(index);
