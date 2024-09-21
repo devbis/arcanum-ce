@@ -310,7 +310,27 @@ void sub_57DE00()
 // 0x57DE10
 bool intgame_save_hotkey(S683518* a1, TigFile* stream)
 {
-    // TODO: Incomplete.
+    if (tig_file_fwrite(&(a1->field_8), sizeof(a1->field_8), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(a1->field_0), sizeof(a1->field_0), 1, stream) != 1) return false;
+
+    switch (a1->field_8) {
+    case 1:
+        if (tig_file_fwrite(&(a1->field_18), sizeof(a1->field_18), 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(a1->field_40), sizeof(a1->field_40), 1, stream) != 1) return false;
+        break;
+    case 2:
+        if (tig_file_fwrite(&(a1->field_C), sizeof(a1->field_C), 1, stream) != 1) return false;
+        break;
+    case 3:
+        if (tig_file_fwrite(&(a1->field_C), sizeof(a1->field_C), 1, stream) != 1) return false;
+        break;
+    case 4:
+        if (tig_file_fwrite(&(a1->field_18), sizeof(a1->field_18), 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(a1->field_C), sizeof(a1->field_C), 1, stream) != 1) return false;
+        break;
+    }
+
+    return true;
 }
 
 // 0x57DEF0
