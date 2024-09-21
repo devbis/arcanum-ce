@@ -23,6 +23,7 @@
 
 static void sub_57CBE0(const char* str);
 static void sub_57CC70(int64_t a1, int64_t a2);
+static void sub_57CE30(int64_t obj, void* a2, int a3);
 
 // 0x5E2E6C
 static int dword_5E2E6C;
@@ -326,9 +327,14 @@ void sub_57CE10()
 }
 
 // 0x57CE30
-void sub_57CE30()
+void sub_57CE30(int64_t obj, void* a2, int a3)
 {
-    // TODO: Incomplete.
+    if (!sub_45A030(a3)) {
+        if (!sub_57BC70(obj, a3)) {
+            sub_57C110(a2);
+        }
+        sub_57BFF0();
+    }
 }
 
 // 0x57CE70
