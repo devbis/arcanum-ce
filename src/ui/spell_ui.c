@@ -214,9 +214,32 @@ void sub_57C370()
 }
 
 // 0x57C3F0
-void sub_57C3F0()
+void sub_57C3F0(int index)
 {
-    // TODO: Incomplete.
+    MagicTechLock* lock;
+    int64_t obj;
+
+    // FIXME: Unused.
+    player_get_pc_obj();
+
+    if (stru_5CB3A8[index].field_4 == 1
+        && sub_4557C0(stru_5CB3A8[index].field_0, &lock)) {
+        obj = lock->target_obj;
+        if (obj == OBJ_HANDLE_NULL) {
+            if (lock->summoned_obj != NULL) {
+                obj = *lock->summoned_obj;
+            }
+            if (obj == OBJ_HANDLE_NULL) {
+                obj = lock->parent_obj;
+            }
+        }
+
+        sub_5507E0(lock->spell);
+
+        if (obj != OBJ_HANDLE_NULL) {
+            sub_43C270(obj);
+        }
+    }
 }
 
 // 0x57C470

@@ -15,6 +15,7 @@ void sub_57C080(int64_t obj, int spl);
 void sub_57C0B0();
 void sub_57C0E0();
 void sub_57C320(int a1);
+void sub_57C3F0(int index);
 void sub_57C4B0();
 bool sub_57C520(int index);
 void sub_57C540(int64_t obj, int index);
