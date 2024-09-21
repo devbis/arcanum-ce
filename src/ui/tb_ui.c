@@ -1,11 +1,27 @@
 #include "ui/tb_ui.h"
 
+#include <stdio.h>
+
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/ui.h"
+#include "ui/charedit_ui.h"
+#include "ui/dialog_ui.h"
+#include "ui/follower_ui.h"
+#include "ui/gameuilib.h"
+#include "ui/intgame.h"
+#include "ui/inven_ui.h"
+#include "ui/mainmenu_ui.h"
+#include "ui/mp_ctrl_ui.h"
+#include "ui/multiplayer_hub_ui.h"
+#include "ui/multiplayer_ui.h"
+#include "ui/skill_ui.h"
+#include "ui/sleep_ui.h"
+#include "ui/written_ui.h"
 
+static void sub_57CBE0(const char* str);
 static void sub_57CC70(int64_t a1, int64_t a2);
 
 // 0x5E2E6C
@@ -202,9 +218,13 @@ void sub_57CBC0(long long a1, long long a2)
 }
 
 // 0x57CBE0
-void sub_57CBE0()
+void sub_57CBE0(const char* str)
 {
-    // TODO: Incomplete.
+    John v1;
+
+    v1.type = 4;
+    v1.str = str;
+    sub_550750(&v1);
 }
 
 // 0x57CC10
@@ -382,19 +402,19 @@ void sub_57CFB0()
     TigWindowModalDialogInfo modal_info;
     TigWindowModalDialogChoice choice;
 
-    message_load("mes\\MultiPlayer.mes", &mes_file);
+    mes_load("mes\\MultiPlayer.mes", &mes_file);
 
     mes_file_entry.num = 1900;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
 
     mes_file_entry.num = 1901;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
 
     // Do you wish to save your character?
     mes_file_entry.num = 1902;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.text = mes_file_entry.str;
 
     modal_info.process = NULL;
@@ -404,7 +424,7 @@ void sub_57CFB0()
     modal_info.redraw = sub_4045A0;
     tig_window_modal_dialog(&modal_info, &choice);
 
-    message_unload(mes_file);
+    mes_unload(mes_file);
 
     return choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
 }
@@ -417,19 +437,19 @@ void sub_57D080()
     TigWindowModalDialogInfo modal_info;
     TigWindowModalDialogChoice choice;
 
-    message_load("mes\\MultiPlayer.mes", &mes_file);
+    mes_load("mes\\MultiPlayer.mes", &mes_file);
 
     mes_file_entry.num = 1900;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
 
     mes_file_entry.num = 1901;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
 
     // Do you wish to export your character to Multiplayer?
     mes_file_entry.num = 1903;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.text = mes_file_entry.str;
 
     modal_info.process = NULL;
@@ -439,7 +459,7 @@ void sub_57D080()
     modal_info.redraw = sub_4045A0;
     tig_window_modal_dialog(&modal_info, &choice);
 
-    message_unload(mes_file);
+    mes_unload(mes_file);
 
     return choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
 }
@@ -453,19 +473,19 @@ void sub_57D150(const char* name)
     TigWindowModalDialogInfo modal_info;
     TigWindowModalDialogChoice choice;
 
-    message_load("mes\\MultiPlayer.mes", &mes_file);
+    mes_load("mes\\MultiPlayer.mes", &mes_file);
 
     mes_file_entry.num = 1900;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
 
     mes_file_entry.num = 1901;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
 
     // The character %s already exists. Do you wish to overwrite the file?
     mes_file_entry.num = 1902;
-    sub_4D43A0(mes_file, &mes_file_entry);
+    mes_get_msg(mes_file, &mes_file_entry);
     snprintf(buffer, sizeof(buffer), mes_file_entry.str, name);
     modal_info.text = buffer;
 
@@ -476,7 +496,7 @@ void sub_57D150(const char* name)
     modal_info.redraw = sub_4045A0;
     tig_window_modal_dialog(&modal_info, &choice);
 
-    message_unload(mes_file);
+    mes_unload(mes_file);
 
     return choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
 }
