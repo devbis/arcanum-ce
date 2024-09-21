@@ -180,9 +180,39 @@ void sub_57C110()
 }
 
 // 0x57C290
-void sub_57C290()
+bool sub_57C290(int magictech)
 {
-    // TODO: Incomplete.
+    int candidate = -1;
+    int64_t pc_obj;
+    int cnt;
+    int index;
+
+    if (!sub_459FF0(magictech)) {
+        return false;
+    }
+
+    pc_obj = player_get_pc_obj();
+    cnt = stat_level(pc_obj, STAT_INTELLIGENCE) / 4;
+
+    for (index = 0; index < cnt; index++) {
+        if (stru_5CB3A8[index].field_4 == 1 && stru_5CB3A8[index].field_0 == magictech) {
+            return true;
+        }
+
+        if (stru_5CB3A8[index].field_0 == -1 && candidate == -1) {
+            candidate = index;
+        }
+    }
+
+    if (candidate >= cnt) {
+        return false;
+    }
+
+    stru_5CB3A8[candidate].field_0 = magictech;
+    stru_5CB3A8[candidate].field_4 = 1;
+    sub_553620(candidate, sub_458AE0(magictech));
+
+    return true;
 }
 
 // 0x57C320

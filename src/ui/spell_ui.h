@@ -14,6 +14,7 @@ void sub_57C040(int64_t obj, int index);
 void sub_57C080(int64_t obj, int spl);
 void sub_57C0B0();
 void sub_57C0E0();
+bool sub_57C290(int magictech);
 void sub_57C320(int a1);
 void sub_57C370(int index);
 void sub_57C3F0(int index);
