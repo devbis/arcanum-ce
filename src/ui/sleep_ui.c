@@ -28,6 +28,18 @@ static UiButtonInfo stru_5CB2C0[8] = {
     { 8, 129, 293, TIG_BUTTON_HANDLE_INVALID },
 };
 
+// 0x5CB340
+static int dword_5CB340[8] = {
+    1,
+    2,
+    4,
+    8,
+    24,
+    -1,
+    -2,
+    -3,
+};
+
 // 0x6834A0
 static tig_font_handle_t dword_6834A0;
 
@@ -219,7 +231,47 @@ void sleep_ui_destroy()
 // 0x57B710
 bool sleep_ui_message_filter(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int index;
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    if (msg->type != TIG_MESSAGE_BUTTON) {
+        return false;
+    }
+
+    if (msg->data.button.state != TIG_BUTTON_STATE_RELEASED) {
+        return false;
+    }
+
+    cnt = dword_6834B0 ? 7 : 8;
+    for (index = 0; index < cnt; index++) {
+        if (msg->data.button.button_handle == stru_5CB2C0[index].button_handle) {
+            break;
+        }
+    }
+
+    if (index >= cnt) {
+        return false;
+    }
+
+    timeevent_clear_all_typed(TIMEEVENT_TYPE_SLEEPING);
+
+    timeevent.type = TIMEEVENT_TYPE_SLEEPING;
+    if (dword_5CB340[index] >= 0) {
+        timeevent.params[0].integer_value = 3600000 * dword_5CB340[index] / 3600000;
+    } else {
+        timeevent.params[0].integer_value = dword_5CB340[index];
+    }
+
+    sub_45A950(&datetime, 50);
+    sub_45B800(&timeevent, &datetime);
+
+    sub_57B9E0();
+    sub_57BAC0();
+    sub_457450(qword_6834A8);
+
+    return true;
 }
 
 // 0x57B7F0
