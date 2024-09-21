@@ -4,7 +4,6 @@
 #include "game/item.h"
 #include "game/magictech.h"
 #include "game/map.h"
-#include "game/mes.h"
 #include "game/obj.h"
 #include "game/player.h"
 #include "game/spell.h"
@@ -1774,7 +1773,7 @@ bool sub_54DC80(TigMessage* msg)
 }
 
 // 0x54DE50
-void sub_54DE50()
+void sub_54DE50(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
