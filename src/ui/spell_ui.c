@@ -1,11 +1,12 @@
 #include "ui/spell_ui.h"
 
 #include "game/magictech.h"
+#include "game/mp_utils.h"
 #include "game/mt_item.h"
 #include "game/obj.h"
 #include "game/player.h"
-#include "game/stat.h"
 #include "game/spell.h"
+#include "game/stat.h"
 #include "ui/intgame.h"
 
 #define FIVE 5
@@ -208,9 +209,25 @@ void sub_57C320(int a1)
 }
 
 // 0x57C370
-void sub_57C370()
+void sub_57C370(int index)
 {
-    // TODO: Incomplete.
+    Packet59 pkt;
+
+    if (stru_5CB3A8[index].field_0 != -1 && stru_5CB3A8[index].field_4 == 1) {
+        stru_5CB3A8[index].field_4 = 2;
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            pkt.type = 59;
+            pkt.field_4 = index;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+
+            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+                sub_457110(stru_5CB3A8[index].field_0);
+            }
+        } else {
+            sub_457110(stru_5CB3A8[index].field_0);
+        }
+    }
 }
 
 // 0x57C3F0
