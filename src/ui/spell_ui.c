@@ -12,7 +12,7 @@
 #define FIVE 5
 
 typedef struct S5CB3A8 {
-    int field_0;
+    int magictech;
     int field_4;
 } S5CB3A8;
 
@@ -70,7 +70,7 @@ bool spell_ui_save(TigFile* stream)
     int index;
 
     for (index = 0; index < FIVE; index++) {
-        if (tig_file_fwrite(&(stru_5CB3A8[index].field_0), sizeof(stru_5CB3A8[index].field_0), 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(stru_5CB3A8[index].magictech), sizeof(stru_5CB3A8[index].magictech), 1, stream) != 1) return false;
         if (tig_file_fwrite(&(stru_5CB3A8[index].field_4), sizeof(stru_5CB3A8[index].field_4), 1, stream) != 1) return false;
     }
 
@@ -83,11 +83,11 @@ bool spell_ui_load(GameLoadInfo* load_info)
     int index;
 
     for (index = 0; index < FIVE; index++) {
-        if (tig_file_fread(&(stru_5CB3A8[index].field_0), sizeof(stru_5CB3A8[index].field_0), 1, load_info->stream) != 1) return false;
+        if (tig_file_fread(&(stru_5CB3A8[index].magictech), sizeof(stru_5CB3A8[index].magictech), 1, load_info->stream) != 1) return false;
         if (tig_file_fread(&(stru_5CB3A8[index].field_4), sizeof(stru_5CB3A8[index].field_4), 1, load_info->stream) != 1) return false;
 
         if (stru_5CB3A8[index].field_4) {
-            sub_553620(index, sub_458AE0(stru_5CB3A8[index].field_0));
+            sub_553620(index, sub_458AE0(stru_5CB3A8[index].magictech));
         }
     }
 
@@ -195,11 +195,11 @@ bool sub_57C290(int magictech)
     cnt = stat_level(pc_obj, STAT_INTELLIGENCE) / 4;
 
     for (index = 0; index < cnt; index++) {
-        if (stru_5CB3A8[index].field_4 == 1 && stru_5CB3A8[index].field_0 == magictech) {
+        if (stru_5CB3A8[index].field_4 == 1 && stru_5CB3A8[index].magictech == magictech) {
             return true;
         }
 
-        if (stru_5CB3A8[index].field_0 == -1 && candidate == -1) {
+        if (stru_5CB3A8[index].magictech == -1 && candidate == -1) {
             candidate = index;
         }
     }
@@ -208,7 +208,7 @@ bool sub_57C290(int magictech)
         return false;
     }
 
-    stru_5CB3A8[candidate].field_0 = magictech;
+    stru_5CB3A8[candidate].magictech = magictech;
     stru_5CB3A8[candidate].field_4 = 1;
     sub_553620(candidate, sub_458AE0(magictech));
 
@@ -216,23 +216,23 @@ bool sub_57C290(int magictech)
 }
 
 // 0x57C320
-void sub_57C320(int a1)
+void sub_57C320(int magictech)
 {
     int index;
 
-    if (a1 == -1) {
+    if (magictech == -1) {
         return;
     }
 
     for (index = 0; index < FIVE; index++) {
-        if (stru_5CB3A8[index].field_0 == a1
+        if (stru_5CB3A8[index].magictech == magictech
             && stru_5CB3A8[index].field_4 >= 1) {
             break;
         }
     }
 
     if (index < FIVE) {
-        stru_5CB3A8[index].field_0 = -1;
+        stru_5CB3A8[index].magictech = -1;
         stru_5CB3A8[index].field_4 = 0;
         sub_553620(index, -1);
     }
@@ -243,7 +243,7 @@ void sub_57C370(int index)
 {
     Packet59 pkt;
 
-    if (stru_5CB3A8[index].field_0 != -1 && stru_5CB3A8[index].field_4 == 1) {
+    if (stru_5CB3A8[index].magictech != -1 && stru_5CB3A8[index].field_4 == 1) {
         stru_5CB3A8[index].field_4 = 2;
 
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
@@ -252,10 +252,10 @@ void sub_57C370(int index)
             tig_net_send_app_all(&pkt, sizeof(pkt));
 
             if ((tig_net_flags & TIG_NET_HOST) != 0) {
-                sub_457110(stru_5CB3A8[index].field_0);
+                sub_457110(stru_5CB3A8[index].magictech);
             }
         } else {
-            sub_457110(stru_5CB3A8[index].field_0);
+            sub_457110(stru_5CB3A8[index].magictech);
         }
     }
 }
@@ -270,7 +270,7 @@ void sub_57C3F0(int index)
     player_get_pc_obj();
 
     if (stru_5CB3A8[index].field_4 == 1
-        && sub_4557C0(stru_5CB3A8[index].field_0, &lock)) {
+        && sub_4557C0(stru_5CB3A8[index].magictech, &lock)) {
         obj = lock->target_obj;
         if (obj == OBJ_HANDLE_NULL) {
             if (lock->summoned_obj != NULL) {
@@ -295,7 +295,7 @@ void sub_57C470()
     int index;
 
     for (index = 0; index < FIVE; index++) {
-        stru_5CB3A8[index].field_0 = -1;
+        stru_5CB3A8[index].magictech = -1;
         stru_5CB3A8[index].field_4 = 0;
         sub_553620(index, -1);
     }
