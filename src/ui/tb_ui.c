@@ -24,6 +24,7 @@
 static void sub_57CBE0(const char* str);
 static void sub_57CC70(int64_t a1, int64_t a2);
 static void sub_57CE30(int64_t obj, void* a2, int a3);
+static void sub_57CE70(int64_t a1, int64_t a2);
 
 // 0x5E2E6C
 static int dword_5E2E6C;
@@ -338,9 +339,19 @@ void sub_57CE30(int64_t obj, void* a2, int a3)
 }
 
 // 0x57CE70
-void sub_57CE70()
+void sub_57CE70(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    if (a2 != OBJ_HANDLE_NULL) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (sub_4A2B10(a2) != -1) {
+                sub_564F60(a2, a1);
+            }
+        } else {
+            if (player_is_pc_obj(a2)) {
+                sub_564F60(a2, a1);
+            }
+        }
+    }
 }
 
 // 0x57CEE0
