@@ -96,7 +96,15 @@ bool spell_ui_load(GameLoadInfo* load_info)
 // 0x57BC30
 void sub_57BC30()
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    John v1;
+
+    mes_file_entry.num = 606;
+    sub_44FDC0(&mes_file_entry);
+
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
+    sub_460630(&v1);
 }
 
 // 0x57BC70
@@ -271,7 +279,7 @@ void sub_57C540(int64_t obj, int index)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || sub_4A2BA0()) {
         if (!sub_4B1790(obj, index, 0)) {
-            if (sub_4B1770(index) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_get_minimum_level(index) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }
@@ -291,7 +299,7 @@ void sub_57C540(int64_t obj, int index)
         }
 
         if (!sub_4B1790(obj, index, 0)) {
-            if (sub_4B1770(index) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_get_minimum_level(index) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }
