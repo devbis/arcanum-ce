@@ -1688,6 +1688,20 @@ void sub_451070(MagicTechLock* a1)
     sub_4510F0();
 }
 
+// 0x456FA0
+void sub_456FA0(int magictech, unsigned int flags)
+{
+    if (magictech != -1
+        && ((tig_net_flags & TIG_NET_CONNECTED) == 0)
+            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if ((flags & 0x1) != 0) {
+            sub_4507D0(magictech_locks[magictech].source_obj.obj,
+                magictech_locks[magictech].spell);
+        }
+        sub_4558D0(magictech);
+    }
+}
+
 // 0x457000
 void sub_457000(int magictech, int action)
 {

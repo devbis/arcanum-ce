@@ -348,6 +348,7 @@ void sub_4507B0(object_id_t obj, int magictech);
 bool sub_450940(int magictech);
 int sub_450B40(int64_t obj);
 void sub_451070(MagicTechLock* a1);
+void sub_456FA0(int magictech, unsigned int flags);
 void sub_457060(MagicTechLock* a1);
 void magictech_interrupt_delayed(int magictech);
 void sub_457450(int64_t obj);
