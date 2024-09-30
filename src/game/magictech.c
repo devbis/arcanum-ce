@@ -45,6 +45,8 @@ static void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num,
 static void sub_450240();
 static bool sub_4507D0(object_id_t obj, int magictech);
 static void sub_455710();
+static bool sub_4570E0(TimeEvent* timeevent);
+static void sub_457270(int magictech);
 static void sub_457530(int magictech);
 static void sub_4578F0(MagicTechInfo* info, char* str);
 static void sub_457B20(MagicTechInfo* info, char* str);
@@ -869,6 +871,9 @@ const char* off_5BBD70[] = {
 // 0x5E3510
 static bool magictech_editor;
 
+// 0x5E3518
+static int dword_5E3518;
+
 // 0x5E6D20
 static mes_file_handle_t dword_5E6D20;
 
@@ -916,6 +921,9 @@ static char** magictech_component_names;
 
 // 0x5E75FC
 static bool dword_5E75FC;
+
+// 0x5E7604
+static bool dword_5E7604;
 
 // 0x5E7608
 static int dword_5E7608;
@@ -1678,6 +1686,32 @@ void sub_451070(MagicTechLock* a1)
     sub_4510F0();
 }
 
+// 0x4570E0
+bool sub_4570E0(TimeEvent* timeevent)
+{
+    return timeevent->params[0].integer_value == dword_5B0BA0
+        && timeevent->params[2].integer_value == 1;
+}
+
+// 0x457270
+void sub_457270(int magictech)
+{
+    MagicTechLock* v1;
+
+    if (sub_4557C0(magictech, &v1)) {
+        v1->action = 2;
+        dword_5E3518 = 0;
+        if (!dword_5E7604) {
+            dword_5E7604 = true;
+            dword_5B0BA0 = magictech;
+            timeevent_clear_one_ex(TIMEEVENT_TYPE_MAGICTECH, sub_4570E0);
+            dword_5E7604 = false;
+        }
+        v1->field_13C |= 0x40;
+        sub_451070(v1);
+    }
+}
+
 // 0x457450
 void sub_457450(int64_t obj)
 {
@@ -1693,7 +1727,8 @@ void sub_457450(int64_t obj)
             info = &(magictech_spells[magictech_locks[index].spell]);
             if ((info->flags & 0x4) == 0
                 && (info->item_triggers == 0 || info->maintain[1] > 0)) {
-            magictech_interrupt_delayed(magictech_locks[index].field_0);
+                magictech_interrupt_delayed(magictech_locks[index].field_0);
+            }
         }
     }
 }
