@@ -350,6 +350,7 @@ int sub_450B40(int64_t obj);
 void sub_451070(MagicTechLock* a1);
 int sub_458A80(unsigned int flags);
 tig_art_id_t sub_458AE0(int magictech);
+int magictech_get_name(int magictech);
 bool sub_459380(int64_t obj, int magictech);
 bool sub_4593F0(int64_t obj, int a2);
 bool magictech_timeevent_process(TimeEvent* timeevent);

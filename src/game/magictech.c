@@ -1661,7 +1661,7 @@ void sub_451070(MagicTechLock* a1)
     if (dword_5B0BA4 != -1 && dword_5B0BA4 != a1->field_0) {
         tig_debug_printf("\n\nMagicTech: ERROR: Process function is NOT Re-Entrant, Spell: %d (%s)!\n",
             a1->spell,
-            sub_458B60(a1->spell));
+            magictech_get_name(a1->spell));
         return;
     }
 
@@ -2202,7 +2202,7 @@ tig_art_id_t sub_458AE0(int magictech)
     MagicTechLock* v1;
     tig_art_id_t art_id;
 
-    if (!sub_4557C0(magictech, &v1) {
+    if (!sub_4557C0(magictech, &v1)) {
         return TIG_ART_ID_INVALID;
     }
 
@@ -2212,6 +2212,13 @@ tig_art_id_t sub_458AE0(int magictech)
 
     return art_id;
 }
+
+// 0x458B60
+int magictech_get_name(int magictech)
+{
+    return spell_get_name(magictech);
+}
+
 
 // 0x459380
 bool sub_459380(int64_t obj, int magictech)
