@@ -1678,6 +1678,26 @@ void sub_451070(MagicTechLock* a1)
     sub_4510F0();
 }
 
+// 0x457450
+void sub_457450(int64_t obj)
+{
+    int index;
+    MagicTechInfo* info;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    for (index = 0; index < 512; index++) {
+        if (magictech_locks[index].source_obj.obj == obj) {
+            info = &(magictech_spells[magictech_locks[index].spell]);
+            if ((info->flags & 0x4) == 0
+                && (info->item_triggers == 0 || info->maintain[1] > 0)) {
+            magictech_interrupt_delayed(magictech_locks[index].field_0);
+        }
+    }
+}
+
 // 0x4574D0
 void sub_4574D0(int64_t obj)
 {
