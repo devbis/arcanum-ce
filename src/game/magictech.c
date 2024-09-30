@@ -2196,6 +2196,23 @@ int sub_458A80(unsigned int flags)
     return false;
 }
 
+// 0x458AE0
+tig_art_id_t sub_458AE0(int magictech)
+{
+    MagicTechLock* v1;
+    tig_art_id_t art_id;
+
+    if (!sub_4557C0(magictech, &v1) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    if (tig_art_interface_id_create(sub_4B1570(v1->spell), 0, 0, 0, &art_id) != TIG_OK) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    return art_id;
+}
+
 // 0x459380
 bool sub_459380(int64_t obj, int magictech)
 {
