@@ -4,6 +4,7 @@
 #include "game/combat.h"
 #include "game/effect.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/mt_item.h"
 #include "game/object.h"
 #include "game/sector.h"
@@ -48,6 +49,7 @@ static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
+static void sub_4558D0(int slot);
 static void sub_456CD0(MagicTechLock* a1);
 static void sub_456F70(int magictech);
 static void sub_457000(int magictech, int action);
@@ -1961,6 +1963,30 @@ bool sub_455820(MagicTechLock* lock)
     }
 
     return success;
+}
+
+// 0x4558D0
+void sub_4558D0(int slot)
+{
+    MagicTechLock* lock;
+    Packet54 pkt;
+
+    lock = &(magictech_locks[slot]);
+    if (lock->field_0 != -1) {
+        dword_5B0BA0 = lock->field_0;
+        timeevent_clear_one_ex(TIMEEVENT_TYPE_MAGICTECH, sub_4570E0);
+        dword_5B0BA0 = -1;
+
+        sub_455960(lock);
+        dword_6876DC--;
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            pkt.type = 54;
+            pkt.field_4 = slot;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+    }
 }
 
 // 0x457530
