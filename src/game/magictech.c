@@ -45,6 +45,7 @@ static void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num,
 static void sub_450240();
 static bool sub_4507D0(object_id_t obj, int magictech);
 static void sub_455710();
+static void sub_456CD0(MagicTechLock* a1);
 static void sub_456F70(int magictech);
 static void sub_457000(int magictech, int action);
 static void sub_457030(int magictech, int action);
@@ -1687,6 +1688,18 @@ void sub_451070(MagicTechLock* a1)
     dword_5E75E4 = 0;
     dword_5E75E8 = a1->action;
     sub_4510F0();
+}
+
+// 0x456CD0
+void sub_456CD0(MagicTechLock* a1)
+{
+    int index;
+    AnimFxNode node;
+
+    for (index = 0; index < 6; index++) {
+        sub_4CCD20(&stru_5E7568, &node, a1->parent_obj.obj, a1->field_0, 6 * a1->spell + index);
+        sub_4CCD80(&node);
+    }
 }
 
 // 0x456E00
