@@ -2174,6 +2174,28 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
     }
 }
 
+// 0x459430
+bool magictech_timeevent_process(TimeEvent* timeevent)
+{
+    MagicTechLock* v1;
+
+    switch (timeevent->params[2].integer_value) {
+    case 1:
+        sub_459490(timeevent->params[0].integer_value);
+        break;
+    case 2:
+        sub_457110(timeevent->params[0].integer_value);
+        break;
+    case 3:
+        if (sub_4557C0(timeevent->params[0].integer_value, &v1)) {
+            sub_451070(v1);
+        }
+        break;
+    }
+
+    return true;
+}
+
 // 0x459490
 void sub_459490(int magictech)
 {
