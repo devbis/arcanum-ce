@@ -2174,6 +2174,20 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
     }
 }
 
+// 0x4593F0
+bool sub_4593F0(int64_t obj, int a2)
+{
+    int magictech;
+
+    if (!sub_459290(obj, a2, &magictech)) {
+        return false;
+    }
+
+    sub_457110(magictech);
+
+    return true;
+}
+
 // 0x459430
 bool magictech_timeevent_process(TimeEvent* timeevent)
 {
