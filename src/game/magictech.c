@@ -47,6 +47,7 @@ static bool sub_4507D0(object_id_t obj, int magictech);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
+static bool sub_455820(MagicTechLock* lock);
 static void sub_456CD0(MagicTechLock* a1);
 static void sub_456F70(int magictech);
 static void sub_457000(int magictech, int action);
@@ -1927,6 +1928,39 @@ bool sub_4557C0(int slot, MagicTechLock** lock_ptr)
 
     *lock_ptr = NULL;
     return false;
+}
+
+// 0x455820
+bool sub_455820(MagicTechLock* lock)
+{
+    bool success = true;
+    MagicTechObjectNode* node;
+
+    if (!sub_444020(&(lock->source_obj.obj), &(lock->source_obj.field_8))) {
+        success = false;
+    }
+
+    if (!sub_444020(&(lock->parent_obj.obj), &(lock->parent_obj.field_8))) {
+        success = false;
+    }
+
+    node = lock->objlist;
+    while (node != NULL) {
+        if (!sub_444020(&(node->obj), &(node->field_8))) {
+            success = false;
+        }
+        node = node->next;
+    }
+
+    node = lock->summoned_obj;
+    while (node != NULL) {
+        if (!sub_444020(&(node->obj), &(node->field_8))) {
+            success = false;
+        }
+        node = node->next;
+    }
+
+    return success;
 }
 
 // 0x457530
