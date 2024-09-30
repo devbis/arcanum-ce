@@ -1678,6 +1678,23 @@ void sub_451070(MagicTechLock* a1)
     sub_4510F0();
 }
 
+// 0x4574D0
+void sub_4574D0(int64_t obj)
+{
+    int index;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    for (index = 0; index < 512; index++) {
+        if (magictech_locks[index].parent_obj.obj == obj
+            || magictech_locks[index].source_obj.obj == obj) {
+            sub_457530(magictech_locks[index].field_0);
+        }
+    }
+}
+
 // 0x455710
 void sub_455710()
 {
