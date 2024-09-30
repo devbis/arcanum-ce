@@ -45,6 +45,7 @@ static void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num,
 static void sub_450240();
 static bool sub_4507D0(object_id_t obj, int magictech);
 static void sub_455710();
+static void sub_457530(int magictech);
 static void sub_4578F0(MagicTechInfo* info, char* str);
 static void sub_457B20(MagicTechInfo* info, char* str);
 static void sub_457D00(MagicTechInfo* info, char* str);
@@ -1688,6 +1689,18 @@ void sub_455710()
         lock->source_obj.obj = OBJ_HANDLE_NULL;
         lock->field_0 = -1;
         lock->field_13C = 0;
+    }
+}
+
+// 0x457530
+void sub_457530(int magictech)
+{
+    MagicTechLock* v1;
+
+    if (sub_4557C0(magictech, &v1)) {
+        v1->source_obj.obj = OBJ_HANDLE_NULL;
+        sub_443EB0(OBJ_HANDLE_NULL, &(v1->source_obj.field_8));
+        v1->source_obj.type = -1;
     }
 }
 
