@@ -50,6 +50,7 @@ static void sub_457B20(MagicTechInfo* info, char* str);
 static void sub_457D00(MagicTechInfo* info, char* str);
 static void magictech_build_ai_info(MagicTechInfo* info, char* str);
 static void magictech_build_effect_info(MagicTechInfo* info, char* str);
+static void sub_459490(int magictech);
 static bool sub_4594D0(TimeEvent* timeevent);
 static bool sub_459640(TimeEvent* timeevent);
 static void sub_45A480(MagicTechLock* a1);
@@ -2170,6 +2171,19 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
             effect_info->data.trait64.field_44 = value;
             break;
         }
+    }
+}
+
+// 0x459490
+void sub_459490(int magictech)
+{
+    MagicTechLock* v1;
+
+    if (sub_4557C0(magictech, &v1)) {
+        if (v1->action == 0) {
+            v1->action = 1;
+        }
+        sub_451070(v1);
     }
 }
 
