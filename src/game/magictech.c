@@ -1693,6 +1693,32 @@ bool sub_4570E0(TimeEvent* timeevent)
         && timeevent->params[2].integer_value == 1;
 }
 
+// 0x4571E0
+void magictech_interrupt_delayed(int magictech)
+{
+    MagicTechLock* v1;
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    sub_4604C0(magictech);
+
+    if (sub_4557C0(&magictech, &v1)
+        && v1->action == 0
+        && (v1->field_13C & 0x04) == 0) {
+        sub_456FA0(magictech, 1);
+        return;
+    }
+
+    timeevent.type = TIMEEVENT_TYPE_MAGICTECH;
+    timeevent.params[0].integer_value = magictech;
+    timeevent.params[2].integer_value = 2;
+    sub_45A950(&datetime, 1);
+
+    if (!sub_45B800(&timeevent, &datetime)) {
+        tig_debug_printf("magictech_interrupt_delayed: Error: failed to queue timeevent!\n");
+    }
+}
+
 // 0x457270
 void sub_457270(int magictech)
 {
