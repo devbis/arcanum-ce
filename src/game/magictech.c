@@ -1689,6 +1689,19 @@ void sub_451070(MagicTechLock* a1)
     sub_4510F0();
 }
 
+// 0x456E00
+void sub_456E00(int magictech)
+{
+    MagicTechLock* v1;
+    AnimFxNode node;
+
+    if (sub_4557C0(magictech, &v1)) {
+        sub_4CCD20(&stru_5E7568, &node, v1->parent_obj.obj, v1->field_0, 6 * v1->spell + 4);
+        node.field_1C = 1;
+        animfx_add(&node);
+    }
+}
+
 // 0x456E60
 void sub_456E60(int64_t obj, int a2)
 {
