@@ -45,6 +45,7 @@ static void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num,
 static void sub_450240();
 static bool sub_4507D0(object_id_t obj, int magictech);
 static void sub_455710();
+static void sub_456F70(int magictech);
 static void sub_457000(int magictech, int action);
 static void sub_457030(int magictech, int action);
 static bool sub_4570E0(TimeEvent* timeevent);
@@ -1686,6 +1687,17 @@ void sub_451070(MagicTechLock* a1)
     dword_5E75E4 = 0;
     dword_5E75E8 = a1->action;
     sub_4510F0();
+}
+
+// 0x456F70
+void sub_456F70(int magictech)
+{
+    MagicTechLock* v1;
+
+    if (sub_4557C0(magictech, &v1)) {
+        v1->action = 0;
+        sub_451070(v1);
+    }
 }
 
 // 0x456FA0
