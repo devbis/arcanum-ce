@@ -2174,6 +2174,28 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
     }
 }
 
+// 0x458A80
+int sub_458A80(unsigned int flags)
+{
+    int64_t pc_obj;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(pc_obj, OBJ_F_SPELL_FLAGS) & flags) == flags) {
+        return true;
+    }
+
+    if (flags == OSF_DETECTING_INVISIBLE
+        && stat_is_maximized(pc_obj, STAT_PERCEPTION)) {
+        return true;
+    }
+
+    return false;
+}
+
 // 0x459380
 bool sub_459380(int64_t obj, int magictech)
 {
