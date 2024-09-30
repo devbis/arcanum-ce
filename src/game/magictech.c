@@ -51,6 +51,7 @@ static bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
 static void sub_4558D0(int slot);
 static void sub_455960(MagicTechLock* lock);
+static void sub_4559E0(MagicTechLock* lock);
 static void sub_456CD0(MagicTechLock* a1);
 static void sub_456F70(int magictech);
 static void sub_457000(int magictech, int action);
@@ -2017,6 +2018,19 @@ void sub_455960(MagicTechLock* lock)
         }
         lock->summoned_obj = NULL;
 
+        lock->field_13C = 0;
+    }
+}
+
+// 0x4559E0
+void sub_4559E0(MagicTechLock* lock)
+{
+    if (lock->field_0 != -1) {
+        lock->field_0 = -1;
+        lock->source_obj.obj = OBJ_HANDLE_NULL;
+        lock->parent_obj.obj = OBJ_HANDLE_NULL;
+        lock->objlist = NULL;
+        lock->summoned_obj = NULL;
         lock->field_13C = 0;
     }
 }
