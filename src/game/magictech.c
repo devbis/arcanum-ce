@@ -10,34 +10,6 @@
 #include "game/stat.h"
 #include "game/timeevent.h"
 
-typedef enum MagicTechComponent {
-    MTC_NOOP,
-    MTC_AGOAL,
-    MTC_AGOALTERMINATE,
-    MTC_AIREDIRECT,
-    MTC_CAST,
-    MTC_CHARGENBRANCH,
-    MTC_DAMAGE,
-    MTC_DESTROY,
-    MTC_DISPEL,
-    MTC_EFFECT,
-    MTC_ENVFLAG,
-    MTC_EYECANDY,
-    MTC_HEAL,
-    MTC_IDENTIFY,
-    MTC_INTERRUPT,
-    MTC_MOVEMENT,
-    MTC_OBJFLAG,
-    MTC_RECHARGE,
-    MTC_SUMMON,
-    MTC_TERMINATE,
-    MTC_TESTNBRANCH,
-    MTC_TRAIT,
-    MTC_TRAITIDX,
-    MTC_TRAIT64,
-    MTC_USE,
-} MagicTechComponent;
-
 typedef enum MagicTechFlagCollection {
     MTFC_FLAGS,
     MTFC_SPELL_FLAGS,
@@ -63,215 +35,8 @@ typedef enum MagicTechFlagCollection {
     MTFC_COUNT,
 } MagicTechFlagCollection;
 
-typedef struct MagicTechEffectInfo {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ uint64_t aoe;
-    /* 0010 */ unsigned int aoe_spell_flags;
-    /* 0014 */ unsigned int aoe_no_spell_flags;
-    /* 0018 */ int radius;
-    /* 001C */ int count;
-    /* 0020 */ uint64_t apply_aoe;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
-    /* 0038 */ unsigned int item_triggers;
-    /* 003C */ int field_3C;
-    union {
-        struct {
-            /* 0040 */ int goal;
-            /* 0044 */ int subgoal;
-        } agoal;
-        struct {
-            /* 0040 */ int goal;
-        } agoal_terminate;
-        struct {
-            /* 0040 */ unsigned int critter_flags;
-            /* 0044 */ int min_iq;
-        } ai_redirect;
-        struct {
-            /* 0040 */ int spell;
-        } cast;
-        struct {
-            /* 0040 */ int cost;
-            /* 0044 */ int branch;
-        } charge_branch;
-        struct {
-            /* 0040 */ int damage_min;
-            /* 0044 */ int damage_max;
-            /* 0048 */ int damage_type;
-            /* 004C */ unsigned int damage_flags;
-        } damage;
-        struct {
-            /* 0040 */ int num;
-            /* 0044 */ int add_remove;
-            /* 0048 */ int count;
-            /* 004C */ int cause;
-            /* 0050 */ int scaled;
-        } effect;
-        struct {
-            /* 0040 */ unsigned int flags;
-            /* 0044 */ int state;
-        } env_flags;
-        struct {
-            /* 0040 */ int num;
-            /* 0044 */ int add_remove;
-            /* 0048 */ unsigned int flags;
-        } eye_candy;
-        struct {
-            /* 0040 */ int damage_min;
-            /* 0044 */ int damage_max;
-            /* 0048 */ int damage_type;
-            /* 004C */ unsigned int damage_flags;
-        } heal;
-        struct {
-            /* 0040 */ int magictech;
-        } interrupt;
-        struct {
-            /* 0040 */ int move_location;
-            /* 0044 */ int tile_radius;
-        } movement;
-        struct {
-            /* 0040 */ int flags_fld;
-            /* 0044 */ unsigned int value;
-            /* 0048 */ int state;
-        } obj_flag;
-        struct {
-            /* 0040 */ int num;
-            /* 0044 */ int max;
-        } recharge;
-        struct {
-            /* 0040 */ ObjectID oid;
-            /* 0058 */ int clear_faction;
-            /* 005C */ int list;
-            /* 0060 */ int palette;
-        } summon;
-        struct {
-            /* 0040 */ int field_40;
-            /* 0044 */ int field_44;
-            /* 0048 */ int field_48;
-            /* 004C */ int field_4C;
-        } test_in_branch;
-        struct {
-            /* 0040 */ int field_40;
-            /* 0044 */ int field_44;
-            /* 0048 */ int field_48;
-            /* 004C */ int field_4C;
-            /* 0050 */ int field_50;
-            /* 0054 */ int field_54;
-        } trait;
-        struct {
-            /* 0040 */ int field_40;
-            /* 0044 */ int field_44;
-            /* 0048 */ int field_48;
-            /* 004C */ int field_4C;
-            /* 0050 */ int field_50;
-            /* 0054 */ int field_54;
-        } trait_idx;
-        struct {
-            /* 0040 */ int field_40;
-            /* 0044 */ int field_44;
-        } trait64;
-    } data;
-} MagicTechEffectInfo;
-
-// See 0x4580C6.
-static_assert(sizeof(MagicTechEffectInfo) == 0x68, "wrong size");
-
-typedef struct MagicTechE8 {
-    int field_0;
-    MagicTechEffectInfo* field_4;
-} MagicTechE8;
-
-typedef struct MagicTechInfoAI {
-    /* 0000 */ int flee;
-    /* 0004 */ int summon;
-    /* 0008 */ int defensive1;
-    /* 000C */ int offensive;
-    /* 0010 */ int healing_light;
-    /* 0014 */ int healing_medium;
-    /* 0018 */ int healing_heavy;
-    /* 001C */ int cure_poison;
-    /* 0020 */ int fatigue_recover;
-    /* 0024 */ int resurrect;
-    /* 0028 */ int defensive2;
-} MagicTechInfoAI;
-
-// See 0x450090.
-static_assert(sizeof(MagicTechInfoAI) == 0x2C, "wrong size");
-
-typedef struct MagicTechInfo {
-    /* 0000 */ const char* field_0;
-    /* 0004 */ int iq;
-    /* 0008 */ int cost;
-    /* 000C */ int resist_stat;
-    /* 0010 */ int resist_value;
-    /* 0014 */ int maintain[2];
-    /* 001C */ int duration1;
-    /* 0020 */ int duration2;
-    /* 0024 */ int duration_stat;
-    /* 0028 */ int duration_stat_value;
-    /* 002C */ int duration_trigger_count;
-    /* 0030 */ int range;
-    /* 0034 */ unsigned int flags;
-    /* 0038 */ unsigned int item_triggers;
-    /* 003C */ int begin_caster;
-    /* 0040 */ int begin_target;
-    /* 0044 */ int maintain_caster;
-    /* 0048 */ int maintain_target;
-    /* 004C */ int end_caster;
-    /* 0050 */ int end_target;
-    /* 0054 */ int callback_caster;
-    /* 0058 */ int callback_target;
-    /* 005C */ int end_callback_caster;
-    /* 0060 */ int end_callback_target;
-    /* 0064 */ int missile;
-    /* 0068 */ int casting_anim;
-    /* 006C */ int field_6C;
-    /* 0070 */ int field_70;
-    /* 0074 */ int field_74;
-    /* 0078 */ int field_78;
-    /* 007C */ int field_7C;
-    /* 0080 */ int field_80;
-    /* 0084 */ int field_84;
-    /* 0088 */ int field_88;
-    /* 008C */ int field_8C;
-    /* 0090 */ int field_90;
-    /* 0094 */ int field_94;
-    /* 0098 */ int field_98;
-    /* 009C */ int field_9C;
-    /* 00A0 */ int field_A0;
-    /* 00A4 */ int field_A4;
-    /* 00A8 */ int field_A8;
-    /* 00AC */ int field_AC;
-    /* 00B0 */ int field_B0;
-    /* 00B4 */ int field_B4;
-    /* 00B8 */ int field_B8;
-    /* 00BC */ int field_BC;
-    /* 00C0 */ int field_C0;
-    /* 00C4 */ int field_C4;
-    /* 00C8 */ int field_C8;
-    /* 00CC */ int field_CC;
-    /* 00D0 */ int field_D0;
-    /* 00D4 */ int field_D4;
-    /* 00D8 */ int field_D8;
-    /* 00DC */ int field_DC;
-    /* 00E0 */ int field_E0;
-    /* 00E4 */ int field_E4;
-    /* 00E8 */ MagicTechE8 field_E8[5];
-    /* 0110 */ int no_stack;
-    /* 0114 */ int field_114;
-    /* 0118 */ unsigned int cancels_sf;
-    /* 011C */ unsigned int disallowed_sf;
-    /* 0120 */ unsigned int disallowed_tsf;
-    /* 0124 */ unsigned int disallowed_tcf;
-    /* 0128 */ unsigned int cancels_envsf;
-    /* 012C */ MagicTechInfoAI ai;
-} MagicTechInfo;
-
-static_assert(sizeof(MagicTechInfo) == 0x158, "wrong size");
-
+static bool sub_44F3C0(MagicTechLock* lock, TigFile* stream);
+static bool sub_44F620(MagicTechLock* lock, TigFile* stream);
 static bool sub_44FE30(int a1, const char* path, int a3);
 static bool sub_44FFA0(int a1, const char* a2, int a3);
 static void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int magictech);
@@ -1134,13 +899,13 @@ static int dword_5E7628;
 static int dword_5E7634;
 
 // 0x6876D8
-static MagicTechInfo* magictech_spells;
+MagicTechInfo* magictech_spells;
 
 // 0x6876DC
 static int dword_6876DC;
 
 // 0x6876E0
-static MagicTechLock* magictech_locks;
+MagicTechLock* magictech_locks;
 
 // 0x44EF50
 bool magictech_init(GameContext* init_info)
@@ -1263,6 +1028,151 @@ void magictech_exit()
 
         magictech_initialized = false;
     }
+}
+
+// 0x44F250
+bool magictech_post_save(TigFile* stream)
+{
+    int cnt;
+    int index;
+    int start;
+    int extent;
+
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (tig_file_fwrite(&dword_6876DC, sizeof(dword_6876DC), 1, stream) != 1) {
+        return false;
+    }
+
+    cnt = 512;
+    if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+        return false;
+    }
+
+    index = 0;
+    while (index < cnt) {
+        start = index;
+        while (index < cnt && (magictech_locks[index].field_13C & 0x1) != 0) {
+            index++;
+        }
+
+        extent = index - start;
+        if (extent > 0) {
+            if (tig_file_fwrite(extent, sizeof(extent), 1, stream) != 1) {
+                return false;
+            }
+
+            while (start < index) {
+                if (!sub_44F3C0(&(magictech_locks[start]), stream)) {
+                    return false;
+                }
+            }
+        }
+
+        while (index < cnt && (magictech_locks[index].field_13C & 0x1) == 0) {
+            index++;
+        }
+
+        extent = index - start;
+        if (extent > 0) {
+            extent = -extent;
+            if (tig_file_fwrite(&extent, sizeof(extent), 1, stream) != 1) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+// 0x44F3C0
+bool sub_44F3C0(MagicTechLock* lock, TigFile* stream)
+{
+    if (stream == NULL) return false;
+    if (tig_file_fwrite(&(lock->field_0), sizeof(lock->field_0), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(lock->spell), sizeof(lock->spell), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(lock->action), sizeof(lock->action), 1, stream) != 1) return false;
+    if (!sub_4BAEE0(&(lock->source_obj), stream)) return false;
+    if (!sub_4BAEE0(&(lock->parent_obj), stream)) return false;
+    if (!sub_4BAEE0(&(lock->target_obj), stream)) return false;
+    if (!sub_4BAEE0(&(lock->field_E8), stream)) return false;
+    if (mt_obj_node_save(&(lock->objlist), stream)) return false;
+    if (mt_obj_node_save(&(lock->summoned_obj), stream)) return false;
+    if (tig_file_fwrite(&(lock->field_138), sizeof(lock->field_138), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(lock->field_13C), sizeof(lock->field_13C), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(lock->field_140), sizeof(lock->field_140), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(lock->field_144), sizeof(lock->field_144), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(lock->field_148), sizeof(lock->field_148), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(lock->field_150), sizeof(lock->field_150), 1, stream) != 1) return false;
+
+    return true;
+}
+
+// 0x44F540
+bool magictech_post_load(GameLoadInfo* load_info)
+{
+    int cnt;
+    int index;
+    int extent;
+    int j;
+
+    if (load_info->stream == NULL) {
+        return false;
+    }
+
+    if (tig_file_fread(&dword_6876DC, sizeof(dword_6876DC), 1, load_info->stream) != 1) {
+        return false;
+    }
+
+    if (tig_file_fread(&cnt, sizeof(cnt), 1, load_info->stream) != 1) {
+        return false;
+    }
+
+    index = 0;
+    while (index < cnt) {
+        if (tig_file_fread(&extent, sizeof(extent), 1, load_info->stream) != 1) {
+            return false;
+        }
+
+        if (extent > 0) {
+            for (j = 0; j < extent; j++) {
+                if (!sub_44F620(&(magictech_locks[index]), load_info->stream)) {
+                    return false;
+                }
+
+                index++;
+            }
+        } else if (extent < 0) {
+            index += -extent;
+        }
+    }
+
+    return true;
+}
+
+// 0x44F620
+bool sub_44F620(MagicTechLock* lock, TigFile* stream)
+{
+    if (stream == NULL) return false;
+    if (tig_file_fread(&(lock->field_0), sizeof(lock->field_0), 1, stream) != 1) return false;
+    if (tig_file_fread(&(lock->spell), sizeof(lock->spell), 1, stream) != 1) return false;
+    if (tig_file_fread(&(lock->action), sizeof(lock->action), 1, stream) != 1) return false;
+    if (!sub_4BAF50(&(lock->source_obj), stream)) return false;
+    if (!sub_4BAF50(&(lock->parent_obj), stream)) return false;
+    if (!sub_4BAF50(&(lock->target_obj), stream)) return false;
+    if (!sub_4BAF50(&(lock->field_E8), stream)) return false;
+    if (mt_obj_node_load(&(lock->objlist), stream)) return false;
+    if (mt_obj_node_load(&(lock->summoned_obj), stream)) return false;
+    if (tig_file_fread(&(lock->field_138), sizeof(lock->field_138), 1, stream) != 1) return false;
+    if (tig_file_fread(&(lock->field_13C), sizeof(lock->field_13C), 1, stream) != 1) return false;
+    if (tig_file_fread(&(lock->field_140), sizeof(lock->field_140), 1, stream) != 1) return false;
+    if (tig_file_fread(&(lock->field_144), sizeof(lock->field_144), 1, stream) != 1) return false;
+    if (tig_file_fread(&(lock->field_148), sizeof(lock->field_148), 1, stream) != 1) return false;
+    if (tig_file_fread(&(lock->field_150), sizeof(lock->field_150), 1, stream) != 1) return false;
+
+    return true;
 }
 
 // 0x44F7A0
@@ -1646,9 +1556,8 @@ void sub_455710()
 
     for (index = 0; index < 512; index++) {
         lock = &(magictech_locks[index]);
-        lock->field_10 = 0;
+        lock->source_obj.obj = OBJ_HANDLE_NULL;
         lock->field_0 = -1;
-        lock->field_14 = 0;
         lock->field_13C = 0;
     }
 }
@@ -2337,7 +2246,7 @@ void magictech_debug_lists()
 {
     int index;
     MagicTechLock* v1;
-    void* node;
+    MagicTechObjectNode* node;
 
     tig_debug_printf("\n\nMagicTech DEBUG Lists:\n");
     tig_debug_printf("----------------------\n\n");
@@ -2350,9 +2259,9 @@ void magictech_debug_lists()
                 magictech_spell_name(v1->spell),
                 v1->spell);
             tig_debug_printf("\tAction: %s\n", off_5B0C0C[v1->action]);
-            sub_45A760(v1->parent_obj, "Parent");
-            sub_45A760(v1->source_obj, "Source");
-            sub_45A760(v1->target_obj, "Target");
+            sub_45A760(v1->parent_obj.obj, "Parent");
+            sub_45A760(v1->source_obj.obj, "Source");
+            sub_45A760(v1->target_obj.obj, "Target");
             node = v1->summoned_obj;
             while (node != NULL) {
                 sub_45A760(node->obj, "SummonedObj");

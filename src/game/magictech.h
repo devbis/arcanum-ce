@@ -4,11 +4,40 @@
 #include "game/context.h"
 #include "game/obj.h"
 #include "game/mes.h"
+#include "game/mt_obj_node.h"
 #include "game/timeevent.h"
 
 #define MT_80 80
 #define MT_140 140
 #define MT_SPELL_COUNT 223
+
+typedef enum MagicTechComponent {
+    MTC_NOOP,
+    MTC_AGOAL,
+    MTC_AGOALTERMINATE,
+    MTC_AIREDIRECT,
+    MTC_CAST,
+    MTC_CHARGENBRANCH,
+    MTC_DAMAGE,
+    MTC_DESTROY,
+    MTC_DISPEL,
+    MTC_EFFECT,
+    MTC_ENVFLAG,
+    MTC_EYECANDY,
+    MTC_HEAL,
+    MTC_IDENTIFY,
+    MTC_INTERRUPT,
+    MTC_MOVEMENT,
+    MTC_OBJFLAG,
+    MTC_RECHARGE,
+    MTC_SUMMON,
+    MTC_TERMINATE,
+    MTC_TESTNBRANCH,
+    MTC_TRAIT,
+    MTC_TRAITIDX,
+    MTC_TRAIT64,
+    MTC_USE,
+} MagicTechComponent;
 
 typedef enum MagicTechItemTriggers {
     MTIT_USER_ACTIVATE = 0x10000000,
@@ -39,32 +68,171 @@ typedef enum MagicTechItemTriggers {
     MTIT_RANDOM_CHANCE_FREQUENT = 0x10,
 } MagicTechItemTriggers;
 
-typedef struct MagicTechLock {
-    /* 0000 */ int field_0;
-    /* 0004 */ int spell;
-    /* 0008 */ int action;
-    /* 000C */ int field_C;
-    /* 0010 */ int64_t source_obj;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
+typedef struct MagicTechEffectInfo {
+    /* 0000 */ int type;
+    /* 0004 */ int field_4;
+    /* 0008 */ uint64_t aoe;
+    /* 0010 */ unsigned int aoe_spell_flags;
+    /* 0014 */ unsigned int aoe_no_spell_flags;
+    /* 0018 */ int radius;
+    /* 001C */ int count;
+    /* 0020 */ uint64_t apply_aoe;
     /* 0028 */ int field_28;
     /* 002C */ int field_2C;
     /* 0030 */ int field_30;
     /* 0034 */ int field_34;
-    /* 0038 */ int field_38;
+    /* 0038 */ unsigned int item_triggers;
     /* 003C */ int field_3C;
-    /* 0040 */ int field_40;
-    /* 0044 */ int field_44;
-    /* 0048 */ int field_48;
-    /* 004C */ int field_4C;
-    /* 0050 */ int field_50;
-    /* 0054 */ int field_54;
-    /* 0058 */ int64_t parent_obj;
-    /* 0060 */ int field_60;
-    /* 0064 */ int field_64;
-    /* 0068 */ int field_68;
+    union {
+        struct {
+            /* 0040 */ int goal;
+            /* 0044 */ int subgoal;
+        } agoal;
+        struct {
+            /* 0040 */ int goal;
+        } agoal_terminate;
+        struct {
+            /* 0040 */ unsigned int critter_flags;
+            /* 0044 */ int min_iq;
+        } ai_redirect;
+        struct {
+            /* 0040 */ int spell;
+        } cast;
+        struct {
+            /* 0040 */ int cost;
+            /* 0044 */ int branch;
+        } charge_branch;
+        struct {
+            /* 0040 */ int damage_min;
+            /* 0044 */ int damage_max;
+            /* 0048 */ int damage_type;
+            /* 004C */ unsigned int damage_flags;
+        } damage;
+        struct {
+            /* 0040 */ int num;
+            /* 0044 */ int add_remove;
+            /* 0048 */ int count;
+            /* 004C */ int cause;
+            /* 0050 */ int scaled;
+        } effect;
+        struct {
+            /* 0040 */ unsigned int flags;
+            /* 0044 */ int state;
+        } env_flags;
+        struct {
+            /* 0040 */ int num;
+            /* 0044 */ int add_remove;
+            /* 0048 */ unsigned int flags;
+        } eye_candy;
+        struct {
+            /* 0040 */ int damage_min;
+            /* 0044 */ int damage_max;
+            /* 0048 */ int damage_type;
+            /* 004C */ unsigned int damage_flags;
+        } heal;
+        struct {
+            /* 0040 */ int magictech;
+        } interrupt;
+        struct {
+            /* 0040 */ int move_location;
+            /* 0044 */ int tile_radius;
+        } movement;
+        struct {
+            /* 0040 */ int flags_fld;
+            /* 0044 */ unsigned int value;
+            /* 0048 */ int state;
+        } obj_flag;
+        struct {
+            /* 0040 */ int num;
+            /* 0044 */ int max;
+        } recharge;
+        struct {
+            /* 0040 */ ObjectID oid;
+            /* 0058 */ int clear_faction;
+            /* 005C */ int list;
+            /* 0060 */ int palette;
+        } summon;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+            /* 0048 */ int field_48;
+            /* 004C */ int field_4C;
+        } test_in_branch;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+            /* 0048 */ int field_48;
+            /* 004C */ int field_4C;
+            /* 0050 */ int field_50;
+            /* 0054 */ int field_54;
+        } trait;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+            /* 0048 */ int field_48;
+            /* 004C */ int field_4C;
+            /* 0050 */ int field_50;
+            /* 0054 */ int field_54;
+        } trait_idx;
+        struct {
+            /* 0040 */ int field_40;
+            /* 0044 */ int field_44;
+        } trait64;
+    } data;
+} MagicTechEffectInfo;
+
+// See 0x4580C6.
+static_assert(sizeof(MagicTechEffectInfo) == 0x68, "wrong size");
+
+typedef struct MagicTechE8 {
+    int field_0;
+    MagicTechEffectInfo* field_4;
+} MagicTechE8;
+
+typedef struct MagicTechInfoAI {
+    /* 0000 */ int flee;
+    /* 0004 */ int summon;
+    /* 0008 */ int defensive1;
+    /* 000C */ int offensive;
+    /* 0010 */ int healing_light;
+    /* 0014 */ int healing_medium;
+    /* 0018 */ int healing_heavy;
+    /* 001C */ int cure_poison;
+    /* 0020 */ int fatigue_recover;
+    /* 0024 */ int resurrect;
+    /* 0028 */ int defensive2;
+} MagicTechInfoAI;
+
+// See 0x450090.
+static_assert(sizeof(MagicTechInfoAI) == 0x2C, "wrong size");
+
+typedef struct MagicTechInfo {
+    /* 0000 */ const char* field_0;
+    /* 0004 */ int iq;
+    /* 0008 */ int cost;
+    /* 000C */ int resist_stat;
+    /* 0010 */ int resist_value;
+    /* 0014 */ int maintain[2];
+    /* 001C */ int duration1;
+    /* 0020 */ int duration2;
+    /* 0024 */ int duration_stat;
+    /* 0028 */ int duration_stat_value;
+    /* 002C */ int duration_trigger_count;
+    /* 0030 */ int range;
+    /* 0034 */ unsigned int flags;
+    /* 0038 */ unsigned int item_triggers;
+    /* 003C */ int begin_caster;
+    /* 0040 */ int begin_target;
+    /* 0044 */ int maintain_caster;
+    /* 0048 */ int maintain_target;
+    /* 004C */ int end_caster;
+    /* 0050 */ int end_target;
+    /* 0054 */ int callback_caster;
+    /* 0058 */ int callback_target;
+    /* 005C */ int end_callback_caster;
+    /* 0060 */ int end_callback_target;
+    /* 0064 */ int missile;
+    /* 0068 */ int casting_anim;
     /* 006C */ int field_6C;
     /* 0070 */ int field_70;
     /* 0074 */ int field_74;
@@ -78,7 +246,8 @@ typedef struct MagicTechLock {
     /* 0094 */ int field_94;
     /* 0098 */ int field_98;
     /* 009C */ int field_9C;
-    /* 00A0 */ int64_t target_obj;
+    /* 00A0 */ int field_A0;
+    /* 00A4 */ int field_A4;
     /* 00A8 */ int field_A8;
     /* 00AC */ int field_AC;
     /* 00B0 */ int field_B0;
@@ -95,26 +264,30 @@ typedef struct MagicTechLock {
     /* 00DC */ int field_DC;
     /* 00E0 */ int field_E0;
     /* 00E4 */ int field_E4;
-    /* 00E8 */ int field_E8;
-    /* 00EC */ int field_EC;
-    /* 00F0 */ int field_F0;
-    /* 00F4 */ int field_F4;
-    /* 00F8 */ int field_F8;
-    /* 00FC */ int field_FC;
-    /* 0100 */ int field_100;
-    /* 0104 */ int field_104;
-    /* 0108 */ int field_108;
-    /* 010C */ int field_10C;
-    /* 0110 */ int field_110;
+    /* 00E8 */ MagicTechE8 field_E8[5];
+    /* 0110 */ int no_stack;
     /* 0114 */ int field_114;
-    /* 0118 */ int field_118;
-    /* 011C */ int field_11C;
-    /* 0120 */ int field_120;
-    /* 0124 */ int field_124;
-    /* 0128 */ int field_128;
-    /* 012C */ int field_12C;
-    /* 0130 */ int field_130;
-    /* 0134 */ int field_134;
+    /* 0118 */ unsigned int cancels_sf;
+    /* 011C */ unsigned int disallowed_sf;
+    /* 0120 */ unsigned int disallowed_tsf;
+    /* 0124 */ unsigned int disallowed_tcf;
+    /* 0128 */ unsigned int cancels_envsf;
+    /* 012C */ MagicTechInfoAI ai;
+} MagicTechInfo;
+
+static_assert(sizeof(MagicTechInfo) == 0x158, "wrong size");
+
+typedef struct MagicTechLock {
+    /* 0000 */ int field_0;
+    /* 0004 */ int spell;
+    /* 0008 */ int action;
+    /* 000C */ int field_C;
+    /* 0010 */ MagicTechObjectNode source_obj;
+    /* 0058 */ MagicTechObjectNode parent_obj;
+    /* 00A0 */ MagicTechObjectNode target_obj;
+    /* 00E8 */ MagicTechObjectNode field_E8;
+    /* 0130 */ MagicTechObjectNode* objlist;
+    /* 0134 */ MagicTechObjectNode* summoned_obj;
     /* 0138 */ int field_138;
     /* 013C */ int field_13C;
     /* 0140 */ int field_140;
@@ -147,16 +320,21 @@ extern const char* off_5BA3C8[27];
 extern const char* off_5BA434[6];
 extern const char* off_5BA44C[31];
 extern const char* off_5BA4C8[1];
+extern MagicTechInfo* magictech_spells;
+extern MagicTechLock* magictech_locks;
 
 bool magictech_init(GameInitInfo* init_info);
 void magictech_reset();
 bool magictech_post_init(GameInitInfo* init_info);
 void magictech_exit();
+bool magictech_post_save(TigFile* stream);
+bool magictech_post_load(GameLoadInfo* load_info);
 void magictech_break_nodes_to_map(const char* map);
 void magictech_save_nodes_to_map(const char* map);
 void magictech_load_nodes_from_map(const char* map);
 void sub_44FDC0(MesFileEntry *mes_file_entry);
 const char* magictech_spell_name(int num);
+void sub_44FE20();
 int magictech_get_range(int magictech);
 int sub_4502B0(int magictech);
 int sub_4502E0(int a1);
