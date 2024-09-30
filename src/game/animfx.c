@@ -176,6 +176,20 @@ void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5)
     node->field_4C = 4;
 }
 
+// 0x4CCD80
+void sub_4CCD80(AnimFxNode* node)
+{
+    tig_art_id_t art_id;
+
+    dword_601738 = node->list;
+    art_id = dword_601738->entries[node->field_18].eye_candy_art_id;
+    sub_502290(art_id);
+    if ((dword_601738->entries[node->field_18].flags & 0x2) != 0) {
+        art_id = tig_art_eye_candy_id_type_set(art_id, 1);
+        sub_502290(art_id);
+    }
+}
+
 // 0x4CD940
 void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4)
 {

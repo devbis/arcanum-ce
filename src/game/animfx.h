@@ -76,6 +76,7 @@ extern int dword_5B7680[];
 bool animfx_init(GameInitInfo* init_info);
 void animfx_exit();
 void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5);
+void sub_4CCD80(AnimFxNode* node);
 void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4);
 bool animfx_list_init(AnimFxList* list);
 bool animfx_list_load(AnimFxList* list);
