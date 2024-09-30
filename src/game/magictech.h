@@ -347,6 +347,7 @@ int magictech_get_duration1(int magictech);
 void sub_4507B0(object_id_t obj, int magictech);
 bool sub_450940(int magictech);
 int sub_450B40(int64_t obj);
+void sub_451070(MagicTechLock* a1);
 bool sub_459500(int index);
 void sub_459A20(int64_t obj);
 void sub_459EA0(int64_t obj);

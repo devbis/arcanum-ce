@@ -122,6 +122,12 @@ static uint64_t qword_596140[] = {
     0x8000000000000000,
 };
 
+// 0x5B0BA0
+static int dword_5B0BA0 = -1;
+
+// 0x5B0BA4
+static int dword_5B0BA4 = -1;
+
 // 0x5B0C0C
 static const char* off_5B0C0C[] = {
     "[Begin]",
@@ -871,6 +877,33 @@ static AnimFxList stru_5E7568;
 // 0x5E7594
 static int magictech_spell_mes_file;
 
+// 0x5E75AC
+static int dword_5E75AC;
+
+// 0x5E75CC
+static int dword_5E75CC;
+
+// 0x5E75D4
+static int dword_5E75D4;
+
+// 0x5E75D8
+static int dword_5E75D8;
+
+// 0x5E75DC
+static int dword_5E75DC;
+
+// 0x5E75E0
+static int dword_5E75E0;
+
+// 0x5E75E4
+static int dword_5E75E4;
+
+// 0x5E75E8
+static int dword_5E75E8;
+
+// 0x5E75F0
+static MagicTechLock* dword_5E75F0;
+
 // 0x5E75F4
 static mes_file_handle_t magictech_mes_file;
 
@@ -1617,6 +1650,28 @@ int sub_450B90(object_id_t obj)
 void sub_450C10(object_id_t obj, unsigned int flags)
 {
     obj_field_int32_set(obj, OBJ_F_SPELL_FLAGS, obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) | flags);
+}
+
+// 0x451070
+void sub_451070(MagicTechLock* a1)
+{
+    if (dword_5B0BA4 != -1 && dword_5B0BA4 != a1->field_0) {
+        tig_debug_printf("\n\nMagicTech: ERROR: Process function is NOT Re-Entrant, Spell: %d (%s)!\n",
+            a1->spell,
+            sub_458B60(a1->spell));
+        return;
+    }
+
+    dword_5E75F0 = a1;
+    dword_5E75AC = -1;
+    dword_5E75CC = 0;
+    dword_5E75D4 = 0;
+    dword_5E75D8 = 0;
+    dword_5E75DC = 0;
+    dword_5E75E0 = 0;
+    dword_5E75E4 = 0;
+    dword_5E75E8 = a1->action;
+    sub_4510F0();
 }
 
 // 0x455710
