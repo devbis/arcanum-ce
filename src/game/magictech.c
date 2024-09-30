@@ -50,6 +50,7 @@ static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
 static void sub_4558D0(int slot);
+static void sub_455960(MagicTechLock* lock);
 static void sub_456CD0(MagicTechLock* a1);
 static void sub_456F70(int magictech);
 static void sub_457000(int magictech, int action);
@@ -1986,6 +1987,37 @@ void sub_4558D0(int slot)
             pkt.field_4 = slot;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
+    }
+}
+
+// 0x455960
+void sub_455960(MagicTechLock* lock)
+{
+    MagicTechObjectNode* node;
+    MagicTechObjectNode* next;
+
+    if (lock->field_0 != -1) {
+        lock->field_0 = -1;
+        lock->source_obj.obj = OBJ_HANDLE_NULL;
+        lock->parent_obj.obj = OBJ_HANDLE_NULL;
+
+        node = lock->objlist;
+        while (node != NULL) {
+            next = node->next;
+            mt_obj_node_destroy(node);
+            node = next;
+        }
+        lock->objlist = NULL;
+
+        node = lock->summoned_obj;
+        while (node != NULL) {
+            next = node->next;
+            mt_obj_node_destroy(node);
+            node = next;
+        }
+        lock->summoned_obj = NULL;
+
+        lock->field_13C = 0;
     }
 }
 
