@@ -1558,7 +1558,7 @@ int64_t sub_450A50(object_id_t obj)
     int type;
 
     if (obj == OBJ_HANDLE_NULL) {
-        return 0;
+        return OBJ_HANDLE_NULL;
     }
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
@@ -1571,6 +1571,40 @@ int64_t sub_450A50(object_id_t obj)
     }
 
     return obj;
+}
+
+// 0x450AC0
+int sub_450AC0(int64_t obj)
+{
+    int index;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return 0;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return 0;
+    }
+
+    for (index = 0; index < 512; index++) {
+        // NOTE: Unclear, likely no-op.
+    }
+
+    return 0;
+}
+
+// 0x450B40
+int sub_450B40(int64_t obj)
+{
+    if (obj == OBJ_HANDLE_NULL) {
+        return 0;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return 0;
+    }
+
+    return sub_450B90(obj) - sub_450AC0(obj);
 }
 
 // 0x450B90
