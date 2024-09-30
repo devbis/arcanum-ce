@@ -358,6 +358,7 @@ bool sub_459F90(int magictech);
 bool sub_459FC0(int magictech);
 bool sub_459FF0(int magictech);
 bool sub_45A030(int magictech);
+int magictech_get_aptitude_adj(int64_t sector_id);
 void sub_45A4F0(int64_t a1, int a2, int a3);
 void sub_45A520(int a1, int a2, int a3, int a4);
 void sub_45A540(int a1, int a2);

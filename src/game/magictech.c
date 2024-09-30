@@ -6,6 +6,7 @@
 #include "game/mes.h"
 #include "game/mt_item.h"
 #include "game/object.h"
+#include "game/sector.h"
 #include "game/spell.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
@@ -2312,6 +2313,21 @@ bool sub_459FF0(int magictech)
 bool sub_45A030(int magictech)
 {
     return magictech_spells[magictech].item_triggers != 0;
+}
+
+// 0x45A060
+int magictech_get_aptitude_adj(int64_t sector_id)
+{
+    int aptitude_adj;
+    Sector* sector;
+
+    aptitude_adj = 0;
+    if (sector_lock(sector_id, &sector)) {
+        aptitude_adj = sector->aptitude_adj;
+        sector_unlock(sector_id);
+    }
+
+    return aptitude_adj;
 }
 
 // 0x45A480
