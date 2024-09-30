@@ -51,6 +51,7 @@ static void magictech_build_ai_info(MagicTechInfo* info, char* str);
 static void magictech_build_effect_info(MagicTechInfo* info, char* str);
 static bool sub_4594D0(TimeEvent* timeevent);
 static bool sub_459640(TimeEvent* timeevent);
+static void sub_45A480(MagicTechLock* a1);
 static void sub_45A760(object_id_t obj, const char* msg);
 
 // 0x596140
@@ -2311,6 +2312,26 @@ bool sub_459FF0(int magictech)
 bool sub_45A030(int magictech)
 {
     return magictech_spells[magictech].item_triggers != 0;
+}
+
+// 0x45A480
+void sub_45A480(MagicTechLock* a1)
+{
+    MagicTechObjectNode* node;
+
+    while (a1->objlist != NULL) {
+        node = a1->objlist;
+        a1->objlist = node->next;
+        mt_obj_node_destroy(node);
+    }
+
+    while (a1->summoned_obj != NULL) {
+        node = a1->summoned_obj;
+        a1->summoned_obj = node->next;
+        mt_obj_node_destroy(node);
+    }
+
+    FREE(a1);
 }
 
 // 0x45A4F0
