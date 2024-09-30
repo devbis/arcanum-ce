@@ -2174,6 +2174,23 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
     }
 }
 
+// 0x459380
+bool sub_459380(int64_t obj, int magictech)
+{
+    int v1;
+    MagicTechLock* v2;
+
+    if (sub_458CF0(obj, &v1)) {
+        do {
+            if (sub_4557C0(v1, &v2) && v2->spell == magictech) {
+                return true;
+            }
+        } while (sub_458D90(obj, &v2));
+    }
+
+    return false;
+}
+
 // 0x4593F0
 bool sub_4593F0(int64_t obj, int a2)
 {

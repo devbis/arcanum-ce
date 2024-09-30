@@ -348,6 +348,7 @@ void sub_4507B0(object_id_t obj, int magictech);
 bool sub_450940(int magictech);
 int sub_450B40(int64_t obj);
 void sub_451070(MagicTechLock* a1);
+bool sub_459380(int64_t obj, int magictech);
 bool sub_4593F0(int64_t obj, int a2);
 bool magictech_timeevent_process(TimeEvent* timeevent);
 bool sub_459500(int index);
