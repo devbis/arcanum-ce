@@ -1686,6 +1686,27 @@ void sub_451070(MagicTechLock* a1)
     sub_4510F0();
 }
 
+// 0x457060
+void sub_457060(MagicTechLock* a1)
+{
+    if (dword_5B0BA4 != -1 && dword_5B0BA4 != a1->field_0) {
+        tig_debug_printf("\n\nMagicTech: ERROR: Process function is NOT Re-Entrant, Spell: %d (%s)!\n",
+            a1->spell,
+            magictech_get_name(a1->spell));
+        return;
+    }
+
+    dword_5E75F0 = a1;
+    dword_5E75AC = -1;
+    dword_5E75CC = 0;
+    dword_5E75D4 = 1;
+    dword_5E75DC = 0;
+    dword_5E75E0 = 0;
+    dword_5E75E4 = 0;
+    dword_5E75E8 = a1->action;
+    sub_4510F0();
+}
+
 // 0x4570E0
 bool sub_4570E0(TimeEvent* timeevent)
 {
