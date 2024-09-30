@@ -46,6 +46,7 @@ static void sub_450240();
 static bool sub_4507D0(object_id_t obj, int magictech);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
+static bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
 static void sub_456CD0(MagicTechLock* a1);
 static void sub_456F70(int magictech);
 static void sub_457000(int magictech, int action);
@@ -1912,6 +1913,20 @@ void magictech_id_new_lock(MagicTechLock** lock_ptr)
             dword_6876DC++;
         }
     }
+}
+
+// 0x4557C0
+bool sub_4557C0(int slot, MagicTechLock** lock_ptr)
+{
+    if (slot != -1
+        && magictech_locks[slot].field_0 != -1
+        && sub_455820(&(magictech_locks[slot]))) {
+        *lock_ptr = &(magictech_locks[slot]);
+        return true;
+    }
+
+    *lock_ptr = NULL;
+    return false;
 }
 
 // 0x457530
