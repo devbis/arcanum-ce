@@ -878,7 +878,7 @@ static mes_file_handle_t magictech_mes_file;
 static char** magictech_component_names;
 
 // 0x5E75FC
-static int dword_5E75FC;
+static bool dword_5E75FC;
 
 // 0x5E7608
 static int dword_5E7608;
@@ -980,7 +980,7 @@ bool magictech_init(GameContext* init_info)
 // 0x44F150
 void magictech_reset()
 {
-    dword_5E75FC = 0;
+    dword_5E75FC = false;
 }
 
 // 0x44F160
@@ -1216,7 +1216,7 @@ const char* magictech_spell_name(int num)
 // 0x44FE20
 void sub_44FE20()
 {
-    dword_5E75FC = 1;
+    dword_5E75FC = true;
 }
 
 // 0x44FE30
@@ -1513,6 +1513,43 @@ bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech)
     }
 
     return sub_450420(obj, cost, false, magictech);
+}
+
+// 0x450940
+bool sub_450940(int magictech)
+{
+    MagicTechLock* v1;
+    int* maintain;
+    int cost;
+
+    if (!sub_4557C0(magictech, &v1)) {
+        tig_debug_printf("\tMagicTech: Maintain cannot charge!\n");
+        return false;
+    }
+
+    if ((v1->field_13C & 0x2) != 0
+        || v1->source_obj.obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    if (v1->action == 0) {
+        cost = magictech_spells[magictech].cost;
+    } else {
+        maintain = magictech_get_maintain1(magictech);
+        cost = maintain[0];
+    }
+
+    if (dword_5E75FC) {
+        cost = 1;
+    }
+
+    if ((obj_field_int32_get(v1->source_obj.obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+            || obj_field_int32_get(v1->source_obj.obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+        && stat_level(v1->source_obj.obj, STAT_RACE) == RACE_DWARF) {
+        cost *= 2;
+    }
+
+    return sub_450420(v1->source_obj.obj, cost, 0, v1->spell);
 }
 
 // 0x450A50
