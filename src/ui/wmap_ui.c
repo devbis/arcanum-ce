@@ -1563,7 +1563,14 @@ void sub_564360()
 // 0x5643C0
 bool sub_5643C0(const char* str)
 {
-    // TODO: Incomplete.
+    while (*str != '\0') {
+        if (*str != ' ') {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
 }
 
 // 0x5643E0
