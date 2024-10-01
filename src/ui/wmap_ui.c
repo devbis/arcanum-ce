@@ -170,6 +170,8 @@ static void sub_563790(int a1, int a2);
 static void sub_563AC0(int x, int y, int* coords);
 static void sub_563B10(int x, int y, int* coords);
 static void sub_563C00(int x, int y, int* coords);
+static bool sub_563DE0(int* coords, int* id);
+static bool sub_563E00(int* coords, int* id, int a3);
 static bool sub_563F00(int* coords, int64_t* a2);
 static void sub_563F90(int* coords);
 static void sub_564030(WmapNote* note);
@@ -1413,13 +1415,13 @@ WmapNote* sub_563D90(int id)
 }
 
 // 0x563DE0
-void sub_563DE0()
+bool sub_563DE0(int* coords, int* id)
 {
-    // TODO: Incomplete.
+    return sub_563E00(coords, id, dword_66D868);
 }
 
 // 0x563E00
-void sub_563E00()
+bool sub_563E00(int* coords, int* id, int a3)
 {
     // TODO: Incomplete.
 }
