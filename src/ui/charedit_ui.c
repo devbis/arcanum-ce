@@ -48,6 +48,7 @@ static int sub_55B4D0(int64_t obj, int param);
 static void sub_55B720(int64_t obj, int stat, int value);
 static bool sub_55BAB0();
 static void sub_55BD10(int group);
+static void sub_55BF20();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
 static bool sub_55C890();
@@ -987,7 +988,78 @@ void sub_55BD10(int group)
 // 0x55BF20
 void sub_55BF20()
 {
-    // TODO: Incomplete.
+    tig_art_id_t skills_win_art_id;
+    TigArtFrameData skills_win_art_frame_data;
+    tig_art_id_t gauge_art_id;
+    TigArtFrameData gauge_art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int y;
+    int skill_level;
+    int index;
+
+    tig_art_interface_id_create(29, 0, 0, 0, &skills_win_art_id);
+    if (tig_art_frame_data(skills_win_art_id, &skills_win_art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    art_blit_info.flags = 0;
+    art_blit_info.dst_rect = &dst_rect;
+    art_blit_info.src_rect = &src_rect;
+
+    if (tig_art_interface_id_create(623, 0, 0, 0, &gauge_art_id) != TIG_OK) {
+        return;
+    }
+
+    if (tig_art_frame_data(gauge_art_id, &gauge_art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    index = 0;
+    for (y = 87; y < 351; y += 61) {
+        if (dword_64E020 < 3) {
+            skill_level = basic_skill_level(qword_64E010,
+                stru_5C82F0[dword_64E020 * 4 + index].value);
+            sub_4C64B0(qword_64E010,
+                stru_5C82F0[dword_64E020 * 4 + index].value);
+        } else {
+            skill_level = tech_skill_level(qword_64E010,
+                stru_5C82F0[dword_64E020 * 4 + index].value);
+            sub_4C6AF0(qword_64E010,
+                stru_5C82F0[dword_64E020 * 4 + index].value);
+        }
+
+        src_rect.x = 59;
+        src_rect.y = y;
+        src_rect.width = gauge_art_frame_data.width;
+        src_rect.height = gauge_art_frame_data.height;
+
+        dst_rect.x = 59;
+        dst_rect.y = y;
+        dst_rect.width = gauge_art_frame_data.width;
+        dst_rect.height = gauge_art_frame_data.height;
+
+        art_blit_info.art_id = skills_win_art_id;
+        tig_window_blit_art(dword_64CA6C, &art_blit_info);
+
+        if (skill_level != 0) {
+            src_rect.x = 0;
+            src_rect.y = 0;
+            src_rect.width = skill_level * gauge_art_frame_data.width / 20;
+            src_rect.height = gauge_art_frame_data.height;
+
+            dst_rect.x = 59;
+            dst_rect.y = y;
+            dst_rect.width = src_rect.width;
+            dst_rect.height = src_rect.height;
+
+            art_blit_info.art_id = gauge_art_id;
+            tig_window_blit_art(dword_64CA6C, &art_blit_info);
+        }
+
+        index++;
+    }
 }
 
 // 0x55C110
