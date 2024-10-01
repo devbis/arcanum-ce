@@ -3285,9 +3285,39 @@ void sub_5566B0()
 }
 
 // 0x556A90
-void sub_556A90()
+void sub_556A90(int a1, bool a2)
 {
-    // TODO: Incomplete.
+    if (a2) {
+        switch (a1) {
+        case 0:
+            if (charedit_is_created()) {
+                return;
+            }
+            break;
+        case 1:
+            if (logbook_ui_is_created()) {
+                return;
+            }
+            break;
+        case 2:
+        case 3:
+            if (wmap_ui_is_created()) {
+                return;
+            }
+            break;
+        case 4:
+            if (inven_ui_is_created()) {
+                return;
+            }
+            break;
+        }
+
+        dword_64C484[a1] = dword_5C6510[a1];
+        sub_556B90(a1);
+    } else {
+        dword_64C484[a1] = dword_5C6524[a1];
+        sub_556B90(a1);
+    }
 }
 
 // 0x556B70
