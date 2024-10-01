@@ -4,12 +4,18 @@
 #include "game/context.h"
 #include "game/timeevent.h"
 
+typedef void(CombatCallbackF0)(int a1);
+typedef void(CombatCallbackF4)();
+typedef void(CombatCallbackF8)();
+typedef void(CombatCallbackFC)(int a1);
+typedef void(CombatCallbackF10)(int64_t obj);
+
 typedef struct CombatCallbacks {
-    void* field_0;
-    void* field_4;
-    void* field_8;
-    void* field_C;
-    void* field_10;
+    CombatCallbackF0* field_0;
+    CombatCallbackF4* field_4;
+    CombatCallbackF8* field_8;
+    CombatCallbackFC* field_C;
+    CombatCallbackF10* field_10;
 } CombatCallbacks;
 
 static_assert(sizeof(CombatCallbacks) == 0x14, "wrong size");

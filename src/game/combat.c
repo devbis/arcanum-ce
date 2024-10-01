@@ -774,7 +774,7 @@ int sub_4B7BA0(int64_t obj, int64_t a2, bool a3)
 
     v1 = 2;
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        && sub_4304C0(obj)) {
+        && get_always_run(obj)) {
         v1 = 1;
     }
 

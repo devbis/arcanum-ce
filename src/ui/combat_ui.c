@@ -1,10 +1,13 @@
 #include "ui/combat_ui.h"
 
+#include "game/anim.h"
 #include "game/combat.h"
 #include "game/obj.h"
 #include "game/player.h"
 #include "ui/anim_ui.h"
 #include "ui/intgame.h"
+#include "ui/textedit_ui.h"
+#include "ui/wmap_ui.h"
 
 #define THREE 3
 #define TWENTY 20
@@ -305,7 +308,7 @@ void combat_ui_destroy()
 void sub_56EFA0(int a1)
 {
     int v1 = 0;
-    int v3;
+    int action_points;
     int v4;
     TigRect rect;
 
@@ -338,24 +341,24 @@ void sub_56EFA0(int a1)
     rect.width = stru_5CAA20.width;
     rect.height = stru_5CAA20.height;
 
-    v3 = sub_4B7C20();
-    v4 = a1 - v3;
+    action_points = sub_4B7C20();
+    v4 = a1 - action_points;
     if (v4 >= 25) {
         v1 = 0;
-        v3 = 0;
+        action_points = 0;
         v4 = 25;
-    } else if (v3 > a1) {
-        v1 = v3 - a1;
-        v3 = a1;
+    } else if (action_points > a1) {
+        v1 = action_points - a1;
+        action_points = a1;
         v4 = 0;
     }
 
-    if (v3 + v4 > 25) {
-        v3 = 25 - v4;
+    if (action_points + v4 > 25) {
+        action_points = 25 - v4;
     }
 
-    if (v1 + v3 + v4 > 25) {
-        v1 = 25 - v3 - v4;
+    if (v1 + action_points + v4 > 25) {
+        v1 = 25 - action_points - v4;
     }
 
     rect.x = 2;
@@ -367,7 +370,7 @@ void sub_56EFA0(int a1)
     }
 
     rect.x += rect.width;
-    rect.width = 120 * v3 / 25;
+    rect.width = 120 * action_points / 25;
     if (rect.width > 0) {
         sub_56F2F0(dword_5CAA1C,
             &rect,
@@ -466,8 +469,8 @@ void sub_56F430(int a1)
         action_points = sub_4B7C20();
         orange = action_points;
         green = a1 - action_points;
-        if (green >= 20) {
-            green = 20;
+        if (green >= TWENTY) {
+            green = TWENTY;
             orange = 0;
             red = 0;
         } else if (action_points > a1) {
@@ -476,12 +479,12 @@ void sub_56F430(int a1)
             green = 0;
         }
 
-        if (orange + green > 20) {
-            orange = 20 - green;
+        if (orange + green > TWENTY) {
+            orange = TWENTY - green;
         }
 
-        if (red + orange + green > 20) {
-            red = 20 - orange - green;
+        if (red + orange + green > TWENTY) {
+            red = TWENTY - orange - green;
         }
     }
 
@@ -636,8 +639,8 @@ void sub_56F990(int64_t obj)
 bool sub_56F9B0(TigMessage* msg)
 {
     int64_t obj;
-    AnimId anim_id_1;
-    AnimId anim_id_2;
+    AnimID anim_id_1;
+    AnimID anim_id_2;
 
     switch (msg->type) {
     case TIG_MESSAGE_BUTTON:
@@ -648,14 +651,14 @@ bool sub_56F9B0(TigMessage* msg)
                 && player_is_pc_obj(obj)
                 && (!sub_423300(obj, &anim_id_1)
                     || sub_44E830(obj, 2, &anim_id_2)
-                    && sub_421D60(anim_id_1, &anim_id_2))) {
+                    && sub_421D60(&anim_id_1, &anim_id_2))) {
                 combat_turn_based_next_subturn();
             }
             return true;
         }
         break;
     case TIG_MESSAGE_KEYBOARD:
-        if (!sub_566EF0()
+        if (!textedit_ui_is_focused()
             && !msg->data.keyboard.pressed
             && msg->data.keyboard.key == DIK_E) {
             obj = sub_4B6D80();
@@ -663,9 +666,10 @@ bool sub_56F9B0(TigMessage* msg)
                 && player_is_pc_obj(obj)
                 && (!sub_423300(obj, &anim_id_1)
                     || sub_44E830(obj, 2, &anim_id_2)
-                    && sub_421D60(anim_id_1, &anim_id_2))) {
+                    && sub_421D60(&anim_id_1, &anim_id_2))) {
                 combat_turn_based_next_subturn();
             }
+            return true;
         }
         break;
     }
