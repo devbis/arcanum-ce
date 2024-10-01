@@ -2,6 +2,7 @@
 #define ARCANUM_UI_INTGAME_H_
 
 #include "game/context.h"
+#include "game/mes.h"
 #include "ui/types.h"
 
 bool intgame_init(GameInitInfo* init_info);
@@ -15,10 +16,13 @@ void iso_interface_destroy();
 void sub_54AA30();
 bool sub_54AA60(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* button_info, unsigned int flags);
 bool sub_54AAE0(UiButtonInfo* button_info);
+void sub_54AC70(UiButtonInfo* button_info);
 void sub_54AEE0(int a1);
 void sub_54B3A0();
 void sub_54B3C0();
 void sub_54B5D0(TigMessage* msg);
+bool sub_54DC80(TigMessage* msg);
+void sub_54DE50(TigMessage* msg);
 void sub_5506C0(int window_type);
 void sub_550720();
 void sub_550750(John* a1);
@@ -34,7 +38,7 @@ void sub_551080();
 void sub_551160();
 bool sub_5517A0(TigMessage* msg);
 int sub_551A00();
-void sub_551A80(int a1);
+bool sub_551A80(int a1);
 int sub_551F70(int a1);
 void sub_552070();
 void sub_552080(int window_type);
@@ -44,7 +48,7 @@ bool sub_553320(void(*func)(TigMessage* msg));
 void sub_553350();
 void sub_553370();
 void sub_553380(int a1, const char* str);
-void sub_5533A0(TigMessage* msg);;
+void sub_5533A0(TigMessage* msg);
 int sub_5533B0();
 void sub_553620(int index, tig_art_id_t art_id);
 void sub_553910(int index, bool a2);

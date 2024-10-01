@@ -52,6 +52,7 @@ static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6)
 static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
 static void sub_555D80(int64_t a1, int64_t a2, const char* str);
+static void sub_556B90(int a1);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
@@ -2512,7 +2513,7 @@ void sub_551A10(int64_t obj)
 }
 
 // 0x551A80
-void sub_551A80(int a1)
+bool sub_551A80(int a1)
 {
     // TODO: Incomplete.
 }
@@ -2642,7 +2643,7 @@ void sub_552740(int64_t obj, int a2)
 {
     if (dword_64C6B4) {
         if (obj != OBJ_HANDLE_NULL) {
-            sub_5597C0(obj, a2);
+            charedit_create(obj, a2);
         }
     }
 }
@@ -3296,9 +3297,39 @@ void sub_556B70()
 }
 
 // 0x556B90
-void sub_556B90()
+void sub_556B90(int a1)
 {
-    // TODO: Incomplete.
+    tig_button_handle_t button_handle;
+    tig_art_id_t art_id;
+
+    switch (a1) {
+    case 0:
+        button_handle = stru_5C64C0[1].button_handle;
+        break;
+    case 1:
+        button_handle = stru_5C64C0[0].button_handle;
+        break;
+    case 2:
+        if (dword_64C534 != 2) {
+            return;
+        }
+
+        button_handle = stru_5C64C0[3].button_handle;
+        break;
+    case 3:
+        if (dword_64C534 != 3) {
+            return;
+        }
+
+        button_handle = stru_5C64C0[3].button_handle;
+        break;
+    case 4:
+        stru_5C64C0[2].button_handle;
+        break;
+    }
+
+    tig_art_interface_id_create(dword_64C484[a1], 0, 0, 0, &art_id);
+    tig_button_set_art(button_handle, art_id);
 }
 
 // 0x556C20
