@@ -16,7 +16,7 @@ static void sub_56EF40();
 static void combat_ui_destroy();
 static void sub_56EFA0(int a1);
 static void sub_56F2F0(tig_window_handle_t window_handle, TigRect* rect, tig_color_t color);
-static void sub_56F430();
+static void sub_56F430(int a1);
 static void sub_56F660();
 static void sub_56F840();
 static void sub_56F990(int64_t obj);
@@ -62,10 +62,14 @@ static tig_window_handle_t dword_5CAA18 = TIG_WINDOW_HANDLE_INVALID;
 static tig_window_handle_t dword_5CAA1C = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5CAA98
-static int dword_5CAA98[THREE] = { 295, 296, 315 };
+static int dword_5CAA98[THREE] = {
+    295, // ap_green.art
+    296, // ap_orange.art
+    315, // ap_red.art
+};
 
 // 0x680EA8
-static int dword_680EA8[THREE];
+static tig_art_id_t dword_680EA8[THREE];
 
 // 0x680EB4
 static int dword_680EB4;
@@ -423,9 +427,103 @@ void sub_56F2F0(tig_window_handle_t window_handle, TigRect* rect, tig_color_t co
 }
 
 // 0x56F430
-void sub_56F430()
+void sub_56F430(int a1)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtAnimData art_anim_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int action_points;
+    int green = 0;
+    int orange = 0;
+    int red = 0;
+    int knob = 0;
+
+    if (!combat_ui_created) {
+        return;
+    }
+
+    sub_56EFA0(a1);
+
+    if (tig_art_interface_id_create(294, 0, 0, 0, &art_id) == TIG_OK
+        && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK
+        && tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &src_rect;
+        tig_window_blit_art(dword_5CAA18, &art_blit_info);
+    }
+
+    if (a1 != 0) {
+        action_points = sub_4B7C20();
+        orange = action_points;
+        green = a1 - action_points;
+        if (green >= 20) {
+            green = 20;
+            orange = 0;
+            red = 0;
+        } else if (action_points > a1) {
+            orange = a1;
+            red = action_points - a1;
+            green = 0;
+        }
+
+        if (orange + green > 20) {
+            orange = 20 - green;
+        }
+
+        if (red + orange + green > 20) {
+            red = 20 - orange - green;
+        }
+    }
+
+    if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        src_rect.x = 0;
+        src_rect.y = 10;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        art_blit_info.flags = 0;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+
+        art_blit_info.art_id = dword_680EA8[0];
+        while (green > 0) {
+            dst_rect.x = dword_5CAA48[knob];
+            tig_window_blit_art(dword_5CAA18, &art_blit_info);
+            green--;
+            knob++;
+        }
+
+        art_blit_info.art_id = dword_680EA8[1];
+        while (orange > 0) {
+            dst_rect.x = dword_5CAA48[knob];
+            tig_window_blit_art(dword_5CAA18, &art_blit_info);
+            orange--;
+            knob++;
+        }
+
+        art_blit_info.art_id = dword_680EA8[2];
+        while (red > 0) {
+            dst_rect.x = dword_5CAA48[knob++];
+            tig_window_blit_art(dword_5CAA18, &art_blit_info);
+            red--;
+            knob++;
+        }
+    }
 }
 
 // 0x56F660
