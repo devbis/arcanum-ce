@@ -41,6 +41,7 @@ typedef struct S5C8CA8 {
 
 static void sub_55A240();
 static void sub_55B150();
+static void sub_55B1B0();
 static void sub_55B280();
 static int sub_55B410(int param);
 static int sub_55B4D0(int64_t obj, int param);
@@ -644,7 +645,27 @@ void sub_55B150()
 // 0x55B1B0
 void sub_55B1B0()
 {
-    // TODO: Incomplete.
+    char v1[13][10];
+    const char* v2[13];
+    int index;
+
+    for (index = 0; index < 13; index++) {
+        v2[index] = v1[index];
+    }
+
+    for (index = 0; index < 8; index++) {
+        sprintf(v1[index],
+            ": %d  ",
+            stat_level(qword_64E010, stru_5C81E0[index].value));
+    }
+
+    for (index = 8; index < 13; index++) {
+        sprintf(v1[index],
+            ": %d  ",
+            sub_43D6D0(qword_64E010, stru_5C81E0[index].value));
+    }
+
+    sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, v2, -1, 13);
 }
 
 // 0x55B280
