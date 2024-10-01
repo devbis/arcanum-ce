@@ -1289,9 +1289,48 @@ void sub_55F1E0()
 }
 
 // 0x55F200
-void sub_55F200()
+void sub_55F200(int type)
 {
-    // TODO: Incomplete.
+    if (charedit_created) {
+        switch (type) {
+        case 0:
+            stru_5C8990.str = dword_64D3C4[15];
+            sub_550750(&stru_5C8990);
+            break;
+        case 1:
+            stru_5C8990.str = dword_64D3C4[16];
+            sub_550750(&stru_5C8990);
+            break;
+        case 2:
+            stru_5C8990.str = dword_64D3C4[17];
+            sub_550750(&stru_5C8990);
+            break;
+        case 3:
+            stru_5C8990.str = dword_64D3C4[18];
+            sub_550750(&stru_5C8990);
+            break;
+        case 4:
+            stru_5C8990.str = dword_64D3C4[9];
+            sub_550750(&stru_5C8990);
+            break;
+        case 5:
+            stru_5C8990.str = dword_64D3C4[20];
+            sub_550750(&stru_5C8990);
+            break;
+        case 6:
+            stru_5C8990.str = dword_64D3C4[19];
+            sub_550750(&stru_5C8990);
+            break;
+        case 7:
+            stru_5C8990.str = dword_64D3C4[21];
+            sub_550750(&stru_5C8990);
+            break;
+        default:
+            stru_5C8990.str = dword_64D3C4[5];
+            sub_550750(&stru_5C8990);
+            break;
+        }
+    }
 }
 
 // 0x55F320
