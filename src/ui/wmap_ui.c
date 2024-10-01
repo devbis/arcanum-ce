@@ -6,6 +6,7 @@
 #include "game/anim.h"
 #include "game/area.h"
 #include "game/critter.h"
+#include "game/location.h"
 #include "game/map.h"
 #include "game/magictech.h"
 #include "game/mes.h"
@@ -169,6 +170,8 @@ static void sub_563790(int a1, int a2);
 static void sub_563AC0(int x, int y, int* coords);
 static void sub_563B10(int x, int y, int* coords);
 static void sub_563C00(int x, int y, int* coords);
+static bool sub_563F00(int* coords, int64_t* a2);
+static void sub_563F90(int* coords);
 static void sub_564030(WmapNote* note);
 static void sub_564070(bool a1);
 static void sub_5640C0(TextEdit* textedit);
@@ -310,6 +313,9 @@ static int dword_66D714;
 
 // 0x66D718
 static WmapNote stru_66D718;
+
+// 0x66D850
+static int64_t qword_66D850;
 
 // 0x66D860
 static bool wmap_ui_initialized;
@@ -1419,9 +1425,25 @@ void sub_563E00()
 }
 
 // 0x563F00
-void sub_563F00()
+bool sub_563F00(int* coords, int64_t* a2)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    int64_t pc_location;
+
+    if (a2 == NULL) {
+        return false;
+    }
+
+    sub_561800(coords, &v1);
+    pc_location = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    if (sub_4B96F0(v1, pc_location) < qword_66D850) {
+        sub_561490(pc_location, coords);
+        *a2 = pc_location;
+        return true;
+    }
+
+    *a2 = 0;
+    return false;
 }
 
 // 0x563F90
@@ -1434,7 +1456,7 @@ void sub_563F90(int* coords)
     sub_563D50(&stru_66D718);
     stru_66D718.field_10 = 0;
     stru_66D718.field_14 = 0;
-    sub_563F00(&stru_66D718.x, &stru_66D718.field_10);
+    sub_563F00(&(stru_66D718.x), &(stru_66D718.field_10));
     sub_564030(&stru_66D718);
 }
 
