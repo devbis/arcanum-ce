@@ -37,6 +37,7 @@ typedef struct S5C8CA8 {
 
 static void sub_55A240();
 static void sub_55B150();
+static int sub_55B4D0(int64_t obj, int param);
 static bool sub_55BAB0();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
@@ -648,7 +649,56 @@ void sub_55B410()
 // 0x55B4D0
 int sub_55B4D0(int64_t obj, int param)
 {
-    // TODO: Incomplete.
+    switch (param) {
+    case 0:
+        return stat_get_base(obj, STAT_UNSPENT_POINTS);
+    case 1:
+        return stat_level(obj, STAT_LEVEL);
+    case 2:
+        return level_get_experience_points_to_next_level(obj);
+    case 3:
+        return sub_43D600(obj);
+    case 4:
+        return object_get_hp_pts(obj);
+    case 5:
+        return sub_45D700(obj);
+    case 6:
+        return critter_fatigue_pts_get_(obj);
+    case 7:
+        return stat_get_base(obj, STAT_STRENGTH);
+    case 8:
+        return stat_level(obj, STAT_STRENGTH);
+    case 9:
+        return stat_get_base(obj, STAT_CONSTITUTION);
+    case 10:
+        return stat_level(obj, STAT_CONSTITUTION);
+    case 11:
+        return stat_get_base(obj, STAT_DEXTERITY);
+    case 12:
+        return stat_level(obj, STAT_DEXTERITY);
+    case 13:
+        return stat_get_base(obj, STAT_BEAUTY);
+    case 14:
+        return stat_level(obj, STAT_BEAUTY);
+    case 15:
+        return stat_get_base(obj, STAT_INTELLIGENCE);
+    case 16:
+        return stat_level(obj, STAT_INTELLIGENCE);
+    case 17:
+        return stat_get_base(obj, STAT_WILLPOWER);
+    case 18:
+        return stat_level(obj, STAT_WILLPOWER);
+    case 19:
+        return stat_get_base(obj, STAT_PERCEPTION);
+    case 20:
+        return stat_level(obj, STAT_PERCEPTION);
+    case 21:
+        return stat_get_base(obj, STAT_CHARISMA);
+    case 22:
+        return stat_level(obj, STAT_CHARISMA);
+    default:
+        return 0;
+    }
 }
 
 // 0x55B720
