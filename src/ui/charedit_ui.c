@@ -5,6 +5,7 @@
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
+#include "ui/intgame.h"
 #include "ui/scrollbar_ui.h"
 
 typedef struct S5C8150 {
@@ -206,6 +207,9 @@ static S5C87D0 stru_5C8630[COLLEGE_COUNT] = {
     { 702, 144, TIG_BUTTON_HANDLE_INVALID, COLLEGE_TEMPORAL },
 };
 
+// 0x5C8990
+static John stru_5C8990 = { 4, 0, 0, 0, 0 };
+
 // 0x5C8CA8
 static S5C8CA8 stru_5C8CA8[4] = {
     { 520, 126, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
@@ -375,7 +379,7 @@ static bool dword_64DEE4;
 static tig_font_handle_t dword_64DF0C;
 
 // 0x64E018
-static bool dword_64E018;
+static bool charedit_created;
 
 // 0x64E01C
 static int dword_64E01C;
@@ -448,7 +452,7 @@ void charedit_exit()
 // 0x5597B0
 void charedit_reset()
 {
-    if (sub_55A220()) {
+    if (charedit_is_created()) {
         sub_55A150();
     }
 }
@@ -466,15 +470,15 @@ void sub_55A150()
 }
 
 // 0x55A220
-bool sub_55A220()
+bool charedit_is_created()
 {
-    return dword_64E018;
+    return charedit_created;
 }
 
 // 0x55A230
 void sub_55A230()
 {
-    if (dword_64E018) {
+    if (charedit_created) {
         sub_55B150();
     }
 }
@@ -1251,7 +1255,10 @@ void sub_55F110(TigRect* rect)
 // 0x55F160
 void sub_55F160()
 {
-    // TODO: Incomplete.
+    if (charedit_created) {
+        stru_5C8990.str = dword_64D3C4[1];
+        sub_550750(&stru_5C8990);
+    }
 }
 
 // 0x55F180
