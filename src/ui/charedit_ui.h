@@ -6,6 +6,7 @@
 bool charedit_init(GameInitInfo* init_info);
 void charedit_exit();
 void charedit_reset();
+void charedit_destroy();
 bool charedit_is_created();
 void sub_55A230();
 void sub_55F160();

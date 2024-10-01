@@ -1,5 +1,7 @@
 #include "ui/charedit_ui.h"
 
+#include "game/combat.h"
+#include "game/critter.h"
 #include "game/level.h"
 #include "game/mes.h"
 #include "game/skill.h"
@@ -327,6 +329,9 @@ static int dword_64CDC4;
 // 0x64CDC8
 static int dword_64CDC8;
 
+// 0x64CDCC
+static int dword_64CDCC;
+
 // 0x64CDD0
 static tig_font_handle_t dword_64CDD0;
 
@@ -378,6 +383,9 @@ static bool dword_64DEE4;
 // 0x64DF0C
 static tig_font_handle_t dword_64DF0C;
 
+// 0x64E010
+static int64_t qword_64E010;
+
 // 0x64E018
 static bool charedit_created;
 
@@ -392,6 +400,9 @@ static int dword_64E024;
 
 // 0x64E028
 static int dword_64E028;
+
+// 0x64E02C
+static bool dword_64E02C;
 
 // 0x64DEE8
 static const char* charedit_minimum_level_str;
@@ -453,7 +464,7 @@ void charedit_exit()
 void charedit_reset()
 {
     if (charedit_is_created()) {
-        sub_55A150();
+        charedit_destroy();
     }
 }
 
@@ -464,9 +475,31 @@ void sub_5597C0()
 }
 
 // 0x55A150
-void sub_55A150()
+void charedit_destroy()
 {
-    // TODO: Incomplete.
+    if (charedit_created) {
+        charedit_created = false;
+        if (dword_64CDCC == 1 || dword_64CDCC == 2) {
+            sub_550DA0(0, 0);
+        }
+        if (dword_64CDCC == 0) {
+            object_set_hp_damage(qword_64E010, 0);
+            critter_fatigue_damage_set(qword_64E010, 0);
+        }
+        intgame_big_window_unlock();
+        tig_window_hide(dword_64CA6C);
+        tig_window_hide(dword_64C7B0);
+        tig_window_hide(dword_64CA8C);
+        tig_window_hide(dword_64CA60);
+        qword_64E010 = OBJ_HANDLE_NULL;
+        sub_551160();
+        sub_551A80(0);
+        sub_55EFB0();
+        if (dword_64E02C) {
+            combat_auto_attack_set(true);
+            dword_64E02C = false;
+        }
+    }
 }
 
 // 0x55A220
