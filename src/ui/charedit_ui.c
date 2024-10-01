@@ -482,7 +482,7 @@ void charedit_reset()
 }
 
 // 0x5597C0
-void sub_5597C0()
+bool charedit_create(int64_t obj, int a2)
 {
     // TODO: Incomplete.
 }
@@ -597,9 +597,22 @@ void sub_55AE70()
 }
 
 // 0x55B0E0
-void sub_55B0E0()
+void sub_55B0E0(bool a1)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    int v2;
+
+    if (a1) {
+        v1 = sub_45E590(qword_64E010);
+    } else {
+        v1 = sub_45E4F0(qword_64E010);
+    }
+
+    if (v1 != qword_64E010) {
+        v2 = dword_64CDCC;
+        charedit_destroy();
+        charedit_create(v1, v2);
+    }
 }
 
 // 0x55B150
