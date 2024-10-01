@@ -1282,7 +1282,10 @@ void sub_55F1A0()
 // 0x55F1E0
 void sub_55F1E0()
 {
-    // TODO: Incomplete.
+    if (charedit_created) {
+        stru_5C8990.str = dword_64D3C4[4];
+        sub_550750(&stru_5C8990);
+    }
 }
 
 // 0x55F200

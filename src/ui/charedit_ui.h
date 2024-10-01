@@ -11,5 +11,6 @@ void sub_55A230();
 void sub_55F160();
 void sub_55F180();
 void sub_55F1A0();
+void sub_55F1E0();
 
 #endif /* ARCANUM_UI_CHAREDIT_UI_H_ */
