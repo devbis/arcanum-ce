@@ -15,6 +15,7 @@ static void combat_ui_create();
 static void sub_56EF40();
 static void combat_ui_destroy();
 static void sub_56EFA0(int a1);
+static void sub_56F2F0(tig_window_handle_t window_handle, TigRect* rect, tig_color_t color);
 static void sub_56F430();
 static void sub_56F660();
 static void sub_56F840();
@@ -379,9 +380,46 @@ void sub_56EFA0(int a1)
 }
 
 // 0x56F2F0
-void sub_56F2F0()
+void sub_56F2F0(tig_window_handle_t window_handle, TigRect* rect, tig_color_t color)
 {
-    // TODO: Incomplete.
+    bool odd = false;
+    int cnt;
+    TigRect line_rect;
+    tig_color_t color1;
+    tig_color_t color2;
+
+    line_rect.x = rect->x;
+    line_rect.y = 2;
+    line_rect.width = 1;
+    line_rect.height = rect->height - 4;
+
+    cnt = rect->width / 2;
+
+    if ((rect->width & 1) != 0) {
+        odd = true;
+    }
+
+    if ((rect->x & 1) != 0) {
+        color1 = color;
+        color2 = tig_color_make(0, 0, 0);
+    } else {
+        color1 = tig_color_make(0, 0, 0);;
+        color2 = color;
+    }
+
+    line_rect.x = rect->x;
+
+    while (cnt > 0) {
+        tig_window_fill(window_handle, &line_rect, color1);
+        line_rect.x++;
+        tig_window_fill(window_handle, &line_rect, color2);
+        line_rect.x++;
+        cnt--;
+    }
+
+    if (odd) {
+        tig_window_fill(window_handle, &line_rect, color1);
+    }
 }
 
 // 0x56F430
