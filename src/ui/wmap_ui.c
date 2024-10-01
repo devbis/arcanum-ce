@@ -177,6 +177,7 @@ static bool sub_564160(WmapNote* note, int a2);
 static bool sub_564210(WmapNote* note);
 static void sub_564320(TextEdit* textedit);
 static bool sub_5643C0(const char* str);
+static void sub_564940();
 static int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime);
 static void wmap_ui_town_notes_load();
 static void sub_5650C0();
@@ -1597,7 +1598,9 @@ void sub_5648E0()
 // 0x564940
 void sub_564940()
 {
-    // TODO: Incomplete.
+    if (dword_5C9AD8 != -1 && dword_66D868 != 2) {
+        sub_564970(&(stru_64E048[dword_5C9AD8]));
+    }
 }
 
 // 0x564970
