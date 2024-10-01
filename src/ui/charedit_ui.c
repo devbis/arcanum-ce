@@ -1336,7 +1336,10 @@ void sub_55F200(int type)
 // 0x55F320
 void sub_55F320()
 {
-    // TODO: Incomplete.
+    if (charedit_created) {
+        stru_5C8990.str = dword_64D3C4[7];
+        sub_550750(&stru_5C8990);
+    }
 }
 
 // 0x55F340
