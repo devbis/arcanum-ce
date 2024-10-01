@@ -5,6 +5,7 @@
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/obj.h"
+#include "game/object.h"
 #include "game/player.h"
 #include "game/spell.h"
 #include "game/stat.h"
@@ -3279,9 +3280,153 @@ void sub_556220()
 }
 
 // 0x5566B0
-void sub_5566B0()
+void sub_5566B0(int64_t obj)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    char buffer[MAX_STRING];
+    int value;
+
+    // Total Defense
+    mes_file_entry.num = 63;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    value = sub_464700(obj);
+    sprintf(buffer,
+        "%s: %d",
+        mes_file_entry.str,
+        value);
+
+    if (intgame_iso_window_type != 0) {
+        sub_550770(-1, buffer);
+        return;
+    }
+
+    sub_550930();
+    sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, 674);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        buffer,
+        &stru_5C70C8,
+        dword_739F88,
+        0x01);
+
+    // Total AC
+    mes_file_entry.num = 70;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    value = object_get_ac(obj, 1);
+    if (value != 0) {
+        sprintf(buffer,
+            "%s: %d",
+            mes_file_entry.str,
+            value);
+    } else {
+        sprintf(buffer,
+            "%s: 0",
+            mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        buffer,
+        &stru_5C70D8,
+        dword_64C498,
+        0x01);
+
+    // Magic Resistance
+    mes_file_entry.num = 65;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    value = sub_43D6D0(obj, 4, 1);
+    if (value != 0) {
+        sprintf(buffer,
+            "%s: %d%%",
+            mes_file_entry.str,
+            value);
+    } else {
+        sprintf(buffer,
+            "%s: 0",
+            mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        buffer,
+        &stru_5C70E8,
+        dword_64C498,
+        0x01);
+
+    // Fire Resistance
+    mes_file_entry.num = 67;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    value = sub_43D6D0(obj, 1, 1);
+    if (value != 0) {
+        sprintf(buffer,
+            "%s: %d%%",
+            mes_file_entry.str,
+            value);
+    } else {
+        sprintf(buffer,
+            "%s: 0",
+            mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        buffer,
+        &stru_5C70F8,
+        dword_64C498,
+        0x01);
+
+    // Damage Resistance
+    mes_file_entry.num = 64;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    value = sub_43D6D0(obj, 0, 1);
+    if (value != 0) {
+        sprintf(buffer,
+            "%s: %d%%",
+            mes_file_entry.str,
+            value);
+    } else {
+        sprintf(buffer,
+            "%s: 0",
+            mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        buffer,
+        &stru_5C70D8,
+        dword_64C498,
+        0x11);
+
+    // Electrical Resistance
+    mes_file_entry.num = 66;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    value = sub_43D6D0(obj, 2, 1);
+    if (value != 0) {
+        sprintf(buffer,
+            "%s: %d%%",
+            mes_file_entry.str,
+            value);
+    } else {
+        sprintf(buffer,
+            "%s: 0",
+            mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        buffer,
+        &stru_5C70E8,
+        dword_64C498,
+        0x11);
+
+    // Poison Resistance
+    mes_file_entry.num = 68;
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    value = sub_43D6D0(obj, 3, 1);
+    if (value != 0) {
+        sprintf(buffer,
+            "%s: %d%%",
+            mes_file_entry.str,
+            value);
+    } else {
+        sprintf(buffer,
+            "%s: 0",
+            mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        buffer,
+        &stru_5C70F8,
+        dword_64C498,
+        0x11);
 }
 
 // 0x556A90
