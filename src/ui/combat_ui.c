@@ -14,6 +14,7 @@ static void sub_56ED00();
 static void combat_ui_create();
 static void sub_56EF40();
 static void combat_ui_destroy();
+static void sub_56EFA0(int a1);
 static void sub_56F430();
 static void sub_56F660();
 static void sub_56F840();
@@ -296,9 +297,85 @@ void combat_ui_destroy()
 }
 
 // 0x56EFA0
-void sub_56EFA0()
+void sub_56EFA0(int a1)
 {
-    // TODO: Incomplete.
+    int v1 = 0;
+    int v3;
+    int v4;
+    TigRect rect;
+
+    if (dword_5CAA1C == TIG_WINDOW_HANDLE_INVALID) {
+        return;
+    }
+
+    if (!player_is_pc_obj(sub_4B6D80())) {
+        return;
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = stru_5CAA20.width;
+    rect.height = stru_5CAA20.height;
+    tig_window_fill(dword_5CAA1C,
+        &rect,
+        tig_color_make(0, 0, 0));
+
+    rect.x += 1;
+    rect.y += 1;
+    rect.width -= 2;
+    rect.height -= 2;
+    tig_window_box(dword_5CAA1C,
+        &rect,
+        tig_color_make(0, 0, 255));
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = stru_5CAA20.width;
+    rect.height = stru_5CAA20.height;
+
+    v3 = sub_4B7C20();
+    v4 = a1 - v3;
+    if (v4 >= 25) {
+        v1 = 0;
+        v3 = 0;
+        v4 = 25;
+    } else if (v3 > a1) {
+        v1 = v3 - a1;
+        v3 = a1;
+        v4 = 0;
+    }
+
+    if (v3 + v4 > 25) {
+        v3 = 25 - v4;
+    }
+
+    if (v1 + v3 + v4 > 25) {
+        v1 = 25 - v3 - v4;
+    }
+
+    rect.x = 2;
+    rect.width = 120 * v4 / 25;
+    if (rect.width > 0) {
+        sub_56F2F0(dword_5CAA1C,
+            &rect,
+            tig_color_make(0, 255, 0));
+    }
+
+    rect.x += rect.width;
+    rect.width = 120 * v3 / 25;
+    if (rect.width > 0) {
+        sub_56F2F0(dword_5CAA1C,
+            &rect,
+            tig_color_make(255, 128, 0));
+    }
+
+    rect.x += rect.width;
+    rect.width = 120 * v1 / 25;
+    if (rect.width > 0) {
+        sub_56F2F0(dword_5CAA1C,
+            &rect,
+            tig_color_make(255, 0, 0));
+    }
 }
 
 // 0x56F2F0
@@ -415,7 +492,7 @@ void sub_56F840()
 void sub_56F990(int64_t obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        sub_40DA50();
+        player_get_pc_obj();
     }
 }
 
