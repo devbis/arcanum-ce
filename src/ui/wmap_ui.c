@@ -1697,7 +1697,45 @@ void sub_564F60(long long a1, long long a2)
 // 0x564FD0
 void wmap_ui_town_notes_load()
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    int index;
+    bool success = true;
+
+    if (dword_66D878 != dword_66D874) {
+        sub_5650C0();
+    }
+    dword_66D878 = dword_66D874;
+
+    if (dword_66D878 != 0) {
+        sprintf(path,
+            "%s\\%s.tmn",
+            "Save\\Current",
+            townmap_name(dword_66D878));
+
+        stream = tig_file_fopen(path, "rb");
+        if (stream == NULL) {
+            return;
+        }
+
+        if (tig_file_fread(&wmap_ui_town_notes_cnt, sizeof(wmap_ui_town_notes_cnt), 1, stream) == 1
+            && tig_file_fread_(&(stru_5C9228[2].field_194), sizeof(stru_5C9228[2].field_194), 1, stream) == 1) {
+            for (index = 0; index < wmap_ui_town_notes_cnt; index++) {
+                if (!wmap_ui_town_note_load(&(wmap_ui_town_notes[index]), stream)) {
+                    success = false;
+                    break;
+                }
+            }
+        } else {
+            success = false;
+        }
+
+        tig_file_fclose(stream);
+
+        if (!success) {
+            tig_debug_printf("wmap_ui_town_notes_load(): Warning reading data!\n");
+        }
+    }
 }
 
 // 0x5650C0
