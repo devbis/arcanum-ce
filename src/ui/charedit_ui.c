@@ -12,6 +12,10 @@
 #include "ui/intgame.h"
 #include "ui/scrollbar_ui.h"
 
+typedef enum CharEditStat {
+    CHAREDIT_STAT_COUNT = 23,
+} CharEditStat;
+
 typedef struct S5C8150 {
     const char* str;
     int x;
@@ -37,6 +41,7 @@ typedef struct S5C8CA8 {
 
 static void sub_55A240();
 static void sub_55B150();
+static void sub_55B280();
 static int sub_55B410(int param);
 static int sub_55B4D0(int64_t obj, int param);
 static bool sub_55BAB0();
@@ -632,7 +637,11 @@ void sub_55B1B0()
 // 0x55B280
 void sub_55B280()
 {
-    // TODO: Incomplete.
+    int stat;
+
+    for (stat = 0; stat < CHAREDIT_STAT_COUNT; stat++) {
+        sub_55B2A0(stat);
+    }
 }
 
 // 0x55B2A0
