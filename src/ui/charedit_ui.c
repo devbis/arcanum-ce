@@ -1,5 +1,7 @@
 #include "ui/charedit_ui.h"
 
+#include <stdio.h>
+
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/level.h"
@@ -33,6 +35,7 @@ typedef struct S5C8CA8 {
     tig_button_handle_t button_handle;
 } S5C8CA8;
 
+static void sub_55A240();
 static void sub_55B150();
 static bool sub_55BAB0();
 static bool sub_55C110();
@@ -287,6 +290,9 @@ static tig_font_handle_t dword_64C9D0;
 // 0x64CA60
 static tig_window_handle_t dword_64CA60;
 
+// 0x64CA64
+static tig_window_handle_t dword_64CA64;
+
 // 0x64CA68
 static tig_font_handle_t dword_64CA68;
 
@@ -519,7 +525,56 @@ void sub_55A230()
 // 0x55A240
 void sub_55A240()
 {
-    // TODO: Incomplete.
+    TigFont font_desc;
+    char* pch;
+    char v1[7][40];
+    const char* v2[7];
+    int index;
+
+    sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[0]), 0, -1, 3);
+    sub_55B880(dword_64CA64, dword_64CDD0, &(stru_5C8150[3]), 0, -1, 1);
+
+    if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 5);
+    } else if (sub_45F730(qword_64E010)) {
+        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
+    } else {
+        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 2);
+        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
+    }
+
+    sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, 0, -1, 13);
+
+    sub_441B60(qword_64E010, qword_64E010, v1[3]);
+    tig_font_push(dword_64CDD0);
+    font_desc.str = v1[3];
+    pch = &(v1[3][strlen(v1[3])]);
+    do {
+        *pch-- = '\0';
+        font_desc.width = 0;
+        sub_535390(&font_desc);
+    } while (font_desc.width > 243);
+    tig_font_pop();
+
+    sprintf(v1[0],  ": %d  ", sub_55B4D0(qword_64E010, 0));
+    sprintf(v1[1],  ": %d  ", sub_55B4D0(qword_64E010, 1));
+    sprintf(v1[2],  ": %d  ", sub_55B4D0(qword_64E010, 2));
+    sprintf(v1[4],  ": %s", race_get_name(stat_level(qword_64E010, STAT_RACE)));
+    sprintf(v1[5],  ": %s", gender_get_name(stat_level(qword_64E010, STAT_GENDER)));
+    sprintf(v1[6],  ": %d ", stat_level(qword_64E010, STAT_AGE));
+
+    for (index = 0; index < 7; index++) {
+        v2[index] = v1[index];
+    }
+
+    sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[0]), &(v2[0]), -1, 3);
+    sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[3]), &(v2[3]), -1, 1);
+
+    if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 3);
+    } else if (!sub_45F730(qword_64E010)) {
+        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 2);
+    }
 }
 
 // 0x55A5C0
@@ -591,7 +646,7 @@ void sub_55B410()
 }
 
 // 0x55B4D0
-void sub_55B4D0()
+int sub_55B4D0(int64_t obj, int param)
 {
     // TODO: Incomplete.
 }
