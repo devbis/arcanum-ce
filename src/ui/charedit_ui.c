@@ -45,6 +45,7 @@ static void sub_55B1B0();
 static void sub_55B280();
 static int sub_55B410(int param);
 static int sub_55B4D0(int64_t obj, int param);
+static void sub_55B720(int64_t obj, int stat, int value);
 static bool sub_55BAB0();
 static bool sub_55C110();
 static void sub_55C2E0(int a1);
@@ -784,9 +785,40 @@ int sub_55B4D0(int64_t obj, int param)
 }
 
 // 0x55B720
-void sub_55B720()
+void sub_55B720(int64_t obj, int stat, int value)
 {
-    // TODO: Incomplete.
+    switch (stat) {
+    case 4:
+        object_hp_pts_set(obj, value);
+        break;
+    case 6:
+        critter_fatigue_pts_set(obj, value);
+        break;
+    case 7:
+        stat_set_base(obj, STAT_STRENGTH, value);
+        break;
+    case 9:
+        stat_set_base(obj, STAT_CONSTITUTION, value);
+        break;
+    case 11:
+        stat_set_base(obj, STAT_DEXTERITY, value);
+        break;
+    case 13:
+        stat_set_base(obj, STAT_BEAUTY, value);
+        break;
+    case 15:
+        stat_set_base(obj, STAT_INTELLIGENCE, value);
+        break;
+    case 17:
+        stat_set_base(obj, STAT_WILLPOWER, value);
+        break;
+    case 19:
+        stat_set_base(obj, STAT_PERCEPTION, value);
+        break;
+    case 21:
+        stat_set_base(obj, STAT_CHARISMA, value);
+        break;
+    }
 }
 
 // 0x55B880
