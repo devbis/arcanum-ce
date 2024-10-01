@@ -176,6 +176,7 @@ static bool sub_564140(WmapNote* note);
 static bool sub_564160(WmapNote* note, int a2);
 static bool sub_564210(WmapNote* note);
 static void sub_564320(TextEdit* textedit);
+static void sub_564360(int id);
 static bool sub_5643C0(const char* str);
 static void sub_564940();
 static int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime);
@@ -1555,9 +1556,25 @@ void sub_564320(TextEdit* textedit)
 }
 
 // 0x564360
-void sub_564360()
+void sub_564360(int id)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    int index;
+    int cnt;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+    cnt = *v1->num_notes;
+    if (v1->notes != NULL) {
+        for (index = 0; index < cnt; index++) {
+            if (v1->notes[index].id == id) {
+                break;
+            }
+        }
+
+        if (index < cnt && (v1->notes[index].field_4 & 0x2) == 0) {
+            sub_564030(&(v1->notes[index]));
+        }
+    }
 }
 
 // 0x5643C0
