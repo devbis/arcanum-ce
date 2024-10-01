@@ -9,5 +9,6 @@ void charedit_reset();
 bool charedit_is_created();
 void sub_55A230();
 void sub_55F160();
+void sub_55F180();
 
 #endif /* ARCANUM_UI_CHAREDIT_UI_H_ */

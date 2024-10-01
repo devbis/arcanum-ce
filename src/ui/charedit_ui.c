@@ -1264,7 +1264,10 @@ void sub_55F160()
 // 0x55F180
 void sub_55F180()
 {
-    // TODO: Incomplete.
+    if (charedit_created) {
+        stru_5C8990.str = dword_64D3C4[13]
+        sub_550750(&stru_5C8990);
+    }
 }
 
 // 0x55F1A0
