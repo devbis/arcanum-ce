@@ -37,6 +37,7 @@ typedef struct S5C8CA8 {
 
 static void sub_55A240();
 static void sub_55B150();
+static int sub_55B410(int param);
 static int sub_55B4D0(int64_t obj, int param);
 static bool sub_55BAB0();
 static bool sub_55C110();
@@ -641,9 +642,47 @@ void sub_55B2A0()
 }
 
 // 0x55B410
-void sub_55B410()
+int sub_55B410(int param)
 {
-    // TODO: Incomplete.
+    switch (param) {
+    case 0:
+        return STAT_UNSPENT_POINTS;
+    case 1:
+        return STAT_LEVEL;
+    case 3:
+    case 4:
+        return -3;
+    case 5:
+    case 6:
+        return -2;
+    case 7:
+    case 8:
+        return STAT_STRENGTH;
+    case 9:
+    case 10:
+        return STAT_CONSTITUTION;
+    case 11:
+    case 12:
+        return STAT_DEXTERITY;
+    case 13:
+    case 14:
+        return STAT_BEAUTY;
+    case 15:
+    case 16:
+        return STAT_INTELLIGENCE;
+    case 17:
+    case 18:
+        return STAT_WILLPOWER;
+    case 19:
+    case 20:
+        return STAT_PERCEPTION;
+    case 21:
+    case 22:
+        return STAT_CHARISMA;
+    default:
+        // FIXME: Ideally should return something else to denote error.
+        return 0;
+    }
 }
 
 // 0x55B4D0
