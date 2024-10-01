@@ -177,6 +177,7 @@ static bool sub_564160(WmapNote* note, int a2);
 static bool sub_564210(WmapNote* note);
 static void sub_564320(TextEdit* textedit);
 static bool sub_5643C0(const char* str);
+static int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime);
 static void wmap_ui_town_notes_load();
 static void sub_5650C0();
 static void sub_565230();
@@ -1661,9 +1662,21 @@ void sub_564E30()
 }
 
 // 0x564EE0
-void sub_564EE0()
+int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    int64_t v2;
+    int v3;
+
+    sub_561800(a1, &v1);
+    sub_561800(a2, &v2);
+    v3 = sub_4B96F0(v1, v2) / 64;
+
+    if (datetime != NULL) {
+        sub_45A950(datetime, 3600000 * v3);
+    }
+
+    return v3;
 }
 
 // 0x564F60
