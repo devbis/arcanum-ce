@@ -157,7 +157,7 @@ void sub_4F28A0()
 }
 
 // 0x4F2C60
-void sub_4F2C60(int64_t* obj_ptr)
+int sub_4F2C60(int64_t* obj_ptr)
 {
     int type;
     int64_t whos_in_me_obj;
@@ -241,7 +241,7 @@ void sub_4F51B0()
 }
 
 // 0x4F5270
-void sub_4F5270(int64_t obj, int index)
+bool sub_4F5270(int64_t obj, int index)
 {
     unsigned int flags;
 
