@@ -724,9 +724,22 @@ bool sub_4B7790(int64_t obj, int a2)
 }
 
 // 0x4B7830
-void sub_4B7830()
+bool sub_4B7830(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int type;
+
+    if (!dword_5FC22C) {
+        return sub_4B7790(a1, 0);
+    }
+
+    type = obj_field_int32_get(a1, OBJ_F_TYPE);
+    if (obj_type_is_item(type)
+        && (obj_field_int32_get(a1, OBJ_F_FLAGS) & OF_INVENTORY) != 0
+        && obj_field_handle_get(a1, OBJ_F_ITEM_PARENT) != OBJ_HANDLE_NULL) {
+        return sub_4B7790(a1, 0);
+    }
+
+    return sub_4B7790(a1, sub_4B7BA0(a1, a2, 0));
 }
 
 // 0x4B78D0

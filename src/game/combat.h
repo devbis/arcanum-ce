@@ -40,6 +40,7 @@ bool combat_tb_timeevent_process(TimeEvent* timeevent);
 void combat_turn_based_next_subturn();
 int combat_get_action_points();
 bool sub_4B7790(int64_t obj, int a2);
+bool sub_4B7830(int64_t a1, int64_t a2);
 bool sub_4B7AA0(int64_t obj);
 bool sub_4B7AE0(int64_t obj);
 int sub_4B7C20();
