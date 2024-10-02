@@ -805,9 +805,25 @@ int sub_4B7C20()
 }
 
 // 0x4B7C30
-void sub_4B7C30()
+int sub_4B7C30(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t weapon_obj;
+    int speed;
+
+    weapon_obj = item_wield_get(obj, 1004);
+    speed = item_weapon_magic_speed(weapon_obj, obj);
+    if (speed > 24) {
+        return 1;
+    } else if (speed > 20) {
+        return 2;
+    }
+
+    speed = 8 - speed / 3;
+    if (speed < 1) {
+        speed = 1;
+    }
+
+    return speed;
 }
 
 // 0x4B7C90
