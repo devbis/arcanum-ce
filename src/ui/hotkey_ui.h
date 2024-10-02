@@ -27,6 +27,7 @@ static_assert(sizeof(S683518) == 0x58, "wrong size");
 bool hotkey_ui_init(GameInitInfo* init_info);
 void hotkey_ui_exit();
 void hotkey_ui_resize(ResizeInfo* resize_info);
+bool hotkey_ui_start(int a1, TigRect* rect, int a3, bool a4);
 void sub_57E5A0(S683518* a1);
 void sub_57E8B0();
 void sub_57F1D0(int index);
