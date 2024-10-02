@@ -1,8 +1,15 @@
 #include "game/quest.h"
 
+#include "game/critter.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/object.h"
+#include "game/party.h"
+#include "game/player.h"
+#include "game/reaction.h"
 #include "game/stat.h"
+#include "game/ui.h"
 
 #define MAX_QUEST 1000
 
@@ -18,7 +25,16 @@ typedef struct Quest {
 
 static_assert(sizeof(Quest) == 0x64, "wrong size");
 
+typedef struct PcQuestStateInfo {
+    /* 0000 */ DateTime timestamp;
+    /* 0008 */ int state;
+    /* 000C */ int field_C;
+} PcQuestStateInfo;
+
+static_assert(sizeof(PcQuestStateInfo) == 0x10, "wrong size");
+
 static bool quest_parse(const char* path, int start, int end);
+static int quest_compare(const QuestInfo* a, const QuestInfo* b);
 
 // 0x5B6E34
 static mes_file_handle_t quest_log_mes_file = MES_FILE_HANDLE_INVALID;
@@ -198,6 +214,223 @@ bool quest_parse(const char* path, int start, int end)
     return true;
 }
 
+// 0x4C4C00
+int sub_4C4C00(int64_t a1, int64_t a2, int num)
+{
+    int state;
+
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return 0;
+    }
+
+    state = sub_4C4CB0(a1, num);
+    if (stat_level(a1, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
+        return quests[num].dumb_dialog[state];
+    }
+
+    if (sub_4C0CC0(a2, a1) < 20) {
+        return quests[num].bad_reaction_dialog[state];
+    }
+
+    return quests[num].normal_dialog[state];
+}
+
+// 0x4C4CB0
+int sub_4C4CB0(int64_t obj, int num)
+{
+    PcQuestStateInfo pc_quest_state;
+    int state;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return quest_get_state(num);
+    }
+
+    sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+
+    state = pc_quest_state.state;
+    if ((state & 0x100) != 0) {
+        state = QUEST_STATE_BOTCHED;
+    }
+
+    return state;
+}
+
+// 0x4C4D20
+void sub_4C4D20(int64_t obj, int num, int state, int64_t a4)
+{
+    int old_state;
+    int64_t party_member_obj;
+    int party_member_index;
+    int64_t player_obj;
+    int player_index;
+
+    old_state = sub_4C4CB0(obj, num);
+    if (old_state == QUEST_STATE_COMPLETED
+        || old_state == QUEST_STATE_OTHER_COMPLETED
+        || old_state == QUEST_STATE_BOTCHED) {
+        return;
+    }
+
+    if (old_state >= state) {
+        return;
+    }
+
+    if (state == QUEST_STATE_COMPLETED) {
+        sub_45F110(obj, quest_get_xp(quests[num].experience_level));
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        sub_4C4E60(obj, num, state, a4);
+        return;
+    }
+
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (state == QUEST_STATE_ACCEPTED || state == QUEST_STATE_COMPLETED) {
+            party_member_obj = party_find_first(obj, &party_member_index);
+            do {
+                sub_4C4E60(party_member_obj, num, state, a4);
+            } while ((party_member_obj = party_find_next(&party_member_index)) != OBJ_HANDLE_NULL);
+        } else if (state == QUEST_STATE_BOTCHED) {
+            for (player_index = 0; player_index < 8; player_index++) {
+                player_obj = sub_4A2B60(player_index);
+                if (player_obj != OBJ_HANDLE_NULL) {
+                    sub_4C4E60(player_obj, num, state, a4);
+                }
+            }
+        } else {
+            sub_4C4E60(obj, num, state, a4);
+            return;
+        }
+    }
+
+    sub_4C4CB0(obj, num);
+}
+
+// 0x4C4E60
+int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
+{
+    int old_state;
+    Packet39 pkt;
+    PcQuestStateInfo pc_quest_state;
+    int reaction;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return state;
+    }
+
+    old_state = sub_4C4CB0(obj, num);
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return old_state;
+        }
+
+        pkt.type = 39;
+        sub_4440E0(obj, &(pkt.field_8));
+        pkt.quest = num;
+        pkt.state = state;
+        sub_4440E0(a4, &(pkt.field_40));
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (quest_states[num - 1000] == QUEST_STATE_ACCEPTED) {
+        if (state == QUEST_STATE_COMPLETED || state == QUEST_STATE_OTHER_COMPLETED) {
+            quest_states[num - 1000] = QUEST_STATE_COMPLETED;
+        } else if (state == QUEST_STATE_BOTCHED) {
+            quest_states[num - 1000] = QUEST_STATE_BOTCHED;
+        }
+    } else {
+        if (quest_states[num - 1000] == QUEST_STATE_COMPLETED) {
+            state = QUEST_STATE_OTHER_COMPLETED;
+        } else {
+            state = QUEST_STATE_BOTCHED;
+        }
+    }
+
+    sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    if (state == QUEST_STATE_BOTCHED) {
+        pc_quest_state.state |= 0x100;
+    } else {
+        pc_quest_state.state = state;
+    }
+
+    pc_quest_state.timestamp = sub_45A7C0();
+    sub_407960(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+
+    if (state == QUEST_STATE_COMPLETED) {
+        stat_set_base(obj,
+            STAT_ALIGNMENT,
+            stat_get_base(obj, STAT_ALIGNMENT) + quests[num].alignment_adjustment);
+        tig_sound_quick_play(3028);
+    }
+
+    if (a4 != OBJ_HANDLE_NULL) {
+        if (state == QUEST_STATE_ACCEPTED) {
+            reaction = sub_4C0CC0(a4, obj);
+            if (reaction < 41) {
+                sub_4C0DE0(a4, obj, 41 - reaction);
+            }
+        } else if (state == QUEST_STATE_COMPLETED) {
+            sub_4C0DE0(a4, obj, 10);
+        }
+    }
+
+    if (player_is_pc_obj(obj)) {
+        if ((pc_quest_state.state & ~0x100) != QUEST_STATE_UNKNOWN) {
+            sub_460790(1, 1);
+        }
+    }
+
+    return state;
+}
+
+// 0x4C5070
+int sub_4C5070(int64_t obj, int num)
+{
+    int state;
+    PcQuestStateInfo pc_quest_state;
+    Packet40 pkt;
+
+    state = quest_get_state(num);
+    if (state != QUEST_STATE_BOTCHED) {
+        return state;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return state;
+    }
+
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+            return pc_quest_state.state;
+        }
+
+        pkt.type = 40;
+        sub_4440E0(obj, &(pkt.field_8));
+        pkt.field_38 = num;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    quest_states[num - 1000] = QUEST_STATE_ACCEPTED;
+
+    sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    pc_quest_state.state &= ~0x100;
+    pc_quest_state.timestamp = sub_45A7C0();
+    sub_407960(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+
+    if (player_is_pc_obj(obj)) {
+        if (pc_quest_state.state == QUEST_STATE_COMPLETED) {
+            tig_sound_quick_play(3028);
+        }
+
+        if (pc_quest_state.state != QUEST_STATE_UNKNOWN) {
+            sub_460790(1, 1);
+        }
+    }
+
+    return pc_quest_state.state;
+}
+
 // 0x4C51A0
 int quest_get_state(int num)
 {
@@ -251,6 +484,43 @@ void quest_copy_description(object_id_t obj, int num, char* buffer)
     }
 }
 
+// 0x4C52E0
+int quest_copy_state(int64_t obj, QuestInfo* quests)
+{
+    int index;
+    PcQuestStateInfo pc_quest_state[2000];
+    int cnt;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return 0;
+    }
+
+    sub_407C30(obj, OBJ_F_PC_QUEST_IDX, 1999, pc_quest_state);
+
+    cnt = 0;
+    for (index = 0; index < 2000; index++) {
+        if ((pc_quest_state[index].state & ~0x100) != QUEST_STATE_UNKNOWN) {
+            quests[cnt].num = index;
+            quests[cnt].timestamp = pc_quest_state[index].timestamp;
+            if ((pc_quest_state[index].state & 0x100) != 0) {
+                quests[cnt].state = QUEST_STATE_BOTCHED;
+            } else {
+                quests[cnt].state = pc_quest_state[index].state;
+            }
+        }
+    }
+
+    qsort(quests, cnt, sizeof(*quests), quest_compare);
+
+    return cnt;
+}
+
+// 0x4C53A0
+int quest_compare(const QuestInfo* a, const QuestInfo* b)
+{
+    return datetime_compare(a->timestamp, b->timestamp);
+}
+
 // 0x4C53C0
 int quest_get_xp(int xp_level)
 {
@@ -262,4 +532,40 @@ int quest_get_xp(int xp_level)
     } else {
         return 0;
     }
+}
+
+// 0x4C5400
+bool sub_4C5400(int64_t a1, int64_t a2)
+{
+    PcQuestStateInfo pc_quests[2000];
+    int index;
+    int state;
+    int other_state;
+
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return false;
+    }
+
+    if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return false;
+    }
+
+    sub_407C30(a1, OBJ_F_PC_QUEST_IDX, 1999, pc_quests);
+
+    for (index = 0; index < 2000; index++) {
+        state = sub_4C4CB0(a2, index);
+        if (state != QUEST_STATE_COMPLETED
+            && state != QUEST_STATE_OTHER_COMPLETED
+            && state != QUEST_STATE_BOTCHED) {
+            other_state = pc_quests[index].state & ~0x100;
+            if (state < other_state && other_state == QUEST_STATE_ACCEPTED) {
+                sub_4C4E60(a2, index, QUEST_STATE_ACCEPTED, OBJ_HANDLE_NULL);
+                if ((pc_quests[index].state & 0x100) != 0) {
+                    sub_4C4E60(a2, index, QUEST_STATE_BOTCHED, OBJ_HANDLE_NULL);
+                }
+            }
+        }
+    }
+
+    return true;
 }
