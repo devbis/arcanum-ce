@@ -1,9 +1,13 @@
 #include "game/combat.h"
 
+#include "game/ai.h"
+#include "game/anim.h"
 #include "game/animfx.h"
 #include "game/critter.h"
 #include "game/gamelib.h"
+#include "game/item.h"
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/object_node.h"
 #include "game/player.h"
@@ -13,9 +17,12 @@
 static void turn_based_changed();
 static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
-static void sub_4B54B0(int64_t obj, int a2);
+static void combat_critter_toggle_combat_mode(int64_t obj);
+static int64_t sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
+static void sub_4B7080();
 static bool combat_turn_based_start();
+static void combat_turn_based_end();
 static void sub_4B7300();
 static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
@@ -23,6 +30,7 @@ static void combat_turn_based_subturn_end();
 static void combat_turn_based_end_turn();
 static int sub_4B7BA0(int64_t obj, int64_t a2, bool a3);
 static bool sub_4B7DC0(int64_t obj);
+static void sub_4B7EB0();
 static void sub_4B83E0(int64_t obj, int64_t a2);
 
 // 0x5B57B8
@@ -107,7 +115,7 @@ bool combat_init(GameInitInfo* init_info)
 void combat_exit()
 {
     mes_unload(combat_mes_file);
-    sub_4B7330();
+    combat_turn_based_end();
     if (!combat_editor) {
         animfx_list_exit(&stru_5FC1F8);
     }
@@ -117,7 +125,7 @@ void combat_exit()
 void combat_reset()
 {
     in_combat_reset = true;
-    sub_4B7330();
+    combat_turn_based_end();
     in_combat_reset = false;
 }
 
@@ -279,7 +287,7 @@ void combat_critter_activate_combat_mode(int64_t obj)
 }
 
 // 0x4B3F80
-void combat_critter_toggle_combat_mode()
+void combat_critter_toggle_combat_mode(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -303,7 +311,7 @@ void sub_4B4390()
 }
 
 // 0x4B54B0
-void sub_4B54B0(int64_t obj, int a2)
+int64_t sub_4B54B0(int64_t obj, int a2)
 {
     switch (a2) {
     case 1:
@@ -411,7 +419,7 @@ tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2)
     if (tig_art_type(aid) == TIG_ART_TYPE_ITEM) {
         aid = tig_art_id_rotation_set(aid, v2 / 4);
     } else {
-        aid = sub_502780(aid, tig_art_num(aid) + v2 / 8);
+        aid = tig_art_num_set(aid, tig_art_num_get(aid) + v2 / 8);
         aid = tig_art_id_rotation_set(aid, v2 % 8);
     }
 
@@ -462,19 +470,19 @@ bool sub_4B6C90(bool turn_based)
     }
 
     if (!turn_based) {
-        dword_5FC1E8();
-        sub_4B7330();
+        combat_callbacks.field_8();
+        combat_turn_based_end();
         combat_turn_based = turn_based;
         return true;
     }
 
-    dword_5FC1E4();
+    combat_callbacks.field_4();
     if (combat_turn_based_start()) {
         combat_turn_based = turn_based;
         return true;
     }
 
-    dword_5FC1E8();
+    combat_callbacks.field_8();
     return 1;
 }
 
@@ -582,7 +590,7 @@ void sub_4B7300()
 }
 
 // 0x4B7330
-void sub_4B7330()
+void combat_turn_based_end()
 {
     // TODO: Incomplete.
 }
@@ -621,7 +629,7 @@ void combat_turn_based_subturn_start()
         sub_4B7790(dword_5FC240->obj, 0);
     } else {
         tig_debug_printf("Combat: combat_turn_based_subturn_start: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");
-        sub_4B7330();
+        combat_turn_based_end();
     }
 }
 
@@ -630,7 +638,7 @@ void combat_turn_based_subturn_end()
 {
     combat_debug(dword_5FC240->obj, "SubTurn End");
     if (player_is_pc_obj(dword_5FC240->obj)) {
-        dword_5FC1EC(0);
+        combat_callbacks.field_C(0);
     } else {
         sub_441980(dword_5FC240->obj, dword_5FC240->obj, OBJ_HANDLE_NULL, 16, 0);
     }
@@ -672,7 +680,7 @@ void combat_turn_based_next_subturn()
     }
 
     tig_debug_printf("Combat: combat_turn_based_next_subturn: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");
-    sub_4B7330();
+    combat_turn_based_end();
 }
 
 // 0x4B7740
@@ -709,7 +717,7 @@ bool sub_4B7790(int64_t obj, int a2)
 
     is_pc = player_is_pc_obj(obj);
     if (is_pc) {
-        dword_5FC1EC(combat_action_points);
+        combat_callbacks.field_C(combat_action_points);
     }
 
     if (combat_action_points >= a2) {
@@ -857,7 +865,7 @@ void sub_4B7C90(int64_t obj)
 }
 
 // 0x4B7CD0
-void sub_4B7CD0()
+void sub_4B7CD0(int64_t obj, int action_points)
 {
     // TODO: Incomplete.
 }
@@ -945,7 +953,7 @@ bool sub_4B8040(int64_t obj)
         return false;
     }
 
-    if ((obj_field_in32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) != 0) {
+    if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) != 0) {
         return false;
     }
 
