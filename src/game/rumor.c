@@ -219,7 +219,7 @@ void sub_4C59D0(int rumor, char* buffer)
 }
 
 // 0x4C5A40
-int sub_4C5A40(int64_t obj, RumorInfo* rumors)
+int rumor_copy_state(int64_t obj, RumorInfo* rumors)
 {
     int index;
     int64_t timestamps[2000];

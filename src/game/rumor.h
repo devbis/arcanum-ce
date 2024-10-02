@@ -29,7 +29,7 @@ bool sub_4C58D0(object_id_t object_id, int rumor);
 void sub_4C5920(object_id_t object_id, int rumor, char* buffer);
 void sub_4C5960(int rumor, char* buffer);
 void sub_4C59D0(int rumor, char* buffer);
-int sub_4C5A40(int64_t obj, RumorInfo* rumors);
+int rumor_copy_state(int64_t obj, RumorInfo* rumors);
 bool sub_4C5B10(int64_t a1, int64_t a2);
 
 #endif /* ARCANUM_GAME_RUMOR_H_ */
