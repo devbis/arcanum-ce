@@ -743,9 +743,28 @@ bool sub_4B7830(int64_t a1, int64_t a2)
 }
 
 // 0x4B78D0
-void sub_4B78D0()
+bool sub_4B78D0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int v1;
+    int64_t weapon_obj;
+    int64_t loc1;
+    int64_t loc2;
+
+    if (!dword_5FC22C) {
+        return sub_4B7790(a1, 0);
+    }
+
+    v1 = sub_4B7C30(a1);
+    weapon_obj = item_wield_get(a1, 1004);
+    if (weapon_obj == OBJ_HANDLE_NULL || item_weapon_range(weapon_obj, a1) <= 1) {
+        loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
+        loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
+        if (sub_4B96F0(loc1, loc2) > 1) {
+            v1 += sub_4B7BA0(a1, loc2, 1);
+        }
+    }
+
+    return v1;
 }
 
 // 0x4B79A0
@@ -809,21 +828,22 @@ int sub_4B7C30(int64_t obj)
 {
     int64_t weapon_obj;
     int speed;
+    int v1;
 
     weapon_obj = item_wield_get(obj, 1004);
     speed = item_weapon_magic_speed(weapon_obj, obj);
     if (speed > 24) {
-        return 1;
+        v1 = 1;
     } else if (speed > 20) {
-        return 2;
+        v1 = 2;
+    } else {
+        v1 = 8 - speed / 3;
+        if (v1 < 1) {
+            v1 = 1;
+        }
     }
 
-    speed = 8 - speed / 3;
-    if (speed < 1) {
-        speed = 1;
-    }
-
-    return speed;
+    return v1;
 }
 
 // 0x4B7C90
