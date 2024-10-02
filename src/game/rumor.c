@@ -4,6 +4,7 @@
 
 #include "game/critter.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/stat.h"
 
@@ -121,9 +122,16 @@ void rumor_set_known(int rumor)
 {
     int v1;
     int v2;
+    Packet37 pkt;
 
     if (!sub_4A2BA0()) {
-        // TODO: Incomplete.
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        pkt.type = 37;
+        pkt.rumor = rumor;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
     v1 = (rumor - 1000) / 8;
