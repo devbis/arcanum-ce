@@ -413,7 +413,66 @@ void logbook_ui_destroy()
 // 0x53F350
 bool logbook_ui_message_filter(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+    MesFileEntry mes_file_entry;
+    John v1;
+
+    if (msg->type == TIG_MESSAGE_MOUSE) {
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
+            && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+            sub_53F090();
+            return true;
+        }
+        return false;
+    }
+
+    if (msg->type == TIG_MESSAGE_BUTTON) {
+        switch (msg->data.button.state) {
+        case TIG_BUTTON_STATE_PRESSED:
+            for (index = 0; index < 7; index++) {
+                if (stru_5C3448[index].button_handle == msg->data.button.button_handle) {
+                    sub_53F5F0(index, 0);
+                    return true;
+                }
+            }
+            return false;
+        case TIG_BUTTON_STATE_RELEASED:
+            if (stru_5C3428[0].button_handle == msg->data.button.button_handle) {
+                sub_53F6A0();
+                return true;
+            }
+            if (stru_5C3428[1].button_handle == msg->data.button.button_handle) {
+                sub_53F640();
+                return true;
+            }
+            return false;
+        case TIG_BUTTON_STATE_MOUSE_INSIDE:
+            for (index = 0; index < 7; index++) {
+                if (stru_5C3448[index].button_handle == msg->data.button.button_handle) {
+                    mes_file_entry.num = index;
+                    mes_get_msg(logbook_ui_mes_file, &mes_file_entry);
+
+                    v1.type = 6;
+                    v1.str = mes_file_entry.str;
+                    sub_550750(&v1);
+
+                    return true;
+                }
+            }
+            return false;
+        case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
+            for (index = 0; index < 7; index++) {
+                if (stru_5C3448[index].button_handle == msg->data.button.button_handle) {
+                    sub_550720();
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    return false;
 }
 
 // 0x53F490
