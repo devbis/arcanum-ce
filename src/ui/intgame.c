@@ -12,6 +12,7 @@
 #include "game/timeevent.h"
 #include "ui/compact_ui.h"
 #include "ui/gameuilib.h"
+#include "ui/hotkey_ui.h"
 #include "ui/roller_ui.h"
 #include "ui/textedit_ui.h"
 
@@ -21,6 +22,17 @@ typedef struct IntgameIsoWindowTypeInfo {
 } IntgameIsoWindowTypeInfo;
 
 static_assert(sizeof(IntgameIsoWindowTypeInfo) == 0x14, "wrong size");
+
+typedef struct S64C540 {
+    /* 0000 */ int field_0;
+    /* 0004 */ void* field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+} S64C540;
+
+static_assert(sizeof(S64C540) == 0x18, "wrong size");
 
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
@@ -91,6 +103,16 @@ static TigRect stru_5C63D8 = { 14, 472, 28, 88 };
 
 // 0x5C63E8
 static TigRect stru_5C63E8 = { 754, 473, 28, 88 };
+
+// 0x5C63F8
+static IntgameIsoWindowTypeInfo stru_5C63F8[6] = {
+    { { 15, 578, 29, 12 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 755, 578, 27, 12 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 190, 17, 24, 12 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 104, 512, 50, 20 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 264, 562, 50, 20 }, TIG_WINDOW_HANDLE_INVALID },
+    { { 15, 500, 29, 12 }, TIG_WINDOW_HANDLE_INVALID },
+};
 
 // 0x5C6470
 static TigRect stru_5C6470 = { 61, 509, 251, -1 };
@@ -330,6 +352,15 @@ static UiButtonInfo stru_5C6E90[] = {
     { 481, 3, 192, TIG_BUTTON_HANDLE_INVALID },
 };
 
+// 0x5C6EE0
+static TigRect stru_5C6EE0[5] = {
+    { 281, 3, 32, 32 },
+    { 331, 3, 32, 32 },
+    { 381, 3, 32, 32 },
+    { 431, 3, 32, 32 },
+    { 481, 3, 32, 32 },
+};
+
 // 0x5C6F30
 static UiButtonInfo stru_5C6F30 = { 616, 455, 182, TIG_BUTTON_HANDLE_INVALID };
 
@@ -350,6 +381,9 @@ static UiButtonInfo intgame_mt_button_info = { 161, 443, 563, TIG_BUTTON_HANDLE_
 
 // 0x5C6F78
 static int dword_5C6F78 = 6;
+
+// 0x5C6F80
+static TigRect stru_5C6F80 = { 648, 5, 128, 30 };
 
 // 0x5C6F90
 static UiButtonInfo stru_5C6F90 = { 0, 0, -1, TIG_BUTTON_HANDLE_INVALID };
@@ -492,6 +526,9 @@ static TigVideoBuffer* dword_64C474;
 // 0x64C478
 static int dword_64C478;
 
+// 0x64C47C
+static int dword_64C47C[2];
+
 // 0x64C484
 static int dword_64C484[5];
 
@@ -543,6 +580,9 @@ static int dword_64C534;
 // 0x64C538
 static tig_font_handle_t dword_64C538;
 
+// 0x64C540
+static S64C540 stru_64C540[10];
+
 // 0x64C630
 static bool intgame_big_window_locked;
 
@@ -581,6 +621,9 @@ static int intgame_iso_window_type;
 
 // 0x64C6AC
 static int dword_64C6AC;
+
+// 0x64C6B0
+static bool dword_64C6B0;
 
 // 0x64C6B4
 static bool dword_64C6B4;
@@ -827,7 +870,196 @@ bool intgame_load(GameLoadInfo* load_info)
 // 0x54A330
 bool iso_interface_create(tig_window_handle_t window_handle)
 {
-    // TODO: Incomplete.
+    TigWindowData window_data;
+    TigVideoBufferCreateInfo vb_create_info;
+    TigArtBlitInfo art_blit_info;
+    int index;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    TigArtFrameData art_frame_data;
+    int iwid;
+    TigFont font_desc;
+
+    stru_64C510 = stru_5C63B0;
+    dword_64C52C = window_handle;
+    dword_64C6B0 = 1;
+    dword_64C6B4 = false;
+
+    tig_window_data(window_handle, &window_data);
+
+    vb_create_info.flags = 0;
+    vb_create_info.width = stru_5C63D8.width / 2;
+    vb_create_info.height = stru_5C63D8.height;
+    vb_create_info.background_color = 0;
+    if (tig_video_buffer_create(&vb_create_info, &dword_64C474) != TIG_OK) {
+        tig_debug_printf("iso_interface_create: ERROR: couldn't create video buffer!\n");
+        exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
+    }
+
+    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.message_filter = sub_54C8E0;
+
+    art_blit_info.src_rect = &(window_data.rect);
+    art_blit_info.dst_rect = &(window_data.rect);
+
+    for (index = 0; index < 2; index++) {
+        if (index == 0) {
+            tig_art_interface_id_create(185u, 0, 0, 0, &art_id);
+        } else {
+            tig_art_interface_id_create(184u, 0, 0, 0, &art_id);
+        }
+
+        if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+            tig_debug_printf("iso_interface_create: ERROR: couldn't grab art anim data!\n");
+            exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
+        }
+
+        window_data.background_color = art_anim_data.color_key;
+        window_data.rect = stru_5C6390[index];
+        art_blit_info.art_id = art_id;
+
+        if (tig_window_create(&window_data, &(dword_64C4F8[index])) != TIG_OK) {
+            tig_debug_printf("iso_interface_create: ERROR: couldn't create window!\n");
+            exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
+        }
+
+        window_data.rect.x = 0;
+        window_data.rect.y = 0;
+        tig_window_blit_art(dword_64C4F8[index], &art_blit_info);
+    }
+
+    sub_569F20(dword_64C4F8[0]);
+
+    for (index = 0; index < 5; index++) {
+        sub_54AAE0(&(stru_5C6E40[index]));
+        tig_button_hide(stru_5C6E40[index].button_handle);
+    }
+
+    for (index = 0; index < 4; index++) {
+        if (index == 0 || index == 1) {
+            sub_54AB20(&(stru_5C6480[index]), 0x2);
+        } else {
+            sub_54AAE0(&(stru_5C6480[index]));
+        }
+    }
+
+    for (index = 0; index < 5; index++) {
+        sub_54AAE0(&(stru_5C64C0[index]));
+    }
+
+    sub_54AAE0(&stru_5C6538);
+    sub_5501C0();
+
+    dword_64C6B4 = true;
+    dword_64C530 = 0;
+
+    for (index = 0; index < 11; index++) {
+        iwid = sub_551740(stru_5C6D60[index].rect.x, stru_5C6D60[index].rect.y);
+        if (iwid == -1) {
+            tig_debug_printf("iso_interface_create: ERROR: find iwid match!\n");
+            exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
+        }
+
+        stru_5C6D60[index].rect.x -= stru_5C6390[iwid].x;
+        stru_5C6D60[index].rect.y -= stru_5C6390[iwid].y;
+        stru_5C6D60[index].window_handle = dword_64C4F8[iwid];
+    }
+
+    for (index = 0; index < 6; index++) {
+        iwid = sub_551740(stru_5C63F8[index].rect.x, stru_5C63F8[index].rect.y);
+        if (iwid == -1) {
+            tig_debug_printf("iso_interface_create: ERROR: find iwid match!\n");
+            exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
+        }
+
+        stru_5C63F8[index].rect.x -= stru_5C6390[iwid].x;
+        stru_5C63F8[index].rect.y -= stru_5C6390[iwid].y;
+        stru_5C63F8[index].window_handle = dword_64C4F8[iwid];
+    }
+
+    hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
+    sub_54AAE0(&stru_5C6F30);
+    sub_54AAE0(&intgame_mt_button_info);
+    intgame_mt_button_disable();
+
+    dword_64C6B8 = 0;
+    dword_64C634[0] = 0;
+    sub_4F25B0(4, 0x8200);
+    dword_64C6BC = 0;
+
+    font_desc.str = NULL;
+    sub_535390(&font_desc);
+    tig_art_interface_id_create(171, 0, 0, 0, &(font_desc.art_id));
+    tig_font_create(&font_desc, &dword_64C670);
+
+    stru_5C6F90.x = stru_5C6F80.x;
+    stru_5C6F90.y = stru_5C6F80.y;
+    sub_54ABD0(&stru_5C6F90, stru_5C6F80.width, stru_5C6F80.height);
+
+    if (tig_art_interface_id_create(207, 0, 0, 0, &art_id) != TIG_OK
+        || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        tig_debug_printf("iso_interface_create: ERROR: clock stuff failed!\n");
+        exit(EXIT_FAILURE);
+    }
+    dword_64C47C[0] = art_frame_data.width;
+
+    if (tig_art_interface_id_create(208, 0, 0, 0, &art_id) != TIG_OK
+        || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        tig_debug_printf("iso_interface_create: ERROR: clock stuff failed!\n");
+        exit(EXIT_FAILURE);
+    }
+    dword_64C47C[1] = art_frame_data.width;
+
+    intgame_clock_process_callback();
+    sub_54AEE0(0);
+    sub_54AEE0(1);
+
+    // NOTE: Looks meaningless.
+    font_desc.str = NULL;
+    sub_535390(&font_desc);
+    font_desc.flags = ~TIG_FONT_SHADOW;
+    tig_art_interface_id_create(230, 0, 0, 0, &(font_desc.art_id));
+
+    sub_54B3C0();
+
+    for (index = 0; index < 10; index++) {
+        stru_64C540[index].field_4 = MALLOC(200);
+    }
+
+    dword_5C63D0 = sub_551740(stru_5C6548[8].x, stru_5C6548[8].y);
+    if (dword_5C63D0 == -1) {
+        tig_debug_printf("Intgame: ERROR: Couldn't match magic-tech window!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (intgame_is_compact_interface()) {
+        for (index = 0; index < 2; index++) {
+            tig_window_hide(dword_64C4F8[index]);
+        }
+    }
+
+    for (index = 0; index < 5; index++) {
+        window_data.flags = TIG_WINDOW_FLAG_0x08;
+        window_data.rect = stru_5C6EE0[index];
+        window_data.color_key = tig_color_make(5, 5, 5);
+        if (tig_window_create(&window_data, &(dword_5C6378[index])) != TIG_OK) {
+            tig_debug_printf("intgame_resize: ERROR: Couldn't create spellFSWid: %d!\n", index);
+            tig_exit();
+            return;
+        }
+
+        tig_window_fill(dword_5C6378[index],
+            &(stru_5C6EE0[index]),
+            tig_color_make(0, 0, 0));
+    }
+
+    for (index = 0; index < 5; index++) {
+        sub_54AA60(dword_5C6378[index],
+            &(stru_5C6EE0[index]),
+            &(stru_5C6E90[index]),
+            true);
+        tig_button_hide(stru_5C6E90[index].button_handle);
+    }
 }
 
 // 0x54A9A0
