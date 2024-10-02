@@ -170,6 +170,31 @@ void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, 
     }
 }
 
+// 0x4C57E0
+void sub_4C57E0(int64_t obj, int rumor)
+{
+    DateTime datetime;
+    Packet38 pkt;
+
+    datetime = sub_45A7C0();
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        pkt.type = 38;
+        pkt.rumor = rumor;
+        pkt.field_8 = sub_407EF0(obj);
+        pkt.datetime = datetime;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && !sub_4C58D0(obj, rumor)) {
+        sub_4C58A0(obj, rumor, timestamp);
+    }
+}
+
 // 0x4C58A0
 void sub_4C58A0(object_id_t obj, int rumor, int64_t timestamp)
 {

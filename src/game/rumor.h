@@ -24,6 +24,7 @@ bool rumor_save(TigFile* stream);
 bool rumor_is_known(int rumor);
 void rumor_set_known(int rumor);
 void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, char* buffer);
+void sub_4C57E0(int64_t obj, int rumor);
 void sub_4C58A0(object_id_t obj, int rumor, int64_t timestamp);
 bool sub_4C58D0(object_id_t object_id, int rumor);
 void sub_4C5920(object_id_t object_id, int rumor, char* buffer);
