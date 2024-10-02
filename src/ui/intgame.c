@@ -427,6 +427,9 @@ static UiButtonInfo stru_5C71D0[10] = {
     { 555, 37, 782, TIG_BUTTON_HANDLE_INVALID },
 };
 
+// 0x5C7288
+static tig_window_handle_t dword_5C7288 = TIG_WINDOW_HANDLE_INVALID;
+
 // 0x5C728C
 static int dword_5C728C[] = {
     250,
@@ -712,7 +715,50 @@ void intgame_reset()
 // 0x549F60
 void intgame_resize(ResizeInfo* resize_info)
 {
-    // TODO: Incomplete.
+    int index;
+    TigWindowData window_data;
+    TigRect rect;
+
+    sub_57DA50();
+    dword_64C52C = resize_info->iso_window_handle;
+
+    if (dword_5C7288 != TIG_WINDOW_HANDLE_INVALID) {
+        tig_window_destroy(dword_5C7288);
+        dword_5C7288 = TIG_WINDOW_HANDLE_INVALID;
+    }
+
+    if (resize_info->field_14.height == 400) {
+        hotkey_ui_start(dword_64C4F8[1], &stru_5C6390[1].x, dword_64C4F8[1], 0);
+
+        for (index = 0; index < 5; index++) {
+            tig_window_hide(dword_5C6378[index]);
+        }
+    } else {
+        window_data.flags = TIG_WINDOW_FLAG_0x08;
+        window_data.rect.x = 196;
+        window_data.rect.y = 563;
+        window_data.rect.width = 411;
+        window_data.rect.height = 37;
+        window_data.color_key = tig_color_make(5, 5, 5);
+        if (tig_window_create(&window_data, &dword_5C7288) != TIG_OK) {
+            tig_debug_printf("intgame_resize: ERROR: couldn't create window!");
+            tig_exit();
+        }
+
+        rect.x = 0;
+        rect.y = 0;
+        rect.width = window_data.rect.width;
+        rect.height = window_data.rect.height;
+        tig_window_fill(dword_5C7288,
+            &rect,
+            tig_color_make(5, 5, 5));
+
+        for (index = 0; index < 5; index++) {
+            if (sub_57C520(index)) {
+                tig_window_show(dword_5C6378[index]);
+            }
+        }
+    }
 }
 
 // 0x54A130
