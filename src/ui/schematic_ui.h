@@ -3,6 +3,18 @@
 
 #include "game/context.h"
 
+typedef struct SchematicInfo {
+    int name;
+    int description;
+    int art_num;
+    int item1[3];
+    int item2[3];
+    int prod[3];
+    int qty;
+} SchematicInfo;
+
+static_assert(sizeof(SchematicInfo) == 0x34, "wrong size");
+
 bool schematic_ui_init(GameInitInfo* init_info);
 void schematic_ui_exit();
 void schematic_ui_reset();

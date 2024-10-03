@@ -1,9 +1,16 @@
 #include "ui/schematic_ui.h"
 
+#include "game/critter.h"
+#include "game/gsound.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/obj.h"
+#include "game/object.h"
+#include "game/player.h"
+#include "game/proto.h"
 #include "game/tech.h"
-#include "ui/types.h"
+#include "ui/intgame.h"
+#include "ui/tb_ui.h"
 
 #define SCHEMATIC_F_NAME 0
 #define SCHEMATIC_F_DESCRIPTION 1
@@ -12,18 +19,6 @@
 #define SCHEMATIC_F_ITEM_2 4
 #define SCHEMATIC_F_PROD 5
 #define SCHEMATIC_F_QTY 6
-
-typedef struct SchematicInfo {
-    int name;
-    int description;
-    int art_num;
-    int item1[3];
-    int item2[3];
-    int prod[3];
-    int qty;
-} SchematicInfo;
-
-static_assert(sizeof(SchematicInfo) == 0x34, "wrong size");
 
 static void sub_56D0D0();
 static void schematic_ui_create();
@@ -111,10 +106,10 @@ static long long qword_680E28;
 static int dword_680E30;
 
 // 0x680E34
-static TigFont* schematic_ui_name_font;
+static tig_font_handle_t schematic_ui_name_font;
 
 // 0x680E38
-static TigFont* schematic_ui_description_font;
+static tig_font_handle_t schematic_ui_description_font;
 
 // 0x680E3C
 static tig_button_handle_t dword_680E3C;
@@ -123,7 +118,7 @@ static tig_button_handle_t dword_680E3C;
 static bool dword_680E40;
 
 // 0x680E44
-static int schematic_ui_rules_mes_file;
+static mes_file_handle_t schematic_ui_rules_mes_file;
 
 // 0x680E48
 static int dword_680E48;
@@ -168,10 +163,10 @@ static int dword_680E80;
 static int schematic_ui_num_found_schematics;
 
 // 0x680E88
-static TigFont* dword_680E88;
+static tig_font_handle_t dword_680E88;
 
 // 0x680E8C
-static TigFont* dword_680E8C;
+static tig_font_handle_t dword_680E8C;
 
 // 0x680E90
 static long long qword_680E90;
@@ -195,12 +190,12 @@ bool schematic_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    if (!message_load("rules\\schematic.mes", &schematic_ui_rules_mes_file)) {
+    if (!mes_load("rules\\schematic.mes", &schematic_ui_rules_mes_file)) {
         return false;
     }
 
-    if (!message_load("mes\\schematic_text.mes", &schematic_ui_text_mes_file)) {
-        message_unload(schematic_ui_rules_mes_file);
+    if (!mes_load("mes\\schematic_text.mes", &schematic_ui_text_mes_file)) {
+        mes_unload(schematic_ui_rules_mes_file);
         return false;
     }
 
@@ -208,12 +203,12 @@ bool schematic_ui_init(GameInitInfo* init_info)
         dword_680DE4[tech] = 0;
     }
 
-    dword_680E54 = message_count_in_range(schematic_ui_rules_mes_file, 2000, 3999) / 7;
+    dword_680E54 = mes_entries_count_in_range(schematic_ui_rules_mes_file, 2000, 3999) / 7;
     if (dword_680E54 > 0) {
         dword_680E98 = (int*)MALLOC(sizeof(int) * dword_680E54);
         for (index = 2000; index < 3999; index += 10) {
             mes_file_entry.num = index;
-            if (message_find(schematic_ui_rules_mes_file, &mes_file_entry)) {
+            if (mes_search(schematic_ui_rules_mes_file, &mes_file_entry)) {
                 dword_680E98[index] = index;
 
                 tech = sub_56DB00(dword_680E98[index]);
@@ -257,8 +252,8 @@ bool schematic_ui_init(GameInitInfo* init_info)
 // 0x56D040
 void schematic_ui_exit()
 {
-    message_unload(schematic_ui_rules_mes_file);
-    message_unload(schematic_ui_text_mes_file);
+    mes_unload(schematic_ui_rules_mes_file);
+    mes_unload(schematic_ui_text_mes_file);
     tig_font_destroy(schematic_ui_description_font);
     tig_font_destroy(dword_680E88);
     tig_font_destroy(dword_680E8C);
@@ -326,7 +321,7 @@ void sub_56D130(long long a1, long long a2)
     }
 
     if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        schematic_ui_num_found_schematics = obj_f_idx_size(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
+        schematic_ui_num_found_schematics = obj_arrayfield_length_get(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
         if (schematic_ui_num_found_schematics > 0) {
             schematic_ui_found_schematics = (int*)MALLOC(sizeof(int) * schematic_ui_num_found_schematics);
             for (index = 0; index < schematic_ui_num_found_schematics; index++) {
@@ -419,7 +414,7 @@ void schematic_ui_destroy()
 {
     if (schematic_ui_created) {
         sub_550DA0(0, NULL);
-        sub_557330();
+        intgame_big_window_unlock();
         schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
         if (schematic_ui_num_found_schematics > 0) {
             free(schematic_ui_found_schematics);
@@ -435,6 +430,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
     MesFileEntry mes_file_entry;
     John v1;
     int tech;
+    Packet79 pkt;
 
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
@@ -465,8 +461,8 @@ bool schematic_ui_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == stru_5CA850[2].button_handle) {
                 mes_file_entry.num = 3;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                v1.field_0 = 6;
-                v1.field_4 = mes_file_entry.str;
+                v1.type = 6;
+                v1.str = mes_file_entry.str;
                 sub_550750(&v1);
                 return true;
             }
@@ -474,8 +470,8 @@ bool schematic_ui_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == stru_5CA850[3].button_handle) {
                 mes_file_entry.num = 4;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                v1.field_0 = 6;
-                v1.field_4 = mes_file_entry.str;
+                v1.type = 6;
+                v1.str = mes_file_entry.str;
                 sub_550750(&v1);
                 return true;
             }
@@ -483,15 +479,15 @@ bool schematic_ui_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == stru_5CA850[4].button_handle) {
                 mes_file_entry.num = 5;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                v1.field_0 = 6;
-                v1.field_4 = mes_file_entry.str;
+                v1.type = 6;
+                v1.str = mes_file_entry.str;
                 sub_550750(&v1);
                 return true;
             }
 
             for (tech = 0; tech < TECH_COUNT; tech++) {
                 if (msg->data.button.button_handle == stru_5CA8A0[tech].button_handle) {
-                    v1.field_0 = 10;
+                    v1.type = 10;
                     v1.field_8 = tech;
                     sub_550750(&v1);
                     return true;
@@ -584,20 +580,11 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 switch (dword_680E7C) {
                 case 0:
                     if ((tig_net_flags & 0x1) != 0 && (tig_net_flags & 0x2) == 0) {
-                        struct {
-                            int field_0;
-                            int field_4;
-                            ObjectID field_8;
-                            ObjectID field_20;
-                        } packet;
-
-                        static_assert(sizeof(packet) == 0x40, "wrong size");
-
-                        packet.field_0 = 79;
-                        packet.field_4 = sub_56DB60();
-                        packet.field_8 = sub_407EF0(qword_680E70);
-                        packet.field_20 = sub_407EF0(qword_680E60);
-                        sub_5295F0(packet, sizeof(packet));
+                        pkt.type = 79;
+                        pkt.field_4 = sub_56DB60();
+                        pkt.field_8 = sub_407EF0(qword_680E70);
+                        pkt.field_20 = sub_407EF0(qword_680E60);
+                        tig_net_send_app_all(&pkt, sizeof(pkt));
                         sub_56DDC0();
                     } else {
                         sub_56E720(sub_56DB60(), qword_680E70, qword_680E60);
@@ -607,15 +594,15 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 case 1:
                     mes_file_entry.num = 0;
                     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                    v1.field_0 = 4;
-                    v1.field_4 = mes_file_entry.str;
+                    v1.type = 4;
+                    v1.str = mes_file_entry.str;
                     sub_550750(&v1);
                     break;
                 case 2:
                     mes_file_entry.num = 1;
                     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                    v1.field_0 = 4;
-                    v1.field_4 = mes_file_entry.str;
+                    v1.type = 4;
+                    v1.str = mes_file_entry.str;
                     sub_550750(&v1);
                     break;
                 }
@@ -708,7 +695,7 @@ void sub_56DD20(const char* str, int* items)
     strcpy(mut_str, str);
     cnt = 0;
 
-    pch = strok(mut_str, " ");
+    pch = strtok(mut_str, " ");
     if (pch != NULL) {
         do {
             items[cnt++] = atoi(pch);
@@ -767,7 +754,7 @@ void sub_56DDC0()
     dst_rect = src_rect;
     blit_info.dst_rect = &dst_rect;
 
-    tig_window_blit(schematic_ui_window, &blit_info);
+    tig_window_blit_art(schematic_ui_window, &blit_info);
 
     // Obtain current schematic info.
     schematic = sub_56DB60();
@@ -828,7 +815,7 @@ void sub_56DDC0()
 
     //
     obj = sub_4685A0(schematic_info.prod[0]);
-    discipline[0] = obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
+    discipline[0] = (char)obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
     discipline[1] = '\0';
 
     tig_font_push(dword_680E8C);
@@ -894,8 +881,8 @@ bool sub_56E950(int a1, int a2, int a3, long long obj)
     if (a1 && player_is_pc_obj(obj)) {
         mes_file_entry.num = 2;
         mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-        v1.field_0 = 4;
-        v1.field_4 = mes_file_entry.str;
+        v1.type = 4;
+        v1.str = mes_file_entry.str;
         sub_550750(&v1);
         sub_56DDC0();
         gsound_play_sfx_id(dword_680E6C + 3018, 1);
