@@ -1,6 +1,10 @@
 #include "ui/matchmaker_ui.h"
 
-#include <tig/tig.h>
+#include "game/multiplayer.h"
+#include "ui/intgame.h"
+
+static bool matchmaker_ui_create();
+static bool matchmaker_ui_message_filter(TigMessage* msg);
 
 // 0x5CA308
 static tig_window_handle_t matchmaker_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -35,10 +39,32 @@ void matchmaker_ui_reset()
 {
 }
 
+// 0x569AF0
+void sub_569AF0()
+{
+    if (!matchmaker_ui_created) {
+        if (sub_551A80(17)) {
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0 || sub_49CBD0()) {
+                sub_569B50();
+            } else {
+                tig_debug_printf("MMUI: Could not start multiplayer.. aborting.\n");
+            }
+        }
+    }
+}
+
+// 0x569B40
+bool sub_569B40()
+{
+    return sub_551A80(0);
+}
+
 // 0x569B50
-void sub_569B50()
+bool sub_569B50()
 {
     matchmaker_ui_create();
+
+    return true;
 }
 
 // 0x569B60
@@ -47,7 +73,7 @@ bool matchmaker_ui_create()
     tig_art_id_t art_id;
     TigWindowData window_data;
     TigRect rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
 
     if (!matchmaker_ui_created) {
         if (tig_art_interface_id_create(218, 0, 0, 0, &art_id) != TIG_OK) {
@@ -85,5 +111,7 @@ bool matchmaker_ui_create()
 // 0x569C30
 bool matchmaker_ui_message_filter(TigMessage* msg)
 {
+    (void)msg;
+
     return true;
 }
