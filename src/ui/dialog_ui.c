@@ -1,10 +1,45 @@
 #include "ui/dialog_ui.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/stat.h"
+#include "game/dialog.h"
+#include "game/mp_utils.h"
+#include "game/stat.h"
 
 #define MAX_ENTRIES 8
+
+typedef struct DialogUiEntry {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ DialogEntryNode field_8;
+    /* 1850 */ int field_1850;
+    /* 1854 */ int field_1854;
+    /* 1858 */ int field_1858;
+    /* 185C */ char field_185C;
+    /* 185D */ char field_185D;
+    /* 185E */ char field_185E;
+    /* 185F */ char field_185F;
+} DialogUiEntry;
+
+static DialogUiEntry* sub_567420(long long obj);
+static void sub_5679C0(DialogUiEntry* entry);
+static bool sub_567E30(DialogUiEntry* entry, int a2);
+static bool sub_5681B0(DialogUiEntry* entry);
+static bool sub_568280(DialogUiEntry *a1);
+static void sub_568480(DialogUiEntry* entry, int a2);
+static void sub_5684C0(DialogUiEntry* entry);
+static void sub_5688D0(int a1, int a2, long long obj, int a4);
+static void sub_5689B0();
+
+// 0x66DAB8
+static DialogUiEntry stru_66DAB8[8];
+
+// 0x679DB8
+static unsigned char byte_679DB8[8]; // boolean
+
+// 0x67B960
+static tig_sound_handle_t dword_67B960;
+
+// 0x67B964
+static bool dword_67B964;
 
 // 0x567330
 bool dialog_ui_init(GameInitInfo* init_info)
@@ -13,8 +48,7 @@ bool dialog_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    dword_679DB8 = 0;
-    dword_679DBC = 0;
+    memset(byte_679DB8, 0, sizeof(byte_679DB8));
 
     for (index = 0; index < MAX_ENTRIES; index++) {
         stru_66DAB8[index].field_1850 = false;
@@ -24,7 +58,7 @@ bool dialog_ui_init(GameInitInfo* init_info)
     sub_444990(sub_567460, sub_568430);
     sub_4A84D0(sub_5678D0, sub_568430);
     sub_4C2EA0(sub_568430);
-    dword_67B960 = -1;
+    dword_67B960 = TIG_SOUND_HANDLE_INVALID;
 
     return true;
 }
@@ -80,7 +114,7 @@ void sub_567460()
 void sub_5678D0(long long obj)
 {
     DialogUiEntry* entry;
-    unsigned char packet[1072];
+    Packet44 pkt;
 
     entry = sub_567420(obj);
     if (!entry->field_1850) {
@@ -94,21 +128,24 @@ void sub_5678D0(long long obj)
         dword_67B964 = 0;
     }
 
-    if ((tig_net_flags & 0x1) == 0 || (tig_net_flags & 0x2) != 0) {
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
         sub_412F40(entry->field_4);
     }
 
-    sub_4D6160(entry->field_40, -1);
+    sub_4D6160(entry->field_8.field_38, -1);
 
-    if ((tig_net_flags & 0x1) == 0 || (tig_net_flags & 0x2) != 0) {
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
         sub_413280(&(entry->field_8));
     }
 
-    if ((tig_net_flags & 0x1) == 0 && (tig_net_flags & 0x2) != 0) {
-        *(int*)(&(packet[0])) = 44;
-        *(int*)(&(packet[4])) = 1;
-        memcpy(&(packet[8]), sub_407EF0(obj), sizeof(ObjectId));
-        sub_5295F0(packet, sizeof(packet));
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) != 0) {
+        pkt.type = 44;
+        pkt.field_4 = 1;
+        pkt.field_8 = sub_407EF0(obj);
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
@@ -186,42 +223,42 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(entry->field_10);
-    sub_5686C0(entry->field_10, entry->field_40, 2, -1, &(entry->field_468[a2]));
-    sub_4EF630(entry->field_40);
+    is_pc = player_is_pc_obj(entry->field_8.field_8);
+    sub_5686C0(entry->field_8.field_8, entry->field_8.field_38, 2, -1, &(entry->field_8.field_460[a2]));
+    sub_4EF630(entry->field_8.field_38);
     sub_5689B0();
     sub_413130(&(entry->field_8), a2);
     sub_567D60(entry);
 
-    switch (entry->field_17F0) {
+    switch (entry->field_8.field_17E8) {
     case 0:
         sub_5684C0(entry);
         break;
     case 1:
-        sub_5678D0(entry->field_10);
+        sub_5678D0(entry->field_8.field_8);
         sub_568480(entry, 0);
         break;
     case 2:
-        sub_5678D0(entry->field_10);
-        sub_568480(entry, entry->field_17F4);
+        sub_5678D0(entry->field_8.field_8);
+        sub_568480(entry, entry->field_8.field_17EC);
         break;
     case 3:
         if (is_pc) {
             sub_553370();
-            sub_572240(entry->field_10, entry->field_40, 1);
+            sub_572240(entry->field_8.field_8, entry->field_8.field_38, 1);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_10);
+            sub_5678D0(entry->field_8.field_8);
         }
         break;
     case 4:
-        sub_568540(entry->field_40, entry->field_10, 0, -1, entry->field_78, entry->field_460);
-        sub_5678D0(entry->field_10);
+        sub_568540(entry->field_8.field_38, entry->field_8.field_8, 0, -1, entry->field_8.field_70, entry->field_8.field_458);
+        sub_5678D0(entry->field_8.field_8);
         break;
     case 5:
         if (is_pc) {
             sub_553370();
-            sub_5597C0(entry->field_40, 2);
+            charedit_create(entry->field_8.field_38, 2);
         }
         break;
     case 6:
@@ -233,25 +270,25 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 7:
         if (is_pc) {
             sub_553370();
-            sub_56D130(entry->field_40, entry->field_10);
+            sub_56D130(entry->field_8.field_38, entry->field_8.field_8);
         }
         break;
     case 8:
         if (is_pc) {
             sub_553370();
-            sub_4EE550(entry->field_10, entry->field_40);
+            sub_4EE550(entry->field_8.field_8, entry->field_8.field_38);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_10);
+            sub_5678D0(entry->field_8.field_8);
         }
         break;
     case 9:
         if (is_pc) {
             sub_553370();
-            sub_572240(entry->field_10, entry->field_40, 6);
+            sub_572240(entry->field_8.field_8, entry->field_8.field_38, 6);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_10);
+            sub_5678D0(entry->field_8.field_8);
         }
         break;
     }
@@ -266,9 +303,11 @@ void sub_5680A0()
 }
 
 // 0x5681B0
-int sub_5681B0()
+bool sub_5681B0(DialogUiEntry* entry)
 {
-    return 0;
+    (void)entry;
+
+    return false;
 }
 
 // 0x5681C0
@@ -291,30 +330,30 @@ bool sub_568280(DialogUiEntry *a1)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(a1->field_10);
+    is_pc = player_is_pc_obj(a1->field_8.field_8);
 
-    if ((tig_net_flags & 0x1) != 0 && (tig_net_flags & 0x2) == 0) {
-        byte_679DB8[sub_4A2B10(sub_40DA50())] = 0;
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0 && (tig_net_flags & TIG_NET_HOST) == 0) {
+        byte_679DB8[sub_4A2B10(player_get_pc_obj())] = 0;
     }
 
-    switch (a1->field_17F0) {
+    switch (a1->field_8.field_17E8) {
     case 0:
         sub_5684C0(a1);
         break;
     case 1:
     case 2:
-        sub_5678D0(a1->field_10);
+        sub_5678D0(a1->field_8.field_8);
         break;
     case 3:
         if (is_pc) {
             sub_553370();
-            sub_572240(a1->field_10, a1->field_40, 1);
+            sub_572240(a1->field_8.field_8, a1->field_8.field_38, 1);
         }
         break;
     case 5:
         if (is_pc) {
             sub_553370();
-            sub_5597C0(a1->field_40, 2);
+            charedit_create(a1->field_8.field_38, 2);
         }
         break;
     case 6:
@@ -326,19 +365,19 @@ bool sub_568280(DialogUiEntry *a1)
     case 7:
         if (is_pc) {
             sub_553370();
-            sub_56D130(a1->field_40, a1->field_10);
+            sub_56D130(a1->field_8.field_38, a1->field_8.field_8);
         }
         break;
     case 8:
         if (is_pc) {
             sub_553370();
-            sub_4EE550(a1->field_10, a1->field_40);
+            sub_4EE550(a1->field_8.field_8, a1->field_8.field_38);
         }
         break;
     case 9:
         if (is_pc) {
             sub_553370();
-            sub_572240(a1->field_10, a1->field_40, 6);
+            sub_572240(a1->field_8.field_8, a1->field_8.field_38, 6);
         }
         break;
     }
@@ -359,7 +398,7 @@ void sub_568480(DialogUiEntry* entry, int a2)
         a2 = entry->field_1858 + 1;
     }
 
-    sub_441980(entry->field_10, entry->field_40, 0, 0, 9, a2);
+    sub_441980(entry->field_8.field_8, entry->field_8.field_38, 0, 0, 9, a2);
 }
 
 // 0x5684C0
@@ -367,13 +406,13 @@ void sub_5684C0(DialogUiEntry* entry)
 {
     int index;
 
-    sub_568540(entry->field_40, entry->field_10, 0, -2, entry->field_78, entry->field_460);
+    sub_568540(entry->field_8.field_38, entry->field_8.field_8, 0, -2, entry->field_8.field_70, entry->field_8.field_458);
 
-    if (player_is_pc_obj(entry->field_10)) {
+    if (player_is_pc_obj(entry->field_8.field_8)) {
         sub_553370();
 
-        for (index = 0; index < entry->field_464; index++) {
-            sub_553380(index, entry->field_468[index]);
+        for (index = 0; index < entry->field_8.field_45C; index++) {
+            sub_553380(index, entry->field_8.field_460[index]);
         }
     }
 }
@@ -391,7 +430,7 @@ void sub_5686C0()
 }
 
 // 0x568830
-void sub_568830()
+void sub_568830(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -438,8 +477,8 @@ void sub_5688D0(int a1, int a2, long long obj, int a4)
 // 0x5689B0
 void sub_5689B0()
 {
-    if (dword_67B960 != -1) {
+    if (dword_67B960 != TIG_SOUND_HANDLE_INVALID) {
         tig_sound_destroy(dword_67B960);
-        dword_67B960 = -1;
+        dword_67B960 = TIG_SOUND_HANDLE_INVALID;
     }
 }
