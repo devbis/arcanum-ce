@@ -26,8 +26,9 @@ static bool sub_5681B0(DialogUiEntry* entry);
 static bool sub_568280(DialogUiEntry *a1);
 static void sub_568480(DialogUiEntry* entry, int a2);
 static void sub_5684C0(DialogUiEntry* entry);
+static void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6);
 static void sub_5686C0(int64_t a1, int64_t a2, int a3, int a4, const char* str);
-static void sub_5688D0(int a1, int a2, long long obj, int a4);
+static void sub_5688D0(int64_t a1, long long obj, int a4);
 static void sub_5689B0();
 
 // 0x66DAB8
@@ -419,9 +420,37 @@ void sub_5684C0(DialogUiEntry* entry)
 }
 
 // 0x568540
-void sub_568540()
+void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6)
 {
-    // TODO: Incomplete.
+    Packet44 pkt;
+
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        pkt.type = 44;
+        pkt.subtype = 4;
+        pkt.d.d.field_8 = sub_407EF0(a1);
+        pkt.d.d.field_20 = sub_407EF0(a2);
+        pkt.d.d.field_38 = a3;
+        pkt.d.d.field_3C = a4;
+        pkt.d.d.field_40 = 0;
+        strncpy(pkt.d.d.field_44, str, 1000);
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (a2 != OBJ_HANDLE_NULL
+        && !sub_45D8D0(a1)
+        && !sub_423300(a1, 0)) {
+        sub_424070(a1, 3, 0, 1);
+        sub_433440(a1, sub_441B20(a1, a2));
+    }
+
+    sub_4D62B0(a1);
+    sub_4D5FE0(a1, a3, str);
+    sub_4D6160(a1, a4);
+    sub_5688D0(a1, a2, a6);
 }
 
 // 0x5686C0
@@ -487,12 +516,14 @@ void sub_568880(long long obj, int a2, int a3, int a4, int a5, int a6, const cha
 }
 
 // 0x5688D0
-void sub_5688D0(int a1, int a2, long long obj, int a4)
+void sub_5688D0(int64_t a1, long long obj, int a4)
 {
     int v1;
     int v2;
     char gender;
     char path[TIG_MAX_PATH];
+
+    (void)a1;
 
     if (a4 == -1) {
         return;
