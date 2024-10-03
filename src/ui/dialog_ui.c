@@ -432,7 +432,14 @@ void sub_5686C0()
 // 0x568830
 void sub_568830(int64_t obj)
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < 8; index++) {
+        if (stru_66DAB8[index].field_8.field_8 == obj
+            || stru_66DAB8[index].field_8.field_38 == obj) {
+            sub_5678D0(obj);
+        }
+    }
 }
 
 // 0x568880
