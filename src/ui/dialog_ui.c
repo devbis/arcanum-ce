@@ -145,8 +145,8 @@ void sub_5678D0(long long obj)
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) != 0) {
         pkt.type = 44;
-        pkt.field_4 = 1;
-        pkt.field_8 = sub_407EF0(obj);
+        pkt.subtype = 1;
+        pkt.d.b.field_8 = sub_407EF0(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
