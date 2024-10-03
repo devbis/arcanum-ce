@@ -1,5 +1,7 @@
 #include "ui/scrollbar_ui.h"
 
+#include "game/random.h"
+
 #define MAX_CONTROLS 8
 
 typedef enum ScrollbarUiControlFlags {
@@ -19,6 +21,14 @@ typedef struct ScrollbarUiControl {
 } ScrollbarUiControl;
 
 static_assert(sizeof(ScrollbarUiControl) == 0x80, "wrong size");
+
+static void sub_5807F0(int index, int a2);
+static void scrollbar_ui_control_reset(ScrollbarUiControl* ctrl);
+static void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info);
+static bool sub_581280(ScrollbarId* id);
+static bool sub_5812E0(const ScrollbarId* id, ScrollbarUiControl** ctrl_ptr);
+static int sub_5815D0(int id);
+static int sub_581660(int id);
 
 // 0x5CBF48
 static TigRect stru_5CBF48 = { 0, 0, 11, 5 };
@@ -73,7 +83,7 @@ bool scrollbar_ui_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    scrollbar_reset();
+    scrollbar_ui_reset();
 
     if (tig_art_interface_id_create(238, 0, 0, 0, &scrollbar_ui_top_art_id) != TIG_OK) {
         return false;
@@ -226,7 +236,7 @@ bool scrollbar_ui_control_show(ScrollbarId id)
 }
 
 // 0x580780
-void scrollbar_ui_control_hide(ScrollbarId id)
+bool scrollbar_ui_control_hide(ScrollbarId id)
 {
     ScrollbarUiControl* ctrl;
 
@@ -251,7 +261,7 @@ void scrollbar_ui_control_hide(ScrollbarId id)
 }
 
 // 0x5807F0
-void sub_5807F0()
+void sub_5807F0(int index, int a2)
 {
     // TODO: Incomplete.
 }

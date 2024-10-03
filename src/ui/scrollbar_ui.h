@@ -1,7 +1,7 @@
 #ifndef ARCANUM_UI_SCROLLBAR_UI_H_
 #define ARCANUM_UI_SCROLLBAR_UI_H_
 
-#include <tig/tig.h>
+#include "game/context.h"
 
 typedef struct ScrollbarId {
     /* 0000 */ int index;
@@ -36,6 +36,6 @@ bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, 
 void scrollbar_ui_control_destroy(ScrollbarId id);
 void sub_5806F0(ScrollbarId id);
 bool scrollbar_ui_control_show(ScrollbarId id);
-void scrollbar_ui_control_hide(ScrollbarId id);
+bool scrollbar_ui_control_hide(ScrollbarId id);
 
 #endif /* ARCANUM_UI_SCROLLBAR_UI_H_ */
