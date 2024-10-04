@@ -522,7 +522,7 @@ int64_t sub_4B6D80()
 }
 
 // 0x4B6DA0
-void combat_debug()
+void combat_debug(int64_t obj, const char* msg)
 {
     // TODO: Incomplete.
 }
@@ -1027,9 +1027,44 @@ void sub_4B80D0()
 }
 
 // 0x4B80E0
-void sub_4B80E0()
+void sub_4B80E0(int64_t obj)
 {
-    // TODO: Incomplete.
+    // 0x5B5818
+    static unsigned int dword_5B5818[7] = {
+        OCF2_REACTION_0,
+        OCF2_REACTION_1,
+        OCF2_REACTION_2,
+        OCF2_REACTION_3,
+        OCF2_REACTION_4,
+        OCF2_REACTION_5,
+        OCF2_REACTION_6,
+    };
+
+    int64_t pc_obj;
+    int reaction_level;
+    int reaction_type;
+    unsigned int flags;
+    AnimFxNode node;
+
+    if (dword_5FC22C) {
+        pc_obj = player_get_pc_obj();
+        reaction_level = sub_4C0CC0(obj, pc_obj);
+        reaction_type = reaction_translate(reaction_level);
+
+        flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+        flags &= ~(OCF2_REACTION_0 | OCF2_REACTION_1 | OCF2_REACTION_2 | OCF2_REACTION_3 | OCF2_REACTION_4 | OCF2_REACTION_5 | OCF2_REACTION_6);
+        flags |= dword_5B5818[reaction_type];
+        obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
+
+        if (sub_45D8D0(obj) || sub_4B7DC0(obj)) {
+            animfx_remove(&stru_5FC1F8, obj, 0, -1);
+        } else {
+            sub_4CCD20(&stru_5FC1F8, &node, obj, -1, 0);
+            if (!sub_4CCDD0(&node)) {
+                animfx_add(&node);
+            }
+        }
+    }
 }
 
 // 0x4B81B0
