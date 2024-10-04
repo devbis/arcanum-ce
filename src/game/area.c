@@ -5,6 +5,8 @@
 #include "game/obj.h"
 #include "game/player.h"
 
+static int sub_4CB220(int64_t obj);
+
 // 0x5FF5A8
 static int dword_5FF5A8;
 
@@ -276,6 +278,27 @@ void sub_4CB160(int64_t obj)
             dword_5FF5EC = 0;
         }
     }
+}
+
+// 0x4CB220
+int sub_4CB220(int64_t obj)
+{
+    int index;
+    int v1;
+    int64_t v2;
+    int64_t v3;
+
+    v1 = 0;
+    v2 = sub_4B96F0(sub_4CAED0(0));
+    for (index = 1; index < dword_5FF5A8; index++) {
+        v3 = sub_4B96F0(sub_4CAED0(index));
+        if (v3 < v2) {
+            v1 = index;
+            v2 = v3;
+        }
+    }
+
+    return v1;
 }
 
 // 0x4CB4D0
