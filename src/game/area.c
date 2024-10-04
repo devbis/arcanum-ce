@@ -7,6 +7,7 @@
 #include "game/player.h"
 
 static int sub_4CB220(int64_t obj);
+static int sub_4CB630(int64_t obj);
 
 // 0x5FF5A8
 static int dword_5FF5A8;
@@ -306,6 +307,35 @@ int sub_4CB220(int64_t obj)
 int sub_4CB4D0(int64_t location, int a2)
 {
     // TODO: Incomplete.
+}
+
+// 0x4CB630
+int sub_4CB630(int64_t obj)
+{
+    int v1;
+    int v2;
+    int v3;
+
+    v1 = sub_4BE380(sub_4CFC50(obj));
+    if (v1 == 0) {
+        return 0;
+    }
+
+    v2 = sub_4CB220(obj);
+    if (v2 == 0) {
+        return 0;
+    }
+
+    v3 = sub_4BE380(sub_4CFC50(sub_4CAED0(v2)));
+    if (v3 == 0) {
+        return 0;
+    }
+
+    if (v1 != v3) {
+        return 0;
+    }
+
+    return v2;
 }
 
 // 0x4CB6A0
