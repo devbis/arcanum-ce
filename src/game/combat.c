@@ -10,6 +10,7 @@
 #include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/object_node.h"
+#include "game/object.h"
 #include "game/player.h"
 #include "game/random.h"
 #include "game/stat.h"
@@ -38,6 +39,9 @@ static int dword_5B57B8 = 15;
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
+
+// 0x5FC180
+static ObjectList stru_5FC180;
 
 // 0x5FC1D0
 static ObjectNode* dword_5FC1D0;
@@ -592,7 +596,23 @@ void sub_4B7300()
 // 0x4B7330
 void combat_turn_based_end()
 {
-    // TODO: Incomplete.
+    ObjectNode* node;
+
+    combat_debug(OBJ_HANDLE_NULL, "TB End");
+
+    if (dword_5FC22C) {
+        dword_5FC22C = false;
+        sub_423FE0(0);
+
+        if (!in_combat_reset) {
+            node = stru_5FC180.head;
+            while (node != NULL) {
+                animfx_remove(&stru_5FC1F8, node->obj, 0, -1);
+            }
+        }
+
+        object_list_destroy(&stru_5FC180);
+    }
 }
 
 // 0x4B73A0
