@@ -349,9 +349,21 @@ void sub_413280(DialogEntryNode* a1)
 }
 
 // 0x4132A0
-void sub_4132A0()
+void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
 {
-    // TODO: Incomplete.
+    DialogEntryNode v1;
+
+    if (sub_4AD800(a1, a2, 0) == 0) {
+        sub_413360(a1, a2, &v1);
+        if (sub_45DDA0(a1) == a2) {
+            sub_419260(&v1, "1 0, 2 0, 3 0, 4 0, 5 0, 6 0, 7 0, 8 0");
+        } else {
+            sub_419260(&v1, NULL);
+        }
+        strcpy(buffer, v1.field_70);
+    } else {
+        buffer[0] = '\0';
+    }
 }
 
 // 0x413360

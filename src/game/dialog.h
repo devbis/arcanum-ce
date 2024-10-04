@@ -117,6 +117,8 @@ void sub_412F40(int dlg);
 void sub_412F60(int dlg);
 bool sub_412FD0(DialogEntryNode* a1);
 void sub_413130(DialogEntryNode* a1, int a2);
+void sub_413280(DialogEntryNode* a1);
+void sub_4132A0(int64_t a1, int64_t a2, char* buffer);
 void sub_418030();
 void sub_4182C0();
 
