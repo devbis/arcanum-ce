@@ -77,6 +77,97 @@ void area_exit()
 {
 }
 
+// 0x4CA9B0
+bool area_mod_load()
+{
+    MesFileEntry mes_file_entry;
+    int index;
+    char* str;
+    int64_t x;
+    int64_t y;
+    char* pch;
+    int radius;
+
+    dword_5FF5A8 = 0;
+
+    if (!mes_load("mes\\gamearea.mes", &dword_5FF5B4)) {
+        return true;
+    }
+
+    mes_file_entry.num = 0;
+    mes_get_msg(dword_5FF5B4, &mes_file_entry);
+    do {
+        dword_5FF5A8++;
+    } while (mes_find_next(dword_5FF5B4, &mes_file_entry));
+
+    dword_5FF5B0 = (char**)MALLOC(sizeof(*dword_5FF5B0) * dword_5FF5A8);
+    dword_5FF5D8 = (char**)MALLOC(sizeof(*dword_5FF5D8) * dword_5FF5A8);
+    dword_5FF5AC = (int64_t*)MALLOC(sizeof(*dword_5FF5AC) * dword_5FF5A8);
+    dword_5FF5E8 = (uint8_t*)MALLOC(sizeof(*dword_5FF5E8) * dword_5FF5A8);
+
+    for (index = 0; index < 8; index++) {
+        dword_5FF5B8[index] = (uint8_t*)MALLOC(sizeof(*dword_5FF5B8[index]) * dword_5FF5A8);
+    }
+
+    dword_5FF5E4 = (int*)MALLOC(sizeof(*dword_5FF5E4) * dword_5FF5A8);
+    dword_5FF5DC = (int*)MALLOC(sizeof(*dword_5FF5DC) * dword_5FF5A8);
+    dword_5FF5E0 = (int*)MALLOC(sizeof(*dword_5FF5E0) * dword_5FF5A8);
+
+    index = 0;
+    mes_file_entry.num = 0;
+    mes_get_msg(dword_5FF5B4, &mes_file_entry);
+    tig_str_parse_set_separator(',');
+
+    do {
+        str = mes_file_entry.str;
+        tig_str_parse_value_64(&str, &x);
+        tig_str_parse_value_64(&str, &y);
+        dword_5FF5AC[index] = x | y;
+        dword_5FF5DC[index] = 0;
+        dword_5FF5E0[index] = 0;
+        tig_str_parse_value(&str, &(dword_5FF5DC[index]));
+        tig_str_parse_value(&str, &(dword_5FF5E0[index]));
+
+        pch = strchr(mes_file_entry.str, '/');
+        if (pch != NULL) {
+            dword_5FF5B0[index] = pch + 1;
+
+            pch = strchr(pch + 1, '/');
+            if (pch != NULL) {
+                *pch = '\0';
+                dword_5FF5D8[index] = pch + 1;
+                dword_5FF5E8[index] = 0;
+                dword_5FF5E4[index] = 320;
+
+                pch = strchr(pch + 1, '/');
+                if (pch != NULL) {
+                    *pch = '\0';
+
+                    pch++;
+                    if (tig_str_parse_named_value(&pch, "Radius:", &radius)) {
+                        if (index > 0) {
+                            dword_5FF5E4[index] = radius << 6;
+                        } else if (index == 0) {
+                            dword_5FF5E4[0] = 0;
+                        } else {
+                            // FIXME: Unreachable (and wrong).
+                            dword_5FF5E4[index] = -1;
+                        }
+                    }
+                }
+            } else {
+                tig_debug_printf("Area: area_init: ERROR: Line %d has invalid description data!\n", index);
+            }
+        } else {
+            tig_debug_printf("Area: area_init: ERROR: Line %d has invalid location data!\n", index);
+        }
+
+        index++;
+    } while (mes_find_next(dword_5FF5B4, &mes_file_entry));
+
+    return true;
+}
+
 // 0x4CACB0
 void area_mod_unload()
 {

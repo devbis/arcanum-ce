@@ -6,6 +6,7 @@
 bool area_init(GameInitInfo* init_info);
 void area_reset();
 void area_exit();
+bool area_mod_load();
 void area_mod_unload();
 bool area_load(GameLoadInfo* load_info);
 bool area_save(TigFile* stream);
