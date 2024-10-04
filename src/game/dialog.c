@@ -305,9 +305,41 @@ bool sub_412FD0(DialogEntryNode* a1)
 }
 
 // 0x413130
-void sub_413130()
+void sub_413130(DialogEntryNode* a1, int a2)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int v3;
+
+    if (a1->field_17E8 != 4
+        && a1->field_17E8 != 5
+        && a1->field_17E8 != 7
+        && a1->field_17E8 != 6
+        && a1->field_17E8 != 8
+        && a1->field_17E8 != 9) {
+        if (sub_4AD800(a1->field_38, a1->field_8, 0)) {
+            a1->field_17E8 = 1;
+            return;
+        }
+
+        if (a1->field_17E8 == 3) {
+            sub_417590(a1->field_17EC, &v1, &v2);
+            v3 = 0;
+        } else if (sub_415BA0(a1, &(a1->field_182C[a2]), a2)) {
+            v1 = a1->field_17F0[a2];
+            v2 = a1->field_1804[a2];
+            v3 = a1->field_1818[a2];
+        } else {
+            return;
+        }
+
+        if (sub_45D8D0(a1->field_38) || !sub_4AE120(a1->field_38, a1->field_8)) {
+            sub_414810(v1, a2, v3, a2, a1);
+        } else {
+            sub_4185F0(a1->field_70, a1, 1000);
+            a1->field_17E8 = 4;
+        }
+    }
 }
 
 // 0x413280
