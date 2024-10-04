@@ -40,6 +40,7 @@ typedef struct Dialog {
 static_assert(sizeof(Dialog) == 0x120, "wrong size");
 
 static void sub_414E60(DialogEntryNode* a1, bool randomize);
+static void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4);
 static void sub_41A700(int a1, DialogEntryNode* a2);
 
 // 0x5A063C
@@ -1730,9 +1731,35 @@ void sub_41A230(int a1, int a2, int a3, DialogEntryNode* a4)
 }
 
 // 0x41A290
-void sub_41A290()
+void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int64_t v1;
+    int v2;
+    int64_t v3;
+    int v4;
+    char buffer[1000];
+
+    loc = obj_field_int64_get(a4->field_38, OBJ_F_LOCATION);
+    v1 = sub_4CAED0(a1);
+    v2 = sub_4B8D50(loc, v1);
+    v3 = sub_4B96F0(loc, v1) / 3168;
+    v4 = v3 < 2 ? 600 : 700;
+
+    sub_418780(buffer, a4, v4 + 10 * v2, v4 + 10 * v2 + 9);
+
+    if (v3 < 2) {
+        strcpy(a4->field_70, buffer);
+    } else {
+        sprintf(a4->field_70, buffer, v3);
+    }
+
+    sub_418390(a4->field_460[0], a4, 1000);
+    a4->field_17F0[0] = a2;
+    a4->field_1804[0] = a3;
+    a4->field_182C[0] = 0;
+    a4->field_45C = 1;
+    sub_4CAFD0(a4->field_8, a1);
 }
 
 // 0x41A3E0
