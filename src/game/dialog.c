@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game/critter.h"
+#include "game/newspaper.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/timeevent.h"
@@ -39,6 +40,7 @@ typedef struct Dialog {
 static_assert(sizeof(Dialog) == 0x120, "wrong size");
 
 static void sub_414E60(DialogEntryNode* a1, bool randomize);
+static void sub_41A700(int a1, DialogEntryNode* a2);
 
 // 0x5A063C
 static const char* off_5A063C[] = {
@@ -1823,9 +1825,40 @@ void sub_41A620(int a1, DialogEntryNode* a2)
 }
 
 // 0x41A700
-void sub_41A700()
+void sub_41A700(int a1, DialogEntryNode* a2)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int index;
+    int v1[4];
+
+    cnt = 0;
+    for (index = 0; index < 4; index++) {
+        v1[index] = sub_4BF200(index);
+        if (v1[index] != -1) {
+            cnt++;
+        }
+    }
+
+    if (cnt != 0) {
+        sub_418780(a2->field_70, a2, 4500, 4599);
+        for (index = 0; index < cnt; index++) {
+            sub_460800(v1[index], a2->field_460[index]);
+            a2->field_17F0[index] = 28;
+            a2->field_1804[index] = v1[index];
+        }
+        sub_4182D0(a2->field_460[cnt], a2, 800, 899);
+        sub_417590(a1, &a2->field_17F0[cnt], &a2->field_1804[cnt]);
+        a2->field_45C = cnt + 1;
+    } else {
+        sub_418780(a2->field_70, a2, 4400, 4499);
+        sub_4182D0(a2->field_460[0], a2, 600, 699);
+        sub_417590(a1, a2->field_17F0, a2->field_1804);
+        a2->field_45C = 1;
+    }
+
+    for (index = 0; index < a2->field_45C; index++) {
+        a2->field_182C[index] = 0;
+    }
 }
 
 // 0x41A880
