@@ -6,6 +6,7 @@
 #include "game/object_node.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
+#include "game/ui.h"
 
 #define CLOCKWORK_DECOY 6719
 
@@ -47,6 +48,9 @@ static void sub_4AD730(int64_t obj, DateTime* datetime);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
+
+// 0x5B50CC
+static bool dword_5B50CC;
 
 // 0x5F8488
 static Func5F8488* dword_5F8488;
@@ -725,7 +729,7 @@ bool ai_is_day()
 {
     int hour;
 
-    hour = game_time_hour();
+    hour = datetime_current_hour();
     return hour >= 6 && hour < 21;
 }
 
@@ -1167,7 +1171,17 @@ bool sub_4AF800(int64_t obj, int64_t a2)
 // 0x4AF860
 void sub_4AF860()
 {
-    // TODO: Incomplete.
+    John v1;
+
+    dword_5B50CC = !dword_5B50CC;
+
+    v1.type = 4;
+    if (dword_5B50CC) {
+        v1.str = "NPC fighting is ON";
+    } else {
+        v1.str = "NPC fighting is OFF";
+    }
+    sub_460630(&v1);
 }
 
 // 0x4AF8C0
