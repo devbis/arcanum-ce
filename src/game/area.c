@@ -1,5 +1,6 @@
 #include "game/area.h"
 
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/obj.h"
@@ -305,4 +306,27 @@ int sub_4CB220(int64_t obj)
 int sub_4CB4D0(int64_t location, int a2)
 {
     // TODO: Incomplete.
+}
+
+// 0x4CB6A0
+int sub_4CB6A0(int64_t obj)
+{
+    int map;
+    int area;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return 0;
+    }
+
+    map = sub_40FF40();
+    if (!map_get_area(map, &area)) {
+        return 0;
+    }
+
+    if (area == 0
+        && map == sub_40FF50(1)) {
+        area = sub_4CB630(obj_field_int64_get(obj, OBJ_F_LOCATION));
+    }
+
+    return area;
 }

@@ -19,5 +19,6 @@ bool sub_4CAFD0(int64_t obj, int a2);
 int sub_4CB100(int64_t obj_handle);
 void sub_4CB160(int64_t obj);
 int sub_4CB4D0(int64_t location, int a2);
+int sub_4CB6A0(int64_t obj);
 
 #endif /* ARCANUM_GAME_AREA_H_ */
