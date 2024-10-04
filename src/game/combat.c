@@ -61,6 +61,9 @@ static bool combat_fast_turn_based;
 // 0x5FC22C
 static bool dword_5FC22C;
 
+// 0x5FC230
+static int dword_5FC230;
+
 // 0x5FC234
 static int combat_action_points;
 
@@ -581,7 +584,43 @@ bool combat_tb_timeevent_process(TimeEvent* timeevent)
 // 0x4B71E0
 bool combat_turn_based_start()
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    LocRect loc_rect;
+    ObjectNode* node;
+
+    combat_debug(OBJ_HANDLE_NULL, "TB Start");
+    if (dword_5FC22C) {
+        return true;
+    }
+
+    dword_5FC230 = 0;
+
+    if (!anim_goal_interrupt_all_for_tb_combat()) {
+        tig_debug_printf("Combat: TB_Start: Anim-Goal-Interrupt FAILED!\n");
+    }
+
+    dword_5FC250 = 0;
+
+    sub_423FE0(sub_4B7080);
+
+    loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    sub_4B7300();
+
+    loc_rect.x1 = LOCATION_GET_X(loc) - dword_5B57B8;
+    loc_rect.x2 = LOCATION_GET_X(loc) + dword_5B57B8;
+    loc_rect.y1 = LOCATION_GET_Y(loc) - dword_5B57B8;
+    loc_rect.y2 = LOCATION_GET_Y(loc) + dword_5B57B8;
+    sub_440B40(&loc_rect, 0x18000, &stru_5FC180);
+    sub_4B7EB0();
+
+    node = stru_5FC180.head;
+    while (node != NULL) {
+        sub_424070(node->obj, 3, 0, 1);
+        node = node->next;
+    }
+
+    dword_5FC22C = true;
+    return combat_turn_based_begin_turn();
 }
 
 // 0x4B7300
@@ -608,6 +647,7 @@ void combat_turn_based_end()
             node = stru_5FC180.head;
             while (node != NULL) {
                 animfx_remove(&stru_5FC1F8, node->obj, 0, -1);
+                node = node->next;
             }
         }
 
@@ -616,7 +656,7 @@ void combat_turn_based_end()
 }
 
 // 0x4B73A0
-void combat_turn_based_begin_turn()
+bool combat_turn_based_begin_turn()
 {
     // TODO: Incomplete.
 }
