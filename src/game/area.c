@@ -252,7 +252,30 @@ int sub_4CB100(int64_t obj_handle)
 // 0x4CB160
 void sub_4CB160(int64_t obj)
 {
-    // TODO: Incomplete.
+    Packet102 pkt;
+    int player;
+
+    if (obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (!sub_4A2BA0()) {
+                if ((tig_net_flags & TIG_NET_HOST) == 0) {
+                    return;
+                }
+
+                pkt.type = 102;
+                pkt.field_8 = sub_407EF0(obj);
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+
+                player = sub_4A2B10(obj);
+                if (player != -1) {
+                    dword_5FF5F0[player] = 0;
+                }
+            }
+        } else if (obj == player_get_pc_obj()) {
+            dword_5FF5EC = 0;
+        }
+    }
 }
 
 // 0x4CB4D0
