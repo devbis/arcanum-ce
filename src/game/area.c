@@ -2,6 +2,7 @@
 
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/player.h"
 
 // 0x5FF5A8
 static int dword_5FF5A8;
@@ -165,6 +166,31 @@ void sub_4CAF00(int index, int* a2, int* a3)
     *a3 = dword_5FF5E0[index];
 }
 
+// 0x4CAF50
+bool sub_4CAF50(int64_t obj, int a2)
+{
+    int v1;
+
+    if (obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            v1 = sub_4A2B10(obj);
+            if (v1 != -1) {
+                return (dword_5FF5B8[v1][a2] & 1) != 0;
+            }
+        } else if (obj == player_get_pc_obj()) {
+            return (dword_5FF5E8[a2] & 1) != 0;
+        }
+    }
+    return false;
+}
+
+// 0x4CAFD0
+bool sub_4CAFD0(int64_t obj, int a2)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4CB100
 int sub_4CB100(int64_t obj_handle)
 {
@@ -185,4 +211,16 @@ int sub_4CB100(int64_t obj_handle)
     }
 
     return 0;
+}
+
+// 0x4CB160
+void sub_4CB160(int64_t obj)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4CB4D0
+int sub_4CB4D0(int64_t location, int a2)
+{
+    // TODO: Incomplete.
 }
