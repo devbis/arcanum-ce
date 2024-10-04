@@ -565,10 +565,10 @@ bool sub_4CF810(unsigned int size)
 }
 
 // 0x4CFC50
-int64_t sub_4CFC50(int64_t a1)
+int64_t sub_4CFC50(int64_t loc)
 {
     // TODO: Check, probably wrong.
-    return SECTOR_FROM_XY(SECTOR_X(a1), SECTOR_Y(a1) & ~0x03FFFFFF);
+    return SECTOR_FROM_XY(SECTOR_X(loc), SECTOR_Y(loc) & ~0x03FFFFFF);
 }
 
 // 0x4CFC90
@@ -635,7 +635,7 @@ bool sub_4CFFA0(int64_t id, int a2, int64_t* a3)
 }
 
 // 0x4D0090
-bool sub_4D0090(int64_t* rect, int* a2)
+bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2)
 {
     int x;
     int y;
@@ -644,23 +644,31 @@ bool sub_4D0090(int64_t* rect, int* a2)
     int64_t horizontal[4];
     int64_t vertical[4];
 
-    width = sub_4D1310(rect[0], rect[2] + 1, 64, horizontal) - 1;
+    width = sub_4D1310(rect->x1, rect->x2 + 1, 64, horizontal) - 1;
     if (width == 0) {
         return false;
     }
 
-    height = sub_4D1310(rect[1], rect[3] + 1, 64, vertical) - 1;
+    height = sub_4D1310(rect->y1, rect->y2 + 1, 64, vertical) - 1;
     if (height == 0) {
         return false;
     }
 
     for (y = 0; y < height; y++) {
+        a2->field_8[y].width = 0;
+        a2->field_8[y].field_50 = vertical[1] - vertical[0];
+
         for (x = 0; x < width; x++) {
-            // TODO: Incomplete.
+            a2->field_8[y].field_8[x] = horizontal[x] | vertical[y];
+            a2->field_8[y].field_20[x] = sub_4CFC50(a2->field_8[y].field_8);
+            a2->field_8[y].field_38[x] = sub_4D7090(a2->field_8[y].field_8);
+            a2->field_8[y].field_44[x] = horizontal[1] - horizontal[0];
         }
+
+        a2->field_8[y].width = width;
     }
 
-    *a2 = height;
+    a2->height = height;
 
     return true;
 }
