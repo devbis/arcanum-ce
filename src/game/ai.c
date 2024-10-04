@@ -4,6 +4,7 @@
 #include "game/map.h"
 #include "game/obj.h"
 #include "game/object_node.h"
+#include "game/object.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
@@ -1185,9 +1186,26 @@ void sub_4AF860()
 }
 
 // 0x4AF8C0
-void sub_4AF8C0()
+void sub_4AF8C0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    ObjectList objects;
+    ObjectNode* node;
+
+    v1 = sub_45DDA0(a1);
+    if (v1 == OBJ_HANDLE_NULL) {
+        v1 = a1;
+    }
+
+    sub_4413E0(v1, &objects);
+
+    node = objects.head;
+    while (node != NULL) {
+        sub_4AF930(a1, node->obj);
+        node = node->next;
+    }
+
+    object_list_destroy(&objects);
 }
 
 // 0x4AF930
