@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_DIALOG_H_
 
 #include "game/context.h"
+#include "game/object.h"
 
 // TODO: Better name.
 typedef struct DialogEntryNode {
@@ -11,87 +12,9 @@ typedef struct DialogEntryNode {
     /* 0006 */ char field_6;
     /* 0007 */ char field_7;
     /* 0008 */ int64_t field_8;
-    /* 0010 */ char field_10;
-    /* 0011 */ char field_11;
-    /* 0012 */ char field_12;
-    /* 0013 */ char field_13;
-    /* 0014 */ char field_14;
-    /* 0015 */ char field_15;
-    /* 0016 */ char field_16;
-    /* 0017 */ char field_17;
-    /* 0018 */ char field_18;
-    /* 0019 */ char field_19;
-    /* 001A */ char field_1A;
-    /* 001B */ char field_1B;
-    /* 001C */ char field_1C;
-    /* 001D */ char field_1D;
-    /* 001E */ char field_1E;
-    /* 001F */ char field_1F;
-    /* 0020 */ char field_20;
-    /* 0021 */ char field_21;
-    /* 0022 */ char field_22;
-    /* 0023 */ char field_23;
-    /* 0024 */ char field_24;
-    /* 0025 */ char field_25;
-    /* 0026 */ char field_26;
-    /* 0027 */ char field_27;
-    /* 0028 */ char field_28;
-    /* 0029 */ char field_29;
-    /* 002A */ char field_2A;
-    /* 002B */ char field_2B;
-    /* 002C */ char field_2C;
-    /* 002D */ char field_2D;
-    /* 002E */ char field_2E;
-    /* 002F */ char field_2F;
-    /* 0030 */ char field_30;
-    /* 0031 */ char field_31;
-    /* 0032 */ char field_32;
-    /* 0033 */ char field_33;
-    /* 0034 */ char field_34;
-    /* 0035 */ char field_35;
-    /* 0036 */ char field_36;
-    /* 0037 */ char field_37;
+    /* 0010 */ Ryan field_10;
     /* 0038 */ int64_t field_38;
-    /* 0040 */ char field_40;
-    /* 0041 */ char field_41;
-    /* 0042 */ char field_42;
-    /* 0043 */ char field_43;
-    /* 0044 */ char field_44;
-    /* 0045 */ char field_45;
-    /* 0046 */ char field_46;
-    /* 0047 */ char field_47;
-    /* 0048 */ char field_48;
-    /* 0049 */ char field_49;
-    /* 004A */ char field_4A;
-    /* 004B */ char field_4B;
-    /* 004C */ char field_4C;
-    /* 004D */ char field_4D;
-    /* 004E */ char field_4E;
-    /* 004F */ char field_4F;
-    /* 0050 */ char field_50;
-    /* 0051 */ char field_51;
-    /* 0052 */ char field_52;
-    /* 0053 */ char field_53;
-    /* 0054 */ char field_54;
-    /* 0055 */ char field_55;
-    /* 0056 */ char field_56;
-    /* 0057 */ char field_57;
-    /* 0058 */ char field_58;
-    /* 0059 */ char field_59;
-    /* 005A */ char field_5A;
-    /* 005B */ char field_5B;
-    /* 005C */ char field_5C;
-    /* 005D */ char field_5D;
-    /* 005E */ char field_5E;
-    /* 005F */ char field_5F;
-    /* 0060 */ char field_60;
-    /* 0061 */ char field_61;
-    /* 0062 */ char field_62;
-    /* 0063 */ char field_63;
-    /* 0064 */ char field_64;
-    /* 0065 */ char field_65;
-    /* 0066 */ char field_66;
-    /* 0067 */ char field_67;
+    /* 0040 */ Ryan field_40;
     /* 0068 */ int field_68;
     /* 006C */ int field_6C;
     /* 0070 */ char field_70[1000];
@@ -119,6 +42,7 @@ bool sub_412FD0(DialogEntryNode* a1);
 void sub_413130(DialogEntryNode* a1, int a2);
 void sub_413280(DialogEntryNode* a1);
 void sub_4132A0(int64_t a1, int64_t a2, char* buffer);
+void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3);
 void sub_418030();
 void sub_4182C0();
 

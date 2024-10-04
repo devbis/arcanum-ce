@@ -367,9 +367,12 @@ void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
 }
 
 // 0x413360
-void sub_413360()
+void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3)
 {
-    // TODO: Incomplete.
+    a3->field_8 = a2;
+    a3->field_38 = a1;
+    sub_443EB0(a3->field_38, &(a3->field_40));
+    sub_443EB0(a3->field_8, &(a3->field_10));
 }
 
 // 0x4133B0
