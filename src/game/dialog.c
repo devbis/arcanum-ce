@@ -9,6 +9,7 @@
 #include "game/stat.h"
 #include "game/skill.h"
 #include "game/spell.h"
+#include "game/random.h"
 #include "game/rumor.h"
 
 #define THIRTY_TWO 32
@@ -36,6 +37,8 @@ typedef struct Dialog {
 } Dialog;
 
 static_assert(sizeof(Dialog) == 0x120, "wrong size");
+
+static void sub_414E60(DialogEntryNode* a1, bool randomize);
 
 // 0x5A063C
 static const char* off_5A063C[] = {
@@ -1058,9 +1061,38 @@ void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5)
 }
 
 // 0x414E60
-void sub_414E60()
+void sub_414E60(DialogEntryNode* a1, bool randomize)
 {
-    // TODO: Incomplete.
+    int index;
+    int v1[5];
+    int v2;
+
+    for (index = 0; index < 5; index++) {
+        a1->field_182C[index] = 0;
+        a1->field_460[index][0] = '\0';
+    }
+
+    if (randomize) {
+        random_seed(a1->field_1844);
+    } else {
+        a1->field_1844 = random_seed_generate();
+    }
+
+    if (sub_416840(a1, a2)) {
+        a1->field_45C = sub_414F50(a1, v1);
+        v2 = 0;
+        for (index = 0; index < a1->field_45C; index++) {
+            if (!sub_416C10(v1[index], index - v2, a1)) {
+                v2++;
+            }
+        }
+        a1->field_45C -= v2;
+        if (a1->field_45C == 0) {
+            sub_4182D0(a1->field_460[0], a1, 400, 499);
+            a1->field_17F0[0] = 1;
+            a1->field_45C = 1;
+        }
+    }
 }
 
 // 0x414F50
