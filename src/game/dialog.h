@@ -43,6 +43,7 @@ void sub_413130(DialogEntryNode* a1, int a2);
 void sub_413280(DialogEntryNode* a1);
 void sub_4132A0(int64_t a1, int64_t a2, char* buffer);
 void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3);
+void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4);
 void sub_418030();
 void sub_4182C0();
 

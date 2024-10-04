@@ -376,9 +376,22 @@ void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3)
 }
 
 // 0x4133B0
-void sub_4133B0()
+void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4)
 {
-    // TODO: Incomplete.
+    DialogEntryNode v1;
+
+    if (sub_4AD800(a1, a2, 0) == 0) {
+        sub_413360(a1, a2, &v1);
+        if (reaction_translate(sub_4C0CC0(a1, a2)) < 4) {
+            sub_418780(buffer, &v1, 2000, 2099);
+        } else {
+            sub_418780(buffer, &v1, 1900, 1999);
+        }
+        *a4 = v1.field_458;
+    } else {
+        buffer[0] = '\0';
+        *a4 = -1;
+    }
 }
 
 // 0x413490
