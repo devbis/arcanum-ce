@@ -266,9 +266,42 @@ void sub_412F60(int dlg)
 }
 
 // 0x412FD0
-void sub_412FD0()
+bool sub_412FD0(DialogEntryNode* a1)
 {
-    // TODO: Incomplete.
+    int64_t loc1;
+    int64_t loc2;
+    int64_t tmp;
+    int64_t y1;
+    int64_t y2;
+
+    if (sub_4AD800(a1->field_38, a1->field_8, 0)) {
+        return false;
+    }
+
+    sub_4C1020(a1->field_38, a1->field_8);
+
+    if (sub_45D8D0(a1->field_38) || !sub_4AE120(a1->field_38, a1->field_8)) {
+        if (player_is_pc_obj_(a1->field_8)) {
+            loc1 = obj_field_int64_get(a1->field_8, OBJ_F_LOCATION);
+            loc2 = obj_field_int64_get(a1->field_38, OBJ_F_LOCATION);
+            sub_4B8680(loc1, &tmp, &y1);
+            sub_4B8680(loc2, &tmp, &y2);
+            if (y2 > y1) {
+                sub_4B8CE0(loc2)
+            } else {
+                sub_4B8CE0(loc1);
+            }
+        }
+
+        a1->field_17EC = a1->field_68;
+        a1->field_17E8 = 0;
+        sub_414E60(a1, 0);
+    } else {
+        sub_4185F0(a1->field_70, a1, 1000);
+        a1->field_17E8 = 4;
+    }
+
+    return true;
 }
 
 // 0x413130

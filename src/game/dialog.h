@@ -115,6 +115,7 @@ void dialog_exit();
 bool sub_412E10(const char* path, int* a2);
 void sub_412F40(int dlg);
 void sub_412F60(int dlg);
+bool sub_412FD0(DialogEntryNode* a1);
 void sub_418030();
 void sub_4182C0();
 
