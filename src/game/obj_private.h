@@ -23,6 +23,7 @@ void sub_4E4BD0(S4E4BD0* a1);
 void sub_4E4C00(const void* data, int size, S4E4BD0* a3);
 void sub_4E4C50(void* data, int size, S4E4BD0* a3);
 void sub_4E4CD0(int size, bool editor);
+void sub_4E4DB0();
 void sub_4E62A0(ObjectID* object_id);
 void objid_id_perm_by_load_order(ObjectID* object_id, object_id_t obj);
 bool objid_is_valid(ObjectID a);

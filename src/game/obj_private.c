@@ -48,6 +48,12 @@ static void obj_find_node_allocate(FindNode** obj_find_node);
 static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
 static void sub_4E4C80(S4E4BD0* a1, int size);
+static int64_t sub_4E58C0(int a1, int a2);
+static int64_t sub_4E5900(int64_t a1);
+static uint8_t* sub_4E5920(int index);
+static Object* object_ptr(int index);
+static void sub_4E5980(int* a1, int a2);
+static int sub_4E59A0(int* a1);
 static int sub_4E61E0(int a1);
 static int sub_4E61F0(int a1);
 static bool objid_compare(ObjectID a, ObjectID b);
@@ -97,7 +103,7 @@ static bool obj_priv_editor;
 static S6036B8* dword_6036B8;
 
 // 0x6036BC
-static Object** object_pool_buckets;
+static uint8_t** object_pool_buckets;
 
 // 0x6036C0
 static int dword_6036C0;
@@ -404,7 +410,7 @@ void sub_4E4C80(S4E4BD0* a1, int size)
 // 0x4E4CD0
 void sub_4E4CD0(int size, bool editor)
 {
-    object_pool_buckets = (Object**)CALLOC(256, sizeof(*object_pool_buckets));
+    object_pool_buckets = (uint8_t**)CALLOC(256, sizeof(*object_pool_buckets));
     obj_priv_editor = editor;
     dword_6036E8 = 0x80000;
     object_pool_capacity = 0x2000;
@@ -422,6 +428,77 @@ void sub_4E4CD0(int size, bool editor)
     qword_6036F0 = OBJ_HANDLE_NULL;
     dword_6036B8 = (S6036B8 *)MALLOC(sizeof(*dword_6036B8) * dword_6036C0);
     obj_priv_initialized = true;
+}
+
+// 0x4E4DB0
+void sub_4E4DB0()
+{
+    int index;
+    uint8_t* data;
+    int v1;
+    int64_t obj;
+
+    if (dword_6036C4 != 0) {
+        tig_debug_printf("Destroying %d leftover objects.\n", dword_6036C4);
+        for (index = dword_6036D0 + dword_6036C4 - 1; index >= 0; index--) {
+            data = sub_4E5920(index);
+            if (data[0] == 'H') {
+                // TODO: Review cast.
+                v1 = sub_4E59A0((int*)data);
+                obj = sub_4E58C0(index, v1);
+                sub_405BF0(obj);
+            }
+        }
+    }
+
+    for (index = 0; index < object_pool_num_buckets; index++) {
+        FREE(object_pool_buckets[index]);
+    }
+
+    FREE(dword_6036D8);
+    FREE(dword_6036B8);
+    FREE(object_pool_buckets);
+    obj_priv_initialized = 0;
+}
+
+// 0x4E58C0
+int64_t sub_4E58C0(int a1, int a2)
+{
+    return 8 * (a2 + ((int64_t)a1 << 26)) + 2;
+}
+
+// 0x4E5900
+int64_t sub_4E5900(int64_t a1)
+{
+    return a1 >> 29;
+}
+
+// 0x4E5920
+uint8_t* sub_4E5920(int index)
+{
+    return object_pool_buckets[index / 8192] + object_size_plus_padding * (index % 8192);
+}
+
+// 0x4E5960
+Object* object_ptr(int index)
+{
+    uint8_t* data;
+
+    data = sub_4E5920(index);
+
+    return (Object*)(data + dword_5B9258);
+}
+
+// 0x4E5980
+void sub_4E5980(int* a1, int a2)
+{
+    *a1 = (a2 << 8) + (uint8_t)*a1;
+}
+
+// 0x4E59A0
+int sub_4E59A0(int* a1)
+{
+    return *a1 >> 8;
 }
 
 // 0x4E59B0
