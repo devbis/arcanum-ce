@@ -3256,6 +3256,12 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
     return true;
 }
 
+// 0x40CE20
+bool sub_40CE20(Object* object, int start, int end, ObjEnumerateCallbackEx* callback)
+{
+    // TODO: Incomplete.
+}
+
 // 0x40CEF0
 bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
 {
@@ -3393,6 +3399,40 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
     }
 
     return true;
+}
+
+// 0x40D320
+bool sub_40D320(Object* object, int fld)
+{
+    return (object->field_48[object_fields[fld].field_8] & object_fields[fld].field_C) != 0;
+}
+
+// 0x40D350
+bool sub_40D350(Object* object, int fld)
+{
+    return sub_40D320(object, fld) != 0;
+}
+
+// 0x40D370
+void sub_40D370(Object* object, int fld, bool enabled)
+{
+    sub_40D3A0(object, &(object_fields[fld]), enabled);
+}
+
+// 0x40D3A0
+void sub_40D3A0(Object* object, ObjectFieldInfo* info, int enabled)
+{
+    if (enabled) {
+        object->field_48[info->field_8] |= info->field_C;
+    } else {
+        object->field_48[info->field_8] &= ~info->field_C;
+    }
+}
+
+// 0x40D3D0
+bool sub_40D3D0(Object* object, int fld)
+{
+    return (object->field_4C[object_fields[fld].field_8] & object_fields[fld].field_C) != 0;
 }
 
 // 0x40D400
