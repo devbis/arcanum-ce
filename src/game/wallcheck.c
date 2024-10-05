@@ -1,7 +1,13 @@
 #include "game/wallcheck.h"
 
+// 0x5A3E90
+static bool dword_5A3E90 = true;
+
 // 0x5E0A00
 static GameContextF8* dword_5E0A00;
+
+// 0x5E0A08
+static int64_t qword_5E0A08;
 
 // 0x5E2E24
 static int dword_5E2E24;
@@ -9,8 +15,8 @@ static int dword_5E2E24;
 // 0x5E2E28
 static int dword_5E2E28;
 
-// 0x5A3E90
-static bool dword_5A3E90 = true;
+// 0x5DE6E8
+static bool dword_5DE6E8;
 
 // 0x437D90
 bool wallcheck_init(GameInitInfo* init_info)
@@ -37,7 +43,11 @@ void wallcheck_exit()
 // 0x437E10
 void sub_437E10()
 {
-    // TODO: Incomplete.
+    if (dword_5DE6E8) {
+        sub_439D30(qword_5E0A08);
+        sub_437E50(qword_5E0A08);
+        dword_5DE6E8 = false;
+    }
 }
 
 // 0x437E50
