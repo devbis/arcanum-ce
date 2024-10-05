@@ -2081,9 +2081,18 @@ void sub_40A2D0()
 }
 
 // 0x40A310
-void object_field_write_if_dif()
+bool object_field_write_if_dif(Object* object, int fld, ObjectFieldInfo* info)
 {
-    // TODO: Incomplete.
+    if ((object->field_4C[info->field_8] & info->field_C) == 0) {
+        return true;
+    }
+
+    if (!object_field_write(object, fld, info)) {
+        tig_debug_printf("object_field_write failed in object_field_write_if_dif trying to write field #%d\n", info - object_fields);
+        return false;
+    }
+
+    return true;
 }
 
 // 0x40A370
