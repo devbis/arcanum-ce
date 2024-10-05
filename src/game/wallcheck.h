@@ -4,6 +4,7 @@
 #include "game/context.h"
 
 bool wallcheck_init(GameInitInfo* init_info);
+void wallcheck_reset();
 void sub_437E10();
 void wallcheck_flush();
 void sub_438500(bool enabled);
