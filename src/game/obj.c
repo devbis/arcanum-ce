@@ -2057,9 +2057,17 @@ void sub_40A1B0()
 }
 
 // 0x40A210
-void object_field_write()
+bool object_field_write(Object* object, int fld, ObjectFieldInfo* info)
 {
-    // TODO: Incomplete.
+    ObjSa v1;
+
+    v1.type = info->type;
+    v1.ptr = &(object->field_50[fld]);
+    if (!sub_4E47E0(&v1, dword_5D110C)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x40A250
