@@ -3401,6 +3401,25 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
     return true;
 }
 
+// 0x40D2A0
+void sub_40D2A0(Object* object, int fld)
+{
+    Object* prototype;
+    ObjSa v1;
+    int v2;
+    int v3;
+
+    sub_40D450(object, fld);
+    sub_40D370(object, fld, true);
+
+    prototype = obj_lock(obj_get_prototype_handle(object));
+    v2 = sub_40CB40(prototype, fld);
+    v1.type = object_fields[fld].type;
+    v1.ptr = &(prototype->field_50[v2]);
+    v3 = sub_40D230(object, fld);
+    sub_4E4280(&v1, &(object->field_50[v3]));
+}
+
 // 0x40D320
 bool sub_40D320(Object* object, int fld)
 {
