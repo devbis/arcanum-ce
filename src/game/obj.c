@@ -2075,9 +2075,15 @@ void object_field_read()
 }
 
 // 0x40A2D0
-void sub_40A2D0()
+bool sub_40A2D0(Object* object, int fld, ObjectFieldInfo* info)
 {
-    // TODO: Incomplete.
+    ObjSa v1;
+
+    v1.type = info->type;
+    v1.ptr = &(object->field_50[fld]);
+    sub_4E4660(&v1, &dword_5D111C);
+
+    return true;
 }
 
 // 0x40A310
