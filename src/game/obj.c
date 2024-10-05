@@ -2301,9 +2301,24 @@ void sub_40A400()
 }
 
 // 0x40A740
-void sub_40A740()
+void sub_40A740(int fld, int* start_ptr, int* length_ptr)
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 20; index >= 0; index--) {
+        if (dword_59BE00[index] < fld) {
+            break;
+        }
+    }
+
+    *start_ptr = dword_59BE00[index];
+    *length_ptr = 0;
+    if (*start_ptr + 1 < fld) {
+        index = fld - (*start_ptr + 1);
+        do {
+            *length_ptr++;
+        } while (index != 0);
+    }
 }
 
 // 0x40A790
