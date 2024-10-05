@@ -2026,6 +2026,84 @@ void sub_409E80(S4E4BD0* mem, int64_t obj)
     obj_unlock(obj);
 }
 
+// 0x409F10
+void sub_409F10()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A070
+void sub_40A070()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A0E0
+void sub_40A0E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A140
+void sub_40A140()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A1B0
+void sub_40A1B0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A210
+void object_field_write()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A250
+void sub_40A250()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A290
+void object_field_read()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A2D0
+void sub_40A2D0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A310
+void object_field_write_if_dif()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A370
+void object_field_read_if_dif()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A400
+void sub_40A400()
+{
+    // TODO: Incomplete.
+}
+
+// 0x40A740
+void sub_40A740()
+{
+    // TODO: Incomplete.
+}
+
 // 0x40A790
 int sub_40A790(int a1)
 {
