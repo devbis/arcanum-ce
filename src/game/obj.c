@@ -3395,6 +3395,21 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
     return true;
 }
 
+// 0x40D470
+void sub_40D470(Object* object, int fld)
+{
+    int index;
+
+    object->field_46++;
+    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->field_46);
+
+    for (index = object->field_46 - 1; index > fld; index--) {
+        object->field_50[index] = object->field_50[index - 1];
+    }
+
+    object->field_50[fld] = 0;
+}
+
 // 0x40D4D0
 void sub_40D4D0(Object* object, int fld)
 {
@@ -3412,7 +3427,7 @@ void sub_40D4D0(Object* object, int fld)
     }
 
     object->field_46--;
-    object->field_50 = (int*)REALLOC(object->fiedl_50, sizeof(int) * object->field_46);
+    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->field_46);
 }
 
 // 0x40D560
