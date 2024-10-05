@@ -2087,9 +2087,23 @@ void object_field_write_if_dif()
 }
 
 // 0x40A370
-void object_field_read_if_dif()
+bool object_field_read_if_dif(Object* object, int fld, ObjectFieldInfo* info)
 {
-    // TODO: Incomplete.
+    if ((object->field_4C[info->field_8] & info->field_C) == 0) {
+        return true;
+    }
+
+    if ((object->field_48[info->field_8] & info->field_C) == 0) {
+        sub_40D470(object, fld);
+        sub_40D3A0(object, info, true);
+    }
+
+    if (!object_field_read(object, fld, a3)) {
+        tig_debug_printf("object_field_read failed in object_field_read_if_dif trying to read field #%d\n", info - object_fields);
+        return false;
+    }
+
+    return true;
 }
 
 // 0x40A400
