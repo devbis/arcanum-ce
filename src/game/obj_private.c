@@ -461,6 +461,50 @@ void sub_4E4DB0()
     obj_priv_initialized = 0;
 }
 
+// 0x4E4E60
+Object* sub_4E4E60(int64_t* obj_ptr)
+{
+    int v1;
+    uint8_t* data;
+    Object* object;
+
+    if (dword_6036C4 == 0x200000) {
+        tig_message_post_quit(0);
+        return NULL;
+    }
+
+    if (qword_6036F0 != OBJ_HANDLE_NULL) {
+        *obj_ptr = qword_6036F0;
+
+        v1 = sub_4E5900(*obj_ptr);
+
+        data = sub_4E5920(v1);
+        data[0] = 'H';
+        // TODO: Review cast.
+        sub_4E5980((int*)data, (*obj_ptr >> 3) & 0x7FFFFF);
+
+        object = object_ptr(v1);
+        dword_6036C4++;
+        dword_6036D0--;
+        qword_6036F0 = OBJ_HANDLE_NULL;
+    } else {
+        v1 = sub_4E5640();
+        object = object_ptr(v1);
+        *obj_ptr = sub_4E58C0(v1, dword_6036B0);
+
+        data = sub_4E5920(v1);
+        // TODO: Review cast.
+        sub_4E5980((int*)data, dword_6036B0);
+
+        dword_6036B0++;
+        if (dword_6036B0 > 0x7FFFFF) {
+            dword_6036B0 = 1;
+        }
+    }
+
+    return object;
+}
+
 // 0x4E58C0
 int64_t sub_4E58C0(int a1, int a2)
 {
