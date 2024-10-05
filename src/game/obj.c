@@ -2701,6 +2701,42 @@ void sub_40A8A0()
     object_fields[OBJ_F_PROTOTYPE_HANDLE].type = 12;
 }
 
+// 0x40B8E0
+void sub_40B8E0(int fld)
+{
+    switch (fld) {
+    case OBJ_F_BEGIN:
+        dword_5D10F0[sub_40A790(fld)] = 0;
+        break;
+    case OBJ_F_WALL_BEGIN:
+    case OBJ_F_PORTAL_BEGIN:
+    case OBJ_F_CONTAINER_BEGIN:
+    case OBJ_F_SCENERY_BEGIN:
+    case OBJ_F_PROJECTILE_BEGIN:
+    case OBJ_F_ITEM_BEGIN:
+    case OBJ_F_CRITTER_BEGIN:
+    case OBJ_F_TRAP_BEGIN:
+        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_PAD_I64AS_1].field_8 + 1;
+        break;
+    case OBJ_F_WEAPON_BEGIN:
+    case OBJ_F_AMMO_BEGIN:
+    case OBJ_F_ARMOR_BEGIN:
+    case OBJ_F_GOLD_BEGIN:
+    case OBJ_F_FOOD_BEGIN:
+    case OBJ_F_SCROLL_BEGIN:
+    case OBJ_F_KEY_BEGIN:
+    case OBJ_F_KEY_RING_BEGIN:
+    case OBJ_F_WRITTEN_BEGIN:
+    case OBJ_F_GENERIC_BEGIN:
+        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8 + 1;
+        break;
+    case OBJ_F_PC_BEGIN:
+    case OBJ_F_NPC_BEGIN:
+        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8 + 1;
+        break;
+    }
+}
+
 // 0x40BAC0
 void sub_40BAC0()
 {
