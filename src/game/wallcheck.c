@@ -1,5 +1,7 @@
 #include "game/wallcheck.h"
 
+#include "game/player.h"
+
 // 0x5A3E90
 static bool dword_5A3E90 = true;
 
@@ -77,9 +79,12 @@ bool sub_438520()
 }
 
 // 0x438530
-void sub_438530()
+void sub_438530(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (player_is_pc_obj(obj)) {
+        qword_5E0A08 = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        dword_5DE6E8 = true;
+    }
 }
 
 // 0x438570

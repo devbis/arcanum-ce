@@ -8,5 +8,6 @@ void sub_437E10();
 void wallcheck_flush();
 void sub_438500(bool enabled);
 bool sub_438520();
+void sub_438530(int64_t obj);
 
 #endif /* ARCANUM_GAME_WALLCHECK_H_ */
