@@ -49,6 +49,7 @@ static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
 static void sub_4E4C80(S4E4BD0* a1, int size);
 static void sub_4E56A0(int index);
+static void sub_4E5770(int index);
 static bool sub_4E57E0(ObjectID a1, int* index_ptr);
 static int64_t sub_4E58C0(int a1, int a2);
 static int64_t sub_4E5900(int64_t a1);
@@ -126,7 +127,7 @@ static int dword_6036D0;
 static int object_pool_size_plus_padding;
 
 // 0x6036D8
-static void* dword_6036D8;
+static int* dword_6036D8;
 
 // 0x6036DC
 static int dword_6036DC;
@@ -423,7 +424,7 @@ void sub_4E4CD0(int size, bool editor)
     object_pool_num_buckets = 1;
     dword_6036C4 = 0;
     dword_6036E0 = 4096;
-    dword_6036D8 = MALLOC(0x4000u);
+    dword_6036D8 = (int*)MALLOC(sizeof(*dword_6036D8) * dword_6036E0);
     dword_6036D0 = 0;
     dword_6036C0 = 1024;
     dword_6036DC = 0;
@@ -535,6 +536,18 @@ void sub_4E56A0(int index)
     // TODO: Review cast.
     sub_4E5980((int*)data, 0);
     data[0] = 'P';
+}
+
+// 0x4E5770
+void sub_4E5770(int index)
+{
+    if (dword_6036D0 == dword_6036E0) {
+        dword_6036E0 += 2048;
+        dword_6036D8 = (int*)REALLOC(dword_6036D8, sizeof(*dword_6036D8) * dword_6036E0);
+    }
+
+    dword_6036D8[dword_6036D0] = index;
+    dword_6036D0++;
 }
 
 // 0x4E57E0
