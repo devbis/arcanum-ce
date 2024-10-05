@@ -3259,7 +3259,29 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
 // 0x40CE20
 bool sub_40CE20(Object* object, int start, int end, ObjEnumerateCallbackEx* callback)
 {
-    // TODO: Incomplete.
+    int v1 = 0;
+    int index;
+    int fld;
+
+    for (index = 0; index < object_fields[start + 1].field_8; index++) {
+        v1 += sub_4E5FE0(object->field_48[index], 32);
+    }
+
+    v1 += sub_4E5FE0(object->field_48[index], object_fields[fld].field_10);
+
+    for (fld = start + 1; fld < end; fld++) {
+        if ((object->field_48[object_fields[fld].field_8] & object_fields[fld].field_C) != 0) {
+            if (!callback(object, v1, &(object_fields[fld]))) {
+                return false;
+            }
+
+            if ((object->field_48[object_fields[fld].field_8] & object_fields[fld].field_C) != 0) {
+                v1++;
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x40CEF0
