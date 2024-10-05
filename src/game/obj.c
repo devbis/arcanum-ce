@@ -2867,6 +2867,26 @@ void object_field_set_with_network(object_id_t object_id, int field, int a3, int
     // TODO: Incomplete.
 }
 
+// 0x40BE70
+void sub_40BE70(Object* object)
+{
+    int index;
+    SizeableArray** sa_ptr;
+    int64_t prototype_obj;
+
+    for (index = 0; index < dword_5D1134; index++) {
+        if (sub_40C260(object->type, dword_5D112C[index])
+            && sub_40D320(object, dword_5D112C[index])) {
+            sub_408F40(object, dword_5D112C[index], &sa_ptr, &prototype_obj);
+            if (*sa_ptr != NULL) {
+                if (!sa_enumerate(sa_ptr, sub_40BFC0)) {
+                    tig_debug_printf("Can't convert sizeable array of objects to handles (oft_as_count: %d)\n", index);
+                }
+            }
+        }
+    }
+}
+
 // 0x40BFC0
 bool sub_40BFC0(void* entry, int index)
 {
