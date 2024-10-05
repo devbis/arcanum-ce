@@ -3395,6 +3395,26 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
     return true;
 }
 
+// 0x40D4D0
+void sub_40D4D0(Object* object, int fld)
+{
+    int v1;
+    ObjSa v2;
+    int index;
+
+    v1 = sub_40D230(object, fld);
+    v2.type = object_fields[fld].type;
+    v2.ptr = &(object->field_50[v1]);
+    sub_4E3FA0(&v1);
+
+    for (index = v1; index < object->field_46 - 1; index++) {
+        object->field_50[index] = object->field_50[index + 1];
+    }
+
+    object->field_46--;
+    object->field_50 = (int*)REALLOC(object->fiedl_50, sizeof(int) * object->field_46);
+}
+
 // 0x40D560
 bool sub_40D560(TigFile* stream)
 {
