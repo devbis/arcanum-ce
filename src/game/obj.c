@@ -2039,9 +2039,16 @@ void sub_40A070()
 }
 
 // 0x40A0E0
-void sub_40A0E0()
+bool sub_40A0E0(Object* object, int fld)
 {
-    // TODO: Incomplete.
+    ObjSa v1;
+
+    v1.type = object_fields[fld].type;
+    v1.ptr = &(object->field_50[dword_5D10F4]);
+    sub_4E4990(&v1, dword_5D1118);
+    dword_5D10F4++;
+
+    return true;
 }
 
 // 0x40A140
@@ -2056,6 +2063,7 @@ bool sub_40A140(Object* object, int fld)
     }
 
     dword_5D10F4++;
+
     return true;
 }
 
