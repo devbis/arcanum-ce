@@ -36,8 +36,7 @@ typedef struct S603710 {
 
 typedef struct S6036B8 {
     /* 0000 */ ObjectID field_0;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0018 */ int64_t field_18;
 } S6036B8;
 
 static_assert(sizeof(S6036B8) == 0x20, "wrong size");
@@ -526,6 +525,36 @@ void sub_4E4FB0(int64_t obj)
     sub_4E56A0(sub_4E5900(obj));
 }
 
+// 0x4E4FD0
+void sub_4E4FD0(ObjectID a1, int64_t obj)
+{
+    int index;
+
+    if (sub_4E57E0(a1, &index)) {
+        dword_6036B8[index].field_18 = obj;
+        return;
+    }
+
+    if (dword_6036DC == dword_6036C0) {
+        dword_6036C0 += 0x200;
+        if (dword_6036C0 > 0x200000) {
+            return;
+        }
+
+        dword_6036B8 = (S6036B8*)REALLOC(dword_6036B8, sizeof(*dword_6036B8) * dword_6036C0);
+    }
+
+    if (index != dword_6036DC) {
+        memcpy(&(dword_6036B8[index + 1]),
+            &(dword_6036B8[index]),
+            sizeof(*dword_6036B8) * (dword_6036DC + 0x7FFFFFF * index));
+    }
+
+    dword_6036B8[index].field_0 = a1;
+    dword_6036B8[index].field_18 = obj;
+    dword_6036DC++;
+}
+
 // 0x4E56A0
 void sub_4E56A0(int index)
 {
@@ -582,7 +611,7 @@ bool sub_4E57E0(ObjectID a1, int* index_ptr)
 
     l = 0;
     r = dword_6036DC - 1;
-    while (l < r) {
+    while (l <= r) {
         m = (l + r) / 2;
         // FIXME: Unnecessary copying.
         if (objid_compare(dword_6036B8[m].field_0, a1)) {
@@ -595,7 +624,7 @@ bool sub_4E57E0(ObjectID a1, int* index_ptr)
         }
     }
 
-    *index_ptr = 0;
+    *index_ptr = l;
     return false;
 }
 

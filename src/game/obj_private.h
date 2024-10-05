@@ -28,6 +28,7 @@ Object* sub_4E4E60(int64_t* obj_ptr);
 Object* sub_4E4F80(int64_t obj);
 void sub_4E4FA0(int64_t obj);
 void sub_4E4FB0(int64_t obj);
+void sub_4E4FD0(ObjectID a1, int64_t obj);
 void sub_4E62A0(ObjectID* object_id);
 void objid_id_perm_by_load_order(ObjectID* object_id, object_id_t obj);
 bool objid_is_valid(ObjectID a);
