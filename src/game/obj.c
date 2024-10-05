@@ -3401,6 +3401,21 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
     return true;
 }
 
+// 0x40D230
+int sub_40D230(Object* object, int fld)
+{
+    int v1 = 0;
+    int index;
+
+    for (index = 0; index < object_fields[fld].field_8; index++) {
+        v1 += sub_4E5FE0(object->field_48[index], 32);
+    }
+
+    v1 += sub_4E5FE0(object->field_48[index], object_fields[fld].field_10);
+
+    return v1;
+}
+
 // 0x40D2A0
 void sub_40D2A0(Object* object, int fld)
 {
