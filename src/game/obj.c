@@ -3395,6 +3395,12 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
     return true;
 }
 
+// 0x40D450
+void sub_40D450(Object* object, int fld)
+{
+    sub_40D470(object, sub_40D230(object, fld));
+}
+
 // 0x40D470
 void sub_40D470(Object* object, int fld)
 {
