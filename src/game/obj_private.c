@@ -49,6 +49,7 @@ static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
 static void sub_4E4C80(S4E4BD0* a1, int size);
 static void sub_4E56A0(int index);
+static bool sub_4E57E0(ObjectID a1, int* index_ptr);
 static int64_t sub_4E58C0(int a1, int a2);
 static int64_t sub_4E5900(int64_t a1);
 static uint8_t* sub_4E5920(int index);
@@ -534,6 +535,32 @@ void sub_4E56A0(int index)
     // TODO: Review cast.
     sub_4E5980((int*)data, 0);
     data[0] = 'P';
+}
+
+// 0x4E57E0
+bool sub_4E57E0(ObjectID a1, int* index_ptr)
+{
+    int l;
+    int r;
+    int m;
+
+    l = 0;
+    r = dword_6036DC - 1;
+    while (l < r) {
+        m = (l + r) / 2;
+        // FIXME: Unnecessary copying.
+        if (objid_compare(dword_6036B8[m].field_0, a1)) {
+            l = m + 1;
+        } else if (objid_compare(a1, dword_6036B8[m].field_0)) {
+            r = m - 1;
+        } else {
+            *index_ptr = m;
+            return true;
+        }
+    }
+
+    *index_ptr = 0;
+    return false;
 }
 
 // 0x4E58C0
