@@ -505,6 +505,12 @@ Object* sub_4E4E60(int64_t* obj_ptr)
     return object;
 }
 
+// 0x4E4F80
+Object* sub_4E4F80(int64_t obj)
+{
+    return object_ptr(sub_4E5900(obj));
+}
+
 // 0x4E58C0
 int64_t sub_4E58C0(int a1, int a2)
 {
