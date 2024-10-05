@@ -48,6 +48,7 @@ static void obj_find_node_allocate(FindNode** obj_find_node);
 static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
 static void sub_4E4C80(S4E4BD0* a1, int size);
+static void sub_4E56A0(int index);
 static int64_t sub_4E58C0(int a1, int a2);
 static int64_t sub_4E5900(int64_t a1);
 static uint8_t* sub_4E5920(int index);
@@ -509,6 +510,30 @@ Object* sub_4E4E60(int64_t* obj_ptr)
 Object* sub_4E4F80(int64_t obj)
 {
     return object_ptr(sub_4E5900(obj));
+}
+
+// 0x4E4FA0
+void sub_4E4FA0(int64_t obj)
+{
+}
+
+// 0x4E4FB0
+void sub_4E4FB0(int64_t obj)
+{
+    sub_4E56A0(sub_4E5900(obj));
+}
+
+// 0x4E56A0
+void sub_4E56A0(int index)
+{
+    uint8_t* data;
+
+    data = sub_4E5920(index);
+    sub_4E5770(index);
+    dword_6036C4--;
+    // TODO: Review cast.
+    sub_4E5980((int*)data, 0);
+    data[0] = 'P';
 }
 
 // 0x4E58C0
