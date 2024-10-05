@@ -2180,7 +2180,124 @@ bool object_field_read_if_dif(Object* object, int fld, ObjectFieldInfo* info)
 // 0x40A400
 void sub_40A400()
 {
-    // TODO: Incomplete.
+    int fld;
+    ObjectFieldInfo* info;
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+    int v5;
+    int v6;
+    int v7;
+    int v8;
+    int v9;
+    int v10;
+
+    sub_40A8A0();
+    sub_40A7B0();
+
+    for (fld = OBJ_F_BEGIN; fld < OBJ_F_TOTAL_NORMAL; fld++) {
+        info = &(object_fields[fld]);
+        if (info->type == 1) {
+            sub_40B8E0(fld);
+            info->field_4 = -1;
+            info->field_8 = -1;
+            info->field_C = 0;
+            info->field_10 = 0;
+            info->field_0 = -1;
+
+            switch (fld) {
+            case OBJ_F_BEGIN:
+                v1 = 0;
+                v2 = 0;
+                break;
+            case OBJ_F_WALL_BEGIN:
+            case OBJ_F_PORTAL_BEGIN:
+            case OBJ_F_CONTAINER_BEGIN:
+            case OBJ_F_SCENERY_BEGIN:
+            case OBJ_F_PROJECTILE_BEGIN:
+            case OBJ_F_ITEM_BEGIN:
+            case OBJ_F_CRITTER_BEGIN:
+            case OBJ_F_TRAP_BEGIN:
+                v1 = v5;
+                v2 = v6;
+                break;
+            case OBJ_F_WEAPON_BEGIN:
+            case OBJ_F_AMMO_BEGIN:
+            case OBJ_F_ARMOR_BEGIN:
+            case OBJ_F_GOLD_BEGIN:
+            case OBJ_F_FOOD_BEGIN:
+            case OBJ_F_SCROLL_BEGIN:
+            case OBJ_F_KEY_BEGIN:
+            case OBJ_F_KEY_RING_BEGIN:
+            case OBJ_F_WRITTEN_BEGIN:
+            case OBJ_F_GENERIC_BEGIN:
+                v1 = v7;
+                v2 = v8;
+                break;
+            case OBJ_F_PC_BEGIN:
+            case OBJ_F_NPC_BEGIN:
+                v1 = v9;
+                v2 = v10;
+                break;
+            }
+
+            dword_5D1100[sub_40A790(fld)] = v2;
+        } else if (info->type == 2) {
+            info->field_4 = -1;
+            info->field_8 = -1;
+            info->field_C = 0;
+            info->field_10 = 0;
+            info->field_0 = -1;
+
+            switch (fld) {
+            case OBJ_F_END:
+                v5 = v1;
+                v6 = v2;
+                break;
+            case OBJ_F_ITEM_END:
+                v7 = v1;
+                v8 = v2;
+                break;
+            case OBJ_F_CRITTER_END:
+                v9 = v1;
+                v10 = v2;
+                break;
+            }
+        } else {
+            sub_40A740(fld, &v3, &v4);
+            info->field_0 = v2++;
+            info->field_8 = v4 / 32 + dword_5D10F0[sub_40A790(v3)];
+            info->field_10 = v4 % 32;
+            info->field_C = 1 << info->field_10;
+
+            switch (info->type) {
+            case 3:
+            case 4:
+            case 11:
+            case 12:
+                info->field_4 = -1;
+                break;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 13:
+                info->field_4 = v1++;
+                break;
+            }
+        }
+    }
+
+    for (fld = OBJ_F_TOTAL_NORMAL; fld < OBJ_F_MAX; fld++) {
+        info = &(object_fields[fld]);
+        info->field_4 = -1;
+        info->field_8 = -1;
+        info->field_C = 0;
+        info->field_10 = 0;
+    }
 }
 
 // 0x40A740
