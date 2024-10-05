@@ -877,14 +877,35 @@ bool objid_is_valid(ObjectID a)
 // 0x4E6360
 bool objid_compare(ObjectID a, ObjectID b)
 {
-    if (a.field_0 < b.field_0) return true;
-    if (a.field_0 > b.field_0) return false;
+    if (a.type < b.type) return true;
+    if (a.type > b.type) return false;
 
-    switch (a.field_0) {
+    switch (a.type) {
     case 1:
         return a.a.field_8 < b.a.field_8;
     case 2:
-        // TODO: Incomplete.
+        if (a.g.Data1 < a.g.Data1) return true;
+        if (a.g.Data1 > a.g.Data1) return false;
+        if (a.g.Data2 < a.g.Data2) return true;
+        if (a.g.Data2 > a.g.Data2) return false;
+        if (a.g.Data3 < a.g.Data3) return true;
+        if (a.g.Data3 > a.g.Data3) return false;
+        if (a.g.Data4[0] < a.g.Data4[0]) return true;
+        if (a.g.Data4[0] > a.g.Data4[0]) return false;
+        if (a.g.Data4[1] < a.g.Data4[1]) return true;
+        if (a.g.Data4[1] > a.g.Data4[1]) return false;
+        if (a.g.Data4[2] < a.g.Data4[2]) return true;
+        if (a.g.Data4[2] > a.g.Data4[2]) return false;
+        if (a.g.Data4[3] < a.g.Data4[3]) return true;
+        if (a.g.Data4[3] > a.g.Data4[3]) return false;
+        if (a.g.Data4[4] < a.g.Data4[4]) return true;
+        if (a.g.Data4[4] > a.g.Data4[4]) return false;
+        if (a.g.Data4[5] < a.g.Data4[5]) return true;
+        if (a.g.Data4[5] > a.g.Data4[5]) return false;
+        if (a.g.Data4[6] < a.g.Data4[6]) return true;
+        if (a.g.Data4[6] > a.g.Data4[6]) return false;
+        if (a.g.Data4[7] < a.g.Data4[7]) return true;
+        if (a.g.Data4[7] > a.g.Data4[7]) return false;
     case 3:
         if (a.p.location < b.p.location) return true;
         if (a.p.location > b.p.location) return false;
