@@ -1,19 +1,19 @@
 #include "game/wallcheck.h"
 
 #include "game/player.h"
+#include "game/sector.h"
 
 typedef struct S5E0E20 {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0008 */ int64_t sector_id;
+    /* 0010 */ int64_t obj;
+    /* 0018 */ int64_t field_18;
 } S5E0E20;
 
 static_assert(sizeof(S5E0E20) == 0x20, "wrong size");
+
+static void sub_438570(int64_t obj, int64_t sector_id, int type);
 
 // 0x5A3E90
 static bool dword_5A3E90 = true;
@@ -124,13 +124,36 @@ void sub_438530(int64_t obj)
 }
 
 // 0x438570
-void sub_438570()
+void sub_438570(int64_t obj, int64_t sector_id, int type)
 {
-    // TODO: Incomplete.
+    int index;
+    Sector* sector;
+
+    if (!sub_4386B0(obj, &index)) {
+        memcpy(&(stru_5E0E20[index + 1]),
+            &(stru_5E0E20[index]),
+            sizeof(*stru_5E0E20) * (dword_5E2E24 - index));
+        stru_5E0E20[index].field_0 = 0;
+        stru_5E0E20[index].sector_id = sector_id;
+        stru_5E0E20[index].obj = obj;
+        stru_5E0E20[index].field_18 = sub_4395E0(obj_field_int64_get(obj, OBJ_F_LOCATION));
+
+        sector_lock(sector_id, &sector);
+        sub_438720(stru_5E0E20[index].field_18);
+        dword_5E2E24++;
+    }
+
+    if (type == 1 || type == 16) {
+        stru_5E0E20[index].field_0 = 6;
+    } else if (type == 2 || type == 32) {
+        stru_5E0E20[index].field_0 = 10;
+    } else {
+        stru_5E0E20[index].field_0 = 14;
+    }
 }
 
 // 0x4386B0
-void sub_4386B0()
+bool sub_4386B0(int64_t obj, int* index_ptr)
 {
     // TODO: Incomplete.
 }
