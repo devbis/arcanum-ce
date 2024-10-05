@@ -34,6 +34,14 @@ typedef struct S603710 {
     /* 0004 */ int field_4;
 } S603710;
 
+typedef struct S6036B8 {
+    /* 0000 */ ObjectID field_0;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+} S6036B8;
+
+static_assert(sizeof(S6036B8) == 0x20, "wrong size");
+
 static void sub_4E3BE0();
 static void sub_4E3C60();
 static void obj_find_node_allocate(FindNode** obj_find_node);
@@ -51,6 +59,9 @@ static bool sub_4E6B00(char* dst, const char* src, int size);
 static bool sub_4E7050(int64_t handle, char* path);
 static TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ext);
 static bool handle_from_fname(int64_t* handle_ptr, const char* path);
+
+// 0x5B9258
+static int dword_5B9258 = 4;
 
 // 0x60368C
 static FindNode* dword_60368C;
@@ -75,6 +86,57 @@ static bool obj_find_initialized;
 
 // 0x6036A8
 static bool dword_6036A8;
+
+// 0x6036B0
+static int dword_6036B0;
+
+// 0x6036B4
+static bool obj_priv_editor;
+
+// 0x6036B8
+static S6036B8* dword_6036B8;
+
+// 0x6036BC
+static Object** object_pool_buckets;
+
+// 0x6036C0
+static int dword_6036C0;
+
+// 0x6036C4
+static int dword_6036C4;
+
+// 0x6036C8
+static int object_pool_capacity;
+
+// 0x6036CC
+static int object_pool_num_buckets;
+
+// 0x6036D0
+static int dword_6036D0;
+
+// 0x6036D4
+static int object_pool_size_plus_padding;
+
+// 0x6036D8
+static void* dword_6036D8;
+
+// 0x6036DC
+static int dword_6036DC;
+
+// 0x6036E0
+static int dword_6036E0;
+
+// 0x6036E4
+static int object_size_plus_padding;
+
+// 0x6036E8
+static int dword_6036E8;
+
+// 0x6036F0
+static int64_t qword_6036F0;
+
+// 0x6036F8
+static bool obj_priv_initialized;
 
 // 0x603700
 static int dword_603700;
@@ -337,6 +399,29 @@ void sub_4E4C80(S4E4BD0* a1, int size)
         a1->field_4 = a1->field_0 + a1->field_8 - a1->field_C - new_size;
         a1->field_C += new_size;
     }
+}
+
+// 0x4E4CD0
+void sub_4E4CD0(int size, bool editor)
+{
+    object_pool_buckets = (Object**)CALLOC(256, sizeof(*object_pool_buckets));
+    obj_priv_editor = editor;
+    dword_6036E8 = 0x80000;
+    object_pool_capacity = 0x2000;
+    dword_6036B0 = 2 * ((int)time(0) & 0x3FFFFF) + 1;
+    object_size_plus_padding = dword_5B9258 + size;
+    object_pool_size_plus_padding = (dword_5B9258 + size) * 8192;
+    object_pool_buckets[0] = (Object*)MALLOC(object_pool_size_plus_padding);
+    object_pool_num_buckets = 1;
+    dword_6036C4 = 0;
+    dword_6036E0 = 4096;
+    dword_6036D8 = MALLOC(0x4000u);
+    dword_6036D0 = 0;
+    dword_6036C0 = 1024;
+    dword_6036DC = 0;
+    qword_6036F0 = OBJ_HANDLE_NULL;
+    dword_6036B8 = (S6036B8 *)MALLOC(sizeof(*dword_6036B8) * dword_6036C0);
+    obj_priv_initialized = true;
 }
 
 // 0x4E59B0
