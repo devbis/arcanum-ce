@@ -791,7 +791,7 @@ void sub_4066B0(int* a1, int* a2, int64_t obj)
     object = obj_lock(obj);
     sub_4E4BD0(&v1);
     sub_40D5D0(&v1);
-    is_empty = obj->prototype_oid.type == -1;
+    is_empty = object->field_20.type == -1;
     obj_unlock(obj);
 
     if (is_empty) {
@@ -1612,7 +1612,7 @@ void obj_unlock(int64_t obj_handle)
 // 0x408D60
 void sub_408D60(Object* object, int fld, int* value_ptr)
 {
-    Unknown2 v1;
+    ObjSa v1;
     int64_t proto_handle;
     Object* proto;
 
@@ -1643,7 +1643,7 @@ void sub_408D60(Object* object, int fld, int* value_ptr)
 // 0x408E70
 void sub_408E70(Object* object, int fld, int value)
 {
-    Unknown1 v1;
+    ObjSa v1;
 
     if (object->field_20.field_0 == -1) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
@@ -1663,7 +1663,7 @@ void sub_408E70(Object* object, int fld, int value)
     }
 
     v1.type = object_fields[fld].type;
-    v1.value = value;
+    v1.field_8 = value;
     sub_4E4B70(&v1);
 }
 
@@ -2169,7 +2169,7 @@ bool object_field_read_if_dif(Object* object, int fld, ObjectFieldInfo* info)
         sub_40D3A0(object, info, true);
     }
 
-    if (!object_field_read(object, fld, a3)) {
+    if (!object_field_read(object, fld, info)) {
         tig_debug_printf("object_field_read failed in object_field_read_if_dif trying to read field #%d\n", info - object_fields);
         return false;
     }
@@ -3428,7 +3428,7 @@ bool obj_check_version_memory(void* mem)
 {
     int version;
 
-    sub_4E4C50(version, sizeof(version, mem));
+    sub_4E4C50(version, sizeof(version), mem);
     if (version != OBJ_FILE_VERSION) {
         tig_debug_printf("Object file format version mismatch: (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
     }
