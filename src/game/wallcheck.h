@@ -3,6 +3,8 @@
 
 #include "game/context.h"
 
+bool wallcheck_init(GameInitInfo* init_info);
+void wallcheck_flush();
 void sub_438500(bool enabled);
 bool sub_438520();
 

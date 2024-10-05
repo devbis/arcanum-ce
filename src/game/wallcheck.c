@@ -1,12 +1,25 @@
 #include "game/wallcheck.h"
 
+// 0x5E0A00
+static GameContextF8* dword_5E0A00;
+
+// 0x5E2E24
+static int dword_5E2E24;
+
+// 0x5E2E28
+static int dword_5E2E28;
+
 // 0x5A3E90
 static bool dword_5A3E90 = true;
 
 // 0x437D90
-void wallcheck_init()
+bool wallcheck_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    dword_5E2E24 = 0;
+    dword_5E2E28 = 0;
+    dword_5E0A00 = init_info->field_8;
+
+    return true;
 }
 
 // 0x437DB0
