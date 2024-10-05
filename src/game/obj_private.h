@@ -3,6 +3,15 @@
 
 #include "game/obj.h"
 
+typedef struct S4E4BD0 {
+    uint8_t* field_0;
+    uint8_t* field_4;
+    int field_8;
+    int field_C;
+} S4E4BD0;
+
+static_assert(sizeof(S4E4BD0) == 0x10, "wrong size");
+
 void obj_find_init();
 void obj_find_exit();
 void obj_find_add(int64_t obj);
@@ -10,6 +19,9 @@ void obj_find_remove(int64_t obj);
 void obj_find_move(int64_t obj);
 void sub_4E3F80();
 void sub_4E3F90();
+void sub_4E4BD0(S4E4BD0* a1);
+void sub_4E4C00(const void* data, int size, S4E4BD0* a3);
+void sub_4E4C50(void* data, int size, S4E4BD0* a3);
 void sub_4E62A0(ObjectID* object_id);
 void objid_id_perm_by_load_order(ObjectID* object_id, object_id_t obj);
 bool objid_is_valid(ObjectID a);

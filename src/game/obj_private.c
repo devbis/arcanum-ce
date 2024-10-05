@@ -39,6 +39,7 @@ static void sub_4E3C60();
 static void obj_find_node_allocate(FindNode** obj_find_node);
 static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
+static void sub_4E4C80(S4E4BD0* a1, int size);
 static int sub_4E61E0(int a1);
 static int sub_4E61F0(int a1);
 static bool objid_compare(ObjectID a, ObjectID b);
@@ -295,6 +296,47 @@ void sub_4E3F80()
 void sub_4E3F90()
 {
     dword_6036A8 = false;
+}
+
+// 0x4E4BD0
+void sub_4E4BD0(S4E4BD0* a1)
+{
+    a1->field_0 = (uint8_t*)MALLOC(256);
+    a1->field_4 = a1->field_0;
+    a1->field_8 = 256;
+    a1->field_C = a1->field_8;
+}
+
+// 0x4E4C00
+void sub_4E4C00(const void* data, int size, S4E4BD0* a3)
+{
+    sub_4E4C80(a3, size);
+    memcpy(a3->field_4, data, size);
+    a3->field_4 += size;
+    a3->field_C -= size;
+}
+
+// 0x4E4C50
+void sub_4E4C50(void* data, int size, S4E4BD0* a3)
+{
+    memcpy(data, a3->field_0, size);
+    a3->field_0 += size;
+}
+
+// 0x4E4C80
+void sub_4E4C80(S4E4BD0* a1, int size)
+{
+    int extra_size;
+    int new_size;
+
+    extra_size = size - a1->field_C;
+    if (extra_size > 0) {
+        new_size = (extra_size / 256 + 1) * 256;
+        a1->field_8 += new_size;
+        a1->field_0 = (uint8_t*)REALLOC(a1->field_0, a1->field_8);
+        a1->field_4 = a1->field_0 + a1->field_8 - a1->field_C - new_size;
+        a1->field_C += new_size;
+    }
 }
 
 // 0x4E59B0
