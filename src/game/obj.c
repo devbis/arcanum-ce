@@ -3395,6 +3395,16 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
     return true;
 }
 
+// 0x40D400
+void sub_40D400(Object* object, int fld, bool enabled)
+{
+    if (enabled) {
+        object->field_4C[object_fields[fld].field_8] |= object_fields[fld].field_C;
+    } else {
+        object->field_4C[object_fields[fld].field_8] &= ~object_fields[fld].field_C;
+    }
+}
+
 // 0x40D450
 void sub_40D450(Object* object, int fld)
 {
