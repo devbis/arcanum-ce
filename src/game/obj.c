@@ -30,14 +30,39 @@ static void sub_409E80(void* mem, int64_t obj);
 static bool sub_40C560();
 static bool sub_40C6B0(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
+static int sub_40CB40(Object* object, int fld);
 static bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback);
 static bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback);
-static int sub_40CB40(Object* object, int fld);
 static bool sub_40D560(TigFile* stream);
 static bool obj_check_version_stream(TigFile* stream);
 static void sub_40D5D0(void* mem);
 static bool obj_check_version_memory(void* mem);
 static bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info);
+
+// 0x59BE00
+static int dword_59BE00[] = {
+    OBJ_F_BEGIN,
+    OBJ_F_WALL_BEGIN,
+    OBJ_F_PORTAL_BEGIN,
+    OBJ_F_CONTAINER_BEGIN,
+    OBJ_F_SCENERY_BEGIN,
+    OBJ_F_PROJECTILE_BEGIN,
+    OBJ_F_ITEM_BEGIN,
+    OBJ_F_WEAPON_BEGIN,
+    OBJ_F_AMMO_BEGIN,
+    OBJ_F_ARMOR_BEGIN,
+    OBJ_F_GOLD_BEGIN,
+    OBJ_F_FOOD_BEGIN,
+    OBJ_F_SCROLL_BEGIN,
+    OBJ_F_KEY_BEGIN,
+    OBJ_F_KEY_RING_BEGIN,
+    OBJ_F_WRITTEN_BEGIN,
+    OBJ_F_GENERIC_BEGIN,
+    OBJ_F_CRITTER_BEGIN,
+    OBJ_F_PC_BEGIN,
+    OBJ_F_NPC_BEGIN,
+    OBJ_F_TRAP_BEGIN,
+};
 
 // 0x59BE58
 static struct {
@@ -416,11 +441,17 @@ static int* dword_5D1100;
 // 0x5D1104
 static ObjectFieldInfo* object_fields;
 
+// 0x5D1108
+static Object* dword_5D1108;
+
 // 0x5D110C
 static TigFile* dword_5D110C;
 
+// 0x5D1110
+static Object* dword_5D1110;
+
 // 0x5D1118
-static void* dword_5D1118;
+static S4E4BD0* dword_5D1118;
 
 // 0x5D1120
 static int16_t* dword_5D1120;
@@ -429,10 +460,16 @@ static int16_t* dword_5D1120;
 static bool obj_initialized;
 
 // 0x5D1128
-static void* dword_5D1128;
+static int* dword_5D1128;
 
 // 0x5D112C
-static void* dword_5D112C;
+static int* dword_5D112C;
+
+// 0x5D1130
+static int dword_5D1130;
+
+// 0x5D1134
+static int dword_5D1134;
 
 // 0x405110
 bool obj_init(GameInitInfo* init_info)
@@ -544,440 +581,6 @@ void sub_405800(int type, int64_t* obj_ptr)
     sub_40C690(object);
 
     *obj_ptr = handle;
-}
-
-// 0x408710
-Object* sub_408710(int64_t* obj_handle_ptr)
-{
-    return sub_4E4E60(obj_handle_ptr);
-}
-
-// 0x408720
-Object* obj_lock(int64_t obj_handle)
-{
-    return sub_4E4F80(obj_handle);
-}
-
-// 0x408740
-void obj_unlock(int64_t obj_handle)
-{
-    sub_4E4FA0(obj_handle);
-}
-
-// 0x408D60
-void sub_408D60(Object* object, int fld, int* value_ptr)
-{
-    Unknown2 v1;
-    int64_t proto_handle;
-    Object* proto;
-
-    v1.type = object_fields[fld].type;
-
-    if (object->field_20.field_0 == -1) {
-        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
-        *value_ptr = sub_4E4BA0(&v1);
-    } else {
-        if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
-            v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
-            *value_ptr = sub_4E4BA0(&v1);
-        }
-
-        if (sub_40D320(object, fld)) {
-            v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
-            *value_ptr = sub_4E4BA0(&v1);
-        } else {
-            proto_handle = obj_get_prototype_handle(object);
-            proto = obj_lock(proto_handle);
-            v1.ptr = &(proto->field_50[sub_40CB40(proto, fld)]);
-            *value_ptr = sub_4E4BA0(&v1);
-            obj_unlock(proto_handle);
-        }
-    }
-}
-
-// 0x408E70
-void sub_408E70(Object* object, int fld, int value)
-{
-    Unknown1 v1;
-
-    if (object->field_20.field_0 == -1) {
-        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
-        sub_40D400(object, fld, true);
-    } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
-        v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
-    } else {
-        if (!sub_40D350(object, fld)) {
-            if (!sub_40D320(object, fld)) {
-                sub_40D2A0(object, fld);
-            }
-        }
-
-        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
-        sub_40D400(object, fld, true);
-        object->field_44 = 1;
-    }
-
-    v1.type = object_fields[fld].type;
-    v1.value = value;
-    sub_4E4B70(&v1);
-}
-
-// 0x408F40
-bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr)
-{
-    Object* proto;
-
-    if (object->field_20.field_0 == -1) {
-        *a3 = &(object->field_50[sub_40CB40(object, fld)]);
-        return false;
-    }
-
-    if (fld > OBJ_F_TRANSIENT_BEGIN && fld <= OBJ_F_TRANSIENT_END) {
-        *a3 = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
-        return false;
-    }
-
-    if (sub_40D320(object, fld)) {
-        *a3 = &(object->field_50[sub_40D230(object, fld)]);
-        return false;
-    }
-
-    *proto_handle_ptr = obj_get_prototype_handle(object);
-
-    proto = obj_lock(*proto_handle_ptr);
-    *a3 = &(proto->field_50[sub_40CB40(proto, fld)]);
-
-    return true;
-}
-
-// 0x409000
-void sub_409000(int64_t obj)
-{
-    int index;
-    int type;
-    unsigned int flags;
-    tig_art_id_t art_id = TIG_ART_ID_INVALID;
-
-    obj_field_int32_set(obj, OBJ_F_SHADOW, -1);
-    obj_field_int32_set(obj, OBJ_F_AID, TIG_ART_ID_INVALID);
-    obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, TIG_ART_ID_INVALID);
-    obj_field_int32_set(obj, OBJ_F_CURRENT_AID, TIG_ART_ID_INVALID);
-    obj_field_int32_set(obj, OBJ_F_BLIT_COLOR, tig_color_make(255, 255, 255));
-    obj_field_int32_set(obj, OBJ_F_BLIT_ALPHA, 255);
-    obj_field_int32_set(obj, OBJ_F_BLIT_SCALE, 100);
-    obj_field_int32_set(obj, OBJ_F_LIGHT_AID, TIG_ART_ID_INVALID);
-    obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, tig_color_make(255, 255, 255));
-
-    for (index = 0; index < 7; index++) {
-        sub_4074E0(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
-        sub_4074E0(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
-    }
-
-    for (index = 0; index < 4; index++) {
-        sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
-    }
-
-    for (index = 0; index < 4; index++) {
-        sub_4074E0(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
-    }
-
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    switch (type) {
-    case OBJ_TYPE_WEAPON:
-    case OBJ_TYPE_AMMO:
-    case OBJ_TYPE_ITEM_ARMOR:
-    case OBJ_TYPE_ITEM_GOLD:
-    case OBJ_TYPE_ITEM_FOOD:
-    case OBJ_TYPE_ITEM_SCROLL:
-    case OBJ_TYPE_ITEM_KEY:
-    case OBJ_TYPE_ITEM_KEY_RING:
-    case OBJ_TYPE_ITEM_WRITTEN:
-    case OBJ_TYPE_ITEM_GENERIC:
-        if (type == OBJ_TYPE_ITEM_KEY) {
-            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 0);
-        } else if (type == OBJ_TYPE_ITEM_GOLD) {
-            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
-        } else {
-            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
-        }
-
-        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, TIG_ART_ID_INVALID);
-        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 10000);
-        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_2, 10000);
-        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_3, 10000);
-        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_4, 10000);
-        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_5, 10000);
-
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x434;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-        break;
-    case OBJ_TYPE_PC:
-    case OBJ_TYPE_NPC:
-        stat_set_defaults(obj);
-        skill_set_defaults(obj);
-        spell_set_defaults(obj);
-        tech_set_defaults(obj);
-
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x4030;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-        break;
-    }
-
-    switch (type) {
-    case OBJ_TYPE_WALL:
-        obj_field_int32_set(obj, OBJ_F_HP_PTS, 500);
-
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x4000;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-
-        tig_art_wall_id_create(0, 0, 0, 6, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_PORTAL:
-        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x4000;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-
-        tig_art_portal_id_create(0, 1, 0, 0, 6, 0, &art_id);
-        break;
-    case OBJ_TYPE_CONTAINER:
-        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x4030;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-
-        tig_art_container_id_create(0, 1, 0, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_SCENERY:
-        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x4830;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-
-        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_PROJECTILE:
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x430;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-
-        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_WEAPON:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_WEAPON);
-        obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 10000);
-        obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
-        obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-        obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-        tig_art_item_id_create(0, 1, 0, 0, 3, 0, 0, 0, &art_id);
-        obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-        tig_art_item_id_create(0, 2, 0, 0, 3, 0, 0, 0, &art_id);
-        obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
-        tig_art_item_id_create(0, 0, 0, 0, 3, 0, 0, 0, &art_id);
-        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
-        obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, TIG_ART_ID_INVALID);
-        obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, TIG_ART_ID_INVALID);
-        break;
-    case OBJ_TYPE_AMMO:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_AMMO);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 1, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_ITEM_ARMOR:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_ARMOR);
-        tig_art_item_id_create(0, 1, 0, 0, 4, 2, 0, 0, &art_id);
-        obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-        tig_art_item_id_create(0, 2, 0, 0, 4, 2, 0, 0, &art_id);
-        obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-        tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
-        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
-        obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, OARF_SIZE_MEDIUM);
-        break;
-    case OBJ_TYPE_ITEM_GOLD:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_GOLD);
-        obj_field_int32_set(obj, OBJ_F_GOLD_QUANTITY, 1);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 3, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_ITEM_FOOD:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_FOOD);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 4, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_ITEM_SCROLL:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_SCROLL);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 5, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_ITEM_KEY:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_KEY);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 6, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_ITEM_KEY_RING:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_KEY_RING);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 7, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_ITEM_WRITTEN:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_WRITTEN);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 8, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_ITEM_GENERIC:
-        sub_409640(obj, TIG_ART_ITEM_TYPE_GENERIC);
-        tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_PC:
-    case OBJ_TYPE_NPC:
-        tig_art_critter_id_create(1, 0, 0, 0, 0, 4, 0, 0, 0, &art_id);
-        break;
-    case OBJ_TYPE_TRAP:
-        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-
-        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-        flags |= 0x100434;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
-
-        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
-        break;
-    }
-
-    obj_field_int32_set(obj, OBJ_F_AID, art_id);
-    obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-}
-
-// 0x409640
-void sub_409640(int64_t obj, int subtype)
-{
-    tig_art_id_t art_id;
-
-    if (tig_art_item_id_create(0, 1, 0, 0, 0, subtype, 0, 0, &art_id) != TIG_OK) {
-        art_id = TIG_ART_ID_INVALID;
-    }
-
-    obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-    obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, obj_item_defaults[subtype].worth);
-    obj_field_int32_set(obj, OBJ_F_HP_PTS, obj_item_defaults[subtype].hp);
-}
-
-// 0x4096B0
-bool sub_4096B0(TigFile* stream, int64_t obj)
-{
-    Object* object;
-    int cnt;
-
-    object = obj_lock(obj);
-
-    if (!obj_write_raw(&(object->field_20), sizeof(object->field_20), stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    if (!obj_write_raw(&(object->type), sizeof(object->type), stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    cnt = sub_40C030(object->type);
-    if (!obj_write_raw(object->field_4C, sizeof(object->field_4C[0]) * cnt, stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    dword_5D10F4 = 0;
-    dword_5D110C = stream;
-    if (!obj_enumerate_fields(object, sub_40A070)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    obj_unlock(obj);
-    return true;
-}
-
-// 0x409980
-bool sub_409980(TigFile* stream, int64_t obj)
-{
-    Object* object;
-    int cnt;
-
-    object = obj_lock(obj);
-
-    if (!obj_write_raw(&(object->field_20), sizeof(object->field_20), stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    if (!obj_write_raw(&(object->type), sizeof(object->type), stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    if (!obj_write_raw(&(object->field_46), sizeof(object->field_46), stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    cnt = sub_40C030(object->type);
-    if (!obj_write_raw(object->field_48, sizeof(object->field_48[0]) * cnt, stream)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    dword_5D110C = stream;
-    if (!sub_40CBA0(object, object_field_write)) {
-        obj_unlock(obj);
-        return false;
-    }
-
-    obj_unlock(obj);
-    return true;
-}
-
-// 0x409CB0
-void sub_409CB0(void* mem, int64_t obj)
-{
-    Object* object;
-    int cnt;
-
-    object = obj_lock(obj);
-    sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
-    sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
-    sub_4E4C00(&(object->type), sizeof(object->type), mem);
-    cnt = sub_40C030(object->type);
-    sub_4E4C00(object->field_4C, sizeof(object->field_4C[0]) * cnt, mem);
-    dword_5D10F4 = 0;
-    dword_5D1118 = mem;
-    obj_enumerate_fields(object, sub_40A0E0);
-    obj_unlock(obj);
-}
-
-// 0x409E80
-void sub_409E80(void* mem, int64_t obj)
-{
-    Object* object;
-    int cnt;
-
-    object = obj_lock(obj);
-    sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
-    sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
-    sub_4E4C00(&(object->type), sizeof(object->type), mem);
-    sub_4E4C00(&(object->field_46), sizeof(object->field_46), mem);
-    cnt = sub_40C030(object->type);
-    sub_4E4C00(object->field_48, sizeof(object->field_48[0]) * cnt, mem);
-    dword_5D1118 = mem;
-    sub_40CBA0(object, sub_40A250);
-    obj_unlock(obj);
 }
 
 // 0x405BC0
@@ -1176,6 +779,29 @@ bool obj_read(TigFile* stream, int64_t obj_handle_ptr)
     } else {
         return sub_409AA0(stream, obj_handle_ptr);
     }
+}
+
+// 0x4066B0
+void sub_4066B0(int* a1, int* a2, int64_t obj)
+{
+    Object* object;
+    S4E4BD0 v1;
+    bool is_empty;
+
+    object = obj_lock(obj);
+    sub_4E4BD0(&v1);
+    sub_40D5D0(&v1);
+    is_empty = obj->prototype_oid.type == -1;
+    obj_unlock(obj);
+
+    if (is_empty) {
+        sub_409CB0(&v1, obj);
+    } else {
+        sub_409E80(&v1, obj);
+    }
+
+    *a1 = v1.field_0;
+    *a2 = v1.field_4 - v1.field_0;
 }
 
 // 0x4067F0
@@ -1798,6 +1424,12 @@ void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length)
     obj_unlock(obj_handle);
 }
 
+// 0x407EF0
+ObjectID sub_407EF0(int64_t obj)
+{
+    // TODO: Incomplete.
+}
+
 // 0x408430
 void sub_408430(tig_art_id_t aid)
 {
@@ -1959,181 +1591,452 @@ void sub_408430(tig_art_id_t aid)
     tig_debug_printf("\n");
 }
 
-// 0x40C030
-int sub_40C030(ObjectType object_type)
+// 0x408710
+Object* sub_408710(int64_t* obj_handle_ptr)
 {
-    int v1;
-
-    switch (object_type) {
-    case OBJ_TYPE_WALL:
-        v1 = object_fields[OBJ_F_WALL_PAD_I64AS_1].field_8;
-        break;
-    case OBJ_TYPE_PORTAL:
-        v1 = object_fields[OBJ_F_PORTAL_PAD_I64AS_1].field_8;
-        break;
-    case OBJ_TYPE_CONTAINER:
-        v1 = object_fields[OBJ_F_CONTAINER_PAD_I64AS_1].field_8;
-        break;
-    case OBJ_TYPE_SCENERY:
-        v1 = object_fields[OBJ_F_SCENERY_PAD_I64AS_1].field_8;
-        break;
-    case OBJ_TYPE_PROJECTILE:
-        v1 = object_fields[OBJ_F_PROJECTILE_PAD_I64AS_1].field_8;
-        break;
-    case OBJ_TYPE_WEAPON:
-        v1 = object_fields[OBJ_F_WEAPON_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_AMMO:
-        v1 = object_fields[OBJ_F_AMMO_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_ARMOR:
-        v1 = object_fields[OBJ_F_ARMOR_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_GOLD:
-        v1 = object_fields[OBJ_F_GOLD_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_FOOD:
-        v1 = object_fields[OBJ_F_FOOD_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_SCROLL:
-        v1 = object_fields[OBJ_F_SCROLL_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_KEY:
-        v1 = object_fields[OBJ_F_KEY_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_KEY_RING:
-        v1 = object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_WRITTEN:
-        v1 = object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_ITEM_GENERIC:
-        v1 = object_fields[OBJ_F_GENERIC_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_PC:
-        v1 = object_fields[OBJ_F_PC_PAD_I64AS_1].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_NPC:
-        // NOTE: Probably wrong.
-        v1 = object_fields[OBJ_F_NPC_SHIT_LIST_IDX].field_8;
-        if (v1 == -1) {
-            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
-        }
-        break;
-    case OBJ_TYPE_TRAP:
-        v1 = object_fields[OBJ_F_TRAP_PAD_I64AS_1].field_8;
-        break;
-    default:
-        // NOTE: Original code returns `object_type`.
-        __assume(0);
-    }
-
-    if (v1 == -1) {
-        v1 = object_fields[OBJ_F_PAD_I64AS_1].field_8;
-    }
-
-    return v1 + 1;
+    return sub_4E4E60(obj_handle_ptr);
 }
 
-// 0x40C260
-bool sub_40C260(int type, int fld)
+// 0x408720
+Object* obj_lock(int64_t obj_handle)
 {
-    if (object_fields[fld].type <= 2) {
+    return sub_4E4F80(obj_handle);
+}
+
+// 0x408740
+void obj_unlock(int64_t obj_handle)
+{
+    sub_4E4FA0(obj_handle);
+}
+
+// 0x408D60
+void sub_408D60(Object* object, int fld, int* value_ptr)
+{
+    Unknown2 v1;
+    int64_t proto_handle;
+    Object* proto;
+
+    v1.type = object_fields[fld].type;
+
+    if (object->field_20.field_0 == -1) {
+        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        *value_ptr = sub_4E4BA0(&v1);
+    } else {
+        if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
+            v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+            *value_ptr = sub_4E4BA0(&v1);
+        }
+
+        if (sub_40D320(object, fld)) {
+            v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+            *value_ptr = sub_4E4BA0(&v1);
+        } else {
+            proto_handle = obj_get_prototype_handle(object);
+            proto = obj_lock(proto_handle);
+            v1.ptr = &(proto->field_50[sub_40CB40(proto, fld)]);
+            *value_ptr = sub_4E4BA0(&v1);
+            obj_unlock(proto_handle);
+        }
+    }
+}
+
+// 0x408E70
+void sub_408E70(Object* object, int fld, int value)
+{
+    Unknown1 v1;
+
+    if (object->field_20.field_0 == -1) {
+        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        sub_40D400(object, fld, true);
+    } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
+        v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+    } else {
+        if (!sub_40D350(object, fld)) {
+            if (!sub_40D320(object, fld)) {
+                sub_40D2A0(object, fld);
+            }
+        }
+
+        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        sub_40D400(object, fld, true);
+        object->field_44 = 1;
+    }
+
+    v1.type = object_fields[fld].type;
+    v1.value = value;
+    sub_4E4B70(&v1);
+}
+
+// 0x408F40
+bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr)
+{
+    Object* proto;
+
+    if (object->field_20.field_0 == -1) {
+        *a3 = &(object->field_50[sub_40CB40(object, fld)]);
         return false;
     }
 
-    if ((fld > OBJ_F_BEGIN && fld < OBJ_F_END)
-        || (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END)
-        || fld == OBJ_F_TYPE
-        || fld == OBJ_F_PROTOTYPE_HANDLE) {
-        return true;
+    if (fld > OBJ_F_TRANSIENT_BEGIN && fld <= OBJ_F_TRANSIENT_END) {
+        *a3 = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+        return false;
+    }
+
+    if (sub_40D320(object, fld)) {
+        *a3 = &(object->field_50[sub_40D230(object, fld)]);
+        return false;
+    }
+
+    *proto_handle_ptr = obj_get_prototype_handle(object);
+
+    proto = obj_lock(*proto_handle_ptr);
+    *a3 = &(proto->field_50[sub_40CB40(proto, fld)]);
+
+    return true;
+}
+
+// 0x409000
+void sub_409000(int64_t obj)
+{
+    int index;
+    int type;
+    unsigned int flags;
+    tig_art_id_t art_id = TIG_ART_ID_INVALID;
+
+    obj_field_int32_set(obj, OBJ_F_SHADOW, -1);
+    obj_field_int32_set(obj, OBJ_F_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_CURRENT_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_BLIT_COLOR, tig_color_make(255, 255, 255));
+    obj_field_int32_set(obj, OBJ_F_BLIT_ALPHA, 255);
+    obj_field_int32_set(obj, OBJ_F_BLIT_SCALE, 100);
+    obj_field_int32_set(obj, OBJ_F_LIGHT_AID, TIG_ART_ID_INVALID);
+    obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, tig_color_make(255, 255, 255));
+
+    for (index = 0; index < 7; index++) {
+        sub_4074E0(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
+        sub_4074E0(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
+    }
+
+    for (index = 0; index < 4; index++) {
+        sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
+    }
+
+    for (index = 0; index < 4; index++) {
+        sub_4074E0(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
+    }
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    switch (type) {
+    case OBJ_TYPE_WEAPON:
+    case OBJ_TYPE_AMMO:
+    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_ITEM_GENERIC:
+        if (type == OBJ_TYPE_ITEM_KEY) {
+            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 0);
+        } else if (type == OBJ_TYPE_ITEM_GOLD) {
+            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
+        } else {
+            obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
+        }
+
+        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, TIG_ART_ID_INVALID);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_2, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_3, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_4, 10000);
+        obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_5, 10000);
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x434;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+        break;
+    case OBJ_TYPE_PC:
+    case OBJ_TYPE_NPC:
+        stat_set_defaults(obj);
+        skill_set_defaults(obj);
+        spell_set_defaults(obj);
+        tech_set_defaults(obj);
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x4030;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+        break;
     }
 
     switch (type) {
     case OBJ_TYPE_WALL:
-        return fld > OBJ_F_WALL_BEGIN && fld < OBJ_F_WALL_END;
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 500);
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x4000;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_wall_id_create(0, 0, 0, 6, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_PORTAL:
-        return fld > OBJ_F_PORTAL_BEGIN && fld < OBJ_F_PORTAL_END;
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x4000;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_portal_id_create(0, 1, 0, 0, 6, 0, &art_id);
+        break;
     case OBJ_TYPE_CONTAINER:
-        return fld > OBJ_F_CONTAINER_BEGIN && fld < OBJ_F_CONTAINER_END;
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x4030;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_container_id_create(0, 1, 0, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_SCENERY:
-        return fld > OBJ_F_SCENERY_BEGIN && fld < OBJ_F_SCENERY_END;
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x4830;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_PROJECTILE:
-        return fld > OBJ_F_PROJECTILE_BEGIN && fld < OBJ_F_PROJECTILE_END;
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x430;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_WEAPON:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_WEAPON_BEGIN && fld < OBJ_F_WEAPON_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_WEAPON);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_TYPE, 10000);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_SPEED_FACTOR, 10);
+        obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+        obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+        tig_art_item_id_create(0, 1, 0, 0, 3, 0, 0, 0, &art_id);
+        obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
+        tig_art_item_id_create(0, 2, 0, 0, 3, 0, 0, 0, &art_id);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_PAPER_DOLL_AID, art_id);
+        tig_art_item_id_create(0, 0, 0, 0, 3, 0, 0, 0, &art_id);
+        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_MISSILE_AID, TIG_ART_ID_INVALID);
+        obj_field_int32_set(obj, OBJ_F_WEAPON_VISUAL_EFFECT_AID, TIG_ART_ID_INVALID);
+        break;
     case OBJ_TYPE_AMMO:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_AMMO_BEGIN && fld < OBJ_F_AMMO_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_AMMO);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 1, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_ITEM_ARMOR:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_ARMOR_BEGIN && fld < OBJ_F_ARMOR_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_ARMOR);
+        tig_art_item_id_create(0, 1, 0, 0, 4, 2, 0, 0, &art_id);
+        obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
+        tig_art_item_id_create(0, 2, 0, 0, 4, 2, 0, 0, &art_id);
+        obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
+        tig_art_item_id_create(0, 0, 0, 0, 4, 2, 0, 0, &art_id);
+        obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
+        obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, OARF_SIZE_MEDIUM);
+        break;
     case OBJ_TYPE_ITEM_GOLD:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_GOLD_BEGIN && fld < OBJ_F_GOLD_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_GOLD);
+        obj_field_int32_set(obj, OBJ_F_GOLD_QUANTITY, 1);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 3, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_ITEM_FOOD:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_FOOD_BEGIN && fld < OBJ_F_FOOD_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_FOOD);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 4, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_ITEM_SCROLL:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_SCROLL_BEGIN && fld < OBJ_F_SCROLL_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_SCROLL);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 5, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_ITEM_KEY:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_KEY_BEGIN && fld < OBJ_F_KEY_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_KEY);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 6, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_ITEM_KEY_RING:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_KEY_RING_BEGIN && fld < OBJ_F_KEY_RING_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_KEY_RING);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 7, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_ITEM_WRITTEN:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_WRITTEN_BEGIN && fld < OBJ_F_WRITTEN_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_WRITTEN);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 8, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_ITEM_GENERIC:
-        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
-            || (fld > OBJ_F_GENERIC_BEGIN && fld < OBJ_F_GENERIC_END);
+        sub_409640(obj, TIG_ART_ITEM_TYPE_GENERIC);
+        tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_PC:
-        return (fld > OBJ_F_CRITTER_BEGIN && fld < OBJ_F_CRITTER_END)
-            || (fld > OBJ_F_PC_BEGIN && fld < OBJ_F_PC_END);
     case OBJ_TYPE_NPC:
-        return (fld > OBJ_F_CRITTER_BEGIN && fld < OBJ_F_CRITTER_END)
-            || (fld > OBJ_F_NPC_BEGIN && fld < OBJ_F_NPC_END);
+        tig_art_critter_id_create(1, 0, 0, 0, 0, 4, 0, 0, 0, &art_id);
+        break;
     case OBJ_TYPE_TRAP:
-        return fld > OBJ_F_TRAP_BEGIN && fld < OBJ_F_TRAP_END;
+        obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= 0x100434;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+        tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
+        break;
     }
 
-    return false;
+    obj_field_int32_set(obj, OBJ_F_AID, art_id);
+    obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
+}
+
+// 0x409640
+void sub_409640(int64_t obj, int subtype)
+{
+    tig_art_id_t art_id;
+
+    if (tig_art_item_id_create(0, 1, 0, 0, 0, subtype, 0, 0, &art_id) != TIG_OK) {
+        art_id = TIG_ART_ID_INVALID;
+    }
+
+    obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
+    obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, obj_item_defaults[subtype].worth);
+    obj_field_int32_set(obj, OBJ_F_HP_PTS, obj_item_defaults[subtype].hp);
+}
+
+// 0x4096B0
+bool sub_4096B0(TigFile* stream, int64_t obj)
+{
+    Object* object;
+    int cnt;
+
+    object = obj_lock(obj);
+
+    if (!obj_write_raw(&(object->field_20), sizeof(object->field_20), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->type), sizeof(object->type), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    cnt = sub_40C030(object->type);
+    if (!obj_write_raw(object->field_4C, sizeof(object->field_4C[0]) * cnt, stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    dword_5D10F4 = 0;
+    dword_5D110C = stream;
+    if (!obj_enumerate_fields(object, sub_40A070)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    obj_unlock(obj);
+    return true;
+}
+
+// 0x409980
+bool sub_409980(TigFile* stream, int64_t obj)
+{
+    Object* object;
+    int cnt;
+
+    object = obj_lock(obj);
+
+    if (!obj_write_raw(&(object->field_20), sizeof(object->field_20), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->type), sizeof(object->type), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_write_raw(&(object->field_46), sizeof(object->field_46), stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    cnt = sub_40C030(object->type);
+    if (!obj_write_raw(object->field_48, sizeof(object->field_48[0]) * cnt, stream)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    dword_5D110C = stream;
+    if (!sub_40CBA0(object, object_field_write)) {
+        obj_unlock(obj);
+        return false;
+    }
+
+    obj_unlock(obj);
+    return true;
+}
+
+// 0x409CB0
+void sub_409CB0(S4E4BD0* mem, int64_t obj)
+{
+    Object* object;
+    int cnt;
+
+    object = obj_lock(obj);
+    sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
+    sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
+    sub_4E4C00(&(object->type), sizeof(object->type), mem);
+    cnt = sub_40C030(object->type);
+    sub_4E4C00(object->field_4C, sizeof(object->field_4C[0]) * cnt, mem);
+    dword_5D10F4 = 0;
+    dword_5D1118 = mem;
+    obj_enumerate_fields(object, sub_40A0E0);
+    obj_unlock(obj);
+}
+
+// 0x409E80
+void sub_409E80(S4E4BD0* mem, int64_t obj)
+{
+    Object* object;
+    int cnt;
+
+    object = obj_lock(obj);
+    sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
+    sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
+    sub_4E4C00(&(object->type), sizeof(object->type), mem);
+    sub_4E4C00(&(object->field_46), sizeof(object->field_46), mem);
+    cnt = sub_40C030(object->type);
+    sub_4E4C00(object->field_48, sizeof(object->field_48[0]) * cnt, mem);
+    dword_5D1118 = mem;
+
+    sub_40CBA0(object, sub_40A250);
+    obj_unlock(obj);
+}
+
+// 0x40A790
+int sub_40A790(int a1)
+{
+    int index;
+
+    for (index = 0; index < 21; index++) {
+        if (dword_59BE00[index] == a1) {
+            return index;
+        }
+    }
+    return 0;
 }
 
 // 0x40A7B0
@@ -2503,16 +2406,52 @@ void sub_40A8A0()
     object_fields[OBJ_F_PROTOTYPE_HANDLE].type = 12;
 }
 
+// 0x40BAC0
+void sub_40BAC0()
+{
+    int fld;
+
+    dword_5D1130 = 0;
+    dword_5D1134 = 0;
+
+    for (fld = 0; fld < OBJ_F_TOTAL_NORMAL; fld++) {
+        if (object_fields[fld].type == 12) {
+            dword_5D1130++;
+        } else if (object_fields[fld].type == 13) {
+            dword_5D1134++;
+        }
+    }
+
+    if (dword_5D1130 != 0) {
+        dword_5D1128 = (int*)MALLOC(sizeof(int) * dword_5D1130);
+    }
+
+    if (dword_5D1134 != 0) {
+        dword_5D112C = (int*)MALLOC(sizeof(int) * dword_5D1134);
+    }
+
+    dword_5D1130 = 0;
+    dword_5D1134 = 0;
+
+    for (fld = 0; fld < OBJ_F_TOTAL_NORMAL; fld++) {
+        if (object_fields[fld].type == 12) {
+            dword_5D1128[dword_5D1130++] = fld;
+        } else if (object_fields[fld].type == 13) {
+            dword_5D112C[dword_5D1134++] = fld;
+        }
+    }
+}
+
 // 0x40BBB0
 void sub_40BBB0()
 {
     if (dword_5D1128 != NULL) {
-        free(dword_5D1128);
+        FREE(dword_5D1128);
         dword_5D1128 = NULL;
     }
 
     if (dword_5D112C != NULL) {
-        free(dword_5D112C);
+        FREE(dword_5D112C);
         dword_5D112C = NULL;
     }
 }
@@ -2521,6 +2460,183 @@ void sub_40BBB0()
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4)
 {
     // TODO: Incomplete.
+}
+
+// 0x40C030
+int sub_40C030(ObjectType object_type)
+{
+    int v1;
+
+    switch (object_type) {
+    case OBJ_TYPE_WALL:
+        v1 = object_fields[OBJ_F_WALL_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_PORTAL:
+        v1 = object_fields[OBJ_F_PORTAL_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_CONTAINER:
+        v1 = object_fields[OBJ_F_CONTAINER_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_SCENERY:
+        v1 = object_fields[OBJ_F_SCENERY_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_PROJECTILE:
+        v1 = object_fields[OBJ_F_PROJECTILE_PAD_I64AS_1].field_8;
+        break;
+    case OBJ_TYPE_WEAPON:
+        v1 = object_fields[OBJ_F_WEAPON_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_AMMO:
+        v1 = object_fields[OBJ_F_AMMO_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        v1 = object_fields[OBJ_F_ARMOR_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GOLD:
+        v1 = object_fields[OBJ_F_GOLD_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_FOOD:
+        v1 = object_fields[OBJ_F_FOOD_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_SCROLL:
+        v1 = object_fields[OBJ_F_SCROLL_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY:
+        v1 = object_fields[OBJ_F_KEY_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        v1 = object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_WRITTEN:
+        v1 = object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GENERIC:
+        v1 = object_fields[OBJ_F_GENERIC_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_PC:
+        v1 = object_fields[OBJ_F_PC_PAD_I64AS_1].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_NPC:
+        // NOTE: Probably wrong.
+        v1 = object_fields[OBJ_F_NPC_SHIT_LIST_IDX].field_8;
+        if (v1 == -1) {
+            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
+        }
+        break;
+    case OBJ_TYPE_TRAP:
+        v1 = object_fields[OBJ_F_TRAP_PAD_I64AS_1].field_8;
+        break;
+    default:
+        // NOTE: Original code returns `object_type`.
+        __assume(0);
+    }
+
+    if (v1 == -1) {
+        v1 = object_fields[OBJ_F_PAD_I64AS_1].field_8;
+    }
+
+    return v1 + 1;
+}
+
+// 0x40C260
+bool sub_40C260(int type, int fld)
+{
+    if (object_fields[fld].type <= 2) {
+        return false;
+    }
+
+    if ((fld > OBJ_F_BEGIN && fld < OBJ_F_END)
+        || (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END)
+        || fld == OBJ_F_TYPE
+        || fld == OBJ_F_PROTOTYPE_HANDLE) {
+        return true;
+    }
+
+    switch (type) {
+    case OBJ_TYPE_WALL:
+        return fld > OBJ_F_WALL_BEGIN && fld < OBJ_F_WALL_END;
+    case OBJ_TYPE_PORTAL:
+        return fld > OBJ_F_PORTAL_BEGIN && fld < OBJ_F_PORTAL_END;
+    case OBJ_TYPE_CONTAINER:
+        return fld > OBJ_F_CONTAINER_BEGIN && fld < OBJ_F_CONTAINER_END;
+    case OBJ_TYPE_SCENERY:
+        return fld > OBJ_F_SCENERY_BEGIN && fld < OBJ_F_SCENERY_END;
+    case OBJ_TYPE_PROJECTILE:
+        return fld > OBJ_F_PROJECTILE_BEGIN && fld < OBJ_F_PROJECTILE_END;
+    case OBJ_TYPE_WEAPON:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_WEAPON_BEGIN && fld < OBJ_F_WEAPON_END);
+    case OBJ_TYPE_AMMO:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_AMMO_BEGIN && fld < OBJ_F_AMMO_END);
+    case OBJ_TYPE_ITEM_ARMOR:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_ARMOR_BEGIN && fld < OBJ_F_ARMOR_END);
+    case OBJ_TYPE_ITEM_GOLD:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_GOLD_BEGIN && fld < OBJ_F_GOLD_END);
+    case OBJ_TYPE_ITEM_FOOD:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_FOOD_BEGIN && fld < OBJ_F_FOOD_END);
+    case OBJ_TYPE_ITEM_SCROLL:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_SCROLL_BEGIN && fld < OBJ_F_SCROLL_END);
+    case OBJ_TYPE_ITEM_KEY:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_KEY_BEGIN && fld < OBJ_F_KEY_END);
+    case OBJ_TYPE_ITEM_KEY_RING:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_KEY_RING_BEGIN && fld < OBJ_F_KEY_RING_END);
+    case OBJ_TYPE_ITEM_WRITTEN:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_WRITTEN_BEGIN && fld < OBJ_F_WRITTEN_END);
+    case OBJ_TYPE_ITEM_GENERIC:
+        return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
+            || (fld > OBJ_F_GENERIC_BEGIN && fld < OBJ_F_GENERIC_END);
+    case OBJ_TYPE_PC:
+        return (fld > OBJ_F_CRITTER_BEGIN && fld < OBJ_F_CRITTER_END)
+            || (fld > OBJ_F_PC_BEGIN && fld < OBJ_F_PC_END);
+    case OBJ_TYPE_NPC:
+        return (fld > OBJ_F_CRITTER_BEGIN && fld < OBJ_F_CRITTER_END)
+            || (fld > OBJ_F_NPC_BEGIN && fld < OBJ_F_NPC_END);
+    case OBJ_TYPE_TRAP:
+        return fld > OBJ_F_TRAP_BEGIN && fld < OBJ_F_TRAP_END;
+    }
+
+    return false;
 }
 
 // 0x40C560
@@ -2535,6 +2651,68 @@ bool sub_40C560(Object* object, int fld)
     return true;
 }
 
+// 0x40C580
+void sub_40C580(Object* object)
+{
+    int cnt;
+
+    cnt = sub_40C030(object->type);
+    object->field_48 = (int*)CALLOC(sizeof(int) * 2 * cnt, 1);
+    object->field_4C = &(object->field_48[cnt]);
+}
+
+// 0x40C5B0
+void sub_40C5B0(Object* object)
+{
+    FREE(object->field_48);
+}
+
+// 0x40C5C0
+void sub_40C5C0(Object* dst, Object* src)
+{
+    int cnt;
+
+    cnt = sub_40C030(dst->type);
+    dst->field_48 = (int*)MALLOC(sizeof(int) * 2 * cnt);
+    dst->field_4C = &(dst->field_48[cnt]);
+    memcpy(dst->field_48, src->field_48, sizeof(int) * 2 * cnt);
+}
+
+// 0x40C610
+void sub_40C610(Object* object)
+{
+    int cnt;
+
+    cnt = sub_40C030(object->type);
+    object->field_4C = (int*)MALLOC(sizeof(int) * cnt);
+}
+
+// 0x40C640
+void sub_40C640(Object* object)
+{
+    FREE(object->field_4C);
+}
+
+// 0x40C650
+void sub_40C650(Object* dst, Object* src)
+{
+    int cnt;
+
+    cnt = sub_40C030(dst->type);
+    dst->field_4C = (int*)MALLOC(sizeof(int) * cnt);
+
+    memcpy(dst->field_4C, src->field_4C, sizeof(int) * cnt);
+}
+
+// 0x40C690
+void sub_40C690(Object* object)
+{
+    int cnt;
+
+    cnt = sub_40C030(object->type);
+    memset(object->field_4C, 0, sizeof(int) * cnt);
+}
+
 // 0x40C6B0
 bool sub_40C6B0(Object* object, int fld)
 {
@@ -2543,6 +2721,64 @@ bool sub_40C6B0(Object* object, int fld)
     object->field_50[dword_5D10F4++] = 0;
 
     return true;
+}
+
+// 0x40C6E0
+bool sub_40C6E0(Object* object, int fld)
+{
+    ObjSa v1;
+
+    v1.type = object_fields[fld].type;
+    v1.ptr = &(object->field_50[dword_5D10F4]);
+    sub_4E3FA0(&v1);
+    dword_5D10F4++;
+
+    return true;
+}
+
+// 0x40C730
+bool sub_40C730(Object* object, int fld)
+{
+    ObjSa v1;
+
+    v1.type = object_fields[fld].type;
+    v1.ptr = &(dword_5D1110->field_50[dword_5D10F4]);
+    sub_4E4280(&v1, &(object->field_50[dword_5D10F4]));
+    dword_5D10F4++;
+
+    return true;
+}
+
+// 0x40C7A0
+bool sub_40C7A0(Object* object, int fld, ObjectFieldInfo* info)
+{
+    ObjSa v1;
+
+    v1.type = info->type;
+    v1.ptr = &(dword_5D1108->field_50[fld]);
+    sub_4E4280(&v1, &(object->field_50[fld]));
+
+    return true;
+}
+
+// 0x40C7F0
+void sub_40C7F0(Object* dst, Object* src, int fld)
+{
+    ObjSa v1;
+
+    v1.type = object_fields[fld].type;
+    v1.ptr = &(src->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN]);
+    sub_4E4280(&v1, &(dst->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN]));
+}
+
+// 0x40C840
+void sub_40C840(Object* object, int fld)
+{
+    ObjSa v1;
+
+    v1.type = object_fields[fld].type;
+    v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN]);
+    sub_4E3FA0(&v1);
 }
 
 // 0x40C880
@@ -2684,14 +2920,6 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
     return true;
 }
 
-// 0x40CB40
-int sub_40CB40(Object* object, int fld)
-{
-    (void)object;
-
-    return object_fields[fld].field_0;
-}
-
 // 0x40CB00
 bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback)
 {
@@ -2704,6 +2932,25 @@ bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerate
         }
     }
 
+    return true;
+}
+
+// 0x40CB40
+int sub_40CB40(Object* object, int fld)
+{
+    (void)object;
+
+    return object_fields[fld].field_0;
+}
+
+// 0x40CB60
+bool sub_40CB60(Object* object, int fld, ObjectFieldInfo* info)
+{
+    ObjSa v1;
+
+    v1.type = info->type;
+    v1.ptr = &(object->field_50[fld]);
+    sub_4E3FA0(&v1);
     return true;
 }
 

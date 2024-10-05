@@ -818,6 +818,7 @@ void sub_407900(int64_t obj_handle, int fld, int index, void* value);
 void sub_407960(int64_t obj_handle, int fld, int index, void* value);
 int obj_arrayfield_length_get(int64_t obj_handle, int fld);
 void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length);
+ObjectID sub_407EF0(int64_t obj);
 Object* obj_lock(int64_t obj_handle);
 void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);
