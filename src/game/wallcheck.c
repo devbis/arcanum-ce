@@ -205,7 +205,20 @@ void sub_438830()
 }
 
 // 0x438A50
-void wallcheck_roof_faded_clear()
+void wallcheck_roof_faded_clear(int64_t a1)
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (!sub_4387C0(a1, &index)) {
+        tig_debug_printf("Warning: unable to find roof to clear in wallcheck_roof_faded_clear()\n");
+        return;
+    }
+
+    if (stru_5E0A10[index].field_8-- == 1) {
+        sub_439F20(a1);
+        memcpy(&(stru_5E0A10[index]),
+            &(stru_5E0A10[index + 1]),
+            sizeof(*stru_5E0A10) * (dword_5E2E28 + (index + 1)));
+        dword_5E2E28--;
+    }
 }
