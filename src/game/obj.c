@@ -1466,6 +1466,38 @@ void sub_407C30(int64_t obj, int fld, int cnt, void* data)
     }
 }
 
+// 0x407D50
+void sub_407D50(int64_t obj, int fld)
+{
+    Object* object;
+
+    object = obj_lock(obj);
+    if (sub_40C260(object->type, fld)) {
+        if (object->field_20.type == -1) {
+            sub_40C6E0(object, fld);
+            sub_40D400(object, fld, true);
+            obj_unlock(obj);
+        } else if (fld > OBJ_F_TRANSIENT_BEGIN) {
+            sub_40C840(object, fld);
+            obj_unlock(obj);
+        } else {
+            if (sub_40D320(object, fld)) {
+                sub_40CB60(object, sub_40D230(object, fld), &(object_fields[fld]));
+                sub_40D400(object, fld, true);
+            } else {
+                sub_40D450(object, fld);
+                sub_40D370(object, fld, true);
+                sub_40D400(object, fld, true);
+            }
+            object->field_44 = -1;
+            obj_unlock(obj);
+        }
+    } else {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj);
+    }
+}
+
 // 0x407EF0
 ObjectID sub_407EF0(int64_t obj)
 {
