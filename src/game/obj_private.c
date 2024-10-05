@@ -255,6 +255,18 @@ void obj_find_remove(int64_t obj)
     obj_field_int32_set(obj, OBJ_F_FIND_NODE, NULL);
 }
 
+// 0x4E3B30
+void obj_find_walk_first()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E3BA0
+void obj_find_walk_next()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4E3A70
 void obj_find_move(int64_t obj)
 {
@@ -345,6 +357,18 @@ void obj_find_node_deallocate(FindNode* obj_find_node)
     dword_60368C = obj_find_node;
 }
 
+// 0x4E3D30
+void obj_find_node_attach()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E3D60
+void obj_find_node_detach()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4E3DD0
 void sub_4E3DD0()
 {
@@ -357,6 +381,24 @@ void sub_4E3DD0()
     }
 }
 
+// 0x4E3E10
+void sub_4E3E10()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E3E90
+void sub_4E3E90()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E3F40
+void sub_4E3F40()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4E3F80
 void sub_4E3F80()
 {
@@ -367,6 +409,72 @@ void sub_4E3F80()
 void sub_4E3F90()
 {
     dword_6036A8 = false;
+}
+
+// 0x4E3FA0
+void sub_4E3FA0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4000
+void sub_4E4000()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4180
+void sub_4E4180()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4280
+void sub_4E4280()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4360
+void sub_4E4360()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E44F0
+void sub_4E44F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4660
+void sub_4E4660()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E47E0
+void sub_4E47E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4990
+void sub_4E4990()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4B70
+void sub_4E4B70()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E4BA0
+void sub_4E4BA0()
+{
+    // TODO: Incomplete.
 }
 
 // 0x4E4BD0
