@@ -49,6 +49,7 @@ static void obj_find_node_deallocate(FindNode* obj_find_node);
 static void sub_4E3DD0();
 static void sub_4E4C80(S4E4BD0* a1, int size);
 static void sub_4E56A0(int index);
+static void sub_4E56E0();
 static void sub_4E5770(int index);
 static bool sub_4E57E0(ObjectID a1, int* index_ptr);
 static int64_t sub_4E58C0(int a1, int a2);
@@ -536,6 +537,28 @@ void sub_4E56A0(int index)
     // TODO: Review cast.
     sub_4E5980((int*)data, 0);
     data[0] = 'P';
+}
+
+// 0x4E56E0
+void sub_4E56E0()
+{
+    if (object_pool_capacity < 0x200000) {
+        object_pool_capacity += 0x2000;
+        if (dword_6036E8 <= dword_6036C4 + 1) {
+            tig_debug_printf("WARNING: storing %d objects --", dword_6036C4 + 1);
+            tig_debug_printf(" near %d, game will crash!\n", 0x200000);
+        }
+
+        object_pool_buckets[object_pool_num_buckets++] = (uint8_t*)MALLOC(object_pool_size_plus_padding);
+
+        return true;
+    }
+
+    if (object_pool_capacity > 0x200000) {
+        tig_debug_println("Object pool element cap exceeded.  Capacity tracking out of sync");
+    }
+
+    return false;
 }
 
 // 0x4E5770
