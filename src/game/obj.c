@@ -1424,6 +1424,27 @@ void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length)
     obj_unlock(obj_handle);
 }
 
+// 0x407BA0
+void sub_407BA0(int64_t obj, int fld, int cnt, void* data)
+{
+    Object* object;
+    SizeableArray** sa_ptr;
+    bool prototype_locked;
+    int64_t prototype_obj;
+
+    object = obj_lock(obj);
+    if (sub_40C260(object->type, fld)) {
+        prototype_locked = sub_408F40(object, fld, &sa, &prototype_obj);
+        sa_array_copy_to_flat(data, sa_ptr, cnt, 8);
+        if (prototype_locked) {
+            obj_unlock(prototype_obj);
+        }
+    } else {
+        object_field_not_exists(object, fld);
+        obj_unlock(obj);
+    }
+}
+
 // 0x407EF0
 ObjectID sub_407EF0(int64_t obj)
 {
