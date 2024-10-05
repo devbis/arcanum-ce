@@ -2867,6 +2867,29 @@ void object_field_set_with_network(object_id_t object_id, int field, int a3, int
     // TODO: Incomplete.
 }
 
+// 0x40BFC0
+bool sub_40BFC0(void* entry, int index)
+{
+    ObjectID oid;
+    int64_t obj;
+
+    (void)index;
+
+    memcpy(&oid, entry, sizeof(oid));
+    if (oid.type != 0) {
+        obj = objp_perm_lookup(oid);
+        if (obj != OBJ_HANDLE_NULL) {
+            oid.type = -2;
+            oid.h.field_8 = obj;
+        } else {
+            oid.type = 0;
+        }
+        memcpy(entry, &oid, sizeof(oid));
+    }
+
+    return true;
+}
+
 // 0x40C030
 int sub_40C030(ObjectType object_type)
 {
