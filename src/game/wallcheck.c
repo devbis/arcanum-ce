@@ -74,7 +74,8 @@ void wallcheck_reset()
 // 0x437E00
 void wallcheck_exit()
 {
-    // TODO: Incomplete.
+    wallcheck_reset();
+    dword_5E0A00 = 0;
 }
 
 // 0x437E10
