@@ -1434,7 +1434,7 @@ void sub_407BA0(int64_t obj, int fld, int cnt, void* data)
 
     object = obj_lock(obj);
     if (sub_40C260(object->type, fld)) {
-        prototype_locked = sub_408F40(object, fld, &sa, &prototype_obj);
+        prototype_locked = sub_408F40(object, fld, &sa_ptr, &prototype_obj);
         sa_array_copy_to_flat(data, sa_ptr, cnt, 8);
         if (prototype_locked) {
             obj_unlock(prototype_obj);
@@ -1455,7 +1455,7 @@ void sub_407C30(int64_t obj, int fld, int cnt, void* data)
 
     object = obj_lock(obj);
     if (sub_40C260(object->type, fld)) {
-        prototype_locked = sub_408F40(object, fld, &sa, &prototype_obj);
+        prototype_locked = sub_408F40(object, fld, &sa_ptr, &prototype_obj);
         sa_array_copy_to_flat(data, sa_ptr, cnt, 16);
         if (prototype_locked) {
             obj_unlock(prototype_obj);
