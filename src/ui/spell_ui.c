@@ -3,10 +3,15 @@
 #include "game/magictech.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/player.h"
 #include "game/spell.h"
 #include "game/stat.h"
+#include "game/target.h"
+#include "game/ui.h"
+#include "ui/charedit_ui.h"
+#include "ui/hotkey_ui.h"
 #include "ui/intgame.h"
 
 #define FIVE 5
@@ -234,7 +239,7 @@ void sub_57C320(int magictech)
     if (index < FIVE) {
         stru_5CB3A8[index].magictech = -1;
         stru_5CB3A8[index].field_4 = 0;
-        sub_553620(index, -1);
+        sub_553620(index, TIG_ART_ID_INVALID);
     }
 }
 
@@ -271,13 +276,13 @@ void sub_57C3F0(int index)
 
     if (stru_5CB3A8[index].field_4 == 1
         && sub_4557C0(stru_5CB3A8[index].magictech, &lock)) {
-        obj = lock->target_obj;
+        obj = lock->target_obj.obj;
         if (obj == OBJ_HANDLE_NULL) {
             if (lock->summoned_obj != NULL) {
-                obj = *lock->summoned_obj;
+                obj = lock->summoned_obj->obj;
             }
             if (obj == OBJ_HANDLE_NULL) {
-                obj = lock->parent_obj;
+                obj = lock->parent_obj.obj;
             }
         }
 
@@ -297,7 +302,7 @@ void sub_57C470()
     for (index = 0; index < FIVE; index++) {
         stru_5CB3A8[index].magictech = -1;
         stru_5CB3A8[index].field_4 = 0;
-        sub_553620(index, -1);
+        sub_553620(index, TIG_ART_ID_INVALID);
     }
 
     dword_5CB3D0 = -1;
@@ -385,7 +390,7 @@ void sub_57C540(int64_t obj, int index)
     }
 
     stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
-    if (sub_55A220()) {
+    if (charedit_is_created()) {
         sub_55A230();
         sub_550720();
     }
@@ -403,7 +408,7 @@ void sub_57C670(int64_t obj, int index)
         sub_57F340(index);
         stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
 
-        if (sub_55A220()) {
+        if (charedit_is_created()) {
             sub_55A230();
             sub_550720();
         }
