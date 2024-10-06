@@ -29,6 +29,7 @@ void sub_4A3890();
 int sub_4A38A0();
 void sub_4A39D0(Func5F0DF8* func, int ctx);
 void* sub_4A4230(int player);
+int sub_4A4240(int player);
 void sub_4A4270();
 void sub_4A4280();
 bool sub_4A4320();
