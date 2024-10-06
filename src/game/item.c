@@ -1789,6 +1789,27 @@ void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4)
     }
 }
 
+// 0x467520
+void sub_467520(int64_t obj)
+{
+    int cnt;
+    int index;
+    int64_t item_obj;
+    int inventory_location;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        cnt = obj_field_int32_get(obj, OBJ_F_CRITTER_INVENTORY_NUM);
+        for (index = cnt - 1; index >= 0; index--) {
+            item_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
+            inventory_location = item_inventory_location_get(item_obj);
+            if (inventory_location >= 2000 && inventory_location <= 2009) {
+                sub_461A70(item_obj);
+                sub_4617F0(item_obj, obj);
+            }
+        }
+    }
+}
+
 // 0x4677B0
 void sub_4677B0(int64_t a1, int64_t a2, int a3)
 {

@@ -96,6 +96,7 @@ int sub_466DA0(int64_t obj);
 void item_remove(int64_t obj);
 void sub_4673F0(int64_t obj, int reason);
 void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4);
+void sub_467520(int64_t obj);
 bool item_decay_timeevent_process(TimeEvent* timeevent);
 bool item_can_decay(int64_t obj);
 bool sub_468090(int64_t obj, int ms);
