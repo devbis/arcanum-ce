@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <tig/tig.h>
+#include "game/obj_private.h"
 
 static SettingsEntry* settings_find(Settings* settings, const char* key);
 static void settings_trim(char* str);
@@ -124,6 +124,31 @@ int settings_get_value(Settings* settings, const char* key)
     } else {
         return 0;
     }
+}
+
+// 0x438D40
+void settings_set_obj_value(Settings* settings, const char* key, ObjectID oid)
+{
+    char str[40];
+
+    objid_id_to_str(str, oid);
+    settings_set_str_value(settings, key, str);
+}
+
+// 0x438DA0
+ObjectID settings_get_obj_value(Settings* settings, const char* key)
+{
+    const char* str;
+    ObjectID oid;
+
+    str = settings_get_str_value(settings, key);
+    if (str != NULL) {
+        objid_id_from_str(&oid, str);
+    } else {
+        oid.type = 0;
+    }
+
+    return oid;
 }
 
 // 0x438DF0
