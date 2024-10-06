@@ -1,13 +1,16 @@
 #include "game/stat.h"
 
+#include "game/a_name.h"
 #include "game/background.h"
 #include "game/effect.h"
 #include "game/light.h"
 #include "game/location.h"
+#include "game/magictech.h"
 #include "game/mes.h"
 #include "game/object.h"
 #include "game/sector.h"
 #include "game/skill.h"
+#include "game/tile.h"
 #include "game/timeevent.h"
 
 static bool sub_4B1310(TimeEvent* timeevent);
@@ -327,7 +330,7 @@ int stat_level(object_id_t obj, int stat)
             // - Strength +2
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = sub_4D70B0(location);
-            if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
+            if (tig_art_tile_id_type_get(art_id) == 0) {
                 if (stat == STAT_INTELLIGENCE) {
                     value += 2;
                 }
@@ -410,7 +413,7 @@ int stat_level(object_id_t obj, int stat)
         case BACKGROUND_SKY_MAGE:
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = sub_4D70B0(location);
-            if (tig_art_tile_id_indoor_outdoor_type(art_id) == 0) {
+            if (tig_art_tile_id_type_get(art_id) == 0) {
                 value -= 4;
             } else {
                 value += 4;
