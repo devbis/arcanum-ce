@@ -42,8 +42,7 @@ typedef struct WmapNote {
     /* 0004 */ int field_4;
     /* 0008 */ int x;
     /* 000C */ int y;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
+    /* 0010 */ int64_t field_10;
     /* 0018 */ TigRect field_18;
     /* 0028 */ int field_28;
     /* 002C */ char str[250];
@@ -184,6 +183,7 @@ static void sub_564320(TextEdit* textedit);
 static void sub_564360(int id);
 static bool sub_5643C0(const char* str);
 static void sub_564940();
+static void sub_564970(S64E408* a1);
 static int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime);
 static void wmap_ui_town_notes_load();
 static void sub_5650C0();
@@ -1457,7 +1457,6 @@ void sub_563F90(int* coords)
     stru_66D718.y = coords[1];
     sub_563D50(&stru_66D718);
     stru_66D718.field_10 = 0;
-    stru_66D718.field_14 = 0;
     sub_563F00(&(stru_66D718.x), &(stru_66D718.field_10));
     sub_564030(&stru_66D718);
 }
@@ -1652,7 +1651,7 @@ void sub_564940()
 }
 
 // 0x564970
-void sub_564970()
+void sub_564970(S64E408* a1)
 {
     // TODO: Incomplete.
 }
@@ -1721,7 +1720,7 @@ int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime)
 
     sub_561800(a1, &v1);
     sub_561800(a2, &v2);
-    v3 = sub_4B96F0(v1, v2) / 64;
+    v3 = (int)(sub_4B96F0(v1, v2) / 64);
 
     if (datetime != NULL) {
         sub_45A950(datetime, 3600000 * v3);
@@ -1770,7 +1769,7 @@ void wmap_ui_town_notes_load()
         }
 
         if (tig_file_fread(&wmap_ui_town_notes_cnt, sizeof(wmap_ui_town_notes_cnt), 1, stream) == 1
-            && tig_file_fread_(&(stru_5C9228[2].field_194), sizeof(stru_5C9228[2].field_194), 1, stream) == 1) {
+            && tig_file_fread(&(stru_5C9228[2].field_194), sizeof(stru_5C9228[2].field_194), 1, stream) == 1) {
             for (index = 0; index < wmap_ui_town_notes_cnt; index++) {
                 if (!wmap_ui_town_note_load(&(wmap_ui_town_notes[index]), stream)) {
                     success = false;
