@@ -166,6 +166,14 @@ typedef struct S5F0E1C {
 
 static_assert(sizeof(S5F0E1C) == 0x40, "wrong size");
 
+typedef struct S5E8E08 {
+    /* 0000 */ ObjectID oid;
+    /* 0018 */ char field_18[2000];
+    /* 07E8 */ char field_7E8[2000];
+} S5E8E08;
+
+static_assert(sizeof(S5E8E08) == 0xFB8, "wrong size");
+
 static void sub_49CB80(S5E8AD0* a1);
 static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
@@ -186,6 +194,7 @@ static void sub_4A3170(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
+static void sub_4A44C0(int64_t obj, char* a2, char* a3);
 static void sub_4A54E0();
 static void sub_4A5670(int64_t obj);
 
@@ -206,6 +215,9 @@ static TigIdxTable stru_5E8940;
 
 // 0x5E8AD0
 static S5E8AD0 stru_5E8AD0[NUM_PLAYERS];
+
+// 0x5E8E08
+static S5E8E08 stru_5E8E08[NUM_PLAYERS];
 
 // 0x5F0BE8
 static mes_file_handle_t multiplayer_mes_file;
@@ -1116,9 +1128,25 @@ void sub_4A43B0()
 }
 
 // 0x4A44C0
-void sub_4A44C0()
+void sub_4A44C0(int64_t obj, char* a2, char* a3)
 {
-    // TODO: Incomplete.
+    ObjectID oid;
+    int index;
+
+    oid = sub_407EF0(obj);
+    for (index = 0; index < NUM_PLAYERS; index++) {
+        if (objid_is_equal(oid, stru_5E8E08[index].oid)) {
+            if (a2 != NULL) {
+                strcpy(a2, stru_5E8E08[index].field_18);
+            }
+            if (a3 != NULL) {
+                strcpy(a3, stru_5E8E08[index].field_7E8);
+            }
+            return index;
+        }
+    }
+
+    return -1;
 }
 
 // 0x4A45B0
