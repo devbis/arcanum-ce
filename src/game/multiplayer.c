@@ -16,6 +16,13 @@
 
 #define NUM_PLAYERS 8
 
+typedef struct S5F0DEC {
+    /* 0000 */ ObjectID oid;
+    /* 0018 */ struct S5F0DEC* next;
+} S5F0DEC;
+
+static_assert(sizeof(S5F0DEC) == 0x20, "wrong size");
+
 typedef struct S5E8AD0 {
     /* 0000 */ unsigned int flags;
     /* 0004 */ int field_4;
@@ -74,8 +81,11 @@ static void* off_5F0BC8[NUM_PLAYERS];
 // 0x5F0DE0
 static int dword_5F0DE0;
 
+// 0x5F0DE4
+static void* dword_5F0DE4;
+
 // 0x5F0DEC
-static void* dword_5F0DEC;
+static S5F0DEC* dword_5F0DEC;
 
 // 0x5F0DF8
 static Func5F0DF8* dword_5F0DF8;
@@ -147,7 +157,36 @@ bool multiplayer_init(GameInitInfo* init_info)
 // 0x49C780
 void multiplayer_exit()
 {
-    // TODO: Incomplete.
+    S5F0DEC* node;
+    int index;
+
+    if (dword_5F0E00) {
+        sub_49CC20();
+    }
+
+    while (dword_5F0DEC != NULL) {
+        node = dword_5F0DEC;
+        dword_5F0DEC = dword_5F0DEC->next;
+        FREE(node);
+    }
+
+    for (index = 0; index < 8; index++) {
+        if (off_5F0BC8[index] != NULL) {
+            FREE(off_5F0BC8[index]);
+            off_5F0BC8[index] = NULL;
+        }
+    }
+
+    tig_idxtable_exit(&stru_5E8940);
+    mes_unload(multiplayer_mes_file);
+
+    if (dword_5F0DE4) {
+        FREE(dword_5F0DE4);
+    }
+
+    if (matchmaker_is_active()) {
+        matchmaker_exit();
+    }
 }
 
 // 0x49C820
@@ -702,7 +741,7 @@ void sub_4A45B0()
 }
 
 // 0x4A47D0
-void sub_4A47D0()
+bool sub_4A47D0(int64_t obj, char* str)
 {
     // TODO: Incomplete.
 }

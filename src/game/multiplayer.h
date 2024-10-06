@@ -7,6 +7,7 @@ typedef void(Func5F0E08)();
 typedef void(Func5F0DF8)(int);
 
 bool multiplayer_init(GameInitInfo* init_info);
+void multiplayer_exit();
 bool multiplayer_mod_load();
 void multiplayer_mod_unload();
 bool sub_49CBD0();
@@ -27,6 +28,7 @@ void sub_4A39D0(Func5F0DF8* func, int ctx);
 void* sub_4A4230(int player);
 void sub_4A4270();
 void sub_4A4280();
+bool sub_4A47D0(int64_t obj, char* str);
 bool sub_4A4C40(int64_t obj, int size, char* path);
 int multiplayer_mm_init(int a1);
 void multiplayer_mm_exit();
