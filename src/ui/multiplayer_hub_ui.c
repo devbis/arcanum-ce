@@ -5,21 +5,33 @@
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/multiplayer.h"
+#include "ui/mainmenu_ui.h"
 #include "ui/scrollbar_ui.h"
+#include "ui/server_list_ui.h"
 #include "ui/textedit_ui.h"
 
-static void sub_582E50(TigRect* rect);
+static void sub_581F30();
 static void sub_581F80();
+static void sub_581F90(int a1);
+static void sub_581FB0(TextEdit* textedit);
 static void sub_581FC0(TextEdit* textedit);
+static void sub_582060(const char* str);
+static bool sub_5826D0(const char* a1, int a2, const char* a3);
 static void sub_582790(TigRect* rect);
+static void sub_582860(TigRect* rect);
 static void sub_5829D0(TigRect* rect);
+static void sub_582AD0(TigRect* rect);
 static bool sub_582D10(const char* str);
 static bool sub_582D20(const char* a, const char* b);
 static const char* sub_582D40(const char* str);
 static const char* sub_582D50(const char* str);
 static void sub_582D60(TigRect* rect);
+static void sub_582E50(TigRect* rect);
+static void sub_582E80();
 static void sub_5830F0();
+static void sub_5836A0();
 static void sub_5837A0(TigRect* rect);
+static void sub_583830(TigRect* rect);
 static const char* sub_584A40(int value);
 static const char* sub_584A80();
 static const char* sub_584A90();
@@ -28,8 +40,8 @@ static void sub_584AC0(const char* str);
 static void sub_584C30(TigRect* rect);
 static void sub_585970(char* buffer);
 static void sub_585A20();
-static void sub_585BA0();
-static void sub_585BB0();
+static void sub_585BA0(TextEdit* textedit);
+static void sub_585BB0(TextEdit* textedit);
 
 // 0x599484
 static int dword_599484[3] = {
@@ -50,6 +62,9 @@ static int dword_5994AC[3] = {
     16,
     21,
 };
+
+// 0x5CBF80
+static int dword_5CBF80 = 52;
 
 // 0x5CBFD8
 static TigRect stru_5CBFD8 = { 37, 188, 246, 368 };
@@ -96,6 +111,9 @@ static mes_file_handle_t dword_5CC5F0 = MES_FILE_HANDLE_INVALID;
 // 0x5CC6AC
 static int dword_5CC6AC = -1;
 
+// 0x68674C
+static char byte_68674C[80];
+
 // 0x5CC6B0
 static TextEdit stru_5CC6B0 = {
     0,
@@ -104,6 +122,30 @@ static TextEdit stru_5CC6B0 = {
     sub_585BA0,
     sub_585BB0,
     NULL,
+};
+
+// 0x5CC6C8
+static MainMenuButtonInfo stru_5CC6C8[20] = {
+    { 162, 22, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, 0, 0, 0, 0, -1 },
+    { 162, 56, -1, TIG_BUTTON_HANDLE_INVALID, 0x11, 0, 0, 0, 0, 0, 0, -1 },
+    { 162, 90, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, 0, 0, 0, 0, -1 },
+    { 460, 505, 357, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 54, 325, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0,0, 0, 0, -1 },
+    { 250, 325, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 54, 395, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0,0, 0, 0, -1 },
+    { 250, 395, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 565, 222, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 761, 222, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 565, 362, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 761, 362, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 565, 432, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 761, 432, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 565, 152, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 761, 152, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 325, 152, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 521, 152, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 325, 222, 757, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 521, 222, 758, TIG_BUTTON_HANDLE_INVALID, 0x12, -1, 0x0C, 0, 0, 0, 0, -1 },
 };
 
 // 0x684688
@@ -165,9 +207,6 @@ static int dword_68673C;
 
 // 0x686740
 static GameModuleList stru_686740;
-
-// 0x68674C
-static char byte_68674C[80];
 
 // 0x6867A0
 static MesFileEntry stru_6867A0;
@@ -325,7 +364,7 @@ void sub_581A90()
 }
 
 // 0x581B10
-void sub_581B10()
+void sub_581B10(TigRect* rect)
 {
     // TODO: Incomplete.
 }
@@ -333,7 +372,7 @@ void sub_581B10()
 // 0x581E60
 void sub_581E60(int x, int y)
 {
-    MainMenuWIndowInfo* window_info;
+    MainMenuWindowInfo* window_info;
 
     window_info = sub_5496C0(sub_5496D0());
     x += window_info->field_5C.x;
@@ -380,8 +419,10 @@ void sub_581F90(int a1)
 }
 
 // 0x581FB0
-void sub_581FB0()
+void sub_581FB0(TextEdit* textedit)
 {
+    (void)textedit;
+
     sub_582D60(NULL);
 }
 
@@ -390,10 +431,12 @@ void sub_581FC0(TextEdit* textedit)
 {
     MesFileEntry mes_file_entry;
 
+    (void)textedit;
+
     if (byte_6861F8[0] == '\0') {
         sub_5826D0(NULL, 3, NULL);
         sub_582AD0(NULL);
-        sub_5672A0();
+        textedit_ui_clear();
         return;
     }
 
@@ -408,11 +451,11 @@ void sub_581FC0(TextEdit* textedit)
     }
 
     sub_582AD0(NULL);
-    sub_5672A0();
+    textedit_ui_clear();
 }
 
 // 0x582060
-void sub_582060()
+void sub_582060(const char* str)
 {
     // TODO: Incomplete.
 }
@@ -512,7 +555,7 @@ void sub_5826C0()
 }
 
 // 0x5826D0
-void sub_5826D0()
+bool sub_5826D0(const char* a1, int a2, const char* a3)
 {
     // TODO: Incomplete.
 }
@@ -550,7 +593,7 @@ void sub_582790(TigRect* rect)
 }
 
 // 0x582860
-void sub_582860()
+void sub_582860(TigRect* rect)
 {
     // TODO: Incomplete.
 }
@@ -588,7 +631,7 @@ void sub_5829D0(TigRect* rect)
 }
 
 // 0x582AD0
-void sub_582AD0()
+void sub_582AD0(TigRect* rect)
 {
     // TODO: Incomplete.
 }
@@ -714,7 +757,7 @@ bool mainmenu_ui_execute_multiplayer_hub(int button)
 
     switch (button) {
     case 0:
-        sub_5417A0(1);
+        sub_5417A0(true);
         return false;
     case 1:
         sub_5836A0();
@@ -736,7 +779,7 @@ bool mainmenu_ui_execute_multiplayer_hub(int button)
         if (mes_load("mes\\urls.mes", &mes_file)) {
             mes_file_entry.num = 1;
             mes_get_msg(mes_file, &mes_file_entry);
-            sub_595A60(mes_file_entry.str);
+            system(mes_file_entry.str);
             mes_unload(mes_file);
         }
         return false;
@@ -744,7 +787,7 @@ bool mainmenu_ui_execute_multiplayer_hub(int button)
         if (mes_load("mes\\urls.mes", &mes_file)) {
             mes_file_entry.num = 2;
             mes_get_msg(mes_file, &mes_file_entry);
-            sub_595A60(mes_file_entry.str);
+            system(mes_file_entry.str);
             mes_unload(mes_file);
         }
         return false;
@@ -786,7 +829,7 @@ void sub_5837A0(TigRect* rect)
 }
 
 // 0x583830
-void sub_583830()
+void sub_583830(TigRect* rect)
 {
     // TODO: Incomplete.
 }
@@ -999,9 +1042,9 @@ void sub_584AE0()
     tig_net_local_server_get_name(name, sizeof(name));
     mainmenu_ui_create_window_func(false);
     if (multiplayer_mm_is_active()) {
-        tig_button_show(stru_5CC6C8[2].field_C);
+        tig_button_show(stru_5CC6C8[2].button_handle);
     } else {
-        tig_button_hide(stru_5CC6C8[2].field_C);
+        tig_button_hide(stru_5CC6C8[2].button_handle);
     }
     tig_net_local_server_set_name(name);
     sub_549990(dword_5994AC, 3);
@@ -1042,7 +1085,7 @@ void sub_584C30(TigRect* rect)
 }
 
 // 0x584CB0
-void sub_584CB0()
+void sub_584CB0(TigRect* rect)
 {
     // TODO: Incomplete.
 }
@@ -1118,7 +1161,7 @@ void sub_585A20()
             break;
         case 2305:
             value = atoi(byte_686948);
-            tig_net_local_server_get_level_range(NULL, max_level);
+            tig_net_local_server_get_level_range(NULL, &max_level);
             if (value >= 0) {
                 tig_net_local_server_set_level_range(value, max_level);
             }
@@ -1148,13 +1191,17 @@ void sub_585A20()
 }
 
 // 0x585BA0
-void sub_585BA0()
+void sub_585BA0(TextEdit* textedit)
 {
+    (void)textedit;
+
     sub_585A20();
 }
 
 // 0x585BB0
-void sub_585BB0()
+void sub_585BB0(TextEdit* textedit)
 {
+    (void)textedit;
+
     sub_584CB0(NULL);
 }
