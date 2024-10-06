@@ -16,6 +16,9 @@
 
 #define NUM_PLAYERS 8
 
+#define BEGIN_SENTINEL 0x4ACEBABE
+#define END_SENTINEL 0xBABE01CE
+
 typedef struct S5F0DEC {
     /* 0000 */ ObjectID oid;
     /* 0018 */ struct S5F0DEC* next;
@@ -242,9 +245,49 @@ void multiplayer_reset()
 }
 
 // 0x49C930
-void multiplayer_save()
+bool multiplayer_save(TigFile* stream)
 {
-    // TODO: Incomplete.
+    unsigned int sentinel;
+    S5F0DEC* node;
+    int cnt;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        return true;
+    }
+
+    sentinel = BEGIN_SENTINEL;
+    if (tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
+        return false;
+    }
+
+    node = dword_5F0DEC;
+    while (node != NULL) {
+        cnt++;
+        node = node->next;
+    }
+
+    if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+        return false;
+    }
+
+    node = dword_5F0DEC;
+    while (node != NULL) {
+        if (tig_file_fwrite(&(node->oid), sizeof(node->oid), 1, stream) != 1) {
+            return false;
+        }
+        node = node->next;
+    }
+
+    if (tig_file_fwrite(stru_5E8AD0, sizeof(*stru_5E8AD0), NUM_PLAYERS, stream) != NUM_PLAYERS) {
+        return false;
+    }
+
+    sentinel = END_SENTINEL;
+    if (tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x49CA20
