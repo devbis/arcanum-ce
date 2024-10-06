@@ -42,6 +42,119 @@ typedef struct S5E8AD0 {
 
 static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
 
+typedef struct S5F0DFC {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ int field_20;
+    /* 0024 */ int field_24;
+    /* 0028 */ int field_28;
+    /* 002C */ int field_2C;
+    /* 0030 */ int field_30;
+    /* 0034 */ int field_34;
+    /* 0038 */ int field_38;
+    /* 003C */ int field_3C;
+    /* 0040 */ int field_40;
+    /* 0044 */ int field_44;
+    /* 0048 */ int field_48;
+    /* 004C */ int field_4C;
+    /* 0050 */ int field_50;
+    /* 0054 */ int field_54;
+    /* 0058 */ int field_58;
+    /* 005C */ int field_5C;
+    /* 0060 */ int field_60;
+    /* 0064 */ int field_64;
+    /* 0068 */ int field_68;
+    /* 006C */ int field_6C;
+    /* 0070 */ int field_70;
+    /* 0074 */ int field_74;
+    /* 0078 */ int field_78;
+    /* 007C */ int field_7C;
+    /* 0080 */ int field_80;
+    /* 0084 */ int field_84;
+    /* 0088 */ int field_88;
+    /* 008C */ int field_8C;
+    /* 0090 */ int field_90;
+    /* 0094 */ int field_94;
+    /* 0098 */ int field_98;
+    /* 009C */ int field_9C;
+    /* 00A0 */ int field_A0;
+    /* 00A4 */ int field_A4;
+    /* 00A8 */ int field_A8;
+    /* 00AC */ int field_AC;
+    /* 00B0 */ int field_B0;
+    /* 00B4 */ int field_B4;
+    /* 00B8 */ int field_B8;
+    /* 00BC */ int field_BC;
+    /* 00C0 */ int field_C0;
+    /* 00C4 */ int field_C4;
+    /* 00C8 */ int field_C8;
+    /* 00CC */ int field_CC;
+    /* 00D0 */ int field_D0;
+    /* 00D4 */ int field_D4;
+    /* 00D8 */ int field_D8;
+    /* 00DC */ int field_DC;
+    /* 00E0 */ int field_E0;
+    /* 00E4 */ int field_E4;
+    /* 00E8 */ int field_E8;
+    /* 00EC */ int field_EC;
+    /* 00F0 */ int field_F0;
+    /* 00F4 */ int field_F4;
+    /* 00F8 */ int field_F8;
+    /* 00FC */ int field_FC;
+    /* 0100 */ int field_100;
+    /* 0104 */ int field_104;
+    /* 0108 */ int field_108;
+    /* 010C */ int field_10C;
+    /* 0110 */ int field_110;
+    /* 0114 */ int field_114;
+    /* 0118 */ int field_118;
+    /* 011C */ int field_11C;
+    /* 0120 */ int field_120;
+    /* 0124 */ int field_124;
+    /* 0128 */ int field_128;
+    /* 012C */ int field_12C;
+    /* 0130 */ int field_130;
+    /* 0134 */ int field_134;
+    /* 0138 */ int field_138;
+    /* 013C */ int field_13C;
+    /* 0140 */ int field_140;
+    /* 0144 */ int field_144;
+    /* 0148 */ int field_148;
+    /* 014C */ int field_14C;
+    /* 0150 */ int field_150;
+    /* 0154 */ int field_154;
+    /* 0158 */ int field_158;
+    /* 015C */ int field_15C;
+    /* 0160 */ int field_160;
+    /* 0164 */ int field_164;
+    /* 0168 */ int field_168;
+    /* 016C */ int field_16C;
+    /* 0170 */ int field_170;
+    /* 0174 */ int field_174;
+    /* 0178 */ int field_178;
+    /* 017C */ int field_17C;
+    /* 0180 */ int field_180;
+    /* 0184 */ int field_184;
+    /* 0188 */ int field_188;
+    /* 018C */ int field_18C;
+    /* 0190 */ int field_190;
+    /* 0194 */ int field_194;
+    /* 0198 */ int field_198;
+    /* 019C */ int field_19C;
+    /* 01A0 */ int field_1A0;
+    /* 01A4 */ int field_1A4;
+    /* 01A8 */ struct S5F0DFC* next;
+    /* 01AC */ int field_1AC;
+} S5F0DFC;
+
+static_assert(sizeof(S5F0DFC) == 0x1B0, "wrong size");
+
 static void sub_49CB80(S5E8AD0* a1);
 static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
@@ -53,6 +166,7 @@ static void sub_4A2A30();
 static void sub_4A2A40(int64_t obj);
 static void sub_4A2A90(int64_t obj);
 static void sub_4A2AE0(int player);
+static void sub_4A2CD0(S5F0DFC* a1);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
@@ -97,6 +211,9 @@ static S5F0DEC* dword_5F0DEC;
 
 // 0x5F0DF8
 static Func5F0DF8* dword_5F0DF8;
+
+// 0x5F0DFC
+static S5F0DFC* dword_5F0DFC;
 
 // 0x5F0E00
 static bool dword_5F0E00;
@@ -689,9 +806,14 @@ int64_t multiplayer_find_next_player_obj()
 }
 
 // 0x4A2CD0
-void sub_4A2CD0()
+void sub_4A2CD0(S5F0DFC* a1)
 {
-    // TODO: Incomplete.
+    S5F0DFC* copy;
+
+    copy = (S5F0DFC*)MALLOC(sizeof(*copy));
+    memcpy(copy, a1, sizeof(*copy));
+    copy->next = dword_5F0DFC;
+    dword_5F0DFC = copy;
 }
 
 // 0x4A2D00
