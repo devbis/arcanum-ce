@@ -180,6 +180,7 @@ static void sub_4A2AE0(int player);
 static void sub_4A2CD0(S5F0DFC* a1);
 static void sub_4A3030(ObjectID a1, ObjectID a2, int a3);
 static S5F0E1C* sub_4A3080(ObjectID oid);
+static void sub_4A30D0(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
@@ -881,9 +882,22 @@ S5F0E1C* sub_4A3080(ObjectID oid)
 }
 
 // 0x4A30D0
-void sub_4A30D0()
+void sub_4A30D0(ObjectID oid)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    S5F0E1C* node;
+
+    sub_4F0690(oid, &obj);
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_MULTIPLAYER_LOCK) != 0) {
+        node = sub_4A3080(oid);
+        if (node != NULL) {
+            node->field_34--;
+            if (node->field_34 == 0) {
+                sub_43D280(obj, OF_MULTIPLAYER_LOCK);
+                sub_4A3170(oid);
+            }
+        }
+    }
 }
 
 // 0x4A3170
