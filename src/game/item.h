@@ -63,6 +63,7 @@ int item_get_all(object_id_t obj, object_id_t** list_ptr);
 void sub_462920(object_id_t* list);
 int64_t item_find_first_matching_prototype(int64_t obj, int64_t a2);
 int64_t sub_462A30(int64_t obj, int64_t a2);
+int item_count_items_matching_prototype(int64_t obj, int64_t a2);
 int sub_462C30(int64_t a1, int64_t a2);
 bool npc_respawn_timevent_process(TimeEvent* timeevent);
 bool item_is_identified(int64_t obj);
