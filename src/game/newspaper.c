@@ -1,7 +1,10 @@
 #include "game/newspaper.h"
 
 #include "game/mes.h"
+#include "game/object.h"
+#include "game/proto.h"
 #include "game/random.h"
+#include "game/ui.h"
 
 #define TWENTY_FIVE 25
 #define GENERIC_NEWSPAPER_NUM 5000
