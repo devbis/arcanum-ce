@@ -597,6 +597,42 @@ int sub_462410(object_id_t item_id, int* quantity_field_ptr)
     return rc;
 }
 
+// 0x462480
+int64_t item_find_by_name(int64_t obj, int name)
+{
+    int type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int index;
+    int64_t item_obj;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else if (obj_type_is_critter(type)) {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    } else {
+        return OBJ_HANDLE_NULL;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    for (index = 0; index < cnt; index++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
+        if (obj_field_int32_get(item_obj, OBJ_F_NAME) == name) {
+            return item_obj;
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
+}
+
 // 0x462820
 int sub_462820(object_id_t item_id)
 {

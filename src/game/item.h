@@ -55,6 +55,7 @@ bool item_is_item(object_id_t object_id);
 int item_total_weight(object_id_t obj);
 int sub_461620(int64_t item_obj, int64_t owner_obj, int64_t a3);
 int item_throwing_distance(int64_t item_obj, int64_t critter_obj);
+int64_t item_find_by_name(int64_t obj, int name);
 int sub_462C30(int64_t a1, int64_t a2);
 bool npc_respawn_timevent_process(TimeEvent* timeevent);
 bool item_is_identified(int64_t obj);
