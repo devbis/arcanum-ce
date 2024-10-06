@@ -194,7 +194,8 @@ static void sub_4A3170(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
-static void sub_4A44C0(int64_t obj, char* a2, char* a3);
+static void sub_4A43B0(int64_t obj, const char* a2, const char* a3);
+static int sub_4A44C0(int64_t obj, char* a2, char* a3);
 static void sub_4A54E0();
 static void sub_4A5670(int64_t obj);
 
@@ -236,6 +237,9 @@ static int dword_5F0DE8;
 
 // 0x5F0DEC
 static S5F0DEC* dword_5F0DEC;
+
+// 0x5F0DF4
+static int dword_5F0DF4;
 
 // 0x5F0DF8
 static Func5F0DF8* dword_5F0DF8;
@@ -1122,13 +1126,38 @@ void sub_4A4320()
 }
 
 // 0x4A43B0
-void sub_4A43B0()
+void sub_4A43B0(int64_t obj, const char* a2, const char* a3)
 {
-    // TODO: Incomplete.
+    int index;
+
+    index = sub_4A44C0(obj, NULL, NULL);
+    if (index == -1) {
+        index = dword_5F0DF4;
+        dword_5F0DF4 = (dword_5F0DF4 + 1) % 8;
+        stru_5E8E08[index].oid = sub_407EF0(obj);
+        stru_5E8E08[index].field_18[0] = '\0';
+        stru_5E8E08[index].field_7E8[0] = '\0';
+    }
+
+    if (a2 != NULL) {
+        if (a2[0] != '\0') {
+            strncpy(stru_5E8E08[index].field_18, a2, 2000);
+        } else {
+            stru_5E8E08[index].field_18[0] = '\0';
+        }
+    }
+
+    if (a3 != NULL) {
+        if (a3[0] != '\0') {
+            strncpy(stru_5E8E08[index].field_7E8, a3, 2000);
+        } else {
+            stru_5E8E08[index].field_7E8[0] = '\0';
+        }
+    }
 }
 
 // 0x4A44C0
-void sub_4A44C0(int64_t obj, char* a2, char* a3)
+int sub_4A44C0(int64_t obj, char* a2, char* a3)
 {
     ObjectID oid;
     int index;
