@@ -1,8 +1,14 @@
 #include "game/multiplayer.h"
 
+#include <stdio.h>
+
 #include "game/anim.h"
+#include "game/background.h"
 #include "game/combat.h"
+#include "game/critter.h"
+#include "game/effect.h"
 #include "game/gamelib.h"
+#include "game/item.h"
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/matchmaker.h"
@@ -10,6 +16,7 @@
 #include "game/mp_utils.h"
 #include "game/obj_private.h"
 #include "game/object.h"
+#include "game/player.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/tech.h"
@@ -161,7 +168,7 @@ typedef struct S5F0E1C {
     /* 0018 */ ObjectID field_18;
     /* 0030 */ int field_30;
     /* 0034 */ int field_34;
-    /* 0038 */ S5F0E1C* next;
+    /* 0038 */ struct S5F0E1C* next;
     /* 003C */ int field_3C;
 } S5F0E1C;
 
@@ -185,11 +192,13 @@ static_assert(sizeof(S5F0BC8) == 0x20, "wrong size");
 
 static void sub_49CB80(S5E8AD0* a1);
 static bool sub_49D570(TimeEvent* timeevent);
+static void multiplayer_handle_message(void* msg);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
 static void sub_4A1FC0();
-static void sub_4A2020(void* msg);
+static bool multiplayer_validate_message(void* msg);
 static void sub_4A2040(int a1);
+static bool multiplayer_handle_network_event(int type, int client_id, void* data, int size);
 static void sub_4A2A30();
 static void sub_4A2A40(int64_t obj);
 static void sub_4A2A90(int64_t obj);
@@ -202,11 +211,24 @@ static void sub_4A30D0(ObjectID oid);
 static void sub_4A3170(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
+static void sub_4A3D00(bool a1);
 static bool sub_4A40D0(int player);
 static void sub_4A43B0(int64_t obj, const char* a2, const char* a3);
 static int sub_4A44C0(int64_t obj, char* a2, char* a3);
+static void sub_4A5290();
+static void sub_4A5380();
 static void sub_4A54E0();
 static void sub_4A5670(int64_t obj);
+static int sub_4A5710(int64_t obj, mes_file_handle_t mes_file);
+static int sub_4A57F0(int64_t obj);
+static int sub_4A5840(int64_t obj, mes_file_handle_t mes_file);
+static int sub_4A5920(int64_t obj, mes_file_handle_t mes_file, int num);
+static int sub_4A59F0(int64_t obj, mes_file_handle_t mes_file);
+static void sub_4A5CA0(int64_t obj, mes_file_handle_t mes_file);
+static int sub_4A5D80(int64_t obj, const char* str);
+static int sub_4A5E10(int64_t obj, const char* str);
+static bool sub_4A5EE0(int64_t obj);
+static void sub_4A6010(int64_t obj);
 
 // 0x5B3FD8
 static int dword_5B3FD8 = 10;
@@ -396,7 +418,7 @@ void multiplayer_reset()
         }
 
         if (dword_5F0DE4 != NULL) {
-            sub_4A3D00(0);
+            sub_4A3D00(false);
             dword_5F0DE4 = NULL;
             dword_5F0DE8 = 0;
         }
@@ -515,7 +537,7 @@ bool multiplayer_mod_load()
 void multiplayer_mod_unload()
 {
     sub_4A2BC0();
-    sub_4A3D00(1);
+    sub_4A3D00(true);
     sub_4A2BD0();
 }
 
@@ -544,9 +566,9 @@ bool sub_49CBD0()
     }
 
     sub_4A2AE0(0);
-    tig_net_on_message(sub_49D690);
-    tig_net_on_message_validation(sub_4A2020);
-    tig_net_on_network_event(sub_4A2070);
+    tig_net_on_message(multiplayer_handle_message);
+    tig_net_on_message_validation(multiplayer_validate_message);
+    tig_net_on_network_event(multiplayer_handle_network_event);
     dword_5F0E00 = false;
 
     return true;
@@ -626,7 +648,7 @@ bool multiplayer_map_open_by_name(const char* name)
     sub_4605C0();
 
     if (!obj_validate_system(1)) {
-        tig_debug_prinln("Object system validate failed post-load in multiplayer_map_open_by_name.");
+        tig_debug_println("Object system validate failed post-load in multiplayer_map_open_by_name.");
         tig_message_post_quit(0);
     }
 
@@ -634,7 +656,7 @@ bool multiplayer_map_open_by_name(const char* name)
 }
 
 // 0x49D690
-void sub_49D690()
+void multiplayer_handle_message(void* msg)
 {
     // TODO: Incomplete.
 }
@@ -679,7 +701,7 @@ void sub_4A1FC0()
 }
 
 // 0x4A2020
-void sub_4A2020(void* msg)
+bool multiplayer_validate_message(void* msg)
 {
     int type;
 
@@ -698,7 +720,7 @@ void sub_4A2040(int a1)
 }
 
 // 0x4A2070
-void sub_4A2070()
+bool multiplayer_handle_network_event(int type, int client_id, void* data, int size)
 {
     // TODO: Incomplete.
 }
@@ -765,7 +787,7 @@ int sub_4A2B10(int64_t obj)
 
     for (player = 0; player < NUM_PLAYERS; player++) {
         if (tig_net_client_is_active(player)
-            && sub_4A1F60(player, player_obj)
+            && sub_4A1F60(player, &player_obj)
             && player_obj == obj) {
             return player;
         }
@@ -852,12 +874,12 @@ int64_t multiplayer_find_next_player_obj()
 // 0x4A2CD0
 void sub_4A2CD0(S5F0DFC* a1)
 {
-    S5F0DFC* copy;
+    S5F0DFC* node;
 
-    copy = (S5F0DFC*)MALLOC(sizeof(*copy));
-    memcpy(copy, a1, sizeof(*copy));
-    copy->next = dword_5F0DFC;
-    dword_5F0DFC = copy;
+    node = (S5F0DFC*)MALLOC(sizeof(*node));
+    memcpy(node, a1, sizeof(*node));
+    node->next = dword_5F0DFC;
+    dword_5F0DFC = node;
 }
 
 // 0x4A2D00
@@ -1057,7 +1079,7 @@ bool sub_4A39F0(const char* path, int64_t obj)
 }
 
 // 0x4A3D00
-void sub_4A3D00()
+void sub_4A3D00(bool a1)
 {
     // TODO: Incomplete.
 }
@@ -1595,13 +1617,13 @@ int sub_4A5840(int64_t obj, mes_file_handle_t mes_file)
 }
 
 // 0x4A5920
-void sub_4A5920()
+int sub_4A5920(int64_t obj, mes_file_handle_t mes_file, int num)
 {
     // TODO: Incomplete.
 }
 
 // 0x4A59F0
-void sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
+int sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
 {
     int v1 = 0;
     int level;
@@ -1685,25 +1707,25 @@ void sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
 }
 
 // 0x4A5CA0
-void sub_4A5CA0()
+void sub_4A5CA0(int64_t obj, mes_file_handle_t mes_file)
 {
     // TODO: Incomplete.
 }
 
 // 0x4A5D80
-void sub_4A5D80()
+int sub_4A5D80(int64_t obj, const char* str)
 {
     // TODO: Incomplete.
 }
 
 // 0x4A5E10
-void sub_4A5E10()
+int sub_4A5E10(int64_t obj, const char* str)
 {
     // TODO: Incomplete.
 }
 
 // 0x4A5EE0
-void sub_4A5EE0()
+bool sub_4A5EE0(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -1763,7 +1785,7 @@ void sub_4A6010(int64_t obj)
 }
 
 // 0x4A6190
-void sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4)
+bool sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4)
 {
     if ((tig_net_local_server_get_options() & TIG_NET_SERVER_PLAYER_KILLING) == 0
         && a1 != a2) {
