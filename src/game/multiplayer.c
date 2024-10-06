@@ -47,6 +47,7 @@ static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
 static void sub_4A1FC0();
+static void sub_4A2020(void* msg);
 static void sub_4A2A30();
 static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
@@ -514,9 +515,12 @@ void sub_4A1FC0()
 }
 
 // 0x4A2020
-void sub_4A2020()
+void sub_4A2020(void* msg)
 {
-    // TODO: Incomplete.
+    int type;
+
+    type = *(int*)msg;
+    return type > 0 && type < 131;
 }
 
 // 0x4A2040
