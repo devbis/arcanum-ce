@@ -51,6 +51,7 @@ static void sub_4A2020(void* msg);
 static void sub_4A2040(int a1);
 static void sub_4A2A30();
 static void sub_4A2A40(int64_t obj);
+static void sub_4A2A90(int64_t obj);
 static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
 static void sub_4A3780();
@@ -568,9 +569,19 @@ void sub_4A2A40(int64_t obj)
 }
 
 // 0x4A2A90
-void sub_4A2A90()
+void sub_4A2A90(int64_t obj)
 {
-    // TODO: Incomplete.
+    Packet69 pkt;
+
+    if (obj != OBJ_HANDLE_NULL) {
+        sub_433220(obj);
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            pkt.type = 69;
+            sub_4440E0(obj, &(pkt.field_8));
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+    }
 }
 
 // 0x4A2AE0
