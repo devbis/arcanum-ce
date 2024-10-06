@@ -179,6 +179,7 @@ static void sub_4A2A90(int64_t obj);
 static void sub_4A2AE0(int player);
 static void sub_4A2CD0(S5F0DFC* a1);
 static void sub_4A3030(ObjectID a1, ObjectID a2, int a3);
+static S5F0E1C* sub_4A3080(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
@@ -864,9 +865,19 @@ void sub_4A3030(ObjectID a1, ObjectID a2, int a3)
 }
 
 // 0x4A3080
-void sub_4A3080()
+S5F0E1C* sub_4A3080(ObjectID oid)
 {
-    // TODO: Incomplete.
+    S5F0E1C* node;
+
+    node = dword_5F0E1C;
+    while (node != NULL) {
+        if (objid_is_equal(node->field_0, oid)) {
+            return node;
+        }
+        node = node->next;
+    }
+
+    return NULL;
 }
 
 // 0x4A30D0
