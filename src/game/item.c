@@ -205,7 +205,7 @@ bool item_is_item(object_id_t object_id)
 }
 
 // 0x461340
-int sub_461340(object_id_t object_id)
+int item_inventory_location_get(object_id_t object_id)
 {
     // FIXME: Result is not used.
     item_parent(object_id, NULL);
@@ -512,7 +512,7 @@ bool sub_462230(int64_t a1, int64_t a2, int64_t a3)
     // TODO: Review.
     return basic_skill_get_training(a3, BASIC_SKILL_HAGGLE) >= TRAINING_MASTER
         || ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) == 0
-            && (sub_461340(a1) < 1000 || sub_461340(a1) > 1008));
+            && (item_inventory_location_get(a1) < 1000 || item_inventory_location_get(a1) > 1008));
 }
 
 // 0x4622A0
@@ -1182,7 +1182,7 @@ int64_t item_wield_get(int64_t obj, int inventory_location)
                 obj_field_int32_get(item_obj, OBJ_F_NAME));
         }
 
-        if (sub_461340(item_obj) == inventory_location) {
+        if (item_inventory_location_get(item_obj) == inventory_location) {
             return item_obj;
         }
     }
@@ -1600,7 +1600,7 @@ int sub_466DA0(int64_t obj)
         return ITEM_CANNOT_NOT_DROPPABLE;
     }
 
-    if (sub_461340(obj) < 1000 || sub_461340(obj) > 1008) {
+    if (item_inventory_location_get(obj) < 1000 || item_inventory_location_get(obj) > 1008) {
         return ITEM_CANNOT_OK;
     }
 
