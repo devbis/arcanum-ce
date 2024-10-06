@@ -181,6 +181,7 @@ static void sub_4A2CD0(S5F0DFC* a1);
 static void sub_4A3030(ObjectID a1, ObjectID a2, int a3);
 static S5F0E1C* sub_4A3080(ObjectID oid);
 static void sub_4A30D0(ObjectID oid);
+static void sub_4A3170(ObjectID oid);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
@@ -901,9 +902,31 @@ void sub_4A30D0(ObjectID oid)
 }
 
 // 0x4A3170
-void sub_4A3170()
+void sub_4A3170(ObjectID oid)
 {
-    // TODO: Incomplete.
+    S5F0E1C* node;
+    S5F0E1C** parent_ptr;
+
+    if (dword_5F0E1C != NULL) {
+        // NOTE: Probably can be joined into loop.
+        if (objid_is_equal(dword_5F0E1C->field_0, oid)) {
+            node = dword_5F0E1C;
+            dword_5F0E1C = dword_5F0E1C->next;
+            FREE(node);
+        } else {
+            node = dword_5F0E1C;
+            parent_ptr = &(dword_5F0E1C->next);
+            while (node->next != NULL) {
+                if (objid_is_equal(node->field_0, oid)) {
+                    *parent_ptr = node->next;
+                    FREE(node);
+                    break;
+                }
+                node = node->next;
+                parent_ptr = &((*parent_ptr)->next);
+            }
+        }
+    }
 }
 
 // 0x4A3230
