@@ -71,6 +71,7 @@ bool item_is_identified(int64_t obj);
 void item_identify_all(int64_t obj);
 int item_gold_get(int64_t obj);
 int64_t item_gold_set(int amount, int64_t obj);
+int64_t item_wield_get(int64_t obj, int inventory_location);
 void sub_4654F0(int64_t a, int64_t b);
 void sub_465530(int64_t obj);
 bool sub_4655C0();

@@ -1151,6 +1151,45 @@ int64_t item_gold_set(int amount, int64_t obj)
     return gold_obj;
 }
 
+// 0x4649C0
+int64_t item_wield_get(int64_t obj, int inventory_location)
+{
+    int cnt;
+    int index;
+    int64_t item_obj;
+    bool validated = false;
+
+    cnt = obj_field_int32_get(obj, OBJ_F_CRITTER_INVENTORY_NUM);
+    for (index = 0; index < cnt; index++) {
+        item_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
+        if (item_obj == OBJ_HANDLE_NULL) {
+            tig_debug_printf("item_wield_get: ERROR: inv_obj in slot #%d is NULL!\n", index);
+
+            if (!validated) {
+                if (!obj_validate_system(1)) {
+                    tig_debug_printf("item_wield_get: obj_validate_system: ERROR: Failed to validate!\n");
+                }
+                validated = true;
+                index = -1;
+            }
+        }
+
+        if (!item_is_item(item_obj)) {
+            tig_debug_printf("obj with d %d n %d contains object d %d n %d\n",
+                obj_field_int32_get(obj, OBJ_F_DESCRIPTION),
+                obj_field_int32_get(obj, OBJ_F_NAME),
+                obj_field_int32_get(item_obj, OBJ_F_DESCRIPTION),
+                obj_field_int32_get(item_obj, OBJ_F_NAME));
+        }
+
+        if (sub_461340(item_obj) == inventory_location) {
+            return item_obj;
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
+}
+
 // 0x465010
 int sub_465010(int64_t obj)
 {
