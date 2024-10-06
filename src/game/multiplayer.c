@@ -6,6 +6,7 @@
 #include "game/map.h"
 #include "game/matchmaker.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/obj_private.h"
 #include "game/object.h"
 #include "game/skill.h"
@@ -45,6 +46,7 @@ static void sub_49CB80(S5E8AD0* a1);
 static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
+static void sub_4A1FC0();
 static void sub_4A2A30();
 static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
@@ -495,7 +497,20 @@ bool sub_4A1F60(int player, int64_t* obj_ptr)
 // 0x4A1FC0
 void sub_4A1FC0()
 {
-    // TODO: Incomplete.
+    Packet2 pkt;
+    int cnt;
+    int index;
+
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        pkt.type = 2;
+
+        cnt = tig_net_local_server_get_max_players();
+        for (index = 0; index < cnt; index++) {
+            pkt.oids[index] = stru_5E8AD0[index].field_8;
+        }
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
 }
 
 // 0x4A2020
