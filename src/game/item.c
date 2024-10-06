@@ -1749,6 +1749,22 @@ const char* item_cannot_msg(int reason)
     return mes_file_entry.str;
 }
 
+// 0x4673F0
+void sub_4673F0(int64_t obj, int reason)
+{
+    John v1;
+    const char* str;
+
+    if (player_is_pc_obj(obj)) {
+        str = item_cannot_msg(reason);
+        if (str != NULL) {
+            v1.type = 4;
+            v1.str = str;
+            sub_460630(&v1);
+        }
+    }
+}
+
 // 0x4677B0
 void sub_4677B0(int64_t a1, int64_t a2, int a3)
 {
