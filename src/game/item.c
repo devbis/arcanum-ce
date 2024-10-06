@@ -888,6 +888,96 @@ int sub_462C30(int64_t a1, int64_t a2)
     return 0;
 }
 
+// 0x462CC0
+void sub_462CC0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x462FC0
+void sub_462FC0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463110
+void sub_463110()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4631A0
+void sub_4631A0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463240
+void sub_463240()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463340
+void sub_463340()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463370
+void sub_463370()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463540
+void sub_463540()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463630
+void sub_463630()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463730
+void sub_463730()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463860
+void sub_463860()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4639E0
+void sub_4639E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463B30
+void sub_463B30()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463C60
+void sub_463C60()
+{
+    // TODO: Incomplete.
+}
+
+// 0x463E20
+void sub_463E20()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4640C0
 void sub_4640C0(int64_t obj)
 {
