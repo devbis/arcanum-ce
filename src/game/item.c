@@ -796,6 +796,48 @@ int64_t item_find_first_matching_prototype(int64_t obj, int64_t a2)
             return item_obj;
         }
     }
+
+    return OBJ_HANDLE_NULL;
+}
+
+// 0x462A30
+int64_t sub_462A30(int64_t obj, int64_t a2)
+{
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int index;
+    int cnt;
+    int64_t prototype_obj;
+    int64_t item_obj;
+    int inventory_location;
+
+    if (sub_49B290(a2) == 15065) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    prototype_obj = obj_field_handle_get(a2, OBJ_F_PROTOTYPE_HANDLE);
+
+    for (index = 0; index < cnt; index++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
+        if (item_obj != a2
+            && obj_field_int32_get(item_obj, OBJ_F_PROTOTYPE_HANDLE) == prototype_obj) {
+            inventory_location = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_LOCATION);
+            if (inventory_location >= 2000 && inventory_location <= 2009) {
+                return item_obj;
+            }
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
 }
 
 // 0x462C30
