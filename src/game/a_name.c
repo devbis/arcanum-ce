@@ -628,6 +628,12 @@ int sub_4EBBE0(tig_art_id_t aid)
     }
 }
 
+// 0x4EBC40
+void sub_4EBC40()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4EC160
 int sub_4EC160()
 {

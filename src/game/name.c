@@ -5,6 +5,7 @@
 #include "game/a_name.h"
 #include "game/mes.h"
 
+static void sub_41CE60();
 static bool sub_41D1F0();
 static bool sub_41D2C0();
 static int sub_41D390();
@@ -245,6 +246,12 @@ void name_exit()
     }
 }
 
+// 0x41CE60
+void sub_41CE60()
+{
+    // TODO: Incomplete.
+}
+
 // 0x41D1F0
 bool sub_41D1F0()
 {
@@ -296,7 +303,7 @@ bool sub_41D2C0()
     TigFile* stream;
 
     cnt = sub_41D390();
-    sub_52DFE0(off_5A1064);
+    tig_file_mkdir(off_5A1064);
 
     stream = tig_file_fopen(off_5A1068, "wb");
     if (stream == NULL) {
@@ -379,7 +386,7 @@ void sub_41F240()
     TigRect dst_rect;
     TigRect src_rect;
     TigArtFrameData art_frame_data;
-    TigArtBlitSpec art_blit_spec;
+    TigArtBlitInfo art_blit_spec;
 
     dst_rect.x = 10;
     dst_rect.y = 10;
