@@ -192,8 +192,10 @@ bool item_parent(object_id_t object_id, object_id_t* parent_object_id)
 // 0x461310
 bool item_is_item(object_id_t object_id)
 {
-    if (object_id != 0) {
-        int type = obj_field_int32_get(object_id, OBJ_F_TYPE);
+    int type;
+
+    if (object_id != OBJ_HANDLE_NULL) {
+        type = obj_field_int32_get(object_id, OBJ_F_TYPE);
         if (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC) {
             return true;
         }
@@ -266,14 +268,18 @@ int item_total_weight(object_id_t obj)
 // 0x4614A0
 int sub_4614A0(object_id_t item_id, object_id_t owner_id)
 {
-    int complexity = item_magic_tech_complexity(item_id);
+    int complexity;
+    int owner_type;
+    int adjusted_complexity;
 
-    int owner_type = obj_field_int32_get(owner_id, OBJ_F_TYPE);
+    complexity = item_magic_tech_complexity(item_id);
+
+    owner_type = obj_field_int32_get(owner_id, OBJ_F_TYPE);
     if (owner_type != OBJ_TYPE_PC && owner_type != OBJ_TYPE_NPC) {
         return complexity;
     }
 
-    int adjusted_complexity = (complexity + sub_4B0490(owner_id, STAT_MAGICK_TECH_APTITUDE)) / 2;
+    adjusted_complexity = (complexity + stat_level(owner_id, STAT_MAGICK_TECH_APTITUDE)) / 2;
     if (complexity < 0) {
         if (adjusted_complexity > 0) {
             return 0;
@@ -302,7 +308,9 @@ int item_magic_tech_complexity(object_id_t item_id)
 // 0x461540
 int sub_461540(object_id_t item_id, object_id_t owner_id)
 {
-    int complexity = item_magic_tech_complexity(item_id);
+    int complexity;
+
+    complexity = item_magic_tech_complexity(item_id);
     if (complexity != 0) {
         return 100 * sub_4614A0(item_id, owner_id) / complexity;
     } else {
@@ -313,7 +321,9 @@ int sub_461540(object_id_t item_id, object_id_t owner_id)
 // 0x461590
 int sub_461590(object_id_t item_id, object_id_t owner_id, int a3)
 {
-    int complexity = item_magic_tech_complexity(item_id);
+    int complexity;
+
+    complexity = item_magic_tech_complexity(item_id);
     if (complexity > 0) {
         // FIXME: Calculating complexity twice.
         return a3 * sub_4614A0(item_id, owner_id) / item_magic_tech_complexity(item_id);
@@ -548,7 +558,7 @@ bool npc_respawn_timevent_process(TimeEvent* timeevent)
 // 0x4641A0
 int item_inventory_source(object_id_t obj)
 {
-    if (obj != 0) {
+    if (obj != OBJ_HANDLE_NULL) {
         switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
         case OBJ_TYPE_CONTAINER:
             return obj_field_int32_get(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE);
