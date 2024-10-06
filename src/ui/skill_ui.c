@@ -3,7 +3,9 @@
 #include "game/mes.h"
 #include "game/obj.h"
 #include "game/skill.h"
+#include "game/text_floater.h"
 #include "ui/intgame.h"
+#include "ui/inven_ui.h"
 #include "ui/types.h"
 
 #define FOUR 4
@@ -11,6 +13,8 @@
 static bool sub_57A5E0(int64_t obj);
 static bool sub_57A710(int64_t a1, int64_t a2);
 static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
+static void sub_57A7F0();
+static void sub_57A8C0();
 static bool sub_57A990(int64_t obj, int a2, int a3, bool success);
 static bool skill_ui_trap(int64_t obj, int a2, int a3, bool success);
 static bool sub_57AA90(int64_t obj, int a2, int a3, bool success);
@@ -398,9 +402,9 @@ void sub_57AC50(int64_t obj, int skill, int a3)
 void sub_57AC90(int64_t obj, int skill, int a3)
 {
     if (IS_TECH_SKILL(skill)) {
-        sub_4C6850(obj, GET_TECH_SKILL(skill), a3);
+        basic_skill_set_training(obj, GET_TECH_SKILL(skill), a3);
     } else {
-        sub_4C6170(obj, GET_BASIC_SKILL(skill), a3);
+        tech_skill_set_training(obj, GET_BASIC_SKILL(skill), a3);
     }
 }
 
