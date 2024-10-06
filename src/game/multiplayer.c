@@ -1763,9 +1763,75 @@ void sub_4A6010(int64_t obj)
 }
 
 // 0x4A6190
-void sub_4A6190()
+void sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4)
 {
-    // TODO: Incomplete.
+    if ((tig_net_local_server_get_options() & TIG_NET_SERVER_PLAYER_KILLING) == 0
+        && a1 != a2) {
+        if (a1 != OBJ_HANDLE_NULL
+            && obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC
+            && a2 != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                return true;
+            }
+
+            if (obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                return true;
+            }
+        }
+
+        if (a4 != OBJ_HANDLE_NULL
+            && obj_field_int32_get(a4, OBJ_F_TYPE) == OBJ_TYPE_PC
+            && a2 != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                return true;
+            }
+
+            if (obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                return true;
+            }
+        }
+    }
+
+    if ((tig_net_local_server_get_options() & TIG_NET_SERVER_FRIENDLY_FIRE) == 0
+        && a1 != a2) {
+        if (a1 != OBJ_HANDLE_NULL
+            && (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC
+                || obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC)) {
+            if (a2 != OBJ_HANDLE_NULL
+                && (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC
+                    || obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+                && sub_45E2E0(a1, a2)) {
+                return true;
+            }
+
+            if (a3 != OBJ_HANDLE_NULL
+                && (obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_PC
+                    || obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+                && sub_45E2E0(a1, a3)) {
+                return true;
+            }
+        }
+
+        if (a4 != OBJ_HANDLE_NULL
+            && (obj_field_int32_get(a4, OBJ_F_TYPE) == OBJ_TYPE_PC
+                || obj_field_int32_get(a4, OBJ_F_TYPE) == OBJ_TYPE_NPC)) {
+            if (a2 != OBJ_HANDLE_NULL
+                && (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC
+                    || obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+                && sub_45E2E0(a1, a2)) {
+                return true;
+            }
+
+            if (a3 != OBJ_HANDLE_NULL
+                && (obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_PC
+                    || obj_field_int32_get(a3, OBJ_F_TYPE) == OBJ_TYPE_NPC)
+                && sub_45E2E0(a1, a3)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 // 0x4A6470

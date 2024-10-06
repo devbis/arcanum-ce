@@ -68,5 +68,6 @@ void sub_4A5510(int64_t obj, int value);
 void sub_4A5570(int64_t obj, int value);
 int sub_4A55D0(int player);
 void sub_4A5610();
+void sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4);
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */
