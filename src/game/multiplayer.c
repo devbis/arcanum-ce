@@ -36,16 +36,12 @@ typedef struct S5E8AD0 {
     /* 002C */ int field_2C;
     /* 0030 */ int field_30;
     /* 0034 */ int field_34;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
-    /* 0040 */ int field_40;
-    /* 0044 */ int field_44;
-    /* 0048 */ int field_48;
-    /* 004C */ int field_4C;
+    /* 0038 */ ObjectID field_38;
 } S5E8AD0;
 
 static_assert(sizeof(S5E8AD0) == 0x50, "wrong size");
 
+static void sub_49CB80(S5E8AD0* a1);
 static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
@@ -357,9 +353,19 @@ void multiplayer_mod_unload()
 }
 
 // 0x49CB80
-void sub_49CB80()
+void sub_49CB80(S5E8AD0* a1)
 {
-    // TODO: Incomplete.
+    memset(a1, 0, sizeof(*a1));
+    a1->flags = 0;
+    a1->field_20 = -1;
+    a1->field_24 = 1;
+    a1->field_28 = 0;
+    a1->field_2C = 0;
+    a1->field_30 = 0;
+    a1->field_34 = 0;
+    memset(&(a1->field_8), 0, sizeof(a1->field_8));
+    memset(&(a1->field_38), 0, sizeof(a1->field_38));
+    a1->field_38.type = 0;
 }
 
 // 0x49CBD0
