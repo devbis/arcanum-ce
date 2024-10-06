@@ -3,6 +3,7 @@
 #include "game/description.h"
 #include "game/magictech.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/mt_item.h"
 #include "game/object.h"
 #include "game/player.h"
@@ -1762,6 +1763,29 @@ void sub_4673F0(int64_t obj, int reason)
             v1.str = str;
             sub_460630(&v1);
         }
+    }
+}
+
+// 0x467440
+void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4)
+{
+    unsigned int flags;
+    Packet125 pkt;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
+        flags = obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS);
+        flags |= OIF_IDENTIFIED;
+        obj_field_int32_set(a1, OBJ_F_ITEM_FLAGS, flags);
+        sub_464830(a3, a2, a4, OBJ_HANDLE_NULL);
+        sub_4EE3A0(a3, a1);
+    } else {
+        pkt.type = 125;
+        sub_4F0640(a1, &(pkt.field_8));
+        sub_4F0640(a2, &(pkt.field_20));
+        sub_4F0640(a3, &(pkt.field_38));
+        pkt.field_50 = a4;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
