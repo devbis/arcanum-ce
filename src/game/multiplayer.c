@@ -178,6 +178,7 @@ static void sub_4A2A40(int64_t obj);
 static void sub_4A2A90(int64_t obj);
 static void sub_4A2AE0(int player);
 static void sub_4A2CD0(S5F0DFC* a1);
+static void sub_4A2E90();
 static void sub_4A3030(ObjectID a1, ObjectID a2, int a3);
 static S5F0E1C* sub_4A3080(ObjectID oid);
 static void sub_4A30D0(ObjectID oid);
@@ -843,7 +844,13 @@ void sub_4A2D00()
 // 0x4A2E90
 void sub_4A2E90()
 {
-    // TODO: Incomplete.
+    S5F0E1C* node;
+
+    while (dword_5F0E1C != NULL) {
+        node = dword_5F0E1C;
+        dword_5F0E1C = dword_5F0E1C->next;
+        FREE(node);
+    }
 }
 
 // 0x4A2EC0
