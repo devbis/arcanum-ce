@@ -1106,9 +1106,13 @@ void* sub_4A4180(int player)
 }
 
 // 0x4A41B0
-void sub_4A41B0()
+int sub_4A41B0(int player)
 {
-    // TODO: Incomplete.
+    if (sub_4A40D0(player)) {
+        return off_5F0BC8[player]->size;
+    } else {
+        return 0;
+    }
 }
 
 // 0x4A41E0
