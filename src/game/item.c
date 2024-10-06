@@ -335,6 +335,46 @@ int sub_461590(object_id_t item_id, object_id_t owner_id, int a3)
     }
 }
 
+// 0x461620
+int sub_461620(int64_t item_obj, int64_t owner_obj, int64_t a3)
+{
+    int complexity;
+    int aptitude1;
+    int aptitude2;
+
+    complexity = item_magic_tech_complexity;
+
+    if (!obj_type_is_critter(obj_field_int32_get(owner_obj, OBJ_F_TYPE))) {
+        return 0;
+    }
+    aptitude1 = stat_level(owner_obj, STAT_MAGICK_TECH_APTITUDE);
+
+    if (!obj_type_is_critter(obj_field_int32_get(a3, OBJ_F_TYPE))) {
+        return 0;
+    }
+    aptitude2 = stat_level(a3, STAT_MAGICK_TECH_APTITUDE);
+
+    if (complexity > 0) {
+        if (aptitude2 < 0) {
+            if (aptitude1 < 0) {
+                return -aptitude2;
+            } else {
+                return -aptitude2 * (100 - aptitude1) / 100;
+            }
+        }
+    } else if (complexity < 0) {
+        if (aptitude2 > 0) {
+            if (aptitude1 > 0) {
+                return aptitude2;
+            } else {
+                return aptitude2 * (100 + aptitude1) / 100;
+            }
+        }
+    }
+
+    return 0;
+}
+
 // 0x461780
 void sub_461780(object_id_t item_id, int* width, int* height)
 {
