@@ -375,6 +375,30 @@ int sub_461620(int64_t item_obj, int64_t owner_obj, int64_t a3)
     return 0;
 }
 
+// 0x461700
+int sub_461700(int64_t item_obj, int64_t owner_obj)
+{
+    int complexity;
+    int aptitude;
+
+    complexity = item_magic_tech_complexity(item_obj);
+    if (complexity >= 0) {
+        return 0;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(owner_obj, OBJ_F_TYPE))) {
+        return 0;
+    }
+
+    aptitude = stat_level(owner_obj, STAT_MAGICK_TECH_APTITUDE);
+    if (aptitude <= 0) {
+        return 0;
+    }
+
+    // TODO: Unclear math.
+    return 0;
+}
+
 // 0x461780
 void sub_461780(object_id_t item_id, int* width, int* height)
 {
@@ -402,6 +426,42 @@ void sub_461780(object_id_t item_id, int* width, int* height)
     }
 }
 
+// 0x4617F0
+void sub_4617F0(int64_t a1, int64_t a2)
+{
+    sub_461810(a1, a2, -1);
+}
+
+// 0x461810
+void sub_461810()
+{
+    // TODO: Incomplete.
+}
+
+// 0x461A70
+void sub_461A70(int64_t a1)
+{
+    sub_461AB0(a1, 0);
+}
+
+// 0x461A90
+void sub_461A90(int64_t a1)
+{
+    sub_461AB0(a1, random_between(2, 4));
+}
+
+// 0x461AB0
+void sub_461AB0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x461CA0
+void sub_461CA0()
+{
+    // TODO: Incomplete.
+}
+
 // 0x461F20
 int item_worth(object_id_t item_id)
 {
@@ -425,11 +485,31 @@ bool sub_461F60(object_id_t item_id)
     return obj_field_int32_get(item_id, OBJ_F_ITEM_WORTH) == 0;
 }
 
+// 0x461F80
+void sub_461F80()
+{
+    // TODO: Incomplete.
+}
+
+// 0x462170
+bool sub_462170(int64_t a1, int64_t a2, int64_t a3)
+{
+    // TODO: Review.
+    return !sub_461F60(a1)
+        && (!tig_art_item_id_destroyed_get(obj_field_int32_get(a1, OBJ_F_CURRENT_AID)))
+        && (basic_skill_get_training(a2, BASIC_SKILL_HAGGLE) >= TRAINING_EXPERT
+            || (sub_441980(a1, a3, a2, 17, 0) == 1
+                && sub_464200(a1, a3)))
+        && ((obj_field_int32_get(a3, OBJ_F_NPC_FLAGS) & ONF_FENCE) != 0
+            || (obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_STOLEN) == 0);
+}
+
 // 0x462230
 bool sub_462230(int64_t a1, int64_t a2, int64_t a3)
 {
     (void)a2;
 
+    // TODO: Review.
     return basic_skill_get_training(a3, BASIC_SKILL_HAGGLE) >= TRAINING_MASTER
         || ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) == 0
             && (sub_461340(a1) < 1000 || sub_461340(a1) > 1008));
