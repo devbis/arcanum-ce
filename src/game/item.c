@@ -1891,6 +1891,65 @@ bool sub_467E70()
     return ret;
 }
 
+// 0x467E80
+void sub_467E80(int64_t a1, int64_t a2)
+{
+    int inventory_location;
+    int64_t item_obj;
+    unsigned int light_flags;
+    unsigned int light_size;
+    unsigned int critter_flags;
+    int v1;
+    tig_art_id_t aid;
+    tig_color_t color;
+
+    if (a1 == OBJ_HANDLE_NULL
+        || (obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY) != 0) {
+        light_flags = 0;
+        for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+            item_obj = item_wield_get(a2, inventory_location);
+            if (item_obj != OBJ_HANDLE_NULL) {
+                light_size = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY;
+                if (light_size != 0) {
+                    v1 = sub_461540(item_obj, a2);
+                    if (v1 <= 25) {
+                        light_size >>= 3;
+                    } else if (v1 <= 50) {
+                        light_size >>= 2;
+                    } else if (v1 <= 75) {
+                        light_size >>= 1;
+                    }
+                    light_flags |= light_size & OIF_LIGHT_ANY;
+                }
+            }
+        }
+
+        critter_flags = obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS);
+        critter_flags &= ~OCF_LIGHT_ANY;
+
+        if ((light_flags & OIF_LIGHT_XLARGE) != 0) {
+            critter_flags |= OCF_LIGHT_XLARGE;
+        }
+
+        if ((light_flags & OIF_LIGHT_LARGE) != 0) {
+            critter_flags |= OCF_LIGHT_LARGE;
+        }
+
+        if ((light_flags & OIF_LIGHT_MEDIUM) != 0) {
+            critter_flags |= OCF_LIGHT_MEDIUM;
+        }
+
+        if ((light_flags & OIF_LIGHT_SMALL) != 0) {
+            critter_flags |= OCF_LIGHT_SMALL;
+        }
+
+        obj_field_int32_set(a2, OBJ_F_CRITTER_FLAGS, critter_flags);
+
+        aid = sub_45FA70(a2, &color);
+        object_set_light(a2, 0, aid, color);
+    }
+}
+
 // 0x467FC0
 bool item_decay_timeevent_process(TimeEvent* timeevent)
 {
