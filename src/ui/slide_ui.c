@@ -1,11 +1,23 @@
 #include "ui/slide_ui.h"
 
-#include <tig/tig.h>
+#include <stdio.h>
 
-#include "game/lib/gfade.h"
+#include "game/gfade.h"
+#include "game/gsound.h"
+#include "game/mes.h"
+
+static void sub_569720(int a1);
+static bool sub_569770(tig_window_handle_t window_handle, int num);
+static bool sub_569930(int num, char* slide_path, char* speech_path);
+static void sub_5699F0();
+static void sub_569A60();
+static void sub_569A90();
+
+// 0x67B970
+static int dword_67B970;
 
 // 0x67B974
-static int slide_ui_slide_mes_file;
+static mes_file_handle_t slide_ui_slide_mes_file;
 
 // 0x67B978
 static int dword_67B978[100];
@@ -16,15 +28,15 @@ static bool dword_67BB08;
 // 0x5695B0
 bool slide_ui_mod_load()
 {
-    message_load("rules\\slide.mes", &slide_ui_slide_mes_file);
+    mes_load("rules\\slide.mes", &slide_ui_slide_mes_file);
     return true;
 }
 
 // 0x5695D0
 void slide_ui_mod_unload()
 {
-    message_unload(slide_ui_slide_mes_file);
-    slide_ui_slide_mes_file = -1;
+    mes_unload(slide_ui_slide_mes_file);
+    slide_ui_slide_mes_file = MES_FILE_HANDLE_INVALID;
 }
 
 // 0x5695F0
@@ -61,7 +73,7 @@ void sub_569600(int a1)
         window_data.rect.height = 600;
         window_data.background_color = 0;
         if (tig_window_create(&window_data, &window_handle) == TIG_OK) {
-            sub_41C340(25);
+            gsound_stop_all(25);
             tig_mouse_hide();
             sound_handle = gsound_play_music_indefinitely("sound\\music\\DwarvenMusic.mp3", 25);
 
@@ -86,13 +98,13 @@ void sub_569600(int a1)
 }
 
 // 0x569720
-void sub_569720()
+void sub_569720(int a1)
 {
     // TODO: Incomplete.
 }
 
 // 0x569770
-void sub_569770()
+bool sub_569770(tig_window_handle_t window_handle, int num)
 {
     // TODO: Incomplete.
 }
@@ -105,11 +117,11 @@ bool sub_569930(int num, char* slide_path, char* speech_path)
     char* tok;
 
     mes_file_entry.num = num;
-    if (message_find(slide_ui_slide_mes_file, &mes_file_entry)) {
+    if (mes_search(slide_ui_slide_mes_file, &mes_file_entry)) {
         return false;
     }
 
-    strcpy(buffer, mes_file_entry.text);
+    strcpy(buffer, mes_file_entry.str);
 
     tok = strtok(buffer, " \t\n");
     if (tok == NULL) {
