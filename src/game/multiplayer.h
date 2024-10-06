@@ -35,6 +35,7 @@ bool sub_4A4320();
 void sub_4A40F0(int player, ObjectID oid, int level, void* data, int size);
 void* sub_4A4180(int player);
 int sub_4A41B0(int player);
+ObjectID sub_4A41E0(int player);
 bool sub_4A47D0(int64_t obj, char* str);
 bool sub_4A4C40(int64_t obj, int size, char* path);
 int multiplayer_mm_init(int a1);

@@ -1116,9 +1116,17 @@ int sub_4A41B0(int player)
 }
 
 // 0x4A41E0
-void sub_4A41E0()
+ObjectID sub_4A41E0(int player)
 {
-    // TODO: Incomplete.
+    ObjectID oid;
+
+    if (sub_4A40D0(player)) {
+        oid = off_5F0BC8[player]->oid;
+    } else {
+        oid.type = 0;
+    }
+
+    return oid;
 }
 
 // 0x4A4230
