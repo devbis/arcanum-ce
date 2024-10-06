@@ -1,5 +1,6 @@
 #include "game/multiplayer.h"
 
+#include "game/anim.h"
 #include "game/combat.h"
 #include "game/gamelib.h"
 #include "game/magictech.h"
@@ -1042,7 +1043,7 @@ void sub_4A39D0(Func5F0DF8* func, int ctx)
 }
 
 // 0x4A39F0
-void sub_4A39F0()
+bool sub_4A39F0(const char* path, int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -1120,9 +1121,15 @@ void sub_4A4280()
 }
 
 // 0x4A4320
-void sub_4A4320()
+bool sub_4A4320()
 {
-    // TODO: Incomplete.
+    char str[40];
+    char path[TIG_MAX_PATH];
+
+    objid_id_to_str(str, sub_407EF0(player_get_pc_obj()));
+    snprintf(path, sizeof(path), "Players\\%s.mpc", str);
+    sub_424070(player_get_pc_obj(), 6, false, true);
+    return sub_4A39F0(path, player_get_pc_obj());
 }
 
 // 0x4A43B0
