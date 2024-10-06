@@ -633,6 +633,42 @@ int64_t item_find_by_name(int64_t obj, int name)
     return OBJ_HANDLE_NULL;
 }
 
+// 0x4626B0
+int64_t item_find_first_of_type(int64_t obj, int type)
+{
+    int obj_type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int index;
+    int64_t item_obj;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return OBJ_HANDLE_NULL;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else if (obj_type_is_critter(obj_type)) {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    } else {
+        return OBJ_HANDLE_NULL;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    for (index = 0; index < cnt; index++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
+        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == type) {
+            return item_obj;
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
+}
+
 // 0x462820
 int sub_462820(object_id_t item_id)
 {
