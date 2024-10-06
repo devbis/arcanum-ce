@@ -540,6 +540,34 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj)
     return distance;
 }
 
+// 0x462330
+void sub_462330(int64_t item_obj, int index, int* min_damage, int* max_damage)
+{
+    int64_t owner_obj;
+    int weight;
+
+    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+        && (obj_field_int32_get(item_obj, OBJ_F_WEAPON_FLAGS) & OWF_THROWABLE) != 0) {
+        *min_damage = obj_arrayfield_int32_get(item_obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, index);
+        *max_damage = obj_arrayfield_int32_get(item_obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, index);
+        return;
+    }
+
+    if (index == 0) {
+        owner_obj = OBJ_HANDLE_NULL;
+        item_parent(item_obj, &owner_obj);
+        weight = item_weight(item_obj, owner_obj);
+
+        *min_damage = (weight + 99) / 100;
+        // TODO: Unclear math.
+        *max_damage = *min_damage;
+        return;
+    }
+
+    *min_damage = 0;
+    *max_damage = 0;
+}
+
 // 0x462410
 int sub_462410(object_id_t item_id, int* quantity_field_ptr)
 {
