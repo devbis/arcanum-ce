@@ -1,6 +1,8 @@
 #include "game/mt_ai.h"
 
+#include "game/item.h"
 #include "game/magictech.h"
+#include "game/spell.h"
 #include "game/stat.h"
 
 typedef struct S600A20_Entry {
@@ -23,8 +25,7 @@ typedef struct S5FF620 {
     /* 0008 */ int64_t field_8;
     /* 0010 */ int field_10;
     /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0018 */ int64_t field_18;
     /* 0020 */ int field_20;
     /* 0024 */ int field_24;
     /* 0028 */ int field_28;
@@ -34,7 +35,24 @@ typedef struct S5FF620 {
 
 static_assert(sizeof(S5FF620) == 0x80, "wrong size");
 
+static bool sub_4CC240();
+static void sub_4CC270();
 static int sub_4CC2D0(const S600A20_Entry* a, const S600A20_Entry* b);
+static int sub_4CC310(int spl);
+static bool sub_4CC350(int index, S600A20* a2);
+static bool sub_4CC380(S600A20* a2);
+static void sub_4CC470();
+static void sub_4CC4C0();
+static void sub_4CC4F0(S5FF620* a1, int64_t obj, int a3);
+static void sub_4CC520(int index);
+static bool sub_4CC6F0(S5FF620* a1);
+static void sub_4CC740(S5FF620* src, S5FF620* dst);
+static void sub_4CC930(S5FF620* a1, int64_t item_obj);
+static bool sub_4CCA30(int64_t item_obj, S5FF620* a2);
+static void sub_4CCAD0(int spell);
+static void sub_4CCB10(int spell, int64_t obj);
+static void sub_4CCB50(int64_t obj);
+static void sub_4CCB90(S5FF620* a1, int a2);
 
 // 0x5B7558
 static int dword_5B7558 = -1;
@@ -61,7 +79,7 @@ static int dword_6016F8;
 static int dword_6016FC;
 
 // 0x4CC1F0
-void mt_ai_init(GameInitInfo* init_info)
+bool mt_ai_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
@@ -213,9 +231,8 @@ void sub_4CC470()
         ptr->obj = OBJ_HANDLE_NULL;
         ptr->field_28 = 0;
         ptr->field_8 = 0;
-        ptr->field_18 = 0;
+        ptr->field_18 = OBJ_HANDLE_NULL;
         ptr->field_2C = 0;
-        ptr->field_1C = 0;
 
         for (k = 0; k < 10; k++) {
             ptr->field_30[k].entries = NULL;
@@ -245,26 +262,24 @@ void sub_4CC4F0(S5FF620* a1, int64_t obj, int a3)
 {
     a1->obj = obj;
     a1->field_10 = a3;
-    a1->field_18 = 0;
+    a1->field_18 = OBJ_HANDLE_NULL;
     a1->field_28 = 0;
-    a1->field_1C = 0;
     a1->field_20 = -1;
     a1->field_2C = 0;
 }
 
 // 0x4CC520
-void sub_4CC520(int index)
+void sub_4CC520(int a1)
 {
     S5FF620* ptr;
     int index;
 
-    ptr = &(stru_5FF620[index]);
+    ptr = &(stru_5FF620[a1]);
     ptr->obj = OBJ_HANDLE_NULL;
     ptr->field_8 = OBJ_HANDLE_NULL;
     ptr->field_28 = 0;
-    ptr->field_18 = 0;
+    ptr->field_18 = OBJ_HANDLE_NULL;
     ptr->field_2C = 0;
-    ptr->field_1C = 0;
 
     for (index = 0; index < 10; index++) {
         if (ptr->field_30[index].entries != NULL) {
@@ -347,7 +362,8 @@ void sub_4CC810(S5FF620* a1)
     item_obj = item_wield_get(a1->obj, 1004);
     if (item_obj != OBJ_HANDLE_NULL
         && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_HEXED) != 0) {
-        return sub_4CC930(a1, item_obj);
+        sub_4CC930(a1, item_obj);
+        return;
     }
 
     cnt = obj_field_int32_get(a1->obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX);
@@ -395,12 +411,12 @@ void sub_4CC930(S5FF620* a1, int64_t item_obj)
     obj_field_int32_get(item_obj, OBJ_F_TYPE);
 
     if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE)) != 0
-        && sub_4CCA30(a1, item_obj)) {
+        && sub_4CCA30(item_obj, a1)) {
         for (index = 0; index < 5; index++) {
             spell = obj_field_int32_get(item_obj, 100 + index);
             if (spell != 10000
                 && (magictech_spells[spell].ai.flee + dword_5B7558) != -1
-                && sub_456A10(a1->obj, a1->field_18, a1->field_1C, item_obj)) {
+                && sub_456A10(a1->obj, a1->field_18, item_obj)) {
                 sub_4CCB10(spell, item_obj);
             }
         }
@@ -498,7 +514,7 @@ void sub_4CCC00(int64_t obj)
 }
 
 // 0x4CCC40
-void sub_4CCC40()
+void sub_4CCC40(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
