@@ -58,6 +58,7 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj);
 int64_t item_find_by_name(int64_t obj, int name);
 int64_t item_find_first_of_type(int64_t obj, int type);
 int64_t item_find_first_generic(int64_t obj, unsigned int flags);
+int64_t item_find_first(object_id_t obj);
 int sub_462C30(int64_t a1, int64_t a2);
 bool npc_respawn_timevent_process(TimeEvent* timeevent);
 bool item_is_identified(int64_t obj);

@@ -707,21 +707,21 @@ int64_t item_find_first_generic(int64_t obj, unsigned int flags)
 }
 
 // 0x462820
-int sub_462820(object_id_t item_id)
+int64_t item_find_first(object_id_t obj)
 {
-    int inventory_count_field;
-    int inventory_list_field;
+    int inventory_num_fld;
+    int inventory_list_fld;
 
-    if (obj_field_int32_get(item_id, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-        inventory_count_field = OBJ_F_CONTAINER_INVENTORY_NUM;
-        inventory_list_field = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
     } else {
-        inventory_count_field = OBJ_F_CRITTER_INVENTORY_NUM;
-        inventory_list_field = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
     }
 
-    if (obj_field_int32_get(item_id, inventory_count_field) > 0) {
-        return obj_arrayfield_handle_get(item_id, inventory_list_field, 0);
+    if (obj_field_int32_get(obj, inventory_num_fld) > 0) {
+        return obj_arrayfield_handle_get(obj, inventory_list_fld, 0);
     } else {
         return 0;
     }
