@@ -1240,6 +1240,19 @@ bool item_wield_set(int64_t item_obj, int inventory_location)
     return true;
 }
 
+// 0x464C50
+bool sub_464C50(int64_t obj, int inventory_location)
+{
+    int64_t item_obj;
+
+    item_obj = item_wield_get(obj, inventory_location);
+    if (item_obj != OBJ_HANDLE_NULL) {
+        return sub_464C80(item_obj);
+    } else {
+        return true;
+    }
+}
+
 // 0x465010
 int sub_465010(int64_t obj)
 {
