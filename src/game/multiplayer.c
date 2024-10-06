@@ -155,6 +155,17 @@ typedef struct S5F0DFC {
 
 static_assert(sizeof(S5F0DFC) == 0x1B0, "wrong size");
 
+typedef struct S5F0E1C {
+    /* 0000 */ ObjectID field_0;
+    /* 0018 */ ObjectID field_18;
+    /* 0030 */ int field_30;
+    /* 0034 */ int field_34;
+    /* 0038 */ S5F0E1C* next;
+    /* 003C */ int field_3C;
+} S5F0E1C;
+
+static_assert(sizeof(S5F0E1C) == 0x40, "wrong size");
+
 static void sub_49CB80(S5E8AD0* a1);
 static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
@@ -167,6 +178,7 @@ static void sub_4A2A40(int64_t obj);
 static void sub_4A2A90(int64_t obj);
 static void sub_4A2AE0(int player);
 static void sub_4A2CD0(S5F0DFC* a1);
+static void sub_4A3030(ObjectID a1, ObjectID a2, int a3);
 static void sub_4A3660(int player);
 static void sub_4A3780();
 static bool sub_4A40D0(int player);
@@ -232,6 +244,9 @@ static int dword_5F0E10;
 
 // 0x5F0E14
 static bool dword_5F0E14;
+
+// 0x5F0E1C
+static S5F0E1C* dword_5F0E1C;
 
 // 0x49C670
 bool multiplayer_init(GameInitInfo* init_info)
@@ -835,9 +850,17 @@ void sub_4A2EC0()
 }
 
 // 0x4A3030
-void sub_4A3030()
+void sub_4A3030(ObjectID a1, ObjectID a2, int a3)
 {
-    // TODO: Incomplete.
+    S5F0E1C* node;
+
+    node = (S5F0E1C*)MALLOC(sizeof(*node));
+    node->field_0 = a1;
+    node->field_18 = a2;
+    node->field_30 = a3;
+    node->field_34 = 1;
+    node->next = dword_5F0E1C;
+    dword_5F0E1C = node;
 }
 
 // 0x4A3080
