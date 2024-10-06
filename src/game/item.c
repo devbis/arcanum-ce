@@ -1030,6 +1030,40 @@ int item_inventory_source(object_id_t obj)
     return 0;
 }
 
+// 0x4642C0
+bool sub_4642C0(int64_t obj, int64_t item_obj)
+{
+    int obj_type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int index;
+    int cnt;
+
+    if (!sub_4E5470(obj)) {
+        return false;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else if (obj_type_is_critter(obj_type)) {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    } else {
+        return false;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    for (index = 0; index < cnt; index++) {
+        if (obj_arrayfield_handle_get(obj, inventory_list_fld, index) == item_obj) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // 0x464370
 bool item_is_identified(int64_t obj)
 {
