@@ -2,11 +2,14 @@
 
 #include <stdio.h>
 
+#include "game/anim.h"
+#include "game/critter.h"
 #include "game/description.h"
 #include "game/gsound.h"
 #include "game/jumppoint.h"
 #include "game/light_scheme.h"
 #include "game/location.h"
+#include "game/magictech.h"
 #include "game/mes.h"
 #include "game/obj_private.h"
 #include "game/object.h"
@@ -16,6 +19,8 @@
 #include "game/teleport.h"
 #include "game/terrain.h"
 #include "game/timeevent.h"
+#include "game/townmap.h"
+#include "game/ui.h"
 #include "game/wallcheck.h"
 
 #define MAP_LIST_CAPACITY 200
@@ -72,12 +77,14 @@ typedef struct MapProperties {
 
 static_assert(sizeof(MapProperties) == 0x18, "wrong size");
 
+static void sub_40FE00(int64_t loc);
 static void map_close();
 static bool map_save_preprocess();
 static bool map_save_objects();
 static bool map_save_difs();
 static bool map_save_dynamic();
 static void map_load_postprocess();
+static bool sub_410D10(const char* a1, const char* a2);
 static bool sub_411450(const char* name);
 static void map_disable_objects();
 
@@ -379,7 +386,7 @@ bool map_save(TigFile* stream)
                 break;
             }
 
-            long pos;
+            int pos;
             tig_file_fgetpos(stream, &pos);
             tig_debug_printf(" wrote to: %lu, Total: (%lu), Time (ms): %d\n",
                 pos,
@@ -464,7 +471,7 @@ bool map_load(LoadContext* ctx)
                 return false;
             }
 
-            long pos;
+            int pos;
             tig_file_fgetpos(ctx->stream, &pos);
             tig_debug_printf(" read to: %lu, Total: (%lu), Time (ms): %d\n",
                 pos,
@@ -724,7 +731,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
     sprintf(path2, "%s\\maps\\%s", "Save\\Current", info->name);
 
     tig_debug_printf("Loading Map: %s\n", path1);
-    sub_41C340(0);
+    gsound_stop_all(0);
 
     if (!map_open(path1, path2, 1)) {
         return false;
@@ -746,6 +753,12 @@ bool map_open_in_game(int map, bool a2, bool a3)
     }
 
     return true;
+}
+
+// 0x40FE00
+void sub_40FE00(int64_t loc)
+{
+    // TODO: Incomplete.
 }
 
 // 0x40FED0
@@ -853,7 +866,7 @@ void map_flush(unsigned int flags)
 
     map_load_postprocess();
     sector_flush(flags);
-    jumppoints_flush();
+    jumppoint_flush();
     terrain_flush();
     townmap_flush();
 
@@ -931,7 +944,7 @@ void map_close()
         dword_5D11E8 = true;
 
         wallcheck_flush();
-        sound_game_flush();
+        gsound_flush();
 
         dword_5D11FC = false;
 
@@ -956,7 +969,7 @@ bool map_save_preprocess()
             if (!sub_43D990(obj)) {
                 sub_4064B0(obj);
             }
-        } while (sub_408390(&obj, v1));
+        } while (sub_408390(&obj, &v1));
     }
 
     return true;
@@ -977,7 +990,7 @@ bool map_save_objects()
                     return false;
                 }
             }
-        } while (sub_408390(&obj, v1));
+        } while (sub_408390(&obj, &v1));
     }
 
     return true;
@@ -1135,6 +1148,12 @@ void map_load_postprocess()
     }
 }
 
+// 0x410D10
+bool sub_410D10(const char* a1, const char* a2)
+{
+    // TODO: Incomplete.
+}
+
 // 0x411450
 bool sub_411450(const char* name)
 {
@@ -1246,16 +1265,16 @@ void map_disable_objects()
     int64_t obj;
     int v1;
     int64_t location;
-    int sector;
+    int64_t sector_id;
     unsigned int flags;
 
     if (sub_4082C0(&obj, &v1)) {
         do {
             if (!sub_43D990(obj)) {
                 location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                sector = sub_4CFC50(location);
-                if (!sub_4D0DE0(sector) && !player_is_pc_obj(obj)) {
-                    if (sub_45DDA0() != player_get_pc_obj()) {
+                sector_id = sub_4CFC50(location);
+                if (!sub_4D0DE0(sector_id) && !player_is_pc_obj(obj)) {
+                    if (sub_45DDA0(obj) != player_get_pc_obj()) {
                         flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
                         flags |= OF_OFF;
                         obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
