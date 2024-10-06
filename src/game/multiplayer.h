@@ -8,6 +8,7 @@ typedef void(Func5F0DF8)(int);
 
 bool multiplayer_init(GameInitInfo* init_info);
 void multiplayer_exit();
+void multiplayer_reset();
 bool multiplayer_mod_load();
 void multiplayer_mod_unload();
 bool sub_49CBD0();

@@ -84,6 +84,9 @@ static int dword_5F0DE0;
 // 0x5F0DE4
 static void* dword_5F0DE4;
 
+// 0x5F0DE8
+static int dword_5F0DE8;
+
 // 0x5F0DEC
 static S5F0DEC* dword_5F0DEC;
 
@@ -170,7 +173,7 @@ void multiplayer_exit()
         FREE(node);
     }
 
-    for (index = 0; index < 8; index++) {
+    for (index = 0; index < NUM_PLAYERS; index++) {
         if (off_5F0BC8[index] != NULL) {
             FREE(off_5F0BC8[index]);
             off_5F0BC8[index] = NULL;
@@ -192,7 +195,50 @@ void multiplayer_exit()
 // 0x49C820
 void multiplayer_reset()
 {
-    // TODO: Incomplete.
+    S5F0DEC* node;
+    int index;
+
+    if (!dword_5F0E10) {
+        if (dword_5F0E00) {
+            sub_49CC20();
+        }
+        dword_5F0E00 = false;
+
+        tig_idxtable_exit(&stru_5E8940);
+        tig_idxtable_init(&stru_5E8940, 16);
+
+        while (dword_5F0DEC != NULL) {
+            node = dword_5F0DEC;
+            dword_5F0DEC = dword_5F0DEC->next;
+            FREE(node);
+        }
+
+        tig_net_local_server_set_name("Arcanum");
+        tig_net_local_client_set_name("Player");
+        tig_net_local_server_set_max_players(NUM_PLAYERS);
+        tig_net_local_server_set_description("Description");
+
+        for (index = 0; index < NUM_PLAYERS; index++) {
+            sub_49CB80(&(stru_5E8AD0[index]));
+        }
+
+        for (index = 0; index < NUM_PLAYERS; index++) {
+            if (off_5F0BC8[index] != NULL) {
+                FREE(off_5F0BC8[index]);
+                off_5F0BC8[index] = NULL;
+            }
+        }
+
+        if (dword_5F0DE4 != NULL) {
+            sub_4A3D00(0);
+            dword_5F0DE4 = NULL;
+            dword_5F0DE8 = 0;
+        }
+
+        sub_4A5290();
+        sub_4A5380();
+        timeevent_clear_all_typed(TIMEEVENT_TYPE_MULTIPLAYER);
+    }
 }
 
 // 0x49C930
