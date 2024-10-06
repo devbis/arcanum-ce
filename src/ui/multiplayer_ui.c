@@ -1,20 +1,92 @@
 #include "ui/multiplayer_ui.h"
 
-#include <tig/tig.h>
-
+#include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/timeevent.h"
+#include "ui/intgame.h"
+#include "ui/mainmenu_ui.h"
+#include "ui/mp_ctrl_ui.h"
 #include "ui/textedit_ui.h"
+
+typedef struct S681000 {
+    void* field_0;
+    int field_4;
+} S681000;
+
+static_assert(sizeof(S681000) == 0x8, "wrong size");
+
+static void sub_5706D0();
+static void sub_570E10();
+static void sub_570E40();
+static void sub_570EF0();
+static void sub_571100();
+static bool sub_5713F0(TigMessage* msg);
+static void sub_571660(TextEdit* textedit);
+static void sub_571730(TextEdit* textedit);
 
 // 0x599458
 static char byte_599458[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
+// 0x5CABE8
+static tig_window_handle_t dword_5CABE8;
+
+// 0x5CABEC
+static int dword_5CABEC = -1;
+
+// 0x5CABF0
+static int dword_5CABF0 = -1;
+
+// 0x680F18
+static char byte_680F18[128];
+
+// 0x5CABF8
+static TextEdit stru_5CABF8 = {
+    0,
+    byte_680F18,
+    128,
+    sub_571730,
+    sub_571660,
+    NULL,
+};
+
+// 0x680EF0
+static tig_button_handle_t dword_680EF0[10];
+
+// 0x680F98
+static tig_button_handle_t dword_680F98;
+
 // 0x680FD0
 static TigArtFrameData stru_680FD0[2];
 
+// 0x680F9C
+static int dword_680F9C[2];
+
+// 0x680FA4
+static int dword_680FA4[10];
+
+// 0x680FCC
+static tig_button_handle_t dword_680FCC;
+
+// 0x681000
+static S681000* off_681000;
+
+// 0x681004
+static tig_button_handle_t dword_681004[10];
+
+// 0x68102C
+static tig_button_handle_t dword_68102C;
+
 // 0x681030
-static int multiplayer_ui_mes_file;
+static mes_file_handle_t multiplayer_ui_mes_file;
 
 // 0x681034
 static bool multiplayer_ui_initialized;
+
+// 0x681038
+static bool dword_681038;
+
+// 0x68103C
+static int dword_68103C;
 
 // 0x56FF80
 bool multiplayer_ui_init(GameInitInfo* init_info)
@@ -24,7 +96,7 @@ bool multiplayer_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    if (!message_load("mes\\MultiPlayer.mes", &multiplayer_ui_mes_file)) {
+    if (!mes_load("mes\\MultiPlayer.mes", &multiplayer_ui_mes_file)) {
         sub_549B10();
         return true;
     }
@@ -54,7 +126,7 @@ void multiplayer_ui_exit()
 {
     int index;
 
-    message_unload(multiplayer_ui_mes_file);
+    mes_unload(multiplayer_ui_mes_file);
 
     if (off_681000 != NULL) {
         for (index = 0; index < 10; index++) {
@@ -86,7 +158,7 @@ void sub_5700C0()
 
     dword_68103C = 0;
     sub_5706D0();
-    dword_681038 = 1;
+    dword_681038 = true;
     sub_570E10();
 
     datetime.days = 0;
@@ -143,7 +215,7 @@ bool sub_5701A0(tig_window_handle_t window_handle, const TigRect* rect)
 }
 
 // 0x570260
-void sub_570260()
+bool sub_570260(tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
@@ -157,13 +229,13 @@ bool sub_5703B0()
 }
 
 // 0x5703D0
-void sub_5703D0()
+void sub_5703D0(const char* str, int player)
 {
     // TODO: Incomplete.
 }
 
 // 0x5704E0
-void sub_5704E0()
+void sub_5704E0(int64_t a1, int64_t a2, int type)
 {
     // TODO: Incomplete.
 }
@@ -177,16 +249,16 @@ void sub_5706D0()
 // 0x570890
 void sub_570890()
 {
-    // TODO: Incomplete.
-}
-
-// 0x5708B0
-void sub_5708B0()
-{
     if (dword_681038) {
         sub_570130();
         sub_5700C0();
     }
+}
+
+// 0x5708B0
+void sub_5708B0(int a1)
+{
+    sub_570E10(a1);
 }
 
 // 0x5708C0
@@ -221,7 +293,7 @@ void sub_570940()
 bool sub_5709E0()
 {
     tig_button_hide(dword_680F98);
-    textedit_ui_unfocus();
+    textedit_ui_unfocus(&stru_5CABF8);
     dword_5CABF0 = -1;
     dword_5CABEC = -1;
     return true;
@@ -270,7 +342,7 @@ void sub_570E40()
 {
     TigRect src_rect;
     TigRect dst_rect;
-    TigArtBlitSpec blit_info;
+    TigArtBlitInfo blit_info;
     int index;
 
     src_rect.x = 0;
@@ -306,7 +378,7 @@ void sub_571100()
 }
 
 // 0x5713F0
-void sub_5713F0()
+bool sub_5713F0(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
@@ -347,7 +419,7 @@ void sub_571660(TextEdit* textedit)
     tig_color_t color;
 
     color = tig_color_make(2, 0, 116);
-    if (*textedit->buffer != '\0') {
+    if (textedit->buffer[0] != '\0') {
         intgame_text_edit_refresh_color(textedit->buffer, sub_549940(0, 0), color, 1);
     } else {
         intgame_text_edit_refresh_color("", sub_549940(0, 0), color, 1);
@@ -357,9 +429,9 @@ void sub_571660(TextEdit* textedit)
 // 0x571730
 void sub_571730(TextEdit* textedit)
 {
-    MultiplayerPacket83 pkt;
+    Packet83 pkt;
 
-    if (*textedit->buffer != '\0') {
+    if (textedit->buffer[0] != '\0') {
         pkt.type = 83;
         pkt.field_4 = sub_529520();
         pkt.field_8 = dword_5CABF0;
