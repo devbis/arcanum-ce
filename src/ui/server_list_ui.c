@@ -2,11 +2,34 @@
 
 #include <stdio.h>
 
-#include <tig/tig.h>
-
 #include "game/mes.h"
+#include "game/multiplayer.h"
+#include "ui/intgame.h"
+#include "ui/mainmenu_ui.h"
+#include "ui/multiplayer_hub_ui.h"
 #include "ui/scrollbar_ui.h"
 
+static void sub_585E40();
+static void sub_585F00(TigNetServer* server);
+static void sub_585FF0(TigNetServer* servers, int cnt);
+static void sub_586AB0(TigRect* rect);
+static void sub_586AD0(TigRect* rect, tig_window_handle_t window_handle);
+static void sub_586D20(TigRect* rect, tig_window_handle_t window_handle);
+static void sub_586ED0(TigRect* rect, tig_window_handle_t window_handle);
+static void sub_587570(TigRect* rect, tig_window_handle_t window_handle);
+static void sub_587960(TigRect* rect, tig_window_handle_t window_handle);
+static void sub_587D60(TigRect* rect, tig_window_handle_t window_handle);
+static void sub_588180(TigRect* rect, tig_window_handle_t window_handle);
+static void sub_5883E0(tig_button_handle_t button_handle, tig_window_handle_t window_handle);
+static void sub_588650();
+static void sub_5887F0();
+static void sub_588990();
+static void sub_588B10(TigNetServer* server);
+static int sub_588B70(const TigNetServer* a, const TigNetServer* b);
+static TigNetServer* sub_588C80(TigNetServer* server, TigNetServer* servers, int cnt);
+static void sub_588CC0(TigNetServer* server, bool a2);
+static TigNetServer* sub_588D00();
+static void sub_588D70(int value);
 static const char* sub_588E10(int seconds);
 static void sub_588EC0(TigNetServer* servers, int count);
 static void sub_588EF0();
@@ -16,6 +39,17 @@ static int dword_5994BC[3] = {
     2,
     16,
     21,
+};
+
+// 0x5CCAF8
+static MainMenuButtonInfo stru_5CCAF8[7] = {
+    { 162, 32, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, 0, 0, 0, 0, -1 },
+    { 162, 72, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, 0, 0, 0, 0, -1 },
+    { 162, 112, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 0, 0, 0,0, 0, -1 },
+    { 58, 533, 357, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0,0, 0, 0, -1 },
+    { 72, 491, 751, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0,0, 0, 0, -1 },
+    { 232, 492, 752, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0, 0, 0, 0, -1 },
+    { 764, 101, 762, TIG_BUTTON_HANDLE_INVALID, 0x11, -1, 0x0C, 0, 0, 0, 0, -1 },
 };
 
 // 0x5CCC48
@@ -119,15 +153,15 @@ void sub_585D50()
     dword_687258 = 0;
     dword_687254 = 0;
     sub_549830(17);
-    mainmenu_ui_create_window_func(0);
+    mainmenu_ui_create_window_func(false);
 
-    if (sub_4A4ED0()) {
-        tig_button_show(stru_5CCAF8[1].field_C);
+    if (multiplayer_mm_is_active()) {
+        tig_button_show(stru_5CCAF8[1].button_handle);
         tig_net_on_server_bcast(sub_585F00);
         sub_588990();
     } else {
-        tig_button_hide(stru_5CCAF8[1].field_C);
-        tig_button_hide(stru_5CCAF8[6].field_C);
+        tig_button_hide(stru_5CCAF8[1].button_handle);
+        tig_button_hide(stru_5CCAF8[6].button_handle);
         tig_net_on_servers_change(sub_588EC0);
         tig_net_get_servers(&servers, &servers_cnt);
         sub_585FF0(servers, servers_cnt);
@@ -177,7 +211,7 @@ void sub_585E40()
 }
 
 // 0x585F00
-void sub_585F00()
+void sub_585F00(TigNetServer* server)
 {
     // TODO: Incomplete.
 }
@@ -230,67 +264,67 @@ void sub_5860D0(TigRect* rect)
 }
 
 // 0x586150
-void sub_586150()
+void sub_586150(int a1, int a2, int a3)
 {
     // TODO: Incomplete.
 }
 
 // 0x5862D0
-void sub_5862D0()
+bool sub_5862D0(TigMessage* msg, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x586AB0
-void sub_586AB0()
+void sub_586AB0(TigRect* rect)
 {
     // TODO: Incomplete.
 }
 
 // 0x586AD0
-void sub_586AD0()
+void sub_586AD0(TigRect* rect, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x586D20
-void sub_586D20()
+void sub_586D20(TigRect* rect, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x586ED0
-void sub_586ED0()
+void sub_586ED0(TigRect* rect, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x587570
-void sub_587570()
+void sub_587570(TigRect* rect, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x587960
-void sub_587960()
+void sub_587960(TigRect* rect, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x587D60
-void sub_587D60()
+void sub_587D60(TigRect* rect, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x588180
-void sub_588180()
+void sub_588180(TigRect* rect, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x5883E0
-void sub_5883E0()
+void sub_5883E0(tig_button_handle_t button_handle, tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
@@ -325,7 +359,7 @@ void sub_588B10(TigNetServer* server)
 }
 
 // 0x588B70
-void sub_588B70()
+int sub_588B70(const TigNetServer* a, const TigNetServer* b)
 {
     // TODO: Incomplete.
 }
@@ -337,7 +371,7 @@ TigNetServer* sub_588C80(TigNetServer* server, TigNetServer* servers, int cnt)
 }
 
 // 0x588CC0
-void sub_588CC0()
+void sub_588CC0(TigNetServer* server, bool a2)
 {
     // TODO: Incomplete.
 }
@@ -407,7 +441,7 @@ void sub_588F00()
 }
 
 // 0x588F10
-void sub_588F10(int a1)
+bool sub_588F10(int a1)
 {
     switch (a1) {
     case 0:
@@ -435,7 +469,7 @@ void sub_588F10(int a1)
         }
         break;
     case 3:
-        sub_5883E0(stru_5CCAF8[3].field_C, sub_549820());
+        sub_5883E0(stru_5CCAF8[3].button_handle, sub_549820());
         break;
     case 4:
         sub_588650();
