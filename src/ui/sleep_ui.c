@@ -2,9 +2,12 @@
 
 #include "game/critter.h"
 #include "game/gfade.h"
+#include "game/magictech.h"
 #include "game/mes.h"
+#include "game/object.h"
 #include "game/timeevent.h"
-#include "ui/types.h"
+#include "ui/anim_ui.h"
+#include "ui/intgame.h"
 
 static bool sleep_ui_create();
 static void sleep_ui_destroy();
@@ -48,6 +51,9 @@ static int64_t qword_6834A8;
 
 // 0x6834B0
 static bool dword_6834B0;
+
+// 0x6834B8
+static Ryan stru_6834B8;
 
 // 0x6834E0
 static bool dword_6834E0;
@@ -131,11 +137,11 @@ void sub_57B450()
                 critter_leave_bed(qword_6834A8, obj);
             }
         }
-    }
 
-    dword_6834E8 = 0;
-    qword_6834A8 = 0;
-    dword_6834B0 = 0;
+        dword_6834E8 = 0;
+        qword_6834A8 = 0;
+        dword_6834B0 = 0;
+    }
 }
 
 // 0x57B4E0
@@ -322,16 +328,16 @@ void sub_57BA70()
 // 0x57BAC0
 void sub_57BAC0()
 {
-    ObjectNodeList l;
+    ObjectList objects;
     ObjectNode* node;
 
-    sub_4411C0(qword_6834A8, &l);
+    object_get_followers(qword_6834A8, &objects);
 
-    node = l.head;
-    whiel (node != NULL) {
-        sub_441980(node->obj, 0, 0, 29, 0);
+    node = objects.head;
+    while (node != NULL) {
+        sub_441980(qword_6834A8, node->obj, OBJ_HANDLE_NULL, 29, 0);
         node = node->next;
     }
 
-    sub_4410E0(&l);
+    object_list_destroy(&objects);
 }
