@@ -1096,9 +1096,13 @@ void sub_4A40F0(int player, ObjectID oid, int level, void* data, int size)
 }
 
 // 0x4A4180
-void sub_4A4180()
+void* sub_4A4180(int player)
 {
-    // TODO: Incomplete.
+    if (sub_4A40D0(player)) {
+        return (void*)(off_5F0BC8[player] + 1);
+    } else {
+        return NULL;
+    }
 }
 
 // 0x4A41B0
