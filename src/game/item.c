@@ -728,31 +728,32 @@ int64_t item_find_first(object_id_t obj)
 }
 
 // 0x462880
-int sub_462880(object_id_t obj, object_id_t** list_ptr)
+int item_get_all(object_id_t obj, object_id_t** list_ptr)
 {
-    int inventory_count_field;
-    int inventory_list_field;
+    int inventory_num_fld;
+    int inventory_list_fld;
     int index;
-    int count;
+    int cnt;
 
     *list_ptr = NULL;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-        inventory_count_field = OBJ_F_CONTAINER_INVENTORY_NUM;
-        inventory_list_field = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
     } else {
-        inventory_count_field = OBJ_F_CRITTER_INVENTORY_NUM;
-        inventory_list_field = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
     }
 
-    count = obj_field_int32_get(obj, inventory_count_field);
-    if (count > 0) {
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    if (cnt > 0) {
         *list_ptr = (object_id_t*)MALLOC(sizeof(**list_ptr));
-        for (index = 0; index < count; index++) {
-            list_ptr[index] = obj_arrayfield_handle_get(obj, inventory_list_field, index);
+        for (index = 0; index < cnt; index++) {
+            list_ptr[index] = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
         }
     }
-    return count;
+
+    return cnt;
 }
 
 // 0x462920
