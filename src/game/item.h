@@ -79,6 +79,7 @@ void sub_4654F0(int64_t a, int64_t b);
 void sub_465530(int64_t obj);
 bool sub_4655C0();
 int item_location_get(int64_t obj);
+int64_t sub_465690(int64_t obj, int inventory_location);
 void item_location_set(int64_t obj, int location);
 int item_ammo_quantity_get(object_id_t obj, int ammo_type);
 int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj);

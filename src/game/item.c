@@ -1353,6 +1353,32 @@ int item_location_get(int64_t obj)
     return -1;
 }
 
+// 0x465690
+int64_t sub_465690(int64_t obj, int inventory_location)
+{
+    int cnt;
+    int index;
+    int64_t item_obj;
+
+    cnt = obj_field_int32_get(obj, OBJ_F_CRITTER_INVENTORY_NUM);
+    for (index = 0; index < cnt; index++) {
+        item_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
+        if (!item_is_item(item_obj)) {
+            tig_debug_printf("obj with d %d n %d contains object d %d n %d\n",
+                obj_field_int32_get(obj, OBJ_F_DESCRIPTION),
+                obj_field_int32_get(obj, OBJ_F_NAME),
+                obj_field_int32_get(item_obj, OBJ_F_DESCRIPTION),
+                obj_field_int32_get(item_obj, OBJ_F_NAME));
+        }
+
+        if (item_inventory_location_get(item_obj) == inventory_location) {
+            return item_obj;
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
+}
+
 // 0x465760
 void item_location_set(int64_t obj, int location)
 {
