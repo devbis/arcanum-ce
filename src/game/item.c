@@ -1076,6 +1076,39 @@ bool item_is_identified(int64_t obj)
         || (obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0;
 }
 
+// 0x4643D0
+void item_identify_all(int64_t obj)
+{
+    int obj_type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int index;
+    int cnt;
+    int64_t item_obj;
+    unsigned int flags;
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else if (obj_type_is_critter(obj_type)) {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    } else {
+        return;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    for (index = 0; index < cnt; index++) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
+        flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+        flags |= OIF_IDENTIFIED;
+        obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, flags);
+    }
+
+    return false;
+}
+
 // 0x464780
 int item_gold_get(int64_t obj)
 {

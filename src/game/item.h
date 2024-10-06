@@ -68,6 +68,7 @@ int sub_462C30(int64_t a1, int64_t a2);
 bool npc_respawn_timevent_process(TimeEvent* timeevent);
 bool sub_4642C0(int64_t obj, int64_t item_obj);
 bool item_is_identified(int64_t obj);
+void item_identify_all(int64_t obj);
 int item_gold_get(int64_t obj);
 int64_t item_gold_set(int amount, int64_t obj);
 void sub_4654F0(int64_t a, int64_t b);
