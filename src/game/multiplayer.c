@@ -291,9 +291,55 @@ bool multiplayer_save(TigFile* stream)
 }
 
 // 0x49CA20
-void mutliplayer_load()
+bool mutliplayer_load(GameLoadInfo* load_info)
 {
-    // TODO: Incomplete.
+    unsigned int sentinel;
+    S5F0DEC* node;
+    int cnt;
+    ObjectID oid;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        return true;
+    }
+
+    if (tig_file_fread(&sentinel, sizeof(sentinel), 1, load_info->stream) != 1) {
+        return false;
+    }
+
+    if (sentinel != BEGIN_SENTINEL) {
+        return false;
+    }
+
+    if (tig_file_fread(&cnt, sizeof(cnt), 1, load_info->stream) != 1) {
+        return false;
+    }
+
+    while (cnt != 0) {
+        if (tig_file_fread(&oid, sizeof(oid), 1, load_info->stream) != 1) {
+            return false;
+        }
+
+        node = (S5F0DEC*)MALLOC(sizeof(*node));
+        node->oid = oid;
+        node->next = dword_5F0DEC;
+        dword_5F0DEC = node;
+
+        cnt--;
+    }
+
+    if (tig_file_fread(stru_5E8AD0, sizeof(*stru_5E8AD0), NUM_PLAYERS, load_info->stream) != NUM_PLAYERS) {
+        return false;
+    }
+
+    if (tig_file_fread(&sentinel, sizeof(sentinel), 1, load_info->stream) != 1) {
+        return false;
+    }
+
+    if (sentinel != END_SENTINEL) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x49CB50
