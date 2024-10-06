@@ -2,10 +2,14 @@
 
 #include "game/critter.h"
 #include "game/gsound.h"
-#include "game/obj.h"
+#include "game/location.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/obj.h"
+#include "game/player.h"
 #include "game/proto.h"
 #include "game/tech.h"
+#include "ui/intgame.h"
 #include "ui/types.h"
 
 #define TWO 2
@@ -227,7 +231,7 @@ void written_ui_create()
 {
     TigWindowData window_data;
     MesFileEntry mes_file_entry;
-    Jack v1;
+    S550DA0 v1;
     long long obj;
     long long location;
     int index;
