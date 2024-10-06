@@ -175,6 +175,14 @@ typedef struct S5E8E08 {
 
 static_assert(sizeof(S5E8E08) == 0xFB8, "wrong size");
 
+typedef struct S5F0BC8 {
+    /* 0000 */ ObjectID oid;
+    /* 0018 */ int level;
+    /* 001C */ int size;
+} S5F0BC8;
+
+static_assert(sizeof(S5F0BC8) == 0x20, "wrong size");
+
 static void sub_49CB80(S5E8AD0* a1);
 static bool sub_49D570(TimeEvent* timeevent);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
@@ -225,7 +233,7 @@ static S5E8E08 stru_5E8E08[NUM_PLAYERS];
 static mes_file_handle_t multiplayer_mes_file;
 
 // 0x5F0BC8
-static void* off_5F0BC8[NUM_PLAYERS];
+static S5F0BC8* off_5F0BC8[NUM_PLAYERS];
 
 // 0x5F0DE0
 static int dword_5F0DE0;
@@ -1073,9 +1081,18 @@ bool sub_4A40D0(int player)
 }
 
 // 0x4A40F0
-void sub_4A40F0()
+void sub_4A40F0(int player, ObjectID oid, int level, void* data, int size)
 {
-    // TODO: Incomplete.
+    if (sub_4A40D0(player)) {
+        FREE(off_5F0BC8[player]);
+    }
+
+    // NOTE: What are 8 extra bytes for?
+    off_5F0BC8[player] = MALLOC(sizeof(S5F0BC8) + 8 + size);
+    off_5F0BC8[player]->oid = oid;
+    off_5F0BC8[player]->level = level;
+    off_5F0BC8[player]->size = size;
+    memcpy(off_5F0BC8[player] + 1, data, size);
 }
 
 // 0x4A4180
