@@ -1,6 +1,7 @@
 #include "ui/iso.h"
 
 #include "game/gamelib.h"
+#include "ui/intgame.h"
 
 static void sub_557F30();
 
@@ -138,5 +139,5 @@ void sub_558130(TigRect* rect)
 // 0x5581A0
 void sub_5581A0(TigRect* rect)
 {
-    sub_402D30(&rect);
+    sub_402D30(rect);
 }
