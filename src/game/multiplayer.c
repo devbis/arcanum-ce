@@ -48,6 +48,7 @@ static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
 static bool sub_4A1F60(int player, int64_t* obj_ptr);
 static void sub_4A1FC0();
 static void sub_4A2020(void* msg);
+static void sub_4A2040(int a1);
 static void sub_4A2A30();
 static void sub_4A2AE0(int player);
 static void sub_4A3660(int player);
@@ -524,9 +525,13 @@ void sub_4A2020(void* msg)
 }
 
 // 0x4A2040
-void sub_4A2040()
+void sub_4A2040(int a1)
 {
-    // TODO: Incomplete.
+    Packet67 pkt;
+
+    pkt.type = 67;
+    pkt.field_4 = a1;
+    tig_net_send_app_all(&pkt, sizeof(pkt));
 }
 
 // 0x4A2070
