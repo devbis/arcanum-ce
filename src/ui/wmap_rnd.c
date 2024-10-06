@@ -1,8 +1,87 @@
 #include "ui/wmap_rnd.h"
 
+#include "game/area.h"
+#include "game/map.h"
+#include "game/player.h"
 #include "game/random.h"
+#include "game/sector.h"
+#include "game/terrain.h"
 #include "game/timeevent.h"
 #include "ui/sleep_ui.h"
+#include "ui/wmap_ui.h"
+
+typedef struct S64C780_F0 {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+} S64C780_F0;
+
+static_assert(sizeof(S64C780_F0) == 0x18, "wrong size");
+
+typedef struct S64C780 {
+    /* 0000 */ S64C780_F0* entries;
+    /* 0004 */ int cnt;
+} S64C780;
+
+static_assert(sizeof(S64C780) == 0x8, "wrong size");
+
+static bool wmap_rnd_terrain_clear(uint16_t a1);
+static void sub_558AF0();
+static void sub_558B50();
+static void sub_558CE0(S64C780 *a1);
+static bool sub_558DE0(int64_t location);
+
+// 0x5C79A0
+static const char* off_5C79A0[] = {
+    "none",
+    "easy",
+    "average",
+    "powerful",
+};
+
+// 0x5C79B0
+static const char* off_5C79B0[] = {
+    "First:",
+    "Second:",
+    "Third:",
+    "Fourth:",
+    "Fifth:",
+};
+
+// 0x5C79C4
+static int dword_5C79C4[] = {
+    1,
+    3,
+    0,
+    2,
+    7,
+    6,
+    9,
+    2,
+    6,
+    0,
+    4,
+    2,
+    8,
+    5,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+// 0x64C728
+static S64C780 stru_64C728;
+
+// 0x64C780
+static S64C780 stru_64C780;
+
+// 0x64C788
+static S64C780 stru_64C788;
 
 // 0x64C790
 static bool dword_64C790;
@@ -65,7 +144,7 @@ void sub_5589D0()
 }
 
 // 0x5589E0
-bool wmap_rnd_terrain_clear(int a1)
+bool wmap_rnd_terrain_clear(uint16_t a1)
 {
     int v1;
     int v2;
@@ -113,7 +192,9 @@ void sub_558AF0()
 // 0x558B50
 void sub_558B50()
 {
-    // TODO: Incomplete.
+    sub_558CE0(&stru_64C780);
+    sub_558CE0(&stru_64C788);
+    sub_558CE0(&stru_64C728);
 }
 
 // 0x558B80
@@ -129,9 +210,12 @@ void sub_558C90()
 }
 
 // 0x558CE0
-void sub_558CE0()
+void sub_558CE0(S64C780 *a1)
 {
-    // TODO: Incomplete.
+    if (a1->cnt != 0) {
+        FREE(a1->entries);
+        a1->cnt = 0;
+    }
 }
 
 // 0x558D00
@@ -153,7 +237,7 @@ void sub_558D40()
 }
 
 // 0x558DE0
-void sub_558DE0()
+bool sub_558DE0(int64_t location)
 {
     // TODO: Incomplete.
 }
@@ -168,7 +252,7 @@ void sub_558F30()
 int wmap_rnd_determine_terrain(long long location)
 {
     long long v1;
-    int v2;
+    uint16_t v2;
     int v3;
 
     v1 = sub_4CFC50(location);
@@ -239,13 +323,11 @@ bool sub_5595B0()
         && !sub_4CB6A0(player_get_pc_obj())) {
         sub_566CC0(&location);
         if (sub_558DE0(location)) {
-            if (sub_560F90()) {
+            if (wmap_ui_is_created()) {
                 sub_560F40();
                 sub_560720();
-            } else {
-                if (sleep_ui_is_created()) {
-                    sub_57B450();
-                }
+            } else if (sleep_ui_is_created()) {
+                sub_57B450();
             }
         }
     }
