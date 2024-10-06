@@ -1253,6 +1253,31 @@ bool sub_464C50(int64_t obj, int inventory_location)
     }
 }
 
+// 0x464C80
+bool sub_464C80(int64_t item_obj)
+{
+    int inventory_location;
+    int64_t owner_obj;
+    int v1;
+
+    inventory_location = item_inventory_location_get(item_obj);
+    if (inventory_location >= 1000 && inventory_location <= 1008) {
+        if (sub_466DA0(item_obj) != ITEM_CANNOT_OK) {
+            return false;
+        }
+
+        item_parent(item_obj, owner_obj);
+        if (sub_466510(item_obj, owner_obj, &v1) != ITEM_CANNOT_OK) {
+            return false;
+        }
+
+        item_remove(item_obj);
+        item_insert(item_obj, owner_obj, v1);
+    }
+
+    return true;
+}
+
 // 0x465010
 int sub_465010(int64_t obj)
 {

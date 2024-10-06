@@ -74,6 +74,7 @@ int64_t item_gold_set(int amount, int64_t obj);
 int64_t item_wield_get(int64_t obj, int inventory_location);
 bool item_wield_set(int64_t item_obj, int inventory_location);
 bool sub_464C50(int64_t obj, int inventory_location);
+bool sub_464C80(int64_t item_obj);
 void sub_4654F0(int64_t a, int64_t b);
 void sub_465530(int64_t obj);
 bool sub_4655C0();
