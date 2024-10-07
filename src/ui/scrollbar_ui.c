@@ -273,7 +273,7 @@ void sub_580B10()
 }
 
 // 0x5810D0
-void sub_5810D0()
+void sub_5810D0(ScrollbarId id, int a2, int a3)
 {
     // TODO: Incomplete.
 }
