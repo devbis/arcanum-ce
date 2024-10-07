@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 
+void sub_585D50();
 void sub_585E20();
 void sub_5860D0(TigRect* rect);
 void sub_586150(int a1, int a2, int a3);
