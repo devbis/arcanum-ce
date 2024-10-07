@@ -6,8 +6,13 @@
 
 bool wmap_ui_init(GameInitInfo* init_info);
 void wmap_ui_exit();
+void sub_560720();
+int sub_560740();
+void sub_560750();
+void sub_560760();
 void sub_560F40();
 int wmap_ui_is_created();
 bool wmap_ui_bkg_process_callback(TimeEvent* timeevent);
+void sub_566CC0(int64_t* location_ptr);
 
 #endif /* ARCANUM_UI_WMAP_UI_H_ */
