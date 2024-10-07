@@ -551,7 +551,7 @@ void sub_5826B0()
 // 0x5826C0
 void sub_5826C0()
 {
-    // TODO: Incomplete.
+    sub_5830F0();
 }
 
 // 0x5826D0

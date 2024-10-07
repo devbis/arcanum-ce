@@ -18,6 +18,7 @@ void sub_582650(const char* a1, const char* a2);
 void sub_582670(const char* a1, const char* a2);
 void sub_582690(const char* a1, const char* a2);
 void sub_5826B0();
+void sub_5826C0();
 void sub_583200();
 void sub_583510();
 void sub_583540(TigRect* rect);
