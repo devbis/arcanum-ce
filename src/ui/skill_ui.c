@@ -115,13 +115,13 @@ int sub_579F90()
 }
 
 // 0x579FA0
-void sub_579FA0()
+void sub_579FA0(int64_t obj, int index)
 {
     // TODO: Incomplete.
 }
 
 // 0x57A0A0
-void skill_ui_preprocess()
+void skill_ui_preprocess(int64_t obj, int type)
 {
     // TODO: Incomplete.
 }
@@ -171,7 +171,7 @@ void sub_57A6B0()
 }
 
 // 0x57A6C0
-void sub_57A6C0()
+void sub_57A6C0(int a1, int64_t* obj_ptr)
 {
     // TODO: Incomplete.
 }
