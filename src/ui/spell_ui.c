@@ -114,7 +114,7 @@ void sub_57BC30()
 }
 
 // 0x57BC70
-void sub_57BC70()
+void sub_57BC70(int64_t obj, int spl)
 {
     // TODO: Incomplete.
 }

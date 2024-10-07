@@ -9,6 +9,7 @@ void spell_ui_exit();
 bool spell_ui_save(TigFile* stream);
 bool spell_ui_load(GameLoadInfo* load_info);
 void sub_57BC30();
+void sub_57BC70(int64_t obj, int spl);
 void sub_57BFF0();
 void sub_57C040(int64_t obj, int index);
 void sub_57C080(int64_t obj, int spl);
