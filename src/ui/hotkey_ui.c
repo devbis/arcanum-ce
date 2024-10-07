@@ -1,10 +1,18 @@
 #include "ui/hotkey_ui.h"
 
 #include "game/gsound.h"
+#include "game/item.h"
+#include "game/object.h"
 #include "game/player.h"
+#include "game/spell.h"
 #include "ui/intgame.h"
+#include "ui/inven_ui.h"
+#include "ui/skill_ui.h"
 
+static bool intgame_save_hotkey(S683518* a1, TigFile* stream);
+static bool intgame_load_hotkey(S683518* a1, TigFile* stream);
 static void intgame_hotkey_mouse_load(tig_art_id_t art_id, bool a2);
+static void sub_57EE30(int64_t a1, int inventory_location);
 static bool button_create_no_art(UiButtonInfo* button_info, int width, int height);
 
 // 0x5CB494
@@ -36,10 +44,10 @@ static int dword_5CB4BC[10] = {
 };
 
 // 0x5CB4E4
-static int dword_5CB4E4 = -1;
+int dword_5CB4E4 = -1;
 
 // 0x683510
-static int dword_683510;
+static tig_window_handle_t dword_683510;
 
 // 0x683518
 static S683518 stru_683518[2];
@@ -59,6 +67,9 @@ static int dword_683950;
 // 0x683958
 static int dword_683958;
 
+// 0x683960
+static FollowerInfo stru_683960;
+
 // 0x6839A8
 static int dword_6839A8;
 
@@ -66,7 +77,7 @@ static int dword_6839A8;
 static int dword_6839AC;
 
 // 0x6839B0
-static int dword_6839B0;
+int dword_6839B0;
 
 // 0x57D700
 bool hotkey_ui_init(GameInitInfo* init_info)
@@ -78,8 +89,8 @@ bool hotkey_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    dword_6835D8 = -1;
-    dword_683510 = -1;
+    dword_6835D8 = TIG_WINDOW_HANDLE_INVALID;
+    dword_683510 = TIG_WINDOW_HANDLE_INVALID;
 
     if (tig_art_interface_id_create(dword_5CB494[0], 0, 0, 0, &art_id) != TIG_OK) {
         tig_debug_printf("hotkey_ui_init: ERROR: tig_art_interface_id_create failed!\n");
@@ -274,7 +285,7 @@ bool sub_57DBA0(GameLoadInfo* load_info)
             return false;
         }
 
-        sub_57EFA0(v1.field_8, v1.field_C, v1.field_10, v1.field_14);
+        sub_57EFA0(v1.field_8, v1.field_C, v1.field_10);
     }
 
     for (index = 0; index < 10; index++) {
@@ -291,7 +302,7 @@ void sub_57DC20()
 {
     dword_683950 = -1;
     dword_683958 = 1;
-    sub_4440E0(sub_573620(), &qword_683960);
+    sub_4440E0(sub_573620(), &stru_683960);
     dword_6839B0 = 1;
 }
 
@@ -340,7 +351,7 @@ bool intgame_load_hotkey(S683518* a1, TigFile* stream)
 }
 
 // 0x57E140
-void intgame_hotkey_refresh()
+void intgame_hotkey_refresh(int index)
 {
     // TODO: Incomplete.
 }
@@ -415,17 +426,16 @@ void intgame_hotkey_mouse_load(tig_art_id_t art_id, bool a2)
 // 0x57E5A0
 void sub_57E5A0(S683518* a1)
 {
-    a1->field_10 = 0;
+    a1->field_10 = OBJ_HANDLE_NULL;
     a1->field_8 = 0;
     a1->field_4 = 0;
     a1->field_44 = -1;
-    a1->field_14 = 0;
     a1->field_18.type = 0;
     dword_5CB4E4 = -1;
 }
 
 // 0x57E5D0
-void sub_57E5D0()
+bool sub_57E5D0()
 {
     // TODO: Incomplete.
 }
@@ -440,7 +450,7 @@ void sub_57E8B0()
 }
 
 // 0x57E8D0
-void sub_57E8D0()
+bool sub_57E8D0(int a1)
 {
     // TODO: Incomplete.
 }
@@ -460,7 +470,7 @@ bool sub_57EDA0(int a1)
     if (sub_573620() != OBJ_HANDLE_NULL) {
         dword_683950 = -1;
         dword_683958 = 1;
-        sub_4440E0(sub_573620(), &qword_683960);
+        sub_4440E0(sub_573620(), &stru_683960);
         dword_6839B0 = 1;
     }
 
@@ -478,25 +488,25 @@ void sub_57EDF0(int64_t obj, int64_t a2, int a3)
 }
 
 // 0x57EE30
-void sub_57EE30()
+void sub_57EE30(int64_t a1, int a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x57EED0
-void sub_57EED0()
+bool sub_57EED0(int64_t obj, int a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x57EF90
-void sub_57EF90()
+void sub_57EF90(int index)
 {
-    // TODO: Incomplete.
+    sub_57F210(index);
 }
 
 // 0x57EFA0
-void sub_57EFA0()
+void sub_57EFA0(int a1, int a2, int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -565,7 +575,7 @@ bool sub_57F260()
 }
 
 // 0x57F2C0
-void sub_57F2C0(int a1, int a2, int a3)
+void sub_57F2C0(int64_t obj, int a3)
 {
     int index;
     S683518* v1;
@@ -573,9 +583,9 @@ void sub_57F2C0(int a1, int a2, int a3)
     if (a3) {
         for (index = 0; index < 2; index++) {
             v1 = &(stru_683518[index]);
-            if (v1->field_0 == a1 && v1->field_4 == a2) {
+            if (v1->field_10 == obj) {
                 sub_57E5A0(v1);
-                sub_57EFA0(2, sub_557B50(index), v1->field_0, v1->field_4);
+                sub_57EFA0(2, sub_557B50(index), v1->field_10);
             }
         }
     }
@@ -592,7 +602,7 @@ void sub_57F340(int a1)
         if (v1->field_8 == 3 && v1->field_C == a1) {
             sub_57E5A0(v1);
             v1->field_C = sub_557B50(index);
-            sub_57EFA0(2, v1->field_C, 0, 0);
+            sub_57EFA0(2, v1->field_C, OBJ_HANDLE_NULL);
         }
     }
 
