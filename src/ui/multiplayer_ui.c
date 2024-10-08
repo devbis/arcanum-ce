@@ -50,7 +50,7 @@ static TextEdit stru_5CABF8 = {
 };
 
 // 0x680EF0
-static tig_button_handle_t dword_680EF0[10];
+static tig_button_handle_t multiplayer_ui_kick_button_handles[10];
 
 // 0x680F98
 static tig_button_handle_t dword_680F98;
@@ -71,7 +71,7 @@ static tig_button_handle_t dword_680FCC;
 static S681000* off_681000;
 
 // 0x681004
-static tig_button_handle_t dword_681004[10];
+static tig_button_handle_t multiplayer_ui_add_button_handles[10];
 
 // 0x68102C
 static tig_button_handle_t dword_68102C;
@@ -178,8 +178,8 @@ void sub_570130()
     if (dword_681038) {
         if (dword_5CABE8 != TIG_WINDOW_HANDLE_INVALID) {
             for (index = 0; index < dword_68103C; index++) {
-                tig_button_destroy(dword_681004[index]);
-                tig_button_destroy(dword_680EF0[index]);
+                tig_button_destroy(multiplayer_ui_add_button_handles[index]);
+                tig_button_destroy(multiplayer_ui_kick_button_handles[index]);
             }
             tig_window_destroy(dword_5CABE8);
             dword_5CABE8 = TIG_WINDOW_HANDLE_INVALID;
@@ -243,7 +243,65 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
 // 0x5706D0
 void sub_5706D0()
 {
-    // TODO: Incomplete.
+    int index;
+    TigWindowData window_data;
+    TigButtonData add_button_data;
+    TigButtonData kick_button_data;
+
+    for (index = 0; index < 8; index++) {
+        if (dword_68103C >= 10) {
+            break;
+        }
+
+        if (!tig_net_client_is_active(index)) {
+            dword_680FA4[dword_68103C++] = index;
+        }
+    }
+
+    if (dword_68103C != 0) {
+        window_data.flags = TIG_WINDOW_FLAG_0x02;
+        window_data.rect.x = 566;
+        window_data.rect.y = 41;
+        window_data.rect.width = stru_680FD0[0].width;
+        window_data.rect.height = stru_680FD0[0].height * dword_68103C;
+        window_data.message_filter = sub_5713F0;
+        if (tig_window_create(&window_data, &dword_5CABE8) != TIG_OK) {
+            // FIXME: Should be `EXIT_FAILURE`.
+            exit(EXIT_SUCCESS);
+        }
+
+        add_button_data.flags = TIG_BUTTON_FLAG_0x01;
+        add_button_data.window_handle = dword_5CABE8;
+        add_button_data.x = 4;
+        tig_art_interface_id_create(638, 0, 0, 0, &(add_button_data.art_id));
+        add_button_data.mouse_down_snd_id = -1;
+        add_button_data.mouse_up_snd_id = -1;
+        add_button_data.mouse_enter_snd_id = -1;
+        add_button_data.mouse_exit_snd_id = -1;
+
+        kick_button_data.flags = TIG_BUTTON_FLAG_0x01;
+        kick_button_data.window_handle = dword_5CABE8;
+        kick_button_data.x = 4;
+        tig_art_interface_id_create(638, 0, 0, 0, &(kick_button_data.art_id));
+        kick_button_data.mouse_down_snd_id = -1;
+        kick_button_data.mouse_up_snd_id = -1;
+        kick_button_data.mouse_enter_snd_id = -1;
+        kick_button_data.mouse_exit_snd_id = -1;
+
+        for (index = 0; index < dword_68103C; index++) {
+            add_button_data.y = index * stru_680FD0[index % 2].height + 4;
+            if (tig_button_create(&add_button_data, &(multiplayer_ui_add_button_handles[index])) != TIG_OK) {
+                // FIXME: Should be `EXIT_FAILURE`.
+                exit(EXIT_SUCCESS);
+            }
+
+            kick_button_data.y = index * stru_680FD0[index % 2].height + 4;
+            if (tig_button_create(&kick_button_data, &(multiplayer_ui_kick_button_handles[index])) != TIG_OK) {
+                // FIXME: Should be `EXIT_FAILURE`.
+                exit(EXIT_SUCCESS);
+            }
+        }
+    }
 }
 
 // 0x570890
