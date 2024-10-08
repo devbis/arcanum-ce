@@ -65,7 +65,7 @@ static int dword_680F9C[2];
 static int dword_680FA4[10];
 
 // 0x680FCC
-static tig_button_handle_t dword_680FCC;
+static tig_button_handle_t multiplayer_ui_ban_btn;
 
 // 0x681000
 static S681000* off_681000;
@@ -74,7 +74,7 @@ static S681000* off_681000;
 static tig_button_handle_t multiplayer_ui_add_button_handles[10];
 
 // 0x68102C
-static tig_button_handle_t dword_68102C;
+static tig_button_handle_t multiplayer_ui_kick_btn;
 
 // 0x681030
 static mes_file_handle_t multiplayer_ui_mes_file;
@@ -204,12 +204,12 @@ bool sub_5701A0(tig_window_handle_t window_handle, const TigRect* rect)
     button_data.x = 286 - rect->x;
     button_data.y = 524 - rect->y;
     tig_art_interface_id_create(843, 0, 0, 0, &(button_data.art_id));
-    tig_button_create(&button_data, &dword_68102C);
+    tig_button_create(&button_data, &multiplayer_ui_kick_btn);
 
     button_data.x = 455 - rect->x;
     button_data.y = 524 - rect->y;
     tig_art_interface_id_create(844, 0, 0, 0, &(button_data.art_id));
-    tig_button_create(&button_data, &dword_680FCC);
+    tig_button_create(&button_data, &multiplayer_ui_ban_btn);
 
     return true;
 }
@@ -222,8 +222,8 @@ bool sub_570260(tig_window_handle_t window_handle)
     TigFont font_desc;
     TigRect rect;
 
-    tig_button_show(dword_68102C);
-    tig_button_show(dword_680FCC);
+    tig_button_show(multiplayer_ui_kick_btn);
+    tig_button_show(multiplayer_ui_ban_btn);
 
     // Disconnect
     tig_font_push(sub_549940(2, 0));
@@ -262,8 +262,9 @@ bool sub_570260(tig_window_handle_t window_handle)
 // 0x5703B0
 bool sub_5703B0()
 {
-    tig_button_hide(dword_68102C);
-    tig_button_hide(dword_680FCC);
+    tig_button_hide(multiplayer_ui_kick_btn);
+    tig_button_hide(multiplayer_ui_ban_btn);
+
     return true;
 }
 
