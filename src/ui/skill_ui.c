@@ -1,8 +1,11 @@
 #include "ui/skill_ui.h"
 
+#include "game/critter.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/player.h"
 #include "game/skill.h"
+#include "game/target.h"
 #include "game/text_floater.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
@@ -32,11 +35,11 @@ static int dword_5CB230[] = { 279, 280, 282, 278 };
 static int dword_5CB240[] = { 6, 5, 15, 12 };
 
 // 0x5CB250
-static int dword_5CB250[4][2] = {
-    { 0x1, 0x0 },
-    { 0x40000044, 0x0 },
-    { 0x4, 0x8000 },
-    { 0x2000004, 0x0 },
+static int qword_5CB250[4] = {
+    0x1,
+    0x40000044,
+    0x800000000004,
+    0x2000004,
 };
 
 // 0x5CB270
@@ -123,7 +126,43 @@ void sub_579FA0(int64_t obj, int index)
 // 0x57A0A0
 void skill_ui_preprocess(int64_t obj, int type)
 {
-    // TODO: Incomplete.
+    bool is_pc;
+    uint64_t tgt;
+    Tanya v3;
+
+    is_pc = player_is_pc_obj(obj);
+    qword_683490 = obj;
+    dword_5CB270 = type;
+
+    tgt = qword_5CB250[type];
+    sub_4C7090(&v3);
+
+    switch (type) {
+    case 0:
+        sub_45EE30(obj, !critter_is_concealed(obj));
+        break;
+    case 1:
+    case 2:
+        break;
+    case 3:
+        if (!is_pc) {
+            return;
+        }
+
+        if (!inven_ui_is_created()) {
+            sub_572240(obj, OBJ_HANDLE_NULL, 0);
+        }
+        break;
+    default:
+        tig_debug_printf("skill_ui_preprocess: ERROR: type out of range!\n");
+        return;
+    }
+
+    if (is_pc && tgt != Tgt_None && tgt != Tgt_Self) {
+        if (sub_551A80(2)) {
+            sub_4F25B0(tgt);
+        }
+    }
 }
 
 // 0x57A1A0
