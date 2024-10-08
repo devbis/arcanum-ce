@@ -21,6 +21,7 @@ static void sub_570E40();
 static void sub_570EF0();
 static void sub_571100();
 static bool sub_5713F0(TigMessage* msg);
+static void sub_571570(int screen_x, int screen_y, int* window_x, int* window_y);
 static bool sub_5715A0(int x, int y, int* index_ptr);
 static void sub_571660(TextEdit* textedit);
 static void sub_571730(TextEdit* textedit);
@@ -496,14 +497,14 @@ bool sub_5713F0(TigMessage* msg)
 }
 
 // 0x571570
-void sub_571570(int a1, int a2, int* a3, int* a4)
+void sub_571570(int screen_x, int screen_y, int* window_x, int* window_y)
 {
-    if (a3 != NULL) {
-        *a3 = a1 - 566;
+    if (window_x != NULL) {
+        *window_x = screen_x - 566;
     }
 
-    if (a4 != NULL) {
-        *a4 = a2 - 41;
+    if (window_y != NULL) {
+        *window_y = screen_y - 41;
     }
 }
 
