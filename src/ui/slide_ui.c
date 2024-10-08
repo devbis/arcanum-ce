@@ -106,7 +106,77 @@ void sub_569720(int a1)
 // 0x569770
 bool sub_569770(tig_window_handle_t window_handle, int num)
 {
-    // TODO: Incomplete.
+    TigMessage msg;
+    TigRect rect;
+    TigBmp bmp;
+    char speech_path[TIG_MAX_PATH];
+    tig_sound_handle_t speech_handle;
+    bool success = true;
+    bool stop;
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = 800;
+    rect.height = 600;
+
+    if (sub_569930(num, bmp.name, speech_path)) {
+        if (tig_bmp_create(&bmp)) {
+            tig_bmp_copy_to_window(&bmp, &rect, window_handle, &rect);
+            tig_bmp_destroy(&bmp);
+
+            sub_51E850(window_handle);
+            tig_window_display();
+
+            sub_569A60();
+
+            speech_handle = gsound_play_voice(speech_path, 0);
+            while (tig_message_dequeue(&msg) == TIG_OK) {
+                if (msg.type == TIG_MESSAGE_REDRAW) {
+                    sub_4045A0();
+                }
+            }
+
+            stop = false;
+            do {
+                tig_ping();
+
+                while (tig_message_dequeue(&msg) == TIG_OK) {
+                    if (msg.type == TIG_MESSAGE_KEYBOARD) {
+                        if (msg.data.keyboard.pressed == false) {
+                            stop = true;
+                            if (msg.data.keyboard.key == DIK_ESCAPE) {
+                                success = false;
+                            }
+                        }
+                    } else if (msg.type == TIG_MESSAGE_MOUSE) {
+                        if (msg.data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
+                            || msg.data.mouse.event == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP
+                            || msg.data.mouse.event == TIG_MESSAGE_MOUSE_MIDDLE_BUTTON_UP) {
+                            stop = true;
+                        }
+                    } else if (msg.type == TIG_MESSAGE_REDRAW) {
+                        sub_4045A0();
+                    }
+                }
+
+                if (stop) {
+                    break;
+                }
+            } while (speech_handle != TIG_SOUND_HANDLE_INVALID && tig_sound_is_playing(speech_handle));
+
+            tig_sound_destroy(speech_handle);
+        }
+
+        while (tig_message_dequeue(&msg) == TIG_OK) {
+            if (msg.type == TIG_MESSAGE_REDRAW) {
+                sub_4045A0();
+            }
+        }
+
+        sub_5699F0();
+    }
+
+    return success;
 }
 
 // 0x569930
