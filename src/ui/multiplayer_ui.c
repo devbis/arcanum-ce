@@ -284,9 +284,22 @@ bool sub_5708C0(tig_window_handle_t window_handle, const TigRect* rect)
 }
 
 // 0x570940
-void sub_570940()
+bool sub_570940(int a1)
 {
-    // TODO: Incomplete.
+    if (dword_5CABF0 == -1) {
+        return false;
+    }
+
+    dword_5CABEC = a1;
+    sub_570A40(a1);
+    tig_button_show(dword_680F98);
+    textedit_ui_focus(&stru_5CABF8);
+    intgame_text_edit_refresh_color(stru_5CABF8.buffer,
+        sub_549940(0, 0),
+        tig_color_make(2, 0, 116),
+        true);
+
+    return true;
 }
 
 // 0x5709E0

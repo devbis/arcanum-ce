@@ -14,5 +14,6 @@ bool sub_5703B0();
 void sub_5703D0(const char* str, int player);
 void sub_5704E0(int64_t a1, int64_t a2, int type);
 void sub_570890();
+bool sub_570940(int a1);
 
 #endif /* ARCANUM_UI_MULTIPLAYER_UI_H_ */
