@@ -2,6 +2,10 @@
 #define ARCANUM_UI_CHAREDIT_UI_H_
 
 #include "game/context.h"
+#include "ui/types.h"
+
+extern John stru_5C8990;
+extern const char* dword_64D3C4[23];
 
 bool charedit_init(GameInitInfo* init_info);
 void charedit_exit();
@@ -18,5 +22,8 @@ void sub_55F1E0();
 void sub_55F200(int type);
 void sub_55F320();
 void sub_55F340();
+void sub_55F360(int a1);
+void sub_55F450(int a1, int a2, int a3);
+void sub_55F5F0(int a1, int a2, int a3);
 
 #endif /* ARCANUM_UI_CHAREDIT_UI_H_ */
