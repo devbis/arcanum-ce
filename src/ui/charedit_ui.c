@@ -2,14 +2,21 @@
 
 #include <stdio.h>
 
+#include "game/anim.h"
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/level.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/object.h"
+#include "game/player.h"
+#include "game/portrait.h"
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
+#include "game/tech.h"
+#include "game/ui.h"
 #include "ui/intgame.h"
 #include "ui/scrollbar_ui.h"
 
@@ -41,6 +48,8 @@ typedef struct S5C8CA8 {
 } S5C8CA8;
 
 static void sub_55A240();
+static bool sub_55A5C0(TigMessage* msg);
+static void sub_55AE70(int a1);
 static void sub_55B150();
 static void sub_55B1B0();
 static void sub_55B280();
@@ -73,6 +82,34 @@ static void sub_55EFF0();
 static void sub_55F0D0();
 static void sub_55F0E0(int value);
 static void sub_55F110(TigRect* rect);
+
+// 0x5C7F88
+static S5C87D0 stru_5C7F88[10] = {
+    { 465, 144, TIG_BUTTON_HANDLE_INVALID, 4 },
+    { 465, 214, TIG_BUTTON_HANDLE_INVALID, 6 },
+    { 224, 117, TIG_BUTTON_HANDLE_INVALID, 7 },
+    { 224, 157, TIG_BUTTON_HANDLE_INVALID, 9 },
+    { 224, 197, TIG_BUTTON_HANDLE_INVALID, 11 },
+    { 224, 237, TIG_BUTTON_HANDLE_INVALID, 13 },
+    { 367, 117, TIG_BUTTON_HANDLE_INVALID, 15 },
+    { 367, 157, TIG_BUTTON_HANDLE_INVALID, 17 },
+    { 367, 197, TIG_BUTTON_HANDLE_INVALID, 19 },
+    { 367, 237, TIG_BUTTON_HANDLE_INVALID, 21 },
+};
+
+// 0x5C8028
+static S5C87D0 stru_5C8028[10] = {
+    { 409, 144, TIG_BUTTON_HANDLE_INVALID, 4 },
+    { 409, 214, TIG_BUTTON_HANDLE_INVALID, 6 },
+    { 170, 117, TIG_BUTTON_HANDLE_INVALID, 7 },
+    { 170, 157, TIG_BUTTON_HANDLE_INVALID, 9 },
+    { 170, 197, TIG_BUTTON_HANDLE_INVALID, 11 },
+    { 170, 237, TIG_BUTTON_HANDLE_INVALID, 13 },
+    { 313, 117, TIG_BUTTON_HANDLE_INVALID, 15 },
+    { 313, 157, TIG_BUTTON_HANDLE_INVALID, 17 },
+    { 313, 197, TIG_BUTTON_HANDLE_INVALID, 19 },
+    { 313, 237, TIG_BUTTON_HANDLE_INVALID, 21 },
+};
 
 // 0x5C8150
 static S5C8150 stru_5C8150[] = {
@@ -416,11 +453,26 @@ static ScrollbarId stru_64C7A8;
 // 0x64C7B0
 static tig_window_handle_t dword_64C7B0;
 
+// 0x64C7B4
+static tig_button_handle_t dword_64C7B4;
+
+// 0x64C7B8
+static int dword_64C7B8[BASIC_SKILL_COUNT];
+
 // 0x64C7E8
 static tig_button_handle_t dword_64C7E8[15];
 
+// 0x64C824
+static tig_button_handle_t dword_64C824;
+
 // 0x64C828
 static tig_font_handle_t dword_64C828;
+
+// 0x64C82C
+static int dword_64C82C[TECH_SKILL_COUNT];
+
+// 0x64C83C
+static tig_button_handle_t dword_64C83C;
 
 // 0x64C840
 static tig_font_handle_t dword_64C840;
@@ -431,8 +483,20 @@ static const char* charedit_fatigue_str;
 // 0x64C848
 static tig_font_handle_t dword_64C848;
 
+// 0x64C9CC
+static int dword_64C9CC;
+
 // 0x64C9D0
 static tig_font_handle_t dword_64C9D0;
+
+// 0x64CA54
+static tig_button_handle_t dword_64CA54;
+
+// 0x64CA58
+static int dword_64CA58;
+
+// 0x64CA5C
+static tig_button_handle_t dword_64CA5C;
 
 // 0x64CA60
 static tig_window_handle_t dword_64CA60;
@@ -467,6 +531,9 @@ static const char* dword_64CA90[200];
 // 0x64CDB0
 static tig_font_handle_t dword_64CDB0;
 
+// 0x64CDB4
+static int dword_64CDB4;
+
 // 0x64CDB8
 static tig_font_handle_t dword_64CDB8;
 
@@ -491,6 +558,9 @@ static tig_font_handle_t dword_64CDD0;
 // 0x64CDD4
 static tig_button_handle_t spell_plus_bid;
 
+// 0x64CFDC
+static tig_button_handle_t dword_64CFDC;
+
 // 0x64CFE0
 static tig_font_handle_t dword_64CFE0;
 
@@ -504,7 +574,7 @@ static int dword_64D304[23];
 static int dword_64D360;
 
 // 0x64D364
-static int dword_64D364[16];
+static int dword_64D364[COLLEGE_COUNT];
 
 // 0x64D3A4
 static tig_font_handle_t dword_64D3A4;
@@ -517,6 +587,9 @@ static tig_font_handle_t dword_64D3B0;
 
 // 0x64D3B4
 static int dword_64D3B4;
+
+// 0x64D3B8
+static tig_button_handle_t dword_64D3B8;
 
 // 0x64D3BC
 static tig_font_handle_t dword_64D3BC;
@@ -532,6 +605,9 @@ static tig_font_handle_t dword_64D420;
 
 // 0x64D424
 static int dword_64D424;
+
+// 0x64D428
+static tig_button_handle_t dword_64D428;
 
 // 0x64D42C
 static tig_font_handle_t dword_64D42C;
@@ -568,6 +644,9 @@ static bool dword_64E02C;
 
 // 0x64DEE8
 static const char* charedit_minimum_level_str;
+
+// 0x64DEEC
+static int dword_64DEEC[TECH_COUNT];
 
 // 0x559690
 bool charedit_init(GameInitInfo* init_info)
@@ -633,7 +712,307 @@ void charedit_reset()
 // 0x5597C0
 bool charedit_create(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigWindowData window_data;
+    TigButtonData button_data;
+    int index;
+    int portrait;
+    S550DA0 v1;
+    Packet127 pkt;
+
+    if (charedit_created) {
+        charedit_destroy();
+        return true;
+    }
+
+    pc_obj = player_get_pc_obj();
+    if (sub_45D8D0(pc_obj) || !sub_551A80(0) || !sub_551A80(9)) {
+        return false;
+    }
+
+    qword_64E010 = obj;
+    dword_64CDCC = a2;
+
+    if (dword_64CDCC == 0) {
+        object_set_hp_damage(obj, 0);
+        critter_fatigue_damage_set(obj, 0);
+    }
+
+    tig_art_interface_id_create(22, 0, 0, 0, &art_id);
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        qword_64E010 = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    if (!intgame_big_window_lock(sub_55A5C0, &dword_64CA64)) {
+        qword_64E010 = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    tig_window_data(dword_64CA64, &window_data);
+
+    window_data.rect.x = 0;
+    window_data.rect.y = 0;
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = window_data.rect.width;
+    dst_rect.height = window_data.rect.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &(window_data.rect);
+    art_blit_info.dst_rect = &dst_rect;
+    if (tig_window_blit_art(dword_64CA64, &art_blit_info) != TIG_OK) {
+        intgame_big_window_unlock();
+        qword_64E010 = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.window_handle = dword_64CA64;
+    button_data.mouse_down_snd_id = 3000;
+    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
+    tig_art_interface_id_create(24, 0, 0, 0, &button_data.art_id);
+    for (index = 0; index < 10; index++) {
+        if (dword_64CDCC == 2) {
+            stru_5C7F88[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
+        } else {
+            button_data.x = stru_5C7F88[index].x;
+            button_data.y = stru_5C7F88[index].y;
+            if (tig_button_create(&button_data, &(stru_5C7F88[index].button_handle))) {
+                intgame_big_window_unlock();
+                qword_64E010 = OBJ_HANDLE_NULL;
+                return false;
+            }
+        }
+    }
+
+    tig_art_interface_id_create(23, 0, 0, 0, &button_data.art_id);
+    for (index = 0; index < 10; index++) {
+        if (dword_64CDCC == 2) {
+            stru_5C8028[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
+        } else {
+            button_data.x = stru_5C8028[index].x;
+            button_data.y = stru_5C8028[index].y;
+            if (tig_button_create(&button_data, &(stru_5C8028[index].button_handle))) {
+                intgame_big_window_unlock();
+                qword_64E010 = OBJ_HANDLE_NULL;
+                return false;
+            }
+        }
+    }
+
+    sub_55A240();
+
+    if (sub_553D10(pc_obj, qword_64E010, &portrait)) {
+        portrait_draw_native(qword_64E010, portrait, dword_64CA64, stru_5C89A8[0].x, stru_5C89A8[0].y);
+    } else {
+        tig_art_interface_id_create(portrait, 0, 0, 0, &art_id);
+        tig_art_frame_data(art_id, &art_frame_data);
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        dst_rect.x = stru_5C89A8[0].x;
+        dst_rect.y = stru_5C89A8[0].y;
+        dst_rect.width = art_frame_data.width;
+        dst_rect.height = art_frame_data.height;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(dword_64CA64, &art_blit_info);
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.window_handle = dword_64CA64;
+    tig_art_interface_id_create(34, 0, 0, 0, &(button_data.art_id));
+    button_data.mouse_down_snd_id = 3000;
+    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
+    button_data.x = 527;
+    button_data.y = 11;
+    if (tig_button_create(&button_data, &dword_64C7B4) != TIG_OK) {
+        intgame_big_window_unlock();
+        qword_64E010 = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    button_data.x = 595;
+    tig_art_interface_id_create(35, 0, 0, 0, &(button_data.art_id));
+    if (tig_button_create(&button_data, &dword_64C83C) != TIG_OK) {
+        intgame_big_window_unlock();
+        qword_64E010 = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    button_data.x = 663;
+    tig_art_interface_id_create(36, 0, 0, 0, &(button_data.art_id));
+    if (tig_button_create(&button_data, &dword_64D3B8) != TIG_OK) {
+        intgame_big_window_unlock();
+        qword_64E010 = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    button_data.x = 754;
+    button_data.y = 21;
+    tig_art_interface_id_create(568, 0, 0, 0, &(button_data.art_id));
+    if (tig_button_create(&button_data, &dword_64CA54) != TIG_OK) {
+        intgame_big_window_unlock();
+        qword_64E010 = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    tig_window_show(dword_64CA6C);
+    tig_window_show(dword_64C7B0);
+    tig_window_show(dword_64CA8C);
+    tig_window_show(dword_64CA60);
+    sub_51E850(dword_64CA6C);
+
+    if (dword_64CDCC == 2) {
+        for (index = 0; index < 15; index++) {
+            tig_button_hide(dword_64C7E8[index]);
+        }
+    } else {
+        for (index = 0; index < 15; index++) {
+            tig_button_show(dword_64C7E8[index]);
+        }
+    }
+
+    dword_64E01C = 0;
+    sub_55BD10(dword_64E020);
+
+    if (qword_64E010 != OBJ_HANDLE_NULL) {
+        dword_64D428 = TIG_BUTTON_HANDLE_INVALID;
+        dword_64CFDC = TIG_BUTTON_HANDLE_INVALID;
+    } else {
+        button_data.flags = 1;
+        button_data.window_handle = dword_64CA64;
+        button_data.mouse_down_snd_id = 3000;
+        button_data.mouse_up_snd_id = 3001;
+        button_data.mouse_enter_snd_id = -1;
+        button_data.mouse_exit_snd_id = -1;
+
+        tig_art_interface_id_create(24, 0, 0, 0, &(button_data.art_id));
+        button_data.x = 82;
+        button_data.y = 196;
+        tig_button_create(&button_data, &dword_64D428);
+
+        button_data.y += 12;
+        tig_art_interface_id_create(23, 0, 0, 0, &(button_data.art_id));
+        tig_button_create(&button_data, &dword_64CFDC);
+    }
+
+    sub_55B150();
+    sub_4B8CE0(obj_field_int64_get(qword_64E010, OBJ_F_LOCATION));
+
+    v1.window_handle = dword_64CA64;
+    v1.rect = &stru_5C8930;
+    tig_art_interface_id_create(198, 0, 0, 0, &v1.art_id);
+
+    if (dword_64CDCC == 1 || dword_64CDCC == 2) {
+        sub_550DA0(1, &v1);
+    }
+
+    if (dword_64CDCC != 3) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0
+            || sub_4A2BA0()) {
+            for (index = 0; index < 23; index++) {
+                dword_64D304[index] = sub_55B4D0(qword_64E010, index);
+            }
+
+            for (index = 0; index < TECH_COUNT; index++) {
+                dword_64DEEC[index] = tech_get_degree(qword_64E010, index);
+            }
+
+            for (index = 0; index < COLLEGE_COUNT; index++) {
+                dword_64D364[index] = sub_4B1AB0(qword_64E010, index);
+            }
+
+            for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+                dword_64C7B8[index] = basic_skill_get_base(qword_64E010, index);
+            }
+
+            for (index = 0; index < TECH_SKILL_COUNT; index++) {
+                dword_64C82C[index] = tech_skill_get_base(qword_64E010, index);
+            }
+        } else {
+            pkt.type = 127;
+            pkt.field_4 = 0;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.window_handle = dword_64CA64;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+    button_data.art_id = TIG_ART_ID_INVALID;
+
+    for (index = 0; index < 32; index++) {
+        button_data.x = stru_5C89A8[index].x;
+        button_data.y = stru_5C89A8[index].y;
+        button_data.width = stru_5C89A8[index].width;
+        button_data.height = stru_5C89A8[index].height;
+        tig_button_create(&button_data, &stru_5C89A8[index].button_handle);
+    }
+
+    dword_64C824 = TIG_BUTTON_HANDLE_INVALID;
+    dword_64CA5C = TIG_BUTTON_HANDLE_INVALID;
+
+    if (dword_64CDCC == 2
+        && critter_leader_get(qword_64E010) == pc_obj
+        && sub_45E590(qword_64E010) != qword_64E010) {
+        button_data.flags = TIG_BUTTON_FLAG_0x01;
+        button_data.window_handle = dword_64CA64;
+
+        tig_art_interface_id_create(827, 0, 0, 0, &(button_data.art_id));
+        button_data.x = 126;
+        button_data.y = 44;
+        tig_button_create(&button_data, &dword_64C824);
+
+        tig_art_interface_id_create(828, 0, 0, 0, &(button_data.art_id));
+        button_data.x = 461;
+        button_data.y = 44;
+        tig_button_create(&button_data, &dword_64CA5C);
+    }
+
+    dword_64C9CC = -1;
+    dword_64CA58 = -1;
+    dword_64CDB4 = -1;
+    dword_64D360 = -1;
+
+    if (player_is_pc_obj(obj)) {
+        sub_460790(0, 0);
+    }
+
+    sub_424070(obj, 4, 0, 1);
+
+    charedit_created = true;
+
+    if (combat_auto_attack_get(pc_obj)) {
+        dword_64E02C = true;
+        combat_auto_attack_set(0);
+    }
+
+    return true;
 }
 
 // 0x55A150
@@ -734,13 +1113,13 @@ void sub_55A240()
 }
 
 // 0x55A5C0
-void sub_55A5C0()
+bool sub_55A5C0(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
 
 // 0x55AE70
-void sub_55AE70()
+void sub_55AE70(int a1)
 {
     // TODO: Incomplete.
 }
