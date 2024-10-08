@@ -21,6 +21,7 @@ static void sub_570E40();
 static void sub_570EF0();
 static void sub_571100();
 static bool sub_5713F0(TigMessage* msg);
+static bool sub_5715A0(int x, int y, int* index_ptr);
 static void sub_571660(TextEdit* textedit);
 static void sub_571730(TextEdit* textedit);
 
@@ -507,9 +508,30 @@ void sub_571570(int a1, int a2, int* a3, int* a4)
 }
 
 // 0x5715A0
-bool sub_5715A0(int a1, int a2, int* a3)
+bool sub_5715A0(int x, int y, int* index_ptr)
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (x < 4 || x > 36
+        || y <= 0 || y >= 10 * stru_680FD0[0].height) {
+        return false;
+    }
+
+    if (y % stru_680FD0[0].height < 4
+        || y % stru_680FD0[0].height > 36) {
+        return false;
+    }
+
+    index = y / stru_680FD0[0].height;
+    if (tig_net_client_is_waiting(dword_680FA4[index])) {
+        return false;
+    }
+
+    if (index_ptr != NULL) {
+        *index_ptr = index;
+    }
+
+    return true;
 }
 
 // 0x571610
