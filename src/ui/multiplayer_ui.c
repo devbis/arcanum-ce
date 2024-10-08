@@ -217,7 +217,46 @@ bool sub_5701A0(tig_window_handle_t window_handle, const TigRect* rect)
 // 0x570260
 bool sub_570260(tig_window_handle_t window_handle)
 {
-    // TODO: Incomplete.
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+    TigFont font_desc;
+    TigRect rect;
+
+    tig_button_show(dword_68102C);
+    tig_button_show(dword_680FCC);
+
+    // Disconnect
+    tig_font_push(sub_549940(2, 0));
+    mes_load("mes\\MultiPlayer.mes", &mes_file); // FIXME: No error checking.
+    mes_file_entry.num = 1090;
+    mes_get_msg(mes_file, &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+    rect.x = (163 - font_desc.width) / 2 + 235;
+    rect.y = 54;
+    rect.width = font_desc.width;
+    rect.height = font_desc.height;
+    tig_window_text_write(window_handle, mes_file_entry.str, &rect);
+    tig_font_pop();
+
+    // Ban
+    tig_font_push(sub_549940(2, 0));
+    mes_file_entry.num = 1091;
+    mes_get_msg(mes_file, &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+    rect.x = (163 - font_desc.width) / 2 + 402;
+    rect.y = 54;
+    rect.width = font_desc.width;
+    rect.height = font_desc.height;
+    tig_window_text_write(window_handle, mes_file_entry.str, &rect);
+    tig_font_pop();
+
+    mes_unload(mes_file);
+
+    return true;
 }
 
 // 0x5703B0
