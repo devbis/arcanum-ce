@@ -1,8 +1,22 @@
 #include "ui/dialog_ui.h"
 
+#include <stdio.h>
+
+#include "game/anim.h"
+#include "game/critter.h"
 #include "game/dialog.h"
+#include "game/gsound.h"
 #include "game/mp_utils.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
+#include "game/player.h"
 #include "game/stat.h"
+#include "game/tb.h"
+#include "ui/charedit_ui.h"
+#include "ui/intgame.h"
+#include "ui/inven_ui.h"
+#include "ui/schematic_ui.h"
+#include "ui/wmap_ui.h"
 
 #define MAX_ENTRIES 8
 
@@ -322,9 +336,17 @@ void sub_5681C0(long long a1, long long a2)
 }
 
 // 0x568220
-void sub_568220()
+void sub_568220(int a1, int a2, int a3, int a4, int a5, int a6)
 {
-    // TODO: Incomplete.
+    DialogUiEntry* entry;
+
+    entry = &(stru_66DAB8[a2]);
+    entry->field_1850 = a3;
+    entry->field_1854 = a4;
+    entry->field_1858 = a5;
+    sub_567C30(a1, entry, a6);
+    entry->field_0 = a2;
+    sub_568280(entry);
 }
 
 // 0x568280
@@ -400,7 +422,7 @@ void sub_568480(DialogUiEntry* entry, int a2)
         a2 = entry->field_1858 + 1;
     }
 
-    sub_441980(entry->field_8.field_8, entry->field_8.field_38, 0, 0, 9, a2);
+    sub_441980(entry->field_8.field_8, entry->field_8.field_38, OBJ_HANDLE_NULL, 9, a2);
 }
 
 // 0x5684C0

@@ -13,6 +13,7 @@ void sub_567A20(long long obj);
 void sub_567A60(long long obj);
 void sub_567E00(int index, int a2);
 void sub_5681C0(long long a1, long long a2);
+void sub_568220(int a1, int a2, int a3, int a4, int a5, int a6);
 void sub_568830(int64_t obj);
 void sub_568880(long long obj, int a2, int a3, int a4, int a5, int a6, const char* str);
 
