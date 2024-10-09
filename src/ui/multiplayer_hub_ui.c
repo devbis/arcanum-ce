@@ -10,6 +10,14 @@
 #include "ui/server_list_ui.h"
 #include "ui/textedit_ui.h"
 
+typedef struct S5CC5F8 {
+    int num;
+    int x;
+    int y;
+} S5CC5F8;
+
+static_assert(sizeof(S5CC5F8) == 0xC, "wrong size");
+
 static void sub_581F30();
 static void sub_581F80();
 static void sub_581F90(int a1);
@@ -38,6 +46,7 @@ static const char* sub_584A90();
 static void sub_584AA0(const char* str);
 static void sub_584AC0(const char* str);
 static void sub_584C30(TigRect* rect);
+static void sub_5850C0(int x, int y);
 static bool sub_585270(int num);
 static const char* sub_585630(int num);
 static void sub_585970(char* buffer);
@@ -109,6 +118,25 @@ static TigRect stru_5CC4B0 = { 327, 310, 164, 14 };
 
 // 0x5CC5F0
 static mes_file_handle_t dword_5CC5F0 = MES_FILE_HANDLE_INVALID;
+
+// 0x5CC5F8
+static S5CC5F8 stru_5CC5F8[15] = {
+    { 2300, 61, 233 },
+    { 2301, 61, 302 },
+    { 2302, 61, 373 },
+    { 2303, 333, 270 },
+    { 2305, 333, 340 },
+    { 2306, 333, 410 },
+    { 2307, 451, 61 },
+    { 2308, 573, 200 },
+    { 2309, 573, 270 },
+    { 2310, 573, 340 },
+    { 2311, 573, 410 },
+    { 2313, 573, 130 },
+    { 2312, 333, 130 },
+    { 2314, 333, 200 },
+    { -1, 0, 0 },
+};
 
 // 0x5CC6AC
 static int dword_5CC6AC = -1;
@@ -1096,9 +1124,60 @@ void sub_584CB0(TigRect* rect)
 }
 
 // 0x5850C0
-void sub_5850C0()
+void sub_5850C0(int x, int y)
 {
-    // TODO: Incomplete.
+    int index;
+    int level;
+
+    if (dword_686960) {
+        sub_585A20();
+    }
+
+    index = 0;
+    while (stru_5CC5F8[index].num != -1) {
+        if (x >= stru_5CC5F8[index].x && x <= stru_5CC5F8[index].x + 204
+            && y >= stru_5CC5F8[index].y && y <= stru_5CC5F8[index].y + 42) {
+            break;
+        }
+    }
+
+    switch (stru_5CC5F8[index].num) {
+    case 2300:
+        dword_5CC6AC = 2300;
+        tig_net_local_server_get_name(byte_686948, sizeof(byte_686948) - 1);
+        sub_585970(byte_686948);
+        break;
+    case 2303:
+        dword_5CC6AC = 2303;
+        itoa(tig_net_local_server_get_max_players(), byte_686948, 10);
+        sub_585970(byte_686948);
+        break;
+    case 2305:
+        dword_5CC6AC = 2305;
+        tig_net_local_server_get_level_range(&level, NULL);
+        itoa(level, byte_686948, 10);
+        sub_585970(byte_686948);
+        break;
+    case 2306:
+        dword_5CC6AC = 2306;
+        tig_net_local_server_get_level_range(NULL, &level);
+        itoa(level, byte_686948, 10);
+        sub_585970(byte_686948);
+        break;
+    case 2307:
+        dword_5CC6AC = 2307;
+        byte_686948[0] = '\0';
+        sub_585970(byte_686948);
+        break;
+    case 2309:
+        dword_5CC6AC = 2309;
+        itoa(sub_4A55F0(), byte_686948, 10);
+        sub_585970(byte_686948);
+        break;
+    }
+
+    sub_584CB0(NULL);
+    return;
 }
 
 // 0x585270
