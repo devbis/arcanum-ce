@@ -36,6 +36,7 @@ typedef struct DialogUiEntry {
 static DialogUiEntry* sub_567420(long long obj);
 static void sub_5679C0(DialogUiEntry* entry);
 static bool sub_567E30(DialogUiEntry* entry, int a2);
+static bool sub_5680A0(TigMessage* msg);
 static bool sub_5681B0(DialogUiEntry* entry);
 static bool sub_568280(DialogUiEntry *a1);
 static void sub_568480(DialogUiEntry* entry, int a2);
@@ -313,9 +314,44 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 }
 
 // 0x5680A0
-void sub_5680A0()
+bool sub_5680A0(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    DialogUiEntry* entry;
+    int v1;
+    int player;
+    Packet44 pkt;
+
+    entry = sub_567420(player_get_pc_obj());
+    if (sub_5681B0(entry)) {
+        return false;
+    }
+
+    v1 = sub_5533A0(msg);
+    if (v1 == -1) {
+        sub_5517A0(msg);
+        return true;
+    }
+
+    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!sub_567E30(entry, v1)) {
+            sub_5517A0(msg);
+        }
+        return true;
+    }
+
+    player = sub_4A2B10(player_get_pc_obj());
+    if (byte_679DB8[player] != 1) {
+        byte_679DB8[player] = 1;
+
+        pkt.type = 44;
+        pkt.subtype = 2;
+        pkt.d.b.field_8 = sub_407EF0(player_get_pc_obj());
+        pkt.field_20 = entry->field_0;
+        pkt.field_24 = v1;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    return true;
 }
 
 // 0x5681B0
