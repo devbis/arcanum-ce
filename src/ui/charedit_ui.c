@@ -66,6 +66,7 @@ static bool sub_55C110();
 static void sub_55C2E0(int a1);
 static void sub_55C3A0();
 static bool sub_55C890();
+static void sub_55CA70(int a1, int a2);
 static void spells_print_all();
 static bool sub_55D060();
 static void sub_55D210();
@@ -1779,9 +1780,59 @@ bool sub_55C890()
 }
 
 // 0x55CA70
-void sub_55CA70()
+void sub_55CA70(int a1, int a2)
 {
-    // TODO: Incomplete.
+    int art_num;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtAnimData art_anim_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigPaletteModifyInfo palette_modify_info;
+    TigPalette tmp_palette;
+
+    art_num = sub_4B1570(a1 + 5 * dword_64E024);
+    if (art_num != -1) {
+        tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
+        tig_art_frame_data(art_id, &art_frame_data);
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+
+        if (a1 < a2) {
+            art_blit_info.flags = 0;
+            tmp_palette = NULL;
+        } else {
+            tig_art_anim_data(art_id, &art_anim_data);
+
+            tmp_palette = tig_palette_create();
+            palette_modify_info.flags = TIG_PALETTE_MODIFY_GRAYSCALE;
+            palette_modify_info.src_palette = art_anim_data.palette1;
+            palette_modify_info.dst_palette = tmp_palette;
+            tig_palette_modify(&palette_modify_info);
+
+            art_blit_info.flags = TIG_ART_BLT_PALETTE_OVERRIDE;
+            art_blit_info.palette = tmp_palette;
+        }
+
+        dst_rect.x = dword_5C8FF8[a1] - 503;
+        dst_rect.y = dword_5C900C[a1] - 104;
+        dst_rect.width = art_frame_data.width;
+        dst_rect.height = art_frame_data.height;
+
+        art_blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(dword_64C7B0, &art_blit_info);
+
+        if (tmp_palette != NULL) {
+            tig_palette_destroy(tmp_palette);
+        }
+    }
 }
 
 // 0x55CBC0
