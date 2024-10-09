@@ -561,6 +561,9 @@ static tig_font_handle_t dword_64CDD0;
 // 0x64CDD4
 static tig_button_handle_t spell_plus_bid;
 
+// 0x64CDD8
+static tig_button_handle_t dword_64CDD8;
+
 // 0x64CFDC
 static tig_button_handle_t dword_64CFDC;
 
@@ -584,6 +587,9 @@ static tig_font_handle_t dword_64D3A4;
 
 // 0x64D3A8
 static tig_font_handle_t dword_64D3A8;
+
+// 0x64D3AC
+static tig_button_handle_t dword_64D3AC;
 
 // 0x64D3B0
 static tig_font_handle_t dword_64D3B0;
@@ -2069,7 +2075,77 @@ bool sub_55DC60(TigMessage* msg)
 // 0x55DF90
 bool sub_55DF90(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (msg->type == TIG_MESSAGE_BUTTON) {
+        if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
+            for (index = 0; index < 15; index++) {
+                if (msg->data.button.button_handle == dword_64C7E8[index]) {
+                    if (index < dword_64CDC8) {
+                        sub_55B880(dword_64CA60, dword_64CA68, &stru_5C8E50[index], NULL, -1, 1);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
+            for (index = 0; index < 15; index++) {
+                if (msg->data.button.button_handle == dword_64C7E8[index]) {
+                    if (index < dword_64CDC8) {
+                        sub_55B880(dword_64CA60, dword_64C9D0, &stru_5C8E50[index], NULL, -1, 1);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
+            for (index = 0; index < 15; index++) {
+                if (msg->data.button.button_handle == dword_64C7E8[index]) {
+                    if (index < dword_64CDC8) {
+                        level_auto_level_scheme_set(qword_64E010, dword_64CFE4[index + dword_64D424]);
+                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                            sub_4A45B0(player_get_pc_obj());
+                        }
+                        sub_55D210();
+                    }
+
+                    return true;
+                }
+            }
+
+            if (msg->data.button.button_handle == dword_64CDD8) {
+                if (dword_64D424 > 0) {
+                    dword_64D424--;
+                    sub_55D210();
+                }
+
+                return true;
+            }
+
+            if (msg->data.button.button_handle == dword_64D3AC) {
+                if (dword_64D424 < dword_64CDC8 - 15) {
+                    dword_64D424++;
+                    sub_55D210();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    return false;
 }
 
 // 0x55E110
