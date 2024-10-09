@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "game/ai.h"
 #include "game/anim.h"
 #include "game/combat.h"
 #include "game/critter.h"
@@ -11,13 +12,14 @@
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/player.h"
-#include "game/stat.h"
 #include "game/script_name.h"
+#include "game/stat.h"
 #include "game/tb.h"
 #include "ui/charedit_ui.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
 #include "ui/schematic_ui.h"
+#include "ui/tb_ui.h"
 #include "ui/wmap_ui.h"
 
 #define MAX_ENTRIES 8
@@ -37,10 +39,12 @@ typedef struct DialogUiEntry {
 
 static DialogUiEntry* sub_567420(long long obj);
 static void sub_5679C0(DialogUiEntry* entry);
+static void sub_567D60(DialogUiEntry* entry);
 static bool sub_567E30(DialogUiEntry* entry, int a2);
 static bool sub_5680A0(TigMessage* msg);
 static bool sub_5681B0(DialogUiEntry* entry);
 static bool sub_568280(DialogUiEntry *a1);
+static void sub_568430(int64_t a1, int64_t a2, const char* a3, int a4);
 static void sub_568480(DialogUiEntry* entry, int a2);
 static void sub_5684C0(DialogUiEntry* entry);
 static void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6);
@@ -347,7 +351,7 @@ void sub_567C30()
 }
 
 // 0x567D60
-void sub_567D60()
+void sub_567D60(DialogUiEntry* entry)
 {
     // TODO: Incomplete.
 }
@@ -569,9 +573,13 @@ bool sub_568280(DialogUiEntry *a1)
 }
 
 // 0x568430
-void sub_568430()
+void sub_568430(int64_t a1, int64_t a2, const char* a3, int a4)
 {
-    // TODO: Incomplete.
+    int font;
+
+    // TODO: Unclear.
+    font = obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC ? 0 : 2;
+    sub_568540(a1, a2, font, -1, a3, a4);
 }
 
 // 0x568480
