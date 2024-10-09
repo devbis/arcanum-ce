@@ -38,6 +38,7 @@ static const char* sub_584A90();
 static void sub_584AA0(const char* str);
 static void sub_584AC0(const char* str);
 static void sub_584C30(TigRect* rect);
+static const char* sub_585630(int num);
 static void sub_585970(char* buffer);
 static void sub_585A20();
 static void sub_585BA0(TextEdit* textedit);
@@ -213,6 +214,9 @@ static MesFileEntry stru_6867A0;
 
 // 0x6867A8
 static char byte_6867A8[80];
+
+// 0x6867F8
+static char byte_6867F8[256];
 
 // 0x6868F8
 static char byte_6868F8[80];
@@ -1103,9 +1107,102 @@ void sub_585270()
 }
 
 // 0x585630
-void sub_585630()
+const char* sub_585630(int num)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    int server_type;
+    int min_level;
+    int max_level;
+    size_t len;
+
+    strncpy(byte_6867F8, "xXxXx", 256);
+
+    if (num != dword_5CC6AC || num == 2307) {
+        switch (num) {
+        case 2300:
+            tig_net_local_server_get_name_(byte_6867F8, 256);
+            return byte_6867F8;
+        case 2301:
+            if (stru_686740.count != 0 && stru_686740.paths != NULL) {
+                return stru_686740.paths[dword_686964];
+            }
+
+            mes_file_entry.num = 2332;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6867F8, mes_file_entry.str);
+            return byte_6867F8;
+        case 2302:
+            tig_net_local_server_type_get(&server_type);
+            mes_file_entry.num = 2320 + server_type;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6867F8, mes_file_entry.str);
+            return byte_6867F8;
+        case 2303:
+            itoa(tig_net_local_server_get_max_players(), byte_6867F8, 10);
+            return byte_6867F8;
+        case 2305:
+            tig_net_local_server_get_level_range(&min_level, NULL);
+            itoa(min_level, byte_6867F8, 10);
+            return byte_6867F8;
+        case 2306:
+            tig_net_local_server_get_level_range(NULL, &max_level);
+            itoa(max_level, byte_6867F8, 10);
+            return byte_6867F8;
+        case 2307:
+            if (dword_5CC6AC == 2307) {
+                len = strlen(byte_686948);
+                byte_6867F8[len] = '|';
+                byte_6867F8[len + 1] = '\0';
+            } else {
+                len = tig_net_local_server_get_password_length();
+                byte_6867F8[len] = '\0';
+            }
+
+            while (len != 0) {
+                byte_6867F8[--len] = '*';
+            }
+            break;
+        case 2308:
+            mes_file_entry.num = (tig_net_local_server_get_options() & TIG_NET_SERVER_PRIVATE_CHAT) != 0 ? 2331 : 2330;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6867F8, mes_file_entry.str);
+            return byte_6867F8;
+        case 2309:
+            itoa(sub_4A55F0(), byte_6867F8, 10);
+            return byte_6867F8;
+        case 2310:
+            mes_file_entry.num = (tig_net_local_server_get_options() & TIG_NET_SERVER_PLAYER_KILLING) != 0 ? 2331 : 2330;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6867F8, mes_file_entry.str);
+            return byte_6867F8;
+        case 2311:
+
+        case 2312:
+            mes_file_entry.num = tig_net_auto_join_is_enabled() ? 2331 : 2330;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6867F8, mes_file_entry.str);
+            return byte_6867F8;
+        case 2313:
+            mes_file_entry.num = (tig_net_local_server_get_options() & TIG_NET_SERVER_AUTO_EQUIP) != 0 ? 2331 : 2330;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6867F8, mes_file_entry.str);
+            return byte_6867F8;
+        case 2314:
+            if ((tig_net_local_server_get_options() & TIG_NET_SERVER_KEY_SHARING) != 0) {
+                mes_file_entry.num = (tig_net_local_server_get_options() & 0x80) != 0 ? 2334 : 2331;
+            } else {
+                mes_file_entry.num = 2330;
+            }
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6867F8, mes_file_entry.str);
+            return byte_6867F8;
+        default:
+            return byte_6867F8;
+        }
+    }
+
+    sprintf(byte_6867F8, "%s|", byte_686948);
+    return byte_6867F8;
 }
 
 // 0x585970
