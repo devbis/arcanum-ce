@@ -38,6 +38,7 @@ static const char* sub_584A90();
 static void sub_584AA0(const char* str);
 static void sub_584AC0(const char* str);
 static void sub_584C30(TigRect* rect);
+static bool sub_585270(int num);
 static const char* sub_585630(int num);
 static void sub_585970(char* buffer);
 static void sub_585A20();
@@ -1101,9 +1102,181 @@ void sub_5850C0()
 }
 
 // 0x585270
-void sub_585270()
+bool sub_585270(int num)
 {
-    // TODO: Incomplete.
+    TigRect rect;
+    MesFileEntry mes_file_entry;
+    char name[80];
+    char tmp[130];
+    struct sockaddr_in addr;
+    int server_type;
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = 800;
+    rect.height = 600;
+
+    if (dword_5CC6AC != -1) {
+        sub_585A20();
+    }
+
+    switch (num) {
+    case 0:
+        sub_5417A0(false);
+        sub_583200();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        return false;
+    case 1:
+        sub_5417A0(false);
+        sub_585D50();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        return false;
+    case 2:
+        sub_5417A0(false);
+        multiplayer_hub_ui_init();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+        return false;
+    case 3:
+        rect.width = 0;
+        if (stru_686740.count != 0) {
+            sub_4A4270();
+            sub_4A2BC0();
+            sub_4A3D00(1);
+            sub_4A2BD0();
+            sub_541710();
+            sub_4A4280();
+            sub_49CC50();
+            if (sub_49CC70(stru_686740.paths[dword_686964], 0)) {
+                if (multiplayer_mm_is_active()) {
+                    tig_net_local_server_get_name(name, sizeof(name));
+                    sub_52B0C0(&addr);
+                    tig_net_inet_string(addr.sin_addr.S_un.S_addr, tmp);
+                    sprintf(&(tmp[sizeof(tmp)]), ":%d", 31435);
+                    // multiplayer_mm_register();
+                    sub_5499B0(stru_6867A0.str);
+                }
+                sub_5412D0();
+            } else {
+                sub_5280F0();
+                tig_net_start_client();
+                sub_549B30();
+            }
+            sub_584CB0(&rect);
+        } else {
+            mes_file_entry.num = 2332;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            strcpy(byte_6868F8, mes_file_entry.str);
+        }
+        return false;
+    case 4:
+        if (stru_686740.count != 0) {
+            dword_686964--;
+            if (dword_686964 < 0) {
+                dword_686964 = stru_686740.count - 1;
+            }
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 5:
+        if (stru_686740.count != 0) {
+            dword_686964 = (dword_686964 + 1) % stru_686740.count;
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 6:
+        tig_net_local_server_type_get(&server_type);
+        server_type--;
+        if (server_type < 0) {
+            server_type = TIG_NET_SERVER_TYPE_ROLEPLAY;
+        }
+        tig_net_local_bookmark_set_type(server_type);
+        sub_584CB0(&rect);
+        return false;
+    case 7:
+        tig_net_local_server_type_get(&server_type);
+        server_type = (server_type + 1) % 3;
+        tig_net_local_bookmark_set_type(server_type);
+        sub_584CB0(&rect);
+        return false;
+    case 8:
+    case 9:
+        if ((tig_net_local_server_get_options() & TIG_NET_SERVER_PRIVATE_CHAT) != 0) {
+            tig_net_local_server_disable_option(TIG_NET_SERVER_PRIVATE_CHAT);
+        } else {
+            tig_net_local_server_enable_option(TIG_NET_SERVER_PRIVATE_CHAT);
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 10:
+    case 11:
+        if ((tig_net_local_server_get_options() & TIG_NET_SERVER_PLAYER_KILLING) != 0) {
+            tig_net_local_server_disable_option(TIG_NET_SERVER_PLAYER_KILLING);
+        } else {
+            tig_net_local_server_enable_option(TIG_NET_SERVER_PLAYER_KILLING);
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 12:
+    case 13:
+        if ((tig_net_local_server_get_options() & TIG_NET_SERVER_FRIENDLY_FIRE) != 0) {
+            tig_net_local_server_disable_option(TIG_NET_SERVER_FRIENDLY_FIRE);
+        } else {
+            tig_net_local_server_enable_option(TIG_NET_SERVER_FRIENDLY_FIRE);
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 14:
+    case 15:
+        if ((tig_net_local_server_get_options() & TIG_NET_SERVER_AUTO_EQUIP) != 0) {
+            tig_net_local_server_disable_option(TIG_NET_SERVER_AUTO_EQUIP);
+        } else {
+            tig_net_local_server_enable_option(TIG_NET_SERVER_AUTO_EQUIP);
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 16:
+    case 17:
+        if (tig_net_auto_join_is_enabled()) {
+            tig_net_auto_join_disable();
+        } else {
+            tig_net_auto_join_enable();
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 18:
+        if ((tig_net_local_server_get_options() & TIG_NET_SERVER_KEY_SHARING) != 0) {
+            if ((tig_net_local_server_get_options() & 0x80) == 0) {
+                tig_net_local_server_disable_option(TIG_NET_SERVER_KEY_SHARING);
+            } else {
+                tig_net_local_server_disable_option(0x80);
+            }
+        } else {
+            tig_net_local_server_enable_option(TIG_NET_SERVER_KEY_SHARING | 0x80);
+        }
+        sub_584CB0(&rect);
+        return false;
+    case 19:
+        if ((tig_net_local_server_get_options() & TIG_NET_SERVER_KEY_SHARING) != 0) {
+            if ((tig_net_local_server_get_options() & 0x80) == 0) {
+                tig_net_local_server_enable_option(0x80);
+            } else {
+                tig_net_local_server_disable_option(TIG_NET_SERVER_KEY_SHARING | 0x80);
+            }
+        } else {
+            tig_net_local_server_enable_option(TIG_NET_SERVER_KEY_SHARING);
+        }
+        sub_584CB0(&rect);
+        return false;
+    default:
+        sub_584CB0(&rect);
+        return false;
+    }
 }
 
 // 0x585630
