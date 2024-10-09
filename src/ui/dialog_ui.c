@@ -241,7 +241,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     bool is_pc;
 
     is_pc = player_is_pc_obj(entry->field_8.field_8);
-    sub_5686C0(entry->field_8.field_8, entry->field_8.field_38, 2, -1, &(entry->field_8.field_460[a2]));
+    sub_5686C0(entry->field_8.field_8, entry->field_8.field_38, 2, -1, entry->field_8.field_460[a2]);
     sub_4EF630(entry->field_8.field_38);
     sub_5689B0();
     sub_413130(&(entry->field_8), a2);
