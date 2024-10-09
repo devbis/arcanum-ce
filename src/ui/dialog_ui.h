@@ -7,6 +7,7 @@ bool dialog_ui_init(GameInitInfo* init_info);
 void dialog_ui_exit();
 void dialog_ui_reset();
 bool sub_567400(long long obj);
+void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5);
 void sub_5678D0(long long obj);
 int sub_567A10();
 void sub_567A20(long long obj);

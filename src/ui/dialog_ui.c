@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game/anim.h"
+#include "game/combat.h"
 #include "game/critter.h"
 #include "game/dialog.h"
 #include "game/gsound.h"
@@ -11,6 +12,7 @@
 #include "game/multiplayer.h"
 #include "game/player.h"
 #include "game/stat.h"
+#include "game/script_name.h"
 #include "game/tb.h"
 #include "ui/charedit_ui.h"
 #include "ui/intgame.h"
@@ -122,9 +124,130 @@ DialogUiEntry* sub_567420(long long obj)
 }
 
 // 0x567460
-void sub_567460()
+void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
 {
-    // TODO: Incomplete.
+    DialogUiEntry* entry;
+    char path[TIG_MAX_PATH];
+    char str[2000];
+    Packet44 pkt;
+
+    if (sub_45D8D0(a1)) {
+        return;
+    }
+
+    if (sub_45D800(a1)) {
+        return;
+    }
+
+    if (sub_4AD800(a2, a1, 0) != 0) {
+        return;
+    }
+
+    if (player_is_pc_obj(a1) && sub_551A00() == 3) {
+        return;
+    }
+
+    if (combat_critter_is_combat_mode_active(a1)) {
+        if (!sub_4B3D90(a1)) {
+            return;
+        }
+        combat_critter_deactivate_combat_mode(a1);
+    }
+
+    entry = sub_567420(a1);
+    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (a3 != 0 && script_name_build_dlg_name(a3, path)) {
+            if (!sub_412E10(path, &(entry->field_4))) {
+                return;
+            }
+
+            entry->field_8.field_0 = entry->field_4;
+            entry->field_8.field_8 = a1;
+            entry->field_8.field_38 = a2;
+            entry->field_8.field_68 = a5;
+            entry->field_8.field_6C = a3;
+            if (!sub_412FD0(&(entry->field_8))) {
+                sub_412F40(entry->field_4);
+                return;
+            }
+
+            if (entry->field_8.field_17E8 == 4) {
+                sub_568540(entry->field_8.field_38,
+                    entry->field_8.field_8,
+                    0,
+                    -1,
+                    entry->field_8.field_70,
+                    entry->field_8.field_458);
+                sub_413280(&(entry->field_8));
+                sub_412F40(entry->field_4);
+                return;
+            }
+
+            if (player_is_pc_obj(a1)) {
+                if (!sub_553320(sub_5680A0)) {
+                    sub_413280(&(entry->field_8));
+                    sub_412F40(entry->field_4);
+                    return;
+                }
+
+                dword_67B964 = true;
+
+                if (!intgame_is_compact_interface()) {
+                    sub_57CD60(a1, a2, str);
+                    sub_553BE0(a1, a2, str);
+                    sub_43C270(a2);
+                }
+            }
+
+            sub_424070(a1, 3, 0, true);
+            sub_433440(a1, sub_441B20(a1, a2));
+
+            if (critter_is_concealed(a1)) {
+                sub_45EE30(a1, false);
+            }
+
+            if (critter_is_concealed(a2)) {
+                sub_45EE30(a2, false);
+            }
+
+            entry->field_1854 = a3;
+            entry->field_1858 = a4;
+            entry->field_1850 = 1;
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                && (tig_net_flags & TIG_NET_HOST) != 0) {
+                pkt.type = 44;
+                pkt.subtype = 0;
+                pkt.d.d.field_8 = sub_407EF0(a1);
+                pkt.d.d.field_20 = sub_407EF0(a2);
+                pkt.d.d.field_38 = a3;
+                pkt.d.d.field_3C = a4;
+                pkt.d.d.field_40 = a5;
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+            }
+
+            sub_5684C0(entry);
+            sub_567D60(entry);
+        } else {
+            sub_5681C0(a1, a2);
+        }
+    } else {
+        if (a3 != 0
+            && script_name_build_dlg_name(a3, path)
+            && player_is_pc_obj(a1)) {
+            if (sub_553320(sub_5680A0)) {
+                entry->field_8.field_68 = a5;
+                entry->field_8.field_8 = a1;
+                entry->field_8.field_38 = a2;
+                entry->field_8.field_6C = a3;
+                entry->field_1854 = a3;
+                entry->field_1858 = a4;
+                entry->field_1850 = 1;
+
+                dword_67B964 = true;
+            }
+        }
+    }
 }
 
 // 0x5678D0
