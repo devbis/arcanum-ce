@@ -309,6 +309,9 @@ static TigRect stru_5C8970 = { 756, 68, 30, 16 };
 // 0x5C8980
 static TigRect stru_5C8980 = { 756, 367, 30, 16 };
 
+// 0x5C8E40
+static S5C8150 stru_5C8E40 = { 0, -620, 125, 0 };
+
 // 0x5C8E50
 static S5C8150 stru_5C8E50[15] = {
     { NULL, 526, 170, 0 },
@@ -615,12 +618,6 @@ static tig_font_handle_t dword_64D42C;
 // 0x64D430
 static tig_button_handle_t spell_minus_bid;
 
-// 0x64DEE4
-static bool dword_64DEE4;
-
-// 0x64DF0C
-static tig_font_handle_t dword_64DF0C;
-
 // 0x64E010
 static int64_t qword_64E010;
 
@@ -642,11 +639,20 @@ static int dword_64E028;
 // 0x64E02C
 static bool dword_64E02C;
 
+// 0x64D714
+static char byte_64D714[2000];
+
+// 0x64DEE4
+static bool dword_64DEE4;
+
 // 0x64DEE8
 static const char* charedit_minimum_level_str;
 
 // 0x64DEEC
 static int dword_64DEEC[TECH_COUNT];
+
+// 0x64DF0C
+static tig_font_handle_t dword_64DF0C;
 
 // 0x559690
 bool charedit_init(GameInitInfo* init_info)
@@ -1990,7 +1996,50 @@ bool sub_55D060()
 // 0x55D210
 void sub_55D210()
 {
-    // TODO: Incomplete.
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect rect;
+    int cnt;
+    int index;
+
+    tig_art_interface_id_create(567, 0, 0, 0, &(art_blit_info.art_id));
+    if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = art_frame_data.width;
+    rect.height = art_frame_data.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &rect;
+    art_blit_info.dst_rect = &rect;
+    tig_window_blit_art(dword_64CA60, &art_blit_info);
+
+    if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && (obj_field_int32_get(qword_64E010, OBJ_F_PC_FLAGS) & OPCF_USE_ALT_DATA) != 0) {
+        if (!sub_4A49E0(qword_64E010, byte_64D714)) {
+            byte_64D714[0] = '\0';
+        }
+        stru_5C8E40.str = byte_64D714;
+    } else {
+        stru_5C8E40.str = level_advancement_scheme_get_name(level_auto_level_scheme_get(qword_64E010));
+    }
+
+    cnt = dword_64CDC8;
+    if (cnt >= 15) {
+        cnt = 15;
+    }
+
+    for (index = 0; index < cnt; index++) {
+        stru_5C8E50[index].str = dword_64CA90[dword_64D424 + index];
+    }
+
+    sub_55B880(dword_64CA60, dword_64CA68, &stru_5C8E40, NULL, -1, 1);
+    sub_55B880(dword_64CA60, dword_64C9D0, &(stru_5C8E50[0]), NULL, -1, cnt);
+
+    sub_5806F0(stru_64C7A8);
 }
 
 // 0x55D3A0
