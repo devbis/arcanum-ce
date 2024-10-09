@@ -4,6 +4,7 @@
 
 #include "game/ai.h"
 #include "game/anim.h"
+#include "game/broadcast.h"
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/dialog.h"
@@ -12,6 +13,7 @@
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/player.h"
+#include "game/script.h"
 #include "game/script_name.h"
 #include "game/stat.h"
 #include "game/tb.h"
@@ -255,10 +257,12 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
 }
 
 // 0x5678D0
-void sub_5678D0(long long obj)
+void sub_5678D0(long long obj, int a2)
 {
     DialogUiEntry* entry;
     Packet44 pkt;
+
+    (void)a2;
 
     entry = sub_567420(obj);
     if (!entry->field_1850) {
@@ -379,11 +383,11 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         sub_5684C0(entry);
         break;
     case 1:
-        sub_5678D0(entry->field_8.field_8);
+        sub_5678D0(entry->field_8.field_8, 0);
         sub_568480(entry, 0);
         break;
     case 2:
-        sub_5678D0(entry->field_8.field_8);
+        sub_5678D0(entry->field_8.field_8, 0);
         sub_568480(entry, entry->field_8.field_17EC);
         break;
     case 3:
@@ -392,12 +396,12 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
             sub_572240(entry->field_8.field_8, entry->field_8.field_38, 1);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_8.field_8);
+            sub_5678D0(entry->field_8.field_8, 0);
         }
         break;
     case 4:
         sub_568540(entry->field_8.field_38, entry->field_8.field_8, 0, -1, entry->field_8.field_70, entry->field_8.field_458);
-        sub_5678D0(entry->field_8.field_8);
+        sub_5678D0(entry->field_8.field_8, 0);
         break;
     case 5:
         if (is_pc) {
@@ -423,7 +427,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
             sub_4EE550(entry->field_8.field_8, entry->field_8.field_38);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_8.field_8);
+            sub_5678D0(entry->field_8.field_8, 0);
         }
         break;
     case 9:
@@ -432,7 +436,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
             sub_572240(entry->field_8.field_8, entry->field_8.field_38, 6);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_8.field_8);
+            sub_5678D0(entry->field_8.field_8, 0);
         }
         break;
     }
@@ -529,7 +533,7 @@ bool sub_568280(DialogUiEntry *a1)
         break;
     case 1:
     case 2:
-        sub_5678D0(a1->field_8.field_8);
+        sub_5678D0(a1->field_8.field_8, 0);
         break;
     case 3:
         if (is_pc) {
@@ -685,7 +689,7 @@ void sub_568830(int64_t obj)
     for (index = 0; index < 8; index++) {
         if (stru_66DAB8[index].field_8.field_8 == obj
             || stru_66DAB8[index].field_8.field_38 == obj) {
-            sub_5678D0(obj);
+            sub_5678D0(obj, 0);
         }
     }
 }
