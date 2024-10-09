@@ -245,6 +245,18 @@ int background_obj_get_background_text(object_id_t obj)
     return obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND_TEXT);
 }
 
+// 0x4C26F0
+void sub_4C26F0(int64_t obj)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C2950
+void sub_4C2950(int64_t a1)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4C2A70
 static int background_get_base_money()
 {

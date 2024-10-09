@@ -25,6 +25,8 @@ void sub_4C25E0(int64_t obj, int background, int background_text);
 void background_obj_clear(object_id_t obj);
 int background_obj_get_background(object_id_t obj);
 int background_obj_get_background_text(object_id_t obj);
+void sub_4C26F0(int64_t obj);
+void sub_4C2950(int64_t a1);
 int background_adjust_money(int amount, int background);
 bool background_get_items(char* dest, size_t size, int background);
 
