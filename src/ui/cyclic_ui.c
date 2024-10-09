@@ -733,6 +733,9 @@ bool cyclic_ui_draw_text(CyclicUiControl* ctrl)
             str = NULL;
         }
         break;
+    default:
+        str = NULL;
+        break;
     }
 
     if (str == NULL) {
