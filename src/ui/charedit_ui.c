@@ -2725,7 +2725,102 @@ void sub_55EBA0()
 // 0x55EC90
 void sub_55EC90()
 {
-    // TODO: Incomplete.
+    int index;
+    char buffer[3][10];
+    const char* tmp[3];
+    int value;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    for (index = 0; index < 3; index++) {
+        tmp[index] = buffer;
+    }
+
+    value = stat_level(qword_64E010, STAT_ALIGNMENT) / 10;
+    sprintf(buffer[0], "%d", value);
+
+    tig_art_interface_id_create(254, value / 10 + 10, 0, 0, &(art_blit_info.art_id));
+    if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = 56 - art_frame_data.hot_x;
+    dst_rect.y = 181 - art_frame_data.hot_y;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(dword_64CA64, &art_blit_info);
+
+    tig_art_interface_id_create(255, 0, 0, 0, &(art_blit_info.art_id));
+    if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    tig_art_interface_id_create(22, 0, 0, 0, &(art_blit_info.art_id));
+
+    src_rect.x = 775;
+    src_rect.y = 87;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = 278;
+
+    dst_rect.x = 775;
+    dst_rect.y = 87;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = 278;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(dword_64CA64, &art_blit_info);
+
+    value = stat_level(qword_64E010, STAT_MAGICK_TECH_APTITUDE);
+    if (value < 0) {
+        sprintf(buffer[2], "%d", -value);
+        strcpy(buffer[1], "0");
+    } else {
+        sprintf(buffer[1], "%d", value);
+        strcpy(buffer[2], "0");
+    }
+
+    tig_art_interface_id_create(255, 0, 0, 0, &(art_blit_info.art_id));
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = 775;
+    dst_rect.y = 221 - (value * 128) / 100;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(dword_64CA64, &art_blit_info);
+
+    tig_art_interface_id_create(22, 0, 0, 0, &(art_blit_info.art_id));
+
+    art_blit_info.src_rect = &stru_5C8970;
+    art_blit_info.dst_rect = &stru_5C8970;
+    art_blit_info.flags = 0;
+    tig_window_blit_art(dword_64CA64, &art_blit_info);
+
+    art_blit_info.src_rect = &stru_5C8980;
+    art_blit_info.dst_rect = &stru_5C8980;
+    tig_window_blit_art(dword_64CA64, &art_blit_info);
+
+    sub_55B880(dword_64CA64, dword_64C848, stru_5C8940, tmp, -1, 3);
 }
 
 // 0x55EFB0
