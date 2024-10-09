@@ -33,6 +33,7 @@ static void sub_588D70(int value);
 static const char* sub_588E10(int seconds);
 static void sub_588EC0(TigNetServer* servers, int count);
 static void sub_588EF0();
+static void sub_588FF0(const char* path, int progress, tig_window_handle_t window_handle);
 
 // 0x5994BC
 static int dword_5994BC[3] = {
@@ -486,7 +487,52 @@ bool sub_588F10(int a1)
 }
 
 // 0x588FF0
-void sub_588FF0()
+void sub_588FF0(const char* path, int progress, tig_window_handle_t window_handle)
 {
-    // TODO: Incomplete.
+    TigRect v5;
+    TigRect v6;
+    TigRect v7;
+    TigFont font_desc;
+    char fname[_MAX_FNAME];
+    char ext[_MAX_EXT];
+    char tmp[_MAX_FNAME + _MAX_EXT];
+
+    v5.height = 15;
+    v5.width = 210;
+    v5.x = 60;
+    v5.y = 450;
+
+    v6.height = 15;
+    v6.width = 210;
+    v6.x = 60;
+    v6.y = 450;
+
+    v7.height = 17;
+    v7.width = 212;
+    v7.x = 59;
+    v7.y = 449;
+
+    if (dword_68699C && path != NULL) {
+        tig_window_fill(window_handle, &v7, tig_color_make(255, 255, 255));
+        tig_window_fill(window_handle, &v5, tig_color_make(0, 0, 0));
+        tig_window_fill(window_handle, &v6, tig_color_make(255, 0, 0));
+
+        _splitpath(path, NULL, NULL, fname, ext);
+        sprintf(tmp, "%s%s %d%%", fname, ext, progress);
+
+        tig_font_push(sub_549940(0, 0));
+        font_desc.width = 0;
+        font_desc.str = tmp;
+        sub_535390(&font_desc);
+        while (font_desc.width > v5.width) {
+            fname[strlen(fname) - 1] = '\0';
+            sprintf(tmp, "%s..%s %d%%", fname, ext, progress);
+            font_desc.width = 0;
+            sub_535390(&font_desc);
+        }
+        v5.width = font_desc.width;
+        v5.x = (210 - font_desc.width) / 2 + 60;
+        tig_window_text_write(window_handle, tmp, &v5);
+        tig_font_pop();
+    }
 }
