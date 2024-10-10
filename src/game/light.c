@@ -726,9 +726,11 @@ int64_t sub_4DDA60(Light30* a1)
 }
 
 // 0x4DDA70
-void sub_4DDA70()
+void sub_4DDA70(Light30* light, int offset_x, int offset_y)
 {
-    // TODO: Incomplete.
+    light->offset_x = offset_x;
+    light->offset_y = offset_y;
+    light->flags |= 0x80;
 }
 
 // 0x4DDAB0
