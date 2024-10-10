@@ -31,6 +31,7 @@ typedef struct LightCreateInfo {
 
 static void sub_4D9310(LightCreateInfo* create_info, Light30** light_ptr);
 static void sub_4D93B0(Light30* light);
+static void sub_4D9510(Light30* light);
 static void sub_4DD150(light_handle_t light_handle, int a2);
 static void sub_4DD230(light_handle_t light_handle, int a2);
 static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
@@ -536,9 +537,17 @@ bool sub_4D94F0(TigFile* stream, Light30* a2)
 }
 
 // 0x4D9510
-void sub_4D9510()
+void sub_4D9510(Light30* light)
 {
-    // TODO: Incomplete.
+    int64_t sector_id;
+    Sector* sector;
+
+    sector_id = sub_4CFC50(light->loc);
+    if (sub_4DD110(light) || sub_4D04E0(sector_id)) {
+        sector_lock(sector_id, &sector);
+        sub_4F7200(&(sector->lights), light);
+        sector_unlock(sector_id);
+    }
 }
 
 // 0x4D9570
