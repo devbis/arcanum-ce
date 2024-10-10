@@ -45,7 +45,7 @@ static bool sub_4DE0B0(tig_art_id_t art_id, TigPaletteModifyInfo* modify_info);
 static void sub_4DE200();
 static void sub_4DE250();
 static void light_get_rect_internal(Light30* light, TigRect* rect);
-static void sub_4DE390(Light30* a1);
+static void sub_4DE390(Light30* light);
 static void sub_4DE4D0(Light30* light);
 static void sub_4DE4F0(Light30* light, int offset_x, int offset_y);
 static bool sub_4DE5D0();
@@ -1070,9 +1070,42 @@ void light_get_rect_internal(Light30* light, TigRect* rect)
 }
 
 // 0x4DE390
-void sub_4DE390(Light30* a1)
+void sub_4DE390(Light30* light)
 {
-    // TODO: Incomplete.
+    tig_color_t color;
+    bool have_color;
+    TigPaletteModifyInfo palette_modify_info;
+    TigArtAnimData art_anim_data;
+
+    if ((light->flags & 0x8) != 0) {
+        color = light_get_indoor_color();
+        have_color = true;
+    } else if ((light->flags & 0x10) != 0) {
+        color = light_get_outdoor_color();
+        have_color = true;
+    }
+
+    if (have_color) {
+        light->r = (uint8_t)tig_color_get_red(color);
+        light->g = (uint8_t)tig_color_get_green(color);
+        light->b = (uint8_t)tig_color_get_blue(color);
+    }
+
+    light->tint_color = tig_color_make(light->r, light->g, light->b);
+    if (light->tint_color == tig_color_make(255, 255, 255)) {
+        sub_4DE4D0(light);
+    } else {
+        if (light->palette == NULL) {
+            light->palette = tig_palette_create();
+        }
+
+        tig_art_anim_data(light->art_id, &art_anim_data);
+        palette_modify_info.flags = TIG_PALETTE_MODIFY_TINT;
+        palette_modify_info.tint_color = light->tint_color;
+        palette_modify_info.src_palette = art_anim_data.palette1;
+        palette_modify_info.dst_palette = light->palette;
+        tig_palette_modify(&palette_modify_info);
+    }
 }
 
 // 0x4DE4D0
