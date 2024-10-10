@@ -48,6 +48,8 @@ static Light602E60* sub_4DE770();
 static void sub_4DE7A0(Light602E60* node);
 static void sub_4DE7C0();
 static void sub_4DE7F0();
+static bool sub_4DE820(TimeEvent* timeevent);
+static void sub_4DE870(LightCreateInfo* create_info, Light30** light_ptr);
 static void sub_4DE900(UnknownContext* ctx);
 
 // 0x602E10
@@ -139,6 +141,9 @@ static int dword_602ED0;
 
 // 0x602ED4
 static int dword_602ED4;
+
+// 0x603400
+static int dword_603400;
 
 // 0x603404
 static int dword_603404;
@@ -938,9 +943,9 @@ void sub_4DE7F0()
 }
 
 // 0x4DE820
-void sub_4DE820()
+bool sub_4DE820(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent->params[0].integer_value == dword_603400;
 }
 
 // 0x4DE870
