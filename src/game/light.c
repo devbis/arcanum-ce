@@ -33,6 +33,7 @@ static void sub_4DD150(light_handle_t light_handle, int a2);
 static void sub_4DD230(light_handle_t light_handle, int a2);
 static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
 static void sub_4DD500(Light30* light, int offset_x, int offset_y);
+static void sub_4DDAB0(Light30* light, tig_art_id_t art_id);
 static bool sub_4DDD90(Sector* sector);
 static void shadows_changed();
 static bool sub_4DDF50();
@@ -731,9 +732,24 @@ void sub_4DDA70()
 }
 
 // 0x4DDAB0
-void sub_4DDAB0()
+void sub_4DDAB0(Light30* light, tig_art_id_t art_id)
 {
-    // TODO: Incomplete.
+    light->art_id = art_id;
+    light->flags |= 0x80;
+
+    if (light->obj != OBJ_HANDLE_NULL) {
+        if ((light->flags & 0x8000000) != 0) {
+            obj_field_int32_set(light->obj, OBJ_F_LIGHT_AID, art_id);
+        } else if ((light->flags & 0x10000000) != 0) {
+            obj_field_int32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 0, art_id);
+        } else if ((light->flags & 0x20000000) != 0) {
+            obj_field_int32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 1, art_id);
+        } else if ((light->flags & 0x40000000) != 0) {
+            obj_field_int32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 2, art_id);
+        } else if ((light->flags & 0x80000000) != 0) {
+            obj_field_int32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 3, art_id);
+        }
+    }
 }
 
 // 0x4DDB70
