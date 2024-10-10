@@ -49,6 +49,7 @@ bool sub_4D94F0(TigFile* stream, Light30* a2);
 void sub_4D9A90(object_id_t object_id);
 void sub_4DA310(object_id_t object_id);
 uint8_t sub_4DCE10(int64_t obj);
+void light_get_rect(Light30* light, TigRect* rect);
 void sub_4DDA70(Light30* light, int offset_x, int offset_y);
 bool sub_4DDD20(TigFile* stream, Light30** a2);
 bool sub_4DDD70(TigFile* stream, Light30* a2);

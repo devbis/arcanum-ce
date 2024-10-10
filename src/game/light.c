@@ -43,7 +43,7 @@ static void sub_4DE060();
 static bool sub_4DE0B0(tig_art_id_t art_id, TigPaletteModifyInfo* modify_info);
 static void sub_4DE200();
 static void sub_4DE250();
-static void sub_4DE290(int a1, int a2);
+static void light_get_rect_internal(Light30* light, TigRect* rect);
 static void sub_4DE390(Light30* a1);
 static void sub_4DE4D0(Light30* light);
 static void sub_4DE4F0(Light30* light, int offset_x, int offset_y);
@@ -468,7 +468,7 @@ void sub_4D9310(LightCreateInfo* create_info, Light30** light_ptr)
             sector_unlock(sector_id);
         }
 
-        sub_4DD130(*light_ptr, &rect);
+        light_get_rect(*light_ptr, &rect);
         sub_4DF310(&rect, true);
     }
 }
@@ -704,9 +704,9 @@ bool sub_4DD110()
 }
 
 // 0x4DD130
-void sub_4DD130(int a1, int a2)
+void light_get_rect(Light30* light, TigRect* rect)
 {
-    sub_4DE290(a1, a2);
+    light_get_rect_internal(light, rect);
 }
 
 // 0x4DD150
@@ -989,9 +989,29 @@ void sub_4DE250()
 }
 
 // 0x4DE290
-void sub_4DE290(int a1, int a2)
+void light_get_rect_internal(Light30* light, TigRect* rect)
 {
-    // TODO: Incomplete.
+    int64_t x;
+    int64_t y;
+    TigArtFrameData art_frame_data;
+
+    rect->x = 0;
+    rect->y = 0;
+    rect->width = 0;
+    rect->height = 0;
+
+    sub_4B8680(light->loc, &x, &y);
+    if (x >= INT_MIN && x < INT_MAX
+        && y >= INT_MIN && y < INT_MAX) {
+        if (tig_art_frame_data(light->art_id, &art_frame_data) == TIG_OK) {
+            rect->x = light->offset_x + (int)x + 40;
+            rect->y = light->offset_y + (int)y + 20;
+            rect->width = art_frame_data.width;
+            rect->height = art_frame_data.height;
+            rect->x -= art_frame_data.hot_x;
+            rect->y -= art_frame_data.hot_y;
+        }
+    }
 }
 
 // 0x4DE390
@@ -1018,7 +1038,7 @@ void sub_4DE4F0(Light30* light, int offset_x, int offset_y)
     Sector* sector;
 
     if (light->offset_x != offset_x || light->offset_y != offset_y) {
-        sub_4DE290(light, &dirty_rect);
+        light_get_rect_internal(light, &dirty_rect);
         sector_id = sub_4CFC50(light->loc);
         if (sub_4DD110(light) || sub_4D04E0(sector_id)) {
             sector_lock(sector_id, &sector);
@@ -1030,7 +1050,7 @@ void sub_4DE4F0(Light30* light, int offset_x, int offset_y)
         }
 
         light->flags |= 0x80;
-        sub_4DE290(light, &updated_rect);
+        light_get_rect_internal(light, &updated_rect);
         tig_rect_union(&dirty_rect, &updated_rect, &dirty_rect);
         sub_4DF310(&dirty_rect, true);
     }
