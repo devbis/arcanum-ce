@@ -413,9 +413,18 @@ void sub_4D8620(Light30* light)
 }
 
 // 0x4D8660
-void light_timeevent_process()
+bool light_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    DateTime datetime;
+    TimeEvent next_timeevent;
+
+    sub_4DD720(timeevent->params[0].integer_value);
+
+    next_timeevent = *timeevent;
+    sub_45A950(&datetime, next_timeevent.params[1].integer_value);
+    sub_45B800(&timeevent, &datetime);
+
+    return true;
 }
 
 // 0x4D86B0
