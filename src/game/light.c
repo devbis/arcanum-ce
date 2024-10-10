@@ -754,9 +754,9 @@ void sub_4DD0A0(object_id_t object_id, int a2, int a3)
 }
 
 // 0x4DD110
-bool sub_4DD110()
+bool sub_4DD110(Light30* light)
 {
-    // TODO: Incomplete.
+    return light->obj == OBJ_HANDLE_NULL;
 }
 
 // 0x4DD130

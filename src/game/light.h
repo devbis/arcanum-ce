@@ -50,6 +50,7 @@ void sub_4D9990(int64_t obj);
 void sub_4D9A90(object_id_t object_id);
 void sub_4DA310(object_id_t object_id);
 uint8_t sub_4DCE10(int64_t obj);
+bool sub_4DD110(Light30* light);
 void light_get_rect(Light30* light, TigRect* rect);
 void light_set_location(Light30* light, int64_t loc);
 int64_t light_get_location(Light30* light);
