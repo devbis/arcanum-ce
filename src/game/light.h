@@ -10,11 +10,41 @@
 typedef unsigned int light_handle_t;
 typedef unsigned int shadow_handle_t;
 
+typedef struct Light30 {
+    int field_0;
+    int field_4;
+    int64_t field_8;
+    int field_10;
+    int field_14;
+    int field_18;
+    int field_1C;
+    int field_20;
+    int field_24;
+    int field_28;
+    int field_2C;
+} Light30;
+
+// See 0x4DDD20.
+static_assert(sizeof(Light30) == 0x30, "wrong size");
+
 bool light_init(GameInitInfo* init_info);
 void light_exit();
 void light_resize(ResizeContext* resize_info);
 bool light_update_view(ViewOptions* view_options);
-void light_build_color(uint8_t red, uint8_t green, uint8_t blue, int* color);
-void light_get_color_components(int color, uint8_t* red, uint8_t* green, uint8_t* blue);
+void sub_4D81F0();
+void sub_4D8350(UnknownContext* ctx);
+void light_build_color(uint8_t red, uint8_t green, uint8_t blue, unsigned int* color);
+void light_get_color_components(unsigned int color, uint8_t* red, uint8_t* green, uint8_t* blue);
+tig_color_t light_get_outdoor_color();
+tig_color_t light_get_indoor_color();
+void light_set_colors(tig_color_t indoor_color, tig_color_t outdoor_color);
+bool sub_4D94D0(TigFile* stream, Light30** a2);
+bool sub_4D94F0(TigFile* stream, Light30* a2);
+void sub_4D9A90(object_id_t object_id);
+void sub_4DA310(object_id_t object_id);
+uint8_t sub_4DCE10(int64_t obj);
+bool sub_4DDD20(TigFile* stream, Light30** a2);
+bool sub_4DDD70(TigFile* stream, Light30* a2);
+void sub_4DF310(TigRect* rect, bool invalidate);
 
 #endif /* ARCANUM_GAME_LIGHT_H_ */

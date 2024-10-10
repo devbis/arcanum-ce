@@ -1,36 +1,42 @@
 #include "game/light.h"
 
 #include "game/gamelib.h"
+#include "game/object.h"
+#include "game/sector.h"
+#include "game/sector_block_list.h"
 
 #define SHADOWS_KEY "shadows"
-
-typedef struct Light30 {
-    int field_0;
-    int field_4;
-    int field_8;
-    int field_C;
-    int field_10;
-    int field_14;
-    int field_18;
-    int field_1C;
-    int field_20;
-    int field_24;
-    int field_28;
-    int field_2C;
-} Light30;
-
-// See 0x4DDD20.
-static_assert(sizeof(Light30) == 0x30, "wrong size");
 
 typedef struct Light602E60 {
     int field_0;
     int field_4;
     int field_8;
-    Light602E60* next;
+    struct Light602E60* next;
 } Light602E60;
 
 // See 4DE7C0.
 static_assert(sizeof(Light602E60) == 0x10, "wrong size");
+
+static void sub_4DD150(light_handle_t light_handle, int a2);
+static void sub_4DD230(light_handle_t light_handle, int a2);
+static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
+static void sub_4DD500(light_handle_t light_handle, int a2, int a3);
+static bool sub_4DDD90(Sector* sector);
+static void shadows_changed();
+static bool sub_4DDF50();
+static void sub_4DE060();
+static bool sub_4DE0B0(tig_art_id_t art_id, TigPaletteModifyInfo* modify_info);
+static void sub_4DE200();
+static void sub_4DE250();
+static void sub_4DE290(int a1, int a2);
+static void sub_4DE390(Light30* a1);
+static bool sub_4DE5D0();
+static void sub_4DE730();
+static Light602E60* sub_4DE770();
+static void sub_4DE7A0(Light602E60* node);
+static void sub_4DE7C0();
+static void sub_4DE7F0();
+static void sub_4DE900(UnknownContext* ctx);
 
 // 0x602E10
 static int light_bpp;
@@ -87,7 +93,7 @@ static void* dword_602EA0;
 static int dword_602EA4;
 
 // 0x602EA8
-static int dword_602EA8;
+static tig_color_t light_outdoor_color;
 
 // 0x602EAC
 static void* dword_602EAC;
@@ -114,7 +120,7 @@ static tig_window_handle_t light_iso_window_handle;
 static int dword_602EC8;
 
 // 0x602ECC
-static int dword_602ECC;
+static bool dword_602ECC;
 
 // 0x602ED0
 static int dword_602ED0;
@@ -126,7 +132,7 @@ static int dword_602ED4;
 static int dword_603404;
 
 // 0x603408
-static int dword_603408;
+static tig_color_t light_indoor_color;
 
 // 0x60340C
 static int dword_60340C;
@@ -143,15 +149,15 @@ bool light_init(GameInitInfo* init_info)
     TigWindowData window_data;
 
     dword_602E58 = (void**)CALLOC(7, sizeof(*dword_602E58));
-    nullsub_33();
+    sub_4F8330();
     light_iso_window_handle = init_info->iso_window_handle;
     dword_602E8C = init_info->field_8;
     light_editor = init_info->editor;
     light_view_options.type = VIEW_TYPE_ISOMETRIC;
-    dword_602ECC = 1;
-    dword_602EB8 = 1;
+    dword_602ECC = true;
+    dword_602EB8 = true;
 
-    if (sub_51FA80(&light_bpp) != TIG_OK) {
+    if (tig_video_get_bpp(&light_bpp) != TIG_OK) {
         FREE(dword_602E58);
         return false;
     }
@@ -181,8 +187,8 @@ bool light_init(GameInitInfo* init_info)
         return false;
     }
 
-    dword_602EA8 = tig_color_make(255, 255, 255);
-    dword_603408 = tig_color_make(255, 255, 255);
+    light_outdoor_color = tig_color_make(255, 255, 255);
+    light_indoor_color = tig_color_make(255, 255, 255);
 
     sub_4DE200();
     sub_5022B0(sub_4DE0B0);
@@ -225,13 +231,13 @@ bool light_update_view(ViewOptions* view_options)
 // 0x4D81F0
 void sub_4D81F0()
 {
-    dword_602ECC = 1 - dword_602ECC;
+    dword_602ECC = !dword_602ECC;
 
     if (!dword_60340C) {
         sub_5022D0();
     }
 
-    sub_4D1060(sub_4DDD90);
+    sector_enumerate(sub_4DDD90);
     sub_4DF310(NULL, false);
 }
 
@@ -251,21 +257,21 @@ void sub_4D8210()
             break;
         case 16:
             dword_602EC8 = stru_602E68.pitch / 2;
-            dword_602EB4 = stru_602E68.surface_data;
+            dword_602EB4 = stru_602E68.surface_data.pixels;
             dword_602EBC = stru_602E18.pitch / 2;
-            dword_602E9C = stru_602E18.surface_data;
+            dword_602E9C = stru_602E18.surface_data.pixels;
             break;
         case 24:
             dword_602EC8 = stru_602E68.pitch;
-            dword_602EB0 = stru_602E68.surface_data;
+            dword_602EB0 = stru_602E68.surface_data.pixels;
             dword_602EBC = stru_602E18.pitch;
-            dword_602EA0 = stru_602E18.surface_data;
+            dword_602EA0 = stru_602E18.surface_data.pixels;
             break;
         case 32:
             dword_602EC8 = stru_602E68.pitch / 4;
-            dword_602EAC = stru_602E68.surface_data;
+            dword_602EAC = stru_602E68.surface_data.pixels;
             dword_602EBC = stru_602E18.pitch / 4;
-            dword_602E98 = stru_602E18.surface_data;
+            dword_602E98 = stru_602E18.surface_data.pixels;
             break;
         }
     }
@@ -284,32 +290,32 @@ void sub_4D8320()
 // 0x4D8350
 void sub_4D8350(UnknownContext* ctx)
 {
+    long long location;
+    long long x;
+    long long y;
+
     if (dword_602EB8) {
         if (light_view_options.type == VIEW_TYPE_ISOMETRIC) {
-            long long location;
             sub_4B8730(stru_602E48.width / 2, stru_602E48.height / 2, &location);
-
-            long long x;
-            long long y;
             sub_4B8680(location, &x, &y);
             x += 40;
             y += 20;
 
-            dword_602ED0 = x - dword_602E44 / 2;
-            dword_602ED4 = y - dword_602EA4 / 2;
+            dword_602ED0 = (int)x - dword_602E44 / 2;
+            dword_602ED4 = (int)y - dword_602EA4 / 2;
             sub_4DE900(ctx);
         }
     }
 }
 
 // 0x4D84B0
-void light_build_color(uint8_t red, uint8_t green, uint8_t blue, int* color)
+void light_build_color(uint8_t red, uint8_t green, uint8_t blue, unsigned int* color)
 {
     *color = (red << 16) | (green << 8) | blue;
 }
 
 // 0x4D84D0
-void light_get_color_components(int color, uint8_t* red, uint8_t* green, uint8_t* blue)
+void light_get_color_components(unsigned int color, uint8_t* red, uint8_t* green, uint8_t* blue)
 {
     *red = (color >> 16) & 0xFF;
     *green = (color >> 8) & 0xFF;
@@ -317,22 +323,22 @@ void light_get_color_components(int color, uint8_t* red, uint8_t* green, uint8_t
 }
 
 // 0x4D8500
-int sub_4D8500()
+tig_color_t light_get_outdoor_color()
 {
-    return dword_602EA8;
+    return light_outdoor_color;
 }
 
 // 0x4D8530
-int sub_4D8530()
+tig_color_t light_get_indoor_color()
 {
-    return dword_603408;
+    return light_indoor_color;
 }
 
 // 0x4D8560
-void sub_4D8560(int a1, int a2)
+void light_set_colors(tig_color_t indoor_color, tig_color_t outdoor_color)
 {
-    dword_603408 = a1;
-    dword_602EA8 = a2;
+    light_indoor_color = indoor_color;
+    light_outdoor_color = outdoor_color;
     sub_4DE200();
 
     if (dword_602ECC) {
@@ -340,23 +346,129 @@ void sub_4D8560(int a1, int a2)
             sub_5022D0();
         }
 
-        sub_4D1060(sub_4DDD90);
+        sector_enumerate(sub_4DDD90);
         sub_4DF310(NULL, false);
     }
+}
+
+// 0x4D8590
+void sub_4D8590()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D8620
+void sub_4D8620()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D8660
+void light_timeevent_process()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D86B0
+void sub_4D86B0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D87F0
+void sub_4D87F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D89E0
+void sub_4D89E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D9240
+void sub_4D9240()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D9310
+void sub_4D9310()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D93B0
+void sub_4D93B0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D94B0
+int sub_4D94B0(Light30* a1)
+{
+    return a1->field_18 & 0x80;
+}
+
+// 0x4D94C0
+void sub_4D94C0(Light30* a1)
+{
+    a1->field_18 &= ~0x80;
+}
+
+// 0x4D94D0
+bool sub_4D94D0(TigFile* stream, Light30** a2)
+{
+    return sub_4DDD20(stream, a2);
+}
+
+// 0x4D94F0
+bool sub_4D94F0(TigFile* stream, Light30* a2)
+{
+    return sub_4DDD70(stream, a2);
+}
+
+// 0x4D9510
+void sub_4D9510()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D9570
+void sub_4D9570()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D9590
+void sub_4D9590()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D9990
+void sub_4D9990()
+{
+    // TODO: Incomplete.
 }
 
 // 0x4D9A90
 void sub_4D9A90(object_id_t object_id)
 {
-    unsigned int render_flags = obj_field_int32_get(object_id, OBJ_F_RENDER_FLAGS);
+    unsigned int render_flags;
+    light_handle_t light_handle;
+    int index;
+
+    render_flags = obj_field_int32_get(object_id, OBJ_F_RENDER_FLAGS);
     if ((render_flags & OBJECT_RENDER_FLAG_0x80000000) != 0) {
-        light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
+        light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
         if (light_handle != LIGHT_HANDLE_INVALID) {
             sub_4D93B0(light_handle);
         }
 
-        for (int index = 0; index < 4; index++) {
-            light_handle_t light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+        for (index = 0; index < 4; index++) {
+            light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
             if (light_handle != LIGHT_HANDLE_INVALID) {
                 sub_4D93B0(light_handle);
             }
@@ -366,11 +478,20 @@ void sub_4D9A90(object_id_t object_id)
     }
 }
 
+// 0x4D9B20
+void sub_4D9B20()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4DA310
 void sub_4DA310(object_id_t object_id)
 {
-    for (int index = 0; index < 5; index++) {
-        shadow_handle_t shadow_handle = obj_arrayfield_int32_get(object_id, OBJ_F_SHADOW_HANDLES, index);
+    int index;
+    shadow_handle_t shadow_handle;
+
+    for (index = 0; index < 5; index++) {
+        shadow_handle = obj_arrayfield_int32_get(object_id, OBJ_F_SHADOW_HANDLES, index);
         if (shadow_handle == SHADOW_HANDLE_INVALID) {
             break;
         }
@@ -380,27 +501,51 @@ void sub_4DA310(object_id_t object_id)
     }
 }
 
+// 0x4DA360
+void sub_4DA360()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DC210
+void sub_4DC210()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DCE10
+uint8_t sub_4DCE10(int64_t obj)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4DCEA0
 void sub_4DCEA0(object_id_t object_id, int a2)
 {
-    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle;
+    int index;
+    unsigned int flags;
+
+    light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD150(light_handle, a2);
     } else {
         if (obj_field_int32_get(object_id, OBJ_F_LIGHT_AID) != -1) {
-            unsigned int light_flags = obj_field_int32_get(object_id, OBJ_F_LIGHT_FLAGS);
-            obj_field_int32_set(object_id, OBJ_F_LIGHT_FLAGS, light_flags | a2);
+            flags = obj_field_int32_get(object_id, OBJ_F_LIGHT_FLAGS);
+            flags |= a2;
+            obj_field_int32_set(object_id, OBJ_F_LIGHT_FLAGS, flags);
         }
     }
 
-    for (int index = 0; index < 4; index++) {
-        light_handle_t light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+    for (index = 0; index < 4; index++) {
+        light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
         if (light_handle != LIGHT_HANDLE_INVALID) {
             sub_4DD150(light_handle, a2);
         } else {
             if (sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_AID, index) != -1) {
-                unsigned int light_flags = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index);
-                sub_4074E0(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index, light_flags | a2);
+                flags = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index);
+                flags |= a2;
+                sub_4074E0(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index, flags);
             }
         }
     }
@@ -409,24 +554,30 @@ void sub_4DCEA0(object_id_t object_id, int a2)
 // 0x4DCF60
 void sub_4DCF60(object_id_t object_id, int a2)
 {
-    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle;
+    int index;
+    unsigned int flags;
+
+    light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD230(light_handle, a2);
     } else {
         if (obj_field_int32_get(object_id, OBJ_F_LIGHT_AID) != -1) {
-            unsigned int light_flags = obj_field_int32_get(object_id, OBJ_F_LIGHT_FLAGS);
-            obj_field_int32_set(object_id, OBJ_F_LIGHT_FLAGS, light_flags & ~a2);
+            flags = obj_field_int32_get(object_id, OBJ_F_LIGHT_FLAGS);
+            flags &= ~a2;
+            obj_field_int32_set(object_id, OBJ_F_LIGHT_FLAGS, flags);
         }
     }
 
-    for (int index = 0; index < 4; index++) {
-        light_handle_t light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+    for (index = 0; index < 4; index++) {
+        light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
         if (light_handle != LIGHT_HANDLE_INVALID) {
             sub_4DD230(light_handle, a2);
         } else {
             if (sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_AID, index) != -1) {
-                unsigned int light_flags = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index);
-                sub_4074E0(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index, light_flags & ~a2);
+                flags = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index);
+                flags &= ~a2;
+                sub_4074E0(object_id, OBJ_F_OVERLAY_LIGHT_FLAGS, index, flags);
             }
         }
     }
@@ -435,13 +586,16 @@ void sub_4DCF60(object_id_t object_id, int a2)
 // 0x4DD020
 void sub_4DD020(object_id_t object_id, int a2, int a3, int a4, int a5)
 {
-    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle;
+    int index;
+
+    light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD320(light_handle, a2, a3, a4, a5);
     }
 
-    for (int index = 0; index < 4; index++) {
-        light_handle_t light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+    for (index = 0; index < 4; index++) {
+        light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
         if (light_handle != LIGHT_HANDLE_INVALID) {
             sub_4DD320(light_handle, a2, a3, a4, a5);
         }
@@ -451,23 +605,122 @@ void sub_4DD020(object_id_t object_id, int a2, int a3, int a4, int a5)
 // 0x4DD0A0
 void sub_4DD0A0(object_id_t object_id, int a2, int a3)
 {
-    light_handle_t light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
+    light_handle_t light_handle;
+    int index;
+
+    light_handle = obj_field_int32_get(object_id, OBJ_F_LIGHT_HANDLE);
     if (light_handle != LIGHT_HANDLE_INVALID) {
         sub_4DD500(light_handle, a2, a3);
     }
 
-    for (int index = 0; index < 4; index++) {
-        light_handle_t light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+    for (index = 0; index < 4; index++) {
+        light_handle = sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
         if (light_handle != LIGHT_HANDLE_INVALID) {
             sub_4DD500(light_handle, a2, a3);
         }
     }
 }
 
+// 0x4DD110
+bool sub_4DD110()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DD130
+void sub_4DD130(int a1, int a2)
+{
+    sub_4DE290(a1, a2);
+}
+
+// 0x4DD150
+void sub_4DD150(light_handle_t light_handle, int a2)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DD230
+void sub_4DD230(light_handle_t light_handle, int a2)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DD310
+int sub_4DD310(Light30* a1)
+{
+    return a1->field_18;
+}
+
+// 0x4DD320
+void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DD500
+void sub_4DD500(light_handle_t light_handle, int a2, int a3)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DD720
+void sub_4DD720()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DD830
+void sub_4DD830()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DD940
+void sub_4DD940()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DDA40
+void sub_4DDA40()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DDA60
+int64_t sub_4DDA60(Light30* a1)
+{
+    return a1->field_8;
+}
+
+// 0x4DDA70
+void sub_4DDA70()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DDAB0
+void sub_4DDAB0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DDB70
+void sub_4DDB70()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DDB80
+void sub_4DDB80()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4DDD20
 bool sub_4DDD20(TigFile* stream, Light30** a2)
 {
-    Light30* v1 = (Light30*)malloc(sizeof(*v1));
+    Light30* v1 = (Light30*)MALLOC(sizeof(*v1));
     if (tig_file_fread(v1, sizeof(*v1), 1, stream) != 1) {
         return false;
     }
@@ -482,6 +735,12 @@ bool sub_4DDD20(TigFile* stream, Light30** a2)
 bool sub_4DDD70(TigFile* stream, Light30* a2)
 {
     return tig_file_fread(a2, sizeof(*a2), 1, stream) == 1;
+}
+
+// 0x4DDD90
+bool sub_4DDD90(Sector* sector)
+{
+    // TODO: Incomplete.
 }
 
 // 0x4DDF20
@@ -541,6 +800,12 @@ void sub_4DE060()
     }
 }
 
+// 0x4DE0B0
+bool sub_4DE0B0(tig_art_id_t art_id, TigPaletteModifyInfo* modify_info)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4DE200
 void sub_4DE200()
 {
@@ -548,12 +813,12 @@ void sub_4DE200()
         if (dword_602E40 == NULL) {
             dword_602E40 = tig_palette_create();
         }
-        tig_palette_fill(dword_602E40, dword_603408);
+        tig_palette_fill(dword_602E40, light_indoor_color);
 
         if (dword_602E88 == NULL) {
             dword_602E88 = tig_palette_create();
         }
-        tig_palette_fill(dword_602E88, dword_602EA8);
+        tig_palette_fill(dword_602E88, light_outdoor_color);
     }
 }
 
@@ -569,10 +834,48 @@ void sub_4DE250()
     }
 }
 
+// 0x4DE290
+void sub_4DE290(int a1, int a2)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DE390
+void sub_4DE390(Light30* a1)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DE4D0
+void sub_4DE4D0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DE4F0
+void sub_4DE4F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DE5D0
+bool sub_4DE5D0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DE730
+void sub_4DE730()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4DE770
 Light602E60* sub_4DE770()
 {
-    Light602E60* node = off_602E60;
+    Light602E60* node;
+
+    node = off_602E60;
     if (node == NULL) {
         sub_4DE7C0();
         node = off_602E60;
@@ -594,8 +897,11 @@ void sub_4DE7A0(Light602E60* node)
 // 0x4DE7C0
 void sub_4DE7C0()
 {
-    for (int index = 0; index < 20; index++) {
-        Light602E60* node = (Light602E60*)malloc(sizeof(*node));
+    int index;
+    Light602E60* node;
+
+    for (index = 0; index < 20; index++) {
+        node = (Light602E60*)malloc(sizeof(*node));
         node->next = off_602E60;
         off_602E60 = node;
     }
@@ -604,17 +910,44 @@ void sub_4DE7C0()
 // 0x4DE7F0
 void sub_4DE7F0()
 {
-    Light602E60* curr = off_602E60;
+    Light602E60* curr;
+    Light602E60* next;
+
+    curr = off_602E60;
     while (curr != NULL) {
-        Light602E60* next = curr->next;
+        next = curr->next;
         free(curr);
         curr = next;
     }
     off_602E60 = NULL;
 }
 
+// 0x4DE820
+void sub_4DE820()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DE870
+void sub_4DE870()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DE900
+void sub_4DE900(UnknownContext* ctx)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4DF1D0
+void sub_4DF1D0()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4DF310
-void sub_4DF310(TigRect* rect, bool a2)
+void sub_4DF310(TigRect* rect, bool invalidate)
 {
     TigRect dirty_rect;
 
@@ -630,7 +963,7 @@ void sub_4DF310(TigRect* rect, bool a2)
     dirty_rect.height += 40;
     dword_602E8C(&dirty_rect);
 
-    if (a2) {
+    if (invalidate) {
         object_invalidate_rect(&dirty_rect);
     }
 }
