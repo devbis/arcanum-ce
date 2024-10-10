@@ -4,6 +4,8 @@
 
 #include "game/effect.h"
 #include "game/mes.h"
+#include "game/object.h"
+#include "game/skill.h"
 #include "game/stat.h"
 
 #define FIRST_DESCRIPTION_ID 1000
@@ -252,9 +254,52 @@ void sub_4C26F0(int64_t obj)
 }
 
 // 0x4C2950
-void sub_4C2950(int64_t a1)
+void sub_4C2950(int64_t obj)
 {
-    // TODO: Incomplete.
+    ObjectList followers;
+    ObjectNode* node;
+    int skill;
+    int educator_training;
+    int follower_training;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
+        && background_obj_get_background(obj) != BACKGROUND_EDUCATOR) {
+        return;
+    }
+
+    object_get_followers(obj, &followers);
+
+    for (skill = 0; skill < BASIC_SKILL_COUNT; skill++) {
+        educator_training = basic_skill_get_training(obj, skill);
+        if (educator_training > TRAINING_APPRENTICE) {
+            node = followers.head;
+            while (node != NULL) {
+                follower_training = basic_skill_get_training(node->obj, skill);
+                follower_training++;
+                while (follower_training < educator_training) {
+                    basic_skill_set_training(node->obj, skill, follower_training);
+                }
+                node = node->next;
+            }
+        }
+    }
+
+    for (skill = 0; skill < TECH_SKILL_COUNT; skill++) {
+        educator_training = tech_skill_get_training(obj, skill);
+        if (educator_training > TRAINING_APPRENTICE) {
+            node = followers.head;
+            while (node != NULL) {
+                follower_training = tech_skill_get_training(node->obj, skill);
+                follower_training++;
+                while (follower_training < educator_training) {
+                    tech_skill_set_training(node->obj, skill, follower_training);
+                }
+                node = node->next;
+            }
+        }
+    }
+
+    object_list_destroy(&followers);
 }
 
 // 0x4C2A70

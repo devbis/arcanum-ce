@@ -4,6 +4,7 @@
 #include "game/context.h"
 #include "game/obj.h"
 
+#define BACKGROUND_EDUCATOR 51
 #define BACKGROUND_DAY_MAGE 62
 #define BACKGROUND_NIGHT_MAGE 63
 #define BACKGROUND_SKY_MAGE 64
@@ -26,7 +27,7 @@ void background_obj_clear(object_id_t obj);
 int background_obj_get_background(object_id_t obj);
 int background_obj_get_background_text(object_id_t obj);
 void sub_4C26F0(int64_t obj);
-void sub_4C2950(int64_t a1);
+void sub_4C2950(int64_t obj);
 int background_adjust_money(int amount, int background);
 bool background_get_items(char* dest, size_t size, int background);
 
