@@ -43,6 +43,7 @@ static void sub_4DE250();
 static void sub_4DE290(int a1, int a2);
 static void sub_4DE390(Light30* a1);
 static void sub_4DE4D0(Light30* light);
+static void sub_4DE4F0(Light30* light, int offset_x, int offset_y);
 static bool sub_4DE5D0();
 static void sub_4DE730();
 static Light602E60* sub_4DE770();
@@ -889,9 +890,30 @@ void sub_4DE4D0(Light30* light)
 }
 
 // 0x4DE4F0
-void sub_4DE4F0()
+void sub_4DE4F0(Light30* light, int offset_x, int offset_y)
 {
-    // TODO: Incomplete.
+    TigRect dirty_rect;
+    TigRect updated_rect;
+    int64_t sector_id;
+    Sector* sector;
+
+    if (light->offset_x != offset_x || light->offset_y != offset_y) {
+        sub_4DE290(light, &dirty_rect);
+        sector_id = sub_4CFC50(light->loc);
+        if (sub_4DD110(light) || sub_4D04E0(sector_id)) {
+            sector_lock(sector_id, &sector);
+            sub_4F7250(&(sector->lights), light, light->loc, offset_x, offset_y);
+            sector_unlock(sector_id);
+        } else {
+            light->offset_x = offset_x;
+            light->offset_y = offset_y;
+        }
+
+        light->flags |= 0x80;
+        sub_4DE290(light, &updated_rect);
+        tig_rect_union(&dirty_rect, &updated_rect, &dirty_rect);
+        sub_4DF310(&dirty_rect, true);
+    }
 }
 
 // 0x4DE5D0
