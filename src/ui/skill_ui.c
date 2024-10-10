@@ -210,7 +210,7 @@ void sub_57A6B0()
 }
 
 // 0x57A6C0
-void sub_57A6C0(int a1, int64_t* obj_ptr)
+int sub_57A6C0(int a1, int64_t* obj_ptr)
 {
     // TODO: Incomplete.
 }

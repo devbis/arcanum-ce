@@ -13,7 +13,7 @@ void sub_579FA0(int64_t obj, int index);
 void skill_ui_preprocess(int64_t obj, int type);
 void sub_57A1A0();
 int sub_57A6A0(int index);
-void sub_57A6C0(int a1, int64_t* obj_ptr);
+int sub_57A6C0(int a1, int64_t* obj_ptr);
 const char* sub_57A700(int index);
 void sub_57AC50(int64_t obj, int skill, int a3);
 void sub_57AC90(int64_t obj, int skill, int a3);
