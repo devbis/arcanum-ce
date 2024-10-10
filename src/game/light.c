@@ -463,9 +463,11 @@ void sub_4D9510()
 }
 
 // 0x4D9570
-void sub_4D9570()
+void sub_4D9570(Light30* light)
 {
-    // TODO: Incomplete.
+    sub_4D8620(light);
+    sub_4DE4D0(light);
+    FREE(light);
 }
 
 // 0x4D9590

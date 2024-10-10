@@ -41,6 +41,7 @@ tig_color_t light_get_indoor_color();
 void light_set_colors(tig_color_t indoor_color, tig_color_t outdoor_color);
 void sub_4D8620(Light30* light);
 bool sub_4D94D0(TigFile* stream, Light30** a2);
+void sub_4D9570(Light30* light);
 bool sub_4D94F0(TigFile* stream, Light30* a2);
 void sub_4D9A90(object_id_t object_id);
 void sub_4DA310(object_id_t object_id);
