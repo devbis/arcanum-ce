@@ -29,6 +29,7 @@ typedef struct LightCreateInfo {
     /* 0022 */ uint8_t b;
 } LightCreateInfo;
 
+static void sub_4D9310(LightCreateInfo* create_info, Light30** light_ptr);
 static void sub_4DD150(light_handle_t light_handle, int a2);
 static void sub_4DD230(light_handle_t light_handle, int a2);
 static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
@@ -452,9 +453,24 @@ void sub_4D9240()
 }
 
 // 0x4D9310
-void sub_4D9310()
+void sub_4D9310(LightCreateInfo* create_info, Light30** light_ptr)
 {
-    // TODO: Incomplete.
+    int64_t sector_id;
+    Sector* sector;
+    TigRect rect;
+
+    sub_4DE870(create_info, light_ptr);
+    if (*light_ptr != NULL) {
+        sector_id = sub_4CFC50(create_info->loc);
+        if (sub_4DD110(*light_ptr) || sub_4D04E0(sector_id)) {
+            sector_lock(sector_id, &sector);
+            sub_4F71C0(&(sector->lights), *light_ptr);
+            sector_unlock(sector_id);
+        }
+
+        sub_4DD130(*light_ptr, &rect);
+        sub_4DF310(&rect, true);
+    }
 }
 
 // 0x4D93B0
