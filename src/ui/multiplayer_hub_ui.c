@@ -342,9 +342,22 @@ void sub_581910(TigRect* rect)
 }
 
 // 0x581950
-void sub_581950()
+void sub_581950(int x, int y)
 {
-    // TODO: Incomplete.
+    MainMenuWindowInfo* window;
+
+    window = sub_5496C0(sub_5496D0());
+    x += window->field_5C.x;
+    y += window->field_5C.y;
+
+    if (x >= stru_5CC018.x && x < stru_5CC018.x + stru_5CC018.width
+        && y >= stru_5CC018.y && y < stru_5CC018.y + stru_5CC018.height) {
+        sub_5417A0(0);
+        sub_581A60();
+        if (sub_541680()) {
+            sub_541810(sub_5496D0());
+        }
+    }
 }
 
 // 0x5819D0

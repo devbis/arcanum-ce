@@ -6,6 +6,7 @@
 void multiplayer_hub_ui_init();
 void multiplayer_hub_ui_exit();
 void sub_581910(TigRect* rect);
+void sub_581950(int x, int y);
 bool sub_5819D0(int a1);
 void sub_581A60();
 void sub_581A80();
