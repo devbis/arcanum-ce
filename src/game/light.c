@@ -921,7 +921,7 @@ void sub_4DE7C0()
     Light602E60* node;
 
     for (index = 0; index < 20; index++) {
-        node = (Light602E60*)malloc(sizeof(*node));
+        node = (Light602E60*)MALLOC(sizeof(*node));
         node->next = off_602E60;
         off_602E60 = node;
     }
@@ -936,7 +936,7 @@ void sub_4DE7F0()
     curr = off_602E60;
     while (curr != NULL) {
         next = curr->next;
-        free(curr);
+        FREE(curr);
         curr = next;
     }
     off_602E60 = NULL;
