@@ -71,7 +71,7 @@ static int dword_602E44;
 static TigRect stru_602E48;
 
 // 0x602E58
-static void** dword_602E58;
+static TigPalette* dword_602E58;
 
 // 0x602E5C
 static TigVideoBuffer* dword_602E5C;
@@ -83,7 +83,7 @@ static Light602E60* off_602E60;
 static TigVideoBufferData stru_602E68;
 
 // 0x602E88
-static void* dword_602E88;
+static TigBmp stru_602EE8;
 
 // 0x602E8C
 static GameContextF8* dword_602E8C;
@@ -165,7 +165,7 @@ bool light_init(GameInitInfo* init_info)
 {
     TigWindowData window_data;
 
-    dword_602E58 = (void**)CALLOC(7, sizeof(*dword_602E58));
+    dword_602E58 = (TigPalette**)CALLOC(7, sizeof(*dword_602E58));
     sub_4F8330();
     light_iso_window_handle = init_info->iso_window_handle;
     dword_602E8C = init_info->field_8;
@@ -887,7 +887,15 @@ bool sub_4DE5D0()
 // 0x4DE730
 void sub_4DE730()
 {
-    // TODO: Incomplete.
+    int index;
+
+    sub_4DE7F0();
+
+    for (index = 0; index < 7; index++) {
+        tig_palette_destroy(dword_602E58[index]);
+    }
+
+    tig_bmp_destroy(&stru_602EE8);
 }
 
 // 0x4DE770
