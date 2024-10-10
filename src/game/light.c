@@ -37,6 +37,7 @@ static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int 
 static void sub_4DD500(Light30* light, int offset_x, int offset_y);
 static void sub_4DDAB0(Light30* light, tig_art_id_t art_id);
 static tig_art_id_t sub_4DDB70(Light30* light);
+static void sub_4DDB80(Light30* light, uint8_t r, uint8_t g, uint8_t b);
 static bool sub_4DDD90(Sector* sector);
 static void shadows_changed();
 static bool sub_4DDF50();
@@ -860,9 +861,48 @@ tig_art_id_t sub_4DDB70(Light30* light)
 }
 
 // 0x4DDB80
-void sub_4DDB80()
+void sub_4DDB80(Light30* light, uint8_t r, uint8_t g, uint8_t b)
 {
-    // TODO: Incomplete.
+    unsigned int color;
+    int index;
+
+    if ((light->flags & 0x08) != 0) {
+        sub_4DD230(light, 0x08);
+    }
+
+    if ((light->flags & 0x10) != 0) {
+        sub_4DD230(light, 0x10);
+    }
+
+    light->flags |= 0x80;
+
+    if (light->obj != OBJ_HANDLE_NULL) {
+        light_build_color(r, g, b, &color);
+
+        if ((light->flags & 0x8000000) != 0) {
+            obj_field_int32_set(light->obj, OBJ_F_LIGHT_COLOR, color);
+        } else {
+            if ((light->flags & 0x10000000) != 0) {
+                index = 0;
+            } else if ((light->flags & 0x20000000) != 0) {
+                index = 1;
+            } else if ((light->flags & 0x40000000) != 0) {
+                index = 2;
+            } else if ((light->flags & 0x80000000) != 0) {
+                index = 3;
+            } else {
+                // Unreachable.
+                __assume(0);
+            }
+
+            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_COLOR, index, color);
+        }
+    }
+
+    light->r = r;
+    light->g = g;
+    light->b = b;
+    sub_4DE390(light);
 }
 
 // 0x4DDD20
