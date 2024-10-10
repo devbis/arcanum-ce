@@ -9,7 +9,7 @@ void wmap_rnd_reset();
 void wmap_rnd_mod_load();
 void wmap_rnd_mod_unload();
 void sub_5589D0();
-bool sub_5595B0();
+bool sub_5595B0(int a1);
 void sub_559640();
 
 #endif /* ARCANUM_UI_WMAP_RND_H_ */

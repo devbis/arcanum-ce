@@ -313,13 +313,15 @@ void wmap_rnd_encounter_build_object()
 }
 
 // 0x5595B0
-bool sub_5595B0()
+bool sub_5595B0(int a1)
 {
     long long location;
 
+    (void)a1;
+
     sub_559640();
 
-    if (sub_40FF40() == sub_40FF50(1)
+    if (sub_40FF40() == sub_40FF50(MAP_TYPE_START_MAP)
         && !sub_4CB6A0(player_get_pc_obj())) {
         sub_566CC0(&location);
         if (sub_558DE0(location)) {
