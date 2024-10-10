@@ -555,9 +555,33 @@ void sub_4D9590()
 }
 
 // 0x4D9990
-void sub_4D9990()
+void sub_4D9990(int64_t obj)
 {
-    // TODO: Incomplete.
+    Light30* light;
+    unsigned int color;
+    int index;
+
+    light = (Light30*)obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE);
+    if (light != LIGHT_HANDLE_INVALID) {
+        obj_field_int32_set(obj, OBJ_F_LIGHT_FLAGS, light->flags);
+        obj_field_int32_set(obj, OBJ_F_LIGHT_AID, light->art_id);
+        light_build_color(light->r, light->g, light->b, &color);
+        obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, color);
+    } else {
+        obj_field_int23_set(obj, OBJ_F_LIGHT_AID, TIG_ART_ID_INVALID);
+    }
+
+    for (index = 0; index < 4; index++) {
+        light = (Light30*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+        if (light != LIGHT_HANDLE_INVALID) {
+            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, index, light->flags);
+            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, light->art_id);
+            light_build_color(light->r, light->g, light->b, &color);
+            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_COLOR, index, color);
+        } else {
+            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
+        }
+    }
 }
 
 // 0x4D9A90
