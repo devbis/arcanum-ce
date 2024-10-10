@@ -149,7 +149,7 @@ static TigRect stru_602ED8;
 static TigBmp stru_602EE8;
 
 // 0x603400
-static int dword_603400;
+static Light30* dword_603400;
 
 // 0x603404
 static int dword_603404;
@@ -381,9 +381,13 @@ void sub_4D8590()
 }
 
 // 0x4D8620
-void sub_4D8620()
+void sub_4D8620(Light30* light)
 {
-    // TODO: Incomplete.
+    if ((sub_4DD310(light) & 0x4) != 0) {
+        dword_603400 = light;
+        timeevent_clear_all_ex(TIMEEVENT_TYPE_LIGHT, sub_4DE820);
+        sub_4DD230(light, 0x4);
+    }
 }
 
 // 0x4D8660
