@@ -82,11 +82,8 @@ static Light602E60* off_602E60;
 // 0x602E68
 static TigVideoBufferData stru_602E68;
 
-// 0x602ED8
-static TigRect stru_602ED8;
-
 // 0x602E88
-static TigBmp stru_602EE8;
+static TigPalette dword_602E88;
 
 // 0x602E8C
 static GameContextF8* dword_602E8C;
@@ -144,6 +141,12 @@ static int dword_602ED0;
 
 // 0x602ED4
 static int dword_602ED4;
+
+// 0x602ED8
+static TigRect stru_602ED8;
+
+// 0x602EE8
+static TigBmp stru_602EE8;
 
 // 0x603400
 static int dword_603400;
