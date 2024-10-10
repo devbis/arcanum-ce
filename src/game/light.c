@@ -941,7 +941,74 @@ bool sub_4DDD70(TigFile* stream, Light30* a2)
 // 0x4DDD90
 bool sub_4DDD90(Sector* sector)
 {
-    // TODO: Incomplete.
+    int hour;
+    bool is_day;
+    int tile;
+    ObjectNode* node;
+    unsigned int obj_flags;
+    unsigned int render_flags;
+    unsigned int scenery_flags;
+    bool update;
+    Light30* light;
+    int index;
+
+    hour = datetime_current_hour();
+    is_day = hour >= 6 && hour < 18;
+
+    for (tile = 0; tile < 4096; tile++) {
+        node = sector->objects.heads[tile];
+        while (node != NULL) {
+            obj_flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
+
+            render_flags = obj_field_int32_get(node->obj, OBJ_F_RENDER_FLAGS);
+            render_flags &= ~0x6000000;
+
+            if (obj_field_int32_get(node->obj, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
+                scenery_flags = obj_field_int32_get(node->obj, OBJ_F_SCENERY_FLAGS);
+                if ((scenery_flags & 0x400) == 0
+                    && (scenery_flags & OSCF_NOCTURNAL) != 0) {
+                    update = false;
+                    if (tig_art_tile_id_type_get(sector->tiles.field_0[tile]) != 0) {
+                        if (is_day) {
+                            if ((obj_flags & OF_OFF) == 0) {
+                                sub_43D0E0(node->obj, OF_OFF);
+                                update = true;
+                            }
+                        } else {
+                            if ((obj_flags & OF_OFF) != 0) {
+                                sub_43D280(node->obj, OF_OFF);
+                                update = true;
+                            }
+                        }
+                    } else {
+                        if ((obj_flags & OF_OFF) != 0) {
+                            sub_43D280(node->obj, OF_OFF);
+                            update = true;
+                        }
+                    }
+
+                    if (update) {
+                        sub_4D9590(node->obj, false);
+                        light = obj_field_int32_get(node->obj, OBJ_F_LIGHT_HANDLE);
+                        if (light != NULL) {
+                            sub_4F71C0(&(sector->lights), light);
+                        }
+
+                        for (index = 0; index < 4; index++) {
+                            light = sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+                            if (light != NULL) {
+                                sub_4F71C0(&(sector->lights), light);
+                            }
+                        }
+                    }
+                }
+            }
+
+            node = node->next;
+        }
+    }
+
+    return true;
 }
 
 // 0x4DDF20
