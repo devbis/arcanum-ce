@@ -11,17 +11,18 @@ typedef unsigned int light_handle_t;
 typedef unsigned int shadow_handle_t;
 
 typedef struct Light30 {
-    int field_0;
-    int field_4;
-    int64_t field_8;
-    int field_10;
-    int field_14;
-    int field_18;
-    int field_1C;
-    int field_20;
-    int field_24;
-    int field_28;
-    int field_2C;
+    /* 0000 */ int64_t obj;
+    /* 0008 */ int64_t loc;
+    /* 0010 */ int offset_x;
+    /* 0014 */ int offset_y;
+    /* 0018 */ unsigned int flags;
+    /* 001C */ tig_art_id_t art_id;
+    /* 0020 */ uint8_t r;
+    /* 0021 */ uint8_t b;
+    /* 0022 */ uint8_t g;
+    /* 0024 */ tig_color_t tint_color;
+    /* 0028 */ TigPalette palette;
+    /* 002C */ int field_2C;
 } Light30;
 
 // See 0x4DDD20.

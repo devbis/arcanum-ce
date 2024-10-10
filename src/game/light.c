@@ -17,6 +17,18 @@ typedef struct Light602E60 {
 // See 4DE7C0.
 static_assert(sizeof(Light602E60) == 0x10, "wrong size");
 
+typedef struct LightCreateInfo {
+    /* 0000 */ int64_t obj;
+    /* 0008 */ int64_t loc;
+    /* 0010 */ int offset_x;
+    /* 0014 */ int offset_y;
+    /* 0018 */ tig_art_id_t art_id;
+    /* 001C */ unsigned int flags;
+    /* 0020 */ uint8_t r;
+    /* 0021 */ uint8_t g;
+    /* 0022 */ uint8_t b;
+} LightCreateInfo;
+
 static void sub_4DD150(light_handle_t light_handle, int a2);
 static void sub_4DD230(light_handle_t light_handle, int a2);
 static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
@@ -408,13 +420,13 @@ void sub_4D93B0()
 // 0x4D94B0
 int sub_4D94B0(Light30* a1)
 {
-    return a1->field_18 & 0x80;
+    return a1->flags & 0x80;
 }
 
 // 0x4D94C0
 void sub_4D94C0(Light30* a1)
 {
-    a1->field_18 &= ~0x80;
+    a1->flags &= ~0x80;
 }
 
 // 0x4D94D0
@@ -646,9 +658,9 @@ void sub_4DD230(light_handle_t light_handle, int a2)
 }
 
 // 0x4DD310
-int sub_4DD310(Light30* a1)
+unsigned int sub_4DD310(Light30* a1)
 {
-    return a1->field_18;
+    return a1->flags;
 }
 
 // 0x4DD320
@@ -690,7 +702,7 @@ void sub_4DDA40()
 // 0x4DDA60
 int64_t sub_4DDA60(Light30* a1)
 {
-    return a1->field_8;
+    return a1->loc;
 }
 
 // 0x4DDA70
@@ -718,16 +730,19 @@ void sub_4DDB80()
 }
 
 // 0x4DDD20
-bool sub_4DDD20(TigFile* stream, Light30** a2)
+bool sub_4DDD20(TigFile* stream, Light30** light_ptr)
 {
-    Light30* v1 = (Light30*)MALLOC(sizeof(*v1));
-    if (tig_file_fread(v1, sizeof(*v1), 1, stream) != 1) {
+    Light30* light;
+
+    light = (Light30*)MALLOC(sizeof(*light));
+    if (tig_file_fread(light, sizeof(*light), 1, stream) != 1) {
         return false;
     }
 
-    v1->field_28 = 0;
-    sub_4DE390(v1);
-    *a2 = v1;
+    light->palette = NULL;
+    sub_4DE390(light);
+    *light_ptr = light;
+
     return true;
 }
 
@@ -929,9 +944,27 @@ void sub_4DE820()
 }
 
 // 0x4DE870
-void sub_4DE870()
+void sub_4DE870(LightCreateInfo* create_info, Light30** light_ptr)
 {
-    // TODO: Incomplete.
+    Light30* light;
+
+    if (light_editor || create_info->obj != OBJ_HANDLE_NULL) {
+        light = (Light30*)MALLOC(sizeof(*light));
+        light->obj = create_info->obj;
+        light->loc = create_info->loc;
+        light->offset_x = create_info->offset_x;
+        light->offset_y = create_info->offset_y;
+        light->art_id = create_info->art_id;
+        light->flags = create_info->flags;
+        light->r = create_info->r;
+        light->g = create_info->g;
+        light->b = create_info->b;
+        light->palette = NULL;
+        sub_4DE390(&light);
+        *light_ptr = light;
+    } else {
+        *light_ptr = NULL;
+    }
 }
 
 // 0x4DE900
