@@ -42,6 +42,7 @@ static void sub_4DE200();
 static void sub_4DE250();
 static void sub_4DE290(int a1, int a2);
 static void sub_4DE390(Light30* a1);
+static void sub_4DE4D0(Light30* light);
 static bool sub_4DE5D0();
 static void sub_4DE730();
 static Light602E60* sub_4DE770();
@@ -879,9 +880,12 @@ void sub_4DE390(Light30* a1)
 }
 
 // 0x4DE4D0
-void sub_4DE4D0()
+void sub_4DE4D0(Light30* light)
 {
-    // TODO: Incomplete.
+    if (light->palette != NULL) {
+        tig_palette_destroy(light->palette);
+        light->palette = NULL;
+    }
 }
 
 // 0x4DE4F0
