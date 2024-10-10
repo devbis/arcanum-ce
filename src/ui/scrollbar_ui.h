@@ -37,6 +37,7 @@ void scrollbar_ui_control_destroy(ScrollbarId id);
 void sub_5806F0(ScrollbarId id);
 bool scrollbar_ui_control_show(ScrollbarId id);
 bool scrollbar_ui_control_hide(ScrollbarId id);
+bool sub_580B10(TigMessage* msg);
 void sub_5810D0(ScrollbarId id, int a2, int a3);
 
 #endif /* ARCANUM_UI_SCROLLBAR_UI_H_ */

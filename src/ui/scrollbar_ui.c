@@ -267,7 +267,7 @@ void sub_5807F0(int index, int a2)
 }
 
 // 0x580B10
-void sub_580B10()
+bool sub_580B10(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
