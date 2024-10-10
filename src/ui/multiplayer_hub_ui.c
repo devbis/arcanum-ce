@@ -391,9 +391,25 @@ void sub_581A80()
 }
 
 // 0x581A90
-void sub_581A90()
+bool sub_581A90(int a1)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+
+    if (a1 != 3) {
+        return true;
+    }
+
+    if (!multiplayer_mm_chatroom_create(byte_686250, byte_684688)
+        || !sub_5499B0(stru_6861D8.str)) {
+        mes_file_entry.num = 10064;
+        mes_get_msg(sub_549840(), &mes_file_entry);
+        sub_5826D0(NULL, 2, mes_file_entry.str);
+    }
+
+    sub_5417A0(1);
+    sub_5830F0();
+
+    return false;
 }
 
 // 0x581B10
@@ -577,8 +593,10 @@ void sub_582690(const char* a1, const char* a2)
 }
 
 // 0x5826B0
-void sub_5826B0()
+void sub_5826B0(int a1, int a2)
 {
+    (void)a1;
+    (void)a2;
 }
 
 // 0x5826C0
