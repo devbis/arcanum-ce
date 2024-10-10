@@ -378,9 +378,27 @@ void light_set_colors(tig_color_t indoor_color, tig_color_t outdoor_color)
 }
 
 // 0x4D8590
-void sub_4D8590()
+void sub_4D8590(Light30* light)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    if ((sub_4DD310(light) & 0x24) == 0) {
+        art_id = sub_4DDB70(light);
+        if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK
+            && art_anim_data.num_frames > 1) {
+            timeevent.type = TIMEEVENT_TYPE_LIGHT;
+            timeevent.params[0].integer_value = light;
+            timeevent.params[1].integer_value = 1000 / art_anim_data.fps;
+
+            sub_45A950(&datetime, 1000 / art_anim_data.fps);
+            if (sub_45B800(&timeevent, &datetime)) {
+                sub_4DD150(light, 0x4);
+            }
+        }
+    }
 }
 
 // 0x4D8620
