@@ -82,6 +82,9 @@ static Light602E60* off_602E60;
 // 0x602E68
 static TigVideoBufferData stru_602E68;
 
+// 0x602ED8
+static TigRect stru_602ED8;
+
 // 0x602E88
 static TigBmp stru_602EE8;
 
@@ -881,7 +884,49 @@ void sub_4DE4F0()
 // 0x4DE5D0
 bool sub_4DE5D0()
 {
-    // TODO: Incomplete.
+    int index;
+    tig_art_id_t art_id;
+    TigPaletteModifyInfo palette_modify_info;
+    TigArtAnimData art_anim_data;
+
+    for (index = 0; index < 1000; index++) {
+        if (tig_art_light_id_create(index, 0, 0, 1, &art_id) == TIG_OK
+            && tig_art_exists(art_id) == TIG_OK) {
+            break;
+        }
+    }
+
+    if (index == 1000) {
+        return false;
+    }
+
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        return false;
+    }
+
+    strcpy(stru_602EE8.name, "art\\light\\shadowmap.bmp");
+    if (tig_bmp_create(&stru_602EE8) != TIG_OK) {
+        return false;
+    }
+
+    if (stru_602EE8.bpp != 8) {
+        return false;
+    }
+
+    stru_602ED8.width = stru_602EE8.width;
+    stru_602ED8.height = stru_602EE8.height;
+
+    palette_modify_info.flags = TIG_PALETTE_MODIFY_TINT;
+    palette_modify_info.src_palette = art_anim_data.palette2;
+
+    for (index = 0; index < 7; index++) {
+        dword_602E58[index] = tig_palette_create();
+        palette_modify_info.dst_palette = dword_602E58[index];
+        palette_modify_info.tint_color = tig_color_make(225 - 13 * index, 225 - 13 * index, 225 - 13 * index);
+        tig_palette_modify(&palette_modify_info);
+    }
+
+    return true;
 }
 
 // 0x4DE730
