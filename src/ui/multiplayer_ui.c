@@ -16,6 +16,7 @@ typedef struct S681000 {
 static_assert(sizeof(S681000) == 0x8, "wrong size");
 
 static void sub_5706D0();
+static void sub_570A40(tig_window_handle_t window_handle);
 static void sub_570E10();
 static void sub_570E40();
 static void sub_570EF0();
@@ -429,13 +430,13 @@ bool sub_570A10(TigMessage* msg)
 }
 
 // 0x570A40
-void sub_570A40()
+void sub_570A40(tig_window_handle_t window_handle)
 {
     // TODO: Incomplete.
 }
 
 // 0x570BC0
-void sub_570BC0()
+bool sub_570BC0(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
