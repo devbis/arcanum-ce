@@ -34,6 +34,7 @@ static void sub_4DD230(light_handle_t light_handle, int a2);
 static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
 static void sub_4DD500(Light30* light, int offset_x, int offset_y);
 static void sub_4DDAB0(Light30* light, tig_art_id_t art_id);
+static tig_art_id_t sub_4DDB70(Light30* light);
 static bool sub_4DDD90(Sector* sector);
 static void shadows_changed();
 static bool sub_4DDF50();
@@ -773,9 +774,9 @@ void sub_4DDAB0(Light30* light, tig_art_id_t art_id)
 }
 
 // 0x4DDB70
-void sub_4DDB70()
+tig_art_id_t sub_4DDB70(Light30* light)
 {
-    // TODO: Incomplete.
+    return light->art_id;
 }
 
 // 0x4DDB80
