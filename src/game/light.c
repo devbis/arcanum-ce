@@ -32,7 +32,7 @@ typedef struct LightCreateInfo {
 static void sub_4DD150(light_handle_t light_handle, int a2);
 static void sub_4DD230(light_handle_t light_handle, int a2);
 static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
-static void sub_4DD500(light_handle_t light_handle, int a2, int a3);
+static void sub_4DD500(Light30* light, int offset_x, int offset_y);
 static bool sub_4DDD90(Sector* sector);
 static void shadows_changed();
 static bool sub_4DDF50();
@@ -689,9 +689,9 @@ void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5)
 }
 
 // 0x4DD500
-void sub_4DD500(light_handle_t light_handle, int a2, int a3)
+void sub_4DD500(Light30* light, int offset_x, int offset_y)
 {
-    // TODO: Incomplete.
+    sub_4DE4F0(light, offset_x, offset_y);
 }
 
 // 0x4DD720
