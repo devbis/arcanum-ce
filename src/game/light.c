@@ -30,6 +30,7 @@ typedef struct LightCreateInfo {
 } LightCreateInfo;
 
 static void sub_4D9310(LightCreateInfo* create_info, Light30** light_ptr);
+static void sub_4D93B0(Light30* light);
 static void sub_4DD150(light_handle_t light_handle, int a2);
 static void sub_4DD230(light_handle_t light_handle, int a2);
 static void sub_4DD320(light_handle_t light_handle, int a2, int a3, int a4, int a5);
@@ -474,9 +475,39 @@ void sub_4D9310(LightCreateInfo* create_info, Light30** light_ptr)
 }
 
 // 0x4D93B0
-void sub_4D93B0()
+void sub_4D93B0(Light30* light)
 {
-    // TODO: Incomplete.
+    TigRect rect;
+    int index;
+
+    sub_4D8620(light);
+
+    light_get_rect_internal(light, &rect);
+    sub_4DF310(&rect, true);
+
+    if (light->obj != OBJ_HANDLE_NULL) {
+        if (obj_field_int32_get(light->obj, OBJ_F_LIGHT_HANDLE) == light) {
+            obj_field_int32_set(light->obj, OBJ_F_LIGHT_HANDLE, LIGHT_HANDLE_INVALID);
+            sub_4D9510(light);
+            sub_4D9570(light);
+        } else {
+            for (index = 0; index < 4; index++) {
+                if (sub_407470(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index) == light) {
+                    sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index, LIGHT_HANDLE_INVALID);
+                    sub_4D9510(light);
+                    sub_4D9570(light);
+                    break;
+                }
+            }
+        }
+    } else {
+        if (light_editor) {
+            sub_4D9510(light);
+            sub_4D9570(light);
+        } else {
+            sub_4DD150(light, 0x100);
+        }
+    }
 }
 
 // 0x4D94B0
