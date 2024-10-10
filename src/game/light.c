@@ -814,15 +814,16 @@ void sub_4DD940()
 }
 
 // 0x4DDA40
-void sub_4DDA40()
+void light_set_location(Light30* light, int64_t loc)
 {
-    // TODO: Incomplete.
+    light->loc = loc;
+    light->flags |= 0x80;
 }
 
 // 0x4DDA60
-int64_t sub_4DDA60(Light30* a1)
+int64_t light_get_location(Light30* light)
 {
-    return a1->loc;
+    return light->loc;
 }
 
 // 0x4DDA70
