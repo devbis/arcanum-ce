@@ -837,7 +837,65 @@ void sub_4DE060()
 // 0x4DE0B0
 bool sub_4DE0B0(tig_art_id_t art_id, TigPaletteModifyInfo* modify_info)
 {
-    // TODO: Incomplete.
+    if (!dword_602ECC) {
+        return false;
+    }
+
+    modify_info->flags = TIG_PALETTE_MODIFY_TINT;
+    switch (tig_art_type(art_id )) {
+    case TIG_ART_TYPE_TILE:
+        if (tig_art_tile_id_type_get(art_id) == 0) {
+            modify_info->tint_color = light_indoor_color;
+        } else {
+            modify_info->tint_color = light_outdoor_color;
+        }
+        return true;
+    case TIG_ART_TYPE_WALL:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    case TIG_ART_TYPE_CRITTER:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    case TIG_ART_TYPE_PORTAL:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    case TIG_ART_TYPE_SCENERY:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    case TIG_ART_TYPE_INTERFACE:
+        return false;
+    case TIG_ART_TYPE_ITEM:
+        if (tig_art_item_id_disposition_get(art_id) == TIG_ART_ITEM_DISPOSITION_GROUND) {
+            modify_info->tint_color = light_outdoor_color;
+            return true;
+        }
+        return false;
+    case TIG_ART_TYPE_CONTAINER:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    case TIG_ART_TYPE_MISC:
+        return false;
+    case TIG_ART_TYPE_LIGHT:
+        return false;
+    case TIG_ART_TYPE_ROOF:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    case TIG_ART_TYPE_FACADE:
+        if (tig_art_tile_id_type_get(art_id) == 0) {
+            modify_info->tint_color = light_indoor_color;
+        } else {
+            modify_info->tint_color = light_outdoor_color;
+        }
+        return true;
+    case TIG_ART_TYPE_MONSTER:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    case TIG_ART_TYPE_UNIQUE_NPC:
+        modify_info->tint_color = light_outdoor_color;
+        return true;
+    default:
+        return false;
+    }
 }
 
 // 0x4DE200
