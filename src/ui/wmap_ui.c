@@ -27,7 +27,7 @@ typedef struct S5C9160 {
     union {
         int num;
         tig_art_id_t art_id;
-    };
+    } data;
     /* 0004 */ int width;
     /* 0008 */ int height;
     /* 000C */ tig_color_t color;
@@ -628,8 +628,8 @@ bool wmap_ui_init(GameInitInfo* init_info)
 
     for (index = 0; index < 8; index++) {
         stru_5C9160[index].field_14 = 1;
-        tig_art_interface_id_create(stru_5C9160[index].num, 0, 0, 0, &art_id);
-        stru_5C9160[index].art_id = art_id;
+        tig_art_interface_id_create(stru_5C9160[index].data.num, 0, 0, 0, &art_id);
+        stru_5C9160[index].data.art_id = art_id;
 
         if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
             return false;
@@ -1089,7 +1089,7 @@ bool sub_5614F0()
         return false;
     }
 
-    if (sub_40FF40() == sub_40FF50(1)) {
+    if (sub_40FF40() == sub_40FF50(MAP_TYPE_START_MAP)) {
         return false;
     }
 
@@ -1118,7 +1118,7 @@ void sub_561860(long long a1)
     teleport_data.flags = 0x20;
     teleport_data.field_8 = player_get_pc_obj();
     teleport_data.field_10 = a1;
-    teleport_data.map = sub_40FF50(1);
+    teleport_data.map = sub_40FF50(MAP_TYPE_START_MAP);
     sub_4D3380(&teleport_data);
 }
 
