@@ -98,6 +98,9 @@ static int dword_5CCADC[5] = {
     0,
 };
 
+// 0x686968
+static MesFileEntry stru_686968;
+
 // 0x68698C
 static tig_timestamp_t dword_68698C;
 
@@ -119,6 +122,15 @@ static int dword_6869A4;
 // 0x6869A8
 static int dword_6869A8;
 
+// 0x6869AC
+static int dword_6869AC;
+
+// 0x6869B0
+static char byte_6869B0[80];
+
+// 0x686A00
+static char byte_686A00[80];
+
 // 0x686A50
 static char byte_686A50[2048];
 
@@ -128,10 +140,47 @@ static bool dword_687254;
 // 0x687258
 static int dword_687258;
 
+// 0x68725C
+static int dword_68725C;
+
 // 0x585BC0
-void serverlist_ui_init()
+bool serverlist_ui_init()
 {
-    // TODO: Incomplete.
+    dword_687254 = 0;
+    dword_6869A0 = 0;
+    dword_6869A4 = 0;
+    dword_6869A8 = 0;
+    sub_588CC0(0, 0);
+    dword_5CCADC[0] = 5;
+    dword_5CCADC[1] = 5;
+    dword_5CCADC[2] = 5;
+    dword_5CCADC[3] = 5;
+    dword_5CCADC[4] = 5;
+
+    if (!mes_load("mes\\mainmenu.mes", &serverlist_ui_mainmenu_mes_file)) {
+        tig_debug_printf("ServerList_UI: init: ERROR could not load '%s'. Aborting init.\n", "mes\\mainmenu.mes");
+        return false;
+    }
+
+    if (!mes_load("mes\\multiplayer.mes", &serverlist_ui_multiplayer_mes_file)) {
+        tig_debug_printf("ServerList_UI: init: ERROR could not load '%s'. Aborting init.\n", "mes\\multiplayer.mes");
+        return false;
+    }
+
+    dword_6869AC = 0;
+    byte_6869B0[0] = '\0';
+    byte_686A50[0] = '\0';
+    byte_686A00[0] = '\0';
+    tig_net_local_server_clear_password();
+    dword_687258 = 0;
+    dword_68725C = 0;
+
+    stru_686968.num = 3000;
+    mes_get_msg(serverlist_ui_multiplayer_mes_file, &stru_686968);
+
+    serverlist_ui_initialized = true;
+
+    return true;
 }
 
 // 0x585CB0

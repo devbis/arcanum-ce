@@ -3,6 +3,8 @@
 
 #include "game/context.h"
 
+bool serverlist_ui_init();
+void serverlist_ui_exit();
 void sub_585D50();
 void sub_585E20();
 void sub_5860D0(TigRect* rect);
