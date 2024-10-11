@@ -307,15 +307,15 @@ void sub_57DC20()
 }
 
 // 0x57DC60
-void sub_57DC60()
+bool sub_57DC60(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
 
 // 0x57DE00
-void sub_57DE00()
+bool sub_57DE00()
 {
-    // TODO: Incomplete.
+    return dword_6839B0;
 }
 
 // 0x57DE10
