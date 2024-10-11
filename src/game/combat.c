@@ -26,6 +26,7 @@ static void sub_4B3770(CombatContext* combat);
 static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t sub_4B54B0(int64_t obj, int a2);
+static void sub_4B5520(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
 static int sub_4B65A0();
 static void sub_4B6B90(CombatContext* combat);
@@ -42,6 +43,14 @@ static int sub_4B7BA0(int64_t obj, int64_t a2, bool a3);
 static bool sub_4B7DC0(int64_t obj);
 static void sub_4B7EB0();
 static void sub_4B83E0(int64_t obj, int64_t a2);
+
+// 0x5B5790
+static struct {
+    const char* name;
+    bool(*func)(int64_t a1, int64_t a2, int64_t a3, int64_t a4);
+} stru_5B5790[] = {
+    { "Multiplayer", sub_4A6190 },
+};
 
 // 0x5B57B8
 static int dword_5B57B8 = 15;
@@ -723,9 +732,18 @@ int64_t sub_4B54B0(int64_t obj, int a2)
 }
 
 // 0x4B5520
-void sub_4B5520()
+void sub_4B5520(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < sizeof(stru_5B5790) / sizeof(stru_5B5790[0]); index++) {
+        if (stru_5B5790[index].func != NULL
+            && stru_5B5790[index].func(combat->field_8, combat->field_20, combat->field_28, combat->field_30)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x4B5580
