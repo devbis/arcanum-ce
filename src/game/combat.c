@@ -1682,9 +1682,46 @@ void sub_4B7C90(int64_t obj)
 }
 
 // 0x4B7CD0
-void sub_4B7CD0(int64_t obj, int action_points)
+bool sub_4B7CD0(int64_t obj, int action_points)
 {
-    // TODO: Incomplete.
+    bool is_pc;
+    CombatContext combat;
+
+    if (!dword_5FC22C) {
+        return true;
+    }
+
+    if (dword_5FC240->obj != obj) {
+        return true;
+    }
+
+    is_pc = player_is_pc_obj(obj);
+    if (combat_action_points >= action_points) {
+        combat_action_points -= action_points;
+
+        if (is_pc) {
+            combat_callbacks.field_C(combat_action_points);
+        }
+
+        return true;
+    }
+
+    if (combat_action_points > 0 && is_pc && sub_45D700(obj) > 1) {
+        sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
+        combat.flags |= 0x80;
+        combat.field_44[4] = 2;
+        sub_4B4390(&combat);
+
+        combat_action_points = 0;
+        combat_callbacks.field_C(0);
+
+        return true;
+    }
+
+    combat_action_points = 0;
+    combat_turn_based_next_subturn();
+
+    return false;
 }
 
 // 0x4B7DC0
