@@ -741,9 +741,209 @@ void sub_4B5810()
 }
 
 // 0x4B58C0
-void sub_4B58C0()
+void sub_4B58C0(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    Packet21 pkt;
+    int type;
+    int index;
+    unsigned int critter_flags;
+    bool v1 = false;
+    bool v2 = false;
+    tig_art_id_t art_id;
+
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        pkt.type = 21;
+        sub_4F0640(combat->field_8, &(pkt.field_70));
+        sub_4F0640(combat->weapon_obj, &(pkt.field_88));
+        sub_4F0640(combat->field_20, &(pkt.field_A0));
+        sub_4F0640(combat->field_28, &(pkt.field_B8));
+        sub_4F0640(combat->field_30, &(pkt.field_D0));
+        pkt.combat = *combat;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    type = obj_field_int32_get(combat->field_20, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        return;
+    }
+
+    if ((combat->field_58 & 0x1000) != 0
+        && (combat->field_58 & 0x1) == 0) {
+        for (index = 0; index < 5; index++) {
+            sub_4EA2E0(combat->field_20, 7);
+        }
+    }
+
+    if (sub_45D8D0(combat->field_20)) {
+        if ((combat->field_58 & 0x2) == 0) {
+            return;
+        }
+    }
+
+    critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+    if ((critter_flags & OCF_UNREVIVIFIABLE) != 0
+        && (combat->field_58 & 0x400000) != 0) {
+        v1 = true;
+    }
+    if ((critter_flags & OCF_UNRESSURECTABLE) != 0
+        && (combat->field_58 & 0x400000) == 0) {
+        v1 = true;
+    }
+
+    if (!sub_441980(combat->field_8, combat->field_20, combat->weapon_obj, 18, 0) || v1) {
+        sub_45A540(combat->field_20);
+        return;
+    }
+
+    art_id = obj_field_int32_get(combat->field_20, OBJ_F_CURRENT_AID);
+    art_id = sub_503E50(art_id, 0);
+    art_id = tig_art_id_frame_set(art_id, 0);
+    object_set_current_aid(combat->field_20, art_id);
+
+    v2 = true;
+
+    sub_4B5E90(combat->target_loc);
+    sub_4AF170(combat->field_20);
+    sub_43D280(combat->field_20, OF_FLAT | OF_NO_BLOCK);
+
+    critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+    critter_flags &= ~OCF_STUNNED;
+    obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+
+    sub_45EC80(combat->field_20);
+
+    if (critter_fatigue_damage_get(combat->field_20) != 10) {
+        critter_fatigue_damage_set(combat->field_20, 10);
+    }
+
+    sub_459740(combat->field_20);
+
+    if (combat->field_8 != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->field_8, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        int reaction_level = sub_4C0CC0(combat->field_20, combat->field_8);
+        if (reaction_level > 0 && reaction_level < 70) {
+            sub_4C0DE0(combat->field_20, combat->field_8, 70 - reaction_level);
+        }
+    }
+
+    if (type == OBJ_TYPE_NPC) {
+        int64_t leader_obj = critter_leader_get(combat->field_20);
+        if (leader_obj != OBJ_HANDLE_NULL) {
+            if (!critter_follow(combat->field_20, leader_obj, false)) {
+                critter_leader_set(combat->field_20, OBJ_HANDLE_NULL);
+            }
+        }
+    }
+
+    if ((combat->field_58 & 0x1) != 0) {
+        combat->field_44[0] = object_get_hp_damage(combat->field_20);
+        if (combat->field_44[4] > 0) {
+            combat->field_44[4] = critter_fatigue_damage_get(combat->field_20);
+        }
+
+        for (index = 0; index < 5; index++) {
+            sub_4EA2E0(combat->field_20, 7);
+        }
+
+        critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+        if ((critter_flags & OCF_BLINDED) != 0) {
+            critter_flags &= ~OCF_BLINDED;
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+        if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) != 0) {
+            critter_flags &= ~OCF_CRIPPLED_ARMS_ONE;
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+        if ((critter_flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
+            critter_flags &= ~OCF_CRIPPLED_ARMS_BOTH;
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+        if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
+            critter_flags &= ~OCF_CRIPPLED_LEGS_BOTH;
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+    } else {
+        critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+        if ((combat->field_58 & 0x200) != 0
+            && (critter_flags & OCF_BLINDED) != 0) {
+            critter_flags &= ~OCF_BLINDED;
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+        if ((combat->field_58 & 0x400) != 0
+            && (critter_flags & (OCF_CRIPPLED_ARMS_ONE | OCF_CRIPPLED_ARMS_BOTH)) != 0) {
+            critter_flags &= ~(OCF_CRIPPLED_ARMS_ONE | OCF_CRIPPLED_ARMS_BOTH);
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+        if ((combat->field_58 & 0x800) != 0
+            && (critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
+            critter_flags &= ~OCF_BLINDED;
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+    }
+
+    if (combat->field_44[0] > 0) {
+        int new_dam;
+        int cur_dam;
+
+        cur_dam = object_get_hp_damage(combat->field_20);
+        if (cur_dam != 0) {
+            new_dam = cur_dam - combat->field_44[0];
+            if (new_dam < 0) {
+                new_dam = 0;
+            }
+            object_set_hp_damage(combat->field_20, new_dam);
+        }
+    }
+
+    if (combat->field_44[4] > 0) {
+        int new_dam;
+        int cur_dam;
+        int v1;
+
+        cur_dam = critter_fatigue_damage_get(combat->field_20);
+        if (cur_dam != 0) {
+            v1 = sub_45D700(combat->field_20);
+            new_dam = cur_dam - combat->field_44[4];
+            if (new_dam < 0) {
+                new_dam = 0;
+            }
+            critter_fatigue_damage_set(combat->field_20, new_dam);
+
+            if (v1 <= 0 && sub_45D700(combat->field_20) > 0) {
+                sub_434DE0(combat->field_20);
+            }
+        }
+    }
+
+    if (combat->field_44[1] > 0) {
+        int new_dam;
+        int cur_dam;
+
+        cur_dam = stat_get_base(combat->field_20, STAT_POISON_LEVEL);
+        if (cur_dam != 0) {
+            new_dam = cur_dam - combat->field_44[1];
+            if (new_dam < 0) {
+                new_dam = 0;
+            }
+            stat_set_base(combat->field_20, STAT_POISON_LEVEL, new_dam);
+        }
+    }
+
+    if (v2 && type != OBJ_TYPE_PC) {
+        sub_4AD6E0(combat->field_20);
+    }
+
+    if (type == OBJ_TYPE_NPC) {
+        if (sub_45DDA0(combat->field_20) == player_get_pc_obj()) {
+            sub_460780();
+        }
+    }
+
+    sub_4B80E0(combat->field_20);
 }
 
 // 0x4B5E90
