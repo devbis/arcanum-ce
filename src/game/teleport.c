@@ -1,8 +1,18 @@
 #include "game/teleport.h"
 
+#include <stdio.h>
+
+#include "game/ai.h"
+#include "game/anim.h"
 #include "game/combat.h"
+#include "game/critter.h"
+#include "game/gamelib.h"
+#include "game/light.h"
 #include "game/map.h"
+#include "game/mp_utils.h"
+#include "game/object.h"
 #include "game/player.h"
+#include "game/ui.h"
 
 typedef struct S6018B8 {
     int field_0;
@@ -14,6 +24,8 @@ typedef struct S6018B8 {
 // See 0x4D3F00.
 static_assert(sizeof(S6018B8) == 0x18, "wrong size");
 
+static bool sub_4D3460(TeleportData* teleport_data);
+static void sub_4D3760(int64_t a1, int a2, int a3);
 static bool sub_4D39A0(TeleportData* teleport_data);
 static void sub_4D3D60(int64_t obj);
 static void sub_4D3E20(int64_t obj);
@@ -135,6 +147,18 @@ bool sub_4D3420(int64_t obj)
     return false;
 }
 
+// 0x4D3460
+bool sub_4D3460(TeleportData* teleport_data)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D3760
+void sub_4D3760(int64_t a1, int a2, int a3)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4D39A0
 bool sub_4D39A0(TeleportData* teleport_data)
 {
@@ -235,7 +259,7 @@ void sub_4D3D60(int64_t obj)
         sub_45F710(obj);
         mp_obj_field_obj_set(obj, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
         mp_obj_field_obj_set(obj, OBJ_F_NPC_WHO_HIT_ME_LAST, OBJ_HANDLE_NULL);
-        sub_4F0500(obj, 0x130);
+        sub_4F0500(obj, OBJ_F_NPC_SHIT_LIST_IDX);
         mp_obj_field_obj_set(obj, OBJ_F_NPC_SUBSTITUTE_INVENTORY, OBJ_HANDLE_NULL);
     case OBJ_TYPE_PC:
         mp_obj_field_obj_set(obj, OBJ_F_CRITTER_FLEEING_FROM, OBJ_HANDLE_NULL);
