@@ -478,9 +478,32 @@ void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int a3)
 }
 
 // 0x4B3C00
-void sub_4B3C00()
+void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int a5)
 {
-    // TODO: Incomplete.
+    int64_t attacker_loc;
+    CombatContext combat;
+
+    attacker_loc = obj_field_int64_get(attacker_obj, OBJ_F_LOCATION);
+    if (obj_field_int32_get(attacker_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        item_remove(weapon_obj);
+    }
+
+    if (sub_441980(attacker_obj, weapon_obj, target_obj, 6, 0)) {
+        sub_4B2210(attacker_obj, target_obj, &combat);
+        combat.field_40 = a5;
+        combat.weapon_obj = weapon_obj;
+        if (target_obj == OBJ_HANDLE_NULL) {
+            combat.target_loc = target_loc;
+        }
+        combat.flags &= ~0xC000;
+        combat.flags |= 0x40240;
+        sub_4EFF50(weapon_obj, 2);
+        sub_4415C0(weapon_obj, attacker_loc);
+        sub_4B3170(&combat);
+    } else {
+        sub_4415C0(weapon_obj, attacker_loc);
+        sub_4617F0(weapon_obj, attacker_obj);
+    }
 }
 
 // 0x4B3D50
