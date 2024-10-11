@@ -1208,7 +1208,48 @@ void combat_debug(int64_t obj, const char* msg)
 // 0x4B6E70
 void sub_4B6E70(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (!dword_5FC22C) {
+        return;
+    }
+
+    combat_debug(obj, "Whos Turn Set");
+
+    if (!player_is_pc_obj(qword_5FC248)) {
+        sub_424070(qword_5FC248, 3, 0, 1);
+    }
+
+    if (dword_5FC240->obj != obj) {
+
+    }
+
+    combat_action_points = stat_level(obj, STAT_SPEED);
+    if (combat_action_points < 5) {
+        combat_action_points = 5;
+    }
+
+    tig_debug_printf("Combat: TB: Action Points Available: %d.\n", combat_action_points);
+
+    if (player_is_pc_obj(obj)) {
+        combat_callbacks.field_C(combat_action_points);
+
+        if (!sub_4BB900()) {
+            sub_4BB8E0();
+        }
+    } else {
+        combat_callbacks.field_C(0);
+        sub_4BB910();
+        sub_4B7010(obj);
+
+        if (sub_4BB900()) {
+            sub_4BB8F0();
+        }
+    }
+
+    qword_5FC248 = obj;
+
+    if (combat_callbacks.field_10 != NULL) {
+        combat_callbacks.field_10(obj);
+    }
 }
 
 // 0x4B7010
