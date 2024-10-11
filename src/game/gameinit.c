@@ -1,5 +1,6 @@
 #include "game/gameinit.h"
 
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/player.h"
 #include "game/timeevent.h"
@@ -58,14 +59,14 @@ bool gameinit_init(GameInitInfo* init_info)
 // 0x4B9BE0
 void gameinit_reset()
 {
-    int v1;
+    int map;
 
     if (!gameinit_editor) {
-        v1 = sub_40FF50(2);
-        if (v1 == 0) {
-            v1 = sub_40FF50(1);
+        map = sub_40FF50(MAP_TYPE_SHOPPING_MAP);
+        if (map == 0) {
+            map = sub_40FF50(MAP_TYPE_START_MAP);
         }
-        sub_40FC70(v1, 0, 1);
+        map_open_in_game(map, 0, 1);
         player_create();
     }
 }
