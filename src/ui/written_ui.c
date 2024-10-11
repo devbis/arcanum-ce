@@ -462,7 +462,7 @@ void sub_56CB60()
 }
 
 // 0x56CCA0
-void sub_56CCA0()
+void sub_56CCA0(int num, char* str)
 {
     // TODO: Incomplete.
 }

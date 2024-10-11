@@ -8,5 +8,6 @@ void written_ui_mod_unload();
 void sub_56BB60(int64_t a1, int64_t a2);
 void sub_56BC00(int a1, int a2);
 void sub_56BC90();
+void sub_56CCA0(int num, char* str);
 
 #endif /* ARCANUM_UI_WRITTEN_UI_H_ */
