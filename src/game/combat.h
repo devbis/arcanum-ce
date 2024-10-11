@@ -20,9 +20,31 @@ typedef struct CombatCallbacks {
 
 static_assert(sizeof(CombatCallbacks) == 0x14, "wrong size");
 
+typedef struct CombatContext {
+    /* 0000 */ int flags;
+    /* 0004 */ int field_4;
+    /* 0008 */ int64_t field_8;
+    /* 0010 */ int64_t weapon_obj;
+    /* 0018 */ int skill;
+    /* 001C */ int field_1C;
+    /* 0020 */ int64_t field_20;
+    /* 0028 */ int64_t field_28;
+    /* 0030 */ int64_t field_30;
+    /* 0038 */ int64_t target_loc;
+    /* 0040 */ int field_40;
+    /* 0044 */ int field_44[5];
+    /* 0058 */ int field_58;
+    /* 005C */ int field_5C;
+    /* 0060 */ int field_60;
+    /* 0064 */ int field_64;
+} CombatContext;
+
+static_assert(sizeof(CombatContext) == 0x68, "wrong size");
+
 bool combat_init(GameInitInfo* init_info);
 void combat_exit();
 void combat_reset();
+void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat);
 int64_t sub_4B23B0(int64_t obj);
 bool combat_critter_is_combat_mode_active(int64_t obj);
 bool sub_4B3D90(int64_t a1);

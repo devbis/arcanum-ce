@@ -14,6 +14,7 @@
 #include "game/player.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/skill.h"
 #include "game/stat.h"
 #include "game/text_floater.h"
 
@@ -152,9 +153,56 @@ void combat_load()
 }
 
 // 0x4B2210
-void sub_4B2210()
+void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int type;
+
+    combat->field_8 = attacker_obj;
+    if (attacker_obj != OBJ_HANDLE_NULL) {
+        type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
+        if (obj_type_is_critter(type)) {
+            combat->weapon_obj = sub_4B23B0(attacker_obj);
+        } else {
+            combat->weapon_obj = OBJ_HANDLE_NULL;
+        }
+    }
+
+    combat->skill = item_weapon_skill(combat->weapon_obj);
+
+    if (attacker_obj != OBJ_HANDLE_NULL
+        && obj_type_is_critter(type)
+        && target_obj != OBJ_HANDLE_NULL
+        && obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))
+        && combat->skill == BASIC_SKILL_MELEE
+        && critter_can_backstab(attacker_obj, target_obj)) {
+        combat->flags |= 0x4000;
+        if (sub_4AF260(target_obj, attacker_obj)
+            && sub_4AF470(target_obj, attacker_obj, 0)) {
+            combat->flags |= 0x8000;
+        }
+    }
+
+    combat->field_20 = target_obj;
+    combat->field_28 = target_obj;
+
+    if (target_obj != OBJ_HANDLE_NULL) {
+        combat->target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    }
+
+    combat->field_30 = attacker_obj;
+    combat->field_40 = 0;
+    combat->field_58 = 0;
+    combat->field_5C = 0;
+    combat->field_44[0] = 0;
+    combat->field_44[1] = 0;
+    combat->field_44[2] = 0;
+    combat->field_44[3] = 0;
+    combat->field_44[4] = 0;
+
+    if (combat->skill == BASIC_SKILL_THROWING
+        || item_weapon_range(combat->weapon_obj, combat->field_8) > 1) {
+        combat->flags |= 0x200;
+    }
 }
 
 // 0x4B23B0
