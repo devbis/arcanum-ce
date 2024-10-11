@@ -735,9 +735,25 @@ void sub_4B5580()
 }
 
 // 0x4B5810
-void sub_4B5810()
+void sub_4B5810(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int index;
+    int64_t item_obj;
+
+    obj = combat->field_20;
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        for (index = 0; index < 9; index++) {
+            item_obj = item_wield_get(obj, 1000 + index);
+            if (item_obj != NULL) {
+                combat->field_20 = item_obj;
+                sub_4B4390(combat);
+            }
+        }
+    }
+    combat->field_20 = obj;
+    combat->field_44[0] /= 3;
+    sub_4B4390(combat);
 }
 
 // 0x4B58C0

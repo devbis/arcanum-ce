@@ -56,6 +56,7 @@ bool sub_4B3D90(int64_t obj);
 void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 void sub_4B4320(int64_t obj);
+void sub_4B5810(CombatContext* combat);
 void sub_4B58C0(CombatContext* combat);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
 bool combat_set_callbacks(CombatCallbacks* callbacks);
