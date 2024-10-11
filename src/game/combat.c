@@ -22,6 +22,7 @@ static void turn_based_changed();
 static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
 static void sub_4B2F60(CombatContext* combat);
+static void sub_4B3770(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
@@ -337,9 +338,61 @@ void sub_4B3170()
 }
 
 // 0x4B3770
-void sub_4B3770()
+void sub_4B3770(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int sound_id;
+    CombatContext body_of_fire;
+
+    if ((combat->flags & 0x2) != 0) {
+        if (combat->weapon_obj != OBJ_HANDLE_NULL) {
+            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 7, 0);
+
+            if ((combat->flags & 0x4) != 0) {
+                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 34, 0);
+            }
+        }
+
+        if (combat->field_8 != OBJ_HANDLE_NULL
+            && combat->field_20 != OBJ_HANDLE_NULL) {
+            sub_441980(combat->field_20, combat->field_8, OBJ_HANDLE_NULL, 26, 0);
+        }
+
+        sub_4B6680(combat);
+        sub_4B4390(combat);
+
+        if ((combat->flags & 0x4) != 0) {
+            sound_id = sub_4F0ED0(combat->field_20, 0);
+            sub_41B930(sound_id, 1, combat->field_20);
+
+            sound_id = sub_4F0BF0(combat->weapon_obj, combat->field_8, combat->field_20, 6);
+            sub_41B930(sound_id, 1, combat->field_8);
+        } else {
+            sound_id = sub_4F0BF0(combat->weapon_obj, combat->field_8, combat->field_20, 4);
+            sub_41B930(sound_id, 1, combat->field_8);
+        }
+
+        if ((obj_field_int32_get(combat->field_8, OBJ_F_SPELL_FLAGS) & OSF_BODY_OF_FIRE) == 0
+            && (obj_field_int32_get(combat->field_20, OBJ_F_SPELL_FLAGS) & OSF_BODY_OF_FIRE) != 0) {
+            sub_4B2210(combat->field_20, combat->field_8, &body_of_fire);
+            body_of_fire.field_44[3] = 5;
+            sub_4B4390(&body_of_fire);
+        }
+    } else {
+        sound_id = sub_4F0BF0(combat->weapon_obj, combat->field_8, combat->field_20, 5);
+        sub_41B930(sound_id, 1, combat->field_8);
+
+        if (obj_field_int32_get(combat->field_20, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            sub_4A84F0(combat->field_20);
+        }
+
+        if (combat->weapon_obj != OBJ_HANDLE_NULL) {
+            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 8, 0);
+
+            if ((combat->flags & 0x4) != 0) {
+                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 35, 0);
+            }
+        }
+    }
 }
 
 // 0x4B39B0
