@@ -26,6 +26,7 @@ static void sub_4B3770(CombatContext* combat);
 static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t sub_4B54B0(int64_t obj, int a2);
+static void sub_4B5E90(int64_t loc);
 static int sub_4B65A0();
 static void sub_4B7080();
 static bool combat_turn_based_start();
@@ -650,9 +651,30 @@ void sub_4B58C0()
 }
 
 // 0x4B5E90
-void sub_4B5E90()
+void sub_4B5E90(int64_t loc)
 {
-    // TODO: Incomplete.
+    ObjectList objects;
+    ObjectNode* node;
+    tig_art_id_t art_id;
+    int64_t obj;
+
+    sub_4407C0(loc, OBJ_TM_SCENERY, &objects);
+
+    node = objects.head;
+    while (node != NULL) {
+        art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+        if (tig_art_scenery_id_type_get(art_id) == TIG_ART_SCENERY_TYPE_MISC_SMALL
+            && tig_art_num_get(art_id) == 0) {
+            obj = node->obj;
+            object_list_destroy(&objects);
+            sub_45EC80(obj);
+            sub_43CCA0(obj);
+            return;
+        }
+        node = node->next;
+    }
+
+    object_list_destroy(&objects);
 }
 
 // 0x4B5F30
