@@ -55,7 +55,6 @@ static int sub_450B90(object_id_t obj);
 static void sub_4510F0();
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
-static bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
 static void sub_4558D0(int slot);
 static void sub_455960(MagicTechLock* lock);
@@ -1722,6 +1721,200 @@ void sub_4510F0()
     // TODO: Incomplete.
 }
 
+// 0x455710
+void sub_455710()
+{
+    int index;
+    MagicTechLock* lock;
+
+    for (index = 0; index < 512; index++) {
+        lock = &(magictech_locks[index]);
+        lock->source_obj.obj = OBJ_HANDLE_NULL;
+        lock->field_0 = -1;
+        lock->field_13C = 0;
+    }
+}
+
+// 0x455740
+void magictech_id_new_lock(MagicTechLock** lock_ptr)
+{
+    int index;
+
+    for (index = 0; index < 512; index++) {
+        if (magictech_locks[index].field_0 == -1) {
+            magictech_locks[index].field_0 = index;
+            magictech_locks[index].field_13C = 0x1;
+            magictech_locks[index].action = 0;
+            *lock_ptr = &(magictech_locks[index]);
+            dword_6876DC++;
+        }
+    }
+}
+
+// 0x4557C0
+bool sub_4557C0(int slot, MagicTechLock** lock_ptr)
+{
+    if (slot != -1
+        && magictech_locks[slot].field_0 != -1
+        && sub_455820(&(magictech_locks[slot]))) {
+        *lock_ptr = &(magictech_locks[slot]);
+        return true;
+    }
+
+    *lock_ptr = NULL;
+    return false;
+}
+
+// 0x455820
+bool sub_455820(MagicTechLock* lock)
+{
+    bool success = true;
+    MagicTechObjectNode* node;
+
+    if (!sub_444020(&(lock->source_obj.obj), &(lock->source_obj.field_8))) {
+        success = false;
+    }
+
+    if (!sub_444020(&(lock->parent_obj.obj), &(lock->parent_obj.field_8))) {
+        success = false;
+    }
+
+    node = lock->objlist;
+    while (node != NULL) {
+        if (!sub_444020(&(node->obj), &(node->field_8))) {
+            success = false;
+        }
+        node = node->next;
+    }
+
+    node = lock->summoned_obj;
+    while (node != NULL) {
+        if (!sub_444020(&(node->obj), &(node->field_8))) {
+            success = false;
+        }
+        node = node->next;
+    }
+
+    return success;
+}
+
+// 0x4558D0
+void sub_4558D0(int slot)
+{
+    MagicTechLock* lock;
+    Packet54 pkt;
+
+    lock = &(magictech_locks[slot]);
+    if (lock->field_0 != -1) {
+        dword_5B0BA0 = lock->field_0;
+        timeevent_clear_one_ex(TIMEEVENT_TYPE_MAGICTECH, sub_4570E0);
+        dword_5B0BA0 = -1;
+
+        sub_455960(lock);
+        dword_6876DC--;
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            pkt.type = 54;
+            pkt.field_4 = slot;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+    }
+}
+
+// 0x455960
+void sub_455960(MagicTechLock* lock)
+{
+    MagicTechObjectNode* node;
+    MagicTechObjectNode* next;
+
+    if (lock->field_0 != -1) {
+        lock->field_0 = -1;
+        lock->source_obj.obj = OBJ_HANDLE_NULL;
+        lock->parent_obj.obj = OBJ_HANDLE_NULL;
+
+        node = lock->objlist;
+        while (node != NULL) {
+            next = node->next;
+            mt_obj_node_destroy(node);
+            node = next;
+        }
+        lock->objlist = NULL;
+
+        node = lock->summoned_obj;
+        while (node != NULL) {
+            next = node->next;
+            mt_obj_node_destroy(node);
+            node = next;
+        }
+        lock->summoned_obj = NULL;
+
+        lock->field_13C = 0;
+    }
+}
+
+// 0x4559E0
+void sub_4559E0(MagicTechLock* lock)
+{
+    if (lock->field_0 != -1) {
+        lock->field_0 = -1;
+        lock->source_obj.obj = OBJ_HANDLE_NULL;
+        lock->parent_obj.obj = OBJ_HANDLE_NULL;
+        lock->objlist = NULL;
+        lock->summoned_obj = NULL;
+        lock->field_13C = 0;
+    }
+}
+
+// 0x455A20
+void sub_455A20(MagicTechSerializedData* a1, int64_t obj, int a3)
+{
+    a1->field_0 = a3;
+    sub_4440E0(obj, &(a1->field_8));
+    if (obj != OBJ_HANDLE_NULL) {
+        a1->loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    } else {
+        a1->loc = 0;
+    }
+    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_70));
+    a1->field_D0 = 0;
+    a1->field_D4 = 0;
+    sub_4440E0(sub_450A50(obj), &(a1->field_40));
+    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_A0));
+    a1->field_D8 = 0;
+    a1->field_DC = 0;
+}
+
+// 0x455AC0
+void sub_455AC0(MagicTechSerializedData* a1)
+{
+    // TODO: Incomplete.
+}
+
+// 0x455C30
+void sub_455C30()
+{
+    // TODO: Incomplete.
+}
+
+// 0x456430
+void sub_456430()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4564E0
+void sub_4564E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x456A10
+bool sub_456A10(int64_t a1, int64_t a2, int64_t a3)
+{
+    // TODO: Incomplete.
+}
+
 // 0x456CD0
 void sub_456CD0(MagicTechLock* a1)
 {
@@ -1925,157 +2118,6 @@ void sub_4574D0(int64_t obj)
             sub_457530(magictech_locks[index].field_0);
         }
     }
-}
-
-// 0x455710
-void sub_455710()
-{
-    int index;
-    MagicTechLock* lock;
-
-    for (index = 0; index < 512; index++) {
-        lock = &(magictech_locks[index]);
-        lock->source_obj.obj = OBJ_HANDLE_NULL;
-        lock->field_0 = -1;
-        lock->field_13C = 0;
-    }
-}
-
-// 0x455740
-void magictech_id_new_lock(MagicTechLock** lock_ptr)
-{
-    int index;
-
-    for (index = 0; index < 512; index++) {
-        if (magictech_locks[index].field_0 == -1) {
-            magictech_locks[index].field_0 = index;
-            magictech_locks[index].field_13C = 0x1;
-            magictech_locks[index].action = 0;
-            *lock_ptr = &(magictech_locks[index]);
-            dword_6876DC++;
-        }
-    }
-}
-
-// 0x4557C0
-bool sub_4557C0(int slot, MagicTechLock** lock_ptr)
-{
-    if (slot != -1
-        && magictech_locks[slot].field_0 != -1
-        && sub_455820(&(magictech_locks[slot]))) {
-        *lock_ptr = &(magictech_locks[slot]);
-        return true;
-    }
-
-    *lock_ptr = NULL;
-    return false;
-}
-
-// 0x455820
-bool sub_455820(MagicTechLock* lock)
-{
-    bool success = true;
-    MagicTechObjectNode* node;
-
-    if (!sub_444020(&(lock->source_obj.obj), &(lock->source_obj.field_8))) {
-        success = false;
-    }
-
-    if (!sub_444020(&(lock->parent_obj.obj), &(lock->parent_obj.field_8))) {
-        success = false;
-    }
-
-    node = lock->objlist;
-    while (node != NULL) {
-        if (!sub_444020(&(node->obj), &(node->field_8))) {
-            success = false;
-        }
-        node = node->next;
-    }
-
-    node = lock->summoned_obj;
-    while (node != NULL) {
-        if (!sub_444020(&(node->obj), &(node->field_8))) {
-            success = false;
-        }
-        node = node->next;
-    }
-
-    return success;
-}
-
-// 0x4558D0
-void sub_4558D0(int slot)
-{
-    MagicTechLock* lock;
-    Packet54 pkt;
-
-    lock = &(magictech_locks[slot]);
-    if (lock->field_0 != -1) {
-        dword_5B0BA0 = lock->field_0;
-        timeevent_clear_one_ex(TIMEEVENT_TYPE_MAGICTECH, sub_4570E0);
-        dword_5B0BA0 = -1;
-
-        sub_455960(lock);
-        dword_6876DC--;
-
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
-            pkt.type = 54;
-            pkt.field_4 = slot;
-            tig_net_send_app_all(&pkt, sizeof(pkt));
-        }
-    }
-}
-
-// 0x455960
-void sub_455960(MagicTechLock* lock)
-{
-    MagicTechObjectNode* node;
-    MagicTechObjectNode* next;
-
-    if (lock->field_0 != -1) {
-        lock->field_0 = -1;
-        lock->source_obj.obj = OBJ_HANDLE_NULL;
-        lock->parent_obj.obj = OBJ_HANDLE_NULL;
-
-        node = lock->objlist;
-        while (node != NULL) {
-            next = node->next;
-            mt_obj_node_destroy(node);
-            node = next;
-        }
-        lock->objlist = NULL;
-
-        node = lock->summoned_obj;
-        while (node != NULL) {
-            next = node->next;
-            mt_obj_node_destroy(node);
-            node = next;
-        }
-        lock->summoned_obj = NULL;
-
-        lock->field_13C = 0;
-    }
-}
-
-// 0x4559E0
-void sub_4559E0(MagicTechLock* lock)
-{
-    if (lock->field_0 != -1) {
-        lock->field_0 = -1;
-        lock->source_obj.obj = OBJ_HANDLE_NULL;
-        lock->parent_obj.obj = OBJ_HANDLE_NULL;
-        lock->objlist = NULL;
-        lock->summoned_obj = NULL;
-        lock->field_13C = 0;
-    }
-}
-
-// 0x456A10
-bool sub_456A10(int64_t a1, int64_t a2, int64_t a3)
-{
-    // TODO: Incomplete.
 }
 
 // 0x457530
@@ -2586,7 +2628,7 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
 }
 
 // 0x458A80
-int sub_458A80(unsigned int flags)
+bool sub_458A80(unsigned int flags)
 {
     int64_t pc_obj;
 
