@@ -44,6 +44,7 @@ static_assert(sizeof(CombatContext) == 0x68, "wrong size");
 bool combat_init(GameInitInfo* init_info);
 void combat_exit();
 void combat_reset();
+bool combat_load(GameLoadInfo* load_info);
 void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat);
 int64_t sub_4B23B0(int64_t obj);
 void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat);

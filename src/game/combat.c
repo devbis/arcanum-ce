@@ -82,11 +82,17 @@ static int dword_5FC230;
 // 0x5FC234
 static int combat_action_points;
 
+// 0x5FC238
+static int64_t qword_5FC238;
+
 // 0x5FC240
 static ObjectNode* dword_5FC240;
 
 // 0x5FC244
 static int dword_5FC244;
+
+// 0x5FC248
+static int64_t qword_5FC248;
 
 // 0x5FC250
 static int dword_5FC250;
@@ -158,9 +164,70 @@ void combat_save()
 }
 
 // 0x4B2020
-void combat_load()
+bool combat_load(GameLoadInfo* load_info)
 {
-    // TODO: Incomplete.
+    int saved_action_points;
+    ObjectID oid;
+    int64_t obj;
+    ObjectNode* node;
+
+    if (load_info->stream == NULL) return false;
+    if (tig_file_fread(&combat_turn_based, sizeof(combat_turn_based), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&dword_5FC22C, sizeof(dword_5FC22C), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&dword_5FC230, sizeof(dword_5FC230), 1, load_info->stream) != 1) return false;
+
+    if (!dword_5FC22C) {
+        return true;
+    }
+
+    combat_callbacks.field_4();
+
+    if (tig_file_fread(&combat_action_points, sizeof(combat_action_points), 1, load_info->stream) != 1) return false;
+    saved_action_points = combat_action_points;
+    dword_5FC22C = false;
+
+    if (!combat_turn_based_start()) {
+        return false;
+    }
+
+    combat_action_points = saved_action_points;
+
+    if (tig_file_fread(&oid, sizeof(oid), 1, load_info->stream) != 1) return false;
+    qword_5FC238 = objp_perm_lookup(oid);
+
+    if (tig_file_fread(&oid, sizeof(oid), 1, load_info->stream) != 1) return false;
+    obj = objp_perm_lookup(oid);
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    node = stru_5FC180.head;
+    while (node != NULL) {
+        if (node->obj == obj) {
+            break;
+        }
+        node = node->next;
+    }
+
+    if (node == NULL) {
+        return false;
+    }
+
+    dword_5FC240 = node;
+
+    if (tig_file_fread(&dword_5FC244, sizeof(dword_5FC244), 1, load_info->stream) != 1) return false;
+
+    dword_5FC244 = 0;
+
+    if (tig_file_fread(&oid, sizeof(oid), 1, load_info->stream) != 1) return false;
+    qword_5FC248 = objp_perm_lookup(oid);
+    if (qword_5FC248 == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    combat_callbacks.field_C(combat_action_points);
+
+    return true;
 }
 
 // 0x4B2210
