@@ -28,6 +28,7 @@ static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t sub_4B54B0(int64_t obj, int a2);
 static void sub_4B5E90(int64_t loc);
 static int sub_4B65A0();
+static void sub_4B6B90(CombatContext* combat);
 static void sub_4B7080();
 static bool combat_turn_based_start();
 static void combat_turn_based_end();
@@ -749,9 +750,42 @@ tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2)
 }
 
 // 0x4B6B90
-void sub_4B6B90()
+void sub_4B6B90(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+
+    // FIXME: Unused.
+    pc_obj = player_get_pc_obj();
+
+    if (!combat_taunts_get()) {
+        return;
+    }
+
+    if (obj_field_int32_get(combat->field_8, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    if (combat->field_20 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (combat->field_20 == combat->field_8) {
+        return;
+    }
+
+    if ((combat->flags & 0x2) == 0) {
+        return;
+    }
+
+    if ((combat->field_20 == combat->field_28)) {
+        if ((combat->flags & 0x4) != 0) {
+            sub_4AE9E0(combat->field_8, false);
+        }
+    } else {
+        if ((combat->flags & 0x08) != 0) {
+            sub_4AE9E0(combat->field_8, true);
+        }
+    }
 }
 
 // 0x4B6C40
