@@ -3,6 +3,7 @@
 #include "game/critter.h"
 #include "game/mes.h"
 #include "game/obj.h"
+#include "game/object.h"
 #include "game/player.h"
 #include "ui/intgame.h"
 
@@ -304,7 +305,7 @@ void sub_56AFD0(int a1)
 
     qword_67BC20 = player_get_pc_obj();
     sub_444130(&(dword_67BC08[a1 + dword_67BC10]));
-    qword_67BC50 = dword_67BC08[dword_67BC10 + a1].field_0;
+    qword_67BC50 = dword_67BC08[dword_67BC10 + a1].obj;
 
     window_data.flags = 0;
     window_data.rect = stru_67BB88[a1];
