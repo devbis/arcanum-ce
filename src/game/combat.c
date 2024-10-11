@@ -517,9 +517,57 @@ bool combat_critter_is_combat_mode_active(int64_t obj)
 }
 
 // 0x4B3D90
-bool sub_4B3D90(int64_t a1)
+bool sub_4B3D90(int64_t obj)
 {
-    // TODO: Incomplete.
+    bool ret = true;
+    ObjectList pcs;
+    ObjectNode* pc_node;
+    ObjectList npcs;
+    ObjectNode* npc_node;
+    int64_t combat_focus_obj;
+
+    if (!combat_critter_is_combat_mode_active(obj)) {
+        return true;
+    }
+
+    if (!sub_45D790(obj)) {
+        return true;
+    }
+
+    if (sub_44E830(obj, 19, NULL)) {
+        return false;
+    }
+
+    sub_441260(obj, &pcs);
+    sub_440FC0(obj, OBJ_TM_NPC, &npcs);
+
+    npc_node = npcs.head;
+    while (npc_node != NULL && ret) {
+        combat_focus_obj = obj_field_handle_get(npc_node->obj, OBJ_F_NPC_COMBAT_FOCUS);
+        if (combat_focus_obj == obj) {
+            if (sub_45D790(npc_node->obj) && ai_is_fighting(npc_node->obj)) {
+                ret = false;
+                break;
+            }
+        } else {
+            pc_node = pcs.head;
+            while (pc_node != NULL) {
+                if (combat_focus_obj == obj
+                    && sub_45D790(npc_node->obj)
+                    && ai_is_fighting(npc_node->obj)) {
+                    ret = false;
+                    break;
+                }
+                pc_node = pc_node->next;
+            }
+        }
+        npc_node = npc_node->next;
+    }
+
+    object_list_destroy(&npcs);
+    object_list_destroy(&pcs);
+
+    return ret;
 }
 
 // 0x4B3F20

@@ -50,7 +50,7 @@ void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat);
 void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int a3);
 void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int a5);
 bool combat_critter_is_combat_mode_active(int64_t obj);
-bool sub_4B3D90(int64_t a1);
+bool sub_4B3D90(int64_t obj);
 void combat_critter_deactivate_combat_mode(int64_t obj);
 void combat_critter_activate_combat_mode(int64_t obj);
 void sub_4B4320(int64_t obj);
