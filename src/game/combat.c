@@ -23,6 +23,7 @@ static void fast_turn_based_changed();
 static int sub_4B2810(int64_t obj);
 static void sub_4B2F60(CombatContext* combat);
 static void sub_4B3770(CombatContext* combat);
+static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t sub_4B54B0(int64_t obj, int a2);
 static int sub_4B65A0();
@@ -42,6 +43,12 @@ static void sub_4B83E0(int64_t obj, int64_t a2);
 
 // 0x5B57B8
 static int dword_5B57B8 = 15;
+
+// 0x5B57FC
+static int dword_5B57FC[2] = {
+    0,
+    10,
+};
 
 // 0x5FC178
 static mes_file_handle_t combat_mes_file;
@@ -396,9 +403,67 @@ void sub_4B3770(CombatContext* combat)
 }
 
 // 0x4B39B0
-void sub_4B39B0()
+void sub_4B39B0(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    bool is_boomerangs = false;
+    tig_art_id_t missile_art_id = TIG_ART_ID_INVALID;
+    int64_t loc;
+    int range;
+    int max_range;
+    int rotation;
+    int num_arrows;
+    int arrow;
+
+    if ((combat->flags & 0x100) == 0
+        && combat->weapon_obj != OBJ_HANDLE_NULL) {
+        if (obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+            missile_art_id = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MISSILE_AID);
+            is_boomerangs = (obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_BOOMERANGS) != 0;
+        }
+    } else {
+        tig_art_scenery_id_create(0, 0, 0, 0, 0, &missile_art_id);
+    }
+
+    if (missile_art_id == TIG_ART_ID_INVALID) {
+        if (combat->skill == BASIC_SKILL_THROWING) {
+            missile_art_id = obj_field_int32_get(combat->weapon_obj, OBJ_F_CURRENT_AID);
+        }
+    }
+
+    if (missile_art_id == TIG_ART_ID_INVALID) {
+        sub_4B2F60(combat);
+        return;
+    }
+
+    loc = obj_field_int64_get(combat->field_8, OBJ_F_LOCATION);
+    if (combat->skill == BASIC_SKILL_THROWING
+        && !is_boomerangs
+        && (combat->flags & 0x02) == 0) {
+        range = (20 - basic_skill_level(combat->field_8, BASIC_SKILL_THROWING)) / 5 + 1;
+        max_range = sub_4B96F0(loc, combat->target_loc);
+        if (range > max_range) {
+            range = max_range;
+        }
+
+        sub_4B90D0(combat->target_loc, random_between(0, 7), &(combat->target_loc));
+        combat->field_20 = OBJ_HANDLE_NULL;
+        combat->flags |= 0x20;
+    }
+
+    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+        // FIXME: Unused.
+        rotation = tig_art_id_rotation_get(obj_field_int32_get(combat->field_8, OBJ_F_CURRENT_AID));
+
+        num_arrows = 1;
+        if (combat->skill == BASIC_SKILL_BOW
+            && basic_skill_get_training(combat->field_8, BASIC_SKILL_BOW) >= TRAINING_EXPERT) {
+            num_arrows = 2;
+        }
+
+        for (arrow = 0; arrow < num_arrows; arrow++) {
+            sub_4B24F0(combat, loc, dword_5B57FC[arrow], dword_5B57FC[arrow], missile_art_id);
+        }
+    }
 }
 
 // 0x4B3BB0
