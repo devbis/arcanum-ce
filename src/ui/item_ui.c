@@ -26,7 +26,7 @@ void sub_5719F0()
 }
 
 // 0x571AA0
-void sub_571AA0()
+void sub_571AA0(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
