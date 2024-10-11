@@ -1,7 +1,15 @@
 #include "game/reaction.h"
 
+#include "game/ai.h"
+#include "game/critter.h"
+#include "game/effect.h"
+#include "game/magictech.h"
 #include "game/mes.h"
+#include "game/multiplayer.h"
+#include "game/mp_utils.h"
 #include "game/obj.h"
+#include "game/stat.h"
+#include "game/target.h"
 
 // 0x5FC88C
 static mes_file_handle_t reaction_mes_file;
@@ -9,9 +17,14 @@ static mes_file_handle_t reaction_mes_file;
 // 0x5FC890
 static char* reaction_names[REACTION_COUNT];
 
+static int sub_4C0D00(int64_t a1, int64_t a2, unsigned int flags);
 static int sub_4C1290(int64_t a1, int64_t a2);
 static int reaction_get_base(int64_t obj);
 static bool sub_4C12F0(int64_t a1, int64_t a2, bool a3, int* a4);
+static void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value);
+static void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int a4, int a5);
+static int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags);
+static int sub_4C15A0(int a1);
 
 // 0x4C0BD0
 bool reaction_init(GameInitInfo* init_info)
@@ -41,32 +54,131 @@ void reaction_exit()
 }
 
 // 0x4C0C40
-bool sub_4C0C40(int64_t pc, int64_t npc)
+bool sub_4C0C40(int64_t npc_obj, int64_t pc_obj)
 {
     int v1;
 
-    if (pc == npc) {
+    if (npc_obj == pc_obj) {
         return true;
     }
 
-    if (obj_field_int32_get(pc, OBJ_F_TYPE) != OBJ_TYPE_PC
-        || obj_field_int32_get(npc, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    // Make sure `pc_obj` is actually PC.
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return false;
     }
 
-    return sub_4C12F0(pc, npc, false, &v1);
+    // Make sure `npc_obj` is actually NPC.
+    if (obj_field_int32_get(npc_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    return sub_4C12F0(npc_obj, pc_obj, false, &v1);
 }
 
 // 0x4C0CC0
-int sub_4C0CC0(int64_t a1, int64_t a2)
+int sub_4C0CC0(int64_t npc_obj, int64_t pc_ob)
 {
-    return sub_4C0D00(a1, a2, 0);
+    return sub_4C0D00(npc_obj, pc_ob, 0);
 }
 
 // 0x4C0CE0
-int sub_4C0CE0(int64_t a1, int64_t a2)
+int sub_4C0CE0(int64_t npc_obj, int64_t pc_ob)
 {
-    return sub_4C0D00(a1, a2, 1);
+    return sub_4C0D00(npc_obj, pc_ob, 1);
+}
+
+// 0x4C0D00
+int sub_4C0D00(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
+{
+    int value;
+    int64_t mind_controlled_by_obj;
+
+    if (sub_4AFB30(npc_obj, pc_obj)) {
+        return 0;
+    }
+
+    // Make sure `pc_obj` is actually PC.
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return 50;
+    }
+
+    // Make sure `npc_obj` is actually NPC.
+    if (obj_field_int32_get(npc_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return 50;
+    }
+
+    value = sub_4C1500(npc_obj, pc_obj, flags) + sub_4C1290(npc_obj, pc_obj);
+    value = effect_adjust_reaction(npc_obj, value);
+
+    if (value < 50
+        && sub_459040(npc_obj, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)
+        && mind_controlled_by_obj == pc_obj) {
+        value = 50;
+    }
+
+    return value;
+}
+
+// 0x4C0DE0
+void sub_4C0DE0(int64_t npc_obj, int64_t pc_obj, int value)
+{
+    int64_t mind_controlled_by_obj;
+    int base;
+    int adjusted_value;
+    unsigned int flags;
+
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        sub_4EDC00(npc_obj, pc_obj, value);
+    }
+
+    if (value == 0) {
+        return;
+    }
+
+    // Make sure `pc_obj` is actually PC.
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    // Make sure `npc_obj` is actually NPC.
+    if (obj_field_int32_get(npc_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
+
+    if (sub_459040(npc_obj, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)
+        && mind_controlled_by_obj == pc_obj) {
+        return;
+    }
+
+    if (value < 0
+        && stat_is_maximized(pc_obj, STAT_CHARISMA)
+        && sub_45DDA0(npc_obj) == pc_obj) {
+        return;
+    }
+
+    base = sub_4C1290(npc_obj, pc_obj);
+    adjusted_value = effect_adjust_good_bad_reaction(pc_obj, value);
+    sub_4C1360(npc_obj, pc_obj, base + adjusted_value);
+
+    if (value < 0 && critter_leader_get(npc_obj) == pc_obj) {
+        flags = obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS);
+        flags |= ONF_CHECK_LEADER;
+        obj_field_int32_set(npc_obj, OBJ_F_NPC_FLAGS, flags);
+
+        flags = obj_field_int32_get(npc_obj, OBJ_F_CRITTER_FLAGS2);
+        flags |= OCF2_CHECK_REACTION_BAD;
+        obj_field_int32_set(npc_obj, OBJ_F_CRITTER_FLAGS2, flags);
+    }
+}
+
+// 0x4C0F50
+void sub_4C0F50(int64_t a1, int64_t a2)
+{
+    // TODO: Incomplete.
 }
 
 // 0x4C0FC0
@@ -88,36 +200,42 @@ const char* reaction_get_name(int reaction)
 }
 
 // 0x4C1020
-void sub_4C1020(int64_t pc, int64_t npc)
+void sub_4C1020(int64_t npc_obj, int64_t pc_obj)
 {
     int v1;
 
-    if (obj_field_int32_get(pc, OBJ_F_TYPE) != OBJ_TYPE_PC
-        || obj_field_int32_get(npc, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 
-    v1 = sub_4C1290(pc, npc);
-    if (v1 < 100 && sub_4F5270(npc, 1)) {
+    if (obj_field_int32_get(npc_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
+
+    v1 = sub_4C1290(npc_obj, pc_obj);
+    if (v1 < 100 && sub_4F5270(pc_obj, 1)) {
         v1 = 100;
     }
 
-    sub_4C1490(pc, npc, v1, 0);
+    sub_4C1490(npc_obj, pc_obj, v1, 0);
 }
 
 // 0x4C10A0
-void sub_4C10A0(int64_t pc, int64_t npc)
+void sub_4C10A0(int64_t npc_obj, int64_t pc_obj)
 {
     int v1;
 
-    if (obj_field_int32_get(pc, OBJ_F_TYPE) != OBJ_TYPE_PC
-        || obj_field_int32_get(npc, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 
-    v1 = sub_4C1290(pc, npc);
-    sub_4C1490(pc, 0, v1, 0);
-    sub_4C1360(pc, npc, v1);
+    if (obj_field_int32_get(npc_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
+
+    v1 = sub_4C1290(npc_obj, pc_obj);
+    sub_4C1490(npc_obj, 0, v1, 0);
+    sub_4C1360(npc_obj, pc_obj, v1);
 }
 
 // 0x4C1110
@@ -157,16 +275,22 @@ int sub_4C1150(int64_t a1, int64_t a2, int a3)
     return a3 * v2 / 100;
 }
 
+// 0x4C11D0
+void sub_4C11D0(int64_t a1, int64_t a2, int a3)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4C1290
-int sub_4C1290(int64_t a1, int64_t a2)
+int sub_4C1290(int64_t npc_obj, int64_t pc_obj)
 {
     int v1;
 
-    if (sub_4C12F0(a1, a2, 1, &v1)) {
+    if (sub_4C12F0(npc_obj, pc_obj, 1, &v1)) {
         return v1;
     }
 
-    return reaction_get_base(a1);
+    return reaction_get_base(npc_obj);
 }
 
 // 0x4C12D0
@@ -176,17 +300,48 @@ int reaction_get_base(int64_t obj)
 }
 
 // 0x4C12F0
-bool sub_4C12F0(int64_t a1, int64_t a2, bool a3, int* a4)
+bool sub_4C12F0(int64_t npc_obj, int64_t pc_obj, bool a3, int* a4)
 {
     int index;
 
     for (index = 0; index < 10; index++) {
         if ((index != 0 || a3)
-            && a2 == obj_arrayfield_handle_get(a1, OBJ_F_NPC_REACTION_PC_IDX, index)) {
-            *a4 = sub_407470(a1, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
+            && pc_obj == obj_arrayfield_handle_get(npc_obj, OBJ_F_NPC_REACTION_PC_IDX, index)) {
+            *a4 = sub_407470(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
             return true;
         }
     }
 
     return false;
+}
+
+// 0x4C1360
+void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C1490
+void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int a4, int a5)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C1500
+int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4C15A0
+int sub_4C15A0(int a1)
+{
+    // FIXME: Unused.
+    datetime_current_second();
+
+    if (a1 > 50) {
+        return a1 - 50;
+    } else {
+        return 50 - a1;
+    }
 }
