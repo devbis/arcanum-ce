@@ -158,9 +158,37 @@ void combat_reset()
 }
 
 // 0x4B1EA0
-void combat_save()
+bool combat_save(TigFile* stream)
 {
-    // TODO: Incomplete.
+    ObjectID oid;
+
+    if (stream == NULL) return false;
+    if (tig_file_fwrite(&combat_turn_based, sizeof(combat_turn_based), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5FC22C, sizeof(dword_5FC22C), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&dword_5FC230, sizeof(dword_5FC230), 1, stream) != 1) return false;
+
+    if (!dword_5FC22C) {
+        return true;
+    }
+
+    if (tig_file_fwrite(&combat_action_points, sizeof(combat_action_points), 1, stream) != 1) return false;
+
+    if (qword_5FC238 == OBJ_HANDLE_NULL) {
+        oid.type = 0;
+    } else {
+        oid = sub_407EF0(qword_5FC238);
+    }
+    if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
+
+    oid = sub_407EF0(dword_5FC240->obj);
+    if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
+
+    if (tig_file_fwrite(&dword_5FC244, sizeof(dword_5FC244), 1, stream) != 1) return false;
+
+    oid = sub_407EF0(qword_5FC248);
+    if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
+
+    return true;
 }
 
 // 0x4B2020
