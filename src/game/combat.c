@@ -106,6 +106,12 @@ static int64_t qword_5FC248;
 // 0x5FC250
 static int dword_5FC250;
 
+// 0x5FC258
+static int64_t qword_5FC258;
+
+// 0x5FC260
+static int dword_5FC260;
+
 // 0x5FC264
 static bool dword_5FC264;
 
@@ -1272,7 +1278,39 @@ void sub_4B7010(int64_t obj)
 // 0x4B7080
 void sub_4B7080()
 {
-    // TODO: Incomplete.
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    if (!dword_5FC22C) {
+        return;
+    }
+
+    combat_debug(OBJ_HANDLE_NULL, "TB Anims Complete");
+
+    if (gamelib_in_reset()) {
+        return;
+    }
+
+    if (dword_5FC240 != NULL) {
+        if (sub_40DA20(dword_5FC240->obj) && combat_action_points > 0) {
+            return;
+        }
+
+        if (dword_5FC240->obj == qword_5FC258) {
+            if (combat_action_points == dword_5FC260) {
+                dword_5FC264 = true;
+            }
+            dword_5FC260 = combat_action_points;
+        } else {
+            qword_5FC258 = dword_5FC240->obj;
+        }
+    }
+
+    if (!sub_45C0E0(TIMEEVENT_TYPE_TB_COMBAT)) {
+        timeevent.type = TIMEEVENT_TYPE_TB_COMBAT;
+        sub_45A950(&datetime, 2);
+        sub_45B800(&timeevent, &datetime);
+    }
 }
 
 // 0x4B7150
