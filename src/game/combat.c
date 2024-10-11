@@ -467,9 +467,14 @@ void sub_4B39B0(CombatContext* combat)
 }
 
 // 0x4B3BB0
-void sub_4B3BB0()
+void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int a3)
 {
-    // TODO: Incomplete.
+    CombatContext combat;
+
+    sub_4B2210(attacker_obj, target_obj, &combat);
+    combat.field_40 = a3;
+    combat.flags |= 0x50000;
+    sub_4B3170(&combat);
 }
 
 // 0x4B3C00
