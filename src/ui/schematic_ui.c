@@ -867,16 +867,18 @@ void sub_56E190()
 }
 
 // 0x56E720
-void sub_56E720()
+bool sub_56E720(int a1, int64_t a2, int64_t a3)
 {
     // TODO: Incomplete.
 }
 
 // 0x56E950
-bool sub_56E950(int a1, int a2, int a3, long long obj)
+bool sub_56E950(int a1, int64_t a2, long long obj)
 {
     MesFileEntry mes_file_entry;
     John v1;
+
+    (void)a2;
 
     if (a1 && player_is_pc_obj(obj)) {
         mes_file_entry.num = 2;
