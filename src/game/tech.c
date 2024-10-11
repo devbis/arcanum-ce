@@ -268,6 +268,12 @@ int tech_get_min_intelligence_for_degree(int degree)
     return tech_min_intelligence[degree];
 }
 
+// 0x4B0120
+void sub_4B0120(int64_t a1, int64_t a2)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4B02B0
 bool sub_4B02B0(object_id_t obj, int intelligence)
 {

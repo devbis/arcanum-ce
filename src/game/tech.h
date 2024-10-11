@@ -45,6 +45,7 @@ int tech_dec_degree(int64_t obj, int tech);
 int tech_get_cost_for_degree(int a1);
 int sub_4B00B0(object_id_t obj, int tech);
 int tech_get_min_intelligence_for_degree(int degree);
+void sub_4B0120(int64_t a1, int64_t a2);
 bool sub_4B02B0(object_id_t obj, int intelligence);
 int sub_4B0320(int a1, int a2);
 
