@@ -4,10 +4,15 @@
 #include "game/gamelib.h"
 #include "game/gfade.h"
 #include "game/light_scheme.h"
+#include "game/multiplayer.h"
 #include "game/player.h"
 #include "game/timeevent.h"
+#include "game/ui.h"
+#include "ui/combat_ui.h"
+#include "ui/compact_ui.h"
 #include "ui/gameuilib.h"
 #include "ui/intgame.h"
+#include "ui/inven_ui.h"
 #include "ui/mainmenu_ui.h"
 #include "ui/mp_ctrl_ui.h"
 #include "ui/sleep_ui.h"
@@ -16,6 +21,9 @@
 
 static bool sub_57D3B0(TimeEvent* timeevent);
 static bool anim_ui_bkg_process_callback(TimeEvent* timeevent);
+static bool sub_57D650();
+static bool ambient_lighting_process_callback(TimeEvent* timeevent);
+static void sub_57D6C0();
 
 // 0x5CB408
 static bool dword_5CB408;
@@ -80,6 +88,8 @@ bool anim_ui_load(GameLoadInfo* load_info)
 {
     DateTime datetime;
     TimeEvent timeevent;
+
+    (void)load_info;
 
     timeevent_clear_all_typed(TIMEEVENT_TYPE_AMBIENT_LIGHTING);
     timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
@@ -240,11 +250,13 @@ bool sub_57D650()
 }
 
 // 0x57D660
-void ambient_lighting_process_callback()
+bool ambient_lighting_process_callback(TimeEvent* timeevent)
 {
     int hour;
     DateTime datetime;
-    TimeEvent timeevent;
+    TimeEvent next_timeevent;
+
+    (void)timeevent;
 
     hour = datetime_current_hour();
     if (sub_57D650()) {
@@ -252,9 +264,9 @@ void ambient_lighting_process_callback()
     }
 
     timeevent_clear_all_typed(TIMEEVENT_TYPE_AMBIENT_LIGHTING);
-    timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
+    next_timeevent.type = TIMEEVENT_TYPE_AMBIENT_LIGHTING;
     sub_45A950(&datetime, 3600000);
-    sub_45B800(&timeevent, &datetime);
+    sub_45B800(&next_timeevent, &datetime);
 
     return true;
 }
