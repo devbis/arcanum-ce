@@ -3,8 +3,10 @@
 #include <stdio.h>
 
 #include "game/effect.h"
+#include "game/item.h"
 #include "game/mes.h"
 #include "game/object.h"
+#include "game/proto.h"
 #include "game/skill.h"
 #include "game/stat.h"
 
@@ -250,7 +252,38 @@ int background_obj_get_background_text(object_id_t obj)
 // 0x4C26F0
 void sub_4C26F0(int64_t obj)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    char str[MAX_STRING];
+    int background;
+    char* tok;
+    int64_t proto_obj;
+    int64_t loc;
+    int64_t item_obj;
+    unsigned int flags;
+
+    background = obj_field_int32_get(obj, OBJ_F_PC_BACKGROUND);
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_MONEY;
+    mes_get_msg(background_mes_file, &mes_file_entry);
+
+    sub_464830(OBJ_HANDLE_NULL, obj, atoi(mes_file_entry.str), OBJ_HANDLE_NULL);
+
+    mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_ITEMS;
+    if (mes_search(background_mes_file, &mes_file_entry)) {
+        strcpy(str, mes_file_entry.str);
+
+        tok = strtok(str, " \t\n");
+        while (tok != NULL) {
+            proto_obj = sub_4685A0(atoi(tok));
+            loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            if (object_create(proto_obj, loc, &item_obj)) {
+                flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+                flags |= OIF_IDENTIFIED;
+                obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, flags);
+                sub_4617F0(item_obj, obj);
+            }
+            tok = strtok(NULL, " \t\n");
+        }
+    }
 }
 
 // 0x4C2950
