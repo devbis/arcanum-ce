@@ -46,6 +46,7 @@ void combat_exit();
 void combat_reset();
 void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat);
 int64_t sub_4B23B0(int64_t obj);
+void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat);
 bool combat_critter_is_combat_mode_active(int64_t obj);
 bool sub_4B3D90(int64_t a1);
 void combat_critter_deactivate_combat_mode(int64_t obj);

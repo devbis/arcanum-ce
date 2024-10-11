@@ -237,9 +237,9 @@ void sub_4B24F0()
 }
 
 // 0x4B2650
-void sub_4B2650()
+void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat)
 {
-    // TODO: Incomplete.
+    sub_4B2690(a1, a2, combat != NULL ? combat->field_28 : OBJ_HANDLE_NULL, false);
 }
 
 // 0x4B2690
