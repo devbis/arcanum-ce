@@ -20,7 +20,6 @@ static void combat_ui_destroy();
 static void sub_56EFA0(int a1);
 static void sub_56F2F0(tig_window_handle_t window_handle, TigRect* rect, tig_color_t color);
 static void sub_56F430(int a1);
-static void sub_56F660();
 static void sub_56F840();
 static void sub_56F990(int64_t obj);
 static bool sub_56F9B0(TigMessage* msg);
