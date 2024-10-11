@@ -13,7 +13,9 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "game/random.h"
+#include "game/reaction.h"
 #include "game/stat.h"
+#include "game/text_floater.h"
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
@@ -24,6 +26,7 @@ static int sub_4B65A0();
 static void sub_4B7080();
 static bool combat_turn_based_start();
 static void combat_turn_based_end();
+static bool combat_turn_based_begin_turn();
 static void sub_4B7300();
 static bool sub_4B7580(ObjectNode* object_node);
 static void combat_turn_based_subturn_start();
@@ -272,7 +275,7 @@ bool combat_critter_is_combat_mode_active(int64_t obj)
 }
 
 // 0x4B3D90
-void sub_4B3D90()
+bool sub_4B3D90(int64_t a1)
 {
     // TODO: Incomplete.
 }
@@ -528,7 +531,7 @@ void combat_debug(int64_t obj, const char* msg)
 }
 
 // 0x4B6E70
-void sub_4B6E70()
+void sub_4B6E70(int64_t obj)
 {
     // TODO: Incomplete.
 }
