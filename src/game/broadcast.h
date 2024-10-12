@@ -11,10 +11,13 @@ typedef struct Broadcast {
 
 static_assert(sizeof(Broadcast) == 0x88, "wrong size");
 
+typedef void(Func5FDC88)(int64_t a1, int64_t a2, const char* a3, int a4);
+
 bool broadcast_init(GameInitInfo* init_info);
 void broadcast_exit();
-void sub_4C2EA0(int a1);
+void sub_4C2EA0(Func5FDC88* func);
 void sub_4C2F00(int64_t obj, Broadcast* bcast);
+void broadcast_msg_client(int64_t obj, Broadcast* bcast);
 void sub_4C3BE0(unsigned int a1, int a2, int a3);
 
 #endif /* ARCANUM_GAME_BROADCAST_H_ */

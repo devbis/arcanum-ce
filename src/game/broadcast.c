@@ -2,14 +2,15 @@
 
 #include "game/mes.h"
 #include "game/player.h"
+#include "game/text_filter.h"
 
 typedef struct S5FF404 {
     char* field_0;
-    char* field_4;
+    int field_4;
 } S5FF404;
 
 static int broadcast_match_str_to_base_type(const char* str);
-static const char* sub_4C3B40(const char* str);
+static int sub_4C3B40(const char* str);
 static void sub_4C3B90();
 
 // 0x5FDC4C
@@ -19,7 +20,7 @@ static const char* dword_5FDC4C[14];
 static mes_file_handle_t dword_5FDC84;
 
 // 0x5FDC88
-static int dword_5FDC88;
+static Func5FDC88* dword_5FDC88;
 
 // 0x5FDC8C
 static mes_file_handle_t dword_5FDC8C;
@@ -45,7 +46,7 @@ bool broadcast_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    dword_5FDC88 = 0;
+    dword_5FDC88 = NULL;
 
     if (!mes_load("mes\\broadcast.mes", &dword_5FDC84)) {
         tig_debug_printf("broadcast_init: ERROR: couldn't load message file: mes\\broadcast.mes!\n");
@@ -96,7 +97,7 @@ bool broadcast_init(GameInitInfo* init_info)
 
     sub_4C3B90();
 
-    if (!sub_4F67D0()) {
+    if (!text_filter_init()) {
         return false;
     }
 
@@ -123,15 +124,15 @@ void broadcast_exit()
         tig_debug_printf("broadcast_exit: ERROR: couldn't unload message file: mp_mes_id!\n");
     }
 
-    sub_4F6820();
+    text_filter_exit();
 
     broadcast_initialized = false;
 }
 
 // 0x4C2EA0
-void sub_4C2EA0(int a1)
+void sub_4C2EA0(Func5FDC88* func)
 {
-    dword_5FDC88 = a1;
+    dword_5FDC88 = func;
 }
 
 // 0x4C2EB0
@@ -183,13 +184,13 @@ void sub_4C3040()
 }
 
 // 0x4C31A0
-void broadcast_msg_client()
+void broadcast_msg_client(int64_t obj, Broadcast* bcast)
 {
     // TODO: Incomplete.
 }
 
 // 0x4C3B40
-const char* sub_4C3B40(const char* str)
+int sub_4C3B40(const char* str)
 {
     int index;
 
@@ -203,7 +204,7 @@ const char* sub_4C3B40(const char* str)
         }
     }
 
-    return NULL;
+    return 0;
 }
 
 // 0x4C3B90
