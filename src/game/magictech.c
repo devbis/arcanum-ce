@@ -1,16 +1,19 @@
 #include "game/magictech.h"
 
-#include "game/animfx.h"
 #include "game/anim_private.h"
+#include "game/animfx.h"
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/effect.h"
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/mt_ai.h"
 #include "game/mt_item.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/random.h"
+#include "game/script.h"
 #include "game/sector.h"
 #include "game/spell.h"
 #include "game/stat.h"
@@ -43,6 +46,8 @@ typedef enum MagicTechFlagCollection {
     MTFC_COUNT,
 } MagicTechFlagCollection;
 
+typedef void(MagicTechProc)();
+
 static bool sub_44F3C0(MagicTechLock* lock, TigFile* stream);
 static bool sub_44F620(MagicTechLock* lock, TigFile* stream);
 static bool sub_44FE30(int a1, const char* path, int a3);
@@ -53,6 +58,31 @@ static void sub_450240();
 static bool sub_4507D0(object_id_t obj, int magictech);
 static int sub_450B90(object_id_t obj);
 static void sub_4510F0();
+static void MTComponentAGoal_ProcFunc();
+static void MTComponentAGoalTerminate_ProcFunc();
+static void MTComponentAIRedirect_ProcFunc();
+static void MTComponentCast_ProcFunc();
+static void MTComponentChargeNBranch_ProcFunc();
+static void MTComponentDamage_ProcFunc();
+static void MTComponentDestroy_ProcFunc();
+static void MTComponentDispel_ProcFunc();
+static void MTComponentEffect_ProcFunc();
+static void MTComponentEyeCandy_ProcFunc();
+static void MTComponentHeal_ProcFunc();
+static void MTComponentIdentify_ProcFunc();
+static void MTComponentInterrupt_ProcFunc();
+static void MTComponentObjFlag_ProcFunc();
+static void MTComponentMovement_ProcFunc();
+static void MTComponentRecharge_ProcFunc();
+static void MTComponentSummon_ProcFunc();
+static void MTComponentTerminate_ProcFunc();
+static void MTComponentTestNBranch_ProcFunc();
+static void MTComponentTrait_ProcFunc();
+static void MTComponentTraitIdx_ProcFunc();
+static void MTComponentTrait64_ProcFunc();
+static void MTComponentUse_ProcFunc();
+static void MTComponentNoop_ProcFunc();
+static void MTComponentEnvFlag_ProcFunc();
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -156,6 +186,35 @@ static int dword_5B0BA0 = -1;
 
 // 0x5B0BA4
 static int dword_5B0BA4 = -1;
+
+// 0x4513FD
+static MagicTechProc* magictech_procs[] = {
+    MTComponentNoop_ProcFunc,
+    MTComponentAGoal_ProcFunc,
+    MTComponentAGoalTerminate_ProcFunc,
+    MTComponentAIRedirect_ProcFunc,
+    MTComponentCast_ProcFunc,
+    MTComponentChargeNBranch_ProcFunc,
+    MTComponentDamage_ProcFunc,
+    MTComponentDestroy_ProcFunc,
+    MTComponentDispel_ProcFunc,
+    MTComponentEffect_ProcFunc,
+    MTComponentEnvFlag_ProcFunc,
+    MTComponentEyeCandy_ProcFunc,
+    MTComponentHeal_ProcFunc,
+    MTComponentIdentify_ProcFunc,
+    MTComponentInterrupt_ProcFunc,
+    MTComponentMovement_ProcFunc,
+    MTComponentObjFlag_ProcFunc,
+    MTComponentRecharge_ProcFunc,
+    MTComponentSummon_ProcFunc,
+    MTComponentTerminate_ProcFunc,
+    MTComponentTestNBranch_ProcFunc,
+    MTComponentTrait_ProcFunc,
+    MTComponentTraitIdx_ProcFunc,
+    MTComponentTrait64_ProcFunc,
+    MTComponentUse_ProcFunc,
+};
 
 // 0x5B0C0C
 static const char* off_5B0C0C[] = {
@@ -903,14 +962,26 @@ static mes_file_handle_t dword_5E6D20;
 // 0x5E6D24
 static GameContextF8* dword_5E6D24;
 
+// 0x5E6D28
+static S603CB8 stru_5E6D28;
+
+// 0x5E6D90
+static int dword_5E6D90;
+
 // 0x5E7568
 static AnimFxList stru_5E7568;
 
 // 0x5E7594
 static int magictech_spell_mes_file;
 
+// 0x5E759C
+static MagicTechE8* dword_5E759C;
+
 // 0x5E75AC
 static int dword_5E75AC;
+
+// 0x5E75B8
+static int64_t qword_5E75B8;
 
 // 0x5E75CC
 static int dword_5E75CC;
@@ -959,6 +1030,12 @@ static int64_t qword_5E7610;
 
 // 0x5E7618
 static bool magictech_initialized;
+
+// 0x5E761C
+static MagicTechEffectInfo* dword_5E761C;
+
+// 0x5E7624
+static bool dword_5E7624;
 
 // 0x5E7628
 static int dword_5E7628;
@@ -1730,7 +1807,9 @@ void MTComponentAGoal_ProcFunc()
 // 0x4516D0
 void MTComponentAGoalTerminate_ProcFunc()
 {
-    // TODO: Incomplete.
+    if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
+        sub_44E4D0(stru_5E6D28.field_20, dword_5E761C->data.agoal_terminate.goal, -1);
+    }
 }
 
 // 0x451700
@@ -1742,13 +1821,44 @@ void MTComponentAIRedirect_ProcFunc()
 // 0x451740
 void MTComponentCast_ProcFunc()
 {
-    // TODO: Incomplete.
+    MagicTechSerializedData v1;
+
+    sub_455A20(&v1, OBJ_HANDLE_NULL, dword_5E761C->data.cast.spell);
+    sub_4440E0(stru_5E6D28.field_20, &(v1.field_70));
+    sub_4440E0(dword_5E75F0->parent_obj.obj, &(v1.field_40));
+    v1.field_DC |= 0x1;
+    v1.field_D0 = stru_5E6D28.field_28;
+
+    if (v1.field_40.obj != OBJ_HANDLE_NULL) {
+        v1.loc = obj_field_int64_get(v1.field_40.obj, OBJ_F_LOCATION);
+    }
+
+    if (v1.field_D0 == 0) {
+        if (v1.field_70.obj == OBJ_HANDLE_NULL) {
+            return;
+        }
+
+        v1.field_D0 = obj_field_int64_get(v1.field_70.obj, OBJ_F_LOCATION);
+    }
+
+    if (v1.field_70.obj != OBJ_HANDLE_NULL || v1.field_D0 != 0) {
+        sub_455AC0(&v1);
+    }
 }
 
 // 0x451850
 void MTComponentChargeNBranch_ProcFunc()
 {
-    // TODO: Incomplete.
+    if (dword_5E75F0->source_obj.obj != OBJ_HANDLE_NULL
+        && !sub_450420(dword_5E75F0->source_obj.obj, dword_5E761C->data.charge_branch.cost, true, dword_5E75F0->spell)) {
+        if (dword_5E761C->data.charge_branch.branch != -1) {
+            dword_5E7624 = true;
+            dword_5E6D90 = min(dword_5E761C->data.charge_branch.branch, dword_5E759C->field_0);
+        } else {
+            dword_5E7624 = true;
+            dword_5E6D90 = dword_5E759C->field_0;
+        }
+    }
 }
 
 // 0x4518D0
@@ -1766,11 +1876,11 @@ void MTComponentDestroy_ProcFunc()
 // 0x451B90
 void MTComponentDispel_ProcFunc()
 {
-    // TODO: Incomplete.
+    sub_451BB0(stru_5E6D28.field_20, dword_5E75F0->field_0);
 }
 
 // 0x451BB0
-void sub_451BB0()
+void sub_451BB0(int64_t obj, int magictech)
 {
     // TODO: Incomplete.
 }
@@ -1796,19 +1906,65 @@ void MTComponentEyeCandy_ProcFunc()
 // 0x4521A0
 void MTComponentHeal_ProcFunc()
 {
-    // TODO: Incomplete.
+    CombatContext combat;
+    int heal_min;
+    int heal_max;
+
+    if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
+        sub_4B2210(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20, &combat);
+        combat.field_58 |= dword_5E761C->data.heal.damage_flags;
+        if ((combat.field_58 & 0x1) == 0) {
+            heal_min = dword_5E761C->data.heal.damage_min;
+            heal_max = dword_5E761C->data.heal.damage_max;
+            if ((combat.field_58 & 0x800000) != 0
+                && obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
+                if (dword_5E75F0->parent_obj.field_34 > 0) {
+                    heal_max = heal_min + dword_5E75F0->parent_obj.field_34 * (heal_max - heal_min) / 100;
+                    heal_min = heal_max;
+                } else {
+                    heal_max = heal_min;
+                }
+                combat.field_58 &= ~0x800000;
+            }
+
+            if (dword_5E761C->data.heal.damage_type == 1) {
+                combat.field_44[1] = random_between(heal_min, heal_max);
+            } else if (dword_5E761C->data.heal.damage_type == 4) {
+                combat.field_44[4] = random_between(heal_min, heal_max);
+            } else {
+                combat.field_44[0] = random_between(heal_min, heal_max);
+            }
+        }
+
+        sub_4B58C0(&combat);
+    }
 }
 
 // 0x4522A0
 void MTComponentIdentify_ProcFunc()
 {
-    // TODO: Incomplete.
+    if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
+        if (obj_type_is_critter(dword_5E75AC)) {
+            sub_4EE4C0(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
+        } else if (dword_5E75AC == OBJ_TYPE_CONTAINER) {
+            sub_4EE430(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
+        } else {
+            sub_4EE3A0(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
+        }
+    }
 }
 
 // 0x452300
 void MTComponentInterrupt_ProcFunc()
 {
-    // TODO: Incomplete.
+    MagicTechSerializedData v1;
+
+    sub_455A20(&v1, OBJ_HANDLE_NULL, dword_5E761C->data.interrupt.magictech);
+    sub_4440E0(stru_5E6D28.field_20, &(v1.field_70));
+    v1.field_D0 = stru_5E6D28.field_28;
+    if (v1.field_70.obj != OBJ_HANDLE_NULL || v1.field_D0 != OBJ_HANDLE_NULL) {
+        sub_4573D0(&v1);
+    }
 }
 
 // 0x452380
@@ -1832,7 +1988,9 @@ void sub_452650()
 // 0x452800
 void MTComponentRecharge_ProcFunc()
 {
-    // TODO: Incomplete.
+    sub_454920(stru_5E6D28.field_20,
+        dword_5E761C->data.recharge.num,
+        dword_5E761C->data.recharge.max);
 }
 
 // 0x452830
@@ -1850,13 +2008,58 @@ void magictech_pick_proto_from_list()
 // 0x4529D0
 void MTComponentTerminate_ProcFunc()
 {
-    // TODO: Incomplete.
+    dword_5E7624 = 1;
+    dword_5E6D90 = dword_5E759C->field_0;
 }
 
 // 0x4529F0
 void MTComponentTestNBranch_ProcFunc()
 {
-    // TODO: Incomplete.
+    int value;
+
+    if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL && obj_type_is_critter(dword_5E75AC)) {
+        value = obj_field_int32_get(stru_5E6D28.field_20, dword_5E761C->data.test_in_branch.field_40);
+        switch (dword_5E761C->data.test_in_branch.field_44) {
+        case 0:
+            if (value == dword_5E761C->data.test_in_branch.field_48) {
+                return;
+            }
+            break;
+        case 1:
+            if (value > dword_5E761C->data.test_in_branch.field_48) {
+                return;
+            }
+            break;
+        case 2:
+            if (value >= dword_5E761C->data.test_in_branch.field_48) {
+                return;
+            }
+            break;
+        case 3:
+            if (value < dword_5E761C->data.test_in_branch.field_48) {
+                return;
+            }
+            break;
+        case 4:
+            if (value <= dword_5E761C->data.test_in_branch.field_48) {
+                return;
+            }
+            break;
+        default:
+            tig_debug_printf("MTComponentTestNBranch_ProcFunc: Error: test type out of range!\n");
+            break;
+        }
+
+        dword_5E7624 = true;
+        if (dword_5E761C->data.test_in_branch.field_4C != -1) {
+            dword_5E6D90 = dword_5E761C->data.test_in_branch.field_4C;
+            if (dword_5E6D90 >= dword_5E759C->field_0) {
+                dword_5E6D90 = dword_5E759C->field_0;
+            }
+        } else {
+            dword_5E6D90 = dword_5E759C->field_0;
+        }
+    }
 }
 
 // 0x452AD0
@@ -1880,31 +2083,70 @@ void sub_452CD0()
 // 0x452D80
 void MTComponentTraitIdx_ProcFunc()
 {
-    // TODO: Incomplete.
+    int value;
+
+    if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL && obj_type_is_critter(dword_5E75AC)) {
+        if (dword_5E761C->data.trait_idx.field_44 == OBJ_F_CRITTER_STAT_BASE_IDX) {
+            value = stat_get_base(stru_5E6D28.field_20,
+                dword_5E761C->data.trait_idx.field_40);
+        } else {
+            value = obj_arrayfield_int32_get(stru_5E6D28.field_20,
+                dword_5E761C->data.trait_idx.field_44,
+                dword_5E761C->data.trait_idx.field_40);
+        }
+
+        if (dword_5E761C->data.trait_idx.field_48 == 0) {
+            value = value * dword_5E761C->data.trait_idx.field_4C / dword_5E761C->data.trait_idx.field_50 + dword_5E761C->data.trait_idx.field_54;
+            if (dword_5E761C->data.trait_idx.field_44 == OBJ_F_CRITTER_STAT_BASE_IDX) {
+                stat_set_base(stru_5E6D28.field_20,
+                    dword_5E761C->data.trait_idx.field_40,
+                    value);
+            } else {
+                obj_arrayfield_int32_set(stru_5E6D28.field_20,
+                    dword_5E761C->data.trait_idx.field_44,
+                    dword_5E761C->data.trait_idx.field_40, value);
+            }
+        }
+    }
 }
 
 // 0x452E40
 void MTComponentTrait64_ProcFunc()
 {
-    // TODO: Incomplete.
+    switch (dword_5E761C->data.trait64.field_44) {
+    case 0:
+        obj_field_int64_set(stru_5E6D28.field_20, dword_5E761C->data.trait64.field_40, stru_5E6D28.field_28);
+        obj_field_int32_set(stru_5E6D28.field_20, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
+        break;
+    case 1:
+    case 2:
+        qword_5E75B8 = dword_5E75F0->parent_obj.obj;
+        obj_field_handle_set(stru_5E6D28.field_20, dword_5E761C->data.trait64.field_40, qword_5E75B8);
+        break;
+    }
 }
 
 // 0x452ED0
 void MTComponentUse_ProcFunc()
 {
-    // TODO: Incomplete.
+    if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
+        sub_441980(stru_5E6D28.field_20,
+            stru_5E6D28.field_20,
+            stru_5E6D28.field_20,
+            SAP_USE,
+            0);
+    }
 }
 
 // 0x452F00
 void MTComponentNoop_ProcFunc()
 {
-    // TODO: Incomplete.
 }
 
 // 0x452F10
 void MTComponentEnvFlag_ProcFunc()
 {
-    // TODO: Incomplete.
+    tig_debug_printf("MagicTech: Process: Component: Error:  Invalid Component Type!\n");
 }
 
 // 0x452F20
@@ -2022,7 +2264,7 @@ void sub_4548D0()
 }
 
 // 0x454920
-void sub_454920()
+void sub_454920(int64_t obj, int num, int max)
 {
     // TODO: Incomplete.
 }
@@ -2427,6 +2669,12 @@ void sub_457270(int magictech)
         v1->field_13C |= 0x40;
         sub_451070(v1);
     }
+}
+
+// 0x4573D0
+void sub_4573D0(MagicTechSerializedData* a1)
+{
+    // TODO: Incomplete.
 }
 
 // 0x457450
