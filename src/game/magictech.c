@@ -84,6 +84,7 @@ static void MTComponentUse_ProcFunc();
 static void MTComponentNoop_ProcFunc();
 static void MTComponentEnvFlag_ProcFunc();
 static bool sub_4532F0(int64_t obj, int magictech);
+static bool sub_453370(int64_t obj, int magictech, int a3);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -2175,9 +2176,28 @@ bool sub_4532F0(int64_t obj, int magictech)
 }
 
 // 0x453370
-void sub_453370()
+bool sub_453370(int64_t obj, int magictech, int a3)
 {
-    // TODO: Incomplete.
+    int cost;
+    int v1;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    cost = magictech_get_maintain1(magictech)[0];
+    v1 = a3 * cost / 100;
+    if (v1 == 0) {
+        v1 = 1;
+    }
+    cost += v1;
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        cost *= 2;
+    }
+
+    return sub_450420(obj, cost, true, magictech);
 }
 
 // 0x453410
