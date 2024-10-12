@@ -1,5 +1,7 @@
 #include "game/magictech.h"
 
+#include <stdio.h>
+
 #include "game/anim_private.h"
 #include "game/animfx.h"
 #include "game/combat.h"
@@ -1349,7 +1351,60 @@ void magictech_save_nodes_to_map(const char* map)
 // 0x44FC30
 void magictech_load_nodes_from_map(const char* map)
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    int cnt;
+    int index;
+    MagicTechLock v1;
+    MagicTechLock* v2;
+    int v3;
+
+    sprintf(path, "save\\current\\maps\\%s\\MT.dat", map);
+
+    if (!tig_file_exists(path, NULL)) {
+        return;
+    }
+
+    stream = tig_file_fopen(path, "rb");
+    if (stream == NULL) {
+        // FIXME: Message is misleading, informs about TimeEvent, not magictech.
+        tig_debug_printf("MagicTech: magictech_load_nodes_from_map: ERROR: Couldn't open TimeEvent data file for map!\n");
+        return;
+    }
+
+    if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
+        tig_debug_printf("MagicTech: magictech_load_nodes_from_map: ERROR: Reading Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    v1.objlist = NULL;
+    v1.summoned_obj = NULL;
+
+    for (index = 0; index < cnt; index++) {
+        sub_4559E0(&v1);
+        if (!sub_44F620(&v1, stream)) {
+            break;
+        }
+
+        v2 = &(magictech_locks[v1.field_0]);
+        if ((v2->field_13C & 0x1) != 0) {
+            magictech_id_new_lock(&v2);
+        }
+
+        v3 = v2->field_0;
+        *v2 = v1;
+        v2->field_0 = v3;
+        sub_459500(v2->field_0);
+    }
+
+    tig_file_fclose(stream);
+
+    if (index < cnt) {
+        tig_debug_printf("MagicTech: magictech_load_nodes_from_map: ERROR: Failed to load all nodes!\n");
+    }
+
+    tig_file_remove(path);
 }
 
 // 0x44FDC0
