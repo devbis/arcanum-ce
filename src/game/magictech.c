@@ -86,6 +86,7 @@ static void MTComponentEnvFlag_ProcFunc();
 static bool sub_4532F0(int64_t obj, int magictech);
 static bool sub_453370(int64_t obj, int magictech, int a3);
 static void sub_4534E0(MagicTechLock* a1);
+static void sub_453630();
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -982,6 +983,9 @@ static MagicTechE8* dword_5E759C;
 
 // 0x5E75AC
 static int dword_5E75AC;
+
+// 0x5E75B0
+static int64_t qword_5E75B0;
 
 // 0x5E75B8
 static int64_t qword_5E75B8;
@@ -2247,7 +2251,22 @@ void sub_4534E0(MagicTechLock* a1)
 // 0x453630
 void sub_453630()
 {
-    // TODO: Incomplete.
+    sub_4F2600(&stru_5E6D28, 0, dword_5E75F0->source_obj.obj);
+    stru_5E6D28.field_50 = &dword_5E3518;
+    stru_5E6D28.field_54 = &dword_5E75F0->objlist;
+    stru_5E6D28.field_58 = &dword_5E75F0->summoned_obj;
+    stru_5E6D28.field_30 = dword_5E75F0->target_obj.obj;
+    // TODO: Wrong.
+    // stru_5E6D28.field_38 = &dword_5E75F0->target_obj.next;
+    stru_5E6D28.field_40 = dword_5E75F0->field_E8.obj;
+    stru_5E6D28.field_48 = 0;
+    stru_5E6D28.field_8 = dword_5E75F0->parent_obj.obj;
+    qword_5E75B0 = dword_5E75F0->source_obj.obj;
+
+    if (dword_5E75F0->source_obj.obj == OBJ_HANDLE_NULL) {
+        // TODO: Wrong.
+        // stru_5E6D28.field_18 = dword_5E75F0->source_obj.next;
+    }
 }
 
 // 0x453710
