@@ -87,6 +87,7 @@ static bool sub_4532F0(int64_t obj, int magictech);
 static bool sub_453370(int64_t obj, int magictech, int a3);
 static void sub_4534E0(MagicTechLock* a1);
 static void sub_453630();
+static bool sub_453710();
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -976,7 +977,7 @@ static int dword_5E6D90;
 static AnimFxList stru_5E7568;
 
 // 0x5E7594
-static int magictech_spell_mes_file;
+static mes_file_handle_t magictech_spell_mes_file;
 
 // 0x5E759C
 static MagicTechE8* dword_5E759C;
@@ -2270,9 +2271,32 @@ void sub_453630()
 }
 
 // 0x453710
-void sub_453710()
+bool sub_453710()
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+
+    if (dword_5E75F0->source_obj.obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    if (dword_5E75F0->action >= 2) {
+        return true;
+    }
+
+    stru_5E6D28.field_5C = obj_field_int32_get(dword_5E75F0->source_obj.obj, OBJ_F_SPELL_FLAGS);
+    if ((stru_5E6D28.field_5C & OSF_ANTI_MAGIC_SHELL) == 0
+        || (dword_5E75F0->field_138 & 0x800) != 0) {
+        return true;
+    }
+
+    if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
+        mes_file_entry.num = 602;
+        mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
+        sub_460610(mes_file_entry.str);
+        sub_4604C0(dword_5E75F0->field_0);
+    }
+
+    return false;
 }
 
 // 0x4537B0
