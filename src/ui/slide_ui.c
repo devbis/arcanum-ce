@@ -2,11 +2,13 @@
 
 #include <stdio.h>
 
+#include "game/gamelib.h"
 #include "game/gfade.h"
 #include "game/gsound.h"
 #include "game/mes.h"
+#include "game/script.h"
 
-static void sub_569720(int a1);
+static void sub_569720(int type);
 static bool sub_569770(tig_window_handle_t window_handle, int num);
 static bool sub_569930(int num, char* slide_path, char* speech_path);
 static void sub_5699F0();
@@ -98,9 +100,20 @@ void sub_569600(int a1)
 }
 
 // 0x569720
-void sub_569720(int a1)
+void sub_569720(int type)
 {
-    // TODO: Incomplete.
+    Script scr;
+    ScriptInvocation invocation;
+
+    scr.num = dword_5A5700[type];
+
+    invocation.script = &scr;
+    invocation.field_20 = 1;
+    invocation.triggerer_obj = OBJ_HANDLE_NULL;
+    invocation.attachee_obj = OBJ_HANDLE_NULL;
+    invocation.extra_obj = OBJ_HANDLE_NULL;
+    invocation.line = 0;
+    sub_4449B0(&invocation);
 }
 
 // 0x569770
