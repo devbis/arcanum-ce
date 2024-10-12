@@ -89,6 +89,7 @@ static void sub_4534E0(MagicTechLock* a1);
 static void sub_453630();
 static bool sub_453710();
 static void sub_453EE0();
+static void sub_453F20(int64_t a1, int64_t a2);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -1008,7 +1009,7 @@ static int dword_5E75D8;
 static int dword_5E75DC;
 
 // 0x5E75E0
-static int dword_5E75E0;
+static int64_t qword_5E75E0;
 
 // 0x5E75E4
 static int dword_5E75E4;
@@ -1798,8 +1799,7 @@ void sub_451070(MagicTechLock* a1)
     dword_5E75D4 = 0;
     dword_5E75D8 = 0;
     dword_5E75DC = 0;
-    dword_5E75E0 = 0;
-    dword_5E75E4 = 0;
+    qword_5E75E0 = 0;
     dword_5E75E8 = a1->action;
     sub_4510F0();
 }
@@ -2338,9 +2338,17 @@ void sub_453EE0()
 }
 
 // 0x453F20
-void sub_453F20()
+void sub_453F20(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    if (qword_5E75E0 != a2) {
+        qword_5E75E0 = a2;
+        sub_4A9650(a1, a2, 1, 0);
+
+        if (dword_5E75F0->field_E8.obj != OBJ_HANDLE_NULL
+            && a1 != dword_5E75F0->field_E8.obj) {
+            sub_4A9650(dword_5E75F0->field_E8.obj, a2, 1, 0);
+        }
+    }
 }
 
 // 0x453FA0
@@ -2717,8 +2725,7 @@ void sub_457060(MagicTechLock* a1)
     dword_5E75CC = 0;
     dword_5E75D4 = 1;
     dword_5E75DC = 0;
-    dword_5E75E0 = 0;
-    dword_5E75E4 = 0;
+    qword_5E75E0 = 0;
     dword_5E75E8 = a1->action;
     sub_4510F0();
 }
