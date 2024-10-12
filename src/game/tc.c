@@ -294,7 +294,7 @@ void sub_4C9810(int index, const char* str)
 }
 
 // 0x4C9A10
-void sub_4C9A10()
+int sub_4C9A10(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
