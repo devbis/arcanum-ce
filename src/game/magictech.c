@@ -88,6 +88,7 @@ static bool sub_453370(int64_t obj, int magictech, int a3);
 static void sub_4534E0(MagicTechLock* a1);
 static void sub_453630();
 static bool sub_453710();
+static void sub_453EE0();
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -978,6 +979,9 @@ static AnimFxList stru_5E7568;
 
 // 0x5E7594
 static mes_file_handle_t magictech_spell_mes_file;
+
+// 0x5E7598
+static MagicTechInfo* dword_5E7598;
 
 // 0x5E759C
 static MagicTechE8* dword_5E759C;
@@ -2326,7 +2330,11 @@ void sub_453D40()
 // 0x453EE0
 void sub_453EE0()
 {
-    // TODO: Incomplete.
+    if ((dword_5E7598->flags & 2) != 0
+        && stru_5E6D28.field_20 != OBJ_HANDLE_NULL
+        && dword_5E75F0->action != 2) {
+        sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
+    }
 }
 
 // 0x453F20
