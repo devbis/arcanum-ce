@@ -90,6 +90,7 @@ static void sub_453630();
 static bool sub_453710();
 static void sub_453EE0();
 static void sub_453F20(int64_t a1, int64_t a2);
+static void sub_4554B0(MagicTechLock* a1, int64_t obj);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -2424,9 +2425,25 @@ void sub_455350()
 }
 
 // 0x4554B0
-void sub_4554B0()
+void sub_4554B0(MagicTechLock* a1, int64_t obj)
 {
-    // TODO: Incomplete.
+    MagicTechObjectNode* node;
+
+    if (obj != OBJ_HANDLE_NULL) {
+        node = a1->summoned_obj;
+        while (node != NULL) {
+            node = node->next;
+        }
+
+        a1->summoned_obj = mt_obj_node_create();
+        a1->summoned_obj->next = node;
+        a1->summoned_obj->obj = obj;
+        a1->summoned_obj->type = obj_field_int32_get(obj, OBJ_F_TYPE);
+        if (obj_type_is_critter(a1->summoned_obj->type)) {
+            a1->summoned_obj->field_34 = stat_level(obj, STAT_MAGICK_TECH_APTITUDE);
+        }
+        sub_443EB0(obj, &(a1->summoned_obj->field_8));
+    }
 }
 
 // 0x455550
