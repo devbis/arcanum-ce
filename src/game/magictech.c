@@ -85,6 +85,7 @@ static void MTComponentNoop_ProcFunc();
 static void MTComponentEnvFlag_ProcFunc();
 static bool sub_4532F0(int64_t obj, int magictech);
 static bool sub_453370(int64_t obj, int magictech, int a3);
+static void sub_4534E0(MagicTechLock* a1);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
@@ -2207,9 +2208,40 @@ void sub_453410()
 }
 
 // 0x4534E0
-void sub_4534E0()
+void sub_4534E0(MagicTechLock* a1)
 {
-    // TODO: Incomplete.
+    int index;
+    MagicTechInfo* info;
+    MagicTechLock* v2;
+
+    if ((a1->field_13C & 0x1) == 0) {
+        return;
+    }
+
+    info = &(magictech_spells[a1->spell]);
+    if (info->cancels_sf != 0) {
+        for (index = 0; index < 512; index++) {
+            v2 = &(magictech_locks[index]);
+            if ((v2->field_13C & 0x1) != 0
+                && v2->source_obj.obj == a1->source_obj.obj
+                && (magictech_spells[v2->spell].cancels_sf & info->cancels_sf) != 0
+                && a1->field_0 != v2->field_0) {
+                sub_457110(v2->field_0);
+            }
+        }
+    }
+
+    if (info->cancels_envsf != 0 && sub_458A80(info->cancels_envsf)) {
+        for (index = 0; index < 512; index++) {
+            v2 = &(magictech_locks[index]);
+            if ((v2->field_13C & 0x1) != 0
+                && v2->source_obj.obj == a1->source_obj.obj
+                && (magictech_spells[v2->spell].cancels_envsf & info->cancels_envsf) != 0
+                && a1->field_0 != v2->field_0) {
+                sub_457110(v2->field_0);
+            }
+        }
+    }
 }
 
 // 0x453630
