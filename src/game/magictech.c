@@ -1721,6 +1721,354 @@ void sub_4510F0()
     // TODO: Incomplete.
 }
 
+// 0x4514E0
+void MTComponentAGoal_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4516D0
+void MTComponentAGoalTerminate_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451700
+void MTComponentAIRedirect_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451740
+void MTComponentCast_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451850
+void MTComponentChargeNBranch_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4518D0
+void MTComponentDamage_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451AF0
+void MTComponentDestroy_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451B90
+void MTComponentDispel_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451BB0
+void sub_451BB0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451C40
+void sub_451C40()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451F20
+void MTComponentEffect_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x451FE0
+void MTComponentEyeCandy_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4521A0
+void MTComponentHeal_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4522A0
+void MTComponentIdentify_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452300
+void MTComponentInterrupt_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452380
+void MTComponentObjFlag_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4524C0
+void MTComponentMovement_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452650
+void sub_452650()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452800
+void MTComponentRecharge_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452830
+void MTComponentSummon_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452900
+void magictech_pick_proto_from_list()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4529D0
+void MTComponentTerminate_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4529F0
+void MTComponentTestNBranch_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452AD0
+void MTComponentTrait_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452B00
+void magictech_process()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452CD0
+void sub_452CD0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452D80
+void MTComponentTraitIdx_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452E40
+void MTComponentTrait64_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452ED0
+void MTComponentUse_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452F00
+void MTComponentNoop_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452F10
+void MTComponentEnvFlag_ProcFunc()
+{
+    // TODO: Incomplete.
+}
+
+// 0x452F20
+void sub_452F20()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4532F0
+void sub_4532F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453370
+void sub_453370()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453410
+void sub_453410()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4534E0
+void sub_4534E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453630
+void sub_453630()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453710
+void sub_453710()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4537B0
+void sub_4537B0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453B20
+void sub_453B20()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453CC0
+void sub_453CC0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453D40
+void sub_453D40()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453EE0
+void sub_453EE0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453F20
+void sub_453F20()
+{
+    // TODO: Incomplete.
+}
+
+// 0x453FA0
+void sub_453FA0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4545E0
+void sub_4545E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x454700
+void sub_454700()
+{
+    // TODO: Incomplete.
+}
+
+// 0x454790
+void sub_454790()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4547F0
+void sub_4547F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4548D0
+void sub_4548D0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x454920
+void sub_454920()
+{
+    // TODO: Incomplete.
+}
+
+// 0x454A10
+void magictech_component_obj_flag()
+{
+    // TODO: Incomplete.
+}
+
+// 0x455100
+void sub_455100()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4551C0
+void sub_4551C0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x455250
+void sub_455250()
+{
+    // TODO: Incomplete.
+}
+
+// 0x455350
+void sub_455350()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4554B0
+void sub_4554B0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x455550
+void sub_455550()
+{
+    // TODO: Incomplete.
+}
+
 // 0x455710
 void sub_455710()
 {
@@ -1878,7 +2226,6 @@ void sub_455A20(MagicTechSerializedData* a1, int64_t obj, int a3)
     }
     sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_70));
     a1->field_D0 = 0;
-    a1->field_D4 = 0;
     sub_4440E0(sub_450A50(obj), &(a1->field_40));
     sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_A0));
     a1->field_D8 = 0;

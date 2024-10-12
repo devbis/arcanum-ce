@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 #include "game/obj.h"
+#include "game/object.h"
 #include "game/mes.h"
 #include "game/mt_obj_node.h"
 #include "game/timeevent.h"
@@ -302,57 +303,12 @@ static_assert(sizeof(MagicTechLock) == 0x158, "wrong size");
 typedef struct MagicTechSerializedData {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
+    /* 0008 */ FollowerInfo field_8;
     /* 0038 */ int64_t loc;
-    /* 0040 */ int field_40;
-    /* 0044 */ int field_44;
-    /* 0048 */ int field_48;
-    /* 004C */ int field_4C;
-    /* 0050 */ int field_50;
-    /* 0054 */ int field_54;
-    /* 0058 */ int field_58;
-    /* 005C */ int field_5C;
-    /* 0060 */ int field_60;
-    /* 0064 */ int field_64;
-    /* 0068 */ int field_68;
-    /* 006C */ int field_6C;
-    /* 0070 */ int field_70;
-    /* 0074 */ int field_74;
-    /* 0078 */ int field_78;
-    /* 007C */ int field_7C;
-    /* 0080 */ int field_80;
-    /* 0084 */ int field_84;
-    /* 0088 */ int field_88;
-    /* 008C */ int field_8C;
-    /* 0090 */ int field_90;
-    /* 0094 */ int field_94;
-    /* 0098 */ int field_98;
-    /* 009C */ int field_9C;
-    /* 00A0 */ int field_A0;
-    /* 00A4 */ int field_A4;
-    /* 00A8 */ int field_A8;
-    /* 00AC */ int field_AC;
-    /* 00B0 */ int field_B0;
-    /* 00B4 */ int field_B4;
-    /* 00B8 */ int field_B8;
-    /* 00BC */ int field_BC;
-    /* 00C0 */ int field_C0;
-    /* 00C4 */ int field_C4;
-    /* 00C8 */ int field_C8;
-    /* 00CC */ int field_CC;
-    /* 00D0 */ int field_D0;
-    /* 00D4 */ int field_D4;
+    /* 0040 */ FollowerInfo field_40;
+    /* 0070 */ FollowerInfo field_70;
+    /* 00A0 */ FollowerInfo field_A0;
+    /* 00D0 */ int64_t field_D0;
     /* 00D8 */ int field_D8;
     /* 00DC */ int field_DC;
 } MagicTechSerializedData;
