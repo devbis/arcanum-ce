@@ -42,6 +42,7 @@ typedef struct Effect {
 static_assert(sizeof(Effect) == 0x58, "wrong size");
 
 static void effect_parse(int num, char* text);
+static int sub_4EA6C0(int64_t obj, int id, int value, Effect* effect, bool a5);
 
 // 0x5B9BA8
 static const char* off_5B9BA8[] = {
@@ -370,6 +371,24 @@ static void effect_parse(int num, char* text)
     }
 }
 
+// 0x4E9F70
+void sub_4E9F70(int64_t obj, int effect, int type)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4EA100
+void sub_4EA100(int64_t obj, int effect)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4EA2E0
+bool sub_4EA2E0(int64_t obj, int effect_id)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4EA4A0
 int sub_4EA4A0(object_id_t obj, int effect_id)
 {
@@ -394,6 +413,12 @@ int sub_4EA4A0(object_id_t obj, int effect_id)
 int effect_adjust_stat_level(object_id_t obj, int stat, int value)
 {
     return sub_4EA6C0(obj, stat, value, effect_stat_effects, false);
+}
+
+// 0x4EA6C0
+int sub_4EA6C0(int64_t obj, int id, int value, Effect* effect, bool a5)
+{
+    // TODO: Incomplete.
 }
 
 // 0x4EA930
