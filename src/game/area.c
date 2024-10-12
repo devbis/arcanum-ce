@@ -1,10 +1,15 @@
 #include "game/area.h"
 
+#include "game/location.h"
 #include "game/map.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/player.h"
+#include "game/sector.h"
+#include "game/townmap.h"
+#include "game/ui.h"
 
 static int sub_4CB220(int64_t obj);
 static int sub_4CB630(int64_t obj);
@@ -316,6 +321,7 @@ bool sub_4CAFD0(int64_t obj, int a2)
             dword_5FF5E8[a2] |= 1;
             sub_460790(3, 1);
             dword_5FF5EC = a2;
+            return true;
         }
     }
 
@@ -382,9 +388,9 @@ int sub_4CB220(int64_t obj)
     int64_t v3;
 
     v1 = 0;
-    v2 = sub_4B96F0(sub_4CAED0(0));
+    v2 = sub_4B96F0(sub_4CAED0(0), obj);
     for (index = 1; index < dword_5FF5A8; index++) {
-        v3 = sub_4B96F0(sub_4CAED0(index));
+        v3 = sub_4B96F0(sub_4CAED0(index), obj);
         if (v3 < v2) {
             v1 = index;
             v2 = v3;
@@ -445,7 +451,7 @@ int sub_4CB6A0(int64_t obj)
     }
 
     if (area == 0
-        && map == sub_40FF50(1)) {
+        && map == sub_40FF50(MAP_TYPE_START_MAP)) {
         area = sub_4CB630(obj_field_int64_get(obj, OBJ_F_LOCATION));
     }
 
