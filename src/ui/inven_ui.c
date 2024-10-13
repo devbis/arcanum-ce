@@ -18,16 +18,26 @@
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/spell.h"
+#include "game/target.h"
+#include "ui/hotkey_ui.h"
 #include "ui/intgame.h"
+#include "ui/item_ui.h"
 #include "ui/mainmenu_ui.h"
 #include "ui/scrollbar_ui.h"
+#include "ui/skill_ui.h"
+#include "ui/spell_ui.h"
+#include "ui/tb_ui.h"
 
 static bool sub_572340();
 static bool inven_ui_message_filter(TigMessage* msg);
 static void sub_574FD0(bool a1);
-static bool sub_575100(int* a1);
-static bool sub_575180(int* a1);
+static bool sub_575100(bool* a1);
+static bool sub_575180(bool* a1);
 static void sub_575200(int a1);
+static void sub_575360(int a1);
+static void sub_5754C0(int x, int y);
+static int sub_575CB0(int x, int y, int64_t* a3);
+static int64_t sub_575FA0(int x, int y, int64_t* a3);
 static void redraw_inven_fix_bad_inven_obj(int64_t a1);
 static bool redraw_inven_fix_bad_inven(int64_t a1, int64_t a2);
 static void sub_576520(bool a1);
@@ -36,10 +46,13 @@ static void sub_578330(int64_t a1, int64_t a2);
 static void sub_5786C0(int64_t obj);
 static void sub_578760(int64_t obj);
 static void sub_5788C0(int64_t a1, int64_t a2, int a3, int a4);
+static void sub_579770(int64_t obj, int64_t a2);
 static bool sub_579840(int64_t obj, bool a2);
 static void sub_579B60(int64_t obj);
 static void sub_579C40();
 static void sub_579D70();
+static void sub_579DA0();
+static void sub_579DD0();
 static void sub_579E00(int a1);
 static void sub_579E30(TigRect* rect);
 
@@ -254,6 +267,9 @@ static int dword_683464;
 
 // 0x68346C
 static bool dword_68346C;
+
+// 0x683470
+static int dword_683470;
 
 // 0x739F58
 static int dword_739F58;
@@ -1107,10 +1123,786 @@ void sub_573840()
     qword_6810E0 = 0;
 }
 
+// 0x573897
+static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg)
+{
+    if (msg->data.button.button_handle == dword_6814EC) {
+        dword_68150C = 0;
+        tig_button_hide(dword_682C6C);
+        tig_button_hide(dword_6814E8);
+        tig_button_hide(dword_681460);
+        tig_button_hide(dword_682C88);
+        sub_576520(0);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_682C80) {
+        dword_68150C = 1;
+        tig_button_show(dword_682C6C);
+        tig_button_show(dword_6814E8);
+        tig_button_show(dword_681460);
+        tig_button_show(dword_682C88);
+        sub_576520(0);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_683460) {
+        dword_681514 = 0;
+        sub_579DA0();
+        tig_button_hide(dword_6813A0);
+        tig_button_hide(dword_682C84);
+        sub_576520(0);
+        sub_576520(0);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_681500) {
+        dword_681514 = 1;
+        sub_579DD0();
+        tig_button_show(dword_6813A0);
+        tig_button_show(dword_682C84);
+        sub_576520(0);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_682C6C || msg->data.button.button_handle == dword_681460) {
+        sub_5506C0(0);
+        sub_556220(qword_6814F8);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_6814E8 || msg->data.button.button_handle == dword_682C88) {
+        sub_5506C0(0);
+        sub_5566B0(qword_6814F8);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_6813A0) {
+        sub_5506C0(0);
+        sub_556220(qword_682C78);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_682C84) {
+        sub_5506C0(0);
+        sub_5566B0(qword_682C78);
+        return true;
+    }
+
+    return false;
+}
+
+// 0x573A95
+static inline bool inven_ui_message_filter_handle_button_released(TigMessage* msg)
+{
+    if (msg->data.button.button_handle == dword_681444) {
+        sub_4670A0(qword_6814F8, dword_6814F0);
+        sub_466260(qword_6814F8, dword_68111C);
+        if (dword_6810FC) {
+            sub_4670A0(qword_6813A8, dword_6814F0);
+            sub_466260(qword_6813A8, dword_681518);
+        }
+        dword_6814F0 = 1 - dword_6814F0;
+        sub_576520(0);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_681464) {
+        sub_579770(qword_6813A8, qword_6814F8);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_681100) {
+        sub_574FD0(0);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_681398) {
+        sub_574FD0(1);
+        return true;
+    }
+
+    return false;
+}
+
+// 0x573BAF
+static inline bool inven_ui_mssage_filter_handle_button_hovered(TigMessage* msg)
+{
+    if (msg->data.button.button_handle == dword_682C6C || msg->data.button.button_handle == dword_681460) {
+        sub_556220(qword_6814F8);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_6814E8 || msg->data.button.button_handle == dword_682C88) {
+        sub_5566B0(qword_6814F8);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_6813A0) {
+        sub_556220(qword_682C78);
+        return true;
+    }
+
+    if (msg->data.button.button_handle == dword_682C84) {
+        sub_5566B0(qword_682C78);
+        return true;
+    }
+
+    return false;
+}
+
+// 0x573C80
+static inline void inven_ui_message_filter_handle_mouse_idle(TigMessage* msg)
+{
+    int64_t v1;
+    int64_t v2;
+
+    if (qword_6810E0 == OBJ_HANDLE_NULL) {
+        v1 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &v2);
+        if (v1 != qword_681458) {
+            qword_681458 = v1;
+            if (qword_681458 != OBJ_HANDLE_NULL) {
+                sub_57CCF0(qword_6814F8, qword_681458);
+                switch (dword_683464) {
+                case 1:
+                    sub_578330(qword_681458, v2);
+                    break;
+                case 5:
+                    sub_5786C0(qword_681458);
+                    break;
+                case 6:
+                    sub_578760(qword_681458);
+                    break;
+                default:
+                    sub_576520(0);
+                    break;
+                }
+            } else {
+                byte_68241C[0] = '\0';
+                dword_681440 = -1;
+                sub_576520(0);
+            }
+        }
+    }
+}
+
+// 0x573D61
+static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
+{
+    if (qword_6810E0 != OBJ_HANDLE_NULL) {
+        if (dword_681394) {
+            if (msg->data.mouse.x >= stru_6813B0.x
+                && msg->data.mouse.x < stru_6813B0.x + stru_6813B0.width
+                && msg->data.mouse.y >= stru_6813B0.y
+                && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
+                if (dword_6813A4 == 224) {
+                    if (qword_681450 == qword_6813A8) {
+                        switch (dword_683464) {
+                        case 1:
+                            if (dword_6810FC) {
+                                dword_6813A4 = 225;
+                            } else {
+                                dword_6813A4 = 348;
+                            }
+                            break;
+                        case 2:
+                        case 3:
+                            dword_6813A4 = 348;
+                            break;
+                        default:
+                            dword_6813A4 = 225;
+                            break;
+                        }
+                    } else {
+                        dword_6813A4 = 225;
+                    }
+
+                    sub_576520(0);
+                    return true;
+                }
+            } else {
+                if (dword_6813A4 != 224) {
+                    dword_6813A4 = 224;
+                    sub_576520(0);
+                    return true;
+                }
+            }
+        }
+
+        if (dword_681448) {
+            if (msg->data.mouse.x >= stru_681108.x
+                && msg->data.mouse.x < stru_681108.x + stru_681108.width
+                && msg->data.mouse.y >= stru_681108.y
+                && msg->data.mouse.y < stru_681108.y + stru_681108.height) {
+                if (dword_682C70 == 345) {
+                    // TODO: Wrong.
+                    dword_682C70 = sub_579840(qword_6810E0, 0) ? 346 : 347;
+                }
+            } else {
+                if (dword_682C70 != 345) {
+                    dword_682C70 = 345;
+                    sub_576520(0);
+                    return true;
+                }
+            }
+        }
+
+        if (dword_681118) {
+            if (msg->data.mouse.x >= stru_681380.x
+                && msg->data.mouse.x < stru_681380.x + stru_681380.width
+                && msg->data.mouse.y >= stru_681380.y
+                && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
+                if (dword_681504 == 342) {
+                    if ((qword_681450 == qword_6813A8
+                            && (dword_683464 == 1
+                                || dword_683464 == 2
+                                || dword_683464 == 3))
+                        || sub_462C30(qword_6814F8, qword_6810E0)) {
+                        dword_681504 = 347;
+                    } else {
+                        dword_681504 = 343;
+                    }
+                    sub_576520(0);
+                    return true;
+                }
+            } else {
+                if (dword_681504 != 342) {
+                    dword_681504 = 342;
+                    sub_576520(0);
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+// 0x574080
+static inline bool inven_ui_message_filter_handle_mouse_lbutton_down(TigMessage* msg)
+{
+    int64_t v1;
+    int64_t v2;
+    S4F2810 v3;
+
+    switch (sub_551A00()) {
+    case 8:
+    case 10:
+    case 11:
+    case 4:
+        dword_68346C = true;
+        if (qword_6810E0 == OBJ_HANDLE_NULL) {
+            qword_6810E0 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &qword_681450);
+            if (qword_6810E0 != OBJ_HANDLE_NULL) {
+                dword_683470 = sub_575CB0(msg->data.mouse.x, msg->data.mouse.y, &v2);
+                dword_6810E8 = item_inventory_location_get(qword_6810E0);
+                dword_683470 -= dword_6810E8;
+                sub_5754C0(msg->data.mouse.x, msg->data.mouse.y);
+            }
+            return true;
+        }
+        break;
+    case 2:
+        v1 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &qword_681450);
+        if (v1 != OBJ_HANDLE_NULL) {
+            sub_4F2810(&v3, v1);
+            sub_57A1F0(&v3);
+            sub_57A1A0();
+            return true;
+        }
+        break;
+    case 1:
+        v1 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &qword_681450);
+        if (v1 != OBJ_HANDLE_NULL) {
+            sub_4F2810(&v3, v1);
+            sub_57C110(&v3);
+            return true;
+        }
+        break;
+    case 16:
+        v1 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &qword_681450);
+        if (v1 != OBJ_HANDLE_NULL) {
+            sub_4F2810(&v3, v1);
+            sub_571CB0(&v3);
+            return true;
+        }
+        break;
+    }
+
+    return false;
+}
+
+// 0x5747E4
+static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(TigMessage* msg, bool* v45)
+{
+    int64_t v3;
+    int64_t v2;
+    int inventory_location;
+    int new_inventory_location;
+    int err;
+    int64_t old_item_obj;
+    int v5;
+
+    if (dword_681394
+        && msg->data.mouse.x >= stru_6813B0.x
+        && msg->data.mouse.x < stru_6813B0.x + stru_6813B0.width
+        && msg->data.mouse.y >= stru_6813B0.y
+        && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
+        if (qword_681450 == qword_6813A8) {
+            switch (dword_683464) {
+            case 1:
+                if (dword_6810FC) {
+                    sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 2);
+                } else {
+                    sub_575770();
+                }
+                break;
+            case 2:
+            case 3:
+                sub_575770();
+                break;
+            default:
+                sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 2);
+                break;
+            }
+        } else {
+            sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 2);
+        }
+
+        qword_6810E0 = OBJ_HANDLE_NULL;
+        dword_6813A4 = 224;
+
+        return false;
+    }
+
+    if (dword_681448
+        && msg->data.mouse.x >= stru_681108.x
+        && msg->data.mouse.x < stru_681108.x + stru_681108.width
+        && msg->data.mouse.y >= stru_681108.y
+        && msg->data.mouse.y < stru_681108.y + stru_681108.height) {
+        v3 = qword_6810E0;
+        sub_575770();
+        sub_579B60(v3);
+        qword_6810E0 = OBJ_HANDLE_NULL;
+        dword_682C70 = 345;
+
+        return false;
+    }
+
+    if (dword_681118
+        && msg->data.mouse.x >= stru_681380.x
+        && msg->data.mouse.x < stru_681380.x + stru_681380.width
+        && msg->data.mouse.y >= stru_681380.y
+        && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
+        if ((qword_681450 == qword_6813A8
+                && (dword_683464 == 1
+                    || dword_683464 == 2
+                    || dword_683464 == 3)
+            || sub_462C30(qword_6814F8, qword_6810E0))) {
+            sub_575770();
+            qword_6810E0 = OBJ_HANDLE_NULL;
+            dword_681504 = 342;
+
+            return false;
+        }
+
+        if ((obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) == 0
+            || dword_683464) {
+            v3 = qword_6810E0;
+            sub_575770();
+            if (!sub_4B6D70() || sub_4B6D80() == qword_6814F8) {
+                if (tig_kb_is_key_pressed(DIK_LSHIFT)
+                    || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                    sub_462CC0(qword_6814F8, v3, qword_6814F8);
+                } else {
+                    sub_462CC0(qword_6814F8, v3, OBJ_HANDLE_NULL);
+                }
+            }
+
+            if (!inven_ui_created) {
+                return true;
+            }
+
+            qword_6810E0 = OBJ_HANDLE_NULL;
+            dword_681504 = 342;
+        } else {
+            sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 4);
+            sub_576520(0);
+            sub_466260(qword_6814F8, dword_68111C);
+            if (qword_6813A8 != OBJ_HANDLE_NULL) {
+                sub_466260(qword_6813A8, dword_681518);
+            }
+        }
+
+        return false;
+    }
+
+    inventory_location = sub_575CB0(msg->data.mouse.x, msg->data.mouse.y, &v2);
+    if (inventory_location >= 2000 && inventory_location <= 2009) {
+        return false;
+    }
+
+    if (inventory_location >= 1000 && inventory_location <= 1008) {
+        if (dword_683464 == 1) {
+            if (qword_681450 != qword_6814F8 && v2 != qword_6814F8 && !dword_6810FC) {
+                sub_575770();
+                return false;
+            }
+        } else {
+            if (dword_683464 == 3 && qword_681450 != qword_6814F8 && v2 != qword_6814F8) {
+                sub_575770();
+                return false;
+            }
+        }
+
+        err = sub_464D20(qword_6810E0, inventory_location, v2);
+        if (err != 0) {
+            sub_4673F0(v2, err);
+            sub_575770();
+        }
+
+        old_item_obj = item_wield_get(v2, inventory_location);
+        if (old_item_obj == OBJ_HANDLE_NULL || old_item_obj == qword_6810E0) {
+            if (v2 == qword_6814F8) {
+                if (!sub_575180(v45)) {
+                    sub_575200(inventory_location);
+                }
+            } else {
+                if (!sub_575100(v45)) {
+                    sub_575360(inventory_location);
+                }
+            }
+
+            qword_6810E0 = OBJ_HANDLE_NULL;
+            return false;
+        }
+
+        if (v2 != qword_6814F8) {
+            sub_575770();
+            return false;
+        }
+
+        err = sub_466DA0(old_item_obj);
+        if (err != 0) {
+            if (v2 == qword_6814F8) {
+                sub_4673F0(v2, err);
+            }
+            sub_575770();
+            return false;
+        }
+
+        if ((dword_683464 == 1 || dword_683464 == 3) && qword_681450 != v2) {
+            sub_575770();
+            return false;
+        }
+
+        sub_45F920();
+        item_remove(qword_6810E0);
+        new_inventory_location = item_inventory_location_get(old_item_obj);
+        item_remove(old_item_obj);
+        err = sub_466510(old_item_obj, v2, &v5);
+        if (err == 0) {
+            item_insert(qword_6810E0, qword_681450, dword_6810E8);
+            sub_5788C0(qword_6810E0, v2, inventory_location, 1);
+            item_insert(old_item_obj, v2, v5);
+            qword_6810E0 = old_item_obj;
+            dword_6810E8 = v5;
+            qword_681450 = v2;
+            dword_683470 = 0;
+            sub_5754C0(-1, -1);
+        } else {
+            sub_4673F0(v2, err);
+            item_insert(old_item_obj, v2, new_inventory_location);
+            sub_575930();
+        }
+        sub_45F910();
+
+        return false;
+    }
+
+    if (inventory_location - dword_683470 < 0) {
+        if (!sub_57EDA0(1)) {
+            sub_575770();
+        }
+    } else if (v2 == qword_6814F8) {
+        if (!sub_575180(v45)) {
+            sub_575200(inventory_location - dword_683470);
+        }
+    } else {
+        if (sub_575100(v45)) {
+            sub_575360(inventory_location - dword_683470);
+        }
+    }
+
+    sub_57F260();
+
+    qword_6810E0 = OBJ_HANDLE_NULL;
+    return false;
+}
+
+// 0x574559
+static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* msg, bool* v45)
+{
+    int64_t v1;
+    int64_t v2;
+    int64_t v3;
+    int inventory_location;
+
+    dword_68346C = 0;
+    if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+        if (!sub_541680()) {
+            if (qword_6810E0 != OBJ_HANDLE_NULL) {
+                if (!dword_683464) {
+                    sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 4);
+                    sub_576520(0);
+                    sub_466260(qword_6814F8, dword_68111C);
+                    if (qword_6813A8) {
+                        sub_466260(qword_6813A8, dword_681518);
+                    }
+                    return false;
+                }
+
+                sub_575770();
+            }
+
+            *v45 = true;
+        }
+
+        return false;
+    }
+
+    if (qword_6810E0 == OBJ_HANDLE_NULL) {
+        v1 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &v2);
+        if (v1 == OBJ_HANDLE_NULL) {
+            return false;
+        }
+
+        switch (dword_683464) {
+        case 5:
+            sub_5786C0(v1);
+            if (dword_681440 > 0
+                && item_gold_get(qword_6814F8) >= dword_681440) {
+                sub_467440(v1, qword_682C78, qword_6814F8, dword_681440);
+            } else {
+                sub_413910(qword_682C78, qword_6814F8, byte_68241C);
+            }
+            break;
+        case 6:
+            sub_578760(v1);
+            if (dword_681440 > 0
+                && item_gold_get(qword_6814F8) >= dword_681440) {
+                sub_4C8E60(v1, qword_682C78, qword_6814F8, dword_681440);
+            } else {
+                sub_413910(qword_682C78, qword_6814F8, byte_68241C);
+            }
+            break;
+        default:
+            return false;
+        }
+
+        byte_68241C[0] = '\0';
+        dword_681440 = -1;
+        sub_576520(0);
+
+        return false;
+    }
+
+
+
+    sub_576520(0);
+    sub_466260(qword_6814F8, dword_68111C);
+    if (qword_6813A8) {
+        sub_466260(qword_6813A8, dword_681518);
+    }
+
+    if (!qword_6810E0) {
+        sub_553990();
+    }
+    if (!v45) {
+        return true;
+    }
+
+    return false;
+}
+
+// 0x5742A4
+static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* msg, bool* v45)
+{
+    int64_t v1;
+    int64_t v2;
+    int64_t v3;
+    int rc;
+    int v5;
+    int64_t v6;
+    int inventory_location;
+
+    v1 = sub_575FA0(msg->data.mouse.x, msg->data.mouse.y, &v2);
+    if (v1 == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (dword_683464 == 0) {
+        inventory_location = item_inventory_location_get(v1);
+        if (inventory_location < 1000 || inventory_location > 1008) {
+            inventory_location = item_location_get(v1);
+            if (inventory_location == -1
+                && sub_462C30(qword_6814F8, v1) == ITEM_CANNOT_OK) {
+                if (!sub_4B6D70()
+                    || sub_4B6D80() == qword_6814F8) {
+                    sub_462CC0(qword_6814F8, v1, qword_6814F8);
+                }
+
+                if (!inven_ui_created) {
+                    return false;
+                }
+            }
+        }
+    } else if (dword_683464 > 0 && dword_683464 <= 3) {
+        v3 = qword_6814F8;
+        if (v2 == qword_6814F8) {
+            v3 = qword_6813A8;
+            v6 = qword_6813A8;
+        } else {
+            v6 = qword_6814F8;
+        }
+
+        rc = sub_466510(v1, v3, &v5);
+        if (rc != ITEM_CANNOT_OK) {
+            sub_4673F0(v2, rc);
+            return true;
+        }
+
+        qword_6810E0 = v1;
+        qword_681450 = v2;
+        dword_683470 = sub_575CB0(msg->data.mouse.x, msg->data.mouse.y, &v1);
+        dword_6810E8 = item_inventory_location_get(qword_6810E0);
+        dword_683470 -= dword_6810E8;
+        sub_5754C0(msg->data.mouse.x, msg->data.mouse.y);
+        if (qword_6810E0 != OBJ_HANDLE_NULL) {
+            if (v6 == qword_6814F8) {
+                if (!sub_575180(v45)) {
+                    sub_575200(v5);
+                }
+            } else {
+                if (!sub_575100(v45)) {
+                    sub_575360(v5);
+                }
+            }
+            qword_6810E0 = OBJ_HANDLE_NULL;
+        }
+    }
+
+    sub_576520(0);
+    sub_466260(qword_6814F8, dword_68111C);
+    if (qword_6813A8 != OBJ_HANDLE_NULL) {
+        sub_466260(qword_6813A8, dword_681518);
+    }
+
+    if (qword_6810E0 == OBJ_HANDLE_NULL) {
+        sub_553990();
+    }
+
+    if (!v45) {
+        return true;
+    }
+
+    return false;
+}
+
+// NOTE: This function is huge and hard to work with. Some chunks were
+// externalized into separate inline functions above. This leads to some
+// duplication of the code and acts as an optimization fence for compiler.
+//
 // 0x573850
 bool inven_ui_message_filter(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    bool v45 = false;
+    int64_t v49;
+    int64_t v8;
+
+    if (qword_6810E0 != OBJ_HANDLE_NULL) {
+        sub_5811A0();
+    } else {
+        sub_5811B0();
+    }
+
+    switch (msg->type) {
+    case TIG_MESSAGE_BUTTON:
+        switch (msg->data.button.state) {
+        case TIG_BUTTON_STATE_PRESSED:
+            // 0x573897
+            if (inven_ui_message_filter_handle_button_pressed(msg)) {
+                return true;
+            }
+            break;
+        case TIG_BUTTON_STATE_RELEASED:
+            // 0x573A95
+            if (inven_ui_message_filter_handle_button_released(msg)) {
+                return true;
+            }
+            break;
+        case TIG_BUTTON_STATE_MOUSE_INSIDE:
+            // 0x573BAF
+            if (inven_ui_mssage_filter_handle_button_hovered(msg)) {
+                return true;
+            }
+            break;
+        }
+        break;
+    case TIG_MESSAGE_MOUSE:
+        if (msg->type == TIG_MESSAGE_MOUSE_IDLE) {
+            // 0x573C80
+            inven_ui_message_filter_handle_mouse_idle(msg);
+        } else if (msg->type == TIG_MESSAGE_MOUSE_MOVE) {
+            // 0x573D61
+            if (inven_ui_message_filter_handle_mouse_move(msg)) {
+                return true;
+            }
+            break;
+        } else if (msg->type == TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN
+            && !dword_68346C
+            && dword_683464 != 4
+            && dword_683464 != 5
+            && dword_683464 != 6) {
+            // 0x574080
+            if (inven_ui_message_filter_handle_mouse_lbutton_down(msg)) {
+                return true;
+            }
+            break;
+        } else if (msg->type == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
+            || (msg->type == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP && sub_54EB50())) {
+            // 0x574559
+            if (inven_ui_message_filter_handle_mouse_lbutton_up(msg, &v45)) {
+                return true;
+            }
+            break;
+        } else if (msg->type == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP
+            && qword_6810E0 == OBJ_HANDLE_NULL
+            && (dword_683464 == 0
+                || dword_683464 == 1
+                || dword_683464 == 2
+                || dword_683464 == 3)) {
+            // 0x5742A4
+            if (inven_ui_message_filter_handle_mouse_rbutton_up(msg, &v45)) {
+                return true;
+            }
+            break;
+        }
+    }
+
+    if (dword_683464 == 1
+        && qword_6810E0 == OBJ_HANDLE_NULL
+        && sub_551A00() != 13
+        && (critter_is_sleeping(qword_682C78) || !sub_45D790(qword_682C78))) {
+        v45 = true;
+    }
+
+    if (v45 || dword_739F58) {
+        inven_ui_destroy();
+        return true;
+    }
+
+    return false;
 }
 
 // 0x574FD0
@@ -1165,7 +1957,7 @@ bool sub_575080(int64_t a1, int64_t a2)
 }
 
 // 0x575100
-bool sub_575100(int* a1)
+bool sub_575100(bool* a1)
 {
     int64_t v1;
 
@@ -1177,14 +1969,14 @@ bool sub_575100(int* a1)
     sub_575770();
 
     if (sub_4C7010(qword_6814F8, qword_682C78, v1)) {
-        *a1 = 1;
+        *a1 = true;
     }
 
     return true;
 }
 
 // 0x575180
-bool sub_575180(int* a1)
+bool sub_575180(bool* a1)
 {
     int64_t v1;
 
@@ -1196,7 +1988,7 @@ bool sub_575180(int* a1)
     sub_575770();
 
     if (sub_4C6FD0(qword_6814F8, qword_682C78, v1)) {
-        *a1 = 1;
+        *a1 = true;
     }
 
     return true;
@@ -1229,13 +2021,13 @@ void sub_575200(int a1)
 }
 
 // 0x575360
-void sub_575360()
+void sub_575360(int a1)
 {
     // TODO: Incomplete.
 }
 
 // 0x5754C0
-void sub_5754C0()
+void sub_5754C0(int x, int y)
 {
     // TODO: Incomplete.
 }
@@ -1289,13 +2081,13 @@ void sub_575C50(int64_t obj)
 }
 
 // 0x575CB0
-void sub_575CB0()
+int sub_575CB0(int x, int y, int64_t* a3)
 {
     // TODO: Incomplete.
 }
 
 // 0x575FA0
-void sub_575FA0()
+int64_t sub_575FA0(int x, int y, int64_t* a3)
 {
     // TODO: Incomplete.
 }
