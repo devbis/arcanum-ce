@@ -2454,7 +2454,78 @@ void sub_579770(int64_t obj, int64_t a2)
 // 0x579840
 bool sub_579840(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    int v1;
+    bool v2 = false;
+    int training;
+    size_t pos;
+
+    if (qword_681450 == qword_6814F8) {
+        if (!a2) {
+            sub_414020(qword_682C78, qword_6814F8, 2, byte_68241C);
+        }
+        return false;
+    }
+
+    if (basic_skill_get_base(qword_682C78, BASIC_SKILL_GAMBLING) == 0) {
+        if (!a2) {
+            sub_414020(qword_682C78, qword_6814F8, 9, byte_68241C);
+        }
+        return false;
+    }
+
+    v1 = sub_461F80(obj, qword_682C78, qword_6814F8, 0);
+    if (v1 > sub_4C6520(qword_6814F8)) {
+        if (!a2) {
+            sub_414020(qword_682C78, qword_6814F8, 3, byte_68241C);
+        }
+        return false;
+    }
+
+    if (v1 > item_gold_get(qword_6814F8)) {
+        if (!a2) {
+            sub_414020(qword_682C78, qword_6814F8, 4, byte_682804);
+            sprintf(byte_68241C, byte_682804, v1);
+        }
+        return false;
+    }
+
+    training = basic_skill_get_training(qword_682C78, BASIC_SKILL_GAMBLING);
+    if (item_inventory_location_get(obj) >= 1000 && item_inventory_location_get(obj) <= 1008) {
+        if (training < TRAINING_EXPERT) {
+            if (!a2) {
+                sub_414020(qword_682C78, qword_6814F8, 5, byte_68241C);
+            }
+            return false;
+        }
+
+        v2 = true;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) != 0) {
+        if (training < TRAINING_MASTER) {
+            if (!a2) {
+                sub_414020(qword_682C78, qword_6814F8, 6, byte_68241C);
+            }
+            return false;
+        }
+
+        v2 = true;
+    }
+
+    if (!a2) {
+        if (v2) {
+            sub_414020(qword_682C78, qword_6814F8, 7, byte_68241C);
+            strcat(byte_68241C, " ");
+            pos = strlen(byte_68241C);
+        } else {
+            pos = 0;
+        }
+
+        sub_414020(qword_682C78, qword_6814F8, 8, byte_682804);
+        sprintf(&(byte_68241C[pos]), byte_682804, v1);
+    }
+
+    return true;
 }
 
 // 0x579B60
