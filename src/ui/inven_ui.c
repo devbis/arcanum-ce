@@ -2023,7 +2023,42 @@ void sub_575200(int a1)
 // 0x575360
 void sub_575360(int a1)
 {
-    // TODO: Incomplete.
+    int cost;
+
+    if (dword_683464 != 1) {
+        sub_5788C0(qword_6810E0, qword_6813A8, a1, 1);
+        qword_681458 = OBJ_HANDLE_NULL;
+        return;
+    }
+
+    if (qword_681450 != qword_6814F8) {
+        if (!dword_6810FC) {
+            sub_575770();
+        } else {
+            sub_5788C0(qword_6810E0, qword_6813A8, a1, 1);
+        }
+        qword_681458 = OBJ_HANDLE_NULL;
+        return;
+    }
+
+    if (dword_681440 == -1 || qword_6810E0 != qword_681458) {
+        sub_578330(qword_6810E0, qword_6814F8);
+    }
+
+    if (dword_681440 != 0 || dword_6810FC) {
+        cost = item_gold_get(qword_682C78);
+        if (cost < dword_681440) {
+            dword_681440 = cost;
+        }
+
+        sub_5788C0(qword_6810E0, qword_6813A8, a1, 1);
+        qword_681458 = OBJ_HANDLE_NULL;
+        dword_681440 = -1;
+    } else {
+        sub_575770();
+        qword_681458 = OBJ_HANDLE_NULL;
+        dword_681440 = -1;
+    }
 }
 
 // 0x5754C0
