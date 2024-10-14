@@ -1,10 +1,12 @@
 #include "game/party.h"
 
+#include "game/multiplayer.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
 
 #define PARTY_TABLE_SIZE 8
 
+static bool sub_4BA290();
 static void sub_4BA320(int64_t a1, int64_t a2, int a3);
 
 // 0x5FC32C
@@ -193,7 +195,7 @@ void sub_4BA260()
 }
 
 // 0x4BA290
-void sub_4BA290()
+bool sub_4BA290()
 {
     struct {
         int type;
