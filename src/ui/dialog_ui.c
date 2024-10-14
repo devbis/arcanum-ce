@@ -12,9 +12,10 @@
 #include "game/mp_utils.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/obj_private.h"
 #include "game/player.h"
-#include "game/script.h"
 #include "game/script_name.h"
+#include "game/script.h"
 #include "game/stat.h"
 #include "game/tb.h"
 #include "ui/charedit_ui.h"
@@ -65,6 +66,12 @@ static tig_sound_handle_t dword_67B960;
 
 // 0x67B964
 static bool dword_67B964;
+
+// 0x679DC0
+static struct {
+    Packet44 pkt;
+    char buffer[6000];
+} stru_679DC0;
 
 // 0x567330
 bool dialog_ui_init(GameInitInfo* init_info)
@@ -343,21 +350,100 @@ void sub_567A60(long long obj)
 }
 
 // 0x567AB0
-void sub_567AB0()
+void sub_567AB0(DialogUiEntry* entry, DialogSerializedData* serialized_data, char* buffer)
 {
-    // TODO: Incomplete.
+    int index;
+    int pos;
+
+    if (entry->field_8.field_8 != OBJ_HANDLE_NULL) {
+        serialized_data->field_8 = sub_407EF0(entry->field_8.field_8);
+    } else {
+        serialized_data->field_8.type = 0;
+    }
+
+    if (entry->field_8.field_38 != OBJ_HANDLE_NULL) {
+        serialized_data->field_20 = sub_407EF0(entry->field_8.field_38);
+    } else {
+        serialized_data->field_20.type = 0;
+    }
+
+    serialized_data->field_3C = entry->field_8.field_6C;
+    serialized_data->field_40 = 0;
+    serialized_data->field_44 = (int)strlen(entry->field_8.field_70) + 1;
+    strncpy(buffer, entry->field_8.field_70, serialized_data->field_44);
+
+    pos = serialized_data->field_44;
+    for (index = 0; index < 5; index++) {
+        serialized_data->field_50[index] = pos;
+        serialized_data->field_64[index] = (int)strlen(entry->field_8.field_460[index]) + 1;
+        strncpy(&(buffer[pos]), entry->field_8.field_460[index], serialized_data->field_64[index]);
+        serialized_data->field_80[index] = entry->field_8.field_17F0[index];
+        serialized_data->field_94[index] = entry->field_8.field_1804[index];
+        serialized_data->field_A8[index] = entry->field_8.field_1818[index];
+    }
+
+    serialized_data->field_BC = entry->field_8.field_1840;
+    serialized_data->field_C0 = entry->field_8.field_1844;
 }
 
 // 0x567C30
-void sub_567C30()
+void sub_567C30(DialogSerializedData* serialized_data, DialogUiEntry* entry, const char* buffer)
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (serialized_data->field_8.type != 0) {
+        entry->field_8.field_8 = objp_perm_lookup(serialized_data->field_8);
+    } else {
+        entry->field_8.field_8 = OBJ_HANDLE_NULL;
+    }
+
+    if (serialized_data->field_20.type != 0) {
+        entry->field_8.field_38 = objp_perm_lookup(serialized_data->field_20);
+    } else {
+        entry->field_8.field_38 = OBJ_HANDLE_NULL;
+    }
+
+    entry->field_8.field_6C = serialized_data->field_3C;
+    entry->field_8.field_68 = serialized_data->field_38;
+    strncpy(entry->field_8.field_70, &(buffer[serialized_data->field_40]), serialized_data->field_44);
+    entry->field_8.field_45C = serialized_data->field_4C;
+    entry->field_8.field_17E8 = serialized_data->field_78;
+    entry->field_8.field_17EC = serialized_data->field_7C;
+
+    for (index = 0; index < 5; index++) {
+        strncpy(entry->field_8.field_460[index], &(buffer[serialized_data->field_50[index]]), serialized_data->field_64[index]);
+        entry->field_8.field_17F0[index] = serialized_data->field_80[index];
+        entry->field_8.field_1804[index] = serialized_data->field_94[index];
+        entry->field_8.field_1818[index] = serialized_data->field_A8[index];
+    }
+
+    entry->field_8.field_1840 = serialized_data->field_BC;
+    entry->field_8.field_1844 = serialized_data->field_C0;
 }
 
 // 0x567D60
 void sub_567D60(DialogUiEntry* entry)
 {
-    // TODO: Incomplete.
+    int size;
+    int index;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) != 0) {
+        stru_679DC0.pkt.type = 44;
+        stru_679DC0.pkt.subtype = 3;
+        stru_679DC0.pkt.d.e.field_8 = entry->field_0;
+        stru_679DC0.pkt.d.e.field_C = entry->field_1850;
+        stru_679DC0.pkt.d.e.field_10 = entry->field_1854;
+        stru_679DC0.pkt.d.e.field_14 = entry->field_1858;
+        sub_567AB0(entry, &(stru_679DC0.pkt.d.e.serialized_data), stru_679DC0.buffer);
+
+        size = sizeof(stru_679DC0) + stru_679DC0.pkt.d.e.serialized_data.field_44;
+        for (index = 0; index < 5; index++) {
+            size += stru_679DC0.pkt.d.e.serialized_data.field_64[index];
+        }
+
+        tig_net_send_app_all(&stru_679DC0, size);
+    }
 }
 
 // 0x567E00
@@ -476,9 +562,9 @@ bool sub_5680A0(TigMessage* msg)
 
         pkt.type = 44;
         pkt.subtype = 2;
-        pkt.d.b.field_8 = sub_407EF0(player_get_pc_obj());
-        pkt.field_20 = entry->field_0;
-        pkt.field_24 = v1;
+        pkt.d.f.field_8 = sub_407EF0(player_get_pc_obj());
+        pkt.d.f.field_20 = entry->field_0;
+        pkt.d.f.field_24 = v1;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -503,7 +589,7 @@ void sub_5681C0(long long a1, long long a2)
 }
 
 // 0x568220
-void sub_568220(int a1, int a2, int a3, int a4, int a5, int a6)
+void sub_568220(DialogSerializedData* serialized_data, int a2, int a3, int a4, int a5, char* buffer)
 {
     DialogUiEntry* entry;
 
@@ -511,7 +597,7 @@ void sub_568220(int a1, int a2, int a3, int a4, int a5, int a6)
     entry->field_1850 = a3;
     entry->field_1854 = a4;
     entry->field_1858 = a5;
-    sub_567C30(a1, entry, a6);
+    sub_567C30(serialized_data, entry, buffer);
     entry->field_0 = a2;
     sub_568280(entry);
 }
@@ -593,7 +679,7 @@ void sub_568480(DialogUiEntry* entry, int a2)
         a2 = entry->field_1858 + 1;
     }
 
-    sub_441980(entry->field_8.field_8, entry->field_8.field_38, OBJ_HANDLE_NULL, 9, a2);
+    sub_441980(entry->field_8.field_8, entry->field_8.field_38, OBJ_HANDLE_NULL, SAP_DIALOG, a2);
 }
 
 // 0x5684C0
