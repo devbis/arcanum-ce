@@ -5,6 +5,7 @@
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/object.h"
+#include "game/script.h"
 #include "game/timeevent.h"
 #include "ui/anim_ui.h"
 #include "ui/intgame.h"
@@ -335,7 +336,7 @@ void sub_57BAC0()
 
     node = objects.head;
     while (node != NULL) {
-        sub_441980(qword_6834A8, node->obj, OBJ_HANDLE_NULL, 29, 0);
+        sub_441980(qword_6834A8, node->obj, OBJ_HANDLE_NULL, SAP_LEADER_SLEEPING, 0);
         node = node->next;
     }
 
