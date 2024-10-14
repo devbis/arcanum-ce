@@ -11,6 +11,7 @@ typedef struct TownMapIndexEntry {
 } TownMapIndexEntry;
 
 static void sub_4BED00();
+static void sub_4BED30(int map, int a2);
 static void sub_4BED90(int map, int index);
 static bool sub_4BEDD0(int map, int index);
 static bool sub_4BEE60(int map);
@@ -86,7 +87,7 @@ void townmap_reset()
                 } while (isspace(*back));
 
                 pch += 3;
-                while (isspace(pch)) {
+                while (isspace(*pch)) {
                     pch++;
                 }
 
@@ -171,7 +172,7 @@ const char* townmap_name(int map)
 // 0x4BE4E0
 bool townmap_info(int map, TownMapInfo* tmi)
 {
-    char* name;
+    const char* name;
     char path[TIG_MAX_PATH];
     TigFile* stream;
     int version;
@@ -289,7 +290,7 @@ void sub_4BED00()
 }
 
 // 0x4BED30
-void sub_4BED30()
+void sub_4BED30(int map, int a2)
 {
     // TODO: Incomplete.
 }
