@@ -5,7 +5,7 @@
 
 typedef struct ObjectNode {
     int64_t obj;
-    ObjectNode* next;
+    struct ObjectNode* next;
     int field_C;
 } ObjectNode;
 
