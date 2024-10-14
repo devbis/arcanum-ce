@@ -1,8 +1,7 @@
-#include "game/lib/wall.h"
+#include "game/wall.h"
 
-#include "tig/color.h"
-#include "tig/rect.h"
-#include "tig/window.h"
+static void sub_4E1C00(int a1);
+static void sub_4E1EB0(int a1);
 
 // 0x603420
 static TigRect stru_603420;
@@ -26,13 +25,14 @@ static ViewOptions wall_view_options;
 static int dword_603448;
 
 // 0x4DF390
-bool wall_init(GameContext* ctx)
+bool wall_init(GameInitInfo* init_info)
 {
-    wall_iso_window_handle = ctx->iso_window_handle;
-    dword_603438 = ctx->field_8;
-
     TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data) != TIG_OK) {
+
+    wall_iso_window_handle = init_info->iso_window_handle;
+    dword_603438 = init_info->field_8;
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
         return false;
     }
 
@@ -42,7 +42,7 @@ bool wall_init(GameContext* ctx)
     stru_603420.height = window_data.rect.height;
 
     wall_view_options.type = VIEW_TYPE_ISOMETRIC;
-    wall_is_editor = ctx->editor;
+    wall_is_editor = init_info->editor;
     dword_603448 = 1;
     dword_603434 = tig_color_make(255, 0, 100);
 
@@ -57,16 +57,17 @@ void wall_exit()
 }
 
 // 0x4DF480
-void wall_resize(ResizeContext* ctx)
+void wall_resize(ResizeInfo* resize_info)
 {
-    wall_iso_window_handle = ctx->iso_window_handle;
-    stru_603420 = ctx->field_14;
+    wall_iso_window_handle = resize_info->iso_window_handle;
+    stru_603420 = resize_info->field_14;
 }
 
 // 0x4DF4C0
 bool wall_update_view(ViewOptions* view_options)
 {
     wall_view_options = *view_options;
+
     return true;
 }
 
@@ -79,4 +80,59 @@ void sub_4DF500(int a1)
             sub_4E1EB0(a1);
         }
     }
+}
+
+
+// 0x4DF740
+void sub_4DF740()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E0240
+void sub_4E0240()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E1490
+void sub_4E1490()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E18F0
+void sub_4E18F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E1C00
+void sub_4E1C00(int a1)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E1EB0
+void sub_4E1EB0(int a1)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E20A0
+void sub_4E20A0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E25B0
+void sub_4E25B0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E2C50
+void sub_4E2C50()
+{
+    // TODO: Incomplete.
 }
