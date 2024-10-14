@@ -26,6 +26,7 @@ void sub_57EF90(int index);
 void sub_57EFA0(int a1, int a2, int64_t obj);
 void sub_57E8B0();
 bool sub_57E8D0(int a1);
+bool sub_57EDA0(int a1);
 void sub_57EDF0(int64_t obj, int64_t a2, int a3);
 bool sub_57EED0(int64_t obj, int a2);
 void sub_57F1D0(int index);
