@@ -2,6 +2,7 @@
 #define ARCANUM_UI_SKILL_UI_H_
 
 #include "game/context.h"
+#include "game/target.h"
 
 bool skill_ui_init(GameInitInfo* init_info);
 void skill_ui_reset();
@@ -12,6 +13,7 @@ int sub_579F90();
 void sub_579FA0(int64_t obj, int index);
 void skill_ui_preprocess(int64_t obj, int type);
 void sub_57A1A0();
+void sub_57A1F0(S4F2810* a1);
 int sub_57A6A0(int index);
 int sub_57A6C0(int a1, int64_t* obj_ptr);
 const char* sub_57A700(int index);

@@ -173,7 +173,7 @@ void sub_57A1A0()
 }
 
 // 0x57A1F0
-void sub_57A1F0()
+void sub_57A1F0(S4F2810* a1)
 {
     // TODO: Incomplete.
 }
