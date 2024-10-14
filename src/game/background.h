@@ -12,6 +12,7 @@
 #define BACKGROUND_AGORAPHOBIC 66
 #define BACKGROUND_HYDROPHOBIC 67
 #define BACKGROUND_AFRAID_OF_THE_DARK 68
+#define BACKGROUND_MAGICK_ALLERGY 69
 
 bool background_init(GameInitInfo* init_info);
 void background_exit();
