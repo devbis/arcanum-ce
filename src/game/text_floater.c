@@ -1,11 +1,6 @@
-#include "game/lib/text_floater.h"
+#include "game/text_floater.h"
 
-#include "game/lib/settings.h"
-#include "tig/art.h"
-#include "tig/color.h"
-#include "tig/font.h"
-#include "tig/video.h"
-#include "tig/window.h"
+#include "game/gamelib.h"
 
 #define TEXT_FLOATERS_KEY "text floaters"
 #define FLOAT_SPEED_KEY "float speed"
@@ -20,8 +15,8 @@ typedef struct TextFloater6028F0 {
     int field_10;
     int field_14;
     int field_18;
-    TextFloater6028F0* next;
-};
+    struct TextFloater6028F0* next;
+} TextFloater6028F0;
 
 // See 0x4D5950.
 static_assert(sizeof(TextFloater6028F0) == 0x20, "wrong size");
@@ -30,11 +25,16 @@ typedef struct TextFloater60289C {
     int field_0;
     int field_4;
     int field_8;
-    TextFloater60289C* next;
-};
+    struct TextFloater60289C* next;
+} TextFloater60289C;
 
 // See 0x4D57E0.
 static_assert(sizeof(TextFloater60289C) == 0x10, "wrong size");
+
+static void sub_4D5780();
+static void text_floaters_set_internal(int value);
+static void text_floaters_changed();
+static void float_speed_changed();
 
 // 0x5B8E6C
 static uint8_t byte_5B8E6C[FIVE][3] = {
@@ -85,17 +85,21 @@ static TextFloater6028F0* off_6028F0;
 static TigRect stru_6028F8;
 
 // 0x602908
-static TigFont* dword_602908[FIVE];
+static tig_font_handle_t dword_602908[FIVE];
 
 // 0x4D4E20
-bool text_floater_init(GameContext* ctx)
+bool text_floater_init(GameInitInfo* init_info)
 {
     TigWindowData window_data;
-    if (tig_window_data(ctx->iso_window_handle, &window_data) != TIG_OK) {
+    TigFont font;
+    TigArtFrameData art_frame_data;
+    int index;
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
         return false;
     }
 
-    dword_6028E8 = ctx->iso_window_handle;
+    dword_6028E8 = init_info->iso_window_handle;
 
     stru_6028B0.x = 0;
     stru_6028B0.y = 0;
@@ -103,20 +107,18 @@ bool text_floater_init(GameContext* ctx)
     stru_6028B0.height = window_data.rect.height;
 
     text_floater_view_options.type = VIEW_TYPE_ISOMETRIC;
-    dword_6028C4 = ctx->field_8;
+    dword_6028C4 = init_info->field_8;
 
     dword_6028C8 = tig_color_make(0, 0, 255);
     dword_6028C0 = tig_color_make(0, 0, 0);
 
-    TigFont font;
-    font.flags = TIG_FONT_0x80 | TIG_FONT_SHADOW;
+    font.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
-    TigArtFrameData art_frame_data;
     tig_art_frame_data(font.art_id, &art_frame_data);
     dword_602898 = art_frame_data.height + 2;
 
-    for (int index = 0; index < FIVE; index++) {
+    for (index = 0; index < FIVE; index++) {
         font.color = tig_color_make(byte_5B8E6C[index][0], byte_5B8E6C[index][1], byte_5B8E6C[index][2]);
         tig_font_create(&font, &(dword_602908[index]));
     }
@@ -199,10 +201,54 @@ int text_floaters_get()
     return text_floaters;
 }
 
+// 0x4D5190
+void tf_ping()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5310
+void sub_4D5310()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5450
+void sub_4D5450(int64_t obj, int type, const char* str)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5570
+void sub_4D5570()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5620
+void sub_4D5620()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D56C0
+void sub_4D56C0(int64_t obj)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5780
+void sub_4D5780()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4D57E0
 TextFloater60289C* sub_4D57E0()
 {
-    TextFloater60289C* node = off_60289C;
+    TextFloater60289C* node;
+
+    node = off_60289C;
     if (node != NULL) {
         off_60289C = node->next;
     } else {
@@ -217,6 +263,12 @@ TextFloater60289C* sub_4D57E0()
     return node;
 }
 
+// 0x4D5820
+void sub_4D5820()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4D5850
 void sub_4D5850(TextFloater60289C* node)
 {
@@ -224,10 +276,25 @@ void sub_4D5850(TextFloater60289C* node)
     off_60289C = node;
 }
 
+// 0x4D5870
+void sub_4D5870()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D58C0
+void sub_4D58C0()
+{
+    // TODO: Incomplete.
+}
+
 // 0x4D5950
 TextFloater6028F0* sub_4D5950()
 {
-    TextFloater6028F0* node = off_6028F0;
+    TextFloater6028F0* node;
+    TigVideoBufferCreateInfo vb_create_info;
+
+    node = off_6028F0;
     if (node != NULL) {
         off_6028F0 = off_6028F0->next;
         node->next = NULL;
@@ -235,7 +302,6 @@ TextFloater6028F0* sub_4D5950()
         node = (TextFloater6028F0*)malloc(sizeof(*node));
         node->next = NULL;
 
-        TigVideoBufferCreateInfo vb_create_info;
         vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
         vb_create_info.width = 200;
         vb_create_info.height = dword_602898;
@@ -252,6 +318,30 @@ void sub_4D59D0(TextFloater6028F0* node)
 {
     node->next = off_6028F0;
     off_6028F0 = node;
+}
+
+// 0x4D59F0
+void sub_4D59F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5A30
+void sub_4D5A30()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5A60
+void sub_4D5A60()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D5AA0
+void sub_4D5AA0()
+{
+    // TODO: Incomplete.
 }
 
 // 0x4D5B10
