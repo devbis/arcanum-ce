@@ -2,6 +2,10 @@
 #define ARCANUM_UI_MULTIPLAYER_HUB_UI_H_
 
 #include "game/context.h"
+#include "ui/types.h"
+
+extern MainMenuButtonInfo stru_5CC4C0[2];
+extern MainMenuButtonInfo stru_5CC520[2];
 
 void multiplayer_hub_ui_init();
 void multiplayer_hub_ui_exit();
@@ -31,6 +35,10 @@ void sub_583A90();
 void sub_583B10();
 void sub_583B20(int x, int y);
 void sub_583C80(int x, int y);
+void sub_583D90();
+void sub_584150();
+bool sub_5845E0(int btn);
+bool sub_5847D0(int btn);
 void sub_584AE0();
 void sub_584C00();
 void sub_584CB0(TigRect* rect);

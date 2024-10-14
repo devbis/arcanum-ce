@@ -116,6 +116,18 @@ static TigRect stru_5CC4A0 = { 327, 338, 165, 15 };
 // 0x5CC4B0
 static TigRect stru_5CC4B0 = { 327, 310, 164, 14 };
 
+// 0x5CC4C0
+MainMenuButtonInfo stru_5CC4C0[2] = {
+    { 343, 376, 33, TIG_BUTTON_HANDLE_INVALID, 21, 0, 0, 0, 0, 0, 0, -1 },
+    { 446, 376, 32, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, 0, 0, 0, 0, -1 },
+};
+
+// 0x5CC520
+MainMenuButtonInfo stru_5CC520[2] = {
+    { 343, 376, 33, TIG_BUTTON_HANDLE_INVALID, 21, 0, 0, 0, 0, 0, 0, -1 },
+    { 446, 376, 32, TIG_BUTTON_HANDLE_INVALID, -2, 0, 0, 0, 0, 0, 0, -1 },
+};
+
 // 0x5CC5F0
 static mes_file_handle_t dword_5CC5F0 = MES_FILE_HANDLE_INVALID;
 
@@ -1028,13 +1040,13 @@ void sub_584150()
 }
 
 // 0x5845E0
-void sub_5845E0()
+bool sub_5845E0(int btn)
 {
     // TODO: Incomplete.
 }
 
 // 0x5847D0
-void sub_5847D0()
+bool sub_5847D0(int btn)
 {
     // TODO: Incomplete.
 }
@@ -1403,7 +1415,7 @@ const char* sub_585630(int num)
     if (num != dword_5CC6AC || num == 2307) {
         switch (num) {
         case 2300:
-            tig_net_local_server_get_name_(byte_6867F8, 256);
+            tig_net_local_server_get_name(byte_6867F8, 256);
             return byte_6867F8;
         case 2301:
             if (stru_686740.count != 0 && stru_686740.paths != NULL) {
