@@ -2,6 +2,7 @@
 #define ARCANUM_UI_SPELL_UI_H_
 
 #include "game/context.h"
+#include "game/target.h"
 
 bool spell_ui_init(GameInitInfo* init_info);
 void spell_ui_reset();
@@ -15,7 +16,7 @@ void sub_57C040(int64_t obj, int index);
 void sub_57C080(int64_t obj, int spl);
 void sub_57C0B0();
 void sub_57C0E0();
-void sub_57C110(void* a1);
+void sub_57C110(S4F2810* a1);
 bool sub_57C290(int magictech);
 void sub_57C320(int magictech);
 void sub_57C370(int index);

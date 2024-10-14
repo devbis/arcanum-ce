@@ -1,5 +1,6 @@
 #include "ui/spell_ui.h"
 
+#include "game/critter.h"
 #include "game/magictech.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
@@ -179,9 +180,40 @@ void sub_57C0E0()
 }
 
 // 0x57C110
-void sub_57C110(void* a1)
+void sub_57C110(S4F2810* a1)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    John v1;
+    MagicTechSerializedData v2;
+
+    if (!sub_45D8D0(qword_683500) && !sub_45D800(qword_683500)) {
+        if (obj_type_is_critter(obj_field_int32_get(qword_6834F8, OBJ_F_TYPE))
+            && !magictech_can_charge_spell_fatigue(qword_683500, dword_5CB3A0)) {
+            // Not enough Energy.
+            mes_file_entry.num = 600;
+            sub_44FDC0(&mes_file_entry);
+            sub_460610(mes_file_entry.str);
+        } else {
+            sub_455A20(&v2, qword_6834F8, dword_5CB3A0);
+            if (a1->field_8) {
+                v2.field_D0 = a1->field_0;
+            } else {
+                sub_4440E0(a1->field_0, &(v2.field_70));
+            }
+
+            if (sub_456BC0(&v2)) {
+                sub_455AC0(&v2);
+            } else {
+                // You cannot see the target.
+                mes_file_entry.num = 604;
+                sub_44FDC0(&mes_file_entry);
+
+                v1.type = 6;
+                v1.str = mes_file_entry.str;
+                sub_460630(&v1);
+            }
+        }
+    }
 }
 
 // 0x57C290
