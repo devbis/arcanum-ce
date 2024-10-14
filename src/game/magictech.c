@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "game/ai.h"
 #include "game/anim_private.h"
 #include "game/animfx.h"
 #include "game/combat.h"
@@ -1410,7 +1411,7 @@ void magictech_save_nodes_to_map(const char* map)
     }
 
     if (tig_file_fseek(stream, 0, SEEK_SET) != 0
-        || tig_file_fwrite(cnt, sizeof(cnt), 1, stream) != 1) {
+        || tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
         tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Writing Header to data file for map!\n");
     }
 
@@ -2765,6 +2766,18 @@ void sub_4564E0()
 
 // 0x456A10
 bool sub_456A10(int64_t a1, int64_t a2, int64_t a3)
+{
+    // TODO: Incomplete.
+}
+
+// 0x456A90
+void sub_456A90()
+{
+    // TODO: Incomplete.
+}
+
+// 0x456BC0
+bool sub_456BC0(MagicTechSerializedData* a1)
 {
     // TODO: Incomplete.
 }
