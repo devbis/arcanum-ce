@@ -2,19 +2,11 @@
 #define ARCANUM_GAME_MT_OBJ_NODE_H_
 
 #include "game/context.h"
+#include "game/object.h"
 
 typedef struct MagicTechObjectNode {
     /* 0000 */ int64_t obj;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
+    /* 0008 */ Ryan field_8;
     /* 0030 */ int field_30;
     /* 0034 */ int field_34;
     /* 0038 */ int type;
