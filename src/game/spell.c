@@ -378,6 +378,12 @@ int spell_get_minimum_level(int spell)
     return spell_minimum_levels[spell % FIVE];
 }
 
+// 0x4B1790
+bool sub_4B1790(int64_t obj, int spell, int a3)
+{
+    // TODO: Incomplete.
+}
+
 bool sub_4B1950(int64_t obj, int spell)
 {
     return obj != OBJ_HANDLE_NULL

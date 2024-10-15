@@ -125,6 +125,7 @@ int sub_4B1740(int spell);
 int sub_4B1750(int spell);
 int spell_get_iq(int spell);
 int spell_get_minimum_level(int spell);
+bool sub_4B1790(int64_t obj, int spell, int a3);
 bool sub_4B1950(int64_t obj, int spell);
 bool sub_4B19B0(int64_t obj, int spell);
 const char* college_get_name(int college);
