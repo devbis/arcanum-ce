@@ -1,10 +1,18 @@
 #include "game/ai.h"
 
+#include "game/anim_private.h"
+#include "game/anim.h"
+#include "game/combat.h"
 #include "game/critter.h"
+#include "game/dialog.h"
+#include "game/item.h"
 #include "game/map.h"
 #include "game/obj.h"
 #include "game/object_node.h"
 #include "game/object.h"
+#include "game/proto.h"
+#include "game/reaction.h"
+#include "game/script.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
@@ -26,29 +34,55 @@ typedef struct Ai {
 
 static_assert(sizeof(Ai) == 0x38, "wrong size");
 
+static bool sub_4A8570(Ai* ai);
 static void sub_4A88D0(Ai* ai, int64_t obj);
+static bool sub_4A8940(Ai* ai);
+static bool sub_4A8E70(Ai* ai);
+static void sub_4A92D0(Ai* ai);
 static void sub_4A94C0(int64_t obj, int64_t tgt);
 static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
+static void sub_4AA620(int64_t a1, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
+static int sub_4AABE0(int64_t a1, int a2, int64_t a3, int* a4);
+static bool sub_4AAF50(Ai* ai);
+static bool sub_4AB030(int64_t a1, int64_t a2);
+static bool sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3);
+static void sub_4AB2A0(int64_t a1, int64_t a2);
+static bool sub_4AB2F0(int64_t a1, int64_t a2);
+static int64_t sub_4AB460(int64_t a1);
+static bool sub_4AB990(int64_t a1, int64_t a2);
 static void sub_4ABC20(Ai* ai);
+static bool sub_4ABC70(Ai* ai);
 static bool sub_4ABEB0(int64_t obj, int64_t tgt);
 static void sub_4AC180(Ai* ai);
+static void sub_4AC250(Ai* ai);
 static void sub_4AC320(Ai* ai);
 static void sub_4AC350(Ai* ai);
+static void sub_4AC380(Ai* ai);
 static void sub_4AC620(Ai* ai);
 static void sub_4AC660(Ai* ai);
+static void sub_4AC6E0(Ai* ai);
+static void sub_4AC7B0(Ai* ai);
 static bool ai_is_day();
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
+static void sub_4AD0B0(int64_t obj);
+static int64_t ai_find_nearest_bed(int64_t obj);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
 static int sub_4AD5D0(int64_t obj);
+static int sub_4AD610(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
+static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
+static bool sub_4AECA0(int64_t a1, int64_t a2);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
+static void sub_4AF8C0(int64_t a1, int64_t a2);
+static void sub_4AF930(int64_t a1, int64_t a2);
+static void sub_4AF9D0(int64_t a1, int64_t a2);
 
 // 0x5B50CC
 static bool dword_5B50CC;
@@ -113,7 +147,7 @@ void sub_4A84F0(int64_t obj)
 }
 
 // 0x4A8570
-void sub_4A8570()
+bool sub_4A8570(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -127,14 +161,14 @@ void sub_4A88D0(Ai* ai, int64_t obj)
     ai->field_14 = 0;
     ai->field_18 = 10000;
     ai->field_1C = -1;
-    ai->field_24 = 0;
+    ai->field_20 = 0;
     ai->leader_obj = critter_leader_get(obj);
     ai_danger_source(obj, &(ai->danger_type), &(ai->danger_source));
     ai->field_30 = -1;
 }
 
 // 0x4A8940
-void sub_4A8940()
+bool sub_4A8940(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -146,7 +180,7 @@ void sub_4A8AA0()
 }
 
 // 0x4A8E70
-void sub_4A8E70()
+bool sub_4A8E70(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -158,7 +192,7 @@ void sub_4A8F90()
 }
 
 // 0x4A92D0
-void sub_4A92D0()
+void sub_4A92D0(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -186,7 +220,7 @@ void sub_4A9560()
 }
 
 // 0x4A9650
-void sub_4A9650()
+void sub_4A9650(int64_t obj, int64_t tgt, int a3, unsigned int flags)
 {
     // TODO: Incomplete.
 }
@@ -238,6 +272,7 @@ void sub_4A9E10()
 void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4)
 {
     int64_t leader_obj;
+    int danger_type;
 
     if ((obj_field_int32_get(a1, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0) {
         leader_obj = OBJ_HANDLE_NULL;
@@ -270,9 +305,23 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4)
 }
 
 // 0x4AA0D0
-void sub_4AA0D0()
+void sub_4AA0D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    ObjectList npcs;
+    ObjectNode* node;
+
+    sub_4AE4E0(obj, 10, &npcs, OBJ_TM_NPC);
+
+    node = npcs.head;
+    while (node != NULL) {
+        if (!sub_45D8D0(node->obj)
+            && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
+            && sub_45DDA0(node->obj) != obj
+            && (!sub_4AF260(node->obj, obj) || !sub_4AF470(node->obj, obj, 0))) {
+            sub_4A9650(obj, node->obj, 0, 0);
+        }
+        node = node->next;
+    }
 }
 
 // 0x4AA1B0
@@ -282,7 +331,7 @@ void sub_4AA1B0()
 }
 
 // 0x4AA300
-void sub_4AA300()
+void sub_4AA300(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
@@ -305,16 +354,17 @@ void sub_4AA4A0(int64_t obj)
     int type;
     int64_t combat_focus_obj;
     unsigned int flags;
-    ObjectNodeList obj_list;
+    ObjectList objects;
     ObjectNode* node;
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
     switch (type) {
     case OBJ_TYPE_NPC:
         combat_focus_obj = obj_field_handle_get(obj, OBJ_F_NPC_COMBAT_FOCUS);
-        if (combat_focus_obj != NULL) {
-            combat_focus_obj(obj, combat_focus_obj);
+        if (combat_focus_obj != OBJ_HANDLE_NULL) {
+            sub_4AA300(obj, combat_focus_obj);
             sub_424070(obj, 3, 0, 0);
+            combat_critter_deactivate_combat_mode(obj);
         }
         if (sub_45DDA0(obj)) {
             flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
@@ -324,15 +374,15 @@ void sub_4AA4A0(int64_t obj)
         ai_target_unlock(obj);
         break;
     case OBJ_TYPE_PC:
-        sub_441260(obj, &obj_list);
+        sub_441260(obj, &objects);
 
-        node = obj_list.head;
+        node = objects.head;
         while (node != NULL) {
             sub_4AA4A0(node->obj);
             node = node->next;
         }
 
-        object_list_destroy(&obj_list);
+        object_list_destroy(&objects);
         break;
     }
 }
@@ -342,7 +392,7 @@ void sub_4AA580(int64_t obj)
 {
     int type;
     unsigned int flags;
-    ObjectNodeList obj_list;
+    ObjectList objects;
     ObjectNode* node;
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
@@ -355,21 +405,21 @@ void sub_4AA580(int64_t obj)
         }
         break;
     case OBJ_TYPE_PC:
-        sub_441260(obj, &obj_list);
+        sub_441260(obj, &objects);
 
-        node = obj_list.head;
+        node = objects.head;
         while (node != NULL) {
             sub_4AA580(node->obj);
             node = node->next;
         }
 
-        object_list_destroy(&obj_list);
+        object_list_destroy(&objects);
         break;
     }
 }
 
 // 0x4AA620
-void sub_4AA620()
+void sub_4AA620(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
@@ -485,25 +535,25 @@ void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr)
 }
 
 // 0x4AABE0
-void sub_4AABE0()
+int sub_4AABE0(int64_t a1, int a2, int64_t a3, int* a4)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AAF50
-void sub_4AAF50()
+bool sub_4AAF50(Ai* ai)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AB030
-void sub_4AB030()
+bool sub_4AB030(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AB0B0
-void sub_4AB0B0()
+bool sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
 {
     // TODO: Incomplete.
 }
@@ -519,7 +569,7 @@ void sub_4AB2A0(int64_t a1, int64_t a2)
 }
 
 // 0x4AB2F0
-void sub_4AB2F0()
+bool sub_4AB2F0(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
@@ -537,13 +587,13 @@ int sub_4AB430(int64_t obj)
 }
 
 // 0x4AB460
-void sub_4AB460()
+int64_t sub_4AB460(int64_t a1)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AB990
-void sub_4AB990()
+bool sub_4AB990(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
@@ -574,7 +624,7 @@ void sub_4ABC20(Ai* ai)
 }
 
 // 0x4ABC70
-void sub_4ABC70()
+bool sub_4ABC70(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -650,7 +700,7 @@ void sub_4AC180(Ai* ai)
 }
 
 // 0x4AC250
-void sub_4AC250()
+void sub_4AC250(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -675,7 +725,7 @@ void sub_4AC350(Ai* ai)
 }
 
 // 0x4AC380
-void sub_4AC380()
+void sub_4AC380(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -702,13 +752,13 @@ void sub_4AC660(Ai* ai)
 }
 
 // 0x4AC6E0
-void sub_4AC6E0()
+void sub_4AC6E0(Ai* ai)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AC7B0
-void sub_4AC7B0()
+void sub_4AC7B0(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -757,15 +807,35 @@ bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr)
 }
 
 // 0x4AD0B0
-void sub_4AD0B0()
+void sub_4AD0B0(int64_t obj)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AD140
-void sub_4AD140()
+int64_t ai_find_nearest_bed(int64_t loc)
 {
-    // TODO: Incomplete.
+    int64_t bed_obj = OBJ_HANDLE_NULL;
+    ObjectList objects;
+    ObjectNode* node;
+    tig_art_id_t art_id;
+
+    sub_4407C0(loc, OBJ_TM_SCENERY, &objects);
+
+    node = objects.head;
+    while (node != NULL) {
+        art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+        if (tig_art_scenery_id_type_get(art_id) == TIG_ART_SCENERY_TYPE_BEDS) {
+            bed_obj = node->obj;
+            break;
+        }
+
+        node = node->next;
+    }
+
+    object_list_destroy(&objects);
+
+    return bed_obj;
 }
 
 // 0x4AD1B0
@@ -803,7 +873,7 @@ int sub_4AD5D0(int64_t obj)
 }
 
 // 0x4AD610
-void sub_4AD610()
+int sub_4AD610(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -859,13 +929,13 @@ void sub_4AD7D0(int64_t obj)
 }
 
 // 0x4AD800
-void sub_4AD800()
+int sub_4AD800(int64_t a1, int64_t a2, bool a3)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AD950
-void sub_4AD950()
+int sub_4AD950(int64_t a1, int64_t a2, bool a3)
 {
     // TODO: Incomplete.
 }
@@ -921,13 +991,27 @@ void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 }
 
 // 0x4AE0A0
-void sub_4AE0A0()
+void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 {
-    // TODO: Incomplete.
+    ObjectList objects;
+    ObjectNode* node;
+
+    *cnt_ptr = 1;
+    *lvl_ptr = stat_level(obj, STAT_LEVEL);
+
+    sub_441260(obj, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        *cnt_ptr += 1;
+        *lvl_ptr += stat_level(obj, STAT_LEVEL);
+        node = node->next;
+    }
+
+    object_list_destroy(&objects);
 }
 
 // 0x4AE120
-void sub_4AE120()
+int sub_4AE120(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
@@ -967,9 +1051,17 @@ void sub_4AE450()
 }
 
 // 0x4AE4E0
-void sub_4AE4E0()
+void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    LocRect loc_rect;
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    loc_rect.x1 = loc - radius;
+    loc_rect.y1 = loc - radius;
+    loc_rect.x2 = loc + radius;
+    loc_rect.y2 = loc + radius;
+    sub_440B40(&loc_rect, flags, objects);
 }
 
 // 0x4AE570
@@ -985,7 +1077,7 @@ void sub_4AE720()
 }
 
 // 0x4AE9E0
-void sub_4AE9E0()
+void sub_4AE9E0(int64_t a1, bool a2)
 {
     // TODO: Incomplete.
 }
@@ -1070,15 +1162,43 @@ int sub_4AEB70(int64_t obj, int64_t portal, int a3)
 }
 
 // 0x4AECA0
-void sub_4AECA0()
+bool sub_4AECA0(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AED80
-void sub_4AED80()
+int sub_4AED80(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    unsigned int container_flags;
+    int key_id;
+
+    if (sub_49B290(a2) == 3023 || object_is_destroyed(a2)) {
+        return 0;
+    }
+
+    if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
+        return 4;
+    }
+
+    if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        container_flags = obj_field_int32_get(a2, OBJ_F_CONTAINER_FLAGS);
+        if ((container_flags & OCOF_JAMMED) != 0) {
+            return 2;
+        }
+        if ((container_flags & OCOF_MAGICALLY_HELD) != 0) {
+            return 3;
+        }
+
+        if (object_is_locked(a2)) {
+            key_id = obj_field_int32_get(a2, OBJ_F_CONTAINER_KEY_ID);
+            if (!sub_463370(a1, key_id)) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
 }
 
 // 0x4AEE50
@@ -1126,7 +1246,7 @@ bool sub_4AF210(int64_t obj, int64_t* danger_source_ptr)
 {
     int danger_type;
 
-    ai_danger_source(obj, &danger_type, &danger_source_ptr);
+    ai_danger_source(obj, &danger_type, danger_source_ptr);
 
     return danger_type == 3;
 }
@@ -1144,13 +1264,13 @@ int sub_4AF240(int value)
 }
 
 // 0x4AF260
-void sub_4AF260()
+int sub_4AF260(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AF470
-void sub_4AF470()
+int sub_4AF470(int64_t a1, int64_t a2, int a3)
 {
     // TODO: Incomplete.
 }
@@ -1209,13 +1329,13 @@ void sub_4AF8C0(int64_t a1, int64_t a2)
 }
 
 // 0x4AF930
-void sub_4AF930()
+void sub_4AF930(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x4AF9D0
-void sub_4AF9D0()
+void sub_4AF9D0(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
