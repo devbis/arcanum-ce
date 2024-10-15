@@ -262,9 +262,20 @@ void sub_57A6B0(Tanya* a1)
 }
 
 // 0x57A6C0
-int sub_57A6C0(int a1, int64_t* obj_ptr)
+int sub_57A6C0(int a1, S4F2810* a2)
 {
-    // TODO: Incomplete.
+    int v1;
+    int complexity;
+
+    v1 = dword_5CB240[a1];
+    if (v1 == -1) {
+        complexity = obj_field_int32_get(a2->field_0, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+        if (a1 == 3 && complexity >= 20) {
+            v1 = 12;
+        }
+    }
+
+    return v1;
 }
 
 // 0x57A700
