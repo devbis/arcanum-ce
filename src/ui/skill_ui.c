@@ -22,7 +22,7 @@ static void sub_57A620(Tanya* a1);
 static void sub_57A6B0(Tanya* a1);
 static bool sub_57A710(int64_t a1, int64_t a2);
 static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
-static void sub_57A7F0();
+static bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6);
 static void sub_57A8C0();
 static bool sub_57A990(int64_t obj, int a2, int a3, bool success);
 static bool skill_ui_trap(int64_t obj, int a2, int a3, bool success);
@@ -315,9 +315,42 @@ bool sub_57A770(int64_t obj, int a2, int a3, bool success)
 }
 
 // 0x57A7F0
-void sub_57A7F0()
+bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    John v1;
+    bool v2;
+    int client_id;
+
+    if (a6) {
+        mes_file_entry.num = 500;
+        v2 = false;
+    } else {
+        mes_file_entry.num = 501;
+        v2 = true;
+    }
+
+    mes_get_msg(skill_ui_mes_file, &mes_file_entry);
+
+    v1.type = 6;
+    v1.str = mes_file_entry.str;
+
+    if (player_is_pc_obj(obj)) {
+        sub_550750(&v1);
+    } else {
+        client_id = sub_4A2B10(obj);
+        if (client_id != -1) {
+            sub_4EDA60(&v1, client_id, 0);
+        }
+    }
+
+    sub_4D5450(obj, v2, mes_file_entry.str);
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        sub_4EDB70(obj, v2, mes_file_entry.str);
+    }
+
+    return true;
 }
 
 // 0x57A8C0
