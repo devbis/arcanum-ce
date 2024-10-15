@@ -10,7 +10,7 @@ void skill_ui_exit();
 int sub_579F50(int index);
 int sub_579F70(int index);
 int sub_579F90();
-void sub_579FA0(int64_t obj, int index);
+void sub_579FA0(int64_t obj, int type);
 void skill_ui_preprocess(int64_t obj, int type);
 void sub_57A1A0();
 void sub_57A1F0(S4F2810* a1);

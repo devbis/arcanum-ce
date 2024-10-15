@@ -2,6 +2,8 @@
 
 #include "game/critter.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/player.h"
 #include "game/skill.h"
@@ -118,9 +120,45 @@ int sub_579F90()
 }
 
 // 0x579FA0
-void sub_579FA0(int64_t obj, int index)
+void sub_579FA0(int64_t obj, int type)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    Packet30 pkt;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj != obj) {
+        if (sub_45D8D0(pc_obj)
+            || sub_45D800(pc_obj)) {
+            return;
+        }
+
+        if (sub_45D8D0(obj)
+            || sub_45D800(obj)) {
+            return;
+        }
+    }
+
+    if (sub_551A00() == 2) {
+        sub_57A1A0();
+    }
+
+    qword_683490 = obj;
+    dword_5CB270 = type;
+
+    if ((qword_5CB250[type] & 0x2000000) != 0
+        || sub_551A80(0)) {
+        if (!sub_4A2BA0()) {
+            pkt.type = 30;
+            sub_4440E0(pc_obj, &(pkt.field_8));
+            pkt.field_38 = type;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+            if ((tig_net_flags & TIG_NET_HOST) == 0) {
+                return;
+            }
+        }
+
+        skill_ui_preprocess(obj, type);
+    }
 }
 
 // 0x57A0A0
