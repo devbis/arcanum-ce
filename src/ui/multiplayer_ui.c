@@ -1,5 +1,7 @@
 #include "ui/multiplayer_ui.h"
 
+#include <stdio.h>
+
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/timeevent.h"
@@ -274,7 +276,40 @@ bool sub_5703B0()
 // 0x5703D0
 void sub_5703D0(const char* str, int player)
 {
-    // TODO: Incomplete.
+    int index;
+    MesFileEntry mes_file_entry;
+
+    if (dword_5CABEC == -1) {
+        dword_5CABF0 = player;
+        sub_5506C0(3);
+    }
+
+    if (off_681000[9].field_0 != NULL) {
+        FREE(off_681000[9].field_0);
+    }
+
+    for (index = 9; index > 0; index--) {
+        off_681000[index] = off_681000[index - 1];
+    }
+
+    off_681000[0].field_0 = (char*)MALLOC(128);
+    if (player == sub_529520()) {
+        strncpy(off_681000[0].field_0, str, 128);
+    } else {
+        mes_file_entry.num = 1200;
+        mes_get_msg(multiplayer_ui_mes_file, &mes_file_entry);
+        snprintf(off_681000[0].field_0,
+            128,
+            mes_file_entry.str,
+            tig_net_client_info_get_name(player),
+            str);
+    }
+
+    off_681000[0].field_4 = player;
+
+    if (dword_5CABEC != -1) {
+        sub_570A40(dword_5CABEC);
+    }
 }
 
 // 0x5704E0
