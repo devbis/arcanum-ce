@@ -40,7 +40,7 @@ void sub_571C80()
 }
 
 // 0x571CB0
-void sub_571CB0()
+void sub_571CB0(S4F2810* a1)
 {
     // TODO: Incomplete.
 }
