@@ -3,32 +3,41 @@
 #include "game/ai.h"
 #include "game/anim.h"
 #include "game/animfx.h"
+#include "game/ci.h"
 #include "game/critter.h"
+#include "game/effect.h"
 #include "game/gamelib.h"
+#include "game/gsound.h"
 #include "game/item.h"
+#include "game/magictech.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/obj_private.h"
 #include "game/obj.h"
 #include "game/object_node.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/script.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/text_floater.h"
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
+static void sub_4B2690(int64_t a1, int64_t a2, int64_t a3, CombatContext* combat, bool a5);
 static int sub_4B2810(int64_t obj);
 static void sub_4B2F60(CombatContext* combat);
 static void sub_4B3770(CombatContext* combat);
 static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t sub_4B54B0(int64_t obj, int a2);
-static void sub_4B5520(CombatContext* combat);
+static bool sub_4B5520(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
 static int sub_4B65A0();
+static void sub_4B6680(CombatContext* combat);
 static void sub_4B6B90(CombatContext* combat);
 static void sub_4B7080();
 static bool combat_turn_based_start();
@@ -360,11 +369,11 @@ void sub_4B24F0()
 // 0x4B2650
 void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat)
 {
-    sub_4B2690(a1, a2, combat != NULL ? combat->field_28 : OBJ_HANDLE_NULL, false);
+    sub_4B2690(a1, a2, combat != NULL ? combat->field_28 : OBJ_HANDLE_NULL, combat, false);
 }
 
 // 0x4B2690
-void sub_4B2690()
+void sub_4B2690(int64_t a1, int64_t a2, int64_t a3, CombatContext* combat, bool a5)
 {
     // TODO: Incomplete.
 }
@@ -404,17 +413,17 @@ void sub_4B2F60(CombatContext* combat)
 
     if ((combat->flags & 0x2) != 0) {
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 7, 0);
+            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_HIT, 0);
 
             if ((combat->flags & 0x4) != 0
                 && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 34, 0);
+                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_CRITICAL_HIT, 0);
             }
         }
 
         if (combat->field_8 != OBJ_HANDLE_NULL
             && combat->field_20 != OBJ_HANDLE_NULL) {
-            sub_441980(combat->field_20, combat->field_8, OBJ_HANDLE_NULL, 34, 0);
+            sub_441980(combat->field_20, combat->field_8, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
         }
 
         sub_4B6680(combat);
@@ -440,18 +449,18 @@ void sub_4B2F60(CombatContext* combat)
         }
 
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 8, 0);
+            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_MISS, 0);
 
             if ((combat->flags & 0x04) != 0
                 && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
-                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 35, 0);
+                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_CRITICAL_MISS, 0);
             }
         }
     }
 }
 
 // 0x4B3170
-void sub_4B3170()
+void sub_4B3170(CombatContext* combat)
 {
     // TODO: Incomplete.
 }
@@ -464,16 +473,16 @@ void sub_4B3770(CombatContext* combat)
 
     if ((combat->flags & 0x2) != 0) {
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 7, 0);
+            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_HIT, 0);
 
             if ((combat->flags & 0x4) != 0) {
-                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 34, 0);
+                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_CRITICAL_HIT, 0);
             }
         }
 
         if (combat->field_8 != OBJ_HANDLE_NULL
             && combat->field_20 != OBJ_HANDLE_NULL) {
-            sub_441980(combat->field_20, combat->field_8, OBJ_HANDLE_NULL, 26, 0);
+            sub_441980(combat->field_20, combat->field_8, OBJ_HANDLE_NULL, SAP_CRITTER_HITS, 0);
         }
 
         sub_4B6680(combat);
@@ -505,10 +514,10 @@ void sub_4B3770(CombatContext* combat)
         }
 
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
-            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 8, 0);
+            sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_MISS, 0);
 
             if ((combat->flags & 0x4) != 0) {
-                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, 35, 0);
+                sub_441980(combat->field_8, combat->weapon_obj, combat->field_20, SAP_CRITICAL_MISS, 0);
             }
         }
     }
@@ -521,7 +530,7 @@ void sub_4B39B0(CombatContext* combat)
     tig_art_id_t missile_art_id = TIG_ART_ID_INVALID;
     int64_t loc;
     int range;
-    int max_range;
+    int64_t max_range;
     int rotation;
     int num_arrows;
     int arrow;
@@ -554,10 +563,10 @@ void sub_4B39B0(CombatContext* combat)
         range = (20 - basic_skill_level(combat->field_8, BASIC_SKILL_THROWING)) / 5 + 1;
         max_range = sub_4B96F0(loc, combat->target_loc);
         if (range > max_range) {
-            range = max_range;
+            range = (int)max_range;
         }
 
-        sub_4B90D0(combat->target_loc, random_between(0, 7), &(combat->target_loc));
+        sub_4B90D0(combat->target_loc, random_between(0, 7), range, &(combat->target_loc));
         combat->field_20 = OBJ_HANDLE_NULL;
         combat->flags |= 0x20;
     }
@@ -600,7 +609,7 @@ void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, in
         item_remove(weapon_obj);
     }
 
-    if (sub_441980(attacker_obj, weapon_obj, target_obj, 6, 0)) {
+    if (sub_441980(attacker_obj, weapon_obj, target_obj, SAP_THROW, 0)) {
         sub_4B2210(attacker_obj, target_obj, &combat);
         combat.field_40 = a5;
         combat.weapon_obj = weapon_obj;
@@ -717,7 +726,7 @@ void sub_4B4320(int64_t obj)
 }
 
 // 0x4B4390
-void sub_4B4390()
+void sub_4B4390(CombatContext* combat)
 {
     // TODO: Incomplete.
 }
@@ -738,7 +747,7 @@ int64_t sub_4B54B0(int64_t obj, int a2)
 }
 
 // 0x4B5520
-void sub_4B5520(CombatContext* combat)
+bool sub_4B5520(CombatContext* combat)
 {
     int index;
 
@@ -769,7 +778,7 @@ void sub_4B5810(CombatContext* combat)
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         for (index = 0; index < 9; index++) {
             item_obj = item_wield_get(obj, 1000 + index);
-            if (item_obj != NULL) {
+            if (item_obj != OBJ_HANDLE_NULL) {
                 combat->field_20 = item_obj;
                 sub_4B4390(combat);
             }
@@ -834,7 +843,7 @@ void sub_4B58C0(CombatContext* combat)
         v1 = true;
     }
 
-    if (!sub_441980(combat->field_8, combat->field_20, combat->weapon_obj, 18, 0) || v1) {
+    if (!sub_441980(combat->field_8, combat->field_20, combat->weapon_obj, SAP_RESURRECT, 0) || v1) {
         sub_45A540(combat->field_20);
         return;
     }
@@ -942,18 +951,18 @@ void sub_4B58C0(CombatContext* combat)
     if (combat->field_44[4] > 0) {
         int new_dam;
         int cur_dam;
-        int v1;
+        int v3;
 
         cur_dam = critter_fatigue_damage_get(combat->field_20);
         if (cur_dam != 0) {
-            v1 = sub_45D700(combat->field_20);
+            v3 = sub_45D700(combat->field_20);
             new_dam = cur_dam - combat->field_44[4];
             if (new_dam < 0) {
                 new_dam = 0;
             }
             critter_fatigue_damage_set(combat->field_20, new_dam);
 
-            if (v1 <= 0 && sub_45D700(combat->field_20) > 0) {
+            if (v3 <= 0 && sub_45D700(combat->field_20) > 0) {
                 sub_434DE0(combat->field_20);
             }
         }
@@ -1048,7 +1057,7 @@ void sub_4B65D0()
 }
 
 // 0x4B6680
-void sub_4B6680()
+void sub_4B6680(CombatContext* combat)
 {
     // TODO: Incomplete.
 }
@@ -1264,7 +1273,7 @@ void sub_4B7010(int64_t obj)
     if (obj == dword_5FC240->obj
         && !sub_40DA20(obj)
         && !gamelib_in_load()) {
-        if (sub_441980(obj, obj, OBJ_HANDLE_NULL, 19, 0) == 1) {
+        if (sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0) == 1) {
             sub_4A84F0(obj);
         }
 
@@ -1367,7 +1376,7 @@ bool combat_turn_based_start()
     loc_rect.x2 = LOCATION_GET_X(loc) + dword_5B57B8;
     loc_rect.y1 = LOCATION_GET_Y(loc) - dword_5B57B8;
     loc_rect.y2 = LOCATION_GET_Y(loc) + dword_5B57B8;
-    sub_440B40(&loc_rect, 0x18000, &stru_5FC180);
+    sub_440B40(&loc_rect, OBJ_TM_NPC | OBJ_TM_PC, &stru_5FC180);
     sub_4B7EB0();
 
     node = stru_5FC180.head;
@@ -1457,7 +1466,7 @@ void combat_turn_based_subturn_end()
     if (player_is_pc_obj(dword_5FC240->obj)) {
         combat_callbacks.field_C(0);
     } else {
-        sub_441980(dword_5FC240->obj, dword_5FC240->obj, OBJ_HANDLE_NULL, 16, 0);
+        sub_441980(dword_5FC240->obj, dword_5FC240->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
     }
 }
 
