@@ -234,7 +234,29 @@ void sub_57A1A0()
 // 0x57A1F0
 void sub_57A1F0(S4F2810* a1)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    Packet31 pkt;
+
+    pc_obj = player_get_pc_obj();
+
+    if (!sub_4A2BA0()) {
+        pkt.type = 31;
+        sub_4440E0(qword_683490, &(pkt.field_8));
+        pkt.field_38 = dword_5CB270;
+        pkt.field_40 = *a1;
+        if (!a1->field_8) {
+            pkt.field_50 = sub_407EF0(a1->field_0);
+        }
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+    }
+
+    if ((pc_obj == qword_683490 || !sub_45D800(pc_obj))
+        && !sub_45D800(qword_683490)) {
+        sub_57A320(a1, qword_683490, dword_5CB270);
+    }
 }
 
 // 0x57A320
