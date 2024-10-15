@@ -35,11 +35,11 @@ static int dword_5CB230[] = { 279, 280, 282, 278 };
 static int dword_5CB240[] = { 6, 5, 15, 12 };
 
 // 0x5CB250
-static int qword_5CB250[4] = {
-    0x1,
-    0x40000044,
-    0x800000000004,
-    0x2000004,
+static uint64_t qword_5CB250[4] = {
+    Tgt_Self,
+    Tgt_Obj_No_ST_Critter_Animal,
+    Tgt_Tile | Tgt_Object,
+    Tgt_Obj_Inven,
 };
 
 // 0x5CB270
