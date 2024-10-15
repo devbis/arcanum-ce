@@ -1,6 +1,7 @@
 #include "ui/skill_ui.h"
 
 #include "game/critter.h"
+#include "game/dialog.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
@@ -9,6 +10,7 @@
 #include "game/skill.h"
 #include "game/target.h"
 #include "game/text_floater.h"
+#include "ui/dialog_ui.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
 #include "ui/types.h"
@@ -16,6 +18,7 @@
 #define FOUR 4
 
 static bool sub_57A5E0(int64_t obj);
+static void sub_57A620(Tanya* a1);
 static bool sub_57A710(int64_t a1, int64_t a2);
 static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
 static void sub_57A7F0();
@@ -230,9 +233,19 @@ bool sub_57A5E0(int64_t obj)
 }
 
 // 0x57A620
-void sub_57A620()
+void sub_57A620(Tanya* a1)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    char str[1000];
+
+    if (!tig_kb_is_key_pressed(DIK_LCONTROL) && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+        obj = a1->field_0.obj;
+        sub_4C9050(a1);
+        if (obj != a1->field_0.obj) {
+            sub_4139A0(a1->field_0.obj, obj, str);
+            sub_568430(a1->field_0.obj, obj, str, 0);
+        }
+    }
 }
 
 // 0x57A6A0
