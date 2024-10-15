@@ -3,7 +3,9 @@
 #include <stdio.h>
 
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "game/mp_utils.h"
+#include "game/player.h"
 #include "game/timeevent.h"
 #include "ui/intgame.h"
 #include "ui/mainmenu_ui.h"
@@ -315,7 +317,86 @@ void sub_5703D0(const char* str, int player)
 // 0x5704E0
 void sub_5704E0(int64_t a1, int64_t a2, int type)
 {
-    // TODO: Incomplete.
+    int num;
+    int confirmation_num = -1;
+    MesFileEntry mes_file_entry;
+    John v1;
+    char* pc_player_name;
+    char str[128];
+    int client_id;
+
+    switch (type) {
+    case 0:
+        // %s joined the party.
+        num = 2000;
+        // %s has joined you to their party.
+        confirmation_num = 2001;
+        break;
+    case 1:
+        // Join Failed: %s.
+        num = 2005;
+        break;
+    case 2:
+        // Join Failed: %s cannot join self.
+        num = 2006;
+        break;
+    case 4:
+        // Join Failed: %s is already in a party.
+        num = 2007;
+        break;
+    case 5:
+        // Disband Failed: %s.
+        num = 2010;
+        break;
+    case 6:
+        // Disband Failed: %s is not in a party.
+        num = 2011;
+        break;
+    case 7:
+        // Disband Failed: %s is not in your party.
+        num = 2012;
+        break;
+    default:
+        return;
+    }
+
+    mes_file_entry.num = num;
+    mes_get_msg(multiplayer_ui_mes_file, &mes_file_entry);
+
+    obj_field_string_get(a2, OBJ_F_PC_PLAYER_NAME, &pc_player_name);
+    sprintf(str, mes_file_entry.str, pc_player_name);
+    FREE(pc_player_name);
+
+    v1.type = 4;
+    v1.str = str;
+    if (player_is_pc_obj(a1)) {
+        sub_550750(&v1);
+    } else {
+        client_id = sub_4A2B10(a1);
+        if (client_id != -1) {
+            sub_4EDA60(&v1, client_id, 0);
+        }
+    }
+
+    if (confirmation_num != -1) {
+        mes_file_entry.num = confirmation_num;
+        mes_get_msg(multiplayer_ui_mes_file, &mes_file_entry);
+
+        obj_field_string_get(a1, OBJ_F_PC_PLAYER_NAME, &pc_player_name);
+        sprintf(str, mes_file_entry.str, pc_player_name);
+        FREE(pc_player_name);
+
+        v1.type = 4;
+        v1.str = str;
+        if (player_is_pc_obj(a2)) {
+            sub_550750(&v1);
+        } else {
+            client_id = sub_4A2B10(a2);
+            if (client_id != -1) {
+                sub_4EDA60(&v1, client_id, 0);
+            }
+        }
+    }
 }
 
 // 0x5706D0
