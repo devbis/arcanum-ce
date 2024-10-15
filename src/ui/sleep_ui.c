@@ -1,12 +1,17 @@
 #include "ui/sleep_ui.h"
 
+#include "game/combat.h"
 #include "game/critter.h"
 #include "game/gfade.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/object.h"
+#include "game/player.h"
 #include "game/script.h"
+#include "game/sector.h"
 #include "game/timeevent.h"
+#include "game/townmap.h"
+#include "game/ui.h"
 #include "ui/anim_ui.h"
 #include "ui/intgame.h"
 
@@ -114,9 +119,137 @@ void sleep_ui_reset()
 }
 
 // 0x57B180
-void sub_57B180(int64_t obj)
+void sub_57B180(int64_t bed_obj)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t loc;
+    int64_t sector_id;
+    int townmap;
+    MesFileEntry mes_file_entry;
+    John v1;
+    bool halt;
+
+    pc_obj = player_get_pc_obj();
+
+    if (sub_45D8D0(bed_obj)) {
+        return;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        return;
+    }
+
+    if (sleep_ui_created) {
+        sub_57B450();
+        return;
+    }
+
+    if (sub_45D800(pc_obj)) {
+        // You are unconscious already.
+        mes_file_entry.num = 11;
+        mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
+
+        v1.type = 4;
+        v1.str = mes_file_entry.str;
+        sub_460630(&v1);
+
+        dword_6834B0 = false;
+        return;
+    }
+
+    if (bed_obj == OBJ_HANDLE_NULL) {
+        loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
+        sector_id = sub_4CFC50(loc);
+        townmap = sub_4BE380(sector_id);
+        if (townmap != 0) {
+            if (!sub_4BECC0(townmap)) {
+                // You cannot wait here.
+                mes_file_entry.num = 20;
+                mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
+
+                v1.type = 4;
+                v1.str = mes_file_entry.str;
+                sub_460630(&v1);
+                return;
+            }
+            dword_6834B0 = true;
+        }
+    }
+
+    if (combat_critter_is_combat_mode_active(pc_obj)) {
+        if (!sub_4B3D90(pc_obj)) {
+            // You cannot sleep with enemies near.
+            mes_file_entry.num = 9;
+            mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
+
+            v1.type = 4;
+            v1.str = mes_file_entry.str;
+            sub_460630(&v1);
+            dword_6834B0 = false;
+            return;
+        }
+        combat_critter_deactivate_combat_mode(pc_obj);
+    }
+
+    if (bed_obj != OBJ_HANDLE_NULL) {
+        if (sub_441980(pc_obj, bed_obj, OBJ_HANDLE_NULL, SAP_USE, 0) == 1) {
+            // You cannot sleep here. Find an inn and pay for a bed.
+            mes_file_entry.num = 8;
+            mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
+
+            v1.type = 4;
+            v1.str = mes_file_entry.str;
+            sub_460630(&v1);
+            dword_6834B0 = false;
+            return;
+        }
+    }
+
+    if (!critter_enter_bed(pc_obj, bed_obj)) {
+        // That bed is occupied.
+        mes_file_entry.num = 10;
+        mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
+
+        v1.type = 4;
+        v1.str = mes_file_entry.str;
+        sub_460630(&v1);
+        dword_6834B0 = false;
+        return;
+    }
+
+    // NOTE: I'm not sure how to make it pretty without goto.
+    halt = true;
+    do {
+        if (!sub_551A80(0)) {
+            break;
+        }
+
+        if (!sub_551A80(6)) {
+            break;
+        }
+
+        qword_6834A8 = pc_obj;
+
+        if (bed_obj != OBJ_HANDLE_NULL) {
+            dword_6834E8 = true;
+            sub_443EB0(bed_obj, &stru_6834B8);
+        } else {
+            dword_6834E8 = false;
+        }
+
+        if (!sleep_ui_create()) {
+            break;
+        }
+
+        halt = false;
+    } while (0);
+
+    if (halt) {
+        if (bed_obj != OBJ_HANDLE_NULL) {
+            critter_leave_bed(pc_obj, bed_obj);
+        }
+        dword_6834B0 = false;
+    }
 }
 
 // 0x57B450
