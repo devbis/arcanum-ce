@@ -1,5 +1,6 @@
 #include "ui/skill_ui.h"
 
+#include "game/anim.h"
 #include "game/critter.h"
 #include "game/dialog.h"
 #include "game/mes.h"
@@ -7,6 +8,7 @@
 #include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/player.h"
+#include "game/script.h"
 #include "game/skill.h"
 #include "game/target.h"
 #include "game/text_floater.h"
@@ -32,16 +34,31 @@ static bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success);
 static bool skill_ui_no_lock(int64_t obj);
 
 // 0x5CB220
-static int dword_5CB220[] = { 279, 280, 282, 278 };
+static int dword_5CB220[FOUR] = {
+    279,
+    280,
+    282,
+    278,
+};
 
 // 0x5CB230
-static int dword_5CB230[] = { 279, 280, 282, 278 };
+static int dword_5CB230[FOUR] = {
+    279,
+    280,
+    282,
+    278,
+};
 
 // 0x5CB240
-static int dword_5CB240[] = { 6, 5, 15, 12 };
+static int dword_5CB240[FOUR] = {
+    SKILL_PROWLING,
+    SKILL_PICK_POCKET,
+    SKILL_DISARM_TRAPS,
+    SKILL_REPAIR,
+};
 
 // 0x5CB250
-static uint64_t qword_5CB250[4] = {
+static uint64_t qword_5CB250[FOUR] = {
     Tgt_Self,
     Tgt_Obj_No_ST_Critter_Animal,
     Tgt_Tile | Tgt_Object,
@@ -221,9 +238,78 @@ void sub_57A1F0(S4F2810* a1)
 }
 
 // 0x57A320
-void sub_57A320()
+void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
 {
-    // TODO: Incomplete.
+    bool is_pc;
+    int skill;
+    unsigned int spell_flags;
+    MesFileEntry mes_file_entry;
+    Tanya v2;
+
+    if (sub_45D8D0(obj)) {
+        return;
+    }
+
+    is_pc = player_is_pc_obj(obj);
+    skill = sub_57A6C0(a3, a1);
+
+    switch (skill) {
+    case SKILL_PICK_POCKET:
+        if (!a1->field_8
+            && is_pc
+            && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            sub_57A1A0();
+
+            spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
+
+            if ((obj_field_int32_get(a1->field_0, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0) {
+                if (sub_57A5E0(a1->field_0)) {
+                    if (player_is_pc_obj(obj)) {
+                        mes_file_entry.num = 525;
+                        mes_get_msg(skill_ui_mes_file, &mes_file_entry);
+                        sub_4D5450(obj, 0, mes_file_entry.str);
+                    }
+                } else if (sub_45D8D0(a1->field_0)) {
+                    if (sub_441980(obj, a1->field_0, obj, SAP_USE, 0)
+                        && (spell_flags & OSF_POLYMORPHED) == 0
+                        && !sub_423300(a1->field_0, 0)) {
+                        sub_4602D0(obj, a1->field_0);
+                    }
+                } else {
+                    sub_57A710(obj, a1->field_0);
+                }
+            }
+        }
+        return;
+    case SKILL_REPAIR:
+        if (!a1->field_8) {
+            sub_4C7090(&v2);
+            sub_4440E0(obj, &(v2.field_0));
+            sub_4440E0(a1->field_0, &(v2.field_30));
+            sub_4440E0(OBJ_HANDLE_NULL, &(v2.field_68));
+            v2.field_98 = 0;
+            v2.field_9C = 12;
+            sub_57A6B0(&v2);
+        }
+        return;
+    case SKILL_DISARM_TRAPS:
+        if (!a1->field_8 && sub_4B7CD0(obj, 4)) {
+            sub_4C7090(&v2);
+            sub_4440E0(obj, &(v2.field_0));
+            sub_4440E0(a1->field_0, &(v2.field_30));
+            sub_4440E0(OBJ_HANDLE_NULL, &(v2.field_68));
+            v2.field_98 = 4;
+            v2.field_9C = 15;
+            sub_57A620(&v2);
+            sub_57A6B0(&v2);
+        }
+        return;
+    default:
+        if (!a1->field_8) {
+            sub_4C6F90(obj, skill, a1->field_0, 0);
+        }
+        return;
+    }
 }
 
 // 0x57A5E0
@@ -271,7 +357,7 @@ int sub_57A6C0(int a1, S4F2810* a2)
     if (v1 == -1) {
         complexity = obj_field_int32_get(a2->field_0, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
         if (a1 == 3 && complexity >= 20) {
-            v1 = 12;
+            v1 = SKILL_REPAIR;
         }
     }
 
