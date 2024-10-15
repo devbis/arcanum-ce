@@ -116,13 +116,25 @@ void sub_40D860()
 void player_create()
 {
     tig_art_id_t art_id;
+    int map;
+    int64_t x;
+    int64_t y;
+    int64_t loc;
 
     qword_5D1150 = sub_468570(15);
 
-    // TODO: Incomplete.
+    map = sub_40FF40();
+    if (map == 0
+        || !map_get_starting_location(map, &x, &y)
+        || (loc = LOCATION_MAKE(x, y)) == 0) {
+        loc = sub_4B9810();
+        if (!player_editor) {
+            tig_debug_printf("Player: ERROR: Map loaded that is NOT in map list!\n");
+        }
+    }
 
-    tig_debug_printf("player_create: loc: X: %d, Y: %d\n", x, y);
-    if (!object_create(qword_5D1150), x, y, pcObj)) {
+    tig_debug_printf("player_create: loc: X: %d, Y: %d\n", LOCATION_GET_X(loc), LOCATION_GET_Y(loc));
+    if (!object_create(qword_5D1150, loc, &pcObj)) {
         tig_debug_printf("player_create: Error: failed to create player!\n");
         exit(EXIT_FAILURE);
     }
