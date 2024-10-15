@@ -284,7 +284,48 @@ bool sleep_ui_message_filter(TigMessage* msg)
 // 0x57B7F0
 bool sleep_ui_process_callback(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    DateTime datetime;
+    TimeEvent next_timeevent;
+    ObjectList objects;
+    ObjectNode* node;
+    int hours;
+
+    sub_45A950(&datetime, 3600000);
+    sub_45C200(&datetime);
+
+    next_timeevent.type = TIMEEVENT_TYPE_SLEEPING;
+    if (!dword_6834B0) {
+        hours = dword_6834E8 ? 2 : 1;
+        sub_45E910(qword_6834A8, hours);
+
+        sub_441260(qword_6834A8, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            sub_45E910(node->obj, hours);
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
+
+    if (!sub_45D8D0(qword_6834A8)) {
+        if (timeevent->params[0].integer_value > 1) {
+            timeevent->params[0].integer_value -= 1;
+            sub_45A950(&datetime, 200);
+            sub_45B800(&next_timeevent, &datetime);
+            return true;
+        }
+
+        if ((timeevent->params[0].integer_value == -1 && datetime_current_hour() == 7)
+            || (timeevent->params[0].integer_value == -2 && datetime_current_hour() == 20)
+            || (timeevent->params[0].integer_value == -3 && object_get_hp_damage(qword_6834A8) > 0)) {
+            sub_45A950(&datetime, 200);
+            sub_45B800(&next_timeevent, &datetime);
+            return true;
+        }
+    }
+
+    sub_57BA70();
+    return true;
 }
 
 // 0x57B9E0
