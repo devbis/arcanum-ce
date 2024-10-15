@@ -10,8 +10,10 @@
 #include "game/player.h"
 #include "game/script.h"
 #include "game/skill.h"
+#include "game/stat.h"
 #include "game/target.h"
 #include "game/text_floater.h"
+#include "ui/charedit_ui.h"
 #include "ui/dialog_ui.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
@@ -693,7 +695,76 @@ void sub_57AC90(int64_t obj, int skill, int a3)
 // 0x57ACD0
 void sub_57ACD0(int64_t obj, int skill)
 {
-    // TODO: Incomplete.
+    bool is_pc;
+    int base;
+    int level;
+    int cost;
+    int points;
+
+    is_pc = player_is_pc_obj(obj);
+    if (IS_TECH_SKILL(skill)) {
+        skill = GET_TECH_SKILL(skill);
+        base = tech_skill_get_base(obj, skill);
+        level = tech_skill_level(obj, skill);
+        cost = sub_4C6AF0(obj, skill);
+        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > points) {
+            if (is_pc && charedit_is_created()) {
+                sub_55F160();
+            }
+            return;
+        }
+
+        if (tech_skill_set_base(obj, skill, base + cost) != base + cost) {
+            if (level == 20) {
+                if (is_pc && charedit_is_created()) {
+                    sub_55F1E0();
+                }
+            } else {
+                if (is_pc && charedit_is_created()) {
+                    sub_55F200(tech_skill_get_stat(skill));
+                }
+            }
+            return;
+        }
+
+        stat_set_base(obj, STAT_UNSPENT_POINTS, points - cost);
+        if (is_pc && charedit_is_created()) {
+            sub_55A230();
+            sub_550720();
+        }
+    } else {
+        skill = GET_BASIC_SKILL(skill);
+        base = basic_skill_get_base(obj, skill);
+        level = basic_skill_level(obj, skill);
+        cost = sub_4C64B0(obj, skill);
+        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > points) {
+            if (is_pc && charedit_is_created()) {
+                sub_55F160();
+            }
+            return;
+        }
+
+        if (basic_skill_set_base(obj, skill, base + cost) != base + cost) {
+            if (level == 20) {
+                if (is_pc && charedit_is_created()) {
+                    sub_55F1E0();
+                }
+            } else {
+                if (is_pc && charedit_is_created()) {
+                    sub_55F200(tech_skill_get_stat(skill));
+                }
+            }
+            return;
+        }
+
+        stat_set_base(obj, STAT_UNSPENT_POINTS, points - cost);
+        if (is_pc && charedit_is_created()) {
+            sub_55A230();
+            sub_550720();
+        }
+    }
 }
 
 // 0x57AEB0
