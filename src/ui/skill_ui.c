@@ -19,6 +19,7 @@
 
 static bool sub_57A5E0(int64_t obj);
 static void sub_57A620(Tanya* a1);
+static void sub_57A6B0(Tanya* a1);
 static bool sub_57A710(int64_t a1, int64_t a2);
 static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
 static void sub_57A7F0();
@@ -255,9 +256,9 @@ int sub_57A6A0(int index)
 }
 
 // 0x57A6B0
-void sub_57A6B0()
+void sub_57A6B0(Tanya* a1)
 {
-    // TODO: Incomplete.
+    sub_4C7160(a1);
 }
 
 // 0x57A6C0
