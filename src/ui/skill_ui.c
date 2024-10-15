@@ -770,5 +770,63 @@ void sub_57ACD0(int64_t obj, int skill)
 // 0x57AEB0
 void sub_57AEB0(int64_t obj, int skill)
 {
-    // TODO: Incomplete.
+    bool is_pc;
+    int base;
+    int level;
+    int cost;
+    int points;
+
+    is_pc = player_is_pc_obj(obj);
+    if (IS_TECH_SKILL(skill)) {
+        skill = GET_TECH_SKILL(skill);
+        base = tech_skill_get_base(obj, skill);
+        level = tech_skill_level(obj, skill); // FIXME: Unused.
+        cost = sub_4C6B00(obj, skill);
+        points = stat_level(obj, STAT_UNSPENT_POINTS);
+
+        if (tech_skill_set_base(obj, skill, base - cost) != base - cost) {
+            if (tech_skill_get_base(obj, skill) != 0) {
+                if (is_pc && charedit_is_created()) {
+                    sub_55F340();
+                }
+            } else {
+                if (is_pc && charedit_is_created()) {
+                    sub_55F320();
+                }
+            }
+            return;
+        }
+
+        stat_set_base(obj, STAT_UNSPENT_POINTS, points + cost);
+        if (is_pc && charedit_is_created()) {
+            sub_55A230();
+            sub_550720();
+        }
+    } else {
+        skill = GET_BASIC_SKILL(skill);
+        base = basic_skill_get_base(obj, skill);
+        level = basic_skill_level(obj, skill);
+        cost = sub_4C64C0(obj, skill);
+        points = stat_level(obj, STAT_UNSPENT_POINTS);
+
+        // NOTE: This code is different from tech skills code path above.
+        while (level == basic_skill_level(obj, skill)) {
+            if (basic_skill_set_base(obj, skill, base - cost) != base - cost) {
+                if (basic_skill_get_base(obj, skill) != 0) {
+                    // FIXME: No check for pc/charedit.
+                    sub_55F340();
+                } else {
+                    // FIXME: No check for pc/charedit.
+                    sub_55F320();
+                }
+                return;
+            }
+
+            points = stat_set_base(obj, STAT_UNSPENT_POINTS, points + cost);
+            if (is_pc && charedit_is_created()) {
+                sub_55A230();
+                sub_550720();
+            }
+        }
+    }
 }
