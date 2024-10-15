@@ -1,9 +1,14 @@
 #include "game/skill.h"
 
+#include "game/anim.h"
+#include "game/background.h"
+#include "game/critter.h"
 #include "game/effect.h"
 #include "game/gamelib.h"
+#include "game/item.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/player.h"
 #include "game/random.h"
 #include "game/stat.h"
@@ -868,7 +873,7 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
         break;
     case TECH_SKILL_FIREARMS:
         value = 5 * level + 25;
-        if (other_obj != NULL
+        if (other_obj != OBJ_HANDLE_NULL
             && (obj_field_int32_get(other_obj, OBJ_F_SPELL_FLAGS) & OSF_MAGNETIC_INVERSION) != 0) {
             value -= 20;
         }
@@ -982,7 +987,7 @@ bool sub_4C6B50(int64_t obj, int stat, int value)
 // 0x4C6F90
 bool sub_4C6F90(int64_t a1, int a2, int64_t a3, int a4)
 {
-    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, a4);
+    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, a2, a4);
 }
 
 // 0x4C6FD0
@@ -1000,7 +1005,7 @@ bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3)
 // 0x4C7050
 bool sub_4C7050(int64_t a1, int a2, int64_t a3)
 {
-    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, 2 << a2);
+    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, 15, 2 << a2);
 }
 
 // 0x4C7090
@@ -1052,7 +1057,7 @@ bool sub_4C83E0(int64_t obj)
     }
 
     leader_obj = critter_leader_get(obj);
-    if (leader_obj != NULL && player_is_pc_obj(leader_obj)) {
+    if (leader_obj != OBJ_HANDLE_NULL && player_is_pc_obj(leader_obj)) {
         return true;
     }
 
@@ -1079,7 +1084,7 @@ void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4)
         sub_4440E0(a2, &(v1.field_0));
         sub_4440E0(a1, &(v1.field_30));
         sub_4C7160(&v1);
-        sub_464830(a3, a2, a4, 0);
+        sub_464830(a3, a2, a4, OBJ_HANDLE_NULL);
         sub_4EE3A0(a3, a1);
     } else {
         pkt.type = 126;
@@ -1139,19 +1144,19 @@ int64_t sub_4C91F0(int64_t obj, int a2)
     int64_t v1 = OBJ_HANDLE_NULL;
 
     if (a2 == 10) {
-        v1 = sub_462760(obj, 8);
+        v1 = item_find_first_generic(obj, 8);
         if (v1 == OBJ_HANDLE_NULL) {
             obj = sub_45F650(obj);
             if (obj != OBJ_HANDLE_NULL) {
-                v1 = sub_462760(obj, 8);
+                v1 = item_find_first_generic(obj, 8);
             }
         }
     } else if (a2 == 14) {
-        v1 = sub_462760(obj, 2);
+        v1 = item_find_first_generic(obj, 2);
         if (v1 == OBJ_HANDLE_NULL) {
             obj = sub_45F650(obj);
             if (obj != OBJ_HANDLE_NULL) {
-                v1 = sub_462760(obj, 2);
+                v1 = item_find_first_generic(obj, 2);
             }
         }
     }

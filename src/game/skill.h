@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 #include "game/obj.h"
+#include "game/object.h"
 
 typedef enum BasicSkill {
     BASIC_SKILL_BOW,
