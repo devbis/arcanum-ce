@@ -28,7 +28,7 @@ void sub_40D860();
 void player_create();
 bool player_is_pc_obj(object_id_t object_id);
 bool sub_40DA20(object_id_t object_id);
-object_id_t sub_40DA50();
+object_id_t player_get_pc_obj();
 bool sub_40DAB0();
 bool sub_40DAF0(object_id_t obj);
 void sub_40DB50(PlayerSpec* player_spec);

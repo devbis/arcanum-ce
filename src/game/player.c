@@ -1,6 +1,14 @@
 #include "game/player.h"
 
+#include "game/item.h"
 #include "game/level.h"
+#include "game/location.h"
+#include "game/map.h"
+#include "game/obj_private.h"
+#include "game/object.h"
+#include "game/proto.h"
+#include "game/scroll.h"
+#include "game/ui.h"
 
 // 0x5D1138
 static ObjectID stru_5D1138;
@@ -10,6 +18,9 @@ static object_id_t qword_5D1150;
 
 // 0x5D1158
 static object_id_t pcObj;
+
+// 0x5D1160
+static int64_t qword_5D1160;
 
 // 0x739E5C
 bool player_editor;
@@ -144,12 +155,12 @@ bool sub_40DA20(object_id_t object_id)
 }
 
 // 0x40DA50
-object_id_t sub_40DA50()
+object_id_t player_get_pc_obj()
 {
     object_id_t obj = pcObj;
 
     if (obj != OBJ_HANDLE_NULL) {
-        if (sub_4E5470(pcObj) || stru_5D1138.field_0 == 0) {
+        if (sub_4E5470(pcObj) || stru_5D1138.type == 0) {
             obj = pcObj;
         } else {
             pcObj = objp_perm_lookup(stru_5D1138);
@@ -201,7 +212,9 @@ void sub_40DB50(PlayerSpec* player_spec)
 // 0x40DB70
 bool player_obj_create_player(PlayerSpec* player_spec)
 {
-    object_id_t current_handle = OBJ_HANDLE_NULL;
+    object_id_t old_handle = OBJ_HANDLE_NULL;
+    int64_t loc;
+    char str[80];
 
     if (player_spec->field_2C == -1) {
         qword_5D1160 = sub_468570(15);
@@ -210,20 +223,49 @@ bool player_obj_create_player(PlayerSpec* player_spec)
     }
 
     if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x2) != 0) {
-
+        loc = player_spec->field_20;
+    } else {
+        // TODO: Looks that same as above, check.
+        loc = player_spec->field_20;
     }
 
-    // TODO: Incomplete.
+    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x1) != 0) {
+        old_handle = player_spec->field_0;
+    }
+
+    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x4) != 0) {
+        if (pcObj != OBJ_HANDLE_NULL) {
+            sub_40DAB0();
+        }
+    }
 
     if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x1) != 0) {
-        if (current_handle != player_spec->field_0) {
+        objid_id_to_str(str, player_spec->field_8);
+        tig_debug_printf("player_obj_create_player: Player ID: %s\n", str);
+        if (!sub_43CBF0(qword_5D1160, loc, player_spec->field_8, &(player_spec->field_0))) {
+            tig_debug_printf("player_obj_create_player: Error: failed to create player!\n");
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        if (!object_create(qword_5D1160, loc, &(player_spec->field_0))) {
+            tig_debug_printf("player_obj_create_player: Error: failed to create player!\n");
+            exit(EXIT_FAILURE);
+        }
+
+        player_spec->field_8 = sub_407EF0(player_spec->field_0);
+        objid_id_to_str(str, player_spec->field_8);
+        tig_debug_printf("player_obj_create_player: Player ID: %s\n", str);
+    }
+
+    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x1) != 0) {
+        if (old_handle != player_spec->field_0) {
             // FIXME: Using println with newline character.
             tig_debug_println("ERROR: : object_create created new handle instead of using current one!\n");
         }
     }
 
-    tig_debug_printf("player_obj_create_player: StartLoc: X: %d, Y: %d\n", x, y);
-    obj_field_int64_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_DEST, x, y);
+    tig_debug_printf("player_obj_create_player: StartLoc: X: %d, Y: %d\n", LOCATION_GET_X(loc), LOCATION_GET_Y(loc));
+    obj_field_int64_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_DEST, loc);
     obj_field_int32_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
 
     if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x4) == 0) {
