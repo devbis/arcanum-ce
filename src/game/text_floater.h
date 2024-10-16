@@ -3,6 +3,15 @@
 
 #include "game/context.h"
 
+typedef enum TextFloaterType {
+    TF_TYPE_WHITE,
+    TF_TYPE_RED,
+    TF_TYPE_GREEN,
+    TF_TYPE_BLUE,
+    TF_TYPE_YELLOW,
+    TF_TYPE_COUNT,
+} TextFloaterType;
+
 bool text_floater_init(GameInitInfo* init_info);
 void text_floater_resize(ResizeInfo* resize_info);
 void text_floater_exit();
@@ -10,7 +19,11 @@ bool text_floater_update_view(ViewOptions* view_options);
 void text_floater_map_close();
 int text_floaters_set(int value);
 int text_floaters_get();
-void sub_4D5450(int64_t obj, int type, const char* str);
-void sub_4D56C0(int64_t obj);
+void tf_ping(tig_timestamp_t timestamp);
+void sub_4D5310(UnknownContext *a1);
+void tf_add(int64_t obj, int type, const char* str);
+void sub_4D5570(int64_t obj, int64_t loc, int offset_x, int offset_y);
+void sub_4D5620(int64_t obj);
+void tf_remove(int64_t obj);
 
 #endif /* ARCANUM_GAME_TEXT_FLOATER_H_ */
