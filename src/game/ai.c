@@ -78,6 +78,7 @@ static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
+static int64_t sub_4AE450(int64_t a1, int64_t a2);
 static bool sub_4AECA0(int64_t a1, int64_t a2);
 static int sub_4AF240(int value);
 static bool sub_4AF800(int64_t obj, int64_t a2);
@@ -1046,9 +1047,20 @@ int sub_4AE3A0(int64_t a1, int64_t a2)
 }
 
 // 0x4AE450
-void sub_4AE450()
+int64_t sub_4AE450(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t combat_focus_obj;
+
+    if (sub_45D8D0(a2)
+        && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_NPC
+        && obj_field_obj_get(a2, OBJ_F_NPC_COMBAT_FOCUS, &combat_focus_obj)
+        && combat_focus_obj != OBJ_HANDLE_NULL
+        && sub_4AB990(a1, combat_focus_obj)
+        && sub_4AE3A0(a1, a2)) {
+        return combat_focus_obj;
+    }
+
+    return OBJ_HANDLE_NULL;
 }
 
 // 0x4AE4E0
