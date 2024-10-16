@@ -66,6 +66,7 @@ static void sub_4AC620(Ai* ai);
 static void sub_4AC660(Ai* ai);
 static void sub_4AC6E0(Ai* ai);
 static void sub_4AC7B0(Ai* ai);
+static bool sub_4AC910(Ai* ai, int64_t a2);
 static bool ai_is_day();
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD0B0(int64_t obj);
@@ -766,9 +767,67 @@ void sub_4AC7B0(Ai* ai)
 }
 
 // 0x4AC910
-void sub_4AC910()
+bool sub_4AC910(Ai* ai, int64_t a2)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+    int64_t item_obj;
+    int v1;
+    int64_t loc;
+    int64_t v2;
+    ObjectList objects;
+    ObjectNode* node;
+
+    flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+    if ((flags & 0x40000000) == 0) {
+        return false;
+    }
+
+    if ((flags & 0x10000000) == 0) {
+        return false;
+    }
+
+    flags &= ~0x40000000;
+    obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, flags);
+
+    if (basic_skill_get_base(ai->obj, BASIC_SKILL_THROWING) == 0) {
+        return false;
+    }
+
+    item_obj = item_find_first_generic(ai->obj, 0x10);
+    if (item_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    v1 = sub_466230(item_obj);
+    if (a2 <= v1) {
+        return false;
+    }
+
+    loc = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
+    sub_4ADE00(ai->obj, loc, &v2);
+    if (v2 != 0) {
+        return false;
+    }
+
+    sub_4AE4E0(ai->danger_source, v1, &objects, OBJ_TM_NPC);
+    node = objects.head;
+    while (node != NULL) {
+        if (!sub_45D8D0(node->obj)
+            && sub_4AE3A0(ai->obj, node->obj)) {
+            break;
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (node != NULL) {
+        return false;
+    }
+
+    loc = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
+    sub_434F80(ai->obj, item_obj, loc);
+
+    return true;
 }
 
 // 0x4ACBB0
