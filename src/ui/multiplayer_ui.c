@@ -6,6 +6,7 @@
 #include "game/multiplayer.h"
 #include "game/mp_utils.h"
 #include "game/player.h"
+#include "game/portrait.h"
 #include "game/timeevent.h"
 #include "ui/intgame.h"
 #include "ui/mainmenu_ui.h"
@@ -20,7 +21,7 @@ typedef struct S681000 {
 static_assert(sizeof(S681000) == 0x8, "wrong size");
 
 static void sub_5706D0();
-static void sub_570A40(tig_window_handle_t window_handle);
+static bool sub_570A40(tig_window_handle_t window_handle);
 static void sub_570E10();
 static void sub_570E40();
 static void sub_570EF0();
@@ -546,9 +547,56 @@ bool sub_570A10(TigMessage* msg)
 }
 
 // 0x570A40
-void sub_570A40(tig_window_handle_t window_handle)
+bool sub_570A40(tig_window_handle_t window_handle)
 {
-    // TODO: Incomplete.
+    TigRect frame_rect;
+    TigRect text_rect;
+    TigFont font_desc;
+    int64_t obj;
+    int portrait;
+    int index;
+
+    frame_rect.x = 293;
+    frame_rect.y = 60;
+    frame_rect.width = 266;
+    frame_rect.height = 60;
+
+    tig_window_fill(window_handle, &frame_rect, tig_color_make(0, 0, 0));
+
+    if (dword_5CABF0 != -1) {
+        obj = sub_4A2B60(dword_5CABF0);
+        if (obj != OBJ_HANDLE_NULL) {
+            portrait = sub_4CEB80(obj);
+            if (portrait != 0) {
+                portrait_draw_native(obj, portrait, window_handle, 219, 69);
+            }
+        }
+    }
+
+    for (index = 0; off_681000[index].field_0 != NULL; index++) {
+        tig_font_push(sub_549940(0, 0));
+
+        font_desc.str = off_681000[index].field_0;
+        font_desc.width = frame_rect.width;
+        font_desc.height = 0;
+        sub_535390(&font_desc);
+
+        text_rect.x = frame_rect.x;
+        text_rect.y = frame_rect.y + frame_rect.height;
+        text_rect.width = font_desc.width;
+        text_rect.height = font_desc.height;
+
+        frame_rect.height -= font_desc.height;
+        if (frame_rect.height < 0) {
+            tig_font_pop();
+            break;
+        }
+
+        tig_window_text_write(window_handle, off_681000[index].field_0, &text_rect);
+        tig_font_pop();
+    }
+
+    return true;
 }
 
 // 0x570BC0
