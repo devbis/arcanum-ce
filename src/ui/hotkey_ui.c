@@ -7,10 +7,13 @@
 #include "game/spell.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
+#include "ui/mainmenu_ui.h"
 #include "ui/skill_ui.h"
+#include "ui/textedit_ui.h"
 
 static bool intgame_save_hotkey(S683518* a1, TigFile* stream);
 static bool intgame_load_hotkey(S683518* a1, TigFile* stream);
+static int sub_57E460();
 static void intgame_hotkey_mouse_load(tig_art_id_t art_id, bool a2);
 static void sub_57EE30(int64_t a1, int inventory_location);
 static bool button_create_no_art(UiButtonInfo* button_info, int width, int height);
@@ -285,7 +288,7 @@ bool sub_57DBA0(GameLoadInfo* load_info)
             return false;
         }
 
-        sub_57EFA0(v1.field_8, v1.field_C, v1.field_10);
+        sub_57EFA0(v1.field_8, v1.field_C, v1.field_10.obj);
     }
 
     for (index = 0; index < 10; index++) {
@@ -309,7 +312,62 @@ void sub_57DC20()
 // 0x57DC60
 bool sub_57DC60(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+
+    switch (msg->type) {
+    case TIG_MESSAGE_BUTTON:
+        switch (msg->data.button.state) {
+        case TIG_BUTTON_STATE_RELEASED:
+            for (index = 0; index < 2; index++) {
+                if (msg->data.button.button_handle == sub_557B20(index)->button_handle) {
+                    sub_54FCF0(&(stru_683518[index]));
+                    return true;
+                }
+            }
+            for (index = 0; index < 10; index++) {
+                if (msg->data.button.button_handle == stru_6835E0[index].info.button_handle) {
+                    if (dword_6839B0 || sub_573620()) {
+                        if (sub_573620()) {
+                            sub_57DC20();
+                        }
+                        sub_57E8D0(1);
+                    } else {
+                        sub_54FCF0(&(stru_6835E0[index]));
+                    }
+                    return true;
+                }
+            }
+            return false;
+        case TIG_BUTTON_STATE_MOUSE_INSIDE:
+            if (msg->data.button.button_handle == sub_557B20(0)->button_handle) {
+                sub_550150(&(stru_683518[0]));
+                return true;
+            }
+            if (msg->data.button.button_handle == sub_557B20(1)->button_handle) {
+                sub_550150(&(stru_683518[1]));
+                return true;
+            }
+            index = sub_57E460();
+            if (index < 10 && stru_6835E0[index].field_8) {
+                sub_550150(&(stru_6835E0[index]));
+                return true;
+            }
+            return false;
+        default:
+            return false;
+        }
+    case TIG_MESSAGE_CHAR:
+        if (!textedit_ui_is_focused()
+            && !sub_541680()
+            && (msg->data.character.ch == 'A' || msg->data.character.ch == 'a')) {
+            sub_54FCF0(stru_683518);
+            gsound_play_sfx_id(0, 1);
+            return true;
+        }
+        return false;
+    default:
+        return false;
+    }
 }
 
 // 0x57DE00
@@ -326,7 +384,7 @@ bool intgame_save_hotkey(S683518* a1, TigFile* stream)
 
     switch (a1->field_8) {
     case 1:
-        if (tig_file_fwrite(&(a1->field_18), sizeof(a1->field_18), 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(a1->field_10.field_8), sizeof(a1->field_10.field_8), 1, stream) != 1) return false;
         if (tig_file_fwrite(&(a1->field_40), sizeof(a1->field_40), 1, stream) != 1) return false;
         break;
     case 2:
@@ -336,7 +394,7 @@ bool intgame_save_hotkey(S683518* a1, TigFile* stream)
         if (tig_file_fwrite(&(a1->field_C), sizeof(a1->field_C), 1, stream) != 1) return false;
         break;
     case 4:
-        if (tig_file_fwrite(&(a1->field_18), sizeof(a1->field_18), 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(a1->field_10.field_8), sizeof(a1->field_10.field_8), 1, stream) != 1) return false;
         if (tig_file_fwrite(&(a1->field_C), sizeof(a1->field_C), 1, stream) != 1) return false;
         break;
     }
@@ -426,11 +484,11 @@ void intgame_hotkey_mouse_load(tig_art_id_t art_id, bool a2)
 // 0x57E5A0
 void sub_57E5A0(S683518* a1)
 {
-    a1->field_10 = OBJ_HANDLE_NULL;
+    a1->field_10.obj = OBJ_HANDLE_NULL;
     a1->field_8 = 0;
     a1->field_4 = 0;
     a1->field_44 = -1;
-    a1->field_18.type = 0;
+    a1->field_10.field_8.objid.type = 0;
     dword_5CB4E4 = -1;
 }
 
@@ -583,9 +641,9 @@ void sub_57F2C0(int64_t obj, int a3)
     if (a3) {
         for (index = 0; index < 2; index++) {
             v1 = &(stru_683518[index]);
-            if (v1->field_10 == obj) {
+            if (v1->field_10.obj == obj) {
                 sub_57E5A0(v1);
-                sub_57EFA0(2, sub_557B50(index), v1->field_10);
+                sub_57EFA0(2, sub_557B50(index), v1->field_10.obj);
             }
         }
     }
