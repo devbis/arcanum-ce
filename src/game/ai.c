@@ -13,6 +13,7 @@
 #include "game/proto.h"
 #include "game/reaction.h"
 #include "game/script.h"
+#include "game/skill.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
@@ -1065,9 +1066,51 @@ void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags
 }
 
 // 0x4AE570
-void sub_4AE570()
+int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill)
 {
-    // TODO: Incomplete.
+    switch (skill) {
+    case SKILL_HEAL:
+        if (a3 == OBJ_HANDLE_NULL
+            || obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_ITEM_GENERIC
+            || (obj_field_int32_get(a3, OBJ_F_GENERIC_FLAGS) & 0x8) == 0) {
+            return 1;
+        }
+
+        if (a2 == OBJ_HANDLE_NULL
+            || !obj_type_is_critter(obj_field_int32_get(a2, OBJ_F_TYPE))
+            || (obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & (OCF_UNDEAD | OCF_MECHANICAL)) != 0) {
+            return 2;
+        }
+
+        return 0;
+    case SKILL_REPAIR:
+        if (a2 == OBJ_HANDLE_NULL
+            || !obj_type_is_item(obj_field_int32_get(a2, OBJ_F_TYPE))) {
+            return 2;
+        }
+
+        return 0;
+    case SKILL_DISARM_TRAPS:
+        if (a3 != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_ITEM_GENERIC
+                || (obj_field_int32_get(a3, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) == 0) {
+                return 1;
+            }
+        } else {
+            if (a1 == OBJ_HANDLE_NULL || !sub_45DDA0(a1)) {
+                return 1;
+            }
+        }
+
+        if (a2 == OBJ_HANDLE_NULL
+            || !object_is_lockable(a2)) {
+            return 2;
+        }
+
+        return 0;
+    }
+
+    return 0;
 }
 
 // 0x4AE720

@@ -32,6 +32,7 @@ void sub_4ADFF0(int64_t obj);
 void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 int sub_4AE120(int64_t a1, int64_t a2);
 void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags);
+int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill);
 void sub_4AE9E0(int64_t a1, bool a2);
 void sub_4AEAB0(int64_t a1, int64_t a2);
 bool sub_4AEB10(int64_t obj);
