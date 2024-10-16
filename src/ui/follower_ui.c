@@ -1,5 +1,8 @@
 #include "ui/follower_ui.h"
 
+#include <stdio.h>
+
+#include "game/broadcast.h"
 #include "game/critter.h"
 #include "game/mes.h"
 #include "game/obj.h"
@@ -358,9 +361,32 @@ void sub_56B110(bool a1)
 }
 
 // 0x56B180
-void sub_56B180()
+void sub_56B180(S4F2810* a1)
 {
-    // TODO: Incomplete.
+    int num;
+    Broadcast bcast;
+    MesFileEntry mes_file_entry;
+    char str[MAX_STRING];
+
+    sub_56B280();
+    if (!sub_45D8D0(qword_67BC20) && !sub_45D800(qword_67BC20)) {
+        if (a1->field_8) {
+            // Walk
+            num = 0;
+            bcast.field_0 = a1->field_0;
+        } else {
+            // Attack
+            num = 1;
+            bcast.field_0 = obj_field_int64_get(a1->field_0, OBJ_F_LOCATION);
+        }
+
+        mes_file_entry.num = num;
+        if (mes_search(follower_ui_mes_file, &mes_file_entry)) {
+            sub_441B60(qword_67BC50, qword_67BC20, str);
+            sprintf(bcast.field_8, "%s %s", str, mes_file_entry.str);
+            sub_4C2F00(qword_67BC20, &bcast);
+        }
+    }
 }
 
 // 0x56B280
