@@ -28,6 +28,7 @@ void sub_4AD6E0(int64_t obj);
 void sub_4AD7D0(int64_t obj);
 int sub_4AD800(int64_t a1, int64_t a2, bool a3);
 int sub_4AD950(int64_t a1, int64_t a2, bool a3);
+void sub_4AD790(int64_t obj, int a2);
 void sub_4ADFF0(int64_t obj);
 void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 int sub_4AE120(int64_t a1, int64_t a2);

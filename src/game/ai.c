@@ -918,9 +918,16 @@ void sub_4AD730(int64_t obj, DateTime* datetime)
 }
 
 // 0x4AD790
-void sub_4AD790()
+void sub_4AD790(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    TimeEvent timeevent;
+
+    sub_4AD7D0(obj);
+
+    timeevent.type = TIMEEVENT_TYPE_AI;
+    timeevent.params[0].object_value = obj;
+    timeevent.params[1].integer_value = a2;
+    sub_45B820(&timeevent);
 }
 
 // 0x4AD7D0
