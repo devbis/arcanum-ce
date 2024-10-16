@@ -646,7 +646,50 @@ void sub_570E40()
 // 0x570EF0
 void sub_570EF0()
 {
-    // TODO: Incomplete.
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int index;
+    int64_t obj;
+    int portrait;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = 32;
+    src_rect.height = 32;
+
+    dst_rect.x = 4;
+    dst_rect.y = 0;
+    dst_rect.width = 32;
+    dst_rect.height = 32;
+
+    for (index = 0; index < dword_68103C; index++) {
+        if (tig_net_client_is_waiting(dword_680FA4[index])) {
+            tig_button_show(multiplayer_ui_add_button_handles[index]);
+        } else {
+            tig_button_hide(multiplayer_ui_add_button_handles[index]);
+
+            obj = sub_4A2B60(dword_680FA4[index]);
+            if (obj != OBJ_HANDLE_NULL
+                && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+                portrait = sub_4CEB80(obj);
+                if (portrait != 0) {
+                    portrait_draw_32x32(obj, portrait, dword_5CABE8, 4, index * stru_680FD0[index % 2].height + 4);
+                    if (index == dword_5CABF0) {
+                        art_blit_info.flags = TIG_ART_BLT_BLEND_ALPHA_CONST;
+                        tig_art_interface_id_create(646, 0, 0, 0, &(art_blit_info.art_id));
+                        art_blit_info.alpha[0] = 128;
+                        art_blit_info.src_rect = &src_rect;
+                        art_blit_info.dst_rect = &dst_rect;
+
+                        dst_rect.y = index * stru_680FD0[0].height + 4;
+
+                        tig_window_blit_art(dword_5CABE8, &art_blit_info);
+                    }
+                }
+            }
+        }
+    }
 }
 
 // 0x571100
