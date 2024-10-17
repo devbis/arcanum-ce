@@ -4,13 +4,13 @@
 #include "game/context.h"
 
 typedef struct JumpPoint {
-    int field_0;
-    int field_4;
-    int64_t location;
-    int field_10;
-    int field_14;
-    int field_18;
-    int field_1C;
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int64_t location;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
 } JumpPoint;
 
 // See 0x4E3800.
