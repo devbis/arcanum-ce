@@ -288,7 +288,31 @@ int sub_4C1150(int64_t a1, int64_t a2, int a3)
 // 0x4C11D0
 void sub_4C11D0(int64_t a1, int64_t a2, int a3)
 {
-    // TODO: Incomplete.
+    int v1;
+
+    if (a3 < 0) {
+        v1 = a3 / 100;
+        if (v1 == 0) {
+            v1 = -2;
+        } else if (v1 < -30) {
+            v1 = -30;
+        }
+    } else if (a3 > 50
+        && reaction_translate(sub_4C0CC0(a1, a2)) < REACTION_AMIABLE) {
+        if (a3 < 200) {
+            v1 = a3 / 40;
+        } else if (a3 < 1000) {
+            v1 = (a3 - 200) / 100 + 5;
+        } else {
+            v1 = 15;
+        }
+    } else {
+        v1 = 0;
+    }
+
+    if (v1 != 0) {
+        sub_4C0DE0(a1, a2, v1);
+    }
 }
 
 // 0x4C1290
