@@ -17,7 +17,7 @@ static JumpPoint* jumppoints;
 static tig_art_id_t dword_603558;
 
 // 0x60355C
-static GameContextF8* dword_60355C;
+static GameContextF8* jumppoint_iso_invalidate_rect;
 
 // 0x603560
 static char byte_603560[TIG_MAX_PATH];
@@ -29,7 +29,7 @@ static ViewOptions jumppoint_view_options;
 static bool dword_603670;
 
 // 0x603674
-static int jumppoint_iso_window_handle;
+static tig_window_handle_t jumppoint_iso_window_handle;
 
 // 0x603678
 static tig_art_id_t dword_603678;
@@ -50,7 +50,7 @@ static bool jumppoint_editor;
 bool jumppoint_init(GameInitInfo* init_info)
 {
     jumppoint_iso_window_handle = init_info->iso_window_handle;
-    dword_60355C = init_info->field_8;
+    jumppoint_iso_invalidate_rect = init_info->field_8;
     jumppoint_editor = init_info->editor;
     jumppoint_view_options.type = VIEW_TYPE_ISOMETRIC;
 
@@ -136,7 +136,7 @@ void jumppoint_close()
     jumppoints_count = 0;
 
     if (jumppoint_editor == 1) {
-        dword_60355C(0);
+        jumppoint_iso_invalidate_rect(NULL);
     }
 
     dword_60367C = false;
@@ -184,6 +184,61 @@ void sub_4E3300()
     dword_603670 = !dword_603670;
 }
 
+// 0x4E3320
+void sub_4E3320(UnknownContext* a1)
+{
+    TigArtBlitInfo art_blit_info;
+    TigArtFrameData art_frame_data;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int index;
+    TigRect jp_rect;
+    TigRectListNode* rect_node;
+
+    if (!dword_603670) {
+        return;
+    }
+
+    switch (jumppoint_view_options.type) {
+    case VIEW_TYPE_ISOMETRIC:
+        art_blit_info.art_id = dword_603678;
+        break;
+    case VIEW_TYPE_TOP_DOWN:
+        art_blit_info.art_id = dword_603558;
+        tig_art_frame_data(dword_603558, &art_frame_data);
+        src_rect.y = 0;
+        src_rect.x = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+        break;
+    default:
+        // Unknown view type.
+        return;
+    }
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    for (index = 0; index < jumppoints_count; index++) {
+        jumppoint_get_rect(index, &jp_rect);
+
+        rect_node = *a1->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&jp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                if (jumppoint_view_options.type != VIEW_TYPE_TOP_DOWN) {
+                    src_rect.x = dst_rect.x - jp_rect.x;
+                    src_rect.y = dst_rect.y - jp_rect.y;
+                    src_rect.width = dst_rect.width;
+                    src_rect.height = dst_rect.height;
+                }
+                tig_window_blit_art(jumppoint_iso_window_handle, &art_blit_info);
+            }
+            rect_node = rect_node->next;
+        }
+    }
+}
+
 // 0x4E3450
 bool jumppoint_find_by_location(int64_t location, JumpPoint* jumppoint)
 {
@@ -207,7 +262,7 @@ void sub_4E36A0(int jumppoint)
     TigRect rect;
 
     jumppoint_get_rect(jumppoint, &rect);
-    dword_60355C(&rect);
+    jumppoint_iso_invalidate_rect(&rect);
 }
 
 // 0x4E36D0
