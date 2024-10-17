@@ -467,7 +467,57 @@ bool sub_4C12F0(int64_t npc_obj, int64_t pc_obj, bool a3, int* a4)
 // 0x4C1360
 void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value)
 {
-    // TODO: Incomplete.
+    int index;
+    int candidate;
+    int64_t obj;
+    int v1;
+    int reaction_level;
+    int v2;
+    int v3;
+
+    candidate = -1;
+    for (index = 0; index < 10; index++) {
+        obj = obj_arrayfield_handle_get(npc_obj, OBJ_F_NPC_REACTION_PC_IDX, index);
+        if (obj == pc_obj) {
+            sub_4C1490(npc_obj, pc_obj, value, index);
+            return;
+        }
+
+        if (obj == OBJ_HANDLE_NULL
+            && index != 0
+            && candidate == -1) {
+            candidate = index;
+        }
+    }
+
+    if (candidate != -1) {
+        sub_4C1490(npc_obj, pc_obj, value, candidate);
+        return;
+    }
+
+    // FIXME: Unused.
+    datetime_current_second();
+
+    v1 = sub_4C15A0(value);
+    for (index = 0; index < 10; index++) {
+        if (index != 0) {
+            reaction_level = sub_407470(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
+
+            // FIXME: Unused.
+            sub_407470(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index);
+
+            v2 = sub_4C15A0(reaction_level);
+            if (v2 < v1 && (candidate == -1 || v2 < v3)) {
+                candidate = index;
+                v3 = v2;
+            }
+        }
+    }
+
+    if (candidate != -1) {
+        sub_4C1490(npc_obj, pc_obj, value, candidate);
+        return;
+    }
 }
 
 // 0x4C1490
@@ -488,7 +538,7 @@ int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
     int npc_race;
     int pc_race;
 
-    if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS, npc_obj) & ONF_ALOOF) == 0
+    if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS) & ONF_ALOOF) == 0
         && !sub_45F730(npc_obj)) {
         modifier = stat_level(pc_obj, STAT_REACTION_MODIFIER);
         npc_race = stat_level(npc_obj, STAT_RACE);
