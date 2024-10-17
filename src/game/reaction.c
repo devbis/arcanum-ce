@@ -22,7 +22,7 @@ static int sub_4C1290(int64_t a1, int64_t a2);
 static int reaction_get_base(int64_t obj);
 static bool sub_4C12F0(int64_t a1, int64_t a2, bool a3, int* a4);
 static void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value);
-static void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int a4, int a5);
+static void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int level, int index);
 static int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags);
 static int sub_4C15A0(int a1);
 
@@ -356,9 +356,13 @@ void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value)
 }
 
 // 0x4C1490
-void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int a4, int a5)
+void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int level, int index)
 {
-    // TODO: Incomplete.
+    sub_4F0070(npc_obj, OBJ_F_NPC_REACTION_PC_IDX, index, pc_obj);
+    obj_f_set_int32_with_network(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index, level);
+    obj_f_set_int32_with_network(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index, datetime_current_second());
+    sub_460240(npc_obj);
+    sub_4B80E0(npc_obj);
 }
 
 // 0x4C1500
