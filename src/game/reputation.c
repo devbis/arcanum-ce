@@ -120,7 +120,7 @@ bool sub_4C1730(const char* path, int start, int end)
 }
 
 // 0x4C1AC0
-void sub_4C1AC0()
+int sub_4C1AC0(int64_t pc_obj, int64_t npc_obj)
 {
     // TODO: Incomplete.
 }

@@ -9,5 +9,6 @@ bool reputation_mod_load();
 void reputation_mod_unload();
 void sub_4C1BD0(int index, char* buffer);
 bool sub_4C1CB0(int64_t obj, int reputation);
+int sub_4C1AC0(int64_t pc_obj, int64_t npc_obj);
 
 #endif /* ARCANUM_GAME_REPUTATION_H_ */

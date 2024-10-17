@@ -5,17 +5,12 @@
 #include "game/effect.h"
 #include "game/magictech.h"
 #include "game/mes.h"
-#include "game/multiplayer.h"
 #include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
+#include "game/reputation.h"
 #include "game/stat.h"
 #include "game/target.h"
-
-// 0x5FC88C
-static mes_file_handle_t reaction_mes_file;
-
-// 0x5FC890
-static char* reaction_names[REACTION_COUNT];
 
 static int sub_4C0D00(int64_t a1, int64_t a2, unsigned int flags);
 static int sub_4C1290(int64_t a1, int64_t a2);
@@ -25,6 +20,126 @@ static void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value);
 static void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int level, int index);
 static int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags);
 static int sub_4C15A0(int a1);
+
+// 0x5FC88C
+static mes_file_handle_t reaction_mes_file;
+
+// 0x5FC890
+static char* reaction_names[REACTION_COUNT];
+
+// 0x5B684C
+static int dword_5B684C[RACE_COUNT][8] = {
+    {
+        0,
+        0,
+        5,
+        5,
+        0,
+        10,
+        -5,
+        -5,
+    },
+    {
+        -5,
+        10,
+        -10,
+        -5,
+        0,
+        5,
+        -10,
+        -15,
+    },
+    {
+        -10,
+        -20,
+        0,
+        0,
+        -10,
+        10,
+        -15,
+        -10,
+    },
+    {
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        -5,
+        -5,
+    },
+    {
+        0,
+        0,
+        0,
+        0,
+        5,
+        5,
+        -10,
+        5,
+    },
+    {
+        0,
+        0,
+        20,
+        15,
+        0,
+        10,
+        -10,
+        -10,
+    },
+    {
+        0,
+        -20,
+        -15,
+        -10,
+        -10,
+        0,
+        10,
+        0,
+    },
+    {
+        0,
+        -20,
+        -15,
+        -5,
+        20,
+        10,
+        0,
+        5,
+    },
+    {
+        -30,
+        -30,
+        5,
+        -20,
+        -30,
+        -5,
+        -30,
+        -30,
+    },
+    {
+        -10,
+        -30,
+        -20,
+        -15,
+        -20,
+        -20,
+        0,
+        -10,
+    },
+    {
+        -20,
+        -30,
+        -40,
+        -30,
+        -20,
+        -20,
+        10,
+        0,
+    },
+};
 
 // 0x4C0BD0
 bool reaction_init(GameInitInfo* init_info)
@@ -368,7 +483,28 @@ void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int level, int index)
 // 0x4C1500
 int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
 {
-    // TODO: Incomplete.
+    int v1 = 0;
+    int modifier;
+    int npc_race;
+    int pc_race;
+
+    if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS, npc_obj) & ONF_ALOOF) == 0
+        && !sub_45F730(npc_obj)) {
+        modifier = stat_level(pc_obj, STAT_REACTION_MODIFIER);
+        npc_race = stat_level(npc_obj, STAT_RACE);
+        pc_race = stat_level(pc_obj, STAT_RACE);
+
+        v1 = dword_5B684C[npc_race][pc_race] + modifier;
+        if ((flags & 0x1) != 0) {
+            if (v1 < -49) {
+                v1 = -49;
+            }
+        }
+    }
+
+    v1 += sub_4C1AC0(pc_obj, npc_obj);
+
+    return v1;
 }
 
 // 0x4C15A0
