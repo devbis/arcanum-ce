@@ -178,7 +178,17 @@ void sub_4C0DE0(int64_t npc_obj, int64_t pc_obj, int value)
 // 0x4C0F50
 void sub_4C0F50(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < 10; index++) {
+        if (index != 0
+            && obj_arrayfield_handle_get(a1, OBJ_F_NPC_REACTION_PC_IDX, index) == a2) {
+            obj_arrayfield_obj_set(a1, OBJ_F_NPC_REACTION_PC_IDX, index, OBJ_HANDLE_NULL);
+            break;
+        }
+    }
+
+    sub_4B80E0(a1);
 }
 
 // 0x4C0FC0
