@@ -1,7 +1,5 @@
 #include "game/sector_script_list.h"
 
-static bool sub_4F6220(SectorScriptList* list);
-
 // 0x4F6170
 bool sector_script_list_init(SectorScriptList* list)
 {
@@ -14,7 +12,7 @@ bool sector_script_list_reset(SectorScriptList* list)
     list->flags = 0;
     memset(&(list->scr), 0, sizeof(list->scr));
     list->flags = 0;
-    list->scr.field_8 = 0;
+    list->scr.num = 0;
 
     return true;
 }
@@ -26,7 +24,7 @@ bool sector_script_list_exit(SectorScriptList* list)
 }
 
 // 0x4F61C0
-bool sub_4F61C0(SectorScriptList* list, Scr* scr)
+bool sub_4F61C0(SectorScriptList* list, Script* scr)
 {
     list->scr = *scr;
     list->flags |= 0x1;
@@ -34,17 +32,17 @@ bool sub_4F61C0(SectorScriptList* list, Scr* scr)
 }
 
 // 0x4F61F0
-bool sub_4F61F0(SectorScriptList* list, Scr* scr)
+bool sub_4F61F0(SectorScriptList* list, Script* scr)
 {
     *scr = list->scr;
 
-    return scr->field_8 != 0;
+    return scr->num != 0;
 }
 
 // 0x4F6220
 bool sub_4F6220(SectorScriptList* list)
 {
-    if (list->scr.field_8 != 0) {
+    if (list->scr.num != 0) {
         sector_script_list_reset(list);
         list->flags |= 0x1;
     }
