@@ -1190,7 +1190,7 @@ int64_t item_gold_set(int amount, int64_t obj)
 {
     int64_t gold_obj;
 
-    if (sub_4ED8B0(9056, obj, &gold_obj)) {
+    if (mp_object_create(9056, obj, &gold_obj)) {
         sub_4EFDD0(obj, OBJ_F_GOLD_QUANTITY, amount);
     }
 
@@ -1612,12 +1612,69 @@ int64_t item_ammo_obj(object_id_t obj, int ammo_type)
     }
 }
 
+// 0x4658E0
+bool item_ammo_move(int64_t from_obj, int64_t to_obj, int qty, int ammo_type, int64_t ammo_obj)
+{
+    int remaining_qty;
+    int64_t to_ammo_obj;
+
+    if (qty == 0) {
+        return true;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return false;
+    }
+
+    if (from_obj != OBJ_HANDLE_NULL) {
+        if (ammo_obj == OBJ_HANDLE_NULL) {
+            ammo_obj = item_ammo_obj(from_obj, ammo_type);
+        }
+
+        if (ammo_obj != OBJ_HANDLE_NULL) {
+            remaining_qty = obj_field_int32_get(ammo_obj, OBJ_F_AMMO_QUANTITY);
+            if (remaining_qty < qty) {
+                return false;
+            }
+
+            if (to_obj != OBJ_HANDLE_NULL) {
+                sub_441980(to_obj, ammo_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
+            }
+
+            if (remaining_qty == qty) {
+                sub_43CCA0(ammo_obj);
+            } else {
+                sub_4EFDD0(ammo_obj, OBJ_F_AMMO_QUANTITY, remaining_qty - qty);
+            }
+        }
+    }
+
+    if (to_obj != OBJ_HANDLE_NULL) {
+        to_ammo_obj = item_ammo_obj(to_obj, ammo_type);
+        if (to_ammo_obj != OBJ_HANDLE_NULL) {
+            remaining_qty = obj_field_int32_get(ammo_obj, OBJ_F_AMMO_QUANTITY);
+            sub_4EFDD0(ammo_obj, OBJ_F_AMMO_QUANTITY, remaining_qty + qty);
+        } else {
+            to_ammo_obj = item_ammo_create(qty,
+                ammo_type,
+                obj_field_int64_get(to_obj, OBJ_F_LOCATION));
+            sub_4617F0(to_ammo_obj, to_obj);
+        }
+    }
+
+    sub_466D60(from_obj);
+    sub_466D60(to_obj);
+
+    return true;
+}
+
 // 0x465A40
-int64_t item_ammo_quantity_set(int quantity, int ammo_type, int64_t obj)
+int64_t item_ammo_create(int quantity, int ammo_type, int64_t loc)
 {
     int64_t ammo_obj;
 
-    if (sub_4ED8B0(dword_5B32B0[ammo_type], obj, &ammo_obj)) {
+    if (mp_object_create(dword_5B32B0[ammo_type], loc, &ammo_obj)) {
         sub_4EFDD0(ammo_obj, OBJ_F_AMMO_QUANTITY, quantity);
     }
 
