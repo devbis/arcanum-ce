@@ -1188,9 +1188,63 @@ void sub_4B5F40()
 }
 
 // 0x4B6410
-void sub_4B6410()
+void sub_4B6410(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int crit_miss_chart;
+    int crit_miss_effect;
+    int chance;
+
+    if (combat->weapon_obj != OBJ_HANDLE_NULL) {
+        if (obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+            crit_miss_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_MISS_CHART);
+            if ((combat->flags & 0x20000) == 0) {
+                crit_miss_effect = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_EFFECT);
+                chance = sub_461590(combat->weapon_obj, combat->field_8, crit_miss_effect);
+            } else {
+                chance = 0;
+            }
+        } else {
+            crit_miss_chart = 1;
+            chance = 0;
+        }
+    } else {
+        crit_miss_chart = 5;
+        chance = 0;
+    }
+
+    chance = effect_adjust_crit_fail_effect(combat->field_8, chance);
+
+    combat->flags &= ~0x1;
+    combat->flags &= ~0x4;
+    combat->flags |= 0x8;
+    combat->flags |= 0x2;
+
+    combat->field_20 = combat->field_8;
+    combat->target_loc = obj_field_int64_get(combat->field_20, OBJ_F_LOCATION);
+
+    if (random_between(1, 100) <= 50) {
+        combat->flags |= 0x4;
+        if (crit_miss_chart != 5 && random_between(1, 100) <= chance + 1) {
+            combat->field_58 |= 0x8000;
+        }
+
+        if ((crit_miss_chart == 6
+                || crit_miss_chart == 7
+                || crit_miss_chart == 8)
+            && random_between(1, 100) <= chance + 1) {
+            combat->field_58 |= 0x10000;
+        }
+
+        if (item_weapon_ammo_type(combat->weapon_obj) != 10000) {
+            if (random_between(1, 100) <= chance + 1) {
+                combat->field_58 |= 0x40000;
+            } else if (random_between(1, 100) <= chance + 11) {
+                combat->field_58 |= 0x20000;
+            }
+        }
+
+        sub_4B5F40(combat);
+    }
 }
 
 // 0x4B65A0
