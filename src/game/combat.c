@@ -40,6 +40,8 @@ static int64_t sub_4B54B0(int64_t obj, int a2);
 static bool sub_4B5520(CombatContext* combat);
 static void sub_4B5580(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
+static void sub_4B5F40(CombatContext* combat);
+static void sub_4B6410(CombatContext* combat);
 static int sub_4B65A0();
 static void sub_4B6680(CombatContext* combat);
 static void sub_4B6B90(CombatContext* combat);
@@ -1182,9 +1184,182 @@ void sub_4B5F30()
 }
 
 // 0x4B5F40
-void sub_4B5F40()
+void sub_4B5F40(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int target_obj_type;
+    int attacker_obj_type;
+    bool npc_attacks_pc;
+    int crit_hit_chart;
+    int chance;
+    int critter_crit_hit_chart;
+    unsigned int critter_flags;
+    int64_t item_obj;
+    int difficulty;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return;
+    }
+
+    if (combat->field_20 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (combat->field_8 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    target_obj_type = obj_field_int32_get(combat->field_20, OBJ_F_TYPE);
+    attacker_obj_type = obj_field_int32_get(combat->field_8, OBJ_F_TYPE);
+
+    // Make sure it's a clash between critters.
+    if (!obj_type_is_critter(target_obj_type)
+        || !obj_type_is_critter(attacker_obj_type)) {
+        return;
+    }
+
+    npc_attacks_pc = target_obj_type == OBJ_TYPE_PC
+        && attacker_obj_type == OBJ_TYPE_NPC;
+
+    critter_crit_hit_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_CRITTER_CRIT_HIT_CHART);
+
+    if (combat->weapon_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+        crit_hit_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_HIT_CHART);
+        if ((combat->flags & 0x20000) == 0) {
+            chance = sub_461590(combat->weapon_obj,
+                combat->field_8,
+                obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_EFFECT));
+        }
+    } else {
+        crit_hit_chart = 1;
+        chance = 0;
+    }
+
+    chance = effect_adjust_crit_hit_effect(combat->field_8, chance);
+
+    if ((combat->flags & 0x1) != 0) {
+        chance += 10;
+    }
+
+    if (!npc_attacks_pc) {
+        if (random_between(1, 100) <= chance + 10) {
+            combat->field_58 |= 0x20;
+        } else if (random_between(1, 100) <= chance + 30) {
+            combat->field_58 |= 0x10;
+        } else if (random_between(1, 100) <= chance + 60) {
+            combat->field_58 |= 0x8;
+        }
+    }
+
+    if (critter_crit_hit_chart != 2) {
+        critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+        if ((critter_flags & OCF_UNDEAD) == 0) {
+            item_obj = item_wield_get(combat->field_20, 1000);
+
+            difficulty = chance + 5;
+
+            if (crit_hit_chart == 1 || crit_hit_chart == 3) {
+                difficulty += 10;
+            }
+
+            if (combat->field_40 == 1 && item_obj == OBJ_HANDLE_NULL) {
+                difficulty += 10;
+            }
+
+            if (random_between(1, 100) <= difficulty
+                && !sub_45F060(combat->field_20, STAT_CONSTITUTION, -5)) {
+                combat->field_58 |= 0x40;
+                if (target_obj_type != OBJ_TYPE_PC
+                    && (critter_flags & OCF_FATIGUE_IMMUNE) == 0
+                    && random_between(1, 100) < difficulty
+                    && !sub_45F060(combat->field_20, STAT_CONSTITUTION, -5)) {
+                    combat->field_58 |= 0x100;
+                }
+            }
+
+            // NOTE: Not sure how to reimplement it without goto.
+            do {
+                if (critter_crit_hit_chart != 4) {
+                    if (critter_crit_hit_chart != 5 && combat->field_40 == 2) {
+                        if (random_between(1, 100) <= chance + 1
+                            && !sub_45F060(combat->field_20, STAT_CONSTITUTION, -5)) {
+                            combat->field_58 |= 0x400;
+                        }
+                        break;
+                    }
+
+                    if (combat->field_40 == 3) {
+                        if (random_between(1, 100) <= chance + 1
+                            && !sub_45F060(combat->field_20, STAT_CONSTITUTION, -5)) {
+                            combat->field_58 |= 0x800;
+                        }
+                        break;
+                    }
+                }
+
+                if (combat->field_40 == 1) {
+                    if (crit_hit_chart == 1) {
+                        if (item_obj != OBJ_HANDLE_NULL
+                            && random_between(1, 100) <= chance + 5) {
+                            combat->field_58 |= 0x80000;
+                            break;
+                        }
+                    }
+
+                    if (!npc_attacks_pc
+                        && random_between(1, 100) <= chance + (item_obj == OBJ_HANDLE_NULL ? 1 : 0)
+                        && !sub_45F060(combat->field_20, STAT_CONSTITUTION, 0)) {
+                        combat->field_58 |= 0x200;
+                        break;
+                    }
+                }
+            } while (0);
+
+            if (target_obj_type == OBJ_TYPE_PC
+                && ((combat->flags & 0x8) == 0
+                    || sub_4EA4A0(combat->field_20, 50) <= 0)
+                && random_between(1, 100) <= chance + 5) {
+                combat->field_58 |= 0x1000;
+            }
+        }
+
+        if (critter_crit_hit_chart == 0) {
+            difficulty = chance + 5;
+
+            if (crit_hit_chart == 1) {
+                difficulty += 5;
+            }
+
+            if (combat->field_40 == 3) {
+                difficulty += 10;
+            }
+
+            if (random_between(1, 100) <= difficulty) {
+                combat->field_58 |= 0x80;
+            }
+        }
+    }
+
+    if (sub_4B23B0(combat->field_20)) {
+        if (random_between(1, 100) <= chance + 10) {
+            combat->field_58 |= 0x4000;
+        }
+
+        if (!npc_attacks_pc
+            && random_between(1, 100) <= chance + 10) {
+            combat->field_58 |= 0x2000;
+        }
+    }
+
+    if (sub_4B54B0(combat->field_20, combat->field_40)
+        && random_between(1, 100) <= chance + 10) {
+        combat->field_58 |= 0x100000;
+    }
+
+    if (combat->field_58 == 0) {
+        combat->field_58 = 0x8;
+    }
 }
 
 // 0x4B6410
@@ -1198,8 +1373,9 @@ void sub_4B6410(CombatContext* combat)
         if (obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
             crit_miss_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_CRIT_MISS_CHART);
             if ((combat->flags & 0x20000) == 0) {
-                crit_miss_effect = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_EFFECT);
-                chance = sub_461590(combat->weapon_obj, combat->field_8, crit_miss_effect);
+                chance = sub_461590(combat->weapon_obj,
+                    combat->field_8,
+                    obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_EFFECT));
             } else {
                 chance = 0;
             }
