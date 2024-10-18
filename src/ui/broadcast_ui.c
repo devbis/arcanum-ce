@@ -1,5 +1,6 @@
 #include "ui/broadcast_ui.h"
 
+#include "game/broadcast.h"
 #include "game/player.h"
 #include "ui/intgame.h"
 #include "ui/textedit_ui.h"
@@ -18,13 +19,7 @@ static TextEdit stru_5CAC28 = {
 };
 
 // 0x681040
-static int dword_681040;
-
-// 0x681044
-static int dword_681044;
-
-// 0x681048
-static char byte_681048[128];
+static Broadcast stru_681040;
 
 // 0x6810C8
 static tig_font_handle_t dword_6810C8;
@@ -42,8 +37,8 @@ bool broadcast_ui_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    byte_681048[0] = '\0';
-    stru_5CAC28.buffer = byte_681048;
+    stru_681040.field_8[0] = '\0';
+    stru_5CAC28.buffer = stru_681040.field_8;
 
     font_desc.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_SHADOW;
     tig_art_misc_id_create(TIG_ART_SYSTEM_FONT, 0, &(font_desc.art_id));
@@ -62,7 +57,7 @@ void broadcast_ui_exit()
 // 0x571890
 void broadcast_ui_reset()
 {
-    byte_681048[0] = '\0';
+    stru_681040.field_8[0] = '\0';
 }
 
 // 0x5718A0
@@ -73,8 +68,7 @@ void sub_5718A0()
         return;
     }
 
-    dword_681040 = 0;
-    dword_681044 = 0;
+    stru_681040.obj = OBJ_HANDLE_NULL;
     sub_5506C0(7);
     textedit_ui_focus(&stru_5CAC28);
     dword_6810CC = 1;
@@ -98,8 +92,8 @@ void sub_571910()
 void sub_571950(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
-        sub_551830(&dword_681040);
-        sub_4C2F00(player_get_pc_obj(), &dword_681040);
+        intgame_get_pc_under_cursor(&(stru_681040.obj));
+        sub_4C2F00(player_get_pc_obj(), &stru_681040);
     }
     sub_571910();
 }
