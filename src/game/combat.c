@@ -43,6 +43,7 @@ static void sub_4B5E90(int64_t loc);
 static void sub_4B5F40(CombatContext* combat);
 static void sub_4B6410(CombatContext* combat);
 static int sub_4B65A0();
+static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
 static void sub_4B6680(CombatContext* combat);
 static void sub_4B6B90(CombatContext* combat);
 static void sub_4B7080();
@@ -374,7 +375,7 @@ void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t
     unsigned int weapon_flags;
     unsigned int critter_flags2;
 
-    if (sub_4ED8B0(5028, loc, &missile_obj)) {
+    if (mp_object_create(5028, loc, &missile_obj)) {
         sub_4EFDD0(missile_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE, combat->field_58);
         if ((combat->flags & 0x100) != 0) {
             hit_loc = combat->field_44[0];
@@ -1434,9 +1435,36 @@ int sub_4B65A0()
 }
 
 // 0x4B65D0
-void sub_4B65D0()
+bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
 {
-    // TODO: Incomplete.
+    int ammo_type;
+    int qty;
+    int consumption;
+
+    if (obj_field_int32_get(critter_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+        && !sub_45DDA0(critter_obj)) {
+        return true;
+    }
+
+    ammo_type = item_weapon_ammo_type(weapon_obj);
+    if (ammo_type == 10000) {
+        return true;
+    }
+
+    qty = item_ammo_quantity_get(critter_obj, ammo_type);
+
+    if (a4) {
+        item_ammo_move(critter_obj, OBJ_HANDLE_NULL, qty, ammo_type, OBJ_HANDLE_NULL);
+        return true;
+    }
+
+    consumption = a3 * obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
+    if (qty >= consumption) {
+        item_ammo_move(critter_obj, OBJ_HANDLE_NULL, consumption, ammo_type, OBJ_HANDLE_NULL);
+        return true;
+    }
+
+    return false;
 }
 
 // 0x4B6680
