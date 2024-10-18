@@ -1,5 +1,7 @@
 #include "game/combat.h"
 
+#include <stdio.h>
+
 #include "game/ai.h"
 #include "game/anim.h"
 #include "game/animfx.h"
@@ -36,6 +38,7 @@ static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
 static int64_t sub_4B54B0(int64_t obj, int a2);
 static bool sub_4B5520(CombatContext* combat);
+static void sub_4B5580(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
 static int sub_4B65A0();
 static void sub_4B6680(CombatContext* combat);
@@ -803,9 +806,118 @@ bool sub_4B5520(CombatContext* combat)
 }
 
 // 0x4B5580
-void sub_4B5580()
+void sub_4B5580(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int dam;
+    int complexity;
+    char str[80];
+    MesFileEntry mes_file_entry;
+
+    if (combat->field_8 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (combat->field_20 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if ((combat->flags & 0x10000) == 0) {
+        return;
+    }
+
+    if ((combat->field_58 & 0x200000) == 0) {
+        return;
+    }
+
+    if (combat->skill != SKILL_MELEE) {
+        return;
+    }
+
+    switch (obj_field_int32_get(combat->field_20, OBJ_F_MATERIAL)) {
+    case 0:
+        dam = 4;
+        break;
+    case 1:
+        dam = 3;
+        break;
+    case 2:
+        dam = 2;
+        break;
+    case 3:
+        dam = 1;
+        break;
+    case 5:
+        dam = 5;
+        break;
+    case 6:
+        dam = combat->weapon_obj != OBJ_HANDLE_NULL ? 0 : 5;
+        break;
+    case 12:
+        dam = 5;
+        break;
+    }
+
+    if (combat->weapon_obj != OBJ_HANDLE_NULL) {
+        complexity = obj_field_int32_get(combat->weapon_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+        if (complexity < 0) {
+            complexity = -complexity;
+        }
+
+        if (complexity > 100) {
+            complexity = 100;
+        }
+
+        dam += dam * complexity / -100;
+
+        switch (tig_art_item_id_subtype_get(obj_field_int32_get(combat->weapon_obj, OBJ_F_ITEM_USE_AID_FRAGMENT))) {
+        case TIG_ART_WEAPON_TYPE_AXE:
+            dam -= 2;
+            break;
+        case TIG_ART_WEAPON_TYPE_MACE:
+        case TIG_ART_WEAPON_TYPE_STAFF:
+            dam -= 1;
+            break;
+        }
+    } else {
+        int hp = sub_43D600(combat->field_8);
+        if (dam >= hp) {
+            dam = hp - 1;
+        }
+    }
+
+    str[0] = '\0';
+
+    if (dam > 0) {
+        if (combat->weapon_obj != OBJ_HANDLE_NULL) {
+            // Apply damage to the weapon.
+            object_set_hp_damage(combat->weapon_obj,
+                object_get_hp_damage(combat->weapon_obj) + dam);
+
+            mes_file_entry.num = 8; // "Weapon damaged"
+            if (sub_43D600(combat->weapon_obj) <= 0) {
+                sub_43F1C0(combat->weapon_obj, combat->field_8);
+                mes_file_entry.num = 23; // "Weapon broken"
+                sub_4B83E0(combat->field_8, combat->field_20);
+            }
+
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            strcpy(str, mes_file_entry.str);
+        } else {
+            if (text_floaters_get() == 2) {
+                mes_file_entry.num = 1; // "HT"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                sprintf(str, "%d %s", dam, mes_file_entry.str);
+            }
+
+            // Apply damage to the target.
+            object_set_hp_damage(combat->field_8,
+                object_get_hp_damage(combat->field_8) + dam);
+        }
+
+        if (str[0] != '\0') {
+            tf_add(combat->field_8, TF_TYPE_RED, str);
+        }
+    }
 }
 
 // 0x4B5810
