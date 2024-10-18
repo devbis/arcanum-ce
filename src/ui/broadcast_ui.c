@@ -68,7 +68,7 @@ void sub_5718A0()
         return;
     }
 
-    stru_681040.obj = OBJ_HANDLE_NULL;
+    stru_681040.loc = 0;
     sub_5506C0(7);
     textedit_ui_focus(&stru_5CAC28);
     dword_6810CC = 1;
@@ -92,7 +92,7 @@ void sub_571910()
 void sub_571950(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
-        intgame_get_pc_under_cursor(&(stru_681040.obj));
+        intgame_get_location_under_cursor(&(stru_681040.loc));
         sub_4C2F00(player_get_pc_obj(), &stru_681040);
     }
     sub_571910();

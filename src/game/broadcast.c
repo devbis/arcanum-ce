@@ -221,12 +221,12 @@ void sub_4C3B90()
 }
 
 // 0x4C3BE0
-void sub_4C3BE0(unsigned int a1, int64_t obj)
+void sub_4C3BE0(unsigned int a1, int64_t loc)
 {
     Broadcast bcast;
 
     if (a1 < 6) {
-        bcast.obj = obj;
+        bcast.loc = loc;
         strcpy(bcast.field_8, byte_5FDC90[a1]);
         sub_4C2F00(player_get_pc_obj(), &bcast);
     }
