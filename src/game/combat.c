@@ -27,6 +27,7 @@
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
+static void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t missile_art_id);
 static void sub_4B2690(int64_t a1, int64_t a2, int64_t a3, CombatContext* combat, bool a5);
 static int sub_4B2810(int64_t obj);
 static void sub_4B2F60(CombatContext* combat);
@@ -361,9 +362,49 @@ void fast_turn_based_changed()
 }
 
 // 0x4B24F0
-void sub_4B24F0()
+void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t missile_art_id)
 {
-    // TODO: Incomplete.
+    int64_t missile_obj;
+    int hit_loc;
+    unsigned int weapon_flags;
+    unsigned int critter_flags2;
+
+    if (sub_4ED8B0(5028, loc, &missile_obj)) {
+        sub_4EFDD0(missile_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE, combat->field_58);
+        if ((combat->flags & 0x100) != 0) {
+            hit_loc = combat->field_44[0];
+        } else {
+            hit_loc = combat->field_40;
+        }
+        sub_4EFDD0(missile_obj, OBJ_F_PROJECTILE_HIT_LOC, hit_loc);
+
+        mp_obj_field_obj_set(missile_obj, OBJ_F_PROJECTILE_PARENT_WEAPON, combat->weapon_obj);
+
+        if (combat->weapon_obj != OBJ_HANDLE_NULL
+            && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+            weapon_flags = obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_FLAGS);
+            if ((weapon_flags & OWF_TRANS_PROJECTILE) != 0) {
+                sub_4EFDD0(missile_obj, OBJ_F_BLIT_FLAGS, TIG_ART_BLT_BLEND_ADD);
+            }
+            if ((weapon_flags & OWF_BOOMERANGS) != 0) {
+                critter_flags2 = obj_field_int32_get(combat->field_8, OBJ_F_CRITTER_FLAGS2);
+                critter_flags2 |= OCF2_USING_BOOMERANG;
+                sub_4EFDD0(combat->field_8, OBJ_F_CRITTER_FLAGS2, critter_flags2);
+
+                combat->flags |= 0x1000;
+            }
+        }
+
+        sub_4EFDD0(missile_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT, combat->flags);
+        sub_435870(combat->field_8,
+            missile_obj,
+            missile_art_id,
+            a3,
+            a4,
+            combat->field_20,
+            combat->target_loc,
+            combat->weapon_obj);
+    }
 }
 
 // 0x4B2650
@@ -1874,7 +1915,7 @@ void sub_4B80E0(int64_t obj)
 bool combat_set_blinded(int64_t obj)
 {
     unsigned int flags;
-    int color;
+    int tf_type;
     MesFileEntry mes_file_entry;
 
     flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
@@ -1885,11 +1926,13 @@ bool combat_set_blinded(int64_t obj)
     flags |= OCF_BLINDED;
     obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
 
-    color = obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC ? 1 : 0;
+    tf_type = obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        ? TF_TYPE_RED
+        : TF_TYPE_WHITE;
 
     mes_file_entry.num = 4; // "Blinded"
     mes_get_msg(combat_mes_file, &mes_file_entry);
-    sub_4D5450(obj, color, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     return true;
 }
