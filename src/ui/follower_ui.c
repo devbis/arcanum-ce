@@ -9,6 +9,7 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "ui/intgame.h"
+#include "ui/inven_ui.h"
 
 static void sub_56A6E0(int index);
 static bool sub_56A9D0(TigMessage* msg);
@@ -347,17 +348,18 @@ void sub_56B0F0()
 void sub_56B110(bool a1)
 {
     sub_551A80(18);
+
     if (!a1) {
-        sub_4F25B0(0, 0x8000);
+        sub_4F25B0(Tgt_Tile);
         return;
     }
 
     if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
-        sub_4F25B0(0x10000004, 0x200);
+        sub_4F25B0(Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall);
         return;
     }
 
-    sub_4F25B0(0x90000004, 0x10000200);
+    sub_4F25B0(Tgt_Obj_No_ST_Critter_Dead | Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall | Tgt_Non_Party_Critters);
 }
 
 // 0x56B180
@@ -373,11 +375,11 @@ void sub_56B180(S4F2810* a1)
         if (a1->field_8) {
             // Walk
             num = 0;
-            bcast.field_0 = a1->field_0;
+            bcast.loc = a1->field_0;
         } else {
             // Attack
             num = 1;
-            bcast.field_0 = obj_field_int64_get(a1->field_0, OBJ_F_LOCATION);
+            bcast.loc = obj_field_int64_get(a1->field_0, OBJ_F_LOCATION);
         }
 
         mes_file_entry.num = num;
