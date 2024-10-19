@@ -1,33 +1,37 @@
-#include "game/lib/item_effect.h"
+#include "game/item_effect.h"
 
-#include "game/lib/message.h"
+#include "game/mes.h"
 
 // 0x6018C0
 static int dword_6018C0;
 
 // 0x6018C4
-static int game_item_effect_msg_file;
+static mes_file_handle_t game_item_effect_mes_file;
 
 // 0x6018C8
-static int item_effect_msg_file;
+static mes_file_handle_t item_effect_mes_file;
 
 // 0x4D3F60
-bool item_effect_init(GameContext* ctx)
+bool item_effect_init(GameInitInfo* init_info)
 {
-    if (!message_load("mes\\item_effect.mes", &item_effect_msg_file)) {
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    (void)init_info;
+
+    if (!mes_load("mes\\item_effect.mes", &item_effect_mes_file)) {
         return false;
     }
 
-    int count = message_count(item_effect_msg_file);
-    if (count != 0) {
-        MessageListItem msg;
-        sub_4D4500(item_effect_msg_file, count - 1, &msg);
-        dword_6018C0 = msg.num;
+    cnt = mes_entries_count(item_effect_mes_file);
+    if (cnt != 0) {
+        mes_get_entry(item_effect_mes_file, cnt - 1, &mes_file_entry);
+        dword_6018C0 = mes_file_entry.num;
     } else {
         dword_6018C0 = 0;
     }
 
-    game_item_effect_msg_file = -1;
+    game_item_effect_mes_file = MES_FILE_HANDLE_INVALID;
 
     return true;
 }
@@ -35,18 +39,20 @@ bool item_effect_init(GameContext* ctx)
 // 0x4D3FE0
 void item_effect_exit()
 {
-    message_unload(item_effect_msg_file);
+    mes_unload(item_effect_mes_file);
 }
 
 // 0x4D3FF0
 bool item_effect_mod_load()
 {
-    if (message_load("mes\\gameitemeffect.mes", &game_item_effect_msg_file)) {
-        int count = message_count(game_item_effect_msg_file);
-        if (count != 0) {
-            MessageListItem msg;
-            sub_4D4500(game_item_effect_msg_file, count - 1, &msg);
-            dword_6018C0 = msg.num;
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    if (mes_load("mes\\gameitemeffect.mes", &game_item_effect_mes_file)) {
+        cnt = mes_entries_count(game_item_effect_mes_file);
+        if (cnt != 0) {
+            mes_get_entry(game_item_effect_mes_file, cnt - 1, &mes_file_entry);
+            dword_6018C0 = mes_file_entry.num;
         }
     }
 
@@ -56,32 +62,33 @@ bool item_effect_mod_load()
 // 0x4D4050
 void item_effect_mod_unload()
 {
-    message_unload(game_item_effect_msg_file);
-    game_item_effect_msg_file = -1;
+    mes_unload(game_item_effect_mes_file);
+    game_item_effect_mes_file = -1;
 }
 
 // 0x4D4080
 const char* item_effect_get_text(int num)
 {
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+
     if (num < 0 || num > dword_6018C0) {
         return NULL;
     }
 
-    int msg_file;
     if (num < 30000) {
-        msg_file = item_effect_msg_file;
+        mes_file = item_effect_mes_file;
     } else {
-        msg_file = game_item_effect_msg_file;
-        if (msg_file == -1) {
+        mes_file = game_item_effect_mes_file;
+        if (mes_file == -1) {
             return NULL;
         }
     }
 
-    MessageListItem msg;
-    msg.num = num;
-    if (!message_find(msg_file, &msg)) {
+    mes_file_entry.num = num;
+    if (!mes_search(mes_file, &mes_file_entry)) {
         return NULL;
     }
 
-    return msg.text;
+    return mes_file_entry.str;
 }
