@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game/background.h"
+#include "game/critter.h"
 #include "game/gamelib.h"
 #include "game/gfade.h"
 #include "game/gmovie.h"
@@ -17,6 +18,7 @@
 #include "game/player.h"
 #include "game/portrait.h"
 #include "game/proto.h"
+#include "game/reaction.h"
 #include "game/script.h"
 #include "game/stat.h"
 #include "game/teleport.h"
@@ -4299,7 +4301,50 @@ bool sub_545E40(tig_button_handle_t button_handle)
 // 0x545E80
 void sub_545E80(TigRect* rect)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    LocRect loc_rect;
+    ObjectList objects;
+    int64_t npc_obj;
+    int64_t substitute_inventory_obj;
+
+    pc_obj = player_get_pc_obj();
+    sub_460FF0(pc_obj);
+    if (!sub_40FF50(2)) {
+        sub_5412D0();
+        return;
+    }
+
+    loc_rect.x1 = 0;
+    loc_rect.y1 = 0;
+    location_get_limits(&(loc_rect.x2), &(loc_rect.y2));
+    sub_440B40(&loc_rect, OBJ_TM_NPC, &objects);
+
+    if (objects.head != NULL) {
+        npc_obj = objects.head->obj;
+    } else {
+        npc_obj = OBJ_HANDLE_NULL;
+    }
+    object_list_destroy(&objects);
+
+    dword_64C418 = true;
+
+    if (npc_obj == OBJ_HANDLE_NULL) {
+        sub_5412D0();
+        return;
+    }
+
+    sub_4C0F50(npc_obj, pc_obj);
+    sub_463E20(npc_obj);
+
+    substitute_inventory_obj = sub_45F650(npc_obj);
+    if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
+        sub_463E20(substitute_inventory_obj);
+    }
+
+    if (!sub_572240(pc_obj, npc_obj, 1)) {
+        sub_5412D0();
+        return;
+    }
 }
 
 // 0x545F60
