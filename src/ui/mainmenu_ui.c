@@ -4142,7 +4142,54 @@ void sub_5458D0(TigRect* rect)
 // 0x5459F0
 bool sub_5459F0(tig_button_handle_t button_handle)
 {
-    // TODO: Incomplete.
+    int index;
+    int64_t pc_obj;
+    MainMenuWindowInfo* window;
+
+    for (index = 0; index < 4; index++) {
+        if (button_handle == stru_5C51B0[index].button_handle) {
+            break;
+        }
+    }
+
+    if (index >= 4) {
+        return true;
+    }
+
+    pc_obj = player_get_pc_obj();
+    window = main_menu_window_info[dword_64C414];
+
+    switch (index) {
+    case 0:
+        if (window->execute_func != NULL && !window->execute_func(0)) {
+            return true;
+        }
+        sub_5412D0();
+        return true;
+    case 1:
+        sub_5417A0(1);
+        return true;
+    case 2:
+        if (dword_5C5308 > 1) {
+            dword_5C5308--;
+        } else {
+            dword_5C5308 = dword_5C361C - 1;
+        }
+        qword_64C460 = objp_perm_lookup(sub_407EF0(sub_4685A0(dword_5C5308 + 16066)));
+        window->refresh_func(NULL);
+        return true;
+    case 3:
+        if (dword_5C5308 < dword_5C361C - 1) {
+            dword_5C5308++;
+        } else {
+            dword_5C5308 = 1;
+        }
+        qword_64C460 = objp_perm_lookup(sub_407EF0(sub_4685A0(dword_5C5308 + 16067)));
+        window->refresh_func(NULL);
+        return true;
+    default:
+        return true;
+    }
 }
 
 // 0x545B60
