@@ -66,9 +66,10 @@ static void mainmenu_ui_destroy_options();
 static bool sub_541D90(tig_button_handle_t button_handle);
 static void sub_541E20(int a1);
 static void mainmenu_ui_create_load_game();
+static void sub_542200();
 static void mainmenu_ui_destroy_load_game();
 static void sub_542280(int a1);
-static void sub_5422A0();
+static void sub_5422A0(TigRect* rect);
 static bool sub_5422C0(int btn);
 static bool sub_542420(tig_button_handle_t button_handle);
 static bool sub_542460(tig_button_handle_t button_handle);
@@ -2216,6 +2217,9 @@ static int dword_64C448;
 // 0x64C44C
 static int dword_64C44C;
 
+// 0x64C450
+static bool dword_64C450;
+
 // 0x64C454
 static int dword_64C454;
 
@@ -2952,7 +2956,95 @@ void sub_541E20(int a1)
 // 0x541F20
 void mainmenu_ui_create_load_game()
 {
-    // TODO: Incomplete.
+    MainMenuWindowInfo* window;
+    int64_t pc_obj;
+    S550DA0 v1;
+
+    dword_64C414 = 7;
+    window = main_menu_window_info[dword_64C414];
+
+    sub_542200();
+
+    if (dword_64C37C) {
+        gamelib_modsavlist_create(dword_64C37C, &stru_64BBF8);
+    } else {
+        gamelib_savlist_create(&stru_64BBF8);
+    }
+
+    sub_403C10(&stru_64BBF8, 0, 0);
+
+    window->field_8C = stru_64BBF8.count;
+    if (window->field_90 == -1) {
+        if (window->field_8C > 0) {
+            const char* path = sub_403850();
+            unsigned int index;
+
+            window->field_90 = 0;
+
+            if (path != NULL && *path != '\0') {
+                for (index = 0; index < stru_64BBF8.count; index++) {
+                    if (strcmp(stru_64BBF8.paths[index], path) == 0) {
+                        window->field_90 = index;
+                        break;
+                    }
+                }
+            }
+        }
+    } else if (window->field_90 >= window->field_8C) {
+        window->field_90 = window->field_8C > 0 ? 0 : -1;
+    }
+
+    window->field_88 = window->field_8C - window->field_5C.height / 20 - 1;
+    if (window->field_88 < 0) {
+        window->field_88 = 0;
+    }
+    window->field_84 = 0;
+
+    mainmenu_ui_create_window_func(false);
+
+    if (!main_menu_button_create_ex(&stru_5C45D8, 0, 0, 0x2)) {
+        tig_debug_printf("MainMenu-UI: mainmenu_ui_create_load_game: ERROR: Failed to create button.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    stru_64C260.field_4 = stru_5C4798;
+    stru_64C260.flags = 0x39F;
+    stru_64C260.field_28 = 0;
+    stru_64C260.field_24 = window->field_88 + 1;
+    if (stru_64C260.field_24 > 0) {
+        stru_64C260.field_24--;
+    }
+    stru_64C260.field_38 = window->field_90 < 7 ? 0 : window->field_90;
+    stru_64C260.field_2C = 1;
+    stru_64C260.field_3C = sub_542280;
+    stru_64C260.field_40 = sub_5422A0;
+    stru_64C260.rect.x = 34;
+    stru_64C260.rect.y = 110;
+    stru_64C260.rect.width = 195;
+    stru_64C260.rect.height = 232;
+    scrollbar_ui_control_create(&stru_64C220, &stru_64C260, dword_5C3624);
+
+    dword_64C450 = false;
+
+    pc_obj = player_get_pc_obj();
+
+    v1.window_handle = dword_5C3624;
+    v1.rect = &stru_5C4780;
+    tig_art_interface_id_create(746, 0, 0, 0, &(v1.art_id));
+
+    if (pc_obj != OBJ_HANDLE_NULL) {
+        sub_4B8CE0(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
+    }
+
+    if (sub_40FF50(2) == sub_40FF40()) {
+        sub_550DA0(2, &v1);
+    } else {
+        sub_550DA0(1, &v1);
+        dword_64C450 = true;
+    }
+
+    sub_5806F0(stru_64C220);
+    tig_window_display();
 }
 
 // 0x542200
@@ -2991,8 +3083,10 @@ void sub_542280(int a1)
 }
 
 // 0x5422A0
-void sub_5422A0()
+void sub_5422A0(TigRect* rect)
 {
+    (void)rect;
+
     main_menu_window_info[dword_64C414]->refresh_func(NULL);
 }
 
