@@ -3093,7 +3093,47 @@ void sub_5422A0(TigRect* rect)
 // 0x5422C0
 bool sub_5422C0(int btn)
 {
-    // TODO: Incomplete.
+    int index;
+    MatchmakerRegisterInfo register_info;
+    char name[256];
+
+    index = main_menu_window_info[dword_64C414]->field_90;
+    if (index == -1) {
+        return false;
+    }
+
+    strncpy(name, stru_64BBF8.paths[index], 8);
+    name[8] = '\0';
+
+    if (stru_64BBF8.module == NULL) {
+        return sub_5432B0(name);
+    }
+
+    sub_4A4270();
+    sub_4A2BC0();
+    sub_4A3D00(1);
+    sub_4A2BD0();
+    sub_541710();
+    sub_4A4280();
+    sub_49CC50();
+
+    if (sub_49CC70(stru_64BBF8.module, name)) {
+        if (multiplayer_mm_is_active()) {
+            tig_net_local_server_get_name(register_info.name, sizeof(register_info.name));
+            sub_52B0C0(&(register_info.addr));
+            tig_net_inet_string(register_info.addr.sin_addr.s_addr, register_info.hostname);
+            sprintf(&(register_info.hostname[strlen(register_info.hostname)]), ":%d", 31435);
+            multiplayer_mm_register(0);
+            sub_5499B0(stru_64C0E8.str);
+        }
+        sub_5412D0();
+    } else {
+        sub_5280F0();
+        tig_net_start_client();
+        sub_549B30();
+    }
+
+    return true;
 }
 
 // 0x542420
