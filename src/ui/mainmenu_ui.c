@@ -4432,7 +4432,58 @@ bool main_menu_button_create(MainMenuButtonInfo *info, int width, int height)
 // 0x5461C0
 bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height, unsigned int flags)
 {
-    // TODO: Incomplete.
+    TigButtonData button_data;
+    int index;
+
+    button_data.flags = flags;
+    button_data.x = info->x;
+    button_data.y = info->y;
+
+    if (info->art_num != -1) {
+        tig_art_interface_id_create(info->art_num, 0, 0, 0, &(button_data.art_id));
+    } else {
+        button_data.art_id = TIG_ART_ID_INVALID;
+        button_data.width = width;
+        button_data.height = height;
+    }
+
+    if ((info->flags & 0x1) != 0) {
+        for (index = 0; index < 3; index++) {
+            if (info->x >= stru_5C3680[index].x
+                && info->x < stru_5C3680[index].x + stru_5C3680[index].width
+                && info->y >= stru_5C3680[index].y
+                && info->y < stru_5C3680[index].y + stru_5C3680[index].height) {
+                break;
+            }
+        }
+
+        if (index >= 3) {
+            return false;
+        }
+
+        button_data.window_handle = dword_5C3670[index];
+        button_data.x -= stru_5C3680[index].y;
+    } else {
+        button_data.window_handle = dword_5C3624;
+        button_data.y -= stru_5C3628.y;
+    }
+
+    if ((info->flags & 0x2) != 0) {
+        button_data.flags |= TIG_BUTTON_FLAG_0x02;
+    }
+
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
+    if (info->art_num != -1) {
+        button_data.mouse_down_snd_id = 3000;
+        button_data.mouse_up_snd_id = 3001;
+    } else {
+        button_data.mouse_down_snd_id = 3027;
+        button_data.mouse_enter_snd_id = 3026;
+    }
+
+    return tig_button_create(&button_data, &(info->button_handle)) == TIG_OK;
 }
 
 // 0x546330
