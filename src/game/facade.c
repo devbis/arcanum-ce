@@ -1,6 +1,7 @@
 #include "game/facade.h"
 
 #include "game/tile.h"
+#include "game/walkmask.h"
 
 static void sub_4CA0F0(int a1, int a2, int a3);
 static void sub_4CA240();
