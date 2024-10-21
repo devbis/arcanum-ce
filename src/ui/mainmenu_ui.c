@@ -4252,7 +4252,55 @@ void sub_545C60()
 // 0x545C70
 bool sub_545C70(tig_button_handle_t button_handle)
 {
-    // TODO: Incomplete.
+    if (button_handle == stru_5C5310[0].button_handle) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            uint8_t* v1;
+            int v2;
+
+            sub_4A2BD0();
+            if (!sub_4A4320()) {
+                tig_debug_printf("MainMenu_UI: Could not save multiplayer character.\n");
+                return true;
+            }
+
+            settings_set_obj_value(&settings,
+                "selected_char_id",
+                sub_407EF0(player_get_pc_obj()));
+
+            dword_5C3618 = -1;
+            if (dword_64C41C != NULL) {
+                FREE(dword_64C41C);
+                dword_64C41C = NULL;
+            }
+
+            sub_4A3D70(&dword_64C41C, &dword_64C420);
+            sub_442050(&v1, &v2, player_get_pc_obj());
+            sub_4A40F0(0,
+                sub_407EF0(player_get_pc_obj()),
+                stat_level(player_get_pc_obj(), STAT_LEVEL),
+                v1,
+                v2);
+            FREE(v1);
+
+            sub_5417A0(0);
+            mainmenu_ui_create_multiplayer_hub();
+            if (sub_541680()) {
+                sub_541810(sub_5496D0());
+            }
+
+            return false;
+        }
+
+        sub_5480C0(2);
+        return true;
+    }
+
+    if (button_handle == stru_5C5310[1].button_handle) {
+        sub_5417A0(1);
+        return true;
+    }
+
+    return false;
 }
 
 // 0x545DF0
