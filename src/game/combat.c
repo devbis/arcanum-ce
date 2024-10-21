@@ -2019,9 +2019,23 @@ void sub_4B79A0()
 }
 
 // 0x4B7A20
-void sub_4B7A20()
+bool sub_4B7A20(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t loc1;
+    int64_t loc2;
+    int v1;
+
+    if (!dword_5FC22C) {
+        return sub_4B7790(a1, 0);
+    }
+
+    v1 = 1;
+    loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
+    loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
+    if (loc1 != loc2) {
+        v1 = sub_4B7BA0(a1, loc2, false) + 1;
+    }
+    return sub_4B7790(a1, v1);
 }
 
 // 0x4B7AA0
