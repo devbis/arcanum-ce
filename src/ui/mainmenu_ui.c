@@ -4756,7 +4756,67 @@ bool mainmenu_ui_process_callback(TimeEvent* timeevent)
 // 0x5480C0
 void sub_5480C0(int a1)
 {
-    // TODO: Incomplete.
+    MainMenuWindowInfo* window;
+
+    window = main_menu_window_info[dword_64C414];
+    switch (a1) {
+    case 0:
+        sub_548FF0(window->field_84 - 1);
+        return;
+    case 1:
+        sub_548FF0(window->field_84 + 1);
+        return;
+    case 2:
+        if (window->execute_func != NULL) {
+            dword_5C3FB8 = window->execute_func(-1);
+            if (!dword_5C3FB8) {
+                return;
+            }
+        }
+        if (dword_64C384) {
+            if (dword_64C414 == 15) {
+                sub_5412D0();
+            } else {
+                sub_5417A0(0);
+                dword_64C414++;
+                sub_541740();
+            }
+        }
+        return;
+    case 3:
+        if (dword_64C414 != 6 || sub_589430()) {
+            sub_5417A0(1);
+        }
+        return;
+    case 4:
+        window->field_C &= ~0x1;
+        if ((window->field_C & 0x2) != 0) {
+            window->field_90 = 0;
+        }
+        if ((window->field_C & 0x4) != 0) {
+            if (window->field_90 > 0) {
+                window->field_90--;
+            }
+        }
+        if (window->refresh_func != NULL) {
+            window->refresh_func(NULL);
+        }
+        return;
+    case 5:
+        window->field_C |= 0x1;
+        if ((window->field_C & 0x2) != 0) {
+            window->field_90 = -1;
+        }
+        if ((window->field_C & 0x4) != 0) {
+            if (window->field_90 < window->field_8C - 1) {
+                window->field_90++;
+            }
+        }
+        if (window->refresh_func != NULL) {
+            window->refresh_func(NULL);
+        }
+        return;
+    }
 }
 
 // 0x548210
