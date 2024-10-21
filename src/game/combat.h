@@ -75,6 +75,7 @@ int combat_get_action_points();
 bool sub_4B7790(int64_t obj, int a2);
 bool sub_4B7830(int64_t a1, int64_t a2);
 bool sub_4B78D0(int64_t a1, int64_t a2);
+bool sub_4B79A0(int64_t a1, int64_t a2);
 bool sub_4B7A20(int64_t a1, int64_t a2);
 bool sub_4B7AA0(int64_t obj);
 bool sub_4B7AE0(int64_t obj);
