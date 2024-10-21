@@ -4776,7 +4776,227 @@ void sub_548210(int a1, int a2)
 // 0x5482A0
 void sub_5482A0(TigRect* rect)
 {
-    // TODO: Incomplete.
+    TigArtBlitInfo art_blit_info;
+    TigRect text_rect;
+    MesFileEntry mes_file_entry1;
+    MesFileEntry mes_file_entry2;
+    TigFont font_desc;
+    char str[80];
+    int64_t obj;
+    int aptitude;
+    int portrait;
+    char* player_name;
+    char* copy;
+    size_t pos;
+
+    text_rect.x = 384;
+    text_rect.y = 0;
+    text_rect.width = 416;
+    text_rect.height = 600;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = dword_64C2A4;
+    art_blit_info.dst_rect = &text_rect;
+    art_blit_info.src_rect = &text_rect;
+    tig_window_blit_art(dword_5C3624, &art_blit_info);
+
+    if (dword_5C3618 < 0 || dword_5C3618 > dword_64C420) {
+        if (stru_64C248.type != 0) {
+            int index;
+
+            for (index = 0; index < dword_64C420; index++) {
+                if (objid_is_equal(stru_64C248, sub_407EF0(dword_64C41C[index]))) {
+                    dword_5C3618 = index;
+                    break;
+                }
+            }
+        }
+
+        if (dword_5C3618 < 0 || dword_5C3618 > dword_64C420) {
+            dword_5C3618 = 0;
+            stru_64C248 = sub_407EF0(dword_64C41C[dword_5C3618]);
+            settings_set_obj_value(&settings, "selected_char_id", stru_64C248);
+        }
+    }
+
+    if (dword_5C3618 < 0 || dword_5C3618 >= dword_64C420) {
+        return;
+    }
+
+    obj = dword_64C41C[dword_5C3618];
+
+    portrait = sub_4CEB80(obj);
+    if (portrait) {
+        portrait_draw_native(obj, portrait, dword_5C3624, 530, 117);
+    }
+
+    // Render name.
+    tig_font_push(sub_549940(2, 3));
+
+    obj_field_string_get(obj, OBJ_F_PC_PLAYER_NAME, &player_name);
+    copy = STRDUP(player_name);
+    pos = strlen(copy);
+    while (pos > 0) {
+        copy[pos] = '\0';
+        font_desc.width = 0;
+        font_desc.str = copy;
+        sub_535390(&font_desc);
+        if (font_desc.width <= 259) {
+            break;
+        }
+        pos--;
+    }
+    FREE(player_name);
+    // FIXME: Leaking `player_name`.
+
+    text_rect.x = 432 + (259 - font_desc.width) / 2;
+    text_rect.y = 190;
+    text_rect.width = font_desc.width;
+    text_rect.height = font_desc.height;
+    tig_window_text_write(dword_5C3624, copy, &text_rect);
+
+    tig_font_pop();
+
+    // Render primary stats.
+    tig_font_push(sub_549940(0, 1));
+
+    mes_file_entry1.num = 2020; // "ST: %02d"
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_STRENGTH));
+    text_rect.x = 475;
+    text_rect.y = 117;
+    text_rect.width = 54;
+    text_rect.height = 15;
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2021; // "DX: %02d"
+    text_rect.y += 16;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_DEXTERITY));
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2022; // "CN: %02d"
+    text_rect.y += 16;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_CONSTITUTION));
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2023; // "BE: %02d"
+    text_rect.y += 16;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_BEAUTY));
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2024; // "IN: %02d"
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_INTELLIGENCE));
+    text_rect.x = 610;
+    text_rect.y = 117;
+    text_rect.width = 54;
+    text_rect.height = 15;
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2025; // "PE: %02d"
+    text_rect.y += 16;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_PERCEPTION));
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2026; // "WP: %02d"
+    text_rect.y += 16;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_WILLPOWER));
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2027; // "CH: %02d"
+    text_rect.y += 16;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_CHARISMA));
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    tig_font_pop();
+
+    // Render secondary stats.
+    tig_font_push(sub_549940(0, 0));
+
+    mes_file_entry1.num = 2028; // "Level: %d"
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, 17));
+    font_desc.width = 0;
+    font_desc.str = str;
+    sub_535390(&font_desc);
+
+    text_rect.width = font_desc.width;
+    text_rect.height = font_desc.height;
+    text_rect.x = (260 - font_desc.width) / 2 + 432;
+    text_rect.y = 217;
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2029; // "Alignment: %d"
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_ALIGNMENT) / 10);
+    font_desc.width = 0;
+    font_desc.str = str;
+    sub_535390(&font_desc);
+
+    text_rect.width = font_desc.width;
+    text_rect.y += 16;
+    text_rect.x = (260 - font_desc.width) / 2 + 432;
+    text_rect.height = font_desc.height;
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2030; // "Aptitude: %s %d"
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+
+    aptitude = stat_level(obj, STAT_MAGICK_TECH_APTITUDE);
+    if (aptitude > 0) {
+        mes_file_entry2.num = 2033; // "Magick"
+    } else if (aptitude < 0) {
+        mes_file_entry2.num = 2034; // "Technology"
+        aptitude = -aptitude;
+    } else {
+        mes_file_entry2.num = 2035; // " "
+    }
+
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry2);
+    sprintf(str, mes_file_entry1.str, mes_file_entry2.str, aptitude);
+    font_desc.width = 0;
+    font_desc.str = str;
+    sub_535390(&font_desc);
+
+    text_rect.width = font_desc.width;
+    text_rect.x = (260 - font_desc.width) / 2 + 432;
+    text_rect.y += 16;
+    text_rect.height = font_desc.height;
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2031; // "Total Attack: %d"
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, sub_464630(obj));
+    font_desc.width = 0;
+    font_desc.str = str;
+    sub_535390(&font_desc);
+
+    text_rect.width = font_desc.width;
+    text_rect.y += 16;
+    text_rect.x = (260 - font_desc.width) / 2 + 432;
+    text_rect.height = font_desc.height;
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    mes_file_entry1.num = 2032; // "Total Defense: %d"
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
+    sprintf(str, mes_file_entry1.str, sub_464700(obj));
+    font_desc.width = 0;
+    font_desc.str = str;
+    sub_535390(&font_desc);
+
+    text_rect.width = font_desc.width;
+    text_rect.x = (260 - font_desc.width) / 2 + 432;
+    text_rect.height = font_desc.height;
+    text_rect.y += 16;
+    tig_window_text_write(dword_5C3624, str, &text_rect);
+
+    tig_font_pop();
 }
 
 // 0x548B60
