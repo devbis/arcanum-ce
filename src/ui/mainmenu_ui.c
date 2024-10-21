@@ -3449,7 +3449,68 @@ bool sub_5432B0(const char* name)
 // 0x543380
 void mainmenu_ui_create_save_game()
 {
-    // TODO: Incomplete.
+    MainMenuWindowInfo* window;
+    int64_t pc_obj;
+    S550DA0 v1;
+
+    dword_64C414 = 8;
+    window = main_menu_window_info[dword_64C414];
+
+    sub_542200();
+    gamelib_savlist_create(&stru_64BBF8);
+    sub_403C10(&stru_64BBF8, 0, 0);
+    byte_64C2F8[0] = '\0';
+    window->field_8C = stru_64BBF8.count + 1;
+    if (stru_64BBF8.count != 0) {
+        window->field_90 = 1;
+    } else {
+        window->field_90 = -1;
+    }
+
+    window->field_88 = window->field_8C - window->field_5C.height / 20 - 1;
+    if (window->field_88 < 0) {
+        window->field_88 = 0;
+    }
+
+    window->field_84 = 0;
+    mainmenu_ui_create_window_func(0);
+
+    if (!main_menu_button_create_ex(&stru_5C4838, 0, 0, 2)) {
+        tig_debug_printf("MainMenu-UI: mainmenu_ui_create_save_game: ERROR: Failed to create button.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    stru_64C260.field_4 = stru_5C4798;
+    stru_64C260.flags = 0x39F;
+    stru_64C260.field_28 = 0;
+    stru_64C260.field_24 = window->field_88 + 1;
+    if (stru_64C260.field_24 > 0) {
+        stru_64C260.field_24--;
+    }
+    stru_64C260.field_38 = 0;
+    stru_64C260.field_2C = 1;
+    stru_64C260.field_3C = sub_542280;
+    stru_64C260.field_40 = sub_5422A0;
+    stru_64C260.rect.x = 34;
+    stru_64C260.rect.y = 110;
+    stru_64C260.rect.width = 195;
+    stru_64C260.rect.height = 232;
+    scrollbar_ui_control_create(&stru_64C220, &stru_64C260, dword_5C3624);
+
+    pc_obj = player_get_pc_obj();
+
+    v1.window_handle = dword_5C3624;
+    v1.rect = &stru_5C4780;
+    tig_art_interface_id_create(746, 0, 0, 0, &(v1.art_id));
+
+    if (pc_obj != OBJ_HANDLE_NULL) {
+        sub_4B8CE0(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
+    }
+
+    sub_550DA0(1, &v1);
+    sub_5806F0(stru_64C220);
+
+    tig_window_display();
 }
 
 // 0x543580
