@@ -2567,7 +2567,7 @@ void redraw_inven(bool a1)
         src_rect.height = text_rects[0].height;
         tig_window_text_write(inven_ui_window_handle, str, &src_rect);
 
-        sprintf(str, "%d", sub_464700(qword_6814F8));
+        sprintf(str, "%d", item_total_defence(qword_6814F8));
         tig_window_text_write(inven_ui_window_handle, str, &(text_rects[1]));
 
         tig_font_pop();
@@ -2917,7 +2917,7 @@ void redraw_inven(bool a1)
             src_rect.width = stru_5CAF38.width;
             src_rect.height = stru_5CAF38.height;
             tig_window_text_write(inven_ui_window_handle, str, &src_rect);
-            sprintf(str, "%d", sub_464700(qword_682C78));
+            sprintf(str, "%d", item_total_defence(qword_682C78));
             tig_window_text_write(inven_ui_window_handle, str, &src_rect);
             tig_font_pop();
         } else {

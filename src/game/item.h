@@ -92,7 +92,7 @@ bool item_is_identified(int64_t obj);
 void item_identify_all(int64_t obj);
 void sub_464470(int64_t obj, int* a2, int* a3);
 int item_total_attack(int64_t critter_obj);
-int sub_464700(int64_t critter_obj);
+int item_total_defence(int64_t critter_obj);
 int item_gold_get(int64_t obj);
 bool sub_464830(int64_t a1, int64_t a2, int a3, int64_t a4);
 int64_t item_gold_set(int amount, int64_t obj);

@@ -1207,9 +1207,21 @@ int item_total_attack(int64_t critter_obj)
 }
 
 // 0x464700
-int sub_464700(int64_t critter_obj)
+int item_total_defence(int64_t obj)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int damage_type;
+
+    v1 = dword_5B3304 * object_get_ac(obj, true);
+    v2 = dword_5B3304;
+
+    for (damage_type = 0; damage_type < 5; damage_type++) {
+        v1 += dword_5B3308[damage_type] * sub_43D6D0(obj, damage_type, true);
+        v2 += dword_5B3308[damage_type];
+    }
+
+    return 2 * (v1 / (v2 + 6));
 }
 
 // 0x464780

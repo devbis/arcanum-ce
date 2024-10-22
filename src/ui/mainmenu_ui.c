@@ -5154,7 +5154,7 @@ void sub_5482A0(TigRect* rect)
 
     mes_file_entry1.num = 2032; // "Total Defense: %d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, sub_464700(obj));
+    sprintf(str, mes_file_entry1.str, item_total_defence(obj));
     font_desc.width = 0;
     font_desc.str = str;
     sub_535390(&font_desc);
