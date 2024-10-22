@@ -6,6 +6,9 @@ static UiCallbacks ui_callbacks;
 // 0x5E87C8
 static TigIdxTable stru_5E87C8;
 
+// 0x5E87D8
+static int dword_5E87D8;
+
 // 0x45FD40
 void ui_init(UiCallbacks* callbacks)
 {
@@ -13,7 +16,7 @@ void ui_init(UiCallbacks* callbacks)
         ui_callbacks = *callbacks;
     }
 
-    tig_idxtable_init(&stru_5E87C8, 24);
+    tig_idxtable_init(&stru_5E87C8, sizeof(John));
 }
 
 // 0x460150
@@ -23,9 +26,20 @@ void ui_exit()
 }
 
 // 0x460160
-void ui_timeevent_process()
+bool ui_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    John v1;
+
+    if (timeevent->params[0].integer_value != 0) {
+        tig_debug_printf("UI: Unknown type of timeevent passed to ui_timeevent_process (%d).\n",
+            timeevent->params[0].integer_value);
+    } else {
+        tig_idxtable_get(&stru_5E87C8, timeevent->params[1].integer_value, &v1);
+        sub_460630(&v1);
+        FREE(v1.str);
+    }
+
+    return true;
 }
 
 // 0x4601C0
@@ -37,10 +51,10 @@ void sub_4601C0()
 }
 
 // 0x4601D0
-void sub_4601D0(int a1, int a2)
+void sub_4601D0(int64_t obj)
 {
     if (ui_callbacks.field_4 != NULL) {
-        ui_callbacks.field_4(a1, a2);
+        ui_callbacks.field_4(obj);
     }
 }
 
@@ -69,18 +83,18 @@ void sub_460260(long long a1)
 }
 
 // 0x460280
-void sub_460280(int a1, int a2)
+void sub_460280(int64_t obj)
 {
     if (ui_callbacks.field_18 != NULL) {
-        ui_callbacks.field_18(a1, a2);
+        ui_callbacks.field_18(obj);
     }
 }
 
 // 0x4602A0
-void sub_4602A0(int a1, int a2, int a3, int a4)
+void sub_4602A0(int64_t obj, int a3, int a4)
 {
     if (ui_callbacks.field_1C != NULL) {
-        ui_callbacks.field_1C(a1, a2, a3, a4);
+        ui_callbacks.field_1C(obj, a3, a4);
     }
 }
 
@@ -93,26 +107,26 @@ void sub_4602D0(long long a1, long long a2)
 }
 
 // 0x460300
-void sub_460300(int a1, int a2, int a3, int a4)
+void sub_460300(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_24 != NULL) {
-        ui_callbacks.field_24(a1, a2, a3, a4);
+        ui_callbacks.field_24(a1, a2);
     }
 }
 
 // 0x460330
-void sub_460330(int a1, int a2, int a3, int a4)
+void sub_460330(int64_t obj, int tech, int action)
 {
     if (ui_callbacks.field_28 != NULL) {
-        ui_callbacks.field_28(a1, a2, a3, a4);
+        ui_callbacks.field_28(obj, tech, action);
     }
 }
 
 // 0x460360
-void sub_460360(int a1, int a2, int a3)
+void sub_460360(int64_t obj, int type)
 {
     if (ui_callbacks.field_2C != NULL) {
-        ui_callbacks.field_2C(a1, a2, a3);
+        ui_callbacks.field_2C(obj, type);
     }
 }
 
@@ -125,18 +139,18 @@ void sub_460380(int a1, int a2, int a3, int a4)
 }
 
 // 0x4603E0
-void sub_4603E0(int a1, int a2, int a3, int a4)
+void sub_4603E0(int64_t obj, int a3, int a4)
 {
     if (ui_callbacks.field_38 != NULL) {
-        ui_callbacks.field_38(a1, a2, a3, a4);
+        ui_callbacks.field_38(obj, a3, a4);
     }
 }
 
 // 0x460410
-void sub_460410(int a1, int a2, int a3, int a4)
+void sub_460410(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_3C != NULL) {
-        ui_callbacks.field_3C(a1, a2, a3, a4);
+        ui_callbacks.field_3C(a1, a2);
     }
 }
 
@@ -149,10 +163,10 @@ void sub_460440(int a1, int a2)
 }
 
 // 0x460460
-int sub_460460(int a1, int a2)
+int sub_460460(int64_t obj)
 {
     if (ui_callbacks.field_44 != NULL) {
-        return ui_callbacks.field_44(a1, a2);
+        return ui_callbacks.field_44(obj);
     } else {
         return 0;
     }
@@ -185,10 +199,10 @@ void sub_4604E0()
 }
 
 // 0x4604F0
-void sub_4604F0(int a1, int a2, int a3, int a4)
+void sub_4604F0(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_58 != NULL) {
-        ui_callbacks.field_58(a1, a2, a3, a4);
+        ui_callbacks.field_58(a1, a2);
     }
 }
 
@@ -217,18 +231,18 @@ void sub_460540(int a1)
 }
 
 // 0x460560
-void sub_460560(int a1, int a2, int a3, int a4, int a5)
+void sub_460560(int64_t a1, int64_t a2, int a3)
 {
     if (ui_callbacks.field_68 != NULL) {
-        ui_callbacks.field_68(a1, a2, a3, a4, a5);
+        ui_callbacks.field_68(a1, a2, a3);
     }
 }
 
 // 0x460590
-int sub_460590(int a1, int a2, int a3)
+int sub_460590(int64_t a1, int a2)
 {
     if (ui_callbacks.field_6C != NULL) {
-        return ui_callbacks.field_6C(a1, a2, a3);
+        return ui_callbacks.field_6C(a1, a2);
     } else {
         return 0;
     }
@@ -251,15 +265,15 @@ void sub_4605D0()
 }
 
 // 0x4605E0
-void sub_4605E0(int a1, int a2, int a3, int a4)
+void sub_4605E0(int64_t a1, void* a2, int a3)
 {
     if (ui_callbacks.field_78 != NULL) {
-        ui_callbacks.field_78(a1, a2, a3, a4);
+        ui_callbacks.field_78(a1, a2, a3);
     }
 }
 
 // 0x460610
-void sub_460610(int a1)
+void sub_460610(const char* a1)
 {
     if (ui_callbacks.field_7C != NULL) {
         ui_callbacks.field_7C(a1);
@@ -267,7 +281,7 @@ void sub_460610(int a1)
 }
 
 // 0x460630
-void sub_460630(int a1)
+void sub_460630(John* a1)
 {
     if (ui_callbacks.field_80 != NULL) {
         ui_callbacks.field_80(a1);
@@ -275,9 +289,21 @@ void sub_460630(int a1)
 }
 
 // 0x460650
-void sub_460650()
+void sub_460650(John* a1, unsigned int milliseconds)
 {
-    // TODO: Incomplete.
+    int id;
+
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    id = dword_5E87D8++;
+    a1->str = STRDUP(a1->str);
+    timeevent.type = TIMEEVENT_TYPE_UI;
+    timeevent.params[0].integer_value = 0;
+    timeevent.params[1].integer_value = id;
+    sub_45A950(&datetime, milliseconds);
+    tig_idxtable_set(&stru_5E87C8, id, a1);
+    sub_45B800(&timeevent, &datetime);
 }
 
 // 0x4606C0
@@ -297,10 +323,10 @@ void sub_4606E0()
 }
 
 // 0x4606F0
-void sub_4606F0(int a1, int a2, int a3, int a4)
+void sub_4606F0(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_8C != NULL) {
-        ui_callbacks.field_8C(a1, a2, a3, a4);
+        ui_callbacks.field_8C(a1, a2);
     }
 }
 
@@ -313,10 +339,10 @@ void sub_460720(int a1, int a2)
 }
 
 // 0x460740
-void sub_460740(int a1, int a2, int a3, int a4)
+void sub_460740(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_94 != NULL) {
-        ui_callbacks.field_94(a1, a2, a3, a4);
+        ui_callbacks.field_94(a1, a2);
     }
 }
 
@@ -353,26 +379,26 @@ void sub_4607B0(int a1)
 }
 
 // 0x4607D0
-void sub_4607D0(int a1, int a2, int a3, int a4)
+void sub_4607D0(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_A8 != NULL) {
-        ui_callbacks.field_A8(a1, a2, a3, a4);
+        ui_callbacks.field_A8(a1, a2);
     }
 }
 
 // 0x460800
-void sub_460800(int a1, int a2)
+void sub_460800(int a1, char* str)
 {
     if (ui_callbacks.field_AC != NULL) {
-        ui_callbacks.field_AC(a1, a2);
+        ui_callbacks.field_AC(a1, str);
     }
 }
 
 // 0x460820
-void sub_460820(int a1, int a2)
+void sub_460820(int64_t obj)
 {
     if (ui_callbacks.field_B0 != NULL) {
-        ui_callbacks.field_B0(a1, a2);
+        ui_callbacks.field_B0(obj);
     }
 }
 
@@ -409,34 +435,34 @@ void sub_460890(int a1)
 }
 
 // 0x4608B0
-void sub_4608B0(int a1, int a2, int a3)
+void sub_4608B0(int64_t a1, int a2)
 {
     if (ui_callbacks.field_C4 != NULL) {
-        ui_callbacks.field_C4(a1, a2, a3);
+        ui_callbacks.field_C4(a1, a2);
     }
 }
 
 // 0x4608D0
-void sub_4608D0(int a1, int a2, int a3, int a4, int a5)
+void sub_4608D0(int a1, int64_t a2, int64_t a3)
 {
     if (ui_callbacks.field_C8 != NULL) {
-        ui_callbacks.field_C8(a1, a2, a3, a4, a5);
+        ui_callbacks.field_C8(a1, a2, a3);
     }
 }
 
 // 0x460900
-void sub_460900(int a1, int a2, int a3, int a4, int a5)
+void sub_460900(int a1, int64_t a2, int64_t a3)
 {
     if (ui_callbacks.field_CC != NULL) {
-        ui_callbacks.field_CC(a1, a2, a3, a4, a5);
+        ui_callbacks.field_CC(a1, a2, a3);
     }
 }
 
 // 0x460930
-void sub_460930(int a1, int a2, int a3, int a4)
+void sub_460930(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_D0 != NULL) {
-        ui_callbacks.field_D0(a1, a2, a3, a4);
+        ui_callbacks.field_D0(a1, a2);
     }
 }
 
@@ -449,34 +475,34 @@ void sub_460960(int a1)
 }
 
 // 0x460980
-void sub_460980(int a1, int a2)
+void sub_460980(int64_t a1)
 {
     if (ui_callbacks.field_D8 != NULL) {
-        ui_callbacks.field_D8(a1, a2);
+        ui_callbacks.field_D8(a1);
     }
 }
 
 // 0x4609E0
-void sub_4609E0(int a1, int a2, int a3, int a4, int a5, int a6, int a7)
+void sub_4609E0(int64_t a1, int64_t a2, int a5, int a6, int a7)
 {
     if (ui_callbacks.field_E8 != NULL) {
-        ui_callbacks.field_E8(a1, a2, a3, a4, a5, a6, a7);
+        ui_callbacks.field_E8(a1, a2, a5, a6, a7);
     }
 }
 
 // 0x460A20
-void sub_460A20(int a1, int a2, int a3)
+void sub_460A20(int64_t a1, int a3)
 {
     if (ui_callbacks.field_EC != NULL) {
-        ui_callbacks.field_EC(a1, a2, a3);
+        ui_callbacks.field_EC(a1, a3);
     }
 }
 
 // 0x460A40
-void sub_460A40(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
+void sub_460A40(int64_t obj, int a3, int a4, int a5, int a6, int a7, const char* str)
 {
     if (ui_callbacks.field_F0 != NULL) {
-        ui_callbacks.field_F0(a1, a2, a3, a4, a5, a6, a7, a8);
+        ui_callbacks.field_F0(obj, a3, a4, a5, a6, a7, str);
     }
 }
 
@@ -513,10 +539,10 @@ void sub_460AF0()
 }
 
 // 0x460B00
-int sub_460B00(int a1, int a2)
+int sub_460B00(int a1, int64_t* obj_ptr)
 {
     if (ui_callbacks.field_104 != NULL) {
-        return ui_callbacks.field_104(a1, a2);
+        return ui_callbacks.field_104(a1, obj_ptr);
     } else {
         return 0;
     }
@@ -588,7 +614,7 @@ int sub_460BC0()
 }
 
 // 0x460BE0
-int sub_460BE0(int a1, int a2)
+int sub_460BE0(const char* a1, int a2)
 {
     if (ui_callbacks.field_124 != NULL) {
         return ui_callbacks.field_124(a1, a2);
@@ -614,53 +640,53 @@ void sub_460C20()
 }
 
 // 0x460C30
-void sub_460C30(int a1, int a2)
+void sub_460C30(int64_t a1)
 {
     if (ui_callbacks.field_130 != NULL) {
-        ui_callbacks.field_130(a1, a2);
+        ui_callbacks.field_130(a1);
     }
 }
 
 // 0x460C50
-int sub_460C50(int a1, int a2, int a3, int a4, int a5)
+int sub_460C50(int64_t a1, int64_t a2, int a3)
 {
     if (ui_callbacks.field_134 != NULL) {
-        return ui_callbacks.field_134(a1, a2, a3, a4, a5);
+        return ui_callbacks.field_134(a1, a2, a3);
     } else {
         return 0;
     }
 }
 
 // 0x460C80
-int sub_460C80(int a1, int a2, int a3, int a4, int a5)
+int sub_460C80(int64_t a1, int64_t a2, int a3)
 {
     if (ui_callbacks.field_138 != NULL) {
-        return ui_callbacks.field_138(a1, a2, a3, a4, a5);
+        return ui_callbacks.field_138(a1, a2, a3);
     } else {
         return 0;
     }
 }
 
 // 0x460CB0
-void sub_460CB0(int a1, int a2, int a3, int a4, int a5)
+void sub_460CB0(int64_t a1, int64_t a2, int a3)
 {
     if (ui_callbacks.field_13C != NULL) {
-        ui_callbacks.field_13C(a1, a2, a3, a4, a5);
+        ui_callbacks.field_13C(a1, a2, a3);
     }
 }
 
 // 0x460CE0
-int sub_460CE0(int a1, int a2, int a3, int a4, int a5)
+int sub_460CE0(int64_t a1, int64_t a2, int a3)
 {
     if (ui_callbacks.field_140 != NULL) {
-        return ui_callbacks.field_140(a1, a2, a3, a4, a5);
+        return ui_callbacks.field_140(a1, a2, a3);
     } else {
         return 0;
     }
 }
 
 // 0x460D10
-void sub_460D10(int a1)
+void sub_460D10(const char* a1)
 {
     if (ui_callbacks.field_144 != NULL) {
         ui_callbacks.field_144(a1);
@@ -668,7 +694,7 @@ void sub_460D10(int a1)
 }
 
 // 0x460D30
-void sub_460D30(int a1)
+void sub_460D30(const char* a1)
 {
     if (ui_callbacks.field_148 != NULL) {
         ui_callbacks.field_148(a1);
@@ -676,7 +702,7 @@ void sub_460D30(int a1)
 }
 
 // 0x460D50
-void sub_460D50(int a1, int a2)
+void sub_460D50(const char* a1, const char* a2)
 {
     if (ui_callbacks.field_14C != NULL) {
         ui_callbacks.field_14C(a1, a2);
@@ -684,7 +710,7 @@ void sub_460D50(int a1, int a2)
 }
 
 // 0x460D70
-void sub_460D70(int a1, int a2)
+void sub_460D70(const char* a1, const char* a2)
 {
     if (ui_callbacks.field_150 != NULL) {
         ui_callbacks.field_150(a1, a2);
@@ -700,7 +726,7 @@ void sub_460D90(int a1, int a2)
 }
 
 // 0x460DB0
-void sub_460DB0(int a1, int a2)
+void sub_460DB0(const char* a1, const char* a2)
 {
     if (ui_callbacks.field_158 != NULL) {
         ui_callbacks.field_158(a1, a2);
@@ -716,10 +742,10 @@ void sub_460DD0()
 }
 
 // 0x460DE0
-void sub_460DE0(int a1, int a2, int a3, int a4)
+void sub_460DE0(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_160 != NULL) {
-        ui_callbacks.field_160(a1, a2, a3, a4);
+        ui_callbacks.field_160(a1, a2);
     }
 }
 
