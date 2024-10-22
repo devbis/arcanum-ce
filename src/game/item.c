@@ -90,6 +90,30 @@ int dword_5B32C0[RACE_COUNT] = {
     2,
 };
 
+// 0x5B32EC
+static int dword_5B32EC = 15;
+
+// 0x5B32F0
+static int dword_5B32F0[] = {
+    12,
+    12,
+    18,
+    15,
+    12,
+};
+
+// 0x5B3304
+static int dword_5B3304 = 24;
+
+// 0x5B3308
+static int dword_5B3308[5] = {
+    25,
+    15,
+    10,
+    16,
+    15,
+};
+
 // 0x5E87E0
 static char** item_ammunition_type_names;
 
@@ -176,6 +200,12 @@ void item_exit()
 void item_resize(ResizeInfo *resize_info)
 {
     stru_5E8808 = resize_info->field_14;
+}
+
+// 0x460FF0
+void sub_460FF0(int64_t obj)
+{
+    // TODO: Incomplete.
 }
 
 // 0x4612A0
@@ -1132,15 +1162,48 @@ void item_identify_all(int64_t obj)
 }
 
 // 0x464470
-void sub_464470()
+void sub_464470(int64_t obj, int* a2, int* a3)
 {
     // TODO: Incomplete.
 }
 
 // 0x464630
-int sub_464630(int64_t critter_obj)
+int item_total_attack(int64_t critter_obj)
 {
-    // TODO: Incomplete.
+    int64_t weapon_obj;
+    int skill;
+    int v1;
+    int v2;
+    int v3;
+    int damage_type;
+    int min_dam;
+    int max_dam;
+
+    weapon_obj = item_wield_get(critter_obj, 1004);
+    skill = item_weapon_skill(weapon_obj);
+    if (IS_TECH_SKILL(skill)) {
+        v1 = sub_4C69F0(critter_obj, GET_TECH_SKILL(skill), OBJ_HANDLE_NULL);
+    } else {
+        v1 = sub_4C62E0(critter_obj, GET_BASIC_SKILL(skill), OBJ_HANDLE_NULL);
+    }
+
+    v3 = v1 * dword_5B32EC;
+    v2 = dword_5B32EC;
+
+    for (damage_type = 0; damage_type < 5; damage_type++) {
+        item_weapon_damage(weapon_obj,
+            critter_obj,
+            damage_type,
+            skill,
+            false,
+            &min_dam,
+            &max_dam);
+
+        v3 += dword_5B32F0[damage_type] * ((min_dam + max_dam) / 2);
+        v2 += dword_5B32F0[damage_type];
+    }
+
+    return v3 / (v2 + 6);
 }
 
 // 0x464700
@@ -1897,7 +1960,7 @@ int item_weapon_min_strength(int64_t item_obj, int64_t critter_obj)
 }
 
 // 0x465F70
-void sub_465F70()
+void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type, int skill, bool a5, int* min_dam_ptr, int* max_dam_ptr)
 {
     // TODO: Incomplete.
 }

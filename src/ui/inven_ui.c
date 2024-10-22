@@ -2555,7 +2555,7 @@ void redraw_inven(bool a1)
     if (text_rects != NULL) {
         tig_font_push(dword_681390);
 
-        sprintf(str, "%d", sub_464630(qword_6814F8));
+        sprintf(str, "%d", item_total_attack(qword_6814F8));
 
         font_desc.str = str;
         font_desc.width = 0;
@@ -2908,7 +2908,7 @@ void redraw_inven(bool a1)
             tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
             tig_font_push(dword_682C74);
-            sprintf(str, "%d", sub_464630(qword_682C78));
+            sprintf(str, "%d", item_total_attack(qword_682C78));
             font_desc.str = str;
             font_desc.width = 0;
             sub_535390(&font_desc);
