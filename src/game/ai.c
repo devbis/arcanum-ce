@@ -11,6 +11,7 @@
 #include "game/object_node.h"
 #include "game/object.h"
 #include "game/proto.h"
+#include "game/random.h"
 #include "game/reaction.h"
 #include "game/script.h"
 #include "game/skill.h"
@@ -86,6 +87,7 @@ static bool sub_4AF800(int64_t obj, int64_t a2);
 static void sub_4AF8C0(int64_t a1, int64_t a2);
 static void sub_4AF930(int64_t a1, int64_t a2);
 static void sub_4AF9D0(int64_t a1, int64_t a2);
+static void sub_4AFA90(int64_t obj);
 
 // 0x5B50CC
 static bool dword_5B50CC;
@@ -1462,9 +1464,26 @@ void sub_4AF9D0(int64_t a1, int64_t a2)
 }
 
 // 0x4AFA90
-void sub_4AFA90()
+void sub_4AFA90(int64_t obj)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int start;
+    int index;
+    int64_t shit_obj;
+
+    sub_4AF9D0(obj, OBJ_HANDLE_NULL);
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_NPC_SHIT_LIST_IDX);
+    start = random_between(0, cnt - 1);
+
+    for (index = 0; index < cnt; index++) {
+        obj_arrayfield_obj_get(obj, OBJ_F_NPC_SHIT_LIST_IDX, (start + index) % cnt, &shit_obj);
+        if (sub_4AB990(obj, shit_obj)) {
+            return shit_obj;
+        }
+    }
+
+    return OBJ_HANDLE_NULL;
 }
 
 // 0x4AFB30
