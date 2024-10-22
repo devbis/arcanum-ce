@@ -1273,23 +1273,22 @@ void sub_4AEAB0(int64_t a1, int64_t a2)
 }
 
 // 0x4AEB10
-bool sub_4AEB10(int64_t obj)
+bool ai_critter_can_open_portals(int64_t obj)
 {
-    int type;
-    int v1[17];
+    AiParams params;
 
     if (obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PC) {
+    switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
+    case OBJ_TYPE_PC:
         return true;
+    case OBJ_TYPE_NPC:
+        sub_4AAA60(obj, &params);
+        return params.field_40;
     }
-    if (type == OBJ_TYPE_NPC) {
-        sub_4AAA60(obj, v1);
-        return v1[16];
-    }
+
     return false;
 }
 

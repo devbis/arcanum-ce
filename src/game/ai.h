@@ -37,7 +37,7 @@ void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags
 int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill);
 void sub_4AE9E0(int64_t a1, bool a2);
 void sub_4AEAB0(int64_t a1, int64_t a2);
-bool sub_4AEB10(int64_t obj);
+bool ai_critter_can_open_portals(int64_t obj);
 int sub_4AEB70(int64_t obj, int64_t portal, int a3);
 int sub_4AED80(int64_t a1, int64_t a2);
 void sub_4AF130(int64_t a1, int64_t a2);
