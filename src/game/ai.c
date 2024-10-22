@@ -598,7 +598,15 @@ bool sub_4AAF50(Ai* ai)
 // 0x4AB030
 bool sub_4AB030(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    AiParams params;
+
+    if ((obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+        return true;
+    }
+
+    sub_4AAA60(a1, &params);
+
+    return sub_441AE0(a1, a2) > params.field_10;
 }
 
 // 0x4AB0B0
