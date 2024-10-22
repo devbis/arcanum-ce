@@ -1454,7 +1454,21 @@ void sub_4AF8C0(int64_t a1, int64_t a2)
 // 0x4AF930
 void sub_4AF930(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    int index;
+
+    if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        v1 = sub_45DDA0(a2);
+    } else {
+        v1 = a2;
+    }
+
+    if ((v1 == OBJ_HANDLE_NULL || v1 != sub_45DDA0(a1))
+        && !sub_4AFB30(a1, a2)) {
+        index = obj_arrayfield_length_get(a1, OBJ_F_NPC_SHIT_LIST_IDX);
+        obj_arrayfield_obj_set(a1, OBJ_F_NPC_SHIT_LIST_IDX, index, a2);
+        sub_4B80E0(a1);
+    }
 }
 
 // 0x4AF9D0
