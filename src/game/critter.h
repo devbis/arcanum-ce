@@ -30,22 +30,6 @@ typedef enum EncumbranceLevel {
     MAX_ENCUMBRANCE_LEVEL,
 } EncumbranceLevel;
 
-typedef struct FollowerInfo {
-    /* 0000 */ int64_t field_0;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-} FollowerInfo;
-
-static_assert(sizeof(FollowerInfo) == 0x30, "wrong size");
-
 bool critter_init(GameInitInfo* init_info);
 void critter_exit();
 int critter_social_class_get(long long obj);
@@ -64,6 +48,9 @@ int critter_fatigue_adj_get(long long obj);
 int critter_fatigue_adj_set(long long obj, int value);
 int critter_fatigue_damage_get(long long obj);
 int critter_fatigue_damage_set(long long obj, int value);
+int sub_45D670(long long obj);
+int sub_45D700(long long obj);
+bool sub_45D790(long long obj);
 bool sub_45D800(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
 bool sub_45D8D0(long long obj);
@@ -73,7 +60,14 @@ void critter_leader_set(int64_t follower_obj, int64_t leader_obj);
 bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force);
 bool critter_disband(int64_t obj, bool force);
 bool sub_45E180(int64_t obj);
+void sub_45E1E0(int64_t obj);
+bool sub_45E2E0(int64_t a1, int64_t a2);
+int sub_45E3F0(int64_t obj, bool exclude_forced_followers);
+int64_t sub_45E4F0(int64_t critter_obj);
+int64_t sub_45E590(int64_t critter_obj);
+bool critter_fatigue_timeevent_process(TimeEvent* timeevent);
 bool sub_45E820(int64_t obj, int a2, int a3);
+void sub_45E910(int64_t critter_obj, int hours);
 bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool sub_45EAB0(int64_t obj);
 bool critter_decay_timeevent_process(TimeEvent* timeevent);
@@ -89,13 +83,19 @@ int sub_45F0B0(int64_t obj);
 void sub_45F110(int64_t obj, int a2);
 bool critter_enter_bed(int64_t obj, int64_t bed);
 void critter_leave_bed(int64_t obj, int64_t bed);
+bool critter_has_bad_associates(int64_t obj);
 int64_t sub_45F650(int64_t obj);
+int critter_teleport_map_get(long long obj);
+void sub_45F710(long long obj);
 bool sub_45F730(long long obj);
 int sub_45F790(long long obj);
+void sub_45F910();
+void sub_45F920();
 const char* critter_encumbrance_level_name(int level);
 int critter_encumbrance_level_ratio(int level);
 int critter_description_get(long long a, long long b);
 bool critter_can_backstab(int64_t obj, int64_t tgt);
+tig_art_id_t sub_45FA70(long long obj, unsigned int* rgb);
 bool sub_45FB90(int64_t obj);
 bool sub_45FC00(int64_t obj);
 void critter_debug_obj(object_id_t obj);

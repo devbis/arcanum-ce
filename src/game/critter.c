@@ -1,25 +1,47 @@
 #include "game/critter.h"
 
 #include "game/ai.h"
+#include "game/anim.h"
 #include "game/background.h"
+#include "game/combat.h"
 #include "game/effect.h"
 #include "game/item.h"
 #include "game/light.h"
+#include "game/magictech.h"
 #include "game/map.h"
 #include "game/mes.h"
-#include "game/object.h"
+#include "game/mp_utils.h"
+#include "game/mt_item.h"
+#include "game/multiplayer.h"
 #include "game/object_node.h"
+#include "game/object.h"
+#include "game/party.h"
+#include "game/player.h"
 #include "game/random.h"
+#include "game/reaction.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/ui.h"
 
+static void sub_45E040(int64_t obj);
 static bool sub_45E8D0(TimeEvent* timeevent);
 static bool sub_45EA80(TimeEvent* timeevent);
 static bool sub_45ECB0(TimeEvent* timeevent);
+static void sub_45EE90(int64_t obj, bool a2);
 
 // 0x5B304C
 static int dword_5B304C = -1;
+
+// 0x5B3050
+static int dword_5B3050[MAX_ENCUMBRANCE_LEVEL] = {
+    0,
+    0,
+    0,
+    0,
+    600000,
+    60000,
+    5000,
+};
 
 // 0x5B306C
 static int dword_5B306C[MAX_ENCUMBRANCE_LEVEL] = {
@@ -181,7 +203,34 @@ int critter_fatigue_pts_get(long long obj)
 // 0x45D3E0
 int critter_fatigue_pts_set(long long obj, int value)
 {
-    // TODO: Incomplete.
+    int type;
+    Packet51 pkt;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (!obj_type_is_critter(type)) {
+        return 0;
+    }
+
+    if (!sub_4A2BA0()) {
+        pkt.type = 51;
+        pkt.field_4 = 1;
+        pkt.field_8 = sub_407EF0(obj);
+        pkt.field_20 = value;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return value;
+        }
+    }
+
+    if (value < 0) {
+        value = 0;
+    }
+
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_PTS, value);
+    sub_460260(obj);
+
+    return value;
 }
 
 // 0x45D4A0
@@ -472,7 +521,7 @@ bool critter_disband(int64_t obj, bool force)
 }
 
 // 0x45E040
-void sub_45E040()
+void sub_45E040(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -497,43 +546,141 @@ bool sub_45E180(int64_t obj)
 }
 
 // 0x45E1E0
-void sub_45E1E0()
+void sub_45E1E0(int64_t obj)
 {
-    // TODO: Incomplete.
+    void(*func)(int64_t obj, unsigned int flags);
+    unsigned int critter_flags2;
+    unsigned int spell_flags;
+    ObjectList objects;
+    ObjectNode* node;
+
+    func = (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) != 0
+        ? sub_43D280
+        : sub_43D0E0;
+
+    func(obj, OF_OFF);
+
+    critter_flags2 = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+    if (func == sub_43D0E0) {
+        critter_flags2 |= OCF2_SAFE_OFF;
+    } else {
+        critter_flags2 &= ~OCF2_SAFE_OFF;
+    }
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, critter_flags2);
+
+    sub_441260(obj, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        spell_flags = obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS);
+        if ((spell_flags & OSF_SUMMONED) == 0
+            || (spell_flags & OSF_FAMILIAR) != 0) {
+            func(node->obj, OF_OFF);
+
+            critter_flags2 = obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS2);
+            if (func == sub_43D0E0) {
+                critter_flags2 |= OCF2_SAFE_OFF;
+            } else {
+                critter_flags2 &= ~OCF2_SAFE_OFF;
+            }
+            obj_field_int32_set(node->obj, OBJ_F_CRITTER_FLAGS2, critter_flags2);
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
 }
 
 // 0x45E2E0
-void sub_45E2E0()
+bool sub_45E2E0(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x45E3F0
-void sub_45E3F0()
+int sub_45E3F0(int64_t obj, bool exclude_forced_followers)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int all_followers_cnt;
+    int index;
+    int64_t follower_obj;
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_FOLLOWER_IDX);
+
+    if (exclude_forced_followers) {
+        all_followers_cnt = cnt;
+        for (index = 0; index < all_followers_cnt; index++) {
+            follower_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_FOLLOWER_IDX, index);
+            if ((obj_field_int32_get(follower_obj, OBJ_F_NPC_FLAGS) & ONF_FORCED_FOLLOWER) != 0) {
+                cnt--;
+            }
+        }
+    }
+
+    return cnt;
 }
 
 // 0x45E460
-void sub_45E460()
+int sub_45E460(int64_t critter_obj, bool exclude_forced_followers)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int all_followers_cnt;
+    int index;
+    int64_t follower_obj;
+
+    cnt = obj_arrayfield_length_get(critter_obj, OBJ_F_CRITTER_FOLLOWER_IDX);
+    all_followers_cnt = cnt;
+    for (index = 0; index < all_followers_cnt; index++) {
+        follower_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_FOLLOWER_IDX, index);
+        if (exclude_forced_followers
+            && (obj_field_int32_get(follower_obj, OBJ_F_NPC_FLAGS) & ONF_FORCED_FOLLOWER) != 0) {
+            cnt--;
+        } else {
+            cnt += sub_45E460(follower_obj, exclude_forced_followers);
+        }
+    }
+
+    return cnt;
 }
 
 // 0x45E4F0
-void sub_45E4F0()
+int64_t sub_45E4F0(int64_t critter_obj)
 {
     // TODO: Incomplete.
 }
 
 // 0x45E590
-void sub_45E590()
+int64_t sub_45E590(int64_t critter_obj)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int64_t leader_obj;
+    ObjectList objects;
+    ObjectNode* node;
+
+    obj = critter_obj;
+    leader_obj = critter_leader_get(critter_obj);
+    if (leader_obj != OBJ_HANDLE_NULL) {
+        object_get_followers(leader_obj, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            if (node->obj == critter_obj) {
+                break;
+            }
+            node = node->next;
+        }
+        if (node != NULL) {
+            if (node->next != NULL) {
+                obj = node->next->obj;
+            } else {
+                obj = objects.head->obj;
+            }
+        }
+        object_list_destroy(&objects);
+    }
+
+    return obj;
 }
 
 // 0x45E610
-void critter_fatigue_timeevent_process()
+bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
 {
     // TODO: Incomplete.
 }
@@ -580,7 +727,7 @@ bool sub_45E8D0(TimeEvent* timeevent)
 }
 
 // 0x45E910
-void sub_45E910()
+void sub_45E910(int64_t critter_obj, int hours)
 {
     // TODO: Incomplete.
 }
@@ -766,23 +913,23 @@ bool critter_is_concealed(int64_t obj)
 // 0x45EE30
 void sub_45EE30(int64_t obj, bool a2)
 {
-    ObjectNodeList list;
+    ObjectList objects;
     ObjectNode* node;
 
     sub_45EE90(obj, a2);
-    sub_441260(obj, &list);
+    sub_441260(obj, &objects);
 
-    node = list.head;
+    node = objects.head;
     while (node != NULL) {
         sub_45EE90(obj, a2);
         node = node->next;
     }
 
-    object_list_destroy(&list);
+    object_list_destroy(&objects);
 }
 
 // 0x45EE90
-void sub_45EE90()
+void sub_45EE90(int64_t obj, bool a2)
 {
     // TODO: Incomplete.
 }
@@ -915,15 +1062,43 @@ void critter_leave_bed(int64_t obj, int64_t bed)
 }
 
 // 0x45F460
-void critter_has_bad_associates()
+bool critter_has_bad_associates(int64_t obj)
 {
-    // TODO: Incomplete.
+    ObjectList objects;
+    ObjectNode* node;
+    unsigned int flags;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        obj = sub_45DDA0(obj);
+        if (obj == OBJ_HANDLE_NULL) {
+            return false;
+        }
+    }
+
+    sub_441260(obj, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if ((obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_SUMMONED) != 0
+            && (obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS) & ONF_FAMILIAR) == 0
+            && (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL) == 0) {
+            flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
+            if ((flags & (OF_OFF | OF_DONTDRAW)) == 0) {
+                break;
+            }
+            tig_debug_printf("critter_has_bad_associates: WARNING: Critter found in party that is turned OFF/DONT_DRAW: oFlags: %d!\n", flags);
+        }
+        node = node->next;
+    }
+
+    object_list_destroy(&objects);
+
+    return node != NULL;
 }
 
 // 0x45F550
 int sub_45F550(long long obj)
 {
-    return sub_4AEB10(obj);
+    return ai_critter_can_open_portals(obj);
 }
 
 // 0x45F570
@@ -986,7 +1161,7 @@ int64_t sub_45F650(int64_t obj)
         return OBJ_HANDLE_NULL;
     }
 
-    substitute_inventory_obj = obj_fiedl_handle_get(obj, OBJ_F_NPC_SUBSTITUTE_INVENTORY);
+    substitute_inventory_obj = obj_field_handle_get(obj, OBJ_F_NPC_SUBSTITUTE_INVENTORY);
     if (substitute_inventory_obj == OBJ_HANDLE_NULL) {
         return OBJ_HANDLE_NULL;
     }
@@ -1063,9 +1238,44 @@ int sub_45F790(long long obj)
 }
 
 // 0x45F820
-void sub_45F820()
+void sub_45F820(int64_t obj, int value)
 {
-    // TODO: Incomplete.
+    int encumbrance_level;
+    int v1;
+    MesFileEntry mes_file_entry;
+    John v2;
+
+    encumbrance_level = sub_45F790(obj);
+    if (encumbrance_level == value) {
+        return;
+    }
+
+    sub_4EA200(obj, 158);
+
+    v1 = encumbrance_level;
+    while (v1 > 0) {
+        sub_4E9F70(obj, 158, 5);
+    }
+
+    if (encumbrance_level == ENCUMBRANCE_LEVEL_SEVERE) {
+        sub_4E9F70(obj, 158, 5);
+        sub_4E9F70(obj, 158, 5);
+    }
+
+    sub_436FA0(obj);
+
+    if (dword_5E8638 > 0 && player_is_pc_obj(obj)) {
+        mes_file_entry.num = 11 + encumbrance_level;
+        mes_get_msg(critter_mes_file, &mes_file_entry);
+
+        v2.type = 4;
+        v2.str = mes_file_entry.str;
+        sub_460630(&v2);
+    }
+
+    if (dword_5B3050[encumbrance_level] != 0) {
+        sub_45E820(obj, 1, dword_5B3050[encumbrance_level]);
+    }
 }
 
 // 0x45F910
