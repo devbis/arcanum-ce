@@ -2,7 +2,9 @@
 
 #include "game/area.h"
 #include "game/map.h"
+#include "game/object.h"
 #include "game/player.h"
+#include "game/proto.h"
 #include "game/random.h"
 #include "game/sector.h"
 #include "game/terrain.h"
@@ -33,6 +35,7 @@ static void sub_558AF0();
 static void sub_558B50();
 static void sub_558CE0(S64C780 *a1);
 static bool sub_558DE0(int64_t location);
+static void wmap_rnd_encounter_build_object(int name, int64_t loc, int64_t* obj_ptr);
 
 // 0x5C79A0
 static const char* off_5C79A0[] = {
@@ -307,9 +310,20 @@ void sub_5594E0()
 }
 
 // 0x559550
-void wmap_rnd_encounter_build_object()
+void wmap_rnd_encounter_build_object(int name, int64_t loc, int64_t* obj_ptr)
 {
-    // TODO: Incomplete.
+    int64_t proto_obj;
+    int64_t obj;
+
+    proto_obj = sub_4685A0(name);
+    if (!object_create(proto_obj, loc, &obj)) {
+        tig_debug_printf("wmap_rnd_encounter_build_object: ERROR: object_create failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (obj_ptr != NULL) {
+        *obj_ptr = obj;
+    }
 }
 
 // 0x5595B0
