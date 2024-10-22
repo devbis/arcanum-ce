@@ -1460,7 +1460,23 @@ void sub_4AF930(int64_t a1, int64_t a2)
 // 0x4AF9D0
 void sub_4AF9D0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int index;
+    int64_t other_obj;
+
+    cnt = obj_arrayfield_length_get(a1, OBJ_F_NPC_SHIT_LIST_IDX);
+    for (index = 0; index < cnt; index++) {
+        obj_arrayfield_obj_get(a1, OBJ_F_NPC_SHIT_LIST_IDX, index, &other_obj);
+        if (other_obj == a2 || other_obj == OBJ_HANDLE_NULL) {
+            if (index < cnt - 1) {
+                obj_arrayfield_obj_get(a1, OBJ_F_NPC_SHIT_LIST_IDX, cnt - 1, &other_obj);
+                obj_arrayfield_obj_set(a1, OBJ_F_NPC_SHIT_LIST_IDX, index, other_obj);
+            }
+            obj_arrayfield_length_set(a1, OBJ_F_NPC_SHIT_LIST_IDX, cnt - 1);
+            cnt--;
+            index--;
+        }
+    }
 }
 
 // 0x4AFA90
