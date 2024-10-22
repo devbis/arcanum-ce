@@ -949,9 +949,29 @@ void sub_462FC0()
 }
 
 // 0x463110
-void sub_463110()
+int item_get_keys(int64_t obj, int* key_ids)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    int index;
+    int cnt;
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)) {
+        obj = item_find_key_ring(obj);
+    } else if (obj_type != OBJ_TYPE_ITEM_KEY_RING) {
+        return 0;
+    }
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return 0;
+    }
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_KEY_RING_LIST_IDX);
+    for (index = 0; index < cnt; index++) {
+        key_ids[index] = sub_407470(obj, OBJ_F_KEY_RING_LIST_IDX, index);
+    }
+
+    return cnt;
 }
 
 // 0x4631A0

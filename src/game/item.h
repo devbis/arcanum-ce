@@ -81,6 +81,7 @@ int64_t sub_462A30(int64_t obj, int64_t a2);
 int item_count_items_matching_prototype(int64_t obj, int64_t a2);
 int sub_462C30(int64_t a1, int64_t a2);
 int sub_462CC0(int64_t a1, int64_t a2, int64_t a3);
+int item_get_keys(int64_t obj, int* key_ids);
 bool sub_463370(int64_t obj, int key_id);
 void sub_463860(int64_t obj, bool a2);
 void sub_463E20(int64_t obj);
