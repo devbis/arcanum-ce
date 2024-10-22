@@ -2212,7 +2212,7 @@ void sub_466AA0(int64_t critter_obj, int64_t a2)
     key_ring_obj = item_find_key_ring(critter_obj);
     if (key_ring_obj != OBJ_HANDLE_NULL) {
         index = obj_arrayfield_length_get(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX);
-        cnt = obj_arrayfiedl_length_get(a2, OBJ_F_KEY_RING_LIST_IDX);
+        cnt = obj_arrayfield_length_get(a2, OBJ_F_KEY_RING_LIST_IDX);
         while (cnt > 0) {
             key_id = sub_407470(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
             obj_arrayfield_length_set(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
@@ -2225,7 +2225,7 @@ void sub_466AA0(int64_t critter_obj, int64_t a2)
     } else {
         cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
         while (cnt > 0) {
-            item_obj = obj_field_int64_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, cnt - 1);
+            item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, cnt - 1);
             if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_KEY) {
                 sub_466A50(item_obj, a2);
             }
