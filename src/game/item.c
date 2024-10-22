@@ -39,7 +39,7 @@ static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
-static int64_t sub_4631A0(int64_t a1);
+static int64_t item_find_key_ring(int64_t critter_obj);
 static bool sub_464200(int64_t a1, int64_t a2);
 static int sub_465010(int64_t obj);
 static tig_art_id_t sub_465020(int64_t obj);
@@ -955,9 +955,25 @@ void sub_463110()
 }
 
 // 0x4631A0
-int64_t sub_4631A0(int64_t a1)
+int64_t item_find_key_ring(int64_t critter_obj)
 {
-    // TODO: Incomplete.
+    int index;
+    int cnt;
+    int64_t item_obj;
+    int64_t key_ring_obj = OBJ_HANDLE_NULL;
+
+    cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
+    for (index = 0; index < cnt; index++) {
+        item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
+        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_KEY_RING) {
+            key_ring_obj = item_obj;
+            if (obj_arrayfield_length_get(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX) > 0) {
+                return key_ring_obj;
+            }
+        }
+    }
+
+    return key_ring_obj;
 }
 
 // 0x463240
@@ -2070,7 +2086,7 @@ bool sub_466A00(int64_t a1, int64_t key_obj)
 {
     int64_t key_ring_obj;
 
-    key_ring_obj = sub_4631A0(a1);
+    key_ring_obj = item_find_key_ring(a1);
     if (key_ring_obj == OBJ_HANDLE_NULL) {
         return false;
     }
