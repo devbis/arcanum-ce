@@ -111,6 +111,16 @@ void scroll_start_scrolling_in_direction(int direction)
     int dy;
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
+    int distance;
+    int64_t center_x;
+    int64_t center_y;
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+    bool v5;
+    int64_t loc;
+    int rotation;
 
     if (!scroll_init_info.editor) {
         if ((unsigned int)tig_timer_between(dword_5D117C, gamelib_ping_time) < scroll_fps) {
@@ -166,40 +176,134 @@ void scroll_start_scrolling_in_direction(int direction)
         return;
     }
 
-    // TODO: Incomplete.
+    dword_5D11C0 = true;
+
+    distance = scroll_get_distance();
+    if (distance == 0) {
+        tig_art_interface_id_create(direction + 679, 0, 0, 0, &art_id);
+        sub_40EA50(art_id);
+        sub_40E630(dx, dy);
+        return;
+    }
+
+    sub_4B8680(scroll_center, &center_x, &center_y);
+    center_x = LOCATION_MAKE(LOCATION_GET_X(center_x) + 40, LOCATION_GET_Y(center_x) + 40);
+    center_y = LOCATION_MAKE(LOCATION_GET_X(center_y) + 20, LOCATION_GET_Y(center_y) + 20);
+
+    v1 = scroll_rect.width / 2;
+    v2 = scroll_rect.height / 2;
+
+    v3 = abs(v1 - dx - (int)center_x);
+    v4 = abs(v2 - dy - (int)center_y);
+
+    if (v3 < 80 * distance && v4 < 40 * distance) {
+        tig_art_interface_id_create(direction + 679, 0, 0, 0, &art_id);
+        sub_40EA50(art_id);
+        sub_40E630(dx, dy);
+        return;
+    }
+
+    sub_4B8730(v1, v2, &loc);
+
+    rotation = sub_4B8D50(loc, scroll_center);
+    if (rotation == (direction - 1) % 8
+        || rotation == (direction + 1) % 8
+        || rotation == direction) {
+        tig_art_interface_id_create(direction + 679, 0, 0, 0, &art_id);
+        sub_40EA50(art_id);
+        sub_40E630(dx, dy);
+        return;
+    }
+
+    v5 = false;
+    if (v3 >= 80 * distance) {
+        switch (direction) {
+        case 1:
+            direction = 0;
+            dx += dword_5D11A4 + 4;
+            break;
+        case 2:
+        case 6:
+            v5 = true;
+            break;
+        case 3:
+            direction = 4;
+            dx += dword_5D11A4 + 4;
+            break;
+        case 5:
+            direction = 4;
+            dx -= dword_5D11A4 + 4;
+            break;
+        case 7:
+            direction = 0;
+            dx -= dword_5D11A4 + 4;
+            break;
+        }
+    }
+
+    if (v4 >= 40 * distance) {
+        switch (direction) {
+        case 0:
+        case 4:
+            v5 = true;
+            break;
+        case 1:
+            direction = 2;
+            dy -= dword_5D11A0 + 2;
+            break;
+        case 3:
+            direction = 2;
+            dy += dword_5D11A0 + 2;
+            break;
+        case 5:
+            direction = 6;
+            dy += dword_5D11A0 + 2;
+            break;
+        case 7:
+            direction = 6;
+            dy -= dword_5D11A0 + 2;
+            break;
+        }
+    }
+
+    if (!v5) {
+        tig_art_interface_id_create(direction + 679, 0, 0, 0, &art_id);
+        sub_40EA50(art_id);
+        sub_40E630(dx, dy);
+        return;
+    }
 
     tig_art_interface_id_create(678, 0, 0, 0, &art_id);
-    if (sub_40EA50(art_id)) {
-        if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
-            switch (direction) {
-            case SCROLL_DIRECTION_UP:
-                tig_mouse_cursor_set_offset(art_frame_data.width / 2, 0);
-                break;
-            case SCROLL_DIRECTION_UP_RIGHT:
-                tig_mouse_cursor_set_offset(art_frame_data.width - 1, 0);
-                break;
-            case SCROLL_DIRECTION_RIGHT:
-                tig_mouse_cursor_set_offset(art_frame_data.width - 1, art_frame_data.height / 2);
-                break;
-            case SCROLL_DIRECTION_DOWN_RIGHT:
-                tig_mouse_cursor_set_offset(art_frame_data.width - 1, art_frame_data.height - 1);
-                break;
-            case SCROLL_DIRECTION_DOWN:
-                tig_mouse_cursor_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
-                break;
-            case SCROLL_DIRECTION_DOWN_LEFT:
-                tig_mouse_cursor_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
-                break;
-            case SCROLL_DIRECTION_LEFT:
-                tig_mouse_cursor_set_offset(0, art_frame_data.height / 2);
-                break;
-            case SCROLL_DIRECTION_UP_LEFT:
-                tig_mouse_cursor_set_offset(0, 0);
-                break;
-            default:
-                tig_mouse_cursor_set_offset(direction, direction);
-                break;
-            }
+    if (sub_40EA50(art_id)
+        && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+        switch (direction) {
+        case SCROLL_DIRECTION_UP:
+            tig_mouse_cursor_set_offset(art_frame_data.width / 2, 0);
+            break;
+        case SCROLL_DIRECTION_UP_RIGHT:
+            tig_mouse_cursor_set_offset(art_frame_data.width - 1, 0);
+            break;
+        case SCROLL_DIRECTION_RIGHT:
+            tig_mouse_cursor_set_offset(art_frame_data.width - 1, art_frame_data.height / 2);
+            break;
+        case SCROLL_DIRECTION_DOWN_RIGHT:
+            tig_mouse_cursor_set_offset(art_frame_data.width - 1, art_frame_data.height - 1);
+            break;
+        case SCROLL_DIRECTION_DOWN:
+            tig_mouse_cursor_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
+            break;
+        case SCROLL_DIRECTION_DOWN_LEFT:
+            tig_mouse_cursor_set_offset(art_frame_data.width / 2, art_frame_data.height - 1);
+            break;
+        case SCROLL_DIRECTION_LEFT:
+            tig_mouse_cursor_set_offset(0, art_frame_data.height / 2);
+            break;
+        case SCROLL_DIRECTION_UP_LEFT:
+            tig_mouse_cursor_set_offset(0, 0);
+            break;
+        default:
+            tig_mouse_cursor_set_offset(direction, direction);
+            break;
         }
     }
 }
