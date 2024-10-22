@@ -1164,7 +1164,49 @@ void item_identify_all(int64_t obj)
 // 0x464470
 void sub_464470(int64_t obj, int* a2, int* a3)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int index;
+    int cnt;
+    int64_t item_obj;
+    int v1 = 0;
+    int v2 = 0;
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else if (obj_type_is_critter(obj_type)) {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    } else {
+        inventory_num_fld = -1;
+    }
+
+    if (inventory_num_fld != -1) {
+        cnt = obj_field_int32_get(obj, inventory_num_fld);
+        while (cnt > 0) {
+            item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, cnt - 1);
+            obj_field_handle_set(item_obj, OBJ_F_ITEM_PARENT, obj);
+
+            // TODO: Incomplete.
+
+            if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
+                sub_4417A0(item_obj, obj);
+                v2++;
+            }
+            cnt--;
+        }
+    }
+
+    if (a2 != NULL) {
+        *a2 += v1;
+    }
+
+    if (a3 != NULL) {
+        *a3 += v2;
+    }
 }
 
 // 0x464630
