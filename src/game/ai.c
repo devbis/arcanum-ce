@@ -73,7 +73,7 @@ static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_
 static int sub_4AABE0(int64_t a1, int a2, int64_t a3, int* a4);
 static bool sub_4AAF50(Ai* ai);
 static bool sub_4AB030(int64_t a1, int64_t a2);
-static bool sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3);
+static int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AB2A0(int64_t a1, int64_t a2);
 static bool sub_4AB2F0(int64_t a1, int64_t a2);
 static int64_t sub_4AB460(int64_t a1);
@@ -610,9 +610,68 @@ bool sub_4AB030(int64_t a1, int64_t a2)
 }
 
 // 0x4AB0B0
-bool sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
+int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
 {
-    // TODO: Incomplete.
+    int64_t distance1;
+    int64_t distance2;
+    int score1;
+    int score2;
+
+    if (a2 == OBJ_HANDLE_NULL) {
+        return a3;
+    }
+
+    if (a3 == OBJ_HANDLE_NULL) {
+        return a2;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(a3, OBJ_F_TYPE))) {
+        return a2;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(a2, OBJ_F_TYPE))) {
+        return a3;
+    }
+
+    if (sub_45D800(a3)) {
+        return a2;
+    }
+
+    if (sub_45D800(a2)) {
+        return a3;
+    }
+
+    distance1 = sub_441AE0(a1, a3);
+    if (distance1 > 20) {
+        return a2;
+    }
+
+    distance2 = sub_441AE0(a1, a2);
+    if (distance2 > 20) {
+        return a3;
+    }
+
+    if (sub_4AF800(a1, a2)) {
+        return a2;
+    }
+
+    if (sub_4AF800(a1, a3)) {
+        return a3;
+    }
+
+    if (random_between(1, 100) > 50) {
+        score1 = -((int)distance1);
+        score2 = -((int)distance2);
+    } else {
+        score1 = stat_level(a3, STAT_LEVEL) - (int)distance1;
+        score2 = stat_level(a3, STAT_LEVEL) - (int)distance2;
+    }
+
+    if (score1 > score2) {
+        return a3;
+    } else {
+        return a2;
+    }
 }
 
 // 0x4AB2A0
