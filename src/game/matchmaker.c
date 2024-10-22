@@ -2,11 +2,11 @@
 
 #include <tig/tig.h>
 
-typedef int(MatchmakerInit)(int);
+typedef int(MatchmakerInit)(MatchmakerInitInfo* init_info);
 typedef void(MatchmakerExit)();
 typedef int(MatchmakerIsActive)();
 typedef int(MatchmakerMotdGet)();
-typedef int(MatchmakerLogin)(int, int);
+typedef int(MatchmakerLogin)(const char*, const char*);
 typedef int(MatchmakerCreateAccount)(int, int, int);
 typedef int(MatchmakerVersionNeedsUpgrade)(int);
 typedef int(MatchmakerGameListGet)(void**, int*);
@@ -69,7 +69,7 @@ static_assert(sizeof(MatchmakerState) == 0x80, "wrong size");
 static MatchmakerState mm;
 
 // 0x4F5820
-int matchmaker_init(int a1)
+int matchmaker_init(MatchmakerInitInfo* init_info)
 {
     int err;
     if (mm.initialized) {
@@ -97,7 +97,7 @@ int matchmaker_init(int a1)
         return 0;
     }
 
-    if (!mm.init(a1)) {
+    if (!mm.init(init_info)) {
         tig_debug_printf("MM: mm.init failed, aborting.\n");
         FreeLibrary(mm.module);
         memset(&mm, 0, sizeof(mm));
@@ -170,7 +170,7 @@ int matchmaker_motd_get(int a1, int a2, int a3, int a4)
 }
 
 // 0x4F5A90
-int matchmaker_login(int a1, int a2)
+int matchmaker_login(const char* a1, const char* a2)
 {
     if (mm.login != NULL) {
         return mm.login(a1, a2);
