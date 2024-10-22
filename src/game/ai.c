@@ -1021,7 +1021,7 @@ void sub_4ADCC0()
 }
 
 // 0x4ADE00
-void sub_4ADE00()
+int sub_4ADE00(int64_t a1, int64_t a2, int64_t* a3)
 {
     // TODO: Incomplete.
 }
