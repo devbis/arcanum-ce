@@ -803,7 +803,20 @@ void sub_4AC660(Ai* ai)
 // 0x4AC6E0
 void sub_4AC6E0(Ai* ai)
 {
-    // TODO: Incomplete.
+    AiParams params;
+    unsigned int npc_flags;
+    int64_t distance;
+
+    sub_4AAA60(ai->obj, &params);
+    npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+    distance = sub_441AE0(ai->obj, ai->danger_source);
+    if (params.field_3C > 1 && distance < params.field_3C && random_between(1, 20) == 1) {
+        npc_flags |= ONF_BACKING_OFF;
+        npc_flags |= 0x40000000;
+        obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+    } else if (!sub_4AC910(ai, distance)) {
+        sub_434B00(ai->obj, ai->danger_source, ai->field_30);
+    }
 }
 
 // 0x4AC7B0
