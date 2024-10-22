@@ -21,6 +21,28 @@
 
 #define CLOCKWORK_DECOY 6719
 
+typedef struct AiParams {
+    /* 0000 */ int field_0; // Percentage of NPC hit points below which NPC will flee.
+    /* 0004 */ int field_4; // Number of people besides PC beyond which NPC will flee.
+    /* 0008 */ int field_8; // Number of levels above NPC beyond which NPC will flee.
+    /* 000C */ int field_C; // Percentage of PC hit points below which NPC will never flee.
+    /* 0010 */ int field_10; // How far to flee, in tiles.
+    /* 0014 */ int field_14; // The reaction level at which the NPC will not follow the PC.
+    /* 0018 */ int field_18; // How far PC align is above NPC align before NPC wont follow.
+    /* 001C */ int field_1C; // How far PC align is below NPC align before NPC wont follow.
+    /* 0020 */ int field_20; // How many levels the NPC can be above the PC and still join.
+    /* 0024 */ int field_24; // How much a non-accidental hit will lower a follower's reaction.
+    /* 0028 */ int field_28; // NPC will attack if his reaction is below this.
+    /* 002C */ int field_2C; // How different alignments can be before non-follower NPC attacks.
+    /* 0030 */ int field_30; // Alignment of target at (or above) which the good-aligned follower NPC will not attack.
+    /* 0034 */ int field_34; // Chance of throwing defensive spell (as opposed to offensive).
+    /* 0038 */ int field_38; // Chance of throwing a healing spell in combat.
+    /* 003C */ int field_3C; // Minimum distance in combat.
+    /* 0040 */ int field_40; // The NPC can open portals if this is nonzero and cannot if it is zero.
+} AiParams;
+
+static_assert(sizeof(AiParams) == 0x44, "wrong size");
+
 typedef struct Ai {
     /* 0000 */ int64_t obj;
     /* 0008 */ int64_t danger_source;
@@ -46,6 +68,7 @@ static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static void sub_4AA620(int64_t a1, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
+static void sub_4AAA60(int64_t obj, AiParams* params);
 static void ai_danger_source(int64_t obj, int* type_ptr, int64_t* danger_source_ptr);
 static int sub_4AABE0(int64_t a1, int a2, int64_t a3, int* a4);
 static bool sub_4AAF50(Ai* ai);
@@ -101,6 +124,11 @@ static int dword_5B50C8 = 15;
 
 // 0x5B50CC
 static bool dword_5B50CC = true;
+
+// NOTE: Original code likely defined it as `int[150][17]`.
+//
+// 0x5F5CB0
+static AiParams dword_5F5CB0[150];
 
 // 0x5F8488
 static Func5F8488* dword_5F8488;
@@ -508,9 +536,15 @@ bool sub_4AAA30(TimeEvent* timeevent)
 }
 
 // 0x4AAA60
-void sub_4AAA60()
+void sub_4AAA60(int64_t obj, AiParams* params)
 {
-    // TODO: Incomplete.
+    int index;
+
+    index = obj_field_int32_get(obj, OBJ_F_NPC_AI_DATA);
+
+    // NOTE: Original code is different. It treats `params` as an array of 17
+    // integers and copies them one by one in the loop.
+    *params = dword_5F5CB0[index];
 }
 
 // 0x4AAAA0
