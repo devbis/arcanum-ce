@@ -49,6 +49,7 @@ static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
+static void sub_466AA0(int64_t critter_obj, int64_t a2);
 static void sub_466BD0(int64_t key_ring_obj);
 static bool item_insert_failure(ItemInsertInfo* item_insert_info);
 static const char* item_cannot_msg(int reason);
@@ -2197,6 +2198,41 @@ void sub_466A50(int64_t key_obj, int64_t key_ring_obj)
         index,
         key_id);
     sub_43CCA0(key_obj);
+}
+
+// 0x466AA0
+void sub_466AA0(int64_t critter_obj, int64_t a2)
+{
+    int64_t key_ring_obj;
+    int cnt;
+    int64_t item_obj;
+    int index;
+    int key_id;
+
+    key_ring_obj = item_find_key_ring(critter_obj);
+    if (key_ring_obj != OBJ_HANDLE_NULL) {
+        index = obj_arrayfield_length_get(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX);
+        cnt = obj_arrayfiedl_length_get(a2, OBJ_F_KEY_RING_LIST_IDX);
+        while (cnt > 0) {
+            key_id = sub_407470(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
+            obj_arrayfield_length_set(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
+            sub_4074E0(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX, index++, key_id);
+            cnt--;
+        }
+
+        sub_466BD0(key_ring_obj);
+        sub_466BD0(a2);
+    } else {
+        cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
+        while (cnt > 0) {
+            item_obj = obj_field_int64_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, cnt - 1);
+            if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_KEY) {
+                sub_466A50(item_obj, a2);
+            }
+            cnt--;
+        }
+        sub_466BD0(a2);
+    }
 }
 
 // 0x466BD0
