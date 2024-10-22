@@ -8,8 +8,8 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
-#include "game/object.h"
 #include "game/obj_private.h"
+#include "game/object.h"
 #include "game/player.h"
 #include "game/proto.h"
 #include "game/random.h"
@@ -17,6 +17,7 @@
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
+#include "game/trap.h"
 #include "game/ui.h"
 
 #define FIRST_AMMUNITION_TYPE_ID 0
@@ -943,9 +944,50 @@ int sub_462CC0(int64_t a1, int64_t a2, int64_t a3)
 }
 
 // 0x462FC0
-void sub_462FC0()
+void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
 {
-    // TODO: Incomplete.
+    int64_t parent_obj;
+    int mana_store;
+    int obj_type;
+    unsigned int item_flags;
+    S4F2810 v1;
+
+    if (item_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    item_parent(item_obj, &parent_obj);
+
+    if (loc == 0
+        && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_NEEDS_TARGET) != 0) {
+        sub_4EE060(obj, item_obj);
+        return;
+    }
+
+    if (trap_is_trap_device(item_obj)) {
+        sub_4BC480(obj, item_obj, loc);
+        return;
+    }
+
+    mana_store = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE);
+    obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
+    item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+    if (mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
+        sub_4F27F0(&v1, loc);
+        sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
+        sub_4CBF70(item_obj, 0);
+    } else {
+        sub_4B7CD0(obj, 4);
+        if (obj_type == OBJ_TYPE_ITEM_WRITTEN) {
+            sub_4606F0(item_obj, obj);
+            return;
+        }
+    }
+
+    if (obj_type == OBJ_TYPE_ITEM_FOOD || obj_type == OBJ_TYPE_ITEM_SCROLL) {
+        sub_4574D0(item_obj);
+        sub_43CCA0(item_obj);
+    }
 }
 
 // 0x463110
