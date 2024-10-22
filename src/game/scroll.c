@@ -7,8 +7,10 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "game/stat.h"
+#include "game/tc.h"
 #include "game/ui.h"
 
+static void sub_40E630(int64_t dx, int64_t dy);
 static void sub_40E910(int64_t a1);
 static void sub_40E940();
 static bool sub_40EA50(tig_art_id_t art_id);
@@ -315,6 +317,69 @@ void scroll_stop_scrolling()
     if (dword_5D11C0) {
         sub_460AF0();
         dword_5D11C0 = false;
+    }
+}
+
+// 0x40E630
+void sub_40E630(int64_t dx, int64_t dy)
+{
+    int64_t v1;
+    int64_t v2;
+    int64_t v3;
+    int64_t v4;
+    TigRect rect;
+
+    scroll_init_info.field_C();
+
+    sub_4B8AD0(&v1, &v2);
+    sub_4B8B30(dx, dy);
+    sub_4B8AD0(&v3, &v4);
+
+    if (v1 == v3 && v2 == v4) {
+        return;
+    }
+
+    v3 -= v1;
+    v4 -= v2;
+    tig_window_scroll(scroll_init_info.iso_window_handle, (int)v3, (int)v4);
+
+    if (v3 > 0) {
+        rect = scroll_rect;
+        rect.width = (int)v3;
+        scroll_init_info.field_8(&rect);
+    } else if (v3 < 0) {
+        rect = scroll_rect;
+        rect.x += (int)dx;
+        rect.width = -((int)dx);
+        scroll_init_info.field_8(&rect);
+    }
+
+    if (v3 != 0 && v4 != 0) {
+        scroll_init_info.field_C();
+    }
+
+    if (v4 < 0) {
+        rect = scroll_rect;
+        rect.y += scroll_rect.height + (int)v4;
+        rect.height -= (int)v4;
+        scroll_init_info.field_8(&rect);
+    } else if (v4 > 0) {
+        rect = scroll_rect;
+        rect.y = (int)v4;
+        scroll_init_info.field_8(&rect);
+    }
+
+    // TODO: Wrong, check.
+    sub_4C9620((int)v3, (int)v4);
+
+    if (!scroll_init_info.editor) {
+        int64_t loc;
+
+        sub_4B8730(scroll_rect.width / 2, scroll_rect.height / 2, &loc);
+        if (loc != qword_5D11B8) {
+            sub_41C6D0(loc);
+            qword_5D11B8 = loc;
+        }
     }
 }
 
