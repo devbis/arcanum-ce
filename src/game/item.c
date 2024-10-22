@@ -44,7 +44,7 @@ static int64_t item_find_key_ring(int64_t critter_obj);
 static bool sub_464200(int64_t a1, int64_t a2);
 static int sub_465010(int64_t obj);
 static tig_art_id_t sub_465020(int64_t obj);
-static tig_art_id_t sub_4650D0(int64_t obj);
+static tig_art_id_t sub_4650D0(int64_t critter_obj);
 static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr);
 static bool sub_466A00(int64_t a1, int64_t key_obj);
@@ -1647,9 +1647,34 @@ tig_art_id_t sub_465020(int64_t obj)
 }
 
 // 0x4650D0
-tig_art_id_t sub_4650D0(int64_t obj)
+tig_art_id_t sub_4650D0(int64_t critter_obj)
 {
-    // TODO: Incomplete.
+    int64_t item_obj;
+    int v1;
+    int v2;
+    tig_art_id_t art_id;
+
+    item_obj = item_wield_get(critter_obj, 1004);
+    if (item_obj != OBJ_HANDLE_NULL) {
+        v1 = tig_art_item_id_subtype_get(obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
+    } else {
+        v1 = 1;
+    }
+
+    item_obj = item_wield_get(critter_obj, 1005);
+    if (item_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+        v2 = 1;
+    } else {
+        v2 = 0;
+    }
+
+    art_id = obj_field_int32_get(critter_obj, OBJ_F_CURRENT_AID);
+    art_id = sub_503E50(art_id, 20);
+    art_id = sub_504100(art_id, v1);
+    art_id = sub_504180(art_id, v2);
+
+    return art_id;
 }
 
 // 0x465170
