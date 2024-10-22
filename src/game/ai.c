@@ -83,14 +83,24 @@ static int sub_4AE3A0(int64_t a1, int64_t a2);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
 static bool sub_4AECA0(int64_t a1, int64_t a2);
 static int sub_4AF240(int value);
+static int sub_4AF640(int64_t a1, int64_t a2);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 static void sub_4AF8C0(int64_t a1, int64_t a2);
 static void sub_4AF930(int64_t a1, int64_t a2);
 static void sub_4AF9D0(int64_t a1, int64_t a2);
 static int64_t sub_4AFA90(int64_t obj);
 
+// 0x5B50C0
+static int dword_5B50C0[] = {
+    2,
+    8,
+};
+
+// 0x5B50C8
+static int dword_5B50C8 = 15;
+
 // 0x5B50CC
-static bool dword_5B50CC;
+static bool dword_5B50CC = true;
 
 // 0x5F8488
 static Func5F8488* dword_5F8488;
@@ -291,18 +301,18 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4)
         }
 
         if (sub_4AE3A0(a1, a3)) {
-            if (sub_4AF260(a1, a3) == 0 || !sub_4AF470(a1, a3, a4)) {
+            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, a4) == 0) {
                 sub_4AA620(a1, a2);
             }
         } else if (sub_4AE3A0(a1, a2)) {
-            if (sub_4AF260(a1, a3) == 0 || !sub_4AF470(a1, a3, a4)) {
+            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, a4) == 0) {
                 sub_4AA620(a1, a3);
             }
         } else if (critter_social_class_get(a1) != SOCIAL_CLASS_GUARD
             && (obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0) {
             ai_danger_source(a1, &danger_type, NULL);
             if (danger_type == 0
-                && (sub_4AF260(a1, a3) == 0 || !sub_4AF470(a1, a3, a4))) {
+                && (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, a4) == 0)) {
                     sub_4AABE0(a1, 2, a2, 0);
                 }
         }
@@ -1425,7 +1435,7 @@ int sub_4AF260(int64_t a1, int64_t a2)
         sub_4440E0(a2, &(v1.field_0));
         sub_4440E0(a1, &(v1.field_30));
         v1.field_98 |= 0x4000;
-        v1.field_9C = 6;
+        v1.field_9C = BASIC_SKILL_PROWLING;
 
         diff = prowling - sub_4C8430(&v1);
         if (diff < 0) {
@@ -1460,11 +1470,62 @@ int sub_4AF260(int64_t a1, int64_t a2)
 // 0x4AF470
 int sub_4AF470(int64_t a1, int64_t a2, int a3)
 {
-    // TODO: Incomplete.
+    unsigned int critter_flags;
+    int64_t distance;
+    int perception;
+    Tanya v1;
+    int v2;
+
+    critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
+    if ((critter_flags & OCF_STUNNED) != 0) {
+        return 1000;
+    }
+
+    if (sub_45D800(a1)) {
+        return 1000;
+    }
+
+    distance = sub_441AE0(a1, a2);
+    if (distance > 1000) {
+        return 1000;
+    }
+
+    perception = stat_level(a1, STAT_PERCEPTION);
+    if ((critter_flags & OCF_SLEEPING) != 0) {
+        perception /= 2;
+    }
+
+    if ((obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & OCF_MOVING_SILENTLY) != 0) {
+        int prowling;
+        int diff;
+
+        prowling = sub_4C62E0(a2, BASIC_SKILL_PROWLING, a1);
+        sub_4C7090(&v1);
+        sub_4440E0(a2, &(v1.field_0));
+        sub_4440E0(a1, &(v1.field_30));
+        v1.field_98 |= 0x2000;
+        v1.field_9C = BASIC_SKILL_PROWLING;
+
+        diff = prowling - sub_4C8430(&v1);
+        if (diff < 0) {
+            diff = 0;
+        } else if (diff > 100) {
+            diff = 100;
+        }
+
+        perception += perception * diff / -100;
+    }
+
+    v2 = (dword_5B50C0[a3] - dword_5B50C0[0] + sub_4AF240(perception - 4)) / 2 - sub_4AF640(a1, a2);
+    if ((int)distance > v2) {
+        return (int)distance - v2;
+    }
+
+    return 0;
 }
 
 // 0x4AF640
-void sub_4AF640()
+int sub_4AF640(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
