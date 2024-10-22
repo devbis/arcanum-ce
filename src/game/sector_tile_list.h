@@ -4,14 +4,14 @@
 #include <tig/tig.h>
 
 typedef struct SectorTileList {
-    int field_0[4096];
-    uint8_t field_4000[512];
-    uint8_t field_4200;
+    /* 0000 */ tig_art_id_t art_ids[4096];
+    /* 4000 */ uint32_t difmask[128];
+    /* 4200 */ uint8_t dif;
 } SectorTileList;
 
 static_assert(sizeof(SectorTileList) == 0x4204, "wrong size");
 
-bool sector_tile_list_init(SectorTileList* list, int* a2);
+bool sector_tile_list_init(SectorTileList* list, tig_art_id_t* art_id_ptr);
 bool sector_tile_list_reset(SectorTileList* list);
 bool sector_tile_list_exit(SectorTileList* list);
 bool sector_tile_list_load(SectorTileList* list, TigFile* stream);
