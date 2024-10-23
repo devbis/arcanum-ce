@@ -898,10 +898,10 @@ void sub_4101D0(int64_t location, int64_t a2)
         if (jumppoint_find_by_location(location, &jumppoint)) {
             dword_5D1220++;
 
-            teleport_data.map = jumppoint.field_10;
-            teleport_data.field_8 = a2;
             teleport_data.flags = 0;
-            teleport_data.field_10 = jumppoint.field_18;
+            teleport_data.obj = a2;
+            teleport_data.loc = jumppoint.field_18;
+            teleport_data.map = jumppoint.field_10;
             sub_4D3380(&teleport_data);
 
             dword_5D1220--;

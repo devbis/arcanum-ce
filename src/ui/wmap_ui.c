@@ -1116,8 +1116,8 @@ void sub_561860(long long a1)
     sector_flush(0);
 
     teleport_data.flags = 0x20;
-    teleport_data.field_8 = player_get_pc_obj();
-    teleport_data.field_10 = a1;
+    teleport_data.obj = player_get_pc_obj();
+    teleport_data.loc = a1;
     teleport_data.map = sub_40FF50(MAP_TYPE_START_MAP);
     sub_4D3380(&teleport_data);
 }
@@ -1694,7 +1694,7 @@ void sub_564A70(long long a1, long long a2)
 }
 
 // 0x564AF0
-void sub_564AF0()
+void sub_564AF0(int64_t a1)
 {
     // TODO: Incomplete.
 }

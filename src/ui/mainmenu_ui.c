@@ -2526,23 +2526,23 @@ void sub_5412E0(bool a1)
                 fade_data.field_10 = 0;
                 sub_4BDFA0(&fade_data);
 
+                teleport_data.flags = TELEPORT_MOVIE1 | TELEPORT_MOVIE2 | TELEPORT_FADE_IN;
+                teleport_data.obj = pc_obj;
+                teleport_data.loc = x | y;
                 teleport_data.map = map;
-                teleport_data.field_10 = x | y;
-                teleport_data.field_40 = 1;
-                teleport_data.flags = 0x45;
-                teleport_data.field_8 = pc_obj;
                 teleport_data.movie1 = 1;
                 teleport_data.movie_flags1 = 0;
                 teleport_data.movie2 = 7;
                 teleport_data.movie_flags2 = 0;
-                teleport_data.field_48 = 64;
-                teleport_data.field_4C = 0x40400000;
-                teleport_data.field_44 = tig_color_make(0, 0, 0);
+                teleport_data.fade_in.field_0 = 1;
+                teleport_data.fade_in.steps = 64;
+                teleport_data.fade_in.duration = 3.0f;
+                teleport_data.fade_in.color = tig_color_make(0, 0, 0);
                 sub_4D3380(&teleport_data);
 
                 gsound_stop_all(0);
 
-                mes_file_entry.num = 6000;
+                mes_file_entry.num = 6000; // "Please Wait"
                 mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
                 sub_557FD0(mes_file_entry.str);
 

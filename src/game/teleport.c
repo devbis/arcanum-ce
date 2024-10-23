@@ -7,12 +7,18 @@
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/gamelib.h"
+#include "game/gmovie.h"
+#include "game/gsound.h"
 #include "game/light.h"
+#include "game/magictech.h"
 #include "game/map.h"
 #include "game/mp_utils.h"
+#include "game/multiplayer.h"
+#include "game/obj_private.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/ui.h"
+#include "game/wallcheck.h"
 
 typedef struct S6018B8 {
     int field_0;
@@ -25,7 +31,7 @@ typedef struct S6018B8 {
 static_assert(sizeof(S6018B8) == 0x18, "wrong size");
 
 static bool sub_4D3460(TeleportData* teleport_data);
-static void sub_4D3760(int64_t a1, int a2, int a3);
+static void sub_4D3760(int64_t obj, int64_t loc);
 static bool sub_4D39A0(TeleportData* teleport_data);
 static void sub_4D3D60(int64_t obj);
 static void sub_4D3E20(int64_t obj);
@@ -55,6 +61,9 @@ static TeleportData stru_601858;
 
 // 0x6018B8
 static S6018B8* off_6018B8;
+
+// 0x6018BC
+static bool dword_6018BC;
 
 // 0x4D32D0
 bool teleport_init(GameInitInfo* init_info)
@@ -90,8 +99,8 @@ void teleport_ping()
 
         dword_601844 = false;
 
-        if ((stru_601858.flags & TELEPORT_FLAG_0x80000000) != 0
-            && (stru_601858.flags & TELEPORT_FLAG_0x00000020) != 0) {
+        if ((stru_601858.flags & TELEPORT_0x80000000) != 0
+            && (stru_601858.flags & TELEPORT_0x0020) != 0) {
             sub_402FA0();
         }
     }
@@ -101,7 +110,7 @@ void teleport_ping()
 bool sub_4D3380(TeleportData* teleport_data)
 {
     if (dword_601844) {
-        if ((stru_601858.flags & TELEPORT_FLAG_0x80000000) != 0) {
+        if ((stru_601858.flags & TELEPORT_0x80000000) != 0) {
             return false;
         }
     }
@@ -109,14 +118,14 @@ bool sub_4D3380(TeleportData* teleport_data)
     stru_601858 = *teleport_data;
     dword_601844 = true;
 
-    if (player_is_pc_obj(teleport_data->field_8)) {
-        stru_601858.flags |= TELEPORT_FLAG_0x80000000;
+    if (player_is_pc_obj(teleport_data->obj)) {
+        stru_601858.flags |= TELEPORT_0x80000000;
 
-        if ((stru_601858.flags & TELEPORT_FLAG_0x00000002) != 0) {
-            sub_4BDFA0(&(stru_601858.fade));
+        if ((stru_601858.flags & TELEPORT_FADE_OUT) != 0) {
+            sub_4BDFA0(&(stru_601858.fade_out));
         }
 
-        if ((stru_601858.flags & TELEPORT_FLAG_0x00000020) != 0) {
+        if ((stru_601858.flags & TELEPORT_0x0020) != 0) {
             sub_402FC0();
             sub_402F90();
         }
@@ -150,11 +159,126 @@ bool sub_4D3420(int64_t obj)
 // 0x4D3460
 bool sub_4D3460(TeleportData* teleport_data)
 {
-    // TODO: Incomplete.
+    int map;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if ((teleport_data->flags & TELEPORT_FADE_OUT) != 0) {
+            sub_4BDFA0(&(teleport_data->fade_out));
+        }
+    }
+
+    if ((teleport_data->flags & TELEPORT_SOUND) != 0) {
+        sub_41B930(teleport_data->sound_id, 1, teleport_data->obj);
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if ((teleport_data->flags & TELEPORT_MOVIE1) != 0) {
+            gmovie_play(teleport_data->movie1, teleport_data->movie_flags1, 0);
+        }
+
+        if ((teleport_data->flags & TELEPORT_MOVIE2) != 0) {
+            gmovie_play(teleport_data->movie2, teleport_data->movie_flags2, 0);
+        }
+
+        if ((teleport_data->flags & TELEPORT_TIME) != 0) {
+            DateTime datetime;
+
+            sub_45A950(&datetime, 1000 * teleport_data->time);
+            sub_45C200(&datetime);
+        }
+    }
+
+    map = sub_40FF40();
+    if (teleport_data->map == -1) {
+        teleport_data->map = map;
+    }
+
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return false;
+        }
+
+        if (teleport_data->map != map) {
+            return false;
+        }
+    }
+
+    if ((teleport_data->flags & TELEPORT_0x0100) == 0) {
+        ObjectList objects;
+        ObjectNode* node;
+
+        object_get_followers(teleport_data->obj, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            if (sub_45D800(node->obj)) {
+                sub_4AA7A0(node->obj);
+            }
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
+
+    sub_4D3760(teleport_data->obj, teleport_data->loc);
+
+    if (dword_6018BC) {
+        sub_43CB70();
+        wallcheck_flush();
+    }
+
+    if (teleport_data->map != map && sub_40DA20(teleport_data->obj)) {
+        sub_459F50();
+        sub_437980();
+        sub_45C720(teleport_data->map);
+    }
+
+    if (!sub_4D39A0(teleport_data)) {
+        return false;
+    }
+
+    if (dword_6018BC) {
+        ObjectID oid;
+        int64_t obj;
+
+        oid.type = 0;
+        if (obj_field_int32_get(teleport_data->obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            oid = sub_407EF0(teleport_data->obj);
+        } else if (obj_field_int32_get(teleport_data->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            oid = sub_407EF0(sub_45DDA0(teleport_data->obj));
+        }
+
+        dword_6018BC = false;
+
+        if (teleport_data->map != map) {
+            if (!map_open_in_game(teleport_data->map, false, false)) {
+                return false;
+            }
+
+            sub_4B8CE0(teleport_data->loc);
+            sub_40D860();
+        }
+
+        if (oid.type != 0) {
+            obj = objp_perm_lookup(oid);
+            if (obj != OBJ_HANDLE_NULL) {
+                sub_4EF1E0(teleport_data->loc, obj);
+            }
+        }
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if ((teleport_data->flags & TELEPORT_FADE_IN) != 0) {
+            dword_601848(NULL);
+            dword_601850();
+            tig_window_display();
+            sub_4BDFA0(&(teleport_data->fade_in));
+        }
+    }
+
+    return true;
 }
 
 // 0x4D3760
-void sub_4D3760(int64_t a1, int a2, int a3)
+void sub_4D3760(int64_t obj, int64_t loc)
 {
     // TODO: Incomplete.
 }
@@ -209,7 +333,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
             flags |= OF_DYNAMIC;
             flags |= OF_TELEPORTED;
             obj_field_int32_set(node->obj, OBJ_F_FLAGS, flags);
-            obj_field_int64_set(node->obj, OBJ_F_LOCATION, teleport_data->field_10);
+            obj_field_int64_set(node->obj, OBJ_F_LOCATION, teleport_data->loc);
             obj_field_int32_set(node->obj, OBJ_F_OFFSET_X, 0);
             obj_field_int32_set(node->obj, OBJ_F_OFFSET_Y, 0);
 
