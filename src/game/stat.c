@@ -1,7 +1,9 @@
 #include "game/stat.h"
 
 #include "game/a_name.h"
+#include "game/anim.h"
 #include "game/background.h"
+#include "game/combat.h"
 #include "game/effect.h"
 #include "game/light.h"
 #include "game/location.h"
@@ -693,6 +695,79 @@ bool sub_4B10A0(int64_t obj, int stat, int value)
     }
 
     return value <= stat_level(obj, stat);
+}
+
+// 0x4B1170
+bool stat_poison_timeevent_process(TimeEvent* timeevent)
+{
+    int type;
+    int64_t obj;
+    int poison;
+    int damage;
+    DateTime datetime;
+    TimeEvent next_timeevent;
+    CombatContext combat;
+
+    type = timeevent->params[0].integer_value;
+    obj = timeevent->params[1].object_value;
+
+    poison = stat_get_base(obj, STAT_POISON_LEVEL);
+    switch (type) {
+    case 0:
+        if (poison > 0) {
+            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+                sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
+                if (poison >= 550) {
+                    damage = 3;
+                } else if (poison >= 200) {
+                    damage = 2;
+                } else {
+                    damage = 1;
+                }
+                combat.field_44[0] = damage;
+                combat.flags |= 0x80;
+                sub_4B4390(&combat);
+            }
+
+            if ((combat.field_58 & 0x200000) != 0) {
+                sub_433020(combat.field_20, 2, 1, &combat);
+            }
+
+            sub_4B1350(obj, poison, 0);
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+                sub_460240(obj);
+            }
+        }
+        break;
+    case 1:
+        if (poison > 0) {
+            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+                poison -= stat_level(obj, STAT_POISON_RECOVERY);
+                if (poison < 0) {
+                    poison = 0;
+                }
+                stat_set_base(obj, STAT_POISON_LEVEL, poison);
+            }
+
+            if (poison > 0) {
+                next_timeevent.type = TIMEEVENT_TYPE_POISON;
+                next_timeevent.params[0].integer_value = 1;
+                next_timeevent.params[1].object_value = obj;
+                next_timeevent.params[2].integer_value = sub_45A7F0();
+                sub_45A950(&datetime, 120000);
+                if (!sub_45B800(&next_timeevent, &datetime)) {
+                    return false;
+                }
+            }
+        }
+        break;
+    }
+
+    return true;
 }
 
 // 0x4B1310
