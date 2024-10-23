@@ -1,6 +1,17 @@
-#include "game/lib/object.h"
-#include "game/lib/spell.h"
-#include "game/lib/stat.h"
+#include "game/proto.h"
+
+#include <stdio.h>
+
+#include "game/critter.h"
+#include "game/level.h"
+#include "game/light.h"
+#include "game/magictech.h"
+#include "game/obj_private.h"
+#include "game/object.h"
+#include "game/oname.h"
+#include "game/script.h"
+#include "game/spell.h"
+#include "game/stat.h"
 
 typedef enum ProtoField {
     PROTO_F_DESCRIPTION,
@@ -42,6 +53,29 @@ typedef enum ProtoField {
     PROTO_F_CATEGORY,
     PROTO_F_COUNT,
 } ProtoField;
+
+static ObjectType sub_4685D0(int description);
+static int sub_468600(ObjectType object_type);
+static bool sub_468610(int description);
+static void sub_468660(bool* error_ptr);
+static int sub_468720(ObjectType object_type);
+static void sub_468800();
+static bool proto_save(long long obj);
+static ObjectID sub_468860(int a1);
+static void sub_468890(int description);
+static void sub_468930(long long obj, int description);
+static void sub_49AFF0(long long obj, int description);
+static void sub_49B010(long long obj, int description);
+static void sub_49B220(long long obj, int description);
+static void sub_49B240(long long obj, int f, int percent);
+static void sub_49B2E0(long long obj);
+static void sub_49B340(long long obj, int description);
+static int sub_49B5A0(TigFile* stream, long long obj, int type);
+static void sub_49BB40(long long obj, int a2);
+static bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5);
+static int sub_49BF10(const char* str, const char** identifiers, int size);
+static void sub_49C060(long long obj, TigFile* stream, int type);
+static void sub_49C610(TigFile* stream, const char* name, int value, const char** identifiers, int size);
 
 // 0x5B37FC
 static int dword_5B37FC[OBJ_TYPE_COUNT] = {
@@ -177,7 +211,7 @@ static const char* off_5B395C[] = {
 static bool in_proto_save;
 
 // 0x5E882C
-static ObjectId* dword_5E882C;
+static ObjectID* dword_5E882C;
 
 // 0x5E8830
 static bool initialized;
@@ -196,7 +230,7 @@ int proto_init(GameInitInfo* init_info)
         return true;
     }
 
-    dword_5E882C = CALLOC(OBJ_TYPE_COUNT, sizeof(ObjectId));
+    dword_5E882C = (ObjectID*)CALLOC(OBJ_TYPE_COUNT, sizeof(ObjectID));
 
     tig_file_mkdir("proto");
 
@@ -245,7 +279,7 @@ void proto_exit()
 // 0x468330
 bool proto_save(long long obj)
 {
-    ObjectId object_id;
+    ObjectID object_id;
     char* name = NULL;
     char path[TIG_MAX_PATH];
     TigFile* stream;
@@ -257,7 +291,7 @@ bool proto_save(long long obj)
         return false;
     }
 
-    sprintf(path, "proto\\%06d - %s.pro", object_id.d.a.field_8, name);
+    sprintf(path, "proto\\%06d - %s.pro", object_id.d.a, name);
     FREE(name);
 
     stream = tig_file_fopen(path, "wb");
@@ -335,7 +369,7 @@ void sub_468660(bool* error_ptr)
 {
     int object_type;
     int description;
-    ObjectId object_id;
+    ObjectID object_id;
     const char* name;
     char path[TIG_MAX_PATH];
 
@@ -345,7 +379,7 @@ void sub_468660(bool* error_ptr)
         for (description = dword_5B37FC[object_type]; description < dword_5B384C[object_type]; description++) {
             object_id = sub_468860(description);
             name = sub_4E7400(sub_468720(object_type));
-            sprintf(path, "proto\\%06d - %s.pro", object_id.d.index, name);
+            sprintf(path, "proto\\%06d - %s.pro", object_id.d.a, name);
             if (!tig_file_exists(path, NULL)) {
                 sub_468890(description);
                 *error_ptr = true;
@@ -418,7 +452,7 @@ void sub_468800()
 }
 
 // 0x468860
-ObjectId sub_468860(int a1)
+ObjectID sub_468860(int a1)
 {
     return sub_4E6540(a1 + 20);
 }
@@ -443,15 +477,15 @@ void sub_468890(int description)
 // 0x468930
 void sub_468930(long long obj, int description)
 {
-    int scr[3];
+    Script scr;
     tig_art_id_t art_id;
     unsigned int rgb;
     const char* str;
 
     obj_field_int32_set(obj, OBJ_F_DESCRIPTION, description);
-    scr[2] = 0;
-    scr[0] = 0;
-    scr[1] = 0;
+    scr.num = 0;
+    scr.hdr.flags = 0;
+    scr.hdr.counters = 0;
 
     switch (sub_4685D0(description)) {
     case OBJ_TYPE_WALL:
@@ -989,9 +1023,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400800);
             tig_art_light_id_create(0x13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1004,9 +1038,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400800);
             tig_art_light_id_create(0x14, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -1019,9 +1053,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400800);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -1032,9 +1066,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400800);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
@@ -1044,7 +1078,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x400C00);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -1054,9 +1088,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 15);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
@@ -1067,9 +1101,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
@@ -1079,10 +1113,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 14);
             break;
@@ -1092,10 +1126,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -1105,10 +1139,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -1118,10 +1152,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -1131,9 +1165,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             break;
@@ -1143,9 +1177,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
@@ -1155,9 +1189,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -1196,11 +1230,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 4, 80);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 4, 80);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 15);
@@ -1211,11 +1245,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 250);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 4, 80);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 4, 80);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 15);
             break;
@@ -1225,9 +1259,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x800 | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 20);
@@ -1248,11 +1282,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30000);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 4, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 4, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4030);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 19);
@@ -1314,7 +1348,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(255, 255, 240, &rgb);
+            light_build_color(255, 255, 240, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1326,9 +1360,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
-            tig_art_light_id_create(0xBu, 0, 0, 0, (unsigned int *)&art_id);
+            tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(244, 254, 255, rgb);
+            light_build_color(244, 254, 255, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1340,9 +1374,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
-            tig_art_light_id_create(5, 0, 0, 0, (unsigned int *)&art_id);
+            tig_art_light_id_create(5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(244, 254, 255, &rgb);
+            light_build_color(244, 254, 255, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1356,7 +1390,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(255, 255, 240, &rgb);
+            light_build_color(255, 255, 240, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1370,7 +1404,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xEu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(244, 254, 255, &rgb);
+            light_build_color(244, 254, 255, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1384,7 +1418,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xFu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(244, 254, 0xFFu, &rgb);
+            light_build_color(244, 254, 0xFFu, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1398,7 +1432,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0x10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(244, 254, 255, &rgb);
+            light_build_color(244, 254, 255, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1412,7 +1446,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0x11, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(244, 254, 0xFFu, &rgb);
+            light_build_color(244, 254, 0xFFu, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1422,11 +1456,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 250);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
-            object_field_set_idx_int32(obj, OBJ_F_RESISTANCE_IDX, 4, 80);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
+            obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 4, 80);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8500);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x10);
@@ -1441,7 +1475,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(193, 255, 255, &rgb);
+            light_build_color(193, 255, 255, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1455,7 +1489,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(193, 255, 255, rgb);
+            light_build_color(193, 255, 255, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1469,7 +1503,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             tig_art_light_id_create(0xBu, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
-            light_build_color_(193, 255, 255, &rgb);
+            light_build_color(193, 255, 255, &rgb);
             obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
             break;
@@ -1541,10 +1575,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -1570,10 +1604,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -1598,10 +1632,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -1626,10 +1660,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -1654,10 +1688,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -1685,10 +1719,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
@@ -1715,10 +1749,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -1744,10 +1778,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -1775,10 +1809,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -1805,12 +1839,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 35);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 35);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -1836,10 +1870,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 50);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -1868,8 +1902,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 40);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 45);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
@@ -1897,8 +1931,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 7);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 30);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 5070);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -1927,13 +1961,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -1957,16 +1991,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 16);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
-            scr[2] = 29006;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
-            scr[2] = 29006;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 8, scr);
+            scr.num = 29006;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            scr.num = 29006;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             break;
         case 6044:
             tig_art_item_id_create(8, 0, 0, 0, 6, 0, 0, 0, &art_id);
@@ -1988,10 +2022,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -2019,10 +2053,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -2051,10 +2085,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -2082,8 +2116,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
@@ -2112,10 +2146,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
@@ -2143,12 +2177,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 7);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
@@ -2175,8 +2209,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -2202,10 +2236,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -2232,10 +2266,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 536);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -2261,10 +2295,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 24);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -2292,10 +2326,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
@@ -2324,10 +2358,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
@@ -2357,10 +2391,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -2386,10 +2420,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -2415,10 +2449,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             goto LABEL_252;
         case 6059:
             tig_art_item_id_create(9, 0, 0, 0, 3, 0, 0, 0, &art_id);
@@ -2440,10 +2474,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
@@ -2469,10 +2503,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 65);
@@ -2498,10 +2532,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
@@ -2527,10 +2561,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -2556,10 +2590,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
     LABEL_252:
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
@@ -2586,19 +2620,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
-            scr[2] = 28001;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28002;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 28001;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28002;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
         case 6065:
@@ -2621,13 +2655,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 53);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
@@ -2654,10 +2688,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -2682,10 +2716,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -2710,10 +2744,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
@@ -2740,10 +2774,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
@@ -2770,16 +2804,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
-            scr[2] = 28003;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
+            scr.num = 28003;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             obj_field_int32_set(obj, OBJ_F_NAME, 2027);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -2803,18 +2837,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
-            scr[2] = 28004;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28005;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 28004;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28005;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
         case 6072:
@@ -2837,10 +2871,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -2865,10 +2899,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -2893,10 +2927,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 85);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
@@ -2921,10 +2955,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
@@ -2949,10 +2983,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 7);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
@@ -2977,10 +3011,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -3007,10 +3041,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
@@ -3038,12 +3072,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 7);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
@@ -3071,10 +3105,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, -10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3102,10 +3136,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, -5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -3135,8 +3169,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, -10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3164,10 +3198,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3195,10 +3229,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
@@ -3226,10 +3260,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3257,10 +3291,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3288,10 +3322,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3318,10 +3352,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3349,10 +3383,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 280);
@@ -3378,10 +3412,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
@@ -3407,10 +3441,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
@@ -3436,10 +3470,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
@@ -3465,10 +3499,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
@@ -3494,10 +3528,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
@@ -3526,12 +3560,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
@@ -3560,10 +3594,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
@@ -3592,10 +3626,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -3622,10 +3656,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
@@ -3652,16 +3686,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
-            scr[2] = 28007;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
+            scr.num = 28007;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 6100:
@@ -3685,16 +3719,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
-            scr[2] = 28006;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
+            scr.num = 28006;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -3718,10 +3752,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3748,10 +3782,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3779,10 +3813,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3810,10 +3844,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3841,10 +3875,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3873,10 +3907,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3904,10 +3938,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3935,10 +3969,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3966,10 +4000,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -3997,10 +4031,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
@@ -4030,10 +4064,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -4059,10 +4093,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
@@ -4092,10 +4126,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
@@ -4127,10 +4161,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
@@ -4162,10 +4196,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
@@ -4193,16 +4227,15 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 18);
-    LABEL_262:
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
         case 6117:
@@ -4225,10 +4258,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -4253,10 +4286,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 35);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 35);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -4283,10 +4316,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -4316,11 +4349,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_EFFECT, 50);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE, 20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -4350,10 +4383,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -4381,12 +4414,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 0);
@@ -4414,13 +4447,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 5);
@@ -4448,13 +4481,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 10);
@@ -4482,13 +4515,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 20);
@@ -4518,12 +4551,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -45);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -4549,12 +4582,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
@@ -4580,13 +4613,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -4613,13 +4646,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -4646,13 +4679,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 16);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -4680,12 +4713,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 40);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -4712,12 +4745,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 30);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -4744,12 +4777,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 30);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 50);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -4775,13 +4808,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
@@ -4807,13 +4840,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -4840,13 +4873,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 13);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 13);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 3);
@@ -4874,13 +4907,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 16);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 5);
@@ -4908,13 +4941,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 1);
@@ -4942,13 +4975,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 16);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 2);
@@ -4976,13 +5009,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 24);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 3);
@@ -5009,13 +5042,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 32);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 4);
@@ -5043,14 +5076,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 2);
@@ -5078,14 +5111,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 4);
@@ -5113,14 +5146,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 16);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 6);
@@ -5148,14 +5181,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 16);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 8);
@@ -5184,12 +5217,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
@@ -5218,12 +5251,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 30);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
@@ -5252,14 +5285,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
@@ -5285,14 +5318,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
@@ -5318,14 +5351,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
@@ -5351,14 +5384,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 4);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
@@ -5383,10 +5416,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 141);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -5414,10 +5447,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 269);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -5446,8 +5479,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 80);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 80);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 44);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
@@ -5476,8 +5509,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 45);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
@@ -5507,12 +5540,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -5541,10 +5574,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 30);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 60);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 60);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -5572,12 +5605,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -5605,8 +5638,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -5636,14 +5669,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
@@ -5669,14 +5702,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
@@ -5702,14 +5735,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 18);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 18);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
@@ -5735,14 +5768,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 24);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 24);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29692);
@@ -5769,8 +5802,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
@@ -5799,10 +5832,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
@@ -5831,10 +5864,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
@@ -5864,10 +5897,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
@@ -5895,11 +5928,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
@@ -5928,11 +5961,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 7);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 82);
@@ -5961,11 +5994,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 50);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
@@ -5994,15 +6027,15 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 40);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29695);
-            scr[2] = 2486;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
+            scr.num = 2486;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             break;
         case 6172:
             tig_art_item_id_create(10, 0, 0, 0, 7, 0, 0, 0, &art_id);
@@ -6024,10 +6057,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 25);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 6);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 25);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
@@ -6053,12 +6086,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 40);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 10);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -6084,10 +6117,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 25);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 25);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
@@ -6115,10 +6148,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 1);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -6143,8 +6176,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -6172,8 +6205,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -6202,8 +6235,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_AMMO_CONSUMPTION, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_HIT_CHART, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -6304,8 +6337,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
@@ -6348,8 +6381,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
@@ -6365,7 +6398,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 145);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
                 break;
             case 8067:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -6377,7 +6410,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(2, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 155);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 17);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 17);
                 break;
             }
             break;
@@ -6394,9 +6427,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -6417,27 +6450,27 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1200);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 30);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -90);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 600);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, -5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, -10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, -20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, -5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2000);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
-            scr[2] = 30303;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28005;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30303;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28005;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             switch (description) {
             case 8061:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
@@ -6449,7 +6482,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
                 break;
             }
             break;
@@ -6467,9 +6500,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, -15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, -15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -6502,18 +6535,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 600);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 4, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 950);
@@ -6530,7 +6563,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(14, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 800);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             case 8068:
@@ -6543,7 +6576,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(15, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29719);
                 break;
             }
@@ -6563,19 +6596,20 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10000);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 19);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 31);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
-            scr[1] = scr[1] & ~0xFF | 10;
-            scr[2] = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 10;
+            scr.num = 30287;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30288;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8064:
@@ -6598,7 +6632,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -6658,15 +6692,15 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 125);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8052:
@@ -6681,18 +6715,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 3);
-            scr[1] = scr[1] & 2 | 2;
-            scr[2] = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 2;
+            scr.num = 28014;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28015;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8053:
@@ -6706,7 +6741,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -6724,7 +6759,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -6742,7 +6777,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -6759,7 +6794,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 1);
@@ -6775,7 +6810,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
@@ -6783,11 +6818,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
-            scr[1] = scr[1] & 0xFF7602FF | 0x760200;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF7602FF;
+            scr.hdr.counters |= 0x760200;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
         case 8060:
@@ -6803,9 +6839,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 450);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -6829,8 +6865,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
@@ -6873,15 +6909,15 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
-            scr[2] = 28008;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28009;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 28008;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28009;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
             case 8079:
@@ -6894,7 +6930,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(4, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 145);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 5);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
@@ -6908,7 +6944,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(4, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 160);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -5);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29719);
                 break;
@@ -6928,18 +6964,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -350);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
@@ -6955,7 +6991,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(9, 2, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 450);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -6974,29 +7010,29 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1200);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 25);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 45);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 45);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -90);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 600);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, -10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, -10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, -20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 900);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
-            scr[2] = 30303;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28005;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30303;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28005;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             switch (description) {
             case 8081:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
@@ -7008,7 +7044,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 38);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 38);
                 break;
             case 8291:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -7022,7 +7058,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(2, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1400);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 53);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 53);
                 break;
             }
             break;
@@ -7040,17 +7076,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
-            scr[1] = scr[1] & 0xFF8F05FF | 0x8F0500;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8F05FF;
+            scr.hdr.counters |= 0x8F0500;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
             case 8082:
@@ -7080,9 +7117,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -7100,7 +7137,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 30);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 30);
                 break;
             case 8088:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -7112,7 +7149,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(2, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1200);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 38);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 38);
                 break;
             }
             break;
@@ -7130,21 +7167,22 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 11);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 70);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 40);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 40);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 70);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
-            scr[1] = scr[1] & ~0xFF | 0x0F;
-            scr[2] = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x0F;
+            scr.num = 30287;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30288;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8084:
@@ -7167,14 +7205,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
-            scr[2] = 30020;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30021;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30020;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30021;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
             case 8085:
@@ -7215,9 +7253,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 250);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 14);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 30);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -7241,8 +7279,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 7);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 340);
@@ -7285,8 +7323,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
@@ -7302,7 +7340,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 140);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 break;
             case 8107:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -7314,7 +7352,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(2, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 160);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 17);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 17);
                 break;
             }
             break;
@@ -7331,9 +7369,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -7355,9 +7393,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 30);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
@@ -7375,7 +7413,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
                 break;
             }
             break;
@@ -7393,8 +7431,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, -5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, -5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
@@ -7427,9 +7465,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 30);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -7447,7 +7485,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(4, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
                 break;
             case 8108:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -7459,7 +7497,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(5, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1100);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 38);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 38);
                 break;
             }
             break;
@@ -7477,15 +7515,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 11);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
-            scr[1] = scr[1] & ~0xFF | 0x05;
-            scr[2] = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x05;
+            scr.num = 30287;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30288;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8104:
@@ -7508,7 +7547,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -7553,9 +7592,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 430);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -7579,8 +7618,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -7623,8 +7662,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 540);
@@ -7640,7 +7679,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(7, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 480);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
                 break;
             case 8127:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -7652,7 +7691,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(8, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 520);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
                 break;
             }
             break;
@@ -7670,9 +7709,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -7690,7 +7729,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 3, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 450);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
                 break;
             }
             break;
@@ -7708,9 +7747,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 37);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 37);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 900);
@@ -7727,7 +7766,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(1, 2, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 33);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 33);
                 break;
             }
             break;
@@ -7745,14 +7784,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 8);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 80);
@@ -7787,8 +7826,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 800);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -35);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1100);
@@ -7806,7 +7845,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(18, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 600);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 35);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 35);
                 break;
             case 8128:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -7818,7 +7857,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(19, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 45);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 45);
                 break;
             }
             break;
@@ -7836,17 +7875,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 11);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
-            scr[1] = scr[1] & ~0xFF | 0x05;
-            scr[2] = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x05;
+            scr.num = 30287;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30288;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8124:
@@ -7869,7 +7909,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -7915,9 +7955,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 250);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 13);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 24);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 24);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 300);
@@ -7936,7 +7976,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(4, 2, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
                 break;
             case 8292:
                 tig_art_item_id_create(3, 2, 0, 0, 6, 2, 0, 2, &art_id);
@@ -7950,7 +7990,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(5, 2, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 270);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
                 break;
             }
             break;
@@ -7964,7 +8004,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
@@ -7989,7 +8029,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -8023,14 +8063,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
-            scr[2] = 30020;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30021;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30020;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30021;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
             case 8137:
@@ -8061,7 +8101,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -8095,7 +8135,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -8129,9 +8169,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 80);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 30);
@@ -8178,8 +8218,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 250);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
@@ -8225,13 +8265,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 60);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -8246,7 +8286,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(10, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 140);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             case 8153:
@@ -8259,7 +8299,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(11, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 160);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29719);
                 break;
             }
@@ -8277,18 +8317,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 70);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 70);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
-            scr[2] = 28010;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28011;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 28010;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28011;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -8305,9 +8345,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 400);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 13);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 25);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -8327,9 +8367,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 650);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 14);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 27);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 27);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -8351,13 +8391,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 14);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -150);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
@@ -8377,13 +8417,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
@@ -8402,13 +8442,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 2807);
-            scr[2] = 1341;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 0, scr);
+            scr.num = 1341;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
         case 8160:
@@ -8427,11 +8467,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29708);
             obj_field_int32_set(obj, OBJ_F_NAME, 2827);
-            scr[1] = scr[1] & 0xFF8602FF | 0x860200;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8602FF;
+            scr.hdr.counters |= 0x860200;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
         case 8161:
@@ -8446,8 +8487,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -8466,7 +8507,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -8482,7 +8523,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -8521,11 +8562,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
-            scr[1] = scr[1] & 0xFF8701FF | 0x870100;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8701FF;
+            scr.hdr.counters |= 0x870100;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
         case 8166:
@@ -8539,7 +8581,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
@@ -8558,7 +8600,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 8);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
@@ -8575,7 +8617,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
@@ -8592,7 +8634,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 40);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
@@ -8609,7 +8651,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 40);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
@@ -8626,7 +8668,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
@@ -8644,7 +8686,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 40);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
@@ -8662,7 +8704,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 25);
@@ -8685,15 +8727,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29711);
-            scr[1] = scr[1] & 0xFF8805FF | 0x880500;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8805FF;
+            scr.hdr.counters |= 0x880500;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
         case 8175:
@@ -8708,18 +8751,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 145);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 7);
-            scr[1] = scr[1] & 2 | 2;
-            scr[2] = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x02;
+            scr.num = 28014;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28015;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8176:
@@ -8734,18 +8778,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 25);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 15);
-            scr[1] = scr[1] & ~0xFF | 0x04;
-            scr[2] = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x04;
+            scr.num = 28014;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28015;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8177:
@@ -8760,18 +8805,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 25);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 8);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 260);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 10);
-            scr[1] = (scr[1] & ~0xFF) & 5 | 5;
-            scr[2] = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x05;
+            scr.num = 28014;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28015;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8178:
@@ -8786,18 +8832,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 183);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 2);
-            scr[1] = scr[1] & ~0xFF | 0x01;
-            scr[2] = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x01;
+            scr.num = 28014;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28015;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8179:
@@ -8811,17 +8858,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
-            scr[1] = scr[1] & 0xFF8A01FF | 0x8A0100;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8A01FF;
+            scr.hdr.counters |= 0x8A0100;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8180:
@@ -8835,17 +8883,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
-            scr[1] = scr[1] & 0xFF8B02FF | 0x8B0200;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8B02FF;
+            scr.hdr.counters |= 0x8B0200;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8181:
@@ -8860,15 +8909,15 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8182:
@@ -8883,15 +8932,15 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 70);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8183:
@@ -8911,11 +8960,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
-            scr[1] = scr[1] & 0xFF8C02FF | 0x8C0200;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8C02FF;
+            scr.hdr.counters |= 0x8C0200;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8184:
@@ -8935,10 +8985,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
-            scr[2] = 28017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 28017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 8185:
@@ -8971,7 +9021,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 130);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
@@ -8991,7 +9041,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
@@ -9013,17 +9063,17 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 2048);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8189:
@@ -9038,17 +9088,17 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8190:
@@ -9137,8 +9187,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_NAME, 2866);
-            scr[2] = 29016;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
+            scr.num = 29016;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             break;
         case 8195:
             tig_art_item_id_create(5, 0, 0, 0, 0, 2, 1, 0, &art_id);
@@ -9193,9 +9243,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1300);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 500);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 17);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -9217,23 +9267,24 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 800);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 7);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 850);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
-            scr[1] = scr[1] & 0xFF8E08FF | 0x8E0800;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFF8E08FF;
+            scr.hdr.counters |= 0x8E0800;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
         case 8199:
@@ -9253,10 +9304,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8200:
@@ -9272,14 +9323,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
-            scr[2] = 30020;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30021;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30020;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30021;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 18);
             break;
         case 8201:
@@ -9296,8 +9347,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
@@ -9328,17 +9379,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29707);
-            scr[1] = scr[1] & 0xFFD501FF | 0xD50100;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFFD501FF;
+            scr.hdr.counters |= 0xD50100;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -9354,17 +9406,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
-            scr[1] = scr[1] & 0xFFD804FF | 0xD80400;
-            scr[2] = 30293;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30294;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFFD804FF;
+            scr.hdr.counters |= 0xD80400;
+            scr.num = 30293;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30294;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -9379,17 +9432,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
-            scr[1] = scr[1] & 0xFFD702FF | 0xD70200;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFFD702FF;
+            scr.hdr.counters |= 0xD70200;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
@@ -9405,17 +9459,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29709);
-            scr[1] = scr[1] & 0xFFD601FF | 0xD60100;
-            scr[2] = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFFD601FF;
+            scr.hdr.counters |= 0xD60100;
+            scr.num = 28012;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28013;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -9437,10 +9492,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 2806);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             break;
         case 8208:
         case 8209:
@@ -9457,18 +9512,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 170);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -9483,7 +9538,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(13, 2, 0, 0, 2, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             case 8210:
@@ -9496,7 +9551,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(14, 2, 0, 0, 2, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29719);
                 break;
             }
@@ -9516,18 +9571,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 160);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -9542,7 +9597,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(13, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             case 8213:
@@ -9555,7 +9610,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(14, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29719);
                 break;
             }
@@ -9575,18 +9630,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -9601,7 +9656,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(16, 2, 0, 0, 2, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             case 8216:
@@ -9614,7 +9669,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(17, 2, 0, 0, 2, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29719);
                 break;
             }
@@ -9634,18 +9689,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 170);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
@@ -9660,7 +9715,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(16, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             case 8219:
@@ -9673,7 +9728,7 @@ void sub_468930(long long obj, int description)
                 obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
                 tig_art_item_id_create(17, 2, 0, 0, 2, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29719);
                 break;
             }
@@ -9691,13 +9746,13 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 14);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -150);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
@@ -9717,19 +9772,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 520);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -9744,7 +9799,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(7, 2, 0, 0, 3, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -9763,19 +9818,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 510);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -9790,7 +9845,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(7, 2, 0, 0, 3, 2, 0, 1, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 490);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -9809,19 +9864,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -9836,7 +9891,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(7, 2, 0, 0, 3, 2, 0, 2, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 490);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -9855,19 +9910,19 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 23);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
@@ -9882,7 +9937,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(7, 2, 0, 0, 3, 2, 0, 3, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 490);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 21);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -9902,17 +9957,17 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 18);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 45);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 65);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 45);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 65);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, -10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, -15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, -10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, -75);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, -15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, -10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, -75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 900);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
@@ -9929,7 +9984,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(4, 2, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
                 break;
             case 8231:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 4);
@@ -9941,7 +9996,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(5, 2, 0, 0, 4, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1400);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 47);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 47);
                 tig_art_item_id_create(2, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
                 break;
@@ -9961,18 +10016,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10004,18 +10059,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10047,18 +10102,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 35);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 35);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 35);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 35);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 35);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 35);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 35);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 35);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10090,18 +10145,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 50);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10116,7 +10171,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(5, 2, 0, 0, 5, 2, 0, 2, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29722);
-                break
+                break;
             }
             break;
         case 8240:
@@ -10133,18 +10188,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10176,18 +10231,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10219,18 +10274,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10262,18 +10317,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -10305,8 +10360,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
@@ -10338,16 +10393,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 0);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
@@ -10365,7 +10420,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(7, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -10384,16 +10439,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
@@ -10411,7 +10466,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(9, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -10430,16 +10485,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
@@ -10457,7 +10512,7 @@ void sub_468930(long long obj, int description)
                 tig_art_item_id_create(11, 2, 0, 0, 6, 2, 0, 0, &art_id);
                 obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -10476,16 +10531,16 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 36);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
@@ -10495,15 +10550,15 @@ void sub_468930(long long obj, int description)
             switch (description) {
             case 8257:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
-                tig_art_item_id_create(14, 0, 0, 0, 6, 2, 0, 0, &tig_art_container_id_create);
-                obj_field_int32_set(obj, OBJ_F_AID, tig_art_container_id_create);
-                obj_field_int32_set(obj, OBJ_F_CURRENT_AID, tig_art_container_id_create);
-                tig_art_item_id_create(14, 1, 0, 0, 6, 2, 0, 0, &tig_art_container_id_create);
-                obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, tig_art_container_id_create);
-                tig_art_item_id_create(14, 2, 0, 0, 6, 2, 0, 0, &tig_art_container_id_create);
-                obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, tig_art_container_id_create);
+                tig_art_item_id_create(14, 0, 0, 0, 6, 2, 0, 0, &art_id);
+                obj_field_int32_set(obj, OBJ_F_AID, art_id);
+                obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
+                tig_art_item_id_create(14, 1, 0, 0, 6, 2, 0, 0, &art_id);
+                obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
+                tig_art_item_id_create(14, 2, 0, 0, 6, 2, 0, 0, &art_id);
+                obj_field_int32_set(obj, OBJ_F_ARMOR_PAPER_DOLL_AID, art_id);
                 obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 900);
-                object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
+                obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 32);
                 obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
                 break;
             }
@@ -10525,8 +10580,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 4, 30);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, -30);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 4, 30);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -10546,9 +10601,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -10568,9 +10623,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -10590,9 +10645,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 12);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -10612,9 +10667,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 16);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 16);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 16);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -10652,18 +10707,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8265:
@@ -10678,18 +10733,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8266:
@@ -10704,17 +10759,17 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 8);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 6);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8267:
@@ -10729,17 +10784,17 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 8);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
-            scr[2] = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.num = 30291;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30292;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8268:
@@ -10754,11 +10809,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 2);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
@@ -10776,11 +10831,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 3);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 3);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
@@ -10798,11 +10853,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 4);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
@@ -10820,11 +10875,11 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
@@ -10842,10 +10897,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
@@ -10863,10 +10918,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
@@ -10884,10 +10939,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
@@ -10905,10 +10960,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
@@ -10948,13 +11003,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 15);
-            v112 = scr[1];
-            LOBYTE(v112) = scr[1] & 2;
-            scr[1] = v112 | 2;
-            scr[2] = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= ~0xFF;
+            scr.hdr.counters |= 0x02;
+            scr.num = 28014;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 28015;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             break;
         case 8278:
             tig_art_item_id_create(14, 0, 0, 0, 0, 2, 5, 0, &art_id);
@@ -11150,17 +11204,18 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 70);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 6);
-            object_field_set_idx_int32(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
+            obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
-            scr[1] = scr[1] & 0xFFE703FF | 0xE70300;
-            scr[2] = 30289;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 24, scr);
-            scr[2] = 30290;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 25, scr);
+            scr.hdr.counters &= 0xFFE703FF;
+            scr.hdr.counters |= 0xE70300;
+            scr.num = 30289;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            scr.num = 30290;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         }
@@ -11439,9 +11494,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
-            scr[2] = 30282;
-            scr[1] = 0x32002314;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30282;
+            scr.hdr.counters = 0x32002314;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12202,8 +12257,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 3619);
-            scr[2] = 2545;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 2545;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x100000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -12339,9 +12394,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
-            scr[2] = 30282;
-            scr[1] = OBJ_F_KEY_KEY_ID832;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30282;
+            scr.hdr.counters = 0x50002550;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12358,9 +12413,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
-            scr[2] = 30282;
-            scr[1] = 838936350;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30282;
+            scr.hdr.counters = 0x3201271E;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12377,9 +12432,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
-            scr[2] = 30282;
-            scr[1] = 1342253382;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30282;
+            scr.hdr.counters = 0x50012946;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12396,9 +12451,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
-            scr[2] = 30282;
-            scr[1] = 839003000;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30282;
+            scr.hdr.counters = 0x32022B78;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12415,9 +12470,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
-            scr[2] = 30282;
-            scr[1] = 1342385528;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30282;
+            scr.hdr.counters = 0x50032D78;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12683,10 +12738,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 1);
             obj_field_int32_set(obj, OBJ_F_NAME, 5212);
             obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, 1030);
-            scr[2] = 1146;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
-            scr[2] = 1145;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 0, scr);
+            scr.num = 1146;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            scr.num = 1145;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12724,8 +12779,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            scr[2] = 1832;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
+            scr.num = 1832;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             tig_art_item_id_create(2, 0, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12736,8 +12791,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 0);
             obj_field_int32_set(obj, OBJ_F_NAME, 5229);
             obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, 1020);
-            scr[2] = 1891;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 1891;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
@@ -13526,9 +13581,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            scr[2] = 1022;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 8, scr);
+            scr.num = 1022;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -13724,9 +13779,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
-            scr[2] = 30001;
-            scr[1] = scr[1] & 0xFFFF190F | 0x190F;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30001;
+            scr.hdr.counters &= 0xFFFF190F;
+            scr.hdr.counters |= 0x190F;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
@@ -13886,9 +13942,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            scr[2] = 1343;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 8, scr);
+            scr.num = 1343;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -13937,8 +13993,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
-            scr[2] = 1436;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 0, scr);
+            scr.num = 1436;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_NAME, 5639);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
@@ -13953,8 +14009,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
-            scr[2] = 1435;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 0, scr);
+            scr.num = 1435;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_NAME, 5641);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
@@ -14008,9 +14064,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
-            scr[2] = 30001;
-            scr[1] = scr[1] & 0xFF0000 | 0x8C000A05;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30001;
+            scr.hdr.counters &= 0xFF0000;
+            scr.hdr.counters |= 0x8C000A05;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
@@ -14225,9 +14282,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
-            scr[2] = 29017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 8, scr);
+            scr.num = 29017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             break;
@@ -14362,8 +14419,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_NAME, 5614);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
-            scr[2] = 2942;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 2942;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15127:
             tig_art_item_id_create(82, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -14377,8 +14434,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             obj_field_int32_set(obj, OBJ_F_NAME, 5628);
-            scr[2] = 2947;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
+            scr.num = 2947;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             break;
         case 15128:
             tig_art_item_id_create(83, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -14453,9 +14510,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(96, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            scr[2] = 30008;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 8, scr);
+            scr.num = 30008;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -14820,8 +14877,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29714);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 2097600);
-            scr[2] = 28019;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 28019;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 3);
             break;
         case 15160:
@@ -15004,9 +15061,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 4500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 350);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2200);
-            scr[2] = 30008;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 8, scr);
+            scr.num = 30008;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
@@ -15054,8 +15111,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 128);
-            scr[2] = 29019;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 29019;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15176:
             tig_art_item_id_create(14, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15126,8 +15183,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_NAME, 6698);
-            scr[2] = 2631;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
+            scr.num = 2631;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
@@ -15226,13 +15283,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
-            scr[1] = (unsigned __int8)scr[1] | 0x401A900;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2914;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401A900;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2914;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15189:
             tig_art_item_id_create(160, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15245,13 +15303,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
-            scr[1] = (unsigned __int8)scr[1] | 0x401AB00;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2916;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401AB00;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2916;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15190:
             tig_art_item_id_create(162, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15264,13 +15323,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
-            scr[1] = (unsigned __int8)scr[1] | 0x401A800;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2913;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401A800;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2913;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15191:
             tig_art_item_id_create(166, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15283,13 +15343,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
-            scr[1] = (unsigned __int8)scr[1] | 0x401AA00;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2915;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401AA00;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2915;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15192:
             tig_art_item_id_create(161, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15302,13 +15363,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
-            scr[1] = (unsigned __int8)scr[1] | 0x401AF00;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2920;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401AF00;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2920;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15193:
             tig_art_item_id_create(165, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15321,13 +15383,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
-            scr[1] = (unsigned __int8)scr[1] | 0x401AD00;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2918;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401AD00;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2918;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15194:
             tig_art_item_id_create(163, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15340,13 +15403,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
-            scr[1] = (unsigned __int8)scr[1] | 0x401AE00;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2919;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401AE00;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2919;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15195:
             tig_art_item_id_create(164, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15359,13 +15423,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
-            scr[1] = (unsigned __int8)scr[1] | 0x401AC00;
-            scr[2] = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
-            scr[2] = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 28, scr);
-            scr[2] = 2917;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.hdr.counters &= 0xFF;
+            scr.hdr.counters |= 0x401AC00;
+            scr.num = 30017;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            scr.num = 30018;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            scr.num = 2917;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15196:
             tig_art_item_id_create(169, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15404,8 +15469,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_NAME, 5620);
-            scr[2] = 30283;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 21, scr);
+            scr.num = 30283;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             break;
         case 15199:
             tig_art_item_id_create(71, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15578,9 +15643,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            scr[2] = 30300;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 7, scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 8, scr);
+            scr.num = 30300;
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -15603,12 +15668,12 @@ void sub_468930(long long obj, int description)
             sub_441C70(obj, 0, 1, 0);
             obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, "none");
             obj_field_int32_set(obj, OBJ_F_CRITTER_PORTRAIT, 1005);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16067:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 76);
             sub_441C70(obj, 2, 1, 5);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15616,12 +15681,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 108);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 39);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1039);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16068:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 77);
             sub_441C70(obj, 2, 1, 4);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15629,12 +15694,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 24);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 40);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1040);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16069:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 78);
             sub_441C70(obj, 0, 1, 3);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15642,12 +15707,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 20);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 41);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1041);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16070:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 79);
             sub_441C70(obj, 3, 1, 7);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15655,12 +15720,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 25);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 42);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1042);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16071:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 80);
             sub_441C70(obj, 4, 1, 2);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15668,12 +15733,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 20);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 43);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1043);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16072:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 81);
             sub_441C70(obj, 0, 1, 0);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15681,12 +15746,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 22);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 44);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1044);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16073:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 82);
             sub_441C70(obj, 0, 1, 6);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15694,12 +15759,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 20);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 45);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1045);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16074:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 83);
             sub_441C70(obj, 1, 1, 1);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15707,12 +15772,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 24);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 46);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1046);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16075:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 84);
             sub_441C70(obj, 0, 0, 0);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15720,12 +15785,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 23);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 47);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1047);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16076:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 85);
             sub_441C70(obj, 4, 0, 2);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15733,12 +15798,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 22);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 48);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1048);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16077:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 86);
             sub_441C70(obj, 0, 0, 6);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15746,12 +15811,12 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 26);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 49);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1049);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         case 16078:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 87);
             sub_441C70(obj, 0, 0, 3);
-            str = level_advancement_scheme_get_name_(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
+            str = level_advancement_scheme_get_name(obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME));
             if (str != NULL) {
                 obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, str);
             }
@@ -15759,10 +15824,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 26);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 50);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1050);
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         default:
-            sub_43D530(obj, 0);
+            object_set_hp_damage(obj, 0);
             break;
         }
         break;
@@ -15782,82 +15847,82 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100);
         switch (description) {
         case 26000:
-            tig_art_eye_candy_id_create_(0x163, 0, 0, 0, 2, 0, 4, &art_id);
+            tig_art_eye_candy_id_create(0x163, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30000;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30000;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26001:
-            tig_art_eye_candy_id_create_(0x164, 0, 0, 0, 2, 0, 4, &art_id);
+            tig_art_eye_candy_id_create(0x164, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30001;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30001;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26002:
-            tig_art_eye_candy_id_create_(0x15Fu, 0, 0, 0, 2, 0, 4, &art_id);
+            tig_art_eye_candy_id_create(0x15Fu, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30002;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30002;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26003:
-            tig_art_eye_candy_id_create_(0x162, 0, 0, 0, 2, 0, 4, &art_id);
+            tig_art_eye_candy_id_create(0x162, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30003;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30003;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26004:
-            tig_art_eye_candy_id_create_(0x161, 0, 0, 0, 2, 0, 4, &art_id);
+            tig_art_eye_candy_id_create(0x161, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30004;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30004;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26005:
-            tig_art_eye_candy_id_create_(0x160, 0, 0, 0, 2, 0, 4, &art_id);
+            tig_art_eye_candy_id_create(0x160, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30005;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30005;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26006:
-            tig_art_eye_candy_id_create_(0x165, 0, 0, 0, 2, 0, 4, &art_id);
+            tig_art_eye_candy_id_create(0x165, 0, 0, 0, 2, 0, 4, &art_id);
             art_id = tig_art_id_frame_set(art_id, -1);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30006;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30006;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26007:
             tig_art_scenery_id_create(0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            scr[2] = 30007;
-            sub_44BCC0(scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 1, scr);
+            scr.num = 30007;
+            sub_44BCC0(&scr);
+            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
         }
@@ -15875,7 +15940,7 @@ void sub_49AFF0(long long obj, int description)
 void sub_49B010(long long obj, int description)
 {
     tig_art_id_t art_id;
-    int scr[3];
+    Script scr;
     int exp;
 
     obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
@@ -15898,24 +15963,24 @@ void sub_49B010(long long obj, int description)
     case 27311:
         sub_49AFF0(obj, 17082);
         obj_field_int32_set(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27311);
-        scr[2] = 1498;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 9, scr);
-        scr[2] = 1499;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 10, scr);
+        scr.num = 1498;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG, &scr);
+        scr.num = 1499;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_FIRST_HEARTBEAT, &scr);
         break;
     case 27319:
         sub_49AFF0(obj, 17082);
-        scr[2] = 30117;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 19, scr);
-        scr[2] = 30118;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 12, scr);
+        scr.num = 30117;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
+        scr.num = 30118;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_DYING, &scr);
         break;
     case 27320:
         sub_49AFF0(obj, 17082);
-        scr[2] = 30119;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 19, scr);
-        scr[2] = 30120;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, 12, scr);
+        scr.num = 30119;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
+        scr.num = 30120;
+        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_DYING, &scr);
         break;
     default:
         sub_49B220(obj, description);
@@ -15925,7 +15990,7 @@ void sub_49B010(long long obj, int description)
     exp = sub_45F0B0(obj);
     obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
     obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
-    sub_43D530(obj, 0);
+    object_set_hp_damage(obj, 0);
 }
 
 // 0x49B220
@@ -15947,12 +16012,12 @@ void sub_49B240(long long obj, int f, int percent)
 int sub_49B290(long long obj)
 {
     long long prototype_handle;
-    ObjectId object_id;
+    ObjectID object_id;
 
-    prototype_handle = obj_f_get_handle(obj, OBJ_F_PROTOTYPE_HANDLE);
+    prototype_handle = obj_field_handle_get(obj, OBJ_F_PROTOTYPE_HANDLE);
     object_id = sub_407EF0(prototype_handle);
 
-    return object_id.d.a.field_8 - 20;
+    return object_id.d.a - 20;
 }
 
 // 0x49B2E0
@@ -15976,7 +16041,7 @@ void sub_49B340(long long obj, int description)
     int v1;
     int exp;
     tig_art_id_t art_id;
-    int rgb;
+    unsigned int rgb;
     int gender;
     int race;
 
@@ -16012,7 +16077,7 @@ void sub_49B340(long long obj, int description)
         exp = sub_45F0B0(obj);
         obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
         obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
-        sub_43D530(obj, 0);
+        object_set_hp_damage(obj, 0);
 
         art_id = sub_45FA70(obj, &rgb);
         obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
@@ -16047,7 +16112,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 {
     tig_art_id_t art_id;
     char str[1000];
-    int scr[3];
+    Script scr;
     int fld;
     int v2;
     int v3;
@@ -16058,7 +16123,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
         obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
         obj_field_int32_set(obj, OBJ_F_NPC_REACTION_BASE, 50);
         obj_field_int32_set(obj, OBJ_F_NPC_WAIT, 2);
-        tig_art_light_id_create_(6, 0, 0, 1, &art_id);
+        tig_art_light_id_create(6, 0, 0, 1, &art_id);
         obj_field_int32_set(obj, OBJ_F_SHADOW, art_id);
         obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 250);
     }
@@ -16134,24 +16199,24 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                     sub_49BB40(obj, v2);
                     break;
                 case PROTO_F_SCRIPT:
-                    scr[2] = v3;
-                    scr[1] = v4;
-                    sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, v2, scr);
+                    scr.num = v3;
+                    scr.hdr.counters = v4;
+                    sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, v2, &scr);
                     break;
                 case PROTO_F_DAMAGE_RESISTANCE:
-                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 0, v2);
+                    obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, v2);
                     break;
                 case PROTO_F_FIRE_RESISTANCE:
-                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 1, v2);
+                    obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, v2);
                     break;
                 case PROTO_F_ELECTRICAL_RESISTANCE:
-                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 2, v2);
+                    obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, v2);
                     break;
                 case PROTO_F_POISON_RESISTANCE:
-                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 3, v2);
+                    obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, v2);
                     break;
                 case PROTO_F_MAGIC_RESISTANCE:
-                    obj_f_set_int32_idx(obj, OBJ_F_RESISTANCE_IDX, 4, v2);
+                    obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 4, v2);
                     break;
                 case PROTO_F_NORMAL_DAMAGE:
                     sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 0, v2);
@@ -16186,7 +16251,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                     obj_field_int32_set(obj, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER, v2);
                     break;
                 case PROTO_F_SOCIAL_CLASS:
-                    sub_45D030(obj, v2);
+                    critter_social_class_set(obj, v2);
                     break;
                 case PROTO_F_OBJECT_FLAG:
                     obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | v2);
@@ -16208,7 +16273,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 // 0x49BB40
 void sub_49BB40(long long obj, int a2)
 {
-    sub_43D4E0(obj, sub_43D4C0(obj) + a2 - sub_43D5A0(obj));
+    object_set_hp_adj(obj, object_get_hp_adj(obj) + a2 - sub_43D5A0(obj));
 }
 
 // 0x49BB70
@@ -16294,7 +16359,7 @@ bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
             name = spell_get_name(spl);
             pos = strlen(name);
             if (strnicmp(str, name, pos) == 0) {
-                *a3 = stat;
+                *a3 = spl;
                 *a4 = atoi(str + pos);
                 return true;
             }
@@ -16367,23 +16432,23 @@ void sub_49C060(long long obj, TigFile* stream, int type)
         tig_file_fprintf(stream, "%s: %d %d\n",
             off_5B38C8[PROTO_F_ART_NUMBER_AND_PALETTE],
             tig_art_num_get(art_id),
-            tig_art_palette_get(art_id));
+            tig_art_id_palette_get(art_id));
         break;
     case 2:
         tig_file_fprintf(stream, "%s: %d %d\n",
             off_5B38C8[PROTO_F_ART_NUMBER_AND_PALETTE],
             sub_503F20(art_id),
-            tig_art_palette_get(art_id));
+            tig_art_id_palette_get(art_id));
         break;
     default:
         tig_file_fprintf(stream, "%s: %s %d\n",
             off_5B38C8[PROTO_F_BASIC_STAT],
             stat_get_name(STAT_GENDER),
-            stat_get_base(STAT_GENDER));
+            stat_get_base(obj, STAT_GENDER));
         tig_file_fprintf(stream, "%s: %s %d\n",
             off_5B38C8[PROTO_F_BASIC_STAT],
             stat_get_name(STAT_RACE),
-            stat_get_base(STAT_RACE));
+            stat_get_base(obj, STAT_RACE));
         break;
     }
 
@@ -16477,7 +16542,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
         sub_43D5A0(obj));
 
     for (index = 0; index < 36; index++) {
-        sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, scr);
+        sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
         if (scr[2] != 0) {
             tig_file_fprintf(stream, "%s: %d %d %d %d %d %d\n",
                 off_5B38C8[PROTO_F_SCRIPT],
@@ -16491,7 +16556,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     }
 
     for (index = PROTO_F_DAMAGE_RESISTANCE; index <= PROTO_F_MAGIC_RESISTANCE; index++) {
-        value = obj_f_get_int32_idx(obj, OBJ_F_RESISTANCE_IDX, index);
+        value = obj_arrayfield_int32_get(obj, OBJ_F_RESISTANCE_IDX, index);
         if (value != 0) {
             tig_file_fprintf(stream, "%s: %d\n",
                 off_5B38C8[index],
@@ -16531,7 +16596,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
 
     tig_file_fprintf(stream, "%s: %d\n",
         off_5B38C8[PROTO_F_SOCIAL_CLASS],
-        critter_get_social_class(obj));
+        critter_social_class_get(obj));
 
     sub_49C610(stream,
         off_5B38C8[PROTO_F_OBJECT_FLAG],
