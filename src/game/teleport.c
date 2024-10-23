@@ -17,12 +17,12 @@
 #include "game/obj_private.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/reaction.h"
 #include "game/ui.h"
 #include "game/wallcheck.h"
 
 typedef struct S6018B8 {
-    int field_0;
-    int field_4;
+    int64_t loc;
     int64_t obj;
     struct S6018B8* next;
 } S6018B8;
@@ -31,7 +31,7 @@ typedef struct S6018B8 {
 static_assert(sizeof(S6018B8) == 0x18, "wrong size");
 
 static bool sub_4D3460(TeleportData* teleport_data);
-static void sub_4D3760(int64_t obj, int64_t loc);
+static bool sub_4D3760(int64_t obj, int64_t loc);
 static bool sub_4D39A0(TeleportData* teleport_data);
 static void sub_4D3D60(int64_t obj);
 static void sub_4D3E20(int64_t obj);
@@ -278,9 +278,98 @@ bool sub_4D3460(TeleportData* teleport_data)
 }
 
 // 0x4D3760
-void sub_4D3760(int64_t obj, int64_t loc)
+bool sub_4D3760(int64_t obj, int64_t loc)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    unsigned int flags;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    S6018B8* node;
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+
+    if ((flags & OF_TEXT) != 0) {
+        sub_4EF630(obj);
+    }
+
+    if ((flags & OF_TEXT_FLOATER) != 0) {
+        sub_4EF5C0(obj);
+    }
+
+    if (obj_type_is_critter(obj_type)) {
+        ObjectList objects;
+        ObjectNode* obj_node;
+        int64_t v1;
+
+        object_get_followers(obj, &objects);
+        obj_node = objects.head;
+        while (obj_node != NULL) {
+            if ((obj_field_int32_get(obj_node->obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) == 0) {
+                if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                    v1 = sub_4C1110(obj_node->obj);
+                    if (v1 != OBJ_HANDLE_NULL) {
+                        sub_460A20(v1, 0);
+                    }
+                }
+
+                if (!sub_4D3760(obj_node->obj, loc)) {
+                    object_list_destroy(&objects);
+                    return false;
+                }
+            }
+            obj_node = obj_node->next;
+        }
+
+        object_list_destroy(&objects);
+    }
+
+    if (obj_type_is_critter(obj_type)) {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    } else if (obj_type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else {
+        inventory_num_fld = -1;
+    }
+
+    if (inventory_num_fld != -1) {
+        int cnt;
+        int inv_size;
+        int index;
+        int64_t item_obj;
+        int64_t item_loc;
+
+        cnt = obj_field_int32_get(obj, inventory_num_fld);
+        inv_size = obj_arrayfield_length_get(obj, inventory_list_fld);
+        if (cnt != inv_size) {
+            tig_debug_printf("Inventory array count does not equal associated num field on teleport.  Array: %d, Field: %d\n",
+                inv_size,
+                cnt);
+            return false;
+        }
+
+        for (index = 0; index < cnt; index++) {
+            item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
+            item_loc = obj_field_int64_get(item_obj, OBJ_F_LOCATION);
+            if (!sub_4D3760(item_obj, item_loc)) {
+                return false;
+            }
+        }
+    }
+
+    node = sub_4D3EB0();
+    node->loc = loc;
+    node->obj = obj;
+    node->next = dword_601840;
+    dword_601840 = node;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        dword_6018BC = true;
+    }
+
+    return true;
 }
 
 // 0x4D39A0
