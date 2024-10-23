@@ -9,12 +9,10 @@ typedef struct SectorSoundList {
     /* 0008 */ int field_8;
 } SectorSoundList;
 
-// See 0x4F815F.
 static_assert(sizeof(SectorSoundList) == 0xC, "wrong size");
 
 bool sector_sound_list_init(SectorSoundList* list);
 bool sector_sound_list_reset(SectorSoundList* list);
-void sub_4F8120(SectorSoundList* list);
 bool sector_sound_list_exit(SectorSoundList* list);
 bool sector_sound_list_load(SectorSoundList* list, TigFile* stream);
 bool sector_sound_list_save(SectorSoundList* list, TigFile* stream);
