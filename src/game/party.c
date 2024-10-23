@@ -53,6 +53,8 @@ bool party_save(TigFile* stream)
         tig_debug_printf("Party: could not save, unable to write table.\n", cnt);
         return false;
     }
+
+    return true;
 }
 
 // 0x4B9EC0
