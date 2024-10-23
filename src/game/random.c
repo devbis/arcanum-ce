@@ -1,4 +1,4 @@
-#include "game/lib/random.h"
+#include "game/random.h"
 
 #include <time.h>
 
@@ -8,9 +8,12 @@ static int random_prev_value;
 static void random_set_prev_value(int value);
 
 // 0x4CEEB0
-bool random_init(GameContext* ctx)
+bool random_init(GameInitInfo* init_info)
 {
+    (void)init_info;
+
     random_seed_generate();
+
     return true;
 }
 
@@ -29,7 +32,9 @@ void random_seed(int value)
 int random_seed_generate()
 {
     int seed = time(NULL);
+
     random_seed(seed);
+
     return seed;
 }
 
