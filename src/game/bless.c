@@ -2,40 +2,16 @@
 
 #include "game/effect.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
 
-// TODO: Move John out of ui types.
-#include "ui/types.h"
-
 #define BLESS_F_NAME 0
 #define BLESS_F_EFFECT 1
 #define BLESS_F_DESCRIPTION 2
-
-// TODO: Move to multiplayer packets.
-typedef struct ChangeBlessPacket {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
-    /* 0038 */ int bless;
-    /* 003C */ int add;
-} ChangeBlessPacket;
-
-static_assert(sizeof(ChangeBlessPacket) == 0x40, "wrong size");
 
 static void bless_copy_field(int bless, int field, char* buffer);
 
@@ -125,7 +101,6 @@ bool bless_is_added_to(object_id_t obj, int bless)
 // 0x4C42F0
 void bless_add(object_id_t obj, int bless)
 {
-    ChangeBlessPacket pkt;
     int cnt;
     DateTime datetime;
     MesFileEntry mes_file_entry;
@@ -140,6 +115,8 @@ void bless_add(object_id_t obj, int bless)
     }
 
     if (!sub_4A2BA0()) {
+        ChangeBlessPacket pkt;
+
         if (!(tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
@@ -184,7 +161,6 @@ int bless_get_effect(int bless)
 // 0x4C4450
 void bless_remove(object_id_t obj, int bless)
 {
-    ChangeBlessPacket pkt;
     int cnt;
     int index;
     int tmp_bless;
@@ -195,6 +171,8 @@ void bless_remove(object_id_t obj, int bless)
     }
 
     if (!sub_4A2BA0()) {
+        ChangeBlessPacket pkt;
+
         if (!(tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
