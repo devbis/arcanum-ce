@@ -151,7 +151,7 @@ void written_ui_mod_unload()
 }
 
 // 0x56BB60
-void sub_56BB60(int64_t a1, int64_t a2)
+void sub_56BB60(int64_t written_obj, int64_t pc_obj)
 {
     int subtype;
     int start;
@@ -160,18 +160,18 @@ void sub_56BB60(int64_t a1, int64_t a2)
         return;
     }
 
-    if (sub_45D8D0(a2)) {
+    if (sub_45D8D0(pc_obj)) {
         return;
     }
 
-    subtype = obj_field_int32_get(a1, OBJ_F_WRITTEN_SUBTYPE);
-    start = obj_field_int32_get(a1, OBJ_F_WRITTEN_TEXT_START_LINE);
+    subtype = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_SUBTYPE);
+    start = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_TEXT_START_LINE);
 
     if (subtype == 5) {
-        sub_4B0120(a2, a1);
+        tech_learn_schematic(pc_obj, written_obj);
     } else {
-        dword_680DB0 = sub_49B290(a1) == 14072;
-        sub_4EE290(a2, subtype, start);
+        dword_680DB0 = sub_49B290(written_obj) == 14072;
+        sub_4EE290(pc_obj, subtype, start);
     }
 }
 

@@ -3,10 +3,12 @@
 #include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/stat.h"
+#include "game/ui.h"
 
 // TODO: Refactor.
 #define SEVENTEEN 17
@@ -60,7 +62,7 @@ static char* degree_names[DEGREE_COUNT];
 static char* degree_descriptions[TECH_COUNT][DEGREE_COUNT];
 
 // 0x5F85C8
-static mes_file_handle_t tech_msg_file;
+static mes_file_handle_t tech_mes_file;
 
 // 0x5F85CC
 static char* tech_descriptions[TECH_COUNT];
@@ -77,25 +79,25 @@ bool tech_init(GameInitInfo* init_info)
 
     (void)init_info;
 
-    if (!mes_load("mes\\tech.mes", &tech_msg_file)) {
+    if (!mes_load("mes\\tech.mes", &tech_mes_file)) {
         return false;
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
         mes_file_entry.num = tech;
-        mes_get_msg(tech_msg_file, &mes_file_entry);
+        mes_get_msg(tech_mes_file, &mes_file_entry);
         tech_names[tech] = mes_file_entry.str;
     }
 
     for (degree = 0; degree < DEGREE_COUNT; degree++) {
         mes_file_entry.num = degree + 8;
-        mes_get_msg(tech_msg_file, &mes_file_entry);
+        mes_get_msg(tech_mes_file, &mes_file_entry);
         degree_names[degree] = mes_file_entry.str;
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
         mes_file_entry.num = tech + 16;
-        mes_get_msg(tech_msg_file, &mes_file_entry);
+        mes_get_msg(tech_mes_file, &mes_file_entry);
         tech_descriptions[tech] = mes_file_entry.str;
     }
 
@@ -106,7 +108,7 @@ bool tech_init(GameInitInfo* init_info)
     for (tech = 0; tech < TECH_COUNT; tech++) {
         for (degree = 0; degree < DEGREE_COUNT; degree++) {
             mes_file_entry.num = tech * DEGREE_COUNT + degree + 24;
-            mes_get_msg(tech_msg_file, &mes_file_entry);
+            mes_get_msg(tech_mes_file, &mes_file_entry);
             degree_descriptions[tech][degree] = mes_file_entry.str;
         }
     }
@@ -117,7 +119,7 @@ bool tech_init(GameInitInfo* init_info)
 // 0x4AFDD0
 void tech_exit()
 {
-    mes_unload(tech_msg_file);
+    mes_unload(tech_mes_file);
 }
 
 // 0x4AFDE0
@@ -208,7 +210,9 @@ int tech_set_degree(long long object_id, int tech, int value)
         return 0;
     }
 
-    return sub_4F0270(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
+    obj_f_set_int32_with_network(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
+
+    return value;
 }
 
 // 0x4AFFF0
@@ -269,9 +273,68 @@ int tech_get_min_intelligence_for_degree(int degree)
 }
 
 // 0x4B0120
-void sub_4B0120(int64_t a1, int64_t a2)
+void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
 {
-    // TODO: Incomplete.
+    int schematic;
+    int cnt;
+    int index;
+    MesFileEntry mes_file_entry;
+    John v1;
+    int player;
+
+    schematic = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_TEXT_START_LINE);
+
+    cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
+    for (index = 0; index < cnt; index++) {
+        if (sub_407470(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index) == schematic) {
+            break;
+        }
+    }
+
+    if (index >= cnt) {
+        obj_f_set_int32_with_network(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index, schematic);
+        sub_43CCA0(written_obj);
+
+        mes_file_entry.num = 89; // "You have learned a new schematic!"
+        mes_get_msg(tech_mes_file, &mes_file_entry);
+
+        v1.type = 13;
+        v1.str = mes_file_entry.str;
+        v1.field_8 = schematic;
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            player = sub_4A2B10(pc_obj);
+            if (player == -1) {
+                return;
+            }
+
+            if (player != 0) {
+                sub_4EDA60(&v1, player, 0);
+                return;
+            }
+        }
+    } else {
+        mes_file_entry.num = 88; // "You already know this schematic."
+        mes_get_msg(tech_mes_file, &mes_file_entry);
+
+        v1.type = 13;
+        v1.str = mes_file_entry.str;
+        v1.field_8 = schematic;
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            player = sub_4A2B10(pc_obj);
+            if (player == -1) {
+                return;
+            }
+
+            if (player != 0) {
+                sub_4EDA60(&v1, player, 0);
+                return;
+            }
+        }
+    }
+
+    sub_460630(&v1);
 }
 
 // 0x4B02B0
