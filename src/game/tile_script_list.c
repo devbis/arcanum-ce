@@ -3,7 +3,7 @@
 static void sub_4F6380();
 
 // 0x603DD0
-static TileScriptListNode* tile_script_node_head;
+TileScriptListNode* tile_script_node_head;
 
 // 0x4F6310
 void sub_4F6310()
@@ -50,7 +50,7 @@ void sub_4F6380()
 }
 
 // 0x4F63E0
-bool sector_tile_script_list_init(TileScriptList* list)
+bool tile_script_list_init(TileScriptList* list)
 {
     list->flags = 0;
     list->head = 0;
@@ -59,7 +59,7 @@ bool sector_tile_script_list_init(TileScriptList* list)
 }
 
 // 0x4F6400
-bool sector_tile_script_list_reset(TileScriptList* list)
+bool tile_script_list_reset(TileScriptList* list)
 {
     TileScriptListNode* node;
     TileScriptListNode* next;
@@ -78,13 +78,13 @@ bool sector_tile_script_list_reset(TileScriptList* list)
 }
 
 // 0x4F6460
-bool sector_tile_script_list_exit(TileScriptList* list)
+bool tile_script_list_exit(TileScriptList* list)
 {
-    return sector_tile_script_list_reset(list);
+    return tile_script_list_reset(list);
 }
 
 // 0x4F6470
-bool sub_4F6470(TileScriptList* list, unsigned int id, Scr* scr)
+bool sub_4F6470(TileScriptList* list, unsigned int id, Script* scr)
 {
     TileScriptListNode* prev;
     TileScriptListNode* node;
@@ -160,7 +160,7 @@ bool sub_4F6520(TileScriptList* list, unsigned int id)
 }
 
 // 0x4F6570
-bool sub_4F6570(TileScriptList* list, unsigned int id, Scr* scr)
+bool sub_4F6570(TileScriptList* list, unsigned int id, Script* scr)
 {
     TileScriptListNode* node;
 
