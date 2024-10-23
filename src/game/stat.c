@@ -4,14 +4,21 @@
 #include "game/anim.h"
 #include "game/background.h"
 #include "game/combat.h"
+#include "game/critter.h"
 #include "game/effect.h"
+#include "game/level.h"
 #include "game/light.h"
 #include "game/location.h"
 #include "game/magictech.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/object.h"
+#include "game/player.h"
 #include "game/sector.h"
 #include "game/skill.h"
+#include "game/spell.h"
+#include "game/tech.h"
 #include "game/tile.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
@@ -530,9 +537,169 @@ int stat_get_base(object_id_t obj, int stat)
 // 0x4B0980
 int stat_set_base(object_id_t obj, int stat, int value)
 {
-    // TODO: Incomplete.
-    (void)obj;
-    (void)stat;
+    int obj_type;
+    int min_value;
+    int max_value;
+    int before;
+    int after;
+    int encumbrance_level;
+
+    // Make sure obj is a critter.
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (!obj_type_is_critter(obj_type)) {
+        return 0;
+    }
+
+    // Make sure stat is valid.
+    if (stat < 0 || stat >= STAT_COUNT) {
+        return false;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && !sub_4A2BA0()) {
+        SetBaseStatPacket pkt;
+
+        pkt.type = 50;
+        pkt.stat = stat;
+        pkt.value = value;
+        pkt.oid = sub_407EF0(obj);
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            if (player_is_pc_obj(obj)
+                && stat <= LAST_PRIMARY_STAT
+                && abs(stat_get_base(obj, stat) - value) == 1) {
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+            }
+            return true;
+        }
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    // We cannot modify derived stats for obvious reasons. If we're trying to do
+    // it silently ignore this request and simply return it's current value.
+    if (stat >= FIRST_DERIVED_STAT && stat <= LAST_DERIVED_STAT) {
+        return stat_get_base(obj, stat);
+    }
+
+    // Grab valid range for given stat and clamp value to that range.
+    min_value = stat_get_min_value(obj, stat);
+    max_value = stat_get_max_value(obj, stat);
+    if (value < min_value) {
+        value = min_value;
+    } else if (value > max_value) {
+        value = max_value;
+    }
+
+    before = stat_get_base(obj, stat);
+    obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, value);
+    after = stat_level(obj, stat);
+    obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, before);
+
+    if (value < before) {
+        if (!sub_4C6B50(obj, value, after)) {
+            return before;
+        }
+
+        switch (stat) {
+        case STAT_INTELLIGENCE:
+            if (!sub_4B1B90(obj, after)) {
+                return before;
+            }
+            if (!sub_4B02B0(obj, after)) {
+                return before;
+            }
+            break;
+        case STAT_WILLPOWER:
+            if (!sub_4B1C00(obj, after)) {
+                return before;
+            }
+            break;
+        }
+    }
+
+    switch (stat) {
+    case STAT_STRENGTH:
+        encumbrance_level = sub_45F790(obj);
+        break;
+    case STAT_POISON_LEVEL:
+        // Maximized constitution grants poison immunity.
+        if (stat_is_maximized(obj, STAT_CONSTITUTION)) {
+            value = 0;
+        }
+        break;
+    case STAT_GENDER:
+        sub_4EA2E0(stat, 9);
+        break;
+    case STAT_RACE:
+        sub_4EA2E0(stat, 0);
+        break;
+    }
+
+    obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, value);
+
+    switch (stat) {
+    case STAT_STRENGTH:
+        sub_45F820(obj, encumbrance_level);
+        break;
+    case STAT_INTELLIGENCE:
+        if (player_is_pc_obj(obj)) {
+            sub_4604E0();
+        }
+        break;
+    case STAT_SPEED:
+        sub_436FA0(obj);
+        break;
+    case STAT_EXPERIENCE_POINTS:
+        sub_4A69C0(obj);
+        sub_460860();
+        break;
+    case STAT_ALIGNMENT:
+        if (before != value && obj_type == OBJ_TYPE_PC) {
+            ObjectList followers;
+            ObjectNode* node;
+            unsigned int flags;
+
+            object_get_followers(obj, &followers);
+            node = followers.head;
+            while (node != NULL) {
+                flags = obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS);
+                flags |= ONF_CHECK_LEADER;
+                obj_field_int32_set(node->obj, OBJ_F_NPC_FLAGS, flags);
+
+                flags = obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS2);
+                if (value >= before) {
+                    flags |= OCF2_CHECK_ALIGN_GOOD;
+                } else {
+                    flags |= OCF2_CHECK_ALIGN_BAD;
+                }
+                obj_field_int32_set(node->obj, OBJ_F_CRITTER_FLAGS2, flags);
+
+                node = node->next;
+            }
+            object_list_destroy(&followers);
+        }
+        sub_4601C0();
+        break;
+    case STAT_MAGICK_POINTS:
+    case STAT_TECH_POINTS:
+        sub_4601C0();
+        break;
+    case STAT_POISON_LEVEL:
+        if (value > 0) {
+            sub_4B1350(obj, value, true);
+        }
+        sub_460240(obj);
+        break;
+    case STAT_GENDER:
+        if (value == GENDER_FEMALE) {
+            sub_4E9F70(obj, 330, 9);
+        }
+        break;
+    case STAT_RACE:
+        sub_4E9F70(obj, value + 64, 0);
+        break;
+    }
 
     return value;
 }
