@@ -2,15 +2,18 @@
 
 #include <stdio.h>
 
+#include "game/background.h"
 #include "game/critter.h"
 #include "game/mes.h"
 #include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/object.h"
+#include "game/player.h"
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
 #include "game/tech.h"
+#include "game/ui.h"
 
 #define LEVEL_MAX 51
 #define TEN 10
@@ -27,6 +30,8 @@
 typedef int(MiscGetter)(int64_t obj);
 typedef int(MiscSetter)(int64_t obj, int value);
 
+static int sub_4A6980(int old_level, int new_level);
+static void sub_4A6CB0(int64_t obj, int a3, int a4);
 static bool sub_4A7030(int64_t obj, char* str);
 static bool sub_4A7340(int64_t obj, const char* str);
 static int sub_4A75E0(int64_t obj, int stat, int value);
@@ -163,6 +168,8 @@ bool level_init(GameInitInfo* init_info)
     MesFileEntry msg;
     int index;
 
+    (void)init_info;
+
     if (!mes_load("rules\\xp_level.mes", &xp_level_mes_file)) {
         return false;
     }
@@ -287,13 +294,102 @@ int sub_4A6980(int old_level, int new_level)
             points++;
         }
     }
+
     return points;
 }
 
 // 0x4A69C0
-void sub_4A69C0(int64_t obj)
+void sub_4A69C0(int64_t pc_obj)
 {
-    // TODO: Incomplete.
+    John v1;
+    int old_level;
+    int cur_level;
+    int max_level;
+    int exp_to_next_level;
+    ObjectList objects;
+    ObjectNode* node;
+    char str[MAX_STRING];
+    int unspent_points;
+    MesFileEntry mes_file_entry;
+
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    cur_level = stat_get_base(pc_obj, STAT_LEVEL);
+    max_level = stat_get_max_value(pc_obj, STAT_LEVEL);
+    if (cur_level >= max_level) {
+        return;
+    }
+
+    exp_to_next_level = level_get_experience_points_to_next_level(pc_obj);
+    if (exp_to_next_level > 0) {
+        return;
+    }
+
+    v1.type = 0;
+    v1.str = str;
+
+    old_level = cur_level;
+
+    do {
+        cur_level++;
+        if (cur_level == max_level) {
+            stat_set_base(pc_obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[cur_level - 1]);
+        } else {
+            stat_set_base(pc_obj, STAT_LEVEL, cur_level);
+
+            unspent_points = stat_get_base(pc_obj, STAT_UNSPENT_POINTS);
+            unspent_points += sub_4A6980(cur_level - 1, cur_level);
+            stat_set_base(pc_obj, STAT_UNSPENT_POINTS, unspent_points);
+
+            v1.field_8 = cur_level;
+
+            if (level_auto_level_scheme_get(pc_obj) != 0) {
+                v1.field_C = -1;
+                if (sub_4A7030(pc_obj, str)) {
+                    mes_file_entry.num = 1;
+                    mes_get_msg(level_mes_file, &mes_file_entry);
+                    strcat(str, " ");
+                    strcat(str, mes_file_entry.str);
+                }
+            } else {
+                v1.field_C = unspent_points;
+                str[0] = '\0';
+            }
+
+            if (player_is_pc_obj(pc_obj)) {
+                sub_460630(&v1);
+                sub_460790(0, 1);
+                sub_460240(pc_obj);
+                sub_460260(pc_obj);
+            }
+
+            exp_to_next_level = level_get_experience_points_to_next_level(pc_obj);
+        }
+    } while (cur_level < max_level && exp_to_next_level <= 0);
+
+    sub_441260(pc_obj, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        sub_4A6CB0(node->obj, old_level, cur_level);
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    sub_440FC0(pc_obj, OBJ_TM_NPC, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if (!sub_45D8D0(node->obj)
+            && (obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0
+            && sub_45DDA0(node->obj) == pc_obj) {
+            sub_4A6CB0(node->obj, old_level, cur_level);
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    sub_4C2950(pc_obj);
 }
 
 // 0x4A6CB0
@@ -557,12 +653,7 @@ bool sub_4A7340(int64_t obj, const char* str)
 
     strcpy(buffer, str);
 
-    for (;;) {
-        tok = strtok(buffer, " ");
-        if (tok == NULL) {
-            return true;
-        }
-
+    for (tok = strtok(buffer, " "); tok != NULL; tok = strtok(NULL, " ")) {
         score = atoi(strtok(NULL, ","));
 
         for (index = 0; index < LEVEL_SCHEME_STATS_MAX; index++) {
