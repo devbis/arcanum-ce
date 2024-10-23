@@ -12,8 +12,10 @@
 #include "game/skill.h"
 #include "game/tile.h"
 #include "game/timeevent.h"
+#include "game/ui.h"
 
 static bool sub_4B1310(TimeEvent* timeevent);
+static bool sub_4B1350(int64_t obj, int value, bool a3);
 
 // 0x5B5194
 static int stat_min_values[STAT_COUNT] = {
@@ -512,6 +514,9 @@ int stat_get_base(object_id_t obj, int stat)
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             value = magictech_get_aptitude_adj(sub_4CFC50(location)) + bonus;
             break;
+        default:
+            // Unreachable.
+            __assume(0);
         }
     } else {
         value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat);
@@ -695,4 +700,44 @@ bool sub_4B1310(TimeEvent* timeevent)
 {
     return timeevent->params[1].object_value == qword_5F8728
         && timeevent->params[0].integer_value == dword_5B53F4;
+}
+
+// 0x4B1350
+bool sub_4B1350(int64_t obj, int value, bool a3)
+{
+    DateTime datetime;
+    TimeEvent timeevent;
+
+    (void)value;
+
+    qword_5F8728 = obj;
+    dword_5B53F4 = 0;
+
+    timeevent.type = TIMEEVENT_TYPE_POISON;
+    timeevent.params[0].integer_value = 0;
+    timeevent.params[1].object_value = obj;
+    timeevent.params[2].integer_value = sub_45A7F0();
+
+    if (!sub_45C140(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
+        sub_45A950(&datetime, 15000);
+        if (!sub_45B800(&timeevent, &datetime)) {
+            return false;
+        }
+    }
+
+    if (a3) {
+        dword_5B53F4 = 1;
+        if (!sub_45C140(TIMEEVENT_TYPE_POISON, sub_4B1310)) {
+            sub_45A950(&datetime, 120000);
+
+            timeevent.params[0].integer_value = 1;
+            if (!sub_45B800(&timeevent, &datetime)) {
+                return false;
+            }
+        }
+    }
+
+    sub_460240(obj);
+
+    return true;
 }
