@@ -362,6 +362,7 @@ bool background_get_items(char* dest, size_t size, int background)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_ITEMS;
+    mes_get_msg(background_mes_file, &mes_file_entry);
     strncpy(dest, mes_file_entry.str, size);
 
     return true;
