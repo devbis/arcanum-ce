@@ -81,6 +81,7 @@ void sub_4CE3C0(int num, char* path, int size)
 
         mes_file = portrait_user_mes_file;
     } else {
+        mes_file = portrait_mes_file;
         mes_file_entry.num = 1000;
     }
 
@@ -205,7 +206,7 @@ bool portrait_find_first(int64_t obj, int* portrait_ptr)
 }
 
 // 0x4CE7A0
-bool portarit_find_last(int64_t obj, int* portrait_ptr)
+bool portrait_find_last(int64_t obj, int* portrait_ptr)
 {
     MesFileEntry mes_file_entry;
     int num = 0;
@@ -317,6 +318,8 @@ bool portrait_find_prev(int64_t obj, int* portrait_ptr)
         }
         mes_file_entry.num--;
     }
+
+    return false;
 }
 
 // 0x4CEAC0
