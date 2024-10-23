@@ -2,40 +2,16 @@
 
 #include "game/effect.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
 #include "game/multiplayer.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
 
-// TODO: Move John out of ui types.
-#include "ui/types.h"
-
 #define CURSE_F_NAME 0
 #define CURSE_F_EFFECT 1
 #define CURSE_F_DESCRIPTION 2
-
-// TODO: Move to multiplayer packets.
-typedef struct ChangeCursePacket {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
-    /* 0038 */ int curse;
-    /* 003C */ int add;
-} ChangeCursePacket;
-
-static_assert(sizeof(ChangeCursePacket) == 0x40, "wrong size");
 
 static void curse_copy_field(int curse, int field, char* buffer);
 
@@ -125,7 +101,6 @@ bool curse_is_added_to(object_id_t obj, int curse)
 // 0x4C3E40
 void curse_add(object_id_t obj, int curse)
 {
-    ChangeCursePacket pkt;
     int cnt;
     DateTime datetime;
     MesFileEntry mes_file_entry;
@@ -140,6 +115,8 @@ void curse_add(object_id_t obj, int curse)
     }
 
     if (!sub_4A2BA0()) {
+        ChangeCursePacket pkt;
+
         if (!(tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
@@ -184,7 +161,6 @@ int curse_get_effect(int curse)
 // 0x4C3FA0
 void curse_remove(object_id_t obj, int curse)
 {
-    ChangeCursePacket pkt;
     int cnt;
     int index;
     int tmp_curse;
@@ -195,6 +171,8 @@ void curse_remove(object_id_t obj, int curse)
     }
 
     if (!sub_4A2BA0()) {
+        ChangeCursePacket pkt;
+
         if (!(tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
