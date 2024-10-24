@@ -41,13 +41,7 @@ static void sub_5836A0();
 static void sub_5837A0(TigRect* rect);
 static void sub_583830(TigRect* rect);
 static const char* sub_584A40(int value);
-static const char* sub_584A80();
-static const char* sub_584A90();
-static void sub_584AA0(const char* str);
-static void sub_584AC0(const char* str);
 static void sub_584C30(TigRect* rect);
-static void sub_5850C0(int x, int y);
-static bool sub_585270(int num);
 static const char* sub_585630(int num);
 static void sub_585970(char* buffer);
 static void sub_585A20();
@@ -100,6 +94,39 @@ static TigRect stru_5CC038 = { 69, 274, 183, 18 };
 
 // 0x5CC048
 static TigRect stru_5CC048 = { 69, 365, 183, 108 };
+
+// 0x5CC058
+MainMenuButtonInfo stru_5CC058[3] = {
+    { 162, 34, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 8, { 0 }, -1 },
+    { 162, 73, -1, TIG_BUTTON_HANDLE_INVALID, 0x11, 0, 8, { 0 }, -1 },
+    { 162, 122, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 8, { 0 }, -1 },
+};
+
+// 0x5CC0E8
+MainMenuButtonInfo stru_5CC0E8[5] = {
+    { 162, 34, -1, TIG_BUTTON_HANDLE_INVALID, -1, 0, 8, { 0 }, -1 },
+    { 162, 73, -1, TIG_BUTTON_HANDLE_INVALID, 0x11, 0, 8, { 0 }, -1 },
+    { 162, 122, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 8, { 0 }, -1 },
+    { 92, 464, 33, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0xC, { 0 }, -1 },
+    { 197, 464, 32, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0xC, { 0 }, -1 },
+};
+
+// 0x5CC258
+static TigRect stru_5CC258 = { 289, 388, 13, 164 };
+
+// 0x5CC268
+static TigRect stru_5CC268 = { 0, 364, 333, 236 };
+
+// 0x5CC278
+MainMenuButtonInfo stru_5CC278[7] = {
+    { 162, 34, -1, TIG_BUTTON_HANDLE_INVALID, 0x10, 0, 0, { 0 }, -1 },
+    { 162, 73, -1, TIG_BUTTON_HANDLE_INVALID, 0x11, 0, 0, { 0 }, -1 },
+    { 162, 122, -1, TIG_BUTTON_HANDLE_INVALID, 0x12, 0, 0, { 0 }, -1 },
+    { 162, 161, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, { 0 }, -1 },
+    { 162, 200, -1, TIG_BUTTON_HANDLE_INVALID, 0x16, 0, 0, { 0 }, -1 },
+    { 162, 239, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
+    { 162, 278, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, { 0 }, -1 },
+};
 
 // 0x5CC470
 static TigRect stru_5CC470 = { 327, 120, 165, 15 };
@@ -167,7 +194,7 @@ static TextEdit stru_5CC6B0 = {
 };
 
 // 0x5CC6C8
-static MainMenuButtonInfo stru_5CC6C8[20] = {
+MainMenuButtonInfo stru_5CC6C8[20] = {
     { 162, 22, -1, TIG_BUTTON_HANDLE_INVALID, 0x15, 0, 0, 0, 0, 0, 0, -1 },
     { 162, 56, -1, TIG_BUTTON_HANDLE_INVALID, 0x11, 0, 0, 0, 0, 0, 0, -1 },
     { 162, 90, -1, TIG_BUTTON_HANDLE_INVALID, 0x17, 0, 0, 0, 0, 0, 0, -1 },
@@ -365,7 +392,7 @@ void sub_581950(int x, int y)
     if (x >= stru_5CC018.x && x < stru_5CC018.x + stru_5CC018.width
         && y >= stru_5CC018.y && y < stru_5CC018.y + stru_5CC018.height) {
         sub_5417A0(0);
-        sub_581A60();
+        multiplayer_hub_ui_create_chat();
         if (sub_541680()) {
             sub_541810(sub_5496D0());
         }
@@ -378,7 +405,7 @@ bool sub_5819D0(int a1)
     switch (a1) {
     case 0:
         sub_5417A0(false);
-        sub_583200();
+        mainmenu_ui_create_multiplayer_hub();
         if (sub_541680()) {
             sub_541810(sub_5496D0());
         }
@@ -403,20 +430,20 @@ bool sub_5819D0(int a1)
 }
 
 // 0x581A60
-void sub_581A60()
+void multiplayer_hub_ui_create_chat()
 {
     sub_549830(24);
     sub_546330();
-    sub_581B10(NULL);
+    multiplayer_hub_ui_refresh_chat(NULL);
 }
 
 // 0x581A80
-void sub_581A80()
+void multiplayer_hub_ui_destroy_chat()
 {
 }
 
 // 0x581A90
-bool sub_581A90(int a1)
+bool multiplayer_hub_ui_execute_chat(int a1)
 {
     MesFileEntry mes_file_entry;
 
@@ -438,7 +465,7 @@ bool sub_581A90(int a1)
 }
 
 // 0x581B10
-void sub_581B10(TigRect* rect)
+void multiplayer_hub_ui_refresh_chat(TigRect* rect)
 {
     // TODO: Incomplete.
 }
@@ -805,20 +832,20 @@ void sub_583140()
 }
 
 // 0x583200
-void sub_583200()
+void mainmenu_ui_create_multiplayer_hub()
 {
     // TODO: Incomplete.
 }
 
 // 0x583510
-void sub_583510()
+void mainmenu_ui_destroy_multiplayer_hub()
 {
     scrollbar_ui_control_destroy(stru_686520);
     mes_unload(dword_686528);
 }
 
 // 0x583540
-void sub_583540(TigRect* rect)
+void mainmenu_ui_refresh_multiplayer_hub(TigRect* rect)
 {
     sub_5837A0(rect);
     sub_5482A0(rect);
@@ -1028,13 +1055,13 @@ void sub_583C80(int x, int y)
 }
 
 // 0x583D90
-void sub_583D90()
+void sub_583D90(TigRect* rect)
 {
     // TODO: Incomplete.
 }
 
 // 0x584150
-void sub_584150()
+void sub_584150(TigRect* rect)
 {
     // TODO: Incomplete.
 }
@@ -1048,7 +1075,76 @@ bool sub_5845E0(int btn)
 // 0x5847D0
 bool sub_5847D0(int btn)
 {
-    // TODO: Incomplete.
+    MatchmakerInitInfo matchmaker_init_info;
+    MesFileEntry mes_file_entry;
+    TigWindowModalDialogInfo modal_dialog_info;
+    TigWindowModalDialogChoice choice;
+
+    switch (btn) {
+    case 0:
+        settings_set_str_value(&settings, "won_account", won_account);
+        settings_set_str_value(&settings, "won_password", won_password);
+        sub_4A4D60(&matchmaker_init_info);
+        if (!multiplayer_mm_is_active()) {
+            if (!multiplayer_mm_init(&matchmaker_init_info)) {
+                mes_file_entry.num = 2052;
+                mes_get_msg(sub_549840(), &mes_file_entry);
+
+                modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
+                modal_dialog_info.redraw = sub_4045A0;
+                modal_dialog_info.process = NULL;
+                modal_dialog_info.x = 237;
+                modal_dialog_info.y = 232;
+                modal_dialog_info.text = mes_file_entry.str;
+                tig_debug_printf("MainMenu_UI: Could not initialize Matchmaker. Aborting.\n");
+                tig_window_modal_dialog(&modal_dialog_info, &choice);
+                multiplayer_mm_exit();
+                sub_584150(NULL);
+                return false;
+            }
+
+            if (!sub_5499B0(stru_686530.str)) {
+                mes_file_entry.num = 2052;
+                mes_get_msg(sub_549840(), &mes_file_entry);
+
+                modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
+                modal_dialog_info.redraw = sub_4045A0;
+                modal_dialog_info.process = NULL;
+                modal_dialog_info.x = 237;
+                modal_dialog_info.y = 232;
+                modal_dialog_info.text = mes_file_entry.str;
+                tig_debug_printf("MainMenu_UI: Could not initialize Matchmaker. Aborting.\n");
+                tig_window_modal_dialog(&modal_dialog_info, &choice);
+                multiplayer_mm_exit();
+                sub_584150(NULL);
+                return false;
+            }
+        }
+        if (strcmp(won_password, byte_68663C) != 0) {
+            dword_68673C = 3;
+            sub_584150(NULL);
+            return false;
+        }
+        if (!multiplayer_mm_create_account(won_account, won_password, byte_6866BC)
+            || !sub_5499B0(stru_686530.str)) {
+            dword_68673C = 4;
+            sub_584150(NULL);
+            return false;
+        }
+        if (!multiplayer_mm_login(won_account, won_password)
+            || !sub_5499B0(stru_686530.str)) {
+            dword_68673C = 1;
+            sub_584150(NULL);
+            return false;
+        }
+        return true;
+    case 1:
+        return true;
+    default:
+        tig_debug_printf("MainMenuUI: new won execute unknown button Idx %d.\n", btn);
+        sub_584150(NULL);
+        return false;
+    }
 }
 
 // 0x584A40
@@ -1245,7 +1341,7 @@ bool sub_585270(int num)
     switch (num) {
     case 0:
         sub_5417A0(false);
-        sub_583200();
+        mainmenu_ui_create_multiplayer_hub();
         if (sub_541680()) {
             sub_541810(sub_5496D0());
         }
