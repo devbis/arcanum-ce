@@ -971,9 +971,59 @@ void sub_5837A0(TigRect* rect)
 }
 
 // 0x583830
-void sub_583830(TigRect* rect)
+void sub_583830(TigRect* dirty_rect)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    TigFont font_desc;
+    TigArtBlitInfo art_blit_info;
+    TigRect rect;
+    tig_art_id_t art_id;
+
+    if (dirty_rect == NULL
+        || (dirty_rect->x < stru_5CC268.x + stru_5CC268.width
+            && dirty_rect->y < stru_5CC268.y + stru_5CC268.height
+            && stru_5CC268.x < dirty_rect->x + dirty_rect->width
+            && stru_5CC268.y < dirty_rect->y + dirty_rect->height)) {
+        if (multiplayer_mm_is_active()) {
+            sub_5837A0(&stru_5CC268);
+
+            mes_file_entry.num = 2040;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+
+            tig_font_push(sub_549940(0, 3));
+            font_desc.width = 0;
+            font_desc.str = mes_file_entry.str;
+            sub_535390(&font_desc);
+
+            rect.x = (172 - font_desc.width) / 2 + 83;
+            rect.y = 373;
+            rect.width = font_desc.width;
+            rect.height = font_desc.height;
+            tig_window_text_write(sub_549820(), mes_file_entry.str, &rect);
+            tig_font_pop();
+
+            if (dirty_rect == NULL
+                || (dirty_rect->x < stru_5CC258.x + stru_5CC258.width
+                    && dirty_rect->y < stru_5CC258.y + stru_5CC258.height
+                    && stru_5CC258.x < dirty_rect->x + dirty_rect->width
+                    && stru_5CC258.y < dirty_rect->y + dirty_rect->height)) {
+                sub_5806F0(stru_686520);
+            }
+        } else {
+            tig_art_interface_id_create(760, 0, 0, 0, &art_id);
+
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = 333;
+            rect.height = 236;
+
+            art_blit_info.flags = 0;
+            art_blit_info.art_id = art_id;
+            art_blit_info.src_rect = &rect;
+            art_blit_info.dst_rect = &stru_5CC268;
+            tig_window_blit_art(sub_549820(), &art_blit_info);
+        }
+    }
 }
 
 // 0x583A00
