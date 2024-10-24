@@ -239,7 +239,7 @@ static char won_account[128];
 static char won_password[128];
 
 // 0x68663C
-static char byte_68663C[128];
+static char won_password_confirmation[128];
 
 // 0x6866BC
 static char byte_6866BC[128];
@@ -1031,7 +1031,7 @@ void sub_583A00()
 {
     won_account[0] = '\0';
     won_password[0] = '\0';
-    byte_68663C[0] = '\0';
+    won_password_confirmation[0] = '\0';
     byte_6866BC[0] = '\0';
 
     if (!mes_load("mes\\Multiplayer.mes", &dword_686538)) {
@@ -1103,7 +1103,7 @@ void sub_583B20(int x, int y)
         && x < stru_5CC490.x + stru_5CC490.width
         && y < stru_5CC490.y + stru_5CC490.height) {
         dword_68673C = 0;
-        sub_5493C0(byte_68663C, 128);
+        sub_5493C0(won_password_confirmation, 128);
     } else if (x >= stru_5CC4A0.x
         && y >= stru_5CC4A0.y
         && x < stru_5CC4A0.x + stru_5CC4A0.width
@@ -1229,14 +1229,14 @@ void sub_583D90(TigRect* rect)
     }
 
     font_desc.width = 0;
-    font_desc.str = mes_file_entry.str;
+    font_desc.str = str;
     sub_535390(&font_desc);
 
     dst_rect.x = 327;
     dst_rect.y = 175;
     dst_rect.width = font_desc.width;
     dst_rect.height = font_desc.height;
-    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+    tig_window_text_write(sub_549820(), str, &dst_rect);
 
     if (dword_68673C != 0) {
         font_desc.width = 0;
@@ -1246,7 +1246,7 @@ void sub_583D90(TigRect* rect)
         dst_rect.y = 230;
         dst_rect.width = font_desc.width;
         dst_rect.height = font_desc.height;
-        tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+        tig_window_text_write(sub_549820(), font_desc.str, &dst_rect);
     }
 
     mes_file_entry.num = 2005; // "New WON Account"
@@ -1267,7 +1267,162 @@ void sub_583D90(TigRect* rect)
 // 0x584150
 void sub_584150(TigRect* rect)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    TigRect dst_rect;
+    TigRect src_rect;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigFont font_desc;
+    char str[132];
+    tig_art_id_t art_id;
+    size_t pos;
+
+    (void)rect;
+
+    tig_art_interface_id_create(761, 0, 0, 0, &art_id);
+    tig_art_frame_data(art_id, &art_frame_data);
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = 293;
+    dst_rect.y = 72;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(sub_549820(), &art_blit_info);
+
+    tig_font_push(sub_549940(0, 0));
+
+    mes_file_entry.num = 2000; // "Login Name"
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+
+    dst_rect.x = (165 - font_desc.width) / 2 + 327;
+    dst_rect.y = 94;
+    dst_rect.width = font_desc.width;
+    dst_rect.height = font_desc.height;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    if (sub_549520() == won_account) {
+        sprintf(str, "%s|", won_account);
+    } else {
+        strcpy(str, won_account);
+    }
+
+    dst_rect.x = 327;
+    dst_rect.y = 120;
+    dst_rect.width = 165;
+    dst_rect.height = 15;
+    tig_window_text_write(sub_549820(), str, &dst_rect);
+
+    mes_file_entry.num = 2000; // "Password"
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+
+    dst_rect.x = (196 - font_desc.width) / 2 + 312;
+    dst_rect.y = 149;
+    dst_rect.width = font_desc.width;
+    dst_rect.height = 15;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    if (sub_549520() == won_password) {
+        pos = strlen(won_password);
+        str[pos] = '|';
+        str[pos + 1] = '\0';
+    } else {
+        pos = strlen(won_password);
+        str[pos] = '\0';
+    }
+
+    while (pos > 0) {
+        str[pos - 1] = '*';
+    }
+
+    dst_rect.x = 327;
+    dst_rect.y = 175;
+    dst_rect.width = 164;
+    dst_rect.height = 15;
+    tig_window_text_write(sub_549820(), str, &dst_rect);
+
+    mes_file_entry.num = 2002; // "Verify Password"
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+
+    dst_rect.x = (181 - font_desc.width) / 2 + 327;
+    dst_rect.y = 204;
+    dst_rect.width = font_desc.width;
+    dst_rect.height = 15;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    if (sub_549520() == won_password_confirmation) {
+        pos = strlen(won_password_confirmation);
+        str[pos] = '|';
+        str[pos + 1] = '\0';
+    } else {
+        pos = strlen(won_password_confirmation);
+        str[pos] = '\0';
+    }
+
+    while (pos > 0) {
+        str[pos - 1] = '*';
+    }
+
+    dst_rect.x = 327;
+    dst_rect.y = 230;
+    dst_rect.width = 181;
+    dst_rect.height = 15;
+    tig_window_text_write(sub_549820(), str, &dst_rect);
+
+    if (sub_549520() == byte_6866BC) {
+        sprintf(str, "%s|", byte_6866BC);
+    } else {
+        strcpy(str, byte_6866BC);
+    }
+
+    dst_rect.x = 319;
+    dst_rect.y = 338;
+    dst_rect.width = 189;
+    dst_rect.height = 62;
+    tig_window_text_write(sub_549820(), str, &dst_rect);
+
+    tig_font_pop();
+
+    tig_font_push(sub_549940(1, 0));
+
+    switch (dword_68673C) {
+    case 3:
+        mes_file_entry.num = 2007; // "Passwords do not match."
+        break;
+    case 4:
+        mes_file_entry.num = 2008; // "Cannot create account, it already exists."
+        break;
+    default:
+        mes_file_entry.num = 2003; // "Enter your email address below..." (cont.)
+        break;
+    }
+
+    mes_get_msg(sub_549840(), &mes_file_entry);
+
+    dst_rect.x = 319;
+    dst_rect.y = 265;
+    dst_rect.width = 189;
+    dst_rect.height = 62;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    tig_font_pop();
 }
 
 // 0x5845E0
@@ -1387,7 +1542,7 @@ bool sub_5847D0(int btn)
                 return false;
             }
         }
-        if (strcmp(won_password, byte_68663C) != 0) {
+        if (strcmp(won_password, won_password_confirmation) != 0) {
             dword_68673C = 3;
             sub_584150(NULL);
             return false;
