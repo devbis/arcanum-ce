@@ -71,6 +71,17 @@ static int dword_5994AC[3] = {
 // 0x5CBF80
 static int dword_5CBF80 = 52;
 
+// 0x5CBF88
+static struct {
+    const char* str;
+    int cmd;
+} stru_5CBF88[] = {
+    { NULL, 0 },
+    { NULL, 1 },
+    { NULL, 2 },
+    { NULL, -1 },
+};
+
 // 0x5CBFD8
 static TigRect stru_5CBFD8 = { 37, 188, 246, 368 };
 
@@ -504,7 +515,14 @@ void sub_581F10()
 // 0x581F30
 void sub_581F30()
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    int index = 0;
+
+    while (stru_5CBF88[index].cmd != -1) {
+        mes_file_entry.num = 10100 + index;
+        mes_get_msg(sub_549840(), &mes_file_entry);
+        stru_5CBF88[index].str = mes_file_entry.str;
+    }
 }
 
 // 0x581F80
