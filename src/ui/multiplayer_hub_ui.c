@@ -5,6 +5,7 @@
 #include "game/gamelib.h"
 #include "game/mes.h"
 #include "game/multiplayer.h"
+#include "game/stat.h"
 #include "ui/mainmenu_ui.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/server_list_ui.h"
@@ -921,7 +922,27 @@ bool mainmenu_ui_execute_multiplayer_hub(int button)
 // 0x5836A0
 void sub_5836A0()
 {
-    // TODO: Incomplete.
+    uint8_t* data;
+    int size;
+    char* player_name;
+
+    if (dword_5C3618 >= 0 && dword_5C3618 < dword_64C420) {
+        sub_4A2BD0();
+        sub_442050(&data, &size, dword_64C41C[dword_5C3618]);
+        obj_field_string_get(dword_64C41C[dword_5C3618], OBJ_F_PC_PLAYER_NAME, &player_name);
+
+        tig_net_local_client_set_name(player_name);
+        tig_net_client_info_set_name(0, player_name);
+        tig_net_local_server_set_name(player_name);
+        FREE(player_name);
+
+        sub_4A40F0(0,
+            sub_407EF0(dword_64C41C[dword_5C3618]),
+            stat_level(dword_64C41C[dword_5C3618], STAT_LEVEL),
+            data,
+            size);
+        FREE(data);
+    }
 }
 
 // 0x5837A0
