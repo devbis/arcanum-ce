@@ -1069,7 +1069,70 @@ void sub_584150(TigRect* rect)
 // 0x5845E0
 bool sub_5845E0(int btn)
 {
-    // TODO: Incomplete.
+    MatchmakerInitInfo matchmaker_init_info;
+    MesFileEntry mes_file_entry;
+    TigWindowModalDialogInfo modal_dialog_info;
+    TigWindowModalDialogChoice choice;
+
+    switch (btn) {
+    case 0:
+        settings_set_str_value(&settings, "won_account", won_account);
+        settings_set_str_value(&settings, "won_password", won_password);
+        sub_4A4D60(&matchmaker_init_info);
+        if (!multiplayer_mm_is_active()) {
+            if (!multiplayer_mm_init(&matchmaker_init_info)) {
+                mes_file_entry.num = 2052;
+                mes_get_msg(sub_549840(), &mes_file_entry);
+
+                modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
+                modal_dialog_info.redraw = sub_4045A0;
+                modal_dialog_info.process = NULL;
+                modal_dialog_info.x = 237;
+                modal_dialog_info.y = 232;
+                modal_dialog_info.text = mes_file_entry.str;
+                tig_debug_printf("MainMenu_UI: Could not initialize Matchmaker. Aborting.\n");
+                tig_window_modal_dialog(&modal_dialog_info, &choice);
+                multiplayer_mm_exit();
+                exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
+            }
+
+            if (!sub_5499B0(stru_686530.str)) {
+                mes_file_entry.num = 2052;
+                mes_get_msg(sub_549840(), &mes_file_entry);
+
+                modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_CHOICE_OK;
+                modal_dialog_info.redraw = sub_4045A0;
+                modal_dialog_info.process = NULL;
+                modal_dialog_info.x = 237;
+                modal_dialog_info.y = 232;
+                modal_dialog_info.text = mes_file_entry.str;
+                tig_debug_printf("MainMenu_UI: Could not initialize Matchmaker. Aborting.\n");
+                tig_window_modal_dialog(&modal_dialog_info, &choice);
+                multiplayer_mm_exit();
+                return false;
+            }
+        }
+        sub_583D90(NULL);
+        if (!multiplayer_mm_login(sub_584A80(), sub_584A90())
+            || !sub_5499B0(stru_686530.str)) {
+            dword_68673C = 1;
+            sub_583D90(NULL);
+            return false;
+        }
+        sub_5417A0(false);
+        mainmenu_ui_create_multiplayer_hub();
+        if (!sub_541680()) {
+            return false;
+        }
+        sub_541810(sub_5496D0());
+        return false;
+    case 1:
+        sub_5417A0(true);
+        return false;
+    default:
+        tig_debug_printf("MainMenuUI: logon won execute unknown button Idx %d.\n", btn);
+        return false;
+    }
 }
 
 // 0x5847D0
