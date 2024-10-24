@@ -22,6 +22,7 @@
 #include "ui/skill_ui.h"
 #include "ui/spell_ui.h"
 #include "ui/tech_ui.h"
+#include "ui/schematic_ui.h"
 
 typedef enum CharEditStat {
     CHAREDIT_STAT_COUNT = 23,
@@ -437,6 +438,13 @@ static int dword_5C8FA8[] = {
     654,
     655,
     656,
+};
+
+// 0x5C8FC8
+static S5C8150 stru_5C8FC8[3] = {
+    { 0, 520, 174, -1 },
+    { 0, -621, 173, -1 },
+    { 0, 707, 176, -1 },
 };
 
 // 0x5C8FF8
@@ -1708,7 +1716,140 @@ void sub_55C2E0(int a1)
 // 0x55C3A0
 void sub_55C3A0()
 {
-    // TODO: Incomplete.
+    TigButtonData button_data;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect rect;
+    char str[7][80];
+    char v1[80];
+    char v2[80];
+    int index;
+    tig_art_id_t art_id;
+    int degree;
+    int next_degree;
+
+    tig_art_interface_id_create(30, 0, 0, 0, &art_id);
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    rect.x = 0;
+    rect.y = 25;
+    rect.width = art_frame_data.width;
+    rect.height = art_frame_data.height;
+
+    art_blit_info.art_id = art_id;
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &rect;
+    art_blit_info.dst_rect = &rect;
+
+    if (dword_64D3B4 != TIG_BUTTON_HANDLE_INVALID) {
+        tig_button_destroy(dword_64D3B4);
+    }
+
+    if (dword_64CDC4 != TIG_BUTTON_HANDLE_INVALID) {
+        tig_button_destroy(dword_64CDC4);
+    }
+
+    dword_64D3B4 = TIG_BUTTON_HANDLE_INVALID;
+    dword_64CDC4 = TIG_BUTTON_HANDLE_INVALID;
+
+    for (index = 0; index < 8; index++) {
+        if (stru_5C8D08[index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_destroy(stru_5C8D08[index].button_handle);
+            stru_5C8D08[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
+        }
+    }
+
+    tig_window_blit_art(dword_64CA8C, &art_blit_info);
+
+    for (index = 0; index < 3; index++) {
+        stru_5C8FC8[index].str = str[0];
+    }
+
+    str[0][0] = (char)('1' + dword_64E028);
+    str[0][1] = '\0';
+    sub_55B880(dword_64CA8C, dword_64D3A4, &(stru_5C8FC8[0]), 0, -1, 1);
+
+    sprintf(str[0],
+        "%s %s",
+        tech_get_name(dword_64E028),
+        degree_get_name(tech_get_degree(qword_64E010, dword_64E028)));
+    sub_55B880(dword_64CA8C, dword_64CFE0, &(stru_5C8FC8[1]), 0, -1, 1);
+
+    sprintf(str[0], "%d", sub_4B00B0(qword_64E010, dword_64E028));
+    sub_55B880(dword_64CA8C, dword_64CA68, &(stru_5C8FC8[2]), 0, -1, 1);
+
+    degree = tech_get_degree(qword_64E010, dword_64E028);
+    next_degree = degree < 7 ? degree + 1 : degree;
+
+    for (index = 0; index < degree; index++) {
+        sub_55C2E0(index);
+    }
+
+    for (index = 1; index - 1 < 7; index++) {
+        stru_5C8850[index - 1].str = sub_56EA10(dword_64E028, index);
+        sub_56EA30(dword_64E028, index, v1, v2);
+        sprintf(str[index - 1], "[%s]+[%s]", v1, v2);
+        stru_5C88C0[index - 1].str = str[index - 1];
+    }
+
+    if (next_degree > degree) {
+        if (degree > 0) {
+            sub_55B880(dword_64CA8C, dword_64CFE0, stru_5C8850, 0, -1, degree);
+            sub_55B880(dword_64CA8C, dword_64C840, stru_5C88C0, 0, -1, degree);
+        }
+
+        sub_55B880(dword_64CA8C, dword_64CDC0, &(stru_5C8850[degree]), 0, -1, 1);
+        sub_55B880(dword_64CA8C, dword_64CDB8, &(stru_5C88C0[degree]), 0, -1, 1);
+
+        if (degree + 1 < 7) {
+            sub_55B880(dword_64CA8C, dword_64D3B0, &stru_5C8850[degree + 1], 0, -1, 6 - degree);
+            sub_55B880(dword_64CA8C, dword_64D42C, &stru_5C88C0[degree + 1], 0, -1, 6 - degree);
+        }
+    } else {
+        sub_55B880(dword_64CA8C, dword_64CFE0, stru_5C8850, 0, -1, 7);
+        sub_55B880(dword_64CA8C, dword_64C840, stru_5C88C0, 0, -1, 7);
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.window_handle = dword_64CA8C;
+    button_data.mouse_down_snd_id = 3000;
+    button_data.mouse_up_snd_id = 3001;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
+    if (next_degree > degree
+        && dword_64CDCC != 2) {
+        tig_art_interface_id_create(647, 0, 0, 0, &(button_data.art_id));
+        button_data.x = dword_5C8F70[next_degree - 1];
+        button_data.y = dword_5C8F8C[next_degree - 1];
+        tig_button_create(&button_data, &dword_64D3B4);
+    }
+
+    if (degree > 0
+        && dword_64CDCC != 2
+        && (dword_64CDCC == 0
+            || dword_64CDCC == 3
+            || dword_64DEEC[dword_64E028] < degree)) {
+        tig_art_interface_id_create(648, 0, 0, 0, &(button_data.art_id));
+        button_data.x = dword_5C8F70[degree - 1];
+        button_data.y = dword_5C8F8C[degree - 1];
+        tig_button_create(&button_data, &dword_64CDC4);
+    }
+
+    button_data.flags = TIG_BUTTON_FLAG_0x01;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.art_id = TIG_ART_ID_INVALID;
+
+    for (index = 0; index < 8; index++) {
+        button_data.x = stru_5C8D08[index].x - 503;
+        button_data.y = stru_5C8D08[index].y - 63;
+        button_data.width = stru_5C8D08[index].width;
+        button_data.height = stru_5C8D08[index].height;
+        tig_button_create(&button_data, &(stru_5C8D08[index].button_handle));
+    }
 }
 
 // 0x55C890
