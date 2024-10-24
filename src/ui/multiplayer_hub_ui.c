@@ -7,6 +7,7 @@
 #include "game/multiplayer.h"
 #include "game/stat.h"
 #include "ui/mainmenu_ui.h"
+#include "ui/mp_ctrl_ui.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/server_list_ui.h"
 #include "ui/textedit_ui.h"
@@ -54,6 +55,12 @@ static int dword_599484[3] = {
     2,
     16,
     21,
+};
+
+// 0x599494
+static int dword_599494[2] = {
+    2,
+    16,
 };
 
 // 0x5994A0
@@ -271,11 +278,26 @@ static void* dword_6862DC;
 // 0x6862E0
 static int dword_6862E0;
 
+// 0x686310
+static MesFileEntry stru_686310;
+
+// 0x686318
+static MesFileEntry stru_686318;
+
+// 0x686320
+static char byte_686320[256];
+
+// 0x686420
+static char byte_686420[256];
+
 // 0x686520
 static ScrollbarId stru_686520;
 
 // 0x686528
 static mes_file_handle_t dword_686528;
+
+// 0x68652C
+static bool dword_68652C;
 
 // 0x686530
 static MesFileEntry stru_686530;
@@ -853,7 +875,103 @@ void sub_583140()
 // 0x583200
 void mainmenu_ui_create_multiplayer_hub()
 {
-    // TODO: Incomplete.
+    ScrollbarUiControlInfo sb_create_info;
+    int index;
+
+    sub_549830(21);
+
+    if (!mes_load("mes\\Multiplayer.mes", &dword_686528)) {
+        tig_debug_printf("MultiplayerHUB: could not '%s', aborting create.\n", "mes\\Multiplayer.mes");
+        exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
+    }
+
+    stru_686310.num = 3001; // "Waiting for Message Of The Day."
+    mes_get_msg(dword_686528, &stru_686310);
+
+    stru_686318.num = 3002; // "Checking for Arcanum updates."
+    mes_get_msg(dword_686528, &stru_686318);
+
+    sb_create_info.field_4 = stru_5CC258;
+    sb_create_info.rect = stru_5CC268;
+    sb_create_info.flags = 0xFFFF;
+    sb_create_info.field_38 = 0;
+    sb_create_info.field_24 = 0;
+    sb_create_info.field_28 = 0;
+    sb_create_info.field_34 = 1;
+    sb_create_info.field_30 = 1;
+    sb_create_info.field_2C = 1;
+    sb_create_info.field_40 = sub_5837A0;
+    sb_create_info.field_3C = 0;
+
+    mainmenu_ui_create_window_func(0);
+
+    scrollbar_ui_control_create(&stru_686520, &sb_create_info, sub_549820());
+
+    if (multiplayer_mm_is_active()) {
+        if (!dword_68652C) {
+            char version[36];
+
+            dword_68652C = true;
+            gamelib_copy_version(NULL, version, NULL);
+
+            if (multiplayer_mm_version_needs_upgrade(version)) {
+                tig_debug_printf("Version may need upgrade...\n");
+
+                if (sub_5499B0(stru_686318.str)) {
+                    MesFileEntry new_vesion_available_msg;
+                    MesFileEntry yes_msg;
+                    MesFileEntry no_msg;
+                    TigWindowModalDialogInfo modal_dialog_info;
+                    TigWindowModalDialogChoice choice;
+
+                    tig_debug_printf("Version does need upgrade...\n");
+
+                    new_vesion_available_msg.num = 3003;
+                    mes_get_msg(dword_686528, &new_vesion_available_msg);
+
+                    yes_msg.num = 1900;
+                    mes_get_msg(dword_686528, &yes_msg);
+
+                    no_msg.num = 1901;
+                    mes_get_msg(dword_686528, &no_msg);
+
+                    modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
+                    modal_dialog_info.x = 237;
+                    modal_dialog_info.y = 232;
+                    modal_dialog_info.text = new_vesion_available_msg.str;
+                    modal_dialog_info.redraw = sub_4045A0;
+                    modal_dialog_info.process = NULL;
+                    modal_dialog_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = yes_msg.str[0];
+                    modal_dialog_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = no_msg.str[0];
+                    tig_window_modal_dialog(&modal_dialog_info, &choice);
+
+                    if (choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
+                        system("SierraUp.exe");
+                        mainmenu_ui_exit_game();
+                    }
+                }
+            }
+        }
+
+        if (byte_686320[0] == '\0' && byte_686420[0] == '\0') {
+            multiplayer_mm_motd_get(byte_686320, sizeof(byte_686320), byte_686420, sizeof(byte_686420));
+            sub_5499B0(stru_686310.str);
+        }
+
+        for (index = 3; index < 7; index++) {
+            tig_button_show(stru_5CC278[index].button_handle);
+        }
+    } else {
+        for (index = 3; index < 7; index++) {
+            tig_button_hide(stru_5CC278[index].button_handle);
+        }
+        scrollbar_ui_control_hide(stru_686520);
+    }
+
+    tig_button_show(stru_5CC278[4].button_handle);
+    mainmenu_ui_refresh_multiplayer_hub(NULL);
+    sub_549990(dword_599494, 2);
+    sub_569F30();
 }
 
 // 0x583510
