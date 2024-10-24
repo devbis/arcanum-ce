@@ -1146,7 +1146,122 @@ void sub_583C80(int x, int y)
 // 0x583D90
 void sub_583D90(TigRect* rect)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    TigRect dst_rect;
+    TigRect src_rect;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigFont font_desc;
+    char str[132];
+    tig_art_id_t art_id;
+    size_t pos;
+
+    (void)rect;
+
+    tig_art_interface_id_create(755, 0, 0, 0, &art_id);
+    tig_art_frame_data(art_id, &art_frame_data);
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect.x = 293;
+    dst_rect.y = 72;
+    dst_rect.width = art_frame_data.width;
+    dst_rect.height = art_frame_data.height;
+
+    art_blit_info.art_id = art_id;
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(sub_549820(), &art_blit_info);
+
+    tig_font_push(sub_549940(0, 0));
+
+    mes_file_entry.num = 2000; // "Login Name"
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+
+    dst_rect.x = (165 - font_desc.width) / 2 + 327;
+    dst_rect.y = 94;
+    dst_rect.width = font_desc.width;
+    dst_rect.height = font_desc.height;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    if (sub_549520() == won_account) {
+        sprintf(str, "%s|", won_account);
+    } else {
+        strcpy(str, won_account);
+    }
+
+    dst_rect.x = 327;
+    dst_rect.y = 120;
+    dst_rect.width = 165;
+    dst_rect.height = 15;
+    tig_window_text_write(sub_549820(), str, &dst_rect);
+
+    mes_file_entry.num = 2001; // "Password"
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+
+    dst_rect.x = (196 - font_desc.width) / 2 + 312;
+    dst_rect.y = 149;
+    dst_rect.width = font_desc.width;
+    dst_rect.height = 15;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    if (sub_549520() == won_password) {
+        pos = strlen(won_password);
+        str[pos] = '|';
+        str[pos + 1] = '\0';
+    } else {
+        pos = strlen(won_password);
+        str[pos] = '\0';
+    }
+
+    while (pos > 0) {
+        str[pos - 1] = '*';
+    }
+
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+
+    dst_rect.x = 327;
+    dst_rect.y = 175;
+    dst_rect.width = font_desc.width;
+    dst_rect.height = font_desc.height;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    if (dword_68673C != 0) {
+        font_desc.width = 0;
+        font_desc.str = sub_584A40(dword_68673C);
+
+        dst_rect.x = (134 - font_desc.width) / 2 + 343;
+        dst_rect.y = 230;
+        dst_rect.width = font_desc.width;
+        dst_rect.height = font_desc.height;
+        tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+    }
+
+    mes_file_entry.num = 2005; // "New WON Account"
+    mes_get_msg(sub_549840(), &mes_file_entry);
+    font_desc.width = 0;
+    font_desc.str = mes_file_entry.str;
+    sub_535390(&font_desc);
+
+    dst_rect.x = (164 - font_desc.width) / 2 + 327;
+    dst_rect.y = 310;
+    dst_rect.width = font_desc.width;
+    dst_rect.height = font_desc.height;
+    tig_window_text_write(sub_549820(), mes_file_entry.str, &dst_rect);
+
+    tig_font_pop();
 }
 
 // 0x584150
