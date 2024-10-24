@@ -419,7 +419,6 @@ int basic_skill_get_training(int64_t obj, int skill)
 // 0x4C6170
 int basic_skill_set_training(int64_t obj, int skill, int training)
 {
-    Packet56 pkt;
     int skill_value;
     int current_training;
 
@@ -439,6 +438,8 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
     skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill);
     current_training = (skill_value >> 6) & 3;
     if (!sub_4A2BA0()) {
+        SetSkillTrainingPacket pkt;
+
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return current_training;
         }
@@ -778,7 +779,6 @@ int tech_skill_get_training(int64_t obj, int skill)
 // 0x4C6850
 int tech_skill_set_training(int64_t obj, int skill, int training)
 {
-    Packet56 pkt;
     int skill_value;
     int current_training;
 
@@ -798,6 +798,8 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
     skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill);
     current_training = (skill_value >> 6) & 3;
     if (!sub_4A2BA0()) {
+        SetSkillTrainingPacket pkt;
+
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return current_training;
         }
@@ -1139,27 +1141,31 @@ void sub_4C9050(Tanya* a1)
 }
 
 // 0x4C91F0
-int64_t sub_4C91F0(int64_t obj, int a2)
+int64_t sub_4C91F0(int64_t obj, int skill)
 {
-    int64_t v1 = OBJ_HANDLE_NULL;
+    int64_t item_obj = OBJ_HANDLE_NULL;
+    int64_t substitute_inventory_obj;
 
-    if (a2 == 10) {
-        v1 = item_find_first_generic(obj, 8);
-        if (v1 == OBJ_HANDLE_NULL) {
-            obj = sub_45F650(obj);
-            if (obj != OBJ_HANDLE_NULL) {
-                v1 = item_find_first_generic(obj, 8);
+    switch (skill) {
+    case SKILL_HEAL:
+        item_obj = item_find_first_generic(obj, OGF_IS_HEALING_ITEM);
+        if (item_obj == OBJ_HANDLE_NULL) {
+            substitute_inventory_obj = sub_45F650(obj);
+            if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
+                item_obj = item_find_first_generic(substitute_inventory_obj, OGF_IS_HEALING_ITEM);
             }
         }
-    } else if (a2 == 14) {
-        v1 = item_find_first_generic(obj, 2);
-        if (v1 == OBJ_HANDLE_NULL) {
-            obj = sub_45F650(obj);
-            if (obj != OBJ_HANDLE_NULL) {
-                v1 = item_find_first_generic(obj, 2);
+        break;
+    case SKILL_PICK_LOCKS:
+        item_obj = item_find_first_generic(obj, OGF_IS_LOCKPICK);
+        if (item_obj == OBJ_HANDLE_NULL) {
+            substitute_inventory_obj = sub_45F650(obj);
+            if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
+                item_obj = item_find_first_generic(substitute_inventory_obj, OGF_IS_LOCKPICK);
             }
         }
+        break;
     }
 
-    return v1;
+    return item_obj;
 }

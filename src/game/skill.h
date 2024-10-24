@@ -137,6 +137,6 @@ void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4);
 bool get_follower_skills(int64_t obj);
 void set_follower_skills(bool enabled);
 void sub_4C9050(Tanya* a1);
-int64_t sub_4C91F0(int64_t obj, int a2);
+int64_t sub_4C91F0(int64_t obj, int skill);
 
 #endif /* ARCANUM_GAME_SKILL_H_ */
