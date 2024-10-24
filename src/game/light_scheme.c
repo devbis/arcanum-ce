@@ -227,6 +227,13 @@ void light_scheme_parse(int msg_file)
     MesFileEntry mes_file_entry;
     char* text;
 
+    // NOTE: Initialize colors to zero to keep compiler happy. Original code
+    // does not perform this initialization.
+    memset(&outdoor, 0, sizeof(outdoor));
+    memset(&indoor, 0, sizeof(indoor));
+    memset(&prev_outdoor, 0, sizeof(prev_outdoor));
+    memset(&prev_indoor, 0, sizeof(prev_indoor));
+
     tig_str_parse_set_separator(',');
 
     for (index = 0; index < LIGHT_SCHEME_HOURS; index++) {
