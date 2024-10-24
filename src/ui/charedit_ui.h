@@ -2,6 +2,7 @@
 #define ARCANUM_UI_CHAREDIT_UI_H_
 
 #include "game/context.h"
+#include "game/ui.h"
 #include "ui/types.h"
 
 extern John stru_5C8990;

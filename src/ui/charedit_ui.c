@@ -19,6 +19,8 @@
 #include "game/ui.h"
 #include "ui/intgame.h"
 #include "ui/scrollbar_ui.h"
+#include "ui/skill_ui.h"
+#include "ui/spell_ui.h"
 #include "ui/tech_ui.h"
 
 typedef enum CharEditStat {
@@ -561,7 +563,7 @@ static tig_font_handle_t dword_64CDBC;
 static tig_font_handle_t dword_64CDC0;
 
 // 0x64CDC4
-static int dword_64CDC4;
+static tig_button_handle_t dword_64CDC4;
 
 // 0x64CDC8
 static int dword_64CDC8;
@@ -609,7 +611,7 @@ static tig_button_handle_t dword_64D3AC;
 static tig_font_handle_t dword_64D3B0;
 
 // 0x64D3B4
-static int dword_64D3B4;
+static tig_button_handle_t dword_64D3B4;
 
 // 0x64D3B8
 static tig_button_handle_t dword_64D3B8;
@@ -1668,8 +1670,8 @@ bool sub_55C110()
     }
 
     tig_button_radio_group_create(8, button_handles, dword_64E028);
-    dword_64D3B4 = -1;
-    dword_64CDC4 = -1;
+    dword_64D3B4 = TIG_BUTTON_HANDLE_INVALID;
+    dword_64CDC4 = TIG_BUTTON_HANDLE_INVALID;
 
     return true;
 }
@@ -2786,7 +2788,7 @@ void sub_55EC90()
     TigRect dst_rect;
 
     for (index = 0; index < 3; index++) {
-        tmp[index] = buffer;
+        tmp[index] = buffer[3];
     }
 
     value = stat_level(qword_64E010, STAT_ALIGNMENT) / 10;
