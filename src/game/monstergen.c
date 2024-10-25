@@ -1,5 +1,6 @@
 #include "game/monstergen.h"
 
+#include "game/mp_utils.h"
 #include "game/obj.h"
 
 #define DISABLED 0x80
@@ -20,7 +21,7 @@ typedef struct GeneratorInfo {
 static void sub_4BA500(int64_t obj, GeneratorInfo* info);
 static int sub_4BA590(int index);
 static void sub_4BA620(GeneratorInfo* info);
-static void sub_4BA6D0(int index, int value);
+static int sub_4BA6D0(int index, int value);
 static bool sub_4BA720(int64_t obj);
 
 // 0x5FC350
@@ -135,7 +136,7 @@ void sub_4BA620(GeneratorInfo* info)
 }
 
 // 0x4BA6D0
-void sub_4BA6D0(int index, int value)
+int sub_4BA6D0(int index, int value)
 {
     if (index < 0 || index >= 256) {
         return sub_4BA590(index);
