@@ -1,10 +1,15 @@
 #include "ui/compact_ui.h"
 
+#include <stdio.h>
+
+#include "game/critter.h"
 #include "game/player.h"
+#include "game/stat.h"
 #include "game/timeevent.h"
 #include "ui/anim_ui.h"
 #include "ui/dialog_ui.h"
 #include "ui/intgame.h"
+#include "ui/mainmenu_ui.h"
 
 #define MAX_COMPONENTS 2
 
@@ -304,7 +309,109 @@ bool compact_ui_health_bar_message_filter(TigMessage* msg)
 // 0x569070
 void compact_ui_health_bar_draw(int a1)
 {
-    // TODO: Incomplete.
+    TigRect rect1;
+    TigRect rect2;
+    TigLine line;
+    TigFont font_desc;
+    char str[12];
+    int64_t pc_obj;
+    int poison;
+
+    (void)a1;
+
+    rect1.x = 0;
+    rect1.y = 0;
+    rect1.width = 49;
+    rect1.height = 102;
+    tig_window_fill(compact_ui_components[0].window_handle,
+        &rect1,
+        compact_ui_components[0].field_34);
+
+    rect2.x = 0;
+    rect2.y = 0;
+    rect2.width = rect1.width;
+    rect2.height = rect1.height;
+    tig_window_box(compact_ui_components[0].window_handle,
+        &rect2,
+        tig_color_make(9, 9, 9));
+
+    line.x1 = 24;
+    line.y1 = 1;
+    line.x2 = 24;
+    line.y2 = rect1.height - 2;
+    tig_window_line(compact_ui_components[0].window_handle,
+        &line,
+        tig_color_make(9, 9, 9));
+
+    pc_obj = player_get_pc_obj();
+
+    rect1.x = 1;
+    rect1.width = 23;
+    rect1.y = 100 * (100 * object_get_hp_damage(pc_obj) / sub_43D5A0(pc_obj)) / 100;
+    if (rect1.y > 100) {
+        rect1.y = 100;
+    }
+    rect1.height = 100 - rect1.y;
+
+    poison = stat_level(pc_obj, STAT_POISON_LEVEL);
+    if (poison > 0) {
+        sub_569550(compact_ui_components[0].window_handle,
+            &rect1,
+            tig_color_make(0, 255, 0));
+
+        sprintf(str, "%02d", poison);
+        tig_font_push(sub_549940(0, 0));
+        font_desc.width = 0;
+        font_desc.str = str;
+        sub_535390(&font_desc);
+        rect1.x += (23 - font_desc.width) / 2;
+        rect1.y += 40;
+        rect1.width = font_desc.width;
+        rect1.height = font_desc.height;
+        tig_window_text_write(compact_ui_components[0].window_handle, str, &rect1);
+        tig_font_pop();
+        rect1.y -= 40;
+    } else {
+        sub_569550(compact_ui_components[0].window_handle,
+            &rect1,
+            tig_color_make(255, 0, 0));
+    }
+
+    sprintf(str, "%02d", sub_43D600(pc_obj));
+    tig_font_push(sub_549940(0, 0));
+    font_desc.width = 0;
+    font_desc.str = str;
+    sub_535390(&font_desc);
+    rect1.x += (23 - font_desc.width) / 2;
+    rect1.width = font_desc.width;
+    rect1.height = font_desc.height;
+    tig_window_text_write(compact_ui_components[0].window_handle, str, &rect1);
+    tig_font_pop();
+
+    // NOTE: Original code is a bit odd (max is 101), probably worth checking.
+    rect1.x = 25;
+    rect1.width = 23;
+    rect1.y = 100 * (100 * critter_fatigue_damage_get(pc_obj) / sub_45D670(pc_obj)) / 100;
+    if (rect1.y > 100) {
+        rect1.y = 100;
+    }
+    rect1.height = 100 - rect1.y;
+    sub_569550(compact_ui_components[0].window_handle,
+        &rect1,
+        tig_color_make(0, 0, 255));
+
+    sprintf(str, "%02d", sub_45D700(pc_obj));
+    tig_font_push(sub_549940(0, 0));
+    font_desc.width = 0;
+    font_desc.str = str;
+    sub_535390(&font_desc);
+    rect1.x += (23 - font_desc.width) / 2;
+    rect1.width = font_desc.width;
+    rect1.height = font_desc.height;
+    tig_window_text_write(compact_ui_components[0].window_handle,
+        str,
+        &rect1);
+    tig_font_pop();
 }
 
 // 0x569550
