@@ -1,6 +1,7 @@
 #include "ui/mp_ctrl_ui.h"
 
 #include "game/gsound.h"
+#include "game/obj_private.h"
 #include "ui/multiplayer_ui.h"
 #include "ui/server_list_ui.h"
 
@@ -10,7 +11,7 @@ static bool sub_569F40(int num);
 static void sub_56A000();
 
 // 0x5CA350
-static int dword_5CA350 = -1;
+static tig_window_handle_t dword_5CA350 = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x67BB14
 static bool mp_ctrl_ui_initialized;
@@ -32,7 +33,7 @@ void mp_ctrl_ui_exit()
 }
 
 // 0x569C70
-void sub_569C70(int a1, int a2, int a3)
+void sub_569C70(int a1, int a2, const char* a3)
 {
     sub_586150(a1, a2, a3);
 
@@ -143,9 +144,9 @@ bool mp_ctrl_ui_process_callback(TimeEvent* timeevent)
 }
 
 // 0x569F20
-bool sub_569F20(int a1)
+bool sub_569F20(tig_window_handle_t window_handle)
 {
-    dword_5CA350 = a1;
+    dword_5CA350 = window_handle;
     return true;
 }
 
