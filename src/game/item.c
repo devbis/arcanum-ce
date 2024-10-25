@@ -4,6 +4,7 @@
 #include "game/background.h"
 #include "game/critter.h"
 #include "game/description.h"
+#include "game/invensource.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
@@ -1160,7 +1161,33 @@ int item_inventory_source(object_id_t obj)
 // 0x464200
 bool sub_464200(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int invensource_id;
+    InvenSourceSet set;
+    int index;
+    int basic_prototype;
+    int64_t substitute_inventory_obj;
+
+    invensource_id = item_inventory_source(a2);
+    if (invensource_id != 0) {
+        invensource_get_id_list(invensource_id, &set);
+        if (set.field_0) {
+            return true;
+        }
+
+        basic_prototype = sub_49B290(a1);
+        for (index = 0; index < set.field_8; index++) {
+            if (set.buy_basic_prototype[index] == basic_prototype) {
+                return true;
+            }
+        }
+    }
+
+    substitute_inventory_obj = sub_45F650(a2);
+    if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
+        return sub_464200(a1, substitute_inventory_obj);
+    }
+
+    return false;
 }
 
 // 0x4642C0
