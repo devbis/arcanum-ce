@@ -38,6 +38,19 @@ static uint8_t byte_5B8EA0[TB_TYPE_COUNT][3] = {
 // 0x5B8EB0
 static TigRect stru_5B8EB0 = { 0, 0, 200, 200 };
 
+// 0x5B8EC0
+static int dword_5B8EC0[9][8] = {
+    { 0, 7, 6, 5, 4, 1, 2, 3 },
+    { 0, 1, 7, 2, 6, 3, 5, 4 },
+    { 0, 1, 2, 3, 4, 7, 6, 5 },
+    { 7, 6, 5, 0, 4, 1, 3, 2 },
+    { 0, 1, 2, 3, 4, 5, 6, 7 },
+    { 1, 2, 3, 0, 4, 7, 5, 6 },
+    { 7, 6, 5, 4, 3, 2, 1, 0 },
+    { 4, 3, 5, 2, 6, 1, 7, 0 },
+    { 1, 2, 3, 4, 5, 6, 7, 0 },
+};
+
 // 0x602920
 static TigRect stru_602920;
 
@@ -353,7 +366,7 @@ static void sub_4D6350(S602930* a1)
     sub_4D63B0(a1, &rect);
     dword_602AB0(&rect);
 
-     flags = obj_field_int32_get(a1->object_id, OBJ_F_FLAGS);
+    flags = obj_field_int32_get(a1->object_id, OBJ_F_FLAGS);
     flags &= ~OF_TEXT;
     obj_field_int32_set(a1->object_id, OBJ_F_FLAGS, flags);
 
@@ -377,7 +390,135 @@ static void sub_4D63B0(S602930* a1, TigRect* rect)
 // 0x4D6410
 static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset_y, TigRect* rect)
 {
-    // TODO: Incomplete.
+    int64_t x;
+    int64_t y;
+    int v1;
+    int index;
+
+    sub_4B8680(location, &x, &y);
+
+    x += offset_x + 40;
+    y += offset_y + 20;
+
+    if (x < INT_MIN || x > INT_MAX
+        || y < INT_MIN || y > INT_MAX) {
+        rect->x = 0;
+        rect->y = 0;
+        rect->width = 0;
+        rect->height = 0;
+        return;
+    }
+
+    rect->width = a1->rect.width;
+    rect->height = a1->rect.height;
+
+    if (a1->field_2C == -1) {
+        a1->field_2C = 0;
+
+        v1 = 0;
+        if (x >= 380) {
+            if (x >= 420) {
+                v1 += 2;
+            } else {
+                v1 += 1;
+            }
+        }
+
+        if (y >= 190) {
+            if (y >= 290) {
+                v1 += 6;
+            } else {
+                v1 += 3;
+            }
+        }
+
+        for (index = 0; index < 8; index++) {
+            rect->x = (int)x;
+            rect->y = (int)y;
+
+            switch (dword_5B8EC0[v1][index]) {
+            case 0:
+                rect->x -= rect->width / 2;
+                rect->y -= rect->height + 100;
+                break;
+            case 1:
+                rect->x += 40;
+                rect->y -= rect->height / 2 + 55;
+                break;
+            case 2:
+                rect->x += 80;
+                rect->y -= rect->height / 2;
+                break;
+            case 3:
+                rect->x += 40;
+                rect->y += rect->height / 2 + 20;
+                break;
+            case 4:
+                rect->x -= rect->width / 2;
+                rect->y += 10;
+                break;
+            case 5:
+                rect->x -= rect->width + 40;
+                rect->y += rect->height / 2 + 20;
+                break;
+            case 6:
+                rect->x -= rect->width + 80;
+                rect->y -= rect->height / 2;
+                break;
+            case 7:
+                rect->x -= rect->width + 40;
+                rect->y -= rect->height / 2 + 55;
+                break;
+            }
+
+            if (rect->x >= stru_602920.x
+                && rect->y >= stru_602920.y
+                && rect->x + rect->width <= stru_602920.x + stru_602920.width
+                && rect->y + rect->height <= stru_602920.y + stru_602920.height) {
+                break;
+            }
+        }
+
+        a1->field_2C = dword_5B8EC0[v1][index];
+    }
+
+    rect->x = (int)x;
+    rect->y = (int)y;
+
+    switch (a1->field_2C) {
+    case 0:
+        rect->x -= rect->width / 2;
+        rect->y -= rect->height + 100;
+        break;
+    case 1:
+        rect->x += 40;
+        rect->y -= rect->height / 2 + 55;
+        break;
+    case 2:
+        rect->x += 80;
+        rect->y -= rect->height / 2;
+        break;
+    case 3:
+        rect->x += 40;
+        rect->y += rect->height / 2 + 20;
+        break;
+    case 4:
+        rect->x -= rect->width / 2;
+        rect->y += 10;
+        break;
+    case 5:
+        rect->x -= rect->width + 40;
+        rect->y += rect->height / 2 + 20;
+        break;
+    case 6:
+        rect->x -= rect->width + 80;
+        rect->y -= rect->height / 2;
+        break;
+    case 7:
+        rect->x -= rect->width + 40;
+        rect->y -= rect->height / 2 + 55;
+        break;
+    }
 }
 
 // 0x4D67F0
