@@ -161,4 +161,14 @@ void sub_45C580();
 void sub_45C720(int map);
 void timeevent_debug_lists();
 
+static inline uint64_t datetime_to_uint64(DateTime datetime)
+{
+    return *(uint64_t*)&datetime;
+}
+
+static inline DateTime datetime_from_uint64(uint64_t value)
+{
+    return *(DateTime*)&value;
+}
+
 #endif /* ARCANUM_GAME_TIMEEVENT_H_ */

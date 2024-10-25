@@ -7,6 +7,8 @@
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/obj_private.h"
 #include "game/object.h"
 #include "game/teleport.h"
@@ -40,8 +42,8 @@ typedef struct TimeEventNode {
 // See 0x45BA20.
 static_assert(sizeof(TimeEventNode) == 0xD8, "wrong size");
 
-typedef void(TimeEventNodeExitFunc)(TimeEventNode* node);
-typedef bool(TimeEventNodeShouldSaveFunc)(TimeEventNode* node);
+typedef void(TimeEventExitFunc)(TimeEvent* timeevent);
+typedef bool(TimeEventShouldSaveFunc)(TimeEvent* timeevent);
 
 typedef struct TimeEventTypeInfo {
     char name[20];
@@ -49,8 +51,8 @@ typedef struct TimeEventTypeInfo {
     unsigned int flags;
     int time_type;
     TimeEventProcessFunc* process_func;
-    TimeEventNodeExitFunc* exit_func;
-    TimeEventNodeShouldSaveFunc* should_save_func;
+    TimeEventExitFunc* exit_func;
+    TimeEventShouldSaveFunc* should_save_func;
 } TimeEventTypeInfo;
 
 static bool timeevent_do_nothing(TimeEvent* timeevent);
@@ -178,7 +180,7 @@ static DateTime stru_5E8600;
 static DateTime stru_5E8608;
 
 // 0x5E8610
-static unsigned int dword_5E8610;
+static tig_timestamp_t dword_5E8610;
 
 // 0x5E8614
 static bool timeevent_initialized;
@@ -191,6 +193,9 @@ static bool timeevent_in_ping;
 
 // 0x5E8620
 static bool dword_5E8620;
+
+// 0x5E8624
+static tig_timestamp_t dword_5E8624;
 
 // 0x5E8628
 static int dword_5E8628;
@@ -558,7 +563,7 @@ bool timeevent_save(TigFile* stream)
     int count;
     TimeEventNode* timeevent;
     int pos;
-    TimeEventNodeShouldSaveFunc* should_save_func;
+    TimeEventTypeInfo* info;
 
     if (!tig_file_fwrite(&stru_5E85F8, sizeof(stru_5E85F8), 1, stream) != 1) {
         return false;
@@ -584,12 +589,12 @@ bool timeevent_save(TigFile* stream)
 
         timeevent = dword_5E7638[index];
         while (timeevent != NULL) {
+            info = &(stru_5B2188[timeevent->te.type]);
             // NOTE: Original code is slightly different. It uses bitwise AND
             // with 0x1 implying `saveable` is a bitfield.
-            if (stru_5B2188[timeevent->te.type].saveable) {
-                should_save_func = stru_5B2188[timeevent->te.type].should_save_func;
-                if (should_save_func == NULL || should_save_func(timeevent)) {
-                    if (!timeevent_save_node(&(stru_5B2188[timeevent->te.type]), timeevent, stream)) {
+            if (info->saveable) {
+                if (info->should_save_func == NULL || info->should_save_func(&(timeevent->te))) {
+                    if (!timeevent_save_node(info, timeevent, stream)) {
                         return false;
                     }
 
@@ -784,7 +789,118 @@ void sub_45B360()
 // 0x45B370
 void timeevent_ping(tig_timestamp_t timestamp)
 {
-    // TODO: Incomplete.
+    tig_duration_t delta;
+    int time_type;
+    DateTime* datetime;
+    TimeEventNode* node;
+    TimeEventTypeInfo* info;
+    int iter = 0;
+    TimeEventNode offending_node_candidate;
+
+    delta = tig_timer_between(dword_5E8610, timestamp);
+    if (delta < 5) {
+        return;
+    }
+
+    dword_5E8610 = timestamp;
+
+    if (delta > 250) {
+        delta = 250;
+    }
+
+    timeevent_in_ping = true;
+    datetime_add_milliseconds(&stru_5E85F8, delta);
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!sub_45B300()) {
+            if (dword_5E8628 < 1000 * (sub_4A38A0() + 16)) {
+                datetime_add_milliseconds(&stru_5E8600, 8 * delta);
+                datetime_add_milliseconds(&stru_5E8608, 8 * delta);
+                dword_5E8628 += 8 * delta;
+            }
+        }
+    } else {
+        if (!sub_45B300()) {
+            if (!sub_4B6D70()) {
+                datetime_add_milliseconds(&stru_5E8600, 8 * delta);
+            }
+            datetime_add_milliseconds(&stru_5E8608, 8 * delta);
+        }
+    }
+
+    for (time_type = 0; time_type < 3; time_type++) {
+        switch (time_type) {
+        case 0:
+            datetime = &stru_5E85F8;
+            break;
+        case 1:
+            datetime = &stru_5E8600;
+            break;
+        case 2:
+            datetime = &stru_5E8608;
+            break;
+        default:
+            // Unreachable.
+            __assume(0);
+        }
+
+        // TimeEventNode objects are sorted by their datetime, so we are only
+        // interested in head node.
+        while ((node = dword_5E7638[time_type]) != NULL
+            && datetime_compare(datetime, &(node->te.datetime)) >= 0) {
+            dword_5E7638[time_type] = node->next;
+
+            info = &(stru_5B2188[node->te.type]);
+
+            if (sub_45B610(node)) {
+                // Save current node for debug purposes. In case infinite loop
+                // is detected (see below), this is the offending node which
+                // either creates too many timeevents or spams one timeevent for
+                // immediate processing.
+                offending_node_candidate = *node;
+
+                info->process_func(&(node->te));
+            }
+
+            // Give user code a chance for cleanup.
+            //
+            // NOTE: This is useless, there are no cleanup functions.
+            if (info->exit_func != NULL) {
+                info->exit_func(&(node->te));
+            }
+
+            timeevent_node_destroy(node);
+
+            // Attempt to detect infinite loop using simple counter. Original
+            // devs assumed 500 events is just too much for one tick to be true.
+            // This might happen if process function enqueue new timeevents for
+            // immediate processing.
+            if (++iter > 500) {
+                tig_debug_printf("TimeEvent: timeevent_ping: ERROR: Suspected Infinite Loop Caught: Last Type: %s!\n", info->name);
+                timeevent_debug_node(&offending_node_candidate, -1);
+                iter = 0;
+                break;
+            }
+        }
+    }
+
+    timeevent_in_ping = false;
+
+    sub_45B750();
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) != 0
+        && tig_timer_between(dword_5E8624, timestamp) > 950) {
+        Packet3 pkt;
+
+        dword_5E8624 = timestamp;
+
+        pkt.type = 3;
+        pkt.field_8 = datetime_to_uint64(stru_5E8600);
+        pkt.field_10 = datetime_to_uint64(stru_5E8608);
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
 }
 
 // 0x45B600
@@ -1058,7 +1174,7 @@ void timeevent_clear()
             dword_5E7638[index] = node->next;
 
             if (stru_5B2188[node->te.type].exit_func != NULL) {
-                stru_5B2188[node->te.type].exit_func(node);
+                stru_5B2188[node->te.type].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1069,7 +1185,7 @@ void timeevent_clear()
             dword_5E7E14[index] = node->next;
 
             if (stru_5B2188[node->te.type].exit_func != NULL) {
-                stru_5B2188[node->te.type].exit_func(node);
+                stru_5B2188[node->te.type].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1120,7 +1236,7 @@ bool timeevent_clear_all_typed(int list)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1136,7 +1252,7 @@ bool timeevent_clear_all_typed(int list)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1165,7 +1281,7 @@ bool timeevent_clear_one_typed(int list)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1183,7 +1299,7 @@ bool timeevent_clear_one_typed(int list)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1214,7 +1330,7 @@ bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1230,7 +1346,7 @@ bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1259,7 +1375,7 @@ bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1277,7 +1393,7 @@ bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback)
             *node_ptr = node->next;
 
             if (stru_5B2188[list].exit_func != NULL) {
-                stru_5B2188[list].exit_func(node);
+                stru_5B2188[list].exit_func(&(node->te));
             }
 
             timeevent_node_destroy(node);
@@ -1457,7 +1573,7 @@ void timeevent_save_nodes_to_map(const char* name)
                 count++;
 
                 if (stru_5B2188[node->te.type].exit_func != NULL) {
-                    stru_5B2188[node->te.type].exit_func(node);
+                    stru_5B2188[node->te.type].exit_func(&(node->te));
                 }
 
                 timeevent_node_destroy(node);
@@ -1678,7 +1794,7 @@ void timeevent_break_nodes_to_map(const char* name)
                 count++;
 
                 if (stru_5B2188[node->te.type].exit_func != NULL) {
-                    stru_5B2188[node->te.type].exit_func(node);
+                    stru_5B2188[node->te.type].exit_func(&(node->te));
                 }
 
                 timeevent_node_destroy(node);
