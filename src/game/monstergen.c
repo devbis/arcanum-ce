@@ -1,7 +1,11 @@
 #include "game/monstergen.h"
 
+#include "game/location.h"
 #include "game/mp_utils.h"
 #include "game/obj.h"
+#include "game/random.h"
+#include "game/target.h"
+#include "game/tile.h"
 
 #define DISABLED 0x80
 
@@ -23,6 +27,19 @@ static int sub_4BA590(int index);
 static void sub_4BA620(GeneratorInfo* info);
 static int sub_4BA6D0(int index, int value);
 static bool sub_4BA720(int64_t obj);
+static int sub_4BA910(GeneratorInfo* generator_info, int cnt);
+
+// 0x5B5EC0
+static DateTime stru_5B5EC0[8] = {
+    { 0, 1000 },
+    { 0, 30000 },
+    { 0, 60000 },
+    { 0, 3600000 },
+    { 1, 0 },
+    { 7, 0 },
+    { 30, 0 },
+    { 360, 0 },
+};
 
 // 0x5FC350
 static uint8_t* off_5FC350;
@@ -172,15 +189,158 @@ bool sub_4BA720(int64_t obj)
 }
 
 // 0x4BA790
-void sub_4BA790()
+bool sub_4BA790(int64_t obj, DateTime* datetime)
 {
-    // TODO: Incomplete.
+    GeneratorInfo generator_info;
+    int v3;
+    int v2;
+    int v1;
+    TigRect rect;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_GENERATOR) == 0) {
+        return false;
+    }
+
+    sub_4BA500(obj, &generator_info);
+
+    v2 = generator_info.field_14 - generator_info.field_24;
+
+    do {
+        if (v2 <= 0) {
+            break;
+        }
+
+        if (monstergen_is_disabled(generator_info.index)) {
+            break;
+        }
+
+        if (game_time_is_day()) {
+            if ((generator_info.field_0 & 1) == 0) {
+                break;
+            }
+        } else {
+            if ((generator_info.field_0 & 2) == 0) {
+                break;
+            }
+        }
+
+        if ((generator_info.field_0 & 0x4) != 0) {
+            object_get_rect(obj, 0x8, &rect);
+            if (rect.x < stru_5FC358.width + stru_5FC358.x
+                && rect.y < stru_5FC358.height + stru_5FC358.y
+                && stru_5FC358.x < rect.x + rect.width
+                && stru_5FC358.y < rect.y + rect.height) {
+                break;
+            }
+        }
+
+        if ((generator_info.field_0 & 0x10) == 0) {
+            v1 = generator_info.field_18 - generator_info.field_28;
+            if (v1 <= 0) {
+                break;
+            }
+
+            if (v2 > v1) {
+                v2 = v1;
+            }
+        }
+
+        if (v2 <= 0) {
+            break;
+        }
+
+        if ((generator_info.field_0 & 0x08) == 0) {
+            v2 = 1;
+        }
+
+        v3 = sub_4BA910(&generator_info, v2);
+        generator_info.field_24 += v3;
+
+        if ((generator_info.field_0 & 0x10) == 0) {
+            generator_info.field_28 += v3;
+        }
+        sub_4BA620(&generator_info);
+    } while (0);
+
+    *datetime = stru_5B5EC0[generator_info.rate];
+    return true;
 }
 
 // 0x4BA910
-void sub_4BA910()
+int sub_4BA910(GeneratorInfo* generator_info, int cnt)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int64_t x;
+    int64_t y;
+    int64_t target_loc;
+    int64_t target_x;
+    int64_t target_y;
+    tig_art_id_t art_id;
+    int tile_type;
+    int gen_cnt;
+    int attempt;
+    int distance;
+    TigRect rect;
+    int dx;
+    int dy;
+    int64_t obj;
+    unsigned int flags;
+
+    loc = obj_field_int64_get(generator_info->obj, OBJ_F_LOCATION);
+    art_id = sub_4D70B0(loc);
+    tile_type = tig_art_tile_id_type_get(art_id);
+    sub_4B8680(loc, &x, &y);
+    object_get_rect(generator_info->obj, 0x8, &rect);
+
+    gen_cnt = 0;
+    while (gen_cnt < cnt) {
+        if (generator_info->field_14 == 1) {
+            target_loc = loc;
+        } else {
+            for (attempt = 0; attempt < 10; attempt++) {
+                distance = random_between(1, 5);
+                if (sub_4F4E40(generator_info->obj, distance, &target_loc)
+                    && tile_type == tig_art_tile_id_type_get(sub_4D70B0(target_loc))) {
+                    if ((generator_info->field_0 & 0x4) == 0) {
+                        break;
+                    }
+
+                    sub_4B8680(target_loc, &target_x, &target_y);
+
+                    dx = (int)(target_x - x + rect.x);
+                    dy = (int)(target_y - y + rect.y);
+                    if (dx >= stru_5FC358.x + stru_5FC358.width
+                        || dy >= stru_5FC358.y + stru_5FC358.height
+                        || stru_5FC358.x >= dx + rect.width
+                        || stru_5FC358.y >= dy + rect.height) {
+                        break;
+                    }
+                }
+            }
+
+            if (attempt == 10) {
+                target_loc = loc;
+            }
+        }
+
+        if (!sub_4EF920(generator_info->obj, target_loc, &obj)) {
+            break;
+        }
+
+        sub_4BA720(obj);
+
+        flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+        flags |= ONF_GENERATED;
+        sub_4EFDD0(obj, OBJ_F_NPC_FLAGS, flags);
+
+        gen_cnt++;
+    }
+
+    return gen_cnt;
 }
 
 // 0x4BAB30
