@@ -1,5 +1,6 @@
 #include "game/wp.h"
 
+#include "game/location.h"
 #include "game/obj.h"
 
 typedef struct S5FC668 {
