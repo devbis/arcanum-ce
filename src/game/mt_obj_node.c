@@ -5,6 +5,7 @@
 static void sub_4BACA0();
 static void sub_4BACD0();
 static bool sub_4BAD70(MagicTechObjectNode* node, TigFile* stream);
+static bool sub_4BAE50(MagicTechObjectNode* node, TigFile* stream);
 
 // 0x5FC368
 static MagicTechObjectNode* mt_obj_node_head;
