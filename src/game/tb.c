@@ -1,9 +1,9 @@
 #include "game/tb.h"
 
 #include "game/gamelib.h"
+#include "game/object.h"
 
 #define TEXT_DURATION_KEY "text duration"
-#define FOUR 4
 #define EIGHT 8
 
 #define S602930_FLAG_0x1 0x1
@@ -16,10 +16,7 @@ typedef struct S602930 {
     unsigned int time;
     int duration;
     TigVideoBuffer* video_buffer;
-    int field_1C;
-    int field_20;
-    int field_24;
-    int field_28;
+    TigRect rect;
     int field_2C;
 } S602930;
 
@@ -31,12 +28,15 @@ static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset
 static void tb_text_duration_changed();
 
 // 0x5B8EA0
-static uint8_t byte_5B8EA0[FOUR][3] = {
+static uint8_t byte_5B8EA0[TB_TYPE_COUNT][3] = {
     { 255, 255, 255 },
     { 255, 0, 0 },
     { 0, 255, 0 },
     { 0, 0, 255 },
 };
+
+// 0x5B8EB0
+static TigRect stru_5B8EB0 = { 0, 0, 200, 200 };
 
 // 0x602920
 static TigRect stru_602920;
@@ -66,7 +66,7 @@ static int dword_602AC4;
 static ViewOptions tb_view_options;
 
 // 0x602AD0
-static tig_font_handle_t dword_602AD0[FOUR];
+static tig_font_handle_t dword_602AD0[TB_TYPE_COUNT];
 
 // 0x4D5B80
 bool tb_init(GameInitInfo* init_info)
@@ -110,7 +110,7 @@ bool tb_init(GameInitInfo* init_info)
     font.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_CENTERED | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
-    for (index = 0; index < FOUR; index++) {
+    for (index = 0; index < TB_TYPE_COUNT; index++) {
         font.color = tig_color_make(byte_5B8EA0[index][0], byte_5B8EA0[index][1], byte_5B8EA0[index][2]);
         tig_font_create(&font, &(dword_602AD0[index]));
     }
@@ -134,7 +134,7 @@ void tb_exit()
 
     sub_4D6320();
 
-    for (index = 0; index < FOUR; index++) {
+    for (index = 0; index < TB_TYPE_COUNT; index++) {
         tig_font_destroy(dword_602AD0[index]);
     }
 
@@ -207,8 +207,8 @@ void sub_4D5F10(UnknownContext* ctx)
                     node = *ctx->rects;
                     while (node != NULL) {
                         if (tig_rect_intersection(&rect, &(node->rect), &intersection) == TIG_OK) {
-                            src_rect.x = intersection.x + stru_602930[index].field_1C - rect.x;
-                            src_rect.y = intersection.y + stru_602930[index].field_20 - rect.y;
+                            src_rect.x = intersection.x + stru_602930[index].rect.x - rect.x;
+                            src_rect.y = intersection.y + stru_602930[index].rect.y - rect.y;
                             src_rect.width = intersection.width;
                             src_rect.height = intersection.height;
                             tig_window_copy_from_vbuffer(tb_iso_window_handle, &intersection, stru_602930[index].video_buffer, &src_rect);
@@ -222,9 +222,50 @@ void sub_4D5F10(UnknownContext* ctx)
 }
 
 // 0x4D5FE0
-void sub_4D5FE0(object_id_t object_id, int font, const char* text)
+void sub_4D5FE0(int64_t obj, int type, const char* str)
 {
-    // TODO: Incomplete.
+    int index;
+    int v1 = -1;
+    int v2 = -1;
+    TigRect dirty_rect;
+
+    for (index = 0; index < 8; index++) {
+        if ((stru_602930[index].flags & 0x1) != 0) {
+            if (stru_602930[index].object_id != OBJ_HANDLE_NULL
+                && stru_602930[index].object_id == obj) {
+                v1 = index;
+                break;
+            }
+
+            if (v1 == -1
+                || ((stru_602930[index].flags & 0x2) == 0
+                    && stru_602930[index].time < stru_602930[index - 1].time)) {
+                v1 = index;
+            }
+        } else {
+            v2 = index;
+        }
+    }
+
+    if (v2 == -1) {
+        sub_4D6350(&(stru_602930[v1]));
+        v2 = v1;
+    }
+
+    tig_video_buffer_fill(stru_602930[v2].video_buffer, &stru_5B8EB0, dword_602AC4);
+    tig_font_push(dword_602AD0[type]);
+    tig_font_write(stru_602930[v2].video_buffer, str, &stru_5B8EB0, &dirty_rect);
+    tig_font_pop();
+
+    stru_602930[v2].time = gamelib_ping_time;
+    stru_602930[v2].duration = tb_text_duration;
+    stru_602930[v2].flags = 1;
+    stru_602930[v2].object_id = obj;
+    stru_602930[v2].rect = dirty_rect;
+    stru_602930[v2].field_2C = -1;
+    sub_43D0E0(obj, OF_TEXT);
+    sub_4D63B0(&(stru_602930[v2]), &dirty_rect);
+    dword_602AB0(&dirty_rect);
 }
 
 // 0x4D6160
