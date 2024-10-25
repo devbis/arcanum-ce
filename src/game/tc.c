@@ -296,7 +296,57 @@ void sub_4C9810(int index, const char* str)
 // 0x4C9A10
 int sub_4C9A10(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (tc_editor) {
+        return -1;
+    }
+
+    if (!dword_5FF568) {
+        return -1;
+    }
+
+    if (msg->type != TIG_MESSAGE_MOUSE) {
+        return -1;
+    }
+
+    if (msg->data.mouse.x < tc_iso_window_rect.x + stru_5FF4F8.x
+        || msg->data.mouse.y < tc_iso_window_rect.y + stru_5FF4F8.y
+        || msg->data.mouse.x >= tc_iso_window_rect.x + stru_5FF4F8.x + stru_5FF4F8.width
+        || msg->data.mouse.y >= tc_iso_window_rect.y + stru_5FF4F8.y + stru_5FF4F8.height) {
+        if (dword_5B7218 != -1) {
+            sub_4C9810(dword_5B7218, dword_5FF554[dword_5B7218]);
+            dword_5B7218 = -1;
+        }
+        return -1;
+    }
+
+    switch (msg->data.mouse.event) {
+    case TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN:
+        if (msg->data.mouse.repeat) {
+            return -1;
+        }
+
+        index = (msg->data.mouse.y - (tc_iso_window_rect.y + stru_5FF4F8.y)) / (stru_5FF508.height / 5);
+        if (dword_5FF554[index] != NULL) {
+            return index;
+        }
+        return -1;
+    case TIG_MESSAGE_MOUSE_MOVE:
+        index = (msg->data.mouse.y - (tc_iso_window_rect.y + stru_5FF4F8.y)) / (stru_5FF508.height / 5);
+        if (dword_5B7218 != index && dword_5B7218 != -1) {
+            sub_4C9810(dword_5B7218, dword_5FF554[dword_5B7218]);
+        }
+        if (dword_5FF554[index] != NULL) {
+            sub_4C9810(index, dword_5FF554[index]);
+            dword_5B7218 = index;
+        } else {
+            dword_5B7218 = -1;
+        }
+        return -1;
+    default:
+        return -1;
+    }
 }
 
 // 0x4C9B90
