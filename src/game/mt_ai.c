@@ -1,39 +1,12 @@
 #include "game/mt_ai.h"
 
+#include "game/ai.h"
+#include "game/combat.h"
+#include "game/critter.h"
 #include "game/item.h"
 #include "game/magictech.h"
 #include "game/spell.h"
 #include "game/stat.h"
-
-typedef struct S600A20_Entry {
-    int spell;
-    int64_t obj;
-} S600A20_Entry;
-
-// See 0x4CC3C0.
-static_assert(sizeof(S600A20_Entry) == 0x10, "wrong size");
-
-typedef struct S600A20 {
-    int cnt;
-    S600A20_Entry* entries;
-} S600A20;
-
-static_assert(sizeof(S600A20) == 0x8, "wrong size");
-
-typedef struct S5FF620 {
-    /* 0000 */ int64_t obj;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int64_t field_18;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ S600A20 field_30[10];
-} S5FF620;
-
-static_assert(sizeof(S5FF620) == 0x80, "wrong size");
 
 static bool sub_4CC240();
 static void sub_4CC270();
@@ -45,8 +18,12 @@ static void sub_4CC470();
 static void sub_4CC4C0();
 static void sub_4CC4F0(S5FF620* a1, int64_t obj, int a3);
 static void sub_4CC520(int index);
+static void sub_4CC580(S5FF620* a1);
 static bool sub_4CC6F0(S5FF620* a1);
 static void sub_4CC740(S5FF620* src, S5FF620* dst);
+static bool sub_4CC770(S5FF620** a1);
+static void sub_4CC810(S5FF620* a1);
+static void magictech_build_ai_action_list(S5FF620* a1);
 static void sub_4CC930(S5FF620* a1, int64_t item_obj);
 static bool sub_4CCA30(int64_t item_obj, S5FF620* a2);
 static void sub_4CCAD0(int spell);
@@ -141,6 +118,8 @@ int sub_4CC2A0(int spl)
 {
     if (mt_ai_initialized) {
         return magictech_spells[spl].ai.defensive2;
+    } else {
+        return 0;
     }
 }
 
@@ -293,9 +272,54 @@ void sub_4CC520(int a1)
 }
 
 // 0x4CC580
-void sub_4CC580()
+void sub_4CC580(S5FF620* a1)
 {
-    // TODO: Incomplete.
+    S5FF620* v1;
+
+    if (a1->obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (sub_4CC6F0(a1)) {
+        v1 = a1;
+        if (a1->field_30[a1->field_10].cnt > 0) {
+            return;
+        }
+    } else {
+        if (!sub_4CC770(&v1)) {
+            return;
+        }
+
+        v1->obj = a1->obj;
+        v1->field_10 = a1->field_10;
+    }
+
+    v1->field_8 = sub_45DDA0(a1->obj);
+    v1->field_18 = a1->field_18;
+
+    dword_6016F4 = 0;
+    dword_5B7558 = v1->field_10;
+
+    if (combat_critter_is_combat_mode_active(v1->obj)
+        && sub_4AB430(v1->obj) <= 50) {
+        sub_4CC810(v1);
+        if (!dword_6016F4) {
+            magictech_build_ai_action_list(v1);
+        }
+    } else {
+        magictech_build_ai_action_list(v1);
+        if (!dword_6016F4) {
+            sub_4CC810(v1);
+        }
+    }
+
+    if (dword_6016F4 > 0) {
+        sub_4CCB90(v1, dword_5B7558);
+        v1->field_20 = stru_600A70[0].spell;
+        v1->field_28 = stru_600A70[0].spell;
+    }
+
+    sub_4CC740(v1, a1);
 }
 
 // 0x4CC6F0
@@ -497,8 +521,9 @@ void sub_4CCB90(S5FF620* a1, int a2)
 }
 
 // 0x4CCBF0
-void sub_4CCBF0(int a1)
+void sub_4CCBF0(S5FF620* a1)
 {
+    (void)a1;
 }
 
 // 0x4CCC00
@@ -514,7 +539,32 @@ void sub_4CCC00(int64_t obj)
 }
 
 // 0x4CCC40
-void sub_4CCC40(int64_t a1, int64_t a2)
+void sub_4CCC40(int64_t obj, int64_t item_obj)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int v3;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    for (v1 = 0; v1 < 40; v1++) {
+        if (stru_5FF620[v1].obj == obj) {
+            break;
+        }
+    }
+
+    if (v1 >= 40) {
+        return;
+    }
+
+    for (v2 = 0; v2 < 10; v2++) {
+        for (v3 = 0; v3 < stru_5FF620[v1].field_30[v2].cnt; v3++) {
+            if (stru_5FF620[v1].field_30[v2].entries[v3].obj == item_obj) {
+                sub_4CC520(v1);
+                return;
+            }
+        }
+    }
 }
