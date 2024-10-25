@@ -63,7 +63,7 @@ static bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* da
 static TimeEventNode* timeevent_node_create();
 static void timeevent_node_destroy(TimeEventNode* node);
 static bool sub_45B610(TimeEventNode *timeevent);
-static bool sub_45B620(TimeEventNode* node, bool a2);
+static bool sub_45B620(TimeEventNode* node, bool force);
 static void sub_45B750();
 static bool sub_45B7A0(TimeEventNode* node);
 static bool sub_45BAF0(TimeEvent* timeevent);
@@ -916,9 +916,45 @@ bool sub_45B610(TimeEventNode *timeevent)
 }
 
 // 0x45B620
-bool sub_45B620(TimeEventNode* node, bool a2)
+bool sub_45B620(TimeEventNode* node, bool force)
 {
-    // TODO: Incomplete.
+    int index;
+    TimeEventTypeInfo* info;
+    int64_t obj;
+
+    info = &(stru_5B2188[node->te.type]);
+
+    for (index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
+        if (node->field_30[index].objid.type != OID_TYPE_NULL) {
+            obj = node->te.params[index].object_value;
+            if (obj != OBJ_HANDLE_NULL || force) {
+                if (map_is_clearing_objects()) {
+                    return false;
+                }
+
+                if (obj == OBJ_HANDLE_NULL
+                    || !sub_4E5470(obj)) {
+                    if (!sub_443F80(&obj, &(node->field_30[index]))) {
+                        node->te.params[index].object_value = OBJ_HANDLE_NULL;
+                        tig_debug_printf("TimeEvent: ERROR: Object validate recovery FAILED: TE-Type: %s!\n", info->name);
+                        return false;
+                    }
+                    node->te.params[index].object_value = obj;
+                }
+
+                if (obj == OBJ_HANDLE_NULL
+                    || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+                    return false;
+                }
+            }
+        } else {
+            if ((info->flags & dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT]) != 0) {
+                node->te.params[index].object_value = OBJ_HANDLE_NULL;
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x45B750
