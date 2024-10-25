@@ -334,7 +334,7 @@ void reputation_add(int64_t pc_obj, int reputation)
 
     index = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     sub_4074E0(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, reputation);
-    obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, sub_45A7C0());
+    obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, datetime_to_uint64(sub_45A7C0()));
 
     if (player_is_pc_obj(pc_obj)) {
         sub_460790(1, 1);
