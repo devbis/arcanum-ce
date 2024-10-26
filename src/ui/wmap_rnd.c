@@ -2,39 +2,86 @@
 
 #include "game/area.h"
 #include "game/map.h"
+#include "game/mes.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/proto.h"
 #include "game/random.h"
 #include "game/sector.h"
+#include "game/stat.h"
+#include "game/target.h"
 #include "game/terrain.h"
+#include "game/tile.h"
 #include "game/timeevent.h"
+#include "game/townmap.h"
 #include "ui/sleep_ui.h"
 #include "ui/wmap_ui.h"
 
-typedef struct S64C780_F0 {
+typedef struct WmapRndEncounterChartEntry {
+    /* 0000 */ int64_t loc;
+    /* 0008 */ int64_t radius;
+    /* 0010 */ int value;
+} WmapRndEncounterChartEntry;
+
+static_assert(sizeof(WmapRndEncounterChartEntry) == 0x18, "wrong size");
+
+typedef struct WmapRndEncounterChart {
+    /* 0000 */ WmapRndEncounterChartEntry* entries;
+    /* 0004 */ int num_entries;
+} WmapRndEncounterChart;
+
+static_assert(sizeof(WmapRndEncounterChart) == 0x8, "wrong size");
+
+typedef struct WmapRndEncounterTableEntry {
+    /* 0000 */ int frequency;
+    /* 0004 */ int16_t lower[5];
+    /* 000E */ int16_t upper[5];
+    /* 0018 */ int field_18[5];
+    /* 002C */ int16_t min_level;
+    /* 002E */ int16_t max_level;
+    /* 0030 */ int global_flag_num;
+    /* 0034 */ int trigger_cnt;
+    /* 0038 */ int field_38;
+    /* 003C */ int field_3C;
+} WmapRndEncounterTableEntry;
+
+static_assert(sizeof(WmapRndEncounterTableEntry) == 0x40, "wrong size");
+
+typedef struct WmapRndEncounterTable {
+    /* 0000 */ int num_entries;
+    /* 0004 */ WmapRndEncounterTableEntry* entries;
+} WmapRndEncounterTable;
+
+static_assert(sizeof(WmapRndEncounterTable) == 0x8, "wrong size");
+
+typedef struct WmapRndSaveInfo {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-} S64C780_F0;
+} WmapRndSaveInfo;
 
-static_assert(sizeof(S64C780_F0) == 0x18, "wrong size");
-
-typedef struct S64C780 {
-    /* 0000 */ S64C780_F0* entries;
-    /* 0004 */ int cnt;
-} S64C780;
-
-static_assert(sizeof(S64C780) == 0x8, "wrong size");
+static_assert(sizeof(WmapRndSaveInfo) == 0x8, "wrong size");
 
 static bool wmap_rnd_terrain_clear(uint16_t a1);
+static bool sub_558A40(MesFileEntry* mes_file_entry, int cnt, int* value_ptr);
+static void wmap_rnd_encounter_table_init(WmapRndEncounterTable* table);
+static void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entry);
 static void sub_558AF0();
 static void sub_558B50();
-static void sub_558CE0(S64C780 *a1);
+static bool wmap_rnd_encounter_chart_parse(WmapRndEncounterChart* chart, int num, const char** value_list);
+static void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry *entry);
+static void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart);
+static void wmap_rnd_encounter_chart_sort(WmapRndEncounterChart* chart);
+static int sub_558D20(const WmapRndEncounterChartEntry* a, const WmapRndEncounterChartEntry* b);
+static bool sub_558D40(char** str, WmapRndEncounterTableEntry *entry);
 static bool sub_558DE0(int64_t location);
+static bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr);
+static int wmap_rnd_determine_terrain(long long location);
+static bool wmap_rnd_encounter_check();
+static bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry);
+static int wmap_rnd_encounter_total_frequency(WmapRndEncounterTable *table);
+static int wmap_rnd_encounter_entry_total_monsters(WmapRndEncounterTableEntry* entry);
+static void sub_559260(WmapRndEncounterTableEntry* entry);
+static void sub_5594E0(int a1, int64_t* dx_ptr, int64_t* dy_ptr);
 static void wmap_rnd_encounter_build_object(int name, int64_t loc, int64_t* obj_ptr);
 
 // 0x5C79A0
@@ -78,19 +125,58 @@ static int dword_5C79C4[] = {
 };
 
 // 0x64C728
-static S64C780 stru_64C728;
+static WmapRndEncounterChart wmap_rnd_encounter_chart;
+
+// 0x64C730
+static mes_file_handle_t wmap_rnd_mes_file;
+
+// 0x64C738
+static int dword_64C738;
+
+// 0x64C73C
+static bool dword_64C73C;
+
+// 0x64C740
+static int dword_64C740;
+
+// 0x64C744
+static int dword_64C744;
+
+// 0x64C748
+static int dword_64C748;
+
+// 0x64C74C
+static int dword_64C74C[5];
+
+// 0x64C760
+static int64_t qword_64C760;
+
+// 0x64C768
+static int64_t qword_64C768;
+
+// 0x64C770
+static int64_t qword_64C770;
+
+// 0x64C778
+static int dword_64C778;
 
 // 0x64C780
-static S64C780 stru_64C780;
+static WmapRndEncounterChart wmap_rnd_frequency_chart;
 
 // 0x64C788
-static S64C780 stru_64C788;
+static WmapRndEncounterChart wmap_rnd_power_chart;
 
 // 0x64C790
 static bool dword_64C790;
 
 // 0x64C794
 static bool dword_64C794;
+
+// 0x64C798
+static WmapRndEncounterTable* wmap_rnd_encounter_tables;
+
+// 0x64C79C
+static int wmap_rnd_num_encounter_tables;
 
 // 0x5581B0
 bool wmap_rnd_init(GameInitInfo* init_info)
@@ -111,9 +197,161 @@ void wmap_rnd_reset()
 }
 
 // 0x5581E0
-void wmap_rnd_mod_load()
+bool wmap_rnd_mod_load()
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    int num_tables;
+    int table_idx;
+    WmapRndEncounterTable* table;
+    int num_entries;
+    int entry_idx;
+    WmapRndEncounterTableEntry* entry;
+    char* str;
+    int value;
+
+    if (dword_64C794) {
+        return true;
+    }
+
+    if (dword_64C790) {
+        return true;
+    }
+
+    if (!mes_load("Rules\\WMap_Rnd.mes", &wmap_rnd_mes_file)) {
+        tig_debug_printf("wmap_rnd_mod_load: ERROR: failed to load msg file: Rules\\WMap_Rnd.mes!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    tig_str_parse_set_separator(',');
+
+    if (!wmap_rnd_encounter_chart_parse(&wmap_rnd_frequency_chart, 10000, NULL)) {
+        tig_debug_println("Disabling random encounters because of bad message file.");
+        mes_unload(wmap_rnd_mes_file);
+        dword_64C790 = true;
+        return true;
+    }
+
+    if (!wmap_rnd_encounter_chart_parse(&wmap_rnd_power_chart, 20000, off_5C79A0)) {
+        tig_debug_println("Disabling random encounters because of bad message file.");
+        wmap_rnd_encounter_chart_exit(&wmap_rnd_frequency_chart);
+        mes_unload(wmap_rnd_mes_file);
+        dword_64C790 = true;
+        return true;
+    }
+
+    if (!wmap_rnd_encounter_chart_parse(&wmap_rnd_encounter_chart, 30000, NULL)) {
+        tig_debug_println("Disabling random encounters because of bad message file.");
+        wmap_rnd_encounter_chart_exit(&wmap_rnd_frequency_chart);
+        wmap_rnd_encounter_chart_exit(&wmap_rnd_power_chart);
+        mes_unload(wmap_rnd_mes_file);
+        dword_64C790 = true;
+        return true;
+    }
+
+    mes_file_entry.num = 49999;
+    mes_get_msg(wmap_rnd_mes_file, &mes_file_entry);
+
+    num_tables = atoi(mes_file_entry.str) + 54;
+    wmap_rnd_encounter_tables = MALLOC(sizeof(*wmap_rnd_encounter_tables) * num_tables);
+
+    for (table_idx = 0; table_idx < num_tables; table_idx++) {
+        table = &(wmap_rnd_encounter_tables[table_idx]);
+        wmap_rnd_encounter_table_init(table);
+
+        mes_file_entry.num = 50000 + 100 * table_idx;
+        if (!sub_558A40(&mes_file_entry, 100, &num_entries)) {
+            tig_debug_println("Disabling random encounters because of bad message file.");
+            sub_558AF0();
+            sub_558B50();
+            mes_unload(wmap_rnd_mes_file);
+            dword_64C790 = true;
+            return true;
+        }
+
+        mes_file_entry.num = 50000 + 100 * table_idx;
+
+        table->num_entries = num_entries;
+        table->entries = (WmapRndEncounterTableEntry*)MALLOC(sizeof(WmapRndEncounterTableEntry) * num_entries);
+        wmap_rnd_num_encounter_tables++;
+
+        for (entry_idx = 0; entry_idx < num_entries; entry_idx++) {
+            entry = &(table->entries[entry_idx]);
+            wmap_rnd_encounter_table_entry_init(entry);
+
+            if (!mes_search(wmap_rnd_mes_file, &mes_file_entry)) {
+                tig_debug_printf("Error:  Random encounter table is discontinuous at line %d.\n", mes_file_entry.num);
+                tig_debug_println("Disabling random encounters because of bad message file.");
+                sub_558AF0();
+                sub_558B50();
+                mes_unload(wmap_rnd_mes_file);
+                dword_64C790 = true;
+                return true;
+            }
+            entry->field_3C = mes_file_entry.num;
+
+            mes_get_msg(wmap_rnd_mes_file, &mes_file_entry);
+            str = mes_file_entry.str;
+
+            tig_str_parse_value(&str, &(entry->frequency));
+
+            if (!sub_558D40(&str, entry)) {
+                tig_debug_printf("Error: Random encounter table has no: prototype at line: %d.\n", mes_file_entry.num);
+                tig_debug_println("Disabling random encounters because of bad message file.");
+                sub_558AF0();
+                sub_558B50();
+                mes_unload(wmap_rnd_mes_file);
+                dword_64C790 = true;
+                return true;
+            }
+
+            if (tig_str_parse_named_value(&str, "MinLevel:", &value)) {
+                if (value < 0 || value > 32000) {
+                    tig_debug_printf("WmapRnd: Init: ERROR: MinLevel Value Wrong: Line: %d.\n", mes_file_entry.num);
+                    tig_debug_println("Disabling random encounters because of bad message file.");
+                    sub_558AF0();
+                    sub_558B50();
+                    mes_unload(wmap_rnd_mes_file);
+                    dword_64C790 = true;
+                    return true;
+                }
+                entry->min_level = (int16_t)value;
+            }
+
+            if (tig_str_parse_named_value(&str, "MinLevel:", &value)) {
+                if (value < 0 || value > 32000) {
+                    tig_debug_printf("WmapRnd: Init: ERROR: MaxLevel Value Wrong: Line: %d.\n", mes_file_entry.num);
+                    tig_debug_println("Disabling random encounters because of bad message file.");
+                    sub_558AF0();
+                    sub_558B50();
+                    mes_unload(wmap_rnd_mes_file);
+                    dword_64C790 = true;
+                    return true;
+                }
+                entry->max_level = (int16_t)value;
+            }
+
+            if (tig_str_parse_named_value(&str, "GlobalFlag:", &value)) {
+                if (value > 3200) {
+                    tig_debug_printf("WmapRnd: Init: ERROR: globalFlagNum Value Wrong: Line: %d.\n", mes_file_entry.num);
+                    tig_debug_println("Disabling random encounters because of bad message file.");
+                    sub_558AF0();
+                    sub_558B50();
+                    mes_unload(wmap_rnd_mes_file);
+                    dword_64C790 = true;
+                    return true;
+                }
+                entry->global_flag_num = value;
+            }
+
+            if (tig_str_parse_named_value(&str, "TriggerCount:", &value)) {
+                entry->trigger_cnt = value;
+            }
+        }
+    }
+
+    mes_unload(wmap_rnd_mes_file);
+    dword_64C790 = true;
+    return true;
 }
 
 // 0x558700
@@ -129,15 +367,114 @@ void wmap_rnd_mod_unload()
 }
 
 // 0x558730
-void wmap_rnd_save()
+bool wmap_rnd_save(TigFile* stream)
 {
-    // TODO: Incomplete.
+    int table_idx;
+    int entry_idx;
+    int save_info_idx;
+    int num_entries;
+    WmapRndSaveInfo* save_info;
+    WmapRndEncounterTable* table;
+    WmapRndEncounterTableEntry* entry;
+
+    if (stream == NULL) {
+        return false;
+    }
+
+    num_entries = 0;
+    save_info = NULL;
+    if (!dword_64C794
+        && dword_64C790
+        && wmap_rnd_encounter_tables != NULL) {
+        for (table_idx = 0; table_idx < wmap_rnd_num_encounter_tables; table_idx++) {
+            num_entries += wmap_rnd_encounter_tables[table_idx].num_entries;
+        }
+
+        if (num_entries != 0) {
+            save_info = (WmapRndSaveInfo*)MALLOC(sizeof(*save_info) * num_entries);
+            save_info_idx = 0;
+            for (table_idx = 0; table_idx < wmap_rnd_num_encounter_tables; table_idx++) {
+                table = &(wmap_rnd_encounter_tables[table_idx]);
+                for (entry_idx = 0; entry_idx < table->num_entries; entry_idx++) {
+                    entry = &(table->entries[entry_idx]);
+                    save_info[save_info_idx].field_0 = entry->field_38;
+                    save_info[save_info_idx].field_4 = entry->field_3C;
+                }
+            }
+        }
+    }
+
+    if (tig_file_fwrite(&num_entries, sizeof(num_entries), 1, stream) != 1) {
+        tig_debug_println("Error writing random encounter save data.");
+        if (save_info != NULL) {
+            FREE(save_info);
+        }
+        return false;
+    }
+
+    if (save_info != NULL) {
+        if (tig_file_fwrite(save_info, sizeof(*save_info) * num_entries, 1, stream) != 1) {
+            tig_debug_println("Error writing random encounter save data.");
+            FREE(save_info);
+            return false;
+        }
+
+        FREE(save_info);
+    }
+
+    return true;
 }
 
 // 0x558880
-void wmap_rnd_load()
+bool wmap_rnd_load(GameLoadInfo* load_info)
 {
-    // TODO: Incomplete.
+    int table_idx;
+    int entry_idx;
+    int save_info_idx;
+    int num_entries;
+    WmapRndSaveInfo* save_info;
+    WmapRndEncounterTable* table;
+    WmapRndEncounterTableEntry* entry;
+
+    if (load_info->stream == NULL) {
+        return false;
+    }
+
+    if (tig_file_fread(&num_entries, sizeof(num_entries), 1, load_info->stream) != 1) {
+        tig_debug_println("Error reading random encounter save data.");
+        return false;
+    }
+
+    if (num_entries != 0) {
+        save_info = (WmapRndSaveInfo*)MALLOC(sizeof(*save_info) * num_entries);
+        if (tig_file_fread(save_info, sizeof(*save_info) * num_entries, 1, load_info->stream) != 1) {
+            tig_debug_println("Error reading random encounter save data.");
+            FREE(save_info);
+            return false;
+        }
+
+        if (!dword_64C794
+            && dword_64C790
+            && wmap_rnd_num_encounter_tables != 0
+            && wmap_rnd_encounter_tables != NULL) {
+            for (table_idx = 0; table_idx < wmap_rnd_num_encounter_tables; table_idx++) {
+                table = &(wmap_rnd_encounter_tables[table_idx]);
+                for (entry_idx = 0; entry_idx < table->num_entries; entry_idx++) {
+                    entry = &(table->entries[entry_idx]);
+                    for (save_info_idx = 0; save_info_idx < num_entries; save_info_idx++) {
+                        if (entry->field_3C == save_info[save_info_idx].field_4) {
+                            entry->field_38 = save_info[save_info_idx].field_0;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        FREE(save_info);
+    }
+
+    return true;
 }
 
 // 0x5589D0
@@ -169,86 +506,245 @@ bool wmap_rnd_terrain_clear(uint16_t a1)
 }
 
 // 0x558A40
-void sub_558A40()
+bool sub_558A40(MesFileEntry* mes_file_entry, int cnt, int* value_ptr)
 {
-    // TODO: Incomplete.
+    int end;
+    int index = 0;
+    int v1 = -1;
+
+    end = mes_file_entry->num + cnt;
+
+    mes_get_msg(wmap_rnd_mes_file, mes_file_entry);
+
+    while (mes_file_entry->num != v1) {
+        if (mes_file_entry->num >= end) {
+            *value_ptr = index;
+            return true;
+        }
+
+        index++;
+        if (!mes_find_next(wmap_rnd_mes_file, mes_file_entry)) {
+            *value_ptr = index;
+            return true;
+        }
+    }
+
+    tig_debug_printf("Error:  Line %d is duplicated in random encounter tables.\n", v1);
+    return false;
 }
 
 // 0x558AC0
-void sub_558AC0()
+void wmap_rnd_encounter_table_init(WmapRndEncounterTable* table)
 {
-    // TODO: Incomplete.
+    table->num_entries = 0;
 }
 
 // 0x558AD0
-void sub_558AD0()
+void wmap_rnd_encounter_table_entry_init(WmapRndEncounterTableEntry* entry)
 {
-    // TODO: Incomplete.
+    entry->field_18[0] = 0;
+    entry->min_level = 0;
+    entry->max_level = 32000;
+    entry->global_flag_num = -1;
+    entry->trigger_cnt = -1;
+    entry->field_38 = 0;
 }
 
 // 0x558AF0
 void sub_558AF0()
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (wmap_rnd_encounter_tables != NULL) {
+        for (index = 0; index < wmap_rnd_num_encounter_tables; index++) {
+            FREE(wmap_rnd_encounter_tables[index].entries);
+        }
+        FREE(wmap_rnd_encounter_tables);
+        wmap_rnd_encounter_tables = NULL;
+        wmap_rnd_num_encounter_tables = 0;
+    }
 }
 
 // 0x558B50
 void sub_558B50()
 {
-    sub_558CE0(&stru_64C780);
-    sub_558CE0(&stru_64C788);
-    sub_558CE0(&stru_64C728);
+    wmap_rnd_encounter_chart_exit(&wmap_rnd_frequency_chart);
+    wmap_rnd_encounter_chart_exit(&wmap_rnd_power_chart);
+    wmap_rnd_encounter_chart_exit(&wmap_rnd_encounter_chart);
 }
 
 // 0x558B80
-void sub_558B80()
+bool wmap_rnd_encounter_chart_parse(WmapRndEncounterChart* chart, int num, const char** value_list)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    int cnt;
+    int index;
+    char* str;
+
+    mes_file_entry.num = num;
+    if (!sub_558A40(&mes_file_entry, 10000, &cnt)) {
+        return false;
+    }
+
+    chart->num_entries = cnt;
+    if (chart->num_entries == 0) {
+        tig_debug_println("Warning:  Empty random encouter chart.");
+        return false;
+    }
+
+    chart->entries = (WmapRndEncounterChartEntry*)MALLOC(sizeof(*chart->entries) * chart->num_entries);
+    for (index = 0; index < chart->num_entries; index++) {
+        mes_file_entry.num = num + index;
+        mes_get_msg(wmap_rnd_mes_file, &mes_file_entry);
+
+        str = mes_file_entry.str;
+        wmap_rnd_encounter_chart_entry_parse(&str, &(chart->entries[index]));
+
+        if (value_list != NULL) {
+            strlwr(str);
+            tig_str_match_str_to_list(&str, value_list, 4, &(chart->entries[index].value));
+        } else {
+            tig_str_parse_value(&str, &(chart->entries[index].value));
+        }
+    }
+
+    wmap_rnd_encounter_chart_sort(chart);
+
+    return true;
 }
 
 // 0x558C90
-void sub_558C90()
+void wmap_rnd_encounter_chart_entry_parse(char** str, WmapRndEncounterChartEntry *entry)
 {
-    // TODO: Incomplete.
+    int64_t x;
+    int64_t y;
+
+    tig_str_parse_value_64(str, &x);
+    tig_str_parse_value_64(str, &y);
+    entry->loc = LOCATION_MAKE(x, y);
+    tig_str_parse_value_64(str, &(entry->radius));
 }
 
 // 0x558CE0
-void sub_558CE0(S64C780 *a1)
+void wmap_rnd_encounter_chart_exit(WmapRndEncounterChart *chart)
 {
-    if (a1->cnt != 0) {
-        FREE(a1->entries);
-        a1->cnt = 0;
+    if (chart->num_entries != 0) {
+        FREE(chart->entries);
+        chart->num_entries = 0;
     }
 }
 
 // 0x558D00
-void sub_558D00()
+void wmap_rnd_encounter_chart_sort(WmapRndEncounterChart* chart)
 {
-    // TODO: Incomplete.
+    qsort(chart->entries, chart->num_entries, sizeof(*chart->entries), sub_558D20);
 }
 
 // 0x558D20
-void sub_558D20()
+int sub_558D20(const WmapRndEncounterChartEntry* a, const WmapRndEncounterChartEntry* b)
 {
-    // TODO: Incomplete.
+    if (a->radius < b->radius) {
+        return -1;
+    } else if (a->radius > b->radius) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 // 0x558D40
-void sub_558D40()
+bool sub_558D40(char** str, WmapRndEncounterTableEntry *entry)
 {
-    // TODO: Incomplete.
+    int index;
+    int type;
+    int lower;
+    int upper;
+
+    for (index = 0; index < 5; index++) {
+        if (!tig_str_parse_named_value(str, off_5C79B0[index], &type)) {
+            entry->field_18[index] = 0;
+            return index != 0;
+        }
+
+        entry->field_18[index] = type;
+
+        tig_str_parse_range(str, &lower, &upper);
+        entry->lower[index] = (int16_t)lower;
+        entry->upper[index] = (int16_t)upper;
+    }
+
+    return true;
 }
 
 // 0x558DE0
-bool sub_558DE0(int64_t location)
+bool sub_558DE0(int64_t loc)
 {
-    // TODO: Incomplete.
+    int hour;
+
+    if (dword_64C794 || !dword_64C790) {
+        return false;
+    }
+
+    qword_64C760 = loc;
+    qword_64C768 = LOCATION_GET_X(loc);
+    qword_64C770 = LOCATION_GET_Y(loc);
+
+    if (!sub_558F30(&wmap_rnd_frequency_chart, loc, &dword_64C738)) {
+        dword_64C738 = 5;
+    }
+
+    if (sleep_ui_is_created()) {
+        dword_64C738 *= 5;
+    }
+
+    if (random_between(1, 100) > dword_64C738) {
+        return false;
+    }
+
+    if (sub_558F30(&wmap_rnd_power_chart, loc, &dword_64C740)) {
+        if (dword_64C740 == 0) {
+            return false;
+        }
+    } else {
+        dword_64C740 = 2;
+    }
+
+    hour = datetime_current_hour();
+    dword_64C73C = hour < 6 || hour >= 18;
+
+    if (sub_4BE380(sub_4CFC50(loc))) {
+        return false;
+    }
+
+    dword_64C744 = wmap_rnd_determine_terrain(loc);
+    if (!dword_64C744) {
+        return false;
+    }
+
+    if (!sub_558F30(&wmap_rnd_encounter_chart, loc, &dword_64C748)) {
+        dword_64C748 = -1;
+    }
+
+    if (!wmap_rnd_encounter_check()) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x558F30
-void sub_558F30()
+bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr)
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < chart->num_entries; index++) {
+        if (sub_4B96F0(chart->entries[index].loc, loc) <= chart->entries[index].radius) {
+            *value_ptr = chart->entries[index].value;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x558FB0
@@ -274,39 +770,210 @@ int wmap_rnd_determine_terrain(long long location)
 }
 
 // 0x559010
-void wmap_rnd_encounter_check()
+bool wmap_rnd_encounter_check()
 {
-    // TODO: Incomplete.
+    int v1;
+    WmapRndEncounterTable* table;
+    int frequency;
+    int index;
+    int v2 = -1;
+
+    if (dword_64C748 == -1) {
+        dword_64C748 = dword_64C73C + 2 * (dword_64C740 + 2 * dword_64C744 + dword_64C744) - 8;
+    }
+
+    tig_debug_printf("WMap_Rnd: Random Encounter Fired: Table: %d.\n", dword_64C748);
+
+    if (dword_64C748 >= wmap_rnd_num_encounter_tables) {
+        tig_debug_printf("WmapRnd: wmap_rnd_encounter_check: ERROR: Table %d was out of bounds!\n", dword_64C748);
+        return false;
+    }
+
+    table = &(wmap_rnd_encounter_tables[dword_64C748]);
+    v1 = wmap_rnd_encounter_total_frequency(table);
+    if (v1 <= 0) {
+        return false;
+    }
+
+    frequency = random_between(1, v1);
+
+    for (index = 0; index < table->num_entries; index++) {
+        if (wmap_rnd_encounter_entry_check(&(table->entries[index]))) {
+            v2 = index;
+            if (frequency < table->entries[index].frequency) {
+                break;
+            }
+            frequency -= table->entries[index].frequency;
+        }
+    }
+
+    if (index >= table->num_entries) {
+        if (v2 == -1) {
+            return false;
+        }
+        index = v2;
+    }
+
+    table->entries[index].field_38++;
+
+    if (wmap_rnd_encounter_entry_total_monsters(&(table->entries[index])) == 0) {
+        tig_debug_println("WmapRnd: Total monsters is zero.");
+        return false;
+    }
+
+    sub_559260(&(table->entries[index]));
+
+    return true;
 }
 
 // 0x559150
-void sub_559150()
+bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int level;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    level = stat_level(pc_obj, STAT_LEVEL);
+    if (level < entry->min_level
+        || level > entry->max_level) {
+        return false;
+    }
+
+    if (entry->global_flag_num != -1 && !script_gl_flag_get(entry->global_flag_num)) {
+        return false;
+    }
+
+    if (entry->trigger_cnt > -1 && entry->trigger_cnt <= entry->field_38) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x5591B0
-void sub_5591B0()
+int wmap_rnd_encounter_total_frequency(WmapRndEncounterTable *table)
 {
-    // TODO: Incomplete.
+    int frequency = 0;
+    int index;
+
+    for (index = 0; index < table->num_entries; index++) {
+        if (wmap_rnd_encounter_entry_check(&(table->entries[index]))) {
+            frequency += table->entries[index].frequency;
+        }
+    }
+
+    return frequency;
 }
 
 // 0x559200
-void sub_559200()
+int wmap_rnd_encounter_entry_total_monsters(WmapRndEncounterTableEntry* entry)
 {
-    // TODO: Incomplete.
+    int monsters = 0;
+    int index;
+
+    for (index = 0; index < 5; index++) {
+        if (entry->field_18[index] == 0) {
+            break;
+        }
+
+        dword_64C74C[index] = entry->lower[index] == entry->upper[index]
+            ? entry->lower[index]
+            : random_between(entry->lower[index], entry->upper[index]);
+        monsters += dword_64C74C[index];
+    }
+
+    return monsters;
 }
 
 // 0x559260
-void sub_559260()
+void sub_559260(WmapRndEncounterTableEntry* entry)
 {
-    // TODO: Incomplete.
+    int index;
+    int k;
+    ObjectList objects;
+    ObjectNode* node;
+    int64_t obj;
+    int64_t origin;
+    int64_t loc;
+    int64_t dx;
+    int64_t dy;
+    int64_t pc_obj;
+    int rotation;
+    tig_art_id_t art_id;
+
+    if (random_between(1, 100) < 51) {
+        // TODO: Check.
+        origin = LOCATION_MAKE(qword_64C768 - 6, qword_64C770);
+        dword_64C778 = 6;
+    } else {
+        // TODO: Check.
+        origin = LOCATION_MAKE(qword_64C768, qword_64C770 - 6);
+        dword_64C778 = 2;
+    }
+
+    for (index = 0; index < 5; index++) {
+        if (entry->field_18[index] == 0) {
+            break;
+        }
+
+        for (k = 0; k < dword_64C74C[index]; k++) {
+            // TODO: Check.
+            dx = origin;
+            dy = origin;
+            sub_5594E0(k, &dx, &dy);
+            loc = LOCATION_MAKE(LOCATION_GET_X(origin) + dx, LOCATION_GET_Y(origin) + dy);
+            wmap_rnd_encounter_build_object(entry->field_18[index], loc, &obj);
+            if (sub_4D7110(loc, 0)) {
+                pc_obj = player_get_pc_obj();
+                if (!sub_4F4E40(pc_obj, 6, &loc) || sub_4D7110(loc, 0)) {
+                    sub_43CCA0(obj);
+                    obj = OBJ_HANDLE_NULL;
+                } else {
+                    sub_43E770(obj, loc, 0, 0);
+                }
+            }
+
+            sub_4407C0(loc, OBJ_TM_PC | OBJ_TM_NPC, &objects);
+            node = objects.head;
+            while (node != NULL) {
+                if (node->obj != obj) {
+                    sub_43CCA0(obj);
+                    obj = OBJ_HANDLE_NULL;
+                }
+                node = node->next;
+            }
+            object_list_destroy(&objects);
+
+            if (obj != OBJ_HANDLE_NULL) {
+                rotation = sub_4B8D50(loc, qword_64C760);
+                art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+                art_id = tig_art_id_rotation_set(art_id, rotation);
+                object_set_current_aid(obj, art_id);
+            }
+        }
+    }
 }
 
+// TODO: Check.
+//
 // 0x5594E0
-void sub_5594E0()
+void sub_5594E0(int a1, int64_t* dx_ptr, int64_t* dy_ptr)
 {
-    // TODO: Incomplete.
+    int v1;
+
+    if (a1 != 0) {
+        v1 = (a1 - 1) / 3 + 1;
+        *dx_ptr = LOCATION_MAKE(LOCATION_GET_X(*dx_ptr) + 1, LOCATION_GET_Y(*dx_ptr) + 1);
+
+        v1 = a1 / 3;
+        *dy_ptr = LOCATION_MAKE(LOCATION_GET_X(*dy_ptr) + v1, LOCATION_GET_Y(*dy_ptr) + v1);
+    } else {
+        *dy_ptr = LOCATION_MAKE(LOCATION_GET_X(*dy_ptr) + 1, LOCATION_GET_Y(*dy_ptr) + 1);
+    }
 }
 
 // 0x559550
