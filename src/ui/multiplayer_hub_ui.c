@@ -12,6 +12,21 @@
 #include "ui/server_list_ui.h"
 #include "ui/textedit_ui.h"
 
+typedef enum ChatEntryType {
+    CHAT_ENTRY_TYPE_INCOMING_MSG,
+    CHAT_ENTRY_TYPE_INCOMING_EMOTE,
+    CHAT_ENTRY_TYPE_SYSTEM_INFO,
+    CHAT_ENTRY_TYPE_BLANK,
+    CHAT_ENTRY_TYPE_OUTGOING_MSG,
+    CHAT_ENTRY_TYPE_OUTGOING_EMOTE,
+    CHAT_ENTRY_TYPE_INCOMING_WHISPER,
+    CHAT_ENTRY_TYPE_OUTGOING_WHISPER,
+    CHAT_ENTRY_TYPE_WHO_LIST,
+    CHAT_ENTRY_TYPE_JOIN,
+    CHAT_ENTRY_TYPE_LEAVE,
+    CHAT_ENTRY_TYPE_COUNT,
+} ChatEntryType;
+
 typedef struct S5CC5F8 {
     int num;
     int x;
@@ -20,12 +35,22 @@ typedef struct S5CC5F8 {
 
 static_assert(sizeof(S5CC5F8) == 0xC, "wrong size");
 
+typedef struct S684708 {
+    /* 0000 */ char* str;
+    /* 0004 */ int type;
+    /* 0008 */ char field_8[80];
+} S684708;
+
+static_assert(sizeof(S684708) == 0x58, "wrong size");
+
 static void sub_581F30();
 static void sub_581F80();
 static void sub_581F90(int a1);
 static void sub_581FB0(TextEdit* textedit);
 static void sub_581FC0(TextEdit* textedit);
 static void sub_582060(const char* str);
+static const char* sub_582440(const char* src, char* dst);
+static void sub_5824C0(const char** src);
 static bool sub_5826D0(const char* a1, int a2, const char* a3);
 static void sub_582790(TigRect* rect);
 static void sub_582860(TigRect* rect);
@@ -39,6 +64,7 @@ static void sub_582D60(TigRect* rect);
 static void sub_582E50(TigRect* rect);
 static void sub_582E80();
 static void sub_5830F0();
+static tig_font_handle_t sub_583140(int type);
 static void sub_5836A0();
 static void sub_5837A0(TigRect* rect);
 static void sub_583830(TigRect* rect);
@@ -88,6 +114,22 @@ static struct {
     { NULL, 1 },
     { NULL, 2 },
     { NULL, -1 },
+};
+
+// 0x5CBFA8
+static int dword_5CBFA8[] = {
+    3,
+    3,
+    1,
+    0,
+    0,
+    0,
+    5,
+    5,
+    2,
+    0,
+    0,
+    0,
 };
 
 // 0x5CBFD8
@@ -239,20 +281,8 @@ MainMenuButtonInfo stru_5CC6C8[20] = {
 // 0x684688
 static char byte_684688[128];
 
-// 0x68653C
-static char won_account[128];
-
-// 0x6865BC
-static char won_password[128];
-
-// 0x68663C
-static char won_password_confirmation[128];
-
-// 0x6866BC
-static char byte_6866BC[128];
-
-// 0x6862D8
-static mes_file_handle_t dword_6862D8;
+// 0x684708
+static S684708 stru_684708[78];
 
 // 0x6861D8
 static MesFileEntry stru_6861D8;
@@ -272,11 +302,17 @@ static char byte_686250[128];
 // 0x6862D0
 static ScrollbarId stru_6862D0;
 
+// 0x6862D8
+static mes_file_handle_t dword_6862D8;
+
 // 0x6862DC
-static void* dword_6862DC;
+static MatchmakerChatroom* dword_6862DC;
 
 // 0x6862E0
 static int dword_6862E0;
+
+// 0x6862E4
+static tig_font_handle_t dword_6862E4[CHAT_ENTRY_TYPE_COUNT];
 
 // 0x686310
 static MesFileEntry stru_686310;
@@ -304,6 +340,18 @@ static MesFileEntry stru_686530;
 
 // 0x686538
 static mes_file_handle_t dword_686538;
+
+// 0x68653C
+static char won_account[128];
+
+// 0x6865BC
+static char won_password[128];
+
+// 0x68663C
+static char won_password_confirmation[128];
+
+// 0x6866BC
+static char byte_6866BC[128];
 
 // 0x68673C
 static int dword_68673C;
@@ -487,9 +535,9 @@ bool multiplayer_hub_ui_execute_chat(int a1)
 
     if (!multiplayer_mm_chatroom_create(byte_686250, byte_684688)
         || !sub_5499B0(stru_6861D8.str)) {
-        mes_file_entry.num = 10064;
+        mes_file_entry.num = 10064; // "Cannot create chatroom."
         mes_get_msg(sub_549840(), &mes_file_entry);
-        sub_5826D0(NULL, 2, mes_file_entry.str);
+        sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
     }
 
     sub_5417A0(1);
@@ -501,7 +549,94 @@ bool multiplayer_hub_ui_execute_chat(int a1)
 // 0x581B10
 void multiplayer_hub_ui_refresh_chat(TigRect* rect)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    MesFileEntry mes_file_entry;
+    TigRect text_rect;
+    TigFont font_desc;
+    char str[256];
+    char* copy;
+    size_t pos;
+
+    sub_582790(rect);
+    sub_5829D0(rect);
+
+    if (rect == NULL
+        || (rect->x < stru_5CC028.x + stru_5CC028.width
+            && rect->y < stru_5CC028.y + stru_5CC028.height
+            && stru_5CC028.x < rect->x + rect->width
+            && stru_5CC028.y < rect->y + rect->height)) {
+        tig_art_interface_id_create(756, 0, 0, 0, &art_id);
+
+        src_rect.y = 0;
+        src_rect.x = 0;
+        src_rect.width = 286;
+        src_rect.height = 394;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &stru_5CC028;
+        tig_window_blit_art(sub_549820(), &art_blit_info);
+
+        mes_file_entry.num = 2401; // "Room Name"
+        mes_get_msg(sub_549840(), &mes_file_entry);
+
+        font_desc.width = 0;
+        font_desc.str = mes_file_entry.str;
+        sub_535390(&font_desc);
+        text_rect.x = (214 - font_desc.width) / 2 + 55;
+        text_rect.y = 247;
+        text_rect.width = font_desc.width;
+        text_rect.height = font_desc.height;
+        tig_window_text_write(sub_549820(), mes_file_entry.str, &text_rect);
+
+        if (sub_549520() == byte_686250) {
+            sprintf(str, "%s|", byte_686250);
+        } else {
+            strcpy(str, byte_686250);
+        }
+        font_desc.width = 0;
+        font_desc.str = str;
+        sub_535390(&font_desc);
+        text_rect.x = (183 - font_desc.width) / 2 + 69;
+        text_rect.y = 274;
+        text_rect.width = font_desc.width;
+        text_rect.height = font_desc.height;
+        tig_window_text_write(sub_549820(), str, &text_rect);
+
+        mes_file_entry.num = 2402; // "Password"
+        mes_get_msg(sub_549840(), &mes_file_entry);
+        font_desc.width = 0;
+        font_desc.str = mes_file_entry.str;
+        sub_535390(&font_desc);
+        text_rect.x = (214 - font_desc.width) / 2 + 55;
+        text_rect.y = 337;
+        text_rect.width = font_desc.width;
+        text_rect.height = font_desc.height;
+        tig_window_text_write(sub_549820(), mes_file_entry.str, &text_rect);
+
+        copy = STRDUP(byte_684688);
+        for (pos = 0; copy[pos] != '\0'; pos++) {
+            copy[pos] = '*';
+        }
+
+        if (sub_549520() == byte_684688) {
+            sprintf(str, "%s|", copy);
+        } else {
+            strcpy(str, copy);
+        }
+        font_desc.str = str;
+        font_desc.width = 0;
+        sub_535390(&font_desc);
+        text_rect.x = (183 - font_desc.width) / 2 + 69;
+        text_rect.y = 365;
+        text_rect.width = font_desc.width;
+        text_rect.height = font_desc.height;
+        tig_window_text_write(sub_549820(), font_desc.str, &text_rect);
+        FREE(copy);
+    }
 }
 
 // 0x581E60
@@ -576,7 +711,7 @@ void sub_581FC0(TextEdit* textedit)
     (void)textedit;
 
     if (byte_6861F8[0] == '\0') {
-        sub_5826D0(NULL, 3, NULL);
+        sub_5826D0(NULL, CHAT_ENTRY_TYPE_BLANK, NULL);
         sub_582AD0(NULL);
         textedit_ui_clear();
         return;
@@ -586,9 +721,9 @@ void sub_581FC0(TextEdit* textedit)
         if (byte_6861F8[0] == '/') {
             sub_582060(&(byte_6861F8[1]));
         } else {
-            mes_file_entry.num = 10053;
+            mes_file_entry.num = 10053; // "Unknown Command. Try /HELP."
             mes_get_msg(sub_549840(), &mes_file_entry);
-            sub_5826D0(NULL, 2, mes_file_entry.str);
+            sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
         }
     }
 
@@ -599,19 +734,117 @@ void sub_581FC0(TextEdit* textedit)
 // 0x582060
 void sub_582060(const char* str)
 {
-    // TODO: Incomplete.
+    char* copy;
+    const char* v1;
+    char v2[80];
+    char v3[80];
+    int index;
+    int cmd = -1;
+    MesFileEntry mes_file_entry;
+    MatchmakerChatroomMember* members;
+    int num_members;
+    int bit;
+    int room;
+
+    copy = STRDUP(str);
+    v1 = sub_582440(copy, v2);
+
+    for (index = 0; stru_5CBF88[index].str != NULL; index++) {
+        if (strnicmp(v2, stru_5CBF88[index].str, strlen(v2)) == 0) {
+            cmd = stru_5CBF88[index].cmd;
+            break;
+        }
+    }
+
+    switch (cmd) {
+    case 0:
+        while (isspace(*v1)) {
+            v1++;
+        }
+        if (isdigit(*v1)) {
+            room = atoi(v1);
+            if (room > 0 && room <= dword_6862E0) {
+                if (!multiplayer_mm_chatroom_join(&(dword_6862DC[room - 1]), 0)
+                    || !sub_5499B0(stru_6861D8.str)) {
+                    mes_file_entry.num = 10050; // "Could not join chatroom %d."
+                    mes_get_msg(sub_549840(), &mes_file_entry);
+                    snprintf(v2, sizeof(v2), mes_file_entry.str, room);
+                    sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, v2);
+                }
+            } else {
+                mes_file_entry.num = 10052; // "Unknown chatroom %s."
+                mes_get_msg(sub_549840(), &mes_file_entry);
+                snprintf(v2, sizeof(v2), mes_file_entry.str, v1);
+                sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, v2);
+            }
+        }
+        if (dword_6862DC != NULL) {
+            multiplayer_mm_chatroom_list_free(dword_6862DC);
+        }
+        if (!multiplayer_mm_chatroom_list_get(&dword_6862DC, &dword_6862E0)
+            && sub_5499B0(stru_6861D8.str)) {
+            dword_6862DC = NULL;
+        }
+        multiplayer_hub_ui_refresh_chat(NULL);
+        break;
+    case 1:
+        mes_file_entry.num = 10000; // "Arcanum and WON.net CHAT Help File"
+        while (mes_search(sub_549840(), &mes_file_entry)) {
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
+            mes_file_entry.num++;
+        }
+        break;
+    case 2:
+        if (multiplayer_mm_chatroom_members_get(&members, &num_members)) {
+            if (num_members > 0) {
+                for (index = 0; index < num_members; index++) {
+                    snprintf(v3, sizeof(v3), "%s ", members[index].name);
+                    for (bit = 0; bit < 32; bit++) {
+                        if ((members[index].flags & (1 << bit)) != 0) {
+                            mes_file_entry.num = 10200 + bit;
+                            mes_get_msg(sub_549840(), &mes_file_entry);
+                            strncat(v3, mes_file_entry.str, sizeof(v3));
+                        }
+                    }
+                    sub_5826D0(NULL, CHAT_ENTRY_TYPE_WHO_LIST, v3);
+                }
+            } else {
+                mes_file_entry.num = 10062; // "There is nobody in this chatroom? Odd, what about YOURSELF!"
+                mes_get_msg(sub_549840(), &mes_file_entry);
+                sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
+            }
+            multiplayer_mm_chatroom_members_free(members);
+        } else {
+            mes_file_entry.num = 10063; // "Could not get a list of people in the ChatRoom."
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            sub_5826D0(NULL, CHAT_ENTRY_TYPE_SYSTEM_INFO, mes_file_entry.str);
+        }
+        break;
+    }
 }
 
 // 0x582440
-void sub_582440()
+const char* sub_582440(const char* src, char* dst)
 {
-    // TODO: Incomplete.
+    sub_5824C0(&src);
+
+    while (*src != '\0' && !isspace(*src)) {
+        *dst++ = (char)(unsigned char)tolower(*src);
+        src++;
+    }
+
+    *dst = '\0';
+
+    return src;
 }
 
 // 0x5824C0
-void sub_5824C0()
+void sub_5824C0(const char** src)
 {
-    // TODO: Incomplete.
+    while (**src != '\0' && isspace(**src)) {
+        (*src)++;
+    }
 }
 
 // 0x582510
@@ -624,7 +857,7 @@ void sub_582510(const char* name)
     mes_get_msg(sub_549840(), &mes_file_entry);
 
     snprintf(str, sizeof(str), mes_file_entry.str, name);
-    sub_5826D0(NULL, 9, str);
+    sub_5826D0(NULL, CHAT_ENTRY_TYPE_JOIN, str);
     sub_582AD0(NULL);
 
     if (dword_6862DC != NULL) {
@@ -649,7 +882,7 @@ void sub_5825B0(const char* name)
     mes_get_msg(sub_549840(), &mes_file_entry);
 
     snprintf(str, sizeof(str), mes_file_entry.str, name);
-    sub_5826D0(NULL, 10, str);
+    sub_5826D0(NULL, CHAT_ENTRY_TYPE_LEAVE, str);
     sub_582AD0(NULL);
 
     if (dword_6862DC != NULL) {
@@ -667,21 +900,21 @@ void sub_5825B0(const char* name)
 // 0x582650
 void sub_582650(const char* a1, const char* a2)
 {
-    sub_5826D0(a1, 0, a2);
+    sub_5826D0(a1, CHAT_ENTRY_TYPE_INCOMING_MSG, a2);
     sub_582AD0(NULL);
 }
 
 // 0x582670
 void sub_582670(const char* a1, const char* a2)
 {
-    sub_5826D0(a1, 1, a2);
+    sub_5826D0(a1, CHAT_ENTRY_TYPE_INCOMING_EMOTE, a2);
     sub_582AD0(NULL);
 }
 
 // 0x582690
 void sub_582690(const char* a1, const char* a2)
 {
-    sub_5826D0(a1, 6, a2);
+    sub_5826D0(a1, CHAT_ENTRY_TYPE_INCOMING_WHISPER, a2);
     sub_582AD0(NULL);
 }
 
@@ -699,9 +932,37 @@ void sub_5826C0()
 }
 
 // 0x5826D0
-bool sub_5826D0(const char* a1, int a2, const char* a3)
+bool sub_5826D0(const char* a1, int type, const char* a3)
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (stru_684708[0].str != NULL) {
+        FREE(stru_684708[0].str);
+    }
+
+    for (index = 0; index < 77; index++) {
+        stru_684708[index] = stru_684708[index + 1];
+    }
+
+    stru_684708[77].type = type;
+
+    switch (type) {
+    case CHAT_ENTRY_TYPE_INCOMING_MSG:
+    case CHAT_ENTRY_TYPE_INCOMING_EMOTE:
+    case CHAT_ENTRY_TYPE_INCOMING_WHISPER:
+        strncpy(stru_684708[77].field_8, a3, 80);
+        stru_684708[77].str = STRDUP(a1);
+        break;
+    case CHAT_ENTRY_TYPE_SYSTEM_INFO:
+    case CHAT_ENTRY_TYPE_WHO_LIST:
+    case CHAT_ENTRY_TYPE_JOIN:
+    case CHAT_ENTRY_TYPE_LEAVE:
+        strncpy(stru_684708[77].field_8, a3, 80);
+        stru_684708[77].str = NULL;
+        break;
+    }
+
+    return true;
 }
 
 // 0x582790
@@ -739,7 +1000,43 @@ void sub_582790(TigRect* rect)
 // 0x582860
 void sub_582860(TigRect* rect)
 {
-    // TODO: Incomplete.
+    int index;
+    TigRect text_rect;
+    TigFont font_desc;
+    int y;
+    char str[128];
+
+    if (rect == NULL
+        || (rect->x < stru_5CBFD8.x + stru_5CBFD8.width
+            && rect->y < stru_5CBFD8.y + stru_5CBFD8.height
+            && stru_5CBFD8.x < rect->x + rect->width
+            && stru_5CBFD8.y < rect->y + rect->height)) {
+        sub_582790(&stru_5CBFD8);
+
+        if (dword_6862DC != NULL) {
+            y = 188;
+            for (index = 0; index < dword_6862E0; index++) {
+                tig_font_push(sub_549940(0, 0));
+                snprintf(str, sizeof(str),
+                    "#%d: %s (%d) %c%c",
+                    dword_6862DC[index].field_0 + 1,
+                    dword_6862DC[index].name,
+                    dword_6862DC[index].field_84,
+                    (dword_6862DC[index].flags & 2) != 0 ? 'I' : ' ',
+                    (dword_6862DC[index].flags & 1) != 0 ? '\x7F' : ' ');
+                font_desc.width = 0;
+                font_desc.str = str;
+                sub_535390(&font_desc);
+                text_rect.x = 37;
+                text_rect.y = y;
+                text_rect.width = font_desc.width;
+                text_rect.height = font_desc.height;
+                tig_window_text_write(sub_549820(), str, &text_rect);
+                tig_font_pop();
+                y += 16;
+            }
+        }
+    }
 }
 
 // 0x5829D0
@@ -777,7 +1074,97 @@ void sub_5829D0(TigRect* rect)
 // 0x582AD0
 void sub_582AD0(TigRect* rect)
 {
-    // TODO: Incomplete.
+    TigRect text_rect;
+    TigFont font_desc;
+    int index;
+    tig_font_handle_t font;
+    char str[216];
+
+    if (sub_5496D0() != 23) {
+        return;
+    }
+
+    if (rect == NULL
+        || rect->x < stru_5CBFE8.x + stru_5CBFE8.width
+        && rect->y < stru_5CBFE8.y + stru_5CBFE8.height
+        && stru_5CBFE8.x < rect->x + rect->width
+        && stru_5CBFE8.y < rect->y + rect->height) {
+        sub_582790(&stru_5CBFE8);
+
+        text_rect.x = 336;
+        text_rect.height = 15;
+
+        for (index = dword_5CBF80; index < dword_5CBF80 + 26; index++) {
+            switch (stru_684708[dword_5CBF80].type) {
+            case CHAT_ENTRY_TYPE_INCOMING_MSG:
+            case CHAT_ENTRY_TYPE_INCOMING_EMOTE:
+            case CHAT_ENTRY_TYPE_INCOMING_WHISPER:
+                if (!sub_582D10(stru_684708[dword_5CBF80].str)) {
+                    if (sub_582D20(stru_684708[dword_5CBF80].str, sub_582D50(sub_584A80()))) {
+                        switch (stru_684708[dword_5CBF80].type) {
+                        case 0:
+                            font = sub_583140(CHAT_ENTRY_TYPE_OUTGOING_MSG);
+                            break;
+                        case 1:
+                            font = sub_583140(CHAT_ENTRY_TYPE_OUTGOING_EMOTE);
+                            break;
+                        case 6:
+                            font = sub_583140(CHAT_ENTRY_TYPE_OUTGOING_WHISPER);
+                            break;
+                        default:
+                            // Should be unreachable.
+                            __assume(0);
+                        }
+                    } else {
+                        font = sub_583140(stru_684708[dword_5CBF80].type);
+                    }
+
+                    tig_font_push(font);
+                    switch (stru_684708[dword_5CBF80].type) {
+                    case 0:
+                        sprintf(str,
+                            "%s: %s",
+                            sub_582D40(stru_684708[dword_5CBF80].str),
+                            stru_684708[dword_5CBF80].field_8);
+                        break;
+                    case 1:
+                        sprintf(str,
+                            "* %s %s",
+                            sub_582D40(stru_684708[dword_5CBF80].str),
+                            stru_684708[dword_5CBF80].field_8);
+                        break;
+                    case 6:
+                        sprintf(str,
+                            "~%s~: %s",
+                            sub_582D40(stru_684708[dword_5CBF80].str),
+                            stru_684708[dword_5CBF80].field_8);
+                        break;
+                    }
+                    font_desc.str = str;
+                    font_desc.width = 0;
+                    sub_535390(&font_desc);
+                    text_rect.width = font_desc.width;
+                    text_rect.y = 15 * (index - dword_5CBF80) + 99;
+                    tig_window_text_write(sub_549820(), font_desc.str, &text_rect);
+                    tig_font_pop();
+                }
+                break;
+            case CHAT_ENTRY_TYPE_SYSTEM_INFO:
+            case CHAT_ENTRY_TYPE_WHO_LIST:
+            case CHAT_ENTRY_TYPE_JOIN:
+            case CHAT_ENTRY_TYPE_LEAVE:
+                tig_font_push(sub_583140(stru_684708[dword_5CBF80].type));
+                font_desc.str = stru_684708[dword_5CBF80].field_8;
+                font_desc.width = 0;
+                sub_535390(&font_desc);
+                text_rect.width = font_desc.width;
+                text_rect.y = 15 * (index - dword_5CBF80) + 99;
+                tig_window_text_write(sub_549820(), font_desc.str, &text_rect);
+                tig_font_pop();
+                break;
+            }
+        }
+    }
 }
 
 // 0x582D10
@@ -867,9 +1254,31 @@ void sub_5830F0()
 }
 
 // 0x583140
-void sub_583140()
+tig_font_handle_t sub_583140(int type)
 {
-    // TODO: Incomplete.
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+    int color;
+
+    if (dword_6862E4[type] == TIG_FONT_HANDLE_INVALID) {
+        if (mes_load("Rules\\ChatColors.mes", &mes_file)) {
+            mes_file_entry.num = 100 + type;
+            if (mes_search(mes_file, &mes_file_entry)) {
+                mes_get_msg(mes_file, &mes_file_entry);
+                color = atoi(mes_file_entry.str);
+                if (color >= 0 && color < MM_COLOR_COUNT) {
+                    dword_6862E4[type] = sub_549940(0, color);
+                }
+            }
+            mes_unload(mes_file);
+        }
+
+        if (dword_6862E4[type] == TIG_FONT_HANDLE_INVALID) {
+            dword_6862E4[type] = sub_549940(0, dword_5CBFA8[type]);
+        }
+    }
+
+    return dword_6862E4[type];
 }
 
 // 0x583200
@@ -1799,7 +2208,141 @@ void sub_584C30(TigRect* rect)
 // 0x584CB0
 void sub_584CB0(TigRect* rect)
 {
-    // TODO: Incomplete.
+    int index;
+    TigRect text_rect;
+    TigFont font_desc;
+    MesFileEntry mes_file_entry;
+    char* copy;
+    size_t pos;
+
+    if (sub_549820() == -1) {
+        return;
+    }
+
+    sub_584C30(rect);
+
+    tig_font_push(sub_549940(0, 0));
+    for (index = 0; index < 15; index++) {
+        if (stru_5CC5F8[index].num == -1) {
+            break;
+        }
+
+        text_rect.x = stru_5CC5F8[index].x;
+        text_rect.y = stru_5CC5F8[index].y;
+        text_rect.width = 204;
+        text_rect.height = 15;
+
+        if (rect == NULL
+            || (rect->x < text_rect.x + text_rect.width
+                && rect->y < text_rect.y + text_rect.height
+                && text_rect.x < rect->x + rect->width
+                && text_rect.y < rect->y + rect->height)) {
+            sub_584C30(&text_rect);
+
+            mes_file_entry.num = stru_5CC5F8[index].num;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            copy = STRDUP(mes_file_entry.str);
+
+            font_desc.width = 0;
+            font_desc.str = copy;
+            sub_535390(&font_desc);
+
+            while (font_desc.width > 204) {
+                pos = strlen(copy);
+                copy[pos - 1] = '\0';
+                font_desc.width = 0;
+                font_desc.str = copy;
+                sub_535390(&font_desc);
+                pos--;
+            }
+
+            text_rect.x = stru_5CC5F8[index].x + (204 - font_desc.width) / 2;
+            text_rect.y = stru_5CC5F8[index].y;
+            text_rect.width = font_desc.width;
+            text_rect.height = font_desc.height;
+            tig_window_text_write(sub_549820(), copy, &text_rect);
+            FREE(copy);
+        }
+    }
+    tig_font_pop();
+
+    tig_font_push(sub_549940(0, 1));
+    for (index = 0; index < 15; index++) {
+        text_rect.x = stru_5CC5F8[index].x;
+        text_rect.y = stru_5CC5F8[index].y + 27;
+        text_rect.width = 204;
+        text_rect.height = 15;
+
+        if (rect == NULL
+            || (rect->x < text_rect.x + text_rect.width
+                && rect->y < text_rect.y + text_rect.height
+                && text_rect.x < rect->x + rect->width
+                && text_rect.y < rect->y + rect->height)) {
+            sub_584C30(&text_rect);
+
+            mes_file_entry.num = stru_5CC5F8[index].num;
+            mes_get_msg(sub_549840(), &mes_file_entry);
+            copy = STRDUP(mes_file_entry.str);
+
+            font_desc.width = 0;
+            font_desc.str = copy;
+            sub_535390(&font_desc);
+
+            while (font_desc.width > 172) {
+                pos = strlen(copy);
+                copy[pos - 1] = '\0';
+                font_desc.width = 0;
+                font_desc.str = copy;
+                sub_535390(&font_desc);
+                pos--;
+            }
+
+            text_rect.x = stru_5CC5F8[index].x + (204 - font_desc.width) / 2;
+            text_rect.y = stru_5CC5F8[index].y + 27;
+            text_rect.width = font_desc.width;
+            text_rect.height = font_desc.height;
+            tig_window_text_write(sub_549820(), copy, &text_rect);
+            FREE(copy);
+        }
+    }
+    tig_font_pop();
+
+    text_rect.x = 530;
+    text_rect.y = 522;
+    text_rect.width = 163;
+    text_rect.height = 15;
+
+    if (rect == NULL
+        || (rect->x < text_rect.x + text_rect.width
+            && rect->y < text_rect.y + text_rect.height
+            && text_rect.x < rect->x + rect->width
+            && text_rect.y < rect->y + rect->height)) {
+        sub_584C30(&text_rect);
+        tig_font_push(sub_549940(0, 5));
+        font_desc.width = 0;
+        font_desc.str = byte_6868F8;
+        sub_535390(&font_desc);
+        text_rect.x = (163 - font_desc.width) / 2 + 530;
+        text_rect.y = 522;
+        text_rect.width = font_desc.width;
+        text_rect.height = font_desc.height;
+        tig_window_text_write(sub_549820(), font_desc.str, &text_rect);
+        tig_font_pop();
+    }
+
+    text_rect.x = 0;
+    text_rect.y = 0;
+    text_rect.width = 320;
+    text_rect.height = 180;
+
+    if (rect == NULL
+        || (rect->x < text_rect.x + text_rect.width
+            && rect->y < text_rect.y + text_rect.height
+            && text_rect.x < rect->x + rect->width
+            && text_rect.y < rect->y + rect->height)) {
+        sub_584C30(&text_rect);
+        sub_549960();
+    }
 }
 
 // 0x5850C0
