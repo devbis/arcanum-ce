@@ -380,6 +380,54 @@ int sub_41D390()
     return cnt;
 }
 
+// 0x41D510
+tig_art_id_t sub_41D510(tig_art_id_t aid)
+{
+    // TODO: Incomplete.
+}
+
+// 0x41DA40
+void sub_41DA40()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41DAE0
+void sub_41DAE0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41DFC0
+void sub_41DFC0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41E200
+void sub_41E200()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41E960
+void sub_41E960()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41F090
+void sub_41F090()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41F190
+void sub_41F190()
+{
+    // TODO: Incomplete.
+}
+
 // 0x41F240
 void sub_41F240()
 {
@@ -423,6 +471,96 @@ void sub_41F240()
             tig_window_blit_art(dword_739E48, &art_blit_spec);
         }
     }
+}
+
+// 0x41F3C0
+void sub_41F3C0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41F570
+void sub_41F570()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41F6C0
+void sub_41F6C0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41F840
+void sub_41F840()
+{
+    // TODO: Incomplete.
+}
+
+// 0x41F9F0
+void sub_41F9F0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4200C0
+void sub_4200C0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x420110
+void sub_420110()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4201C0
+void sub_4201C0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x420330
+void sub_420330()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4203B0
+void sub_4203B0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x420660
+void sub_420660()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4207D0
+void sub_4207D0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x420900
+void sub_420900()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4209C0
+void sub_4209C0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x420E30
+void sub_420E30()
+{
+    // TODO: Incomplete.
 }
 
 // 0x421AC0
