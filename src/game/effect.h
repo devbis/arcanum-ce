@@ -4,6 +4,20 @@
 #include "game/context.h"
 #include "game/obj.h"
 
+typedef enum EffectCause {
+    EFFECT_CAUSE_RACE,
+    EFFECT_CAUSE_BACKGROUND,
+    EFFECT_CAUSE_CLASS,
+    EFFECT_CAUSE_BLESS,
+    EFFECT_CAUSE_CURSE,
+    EFFECT_CAUSE_ITEM,
+    EFFECT_CAUSE_SPELL,
+    EFFECT_CAUSE_INJURY,
+    EFFECT_CAUSE_TECH,
+    EFFECT_CAUSE_GENDER,
+    EFFECT_CAUSE_COUNT,
+} EffectCause;
+
 extern const char* off_5B9CB4[];
 
 bool effect_init(GameInitInfo* init_info);

@@ -149,8 +149,11 @@ static const char* off_5B9C8C[] = {
     "xpgain",
 };
 
+// TODO: Figure out proper enum.
+static_assert(sizeof(off_5B9C8C) / sizeof(off_5B9C8C[0]) == EFFECT_SPECIAL_COUNT, "wrong size");
+
 // 0x5B9CB4
-const char* off_5B9CB4[] = {
+const char* off_5B9CB4[EFFECT_CAUSE_COUNT] = {
     "Race",
     "Background",
     "Class",
@@ -163,8 +166,7 @@ const char* off_5B9CB4[] = {
     "Gender",
 };
 
-// TODO: Figure out proper enum.
-static_assert(sizeof(off_5B9C8C) / sizeof(off_5B9C8C[0]) == EFFECT_SPECIAL_COUNT, "wrong size");
+static_assert(sizeof(off_5B9CB4) / sizeof(off_5B9CB4[0]) == EFFECT_CAUSE_COUNT, "wrong size");
 
 // 0x603ADC
 static bool effect_initialized;
@@ -653,9 +655,99 @@ int effect_adjust_stat_level(object_id_t obj, int stat, int value)
 }
 
 // 0x4EA6C0
-int sub_4EA6C0(int64_t obj, int id, int value, Effect* effect, bool a5)
+int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int index;
+    int effect;
+    int cause;
+    Effect* meta;
+    int change;
+    int adds = 0;
+    int mults = 1;
+    int divs = 1;
+    int min = -1;
+    int max = -1;
+    int percents = 0;
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return 0;
+    }
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+    if (cnt <= 0) {
+        return value;
+    }
+
+    for (index = 0; index < cnt; index++) {
+        effect = sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index);
+        if (a5) {
+            cause = sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index);
+            switch (cause) {
+            case EFFECT_CAUSE_RACE:
+            case EFFECT_CAUSE_BACKGROUND:
+            case EFFECT_CAUSE_CLASS:
+            case EFFECT_CAUSE_GENDER:
+                continue;
+            }
+        }
+
+        meta = &(tbl[effect]);
+        for (change = 0; change < meta->count; change++) {
+            if (meta->ids[change] == id) {
+                switch (meta->operators[change]) {
+                case EFFECT_OPERATOR_ADD:
+                    adds += meta->params[change];
+                    break;
+                case EFFECT_OPERATOR_MULTIPLY:
+                    mults *= meta->params[change];
+                    break;
+                case EFFECT_OPERATOR_DIVIDE:
+                    divs *= meta->params[change];
+                    break;
+                case EFFECT_OPERATOR_MIN:
+                    if (min == -1 || min < meta->params[change]) {
+                        min = meta->params[change];
+                    }
+                    break;
+                case EFFECT_OPERATOR_MAX:
+                    if (max == -1 || max > meta->params[change]) {
+                        max = meta->params[change];
+                    }
+                    break;
+                case EFFECT_OPERATOR_PERCENT:
+                    percents += meta->params[change];
+                    break;
+                }
+            }
+        }
+    }
+
+    if (percents != 0) {
+        value = value * (percents + 100) / 100;
+    }
+
+    if (mults != 1) {
+        value *= mults;
+    }
+
+    if (divs != 1) {
+        value /= divs;
+    }
+
+    if (adds != 0) {
+        value += adds;
+    }
+
+    if (min != -1 && value < min) {
+        value = min;
+    }
+
+    if (max != -1 && value > max) {
+        value = max;
+    }
+
+    return value;
 }
 
 // 0x4EA930
