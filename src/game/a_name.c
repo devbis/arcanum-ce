@@ -27,6 +27,7 @@ static bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr);
 static bool count_tile_names();
 static bool load_tile_names();
 static bool load_tile_edges();
+static bool sub_4EB770(char* name, int* a2, int* a3);
 static bool sub_4EB7D0(const char* name, int* index_ptr);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
@@ -523,6 +524,28 @@ bool load_tile_edges()
     // TODO: Incomplete.
 
     return false;
+}
+
+// 0x4EB770
+bool sub_4EB770(char* name, int* a2, int* a3)
+{
+    char ch;
+    bool v1;
+
+    if (strlen(name) != 6) {
+        return false;
+    }
+
+    ch = name[3];
+    name[3] = '\0';
+    v1 = sub_4EB7D0(name, a2);
+    name[3] = ch;
+
+    if (!v1) {
+        return false;
+    }
+
+    return sub_4EB7D0(name + 3, a3);
 }
 
 // 0x4EB7D0
