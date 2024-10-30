@@ -29,7 +29,8 @@ static bool load_tile_names();
 static bool load_tile_edges();
 static bool sub_4EB770(char* name, int* a2, int* a3);
 static bool sub_4EB7D0(const char* name, int* index_ptr);
-static bool sub_4EB860(int a1, int a2, int a3, int* a4);
+static bool sub_4EB860(int a1, int a2, int* a3, int* a4);
+static bool sub_4EB8D0(int* a1, int a2, int a3, int* a4);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static int sub_4EC160();
@@ -572,7 +573,7 @@ bool sub_4EB7D0(const char* name, int* index_ptr)
 }
 
 // 0x4EB860
-bool sub_4EB860(int a1, int a2, int a3, int* a4)
+bool sub_4EB860(int a1, int a2, int* a3, int* a4)
 {
     bool rc;
     int* v1;
@@ -589,6 +590,43 @@ bool sub_4EB860(int a1, int a2, int a3, int* a4)
     FREE(v1);
 
     return rc;
+}
+
+// 0x4EB8D0
+bool sub_4EB8D0(int* a1, int a2, int a3, int* a4)
+{
+    int cnt;
+    int index;
+    int offset;
+    int v1;
+
+    cnt = num_outdoor_non_flippable_names + num_outdoor_flippable_names;
+
+    offset = 0;
+    for (index = 0; index < cnt; index++) {
+        if (a4[offset + a1[a2]]) {
+            for (v1 = 0; v1 <= a2; v1++) {
+                if (index == a1[v1]) {
+                    break;
+                }
+            }
+
+            if (v1 > a2) {
+                a1[a2 + 1] = index;
+                if (index == a3) {
+                    return true;
+                }
+
+                if (sub_4EB8D0(a1, a2 + 1, a3, a4)) {
+                    return true;
+                }
+            }
+        }
+
+        offset += cnt;
+    }
+
+    return false;
 }
 
 // 0x4EB970
