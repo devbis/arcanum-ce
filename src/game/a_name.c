@@ -34,6 +34,7 @@ static bool sub_4EB8D0(int* a1, int a2, int a3, int* a4);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static uint8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6);
+static int sub_4EBEF0(int a1, int a2, int a3, int a4, int a5, int a6);
 static int sub_4EC160();
 static bool build_facade_file_name(int num, char* fname);
 static bool sub_4EC4B0();
@@ -845,6 +846,44 @@ uint8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6)
     }
 
     return index;
+}
+
+// 0x4EBEF0
+int sub_4EBEF0(int a1, int a2, int a3, int a4, int a5, int a6)
+{
+    if (!dword_603AE4) {
+        return 1;
+    }
+
+    if (a1 == a2 && a5 == a6) {
+        if (a4) {
+            if (a5) {
+                return dword_687660[0][a3 * num_outdoor_flippable_names + a1];
+            } else {
+                return dword_687660[1][a3 * num_outdoor_non_flippable_names + a1];
+            }
+        } else {
+            if (a5) {
+                return dword_687660[2][a3 * num_indoor_flippable_names + a1];
+            } else {
+                return dword_687660[3][a3 * num_indoor_non_flippable_names + a1];
+            }
+        }
+    } else {
+        if (a5) {
+            if (a6) {
+                return dword_687660[4][num_outdoor_flippable_names * (a2 + a3 * num_outdoor_flippable_names) + a1];
+            } else {
+                return dword_687660[6][num_outdoor_flippable_names * (a2 + a3 * num_outdoor_non_flippable_names) + a1];
+            }
+        } else {
+            if (a6) {
+                return dword_687660[6][num_outdoor_flippable_names * (a1 + a3 * num_outdoor_non_flippable_names) + a2];
+            } else {
+                return dword_687660[5][num_outdoor_flippable_names * (a2 + a3 * num_outdoor_flippable_names) + a1];
+            }
+        }
+    }
 }
 
 // 0x4EC160
