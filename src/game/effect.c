@@ -1,5 +1,6 @@
 #include "game/effect.h"
 
+#include "game/critter.h"
 #include "game/mes.h"
 #include "game/skill.h"
 #include "game/stat.h"
@@ -42,6 +43,7 @@ typedef struct Effect {
 static_assert(sizeof(Effect) == 0x58, "wrong size");
 
 static void effect_parse(int num, char* text);
+static void sub_4EA520(int64_t obj, int start);
 static int sub_4EA6C0(int64_t obj, int id, int value, Effect* effect, bool a5);
 
 // 0x5B9BA8
@@ -115,8 +117,7 @@ static const char* off_5B9C58[] = {
     "resistmagic",
 };
 
-// TODO: Figure out proper enum.
-static_assert(sizeof(off_5B9C58) / sizeof(off_5B9C58[0]) == 0, "wrong size");
+static_assert(sizeof(off_5B9C58) / sizeof(off_5B9C58[0]) == DAMAGE_TYPE_COUNT, "wrong size");
 
 // 0x5B9C6C
 static const char* off_5B9C6C[] = {
@@ -383,6 +384,12 @@ void sub_4EA100(int64_t obj, int effect)
     // TODO: Incomplete.
 }
 
+// 0x4EA200
+void sub_4EA200(int64_t obj, int effect)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4EA2E0
 bool sub_4EA2E0(int64_t obj, int effect_id)
 {
@@ -407,6 +414,53 @@ int sub_4EA4A0(object_id_t obj, int effect_id)
     }
 
     return effect_count;
+}
+
+// 0x4EA520
+void sub_4EA520(int64_t obj, int start)
+{
+    int strength;
+    int encumbrance;
+    int v1;
+    int v2;
+    int end;
+    int data;
+    int diff;
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
+    }
+
+    strength = stat_level(obj, STAT_STRENGTH);
+    encumbrance = sub_45F790(obj);
+    v1 = sub_43D5A0(obj);
+    v2 = sub_45D670(obj);
+
+    end = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX) - 1;
+    while (start < end) {
+        data = sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, start + 1);
+        sub_4074E0(obj, OBJ_F_CRITTER_EFFECTS_IDX, start, data);
+
+        data = sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start + 1);
+        sub_4074E0(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start, data);
+    }
+
+    obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, end);
+    obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, end);
+
+    if (strength != stat_level(obj, STAT_STRENGTH)) {
+        sub_45F820(obj, encumbrance);
+    }
+
+    diff = sub_43D5A0(obj) - v1;
+    if (diff != 0) {
+        object_set_hp_damage(obj, object_get_hp_damage(obj) + diff);
+    }
+
+    diff = sub_45D670(obj) - v2;
+    if (diff != 0) {
+        critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
+    }
 }
 
 // 0x4EA690
