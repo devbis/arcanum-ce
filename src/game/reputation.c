@@ -128,7 +128,6 @@ bool sub_4C1730(const char* path, int start, int end)
     int reputation;
     char str[MAX_STRING];
     char* tok;
-    int faction;
     int effect;
     bool err;
 
