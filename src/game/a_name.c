@@ -632,11 +632,38 @@ bool sub_4EB8D0(int* a1, int a2, int a3, int* a4)
 // 0x4EB970
 tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b)
 {
-    // TODO: Incomplete.
-    (void)a;
-    (void)b;
+    int v1;
+    int v2;
+    int v3;
+    tig_art_id_t art_id;
 
-    return TIG_ART_ID_INVALID;
+    if (!tig_art_tile_id_type_get(a)) {
+        return a;
+    }
+
+    if (!tig_art_tile_id_type_get(b)) {
+        return b;
+    }
+
+    v1 = tig_art_tile_id_num1_get(a);
+    if (!tig_art_tile_id_flippable1_get(a)) {
+        v1 += num_outdoor_flippable_names;
+    }
+
+    v2 = tig_art_tile_id_num1_get(b);
+    if (!tig_art_tile_id_flippable1_get(b)) {
+        v2 += num_outdoor_flippable_names;
+    }
+
+    v3 = dword_603AF8[v2 + v1 * (num_outdoor_flippable_names + num_outdoor_non_flippable_names)];
+    if (v3 < num_outdoor_flippable_names) {
+        tig_art_tile_id_create(v3, v3, 15, 0, 1, 1, 1, 0, &art_id);
+    } else {
+        v3 -= num_outdoor_flippable_names;
+        tig_art_tile_id_create(v3, v3, 15, 0, 1, 0, 0, 0, &art_id);
+    }
+
+    return art_id;
 }
 
 // 0x4EBA30
