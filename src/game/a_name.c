@@ -1623,6 +1623,102 @@ bool build_wall_file_name(const char* name, int piece, int damage, int variation
     return true;
 }
 
+// 0x4ED070
+tig_art_id_t sub_4ED070(tig_art_id_t art_id, unsigned int flags)
+{
+    int p_piece;
+    unsigned int damage;
+    int rotation;
+    unsigned int new_damage;
+
+    if (tig_art_type(art_id) != TIG_ART_TYPE_WALL) {
+        return art_id;
+    }
+
+    p_piece = tig_art_wall_id_p_piece_get(art_id);
+    damage = tig_art_id_damaged_get(art_id);
+    damage |= flags;
+    art_id = tig_art_id_damaged_set(art_id, damage);
+    rotation = tig_art_id_rotation_get(art_id);
+
+    switch (rotation) {
+    case 2:
+    case 3:
+    case 6:
+    case 7:
+        new_damage = 0;
+        if ((damage & 0x400) != 0) {
+            new_damage |= 0x80;
+        }
+        if ((damage & 0x80) != 0) {
+            new_damage |= 0x400;
+        }
+        damage = new_damage;
+        break;
+    }
+
+    switch (p_piece) {
+    case 0:
+        if (damage == (0x400 | 0x80)) {
+            return TIG_ART_ID_INVALID;
+        }
+        return art_id;
+    case 7:
+    case 9:
+    case 12:
+    case 16:
+    case 21:
+    case 24:
+    case 28:
+    case 34:
+    case 37:
+    case 41:
+        if ((damage & 0x80) != 0) {
+            return TIG_ART_ID_INVALID;
+        }
+        return art_id;
+    case 8:
+    case 11:
+    case 15:
+    case 20:
+    case 23:
+    case 27:
+    case 33:
+    case 36:
+    case 40:
+    case 45:
+        if ((damage & 0x400) != 0) {
+            return TIG_ART_ID_INVALID;
+        }
+        return art_id;
+    case 10:
+    case 13:
+    case 14:
+    case 17:
+    case 18:
+    case 19:
+    case 22:
+    case 25:
+    case 26:
+    case 29:
+    case 30:
+    case 31:
+    case 32:
+    case 35:
+    case 38:
+    case 39:
+    case 42:
+    case 43:
+    case 44:
+        if (damage != 0) {
+            return TIG_ART_ID_INVALID;
+        }
+        return art_id;
+    default:
+        return art_id;
+    }
+}
+
 // 0x4ED030
 int sub_4ED030(const char* str)
 {
