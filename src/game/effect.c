@@ -1,5 +1,6 @@
 #include "game/effect.h"
 
+#include "game/anim.h"
 #include "game/critter.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
@@ -382,7 +383,38 @@ void sub_4E9F70(int64_t obj, int effect, int type)
 // 0x4EA100
 void sub_4EA100(int64_t obj, int effect)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int index;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet86 pkt;
+
+            pkt.type = 86;
+            pkt.subtype = 1;
+            pkt.oid = sub_407EF0(obj);
+            pkt.field_20 = effect;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        } else {
+            if (!sub_4A2BA0()) {
+                return;
+            }
+        }
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
+    }
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
+    for (index = 0; index < cnt; index++) {
+        if (sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
+            sub_4EA520(obj, index);
+            break;
+        }
+    }
+
+    sub_436FA0(obj);
 }
 
 // 0x4EA200
