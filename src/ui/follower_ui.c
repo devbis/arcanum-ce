@@ -555,7 +555,65 @@ void sub_56B620()
 // 0x56B6F0
 void sub_56B6F0()
 {
-    // TODO: Incomplete.
+    int index;
+    int64_t pc_obj;
+    ObjectList followers;
+    ObjectNode* node;
+
+    if (!follower_ui_initialized) {
+        return;
+    }
+
+    for (index = 0; index < 9; index++) {
+        tig_window_hide(dword_67BB60[index]);
+    }
+
+    dword_67BC58 = 0;
+    pc_obj = player_get_pc_obj();
+    object_get_followers(pc_obj, &followers);
+    node = followers.head;
+    while (node != NULL) {
+        dword_67BC58++;
+        node = node->next;
+    }
+
+    if (dword_67BC58 > dword_67BC14) {
+        dword_67BC14 = dword_67BC58 + 10;
+        dword_67BC08 = (FollowerInfo*)REALLOC(dword_67BC08, sizeof(*dword_67BC08) * dword_67BC14);
+    }
+
+    node = followers.head;
+    while (node != NULL) {
+        sub_4440E0(dword_67BC08[index].obj, &(dword_67BC08[index]));
+        node = node->next;
+    }
+
+    object_list_destroy(&followers);
+
+    if (dword_67BC60) {
+        for (index = 0; index < 6; index++) {
+            if (index >= dword_67BC58) {
+                break;
+            }
+
+            tig_window_show(dword_67BB60[index]);
+        }
+    }
+
+    if (dword_67BC58 > 6) {
+        if (dword_67BC10 > dword_67BC58 - 6) {
+            dword_67BC10 = dword_67BC58 - 6;
+        }
+    } else {
+        dword_67BC10 = 0;
+    }
+
+    sub_56B850();
+    sub_56B880();
+
+    if (!dword_67BC64) {
+        sub_56B290();
+    }
 }
 
 // 0x56B850
