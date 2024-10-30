@@ -25,7 +25,7 @@ typedef struct GeneratorInfo {
 static void sub_4BA500(int64_t obj, GeneratorInfo* info);
 static int sub_4BA590(int index);
 static void sub_4BA620(GeneratorInfo* info);
-static int sub_4BA6D0(int index, int value);
+static void sub_4BA6D0(int index, int value);
 static bool sub_4BA720(int64_t obj);
 static int sub_4BA910(GeneratorInfo* generator_info, int cnt);
 
@@ -153,14 +153,16 @@ void sub_4BA620(GeneratorInfo* info)
 }
 
 // 0x4BA6D0
-int sub_4BA6D0(int index, int value)
+void sub_4BA6D0(int index, int value)
 {
     if (index < 0 || index >= 256) {
-        return sub_4BA590(index);
+        sub_4BA590(index);
+        return;
     }
 
     if (value < 0 || value >= 32) {
-        return sub_4BA590(index);
+        sub_4BA590(index);
+        return;
     }
 
     off_5FC350[index] &= ~0x1F;
