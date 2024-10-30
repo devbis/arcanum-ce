@@ -551,9 +551,21 @@ bool sub_4EB770(char* name, int* a2, int* a3)
 // 0x4EB7D0
 bool sub_4EB7D0(const char* name, int* index_ptr)
 {
-    // TODO: Incomplete.
-    (void)name;
-    (void)index_ptr;
+    int index = 0;
+
+    for (index = 0; index < num_outdoor_flippable_names; index++) {
+        if (strcmpi(outdoor_flippable_tile_names[index], name) == 0) {
+            *index_ptr = index;
+            return true;
+        }
+    }
+
+    for (index = 0; index < num_outdoor_non_flippable_names; index++) {
+        if (strcmpi(outdoor_non_flippable_tile_names[index], name) == 0) {
+            *index_ptr = num_outdoor_flippable_names + index;
+            return true;
+        }
+    }
 
     return false;
 }
