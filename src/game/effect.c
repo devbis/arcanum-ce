@@ -543,6 +543,42 @@ void sub_4EA2E0(int64_t obj, int cause)
     }
 }
 
+// 0x4EA3C0
+void sub_4EA3C0(int64_t obj, int cause)
+{
+    int cnt;
+    int index;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet86 pkt;
+
+            pkt.type = 86;
+            pkt.subtype = 4;
+            pkt.oid = sub_407EF0(obj);
+            pkt.field_20 = cause;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        } else {
+            if (!sub_4A2BA0()) {
+                return;
+            }
+        }
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
+    }
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
+    for (index = 0; index < cnt; index++) {
+        if (sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
+            sub_4EA520(obj, index);
+            index--;
+            cnt--;
+        }
+    }
+}
+
 // 0x4EA4A0
 int sub_4EA4A0(object_id_t obj, int effect_id)
 {

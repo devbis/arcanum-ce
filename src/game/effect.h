@@ -14,6 +14,7 @@ void sub_4E9F70(int64_t obj, int effect, int cause);
 void sub_4EA100(int64_t obj, int effect);
 void sub_4EA200(int64_t obj, int effect);
 void sub_4EA2E0(int64_t obj, int cause);
+void sub_4EA3C0(int64_t obj, int cause);
 int sub_4EA4A0(object_id_t obj, int effect_id);
 int effect_adjust_stat_level(object_id_t obj, int stat, int value);
 int sub_4EA930(object_id_t obj, int stat, int value);
