@@ -375,9 +375,64 @@ static void effect_parse(int num, char* text)
 }
 
 // 0x4E9F70
-void sub_4E9F70(int64_t obj, int effect, int type)
+void sub_4E9F70(int64_t obj, int effect, int cause)
 {
-    // TODO: Incomplete.
+    int strength;
+    int encumbrance;
+    int v1;
+    int v2;
+    int diff;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet86 pkt;
+
+            pkt.type = 86;
+            pkt.subtype = 0;
+            pkt.oid = sub_407EF0(obj);
+            pkt.field_20 = effect;
+            pkt.field_24 = cause;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        } else {
+            if (!sub_4A2BA0()) {
+                return;
+            }
+        }
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
+    }
+
+    strength = stat_level(obj, STAT_STRENGTH);
+    encumbrance = sub_45F790(obj);
+    v1 = sub_43D5A0(obj);
+    v2 = sub_45D670(obj);
+
+    sub_4074E0(obj,
+        OBJ_F_CRITTER_EFFECTS_IDX,
+        obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX),
+        effect);
+    sub_4074E0(obj,
+        OBJ_F_CRITTER_EFFECT_CAUSE_IDX,
+        obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX),
+        cause);
+
+    if (strength != stat_level(obj, STAT_STRENGTH)) {
+        sub_45F820(obj, encumbrance);
+    }
+
+    diff = sub_43D5A0(obj) - v1;
+    if (diff != 0) {
+        object_set_hp_damage(obj, object_get_hp_damage(obj) + diff);
+    }
+
+    diff = sub_45D670(obj) - v2;
+    if (diff != 0) {
+        critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
+    }
+
+    sub_436FA0(obj);
 }
 
 // 0x4EA100
