@@ -1471,6 +1471,74 @@ void init_wall_structures()
     } while (mes_find_next(wall_structure_mes_file, &mes_file_entry) && mes_file_entry.num < 1000);
 }
 
+// 0x4ECEB0
+bool sub_4ECEB0(tig_art_id_t art_id, char* path)
+{
+    int num;
+    int rotation;
+    int p_piece;
+    int damage;
+    int variation;
+    int new_damage;
+    int v1;
+
+    if (tig_art_type(art_id) != TIG_ART_TYPE_WALL) {
+        return false;
+    }
+
+    num = tig_art_wall_id_num_get(art_id);
+    rotation = tig_art_id_rotation_get(art_id);
+    p_piece = tig_art_wall_id_p_piece_get(art_id);
+    damage = tig_art_id_damaged_get(art_id);
+    variation = tig_art_wall_id_variation_get(art_id);
+
+    switch (rotation) {
+    case 2:
+    case 3:
+    case 6:
+    case 7:
+        new_damage = 0;
+        if ((damage & 0x400) != 0) {
+            new_damage |= 0x80;
+        }
+        if ((damage & 0x80) != 0) {
+            new_damage |= 0x400;
+        }
+        damage = new_damage;
+        break;
+    }
+
+    if ((damage & 0x400) != 0) {
+        new_damage = 0x400;
+        if (p_piece == 7) {
+            p_piece = 0;
+        }
+    } else if ((damage & 0x80) != 0) {
+        new_damage = 0x80;
+        if (p_piece == 8) {
+            p_piece = 0;
+        }
+    } else {
+        new_damage = 0;
+    }
+
+    if (num >= num_wall_structures) {
+        return false;
+    }
+
+    if (rotation / 2 == 0 || rotation / 2 == 3) {
+        v1 = wall_structures[num].field_4;
+    } else {
+        v1 = wall_structures[num].field_C;
+    }
+
+    if (v1 >= num_wall_file_names) {
+        return false;
+    }
+
+    return build_wall_file_name(wall_file_names[v1], p_piece, new_damage, variation, path);
+}
+
 // 0x4ECFC0
 bool build_wall_file_name(const char* name, int piece, int damage, int variation, char* fname)
 {
