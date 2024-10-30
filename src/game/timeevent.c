@@ -1588,7 +1588,7 @@ void timeevent_save_nodes_to_map(const char* name)
         }
     }
 
-    for (time_type = 0; time_type = TIME_TYPE_COUNT; time_type++) {
+    for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
         node_ptr = &(dword_5E7638[time_type]);
         while (*node_ptr != NULL) {
             node = *node_ptr;
@@ -1809,7 +1809,7 @@ void timeevent_break_nodes_to_map(const char* name)
         }
     }
 
-    for (time_type = 0; time_type = TIME_TYPE_COUNT; time_type++) {
+    for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
         node_ptr = &(dword_5E7638[time_type]);
         while (*node_ptr != NULL) {
             node = *node_ptr;
