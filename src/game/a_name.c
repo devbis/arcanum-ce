@@ -29,8 +29,8 @@ static bool load_tile_names();
 static bool load_tile_edges();
 static bool sub_4EB770(char* name, int* a2, int* a3);
 static bool sub_4EB7D0(const char* name, int* index_ptr);
-static bool sub_4EB860(int a1, int a2, int* a3, int* a4);
-static bool sub_4EB8D0(int* a1, int a2, int a3, int* a4);
+static bool sub_4EB860(int a1, int a2, bool* a3, int* a4);
+static bool sub_4EB8D0(int* a1, int a2, int a3, bool* a4);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static uint8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6);
@@ -527,9 +527,51 @@ bool load_tile_names()
 // 0x4EB5E0
 bool load_tile_edges()
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    bool* v1;
+    int cnt;
+    int v2;
+    int v3;
+    int v4;
 
-    return false;
+    mes_file_entry.num = 400;
+    if (!mes_search(tilename_mes_file, &mes_file_entry)) {
+        return false;
+    }
+
+    cnt = num_outdoor_non_flippable_names + num_outdoor_flippable_names;
+    v1 = (bool*)MALLOC(sizeof(*v1) * cnt * cnt);
+
+    for (v2 = 0; v2 < cnt; v2++) {
+        for (v3 = 0; v3 < cnt; v3++) {
+            v1[cnt * v2 + v3] = false;
+        }
+    }
+
+    do {
+        if (!sub_4EB770(mes_file_entry.str, &v2, &v3)) {
+            FREE(v1);
+            return false;
+        }
+
+        v1[cnt * v3 + v2] = true;
+        v1[cnt * v2 + v3] = true;
+    } while (mes_find_next(tilename_mes_file, &mes_file_entry));
+
+    dword_603AF8 = MALLOC(sizeof(*dword_603AF8) * cnt * cnt);
+
+    for (v2 = 0; v2 < cnt; v2++) {
+        for (v3 = 0; v3 < cnt; v3++) {
+            if (!sub_4EB860(v2, v3, v1, &v4)) {
+                FREE(v1);
+                return false;
+            }
+        }
+    }
+
+    FREE(v1);
+
+    return true;
 }
 
 // 0x4EB770
@@ -577,7 +619,7 @@ bool sub_4EB7D0(const char* name, int* index_ptr)
 }
 
 // 0x4EB860
-bool sub_4EB860(int a1, int a2, int* a3, int* a4)
+bool sub_4EB860(int a1, int a2, bool* a3, int* a4)
 {
     bool rc;
     int* v1;
@@ -597,7 +639,7 @@ bool sub_4EB860(int a1, int a2, int* a3, int* a4)
 }
 
 // 0x4EB8D0
-bool sub_4EB8D0(int* a1, int a2, int a3, int* a4)
+bool sub_4EB8D0(int* a1, int a2, int a3, bool* a4)
 {
     int cnt;
     int index;
