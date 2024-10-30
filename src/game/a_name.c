@@ -33,6 +33,7 @@ static bool sub_4EB860(int a1, int a2, int* a3, int* a4);
 static bool sub_4EB8D0(int* a1, int a2, int a3, int* a4);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
+static uint8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6);
 static int sub_4EC160();
 static bool build_facade_file_name(int num, char* fname);
 static bool sub_4EC4B0();
@@ -828,6 +829,22 @@ void sub_4EBC40()
     }
 
     dword_603AE4 = true;
+}
+
+// 0x4EBE90
+uint8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6)
+{
+    int index;
+    tig_art_id_t art_id;
+
+    for (index = 8; index > 0; index--) {
+        if (tig_art_tile_id_create(a1, a2, a3, index - 1, a4, a5, a6, 0, &art_id) == TIG_OK
+            && tig_art_exists(art_id) == TIG_OK) {
+            break;
+        }
+    }
+
+    return index;
 }
 
 // 0x4EC160
