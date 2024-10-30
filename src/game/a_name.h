@@ -1,7 +1,7 @@
 #ifndef ARCANUM_GAME_A_NAME_H_
 #define ARCANUM_GAME_A_NAME_H_
 
-#include <tig/tig.h>
+#include "game/obj.h"
 
 bool a_name_tile_init();
 void a_name_tile_exit();
@@ -23,6 +23,7 @@ bool a_name_facade_aid_to_fname(tig_art_id_t aid, char* fname);
 bool a_name_portal_init();
 void a_name_portal_exit();
 bool a_name_portal_aid_to_fname(tig_art_id_t aid, char* fname);
+tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid);
 tig_art_id_t sub_4EC830(tig_art_id_t aid);
 bool a_name_wall_init();
 void a_name_wall_exit();

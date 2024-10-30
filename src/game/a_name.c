@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game/mes.h"
+#include "game/obj_private.h"
 
 #define WS_NOWINDOWS 0x01
 #define WS_NODOORS 0x02
@@ -1204,6 +1205,92 @@ bool a_name_portal_aid_to_fname(tig_art_id_t aid, char* fname)
     }
 
     return true;
+}
+
+// 0x4EC670
+tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
+{
+    int p_piece;
+    bool v1;
+    WallStructure wallstructure;
+    char path[TIG_MAX_PATH];
+    char* fname;
+    int portal_num;
+    MesFileEntry mes_file_entry;
+    int rotation;
+    int palette;
+    tig_art_id_t portal_art_id;
+
+    p_piece = tig_art_wall_id_p_piece_get(art_id);
+
+    switch (p_piece) {
+    case 22:
+    case 25:
+    case 26:
+    case 29:
+    case 30:
+    case 31:
+    case 32:
+        v1 = true;
+        break;
+    case 10:
+    case 13:
+    case 14:
+    case 17:
+    case 18:
+    case 19:
+        v1 = false;
+        break;
+    default:
+        return TIG_ART_ID_INVALID;
+    }
+
+    sub_4ED180(tig_art_wall_id_num_get(art_id), &wallstructure);
+
+    if ((wallstructure.flags & 0x2) != 0 && v1) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    if ((wallstructure.flags & 0x1) != 0 && !v1) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    oid->type = OID_TYPE_NULL;
+
+    if (!sub_4ECEB0(art_id, path)) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    fname = &(path[strlen(path) - 12]);
+
+    if (v1) {
+        fname[3] = 'E';
+    } else {
+        fname[3] = 'F';
+    }
+
+    fname[6] = 'U';
+
+    portal_num = sub_4EC940(fname);
+    if (portal_num == -1) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    mes_file_entry.num = portal_num;
+    mes_get_msg(portal_mes_file, &mes_file_entry);
+
+    // See 0x4EC5A0 how string is split into two chunks.
+    *oid = sub_4E6540(atoi(mes_file_entry.str + strlen(mes_file_entry.str) + 1));
+
+    rotation = tig_art_id_rotation_get(art_id);
+    palette = tig_art_id_palette_get(art_id);
+    if (!v1) {
+        portal_num -= 1001;
+    }
+
+    tig_art_portal_id_create(portal_num, v1, 0, 0, rotation, palette, &portal_art_id);
+
+    return portal_art_id;
 }
 
 // 0x4EC830
