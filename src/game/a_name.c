@@ -173,7 +173,7 @@ static int num_roof_file_names;
 static int roof_initialized;
 
 // 0x687660
-static int* dword_687660[7];
+static uint8_t* dword_687660[7];
 
 // 0x687680
 static int dword_687680[7];
@@ -778,7 +778,56 @@ int sub_4EBBE0(tig_art_id_t aid)
 // 0x4EBC40
 void sub_4EBC40()
 {
-    // TODO: Incomplete.
+    int index;
+    int v1;
+    int v2;
+    int v3;
+
+    for (index = 0; index < 7; index++) {
+        dword_687660[index] = (uint8_t*)MALLOC(dword_687680[index]);
+    }
+
+    if (!sub_4EC020()) {
+        for (v1 = 0; v1 < 16; v1++) {
+            for (index = 0; index < num_outdoor_flippable_names; index++) {
+                dword_687660[0][v1 * num_outdoor_flippable_names + index] = sub_4EBE90(index, index, v1, 1, 1, 1);
+            }
+
+            for (index = 0; index < num_outdoor_flippable_names; index++) {
+                dword_687660[1][v1 * num_outdoor_non_flippable_names + index] = sub_4EBE90(index, index, v1, 1, 0, 0);
+            }
+
+            for (index = 0; index < num_indoor_flippable_names; index++) {
+                dword_687660[2][v1 * num_indoor_flippable_names + index] = sub_4EBE90(index, index, v1, 0, 1, 1);
+            }
+
+            for (index = 0; index < num_indoor_non_flippable_names; index++) {
+                dword_687660[3][v1 * num_indoor_non_flippable_names + index] = sub_4EBE90(index, index, v1, 0, 0, 0);
+            }
+
+            for (v2 = 0; v2 < num_outdoor_flippable_names; v2++) {
+                for (v3 = 0; v3 < num_outdoor_flippable_names; v3++) {
+                    dword_687660[4][(v1 * num_outdoor_flippable_names + v3) * num_outdoor_flippable_names + v2] = sub_4EBE90(v2, v3, v1, 1, 1, 1);
+                }
+            }
+
+            for (v2 = 0; v2 < num_outdoor_non_flippable_names; v2++) {
+                for (v3 = 0; v3 < num_outdoor_non_flippable_names; v3++) {
+                    dword_687660[5][(v1 * num_outdoor_non_flippable_names + v3) * num_outdoor_non_flippable_names + v2] = sub_4EBE90(v2, v3, v1, 1, 0, 0);
+                }
+            }
+
+            for (v2 = 0; v2 < num_outdoor_flippable_names; v2++) {
+                for (v3 = 0; v3 < num_outdoor_non_flippable_names; v3++) {
+                    dword_687660[6][(v1 * num_outdoor_non_flippable_names + v3) * num_outdoor_flippable_names + v2] = sub_4EBE90(v2, v3, v1, 1, 1, 0);
+                }
+            }
+        }
+
+        sub_4EC0C0();
+    }
+
+    dword_603AE4 = true;
 }
 
 // 0x4EC160
