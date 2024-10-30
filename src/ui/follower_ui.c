@@ -8,6 +8,8 @@
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/portrait.h"
+#include "game/stat.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
 
@@ -102,6 +104,9 @@ static bool follower_ui_initialized;
 
 // 0x67BC60
 static bool dword_67BC60;
+
+// 0x67BC64
+static bool dword_67BC64;
 
 // 0x67BC0C
 static tig_window_handle_t dword_67BC0C;
@@ -400,7 +405,70 @@ void sub_56B280()
 // 0x56B290
 void sub_56B290()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t follower_obj;
+    tig_color_t color;
+    TigRect rect;
+    int index;
+    int portrait;
+    int hp;
+    int fatigue;
+
+    if (!dword_67BC60) {
+        return;
+    }
+
+    dword_67BC64 = true;
+
+    pc_obj = player_get_pc_obj();
+    color = tig_color_make(255, 0, 0);
+
+    rect.x = 4;
+    rect.y = 4;
+    rect.width = 32;
+    rect.height = 32;
+
+    for (index = 0; index < 6; index++) {
+        if (dword_67BC10 + index >= dword_67BC58) {
+            break;
+        }
+
+        sub_444130(&(dword_67BC08[dword_67BC10 + index]));
+
+        follower_obj = dword_67BC08[dword_67BC10 + index].obj;
+        if (follower_obj == OBJ_HANDLE_NULL) {
+            sub_56B6F0();
+            break;
+        }
+
+        sub_56B510(dword_67BB60[index], 503, 0, 0, 100, 100);
+
+        if (sub_553D10(pc_obj, follower_obj, &portrait)) {
+            portrait_draw_32x32(follower_obj,
+                portrait,
+                dword_67BB60[index],
+                4,
+                4);
+        } else {
+            sub_56B510(dword_67BB60[index], portrait, 4, 4, 100, 50);
+        }
+
+        hp = 100 * sub_43D600(follower_obj) / sub_43D5A0(follower_obj);
+        if (stat_level(follower_obj, STAT_POISON_LEVEL) > 20) {
+            sub_56B510(dword_67BB60[index], 616, 3, 39, hp, 100);
+        } else {
+            sub_56B510(dword_67BB60[index], 505, 3, 39, hp, 100);
+        }
+
+        if (hp < 20) {
+            tig_window_tint(dword_67BB60[index], &rect, color, 0);
+        }
+
+        fatigue = 100 * sub_45D700(follower_obj) / sub_45D670(follower_obj);
+        sub_56B510(dword_67BB60[index], 504, 3, 44, fatigue, 100);
+    }
+
+    dword_67BC64 = false;
 }
 
 // 0x56B4D0
