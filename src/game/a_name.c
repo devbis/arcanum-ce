@@ -36,6 +36,7 @@ static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static uint8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6);
 static int sub_4EBEF0(int a1, int a2, int a3, int a4, int a5, int a6);
 static bool sub_4EC020();
+static bool sub_4EC0C0();
 static int sub_4EC160();
 static bool build_facade_file_name(int num, char* fname);
 static bool sub_4EC4B0();
@@ -908,6 +909,37 @@ bool sub_4EC020()
 
     for (index = 0; index < 7; index++) {
         if (tig_file_fread(dword_687660[index], 1, dword_687680[index], stream) < dword_687680[index]) {
+            break;
+        }
+    }
+
+    tig_file_fclose(stream);
+
+    return index == 7;
+}
+
+// 0x4EC0C0
+bool sub_4EC0C0()
+{
+    int cnt;
+    TigFile* stream;
+    int index;
+
+    cnt = sub_4EC160();
+
+    tig_file_mkdir("art\\tile");
+    stream = tig_file_fopen("art\\tile\\tilevariant.dat", "wb");
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+        tig_file_fclose(stream);
+        return false;
+    }
+
+    for (index = 0; index < 7; index++) {
+        if (tig_file_fwrite(dword_687660[index], 1, dword_687680[index], stream) < dword_687680[index]) {
             break;
         }
     }
