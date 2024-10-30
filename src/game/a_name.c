@@ -366,9 +366,35 @@ bool sub_4EB0C0(int num, int type, int flippable, char** name_ptr)
 // 0x4EB160
 bool sub_4EB160(const char* name, tig_art_id_t* art_id_ptr)
 {
-    // TODO: Incomplete.
-    (void)name;
-    (void)art_id_ptr;
+    int index;
+
+    for (index = 0; index < num_outdoor_flippable_names; index++) {
+        if (strcmpi(outdoor_flippable_tile_names[index], name) == 0) {
+            tig_art_tile_id_create(index, index, 15, 0, 1, 1, 1, 0, art_id_ptr);
+            return true;
+        }
+    }
+
+    for (index = 0; index < num_outdoor_non_flippable_names; index++) {
+        if (strcmpi(outdoor_non_flippable_tile_names[index], name) == 0) {
+            tig_art_tile_id_create(index, index, 15, 0, 1, 0, 0, 0, art_id_ptr);
+            return true;
+        }
+    }
+
+    for (index = 0; index < num_indoor_flippable_names; index++) {
+        if (strcmpi(indoor_flippable_tile_names[index], name) == 0) {
+            tig_art_tile_id_create(index, index, 15, 0, 0, 1, 1, 0, art_id_ptr);
+            return true;
+        }
+    }
+
+    for (index = 0; index < num_indoor_non_flippable_names; index++) {
+        if (strcmpi(indoor_non_flippable_tile_names[index], name) == 0) {
+            tig_art_tile_id_create(index, index, 15, 0, 0, 0, 0, 0, art_id_ptr);
+            return true;
+        }
+    }
 
     return false;
 }
