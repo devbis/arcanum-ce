@@ -2,10 +2,11 @@
 
 #include "game/critter.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/tech.h"
-#include "tig/debug.h"
 
 #define EFFECT_LIST_CAPACITY 400
 
@@ -391,9 +392,38 @@ void sub_4EA200(int64_t obj, int effect)
 }
 
 // 0x4EA2E0
-bool sub_4EA2E0(int64_t obj, int effect_id)
+void sub_4EA2E0(int64_t obj, int cause)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int index;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet86 pkt;
+
+            pkt.type = 86;
+            pkt.subtype = 3;
+            pkt.oid = sub_407EF0(obj);
+            pkt.field_20 = cause;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        } else {
+            if (!sub_4A2BA0()) {
+                return;
+            }
+        }
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
+    }
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
+    for (index = 0; index < cnt; index++) {
+        if (sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
+            sub_4EA520(obj, index);
+            break;
+        }
+    }
 }
 
 // 0x4EA4A0
