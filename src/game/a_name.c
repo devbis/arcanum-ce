@@ -29,6 +29,7 @@ static bool load_tile_names();
 static bool load_tile_edges();
 static bool sub_4EB770(char* name, int* a2, int* a3);
 static bool sub_4EB7D0(const char* name, int* index_ptr);
+static bool sub_4EB860(int a1, int a2, int a3, int* a4);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static int sub_4EC160();
@@ -568,6 +569,26 @@ bool sub_4EB7D0(const char* name, int* index_ptr)
     }
 
     return false;
+}
+
+// 0x4EB860
+bool sub_4EB860(int a1, int a2, int a3, int* a4)
+{
+    bool rc;
+    int* v1;
+
+    if (a1 == a2) {
+        *a4 = a1;
+        return true;
+    }
+
+    v1 = (int*)MALLOC(sizeof(int) * (num_outdoor_non_flippable_names + num_outdoor_flippable_names));
+    v1[0] = a1;
+    rc = sub_4EB8D0(v1, 0, a2, a3);
+    *a4 = v1[1];
+    FREE(v1);
+
+    return rc;
 }
 
 // 0x4EB970
