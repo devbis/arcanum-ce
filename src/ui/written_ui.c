@@ -16,6 +16,14 @@
 #define FIVE 5
 #define TEN 10
 
+typedef struct S5CA538 {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int x;
+    /* 000C */ int y;
+    /* 0010 */ int alignment;
+} S5CA538;
+
 static void written_ui_create();
 static void written_ui_destroy();
 static bool written_ui_message_filter(TigMessage* msg);
@@ -23,6 +31,10 @@ static void sub_56C050();
 static void sub_56C590(int num, int x, int y);
 static void sub_56C630(const char* str, int num, int x, int y, int alignment);
 static void sub_56C750(const char* str, int num, TigRect* rect);
+static bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr);
+static void sub_56C9F0(char* str, int* font_ptr, int* centered_ptr, char** str_ptr);
+static void sub_56CAA0(int a1, int* a2, int* a3);
+static int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr);
 
 // 0x5CA478
 static tig_window_handle_t written_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -67,6 +79,59 @@ static TigRect stru_5CA508 = { 327, 126, 250, 240 };
 
 // 0x5CA518
 static TigRect stru_5CA518 = { 335, 90, 234, 20 };
+
+// 0x5CA528
+static TigRect stru_5CA528 = { 269, 40, 428, 327 };
+
+// 0x5CA538
+static S5CA538 stru_5CA538[11] = {
+    { 481, 1000, 342, 35, 1 },
+    { 481, 1001, 342, 41, 1 },
+    { 481, 1002, 321, 50, 0 },
+    { 481, 1003, 321, 59, 0 },
+    { 481, 1004, 321, 68, 0 },
+    { 479, 1005, 450, 36, 1 },
+    { 479, 1006, 450, 61, 1 },
+    { 481, 1007, 558, 35, 1 },
+    { 481, 1008, 539, 50, 0 },
+    { 481, 1009, 539, 60, 0 },
+    { 481, 1010, 539, 69, 0 },
+};
+
+// 0x5CA618
+static TigRect stru_5CA618[2] = {
+    { 227, 57, 200, 290 },
+    { 476, 57, 200, 290 },
+};
+
+// 0x5CA638
+static S5CA538 stru_5CA638[6] = {
+    { 485, 0, 216, 44, 1 },
+    { 484, 1, 453, 41, 1 },
+    { 485, 0, 689, 44, 1 },
+    { 482, 2, 194, 76, 0 },
+    { 482, 3, 449, 76, 1 },
+    { 482, 2, 712, 76, 2 },
+};
+
+// 0x5CA6B0
+static S5CA538 stru_5CA6B0[6] = {
+    { 485, 0, 216, 44, 1 },
+    { 815, 4, 453, 41, 1 },
+    { 485, 0, 689, 44, 1 },
+    { 482, 2, 194, 76, 0 },
+    { 482, 5, 449, 76, 1 },
+    { 482, 2, 712, 76, 2 },
+};
+
+// 0x5CA728
+static TigRect stru_5CA728[5] = {
+    { 186, 97, 255, 90 },
+    { 188, 196, 120, 175 },
+    { 328, 196, 120, 175 },
+    { 460, 103, 120, 270 },
+    { 592, 103, 120, 270 },
+};
 
 // 0x67BC68
 static int dword_67BC68;
@@ -354,7 +419,159 @@ bool written_ui_message_filter(TigMessage* msg)
 // 0x56C050
 void sub_56C050()
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int v3;
+    S5CA538* v4;
+    MesFileEntry mes_file_entry;
+    int index;
+    int width;
+    int height;
+    int font;
+    int centered;
+    char* str;
+    TigRect rect;
+
+    if (dword_680DCC == 0) {
+        tig_button_hide(stru_5CA4D8[0].button_handle);
+        tig_button_hide(stru_5CA4D8[1].button_handle);
+    }
+
+    if (dword_680DCC == 4) {
+        v1 = dword_67BC6C;
+    } else if (dword_680DB0) {
+        v1 = 817;
+    } else {
+        v1 = dword_5CA4B8[dword_680DCC];
+    }
+
+    sub_56C590(v1, 132, 0);
+
+    switch (dword_680DCC) {
+    case 0:
+        v2 = dword_67BC70[dword_680DD0];
+        v3 = dword_680C20[dword_680DD0];
+        sub_56CAA0(0, &v2, &v3);
+        sub_56CAA0(1, &v2, &v3);
+        if (dword_680DD0 > 0) {
+            tig_button_show(stru_5CA4D8[0].button_handle);
+        }
+        if (dword_680DD0 < dword_680DD4 - 1 && dword_680DD4 < 100) {
+            tig_button_show(stru_5CA4D8[1].button_handle);
+        }
+        break;
+    case 1:
+        sub_56C750(written_ui_text, 497, &stru_5CA4F8);
+        break;
+    case 2:
+        v4 = !dword_680DB0 ? stru_5CA638 : stru_5CA6B0;
+        for (index = 0; index < 6; index++) {
+            mes_file_entry.num = v4[index].field_4;
+            mes_get_msg(dword_680DB8[2], &mes_file_entry);
+            sub_56C630(mes_file_entry.str,
+                v4[index].field_0,
+                v4[index].x,
+                v4[index].y,
+                v4[index].alignment);
+        }
+
+        mes_file_entry.num = dword_67BC6C;
+        if (mes_search(dword_680DB4, &mes_file_entry)) {
+            sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+            sub_56C800(str, font, centered, &(stru_5CA728[0]), &height);
+        }
+
+        mes_file_entry.num++;
+        if (mes_search(dword_680DB4, &mes_file_entry)) {
+            sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+
+            index = 1;
+            rect = stru_5CA728[index];
+            while (true) {
+                while (!sub_56C800(str, font, centered, &rect, &height)) {
+                    index++;
+                    if (index >= 5) {
+                        return;
+                    }
+
+                    rect = stru_5CA728[index];
+                    str += height;
+                }
+
+                rect.height -= height;
+                rect.y += height;
+
+                mes_file_entry.num++;
+                if (mes_file_entry.num >= dword_67BC6C + 10) {
+                    break;
+                }
+
+                if (!mes_search(dword_680DB4, &mes_file_entry)) {
+                    break;
+                }
+
+                sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+            }
+
+            if (index < 5) {
+                mes_file_entry.num = dword_67BC6C / 10 + 10;
+                if (mes_file_entry.num >= dword_67BC68 + 10) {
+                    mes_file_entry.num = 10;
+                }
+
+                if (mes_search(dword_680DB8[2], &mes_file_entry)) {
+                    sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+
+                    while (true) {
+                        while (!sub_56C800(str, font, centered, &rect, &height)) {
+                            index++;
+                            if (index >= 5) {
+                                return;
+                            }
+
+                            rect = stru_5CA728[index];
+                            str += height;
+                        }
+
+                        mes_file_entry.num++;
+                        if (mes_file_entry.num >= dword_67BC68 + 10) {
+                            mes_file_entry.num = 10;
+                        }
+
+                        if (!mes_search(dword_680DB8[2], &mes_file_entry)) {
+                            break;
+                        }
+
+                        sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+                        rect.height -= height;
+                        rect.y += height;
+                    }
+                }
+            }
+        }
+        break;
+    case 3:
+        for (index = 0; index < 11; index++) {
+            mes_file_entry.num = stru_5CA538[index].field_4;
+            mes_get_msg(dword_680DB8[3], &mes_file_entry);
+            sub_56C630(mes_file_entry.str,
+                stru_5CA538[index].field_0,
+                stru_5CA538[index].x,
+                stru_5CA538[index].y,
+                stru_5CA538[index].alignment);
+        }
+
+        mes_file_entry.num = 1011;
+        mes_get_msg(dword_680DB8[3], &mes_file_entry);
+        sub_56C750(mes_file_entry.str, 481, &stru_5CA518);
+        sub_56C750(written_ui_text, 480, &stru_5CA508);
+        break;
+    case 6:
+        width = dword_67BC6C;
+        height = 0;
+        sub_56CB60(&stru_5CA528, &width, &height);
+        break;
+    }
 }
 
 // 0x56C590
@@ -438,31 +655,195 @@ void sub_56C750(const char* str, int num, TigRect* rect)
 }
 
 // 0x56C800
-void sub_56C800()
+bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* height_ptr)
 {
-    // TODO: Incomplete.
+    TigFont font_desc;
+    tig_font_handle_t font;
+    bool rc;
+
+    font_desc.flags = centered == 1 ? TIG_FONT_CENTERED : 0;
+    tig_art_interface_id_create(font_num, 0, 0, 0, &(font_desc.art_id));
+
+    if (dword_680DCC == 6) {
+        font_desc.color = tig_color_make(255, 255, 255);
+    } else {
+        font_desc.color = tig_color_make(0, 0, 0);
+    }
+
+    font_desc.str = NULL;
+
+    tig_font_create(&font_desc, &font);
+    tig_font_push(font);
+
+    font_desc.str = str;
+    font_desc.width = rect->width;
+    sub_535390(&font_desc);
+
+    if (font_desc.height > rect->height) {
+        size_t truncate_pos = 0;
+        size_t end = strlen(str);
+        size_t pos;
+        char ch;
+
+        for (pos = 0; pos < end; pos++) {
+            ch = str[pos];
+            if (ch == ' ' || ch == '\n') {
+                str[pos] = '\0';
+                sub_535390(&font_desc);
+                str[pos] = ch;
+
+                if (font_desc.height > rect->height) {
+                    break;
+                }
+
+                truncate_pos = pos;
+            }
+        }
+
+        if (truncate_pos > 0) {
+            ch = str[truncate_pos];
+            str[truncate_pos] = '\0';
+            tig_window_text_write(written_ui_window, str, rect);
+            str[truncate_pos] = ch;
+        }
+
+        *height_ptr = (int)truncate_pos;
+        rc = false;
+    } else {
+        tig_window_text_write(written_ui_window, str, rect);
+        *height_ptr = font_desc.height;
+        rc = true;
+    }
+
+    tig_font_pop();
+    tig_font_destroy(font);
+
+    return rc;
 }
 
 // 0x56C9F0
-void sub_56C9F0()
+void sub_56C9F0(char* str, int* font_ptr, int* centered_ptr, char** str_ptr)
 {
-    // TODO: Incomplete.
+    *font_ptr = atoi(str);
+
+    *str_ptr = str;
+    while (isdigit(**str_ptr)) {
+        (*str_ptr)++;
+    }
+
+    *centered_ptr = **str_ptr == 'c' || **str_ptr == 'C';
+
+    if (**str_ptr != '\0') {
+        (*str_ptr)++;
+    }
+
+    if (isspace(**str_ptr)) {
+        (*str_ptr)++;
+    }
 }
 
 // 0x56CAA0
-void sub_56CAA0()
+void sub_56CAA0(int a1, int* a2, int* a3)
 {
-    // TODO: Incomplete.
+    TigRect rect;
+    int v1;
+    MesFileEntry mes_file_entry;
+
+    rect = stru_5CA618[a1];
+    v1 = sub_56CB60(&rect, a2, a3);
+    if (v1 == -1) {
+        *a3 += v1;
+        mes_file_entry.num = *a2;
+        if (mes_file_entry.num < dword_67BC6C + 10
+            && mes_search(dword_680DB4, &mes_file_entry)) {
+            dword_67BC70[dword_680DD0 + a1 + 1] = mes_file_entry.num;
+            dword_680C20[dword_680DD0 + a1 + 1] = *a3;
+            if (dword_680DD4 == dword_680DD0 + a1) {
+                dword_680DD4++;
+            }
+        }
+    }
 }
 
 // 0x56CB60
-void sub_56CB60()
+int sub_56CB60(TigRect* rect, int* num_ptr, int* height_ptr)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    int font;
+    int centered;
+    char* str;
+    TigRect v4;
+    int v1;
+
+    mes_file_entry.num = *num_ptr;
+    if (mes_file_entry.num >= dword_67BC6C + 10) {
+        return -1;
+    }
+
+    if (mes_search(dword_680DB4, &mes_file_entry)) {
+        return -1;
+    }
+
+    sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+
+    v1 = *height_ptr;
+    str += *height_ptr;
+    v4 = *rect;
+    if (sub_56C800(str, font, centered, &v4, height_ptr)) {
+        v1 = 0;
+        do {
+            v4.y += *height_ptr;
+            v4.height -= *height_ptr;
+            mes_file_entry.num++;
+            if (mes_file_entry.num >= dword_67BC6C + 10) {
+                break;
+            }
+
+            if (!mes_search(dword_680DB4, &mes_file_entry)) {
+                break;
+            }
+
+            sub_56C9F0(mes_file_entry.str, &font, &centered, &str);
+        } while (sub_56C800(str, font, centered, &v4, height_ptr));
+    }
+
+    *num_ptr = mes_file_entry.num;
+    return v1;
 }
 
 // 0x56CCA0
 void sub_56CCA0(int num, char* str)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    int font;
+    int centered;
+    char* tmp;
+    char* pch;
+
+    if (!written_ui_mod_loaded) {
+        return;
+    }
+
+    mes_file_entry.num = num;
+    str[0] = '\0';
+
+    if (dword_680DB8[2] == MES_FILE_HANDLE_INVALID) {
+        return;
+    }
+
+    if (!mes_search(dword_680DB8[2], &mes_file_entry)) {
+        return;
+    }
+
+    sub_56C9F0(mes_file_entry.str, &font, &centered, &tmp);
+
+    strcpy(str, tmp);
+
+    pch = str;
+    while (*pch != '\0') {
+        if (*pch == '\n') {
+            *pch = ' ';
+        }
+        pch++;
+    }
 }
