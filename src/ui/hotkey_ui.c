@@ -18,6 +18,7 @@ static bool intgame_save_hotkey(S683518* a1, TigFile* stream);
 static bool intgame_load_hotkey(S683518* a1, TigFile* stream);
 static int sub_57E460();
 static void intgame_hotkey_mouse_load(tig_art_id_t art_id, bool a2);
+static void sub_57ED60(S683518* a1, int a2);
 static void sub_57EE30(int64_t a1, int inventory_location);
 static bool button_create_no_art(UiButtonInfo* button_info, int width, int height);
 
@@ -747,6 +748,9 @@ bool sub_57E5D0()
             dword_68395C = hotkey->field_C;
             tig_art_interface_id_create(sub_4B1570(dword_68395C), 0, 0, 0, &art_id);
             break;
+        default:
+            // Should be unreachable.
+            __assume(0);
         }
 
         dword_683950 = index;
@@ -808,7 +812,172 @@ void sub_57E8B0()
 // 0x57E8D0
 bool sub_57E8D0(int a1)
 {
-    // TODO: Incomplete.
+    int64_t parent_obj;
+    MesFileEntry mes_file_entry;
+    John v1;
+    int obj_type;
+    int index;
+    S683518* hotkey;
+    int sound_id;
+    int64_t v2;
+    int64_t v3;
+    unsigned int flags;
+
+    if (!dword_6839B0) {
+        dword_5CB4E4 = -1;
+        return false;
+    }
+
+    if (a1 == 1 && !sub_573620()) {
+        return false;
+    }
+
+    sub_573730();
+
+    if (stru_683960.obj != OBJ_HANDLE_NULL) {
+        if (item_parent(stru_683960.obj, &parent_obj)
+            && !player_is_pc_obj(parent_obj)) {
+            dword_6839B0 = false;
+            sub_575770();
+            sub_553990();
+            dword_5CB4E4 = -1;
+            return false;
+        }
+
+        obj_type = obj_field_int32_get(stru_683960.obj, OBJ_F_TYPE);
+        if (obj_type == OBJ_TYPE_AMMO
+            || obj_type == OBJ_TYPE_ITEM_GOLD) {
+            dword_6839B0 = false;
+            sub_575770();
+            sub_553990();
+            dword_5CB4E4 = -1;
+            return false;
+        }
+
+        if (sub_462A30(parent_obj, stru_683960.obj)) {
+            mes_file_entry.num = 4000;
+            mes_get_msg(sub_557B10(), &mes_file_entry);
+
+            v1.type = 6;
+            v1.str = mes_file_entry.str;
+            sub_550750(&v1);
+
+            dword_6839B0 = false;
+            sub_575770();
+            sub_553990();
+            dword_5CB4E4 = -1;
+            return false;
+        }
+    }
+
+    index = sub_57E460();
+    if (index < 10) {
+        hotkey = &(stru_6835E0[index]);
+        if (dword_5CB4E4 == index) {
+            sound_id = sub_4F0BF0(hotkey->field_10.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
+            if (sound_id != -1) {
+                gsound_play_sfx_id(sound_id, 1);
+            }
+
+            hotkey->field_4 &= ~0x1;
+            intgame_hotkey_refresh(index);
+
+            dword_6839B0 = false;
+            sub_573840();
+            sub_553990();
+            dword_5CB4E4 = -1;
+            return true;
+        }
+
+        if (dword_5CB4E4 != -1) {
+            sub_57E5A0(&(stru_6835E0[dword_5CB4E4]));
+        }
+
+        v2 = hotkey->field_10.obj;
+        v3 = OBJ_HANDLE_NULL; // NOTE: To silence compiler warnings.
+        if (v2 != OBJ_HANDLE_NULL) {
+            if (item_parent(v2, &v3)) {
+                sub_461A70(v2);
+            } else {
+                v2 = OBJ_HANDLE_NULL;
+            }
+        }
+
+        if (dword_5CB4E4 != -1) {
+            if (hotkey->field_8 == 0) {
+                intgame_hotkey_refresh(dword_5CB4E4);
+            } else {
+                sub_57ED60(hotkey, dword_5CB4E4);
+            }
+            dword_5CB4E4 = -1;
+        }
+
+        hotkey->field_40 = -1;
+        if (hotkey->info.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            sub_57F210(index);
+        }
+
+        hotkey->field_8 = dword_683958;
+
+        switch (dword_683958) {
+        case 1:
+            sub_573840();
+            item_inventory_location_get(stru_683960.obj); // FIXME: Useless.
+            flags = obj_field_int32_get(stru_683960.obj, OBJ_F_ITEM_FLAGS);
+            flags &= ~OIF_NO_DISPLAY;
+            obj_field_int32_set(stru_683960.obj, OBJ_F_ITEM_FLAGS, flags);
+            item_location_set(stru_683960.obj, hotkey->field_0 + 2000);
+            sub_576100(player_get_pc_obj());
+            hotkey->field_10 = stru_683960;
+            hotkey->field_44 = sub_554BE0(stru_683960.obj);
+            hotkey->field_40 = item_count_items_matching_prototype(player_get_pc_obj(), hotkey->field_10.obj);
+            break;
+        case 2:
+            hotkey->field_C = dword_68395C;
+            hotkey->info.art_num = sub_579F70(dword_68395C);
+            tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
+        case 3:
+            hotkey->field_C = dword_68395C;
+            hotkey->info.art_num = sub_4B1570(dword_68395C);
+            tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
+            break;
+        case 4:
+            hotkey->field_10 = stru_683960;
+            hotkey->field_C = dword_68395C;
+            hotkey->info.art_num = sub_4B1570(dword_68395C);
+            tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
+            break;
+        }
+
+        if (v2 != OBJ_HANDLE_NULL && v3 != OBJ_HANDLE_NULL) {
+            sub_4617F0(v2, v3);
+        }
+
+        hotkey->field_8 = dword_683958;
+        hotkey->field_4 = 0;
+        intgame_hotkey_refresh(index);
+    }
+
+    if (dword_683958 != 1) {
+        if (stru_683960.obj != OBJ_HANDLE_NULL) {
+            sound_id = sub_4F0BF0(stru_683960.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
+            if (sound_id != -1) {
+                gsound_play_sfx_id(sound_id, 1);
+            }
+        }
+
+        dword_6839B0 = false;
+        sub_553990();
+        dword_5CB4E4 = -1;
+        return true;
+    }
+
+    if (inven_ui_is_created()) {
+        dword_6839B0 = false;
+        dword_5CB4E4 = -1;
+    }
+
+    return false;;
 }
 
 // 0x57ED60
@@ -912,7 +1081,7 @@ void sub_57EFA0(int a1, int a2, int64_t obj)
             return;
         }
         // FIXME: `new_art_id` is never set in this code path.
-        new_art_id = 1;
+        new_art_id = TIG_ART_ID_INVALID;
         break;
     case 2:
         if (stru_683518[0].field_8 == 2
@@ -936,6 +1105,9 @@ void sub_57EFA0(int a1, int a2, int64_t obj)
         }
         tig_art_interface_id_create(sub_4B1570(a2), 0, 0, 0, &new_art_id);
         break;
+    default:
+        // Unreachable;
+        __assume(0);
     }
 
     stru_683518[1].field_8 = stru_683518[0].field_8;
