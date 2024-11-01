@@ -4,6 +4,7 @@
 #include "game/gsound.h"
 #include "game/item.h"
 #include "game/object.h"
+#include "game/obj_private.h"
 #include "game/player.h"
 #include "game/spell.h"
 #include "ui/intgame.h"
@@ -404,9 +405,91 @@ bool intgame_save_hotkey(S683518* a1, TigFile* stream)
 }
 
 // 0x57DEF0
-bool intgame_load_hotkey(S683518* a1, TigFile* stream)
+bool intgame_load_hotkey(S683518* hotkey, TigFile* stream)
 {
-    // TODO: Incomplete.
+    if (tig_file_fread(&(hotkey->field_8), sizeof(hotkey->field_8), 1, stream) != 1) {
+        return false;
+    }
+
+    if (tig_file_fread(&(hotkey->field_0), sizeof(hotkey->field_0), 1, stream) != 1) {
+        return false;
+    }
+
+    hotkey->field_4 = 0;
+
+    switch (hotkey->field_8) {
+    case 1:
+        if (tig_file_fread(&(hotkey->field_10.field_8.objid), sizeof(ObjectID), 1, stream) != 1) {
+            return false;
+        }
+
+        hotkey->field_10.obj = objp_perm_lookup(hotkey->field_10.field_8.objid);
+        if (hotkey->field_10.obj == OBJ_HANDLE_NULL) {
+            tig_debug_printf("hotkey_ui: intgame_load_hotkey: ERROR: Load of object FAILED to match!!!\n");
+            hotkey->field_8 = 0;
+        }
+
+        sub_4440E0(hotkey->field_10.obj, &(hotkey->field_10));
+        hotkey->field_44 = sub_554BE0(hotkey->field_10.obj);
+
+        if (tig_file_fread(&(hotkey->field_40), sizeof(hotkey->field_40), 1, stream) != 1) {
+            return false;
+        }
+
+        break;
+    case 2:
+        sub_4440E0(OBJ_HANDLE_NULL, &(hotkey->field_10));
+
+        if (tig_file_fread(&(hotkey->field_C), sizeof(hotkey->field_C), 1, stream) != 1) {
+            return false;
+        }
+
+        hotkey->info.art_num = sub_579F70(hotkey->field_C);
+        tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
+        hotkey->field_40 = -1;
+
+        break;
+    case 3:
+        sub_4440E0(OBJ_HANDLE_NULL, &hotkey->field_10);
+
+        if (tig_file_fread(&(hotkey->field_C), sizeof(hotkey->field_C), 1, stream) != 1) {
+            return false;
+        }
+
+        hotkey->info.art_num = sub_4B1570(hotkey->field_C);
+        tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
+        hotkey->field_40 = -1;
+
+        break;
+    case 4:
+        if (tig_file_fread(&(hotkey->field_10.field_8.objid), sizeof(ObjectID), 1, stream) != 1) {
+            return false;
+        }
+
+        hotkey->field_10.obj = objp_perm_lookup(hotkey->field_10.field_8.objid);
+        if (hotkey->field_10.obj == OBJ_HANDLE_NULL) {
+            return false;
+        }
+
+        sub_4440E0(hotkey->field_10.obj, &(hotkey->field_10));
+        hotkey->field_44 = sub_554BE0(hotkey->field_10.obj);
+
+        if (tig_file_fread(&(hotkey->field_C), sizeof(hotkey->field_C), 1, stream) != 1) {
+            return false;
+        }
+
+        hotkey->info.art_num = sub_4B1570(hotkey->field_C);
+        tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
+        hotkey->field_40 = -1;
+
+        break;
+    }
+
+    if (hotkey->field_0 != -1) {
+        intgame_hotkey_refresh(hotkey->field_0);
+    }
+
+    return true;
 }
 
 // 0x57E140
