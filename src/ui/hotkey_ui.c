@@ -567,7 +567,61 @@ void sub_57EF90(int index)
 // 0x57EFA0
 void sub_57EFA0(int a1, int a2, int64_t obj)
 {
-    // TODO: Incomplete.
+    tig_art_id_t new_art_id;
+    tig_art_id_t old_art_id;
+    tig_button_handle_t button_handle;
+
+    switch (a1) {
+    case 1:
+        if (stru_683518[0].field_8 == 1
+            && stru_683518[0].field_10.obj == obj) {
+            return;
+        }
+        // FIXME: `new_art_id` is never set in this code path.
+        new_art_id = 1;
+        break;
+    case 2:
+        if (stru_683518[0].field_8 == 2
+            && stru_683518[0].field_C == a2) {
+            return;
+        }
+        tig_art_interface_id_create(sub_579F70(a2), 0, 0, 0, &new_art_id);
+        break;
+    case 3:
+        if (stru_683518[0].field_8 == 3
+            && stru_683518[0].field_C == a2) {
+            return;
+        }
+        tig_art_interface_id_create(sub_4B1570(a2), 0, 0, 0, &new_art_id);
+        break;
+    case 4:
+        if (stru_683518[0].field_8 == 3
+            && stru_683518[0].field_C == a2
+            && stru_683518[0].field_10.obj == obj) {
+            return;
+        }
+        tig_art_interface_id_create(sub_4B1570(a2), 0, 0, 0, &new_art_id);
+        break;
+    }
+
+    stru_683518[1].field_8 = stru_683518[0].field_8;
+    stru_683518[1].field_C = stru_683518[0].field_C;
+    sub_4440E0(stru_683518[0].field_10.obj, &stru_683518[1].field_10);
+    sub_557B20(1)->art_num = sub_557B20(0)->art_num;
+    button_handle = sub_557B20(1)->button_handle;
+    if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
+        tig_art_interface_id_create(sub_557B20(1)->art_num, 0, 0, 0, &old_art_id);
+        tig_button_set_art(button_handle, old_art_id);
+    }
+
+    stru_683518[0].field_8 = a1;
+    stru_683518[0].field_C = a2;
+    sub_4440E0(obj, &stru_683518[1].field_10);
+    sub_557B20(0)->art_num = tig_art_num_get(new_art_id);
+    button_handle = sub_557B20(0)->button_handle;
+    if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
+        tig_button_set_art(button_handle, new_art_id);
+    }
 }
 
 // 0x57F160
