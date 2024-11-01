@@ -1,5 +1,6 @@
 #include "ui/hotkey_ui.h"
 
+#include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/item.h"
 #include "game/object.h"
@@ -488,7 +489,7 @@ void sub_57E5A0(S683518* a1)
     a1->field_8 = 0;
     a1->field_4 = 0;
     a1->field_44 = -1;
-    a1->field_10.field_8.objid.type = 0;
+    a1->field_10.field_8.objid.type = OID_TYPE_NULL;
     dword_5CB4E4 = -1;
 }
 
@@ -676,5 +677,40 @@ void sub_57F340(int a1)
 // 0x57F3C0
 void intgame_hotkeys_recover()
 {
-    // TODO: Incomplete.
+    int index;
+    tig_button_handle_t button_handle;
+    tig_art_id_t art_id;
+    S683518* hotkey;
+
+    for (index = 0; index < 2; index++) {
+        if ((stru_683518[index].field_8 == 1
+                || stru_683518[index].field_8 == 4)
+            && !sub_444130(&(stru_683518[index].field_10))) {
+            if (!gamelib_in_reset()) {
+                tig_debug_printf("Intgame: intgame_hotkeys_recover: ERROR: Active Item Hotkey %d failed to recover!\n", index);
+            }
+
+            stru_683518[index].field_8 = 2;
+            stru_683518[index].field_C = sub_557B50(index);
+            sub_557B20(index)->art_num = sub_579F70(index);
+
+            button_handle = sub_557B20(index)->button_handle;
+            if (button_handle == TIG_BUTTON_HANDLE_INVALID) {
+                tig_art_interface_id_create(sub_557B20(index)->art_num, 0, 0, 0, &art_id);
+                tig_button_set_art(button_handle, art_id);
+            }
+        }
+    }
+
+    for (index = 0; index < 10; index++) {
+        hotkey = sub_57F240(index);
+        if (hotkey->field_8 == 1 || hotkey->field_8 == 4) {
+            if (hotkey->field_10.obj != OBJ_HANDLE_NULL) {
+                if (!sub_444130(&(hotkey->field_10))) {
+                    tig_debug_printf("Intgame: intgame_hotkeys_recover: ERROR: Item Hotkey %d failed to recover!\n", index);
+                    sub_57F210(index);
+                }
+            }
+        }
+    }
 }
