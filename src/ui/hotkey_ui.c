@@ -3,6 +3,7 @@
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/item.h"
+#include "game/mt_item.h"
 #include "game/object.h"
 #include "game/obj_private.h"
 #include "game/player.h"
@@ -72,8 +73,14 @@ static int dword_683950;
 // 0x683958
 static int dword_683958;
 
+// 0x68395C
+static int dword_68395C;
+
 // 0x683960
 static FollowerInfo stru_683960;
+
+// 0x6839A0
+static int dword_6839A0;
 
 // 0x6839A8
 static int dword_6839A8;
@@ -242,7 +249,7 @@ void sub_57DAB0()
     tig_button_handle_t button_handle;
     tig_art_id_t art_id;
 
-    dword_6839B0 = 0;
+    dword_6839B0 = false;
 
     for (index = 0; index < 2; index++) {
         sub_57E5A0(&(stru_683518[index]));
@@ -308,7 +315,7 @@ void sub_57DC20()
     dword_683950 = -1;
     dword_683958 = 1;
     sub_4440E0(sub_573620(), &stru_683960);
-    dword_6839B0 = 1;
+    dword_6839B0 = true;
 }
 
 // 0x57DC60
@@ -694,7 +701,99 @@ void sub_57E5A0(S683518* a1)
 // 0x57E5D0
 bool sub_57E5D0()
 {
-    // TODO: Incomplete.
+    int index;
+    S683518 *hotkey;
+    tig_art_id_t art_id;
+    UiButtonInfo button_info;
+    int spl;
+    bool v1 = true;
+
+    if (dword_6839B0) {
+        return false;
+    }
+
+    stru_683960.obj = OBJ_HANDLE_NULL;
+    stru_683960.field_8.objid.type = OID_TYPE_NULL;
+
+    index = sub_57E460();
+    if (index < 10) {
+        hotkey = &(stru_6835E0[index]);
+        if ((hotkey->field_4 & 0x1) != 0) {
+            return false;
+        }
+
+        dword_5CB4E4 = index;
+        switch (hotkey->field_8) {
+        case 1:
+            dword_683958 = hotkey->field_8;
+            stru_683960 = hotkey->field_10;
+            sub_573630(stru_683960.obj);
+            art_id = TIG_ART_ID_INVALID;
+            v1 = false;
+            break;
+        case 2:
+            dword_683958 = hotkey->field_8;
+            dword_68395C = hotkey->field_C;
+            tig_art_interface_id_create(sub_579F70(dword_68395C), 0, 0, 0, &art_id);
+            break;
+        case 3:
+            dword_683958 = hotkey->field_8;
+            dword_68395C = hotkey->field_C;
+            tig_art_interface_id_create(sub_4B1570(hotkey->field_C), 0, 0, 0, &art_id);
+            break;
+        case 4:
+            dword_683958 = hotkey->field_8;
+            stru_683960 = hotkey->field_10;
+            dword_68395C = hotkey->field_C;
+            tig_art_interface_id_create(sub_4B1570(dword_68395C), 0, 0, 0, &art_id);
+            break;
+        }
+
+        dword_683950 = index;
+        hotkey->field_4 |= 0x1;
+        intgame_hotkey_refresh(index);
+        intgame_hotkey_mouse_load(art_id, v1);
+        dword_6839B0 = true;
+        return true;
+    }
+
+    if (!intgame_is_compact_interface()) {
+        index = sub_557CF0();
+        if (index < 5) {
+            dword_683958 = 3;
+            dword_68395C = index + 5 * sub_557AB0();
+            sub_557AC0(sub_557AB0(), index, &button_info);
+            tig_art_interface_id_create(button_info.art_num, 0, 0, 0, &art_id);
+            intgame_hotkey_mouse_load(art_id, true);
+            dword_6839B0 = true;
+            return true;
+        }
+
+        index = sub_557B60();
+        if (index < 4) {
+            dword_683958 = 2;
+            dword_68395C = index;
+            tig_art_interface_id_create(sub_579F70(index), 0, 0, 0, &art_id);
+            intgame_hotkey_mouse_load(art_id, true);
+            dword_6839B0 = true;
+            return true;
+        }
+
+        index = sub_557C00();
+        if (index < 5) {
+            spl = mt_item_spell(sub_557B00(), index);
+            dword_683958 = 4;
+            sub_4440E0(sub_557B00(), &stru_683960);
+            dword_68395C = spl;
+            dword_6839A0 = sub_4B1570(spl);
+            tig_art_interface_id_create(dword_6839A0, 0, 0, 0, &art_id);
+            intgame_hotkey_mouse_load(art_id, true);
+            dword_6839B0 = true;
+            return true;
+        }
+    }
+
+    return true;
 }
 
 // 0x57E8B0
@@ -702,7 +801,7 @@ void sub_57E8B0()
 {
     sub_575770();
     sub_553990();
-    dword_6839B0 = 0;
+    dword_6839B0 = false;
     dword_5CB4E4 = -1;
 }
 
@@ -728,7 +827,7 @@ bool sub_57EDA0(int a1)
         dword_683950 = -1;
         dword_683958 = 1;
         sub_4440E0(sub_573620(), &stru_683960);
-        dword_6839B0 = 1;
+        dword_6839B0 = true;
     }
 
     return sub_57E8D0(a1) != 0;
