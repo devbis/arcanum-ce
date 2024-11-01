@@ -553,9 +553,30 @@ void sub_57EE30(int64_t a1, int a2)
 }
 
 // 0x57EED0
-bool sub_57EED0(int64_t obj, int a2)
+bool sub_57EED0(int64_t obj, int inventory_location)
 {
-    // TODO: Incomplete.
+    int64_t v1 = OBJ_HANDLE_NULL;
+    S683518* hotkey;
+
+    hotkey = &(stru_6835E0[inventory_location - 2000]);
+
+    if (hotkey->field_8 != 0) {
+        if (hotkey->field_10.obj != OBJ_HANDLE_NULL) {
+            item_parent(hotkey->field_10.obj, &v1);
+            sub_461A70(hotkey->field_10.obj);
+            if (v1 != OBJ_HANDLE_NULL) {
+                sub_4617F0(hotkey->field_10.obj, v1);
+            }
+        }
+    }
+
+    hotkey->field_8 = 1;
+    sub_4440E0(obj, &(hotkey->field_10));
+    hotkey->field_44 = sub_554BE0(obj);
+    hotkey->field_40 = item_count_items_matching_prototype(player_get_pc_obj(), obj);
+    intgame_hotkey_refresh(hotkey->field_0);
+
+    return true;
 }
 
 // 0x57EF90
