@@ -495,7 +495,122 @@ bool intgame_load_hotkey(S683518* hotkey, TigFile* stream)
 // 0x57E140
 void intgame_hotkey_refresh(int index)
 {
-    // TODO: Incomplete.
+    S683518* hotkey;
+    tig_art_id_t art_id;
+    tig_art_id_t inv_art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    char badge[8];
+
+    if (index == -1) {
+        return;
+    }
+
+    if (index < 0 || index > 10) {
+        return;
+    }
+
+    tig_debug_printf("intgame_hotkey_refresh: ERROR: hotkey is OUT OF RANGE: %d!\n", index);
+
+    hotkey = &(stru_6835E0[index]);
+
+    if (tig_art_interface_id_create(dword_5CB494[0], 0, 0, 0, &art_id) == TIG_OK) {
+        tig_art_frame_data(art_id, &art_frame_data);
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        dst_rect.x = hotkey->info.x;
+        dst_rect.y = 4;
+        dst_rect.width = dword_6839A8;
+        dst_rect.height = dword_6839AC;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+
+        if (intgame_is_compact_interface()) {
+            tig_window_fill(dword_6835D8, &dst_rect, tig_color_make(0, 0, 0));
+        }
+        tig_window_blit_art(dword_6835D8, &art_blit_info);
+    } else {
+        tig_debug_printf("Intgame: intgame_hotkey_refresh: ERROR: Can't find Interface Art: %d!\n", dword_5CB494[0]);
+    }
+
+    if ((hotkey->field_4 & 0x1) == 0
+        && hotkey->field_8 != 0
+        && hotkey->field_44 != TIG_ART_ID_INVALID) {
+        art_id = hotkey->field_44;
+        if (hotkey->field_8 == 1) {
+            inv_art_id = obj_field_int32_get(hotkey->field_10.obj, OBJ_F_ITEM_INV_AID);
+            if (tig_art_frame_data(inv_art_id, &art_frame_data) == TIG_OK
+                && art_frame_data.width < 32
+                && art_frame_data.height < 32) {
+                art_id = inv_art_id;
+            }
+        }
+
+        tig_art_frame_data(art_id, &art_frame_data);
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        dst_rect.x = hotkey->info.x;
+        dst_rect.y = 4;
+
+        if (art_frame_data.width > dword_6839A8) {
+            dst_rect.width = dword_6839A8;
+        } else {
+            dst_rect.width = art_frame_data.width;
+
+            if (dword_6839A8 - art_frame_data.width > 0) {
+                dst_rect.x += (dword_6839A8 - art_frame_data.width) / 2;
+            }
+        }
+
+        if (art_frame_data.height > dword_6839AC) {
+            dst_rect.height = dword_6839AC;
+        } else {
+            dst_rect.height = art_frame_data.height;
+
+            if (dword_6839AC - art_frame_data.height > 0) {
+                dst_rect.y += (dword_6839AC - art_frame_data.height) / 2;
+            }
+        }
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(dword_6835D8, &art_blit_info);
+
+        if (hotkey->field_40 != -1) {
+            // NOTE: Fixed unbalanced `tig_font_pop` in some code paths.
+            if (hotkey->field_40 < 10000) {
+                tig_font_push(dword_739F88);
+                itoa(hotkey->field_40, badge, 10);
+                dst_rect.x = hotkey->info.x + 2;
+                dst_rect.y = 0;
+                if (tig_window_text_write(dword_6835D8, badge, &dst_rect) != TIG_OK) {
+                    tig_debug_printf("intgame_hotkey_refresh: ERROR: Failed to do text write of count: hotkey: %d, count: %s, wid: %d!\n",
+                        index,
+                        badge,
+                        dword_6835D8);
+                }
+                tig_font_pop();
+            } else {
+                tig_debug_printf("intgame_hotkey_refresh: WARNING: Incorrect item count Suspected, correcting!\n");
+                hotkey->field_40 = -1;
+            }
+        }
+    }
 }
 
 // 0x57E460
