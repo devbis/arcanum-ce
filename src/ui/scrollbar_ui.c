@@ -275,7 +275,39 @@ bool sub_580B10(TigMessage* msg)
 // 0x5810D0
 void sub_5810D0(ScrollbarId id, int a2, int a3)
 {
-    // TODO: Incomplete.
+    ScrollbarUiControl* ctrl;
+
+    if (!sub_5812E0(&id, &ctrl)) {
+        return;
+    }
+
+    switch (a2) {
+    case 0:
+        ctrl->info.field_28 = a3;
+        if (ctrl->info.field_38 < ctrl->info.field_28) {
+            ctrl->info.field_38 = ctrl->info.field_28;
+        }
+        break;
+    case 1:
+        ctrl->info.field_24 = a3;
+        if (ctrl->info.field_38 > ctrl->info.field_24) {
+            ctrl->info.field_38 = ctrl->info.field_24;
+        }
+        break;
+    case 2:
+        if (a3 >= ctrl->info.field_28 && a3 <= ctrl->info.field_24) {
+            ctrl->info.field_38 = a3;
+        } else {
+            ctrl->info.field_38 = ctrl->info.field_28;
+        }
+        break;
+    }
+
+    if (ctrl->info.field_3C != NULL) {
+        ctrl->info.field_3C(ctrl->info.field_38);
+    }
+
+    sub_5806F0(ctrl->id);
 }
 
 // 0x581180
