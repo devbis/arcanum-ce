@@ -488,7 +488,7 @@ void sub_57E5A0(S683518* a1)
     a1->field_10.obj = OBJ_HANDLE_NULL;
     a1->field_8 = 0;
     a1->field_4 = 0;
-    a1->field_44 = -1;
+    a1->field_44 = TIG_ART_ID_INVALID;
     a1->field_10.field_8.objid.type = OID_TYPE_NULL;
     dword_5CB4E4 = -1;
 }
