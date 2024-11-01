@@ -85,6 +85,12 @@ static int dword_684674;
 // 0x684678
 static int dword_684678;
 
+// 0x68467C
+static int dword_68467C;
+
+// 0x684680
+static int dword_684680;
+
 // 0x684684
 static int dword_684684;
 
@@ -384,7 +390,202 @@ void sub_5807F0(int index, int a2)
 // 0x580B10
 bool sub_580B10(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+    ScrollbarUiControl* ctrl;
+    int v1;
+
+    if (dword_684684 != 0) {
+        return false;
+    }
+
+    switch (msg->type) {
+    case TIG_MESSAGE_MOUSE:
+        switch (msg->data.mouse.event) {
+        case TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN:
+            if (dword_5CBF78 == -1) {
+                for (index = 0; index < 8; index++) {
+                    ctrl = &(scrollbar_ui_controls[index]);
+                    if ((ctrl->flags & 0x1) != 0
+                        && (ctrl->flags & 0x2) == 0) {
+                        if (sub_581360(index, msg->data.mouse.x, msg->data.mouse.y)) {
+                            dword_5CBF78 = index;
+                            dword_68467C = msg->data.mouse.y
+                                - scrollbar_ui_controls[index].window_data.rect.y
+                                - sub_5815D0(index);
+                            tig_button_hide(scrollbar_ui_controls[index].button_up);
+                            tig_button_hide(scrollbar_ui_controls[index].button_down);
+                            return true;
+                        }
+
+                        if (sub_5813E0(index, msg->data.mouse.x, msg->data.mouse.y)) {
+                            ctrl->info.field_38 -= ctrl->info.field_30;
+                            if (ctrl->info.field_38 < ctrl->info.field_28) {
+                                ctrl->info.field_38 = ctrl->info.field_28;
+                            }
+                            if (ctrl->info.field_3C != NULL) {
+                                ctrl->info.field_3C(ctrl->info.field_38);
+                            }
+                            sub_5806F0(ctrl->id);
+                        } else if (sub_581460(index, msg->data.mouse.x, msg->data.mouse.y)) {
+                            ctrl->info.field_38 += ctrl->info.field_30;
+                            if (ctrl->info.field_38 > ctrl->info.field_24) {
+                                ctrl->info.field_38 = ctrl->info.field_24;
+                            }
+                            if (ctrl->info.field_3C != NULL) {
+                                ctrl->info.field_3C(ctrl->info.field_38);
+                            }
+                            sub_5806F0(ctrl->id);
+                        }
+                    }
+                }
+            }
+            return false;
+        case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+            if (dword_5CBF78 != -1) {
+                if (sub_5816A0(dword_5CBF78, scrollbar_ui_controls[dword_5CBF78].info.field_38) + dword_684680) {
+                    scrollbar_ui_controls[dword_5CBF78].info.field_38 += dword_684680;
+                }
+                dword_684680 = 0;
+                sub_5807F0(dword_5CBF78, 0);
+                tig_button_show(scrollbar_ui_controls[dword_5CBF78].button_up);
+                tig_button_show(scrollbar_ui_controls[dword_5CBF78].button_down);
+                dword_5CBF78 = -1;
+                return true;
+            }
+            return false;
+        case TIG_MESSAGE_MOUSE_MOVE:
+            if (dword_5CBF78 != -1) {
+                int v2;
+                float v3;
+                float v4;
+
+                ctrl = &(scrollbar_ui_controls[dword_5CBF78]);
+                v2 = msg->data.mouse.y
+                    - scrollbar_ui_controls[dword_5CBF78].window_data.rect.y
+                    - dword_68467C
+                    - sub_5815D0(dword_5CBF78);
+                v3 = sub_581550(dword_5CBF78);
+                v4 = v2 - dword_684680 * v3;
+                if (v4 > v3 && ctrl->info.field_38 + dword_684680 < ctrl->info.field_24) {
+                    do {
+                        v4 -= v3;
+                        dword_684680 += ctrl->info.field_2C;
+                    } while (v4 > v3 && ctrl->info.field_38 + dword_684680 < ctrl->info.field_24);
+                } else if (v4 < -v3 && ctrl->info.field_38 + dword_684680 > ctrl->info.field_28) {
+                    do {
+                        v4 += -v3;
+                        dword_684680 -= ctrl->info.field_2C;
+                    } while (v4 < -v3 && ctrl->info.field_38 + dword_684680 > ctrl->info.field_28);
+                } else {
+                    sub_5807F0(dword_5CBF78, v2);
+                    return true;
+                }
+
+                if (ctrl->info.field_3C != NULL) {
+                    if (sub_5816A0(dword_5CBF78, ctrl->info.field_38 + dword_684680)) {
+                        sub_5816D0();
+                        ctrl->info.field_3C(ctrl->info.field_38 + dword_684680);
+                        sub_5816E0();
+                    } else {
+                        if (ctrl->info.field_38 + dword_684680 > ctrl->info.field_24) {
+                            ctrl->info.field_3C(ctrl->info.field_24);
+                            sub_5807F0(dword_5CBF78, ctrl->info.field_4.height - ((int)v3 * (ctrl->info.field_38 + 1)));
+                            return true;
+                        }
+
+                        if (ctrl->info.field_38 + dword_684680 < ctrl->info.field_28) {
+                            ctrl->info.field_3C(ctrl->info.field_28);
+                            sub_5807F0(dword_5CBF78, -(ctrl->info.field_38 * (int)v3));
+                            return true;
+                        }
+                    }
+                }
+
+                sub_5807F0(dword_5CBF78, v2);
+                return true;
+            }
+            return false;
+        case TIG_MESSAGE_MOUSE_WHEEL:
+            for (index = 0; index < 8; index++) {
+                ctrl = &(scrollbar_ui_controls[index]);
+                if ((ctrl->flags & 0x1) != 0
+                    && (ctrl->flags & 0x2) == 0
+                    && sub_5814E0(index, msg->data.mouse.x, msg->data.mouse.y)) {
+                    if (msg->data.mouse.z > 0) {
+                        ctrl->info.field_38 -= ctrl->info.field_34;
+                        if (ctrl->info.field_38 < ctrl->info.field_28) {
+                            ctrl->info.field_38 = ctrl->info.field_28;
+                        }
+                        if (ctrl->info.field_3C != NULL) {
+                            ctrl->info.field_3C(ctrl->info.field_38);
+                        }
+                        sub_5806F0(ctrl->id);
+                        return true;
+                    } else if (msg->data.mouse.z < 0) {
+                        ctrl->info.field_38 += ctrl->info.field_34;
+                        if (ctrl->info.field_38 > ctrl->info.field_24) {
+                            ctrl->info.field_38 = ctrl->info.field_24;
+                        }
+                        if (ctrl->info.field_3C != NULL) {
+                            ctrl->info.field_3C(ctrl->info.field_38);
+                        }
+                        sub_5806F0(ctrl->id);
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
+        default:
+            return false;
+        }
+    case TIG_MESSAGE_BUTTON:
+        switch (msg->data.button.state) {
+        case TIG_BUTTON_STATE_PRESSED:
+            for (index = 0; index < 8; index++) {
+                ctrl = &(scrollbar_ui_controls[index]);
+                if ((ctrl->flags & 0x8) != 0
+                    && (ctrl->flags & 0x2) == 0) {
+                    if (msg->data.button.button_handle == ctrl->button_up) {
+                        v1 = ctrl->info.field_38 - ctrl->info.field_2C;
+                        ctrl->info.field_38 = v1;
+                        if (v1 < ctrl->info.field_28) {
+                            ctrl->info.field_38 = ctrl->info.field_28;
+                        }
+                        if (ctrl->info.field_3C != NULL) {
+                            ctrl->info.field_3C(ctrl->info.field_38);
+                        }
+                        sub_5806F0(ctrl->id);
+                        if (dword_5CBF78 == ctrl->id.index) {
+                            dword_5CBF78 = -1;
+                        }
+                        return true;
+                    }
+
+                    if (msg->data.button.button_handle == ctrl->button_down) {
+                        v1 = ctrl->info.field_38 + ctrl->info.field_2C;
+                        ctrl->info.field_38 += v1;
+                        if (v1 > ctrl->info.field_24) {
+                            ctrl->info.field_38 = ctrl->info.field_24;
+                        }
+                        if (ctrl->info.field_3C != NULL) {
+                            ctrl->info.field_3C(ctrl->info.field_38);
+                        }
+                        sub_5806F0(ctrl->id);
+                        if (dword_5CBF78 == ctrl->id.index) {
+                            dword_5CBF78 = -1;
+                        }
+                        return true;
+                    }
+                }
+            }
+            return false;
+        default:
+            return false;
+        }
+    default:
+        return false;
+    }
 }
 
 // 0x5810D0
