@@ -23,7 +23,7 @@ void sub_55F1E0();
 void sub_55F200(int type);
 void sub_55F320();
 void sub_55F340();
-void sub_55F360(int a1);
+void sub_55F360(int player);
 void sub_55F450(int a1, int a2, int a3);
 void sub_55F5F0(int a1, int a2, int a3);
 

@@ -510,11 +510,17 @@ static const char* charedit_fatigue_str;
 // 0x64C848
 static tig_font_handle_t dword_64C848;
 
+// 0x64C84C
+static int dword_64C84C[8][BASIC_SKILL_COUNT];
+
 // 0x64C9CC
 static int dword_64C9CC;
 
 // 0x64C9D0
 static tig_font_handle_t dword_64C9D0;
+
+// 0x64C9D4
+static int dword_64C9D4[8][TECH_SKILL_COUNT];
 
 // 0x64CA54
 static tig_button_handle_t dword_64CA54;
@@ -588,6 +594,9 @@ static tig_button_handle_t spell_plus_bid;
 // 0x64CDD8
 static tig_button_handle_t dword_64CDD8;
 
+// 0x64CDDC
+static int dword_64CDDC[8][COLLEGE_COUNT];
+
 // 0x64CFDC
 static tig_button_handle_t dword_64CFDC;
 
@@ -648,6 +657,27 @@ static tig_font_handle_t dword_64D42C;
 // 0x64D430
 static tig_button_handle_t spell_minus_bid;
 
+// 0x64D434
+static int dword_64D434[8][CHAREDIT_STAT_COUNT];
+
+// 0x64D714
+static char byte_64D714[2000];
+
+// 0x64DEE4
+static bool dword_64DEE4;
+
+// 0x64DEE8
+static const char* charedit_minimum_level_str;
+
+// 0x64DEEC
+static int dword_64DEEC[TECH_COUNT];
+
+// 0x64DF0C
+static tig_font_handle_t dword_64DF0C;
+
+// 0x64DF10
+static int dword_64DF10[8][TECH_COUNT];
+
 // 0x64E010
 static int64_t qword_64E010;
 
@@ -668,21 +698,6 @@ static int dword_64E028;
 
 // 0x64E02C
 static bool dword_64E02C;
-
-// 0x64D714
-static char byte_64D714[2000];
-
-// 0x64DEE4
-static bool dword_64DEE4;
-
-// 0x64DEE8
-static const char* charedit_minimum_level_str;
-
-// 0x64DEEC
-static int dword_64DEEC[TECH_COUNT];
-
-// 0x64DF0C
-static tig_font_handle_t dword_64DF0C;
 
 // 0x559690
 bool charedit_init(GameInitInfo* init_info)
@@ -3191,9 +3206,35 @@ void sub_55F340()
 }
 
 // 0x55F360
-void sub_55F360(int a1)
+void sub_55F360(int player)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int index;
+
+    obj = sub_4A2B60(player);
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    for (index = 0; index < CHAREDIT_STAT_COUNT; index++) {
+        dword_64D434[player][index] = sub_55B4D0(obj, index);
+    }
+
+    for (index = 0; index < TECH_COUNT; index++) {
+        dword_64DF10[player][index] = tech_get_degree(obj, index);
+    }
+
+    for (index = 0; index < COLLEGE_COUNT; index++) {
+        dword_64CDDC[player][index] = sub_4B1AB0(obj, index);
+    }
+
+    for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+        dword_64C84C[player][index] = basic_skill_get_base(obj, index);
+    }
+
+    for (index = 0; index < TECH_SKILL_COUNT; index++) {
+        dword_64C9D4[player][index] = tech_skill_get_base(obj, index);
+    }
 }
 
 // 0x55F450
