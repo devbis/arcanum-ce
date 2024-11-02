@@ -1,13 +1,17 @@
 #include "ui/item_ui.h"
 
+#include "game/anim.h"
 #include "game/combat.h"
 #include "game/critter.h"
+#include "game/item.h"
 #include "game/magictech.h"
 #include "game/mt_item.h"
 #include "game/obj.h"
 #include "game/player.h"
+#include "game/skill.h"
 #include "game/target.h"
 #include "game/trap.h"
+#include "ui/dialog_ui.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
 #include "ui/spell_ui.h"
@@ -133,8 +137,110 @@ void sub_571C80()
     sub_553A60(21);
 }
 
+// TODO: Review.
+//
 // 0x571CB0
 void sub_571CB0(S4F2810* a1)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    Tanya v1;
+    int spell_mana_store = 0;
+    unsigned int item_flags = 0;
+    int range = -1;
+    int64_t v2;
+    char str[1000];
+
+    pc_obj = player_get_pc_obj();
+
+    if (sub_45D8D0(pc_obj)) {
+        return;
+    }
+
+    if (sub_45D800(pc_obj)) {
+        return;
+    }
+
+    if (obj_field_int32_get(qword_6810D8, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+        && !tig_kb_is_key_pressed(DIK_LCONTROL)
+        && (obj_field_int32_get(qword_6810D8, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
+        sub_4C7090(&v1);
+        sub_4440E0(pc_obj, &(v1.field_0));
+        if (!a1->field_8) {
+            sub_4440E0(a1->field_0, &(v1.field_30));
+        }
+        v1.field_9C = SKILL_PICK_LOCKS;
+        v1.field_68.obj = item_find_first_generic(v1.field_0.obj, OGF_IS_LOCKPICK);
+        sub_4C9050(&v1);
+
+        if (pc_obj == v1.field_0.obj) {
+            v2 = qword_6810D8;
+        } else {
+            v2 = item_find_first_generic(v1.field_0.obj, OGF_IS_LOCKPICK);
+            sub_4139A0(v1.field_0.obj, pc_obj, str);
+            sub_568430(v1.field_0.obj, pc_obj, str, 0);
+            if (v2 == OBJ_HANDLE_NULL) {
+                sub_4352C0(v1.field_0.obj, OBJ_HANDLE_NULL, v1.field_30.obj, SKILL_PICK_LOCKS, 0);
+                sub_571C80();
+                return;
+            }
+        }
+    } else {
+        v2 = qword_6810D8;
+    }
+
+    if (v2 != OBJ_HANDLE_NULL) {
+        spell_mana_store = obj_field_int32_get(v2, OBJ_F_ITEM_SPELL_MANA_STORE);
+        item_flags = obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS);
+    }
+
+    if (a1->field_8) {
+        if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
+            sub_462FC0(pc_obj, v2, a1->field_0);
+        } else if (trap_is_trap_device(v2)) {
+            sub_4355F0(pc_obj, a1->field_0, v2, 0);
+        } else {
+            sub_434F80(pc_obj, v2, a1->field_0);
+        }
+    } else {
+        if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
+            range = magictech_get_range(obj_field_int32_get(v2, OBJ_F_ITEM_SPELL_1));
+            if (range < sub_441AE0(pc_obj, a1->field_0)) {
+                range = -1;
+            }
+        }
+
+        // TODO: Too many conditions merged with previous block, probably wrong.
+        if ((spell_mana_store != 0
+                && range != -1
+                && (item_flags & OIF_NO_RANGED_USE) == 0)
+            || ((item_flags & OIF_IS_MAGICAL) == 0
+                && range == -1
+                && (item_flags & OIF_NO_RANGED_USE) == 0)
+            || ((item_flags & OIF_IS_MAGICAL) != 0
+                && range != -1
+                && (item_flags & OIF_NO_RANGED_USE) == 0)) {
+            sub_462CC0(pc_obj, v2, a1->field_0);
+            sub_571C80();
+            return;
+        }
+
+        if ((item_flags & OIF_IS_MAGICAL))
+
+        sub_435450(pc_obj, a1->field_0, v2, 0);
+        if (tig_kb_is_key_pressed(DIK_LSHIFT)) {
+            sub_436C80();
+            sub_571C80();
+            return;
+        }
+
+        if (tig_kb_is_key_pressed(DIK_LCONTROL)
+            || !tig_kb_get_modifier(DIK_NUMLOCK)
+            || (get_always_run(pc_obj) && !tig_kb_is_key_pressed(DIK_LCONTROL))) {
+            sub_436C20();
+            sub_571C80();
+            return;
+        }
+    }
+
+    sub_571C80();
 }
