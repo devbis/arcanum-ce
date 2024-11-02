@@ -116,6 +116,20 @@ static S5C87D0 stru_5C8028[10] = {
     { 313, 237, TIG_BUTTON_HANDLE_INVALID, 21 },
 };
 
+// 0x5C8124
+static int dword_5C8124[] = {
+    -1,
+    -1,
+    STAT_STRENGTH,
+    STAT_CONSTITUTION,
+    STAT_DEXTERITY,
+    STAT_BEAUTY,
+    STAT_INTELLIGENCE,
+    STAT_WILLPOWER,
+    STAT_PERCEPTION,
+    STAT_CHARISMA,
+};
+
 // 0x5C8150
 static S5C8150 stru_5C8150[] = {
     { NULL, 212, 94, 0 },
@@ -3299,7 +3313,106 @@ void sub_55F450(int player, int type, int param)
 }
 
 // 0x55F5F0
-void sub_55F5F0(int a1, int a2, int a3)
+void sub_55F5F0(int player, int type, int param)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int value;
+    int cost;
+    int unspent_points;
+
+    obj = sub_4A2B60(player);
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    switch (type) {
+    case 0:
+        value = sub_55B4D0(obj, param);
+        if (value == dword_64D434[player][param]) {
+            stru_5C8990.str = dword_64D3C4[2];
+            sub_4EDA60(&stru_5C8990, player, 0);
+            return;
+        }
+
+        if (param == 4 || param == 6) {
+            cost = 1;
+        } else {
+            cost = sub_4B0F50(value);
+        }
+
+        value--;
+
+        sub_55B720(obj, param, value);
+        if (sub_55B4D0(obj, param) > value) {
+            if (value == 0) {
+                stru_5C8990.str = dword_64D3C4[3];
+                sub_4EDA60(&stru_5C8990, player, 0);
+                return;
+            }
+
+            if (dword_5C8124[param] != -1
+                && !sub_4C6B50(obj, dword_5C8124[param], value - 1)) { // TODO: Additional -1 looks wrong, check.
+                stru_5C8990.str = dword_64D3C4[11];
+                sub_4EDA60(&stru_5C8990, player, 0);
+                return;
+            }
+
+            if (stru_5C8028[param].art_num == 15
+                && !sub_4B1B90(obj, value - 1)) { // TODO: Additional -1 looks wrong, check.
+                stru_5C8990.str = dword_64D3C4[12];
+                sub_4EDA60(&stru_5C8990, player, 0);
+                return;
+            }
+
+            if (stru_5C8028[param].art_num == 15
+                && !sub_4B02B0(obj, value - 1)) { // TODO: Additional -1 looks wrong, check.
+                stru_5C8990.str = dword_64D3C4[14];
+                sub_4EDA60(&stru_5C8990, player, 0);
+                return;
+            }
+
+            if (stru_5C8028[param].art_num == 17
+                && !sub_4B1C00(obj, value - 1)) { // TODO: Additional -1 looks wrong, check.
+                stru_5C8990.str = dword_64D3C4[22];
+                sub_4EDA60(&stru_5C8990, player, 0);
+                return;
+            }
+
+            // Something else, but still error.
+            return;
+        }
+
+        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
+        break;
+    case 1:
+        if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C84C[player][param]) {
+            stru_5C8990.str = dword_64D3C4[6];
+            sub_4EDA60(&stru_5C8990, player, 0);
+            return;
+        }
+        sub_57AEB0(obj, param);
+        break;
+    case 2:
+        if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C9D4[player][param]) {
+            stru_5C8990.str = dword_64D3C4[6];
+            sub_4EDA60(&stru_5C8990, player, 0);
+            return;
+        }
+        sub_57AEB0(obj, param);
+        break;
+    case 3:
+        tech_ui_dec_degree(obj, param);
+        break;
+    case 4:
+        value = sub_4B1AB0(obj, param);
+        if (value == dword_64CDDC[player][param]) {
+            stru_5C8990.str = dword_64D3C4[10];
+            sub_4EDA60(&stru_5C8990, player, 0);
+            return;
+        }
+
+        sub_57C670(obj, value + 5 * param - 1);
+        break;
+    }
 }
