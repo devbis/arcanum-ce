@@ -3238,9 +3238,64 @@ void sub_55F360(int player)
 }
 
 // 0x55F450
-void sub_55F450(int a1, int a2, int a3)
+void sub_55F450(int player, int type, int param)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int value;
+    int cost;
+    int unspent_points;
+
+    obj = sub_4A2B60(player);
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    switch (type) {
+    case 0:
+        value = sub_55B4D0(obj, param) + 1;
+        if (param == 4 || param == 6) {
+            cost = 1;
+        } else {
+            int stat;
+
+            stat = sub_55B410(param);
+            if (stat_level(obj, stat) > stat_get_max_value(obj, stat)) {
+                stru_5C8990.str = dword_64D3C4[0];
+                sub_4EDA60(&stru_5C8990, player, 0);
+                return;
+            }
+
+            cost = sub_4B0F50(value);
+        }
+
+        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        if (cost > unspent_points) {
+            stru_5C8990.str = dword_64D3C4[1];
+            sub_4EDA60(&stru_5C8990, player, 0);
+            return;
+        }
+
+        sub_55B720(obj, param, value);
+
+        if (sub_55B4D0(obj, param) < value) {
+            stru_5C8990.str = dword_64D3C4[0];
+            sub_4EDA60(&stru_5C8990, player, 0);
+            return;
+        }
+
+        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+        break;
+    case 1:
+    case 2:
+        sub_57ACD0(obj, param);
+        break;
+    case 3:
+        tech_ui_inc_degree(obj, param);
+        break;
+    case 4:
+        sub_57C540(obj, sub_4B1AB0(obj, param) + 5 * param);
+        break;
+    }
 }
 
 // 0x55F5F0
