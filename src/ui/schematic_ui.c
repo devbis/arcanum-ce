@@ -638,7 +638,24 @@ int sub_56DB00(int schematic)
 // 0x56DB60
 int sub_56DB60()
 {
-    // TODO: Incomplete.
+    int index;
+    int v1;
+
+    if (dword_680E4C[dword_680E6C] == 0) {
+        return -1;
+    }
+
+    v1 = 0;
+    for (index = 0; index < dword_680E48; index++) {
+        if (sub_56DB00(dword_680E5C[index]) == dword_680E6C) {
+            if (v1 == dword_680E58) {
+                return dword_680E5C[index];
+            }
+            v1++;
+        }
+    }
+
+    return -1;
 }
 
 // 0x56DBD0
