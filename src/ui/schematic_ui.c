@@ -1,5 +1,7 @@
 #include "ui/schematic_ui.h"
 
+#include <stdio.h>
+
 #include "game/critter.h"
 #include "game/gsound.h"
 #include "game/item.h"
@@ -30,7 +32,7 @@ static int sub_56DB00(int schematic);
 static int sub_56DB60();
 static void sub_56DD20(const char* str, int* items);
 static void sub_56DDC0();
-static void sub_56E190();
+static void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4);
 
 // 0x5CA818
 static tig_window_handle_t schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -70,10 +72,10 @@ static UiButtonInfo stru_5CA8A0[TECH_COUNT] = {
 };
 
 // 0x5CA920
-static TigRect stru_5CA920 = { 579, 181, 99, 67 };
-
-// 0x5CA930
-static TigRect stru_5CA930 = { 579, 277, 99, 67 };
+static TigRect stru_5CA920[] = {
+    { 579, 181, 99, 67 },
+    { 579, 277, 99, 67 },
+};
 
 // 0x5CA940
 static TigRect stru_5CA940[] = {
@@ -386,16 +388,16 @@ void schematic_ui_create()
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = schematic_ui_window;
-    button_data.x = stru_5CA920.x;
-    button_data.y = stru_5CA920.y;
-    button_data.width = stru_5CA920.width;
-    button_data.height = stru_5CA920.height;
+    button_data.x = stru_5CA920[0].x;
+    button_data.y = stru_5CA920[0].y;
+    button_data.width = stru_5CA920[0].width;
+    button_data.height = stru_5CA920[0].height;
     tig_button_create(&button_data, &dword_680DE0);
 
-    button_data.x = stru_5CA930.x;
-    button_data.y = stru_5CA930.y;
-    button_data.width = stru_5CA930.width;
-    button_data.height = stru_5CA930.height;
+    button_data.x = stru_5CA920[1].x;
+    button_data.y = stru_5CA920[1].y;
+    button_data.width = stru_5CA920[1].width;
+    button_data.height = stru_5CA920[1].height;
     tig_button_create(&button_data, &dword_680E3C);
 
     sub_56DDC0();
@@ -848,8 +850,8 @@ void sub_56DDC0()
     tig_font_pop();
 
     //
-    sub_56E190(0, schematic_info, &v1, &v2);
-    sub_56E190(1, schematic_info, &v3, &v4);
+    sub_56E190(0, &schematic_info, &v1, &v2);
+    sub_56E190(1, &schematic_info, &v3, &v4);
 
     if (!v2 || !v4) {
         dword_680E7C = 2;
@@ -880,9 +882,180 @@ void sub_56DDC0()
 }
 
 // 0x56E190
-void sub_56E190()
+void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
 {
-    // TODO: Incomplete.
+    int index;
+    TigArtAnimData art_anim_data;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect dst_rect;
+    TigRect src_rect;
+    int64_t item_obj;
+    int discipline;
+    int complexity;
+    TigPalette palette;
+    TigPaletteModifyInfo palette_modify_info;
+    char str[80];
+    float width_ratio;
+    float height_ratio;
+
+    if (ingr == 0) {
+        for (index = 0; index < 3; index++) {
+            item_obj = sub_4685A0(schematic_info->item1[index]);
+            if (sub_462540(qword_680E70, item_obj, 0x7)) {
+                break;
+            }
+        }
+
+        if (index == 3) {
+            item_obj = sub_4685A0(schematic_info->item1[0]);
+            *a3 = false;
+        } else {
+            *a3 = true;
+        }
+
+        qword_680E28 = item_obj;
+    } else {
+        for (index = 0; index < 3; index++) {
+            item_obj = sub_4685A0(schematic_info->item2[index]);
+            if (sub_462540(qword_680E70, item_obj, 0x7)) {
+                break;
+            }
+        }
+
+        if (index == 3) {
+            item_obj = sub_4685A0(schematic_info->item2[0]);
+            *a3 = false;
+        } else {
+            *a3 = true;
+        }
+
+        qword_680E90 = item_obj;
+    }
+
+    discipline = obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE);
+    complexity = -obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+    *a4 = sub_4B00B0(qword_680E70, discipline) >= complexity;
+
+    if (*a4) {
+        if (*a3) {
+            tig_art_interface_id_create(831u, 0, 0, 0, &(art_blit_info.art_id));
+        } else {
+            tig_art_interface_id_create(830u, 0, 0, 0, &(art_blit_info.art_id));
+        }
+
+        art_blit_info.flags = 0;
+        if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
+            return;
+        }
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+
+        dst_rect.y = stru_5CA920[ingr].y;
+        dst_rect.x = stru_5CA920[ingr].x;
+        dst_rect.width = art_frame_data.width;
+        dst_rect.height = art_frame_data.height;
+
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(schematic_ui_window, &art_blit_info);
+    }
+
+    art_blit_info.flags = 0;
+
+    switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
+    case OBJ_TYPE_WEAPON:
+        art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_WEAPON_PAPER_DOLL_AID);
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_ARMOR_PAPER_DOLL_AID);
+        break;
+    default:
+        art_blit_info.art_id = TIG_ART_ID_INVALID;
+        break;
+    }
+
+    if (art_blit_info.art_id != TIG_ART_ID_INVALID) {
+        art_blit_info.art_id = tig_art_item_id_disposition_set(art_blit_info.art_id, TIG_ART_ITEM_DISPOSITION_SCHEMATIC);
+        if (tig_art_exists(art_blit_info.art_id) != TIG_OK) {
+            art_blit_info.art_id = TIG_ART_ID_INVALID;
+        }
+    }
+
+    if (art_blit_info.art_id == TIG_ART_ID_INVALID) {
+        art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_AID);
+    }
+
+    if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
+        return;
+    }
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = art_frame_data.width;
+    src_rect.height = art_frame_data.height;
+
+    dst_rect = stru_5CA920[ingr];
+
+    width_ratio = (float)art_frame_data.width / (float)stru_5CA920[ingr].width;
+    height_ratio = (float)art_frame_data.height / (float)stru_5CA920[ingr].height;
+
+    if (width_ratio > height_ratio && width_ratio > 1.0f) {
+        dst_rect.height = (int)(art_frame_data.height / width_ratio);
+        dst_rect.y += (stru_5CA920[ingr].height - dst_rect.height) / 2;
+    } else if (height_ratio > width_ratio && height_ratio > 1.0f) {
+        dst_rect.width = (int)(art_frame_data.width / height_ratio);
+        dst_rect.x += (stru_5CA920[ingr].width - dst_rect.width) / 2;
+    } else {
+        dst_rect.width = art_frame_data.width;
+        dst_rect.x += (stru_5CA920[ingr].width - art_frame_data.width) / 2;
+        dst_rect.height = art_frame_data.height;
+        dst_rect.y += (stru_5CA920[ingr].height - art_frame_data.height) / 2;
+    }
+
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    if (!*a4 && tig_art_anim_data(art_blit_info.art_id, &art_anim_data) == TIG_OK) {
+        palette = tig_palette_create();
+
+        palette_modify_info.flags = TIG_PALETTE_MODIFY_GRAYSCALE;
+        palette_modify_info.src_palette = art_anim_data.palette1;
+        palette_modify_info.dst_palette = palette;
+        tig_palette_modify(&palette_modify_info);
+
+        palette_modify_info.flags = TIG_PALETTE_MODIFY_TINT;
+        palette_modify_info.tint_color = tig_color_make(255, 204, 102);
+        palette_modify_info.src_palette = palette;
+        tig_palette_modify(&palette_modify_info);
+
+        art_blit_info.flags |= TIG_ART_BLT_PALETTE_OVERRIDE;
+        art_blit_info.palette = palette;
+    } else {
+        palette = NULL;
+    }
+
+    tig_window_blit_art(schematic_ui_window, &art_blit_info);
+
+    if (palette != NULL) {
+        tig_palette_destroy(palette);
+    }
+
+    if (complexity > 0) {
+        str[0] = (char)(discipline + '1');
+        str[1] = '\0';
+        tig_font_push(dword_680E88);
+        tig_window_text_write(schematic_ui_window, str, &(stru_5CA940[ingr]));
+        tig_font_pop();
+
+        sprintf(str, "%d", complexity);
+        tig_font_push(schematic_ui_description_font);
+        tig_window_text_write(schematic_ui_window, str, &stru_5CA960[ingr]);
+        tig_font_pop();
+    }
 }
 
 // 0x56E720
