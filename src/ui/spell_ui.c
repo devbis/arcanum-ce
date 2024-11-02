@@ -1,6 +1,7 @@
 #include "ui/spell_ui.h"
 
 #include "game/critter.h"
+#include "game/item.h"
 #include "game/magictech.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
@@ -14,6 +15,7 @@
 #include "ui/charedit_ui.h"
 #include "ui/hotkey_ui.h"
 #include "ui/intgame.h"
+#include "ui/inven_ui.h"
 
 #define FIVE 5
 
@@ -114,10 +116,134 @@ void sub_57BC30()
     sub_460630(&v1);
 }
 
+// FIXME: Probably returns error code where 0 is success.
+//
 // 0x57BC70
 bool sub_57BC70(int64_t obj, int spl)
 {
-    // TODO: Incomplete.
+    uint64_t* tgt_ptr;
+    uint64_t tgt;
+    bool v1 = false;
+    S4F2810 v2;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    dword_683508 = true;
+
+    if (obj_type_is_item(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        if (!item_parent(obj, &qword_683500)) {
+            return true;
+        }
+    } else {
+        qword_683500 = obj;
+    }
+
+    if (qword_683500 == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    if (!sub_40DA20(qword_683500)) {
+        return true;
+    }
+
+    if ((obj_field_int32_get(qword_683500, OBJ_F_FLAGS) & OF_OFF) != 0) {
+        return true;
+    }
+
+    if (sub_45D8D0(qword_683500)) {
+        return true;
+    }
+
+    if (sub_45D800(qword_683500)) {
+        return true;
+    }
+
+    if (sub_551A00() == 1) {
+        sub_57BFF0();
+    }
+
+    if (!sub_459F60(spl)) {
+        dword_683508 = false;
+        return true;
+    }
+
+    dword_5CB3A0 = spl;
+    qword_6834F8 = obj;
+
+    sub_459F20(spl, &tgt_ptr);
+    tgt = *tgt_ptr;
+
+    if (sub_450370(dword_5CB3A0)
+        && !tig_kb_is_key_pressed(DIK_LALT)
+        && !tig_kb_is_key_pressed(DIK_RALT)) {
+        // FIXME: Looks odd.
+        tgt |= (Tgt_Non_Party_Critters & ~Tgt_Object);
+    }
+
+    if ((tgt & (Tgt_Obj_Inven & ~Tgt_Object)) != 0) {
+        if (sub_551A00() == 4 || sub_551A00() == 11) {
+            inven_ui_destroy();
+        }
+
+        if (inven_ui_is_created()) {
+            v1 = true;
+        } else {
+            sub_572240(qword_6834F8, OBJ_HANDLE_NULL, 0);
+        }
+    } else {
+        if (!sub_551A80(0)) {
+            dword_683508 = false;
+            return true;
+        }
+    }
+
+    // TODO: Check, probably wrong.
+    if (*tgt_ptr == Tgt_None
+        || ((*tgt_ptr & Tgt_Self) != 0
+            && (*tgt_ptr & Tgt_Tile) == 0)
+        || *tgt_ptr == Tgt_Obj_Radius) {
+        sub_4F27F0(&v2, obj_field_int64_get(qword_683500, OBJ_F_LOCATION));
+        sub_57C110(&v2);
+        dword_683508 = false;
+        return true;
+    }
+
+    if (!sub_4B7AA0(qword_683500)) {
+        dword_683508 = false;
+        return false;
+    }
+
+    sub_4F25B0(tgt);
+    if (sub_551A80(1)) {
+        sub_4F25B0(tgt);
+        dword_68350C = sub_500560();
+        if (!dword_68350C) {
+            sub_500570();
+        }
+
+        if ((*tgt_ptr & Tgt_Object) != 0
+            && (tig_kb_is_key_pressed(DIK_LSHIFT)
+                || tig_kb_is_key_pressed(DIK_RSHIFT))) {
+            sub_4F2810(&v2, player_get_pc_obj());
+            // FIXME: Odd.
+            if ((*tgt_ptr & (Tgt_Obj_No_Self & ~Tgt_Object)) == 0) {
+                sub_57C110(&v2);
+                dword_683508 = false;
+                return true;
+            }
+        }
+    }
+
+    if (v1) {
+        if (!inven_ui_is_created()) {
+            sub_572240(qword_6834F8, OBJ_HANDLE_NULL, 0);
+        }
+    }
+
+    dword_683508 = false;
+    return false;
 }
 
 // 0x57BFF0
