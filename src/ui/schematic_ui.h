@@ -21,7 +21,7 @@ void schematic_ui_reset();
 void sub_56D130(long long a1, long long a2);
 void sub_56D2D0();
 void sub_56DBD0(int schematic, SchematicInfo* schematic_info);
-bool sub_56E720(int a1, int64_t a2, int64_t a3);
+bool sub_56E720(int schematic, int64_t a2, int64_t a3);
 bool sub_56E950(int a1, int64_t a2, long long obj);
 const char* sub_56E9D0(int schematic);
 const char* sub_56EA10(int a1, int a2);

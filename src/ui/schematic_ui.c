@@ -2,8 +2,10 @@
 
 #include "game/critter.h"
 #include "game/gsound.h"
+#include "game/item.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/player.h"
@@ -884,9 +886,94 @@ void sub_56E190()
 }
 
 // 0x56E720
-bool sub_56E720(int a1, int64_t a2, int64_t a3)
+bool sub_56E720(int schematic, int64_t a2, int64_t a3)
 {
-    // TODO: Incomplete.
+    SchematicInfo info;
+    int64_t obj;
+    int ingridient1;
+    int ingridient2;
+    int64_t ingridient1_obj;
+    int64_t ingridient2_obj;
+    int prod;
+    int64_t loc;
+    int qty;
+    int64_t prod_obj;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0
+        && !sub_4A2BA0()) {
+        return true;
+    }
+
+    if (schematic == -1) {
+        return false;
+    }
+
+    sub_56DBD0(schematic, &info);
+
+    for (ingridient1 = 0; ingridient1 < 3; ingridient1++) {
+        obj = sub_4685A0(info.item1[ingridient1]);
+        ingridient1_obj = sub_462540(a2, obj, 0x7);
+        if (ingridient1_obj != OBJ_HANDLE_NULL) {
+            break;
+        }
+    }
+
+    if (ingridient1 == 3) {
+        return false;
+    }
+
+    for (ingridient2 = 0; ingridient2 < 3; ingridient2++) {
+        obj = sub_4685A0(info.item2[ingridient2]);
+        ingridient2_obj = sub_462540(a2, obj, 0x7);
+        if (ingridient2_obj != OBJ_HANDLE_NULL) {
+            break;
+        }
+    }
+
+    if (ingridient2 == 3) {
+        return false;
+    }
+
+    if (ingridient1 != 0) {
+        prod = info.prod[ingridient1];
+    } else {
+        prod = info.prod[ingridient2];
+    }
+
+    loc = obj_field_int64_get(a2, OBJ_F_LOCATION);
+
+    if (obj_field_int32_get(ingridient1_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
+        item_ammo_move(a2,
+            OBJ_HANDLE_NULL,
+            1,
+            obj_field_int32_get(ingridient1_obj, OBJ_F_AMMO_QUANTITY),
+            ingridient1_obj);
+    } else {
+        sub_43CCA0(ingridient1_obj);
+    }
+
+    if (obj_field_int32_get(ingridient2_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
+        item_ammo_move(a2,
+            OBJ_HANDLE_NULL,
+            1,
+            obj_field_int32_get(ingridient2_obj, OBJ_F_AMMO_QUANTITY),
+            ingridient2_obj);
+    } else {
+        sub_43CCA0(ingridient2_obj);
+    }
+
+    for (qty = 0; qty < info.qty; qty++) {
+        if (!mp_object_create(prod, loc, &prod_obj)) {
+            return false;
+        }
+
+        sub_4617F0(prod_obj, a2);
+    }
+
+    sub_4EE0F0(1, a2, a3);
+
+    return true;
 }
 
 // 0x56E950
