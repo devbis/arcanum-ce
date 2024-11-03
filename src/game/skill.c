@@ -1040,7 +1040,36 @@ bool sub_4C7160(Tanya* a1)
 // 0x4C81A0
 bool sub_4C81A0(int a1, int a2, Tanya* a3)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+
+    v1 = (dword_5B6F64[a3->field_9C] & 0x400) != 0 ? 20 : 2;
+    v2 = a2 / v1;
+
+    if ((a3->field_98 & 0x8) != 0) {
+        v2 += sub_4B5F30(a3->field_A4) / -5;
+    }
+
+    if (a3->field_68.obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(a3->field_68.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+        && (a3->field_98 & 0x10000) == 0) {
+        v2 += sub_461590(a3->field_68.obj,
+            a3->field_0.obj,
+            obj_field_int32_get(a3->field_68.obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE));
+    }
+
+    if ((a3->field_98 & 0x8000) != 0) {
+        v2 += 2 * basic_skill_level(a3->field_0.obj, BASIC_SKILL_BACKSTAB);
+        v2 -= stat_level(a3->field_30.obj, STAT_LEVEL);
+
+        if (basic_skill_get_training(a3->field_0.obj, BASIC_SKILL_BACKSTAB) == TRAINING_MASTER) {
+            v2 += 20;
+        }
+    }
+
+    v2 = effect_adjust_crit_hit_chance(a3->field_0.obj, v2);
+
+    return a1 <= v2;
 }
 
 // 0x4C82E0
