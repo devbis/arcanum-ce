@@ -168,6 +168,8 @@ static void sub_562800(int id);
 static void sub_562880(WmapNoteCoords* coords);
 static void sub_562A20(int x, int y);
 static void sub_562AF0(int x, int y);
+static void sub_562B70(int a1);
+static bool wmap_load_townmap_info();
 static bool wmTileArtLockMode(int a1, int a2);
 static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
 static bool sub_563200(int a1, int a2);
@@ -292,6 +294,9 @@ static tig_color_t dword_64E03C;
 
 // 0x64E048
 static S64E408 stru_64E048[2];
+
+// 0x64E7E8
+static WmapNoteCoords stru_64E7E8;
 
 // 0x64E7F0
 static mes_file_handle_t wmap_ui_worldmap_mes_file;
@@ -1287,13 +1292,110 @@ void sub_562AF0(int x, int y)
 }
 
 // 0x562B70
-void sub_562B70()
+void sub_562B70(int a1)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    John v1;
+    int v2;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    sub_5615D0(0);
+
+    if (dword_66D868 == a1) {
+        return;
+    }
+
+    switch (a1) {
+    case 1:
+        if (stru_5C9228[0].str[0] == '\0') {
+            mes_file_entry.num = 605;
+            mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+
+            v1.type = 6;
+            v1.str = mes_file_entry.str;
+            sub_550750(&v1);
+            return;
+        }
+        break;
+    case 2:
+        if (!dword_66D874) {
+            return;
+        }
+        break;
+    }
+
+    dword_66D868 = a1;
+
+    switch (a1) {
+    case 1:
+        if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_hide(stru_5C9B80.button_handle);
+        }
+        break;
+    case 2:
+        if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_show(stru_5C9B80.button_handle);
+        }
+
+        if (!wmap_load_townmap_info()) {
+            sub_562B70(0);
+            return;
+        }
+        break;
+    default:
+        if (dword_66D880) {
+            if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+                tig_button_show(stru_5C9B80.button_handle);
+            }
+        } else {
+            if (stru_5C9B80.button_handle != TIG_BUTTON_HANDLE_INVALID) {
+                tig_button_hide(stru_5C9B80.button_handle);
+            }
+        }
+        break;
+    }
+
+    if (wmap_ui_window != TIG_WINDOW_HANDLE_INVALID) {
+        v2 = a1;
+        if (!dword_66D880) {
+            v2 = 2;
+        }
+
+        if (stru_5C9228[v2].field_54 != -1) {
+            tig_art_interface_id_create(stru_5C9228[v2].field_54, 0, 0, 0, &art_id);
+
+            if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK
+                && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+                src_rect.x = 0;
+                src_rect.y = 0;
+                src_rect.width = art_frame_data.width;
+                src_rect.height = art_frame_data.height;
+
+                dst_rect.x = stru_5C9A78.x;
+                dst_rect.y = stru_5C9A78.y;
+                dst_rect.width = art_frame_data.width;
+                dst_rect.height = art_frame_data.height;
+
+                art_blit_info.flags = 0;
+                art_blit_info.art_id = art_id;
+                art_blit_info.src_rect = &src_rect;
+                art_blit_info.dst_rect = &dst_rect;
+                tig_window_blit_art(wmap_ui_window, &art_blit_info);
+            }
+
+            stru_5C9228[dword_66D868].field_48();
+            sub_562880(&stru_64E7E8);
+        }
+    }
 }
 
 // 0x562D80
-void wmap_load_townmap_info()
+bool wmap_load_townmap_info()
 {
     // TODO: Incomplete.
 }
