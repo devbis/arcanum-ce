@@ -24,9 +24,32 @@
 #include "ui/tech_ui.h"
 #include "ui/schematic_ui.h"
 
-typedef enum CharEditStat {
-    CHAREDIT_STAT_COUNT = 23,
-} CharEditStat;
+typedef enum ChareditStat {
+    CHAREDIT_STAT_UNSPENT_POINTS,
+    CHAREDIT_STAT_LEVEL,
+    CHAREDIT_STAT_XP_TO_NEXT_LEVEL,
+    CHAREDIT_STAT_3,
+    CHAREDIT_STAT_HP_PTS,
+    CHAREDIT_STAT_5,
+    CHAREDIT_STAT_FATIGUE_PTS,
+    CHAREDIT_STAT_STRENGTH_BASE,
+    CHAREDIT_STAT_STRENGTH_CURRENT,
+    CHAREDIT_STAT_CONSTITUTION_BASE,
+    CHAREDIT_STAT_CONSTITUTION_CURRENT,
+    CHAREDIT_STAT_DEXTERITY_BASE,
+    CHAREDIT_STAT_DEXTERITY_CURRENT,
+    CHAREDIT_STAT_BEAUTY_BASE,
+    CHAREDIT_STAT_BEAUTY_CURRENT,
+    CHAREDIT_STAT_INTELLIGENCE_BASE,
+    CHAREDIT_STAT_INTELLIGENCE_CURRENT,
+    CHAREDIT_STAT_WILLPOWER_BASE,
+    CHAREDIT_STAT_WILLPOWER_CURRENT,
+    CHAREDIT_STAT_PERCEPTION_BASE,
+    CHAREDIT_STAT_PERCEPTION_CURRENT,
+    CHAREDIT_STAT_CHARISMA_BASE,
+    CHAREDIT_STAT_CHARISMA_CURRENT,
+    CHAREDIT_STAT_COUNT,
+} ChareditStat;
 
 typedef struct S5C8150 {
     const char* str;
@@ -90,30 +113,30 @@ static void sub_55F110(TigRect* rect);
 
 // 0x5C7F88
 static S5C87D0 stru_5C7F88[10] = {
-    { 465, 144, TIG_BUTTON_HANDLE_INVALID, 4 },
-    { 465, 214, TIG_BUTTON_HANDLE_INVALID, 6 },
-    { 224, 117, TIG_BUTTON_HANDLE_INVALID, 7 },
-    { 224, 157, TIG_BUTTON_HANDLE_INVALID, 9 },
-    { 224, 197, TIG_BUTTON_HANDLE_INVALID, 11 },
-    { 224, 237, TIG_BUTTON_HANDLE_INVALID, 13 },
-    { 367, 117, TIG_BUTTON_HANDLE_INVALID, 15 },
-    { 367, 157, TIG_BUTTON_HANDLE_INVALID, 17 },
-    { 367, 197, TIG_BUTTON_HANDLE_INVALID, 19 },
-    { 367, 237, TIG_BUTTON_HANDLE_INVALID, 21 },
+    { 465, 144, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_HP_PTS },
+    { 465, 214, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_FATIGUE_PTS },
+    { 224, 117, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_STRENGTH_BASE },
+    { 224, 157, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_CONSTITUTION_BASE },
+    { 224, 197, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_DEXTERITY_BASE },
+    { 224, 237, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_BEAUTY_BASE },
+    { 367, 117, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_INTELLIGENCE_BASE },
+    { 367, 157, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_WILLPOWER_BASE },
+    { 367, 197, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_PERCEPTION_BASE },
+    { 367, 237, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_CHARISMA_BASE },
 };
 
 // 0x5C8028
 static S5C87D0 stru_5C8028[10] = {
-    { 409, 144, TIG_BUTTON_HANDLE_INVALID, 4 },
-    { 409, 214, TIG_BUTTON_HANDLE_INVALID, 6 },
-    { 170, 117, TIG_BUTTON_HANDLE_INVALID, 7 },
-    { 170, 157, TIG_BUTTON_HANDLE_INVALID, 9 },
-    { 170, 197, TIG_BUTTON_HANDLE_INVALID, 11 },
-    { 170, 237, TIG_BUTTON_HANDLE_INVALID, 13 },
-    { 313, 117, TIG_BUTTON_HANDLE_INVALID, 15 },
-    { 313, 157, TIG_BUTTON_HANDLE_INVALID, 17 },
-    { 313, 197, TIG_BUTTON_HANDLE_INVALID, 19 },
-    { 313, 237, TIG_BUTTON_HANDLE_INVALID, 21 },
+    { 409, 144, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_HP_PTS },
+    { 409, 214, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_FATIGUE_PTS },
+    { 170, 117, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_STRENGTH_BASE },
+    { 170, 157, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_CONSTITUTION_BASE },
+    { 170, 197, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_DEXTERITY_BASE },
+    { 170, 237, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_BEAUTY_BASE },
+    { 313, 117, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_INTELLIGENCE_BASE },
+    { 313, 157, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_WILLPOWER_BASE },
+    { 313, 197, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_PERCEPTION_BASE },
+    { 313, 237, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_CHARISMA_BASE },
 };
 
 // 0x5C8124
@@ -1337,39 +1360,39 @@ void sub_55B2A0(int stat)
 int sub_55B410(int stat)
 {
     switch (stat) {
-    case 0:
+    case CHAREDIT_STAT_UNSPENT_POINTS:
         return STAT_UNSPENT_POINTS;
-    case 1:
+    case CHAREDIT_STAT_LEVEL:
         return STAT_LEVEL;
-    case 3:
-    case 4:
+    case CHAREDIT_STAT_3:
+    case CHAREDIT_STAT_HP_PTS:
         return -3;
-    case 5:
-    case 6:
+    case CHAREDIT_STAT_5:
+    case CHAREDIT_STAT_FATIGUE_PTS:
         return -2;
-    case 7:
-    case 8:
+    case CHAREDIT_STAT_STRENGTH_BASE:
+    case CHAREDIT_STAT_STRENGTH_CURRENT:
         return STAT_STRENGTH;
-    case 9:
-    case 10:
+    case CHAREDIT_STAT_CONSTITUTION_BASE:
+    case CHAREDIT_STAT_CONSTITUTION_CURRENT:
         return STAT_CONSTITUTION;
-    case 11:
-    case 12:
+    case CHAREDIT_STAT_DEXTERITY_BASE:
+    case CHAREDIT_STAT_DEXTERITY_CURRENT:
         return STAT_DEXTERITY;
-    case 13:
-    case 14:
+    case CHAREDIT_STAT_BEAUTY_BASE:
+    case CHAREDIT_STAT_BEAUTY_CURRENT:
         return STAT_BEAUTY;
-    case 15:
-    case 16:
+    case CHAREDIT_STAT_INTELLIGENCE_BASE:
+    case CHAREDIT_STAT_INTELLIGENCE_CURRENT:
         return STAT_INTELLIGENCE;
-    case 17:
-    case 18:
+    case CHAREDIT_STAT_WILLPOWER_BASE:
+    case CHAREDIT_STAT_WILLPOWER_CURRENT:
         return STAT_WILLPOWER;
-    case 19:
-    case 20:
+    case CHAREDIT_STAT_PERCEPTION_BASE:
+    case CHAREDIT_STAT_PERCEPTION_CURRENT:
         return STAT_PERCEPTION;
-    case 21:
-    case 22:
+    case CHAREDIT_STAT_CHARISMA_BASE:
+    case CHAREDIT_STAT_CHARISMA_CURRENT:
         return STAT_CHARISMA;
     default:
         // FIXME: Ideally should return something else to denote error.
@@ -1381,51 +1404,51 @@ int sub_55B410(int stat)
 int sub_55B4D0(int64_t obj, int stat)
 {
     switch (stat) {
-    case 0:
+    case CHAREDIT_STAT_UNSPENT_POINTS:
         return stat_get_base(obj, STAT_UNSPENT_POINTS);
-    case 1:
+    case CHAREDIT_STAT_LEVEL:
         return stat_level(obj, STAT_LEVEL);
-    case 2:
+    case CHAREDIT_STAT_XP_TO_NEXT_LEVEL:
         return level_get_experience_points_to_next_level(obj);
-    case 3:
+    case CHAREDIT_STAT_3:
         return sub_43D600(obj);
-    case 4:
+    case CHAREDIT_STAT_HP_PTS:
         return object_get_hp_pts(obj);
-    case 5:
+    case CHAREDIT_STAT_5:
         return sub_45D700(obj);
-    case 6:
+    case CHAREDIT_STAT_FATIGUE_PTS:
         return critter_fatigue_pts_get(obj);
-    case 7:
+    case CHAREDIT_STAT_STRENGTH_BASE:
         return stat_get_base(obj, STAT_STRENGTH);
-    case 8:
+    case CHAREDIT_STAT_STRENGTH_CURRENT:
         return stat_level(obj, STAT_STRENGTH);
-    case 9:
+    case CHAREDIT_STAT_CONSTITUTION_BASE:
         return stat_get_base(obj, STAT_CONSTITUTION);
-    case 10:
+    case CHAREDIT_STAT_CONSTITUTION_CURRENT:
         return stat_level(obj, STAT_CONSTITUTION);
-    case 11:
+    case CHAREDIT_STAT_DEXTERITY_BASE:
         return stat_get_base(obj, STAT_DEXTERITY);
-    case 12:
+    case CHAREDIT_STAT_DEXTERITY_CURRENT:
         return stat_level(obj, STAT_DEXTERITY);
-    case 13:
+    case CHAREDIT_STAT_BEAUTY_BASE:
         return stat_get_base(obj, STAT_BEAUTY);
-    case 14:
+    case CHAREDIT_STAT_BEAUTY_CURRENT:
         return stat_level(obj, STAT_BEAUTY);
-    case 15:
+    case CHAREDIT_STAT_INTELLIGENCE_BASE:
         return stat_get_base(obj, STAT_INTELLIGENCE);
-    case 16:
+    case CHAREDIT_STAT_INTELLIGENCE_CURRENT:
         return stat_level(obj, STAT_INTELLIGENCE);
-    case 17:
+    case CHAREDIT_STAT_WILLPOWER_BASE:
         return stat_get_base(obj, STAT_WILLPOWER);
-    case 18:
+    case CHAREDIT_STAT_WILLPOWER_CURRENT:
         return stat_level(obj, STAT_WILLPOWER);
-    case 19:
+    case CHAREDIT_STAT_PERCEPTION_BASE:
         return stat_get_base(obj, STAT_PERCEPTION);
-    case 20:
+    case CHAREDIT_STAT_PERCEPTION_CURRENT:
         return stat_level(obj, STAT_PERCEPTION);
-    case 21:
+    case CHAREDIT_STAT_CHARISMA_BASE:
         return stat_get_base(obj, STAT_CHARISMA);
-    case 22:
+    case CHAREDIT_STAT_CHARISMA_CURRENT:
         return stat_level(obj, STAT_CHARISMA);
     default:
         return 0;
@@ -1436,34 +1459,34 @@ int sub_55B4D0(int64_t obj, int stat)
 void sub_55B720(int64_t obj, int stat, int value)
 {
     switch (stat) {
-    case 4:
+    case CHAREDIT_STAT_HP_PTS:
         object_hp_pts_set(obj, value);
         break;
-    case 6:
+    case CHAREDIT_STAT_FATIGUE_PTS:
         critter_fatigue_pts_set(obj, value);
         break;
-    case 7:
+    case CHAREDIT_STAT_STRENGTH_BASE:
         stat_set_base(obj, STAT_STRENGTH, value);
         break;
-    case 9:
+    case CHAREDIT_STAT_CONSTITUTION_BASE:
         stat_set_base(obj, STAT_CONSTITUTION, value);
         break;
-    case 11:
+    case CHAREDIT_STAT_DEXTERITY_BASE:
         stat_set_base(obj, STAT_DEXTERITY, value);
         break;
-    case 13:
+    case CHAREDIT_STAT_BEAUTY_BASE:
         stat_set_base(obj, STAT_BEAUTY, value);
         break;
-    case 15:
+    case CHAREDIT_STAT_INTELLIGENCE_BASE:
         stat_set_base(obj, STAT_INTELLIGENCE, value);
         break;
-    case 17:
+    case CHAREDIT_STAT_WILLPOWER_BASE:
         stat_set_base(obj, STAT_WILLPOWER, value);
         break;
-    case 19:
+    case CHAREDIT_STAT_PERCEPTION_BASE:
         stat_set_base(obj, STAT_PERCEPTION, value);
         break;
-    case 21:
+    case CHAREDIT_STAT_CHARISMA_BASE:
         stat_set_base(obj, STAT_CHARISMA, value);
         break;
     }
@@ -3324,7 +3347,7 @@ void sub_55F450(int player, int type, int param)
     switch (type) {
     case 0:
         value = sub_55B4D0(obj, param) + 1;
-        if (param == 4 || param == 6) {
+        if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
             cost = 1;
         } else {
             int stat;
@@ -3391,7 +3414,7 @@ void sub_55F5F0(int player, int type, int param)
             return;
         }
 
-        if (param == 4 || param == 6) {
+        if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
             cost = 1;
         } else {
             cost = sub_4B0F50(value);
