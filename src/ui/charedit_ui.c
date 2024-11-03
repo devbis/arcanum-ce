@@ -2522,7 +2522,133 @@ void sub_55D210()
 // 0x55D3A0
 bool sub_55D3A0(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+
+    switch (msg->type) {
+    case TIG_MESSAGE_MOUSE:
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_IDLE) {
+            sub_55AE70(dword_64CA58);
+        }
+        break;
+    case TIG_MESSAGE_BUTTON:
+        switch (msg->data.button.state) {
+        case TIG_BUTTON_STATE_MOUSE_INSIDE:
+            for (index = 0; index < 4; index++) {
+                if (msg->data.button.button_handle == stru_5C82B0[index].button_handle) {
+                    dword_64CA58 = index + 135;
+                    return true;
+                }
+            }
+
+            for (index = 0; index < 4; index++) {
+                if (msg->data.button.button_handle == stru_5C8CA8[index].button_handle) {
+                    dword_64CA58 = 4 * dword_64E020 + 1000 + index;
+                    return true;
+                }
+            }
+
+            for (index = 0; index < 12; index++) {
+                if (msg->data.button.button_handle == stru_5C8430[index].button_handle) {
+                    dword_64CA58 = stru_5C8430[index].art_num + 1000;
+                    return true;
+                }
+
+                if (msg->data.button.button_handle == stru_5C8530[index].button_handle) {
+                    dword_64CA58 = stru_5C8530[index].art_num + 1000;
+                    return true;
+                }
+            }
+            break;
+        case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
+            for (index = 0; index < 4; index++) {
+                if (msg->data.button.button_handle == stru_5C82B0[index].button_handle) {
+                    dword_64CA58 = -1;
+                    sub_550720();
+                    return true;
+                }
+            }
+
+            for (index = 0; index < 4; index++) {
+                if (msg->data.button.button_handle == stru_5C8CA8[index].button_handle) {
+                    dword_64CA58 = -1;
+                    sub_550720();
+                    return true;
+                }
+            }
+
+            for (index = 0; index < 12; index++) {
+                if (msg->data.button.button_handle == stru_5C8430[index].button_handle) {
+                    dword_64CA58 = -1;
+                    sub_550720();
+                    return true;
+                }
+
+                if (msg->data.button.button_handle == stru_5C8530[index].button_handle) {
+                    dword_64CA58 = -1;
+                    sub_550720();
+                    return true;
+                }
+            }
+            break;
+        case TIG_BUTTON_STATE_PRESSED:
+            for (index = 0; index < 12; index++) {
+                if (msg->data.button.button_handle == stru_5C8430[index].button_handle) {
+                    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                        && (tig_net_flags & TIG_NET_HOST) == 0
+                        && !sub_4A2BA0()) {
+                        Packet127 pkt;
+
+                        pkt.type = 127;
+                        pkt.field_4 = 1;
+                        pkt.field_8 = 1;
+                        pkt.field_C = stru_5C8430[index].art_num;
+                        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+                        return true;
+                    }
+
+                    sub_57ACD0(qword_64E010, stru_5C8430[index].art_num);
+                    return true;
+                }
+
+                if (msg->data.button.button_handle == stru_5C8530[index].button_handle) {
+                    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                        && (tig_net_flags & TIG_NET_HOST) == 0
+                        && !sub_4A2BA0()) {
+                        Packet127 pkt;
+
+                        pkt.type = 127;
+                        pkt.field_4 = 2;
+                        pkt.field_8 = 1;
+                        pkt.field_C = stru_5C8430[index].art_num;
+                        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+                        return true;
+                    }
+
+                    if (basic_skill_get_base(qword_64E010, stru_5C8430[index].art_num) == dword_64C7B8[stru_5C8530[index].art_num]) {
+                        stru_5C8990.str = dword_64D3C4[6];
+                        sub_550750(&stru_5C8990);
+                    } else {
+                        sub_57AEB0(qword_64E010, stru_5C8430[index].art_num);
+                    }
+
+                    return true;
+                }
+            }
+
+            for (index = 0; index < 4; index++) {
+                if (msg->data.button.button_handle == stru_5C82B0[index].button_handle) {
+                    sub_55BD10(index);
+                    return true;
+                }
+            }
+            break;
+        }
+        break;
+    }
+
+    return sub_55D6F0(msg);
 }
 
 // 0x55D6F0
