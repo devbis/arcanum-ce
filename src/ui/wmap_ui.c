@@ -199,6 +199,8 @@ static void sub_5640C0(TextEdit* textedit);
 static bool sub_564140(WmapNote* note);
 static bool sub_564160(WmapNote* note, int a2);
 static bool sub_564210(WmapNote* note);
+static void sub_5642E0(int a1, int a2);
+static void sub_5642F0(WmapNote* note);
 static void sub_564320(TextEdit* textedit);
 static void sub_564360(int id);
 static bool sub_5643C0(const char* str);
@@ -1967,12 +1969,48 @@ bool sub_564160(WmapNote* note, int a2)
 // 0x564210
 bool sub_564210(WmapNote* note)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    int index;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+
+    if (v1->notes == NULL) {
+        return false;
+    }
+
+    if (note->id == -1) {
+        return false;
+    }
+
+    // Find note by id.
+    for (index = 0; index < *v1->num_notes; index++) {
+        if (v1->notes[index].id == note->id) {
+            break;
+        }
+    }
+
+    if (index >= *v1->num_notes) {
+        // Note does not exists.
+        return false;
+    }
+
+    sub_5642F0(&(v1->notes[index]));
+    sub_5642E0(v1->notes[index].id, dword_66D868);
+
+    (*v1->num_notes)--;
+
+    // Move subsequent notes up (one at a time).
+    while (index < *v1->num_notes) {
+        v1->notes[index] = v1->notes[index + 1];
+        index++;
+    }
 }
 
 // 0x5642E0
-void sub_5642E0()
+void sub_5642E0(int a1, int a2)
 {
+    (void)a1;
+    (void)a2;
 }
 
 // 0x5642F0
