@@ -191,6 +191,7 @@ static void sub_565230();
 static void sub_5657A0(TigRect* rect);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
 static void wmap_town_refresh_rect(TigRect* rect);
+static void sub_566D10(int a1, int* a2, TigRect* a3, TigRect* a4, S5C9228* a5);
 
 // 0x5C9220
 static int dword_5C9220 = -1;
@@ -1912,7 +1913,32 @@ void sub_566CC0(int64_t* location_ptr)
 }
 
 // 0x566D10
-void sub_566D10()
+void sub_566D10(int a1, int* a2, TigRect* a3, TigRect* a4, S5C9228* a5)
 {
-    // TODO: Incomplete.
+    int dx;
+    int dy;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    dx = a2[0] - src_rect.width / 2 - a5->field_34;
+    dy = a2[1] - src_rect.height / 2 - a5->field_38;
+
+    src_rect.x = a3->x + dx;
+    src_rect.y = a3->y + dy;
+    src_rect.width = stru_5C9160[a1].width;
+    src_rect.height = stru_5C9160[a1].height;
+    if (tig_rect_intersection(&src_rect, a4, &src_rect) == TIG_OK) {
+        dst_rect = src_rect;
+
+        src_rect.x -= a3->x + dx;
+        src_rect.y -= a3->y + dy;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = stru_5C9160[a1].data.art_id;
+        art_blit_info.dst_video_buffer = dword_64E7F4;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(wmap_ui_window, &art_blit_info);
+    }
 }
