@@ -627,7 +627,6 @@ bool sub_4BCB70(ScriptInvocation* invocation)
     ObjectList critters;
     ObjectNode* node;
     AnimFxNode animfx;
-    MesFileEntry mes_file_entry;
     int v1;
 
     if (trap_type_from_scr(invocation->script) == TRAP_TYPE_INVALID) {
@@ -653,6 +652,9 @@ bool sub_4BCB70(ScriptInvocation* invocation)
     if (invocation->script->num > TRAP_SCRIPT_LAST) {
         return invocation->script->num == TRAP_SCRIPT_TRAP_SOURCE;
     }
+
+    // NOTE: Silence compiler warning.
+    critters.head = NULL;
 
     if (radius > 0) {
         sub_4AE4E0(invocation->attachee_obj, radius, &critters, OBJ_TM_PC | OBJ_TM_NPC);
@@ -828,7 +830,7 @@ int sub_4BD340(int64_t trap_obj)
     trap_oid = sub_407EF0(trap_obj);
 
     while (dword_5FC48C != NULL) {
-        if (!objid_is_equal(node->trap_oid, trap_oid)) {
+        if (!objid_is_equal(dword_5FC48C->trap_oid, trap_oid)) {
             break;
         }
 
