@@ -167,6 +167,7 @@ static bool sub_5627F0(long long a1);
 static void sub_562800(int id);
 static void sub_562880(WmapNoteCoords* coords);
 static void sub_562A20(int x, int y);
+static void sub_562AF0(int x, int y);
 static bool wmTileArtLockMode(int a1, int a2);
 static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
 static bool sub_563200(int a1, int a2);
@@ -1270,9 +1271,19 @@ void sub_562A20(int x, int y)
 }
 
 // 0x562AF0
-void sub_562AF0()
+void sub_562AF0(int x, int y)
 {
-    // TODO: Incomplete.
+    if (y < stru_5C9228[dword_66D868].field_18 + 23) {
+        sub_563790(0, 10);
+    } else if (y > stru_5C9228[dword_66D868].field_18 + stru_5C9228[dword_66D868].field_20 - 23) {
+        sub_563790(4, 10);
+    }
+
+    if (x < stru_5C9228[dword_66D868].field_14 + 23) {
+        sub_563790(6, 10);
+    } else if (x > stru_5C9228[dword_66D868].field_14 + stru_5C9228[dword_66D868].field_1C - 23) {
+        sub_563790(2, 10);
+    }
 }
 
 // 0x562B70
