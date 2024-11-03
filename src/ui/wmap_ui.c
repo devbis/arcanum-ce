@@ -162,6 +162,7 @@ static void sub_561430(long long location);
 static void sub_561490(long long location, WmapCoords* coords);
 static void sub_5614C0(int x, int y);
 static bool sub_5615D0(int a1);
+static bool sub_561860(int64_t loc);
 static bool sub_5627F0(long long a1);
 static void sub_562800(int id);
 static void sub_562880(WmapCoords* coords);
@@ -1159,15 +1160,15 @@ void sub_561800()
 }
 
 // 0x561860
-void sub_561860(long long a1)
+bool sub_561860(int64_t loc)
 {
     TeleportData teleport_data;
 
     sector_flush(0);
 
-    teleport_data.flags = 0x20;
+    teleport_data.flags = TELEPORT_0x0020;
     teleport_data.obj = player_get_pc_obj();
-    teleport_data.loc = a1;
+    teleport_data.loc = loc;
     teleport_data.map = sub_40FF50(MAP_TYPE_START_MAP);
     sub_4D3380(&teleport_data);
 }
@@ -2170,7 +2171,26 @@ void sub_5649D0(int a1)
 // 0x5649F0
 bool sub_5649F0(int64_t loc)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    int v2;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+    v2 = sub_4CB4D0(loc, 1);
+    if (v2 > 0) {
+        loc = sub_4CAED0(v2);
+    }
+
+    if (sub_561860(loc)) {
+        sub_561490(loc, &(v1->field_3C));
+    }
+
+    if (v1->field_48 != NULL) {
+        v1->field_48();
+    }
+
+    sub_57D620();
+
+    return v2 > 0;
 }
 
 // 0x564A70
