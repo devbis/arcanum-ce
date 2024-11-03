@@ -1160,6 +1160,8 @@ bool sub_5627B0(int a1)
 // 0x5627F0
 bool sub_5627F0(long long a1)
 {
+    (void)a1;
+
     return true;
 }
 
