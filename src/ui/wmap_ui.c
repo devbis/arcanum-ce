@@ -1613,7 +1613,35 @@ void sub_563300(int direction)
 // 0x563590
 void sub_563590(int* a1, bool a2)
 {
-    // TODO: Incomplete.
+    S5C9228* v3;
+    int v1;
+    int v2;
+
+    v3 = &(stru_5C9228[dword_66D868]);
+
+    v1 = a1[0] - v3->field_24;
+    if (v1 < 0) {
+        v1 = 0;
+    } else if (v1 > v3->field_24 + v3->field_2C) {
+        v1 = v3->field_2C;
+    }
+
+    v2 = a1[1] - v3->field_28;
+    if (v2 < 0) {
+        v2 = 0;
+    } else if (v2 > v3->field_24 + v3->field_30) {
+        v2 = v3->field_30;
+    }
+
+    if (v1 != v3->field_34
+        || v2 != v3->field_38) {
+        v3->field_34 = v1;
+        v3->field_38 = v2;
+
+        if (a2) {
+            v3->field_48();
+        }
+    }
 }
 
 // 0x563610
