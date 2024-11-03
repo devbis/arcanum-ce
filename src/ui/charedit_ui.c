@@ -1933,6 +1933,12 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
     tig_art_interface_id_create(num, 0, 0, 0, &(art_blit_info.art_id));
     art_blit_info.flags = 0;
 
+    // TODO: The loop below does not look good, review. For now initialize some
+    // vars to silence compiler warnings.
+    rect.x = 0;
+    font_desc.width = 0;
+    font_desc.str = NULL;
+
     tig_font_push(font);
     for (index = 0; index < a6; index++) {
         if (a5 == -1) {
