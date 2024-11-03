@@ -155,6 +155,34 @@ void sub_4CBAA0(int64_t a1, int64_t a2)
     sub_4CB800(a1, a2, OBJ_HANDLE_NULL, (unsigned int)MTIT_PICKUP);
 }
 
+// 0x4CBAD0
+void sub_4CBAD0(int64_t a1, CombatContext* combat, int64_t a3)
+{
+    unsigned int flags;
+    int index;
+    int64_t item_obj;
+
+    if (a3 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    flags = MTIT_PARENT_HIT;
+    if ((combat->flags & 0x40000) != 0
+        && (combat->weapon_obj == OBJ_HANDLE_NULL
+            || item_weapon_range(combat->weapon_obj, a1) <= 1)) {
+        flags |= MTIT_TARGET_ATTACKER_WEAPON_MELEE;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(a3, OBJ_F_TYPE))) {
+        for (index = 0; index < 9; index++) {
+            item_obj = item_wield_get(a3, 1000 + index);
+            if (item_obj != OBJ_HANDLE_NULL) {
+                sub_4CB800(item_obj, a3, a1, flags);
+            }
+        }
+    }
+}
+
 // 0x4CBB80
 void sub_4CBB80(int64_t a1, int64_t a2)
 {
