@@ -1137,7 +1137,54 @@ void set_follower_skills(bool enabled)
 // 0x4C9050
 void sub_4C9050(Tanya* a1)
 {
-    // TODO: Incomplete.
+    int skill_level;
+    ObjectList objects;
+    ObjectNode* node;
+    int v1;
+    int64_t v2;
+
+    if (obj_field_int32_get(a1->field_0.obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    if (!get_follower_skills(a1->field_0.obj)) {
+        return;
+    }
+
+    if (IS_TECH_SKILL(a1->field_9C)) {
+        skill_level = sub_4C69F0(a1->field_0.obj, GET_TECH_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
+        v2 = a1->field_0.obj;
+        sub_441260(v2, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            sub_4440E0(node->obj, &(a1->field_0));
+            v1 = sub_4C69F0(a1->field_0.obj, GET_TECH_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
+            if (v1 > skill_level) {
+                skill_level = v1;
+                v2 = node->obj;
+            }
+            node = node->next;
+        }
+        // FIXME: Probably leaks `objects`?
+    } else {
+        skill_level = sub_4C62E0(a1->field_0.obj, GET_BASIC_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
+        v2 = a1->field_0.obj;
+        sub_441260(v2, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            sub_4440E0(node->obj, &(a1->field_0));
+            v1 = sub_4C62E0(a1->field_0.obj, GET_BASIC_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
+            if (v1 > skill_level) {
+                skill_level = v1;
+                v2 = node->obj;
+            }
+
+            node = node->next;
+        }
+        // FIXME: Probably leaks `objects`?
+    }
+
+    sub_4440E0(v2, &(a1->field_0));
 }
 
 // 0x4C91F0
