@@ -5,6 +5,7 @@
 #include "game/anim.h"
 #include "game/combat.h"
 #include "game/critter.h"
+#include "game/effect.h"
 #include "game/level.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
@@ -18,11 +19,11 @@
 #include "game/tech.h"
 #include "game/ui.h"
 #include "ui/intgame.h"
+#include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/skill_ui.h"
 #include "ui/spell_ui.h"
 #include "ui/tech_ui.h"
-#include "ui/schematic_ui.h"
 
 typedef enum ChareditStat {
     CHAREDIT_STAT_UNSPENT_POINTS,
@@ -110,6 +111,37 @@ static void sub_55EFF0();
 static void sub_55F0D0();
 static void sub_55F0E0(int value);
 static void sub_55F110(TigRect* rect);
+
+// 0x5C7E70
+static struct {
+    int x;
+    int y;
+    int field_8;
+} stru_5C7E70[CHAREDIT_STAT_COUNT] = {
+    { 337, 94, 3 },
+    { 337, 75, 2 },
+    { 337, 113, 6 },
+    { 0, 0, 3 },
+    { -447, 184, 3 },
+    { 0, 0, 3 },
+    { -447, 254, 3 },
+    { 0, 0, 2 },
+    { -211, 156, 2 },
+    { 0, 0, 2 },
+    { -211, 196, 2 },
+    { 0, 0, 2 },
+    { -211, 236, 2 },
+    { 0, 0, 2 },
+    { -211, 276, 2 },
+    { 0, 0, 2 },
+    { -350, 156, 2 },
+    { 0, 0, 2 },
+    { -350, 196, 2 },
+    { 0, 0, 2 },
+    { -350, 236, 2 },
+    { 0, 0, 2 },
+    { -350, 276, 2 },
+};
 
 // 0x5C7F88
 static S5C87D0 stru_5C7F88[10] = {
@@ -442,6 +474,9 @@ static S5C8CA8 stru_5C8DC8[5] = {
 
 // 0x5C8F40
 static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
+
+// 0x5C8F50
+static S5C8150 stru_5C8F50 = { NULL, 0, 0, -1 };
 
 // 0x5C8F70
 static int dword_5C8F70[] = {
@@ -1353,7 +1388,51 @@ void sub_55B280()
 // 0x55B2A0
 void sub_55B2A0(int stat)
 {
-    // TODO: Incomplete.
+    tig_font_handle_t font;
+    int value;
+    int base_value;
+    int effective_value;
+    char str[160];
+
+    switch (stat) {
+    case CHAREDIT_STAT_UNSPENT_POINTS:
+    case CHAREDIT_STAT_LEVEL:
+    case CHAREDIT_STAT_XP_TO_NEXT_LEVEL:
+    case CHAREDIT_STAT_STRENGTH_BASE:
+    case CHAREDIT_STAT_CONSTITUTION_BASE:
+    case CHAREDIT_STAT_DEXTERITY_BASE:
+    case CHAREDIT_STAT_BEAUTY_BASE:
+    case CHAREDIT_STAT_INTELLIGENCE_BASE:
+    case CHAREDIT_STAT_WILLPOWER_BASE:
+    case CHAREDIT_STAT_PERCEPTION_BASE:
+    case CHAREDIT_STAT_CHARISMA_BASE:
+        return;
+    }
+
+    font = dword_64D3A8;
+    switch (stat) {
+    case CHAREDIT_STAT_HP_PTS:
+        value = sub_43D5A0(qword_64E010);
+        break;
+    case CHAREDIT_STAT_FATIGUE_PTS:
+        value = sub_45D670(qword_64E010);
+        break;
+    default:
+        value = sub_55B4D0(qword_64E010, stat);
+        base_value = sub_55B4D0(qword_64E010, stat - 1);
+        effective_value = sub_4EA930(qword_64E010, sub_55B410(stat), base_value);
+        if (effective_value > base_value) {
+            font = dword_64C7A0;
+        } else if (effective_value < base_value) {
+            font = dword_64D3BC;
+        }
+    }
+
+    sprintf(str, " %d ", value);
+    stru_5C8F50.str = str;
+    stru_5C8F50.x = stru_5C7E70[stat].x;
+    stru_5C8F50.y = stru_5C7E70[stat].y;
+    sub_55B880(dword_64CA64, font, &stru_5C8F50, NULL, -1, 1);
 }
 
 // 0x55B410
