@@ -1,7 +1,9 @@
 #include "game/mt_item.h"
 
+#include "game/item.h"
 #include "game/magictech.h"
 #include "game/obj.h"
+#include "game/random.h"
 
 static void sub_4CB800(int64_t a1, int64_t a2, int64_t a3, unsigned int flags);
 static void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int flags);
@@ -75,13 +77,82 @@ void sub_4CB800(int64_t a1, int64_t a2, int64_t a3, unsigned int flags)
 // 0x4CB830
 void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int flags)
 {
-    // TODO: Incomplete.
+    int index;
+    int spl;
+    unsigned int trig;
+    MagicTechSerializedData v1;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        qword_5FF618 = OBJ_HANDLE_NULL;
+        return;
+    }
+
+    for (index = 0; index < 5; index++) {
+        spl = obj_field_int32_get(a1, OBJ_F_ITEM_SPELL_1 + index);
+        if (spl == 10000) {
+            break;
+        }
+
+        trig = mt_item_triggers(spl);
+        if ((trig & flags) != 0) {
+            if ((trig & MTIT_RANDOM_CHANCE_ANY) == 0
+                || ((trig & MTIT_RANDOM_CHANCE_RARE) != 0
+                    && random_between(1, 100) <= 10)
+                || ((trig & MTIT_RANDOM_CHANCE_UNCOMMON) != 0
+                    && random_between(1, 100) <= 20)
+                || ((trig & MTIT_RANDOM_CHANCE_COMMON) != 0
+                    && random_between(1, 100) <= 40)
+                || ((trig & MTIT_RANDOM_CHANCE_FREQUENT) != 0
+                    && random_between(1, 100) <= 66)) {
+                sub_455A20(&v1, a1, sub_4CB790(spl));
+
+                if ((trig & MTIT_TARGET_ATTACKER_ANY) != 0) {
+                    if ((trig & MTIT_TARGET_ATTACKER) != 0) {
+                        sub_4440E0(a3, &(v1.field_70));
+                    } else if ((trig & MTIT_TARGET_ATTACKER_WEAPON) != 0) {
+                        if (a3 != OBJ_HANDLE_NULL) {
+                            sub_4440E0(item_wield_get(a3, 1004), &(v1.field_70));
+                        } else {
+                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.field_70));
+                        }
+                    } else if ((trig & MTIT_TARGET_ATTACKER_ARMOR) != 0) {
+                        if (a3 != OBJ_HANDLE_NULL) {
+                            sub_4440E0(item_wield_get(a3, 1006), &(v1.field_70));
+                        } else {
+                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.field_70));
+                        }
+                    } else {
+                        sub_4440E0(OBJ_HANDLE_NULL, &(v1.field_70));
+                    }
+                } else if ((trig & MTIT_PARENT_ATKS_LOCATION) != 0) {
+                    v1.field_D0 = a4;
+                } else {
+                    sub_4440E0(a2, &(v1.field_70));
+                }
+
+                v1.field_D8 = flags;
+                v1.field_DC |= 0x1;
+
+                if (qword_5FF618 != OBJ_HANDLE_NULL) {
+                    sub_4440E0(qword_5FF618, &(v1.field_A0));
+                }
+
+                if (v1.field_70.obj != OBJ_HANDLE_NULL || v1.field_D0 != 0) {
+                    sub_455AC0(&v1);
+                }
+            }
+        }
+    }
+
+    qword_5FF618 = OBJ_HANDLE_NULL;
 }
 
 // 0x4CBAA0
 void sub_4CBAA0(int64_t a1, int64_t a2)
 {
-    sub_4CB800(a1, a2, OBJ_HANDLE_NULL, MTIT_PICKUP);
+    // FIXME: Cast.
+    sub_4CB800(a1, a2, OBJ_HANDLE_NULL, (unsigned int)MTIT_PICKUP);
 }
 
 // 0x4CBB80
@@ -247,7 +318,7 @@ void sub_4CBF70(int64_t a1, int64_t a2)
 
     type = obj_field_int32_get(a1, OBJ_F_TYPE);
     if (obj_type_is_item(type)) {
-        parent_obj = obj_f_get_handle(a1, OBJ_F_ITEM_PARENT);
+        parent_obj = obj_field_handle_get(a1, OBJ_F_ITEM_PARENT);
         sub_4CB800(a1, parent_obj, a2, 0x1000);
     }
 }
