@@ -6,6 +6,7 @@
 #include "game/anim.h"
 #include "game/area.h"
 #include "game/critter.h"
+#include "game/gamelib.h"
 #include "game/location.h"
 #include "game/map.h"
 #include "game/magictech.h"
@@ -179,6 +180,8 @@ static void sub_563270();
 static void sub_5632A0(int direction);
 static void sub_563300(int direction);
 static void sub_563590(int* a1, bool a2);
+static void sub_563610();
+static void sub_563750(int direction);
 static void sub_563790(int a1, int a2);
 static void sub_563AC0(int x, int y, int* coords);
 static void sub_563B10(int x, int y, int* coords);
@@ -419,6 +422,9 @@ static bool dword_66D9C4;
 
 // 0x66D9C8
 static bool dword_66D9C8;
+
+// 0x66D9D0
+static tig_timestamp_t dword_66D9D0;
 
 // 0x66D9D4
 static WmapNote* dword_66D9D4;
@@ -1647,20 +1653,88 @@ void sub_563590(int* a1, bool a2)
 // 0x563610
 void sub_563610()
 {
-    // TODO: Incomplete.
+    // NOTE: Very odd initial values.
+    int horizontal_direction = -69;
+    int vertical_direction = -69;
+    bool scroll_horizontally = false;
+
+    if (tig_timer_between(dword_66D9D0, gamelib_ping_time) >= 10) {
+        dword_66D9D0 = gamelib_ping_time;
+
+        if (dword_66D8AC != 2) {
+            if (tig_kb_is_key_pressed(DIK_LEFT)) {
+                scroll_horizontally = true;
+                horizontal_direction = 6;
+            } else if (tig_kb_is_key_pressed(DIK_RIGHT)) {
+                scroll_horizontally = true;
+                horizontal_direction = 2;
+            }
+
+            if (tig_kb_is_key_pressed(DIK_UP)) {
+                vertical_direction = 0;
+            } else if (tig_kb_is_key_pressed(DIK_DOWN)) {
+                vertical_direction = 4;
+            } else {
+                if (!scroll_horizontally) {
+                    // Neither left/right nor up/down keys are pressed, no need
+                    // to continue with scrolling.
+                    return;
+                }
+            }
+
+            switch (horizontal_direction) {
+            case 6:
+                switch (vertical_direction) {
+                case 0:
+                    sub_563750(7);
+                    break;
+                case 4:
+                    sub_563750(5);
+                    break;
+                default:
+                    sub_563750(6);
+                    break;
+                }
+                break;
+            case 2:
+                switch (vertical_direction) {
+                case 0:
+                    sub_563750(1);
+                    break;
+                case 4:
+                    sub_563750(3);
+                    break;
+                default:
+                    sub_563750(2);
+                    break;
+                }
+                break;
+            default:
+                switch (vertical_direction) {
+                case 0:
+                    sub_563750(0);
+                    break;
+                case 4:
+                    sub_563750(4);
+                    break;
+                }
+                break;
+            }
+        }
+    }
 }
 
 // 0x563750
-void sub_563750(int a1)
+void sub_563750(int direction)
 {
-    sub_563790(a1, 4);
+    sub_563790(direction, 4);
 }
 
 // 0x563770
-void sub_563770(int a1)
+void sub_563770(int direction)
 {
     if (dword_66D8AC != 2) {
-        sub_563790(a1, 8);
+        sub_563790(direction, 8);
     }
 }
 

@@ -13,6 +13,7 @@ void sub_560760();
 void sub_560790(int64_t a1, int a2);
 void sub_560F40();
 int wmap_ui_is_created();
+void sub_563770(int direction);
 void sub_564000(int a1);
 void sub_564AF0(int64_t a1);
 bool wmap_ui_bkg_process_callback(TimeEvent* timeevent);
