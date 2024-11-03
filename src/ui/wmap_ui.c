@@ -2195,9 +2195,50 @@ void sub_564A70(long long a1, long long a2)
 }
 
 // 0x564AF0
-void sub_564AF0(int64_t a1)
+void sub_564AF0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t pc_loc;
+    int pc_townmap;
+    int64_t obj_loc;
+    int obj_townmap;
+    WmapNote note;
+
+    pc_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    pc_townmap = sub_4BE380(sub_4CFC50(pc_loc));
+
+    obj_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    obj_townmap = sub_4BE380(sub_4CFC50(obj_loc));
+
+    if (pc_townmap != obj_townmap) {
+        return;
+    }
+
+    if (pc_townmap == 0) {
+        tig_debug_printf("WmapUI: WARNING: Object attempted to mark TownMap when no TownMap is available!\n");
+        return;
+    }
+
+    if (!townmap_info(pc_townmap, &stru_64E7F8)) {
+        return;
+    }
+
+    sub_4BE670(&stru_64E7F8, obj_loc, &(note.coords.x), &(note.coords.y));
+
+    if (sub_563E00(&(note.coords), NULL, 2)) {
+        return;
+    }
+
+    sub_441B60(obj, OBJ_HANDLE_NULL, note.str);
+    sub_563D50(&note);
+    note.field_10 = 0;
+    note.field_4 = 0x2;
+    note.field_28 = 3;
+
+    dword_66D878 = pc_townmap;
+
+    if (!sub_564160(&note, 2)) {
+        tig_debug_printf("WmapUI: WARNING: Attempt to mark TownMap Failed: Note didn't Add!\n");
+    }
 }
 
 // 0x564C20
