@@ -63,7 +63,7 @@ typedef struct S5C9228_F180 {
     /* 0000 */ unsigned int flags;
     /* 0004 */ TigVideoBuffer* video_buffer;
     /* 0008 */ TigRect rect;
-    /* 0018 */ int field_18;
+    /* 0018 */ void* field_18;
     /* 001C */ int field_1C;
 } S5C9228_F180;
 
@@ -782,13 +782,23 @@ bool wmap_ui_init(GameInitInfo* init_info)
 // 0x55FF80
 void wmap_ui_exit()
 {
-    int index;
+    int v1;
+    int v2;
 
     dword_66D868 = 0;
     dword_66D8AC = 0;
 
-    for (index = 0; index < 3; index++) {
-        // TODO: Incomplete.
+    for (v1 = 0; v1 < 3; v1++) {
+        if (stru_5C9228[v1].field_180 != NULL) {
+            for (v2 = 0; v2 < stru_5C9228[v1].field_174; v2++) {
+                if (stru_5C9228[v1].field_180[v2].field_18 != NULL) {
+                    FREE(stru_5C9228[v1].field_180[v2].field_18);
+                }
+            }
+
+            FREE(stru_5C9228[v1].field_180);
+            stru_5C9228[v1].field_180 = NULL;
+        }
     }
 
     sub_560150();
@@ -1652,7 +1662,7 @@ bool wmap_load_townmap_info()
 void sub_562F90(S5C9228_F180* a1)
 {
     a1->flags = 0;
-    a1->field_18 = 0;
+    a1->field_18 = NULL;
     a1->field_1C = 0;
 }
 
