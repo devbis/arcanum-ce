@@ -360,7 +360,42 @@ void sub_4CBFC0(int64_t a1, int64_t a2)
 // 0x4CBFF0
 void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
 {
-    // TODO: Incomplete.
+    int index;
+    int spl;
+    MagicTechSerializedData v1;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return;
+    }
+
+    if (a1 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (a2 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    for (index = 0; index < 5; index++) {
+        spl = obj_field_int32_get(a1, OBJ_F_ITEM_SPELL_1 + index);
+        if (spl == 10000) {
+            break;
+        }
+
+        if ((mt_item_triggers(spl) & flags) != 0) {
+            sub_455A20(&v1, a1, sub_4CB790(spl));
+            sub_4440E0(a2, &(v1.field_70));
+            sub_4573D0(&v1);
+
+            sub_455A20(&v1, a1, sub_4CB790(spl));
+            sub_4440E0(a2, &(v1.field_70));
+            v1.field_D8 = flags;
+            if (v1.field_70.obj != OBJ_HANDLE_NULL) {
+                sub_455AC0(&v1);
+            }
+        }
+    }
 }
 
 // 0x4CC130
