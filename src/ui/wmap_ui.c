@@ -21,6 +21,13 @@
 #include "ui/textedit_ui.h"
 #include "ui/types.h"
 
+typedef struct WmapNoteCoords {
+    int x;
+    int y;
+} WmapNoteCoords;
+
+static_assert(sizeof(WmapNoteCoords) == 0x8, "wrong size");
+
 typedef struct S5C9160 {
     // NOTE: Rare case - during initialization the value at offset 0 is art num,
     // which is replaced with interface art id (see `wmap_ui_init`).
@@ -40,8 +47,7 @@ static_assert(sizeof(S5C9160) == 0x18, "wrong size");
 typedef struct WmapNote {
     /* 0000 */ int id;
     /* 0004 */ int field_4;
-    /* 0008 */ int x;
-    /* 000C */ int y;
+    /* 0008 */ WmapNoteCoords coords;
     /* 0010 */ int64_t field_10;
     /* 0018 */ TigRect field_18;
     /* 0028 */ int field_28;
@@ -154,7 +160,7 @@ static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
 static bool sub_5606B0(TigRect* rect, TigFile* stream);
 static void sub_5607E0();
 static void sub_561430(long long location);
-static void sub_561490(long long location, int* coords);
+static void sub_561490(long long location, WmapNoteCoords* coords);
 static void sub_5614C0(int a1, int a2);
 static bool sub_5615D0(int a1);
 static bool sub_5627F0(long long a1);
@@ -170,10 +176,12 @@ static void sub_563790(int a1, int a2);
 static void sub_563AC0(int x, int y, int* coords);
 static void sub_563B10(int x, int y, int* coords);
 static void sub_563C00(int x, int y, int* coords);
-static bool sub_563DE0(int* coords, int* id);
-static bool sub_563E00(int* coords, int* id, int a3);
-static bool sub_563F00(int* coords, int64_t* a2);
-static void sub_563F90(int* coords);
+static bool sub_563C60(WmapNote* note);
+static void sub_563D50(WmapNote* note);
+static bool sub_563DE0(WmapNoteCoords* coords, int* id);
+static bool sub_563E00(WmapNoteCoords* coords, int* id, int a3);
+static bool sub_563F00(WmapNoteCoords* coords, int64_t* a2);
+static void sub_563F90(WmapNoteCoords* coords);
 static void sub_564030(WmapNote* note);
 static void sub_564070(bool a1);
 static void sub_5640C0(TextEdit* textedit);
@@ -187,6 +195,7 @@ static void sub_564840(int a1);
 static void sub_5648E0(int a1, int a2, bool a3);
 static void sub_564940();
 static void sub_564970(S64E408* a1);
+static void sub_5649C0();
 static int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime);
 static void wmap_ui_town_notes_load();
 static void sub_5650C0();
@@ -873,8 +882,8 @@ bool wmap_ui_town_note_save(WmapNote* note, TigFile* stream)
 
     if (tig_file_fwrite(&(note->id), sizeof(note->id), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(note->field_4), sizeof(note->field_4), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(note->x), sizeof(note->x), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(note->y), sizeof(note->y), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
     if (!sub_560440(&(note->field_18), stream)) return false;
     if (tig_file_fwrite(&(note->field_28), sizeof(note->field_28), 1, stream) != 1) return false;
 
@@ -911,8 +920,8 @@ bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream)
 
     if (tig_file_fread(&(note->id), sizeof(note->id), 1, stream) != 1) return false;
     if (tig_file_fread(&(note->field_4), sizeof(note->field_4), 1, stream) != 1) return false;
-    if (tig_file_fread(&(note->x), sizeof(note->x), 1, stream) != 1) return false;
-    if (tig_file_fread(&(note->y), sizeof(note->y), 1, stream) != 1) return false;
+    if (tig_file_fread(&(note->coords.x), sizeof(note->coords.x), 1, stream) != 1) return false;
+    if (tig_file_fread(&(note->coords.y), sizeof(note->coords.y), 1, stream) != 1) return false;
     if (!sub_5606B0(&(note->field_18), stream)) return false;
     if (tig_file_fread(&(note->field_28), sizeof(note->field_28), 1, stream) != 1) return false;
     if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) return false;
@@ -1076,10 +1085,10 @@ void sub_561430(long long location)
 }
 
 // 0x561490
-void sub_561490(long long location, int* coords)
+void sub_561490(long long location, WmapNoteCoords* coords)
 {
-    coords[0] = dword_66D6F8 - ((location >> 6) & 0x3FFFFFF);
-    coords[1] = (location >> 32) >> 6;
+    coords->x = dword_66D6F8 - ((location >> 6) & 0x3FFFFFF);
+    coords->y = (location >> 32) >> 6;
 }
 
 // 0x5614C0
@@ -1168,7 +1177,7 @@ void sub_562800(int id)
     str = sub_4CAE90(id);
     if (str != NULL) {
         strncpy(note.str, str, sizeof(note.str));
-        sub_561490(sub_4CAED0(id), &(note.x));
+        sub_561490(sub_4CAED0(id), &(note.coords));
         sub_563C60(&note);
     }
 }
@@ -1401,7 +1410,7 @@ void sub_563C00(int x, int y, int* coords)
 }
 
 // 0x563C60
-void sub_563C60()
+bool sub_563C60(WmapNote* note)
 {
     // TODO: Incomplete.
 }
@@ -1409,8 +1418,8 @@ void sub_563C60()
 // 0x563D50
 void sub_563D50(WmapNote* note)
 {
-    note->field_18.x = note->x;
-    note->field_18.y = note->y;
+    note->field_18.x = note->coords.x;
+    note->field_18.y = note->coords.y;
     note->field_18.width = dword_66D890 + 203;
     note->field_18.height = 50;
 }
@@ -1435,19 +1444,19 @@ WmapNote* sub_563D90(int id)
 }
 
 // 0x563DE0
-bool sub_563DE0(int* coords, int* id)
+bool sub_563DE0(WmapNoteCoords* coords, int* id)
 {
     return sub_563E00(coords, id, dword_66D868);
 }
 
 // 0x563E00
-bool sub_563E00(int* coords, int* id, int a3)
+bool sub_563E00(WmapNoteCoords* coords, int* id, int a3)
 {
     // TODO: Incomplete.
 }
 
 // 0x563F00
-bool sub_563F00(int* coords, int64_t* a2)
+bool sub_563F00(WmapNoteCoords* coords, int64_t* a2)
 {
     int64_t v1;
     int64_t pc_location;
@@ -1469,15 +1478,14 @@ bool sub_563F00(int* coords, int64_t* a2)
 }
 
 // 0x563F90
-void sub_563F90(int* coords)
+void sub_563F90(WmapNoteCoords* coords)
 {
     stru_66D718.str[0] = '\0';
     stru_66D718.field_28 = dword_66D89C;
-    stru_66D718.x = coords[0];
-    stru_66D718.y = coords[1];
+    stru_66D718.coords = *coords;
     sub_563D50(&stru_66D718);
     stru_66D718.field_10 = 0;
-    sub_563F00(&(stru_66D718.x), &(stru_66D718.field_10));
+    sub_563F00(&(stru_66D718.coords), &(stru_66D718.field_10));
     sub_564030(&stru_66D718);
 }
 
@@ -1920,8 +1928,8 @@ void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3)
     if ((note->field_4 & 0x4) != 0) {
         x = 0;
         y = 0;
-        dx = a2->x + note->x - stru_5C9228[dword_66D868].field_34;
-        dy = a2->y + note->y - stru_5C9228[dword_66D868].field_38;
+        dx = a2->x + note->coords.x - stru_5C9228[dword_66D868].field_34;
+        dy = a2->y + note->coords.y - stru_5C9228[dword_66D868].field_38;
 
         if (dword_66D868 == 0 && note->id <= sub_4CAE80()) {
             sub_4CAF00(note->id, &x, &y);
