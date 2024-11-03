@@ -158,6 +158,7 @@ static void sub_561490(long long location, int* coords);
 static void sub_5614C0(int a1, int a2);
 static bool sub_5615D0(int a1);
 static bool sub_5627F0(long long a1);
+static void sub_562800(int id);
 static bool wmTileArtLockMode(int a1, int a2);
 static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
 static bool sub_563200(int a1, int a2);
@@ -1154,9 +1155,22 @@ bool sub_5627F0(long long a1)
 }
 
 // 0x562800
-void sub_562800()
+void sub_562800(int id)
 {
-    // TODO: Incomplete.
+    WmapNote note;
+    const char* str;
+
+    note.id = id;
+    note.field_4 = 0x2;
+    note.field_10 = 0;
+    note.field_28 = 5;
+
+    str = sub_4CAE90(id);
+    if (str != NULL) {
+        strncpy(note.str, str, sizeof(note.str));
+        sub_561490(sub_4CAED0(id), &(note.x));
+        sub_563C60(&note);
+    }
 }
 
 // 0x562880
