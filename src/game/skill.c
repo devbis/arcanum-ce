@@ -1046,7 +1046,35 @@ bool sub_4C81A0(int a1, int a2, Tanya* a3)
 // 0x4C82E0
 bool sub_4C82E0(int a1, int a2, Tanya* a3)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+
+    v1 = (dword_5B6F64[a3->field_9C] & 0x400) != 0 ? 7 : 2;
+    v2 = (100 - a2) / v1;
+
+    if (a3->field_68.obj != OBJ_HANDLE_NULL) {
+        v3 = sub_43D600(a3->field_68.obj);
+        v4 = sub_43D5A0(a3->field_68.obj);
+        if (v3 < v4) {
+            v2 += 100 * (v4 - v3) / (v1 * v4);
+        }
+
+        if (obj_field_int32_get(a3->field_68.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+            && (a3->field_98 & 0x10000) == 0) {
+            v2 += sub_461590(a3->field_68.obj,
+                a3->field_0.obj,
+                obj_field_int32_get(a3->field_68.obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE));
+        }
+    }
+
+    v2 = effect_adjust_crit_fail_chance(a3->field_0.obj, v2);
+    if (v2 < 2) {
+        v2 = 2;
+    }
+
+    return a1 <= v2;
 }
 
 // 0x4C83E0
