@@ -22,12 +22,12 @@
 #include "ui/textedit_ui.h"
 #include "ui/types.h"
 
-typedef struct WmapNoteCoords {
+typedef struct WmapCoords {
     int x;
     int y;
-} WmapNoteCoords;
+} WmapCoords;
 
-static_assert(sizeof(WmapNoteCoords) == 0x8, "wrong size");
+static_assert(sizeof(WmapCoords) == 0x8, "wrong size");
 
 typedef struct S5C9160 {
     // NOTE: Rare case - during initialization the value at offset 0 is art num,
@@ -48,7 +48,7 @@ static_assert(sizeof(S5C9160) == 0x18, "wrong size");
 typedef struct WmapNote {
     /* 0000 */ int id;
     /* 0004 */ int field_4;
-    /* 0008 */ WmapNoteCoords coords;
+    /* 0008 */ WmapCoords coords;
     /* 0010 */ int64_t field_10;
     /* 0018 */ TigRect field_18;
     /* 0028 */ int field_28;
@@ -119,9 +119,8 @@ static_assert(sizeof(S5C9228) == 0x2C0, "wrong size");
 typedef struct S64E048 {
     /* 0000 */ int field_0;
     /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int64_t field_10;
+    /* 0008 */ WmapCoords coords;
+    /* 0010 */ int64_t loc;
     /* 0018 */ int field_18;
     /* 001C */ int field_1C;
 } S64E048;
@@ -161,12 +160,12 @@ static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
 static bool sub_5606B0(TigRect* rect, TigFile* stream);
 static void sub_5607E0();
 static void sub_561430(long long location);
-static void sub_561490(long long location, WmapNoteCoords* coords);
+static void sub_561490(long long location, WmapCoords* coords);
 static void sub_5614C0(int a1, int a2);
 static bool sub_5615D0(int a1);
 static bool sub_5627F0(long long a1);
 static void sub_562800(int id);
-static void sub_562880(WmapNoteCoords* coords);
+static void sub_562880(WmapCoords* coords);
 static void sub_562A20(int x, int y);
 static void sub_562AF0(int x, int y);
 static void sub_562B70(int a1);
@@ -189,10 +188,10 @@ static void sub_563C00(int x, int y, int* coords);
 static bool sub_563C60(WmapNote* note);
 static void sub_563D50(WmapNote* note);
 static void sub_563D80(int a1, int a2);
-static bool sub_563DE0(WmapNoteCoords* coords, int* id);
-static bool sub_563E00(WmapNoteCoords* coords, int* id, int a3);
-static bool sub_563F00(WmapNoteCoords* coords, int64_t* a2);
-static void sub_563F90(WmapNoteCoords* coords);
+static bool sub_563DE0(WmapCoords* coords, int* id);
+static bool sub_563E00(WmapCoords* coords, int* id, int a3);
+static bool sub_563F00(WmapCoords* coords, int64_t* a2);
+static void sub_563F90(WmapCoords* coords);
 static void sub_564030(WmapNote* note);
 static void sub_564070(bool a1);
 static void sub_5640C0(TextEdit* textedit);
@@ -207,7 +206,7 @@ static bool sub_5643C0(const char* str);
 static void sub_564840(int a1);
 static void sub_5648E0(int a1, int a2, bool a3);
 static void sub_564940();
-static void sub_564970(S64E408* a1);
+static void sub_564970(S64E048* a1);
 static void sub_5649C0();
 static int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime);
 static void wmap_ui_town_notes_load();
@@ -304,7 +303,7 @@ static tig_color_t dword_64E03C;
 static S64E408 stru_64E048[2];
 
 // 0x64E7E8
-static WmapNoteCoords stru_64E7E8;
+static WmapCoords stru_64E7E8;
 
 // 0x64E7F0
 static mes_file_handle_t wmap_ui_worldmap_mes_file;
@@ -1094,17 +1093,17 @@ void wmap_ui_create()
 // 0x561430
 void sub_561430(long long location)
 {
-    int coords[2];
+    WmapCoords coords;
     int v1;
     int v2;
 
-    sub_561490(location, coords);
+    sub_561490(location, &coords);
 
-    if (coords[0] > 99999 || coords[0] == 0) {
+    if (coords.x > 99999 || coords.x == 0) {
         v1 = 200;
     }
 
-    if (coords[1] > 99999 || coords[1] == 0) {
+    if (coords.y > 99999 || coords.y == 0) {
         v2 = 180;
     }
 
@@ -1112,7 +1111,7 @@ void sub_561430(long long location)
 }
 
 // 0x561490
-void sub_561490(long long location, WmapNoteCoords* coords)
+void sub_561490(long long location, WmapCoords* coords)
 {
     coords->x = dword_66D6F8 - ((location >> 6) & 0x3FFFFFF);
     coords->y = (location >> 32) >> 6;
@@ -1212,7 +1211,7 @@ void sub_562800(int id)
 }
 
 // 0x562880
-void sub_562880(WmapNoteCoords* coords)
+void sub_562880(WmapCoords* coords)
 {
     int x;
     int y;
@@ -1834,19 +1833,19 @@ WmapNote* sub_563D90(int id)
 }
 
 // 0x563DE0
-bool sub_563DE0(WmapNoteCoords* coords, int* id)
+bool sub_563DE0(WmapCoords* coords, int* id)
 {
     return sub_563E00(coords, id, dword_66D868);
 }
 
 // 0x563E00
-bool sub_563E00(WmapNoteCoords* coords, int* id, int a3)
+bool sub_563E00(WmapCoords* coords, int* id, int a3)
 {
     // TODO: Incomplete.
 }
 
 // 0x563F00
-bool sub_563F00(WmapNoteCoords* coords, int64_t* a2)
+bool sub_563F00(WmapCoords* coords, int64_t* a2)
 {
     int64_t v1;
     int64_t pc_location;
@@ -1868,7 +1867,7 @@ bool sub_563F00(WmapNoteCoords* coords, int64_t* a2)
 }
 
 // 0x563F90
-void sub_563F90(WmapNoteCoords* coords)
+void sub_563F90(WmapCoords* coords)
 {
     stru_66D718.str[0] = '\0';
     stru_66D718.field_28 = dword_66D89C;
@@ -2133,14 +2132,20 @@ void sub_5648E0(int a1, int a2, bool a3)
 void sub_564940()
 {
     if (dword_5C9AD8 != -1 && dword_66D868 != 2) {
-        sub_564970(&(stru_64E048[dword_5C9AD8]));
+        sub_564970(&(stru_64E048[dword_5C9AD8].field_0[0]));
     }
 }
 
 // 0x564970
-void sub_564970(S64E408* a1)
+void sub_564970(S64E048* a1)
 {
-    // TODO: Incomplete.
+    int v1;
+
+    v1 = sub_4CB2A0(a1->loc, player_get_pc_obj(), qword_66D850);
+    if (v1 > 0) {
+        a1->loc = sub_4CAED0(v1);
+        sub_561490(a1->loc, &(a1->coords));
+    }
 }
 
 // 0x5649C0
@@ -2466,8 +2471,8 @@ void sub_566A80(S5C9228 *a1, TigRect *a2, TigRect *a3)
     art_blit_info.dst_video_buffer = dword_64E7F4;
 
     for (index = 0; index < stru_64E048[v1].field_3C0; index++) {
-        x2 = a2->x + stru_64E048[v1].field_0[index].field_8 - a1->field_34;
-        y2 = a2->y + stru_64E048[v1].field_0[index].field_C - a1->field_38;
+        x2 = a2->x + stru_64E048[v1].field_0[index].coords.x - a1->field_34;
+        y2 = a2->y + stru_64E048[v1].field_0[index].coords.y - a1->field_38;
 
         line.x1 = x1;
         line.y1 = y1;
