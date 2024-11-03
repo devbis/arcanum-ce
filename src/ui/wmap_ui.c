@@ -182,6 +182,7 @@ static bool sub_564210(WmapNote* note);
 static void sub_564320(TextEdit* textedit);
 static void sub_564360(int id);
 static bool sub_5643C0(const char* str);
+static void sub_5648E0(int a1, int a2, bool a3);
 static void sub_564940();
 static void sub_564970(S64E408* a1);
 static int64_t sub_564EE0(int* a1, int* a2, DateTime* datetime);
@@ -1641,9 +1642,25 @@ void sub_564840()
 }
 
 // 0x5648E0
-void sub_5648E0()
+void sub_5648E0(int a1, int a2, bool a3)
 {
-    // TODO: Incomplete.
+    int v1;
+
+    if (a1 == -1) {
+        return;
+    }
+
+    v1 = dword_66D868 == 2 ? 1 : 0;
+    if (stru_64E048[v1].field_0[a1].field_4 == a2) {
+        return;
+    }
+
+    stru_64E048[v1].field_0[a1].field_4 = a2;
+
+    if (a3) {
+        sub_5649C0();
+        stru_5C9228[dword_66D868].field_48();
+    }
 }
 
 // 0x564940
