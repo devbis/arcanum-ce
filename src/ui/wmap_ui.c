@@ -158,12 +158,16 @@ static bool sub_560440(TigRect* rect, TigFile* stream);
 static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
 static bool sub_5606B0(TigRect* rect, TigFile* stream);
 static void sub_5607E0();
+static bool wmap_load_worldmap_info();
+static bool wmap_ui_create();
 static void sub_561430(long long location);
 static void sub_561490(long long location, WmapCoords* coords);
 static void sub_5614C0(int x, int y);
+static bool sub_5614F0();
 static bool sub_5615D0(int a1);
 static void sub_561800(WmapCoords* coords, int64_t* loc_ptr);
 static bool sub_561860(int64_t loc);
+static bool wmap_ui_message_filter(TigMessage* msg);
 static bool sub_5627F0(long long a1);
 static void sub_562800(int id);
 static void sub_562880(WmapCoords* coords);
@@ -261,6 +265,9 @@ static tig_window_handle_t wmap_ui_window = TIG_WINDOW_HANDLE_INVALID;
 // 0x5C9B08
 static TigRect stru_5C9B08 = { 0, 41, 800, 400 };
 
+// 0x5C9B18
+static int dword_5C9B18 = -1;
+
 // 0x5C9B20
 static TextEdit stru_5C9B20 = {
     0,
@@ -327,6 +334,9 @@ static uint8_t byte_64E828[5000];
 
 // 0x64FBB0
 static TigRect stru_64FBB0;
+
+// 0x64FBC8
+static S550DA0 stru_64FBC8;
 
 // 0x64FBD8
 static WmapNote stru_64FBD8[200];
@@ -435,6 +445,9 @@ static bool dword_66D9C4;
 
 // 0x66D9C8
 static bool dword_66D9C8;
+
+// 0x66D9CC
+static int dword_66D9CC;
 
 // 0x66D9D0
 static tig_timestamp_t dword_66D9D0;
@@ -1029,7 +1042,7 @@ void sub_5607E0()
 }
 
 // 0x560AA0
-void wmap_load_worldmap_info()
+bool wmap_load_worldmap_info()
 {
     // TODO: Incomplete.
 }
@@ -1096,9 +1109,163 @@ int wmap_ui_is_created()
 }
 
 // 0x560FA0
-void wmap_ui_create()
+bool wmap_ui_create()
 {
-    // TODO: Incomplete.
+    TigVideoBufferCreateInfo vb_create_info;
+    TigArtAnimData art_anim_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigFont font_desc;
+    int64_t loc;
+    tig_art_id_t art_id;
+    int index;
+    int v2;
+
+    if (wmap_ui_created) {
+        return true;
+    }
+
+    if (sub_40FF40() != sub_40FF50(1)) {
+        int area;
+
+        if (!map_get_area(sub_40FF40(), &area)) {
+            tig_debug_printf("WMapUI: wmap_ui_create: ERROR: Failed to find matching WorldMap Position/area!\n");
+            return false;
+        }
+
+        if (area == -1) {
+            return false;
+        }
+
+        loc = sub_4CAED0(area);
+    } else {
+        loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    }
+
+    if (!wmap_load_worldmap_info()) {
+        if (stru_5C9228[0].field_68[0] == '\0'
+            && !dword_66D874) {
+            MesFileEntry mes_file_entry;
+            John v1;
+
+            mes_file_entry.num = 605;
+            mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+            v1.type = 6;
+            v1.str = mes_file_entry.str;
+            sub_550750(&v1);
+            return false;
+        }
+
+        if (sub_5614F0()) {
+            stru_5C9228[dword_66D868].field_60 = 2000 - stru_5C9228[dword_66D868].rect.width;
+            stru_5C9228[dword_66D868].field_64 = 2000 - stru_5C9228[dword_66D868].rect.height;
+        } else {
+            int64_t limit_x;
+            int64_t limit_y;
+
+            location_get_limits(&limit_x, &limit_y);
+            stru_5C9228[dword_66D868].field_60 = (int)(limit_x / 64) - stru_5C9228[dword_66D868].rect.width;
+            stru_5C9228[dword_66D868].field_64 = (int)(limit_y / 64) - stru_5C9228[dword_66D868].rect.height;
+        }
+
+        if (sub_5614F0()) {
+            dword_66D6F8 = 2000;
+        } else {
+            int64_t limit_x;
+            int64_t limit_y;
+
+            location_get_limits(&limit_x, &limit_y);
+            dword_66D6F8 = (int)(limit_x / 64);
+        }
+
+        if (dword_66D9CC == 0) {
+            dword_66D9CC = 1;
+        }
+    }
+
+    dword_66D898 = 0;
+
+    tig_art_interface_id_create(138, 0, 0, 0, &art_id);
+
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        tig_debug_printf("wmap_ui_create: ERROR: tig_art_anim_data failed!\n");
+        exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
+    }
+
+    src_rect.x = stru_5C9B08.x;
+    src_rect.y = 0;
+    src_rect.width = stru_5C9B08.width;
+    src_rect.height = stru_5C9B08.height;
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = stru_5C9B08.width;
+    dst_rect.height = stru_5C9B08.height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    if (!intgame_big_window_lock(wmap_ui_message_filter, &wmap_ui_window)) {
+        // FIXME: Message is misleading.
+        tig_debug_printf("wmap_ui_create: ERROR: tig_art_anim_data failed!\n");
+        exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
+    }
+
+    tig_window_blit_art(wmap_ui_window, &art_blit_info);
+
+    font_desc.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_SHADOW;
+    tig_art_interface_id_create(840, 0, 0, 0, &(font_desc.art_id));
+
+    for (index = 0; index < 8; index++) {
+        font_desc.color = stru_5C9160[index].color;
+        tig_font_create(&font_desc, &(stru_5C9160[index].font));
+    }
+
+    for (index = 0; index < 2; index++) {
+        sub_54AA60(wmap_ui_window, &stru_5C9B08, &(stru_5C9B50[index]), 0x1);
+    }
+
+    sub_54AA60(wmap_ui_window, &stru_5C9B08, &stru_5C9B70, 4);
+    sub_54AA60(wmap_ui_window, &stru_5C9B08, &stru_5C9B80, dword_5C9B90 | 8);
+
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+    vb_create_info.width = dword_66D890 + 203;
+    vb_create_info.height = 50;
+    vb_create_info.background_color = dword_64E03C;
+    vb_create_info.color_key = dword_64E03C;
+
+    if (tig_video_buffer_create(&vb_create_info, &dword_64E7F4)) {
+        tig_debug_printf("wmap_ui_create: ERROR: tig_video_buffer_create failed!\n");
+        exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
+    }
+
+    stru_64FBC8.window_handle = wmap_ui_window;
+    stru_64FBC8.rect = &stru_5C9AB8;
+    tig_art_interface_id_create(198, 0, 0, 0, &(stru_64FBC8.art_id));
+    sub_550DA0(1, &stru_64FBC8);
+
+    for (index = sub_4CAE80() - 1; index > 0; index--) {
+        if (sub_4CAF50(player_get_pc_obj(), index)) {
+            sub_562800(index);
+        }
+    }
+
+    sub_561430(loc);
+    sub_563590(&(stru_5C9228[dword_66D868].field_3C), false);
+
+    v2 = dword_66D868;
+    dword_66D868 = -1;
+    sub_562B70(v2);
+
+    dword_5C9B18 = -1;
+    sub_565130(1);
+    stru_64E048[0].field_3C8 = dword_66D880 != 0;
+    wmap_ui_created = true;
+
+    return true;
 }
 
 // 0x561430
@@ -1178,7 +1345,7 @@ bool sub_561860(int64_t loc)
 }
 
 // 0x5618B0
-void sub_5618B0()
+bool wmap_ui_message_filter(TigMessage* msg)
 {
     // TODO: Incomplete.
 }
