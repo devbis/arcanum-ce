@@ -745,10 +745,10 @@ void sub_56DDC0()
     SchematicInfo schematic_info;
     long long obj;
     char discipline[2];
-    int v1;
-    int v2;
-    int v3;
-    int v4;
+    bool v1;
+    bool v2;
+    bool v3;
+    bool v4;
 
     if (dword_680E58 != 0) {
         tig_button_show(stru_5CA850[0].button_handle);
