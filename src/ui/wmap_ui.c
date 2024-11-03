@@ -928,9 +928,47 @@ void wmap_ui_reset()
 }
 
 // 0x560280
-void wmap_ui_save()
+bool wmap_ui_save(TigFile* stream)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int num_notes;
+    int cnt;
+
+    if (stream == NULL) {
+        return false;
+    }
+
+    for (v1 = 0; v1 < 3; v1++) {
+        if ((stru_5C9228[v1].flags & 0x2) != 0) {
+            if (stru_5C9228[v1].num_notes != NULL) {
+                num_notes = *stru_5C9228[v1].num_notes;
+            } else {
+                num_notes = 0;
+            }
+
+            cnt = num_notes;
+            for (v2 = 0; v2 < num_notes; v2++) {
+                if ((stru_5C9228[v1].notes[v2].field_4 & 0x2) != 0) {
+                    cnt--;
+                }
+            }
+
+            if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+                return false;
+            }
+
+            for (v2 = 0; v2 < num_notes; v2++) {
+                if ((stru_5C9228[v1].notes[v2].field_4 & 0x2) == 0) {
+                    if (!wmap_ui_town_note_save(&(stru_5C9228[v1].notes[v2]), stream)) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x560350

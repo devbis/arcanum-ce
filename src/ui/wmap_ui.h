@@ -6,6 +6,8 @@
 
 bool wmap_ui_init(GameInitInfo* init_info);
 void wmap_ui_exit();
+void wmap_ui_reset();
+bool wmap_ui_save(TigFile* stream);
 void sub_560720();
 int sub_560740();
 void sub_560750();
