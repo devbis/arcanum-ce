@@ -1495,7 +1495,83 @@ void sub_55B720(int64_t obj, int stat, int value)
 // 0x55B880
 void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C8150* a3, const char** list, int a5, int a6)
 {
-    // TODO: Incomplete.
+    TigWindowData window_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect rect;
+    TigFont font_desc;
+    int num;
+    int index;
+    int x;
+
+    tig_window_data(window_handle, &window_data);
+
+    if (window_handle == dword_64CA6C) {
+        num = 29;
+    } else if (window_handle == dword_64CA8C) {
+        num = 30;
+    } else if (window_handle == dword_64C7B0) {
+        num = 31;
+    } else if (window_handle == dword_64CA60) {
+        num = 567;
+    } else {
+        num = 22;
+    }
+
+    tig_art_interface_id_create(num, 0, 0, 0, &(art_blit_info.art_id));
+    art_blit_info.flags = 0;
+
+    tig_font_push(font);
+    for (index = 0; index < a6; index++) {
+        if (a5 == -1) {
+            font_desc.str = a3[index].str;
+            font_desc.width = 0;
+            sub_535390(&font_desc);
+
+            x = a3[index].x;
+            if (x < 0) {
+                x = -x - font_desc.width / 2;
+            }
+            rect.x = x - window_data.rect.x;
+            rect.width = font_desc.width;
+            rect.height = font_desc.height;
+        }
+        rect.y = a3[index].y;
+
+        if (list != NULL) {
+            font_desc.str = list[index];
+            if (a5 == -1) {
+                if (a3[index].str != NULL) {
+                    rect.x += font_desc.width;
+                }
+            } else if (a5 < 0) {
+                font_desc.width = 0;
+                sub_535390(&font_desc);
+                rect.x = -window_data.rect.x - font_desc.width / 2 - a5;
+            } else {
+                rect.x = a5 - window_data.rect.x;
+            }
+
+            font_desc.width = 0;
+            sub_535390(&font_desc);
+
+            if (a5 == -1 && a3[index].str == NULL) {
+                x = a3[index].x;
+                if (x < 0) {
+                    x = -x - font_desc.width / 2;
+                }
+                rect.x = x - window_data.rect.x;
+            }
+
+            rect.width = font_desc.width;
+            rect.height = font_desc.height;
+        }
+
+        art_blit_info.src_rect = &rect;
+        art_blit_info.dst_rect = &rect;
+        tig_window_blit_art(window_handle, &art_blit_info);
+        tig_window_text_write(window_handle, font_desc.str, &rect);
+    }
+    tig_font_pop();
 }
 
 // 0x55BAB0
