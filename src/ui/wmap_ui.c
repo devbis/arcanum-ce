@@ -166,6 +166,7 @@ static bool sub_5615D0(int a1);
 static bool sub_5627F0(long long a1);
 static void sub_562800(int id);
 static void sub_562880(WmapNoteCoords* coords);
+static void sub_562A20(int x, int y);
 static bool wmTileArtLockMode(int a1, int a2);
 static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
 static bool sub_563200(int a1, int a2);
@@ -377,6 +378,9 @@ static int dword_66D898;
 
 // 0x66D89C
 static int dword_66D89C;
+
+// 0x66D8A8
+static bool dword_66D8A8;
 
 // 0x66D8AC
 static int dword_66D8AC;
@@ -1242,9 +1246,27 @@ void sub_562880(WmapNoteCoords* coords)
 }
 
 // 0x562A20
-void sub_562A20()
+void sub_562A20(int x, int y)
 {
-    // TODO: Incomplete.
+    if (stru_5C9228[dword_66D868].field_44 != 0
+        && x < stru_5C9A88.x
+        && y < stru_5C9A88.y
+        && x >= stru_5C9A88.x + stru_5C9A88.width
+        && y >= stru_5C9A88.y + stru_5C9A88.height) {
+        dword_66D8A8 = true;
+
+        if (y < stru_5C9A88.y) {
+            sub_563790(0, 8);
+        } else if (y > stru_5C9A88.y + stru_5C9A88.height) {
+            sub_563790(4, 8);
+        }
+
+        if (x < stru_5C9A88.x) {
+            sub_563790(6, 8);
+        } else if (x > stru_5C9A88.x + stru_5C9A88.width) {
+            sub_563790(2, 8);
+        }
+    }
 }
 
 // 0x562AF0
