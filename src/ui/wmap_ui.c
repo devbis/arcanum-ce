@@ -188,6 +188,7 @@ static void sub_563B10(int x, int y, int* coords);
 static void sub_563C00(int x, int y, int* coords);
 static bool sub_563C60(WmapNote* note);
 static void sub_563D50(WmapNote* note);
+static void sub_563D80(int a1, int a2);
 static bool sub_563DE0(WmapNoteCoords* coords, int* id);
 static bool sub_563E00(WmapNoteCoords* coords, int* id, int a3);
 static bool sub_563F00(WmapNoteCoords* coords, int64_t* a2);
@@ -1767,7 +1768,37 @@ void sub_563C00(int x, int y, int* coords)
 // 0x563C60
 bool sub_563C60(WmapNote* note)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    int index;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+
+    if (v1->notes == NULL) {
+        return false;
+    }
+
+    // Attempt to find and update by id.
+    for (index = 0; index < *v1->num_notes; index++) {
+        if (v1->notes[index].id == note->id) {
+            // Note already exists, copy over everything.
+            v1->notes[index] = *note;
+            sub_563D50(&(v1->notes[index]));
+            return true;
+        }
+    }
+
+    if (index < 199) {
+        // Note does not exists, but there is a room for a new note.
+        v1->notes[index] = *note;
+        sub_563D50(&(v1->notes[index]));
+        note->field_4 &= ~0x4;
+        (*v1->num_notes)++;
+        sub_563D80(v1->notes[index].id, dword_66D868);
+        return true;
+    }
+
+    // Note does not exists and there is no room for a new one.
+    return false;
 }
 
 // 0x563D50
@@ -1782,6 +1813,8 @@ void sub_563D50(WmapNote* note)
 // 0x563D80
 void sub_563D80(int a1, int a2)
 {
+    (void)a1;
+    (void)a2;
 }
 
 // 0x563D90
