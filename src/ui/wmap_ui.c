@@ -162,6 +162,7 @@ static void sub_561430(long long location);
 static void sub_561490(long long location, WmapCoords* coords);
 static void sub_5614C0(int x, int y);
 static bool sub_5615D0(int a1);
+static void sub_561800(WmapCoords* coords, int64_t* loc_ptr);
 static bool sub_561860(int64_t loc);
 static bool sub_5627F0(long long a1);
 static void sub_562800(int id);
@@ -320,6 +321,9 @@ static TigVideoBuffer* dword_64E7F4;
 
 // 0x64E7F8
 static TownMapInfo stru_64E7F8;
+
+// 0x64E828
+static uint8_t byte_64E828[5000];
 
 // 0x64FBB0
 static TigRect stru_64FBB0;
@@ -1154,7 +1158,7 @@ bool sub_5615D0(int a1)
 }
 
 // 0x561800
-void sub_561800()
+void sub_561800(WmapCoords* coords, int64_t* loc_ptr)
 {
     // TODO: Incomplete.
 }
@@ -2474,7 +2478,18 @@ bool sub_565140()
 // 0x565170
 void sub_565170(WmapCoords* coords)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int64_t v1;
+
+    sub_561800(coords, &loc);
+    sub_4CFFA0(sub_4CFC50(loc), byte_64E828[dword_65E968], &v1);
+
+    dword_65E968++;
+    if (dword_65E968 < stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
+        sub_561490(sub_4CFC90(v1), coords);
+    } else {
+        sub_561490(stru_64E048[0].field_0[0].loc, coords);
+    }
 }
 
 // 0x565230
