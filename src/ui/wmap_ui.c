@@ -165,6 +165,7 @@ static void sub_5614C0(int a1, int a2);
 static bool sub_5615D0(int a1);
 static bool sub_5627F0(long long a1);
 static void sub_562800(int id);
+static void sub_562880(WmapNoteCoords* coords);
 static bool wmTileArtLockMode(int a1, int a2);
 static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
 static bool sub_563200(int a1, int a2);
@@ -320,20 +321,20 @@ static int dword_66D6F8;
 // 0x66D6FC
 static mes_file_handle_t dword_66D6FC;
 
-// 0x66D70C
-static int dword_66D70C;
-
-// 0x66D710
-static int dword_66D710;
-
-// 0x66D714
-static int dword_66D714;
+// 0x66D708
+static TigRect stru_66D708;
 
 // 0x66D718
 static WmapNote stru_66D718;
 
 // 0x66D850
 static int64_t qword_66D850;
+
+// 0x66D858
+static int dword_66D858;
+
+// 0x66D85C
+static int dword_66D85C;
 
 // 0x66D860
 static bool wmap_ui_initialized;
@@ -688,10 +689,12 @@ bool wmap_ui_init(GameInitInfo* init_info)
 
     stru_5C9160[6].color = tig_color_make(150, 150, 150);
 
-    dword_66D70C = stru_5C9AC8.y;
+    stru_66D708.x = 0;
+    stru_66D708.y = stru_5C9AC8.y;
+    stru_66D708.width = stru_5C9AC8.width + dword_66D890 + 3;
+    stru_66D708.height = stru_5C9AC8.height;
+
     stru_5C9AC8.x = dword_66D890 + 3;
-    dword_66D710 = stru_5C9AC8.width + dword_66D890 + 3;
-    dword_66D714 = stru_5C9AC8.height;
 
     if (tig_art_interface_id_create(217, 0, 0, 0, &art_id) != TIG_OK
         || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
@@ -1185,9 +1188,57 @@ void sub_562800(int id)
 }
 
 // 0x562880
-void sub_562880()
+void sub_562880(WmapNoteCoords* coords)
 {
-    // TODO: Incomplete.
+    int x;
+    int y;
+    int index;
+    int64_t limit_x;
+    int64_t limit_y;
+    char str[32];
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    x = dword_66D858 + coords->x;
+    y = dword_66D85C + coords->y;
+
+    for (index = 0; index < 2; index++) {
+        if (tig_video_buffer_fill(dword_64E7F4, &stru_66D708, dword_64E03C) == TIG_OK) {
+            tig_window_fill(wmap_ui_window,
+                &stru_5C9A98[index],
+                tig_color_make(0, 0, 0));
+
+            if (sub_5614F0()) {
+                limit_x = 2000;
+            } else {
+                location_get_limits(&limit_x, &limit_y);
+                limit_x /= 64;
+            }
+
+            if (index == 0) {
+                sprintf(str, "%d W", (int)(limit_x - x));
+            } else {
+                sprintf(str, "%d S", y);
+            }
+
+            tig_font_push(stru_5C9160[0].font);
+            if (tig_font_write(dword_64E7F4, str, &stru_66D708, &dst_rect) == TIG_OK) {
+                dst_rect.x = stru_5C9A98[index].x;
+                dst_rect.y = stru_5C9A98[index].y;
+
+                src_rect.x = 0;
+                src_rect.y = 0;
+                src_rect.width = dst_rect.width;
+                src_rect.height = dst_rect.height;
+
+                tig_window_copy_from_vbuffer(wmap_ui_window,
+                    &dst_rect,
+                    dword_64E7F4,
+                    &src_rect);
+            }
+            tig_font_pop();
+        }
+    }
 }
 
 // 0x562A20
