@@ -191,6 +191,7 @@ static void sub_565230();
 static void sub_5657A0(TigRect* rect);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
 static void wmap_town_refresh_rect(TigRect* rect);
+static void sub_566A80(S5C9228 *a1, TigRect *a2, TigRect *a3);
 static void sub_566D10(int a1, int* a2, TigRect* a3, TigRect* a4, S5C9228* a5);
 
 // 0x5C9220
@@ -1897,9 +1898,80 @@ void wmap_town_refresh_rect(TigRect* rect)
 }
 
 // 0x566A80
-void sub_566A80()
+void sub_566A80(S5C9228 *a1, TigRect *a2, TigRect *a3)
 {
-    // TODO: Incomplete.
+    int v1;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigLine line;
+    TigDrawLineModeInfo line_mode_info;
+    TigDrawLineStyleInfo line_style_info;
+    int index;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+
+    v1 = dword_66D868 == 2 ? 1 : 0;
+    if (stru_64E048[v1].field_3C0 <= 0) {
+        return;
+    }
+
+    line_mode_info.mode = TIG_DRAW_LINE_MODE_NORMAL;
+    line_mode_info.thickness = 1;
+    tig_draw_set_line_mode(&line_mode_info);
+
+    line_style_info.style = TIG_LINE_STYLE_DASHED;
+    tig_draw_set_line_style(&line_style_info);
+
+    x1 = a2->x + a1->field_3C - a1->field_34;
+    y1 = a2->y + a1->field_40 - a1->field_38;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = stru_5C9160[0].width;
+    src_rect.height = stru_5C9160[0].height;
+
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = stru_5C9160[0].data.art_id;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_video_buffer = dword_64E7F4;
+
+    for (index = 0; index < stru_64E048[v1].field_3C0; index++) {
+        x2 = a2->x + stru_64E048[v1].field_0[index].field_8 - a1->field_34;
+        y2 = a2->y + stru_64E048[v1].field_0[index].field_C - a1->field_38;
+
+        line.x1 = x1;
+        line.y1 = y1;
+        line.x2 = x2;
+        line.y2 = y2;
+
+        if (tig_line_intersection(a3, &line) == TIG_OK) {
+            tig_window_line(wmap_ui_window,
+                &line,
+                index == dword_5C9AD8 ? dword_64E034 : dword_65E974);
+        }
+
+        src_rect.x = x2 - stru_5C9160[6].width / 2;
+        src_rect.y = y2 - stru_5C9160[6].height / 2;
+        src_rect.width = stru_5C9160[6].width;
+        src_rect.height = stru_5C9160[6].height;
+        art_blit_info.art_id = stru_5C9160[6].data.art_id;
+
+        if (tig_rect_intersection(&src_rect, a3, &src_rect) == TIG_OK) {
+            dst_rect = src_rect;
+
+            src_rect.x -= x2;
+            src_rect.y -= y2;
+
+            art_blit_info.dst_rect = &dst_rect;
+            tig_window_blit_art(wmap_ui_window, &art_blit_info);
+        }
+
+        x1 = x2;
+        y1 = y2;
+    }
 }
 
 // 0x566CC0
