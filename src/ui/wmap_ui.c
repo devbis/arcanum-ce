@@ -170,6 +170,7 @@ static void sub_562A20(int x, int y);
 static void sub_562AF0(int x, int y);
 static void sub_562B70(int a1);
 static bool wmap_load_townmap_info();
+static void sub_562F90(S5C9228_F180* a1);
 static bool wmTileArtLockMode(int a1, int a2);
 static bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* rect);
 static bool sub_563200(int a1, int a2);
@@ -177,6 +178,7 @@ static void sub_563210(int a1, int a2);
 static void sub_563270();
 static void sub_5632A0(int direction);
 static void sub_563300(int direction);
+static void sub_563590(int* a1, bool a2);
 static void sub_563790(int a1, int a2);
 static void sub_563AC0(int x, int y, int* coords);
 static void sub_563B10(int x, int y, int* coords);
@@ -303,6 +305,9 @@ static mes_file_handle_t wmap_ui_worldmap_mes_file;
 
 // 0x64E7F4
 static TigVideoBuffer* dword_64E7F4;
+
+// 0x64E7F8
+static TownMapInfo stru_64E7F8;
 
 // 0x64FBB0
 static TigRect stru_64FBB0;
@@ -1397,13 +1402,70 @@ void sub_562B70(int a1)
 // 0x562D80
 bool wmap_load_townmap_info()
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    int v2;
+    int v3;
+    int index;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+    stru_64E048[1].field_3C0 = 0;
+
+    if (!townmap_info(dword_66D874, &stru_64E7F8)) {
+        dword_66D874 = 0;
+        return false;
+    }
+
+    sub_4BE670(&stru_64E7F8,
+        obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION),
+        &v2,
+        &v3);
+
+    v1->field_3C = v2;
+    v1->field_40 = v3;
+    v1->field_34 = 0;
+    v1->field_38 = 0;
+
+    strcpy(v1->field_68, townmap_name(dword_66D874));
+    v1->field_178 = stru_64E7F8.width;
+    v1->field_17C = stru_64E7F8.height;
+    v1->field_174 = stru_64E7F8.width * stru_64E7F8.height;
+    v1->field_180 = (S5C9228_F180*)CALLOC(sizeof(*v1->field_180), v1->field_174);
+
+    if (!wmTileArtLockMode(2, 0)) {
+        tig_debug_printf("wmap_load_townmap_info: ERROR: wmTileArtLockMode failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    v1->field_16C = v1->field_180[0].rect.width;
+    v1->field_170 = v1->field_180[0].rect.height;
+    v1->field_58 = v1->field_178 * v1->field_16C;
+    v1->field_5C = v1->field_170 * v1->field_17C;
+
+    sub_563200(2, 0);
+    sub_563210(2, 0);
+
+    for (index = 0; index < v1->field_174; index++) {
+        sub_562F90(&(v1->field_180[index]));
+        v1->field_180[index].rect.width = v1->field_16C;
+        v1->field_180[index].rect.height = v1->field_170;
+    }
+
+    v1->field_2C = v1->field_178 * v1->field_16C - v1->field_24;
+    v1->field_60 = v1->field_178 * v1->field_16C - v1->rect.width;
+    v1->field_30 = v1->field_17C * v1->field_170 - v1->field_28;
+    v1->field_64 = v1->field_17C * v1->field_170 - v1->rect.height;
+
+    sub_563590(&(v1->field_3C), 0);
+
+    return true;
 }
 
 // 0x562F90
-void sub_562F90()
+void sub_562F90(S5C9228_F180* a1)
 {
-    // TODO: Incomplete.
+    a1->flags = 0;
+    a1->field_18 = 0;
+    a1->field_1C = 0;
 }
 
 // 0x562FA0
@@ -1492,6 +1554,9 @@ bool sub_5630F0(const char* path, TigVideoBuffer** video_buffer_ptr, TigRect* re
 // 0x563200
 bool sub_563200(int a1, int a2)
 {
+    (void)a1;
+    (void)a2;
+
     return true;
 }
 
@@ -1546,7 +1611,7 @@ void sub_563300(int direction)
 }
 
 // 0x563590
-void sub_563590()
+void sub_563590(int* a1, bool a2)
 {
     // TODO: Incomplete.
 }
