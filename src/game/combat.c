@@ -168,6 +168,12 @@ static bool dword_5FC264;
 // 0x5FC268
 static bool in_combat_reset;
 
+// 0x5FC26C
+static bool dword_5FC26C;
+
+// 0x5FC270
+static int64_t qword_5FC270;
+
 // 0x5FC1E0
 static CombatCallbacks combat_callbacks;
 
@@ -1662,7 +1668,33 @@ int64_t sub_4B6D80()
 // 0x4B6DA0
 void combat_debug(int64_t obj, const char* msg)
 {
-    // TODO: Incomplete.
+    char* name = NULL;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        obj = qword_5FC270;
+    }
+
+    if (obj != OBJ_HANDLE_NULL) {
+        if (sub_4E5470(obj)) {
+            if (sub_40DA20(obj)) {
+                obj_field_string_get(obj, OBJ_F_PC_PLAYER_NAME, &name);
+            } else {
+                obj_field_string_get(obj, OBJ_F_NAME, &name);
+            }
+        } else {
+            qword_5FC270 = OBJ_HANDLE_NULL;
+        }
+    }
+
+    tig_debug_printf("Combat: TB: DBG: %s: %s, Idx: %d, APs Left: %d\n",
+        msg,
+        name != NULL ? name : " ",
+        dword_5FC250,
+        combat_action_points);
+
+    if (name != NULL) {
+        FREE(name);
+    }
 }
 
 // 0x4B6E70
