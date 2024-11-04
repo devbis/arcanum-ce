@@ -600,7 +600,59 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
 // 0x45DC90
 void sub_45DC90(int64_t a1, int64_t a2, bool a3)
 {
-    // TODO: Incomplete.
+    int64_t summoner_obj;
+    int alignment1;
+    int alignment2;
+    int adj;
+    int v1;
+    int alignment;
+
+    if (!sub_459040(a2, OSF_SUMMONED, &summoner_obj) || summoner_obj != a1) {
+        alignment2 = stat_level(a2, STAT_ALIGNMENT);
+        if (alignment2 < 0) {
+            alignment1 = stat_level(a1, STAT_ALIGNMENT);
+            if (alignment1 > alignment2) {
+                alignment2 = -alignment2;
+                adj = 100 - alignment2;
+            } else {
+                adj = alignment2 - 100;
+            }
+        } else {
+            alignment2 = -alignment2;
+            adj = -100 - alignment2;
+        }
+
+        v1 = alignment2 / 20;
+        if (!a3) {
+            v1 /= 2;
+        }
+
+        // TODO: Check.
+        if (v1 < 0) {
+            alignment = stat_get_base(a1, STAT_ALIGNMENT);
+            if (adj >= 0) {
+                if (alignment + v1 > adj) {
+                    if (alignment > adj) {
+                        stat_set_base(a1, STAT_ALIGNMENT, alignment);
+                    } else {
+                        stat_set_base(a1, STAT_ALIGNMENT, adj);
+                    }
+                } else {
+                    stat_set_base(a1, STAT_ALIGNMENT, alignment + v1);
+                }
+            } else {
+                if (alignment + v1 < adj) {
+                    if (alignment < adj) {
+                        stat_set_base(a1, STAT_ALIGNMENT, alignment);
+                    } else {
+                        stat_set_base(a1, STAT_ALIGNMENT, adj);
+                    }
+                } else {
+                    stat_set_base(a1, STAT_ALIGNMENT, alignment + v1);
+                }
+            }
+        }
+    }
 }
 
 // 0x45DDA0
