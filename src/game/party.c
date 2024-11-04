@@ -6,11 +6,15 @@
 
 #define PARTY_TABLE_SIZE 8
 
+static int sub_4BA260();
 static bool sub_4BA290();
 static void sub_4BA320(int64_t a1, int64_t a2, int a3);
 
 // 0x5FC32C
 static int dword_5FC32C[PARTY_TABLE_SIZE];
+
+// 0x5FC34C
+static int dword_5FC34C;
 
 // 0x4B9E10
 bool party_init(GameInitInfo* init_info)
@@ -191,9 +195,18 @@ bool sub_4BA1E0(int64_t obj)
 }
 
 // 0x4BA260
-void sub_4BA260()
+int sub_4BA260()
 {
-    // TODO: Incomplete.
+    int index;
+
+    for (index = 0; index < 8; index++) {
+        if (dword_5FC32C[index] == dword_5FC34C) {
+            dword_5FC34C = (dword_5FC34C + 1) & 7;
+            index = -1;
+        }
+    }
+
+    return dword_5FC34C;
 }
 
 // 0x4BA290
