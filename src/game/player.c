@@ -28,7 +28,7 @@ bool player_editor;
 // 0x40D6C0
 bool player_init(GameInitInfo* init_info)
 {
-    stru_5D1138.type = 0;
+    stru_5D1138.type = OID_TYPE_NULL;
     player_editor = init_info->editor;
 
     return true;
@@ -39,7 +39,7 @@ void player_reset()
 {
     if (pcObj != OBJ_HANDLE_NULL) {
         pcObj = OBJ_HANDLE_NULL;
-        stru_5D1138.field_0 = 0;
+        stru_5D1138.type = OID_TYPE_NULL;
     }
 
     qword_5D1150 = OBJ_HANDLE_NULL;
@@ -107,7 +107,7 @@ bool player_load(GameLoadInfo* load_info)
 // 0x40D860
 void sub_40D860()
 {
-    if (stru_5D1138.field_0 != 0) {
+    if (stru_5D1138.type != OID_TYPE_NULL) {
         pcObj = objp_perm_lookup(stru_5D1138);
     }
 }
@@ -172,7 +172,7 @@ object_id_t player_get_pc_obj()
     object_id_t obj = pcObj;
 
     if (obj != OBJ_HANDLE_NULL) {
-        if (sub_4E5470(pcObj) || stru_5D1138.type == 0) {
+        if (sub_4E5470(pcObj) || stru_5D1138.type == OID_TYPE_NULL) {
             obj = pcObj;
         } else {
             pcObj = objp_perm_lookup(stru_5D1138);
@@ -192,7 +192,7 @@ bool sub_40DAB0()
 
     sub_43CCA0(pcObj);
     pcObj = OBJ_HANDLE_NULL;
-    stru_5D1138.field_0 = 0;
+    stru_5D1138.type = OID_TYPE_NULL;
 
     return true;
 }
@@ -205,7 +205,7 @@ bool sub_40DAF0(object_id_t obj)
         stru_5D1138 = sub_407EF0(obj);
         sub_4604E0();
     } else {
-        stru_5D1138.field_0 = 0;
+        stru_5D1138.type = OID_TYPE_NULL;
     }
 
     return true;
@@ -215,8 +215,7 @@ bool sub_40DAF0(object_id_t obj)
 void sub_40DB50(PlayerSpec* player_spec)
 {
     player_spec->field_0 = OBJ_HANDLE_NULL;
-    player_spec->field_20 = 0;
-    player_spec->field_24 = 0;
+    player_spec->loc = 0;
     player_spec->field_28 = 0;
     player_spec->field_2C = -1;
 }
@@ -235,10 +234,10 @@ bool player_obj_create_player(PlayerSpec* player_spec)
     }
 
     if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x2) != 0) {
-        loc = player_spec->field_20;
+        loc = player_spec->loc;
     } else {
         // TODO: Looks that same as above, check.
-        loc = player_spec->field_20;
+        loc = player_spec->loc;
     }
 
     if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x1) != 0) {

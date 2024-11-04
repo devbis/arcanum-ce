@@ -11,8 +11,7 @@
 typedef struct PlayerSpec {
     object_id_t field_0;
     ObjectID field_8;
-    int field_20;
-    int field_24;
+    int64_t loc;
     int field_28;
     int field_2C;
 } PlayerSpec;
