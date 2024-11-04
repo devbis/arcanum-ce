@@ -1265,7 +1265,7 @@ bool sub_45F060(int64_t obj, int stat, int mod)
     int lower;
     int upper;
 
-    value = stat_level(obj, stat);
+    value = stat_level(obj, stat) + mod;
     upper = stat_get_max_value(obj, stat);
     lower = stat_get_min_value(obj, stat);
 
