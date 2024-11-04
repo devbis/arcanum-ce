@@ -21,6 +21,7 @@
 #include "game/player.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/reputation.h"
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/stat.h"
@@ -158,9 +159,78 @@ int critter_faction_set(long long obj, int value)
 }
 
 // 0x45D110
-bool critter_faction_same(long long a, long long b)
+bool critter_faction_same(long long obj1, long long obj2)
 {
-    // TODO: Incomplete.
+    int obj_type1;
+    int obj_type2;
+    int faction;
+    int64_t v1;
+    int64_t leader_obj1;
+    int64_t leader_obj2;
+
+    obj_type1 = obj_field_int32_get(obj1, OBJ_F_TYPE);
+    obj_type2 = obj_field_int32_get(obj2, OBJ_F_TYPE);
+
+    if (obj_type1 == OBJ_TYPE_PC) {
+        if (obj_type2 == OBJ_TYPE_PC) {
+            return false;
+        }
+
+        if (sub_45DDA0(obj2) == obj1) {
+            return true;
+        }
+
+        faction = critter_faction_get(obj2);
+        if (faction == 0) {
+            return false;
+        }
+
+        return sub_4C21E0(obj1, faction);
+    }
+
+    if (obj_type2 == OBJ_TYPE_PC) {
+        if (sub_45DDA0(obj1) == obj2) {
+            return true;
+        }
+
+        faction = critter_faction_get(obj1);
+        if (faction == 0) {
+            return false;
+        }
+
+        return sub_4C21E0(obj2, faction);
+    }
+
+    v1 = sub_45DDA0(obj1);
+    if (v1 != OBJ_HANDLE_NULL && v1 == sub_45DDA0(obj2)) {
+        return true;
+    }
+
+    leader_obj1 = critter_leader_get(obj1);
+    if (leader_obj1 == obj2) {
+        return true;
+    }
+
+    leader_obj2 = critter_leader_get(obj2);
+    if (leader_obj2 == obj1) {
+        return true;
+    }
+
+    if (leader_obj1 != OBJ_HANDLE_NULL
+        && leader_obj1 == leader_obj2) {
+        return true;
+    }
+
+    faction = critter_faction_get(obj1);
+    if (faction == 0) {
+        return false;
+    }
+
+    if (faction == critter_faction_get(obj2)) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x45D290
