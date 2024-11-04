@@ -10,6 +10,7 @@
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mes.h"
+#include "game/monstergen.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
 #include "game/multiplayer.h"
@@ -19,10 +20,13 @@
 #include "game/player.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/script.h"
 #include "game/skill.h"
 #include "game/stat.h"
+#include "game/text_floater.h"
 #include "game/ui.h"
 
+static void sub_45DC90(int64_t a1, int64_t a2, bool a3);
 static void sub_45E040(int64_t obj);
 static bool sub_45E8D0(TimeEvent* timeevent);
 static bool sub_45EA80(TimeEvent* timeevent);
@@ -401,13 +405,89 @@ void sub_45D900()
 }
 
 // 0x45DA20
-void sub_45DA20()
+void sub_45DA20(int64_t a1, int64_t a2, int a3)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+    tig_art_id_t art_id;
+
+    if (a1 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    sub_4D5620(a1);
+
+    if (!sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_DYING, 0)) {
+        return;
+    }
+
+    if ((obj_field_int32_get(a1, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return;
+    }
+
+    combat_critter_deactivate_combat_mode(a1);
+    obj_field_int32_set(a1, OBJ_F_CRITTER_DEATH_TIME, datetime_current_second());
+    sub_459740(a1);
+    sub_4B80E0(a1);
+
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        sub_45ED70(a1);
+        obj_field_handle_set(a1, OBJ_F_NPC_COMBAT_FOCUS, a2);
+        sub_4AA1B0(a1, a2);
+
+        if (a2 != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+                a2 = sub_45DDA0(a2);
+            }
+
+            if (a2 != OBJ_HANDLE_NULL) {
+                ObjectList followers;
+                ObjectNode* node;
+
+                sub_45F110(a2, 20 * obj_field_int32_get(a1, OBJ_F_NPC_EXPERIENCE_WORTH) / 100);
+                obj_field_int32_set(a1, OBJ_F_NPC_EXPERIENCE_WORTH, 0);
+                sub_45DC90(a2, a1, true);
+                sub_4F5330(a2, a1);
+
+                object_get_followers(a2, &followers);
+                node = followers.head;
+                while (node != NULL) {
+                    sub_441980(a1, node->obj, a2, SAP_LEADER_KILLING, 0);
+                }
+                object_list_destroy(&followers);
+            }
+        }
+
+        leader_obj = critter_leader_get(a1);
+        if (leader_obj != OBJ_HANDLE_NULL) {
+            critter_disband(a1, true);
+        }
+        critter_leader_set(a1, leader_obj);
+        sub_4BAB30(a1);
+    } else {
+        sub_467520(a1);
+    }
+
+    art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
+    if (sub_5040D0(art_id)) {
+        art_id = sub_504100(art_id, 0);
+        object_set_current_aid(a1, art_id);
+    }
+
+    sub_435080(a1, a3);
+
+    if ((obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_DECAY) == 0) {
+        sub_45EBE0(a1);
+    }
+
+    object_set_hp_damage(a1, 32000);
+
+    if (a2 != OBJ_HANDLE_NULL) {
+        sub_4CBC60(a2, a1);
+    }
 }
 
 // 0x45DC90
-void sub_45DC90()
+void sub_45DC90(int64_t a1, int64_t a2, bool a3)
 {
     // TODO: Incomplete.
 }
