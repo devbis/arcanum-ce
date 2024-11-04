@@ -1770,6 +1770,8 @@ void sub_4B7080()
 // 0x4B7150
 bool combat_tb_timeevent_process(TimeEvent* timeevent)
 {
+    (void)timeevent;
+
     combat_debug(OBJ_HANDLE_NULL, "TimeEvent Process");
 
     if (dword_5FC22C) {
