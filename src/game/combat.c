@@ -1,5 +1,7 @@
 #include "game/combat.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <stdio.h>
 
 #include "game/ai.h"
@@ -1564,9 +1566,38 @@ int sub_4B6930(CombatContext* combat)
 }
 
 // 0x4B6A00
-void sub_4B6A00()
+int sub_4B6A00(int64_t loc1, int64_t loc2)
 {
-    // TODO: Incomplete.
+    int64_t x1;
+    int64_t y1;
+    int64_t x2;
+    int64_t y2;
+    double v1;
+    int extended_rotation;
+
+    if (loc1 == loc2) {
+        return 0;
+    }
+
+    sub_4B8680(loc1, &x1, &y1);
+    sub_4B8680(loc2, &x2, &y2);
+
+    v1 = atan2((double)(y2 - y1), (double)(x2 - x1));
+    if (v1 < 0.0) {
+        v1 += M_PI * 2.0;
+    }
+
+    extended_rotation = (int)(v1 * 32.0 / (M_PI * 2.0));
+    if (extended_rotation < 0 || extended_rotation >= 32) {
+        extended_rotation = 0;
+    }
+
+    extended_rotation += 8;
+    if (extended_rotation >= 32) {
+        extended_rotation -= 32;
+    }
+
+    return extended_rotation;
 }
 
 // 0x4B6B10

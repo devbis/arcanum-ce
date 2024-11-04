@@ -61,6 +61,7 @@ void sub_4B4390(CombatContext* combat);
 void sub_4B5810(CombatContext* combat);
 void sub_4B58C0(CombatContext* combat);
 int sub_4B5F30(int a1);
+int sub_4B6A00(int64_t loc1, int64_t loc2);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
 bool combat_set_callbacks(CombatCallbacks* callbacks);
 bool combat_is_turn_based();
