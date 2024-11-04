@@ -368,9 +368,37 @@ void sub_4AA0D0(int64_t obj)
 }
 
 // 0x4AA1B0
-void sub_4AA1B0()
+void sub_4AA1B0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    sub_4AF170(a1);
+    sub_4AA8C0(a1, true);
+
+    if (a2 != OBJ_HANDLE_NULL
+        && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        ObjectList objects;
+        ObjectNode* node;
+        int danger_type;
+        int64_t danger_obj;
+        unsigned int flags;
+
+        sub_4AE4E0(a2, 3, &objects, OBJ_TM_NPC);
+        node = objects.head;
+        while (node != NULL) {
+            if (!sub_45D8D0(node->obj)
+                && (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0
+                && critter_faction_same(a1, node->obj)) {
+                ai_danger_source(node->obj, &danger_type, &danger_obj);
+                if (danger_type == 1
+                    && danger_obj == a2) {
+                    flags = obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS);
+                    flags |= ONF_BACKING_OFF;
+                    obj_field_int32_set(node->obj, OBJ_F_NPC_FLAGS, flags);
+                }
+            }
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
 }
 
 // 0x4AA300
@@ -468,7 +496,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
 }
 
 // 0x4AA7A0
-void sub_4AA7A0()
+void sub_4AA7A0(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -1674,9 +1702,9 @@ void sub_4AF8C0(int64_t a1, int64_t a2)
     ObjectList objects;
     ObjectNode* node;
 
-    v1 = sub_45DDA0(a1);
+    v1 = sub_45DDA0(a2);
     if (v1 == OBJ_HANDLE_NULL) {
-        v1 = a1;
+        v1 = a2;
     }
 
     sub_4413E0(v1, &objects);
