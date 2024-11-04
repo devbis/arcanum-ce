@@ -763,7 +763,40 @@ void sub_45E1E0(int64_t obj)
 // 0x45E2E0
 bool sub_45E2E0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    int64_t v2;
+    int v3;
+    int v4;
+
+    v3 = sub_4BA020(a1);
+    if (v3 == -1) {
+        if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            v1 = a1;
+        } else {
+            v1 = sub_45DDA0(a1);
+            if (v1 != OBJ_HANDLE_NULL) {
+                v3 = sub_4BA020(v1);
+            }
+        }
+    }
+
+    v4 = sub_4BA020(a2);
+    if (v4 == -1) {
+        if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            v2 = a2;
+        } else {
+            v2 = sub_45DDA0(a2);
+            if (v2 != OBJ_HANDLE_NULL) {
+                v4 = sub_4BA020(v2);
+            }
+        }
+    }
+
+    if (v3 == v4) {
+        return v3 != -1;
+    }
+
+    return v1 != v2 && v1 != OBJ_HANDLE_NULL;
 }
 
 // 0x45E3F0
