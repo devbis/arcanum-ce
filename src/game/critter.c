@@ -5,6 +5,7 @@
 #include "game/background.h"
 #include "game/combat.h"
 #include "game/effect.h"
+#include "game/gamelib.h"
 #include "game/item.h"
 #include "game/light.h"
 #include "game/magictech.h"
@@ -1290,9 +1291,81 @@ int sub_45F0B0(int64_t obj)
 }
 
 // 0x45F110
-void sub_45F110(int64_t obj, int a2)
+void sub_45F110(int64_t obj, int xp_gain)
 {
-    // TODO: Incomplete.
+    int v1;
+    int cnt;
+    ObjectList objects;
+    ObjectNode* node;
+    int xp;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return;
+    }
+
+    if (xp_gain == 0) {
+        return;
+    }
+
+    switch (gamelib_get_game_difficulty()) {
+    case 0:
+        xp_gain += xp_gain / 2;
+        break;
+    case 2:
+        xp_gain -= xp_gain / 2;
+        break;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        v1 = sub_4BA020(obj);
+    } else {
+        v1 = -1;
+    }
+
+    if (v1 != -1) {
+        cnt = 0;
+        sub_440FC0(obj, OBJ_TM_PC, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            if (!sub_45D8D0(node->obj)
+                && node->obj != OBJ_HANDLE_NULL
+                && sub_4BA020(node->obj) == v1) {
+                cnt++;
+            }
+            node = node->next;
+        }
+
+        xp_gain /= cnt;
+        if (xp_gain == 0) {
+            xp_gain = 1;
+        }
+
+        node = objects.head;
+        while (node != NULL) {
+            if (!sub_45D8D0(node->obj)
+                && node->obj != OBJ_HANDLE_NULL
+                && sub_4BA020(node->obj) == v1) {
+                xp = stat_get_base(node->obj, STAT_EXPERIENCE_POINTS);
+                xp += effect_adjust_xp_gain(node->obj, xp_gain);
+                stat_set_base(node->obj, STAT_EXPERIENCE_POINTS, xp);
+            }
+            node = node->next;
+        }
+
+        object_list_destroy(&objects);
+        sub_4EDDE0(OBJ_HANDLE_NULL);
+    } else {
+        if (!sub_45D8D0(obj)) {
+            xp = stat_get_base(node->obj, STAT_EXPERIENCE_POINTS);
+            xp += effect_adjust_xp_gain(node->obj, xp_gain);
+            stat_set_base(node->obj, STAT_EXPERIENCE_POINTS, xp);
+            sub_4EDDE0(OBJ_HANDLE_NULL);
+        }
+    }
 }
 
 // 0x45F2D0
