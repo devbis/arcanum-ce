@@ -278,15 +278,13 @@ int critter_fatigue_pts_get(long long obj)
 // 0x45D3E0
 int critter_fatigue_pts_set(long long obj, int value)
 {
-    int type;
-    Packet51 pkt;
-
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (!obj_type_is_critter(type)) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
     if (!sub_4A2BA0()) {
+        Packet51 pkt;
+
         pkt.type = 51;
         pkt.field_4 = 1;
         pkt.field_8 = sub_407EF0(obj);
@@ -311,35 +309,36 @@ int critter_fatigue_pts_set(long long obj, int value)
 // 0x45D4A0
 int critter_fatigue_adj_get(long long obj)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_ADJ);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
+
+    return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_ADJ);
 }
 
+// FIXME: Wrong name, sets `OBJ_F_CRITTER_FATIGUE_PTS`, not `OBJ_F_CRITTER_FATIGUE_ADJ`.
+//
 // 0x45D4F0
 int critter_fatigue_adj_set(long long obj, int value)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_ADJ, value);
-        sub_460260(obj);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
+
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_PTS, value);
+    sub_460260(obj);
+
+    return value;
 }
 
 // 0x45D550
 int critter_fatigue_damage_get(long long obj)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
+
+    return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE);
 }
 
 // 0x45D5A0
@@ -347,9 +346,8 @@ int critter_fatigue_damage_set(long long obj, int value)
 {
     bool v1;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
-        return false;
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return 0;
     }
 
     if (value < 0) {
@@ -886,8 +884,8 @@ void sub_45E1E0(int64_t obj)
 // 0x45E2E0
 bool sub_45E2E0(int64_t a1, int64_t a2)
 {
-    int64_t v1;
-    int64_t v2;
+    int64_t v1 = OBJ_HANDLE_NULL;
+    int64_t v2 = OBJ_HANDLE_NULL;
     int v3;
     int v4;
 
@@ -1049,7 +1047,95 @@ int64_t sub_45E590(int64_t critter_obj)
 // 0x45E610
 bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    int64_t critter_obj;
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+    int dam;
+    int encumbrance_level;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return true;
+        }
+    }
+
+    v1 = timeevent->params[0].integer_value;
+    critter_obj = timeevent->params[1].object_value;
+    v2 = timeevent->params[2].integer_value;
+
+    if (critter_obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    if (sub_45D8D0(critter_obj)) {
+        return true;
+    }
+
+    // TODO: Figure out math.
+    v3 = sub_45A820(v2) / 8 / 10;
+    if (v3 < 1) {
+        v3 = 1;
+    }
+
+    dam = critter_fatigue_damage_get(critter_obj);
+
+    switch (v1) {
+    case 0:
+        if (dam > 0) {
+            // TODO: Figure out math.
+            dam -= v3 * stat_level(critter_obj, STAT_HEAL_RATE);
+            v4 = sub_45D700(critter_obj);
+            if (dam < 0) {
+                dam = 0;
+            }
+            critter_fatigue_damage_set(critter_obj, dam);
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                && (tig_net_flags & TIG_NET_HOST) != 0) {
+                Packet35 pkt;
+
+                pkt.type = 35;
+                pkt.oid = sub_407EF0(critter_obj);
+                pkt.dam = dam;
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+            }
+
+            if (v4 <= 0 && sub_45D700(critter_obj) > 0) {
+                sub_434DE0(critter_obj);
+            }
+        }
+        break;
+    case 1:
+        // TODO: Figure out math.
+        v4 = sub_45D700(critter_obj);
+        if (v4 >= 5) {
+            if (v4 - v3 < 5) {
+                v3 = 1;
+            }
+            dam += v3;
+            critter_fatigue_damage_set(critter_obj, dam);
+        }
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet35 pkt;
+
+            pkt.type = 35;
+            pkt.oid = sub_407EF0(critter_obj);
+            pkt.dam = dam;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+
+        encumbrance_level = sub_45F790(critter_obj);
+        if (dword_5B3050[encumbrance_level] != 0) {
+            sub_45E820(critter_obj, 1, dword_5B3050[encumbrance_level]);
+        }
+        break;
+    }
+
+    return true;
 }
 
 // 0x45E820
@@ -1525,9 +1611,9 @@ void sub_45F110(int64_t obj, int xp_gain)
         sub_4EDDE0(OBJ_HANDLE_NULL);
     } else {
         if (!sub_45D8D0(obj)) {
-            xp = stat_get_base(node->obj, STAT_EXPERIENCE_POINTS);
-            xp += effect_adjust_xp_gain(node->obj, xp_gain);
-            stat_set_base(node->obj, STAT_EXPERIENCE_POINTS, xp);
+            xp = stat_get_base(obj, STAT_EXPERIENCE_POINTS);
+            xp += effect_adjust_xp_gain(obj, xp_gain);
+            stat_set_base(obj, STAT_EXPERIENCE_POINTS, xp);
             sub_4EDDE0(OBJ_HANDLE_NULL);
         }
     }
