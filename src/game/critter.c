@@ -1175,7 +1175,54 @@ void sub_45EE30(int64_t obj, bool a2)
 // 0x45EE90
 void sub_45EE90(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    tig_art_id_t new_art_id;
+    unsigned int flags;
+
+    if (!sub_4A2BA0()) {
+        Packet33 pkt;
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        pkt.type = 33;
+        sub_4440E0(obj, &(pkt.field_8));
+        pkt.field_38 = a2;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    sub_424070(obj, 5, false, false);
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    if (a2) {
+        new_art_id = sub_45EFA0(art_id);
+        if (new_art_id == art_id) {
+            return;
+        }
+    } else {
+        new_art_id = sub_503E50(art_id, 0);
+        new_art_id = tig_art_id_frame_set(new_art_id, 0);
+    }
+
+    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    if (a2) {
+        flags |= OCF_IS_CONCEALED | OCF_MOVING_SILENTLY;
+    } else {
+        flags &= ~(OCF_IS_CONCEALED | OCF_MOVING_SILENTLY);
+    }
+    obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
+
+    if (sub_45D790(obj)) {
+        object_set_current_aid(obj, new_art_id);
+        sub_43F030(obj);
+    }
+
+    if (!a2) {
+        if (combat_critter_is_combat_mode_active(obj)) {
+            sub_435BD0(obj);
+        }
+    }
 }
 
 // 0x45EFA0
