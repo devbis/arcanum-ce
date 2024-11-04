@@ -45,6 +45,7 @@ static void sub_4B6410(CombatContext* combat);
 static int sub_4B65A0();
 static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
 static void sub_4B6680(CombatContext* combat);
+static int sub_4B6930(CombatContext* combat);
 static void sub_4B6B90(CombatContext* combat);
 static void sub_4B7080();
 static bool combat_turn_based_start();
@@ -1520,9 +1521,46 @@ void sub_4B6860()
 }
 
 // 0x4B6930
-void sub_4B6930()
+int sub_4B6930(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int v1 = 0;
+    int max_dam = 0;
+    int max_dam_index = 0;
+    int index;
+
+    if (combat->field_20 != OBJ_HANDLE_NULL
+        && obj_type_is_critter(obj_field_int32_get(combat->field_20, OBJ_F_TYPE))
+        && (combat->flags & 0x02) != 0) {
+        if ((combat->flags & 0x04) != 0) {
+            v1 = 6;
+        } else {
+            for (index = 0; index < 4; index++) {
+                if (combat->field_44[index] > max_dam) {
+                    max_dam = combat->field_44[index];
+                    max_dam_index = index;
+                }
+            }
+
+            v1 = max_dam_index + 1;
+
+            // FIXME: Unreachable.
+            if (max_dam_index == -1) {
+                return v1;
+            }
+        }
+
+        if (!sub_4377C0(combat, combat->weapon_obj, combat->field_20, 3)) {
+            if (max_dam > 0) {
+                if ((combat->flags & 0x80) == 0) {
+                    sub_433020(combat->field_20, v1, 0, combat);
+                }
+            } else {
+                magictech_anim_play_hit_fx(combat->field_20, combat);
+            }
+        }
+    }
+
+    return v1;
 }
 
 // 0x4B6A00
