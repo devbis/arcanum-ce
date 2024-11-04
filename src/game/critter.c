@@ -974,7 +974,50 @@ bool sub_45E8D0(TimeEvent* timeevent)
 // 0x45E910
 void sub_45E910(int64_t critter_obj, int hours)
 {
-    // TODO: Incomplete.
+    int dam;
+    int heal_rate;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+    }
+
+    if (critter_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (sub_45D8D0(critter_obj)) {
+        return;
+    }
+
+    dam = object_get_hp_damage(critter_obj);
+    heal_rate = stat_level(critter_obj, STAT_HEAL_RATE);
+    if (dam > 0) {
+        dam -= heal_rate * hours;
+        if (dam < 0) {
+            dam = 0;
+        }
+        object_set_hp_damage(critter_obj, dam);
+    }
+
+    dam = critter_fatigue_damage_get(critter_obj);
+    if (dam > 0) {
+        dam -= 3 * heal_rate * hours;
+        if (dam < 0) {
+            dam = 0;
+        }
+        critter_fatigue_damage_set(critter_obj, dam);
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        Packet34 pkt;
+
+        pkt.type = 34;
+        pkt.hours = hours;
+        pkt.oid = sub_407EF0(critter_obj);
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
 }
 
 // 0x45EA00
