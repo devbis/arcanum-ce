@@ -399,9 +399,49 @@ bool sub_45D8D0(long long obj)
 }
 
 // 0x45D900
-void sub_45D900()
+void sub_45D900(int64_t obj)
 {
-    // TODO: Incomplete.
+    CombatContext combat;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (!sub_4A2BA0()) {
+        Packet104 pkt;
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+            return;
+        }
+
+        pkt.type = 104;
+        pkt.oid = sub_407EF0(obj);
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    sub_4A2BC0();
+
+    sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
+    combat.field_58 |= 0x1;
+    sub_4B4390(&combat);
+
+    object_set_hp_damage(obj, 32000);
+
+    if (critter_editor) {
+        tig_art_id_t art_id;
+        TigArtAnimData art_anim_data;
+
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = sub_503E50(art_id, 7);
+        if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+            art_id = tig_art_id_frame_set(art_id, art_anim_data.num_frames - 1);
+        }
+        object_set_current_aid(obj, art_id);
+        sub_43D0E0(obj, OF_FLAT | OF_NO_BLOCK);
+        sub_432D90(obj);
+    }
+
+    sub_4A2BD0();
 }
 
 // 0x45DA20
