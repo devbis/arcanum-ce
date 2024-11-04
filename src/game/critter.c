@@ -815,39 +815,79 @@ int sub_45E460(int64_t critter_obj, bool exclude_forced_followers)
 // 0x45E4F0
 int64_t sub_45E4F0(int64_t critter_obj)
 {
-    // TODO: Incomplete.
+    int64_t prev_obj;
+    int64_t prev_candidate_obj;
+    int64_t leader_obj;
+    ObjectList followers;
+    ObjectNode* node;
+
+    prev_obj = critter_obj;
+
+    leader_obj = critter_leader_get(critter_obj);
+    if (leader_obj != OBJ_HANDLE_NULL) {
+        prev_candidate_obj = OBJ_HANDLE_NULL;
+
+        object_get_followers(leader_obj, &followers);
+        node = followers.head;
+        while (node != NULL) {
+            if (node->obj == critter_obj) {
+                break;
+            }
+            prev_candidate_obj = node->obj;
+            node = node->next;
+        }
+
+        if (node != NULL) {
+            if (prev_candidate_obj != OBJ_HANDLE_NULL) {
+                prev_obj = prev_candidate_obj;
+            } else {
+                while (node != NULL) {
+                    prev_candidate_obj = node->obj;
+                    node = node->next;
+                }
+                prev_obj = prev_candidate_obj;
+            }
+        }
+
+        object_list_destroy(&followers);
+    }
+
+    return prev_obj;
 }
 
 // 0x45E590
 int64_t sub_45E590(int64_t critter_obj)
 {
-    int64_t obj;
+    int64_t next_obj;
     int64_t leader_obj;
-    ObjectList objects;
+    ObjectList followers;
     ObjectNode* node;
 
-    obj = critter_obj;
+    next_obj = critter_obj;
+
     leader_obj = critter_leader_get(critter_obj);
     if (leader_obj != OBJ_HANDLE_NULL) {
-        object_get_followers(leader_obj, &objects);
-        node = objects.head;
+        object_get_followers(leader_obj, &followers);
+        node = followers.head;
         while (node != NULL) {
             if (node->obj == critter_obj) {
                 break;
             }
             node = node->next;
         }
+
         if (node != NULL) {
             if (node->next != NULL) {
-                obj = node->next->obj;
+                next_obj = node->next->obj;
             } else {
-                obj = objects.head->obj;
+                next_obj = followers.head->obj;
             }
         }
-        object_list_destroy(&objects);
+
+        object_list_destroy(&followers);
     }
 
-    return obj;
+    return next_obj;
 }
 
 // 0x45E610
