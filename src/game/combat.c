@@ -1513,7 +1513,74 @@ bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
 // 0x4B6680
 void sub_4B6680(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    unsigned int critter_flags;
+    unsigned int critter_flags2;
+    unsigned int spell_flags;
+    int damage_type;
+    int min_damage;
+    int max_damage;
+    int damage;
+
+    if ((combat->flags & 0x100) != 0) {
+        return;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(combat->field_20, OBJ_F_TYPE))) {
+        critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+        critter_flags2 = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS2);
+        spell_flags = obj_field_int32_get(combat->field_20, OBJ_F_SPELL_FLAGS);
+    }
+
+    for (damage_type = 0; damage_type < 5; damage_type++) {
+        item_weapon_damage(combat->weapon_obj,
+            combat->field_8,
+            damage_type,
+            combat->skill,
+            (combat->flags & 0x20000) != 0,
+            &min_damage,
+            &max_damage);
+
+        if (damage_type == 1
+            && ((critter_flags & (OCF_UNDEAD | OCF_MECHANICAL)) != 0
+                || (spell_flags & OSF_STONED) != 0)) {
+            damage = 0;
+        } else {
+            damage = random_between(min_damage, max_damage);
+
+            switch (damage_type) {
+            case 0:
+                if ((combat->flags & 0x8000) != 0) {
+                    damage += basic_skill_level(combat->field_8, BASIC_SKILL_BACKSTAB) * 5;
+                } else if ((combat->flags & 0x4000) != 0) {
+                    damage += basic_skill_level(combat->field_8, BASIC_SKILL_BACKSTAB);
+                }
+                break;
+            case 4:
+                if ((critter_flags2 & OCF2_FATIGUE_DRAINING) != 0 && damage > 0) {
+                    damage *= 4;
+                }
+                if ((critter_flags & OCF_FATIGUE_LIMITING) != 0 && damage > 0) {
+                    damage /= 4;
+                }
+                break;
+            }
+        }
+
+        combat->field_44[damage_type] = damage;
+    }
+
+    spell_flags = obj_field_int32_get(combat->field_20, OBJ_F_SPELL_FLAGS);
+    if (combat->weapon_obj == OBJ_HANDLE_NULL) {
+        if ((spell_flags & OSF_BODY_OF_EARTH) != 0) {
+            combat->field_44[0] += 5;
+        } else if ((spell_flags & OSF_BODY_OF_FIRE) != 0) {
+            combat->field_44[3] += 15;
+        } else if ((spell_flags & OSF_BODY_OF_WATER) != 0) {
+            combat->field_44[4] += 15;
+        } else if ((spell_flags & OSF_HARDENED_HANDS) != 0) {
+            combat->field_44[0] += 2;
+        }
+    }
 }
 
 // 0x4B6860
