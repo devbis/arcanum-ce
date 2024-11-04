@@ -643,7 +643,58 @@ bool critter_disband(int64_t obj, bool force)
 // 0x45E040
 void sub_45E040(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+    int64_t follower_obj;
+    int cnt;
+    int idx;
+    unsigned int flags;
+
+    leader_obj = critter_leader_get(obj);
+    if (leader_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    sub_459EA0(obj);
+
+    cnt = obj_arrayfield_length_get(leader_obj, OBJ_F_CRITTER_FOLLOWER_IDX);
+    if (cnt > 0) {
+        // Find index of `obj` in the followers array.
+        for (idx = 0; idx < cnt; idx++) {
+            follower_obj = obj_arrayfield_handle_get(leader_obj, OBJ_F_CRITTER_FOLLOWER_IDX, idx);
+            if (follower_obj == obj) {
+                break;
+            }
+        }
+
+        // If we're not at the end of the array, move subsequent items up.
+        if (idx < cnt - 1) {
+            while (idx < cnt - 1) {
+                follower_obj = obj_arrayfield_handle_get(leader_obj, OBJ_F_CRITTER_FOLLOWER_IDX, idx + 1);
+                sub_4F0070(leader_obj, OBJ_F_CRITTER_FOLLOWER_IDX, idx, follower_obj);
+                idx++;
+            }
+        }
+
+        // Shrink the array.
+        sub_4F0570(leader_obj, OBJ_F_CRITTER_FOLLOWER_IDX, cnt - 1);
+    }
+
+    critter_leader_set(obj, OBJ_HANDLE_NULL);
+
+    sub_424070(obj, 5, false, true);
+    sub_436FA0(obj);
+
+    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    if ((flags & ONF_FORCED_FOLLOWER) != 0) {
+        flags &= ~ONF_FORCED_FOLLOWER;
+        sub_4EFDD0(obj, OBJ_F_NPC_FLAGS, flags);
+    }
+
+    sub_4EE190();
+
+    if (critter_is_concealed(obj)) {
+        sub_45EE30(obj, false);
+    }
 }
 
 // 0x45E180
