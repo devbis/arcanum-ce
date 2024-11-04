@@ -1869,7 +1869,63 @@ void combat_turn_based_end()
 // 0x4B73A0
 bool combat_turn_based_begin_turn()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t pc_loc;
+    LocRect loc_rect;
+    ObjectList objects;
+    ObjectNode* node;
+
+    dword_5FC250 = 0;
+    pc_obj = player_get_pc_obj();
+    dword_5FC230++;
+    pc_loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
+    sub_4B7300();
+
+    loc_rect.x1 = LOCATION_GET_X(pc_loc) - dword_5B57B8;
+    loc_rect.y1 = LOCATION_GET_Y(pc_loc) - dword_5B57B8;
+    loc_rect.x2 = LOCATION_GET_X(pc_loc) + dword_5B57B8;
+    loc_rect.y2 = LOCATION_GET_Y(pc_loc) + dword_5B57B8;
+    sub_440B40(&loc_rect, OBJ_TM_PC | OBJ_TM_NPC, &objects);
+    sub_4414E0(&stru_5FC180, &objects);
+    object_list_destroy(&objects);
+
+    sub_4B7EB0();
+
+    dword_5FC250 = 0;
+    dword_5FC240 = stru_5FC180.head;
+    while (sub_4B7580(dword_5FC240) && dword_5FC240 != NULL) {
+        dword_5FC250++;
+        dword_5FC240 = dword_5FC240->next;
+    }
+
+    if (dword_5FC240 == NULL) {
+        if (sub_45D790(pc_obj)) {
+            node = stru_5FC180.head;
+            dword_5FC250 = 0;
+            dword_5FC240 = node;
+            while (node != NULL && node->obj != pc_obj) {
+                node = node->next;
+                dword_5FC240 = node;
+                dword_5FC250++;
+            }
+
+            if (node == OBJ_HANDLE_NULL) {
+                tig_debug_printf("Combat: combat_turn_based_begin_turn: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");
+                combat_turn_based_end();
+                return false;
+            }
+        }
+    } else {
+        node = dword_5FC240;
+    }
+
+    combat_debug(node != NULL ? node->obj : OBJ_HANDLE_NULL, "TB Begin Turn");
+    qword_5FC258 = OBJ_HANDLE_NULL;
+    dword_5FC260 = 0;
+    dword_5FC264 = 0;
+    combat_turn_based_subturn_start();
+
+    return true;
 }
 
 // 0x4B7580
