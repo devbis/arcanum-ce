@@ -68,8 +68,42 @@ static struct {
     { "Multiplayer", sub_4A6190 },
 };
 
+// 0x5B5798
+static int dword_5B5798[] = {
+    0,
+    -50,
+    -30,
+    -30,
+};
+
+// 0x5B57A8
+static int dword_5B57A8[] = {
+    0,
+    10,
+    50,
+    100,
+};
+
 // 0x5B57B8
 static int dword_5B57B8 = 15;
+
+// 0x5B57BC
+static int dword_5B57BC[14] = {
+    10,
+    10,
+    5,
+    0,
+    0,
+    10,
+    0,
+    0,
+    0,
+    0,
+    0,
+    10,
+    0,
+    0,
+};
 
 // 0x5B57FC
 static int dword_5B57FC[2] = {
@@ -205,7 +239,7 @@ bool combat_save(TigFile* stream)
     if (tig_file_fwrite(&combat_action_points, sizeof(combat_action_points), 1, stream) != 1) return false;
 
     if (qword_5FC238 == OBJ_HANDLE_NULL) {
-        oid.type = 0;
+        oid.type = OID_TYPE_NULL;
     } else {
         oid = sub_407EF0(qword_5FC238);
     }
@@ -313,8 +347,8 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
         && combat->skill == BASIC_SKILL_MELEE
         && critter_can_backstab(attacker_obj, target_obj)) {
         combat->flags |= 0x4000;
-        if (sub_4AF260(target_obj, attacker_obj)
-            && sub_4AF470(target_obj, attacker_obj, 0)) {
+        if (sub_4AF260(target_obj, attacker_obj) != 0
+            && sub_4AF470(target_obj, attacker_obj, 0) != 0) {
             combat->flags |= 0x8000;
         }
     }
@@ -1179,9 +1213,9 @@ void sub_4B5E90(int64_t loc)
 }
 
 // 0x4B5F30
-void sub_4B5F30()
+int sub_4B5F30(int a1)
 {
-    // TODO: Incomplete.
+    return dword_5B5798[a1];
 }
 
 // 0x4B5F40
@@ -2225,7 +2259,103 @@ void combat_turn_based_add_critter(int64_t obj)
 // 0x4B7EB0
 void sub_4B7EB0()
 {
-    // TODO: Incomplete.
+    ObjectNode* node;
+    ObjectNode* tail;
+    ObjectNode* prev;
+    ObjectNode* tmp;
+    int64_t leader_obj;
+    bool process;
+    char* name;
+    int index;
+
+    combat_debug(OBJ_HANDLE_NULL, "Sorting List");
+
+    tail = NULL;
+    prev = NULL;
+    node = stru_5FC180.head;
+    if (node != NULL) {
+        do {
+            process = true;
+            if (obj_field_int32_get(node->obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+                leader_obj = sub_45DDA0(node->obj);
+                if (leader_obj == OBJ_HANDLE_NULL
+                    || (obj_field_int32_get(node->obj, OBJ_F_TYPE) != OBJ_TYPE_PC)) {
+                    process = false;
+                }
+            }
+
+            if (process) {
+                if (prev != NULL) {
+                    prev->next = node->next;
+                } else {
+                    stru_5FC180.head = node->next;
+                }
+
+                if (tail != NULL) {
+                    tmp = tail;
+                    while (tmp->next != NULL) {
+                        tmp = tmp->next;
+                    }
+                    tmp->next = node;
+                } else {
+                    tail = node;
+                }
+
+                node->next = NULL;
+                if (prev != NULL) {
+                    node = prev->next;
+                } else {
+                    node = stru_5FC180.head;
+                }
+            } else {
+                prev = node;
+                node = node->next;
+            }
+        } while (node != NULL);
+
+        if (tail != NULL) {
+            if (prev != NULL) {
+                prev->next = tail;
+            } else {
+                stru_5FC180.head = tail;
+            }
+        }
+    }
+
+    node = stru_5FC180.head;
+    while (node != NULL) {
+        sub_4B80E0(node->obj);
+        node = node->next;
+    }
+
+    index = 0;
+    node = stru_5FC180.head;
+    while (node != NULL) {
+        name = NULL;
+        if (sub_4E5470(node->obj)) {
+            if (sub_40DA20(node->obj)) {
+                obj_field_string_get(node->obj, OBJ_F_PC_PLAYER_NAME, &name);
+            } else {
+                obj_field_string_get(node->obj, OBJ_F_NAME, &name);
+            }
+        }
+
+        tig_debug_printf("Combat: TB: DBG: List[%d]: %s\n",
+            index,
+            name != NULL ? name : " ");
+
+        // NOTE: Original code is slightly different and buggy - it attempts
+        // to release `name` depending on a flag which is not reset on every
+        // iteration.
+        if (name != NULL) {
+            FREE(name);
+        }
+
+        node = node->next;
+        index++;
+    }
+
+
 }
 
 // 0x4B8040
