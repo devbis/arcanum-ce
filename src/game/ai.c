@@ -1231,9 +1231,75 @@ int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3)
 }
 
 // 0x4AD950
-int sub_4AD950(int64_t a1, int64_t a2, bool a3)
+int sub_4AD950(int64_t npc_obj, int64_t pc_obj, bool a3)
 {
-    // TODO: Incomplete.
+    int64_t mind_controlled_by_obj;
+    int64_t leader_obj;
+    AiParams params;
+    int npc_alignment;
+    int pc_alignment;
+    int pc_max_followers;
+
+    if ((obj_field_int32_get(npc_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+        if (sub_459040(npc_obj, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)) {
+            if (mind_controlled_by_obj == pc_obj) {
+                return 0;
+            }
+        } else {
+            if (sub_45DDA0(npc_obj)) {
+                return 0;
+            }
+        }
+    }
+
+    if (basic_skill_get_training(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
+        return 0;
+    }
+
+    leader_obj = critter_leader_get(npc_obj);
+    if (leader_obj != OBJ_HANDLE_NULL && leader_obj != pc_obj) {
+        if (stat_level(pc_obj, STAT_CHARISMA) <= stat_level(leader_obj, STAT_CHARISMA)) {
+            return 4;
+        }
+    }
+
+    if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS) & ONF_FORCED_FOLLOWER) != 0) {
+        return 0;
+    }
+
+    sub_4AAA60(npc_obj, &params);
+
+    if (sub_4C0CC0(npc_obj, pc_obj) <= params.field_14) {
+        return 3;
+    }
+
+    npc_alignment = stat_level(npc_obj, STAT_ALIGNMENT);
+    pc_alignment = stat_level(pc_obj, STAT_ALIGNMENT);
+    if (pc_alignment > npc_alignment) {
+        if (pc_alignment - npc_alignment > params.field_18) {
+            return 1;
+        }
+    } else {
+        if (npc_alignment - pc_alignment > params.field_1C) {
+            return 2;
+        }
+    }
+
+    if (stat_level(npc_obj, STAT_LEVEL) >= stat_level(pc_obj, STAT_LEVEL) + params.field_20) {
+        return 7;
+    }
+
+    if (!a3) {
+        pc_max_followers = stat_level(pc_obj, STAT_MAX_FOLLOWERS);
+        if (pc_max_followers == 0) {
+            return 6;
+        }
+        if (sub_45E3F0(pc_obj, true) >= pc_max_followers) {
+            return 5;
+        }
+    }
+
+    return 0;
 }
 
 // 0x4ADB50
