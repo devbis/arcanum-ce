@@ -21,6 +21,24 @@
 #include "ui/intgame.h"
 #include "ui/types.h"
 
+enum LogbookUiButton {
+    LOGBOOK_UI_BUTTON_TURN_PAGE_LEFT,
+    LOGBOOK_UI_BUTTON_TURN_PAGE_RIGHT,
+    LOGBOOK_UI_BUTTON_COUNT,
+};
+
+enum LogbookUiTab {
+    // Also includes hidden Bloopers and Quotes.
+    LOGBOOK_UI_TAB_RUMORS_AND_NOTES,
+    LOGBOOK_UI_TAB_QUESTS,
+    LOGBOOK_UI_TAB_REPUTATIONS,
+    LOGBOOK_UI_TAB_BLESSINGS_AND_CURSES,
+    LOGBOOK_UI_TAB_KILLS_AND_INJURES,
+    LOGBOOK_UI_TAB_BACKGROUND,
+    LOGBOOK_UI_TAB_KEYS,
+    LOGBOOK_UI_TAB_COUNT,
+};
+
 static void logbook_ui_create();
 static void logbook_ui_destroy();
 static bool logbook_ui_message_filter(TigMessage* msg);
@@ -55,13 +73,13 @@ static TigRect stru_5C33F8[2] = {
 static TigRect stru_5C3418 = { 25, 24, 89, 89 };
 
 // 0x5C3428
-static UiButtonInfo stru_5C3428[2] = {
+static UiButtonInfo stru_5C3428[LOGBOOK_UI_BUTTON_COUNT] = {
     { 213, 77, 272, TIG_BUTTON_HANDLE_INVALID },
     { 675, 77, 273, TIG_BUTTON_HANDLE_INVALID },
 };
 
 // 0x5C3448
-static UiButtonInfo stru_5C3448[7] = {
+static UiButtonInfo stru_5C3448[LOGBOOK_UI_TAB_COUNT] = {
     { 696, 83, 265, TIG_BUTTON_HANDLE_INVALID },
     { 696, 129, 267, TIG_BUTTON_HANDLE_INVALID },
     { 696, 175, 271, TIG_BUTTON_HANDLE_INVALID },
@@ -147,7 +165,7 @@ static int dword_648940[13];
 static int dword_648974;
 
 // 0x648978
-static int dword_648978;
+static int logbook_ui_tab;
 
 // 0x64897C
 static int dword_64897C;
@@ -248,7 +266,7 @@ bool logbook_ui_init(GameInitInfo* init_info)
     }
     dword_64879C[0] = 0;
 
-    dword_648978 = 0;
+    logbook_ui_tab = LOGBOOK_UI_TAB_RUMORS_AND_NOTES;
     qword_63FAD8 = 0;
     dword_648798 = 1;
     logbook_ui_initialized = true;
@@ -281,7 +299,7 @@ void logbook_ui_reset()
         sub_53F090();
     }
 
-    dword_648978 = 0;
+    logbook_ui_tab = LOGBOOK_UI_TAB_RUMORS_AND_NOTES;
 
     for (index = 0; index < 100; index++) {
         dword_64879C[index] = -1;
@@ -335,7 +353,7 @@ void logbook_ui_create()
     TigRect src_rect;
     TigRect dst_rect;
     int index;
-    tig_button_handle_t button_handles[7];
+    tig_button_handle_t button_handles[LOGBOOK_UI_TAB_COUNT];
     S550DA0 v1;
 
     if (logbook_ui_created) {
@@ -348,7 +366,7 @@ void logbook_ui_create()
     }
 
     if (tig_kb_is_key_pressed(DIK_LCONTROL) && tig_kb_is_key_pressed(DIK_LMENU)) {
-        dword_648978 = 0;
+        logbook_ui_tab = LOGBOOK_UI_TAB_RUMORS_AND_NOTES;
         dword_648798 = 1;
         dword_648980 = 1;
         gsound_play_sfx_id(3002, 1);
@@ -370,15 +388,21 @@ void logbook_ui_create()
     blit_info.dst_rect = &dst_rect;
     tig_window_blit_art(logbook_ui_window, &blit_info);
 
-    for (index = 0; index < 2; index++) {
-        sub_54AA60(logbook_ui_window, &(stru_5C33F8[0]), &(stru_5C3428[index]), 9);
+    for (index = 0; index < LOGBOOK_UI_BUTTON_COUNT; index++) {
+        sub_54AA60(logbook_ui_window,
+            &(stru_5C33F8[0]),
+            &(stru_5C3428[index]),
+            TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
     }
 
-    for (index = 0; index < 7; index++) {
-        sub_54AA60(logbook_ui_window, &(stru_5C33F8[0]), &(stru_5C3448[index]), 9);
+    for (index = 0; index < LOGBOOK_UI_TAB_COUNT; index++) {
+        sub_54AA60(logbook_ui_window,
+            &(stru_5C33F8[0]),
+            &(stru_5C3448[index]),
+            TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
         button_handles[index] = stru_5C3448[index].button_handle;
     }
-    tig_button_radio_group_create(7, button_handles, dword_648978);
+    tig_button_radio_group_create(LOGBOOK_UI_TAB_COUNT, button_handles, logbook_ui_tab);
 
     sub_4B8CE0(obj_field_int64_get(qword_63FAD8, OBJ_F_LOCATION));
 
@@ -431,7 +455,7 @@ bool logbook_ui_message_filter(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_BUTTON) {
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_PRESSED:
-            for (index = 0; index < 7; index++) {
+            for (index = 0; index < LOGBOOK_UI_TAB_COUNT; index++) {
                 if (stru_5C3448[index].button_handle == msg->data.button.button_handle) {
                     sub_53F5F0(index, 0);
                     return true;
@@ -439,17 +463,17 @@ bool logbook_ui_message_filter(TigMessage* msg)
             }
             return false;
         case TIG_BUTTON_STATE_RELEASED:
-            if (stru_5C3428[0].button_handle == msg->data.button.button_handle) {
+            if (stru_5C3428[LOGBOOK_UI_BUTTON_TURN_PAGE_LEFT].button_handle == msg->data.button.button_handle) {
                 sub_53F6A0();
                 return true;
             }
-            if (stru_5C3428[1].button_handle == msg->data.button.button_handle) {
+            if (stru_5C3428[LOGBOOK_UI_BUTTON_TURN_PAGE_RIGHT].button_handle == msg->data.button.button_handle) {
                 sub_53F640();
                 return true;
             }
             return false;
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            for (index = 0; index < 7; index++) {
+            for (index = 0; index < LOGBOOK_UI_TAB_COUNT; index++) {
                 if (stru_5C3448[index].button_handle == msg->data.button.button_handle) {
                     mes_file_entry.num = index;
                     mes_get_msg(logbook_ui_mes_file, &mes_file_entry);
@@ -463,7 +487,7 @@ bool logbook_ui_message_filter(TigMessage* msg)
             }
             return false;
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
-            for (index = 0; index < 7; index++) {
+            for (index = 0; index < LOGBOOK_UI_TAB_COUNT; index++) {
                 if (stru_5C3448[index].button_handle == msg->data.button.button_handle) {
                     sub_550720();
                     return true;
@@ -521,8 +545,9 @@ void sub_53F490(int a1, int a2)
     selected_button_handle = sub_538730(stru_5C3448[0].button_handle);
     selected_button_index = 0;
 
-    for (index = 0; index < 7; index++) {
+    for (index = 0; index < LOGBOOK_UI_TAB_COUNT; index++) {
         tig_button_show(stru_5C3448[index].button_handle);
+
         if (selected_button_handle == stru_5C3448[index].button_handle) {
             selected_button_index = index;
         }
@@ -533,7 +558,7 @@ void sub_53F490(int a1, int a2)
 }
 
 // 0x53F5F0
-void sub_53F5F0(int a1, int a2)
+void sub_53F5F0(int tab, int a2)
 {
     int index;
 
@@ -543,7 +568,7 @@ void sub_53F5F0(int a1, int a2)
         }
         dword_64879C[0] = 0;
         dword_648798 = 1;
-        dword_648978 = a1;
+        logbook_ui_tab = tab;
     }
 
     sub_53FBB0();
@@ -583,8 +608,8 @@ void sub_53F6E0()
     int index;
     char buffer[80];
 
-    tig_button_hide(stru_5C3428[0].button_handle);
-    tig_button_hide(stru_5C3428[1].button_handle);
+    tig_button_hide(stru_5C3428[LOGBOOK_UI_BUTTON_TURN_PAGE_LEFT].button_handle);
+    tig_button_hide(stru_5C3428[LOGBOOK_UI_BUTTON_TURN_PAGE_RIGHT].button_handle);
 
     src_rect.x = 0;
     src_rect.y = 0;
@@ -610,14 +635,16 @@ void sub_53F6E0()
     }
 
     if (dword_64879C[(dword_648798 - 1) / 2] > 0) {
-        tig_button_show(stru_5C3428[0].button_handle);
+        tig_button_show(stru_5C3428[LOGBOOK_UI_BUTTON_TURN_PAGE_LEFT].button_handle);
     }
 
     if (dword_648974 < dword_648938 - 1) {
-        tig_button_show(stru_5C3428[1].button_handle);
+        tig_button_show(stru_5C3428[LOGBOOK_UI_BUTTON_TURN_PAGE_RIGHT].button_handle);
     }
 
-    mes_file_entry.num = dword_648978 || !dword_648980 ? dword_648978 : 100;
+    mes_file_entry.num = logbook_ui_tab == LOGBOOK_UI_TAB_RUMORS_AND_NOTES && dword_648980
+        ? 100
+        : logbook_ui_tab;
     mes_get_msg(logbook_ui_mes_file, &mes_file_entry);
 
     tig_font_push(dword_648930);
@@ -650,27 +677,27 @@ void sub_53F9E0(int index, TigRect* rect, int a3, int a4)
     v1 = index < dword_648938 - 1;
     buffer[0] = '\0';
 
-    switch (dword_648978) {
-    case 0:
+    switch (logbook_ui_tab) {
+    case LOGBOOK_UI_TAB_RUMORS_AND_NOTES:
         sub_540310(buffer, index);
         break;
-    case 1:
+    case LOGBOOK_UI_TAB_QUESTS:
         sub_540470(buffer, index);
         break;
-    case 2:
+    case LOGBOOK_UI_TAB_REPUTATIONS:
         sub_540510(buffer, index);
         break;
-    case 3:
+    case LOGBOOK_UI_TAB_BLESSINGS_AND_CURSES:
         sub_540550(buffer, index);
         break;
-    case 4:
+    case LOGBOOK_UI_TAB_KILLS_AND_INJURES:
         sub_5405C0(buffer, index);
         v1 = false;
         break;
-    case 5:
+    case LOGBOOK_UI_TAB_BACKGROUND:
         sub_540760(buffer, index);
         break;
-    case 6:
+    case LOGBOOK_UI_TAB_KEYS:
         sub_5407B0(buffer, index);
         break;
     default:
@@ -732,7 +759,7 @@ void sub_53FBB0()
 {
     int index;
 
-    if (dword_648978 == 0) {
+    if (logbook_ui_tab == LOGBOOK_UI_TAB_RUMORS_AND_NOTES) {
         RumorInfo rumors[2000]; // NOTE: Forces `alloca(72000)`.
 
         dword_648938 = rumor_copy_state(qword_63FAD8, rumors);
@@ -757,7 +784,7 @@ void sub_53FBB0()
         return;
     }
 
-    if (dword_648978 == 1) {
+    if (logbook_ui_tab == LOGBOOK_UI_TAB_QUESTS) {
         QuestInfo quests[2000]; // NOTE: Forces `alloca(48000)`.
 
         dword_648938 = quest_copy_state(qword_63FAD8, quests);
@@ -787,7 +814,7 @@ void sub_53FBB0()
         return;
     }
 
-    if (dword_648978 == 2) {
+    if (logbook_ui_tab == LOGBOOK_UI_TAB_REPUTATIONS) {
         ReputationStateEntry reps[2000]; // NOTE: Forces `alloca(32000)`.
 
 
@@ -803,7 +830,7 @@ void sub_53FBB0()
         return;
     }
 
-    if (dword_648978 == 3) {
+    if (logbook_ui_tab == LOGBOOK_UI_TAB_BLESSINGS_AND_CURSES) {
         CurseInfo curses[100];
         BlessInfo blessings[100];
         int num_blessings;
@@ -837,7 +864,7 @@ void sub_53FBB0()
         return;
     }
 
-    if (dword_648978 == 4) {
+    if (logbook_ui_tab == LOGBOOK_UI_TAB_KILLS_AND_INJURES) {
         int v1;
         int v2;
         unsigned int flags;
@@ -906,7 +933,7 @@ void sub_53FBB0()
         return;
     }
 
-    if (dword_648978 == 5) {
+    if (logbook_ui_tab == LOGBOOK_UI_TAB_BACKGROUND) {
         char str[400];
         char* curr;
         size_t pos;
@@ -967,7 +994,7 @@ void sub_53FBB0()
         tig_font_pop();
     }
 
-    if (dword_648978 == 6) {
+    if (logbook_ui_tab == LOGBOOK_UI_TAB_KEYS) {
         dword_648938 = item_get_keys(qword_63FAD8, dword_63FAE4);
         if (dword_648938 > 0) {
             for (index = 0; index < dword_648938; index++) {
