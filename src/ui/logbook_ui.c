@@ -48,7 +48,7 @@ static void sub_53F640();
 static void sub_53F6A0();
 static void sub_53F6E0();
 static int sub_53F8F0(int a1, int a2);
-static void sub_53F9E0(int index, TigRect* rect, int a3, int a4);
+static int sub_53F9E0(int index, TigRect* rect, bool a3, bool a4);
 static int sub_53FAD0(char* buffer, tig_font_handle_t font, TigRect* rect, bool a4, bool a5, bool a6);
 static void sub_53FBB0();
 static void sub_540310(char* buffer, int index);
@@ -662,14 +662,61 @@ void sub_53F6E0()
     tig_font_pop();
 }
 
+// TODO: Review.
+//
 // 0x53F8F0
 int sub_53F8F0(int a1, int a2)
 {
-    // TODO: Incomplete.
+    TigRect v9;
+    int v2;
+    bool v3;
+    bool v4;
+    int v5;
+    bool v6;
+    int v7;
+
+    v9 = stru_5C34B8;
+    v2 = a1;
+    v3 = false;
+    v4 = true;
+    if (a1 > a2) {
+        v5 = -1;
+        v6 = true;
+    } else {
+        v5 = 1;
+        v6 = false;
+    }
+
+    while (a1 != v2 + v5) {
+        v7 = sub_53F9E0(v2, &v9, v6, v4);
+        v4 = false;
+        if (v7 > 0 && v7 <= v9.height) {
+            v9.y += v7;
+            v9.height -= v7;
+        } else {
+            if (v3) {
+                if (v7 > 0) {
+                    v2 += v5;
+                }
+                break;
+            }
+
+            v9 = stru_5C34C8;
+            v3 = true;
+            v4 = true;
+            if (v7 == 0) {
+                v2 -= v5;
+            }
+        }
+
+        v2 += v5;
+    }
+
+    return v2 - v5;
 }
 
 // 0x53F9E0
-void sub_53F9E0(int index, TigRect* rect, int a3, int a4)
+int sub_53F9E0(int index, TigRect* rect, bool a3, bool a4)
 {
     char buffer[2000];
     bool v1;
@@ -700,17 +747,16 @@ void sub_53F9E0(int index, TigRect* rect, int a3, int a4)
     case LOGBOOK_UI_TAB_KEYS:
         sub_5407B0(buffer, index);
         break;
-    default:
-        sub_53FAD0(buffer, dword_648988[index], rect, a3, a4, v1);
-        break;
     }
+
+    return sub_53FAD0(buffer, dword_648988[index], rect, a3, a4, v1);
 }
 
 // 0x53FAD0
 int sub_53FAD0(char* buffer, tig_font_handle_t font, TigRect* rect, bool a4, bool a5, bool a6)
 {
     TigFont font_info;
-    bool warned;
+    bool warned = false;
     size_t pos;
 
     if (buffer[0] == '\0') {
