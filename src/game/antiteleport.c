@@ -2,7 +2,11 @@
 
 #include <tig/tig.h>
 
+#include "game/area.h"
+#include "game/location.h"
+#include "game/map.h"
 #include "game/mes.h"
+#include "game/obj.h"
 
 typedef struct MapEntry {
     int map;
@@ -242,11 +246,60 @@ bool antiteleport_map_list_load(mes_file_handle_t mes_file, AntiTeleportMapList*
 }
 
 // 0x4BDD30
-bool sub_4BDD30(int64_t a1, int64_t a2)
+bool sub_4BDD30(int64_t obj, int64_t a2)
 {
-    // TODO: Incomplete.
-    (void)a1;
-    (void)a2;
+    int map;
+    int index;
+    int area;
+    int64_t loc;
+    int64_t distance;
+    int num_regions;
 
-    return false;
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (!antiteleport_mod_loaded) {
+        return true;
+    }
+
+    map = sub_40FF40();
+
+    for (index = 0; index < antiteleport_map_list.cnt; index++) {
+        if (map == antiteleport_map_list.entries[index].map) {
+            break;
+        }
+    }
+
+    if (index >= antiteleport_map_list.cnt) {
+        return false;
+    }
+
+    if (map == sub_40FF50(MAP_TYPE_START_MAP)) {
+        loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    } else if (map_get_area(map, &area)) {
+        loc = sub_4CAED0(area);
+    } else {
+        return false;
+    }
+
+    num_regions = 0;
+    for (index = 0; index < antiteleport_region_list.cnt; index++) {
+        distance = sub_4B96F0(loc, antiteleport_region_list.entries[index].location);
+        if (distance < antiteleport_region_list.entries[index].radius) {
+            return false;
+        }
+        num_regions++;
+    }
+
+    if (a2 != 0) {
+        for (index = 0; index < antiteleport_region_list.cnt; index++) {
+            distance = sub_4B96F0(a2, antiteleport_region_list.entries[index].location);
+            if (distance < antiteleport_region_list.entries[index].radius) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
