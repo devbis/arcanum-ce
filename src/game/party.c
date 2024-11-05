@@ -1,6 +1,8 @@
 #include "game/party.h"
 
 #include "game/multiplayer.h"
+#include "game/quest.h"
+#include "game/rumor.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
 
@@ -163,9 +165,58 @@ int sub_4BA020(int64_t obj)
 }
 
 // 0x4BA080
-void sub_4BA080()
+bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
 {
-    // TODO: Incomplete.
+    int player1;
+    int player2;
+    int iter;
+    int64_t party_member_obj;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        player1 = sub_4A2B10(a1);
+        if (player1 == -1) {
+            sub_4BA320(a1, a2, 1);
+            return false;
+        }
+
+        player2 = sub_4A2B10(a2);
+        if (player2 == -1) {
+            sub_4BA320(a1, a2, 1);
+            return false;
+        }
+
+        if (dword_5FC32C[player2] != -1) {
+            sub_4BA320(a1, a2, 3);
+            return false;
+        }
+
+        if (dword_5FC32C[player1] == -1) {
+            dword_5FC32C[player1] = sub_4BA260();
+        }
+
+        dword_5FC32C[player2] = dword_5FC32C[player1];
+
+        if (a3 != NULL) {
+            *a3 = dword_5FC32C[player2];
+        }
+
+        sub_4BA320(a1, a2, 0);
+        sub_460AB0(115, 0, 0);
+        sub_4BA290();
+
+        party_member_obj = party_find_first(a1, &iter);
+        do {
+            if (party_member_obj != a2) {
+                sub_4C5400(party_member_obj, a2);
+                sub_4C5400(a2, party_member_obj);
+                sub_4C5B10(party_member_obj, a2);
+                sub_4C5B10(a2, party_member_obj);
+            }
+            party_member_obj = party_find_next(&iter);
+        } while (party_member_obj != OBJ_HANDLE_NULL);
+    }
+
+    return true;
 }
 
 // 0x4BA1E0
