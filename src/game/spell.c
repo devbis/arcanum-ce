@@ -2,6 +2,8 @@
 
 #include "game/magictech.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/stat.h"
@@ -379,9 +381,72 @@ int spell_get_minimum_level(int spell)
 }
 
 // 0x4B1790
-bool sub_4B1790(int64_t obj, int spell, int a3)
+bool sub_4B1790(int64_t obj, int spell, bool a3)
 {
-    // TODO: Incomplete.
+    int v1;
+    int v2;
+    int magic_points;
+    int cost;
+
+    if (!sub_4A2BA0() && sub_40DA20(obj)) {
+        PlayerBuySpellPacket pkt;
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+
+            pkt.type = 48;
+            pkt.player = sub_4A2B10(obj);
+            pkt.spell = spell;
+            pkt.field_C = a3;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+            return true;
+        }
+
+        pkt.type = 49;
+        pkt.player = sub_4A2B10(obj);
+        pkt.spell = spell;
+        pkt.field_C = a3;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    v1 = spell % 5 + 1;
+    v2 = sub_4B1AB0(obj, spell / 5);
+
+    if (!a3) {
+        if (v1 != v2 + 1) {
+            return false;
+        }
+
+        if (spell_get_minimum_level(spell) > stat_level(obj, STAT_LEVEL)) {
+            return false;
+        }
+
+        if (sub_4B1750(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
+            return false;
+        }
+
+        if (spell_get_iq(spell) > stat_level(obj, STAT_WILLPOWER)) {
+            return false;
+        }
+
+        cost = sub_4B1650(spell);
+    } else  {
+        cost = v1 - v2;
+        if (cost < 0) {
+            return true;
+        }
+    }
+
+    magic_points = stat_get_base(obj, STAT_MAGICK_POINTS);
+    magic_points += cost;
+    stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
+
+    sub_4B1B30(obj, spell / 5, v1);
+
+    if (player_is_pc_obj(obj)) {
+        sub_4601C0();
+    }
+
+    return true;
 }
 
 bool sub_4B1950(int64_t obj, int spell)
@@ -473,6 +538,18 @@ int sub_4B1B30(int64_t obj, int a2, int a3)
     } else {
         return 0;
     }
+}
+
+// 0x4B1B90
+bool sub_4B1B90(int64_t obj, int intelligence)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4B1C00
+bool sub_4B1C00(int64_t obj, int willpower)
+{
+    // TODO: Incomplete.
 }
 
 // 0x4B1C70
