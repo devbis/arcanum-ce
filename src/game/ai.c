@@ -262,14 +262,36 @@ void sub_4A9530(AiRedirect* redirect, int64_t a2, int64_t a3)
 {
     redirect->field_0 = a2;
     redirect->field_8 = a3;
-    redirect->field_10 = -1;
-    redirect->field_14 = 0;
+    redirect->intelligence = -1;
+    redirect->critter_flags = 0;
 }
 
 // 0x4A9560
-void sub_4A9560()
+void sub_4A9560(AiRedirect* redirect)
 {
-    // TODO: Incomplete.
+    ObjectList objects;
+    ObjectNode* node;
+
+    if (redirect->field_0 == OBJ_HANDLE_NULL
+        || redirect->field_8 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    sub_440FC0(redirect->field_8, OBJ_TM_PC | OBJ_TM_NPC, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if (!sub_45D8D0(node->obj)
+            && node->obj != redirect->field_0
+            && node->obj != redirect->field_8
+            && (redirect->intelligence <= 0
+                || stat_level(redirect->intelligence, STAT_INTELLIGENCE) <= redirect->intelligence)
+            && (redirect->critter_flags == 0
+                || (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & redirect->critter_flags) != 0)) {
+            sub_4A94C0(redirect->field_0, node->obj);
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
 }
 
 // 0x4A9650
