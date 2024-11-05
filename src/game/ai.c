@@ -102,6 +102,7 @@ static int sub_4AD610(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
+static int sub_4ADB50(int64_t npc_obj, int64_t pc_obj);
 static int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
@@ -1236,9 +1237,59 @@ int sub_4AD950(int64_t a1, int64_t a2, bool a3)
 }
 
 // 0x4ADB50
-void sub_4ADB50()
+int sub_4ADB50(int64_t npc_obj, int64_t pc_obj)
 {
-    // TODO: Incomplete.
+    unsigned int critter_flags2;
+    int64_t mind_controlled_by_obj;
+    AiParams params;
+    int npc_alignment;
+    int pc_alignment;
+
+    critter_flags2 = obj_field_int32_get(npc_obj, OBJ_F_CRITTER_FLAGS2);
+    obj_field_int32_set(npc_obj, OBJ_F_CRITTER_FLAGS2, critter_flags2 & ~(OCF2_CHECK_ALIGN_BAD | OCF2_CHECK_ALIGN_GOOD | OCF2_CHECK_REACTION_BAD));
+
+    if ((obj_field_int32_get(npc_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+        if (sub_459040(npc_obj, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)) {
+            if (mind_controlled_by_obj == pc_obj) {
+                return 0;
+            }
+        } else {
+            if (sub_45DDA0(npc_obj)) {
+                return 0;
+            }
+        }
+    }
+
+    if (basic_skill_get_training(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
+        return 0;
+    }
+
+    if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS) & ONF_FORCED_FOLLOWER) != 0) {
+        return 0;
+    }
+
+    sub_4AAA60(npc_obj, &params);
+
+    if ((critter_flags2 & OCF2_CHECK_REACTION_BAD) != 0
+        && sub_4C0CC0(npc_obj, pc_obj) <= params.field_14 + 20) {
+        return 3;
+    }
+
+    npc_alignment = stat_level(npc_obj, STAT_ALIGNMENT);
+    pc_alignment = stat_level(pc_obj, STAT_ALIGNMENT);
+    if (pc_alignment > npc_alignment) {
+        if ((critter_flags2 & OCF2_CHECK_ALIGN_GOOD) != 0
+            && pc_alignment - npc_alignment <= params.field_18 - 100) {
+            return 1;
+        }
+    } else {
+        if ((critter_flags2 & OCF2_CHECK_ALIGN_BAD) != 0
+            && npc_alignment - pc_alignment <= params.field_1C - 100) {
+            return 2;
+        }
+    }
+
+    return 0;
 }
 
 // 0x4ADCC0
