@@ -6,6 +6,7 @@
 #include "game/critter.h"
 #include "game/dialog.h"
 #include "game/item.h"
+#include "game/magictech.h"
 #include "game/map.h"
 #include "game/obj.h"
 #include "game/object_node.h"
@@ -1168,9 +1169,63 @@ void sub_4AD7D0(int64_t obj)
 }
 
 // 0x4AD800
-int sub_4AD800(int64_t a1, int64_t a2, bool a3)
+int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3)
 {
-    // TODO: Incomplete.
+    unsigned int critter_flags;
+    unsigned int spell_flags;
+    int danger_type;
+    int64_t reaction_pc_obj;
+
+    if ((obj_field_int32_get(npc_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return 5;
+    }
+
+    if (obj_field_int32_get(npc_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        critter_flags = obj_field_int32_get(npc_obj, OBJ_F_CRITTER_FLAGS);
+        if ((critter_flags & (OCF_MUTE | OCF_PARALYZED | OCF_STUNNED)) != 0) {
+            return 5;
+        }
+        if ((critter_flags & OCF_SLEEPING) != 0) {
+            return 6;
+        }
+
+        if (sub_459380(npc_obj, 58)) {
+            return 5;
+        }
+
+        spell_flags = obj_field_int32_get(npc_obj, OBJ_F_SPELL_FLAGS);
+        if ((spell_flags & OSF_STONED) != 0) {
+            return 5;
+        }
+
+        if (sub_45D8D0(npc_obj)) {
+            return (spell_flags & OSF_SPOKEN_WITH_DEAD) == 0 ? 1 : 0;
+        }
+
+        if (sub_45D800(npc_obj)) {
+            return 6;
+        }
+
+        if (!a3) {
+            ai_danger_source(npc_obj, &danger_type, NULL);
+
+            if (danger_type == 1 || danger_type == 2) {
+                return 2;
+            }
+
+            if (!sub_424070(npc_obj, 2, false, false)) {
+                return 3;
+            }
+        }
+
+        reaction_pc_obj = sub_4C1110(npc_obj);
+        if (reaction_pc_obj != OBJ_HANDLE_NULL
+            && reaction_pc_obj != pc_obj) {
+            return 4;
+        }
+    }
+
+    return 0;
 }
 
 // 0x4AD950

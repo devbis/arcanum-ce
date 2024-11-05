@@ -28,7 +28,7 @@ int sub_4AB430(int64_t obj);
 int64_t sub_4ABBC0(int64_t obj);
 void sub_4AD6E0(int64_t obj);
 void sub_4AD7D0(int64_t obj);
-int sub_4AD800(int64_t a1, int64_t a2, bool a3);
+int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3);
 int sub_4AD950(int64_t a1, int64_t a2, bool a3);
 void sub_4AD790(int64_t obj, int a2);
 int sub_4ADE00(int64_t a1, int64_t a2, int64_t* a3);
