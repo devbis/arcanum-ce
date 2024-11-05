@@ -102,6 +102,7 @@ static int sub_4AD610(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
+static int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
@@ -1241,9 +1242,49 @@ void sub_4ADB50()
 }
 
 // 0x4ADCC0
-void sub_4ADCC0()
+int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3)
 {
-    // TODO: Incomplete.
+    int64_t mind_controlled_by_obj;
+    AiParams params;
+
+    if ((obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+        if (sub_459040(a1, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)) {
+            if (mind_controlled_by_obj == a1) {
+                return 0;
+            }
+        } else {
+            if (sub_45DDA0(a1)) {
+                return 0;
+            }
+        }
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(a2, OBJ_F_TYPE))) {
+        return 0;
+    }
+
+    if (critter_leader_get(a2) == a3) {
+        return 4;
+    }
+
+    if (a3 != OBJ_HANDLE_NULL) {
+        if (stat_level(a1, STAT_ALIGNMENT) > 0) {
+            sub_4AAA60(a1, &params);
+            if (stat_level(a2, STAT_ALIGNMENT) >= params.field_30) {
+                return 1;
+            }
+        }
+    }
+
+    if (critter_origin_same(a1, a2)) {
+        return 2;
+    }
+
+    if (critter_faction_same(a1, a2)) {
+        return 3;
+    }
+
+    return 0;
 }
 
 // 0x4ADE00
