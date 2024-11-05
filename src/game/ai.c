@@ -92,7 +92,9 @@ static void sub_4AC660(Ai* ai);
 static void sub_4AC6E0(Ai* ai);
 static void sub_4AC7B0(Ai* ai);
 static bool sub_4AC910(Ai* ai, int64_t a2);
+static bool sub_4ACBB0(int64_t obj, bool a2);
 static bool ai_is_day();
+static bool sub_4ACDB0(int64_t obj, bool a2);
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD0B0(int64_t npc_obj);
 static int64_t ai_find_nearest_bed(int64_t obj);
@@ -874,7 +876,57 @@ void sub_4AC350(Ai* ai)
 // 0x4AC380
 void sub_4AC380(Ai* ai)
 {
-    // TODO: Incomplete.
+    unsigned int npc_flags;
+    int v1;
+    int v2;
+    char str[1000];
+    int v3;
+
+    combat_critter_deactivate_combat_mode(ai->obj);
+
+    if (ai->leader_obj != OBJ_HANDLE_NULL) {
+        npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+        if ((npc_flags & ONF_AI_WAIT_HERE) != 0) {
+            return;
+        }
+
+        anim_goal_follow_obj(ai->obj, ai->leader_obj);
+
+        if (!sub_423300(ai->obj, NULL)) {
+            v1 = sub_4AD950(ai->obj, ai->leader_obj, true);
+            if (v1 != 0 && critter_disband(ai->obj, false)) {
+                npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+                npc_flags |= ONF_JILTED;
+                obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+
+                if (dword_5F8488 != NULL && sub_45D790(ai->obj)) {
+                    sub_414290(ai->obj, ai->leader_obj, v1, str, &v3);
+                    dword_5F8488(ai->obj, ai->leader_obj, str, v3);
+                }
+            } else if ((npc_flags & ONF_CHECK_LEADER) != 0) {
+                npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+                npc_flags &= ~ONF_CHECK_LEADER;
+                obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+
+                v2 = sub_4ADB50(ai->obj, ai->leader_obj);
+                if (v2 != 0) {
+                    if (dword_5F8488 != NULL && sub_45D790(ai->obj)) {
+                        sub_414290(ai->obj, ai->leader_obj, v2, str, &v3);
+                        dword_5F8488(ai->obj, ai->leader_obj, str, v3);
+                    }
+                }
+            }
+        }
+    } else if (!sub_4ACBB0(ai->obj, false) && !sub_4ACDB0(ai->obj, false)) {
+        sub_435CE0(ai->obj);
+        sub_4364D0(ai->obj);
+    }
+
+    if (!critter_is_sleeping(ai->obj)) {
+        if (!sub_460C20() && random_between(1, 100) == 1) {
+            sub_4A8F90(ai->obj, 32736);
+        }
+    }
 }
 
 // 0x4AC620
@@ -988,7 +1040,7 @@ bool sub_4AC910(Ai* ai, int64_t a2)
 }
 
 // 0x4ACBB0
-void sub_4ACBB0()
+bool sub_4ACBB0(int64_t obj, bool a2)
 {
     // TODO: Incomplete.
 }
@@ -1003,7 +1055,7 @@ bool ai_is_day()
 }
 
 // 0x4ACDB0
-void sub_4ACDB0()
+bool sub_4ACDB0(int64_t obj, bool a2)
 {
     // TODO: Incomplete.
 }
