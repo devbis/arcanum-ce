@@ -540,16 +540,50 @@ int sub_4B1B30(int64_t obj, int a2, int a3)
     }
 }
 
+// TODO: Review.
+//
 // 0x4B1B90
 bool sub_4B1B90(int64_t obj, int intelligence)
 {
-    // TODO: Incomplete.
+    int college;
+    int v1;
+    int v2;
+
+    v1 = 0;
+    for (college = 0; college < COLLEGE_COUNT; college++) {
+        for (v2 = 0; v2 < sub_4B1AB0(obj, college); v2++) {
+            if (sub_4B1750(v1 + v2) > intelligence) {
+                return false;
+            }
+        }
+
+        v1 += 5;
+    }
+
+    return true;
 }
 
+// TODO: Review.
+//
 // 0x4B1C00
 bool sub_4B1C00(int64_t obj, int willpower)
 {
-    // TODO: Incomplete.
+    int college;
+    int v1;
+    int v2;
+
+    v1 = 0;
+    for (college = 0; college < COLLEGE_COUNT; college++) {
+        for (v2 = 0; v2 < sub_4B1AB0(obj, college); v2++) {
+            if (spell_get_iq(v1 + v2) > willpower) {
+                return false;
+            }
+        }
+
+        v1 += 5;
+    }
+
+    return true;
 }
 
 // 0x4B1C70
