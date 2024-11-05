@@ -258,9 +258,12 @@ void sub_4A94C0(int64_t obj, int64_t tgt)
 }
 
 // 0x4A9530
-void sub_4A9530()
+void sub_4A9530(AiRedirect* redirect, int64_t a2, int64_t a3)
 {
-    // TODO: Incomplete.
+    redirect->field_0 = a2;
+    redirect->field_8 = a3;
+    redirect->field_10 = -1;
+    redirect->field_14 = 0;
 }
 
 // 0x4A9560

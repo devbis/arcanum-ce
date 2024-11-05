@@ -8,10 +8,18 @@
 typedef void(Func5F8488)(int64_t, int64_t, const char*, int);
 typedef void(Func5F848C)(int64_t, int);
 
+typedef struct AiRedirect {
+    /* 0000 */ int64_t field_0;
+    /* 0008 */ int64_t field_8;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+} AiRedirect;
+
 void ai_exit();
 void ai_mod_unload();
 void sub_4A84D0(Func5F848C* a1, Func5F8488* a2);
 void sub_4A84F0(int64_t obj);
+void sub_4A9530(AiRedirect* redirect, int64_t a2, int64_t a3);
 void sub_4A9650(int64_t obj, int64_t tgt, int a3, unsigned int flags);
 void sub_4A9AD0(int64_t a1, int64_t a2);
 void sub_4AA0D0(int64_t obj);
