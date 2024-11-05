@@ -7,7 +7,9 @@
 #include "game/critter.h"
 #include "game/curse.h"
 #include "game/description.h"
+#include "game/effect.h"
 #include "game/gsound.h"
+#include "game/item.h"
 #include "game/location.h"
 #include "game/mes.h"
 #include "game/player.h"
@@ -728,7 +730,252 @@ int sub_53FAD0(char* buffer, tig_font_handle_t font, TigRect* rect, bool a4, boo
 // 0x53FBB0
 void sub_53FBB0()
 {
-    // TODO: Incomplete.
+    int index;
+
+    if (dword_648978 == 0) {
+        RumorInfo rumors[2000]; // NOTE: Forces `alloca(72000)`.
+
+        dword_648938 = rumor_copy_state(qword_63FAD8, rumors);
+
+        if (dword_648980) {
+            dword_648938 = mes_num_entries(quotes_mes_file);
+            for (index = 0; index < dword_648938; index++) {
+                dword_648988[index] = dword_648934;
+            }
+        } else {
+            for (index = 0; index < dword_648938; index++) {
+                dword_63FAE4[index] = rumors[index].num;
+                stru_6429D8[index] = datetime_from_uint64(rumors[index].timestamp);
+                if (rumors[index].known) {
+                    dword_648988[index] = dword_6429C4;
+                } else {
+                    dword_648988[index] = dword_648934;
+                }
+            }
+        }
+
+        return;
+    }
+
+    if (dword_648978 == 1) {
+        QuestInfo quests[2000]; // NOTE: Forces `alloca(48000)`.
+
+        dword_648938 = quest_copy_state(qword_63FAD8, quests);
+
+        for (index = 0; index < dword_648938; index++) {
+            dword_63FAE4[index] = quests[index].num;
+            stru_6429D8[index] = datetime_from_uint64(quests[index].timestamp);
+            dword_63CBF4[index] = quests[index].state;
+
+            switch (dword_63CBF4[index]) {
+            case QUEST_STATE_COMPLETED:
+                dword_648988[index] = dword_63FAE0;
+                break;
+            case QUEST_STATE_OTHER_COMPLETED:
+            case QUEST_STATE_BOTCHED:
+                dword_648988[index] = dword_64892C;
+                break;
+            case QUEST_STATE_ACCEPTED:
+            case QUEST_STATE_ACHIEVED:
+                dword_648988[index] = dword_64893C;
+                break;
+            default:
+                dword_648988[index] = dword_648934;
+            }
+        }
+
+        return;
+    }
+
+    if (dword_648978 == 2) {
+        ReputationStateEntry reps[2000]; // NOTE: Forces `alloca(32000)`.
+
+
+        dword_648938 = reputation_copy_state(qword_63FAD8, reps);
+
+        for (index = 0; index < dword_648938; index++) {
+            dword_63FAE4[index] = reps[index].reputation;
+            stru_6429D8[index] = datetime_from_uint64(reps[index].timestamp);
+
+            dword_648988[index] = dword_648934;
+        }
+
+        return;
+    }
+
+    if (dword_648978 == 3) {
+        CurseInfo curses[100];
+        BlessInfo blessings[100];
+        int num_blessings;
+        int num_curses;
+        int bless_idx;
+        int curse_idx;
+        int idx;
+
+        num_blessings = sub_4C4200(qword_63FAD8, blessings);
+        num_curses = sub_4C3D50(qword_63FAD8, curses);
+        dword_648938 = num_blessings + num_curses;
+
+        bless_idx = 0;
+        curse_idx = 0;
+        for (idx = 0; idx < dword_648938; idx++) {
+            // TODO: Get rid of cast.
+            if (bless_idx < num_blessings
+                && (curse_idx == num_curses || datetime_compare((DateTime*)&(blessings[bless_idx].ts), (DateTime*)&(curses[curse_idx].ts)))) {
+                dword_63FAE4[idx] = blessings[bless_idx].id;
+                stru_6429D8[idx] = datetime_from_uint64(blessings[bless_idx].ts);
+                dword_648988[idx] = dword_64893C;
+                bless_idx++;
+            } else {
+                dword_63FAE4[idx] = curses[curse_idx].id;
+                stru_6429D8[idx] = datetime_from_uint64(curses[curse_idx].ts);
+                dword_648988[idx] = dword_6429D0;
+                curse_idx++;
+            }
+        }
+
+        return;
+    }
+
+    if (dword_648978 == 4) {
+        int v1;
+        int v2;
+        unsigned int flags;
+        int cnt;
+
+        sub_4F5590(qword_63FAD8, dword_648940);
+
+        for (index = 0; index < 9; index++) {
+            dword_648988[index] = dword_648934;
+        }
+
+        dword_648938 = 9;
+
+        index = sub_4F5770(qword_63FAD8, &v1, &v2);
+        while (index != 0) {
+            dword_63FAE4[dword_648938] = v1;
+            stru_6429D8[dword_648938].milliseconds = v2;
+            dword_648988[dword_648938] = dword_6429C4;
+            dword_648938++;
+            index = sub_4F57C0(qword_63FAD8, index, &v1, &v2);
+        }
+
+        flags = obj_field_int32_get(qword_63FAD8, OBJ_F_CRITTER_FLAGS);
+        if ((flags & OCF_BLINDED) != 0) {
+            for (index = dword_648938 - 1; index >= 9; index--) {
+                if (stru_6429D8[index].milliseconds == 0) {
+                    dword_648988[index] = dword_648934;
+                    break;
+                }
+            }
+        }
+        if ((flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
+            for (index = dword_648938 - 1; index >= 9; index--) {
+                if (stru_6429D8[index].milliseconds == 2) {
+                    dword_648988[index] = dword_648934;
+                    break;
+                }
+            }
+        }
+        if ((flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
+            for (index = dword_648938 - 1; index >= 9; index--) {
+                if (stru_6429D8[index].milliseconds == 1) {
+                    dword_648988[index] = dword_648934;
+                    break;
+                }
+            }
+        }
+        if ((flags & OCF_CRIPPLED_ARMS_ONE) != 0) {
+            for (index = dword_648938 - 1; index >= 9; index--) {
+                if (stru_6429D8[index].milliseconds == 1) {
+                    dword_648988[index] = dword_648934;
+                    break;
+                }
+            }
+        }
+        cnt = sub_4EA4A0(qword_63FAD8, 50);
+        if (cnt > 0) {
+            for (index = dword_648938 - 1; index >= 9; index--) {
+                if (stru_6429D8[index].milliseconds == 3) {
+                    dword_648988[index] = dword_648934;
+                    break;
+                }
+            }
+        }
+
+        return;
+    }
+
+    if (dword_648978 == 5) {
+        char str[400];
+        char* curr;
+        size_t pos;
+        size_t end;
+        size_t truncate_pos;
+        size_t prev_truncate_pos;
+        TigFont font_desc;
+        char ch;
+
+        dword_648938 = 1;
+        dword_63FAE4[0] = background_obj_get_background_text(qword_63FAD8);
+        dword_648988[0] = dword_648934;
+
+        strcpy(str, background_description_get_body(dword_63FAE4[0]));
+        end = strlen(str);
+
+        tig_font_push(dword_648988[0]);
+        font_desc.str = str;
+        font_desc.width = stru_5C34B8.width;
+        sub_535390(&font_desc);
+
+        prev_truncate_pos = 0;
+        curr = str;
+        while (font_desc.height > stru_5C34B8.height) {
+            truncate_pos = 0;
+
+            for (pos = 0; pos < end; pos++) {
+                ch = curr[pos];
+                if (ch == ' ' || ch == '\n') {
+                    curr[pos] = '\0';
+                    sub_535390(&font_desc);
+                    curr[pos] = ch;
+
+                    if (font_desc.height > stru_5C34B8.height) {
+                        break;
+                    }
+
+                    truncate_pos = pos;
+                }
+            }
+
+            if (truncate_pos == 0) {
+                break;
+            }
+
+            prev_truncate_pos += truncate_pos;
+
+            dword_648988[dword_648938] = dword_648988[0];
+            dword_63FAE4[dword_648938] = prev_truncate_pos;
+            dword_648938++;
+
+            end -= truncate_pos;
+            font_desc.str = &(curr[truncate_pos]);
+            sub_535390(&font_desc);
+        }
+
+        dword_63FAE4[dword_648938] = prev_truncate_pos + end;
+        tig_font_pop();
+    }
+
+    if (dword_648978 == 6) {
+        dword_648938 = item_get_keys(qword_63FAD8, dword_63FAE4);
+        if (dword_648938 > 0) {
+            for (index = 0; index < dword_648938; index++) {
+                dword_648988[index] = dword_648934;
+            }
+        }
+        return;
+    }
 }
 
 // 0x540310
@@ -823,7 +1070,7 @@ void sub_540510(char* buffer, int index)
     pos = strlen(buffer);
     buffer[pos] = '\n';
 
-    sub_4C1BD0(dword_63FAE4[index], &(buffer[pos + 1]));
+    reputation_name(dword_63FAE4[index], &(buffer[pos + 1]));
 }
 
 // 0x540550
