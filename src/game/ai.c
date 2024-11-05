@@ -65,6 +65,8 @@ static bool sub_4A8940(Ai* ai);
 static bool sub_4A8E70(Ai* ai);
 static void sub_4A92D0(Ai* ai);
 static void sub_4A94C0(int64_t obj, int64_t tgt);
+static void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4);
+static void sub_4A9C00(int64_t a1, int64_t a2, int64_t a3, int a4, int a5, int a6);
 static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static void sub_4AA620(int64_t a1, int64_t a2);
@@ -299,13 +301,24 @@ void sub_4A9AD0(int64_t a1, int64_t a2)
 }
 
 // 0x4A9B80
-void sub_4A9B80()
+void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4)
 {
-    // TODO: Incomplete.
+    ObjectList followers;
+    ObjectNode* node;
+
+    if (a1 != a2) {
+        object_get_followers(a1, &followers);
+        node = followers.head;
+        while (node != NULL) {
+            sub_4A9C00(node->obj, a1, a2, a3, a4, 0);
+            node = node->next;
+        }
+        object_list_destroy(&followers);
+    }
 }
 
 // 0x4A9C00
-void sub_4A9C00()
+void sub_4A9C00(int64_t a1, int64_t a2, int64_t a3, int a4, int a5, int a6)
 {
     // TODO: Incomplete.
 }
