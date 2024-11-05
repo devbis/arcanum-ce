@@ -93,7 +93,7 @@ static void sub_4AC7B0(Ai* ai);
 static bool sub_4AC910(Ai* ai, int64_t a2);
 static bool ai_is_day();
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
-static void sub_4AD0B0(int64_t obj);
+static void sub_4AD0B0(int64_t npc_obj);
 static int64_t ai_find_nearest_bed(int64_t obj);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
 static int sub_4AD5D0(int64_t obj);
@@ -1022,9 +1022,26 @@ bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr)
 }
 
 // 0x4AD0B0
-void sub_4AD0B0(int64_t obj)
+void sub_4AD0B0(int64_t npc_obj)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int64_t bed_obj;
+
+    loc = obj_field_int64_get(npc_obj, OBJ_F_NPC_STANDPOINT_NIGHT);
+    bed_obj = ai_find_nearest_bed(loc);
+    if (bed_obj != OBJ_HANDLE_NULL
+        && obj_field_handle_get(bed_obj, OBJ_F_SCENERY_WHOS_IN_ME) == npc_obj) {
+        critter_leave_bed(npc_obj, bed_obj);
+        return;
+    }
+
+    loc = obj_field_int64_get(npc_obj, OBJ_F_NPC_STANDPOINT_DAY);
+    bed_obj = ai_find_nearest_bed(loc);
+    if (bed_obj != OBJ_HANDLE_NULL
+        && obj_field_handle_get(bed_obj, OBJ_F_SCENERY_WHOS_IN_ME) == npc_obj) {
+        critter_leave_bed(npc_obj, bed_obj);
+        return;
+    }
 }
 
 // 0x4AD140
