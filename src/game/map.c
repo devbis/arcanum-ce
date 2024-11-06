@@ -16,6 +16,7 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "game/sector.h"
+#include "game/skill.h"
 #include "game/stat.h"
 #include "game/teleport.h"
 #include "game/terrain.h"
@@ -89,6 +90,8 @@ static bool sub_410D10(const char* a1, const char* a2);
 static bool sub_411450(const char* name);
 static void map_disable_objects();
 static void sub_411830(char* str);
+static bool sub_411880(char** str, char** token);
+static void map_apply_obj_patch(int64_t obj, char* str);
 
 // 0x59F058
 static const char* off_59F058[MAP_TYPE_COUNT] = {
@@ -1391,6 +1394,248 @@ void sub_411830(char* str)
     }
 
     strrev(str);
+}
+
+// 0x411880
+bool sub_411880(char** str, char** token)
+{
+    if (token == NULL) {
+        return false;
+    }
+
+    *token = NULL;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    while (**str != '\0' && isspace(**str)) {
+        (*str)++;
+    }
+
+    if (**str == '\0') {
+        return false;
+    }
+
+    while (**str != '\0' && !isspace(**str)) {
+        *(*token)++ = **str;
+        (*str)++;
+    }
+    **token = '\0';
+
+    return true;
+}
+
+// 0x411940
+void map_apply_obj_patch(int64_t obj, char* str)
+{
+    char* key;
+    char* value;
+    unsigned int flags;
+    int index;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (*str != ':') {
+        return;
+    }
+
+    // Consume semicolon.
+    str++;
+
+    while (sub_411880(&str, &key)) {
+        if (strcmpi(key, "internal_name") == 0) {
+            sub_411880(&str, &value);
+            obj_field_int32_set(obj, OBJ_F_NAME, atoi(value));
+        } else if (strcmpi(key, "known_name") == 0) {
+            sub_411880(&str, &value);
+            obj_field_int32_set(obj, OBJ_F_DESCRIPTION, atoi(value));
+        } else if (strcmpi(key, "alignment") == 0) {
+            sub_411880(&str, &value);
+            stat_set_base(obj, STAT_ALIGNMENT, atoi(value));
+        } else if (strcmpi(key, "origin") == 0) {
+            sub_411880(&str, &value);
+            obj_field_int32_set(obj, OBJ_F_NPC_ORIGIN, atoi(value));
+        } else if (strcmpi(key, "notify_npc") == 0) {
+            sub_411880(&str, &value);
+            switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
+            case OBJ_TYPE_PORTAL:
+                obj_field_int32_set(obj, OBJ_F_PORTAL_NOTIFY_NPC, atoi(value));
+                break;
+            case OBJ_TYPE_CONTAINER:
+                obj_field_int32_set(obj, OBJ_F_CONTAINER_NOTIFY_NPC, atoi(value));
+                break;
+            }
+        } else if (strcmpi(key, "magic_hit_adjust") == 0) {
+            sub_411880(&str, &value);
+            obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_HIT_ADJ, atoi(value));
+        } else if (strcmpi(key, "obj_flag") == 0) {
+            flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+            sub_411880(&str, &value);
+            if (value[0] == '!') {
+                for (index = 0; index < 31; index++) {
+                    if (strcmpi(value + 1, off_5BA10C[index]) == 0) {
+                        flags &= ~(1 << index);
+                        break;
+                    }
+                }
+            } else {
+                for (index = 0; index < 31; index++) {
+                    if (strcmpi(value + 1, off_5BA10C[index]) == 0) {
+                        flags &= 1 << index;
+                        break;
+                    }
+                }
+            }
+            obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+        } else if (strcmpi(key, "portal_flag") == 0) {
+            flags = obj_field_int32_get(obj, OBJ_F_PORTAL_FLAGS);
+            sub_411880(&str, &value);
+            if (value[0] == '!') {
+                for (index = 0; index < 9; index++) {
+                    if (strcmpi(value + 1, off_5BA218[index]) == 0) {
+                        flags &= ~(1 << index);
+                        break;
+                    }
+                }
+            } else {
+                for (index = 0; index < 31; index++) {
+                    if (strcmpi(value + 1, off_5BA218[index]) == 0) {
+                        flags &= 1 << index;
+                        break;
+                    }
+                }
+            }
+            obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, flags);
+        } else if (strcmpi(key, "item_flag") == 0) {
+            flags = obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS);
+            sub_411880(&str, &value);
+            if (value[0] == '!') {
+                for (index = 0; index < 23; index++) {
+                    if (strcmpi(value + 1, off_5BA284[index]) == 0) {
+                        flags &= ~(1 << index);
+                        break;
+                    }
+                }
+            } else {
+                for (index = 0; index < 31; index++) {
+                    if (strcmpi(value + 1, off_5BA284[index]) == 0) {
+                        flags &= 1 << index;
+                        break;
+                    }
+                }
+            }
+            obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, flags);
+        } else if (strcmpi(key, "critter_flag") == 0) {
+            flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+            sub_411880(&str, &value);
+            if (value[0] == '!') {
+                for (index = 0; index < 32; index++) {
+                    if (strcmpi(value + 1, off_5BA348[index]) == 0) {
+                        flags &= ~(1 << index);
+                        break;
+                    }
+                }
+            } else {
+                for (index = 0; index < 31; index++) {
+                    if (strcmpi(value + 1, off_5BA348[index]) == 0) {
+                        flags &= 1 << index;
+                        break;
+                    }
+                }
+            }
+            obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
+        } else if (strcmpi(key, "npc_flag") == 0) {
+            flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+            sub_411880(&str, &value);
+            if (value[0] == '!') {
+                for (index = 0; index < 31; index++) {
+                    if (strcmpi(value + 1, off_5BA44C[index]) == 0) {
+                        flags &= ~(1 << index);
+                        break;
+                    }
+                }
+            } else {
+                for (index = 0; index < 31; index++) {
+                    if (strcmpi(value + 1, off_5BA44C[index]) == 0) {
+                        flags &= 1 << index;
+                        break;
+                    }
+                }
+            }
+            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+        } else if (strcmpi(key, "training") == 0) {
+            int training;
+
+            sub_411880(&str, &value);
+            for (training = 0; training < TRAINING_COUNT; training++) {
+                if (strcmpi(value, off_5B7034[training]) == 0) {
+                    sub_411880(&str, &value);
+
+                    for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+                        if (strcmpi(value, off_5B6FF4[index]) == 0) {
+                            basic_skill_set_training(obj, index, training);
+                        }
+                    }
+
+                    for (index = 0; index < TECH_SKILL_COUNT; index++) {
+                        if (strcmpi(value, off_5B7024[index]) == 0) {
+                            tech_skill_set_training(obj, index, training);
+                        }
+                    }
+                }
+            }
+        } else if (strcmpi(key, "script") == 0) {
+            Script scr;
+            int sap;
+
+            sub_411880(&str, &value);
+            sap = atoi(value);
+
+            sub_411880(&str, &value);
+            scr.num = atoi(value);
+
+            if (sub_44BCC0(&scr)) {
+                sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
+            }
+        } else if (strcmpi(key, "daystand") == 0) {
+            int64_t x;
+            int64_t y;
+
+            sub_411880(&str, &value);
+            x = _atoi64(value);
+
+            sub_411880(&str, &value);
+            y = _atoi64(value);
+
+            obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_DAY, LOCATION_MAKE(x, y));
+        } else if (strcmpi(key, "nightstand") == 0) {
+            int64_t x;
+            int64_t y;
+
+            sub_411880(&str, &value);
+            x = _atoi64(value);
+
+            sub_411880(&str, &value);
+            y = _atoi64(value);
+
+            obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_NIGHT, LOCATION_MAKE(x, y));
+        } else if (strcmpi(key, "magic_tech_complexity") == 0) {
+            sub_411880(&str, &value);
+            obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, atoi(value));
+        } else if (strcmpi(key, "level_scheme") == 0) {
+            sub_411880(&str, &value);
+            obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, atoi(value));
+        } else if (strcmpi(key, "faction") == 0) {
+            sub_411880(&str, &value);
+            obj_field_int32_set(obj, OBJ_F_NPC_FACTION, atoi(value));
+        } else {
+            tig_debug_printf("map_apply_obj_patch: Unknown attribute %s.\n", str);
+            return;
+        }
+    }
 }
 
 // 0x412380
