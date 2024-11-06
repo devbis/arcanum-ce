@@ -5,6 +5,7 @@
 #include "game/anim.h"
 #include "game/critter.h"
 #include "game/description.h"
+#include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/jumppoint.h"
 #include "game/light_scheme.h"
@@ -87,6 +88,7 @@ static void map_load_postprocess();
 static bool sub_410D10(const char* a1, const char* a2);
 static bool sub_411450(const char* name);
 static void map_disable_objects();
+static void sub_411830(char* str);
 
 // 0x59F058
 static const char* off_59F058[MAP_TYPE_COUNT] = {
@@ -935,6 +937,94 @@ void sub_4102C0(char** name, char** folder)
     }
 }
 
+// 0x4102F0
+bool sub_4102F0(const char* name)
+{
+    GUID guid;
+    GUID file_guid;
+    TigFile* stream;
+    char path[TIG_MAX_PATH];
+    char* pch;
+    TigFileList file_list;
+    unsigned int index;
+    int64_t obj;
+
+    if (!gamelib_mod_guid(&guid)) {
+        tig_debug_printf("Attempt to retrieve mod GUID when no mod is loaded\n");
+        return true;
+    }
+
+    strcpy(path, "maps\\");
+    strcat(path, name);
+    sub_411830(&(path[5]));
+
+    if (tig_file_exists(path, NULL)) {
+        stream = tig_file_fopen(path, "rb");
+        if (stream == NULL) {
+            tig_debug_printf("Error opening file %s\n", path);
+            return false;
+        }
+
+        if (tig_file_fread(&file_guid, sizeof(file_guid), 1, stream) != 1) {
+            // FIXME: Leaking `stream`.
+            tig_debug_printf("Error reading GUID from file %s\n", path);
+            return false;
+        }
+
+        tig_file_fclose(stream);
+
+        if (IsEqualGUID(&file_guid, &guid)) {
+            return true;
+        }
+    }
+
+    tig_file_mkdir("maps");
+
+    stream = tig_file_fopen(path, "wb");
+    if (stream == NULL) {
+        tig_debug_printf("Error creating file %s\n", path);
+        return false;
+    }
+
+    if (tig_file_fwrite(&guid, sizeof(guid), 1, stream) != 1) {
+        // FIXME: Leaking `stream`.
+        tig_debug_printf("Error writing mod GUID to file %s\n", path);
+        return false;
+    }
+
+    strcpy(path, "maps\\");
+    strcat(path, name);
+    strcat(path, "\\");
+
+    pch = &(path[strlen(path)]);
+    strcpy(pch, "*.mob");
+
+    tig_file_list_create(&file_list, path);
+
+    for (index = 0; index < file_list.count; index++) {
+        strcpy(pch, file_list.entries[index].path);
+        if (!objf_solitary_read(&obj, path)) {
+            // FIXME: Leaking `stream`.
+            tig_file_list_destroy(&file_list);
+            tig_debug_printf("Error reading object %s\n", path);
+            return false;
+        }
+
+        if (!obj_write(stream, obj)) {
+            // FIXME: Leaking `stream`.
+            tig_file_list_destroy(&file_list);
+            tig_debug_printf("Error writing object to mobile objects file.\n", path);
+            return false;
+        }
+
+        sub_405BF0(obj);
+    }
+
+    tig_file_list_destroy(&file_list);
+    tig_file_fclose(stream);
+    return true;
+}
+
 // 0x4106D0
 void map_close()
 {
@@ -1283,6 +1373,30 @@ void map_disable_objects()
             }
         } while (sub_408390(&obj, &v1));
     }
+}
+
+// 0x411830
+void sub_411830(char* str)
+{
+    char* pch;
+
+    pch = str;
+    while (*pch != '\0') {
+        if (*pch >= 'A' && *pch <= 'Z') {
+            *pch += 13;
+            if (*pch > 'Z') {
+                *pch += 'A' - 'Z' + 1;
+            }
+        } else if (*pch >= 'a' && *pch <= 'z') {
+            *pch += 13;
+            if (*pch > 'z') {
+                *pch += 'a' - 'z' + 1;
+            }
+        }
+        pch++;
+    }
+
+    strrev(str);
 }
 
 // 0x412390

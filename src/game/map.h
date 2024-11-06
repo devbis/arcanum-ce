@@ -35,6 +35,7 @@ void sub_4101D0(int64_t location, int64_t a2);
 int sub_410270();
 void sub_410280(long long* location);
 void sub_4102C0(char** name, char** folder);
+bool sub_4102F0(const char* name);
 void map_clear_objects();
 void sub_4115D0(const char* name);
 void map_enable_gender_check();
