@@ -11,8 +11,8 @@ typedef void(Func5F848C)(int64_t, int);
 typedef struct AiRedirect {
     /* 0000 */ int64_t field_0;
     /* 0008 */ int64_t field_8;
-    /* 0010 */ int intelligence;
-    /* 0014 */ int critter_flags;
+    /* 0010 */ int min_iq;
+    /* 0014 */ unsigned int critter_flags;
 } AiRedirect;
 
 void ai_exit();
