@@ -1,5 +1,5 @@
-#ifndef ARCANUM_GAME_LIB_OBJECT_H_
-#define ARCANUM_GAME_LIB_OBJECT_H_
+#ifndef ARCANUM_GAME_OBJ_H_
+#define ARCANUM_GAME_OBJ_H_
 
 #include "game/context.h"
 
@@ -346,7 +346,7 @@ typedef enum ObjectField {
     OBJ_F_TYPE,
     OBJ_F_PROTOTYPE_HANDLE,
     OBJ_F_MAX,
-};
+} ObjectField;
 
 typedef enum ObjectType {
     OBJ_TYPE_WALL,
@@ -524,6 +524,8 @@ typedef enum ObjectItemFlags {
 // clang-format on
 } ObjectItemFlags;
 
+#define OIF_LIGHT_ANY (OIF_LIGHT_XLARGE | OIF_LIGHT_LARGE | OIF_LIGHT_MEDIUM | OIF_LIGHT_SMALL)
+
 typedef enum ObjectWeaponFlags {
 // clang-format off
     OWF_LOUD              = 0x0001,
@@ -590,6 +592,7 @@ typedef enum ObjectGenericFlags {
     OGF_USES_TORCH_SHIELD_LOCATION = 0x0001,
     OGF_IS_LOCKPICK                = 0x0002,
     OGF_IS_TRAP_DEVICE             = 0x0004,
+    OGF_IS_HEALING_ITEM            = 0x0008,
 // clang-format on
 } ObjectGenericFlags;
 
@@ -629,6 +632,8 @@ typedef enum ObjectCritterFlags {
     OCF_FATIGUE_LIMITING   = 0x80000000,
 // clang-format on
 } ObjectCritterFlags;
+
+#define OCF_LIGHT_ANY (OCF_LIGHT_XLARGE | OCF_LIGHT_LARGE | OCF_LIGHT_MEDIUM | OCF_LIGHT_SMALL)
 
 typedef enum ObjectCritterFlags2 {
 // clang-format off
@@ -714,24 +719,10 @@ typedef enum ObjectTrapFlags {
 // clang-format on
 } ObjectTrapFlags;
 
-typedef enum SceneryFlags {
-    SCENERY_FLAG_0x40 = 0x40,
-    SCENERY_FLAG_0x80 = 0x80,
-    SCENERY_FLAG_0x100 = 0x100,
-};
-
 #define OBJECT_FLAG_0x0008 0x0008
 #define OBJECT_FLAG_0x1000 0x1000
 
 #define OBJECT_RENDER_FLAG_0x80000000 0x80000000
-
-typedef struct ObjectID_H {
-    long long field_8;
-} ObjectID_H;
-
-typedef struct ObjectID_A {
-    int field_8;
-} ObjectID_A;
 
 typedef struct ObjectID_P {
     long long location;
@@ -739,19 +730,21 @@ typedef struct ObjectID_P {
     int map;
 } ObjectID_P;
 
+#define OID_TYPE_HANDLE ((int16_t)-2)
+#define OID_TYPE_BLOCKED ((int16_t)-1)
+#define OID_TYPE_NULL ((int16_t)0)
+#define OID_TYPE_A ((int16_t)1)
+#define OID_TYPE_GUID ((int16_t)2)
+#define OID_TYPE_P ((int16_t)3)
+
 typedef struct ObjectID {
+    int16_t type;
     union {
-        // TODO: Remove.
-        uint16_t field_0;
-        uint16_t type;
-    };
-    int field_4;
-    union {
-        ObjectID_H h;
-        ObjectID_A a;
+        int64_t h;
+        int a;
         GUID g;
         ObjectID_P p;
-    };
+    } d;
 } ObjectID;
 
 static_assert(sizeof(ObjectID) == 0x18, "wrong size");
@@ -778,6 +771,7 @@ typedef bool (ObjEnumerateCallback)(Object* object, int fld);
 bool obj_init(GameInitInfo* init_info);
 void obj_exit();
 void sub_405250();
+bool obj_validate_system(unsigned int flags);
 void sub_405790(int64_t obj_handle);
 void sub_405800(int type, int64_t* obj_ptr);
 void sub_408D60(Object* object, int fld, int* value_ptr);
@@ -790,7 +784,9 @@ void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle);
 void sub_4064B0(int64_t obj_handle);
 void sub_406520(int64_t obj_handle);
 bool obj_write(TigFile* stream, int64_t obj_handle);
-bool obj_read(TigFile* stream, int64_t obj_handle_ptr);
+bool obj_read(TigFile* stream, int64_t* obj_handle_ptr);
+void sub_4066B0(uint8_t** a1, int* a2, int64_t obj);
+int sub_4067C0(int64_t obj);
 bool obj_dif_write(TigFile* stream, int64_t obj_handle);
 void sub_406B80(int64_t obj_handle);
 int obj_field_int32_get(object_id_t obj_handle, int field);
@@ -818,7 +814,11 @@ void sub_407900(int64_t obj_handle, int fld, int index, void* value);
 void sub_407960(int64_t obj_handle, int fld, int index, void* value);
 int obj_arrayfield_length_get(int64_t obj_handle, int fld);
 void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length);
+void sub_407BA0(int64_t obj, int fld, int cnt, void* data);
 ObjectID sub_407EF0(int64_t obj);
+ObjectID sub_408020(int64_t obj, int a2);
+bool sub_4082C0(int64_t* obj_ptr, int* index_ptr);
+bool sub_408390(int64_t* obj_ptr, int* index_ptr);
 Object* obj_lock(int64_t obj_handle);
 void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);
@@ -839,4 +839,4 @@ static inline bool obj_type_is_item(int type)
     return type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC;
 }
 
-#endif /* ARCANUM_GAME_LIB_OBJECT_H_ */
+#endif /* ARCANUM_GAME_OBJ_H_ */

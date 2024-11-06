@@ -1,6 +1,12 @@
 #include "game/obj.h"
 
+#include "game/item.h"
 #include "game/obj_private.h"
+#include "game/oname.h"
+#include "game/skill.h"
+#include "game/spell.h"
+#include "game/stat.h"
+#include "game/tech.h"
 
 #define OBJ_FILE_VERSION 119
 
@@ -21,18 +27,73 @@ typedef bool (ObjEnumerateCallbackEx)(Object* object, int fld, ObjectFieldInfo* 
 static void object_field_not_exists(Object* object, int fld);
 static void sub_408430(tig_art_id_t aid);
 static Object* sub_408710(int64_t* obj_handle_ptr);
+static void sub_408760(Object* object, int fld, void* value_ptr);
+static void sub_4088B0(Object* object, int fld, int index, void* value_ptr);
+static void sub_408A20(Object* object, int fld, void* value_ptr);
+static void sub_408BB0(Object* object, int fld, int index, void* value);
 static void sub_409000(int64_t obj);
 static void sub_409640(int64_t obj, int subtype);
 static bool sub_4096B0(TigFile* stream, int64_t obj);
+static bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
 static bool sub_409980(TigFile* stream, int64_t obj);
+static bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
 static void sub_409CB0(void* mem, int64_t obj);
 static void sub_409E80(void* mem, int64_t obj);
-static bool sub_40C560();
+static bool sub_40A070(Object* object, int fld);
+static bool sub_40A0E0(Object* object, int fld);
+static bool sub_40A140(Object* object, int fld);
+static bool sub_40A1B0(Object* object, int fld);
+static bool object_field_write(Object* object, int fld, ObjectFieldInfo* info);
+static bool sub_40A250(Object* object, int fld, ObjectFieldInfo* info);
+static bool object_field_read(Object* object, int fld, ObjectFieldInfo* info);
+static bool sub_40A2D0(Object* object, int fld, ObjectFieldInfo* info);
+static bool object_field_write_if_dif(Object* object, int fld, ObjectFieldInfo* info);
+static bool object_field_read_if_dif(Object* object, int fld, ObjectFieldInfo* info);
+static void sub_40A400();
+static void sub_40A740(int fld, int* start_ptr, int* length_ptr);
+static int sub_40A790(int a1);
+static void sub_40A7B0();
+static void sub_40A8A0();
+static void sub_40B8E0(int fld);
+static void sub_40BAC0();
+static void sub_40BBB0();
+static void sub_40BBF0(Object* object);
+static void sub_40BD20(Object* object);
+static void sub_40BDB0(Object* object);
+static void sub_40BE70(Object* object);
+static bool sub_40BF00(void* entry, int index);
+static bool sub_40BFC0(void* entry, int index);
+static bool sub_40C560(Object* object, int fld);
+static void sub_40C580(Object* object);
+static void sub_40C5B0(Object* object);
+static void sub_40C5C0(Object* dst, Object* src);
+static void sub_40C610(Object* object);
+static void sub_40C640(Object* object);
+static void sub_40C650(Object* dst, Object* src);
+static void sub_40C690(Object* object);
 static bool sub_40C6B0(Object* object, int fld);
+static bool sub_40C6E0(Object* object, int fld);
+static bool sub_40C730(Object* object, int fld);
+static bool sub_40C7A0(Object* object, int fld, ObjectFieldInfo* info);
+static void sub_40C7F0(Object* dst, Object* src, int fld);
+static void sub_40C840(Object* object, int fld);
 static bool obj_enumerate_fields_in_range(Object* obj, int begin, int end, ObjEnumerateCallback* callback);
 static int sub_40CB40(Object* object, int fld);
+static bool sub_40CB60(Object* object, int fld, ObjectFieldInfo* info);
 static bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback);
+static bool sub_40CE20(Object* object, int start, int end, ObjEnumerateCallbackEx* callback);
 static bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback);
+static bool sub_40D170(Object* object, int start, int end, ObjEnumerateCallbackEx* callback);
+static int sub_40D230(Object* object, int fld);
+static void sub_40D2A0(Object* object, int fld);
+static bool sub_40D320(Object* object, int fld);
+static bool sub_40D350(Object* object, int fld);
+static void sub_40D370(Object* object, int fld, bool enabled);
+static void sub_40D3A0(Object* object, ObjectFieldInfo* info, int enabled);
+static bool sub_40D3D0(Object* object, int fld);
+static void sub_40D400(Object* object, int fld, bool enabled);
+static void sub_40D450(Object* object, int fld);
+static void sub_40D470(Object* object, int fld);
 static bool sub_40D560(TigFile* stream);
 static bool obj_check_version_stream(TigFile* stream);
 static void sub_40D5D0(void* mem);
@@ -453,6 +514,9 @@ static Object* dword_5D1110;
 // 0x5D1118
 static S4E4BD0* dword_5D1118;
 
+// 0x5D111C
+static int dword_5D111C;
+
 // 0x5D1120
 static int16_t* dword_5D1120;
 
@@ -489,7 +553,7 @@ bool obj_init(GameInitInfo* init_info)
     sub_40A400();
     sub_40BAC0();
 
-    object.field_20.field_0 = -1;
+    object.field_20.type = OID_TYPE_BLOCKED;
     for (index = 0; index < 18; index++) {
         object.type = index;
         word_5D10FC = 0;
@@ -531,13 +595,19 @@ void sub_405250()
     sub_4E3F80();
 }
 
+// 0x405280
+bool obj_validate_system(unsigned int flags)
+{
+    // TODO: Incomplete.
+}
+
 // 0x405790
 void sub_405790(int64_t obj_handle)
 {
     Object* object;
 
     object = obj_lock(obj_handle);
-    tig_debug_pritnf("{{ Difs on object w/ aid:");
+    tig_debug_printf("{{ Difs on object w/ aid:");
     sub_408430(obj_field_int32_get(obj_handle, OBJ_F_AID));
     if (object->field_44 != 0) {
         sub_40CBA0(object, sub_40D670);
@@ -560,10 +630,10 @@ void sub_405800(int type, int64_t* obj_ptr)
     object->type = type;
     sub_4E62A0(&(object->field_8));
     sub_4E4FD0(object->field_8, handle);
-    object->field_20.field_0 = -1;
+    object->field_20.type = OID_TYPE_BLOCKED;
     object->prototype_handle = OBJ_HANDLE_NULL;
     object->field_40 = 0;
-    sub_40C610(&object);
+    sub_40C610(object);
 
     for (index = 0; index < 19; index++) {
         object->transient_properties[index] = -1;
@@ -590,7 +660,7 @@ bool sub_405BC0(int64_t obj)
     bool ret;
 
     object = obj_lock(obj);
-    ret = object->field_20.field_0 == -1;
+    ret = object->field_20.type == OID_TYPE_BLOCKED;
     obj_unlock(obj);
 
     return ret;
@@ -603,15 +673,15 @@ void sub_405BF0(int64_t obj)
     int fld;
 
     object = obj_lock(obj);
-    if (object->field_20.field_0 != -1) {
+    if (object->field_20.type != OID_TYPE_BLOCKED) {
         obj_find_remove(obj);
     }
 
-    if (object->field_8.field_0 != 0) {
+    if (object->field_8.type != OID_TYPE_NULL) {
         sub_4E52F0(object->field_8);
     }
 
-    if (object->field_20.field_0 != -1) {
+    if (object->field_20.type != OID_TYPE_BLOCKED) {
         sub_40CBA0(object, sub_40CB60);
         sub_40C5B0(object);
 
@@ -639,7 +709,7 @@ void sub_405CC0(int64_t obj)
     int fld;
 
     object = obj_lock(obj);
-    if (object->field_20.field_0 != -1) {
+    if (object->field_20.type != OID_TYPE_BLOCKED) {
         sub_40CBA0(object, sub_40CB60);
         sub_40C5B0(object);
 
@@ -678,7 +748,7 @@ void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
     new_object->field_46 = object->field_46;
     new_object->field_50 = (int*)CALLOC(4 * object->field_46, 1);
 
-    if (object->field_20.field_0 != -1) {
+    if (object->field_20.type != OID_TYPE_BLOCKED) {
         sub_40C5C0(new_object, object);
 
         dword_5D1108 = object;
@@ -751,7 +821,7 @@ bool obj_write(TigFile* stream, int64_t obj_handle)
         return false;
     }
 
-    v1 = object->field_20.field_0 == -1;
+    v1 = object->field_20.type == OID_TYPE_BLOCKED;
     obj_unlock(obj_handle);
 
     if (v1) {
@@ -762,27 +832,27 @@ bool obj_write(TigFile* stream, int64_t obj_handle)
 }
 
 // 0x406600
-bool obj_read(TigFile* stream, int64_t obj_handle_ptr)
+bool obj_read(TigFile* stream, int64_t* obj_handle_ptr)
 {
-    ObjectID object_id;
+    ObjectID oid;
 
     if (!obj_check_version_stream(stream)) {
         return false;
     }
 
-    if (!obj_read_raw(&object_id, sizeof(ObjectID), stream)) {
+    if (!obj_read_raw(&oid, sizeof(ObjectID), stream)) {
         return false;
     }
 
-    if (object_id.field_0 == -1) {
-        return sub_4097B0(stream, obj_handle_ptr, object_id);
+    if (oid.type == OID_TYPE_BLOCKED) {
+        return sub_4097B0(stream, obj_handle_ptr, oid);
     } else {
-        return sub_409AA0(stream, obj_handle_ptr);
+        return sub_409AA0(stream, obj_handle_ptr, oid);
     }
 }
 
 // 0x4066B0
-void sub_4066B0(int* a1, int* a2, int64_t obj)
+void sub_4066B0(uint8_t** a1, int* a2, int64_t obj)
 {
     Object* object;
     S4E4BD0 v1;
@@ -791,7 +861,7 @@ void sub_4066B0(int* a1, int* a2, int64_t obj)
     object = obj_lock(obj);
     sub_4E4BD0(&v1);
     sub_40D5D0(&v1);
-    is_empty = object->field_20.type == -1;
+    is_empty = object->field_20.type == OID_TYPE_BLOCKED;
     obj_unlock(obj);
 
     if (is_empty) {
@@ -803,6 +873,21 @@ void sub_4066B0(int* a1, int* a2, int64_t obj)
     *a1 = v1.field_0;
     *a2 = v1.field_4 - v1.field_0;
 }
+
+
+// 0x4067C0
+int sub_4067C0(int64_t obj)
+{
+    Object* object;
+    int v1;
+
+    object = obj_lock(obj);
+    v1 = object->field_44;
+    obj_unlock(obj);
+
+    return v1;
+}
+
 
 // 0x4067F0
 bool obj_dif_write(TigFile* stream, int64_t obj_handle)
@@ -973,7 +1058,7 @@ int64_t obj_field_handle_get(int64_t obj_handle, int fld)
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj_handle);
-        return 0;
+        return OBJ_HANDLE_NULL;
     }
 
     if (fld == OBJ_F_PROTOTYPE_HANDLE) {
@@ -984,11 +1069,11 @@ int64_t obj_field_handle_get(int64_t obj_handle, int fld)
     sub_408A20(object, fld, &oid);
     obj_unlock(obj_handle);
 
-    if (oid.type == 0 || oid.type != -2) {
-        return 0;
+    if (oid.type == OID_TYPE_NULL || oid.type != OID_TYPE_HANDLE) {
+        return OBJ_HANDLE_NULL;
     }
 
-    return oid.h.field_8;
+    return oid.d.h;
 }
 
 // 0x406F20
@@ -1005,10 +1090,10 @@ void obj_field_handle_set(int64_t obj_handle, int fld, int64_t value)
     }
 
     if (value != OBJ_HANDLE_NULL) {
-        oid.type = -2;
-        oid.h.field_8 = value;
+        oid.type = OID_TYPE_HANDLE;
+        oid.d.h = value;
     } else {
-        oid.type = 0;
+        oid.type = OID_TYPE_NULL;
     }
 
     sub_408760(object, fld, &oid);
@@ -1041,15 +1126,15 @@ bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr)
 
     sub_408A20(object, fld, &oid);
 
-    if (oid.type == 0) {
-        obd_unlock(obj_handle);
+    if (oid.type == OID_TYPE_NULL) {
+        obj_unlock(obj_handle);
         *value_ptr = OBJ_HANDLE_NULL;
         return true;
     }
 
-    if (oid.type == -2) {
-        if (!sub_4E5470(oid.h.field_8)) {
-            oid.type = 0;
+    if (oid.type == OID_TYPE_HANDLE) {
+        if (!sub_4E5470(oid.d.h)) {
+            oid.type = OID_TYPE_NULL;
             sub_408760(object, fld, &oid);
             obj_unlock(obj_handle);
             *value_ptr = OBJ_HANDLE_NULL;
@@ -1057,7 +1142,7 @@ bool obj_field_obj_get(int64_t obj_handle, int fld, int64_t* value_ptr)
         }
 
         obj_unlock(obj_handle);
-        *value_ptr = oid.h.field_8;
+        *value_ptr = oid.d.h;
         return true;
     }
 
@@ -1075,7 +1160,7 @@ ObjectID sub_407100(int64_t obj_handle, int fld)
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj_handle);
-        oid.type = -1;
+        oid.type = OID_TYPE_BLOCKED;
         return oid;
     }
 
@@ -1095,7 +1180,7 @@ void obj_field_string_get(int64_t obj_handle, int fld, char** value_ptr)
 {
     Object* object;
     int name_num;
-    char* name_str;
+    const char* name_str;
 
     object = obj_lock(obj_handle);
     if (!sub_40C260(object->type, fld)) {
@@ -1106,12 +1191,12 @@ void obj_field_string_get(int64_t obj_handle, int fld, char** value_ptr)
     }
 
     if (fld == OBJ_F_NAME) {
-        sub_408A20(obj_handle, OBJ_F_NAME, &name_num);
+        sub_408A20(object, OBJ_F_NAME, &name_num);
         name_str = sub_4E7400(name_num);
         *value_ptr = (char*)MALLOC(strlen(name_str) + 1);
         strcpy(*value_ptr, name_str);
     } else {
-        sub_408A20(obj_handle, fld, value_ptr);
+        sub_408A20(object, fld, value_ptr);
     }
 
     obj_unlock(obj_handle);
@@ -1172,7 +1257,7 @@ void obj_arrayfield_int32_set(int64_t obj_handle, int fld, int index, int value)
 int sub_407470(int64_t obj_handle, int fld, int index)
 {
     Object* object;
-    int64_t value;
+    int value;
 
     object = obj_lock(obj_handle);
     if (!sub_40C260(object->type, fld)) {
@@ -1248,17 +1333,17 @@ int64_t obj_arrayfield_handle_get(int64_t obj_handle, int fld, int index)
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
         obj_unlock(obj_handle);
-        return 0;
+        return OBJ_HANDLE_NULL;
     }
 
     sub_408BB0(object, fld, index, &oid);
     obj_unlock(obj_handle);
 
-    if (oid.type == 0 || oid.type != -2) {
-        return 0;
+    if (oid.type == OID_TYPE_NULL || oid.type != OID_TYPE_HANDLE) {
+        return OBJ_HANDLE_NULL;
     }
 
-    return oid.h.field_8;
+    return oid.d.h;
 }
 
 // 0x4076A0
@@ -1277,15 +1362,15 @@ bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* val
 
     sub_408BB0(object, fld, index, &oid);
 
-    if (oid.type == 0) {
-        obd_unlock(obj_handle);
+    if (oid.type == OID_TYPE_NULL) {
+        obj_unlock(obj_handle);
         *value_ptr = OBJ_HANDLE_NULL;
         return true;
     }
 
-    if (oid.type == -2) {
-        if (!sub_4E5470(oid.h.field_8)) {
-            oid.type = 0;
+    if (oid.type == OID_TYPE_HANDLE) {
+        if (!sub_4E5470(oid.d.h)) {
+            oid.type = OID_TYPE_NULL;
             sub_4088B0(object, fld, index, &oid);
             obj_unlock(obj_handle);
             *value_ptr = OBJ_HANDLE_NULL;
@@ -1293,7 +1378,7 @@ bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* val
         }
 
         obj_unlock(obj_handle);
-        *value_ptr = oid.h.field_8;
+        *value_ptr = oid.d.h;
         return true;
     }
 
@@ -1315,13 +1400,13 @@ void obj_arrayfield_obj_set(int64_t obj_handle, int fld, int index, int64_t valu
     }
 
     if (value != OBJ_HANDLE_NULL) {
-        oid.type = -2;
-        oid.h.field_8 = value;
+        oid.type = OID_TYPE_HANDLE;
+        oid.d.h = value;
     } else {
-        oid.type = 0;
+        oid.type = OID_TYPE_NULL;
     }
 
-    sub_4088B0(obj_handle, fld, index, &oid);
+    sub_4088B0(object, fld, index, &oid);
     obj_unlock(obj_handle);
 }
 
@@ -1473,7 +1558,7 @@ void sub_407D50(int64_t obj, int fld)
 
     object = obj_lock(obj);
     if (sub_40C260(object->type, fld)) {
-        if (object->field_20.type == -1) {
+        if (object->field_20.type == OID_TYPE_BLOCKED) {
             sub_40C6E0(object, fld);
             sub_40D400(object, fld, true);
             obj_unlock(obj);
@@ -1671,6 +1756,24 @@ Object* sub_408710(int64_t* obj_handle_ptr)
     return sub_4E4E60(obj_handle_ptr);
 }
 
+// 0x408020
+ObjectID sub_408020(int64_t obj, int a2)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4082C0
+bool sub_4082C0(int64_t* obj_ptr, int* index_ptr)
+{
+    // TODO: Incomplete.
+}
+
+// 0x408390
+bool sub_408390(int64_t* obj_ptr, int* index_ptr)
+{
+    // TODO: Incomplete.
+}
+
 // 0x408720
 Object* obj_lock(int64_t obj_handle)
 {
@@ -1683,6 +1786,144 @@ void obj_unlock(int64_t obj_handle)
     sub_4E4FA0(obj_handle);
 }
 
+// 0x408760
+void sub_408760(Object* object, int fld, void* value_ptr)
+{
+    ObjSa v1;
+
+    if (object->field_20.type == OID_TYPE_BLOCKED) {
+        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        sub_40D400(object, fld, true);
+    } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
+        v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+    } else {
+        if (sub_40D320(object, fld)) {
+            v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        } else {
+            sub_40D450(object, fld);
+            sub_40D370(object, fld, true);
+            v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+            sub_40D400(object, fld, true);
+        }
+        object->field_44 = 1;
+    }
+
+    v1.type = object_fields[fld].type;
+    switch (v1.type) {
+    case SA_TYPE_INT32:
+        v1.storage.value = *(int*)value_ptr;
+        break;
+    case SA_TYPE_INT64:
+        v1.storage.value64 = *(int64_t*)value_ptr;
+        break;
+    case SA_TYPE_STRING:
+        v1.storage.str = *(char**)value_ptr;
+        break;
+    case SA_TYPE_HANDLE:
+        v1.storage.oid = *(ObjectID*)value_ptr;
+        break;
+    }
+
+    sub_4E4000(&v1);
+}
+
+// 0x4088B0
+void sub_4088B0(Object* object, int fld, int index, void* value_ptr)
+{
+    ObjSa v1;
+
+    if (object->field_20.type == OID_TYPE_BLOCKED) {
+        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        sub_40D400(object, fld, true);
+    } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
+        v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+    } else {
+        // TODO: Incomplete.
+    }
+
+    v1.field_8 = index;
+    v1.type = object_fields[fld].type;
+
+    switch (v1.type) {
+    case SA_TYPE_INT32_ARRAY:
+    case SA_TYPE_UINT32_ARRAY:
+        v1.storage.value = *(unsigned int*)value_ptr;
+        break;
+    case SA_TYPE_INT64_ARRAY:
+    case SA_TYPE_UINT64_ARRAY:
+        v1.storage.value64 = *(uint64_t*)value_ptr;
+        break;
+    case SA_TYPE_SCRIPT:
+        // TODO: Unclear.
+        break;
+    case SA_TYPE_QUEST:
+        // TODO: Unclear.
+        break;
+    case SA_TYPE_HANDLE_ARRAY:
+        v1.storage.oid = *(ObjectID*)value_ptr;
+        break;
+    }
+
+    sub_4E4000(&v1);
+}
+
+// 0x408A20
+void sub_408A20(Object* object, int fld, void* value_ptr)
+{
+    ObjSa v1;
+    int index;
+
+    if (fld == OBJ_F_TYPE) {
+        *(int*)value_ptr = object->type;
+        return;
+    }
+
+    v1.type = object_fields[fld].type;
+    if (object->field_20.type == OID_TYPE_BLOCKED) {
+        index = sub_40CB40(object, fld);
+        v1.ptr = &(object->field_50[index]);
+        sub_4E4180(&v1);
+    } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
+        v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+        sub_4E4180(&v1);
+    } else if (sub_40D320(object, fld)) {
+        index = sub_40D230(object, fld);
+        v1.ptr = &(object->field_50[index]);
+        sub_4E4180(&v1);
+    } else {
+        int64_t proto_handle;
+        Object* proto;
+
+        proto_handle = obj_get_prototype_handle(object);
+        proto = obj_lock(proto_handle);
+        index = sub_40CB40(proto, fld);
+        v1.ptr = &(object->field_50[index]);
+        sub_4E4180(&v1);
+        obj_unlock(proto_handle);
+    }
+
+    switch (v1.type) {
+    case SA_TYPE_INT32:
+        *(int*)value_ptr = v1.storage.value;
+        break;
+    case SA_TYPE_INT64:
+        *(int64_t*)value_ptr = v1.storage.value64;
+        break;
+    case SA_TYPE_STRING:
+        *(char**)value_ptr = v1.storage.str;
+        break;
+    case SA_TYPE_HANDLE:
+        *(ObjectID*)value_ptr = v1.storage.oid;
+        break;
+    }
+}
+
+// 0x408BB0
+void sub_408BB0(Object* object, int fld, int index, void* value)
+{
+    // TODO: Incomplete.
+}
+
 // 0x408D60
 void sub_408D60(Object* object, int fld, int* value_ptr)
 {
@@ -1692,7 +1933,7 @@ void sub_408D60(Object* object, int fld, int* value_ptr)
 
     v1.type = object_fields[fld].type;
 
-    if (object->field_20.field_0 == -1) {
+    if (object->field_20.type == OID_TYPE_BLOCKED) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
         *value_ptr = sub_4E4BA0(&v1);
     } else {
@@ -1719,7 +1960,7 @@ void sub_408E70(Object* object, int fld, int value)
 {
     ObjSa v1;
 
-    if (object->field_20.field_0 == -1) {
+    if (object->field_20.type == OID_TYPE_BLOCKED) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
         sub_40D400(object, fld, true);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
@@ -1746,7 +1987,7 @@ bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr)
 {
     Object* proto;
 
-    if (object->field_20.field_0 == -1) {
+    if (object->field_20.type == OID_TYPE_BLOCKED) {
         *a3 = &(object->field_50[sub_40CB40(object, fld)]);
         return false;
     }
@@ -2019,6 +2260,12 @@ bool sub_4096B0(TigFile* stream, int64_t obj)
     return true;
 }
 
+// 0x4097B0
+bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
+{
+    // TODO: Incomplete.
+}
+
 // 0x409980
 bool sub_409980(TigFile* stream, int64_t obj)
 {
@@ -2061,6 +2308,12 @@ bool sub_409980(TigFile* stream, int64_t obj)
 
     obj_unlock(obj);
     return true;
+}
+
+// 0x409AA0
+bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
+{
+    // TODO: Incomplete.
 }
 
 // 0x409CB0
@@ -2427,9 +2680,9 @@ void sub_40A7B0()
     object_fields[OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX].field_14 = 5;
     object_fields[OBJ_F_ARMOR_RESISTANCE_ADJ_IDX].field_14 = 5;
     object_fields[OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX].field_14 = 5;
-    object_fields[OBJ_F_CRITTER_STAT_BASE_IDX].field_14 = 28;
-    object_fields[OBJ_F_CRITTER_BASIC_SKILL_IDX].field_14 = 12;
-    object_fields[OBJ_F_CRITTER_TECH_SKILL_IDX].field_14 = 4;
+    object_fields[OBJ_F_CRITTER_STAT_BASE_IDX].field_14 = STAT_COUNT;
+    object_fields[OBJ_F_CRITTER_BASIC_SKILL_IDX].field_14 = BASIC_SKILL_COUNT;
+    object_fields[OBJ_F_CRITTER_TECH_SKILL_IDX].field_14 = TECH_SKILL_COUNT;
     object_fields[OBJ_F_RENDER_ALPHA].field_14 = 4;
     object_fields[OBJ_F_SHADOW_HANDLES].field_14 = 5;
 }
@@ -2861,6 +3114,12 @@ void sub_40BBB0()
     }
 }
 
+// 0x40BBF0
+void sub_40BBF0(Object* object)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4F0270
 void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4)
 {
@@ -2887,6 +3146,12 @@ void sub_40BD20(Object* object)
     }
 }
 
+// 0x40BDB0
+void sub_40BDB0(Object* object)
+{
+    // TODO: Incomplete.
+}
+
 // 0x40BE70
 void sub_40BE70(Object* object)
 {
@@ -2907,6 +3172,12 @@ void sub_40BE70(Object* object)
     }
 }
 
+// 0x40BF00
+bool sub_40BF00(void* entry, int index)
+{
+    // TODO: Incomplete.
+}
+
 // 0x40BFC0
 bool sub_40BFC0(void* entry, int index)
 {
@@ -2916,13 +3187,13 @@ bool sub_40BFC0(void* entry, int index)
     (void)index;
 
     memcpy(&oid, entry, sizeof(oid));
-    if (oid.type != 0) {
+    if (oid.type != OID_TYPE_NULL) {
         obj = objp_perm_lookup(oid);
         if (obj != OBJ_HANDLE_NULL) {
-            oid.type = -2;
-            oid.h.field_8 = obj;
+            oid.type = OID_TYPE_HANDLE;
+            oid.d.h = obj;
         } else {
-            oid.type = 0;
+            oid.type = OID_TYPE_NULL;
         }
         memcpy(entry, &oid, sizeof(oid));
     }
@@ -3863,7 +4134,7 @@ void sub_40D4D0(Object* object, int fld)
     v1 = sub_40D230(object, fld);
     v2.type = object_fields[fld].type;
     v2.ptr = &(object->field_50[v1]);
-    sub_4E3FA0(&v1);
+    sub_4E3FA0(&v2);
 
     for (index = v1; index < object->field_46 - 1; index++) {
         object->field_50[index] = object->field_50[index + 1];
@@ -3877,7 +4148,7 @@ void sub_40D4D0(Object* object, int fld)
 bool sub_40D560(TigFile* stream)
 {
     int version = OBJ_FILE_VERSION;
-    return sub_4E7010(&version, sizeof(version), stream);
+    return obj_write_raw(&version, sizeof(version), stream);
 }
 
 // 0x40D590
@@ -3885,7 +4156,7 @@ bool obj_check_version_stream(TigFile* stream)
 {
     int version;
 
-    if (!obj_read_raw(version, sizeof(version), stream)
+    if (!obj_read_raw(&version, sizeof(version), stream)
         || version != OBJ_FILE_VERSION) {
         tig_debug_printf("Object file format version mismatch (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
         return false;
@@ -3906,7 +4177,7 @@ bool obj_check_version_memory(void* mem)
 {
     int version;
 
-    sub_4E4C50(version, sizeof(version), mem);
+    sub_4E4C50(&version, sizeof(version), mem);
     if (version != OBJ_FILE_VERSION) {
         tig_debug_printf("Object file format version mismatch: (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
     }
@@ -3927,6 +4198,8 @@ int64_t obj_get_prototype_handle(Object* object)
 // 0x40D670
 bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info)
 {
+    (void)a2;
+
     if ((object->field_4C[field_info->field_8] & field_info->field_C) != 0) {
         tig_debug_printf("\t #%d", field_info - object_fields);
     }
