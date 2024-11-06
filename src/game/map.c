@@ -1343,12 +1343,6 @@ void sub_4115D0(const char* name)
     }
 }
 
-// 0x412380
-void map_enable_gender_check()
-{
-    map_gender_check_enabled = true;
-}
-
 // 0x411750
 void map_disable_objects()
 {
@@ -1397,6 +1391,12 @@ void sub_411830(char* str)
     }
 
     strrev(str);
+}
+
+// 0x412380
+void map_enable_gender_check()
+{
+    map_gender_check_enabled = true;
 }
 
 // 0x412390
