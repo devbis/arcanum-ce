@@ -5,7 +5,7 @@
 
 typedef struct S5FC668 {
     /* 0000 */ int64_t obj;
-    /* 0008 */ int field_8;
+    /* 0008 */ tig_color_t field_8;
     /* 000C */ int field_C;
 } S5FC668;
 
@@ -13,7 +13,7 @@ static_assert(sizeof(S5FC668) == 0x10, "wrong size");
 
 static void sub_4C0090();
 static void sub_4C00D0(int64_t obj);
-static void sub_4C0140();
+static void sub_4C0140(S5FC668* a1, UnknownContext* a2);
 static bool sub_4C0280(int64_t location, TigRect* rect);
 static void sub_4C0370();
 
@@ -172,9 +172,50 @@ void sub_4C00D0(int64_t obj)
 }
 
 // 0x4C0140
-void sub_4C0140()
+void sub_4C0140(S5FC668* a1, UnknownContext* a2)
 {
-    // TODO: Incomplete.
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int cnt;
+    int idx;
+    int64_t loc;
+    TigRect wp_rect;
+    TigRectListNode* node;
+    tig_art_id_t art_id;
+
+    if (wp_view_options.type == VIEW_TYPE_TOP_DOWN) {
+        return;
+    }
+
+    art_blit_info.flags = TIG_ART_BLT_BLEND_ADD | TIG_ART_BLT_BLEND_COLOR_CONST;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    art_blit_info.color = a1->field_8;
+
+    cnt = obj_arrayfield_length_get(a1->obj, OBJ_F_NPC_WAYPOINTS_IDX);
+    for (idx = 0; idx < cnt; idx++) {
+        art_id = TIG_ART_ID_INVALID;
+        loc = obj_arrayfield_int64_get(a1->obj, OBJ_F_NPC_WAYPOINTS_IDX, idx);
+        if (sub_4C0280(loc, &wp_rect)) {
+            node = *a2->rects;
+            while (node != NULL) {
+                if (tig_rect_intersection(&wp_rect, &(node->rect), &dst_rect) == TIG_OK) {
+                    if (art_id == TIG_ART_ID_INVALID) {
+                        art_id = tig_art_id_frame_set(dword_5FC658, idx < dword_5FC638 ? idx : dword_5FC638 - 1);
+                        art_blit_info.art_id = art_id;
+                    }
+
+                    src_rect.x = dst_rect.x - wp_rect.x;
+                    src_rect.y = dst_rect.y - wp_rect.y;
+                    src_rect.width = dst_rect.width;
+                    src_rect.height = dst_rect.height;
+                    tig_window_blit_art(wp_iso_window_handle, &art_blit_info);
+                }
+                node = node->next;
+            }
+        }
+    }
 }
 
 // 0x4C0280
