@@ -1,7 +1,14 @@
 #include "game/wall.h"
 
+#include "game/obj.h"
+#include "game/obj_private.h"
+#include "game/object.h"
+
 static void sub_4E1C00(int a1);
 static void sub_4E1EB0(int a1);
+static void sub_4E20A0(int64_t obj);
+static void sub_4E25B0(int64_t obj);
+static void sub_4E2C50(int64_t obj);
 
 // 0x603420
 static TigRect stru_603420;
@@ -102,9 +109,28 @@ void sub_4E1490()
 }
 
 // 0x4E18F0
-void sub_4E18F0()
+void sub_4E18F0(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    int p_piece;
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    p_piece = tig_art_wall_id_p_piece_get(art_id);
+
+    if (p_piece >= 9 && p_piece <= 20) {
+        sub_4E20A0(obj);
+    } else if (p_piece >= 21 && p_piece <= 33) {
+        sub_4E25B0(obj);
+    } else if (p_piece >= 34 && p_piece <= 45) {
+        sub_4E2C50(obj);
+    }
+
+    if (a2) {
+        if (sub_4E5470(obj)) {
+            sub_43CF70(obj);
+            sub_43CFF0(obj);
+        }
+    }
 }
 
 // 0x4E1C00
@@ -120,19 +146,19 @@ void sub_4E1EB0(int a1)
 }
 
 // 0x4E20A0
-void sub_4E20A0()
+void sub_4E20A0(int64_t obj)
 {
     // TODO: Incomplete.
 }
 
 // 0x4E25B0
-void sub_4E25B0()
+void sub_4E25B0(int64_t obj)
 {
     // TODO: Incomplete.
 }
 
 // 0x4E2C50
-void sub_4E2C50()
+void sub_4E2C50(int64_t obj)
 {
     // TODO: Incomplete.
 }
