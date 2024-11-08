@@ -21,30 +21,30 @@ void sector_script_exit()
 }
 
 // 0x4C0440
-bool sub_4C0440(int64_t a1, void* a2)
+bool sector_script_get(int64_t sector_id, Script* scr)
 {
     Sector* sector;
     bool ret;
 
     ret = false;
-    if (sector_lock(a1, &sector)) {
-        ret = sub_4F61F0(&(sector->dword_4630), a2);
-        sector_unlock(sector);
+    if (sector_lock(sector_id, &sector)) {
+        ret = sub_4F61F0(&(sector->sector_scripts), scr);
+        sector_unlock(sector_id);
     }
 
     return ret;
 }
 
 // 0x4C0490
-bool sub_4C0490(int64_t v1, void* a2)
+bool sector_script_set(int64_t sector_id, Script* scr)
 {
     Sector* sector;
     bool ret;
 
     ret = false;
-    if (sector_lock(a1, &sector)) {
-        ret = sub_4F61C0(&(sector->dword_4630), a2);
-        sector_unlock(sector);
+    if (sector_lock(sector_id, &sector)) {
+        ret = sub_4F61C0(&(sector->sector_scripts), scr);
+        sector_unlock(sector_id);
     }
 
     return ret;
