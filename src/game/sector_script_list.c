@@ -24,15 +24,15 @@ bool sector_script_list_exit(SectorScriptList* list)
 }
 
 // 0x4F61C0
-bool sub_4F61C0(SectorScriptList* list, Script* scr)
+bool sector_script_list_set(SectorScriptList* list, Script* scr)
 {
     list->scr = *scr;
-    list->flags |= 0x1;
+    list->flags |= SECTOR_SCRIPT_LIST_MODIFIED;
     return true;
 }
 
 // 0x4F61F0
-bool sub_4F61F0(SectorScriptList* list, Script* scr)
+bool sector_script_list_get(SectorScriptList* list, Script* scr)
 {
     *scr = list->scr;
 
@@ -40,11 +40,11 @@ bool sub_4F61F0(SectorScriptList* list, Script* scr)
 }
 
 // 0x4F6220
-bool sub_4F6220(SectorScriptList* list)
+bool sector_script_list_remove(SectorScriptList* list)
 {
     if (list->scr.num != 0) {
         sector_script_list_reset(list);
-        list->flags |= 0x1;
+        list->flags |= SECTOR_SCRIPT_LIST_MODIFIED;
     }
 
     return true;
@@ -67,15 +67,15 @@ bool sector_script_list_save(SectorScriptList* list, TigFile* stream)
         return false;
     }
 
-    list->flags &= ~0x1;
+    list->flags &= ~SECTOR_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
 
 // 0x4F62A0
-bool sub_4F62A0(SectorScriptList* list)
+bool sector_script_list_is_modified(SectorScriptList* list)
 {
-    return (list->flags & 0x1) != 0;
+    return (list->flags & SECTOR_SCRIPT_LIST_MODIFIED) != 0;
 }
 
 // 0x4F62B0
@@ -85,7 +85,7 @@ bool sector_script_list_load_with_dif(SectorScriptList* list, TigFile* stream)
         return false;
     }
 
-    list->flags |= 0x1;
+    list->flags |= SECTOR_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
@@ -97,7 +97,7 @@ bool sector_script_list_save_with_dif(SectorScriptList* list, TigFile* stream)
         return false;
     }
 
-    list->flags |= 0x1;
+    list->flags |= SECTOR_SCRIPT_LIST_MODIFIED;
 
     return true;
 }

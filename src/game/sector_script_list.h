@@ -3,6 +3,8 @@
 
 #include "game/script.h"
 
+#define SECTOR_SCRIPT_LIST_MODIFIED 0x0001
+
 typedef struct SectorScriptList {
     /* 0000 */ unsigned int flags;
     /* 0004 */ Script scr;
@@ -13,12 +15,12 @@ static_assert(sizeof(SectorScriptList) == 0x10, "wrong size");
 bool sector_script_list_init(SectorScriptList* list);
 bool sector_script_list_reset(SectorScriptList* list);
 bool sector_script_list_exit(SectorScriptList* list);
-bool sub_4F61C0(SectorScriptList* list, Script* scr);
-bool sub_4F61F0(SectorScriptList* list, Script* scr);
-bool sub_4F6220(SectorScriptList* list);
+bool sector_script_list_set(SectorScriptList* list, Script* scr);
+bool sector_script_list_get(SectorScriptList* list, Script* scr);
+bool sector_script_list_remove(SectorScriptList* list);
 bool sector_script_list_load(SectorScriptList* list, TigFile* stream);
 bool sector_script_list_save(SectorScriptList* list, TigFile* stream);
-bool sub_4F62A0(SectorScriptList* list);
+bool sector_script_list_is_modified(SectorScriptList* list);
 bool sector_script_list_load_with_dif(SectorScriptList* list, TigFile* stream);
 bool sector_script_list_save_with_dif(SectorScriptList* list, TigFile* stream);
 
