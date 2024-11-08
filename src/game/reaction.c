@@ -475,6 +475,9 @@ void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value)
     int v2;
     int v3;
 
+    // NOTE: Silence compiler warning.
+    v3 = -1;
+
     candidate = -1;
     for (index = 0; index < 10; index++) {
         obj = obj_arrayfield_handle_get(npc_obj, OBJ_F_NPC_REACTION_PC_IDX, index);
@@ -552,7 +555,7 @@ int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
         }
     }
 
-    v1 += sub_4C1AC0(pc_obj, npc_obj);
+    v1 += reputation_reaction_adj(pc_obj, npc_obj);
 
     return v1;
 }
