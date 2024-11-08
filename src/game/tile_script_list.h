@@ -3,6 +3,8 @@
 
 #include "game/script.h"
 
+#define TILE_SCRIPT_LIST_NODE_MODIFIED 0x0001
+
 typedef struct TileScriptListNode {
     /* 0000 */ unsigned int flags;
     /* 0004 */ unsigned int id;
@@ -11,6 +13,8 @@ typedef struct TileScriptListNode {
 } TileScriptListNode;
 
 static_assert(sizeof(TileScriptListNode) == 0x18, "wrong size");
+
+#define TILE_SCRIPT_LIST_MODIFIED 0x0001
 
 typedef struct TileScriptList {
     /* 0000 */ unsigned int flags;
@@ -27,12 +31,12 @@ void tile_script_node_destroy(TileScriptListNode* node);
 bool tile_script_list_init(TileScriptList* list);
 bool tile_script_list_reset(TileScriptList* list);
 bool tile_script_list_exit(TileScriptList* list);
-bool sub_4F6470(TileScriptList* list, unsigned int id, Script* scr);
-bool sub_4F6520(TileScriptList* list, unsigned int id);
-bool sub_4F6570(TileScriptList* list, unsigned int id, Script* scr);
+bool tile_script_list_set(TileScriptList* list, unsigned int id, Script* scr);
+bool tile_script_list_remove(TileScriptList* list, unsigned int id);
+bool tile_script_list_get(TileScriptList* list, unsigned int id, Script* scr);
 bool tile_script_list_load(TileScriptList* list, TigFile* stream);
 bool tile_script_list_save(TileScriptList* list, TigFile* stream);
-bool sub_4F66C0(TileScriptList* list);
+bool tile_script_list_is_modified(TileScriptList* list);
 bool tile_script_list_load_with_dif(TileScriptList* list, TigFile* stream);
 bool tile_script_list_save_with_dif(TileScriptList* list, TigFile* stream);
 

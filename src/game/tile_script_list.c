@@ -84,7 +84,7 @@ bool tile_script_list_exit(TileScriptList* list)
 }
 
 // 0x4F6470
-bool sub_4F6470(TileScriptList* list, unsigned int id, Script* scr)
+bool tile_script_list_set(TileScriptList* list, unsigned int id, Script* scr)
 {
     TileScriptListNode* prev;
     TileScriptListNode* node;
@@ -94,10 +94,10 @@ bool sub_4F6470(TileScriptList* list, unsigned int id, Script* scr)
     node = list->head;
     while (node != NULL) {
         if (node->id == id) {
-            node->flags |= 0x1;
+            node->flags |= TILE_SCRIPT_LIST_NODE_MODIFIED;
             node->scr = *scr;
 
-            list->flags |= 0x1;
+            list->flags |= TILE_SCRIPT_LIST_MODIFIED;
 
             return true;
         }
@@ -111,7 +111,7 @@ bool sub_4F6470(TileScriptList* list, unsigned int id, Script* scr)
     }
 
     new_node = tile_script_node_create();
-    new_node->flags = 0x1;
+    new_node->flags = TILE_SCRIPT_LIST_NODE_MODIFIED;
     new_node->id = id;
     new_node->scr = *scr;
     new_node->next = node;
@@ -122,13 +122,13 @@ bool sub_4F6470(TileScriptList* list, unsigned int id, Script* scr)
         list->head = new_node;
     }
 
-    list->flags |= 0x1;
+    list->flags |= TILE_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
 
 // 0x4F6520
-bool sub_4F6520(TileScriptList* list, unsigned int id)
+bool tile_script_list_remove(TileScriptList* list, unsigned int id)
 {
     TileScriptListNode* prev;
     TileScriptListNode* node;
@@ -154,13 +154,13 @@ bool sub_4F6520(TileScriptList* list, unsigned int id)
     }
 
     tile_script_node_destroy(node);
-    list->flags |= 0x1;
+    list->flags |= TILE_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
 
 // 0x4F6570
-bool sub_4F6570(TileScriptList* list, unsigned int id, Script* scr)
+bool tile_script_list_get(TileScriptList* list, unsigned int id, Script* scr)
 {
     TileScriptListNode* node;
 
@@ -170,6 +170,7 @@ bool sub_4F6570(TileScriptList* list, unsigned int id, Script* scr)
             *scr = node->scr;
             return true;
         }
+        node = node->next;
     }
 
     return false;
@@ -231,15 +232,15 @@ bool tile_script_list_save(TileScriptList* list, TigFile* stream)
         node = node->next;
     }
 
-    list->flags &= ~0x1;
+    list->flags &= ~TILE_SCRIPT_LIST_MODIFIED;
 
     return true;
 }
 
 // 0x4F66C0
-bool sub_4F66C0(TileScriptList* list)
+bool tile_script_list_is_modified(TileScriptList* list)
 {
-    return (list->flags & 0x1) != 0;
+    return (list->flags & TILE_SCRIPT_LIST_MODIFIED) != 0;
 }
 
 // 0x4F66D0
@@ -258,7 +259,7 @@ bool tile_script_list_load_with_dif(TileScriptList* list, TigFile* stream)
             return false;
         }
 
-        sub_4F6470(list, node.id, &(node.scr));
+        tile_script_list_set(list, node.id, &(node.scr));
     }
 
     return true;
@@ -273,7 +274,7 @@ bool tile_script_list_save_with_dif(TileScriptList* list, TigFile* stream)
     cnt = 0;
     node = list->head;
     while (node != NULL) {
-        if ((node->flags & 0x1) != 0) {
+        if ((node->flags & TILE_SCRIPT_LIST_NODE_MODIFIED) != 0) {
             cnt++;
         }
         node = node->next;
@@ -285,7 +286,7 @@ bool tile_script_list_save_with_dif(TileScriptList* list, TigFile* stream)
 
     node = list->head;
     while (node != NULL) {
-        if ((node->flags & 0x1) != 0) {
+        if ((node->flags & TILE_SCRIPT_LIST_NODE_MODIFIED) != 0) {
             if (tig_file_fwrite(node, sizeof(*node), 1, stream) != 1) {
                 return false;
             }
