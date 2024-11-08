@@ -144,7 +144,7 @@ static void mainmenu_ui_create_shared_radio_buttons();
 static void mainmenu_ui_refresh_button_text(int btn, unsigned int flags);
 static void sub_547EF0();
 static void sub_5480C0(int a1);
-static void sub_548210(int a1, int a2);
+static void sub_548210(int x, int y);
 static void sub_548B60(TigRect* rect);
 static void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect);
 static void mmUIWinRefreshScrollBar();
@@ -153,9 +153,7 @@ static bool sub_549040(int a1);
 static bool mainmenu_ui_execute_multiplayer_select_char(int index);
 static void sub_549450();
 static void sub_5494C0(TextEdit* textedit);
-static char* sub_549520();
 static void sub_549540(TextEdit* textedit);
-static void mainmenu_ui_exit_game();
 static void won_account_changed();
 static void won_password_changed();
 static void selected_char_id_changed();
@@ -166,7 +164,7 @@ static bool sub_549A10(TigWindowModalDialogChoice* choice_ptr);
 static void sub_549A80();
 
 // 0x5993D0
-static int dword_5993D0[4] = {
+static int dword_5993D0[MM_FONT_COUNT] = {
     229,
     26,
     27,
@@ -174,7 +172,7 @@ static int dword_5993D0[4] = {
 };
 
 // 0x5993E0
-static int dword_5993E0[10][3] = {
+static int dword_5993E0[MM_COLOR_COUNT][3] = {
     { 255, 255, 255 },
     { 255, 0, 0 },
     { 0, 0, 255 },
@@ -188,7 +186,7 @@ static int dword_5993E0[10][3] = {
 };
 
 // 0x5C3618
-static int dword_5C3618 = -1;
+int dword_5C3618 = -1;
 
 // 0x5C361C
 static int dword_5C361C = 9;
@@ -2118,7 +2116,7 @@ static MesFileEntry stru_64C0E8;
 static char byte_64C0F0[128];
 
 // 0x64C170
-static tig_font_handle_t dword_64C170[4][10];
+static tig_font_handle_t dword_64C170[MM_FONT_COUNT][MM_COLOR_COUNT];
 
 // 0x64C210
 static tig_font_handle_t dword_64C210[2];
@@ -2187,10 +2185,10 @@ static int dword_64C414;
 static bool dword_64C418;
 
 // 0x64C41C
-static int64_t* dword_64C41C;
+int64_t* dword_64C41C;
 
 // 0x64C420
-static int dword_64C420;
+int dword_64C420;
 
 // 0x64C424
 static bool dword_64C424;
@@ -2350,7 +2348,7 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
     sub_4044A0(468, 300);
     dword_64C418 = 0;
     serverlist_ui_init();
-    stru_64C248.type = 0;
+    stru_64C248.type = OID_TYPE_NULL;
     sub_549A80();
     dword_64C37C = NULL;
 
@@ -3098,6 +3096,8 @@ bool sub_5422C0(int btn)
     int index;
     MatchmakerRegisterInfo register_info;
     char name[256];
+
+    (void)btn;
 
     index = main_menu_window_info[dword_64C414]->field_90;
     if (index == -1) {
@@ -4416,6 +4416,8 @@ void sub_545E80(TigRect* rect)
     int64_t npc_obj;
     int64_t substitute_inventory_obj;
 
+    (void)rect;
+
     pc_obj = player_get_pc_obj();
     sub_460FF0(pc_obj);
     if (!sub_40FF50(2)) {
@@ -4929,15 +4931,17 @@ void sub_5480C0(int a1)
 }
 
 // 0x548210
-void sub_548210(int a1, int a2)
+void sub_548210(int x, int y)
 {
-    dword_5C3618 = dword_64C378 + a2 / 20;
+    (void)x;
+
+    dword_5C3618 = dword_64C378 + y / 20;
     if (dword_5C3618 < dword_64C420) {
         stru_64C248 = sub_407EF0(dword_64C41C[dword_5C3618]);
         mainmenu_ui_refresh_multiplayer_select_char(NULL);
     } else {
         dword_5C3618 = -1;
-        stru_64C248.type = 0;
+        stru_64C248.type = OID_TYPE_NULL;
         mainmenu_ui_refresh_multiplayer_select_char(NULL);
     }
 }
@@ -4958,6 +4962,8 @@ void sub_5482A0(TigRect* rect)
     char* copy;
     size_t pos;
 
+    (void)rect;
+
     text_rect.x = 384;
     text_rect.y = 0;
     text_rect.width = 416;
@@ -4970,7 +4976,7 @@ void sub_5482A0(TigRect* rect)
     tig_window_blit_art(dword_5C3624, &art_blit_info);
 
     if (dword_5C3618 < 0 || dword_5C3618 > dword_64C420) {
-        if (stru_64C248.type != 0) {
+        if (stru_64C248.type != OID_TYPE_NULL) {
             int index;
 
             for (index = 0; index < dword_64C420; index++) {
@@ -5726,10 +5732,10 @@ void sub_549850()
     int index;
     TigFont font_info;
 
-    for (group = 0; group < 4; group++) {
+    for (group = 0; group < MM_FONT_COUNT; group++) {
         tig_art_interface_id_create(dword_5993D0[group], 0, 0, 0, &(font_info.art_id));
 
-        for (index = 0; index < 10; index++) {
+        for (index = 0; index < MM_COLOR_COUNT; index++) {
             font_info.color = tig_color_make(dword_5993E0[index][0],
                 dword_5993E0[index][1],
                 dword_5993E0[index][2]);
@@ -5744,17 +5750,17 @@ void sub_549910()
     int group;
     int index;
 
-    for (group = 0; group < 4; group++) {
-        for (index = 0; index < 10; index++) {
+    for (group = 0; group < MM_FONT_COUNT; group++) {
+        for (index = 0; index < MM_COLOR_COUNT; index++) {
             tig_font_destroy(dword_64C170[group][index]);
         }
     }
 }
 
 // 0x549940
-tig_font_handle_t sub_549940(int group, int index)
+tig_font_handle_t sub_549940(int font, int color)
 {
-    return dword_64C170[group][index];
+    return dword_64C170[font][color];
 }
 
 // 0x549960
