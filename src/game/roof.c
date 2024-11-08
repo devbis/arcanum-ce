@@ -357,7 +357,7 @@ void sub_439140(UnknownContext* info)
 // 0x4395A0
 int sub_4395A0(int64_t loc)
 {
-    return sub_4395C0(sub_4D7090((int)(uint32_t)location_get_x(loc), (int)(uint32_t)location_get_y(loc)));
+    return sub_4395C0(sub_4D7090(loc));
 }
 
 // 0x4395C0
@@ -394,7 +394,7 @@ tig_art_id_t sub_4396A0(int64_t loc)
         return TIG_ART_ID_INVALID;
     }
 
-    aid = sector->roofs.field_4[sub_4395A0(loc)];
+    aid = sector->roofs.art_ids[sub_4395A0(loc)];
 
     sector_unlock(sector_id);
 
@@ -418,8 +418,8 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
         return false;
     }
 
-    old_aid = sector->roofs.field_4[sub_4395A0(v1)];
-    sector->roofs.field_4[sub_4395A0(v1)] = aid;
+    old_aid = sector->roofs.art_ids[sub_4395A0(v1)];
+    sector->roofs.art_ids[sub_4395A0(v1)] = aid;
     sector->roofs.field_0 = 0;
 
     if (aid == TIG_ART_ID_INVALID) {
@@ -494,7 +494,7 @@ void sub_439D30(int64_t loc)
     }
 
     v1 = sub_504840(aid);
-    tile = sub_4D7090((int)location_get_x(loc), (int)location_get_y(loc));
+    tile = sub_4D7090(loc);
     v5 = tile & 3;
     v6 = (tile >> 6) % 4;
 

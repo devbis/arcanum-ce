@@ -3,9 +3,11 @@
 
 #include <tig/tig.h>
 
+#define SECTOR_ROOF_LIST_SIZE 256
+
 typedef struct SectorRoofList {
     int field_0;
-    int field_4[256];
+    tig_art_id_t art_ids[SECTOR_ROOF_LIST_SIZE];
 } SectorRoofList;
 
 // See 0x4F7F20.
@@ -16,7 +18,7 @@ bool sector_roof_list_reset(SectorRoofList* list);
 bool sector_roof_list_exit(SectorRoofList* list);
 bool sector_roof_list_load(SectorRoofList* list, TigFile* stream);
 bool sector_roof_list_save(SectorRoofList* list, TigFile* stream);
-bool sub_4F7FC0(SectorRoofList* list);
+bool sector_roof_list_is_modified(SectorRoofList* list);
 bool sector_roof_list_load_with_dif(SectorRoofList* list, TigFile* stream);
 bool sector_roof_list_save_with_dif(SectorRoofList* list, TigFile* stream);
 void sub_4F7FF0(SectorRoofList* list);

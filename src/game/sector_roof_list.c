@@ -1,12 +1,19 @@
 #include "game/sector_roof_list.h"
 
+#include "game/sector.h"
+
 static bool sector_roof_list_load_internal(SectorRoofList* list, TigFile* stream);
 static bool sector_roof_list_save_internal(SectorRoofList* list, TigFile* stream);
 
 // 0x4F7F20
 bool sector_roof_list_init(SectorRoofList* list)
 {
-    memset(list->field_4, -1, sizeof(list->field_4));
+    int index;
+
+    for (index = 0; index < SECTOR_ROOF_LIST_SIZE; index++) {
+        list->art_ids[index] = TIG_ART_ID_INVALID;
+    }
+
     list->field_0 = 1;
 
     return true;
@@ -15,7 +22,12 @@ bool sector_roof_list_init(SectorRoofList* list)
 // 0x4F7F40
 bool sector_roof_list_reset(SectorRoofList* list)
 {
-    memset(list->field_4, -1, sizeof(list->field_4));
+    int index;
+
+    for (index = 0; index < SECTOR_ROOF_LIST_SIZE; index++) {
+        list->art_ids[index] = TIG_ART_ID_INVALID;
+    }
+
     list->field_0 = 1;
 
     return true;
@@ -42,8 +54,10 @@ bool sector_roof_list_save(SectorRoofList* list, TigFile* stream)
 }
 
 // 0x4F7FC0
-bool sub_4F7FC0(SectorRoofList* list)
+bool sector_roof_list_is_modified(SectorRoofList* list)
 {
+    (void)list;
+
     return false;
 }
 
@@ -70,24 +84,29 @@ void sub_4F7FF0(SectorRoofList* list)
 {
     int index;
 
-    for (index = 0; index < 256; index++) {
-        sub_4D0E70(index);
+    for (index = 0; index < SECTOR_ROOF_LIST_SIZE; index++) {
+        sub_4D0E70(list->art_ids[index]);
     }
 }
 
 // 0x4F8020
 bool sector_roof_list_load_internal(SectorRoofList* list, TigFile* stream)
 {
-    if (tig_file_fread(list->field_0, sizeof(list->field_0), 1, stream) != 1) {
+    int index;
+
+    if (tig_file_fread(&(list->field_0), sizeof(list->field_0), 1, stream) != 1) {
         return false;
     }
 
     if (list->field_0 == 0) {
-        if (tig_file_fread(list->field_4, sizeof(*list->field_4), 256, stream) != 256) {
+        if (tig_file_fread(list->art_ids, sizeof(*list->art_ids), SECTOR_ROOF_LIST_SIZE, stream) != SECTOR_ROOF_LIST_SIZE) {
             return false;
         }
     } else {
-        memset(list->field_4, -1, sizeof(list->field_4));
+        for (index = 0; index < SECTOR_ROOF_LIST_SIZE; index++) {
+            list->art_ids[index] = TIG_ART_ID_INVALID;
+        }
+
         list->field_0 = 1;
     }
 
@@ -97,12 +116,12 @@ bool sector_roof_list_load_internal(SectorRoofList* list, TigFile* stream)
 // 0x4F8090
 bool sector_roof_list_save_internal(SectorRoofList* list, TigFile* stream)
 {
-    if (tig_file_fwrite(list->field_0, sizeof(list->field_0), 1, stream) != 1) {
+    if (tig_file_fwrite(&(list->field_0), sizeof(list->field_0), 1, stream) != 1) {
         return false;
     }
 
     if (list->field_0 == 0) {
-        if (tig_file_write(list->field_4, sizeof(*list->field_4), 256, stream) != 256) {
+        if (tig_file_fwrite(list->art_ids, sizeof(*list->art_ids), SECTOR_ROOF_LIST_SIZE, stream) != SECTOR_ROOF_LIST_SIZE) {
             return false;
         }
     }
