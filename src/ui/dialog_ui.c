@@ -47,7 +47,6 @@ static bool sub_567E30(DialogUiEntry* entry, int a2);
 static bool sub_5680A0(TigMessage* msg);
 static bool sub_5681B0(DialogUiEntry* entry);
 static bool sub_568280(DialogUiEntry *a1);
-static void sub_568430(int64_t a1, int64_t a2, const char* a3, int a4);
 static void sub_568480(DialogUiEntry* entry, int a2);
 static void sub_5684C0(DialogUiEntry* entry);
 static void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6);
@@ -175,8 +174,8 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             }
 
             entry->field_8.field_0 = entry->field_4;
-            entry->field_8.field_8 = a1;
-            entry->field_8.field_38 = a2;
+            entry->field_8.pc_obj = a1;
+            entry->field_8.npc_obj = a2;
             entry->field_8.field_68 = a5;
             entry->field_8.field_6C = a3;
             if (!sub_412FD0(&(entry->field_8))) {
@@ -185,8 +184,8 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             }
 
             if (entry->field_8.field_17E8 == 4) {
-                sub_568540(entry->field_8.field_38,
-                    entry->field_8.field_8,
+                sub_568540(entry->field_8.npc_obj,
+                    entry->field_8.pc_obj,
                     0,
                     -1,
                     entry->field_8.field_70,
@@ -250,8 +249,8 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             && player_is_pc_obj(a1)) {
             if (sub_553320(sub_5680A0)) {
                 entry->field_8.field_68 = a5;
-                entry->field_8.field_8 = a1;
-                entry->field_8.field_38 = a2;
+                entry->field_8.pc_obj = a1;
+                entry->field_8.npc_obj = a2;
                 entry->field_8.field_6C = a3;
                 entry->field_1854 = a3;
                 entry->field_1858 = a4;
@@ -288,7 +287,7 @@ void sub_5678D0(long long obj, int a2)
         sub_412F40(entry->field_4);
     }
 
-    sub_4D6160(entry->field_8.field_38, -1);
+    sub_4D6160(entry->field_8.npc_obj, -1);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0) {
@@ -355,22 +354,24 @@ void sub_567AB0(DialogUiEntry* entry, DialogSerializedData* serialized_data, cha
     int index;
     int pos;
 
-    if (entry->field_8.field_8 != OBJ_HANDLE_NULL) {
-        serialized_data->field_8 = sub_407EF0(entry->field_8.field_8);
+    if (entry->field_8.pc_obj != OBJ_HANDLE_NULL) {
+        serialized_data->field_8 = sub_407EF0(entry->field_8.pc_obj);
     } else {
-        serialized_data->field_8.type = 0;
+        serialized_data->field_8.type = OID_TYPE_NULL;
     }
 
-    if (entry->field_8.field_38 != OBJ_HANDLE_NULL) {
-        serialized_data->field_20 = sub_407EF0(entry->field_8.field_38);
+    if (entry->field_8.npc_obj != OBJ_HANDLE_NULL) {
+        serialized_data->field_20 = sub_407EF0(entry->field_8.npc_obj);
     } else {
-        serialized_data->field_20.type = 0;
+        serialized_data->field_20.type = OID_TYPE_NULL;
     }
 
     serialized_data->field_3C = entry->field_8.field_6C;
     serialized_data->field_40 = 0;
     serialized_data->field_44 = (int)strlen(entry->field_8.field_70) + 1;
     strncpy(buffer, entry->field_8.field_70, serialized_data->field_44);
+    serialized_data->field_78 = entry->field_8.field_17E8;
+    serialized_data->field_7C = entry->field_8.field_17EC;
 
     pos = serialized_data->field_44;
     for (index = 0; index < 5; index++) {
@@ -391,16 +392,16 @@ void sub_567C30(DialogSerializedData* serialized_data, DialogUiEntry* entry, con
 {
     int index;
 
-    if (serialized_data->field_8.type != 0) {
-        entry->field_8.field_8 = objp_perm_lookup(serialized_data->field_8);
+    if (serialized_data->field_8.type != OID_TYPE_NULL) {
+        entry->field_8.pc_obj = objp_perm_lookup(serialized_data->field_8);
     } else {
-        entry->field_8.field_8 = OBJ_HANDLE_NULL;
+        entry->field_8.pc_obj = OBJ_HANDLE_NULL;
     }
 
-    if (serialized_data->field_20.type != 0) {
-        entry->field_8.field_38 = objp_perm_lookup(serialized_data->field_20);
+    if (serialized_data->field_20.type != OID_TYPE_NULL) {
+        entry->field_8.npc_obj = objp_perm_lookup(serialized_data->field_20);
     } else {
-        entry->field_8.field_38 = OBJ_HANDLE_NULL;
+        entry->field_8.npc_obj = OBJ_HANDLE_NULL;
     }
 
     entry->field_8.field_6C = serialized_data->field_3C;
@@ -457,9 +458,9 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(entry->field_8.field_8);
-    sub_5686C0(entry->field_8.field_8, entry->field_8.field_38, 2, -1, entry->field_8.field_460[a2]);
-    sub_4EF630(entry->field_8.field_38);
+    is_pc = player_is_pc_obj(entry->field_8.pc_obj);
+    sub_5686C0(entry->field_8.pc_obj, entry->field_8.npc_obj, 2, -1, entry->field_8.field_460[a2]);
+    sub_4EF630(entry->field_8.npc_obj);
     sub_5689B0();
     sub_413130(&(entry->field_8), a2);
     sub_567D60(entry);
@@ -469,30 +470,30 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         sub_5684C0(entry);
         break;
     case 1:
-        sub_5678D0(entry->field_8.field_8, 0);
+        sub_5678D0(entry->field_8.pc_obj, 0);
         sub_568480(entry, 0);
         break;
     case 2:
-        sub_5678D0(entry->field_8.field_8, 0);
+        sub_5678D0(entry->field_8.pc_obj, 0);
         sub_568480(entry, entry->field_8.field_17EC);
         break;
     case 3:
         if (is_pc) {
             sub_553370();
-            sub_572240(entry->field_8.field_8, entry->field_8.field_38, 1);
+            sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 1);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_8.field_8, 0);
+            sub_5678D0(entry->field_8.pc_obj, 0);
         }
         break;
     case 4:
-        sub_568540(entry->field_8.field_38, entry->field_8.field_8, 0, -1, entry->field_8.field_70, entry->field_8.field_458);
-        sub_5678D0(entry->field_8.field_8, 0);
+        sub_568540(entry->field_8.npc_obj, entry->field_8.pc_obj, 0, -1, entry->field_8.field_70, entry->field_8.field_458);
+        sub_5678D0(entry->field_8.pc_obj, 0);
         break;
     case 5:
         if (is_pc) {
             sub_553370();
-            charedit_create(entry->field_8.field_38, 2);
+            charedit_create(entry->field_8.npc_obj, 2);
         }
         break;
     case 6:
@@ -504,25 +505,25 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     case 7:
         if (is_pc) {
             sub_553370();
-            sub_56D130(entry->field_8.field_38, entry->field_8.field_8);
+            sub_56D130(entry->field_8.npc_obj, entry->field_8.pc_obj);
         }
         break;
     case 8:
         if (is_pc) {
             sub_553370();
-            sub_4EE550(entry->field_8.field_8, entry->field_8.field_38);
+            sub_4EE550(entry->field_8.pc_obj, entry->field_8.npc_obj);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_8.field_8, 0);
+            sub_5678D0(entry->field_8.pc_obj, 0);
         }
         break;
     case 9:
         if (is_pc) {
             sub_553370();
-            sub_572240(entry->field_8.field_8, entry->field_8.field_38, 6);
+            sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 6);
         }
         if ((tig_net_flags & 0x1) != 0) {
-            sub_5678D0(entry->field_8.field_8, 0);
+            sub_5678D0(entry->field_8.pc_obj, 0);
         }
         break;
     }
@@ -607,7 +608,7 @@ bool sub_568280(DialogUiEntry *a1)
 {
     bool is_pc;
 
-    is_pc = player_is_pc_obj(a1->field_8.field_8);
+    is_pc = player_is_pc_obj(a1->field_8.pc_obj);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0 && (tig_net_flags & TIG_NET_HOST) == 0) {
         byte_679DB8[sub_4A2B10(player_get_pc_obj())] = 0;
@@ -619,18 +620,18 @@ bool sub_568280(DialogUiEntry *a1)
         break;
     case 1:
     case 2:
-        sub_5678D0(a1->field_8.field_8, 0);
+        sub_5678D0(a1->field_8.pc_obj, 0);
         break;
     case 3:
         if (is_pc) {
             sub_553370();
-            sub_572240(a1->field_8.field_8, a1->field_8.field_38, 1);
+            sub_572240(a1->field_8.pc_obj, a1->field_8.npc_obj, 1);
         }
         break;
     case 5:
         if (is_pc) {
             sub_553370();
-            charedit_create(a1->field_8.field_38, 2);
+            charedit_create(a1->field_8.npc_obj, 2);
         }
         break;
     case 6:
@@ -642,19 +643,19 @@ bool sub_568280(DialogUiEntry *a1)
     case 7:
         if (is_pc) {
             sub_553370();
-            sub_56D130(a1->field_8.field_38, a1->field_8.field_8);
+            sub_56D130(a1->field_8.npc_obj, a1->field_8.pc_obj);
         }
         break;
     case 8:
         if (is_pc) {
             sub_553370();
-            sub_4EE550(a1->field_8.field_8, a1->field_8.field_38);
+            sub_4EE550(a1->field_8.pc_obj, a1->field_8.npc_obj);
         }
         break;
     case 9:
         if (is_pc) {
             sub_553370();
-            sub_572240(a1->field_8.field_8, a1->field_8.field_38, 6);
+            sub_572240(a1->field_8.pc_obj, a1->field_8.npc_obj, 6);
         }
         break;
     }
@@ -679,7 +680,7 @@ void sub_568480(DialogUiEntry* entry, int a2)
         a2 = entry->field_1858 + 1;
     }
 
-    sub_441980(entry->field_8.field_8, entry->field_8.field_38, OBJ_HANDLE_NULL, SAP_DIALOG, a2);
+    sub_441980(entry->field_8.pc_obj, entry->field_8.npc_obj, OBJ_HANDLE_NULL, SAP_DIALOG, a2);
 }
 
 // 0x5684C0
@@ -687,9 +688,9 @@ void sub_5684C0(DialogUiEntry* entry)
 {
     int index;
 
-    sub_568540(entry->field_8.field_38, entry->field_8.field_8, 0, -2, entry->field_8.field_70, entry->field_8.field_458);
+    sub_568540(entry->field_8.npc_obj, entry->field_8.pc_obj, 0, -2, entry->field_8.field_70, entry->field_8.field_458);
 
-    if (player_is_pc_obj(entry->field_8.field_8)) {
+    if (player_is_pc_obj(entry->field_8.pc_obj)) {
         sub_553370();
 
         for (index = 0; index < entry->field_8.field_45C; index++) {
@@ -699,7 +700,7 @@ void sub_5684C0(DialogUiEntry* entry)
 }
 
 // 0x568540
-void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6)
+void sub_568540(int64_t obj, int64_t a2, int type, int a4, const char* str, int a6)
 {
     Packet44 pkt;
 
@@ -710,9 +711,9 @@ void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6)
 
         pkt.type = 44;
         pkt.subtype = 4;
-        pkt.d.d.field_8 = sub_407EF0(a1);
+        pkt.d.d.field_8 = sub_407EF0(obj);
         pkt.d.d.field_20 = sub_407EF0(a2);
-        pkt.d.d.field_38 = a3;
+        pkt.d.d.field_38 = type;
         pkt.d.d.field_3C = a4;
         pkt.d.d.field_40 = 0;
         strncpy(pkt.d.d.field_44, str, 1000);
@@ -720,20 +721,20 @@ void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6)
     }
 
     if (a2 != OBJ_HANDLE_NULL
-        && !sub_45D8D0(a1)
-        && !sub_423300(a1, 0)) {
-        sub_424070(a1, 3, 0, 1);
-        sub_433440(a1, sub_441B20(a1, a2));
+        && !sub_45D8D0(obj)
+        && !sub_423300(obj, 0)) {
+        sub_424070(obj, 3, 0, 1);
+        sub_433440(obj, sub_441B20(obj, a2));
     }
 
-    sub_4D62B0(a1);
-    sub_4D5FE0(a1, a3, str);
-    sub_4D6160(a1, a4);
-    sub_5688D0(a1, a2, a6);
+    sub_4D62B0(obj);
+    sub_4D5FE0(obj, type, str);
+    sub_4D6160(obj, a4);
+    sub_5688D0(obj, a2, a6);
 }
 
 // 0x5686C0
-void sub_5686C0(int64_t a1, int64_t a2, int a3, int a4, const char* str)
+void sub_5686C0(int64_t obj, int64_t a2, int type, int a4, const char* str)
 {
     Packet44 pkt;
 
@@ -744,9 +745,9 @@ void sub_5686C0(int64_t a1, int64_t a2, int a3, int a4, const char* str)
 
         pkt.type = 44;
         pkt.subtype = 4;
-        pkt.d.d.field_8 = sub_407EF0(a1);
+        pkt.d.d.field_8 = sub_407EF0(obj);
         pkt.d.d.field_20 = sub_407EF0(a2);
-        pkt.d.d.field_38 = a3;
+        pkt.d.d.field_38 = type;
         pkt.d.d.field_3C = a4;
         pkt.d.d.field_40 = 1;
         strncpy(pkt.d.d.field_44, str, 1000);
@@ -754,16 +755,16 @@ void sub_5686C0(int64_t a1, int64_t a2, int a3, int a4, const char* str)
     }
 
     if (a2 != OBJ_HANDLE_NULL
-        && !sub_45D8D0(a1)
-        && !sub_423300(a1, 0)) {
-        sub_424070(a1, 3, 0, 1);
-        sub_433440(a1, sub_441B20(a1, a2));
+        && !sub_45D8D0(obj)
+        && !sub_423300(obj, 0)) {
+        sub_424070(obj, 3, 0, 1);
+        sub_433440(obj, sub_441B20(obj, a2));
     }
 
-    if (!player_is_pc_obj(a1)) {
-        sub_4D62B0(a1);
-        sub_4D5FE0(a1, a3, str);
-        sub_4D6160(a1, a4);
+    if (!player_is_pc_obj(obj)) {
+        sub_4D62B0(obj);
+        sub_4D5FE0(obj, type, str);
+        sub_4D6160(obj, a4);
     }
 }
 
@@ -773,16 +774,19 @@ void sub_568830(int64_t obj)
     int index;
 
     for (index = 0; index < 8; index++) {
-        if (stru_66DAB8[index].field_8.field_8 == obj
-            || stru_66DAB8[index].field_8.field_38 == obj) {
+        if (stru_66DAB8[index].field_8.pc_obj == obj
+            || stru_66DAB8[index].field_8.npc_obj == obj) {
             sub_5678D0(obj, 0);
         }
     }
 }
 
 // 0x568880
-void sub_568880(long long obj, int a2, int a3, int a4, int a5, int a6, const char* str)
+void sub_568880(long long obj, int a2, int a3, int type, int a5, int a6, const char* str)
 {
+    (void)a2;
+    (void)a3;
+
     if ((a6 & 1) != 0) {
         if (player_is_pc_obj(obj)) {
             return;
@@ -790,7 +794,7 @@ void sub_568880(long long obj, int a2, int a3, int a4, int a5, int a6, const cha
     }
 
     sub_4D62B0(obj);
-    sub_4D5FE0(obj, a4, str);
+    sub_4D5FE0(obj, type, str);
     sub_4D6160(obj, a5);
 }
 
