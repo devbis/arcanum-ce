@@ -2,27 +2,158 @@
 
 #include <stdio.h>
 
+#include "game/ai.h"
+#include "game/anim.h"
+#include "game/area.h"
 #include "game/critter.h"
-#include "game/newspaper.h"
+#include "game/item.h"
 #include "game/magictech.h"
 #include "game/mes.h"
-#include "game/timeevent.h"
-#include "game/stat.h"
+#include "game/mp_utils.h"
+#include "game/newspaper.h"
+#include "game/player.h"
+#include "game/quest.h"
+#include "game/random.h"
+#include "game/reaction.h"
+#include "game/reputation.h"
+#include "game/rumor.h"
+#include "game/script_name.h"
+#include "game/script.h"
 #include "game/skill.h"
 #include "game/spell.h"
-#include "game/random.h"
-#include "game/rumor.h"
+#include "game/stat.h"
+#include "game/tc.h"
+#include "game/timeevent.h"
+#include "game/ui.h"
 
 #define THIRTY_TWO 32
 
+typedef enum GeneratedDialog {
+    GD_PC2M,
+    GD_PC2F,
+    GD_CLS_M2M,
+    GD_CLS_M2F,
+    GD_CLS_F2F,
+    GD_CLS_F2M,
+    GD_CLS_PC2M,
+    GD_CLS_PC2F,
+    GD_RCE_M2M,
+    GD_RCE_M2F,
+    GD_RCE_F2F,
+    GD_RCE_F2M,
+    GD_NPC_M2M,
+    GD_NPC_M2F,
+    GD_NPC_F2F,
+    GD_NPC_F2M,
+    GD_DUMB_PC2M,
+    GD_DUMB_PC2F,
+    GD_CLS_DUMB_PC2M,
+    GD_CLS_DUMB_PC2F,
+    GD_CLS_DUMB_M2M,
+    GD_CLS_DUMB_M2F,
+    GD_CLS_DUMB_F2F,
+    GD_CLS_DUMB_F2M,
+    GD_RCE_DUMB_M2M,
+    GD_RCE_DUMB_M2F,
+    GD_RCE_DUMB_F2F,
+    GD_RCE_DUMB_F2M,
+    GD_STO_M2M,
+    GD_STO_M2F,
+    GD_STO_F2F,
+    GD_STO_F2M,
+} GeneratedDialog;
+
+typedef enum DialogCondition {
+    DIALOG_COND_PS,
+    DIALOG_COND_CH,
+    DIALOG_COND_PE,
+    DIALOG_COND_AL,
+    DIALOG_COND_MA,
+    DIALOG_COND_TA,
+    DIALOG_COND_GV,
+    DIALOG_COND_GF,
+    DIALOG_COND_QU,
+    DIALOG_COND_RE,
+    DIALOG_COND_GOLD,
+    DIALOG_COND_IN,
+    DIALOG_COND_HA,
+    DIALOG_COND_LF,
+    DIALOG_COND_LC,
+    DIALOG_COND_TR,
+    DIALOG_COND_SK,
+    DIALOG_COND_RU,
+    DIALOG_COND_RQ,
+    DIALOG_COND_FO,
+    DIALOG_COND_LE,
+    DIALOG_COND_QB,
+    DIALOG_COND_ME,
+    DIALOG_COND_NI,
+    DIALOG_COND_QA,
+    DIALOG_COND_RA,
+    DIALOG_COND_PA,
+    DIALOG_COND_SS,
+    DIALOG_COND_WA,
+    DIALOG_COND_WT,
+    DIALOG_COND_PV,
+    DIALOG_COND_PF,
+    DIALOG_COND_NA,
+    DIALOG_COND_AR,
+    DIALOG_COND_RP,
+    DIALOG_COND_IA,
+    DIALOG_COND_SC,
+    DIALOG_COND_COUNT,
+} DialogCondition;
+
+typedef enum DialogAction {
+    DIALOG_ACTION_GOLD,
+    DIALOG_ACTION_RE,
+    DIALOG_ACTION_QU,
+    DIALOG_ACTION_FL,
+    DIALOG_ACTION_CO,
+    DIALOG_ACTION_GV,
+    DIALOG_ACTION_GF,
+    DIALOG_ACTION_MM,
+    DIALOG_ACTION_AL,
+    DIALOG_ACTION_IN,
+    DIALOG_ACTION_LF,
+    DIALOG_ACTION_LC,
+    DIALOG_ACTION_TR,
+    DIALOG_ACTION_RU,
+    DIALOG_ACTION_RQ,
+    DIALOG_ACTION_JO,
+    DIALOG_ACTION_WA,
+    DIALOG_ACTION_LV,
+    DIALOG_ACTION_SS,
+    DIALOG_ACTION_SC,
+    DIALOG_ACTION_SO,
+    DIALOG_ACTION_UW,
+    DIALOG_ACTION_PV,
+    DIALOG_ACTION_PF,
+    DIALOG_ACTION_XP,
+    DIALOG_ACTION_NK,
+    DIALOG_ACTION_RP,
+    DIALOG_ACTION_NP,
+    DIALOG_ACTION_CE,
+    DIALOG_ACTION_FP,
+    DIALOG_ACTION_SU,
+    DIALOG_ACTION_OR,
+    DIALOG_ACTION_II,
+    DIALOG_ACTION_RI,
+    DIALOG_ACTION_ET,
+    DIALOG_ACTION_COUNT,
+} DialogAction;
+
 typedef struct DialogEntry {
     /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
+    /* 0004 */ char* field_4;
+    union {
+        /* 0008 */ int val;
+        /* 0008 */ char* field_8;
+    } data;
     /* 000C */ int field_C;
-    /* 0010 */ int field_10;
+    /* 0010 */ char* field_10;
     /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
+    /* 0018 */ char* field_18;
 } DialogEntry;
 
 static_assert(sizeof(DialogEntry) == 0x1C, "wrong size");
@@ -39,11 +170,70 @@ typedef struct Dialog {
 
 static_assert(sizeof(Dialog) == 0x120, "wrong size");
 
+static void sub_414810(int a1, int a2, int a3, int a4, DialogEntryNode* a5);
 static void sub_414E60(DialogEntryNode* a1, bool randomize);
+static int sub_414F50(DialogEntryNode* a1, int* a2);
+static bool sub_4150D0(DialogEntryNode* a1, char* a2);
+static bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3);
+static int sub_4167C0(const char* str);
+static bool sub_416840(DialogEntryNode* a1, bool a2);
+static bool sub_416AB0(int dlg, DialogEntry* a2);
+static void sub_416B00(char* dst, char* src, DialogEntryNode* a3);
+static bool sub_416C10(int a1, int a2, DialogEntryNode* a3);
+static void sub_417590(int a1, int* a2, int* a3);
+static bool sub_4175D0(const char* path, int* index_ptr);
+static void sub_417720(Dialog* dialog);
+static bool sub_417860(TigFile* stream, DialogEntry* entry, int* a3);
+static bool sub_417C20(TigFile* stream, char* str, int* line_ptr);
+static TigFile* sub_417D60(const char* fname, const char* mode);
+static int sub_417D80(TigFile* stream);
+static int sub_417D90(TigFile* stream);
+static int sub_417E00(const DialogEntry* a, const DialogEntry* b);
+static void sub_417E20(DialogEntry* a1, const DialogEntry* a2);
+static void sub_417F40(DialogEntry* a1);
+static int sub_417F90(int* values, char* str);
+static void sub_4181D0(int a1);
+static void sub_418250(int a1);
+static void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end);
+static void sub_418390(char* str, DialogEntryNode* a2, int start);
+static void sub_418460(char* str, DialogEntryNode* a2);
+static void sub_418480(char* str, DialogEntryNode* a2, int a3);
+static void sub_4185F0(char* str, DialogEntryNode* a2, int a3);
+static void sub_418780(char* str, DialogEntryNode* a2, int a3, int a4);
+static bool sub_418870(char* str, DialogEntryNode* a2, int a3);
+static int sub_4189C0(const char* a1, int a2);
+static void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogEntryNode *a6);
+static void sub_418B30(int a1, DialogEntryNode* a2);
+static void sub_418C40(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_418CA0(int* a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_418DE0(int a1, DialogEntryNode* a2);
+static void sub_418F30(int a1, DialogEntryNode* a2);
+static void sub_418FC0(int a1, int* a2, int a3, int a4, DialogEntryNode* a5);
+static void sub_4190E0(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_419190(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_4191E0(int a1, int a2, DialogEntryNode* a3);
+static void sub_419260(DialogEntryNode* a1, const char* a2);
+static bool sub_4197D0(unsigned int flags, int a2, DialogEntryNode* a3);
+static void sub_419830(int a1, int a2, DialogEntryNode* a3);
+static void sub_419A00(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_419AC0(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_419B50(int a1, int a2, DialogEntryNode* a3);
+static void sub_419C30(int a1, int a2, DialogEntryNode* a3);
+static void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4);
+static int sub_419E20(int64_t obj, int* a2, int cnt);
+static void sub_419E70(const char* str, int a2, int a3, int a4, DialogEntryNode* a5);
+static void sub_41A0F0(int a1, int a2, int a3, DialogEntryNode* a4);
 static void sub_41A150(int a1, int a2, int a3, DialogEntryNode* a4);
 static void sub_41A230(int a1, int a2, int a3, DialogEntryNode* a4);
 static void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4);
+static void sub_41A3E0(int a1, DialogEntryNode* a2);
+static void sub_41A440(char* buffer, DialogEntryNode* a2);
+static void sub_41A520(int a1, DialogEntryNode* a2);
+static void sub_41A620(int a1, DialogEntryNode* a2);
 static void sub_41A700(int a1, DialogEntryNode* a2);
+static void sub_41A880(int a1, int a2, DialogEntryNode* a3);
+static void sub_41A8C0(int a1, int a2, int a3, DialogEntryNode* a4);
 
 // 0x5A063C
 static const char* off_5A063C[] = {
@@ -82,7 +272,7 @@ static const char* off_5A063C[] = {
 };
 
 // 0x5A06BC
-static const char* off_5A06BC[] = {
+static const char* off_5A06BC[DIALOG_COND_COUNT] = {
     "ps",
     "ch",
     "pe",
@@ -123,7 +313,7 @@ static const char* off_5A06BC[] = {
 };
 
 // 0x5A0750
-static const char* off_5A0750[] = {
+static const char* off_5A0750[DIALOG_ACTION_COUNT] = {
     "$$",
     "re",
     "qu",
@@ -161,6 +351,9 @@ static const char* off_5A0750[] = {
     "et",
 };
 
+// 0x5D1224
+static char byte_5D1224[MAX_STRING];
+
 // 0x5D19F4
 static mes_file_handle_t* dword_5D19F4;
 
@@ -180,7 +373,7 @@ static int dword_5D1A04;
 static Dialog* dword_5D1A08;
 
 // 0x5D1A0C
-static bool dword_5D1A0C;
+static bool dialog_show_numbers;
 
 // 0x412D40
 bool dialog_init(GameInitInfo* init_info)
@@ -282,20 +475,20 @@ bool sub_412FD0(DialogEntryNode* a1)
     int64_t y1;
     int64_t y2;
 
-    if (sub_4AD800(a1->field_38, a1->field_8, 0)) {
+    if (sub_4AD800(a1->npc_obj, a1->pc_obj, 0) != 0) {
         return false;
     }
 
-    sub_4C1020(a1->field_38, a1->field_8);
+    sub_4C1020(a1->npc_obj, a1->pc_obj);
 
-    if (sub_45D8D0(a1->field_38) || !sub_4AE120(a1->field_38, a1->field_8)) {
-        if (player_is_pc_obj_(a1->field_8)) {
-            loc1 = obj_field_int64_get(a1->field_8, OBJ_F_LOCATION);
-            loc2 = obj_field_int64_get(a1->field_38, OBJ_F_LOCATION);
+    if (sub_45D8D0(a1->npc_obj) || !sub_4AE120(a1->npc_obj, a1->pc_obj)) {
+        if (player_is_pc_obj(a1->pc_obj)) {
+            loc1 = obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION);
+            loc2 = obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION);
             sub_4B8680(loc1, &tmp, &y1);
             sub_4B8680(loc2, &tmp, &y2);
             if (y2 > y1) {
-                sub_4B8CE0(loc2)
+                sub_4B8CE0(loc2);
             } else {
                 sub_4B8CE0(loc1);
             }
@@ -325,7 +518,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
         && a1->field_17E8 != 6
         && a1->field_17E8 != 8
         && a1->field_17E8 != 9) {
-        if (sub_4AD800(a1->field_38, a1->field_8, 0)) {
+        if (sub_4AD800(a1->npc_obj, a1->pc_obj, 0) != 0) {
             a1->field_17E8 = 1;
             return;
         }
@@ -333,7 +526,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
         if (a1->field_17E8 == 3) {
             sub_417590(a1->field_17EC, &v1, &v2);
             v3 = 0;
-        } else if (sub_415BA0(a1, &(a1->field_182C[a2]), a2)) {
+        } else if (sub_415BA0(a1, a1->field_182C[a2], a2)) {
             v1 = a1->field_17F0[a2];
             v2 = a1->field_1804[a2];
             v3 = a1->field_1818[a2];
@@ -341,7 +534,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
             return;
         }
 
-        if (sub_45D8D0(a1->field_38) || !sub_4AE120(a1->field_38, a1->field_8)) {
+        if (sub_45D8D0(a1->npc_obj) || !sub_4AE120(a1->npc_obj, a1->pc_obj)) {
             sub_414810(v1, a2, v3, a2, a1);
         } else {
             sub_4185F0(a1->field_70, a1, 1000);
@@ -353,7 +546,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
 // 0x413280
 void sub_413280(DialogEntryNode* a1)
 {
-    sub_4C10A0(a1->field_38, a1->field_8);
+    sub_4C10A0(a1->npc_obj, a1->pc_obj);
 }
 
 // 0x4132A0
@@ -377,20 +570,25 @@ void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
 // 0x413360
 void sub_413360(int64_t a1, int64_t a2, DialogEntryNode* a3)
 {
-    a3->field_8 = a2;
-    a3->field_38 = a1;
-    sub_443EB0(a3->field_38, &(a3->field_40));
-    sub_443EB0(a3->field_8, &(a3->field_10));
+    a3->pc_obj = a2;
+    a3->npc_obj = a1;
+    sub_443EB0(a3->npc_obj, &(a3->field_40));
+    sub_443EB0(a3->pc_obj, &(a3->field_10));
 }
 
 // 0x4133B0
 void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4)
 {
     DialogEntryNode v1;
+    int reaction_level;
+    int reaction_type;
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
-        if (reaction_translate(sub_4C0CC0(a1, a2)) < 4) {
+
+        reaction_level = sub_4C0CC0(a1, a2);
+        reaction_type = reaction_translate(reaction_level);
+        if (reaction_type < REACTION_SUSPICIOUS) {
             sub_418780(buffer, &v1, 2000, 2099);
         } else {
             sub_418780(buffer, &v1, 1900, 1999);
@@ -535,7 +733,7 @@ void sub_4139A0(int64_t a1, int64_t a2, char* a3)
 // 0x413A30
 void sub_413A30(DialogEntryNode* a1, bool a2)
 {
-    if (a2 || !sub_4AD800(a1->field_38, a1->field_8, 0)) {
+    if (a2 || sub_4AD800(a1->npc_obj, a1->pc_obj, 0) == 0) {
         a1->field_17EC = a1->field_68;
         a1->field_17E8 = 0;
         sub_416840(a1, 0);
@@ -1073,7 +1271,7 @@ void sub_414E60(DialogEntryNode* a1, bool randomize)
     int v2;
 
     for (index = 0; index < 5; index++) {
-        a1->field_182C[index] = 0;
+        a1->field_182C[index] = NULL;
         a1->field_460[index][0] = '\0';
     }
 
@@ -1083,7 +1281,7 @@ void sub_414E60(DialogEntryNode* a1, bool randomize)
         a1->field_1844 = random_seed_generate();
     }
 
-    if (sub_416840(a1, a2)) {
+    if (sub_416840(a1, randomize)) {
         a1->field_45C = sub_414F50(a1, v1);
         v2 = 0;
         for (index = 0; index < a1->field_45C; index++) {
@@ -1101,33 +1299,1034 @@ void sub_414E60(DialogEntryNode* a1, bool randomize)
 }
 
 // 0x414F50
-void sub_414F50()
+int sub_414F50(DialogEntryNode* a1, int* a2)
 {
-    // TODO: Incomplete.
+    DialogEntry key;
+    int gender;
+    int intelligence;
+    Dialog* dialog;
+    DialogEntry *entry;
+    int idx;
+    int cnt;
+
+    key.field_0 = a1->field_17EC;
+    gender = stat_level(a1->pc_obj, STAT_GENDER);
+    intelligence = stat_level(a1->pc_obj, STAT_INTELLIGENCE);
+
+    if (intelligence > LOW_INTELLIGENCE && sub_45FC00(a1->pc_obj)) {
+        intelligence = 1;
+    }
+
+    dialog = &(dword_5D1A08[a1->field_0]);
+    entry = bsearch(&key,
+        dialog->entries,
+        dialog->entries_length,
+        sizeof(key),
+        sub_417E00);
+
+    if (entry == NULL) {
+        return 0;
+    }
+
+    cnt = 0;
+
+    for (idx = (entry - dialog->entries) + 1; idx < dialog->entries_length && cnt < 5; idx++) {
+        entry = &(dialog->entries[idx]);
+        if (entry->field_C == 0) {
+            return cnt;
+        }
+
+        if (entry->data.val != -1 || entry->data.val == gender) {
+            if ((entry->field_C < 0 && intelligence <= entry->field_C)
+                || (entry->field_C > 0 && intelligence >= entry->field_C)) {
+                if (entry->field_10 == NULL || sub_4150D0(a1, entry->field_10)) {
+                    a2[cnt++] = entry->field_0;
+                }
+            }
+        }
+    }
+
+    return cnt;
 }
 
 // 0x4150D0
-void sub_4150D0()
+bool sub_4150D0(DialogEntryNode* a1, char* a2)
 {
-    // TODO: Incomplete.
+    char* pch;
+    int cond;
+    int value;
+    ObjectList followers;
+    ObjectNode* node;
+    int gold;
+    int training;
+    int level;
+    int v39;
+    int v40;
+    bool inverse;
+    int64_t v2;
+
+    if (a2 == NULL || a2[0] == '\0') {
+        return true;
+    }
+
+    a2[2] = '\0';
+
+    pch = a2;
+    while (*pch != '\0') {
+        while (*pch != '\0' && !isalpha(*pch) && *pch != '$') {
+            pch++;
+        }
+
+        if (*pch == '\0') {
+            break;
+        }
+
+        a2[0] = *pch++;
+        if (*pch == '\0') {
+            break;
+        }
+
+        a2[1] = *pch++;
+
+        value = atoi(pch);
+        for (cond = 0; cond < DIALOG_COND_COUNT; cond++) {
+            if (strcmpi(off_5A06BC[cond], a2) == 0) {
+                break;
+            }
+        }
+
+        switch (cond) {
+        case DIALOG_COND_PS:
+            if (value < 0) {
+                if (basic_skill_level(a1->pc_obj, BASIC_SKILL_PERSUATION) > -value) {
+                    return false;
+                }
+            } else {
+                if (basic_skill_level(a1->pc_obj, BASIC_SKILL_PERSUATION) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_CH:
+            if (value < 0) {
+                if (stat_level(a1->pc_obj, STAT_CHARISMA) > -value) {
+                    return false;
+                }
+            } else {
+                if (stat_level(a1->pc_obj, STAT_CHARISMA) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_PE:
+            if (value < 0) {
+                if (stat_level(a1->pc_obj, STAT_PERCEPTION) > -value) {
+                    return false;
+                }
+            } else {
+                if (stat_level(a1->pc_obj, STAT_PERCEPTION) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_AL:
+            if (value < 0) {
+                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) > -value) {
+                    return false;
+                }
+            } else {
+                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_MA:
+            if (value < 0) {
+                if (stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) > -value) {
+                    return false;
+                }
+            } else {
+                if (stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_TA:
+            if (value < 0) {
+                if (-stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) > -value) {
+                    return false;
+                }
+            } else {
+                if (-stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_GV:
+            if (script_gl_var_get(value) != sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_GF:
+            if (script_gl_flag_get(value) != sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_QU:
+            if (sub_4C4CB0(a1->pc_obj, value) != sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_RE:
+            if (value < 0) {
+                if (sub_4C0CC0(a1->npc_obj, a1->pc_obj) > -value) {
+                    return false;
+                }
+            } else {
+                if (sub_4C0CC0(a1->npc_obj, a1->pc_obj) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_GOLD:
+            gold = item_gold_get(a1->pc_obj);
+            object_get_followers(a1->pc_obj, &followers);
+            node = followers.head;
+            while (node != NULL) {
+                gold += item_gold_get(node->obj);
+                node = node->next;
+            }
+            object_list_destroy(&followers);
+            if (value < 0) {
+                if (gold > value) {
+                    return false;
+                }
+            } else {
+                if (gold < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_IN:
+            if (value < 0) {
+                value = -value;
+                if (item_find_by_name(a1->npc_obj, value) == OBJ_HANDLE_NULL) {
+                    v2 = sub_45F650(a1->npc_obj);
+                    if (v2 == OBJ_HANDLE_NULL) {
+                        return false;
+                    }
+                    if (item_find_by_name(v2, value) == OBJ_HANDLE_NULL) {
+                        return false;
+                    }
+                }
+            } else {
+                if (!item_find_by_name(a1->pc_obj, value)) {
+                    object_get_followers(a1->pc_obj, &followers);
+                    node = followers.head;
+                    while (node != NULL) {
+                        if (item_find_by_name(node->obj, value) == OBJ_HANDLE_NULL) {
+                            break;
+                        }
+                        node = node->next;
+                    }
+                    object_list_destroy(&followers);
+                    if (node == NULL) {
+                        return false;
+                    }
+                }
+            }
+            break;
+        case DIALOG_COND_HA:
+            if (value < 0) {
+                if (basic_skill_level(a1->pc_obj, BASIC_SKILL_HAGGLE) > -value) {
+                    return false;
+                }
+            } else {
+                if (basic_skill_level(a1->pc_obj, BASIC_SKILL_HAGGLE) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_LF:
+            if (script_local_flag_get(a1->npc_obj, SAP_DIALOG, value) != sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_LC:
+            if (script_local_counter_get(a1->npc_obj, SAP_DIALOG, value) != sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_TR:
+            training = sub_4167C0(pch);
+            if (IS_TECH_SKILL(value)) {
+                if (training < 0) {
+                    if (tech_skill_get_training(a1->pc_obj, GET_TECH_SKILL(value)) > -training) {
+                        return false;
+                    }
+                } else {
+                    if (tech_skill_get_training(a1->pc_obj, GET_TECH_SKILL(value)) < training) {
+                        return false;
+                    }
+                }
+            } else {
+                if (training < 0) {
+                    if (basic_skill_get_training(a1->pc_obj, GET_BASIC_SKILL(value)) > -training) {
+                        return false;
+                    }
+                } else {
+                    if (basic_skill_get_training(a1->pc_obj, GET_BASIC_SKILL(value)) < training) {
+                        return false;
+                    }
+                }
+            }
+            break;
+        case DIALOG_COND_SK:
+            level = sub_4167C0(pch);
+            if (IS_TECH_SKILL(value)) {
+                if (level < 0) {
+                    if (tech_skill_level(a1->pc_obj, GET_TECH_SKILL(value)) > -level) {
+                        return false;
+                    }
+                } else {
+                    if (tech_skill_level(a1->pc_obj, GET_TECH_SKILL(value)) < level) {
+                        return false;
+                    }
+                }
+            } else {
+                if (level < 0) {
+                    if (basic_skill_level(a1->pc_obj, GET_BASIC_SKILL(value)) > -level) {
+                        return false;
+                    }
+                } else {
+                    if (basic_skill_level(a1->pc_obj, GET_BASIC_SKILL(value)) < level) {
+                        return false;
+                    }
+                }
+            }
+            break;
+        case DIALOG_COND_RU:
+            if (value < 0) {
+                if (sub_4C58D0(a1->pc_obj, -value)) {
+                    return false;
+                }
+            } else {
+                if (!sub_4C58D0(a1->pc_obj, value)) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_RQ:
+            if (value < 0) {
+                if (rumor_is_known(-value)) {
+                    return false;
+                }
+            } else {
+                if (!rumor_is_known(value)) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_FO:
+            if (value == 0) {
+                if (critter_leader_get(a1->npc_obj) != a1->pc_obj) {
+                    return false;
+                }
+            } else if (value == 1) {
+                if (critter_leader_get(a1->npc_obj) == a1->pc_obj) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_LE:
+            if (value < 0) {
+                if (-stat_level(a1->pc_obj, STAT_LEVEL) > -value) {
+                    return false;
+                }
+            } else {
+                if (-stat_level(a1->pc_obj, STAT_LEVEL) < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_QB:
+            if (sub_4C4CB0(a1->pc_obj, value) > sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_ME:
+            if (value == 0) {
+                if (sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
+                    return false;
+                }
+            } else if (value == 1) {
+                if (!sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_NI:
+            if (value < 0) {
+                value = -value;
+                if (item_find_by_name(a1->npc_obj, value) != OBJ_HANDLE_NULL) {
+                    return false;
+                }
+
+                v2 = sub_45F650(a1->npc_obj);
+                if (v2 != OBJ_HANDLE_NULL) {
+                    if (item_find_by_name(v2, value) != OBJ_HANDLE_NULL) {
+                        return false;
+                    }
+                }
+            } else {
+                if (item_find_by_name(a1->pc_obj, value)) {
+                    return false;
+                }
+
+                object_get_followers(a1->pc_obj, &followers);
+                node = followers.head;
+                while (node != NULL) {
+                    if (item_find_by_name(node->obj, value)) {
+                        break;
+                    }
+                    node = node->next;
+                }
+                object_list_destroy(&followers);
+                if (node != NULL) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_QA:
+            if (sub_4C4CB0(a1->pc_obj, value) < sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_RA:
+            if (value > 0) {
+                if (stat_level(a1->pc_obj, STAT_RACE) + 1 != value) {
+                    return false;
+                }
+            } else {
+                if (stat_level(a1->pc_obj, STAT_RACE) + 1 == -value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_PA:
+            if (value < 0) {
+                value = -value;
+                inverse = true;
+            } else {
+                inverse = false;
+            }
+            object_get_followers(a1->pc_obj, &followers);
+            node = followers.head;
+            while (node != NULL) {
+                if ((obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
+                    && obj_field_int32_get(node->obj, OBJ_F_NAME) == value) {
+                    break;
+                }
+                node = node->next;
+            }
+            object_list_destroy(&followers);
+            if (!inverse) {
+                if (node == NULL) {
+                    return false;
+                }
+            } else {
+                if (node != NULL) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_SS:
+            if (value < 0) {
+                if (sub_445090() > -value) {
+                    return false;
+                }
+            } else {
+                if (sub_445090() < value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_WA:
+            if ((obj_field_int32_get(a1->npc_obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0) {
+                if (value == 0) {
+                    return false;
+                }
+            } else {
+                if (value == 1) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_WT:
+            if ((obj_field_int32_get(a1->npc_obj, OBJ_F_NPC_FLAGS) & ONF_JILTED) != 0) {
+                if (value == 0) {
+                    return false;
+                }
+            } else {
+                if (value == 1) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_PV:
+            if (script_pc_gl_var_get(a1->pc_obj, value) != sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_PF:
+            if (script_pc_gl_flag_get(a1->pc_obj, value) != sub_4167C0(pch)) {
+                return false;
+            }
+            break;
+        case DIALOG_COND_NA:
+            if (value < 0) {
+                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) > value) {
+                    return false;
+                }
+            } else {
+                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) < -value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_AR:
+            if (value > 0) {
+                if (!sub_4CAF50(a1->pc_obj, value)) {
+                    return false;
+                }
+            } else {
+                if (sub_4CAF50(a1->pc_obj, -value)) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_RP:
+            if (value > 0) {
+                if (!reputation_has(a1->pc_obj, value)) {
+                    return false;
+                }
+            } else {
+                if (reputation_has(a1->pc_obj, -value)) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_IA:
+            if (value > 0) {
+                if (sub_4CB6A0(a1->pc_obj) != value) {
+                    return false;
+                }
+            } else {
+                if (sub_4CB6A0(a1->pc_obj) == -value) {
+                    return false;
+                }
+            }
+            break;
+        case DIALOG_COND_SC:
+            v39 = sub_4167C0(pch);
+            v40 = sub_4B1AB0(a1->pc_obj, value);
+            if (v39 > 0) {
+                if (v40 < v39) {
+                    return false;
+                }
+            } else {
+                if (v40 > -v39) {
+                    return false;
+                }
+            }
+            break;
+        default:
+            // Unknown condition.
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x415BA0
-void sub_415BA0()
+bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
 {
-    // TODO: Incomplete.
+    char* pch;
+    int act;
+    int value;
+    ObjectList followers;
+    ObjectNode* node;
+    bool v57 = true;
+    bool v59 = false;
+
+    if (a2 == NULL || a2[0] == '\0') {
+        return true;
+    }
+
+    a2[2] = '\0';
+
+    pch = a2;
+    while (*pch != '\0') {
+        while (*pch != '\0' && !isalpha(*pch) && *pch != '$') {
+            pch++;
+        }
+
+        if (*pch == '\0') {
+            break;
+        }
+
+        a2[0] = *pch++;
+        if (*pch == '\0') {
+            break;
+        }
+
+        a2[1] = *pch++;
+
+        value = atoi(pch);
+        for (act = 0; act < DIALOG_ACTION_COUNT; act++) {
+            if (strcmpi(off_5A0750[act], a2) == 0) {
+                break;
+            }
+        }
+
+        switch (act) {
+        case DIALOG_ACTION_GOLD:
+            if (value > 0) {
+                sub_464830(OBJ_HANDLE_NULL, a1->pc_obj, value, OBJ_HANDLE_NULL);
+            } else if (value < 0) {
+                int total_gold;
+
+                value = -value;
+
+                total_gold = item_gold_get(a1->pc_obj);
+                sub_464830(a1->pc_obj, a1->npc_obj, value, OBJ_HANDLE_NULL);
+
+                value -= total_gold;
+                if (value > 0) {
+                    object_get_followers(a1->pc_obj, &followers);
+                    node = followers.head;
+                    while (node != NULL) {
+                        if (value <= 0) {
+                            break;
+                        }
+
+                        total_gold = item_gold_get(node->obj);
+                        sub_464830(node->obj, a1->npc_obj, value, OBJ_HANDLE_NULL);
+
+                        node = node->next;
+                    }
+                    object_list_destroy(&followers);
+                }
+            }
+            break;
+        case DIALOG_ACTION_RE: {
+            int reaction;
+
+            reaction = sub_4C0CC0(a1->npc_obj, a1->pc_obj);
+
+            while (isspace(*pch)) {
+                pch++;
+            }
+
+            if (*pch == '+' || *pch == '-') {
+                sub_4C0DE0(a1->npc_obj, a1->pc_obj, value);
+            } else if (*pch == '>') {
+                if (reaction < value) {
+                    sub_4C0DE0(a1->npc_obj, a1->pc_obj, value - reaction);
+                }
+            } else if (*pch == '<') {
+                if (reaction > value) {
+                    sub_4C0DE0(a1->npc_obj, a1->pc_obj, value - reaction);
+                }
+            } else {
+                sub_4C0DE0(a1->npc_obj, a1->pc_obj, value - reaction);
+            }
+
+            break;
+        }
+        case DIALOG_ACTION_QU:
+            sub_4C4D20(a1->pc_obj, value, sub_4167C0(pch), a1->npc_obj);
+            break;
+        case DIALOG_ACTION_FL:
+            a1->field_68 = value;
+            sub_413A30(a1, false);
+            a1->field_17E8 = 4;
+            v57 = false;
+            break;
+        case DIALOG_ACTION_CO:
+            v59 = true;
+            break;
+        case DIALOG_ACTION_GV:
+            script_gl_var_set(value, sub_4167C0(pch));
+            break;
+        case DIALOG_ACTION_GF:
+            script_gl_flag_set(value, sub_4167C0(pch));
+            break;
+        case DIALOG_ACTION_MM:
+            sub_4CAFD0(a1->pc_obj, value);
+            break;
+        case DIALOG_ACTION_AL: {
+            int alignment;
+
+            alignment = stat_get_base(a1->pc_obj, STAT_ALIGNMENT);
+
+            while (isspace(*pch)) {
+                pch++;
+            }
+
+            if (*pch == '+' || *pch == '-') {
+                stat_set_base(a1->pc_obj, STAT_ALIGNMENT, alignment + value);
+            } else if (*pch == '>') {
+                if (alignment < value) {
+                    stat_set_base(a1->pc_obj, STAT_ALIGNMENT, value);
+                }
+            } else if (*pch == '<') {
+                if (alignment > value) {
+                    stat_set_base(a1->pc_obj, STAT_ALIGNMENT, value);
+                }
+            } else {
+                stat_set_base(a1->pc_obj, STAT_ALIGNMENT, value);
+            }
+
+            break;
+        }
+        case DIALOG_ACTION_IN: {
+            int64_t item_obj;
+            int64_t substitute_inventory_obj;
+            int64_t parent_obj;
+
+            if (value < 0) {
+                value = -value;
+
+                item_obj = item_find_by_name(a1->npc_obj, value);
+                if (item_obj == OBJ_HANDLE_NULL) {
+                    substitute_inventory_obj = sub_45F650(a1->npc_obj);
+                    if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
+                        item_obj = item_find_by_name(substitute_inventory_obj, value);
+                    }
+                }
+
+                if (item_obj != OBJ_HANDLE_NULL) {
+                    sub_4617F0(item_obj, a1->pc_obj);
+                    item_parent(item_obj, &parent_obj);
+                    if (parent_obj != a1->pc_obj) {
+                        item_remove(item_obj);
+                        sub_466E50(item_obj, obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION));
+                    }
+                }
+            } else {
+                item_obj = item_find_by_name(a1->pc_obj, value);
+                if (item_obj == OBJ_HANDLE_NULL) {
+                    object_get_followers(a1->pc_obj, &followers);
+                    node = followers.head;
+                    while (node != NULL) {
+                        item_obj = item_find_by_name(node->obj, value);
+                        if (item_obj != OBJ_HANDLE_NULL) {
+                            break;
+                        }
+                        node = node->next;
+                    }
+                    object_list_destroy(&followers);
+                }
+
+                if (item_obj != OBJ_HANDLE_NULL) {
+                    sub_4617F0(item_obj, a1->npc_obj);
+                    item_parent(item_obj, &parent_obj);
+                    if (parent_obj != a1->npc_obj) {
+                        if (sub_45DDA0(a1->npc_obj) != OBJ_HANDLE_NULL) {
+                            item_remove(item_obj);
+                            sub_466E50(item_obj, obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION));
+                        } else {
+                            sub_43CCA0(item_obj);
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        case DIALOG_ACTION_LF:
+            script_local_flag_set(a1->npc_obj, SAP_DIALOG, value, sub_4167C0(pch));
+            break;
+        case DIALOG_ACTION_LC:
+            script_local_counter_set(a1->npc_obj, SAP_DIALOG, value, sub_4167C0(pch));
+            break;
+        case DIALOG_ACTION_TR: {
+            int training;
+
+            training = sub_4167C0(pch);
+            if (IS_TECH_SKILL(value)) {
+                tech_skill_set_training(a1->pc_obj, GET_TECH_SKILL(value), training);
+            } else {
+                basic_skill_set_training(a1->pc_obj, GET_BASIC_SKILL(value), training);
+            }
+            break;
+        }
+        case DIALOG_ACTION_RU:
+            sub_4C57E0(a1->pc_obj, value);
+            break;
+        case DIALOG_ACTION_RQ:
+            rumor_set_known(value);
+            break;
+        case DIALOG_ACTION_JO: {
+            int v41;
+            int rc;
+
+            v41 = sub_4167C0(pch);
+            rc = sub_4AD950(a1->npc_obj, a1->pc_obj, value);
+            if (rc == 0) {
+                critter_follow(a1->npc_obj, a1->pc_obj, value);
+                a1->field_17EC = v41;
+                a1->field_17E8 = 0;
+                sub_414E60(a1, false);
+                v57 = false;
+            } else {
+                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->field_70, &(a1->field_458));
+                a1->field_45C = 1;
+                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                a1->field_17F0[0] = a1->field_17F0[a3];
+                a1->field_1804[0] = a1->field_1804[a3];
+                a1->field_182C[0] = 0;
+                v57 = false;
+            }
+            break;
+        }
+        case DIALOG_ACTION_WA:
+            sub_4AA7A0(a1->npc_obj);
+            break;
+        case DIALOG_ACTION_LV:
+            critter_disband(a1->npc_obj, true);
+            break;
+        case DIALOG_ACTION_SS:
+            sub_4450A0(value);
+            break;
+        case DIALOG_ACTION_SC:
+            sub_45F5C0(a1->npc_obj);
+            break;
+        case DIALOG_ACTION_SO:
+            sub_45F600(a1->npc_obj);
+            break;
+        case DIALOG_ACTION_UW: {
+            int v43;
+            int rc;
+
+            v43 = sub_4167C0(pch);
+            rc = sub_4AD950(a1->npc_obj, a1->pc_obj, value);
+            if (rc == 0) {
+                sub_4AA8C0(a1->npc_obj, value);
+                a1->field_17EC = v43;
+                a1->field_17E8 = 0;
+                sub_414E60(a1, false);
+                v57 = false;
+            } else {
+                sub_413A90(a1->npc_obj, a1->pc_obj, rc, a1->field_70, &(a1->field_458));
+                a1->field_45C = 1;
+                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                a1->field_17F0[0] = a1->field_17F0[a3];
+                a1->field_1804[0] = a1->field_1804[a3];
+                a1->field_182C[0] = NULL;
+                v57 = false;
+            }
+            break;
+        }
+        case DIALOG_ACTION_PV:
+            script_pc_gl_var_set(a1->pc_obj, value, sub_4167C0(pch));
+            break;
+        case DIALOG_ACTION_PF:
+            script_pc_gl_flag_set(a1->pc_obj, value, sub_4167C0(pch));
+            break;
+        case DIALOG_ACTION_XP:
+            sub_45F110(a1->pc_obj, quest_get_xp(value));
+            break;
+        case DIALOG_ACTION_NK:
+            sub_45D900(a1->npc_obj);
+            break;
+        case DIALOG_ACTION_RP:
+            if (value > 0) {
+                reputation_add(a1->pc_obj, value);
+            } else {
+                reputation_remove(a1->pc_obj, -value);
+            }
+            break;
+        case DIALOG_ACTION_NP:
+            newspaper_queue(value, sub_4167C0(pch));
+            break;
+        case DIALOG_ACTION_CE:
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            a1->field_17E8 = 5;
+            v57 = false;
+            break;
+        case DIALOG_ACTION_FP:
+            stat_set_base(a1->pc_obj,
+                STAT_FATE_POINTS,
+                stat_get_base(a1->pc_obj, STAT_FATE_POINTS) + 1);
+            break;
+        case DIALOG_ACTION_SU:
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            a1->field_17E8 = 7;
+            v57 = false;
+            break;
+        case DIALOG_ACTION_OR:
+            critter_origin_set(a1->npc_obj, value);
+            break;
+        case DIALOG_ACTION_II:
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            a1->field_17E8 = 8;
+            v57 = false;
+            break;
+        case DIALOG_ACTION_RI:
+            sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+            a1->field_17E8 = 9;
+            v57 = false;
+            break;
+        case DIALOG_ACTION_ET: {
+            int v50;
+            int training;
+            int level;
+
+            v50 = sub_4167C0(pch);
+            if (IS_TECH_SKILL(value)) {
+                level = tech_skill_level(a1->pc_obj, GET_TECH_SKILL(value));
+                training = tech_skill_level(a1->pc_obj, GET_TECH_SKILL(value));
+            } else {
+                level = basic_skill_level(a1->pc_obj, GET_BASIC_SKILL(value));
+                training = basic_skill_level(a1->pc_obj, GET_BASIC_SKILL(value));
+            }
+
+            if (level < sub_4C69C0(TECH_SKILL_PICK_LOCKS)) {
+                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->field_70, &(a1->field_458));
+                sub_418780(a1->field_70, a1, 6200, 6299);
+                a1->field_45C = 1;
+                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                a1->field_17F0[0] = a1->field_17F0[a3];
+                a1->field_1804[0] = a1->field_1804[a3];
+                a1->field_182C[0] = NULL;
+                v57 = false;
+            } else if (training < TRAINING_APPRENTICE) {
+                sub_413A90(a1->npc_obj, a1->pc_obj, 34, a1->field_70, &(a1->field_458));
+                sub_418780(a1->field_70, a1, 6300, 6399);
+                a1->field_45C = 1;
+                sub_4182D0(a1->field_460[0], a1, 600, 699);
+                a1->field_17F0[0] = a1->field_17F0[a3];
+                a1->field_1804[0] = a1->field_1804[a3];
+                a1->field_182C[0] = NULL;
+                v57 = false;
+            } else {
+                a1->field_17EC = v50;
+                a1->field_17E8 = 0;
+                sub_414E60(a1, false);
+                v57 = false;
+            }
+            break;
+        }
+        default:
+            // Unknown action.
+            return v57;
+        }
+    }
+
+    if (v59) {
+        sub_4A9650(a1->pc_obj, a1->npc_obj, 1, 0);
+    }
+
+    return v57;
 }
 
 // 0x4167C0
-void sub_4167C0()
+int sub_4167C0(const char* str)
 {
-    // TODO: Incomplete.
+    while (isspace(*str)) {
+        str++;
+    }
+
+    while (isdigit(*str)) {
+        str++;
+    }
+
+    return atoi(str);
 }
 
 // 0x416840
-void sub_416840()
+bool sub_416840(DialogEntryNode* a1, bool a2)
 {
-    // TODO: Incomplete.
+    DialogEntry v1;
+
+    v1.field_0 = a1->field_17EC;
+    if (!sub_416AB0(a1->field_0, &v1)) {
+        a1->field_458 = -1;
+        a1->field_70[0] = ' ';
+        a1->field_70[1] = '\0';
+        return false;
+    }
+
+    a1->field_1840 = v1.field_14;
+    a1->field_458 = sub_4189C0(v1.field_10, a1->field_6C);
+
+    if (!a2) {
+        sub_415BA0(a1, v1.field_18, 0);
+    }
+
+    if (strnicmp(v1.field_4, "g:", 2) == 0) {
+        sub_419260(a1, &(v1.field_4[2]));
+
+        if (a1->field_17E8) {
+            a1->field_45C = 0;
+            return false;
+        }
+        return true;
+    }
+
+    if (strcmpi(v1.field_4, "i:") == 0) {
+        sub_4185F0(a1->field_70, a1, 1000);
+        return true;
+    }
+
+    if (strnicmp(v1.field_4, "m:", 2) == 0) {
+        char* pch;
+        int v2;
+        int v3;
+        int v4;
+        int v5;
+        int v6;
+        int v7;
+
+        pch = strchr(v1.field_4, '$') + 1;
+        v2 = atoi(pch);
+
+        pch = strchr(pch, ',') + 1;
+        v3 = atoi(pch);
+
+        sub_417590(v3, &v4, &v5);
+        sub_417590(v1.field_14, &v6, &v7);
+        sub_418A40(v2, v4, v5, v6, v7, a1);
+
+        return false;
+    }
+
+    if (strnicmp(v1.field_4, "r:", 2) == 0) {
+        char* pch;
+        int v8;
+        int v9;
+        int v10[100];
+
+        pch = strchr(v1.field_4, '$') + 1;
+        v8 = atoi(pch);
+
+        pch = strchr(pch, ',');
+        v9 = sub_417F90(v10, pch + 1);
+
+        sub_418FC0(v8, v10, v9, v1.field_14, a1);
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(a1->pc_obj, OBJ_F_TYPE))
+        && stat_level(a1->pc_obj, STAT_GENDER) == GENDER_MALE) {
+        sub_416B00(a1->field_70, v1.field_4, a1);
+    } else {
+        sub_416B00(a1->field_70, v1.data.field_8, a1);
+    }
+
+    return true;
 }
 
 // 0x416AB0
@@ -1146,45 +2345,326 @@ bool sub_416AB0(int dlg, DialogEntry* a2)
 }
 
 // 0x416B00
-void sub_416B00()
+void sub_416B00(char* dst, char* src, DialogEntryNode* a3)
 {
-    // TODO: Incomplete.
+    char* remainder;
+    char* start;
+    char* end;
+
+    remainder = src;
+    *dst = '\0';
+
+    start = strchr(src, '@');
+    while (start != NULL) {
+        *start = '\0';
+        strcat(dst, remainder);
+        end = strchr(start + 1, '@');
+        *end = '\0';
+        if (strcmpi(start + 1, "pcname") == 0) {
+            sub_441B60(a3->pc_obj, OBJ_HANDLE_NULL, dst + strlen(dst));
+        } else if (strcmpi(start + 1, "npcname") == 0) {
+            sub_441B60(a3->pc_obj, a3->npc_obj, dst + strlen(dst));
+        }
+
+        *start = '@';
+        *end = '@';
+        start = strchr(end + 1, '@');
+    }
+
+    strcat(dst, remainder);
 }
 
 // 0x416C10
-void sub_416C10()
+bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
 {
-    // TODO: Incomplete.
+    DialogEntry v1;
+
+    v1.field_0 = a1;
+    sub_416AB0(a3->field_0, &v1);
+
+    if (strcmpi(v1.field_4, "a:") == 0) {
+        sub_418390(a3->field_460[a2], a3, 1000);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    }
+
+    a3->field_182C[a2] = v1.field_18;
+
+    if (dialog_show_numbers) {
+        char str[20];
+        size_t len;
+        size_t pos;
+
+        sprintf(str, "[%d]", v1.field_0);
+        len = strlen(str);
+        for (pos = 999; pos >= len; pos--) {
+            a3->field_460[a2][pos] = a3->field_460[a2][pos - len];
+        }
+        if (len > 0) {
+            strncpy(a3->field_460[a2], str, len);
+        }
+    }
+
+    return true;
 }
 
 // 0x417590
-void sub_417590()
+void sub_417590(int a1, int* a2, int* a3)
 {
-    // TODO: Incomplete.
+    if (a1 > 0) {
+        *a2 = 0;
+        *a3 = a1;
+    } else if (a1 < 0) {
+        *a2 = 2;
+        *a3 = -1;
+    } else {
+        *a2 = 1;
+    }
 }
 
 // 0x4175D0
-void sub_4175D0()
+bool sub_4175D0(const char* path, int* index_ptr)
 {
-    // TODO: Incomplete.
+    int candidate = -1;
+    int index;
+
+    for (index = 0; index < dword_5D1A04; index++) {
+        if (strcmpi(path, dword_5D1A08[index].path) == 0) {
+            *index_ptr = index;
+            return true;
+        }
+
+        if (dword_5D1A08[index].refcount == 0) {
+            if (candidate == -1) {
+                candidate = index;
+            } else if (dword_5D1A08[candidate].path[0] != '\0') {
+                if (dword_5D1A08[index].path[0] == '\0'
+                    || datetime_compare(&(dword_5D1A08[candidate].timestamp), &(dword_5D1A08[index].timestamp)) > 0) {
+                    candidate = index;
+                }
+            }
+        }
+    }
+
+    if (candidate != -1) {
+        *index_ptr = candidate;
+        if (dword_5D1A08[candidate].path[0] != '\0') {
+            sub_412F60(index);
+        }
+        return false;
+    }
+
+    *index_ptr = index;
+
+    dword_5D1A04 += 10;
+    dword_5D1A08 = (Dialog*)REALLOC(dword_5D1A08, sizeof(*dword_5D1A08) * dword_5D1A04);
+    while (index < dword_5D1A04) {
+        dword_5D1A08[index].refcount = 0;
+        dword_5D1A08[index].path[0] = '\0';
+        index++;
+    }
+
+    return false;
 }
 
 // 0x417720
-void sub_417720()
+void sub_417720(Dialog* dialog)
 {
-    // TODO: Incomplete.
+    TigFile* stream;
+    DialogEntry v1;
+    char v2[1000];
+    char v3[1000];
+    char v4[1000];
+    char v5[1000];
+    int line;
+
+    stream = sub_417D60(dialog->path, "rt");
+    if (stream == NULL) {
+        return;
+    }
+
+    v1.data.field_8 = v2;
+    v1.field_10 = v3;
+    v1.field_4 = v4;
+    v1.field_18 = v5;
+
+    line = 1;
+    while (sub_417860(stream, &v1, &line)) {
+        if (dialog->entries_length == dialog->entries_capacity) {
+            dialog->entries_capacity += 10;
+            dialog->entries = (DialogEntry*)REALLOC(dialog->entries, sizeof(dialog->entries) * dialog->entries_capacity);
+        }
+
+        sub_417E20(&(dialog->entries[dialog->entries_length]), &v1);
+        dialog->entries_length++;
+
+        v1.data.field_8 = v2;
+    }
+
+    sub_417D80(stream);
+
+    if (dialog->entries_length != 0) {
+        qsort(dialog->entries, dialog->entries_length, sizeof(dialog->entries), sub_417E00);
+    }
 }
 
 // 0x417860
-void sub_417860()
+bool sub_417860(TigFile* stream, DialogEntry* entry, int* line_ptr)
 {
-    // TODO: Incomplete.
+    char str1[1000];
+    char str2[1000];
+
+    if (!sub_417C20(stream, str1, line_ptr)) {
+        return false;
+    }
+    entry->field_0 = atoi(str1);
+
+    if (!sub_417C20(stream, str1, line_ptr)) {
+        tig_debug_printf("Missing text on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        return false;
+    }
+    strcpy(entry->field_4, str1);
+
+    if (!sub_417C20(stream, str2, line_ptr)) {
+        tig_debug_printf("Missing gender field on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        return false;
+    }
+
+    if (!sub_417C20(stream, str1, line_ptr)) {
+        tig_debug_printf("Missing minimum IQ value on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        return false;
+    }
+
+    entry->field_C = atoi(str1);
+    if (entry->field_C == 0 && str1[0] != '\0') {
+        tig_debug_printf("Invalid minimum IQ value on line: %d (dialog line %d). Must be blank (for an NPC) or non-zero (for a PC).\n", *line_ptr, entry->field_0);
+        return false;
+    }
+
+    if (!sub_417C20(stream, str1, line_ptr)) {
+        tig_debug_printf("Missing test field on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        return false;
+    }
+    strcpy(entry->field_10, str1);
+
+    if (!sub_417C20(stream, str1, line_ptr)) {
+        tig_debug_printf("Missing response value on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        return false;
+    }
+
+    if (str1[0] == '#') {
+        tig_debug_printf("Saw a # in a response value on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        return false;
+    }
+    entry->field_14 = atoi(str1);
+
+    if (!sub_417C20(stream, str1, line_ptr)) {
+        tig_debug_printf("Missing effect field on line: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+        return false;
+    }
+    strcpy(entry->field_18, str1);
+
+    if (entry->field_C) {
+        if (str2[0] != '\0') {
+            entry->data.val = atoi(str2);
+        } else {
+            entry->data.val = -1;
+        }
+    } else {
+        size_t pos;
+        size_t end;
+
+        strcpy(entry->data.field_8, str2);
+
+        pos = 0;
+        end = strlen(str2);
+        while (pos < end) {
+            if (!isspace(str2[pos])) {
+                break;
+            }
+            pos++;
+        }
+
+        if (pos == end) {
+            pos = 0;
+            end = strlen(entry->field_4);
+            while (pos < end) {
+                if (!isspace(entry->field_4[pos])) {
+                    break;
+                }
+                pos++;
+            }
+
+            if (pos != end) {
+                tig_debug_printf("Missing NPC response line for females: %d (dialog line %d)\n", *line_ptr, entry->field_0);
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x417C20
-void sub_417C20()
+bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
 {
-    // TODO: Incomplete.
+    int prev = 0;
+    int ch;
+    int len;
+    bool overflow;
+
+    ch = sub_417D90(stream);
+    while (ch != '{') {
+        if (ch == -1) {
+            return false;
+        }
+
+        if (ch == '\n') {
+            (*line_ptr)++;
+        } else if (ch == '}') {
+            tig_debug_printf("Warning! Possible missing left brace { on or before line %d\n", *line_ptr);
+        } else if (ch == '/' && prev == '/') {
+            do {
+                ch = sub_417D90(stream);
+                if (ch == -1) {
+                    return false;
+                }
+            } while (ch != '\n');
+            prev = 0;
+            (*line_ptr)++;
+        } else {
+            prev = ch;
+        }
+    }
+
+    len = 0;
+    overflow = false;
+
+    ch = sub_417D90(stream);
+    while (ch != '}') {
+        if (ch == -1) {
+            tig_debug_printf("Expected right bracket }, reached end of file.\n");
+            return false;
+        }
+
+        if (ch == '\n') {
+            (*line_ptr)++;
+        } else if (ch == '{') {
+            tig_debug_printf("Warning! Possible missing right brace } on or before line %d\n", *line_ptr);
+        }
+
+        if (len < 999) {
+            str[len++] = (char)(unsigned char)ch;
+        } else {
+            overflow = true;
+        }
+    }
+
+    str[len] = '\0';
+
+    if (overflow) {
+        tig_debug_printf("String too long on line: %d\n", *line_ptr);
+    }
+
+    return true;
 }
 
 // 0x417D60
@@ -1202,28 +2682,88 @@ int sub_417D80(TigFile* stream)
 }
 
 // 0x417D90
-void sub_417D90()
+int sub_417D90(TigFile* stream)
 {
-    // TODO: Incomplete.
+    if (dword_5D19FC != dword_5D19F8) {
+        byte_5D1224[dword_5D19FC++];
+    }
+
+    dword_5D19FC = 0;
+    dword_5D19F8 = 0;
+
+    if (tig_file_fgets(byte_5D1224, sizeof(byte_5D1224), stream) == NULL) {
+        return -1;
+    }
+
+    dword_5D19F8 = (int)strlen(byte_5D1224);
+    if (dword_5D19F8 == 0) {
+        return -1;
+    }
+
+    return byte_5D1224[dword_5D19FC++];
 }
 
 // 0x417E00
-void sub_417E00()
+int sub_417E00(const DialogEntry* a, const DialogEntry* b)
 {
-    // TODO: Incomplete.
+    if (a->field_0 < b->field_0) {
+        return -1;
+    } else if (a->field_0 > b->field_0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 // 0x417E20
-void sub_417E20()
+void sub_417E20(DialogEntry* a1, const DialogEntry* a2)
 {
-    // TODO: Incomplete.
+    size_t pos;
+    size_t end;
+
+    *a1 = *a2;
+    a1->field_4 = STRDUP(a2->field_4);
+
+    pos = 0;
+    end = strlen(a2->field_10);
+    while (pos < end) {
+        if (!isspace(a2->field_10[pos])) {
+            break;
+        }
+        pos++;
+    }
+
+    if (pos != end) {
+        a1->field_10 = STRDUP(a2->field_10);
+    } else {
+        a1->field_10 = NULL;
+    }
+
+    pos = 0;
+    end = strlen(a2->field_18);
+    while (pos < end) {
+        if (!isspace(a2->field_18[pos])) {
+            break;
+        }
+        pos++;
+    }
+
+    if (pos != end) {
+        a1->field_18 = STRDUP(a2->field_18);
+    } else {
+        a1->field_18 = NULL;
+    }
+
+    if (!a2->field_C) {
+        a1->data.field_8 = STRDUP(a2->data.field_8);
+    }
 }
 
 // 0x417F40
 void sub_417F40(DialogEntry* a1)
 {
     if (!a1->field_C) {
-        FREE(a1->field_8);
+        FREE(a1->data.field_8);
     }
     FREE(a1->field_4);
 
@@ -1237,9 +2777,42 @@ void sub_417F40(DialogEntry* a1)
 }
 
 // 0x417F90
-void sub_417F90()
+int sub_417F90(int* values, char* str)
 {
-    // TODO: Incomplete.
+    int cnt;
+    char* comma;
+    char* dash;
+    int start;
+    int end;
+
+    for (cnt = 0; cnt < 100; cnt++) {
+        comma = strchr(str, ',');
+        if (comma != NULL) {
+            *comma = '\0';
+        }
+
+        dash = strchr(str, '-');
+        if (dash != NULL) {
+            *dash = '\0';
+            start = atoi(str);
+            end = atoi(dash + 1);
+            while (start <= end && cnt < 100) {
+                values[cnt++] = start;
+                start++;
+            }
+        } else {
+            values[cnt++] = atoi(str);
+        }
+
+        if (comma == NULL) {
+            break;
+        }
+
+        *comma = ',';
+        str = comma + 1;
+    }
+
+    return cnt;
 }
 
 // 0x418030
@@ -1330,50 +2903,224 @@ void sub_418250(int a1)
 // 0x4182C0
 void sub_4182C0()
 {
-    dword_5D1A0C = true;
+    dialog_show_numbers = true;
 }
 
 // 0x4182D0
-void sub_4182D0()
+void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end)
 {
-    // TODO: Incomplete.
+    int gd;
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    if (sub_45FC00(a2->pc_obj)) {
+        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            ? GD_DUMB_PC2M
+            : GD_DUMB_PC2F;
+    } else {
+        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            ? GD_PC2M
+            : GD_PC2F;
+    }
+    sub_418250(gd);
+
+    cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, end);
+    mes_file_entry.num = start + random_between(0, cnt - 1);
+    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+
+    sub_416B00(str, mes_file_entry.str, a2);
 }
 
 // 0x418390
-void sub_418390()
+void sub_418390(char* str, DialogEntryNode* a2, int start)
 {
-    // TODO: Incomplete.
+    int gd;
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    if (sub_45FC00(a2->pc_obj)) {
+        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            ? GD_CLS_DUMB_PC2M
+            : GD_CLS_DUMB_PC2F;
+    } else {
+        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            ? GD_CLS_PC2M
+            : GD_CLS_PC2F;
+    }
+    sub_418250(gd);
+
+    cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
+    mes_file_entry.num = start + random_between(0, cnt - 1);
+    mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+
+    sub_416B00(str, mes_file_entry.str, a2);
 }
 
 // 0x418460
-void sub_418460(int a1, int a2)
+void sub_418460(char* str, DialogEntryNode* a2)
 {
     int v1 = sub_445090();
-    sub_4182D0(a1, a2, v1 + 1700, v1 + 1700);
+    sub_4182D0(str, a2, v1 + 1700, v1 + 1700);
 }
 
 // 0x418480
-void sub_418480()
+void sub_418480(char* str, DialogEntryNode* a2, int start)
 {
-    // TODO: Incomplete.
+    int gd;
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    if (!sub_418870(str, a2, start / 1000 + 9999)) {
+        if (sub_45FC00(a2->npc_obj)) {
+            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_CLS_DUMB_M2M
+                    : GD_CLS_DUMB_M2F;
+            } else {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_CLS_DUMB_F2M
+                    : GD_CLS_DUMB_F2F;
+            }
+        } else {
+            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_CLS_M2M
+                    : GD_CLS_M2F;
+            } else {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_CLS_F2M
+                    : GD_CLS_F2F;
+            }
+
+            start += 50 * critter_social_class_get(a2->npc_obj);
+        }
+
+        cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
+        mes_file_entry.num = start + random_between(0, cnt - 1);
+        mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+
+        sub_416B00(str, mes_file_entry.str, a2);
+        a2->field_458 = -1;
+    }
 }
 
 // 0x4185F0
-void sub_4185F0()
+void sub_4185F0(char* str, DialogEntryNode* a2, int start)
 {
-    // TODO: Incomplete.
+    int gd;
+    int cnt;
+    MesFileEntry mes_file_entry;
+    int race;
+
+    if (!sub_418870(str, a2, start / 1000 + 10999)) {
+        if (sub_45FC00(a2->npc_obj)) {
+            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_RCE_DUMB_M2M
+                    : GD_RCE_DUMB_M2F;
+            } else {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_RCE_DUMB_F2M
+                    : GD_RCE_DUMB_F2F;
+            }
+        } else {
+            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_RCE_M2M
+                    : GD_RCE_M2F;
+            } else {
+                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                    ? GD_RCE_F2M
+                    : GD_RCE_F2F;
+            }
+
+            race = stat_level(a2->pc_obj, STAT_RACE);
+            if (race != stat_level(a2->npc_obj, STAT_RACE)) {
+                start += 50 * (race + 1);
+            }
+        }
+        sub_418250(gd);
+
+        cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
+        mes_file_entry.num = start + random_between(0, cnt - 1);
+        mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+
+        sub_416B00(str, mes_file_entry.str, a2);
+        a2->field_458 = -1;
+    }
 }
 
 // 0x418780
-void sub_418780()
+void sub_418780(char* str, DialogEntryNode* a2, int start, int end)
 {
-    // TODO: Incomplete.
+    int gd;
+    int cnt;
+    MesFileEntry mes_file_entry;
+
+    if (!sub_418870(str, a2, start / 100 + 11999)) {
+
+        if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_NPC_M2M
+                : GD_NPC_M2F;
+        } else {
+            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_NPC_F2M
+                : GD_NPC_F2F;
+        }
+        sub_418250(gd);
+
+        cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, end);
+        mes_file_entry.num = start + random_between(0, cnt - 1);
+        mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
+
+        sub_416B00(str, mes_file_entry.str, a2);
+        a2->field_458 = -1;
+    }
 }
 
 // 0x418870
-void sub_418870()
+bool sub_418870(char* str, DialogEntryNode* a2, int a3)
 {
-    // TODO: Incomplete.
+    Script scr;
+    char path[TIG_MAX_PATH];
+    int dlg;
+    DialogEntry entry;
+    bool v1;
+
+    sub_407840(a2->npc_obj, OBJ_F_SCRIPTS_IDX, SAP_31, &scr);
+
+    if (scr.num == 0) {
+        return false;
+    }
+
+    if (!script_name_build_dlg_name(scr.num, path)) {
+        return false;
+    }
+
+    if (!sub_412E10(path, &dlg)) {
+        return false;
+    }
+
+    entry.field_0 = a3;
+    v1 = sub_416AB0(dlg, &entry);
+    sub_412F40(dlg);
+
+    if (!v1) {
+        return false;
+    }
+
+    if (a2->pc_obj != OBJ_HANDLE_NULL
+        && obj_type_is_critter(obj_field_int32_get(a2->pc_obj, OBJ_F_TYPE))
+        && stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE) {
+        strcpy(str, entry.field_4);
+    } else {
+        strcpy(str, entry.data.field_8);
+    }
+
+    a2->field_458 = sub_4189C0(entry.field_10, scr.num);
+
+    return true;
 }
 
 // 0x4189C0
@@ -1387,7 +3134,7 @@ int sub_4189C0(const char* a1, int a2)
 }
 
 // 0x418A00
-int sub_418A00(int a1, int* a2, int* a3)
+void sub_418A00(int a1, int* a2, int* a3)
 {
     if (a1 != -1) {
         *a2 = (a1 >> 16) & 0x7FFF;
@@ -1404,7 +3151,7 @@ void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogEntryNode *a6)
     int v1;
     char buffer[1000];
 
-    v1 = sub_4C1150(a6->field_38, a6->field_8, a1);
+    v1 = sub_4C1150(a6->npc_obj, a6->pc_obj, a1);
     if (v1 == 1) {
         v1 = 2;
     }
@@ -1415,19 +3162,35 @@ void sub_418A40(int a1, int a2, int a3, int a4, int a5, DialogEntryNode *a6)
     sub_4182D0(a6->field_460[0], a6, 1, 99);
     a6->field_1804[0] = v1;
     a6->field_17F0[0] = 4;
-    a6->field_182C[0] = 0;
+    a6->field_182C[0] = NULL;
     sub_4182D0(a6->field_460[1], a6, 100, 199);
     a6->field_17F0[1] = a4;
-    a6->field_182C[1] = 0;
+    a6->field_182C[1] = NULL;
     a6->field_1804[1] = a5;
     a6->field_17F0[2] = a2;
     a6->field_1804[2] = a3;
 }
 
 // 0x418B30
-void sub_418B30()
+void sub_418B30(int a1, DialogEntryNode* a2)
 {
-    // TODO: Incomplete.
+    Packet82 pkt;
+
+    if (item_gold_get(a2->pc_obj) < a1) {
+        sub_418C40(2000, a2->field_17F0[1], a2->field_1804[1], a2);
+    } else {
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            pkt.type = 82;
+            pkt.field_8 = sub_407EF0(a2->pc_obj);
+            pkt.field_20 = sub_407EF0(a2->npc_obj);
+            pkt.field_38 = a1;
+            pkt.field_40.type = OID_TYPE_NULL;
+        }
+
+        sub_464830(a2->pc_obj, a2->npc_obj, a1, OBJ_HANDLE_NULL);
+        sub_414810(a2->field_17F0[2], a2->field_1804[2], a2->field_1818[2], 2, a2);
+    }
 }
 
 // 0x418C40
@@ -1438,13 +3201,32 @@ void sub_418C40(int a1, int a2, int a3, DialogEntryNode* a4)
     sub_4182D0(a4->field_460[0], a4, 600, 699);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = 0;
+    a4->field_182C[0] = NULL;
 }
 
 // 0x418CA0
-void sub_418CA0()
+void sub_418CA0(int* a1, int a2, int a3, DialogEntryNode* a4)
 {
-    // TODO: Incomplete.
+    int index;
+
+    sub_418480(a4->field_70, a4, 3000);
+    a4->field_45C = a2 + 1;
+
+    for (index = 0; index < a2; index++) {
+        if (IS_TECH_SKILL(a1[index])) {
+            strcpy(a4->field_460[index], tech_skill_get_name(GET_TECH_SKILL(a1[index])));
+        } else {
+            strcpy(a4->field_460[index], tech_skill_get_name(GET_BASIC_SKILL(a1[index])));
+        }
+
+        a4->field_17F0[index] = 6;
+        a4->field_1804[index] = a1[index];
+        a4->field_182C[index] = NULL;
+    }
+
+    a4->field_182C[a2] = NULL;
+    sub_4182D0(a4->field_460[a2], a4, 800, 899);
+    sub_417590(a3, &(a4->field_17F0[a2]), &(a4->field_1804[a2]));
 }
 
 // 0x418DE0
@@ -1454,30 +3236,30 @@ void sub_418DE0(int a1, DialogEntryNode* a2)
 
     v1 = a2->field_45C - 1;
     if (IS_TECH_SKILL(a1)) {
-        if (tech_skill_get_training(a2->field_8, GET_TECH_SKILL(a1)) != TRAINING_NONE) {
+        if (tech_skill_get_training(a2->pc_obj, GET_TECH_SKILL(a1)) != TRAINING_NONE) {
             sub_418C40(4000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        if (tech_skill_set_training(a2->field_8, GET_TECH_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
+        if (tech_skill_set_training(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
             sub_418C40(5000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        tech_skill_set_training(a2->field_8, GET_TECH_SKILL(a1), TRAINING_NONE);
+        tech_skill_set_training(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_NONE);
         sub_418A40(100, 7, a1, a2->field_17F0[v1], a2->field_1804[v1], a2);
     } else {
-        if (basic_skill_get_training(a2->field_8, GET_BASIC_SKILL(a1)) != TRAINING_NONE) {
+        if (basic_skill_get_training(a2->pc_obj, GET_BASIC_SKILL(a1)) != TRAINING_NONE) {
             sub_418C40(4000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        if (basic_skill_set_training(a2->field_8, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
+        if (basic_skill_set_training(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE) == TRAINING_NONE) {
             sub_418C40(5000, a2->field_17F0[v1], a2->field_1804[v1], a2);
             return;
         }
 
-        basic_skill_set_training(a2->field_8, GET_BASIC_SKILL(a1), TRAINING_NONE);
+        basic_skill_set_training(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_NONE);
         sub_418A40(100, 7, a1, a2->field_17F0[v1], a2->field_1804[v1], a2);
     }
 }
@@ -1486,9 +3268,9 @@ void sub_418DE0(int a1, DialogEntryNode* a2)
 void sub_418F30(int a1, DialogEntryNode* a2)
 {
     if (IS_TECH_SKILL(a1)) {
-        tech_skill_set_training(a2->field_8, GET_TECH_SKILL(a1), TRAINING_APPRENTICE);
+        tech_skill_set_training(a2->pc_obj, GET_TECH_SKILL(a1), TRAINING_APPRENTICE);
     } else {
-        basic_skill_set_training(a2->field_8, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE);
+        basic_skill_set_training(a2->pc_obj, GET_BASIC_SKILL(a1), TRAINING_APPRENTICE);
     }
 
     sub_418480(a2->field_70, a2, 6000);
@@ -1496,13 +3278,41 @@ void sub_418F30(int a1, DialogEntryNode* a2)
     sub_418390(a2->field_460[0], a2, 1000);
     a2->field_17F0[0] = a2->field_17F0[1];
     a2->field_1804[0] = a2->field_1804[1];
-    a2->field_182C[0] = 0;
+    a2->field_182C[0] = NULL;
 }
 
 // 0x418FC0
-void sub_418FC0()
+void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogEntryNode* a5)
 {
-    // TODO: Incomplete.
+    int index;
+    int num_known_rumors = 0;
+    int v1;
+    int v2;
+
+    for (index = 0; index < num_rumors; index++) {
+        if (!rumor_is_known(rumors[index])
+            && !sub_4C58D0(a5->pc_obj, rumors[index])) {
+            rumors[num_known_rumors++] = rumors[index];
+        }
+    }
+
+    sub_417590(a4, &v1, &v2);
+
+    if (num_known_rumors != 0) {
+        index = random_between(0, num_known_rumors - 1);
+        if (a1 > 0) {
+            sub_418A40(a1, 9, rumors[index], v1, v2, a5);
+        } else {
+            sub_4190E0(rumors[index], v1, v2, a5);
+        }
+    } else {
+        sub_418480(a5->field_70, a5, 7000);
+        a5->field_45C = 1;
+        sub_4182D0(a5->field_460[0], a5, 600, 699);
+        a5->field_17F0[0] = v1;
+        a5->field_1804[0] = v2;
+        a5->field_182C[0] = NULL;
+    }
 }
 
 // 0x4190E0
@@ -1510,15 +3320,15 @@ void sub_4190E0(int a1, int a2, int a3, DialogEntryNode* a4)
 {
     char buffer[1000];
 
-    sub_4C5700(a4->field_8, a4->field_38, a1, buffer);
+    sub_4C5700(a4->pc_obj, a4->npc_obj, a1, buffer);
     sub_416B00(a4->field_70, buffer, a4);
     a4->field_458 = -1;
-    sub_4C57E0(a4->field_8, a1);
+    sub_4C57E0(a4->pc_obj, a1);
     a4->field_45C = 1;
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = 0;
+    a4->field_182C[0] = NULL;
 }
 
 // 0x419190
@@ -1533,8 +3343,8 @@ void sub_419190(int a1, int a2, int a3, DialogEntryNode* a4)
 // 0x4191E0
 void sub_4191E0(int a1, int a2, DialogEntryNode* a3)
 {
-    sub_4C0DE0(a3->field_38, a3->field_8, -10);
-    if (sub_4C0CC0(a3->field_38, a3->field_8) > 20) {
+    sub_4C0DE0(a3->npc_obj, a3->pc_obj, -10);
+    if (sub_4C0CC0(a3->npc_obj, a3->pc_obj) > 20) {
         sub_414810(a1, a2, 0, 0, a3);
     } else {
         sub_4185F0(a3->field_70, a3, 1000);
@@ -1544,9 +3354,201 @@ void sub_4191E0(int a1, int a2, DialogEntryNode* a3)
 }
 
 // 0x419260
-void sub_419260()
+void sub_419260(DialogEntryNode* a1, const char* str)
 {
-    // TODO: Incomplete.
+    unsigned int flags[10];
+    int values[10];
+    unsigned int spell_flags;
+    tig_art_id_t aid;
+    int v3;
+
+    memset(flags, 0, sizeof(flags));
+
+    if (str != NULL) {
+        int index;
+        int value;
+
+        while (*str != '\0') {
+            while (!isdigit(*str)) {
+                str++;
+            }
+
+            if (*str == '\0') {
+                break;
+            }
+
+            index = atoi(str);
+
+            while (*str != '\0' && *str != ' ') {
+                str++;
+            }
+
+            if (*str == '\0') {
+                break;
+            }
+
+            // TODO: Refactor.
+            if (*str != 'f') {
+                value = atoi(str);
+                flags[index] = value != 0 ? 0x4 : 0x2;
+                values[index] = value;
+            } else if (str[1] == 'l') {
+                value = atoi(str + 2);
+                flags[index] = 0x1;
+                values[index] = value;
+            } else {
+                break;
+            }
+
+            while (*str != '\0' && *str != ',') {
+                str++;
+            }
+        }
+    }
+
+    if ((flags[0] & 0x2) == 0 && sub_45D8D0(a1->npc_obj)) {
+        if (!sub_4197D0(flags[0], values[0], a1)) {
+            sub_418780(a1->field_70, a1, 1500, 1599);
+        }
+        return;
+    }
+
+    if (sub_4AF210(a1->npc_obj, NULL)) {
+        sub_413EA0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
+        return;
+    }
+
+    if ((flags[1] & 0x2) == 0 && critter_has_bad_associates(a1->pc_obj)) {
+        if (!sub_4197D0(flags[1], values[1], a1)) {
+            sub_418480(a1->field_70, a1, 18000);
+
+            if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
+                a1->field_17E8 = 4;
+            }
+        }
+        return;
+    }
+
+    spell_flags = obj_field_int32_get(a1->pc_obj, OBJ_F_SPELL_FLAGS);
+
+    if ((flags[2] & 0x2) == 0 && (spell_flags & OSF_INVISIBLE) != 0) {
+        if (!sub_4197D0(flags[2], values[2], a1)) {
+            sub_418480(a1->field_70, a1, 22000);
+
+            if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
+                a1->field_17E8 = 4;
+            }
+        }
+        return;
+    }
+
+    if ((flags[3] & 0x2) == 0 && (spell_flags & (OSF_BODY_OF_AIR | OSF_BODY_OF_EARTH | OSF_BODY_OF_FIRE | OSF_BODY_OF_WATER)) != 0) {
+        if (!sub_4197D0(flags[3], values[3], a1)) {
+            sub_418480(a1->field_70, a1, 19000);
+
+            if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
+                a1->field_17E8 = 4;
+            }
+        }
+        return;
+    }
+
+    if ((flags[4] & 0x2) == 0 && (spell_flags & OSF_POLYMORPHED) != 0) {
+        if (!sub_4197D0(flags[4], values[4], a1)) {
+            sub_418480(a1->field_70, a1, 20000);
+
+            if (critter_social_class_get(a1->npc_obj) != SOCIAL_CLASS_WIZARD) {
+                a1->field_17E8 = 4;
+            }
+        }
+        return;
+    }
+
+    if ((flags[6] & 0x2) == 0 && (spell_flags & OSF_SHRUNK) != 0) {
+        if (!sub_4197D0(flags[6], values[6], a1)) {
+            sub_4185F0(a1->field_70, a1, 6000);
+        }
+        return;
+    }
+
+    aid = obj_field_int32_get(a1->pc_obj, OBJ_F_CURRENT_AID);
+    v3 = sub_504030(aid);
+
+    if ((flags[7] & 0x2) == 0 && v3 == 0) {
+        if (!sub_4197D0(flags[7], values[7], a1)) {
+            sub_418480(a1->field_70, a1, 16000);
+        }
+        return;
+    }
+
+    if ((flags[8] & 0x2) == 0 && v3 == 7) {
+        if (!sub_4197D0(flags[8], values[8], a1)) {
+            sub_418480(a1->field_70, a1, 17000);
+        }
+        return;
+    }
+
+    if ((flags[9] & 0x2) == 0) {
+        if (!sub_4197D0(flags[9], values[9], a1)) {
+            int reaction_level;
+            int v4;
+
+            if (random_between(1, 100) <= 20) {
+                v4 = sub_4C1F80(a1->pc_obj, a1->npc_obj);
+                if (v4 != 0) {
+                    sub_4C2100(a1->pc_obj, a1->npc_obj, v4, a1->field_70);
+                    a1->field_458 = -1;
+                    if (a1->field_70[0] != '\0') {
+                        return;
+                    }
+                }
+            }
+
+            reaction_level = reaction_translate(sub_4C0CC0(a1->npc_obj, a1->pc_obj));
+            if (sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
+                switch (reaction_level) {
+                case REACTION_LOVE:
+                    sub_418480(a1->field_70, a1, 11000);
+                    break;
+                case REACTION_AMIABLE:
+                case REACTION_COURTEOUS:
+                    sub_418480(a1->field_70, a1, 12000);
+                    break;
+                case REACTION_NEUTRAL:
+                    sub_418480(a1->field_70, a1, 13000);
+                    break;
+                case REACTION_SUSPICIOUS:
+                case REACTION_DISLIKE:
+                    sub_4185F0(a1->field_70, a1, 4000);
+                    break;
+                case REACTION_HATRED:
+                    sub_4185F0(a1->field_70, a1, 5000);
+                    break;
+                }
+            } else {
+                switch (reaction_level) {
+                case REACTION_LOVE:
+                    sub_418480(a1->field_70, a1, 8000);
+                    break;
+                case REACTION_AMIABLE:
+                case REACTION_COURTEOUS:
+                    sub_418480(a1->field_70, a1, 9000);
+                    break;
+                case REACTION_NEUTRAL:
+                    sub_418480(a1->field_70, a1, 10000);
+                    break;
+                case REACTION_SUSPICIOUS:
+                case REACTION_DISLIKE:
+                    sub_4185F0(a1->field_70, a1, 2000);
+                    break;
+                case REACTION_HATRED:
+                    sub_4185F0(a1->field_70, a1, 3000);
+                    break;
+                }
+            }
+        }
+        return;
+    }
 }
 
 // 0x4197D0
@@ -1570,9 +3572,63 @@ bool sub_4197D0(unsigned int flags, int a2, DialogEntryNode* a3)
 }
 
 // 0x419830
-void sub_419830()
+void sub_419830(int a1, int a2, DialogEntryNode* a3)
 {
-    // TODO: Incomplete.
+    int v1;
+    int64_t item_obj;
+    int v3;
+    int index;
+
+    sub_418480(a3->field_70, a3, 14000);
+    v1 = sub_4B1AB0(a3->npc_obj, 12);
+    v3 = 0;
+    switch (a1) {
+    case 0:
+        item_obj = sub_4C91F0(a3->npc_obj, SKILL_HEAL);
+        if (sub_4AE570(a3->npc_obj, a3->pc_obj, item_obj, SKILL_HEAL) == 0) {
+            sub_419A00(0, SKILL_HEAL, a2, a3);
+            v3 = 1;
+        }
+        if (v1 >= 1) {
+            sub_4182D0(a3->field_460[v3], a3, 1100, 1199);
+            a3->field_17F0[v3] = 12;
+            a3->field_1804[v3] = a2;
+            v3++;
+        }
+        if (v1 >= 2) {
+            sub_4182D0(a3->field_460[v3], a3, 1200, 1299);
+            a3->field_17F0[v3] = 13;
+            a3->field_1804[v3] = a2;
+            v3++;
+        }
+        if (v1 == 5) {
+            sub_419AC0(v3++, 64, a2, a3);
+        }
+        break;
+    case 1:
+        if (v1 >= 1) {
+            sub_419AC0(0, 60, a2, a3);
+            v3 = 1;
+        }
+        if (v1 >= 3) {
+            sub_419AC0(v3++, 62, a2, a3);
+        }
+        break;
+    case 2:
+        if (v1 >= 2) {
+            sub_419AC0(0, 61, a2, a3);
+            v3 = 1;
+        }
+        break;
+    }
+
+    sub_4182D0(a3->field_460[v3], a3, 800, 899);
+    sub_417590(a2, &(a3->field_17F0[v3]), &(a3->field_1804[v3]));
+    a3->field_45C = v3 + 1;
+
+    for (index = 0; index < a3->field_45C; index++) {
+        a3->field_182C[index] = NULL;
+    }
 }
 
 // 0x419A00
@@ -1615,16 +3671,16 @@ void sub_419B50(int a1, int a2, DialogEntryNode* a3)
     int v3;
 
     sub_417590(a2, &v1, &v2);
-    if (critter_leader_get(a3->field_38) == a3->field_8) {
+    if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
         sub_419CB0(a1, v1, v2, a3);
     } else {
         if (IS_TECH_SKILL(a1)) {
-            skill_level = tech_skill_level(a3->field_38, GET_TECH_SKILL(a1));
-            training = tech_skill_get_training(a3->field_38, GET_TECH_SKILL(a1));
+            skill_level = tech_skill_level(a3->npc_obj, GET_TECH_SKILL(a1));
+            training = tech_skill_get_training(a3->npc_obj, GET_TECH_SKILL(a1));
             v3 = sub_4C69E0(GET_TECH_SKILL(a1), skill_level, training);
         } else {
-            skill_level = basic_skill_level(a3->field_38, GET_BASIC_SKILL(a1));
-            training = basic_skill_get_training(a3->field_38, GET_BASIC_SKILL(a1));
+            skill_level = basic_skill_level(a3->npc_obj, GET_BASIC_SKILL(a1));
+            training = basic_skill_get_training(a3->npc_obj, GET_BASIC_SKILL(a1));
             v3 = sub_4C62D0(GET_BASIC_SKILL(a1), skill_level, training);
         }
         sub_418A40(v3, 16, a1, v1, v2, a3);
@@ -1638,7 +3694,7 @@ void sub_419C30(int a1, int a2, DialogEntryNode* a3)
     int v2;
 
     sub_417590(a2, &v1, &v2);
-    if (critter_leader_get(a3->field_38) == a3->field_8) {
+    if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
         sub_419D50(a1, v1, v2, a3);
     } else {
         sub_418A40(sub_4B1740(a1), 17, a1, v1, v2, a3);
@@ -1649,22 +3705,22 @@ void sub_419C30(int a1, int a2, DialogEntryNode* a3)
 void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4)
 {
     unsigned int flags;
-    int v1;
+    int64_t v1;
 
-    if (sub_45DDA0(a4->field_38)) {
+    if (sub_45DDA0(a4->npc_obj)) {
         flags = 0;
     } else {
         flags = 0x2000;
     }
 
-    v1 = sub_4C91F0(a4->field_38, a1);
-    sub_4350F0(a4->field_38, a4->field_8, v1, a1, flags);
+    v1 = sub_4C91F0(a4->npc_obj, a1);
+    sub_4350F0(a4->npc_obj, a4->pc_obj, v1, a1, flags);
     sub_418480(a4->field_70, a4, 15000);
     a4->field_45C = 1;
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = 0;
+    a4->field_182C[0] = NULL;
 }
 
 // 0x419D50
@@ -1672,9 +3728,9 @@ void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4)
 {
     MagicTechSerializedData v1;
 
-    sub_455A20(&v1, a4->field_38, a1);
-    sub_4440E0(a4->field_8, &(v1.field_70));
-    if (!sub_45DDA0(a4->field_38)) {
+    sub_455A20(&v1, a4->npc_obj, a1);
+    sub_4440E0(a4->pc_obj, &(v1.field_70));
+    if (!sub_45DDA0(a4->npc_obj)) {
         v1.field_DC |= 0x2;
     }
     sub_455AC0(&v1);
@@ -1683,19 +3739,84 @@ void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4)
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = 0;
+    a4->field_182C[0] = NULL;
 }
 
 // 0x419E20
-void sub_419E20()
+int sub_419E20(int64_t obj, int* a2, int cnt)
 {
-    // TODO: Incomplete.
+    int v1 = 0;
+    int index;
+
+    for (index = 0; index < cnt; index++) {
+        if (!sub_4CAF50(obj, a2[index])) {
+            a2[v1++] = a2[index];
+        }
+    }
+
+    return v1;
 }
 
 // 0x419E70
-void sub_419E70()
+void sub_419E70(const char* str, int a2, int a3, int a4, DialogEntryNode* a5)
 {
-    // TODO: Incomplete.
+    char buffer[1000];
+    char* pch;
+    int v1;
+    int v2;
+    int v3[100];
+    int v4;
+    int v5;
+    int index;
+
+    strcpy(buffer, str);
+
+    pch = strchr(buffer, '$');
+    v1 = atoi(pch + 1);
+
+    pch = strchr(pch, ',');
+    v2 = sub_417F90(v3, pch + 1);
+
+    v4 = 0;
+    v5 = sub_419E20(a5->pc_obj, v3, v2);
+
+    if (a4) {
+        sub_418780(a5->field_70, a5, 500, 599);
+    } else {
+        sub_418780(a5->field_70, a5, 100, 199);
+    }
+
+    if (critter_leader_get(a5->npc_obj) == a5->pc_obj) {
+        a5->field_17EC = 0;
+    } else {
+        a5->field_17EC = v1;
+    }
+
+    for (v4 = 0; v4 < 4; v4++) {
+        if (a3 + v4 >= v5) {
+            break;
+        }
+
+        strcpy(a5->field_460[v4], sub_4CAE90(v3[a3 + v4]));
+        a5->field_17F0[v4] = a4 ? 22 : 19;
+        a5->field_1804[v4] = v3[a3 + v4];
+        a5->field_1818[v4] = a2;
+    }
+
+    if (a3 + v4 < v5) {
+        sub_4182D0(a5->field_460[v4], a5, 600, 699);
+        a5->field_17F0[v4] = a4 ? 21 : 18;
+        a5->field_1804[v4] = a2;
+        a5->field_1818[v4] = a3 + v4;
+    } else {
+        sub_4182D0(a5->field_460[v4], a5, 800, 899);
+        sub_417590(a2, &(a5->field_17F0[v4]), &(a5->field_1804[v4]));
+    }
+
+    a5->field_45C = v4 + 1;
+    for (index = 0; index < a5->field_45C; index++) {
+        a5->field_182C[index] = NULL;
+    }
 }
 
 // 0x41A0F0
@@ -1721,7 +3842,7 @@ void sub_41A150(int a1, int a2, int a3, DialogEntryNode* a4)
     int64_t v3;
     int v4;
 
-    loc = obj_field_int64_get(a4->field_38, OBJ_F_LOCATION);
+    loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
     v1 = sub_4CAED0(a1);
     v2 = sub_4B8D50(loc, v1);
     v3 = sub_4B96F0(loc, v1) / 3168;
@@ -1739,7 +3860,7 @@ void sub_41A150(int a1, int a2, int a3, DialogEntryNode* a4)
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = 0;
+    a4->field_182C[0] = NULL;
     a4->field_45C = 1;
 }
 
@@ -1767,7 +3888,7 @@ void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4)
     int v4;
     char buffer[1000];
 
-    loc = obj_field_int64_get(a4->field_38, OBJ_F_LOCATION);
+    loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
     v1 = sub_4CAED0(a1);
     v2 = sub_4B8D50(loc, v1);
     v3 = sub_4B96F0(loc, v1) / 3168;
@@ -1784,9 +3905,9 @@ void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4)
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = 0;
+    a4->field_182C[0] = NULL;
     a4->field_45C = 1;
-    sub_4CAFD0(a4->field_8, a1);
+    sub_4CAFD0(a4->pc_obj, a1);
 }
 
 // 0x41A3E0
@@ -1795,7 +3916,7 @@ void sub_41A3E0(int a1, DialogEntryNode* a2)
     sub_41A440(a2->field_70, a2);
     sub_418390(a2->field_460[0], a2, 1000);
     sub_417590(a1, a2->field_17F0, a2->field_1804);
-    a2->field_182C[0] = 0;
+    a2->field_182C[0] = NULL;
     a2->field_45C = 1;
 }
 
@@ -1807,14 +3928,14 @@ void sub_41A440(char* buffer, DialogEntryNode* a2)
     MesFileEntry mes_file_entry;
 
     v1 = sub_445090();
-    if (!sub_418870(buffer, a2, v2 + 10000)) {
-        if (stat_level(a2->field_38, STAT_GENDER) == GENDER_MALE) {
-            v2 = stat_level(a2->field_8, STAT_GENDER) == GENDER_MALE ? 29 : 28;
+    if (!sub_418870(buffer, a2, v1 + 10000)) {
+        if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+            v2 = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE ? 29 : 28;
         } else {
-            v2 = stat_level(a2->field_8, STAT_GENDER) == GENDER_MALE ? 31 : 30;
+            v2 = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE ? 31 : 30;
         }
 
-        mes_file_entry.num = stat_level(a2->field_38, STAT_RACE) + 100 * v1;
+        mes_file_entry.num = stat_level(a2->npc_obj, STAT_RACE) + 100 * v1;
         sub_418250(v2);
         mes_get_msg(dword_5D19F4[v2], &mes_file_entry);
         sub_416B00(buffer, mes_file_entry.str, a2);
@@ -1838,10 +3959,10 @@ void sub_41A520(int a1, DialogEntryNode* a2)
     a2->field_1804[2] = a1;
     sub_4182D0(a2->field_460[3], a2, 800, 899);
     sub_417590(a1, &a2->field_17F0[3], &a2->field_1804[3]);
-    a2->field_182C[0] = 0;
-    a2->field_182C[1] = 0;
-    a2->field_182C[2] = 0;
-    a2->field_182C[3] = 0;
+    a2->field_182C[0] = NULL;
+    a2->field_182C[1] = NULL;
+    a2->field_182C[2] = NULL;
+    a2->field_182C[3] = NULL;
     a2->field_45C = 4;
 }
 
@@ -1873,8 +3994,8 @@ void sub_41A620(int a1, DialogEntryNode* a2)
     a2->field_1818[0] = a1;
     sub_4182D0(a2->field_460[1], a2, 100, 199);
     sub_417590(a1, &a2->field_17F0[1], &a2->field_1804[1]);
-    a2->field_182C[0] = 0;
-    a2->field_182C[1] = 0;
+    a2->field_182C[0] = NULL;
+    a2->field_182C[1] = NULL;
     a2->field_45C = 2;
 }
 
@@ -1911,7 +4032,7 @@ void sub_41A700(int a1, DialogEntryNode* a2)
     }
 
     for (index = 0; index < a2->field_45C; index++) {
-        a2->field_182C[index] = 0;
+        a2->field_182C[index] = NULL;
     }
 }
 
@@ -1931,12 +4052,12 @@ void sub_41A8C0(int a1, int a2, int a3, DialogEntryNode* a4)
     int64_t loc;
     int64_t obj;
 
-    loc = obj_field_int64_get(a4->field_8, OBJ_F_LOCATION);
+    loc = obj_field_int64_get(a4->pc_obj, OBJ_F_LOCATION);
     obj = sub_4BF210(a1, loc);
-    sub_4617F0(obj, a4->field_8);
+    sub_4617F0(obj, a4->pc_obj);
     sub_418480(a4->field_70, a4, 15000);
-    sub_418390(a4->field_460, a4, 1000);
+    sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;
     a4->field_1804[0] = a3;
-    a4->field_182C[0] = 0;
+    a4->field_182C[0] = NULL;
 }
