@@ -138,7 +138,7 @@ bool sector_tile_list_save_with_dif_internal(SectorTileList* list, TigFile* stre
     int pos;
 
     cnt_pos = tig_file_ftell(stream);
-    if (pos == -1) {
+    if (cnt_pos == -1) {
         return false;
     }
 
