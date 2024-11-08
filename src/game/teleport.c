@@ -18,6 +18,7 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "game/reaction.h"
+#include "game/roof.h"
 #include "game/ui.h"
 #include "game/wallcheck.h"
 
@@ -239,7 +240,7 @@ bool sub_4D3460(TeleportData* teleport_data)
         ObjectID oid;
         int64_t obj;
 
-        oid.type = 0;
+        oid.type = OID_TYPE_NULL;
         if (obj_field_int32_get(teleport_data->obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             oid = sub_407EF0(teleport_data->obj);
         } else if (obj_field_int32_get(teleport_data->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
@@ -257,7 +258,7 @@ bool sub_4D3460(TeleportData* teleport_data)
             sub_40D860();
         }
 
-        if (oid.type != 0) {
+        if (oid.type != OID_TYPE_NULL) {
             obj = objp_perm_lookup(oid);
             if (obj != OBJ_HANDLE_NULL) {
                 sub_4EF1E0(teleport_data->loc, obj);
@@ -331,7 +332,9 @@ bool sub_4D3760(int64_t obj, int64_t loc)
         inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
         inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
     } else {
+        // NOTE: Set both fields to -1 to bypass code path below.
         inventory_num_fld = -1;
+        inventory_list_fld = -1;
     }
 
     if (inventory_num_fld != -1) {
@@ -456,6 +459,31 @@ bool sub_4D39A0(TeleportData* teleport_data)
         sub_4D3E80();
         return true;
     }
+
+    node = dword_601840;
+    while (node != NULL) {
+        if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
+            sub_4D3D60(node->obj);
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                && player_is_pc_obj(node->obj)) {
+                wallcheck_flush();
+                sub_439EA0(obj_field_int64_get(node->obj, OBJ_F_LOCATION));
+            }
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                && (tig_net_flags & TIG_NET_HOST) != 0) {
+                sub_424070(node->obj, 5, false, false);
+            }
+
+            sub_4EDF20(node->obj, node->loc, 0, 0, 1);
+        }
+        node = node->next;
+    }
+
+    sub_4D3E80();
+
+    return true;
 }
 
 // 0x4D3D60
