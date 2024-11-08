@@ -85,6 +85,10 @@ typedef struct SkillCallbacks {
 
 static_assert(sizeof(SkillCallbacks) == 0x24, "wrong size");
 
+extern const char* off_5B6FF4[BASIC_SKILL_COUNT];
+extern const char* off_5B7024[TECH_SKILL_COUNT];
+extern const char* off_5B7034[TRAINING_COUNT];
+
 bool skill_init(GameInitInfo* init_info);
 void skill_set_callbacks(SkillCallbacks* callbacks);
 void skill_exit();

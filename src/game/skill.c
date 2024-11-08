@@ -111,6 +111,38 @@ static int dword_5B6FA4[20] = {
     20,
 };
 
+// 0x5B6FF4
+const char* off_5B6FF4[BASIC_SKILL_COUNT] = {
+    "bs_bow",
+    "bs_dodge",
+    "bs_melee",
+    "bs_throwing",
+    "bs_backstab",
+    "bs_pick_pocket",
+    "bs_prowling",
+    "bs_spot_trap",
+    "bs_gambling",
+    "bs_haggle",
+    "bs_heal",
+    "bs_persuasion",
+};
+
+// 0x5B7024
+const char* off_5B7024[TECH_SKILL_COUNT] = {
+    "ts_repair",
+    "ts_firearms",
+    "ts_pick_lock",
+    "ts_disarm_trap",
+};
+
+// 0x5B7034
+const char* off_5B7034[TRAINING_COUNT] = {
+    "st_untrained",
+    "st_beginner",
+    "st_expert",
+    "st_master",
+};
+
 // 0x5B7044
 static int dword_5B7044[19] = {
     55,
