@@ -224,7 +224,27 @@ bool townmap_info(int map, TownMapInfo* tmi)
 // 0x4BE670
 void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4)
 {
-    // TODO: Incomplete.
+    int64_t x1;
+    int64_t y1;
+    int64_t x2;
+    int64_t y2;
+    int64_t v1;
+    int64_t v2;
+
+    *a3 = 0;
+    *a4 = 0;
+
+    sub_4B8680(tmi->loc, &x1, &y1);
+    sub_4B8680(loc, &x2, &y2);
+
+    v1 = x2 + tmi->field_C / 2 - x1;
+    v2 = y2 + tmi->field_10 / 2 - y1;
+
+    if (v2 >= 0
+        && v2 < tmi->field_C) {
+        *a3 = (int)(v1 * tmi->field_28);
+        *a4 = (int)(v2 * tmi->field_28);
+    }
 }
 
 // 0x4BE780
