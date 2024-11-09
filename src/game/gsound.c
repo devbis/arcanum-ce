@@ -12,28 +12,28 @@
 #define TWENTY_FIVE 25
 
 typedef struct SoundScheme {
-    uint8_t field_0;
-    uint8_t field_1;
-    uint8_t field_2;
-    int frequency;
-    int time_start;
-    int time_end;
-    int balance_left;
-    int balance_right;
-    int volume_min;
-    int volume_max;
-    tig_sound_handle_t sound_handle;
-    char path[MAX_PATH];
+    /* 0000 */ uint8_t field_0;
+    /* 0001 */ uint8_t field_1;
+    /* 0002 */ uint8_t field_2;
+    /* 0004 */ int frequency;
+    /* 0008 */ int time_start;
+    /* 000C */ int time_end;
+    /* 0010 */ int balance_left;
+    /* 0014 */ int balance_right;
+    /* 0018 */ int volume_min;
+    /* 001C */ int volume_max;
+    /* 0020 */ tig_sound_handle_t sound_handle;
+    /* 0024 */ char path[MAX_PATH];
 } SoundScheme;
 
 // See 0x41BF70.
 static_assert(sizeof(SoundScheme) == 0x128, "wrong size");
 
 typedef struct SoundSchemeList {
-    int field_0;
-    int field_4;
-    int field_8;
-    SoundScheme field_C[TWENTY_FIVE];
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ SoundScheme field_C[TWENTY_FIVE];
 } SoundSchemeList;
 
 static_assert(sizeof(SoundSchemeList) == 0x1CF4, "wrong size");
@@ -769,7 +769,66 @@ void sub_41BAC0(int fade_duration)
 // 0x41BAF0
 void sub_41BAF0()
 {
-    // TODO: Incomplete.
+    int hour;
+    int list_idx;
+    SoundSchemeList* list;
+    int scheme_idx;
+    SoundScheme* scheme;
+    char path[TIG_MAX_PATH];
+    int volume;
+    int extra_volume;
+
+    hour = datetime_current_hour();
+
+    for (list_idx = 0; list_idx < TWO; list_idx++) {
+        list = &(stru_5D1A98[list_idx]);
+        for (scheme_idx = 0; scheme_idx < list->field_8; scheme_idx++) {
+            scheme = &(list->field_C[scheme_idx]);
+            if (!scheme->field_0) {
+                if (hour >= scheme->time_start
+                    && hour <= scheme->time_end
+                    && random_between(0, 999) < scheme->frequency) {
+                    sub_41BCD0(scheme->path, path);
+                    if (scheme->volume_max > scheme->volume_min) {
+                        volume = scheme->volume_min
+                            + random_between(0, scheme->volume_max - scheme->volume_min - 1);
+                    } else {
+                        volume = scheme->volume_min;
+                    }
+
+                    if (scheme->balance_right > scheme->balance_left) {
+                        extra_volume = scheme->balance_left
+                            + random_between(0, scheme->balance_right - scheme->balance_left - 1);
+                    } else {
+                        extra_volume = scheme->balance_left;
+                    }
+
+                    gsound_play_sfx(path, 1, volume, extra_volume, 0);
+                }
+            } else if (scheme->field_2) {
+                if (!tig_sound_is_playing(scheme->sound_handle)) {
+                    if (dword_5D5594) {
+                        sub_41BD50(dword_5D1A38[0], dword_5D1A38[1]);
+                        dword_5D5594 = false;
+                    }
+                }
+            } else if (scheme->field_1) {
+                if (hour < scheme->time_start || hour > scheme->time_end) {
+                    if (scheme->sound_handle != TIG_SOUND_HANDLE_INVALID) {
+                        tig_sound_stop(scheme->sound_handle, 25);
+                        scheme->sound_handle = TIG_SOUND_HANDLE_INVALID;
+                    }
+                } else {
+                    if (scheme->sound_handle == TIG_SOUND_HANDLE_INVALID) {
+                        sub_41BCD0(scheme->path, path);
+                        tig_sound_create(&(scheme->sound_handle), TIG_SOUND_TYPE_MUSIC);
+                        tig_sound_set_volume(scheme->sound_handle, gsound_music_volume * (scheme->volume_min) / 100);
+                        tig_sound_play_streamed_indefinitely(scheme->sound_handle, path, 25, TIG_SOUND_HANDLE_INVALID);
+                    }
+                }
+            }
+        }
+    }
 }
 
 // 0x41BCD0
