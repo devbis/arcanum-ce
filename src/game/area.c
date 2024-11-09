@@ -11,51 +11,55 @@
 #include "game/townmap.h"
 #include "game/ui.h"
 
-static int sub_4CB220(int64_t obj);
-static int sub_4CB630(int64_t obj);
+#define DEFAULT_RADIUS 5
+
+#define AREA_KNOWN 0x1
+
+static int get_nearest_area(int64_t obj);
+static int sub_4CB630(int64_t loc);
 
 // 0x5FF5A8
-static int dword_5FF5A8;
+static int area_count;
 
 // 0x5FF5AC
-static int64_t* dword_5FF5AC;
+static int64_t* area_locations;
 
 // 0x5FF5B0
-static char** dword_5FF5B0;
+static char** area_names;
 
 // 0x5FF5B4
-static mes_file_handle_t dword_5FF5B4;
+static mes_file_handle_t area_gamearea_mes_file;
 
 // 0x5FF5B8
-static unsigned char* dword_5FF5B8[8];
+static uint8_t* area_flags_per_player[8];
 
 // 0x5FF5D8
-static char** dword_5FF5D8;
+static char** area_descriptions;
 
 // 0x5FF5DC
-static int* dword_5FF5DC;
+static int* area_wm_x_offsets;
 
 // 0x5FF5E0
-static int* dword_5FF5E0;
+static int* area_wm_y_offsets;
 
 // 0x5FF5E4
-static int* dword_5FF5E4;
+static int* area_radiuses;
 
 // 0x5FF5E8
-static uint8_t* dword_5FF5E8;
+static uint8_t* area_flags;
 
 // 0x5FF5EC
-static int dword_5FF5EC;
+static int area_last_known_area;
 
 // 0x5FF5F0
-static int dword_5FF5F0[8];
+static int area_last_known_area_per_player[8];
 
 // 0x4CA940
 bool area_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    dword_5FF5A8 = 0;
+    area_count = 0;
 
     return true;
 }
@@ -63,16 +67,16 @@ bool area_init(GameInitInfo* init_info)
 // 0x4CA950
 void area_reset()
 {
-    int index;
+    int area;
     int player;
 
-    for (index = 0; index < dword_5FF5A8; index++) {
-        dword_5FF5E8[index] = 0;
+    for (area = 0; area < area_count; area++) {
+        area_flags[area] = 0;
     }
 
     for (player = 0; player < 8; player++) {
-        for (index = 0; index < dword_5FF5A8; index++) {
-            dword_5FF5B8[player][index] = 0;
+        for (area = 0; area < area_count; area++) {
+            area_flags_per_player[player][area] = 0;
         }
     }
 }
@@ -93,70 +97,68 @@ bool area_mod_load()
     char* pch;
     int radius;
 
-    dword_5FF5A8 = 0;
+    area_count = 0;
 
-    if (!mes_load("mes\\gamearea.mes", &dword_5FF5B4)) {
+    if (!mes_load("mes\\gamearea.mes", &area_gamearea_mes_file)) {
         return true;
     }
 
     mes_file_entry.num = 0;
-    mes_get_msg(dword_5FF5B4, &mes_file_entry);
+    mes_get_msg(area_gamearea_mes_file, &mes_file_entry);
     do {
-        dword_5FF5A8++;
-    } while (mes_find_next(dword_5FF5B4, &mes_file_entry));
+        area_count++;
+    } while (mes_find_next(area_gamearea_mes_file, &mes_file_entry));
 
-    dword_5FF5B0 = (char**)MALLOC(sizeof(*dword_5FF5B0) * dword_5FF5A8);
-    dword_5FF5D8 = (char**)MALLOC(sizeof(*dword_5FF5D8) * dword_5FF5A8);
-    dword_5FF5AC = (int64_t*)MALLOC(sizeof(*dword_5FF5AC) * dword_5FF5A8);
-    dword_5FF5E8 = (uint8_t*)MALLOC(sizeof(*dword_5FF5E8) * dword_5FF5A8);
+    area_names = (char**)MALLOC(sizeof(*area_names) * area_count);
+    area_descriptions = (char**)MALLOC(sizeof(*area_descriptions) * area_count);
+    area_locations = (int64_t*)MALLOC(sizeof(*area_locations) * area_count);
+    area_flags = (uint8_t*)MALLOC(sizeof(*area_flags) * area_count);
 
     for (index = 0; index < 8; index++) {
-        dword_5FF5B8[index] = (uint8_t*)MALLOC(sizeof(*dword_5FF5B8[index]) * dword_5FF5A8);
+        area_flags_per_player[index] = (uint8_t*)MALLOC(sizeof(*area_flags_per_player[index]) * area_count);
     }
 
-    dword_5FF5E4 = (int*)MALLOC(sizeof(*dword_5FF5E4) * dword_5FF5A8);
-    dword_5FF5DC = (int*)MALLOC(sizeof(*dword_5FF5DC) * dword_5FF5A8);
-    dword_5FF5E0 = (int*)MALLOC(sizeof(*dword_5FF5E0) * dword_5FF5A8);
+    area_radiuses = (int*)MALLOC(sizeof(*area_radiuses) * area_count);
+    area_wm_x_offsets = (int*)MALLOC(sizeof(*area_wm_x_offsets) * area_count);
+    area_wm_y_offsets = (int*)MALLOC(sizeof(*area_wm_y_offsets) * area_count);
 
     index = 0;
     mes_file_entry.num = 0;
-    mes_get_msg(dword_5FF5B4, &mes_file_entry);
+    mes_get_msg(area_gamearea_mes_file, &mes_file_entry);
     tig_str_parse_set_separator(',');
 
     do {
         str = mes_file_entry.str;
         tig_str_parse_value_64(&str, &x);
         tig_str_parse_value_64(&str, &y);
-        dword_5FF5AC[index] = x | y;
-        dword_5FF5DC[index] = 0;
-        dword_5FF5E0[index] = 0;
-        tig_str_parse_value(&str, &(dword_5FF5DC[index]));
-        tig_str_parse_value(&str, &(dword_5FF5E0[index]));
+        area_locations[index] = location_make(x, y);
+        area_wm_x_offsets[index] = 0;
+        area_wm_y_offsets[index] = 0;
+        tig_str_parse_value(&str, &(area_wm_x_offsets[index]));
+        tig_str_parse_value(&str, &(area_wm_y_offsets[index]));
 
         pch = strchr(mes_file_entry.str, '/');
         if (pch != NULL) {
-            dword_5FF5B0[index] = pch + 1;
+            area_names[index] = pch + 1;
 
             pch = strchr(pch + 1, '/');
             if (pch != NULL) {
-                *pch = '\0';
-                dword_5FF5D8[index] = pch + 1;
-                dword_5FF5E8[index] = 0;
-                dword_5FF5E4[index] = 320;
+                *pch++ = '\0';
+                area_descriptions[index] = pch;
+                area_flags[index] = 0;
+                area_radiuses[index] = DEFAULT_RADIUS * 64;
 
-                pch = strchr(pch + 1, '/');
+                pch = strchr(pch, '/');
                 if (pch != NULL) {
-                    *pch = '\0';
-
-                    pch++;
+                    *pch++ = '\0';
                     if (tig_str_parse_named_value(&pch, "Radius:", &radius)) {
                         if (index > 0) {
-                            dword_5FF5E4[index] = radius << 6;
+                            area_radiuses[index] = radius * 64;
                         } else if (index == 0) {
-                            dword_5FF5E4[0] = 0;
+                            area_radiuses[0] = 0;
                         } else {
                             // FIXME: Unreachable (and wrong).
-                            dword_5FF5E4[index] = -1;
+                            area_radiuses[index] = -1;
                         }
                     }
                 }
@@ -168,7 +170,7 @@ bool area_mod_load()
         }
 
         index++;
-    } while (mes_find_next(dword_5FF5B4, &mes_file_entry));
+    } while (mes_find_next(area_gamearea_mes_file, &mes_file_entry));
 
     return true;
 }
@@ -176,24 +178,24 @@ bool area_mod_load()
 // 0x4CACB0
 void area_mod_unload()
 {
-    int index;
+    int player;
 
-    if (dword_5FF5B4 != MES_FILE_HANDLE_INVALID) {
-        FREE(dword_5FF5B0);
-        FREE(dword_5FF5D8);
-        FREE(dword_5FF5AC);
-        FREE(dword_5FF5E8);
+    if (area_gamearea_mes_file != MES_FILE_HANDLE_INVALID) {
+        FREE(area_names);
+        FREE(area_descriptions);
+        FREE(area_locations);
+        FREE(area_flags);
 
-        for (index = 0; index < 8; index++) {
-            FREE(dword_5FF5B8[index]);
+        for (player = 0; player < 8; player++) {
+            FREE(area_flags_per_player[player]);
         }
 
-        FREE(dword_5FF5E4);
-        FREE(dword_5FF5DC);
-        FREE(dword_5FF5E0);
+        FREE(area_radiuses);
+        FREE(area_wm_x_offsets);
+        FREE(area_wm_y_offsets);
 
-        mes_unload(dword_5FF5B4);
-        dword_5FF5B4 = MES_FILE_HANDLE_INVALID;
+        mes_unload(area_gamearea_mes_file);
+        area_gamearea_mes_file = MES_FILE_HANDLE_INVALID;
     }
 }
 
@@ -202,12 +204,12 @@ bool area_load(GameLoadInfo* load_info)
 {
     int player;
 
-    if (tig_file_fread(dword_5FF5E8, dword_5FF5A8, 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&dword_5FF5EC, sizeof(dword_5FF5EC), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(area_flags, area_count, 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&area_last_known_area, sizeof(area_last_known_area), 1, load_info->stream) != 1) return false;
 
     for (player = 0; player < 8; player++) {
-        if (tig_file_fread(dword_5FF5B8[player], dword_5FF5A8, 1, load_info->stream) != 1) return false;
-        if (tig_file_fread(&(dword_5FF5F0[player]), sizeof(dword_5FF5F0[0]), 1, load_info->stream) != 1) return false;
+        if (tig_file_fread(area_flags_per_player[player], area_count, 1, load_info->stream) != 1) return false;
+        if (tig_file_fread(&(area_last_known_area_per_player[player]), sizeof(area_last_known_area_per_player[0]), 1, load_info->stream) != 1) return false;
     }
 
     return true;
@@ -218,109 +220,110 @@ bool area_save(TigFile* stream)
 {
     int player;
 
-    if (tig_file_fwrite(dword_5FF5E8, dword_5FF5A8, 1, stream) != 1) return false;
-    if (tig_file_fwrite(&dword_5FF5EC, sizeof(dword_5FF5EC), 1, stream) != 1) return false;
+    if (tig_file_fwrite(area_flags, area_count, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&area_last_known_area, sizeof(area_last_known_area), 1, stream) != 1) return false;
 
     for (player = 0; player < 8; player++) {
-        if (tig_file_fwrite(dword_5FF5B8[player], dword_5FF5A8, 1, stream) != 1) return false;
-        if (tig_file_fwrite(&(dword_5FF5F0[player]), sizeof(dword_5FF5F0[0]), 1, stream) != 1) return false;
+        if (tig_file_fwrite(area_flags_per_player[player], area_count, 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(area_last_known_area_per_player[player]), sizeof(area_last_known_area_per_player[0]), 1, stream) != 1) return false;
     }
 
     return true;
 }
 
 // 0x4CAE80
-int sub_4CAE80()
+int area_get_count()
 {
-  return dword_5FF5A8;
+  return area_count;
 }
 
 // 0x4CAE90
-char* sub_4CAE90(int index)
+char* area_get_name(int area)
 {
-    return index >= 0 && index < dword_5FF5A8
-        ? dword_5FF5B0[index]
+    return area >= 0 && area < area_count
+        ? area_names[area]
         : NULL;
 }
 
 // 0x4CAEB0
-char* sub_4CAEB0(int index)
+char* area_get_description(int area)
 {
-    return index >= 0 && index < dword_5FF5A8
-        ? dword_5FF5D8[index]
+    return area >= 0 && area < area_count
+        ? area_descriptions[area]
         : NULL;
 }
 
 // 0x4CAED0
-int64_t sub_4CAED0(int index)
+int64_t area_get_location(int area)
 {
-    return index >= 0 && index < dword_5FF5A8
-        ? dword_5FF5AC[index]
+    return area >= 0 && area < area_count
+        ? area_locations[area]
         : 0;
 }
 
 // 0x4CAF00
-void sub_4CAF00(int index, int* a2, int* a3)
+void area_get_wm_offset(int area, int* x, int* y)
 {
-    // FIXME: No overflow precondition.
-    *a2 = dword_5FF5DC[index];
-    *a3 = dword_5FF5E0[index];
+    // FIXME: No bound checking guard seen in previous functions.
+    *x = area_wm_x_offsets[area];
+    *y = area_wm_y_offsets[area];
 }
 
 // 0x4CAF50
-bool sub_4CAF50(int64_t obj, int a2)
+bool area_is_known(int64_t pc_obj, int area)
 {
-    int v1;
+    int player;
 
-    if (obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (pc_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-            v1 = sub_4A2B10(obj);
-            if (v1 != -1) {
-                return (dword_5FF5B8[v1][a2] & 1) != 0;
+            player = sub_4A2B10(pc_obj);
+            if (player != -1) {
+                return (area_flags_per_player[player][area] & 1) != 0;
             }
-        } else if (obj == player_get_pc_obj()) {
-            return (dword_5FF5E8[a2] & 1) != 0;
+        } else if (pc_obj == player_get_pc_obj()) {
+            return (area_flags[area] & AREA_KNOWN) != 0;
         }
     }
+
     return false;
 }
 
 // 0x4CAFD0
-bool sub_4CAFD0(int64_t obj, int a2)
+bool area_set_known(int64_t pc_obj, int area)
 {
     Packet101 pkt;
     int player;
 
-    if (sub_4CAF50(obj, a2)) {
+    if (area_is_known(pc_obj, area)) {
         return true;
     }
 
-    if (obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (pc_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
             if (!sub_4A2BA0()) {
                 if ((tig_net_flags & TIG_NET_HOST) != 0) {
                     pkt.type = 101;
-                    pkt.field_8 = sub_407EF0(obj);
-                    pkt.field_20 = a2;
+                    pkt.field_8 = sub_407EF0(pc_obj);
+                    pkt.field_20 = area;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
 
-                    player = sub_4A2B10(obj);
+                    player = sub_4A2B10(pc_obj);
                     if (player == -1) {
                         return false;
                     }
 
-                    dword_5FF5B8[player][a2] |= 1;
-                    dword_5FF5F0[player] = a2;
+                    area_flags_per_player[player][area] |= 1;
+                    area_last_known_area_per_player[player] = area;
                     sub_4EE230(3, 1, player);
                 }
                 return true;
             }
-        } else if (obj == player_get_pc_obj()) {
-            dword_5FF5E8[a2] |= 1;
+        } else if (pc_obj == player_get_pc_obj()) {
+            area_flags[area] |= AREA_KNOWN;
             sub_460790(3, 1);
-            dword_5FF5EC = a2;
+            area_last_known_area = area;
             return true;
         }
     }
@@ -329,35 +332,35 @@ bool sub_4CAFD0(int64_t obj, int a2)
 }
 
 // 0x4CB100
-int sub_4CB100(int64_t obj_handle)
+int area_get_last_known_area(int64_t pc_obj)
 {
-    int v1;
+    int player;
 
-    if (obj_handle != OBJ_HANDLE_NULL
-        && obj_field_int32_get(obj_handle, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (pc_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if ((tig_net_flags & 0x1) != 0) {
-            v1 = sub_4A2B10(obj_handle);
-            if (v1 != -1) {
-                return dword_5FF5F0[v1];
+            player = sub_4A2B10(pc_obj);
+            if (player != -1) {
+                return area_last_known_area_per_player[player];
             }
         } else {
-            if (obj_handle == player_get_pc_obj()) {
-                return dword_5FF5EC;
+            if (pc_obj == player_get_pc_obj()) {
+                return area_last_known_area;
             }
         }
     }
 
-    return 0;
+    return AREA_UNKNOWN;
 }
 
 // 0x4CB160
-void sub_4CB160(int64_t obj)
+void area_reset_last_known_area(int64_t pc_obj)
 {
     Packet102 pkt;
     int player;
 
-    if (obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (pc_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
             if (!sub_4A2BA0()) {
                 if ((tig_net_flags & TIG_NET_HOST) == 0) {
@@ -365,116 +368,102 @@ void sub_4CB160(int64_t obj)
                 }
 
                 pkt.type = 102;
-                pkt.field_8 = sub_407EF0(obj);
+                pkt.field_8 = sub_407EF0(pc_obj);
                 tig_net_send_app_all(&pkt, sizeof(pkt));
 
-                player = sub_4A2B10(obj);
+                player = sub_4A2B10(pc_obj);
                 if (player != -1) {
-                    dword_5FF5F0[player] = 0;
+                    area_last_known_area_per_player[player] = AREA_UNKNOWN;
                 }
             }
-        } else if (obj == player_get_pc_obj()) {
-            dword_5FF5EC = 0;
+        } else if (pc_obj == player_get_pc_obj()) {
+            area_last_known_area = AREA_UNKNOWN;
         }
     }
 }
 
 // 0x4CB220
-int sub_4CB220(int64_t obj)
+int get_nearest_area(int64_t loc)
 {
-    int index;
-    int v1;
-    int64_t v2;
-    int64_t v3;
+    int area;
+    int nearest_area;
+    int64_t nearest_distance;
+    int64_t distance;
 
-    v1 = 0;
-    v2 = sub_4B96F0(sub_4CAED0(0), obj);
-    for (index = 1; index < dword_5FF5A8; index++) {
-        v3 = sub_4B96F0(sub_4CAED0(index), obj);
-        if (v3 < v2) {
-            v1 = index;
-            v2 = v3;
+    nearest_area = AREA_UNKNOWN;
+    nearest_distance = sub_4B96F0(area_get_location(0), loc);
+
+    for (area = 1; area < area_count; area++) {
+        distance = sub_4B96F0(area_get_location(area), loc);
+        if (distance < nearest_distance) {
+            nearest_area = area;
+            nearest_distance = distance;
         }
     }
 
-    return v1;
+    return nearest_area;
 }
 
 // 0x4CB2A0
-int sub_4CB2A0(int64_t loc, int64_t a2, int64_t a3)
+int area_get_nearest_known_area(int64_t loc, int64_t pc_obj, int64_t range)
 {
-    int index;
-    int64_t v5;
-    int64_t v6;
-    int v1;
+    int area;
+    int nearest_area;
+    int64_t nearest_distance;
+    int64_t distance;
 
-    if (a2 == OBJ_HANDLE_NULL) {
-        return 0;
+    if (pc_obj == OBJ_HANDLE_NULL
+        || obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return AREA_UNKNOWN;
     }
 
-    if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-        return 0;
-    }
+    // NOTE: Original code is different.
+    nearest_area = AREA_UNKNOWN;
+    nearest_distance = range + 1;
 
-    v5 = a3 + 1;
-    for (index = 1; index < dword_5FF5A8; index++) {
-        if (sub_4CAF50(a2, index)) {
-            v5 = sub_4B96F0(sub_4CAED0(index), loc);
-            if (v5 < a3) {
-                break;
+    for (area = 1; area < area_count; area++) {
+        distance = sub_4B96F0(area_get_location(area), loc);
+        if (distance < nearest_distance) {
+            if (area_is_known(pc_obj, area)) {
+                nearest_area = area;
+                nearest_distance = distance;
             }
         }
     }
 
-    v1 = index;
-    while (index < dword_5FF5A8 - 1) {
-        v6 = sub_4B96F0(sub_4CAED0(index + 1), loc);
-        if (v6 < a3
-            && sub_4CAF50(a2, index + 1)
-            && v6 < v5) {
-            v5 = v6;
-            v1 = index + 1;
-        }
-        index++;
-    }
-
-    if (v5 < a3 + 1) {
-        return v1;
-    }
-
-    return 0;
+    return nearest_area;
 }
 
 // 0x4CB4D0
-int sub_4CB4D0(int64_t location, int a2)
+int sub_4CB4D0(int64_t location, bool a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x4CB630
-int sub_4CB630(int64_t obj)
+int sub_4CB630(int64_t loc)
 {
     int v1;
     int v2;
     int v3;
 
-    v1 = sub_4BE380(sub_4CFC50(obj));
+    v1 = sub_4BE380(sub_4CFC50(loc));
     if (v1 == 0) {
-        return 0;
+        return AREA_UNKNOWN;
     }
 
-    v2 = sub_4CB220(obj);
+    v2 = get_nearest_area(loc);
     if (v2 == 0) {
-        return 0;
+        return AREA_UNKNOWN;
     }
 
-    v3 = sub_4BE380(sub_4CFC50(sub_4CAED0(v2)));
+    v3 = sub_4BE380(sub_4CFC50(area_get_location(v2)));
     if (v3 == 0) {
-        return 0;
+        return AREA_UNKNOWN;
     }
 
     if (v1 != v3) {
-        return 0;
+        return AREA_UNKNOWN;
     }
 
     return v2;
@@ -487,15 +476,15 @@ int sub_4CB6A0(int64_t obj)
     int area;
 
     if (obj == OBJ_HANDLE_NULL) {
-        return 0;
+        return AREA_UNKNOWN;
     }
 
     map = sub_40FF40();
     if (!map_get_area(map, &area)) {
-        return 0;
+        return AREA_UNKNOWN;
     }
 
-    if (area == 0
+    if (area == AREA_UNKNOWN
         && map == sub_40FF50(MAP_TYPE_START_MAP)) {
         area = sub_4CB630(obj_field_int64_get(obj, OBJ_F_LOCATION));
     }
