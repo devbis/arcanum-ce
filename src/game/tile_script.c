@@ -169,7 +169,7 @@ bool sub_4C07B0(int64_t loc, TileScript* tile_script)
     }
 
     tile = sub_4D7090(loc);
-    rc = sub_4F6570(&(sector->tile_scripts), tile, &(tile_script->scr));
+    rc = tile_script_list_get(&(sector->tile_scripts), tile, &(tile_script->scr));
     tile_script->loc = loc;
     sector_unlock(sector_id);
 
@@ -180,7 +180,7 @@ bool sub_4C07B0(int64_t loc, TileScript* tile_script)
 bool sub_4C0830(TileScript* tile_script)
 {
     int tile;
-    int sector_id;
+    int64_t sector_id;
     Sector* sector;
     TigRect dirty_rect;
 
@@ -191,15 +191,17 @@ bool sub_4C0830(TileScript* tile_script)
     }
 
     if (!tile_script_editor || tile_script->scr.num != 0) {
-        sub_4F6470(&(sector->tile_scripts), tile, &(tile_script->scr));
+        tile_script_list_set(&(sector->tile_scripts), tile, &(tile_script->scr));
     } else {
-        sub_4F6520(&(sector->tile_scripts), tile);
+        tile_script_list_remove(&(sector->tile_scripts), tile);
     }
 
     sector_unlock(sector_id);
 
     sub_4C0A40(sector_id, tile, &dirty_rect);
     tile_script_iso_invalidate_rect(&dirty_rect);
+
+    return true;
 }
 
 // 0x4C08E0
