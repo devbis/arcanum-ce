@@ -1,5 +1,6 @@
 #include "game/gsound.h"
 
+#include <math.h>
 #include <stdio.h>
 
 #include "game/gamelib.h"
@@ -545,7 +546,64 @@ void sub_41B3B0(tig_sound_handle_t sound_handle)
 // 0x41B420
 void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, TigSoundPositionalSize size)
 {
-    // TODO: Incomplete.
+    int extra_volume = 64;
+    int volume = 127;
+    int64_t distance;
+    int64_t v1;
+
+    distance = (int64_t)sqrt((double)((x - qword_5D1A50) * (x - qword_5D1A50) + 2 * (y - qword_5D1A58) * 2 * (y - y - qword_5D1A58)));
+    v1 = x - qword_5D1A50;
+    if (v1 < 0) {
+        v1 = qword_5D1A50 - x;
+    }
+
+    if (distance < sound_minimum_radius[size]) {
+        volume = 127;
+    } else if (distance > sound_maximum_radius[size]) {
+        volume = 0;
+    } else if (sound_maximum_radius[size] > sound_minimum_radius[size]) {
+        volume = (int)(127 * (sound_minimum_radius[size] - distance) / (sound_maximum_radius[size] - sound_minimum_radius[size])) + 127;
+        if (volume < 0) {
+            volume = 0;
+        } else if (volume > 127) {
+            volume = 127;
+        }
+        extra_volume = 64;
+    }
+
+    if (x < qword_5D1A50) {
+        if (v1 > qword_5D1A20) {
+            extra_volume = 0;
+        } else if (v1 > qword_5D1A60) {
+            extra_volume = (int)(64 * (qword_5D1A60 - v1) / (qword_5D1A20 - qword_5D1A60)) + 64;
+            if (extra_volume < 0) {
+                extra_volume = 0;
+            } else if (extra_volume > 127) {
+                extra_volume = 127;
+            }
+        }
+    }
+
+    if (x > qword_5D1A50) {
+        if (v1 > qword_5D1A20) {
+            extra_volume = 127;
+        } else if (v1 > qword_5D1A60) {
+            extra_volume = (int)(64 * (v1 - qword_5D1A60) / (qword_5D1A20 - qword_5D1A60)) + 64;
+            if (extra_volume < 0) {
+                extra_volume = 0;
+            } else if (extra_volume > 127) {
+                extra_volume = 127;
+            }
+        }
+    }
+
+    if (volume_ptr != NULL) {
+        *volume_ptr = volume;
+    }
+
+    if (extra_volume_ptr != NULL) {
+        *extra_volume_ptr = extra_volume;
+    }
 }
 
 // 0x41B720
