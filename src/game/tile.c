@@ -1,10 +1,9 @@
-#include "game/lib/tile.h"
+#include "game/tile.h"
 
-#include "game/lib/gamelib.h"
-#include "tig/art.h"
-#include "tig/debug.h"
-#include "tig/video.h"
-#include "tig/window.h"
+#include "game/a_name.h"
+#include "game/gamelib.h"
+#include "game/sector.h"
+#include "game/tile_block.h"
 
 #define TILE_CACHE_CAPACITY 64
 
@@ -12,9 +11,19 @@ typedef struct TileCacheEntry {
     unsigned int art_id;
     TigVideoBuffer* video_buffer;
     unsigned int time;
-};
+} TileCacheEntry;
 
 static_assert(sizeof(TileCacheEntry) == 0xC, "wrong size");
+
+static void sub_4D7820(int64_t loc, tig_art_id_t art_id);
+static void sub_4D7980();
+static void sub_4D79C0(ViewOptions* view_options);
+static void sub_4D7A00();
+static void sub_4D7A40(int zoom);
+static void sub_4D7A90();
+static void sub_4D7AC0(int zoom);
+static void sub_4D7C70();
+static TigVideoBuffer* sub_4D7E90(unsigned int art_id);
 
 // 0x602AE0
 static TileCacheEntry stru_602AE0[TILE_CACHE_CAPACITY];
@@ -44,21 +53,21 @@ static ViewOptions tile_view_options;
 static bool dword_602E00;
 
 // 0x602E04
-static int dword_602E04;
+static tig_window_handle_t tile_iso_window_handle;
 
 // 0x602E08
 static bool dword_602E08;
 
 // 0x4D6840
-bool tile_init(GameContext* ctx)
+bool tile_init(GameInitInfo* init_info)
 {
-    if (tig_window_vbid_get(ctx->iso_window_handle, &dword_602DF0) != TIG_OK) {
+    if (tig_window_vbid_get(init_info->iso_window_handle, &dword_602DF0) != TIG_OK) {
         return false;
     }
 
     dword_602E00 = tig_video_3d_check_initialized() == TIG_OK;
-    dword_602E04 = ctx->iso_window_handle;
-    dword_602DEC = ctx->field_8;
+    tile_iso_window_handle = init_info->iso_window_handle;
+    dword_602DEC = init_info->field_8;
     tile_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_602DF4 = true;
 
@@ -69,7 +78,7 @@ bool tile_init(GameContext* ctx)
 void tile_exit()
 {
     sub_4D7980();
-    dword_602E04 = -1;
+    tile_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
     dword_602DEC = 0;
 }
 
@@ -81,7 +90,7 @@ void tile_resize(ResizeContext* ctx)
         exit(EXIT_FAILURE);
     }
 
-    dword_602E04 = ctx->iso_window_handle;
+    tile_iso_window_handle = ctx->iso_window_handle;
 }
 
 // 0x4D6900
@@ -89,6 +98,7 @@ bool tile_update_view(ViewOptions* view_options)
 {
     sub_4D79C0(view_options);
     tile_view_options = *view_options;
+
     return true;
 }
 
@@ -99,30 +109,132 @@ void sub_4D6930()
 }
 
 // 0x4D7090
-int sub_4D7090(int a1, int a2)
+int sub_4D7090(int64_t loc)
 {
-    return (a1 & 0x3F) | ((a2 & 0x3F) << 6);
+    int tile_x;
+    int tile_y;
+
+    tile_x = loc & 0x3F;
+    tile_y = (loc >> 32) & 0x3F;
+
+    return TILE_MAKE(tile_x, tile_y);
+}
+
+// 0x4D70B0
+tig_art_id_t sub_4D70B0(int64_t loc)
+{
+    int64_t sector_id;
+    Sector* sector;
+    int tile;
+    tig_art_id_t art_id;
+
+    sector_id = sub_4CFC50(loc);
+    if (!sector_lock(sector_id, &sector)) {
+        return TIG_ART_ID_INVALID;
+    }
+
+    tile = sub_4D7090(loc);
+    art_id = sector->tiles.art_ids[tile];
+    sector_unlock(sector_id);
+
+    return art_id;
+}
+
+// 0x4D7110
+bool sub_4D7110(int64_t loc, bool a2)
+{
+    tig_art_id_t art_id;
+    bool v1;
+
+    if (tb_is_blocked(loc)) {
+        return true;
+    }
+
+    art_id = sub_4D70B0(loc);
+    if (tig_art_type(art_id) == TIG_ART_TYPE_FACADE) {
+        return sub_504AC0(art_id) == 0;
+    }
+
+    v1 = sub_4EBAB0(art_id);
+    if (a2) {
+        if (v1) {
+            sub_4D71A0(loc);
+        }
+        v1 = false;
+    }
+
+    return v1;
+}
+
+// 0x4D7180
+bool sub_4D7180(int64_t loc)
+{
+    return sub_4EBBC0(sub_4D70B0(loc));
+}
+
+// 0x4D71A0
+bool sub_4D71A0(int64_t loc)
+{
+    return sub_4EBB30(sub_4D70B0(loc));
+}
+
+// 0x4D71C0
+bool sub_4D71C0(int64_t loc)
+{
+    return sub_4EBB80(sub_4D70B0(loc));
+}
+
+// 0x4D71E0
+void sub_4D71E0()
+{
+    // TODO: Incomplete.
+}
+
+// 0x4D7430
+void sub_4D7430(int64_t loc)
+{
+    tig_art_id_t art_id;
+
+    art_id = sub_4D70B0(loc);
+    do {
+        if (art_id != TIG_ART_ID_INVALID) {
+            art_id = sub_503800(art_id, sub_5037B0(art_id) + 1);
+        }
+    } while (tig_art_exists(art_id) != TIG_OK);
+
+    sub_4D7820(loc, art_id);
+}
+
+// 0x4D7480
+tig_art_id_t sub_4D7480(tig_art_id_t art_id, int a2, int a3, int a4)
+{
+    // TODO: Incomplete.
 }
 
 // 0x4D7590
-void sub_4D7590(unsigned int art_id, TigVideoBuffer* video_buffer)
+void sub_4D7590(tig_art_id_t art_id, TigVideoBuffer* video_buffer)
 {
-    if (tile_view_options.type == VIEW_TYPE_TOP_DOWN) {
-        TigRect rect = { 0, 0, 80, 40 };
+    TigRect rect;
+    TigArtBlitInfo art_blit_spec;
+    TigVideoBufferData src_video_buffer_data;
+    TigVideoBufferData dst_video_buffer_data;
 
-        TigArtBlitSpec art_blit_spec;
-        art_blit_spec.field_0 = 4;
-        art_blit_spec.src_art_id = art_id;
+    if (tile_view_options.type == VIEW_TYPE_TOP_DOWN) {
+        rect.x = 0;
+        rect.y = 0;
+        rect.width = 80;
+        rect.height = 40;
+
+        art_blit_spec.flags = TIG_ART_BLT_PALETTE_ORIGINAL;
+        art_blit_spec.art_id = art_id;
         art_blit_spec.src_rect = &rect;
         art_blit_spec.dst_video_buffer = dword_602DE0;
         art_blit_spec.dst_rect = &rect;
         tig_art_blit(&art_blit_spec);
 
-        TigVideoBufferData src_video_buffer_data;
         tig_video_buffer_lock(dword_602DE0);
         tig_video_buffer_data(dword_602DE0, &src_video_buffer_data);
 
-        TigVideoBufferData dst_video_buffer_data;
         tig_video_buffer_lock(video_buffer);
         tig_video_buffer_data(video_buffer, &dst_video_buffer_data);
 
@@ -133,7 +245,7 @@ void sub_4D7590(unsigned int art_id, TigVideoBuffer* video_buffer)
                     int index = y * tile_view_options.zoom + x;
                     int src_index = dword_602DE4[index] * src_video_buffer_data.pitch + dword_602DE8[index];
                     int dst_index = y * dst_video_buffer_data.pitch + x;
-                    dst_video_buffer_data.surface_data_8bpp[dst_index] = src_video_buffer_data.surface_data_8bpp[src_index];
+                    dst_video_buffer_data.surface_data.p8[dst_index] = src_video_buffer_data.surface_data.p8[src_index];
                 }
             }
             break;
@@ -143,7 +255,7 @@ void sub_4D7590(unsigned int art_id, TigVideoBuffer* video_buffer)
                     int index = y * tile_view_options.zoom + x;
                     int src_index = dword_602DE4[index] * src_video_buffer_data.pitch / 2 + dword_602DE8[index];
                     int dst_index = y * dst_video_buffer_data.pitch / 2 + x;
-                    dst_video_buffer_data.surface_data_16bpp[dst_index] = src_video_buffer_data.surface_data_16bpp[src_index];
+                    dst_video_buffer_data.surface_data.p16[dst_index] = src_video_buffer_data.surface_data.p16[src_index];
                 }
             }
             break;
@@ -154,7 +266,7 @@ void sub_4D7590(unsigned int art_id, TigVideoBuffer* video_buffer)
                     int index = y * tile_view_options.zoom + x;
                     int src_index = dword_602DE4[index] * src_video_buffer_data.pitch / 4 + dword_602DE8[index];
                     int dst_index = y * dst_video_buffer_data.pitch / 4 + x;
-                    dst_video_buffer_data.surface_data_32bpp[dst_index] = src_video_buffer_data.surface_data_32bpp[src_index];
+                    dst_video_buffer_data.surface_data.p32[dst_index] = src_video_buffer_data.surface_data.p32[src_index];
                 }
             }
             break;
@@ -164,7 +276,7 @@ void sub_4D7590(unsigned int art_id, TigVideoBuffer* video_buffer)
                     int index = y * tile_view_options.zoom + x;
                     int src_index = dword_602DE4[index] * src_video_buffer_data.pitch / 4 + dword_602DE8[index];
                     int dst_index = y * dst_video_buffer_data.pitch / 4 + x;
-                    dst_video_buffer_data.surface_data_32bpp[dst_index] = src_video_buffer_data.surface_data_32bpp[src_index];
+                    dst_video_buffer_data.surface_data.p32[dst_index] = src_video_buffer_data.surface_data.p32[src_index];
                 }
             }
             break;
@@ -172,6 +284,41 @@ void sub_4D7590(unsigned int art_id, TigVideoBuffer* video_buffer)
 
         tig_video_buffer_unlock(video_buffer);
         tig_video_buffer_unlock(dword_602DE0);
+    }
+}
+
+// 0x4D7820
+void sub_4D7820(int64_t loc, tig_art_id_t art_id)
+{
+    int64_t sector_id;
+    Sector* sector;
+    int tile;
+    int64_t x;
+    int64_t y;
+    TigRect rect;
+
+    sector_id = sub_4CFC50(loc);
+    if (sector_lock(sector_id, &sector)) {
+        tile = sub_4D7090(loc);
+        sector->tiles.art_ids[tile] = art_id;
+        sector->tiles.difmask[tile / 32] |= 1 << (tile & 31);
+        sector->tiles.dif = 1;
+        sector_unlock(sector_id);
+
+        sub_4B8680(loc, &x, &y);
+        if (x > INT_MIN && x < INT_MAX
+            && y > INT_MIN && y < INT_MAX) {
+            rect.x = (int)x;
+            rect.y = (int)y;
+            if (tile_view_options.type == VIEW_TYPE_ISOMETRIC) {
+                rect.width = 80;
+                rect.height = 40;
+            } else {
+                rect.width = tile_view_options.zoom;
+                rect.height = tile_view_options.zoom;
+            }
+            dword_602DEC(&rect);
+        }
     }
 }
 
@@ -208,6 +355,7 @@ void sub_4D79C0(ViewOptions* view_options)
 void sub_4D7A00()
 {
     TigVideoBufferCreateInfo vb_create_info;
+
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     vb_create_info.width = 80;
     vb_create_info.height = 40;
@@ -220,16 +368,18 @@ void sub_4D7A00()
 // 0x4D7A40
 void sub_4D7A40(int zoom)
 {
+    TigVideoBufferCreateInfo vb_create_info;
+    int index;
+
     sub_4D7A90();
 
-    TigVideoBufferCreateInfo vb_create_info;
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     vb_create_info.width = zoom;
     vb_create_info.height = zoom;
     vb_create_info.background_color = 0;
 
-    for (int index = 0; index < TILE_CACHE_CAPACITY; index++) {
-        stru_602AE0[index].art_id = -1;
+    for (index = 0; index < TILE_CACHE_CAPACITY; index++) {
+        stru_602AE0[index].art_id = TIG_ART_ID_INVALID;
         tig_video_buffer_create(&vb_create_info, &(stru_602AE0[index].video_buffer));
     }
 }
@@ -237,13 +387,15 @@ void sub_4D7A40(int zoom)
 // 0x4D7A90
 void sub_4D7A90()
 {
-    for (int index = 0; index < TILE_CACHE_CAPACITY; index++) {
+    int index;
+
+    for (index = 0; index < TILE_CACHE_CAPACITY; index++) {
         if (stru_602AE0[index].video_buffer != NULL) {
             tig_video_buffer_destroy(stru_602AE0[index].video_buffer);
         }
 
         stru_602AE0[index].video_buffer = NULL;
-        stru_602AE0[index].art_id = -1;
+        stru_602AE0[index].art_id = TIG_ART_ID_INVALID;
     }
 }
 
@@ -306,8 +458,9 @@ TigVideoBuffer* sub_4D7E90(unsigned int art_id)
 {
     int candidate = -1;
     int found = -1;
+    int index;
 
-    for (int index = 0; index < TILE_CACHE_CAPACITY; index++) {
+    for (index = 0; index < TILE_CACHE_CAPACITY; index++) {
         if (stru_602AE0[index].art_id == -1) {
             found = index;
         } else {
@@ -333,5 +486,6 @@ TigVideoBuffer* sub_4D7E90(unsigned int art_id)
     sub_4D7590(art_id, stru_602AE0[found].video_buffer);
     stru_602AE0[found].art_id = art_id;
     stru_602AE0[found].time = gamelib_ping_time;
+
     return stru_602AE0[found].video_buffer;
 }
