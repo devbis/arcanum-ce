@@ -5,7 +5,9 @@
 
 #include "game/a_name.h"
 #include "game/gamelib.h"
+#include "game/light.h"
 #include "game/random.h"
+#include "game/roof.h"
 #include "game/sector.h"
 #include "game/tile_block.h"
 
@@ -28,7 +30,8 @@ static void sub_4D7A90();
 static void sub_4D7AC0(int zoom);
 static void sub_4D7C70();
 static TigVideoBuffer* sub_4D7E90(unsigned int art_id);
-static void sub_4D7CB0(UnknownContext* render_info);
+static void tile_render_topdown(UnknownContext* render_info);
+static void tile_render_iso(UnknownContext* render_info);
 
 // 0x602AE0
 static TileCacheEntry stru_602AE0[TILE_CACHE_CAPACITY];
@@ -111,6 +114,24 @@ bool tile_update_view(ViewOptions* view_options)
 void tile_toggle_visibility()
 {
     tile_visible = !tile_visible;
+}
+
+// 0x4D6950
+void tile_render(UnknownContext* render_info)
+{
+    if (!tile_visible) {
+        return;
+    }
+
+    switch (tile_view_options.type) {
+    case VIEW_TYPE_ISOMETRIC:
+        tile_render_iso(render_info);
+        break;
+    case VIEW_TYPE_TOP_DOWN:
+        // NOTE: Refactored into separate function for clarity.
+        tile_render_topdown(render_info);
+        break;
+    }
 }
 
 // 0x4D7090
@@ -584,7 +605,7 @@ TigVideoBuffer* sub_4D7E90(unsigned int art_id)
 }
 
 // 0x4D7CB0
-void sub_4D7CB0(UnknownContext* render_info)
+void tile_render_topdown(UnknownContext* render_info)
 {
     Sector601808* sector_node;
     Sector* sector;
@@ -638,4 +659,227 @@ void sub_4D7CB0(UnknownContext* render_info)
         }
         sector_node = sector_node->next;
     }
+}
+
+// NOTE: In the original code this function is a part of `tile_render`, however
+// if `tile_render_topdown` is definitely there, why `tile_render_iso` should
+// not?
+void tile_render_iso(UnknownContext* render_info)
+{
+    SomeSectorStuff* v1;
+    SomeSectorStuffEntry* v3;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigRect tile_rect;
+    TigRect tile_subrect;
+    tig_color_t indoor_color;
+    tig_color_t outdoor_color;
+    int v2;
+    int v4;
+    int indexes[3];
+    int widths[3];
+    bool sector_lock_results[3];
+    Sector* sectors[3];
+    int64_t loc_x;
+    int64_t loc_y;
+    TigRectListNode* rect_node;
+    int tile_type;
+    tig_color_t color;
+    tig_color_t v36[4];
+    tig_color_t v51[9];
+    int v10;
+    int v11;
+    int center_x;
+    int center_y;
+    int v15;
+    int v42;
+    bool v43;
+    int v38;
+
+    v1 = render_info->field_8;
+
+    art_blit_info.flags = 0; // NOTE: Initialize to silence compiler warning.
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    tile_rect.width = 78;
+    tile_rect.height = 40;
+
+    indoor_color = light_get_indoor_color();
+    outdoor_color = light_get_outdoor_color();
+
+    sub_4D8210();
+
+    for (v2 = 0; v2 < v1->height; v2++) {
+        v3 = &(v1->field_8[v2]);
+
+        for (v4 = 0; v4 < v3->width; v4++) {
+            indexes[v4] = v3->field_38[v4];
+            widths[v4] = 64 - v3->field_44[v4];
+            sector_lock_results[v4] = sector_lock(v3->field_20[v4], &(sectors[v4]));
+        }
+
+        sub_4B8680(v3->field_8[v2], &loc_x, &loc_y);
+
+        v10 = 0;
+        v11 = 0;
+
+        for (v38 = 0; v38 < v3->field_50; v38++) {
+            center_x = (int)loc_x + v10;
+            center_y = (int)loc_y + v11;
+
+            for (v15 = 0; v15 < v3->width; v15++) {
+                if (sector_lock_results[v15]) {
+                    for (v42 = 0; v42 < v3->field_44[v15]; v42++) {
+                        v43 = false;
+                        art_blit_info.art_id = sectors[v15]->tiles.art_ids[indexes[v15]];
+                        tile_type = tig_art_tile_id_type_get(art_blit_info.art_id);
+                        if (!sub_439FF0(center_x + 40, center_y + 20, 0)) {
+                            tile_rect.x = center_x + 1;
+                            tile_rect.y = center_y;
+
+                            rect_node = *render_info->rects;
+                            while (rect_node != NULL) {
+                                if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                    src_rect.x = dst_rect.x - tile_rect.x;
+                                    src_rect.y = dst_rect.y - tile_rect.y;
+                                    src_rect.width = dst_rect.width;
+                                    src_rect.height = dst_rect.height;
+
+                                    if (!v43) {
+                                        v43 = true;
+
+                                        art_blit_info.dst_video_buffer = dword_602DF0;
+                                        art_blit_info.field_14 = v36;
+
+                                        color = !tile_type ? indoor_color : outdoor_color;
+
+                                        if (sub_4DA360(center_x, center_y, color, v51)) {
+                                            art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_LERP;
+                                            if (dword_602E00) {
+                                                art_blit_info.flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+                                            }
+                                        } else if (v51[0] != color || dword_602E00) {
+                                            art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_CONST;
+                                            if (dword_602E00) {
+                                                art_blit_info.flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+                                            }
+                                        } else {
+                                            art_blit_info.flags = 0;
+                                        }
+                                    }
+
+                                    if ((art_blit_info.flags & TIG_ART_BLT_BLEND_COLOR_LERP) != 0) {
+                                        art_blit_info.field_18 = &tile_subrect;
+
+                                        tile_subrect.x = tile_rect.x;
+                                        tile_subrect.y = tile_rect.y;
+                                        tile_subrect.width = 39;
+                                        tile_subrect.height = 20;
+                                        if (tig_rect_intersection(&tile_subrect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                            tile_subrect.x -= tile_rect.x;
+                                            tile_subrect.y -= tile_rect.y;
+
+                                            src_rect.x = dst_rect.x - tile_rect.x;
+                                            src_rect.y = dst_rect.y - tile_rect.y;
+                                            src_rect.width = dst_rect.width;
+                                            src_rect.height = dst_rect.height;
+
+                                            v36[0] = v51[0];
+                                            v36[1] = v51[1];
+                                            v36[2] = v51[4];
+                                            v36[3] = v51[3];
+
+                                            tig_art_blit(&art_blit_info);
+                                        }
+
+                                        tile_subrect.x = tile_rect.x + 39;
+                                        tile_subrect.y = tile_rect.y;
+                                        if (tig_rect_intersection(&tile_subrect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                            tile_subrect.x -= tile_rect.x;
+                                            tile_subrect.y -= tile_rect.y;
+
+                                            src_rect.x = dst_rect.x - tile_rect.x;
+                                            src_rect.y = dst_rect.y - tile_rect.y;
+                                            src_rect.width = dst_rect.width;
+                                            src_rect.height = dst_rect.height;
+
+                                            v36[0] = v51[1];
+                                            v36[1] = v51[2];
+                                            v36[2] = v51[5];
+                                            v36[3] = v51[4];
+
+                                            tig_art_blit(&art_blit_info);
+                                        }
+
+                                        tile_subrect.x = tile_rect.x;
+                                        tile_subrect.y = tile_rect.y + 20;
+                                        if (tig_rect_intersection(&tile_subrect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                            tile_subrect.x -= tile_rect.x;
+                                            tile_subrect.y -= tile_rect.y;
+
+                                            src_rect.x = dst_rect.x - tile_rect.x;
+                                            src_rect.y = dst_rect.y - tile_rect.y;
+                                            src_rect.width = dst_rect.width;
+                                            src_rect.height = dst_rect.height;
+
+                                            v36[0] = v51[3];
+                                            v36[1] = v51[4];
+                                            v36[2] = v51[7];
+                                            v36[3] = v51[6];
+
+                                            tig_art_blit(&art_blit_info);
+                                        }
+
+                                        tile_subrect.x = tile_rect.x + 39;
+                                        tile_subrect.y = tile_rect.y + 20;
+                                        if (tig_rect_intersection(&tile_subrect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                            tile_subrect.x -= tile_rect.x;
+                                            tile_subrect.y -= tile_rect.y;
+
+                                            src_rect.x = dst_rect.x - tile_rect.x;
+                                            src_rect.y = dst_rect.y - tile_rect.y;
+                                            src_rect.width = dst_rect.width;
+                                            src_rect.height = dst_rect.height;
+
+                                            v36[0] = v51[4];
+                                            v36[1] = v51[5];
+                                            v36[2] = v51[8];
+                                            v36[3] = v51[7];
+
+                                            tig_art_blit(&art_blit_info);
+                                        }
+                                    } else {
+                                        tig_art_blit(&art_blit_info);
+                                    }
+                                }
+                                rect_node = rect_node->next;
+                            }
+                        }
+
+                        indexes[v15]++;
+                        center_x -= 40;
+                        center_y += 20;
+                    }
+
+                    indexes[v15] += widths[v15];
+                } else {
+                    center_x -= 40 * v3->field_44[v15];
+                    center_y += 20 * v3->field_44[v15];
+                }
+            }
+
+            v10 += 40;
+            v11 += 20;
+        }
+
+        for (v4 = 0; v4 < v3->width; v4++) {
+            if (sector_lock_results[v4]) {
+                sector_unlock(v3->field_20[v4]);
+            }
+        }
+    }
+
+    sub_4D8320();
 }
