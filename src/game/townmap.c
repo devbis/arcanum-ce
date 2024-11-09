@@ -331,9 +331,71 @@ bool sub_4BEAB0(int map, int a2)
 }
 
 // 0x4BEAF0
-void sub_4BEAF0()
+bool sub_4BEAF0(int map, int index, TigVideoBufferBlitInfo* vb_blit_info)
 {
-    // TODO: Incomplete.
+    uint8_t available_flags[3][3] = {
+        { 0x8, 0x8 | 0x4, 0x4 },
+        { 0x8 | 0x1, 0, 0x4 | 0x2 },
+        { 0x1, 0x2 | 0x1, 0x2 },
+    };
+
+    unsigned int flags;
+    TownMapInfo tmi;
+    tig_color_t color;
+    int v8;
+    int v9;
+    int v10;
+    int v16;
+    int v17;
+    int v18;
+
+    vb_blit_info->flags = 0;
+
+    if (map == 0) {
+        return false;
+    }
+
+    if (!townmap_info(map, &tmi)) {
+        return false;
+    }
+
+    if (sub_4BEDD0(map, index)) {
+        return true;
+    }
+
+    flags = 0;
+
+    v16 = index % tmi.width;
+    v18 = index / tmi.width;
+
+    for (v17 = 0; v17 < 3; v17++) {
+        v8 = v18 + v17 - 1;
+        v9 = 1 - v16;
+        v10 = v16 - 1;
+        do {
+            if (v10 >= 0 && v10 < tmi.width
+                && v8 >= 0 && v8 < tmi.height) {
+                if (sub_4BEDD0(map, v10 + tmi.width * v8)) {
+                    flags |= available_flags[v17][v9 + v10];
+                }
+            }
+        } while (v9 + v10 < 3);
+    }
+
+    if (flags == 0) {
+        return false;
+    }
+
+    color = tig_color_make(255, 255, 255);
+
+    vb_blit_info->flags = TIG_VIDEO_BUFFER_BLIT_BLEND_COLOR_LERP;
+    vb_blit_info->field_20 = &stru_5FC4C8;
+    vb_blit_info->field_10 = (flags & 0x8) != 0 ? color : 0;
+    vb_blit_info->field_14 = (flags & 0x4) != 0 ? color : 0;
+    vb_blit_info->field_18 = (flags & 0x2) != 0 ? color : 0;
+    vb_blit_info->field_1C = (flags & 0x1) != 0 ? color : 0;
+
+    return true;
 }
 
 // 0x4BECC0
