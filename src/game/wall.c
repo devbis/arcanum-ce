@@ -142,7 +142,68 @@ void sub_4E18F0(int64_t obj, bool a2)
 // 0x4E1C00
 void sub_4E1C00(UnknownContext* render_info)
 {
-    // TODO: Incomplete.
+    LocRect* loc_rect;
+    int64_t x;
+    int64_t y;
+    int64_t loc;
+    ObjectList walls;
+    ObjectNode* node;
+    int64_t loc_x;
+    int64_t loc_y;
+    tig_art_id_t aid;
+    int rotation;
+    TigRect rect;
+
+    loc_rect = render_info->field_4;
+    for (y = loc_rect->y1; y <= loc_rect->y2; y++) {
+        for (x = loc_rect->x1; x <= loc_rect->x2; x++) {
+            loc = location_make(x, y);
+            sub_4407C0(loc, OBJ_TM_WALL, &walls);
+            node = walls.head;
+            while (node != NULL) {
+                sub_4B8680(loc, &loc_x, &loc_y);
+                if (loc_x >= -wall_view_options.zoom && loc_x <= stru_603420.width
+                    && loc_y >= -wall_view_options.zoom && loc_y <= stru_603420.height) {
+                    aid = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+                    rotation = tig_art_id_rotation_get(aid);
+                    if ((rotation & 1) != 0) {
+                        rotation--;
+                    }
+
+                    switch (rotation) {
+                    case 0:
+                        rect.x = (int)loc_x + wall_view_options.zoom;
+                        rect.y = (int)loc_y;
+                        rect.width = 2;
+                        rect.height = wall_view_options.zoom + 1;
+                        break;
+                    case 2:
+                        rect.x = (int)loc_x;
+                        rect.y = (int)loc_y + wall_view_options.zoom;
+                        rect.width = wall_view_options.zoom + 1;
+                        rect.height = 2;
+                        break;
+                    case 4:
+                        rect.x = (int)loc_x;
+                        rect.y = (int)loc_y;
+                        rect.width = 2;
+                        rect.height = wall_view_options.zoom + 1;
+                        break;
+                    default:
+                        rect.x = (int)loc_x;
+                        rect.y = (int)loc_y;
+                        rect.width = wall_view_options.zoom + 1;
+                        rect.height = 2;
+                        break;
+                    }
+
+                    tig_window_fill(wall_iso_window_handle, &rect, tig_color_make(255, 0, 0));
+                }
+                node = node->next;
+            }
+            object_list_destroy(&walls);
+        }
+    }
 }
 
 // 0x4E1EB0
