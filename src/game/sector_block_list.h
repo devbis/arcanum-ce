@@ -4,8 +4,8 @@
 #include <tig/tig.h>
 
 typedef struct SectorBlockList {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4[128];
+    /* 0000 */ bool modified;
+    /* 0004 */ uint32_t mask[128];
 } SectorBlockList;
 
 // See 0x4F81E0.

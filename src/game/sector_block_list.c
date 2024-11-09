@@ -33,11 +33,11 @@ bool sector_block_list_exit(SectorBlockList* list)
 // 0x4F8250
 bool sector_block_list_load(SectorBlockList* list, TigFile* stream)
 {
-    if (tig_file_fread(list->field_4, sizeof(*list->field_4), 128, stream) != 128) {
+    if (tig_file_fread(list->mask, sizeof(*list->mask), 128, stream) != 128) {
         return false;
     }
 
-    list->field_0 = 0;
+    list->modified = false;
 
     return true;
 }
@@ -45,11 +45,11 @@ bool sector_block_list_load(SectorBlockList* list, TigFile* stream)
 // 0x4F8290
 bool sector_block_list_save(SectorBlockList* list, TigFile* stream)
 {
-    if (tig_file_fwrite(list->field_4, sizeof(*list->field_4), 128, stream) != 128) {
+    if (tig_file_fwrite(list->mask, sizeof(*list->mask), 128, stream) != 128) {
         return false;
     }
 
-    list->field_0 = 0;
+    list->modified = false;
 
     return true;
 }
@@ -61,7 +61,7 @@ bool sector_block_list_load_with_dif(SectorBlockList* list, TigFile* stream)
         return false;
     }
 
-    list->field_0 = 1;
+    list->modified = true;
 
     return true;
 }
@@ -73,7 +73,7 @@ bool sector_block_list_save_with_dif(SectorBlockList* list, TigFile* stream)
         return false;
     }
 
-    list->field_0 = 1;
+    list->modified = true;
 
     return true;
 }
