@@ -222,7 +222,7 @@ bool townmap_info(int map, TownMapInfo* tmi)
 }
 
 // 0x4BE670
-void sub_4BE670()
+void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4)
 {
     // TODO: Incomplete.
 }
@@ -234,7 +234,7 @@ void sub_4BE780()
 }
 
 // 0x4BE8F0
-void sub_4BE8F0()
+void sub_4BE8F0(int64_t loc)
 {
     // TODO: Incomplete.
 }
@@ -292,7 +292,14 @@ void sub_4BED00()
 // 0x4BED30
 void sub_4BED30(int map, int a2)
 {
-    // TODO: Incomplete.
+    if (sub_4BEE60(map)) {
+        if (a2 != 0) {
+            a2 = -1;
+        }
+
+        memset(dword_5FC510, -1, dword_5FC514);
+        dword_5FC50C = 1;
+    }
 }
 
 // 0x4BED90

@@ -28,6 +28,8 @@ int sub_4BE380(int64_t sector_id);
 int townmap_count();
 const char* townmap_name(int map);
 bool townmap_info(int map, TownMapInfo* tmi);
+void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4);
+void sub_4BE8F0(int64_t loc);
 bool sub_4BEAB0(int map, int a2);
 bool sub_4BECC0(int map);
 
