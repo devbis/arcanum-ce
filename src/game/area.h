@@ -19,6 +19,7 @@ bool sub_4CAF50(int64_t obj, int a2);
 bool sub_4CAFD0(int64_t obj, int a2);
 int sub_4CB100(int64_t obj_handle);
 void sub_4CB160(int64_t obj);
+int sub_4CB2A0(int64_t loc, int64_t a2, int64_t a3);
 int sub_4CB4D0(int64_t location, int a2);
 int sub_4CB6A0(int64_t obj);
 

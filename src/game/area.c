@@ -400,6 +400,51 @@ int sub_4CB220(int64_t obj)
     return v1;
 }
 
+// 0x4CB2A0
+int sub_4CB2A0(int64_t loc, int64_t a2, int64_t a3)
+{
+    int index;
+    int64_t v5;
+    int64_t v6;
+    int v1;
+
+    if (a2 == OBJ_HANDLE_NULL) {
+        return 0;
+    }
+
+    if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        return 0;
+    }
+
+    v5 = a3 + 1;
+    for (index = 1; index < dword_5FF5A8; index++) {
+        if (sub_4CAF50(a2, index)) {
+            v5 = sub_4B96F0(sub_4CAED0(index), loc);
+            if (v5 < a3) {
+                break;
+            }
+        }
+    }
+
+    v1 = index;
+    while (index < dword_5FF5A8 - 1) {
+        v6 = sub_4B96F0(sub_4CAED0(index + 1), loc);
+        if (v6 < a3
+            && sub_4CAF50(a2, index + 1)
+            && v6 < v5) {
+            v5 = v6;
+            v1 = index + 1;
+        }
+        index++;
+    }
+
+    if (v5 < a3 + 1) {
+        return v1;
+    }
+
+    return 0;
+}
+
 // 0x4CB4D0
 int sub_4CB4D0(int64_t location, int a2)
 {
