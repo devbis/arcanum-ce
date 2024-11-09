@@ -1,8 +1,10 @@
 #include "game/tile_block.h"
 
-#include <tig/tig.h>
+#include "game/a_name.h"
+#include "game/sector.h"
+#include "game/tile.h"
 
-static void sub_4BB590(int64_t a1, int a2, TigRect* rect);
+static void tb_get_rect_internal(int64_t sector_id, int tile, TigRect* rect);
 
 // 0x5FC370
 static tig_art_id_t tb_td_art_id;
@@ -14,13 +16,13 @@ static bool tb_editor;
 static tig_art_id_t tb_iso_art_id;
 
 // 0x5FC37C
-static GameContextF8* iso_5FC37C;
+static GameContextF8* tb_invalidate_rect;
 
 // 0x5FC380
-static bool dword_5FC380;
+static bool tb_visible;
 
 // 0x5FC388
-static ViewOptions stru_5FC388;
+static ViewOptions tb_view_options;
 
 // 0x5FC390
 static tig_window_handle_t tb_iso_window;
@@ -29,14 +31,14 @@ static tig_window_handle_t tb_iso_window;
 bool tileblock_init(GameInitInfo* init_info)
 {
     tb_iso_window = init_info->iso_window_handle;
-    iso_5FC37C = init_info->field_8;
+    tb_invalidate_rect = init_info->field_8;
     tb_editor = init_info->editor;
-    stru_5FC388.type = VIEW_TYPE_ISOMETRIC;
+    tb_view_options.type = VIEW_TYPE_ISOMETRIC;
 
     tig_art_interface_id_create(614, 0, 0, 0, &tb_iso_art_id);
     tig_art_interface_id_create(615, 0, 0, 0, &tb_td_art_id);
 
-    dword_5FC380 = true;
+    tb_visible = true;
 
     return true;
 }
@@ -49,7 +51,7 @@ void tileblock_exit()
 // 0x4BB060
 bool sub_4BB060(ViewOptions* view_info)
 {
-    stru_5FC388 = *view_info;
+    tb_view_options = *view_info;
     return true;
 }
 
@@ -60,45 +62,220 @@ void tileblock_resize(ResizeInfo* resize_info)
 }
 
 // 0x4BB090
-bool sub_4BB090()
+bool tb_is_visible()
 {
-    return dword_5FC380;
+    return tb_visible;
 }
 
 // 0x4BB0A0
-void sub_4BB0A0()
+void tb_toggle()
 {
-    dword_5FC380 = !dword_5FC380;
+    tb_visible = !tb_visible;
 }
 
 // 0x4BB0C0
-void sub_4BB0C0()
+void sub_4BB0C0(UnknownContext* info)
 {
-    // TODO: Incomplete.
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigArtFrameData art_frame_data;
+    Sector601808* sector_node;
+    Sector* sector;
+    int tile;
+    tig_art_id_t aid;
+    TigRect tb_rect;
+    bool tb_rect_calculated;
+    TigRectListNode* rect_node;
+    ObjectNode* obj_node;
+    int obj_type;
+    bool occupied;
+
+    if (!tb_visible) {
+        return;
+    }
+
+    switch (tb_view_options.type) {
+    case VIEW_TYPE_ISOMETRIC:
+        art_blit_info.art_id = tb_iso_art_id;
+        break;
+    case VIEW_TYPE_TOP_DOWN:
+        art_blit_info.art_id = tb_td_art_id;
+        tig_art_frame_data(tb_td_art_id, &art_frame_data);
+        src_rect.y = 0;
+        src_rect.x = 0;
+        src_rect.width = art_frame_data.width;
+        src_rect.height = art_frame_data.height;
+        break;
+    default:
+        // Unknown view type.
+        return;
+    }
+
+    art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_CONST;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    sector_node = info->field_C;
+    while (sector_node != NULL) {
+        if (sector_lock(sector_node->id, &sector)) {
+            for (tile = 0; tile < 4096; tile++) {
+                occupied = false;
+                tb_rect_calculated = false;
+
+                aid = sector->tiles.art_ids[tile];
+                if ((tig_art_type(aid) == TIG_ART_TYPE_FACADE
+                        && !sub_504AC0(aid))
+                    || sub_4EBAB0(aid)) {
+                    occupied = true;
+                } else {
+                    obj_node = sector->objects.heads[tile];
+                    while (obj_node != NULL) {
+                        obj_type = obj_field_int32_get(obj_node->obj, OBJ_F_TYPE);
+                        if (obj_type != OBJ_TYPE_WALL
+                            && obj_type != OBJ_TYPE_PORTAL
+                            && (obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS) & OF_NO_BLOCK) == 0) {
+                            occupied = true;
+                            break;
+                        }
+                        obj_node = obj_node->next;
+                    }
+                }
+
+                if (occupied) {
+                    art_blit_info.color = tig_color_make(128, 0, 0);
+
+                    tb_get_rect_internal(sector_node->id, tile, &tb_rect);
+                    tb_rect_calculated = true;
+
+                    rect_node = *info->rects;
+                    while (rect_node != NULL) {
+                        if (tig_rect_intersection(&tb_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                            if (tb_view_options.type != VIEW_TYPE_TOP_DOWN) {
+                                src_rect.x = dst_rect.x - tb_rect.x;
+                                src_rect.width = dst_rect.width;
+                                src_rect.y = dst_rect.y - tb_rect.y;
+                                src_rect.height = dst_rect.height;
+                            }
+                            tig_window_blit_art(tb_iso_window, &art_blit_info);
+                        }
+                        rect_node = rect_node->next;
+                    }
+                }
+
+                if ((sector->blocks.mask[tile / 32] & (1 << (tile % 32))) != 0) {
+                    art_blit_info.color = tig_color_make(255, 0, 0);
+
+                    if (!tb_rect_calculated) {
+                        tb_get_rect_internal(sector_node->id, tile, &tb_rect);
+                    }
+
+                    rect_node = *info->rects;
+                    while (rect_node != NULL) {
+                        if (tig_rect_intersection(&tb_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                            if (tb_view_options.type != VIEW_TYPE_TOP_DOWN) {
+                                src_rect.x = dst_rect.x - tb_rect.x;
+                                src_rect.width = dst_rect.width;
+                                src_rect.y = dst_rect.y - tb_rect.y;
+                                src_rect.height = dst_rect.height;
+                            }
+                            tig_window_blit_art(tb_iso_window, &art_blit_info);
+                        }
+                        rect_node = rect_node->next;
+                    }
+                }
+            }
+
+            sector_unlock(sector_node->id);
+        }
+        sector_node = sector_node->next;
+    }
 }
 
 // 0x4BB410
-void sub_4BB410()
+bool tb_is_blocked(int64_t loc)
 {
-    // TODO: Incomplete.
+    int64_t sector_id;
+    Sector* sector;
+    int tile;
+    bool blocked;
+
+    sector_id = sub_4CFC50(loc);
+    if (sector_lock(sector_id, &sector)) {
+        tile = sub_4D7090(loc);
+        blocked = (sector->blocks.mask[tile / 32] & (1 << (tile % 32))) != 0;
+        sector_unlock(sector_id);
+        return blocked;
+    }
+
+    return false;
 }
 
 // 0x4BB490
-void sub_4BB490()
+void tb_set_blocked(int64_t loc, bool blocked)
 {
-    // TODO: Incomplete.
+    int64_t sector_id;
+    Sector* sector;
+    int tile;
+    TigRect rect;
+
+    sector_id = sub_4CFC50(loc);
+    tile = sub_4D7090(loc);
+    if (sector_lock(sector_id, &sector)) {
+        if (blocked) {
+            sector->blocks.mask[tile / 32] |= 1 << (tile % 32);
+        } else {
+            sector->blocks.mask[tile / 32] &= ~(1 << (tile % 32));
+        }
+        sector->blocks.modified = true;
+        sector_unlock(sector_id);
+    }
+
+    tb_get_rect_internal(sector_id, tile, &rect);
+    tb_invalidate_rect(&rect);
 }
 
 // 0x4BB550
-void sub_4BB550(int64_t a1, TigRect* rect)
+void tb_get_rect(int64_t loc, TigRect* rect)
 {
-    sub_4BB590(sub_4CFC50(a1),
-        sub_4D7090(a1),
+    tb_get_rect_internal(sub_4CFC50(loc),
+        sub_4D7090(loc),
         rect);
 }
 
 // 0x4BB590
-void sub_4BB590(int64_t a1, int a2, TigRect* rect)
+void tb_get_rect_internal(int64_t sector_id, int tile, TigRect* rect)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int64_t x;
+    int64_t y;
+    TigArtFrameData art_frame_data;
+
+    loc = location_make(SECTOR_X(sector_id) + TILE_X(tile), SECTOR_Y(sector_id) + TILE_Y(tile));
+    sub_4B8680(loc, &x, &y);
+
+    if (x > INT_MIN && x < INT_MAX
+        && y > INT_MIN && y < INT_MAX) {
+        if (tb_view_options.type == VIEW_TYPE_TOP_DOWN) {
+            rect->x = (int)x;
+            rect->y = (int)y;
+            rect->width = tb_view_options.zoom;
+            rect->height = tb_view_options.zoom;
+            return;
+        }
+
+        if (tig_art_frame_data(tb_iso_art_id, &art_frame_data) == TIG_OK) {
+            rect->x = (int)x - art_frame_data.hot_x + 40;
+            rect->y = (int)y - ((40 - art_frame_data.height) / 2) - art_frame_data.hot_y + 40;
+            rect->width = art_frame_data.width;
+            rect->height = art_frame_data.height;
+            return;
+        }
+    }
+
+    // Something's wrong, nullify rect.
+    rect->x = 0;
+    rect->y = 0;
+    rect->width = 0;
+    rect->height = 0;
 }
