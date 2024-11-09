@@ -248,9 +248,22 @@ void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4)
 }
 
 // 0x4BE780
-void sub_4BE780()
+void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    int64_t v2;
+    int64_t v3;
+    int64_t v4;
+    int64_t loc;
+
+    loc_ptr = 0;
+
+    v1 = (x / tmi->field_28) - tmi->field_C / 2;
+    v2 = (y / tmi->field_28) - tmi->field_10 / 2;
+
+    sub_4B8680(tmi->loc, &v3, &v4);
+    sub_4B8730(v1 + v3, v2 + v4, &loc);
+    *loc_ptr = loc;
 }
 
 // 0x4BE8F0
