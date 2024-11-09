@@ -474,6 +474,8 @@ bool gsound_save(TigFile* stream)
             return false;
         }
     }
+
+    return true;
 }
 
 // 0x41B2A0
