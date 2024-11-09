@@ -1,5 +1,8 @@
 #include "game/tile.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include "game/a_name.h"
 #include "game/gamelib.h"
 #include "game/sector.h"
@@ -403,14 +406,29 @@ void sub_4D7A90()
 // 0x4D7AC0
 void sub_4D7AC0(int zoom)
 {
+    double v1;
+    double v2;
+    double v3;
+    double v4;
+    double scale;
+    double v5;
+    double v6;
+    double v7;
+    double v8;
+    int x;
+    int y;
+
     sub_4D7C70();
 
-    dword_602DE8 = (uint8_t*)malloc(sizeof(*dword_602DE8) * (zoom * zoom));
-    dword_602DE4 = (uint8_t*)malloc(sizeof(*dword_602DE4) * (zoom * zoom));
+    v1 = zoom * 0.5 - 1.0;
 
-    // TODO: Unclear, check in debugger.
+    dword_602DE8 = (uint8_t*)MALLOC(sizeof(*dword_602DE8) * (zoom * zoom));
+    dword_602DE4 = (uint8_t*)MALLOC(sizeof(*dword_602DE4) * (zoom * zoom));
 
-    double scale;
+    v2 = ((zoom - 1) - v1) * M_SQRT1_2;
+    v3 = 80.0 / (v2 * 4.0);
+    v4 = 40.0 / (v2 + v1 * M_SQRT1_2 + v2 + v1 * M_SQRT1_2);
+
     if (zoom < 8) {
         scale = 0.5;
     } else if (zoom < 16) {
@@ -433,9 +451,15 @@ void sub_4D7AC0(int zoom)
         scale = 0.95;
     }
 
-    for (int y = 0; y < zoom; y++) {
-        for (int x = 0; x < zoom; x++) {
-            // TODO: Unclear, check in debugger.
+    v5 = v3 * scale;
+    v6 = v4 * scale;
+
+    for (y = 0; y < zoom; y++) {
+        v7 = (y - v1) * M_SQRT1_2;
+        for (x = 0; x < zoom; x++) {
+            v8 = (x - v1) * M_SQRT1_2;
+            dword_602DE8[y * zoom + x] = (uint8_t)((v7 + v8) * v5 + 40.0);
+            dword_602DE4[y * zoom + x] = (uint8_t)((v7 - v8) * v6 + 20.0);
         }
     }
 }
@@ -444,12 +468,12 @@ void sub_4D7AC0(int zoom)
 void sub_4D7C70()
 {
     if (dword_602DE8 != NULL) {
-        free(dword_602DE8);
+        FREE(dword_602DE8);
         dword_602DE8 = NULL;
     }
 
     if (dword_602DE4 != NULL) {
-        free(dword_602DE4);
+        FREE(dword_602DE4);
         dword_602DE4 = NULL;
     }
 }
