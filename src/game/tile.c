@@ -5,6 +5,7 @@
 
 #include "game/a_name.h"
 #include "game/gamelib.h"
+#include "game/random.h"
 #include "game/sector.h"
 #include "game/tile_block.h"
 
@@ -210,9 +211,76 @@ void sub_4D7430(int64_t loc)
 }
 
 // 0x4D7480
-tig_art_id_t sub_4D7480(tig_art_id_t art_id, int a2, int a3, int a4)
+tig_art_id_t sub_4D7480(tig_art_id_t art_id, int num2, bool flippable2, int a4)
 {
-    // TODO: Incomplete.
+    int num1;
+    int type;
+    int flippable1;
+    int palette;
+    int v1;
+    int v2;
+    int cnt;
+    int tmp;
+
+    num1 = tig_art_tile_id_num1_get(art_id);
+    type = tig_art_tile_id_type_get(art_id);
+    flippable1 = tig_art_tile_id_type_get(art_id);
+    palette = tig_art_id_palette_get(art_id);
+
+    if (flippable1) {
+        if (flippable2 && num2 < num1) {
+            v1 = 15 - a4;
+
+            tmp = num2;
+            num2 = num1;
+            num1 = tmp;
+
+            tmp = flippable2;
+            flippable2 = flippable1;
+            flippable1 = tmp;
+        } else {
+            v1 = a4;
+        }
+    } else {
+        if (flippable2 || num2 < num1) {
+            v1 = 15 - a4;
+
+            tmp = num2;
+            num2 = num1;
+            num1 = tmp;
+
+            tmp = flippable2;
+            flippable2 = flippable1;
+            flippable1 = tmp;
+        } else {
+            v1 = a4;
+        }
+    }
+
+    if (v1 == 0) {
+        flippable1 = flippable2;
+        num1 = num2;
+    } else if (num1 == num2 && flippable1 == flippable2) {
+        v1 = 0;
+    } else if (v1 == 15) {
+        flippable2 = flippable1;
+        num2 = num1;
+        v1 = 0;
+    }
+
+    cnt = sub_4EBEF0(num1, num2, v1, type, flippable1, flippable2);
+    v2 = random_between(0, cnt - 1);
+
+    if (flippable1
+        && flippable2
+        && num1 != num2
+        && random_between(0, 1) != 0) {
+        v2 += 8;
+    }
+
+    tig_art_tile_id_create(num1, num2, v1, v2, type, flippable1, flippable2, palette, &art_id);
+
+    return art_id;
 }
 
 // 0x4D7590

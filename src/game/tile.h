@@ -15,7 +15,7 @@ bool sub_4D7180(int64_t loc);
 bool sub_4D71A0(int64_t loc);
 bool sub_4D71C0(int64_t loc);
 void sub_4D7430(int64_t loc);
-tig_art_id_t sub_4D7480(tig_art_id_t art_id, int a2, int a3, int a4);
+tig_art_id_t sub_4D7480(tig_art_id_t art_id, int num2, bool flippable2, int a4);
 void sub_4D7590(tig_art_id_t art_id, TigVideoBuffer* video_buffer);
 
 #define TILE_X(tile) ((tile) & 0x3F)
