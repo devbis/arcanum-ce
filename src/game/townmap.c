@@ -267,9 +267,49 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
 }
 
 // 0x4BE8F0
-void sub_4BE8F0(int64_t loc)
+bool sub_4BE8F0(int64_t loc)
 {
-    // TODO: Incomplete.
+    int64_t sector_id;
+    Sector* sector;
+    TownMapInfo tmi;
+    int64_t v1;
+    int64_t v2;
+    int64_t v3;
+    int64_t v4;
+    int64_t v5;
+    int64_t v6;
+
+    sector_id = sub_4CFC50(loc);
+
+    if (!sub_4D04A0(sector_id)) {
+        return false;
+    }
+
+    if (!sector_lock(sector_id, &sector)) {
+        return false;
+    }
+
+    if (sector->townmap_info == 0) {
+        sector_unlock(sector_id);
+        return false;
+    }
+
+    if (townmap_info(sector->townmap_info, &tmi)) {
+        sub_4B8680(tmi.loc, &v1, &v2);
+        sub_4B8680(loc, &v3, &v4);
+
+        v5 = v3 + tmi.field_C / 2 - v1;
+        v6 = v4 + tmi.field_10 / 2 - v2;
+
+        if (v5 >= 0 && v5 < tmi.field_C
+            && v6 >= 0 && v6 < tmi.field_10) {
+            sub_4BED90(sector->townmap_info,
+                (int)(tmi.width * v5 / tmi.field_C + tmi.width * (tmi.height * v6 / tmi.field_10)));
+        }
+    }
+
+    sector_unlock(sector_id);
+    return true;
 }
 
 // 0x4BEAB0
