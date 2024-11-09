@@ -24,6 +24,7 @@ static void sub_4D7A90();
 static void sub_4D7AC0(int zoom);
 static void sub_4D7C70();
 static TigVideoBuffer* sub_4D7E90(unsigned int art_id);
+static void sub_4D7CB0(UnknownContext* render_info);
 
 // 0x602AE0
 static TileCacheEntry stru_602AE0[TILE_CACHE_CAPACITY];
@@ -38,13 +39,13 @@ static uint8_t* dword_602DE4;
 static uint8_t* dword_602DE8;
 
 // 0x602DEC
-static GameContextF8* dword_602DEC;
+static GameContextF8* tile_invalidate_rect;
 
 // 0x602DF0
 static TigVideoBuffer* dword_602DF0;
 
 // 0x602DF4
-static bool dword_602DF4;
+static bool tile_visible;
 
 // 0x602DF8
 static ViewOptions tile_view_options;
@@ -67,9 +68,9 @@ bool tile_init(GameInitInfo* init_info)
 
     dword_602E00 = tig_video_3d_check_initialized() == TIG_OK;
     tile_iso_window_handle = init_info->iso_window_handle;
-    dword_602DEC = init_info->field_8;
+    tile_invalidate_rect = init_info->field_8;
     tile_view_options.type = VIEW_TYPE_ISOMETRIC;
-    dword_602DF4 = true;
+    tile_visible = true;
 
     return true;
 }
@@ -79,7 +80,7 @@ void tile_exit()
 {
     sub_4D7980();
     tile_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
-    dword_602DEC = 0;
+    tile_invalidate_rect = NULL;
 }
 
 // 0x4D68C0
@@ -103,9 +104,9 @@ bool tile_update_view(ViewOptions* view_options)
 }
 
 // 0x4D6930
-void sub_4D6930()
+void tile_toggle_visibility()
 {
-    dword_602DF4 = 1 - dword_602DF4;
+    tile_visible = !tile_visible;
 }
 
 // 0x4D7090
@@ -317,7 +318,7 @@ void sub_4D7820(int64_t loc, tig_art_id_t art_id)
                 rect.width = tile_view_options.zoom;
                 rect.height = tile_view_options.zoom;
             }
-            dword_602DEC(&rect);
+            tile_invalidate_rect(&rect);
         }
     }
 }
@@ -488,4 +489,61 @@ TigVideoBuffer* sub_4D7E90(unsigned int art_id)
     stru_602AE0[found].time = gamelib_ping_time;
 
     return stru_602AE0[found].video_buffer;
+}
+
+// 0x4D7CB0
+void sub_4D7CB0(UnknownContext* render_info)
+{
+    Sector601808* sector_node;
+    Sector* sector;
+    int tile;
+    int skip;
+    int x;
+    int y;
+    int64_t loc_x;
+    int64_t loc_y;
+    TigRectListNode* rect_node;
+    TigRect tile_rect;
+    TigRect dst_rect;
+    TigRect src_rect;
+
+    sector_node = render_info->field_C;
+    while (sector_node != NULL) {
+        if (sector_lock(sector_node->id, &sector)) {
+            tile = sub_4D7090(sector_node->field_8);
+            skip = 64 - sector_node->field_10;
+            sub_4B8680(sector_node->field_8, &loc_x, &loc_y);
+
+            for (y = 0; y < sector_node->field_14; y++) {
+                tile_rect.x = (int)loc_x;
+                tile_rect.y = (int)loc_y + y * tile_view_options.zoom;
+                tile_rect.width = tile_view_options.zoom;
+                tile_rect.height = tile_view_options.zoom;
+
+                for (x = 0; x < sector_node->field_10; x++) {
+                    rect_node = *render_info->rects;
+                    while (rect_node != NULL) {
+                        if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                            src_rect.x = dst_rect.x - tile_rect.x;
+                            src_rect.y = dst_rect.y - tile_rect.y;
+                            src_rect.width = dst_rect.width;
+                            src_rect.height = dst_rect.height;
+                            tig_window_copy_from_vbuffer(tile_iso_window_handle,
+                                &dst_rect,
+                                sub_4D7E90(sector->tiles.art_ids[tile]),
+                                &src_rect);
+                        }
+                        rect_node = rect_node->next;
+                    }
+
+                    tile++;
+                    tile_rect.x -= tile_view_options.zoom;
+                }
+
+                tile += skip;
+            }
+            sector_unlock(sector_node->id);
+        }
+        sector_node = sector_node->next;
+    }
 }
