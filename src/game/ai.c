@@ -106,6 +106,7 @@ static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD0B0(int64_t npc_obj);
 static int64_t ai_find_nearest_bed(int64_t obj);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
+static bool sub_4AD420(int64_t obj);
 static bool sub_4AD4D0(int64_t obj);
 static int sub_4AD5D0(int64_t obj);
 static int sub_4AD610(int64_t obj);
@@ -1187,9 +1188,35 @@ void ai_timeevent_process()
 }
 
 // 0x4AD420
-void sub_4AD420()
+bool sub_4AD420(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+
+    if (sub_45D8D0(obj)) {
+        return false;
+    }
+
+    if (sub_4B6D70()) {
+        return false;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        pc_obj = multiplayer_find_first_player_obj();
+        while (pc_obj != OBJ_HANDLE_NULL) {
+            if (sub_441AE0(pc_obj, obj) <= 30) {
+                return true;
+            }
+            pc_obj = multiplayer_find_next_player_obj();
+        }
+
+        return false;
+    }
+
+    if (sub_441AE0(player_get_pc_obj(), obj) <= 30) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x4AD4D0
