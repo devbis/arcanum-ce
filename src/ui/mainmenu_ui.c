@@ -1598,16 +1598,16 @@ static int dword_5C5130[15] = {
 // 0x5C5170
 static struct {
     int field_0;
-    int field_4;
+    bool available_for_female;
 } stru_5C5170[] = {
-    { 0, 1 },
-    { 1, 0 },
-    { 4, 1 },
-    { 0, 1 },
-    { 2, 0 },
-    { 2, 0 },
-    { 0, 1 },
-    { 3, 0 },
+    { 0, true },
+    { 1, false },
+    { 4, true },
+    { 0, true },
+    { 2, false },
+    { 2, false },
+    { 0, true },
+    { 3, false },
 };
 
 // 0x5C51B0
@@ -4138,7 +4138,7 @@ bool sub_5453A0(int64_t obj, int gender)
 
     race = stat_level(obj, STAT_RACE);
     if (gender == GENDER_FEMALE
-        && !stru_5C5170[race].field_4) {
+        && !stru_5C5170[race].available_for_female) {
         return false;
     }
 
@@ -4178,7 +4178,9 @@ void sub_545550(int64_t obj, int race)
 
     gender = stat_level(obj, STAT_GENDER);
     if (gender == GENDER_FEMALE) {
-        gender = stru_5C5170[race].field_4 == 0;
+        gender = !stru_5C5170[race].available_for_female
+            ? GENDER_MALE
+            : GENDER_FEMALE;
     }
 
     sub_441C70(obj, stru_5C5170[race].field_0, gender, race);
@@ -4192,7 +4194,49 @@ void sub_545550(int64_t obj, int race)
 // 0x5455D0
 bool sub_5455D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int race;
+
+    race = stat_level(obj, STAT_RACE);
+    if (race < 7) {
+        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+            do {
+                race++;
+            } while (race < 7 && !stru_5C5170[race].available_for_female);
+
+            if (race >= 8) {
+                // FIXME: Unreachable.
+                return false;
+            }
+
+            if (!stru_5C5170[race].available_for_female) {
+                race = RACE_HUMAN;
+            }
+        } else {
+            race++;
+        }
+    } else {
+        race = RACE_HUMAN;
+        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+            while (!stru_5C5170[race].available_for_female) {
+                race++;
+            }
+
+            if (race >= 8) {
+                // FIXME: Unreachable.
+                return false;
+            }
+
+            if (!stru_5C5170[race].available_for_female) {
+                return false;
+            }
+        }
+    }
+
+    if (race < 8) {
+        background_obj_clear(obj);
+        sub_545550(obj, race);
+        return true;
+    }
 }
 
 // 0x545690
