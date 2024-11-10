@@ -59,6 +59,7 @@ static TigWindowModalDialogChoice sub_5416A0(int num);
 static void sub_541740();
 static int sub_5417E0();
 static void sub_541830(char* dst, const char* src);
+static void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static void sub_541AA0();
 static void sub_541AC0();
 static bool sub_541B50(tig_button_handle_t button_handle);
@@ -2104,6 +2105,9 @@ static tig_font_handle_t dword_64BC04[3];
 // 0x64BC10
 static tig_font_handle_t dword_64BC10[3];
 
+// 0x64BC1C
+static char byte_64BC1C[1000];
+
 // 0x64C004
 static int dword_64C004[50];
 
@@ -2741,9 +2745,83 @@ void sub_541830(char* dst, const char* src)
 }
 
 // 0x5418A0
-void sub_5418A0()
+void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags)
 {
-    // TODO: Incomplete.
+    TigVideoBuffer* vb;
+    TigRect text_rect;
+    TigRect dirty_rect;
+    char* newline;
+    TigFont font_desc;
+    size_t pos;
+
+    if (tig_window_vbid_get(dword_5C3624, &vb) != TIG_OK) {
+        return;
+    }
+
+    text_rect = *rect;
+
+    while (str != NULL) {
+        newline = strstr(str, "\n");
+        if (newline != NULL) {
+            *newline = '\0';
+        }
+
+        sub_541830(byte_64BC1C, str);
+
+        if ((flags & 0x1) != 0) {
+            font_desc.width = 0;
+            font_desc.height = 0;
+            font_desc.str = byte_64BC1C;
+            font_desc.flags = 0;
+            sub_535390(&font_desc);
+
+            if (font_desc.width > rect->width) {
+                pos = strlen(str);
+                while (pos > 0 && font_desc.width > rect->width) {
+                    byte_64BC1C[pos--] = '\0';
+                    font_desc.width = 0;
+                    font_desc.height = 0;
+                    font_desc.str = byte_64BC1C;
+                    font_desc.flags = 0;
+                    sub_535390(&font_desc);
+                }
+            }
+        } else if ((flags & 0x02) != 0) {
+            font_desc.width = 0;
+            font_desc.height = 0;
+            font_desc.str = byte_64BC1C;
+            font_desc.flags = 0;
+            sub_535390(&font_desc);
+
+            if (font_desc.width > rect->width) {
+                pos = strlen(str);
+                while (pos > 0 && font_desc.width > rect->width) {
+                    pos--;
+                    font_desc.width = 0;
+                    font_desc.height = 0;
+                    font_desc.str++;
+                    font_desc.flags = 0;
+                    sub_535390(&font_desc);
+                }
+            }
+        }
+
+        tig_font_push(font);
+        if (tig_font_write(vb, font_desc.str, &text_rect, &dirty_rect) != TIG_OK) {
+            tig_debug_printf("MainMenu-UI: mmUITextWrite_func: ERROR: Couldn't write text: '%s'!\n", byte_64BC1C);
+        }
+        tig_font_pop();
+
+        text_rect.y += dirty_rect.height;
+        text_rect.height -= dirty_rect.height;
+
+        if (newline != NULL) {
+            *newline = '\\';
+            newline += 2;
+        }
+
+        str = newline;
+    }
 }
 
 // 0x541AA0
