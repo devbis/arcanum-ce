@@ -8,6 +8,7 @@
 #include "game/item.h"
 #include "game/magictech.h"
 #include "game/map.h"
+#include "game/name.h"
 #include "game/obj.h"
 #include "game/object_node.h"
 #include "game/object.h"
@@ -2065,7 +2066,59 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
 // 0x4AF640
 int sub_4AF640(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int cnt = 0;
+    int64_t loc1;
+    int64_t loc2;
+    int v1;
+    int8_t offsets[200];
+    unsigned int flags;
+    int offset_x;
+    int offset_y;
+    int64_t loc_x;
+    int64_t loc_y;
+    int idx;
+    int64_t new_loc;
+    int rotation;
+    int64_t v2;
+    int v3;
+
+    loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
+    loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
+    if (loc1 == loc2) {
+        return 0;
+    }
+
+    v1 = sub_4201C0(loc1, loc2, offsets);
+    if (v1 == 0) {
+        return 100;
+    }
+
+    flags = 0x20;
+
+    offset_x = obj_field_int32_get(a1, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(a1, OBJ_F_OFFSET_Y);
+    sub_4B8680(loc1, &loc_x, &loc_y);
+
+    for (idx = 0; idx < v1; idx += 2) {
+        if (loc1 == loc2) {
+            break;
+        }
+
+        offset_x += offsets[idx];
+        offset_y += offsets[idx + 1];
+        sub_4B8730(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc);
+        if (new_loc != loc1) {
+            rotation = sub_4B8D50(loc1, new_loc);
+            if (new_loc == loc2) {
+                flags |= 0x10;
+            }
+
+            cnt += sub_43FDC0(OBJ_HANDLE_NULL, loc1, rotation, flags, &v2, &v3, 0);
+            loc1 = new_loc;
+        }
+    }
+
+    return cnt;
 }
 
 // 0x4AF800
