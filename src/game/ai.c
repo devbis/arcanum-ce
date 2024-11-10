@@ -683,7 +683,29 @@ int sub_4AABE0(int64_t a1, int a2, int64_t a3, int* a4)
 // 0x4AAF50
 bool sub_4AAF50(Ai* ai)
 {
-    // TODO: Incomplete.
+    unsigned int critter_flags;
+    S4ABF10 v1;
+    S5FF620 v2;
+
+    critter_flags = obj_field_int32_get(ai->obj, OBJ_F_CRITTER_FLAGS);
+    if ((critter_flags & OCF_SPELL_FLEE) != 0) {
+        obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags & ~OCF_SPELL_FLEE);
+        return false;
+    }
+
+    sub_4CCA90(&v2, ai->obj, 0);
+    v1.flags = 0x1;
+    v1.entries = v2.field_30[0].entries;
+    v1.cnt = v2.field_30[0].cnt;
+    if (!sub_4ABF10(ai, &v1)) {
+        sub_4CCBF0(&v2);
+        return false;
+    }
+
+    obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags | OCF_SPELL_FLEE);
+    sub_4CCBF0(&v2);
+
+    return true;
 }
 
 // 0x4AB030
