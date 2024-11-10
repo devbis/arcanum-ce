@@ -19,6 +19,7 @@
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/stat.h"
+#include "game/tile.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
 
@@ -113,7 +114,7 @@ static int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
-static bool sub_4AECA0(int64_t a1, int64_t a2);
+static bool sub_4AECA0(int64_t a1, int a2);
 static int sub_4AF240(int value);
 static int sub_4AF640(int64_t a1, int64_t a2);
 static bool sub_4AF800(int64_t obj, int64_t a2);
@@ -1758,9 +1759,40 @@ int sub_4AEB70(int64_t obj, int64_t portal, int a3)
 }
 
 // 0x4AECA0
-bool sub_4AECA0(int64_t a1, int64_t a2)
+bool sub_4AECA0(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    tig_art_id_t aid;
+    int rotation;
+    int64_t new_loc;
+    int64_t tmp_loc;
+
+    loc = obj_field_int32_get(obj, OBJ_F_LOCATION);
+    aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    rotation = tig_art_id_rotation_get(aid);
+    if (!sub_4B8FF0(loc, rotation, &new_loc)) {
+        return false;
+    }
+
+    if ((a2 + 4) % 8 == rotation
+        || (a2 + 5) % 8 == rotation
+        || (a2 + 3) % 8 == rotation) {
+        tmp_loc = new_loc;
+        loc = new_loc;
+        new_loc = tmp_loc;
+    }
+
+    aid = sub_4D70B0(loc);
+    if (tig_art_tile_id_type_get(aid) != 0) {
+        return false;
+    }
+
+    aid = sub_4D70B0(new_loc);
+    if (tig_art_tile_id_type_get(aid) == 0) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4AED80
