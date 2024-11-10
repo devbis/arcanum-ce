@@ -897,7 +897,30 @@ void sub_4AC180(Ai* ai)
 // 0x4AC250
 void sub_4AC250(Ai* ai)
 {
-    // TODO: Incomplete.
+    MagicTechSerializedData v1;
+
+    if (ai->field_20 != OBJ_HANDLE_NULL) {
+        sub_455A20(&v1, ai->field_20, ai->field_18);
+    } else {
+        sub_455A20(&v1, ai->obj, ai->field_18);
+    }
+
+    sub_4440E0(ai->danger_source, &(v1.field_70));
+
+    if (sub_4564E0(&v1)) {
+        sub_455AC0(&v1);
+
+        if (ai->field_20 != OBJ_HANDLE_NULL) {
+            sub_4574D0(ai->field_20);
+
+            switch (obj_field_int32_get(ai->field_20, OBJ_F_TYPE)) {
+            case OBJ_TYPE_ITEM_FOOD:
+            case OBJ_TYPE_ITEM_SCROLL:
+                sub_43CCA0(ai->field_20);
+                break;
+            }
+        }
+    }
 }
 
 // 0x4AC320
