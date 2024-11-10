@@ -778,7 +778,42 @@ void sub_4AB2A0(int64_t a1, int64_t a2)
 // 0x4AB2F0
 bool sub_4AB2F0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    AiParams ai_params;
+    int v1;
+    int v2;
+    int v3;
+    int v4;
+
+    if ((obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) != 0) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+        return false;
+    }
+
+    sub_4AAA60(a1, &ai_params);
+
+    if (sub_4AB400(a2) < ai_params.field_C) {
+        return false;
+    }
+
+    if (sub_4AB400(a2) <= ai_params.field_0) {
+        return true;
+    }
+
+    sub_4AE020(a2, &v1, &v2);
+    sub_4AE020(a1, &v3, &v4);
+
+    if (v1 - v3 >= ai_params.field_4) {
+        return true;
+    }
+
+    if (v2 - v4 >= ai_params.field_8) {
+        return true;
+    }
+
+    return false;
 }
 
 // 0x4AB400
