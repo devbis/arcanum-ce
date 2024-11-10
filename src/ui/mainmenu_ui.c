@@ -3705,7 +3705,7 @@ bool mainmenu_ui_execute_save_game(int btn)
     }
 
     if (!gamelib_save(name, byte_64C2F8)) {
-        mes_file_entry.num = 5003;
+        mes_file_entry.num = 5003; // "Save Game Corrupt!  Save Failed!"
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
         v3.type = 4;
@@ -3715,7 +3715,7 @@ bool mainmenu_ui_execute_save_game(int btn)
         return false;
     }
 
-    mes_file_entry.num = 5002;
+    mes_file_entry.num = 5002; // "Game Saved Successfully."
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
     v3.type = 4;
@@ -3940,7 +3940,7 @@ void sub_544440()
             rect.width = 200;
             rect.height = 20;
 
-            mes_file_entry.num = 5;
+            mes_file_entry.num = 5; // "Loading Save Game..."
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
             tig_window_text_write(dword_5C3624, mes_file_entry.str, &rect);
 
@@ -4071,7 +4071,7 @@ void sub_5447B0(TigRect* rect)
         str = byte_64C2F8[0] != '\0' ? byte_64C2F8 : " ";
 
         // FIXME: Useless.
-        mes_file_entry.num = 500;
+        mes_file_entry.num = 500; // "Choose Name"
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
         if (textedit_ui_is_focused()) {
@@ -4117,7 +4117,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
             && rect->x < stru_5C4EF0.x + stru_5C4EF0.width
             && rect->y < stru_5C4EF0.y + stru_5C4EF0.height)) {
         if (tig_window_fill(dword_5C3624, &stru_5C4EF0, tig_color_make(0, 0, 0)) == TIG_OK) {
-            mes_file_entry.num = 740 + gender;
+            mes_file_entry.num = 740 + gender; // "Female", "Male"
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
             sub_542DF0(mes_file_entry.str, &stru_5C4EF0, font);
         }
@@ -4176,7 +4176,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
                 } else {
                     font = dword_64C210[1];
                     tig_font_push(font);
-                    mes_file_entry.num = 745;
+                    mes_file_entry.num = 745; // "Race"
                     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
                     if (mes_file_entry.str[0] != '\0') {
                         sub_542DF0(mes_file_entry.str, &stru_5C5080, font);
@@ -4208,7 +4208,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
         font = dword_64C210[1];
         tig_font_push(font);
         if (tig_window_fill(dword_5C3624, &stru_5C4EC0, tig_color_make(0, 0, 0)) == TIG_OK) {
-            mes_file_entry.num = 739;
+            mes_file_entry.num = 739; // "Initial Stats"
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
             sub_542DF0(mes_file_entry.str, &stru_5C4EC0, font);
         }
@@ -4573,14 +4573,14 @@ bool sub_545780(int btn)
 
     pc_obj = player_get_pc_obj();
 
-    mes_file_entry.num = 500;
+    mes_file_entry.num = 500; // "Choose Name"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
     if (byte_64C2F8[0] != '\0') {
         strcpy(byte_64C2F8, mes_file_entry.str);
     }
 
     if (strcmp(byte_64C2F8, mes_file_entry.str) == 0) {
-        mes_file_entry.num = 506;
+        mes_file_entry.num = 506; // "You must choose a name."
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
         sub_550770(-1, mes_file_entry.str);
         return false;
@@ -5675,7 +5675,7 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
             FREE(copy);
             // FIXME: Leaking `player_name`.
 
-            mes_file_entry.num = 2006;
+            mes_file_entry.num = 2006; // "Level"
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
             copy = STRDUP(mes_file_entry.str);
             pos = strlen(copy);
@@ -5807,7 +5807,7 @@ bool sub_549040(int a1)
         sub_4A4D60(&init_info);
         if (!multiplayer_mm_is_active()) {
             if (!multiplayer_mm_init(&init_info)) {
-                mes_file_entry.num = 2052;
+                mes_file_entry.num = 2052; // "Could not establish connection to Internet Servers."
                 mes_get_msg(sub_549840(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
@@ -5823,7 +5823,7 @@ bool sub_549040(int a1)
             }
 
             if (!sub_5499B0(stru_64C0E8.str)) {
-                mes_file_entry.num = 2052;
+                mes_file_entry.num = 2052; // "Could not establish connection to Internet Servers."
                 mes_get_msg(sub_549840(), &mes_file_entry);
 
                 modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
@@ -5979,7 +5979,7 @@ void sub_5494C0(TextEdit* textedit)
     MesFileEntry mes_file_entry;
 
     if (textedit->buffer[0] == '\0' && dword_64C414 != 8) {
-        mes_file_entry.num = 500;
+        mes_file_entry.num = 500; // "Choose Name"
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
         strncpy(byte_64C2F8, mes_file_entry.str, 23);
     }
@@ -6080,7 +6080,7 @@ int sub_5496D0()
 // 0x5496E0
 void sub_5496E0()
 {
-    sub_5496F0(5060);
+    sub_5496F0(5060); // "Saving..."
 }
 
 // 0x5496F0
@@ -6102,25 +6102,25 @@ void sub_5496F0(int num)
 // 0x549750
 void sub_549750()
 {
-    sub_5496F0(5062);
+    sub_5496F0(5062); // "Save completed."
 }
 
 // 0x549760
 void sub_549760()
 {
-    sub_5496F0(5065);
+    sub_5496F0(5065); // "Cannot save during turn-based combat when it isn't your turn."
 }
 
 // 0x549770
 void sub_549770()
 {
-    sub_5496F0(5061);
+    sub_5496F0(5061); // "Loading..."
 }
 
 // 0x549780
 void sub_549780()
 {
-    sub_5496F0(5063);
+    sub_5496F0(5063); // "Load completed."
 }
 
 // 0x549790
