@@ -83,6 +83,7 @@ static void mmUIMPLoadGameRefreshFunc(TigRect* rect);
 static void sub_542D00(const char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_542DF0(const char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_542EA0(const char* str, TigRect* rect, tig_font_handle_t font);
+static const char* sub_543040(int index);
 static void sub_543060();
 static void sub_5430D0();
 static bool sub_543160();
@@ -3392,9 +3393,13 @@ void mmUITextWriteCenteredToArray()
 }
 
 // 0x543040
-void sub_543040()
+const char* sub_543040(int index)
 {
-    // TODO: Incomplete.
+    if (stru_64BBF8.paths != NULL) {
+        return stru_64BBF8.paths[index] + 8;
+    } else {
+        return "";
+    }
 }
 
 // 0x543060
