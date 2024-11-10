@@ -131,10 +131,10 @@ void sub_460360(int64_t obj, int type)
 }
 
 // 0x460380
-void sub_460380(int a1, int a2, int a3, int a4)
+void sub_460380(S4F2810 *a1, int64_t obj, int a3)
 {
     if (ui_callbacks.field_30 != NULL) {
-        ui_callbacks.field_30(a1, a2, a3, a4);
+        ui_callbacks.field_30(a1, obj, a3);
     }
 }
 
@@ -467,10 +467,10 @@ void sub_460930(int64_t a1, int64_t a2)
 }
 
 // 0x460960
-void sub_460960(int a1)
+void sub_460960(Packet81* pkt)
 {
     if (ui_callbacks.field_D4 != NULL) {
-        ui_callbacks.field_D4(a1);
+        ui_callbacks.field_D4(pkt);
     }
 }
 
@@ -507,15 +507,15 @@ void sub_460A40(int64_t obj, int a3, int a4, int a5, int a6, int a7, const char*
 }
 
 // 0x460A80
-void sub_460A80(int a1, int a2, int a3, int a4, int a5, int a6)
+void sub_460A80(DialogSerializedData* a1, int a2, int a3, int a4, int a5, char* buffer)
 {
     if (ui_callbacks.field_F4 != NULL) {
-        ui_callbacks.field_F4(a1, a2, a3, a4, a5, a6);
+        ui_callbacks.field_F4(a1, a2, a3, a4, a5, buffer);
     }
 }
 
 // 0x460AB0
-void sub_460AB0(int a1, int a2, int a3)
+void sub_460AB0(int a1, int a2, void* a3)
 {
     if (ui_callbacks.field_F8 != NULL) {
         ui_callbacks.field_F8(a1, a2, a3);
@@ -539,10 +539,10 @@ void sub_460AF0()
 }
 
 // 0x460B00
-int sub_460B00(int a1, int64_t* obj_ptr)
+int sub_460B00(int a1, S4F2810* a2)
 {
     if (ui_callbacks.field_104 != NULL) {
-        return ui_callbacks.field_104(a1, obj_ptr);
+        return ui_callbacks.field_104(a1, a2);
     } else {
         return 0;
     }
@@ -624,18 +624,20 @@ int sub_460BE0(const char* a1, int a2)
 }
 
 // 0x460C00
-void sub_460C00(int a1, int a2)
+void sub_460C00(int schematic, SchematicInfo* schematic_info)
 {
     if (ui_callbacks.field_128 != NULL) {
-        ui_callbacks.field_128(a1, a2);
+        ui_callbacks.field_128(schematic, schematic_info);
     }
 }
 
 // 0x460C20
-void sub_460C20()
+int64_t sub_460C20()
 {
     if (ui_callbacks.field_12C != NULL) {
-        ui_callbacks.field_12C();
+        return ui_callbacks.field_12C();
+    } else {
+        return OBJ_HANDLE_NULL;
     }
 }
 
