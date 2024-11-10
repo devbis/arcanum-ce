@@ -90,7 +90,7 @@ static bool sub_543160();
 static bool sub_5432B0(const char* name);
 static void mainmenu_ui_create_save_game();
 static void mainmenu_ui_destroy_save_game();
-static bool sub_5435D0(int btn);
+static bool mainmenu_ui_execute_save_game(int btn);
 static bool sub_543850(tig_button_handle_t button_handle);
 static bool sub_543890(tig_button_handle_t button_handle);
 static void sub_543920(int a1, int a2);
@@ -1101,7 +1101,7 @@ static MainMenuWindowInfo stru_5C4868 = {
         { -1, 0, 0 },
     },
     mmUIMPSaveGameRefreshFunc,
-    sub_5435D0,
+    mainmenu_ui_execute_save_game,
     { 42, 120, 145, 213 },
     sub_543920,
     0,
@@ -3622,9 +3622,109 @@ void mainmenu_ui_destroy_save_game()
 }
 
 // 0x5435D0
-bool sub_5435D0(int btn)
+bool mainmenu_ui_execute_save_game(int btn)
 {
-    // TODO: Incomplete.
+    int v1;
+    char fname[_MAX_FNAME];
+    const char* name;
+    MesFileEntry mes_file_entry;
+    John v3;
+    int num;
+
+    (void)btn;
+
+    v1 = main_menu_window_info[dword_64C414]->field_90;
+    if (v1 == -1) {
+        return false;
+    }
+
+    if (v1 > 0) {
+        name = strcpy(fname, stru_64BBF8.paths[v1 - 1]);
+        strcpy(byte_64C2F8, stru_64BBF8.paths[v1 - 1] + 8);
+        fname[8] = '\0';
+
+        if (sub_5416A0(5064)) {
+            return false;
+        }
+    } else {
+        sub_403C10(&stru_64BBF8, 1, 0);
+
+        if (stru_64BBF8.count > 0) {
+            if (toupper(stru_64BBF8.paths[0][4]) == 'A') {
+                if (stru_64BBF8.count > 1
+                    && stru_64BBF8.paths[1] != NULL) {
+                    strncpy(fname, stru_64BBF8.paths[1], 8);
+                    fname[8] = '\0';
+                    num = atoi(&(fname[4])) + 1;
+                    if (num >= 9999) {
+                        return false;
+                    }
+
+                    strcpy(fname, stru_64BBF8.paths[0]);
+                    sprintf(&(fname[4]), "%04d", num);
+                    name = fname;
+                } else {
+                    name = "Slot0000";
+                }
+            } else {
+                if (stru_64BBF8.paths[0] != NULL) {
+                    strncpy(fname, stru_64BBF8.paths[0], 8);
+                    fname[8] = '\0';
+                    num = atoi(&(fname[4])) + 1;
+                    if (num >= 9999) {
+                        return false;
+                    }
+
+                    strcpy(fname, stru_64BBF8.paths[0]);
+                    sprintf(&(fname[4]), "%04d", num);
+                    name = fname;
+                } else {
+                    name = "Slot0000";
+                }
+            }
+        } else {
+            name = "Slot0000";
+        }
+    }
+
+    sub_542200();
+
+    if (byte_64C2F8[0] != '\0') {
+        char* pch = byte_64C2F8;
+        while (*pch == ' ') {
+            pch++;
+        }
+
+        if (pch == '\0') {
+            byte_64C2F8[0] = '\0';
+        }
+    }
+
+    if (byte_64C2F8[0] == '\0') {
+        strcpy(byte_64C2F8, name);
+    }
+
+    if (!gamelib_save(name, byte_64C2F8)) {
+        mes_file_entry.num = 5003;
+        mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+
+        v3.type = 4;
+        v3.str = mes_file_entry.str;
+        sub_460630(&v3);
+
+        return false;
+    }
+
+    mes_file_entry.num = 5002;
+    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+
+    v3.type = 4;
+    v3.str = mes_file_entry.str;
+    sub_460630(&v3);
+    sub_5412D0();
+    byte_64C2F8[0] = '\0';
+
+    return true;
 }
 
 // 0x543850
@@ -5887,7 +5987,7 @@ void sub_5494C0(TextEdit* textedit)
     sub_549450();
 
     if (dword_64C414 == 8) {
-        sub_5435D0(-1);
+        mainmenu_ui_execute_save_game(-1);
     }
 }
 
