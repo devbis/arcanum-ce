@@ -1796,9 +1796,85 @@ int sub_4AED80(int64_t a1, int64_t a2)
 }
 
 // 0x4AEE50
-void sub_4AEE50()
+void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int notify_npc;
+    ObjectList objects;
+    ObjectNode* node;
+    AiParams ai_params;
+    char str[1000];
+    int v2;
+
+    if (critter_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    switch (obj_field_int32_get(critter_obj, OBJ_F_TYPE)) {
+    case OBJ_TYPE_PC:
+        pc_obj = critter_obj;
+        break;
+    case OBJ_TYPE_NPC:
+        pc_obj = sub_45DDA0(critter_obj);
+        break;
+    default:
+        pc_obj = OBJ_HANDLE_NULL;
+        break;
+    }
+
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    switch (obj_field_int32_get(target_obj, OBJ_F_TYPE)) {
+    case OBJ_TYPE_PORTAL:
+        notify_npc = obj_field_int32_get(target_obj, OBJ_F_PORTAL_NOTIFY_NPC);
+        break;
+    case OBJ_TYPE_CONTAINER:
+        notify_npc = obj_field_int32_get(target_obj, OBJ_F_CONTAINER_NOTIFY_NPC);
+        break;
+    case OBJ_TYPE_SCENERY:
+        notify_npc = -1;
+        break;
+    default:
+        notify_npc = 0;
+        break;
+    }
+
+    if (notify_npc == 0) {
+        return;
+    }
+
+    sub_4AE4E0(target_obj, 10, &objects, OBJ_TM_NPC);
+    node = objects.head;
+    while (node != NULL) {
+        if ((obj_field_int32_get(node->obj, OBJ_F_NAME) == notify_npc
+                || critter_social_class_get(node->obj) == SOCIAL_CLASS_GUARD)
+            && !sub_45D8D0(node->obj)
+            && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
+            && (!sub_4AF260(node->obj, critter_obj)
+                || !sub_4AF470(node->obj, critter_obj, a4))) {
+            if (sub_441980(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
+                if (a3 && !critter_is_sleeping(node->obj)) {
+                    sub_4C0DE0(node->obj, pc_obj, -20);
+                    sub_4AAA60(node->obj, &ai_params);
+                    if (sub_4C0CC0(node->obj, pc_obj) <= ai_params.field_28) {
+                        sub_4A9650(critter_obj, node->obj, a4, 0);
+                    }
+                    if (sub_45D790(node->obj)) {
+                        if (dword_5F8488 != NULL && sub_45D790(node->obj)) {
+                            sub_414130(node->obj, critter_obj, str, &v2);
+                            dword_5F8488(node->obj, critter_obj, str, v2);
+                        }
+                    }
+                } else {
+                    sub_4A9650(critter_obj, node->obj, a4, 0);
+                }
+            }
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
 }
 
 // 0x4AF130

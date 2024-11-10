@@ -51,6 +51,7 @@ void sub_4AEAB0(int64_t a1, int64_t a2);
 bool ai_critter_can_open_portals(int64_t obj);
 int sub_4AEB70(int64_t obj, int64_t portal, int a3);
 int sub_4AED80(int64_t a1, int64_t a2);
+void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4);
 void sub_4AF130(int64_t a1, int64_t a2);
 void sub_4AF170(int64_t obj);
 void sub_4AF1D0(int64_t obj);
