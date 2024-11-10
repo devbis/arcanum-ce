@@ -1560,7 +1560,73 @@ void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr)
 // 0x4AE120
 int sub_4AE120(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t pc_leader_obj;
+    int obj_type;
+    int danger_source_type;
+    int64_t danger_source_obj;
+    unsigned int npc_flags;
+    unsigned int critter_flags;
+    AiParams ai_params;
+
+    if (sub_4AB990(a1, a2)) {
+        pc_leader_obj = sub_45DDA0(a1);
+        obj_type = obj_field_int32_get(a2, OBJ_F_TYPE);
+
+        if (sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_WILL_KOS, 0) != 0) {
+            ai_danger_source(a1, &danger_source_type, &danger_source_obj);
+
+            if (danger_source_type != 3 || danger_source_obj != a2) {
+                if (pc_leader_obj == OBJ_HANDLE_NULL) {
+                    npc_flags = obj_field_int32_get(a1, OBJ_F_NPC_FLAGS);
+                    if ((npc_flags & ONF_KOS) != 0) {
+                        critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
+                        if (((obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & OSF_ENSHROUDED) != 0
+                                && (critter_flags & OCF_UNDEAD) != 0)
+                            || (obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS) & OSF_FAMILIAR) != 0
+                                && (critter_flags & OCF_ANIMAL) != 0) {
+                            return 0;
+                        }
+
+                        if ((npc_flags & ONF_KOS_OVERRIDE) == 0
+                            && !critter_faction_same(a1, a2)) {
+                            return 1;
+                        }
+                    }
+
+                    sub_4AAA60(a1, &ai_params);
+
+                    if (obj_type == OBJ_TYPE_PC
+                        && sub_4C0CE0(a1, a2) <= ai_params.field_28) {
+                        return 2;
+                    }
+
+                    if (abs(stat_level(a1, STAT_ALIGNMENT) - stat_level(a2, STAT_ALIGNMENT)) >= ai_params.field_2C) {
+                        return 3;
+                    }
+
+                    if (sub_4AF800(a1, a2)) {
+                        return 5;
+                    }
+                }
+
+                if (obj_type == OBJ_TYPE_NPC) {
+                    ai_danger_source(a2, &danger_source_type, &danger_source_obj);
+
+                    if (danger_source_type == 1
+                        && danger_source_obj != OBJ_HANDLE_NULL
+                        && (sub_4AE3A0(a1, danger_source_obj)
+                            || (critter_social_class_get(a1) == SOCIAL_CLASS_GUARD)
+                                && sub_45F730(a2)
+                                && critter_leader_get(a2) == OBJ_HANDLE_NULL)
+                        && !sub_4ADCC0(a1, a2, critter_leader_get(a1))) {
+                        return 4;
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
 }
 
 // 0x4AE3A0
