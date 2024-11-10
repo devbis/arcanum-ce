@@ -58,6 +58,7 @@ static void sub_5412E0(bool a1);
 static TigWindowModalDialogChoice sub_5416A0(int num);
 static void sub_541740();
 static int sub_5417E0();
+static void sub_541830(char* dst, const char* src);
 static void sub_541AA0();
 static void sub_541AC0();
 static bool sub_541B50(tig_button_handle_t button_handle);
@@ -2724,9 +2725,19 @@ void sub_541810(int a1)
 }
 
 // 0x541830
-void sub_541830()
+void sub_541830(char* dst, const char* src)
 {
-    // TODO: Incomplete.
+    while (*src != '\0') {
+        if (src[0] == '\\' && src[1] == 't') {
+            strcpy(dst, "    ");
+            dst += 5;
+            src += 2;
+        } else {
+            *dst++ = *src++;
+        }
+    }
+
+    *dst = '\0';
 }
 
 // 0x5418A0
