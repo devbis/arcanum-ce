@@ -8,6 +8,7 @@
 #include "game/item.h"
 #include "game/magictech.h"
 #include "game/map.h"
+#include "game/multiplayer.h"
 #include "game/name.h"
 #include "game/obj.h"
 #include "game/object_node.h"
@@ -17,8 +18,8 @@
 #include "game/random.h"
 #include "game/reaction.h"
 #include "game/script.h"
-#include "game/spell.h"
 #include "game/skill.h"
+#include "game/spell.h"
 #include "game/stat.h"
 #include "game/tile.h"
 #include "game/timeevent.h"
@@ -1205,7 +1206,25 @@ int sub_4AD5D0(int64_t obj)
 // 0x4AD610
 int sub_4AD610(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t distance;
+    int64_t max_distance;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        max_distance = -1;
+        pc_obj = multiplayer_find_first_player_obj();
+        while (pc_obj != OBJ_HANDLE_NULL) {
+            distance = sub_441AE0(pc_obj, obj);
+            if (max_distance == -1 || distance < max_distance) {
+                max_distance = distance;
+            }
+            pc_obj = multiplayer_find_next_player_obj();
+        }
+    } else {
+        max_distance = sub_441AE0(player_get_pc_obj(), obj);
+    }
+
+    return max_distance >= 0 && max_distance <= 30 ? (int)max_distance : 30;
 }
 
 // 0x4AD6B0
