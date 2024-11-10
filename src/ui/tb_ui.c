@@ -2,29 +2,61 @@
 
 #include <stdio.h>
 
+#include "game/ai.h"
+#include "game/critter.h"
 #include "game/gamelib.h"
+#include "game/magictech.h"
 #include "game/mes.h"
+#include "game/multiplayer.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/script.h"
 #include "game/ui.h"
+#include "ui/anim_ui.h"
 #include "ui/charedit_ui.h"
 #include "ui/dialog_ui.h"
 #include "ui/follower_ui.h"
 #include "ui/gameuilib.h"
+#include "ui/hotkey_ui.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
+#include "ui/item_ui.h"
 #include "ui/mainmenu_ui.h"
 #include "ui/mp_ctrl_ui.h"
 #include "ui/multiplayer_hub_ui.h"
 #include "ui/multiplayer_ui.h"
+#include "ui/schematic_ui.h"
 #include "ui/skill_ui.h"
 #include "ui/sleep_ui.h"
+#include "ui/slide_ui.h"
+#include "ui/spell_ui.h"
+#include "ui/tech_ui.h"
+#include "ui/wmap_rnd.h"
+#include "ui/wmap_ui.h"
 #include "ui/written_ui.h"
 
+static void sub_57CAE0();
+static void sub_57CAB0(long long obj);
+static void sub_57CAF0(long long obj);
+static void sub_57CB10(long long a1, long long a2);
+static void sub_57CB80(long long a1, long long a2);
+static void sub_57CBC0(long long a1, long long a2);
 static void sub_57CBE0(const char* str);
+static void sub_57CC10(long long obj);
 static void sub_57CC70(int64_t a1, int64_t a2);
+static void sub_57CDC0();
+static void sub_57CDE0();
+static void sub_57CDF0(int a1);
+static void sub_57CE00();
+static void sub_57CE10();
 static void sub_57CE30(int64_t obj, void* a2, int a3);
 static void sub_57CE70(int64_t a1, int64_t a2);
+static void ui_charedit_error_msg(int type, int a2);
+static void sub_57CF70(long long a1, long long a2);
+static void sub_57CFA0();
+static bool sub_57CFB0();
+static bool sub_57D080();
+static bool sub_57D150(const char* name, int a2);
 
 // 0x5E2E6C
 static int dword_5E2E6C;
@@ -45,7 +77,7 @@ static tig_color_t dword_5E2EAC;
 static tig_art_id_t dword_5E2ECC;
 
 // 0x5E2F60
-static ObjectID stru_5E2F60;
+static Ryan stru_5E2F60;
 
 // 0x5E2F90
 static int64_t qword_5E2F90;
@@ -57,6 +89,8 @@ static bool dword_64E018;
 bool tb_ui_init(GameInitInfo* init_info)
 {
     UiCallbacks callbacks;
+
+    (void)init_info;
 
     callbacks.field_7C = sub_57CBE0;
     callbacks.field_80 = sub_550750;
@@ -75,7 +109,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_1C = sub_5570D0;
     callbacks.field_20 = sub_57CB10;
     callbacks.field_24 = sub_57CB80;
-    callbacks.field_28 = sub_589B90;
+    callbacks.field_28 = tech_ui_adjust_degree;
     callbacks.field_2C = skill_ui_preprocess;
     callbacks.field_30 = sub_57A320;
     callbacks.field_34 = sub_57AC50;
@@ -142,7 +176,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_144 = sub_582510;
     callbacks.field_148 = sub_5825B0;
     callbacks.field_14C = sub_582650;
-    callbacks.field_154 = nullsub_38;
+    callbacks.field_154 = sub_5826B0;
     callbacks.field_158 = sub_582690;
     callbacks.field_15C = sub_5826C0;
     callbacks.field_160 = sub_57CBC0;
@@ -249,7 +283,7 @@ void sub_57CC70(int64_t a1, int64_t a2)
 {
     int64_t v1;
 
-    if (sub_441980(a1, a2, OBJ_HANDLE_NULL, 9, 0) == 1) {
+    if (sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_DIALOG, 0) == 1) {
         if (sub_4AF210(a2, &v1) && sub_45E2E0(v1, a1)) {
             sub_4AF130(a2, a1);
         } else {
@@ -276,7 +310,7 @@ bool sub_57CD60(long long a1, long long a2, char* buffer)
         return false;
     }
 
-    if (!sub_441980(a1, a2, 0, 0, 0, 0)) {
+    if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_EXAMINE, 0)) {
         return false;
     }
 
@@ -369,7 +403,7 @@ void ui_charedit_error_msg(int type, int a2)
         break;
     case 3:
         if (dword_64E018) {
-            dword_5C8994 = dword_64D410;
+            stru_5C8990.str = dword_64D3C4[19];
             sub_550750(&stru_5C8990);
         }
         break;
@@ -386,7 +420,7 @@ void ui_charedit_error_msg(int type, int a2)
         sub_55F340();
         break;
     case 8:
-        if (sub_55A220()) {
+        if (charedit_is_created()) {
             sub_55A230();
         }
         break;
@@ -400,7 +434,7 @@ void ui_charedit_error_msg(int type, int a2)
 void sub_57CF70(long long a1, long long a2)
 {
     if (player_is_pc_obj(a1)) {
-        sub_5597C0(a2, 2);
+        charedit_create(a2, 2);
     }
 }
 
@@ -412,7 +446,7 @@ void sub_57CFA0()
 }
 
 // 0x57CFB0
-void sub_57CFB0()
+bool sub_57CFB0()
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
@@ -421,16 +455,15 @@ void sub_57CFB0()
 
     mes_load("mes\\MultiPlayer.mes", &mes_file);
 
-    mes_file_entry.num = 1900;
+    mes_file_entry.num = 1900; // "y"
     mes_get_msg(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str[0];
 
-    mes_file_entry.num = 1901;
+    mes_file_entry.num = 1901; // "n"
     mes_get_msg(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str[0];
 
-    // Do you wish to save your character?
-    mes_file_entry.num = 1902;
+    mes_file_entry.num = 1902; // "Do you wish to save your character?"
     mes_get_msg(mes_file, &mes_file_entry);
     modal_info.text = mes_file_entry.str;
 
@@ -447,7 +480,7 @@ void sub_57CFB0()
 }
 
 // 0x57D080
-void sub_57D080()
+bool sub_57D080()
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
@@ -456,16 +489,15 @@ void sub_57D080()
 
     mes_load("mes\\MultiPlayer.mes", &mes_file);
 
-    mes_file_entry.num = 1900;
+    mes_file_entry.num = 1900; // "y"
     mes_get_msg(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str[0];
 
-    mes_file_entry.num = 1901;
+    mes_file_entry.num = 1901; // "n"
     mes_get_msg(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str[0];
 
-    // Do you wish to export your character to Multiplayer?
-    mes_file_entry.num = 1903;
+    mes_file_entry.num = 1903; // "Do you wish to export your character to Multiplayer?"
     mes_get_msg(mes_file, &mes_file_entry);
     modal_info.text = mes_file_entry.str;
 
@@ -482,7 +514,7 @@ void sub_57D080()
 }
 
 // 0x57D150
-void sub_57D150(const char* name)
+bool sub_57D150(const char* name, int a2)
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
@@ -490,18 +522,19 @@ void sub_57D150(const char* name)
     TigWindowModalDialogInfo modal_info;
     TigWindowModalDialogChoice choice;
 
+    (void)a2;
+
     mes_load("mes\\MultiPlayer.mes", &mes_file);
 
-    mes_file_entry.num = 1900;
+    mes_file_entry.num = 1900; // "y"
     mes_get_msg(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_OK] = mes_file_entry.str[0];
 
-    mes_file_entry.num = 1901;
+    mes_file_entry.num = 1901; // "n"
     mes_get_msg(mes_file, &mes_file_entry);
-    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str;
+    modal_info.keys[TIG_WINDOW_MODAL_DIALOG_CHOICE_CANCEL] = mes_file_entry.str[0];
 
-    // The character %s already exists. Do you wish to overwrite the file?
-    mes_file_entry.num = 1902;
+    mes_file_entry.num = 1902; // "The character %s already exists. Do you wish to overwrite the file?""
     mes_get_msg(mes_file, &mes_file_entry);
     snprintf(buffer, sizeof(buffer), mes_file_entry.str, name);
     modal_info.text = buffer;
