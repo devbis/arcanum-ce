@@ -106,6 +106,7 @@ static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD0B0(int64_t npc_obj);
 static int64_t ai_find_nearest_bed(int64_t obj);
 static void sub_4AD1B0(int64_t a1, int64_t a2, int a3);
+static bool sub_4AD4D0(int64_t obj);
 static int sub_4AD5D0(int64_t obj);
 static int sub_4AD610(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
@@ -1192,9 +1193,51 @@ void sub_4AD420()
 }
 
 // 0x4AD4D0
-void sub_4AD4D0()
+bool sub_4AD4D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t pc_leader_obj;
+    int64_t v1;
+
+    if (sub_45D8D0(obj)) {
+        return false;
+    }
+
+    if (sub_4B6D70()) {
+        return false;
+    }
+
+    pc_leader_obj = sub_45DDA0(obj);
+    if (pc_leader_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (sub_441AE0(pc_leader_obj, obj) <= 30) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_PARALYZED) != 0) {
+        return false;
+    }
+
+    if (!sub_45D790(obj)) {
+        return false;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        v1 = sub_4C1110(obj);
+        if (v1 != OBJ_HANDLE_NULL) {
+            sub_460A20(v1, 0);
+        }
+    }
+
+    sub_424070(obj, 4, false, true);
+    sub_43E770(obj, obj_field_int64_get(pc_leader_obj, OBJ_F_LOCATION), 0, 0);
+
+    return true;
 }
 
 // 0x4AD5D0
