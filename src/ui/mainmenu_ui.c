@@ -1577,22 +1577,22 @@ static MainMenuButtonInfo stru_5C5100 = {
 };
 
 // 0x5C5130
-static int dword_5C5130[15] = {
-    0,
-    2,
-    1,
-    3,
-    4,
-    6,
-    5,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
+static int dword_5C5130[] = {
+    STAT_STRENGTH,
+    STAT_CONSTITUTION,
+    STAT_DEXTERITY,
+    STAT_BEAUTY,
+    STAT_INTELLIGENCE,
+    STAT_WILLPOWER,
+    STAT_PERCEPTION,
+    STAT_CHARISMA,
+    STAT_CARRY_WEIGHT,
+    STAT_DAMAGE_BONUS,
+    STAT_AC_ADJUSTMENT,
+    STAT_SPEED,
+    STAT_HEAL_RATE,
+    STAT_POISON_RECOVERY,
+    STAT_REACTION_MODIFIER,
 };
 
 // 0x5C5170
@@ -3985,7 +3985,148 @@ void sub_5447B0(TigRect* rect)
 // 0x5448E0
 void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
 {
-    // TODO: Incomplete.
+    int race;
+    int gender;
+    int portrait;
+    int background;
+    MesFileEntry mes_file_entry;
+    tig_font_handle_t font;
+    int index;
+    char str[32];
+
+    race = stat_level(obj, STAT_RACE);
+    gender = stat_level(obj, STAT_GENDER);
+
+    if (rect == NULL
+        || (stru_5C5060.x < rect->x + rect->width
+            && stru_5C5060.y < rect->y + rect->height
+            && rect->x < stru_5C5060.x + stru_5C5060.width
+            && rect->y < stru_5C5060.y + stru_5C5060.height)) {
+        portrait = sub_4CEB80(obj);
+        if (tig_window_fill(dword_5C3624, &stru_5C5060, tig_color_make(0, 0, 0)) != TIG_OK) {
+            tig_debug_printf("MainMenu-UI: mmUINewCharRefreshFunc: ERROR: Window Fill #0 Failed.\n");
+        }
+        portrait_draw_128x128(obj, portrait, dword_5C3624, stru_5C5060.x, stru_5C5060.y);
+    }
+
+    font = dword_64C218[0];
+    tig_font_push(font);
+    if (rect == NULL
+        || (stru_5C4EF0.x < rect->x + rect->width
+            && stru_5C4EF0.y < rect->y + rect->height
+            && rect->x < stru_5C4EF0.x + stru_5C4EF0.width
+            && rect->y < stru_5C4EF0.y + stru_5C4EF0.height)) {
+        if (tig_window_fill(dword_5C3624, &stru_5C4EF0, tig_color_make(0, 0, 0)) == TIG_OK) {
+            mes_file_entry.num = 740 + gender;
+            mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+            sub_542DF0(mes_file_entry.str, &stru_5C4EF0, font);
+        }
+    }
+
+    if (rect == NULL
+        || (stru_5C4F10.x < rect->x + rect->width
+            && stru_5C4F10.y < rect->y + rect->height
+            && rect->x < stru_5C4F10.x + stru_5C4F10.width
+            && rect->y < stru_5C4F10.y + stru_5C4F10.height)) {
+        if (tig_window_fill(dword_5C3624, &stru_5C4F10, tig_color_make(0, 0, 0)) == TIG_OK) {
+            mes_file_entry.num = 720 + race;
+            mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+            sub_542DF0(mes_file_entry.str, &stru_5C4F10, font);
+        }
+    }
+
+    if (rect == NULL
+        || (stru_5C4F30.x < rect->x + rect->width
+            && stru_5C4F30.y < rect->y + rect->height
+            && rect->x < stru_5C4F30.x + stru_5C4F30.width
+            && rect->y < stru_5C4F30.y + stru_5C4F30.height)) {
+        if (tig_window_fill(dword_5C3624, &stru_5C4F30, tig_color_make(0, 0, 0)) == TIG_OK) {
+            background = background_obj_get_background_text(obj);
+            sub_542DF0(background_description_get_name(background),
+                &stru_5C4F30,
+                font);
+        }
+    }
+    tig_font_pop();
+
+    if (rect == NULL
+        || (stru_5C5070.x < rect->x + rect->width
+            && stru_5C5070.y < rect->y + rect->height
+            && rect->x < stru_5C5070.x + stru_5C5070.width
+            && rect->y < stru_5C5070.y + stru_5C5070.height)) {
+        if (tig_window_fill(dword_5C3624, &stru_5C5070, tig_color_make(0, 0, 0)) == TIG_OK) {
+            if (dword_64C458 == 1) {
+                font = dword_64C210[0];
+                tig_font_push(font);
+                mes_file_entry.num = 742 + gender;
+                mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                if (mes_file_entry.str[0] != '\0') {
+                    sub_542DF0(mes_file_entry.str, &stru_5C5090, font);
+                } else {
+                    tig_debug_printf("MainMenu-UI: mmUISharedCharRefreshFunc: ERROR: Failed to find Racial Description!\n");
+                }
+                tig_font_pop();
+            } else {
+                background = background_obj_get_background_text(obj);
+                if (background > 1000 && dword_64C458 == 0) {
+                    font = dword_64C210[0];
+                    tig_font_push(font);
+                    sub_542DF0(background_description_get_body(background), &stru_5C5070, font);
+                    tig_font_pop();
+                } else {
+                    font = dword_64C210[1];
+                    tig_font_push(font);
+                    mes_file_entry.num = 745;
+                    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                    if (mes_file_entry.str[0] != '\0') {
+                        sub_542DF0(mes_file_entry.str, &stru_5C5080, font);
+                    } else {
+                        tig_debug_printf("MainMenu-UI: mmUISharedCharRefreshFunc: ERROR: Failed to find Racial Description!\n");
+                    }
+                    tig_font_pop();
+
+                    font = dword_64C210[0];
+                    tig_font_push(font);
+                    mes_file_entry.num = 770 + 2 * race + gender;;
+                    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                    if (mes_file_entry.str[0] != '\0') {
+                        sub_542DF0(mes_file_entry.str, &stru_5C5090, font);
+                    } else {
+                        tig_debug_printf("MainMenu-UI: mmUISharedCharRefreshFunc: ERROR: Failed to find Racial Description!\n");
+                    }
+                    tig_font_pop();
+                }
+            }
+        }
+    }
+
+    if (rect == NULL
+        || (stru_5C5050.x < rect->x + rect->width
+            && stru_5C5050.y < rect->y + rect->height
+            && rect->x < stru_5C5050.x + stru_5C5050.width
+            && rect->y < stru_5C5050.y + stru_5C5050.height)) {
+        font = dword_64C210[1];
+        tig_font_push(font);
+        if (tig_window_fill(dword_5C3624, &stru_5C4EC0, tig_color_make(0, 0, 0)) == TIG_OK) {
+            mes_file_entry.num = 739;
+            mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+            sub_542DF0(mes_file_entry.str, &stru_5C4EC0, font);
+        }
+        tig_font_pop();
+
+        font = dword_64C210[0];
+        tig_font_push(font);
+        for (index = 0; index < 15; index++) {
+            if (tig_window_fill(dword_5C3624, &(stru_5C4F50[index]), tig_color_make(0, 0, 0)) == TIG_OK) {
+                sprintf(str,
+                    "%s: %d",
+                    stat_get_short_name(dword_5C5130[index]),
+                    stat_level(obj, dword_5C5130[index]));
+                sub_5418A0(str, &(stru_5C4F50[index]), font, 0);
+            }
+        }
+        tig_font_pop();
+    }
 }
 
 // 0x544FF0
