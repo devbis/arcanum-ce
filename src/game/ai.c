@@ -1018,7 +1018,38 @@ void sub_4AC6E0(Ai* ai)
 // 0x4AC7B0
 void sub_4AC7B0(Ai* ai)
 {
-    // TODO: Incomplete.
+    AiParams ai_params;
+    unsigned int npc_flags;
+    int combat_min_distance;
+    AnimPathCreateInfo path_create_info;
+    int8_t rotations[100];
+
+    sub_4AAA60(ai->obj, &ai_params);
+
+    npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+    if ((npc_flags & ONF_BACKING_OFF) != 0) {
+            combat_min_distance = ai_params.field_3C;
+            if (combat_min_distance <= 1) {
+                combat_min_distance = 5;
+            }
+
+            if (sub_441AE0(ai->obj, ai->danger_source) < combat_min_distance) {
+                path_create_info.obj = ai->obj;
+                path_create_info.from = obj_field_int64_get(ai->obj, OBJ_F_LOCATION);
+                path_create_info.to = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
+                path_create_info.max_rotations = 100;
+                path_create_info.rotations = rotations;
+                path_create_info.field_20 = 0x800;
+                path_create_info.field_24 = combat_min_distance;
+                if (sub_41F3C0(&path_create_info)) {
+                    sub_433C80(ai->obj, path_create_info.to);
+                } else {
+                    obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags & ~(ONF_BACKING_OFF));
+                }
+            } else {
+                obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags & ~(ONF_BACKING_OFF));
+            }
+    }
 }
 
 // 0x4AC910
