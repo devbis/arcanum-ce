@@ -8,6 +8,7 @@
 #include "game/item.h"
 #include "game/magictech.h"
 #include "game/map.h"
+#include "game/mt_ai.h"
 #include "game/multiplayer.h"
 #include "game/name.h"
 #include "game/obj.h"
@@ -64,6 +65,15 @@ typedef struct Ai {
 
 static_assert(sizeof(Ai) == 0x38, "wrong size");
 
+typedef struct S4ABF10 {
+    /* 0000 */ unsigned int flags;
+    /* 0004 */ S600A20_Entry* entries;
+    /* 0008 */ int cnt;
+    /* 0010 */ int64_t obj;
+} S4ABF10;
+
+static_assert(sizeof(S4ABF10) == 0x18, "wrong size");
+
 static bool sub_4A8570(Ai* ai);
 static void sub_4A88D0(Ai* ai, int64_t obj);
 static bool sub_4A8940(Ai* ai);
@@ -88,7 +98,9 @@ static int64_t sub_4AB460(int64_t a1);
 static bool sub_4AB990(int64_t a1, int64_t a2);
 static void sub_4ABC20(Ai* ai);
 static bool sub_4ABC70(Ai* ai);
+static int sub_4ABE20(Ai* ai);
 static bool sub_4ABEB0(int64_t obj, int64_t tgt);
+static bool sub_4ABF10(Ai* ai, S4ABF10* a2);
 static void sub_4AC180(Ai* ai);
 static void sub_4AC250(Ai* ai);
 static void sub_4AC320(Ai* ai);
@@ -821,11 +833,61 @@ void sub_4ABC20(Ai* ai)
 // 0x4ABC70
 bool sub_4ABC70(Ai* ai)
 {
-    // TODO: Incomplete.
+    S5FF620 v1;
+    S4ABF10 v3;
+    AiParams ai_params;
+
+    if (!dword_5B50CC) {
+        return false;
+    }
+
+    if (random_between(1, 100) > sub_4ABE20(ai)) {
+        return false;
+    }
+
+    if (!sub_45E3F0(ai->obj, false) == 0) {
+        sub_4CCA90(&v1, ai->obj, 1);
+        v3.flags = 0x1;
+        v3.entries = v1.field_30[1].entries;
+        v3.cnt = v1.field_30[1].cnt;
+        if (sub_4ABF10(ai, &v3)) {
+            sub_4CCBF0(&v1);
+            return true;
+        }
+
+        sub_4CCBF0(&v1);
+    }
+
+    sub_4AAA60(ai->obj, &ai_params);
+
+    if (ai_params.field_34 < random_between(1, 100)) {
+        sub_4CCA90(&v1, ai->obj, 2);
+        v3.flags = 0x4;
+        v3.entries = v1.field_30[2].entries;
+        v3.cnt = v1.field_30[2].cnt;
+        if (sub_4ABF10(ai, &v3)) {
+            sub_4CCBF0(&v1);
+            return true;
+        }
+
+        sub_4CCBF0(&v1);
+    }
+
+    sub_4CCA90(&v1, ai->obj, 3);
+    v3.flags = 0x2;
+    v3.entries = v1.field_30[3].entries;
+    v3.cnt = v1.field_30[3].cnt;
+    if (sub_4ABF10(ai, &v3)) {
+        sub_4CCBF0(&v1);
+        return true;
+    }
+
+    sub_4CCBF0(&v1);
+    return false;
 }
 
 // 0x4ABE20
-void sub_4ABE20()
+int sub_4ABE20(Ai* ai)
 {
     // TODO: Incomplete.
 }
@@ -851,7 +913,7 @@ bool sub_4ABEB0(int64_t obj, int64_t tgt)
 }
 
 // 0x4ABF10
-void sub_4ABF10()
+bool sub_4ABF10(Ai* ai, S4ABF10* a2)
 {
     // TODO: Incomplete.
 }
