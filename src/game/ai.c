@@ -1677,7 +1677,27 @@ void sub_4AE720()
 // 0x4AE9E0
 void sub_4AE9E0(int64_t a1, bool a2)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int rnd;
+    int64_t follower_obj;
+    char str[1000];
+    int v1;
+
+    if (((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0)
+        && random_between(1, 2) != 1) {
+        if (dword_5F8488 != NULL) {
+            cnt = sub_45E3F0(a1, false);
+            if (cnt != 0) {
+                rnd = cnt > 1 ? random_between(0, cnt - 1) : 0;
+                follower_obj = obj_arrayfield_handle_get(a1, OBJ_F_CRITTER_FOLLOWER_IDX, rnd);
+                if (sub_45D790(follower_obj)) {
+                    sub_413F50(follower_obj, a1, a2, str, &v1);
+                    dword_5F8488(follower_obj, a1, str, v1);
+                }
+            }
+        }
+    }
 }
 
 // 0x4AEAB0
