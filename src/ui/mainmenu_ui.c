@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "game/area.h"
 #include "game/background.h"
 #include "game/critter.h"
 #include "game/gamelib.h"
@@ -83,6 +84,7 @@ static void mmUIMPLoadGameRefreshFunc(TigRect* rect);
 static void sub_542D00(const char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_542DF0(const char* str, TigRect* rect, tig_font_handle_t font);
 static void sub_542EA0(const char* str, TigRect* rect, tig_font_handle_t font);
+static void mmUITextWriteCenteredToArray(const char* str, TigRect* rects, int cnt, tig_font_handle_t font);
 static const char* sub_543040(int index);
 static void sub_543060();
 static void sub_5430D0();
@@ -3308,7 +3310,213 @@ void sub_542560()
 // 0x5425C0
 void mmUIMPLoadGameRefreshFunc(TigRect* rect)
 {
-    // TODO: Incomplete.
+    MainMenuWindowInfo* window;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtAnimData art_anim_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigVideoBufferData video_buffer_data;
+    TigWindowBlitInfo win_blit_info;
+    MesFileEntry mes_file_entry;
+    char str[20];
+    tig_font_handle_t font;
+    int area;
+    const char* area_name;
+    const char* story_state_desc;
+
+    window = main_menu_window_info[dword_64C414];
+    tig_art_interface_id_create(window->background_art_num, 0, 0, 0, &art_id);
+    tig_art_frame_data(art_id, &art_frame_data);
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        src_rect.x = stru_5C4798.x;
+        src_rect.y = stru_5C4798.y;
+        src_rect.width = stru_5C4798.width + 1;
+        src_rect.height = stru_5C4798.height + 1;
+
+        dst_rect.x = stru_5C4798.x;
+        dst_rect.y = stru_5C4798.y;
+        dst_rect.width = stru_5C4798.width + 1;
+        dst_rect.height = stru_5C4798.height + 1;
+
+        art_blit_info.art_id = art_id;
+        art_blit_info.flags = 0;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(dword_5C3624, &art_blit_info);
+    }
+
+    if (rect == NULL
+        || (window->field_5C.x < rect->x + rect->width
+            && window->field_5C.y < rect->y + rect->height
+            && rect->x < window->field_5C.x + window->field_5C.width
+            && rect->y < window->field_5C.y + window->field_5C.height)) {
+        dst_rect.x = window->field_5C.x;
+        dst_rect.y = window->field_5C.y;
+        dst_rect.width = window->field_5C.width;
+        dst_rect.height = window->field_5C.height + 5;
+
+        if (tig_window_fill(dword_5C3624, &dst_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
+            tig_debug_printf("mmUIMPLoadGameRefreshFunc: ERROR: tig_window_fill2 failed!\n");
+            exit(EXIT_FAILURE);
+        }
+
+        dst_rect.height -= 5;
+
+        if (stru_64BBF8.count) {
+            int index;
+            int max_y;
+            const char* name;
+
+            max_y = dst_rect.y + dst_rect.height - 1;
+
+            dst_rect.width -= 4;
+            dst_rect.height = 20;
+
+            for (index = window->field_84; index < window->field_8C; index++) {
+                if (dst_rect.y >= max_y) {
+                    break;
+                }
+
+                font = window->field_90 == index ? dword_64C240 : dword_64C210[0];
+                tig_font_push(font);
+                name = sub_543040(index);
+                if (*name != '\0') {
+                    sub_542D00(name, &dst_rect, font);
+                }
+                dst_rect.y += 20;
+                tig_font_pop();
+            }
+        }
+    }
+
+    if (rect == NULL
+        || (stru_5C46C0.x < rect->x + rect->width
+            && stru_5C46C0.y < rect->y + rect->height
+            && rect->x < stru_5C46C0.x + stru_5C46C0.width
+            && rect->y < stru_5C46C0.y + stru_5C46C0.height)) {
+        if (window->field_90 > -1) {
+            if (!dword_64C444
+                && stru_64BBF8.count > 0
+                && gamelib_saveinfo_load(stru_64BBF8.paths[window->field_90], &stru_64B898)) {
+                dword_64C444 = true;
+            }
+
+            if (dword_64C444) {
+                if (stru_64B898.thumbnail_video_buffer != NULL) {
+                    if (tig_video_buffer_data(stru_64B898.thumbnail_video_buffer, &video_buffer_data) == TIG_OK) {
+                        stru_5C46B0.width = video_buffer_data.width;
+                        stru_5C46B0.height = video_buffer_data.height;
+
+                        stru_5C46C0.width = video_buffer_data.width;
+                        stru_5C46C0.height = video_buffer_data.height;
+
+                        win_blit_info.type = TIG_WINDOW_BLIT_VIDEO_BUFFER_TO_WINDOW;
+                        win_blit_info.vb_blit_flags = 0;
+                        win_blit_info.src_video_buffer = stru_64B898.thumbnail_video_buffer;
+                        win_blit_info.src_rect = &stru_5C46B0;
+                        win_blit_info.dst_window_handle = dword_5C3624;
+                        win_blit_info.dst_rect = &stru_5C46C0;
+
+                        if (tig_window_blit(&win_blit_info) != TIG_OK) {
+                            tig_debug_printf("MMUI: ERROR: mmUIMPLoadGameRefreshFunc FAILED to refresh!\n");
+                        }
+                    }
+                }
+
+                font = dword_64C210[0];
+                tig_font_push(font);
+
+                if (stru_64B898.version == 25) {
+                    if (dword_5C4790) {
+                        sub_542DF0(stru_64B898.pc_name, &stru_5C46D0, font);
+                        if (stru_64B898.pc_portrait != 0) {
+                            portrait_draw_native(OBJ_HANDLE_NULL,
+                                stru_64B898.pc_portrait,
+                                dword_5C3624,
+                                stru_5C46E0.x,
+                                stru_5C46E0.y);
+                        }
+
+                        mes_file_entry.num = 5051; // "Level %d"
+                        mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                        sprintf(str, mes_file_entry.str, stru_64B898.pc_level);
+                        sub_542DF0(str, &stru_5C4720, font);
+
+                        sub_542DF0(stru_64B898.description, &stru_5C4730, font);
+
+                        if (sub_40FF50(MAP_TYPE_START_MAP) == stru_64B898.field_340) {
+                            area = sub_4CB4D0(stru_64B898.pc_location, true);
+                        } else if (!map_get_area(stru_64B898.field_340, &area)) {
+                            area = 0;
+                        }
+
+                        if (area > 0) {
+                            area_name = area_get_name(area);
+                        } else {
+                            mes_file_entry.num = 5050; // "Unknown location."
+                            mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                            area_name = mes_file_entry.str;
+                        }
+
+                        sub_542DF0(area_name, &stru_5C46F0, font);
+
+                        datetime_format_date(&(stru_64B898.datetime), str);
+                        sub_542EA0(str, &stru_5C4710, font);
+
+                        datetime_format_time(&(stru_64B898.datetime), str);
+                        sub_542EA0(str, &stru_5C4700, font);
+
+                        story_state_desc = sub_4450F0(stru_64B898.field_35C);
+                        if (story_state_desc != NULL && *story_state_desc != '\0') {
+                            mmUITextWriteCenteredToArray(story_state_desc, stru_5C4740, 4, font);
+                        }
+                    }
+                } else {
+                    mes_file_entry.num = 5004; // "Version Mismatch!"
+                    mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                    sub_542DF0(mes_file_entry.str, &stru_5C46D0, font);
+                }
+                tig_font_pop();
+            } else {
+                tig_window_fill(dword_5C3624, &stru_5C46C0, tig_color_make(0, 0, 0));
+
+                font = dword_64C218[0];
+                tig_font_push(font);
+                mes_file_entry.num = 5005; // "Empty"
+                mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+                sub_542DF0(mes_file_entry.str, &stru_5C46D0, font);
+                tig_font_pop();
+            }
+        } else {
+            tig_window_fill(dword_5C3624, &stru_5C46C0, tig_color_make(0, 0, 0));
+        }
+
+        tig_art_interface_id_create(748, 0, 0, 0, &art_id);
+        if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK
+            && tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+            src_rect.x = 0;
+            src_rect.y = 0;
+            src_rect.width = art_frame_data.width;
+            src_rect.height = art_frame_data.height;
+
+            dst_rect.x = 281;
+            dst_rect.y = 55;
+            dst_rect.width = art_frame_data.width;
+            dst_rect.height = art_frame_data.height;
+
+            art_blit_info.art_id = art_id;
+            art_blit_info.flags = 0;
+            art_blit_info.src_rect = &src_rect;
+            art_blit_info.dst_rect = &dst_rect;
+            if (tig_window_blit_art(dword_5C3624, &art_blit_info) != TIG_OK) {
+                tig_debug_printf("MMUI: mmUIMPLoadGameRefreshFunc: ERROR: FAILED to refresh!\n");
+            }
+        }
+    }
+
+    mmUIWinRefreshScrollBar();
 }
 
 // 0x542D00
@@ -3387,7 +3595,7 @@ void sub_542EA0(const char* str, TigRect* rect, tig_font_handle_t font)
 }
 
 // 0x542F50
-void mmUITextWriteCenteredToArray()
+void mmUITextWriteCenteredToArray(const char* str, TigRect* rects, int cnt, tig_font_handle_t font)
 {
     // TODO: Incomplete.
 }
