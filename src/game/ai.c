@@ -11,6 +11,7 @@
 #include "game/obj.h"
 #include "game/object_node.h"
 #include "game/object.h"
+#include "game/player.h"
 #include "game/proto.h"
 #include "game/random.h"
 #include "game/reaction.h"
@@ -2201,9 +2202,9 @@ bool sub_4AFB30(int64_t obj, int64_t a2)
 }
 
 // 0x4AFBB0
-void sub_4AFBB0()
+int sub_4AFBB0(int64_t obj)
 {
-    // TODO: Incomplete.
+    return sub_40DA20(obj) ? 5 : 10;
 }
 
 // 0x4AFBD0

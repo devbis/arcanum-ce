@@ -60,6 +60,7 @@ int sub_4AF260(int64_t a1, int64_t a2);
 int sub_4AF470(int64_t a1, int64_t a2, int a3);
 void sub_4AF860();
 bool sub_4AFB30(int64_t obj, int64_t a2);
+int sub_4AFBB0(int64_t obj);
 void ai_target_lock(int64_t obj, int64_t tgt);
 void ai_target_unlock(int64_t obj);
 
