@@ -17,6 +17,7 @@
 #include "game/random.h"
 #include "game/reaction.h"
 #include "game/script.h"
+#include "game/spell.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/tile.h"
@@ -114,6 +115,7 @@ static int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
+static int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech);
 static bool sub_4AECA0(int64_t a1, int a2);
 static int sub_4AF240(int value);
 static int sub_4AF640(int64_t a1, int64_t a2);
@@ -1669,9 +1671,80 @@ int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill)
 }
 
 // 0x4AE720
-void sub_4AE720()
+int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    int64_t v1;
+
+    obj_type = obj_field_int32_get(a1, OBJ_F_TYPE);
+
+    if (item_obj != OBJ_HANDLE_NULL) {
+        if (obj_type == OBJ_TYPE_NPC
+            && sub_4503A0(magictech)
+            && !sub_450B40(a1)) {
+            return 6;
+        }
+
+        if (obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE) == 0) {
+            return 2;
+        }
+
+        if (a3 != OBJ_HANDLE_NULL
+            && (COLLEGE_FROM_SPELL(magictech) != COLLEGE_NECROMANTIC_WHITE
+                || (sub_4AB400(a3) > 30
+                    && sub_4AB430(a1) < 80))
+            && sub_453CC0(a1, item_obj, a3) >= 38) {
+            return 8;
+        }
+    } else {
+        if (!sub_4B1950(a1, magictech)) {
+            return 1;
+        }
+
+        if (obj_type == OBJ_TYPE_NPC) {
+            if (!sub_45DDA0(a1) && sub_4AB430(a1) < 20) {
+                return 2;
+            }
+
+            if (sub_4503A0(magictech) && !sub_450B40(a1)) {
+                return 6;
+            }
+        }
+
+        if (sub_4B1660(magictech, a1) >= sub_45D700(a1)) {
+            return 2;
+        }
+
+        if (sub_4B1750(magictech) > stat_level(a1, STAT_INTELLIGENCE)) {
+            return 3;
+        }
+
+        if (spell_get_iq(magictech) > stat_level(a1, STAT_WILLPOWER)) {
+            return 7;
+        }
+
+        if ((obj_field_int32_get(a1, OBJ_F_NPC_FLAGS) & ONF_CAST_HIGHEST) != 0
+            && sub_4B1AB0(a1, COLLEGE_FROM_SPELL(magictech)) + 5 * COLLEGE_FROM_SPELL(magictech) - 1 != magictech) {
+            return 4;
+        }
+
+        if (a3 != OBJ_HANDLE_NULL
+            && (COLLEGE_FROM_SPELL(magictech) != COLLEGE_NECROMANTIC_WHITE
+                || sub_4AB400(a3) > 30)
+            && sub_453B20(a1, a3, magictech) >= 38) {
+            return 8;
+        }
+    }
+
+    if (a1 != a3 && a3 != OBJ_HANDLE_NULL) {
+        if (sub_4ADE00(a1, obj_field_int64_get(a3, OBJ_F_LOCATION), &v1) >= 100
+            || v1 == OBJ_HANDLE_NULL
+            || v1 == a3) {
+            return 5;
+        }
+    }
+
+    return 0;
 }
 
 // 0x4AE9E0
