@@ -4167,7 +4167,50 @@ bool sub_545440(int64_t obj)
 // 0x545490
 bool sub_545490(int64_t obj)
 {
-    // TODO: Incomplete.
+    int race;
+
+    race = stat_level(obj, STAT_RACE);
+    if (race > 0) {
+        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+            do {
+                race--;
+            } while (race >= 0 && !stru_5C5170[race].available_for_female);
+
+            if (race < 0) {
+                return false;
+            }
+
+            if (!stru_5C5170[race].available_for_female) {
+                return false;
+            }
+        } else {
+            race--;
+        }
+
+        if (race < 0) {
+            return false;
+        }
+    } else {
+        race = 7;
+        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+            while (race >= 0 && !stru_5C5170[race].available_for_female) {
+                race--;
+            }
+
+            if (race < 0) {
+                return false;
+            }
+
+            if (!stru_5C5170[race].available_for_female) {
+                return false;
+            }
+        }
+    }
+
+    background_obj_clear(obj);
+    sub_545550(obj, race);
+
+    return true;
 }
 
 // 0x545550
