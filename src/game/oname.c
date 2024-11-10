@@ -45,12 +45,12 @@ bool o_name_mod_load()
     int msg_file;
 
     if (mes_load("oemes\\gameoname.mes", &msg_file)) {
-        sub_4D46F0(o_name_oname_mes_file, msg_file);
+        mes_merge(o_name_oname_mes_file, msg_file);
         mes_unload(msg_file);
     }
 
     if (mes_load("oemes\\gamefaction.mes", &msg_file)) {
-        sub_4D46F0(o_name_faction_mes_file, msg_file);
+        mes_merge(o_name_faction_mes_file, msg_file);
         mes_unload(msg_file);
     }
 
