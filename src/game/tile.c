@@ -172,7 +172,7 @@ bool sub_4D7110(int64_t loc, bool a2)
     tig_art_id_t art_id;
     bool v1;
 
-    if (tb_is_blocked(loc)) {
+    if (tileblock_is_tile_blocked(loc)) {
         return true;
     }
 
