@@ -2336,7 +2336,7 @@ void item_remove(int64_t obj)
 }
 
 // 0x466E50
-void sub_466E50(int64_t a1, int64_t a2)
+void sub_466E50(int64_t obj, int64_t loc)
 {
     // TODO: Incomplete.
 }
