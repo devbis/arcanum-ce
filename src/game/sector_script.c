@@ -28,7 +28,7 @@ bool sector_script_get(int64_t sector_id, Script* scr)
 
     ret = false;
     if (sector_lock(sector_id, &sector)) {
-        ret = sub_4F61F0(&(sector->sector_scripts), scr);
+        ret = sector_script_list_get(&(sector->sector_scripts), scr);
         sector_unlock(sector_id);
     }
 
@@ -43,7 +43,7 @@ bool sector_script_set(int64_t sector_id, Script* scr)
 
     ret = false;
     if (sector_lock(sector_id, &sector)) {
-        ret = sub_4F61C0(&(sector->sector_scripts), scr);
+        ret = sector_script_list_set(&(sector->sector_scripts), scr);
         sector_unlock(sector_id);
     }
 
