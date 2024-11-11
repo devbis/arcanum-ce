@@ -1,6 +1,7 @@
 #include "game/wallcheck.h"
 
 #include "game/player.h"
+#include "game/roof.h"
 #include "game/sector.h"
 
 typedef struct S5E0A10 {
@@ -26,6 +27,7 @@ static void sub_438570(int64_t obj, int64_t sector_id, int type);
 static bool sub_4386B0(int64_t obj, int* index_ptr);
 static void sub_438720(int64_t a1);
 static bool sub_4387C0(int64_t a1, int* index_ptr);
+static void sub_438830();
 
 // 0x5A3E90
 static bool dword_5A3E90 = true;
@@ -104,7 +106,7 @@ void sub_437E10()
 }
 
 // 0x437E50
-void sub_437E50()
+void sub_437E50(int64_t a1)
 {
     // TODO: Incomplete.
 }
