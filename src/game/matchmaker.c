@@ -5,10 +5,10 @@
 typedef int(MatchmakerInit)(MatchmakerInitInfo* init_info);
 typedef void(MatchmakerExit)();
 typedef int(MatchmakerIsActive)();
-typedef int(MatchmakerMotdGet)();
+typedef int(MatchmakerMotdGet)(char*, int, char*, int);
 typedef int(MatchmakerLogin)(const char*, const char*);
-typedef int(MatchmakerCreateAccount)(int, int, int);
-typedef int(MatchmakerVersionNeedsUpgrade)(int);
+typedef int(MatchmakerCreateAccount)(const char*, const char*, const char*);
+typedef int(MatchmakerVersionNeedsUpgrade)(const char*);
 typedef int(MatchmakerGameListGet)(void**, int*);
 typedef int(MatchmakerGameListFree)(void*);
 typedef int(MatchmakerChatServerListGet)(void**, int*);
@@ -16,14 +16,14 @@ typedef int(MatchmakerChatServerListFree)(void*);
 typedef int(MatchmakerChatServerJoin)(int);
 typedef int(MatchmakerChatRoomListGet)(void**, int*);
 typedef int(MatchmakerChatRoomListFree)(void*);
-typedef int(MatchmakerChatRoomJoin)(int, int);
+typedef int(MatchmakerChatRoomJoin)(MatchmakerChatroom*, int);
 typedef int(MatchmakerChatRoomGet)(int);
 typedef int(MatchmakerChatRoomMembersGet)(void**, int*);
 typedef int(MatchmakerChatRoomMembersFree)(void*);
 typedef int(MatchmakerChatRoomCreate)(const char*, const char*);
 typedef int(MatchmakerChatRoomMesg)(const char*);
 typedef int(MatchmakerRegister)(int);
-typedef int(MatchmakerAdRgbGet)(int, int, int);
+typedef int(MatchmakerAdRgbGet)(unsigned char**, int*, int*);
 typedef int(MatchmakerAdRelease)();
 typedef int(MatchmakerAdClicked)();
 typedef int(MatchmakerPing)();
@@ -152,7 +152,7 @@ int matchmaker_is_active()
 }
 
 // 0x4F5A30
-int matchmaker_motd_get(int a1, int a2, int a3, int a4)
+int matchmaker_motd_get(char* a1, int a2, char* a3, int a4)
 {
     if (mm.motd_get != NULL) {
         return mm.motd_get(a1, a2, a3, a4);
@@ -170,15 +170,15 @@ int matchmaker_motd_get(int a1, int a2, int a3, int a4)
 }
 
 // 0x4F5A90
-int matchmaker_login(const char* a1, const char* a2)
+int matchmaker_login(const char* account, const char* password)
 {
     if (mm.login != NULL) {
-        return mm.login(a1, a2);
+        return mm.login(account, password);
     }
 
     mm.login = (MatchmakerLogin*)GetProcAddress(mm.module, "matchmaker_login");
     if (mm.login != NULL) {
-        return mm.login(a1, a2);
+        return mm.login(account, password);
     }
 
     tig_debug_printf("MM: Could not find matchmaker_login, aborting.\n");
@@ -188,15 +188,15 @@ int matchmaker_login(const char* a1, const char* a2)
 }
 
 // 0x4F5B20
-int matchmaker_create_account(int a1, int a2, int a3)
+int matchmaker_create_account(const char* account, const char* password, const char* a3)
 {
     if (mm.create_account != NULL) {
-        return mm.create_account(a1, a2, a3);
+        return mm.create_account(account, password, a3);
     }
 
     mm.create_account = (MatchmakerCreateAccount*)GetProcAddress(mm.module, "matchmaker_create_account");
     if (mm.create_account != NULL) {
-        return mm.create_account(a1, a2, a3);
+        return mm.create_account(account, password, a3);
     }
 
     tig_debug_printf("MM: Could not find matchmaker_create_account, aborting.\n");
@@ -206,15 +206,15 @@ int matchmaker_create_account(int a1, int a2, int a3)
 }
 
 // 0x4F5B70
-int matchmaker_version_needs_upgrade(int a1)
+int matchmaker_version_needs_upgrade(const char* version)
 {
     if (mm.version_needs_upgrade != NULL) {
-        return mm.version_needs_upgrade(a1);
+        return mm.version_needs_upgrade(version);
     }
 
     mm.version_needs_upgrade = (MatchmakerVersionNeedsUpgrade*)GetProcAddress(mm.module, "matchmaker_version_needs_upgrade");
     if (mm.version_needs_upgrade != NULL) {
-        return mm.version_needs_upgrade(a1);
+        return mm.version_needs_upgrade(version);
     }
 
     tig_debug_printf("MM: Could not find matchmaker_version_needs_upgrade, aborting.\n");
@@ -224,15 +224,15 @@ int matchmaker_version_needs_upgrade(int a1)
 }
 
 // 0x4F5BC0
-int matchmaker_ad_rgb_get(int a1, int a2, int a3)
+int matchmaker_ad_rgb_get(unsigned char** rgb_ptr, int* width_ptr, int* height_ptr)
 {
     if (mm.ad_rgb_get != NULL) {
-        return mm.ad_rgb_get(a1, a2, a3);
+        return mm.ad_rgb_get(rgb_ptr, width_ptr, height_ptr);
     }
 
     mm.ad_rgb_get = (MatchmakerAdRgbGet*)GetProcAddress(mm.module, "matchmaker_ad_rgb_get");
     if (mm.ad_rgb_get != NULL) {
-        return mm.ad_rgb_get(a1, a2, a3);
+        return mm.ad_rgb_get(rgb_ptr, width_ptr, height_ptr);
     }
 
     tig_debug_printf("MM: Could not find matchmaker_ad_rgb_get, aborting.\n");
@@ -404,15 +404,15 @@ int matchmaker_chatroom_list_free(void* chatrooms)
 }
 
 // 0x4F5EC0
-int matchmaker_chatroom_join(int a1, int a2)
+int matchmaker_chatroom_join(MatchmakerChatroom* room, int a2)
 {
     if (mm.chatroom_join != NULL) {
-        return mm.chatroom_join(a1, a2);
+        return mm.chatroom_join(room, a2);
     }
 
     mm.chatroom_join = (MatchmakerChatRoomJoin*)GetProcAddress(mm.module, "matchmaker_chatroom_join");
     if (mm.chatroom_join != NULL) {
-        return mm.chatroom_join(a1, a2);
+        return mm.chatroom_join(room, a2);
     }
 
     tig_debug_printf("MM: Could not find matchmaker_chatroom_join, aborting.\n");
