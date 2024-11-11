@@ -481,7 +481,7 @@ bool sub_412FD0(DialogEntryNode* a1)
 
     sub_4C1020(a1->npc_obj, a1->pc_obj);
 
-    if (sub_45D8D0(a1->npc_obj) || !sub_4AE120(a1->npc_obj, a1->pc_obj)) {
+    if (sub_45D8D0(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
         if (player_is_pc_obj(a1->pc_obj)) {
             loc1 = obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION);
             loc2 = obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION);
@@ -534,7 +534,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
             return;
         }
 
-        if (sub_45D8D0(a1->npc_obj) || !sub_4AE120(a1->npc_obj, a1->pc_obj)) {
+        if (sub_45D8D0(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
             sub_414810(v1, a2, v3, a2, a1);
         } else {
             sub_4185F0(a1->field_70, a1, 1000);
@@ -1796,11 +1796,11 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_AR:
             if (value > 0) {
-                if (!sub_4CAF50(a1->pc_obj, value)) {
+                if (!area_is_known(a1->pc_obj, value)) {
                     return false;
                 }
             } else {
-                if (sub_4CAF50(a1->pc_obj, -value)) {
+                if (area_is_known(a1->pc_obj, -value)) {
                     return false;
                 }
             }
@@ -1964,7 +1964,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             script_gl_flag_set(value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_MM:
-            sub_4CAFD0(a1->pc_obj, value);
+            area_set_known(a1->pc_obj, value);
             break;
         case DIALOG_ACTION_AL: {
             int alignment;
@@ -3749,7 +3749,7 @@ int sub_419E20(int64_t obj, int* a2, int cnt)
     int index;
 
     for (index = 0; index < cnt; index++) {
-        if (!sub_4CAF50(obj, a2[index])) {
+        if (!area_is_known(obj, a2[index])) {
             a2[v1++] = a2[index];
         }
     }
@@ -3797,7 +3797,7 @@ void sub_419E70(const char* str, int a2, int a3, int a4, DialogEntryNode* a5)
             break;
         }
 
-        strcpy(a5->field_460[v4], sub_4CAE90(v3[a3 + v4]));
+        strcpy(a5->field_460[v4], area_get_name(v3[a3 + v4]));
         a5->field_17F0[v4] = a4 ? 22 : 19;
         a5->field_1804[v4] = v3[a3 + v4];
         a5->field_1818[v4] = a2;
@@ -3843,7 +3843,7 @@ void sub_41A150(int a1, int a2, int a3, DialogEntryNode* a4)
     int v4;
 
     loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
-    v1 = sub_4CAED0(a1);
+    v1 = area_get_location(a1);
     v2 = sub_4B8D50(loc, v1);
     v3 = sub_4B96F0(loc, v1) / 3168;
 
@@ -3889,7 +3889,7 @@ void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4)
     char buffer[1000];
 
     loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
-    v1 = sub_4CAED0(a1);
+    v1 = area_get_location(a1);
     v2 = sub_4B8D50(loc, v1);
     v3 = sub_4B96F0(loc, v1) / 3168;
     v4 = v3 < 2 ? 600 : 700;
@@ -3907,7 +3907,7 @@ void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4)
     a4->field_1804[0] = a3;
     a4->field_182C[0] = NULL;
     a4->field_45C = 1;
-    sub_4CAFD0(a4->pc_obj, a1);
+    area_set_known(a4->pc_obj, a1);
 }
 
 // 0x41A3E0
