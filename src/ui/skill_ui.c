@@ -289,9 +289,9 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
             if ((obj_field_int32_get(a1->field_0, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0) {
                 if (sub_57A5E0(a1->field_0)) {
                     if (player_is_pc_obj(obj)) {
-                        mes_file_entry.num = 525;
+                        mes_file_entry.num = 525; // "You cannot pickpocket this creature."
                         mes_get_msg(skill_ui_mes_file, &mes_file_entry);
-                        sub_4D5450(obj, 0, mes_file_entry.str);
+                        tf_add(obj, TF_TYPE_WHITE, mes_file_entry.str);
                     }
                 } else if (sub_45D8D0(a1->field_0)) {
                     if (sub_441980(obj, a1->field_0, obj, SAP_USE, 0)
@@ -412,16 +412,17 @@ bool sub_57A770(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
-    int font;
+    int tf_type;
+
+    (void)a2;
+    (void)a3;
 
     if (success) {
-        // You succeed.
-        mes_file_entry.num = 500;
-        font = 0;
+        mes_file_entry.num = 500; // "You succeed."
+        tf_type = TF_TYPE_WHITE;
     } else {
-        // You fail.
-        mes_file_entry.num = 501;
-        font = 1;
+        mes_file_entry.num = 501; // "You fail."
+        tf_type = TF_TYPE_RED;
     }
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -430,7 +431,7 @@ bool sub_57A770(int64_t obj, int a2, int a3, bool success)
     v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     return true;
 }
@@ -440,17 +441,20 @@ bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 {
     MesFileEntry mes_file_entry;
     John v1;
-    bool v2;
+    int tf_type;
     int client_id;
 
+    (void)a2;
+    (void)a3;
+    (void)a4;
+    (void)a5;
+
     if (a6) {
-        // You succeed.
-        mes_file_entry.num = 500;
-        v2 = false;
+        mes_file_entry.num = 500; // "You succeed."
+        tf_type = TF_TYPE_WHITE;
     } else {
-        // You fail.
-        mes_file_entry.num = 501;
-        v2 = true;
+        mes_file_entry.num = 501; // "You fail."
+        tf_type = TF_TYPE_RED;
     }
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -467,10 +471,10 @@ bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
         }
     }
 
-    sub_4D5450(obj, v2, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        sub_4EDB70(obj, v2, mes_file_entry.str);
+        sub_4EDB70(obj, tf_type, mes_file_entry.str);
     }
 
     return true;
@@ -483,17 +487,20 @@ bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 {
     MesFileEntry mes_file_entry;
     John v1;
-    bool v2;
+    int tf_type;
     int client_id;
 
+    (void)a2;
+    (void)a3;
+    (void)a4;
+    (void)a5;
+
     if (a6) {
-        // You succeed.
-        mes_file_entry.num = 500;
-        v2 = false;
+        mes_file_entry.num = 500; // "You succeed."
+        tf_type = TF_TYPE_WHITE;
     } else {
-        // You fail.
-        mes_file_entry.num = 501;
-        v2 = true;
+        mes_file_entry.num = 501; // "You fail."
+        tf_type = TF_TYPE_RED;
     }
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -510,10 +517,10 @@ bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
         }
     }
 
-    sub_4D5450(obj, v2, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        sub_4EDB70(obj, v2, mes_file_entry.str);
+        sub_4EDB70(obj, tf_type, mes_file_entry.str);
     }
 
     return true;
@@ -524,16 +531,17 @@ bool sub_57A990(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
-    int font;
+    int tf_type;
+
+    (void)a2;
+    (void)a3;
 
     if (success) {
-        // You succeed.
-        mes_file_entry.num = 500;
-        font = 0;
+        mes_file_entry.num = 500; // "You succeed."
+        tf_type = TF_TYPE_WHITE;
     } else {
-        // You fail.
-        mes_file_entry.num = 501;
-        font = 1;
+        mes_file_entry.num = 501; // "You fail."
+        tf_type = TF_TYPE_RED;
     }
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -542,7 +550,7 @@ bool sub_57A990(int64_t obj, int a2, int a3, bool success)
     v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     return true;
 }
@@ -552,16 +560,17 @@ bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
-    int font;
+    int tf_type;
+
+    (void)a2;
+    (void)a3;
 
     if (success) {
-        // Trap successfully disarmed.
-        mes_file_entry.num = 560;
-        font = 0;
+        mes_file_entry.num = 560; // "Trap successfully disarmed."
+        tf_type = TF_TYPE_WHITE;
     } else {
-        // Trap disarm failed.
-        mes_file_entry.num = 561;
-        font = 1;
+        mes_file_entry.num = 561; // "Trap disarm failed."
+        tf_type = TF_TYPE_RED;
     }
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -570,7 +579,7 @@ bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
     v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     return true;
 }
@@ -580,16 +589,17 @@ bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
-    int font;
+    int tf_type;
+
+    (void)a2;
+    (void)a3;
 
     if (success) {
-        // You succeed.
-        mes_file_entry.num = 500;
-        font = 0;
+        mes_file_entry.num = 500; // "You succeed."
+        tf_type = TF_TYPE_WHITE;
     } else {
-        // You fail.
-        mes_file_entry.num = 501;
-        font = 1;
+        mes_file_entry.num = 501; // "You fail."
+        tf_type = TF_TYPE_RED;
     }
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -598,7 +608,7 @@ bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
     v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     return true;
 }
@@ -609,15 +619,14 @@ bool skill_ui_no_repair(int64_t obj)
     MesFileEntry mes_file_entry;
     John v1;
 
-    // That is not in need of repair.
-    mes_file_entry.num = 505;
+    mes_file_entry.num = 505; // "That is not in need of repair."
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
     v1.type = 6;
     v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, 1, mes_file_entry.str);
+    tf_add(obj, TF_TYPE_RED, mes_file_entry.str);
 
     return true;
 }
@@ -627,16 +636,17 @@ bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
     John v1;
-    int font;
+    int tf_type;
+
+    (void)a2;
+    (void)a3;
 
     if (success) {
-        // Lock successfully picked.
-        mes_file_entry.num = 550;
-        font = 0;
+        mes_file_entry.num = 550; // "Lock successfully picked."
+        tf_type = TF_TYPE_WHITE;
     } else {
-        // Lock picking failed.
-        mes_file_entry.num = 551;
-        font = 1;
+        mes_file_entry.num = 551; // "Lock picking failed."
+        tf_type = TF_TYPE_RED;
     }
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
@@ -645,7 +655,7 @@ bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success)
     v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, font, mes_file_entry.str);
+    tf_add(obj, tf_type, mes_file_entry.str);
 
     return true;
 }
@@ -656,15 +666,14 @@ bool skill_ui_no_lock(int64_t obj)
     MesFileEntry mes_file_entry;
     John v1;
 
-    // That has no lock.
-    mes_file_entry.num = 512;
+    mes_file_entry.num = 512; // "That has no lock."
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
     v1.type = 6;
     v1.str = mes_file_entry.str;
     sub_550750(&v1);
 
-    sub_4D5450(obj, 1, mes_file_entry.str);
+    tf_add(obj, TF_TYPE_RED, mes_file_entry.str);
 
     return true;
 }
