@@ -5,6 +5,7 @@
 #include "game/mes.h"
 #include "game/multiplayer.h"
 #include "game/mp_utils.h"
+#include "game/party.h"
 #include "game/player.h"
 #include "game/portrait.h"
 #include "game/timeevent.h"
@@ -29,6 +30,8 @@ static void sub_571100();
 static bool sub_5713F0(TigMessage* msg);
 static void sub_571570(int screen_x, int screen_y, int* window_x, int* window_y);
 static bool sub_5715A0(int x, int y, int* index_ptr);
+static char sub_571610(int a1);
+static int sub_571630(int a1);
 static void sub_571660(TextEdit* textedit);
 static void sub_571730(TextEdit* textedit);
 
@@ -602,7 +605,78 @@ bool sub_570A40(tig_window_handle_t window_handle)
 // 0x570BC0
 bool sub_570BC0(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    Packet46 pkt;
+    MesFileEntry mes_file_entry;
+    John v1;
+    char str[200];
+
+    if (msg->type == TIG_MESSAGE_BUTTON
+        && msg->data.button.state == TIG_BUTTON_STATE_RELEASED
+        && dword_5CABF0 != -1
+        && (tig_net_flags & TIG_NET_HOST) != 0
+        && dword_5CABF0 != 0) {
+        if (msg->data.button.button_handle == multiplayer_ui_kick_btn) {
+            if (tig_net_client_is_waiting(dword_680FA4[dword_5CABF0])
+                || tig_net_client_is_loading(dword_680FA4[dword_5CABF0])) {
+                tig_net_shutdown(dword_680FA4[dword_5CABF0]);
+            } else {
+                pkt.type = 46;
+                pkt.player = dword_680FA4[dword_5CABF0];
+                pkt.field_8 = 0;
+                pkt.field_C = 0;
+                pkt.field_10 = 0;
+                pkt.field_14 = 0;
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+            }
+
+            mes_file_entry.num = 1101; // "Player %s(%d) has been kicked from the game."
+            mes_get_msg(multiplayer_ui_mes_file, &mes_file_entry);
+            snprintf(str, sizeof(str),
+                mes_file_entry.str,
+                tig_net_client_info_get_name(dword_5CABF0),
+                dword_5CABF0);
+
+            v1.type = 4;
+            v1.str = str;
+            sub_550750(&v1);
+            dword_5CABF0 = -1;
+            sub_570890();
+            return true;
+        }
+
+        if (msg->data.button.button_handle == multiplayer_ui_ban_btn) {
+            tig_net_ban(dword_680FA4[dword_5CABF0]);
+
+            if (tig_net_client_is_waiting(dword_680FA4[dword_5CABF0])
+                || tig_net_client_is_loading(dword_680FA4[dword_5CABF0])) {
+                tig_net_shutdown(dword_680FA4[dword_5CABF0]);
+            } else {
+                pkt.type = 46;
+                pkt.player = dword_680FA4[dword_5CABF0];
+                pkt.field_8 = 0;
+                pkt.field_C = 0;
+                pkt.field_10 = 0;
+                pkt.field_14 = 0;
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+            }
+
+            mes_file_entry.num = 1102; // "Player %s(%d) has been banned, no connections from this host will be allowed."
+            mes_get_msg(multiplayer_ui_mes_file, &mes_file_entry);
+            snprintf(str, sizeof(str),
+                mes_file_entry.str,
+                tig_net_client_info_get_name(dword_5CABF0),
+                dword_5CABF0);
+
+            v1.type = 4;
+            v1.str = str;
+            sub_550750(&v1);
+            dword_5CABF0 = -1;
+            sub_570890();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x570E10
@@ -695,13 +769,159 @@ void sub_570EF0()
 // 0x571100
 void sub_571100()
 {
-    // TODO: Incomplete.
+    int index;
+    MesFileEntry mes_file_entry;
+    TigRect rect;
+    TigFont font_desc;
+    int64_t obj;
+    int v1;
+    int ping;
+    int font;
+    char str[12];
+
+    for (index = 0; index < dword_68103C; index++) {
+        tig_font_push(sub_549940(MM_FONT_2, MM_COLOR_WHITE));
+        font_desc.width = 0;
+        font_desc.str = tig_net_client_info_get_name(dword_680FA4[index]);
+        sub_535390(&font_desc);
+        rect.x = 40;
+        rect.y = stru_680FD0[index % 2].height * index + 3;
+        rect.width = font_desc.width;
+        rect.height = font_desc.height;
+        tig_window_text_write(dword_5CABE8, font_desc.str, &rect);
+        tig_font_pop();
+
+        obj = sub_4A2B60(dword_680FA4[index]);
+        if (obj != OBJ_HANDLE_NULL) {
+            v1 = sub_4BA020(obj);
+            if (v1 != -1) {
+                tig_font_push(sub_571630(v1));
+                rect.x += font_desc.width;
+                sprintf(str, " %c", sub_571610(v1));
+                font_desc.width = 0;
+                font_desc.str = str;
+                sub_535390(&font_desc);
+                rect.width = font_desc.width;
+                rect.height = font_desc.height;
+                rect.y += 3;
+                tig_window_text_write(dword_5CABE8, font_desc.str, &rect);
+                rect.y -= 3;
+                tig_font_pop();
+            }
+        }
+
+        tig_font_push(sub_549940(MM_FONT_2, MM_COLOR_WHITE));
+        if (tig_net_client_is_waiting(dword_680FA4[index])) {
+            mes_file_entry.num = 1002; // "Waiting"
+        } else if (tig_net_client_is_loading(dword_680FA4[index])) {
+            mes_file_entry.num = 1003; // "Loading"
+        } else {
+            mes_file_entry.num = 1001; // "Ready"
+        }
+        mes_get_msg(multiplayer_ui_mes_file, &mes_file_entry);
+        font_desc.str = mes_file_entry.str;
+        font_desc.width = 0;
+        sub_535390(&font_desc);
+        rect.x = 40;
+        rect.y = stru_680FD0[index % 2].height * index + 22;
+        rect.width = font_desc.width;
+        rect.height = font_desc.height;
+        tig_window_text_write(dword_5CABE8, font_desc.str, &rect);
+        tig_font_pop();
+
+        if (((tig_net_flags & TIG_NET_HOST) != 0
+                && dword_680FA4[index] != 0)
+            || ((tig_net_flags & TIG_NET_HOST) == 0
+                && dword_680FA4[index] == 0)) {
+            ping = sub_526D60(dword_680FA4[index]);
+            if (ping < 251) {
+                font = sub_549940(MM_FONT_0, MM_COLOR_GREEN);
+            } else if (ping < 501) {
+                font = sub_549940(MM_FONT_0, MM_COLOR_GOLD);
+            } else {
+                font = sub_549940(MM_FONT_0, MM_COLOR_RED);
+            }
+            tig_font_push(font);
+            rect.x = font_desc.width + 40;
+            snprintf(str, sizeof(str), "(%d)", ping);
+            font_desc.width = 0;
+            font_desc.str = str;
+            sub_535390(&font_desc);
+            rect.width = font_desc.width;
+            rect.height = font_desc.height;
+            tig_window_text_write(dword_5CABE8, font_desc.str, &rect);
+            tig_font_pop();
+        }
+    }
 }
 
 // 0x5713F0
 bool sub_5713F0(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+
+    switch (msg->type) {
+    case TIG_MESSAGE_MOUSE:
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
+            && (tig_net_local_server_get_options() & TIG_NET_SERVER_PRIVATE_CHAT) != 0) {
+            int x;
+            int y;
+
+            sub_571570(msg->data.mouse.x,
+                msg->data.mouse.y,
+                &x,
+                &y);
+
+            if (sub_5715A0(x, y, &index)) {
+                if (dword_5CABF0 == -1) {
+                    dword_5CABF0 = index;
+                    sub_5506C0(3);
+                    sub_5708B0(0);
+                    return false;
+                }
+
+                if (dword_5CABF0 != index) {
+                    dword_5CABF0 = index;
+                    sub_570A40(dword_5CABEC);
+                    sub_5708B0(0);
+                    return false;
+                }
+            } else {
+                if (dword_5CABF0 != -1) {
+                    sub_5506C0(3);
+                    sub_5708B0(0);
+                    return false;
+                }
+                dword_5CABF0 = -1;
+            }
+            sub_5708B0(0);
+        }
+        return false;
+    case TIG_MESSAGE_BUTTON:
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            switch (msg->data.button.state) {
+            case TIG_BUTTON_STATE_RELEASED:
+                for (index = 0; index < dword_68103C; index++) {
+                    if (msg->data.button.button_handle == multiplayer_ui_add_button_handles[index]) {
+                        sub_52A9E0(dword_680FA4[index]);
+                        return true;
+                    }
+
+                    if (msg->data.button.button_handle == multiplayer_ui_kick_button_handles[index]) {
+                        dword_5CABF0 = index;
+                        sub_5506C0(10);
+                        return true;
+                    }
+                }
+                return false;
+            default:
+                return false;
+            }
+        }
+        return false;
+    default:
+        return false;
+    }
 }
 
 // 0x571570
