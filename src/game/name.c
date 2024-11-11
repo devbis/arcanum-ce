@@ -474,7 +474,7 @@ void sub_41F240()
 }
 
 // 0x41F3C0
-void sub_41F3C0()
+bool sub_41F3C0(PathCreateInfo* path_create_info)
 {
     // TODO: Incomplete.
 }
@@ -516,7 +516,7 @@ void sub_420110()
 }
 
 // 0x4201C0
-void sub_4201C0()
+int sub_4201C0(int64_t a1, int64_t a2, void* a3)
 {
     // TODO: Incomplete.
 }

@@ -1111,7 +1111,7 @@ void sub_4AC380(Ai* ai)
     }
 
     if (!critter_is_sleeping(ai->obj)) {
-        if (!sub_460C20() && random_between(1, 100) == 1) {
+        if (sub_460C20() == OBJ_HANDLE_NULL && random_between(1, 100) == 1) {
             sub_4A8F90(ai->obj, 32736);
         }
     }
@@ -1163,7 +1163,7 @@ void sub_4AC7B0(Ai* ai)
     AiParams ai_params;
     unsigned int npc_flags;
     int combat_min_distance;
-    AnimPathCreateInfo path_create_info;
+    PathCreateInfo path_create_info;
     int8_t rotations[100];
 
     sub_4AAA60(ai->obj, &ai_params);
