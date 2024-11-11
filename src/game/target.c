@@ -1,11 +1,23 @@
 #include "game/target.h"
 
 #include "game/critter.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/stat.h"
 
+static bool sub_4F28A0(int x, int y, S4F2810* a3);
 static void sub_4F52D0(int64_t obj, int index);
+
+// 0x5BC428
+const char* off_5BC428[] = {
+    "resist_damage",
+    "resist_fire",
+    "resist_electrical",
+    "resist_poison",
+    "resist_magic",
+};
 
 // 0x5BC48C
 static int dword_5BC48C[12] = {
@@ -76,22 +88,21 @@ void target_resize(ResizeInfo* resize_info)
 }
 
 // 0x4F25B0
-void sub_4F25B0()
+void sub_4F25B0(uint64_t flags)
 {
-    // TODO: Incomplete.
+    stru_603D20.field_0 = flags;
 }
 
 // 0x4F25D0
-void sub_4F25D0()
+uint64_t sub_4F25D0()
 {
-    // TODO: Incomplete.
+    return stru_603D20.field_0;
 }
 
 // 0x4F25E0
 void sub_4F25E0(S603D20* a1)
 {
-    a1->field_0 = 0;
-    a1->field_4 = 0;
+    a1->field_0 = Tgt_None;
     a1->field_14 = 0;
     a1->field_10 = 0;
     a1->field_C = 0;
@@ -106,7 +117,6 @@ void sub_4F2600(S603CB8 *a1, S603D20 *a2, int64_t a3)
     a1->field_40 = 0;
     a1->field_10 = a3;
     a1->field_8 = a3;
-    a1->field_34 = 0;
     a1->field_0 = a2;
     a1->field_54 = 0;
     a1->field_58 = 0;
@@ -118,7 +128,6 @@ void sub_4F2600(S603CB8 *a1, S603D20 *a2, int64_t a3)
     a1->field_28 = 0;
     a1->field_20 = 0;
     a1->field_4C = 0;
-    a1->field_2C = 0;
     a1->field_60 = 0;
 
     if (a2 != NULL) {
@@ -127,31 +136,89 @@ void sub_4F2600(S603CB8 *a1, S603D20 *a2, int64_t a3)
 }
 
 // 0x4F2680
-void sub_4F2680()
+bool sub_4F2680(S4F2680* a1)
 {
-    // TODO: Incomplete.
+    stru_603CB8.field_10 = a1->field_0;
+
+    if (a1->field_10->field_8) {
+        stru_603CB8.field_38 = a1->field_10->field_0;
+        stru_603CB8.field_28 = a1->field_10->field_0;
+        stru_603CB8.field_20 = 0;
+        stru_603CB8.field_30 = 0;
+    } else {
+        if ((obj_field_int32_get(a1->field_10->field_0, OBJ_F_FLAGS) & OF_CLICK_THROUGH) != 0) {
+            return false;
+        }
+
+        stru_603CB8.field_30 = a1->field_10->field_0;
+        stru_603CB8.field_20 = a1->field_10->field_0;
+        stru_603CB8.field_28 = OBJ_HANDLE_NULL;
+        stru_603CB8.field_38 = OBJ_HANDLE_NULL;
+    }
+
+    stru_603CB8.field_8 = a1->field_8;
+
+    if (sub_4F2D20(&stru_603CB8)) {
+        if (stru_603D20.field_0) {
+            return true;
+        }
+        return false;
+    }
+
+    if (!a1->field_10->field_8) {
+        if (a1->field_10->field_0 != OBJ_HANDLE_NULL) {
+            stru_603CB8.field_28 = obj_field_int64_get(a1->field_10->field_0, OBJ_F_LOCATION);
+            stru_603CB8.field_38 = stru_603CB8.field_28;
+        }
+        if (sub_4F2D20(&stru_603CB8) && stru_603D20.field_0) {
+            sub_4F27F0(a1->field_10, stru_603CB8.field_28);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x4F27F0
-void sub_4F27F0()
+void sub_4F27F0(S4F2810* a1, int64_t loc)
 {
-    // TODO: Incomplete.
+    a1->field_0 = loc;
+    a1->field_8 = 1;
 }
 
 // 0x4F2810
-void sub_4F2810()
+void sub_4F2810(S4F2810* a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    a1->field_0 = a2;
+    a1->field_8 = 0;
 }
 
 // 0x4F2830
-void sub_4F2830()
+bool sub_4F2830(TigMouseMessageData* mouse, S4F2810* a2, bool fullscreen)
 {
-    // TODO: Incomplete.
+    int x;
+    int y;
+
+    if (mouse->x < stru_603BB0.x
+        || mouse->x >= stru_603BB0.x + stru_603BB0.width
+        || mouse->y < stru_603BB0.y
+        || mouse->y >= stru_603BB0.y + stru_603BB0.height) {
+        return false;
+    }
+
+    x = mouse->x - stru_603BB0.x;
+    y = mouse->y;
+
+    // FIXME: Looks odd, why `x` is not treat in the same way?
+    if (!fullscreen) {
+        y -= stru_603BB0.y;
+    }
+
+    return sub_4F28A0(x, y, a2);
 }
 
 // 0x4F28A0
-void sub_4F28A0()
+bool sub_4F28A0(int x, int y, S4F2810* a3)
 {
     // TODO: Incomplete.
 }
@@ -175,9 +242,21 @@ int sub_4F2C60(int64_t* obj_ptr)
 }
 
 // 0x4F2CB0
-void sub_4F2CB0()
+bool sub_4F2CB0(int x, int y, S4F2810* a3, uint64_t tgt, bool fullscreen)
 {
-    // TODO: Incomplete.
+    uint64_t old_tgt;
+    bool rc;
+
+    x -= stru_603BB0.x;
+    if (!fullscreen) {
+        y -= stru_603BB0.y;
+    }
+
+    old_tgt = sub_4F25D0();
+    sub_4F25B0(tgt);
+    rc = sub_4F28A0(x, y, a3);
+    sub_4F25B0(tgt);
+    return rc;
 }
 
 // 0x4F2D10
@@ -187,7 +266,7 @@ int64_t sub_4F2D10()
 }
 
 // 0x4F2D20
-void sub_4F2D20()
+bool sub_4F2D20(S603CB8* a1)
 {
     // TODO: Incomplete.
 }
@@ -217,7 +296,7 @@ void sub_4F40B0()
 }
 
 // 0x4F4E40
-void sub_4F4E40()
+bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr)
 {
     // TODO: Incomplete.
 }
@@ -229,15 +308,75 @@ bool sub_4F5090(int64_t obj, int index)
 }
 
 // 0x4F50C0
-void sub_4F50C0()
+bool sub_4F50C0(int64_t obj, int index)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+    Packet36 pkt;
+    int fate_points;
+
+    if (!sub_4A2BA0()) {
+        pkt.type = 36;
+        sub_4440E0(obj, &(pkt.field_8));
+        pkt.field_38 = index;
+        pkt.field_3C = 1;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return false;
+        }
+    }
+
+    flags = obj_field_int32_get(obj, OBJ_F_PC_FLAGS_FATE);
+    if ((dword_5BC48C[index] & flags) != 0) {
+        return false;
+    }
+
+    fate_points = stat_get_base(obj, STAT_FATE_POINTS);
+    if (fate_points <= 0) {
+        return false;
+    }
+
+    stat_set_base(obj, STAT_FATE_POINTS, fate_points - 1);
+
+    if (dword_5BC48C[index] != 0) {
+        obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags | dword_5BC48C[index]);
+    } else {
+        sub_4F52D0(obj, index);
+    }
+
+    return true;
 }
 
 // 0x4F51B0
-void sub_4F51B0()
+bool sub_4F51B0(int64_t obj, int index)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+    Packet36 pkt;
+    int fate_points;
+
+    if (!sub_4A2BA0()) {
+        pkt.type = 36;
+        sub_4440E0(obj, &(pkt.field_8));
+        pkt.field_38 = index;
+        pkt.field_3C = 0;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return false;
+        }
+    }
+
+    flags = obj_field_int32_get(obj, OBJ_F_PC_FLAGS_FATE);
+    if ((dword_5BC48C[index] & flags) == 0) {
+        return false;
+    }
+
+    obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags & ~dword_5BC48C[index]);
+
+    fate_points = stat_get_base(obj, STAT_FATE_POINTS);
+    stat_set_base(obj, STAT_FATE_POINTS, fate_points + 1);
+
+    return true;
 }
 
 // 0x4F5270
