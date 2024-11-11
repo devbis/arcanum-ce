@@ -246,14 +246,13 @@ bool antiteleport_map_list_load(mes_file_handle_t mes_file, AntiTeleportMapList*
 }
 
 // 0x4BDD30
-bool sub_4BDD30(int64_t obj, int64_t a2)
+bool antiteleport_check_can_teleport(int64_t obj, int64_t extra_loc)
 {
     int map;
     int index;
     int area;
     int64_t loc;
     int64_t distance;
-    int num_regions;
 
     if (obj == OBJ_HANDLE_NULL) {
         return false;
@@ -267,12 +266,8 @@ bool sub_4BDD30(int64_t obj, int64_t a2)
 
     for (index = 0; index < antiteleport_map_list.cnt; index++) {
         if (map == antiteleport_map_list.entries[index].map) {
-            break;
+            return false;
         }
-    }
-
-    if (index >= antiteleport_map_list.cnt) {
-        return false;
     }
 
     if (map == sub_40FF50(MAP_TYPE_START_MAP)) {
@@ -283,18 +278,16 @@ bool sub_4BDD30(int64_t obj, int64_t a2)
         return false;
     }
 
-    num_regions = 0;
     for (index = 0; index < antiteleport_region_list.cnt; index++) {
         distance = sub_4B96F0(loc, antiteleport_region_list.entries[index].location);
         if (distance < antiteleport_region_list.entries[index].radius) {
             return false;
         }
-        num_regions++;
     }
 
-    if (a2 != 0) {
+    if (extra_loc != 0) {
         for (index = 0; index < antiteleport_region_list.cnt; index++) {
-            distance = sub_4B96F0(a2, antiteleport_region_list.entries[index].location);
+            distance = sub_4B96F0(extra_loc, antiteleport_region_list.entries[index].location);
             if (distance < antiteleport_region_list.entries[index].radius) {
                 return false;
             }
