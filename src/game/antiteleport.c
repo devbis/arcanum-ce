@@ -278,7 +278,7 @@ bool sub_4BDD30(int64_t obj, int64_t a2)
     if (map == sub_40FF50(MAP_TYPE_START_MAP)) {
         loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     } else if (map_get_area(map, &area)) {
-        loc = sub_4CAED0(area);
+        loc = area_get_location(area);
     } else {
         return false;
     }
