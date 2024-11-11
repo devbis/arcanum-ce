@@ -215,6 +215,7 @@ static void sub_564970(S64E048* a1);
 static void sub_5649C0();
 static void sub_5649D0(int a1);
 static bool sub_5649F0(int64_t loc);
+static void sub_564A70(int64_t pc_obj, int64_t loc);
 static void sub_564E30(WmapCoords* coords, int64_t* loc_ptr);
 static int64_t sub_564EE0(WmapCoords* a1, WmapCoords* a2, DateTime* datetime);
 static void wmap_ui_town_notes_load();
@@ -1186,7 +1187,7 @@ bool wmap_ui_create()
             return false;
         }
 
-        loc = sub_4CAED0(area);
+        loc = area_get_location(area);
     } else {
         loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
     }
@@ -1295,8 +1296,8 @@ bool wmap_ui_create()
     tig_art_interface_id_create(198, 0, 0, 0, &(stru_64FBC8.art_id));
     sub_550DA0(1, &stru_64FBC8);
 
-    for (index = sub_4CAE80() - 1; index > 0; index--) {
-        if (sub_4CAF50(player_get_pc_obj(), index)) {
+    for (index = area_get_count() - 1; index > 0; index--) {
+        if (area_is_known(player_get_pc_obj(), index)) {
             sub_562800(index);
         }
     }
@@ -1423,17 +1424,17 @@ bool sub_5627F0(long long a1)
 void sub_562800(int id)
 {
     WmapNote note;
-    const char* str;
+    const char* name;
 
     note.id = id;
     note.field_4 = 0x2;
     note.field_10 = 0;
     note.field_28 = 5;
 
-    str = sub_4CAE90(id);
-    if (str != NULL) {
-        strncpy(note.str, str, sizeof(note.str));
-        sub_561490(sub_4CAED0(id), &(note.coords));
+    name = area_get_name(id);
+    if (name != NULL) {
+        strncpy(note.str, name, sizeof(note.str));
+        sub_561490(area_get_location(id), &(note.coords));
         sub_563C60(&note);
     }
 }
@@ -2369,9 +2370,9 @@ void sub_564970(S64E048* a1)
 {
     int v1;
 
-    v1 = sub_4CB2A0(a1->loc, player_get_pc_obj(), qword_66D850);
+    v1 = area_get_nearest_known_area(a1->loc, player_get_pc_obj(), qword_66D850);
     if (v1 > 0) {
-        a1->loc = sub_4CAED0(v1);
+        a1->loc = area_get_location(v1);
         sub_561490(a1->loc, &(a1->coords));
     }
 }
@@ -2391,12 +2392,12 @@ void sub_5649D0(int a1)
 bool sub_5649F0(int64_t loc)
 {
     S5C9228* v1;
-    int v2;
+    int area;
 
     v1 = &(stru_5C9228[dword_66D868]);
-    v2 = sub_4CB4D0(loc, 1);
-    if (v2 > 0) {
-        loc = sub_4CAED0(v2);
+    area = sub_4CB4D0(loc, true);
+    if (area > 0) {
+        loc = area_get_location(area);
     }
 
     if (sub_561860(loc)) {
@@ -2409,26 +2410,26 @@ bool sub_5649F0(int64_t loc)
 
     sub_57D620();
 
-    return v2 > 0;
+    return area > 0;
 }
 
 // 0x564A70
-void sub_564A70(long long a1, long long a2)
+void sub_564A70(int64_t pc_obj, int64_t loc)
 {
-    int v1;
+    int area;
 
-    v1 = sub_4CB4D0(a2, 0);
-    if (v1 > 0) {
-        if (!sub_4CAF50(a1, v1)) {
-            if (sub_4CB100(a1) == v1) {
-                sub_4CB160(a1);
+    area = sub_4CB4D0(loc, false);
+    if (area > 0) {
+        if (!area_is_known(pc_obj, area)) {
+            if (area_get_last_known_area(pc_obj) == area) {
+                area_reset_last_known_area(pc_obj);
             }
-            sub_4CAFD0(a1, v1);
-            sub_562800(v1);
+            area_set_known(pc_obj, area);
+            sub_562800(area);
         }
 
-        if (sub_4CB100(a1) == v1) {
-            sub_4CB160(a1);
+        if (area_get_last_known_area(pc_obj) == area) {
+            area_reset_last_known_area(pc_obj);
         }
     }
 }
@@ -2750,8 +2751,8 @@ void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3)
         dx = a2->x + note->coords.x - stru_5C9228[dword_66D868].field_34;
         dy = a2->y + note->coords.y - stru_5C9228[dword_66D868].field_38;
 
-        if (dword_66D868 == 0 && note->id <= sub_4CAE80()) {
-            sub_4CAF00(note->id, &x, &y);
+        if (dword_66D868 == 0 && note->id <= area_get_count()) {
+            area_get_wm_offset(note->id, &x, &y);
         }
 
         x += dx - 10;
