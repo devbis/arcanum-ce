@@ -226,6 +226,7 @@ static bool sub_565140();
 static void sub_565170(WmapCoords* coords);
 static void sub_565230();
 static void sub_5657A0(TigRect* rect);
+static bool sub_565CF0(WmapNote* note);
 static void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3);
 static void wmap_note_vbid_lock(WmapNote* note);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
@@ -2729,6 +2730,8 @@ void sub_5657A0(TigRect* rect)
 // 0x565CF0
 bool sub_565CF0(WmapNote* note)
 {
+    (void)note;
+
     return true;
 }
 
