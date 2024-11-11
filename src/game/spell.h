@@ -141,4 +141,6 @@ bool sub_4B1C70(int64_t obj, int a2);
 int sub_4B1CB0(int64_t obj);
 void sub_4B1CF0(int64_t obj, int a2);
 
+#define COLLEGE_FROM_SPELL(spell) ((spell / 5))
+
 #endif /* ARCANUM_GAME_LIB_SPELL_H_ */
