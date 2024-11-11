@@ -201,7 +201,7 @@ bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
         }
 
         sub_4BA320(a1, a2, 0);
-        sub_460AB0(115, 0, 0);
+        sub_460AB0(115, 0, NULL);
         sub_4BA290();
 
         party_member_obj = party_find_first(a1, &iter);
@@ -238,7 +238,7 @@ bool sub_4BA1E0(int64_t obj)
 
         dword_5FC32C[index] = -1;
         sub_4BA320(obj, obj, 6);
-        sub_460AB0(115, 0, 0);
+        sub_460AB0(115, 0, NULL);
         sub_4BA290();
     }
 
@@ -292,7 +292,7 @@ bool sub_4BA2E0(int* party, int cnt)
     }
 
     memcpy(dword_5FC32C, party, sizeof(*party) * cnt);
-    sub_460AB0(115, 0, 0);
+    sub_460AB0(115, 0, NULL);
 
     return true;
 }
