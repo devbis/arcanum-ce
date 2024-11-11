@@ -35,7 +35,6 @@ static bool sub_4EB8D0(int* a1, int a2, int a3, bool* a4);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
 static uint8_t sub_4EBAD0(tig_art_id_t aid);
 static int8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6);
-static int sub_4EBEF0(int a1, int a2, int a3, int a4, int a5, int a6);
 static bool sub_4EC020();
 static bool sub_4EC0C0();
 static int sub_4EC160();

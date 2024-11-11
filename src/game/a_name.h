@@ -14,6 +14,7 @@ bool sub_4EBBA0(tig_art_id_t aid);
 bool sub_4EBBC0(tig_art_id_t aid);
 int sub_4EBBE0(tig_art_id_t aid);
 void sub_4EBC40();
+int sub_4EBEF0(int a1, int a2, int a3, int a4, int a5, int a6);
 bool a_name_item_init();
 void a_name_item_exit();
 bool a_name_item_aid_to_fname(tig_art_id_t aid, char* fname);
