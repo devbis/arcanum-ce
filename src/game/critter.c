@@ -1711,7 +1711,7 @@ bool critter_has_bad_associates(int64_t obj)
 }
 
 // 0x45F550
-int sub_45F550(long long obj)
+bool critter_can_open_portals(long long obj)
 {
     return ai_critter_can_open_portals(obj);
 }

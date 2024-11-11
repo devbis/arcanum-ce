@@ -87,6 +87,7 @@ void sub_45F110(int64_t obj, int a2);
 bool critter_enter_bed(int64_t obj, int64_t bed);
 void critter_leave_bed(int64_t obj, int64_t bed);
 bool critter_has_bad_associates(int64_t obj);
+bool critter_can_open_portals(long long obj);
 void sub_45F5C0(long long obj);
 void sub_45F600(long long obj);
 int64_t sub_45F650(int64_t obj);
