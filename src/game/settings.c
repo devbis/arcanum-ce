@@ -145,7 +145,7 @@ ObjectID settings_get_obj_value(Settings* settings, const char* key)
     if (str != NULL) {
         objid_id_from_str(&oid, str);
     } else {
-        oid.type = 0;
+        oid.type = OID_TYPE_NULL;
     }
 
     return oid;
