@@ -1410,7 +1410,6 @@ void sub_4B5F40(CombatContext* combat)
 void sub_4B6410(CombatContext* combat)
 {
     int crit_miss_chart;
-    int crit_miss_effect;
     int chance;
 
     if (combat->weapon_obj != OBJ_HANDLE_NULL) {
