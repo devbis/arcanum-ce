@@ -56,7 +56,6 @@ typedef enum ProtoField {
 
 static ObjectType sub_4685D0(int description);
 static int sub_468600(ObjectType object_type);
-static bool sub_468610(int description);
 static void sub_468660(bool* error_ptr);
 static int sub_468720(ObjectType object_type);
 static void sub_468800();

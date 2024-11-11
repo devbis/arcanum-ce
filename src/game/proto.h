@@ -8,6 +8,7 @@ int proto_init(GameInitInfo* init_info);
 void proto_exit();
 long long sub_468570(ObjectType object_type);
 long long sub_4685A0(int a1);
+bool sub_468610(int description);
 int sub_49B290(long long obj);
 
 #endif /* ARCANUM_GAME_PROTO_H_ */
