@@ -3,9 +3,11 @@
 #include "game/critter.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/name.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/random.h"
 #include "game/stat.h"
 
 static bool sub_4F28A0(int x, int y, S4F2810* a3);
@@ -39,8 +41,26 @@ static int dword_5BC48C[12] = {
     0x0400,
 };
 
+// 0x603B88
+static PathCreateInfo stru_603B88;
+
 // 0x603BB0
 static TigRect stru_603BB0;
+
+// 0x603BC4
+static int8_t byte_603BC4[200];
+
+// 0x603C94
+static int dword_603C94;
+
+// 0x603C98
+static int dword_603C98;
+
+// 0x603CA8
+static int64_t qword_603CA8;
+
+// 0x603CB0
+static int64_t qword_603CB0;
 
 // 0x603CB8
 static S603CB8 stru_603CB8;
@@ -473,7 +493,66 @@ void sub_4F40B0(S603CB8* a1)
 // 0x4F4E40
 bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr)
 {
-    // TODO: Incomplete.
+    int64_t from;
+    int64_t to;
+    int obj_type;
+    int rotation;
+    int idx;
+    ObjectList critters;
+    ObjectNode* node;
+
+    from = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    *loc_ptr = 0;
+    to = from;
+    rotation = random_between(0, 8);
+
+    for (idx = 0; idx < distance; idx++) {
+        if (!sub_4B8FF0(to, rotation, &to)) {
+            return false;
+        }
+    }
+
+    stru_603B88.obj = obj;
+    stru_603B88.from = from;
+    stru_603B88.to = to;
+    stru_603B88.max_rotations = sizeof(byte_603BC4);
+    stru_603B88.rotations = byte_603BC4;
+    stru_603B88.field_20 = 16;
+
+    dword_603C98 = sub_41F3C0(&stru_603B88);
+    qword_603CB0 = stru_603B88.to;
+    qword_603CA8 = stru_603B88.from;
+
+    if ((dword_603C98 > 0 || stru_603B88.field_24 > 0)
+        && dword_603C98 < distance + 2) {
+        if (stru_603B88.field_24 == 0) {
+            stru_603B88.field_24 = dword_603C98;
+        }
+
+        to = from;
+
+        dword_603C94 = 0;
+        while (dword_603C94 < stru_603B88.field_24) {
+            if (obj_type_is_critter(obj_type)) {
+                sub_4407C0(to, OBJ_TM_CRITTER, &critters);
+                node = critters.head;
+                object_list_destroy(&critters);
+                if (node == NULL) {
+                    break;
+                }
+            }
+
+            if (!sub_4B8FF0(to, byte_603BC4[dword_603C94], &to)) {
+                return false;
+            }
+        }
+        *loc_ptr = to;
+        return true;
+    } else {
+        *loc_ptr = from;
+        return true;
+    }
 }
 
 // 0x4F5090
