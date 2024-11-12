@@ -5,6 +5,7 @@
 #include "game/multiplayer.h"
 #include "game/obj.h"
 #include "game/object.h"
+#include "game/player.h"
 #include "game/stat.h"
 
 static bool sub_4F28A0(int x, int y, S4F2810* a3);
@@ -187,9 +188,9 @@ void sub_4F27F0(S4F2810* a1, int64_t loc)
 }
 
 // 0x4F2810
-void sub_4F2810(S4F2810* a1, int64_t a2)
+void sub_4F2810(S4F2810* a1, int64_t obj)
 {
-    a1->field_0 = a2;
+    a1->field_0 = obj;
     a1->field_8 = 0;
 }
 
@@ -220,7 +221,126 @@ bool sub_4F2830(TigMouseMessageData* mouse, S4F2810* a2, bool fullscreen)
 // 0x4F28A0
 bool sub_4F28A0(int x, int y, S4F2810* a3)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    S4F2680 v1;
+    ObjectList party_members;
+    ObjectList mp_party_members;
+    ObjectList dead_critters;
+    ObjectList objects;
+    ObjectNode* node;
+    int64_t v2;
+    int64_t loc;
+    bool ret = false;
+
+    pc_obj = player_get_pc_obj();
+
+    v1.field_0 = pc_obj;
+    v1.field_8 = pc_obj;
+    v1.field_10 = a3;
+
+    if ((stru_603D20.field_0 & Tgt_No_Self) != 0) {
+        sub_43D0E0(pc_obj, OF_CANCEL);
+    }
+
+    if ((stru_603D20.field_0 & Tgt_Non_Party) != 0) {
+        sub_441260(pc_obj, &party_members);
+        node = party_members.head;
+        while (node != NULL) {
+            sub_43D0E0(node->obj, OF_CANCEL);
+            node = node->next;
+        }
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_441310(pc_obj, &mp_party_members);
+            node = mp_party_members.head;
+            while (node != NULL) {
+                sub_43D0E0(node->obj, OF_CANCEL);
+                node = node->next;
+            }
+        }
+    }
+
+    if ((stru_603D20.field_0 & Tgt_No_ST_Critter_Dead) != 0) {
+        sub_440FC0(pc_obj, OBJ_TM_PC | OBJ_TM_NPC, &dead_critters);
+        node = mp_party_members.head;
+        while (node != NULL) {
+            if (sub_45D8D0(node->obj)) {
+                sub_43D0E0(node->obj, OF_CANCEL);
+            }
+            node = node->next;
+        }
+    }
+
+    if (sub_43D9F0(x, y, &v2, 0x3)) {
+        sub_4F2C60(&v2);
+        sub_4F2810(a3, v2);
+        if (sub_4F2680(&v1)) {
+            ret = true;
+        }
+    }
+
+    if (!ret) {
+        if (sub_4B8730(x, y, &loc)) {
+            sub_4407C0(loc, OBJ_TM_ALL & ~OBJ_TM_PROJECTILE, &objects);
+            node = objects.head;
+            while (node != NULL) {
+                v2 = node->obj;
+                sub_4F2C60(&v2);
+                sub_4F2810(a3, v2);
+                if (sub_4F2680(&v1)) {
+                    ret = true;
+                    break;
+                }
+                node = node->next;
+            }
+            object_list_destroy(&objects);
+
+            if (!ret) {
+                sub_4F27F0(a3, loc);
+                if (sub_4F2680(&v1)) {
+                    ret = true;
+                }
+            }
+        }
+    }
+
+
+    if ((stru_603D20.field_0 & Tgt_No_Self) != 0) {
+        sub_43D280(pc_obj, OF_CANCEL);
+    }
+
+    if ((stru_603D20.field_0 & Tgt_Non_Party) != 0) {
+        node = party_members.head;
+        while (node != NULL) {
+            sub_43D280(node->obj, OF_CANCEL);
+            node = node->next;
+        }
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            node = mp_party_members.head;
+            while (node != NULL) {
+                sub_43D280(node->obj, OF_CANCEL);
+                node = node->next;
+            }
+        }
+    }
+
+    if ((stru_603D20.field_0 & Tgt_No_ST_Critter_Dead) != 0) {
+        node = mp_party_members.head;
+        while (node != NULL) {
+            if (sub_45D8D0(node->obj)) {
+                sub_43D280(node->obj, OF_CANCEL);
+            }
+            node = node->next;
+        }
+    }
+
+    if (!ret) {
+        sub_4F2810(a3, OBJ_HANDLE_NULL);
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4F2C60
