@@ -2,6 +2,7 @@
 #define ARCANUM_GAME_TARGET_H_
 
 #include "game/context.h"
+#include "game/mt_obj_node.h"
 
 typedef struct S4F2810 {
     /* 0000 */ int64_t field_0;
@@ -10,16 +11,16 @@ typedef struct S4F2810 {
 } S4F2810;
 
 typedef struct S603D20 {
-    /* 0000 */ uint64_t field_0;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
+    /* 0000 */ uint64_t aoe_flags;
+    /* 0008 */ unsigned int aoe_spell_flags;
+    /* 000C */ unsigned int aoe_no_spell_flags;
+    /* 0010 */ int radius;
+    /* 0014 */ int count;
 } S603D20;
 
 typedef struct S603CB8_F50_Entry {
-    /* 0000 */ int64_t field_0;
-    /* 0008 */ int64_t field_8;
+    /* 0000 */ int64_t obj;
+    /* 0008 */ int64_t loc;
     /* 0010 */ int field_10;
     /* 0014 */ int field_14;
     /* 0018 */ int field_18;
@@ -45,8 +46,8 @@ static_assert(sizeof(S603CB8_F50) == 0x3808, "wrong size");
 typedef struct S603CB8 {
     /* 0000 */ S603D20* field_0;
     /* 0004 */ int field_4;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ int64_t field_10;
+    /* 0008 */ int64_t self_obj;
+    /* 0010 */ int64_t source_obj;
     /* 0018 */ int64_t field_18;
     /* 0020 */ int64_t field_20;
     /* 0028 */ int64_t field_28;
@@ -56,8 +57,8 @@ typedef struct S603CB8 {
     /* 0048 */ int field_48;
     /* 004C */ int field_4C;
     /* 0050 */ S603CB8_F50* field_50;
-    /* 0054 */ int field_54;
-    /* 0058 */ int field_58;
+    /* 0054 */ MagicTechObjectNode** field_54;
+    /* 0058 */ MagicTechObjectNode** field_58;
     /* 005C */ int field_5C;
     /* 0060 */ int field_60;
     /* 0064 */ int field_64;
@@ -77,6 +78,17 @@ static_assert(sizeof(S4F2680) == 0x18, "wrong size");
 #define Tgt_No_Self 0x10000000
 #define Tgt_Non_Party 0x1000000000000000
 #define Tgt_No_ST_Critter_Dead 0x80000000
+#define Tgt_Summoned_No_Obj 0x400000000000
+#define Tgt_Parent 0x2000000000000000
+#define Tgt_All_Party_Critters_Naked 0x400000000000000
+#define Tgt_Tile_Offscreen_Naked 0x80000000000000
+#define Tgt_Obj_T_Critter_Naked 0x40
+#define Tgt_Obj_T_Portal_Naked 0x10000
+#define Tgt_Obj_T_Container_Naked 0x20000
+#define Tgt_Obj_T_Wall_Naked 0x80000
+#define Tgt_Tile_Radius_Naked 0x20000000000000
+#define Tgt_Tile_Radius_Wall_Naked 0x40000000000000
+#define Tgt_Damaged_Poisoned 0x200000
 
 #define Tgt_None 0x00
 #define Tgt_Self 0x01
@@ -162,6 +174,7 @@ bool sub_4F2830(TigMouseMessageData* mouse, S4F2810* a2, bool fullscreen);
 bool sub_4F2CB0(int x, int y, S4F2810* a3, uint64_t tgt, bool fullscreen);
 int64_t sub_4F2D10();
 bool sub_4F2D20(S603CB8* a1);
+void sub_4F40B0(S603CB8* a1);
 bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr);
 bool sub_4F5090(int64_t obj, int index);
 bool sub_4F50C0(int64_t obj, int index);
