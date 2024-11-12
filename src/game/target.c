@@ -10,6 +10,7 @@
 
 static bool sub_4F28A0(int x, int y, S4F2810* a3);
 static void sub_4F3F10(S603CB8_F50* a1, int64_t obj);
+static void sub_4F4050(S603CB8_F50* a1, int64_t a2);
 static void sub_4F52D0(int64_t obj, int index);
 
 // 0x5BC428
@@ -429,9 +430,19 @@ void sub_4F3FD0()
 }
 
 // 0x4F4050
-void sub_4F4050()
+void sub_4F4050(S603CB8_F50* a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int idx;
+
+    for (idx = 0; idx < a1->cnt; idx++) {
+        if (a1->entries[idx].field_8 == a2) {
+            return;
+        }
+    }
+
+    a1->entries[a1->cnt].field_0 = OBJ_HANDLE_NULL;
+    a1->entries[a1->cnt].field_8 = a2;
+    a1->cnt++;
 }
 
 // 0x4F40B0
