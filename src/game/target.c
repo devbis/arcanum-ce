@@ -9,6 +9,7 @@
 #include "game/stat.h"
 
 static bool sub_4F28A0(int x, int y, S4F2810* a3);
+static void sub_4F3F10(S603CB8_F50* a1, int64_t obj);
 static void sub_4F52D0(int64_t obj, int index);
 
 // 0x5BC428
@@ -392,9 +393,33 @@ bool sub_4F2D20(S603CB8* a1)
 }
 
 // 0x4F3F10
-void sub_4F3F10()
+void sub_4F3F10(S603CB8_F50* a1, int64_t obj)
 {
-    // TODO: Incomplete.
+    int idx;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+            return;
+        }
+
+        if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_SAFE_OFF) == 0) {
+            return;
+        }
+    }
+
+    for (idx = 0; idx < a1->cnt; idx++) {
+        if (a1->entries[idx].field_0 == obj) {
+            return;
+        }
+    }
+
+    a1->entries[a1->cnt].field_0 = obj;
+    a1->entries[a1->cnt].field_8 = 0;
+    a1->cnt++;
 }
 
 // 0x4F3FD0
@@ -410,7 +435,7 @@ void sub_4F4050()
 }
 
 // 0x4F40B0
-void sub_4F40B0()
+void sub_4F40B0(S603CB8* a1)
 {
     // TODO: Incomplete.
 }

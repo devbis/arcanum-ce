@@ -17,6 +17,31 @@ typedef struct S603D20 {
     /* 0014 */ int field_14;
 } S603D20;
 
+typedef struct S603CB8_F50_Entry {
+    /* 0000 */ int64_t field_0;
+    /* 0008 */ int64_t field_8;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ int field_20;
+    /* 0024 */ int field_24;
+    /* 0028 */ int field_28;
+    /* 002C */ int field_2C;
+    /* 0030 */ int field_30;
+    /* 0034 */ int field_34;
+} S603CB8_F50_Entry;
+
+static_assert(sizeof(S603CB8_F50_Entry) == 0x38, "wrong size");
+
+typedef struct S603CB8_F50 {
+    /* 0000 */ int cnt;
+    /* 0004 */ int field_4;
+    /* 0008 */ S603CB8_F50_Entry entries[256];
+} S603CB8_F50;
+
+static_assert(sizeof(S603CB8_F50) == 0x3808, "wrong size");
+
 typedef struct S603CB8 {
     /* 0000 */ S603D20* field_0;
     /* 0004 */ int field_4;
@@ -30,13 +55,15 @@ typedef struct S603CB8 {
     /* 0040 */ int64_t field_40;
     /* 0048 */ int field_48;
     /* 004C */ int field_4C;
-    /* 0050 */ int field_50;
+    /* 0050 */ S603CB8_F50* field_50;
     /* 0054 */ int field_54;
     /* 0058 */ int field_58;
     /* 005C */ int field_5C;
     /* 0060 */ int field_60;
     /* 0064 */ int field_64;
 } S603CB8;
+
+// TODO: Figure out sizeof(S603CB8).
 
 typedef struct S4F2680 {
     /* 0000 */ int64_t field_0;
