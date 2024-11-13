@@ -51,7 +51,7 @@ void sub_4E74A0(SizeableArray** dst, SizeableArray** src)
         sa_deallocate(dst);
     }
 
-    size = sub_4E7A60(*src);
+    size = sa_byte_size(*src);
     *dst = (SizeableArray*)MALLOC(size);
     memcpy(*dst, *src, size);
     (*dst)->field_8 = sub_4E5BF0((*src)->field_8);
