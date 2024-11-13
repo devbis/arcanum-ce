@@ -18,7 +18,7 @@ typedef struct InvenSourceSet {
 
 static_assert(sizeof(InvenSourceSet) == 0xE24, "wrong size");
 
-bool inven_source_init(GameInitInfo* init_info);
+bool invensource_init(GameInitInfo* init_info);
 void invensource_exit();
 void invensource_get_id_list(int id, InvenSourceSet* set);
 
