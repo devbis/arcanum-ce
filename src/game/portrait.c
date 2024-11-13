@@ -41,7 +41,7 @@ static bool portrait_have_user_mes_file;
 static mes_file_handle_t portrait_mes_file;
 
 // 0x4CE350
-bool portait_init(GameInitInfo* init_info)
+bool portrait_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
