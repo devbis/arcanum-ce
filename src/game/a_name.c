@@ -1823,7 +1823,9 @@ bool a_name_light_init()
         return false;
     }
 
-    return light_initialized;
+    light_initialized = true;
+
+    return true;
 }
 
 // 0x4ED220
