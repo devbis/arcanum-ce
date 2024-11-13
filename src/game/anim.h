@@ -20,6 +20,8 @@ void anim_load_nodes_from_map(const char* map);
 bool sub_421D60(AnimID* a, AnimID* b);
 void sub_421DE0(AnimID* anim_id);
 void sub_421E20(AnimID* anim_id, char* buffer);
+bool anim_save(TigFile* stream);
+bool anim_load(GameLoadInfo* load_info);
 void sub_4232F0();
 bool sub_423300(int64_t obj, AnimID* anim_id);
 bool sub_423470(int64_t obj);
