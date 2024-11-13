@@ -170,7 +170,7 @@ static int64_t qword_5F8490;
 static int64_t qword_5F84A0;
 
 // 0x4A8320
-void ai_init()
+bool ai_init(GameInitInfo* init_info)
 {
     // TODO: Incomplete.
 }
@@ -181,7 +181,7 @@ void ai_exit()
 }
 
 // 0x4A8400
-void ai_mod_load()
+bool ai_mod_load()
 {
     // TODO: Incomplete.
 }

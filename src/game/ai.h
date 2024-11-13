@@ -15,7 +15,9 @@ typedef struct AiRedirect {
     /* 0014 */ unsigned int critter_flags;
 } AiRedirect;
 
+bool ai_init(GameInitInfo* init_info);
 void ai_exit();
+bool ai_mod_load();
 void ai_mod_unload();
 void sub_4A84D0(Func5F848C* a1, Func5F8488* a2);
 void sub_4A84F0(int64_t obj);
