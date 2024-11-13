@@ -517,10 +517,10 @@ void intgame_hotkey_refresh(int index)
     }
 
     if (index < 0 || index > 10) {
+        tig_debug_printf("intgame_hotkey_refresh: ERROR: hotkey is OUT OF RANGE: %d!\n", index);
         return;
     }
 
-    tig_debug_printf("intgame_hotkey_refresh: ERROR: hotkey is OUT OF RANGE: %d!\n", index);
 
     hotkey = &(stru_6835E0[index]);
 
