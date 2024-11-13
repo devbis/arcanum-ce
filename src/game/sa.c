@@ -153,7 +153,7 @@ bool sa_has(SizeableArray** sa_ptr, int a2)
 void sub_4E7760(SizeableArray** sa_ptr, int a2)
 {
     if (sa_has(sa_ptr, a2)) {
-        sub_4E79F0(sa_ptr, sub_4E7760((*sa_ptr)->field_8, a2));
+        sub_4E79F0(sa_ptr, sub_4E5D30((*sa_ptr)->field_8, a2));
         sub_4E5C60((*sa_ptr)->field_8, a2, 0);
     }
 }
