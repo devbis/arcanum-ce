@@ -46,16 +46,13 @@ static int dword_5FC518;
 static int townmap_entries_cnt;
 
 // 0x4BE1B0
-void townmap_init()
+void townmap_reset()
 {
     sub_4BED00();
 }
 
-// NOTE: For unknown reason this function returns `1` in all code paths which
-// breaks function signature.
-//
 // 0x4BE1C0
-void townmap_reset()
+bool townmap_mod_load()
 {
     MesFileEntry mes_file_entry;
     int index;
@@ -98,10 +95,12 @@ void townmap_reset()
             index++;
         } while (mes_find_next(townmap_mes_file, &mes_file_entry));
     }
+
+    return true;
 }
 
 // 0x4BE310
-void townmap_mod_load()
+void townmap_mod_unload()
 {
     sub_4BED00();
 

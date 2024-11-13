@@ -19,9 +19,9 @@ typedef struct TownMapInfo {
 
 static_assert(sizeof(TownMapInfo) == 0x30, "wrong size");
 
-void townmap_init();
 void townmap_reset();
-void townmap_mod_load();
+bool townmap_mod_load();
+void townmap_mod_unload();
 void townmap_flush();
 int sub_4BE380(int64_t sector_id);
 int townmap_count();
