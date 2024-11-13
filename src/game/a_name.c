@@ -189,9 +189,17 @@ bool a_name_tile_init()
         return false;
     }
 
-    if (!count_tile_names()
-        || !load_tile_names()
-        || !load_tile_edges()) {
+    if (!count_tile_names()) {
+        mes_unload(tilename_mes_file);
+        return false;
+    }
+
+    if (!load_tile_names()) {
+        mes_unload(tilename_mes_file);
+        return false;
+    }
+
+    if (!load_tile_edges()) {
         mes_unload(tilename_mes_file);
         return false;
     }
