@@ -253,6 +253,9 @@ extern int dword_739E44;
 extern AnimRunInfo anim_run_info[216];
 
 bool sub_44C9A0(AnimRunInfo* run_info);
+bool anim_private_init(GameInitInfo* init_info);
+void anim_private_exit();
+void anim_private_reset();
 bool anim_goal_restart(AnimID* anim_id);
 bool mp_deallocate_run_index(AnimID* anim_id);
 void sub_44C8F0(AnimRunInfo* run_info, AnimGoalNode* goal_node);
