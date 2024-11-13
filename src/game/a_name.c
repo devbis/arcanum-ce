@@ -1451,6 +1451,7 @@ int sub_4ECC00(int index)
 void init_wall_structures()
 {
     MesFileEntry mes_file_entry;
+    int index;
 
     num_wall_structures = 0;
     wall_structures = NULL;
@@ -1465,17 +1466,17 @@ void init_wall_structures()
     }
 
     do {
+        index = num_wall_structures++;
         wall_structures = (WallStructure*)REALLOC(wall_structures, sizeof(WallStructure) * num_wall_structures);
-        wall_structures[num_wall_structures].flags = 0;
-        wall_structures[num_wall_structures].field_4 = 4;
-        wall_structures[num_wall_structures].field_8 = 0;
-        wall_structures[num_wall_structures].field_C = 0;
-        wall_structures[num_wall_structures].field_10 = 0;
-        wall_structures[num_wall_structures].tile_art_id = TIG_ART_ID_INVALID;
-        wall_structures[num_wall_structures].roof_art_id = TIG_ART_ID_INVALID;
-        wall_structures[num_wall_structures].field_1C = 0;
-        sub_4ECD10(mes_file_entry.str, num_wall_structures);
-        num_wall_structures++;
+        wall_structures[index].flags = 0;
+        wall_structures[index].field_4 = 4;
+        wall_structures[index].field_8 = 0;
+        wall_structures[index].field_C = 0;
+        wall_structures[index].field_10 = 0;
+        wall_structures[index].tile_art_id = TIG_ART_ID_INVALID;
+        wall_structures[index].roof_art_id = TIG_ART_ID_INVALID;
+        wall_structures[index].field_1C = 0;
+        sub_4ECD10(mes_file_entry.str, index);
     } while (mes_find_next(wall_structure_mes_file, &mes_file_entry) && mes_file_entry.num < 1000);
 }
 
