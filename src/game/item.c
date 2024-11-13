@@ -472,13 +472,13 @@ void item_inv_icon_size(object_id_t item_id, int* width, int* height)
 }
 
 // 0x4617F0
-void sub_4617F0(int64_t a1, int64_t a2)
+bool sub_4617F0(int64_t a1, int64_t a2)
 {
-    sub_461810(a1, a2, -1);
+    return sub_461810(a1, a2, -1);
 }
 
 // 0x461810
-void sub_461810(int64_t a1, int64_t a2, int inventory_location)
+bool sub_461810(int64_t a1, int64_t a2, int inventory_location)
 {
     // TODO: Incomplete.
 }
@@ -1059,7 +1059,7 @@ bool sub_463370(int64_t obj, int key_id)
 }
 
 // 0x463540
-void sub_463540()
+bool sub_463540(int64_t obj)
 {
     // TODO: Incomplete.
 }
@@ -1089,7 +1089,7 @@ void sub_4639E0()
 }
 
 // 0x463B30
-void sub_463B30()
+void sub_463B30(int64_t obj, bool a2)
 {
     // TODO: Incomplete.
 }
