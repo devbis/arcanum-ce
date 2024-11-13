@@ -4,7 +4,7 @@
 #include "game/context.h"
 #include "game/obj.h"
 
-int proto_init(GameInitInfo* init_info);
+bool proto_init(GameInitInfo* init_info);
 void proto_exit();
 long long sub_468570(ObjectType object_type);
 long long sub_4685A0(int a1);

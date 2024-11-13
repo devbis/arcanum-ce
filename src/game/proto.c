@@ -216,7 +216,7 @@ static ObjectID* dword_5E882C;
 static bool initialized;
 
 // 0x4681B0
-int proto_init(GameInitInfo* init_info)
+bool proto_init(GameInitInfo* init_info)
 {
     unsigned int index;
     bool error;
