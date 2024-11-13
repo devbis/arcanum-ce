@@ -481,11 +481,12 @@ bool load_tile_names()
                     flags |= 0x20;
                     break;
                 }
+                pch++;
             }
 
             sound_type = atoi(pch);
         } else {
-            if (strlen(pch) < 3) {
+            if (strlen(mes_file_entry.str) < 3) {
                 return false;
             }
 
@@ -527,7 +528,7 @@ bool load_tile_names()
             indoor_non_flippable_tile_sounds[index] = sound_type;
             index++;
         }
-    } while (mes_find_next(tilename_mes_file, &mes_file_entry));
+    } while (mes_find_next(tilename_mes_file, &mes_file_entry) && mes_file_entry.num < 400);
 
     return true;
 }
