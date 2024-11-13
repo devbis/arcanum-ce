@@ -79,7 +79,6 @@ typedef struct MapProperties {
 
 static_assert(sizeof(MapProperties) == 0x18, "wrong size");
 
-static void sub_40FE00(int64_t loc);
 static void map_close();
 static bool map_save_preprocess();
 static bool map_save_objects();
