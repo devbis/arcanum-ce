@@ -14,6 +14,7 @@ bool light_scheme_init(GameInitInfo* init_info);
 void light_scheme_reset();
 bool light_scheme_mod_load();
 void light_scheme_mod_unload();
+void light_scheme_exit();
 bool light_scheme_save(TigFile* stream);
 bool light_scheme_load(GameLoadInfo* load_info);
 bool light_scheme_set_map_default(int light_scheme);
