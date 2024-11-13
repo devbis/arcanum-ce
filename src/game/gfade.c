@@ -21,7 +21,7 @@ static GameContextFC* dword_5FC4BC;
 static int fade_iso_window_handle;
 
 // 0x4BDE70
-int gfade_init(GameContext* init_info)
+bool gfade_init(GameInitInfo* init_info)
 {
     TigFont font;
 

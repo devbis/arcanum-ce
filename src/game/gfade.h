@@ -14,7 +14,7 @@ typedef struct FadeData {
 
 static_assert(sizeof(FadeData) == 0x14, "wrong size");
 
-int gfade_init(GameInitInfo* init_info);
+bool gfade_init(GameInitInfo* init_info);
 void gfade_exit();
 void gfade_resize(ResizeInfo* resize_info);
 void sub_4BDFA0(FadeData* fade_data);
