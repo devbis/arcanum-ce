@@ -342,13 +342,14 @@ void mes_load_internal(MesFile* mes_file)
     while (parse_entry(stream, &mes_file_entry)) {
         if (mes_file->num_entries == mes_file->max_entries) {
             mes_file->max_entries += 10;
-            mes_file->entries = (MesFileEntry*)REALLOC(mes_files->entries, sizeof(MesFileEntry) * mes_file->max_entries);
+            mes_file->entries = (MesFileEntry*)REALLOC(mes_file->entries, sizeof(MesFileEntry) * mes_file->max_entries);
         }
 
         copy_mes_file_entry(&(mes_file->entries[mes_file->num_entries]),
             &mes_file_entry,
             &(mes_file->data[offset]));
         offset += (int)strlen(mes_file_entry.str) + 1;
+        mes_file->num_entries++;
     }
 
     mes_file->size = offset;
