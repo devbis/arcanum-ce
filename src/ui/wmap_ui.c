@@ -1006,7 +1006,7 @@ bool sub_560440(TigRect* rect, TigFile* stream)
 }
 
 // 0x5604B0
-void wmap_ui_load()
+bool wmap_ui_load(GameLoadInfo* load_info)
 {
     // TODO: Incomplete.
 }
