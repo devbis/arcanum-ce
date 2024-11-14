@@ -3032,7 +3032,7 @@ void sub_421E20(AnimID* anim_id, char* buffer)
 }
 
 // 0x421EA0
-void anim_save()
+bool anim_save(TigFile* stream)
 {
     // TODO: Incomplete.
 }
