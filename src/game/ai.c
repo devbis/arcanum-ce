@@ -222,7 +222,36 @@ void ai_exit()
 // 0x4A8400
 bool ai_mod_load()
 {
-    // TODO: Incomplete.
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+    int param;
+    int idx;
+    char* str;
+    char* tok;
+
+    if (mes_load("rules\\gameai.mes", &mes_file)) {
+        mes_file_entry.num = 100;
+        if (mes_search(mes_file, &mes_file_entry)) {
+            idx = mes_file_entry.num;
+            do {
+                str = mes_file_entry.str;
+                for (param = 0; param < 17; param++) {
+                    tok = strtok(str, " \t\n");
+                    if (tok == NULL) {
+                        break;
+                    }
+
+                    dword_5F5CB0[idx].values[param] = atoi(tok);
+
+                    str = NULL;
+                }
+            } while (idx < 150 && mes_find_next(mes_file, &mes_file_entry));
+        }
+
+        mes_unload(mes_file);
+    }
+
+    return true;
 }
 
 // 0x4A84C0
