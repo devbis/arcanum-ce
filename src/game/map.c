@@ -5,24 +5,34 @@
 #include "game/anim.h"
 #include "game/critter.h"
 #include "game/description.h"
+#include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/jumppoint.h"
 #include "game/light_scheme.h"
+#include "game/light.h"
 #include "game/location.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/obj_private.h"
 #include "game/object.h"
+#include "game/oname.h"
 #include "game/player.h"
+#include "game/proto.h"
+#include "game/roof.h"
+#include "game/scroll.h"
 #include "game/sector.h"
 #include "game/skill.h"
 #include "game/stat.h"
+#include "game/tb.h"
 #include "game/teleport.h"
 #include "game/terrain.h"
+#include "game/text_floater.h"
+#include "game/tile.h"
 #include "game/timeevent.h"
 #include "game/townmap.h"
 #include "game/ui.h"
+#include "game/wall.h"
 #include "game/wallcheck.h"
 
 #define MAP_LIST_CAPACITY 200
@@ -30,7 +40,7 @@
 #define MAP_MODULE_COUNT 17
 #define SENTINEL 0xBADDBEEF
 
-typedef bool(MapInitFunc)(GameContext* ctx);
+typedef bool(MapInitFunc)(GameInitInfo* init_info);
 typedef void(MapResetFunc)();
 typedef bool(MapModuleLoadFunc)();
 typedef void(MapModuleUnloadFunc)();
@@ -38,9 +48,10 @@ typedef void(MapExitFunc)();
 typedef void(MapPingFunc)(unsigned int time);
 typedef void(MapUpdateViewFunc)(ViewOptions* view_options);
 typedef bool(MapSaveFunc)(TigFile* stream);
-typedef bool(MapLoadFunc)(LoadContext* ctx);
+typedef bool(MapLoadFunc)(GameLoadInfo* load_info);
 typedef void(MapCloseFunc)();
-typedef void(MapResizeFunc)(ResizeContext* ctx);
+typedef void(MapFlushFunc)(MapResetInfo* reset_info);
+typedef void(MapResizeFunc)(ResizeInfo* resize_info);
 
 typedef struct MapModule {
     const char* name;
@@ -54,6 +65,7 @@ typedef struct MapModule {
     MapSaveFunc* save_func;
     MapLoadFunc* load_func;
     MapCloseFunc* close_func;
+    MapFlushFunc* map_reset_func;
     MapResizeFunc* resize_func;
 } MapModule;
 
@@ -101,23 +113,23 @@ static const char* off_59F058[MAP_TYPE_COUNT] = {
 
 // 0x59F068
 static MapModule map_modules[] = {
-    { "Scroll" },
-    { "Location" },
-    { "Light" },
-    { "Tile" },
-    { "Roof" },
-    { "Effect" },
-    { "O_Name" },
-    { "Object_Node" },
-    { "Obj" },
-    { "Proto" },
-    { "Object" },
-    { "Terrain" },
-    { "Sector" },
-    { "TB" },
-    { "TF" },
-    { "Wall" },
-    { "JumpPoint" },
+    { "Scroll", scroll_init, scroll_reset, NULL, NULL, scroll_exit, NULL, scroll_update_view, NULL, NULL, NULL, NULL, scroll_resize },
+    { "Location", location_init, NULL, NULL, NULL, location_exit, NULL, location_update_view, NULL, NULL, NULL, NULL, location_resize },
+    { "Light", light_init, NULL, NULL, NULL, light_exit, NULL, light_update_view, NULL, NULL, NULL, NULL, light_resize },
+    { "Tile", tile_init, NULL, NULL, NULL, tile_exit, NULL, tile_update_view, NULL, NULL, NULL, NULL, tile_resize },
+    { "Roof", roof_init, NULL, NULL, NULL, roof_exit, NULL, sub_439100, NULL, NULL, NULL, NULL, roof_resize },
+    { "Effect", effect_init, NULL, effect_mod_load, effect_mod_unload, effect_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "O_Name", o_name_init, NULL, o_name_mod_load, o_name_mod_unload, o_name_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "Object_Node", object_node_init, NULL, NULL, NULL, object_node_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "Obj", obj_init, NULL, NULL, NULL, obj_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "Proto", proto_init, NULL, NULL, NULL, proto_exit, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "Object", object_init, object_reset, NULL, NULL, object_exit, object_ping, sub_43AA40, NULL, NULL, NULL, object_close, object_resize },
+    { "Terrain", terrain_init, terrain_reset, NULL, NULL, terrain_exit, NULL, NULL, NULL, NULL, sub_4E7B90, terrain_close, NULL },
+    { "Sector", sector_init, sector_reset, NULL, NULL, sector_exit, NULL, sector_update_view, NULL, NULL, NULL, sub_4CF320, sector_resize },
+    { "TB", tb_init, tb_reset, NULL, NULL, tb_exit, tb_ping, tb_update_view, NULL, NULL, NULL, tb_close, tb_resize },
+    { "TF", text_floater_init, text_floater_reset, NULL, NULL, text_floater_exit, tf_ping, text_floater_update_view, NULL, NULL, NULL, text_floater_map_close, text_floater_resize },
+    { "Wall", wall_init, NULL, NULL, NULL, wall_exit, NULL, wall_update_view, NULL, NULL, NULL, NULL, wall_resize },
+    { "JumpPoint", jumppoint_init, jumppoint_reset, NULL, NULL, jumppoint_exit, NULL, jumppoint_update_view, NULL, NULL, sub_4E3050, jumppoint_close, jumppoint_resize },
 };
 
 static_assert(sizeof(map_modules) / sizeof(map_modules[0]) == MAP_MODULE_COUNT, "wrong size");
