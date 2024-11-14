@@ -28,24 +28,27 @@
 
 #define CLOCKWORK_DECOY 6719
 
-typedef struct AiParams {
-    /* 0000 */ int field_0; // Percentage of NPC hit points below which NPC will flee.
-    /* 0004 */ int field_4; // Number of people besides PC beyond which NPC will flee.
-    /* 0008 */ int field_8; // Number of levels above NPC beyond which NPC will flee.
-    /* 000C */ int field_C; // Percentage of PC hit points below which NPC will never flee.
-    /* 0010 */ int field_10; // How far to flee, in tiles.
-    /* 0014 */ int field_14; // The reaction level at which the NPC will not follow the PC.
-    /* 0018 */ int field_18; // How far PC align is above NPC align before NPC wont follow.
-    /* 001C */ int field_1C; // How far PC align is below NPC align before NPC wont follow.
-    /* 0020 */ int field_20; // How many levels the NPC can be above the PC and still join.
-    /* 0024 */ int field_24; // How much a non-accidental hit will lower a follower's reaction.
-    /* 0028 */ int field_28; // NPC will attack if his reaction is below this.
-    /* 002C */ int field_2C; // How different alignments can be before non-follower NPC attacks.
-    /* 0030 */ int field_30; // Alignment of target at (or above) which the good-aligned follower NPC will not attack.
-    /* 0034 */ int field_34; // Chance of throwing defensive spell (as opposed to offensive).
-    /* 0038 */ int field_38; // Chance of throwing a healing spell in combat.
-    /* 003C */ int field_3C; // Minimum distance in combat.
-    /* 0040 */ int field_40; // The NPC can open portals if this is nonzero and cannot if it is zero.
+typedef union AiParams {
+    struct {
+        /* 0000 */ int field_0; // Percentage of NPC hit points below which NPC will flee.
+        /* 0004 */ int field_4; // Number of people besides PC beyond which NPC will flee.
+        /* 0008 */ int field_8; // Number of levels above NPC beyond which NPC will flee.
+        /* 000C */ int field_C; // Percentage of PC hit points below which NPC will never flee.
+        /* 0010 */ int field_10; // How far to flee, in tiles.
+        /* 0014 */ int field_14; // The reaction level at which the NPC will not follow the PC.
+        /* 0018 */ int field_18; // How far PC align is above NPC align before NPC wont follow.
+        /* 001C */ int field_1C; // How far PC align is below NPC align before NPC wont follow.
+        /* 0020 */ int field_20; // How many levels the NPC can be above the PC and still join.
+        /* 0024 */ int field_24; // How much a non-accidental hit will lower a follower's reaction.
+        /* 0028 */ int field_28; // NPC will attack if his reaction is below this.
+        /* 002C */ int field_2C; // How different alignments can be before non-follower NPC attacks.
+        /* 0030 */ int field_30; // Alignment of target at (or above) which the good-aligned follower NPC will not attack.
+        /* 0034 */ int field_34; // Chance of throwing defensive spell (as opposed to offensive).
+        /* 0038 */ int field_38; // Chance of throwing a healing spell in combat.
+        /* 003C */ int field_3C; // Minimum distance in combat.
+        /* 0040 */ int field_40; // The NPC can open portals if this is nonzero and cannot if it is zero.
+    };
+    int values[17];
 } AiParams;
 
 static_assert(sizeof(AiParams) == 0x44, "wrong size");
@@ -172,7 +175,43 @@ static int64_t qword_5F84A0;
 // 0x4A8320
 bool ai_init(GameInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+    int param;
+    int idx;
+    char* str;
+    char* tok;
+
+    (void)init_info;
+
+    dword_5F848C = NULL;
+    dword_5F8488 = NULL;
+
+    if (!mes_load("rules\\ai_params.mes", &mes_file)) {
+        return false;
+    }
+
+    mes_file_entry.num = 0;
+    if (mes_search(mes_file, &mes_file_entry)) {
+        idx = mes_file_entry.num;
+        do {
+            str = mes_file_entry.str;
+            for (param = 0; param < 17; param++) {
+                tok = strtok(str, " \t\n");
+                if (tok == NULL) {
+                    break;
+                }
+
+                dword_5F5CB0[idx].values[param] = atoi(tok);
+
+                str = NULL;
+            }
+        } while (idx < 100 && mes_find_next(mes_file, &mes_file_entry));
+    }
+
+    mes_unload(mes_file);
+
+    return true;
 }
 
 // 0x4A83F0
