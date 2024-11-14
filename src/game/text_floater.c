@@ -161,6 +161,12 @@ void text_floater_resize(ResizeInfo* resize_info)
     tf_iso_window_handle = resize_info->iso_window_handle;
 }
 
+// 0x4D5090
+void text_floater_reset()
+{
+    tf_clear();
+}
+
 // 0x4D5DC0
 void text_floater_exit()
 {

@@ -14,6 +14,7 @@ typedef enum TextFloaterType {
 
 bool text_floater_init(GameInitInfo* init_info);
 void text_floater_resize(ResizeInfo* resize_info);
+void text_floater_reset();
 void text_floater_exit();
 bool text_floater_update_view(ViewOptions* view_options);
 void text_floater_map_close();
