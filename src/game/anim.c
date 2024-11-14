@@ -2903,13 +2903,17 @@ bool anim_init(GameInitInfo* init_info)
     anim_editor = init_info->editor;
 
     if (!anim_editor) {
+        if (!animfx_list_init(&stru_5DE670)) {
+            return false;
+        }
+
         stru_5DE670.path = "Rules\\AnimEyeCandy.mes";
         stru_5DE670.field_18 = 11;
         if (!animfx_list_load(&stru_5DE670)) {
             return false;
         }
 
-        if (!animfx_list_init(&stru_5DE670)) {
+        if (!animfx_list_init(&stru_5DE610)) {
             return false;
         }
 
