@@ -241,10 +241,10 @@ bool proto_init(GameInitInfo* init_info)
     sub_468660(&error);
 
     if (error) {
-    obj_exit();
-    if (!obj_init(init_info)) {
-        FREE(dword_5E882C);
-        return false;
+        obj_exit();
+        if (!obj_init(init_info)) {
+            FREE(dword_5E882C);
+            return false;
         }
     }
 
@@ -323,13 +323,12 @@ ObjectType sub_4685D0(int description)
 {
     ObjectType object_type;
 
-    for (object_type = OBJ_TYPE_WALL; object_type < OBJ_TYPE_COUNT - 1; object_type++) {
+    for (object_type = OBJ_TYPE_WALL; object_type < OBJ_TYPE_MONSTER; object_type++) {
         if (description < dword_5B37FC[object_type + 1]) {
             break;
         }
     }
 
-    // NOTE: Should unique NPC be normalized to NPC?
     if (object_type == OBJ_TYPE_MONSTER) {
         object_type = OBJ_TYPE_NPC;
     }
