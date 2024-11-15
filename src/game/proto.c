@@ -241,14 +241,11 @@ bool proto_init(GameInitInfo* init_info)
     sub_468660(&error);
 
     if (error) {
-        FREE(dword_5E882C);
-        return false;
-    }
-
     obj_exit();
     if (!obj_init(init_info)) {
         FREE(dword_5E882C);
         return false;
+        }
     }
 
     tig_file_list_create(&file_list, "proto\\*.pro");
