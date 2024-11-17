@@ -2055,6 +2055,8 @@ bool sub_55BAB0()
             tig_window_destroy(dword_64CA6C);
             return false;
         }
+
+        button_handles[index] = stru_5C82B0[index].button_handle;
     }
 
     tig_button_radio_group_create(4, button_handles, dword_64E020);
