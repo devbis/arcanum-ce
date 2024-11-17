@@ -39,6 +39,7 @@ bool sub_424560(int64_t obj, tig_art_id_t eye_candy_id, int a3);
 int sub_4261E0(int64_t a1, int64_t a2);
 int sub_426250(int64_t a1, int64_t a2);
 bool sub_427000(int64_t obj);
+bool anim_fidget_timeevent_process(TimeEvent* timeevent);
 void sub_430460();
 void sub_430490(int64_t obj, int offset_x, int offset_y);
 bool get_always_run(int64_t obj);

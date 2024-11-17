@@ -7045,7 +7045,7 @@ bool sub_42FFE0(AnimRunInfo* run_info)
 }
 
 // 0x4300D0
-void anim_fidget_timeevent_process()
+bool anim_fidget_timeevent_process(TimeEvent* timeevent)
 {
     // TODO: Incomplete.
 }
