@@ -5365,6 +5365,8 @@ void sub_546DD0()
             && tig_window_destroy(dword_5C3658) == TIG_OK) {
             dword_5C3658 = TIG_WINDOW_HANDLE_INVALID;
         }
+
+        dword_64C384 = false;
     }
 }
 
