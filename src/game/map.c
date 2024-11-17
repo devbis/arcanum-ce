@@ -539,6 +539,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: map_close()...");
     tig_timer_now(&timestamp);
+    start_timestamp = timestamp;
     map_close();
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
