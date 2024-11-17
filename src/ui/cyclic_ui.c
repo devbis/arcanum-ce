@@ -440,7 +440,7 @@ bool cyclic_ui_base_aid(CyclicUiControl* ctrl, tig_art_id_t* art_id_ptr)
 
     switch (ctrl->info.type) {
     case 0:
-        num = 668;
+        num = 688;
         break;
     case 1:
     case 2:
