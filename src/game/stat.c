@@ -484,18 +484,18 @@ int stat_get_base(object_id_t obj, int stat)
                 value /= 2;
             }
 
-            if (stat_is_maximized(obj, stat)) {
+            if (stat_is_maximized(obj, STAT_STRENGTH)) {
                 value *= 2;
             }
 
             break;
         case STAT_AC_ADJUSTMENT:
-            value = stat_level(obj, stat) - 10;
+            value = stat_level(obj, STAT_DEXTERITY) - 10;
             break;
         case STAT_SPEED:
             value = stat_level(obj, STAT_DEXTERITY);
 
-            if (stat_is_maximized(obj, stat)) {
+            if (stat_is_maximized(obj, STAT_DEXTERITY)) {
                 value += 5;
             }
 
