@@ -1417,7 +1417,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
 // 0x403FF0
 void gamelib_saveinfo_exit(GameSaveInfo* save_info)
 {
-    if (save_info->version != NULL) {
+    if (save_info->thumbnail_video_buffer != NULL) {
         tig_video_buffer_destroy(save_info->thumbnail_video_buffer);
     }
 }
