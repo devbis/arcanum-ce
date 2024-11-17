@@ -1423,7 +1423,7 @@ void sub_4AD1B0(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x4AD200
-void ai_timeevent_process()
+bool ai_timeevent_process(TimeEvent* timeevent)
 {
     // TODO: Incomplete.
 }

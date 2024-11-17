@@ -37,6 +37,7 @@ bool ai_is_fighting(int64_t obj);
 int sub_4AB400(int64_t obj);
 int sub_4AB430(int64_t obj);
 int64_t sub_4ABBC0(int64_t obj);
+bool ai_timeevent_process(TimeEvent* timeevent);
 void sub_4AD6E0(int64_t obj);
 void sub_4AD7D0(int64_t obj);
 int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3);
