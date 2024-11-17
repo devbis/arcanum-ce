@@ -187,10 +187,11 @@ static bool schematic_ui_created;
 // 0x56CD60
 bool schematic_ui_init(GameInitInfo* init_info)
 {
-    int index;
+    int num;
     MesFileEntry mes_file_entry;
     int tech;
     TigFont font;
+    int idx;
 
     (void)init_info;
 
@@ -210,13 +211,16 @@ bool schematic_ui_init(GameInitInfo* init_info)
     dword_680E54 = mes_entries_count_in_range(schematic_ui_rules_mes_file, 2000, 3999) / 7;
     if (dword_680E54 > 0) {
         dword_680E98 = (int*)MALLOC(sizeof(int) * dword_680E54);
-        for (index = 2000; index < 3999; index += 10) {
-            mes_file_entry.num = index;
+        idx = 0;
+        for (num = 2000; num < 3999; num += 10) {
+            mes_file_entry.num = num;
             if (mes_search(schematic_ui_rules_mes_file, &mes_file_entry)) {
-                dword_680E98[index] = index;
+                dword_680E98[idx] = num;
 
-                tech = sub_56DB00(dword_680E98[index]);
+                tech = sub_56DB00(num);
                 dword_680DE4[tech]++;
+
+                idx++;
             }
         }
     }
