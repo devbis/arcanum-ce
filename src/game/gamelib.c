@@ -1127,7 +1127,7 @@ bool gamelib_load(const char* name)
 
     in_load = false;
 
-    duration = tig_timer_elapsed(&start_time);
+    duration = tig_timer_elapsed(start_time);
     tig_debug_printf("gamelib_load: Load Complete.  Total time: %f seconds.\n", (float)duration / 1000.0f);
 
     return true;
