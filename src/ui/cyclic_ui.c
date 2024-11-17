@@ -417,8 +417,6 @@ bool cyclic_ui_draw_base(CyclicUiControl* ctrl)
     dst_rect.width = art_frame_data.width;
     dst_rect.height = art_frame_data.height;
 
-    tig_art_interface_id_create(669, 0, 0, 0, &art_id);
-
     blit_info.flags = 0;
     blit_info.art_id = art_id;
     blit_info.src_rect = &src_rect;
