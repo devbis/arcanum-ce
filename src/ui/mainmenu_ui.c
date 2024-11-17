@@ -3003,28 +3003,27 @@ bool sub_541D90(tig_button_handle_t button_handle)
         return sub_589530(button_handle);
     }
 
-    if (index == 3) {
+    if (index != 3) {
         sub_541E20(index);
         return true;
     }
 
-    if (dword_64C414 != 6 || sub_589430()) {
+    if (dword_64C414 == 6) {
+        if (!sub_589430()) {
+            return true;
+        }
+    }
+
         if (stru_5C36B0[dword_64C244][0]) {
             sub_5412D0();
-            return false;
-        }
-
+    } else {
         sub_5417A0(1);
-
         if (dword_64C414 == 0) {
             sub_5412D0();
-            return false;
+        }
         }
 
         return false;
-    }
-
-    return true;
 }
 
 // 0x541E20
