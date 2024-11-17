@@ -100,7 +100,7 @@ bool trap_init(GameInitInfo* init_info)
 {
     (void)init_info;
 
-    if (animfx_list_init(&stru_5FC460)) {
+    if (!animfx_list_init(&stru_5FC460)) {
         return false;
     }
 
