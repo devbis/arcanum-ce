@@ -732,7 +732,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
         return false;
     }
 
-    info = &(map_list_info[map]);
+    info = &(map_list_info[map - 1]);
     if (dword_5D11FC && !a3) {
         map_flush(0);
     }
@@ -785,7 +785,7 @@ void sub_40FED0()
 // 0x40FEE0
 bool map_get_name(int map, char** name)
 {
-    if (map >= 0 && map < map_list_info_count) {
+    if (map > 0 && map <= map_list_info_count) {
         *name = map_list_info[map].name;
         return true;
     } else {
@@ -813,9 +813,9 @@ int sub_40FF50(int map_type)
 // 0x40FF70
 bool map_get_starting_location(int map, long long* x, long long* y)
 {
-    if (map >= 0 && map < map_list_info_count) {
-        *x = map_list_info[map].x;
-        *y = map_list_info[map].y;
+    if (map > 0 && map <= map_list_info_count) {
+        *x = map_list_info[map - 1].x;
+        *y = map_list_info[map - 1].y;
         return true;
     } else {
         *x = 0;
@@ -827,8 +827,8 @@ bool map_get_starting_location(int map, long long* x, long long* y)
 // 0x40FFE0
 bool map_get_area(int map, int* area)
 {
-    if (map >= 0 && map < map_list_info_count) {
-        *area = map_list_info[map].area;
+    if (map > 0 && map <= map_list_info_count) {
+        *area = map_list_info[map - 1].area;
         return true;
     } else {
         *area = 0;
@@ -839,8 +839,8 @@ bool map_get_area(int map, int* area)
 // 0x410020
 bool map_get_worldmap(int map, int* worldmap)
 {
-    if (map >= 0 && map < map_list_info_count) {
-        *worldmap = map_list_info[map].worldmap;
+    if (map > 0 && map <= map_list_info_count) {
+        *worldmap = map_list_info[map - 1].worldmap;
         return true;
     } else {
         *worldmap = -1;
