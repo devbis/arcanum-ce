@@ -638,11 +638,12 @@ bool cyclic_ui_draw_bar(CyclicUiControl* ctrl)
     dst_rect.width = width;
     dst_rect.height = art_frame_data.height;
 
+    art_blit_info.flags = 0;
+    art_blit_info.art_id = art_id;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
     if (width != 0) {
-        art_blit_info.flags = 0;
-        art_blit_info.art_id = art_id;
-        art_blit_info.src_rect = &src_rect;
-        art_blit_info.dst_rect = &dst_rect;
         if (tig_window_blit_art(ctrl->info.window_handle, &art_blit_info) != TIG_OK) {
             tig_debug_println("Error, cyclic_ui_draw_bar:  Liquid blit failed");
             return false;
@@ -657,14 +658,16 @@ bool cyclic_ui_draw_bar(CyclicUiControl* ctrl)
     src_rect.y = 24;
     src_rect.width = art_frame_data.width - width;
 
-    dst_rect.x = ctrl->info.x + width + 47;
-    dst_rect.y = ctrl->info.y + 24;
-    dst_rect.width = art_frame_data.width - width;
+    if (src_rect.width != 0) {
+        dst_rect.x = ctrl->info.x + width + 47;
+        dst_rect.y = ctrl->info.y + 24;
+        dst_rect.width = art_frame_data.width - width;
 
-    art_blit_info.art_id = art_id;
-    if (tig_window_blit_art(ctrl->info.window_handle, &art_blit_info) != TIG_OK) {
-        tig_debug_println("Error, cyclic_ui_draw_bar:  Base blit failed");
-        return false;
+        art_blit_info.art_id = art_id;
+        if (tig_window_blit_art(ctrl->info.window_handle, &art_blit_info) != TIG_OK) {
+            tig_debug_println("Error, cyclic_ui_draw_bar:  Base blit failed");
+            return false;
+        }
     }
 
     return true;
