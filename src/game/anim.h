@@ -4,6 +4,7 @@
 #include "game/context.h"
 #include "game/anim_private.h"
 #include "game/combat.h"
+#include "game/timeevent.h"
 
 #define PRIORITY_NONE 0
 #define PRIORITY_HIGHEST 6
@@ -25,6 +26,7 @@ bool anim_load(GameLoadInfo* load_info);
 void sub_4232F0();
 bool sub_423300(int64_t obj, AnimID* anim_id);
 bool sub_423470(int64_t obj);
+bool anim_timeevent_process(TimeEvent* timeevent);
 void sub_423E60(const char* msg);
 void sub_423FC0();
 void sub_423FE0(void(*func)());

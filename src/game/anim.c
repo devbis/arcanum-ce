@@ -3404,7 +3404,7 @@ void sub_423550(AnimRunInfo* run_info, int a2)
 }
 
 // 0x423560
-void anim_timeevent_process()
+bool anim_timeevent_process(TimeEvent* timeevent)
 {
     // TODO: Incomplete.
 }
