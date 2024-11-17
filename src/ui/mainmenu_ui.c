@@ -5309,12 +5309,12 @@ void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str
                 src_rect.x = rect->x;
                 src_rect.y = rect->y;
                 src_rect.width = rect->width + 1;
-                src_rect.width = rect->height + 1;
+                src_rect.height = rect->height + 1;
 
                 dst_rect.x = rect->x;
                 dst_rect.y = rect->y;
                 dst_rect.width = rect->width + 1;
-                dst_rect.width = rect->height + 1;
+                dst_rect.height = rect->height + 1;
 
                 art_blit_info.flags = 0;
                 art_blit_info.art_id = art_id;
