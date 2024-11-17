@@ -5394,28 +5394,30 @@ void sub_546EE0()
 void mainmenu_ui_refresh_button_text(int btn, unsigned int flags)
 {
     MainMenuWindowInfo* window;
+    MainMenuButtonInfo* button;
     bool hidden;
     MesFileEntry mes_file_entry;
     TigRect rect;
 
     window = main_menu_window_info[dword_64C414];
+    button = &(window->buttons[btn]);
 
     // FIXME: Result is not being checked.
-    tig_button_is_hidden(window->buttons[btn].button_handle, &hidden);
+    tig_button_is_hidden(button->button_handle, &hidden);
     if (!hidden) {
         mes_file_entry.num = window->num;
-        if ((window->buttons[btn].flags & 0x1) != 0) {
+        if ((button->flags & 0x1) != 0) {
             tig_debug_printf("mainmenu_ui_refresh_button_text: ERROR: flags wrong!\n");
             exit(EXIT_FAILURE);
         }
 
-        if (window->num != -1 && (window->buttons[btn].flags & 0x4) == 0) {
+        if (window->num != -1 && (button->flags & 0x4) == 0) {
             mes_file_entry.num = window->num + btn;
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
-            rect = window->buttons[btn].rect;
-            rect.x -= window->field_30;
-            rect.y -= window->field_34;
+            rect = button->rect;
+            rect.x = button->x - window->field_30;
+            rect.y = button->y - window->field_34;
             mainmenu_ui_refresh_text(dword_5C3624,
                 mes_file_entry.str,
                 &rect,
