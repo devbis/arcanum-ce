@@ -573,7 +573,7 @@ bool cyclic_ui_buttons_create(CyclicUiControl* ctrl)
         return false;
     }
 
-    button_data.x = ctrl->info.x + 6;
+    button_data.x = ctrl->info.x + 180;
     button_data.y = ctrl->info.y + 21;
 
     if (tig_button_create(&button_data, &(ctrl->right_button_handle)) != TIG_OK) {
