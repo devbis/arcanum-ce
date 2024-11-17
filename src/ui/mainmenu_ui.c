@@ -2754,6 +2754,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
     TigRect text_rect;
     TigRect dirty_rect;
     char* newline;
+    char* chunk;
     TigFont font_desc;
     size_t pos;
 
@@ -2764,27 +2765,28 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
     text_rect = *rect;
 
     while (str != NULL) {
-        newline = strstr(str, "\n");
+        newline = strstr(str, "\\n");
         if (newline != NULL) {
             *newline = '\0';
         }
 
         sub_541830(byte_64BC1C, str);
 
+        chunk = byte_64BC1C;
         if ((flags & 0x1) != 0) {
             font_desc.width = 0;
             font_desc.height = 0;
-            font_desc.str = byte_64BC1C;
+            font_desc.str = chunk;
             font_desc.flags = 0;
             sub_535390(&font_desc);
 
             if (font_desc.width > rect->width) {
                 pos = strlen(str);
                 while (pos > 0 && font_desc.width > rect->width) {
-                    byte_64BC1C[pos--] = '\0';
+                    chunk[pos--] = '\0';
                     font_desc.width = 0;
                     font_desc.height = 0;
-                    font_desc.str = byte_64BC1C;
+                    font_desc.str = chunk;
                     font_desc.flags = 0;
                     sub_535390(&font_desc);
                 }
@@ -2792,17 +2794,18 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
         } else if ((flags & 0x02) != 0) {
             font_desc.width = 0;
             font_desc.height = 0;
-            font_desc.str = byte_64BC1C;
+            font_desc.str = chunk;
             font_desc.flags = 0;
             sub_535390(&font_desc);
 
             if (font_desc.width > rect->width) {
                 pos = strlen(str);
                 while (pos > 0 && font_desc.width > rect->width) {
+                    chunk++;
                     pos--;
                     font_desc.width = 0;
                     font_desc.height = 0;
-                    font_desc.str++;
+                    font_desc.str = chunk;
                     font_desc.flags = 0;
                     sub_535390(&font_desc);
                 }
@@ -2810,7 +2813,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
         }
 
         tig_font_push(font);
-        if (tig_font_write(vb, font_desc.str, &text_rect, &dirty_rect) != TIG_OK) {
+        if (tig_font_write(vb, chunk, &text_rect, &dirty_rect) != TIG_OK) {
             tig_debug_printf("MainMenu-UI: mmUITextWrite_func: ERROR: Couldn't write text: '%s'!\n", byte_64BC1C);
         }
         tig_font_pop();
