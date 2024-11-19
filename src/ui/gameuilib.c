@@ -161,7 +161,7 @@ void gameuilib_resize(ResizeContext* resize_info)
 {
     int index;
 
-    for (index = 0; index < MODULE_COUNT; index--) {
+    for (index = 0; index < MODULE_COUNT; index++) {
         if (gameuilib_modules[index].resize_func != NULL) {
             gameuilib_modules[index].resize_func(resize_info);
         }
