@@ -3860,39 +3860,39 @@ void sub_55F1E0()
 }
 
 // 0x55F200
-void sub_55F200(int type)
+void sub_55F200(int stat)
 {
     if (charedit_created) {
-        switch (type) {
-        case 0:
+        switch (stat) {
+        case STAT_STRENGTH:
             stru_5C8990.str = dword_64D3C4[15];
             sub_550750(&stru_5C8990);
             break;
-        case 1:
+        case STAT_DEXTERITY:
             stru_5C8990.str = dword_64D3C4[16];
             sub_550750(&stru_5C8990);
             break;
-        case 2:
+        case STAT_CONSTITUTION:
             stru_5C8990.str = dword_64D3C4[17];
             sub_550750(&stru_5C8990);
             break;
-        case 3:
+        case STAT_BEAUTY:
             stru_5C8990.str = dword_64D3C4[18];
             sub_550750(&stru_5C8990);
             break;
-        case 4:
+        case STAT_INTELLIGENCE:
             stru_5C8990.str = dword_64D3C4[9];
             sub_550750(&stru_5C8990);
             break;
-        case 5:
+        case STAT_PERCEPTION:
             stru_5C8990.str = dword_64D3C4[20];
             sub_550750(&stru_5C8990);
             break;
-        case 6:
+        case STAT_WILLPOWER:
             stru_5C8990.str = dword_64D3C4[19];
             sub_550750(&stru_5C8990);
             break;
-        case 7:
+        case STAT_CHARISMA:
             stru_5C8990.str = dword_64D3C4[21];
             sub_550750(&stru_5C8990);
             break;

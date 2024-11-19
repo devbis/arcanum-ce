@@ -20,7 +20,7 @@ void sub_55F160();
 void sub_55F180();
 void sub_55F1A0();
 void sub_55F1E0();
-void sub_55F200(int type);
+void sub_55F200(int stat);
 void sub_55F320();
 void sub_55F340();
 void sub_55F360(int player);
