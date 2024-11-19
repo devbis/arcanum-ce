@@ -311,7 +311,7 @@ bool portrait_find_prev(int64_t obj, int* portrait_ptr)
         mes_file_entry.num = mes_entries_count(portrait_mes_file) + 999;
     }
 
-    while (mes_file_entry.num >= 1000 && mes_search(portrait_user_mes_file, &mes_file_entry)) {
+    while (mes_file_entry.num >= 1000 && mes_search(portrait_mes_file, &mes_file_entry)) {
         if (sub_4CEAC0(obj, mes_file_entry.str)) {
             *portrait_ptr = mes_file_entry.num;
             return true;
