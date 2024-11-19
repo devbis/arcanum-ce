@@ -2,27 +2,36 @@
 
 #include "game/gamelib.h"
 #include "game/target.h"
+#include "ui/anim_ui.h"
 #include "ui/broadcast_ui.h"
 #include "ui/charedit_ui.h"
 #include "ui/combat_ui.h"
 #include "ui/compact_ui.h"
 #include "ui/cyclic_ui.h"
+#include "ui/dialog_ui.h"
 #include "ui/fate_ui.h"
 #include "ui/follower_ui.h"
+#include "ui/hotkey_ui.h"
 #include "ui/intgame.h"
 #include "ui/inven_ui.h"
 #include "ui/iso.h"
 #include "ui/item_ui.h"
 #include "ui/logbook_ui.h"
 #include "ui/mainmenu_ui.h"
+#include "ui/matchmaker_ui.h"
 #include "ui/mp_ctrl_ui.h"
+#include "ui/multiplayer_ui.h"
 #include "ui/roller_ui.h"
 #include "ui/schematic_ui.h"
 #include "ui/scrollbar_ui.h"
 #include "ui/skill_ui.h"
+#include "ui/sleep_ui.h"
+#include "ui/slide_ui.h"
 #include "ui/spell_ui.h"
 #include "ui/tb_ui.h"
 #include "ui/textedit_ui.h"
+#include "ui/wmap_rnd.h"
+#include "ui/wmap_ui.h"
 #include "ui/written_ui.h"
 
 #define MODULE_COUNT 32
@@ -58,26 +67,26 @@ static_assert(sizeof(GameUiLibModule) == 0x24, "wrong size");
 static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "Scrollbar", scrollbar_ui_init, scrollbar_ui_reset, NULL, NULL, scrollbar_ui_exit, NULL, NULL, NULL },
     { "Cyclic-UI", cyclic_ui_init, NULL, NULL, NULL, cyclic_ui_exit, NULL, NULL, NULL },
-    { "MainMenu-UI" },
+    { "MainMenu-UI", mainmenu_ui_init, NULL, NULL, NULL, mainmenu_ui_exit, NULL, NULL, NULL },
     { "Intgame", intgame_init, intgame_reset, NULL, NULL, intgame_exit, intgame_save, intgame_load, intgame_resize },
-    { "Hotkey-UI" },
-    { "Target" },
-    { "Anim-UI" },
+    { "Hotkey-UI", hotkey_ui_init, NULL, NULL, NULL, hotkey_ui_exit, NULL, NULL, hotkey_ui_resize },
+    { "Target", target_init, target_reset, NULL, NULL, target_exit, NULL, NULL, target_resize },
+    { "Anim-UI", anim_ui_init, anim_ui_reset, NULL, NULL, anim_ui_exit, anim_ui_save, anim_ui_load, NULL },
     { "Iso", iso_init, iso_reset, NULL, NULL, iso_exit, NULL, NULL, iso_resize },
     { "TB-UI", tb_ui_init, tb_ui_reset, NULL, NULL, tb_ui_exit, NULL, NULL, NULL },
     { "TextEdit-UI", textedit_ui_init, textedit_ui_reset, NULL, NULL, textedit_ui_exit, NULL, NULL, NULL },
-    { "WMap-UI" },
-    { "WMap-Rnd" },
+    { "WMap-UI", wmap_ui_init, wmap_ui_reset, NULL, NULL, wmap_ui_exit, wmap_ui_save, wmap_ui_load, NULL },
+    { "WMap-Rnd", wmap_rnd_init, wmap_rnd_reset, wmap_rnd_mod_load, wmap_rnd_mod_unload, wmap_rnd_exit, wmap_rnd_save, wmap_rnd_load, NULL },
     { "LogBook-UI", logbook_ui_init, logbook_ui_reset, NULL, NULL, logbook_ui_exit, NULL, NULL, NULL },
     { "Spell-UI", spell_ui_init, spell_ui_reset, NULL, NULL, spell_ui_exit, spell_ui_save, spell_ui_load, NULL },
-    { "Sleep-UI" },
+    { "Sleep-UI", sleep_ui_init, sleep_ui_reset, NULL, NULL, sleep_ui_exit, NULL, NULL, NULL },
     { "Skill_UI", skill_ui_init, skill_ui_reset, NULL, NULL, skill_ui_exit, NULL, NULL, NULL },
     { "Char-Edit", charedit_init, charedit_reset, NULL, NULL, charedit_exit, NULL, NULL, NULL },
     { "Inven-UI", inven_ui_init, inven_ui_reset, NULL, NULL, inven_ui_exit, NULL, NULL, NULL },
     { "Item-UI", item_ui_init, NULL, NULL, NULL, item_ui_exit, NULL, NULL, NULL },
     { "Broadcast-UI", broadcast_ui_init, broadcast_ui_reset, NULL, NULL, broadcast_ui_exit, NULL, NULL, NULL },
-    { "Dialog-UI" },
-    { "Multiplayer-UI" },
+    { "Dialog-UI", dialog_ui_init, dialog_ui_reset, NULL, NULL, dialog_ui_exit, NULL, NULL, NULL },
+    { "Multiplayer-UI", multiplayer_ui_init, mutliplayer_ui_reset, NULL, NULL, multiplayer_ui_exit, NULL, NULL, NULL },
     { "Fate-UI", fate_ui_init, fate_ui_reset, NULL, NULL, fate_ui_exit, NULL, NULL, NULL },
     { "Combat-UI", combat_ui_init, combat_ui_reset, NULL, NULL, combat_ui_exit, NULL, NULL, combat_ui_resize },
     { "Schematic-UI", schematic_ui_init, schematic_ui_reset, NULL, NULL, schematic_ui_exit, NULL, NULL, NULL },
@@ -85,8 +94,8 @@ static GameUiLibModule gameuilib_modules[MODULE_COUNT] = {
     { "Follower-UI", follower_ui_init, follower_ui_reset, NULL, NULL, follower_ui_exit, follower_ui_save, follower_ui_load, follower_ui_resize },
     { "Roller-UI", roller_ui_init, NULL, NULL, NULL, roller_ui_exit, NULL, NULL, NULL },
     { "MP-Ctrl-UI", mp_ctrl_ui_init, NULL, NULL, NULL, mp_ctrl_ui_exit, NULL, NULL, NULL },
-    { "Matchmaker-UI" },
-    { "Slide-UI" },
+    { "Matchmaker-UI", matchmaker_ui_init, matchmaker_ui_reset, NULL, NULL, matchmaker_ui_exit, NULL, NULL, NULL },
+    { "Slide-UI", NULL, NULL, slide_ui_mod_load, slide_ui_mod_unload, NULL, NULL, NULL, NULL },
     { "Compact-UI", compact_ui_init, compact_ui_reset, NULL, NULL, compact_ui_exit, NULL, NULL, NULL },
 };
 
