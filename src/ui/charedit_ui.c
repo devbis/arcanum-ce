@@ -1954,7 +1954,7 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
             rect.width = font_desc.width;
             rect.height = font_desc.height;
         }
-        rect.y = a3[index].y;
+        rect.y = a3[index].y - window_data.rect.y;
 
         if (list != NULL) {
             font_desc.str = list[index];
