@@ -2183,7 +2183,7 @@ void sub_55BF20()
     }
 
     index = 0;
-    for (y = 87; y < 351; y += 61) {
+    for (y = 87; y < 351; y += 66) {
         if (dword_64E020 < 3) {
             skill_level = basic_skill_level(qword_64E010,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
