@@ -3052,10 +3052,8 @@ bool sub_55D6F0(TigMessage* msg)
 
                     return true;
                 }
-            }
 
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C8430[index + 12].button_handle) {
+                if (msg->data.button.button_handle == stru_5C8530[index + 12].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
                         || sub_4A2BA0()) {
@@ -3063,13 +3061,13 @@ bool sub_55D6F0(TigMessage* msg)
                             stru_5C8990.str = dword_64D3C4[6];
                             sub_550750(&stru_5C8990);
                         } else {
-                            sub_57AEB0(qword_64E010, stru_5C8430[index + 12].art_num + 12);
+                            sub_57AEB0(qword_64E010, stru_5C8530[index + 12].art_num + 12);
                         }
                     } else {
                         pkt.type = 127;
                         pkt.field_4 = 2;
                         pkt.field_8 = 2;
-                        pkt.field_C = stru_5C8430[index + 12].art_num + 12;
+                        pkt.field_C = stru_5C8530[index + 12].art_num + 12;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                     }
 
