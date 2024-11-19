@@ -187,6 +187,7 @@ bool sub_4CC380(S600A20* a2)
             if (sub_4CC310(index) != -1) {
                 a2->entries[cnt].spell = index;
                 a2->entries[cnt].obj = OBJ_HANDLE_NULL;
+                cnt++;
             }
         }
 
