@@ -3661,7 +3661,7 @@ void sub_55EC90()
     TigRect dst_rect;
 
     for (index = 0; index < 3; index++) {
-        tmp[index] = buffer[3];
+        tmp[index] = buffer[index];
     }
 
     value = stat_level(qword_64E010, STAT_ALIGNMENT) / 10;
