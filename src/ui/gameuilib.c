@@ -200,7 +200,7 @@ void gameuilib_mod_unload()
     int index;
 
     if (gameuilib_mod_loaded) {
-        for (index = MODULE_COUNT - 1; index >= 0; index++) {
+        for (index = MODULE_COUNT - 1; index >= 0; index--) {
             if (gameuilib_modules[index].mod_unload_func != NULL) {
                 gameuilib_modules[index].mod_unload_func();
             }
