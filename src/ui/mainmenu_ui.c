@@ -4785,7 +4785,7 @@ bool sub_545780(int btn)
 
     mes_file_entry.num = 500; // "Choose Name"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-    if (byte_64C2F8[0] != '\0') {
+    if (byte_64C2F8[0] == '\0') {
         strcpy(byte_64C2F8, mes_file_entry.str);
     }
 
