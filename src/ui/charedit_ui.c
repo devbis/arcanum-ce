@@ -3464,6 +3464,9 @@ bool sub_55E110()
         }
     }
 
+    // Skip "Electrical".
+    num++;
+
     for (index = 0; index < 23; index++) {
         mes_file_entry.num = num++;
         mes_get_msg(charedit_mes_file, &mes_file_entry);
