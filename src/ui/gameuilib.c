@@ -175,7 +175,7 @@ bool gameuilib_mod_load()
 
     gameuilib_mod_unload();
 
-    for (index = 0; index < MODULE_COUNT; index--) {
+    for (index = 0; index < MODULE_COUNT; index++) {
         if (gameuilib_modules[index].mod_load_func != NULL) {
             if (!gameuilib_modules[index].mod_load_func()) {
                 while (--index >= 0) {
