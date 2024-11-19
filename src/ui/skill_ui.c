@@ -762,7 +762,7 @@ void sub_57ACD0(int64_t obj, int skill)
                 }
             } else {
                 if (is_pc && charedit_is_created()) {
-                    sub_55F200(tech_skill_get_stat(skill));
+                    sub_55F200(basic_skill_get_stat(skill));
                 }
             }
             return;
