@@ -2662,7 +2662,7 @@ void spells_print_all()
 
         sub_55B880(charedit_spells_win,
             dword_64CDCC == 2 ? dword_64C828 : dword_64CDD0,
-            &stru_5C8730[cnt], NULL, -1, -1);
+            &stru_5C8730[cnt], NULL, -1, 1);
 
         if (cnt + 1 < 5) {
             sub_55B880(charedit_spells_win, dword_64C828, &(stru_5C8730[cnt + 1]), NULL, -1, 4 - cnt);
@@ -2686,7 +2686,7 @@ void spells_print_all()
 
         sub_55B880(charedit_spells_win,
             dword_64CDCC == 2 ? dword_64CDB0 : dword_64D420,
-            &(stru_5C8780[cnt]), NULL, -1, -1);
+            &(stru_5C8780[cnt]), NULL, -1, 1);
 
         if (cnt + 1 < 5) {
             sub_55B880(charedit_spells_win, dword_64CDB0, &(stru_5C8780[cnt + 1]), NULL, -1, 4 - cnt);
