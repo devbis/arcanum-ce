@@ -311,7 +311,7 @@ static S5C87D0 stru_5C8530[16] = {
 };
 
 // 0x5C8630
-static S5C87D0 stru_5C8630[COLLEGE_COUNT] = {
+static S5C87D0 charedit_college_buttons[COLLEGE_COUNT] = {
     { 516, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_CONVEYANCE },
     { 541, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_DIVINATION },
     { 566, 119, TIG_BUTTON_HANDLE_INVALID, COLLEGE_AIR },
@@ -2514,14 +2514,14 @@ bool sub_55C890()
         art_num = college_get_art_num(index);
         if (art_num != -1) {
             tig_art_interface_id_create(art_num, 0, 0, 0, &(button_data.art_id));
-            button_data.x = stru_5C8630[index].x - 503;
-            button_data.y = stru_5C8630[index].y - 104;
-            if (tig_button_create(&button_data, &(stru_5C8630[index].button_handle)) != TIG_OK) {
+            button_data.x = charedit_college_buttons[index].x - 503;
+            button_data.y = charedit_college_buttons[index].y - 104;
+            if (tig_button_create(&button_data, &(charedit_college_buttons[index].button_handle)) != TIG_OK) {
                 tig_window_destroy(charedit_spells_win);
                 return false;
             }
 
-            button_handles[index] = stru_5C8630[index].button_handle;
+            button_handles[index] = charedit_college_buttons[index].button_handle;
         }
     }
 
@@ -3238,7 +3238,7 @@ bool sub_55DC60(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_BUTTON) {
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
             for (index = 0; index < 5; index++) {
-                if (msg->data.button.button_handle == stru_5C8630[index].button_handle) {
+                if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
                     dword_64D360 = 3000 + index;
                     return true;
                 }
@@ -3266,7 +3266,7 @@ bool sub_55DC60(TigMessage* msg)
 
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
             for (index = 0; index < 5; index++) {
-                if (msg->data.button.button_handle == stru_5C8630[index].button_handle) {
+                if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
                     dword_64D360 = -1;
                     sub_550720();
                     return true;
@@ -3298,7 +3298,7 @@ bool sub_55DC60(TigMessage* msg)
 
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
             for (index = 0; index < 5; index++) {
-                if (msg->data.button.button_handle == stru_5C8630[index].button_handle) {
+                if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
                     if (dword_64E024 != index) {
                         dword_64E024 = index;
                         spells_print_all();
