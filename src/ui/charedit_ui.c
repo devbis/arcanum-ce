@@ -3237,7 +3237,7 @@ bool sub_55DC60(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_BUTTON) {
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
-            for (index = 0; index < 5; index++) {
+            for (index = 0; index < COLLEGE_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
                     dword_64D360 = 3000 + index;
                     return true;
@@ -3265,7 +3265,7 @@ bool sub_55DC60(TigMessage* msg)
         }
 
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
-            for (index = 0; index < 5; index++) {
+            for (index = 0; index < COLLEGE_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
                     dword_64D360 = -1;
                     sub_550720();
@@ -3297,7 +3297,7 @@ bool sub_55DC60(TigMessage* msg)
         }
 
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
-            for (index = 0; index < 5; index++) {
+            for (index = 0; index < COLLEGE_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
                     if (dword_64E024 != index) {
                         dword_64E024 = index;
