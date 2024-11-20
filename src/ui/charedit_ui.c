@@ -100,7 +100,7 @@ static bool sub_55D060();
 static void sub_55D210();
 static bool sub_55D3A0(TigMessage* msg);
 static bool sub_55D6F0(TigMessage* msg);
-static bool sub_55D940(TigMessage* msg);
+static bool charedit_ui_tech_win_message_filter(TigMessage* msg);
 static bool sub_55DC60(TigMessage* msg);
 static bool sub_55DF90(TigMessage* msg);
 static bool sub_55E110();
@@ -2250,7 +2250,7 @@ bool sub_55C110()
     window_data.rect.width = art_frame_data.width;
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
-    window_data.message_filter = sub_55D940;
+    window_data.message_filter = charedit_ui_tech_win_message_filter;
     if (tig_window_create(&window_data, &charedit_ui_tech_win) != TIG_OK) {
         return false;
     }
@@ -3086,7 +3086,7 @@ bool sub_55D6F0(TigMessage* msg)
 }
 
 // 0x55D940
-bool sub_55D940(TigMessage* msg)
+bool charedit_ui_tech_win_message_filter(TigMessage* msg)
 {
     int index;
     Packet127 pkt;
