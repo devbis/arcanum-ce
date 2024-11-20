@@ -93,7 +93,7 @@ static void sub_55BF20();
 static bool charedit_create_tech_win();
 static void charedit_draw_tech_degree_icon(int index);
 static void charedit_refresh_tech_win();
-static bool sub_55C890();
+static bool charedit_create_spells_win();
 static void sub_55CA70(int a1, int a2);
 static void charedit_refresh_spells_win();
 static bool sub_55D060();
@@ -800,7 +800,7 @@ bool charedit_init(GameInitInfo* init_info)
         return false;
     }
 
-    if (!sub_55C890()) {
+    if (!charedit_create_spells_win()) {
         sub_55EBA0();
         tig_window_destroy(dword_64CA60);
         return false;
@@ -2464,7 +2464,7 @@ void charedit_refresh_tech_win()
 }
 
 // 0x55C890
-bool sub_55C890()
+bool charedit_create_spells_win()
 {
     tig_art_id_t art_id;
     TigWindowData window_data;
