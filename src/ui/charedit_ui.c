@@ -565,7 +565,7 @@ static tig_font_handle_t dword_64C7A0;
 static ScrollbarId stru_64C7A8;
 
 // 0x64C7B0
-static tig_window_handle_t dword_64C7B0;
+static tig_window_handle_t charedit_spells_win;
 
 // 0x64C7B4
 static tig_button_handle_t dword_64C7B4;
@@ -808,21 +808,21 @@ bool charedit_init(GameInitInfo* init_info)
 
     if (!charedit_create_tech_win()) {
         sub_55EBA0();
-        tig_window_destroy(dword_64C7B0);
+        tig_window_destroy(charedit_spells_win);
         tig_window_destroy(dword_64CA60);
         return false;
     }
 
     if (!sub_55BAB0()) {
         sub_55EBA0();
-        tig_window_destroy(dword_64C7B0);
+        tig_window_destroy(charedit_spells_win);
         tig_window_destroy(charedit_tech_win);
         tig_window_destroy(dword_64CA60);
         return false;
     }
 
     tig_window_hide(dword_64CA6C);
-    tig_window_hide(dword_64C7B0);
+    tig_window_hide(charedit_spells_win);
     tig_window_hide(charedit_tech_win);
     tig_window_hide(dword_64CA60);
 
@@ -834,7 +834,7 @@ void charedit_exit()
 {
     sub_55EBA0();
     tig_window_destroy(dword_64CA6C);
-    tig_window_destroy(dword_64C7B0);
+    tig_window_destroy(charedit_spells_win);
     tig_window_destroy(charedit_tech_win);
     tig_window_destroy(dword_64CA60);
 }
@@ -1016,7 +1016,7 @@ bool charedit_create(int64_t obj, int a2)
     }
 
     tig_window_show(dword_64CA6C);
-    tig_window_show(dword_64C7B0);
+    tig_window_show(charedit_spells_win);
     tig_window_show(charedit_tech_win);
     tig_window_show(dword_64CA60);
     sub_51E850(dword_64CA6C);
@@ -1167,7 +1167,7 @@ void charedit_destroy()
         }
         intgame_big_window_unlock();
         tig_window_hide(dword_64CA6C);
-        tig_window_hide(dword_64C7B0);
+        tig_window_hide(charedit_spells_win);
         tig_window_hide(charedit_tech_win);
         tig_window_hide(dword_64CA60);
         qword_64E010 = OBJ_HANDLE_NULL;
@@ -1500,7 +1500,7 @@ bool sub_55A5C0(TigMessage* msg)
                 if (dword_64E01C == 3) {
                     sub_55F0D0();
                 }
-                sub_51E850(dword_64C7B0);
+                sub_51E850(charedit_spells_win);
                 dword_64E01C = 2;
                 sub_55B150();
                 return true;
@@ -1922,7 +1922,7 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
         num = 29;
     } else if (window_handle == charedit_tech_win) {
         num = 30;
-    } else if (window_handle == dword_64C7B0) {
+    } else if (window_handle == charedit_spells_win) {
         num = 31;
     } else if (window_handle == dword_64CA60) {
         num = 567;
@@ -2487,7 +2487,7 @@ bool sub_55C890()
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
     window_data.message_filter = sub_55DC60;
-    if (tig_window_create(&window_data, &dword_64C7B0) != TIG_OK) {
+    if (tig_window_create(&window_data, &charedit_spells_win) != TIG_OK) {
         return false;
     }
 
@@ -2498,13 +2498,13 @@ bool sub_55C890()
     art_blit_info.art_id = art_id;
     art_blit_info.src_rect = &(window_data.rect);
     art_blit_info.dst_rect = &(window_data.rect);
-    if (tig_window_blit_art(dword_64C7B0, &art_blit_info) != TIG_OK) {
-        tig_window_destroy(dword_64C7B0);
+    if (tig_window_blit_art(charedit_spells_win, &art_blit_info) != TIG_OK) {
+        tig_window_destroy(charedit_spells_win);
         return false;
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
-    button_data.window_handle = dword_64C7B0;
+    button_data.window_handle = charedit_spells_win;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
     button_data.mouse_enter_snd_id = -1;
@@ -2517,7 +2517,7 @@ bool sub_55C890()
             button_data.x = stru_5C8630[index].x - 503;
             button_data.y = stru_5C8630[index].y - 104;
             if (tig_button_create(&button_data, &(stru_5C8630[index].button_handle)) != TIG_OK) {
-                tig_window_destroy(dword_64C7B0);
+                tig_window_destroy(charedit_spells_win);
                 return false;
             }
 
@@ -2581,7 +2581,7 @@ void sub_55CA70(int a1, int a2)
         dst_rect.height = art_frame_data.height;
 
         art_blit_info.dst_rect = &dst_rect;
-        tig_window_blit_art(dword_64C7B0, &art_blit_info);
+        tig_window_blit_art(charedit_spells_win, &art_blit_info);
 
         if (tmp_palette != NULL) {
             tig_palette_destroy(tmp_palette);
@@ -2636,7 +2636,7 @@ void spells_print_all()
         }
     }
 
-    tig_window_blit_art(dword_64C7B0, &art_blit_info);
+    tig_window_blit_art(charedit_spells_win, &art_blit_info);
 
     cnt = sub_4B1AB0(qword_64E010, dword_64E024);
 
@@ -2657,18 +2657,18 @@ void spells_print_all()
 
     if (v1 > cnt) {
         if (cnt > 0) {
-            sub_55B880(dword_64C7B0, dword_64D3A8, &(stru_5C8730[0]), NULL, -1, cnt);
+            sub_55B880(charedit_spells_win, dword_64D3A8, &(stru_5C8730[0]), NULL, -1, cnt);
         }
 
-        sub_55B880(dword_64C7B0,
+        sub_55B880(charedit_spells_win,
             dword_64CDCC == 2 ? dword_64C828 : dword_64CDD0,
             &stru_5C8730[cnt], NULL, -1, -1);
 
         if (cnt + 1 < 5) {
-            sub_55B880(dword_64C7B0, dword_64C828, &(stru_5C8730[cnt + 1]), NULL, -1, 4 - cnt);
+            sub_55B880(charedit_spells_win, dword_64C828, &(stru_5C8730[cnt + 1]), NULL, -1, 4 - cnt);
         }
     } else {
-        sub_55B880(dword_64C7B0, dword_64D3A8, &(stru_5C8730[0]), 0, -1, 5);
+        sub_55B880(charedit_spells_win, dword_64D3A8, &(stru_5C8730[0]), 0, -1, 5);
     }
 
     for (index = 0; index < 5; index++) {
@@ -2681,22 +2681,22 @@ void spells_print_all()
 
     if (v1 > cnt) {
         if (cnt > 0) {
-            sub_55B880(dword_64C7B0, dword_64DF0C, &(stru_5C8780[0]), 0, -1, cnt);
+            sub_55B880(charedit_spells_win, dword_64DF0C, &(stru_5C8780[0]), 0, -1, cnt);
         }
 
-        sub_55B880(dword_64C7B0,
+        sub_55B880(charedit_spells_win,
             dword_64CDCC == 2 ? dword_64CDB0 : dword_64D420,
             &(stru_5C8780[cnt]), NULL, -1, -1);
 
         if (cnt + 1 < 5) {
-            sub_55B880(dword_64C7B0, dword_64CDB0, &(stru_5C8780[cnt + 1]), NULL, -1, 4 - cnt);
+            sub_55B880(charedit_spells_win, dword_64CDB0, &(stru_5C8780[cnt + 1]), NULL, -1, 4 - cnt);
         }
     } else {
-        sub_55B880(dword_64C7B0, dword_64DF0C, &(stru_5C8780[0]), 0, -1, 5);
+        sub_55B880(charedit_spells_win, dword_64DF0C, &(stru_5C8780[0]), 0, -1, 5);
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.window_handle = dword_64C7B0;
+    button_data.window_handle = charedit_spells_win;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
     button_data.mouse_enter_snd_id = -1;
@@ -2731,7 +2731,7 @@ void spells_print_all()
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.window_handle = dword_64C7B0;
+    button_data.window_handle = charedit_spells_win;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
     button_data.art_id = TIG_ART_ID_INVALID;
