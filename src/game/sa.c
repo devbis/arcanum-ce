@@ -82,7 +82,7 @@ bool sa_write(SizeableArray** sa_ptr, TigFile* stream)
     int size;
 
     size = sa_byte_size(*sa_ptr);
-    if (!tig_file_fwrite(*sa_ptr, size, 1, stream) != 1) {
+    if (tig_file_fwrite(*sa_ptr, size, 1, stream) != 1) {
         return false;
     }
 
