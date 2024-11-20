@@ -195,7 +195,7 @@ int tech_inc_degree(int64_t obj, int tech)
         return degree;
     }
 
-    cost = tech_get_cost_for_degree(degree);
+    cost = tech_get_cost_for_degree(degree + 1);
     tech_points = stat_get_base(obj, STAT_TECH_POINTS);
     stat_set_base(obj, STAT_TECH_POINTS, tech_points + cost);
 
