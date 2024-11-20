@@ -193,7 +193,7 @@ bool sa_read_no_dealloc(SizeableArray** sa_ptr, TigFile* stream)
 
     size = sa_byte_size(&sa);
 
-    (*sa_ptr) = (SizeableArray*)MALLOC(sizeof(SizeableArray));
+    *sa_ptr = (SizeableArray*)MALLOC(size);
     (*sa_ptr)->size = sa.size;
     (*sa_ptr)->count = sa.count;
     (*sa_ptr)->field_8 = sa.field_8;
@@ -204,7 +204,7 @@ bool sa_read_no_dealloc(SizeableArray** sa_ptr, TigFile* stream)
         }
     }
 
-    return sub_4E5E80((*sa_ptr)->field_8, stream);
+    return sub_4E5E80(&((*sa_ptr)->field_8), stream);
 }
 
 // 0x4E7990
