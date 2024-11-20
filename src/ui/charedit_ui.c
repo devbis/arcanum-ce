@@ -715,7 +715,7 @@ static tig_button_handle_t dword_64D3AC;
 static tig_font_handle_t dword_64D3B0;
 
 // 0x64D3B4
-static tig_button_handle_t dword_64D3B4;
+static tig_button_handle_t charedit_ui_inc_tech_degree_btn;
 
 // 0x64D3B8
 static tig_button_handle_t dword_64D3B8;
@@ -2284,7 +2284,7 @@ bool sub_55C110()
     }
 
     tig_button_radio_group_create(TECH_COUNT, button_handles, charedit_ui_selected_tech);
-    dword_64D3B4 = TIG_BUTTON_HANDLE_INVALID;
+    charedit_ui_inc_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
     dword_64CDC4 = TIG_BUTTON_HANDLE_INVALID;
 
     return true;
@@ -2349,15 +2349,15 @@ void sub_55C3A0()
     art_blit_info.src_rect = &rect;
     art_blit_info.dst_rect = &rect;
 
-    if (dword_64D3B4 != TIG_BUTTON_HANDLE_INVALID) {
-        tig_button_destroy(dword_64D3B4);
+    if (charedit_ui_inc_tech_degree_btn != TIG_BUTTON_HANDLE_INVALID) {
+        tig_button_destroy(charedit_ui_inc_tech_degree_btn);
     }
 
     if (dword_64CDC4 != TIG_BUTTON_HANDLE_INVALID) {
         tig_button_destroy(dword_64CDC4);
     }
 
-    dword_64D3B4 = TIG_BUTTON_HANDLE_INVALID;
+    charedit_ui_inc_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
     dword_64CDC4 = TIG_BUTTON_HANDLE_INVALID;
 
     for (index = 0; index < 8; index++) {
@@ -2430,7 +2430,7 @@ void sub_55C3A0()
         tig_art_interface_id_create(647, 0, 0, 0, &(button_data.art_id));
         button_data.x = dword_5C8F70[next_degree - 1];
         button_data.y = dword_5C8F8C[next_degree - 1];
-        tig_button_create(&button_data, &dword_64D3B4);
+        tig_button_create(&button_data, &charedit_ui_inc_tech_degree_btn);
     }
 
     if (degree > 0
@@ -3119,7 +3119,7 @@ bool sub_55D940(TigMessage* msg)
                 }
             }
 
-            if (msg->data.button.button_handle == dword_64D3B4) {
+            if (msg->data.button.button_handle == charedit_ui_inc_tech_degree_btn) {
                 v1 = tech_get_degree(qword_64E010, charedit_ui_selected_tech);
                 dword_64CDB4 = 5001 + 8 * charedit_ui_selected_tech + v1;
                 return true;
@@ -3151,7 +3151,7 @@ bool sub_55D940(TigMessage* msg)
                 }
             }
 
-            if (msg->data.button.button_handle == dword_64D3B4) {
+            if (msg->data.button.button_handle == charedit_ui_inc_tech_degree_btn) {
                 dword_64CDB4 = -1;
                 sub_550720();
                 return true;
@@ -3178,7 +3178,7 @@ bool sub_55D940(TigMessage* msg)
                 }
             }
 
-            if (msg->data.button.button_handle == dword_64D3B4) {
+            if (msg->data.button.button_handle == charedit_ui_inc_tech_degree_btn) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || sub_4A2BA0()) {
