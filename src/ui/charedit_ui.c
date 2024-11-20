@@ -91,7 +91,7 @@ static bool sub_55BAB0();
 static void sub_55BD10(int group);
 static void sub_55BF20();
 static bool sub_55C110();
-static void sub_55C2E0(int a1);
+static void charedit_ui_draw_tech_degree_icon(int index);
 static void sub_55C3A0();
 static bool sub_55C890();
 static void sub_55CA70(int a1, int a2);
@@ -494,7 +494,7 @@ static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
 static S5C8150 stru_5C8F50 = { NULL, 0, 0, -1 };
 
 // 0x5C8F70
-static int dword_5C8F70[] = {
+static int charedit_ui_tech_degree_icons_x[TECH_COUNT - 1] = {
     8,
     8,
     8,
@@ -505,7 +505,7 @@ static int dword_5C8F70[] = {
 };
 
 // 0x5C8F8C
-static int dword_5C8F8C[] = {
+static int charedit_ui_tech_degree_icons_y[TECH_COUNT - 1] = {
     96,
     129,
     162,
@@ -516,7 +516,7 @@ static int dword_5C8F8C[] = {
 };
 
 // 0x5C8FA8
-static int dword_5C8FA8[] = {
+static int charedit_ui_tech_degree_icons[TECH_COUNT] = {
     653,
     649,
     650,
@@ -2292,7 +2292,7 @@ bool sub_55C110()
 }
 
 // 0x55C2E0
-void sub_55C2E0(int a1)
+void charedit_ui_draw_tech_degree_icon(int index)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -2300,7 +2300,7 @@ void sub_55C2E0(int a1)
     TigRect src_rect;
     TigRect dst_rect;
 
-    tig_art_interface_id_create(dword_5C8FA8[charedit_ui_selected_tech], 0, 0, 0, &art_id);
+    tig_art_interface_id_create(charedit_ui_tech_degree_icons[charedit_ui_selected_tech], 0, 0, 0, &art_id);
     tig_art_frame_data(art_id, &art_frame_data);
 
     src_rect.x = 0;
@@ -2308,8 +2308,8 @@ void sub_55C2E0(int a1)
     src_rect.width = art_frame_data.width;
     src_rect.height = art_frame_data.height;
 
-    dst_rect.x = dword_5C8F8C[a1];
-    dst_rect.y = dword_5C8F70[a1];
+    dst_rect.x = charedit_ui_tech_degree_icons_x[index];
+    dst_rect.y = charedit_ui_tech_degree_icons_y[index];
     dst_rect.width = art_frame_data.width;
     dst_rect.height = art_frame_data.height;
 
@@ -2391,7 +2391,7 @@ void sub_55C3A0()
     next_degree = degree < 7 ? degree + 1 : degree;
 
     for (index = 0; index < degree; index++) {
-        sub_55C2E0(index);
+        charedit_ui_draw_tech_degree_icon(index);
     }
 
     for (index = 1; index - 1 < 7; index++) {
@@ -2429,8 +2429,8 @@ void sub_55C3A0()
     if (next_degree > degree
         && dword_64CDCC != 2) {
         tig_art_interface_id_create(647, 0, 0, 0, &(button_data.art_id));
-        button_data.x = dword_5C8F70[next_degree - 1];
-        button_data.y = dword_5C8F8C[next_degree - 1];
+        button_data.x = charedit_ui_tech_degree_icons_x[next_degree - 1];
+        button_data.y = charedit_ui_tech_degree_icons_y[next_degree - 1];
         tig_button_create(&button_data, &charedit_ui_inc_tech_degree_btn);
     }
 
@@ -2440,8 +2440,8 @@ void sub_55C3A0()
             || dword_64CDCC == 3
             || dword_64DEEC[charedit_ui_selected_tech] < degree)) {
         tig_art_interface_id_create(648, 0, 0, 0, &(button_data.art_id));
-        button_data.x = dword_5C8F70[degree - 1];
-        button_data.y = dword_5C8F8C[degree - 1];
+        button_data.x = charedit_ui_tech_degree_icons_x[degree - 1];
+        button_data.y = charedit_ui_tech_degree_icons_y[degree - 1];
         tig_button_create(&button_data, &charedit_ui_dec_tech_degree_btn);
     }
 
