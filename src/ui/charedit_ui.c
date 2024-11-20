@@ -92,7 +92,7 @@ static void sub_55BD10(int group);
 static void sub_55BF20();
 static bool sub_55C110();
 static void charedit_ui_draw_tech_degree_icon(int index);
-static void sub_55C3A0();
+static void charedit_ui_refresh_tech_win();
 static bool sub_55C890();
 static void sub_55CA70(int a1, int a2);
 static void spells_print_all();
@@ -1667,7 +1667,7 @@ void sub_55B150()
         sub_55BF20();
         break;
     case 1:
-        sub_55C3A0();
+        charedit_ui_refresh_tech_win();
         break;
     case 2:
         spells_print_all();
@@ -2321,7 +2321,7 @@ void charedit_ui_draw_tech_degree_icon(int index)
 }
 
 // 0x55C3A0
-void sub_55C3A0()
+void charedit_ui_refresh_tech_win()
 {
     TigButtonData button_data;
     TigArtFrameData art_frame_data;
@@ -3172,7 +3172,7 @@ bool charedit_ui_tech_win_message_filter(TigMessage* msg)
                 if (msg->data.button.button_handle == charedit_ui_tech_buttons[index].button_handle) {
                     if (charedit_ui_selected_tech != index) {
                         charedit_ui_selected_tech = index;
-                        sub_55C3A0();
+                        charedit_ui_refresh_tech_win();
                     }
 
                     return true;
