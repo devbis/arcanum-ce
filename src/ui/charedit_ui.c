@@ -91,8 +91,8 @@ static bool sub_55BAB0();
 static void sub_55BD10(int group);
 static void sub_55BF20();
 static bool sub_55C110();
-static void charedit_ui_draw_tech_degree_icon(int index);
-static void charedit_ui_refresh_tech_win();
+static void charedit_draw_tech_degree_icon(int index);
+static void charedit_refresh_tech_win();
 static bool sub_55C890();
 static void sub_55CA70(int a1, int a2);
 static void spells_print_all();
@@ -100,7 +100,7 @@ static bool sub_55D060();
 static void sub_55D210();
 static bool sub_55D3A0(TigMessage* msg);
 static bool sub_55D6F0(TigMessage* msg);
-static bool charedit_ui_tech_win_message_filter(TigMessage* msg);
+static bool charedit_tech_win_message_filter(TigMessage* msg);
 static bool sub_55DC60(TigMessage* msg);
 static bool sub_55DF90(TigMessage* msg);
 static bool sub_55E110();
@@ -349,7 +349,7 @@ static S5C8150 stru_5C8780[5] = {
 };
 
 // 0x5C87D0
-static S5C87D0 charedit_ui_tech_buttons[TECH_COUNT] = {
+static S5C87D0 charedit_tech_buttons[TECH_COUNT] = {
     { 8, 7, TIG_BUTTON_HANDLE_INVALID, TECH_HERBOLOGY },
     { 34, 29, TIG_BUTTON_HANDLE_INVALID, TECH_CHEMISTRY },
     { 61, 7, TIG_BUTTON_HANDLE_INVALID, TECH_ELECTRIC },
@@ -494,7 +494,7 @@ static TigRect stru_5C8F40 = { 209, 60, 17, 255 };
 static S5C8150 stru_5C8F50 = { NULL, 0, 0, -1 };
 
 // 0x5C8F70
-static int charedit_ui_tech_degree_icons_x[TECH_COUNT - 1] = {
+static int charedit_tech_degree_icons_x[TECH_COUNT - 1] = {
     8,
     8,
     8,
@@ -505,7 +505,7 @@ static int charedit_ui_tech_degree_icons_x[TECH_COUNT - 1] = {
 };
 
 // 0x5C8F8C
-static int charedit_ui_tech_degree_icons_y[TECH_COUNT - 1] = {
+static int charedit_tech_degree_icons_y[TECH_COUNT - 1] = {
     96,
     129,
     162,
@@ -516,7 +516,7 @@ static int charedit_ui_tech_degree_icons_y[TECH_COUNT - 1] = {
 };
 
 // 0x5C8FA8
-static int charedit_ui_tech_degree_icons[TECH_COUNT] = {
+static int charedit_tech_degree_icons[TECH_COUNT] = {
     653,
     649,
     650,
@@ -643,7 +643,7 @@ static const char* charedit_seconds_str;
 static const char* charedit_second_str;
 
 // 0x64CA8C
-static tig_window_handle_t charedit_ui_tech_win;
+static tig_window_handle_t charedit_tech_win;
 
 // 0x64CA90
 static const char* dword_64CA90[200];
@@ -664,7 +664,7 @@ static tig_font_handle_t dword_64CDBC;
 static tig_font_handle_t dword_64CDC0;
 
 // 0x64CDC4
-static tig_button_handle_t charedit_ui_dec_tech_degree_btn;
+static tig_button_handle_t charedit_dec_tech_degree_btn;
 
 // 0x64CDC8
 static int dword_64CDC8;
@@ -715,7 +715,7 @@ static tig_button_handle_t dword_64D3AC;
 static tig_font_handle_t dword_64D3B0;
 
 // 0x64D3B4
-static tig_button_handle_t charedit_ui_inc_tech_degree_btn;
+static tig_button_handle_t charedit_inc_tech_degree_btn;
 
 // 0x64D3B8
 static tig_button_handle_t dword_64D3B8;
@@ -781,7 +781,7 @@ static int dword_64E020;
 static int dword_64E024;
 
 // 0x64E028
-static int charedit_ui_selected_tech;
+static int charedit_selected_tech;
 
 // 0x64E02C
 static bool dword_64E02C;
@@ -816,14 +816,14 @@ bool charedit_init(GameInitInfo* init_info)
     if (!sub_55BAB0()) {
         sub_55EBA0();
         tig_window_destroy(dword_64C7B0);
-        tig_window_destroy(charedit_ui_tech_win);
+        tig_window_destroy(charedit_tech_win);
         tig_window_destroy(dword_64CA60);
         return false;
     }
 
     tig_window_hide(dword_64CA6C);
     tig_window_hide(dword_64C7B0);
-    tig_window_hide(charedit_ui_tech_win);
+    tig_window_hide(charedit_tech_win);
     tig_window_hide(dword_64CA60);
 
     return true;
@@ -835,7 +835,7 @@ void charedit_exit()
     sub_55EBA0();
     tig_window_destroy(dword_64CA6C);
     tig_window_destroy(dword_64C7B0);
-    tig_window_destroy(charedit_ui_tech_win);
+    tig_window_destroy(charedit_tech_win);
     tig_window_destroy(dword_64CA60);
 }
 
@@ -1017,7 +1017,7 @@ bool charedit_create(int64_t obj, int a2)
 
     tig_window_show(dword_64CA6C);
     tig_window_show(dword_64C7B0);
-    tig_window_show(charedit_ui_tech_win);
+    tig_window_show(charedit_tech_win);
     tig_window_show(dword_64CA60);
     sub_51E850(dword_64CA6C);
 
@@ -1168,7 +1168,7 @@ void charedit_destroy()
         intgame_big_window_unlock();
         tig_window_hide(dword_64CA6C);
         tig_window_hide(dword_64C7B0);
-        tig_window_hide(charedit_ui_tech_win);
+        tig_window_hide(charedit_tech_win);
         tig_window_hide(dword_64CA60);
         qword_64E010 = OBJ_HANDLE_NULL;
         sub_551160();
@@ -1490,7 +1490,7 @@ bool sub_55A5C0(TigMessage* msg)
                 if (dword_64E01C == 3) {
                     sub_55F0D0();
                 }
-                sub_51E850(charedit_ui_tech_win);
+                sub_51E850(charedit_tech_win);
                 dword_64E01C = 1;
                 sub_55B150();
                 return true;
@@ -1667,7 +1667,7 @@ void sub_55B150()
         sub_55BF20();
         break;
     case 1:
-        charedit_ui_refresh_tech_win();
+        charedit_refresh_tech_win();
         break;
     case 2:
         spells_print_all();
@@ -1920,7 +1920,7 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
 
     if (window_handle == dword_64CA6C) {
         num = 29;
-    } else if (window_handle == charedit_ui_tech_win) {
+    } else if (window_handle == charedit_tech_win) {
         num = 30;
     } else if (window_handle == dword_64C7B0) {
         num = 31;
@@ -2250,8 +2250,8 @@ bool sub_55C110()
     window_data.rect.width = art_frame_data.width;
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
-    window_data.message_filter = charedit_ui_tech_win_message_filter;
-    if (tig_window_create(&window_data, &charedit_ui_tech_win) != TIG_OK) {
+    window_data.message_filter = charedit_tech_win_message_filter;
+    if (tig_window_create(&window_data, &charedit_tech_win) != TIG_OK) {
         return false;
     }
 
@@ -2259,13 +2259,13 @@ bool sub_55C110()
     art_blit_info.art_id = art_id;
     art_blit_info.src_rect = &(window_data.rect);
     art_blit_info.dst_rect = &(window_data.rect);
-    if (tig_window_blit_art(charedit_ui_tech_win, &art_blit_info) != TIG_OK) {
-        tig_window_destroy(charedit_ui_tech_win);
+    if (tig_window_blit_art(charedit_tech_win, &art_blit_info) != TIG_OK) {
+        tig_window_destroy(charedit_tech_win);
         return false;
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
-    button_data.window_handle = charedit_ui_tech_win;
+    button_data.window_handle = charedit_tech_win;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
     button_data.mouse_enter_snd_id = -1;
@@ -2273,26 +2273,26 @@ bool sub_55C110()
 
     for (index = 0; index < TECH_COUNT; index++) {
         tig_art_interface_id_create(306 + index, 0, 0, 0, &(button_data.art_id));
-        button_data.x = charedit_ui_tech_buttons[index].x;
-        button_data.y = charedit_ui_tech_buttons[index].y;
-        if (tig_button_create(&button_data, &(charedit_ui_tech_buttons[index].button_handle)) != TIG_OK) {
-            tig_window_destroy(charedit_ui_tech_win);
+        button_data.x = charedit_tech_buttons[index].x;
+        button_data.y = charedit_tech_buttons[index].y;
+        if (tig_button_create(&button_data, &(charedit_tech_buttons[index].button_handle)) != TIG_OK) {
+            tig_window_destroy(charedit_tech_win);
             return false;
         }
 
-        button_handles[index] = charedit_ui_tech_buttons[index].button_handle;
+        button_handles[index] = charedit_tech_buttons[index].button_handle;
     }
 
-    tig_button_radio_group_create(TECH_COUNT, button_handles, charedit_ui_selected_tech);
+    tig_button_radio_group_create(TECH_COUNT, button_handles, charedit_selected_tech);
 
-    charedit_ui_inc_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
-    charedit_ui_dec_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
+    charedit_inc_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
+    charedit_dec_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
 
     return true;
 }
 
 // 0x55C2E0
-void charedit_ui_draw_tech_degree_icon(int index)
+void charedit_draw_tech_degree_icon(int index)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -2300,7 +2300,7 @@ void charedit_ui_draw_tech_degree_icon(int index)
     TigRect src_rect;
     TigRect dst_rect;
 
-    tig_art_interface_id_create(charedit_ui_tech_degree_icons[charedit_ui_selected_tech], 0, 0, 0, &art_id);
+    tig_art_interface_id_create(charedit_tech_degree_icons[charedit_selected_tech], 0, 0, 0, &art_id);
     tig_art_frame_data(art_id, &art_frame_data);
 
     src_rect.x = 0;
@@ -2308,8 +2308,8 @@ void charedit_ui_draw_tech_degree_icon(int index)
     src_rect.width = art_frame_data.width;
     src_rect.height = art_frame_data.height;
 
-    dst_rect.x = charedit_ui_tech_degree_icons_x[index];
-    dst_rect.y = charedit_ui_tech_degree_icons_y[index];
+    dst_rect.x = charedit_tech_degree_icons_x[index];
+    dst_rect.y = charedit_tech_degree_icons_y[index];
     dst_rect.width = art_frame_data.width;
     dst_rect.height = art_frame_data.height;
 
@@ -2317,11 +2317,11 @@ void charedit_ui_draw_tech_degree_icon(int index)
     art_blit_info.art_id = art_id;
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
-    tig_window_blit_art(charedit_ui_tech_win, &art_blit_info);
+    tig_window_blit_art(charedit_tech_win, &art_blit_info);
 }
 
 // 0x55C3A0
-void charedit_ui_refresh_tech_win()
+void charedit_refresh_tech_win()
 {
     TigButtonData button_data;
     TigArtFrameData art_frame_data;
@@ -2350,16 +2350,16 @@ void charedit_ui_refresh_tech_win()
     art_blit_info.src_rect = &rect;
     art_blit_info.dst_rect = &rect;
 
-    if (charedit_ui_inc_tech_degree_btn != TIG_BUTTON_HANDLE_INVALID) {
-        tig_button_destroy(charedit_ui_inc_tech_degree_btn);
+    if (charedit_inc_tech_degree_btn != TIG_BUTTON_HANDLE_INVALID) {
+        tig_button_destroy(charedit_inc_tech_degree_btn);
     }
 
-    if (charedit_ui_dec_tech_degree_btn != TIG_BUTTON_HANDLE_INVALID) {
-        tig_button_destroy(charedit_ui_dec_tech_degree_btn);
+    if (charedit_dec_tech_degree_btn != TIG_BUTTON_HANDLE_INVALID) {
+        tig_button_destroy(charedit_dec_tech_degree_btn);
     }
 
-    charedit_ui_inc_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
-    charedit_ui_dec_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
+    charedit_inc_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
+    charedit_dec_tech_degree_btn = TIG_BUTTON_HANDLE_INVALID;
 
     for (index = 0; index < 8; index++) {
         if (stru_5C8D08[index].button_handle != TIG_BUTTON_HANDLE_INVALID) {
@@ -2368,59 +2368,59 @@ void charedit_ui_refresh_tech_win()
         }
     }
 
-    tig_window_blit_art(charedit_ui_tech_win, &art_blit_info);
+    tig_window_blit_art(charedit_tech_win, &art_blit_info);
 
     for (index = 0; index < 3; index++) {
         stru_5C8FC8[index].str = str[0];
     }
 
-    str[0][0] = (char)('1' + charedit_ui_selected_tech);
+    str[0][0] = (char)('1' + charedit_selected_tech);
     str[0][1] = '\0';
-    sub_55B880(charedit_ui_tech_win, dword_64D3A4, &(stru_5C8FC8[0]), 0, -1, 1);
+    sub_55B880(charedit_tech_win, dword_64D3A4, &(stru_5C8FC8[0]), 0, -1, 1);
 
     sprintf(str[0],
         "%s %s",
-        tech_get_name(charedit_ui_selected_tech),
-        degree_get_name(tech_get_degree(qword_64E010, charedit_ui_selected_tech)));
-    sub_55B880(charedit_ui_tech_win, dword_64CFE0, &(stru_5C8FC8[1]), 0, -1, 1);
+        tech_get_name(charedit_selected_tech),
+        degree_get_name(tech_get_degree(qword_64E010, charedit_selected_tech)));
+    sub_55B880(charedit_tech_win, dword_64CFE0, &(stru_5C8FC8[1]), 0, -1, 1);
 
-    sprintf(str[0], "%d", sub_4B00B0(qword_64E010, charedit_ui_selected_tech));
-    sub_55B880(charedit_ui_tech_win, dword_64CA68, &(stru_5C8FC8[2]), 0, -1, 1);
+    sprintf(str[0], "%d", sub_4B00B0(qword_64E010, charedit_selected_tech));
+    sub_55B880(charedit_tech_win, dword_64CA68, &(stru_5C8FC8[2]), 0, -1, 1);
 
-    degree = tech_get_degree(qword_64E010, charedit_ui_selected_tech);
+    degree = tech_get_degree(qword_64E010, charedit_selected_tech);
     next_degree = degree < 7 ? degree + 1 : degree;
 
     for (index = 0; index < degree; index++) {
-        charedit_ui_draw_tech_degree_icon(index);
+        charedit_draw_tech_degree_icon(index);
     }
 
     for (index = 1; index - 1 < 7; index++) {
-        stru_5C8850[index - 1].str = sub_56EA10(charedit_ui_selected_tech, index);
-        sub_56EA30(charedit_ui_selected_tech, index, v1, v2);
+        stru_5C8850[index - 1].str = sub_56EA10(charedit_selected_tech, index);
+        sub_56EA30(charedit_selected_tech, index, v1, v2);
         sprintf(str[index - 1], "[%s]+[%s]", v1, v2);
         stru_5C88C0[index - 1].str = str[index - 1];
     }
 
     if (next_degree > degree) {
         if (degree > 0) {
-            sub_55B880(charedit_ui_tech_win, dword_64CFE0, stru_5C8850, 0, -1, degree);
-            sub_55B880(charedit_ui_tech_win, dword_64C840, stru_5C88C0, 0, -1, degree);
+            sub_55B880(charedit_tech_win, dword_64CFE0, stru_5C8850, 0, -1, degree);
+            sub_55B880(charedit_tech_win, dword_64C840, stru_5C88C0, 0, -1, degree);
         }
 
-        sub_55B880(charedit_ui_tech_win, dword_64CDC0, &(stru_5C8850[degree]), 0, -1, 1);
-        sub_55B880(charedit_ui_tech_win, dword_64CDB8, &(stru_5C88C0[degree]), 0, -1, 1);
+        sub_55B880(charedit_tech_win, dword_64CDC0, &(stru_5C8850[degree]), 0, -1, 1);
+        sub_55B880(charedit_tech_win, dword_64CDB8, &(stru_5C88C0[degree]), 0, -1, 1);
 
         if (degree + 1 < 7) {
-            sub_55B880(charedit_ui_tech_win, dword_64D3B0, &stru_5C8850[degree + 1], 0, -1, 6 - degree);
-            sub_55B880(charedit_ui_tech_win, dword_64D42C, &stru_5C88C0[degree + 1], 0, -1, 6 - degree);
+            sub_55B880(charedit_tech_win, dword_64D3B0, &stru_5C8850[degree + 1], 0, -1, 6 - degree);
+            sub_55B880(charedit_tech_win, dword_64D42C, &stru_5C88C0[degree + 1], 0, -1, 6 - degree);
         }
     } else {
-        sub_55B880(charedit_ui_tech_win, dword_64CFE0, stru_5C8850, 0, -1, 7);
-        sub_55B880(charedit_ui_tech_win, dword_64C840, stru_5C88C0, 0, -1, 7);
+        sub_55B880(charedit_tech_win, dword_64CFE0, stru_5C8850, 0, -1, 7);
+        sub_55B880(charedit_tech_win, dword_64C840, stru_5C88C0, 0, -1, 7);
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.window_handle = charedit_ui_tech_win;
+    button_data.window_handle = charedit_tech_win;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
     button_data.mouse_enter_snd_id = -1;
@@ -2429,20 +2429,20 @@ void charedit_ui_refresh_tech_win()
     if (next_degree > degree
         && dword_64CDCC != 2) {
         tig_art_interface_id_create(647, 0, 0, 0, &(button_data.art_id));
-        button_data.x = charedit_ui_tech_degree_icons_x[next_degree - 1];
-        button_data.y = charedit_ui_tech_degree_icons_y[next_degree - 1];
-        tig_button_create(&button_data, &charedit_ui_inc_tech_degree_btn);
+        button_data.x = charedit_tech_degree_icons_x[next_degree - 1];
+        button_data.y = charedit_tech_degree_icons_y[next_degree - 1];
+        tig_button_create(&button_data, &charedit_inc_tech_degree_btn);
     }
 
     if (degree > 0
         && dword_64CDCC != 2
         && (dword_64CDCC == 0
             || dword_64CDCC == 3
-            || dword_64DEEC[charedit_ui_selected_tech] < degree)) {
+            || dword_64DEEC[charedit_selected_tech] < degree)) {
         tig_art_interface_id_create(648, 0, 0, 0, &(button_data.art_id));
-        button_data.x = charedit_ui_tech_degree_icons_x[degree - 1];
-        button_data.y = charedit_ui_tech_degree_icons_y[degree - 1];
-        tig_button_create(&button_data, &charedit_ui_dec_tech_degree_btn);
+        button_data.x = charedit_tech_degree_icons_x[degree - 1];
+        button_data.y = charedit_tech_degree_icons_y[degree - 1];
+        tig_button_create(&button_data, &charedit_dec_tech_degree_btn);
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -3086,7 +3086,7 @@ bool sub_55D6F0(TigMessage* msg)
 }
 
 // 0x55D940
-bool charedit_ui_tech_win_message_filter(TigMessage* msg)
+bool charedit_tech_win_message_filter(TigMessage* msg)
 {
     int index;
     Packet127 pkt;
@@ -3103,7 +3103,7 @@ bool charedit_ui_tech_win_message_filter(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_BUTTON) {
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
             for (index = 0; index < TECH_COUNT; index++) {
-                if (msg->data.button.button_handle == charedit_ui_tech_buttons[index].button_handle) {
+                if (msg->data.button.button_handle == charedit_tech_buttons[index].button_handle) {
                     dword_64CDB4 = 4000 + index;
                     return true;
                 }
@@ -3114,21 +3114,21 @@ bool charedit_ui_tech_win_message_filter(TigMessage* msg)
                     if (index == 0) {
                         dword_64CDB4 = 139;
                     } else {
-                        dword_64CDB4 = 5000 + 8 * charedit_ui_selected_tech + index;
+                        dword_64CDB4 = 5000 + 8 * charedit_selected_tech + index;
                     }
                     return true;
                 }
             }
 
-            if (msg->data.button.button_handle == charedit_ui_inc_tech_degree_btn) {
-                v1 = tech_get_degree(qword_64E010, charedit_ui_selected_tech);
-                dword_64CDB4 = 5001 + 8 * charedit_ui_selected_tech + v1;
+            if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
+                v1 = tech_get_degree(qword_64E010, charedit_selected_tech);
+                dword_64CDB4 = 5001 + 8 * charedit_selected_tech + v1;
                 return true;
             }
 
-            if (msg->data.button.button_handle == charedit_ui_dec_tech_degree_btn) {
-                v1 = tech_get_degree(qword_64E010, charedit_ui_selected_tech);
-                dword_64CDB4 = 5000 + 8 * charedit_ui_selected_tech + v1;
+            if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
+                v1 = tech_get_degree(qword_64E010, charedit_selected_tech);
+                dword_64CDB4 = 5000 + 8 * charedit_selected_tech + v1;
                 return true;
             }
 
@@ -3137,7 +3137,7 @@ bool charedit_ui_tech_win_message_filter(TigMessage* msg)
 
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
             for (index = 0; index < TECH_COUNT; index++) {
-                if (msg->data.button.button_handle == charedit_ui_tech_buttons[index].button_handle) {
+                if (msg->data.button.button_handle == charedit_tech_buttons[index].button_handle) {
                     dword_64CDB4 = -1;
                     sub_550720();
                     return true;
@@ -3152,13 +3152,13 @@ bool charedit_ui_tech_win_message_filter(TigMessage* msg)
                 }
             }
 
-            if (msg->data.button.button_handle == charedit_ui_inc_tech_degree_btn) {
+            if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
                 dword_64CDB4 = -1;
                 sub_550720();
                 return true;
             }
 
-            if (msg->data.button.button_handle == charedit_ui_dec_tech_degree_btn) {
+            if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
                 dword_64CDB4 = -1;
                 sub_550720();
                 return true;
@@ -3169,42 +3169,42 @@ bool charedit_ui_tech_win_message_filter(TigMessage* msg)
 
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
             for (index = 0; index < TECH_COUNT; index++) {
-                if (msg->data.button.button_handle == charedit_ui_tech_buttons[index].button_handle) {
-                    if (charedit_ui_selected_tech != index) {
-                        charedit_ui_selected_tech = index;
-                        charedit_ui_refresh_tech_win();
+                if (msg->data.button.button_handle == charedit_tech_buttons[index].button_handle) {
+                    if (charedit_selected_tech != index) {
+                        charedit_selected_tech = index;
+                        charedit_refresh_tech_win();
                     }
 
                     return true;
                 }
             }
 
-            if (msg->data.button.button_handle == charedit_ui_inc_tech_degree_btn) {
+            if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || sub_4A2BA0()) {
-                    tech_ui_inc_degree(qword_64E010, charedit_ui_selected_tech);
+                    tech_ui_inc_degree(qword_64E010, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
                     pkt.field_4 = 1;
                     pkt.field_8 = 3;
-                    pkt.field_C = charedit_ui_selected_tech;
+                    pkt.field_C = charedit_selected_tech;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
 
                 return true;
             }
 
-            if (msg->data.button.button_handle == charedit_ui_dec_tech_degree_btn) {
+            if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || sub_4A2BA0()) {
-                    tech_ui_dec_degree(qword_64E010, charedit_ui_selected_tech);
+                    tech_ui_dec_degree(qword_64E010, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
                     pkt.field_4 = 2;
                     pkt.field_8 = 3;
-                    pkt.field_C = charedit_ui_selected_tech;
+                    pkt.field_C = charedit_selected_tech;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
             }
