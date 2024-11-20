@@ -95,7 +95,7 @@ static void charedit_draw_tech_degree_icon(int index);
 static void charedit_refresh_tech_win();
 static bool sub_55C890();
 static void sub_55CA70(int a1, int a2);
-static void spells_print_all();
+static void charedit_refresh_spells_win();
 static bool sub_55D060();
 static void sub_55D210();
 static bool sub_55D3A0(TigMessage* msg);
@@ -331,7 +331,7 @@ static S5C87D0 charedit_college_buttons[COLLEGE_COUNT] = {
 };
 
 // 0x5C8730
-static S5C8150 stru_5C8730[5] = {
+static S5C8150 charedit_spell_title_labels[5] = {
     { NULL, 562, 180, -1 },
     { NULL, 562, 228, -1 },
     { NULL, 562, 275, -1 },
@@ -340,7 +340,7 @@ static S5C8150 stru_5C8730[5] = {
 };
 
 // 0x5C8780
-static S5C8150 stru_5C8780[5] = {
+static S5C8150 charedit_spell_minimum_level_labels[5] = {
     { NULL, 562, 201, -1 },
     { NULL, 562, 249, -1 },
     { NULL, 562, 296, -1 },
@@ -1670,7 +1670,7 @@ void sub_55B150()
         charedit_refresh_tech_win();
         break;
     case 2:
-        spells_print_all();
+        charedit_refresh_spells_win();
         break;
     default:
         sub_55D210();
@@ -2590,7 +2590,7 @@ void sub_55CA70(int a1, int a2)
 }
 
 // 0x55CBC0
-void spells_print_all()
+void charedit_refresh_spells_win()
 {
     tig_art_id_t art_id;
     TigButtonData button_data;
@@ -2600,8 +2600,8 @@ void spells_print_all()
     int index;
     int cnt;
     int v1;
-    int spell_ids[5];
-    char spell_names[5][80];
+    int spells[5];
+    char spell_minimum_levels[5][80];
     int rc;
 
     tig_art_interface_id_create(31, 0, 0, 0, &art_id);
@@ -2609,10 +2609,11 @@ void spells_print_all()
         return;
     }
 
+    // TODO: What's the purpose of 25px offset?
     rect.x = 0;
     rect.y = 25;
     rect.width = art_frame_data.width;
-    rect.height = art_frame_data.height;
+    rect.height = art_frame_data.height - 25;
 
     art_blit_info.flags = 0;
     art_blit_info.art_id = art_id;
@@ -2651,48 +2652,48 @@ void spells_print_all()
     }
 
     for (index = 0; index < 5; index++) {
-        spell_ids[index] = index + 5 * dword_64E024;
-        stru_5C8730[index].str = spell_get_name(spell_ids[index]);
+        spells[index] = index + 5 * dword_64E024;
+        charedit_spell_title_labels[index].str = spell_get_name(spells[index]);
     }
 
     if (v1 > cnt) {
         if (cnt > 0) {
-            sub_55B880(charedit_spells_win, dword_64D3A8, &(stru_5C8730[0]), NULL, -1, cnt);
+            sub_55B880(charedit_spells_win, dword_64D3A8, &(charedit_spell_title_labels[0]), NULL, -1, cnt);
         }
 
         sub_55B880(charedit_spells_win,
             dword_64CDCC == 2 ? dword_64C828 : dword_64CDD0,
-            &stru_5C8730[cnt], NULL, -1, 1);
+            &charedit_spell_title_labels[cnt], NULL, -1, 1);
 
         if (cnt + 1 < 5) {
-            sub_55B880(charedit_spells_win, dword_64C828, &(stru_5C8730[cnt + 1]), NULL, -1, 4 - cnt);
+            sub_55B880(charedit_spells_win, dword_64C828, &(charedit_spell_title_labels[cnt + 1]), NULL, -1, 4 - cnt);
         }
     } else {
-        sub_55B880(charedit_spells_win, dword_64D3A8, &(stru_5C8730[0]), 0, -1, 5);
+        sub_55B880(charedit_spells_win, dword_64D3A8, &(charedit_spell_title_labels[0]), 0, -1, 5);
     }
 
     for (index = 0; index < 5; index++) {
-        sprintf(spell_names[index],
+        sprintf(spell_minimum_levels[index],
             "%s: %d",
             charedit_minimum_level_str,
-            spell_get_minimum_level(spell_ids[index]));
-        stru_5C8780[index].str = spell_names[index];
+            spell_get_minimum_level(spells[index]));
+        charedit_spell_minimum_level_labels[index].str = spell_minimum_levels[index];
     }
 
     if (v1 > cnt) {
         if (cnt > 0) {
-            sub_55B880(charedit_spells_win, dword_64DF0C, &(stru_5C8780[0]), 0, -1, cnt);
+            sub_55B880(charedit_spells_win, dword_64DF0C, &(charedit_spell_minimum_level_labels[0]), 0, -1, cnt);
         }
 
         sub_55B880(charedit_spells_win,
             dword_64CDCC == 2 ? dword_64CDB0 : dword_64D420,
-            &(stru_5C8780[cnt]), NULL, -1, 1);
+            &(charedit_spell_minimum_level_labels[cnt]), NULL, -1, 1);
 
         if (cnt + 1 < 5) {
-            sub_55B880(charedit_spells_win, dword_64CDB0, &(stru_5C8780[cnt + 1]), NULL, -1, 4 - cnt);
+            sub_55B880(charedit_spells_win, dword_64CDB0, &(charedit_spell_minimum_level_labels[cnt + 1]), NULL, -1, 4 - cnt);
         }
     } else {
-        sub_55B880(charedit_spells_win, dword_64DF0C, &(stru_5C8780[0]), 0, -1, 5);
+        sub_55B880(charedit_spells_win, dword_64DF0C, &(charedit_spell_minimum_level_labels[0]), 0, -1, 5);
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -3301,7 +3302,7 @@ bool sub_55DC60(TigMessage* msg)
                 if (msg->data.button.button_handle == charedit_college_buttons[index].button_handle) {
                     if (dword_64E024 != index) {
                         dword_64E024 = index;
-                        spells_print_all();
+                        charedit_refresh_spells_win();
                     }
 
                     return true;
