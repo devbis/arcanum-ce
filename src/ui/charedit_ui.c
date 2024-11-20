@@ -2255,6 +2255,9 @@ bool charedit_create_tech_win()
         return false;
     }
 
+    window_data.rect.x = 0;
+    window_data.rect.y = 0;
+
     art_blit_info.flags = 0;
     art_blit_info.art_id = art_id;
     art_blit_info.src_rect = &(window_data.rect);
