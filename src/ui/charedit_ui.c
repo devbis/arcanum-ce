@@ -349,15 +349,15 @@ static S5C8150 stru_5C8780[5] = {
 };
 
 // 0x5C87D0
-static S5C87D0 stru_5C87D0[8] = {
-    { 8, 7, TIG_BUTTON_HANDLE_INVALID, 0 },
-    { 34, 29, TIG_BUTTON_HANDLE_INVALID, 1 },
-    { 61, 7, TIG_BUTTON_HANDLE_INVALID, 2 },
-    { 88, 28, TIG_BUTTON_HANDLE_INVALID, 3 },
-    { 116, 7, TIG_BUTTON_HANDLE_INVALID, 4 },
-    { 142, 29, TIG_BUTTON_HANDLE_INVALID, 5 },
-    { 171, 7, TIG_BUTTON_HANDLE_INVALID, 6 },
-    { 198, 29, TIG_BUTTON_HANDLE_INVALID, 7 },
+static S5C87D0 charedit_ui_tech_buttons[TECH_COUNT] = {
+    { 8, 7, TIG_BUTTON_HANDLE_INVALID, TECH_HERBOLOGY },
+    { 34, 29, TIG_BUTTON_HANDLE_INVALID, TECH_CHEMISTRY },
+    { 61, 7, TIG_BUTTON_HANDLE_INVALID, TECH_ELECTRIC },
+    { 88, 28, TIG_BUTTON_HANDLE_INVALID, TECH_EXPLOSIVES },
+    { 116, 7, TIG_BUTTON_HANDLE_INVALID, TECH_GUN },
+    { 142, 29, TIG_BUTTON_HANDLE_INVALID, TECH_MECHANICAL },
+    { 171, 7, TIG_BUTTON_HANDLE_INVALID, TECH_SMITHY },
+    { 198, 29, TIG_BUTTON_HANDLE_INVALID, TECH_THERAPEUTICS },
 };
 
 // 0x5C8850
@@ -2236,7 +2236,7 @@ bool sub_55C110()
     TigButtonData button_data;
     TigArtFrameData art_frame_data;
     TigArtBlitInfo art_blit_info;
-    tig_button_handle_t button_handles[8];
+    tig_button_handle_t button_handles[TECH_COUNT];
     int index;
 
     tig_art_interface_id_create(30, 0, 0, 0, &art_id);
@@ -2271,19 +2271,19 @@ bool sub_55C110()
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
 
-    for (index = 0; index < 8; index++) {
+    for (index = 0; index < TECH_COUNT; index++) {
         tig_art_interface_id_create(306 + index, 0, 0, 0, &(button_data.art_id));
-        button_data.x = stru_5C87D0[index].x;
-        button_data.y = stru_5C87D0[index].y;
-        if (tig_button_create(&button_data, &(stru_5C87D0[index].button_handle)) != TIG_OK) {
+        button_data.x = charedit_ui_tech_buttons[index].x;
+        button_data.y = charedit_ui_tech_buttons[index].y;
+        if (tig_button_create(&button_data, &(charedit_ui_tech_buttons[index].button_handle)) != TIG_OK) {
             tig_window_destroy(dword_64CA8C);
             return false;
         }
 
-        button_handles[index] = stru_5C87D0[index].button_handle;
+        button_handles[index] = charedit_ui_tech_buttons[index].button_handle;
     }
 
-    tig_button_radio_group_create(8, button_handles, dword_64E028);
+    tig_button_radio_group_create(TECH_COUNT, button_handles, dword_64E028);
     dword_64D3B4 = TIG_BUTTON_HANDLE_INVALID;
     dword_64CDC4 = TIG_BUTTON_HANDLE_INVALID;
 
@@ -3101,8 +3101,8 @@ bool sub_55D940(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_BUTTON) {
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
-            for (index = 0; index < 8; index++) {
-                if (msg->data.button.button_handle == stru_5C87D0[index].button_handle) {
+            for (index = 0; index < TECH_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_ui_tech_buttons[index].button_handle) {
                     dword_64CDB4 = 4000 + index;
                     return true;
                 }
@@ -3135,8 +3135,8 @@ bool sub_55D940(TigMessage* msg)
         }
 
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
-            for (index = 0; index < 8; index++) {
-                if (msg->data.button.button_handle == stru_5C87D0[index].button_handle) {
+            for (index = 0; index < TECH_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_ui_tech_buttons[index].button_handle) {
                     dword_64CDB4 = -1;
                     sub_550720();
                     return true;
@@ -3167,8 +3167,8 @@ bool sub_55D940(TigMessage* msg)
         }
 
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
-            for (index = 0; index < 8; index++) {
-                if (msg->data.button.button_handle == stru_5C87D0[index].button_handle) {
+            for (index = 0; index < TECH_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_ui_tech_buttons[index].button_handle) {
                     if (dword_64E028 != index) {
                         dword_64E028 = index;
                         sub_55C3A0();
