@@ -2343,10 +2343,11 @@ void charedit_refresh_tech_win()
         return;
     }
 
+    // TODO: What's the purpose of 25px offset?
     rect.x = 0;
     rect.y = 25;
     rect.width = art_frame_data.width;
-    rect.height = art_frame_data.height;
+    rect.height = art_frame_data.height - 25;
 
     art_blit_info.art_id = art_id;
     art_blit_info.flags = 0;
