@@ -2,16 +2,25 @@
 
 #include <stdio.h>
 
+#include "game/ai.h"
 #include "game/anim.h"
+#include "game/combat.h"
+#include "game/critter.h"
 #include "game/gfade.h"
+#include "game/item.h"
+#include "game/light.h"
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/newspaper.h"
 #include "game/obj_private.h"
 #include "game/object.h"
+#include "game/stat.h"
 #include "game/teleport.h"
+#include "game/trap.h"
+#include "game/ui.h"
 
 typedef enum TimeEventTypeFlags {
     TIME_EVENT_TYPE_FLAG_0x0001 = 0x0001,
@@ -87,40 +96,40 @@ static_assert(sizeof(off_5B2178) / sizeof(off_5B2178[0]), "wrong size");
 // 0x5B2188
 static TimeEventTypeInfo stru_5B2188[] = {
     { "Debug", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, debug_timeevent_process, NULL, NULL },
-    { "Anim", true, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_ANIMATIONS },
+    { "Anim", true, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_ANIMATIONS, anim_timeevent_process },
     { "Bkg Anim", false, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
-    { "Fidget Anim", false, 0, TIME_TYPE_REAL_TIME },
-    { "Script", true, TIME_EVENT_TYPE_FLAG_0x0400 | TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
-    { "MagicTech", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
-    { "Poison", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0010 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
-    { "Resting", true, 10, TIME_TYPE_GAME_TIME },
-    { "Fatigue", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0010 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
+    { "Fidget Anim", false, 0, TIME_TYPE_REAL_TIME, anim_fidget_timeevent_process },
+    { "Script", true, TIME_EVENT_TYPE_FLAG_0x0400 | TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, script_timeevent_process },
+    { "MagicTech", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, magictech_timeevent_process },
+    { "Poison", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0010 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, stat_poison_timeevent_process },
+    { "Resting", true, 10, TIME_TYPE_GAME_TIME, critter_resting_timeevent_process },
+    { "Fatigue", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0010 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, critter_fatigue_timeevent_process },
     { "Aging", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
-    { "AI", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "AI", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, ai_timeevent_process },
     { "Combat", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
-    { "TB Combat", true, 0, TIME_TYPE_REAL_TIME },
+    { "TB Combat", true, 0, TIME_TYPE_REAL_TIME, combat_tb_timeevent_process },
     { "Ambient Lighting", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
     { "WorldMap", true, 0, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
     { "Sleeping", false, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
     { "Clock", true, 0, TIME_TYPE_GAME_TIME, timeevent_do_nothing, NULL, NULL },
-    { "NPC Wait Here", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
+    { "NPC Wait Here", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, ai_npc_wait_here_timeevent_process },
     { "MainMenu", false, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, timeevent_do_nothing, NULL, NULL },
-    { "Light", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_ANIMATIONS },
-    { "Multiplayer", false, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME },
-    { "Lock", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "NPC Respawn", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "Recharge Magic-Item", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "Decay Dead Bodie", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "Item Decay", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "Combat-Focus Wipe", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "Newspapers", true, 0, TIME_TYPE_GAME_TIME },
-    { "Traps", true, TIME_EVENT_TYPE_FLAG_0x0080 | TIME_EVENT_TYPE_FLAG_0x0020 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME },
+    { "Light", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_ANIMATIONS, light_timeevent_process },
+    { "Multiplayer", false, TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, multiplayer_timeevent_process },
+    { "Lock", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, object_lock_timeevent_process },
+    { "NPC Respawn", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, npc_respawn_timevent_process },
+    { "Recharge Magic-Item", true, TIME_EVENT_TYPE_FLAG_0x0040 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, magictech_recharge_timeevent_process },
+    { "Decay Dead Bodie", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, critter_decay_timeevent_process },
+    { "Item Decay", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, item_decay_timeevent_process },
+    { "Combat-Focus Wipe", true, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, critter_npc_combat_focus_wipe_timeevent_process },
+    { "Newspapers", true, 0, TIME_TYPE_GAME_TIME, newspaper_timeevent_process },
+    { "Traps", true, TIME_EVENT_TYPE_FLAG_0x0080 | TIME_EVENT_TYPE_FLAG_0x0020 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, trap_timeevent_process },
     { "Fade", true, TIME_EVENT_TYPE_FLAG_0x4000 | TIME_EVENT_TYPE_FLAG_0x0200 | TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_GAME_TIME, gfade_timeevent_process, NULL, NULL },
     { "MP Ctrl UI", false, 0, TIME_TYPE_REAL_TIME, NULL, NULL, NULL },
-    { "UI", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME },
-    { "Teleported", false, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "Scenery Respawn", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME },
-    { "Random Encounter", true, 0, TIME_TYPE_GAME_TIME },
+    { "UI", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, ui_timeevent_process },
+    { "Teleported", false, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, sub_43EAC0 },
+    { "Scenery Respawn", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, object_scenery_respawn_timeevent_process },
+    { "Random Encounter", true, 0, TIME_TYPE_GAME_TIME, sub_460B30 },
 };
 
 static_assert(sizeof(stru_5B2188) / sizeof(stru_5B2188[0]) == TIMEEVENT_TYPE_COUNT, "wrong size");
