@@ -1084,18 +1084,18 @@ bool map_save_preprocess()
 bool map_save_objects()
 {
     int64_t obj;
-    int v1;
+    int iter;
 
-    if (sub_4082C0(&obj, &v1)) {
+    if (sub_4082C0(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC)
-                && sub_4067C0(obj)) {
+                && obj_is_modified(obj)) {
                 if (!objf_solitary_write(obj, map_folder, ".mob")) {
                     return false;
                 }
             }
-        } while (sub_408390(&obj, &v1));
+        } while (sub_408390(&obj, &iter));
     }
 
     return true;
