@@ -738,7 +738,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
         map_flush(0);
     }
 
-    if (obj_validate_system(1)) {
+    if (!obj_validate_system(1)) {
         tig_debug_println("Object system validate failed pre-load in map_open_in_game.");
         tig_message_post_quit(0);
         // FIXME: Execution continues after quit.
