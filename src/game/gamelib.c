@@ -1528,6 +1528,13 @@ bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info)
     return success;
 }
 
+// 0x4044A0
+void sub_4044A0(int a1, int a2)
+{
+    dword_5D10C0 = a1;
+    dword_5D0D80 = a2;
+}
+
 // 0x404570
 void difficulty_changed()
 {
