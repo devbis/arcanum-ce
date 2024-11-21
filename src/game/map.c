@@ -1230,11 +1230,11 @@ bool map_save_dynamic()
 void map_load_postprocess()
 {
     int64_t obj;
-    int v1;
+    int iter;
     unsigned int flags;
     TimeEvent timeevent;
 
-    if (sub_4082C0(&obj, &v1)) {
+    if (sub_4082C0(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 sub_406520(obj);
@@ -1249,7 +1249,7 @@ void map_load_postprocess()
                 flags &= ~OF_TELEPORTED;
                 obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
             }
-        } while (sub_408390(&obj, &v1));
+        } while (sub_408390(&obj, &iter));
     }
 }
 
