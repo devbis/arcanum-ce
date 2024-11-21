@@ -202,6 +202,10 @@ void compact_ui_draw()
 {
     int index;
 
+    if (!compact_ui_created) {
+        return;
+    }
+
     for (index = 0; index < MAX_COMPONENTS; index++) {
         if (compact_ui_components[index].draw != NULL) {
             compact_ui_components[index].draw(0);
