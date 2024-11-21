@@ -1067,14 +1067,14 @@ void map_close()
 bool map_save_preprocess()
 {
     int64_t obj;
-    int v1;
+    int iter;
 
-    if (sub_4082C0(&obj, &v1)) {
+    if (sub_4082C0(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 sub_4064B0(obj);
             }
-        } while (sub_408390(&obj, &v1));
+        } while (sub_408390(&obj, &iter));
     }
 
     return true;
