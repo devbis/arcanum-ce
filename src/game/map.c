@@ -1190,7 +1190,7 @@ bool map_save_dynamic()
     char path[TIG_MAX_PATH];
     TigFile* stream;
     int64_t obj;
-    int v1;
+    int iter;
     unsigned int flags;
 
     sprintf(path, "%s\\mobile.mdy", map_folder);
@@ -1200,7 +1200,7 @@ bool map_save_dynamic()
         return false;
     }
 
-    if (sub_4082C0(&obj, &v1)) {
+    if (sub_4082C0(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
@@ -1214,7 +1214,7 @@ bool map_save_dynamic()
                     cnt++;
                 }
             }
-        } while (sub_408390(&obj, &v1));
+        } while (sub_408390(&obj, &iter));
     }
 
     tig_file_fclose(stream);
