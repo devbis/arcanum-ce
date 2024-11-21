@@ -1362,12 +1362,12 @@ void sub_4115D0(const char* name)
 void map_disable_objects()
 {
     int64_t obj;
-    int v1;
+    int iter;
     int64_t location;
     int64_t sector_id;
     unsigned int flags;
 
-    if (sub_4082C0(&obj, &v1)) {
+    if (sub_4082C0(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)) {
                 location = obj_field_int64_get(obj, OBJ_F_LOCATION);
@@ -1380,7 +1380,7 @@ void map_disable_objects()
                     }
                 }
             }
-        } while (sub_408390(&obj, &v1));
+        } while (sub_408390(&obj, &iter));
     }
 }
 
