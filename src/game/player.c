@@ -121,7 +121,7 @@ void player_create()
     int64_t y;
     int64_t loc;
 
-    qword_5D1150 = sub_468570(15);
+    qword_5D1150 = sub_468570(OBJ_TYPE_PC);
 
     map = sub_40FF40();
     if (map == 0
