@@ -1293,6 +1293,9 @@ bool sub_411450(const char* name)
 // 0x411520
 void map_clear_objects()
 {
+    int64_t obj;
+    int iter;
+
     if (map_in_map_clear_objects) {
         tig_debug_println("Waring: map_clear_objects attempting to recurse.");
     } else {
@@ -1300,15 +1303,13 @@ void map_clear_objects()
 
         timeevent_clear_for_map_close();
 
-        object_id_t obj;
-        int v1;
-        if (sub_4082C0(&obj, &v1)) {
+        if (sub_4082C0(&obj, &iter)) {
             do {
                 if (!sub_43D990(obj)) {
                     sub_43CF70(obj);
                     sub_43CFF0(obj);
                 }
-            } while (sub_408390(&obj, &v1));
+            } while (sub_408390(&obj, &iter));
         }
 
         sub_4D0B40();
