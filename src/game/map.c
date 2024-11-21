@@ -64,8 +64,8 @@ typedef struct MapModule {
     MapUpdateViewFunc* update_view_func;
     MapSaveFunc* save_func;
     MapLoadFunc* load_func;
-    MapCloseFunc* close_func;
     MapFlushFunc* map_reset_func;
+    MapCloseFunc* close_func;
     MapResizeFunc* resize_func;
 } MapModule;
 
