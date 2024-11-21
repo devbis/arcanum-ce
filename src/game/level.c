@@ -888,7 +888,7 @@ int sub_4A79C0(int64_t obj, int tech, int degree)
         }
 
         new_degree = tech_inc_degree(obj, tech);
-        if (new_degree == degree) {
+        if (new_degree == current_degree) {
             intelligence = stat_get_base(obj, STAT_INTELLIGENCE);
             rc = sub_4A75E0(obj, STAT_INTELLIGENCE, intelligence + 1);
             if (rc != 0) {
