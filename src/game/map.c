@@ -1111,7 +1111,7 @@ bool map_save_difs()
     TigFile* stream2;
     int size;
     int64_t obj;
-    int v1;
+    int iter;
     ObjectID oid;
 
     sprintf(path1, "%s\\mobile.md", map_folder);
@@ -1133,11 +1133,11 @@ bool map_save_difs()
 
     size = tig_file_filelength(stream2);
 
-    if (sub_4082C0(&obj, &v1)) {
+    if (sub_4082C0(&obj, &iter)) {
         do {
             if (!sub_43D990(obj)
-                && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC)
-                && sub_4067C0(obj)) {
+                && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) != 0
+                && obj_is_modified(obj)) {
                 oid = sub_407EF0(obj);
                 if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_EXTINCT | OF_DESTROYED)) != 0) {
                     if (tig_file_fwrite(&oid, sizeof(oid), 1, stream2) != 1) {
@@ -1166,10 +1166,10 @@ bool map_save_difs()
                     }
                 }
             }
-        } while (sub_408390(&obj, &v1));
+        } while (sub_408390(&obj, &iter));
     }
 
-    if (size < 24) {
+    if (size < sizeof(oid)) {
         tig_file_fclose(stream2);
         tig_file_remove(path2);
     }
