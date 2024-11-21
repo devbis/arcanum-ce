@@ -181,6 +181,32 @@ void sub_4E77E0(SizeableArray** src, SizeableArray* dst)
     sub_4E5F30((*src)->field_8, (uint8_t*)dst + size);
 }
 
+// 0x4E7820
+void sub_4E7820(SizeableArray** sa_ptr, uint8_t** data)
+{
+    SizeableArray sa;
+    int size;
+
+    if (*sa_ptr != NULL) {
+        sa_deallocate(sa_ptr);
+    }
+
+    sub_4E4C50(&sa, sizeof(sa), data);
+
+    size = sa_byte_size(&sa);
+
+    *sa_ptr = (SizeableArray*)MALLOC(size);
+    (*sa_ptr)->size = sa.size;
+    (*sa_ptr)->count = sa.count;
+    (*sa_ptr)->field_8 = sa.field_8;
+
+    if (size - sizeof(SizeableArray) != 0) {
+        sub_4E4C50(sub_4E7A50(*sa_ptr), size - sizeof(SizeableArray), data);
+    }
+
+    sub_4E5F70(&((*sa_ptr)->field_8), data);
+}
+
 // 0x4E78F0
 bool sa_read_no_dealloc(SizeableArray** sa_ptr, TigFile* stream)
 {

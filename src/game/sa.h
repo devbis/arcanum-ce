@@ -25,6 +25,7 @@ void sub_4E7760(SizeableArray** sa_ptr, int a2);
 int sa_count(SizeableArray** sa_ptr);
 int sub_4E77B0(SizeableArray** sa_ptr);
 void sub_4E77E0(SizeableArray** src, SizeableArray* dst);
+void sub_4E7820(SizeableArray** sa_ptr, uint8_t** data);
 bool sa_read_no_dealloc(SizeableArray** sa_ptr, TigFile* stream);
 
 #endif /* ARCANUM_GAME_SA_H_ */
