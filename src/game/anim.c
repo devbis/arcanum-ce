@@ -45,7 +45,6 @@ static bool sub_436220(int64_t a1, int64_t a2, int64_t a3);
 static bool sub_4363E0(int64_t a1, int64_t a2);
 static bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr);
 static void sub_436CB0(AnimID anim_id);
-static void sub_436CF0();
 static void sub_436D20(unsigned int flags1, unsigned int flags2);
 static void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2);
 static void sub_436ED0(AnimID anim_id);

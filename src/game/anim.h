@@ -71,6 +71,7 @@ bool sub_436960(int64_t a1, int64_t a2);
 void turn_on_running(AnimID anim_id);
 void sub_436C20();
 void sub_436C80();
+void sub_436CF0();
 void sub_436FA0(int64_t obj);
 bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which);
 void sub_437980();
