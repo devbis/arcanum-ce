@@ -1510,12 +1510,12 @@ bool gamelib_saveinfo_load(const char* name, GameSaveInfo* save_info)
         if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) break;
         if (tig_file_fread(save_info->pc_name, size, 1, stream) != 1) break;
 
-        if (tig_file_read(&(save_info->field_340), sizeof(save_info->field_340), 1, stream) != 1) break;
-        if (tig_file_read(&(save_info->datetime), sizeof(save_info->datetime), 1, stream) != 1) break;
-        if (tig_file_read(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
-        if (tig_file_read(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;
-        if (tig_file_read(&(save_info->pc_location), sizeof(save_info->pc_location), 1, stream) != 1) break;
-        if (tig_file_read(&(save_info->field_35C), sizeof(save_info->field_35C), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->field_340), sizeof(save_info->field_340), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->datetime), sizeof(save_info->datetime), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->pc_portrait), sizeof(save_info->pc_portrait), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->pc_level), sizeof(save_info->pc_level), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->pc_location), sizeof(save_info->pc_location), 1, stream) != 1) break;
+        if (tig_file_fread(&(save_info->field_35C), sizeof(save_info->field_35C), 1, stream) != 1) break;
 
         if (tig_file_fread(&size, sizeof(size), 1, stream) != 1) break;
         if (size != 0 && tig_file_fread(save_info->description, size, 1, stream) != 1) break;
