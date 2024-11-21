@@ -53,11 +53,13 @@ void object_node_reserve()
     ObjectNode* node;
 
     if (object_node_head != NULL) {
-        for (index = 0; index < OBJECT_NODE_LIST_GROW_SIZE; index++) {
-            node = (ObjectNode*)MALLOC(sizeof(*node));
-            node->next = object_node_head;
-            object_node_head = node;
-        }
+        return;
+    }
+
+    for (index = 0; index < OBJECT_NODE_LIST_GROW_SIZE; index++) {
+        node = (ObjectNode*)MALLOC(sizeof(*node));
+        node->next = object_node_head;
+        object_node_head = node;
     }
 }
 
