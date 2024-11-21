@@ -1387,7 +1387,7 @@ void map_disable_objects()
 // 0x411830
 void sub_411830(char* str)
 {
-    char* pch;
+    unsigned char* pch;
 
     pch = str;
     while (*pch != '\0') {
