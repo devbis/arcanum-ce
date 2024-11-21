@@ -344,8 +344,7 @@ void sub_4D5310(UnknownContext *a1)
                         src_rect.width = dst_rect.width;
                         src_rect.height = dst_rect.height;
                         window_blit_info.src_video_buffer = node->video_buffer;
-                        // FIXME: Only 1 byte at 0x14 is being set.
-                        window_blit_info.field_14 = node->field_18;
+                        window_blit_info.field_14[0] = node->field_18;
                         tig_window_blit(&window_blit_info);
                     }
                     node = node->next;
