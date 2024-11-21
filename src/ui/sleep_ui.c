@@ -131,7 +131,7 @@ void sub_57B180(int64_t bed_obj)
 
     pc_obj = player_get_pc_obj();
 
-    if (sub_45D8D0(bed_obj)) {
+    if (sub_45D8D0(pc_obj)) {
         return;
     }
 
