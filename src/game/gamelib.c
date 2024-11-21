@@ -641,7 +641,7 @@ bool gamelib_mod_load(const char* path)
         for (file_index = 0; file_index < file_list.count; file_index++) {
             if ((file_list.entries[file_index].attributes & TIG_FILE_ATTRIBUTE_SUBDIR) != 0
                 && file_list.entries[file_index].path[0] != '.') {
-                if (sub_4102F0(file_list.entries[file_index].path)) {
+                if (!sub_4102F0(file_list.entries[file_index].path)) {
                     tig_debug_printf("gamelib_mod_load(): error preprocessing mobile object data for map %s\n",
                         file_list.entries[file_index].path);
                     sub_405070();
