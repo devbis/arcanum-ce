@@ -618,7 +618,7 @@ bool sub_4A7030(int64_t obj, char* str)
         mes_file_entry.num = 3;
         mes_get_msg(level_mes_file, &mes_file_entry);
         strcat(str, mes_file_entry.str);
-    } else {
+    } else if (dword_5F5C9C > 0) {
         for (index = 0; index < dword_5F5C9C; index++) {
             strcat(str, byte_5F0E60[index]);
             if (dword_5F5C80[index] > 0) {
