@@ -3014,16 +3014,16 @@ bool sub_541D90(tig_button_handle_t button_handle)
         }
     }
 
-        if (stru_5C36B0[dword_64C244][0]) {
-            sub_5412D0();
+    if (stru_5C36B0[dword_64C244][0]) {
+        sub_5412D0();
     } else {
         sub_5417A0(1);
         if (dword_64C414 == 0) {
             sub_5412D0();
         }
-        }
+    }
 
-        return false;
+    return false;
 }
 
 // 0x541E20
