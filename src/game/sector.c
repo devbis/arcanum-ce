@@ -2023,9 +2023,10 @@ bool sub_4D2CA0(int64_t id, int* index_ptr)
 
     l = 0;
     r = dword_601784 - 1;
-    while (l > r) {
+    while (l <= r) {
         m = (l + r) / 2;
         curr = sector_cache_entries[sector_cache_indexes[m]].sector.id;
+
         if (curr < id) {
             l = m + 1;
         } else if (curr > id) {
