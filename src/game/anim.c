@@ -21,6 +21,7 @@
 #include "game/reaction.h"
 #include "game/skill.h"
 #include "game/stat.h"
+#include "game/teleport.h"
 #include "game/tile.h"
 #include "game/timeevent.h"
 
@@ -3316,7 +3317,99 @@ bool sub_422A50(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream)
 // 0x422B10
 void anim_break_nodes_to_map(const char* map)
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    bool exists;
+    int cnt;
+    int idx;
+    AnimRunInfo* run_info;
+
+    sprintf(path, "Save\\Current\\maps\\%s\\Anim.dat", map);
+
+    exists = tig_file_exists(path, NULL);
+    if (exists) {
+        stream = tig_file_fopen(path, "r+b");
+    } else {
+        stream = tig_file_fopen(path, "wb");
+    }
+
+    if (stream == NULL) {
+        tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Couldn't create TimeEvent data file for map!\n");
+        ASSERT(0); // 1001, "0"
+        return;
+    }
+
+    cnt = 0;
+
+    if (!exists) {
+        if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+            tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+            tig_file_fclose(stream);
+            ASSERT(0); // 1011, "0"
+            return;
+        }
+    } else {
+        if (tig_file_fseek(stream, 0, SEEK_SET) != 0) {
+            tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Seeking to start of data file for map!\n");
+            tig_file_fclose(stream);
+            ASSERT(0); // 1042, "0"
+            return;
+        }
+
+        if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
+            tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Reading Header to data file for map!\n");
+            tig_file_fclose(stream);
+            ASSERT(0); // 1025, "0"
+            return;
+        }
+
+        if (tig_file_fseek(stream, 0, SEEK_END) != 0) {
+            tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Seeking to end of data file for map!\n");
+            tig_file_fclose(stream);
+            ASSERT(0); // 1034, "0"
+            return;
+        }
+    }
+
+    for (idx = 0; idx < 216; idx++) {
+        run_info = &(anim_run_info[idx]);
+        if ((run_info->field_C & 0x1) != 0) {
+            if (!sub_4D3420(run_info->field_20)
+                || !off_5B03D0[run_info->goals[0].type]->field_C) {
+                sub_44E2C0(&(run_info->id), 6);
+            } else if (sub_4221C0(run_info, stream)) {
+                cnt++;
+                sub_44E2C0(&(run_info->id), 6);
+            } else {
+                ASSERT(0); // 1067, "0"
+                break;
+            }
+        }
+    }
+
+    if (idx < 216) {
+        tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Failed to save out nodes!\n");
+        ASSERT(0); // 1089, "0"
+        tig_file_fclose(stream);
+        tig_file_remove(path);
+        return;
+    }
+
+    if (tig_file_fseek(stream, 0, SEEK_SET) != 0) {
+        tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        ASSERT(0); // 1111, "0"
+        return;
+    }
+
+    if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+        tig_debug_printf("Anim: anim_break_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        ASSERT(0); // 1103, "0"
+        return;
+    }
+
+    tig_file_fclose(stream);
 }
 
 // 0x422DF0
