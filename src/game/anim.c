@@ -3735,12 +3735,16 @@ bool sub_424560(int64_t obj, tig_art_id_t eye_candy_id, int a3)
 // 0x4246C0
 bool sub_4246C0(AnimRunInfo* run_info)
 {
+    (void)run_info;
+
     return 1;
 }
 
 // 0x4246D0
 bool sub_4246D0(AnimRunInfo* run_info)
 {
+    (void)run_info;
+
     return sub_4B6D70() == 0;
 }
 
@@ -4033,7 +4037,7 @@ bool sub_425590(AnimRunInfo* run_info)
 // 0x425740
 bool sub_425740(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    return (run_info->path.flags & 0x1) == 0;
 }
 
 // 0x425760
@@ -4429,13 +4433,17 @@ bool sub_427640(AnimRunInfo* run_info)
 // 0x427710
 bool sub_427710(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    (void)run_info;
+
+    return false;
 }
 
 // 0x427720
 bool sub_427720(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    (void)run_info;
+
+    return true;
 }
 
 // 0x427730
@@ -6945,18 +6953,24 @@ void sub_42FD70()
 // 0x42FEA0
 bool sub_42FEA0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    (void)run_info;
+
+    return true;
 }
 
 // 0x42FEB0
 bool sub_42FEB0(AnimRunInfo* run_info)
 {
-    return true;
+    (void)run_info;
+
+    return false;
 }
 
 // 0x42FEC0
 bool sub_42FEC0(AnimRunInfo* run_info)
 {
+    (void)run_info;
+
     return false;
 }
 
