@@ -674,7 +674,7 @@ bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2)
 }
 
 // 0x4D02E0
-Sector601808* sub_4D02E0(int64_t* rect)
+Sector601808* sub_4D02E0(LocRect* loc_rect)
 {
     int x;
     int y;
@@ -683,12 +683,12 @@ Sector601808* sub_4D02E0(int64_t* rect)
     Sector601808* prev;
     Sector601808* node;
 
-    width = sub_4D1310(rect[0], rect[2] + 1, 64, dword_6017E8) - 1;
+    width = sub_4D1310(loc_rect->x1, loc_rect->x2 + 1, 64, dword_6017E8) - 1;
     if (width == 0) {
         return NULL;
     }
 
-    height = sub_4D1310(rect[1], rect[3] + 1, 64, dword_6017EC) - 1;
+    height = sub_4D1310(loc_rect->y1, loc_rect->y2 + 1, 64, dword_6017EC) - 1;
     if (height == 0) {
         return NULL;
     }
