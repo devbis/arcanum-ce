@@ -482,7 +482,7 @@ bool sub_4CF810(unsigned int size)
     if (size < sector_cache_size) {
         // Requested size is smaller - shrink current cache.
         for (index = sector_cache_size - 1; index >= size; index--) {
-            sector = &(sector_cache_entries[index]);
+            sector = &(sector_cache_entries[index].sector);
             sector_object_list_exit(&(sector->objects));
             sector_block_list_exit(&(sector->blocks));
             sector_sound_list_exit(&(sector->sounds));
@@ -498,11 +498,11 @@ bool sub_4CF810(unsigned int size)
         sector_cache_entries = (SectorCacheEntry*)REALLOC(sector_cache_entries, sizeof(*sector_cache_entries) * size);
         sector_cache_indexes = (int*)REALLOC(sector_cache_indexes, sizeof(*sector_cache_indexes) * size);
 
-        for (index = sector_cache_size; index < sector_cache_size; index++) {
+        for (index = sector_cache_size; index < size; index++) {
             memset(&(sector_cache_entries[index]), 0, sizeof(*sector_cache_entries));
             sector_cache_indexes[index] = 0;
 
-            sector = &(sector_cache_entries[index]);
+            sector = &(sector_cache_entries[index].sector);
             if (!sector_light_list_init(&(sector->lights))) {
                 return false;
             }
