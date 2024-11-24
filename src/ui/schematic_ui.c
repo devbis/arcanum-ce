@@ -374,7 +374,7 @@ void schematic_ui_create()
         return;
     }
 
-    if (intgame_big_window_lock(schematic_ui_message_filter, &schematic_ui_window)) {
+    if (!intgame_big_window_lock(schematic_ui_message_filter, &schematic_ui_window)) {
         tig_debug_printf("schematic_ui_create: ERROR: intgame_big_window_lock failed!\n");
         exit(0);
     }
@@ -392,6 +392,12 @@ void schematic_ui_create()
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = schematic_ui_window;
+    button_data.art_id = TIG_ART_ID_INVALID;
+    button_data.mouse_down_snd_id = -1;
+    button_data.mouse_up_snd_id = -1;
+    button_data.mouse_enter_snd_id = -1;
+    button_data.mouse_exit_snd_id = -1;
+
     button_data.x = stru_5CA920[0].x;
     button_data.y = stru_5CA920[0].y;
     button_data.width = stru_5CA920[0].width;
