@@ -144,7 +144,7 @@ void fate_ui_create()
     window_data.flags = TIG_WINDOW_FLAG_0x02;
     window_data.rect = window_rect;
     window_data.message_filter = fate_ui_message_filter;
-    if (!tig_window_create(&window_data, &fate_ui_window)) {
+    if (tig_window_create(&window_data, &fate_ui_window) != TIG_OK) {
         tig_debug_printf("fate_ui_create: ERROR: window create failed!\n");
         exit(0);
     }
