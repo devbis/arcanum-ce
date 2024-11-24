@@ -787,7 +787,7 @@ void sub_40FED0()
 bool map_get_name(int map, char** name)
 {
     if (map > 0 && map <= map_list_info_count) {
-        *name = map_list_info[map].name;
+        *name = map_list_info[map - 1].name;
         return true;
     } else {
         *name = NULL;
