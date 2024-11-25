@@ -95,9 +95,9 @@ void settings_add(Settings* settings, const char* key, const char* default_value
     if (entry != NULL) {
         entry->value_changed_func = value_changed_func;
     } else {
-        entry = (SettingsEntry*)malloc(sizeof(*entry));
-        entry->key = _strdup(key);
-        entry->value = _strdup(default_value);
+        entry = (SettingsEntry*)MALLOC(sizeof(*entry));
+        entry->key = STRDUP(key);
+        entry->value = STRDUP(default_value);
         entry->value_changed_func = value_changed_func;
         entry->next = settings->entries;
         settings->entries = entry;
@@ -163,8 +163,8 @@ void settings_set_str_value(Settings* settings, const char* key, const char* val
         settings_add(settings, key, value, NULL);
     } else {
         if (strlen(value) < strlen(entry->value)) {
-            free(entry->value);
-            entry->value = _strdup(value);
+            FREE(entry->value);
+            entry->value = STRDUP(value);
         } else {
             memcpy(entry->value, value, strlen(value) + 1);
         }
