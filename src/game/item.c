@@ -681,7 +681,53 @@ int64_t item_find_by_name(int64_t obj, int name)
 // 0x462540
 int64_t sub_462540(int64_t a1, int64_t a2, unsigned int flags)
 {
-    // TODO: Incomplete.
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int idx;
+    int64_t candidate_obj = OBJ_HANDLE_NULL;
+    int64_t item_obj;
+    int inventory_location;
+
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    }
+
+    cnt = obj_field_int32_get(a1, inventory_num_fld);
+    for (idx = 0; idx < cnt; idx++) {
+        item_obj = obj_arrayfield_handle_get(a1, inventory_list_fld, idx);
+        inventory_location = item_inventory_location_get(item_obj);
+
+        if ((flags & 0x01) != 0) {
+            if (inventory_location >= 1000 && inventory_location <= 1008) {
+                continue;
+            }
+        }
+
+        if ((flags & 0x02) != 0) {
+            if (tig_art_item_id_destroyed_get(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID)) != 0) {
+                continue;
+            }
+        }
+
+        if ((flags & 0x04) != 0) {
+            if (obj_field_int32_get(item_obj, OBJ_F_DESCRIPTION) != obj_field_int32_get(a2, OBJ_F_DESCRIPTION)) {
+                continue;
+            }
+        }
+
+        if (inventory_location < 2000 || inventory_location > 2009) {
+            return item_obj;
+        }
+
+        candidate_obj = item_obj;
+    }
+
+    return candidate_obj;
 }
 
 // 0x4626B0
