@@ -574,10 +574,12 @@ int64_t sub_4CFC50(int64_t loc)
 }
 
 // 0x4CFC90
-int64_t sub_4CFC90(int64_t a1)
+int64_t sub_4CFC90(int64_t sector_id)
 {
-    // TODO: Check, probably wrong.
-    return SECTOR_FROM_XY(SECTOR_X(a1), SECTOR_Y(a1));
+    int64_t x = (sector_id & 0x3FFFFFF) << 6;
+    int64_t y = ((sector_id >> 26) & 0x3FFFFFF) << 6;
+
+    return LOCATION_MAKE(x, y);
 }
 
 // 0x4CFCD0
