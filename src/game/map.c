@@ -261,7 +261,7 @@ void map_reset()
 
         dword_5D11EC = 0;
 
-        tig_debug_printf("map_reset: Done.  Total time: %f seconds.\n", (double)tig_timer_elapsed(reset_start) / 1000.0);
+        tig_debug_printf("map_reset: Done.  Total time: %f seconds.\n", (float)(tig_timer_elapsed(reset_start) / 1000.0));
     }
 }
 
@@ -417,7 +417,7 @@ bool map_save(TigFile* stream)
         }
     }
 
-    tig_debug_printf("map_save: Save Complete.  Total time: %f seconds.\n", (double)tig_timer_elapsed(save_start) / 1000.0);
+    tig_debug_printf("map_save: Save Complete.  Total time: %f seconds.\n", (float)(tig_timer_elapsed(save_start) / 1000.0));
 
     return true;
 }
@@ -502,7 +502,7 @@ bool map_load(LoadContext* ctx)
     bool success = map_open(name, folder, 1);
     tig_debug_printf("done.  Time (ms): %d\n", tig_timer_elapsed(start));
 
-    tig_debug_printf("map_load: Load Complete.  Total time: %f seconds.\n", (double)tig_timer_elapsed(load_start) / 1000.0);
+    tig_debug_printf("map_load: Load Complete.  Total time: %f seconds.\n", (float)(tig_timer_elapsed(load_start) / 1000.0));
 
     return success;
 }
@@ -710,7 +710,8 @@ bool map_open(const char* a1, const char* a2, bool a3)
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
 
-    tig_debug_printf("map_open(): Done.  Total time: %f seconds.\n", (float)start_timestamp / 1000.0f);
+    duration = tig_timer_elapsed(start_timestamp);
+    tig_debug_printf("map_open(): Done.  Total time: %f seconds.\n", (float)(duration / 1000.0f));
 
     dword_5D11E8 = 0;
     dword_5D11FC = 1;
