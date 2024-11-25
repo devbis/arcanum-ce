@@ -631,9 +631,11 @@ int sub_462410(object_id_t item_id, int* quantity_field_ptr)
         rc = dword_5B32A0[ammo_type];
         quantity_field = OBJ_F_AMMO_QUANTITY;
         break;
+    default:
+        // NOTE: Original code leave it uninitialized.
+        quantity_field = -1;
+        break;
     }
-
-    // TODO: There is a strange default value at 0x462460.
 
     if (quantity_field_ptr != NULL) {
         *quantity_field_ptr = quantity_field;
