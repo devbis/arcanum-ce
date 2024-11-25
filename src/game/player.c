@@ -133,7 +133,9 @@ void player_create()
         }
     }
 
-    tig_debug_printf("player_create: loc: X: %d, Y: %d\n", LOCATION_GET_X(loc), LOCATION_GET_Y(loc));
+    tig_debug_printf("player_create: loc: X: %d, Y: %d\n",
+        (int)LOCATION_GET_X(loc),
+        (int)LOCATION_GET_Y(loc));
     if (!object_create(qword_5D1150, loc, &pcObj)) {
         tig_debug_printf("player_create: Error: failed to create player!\n");
         exit(EXIT_FAILURE);
@@ -275,7 +277,9 @@ bool player_obj_create_player(PlayerSpec* player_spec)
         }
     }
 
-    tig_debug_printf("player_obj_create_player: StartLoc: X: %d, Y: %d\n", LOCATION_GET_X(loc), LOCATION_GET_Y(loc));
+    tig_debug_printf("player_obj_create_player: StartLoc: X: %d, Y: %d\n",
+        (int)LOCATION_GET_X(loc),
+        (int)LOCATION_GET_Y(loc));
     obj_field_int64_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_DEST, loc);
     obj_field_int32_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
 
