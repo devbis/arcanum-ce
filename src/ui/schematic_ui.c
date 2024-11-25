@@ -924,7 +924,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
             *a3 = true;
         }
 
-        qword_680E28 = item_obj;
+        qword_680E90 = item_obj;
     } else {
         for (index = 0; index < 3; index++) {
             item_obj = sub_4685A0(schematic_info->item2[index]);
@@ -940,7 +940,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
             *a3 = true;
         }
 
-        qword_680E90 = item_obj;
+        qword_680E28 = item_obj;
     }
 
     discipline = obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE);
