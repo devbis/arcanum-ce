@@ -2618,9 +2618,9 @@ bool sub_4B8040(int64_t obj)
 }
 
 // 0x4B80D0
-void sub_4B80D0()
+int sub_4B80D0()
 {
-    // TODO: Incomplete.
+    return dword_5FC230;
 }
 
 // 0x4B80E0
