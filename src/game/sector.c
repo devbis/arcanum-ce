@@ -567,8 +567,10 @@ bool sub_4CF810(unsigned int size)
 // 0x4CFC50
 int64_t sub_4CFC50(int64_t loc)
 {
-    // TODO: Check, probably wrong.
-    return SECTOR_FROM_XY(SECTOR_X(loc), SECTOR_Y(loc) & ~0x03FFFFFF);
+    int64_t x = LOCATION_GET_X(loc);
+    int64_t y = LOCATION_GET_Y(loc);
+
+    return (((y >> 6) & 0x3FFFFFF) << 26) | ((x >> 6) & 0x3FFFFFF);
 }
 
 // 0x4CFC90

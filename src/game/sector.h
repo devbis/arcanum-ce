@@ -82,7 +82,7 @@ void sub_4CF370();
 void sub_4CF390(UnknownContext* info);
 bool sub_4CF790(int64_t a1, int64_t a2);
 void sub_4CF7E0(int64_t* a1, int64_t* a2);
-int64_t sub_4CFC50(int64_t a1);
+int64_t sub_4CFC50(int64_t loc);
 int64_t sub_4CFC90(int64_t a1);
 bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2);
 Sector601808* sub_4D02E0(LocRect* loc_rect);
