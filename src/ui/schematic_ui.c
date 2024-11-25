@@ -912,7 +912,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     if (ingr == 0) {
         for (index = 0; index < 3; index++) {
             item_obj = sub_4685A0(schematic_info->item1[index]);
-            if (sub_462540(qword_680E70, item_obj, 0x7)) {
+            if (sub_462540(qword_680E70, item_obj, 0x7) != OBJ_HANDLE_NULL) {
                 break;
             }
         }
@@ -928,7 +928,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     } else {
         for (index = 0; index < 3; index++) {
             item_obj = sub_4685A0(schematic_info->item2[index]);
-            if (sub_462540(qword_680E70, item_obj, 0x7)) {
+            if (sub_462540(qword_680E70, item_obj, 0x7) != OBJ_HANDLE_NULL) {
                 break;
             }
         }
@@ -949,9 +949,9 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
 
     if (*a4) {
         if (*a3) {
-            tig_art_interface_id_create(831u, 0, 0, 0, &(art_blit_info.art_id));
+            tig_art_interface_id_create(831, 0, 0, 0, &(art_blit_info.art_id));
         } else {
-            tig_art_interface_id_create(830u, 0, 0, 0, &(art_blit_info.art_id));
+            tig_art_interface_id_create(830, 0, 0, 0, &(art_blit_info.art_id));
         }
 
         art_blit_info.flags = 0;
