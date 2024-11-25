@@ -754,7 +754,7 @@ void sub_56DDC0()
     int schematic;
     SchematicInfo schematic_info;
     long long obj;
-    char discipline[2];
+    char icon[2];
     bool v1;
     bool v2;
     bool v3;
@@ -802,8 +802,8 @@ void sub_56DDC0()
     src_rect.height = art_frame_data.height;
     blit_info.src_rect = &src_rect;
 
-    dst_rect.x = 146;
-    dst_rect.y = 240;
+    dst_rect.x = 240;
+    dst_rect.y = 146;
     dst_rect.width = art_frame_data.width;
     dst_rect.height = art_frame_data.height;
     blit_info.dst_rect = &dst_rect;
@@ -819,8 +819,8 @@ void sub_56DDC0()
     font.width = 0;
     sub_535390(&font);
 
-    src_rect.x = 219;
-    src_rect.y = 71;
+    src_rect.x = 261;
+    src_rect.y = 30;
     src_rect.width = font.width;
     src_rect.height = font.height;
 
@@ -844,10 +844,10 @@ void sub_56DDC0()
     tig_window_text_write(schematic_ui_window, mes_file_entry.str, &src_rect);
     tig_font_pop();
 
-    //
+    // Render icon.
     obj = sub_4685A0(schematic_info.prod[0]);
-    discipline[0] = (char)obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
-    discipline[1] = '\0';
+    icon[0] = (char)obj_field_int32_get(obj, OBJ_F_ITEM_DISCIPLINE) + '0';
+    icon[1] = '\0';
 
     tig_font_push(dword_680E8C);
 
@@ -856,7 +856,7 @@ void sub_56DDC0()
     src_rect.width = 100;
     src_rect.height = 100;
 
-    tig_window_text_write(schematic_ui_window, mes_file_entry.str, &src_rect);
+    tig_window_text_write(schematic_ui_window, icon, &src_rect);
     tig_font_pop();
 
     //
