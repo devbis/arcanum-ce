@@ -1422,6 +1422,8 @@ bool sub_4D1A30(int64_t id, Sector* sector)
             } else {
                 tig_debug_printf("Error opening sector differences file %s\n", dif_path);
             }
+        } else {
+            dif_stream = NULL;
         }
 
         li_update();
