@@ -8,6 +8,7 @@
 #include "game/timeevent.h"
 #include "game/ui.h"
 
+static bool anim_allocate_this_run_index(AnimID* anim_id);
 static bool sub_44D240(int index);
 
 // 0x5A5978
@@ -250,9 +251,73 @@ bool sub_44CCB0(AnimID* anim_id)
 }
 
 // 0x44CDA0
-void sub_44CDA0()
+bool anim_allocate_this_run_index(AnimID* anim_id)
 {
-    // TODO: Incomplete.
+    int slot;
+    AnimRunInfo* run_info;
+    int idx;
+
+    ASSERT(anim_id->slot_num != -1); // 2886, "!anim_id_none(pAnimID)"
+
+    if (anim_id->slot_num == -1) {
+        tig_debug_printf("Anim: WARNING: Animation slots Force Alloc FAILED!\n");
+        return false;
+    }
+
+    for (slot = 0; slot < 216; slot++) {
+        run_info = &(anim_run_info[slot]);
+        if (run_info->id.field_4 == anim_id->field_4) {
+            if ((run_info->field_C & 0x1) != 0
+                && !sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST)) {
+                tig_debug_printf("Anim: WARNING(uniqueID): Animation slots Force Alloc INTERRUPT FAILED!\n");
+                return false;
+            }
+
+            anim_id->field_4 = slot;
+            anim_id->field_8 = 0;
+            break;
+        }
+    }
+
+    if (slot == 216) {
+        if (anim_id->slot_num >= 0
+            && anim_id->slot_num < 216
+            && (anim_run_info[anim_id->slot_num].field_C & 0x1) != 0) {
+            for (slot = 0; slot < 216; slot++) {
+                run_info = &(anim_run_info[slot]);
+                if ((run_info->field_C & 0x1) == 0) {
+                    anim_id->slot_num = slot;
+                    anim_id->field_8 = 0;
+                    break;
+                }
+            }
+
+            if (slot == 216) {
+                tig_debug_printf("Anim: anim_allocate_this_run_index: could not allocate a run index, ALL FULL!.\n");
+                return false;
+            }
+        }
+    }
+
+    run_info = &(anim_run_info[slot]);
+    run_info->id = *anim_id;
+    run_info->field_C = 0x1;
+    run_info->path.maxPathLength = 0;
+    run_info->cur_stack_data = NULL;
+    run_info->current_goal = -1;
+    run_info->goals[0].params[AGDATA_SELF_OBJ].obj = OBJ_HANDLE_NULL;
+    run_info->goals[0].params[AGDATA_TARGET_OBJ].obj = OBJ_HANDLE_NULL;
+    run_info->goals[0].params[AGDATA_BLOCK_OBJ].obj = OBJ_HANDLE_NULL;
+    run_info->goals[0].params[AGDATA_SCRATCH_OBJ].obj = OBJ_HANDLE_NULL;
+    run_info->goals[0].params[AGDATA_PARENT_OBJ].obj = OBJ_HANDLE_NULL;
+
+    for (idx = 0; idx < 5; idx++) {
+        run_info->goals[0].field_B0[idx].objid.type = OID_TYPE_NULL;
+    }
+
+    dword_5E3500++;
+
+    return true;
 }
 
 // 0x44CF20
