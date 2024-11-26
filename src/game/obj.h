@@ -788,6 +788,7 @@ bool obj_read(TigFile* stream, int64_t* obj_handle_ptr);
 void sub_4066B0(uint8_t** a1, int* a2, int64_t obj);
 int sub_4067C0(int64_t obj);
 bool obj_dif_write(TigFile* stream, int64_t obj_handle);
+bool obj_dif_read(TigFile* stream, int64_t obj);
 void sub_406B80(int64_t obj_handle);
 int obj_field_int32_get(object_id_t obj_handle, int field);
 void obj_field_int32_set(object_id_t obj_handle, int field, int value);

@@ -943,6 +943,91 @@ bool obj_dif_write(TigFile* stream, int64_t obj_handle)
     return written;
 }
 
+// 0x406930
+bool obj_dif_read(TigFile* stream, int64_t obj)
+{
+    Object* object;
+    unsigned int marker;
+    ObjectID oid;
+    int cnt;
+    int idx;
+
+    if ((obj_field_int32_get(obj, OBJ_F_INTERNAL_FLAGS) & 0x1) == 0) {
+        tig_debug_println("Error in obj_dif_read:\n  The object in memory that is having difs loaded is not currently storing ids.\n  We are in danger of mixing ids and handles.");
+        return false;
+    }
+
+    object = obj_lock(obj);
+
+    if (!obj_check_version_stream(stream)) {
+        tig_debug_println("Error in obj_dif_read:\n  Object version mismatch.");
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_read_raw(&marker, sizeof(marker), stream)) {
+        tig_debug_println("Error in obj_dif_read:\n  Unable to read start marker.");
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (marker != 0x12344321) {
+        tig_debug_println("Error in obj_dif_read:\n  Start marker mismatch.");
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (!obj_read_raw(&oid, sizeof(oid), stream)) {
+        tig_debug_println("Error in obj_dif_read:\n  Unable to read id.");
+        obj_unlock(obj);
+        return false;
+    }
+
+    if (object->field_8.type != OID_TYPE_NULL) {
+        if (!objid_is_equal(object->field_8, oid)) {
+            tig_debug_println("Error in obj_dif_read:\n  Object in memory already has an id, and dif would change the id.");
+            obj_unlock(obj);
+            return false;
+        }
+    } else if (oid.type > 0 && oid.type < 4) {
+        sub_4E4FD0(oid, obj);
+    }
+
+    cnt = sub_40C030(object->type);
+    for (idx = 0; idx < cnt; idx++) {
+        if (obj_read_raw(&(object->field_4C[idx]), 4, stream)) {
+            tig_debug_println("Error in obj_dif_read:\n  Unable to read one of the modified flag vars.");
+            obj_unlock(obj);
+            return false;
+        }
+    }
+
+    object->modified = true;
+
+    dword_5D110C = stream;
+    if (!sub_40CEF0(object, object_field_read_if_dif)) {
+        tig_debug_println("Error in obj_dif_read:\n  Unable to read one of the fields.");
+        obj_unlock(obj);
+        return false;
+    }
+
+    obj_unlock(obj);
+
+    if (!obj_read_raw(&marker, sizeof(marker), stream)) {
+        tig_debug_println("Error in obj_dif_read:\n  Unable to read the end marker");
+        return false;
+    }
+
+    if (marker != 0x23455432) {
+        tig_debug_printf("Error in obj_dif_read:\n  End marker mismatch.  File position after read is %X.\n", tig_file_ftell(stream));
+        return false;
+    }
+
+    obj_find_move(obj);
+
+    return true;
+}
+
 // 0x406B80
 void sub_406B80(int64_t obj_handle)
 {
