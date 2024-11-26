@@ -494,7 +494,6 @@ int sub_44D340(int slot, int64_t obj)
     }
 
     return -1;
-    // TODO: Incomplete.
 }
 
 // 0x44D3B0
