@@ -7752,10 +7752,54 @@ bool sub_431E50(AnimRunInfo* run_info)
     // TODO: Incomplete.
 }
 
+// NOTE: Binary identical to 0x431A40.
+//
 // 0x4321C0
 bool sub_4321C0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int overlay_fore;
+    int overlay_back;
+    int overlay_light;
+
+    obj = run_info->params[0].obj;
+    ASSERT(obj != OBJ_HANDLE_NULL); // 13671, "obj != OBJ_HANDLE_NULL"
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data &= ~0x40;
+    if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x80) != 0) {
+        return false;
+    }
+
+    overlay_fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    overlay_back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
+    overlay_light = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data;
+
+    if (overlay_fore != -1 || overlay_back != -1) {
+        if (overlay_back != -5) {
+            if (overlay_fore != -1) {
+                sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, overlay_fore, -1);
+            }
+            if (overlay_back != -1) {
+                sub_43ECF0(obj, OBJ_F_OVERLAY_BACK, overlay_back, -1);
+            }
+        } else {
+            sub_43ECF0(obj, OBJ_F_UNDERLAY, overlay_fore, -1);
+        }
+        if (overlay_light == -1) {
+            return true;
+        }
+    } else {
+        if (overlay_light == -1) {
+            return false;
+        }
+    }
+
+    object_set_overlay_light(obj, overlay_light, 0, TIG_ART_ID_INVALID, 0);
+
+    return true;
 }
 
 // 0x4322A0
