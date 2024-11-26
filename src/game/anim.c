@@ -8474,9 +8474,54 @@ bool sub_4357B0(int64_t obj)
 }
 
 // 0x435870
-void sub_435870()
+bool sub_435870(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_art_id, int a4, int a5, int64_t target_obj, int64_t target_loc, int64_t weapon_obj)
 {
-    // TODO: Incomplete.
+    AnimGoalData goal_data;
+    int64_t loc;
+    int rotation;
+    AnimFxListEntry* v1;
+    int projectile_speed;
+
+    if (missile_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (!sub_424070(missile_obj, 4, false, true)) {
+        return false;
+    }
+
+    if (!sub_44D4E0(&goal_data, missile_obj, AG_PROJECTILE)) {
+        return false;
+    }
+
+    loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    rotation = sub_4B6A00(loc, target_loc);
+    sub_4EDCE0(missile_obj, sub_4B6B10(missile_art_id, rotation));
+
+    // FIXME: Useless.
+    tig_art_id_rotation_get(obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID));
+
+    goal_data.params[AGDATA_TARGET_OBJ].obj = target_obj;
+    goal_data.params[AGDATA_PARENT_OBJ].obj = source_obj;
+    goal_data.params[AGDATA_SCRATCH_OBJ].obj = target_obj;
+    goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
+    goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
+    goal_data.params[AGDATA_SCRATCH_VAL4].data = missile_art_id;
+
+    if (weapon_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+        && animfx_id_get(&stru_5DE610, 5 * sub_49B290(weapon_obj) - 30143, &v1)) {
+        projectile_speed = v1->projectile_speed;
+    } else {
+        projectile_speed = 0;
+    }
+    goal_data.params[AGDATA_SCRATCH_VAL5].data = projectile_speed;
+
+    if (!sub_44D520(&goal_data, &stru_5A1908)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x435A00

@@ -65,6 +65,7 @@ bool sub_4350F0(int64_t obj, int64_t a2, int64_t a3, int a6, int a7);
 bool sub_4352C0(int64_t obj, int64_t a2, int64_t a4, int a5, int a6);
 bool sub_435450(int64_t obj, int64_t a2, int64_t a3, unsigned int a4);
 bool sub_4355F0(int64_t obj, int64_t a2, int64_t a3, unsigned int flags);
+bool sub_435870(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_art_id, int a4, int a5, int64_t target_obj, int64_t target_loc, int64_t weapon_obj);
 bool sub_435A90(int64_t obj);
 bool sub_435BD0(int64_t critter_obj);
 bool sub_435CE0(int64_t obj);
