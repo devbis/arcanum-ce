@@ -528,6 +528,10 @@ bool sub_44D3B0(AnimGoalData* goal_data, int64_t obj, int goal_type, bool a4)
     goal_data->params[AGDATA_SCRATCH_VAL6].data = 0;
     goal_data->params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
 
+    if (!a4) {
+        return true;
+    }
+
     goal_node = off_5B03D0[goal_type];
 
     ASSERT(goal_node != NULL); // pGoalNode != NULL
