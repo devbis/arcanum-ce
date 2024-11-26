@@ -7888,7 +7888,20 @@ void sub_433170(int64_t obj)
 // 0x433220
 void sub_433220(int64_t obj)
 {
-    // TODO: Incomplete.
+    int idx;
+    tig_art_id_t art_id;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    for (idx = 0; idx < 7; idx++) {
+        art_id = sub_407470(obj, OBJ_F_OVERLAY_FORE, idx);
+        if (tig_art_num_get(art_id) == 0) {
+            sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, idx, TIG_ART_ID_INVALID);
+            break;
+        }
+    }
 }
 
 // 0x433270
