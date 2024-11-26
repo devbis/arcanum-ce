@@ -666,7 +666,7 @@ bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int 
     run_info->goals[0] = *goal_data;
     run_info->cur_stack_data = &(run_info->goals[0]);
     for (idx = 0; idx < 5; idx++) {
-        sub_443EB0(run_info->goals[0].params[idx].obj, &(run_info->goals[0].field_B0));
+        sub_443EB0(run_info->goals[0].params[idx].obj, &(run_info->goals[0].field_B0[idx]));
     }
     sub_44C840(run_info, off_5B03D0[run_info->goals[0].type]);
     sub_423E60("GoalAdd");
