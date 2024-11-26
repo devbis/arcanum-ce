@@ -1012,16 +1012,19 @@ bool sub_45B800(TimeEvent* timeevent, DateTime* datetime)
 }
 
 // 0x45B820
-void sub_45B820(TimeEvent* timeevent)
+bool sub_45B820(TimeEvent* timeevent)
 {
     DateTime datetime;
+    bool rc;
 
     dword_5E8620 = true;
 
     sub_45A950(&datetime, 0);
-    sub_45B800(timeevent, &datetime);
+    rc = sub_45B800(timeevent, &datetime);
 
     dword_5E8620 = false;
+
+    return rc;
 }
 
 // 0x45B860

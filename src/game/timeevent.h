@@ -143,7 +143,7 @@ void sub_45B340();
 void sub_45B360();
 void timeevent_ping(tig_timestamp_t timestamp);
 bool sub_45B800(TimeEvent* timeevent, DateTime* datetime);
-void sub_45B820(TimeEvent* timeevent);
+bool sub_45B820(TimeEvent* timeevent);
 bool sub_45B860(TimeEvent* timeevent, DateTime* datetime);
 bool sub_45B880(TimeEvent* timeevent, DateTime* datetime, DateTime* a3);
 bool sub_45BA30(TimeEvent* timeevent, DateTime* datetime, DateTime* a3, DateTime* a4);

@@ -24,7 +24,7 @@ static AnimID stru_5E3000;
 bool dword_5E34F4;
 
 // 0x5E34F8
-void(*dword_5E34F8)();
+void (*dword_5E34F8)();
 
 // 0x5E34FC
 bool in_anim_load;
@@ -550,11 +550,11 @@ bool sub_44D500(AnimGoalData* anim_data, int64_t obj, int goal_type)
 // 0x44D520
 bool sub_44D520(AnimGoalData* anim_data, AnimID* anim_id)
 {
-    return sub_44D540(anim_data, anim_id, false);
+    return sub_44D540(anim_data, anim_id, 0);
 }
 
 // 0x44D540
-bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, bool a3)
+bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, unsigned int flags)
 {
     Packet5 pkt;
     int index;
@@ -565,7 +565,7 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, bool a3)
     }
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
-        return sub_44D730(anim_data, anim_id, 1, a3);
+        return sub_44D730(anim_data, anim_id, true, flags);
     }
 
     if (sub_45B300()
@@ -579,7 +579,7 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, bool a3)
     pkt.offset_x = obj_field_int32_get(anim_data->params[AGDATA_SELF_OBJ].obj, OBJ_F_OFFSET_X);
     pkt.offset_y = obj_field_int32_get(anim_data->params[AGDATA_SELF_OBJ].obj, OBJ_F_OFFSET_Y);
     pkt.field_8 = sub_45A7C0();
-    pkt.field_1A4 = a3;
+    pkt.field_1A4 = flags;
     sub_421DE0(&(pkt.field_198));
     for (index = 0; index < 5; index++) {
         sub_443EB0(anim_data->params[index].obj, &(anim_data->field_B0[index]));
@@ -588,7 +588,7 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, bool a3)
     pkt.field_10 = *anim_data;
 
     if ((tig_net_flags & TIG_NET_HOST) != 0) {
-        if (!sub_44D730(anim_data, &v1, 1, a3)) {
+        if (!sub_44D730(anim_data, &v1, true, flags)) {
             return false;
         }
 
@@ -609,9 +609,81 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, bool a3)
 }
 
 // 0x44D730
-bool sub_44D730(AnimGoalData *anim_data, AnimID *anim_id, bool a3, bool a4)
+bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int flags)
 {
-    // TODO: Incomplete.
+    AnimID new_anim_id;
+    AnimRunInfo* run_info;
+    int idx;
+    TimeEvent timeevent;
+    DateTime datetime;
+
+    ASSERT(goal_data != NULL); // 3527, "pGoalRegData != NULL"
+    ASSERT(goal_data->type < ANIM_GOAL_MAX); // 3528, "pGoalRegData->goal_type < anim_goal_max"
+
+    if (in_anim_load) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(goal_data->params[AGDATA_SELF_OBJ].obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return false;
+    }
+
+    if (a3) {
+        if (!sub_44CCB0(&new_anim_id)) {
+            return false;
+        }
+
+        if (anim_id != NULL) {
+            *anim_id = new_anim_id;
+        }
+    } else {
+        ASSERT(anim_id != NULL); // 3551, "pAnimID != NULL"
+
+        new_anim_id = *anim_id;
+        if (!anim_allocate_this_run_index(&new_anim_id)) {
+            return false;
+        }
+    }
+
+    if (new_anim_id.slot_num == -1) {
+        if (anim_id != NULL) {
+            anim_id->slot_num = -1;
+            anim_id->field_4 = new_anim_id.field_4;
+            anim_id->field_8 = new_anim_id.field_8;
+        }
+        return false;
+    }
+
+    run_info = &(anim_run_info[new_anim_id.slot_num]);
+    run_info->current_goal = 0;
+    run_info->field_10 = 0;
+    run_info->field_14 = -1;
+    run_info->field_20 = goal_data->params[AGDATA_SELF_OBJ].obj;
+    run_info->field_C |= flags;
+    run_info->goals[0] = *goal_data;
+    run_info->cur_stack_data = &(run_info->goals[0]);
+    for (idx = 0; idx < 5; idx++) {
+        sub_443EB0(run_info->goals[0].params[idx].obj, &(run_info->goals[0].field_B0));
+    }
+    sub_44C840(run_info, off_5B03D0[run_info->goals[0].type]);
+    sub_423E60("GoalAdd");
+    if ((goal_data->type == AG_ATTACK
+            || goal_data->type == AG_ATTEMPT_ATTACK)
+        && player_is_pc_obj(run_info->field_20)) {
+        sub_460280(run_info->goals[0].params[AGDATA_TARGET_OBJ].obj);
+    }
+
+    timeevent.type = TIMEEVENT_TYPE_ANIM;
+    timeevent.params[0].integer_value = new_anim_id.slot_num;
+    timeevent.params[1].integer_value = new_anim_id.field_4;
+    timeevent.params[2].integer_value = 3333;
+    sub_45A950(&datetime, 5);
+
+    if (!sub_4B6D70() || sub_4B6D80() == run_info->field_20) {
+        return sub_45B800(&timeevent, &datetime);
+    } else {
+        return sub_45B820(&timeevent);
+    }
 }
 
 // 0x44D9B0
@@ -621,7 +693,7 @@ void anim_subgoal_add_func()
 }
 
 // 0x44DBE0
-void sub_44DBE0(AnimID anim_id, AnimGoalData *goal_data)
+void sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
 {
     // TODO: Incomplete.
 }
@@ -771,7 +843,6 @@ bool sub_44E8C0(int64_t obj, AnimID* anim_id)
     }
 
     return false;
-
 }
 
 // 0x44E940
