@@ -414,6 +414,21 @@ int sub_44D2F0(int64_t obj)
 // 0x44D340
 int sub_44D340(int slot, int64_t obj)
 {
+    slot++;
+    AnimRunInfo* run_info;
+
+    for (; slot < 216; slot++) {
+        run_info = &(anim_run_info[slot]);
+        if ((run_info->field_C & 0x1) != 0
+            && (run_info->field_C & 0x2) == 0
+            && run_info->current_goal > -1
+            && run_info->id.slot_num != -1
+            && run_info->field_20 == obj) {
+            return slot;
+        }
+    }
+
+    return -1;
     // TODO: Incomplete.
 }
 
