@@ -25,6 +25,7 @@ bool anim_save(TigFile* stream);
 bool anim_load(GameLoadInfo* load_info);
 void sub_4232F0();
 bool sub_423300(int64_t obj, AnimID* anim_id);
+int sub_4233D0(int64_t obj);
 bool sub_423470(int64_t obj);
 bool anim_timeevent_process(TimeEvent* timeevent);
 void sub_423E60(const char* msg);

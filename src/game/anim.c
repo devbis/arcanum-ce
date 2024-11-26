@@ -3579,9 +3579,27 @@ bool sub_423300(int64_t obj, AnimID* anim_id)
 }
 
 // 0x4233D0
-void sub_4233D0()
+int sub_4233D0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int prev = -1;
+    int slot;
+    AnimGoalNode *goal_node;
+
+    slot = sub_44D2F0(obj);
+    while (slot != -1 && slot != prev) {
+        prev = slot;
+
+        goal_node = off_5B03D0[anim_run_info[slot].goals[0].type];
+        ASSERT(goal_node != NULL); // 1383, "pGoalNode != NULL"
+
+        if (!goal_node->field_8) {
+            return goal_node->priority_level;
+        }
+
+        slot = sub_44D340(slot, obj);
+    }
+
+    return 0;
 }
 
 // 0x423470
