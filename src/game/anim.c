@@ -73,6 +73,7 @@ static bool sub_425740(AnimRunInfo* run_info);
 static void sub_4257E0(int64_t obj, unsigned int* flags_ptr);
 static bool sub_425840(int64_t a1, int64_t a2, int64_t a3, int a4, int64_t a5);
 static bool sub_425930(AnimRunInfo* run_info);
+static bool sub_425BF0(PathCreateInfo* path_create_info, bool a2);
 static bool sub_425D60(AnimRunInfo* run_info);
 static bool sub_426040(AnimRunInfo* run_info);
 static bool sub_426840(AnimRunInfo* run_info);
@@ -4387,9 +4388,42 @@ bool sub_425930(AnimRunInfo* run_info)
 }
 
 // 0x425BF0
-void sub_425BF0()
+bool sub_425BF0(PathCreateInfo* path_create_info, bool a2)
 {
-    // TODO: Incomplete.
+    ASSERT(path_create_info != NULL); // 3923, "pPathData != NULL"
+    ASSERT(path_create_info->obj != OBJ_HANDLE_NULL); // 3924, "pPathData->movingObj != OBJ_HANDLE_NULL"
+
+    if (obj_type_is_critter(obj_field_int32_get(path_create_info->obj, OBJ_F_TYPE))) {
+        if ((obj_field_int32_get(path_create_info->obj, OBJ_F_SPELL_FLAGS) & OSF_ENTANGLED) != 0) {
+            return false;
+        }
+
+        if (!critter_can_open_portals(path_create_info->obj)) {
+            path_create_info->field_20 |= 0x0002;
+        }
+
+        if (!sub_45F570(path_create_info->obj)) {
+            path_create_info->field_20 |= 0x0004;
+        }
+
+        if (critter_is_concealed(path_create_info->obj)
+            && basic_skill_get_training(path_create_info->obj, BASIC_SKILL_PROWLING) <= 0) {
+            path_create_info->field_20 |= 0x0200;
+        }
+
+        if (sub_43D6D0(path_create_info->obj, 1, false) < 45
+            && stat_level(path_create_info->obj, STAT_STRENGTH) != 0) {
+            path_create_info->field_20 |= 0x0400;
+        }
+
+        if (a2) {
+            if (!combat_critter_is_combat_mode_active(path_create_info->obj)) {
+                path_create_info->field_20 |= 0x0010;
+            }
+        }
+    }
+
+    return true;
 }
 
 // 0x425D60
