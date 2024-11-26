@@ -3509,7 +3509,62 @@ void anim_save_nodes_to_map(const char* map)
 // 0x4230A0
 void anim_load_nodes_from_map(const char* map)
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    int cnt;
+    int idx;
+    AnimID anim_id;
+    AnimRunInfo run_info;
+
+    sprintf(path, "Save\\Current\\maps\\%s\\Anim.dat", map);
+
+    if (!tig_file_exists(path, NULL)) {
+        return;
+    }
+
+    stream = tig_file_fopen(path, "rb");
+    if (stream == NULL) {
+        tig_debug_printf("Anim: anim_load_nodes_from_map: ERROR: Couldn't open TimeEvent data file for map!\n");
+        ASSERT(0); // 1255, "0"
+        return;
+    }
+
+    if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
+        tig_debug_printf("Anim: anim_load_nodes_from_map: ERROR: Reading Header to data file for map!\n");
+        tig_file_fclose(stream);
+        ASSERT(0); // 1264, "0"
+        return;
+    }
+
+    for (idx = 0; idx < cnt; idx++) {
+        if (!sub_4227F0(&run_info, stream)) {
+            break;
+        }
+
+        if ((anim_run_info[run_info.id.slot_num].field_C & 0x1) != 0) {
+            if (!sub_44CCB0(&anim_id)) {
+                tig_debug_printf("Anim: anim_load_nodes_from_map: ERROR: Failed to allocate a run slot!\n");
+                ASSERT(0); // 1282, "0"
+                break;
+            }
+        } else {
+            anim_id = run_info.id;
+        }
+
+        anim_run_info[anim_id.slot_num] = run_info;
+        anim_run_info[anim_id.slot_num].id = anim_id;
+        anim_run_info[anim_id.slot_num].cur_stack_data = &(anim_run_info[anim_id.slot_num].goals[anim_run_info[anim_id.slot_num].current_goal]);
+        anim_goal_restart(&anim_id);
+    }
+
+    tig_file_fclose(stream);
+
+    if (idx < cnt) {
+        tig_debug_printf("Anim: anim_load_nodes_from_map: ERROR: Failed to load all nodes!\n");
+        ASSERT(0); // 1307, "0"
+    }
+
+    tig_file_remove(path);
 }
 
 // 0x4232F0
