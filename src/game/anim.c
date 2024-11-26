@@ -6765,7 +6765,21 @@ bool sub_42CAA0(AnimRunInfo* run_info)
 // 0x42CAC0
 bool sub_42CAC0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    AnimGoalData* goal_data;
+    int64_t self_obj;
+    int64_t parent_obj;
+
+    goal_data = run_info->cur_stack_data;
+    if (goal_data != NULL) {
+        self_obj = goal_data->params[AGDATA_SELF_OBJ].obj;
+        parent_obj = goal_data->params[AGDATA_PARENT_OBJ].obj;
+        if (self_obj != OBJ_HANDLE_NULL
+            && (obj_field_int32_get(self_obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
+            sub_4B2650(self_obj, parent_obj, NULL);
+        }
+    }
+
+    return true;
 }
 
 // 0x42CB10
