@@ -4548,7 +4548,33 @@ bool sub_4268F0(AnimRunInfo* run_info)
 // 0x4269D0
 bool sub_4269D0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 4738, "obj != OBJ_HANDLE_NULL"
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    run_info->field_14 = run_info->current_goal;
+
+    if (run_info->params[1].loc == 0
+        || run_info->params[1].loc == -1) {
+        return false;
+    }
+
+    run_info->path.max = sub_4201C0(obj_field_int64_get(obj, OBJ_F_LOCATION),
+        run_info->params[1].loc,
+        run_info->path.rotations);
+    if (run_info->path.max == 0) {
+        return false;
+    }
+
+    run_info->path.curr = 0;
+    run_info->path.flags &= ~0x03;
+
+    return true;
 }
 
 // 0x426A80
