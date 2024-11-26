@@ -7967,9 +7967,33 @@ bool sub_433440(int64_t obj, int rotation)
 }
 
 // 0x433580
-void sub_433580()
+bool sub_433580(int64_t obj)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    int goal_type;
+    AnimGoalData goal_data;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (sub_423300(obj, NULL)) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    goal_type = (obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & OSCF_IS_FIRE)
+        ? AG_ANIMATE_LOOP_FIRE_DMG
+        : AG_ANIMATE_LOOP;
+    sub_44D4E0(&goal_data, obj, goal_type);
+    goal_data.params[AGDATA_ANIM_ID].data = art_id;
+    if (!sub_44D520(&goal_data, &stru_5A1908)) {
+        return false;
+    }
+
+    anim_run_info[stru_5A1908.slot_num].goals[0].params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
+
+    return true;
 }
 
 // 0x433640
