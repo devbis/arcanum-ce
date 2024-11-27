@@ -435,9 +435,33 @@ int area_get_nearest_known_area(int64_t loc, int64_t pc_obj, int64_t range)
 }
 
 // 0x4CB4D0
-int sub_4CB4D0(int64_t location, bool a2)
+int sub_4CB4D0(int64_t loc, bool a2)
 {
-    // TODO: Incomplete.
+    int area;
+    int nearest_area;
+    int64_t nearest_distance;
+    int64_t distance;
+    int64_t radius;
+
+    // NOTE: Original code is different.
+    nearest_area = AREA_UNKNOWN;
+    nearest_distance = 99999;
+
+    for (area = 1; area < area_count; area++) {
+        radius = area_radiuses[area];
+        if (a2 && radius <= 0) {
+            radius = 64;
+        }
+
+        distance = sub_4B96F0(area_get_location(area), loc);
+        if (distance < radius
+            && distance < nearest_distance) {
+            nearest_area = area;
+            nearest_distance = distance;
+        }
+    }
+
+    return nearest_area;
 }
 
 // 0x4CB630
