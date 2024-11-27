@@ -9,6 +9,7 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
+#include "game/multiplayer.h"
 #include "game/obj_private.h"
 #include "game/object.h"
 #include "game/player.h"
@@ -1264,9 +1265,44 @@ bool sub_463370(int64_t obj, int key_id)
 }
 
 // 0x463540
-bool sub_463540(int64_t obj)
+bool sub_463540(int64_t container_obj)
 {
-    // TODO: Incomplete.
+    // 0x5E8824
+    static bool dword_5E8824;
+
+    bool rc = false;
+    int cnt;
+    int64_t item_obj;
+    int64_t loc;
+
+    if (dword_5E8824) {
+        return false;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && sub_4A5460(container_obj)) {
+        return false;
+    }
+
+    dword_5E8824 = true;
+    if (sub_49B290(container_obj) == 3023) {
+        cnt = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_INVENTORY_NUM);
+        if (cnt == 0) {
+            sub_43CCA0(container_obj);
+            rc = true;
+        } else if (cnt == 1) {
+            item_obj = obj_arrayfield_handle_get(container_obj, OBJ_F_CONTAINER_INVENTORY_LIST_IDX, 0);
+            item_remove(item_obj);
+
+            loc = obj_field_int64_get(container_obj, OBJ_F_LOCATION);
+            sub_43CCA0(container_obj);
+            sub_466E50(item_obj, loc);
+            rc = true;
+        }
+    }
+    dword_5E8824 = false;
+
+    return rc;
 }
 
 // 0x463630
