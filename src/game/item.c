@@ -1831,9 +1831,57 @@ int64_t item_gold_obj(int64_t obj)
 }
 
 // 0x464830
-bool sub_464830(int64_t a1, int64_t a2, int a3, int64_t a4)
+bool sub_464830(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_obj)
 {
-    // TODO: Incomplete.
+    int from_qty;
+    int to_qty;
+    int64_t loc;
+
+    if (qty != 0) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) == 0) {
+            return false;
+        }
+
+        if (from_obj != OBJ_HANDLE_NULL) {
+            if (gold_obj == OBJ_HANDLE_NULL) {
+                gold_obj = item_gold_obj(from_obj);
+            }
+
+            if (gold_obj != OBJ_HANDLE_NULL) {
+                from_qty = obj_field_int32_get(gold_obj, OBJ_F_GOLD_QUANTITY);
+                if (from_qty < qty) {
+                    return false;
+                }
+
+                if (to_obj != OBJ_HANDLE_NULL) {
+                    sub_441980(to_obj, gold_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
+                }
+
+                if (from_qty == qty) {
+                    sub_43CCA0(gold_obj);
+                } else {
+                    sub_4EFDD0(gold_obj, OBJ_F_GOLD_QUANTITY, from_qty - qty);
+                }
+            }
+        }
+
+        if (to_obj != OBJ_HANDLE_NULL) {
+            gold_obj = item_gold_obj(to_obj);
+            if (gold_obj != OBJ_HANDLE_NULL) {
+                to_qty = obj_field_int32_get(gold_obj, OBJ_F_GOLD_QUANTITY);
+                sub_4EFDD0(gold_obj, OBJ_F_GOLD_QUANTITY, to_qty + qty);
+            } else {
+                loc = obj_field_int64_get(to_obj, OBJ_F_LOCATION);
+                gold_obj = item_gold_set(qty, loc);
+                sub_4617F0(gold_obj, to_obj);
+            }
+        }
+
+        sub_4605D0();
+    }
+
+    return true;
 }
 
 // 0x464970
