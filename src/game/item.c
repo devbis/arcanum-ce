@@ -580,13 +580,13 @@ bool sub_461810(int64_t a1, int64_t a2, int inventory_location)
 // 0x461A70
 bool item_drop(int64_t item_obj)
 {
-    item_drop_ex(item_obj, 0);
+    return item_drop_ex(item_obj, 0);
 }
 
 // 0x461A90
 bool item_drop_nearby(int64_t item_obj)
 {
-    item_drop_ex(item_obj, random_between(2, 4));
+    return item_drop_ex(item_obj, random_between(2, 4));
 }
 
 // 0x461AB0
