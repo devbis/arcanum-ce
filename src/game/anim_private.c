@@ -141,6 +141,9 @@ static int dword_5B052C = -1;
 // 0x5E3000
 static AnimID stru_5E3000;
 
+// 0x5E33F8
+static AnimPath stru_5E33F8;
+
 // 0x5E34F4
 bool dword_5E34F4;
 
@@ -1107,9 +1110,26 @@ bool sub_44EAD0(int index)
 }
 
 // 0x44EB40
-void sub_44EB40()
+bool sub_44EB40(int64_t obj, int64_t from, int64_t to)
 {
-    // TODO: Incomplete.
+    ASSERT(obj != OBJ_HANDLE_NULL); // 4489, "obj != OBJ_HANDLE_NULL"
+
+    stru_5E33F8.flags = 1;
+    stru_5E33F8.field_CC = 200;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (to == 0 || to == -1) {
+        return false;
+    }
+
+    if (!sub_426560(obj, from, to, &stru_5E33F8, 0)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x44EBD0
