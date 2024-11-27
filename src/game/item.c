@@ -15,6 +15,7 @@
 #include "game/player.h"
 #include "game/proto.h"
 #include "game/random.h"
+#include "game/reaction.h"
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/stat.h"
@@ -40,6 +41,8 @@ typedef struct ItemRemoveInfo {
 
 static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
+static bool sub_462170(int64_t a1, int64_t a2, int64_t a3);
+static bool sub_462230(int64_t a1, int64_t a2, int64_t a3);
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
 static int64_t item_find_key_ring(int64_t critter_obj);
@@ -689,9 +692,66 @@ bool sub_461F60(object_id_t item_id)
 }
 
 // 0x461F80
-int sub_461F80(int64_t a1, int64_t a2, int64_t a3, int a4)
+int sub_461F80(int64_t a1, int64_t a2, int64_t a3, bool a4)
 {
-    // TODO: Incomplete.
+    int worth;
+    int mult;
+    int v1;
+    int v2;
+    int v3;
+
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GOLD) {
+        if (a4) {
+            return item_gold_get(a1);
+        } else {
+            return 0;
+        }
+    }
+
+    worth = item_worth(a1);
+    if (sub_40DA20(a2)) {
+        if (!a4 && !sub_462170(a1, a2, a3)) {
+            return 0;
+        }
+
+        mult = obj_field_int32_get(a3, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER);
+        if (mult > 100) {
+            worth = worth * (3 * (100 - mult) / 8 + 100) / 100;
+        }
+
+        v1 = worth * (sub_4C62E0(a2, BASIC_SKILL_HAGGLE, a1) / 2 + 50) / 100;
+        v2 = sub_43D600(a1);
+        v3 = sub_43D5A0(a1);
+
+        if (v2 <v3) {
+            v1 = v1 * v2 / v3;
+        }
+
+        if (v1 < 0) {
+            return 0;
+        }
+
+        if (v1 == 1) {
+            return 2;
+        }
+    }
+
+    if (!a4 && !sub_462230(a1, a2, a3)) {
+        return 0;
+    }
+
+    mult = obj_field_int32_get(a3, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER);
+    v1 = sub_4C1150(a2, a3, worth + worth * mult * (100 - sub_4C62E0(a3, BASIC_SKILL_HAGGLE, a1) / 10000));
+
+    if (v1 <= worth) {
+        v1 = worth + 1;
+    }
+
+    if (v1 == 1 || v1 == 2) {
+        v1 = 3;
+    }
+
+    return v1;
 }
 
 // 0x462170
