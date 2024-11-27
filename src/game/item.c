@@ -1482,7 +1482,44 @@ void sub_4639E0(int64_t obj, bool a2)
 // 0x463B30
 void sub_463B30(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int inventory_list_cnt;
+    int idx;
+    int64_t loc;
+    int64_t item_obj;
+
+    if (!inventory_fields_from_obj_type(obj_field_int32_get(obj, OBJ_F_TYPE), &inventory_num_fld, &inventory_list_fld)) {
+        return;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    inventory_list_cnt = obj_arrayfield_length_get(obj, inventory_list_fld);
+    if (cnt != inventory_list_cnt) {
+        tig_debug_printf("Inventory array count does not equal associatednum field on delete.  Array: %d, Field: %d",
+            inventory_list_cnt,
+            cnt);
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+    idx = 0;
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    while (cnt > idx) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, idx);
+
+        if (a2 && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_PERSISTENT) != 0) {
+            idx++;
+        } else {
+            item_force_remove(item_obj, obj);
+            sub_4415C0(item_obj, loc);
+            sub_43CCA0(item_obj);
+        }
+
+        cnt = obj_field_int32_get(obj, inventory_num_fld);
+    }
+
 }
 
 // 0x463C60
