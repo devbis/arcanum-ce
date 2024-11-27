@@ -4222,7 +4222,6 @@ bool sub_425340(AnimRunInfo* run_info)
     int64_t range;
     int64_t source_loc;
     int64_t target_loc;
-    int direction;
 
     source_obj = run_info->params[0].obj;
     target_obj = run_info->params[1].obj;
