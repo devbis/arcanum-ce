@@ -114,6 +114,7 @@ bool sub_4655C0();
 int item_location_get(int64_t obj);
 int64_t sub_465690(int64_t obj, int inventory_location);
 void item_location_set(int64_t obj, int location);
+const char* ammunition_type_get_name(int ammo_type);
 int item_ammo_quantity_get(object_id_t obj, int ammo_type);
 bool item_ammo_move(int64_t from_obj, int64_t to_obj, int qty, int ammo_type, int64_t ammo_obj);
 int64_t item_ammo_create(int quantity, int ammo_type, int64_t obj);
