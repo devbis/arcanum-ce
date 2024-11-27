@@ -1224,7 +1224,7 @@ void sub_463860(int64_t obj, bool a2)
 }
 
 // 0x4639E0
-void sub_4639E0()
+void sub_4639E0(int64_t obj, bool a2)
 {
     // TODO: Incomplete.
 }

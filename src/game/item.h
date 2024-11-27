@@ -88,6 +88,7 @@ int item_get_keys(int64_t obj, int* key_ids);
 bool sub_463370(int64_t obj, int key_id);
 bool sub_463540(int64_t obj);
 void sub_463860(int64_t obj, bool a2);
+void sub_4639E0(int64_t obj, bool a2);
 void sub_463B30(int64_t obj, bool a2);
 void sub_463E20(int64_t obj);
 void sub_4640C0(int64_t obj);
