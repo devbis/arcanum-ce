@@ -1438,7 +1438,45 @@ void sub_463860(int64_t obj, bool a2)
 // 0x4639E0
 void sub_4639E0(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int inventory_list_cnt;
+    int idx;
+    int64_t loc;
+    int64_t item_obj;
+
+    if (sub_49B290(obj) == 3023) {
+        return;
+    }
+
+    if (!inventory_fields_from_obj_type(obj_field_int32_get(obj, OBJ_F_TYPE), &inventory_num_fld, &inventory_list_fld)) {
+        return;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    inventory_list_cnt = obj_arrayfield_length_get(obj, inventory_list_fld);
+    if (cnt != inventory_list_cnt) {
+        tig_debug_printf("Inventory array count does not equal associatednum field on poop.  Array: %d, Field: %d",
+            inventory_list_cnt,
+            cnt);
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+    for (idx = inventory_list_cnt - 1; idx >= 0; idx--) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, idx);
+
+        if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
+            item_force_remove(item_obj, obj);
+
+            if (a2) {
+                sub_466E50(item_obj, loc);
+            } else {
+                sub_4415C0(item_obj, loc);
+            }
+        }
+    }
 }
 
 // 0x463B30
