@@ -1306,9 +1306,42 @@ bool sub_463540(int64_t container_obj)
 }
 
 // 0x463630
-void sub_463630()
+void sub_463630(int64_t obj)
 {
-    // TODO: Incomplete.
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int inventory_list_cnt;
+    int idx;
+    int64_t item_obj;
+    unsigned int flags;
+
+    if (!inventory_fields_from_obj_type(obj_field_int32_get(obj, OBJ_F_TYPE), &inventory_num_fld, &inventory_list_fld)) {
+        return;
+    }
+
+    cnt = obj_field_int32_get(obj, inventory_num_fld);
+    inventory_list_cnt = obj_arrayfield_length_get(obj, inventory_list_fld);
+    if (cnt != inventory_list_cnt) {
+        tig_debug_printf("Inventory array count does not equal associatednum field on inventory marking as summoned.  Array: %d, Field: %d",
+            inventory_list_cnt,
+            cnt);
+    }
+
+    // FIXME: Useless.
+    obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+    for (idx = cnt - 1; idx >= 0; idx--) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, idx);
+
+        flags = obj_field_int32_get(item_obj, OBJ_F_SPELL_FLAGS);
+        flags |= OSF_SUMMONED;
+        obj_field_int32_set(item_obj, OBJ_F_SPELL_FLAGS, flags);
+
+        flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+        flags |= OIF_NO_DROP;
+        obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, flags);
+    }
 }
 
 // 0x463730
