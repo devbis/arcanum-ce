@@ -4665,7 +4665,21 @@ bool sub_426F60(AnimRunInfo* run_info)
 // 0x427000
 bool sub_427000(int64_t obj)
 {
-    // TODO: Incomplete.
+    AnimID anim_id;
+    AnimRunInfo* run_info;
+
+    if (sub_4B6D70()
+        && sub_4B6D80() == obj
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_STUNNED) != 0
+        && sub_44E830(obj, AG_ANIMATE_STUNNED, &anim_id)
+        && anim_id_to_run_info(&anim_id, &run_info)) {
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data -= 3;
+        if (run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data <= 0) {
+            sub_44E2C0(&anim_id, PRIORITY_HIGHEST);
+        }
+    }
+
+    return true;
 }
 
 // 0x4270B0
