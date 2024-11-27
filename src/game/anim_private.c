@@ -690,9 +690,58 @@ bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int 
 }
 
 // 0x44D9B0
-void anim_subgoal_add_func()
+bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
 {
-    // TODO: Incomplete.
+    AnimRunInfo* run_info;
+    char str[36];
+    int idx;
+
+    ASSERT(goal_data != NULL); // 3655, "pGoalRegData != NULL"
+    ASSERT(goal_data->type < ANIM_GOAL_MAX); // 3656, "pGoalRegData->goal_type < anim_goal_max"
+
+    if (anim_id.slot_num == -1) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0) {
+            return false;
+        }
+
+        return sub_44D730(goal_data, &anim_id, false, 0);
+    }
+
+    if (!anim_id_to_run_info(&anim_id, &run_info)) {
+        sub_421E20(&anim_id, str);
+        tig_debug_printf("Anim: anim_subgoal_add_func: could not turn animID into a AnimRunInfo %s.\n", str);
+        return false;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if (run_info->current_goal >= 7) {
+            return false;
+        }
+    }
+
+    ASSERT(run_info->current_goal < 7); // 3675, "pRunInfo->current_goal < (ANIM_MAX_GOAL_STACK_SIZE - 1)"
+    ASSERT(run_info->current_goal >= 0); // 3676, "pRunInfo->current_goal >= 0"
+
+    run_info->current_goal++;
+
+    for (idx = run_info->current_goal; idx > 0; idx--) {
+        run_info->goals[idx] = run_info->goals[idx - 1];
+    }
+
+    run_info->goals[0] = *goal_data;
+    for (idx = 0; idx < 5; idx++) {
+        sub_443EB0(run_info->goals[0].params[idx].obj, &(run_info->goals[0].field_B0[idx]));
+    }
+
+    if (run_info->field_14 != -1) {
+        run_info->field_14++;
+    }
+
+    sub_44C840(run_info, off_5B03D0[goal_data->type]);
+    sub_423E60("SubGoal Add");
+
+    return true;
 }
 
 // 0x44DBE0
