@@ -894,9 +894,14 @@ void sub_4EEB90(Packet102* pkt)
 }
 
 // 0x4EEBD0
-void sub_4EEBD0()
+void sub_4EEBD0(Packet101* pkt)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+
+    pc_obj = objp_perm_lookup(pkt->oid);
+    sub_4A2BC0();
+    area_set_known(pc_obj, pkt->area);
+    sub_4A2BD0();
 }
 
 // 0x4EEC10

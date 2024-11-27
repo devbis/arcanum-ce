@@ -305,8 +305,8 @@ bool area_set_known(int64_t pc_obj, int area)
             if (!sub_4A2BA0()) {
                 if ((tig_net_flags & TIG_NET_HOST) != 0) {
                     pkt.type = 101;
-                    pkt.field_8 = sub_407EF0(pc_obj);
-                    pkt.field_20 = area;
+                    pkt.oid = sub_407EF0(pc_obj);
+                    pkt.area = area;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
 
                     player = sub_4A2B10(pc_obj);
