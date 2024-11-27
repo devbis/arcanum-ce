@@ -1873,7 +1873,7 @@ bool sub_464830(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_obj)
                 sub_4EFDD0(gold_obj, OBJ_F_GOLD_QUANTITY, to_qty + qty);
             } else {
                 loc = obj_field_int64_get(to_obj, OBJ_F_LOCATION);
-                gold_obj = item_gold_set(qty, loc);
+                gold_obj = item_gold_create(qty, loc);
                 sub_4617F0(gold_obj, to_obj);
             }
         }
@@ -1885,12 +1885,12 @@ bool sub_464830(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_obj)
 }
 
 // 0x464970
-int64_t item_gold_set(int amount, int64_t obj)
+int64_t item_gold_create(int amount, int64_t loc)
 {
     int64_t gold_obj;
 
-    if (mp_object_create(9056, obj, &gold_obj)) {
-        sub_4EFDD0(obj, OBJ_F_GOLD_QUANTITY, amount);
+    if (mp_object_create(9056, loc, &gold_obj)) {
+        sub_4EFDD0(loc, OBJ_F_GOLD_QUANTITY, amount);
     }
 
     return gold_obj;
