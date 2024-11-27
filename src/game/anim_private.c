@@ -745,9 +745,46 @@ bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
 }
 
 // 0x44DBE0
-void sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
+bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
 {
-    // TODO: Incomplete.
+    Packet7 pkt;
+    int64_t obj;
+    int idx;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        return anim_subgoal_add_func(anim_id, goal_data);
+    }
+
+    if ((tig_net_flags & TIG_NET_HOST) == 0
+        && !player_is_pc_obj(goal_data->params[AGDATA_SELF_OBJ].obj)) {
+        return true;
+    }
+
+    obj = goal_data->params[AGDATA_SELF_OBJ].obj;
+
+    pkt.type = 7;
+    pkt.anim_id = anim_id;
+    pkt.loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+
+    for (idx = 0; idx < 5; idx++) {
+        sub_443EB0(goal_data->params[idx].obj, &(goal_data->field_B0[idx]));
+    }
+
+    pkt.goal_data = *goal_data;
+
+    if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+        return false;
+    }
+
+    if (!anim_subgoal_add_func(anim_id, goal_data)) {
+        return false;
+    }
+
+    tig_net_send_app_all(&pkt, sizeof(pkt));
+    return true;
 }
 
 // 0x44DD80

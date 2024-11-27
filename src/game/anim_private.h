@@ -269,7 +269,7 @@ bool sub_44D520(AnimGoalData* goal_data, AnimID* anim_id);
 bool sub_44D540(AnimGoalData* goal_data, AnimID* anim_id, unsigned int flags);
 bool sub_44D730(AnimGoalData *goal_data, AnimID *anim_id, bool a3, unsigned int flags);
 bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data);
-void sub_44DBE0(AnimID anim_id, AnimGoalData *goal_data);
+bool sub_44DBE0(AnimID anim_id, AnimGoalData *goal_data);
 bool sub_44DD80(AnimRunInfo* run_info, AnimGoalSubNode* goal_subnode);
 bool sub_44E160(AnimID* anim_id);
 bool sub_44E2C0(AnimID* anim_id, int priority);
