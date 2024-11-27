@@ -281,6 +281,7 @@ bool sub_44E710(int64_t obj, AnimGoalData* goal_data, AnimID* anim_id);
 bool sub_44E830(int64_t obj, int a2, AnimID* anim_id);
 void sub_44EBD0(AnimPath* path);
 void sub_44EBE0(AnimPath* path);
+void sub_44EEC0(int index);
 void anim_stats();
 
 #endif /* ARCANUM_GAME_ANIM_PRIVATE_H_ */

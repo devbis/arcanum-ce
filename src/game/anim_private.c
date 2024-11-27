@@ -3,6 +3,7 @@
 #include "game/anim.h"
 #include "game/critter.h"
 #include "game/mp_utils.h"
+#include "game/obj_private.h"
 #include "game/player.h"
 #include "game/random.h"
 #include "game/timeevent.h"
@@ -11,6 +12,124 @@
 static bool anim_allocate_this_run_index(AnimID* anim_id);
 static bool sub_44D240(int index);
 static bool sub_44E2A0(TimeEvent* timeevent);
+static void sub_44ED90(AnimGoalData* goal_data);
+static void anim_stat(AnimRunInfo* run_info);
+
+// 0x5A164C
+static const char* off_5A164C[] = {
+    "ag_animate",
+    "ag_animate_loop",
+    "ag_anim_fidget",
+    "ag_move_to_tile",
+    "ag_run_to_tile",
+    "ag_attempt_move",
+    "ag_move_to_pause",
+    "ag_move_near_tile",
+    "ag_move_near_obj",
+    "ag_move_straight",
+    "ag_attempt_move_straight",
+    "ag_open_door",
+    "ag_attempt_open_door",
+    "ag_unlock_door",
+    "ag_jump_window",
+    "ag_pickup_item",
+    "ag_attempt_pickup",
+    "ag_pickpocket",
+    "ag_attack",
+    "ag_attempt_attack",
+    "ag_kill",
+    "ag_talk",
+    "ag_pick_weapon",
+    "ag_chase",
+    "ag_follow",
+    "ag_flee",
+    "ag_throw_spell",
+    "ag_attempt_spell",
+    "ag_shoot_spell",
+    "ag_hit_by_spell",
+    "ag_hit_by_weapon",
+    "ag_dying",
+    "ag_destroy_obj",
+    "ag_use_skill_on",
+    "ag_attempt_use_skill_on",
+    "ag_skill_conceal",
+    "ag_projectile",
+    "ag_throw_item",
+    "ag_use_object",
+    "ag_use_item_on_object",
+    "ag_use_item_on_object_with_skill",
+    "ag_use_item_on_tile",
+    "ag_use_item_on_tile_with_skill",
+    "ag_knockback",
+    "ag_floating",
+    "ag_eye_candy",
+    "ag_eye_candy_reverse",
+    "ag_eye_candy_callback",
+    "ag_eye_candy_reverse_callback",
+    "ag_close_door",
+    "ag_attempt_close_door",
+    "ag_animate_reverse",
+    "ag_move_away_from_obj",
+    "ag_rotate",
+    "ag_unconceal",
+    "ag_run_near_tile",
+    "ag_run_near_obj",
+    "ag_animate_stunned",
+    "ag_eye_candy_end_callback",
+    "ag_eye_candy_reverse_end_callback",
+    "ag_animate_kneel_magic_hands",
+    "ag_attempt_move_near",
+    "ag_knock_down",
+    "ag_anim_get_up",
+    "ag_attempt_move_straight_knockback",
+    "ag_wander",
+    "ag_wander_seek_darkness",
+    "ag_use_picklock_skill_on",
+    "ag_please_move",
+    "ag_attempt_spread_out",
+    "ag_animate_door_open",
+    "ag_animate_door_closed",
+    "ag_pend_closing_door",
+    "ag_throw_spell_friendly",
+    "ag_attempt_spell_friendly",
+    "ag_eye_candy_fire_dmg",
+    "ag_eye_candy_reverse_fire_dmg",
+    "ag_animate_loop_fire_dmg",
+    "ag_attempt_move_straight_spell",
+    "ag_move_near_obj_combat",
+    "ag_attempt_move_near_combat",
+    "ag_use_container",
+    "ag_throw_spell_w_cast_anim",
+    "ag_attempt_spell_w_cast_anim",
+    "ag_throw_spell_w_cast_anim_2ndary",
+    "ag_back_off_from",
+    "ag_attempt_use_pickpocket_skill_on",
+};
+
+// 0x5B0530
+static const char* off_5B0530[] = {
+    "AGDATA_SELF_OBJ",
+    "AGDATA_TARGET_OBJ",
+    "AGDATA_BLOCK_OBJ",
+    "AGDATA_SCRATCH_OBJ",
+    "AGDATA_PARENT_OBJ",
+    "AGDATA_TARGET_TILE",
+    "AGDATA_ORIGINAL_TILE",
+    "AGDATA_RANGE_DATA",
+    "AGDATA_ANIM_ID",
+    "AGDATA_ANIM_ID_PREVIOUS",
+    "AGDATA_ANIM_DATA",
+    "AGDATA_SPELL_DATA",
+    "AGDATA_SKILL_DATA",
+    "AGDATA_FLAGS_DATA",
+    "AGDATA_SCRATCH_VAL1",
+    "AGDATA_SCRATCH_VAL2",
+    "AGDATA_SCRATCH_VAL3",
+    "AGDATA_SCRATCH_VAL4",
+    "AGDATA_SCRATCH_VAL5",
+    "AGDATA_SCRATCH_VAL6",
+    "AGDATA_SOUND_HANDLE",
+};
 
 // 0x5A5978
 int dword_5A5978 = -1;
@@ -1011,6 +1130,42 @@ void sub_44EBF0(AnimRunInfo* run_info)
 
     if ((run_info->path.flags & 0x1) != 0) {
         run_info->field_C |= 0x10000;
+    }
+}
+
+// 0x44ED90
+void sub_44ED90(AnimGoalData* goal_data)
+{
+    int idx;
+    char str[256];
+
+    tig_debug_printf("    goal_type: %s(%d)\n", off_5A164C[goal_data->type], goal_data->type);
+
+    for (idx = 0; idx < AGDATA_COUNT; idx++) {
+        if (idx < 5) {
+            if (goal_data->params[idx].obj != OBJ_HANDLE_NULL) {
+                if (sub_4E5470(goal_data->params[idx].obj)) {
+                    sub_441B60(goal_data->params[idx].obj, goal_data->params[idx].obj, str);
+                } else {
+                    strcpy(str, "INVALID_OBJ_HANDLE");
+                }
+                tig_debug_printf("    params[ %s ] = %s\n", off_5B0530[idx], str);
+            }
+        } else if (idx == AGDATA_TARGET_TILE) {
+            if (goal_data->params[idx].loc != 0) {
+                tig_debug_printf("    params[ %s ] = X:%d, Y:%d\n",
+                    off_5B0530[idx],
+                    (int)LOCATION_GET_X(goal_data->params[idx].loc),
+                    (int)LOCATION_GET_Y(goal_data->params[idx].loc));
+            }
+        } else {
+            if (goal_data->params[idx].data != 0
+                && goal_data->params[idx].data != -1) {
+                tig_debug_printf("    params[ %s ] = %d\n",
+                    off_5B0530[idx],
+                    goal_data->params[idx].data);
+            }
+        }
     }
 }
 
