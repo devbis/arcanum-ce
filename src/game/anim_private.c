@@ -12,6 +12,7 @@
 static bool anim_allocate_this_run_index(AnimID* anim_id);
 static bool sub_44D240(int index);
 static bool sub_44E2A0(TimeEvent* timeevent);
+static void sub_44EC30(AnimPath* path);
 static void sub_44ED90(AnimGoalData* goal_data);
 static void anim_stat(AnimRunInfo* run_info);
 
@@ -1131,6 +1132,52 @@ void sub_44EBF0(AnimRunInfo* run_info)
     if ((run_info->path.flags & 0x1) != 0) {
         run_info->field_C |= 0x10000;
     }
+}
+
+// 0x44EC30
+void sub_44EC30(AnimPath* path)
+{
+    int idx;
+
+    tig_debug_printf("    flags(0x%0X): %s\n", path->flags, "");
+    tig_debug_printf("    path: ");
+
+    for (idx = 0; idx < path->max; idx++) {
+        switch (path->rotations[idx]) {
+        case 0:
+            tig_debug_printf("U  ");
+            break;
+        case 1:
+            tig_debug_printf("UR ");
+            break;
+        case 2:
+            tig_debug_printf("R  ");
+            break;
+        case 3:
+            tig_debug_printf("DR ");
+            break;
+        case 4:
+            tig_debug_printf("D  ");
+            break;
+        case 5:
+            tig_debug_printf("DL ");
+            break;
+        case 6:
+            tig_debug_printf("L  ");
+            break;
+        case 7:
+            tig_debug_printf("UL ");
+            break;
+        default:
+            tig_debug_printf("?(%d)? ", path->rotations[idx]);
+            break;
+        }
+    }
+
+    tig_debug_printf("    baseRot: %d\n", path->baseRot);
+    tig_debug_printf("    curr: %d, max: %d\n", path->curr, path->max);
+    tig_debug_printf("    subsequence: %d\n", path->subsequence);
+    tig_debug_printf("    maxPathLength: %d, absMaxPathLength: %d\n", path->maxPathLength, path->absMaxPathLength);
 }
 
 // 0x44ED90
