@@ -267,8 +267,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     pc_starting_location = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
     sprintf(msg, "Player Start Position: x: %d, y: %d",
-        (int)(pc_starting_location & 0xFFFFFFFF),
-        (int)(pc_starting_location >> 32));
+        (int)LOCATION_GET_X(pc_starting_location),
+        (int)LOCATION_GET_Y(pc_starting_location));
     tig_debug_printf("%s\n", msg);
 
     main_loop();
