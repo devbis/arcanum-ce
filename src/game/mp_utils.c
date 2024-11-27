@@ -1402,9 +1402,26 @@ void sub_4EFC30()
 }
 
 // 0x4EFCD0
-void sub_4EFCD0()
+void sub_4EFCD0(Packet124* pkt)
 {
-    // TODO: Incomplete.
+    if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        sub_4A2BC0();
+        switch (pkt->subtype) {
+        case 0:
+            sub_4450A0(pkt->field_8);
+            break;
+        case 1:
+            script_gl_var_set(pkt->field_8, pkt->field_C);
+            break;
+        case 2:
+            script_gl_flag_set(pkt->field_8, pkt->field_C);
+            break;
+        case 3:
+            sub_460530();
+            break;
+        }
+        sub_4A2BD0();
+    }
 }
 
 // 0x4EFDD0
