@@ -124,7 +124,7 @@ bool text_floater_init(GameInitInfo* init_info)
     dword_6028C8 = tig_color_make(0, 0, 255);
     dword_6028C0 = tig_color_make(0, 0, 0);
 
-    font_desc.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_SHADOW;
+    font_desc.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
 
     tig_art_frame_data(font_desc.art_id, &art_frame_data);

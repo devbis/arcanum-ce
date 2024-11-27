@@ -1266,7 +1266,7 @@ bool wmap_ui_create()
 
     tig_window_blit_art(wmap_ui_window, &art_blit_info);
 
-    font_desc.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_SHADOW;
+    font_desc.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_SHADOW;
     tig_art_interface_id_create(840, 0, 0, 0, &(font_desc.art_id));
 
     for (index = 0; index < 8; index++) {

@@ -40,7 +40,7 @@ bool broadcast_ui_init(GameInitInfo* init_info)
     stru_681040.field_8[0] = '\0';
     stru_5CAC28.buffer = stru_681040.field_8;
 
-    font_desc.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_SHADOW;
+    font_desc.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_SHADOW;
     tig_art_misc_id_create(TIG_ART_SYSTEM_FONT, 0, &(font_desc.art_id));
     font_desc.color = tig_color_make(120, 120, 175);
     tig_font_create(&font_desc, &dword_6810C8);

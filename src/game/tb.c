@@ -120,7 +120,7 @@ bool tb_init(GameInitInfo* init_info)
         }
     }
 
-    font.flags = TIG_FONT_BLEND_ALPHA_SRC | TIG_FONT_CENTERED | TIG_FONT_SHADOW;
+    font.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_CENTERED | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
     for (index = 0; index < TB_TYPE_COUNT; index++) {

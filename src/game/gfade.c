@@ -36,7 +36,7 @@ bool gfade_init(GameInitInfo* init_info)
     if (tig_video_check_gamma_control() != TIG_OK) {
         fade_have_gamma_control = false;
 
-        font.flags = TIG_FONT_SHADOW | TIG_FONT_CENTERED | TIG_FONT_BLEND_ALPHA_SRC;
+        font.flags = TIG_FONT_SHADOW | TIG_FONT_CENTERED | TIG_FONT_NO_ALPHA_BLEND;
         tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
         font.color = tig_color_make(255, 255, 255);
         tig_font_create(&font, &dword_5FC4B8);
