@@ -1,6 +1,7 @@
 #include "game/mp_utils.h"
 
 #include "game/a_name.h"
+#include "game/area.h"
 #include "game/critter.h"
 #include "game/gsound.h"
 #include "game/obj.h"
@@ -882,9 +883,14 @@ void sub_4EE5E0(Packet100* pkt)
 }
 
 // 0x4EEB90
-void sub_4EEB90()
+void sub_4EEB90(Packet102* pkt)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+
+    pc_obj = objp_perm_lookup(pkt->oid);
+    sub_4A2BC0();
+    area_reset_last_known_area(pc_obj);
+    sub_4A2BD0();
 }
 
 // 0x4EEBD0

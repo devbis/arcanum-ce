@@ -368,7 +368,7 @@ void area_reset_last_known_area(int64_t pc_obj)
                 }
 
                 pkt.type = 102;
-                pkt.field_8 = sub_407EF0(pc_obj);
+                pkt.oid = sub_407EF0(pc_obj);
                 tig_net_send_app_all(&pkt, sizeof(pkt));
 
                 player = sub_4A2B10(pc_obj);
