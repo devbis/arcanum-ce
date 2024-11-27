@@ -10,6 +10,7 @@
 
 static bool anim_allocate_this_run_index(AnimID* anim_id);
 static bool sub_44D240(int index);
+static bool sub_44E2A0(TimeEvent* timeevent);
 
 // 0x5A5978
 int dword_5A5978 = -1;
@@ -831,7 +832,46 @@ void sub_44E0E0(int64_t a1, int64_t a2)
 // 0x44E160
 bool sub_44E160(AnimID* anim_id)
 {
-    // TODO: Incomplete.
+    AnimRunInfo* run_info;
+    int idx;
+    AnimGoalNode* goal_node;
+
+    ASSERT(anim_id != NULL); // 3979, "pAnimID != NULL"
+    ASSERT(anim_id->slot_num < 216); // 3980, "pAnimID->slotNum < ANIM_MAX_CURRENT_ANIMS"
+
+    if (!anim_id_to_run_info(anim_id, &run_info)) {
+        return false;
+    }
+
+    if ((run_info->field_C & 0x1) == 0) {
+        return false;
+    }
+
+    run_info->field_C |= 0x8002;
+
+    if (anim_id->slot_num == dword_5A5978) {
+        return true;
+    }
+
+    dword_5B052C = anim_id->slot_num;
+    timeevent_clear_all_ex(TIMEEVENT_TYPE_ANIM, sub_44E2A0);
+
+    if (run_info->current_goal != -1) {
+        if (run_info->cur_stack_data == NULL) {
+            run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
+        }
+
+        for (idx = run_info->current_goal; idx >= 0; idx--) {
+            goal_node = off_5B03D0[run_info->goals[idx].type];
+            if (goal_node->subnodes[14].func != NULL) {
+                if (sub_44DD80(run_info, &(goal_node->subnodes[14]))) {
+                    goal_node->subnodes[14].func(run_info);
+                }
+            }
+        }
+    }
+
+    return anim_free_run_index(anim_id);
 }
 
 // 0x44E2A0
