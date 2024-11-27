@@ -577,21 +577,85 @@ bool sub_461810(int64_t a1, int64_t a2, int inventory_location)
 }
 
 // 0x461A70
-void sub_461A70(int64_t a1)
+bool item_drop(int64_t item_obj)
 {
-    sub_461AB0(a1, 0);
+    item_drop_ex(item_obj, 0);
 }
 
 // 0x461A90
-void sub_461A90(int64_t a1)
+bool item_drop_nearby(int64_t item_obj)
 {
-    sub_461AB0(a1, random_between(2, 4));
+    item_drop_ex(item_obj, random_between(2, 4));
 }
 
 // 0x461AB0
-bool sub_461AB0(int64_t a1, int a2)
+bool item_drop_ex(int64_t item_obj, int distance)
 {
-    // TODO: Incomplete.
+    int64_t parent_obj;
+    int reason;
+    int obj_type;
+    int64_t loc;
+    int64_t candidate_loc;
+    int attempt;
+    unsigned int flags;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        Packet26 pkt;
+
+        pkt.type = 26;
+        sub_4F0640(item_obj, &(pkt.oid));
+        pkt.field_20 = distance;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+        return true;
+    }
+
+    item_parent(item_obj, &parent_obj);
+
+    if (sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_DROP, 0) == 0) {
+        return false;
+    }
+
+    reason = sub_466DA0(item_obj);
+    obj_type = obj_field_int32_get(parent_obj, OBJ_F_TYPE);
+
+    if (reason != ITEM_CANNOT_OK) {
+        if (obj_type == OBJ_TYPE_PC) {
+            sub_4673F0(parent_obj, reason);
+        }
+        return false;
+    }
+
+    loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
+
+    if (distance > 0) {
+        for (attempt = 0; attempt < 10; attempt++) {
+            if (sub_4F4E40(parent_obj, distance, &candidate_loc)) {
+                loc = candidate_loc;
+                break;
+            }
+        }
+    }
+
+    item_remove(item_obj);
+    sub_466E50(item_obj, loc);
+
+    if (obj_type == OBJ_TYPE_NPC) {
+        switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
+        case OBJ_TYPE_WEAPON:
+            flags = obj_field_int32_get(parent_obj, OBJ_F_NPC_FLAGS);
+            flags |= ONF_LOOK_FOR_WEAPON;
+            obj_field_int32_set(parent_obj, OBJ_F_NPC_FLAGS, flags);
+            break;
+        case OBJ_TYPE_ITEM_ARMOR:
+            flags = obj_field_int32_get(parent_obj, OBJ_F_NPC_FLAGS);
+            flags |= ONF_LOOK_FOR_ARMOR;
+            obj_field_int32_set(parent_obj, OBJ_F_NPC_FLAGS, flags);
+            break;
+        }
+    }
+
+    return true;
 }
 
 // 0x461CA0
@@ -2562,7 +2626,7 @@ void sub_467520(int64_t obj)
             item_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
             inventory_location = item_inventory_location_get(item_obj);
             if (inventory_location >= 2000 && inventory_location <= 2009) {
-                sub_461A70(item_obj);
+                item_drop(item_obj);
                 sub_4617F0(item_obj, obj);
             }
         }
