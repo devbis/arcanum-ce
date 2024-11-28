@@ -314,6 +314,16 @@ typedef struct Packet130 {
 
 static_assert(sizeof(Packet130) == 0x28, "wrong size");
 
+// 0x5BB998
+static int dword_5BB998[6] = {
+    2904,
+    2912,
+    2916,
+    2920,
+    2928,
+    2932,
+};
+
 // 0x4ED510
 void sub_4ED510()
 {
@@ -1789,9 +1799,55 @@ void sub_4F0BF0()
 }
 
 // 0x4F0ED0
-void sub_4F0ED0()
+int sub_4F0ED0(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    tig_art_id_t art_id;
+    int v1;
+    int base;
+    int64_t loc;
+    tig_art_id_t tile_art_id;
+    int tile_sound_type;
+
+    if (obj != OBJ_HANDLE_NULL) {
+        return -1;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return -1;
+    }
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return -1;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
+        return -1;
+    }
+
+    if (a2 != 7) {
+        return obj_field_int32_get(obj, OBJ_F_SOUND_EFFECT) + a2;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    v1 = sub_504030(art_id);
+    if (v1 == 4 || v1 == 6) {
+        base = 2900;
+    } else {
+        loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        tile_art_id = sub_4D70B0(loc);
+        tile_sound_type = sub_4EBBE0(tile_art_id);
+        base = dword_5BB998[tile_sound_type];
+        if (v1 == 3
+            && (tile_sound_type == 5
+                || tile_sound_type == 3
+                || tile_sound_type == 0)) {
+            base += 4;
+        }
+    }
+
+    return random_between(0, 3) + base;
 }
 
 // 0x4F0FD0
