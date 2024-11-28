@@ -1813,5 +1813,52 @@ int sub_4F1010(int64_t obj, int a2)
 // 0x4F1050
 int sub_4F1050(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    int sound_effect;
+    int sound_id = -1;
+    char path[TIG_MAX_PATH];
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return -1;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)
+        || obj_type == OBJ_TYPE_CONTAINER
+        || obj_type == OBJ_TYPE_PORTAL
+        || (obj_type_is_item(obj_type) && obj_type != OBJ_TYPE_WEAPON)) {
+        sound_effect = 0;
+    } else {
+        sound_effect = obj_field_int32_get(obj, OBJ_F_SOUND_EFFECT);
+    }
+
+    switch (a2) {
+    case 0:
+        if (sound_effect == 0) {
+            return -1;
+        }
+
+        sound_id = obj_type == OBJ_TYPE_WEAPON ? sound_effect + 1 : sound_effect;
+        if (gsound_resolve_path(sound_id, path) != TIG_OK) {
+            return -1;
+        }
+        break;
+    case 1:
+        if (sound_effect == 0) {
+            return -1;
+        }
+
+        sound_id = obj_type == OBJ_TYPE_WEAPON ? sound_effect + 2 : sound_effect + 1;
+        if (gsound_resolve_path(sound_id, path) != TIG_OK) {
+            return -1;
+        }
+        break;
+    case 2:
+        if (sound_effect != 0) {
+            sound_id = sound_effect + 2;
+        }
+        break;
+    }
+
+    return sound_id;
 }
