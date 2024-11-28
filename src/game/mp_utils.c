@@ -1406,9 +1406,22 @@ void sub_4EFBE0()
 }
 
 // 0x4EFC30
-void sub_4EFC30()
+void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3)
 {
-    // TODO: Incomplete.
+    int size;
+    Packet123* pkt;
+
+    size = sizeof(*pkt) + (int)strlen(a2) + (int)strlen(a3) + 2;
+    pkt = (Packet123*)MALLOC(size);
+    pkt->type = 123;
+    pkt->total_size = size;
+    pkt->player = sub_4A2B10(pc_obj);
+    pkt->field_10 = (int)strlen(a2) + 1;
+    pkt->field_C = (int)strlen(a3) + 1;
+    strncpy((uint8_t*)(pkt + 1), a2, pkt->field_10);
+    strncpy((uint8_t*)(pkt + 1) + pkt->field_10, a3, pkt->field_C);
+    tig_net_send_app_all(&pkt, size);
+    FREE(pkt);
 }
 
 // 0x4EFCD0
