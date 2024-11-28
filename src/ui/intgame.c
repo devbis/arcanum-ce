@@ -1673,7 +1673,7 @@ void sub_54B5D0(TigMessage* msg)
                 mes_file_entry.num = 23;
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
                 datetime_format_date(&datetime, time_str_buffer);
-                sprintf(&(buffer[strlen(buffer)]), "%s: %s", mes_file_entry.str, time_str_buffer);
+                sprintf(&(buffer[strlen(buffer)]), "   %s: %s", mes_file_entry.str, time_str_buffer);
 
                 v1.type = 6;
                 v1.str = buffer;
