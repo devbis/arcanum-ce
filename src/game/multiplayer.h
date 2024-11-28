@@ -28,6 +28,7 @@ int64_t multiplayer_find_first_player_obj();
 int64_t multiplayer_find_next_player_obj();
 void sub_4A3890();
 int sub_4A38A0();
+bool sub_4A38B0(void(*func)(tig_button_handle_t), tig_button_handle_t button_handle);
 void sub_4A39D0(Func5F0DF8* func, int ctx);
 void sub_4A40F0(int player, ObjectID oid, int level, void* data, int size);
 void* sub_4A4180(int player);

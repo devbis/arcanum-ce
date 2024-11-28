@@ -1060,9 +1060,42 @@ int sub_4A38A0()
 }
 
 // 0x4A38B0
-void sub_4A38B0()
+bool sub_4A38B0(void(*func)(tig_button_handle_t), tig_button_handle_t button_handle)
 {
-    // TODO: Incomplete.
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        char oidstr[40];
+        char path[TIG_MAX_PATH];
+
+        objid_id_to_str(oidstr, sub_407EF0(player_get_pc_obj()));
+        snprintf(path, sizeof(path), "Players\\%s.mpc", oidstr);
+        if (sub_460BB0()) {
+            sub_4A39F0(path, player_get_pc_obj());
+        }
+
+        if (func != NULL) {
+            func(button_handle);
+        }
+
+        tig_net_reset_connection();
+
+        return true;
+    } else {
+        Packet46 pkt;
+        TimeEvent timeevent;
+        DateTime datetime;
+
+        pkt.type = sub_529520();
+        pkt.player = sub_529520();
+        sub_4A39D0(func, button_handle);
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        timeevent.type = TIMEEVENT_TYPE_MULTIPLAYER;
+        timeevent.params[0].integer_value = 3;
+        sub_45A950(&datetime, 5000);
+        sub_45B800(&timeevent, &datetime);
+
+        return true;
+    }
 }
 
 // 0x4A39D0
