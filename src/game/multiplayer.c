@@ -229,6 +229,7 @@ static int sub_4A5D80(int64_t obj, const char* str);
 static int sub_4A5E10(int64_t obj, const char* str);
 static bool sub_4A5EE0(int64_t obj);
 static void sub_4A6010(int64_t obj);
+static bool sub_4A6560(const char* a1, char* a2);
 
 // 0x5B3FD8
 static int dword_5B3FD8 = 10;
@@ -1896,7 +1897,46 @@ void sub_4A6470()
 }
 
 // 0x4A6560
-void sub_4A6560()
+bool sub_4A6560(const char* a1, char* a2)
 {
-    // TODO: Incomplete.
+    static const struct {
+        char ch;
+        int pos;
+    } meta[7] = {
+        { '-', 0 },
+        { '{', 1 },
+        { '-', 10 },
+        { '-', 15 },
+        { '-', 20 },
+        { '-', 25 },
+        { '}', 38 },
+    };
+
+    char path[TIG_MAX_PATH];
+    char dir[_MAX_DIR];
+    char fname[_MAX_FNAME];
+    char ext[_MAX_EXT];
+    int pos;
+    int idx;
+
+    strncpy(path, a1, sizeof(path));
+    _splitpath(path, NULL, dir, fname, ext);
+
+    pos = (int)strlen(fname);
+    if (pos > 39) {
+        for (idx = 0; idx < 7; idx++) {
+            if (fname[pos - 39 + meta[idx].pos] != meta[idx].ch) {
+                return false;
+            }
+        }
+
+        if (a2 != NULL) {
+            fname[pos] = '\0';
+            _makepath(a2, NULL, dir, fname, ext);
+        }
+
+        return true;
+    }
+
+    return false;
 }
