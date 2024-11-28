@@ -71,5 +71,6 @@ void sub_4A5570(int64_t obj, int value);
 int sub_4A55D0(int player);
 void sub_4A5610();
 bool sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4);
+bool sub_4A6470(int64_t pc_obj);
 
 #endif /* ARCANUM_GAME_MULTIPLAYER_H_ */

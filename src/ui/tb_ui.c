@@ -56,7 +56,7 @@ static void sub_57CF70(long long a1, long long a2);
 static void sub_57CFA0();
 static bool sub_57CFB0();
 static bool sub_57D080();
-static bool sub_57D150(const char* name, int a2);
+static bool sub_57D150(const char* name, const char* a2);
 
 // 0x5E2E6C
 static int dword_5E2E6C;
@@ -514,7 +514,7 @@ bool sub_57D080()
 }
 
 // 0x57D150
-bool sub_57D150(const char* name, int a2)
+bool sub_57D150(const char* name, const char* a2)
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;

@@ -614,7 +614,7 @@ int sub_460BC0()
 }
 
 // 0x460BE0
-int sub_460BE0(const char* a1, int a2)
+int sub_460BE0(const char* a1, const char* a2)
 {
     if (ui_callbacks.field_124 != NULL) {
         return ui_callbacks.field_124(a1, a2);

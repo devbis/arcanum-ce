@@ -1891,9 +1891,30 @@ bool sub_4A6190(int64_t a1, int64_t a2, int64_t a3, int64_t a4)
 }
 
 // 0x4A6470
-void sub_4A6470()
+bool sub_4A6470(int64_t pc_obj)
 {
-    // TODO: Incomplete.
+    char oidstr[40];
+    char path[TIG_MAX_PATH];
+    char str[256];
+
+    objid_id_to_str(oidstr, sub_407EF0(pc_obj));
+    snprintf(path, sizeof(path), "Players\\%s.mpc", oidstr);
+    sub_424070(player_get_pc_obj(), PRIORITY_HIGHEST, false, true);
+
+    if (sub_460BC0()) {
+        if (tig_file_exists(path, NULL)) {
+            sub_441B60(pc_obj, pc_obj, str);
+            if (!sub_460BE0(str, oidstr)) {
+                return false;
+            }
+        }
+
+        if (!sub_4A39F0(path, pc_obj)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x4A6560
