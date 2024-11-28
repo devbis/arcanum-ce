@@ -1846,9 +1846,68 @@ bool sub_4F0950(int64_t door_obj)
 }
 
 // 0x4F0A90
-bool sub_4F0A90(int64_t obj)
+bool sub_4F0A90(int64_t door_obj)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    int frame;
+    int rotation;
+
+    if (obj_field_int32_get(door_obj, OBJ_F_TYPE) != OBJ_TYPE_PORTAL) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(door_obj, OBJ_F_CURRENT_AID);
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        return false;
+    }
+
+    if (art_anim_data.num_frames == 1) {
+        return false;
+    }
+
+    frame = tig_art_id_frame_get(art_id);
+    if (frame == 0) {
+        return false;
+    }
+
+    if (sub_504260(art_id)) {
+        rotation = tig_art_id_rotation_get(art_id);
+        if ((rotation & 1) != 0) {
+            rotation--;
+        }
+
+        if (rotation == 6 || rotation == 0) {
+            if (frame >= 4 && frame <= 6) {
+                if (frame == 4) {
+                    sub_43D280(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK | OF_SEE_THROUGH);
+                    art_id = tig_art_id_frame_set(art_id, 0);
+                } else {
+                    art_id = tig_art_id_frame_set(art_id, frame - 1);
+                }
+            } else {
+                art_id = tig_art_id_frame_set(art_id, 6);
+            }
+        } else {
+            if (frame >= 1 && frame <= 3) {
+                if (frame == 1) {
+                    sub_43D280(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK | OF_SEE_THROUGH);
+                    art_id = tig_art_id_frame_set(art_id, 0);
+                } else {
+                    art_id = tig_art_id_frame_set(art_id, frame - 1);
+                }
+            } else {
+                art_id = tig_art_id_frame_set(art_id, 3);
+            }
+        }
+    } else {
+        art_id = tig_art_id_frame_set(art_id, 0);
+        sub_43D280(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK);
+    }
+
+    object_set_current_aid(door_obj, art_id);
+
+    return true;
 }
 
 // 0x4F0BF0
