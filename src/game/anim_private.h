@@ -271,6 +271,8 @@ bool sub_44D730(AnimGoalData *goal_data, AnimID *anim_id, bool a3, unsigned int 
 bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data);
 bool sub_44DBE0(AnimID anim_id, AnimGoalData *goal_data);
 bool sub_44DD80(AnimRunInfo* run_info, AnimGoalSubNode* goal_subnode);
+void sub_44E050(int64_t a1, int64_t a2);
+void sub_44E0E0(int64_t a1, int64_t a2);
 bool sub_44E160(AnimID* anim_id);
 bool sub_44E2C0(AnimID* anim_id, int priority);
 bool anim_find_first_of_type(int64_t obj, int type, AnimID* anim_id);

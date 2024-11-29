@@ -880,7 +880,44 @@ void sub_4AA1B0(int64_t a1, int64_t a2)
 // 0x4AA300
 void sub_4AA300(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int64_t v1;
+    int obj_type;
+    int reaction;
+
+    v1 = sub_45DDA0(a2);
+    if (v1 == OBJ_HANDLE_NULL) {
+        v1 = a2;
+    }
+
+    obj_field_handle_set(a1, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
+    obj_field_handle_set(a1, OBJ_F_NPC_WHO_HIT_ME_LAST, OBJ_HANDLE_NULL);
+    sub_4AF9D0(a1, v1);
+
+    obj_type = obj_field_int32_get(v1, OBJ_F_TYPE);
+    if (obj_type == OBJ_TYPE_PC) {
+        reaction = sub_4C0CC0(a1, v1);
+        if (reaction < 50) {
+            sub_4C0DE0(a1, v1, 50 - reaction);
+        }
+    }
+
+    sub_4AABE0(a1, 0, OBJ_HANDLE_NULL, NULL);
+    sub_44E050(a1, v1);
+
+    if (obj_type_is_critter(obj_type)) {
+        ObjectList objects;
+        ObjectNode* node;
+
+        sub_441260(v1, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            sub_4AA420(node->obj, a1);
+            sub_4AF9D0(a1, node->obj);
+            sub_44E0E0(node->obj, a1);
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
 }
 
 // 0x4AA420
