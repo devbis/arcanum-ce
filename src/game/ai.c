@@ -22,6 +22,7 @@
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
+#include "game/teleport.h"
 #include "game/tile.h"
 #include "game/timeevent.h"
 #include "game/ui.h"
@@ -1711,7 +1712,75 @@ bool sub_4AC910(Ai* ai, int64_t a2)
 // 0x4ACBB0
 bool sub_4ACBB0(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    bool is_sleeping;
+    int map;
+    int next_map;
+    unsigned int npc_flags;
+    int64_t loc;
+    int64_t next_loc;
+    int wp;
+    TeleportData teleport_data;
+
+    is_sleeping = critter_is_sleeping(obj);
+    if (!is_sleeping
+        && (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_OFF | OF_DONTDRAW)) != 0) {
+        return false;
+    }
+
+    if (obj_arrayfield_length_get(obj, OBJ_F_NPC_WAYPOINTS_IDX) == 0) {
+        return false;
+    }
+
+    map = sub_40FF40();
+    next_map = critter_teleport_map_get(obj);
+    if (next_map != map && !a2) {
+        return false;
+    }
+
+    npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    if (ai_is_day()) {
+        if ((npc_flags & ONF_WAYPOINTS_DAY) == 0) {
+            return false;
+        }
+    } else {
+        if ((npc_flags & ONF_WAYPOINTS_NIGHT) == 0) {
+            return false;
+        }
+    }
+
+    if (is_sleeping) {
+        sub_4AD0B0(obj);
+        return true;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    wp = obj_field_int32_get(obj, OBJ_F_NPC_WAYPOINT_CURRENT);
+    next_loc = obj_arrayfield_int64_get(obj, OBJ_F_NPC_WAYPOINTS_IDX, wp);
+    if (sub_4B96F0(loc, next_loc) <= 3) {
+        wp++;
+        if (wp == obj_arrayfield_length_get(obj, OBJ_F_NPC_WAYPOINTS_IDX)) {
+            wp = 0;
+        }
+        obj_field_int32_set(obj, OBJ_F_NPC_WAYPOINT_CURRENT, wp);
+        next_loc = obj_arrayfield_int64_get(obj, OBJ_F_NPC_WAYPOINTS_IDX, wp);
+    }
+
+    if (a2) {
+        if (next_map == map) {
+            sub_424070(obj, 4, false, true);
+            sub_43E770(obj, next_loc, 0, 0);
+        } else {
+            teleport_data.flags = 0;
+            teleport_data.map = next_map;
+            teleport_data.loc = next_loc;
+            teleport_data.obj = obj;
+            teleport_do(&teleport_data);
+        }
+    } else {
+        sub_4AD1B0(obj, next_loc, 3);
+    }
+
+    return true;
 }
 
 // 0x4ACD90
