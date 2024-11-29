@@ -80,6 +80,7 @@ static_assert(sizeof(S4ABF10) == 0x18, "wrong size");
 static bool sub_4A8570(Ai* ai);
 static void sub_4A88D0(Ai* ai, int64_t obj);
 static bool sub_4A8940(Ai* ai);
+static bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3);
 static bool sub_4A8E70(Ai* ai);
 static void sub_4A92D0(Ai* ai);
 static void sub_4A94C0(int64_t obj, int64_t tgt);
@@ -415,11 +416,66 @@ void sub_4A88D0(Ai* ai, int64_t obj)
 // 0x4A8940
 bool sub_4A8940(Ai* ai)
 {
-    // TODO: Incomplete.
+    bool v1;
+    AiParams ai_params;
+    int64_t v2;
+    ObjectList objects;
+    ObjectNode* node;
+
+    if (critter_is_sleeping(ai->obj)) {
+        return false;
+    }
+
+    if (ai->danger_type != 2) {
+        return false;
+    }
+
+    v1 = true;
+
+    if (combat_critter_is_combat_mode_active(ai->obj)) {
+        sub_4AAA60(ai->obj, &ai_params);
+        if (random_between(1, 100) > ai_params.field_38) {
+            v1 = false;
+        }
+    }
+
+    if (sub_4A8AA0(ai, ai->obj, v1)) {
+        return true;
+    }
+
+    v2 = sub_45DDA0(ai->obj);
+    if (v2 == OBJ_HANDLE_NULL) {
+        v2 = ai->leader_obj;
+    }
+
+    if (v2 != OBJ_HANDLE_NULL) {
+        if (sub_4A8AA0(ai, v2, v1)) {
+            return true;
+        }
+    } else {
+        v2 = ai->obj;
+    }
+
+    sub_441260(v2, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if (node->obj != ai->obj
+            && sub_4A8AA0(ai, node->obj, v1)) {
+            break;
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (node == NULL) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4A8AA0
-void sub_4A8AA0()
+bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
 {
     // TODO: Incomplete.
 }
