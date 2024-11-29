@@ -82,6 +82,7 @@ static void sub_4A88D0(Ai* ai, int64_t obj);
 static bool sub_4A8940(Ai* ai);
 static bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3);
 static bool sub_4A8E70(Ai* ai);
+static bool sub_4A8F90(int64_t obj, unsigned int flags);
 static void sub_4A92D0(Ai* ai);
 static void sub_4A94C0(int64_t obj, int64_t tgt);
 static void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4);
@@ -596,11 +597,54 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
 // 0x4A8E70
 bool sub_4A8E70(Ai* ai)
 {
-    // TODO: Incomplete.
+    unsigned int npc_flags;
+
+    if (critter_is_sleeping(ai->obj)) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(ai->obj, OBJ_F_CRITTER_FLAGS) & OCF_BLINDED) != 0) {
+        return false;
+    }
+
+    if (sub_460C20() != OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+
+    if ((npc_flags & ONF_LOOK_FOR_AMMO) != 0) {
+        npc_flags &= ~ONF_LOOK_FOR_AMMO;
+        obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+
+        if (sub_4A8F90(ai->obj, 0x40)) {
+            return true;
+        }
+    }
+
+    if ((npc_flags & ONF_LOOK_FOR_WEAPON) != 0) {
+        npc_flags &= ~ONF_LOOK_FOR_WEAPON;
+        obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+
+        if (sub_4A8F90(ai->obj, 0x20)) {
+            return true;
+        }
+    }
+
+    if ((npc_flags & ONF_LOOK_FOR_ARMOR) != 0) {
+        npc_flags &= ~ONF_LOOK_FOR_ARMOR;
+        obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+
+        if (sub_4A8F90(ai->obj, 0x80)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x4A8F90
-void sub_4A8F90()
+bool sub_4A8F90(int64_t obj, unsigned int flags)
 {
     // TODO: Incomplete.
 }
