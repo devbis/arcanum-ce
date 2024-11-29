@@ -36,6 +36,7 @@ static_assert(sizeof(S5FF620) == 0x80, "wrong size");
 bool mt_ai_init(GameInitInfo* init_info);
 void mt_ai_reset();
 void mt_ai_exit();
+int sub_4CC2A0(int spl);
 void sub_4CCA90(S5FF620* a1, int64_t obj, int a3);
 void sub_4CCBF0(S5FF620* a1);
 void sub_4CCC00(int64_t obj);

@@ -9,6 +9,7 @@
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mt_ai.h"
+#include "game/mt_item.h"
 #include "game/multiplayer.h"
 #include "game/name.h"
 #include "game/obj.h"
@@ -1561,7 +1562,59 @@ bool sub_4ABEB0(int64_t obj, int64_t tgt)
 // 0x4ABF10
 bool sub_4ABF10(Ai* ai, S4ABF10* a2)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int base;
+    int idx;
+    S600A20_Entry* entry;
+
+    if (a2->cnt <= 0) {
+        return false;
+    }
+
+    if ((a2->flags & 0x1) != 0) {
+        obj = ai->obj;
+    } else if ((a2->flags & 0x2) != 0) {
+        obj = ai->danger_source;
+    } else if ((a2->flags & 0x8) != 0) {
+        obj = a2->obj;
+    }
+
+    base = random_between(1, 100) >= 80 ? random_between(0, a2->cnt - 1) : 0;
+
+    for (idx = 0; idx < a2->cnt; idx++) {
+        entry = &(a2->entries[(base + idx) % a2->cnt]);
+        if ((a2->flags & 0x4) != 0) {
+            if (sub_4CC2A0(entry->spell)) {
+                obj = ai->danger_source;
+            } else {
+                obj = ai->obj;
+            }
+        }
+
+        if (entry->spell == -1) {
+            sub_462CC0(ai->obj, entry->obj, obj);
+            return true;
+        }
+
+        if (!sub_459380(obj, entry->spell)
+            && !sub_4AE720(ai->obj, entry->obj, obj, entry->spell)) {
+            if (entry->obj != OBJ_HANDLE_NULL
+                && sub_4CC160(entry->obj)) {
+                ai->field_14 = 2;
+                ai->field_18 = entry->spell;
+                ai->field_20 = entry->obj;
+                ai->danger_source = obj;
+            } else {
+                ai->field_14 = 1;
+                ai->field_18 = entry->spell;
+                ai->danger_source = obj;
+                ai->field_20 = entry->obj;
+            }
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x4AC180
