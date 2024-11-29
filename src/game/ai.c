@@ -654,7 +654,56 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
 // 0x4A92D0
 void sub_4A92D0(Ai* ai)
 {
-    // TODO: Incomplete.
+    int64_t danger_source_obj;
+
+    if (critter_is_sleeping(ai->obj)) {
+        return;
+    }
+
+    switch (ai->danger_type) {
+    case 0:
+        danger_source_obj = sub_4AB460(ai->obj);
+        if (danger_source_obj != OBJ_HANDLE_NULL) {
+            ai->danger_source = danger_source_obj;
+            sub_4ABC20(ai);
+            ai->danger_type = sub_4AABE0(ai->obj, 1, ai->danger_source, &(ai->field_30));
+        }
+        break;
+    case 1:
+        danger_source_obj = sub_4ABBC0(ai->obj);
+        if (danger_source_obj != OBJ_HANDLE_NULL) {
+            ai->danger_source = danger_source_obj;
+            sub_4ABC20(ai);
+            ai->danger_type = sub_4AABE0(ai->obj, 1, ai->danger_source, &(ai->field_30));
+            break;
+        }
+
+        obj_field_obj_get(ai->obj, OBJ_F_NPC_COMBAT_FOCUS, &danger_source_obj);
+        ai->danger_source = danger_source_obj;
+        if (sub_4AB990(ai->obj, ai->danger_source)) {
+            sub_4ABC20(ai);
+            ai->danger_type = sub_4AABE0(ai->obj, 1, ai->danger_source, &(ai->field_30));
+            break;
+        }
+
+        ai->danger_source = sub_4AFA90(ai->obj);
+        if (ai->danger_source != OBJ_HANDLE_NULL) {
+            sub_4ABC20(ai);
+            ai->danger_type = sub_4AABE0(ai->obj, 1, ai->danger_source, &(ai->field_30));
+            break;
+        }
+
+        ai->danger_type = sub_4AABE0(ai->obj, 0, OBJ_HANDLE_NULL, &(ai->field_30));
+        break;
+    case 2:
+        sub_4AAF50(ai);
+        break;
+    case 3:
+        if (sub_4AB400(ai->obj) >= 80 && random_between(1, 500) == 1) {
+            ai->danger_type = sub_4AABE0(ai->obj, 0, OBJ_HANDLE_NULL, &(ai->field_30));
+        }
+        break;
+    }
 }
 
 // 0x4A94C0
