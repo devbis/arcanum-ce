@@ -287,7 +287,114 @@ void sub_4A84F0(int64_t obj)
 // 0x4A8570
 bool sub_4A8570(Ai* ai)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t v1;
+    unsigned int critter_flags;
+    unsigned int npc_flags;
+    int64_t leader_obj;
+
+    if (sub_45D8D0(ai->obj)) {
+        return false;
+    }
+
+    if (!critter_is_sleeping(ai->obj)
+        && (obj_field_int32_get(ai->obj, OBJ_F_FLAGS) & (OF_OFF | OF_DONTDRAW)) != 0) {
+        return false;
+    }
+
+    pc_obj = player_get_pc_obj();
+
+    if ((obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(ai->obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    critter_flags = obj_field_int32_get(ai->obj, OBJ_F_CRITTER_FLAGS);
+
+    v1 = sub_4C1110(ai->obj);
+    if (v1) {
+        if (pc_obj == v1
+            && dword_5F848C != NULL
+            && ai->danger_type != 0
+            && ai->danger_type != 3) {
+            dword_5F848C(pc_obj, 0);
+        }
+        return false;
+    }
+
+    if (combat_critter_is_combat_mode_active(ai->obj)) {
+        if (!sub_4B6D70()) {
+            sub_441980(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
+        }
+        sub_441980(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_START_COMBAT, 0);
+    }
+
+    if (sub_4B6D70() && sub_4B6D80() != ai->obj) {
+        return false;
+    }
+
+    if (sub_4233D0(ai->obj) > 2) {
+        return false;
+    }
+
+    if ((critter_flags & OCF_BLINDED) != 0
+        && random_between(1, 160) <= 1) {
+        critter_flags &= ~OCF_BLINDED;
+        obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+    }
+
+    if ((critter_flags & OCF_CRIPPLED) != 0
+        && random_between(1, 8000) <= 1) {
+        critter_flags &= ~OCF_CRIPPLED;
+        obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+    }
+
+    if ((critter_flags & OCF_STUNNED) != 0) {
+        if (!sub_44E830(ai->obj, AG_ANIMATE_STUNNED, NULL)) {
+            critter_flags &= ~OCF_STUNNED;
+            obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+            return false;
+        }
+    }
+
+    if (sub_45D800(ai->obj)) {
+        return false;
+    }
+
+    npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+    if ((npc_flags & ONF_GENERATOR) != 0) {
+        return false;
+    }
+
+    if ((npc_flags & ONF_CHECK_WIELD) != 0) {
+        sub_4654F0(ai->obj, ai->danger_source);
+
+        npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+        npc_flags &= ~ONF_CHECK_WIELD;
+        obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+    } else if ((npc_flags & ONF_CHECK_WEAPON) != 0) {
+        sub_465170(ai->obj, 1004, ai->danger_source);
+
+        npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
+        npc_flags &= ~ONF_CHECK_WEAPON;
+        obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+    }
+
+    if ((npc_flags & ONF_DEMAINTAIN_SPELLS) != 0) {
+        leader_obj = critter_leader_get(ai->obj);
+        if (leader_obj == OBJ_HANDLE_NULL
+            || sub_45D8D0(leader_obj)
+            || !combat_critter_is_combat_mode_active(leader_obj)) {
+            npc_flags &= ~ONF_DEMAINTAIN_SPELLS;
+            obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
+            sub_457450(ai->obj);
+        }
+    }
+
+    return true;
 }
 
 // 0x4A88D0
