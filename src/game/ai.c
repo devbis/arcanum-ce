@@ -87,6 +87,7 @@ static void sub_4A92D0(Ai* ai);
 static void sub_4A94C0(int64_t obj, int64_t tgt);
 static void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4);
 static void sub_4A9C00(int64_t a1, int64_t a2, int64_t a3, int a4, int a5, int a6);
+static void sub_4A9E10(int64_t a1, int64_t a2, int a3);
 static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static void sub_4AA620(int64_t a1, int64_t a2);
@@ -757,9 +758,33 @@ void sub_4A9C00(int64_t a1, int64_t a2, int64_t a3, int a4, int a5, int a6)
 }
 
 // 0x4A9E10
-void sub_4A9E10()
+void sub_4A9E10(int64_t a1, int64_t a2, int a3)
 {
-    // TODO: Incomplete.
+    int radius;
+    int distance;
+    ObjectList objects;
+    ObjectNode* node;
+
+    radius = dword_5B50C0[a3];
+    distance = sub_441AE0(a2, a1);
+    if (distance < 2 * dword_5B50C8) {
+        sub_4AE4E0(a2, radius, &objects, OBJ_TM_NPC);
+        node = objects.head;
+        while (node != NULL) {
+            sub_4A9F10(node->obj, a2, a1, a3);
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
+    if (distance > 1) {
+        sub_4AE4E0(a1, radius, &objects, OBJ_TM_NPC);
+        node = objects.head;
+        while (node != NULL) {
+            sub_4A9F10(node->obj, a2, a1, a3);
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
 }
 
 // 0x4A9F10
