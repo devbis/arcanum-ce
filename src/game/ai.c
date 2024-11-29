@@ -147,6 +147,16 @@ static void sub_4AF930(int64_t a1, int64_t a2);
 static void sub_4AF9D0(int64_t a1, int64_t a2);
 static int64_t sub_4AFA90(int64_t obj);
 
+// 0x5B5088
+static DateTime stru_5B5088[6] = {
+    { 0, 0 },
+    { 0, 900000 },
+    { 0, 7200000 },
+    { 1, 0 },
+    { 7, 0 },
+    { 30, 0 },
+};
+
 // 0x5B50C0
 static int dword_5B50C0[] = {
     2,
@@ -1102,7 +1112,45 @@ void sub_4AA620(int64_t a1, int64_t a2)
 // 0x4AA7A0
 void sub_4AA7A0(int64_t obj)
 {
-    // TODO: Incomplete.
+    int wait;
+    int64_t leader_obj;
+    TimeEvent timeevent;
+    DateTime datetime;
+    unsigned int npc_flags;
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        return;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0) {
+        return;
+    }
+
+    wait = obj_field_int32_get(obj, OBJ_F_NPC_WAIT);
+    leader_obj = critter_leader_get(obj);
+    if (stat_is_maximized(leader_obj, STAT_CHARISMA)
+        && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0) {
+        if (basic_skill_get_training(leader_obj, BASIC_SKILL_PERSUATION) != TRAINING_NONE) {
+            wait++;
+        }
+
+        if (wait < 6) {
+            datetime = stru_5B5088[wait];
+            timeevent.type = TIMEEVENT_TYPE_NPC_WAIT_HERE;
+            sub_45B800(&timeevent, &datetime);
+        }
+    }
+    critter_disband(obj, true);
+    critter_leader_set(obj, leader_obj);
+
+    npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    npc_flags |= ONF_AI_WAIT_HERE;
+    obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);
 }
 
 // 0x4AA8C0
