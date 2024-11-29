@@ -477,7 +477,120 @@ bool sub_4A8940(Ai* ai)
 // 0x4A8AA0
 bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
 {
-    // TODO: Incomplete.
+    S4ABF10 v1;
+    S5FF620 v2;
+    int v3;
+    int64_t item_obj;
+
+    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & ONF_NO_ATTACK) != 0) {
+        return false;
+    }
+
+    if (sub_45D8D0(obj)) {
+        sub_4CCA90(&v2, ai->obj, 9);
+        v1.flags = 0x8;
+        v1.entries = v2.field_30[9].entries;
+        v1.cnt = v2.field_30[9].cnt;
+        v1.obj = obj;
+        if (sub_4ABF10(ai, &v1)) {
+            sub_4CCBF0(&v2);
+            return true;
+        } else {
+            sub_4CCBF0(&v2);
+            return false;
+        }
+    }
+
+    v3 = sub_4AB400(obj);
+    if (v3 > 30 && !a3) {
+        return false;
+    }
+
+    if (ai->danger_type != 0) {
+        if (sub_4AB430(ai->obj) < 20) {
+            sub_4CCA90(&v2, ai->obj, 8);
+            v1.flags = 0x8;
+            v1.entries = v2.field_30[8].entries;
+            v1.cnt = v2.field_30[8].cnt;
+            v1.obj = obj;
+            if (sub_4ABF10(ai, &v1)) {
+                sub_4CCBF0(&v2);
+                return true;
+            }
+
+            sub_4CCBF0(&v2);
+        }
+    } else {
+        if (v3 < 90) {
+            item_obj = sub_4C91F0(ai->obj, BASIC_SKILL_HEAL);
+            if (!sub_4AE570(ai->obj, obj, item_obj, BASIC_SKILL_HEAL)) {
+                ai->danger_source = obj;
+                ai->field_20 = item_obj;
+                ai->field_14 = 3;
+                ai->field_1C = 10;
+                return true;
+            }
+        }
+    }
+
+    if (v3 < 40) {
+        sub_4CCA90(&v2, ai->obj, 6);
+        v1.flags = 0x8;
+        v1.entries = v2.field_30[6].entries;
+        v1.cnt = v2.field_30[6].cnt;
+        v1.obj = obj;
+        if (sub_4ABF10(ai, &v1)) {
+            sub_4CCBF0(&v2);
+            return true;
+        }
+
+        sub_4CCBF0(&v2);
+    }
+
+    if (v3 < 55) {
+        sub_4CCA90(&v2, ai->obj, 5);
+        v1.flags = 0x8;
+        v1.entries = v2.field_30[5].entries;
+        v1.cnt = v2.field_30[5].cnt;
+        v1.obj = obj;
+        if (sub_4ABF10(ai, &v1)) {
+            sub_4CCBF0(&v2);
+            return true;
+        }
+
+        sub_4CCBF0(&v2);
+    }
+
+    if (stat_level(obj, STAT_POISON_LEVEL) > 0) {
+        sub_4CCA90(&v2, ai->obj, 7);
+        v1.flags = 0x8;
+        v1.entries = v2.field_30[7].entries;
+        v1.cnt = v2.field_30[7].cnt;
+        v1.obj = obj;
+        if (sub_4ABF10(ai, &v1)) {
+            sub_4CCBF0(&v2);
+            return true;
+        }
+
+        sub_4CCBF0(&v2);
+    }
+
+    if (v3 < 70
+        || (ai->danger_type == 0 && v3 < 90)) {
+        sub_4CCA90(&v2, ai->obj, 4);
+        v1.flags = 0x8;
+        v1.entries = v2.field_30[4].entries;
+        v1.cnt = v2.field_30[4].cnt;
+        v1.obj = obj;
+        if (sub_4ABF10(ai, &v1)) {
+            sub_4CCBF0(&v2);
+            return true;
+        }
+
+        sub_4CCBF0(&v2);
+    }
+
+    return false;
 }
 
 // 0x4A8E70
