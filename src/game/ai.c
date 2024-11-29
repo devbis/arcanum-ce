@@ -1055,7 +1055,48 @@ void sub_4AA580(int64_t obj)
 // 0x4AA620
 void sub_4AA620(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    int danger_type;
+    int64_t danger_source_obj;
+    char str[1000];
+    int v1;
+
+    if (sub_45D8D0(a1)) {
+        return;
+    }
+
+    ai_danger_source(a1, &danger_type, &danger_source_obj);
+
+    switch (danger_type) {
+    case 0:
+        sub_4AB2A0(a1, a2);
+        break;
+    case 1:
+        if (danger_source_obj == a2
+            || sub_4AB0B0(a1, danger_source_obj, a2) == a2) {
+            sub_4AB2A0(a1, a2);
+        }
+        break;
+    case 2:
+        if (danger_source_obj != a2
+            && sub_4AB030(a1, danger_source_obj)) {
+            sub_4AB2A0(a1, a2);
+        }
+        break;
+    case 3:
+        if (danger_source_obj == a2
+            || sub_4AB0B0(a1, danger_source_obj, a2) == a2) {
+            sub_4AB2A0(a1, a2);
+        } else {
+            if (sub_45D790(a1)) {
+                sub_413EA0(a1, a2, str, &v1);
+                dword_5F8488(a1, a2, str, v1);
+            }
+            sub_434980(a1, a2);
+        }
+        break;
+    }
+
+    combat_turn_based_add_critter(a1);
 }
 
 // 0x4AA7A0
