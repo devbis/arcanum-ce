@@ -69,6 +69,8 @@ bool sub_435870(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_ar
 bool sub_435A90(int64_t obj);
 bool sub_435BD0(int64_t critter_obj);
 bool sub_435CE0(int64_t obj);
+bool sub_435E60(int64_t obj, int64_t tether_loc, int radius);
+bool sub_436040(int64_t obj, int64_t tether_loc, int radius);
 void sub_4364D0(int64_t obj);
 bool sub_436960(int64_t a1, int64_t a2);
 void turn_on_running(AnimID anim_id);

@@ -1795,7 +1795,100 @@ bool ai_is_day()
 // 0x4ACDB0
 bool sub_4ACDB0(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    bool is_sleeping;
+    int64_t standpoint_loc;
+    int map;
+    int next_map;
+    int hour;
+    int64_t loc;
+    unsigned int npc_flags;
+    int64_t distance;
+    int wandering_range;
+    int64_t bed_obj;
+    TeleportData teleport_data;
+
+    is_sleeping = critter_is_sleeping(obj);
+    if (!is_sleeping
+        && ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_OFF | OF_DONTDRAW)) != 0
+            || !ai_get_standpoint(obj, &standpoint_loc))) {
+        return false;
+    }
+
+    next_map = critter_teleport_map_get(obj);
+    map = sub_40FF40();
+    if (next_map == map) {
+        if (!a2) {
+            hour = datetime_current_hour();
+            if ((hour == 6 || hour == 21)
+                && random_between(1, 1000) != 1) {
+                return false;
+            }
+        }
+    } else {
+        if (!a2) {
+            return false;
+        }
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+    distance = sub_4B96F0(standpoint_loc, loc);
+
+    wandering_range = (npc_flags & (ONF_WANDERS_IN_DARK | ONF_WANDERS)) != 0 ? 4 : 1;
+    if (distance <= wandering_range) {
+        if ((npc_flags & ONF_WAYPOINTS_BED) == 0) {
+            npc_flags |= ONF_WAYPOINTS_BED;
+            obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);
+
+            bed_obj = ai_find_nearest_bed(standpoint_loc);
+            if (bed_obj != OBJ_HANDLE_NULL) {
+                critter_enter_bed(obj, bed_obj);
+            }
+        }
+
+        if (!is_sleeping) {
+            if ((npc_flags & ONF_WANDERS) != 0) {
+                sub_435E60(obj, standpoint_loc, 4);
+                return true;
+            }
+
+            if ((npc_flags & ONF_WANDERS_IN_DARK) != 0) {
+                sub_436040(obj, standpoint_loc, 4);
+                return true;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    if (is_sleeping) {
+        sub_4AD0B0(obj);
+        return true;
+    }
+
+    if ((npc_flags & ONF_WAYPOINTS_BED) != 0) {
+        npc_flags &= ~ONF_WAYPOINTS_BED;
+        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);
+    }
+
+    if (a2) {
+        if (next_map == map) {
+            sub_424070(obj, 4, 0, 1);
+            sub_43E770(obj, standpoint_loc, 0, 0);
+        } else {
+            teleport_data.flags = 0;
+            teleport_data.map = next_map;
+            teleport_data.loc = standpoint_loc;
+            teleport_data.obj = obj;
+            teleport_do(&teleport_data);
+        }
+    } else {
+        sub_4AD1B0(obj, standpoint_loc, 1);
+    }
+
+    return true;
 }
 
 // 0x4AD060
