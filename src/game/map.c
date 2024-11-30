@@ -97,7 +97,7 @@ static bool map_save_objects();
 static bool map_save_difs();
 static bool map_save_dynamic();
 static void map_load_postprocess();
-static bool sub_410D10(const char* a1, const char* a2);
+static bool map_load_mobile(const char* a1, const char* a2);
 static bool sub_411450(const char* name);
 static void map_disable_objects();
 static void sub_411830(char* str);
@@ -606,7 +606,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: loading mobile objects...");
     tig_timer_now(&timestamp);
-    if (!sub_410D10(a1, a2)) {
+    if (!map_load_mobile(a1, a2)) {
         tig_debug_println("Error reading mobile objects");
         map_close();
         return false;
@@ -1273,9 +1273,173 @@ void map_load_postprocess()
 }
 
 // 0x410D10
-bool sub_410D10(const char* a1, const char* a2)
+bool map_load_mobile(const char* a1, const char* a2)
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    char path2[TIG_MAX_PATH];
+    char path3[TIG_MAX_PATH];
+    char* fname;
+    TigFileList file_list;
+    unsigned int idx;
+    ObjectID oid;
+    int64_t obj;
+    TigFile* stream;
+    GUID guid;
+
+    if (dword_5D1200) {
+        sprintf(path, "%s\\*.mob", a1);
+        tig_file_list_create(&file_list, path);
+        for (idx = 0; idx < file_list.count; idx++) {
+            sprintf(path, "%s\\%s", a2, file_list.entries[idx].path);
+            if (!tig_file_exists(path, NULL)) {
+                strcpy(&(path[strlen(path) - 4]), ".del");
+                if (!tig_file_exists(path, NULL)) {
+                    sprintf(path, "%s\\%s", a1, file_list.entries[idx].path);
+                    if (!objf_solitary_read(&obj, path)) {
+                        tig_file_list_destroy(&file_list);
+                        tig_debug_printf("Error reading object %s\n", path);
+                        return false;
+                    }
+                }
+            }
+        }
+        tig_file_list_destroy(&file_list);
+
+        sprintf(path, "%s\\*.mob", a2);
+        tig_file_list_create(&file_list, path);
+        for (idx = 0; idx < file_list.count; idx++) {
+            sprintf(path, "%s\\%s", a2, file_list.entries[idx].path);
+            if (!objf_solitary_read(&obj, path)) {
+                tig_file_list_destroy(&file_list);
+                tig_debug_printf("Error reading object %s\n", path);
+                return false;
+            }
+        }
+    }
+
+    strcpy(path2, a1);
+    sub_411830(&(path2[5]));
+
+    strcpy(path3, a2);
+    strcat(path3, "\\");
+    fname = &(path3[strlen(path3)]);
+
+    stream = tig_file_fopen(path2, "rb");
+    if (stream == NULL) {
+        tig_debug_printf("Error opening file %s\n", path2);
+        return false;
+    }
+
+    if (tig_file_fread(&guid, sizeof(guid), 1, stream) != 1) {
+        // FIX: Release `stream`.
+        tig_file_fclose(stream);
+
+        tig_debug_printf("Error reading GUID from file %s\n", path2);
+        return false;
+    }
+
+    while (obj_read(stream, &obj)) {
+    }
+
+    if (tig_file_feof(stream) == 0) {
+        // FIX: Release `stream`.
+        tig_file_fclose(stream);
+
+        tig_debug_printf("Error reading object from file %s\n", path2);
+        return false;
+    }
+
+    // FIX: Release `stream`.
+    tig_file_fclose(stream);
+
+    strcpy(fname, "mobile.md");
+    if (tig_file_exists(path3, NULL)) {
+        stream = tig_file_fopen(path3, "rb");
+        if (stream == NULL) {
+            tig_debug_printf("Error opening differences file %s for reading\n", path3);
+            return false;
+        }
+
+        while (tig_file_fread(&oid, sizeof(oid), 1, stream) == 1) {
+            obj = objp_perm_lookup(oid);
+            if (obj == OBJ_HANDLE_NULL) {
+                tig_file_fclose(stream);
+                tig_debug_printf("Error retrieving object handle to apply differences\n");
+                return false;
+            }
+
+            if (!obj_dif_read(stream, obj)) {
+                tig_file_fclose(stream);
+                tig_debug_printf("Error reading object differences\n");
+                return false;
+            }
+
+            if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_EXTINCT) != 0) {
+                sub_405BF0(obj);
+            }
+        }
+
+        if (tig_file_feof(stream) == 0) {
+            tig_file_fclose(stream);
+            tig_debug_printf("Error reading differences from file %s\n", path3);
+            return false;
+        }
+
+        tig_file_fclose(stream);
+    }
+
+    strcpy(fname, "mobile.des");
+    if (tig_file_exists(path3, NULL)) {
+        stream = tig_file_fopen(path3, "rb");
+
+        if (stream != NULL) {
+            while (tig_file_fread(&oid, sizeof(oid), 1, stream) == 1) {
+                obj = objp_perm_lookup(oid);
+                if (obj != OBJ_HANDLE_NULL) {
+                    sub_405BF0(obj);
+                }
+            }
+
+            tig_file_fclose(stream);
+        }
+    }
+
+    if (tig_file_exists("Rules\\map.patch", NULL)) {
+        stream = tig_file_fopen("Rules\\map.patch", "rt");
+        if (stream != NULL) {
+            char str[4096];
+            int line;
+            char* end;
+
+            line = 0;
+            while (tig_file_fgets(str, sizeof(str), stream) != NULL) {
+                line++;
+
+                if (str[0] != '#' && str[0] != '\n') {
+                    end = &(str[strlen(str) - 1]);
+                    if (*end != '\n'
+                        && !tig_file_feof(stream)) {
+                        tig_debug_printf("Error reading map.patch line %d is too long.\n", line);
+                        break;
+                    }
+
+                    *end = '\0';
+                    if (objid_id_from_str(&oid, str)) {
+                        obj = objp_perm_lookup(oid);
+                        if (obj != OBJ_HANDLE_NULL) {
+                            map_apply_obj_patch(obj, strchr(str, ':'));
+                        }
+                    } else {
+                        tig_debug_printf("Malformed line %d: \"%s\"\n", line, str);
+                    }
+                }
+            }
+
+            tig_file_fclose(stream);
+        }
+    }
+
+    return true;
 }
 
 // 0x411450
