@@ -1711,7 +1711,7 @@ int magictech_get_cost(int magictech)
 bool sub_450370(int magictech)
 {
     if (magictech_initialized) {
-        return (magictech_spells[magictech].flags & 0x100) != 0;
+        return (magictech_spells[magictech].flags & 0x2) != 0;
     } else {
         return false;
     }
