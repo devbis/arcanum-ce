@@ -378,14 +378,14 @@ void animfx_build_eye_candy_effect(int index, char* str)
     tig_str_parse_set_separator(',');
 
     AnimFxListEntry* entry = &(dword_601738->entries[index]);
-    entry->eye_candy_art_id = -1;
+    entry->eye_candy_art_id = TIG_ART_ID_INVALID;
     entry->sound = -1;
-    entry->light_art_id = -1;
+    entry->light_art_id = TIG_ART_ID_INVALID;
     entry->flags = 0;
     entry->light_color = 0;
 
     if (curr[0] == '\0') {
-        entry->eye_candy_art_id = -1;
+        entry->eye_candy_art_id = TIG_ART_ID_INVALID;
         return;
     }
 
@@ -455,7 +455,7 @@ void animfx_build_eye_candy_effect(int index, char* str)
         if (tig_art_eye_candy_id_create(art, 0, 0, (entry->flags & ANIMFX_LIST_ENTRY_TRANSLUCENCY) != 0 ? 1 : 0, type, palette, scale, &eye_candy_art_id) == TIG_OK) {
             entry->eye_candy_art_id = eye_candy_art_id;
             if (!sub_4CE1A0(entry->eye_candy_art_id, entry->flags, index, str)) {
-                entry->eye_candy_art_id = -1;
+                entry->eye_candy_art_id = TIG_ART_ID_INVALID;
                 entry->flags = 0;
             }
         } else {
@@ -465,7 +465,7 @@ void animfx_build_eye_candy_effect(int index, char* str)
                 tig_art_num_get(eye_candy_art_id),
                 index,
                 curr);
-            entry->eye_candy_art_id = -1;
+            entry->eye_candy_art_id = TIG_ART_ID_INVALID;
             entry->flags = 0;
         }
     } else if (tig_str_parse_named_value(&curr, "Sound:", &sound)) {
@@ -496,7 +496,7 @@ void animfx_build_eye_candy_effect(int index, char* str)
             light_build_color(255, 255, 255, &(entry->light_color));
         }
     } else {
-        entry->light_art_id = -1;
+        entry->light_art_id = TIG_ART_ID_INVALID;
     }
 
     int projectile_speed;
@@ -562,9 +562,9 @@ void sub_4CE2A0(int index)
 
     entry = &(dword_601738->entries[index]);
     entry->flags = 0;
-    entry->eye_candy_art_id = -1;
+    entry->eye_candy_art_id = TIG_ART_ID_INVALID;
     entry->sound = -1;
-    entry->light_art_id = -1;
+    entry->light_art_id = TIG_ART_ID_INVALID;
     entry->projectile_speed = 0;
 }
 
