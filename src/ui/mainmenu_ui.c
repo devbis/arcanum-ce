@@ -2534,7 +2534,7 @@ void sub_5412E0(bool a1)
 
                 teleport_data.flags = TELEPORT_MOVIE1 | TELEPORT_MOVIE2 | TELEPORT_FADE_IN;
                 teleport_data.obj = pc_obj;
-                teleport_data.loc = x | y;
+                teleport_data.loc = LOCATION_MAKE(x, y);
                 teleport_data.map = map;
                 teleport_data.movie1 = 1;
                 teleport_data.movie_flags1 = 0;
