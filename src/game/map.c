@@ -776,7 +776,25 @@ bool map_open_in_game(int map, bool a2, bool a3)
 // 0x40FE00
 void sub_40FE00(int64_t loc)
 {
-    // TODO: Incomplete.
+    int64_t sector_id;
+    int64_t x;
+    int64_t y;
+    int dx;
+    int dy;
+    Sector* sector;
+
+    sector_id = sub_4CFC50(loc);
+    x = SECTOR_X(sector_id) - 1;
+    y = SECTOR_Y(sector_id) - 1;
+
+    for (dy = 0; dy < 3; dy++) {
+        for (dx = 0; dx < 3; dx++) {
+            sector_id = SECTOR_FROM_XY(x + dx, y + dy);
+            if (sector_lock(sector_id, &sector)) {
+                sector_unlock(sector_id);
+            }
+        }
+    }
 }
 
 // 0x40FED0
