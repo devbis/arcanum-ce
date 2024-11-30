@@ -2013,7 +2013,25 @@ void MTComponentDamage_ProcFunc()
 // 0x451AF0
 void MTComponentDestroy_ProcFunc()
 {
-    // TODO: Incomplete.
+    unsigned int spell_flags;
+
+    if (stru_5E6D28.field_20 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    spell_flags = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_SPELL_FLAGS);
+    if (!dword_5E75F0->field_144 || (spell_flags & OSF_SUMMONED) != 0) {
+        sub_43CCA0(stru_5E6D28.field_20);
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet72 pkt;
+
+            pkt.type = 72;
+            pkt.oid = sub_407EF0(stru_5E6D28.field_20);
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+    }
 }
 
 // 0x451B90
