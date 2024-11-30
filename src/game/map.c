@@ -98,7 +98,7 @@ static bool map_save_difs();
 static bool map_save_dynamic();
 static void map_load_postprocess();
 static bool map_load_mobile(const char* a1, const char* a2);
-static bool sub_411450(const char* name);
+static bool map_load_dynamic(const char* name);
 static void map_disable_objects();
 static void sub_411830(char* str);
 static bool sub_411880(char** str, char* token);
@@ -610,6 +610,18 @@ bool map_open(const char* a1, const char* a2, bool a3)
         tig_debug_println("Error reading mobile objects");
         map_close();
         return false;
+    }
+    duration = tig_timer_elapsed(timestamp);
+    tig_debug_printf("done.  Time (ms): %d\n", duration);
+
+    tig_debug_printf("map_open: loading mobile dynamic objects...");
+    tig_timer_now(&timestamp);
+    if (!dword_5D1200) {
+        if (!map_load_dynamic(a2)) {
+            tig_debug_println("Error reading dynamic mobile objects\n");
+                map_close();
+                return false;
+        }
     }
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
@@ -1443,7 +1455,7 @@ bool map_load_mobile(const char* a1, const char* a2)
 }
 
 // 0x411450
-bool sub_411450(const char* name)
+bool map_load_dynamic(const char* name)
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
