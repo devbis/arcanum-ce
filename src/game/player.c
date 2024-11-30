@@ -246,7 +246,7 @@ bool player_obj_create_player(PlayerSpec* player_spec)
         old_handle = player_spec->field_0;
     }
 
-    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x4) != 0) {
+    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x4) == 0) {
         if (pcObj != OBJ_HANDLE_NULL) {
             sub_40DAB0();
         }
