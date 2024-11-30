@@ -191,15 +191,15 @@ bool sub_4C0C40(int64_t npc_obj, int64_t pc_obj)
 }
 
 // 0x4C0CC0
-int sub_4C0CC0(int64_t npc_obj, int64_t pc_ob)
+int sub_4C0CC0(int64_t npc_obj, int64_t pc_obj)
 {
-    return sub_4C0D00(npc_obj, pc_ob, 0);
+    return sub_4C0D00(npc_obj, pc_obj, 0);
 }
 
 // 0x4C0CE0
-int sub_4C0CE0(int64_t npc_obj, int64_t pc_ob)
+int sub_4C0CE0(int64_t npc_obj, int64_t pc_obj)
 {
-    return sub_4C0D00(npc_obj, pc_ob, 1);
+    return sub_4C0D00(npc_obj, pc_obj, 1);
 }
 
 // 0x4C0D00
