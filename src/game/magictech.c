@@ -2246,11 +2246,11 @@ void MTComponentTestNBranch_ProcFunc()
 // 0x452AD0
 void MTComponentTrait_ProcFunc()
 {
-    // TODO: Incomplete.
+    magictech_process(stru_5E6D28.field_20, &dword_5E761C->data.trait, dword_5E75AC);
 }
 
 // 0x452B00
-void magictech_process()
+void magictech_process(int64_t obj, void* a2, int a3)
 {
     // TODO: Incomplete.
 }

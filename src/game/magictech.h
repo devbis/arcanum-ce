@@ -367,6 +367,7 @@ bool sub_450940(int magictech);
 int sub_450B40(int64_t obj);
 void sub_451070(MagicTechLock* a1);
 void sub_451BB0(int64_t obj, int magictech);
+void magictech_process(int64_t obj, void* a2, int a3);
 void sub_454920(int64_t obj, int num, int max);
 bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
 void sub_455A20(MagicTechSerializedData* a1, int64_t obj, int a3);
