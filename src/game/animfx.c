@@ -462,7 +462,7 @@ void animfx_build_eye_candy_effect(int index, char* str)
             tig_debug_printf("AnimFX: ERROR: Build Eye Candy FAILED Due to invalid ART ID: [%s], %u, Art Num: %d: Foreground: Index: %d, Str: [%s]!!!\n",
                 dword_601738->path,
                 eye_candy_art_id,
-                tig_art_num(eye_candy_art_id),
+                tig_art_num_get(eye_candy_art_id),
                 index,
                 curr);
             entry->eye_candy_art_id = -1;
@@ -514,7 +514,7 @@ bool sub_4CE1A0(tig_art_id_t art_id, unsigned int flags, int index, const char* 
             tig_debug_printf("AnimFX: ERROR: Build Eye Candy FAILED Due to invalid ART ID: [%s], %u, Art Num: %d: Foreground: Index: %d, Str: [%s]!!!\n",
                 dword_601738->path,
                 art_id,
-                tig_art_num(art_id),
+                tig_art_num_get(art_id),
                 index,
                 str);
             return false;
@@ -527,7 +527,7 @@ bool sub_4CE1A0(tig_art_id_t art_id, unsigned int flags, int index, const char* 
             tig_debug_printf("AnimFX: ERROR: Build Eye Candy FAILED Due to invalid ART ID: [%s], %u, Art Num: %d: Background: Index: %d, Str: [%s]!!!\n",
                 dword_601738->path,
                 art_id,
-                tig_art_num(art_id),
+                tig_art_num_get(art_id),
                 index,
                 str);
             return false;
@@ -540,7 +540,7 @@ bool sub_4CE1A0(tig_art_id_t art_id, unsigned int flags, int index, const char* 
             tig_debug_printf("AnimFX: ERROR: Build Eye Candy FAILED Due to invalid ART ID: [%s], %u, Art Num: %d: Underlay: Index: %d, Str: [%s]!!!\n",
                 dword_601738->path,
                 art_id,
-                tig_art_num(art_id),
+                tig_art_num_get(art_id),
                 index,
                 str);
             return false;
