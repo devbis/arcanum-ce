@@ -109,7 +109,7 @@ void sub_4E0240()
 }
 
 // 0x4E1490
-void sub_4E1490()
+void sub_4E1490(int64_t a1, int64_t a2)
 {
     // TODO: Incomplete.
 }
