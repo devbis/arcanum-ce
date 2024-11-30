@@ -965,7 +965,7 @@ const char* off_5BBD70[] = {
 static bool magictech_editor;
 
 // 0x5E3518
-static int dword_5E3518;
+static S603CB8_F50 stru_5E3518;
 
 // 0x5E6D20
 static mes_file_handle_t dword_5E6D20;
@@ -2426,20 +2426,18 @@ void sub_4534E0(MagicTechLock* a1)
 void sub_453630()
 {
     sub_4F2600(&stru_5E6D28, 0, dword_5E75F0->source_obj.obj);
-    stru_5E6D28.field_50 = &dword_5E3518;
+    stru_5E6D28.field_50 = &stru_5E3518;
     stru_5E6D28.field_54 = &dword_5E75F0->objlist;
     stru_5E6D28.field_58 = &dword_5E75F0->summoned_obj;
     stru_5E6D28.field_30 = dword_5E75F0->target_obj.obj;
-    // TODO: Wrong.
-    // stru_5E6D28.field_38 = &dword_5E75F0->target_obj.next;
+    stru_5E6D28.field_38 = dword_5E75F0->target_obj.loc;
     stru_5E6D28.field_40 = dword_5E75F0->field_E8.obj;
     stru_5E6D28.field_48 = 0;
-    stru_5E6D28.field_8 = dword_5E75F0->parent_obj.obj;
+    stru_5E6D28.self_obj = dword_5E75F0->parent_obj.obj;
     qword_5E75B0 = dword_5E75F0->source_obj.obj;
 
     if (dword_5E75F0->source_obj.obj == OBJ_HANDLE_NULL) {
-        // TODO: Wrong.
-        // stru_5E6D28.field_18 = dword_5E75F0->source_obj.next;
+        stru_5E6D28.field_18 = dword_5E75F0->source_obj.loc;
     }
 }
 
