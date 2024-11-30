@@ -1522,7 +1522,7 @@ bool sub_44FE30(int a1, const char* path, int a3)
         }
     }
 
-    while (magictech < MT_80) {
+    for (magictech = 0; magictech < MT_80; magictech++) {
         sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3, magictech);
         magictech++;
     }
