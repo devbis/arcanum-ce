@@ -2046,7 +2046,7 @@ bool sector_cache_find_unused(unsigned int* index_ptr)
 
     // NOTE: Unsigned comparison.
     for (index = 0; index < sector_cache_size; index++) {
-        if (!sector_cache_entries->used) {
+        if (!sector_cache_entries[index].used) {
             *index_ptr = index;
             return true;
         }
