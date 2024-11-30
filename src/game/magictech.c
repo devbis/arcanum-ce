@@ -2043,7 +2043,27 @@ void MTComponentDispel_ProcFunc()
 // 0x451BB0
 void sub_451BB0(int64_t obj, int magictech)
 {
-    // TODO: Incomplete.
+    if (!sub_4A2BA0()) {
+        Packet74 pkt;
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        pkt.type = 74;
+        pkt.subtype = 1;
+        pkt.magictech = magictech;
+        if (obj != OBJ_HANDLE_NULL) {
+            pkt.oid = sub_407EF0(obj);
+        } else {
+            pkt.oid.type = OID_TYPE_NULL;
+        }
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (obj != OBJ_HANDLE_NULL) {
+        sub_451C40(magictech, obj);
+    }
 }
 
 // 0x451C40
