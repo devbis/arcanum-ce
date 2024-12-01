@@ -200,7 +200,7 @@ bool sub_569930(int num, char* slide_path, char* speech_path)
     char* tok;
 
     mes_file_entry.num = num;
-    if (mes_search(slide_ui_slide_mes_file, &mes_file_entry)) {
+    if (!mes_search(slide_ui_slide_mes_file, &mes_file_entry)) {
         return false;
     }
 
