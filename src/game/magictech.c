@@ -3801,7 +3801,7 @@ void sub_459EA0(int64_t obj)
 }
 
 // 0x459F20
-bool sub_459F20(int magictech, int* a2)
+bool sub_459F20(int magictech, uint64_t** a2)
 {
     *a2 = magictech_spells[magictech].field_70;
     return true;
