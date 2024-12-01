@@ -4440,7 +4440,19 @@ bool sub_426040(AnimRunInfo* run_info)
 // 0x4261E0
 int sub_4261E0(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    AnimPath path;
+
+    path.flags = 0;
+    path.curr = 0;
+    path.max = 0;
+    path.absMaxPathLength = 0;
+    path.maxPathLength = 0;
+    path.baseRot = 0;
+    if (!sub_426500(a1, a2, &path, 0x0)) {
+        return 0;
+    }
+
+    return path.max;
 }
 
 // 0x426250
