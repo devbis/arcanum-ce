@@ -720,7 +720,7 @@ void tile_render_iso(UnknownContext* render_info)
             sector_lock_results[v4] = sector_lock(v3->field_20[v4], &(sectors[v4]));
         }
 
-        sub_4B8680(v3->field_8[v2], &loc_x, &loc_y);
+        sub_4B8680(v3->field_8[0], &loc_x, &loc_y);
 
         v10 = 0;
         v11 = 0;
