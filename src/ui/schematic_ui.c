@@ -531,7 +531,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
             for (tech = 0; tech < TECH_COUNT; tech++) {
                 if (msg->data.button.button_handle == stru_5CA8A0[tech].button_handle) {
                     dword_680E6C = tech;
-                    dword_680E58 = tech;
+                    dword_680E58 = 0;
                     sub_56DDC0();
                     gsound_play_sfx_id(3010, 1);
                     return true;
