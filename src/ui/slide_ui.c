@@ -133,7 +133,7 @@ bool sub_569770(tig_window_handle_t window_handle, int num)
     rect.height = 600;
 
     if (sub_569930(num, bmp.name, speech_path)) {
-        if (tig_bmp_create(&bmp)) {
+        if (tig_bmp_create(&bmp) == TIG_OK) {
             tig_bmp_copy_to_window(&bmp, &rect, window_handle, &rect);
             tig_bmp_destroy(&bmp);
 
