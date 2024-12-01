@@ -3913,7 +3913,7 @@ void sub_45A540(int64_t a1)
 bool sub_45A580(int64_t a1, int64_t a2)
 {
     if ((obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) == 0
-        || (obj_field_int32_get(a2, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_INVISIBLE) != 0) {
+        || (obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_INVISIBLE) != 0) {
         return true;
     }
 
@@ -3925,11 +3925,11 @@ bool sub_45A580(int64_t a1, int64_t a2)
         return true;
     }
 
-    if (sub_44E830(a2, 19, 0)) {
+    if (sub_44E830(a2, AG_ATTEMPT_ATTACK, NULL)) {
         return true;
     }
 
-    if (sub_44E830(a2, 27, 0)) {
+    if (sub_44E830(a2, AG_ATTEMPT_SPELL, NULL)) {
         return true;
     }
 
