@@ -4731,6 +4731,8 @@ bool sub_5455D0(int64_t obj)
         sub_545550(obj, race);
         return true;
     }
+
+    return false;
 }
 
 // 0x545690
