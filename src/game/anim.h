@@ -31,6 +31,7 @@ bool anim_timeevent_process(TimeEvent* timeevent);
 void sub_423E60(const char* msg);
 void sub_423FC0();
 void sub_423FE0(void(*func)());
+bool sub_423FF0(int64_t obj);
 bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4);
 bool sub_424250();
 bool anim_goal_interrupt_all_goals_of_priority(int priority_level);
