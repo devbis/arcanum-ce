@@ -26,13 +26,13 @@ static bool ambient_lighting_process_callback(TimeEvent* timeevent);
 static void sub_57D6C0();
 
 // 0x5CB408
-static bool dword_5CB408;
+static bool dword_5CB408 = true;
 
 // 0x5CB40C
-static int dword_5CB40C;
+static int dword_5CB40C = -1;
 
 // 0x5CB410
-static int dword_5CB410;
+static int dword_5CB410 = -1;
 
 // 0x57D240
 bool anim_ui_init(GameInitInfo* init_info)
