@@ -4474,9 +4474,12 @@ int sub_426250(int64_t a1, int64_t a2)
 }
 
 // 0x4262D0
-void anim_create_path_max_length()
+void anim_create_path_max_length(int64_t a1, const char* msg, int value)
 {
-    // TODO: Incomplete.
+    char str[MAX_STRING];
+
+    sub_441B60(a1, a1, str);
+    tig_debug_printf("Anim: anim_create_path_max_length: Error: %s: %d!  [%s]\n", msg, value, str);
 }
 
 // 0x426320
