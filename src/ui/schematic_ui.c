@@ -457,7 +457,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
         break;
     case TIG_MESSAGE_BUTTON:
         switch (msg->data.button.state) {
-        case 2:
+        case TIG_BUTTON_STATE_MOUSE_INSIDE:
             if (msg->data.button.button_handle == dword_680DE0) {
                 if (qword_680E90 != 0) {
                     sub_57CCF0(qword_680E60, qword_680E90);
@@ -509,7 +509,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
             }
 
             break;
-        case 3:
+        case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
             if (msg->data.button.button_handle == dword_680DE0
                 || msg->data.button.button_handle == dword_680E3C
                 || msg->data.button.button_handle == stru_5CA850[2].button_handle
@@ -527,7 +527,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
             }
 
             break;
-        case 0:
+        case TIG_BUTTON_STATE_PRESSED:
             for (tech = 0; tech < TECH_COUNT; tech++) {
                 if (msg->data.button.button_handle == stru_5CA8A0[tech].button_handle) {
                     dword_680E6C = tech;
@@ -589,7 +589,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
             }
 
             break;
-        case 1:
+        case TIG_BUTTON_STATE_RELEASED:
             if (msg->data.button.button_handle == stru_5CA850[2].button_handle) {
                 switch (dword_680E7C) {
                 case 0:
