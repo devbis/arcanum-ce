@@ -6341,12 +6341,6 @@ void sub_549780()
     sub_5496F0(5063); // "Load completed."
 }
 
-// 0x549790
-void sub_549790()
-{
-    // TODO: Incomplete.
-}
-
 // 0x549820
 tig_window_handle_t sub_549820()
 {
