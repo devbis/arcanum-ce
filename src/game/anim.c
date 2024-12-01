@@ -4458,7 +4458,19 @@ int sub_4261E0(int64_t a1, int64_t a2)
 // 0x426250
 int sub_426250(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    AnimPath path;
+
+    path.flags = 1;
+    path.curr = 0;
+    path.max = 0;
+    path.absMaxPathLength = 0;
+    path.maxPathLength = 0;
+    path.baseRot = 0;
+    if (!sub_426500(a1, a2, &path, 0x1)) {
+        return 0;
+    }
+
+    return path.max;
 }
 
 // 0x4262D0
