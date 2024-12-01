@@ -18,6 +18,7 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "game/proto.h"
+#include "game/random.h"
 #include "game/reaction.h"
 #include "game/skill.h"
 #include "game/stat.h"
@@ -7456,7 +7457,86 @@ bool sub_42FFE0(AnimRunInfo* run_info)
 // 0x4300D0
 bool anim_fidget_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    bool v1 = false;
+    TigRect rect;
+    TimeEvent next_timeevent;
+    DateTime datetime;
+    LocRect loc_rect;
+    ObjectList objects;
+    ObjectNode* node;
+    int cnt;
+    int skip;
+    tig_art_id_t art_id;
+    AnimGoalData goal_data;
+
+    if (sub_4B6D70()) {
+        return true;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        return true;
+    }
+
+    if (dword_5DE6E0) {
+        return true;
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = 800;
+    rect.height = 400;
+
+    if (sub_4B9130(&rect, &loc_rect)) {
+        sub_45A950(&datetime, 4000);
+
+        cnt = sub_4302D0(&loc_rect, &objects);
+        if (cnt != 0) {
+            if (cnt > 1) {
+                if (sub_441140(&objects, qword_5DE6D8)) {
+                    cnt--;
+                }
+            }
+
+            if (cnt > 1) {
+                skip = random_between(0, cnt - 1);
+            } else {
+                skip = 0;
+            }
+
+            node = objects.head;
+            while (skip > 0) {
+                node = node->next;
+                skip--;
+            }
+
+            ASSERT(node != NULL); // 12021, "pCurNode != NULL"
+
+            qword_5DE6D8 = node->obj;
+            if (qword_5DE6D8 != OBJ_HANDLE_NULL) {
+                art_id = obj_field_int32_get(qword_5DE6D8, OBJ_F_CURRENT_AID);
+                art_id = tig_art_id_frame_set(art_id, 0);
+                if (sub_459380(qword_5DE6D8, 172)) {
+                    art_id = sub_503E50(art_id, 23);
+                    v1 = true;
+                }
+
+                object_set_current_aid(qword_5DE6D8, art_id);
+
+                sub_44D4E0(&goal_data, qword_5DE6D8, AG_ANIM_FIDGET);
+                if (!sub_44D520(&goal_data, NULL)) {
+                    if (v1) {
+                        art_id = sub_503E50(art_id, 0);
+                        object_set_current_aid(qword_5DE6D8, art_id);
+                    }
+                }
+            }
+        }
+
+        object_list_destroy(&objects);
+    }
+
+    next_timeevent.type = TIMEEVENT_TYPE_FIDGET_ANIM;
+    return sub_45B800(&timeevent, &datetime);
 }
 
 // 0x4302D0
