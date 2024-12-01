@@ -5022,7 +5022,9 @@ void sub_545E20()
 // 0x545E30
 void sub_545E30()
 {
-    // TODO: Incomplete.
+    if (inven_ui_is_created()) {
+        inven_ui_destroy();
+    }
 }
 
 // 0x545E40
