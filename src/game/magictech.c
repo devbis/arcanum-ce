@@ -3776,6 +3776,68 @@ void sub_459A20(int64_t obj)
 {
 }
 
+// 0x459A30
+void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
+{
+    unsigned int spell_flags;
+    AnimFxNode node;
+    int magictech;
+
+    spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
+
+    if ((spell_flags & OSF_SHIELDED) != 0) {
+        if (sub_459170(obj, OSF_SHIELDED, &magictech)) {
+            sub_4CCD20(&stru_5E7568,
+                &node,
+                obj,
+                magictech_locks[magictech].field_0,
+                6 * magictech_locks[magictech].spell + 5);
+            node.field_1C = 1;
+            animfx_add(&node);
+        } else {
+            tig_debug_printf("MagicTech: magictech_anim_play_hit_fx: Failed to match spell from flags!\n");
+        }
+    }
+
+    if ((spell_flags & OSF_MAGNETIC_INVERSION) != 0) {
+        if (sub_459170(obj, OSF_MAGNETIC_INVERSION, &magictech)) {
+            sub_4CCD20(&stru_5E7568,
+                &node,
+                obj,
+                magictech_locks[magictech].field_0,
+                6 * magictech_locks[magictech].spell + 5);
+            node.field_1C = 1;
+            animfx_add(&node);
+        } else {
+            tig_debug_printf("MagicTech: magictech_anim_play_hit_fx: Failed to match spell from flags!\n");
+            sub_4CCD20(&stru_5E7568, &node, obj, -1, 1097);
+            node.field_1C = 1;
+            animfx_add(&node);
+        }
+    }
+
+    if ((spell_flags & OSF_ENTANGLED) != 0) {
+        if (sub_459170(obj, OSF_ENTANGLED, &magictech)) {
+            if (!sub_459C10(obj, magictech)) {
+                sub_45A520(combat->field_8, obj);
+                magictech_interrupt_delayed(magictech);
+            }
+        }
+    }
+
+    if (sub_49B290(obj) == 27369 && !combat->field_5C) {
+        sub_4CCD20(&stru_5E7568, &node, obj, -1, 1259);
+        node.field_1C = 1;
+        animfx_add(&node);
+    }
+}
+
+// 0x459C10
+bool sub_459C10(int64_t obj, int magictech)
+{
+    // TODO: Incomplete.
+}
+
 // 0x459EA0
 void sub_459EA0(int64_t obj)
 {

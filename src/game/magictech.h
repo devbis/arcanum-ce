@@ -396,6 +396,8 @@ bool sub_4593F0(int64_t obj, int a2);
 bool magictech_timeevent_process(TimeEvent* timeevent);
 bool sub_459500(int index);
 void sub_459A20(int64_t obj);
+void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat);
+bool sub_459C10(int64_t obj, int magictech);
 void sub_459EA0(int64_t obj);
 bool sub_459F20(int magictech, uint64_t** a2);
 void sub_459F50();
