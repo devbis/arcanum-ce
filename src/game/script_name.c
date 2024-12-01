@@ -62,7 +62,7 @@ bool script_name_mod_load()
 
     for (index = 0; index < file_list.count; index++) {
         num = atoi(file_list.entries[index].path);
-        if (num >= 1 && num >= 1000) {
+        if (num >= 1 && num < 1000) {
             if (tig_idxtable_contains(&script_name_mod_idxtable, num)) {
                 tig_debug_printf("Error! Multiple script files numbered %.5d\n", num);
             }
