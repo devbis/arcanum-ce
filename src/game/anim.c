@@ -76,6 +76,7 @@ static bool sub_425930(AnimRunInfo* run_info);
 static bool sub_425BF0(PathCreateInfo* path_create_info, bool a2);
 static bool sub_425D60(AnimRunInfo* run_info);
 static bool sub_426040(AnimRunInfo* run_info);
+static int sub_426500(int64_t obj, int64_t a2, AnimPath* path, unsigned int flags);
 static bool sub_426840(AnimRunInfo* run_info);
 static bool sub_4268F0(AnimRunInfo* run_info);
 static bool sub_4269D0(AnimRunInfo* run_info);
@@ -4489,13 +4490,15 @@ void sub_426320()
 }
 
 // 0x426500
-void sub_426500()
+int sub_426500(int64_t obj, int64_t a2, AnimPath* path, unsigned int flags)
 {
-    // TODO: Incomplete.
+    ASSERT(obj != OBJ_HANDLE_NULL); // 4493, "obj != OBJ_HANDLE_NULL"
+
+    return sub_426560(obj, obj_field_int64_get(obj, OBJ_F_LOCATION), a2, path, flags);
 }
 
 // 0x426560
-void sub_426560()
+bool sub_426560(int64_t obj, int64_t a2, int64_t a3, AnimPath* path, unsigned int flags)
 {
     // TODO: Incomplete.
 }
