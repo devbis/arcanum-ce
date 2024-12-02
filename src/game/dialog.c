@@ -2685,7 +2685,7 @@ int sub_417D80(TigFile* stream)
 int sub_417D90(TigFile* stream)
 {
     if (dword_5D19FC != dword_5D19F8) {
-        byte_5D1224[dword_5D19FC++];
+        return byte_5D1224[dword_5D19FC++];
     }
 
     dword_5D19FC = 0;
