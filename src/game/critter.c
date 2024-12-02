@@ -676,7 +676,7 @@ int64_t critter_leader_get(int64_t obj)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         obj_field_obj_get(obj, OBJ_F_NPC_LEADER, &leader_obj);
-        return obj;
+        return leader_obj;
     } else {
         return OBJ_HANDLE_NULL;
     }
