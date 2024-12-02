@@ -2320,10 +2320,10 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
     }
 
     if (obj_type_is_critter(obj_field_int32_get(a1->pc_obj, OBJ_F_TYPE))
-        && stat_level(a1->pc_obj, STAT_GENDER) == GENDER_MALE) {
-        sub_416B00(a1->field_70, v1.field_4, a1);
-    } else {
+        && stat_level(a1->pc_obj, STAT_GENDER) != GENDER_MALE) {
         sub_416B00(a1->field_70, v1.data.field_8, a1);
+    } else {
+        sub_416B00(a1->field_70, v1.field_4, a1);
     }
 
     return true;
