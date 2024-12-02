@@ -2491,7 +2491,7 @@ void sub_417720(Dialog* dialog)
     while (sub_417860(stream, &v1, &line)) {
         if (dialog->entries_length == dialog->entries_capacity) {
             dialog->entries_capacity += 10;
-            dialog->entries = (DialogEntry*)REALLOC(dialog->entries, sizeof(dialog->entries) * dialog->entries_capacity);
+            dialog->entries = (DialogEntry*)REALLOC(dialog->entries, sizeof(*dialog->entries) * dialog->entries_capacity);
         }
 
         sub_417E20(&(dialog->entries[dialog->entries_length]), &v1);
@@ -2503,7 +2503,7 @@ void sub_417720(Dialog* dialog)
     sub_417D80(stream);
 
     if (dialog->entries_length != 0) {
-        qsort(dialog->entries, dialog->entries_length, sizeof(dialog->entries), sub_417E00);
+        qsort(dialog->entries, dialog->entries_length, sizeof(*dialog->entries), sub_417E00);
     }
 }
 
