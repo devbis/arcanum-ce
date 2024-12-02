@@ -345,6 +345,8 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
         } else {
             combat->weapon_obj = OBJ_HANDLE_NULL;
         }
+    } else {
+        combat->weapon_obj = OBJ_HANDLE_NULL;
     }
 
     combat->skill = item_weapon_skill(combat->weapon_obj);
