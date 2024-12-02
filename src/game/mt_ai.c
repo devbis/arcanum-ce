@@ -391,7 +391,7 @@ void sub_4CC810(S5FF620* a1)
         return;
     }
 
-    cnt = obj_field_int32_get(a1->obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX);
+    cnt = obj_field_int32_get(a1->obj, OBJ_F_CRITTER_INVENTORY_NUM);
     for (index = 0; index < cnt; index++) {
         item_obj = obj_arrayfield_handle_get(a1->obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
         sub_4CC930(a1, item_obj);
