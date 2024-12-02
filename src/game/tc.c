@@ -58,7 +58,7 @@ bool tc_init(GameInitInfo* init_info)
     tig_art_id_t art_id;
     TigFont font;
 
-    tc_editor = init_info;
+    tc_editor = init_info->editor;
     if (!tc_editor) {
         if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
             return false;
