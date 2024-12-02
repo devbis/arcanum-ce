@@ -1356,6 +1356,7 @@ void sub_587D60(TigRect* rect, tig_window_handle_t window_handle)
             }
 
             y += 20;
+            index++;
         }
     }
 }
