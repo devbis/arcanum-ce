@@ -567,10 +567,10 @@ int sub_460B30(TimeEvent* timeevent)
 }
 
 // 0x460B50
-void sub_460B50(int a1, int a2, int a3, int a4)
+void sub_460B50(int64_t a1, int64_t a2)
 {
     if (ui_callbacks.field_110 != NULL) {
-        ui_callbacks.field_110(a1, a2, a3, a4);
+        ui_callbacks.field_110(a1, a2);
     }
 }
 
