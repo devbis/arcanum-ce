@@ -30,6 +30,8 @@
 
 #define CLOCKWORK_DECOY 6719
 
+#define AI_PARAMS_MAX 17
+
 typedef union AiParams {
     struct {
         /* 0000 */ int field_0; // Percentage of NPC hit points below which NPC will flee.
@@ -50,7 +52,7 @@ typedef union AiParams {
         /* 003C */ int field_3C; // Minimum distance in combat.
         /* 0040 */ int field_40; // The NPC can open portals if this is nonzero and cannot if it is zero.
     };
-    int values[17];
+    int values[AI_PARAMS_MAX];
 } AiParams;
 
 static_assert(sizeof(AiParams) == 0x44, "wrong size");
@@ -211,7 +213,7 @@ bool ai_init(GameInitInfo* init_info)
         idx = mes_file_entry.num;
         do {
             str = mes_file_entry.str;
-            for (param = 0; param < 17; param++) {
+            for (param = 0; param < AI_PARAMS_MAX; param++) {
                 tok = strtok(str, " \t\n");
                 if (tok == NULL) {
                     break;
@@ -221,6 +223,7 @@ bool ai_init(GameInitInfo* init_info)
 
                 str = NULL;
             }
+            idx++;
         } while (idx < 100 && mes_find_next(mes_file, &mes_file_entry));
     }
 
@@ -250,7 +253,7 @@ bool ai_mod_load()
             idx = mes_file_entry.num;
             do {
                 str = mes_file_entry.str;
-                for (param = 0; param < 17; param++) {
+                for (param = 0; param < AI_PARAMS_MAX; param++) {
                     tok = strtok(str, " \t\n");
                     if (tok == NULL) {
                         break;
@@ -260,6 +263,7 @@ bool ai_mod_load()
 
                     str = NULL;
                 }
+                idx++;
             } while (idx < 150 && mes_find_next(mes_file, &mes_file_entry));
         }
 
