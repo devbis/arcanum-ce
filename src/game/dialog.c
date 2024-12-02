@@ -2633,6 +2633,8 @@ bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
         } else {
             prev = ch;
         }
+
+        ch = sub_417D90(stream);
     }
 
     len = 0;
@@ -2656,6 +2658,8 @@ bool sub_417C20(TigFile* stream, char* str, int* line_ptr)
         } else {
             overflow = true;
         }
+
+        ch = sub_417D90(stream);
     }
 
     str[len] = '\0';
