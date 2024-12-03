@@ -3592,9 +3592,22 @@ tig_art_id_t sub_458B70(int magictech)
 }
 
 // 0x458C00
-void sub_458C00()
+void sub_458C00(int spell, int64_t obj)
 {
-    // TODO: Incomplete.
+    MagicTechLock* v1;
+    AnimFxListEntry* v2;
+
+    if (obj == OBJ_HANDLE_NULL
+        && sub_4557C0(spell, &v1)
+        && animfx_id_get(&stru_5E7568, v1->spell * 6 + 1, &v2)) {
+        if (tig_art_exists(v2->light_art_id) == TIG_OK) {
+            object_set_light(obj, 0x20, v2->light_art_id, v2->light_color);
+        }
+
+        if (v2->sound != -1) {
+            sub_41B930(v2->sound, 1, obj);
+        }
+    }
 }
 
 // 0x458CA0

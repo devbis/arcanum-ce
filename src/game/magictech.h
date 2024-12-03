@@ -388,6 +388,7 @@ bool sub_458A80(unsigned int flags);
 tig_art_id_t sub_458AE0(int magictech);
 const char* magictech_get_name(int magictech);
 tig_art_id_t sub_458B70(int magictech);
+void sub_458C00(int spell, int64_t obj);
 int sub_458CA0(int magictech);
 bool sub_459040(int64_t a1, unsigned int flags, int64_t* a3);
 bool sub_459170(int64_t a1, unsigned int flags, int64_t* a3);
