@@ -3712,9 +3712,42 @@ bool sub_423C80(AnimRunInfo* run_info, DateTime* a2, int delay)
 }
 
 // 0x423D10
-void sub_423D10()
+void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** goal_node_ptr, AnimGoalData** goal_data_ptr, bool* a5)
 {
-    // TODO: Incomplete.
+    if (run_info->current_goal == 0
+        && (*flags_ptr & 0x40000000) == 0) {
+        run_info->field_C |= 0x02;
+    }
+
+    if ((*goal_node_ptr)->subnodes[14].func != NULL
+        && ((*flags_ptr & 0x70000000) == 0
+            || (*flags_ptr & 0x4000000) == 0)
+        && sub_44DD80(run_info, &((*goal_node_ptr)->subnodes[14]))) {
+        (*goal_node_ptr)->subnodes[14].func(run_info);
+    }
+
+    if ((*flags_ptr & 0x1000000) == 0) {
+        run_info->path.maxPathLength = 0;
+        run_info->field_C &= ~0x83C;
+    }
+
+    if ((*flags_ptr & 0x2000000) != 0) {
+        run_info->path.flags = 0x01;
+    }
+
+    sub_44C8F0(run_info, *goal_node_ptr);
+
+    run_info->current_goal--;
+
+    if (run_info->current_goal >= 0) {
+        *goal_data_ptr = &(run_info->goals[run_info->current_goal]);
+        *goal_node_ptr = off_5B03D0[(*goal_data_ptr)->type];
+        *a5 = false;
+    } else {
+        if ((*flags_ptr & 0x40000000) == 0) {
+            run_info->field_C |= 0x02;
+        }
+    }
 }
 
 // 0x423E60
