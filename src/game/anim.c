@@ -6327,7 +6327,60 @@ bool sub_42AFB0(AnimRunInfo* run_info)
 // 0x42B090
 bool sub_42B090(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int obj_type;
+    tig_art_id_t art_id;
+
+    if (map_is_clearing_objects()) {
+        return true;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return true;
+    }
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 8068, "obj != OBJ_HANDLE_NULL"
+
+    if ((run_info->field_C & 0x8000) != 0
+        || map_is_clearing_objects()
+        || obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+    if (obj_type_is_critter(obj_type)) {
+        if (critter_is_concealed(obj)) {
+            art_id = sub_503E50(art_id, 5);
+        } else {
+            art_id = sub_503E50(art_id, 0);
+        }
+
+        art_id = tig_art_id_frame_set(art_id, 0);
+        object_set_current_aid(obj, art_id);
+        sub_430490(obj, 0, 0);
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) != 0) {
+        Packet10 pkt;
+
+        pkt.type = 10;
+        pkt.anim_id = run_info->id;
+        pkt.oid = sub_407EF0(obj);
+        pkt.loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+        pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+        pkt.art_id = art_id;
+        pkt.flags = run_info->field_C;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    return true;
 }
 
 // 0x42B250
