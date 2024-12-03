@@ -59,7 +59,7 @@ static bool sub_4246C0(AnimRunInfo* run_info);
 static bool sub_4246D0(AnimRunInfo* run_info);
 static bool sub_4246E0(AnimRunInfo* run_info);
 static bool sub_424820(AnimRunInfo* run_info);
-static bool sub_4248A0(int a1, int64_t self_obj, int64_t a3, int64_t a4, int64_t loc, int spell, int64_t* obj_ptr, AnimID anim_id, ObjectID oid);
+static bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64_t loc, int64_t target_loc, int spell, int64_t* obj_ptr, AnimID anim_id, ObjectID oid);
 static bool sub_424BC0(AnimRunInfo* run_info);
 static bool sub_424D00(AnimRunInfo* run_info);
 static bool sub_424D90(AnimRunInfo* run_info);
@@ -4122,9 +4122,79 @@ bool sub_424820(AnimRunInfo* run_info)
 }
 
 // 0x4248A0
-bool sub_4248A0(int a1, int64_t self_obj, int64_t a3, int64_t a4, int64_t loc, int spell, int64_t* obj_ptr, AnimID anim_id, ObjectID oid)
+bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64_t loc, int64_t target_loc, int spell, int64_t* obj_ptr, AnimID anim_id, ObjectID oid)
 {
-    // TODO: Incomplete.
+    int64_t proto_obj;
+    int64_t self_loc;
+    int rotation;
+
+    ASSERT(obj_ptr != NULL); // 3074, "obj != NULL"
+
+    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+        proto_obj = sub_4685A0(5028);
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) == 0) {
+            if (!sub_43CBF0(proto_obj, loc, oid, obj_ptr)) {
+                ASSERT(0); // 3085, "0"
+                exit(EXIT_FAILURE);
+            }
+        } else {
+            if (!object_create(proto_obj, loc, obj_ptr)) {
+                ASSERT(0); // 3090, "0"
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet6 pkt;
+
+            pkt.type = 6;
+            pkt.subtype = 0;
+            pkt.art_id = art_id;
+
+            if (self_obj != OBJ_HANDLE_NULL) {
+                pkt.self_oid = sub_407EF0(self_obj);
+            } else {
+                pkt.self_oid.type = OID_TYPE_NULL;
+            }
+
+            if (target_obj != OBJ_HANDLE_NULL) {
+                pkt.target_oid = sub_407EF0(self_obj);
+            } else {
+                pkt.target_oid.type = OID_TYPE_NULL;
+            }
+
+            pkt.loc = loc;
+            pkt.target_loc = target_loc;
+            pkt.spell = spell;
+            pkt.anim_id = anim_id;
+            pkt.obj_oid = sub_407EF0(*obj_ptr);
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+
+        sub_43D0E0(*obj_ptr, OF_DONTLIGHT);
+
+        if (art_id != TIG_ART_ID_INVALID) {
+            if (target_obj != OBJ_HANDLE_NULL) {
+                target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+            }
+
+            self_loc = obj_field_int64_get(self_obj, OBJ_F_LOCATION);
+            rotation = sub_4B6A00(self_loc, target_loc);
+            art_id = sub_4B6B10(art_id, rotation);
+
+            obj_field_int32_set(*obj_ptr, OBJ_F_AID, art_id);
+            obj_field_int32_set(*obj_ptr, OBJ_F_CURRENT_AID, art_id);
+        } else {
+            ASSERT(0); // 3126, "0"
+        }
+
+        sub_458C00(spell, *obj_ptr);
+    }
+
+    return true;
 }
 
 // 0x424BC0
