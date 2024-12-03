@@ -4070,6 +4070,7 @@ bool sub_4246E0(AnimRunInfo* run_info)
     int64_t parent_obj;
     AnimGoalData goal_data;
     AnimID anim_id;
+    int idx;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
@@ -4089,7 +4090,12 @@ bool sub_4246E0(AnimRunInfo* run_info)
 
     sub_44D4E0(&goal_data, obj, run_info->params[2].data);
 
-    // TODO: Incomplete.
+    for (idx = 1; idx < AGDATA_COUNT; idx++) {
+        goal_data.params[idx] = run_info->cur_stack_data->params[idx];
+    }
+
+    goal_data.params[AGDATA_ANIM_ID].data = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    goal_data.params[AGDATA_PARENT_OBJ].obj = parent_obj;
 
     if (!sub_44D520(&goal_data, &anim_id)) {
         return false;
