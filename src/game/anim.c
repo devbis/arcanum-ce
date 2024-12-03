@@ -4583,7 +4583,48 @@ bool sub_425D60(AnimRunInfo* run_info)
 // 0x426040
 bool sub_426040(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    unsigned int flags = 0;
+    bool rc;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 4297, "obj != OBJ_HANDLE_NULL"
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    run_info->field_14 = run_info->current_goal;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        sub_44EBF0(run_info);
+        return true;
+    }
+
+    if ((run_info->field_C & 0x400) != 0) {
+        flags = 0x78;
+    }
+
+    if (run_info->params[1].loc == 0 || run_info->params[1].loc == -1) {
+        return false;
+    }
+
+    if (sub_426500(obj, run_info->params[1].loc, &(run_info->path), flags)) {
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_4ED510(run_info->id, run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc, run_info);
+        }
+        return true;
+    }
+
+    if ((run_info->field_C & 0x400) != 0 || !sub_40DA20(obj)) {
+        return false;
+    }
+
+    run_info->field_C |= 0x400;
+    rc = sub_426500(obj, run_info->params[1].loc, &(run_info->path), flags | 0x78);
+    sub_4ED510(run_info->id, run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc, run_info);
+    return rc;
 }
 
 // 0x4261E0
