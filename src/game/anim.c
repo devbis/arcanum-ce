@@ -4200,7 +4200,45 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
 // 0x424BC0
 bool sub_424BC0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t parent_obj;
+    int64_t target_loc;
+    tig_art_id_t art_id;
+    int64_t parent_loc;
+    int rotation;
+
+    source_obj = run_info->params[0].obj;
+
+    if (run_info->cur_stack_data == NULL) {
+        run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
+    }
+
+    parent_obj = run_info->cur_stack_data->params[AGDATA_PARENT_OBJ].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 3202, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(parent_obj != OBJ_HANDLE_NULL); // 3203, "parentObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (parent_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (run_info->params[1].obj != OBJ_HANDLE_NULL) {
+        target_loc = obj_field_int64_get(run_info->params[1].obj, OBJ_F_LOCATION);
+    } else {
+        target_loc = run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc;
+    }
+
+    // FIXME: Looks meaningless.
+    art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
+    parent_loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
+    rotation = sub_4B6A00(parent_loc, target_loc);
+    sub_4B6B10(art_id, rotation);
+
+    return true;
 }
 
 // 0x424D00
