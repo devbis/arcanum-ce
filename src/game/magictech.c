@@ -3588,7 +3588,24 @@ const char* magictech_get_name(int magictech)
 // 0x458B70
 tig_art_id_t sub_458B70(int magictech)
 {
-    // TODO: Incomplete.
+    MagicTechLock* v1;
+    AnimFxListEntry* v2;
+    tig_art_id_t eye_candy_art_id = TIG_ART_ID_INVALID;
+    tig_art_id_t obj_art_id;
+    int rotation;
+
+    if (sub_4557C0(magictech, &v1)
+        && animfx_id_get(&stru_5E7568, v1->spell * 6 + 1, &v2)
+        && v1->parent_obj.obj != OBJ_HANDLE_NULL) {
+        eye_candy_art_id = v2->eye_candy_art_id;
+        if (eye_candy_art_id != TIG_ART_ID_INVALID) {
+            obj_art_id = obj_field_int32_get(v1->parent_obj.obj, OBJ_F_CURRENT_AID);
+            rotation = tig_art_id_rotation_get(obj_art_id);
+            eye_candy_art_id = tig_art_id_rotation_set(eye_candy_art_id, rotation);
+        }
+    }
+
+    return eye_candy_art_id;
 }
 
 // 0x458C00
