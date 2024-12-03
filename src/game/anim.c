@@ -6121,7 +6121,42 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
 // 0x42AB90
 bool sub_42AB90(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t item_obj;
+    int64_t target_obj;
+    int64_t target_loc;
+
+    source_obj = run_info->params[0].obj;
+    item_obj = run_info->params[1].obj;
+    target_obj = run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj;
+    target_loc = run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 7861, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(item_obj != OBJ_HANDLE_NULL); // 7861, "itemObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL) {
+        return false;;
+    }
+
+    if (target_obj != OBJ_HANDLE_NULL) {
+        if (target_obj == -1) {
+            target_obj = OBJ_HANDLE_NULL;
+        }
+    } else {
+        if (target_loc == 0) {
+            return false;
+        }
+    }
+
+    if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return false;
+    }
+
+    sub_4B3C00(source_obj, item_obj, target_obj, target_loc, 0);
+
+    run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj = OBJ_HANDLE_NULL;
+
+    return true;
 }
 
 // 0x42ACD0
