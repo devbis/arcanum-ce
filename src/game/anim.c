@@ -8360,8 +8360,6 @@ bool sub_42E590(AnimRunInfo* run_info)
 bool sub_42E6B0(AnimRunInfo* run_info)
 {
     int64_t obj;
-    tig_art_id_t art_id;
-    TigArtAnimData art_anim_data;
 
     obj = run_info->params[0].obj;
 
