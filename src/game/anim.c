@@ -7811,7 +7811,56 @@ bool sub_42D6F0(AnimRunInfo* run_info)
 // 0x42D7D0
 bool sub_42D7D0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    int v1;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 9889, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        tig_debug_printf("Anim: Warning: Goal Received NULL Object!\n");
+        return false;
+    }
+
+    art_id = run_info->params[1].data;
+    if (art_id == TIG_ART_ID_INVALID) {
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_frame_set(art_id, 0);
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        v1 = sub_503E20(art_id);
+        if (v1 < 17 || v1 > 19) {
+            return false;
+        }
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    object_set_current_aid(obj, art_id);
+
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        run_info->field_CFC = 1000 / art_anim_data.fps;
+    } else {
+        tig_debug_printf("Anim: AGbeginAnimJump: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+        run_info->field_CFC = 100;
+    }
+
+    run_info->field_C |= 0x10;
+
+    return true;
 }
 
 // 0x42D910
