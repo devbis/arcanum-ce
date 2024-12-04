@@ -2568,7 +2568,21 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 // 0x564E30
 void sub_564E30(WmapCoords* coords, int64_t* loc_ptr)
 {
-    // TODO: Incomplete.
+    int x;
+    int y;
+    int area;
+
+    x = ((dword_66D6F8 - coords->x) << 6) + 32;
+    y = (coords->y << 6) + 32;
+    *loc_ptr = location_make(x, y);
+
+    area = area_get_nearest_known_area(*loc_ptr, player_get_pc_obj(), qword_66D850);
+    if (area > 0) {
+        if (!area_is_known(player_get_pc_obj(), area)) {
+            *loc_ptr = area_get_location(area);
+            sub_561490(*loc_ptr, coords);
+        }
+    }
 }
 
 // 0x564EE0
