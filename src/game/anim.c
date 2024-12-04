@@ -9,6 +9,7 @@
 #include "game/gsound.h"
 #include "game/item.h"
 #include "game/light_scheme.h"
+#include "game/light.h"
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mp_utils.h"
@@ -4834,7 +4835,64 @@ void anim_create_path_max_length(int64_t a1, const char* msg, int value)
 // 0x426320
 int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj)
 {
-    // TODO: Incomplete.
+    int estimate;
+
+    ASSERT(anim_path->maxPathLength >= 0); // 4404, "pAnimPath->maxPathLength >= 0"
+
+    if (anim_path->maxPathLength < 0) {
+        anim_path->maxPathLength = 0;
+    }
+
+    if (anim_path->maxPathLength != 0) {
+        anim_path->maxPathLength = anim_path->absMaxPathLength + 5;
+        if (anim_path->maxPathLength > anim_path->absMaxPathLength) {
+            if (anim_path->absMaxPathLength > 0) {
+                anim_path->maxPathLength = anim_path->absMaxPathLength;
+            } else {
+                estimate = (int)sub_4B96F0(from, to);
+                if (estimate > anim_path->field_CC) {
+                    anim_create_path_max_length(obj, "Estimated Distance is too large", estimate);
+                }
+
+                anim_path->absMaxPathLength = 4 * estimate + 5;
+                if (anim_path->absMaxPathLength > anim_path->field_CC) {
+                    anim_path->absMaxPathLength = anim_path->field_CC;
+                }
+
+                if (anim_path->maxPathLength > anim_path->absMaxPathLength) {
+                    if (anim_path->absMaxPathLength > 0) {
+                        anim_path->maxPathLength = anim_path->absMaxPathLength;
+                    } else {
+                        anim_path->absMaxPathLength = anim_path->field_CC;
+                    }
+                }
+            }
+        }
+    } else {
+        estimate = (int)sub_4B96F0(from, to);
+        if (estimate > anim_path->field_CC) {
+            anim_create_path_max_length(obj, "Estimated Distance is too large", estimate);
+            tig_debug_printf("   SrcLocAxis: (%d x %d)", (int)location_get_x(from), (int)location_get_y(from));
+            tig_debug_printf(", DstLocAxis: (%d x %d)\n", (int)location_get_x(to), (int)location_get_y(to));
+        }
+
+        anim_path->maxPathLength = 4 * estimate + 5;
+        if (anim_path->absMaxPathLength > anim_path->field_CC) {
+            anim_path->absMaxPathLength = anim_path->field_CC;
+        }
+    }
+
+    if (anim_path->maxPathLength == 0) {
+        anim_create_path_max_length(obj, "Path Length is 0", anim_path->maxPathLength);
+    } else if (anim_path->maxPathLength > anim_path->field_CC) {
+        anim_create_path_max_length(obj, "Path Length is out of range", anim_path->maxPathLength);
+    }
+
+    if (anim_path->maxPathLength > anim_path->field_CC) {
+        anim_path->maxPathLength = anim_path->field_CC;
+    }
+
+    return anim_path->maxPathLength;
 }
 
 // 0x426500
