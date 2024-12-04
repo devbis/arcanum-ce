@@ -8868,7 +8868,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
     }
 
     next_timeevent.type = TIMEEVENT_TYPE_FIDGET_ANIM;
-    return sub_45B800(&timeevent, &datetime);
+    return sub_45B800(&next_timeevent, &datetime);
 }
 
 // 0x4302D0
