@@ -7972,7 +7972,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
 
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 1;
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
-        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = sub_441AE0(obj, player_get_pc_obj) < 30;
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = sub_441AE0(obj, player_get_pc_obj()) < 30;
     }
 
     run_info->field_C |= 0x10;
