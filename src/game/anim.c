@@ -7206,7 +7206,38 @@ bool sub_42C780(AnimRunInfo* run_info)
 // 0x42C850
 bool sub_42C850(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t source_loc;
+    int64_t target_loc;
+    tig_art_id_t art_id;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 9141, "sourceObj != OBJ_HANDLE_NULL"
+
+    if (target_obj != OBJ_HANDLE_NULL && source_obj != target_obj) {
+        if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+            return false;
+        }
+
+        if (obj_type_is_critter(obj_field_int32_get(source_obj, OBJ_F_TYPE))
+            && (obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+            return false;
+        }
+
+        source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+        target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+
+        art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_rotation_set(art_id, sub_4B8D50(source_loc, target_loc));
+        if (tig_art_exists(art_id) == TIG_OK) {
+            object_set_current_aid(source_obj, art_id);
+        }
+    }
+
+    return true;
 }
 
 // 0x42CA90
