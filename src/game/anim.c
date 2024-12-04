@@ -6660,9 +6660,23 @@ bool sub_42B7F0(AnimRunInfo* run_info)
 }
 
 // 0x42B8B0
-void sub_42B8B0()
+void anim_goal_reset_position_mp(AnimID* anim_id, int64_t obj, int64_t loc, tig_art_id_t art_id, unsigned int flags, int offset_x, int offset_y)
 {
-    // TODO: Incomplete.
+    AnimRunInfo* run_info;
+    char str[36];
+
+    if (art_id != TIG_ART_ID_INVALID) {
+        object_set_current_aid(obj, art_id);
+    }
+
+    sub_43E770(obj, loc, offset_x, offset_y);
+
+    if (anim_id_to_run_info(anim_id, &run_info)) {
+        run_info->field_C = flags;
+    } else {
+        sub_421E20(anim_id, str);
+        tig_debug_printf("Anim: anim_goal_reset_position_mp: Could not convert ID (%s) to slot!\n", str);
+    }
 }
 
 // 0x42B940
