@@ -7658,7 +7658,52 @@ bool sub_42D300(AnimRunInfo* run_info)
 // 0x42D440
 bool sub_42D440(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    int frame;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 9717, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        tig_debug_printf("Anim: Warning: Goal Received NULL Object!\n");
+        return false;
+    }
+
+    object_inc_current_aid(obj);
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    frame = tig_art_id_frame_get(art_id);
+    if (frame == art_anim_data.num_frames - 2
+        && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data > 0) {
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data--;
+        art_id = tig_art_id_frame_set(art_id, 2);
+        object_set_current_aid(obj, art_id);
+        return true;
+    }
+
+    if (frame == art_anim_data.num_frames - 1) {
+        // FIXME: Useless.
+        tig_art_type(art_id);
+
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    if (frame == art_anim_data.action_frame - 1) {
+        run_info->field_C |= 0x04;
+    }
+
+    object_inc_current_aid(obj);
+    return true;
 }
 
 // 0x42D570
