@@ -7923,7 +7923,88 @@ bool sub_42D910(AnimRunInfo* run_info)
 // 0x42DA50
 bool sub_42DA50(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+    int v1;
+    TigArtAnimData art_anim_data;
+    int sound_id;
+    int max_sound_distance;
+    tig_sound_handle_t sound_handle;
+    int64_t loc;
+    int64_t player_loc;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 10027, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        tig_debug_printf("Anim: Warning: Goal Received NULL Object!\n");
+        return false;
+    }
+
+    art_id = run_info->params[1].data;
+    if (art_id == TIG_ART_ID_INVALID) {
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_frame_set(art_id, 0);
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        v1 = sub_503E20(art_id);
+        if (v1 < 17 || v1 > 19) {
+            return false;
+        }
+    }
+
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        run_info->field_CFC = 1000 / art_anim_data.fps;
+    } else {
+        tig_debug_printf("Anim: AGbeginAnimLoopAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+        run_info->field_CFC = 100;
+    }
+
+    ASSERT(run_info->cur_stack_data != NULL); // 10074, "pRunInfo->pCurStackData != NULL"
+
+    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 1;
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = sub_441AE0(obj, player_get_pc_obj) < 30;
+    }
+
+    run_info->field_C |= 0x10;
+
+    if ((run_info->field_C & 0x20000) != 0) {
+        return true;
+    }
+
+    sound_id = sub_4F1050(obj, 2);
+    if (sound_id == -1) {
+        return true;
+    }
+
+    max_sound_distance = sub_41B9E0(obj);
+    sound_handle = run_info->goals[0].params[AGDATA_SOUND_HANDLE].data;
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    player_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    if (sub_4B96F0(player_loc, loc) > max_sound_distance) {
+        if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
+            tig_sound_destroy(sound_handle);
+            run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
+        }
+    } else if (sound_handle == TIG_SOUND_HANDLE_INVALID) {
+        sound_handle = sub_41B930(sound_id, 1, obj);
+        if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
+            run_info->goals[0].params[AGDATA_SOUND_HANDLE].data = sound_handle;
+        } else {
+            tig_debug_printf("Anim: ERROR: Animate Forever: Sound Failed to Start!\n");
+        }
+    }
+
+    return true;
 }
 
 // 0x42DCF0
