@@ -202,10 +202,8 @@ typedef struct AnimPath {
     /* 00DC */ int subsequence;
     /* 00E0 */ int maxPathLength; // TODO: Normalize to snake_case.
     /* 00E4 */ int absMaxPathLength; // TODO: Normalize to snake_case.
-    /* 00E8 */ int field_E8;
-    /* 00EC */ int field_EC;
-    /* 00F0 */ int field_F0;
-    /* 00F4 */ int field_F4;
+    /* 00E8 */ int64_t field_E8;
+    /* 00F0 */ int64_t field_F0;
 } AnimPath;
 
 static_assert(sizeof(AnimPath) == 0xF8, "wrong size");

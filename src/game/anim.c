@@ -77,6 +77,7 @@ static bool sub_425930(AnimRunInfo* run_info);
 static bool sub_425BF0(PathCreateInfo* path_create_info, bool a2);
 static bool sub_425D60(AnimRunInfo* run_info);
 static bool sub_426040(AnimRunInfo* run_info);
+static int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj);
 static int sub_426500(int64_t obj, int64_t a2, AnimPath* path, unsigned int flags);
 static bool sub_426840(AnimRunInfo* run_info);
 static bool sub_4268F0(AnimRunInfo* run_info);
@@ -4534,7 +4535,83 @@ bool sub_425840(int64_t a1, int64_t a2, int64_t a3, int a4, int64_t a5)
 // 0x425930
 bool sub_425930(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int64_t loc;
+    int range;
+    int x;
+    int y;
+    int64_t target_loc;
+    PathCreateInfo path_create_info;
+
+    ASSERT(run_info != NULL); // 4071, "pRunInfo != NULL"
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 4075, "obj != OBJ_HANDLE_NULL"
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        run_info->path.flags = 0x01;
+        return true;
+    }
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    range = run_info->cur_stack_data->params[AGDATA_RANGE_DATA].data;
+    x = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    y = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
+
+    x += random_between(-range, range);
+    y += random_between(-range, range);
+    target_loc = location_make(x, y);
+
+    run_info->field_14 = run_info->current_goal + 1;
+
+    path_create_info.obj = obj;
+    path_create_info.max_rotations = sub_426320(&(run_info->path), loc, target_loc, obj);
+    path_create_info.from = loc;
+    path_create_info.to = target_loc;
+    path_create_info.rotations = run_info->path.rotations;
+    path_create_info.field_20 = 0;
+
+    if (sub_425BF0(&path_create_info, 1)) {
+        run_info->path.max = sub_41F3C0(&path_create_info);
+    } else {
+        run_info->path.max = 0;
+    }
+
+    if (run_info->path.max == 0 || run_info->path.max > range) {
+        path_create_info.field_20 = 0x01;
+        if (!sub_425BF0(&path_create_info, 1)) {
+            if (!sub_40DA20(obj)) {
+                sub_4B7C90(obj);
+            }
+            return false;
+        }
+
+        run_info->path.max = sub_41F3C0(&path_create_info);
+        if (run_info->path.max == 0 || run_info->path.max > range) {
+            if (!sub_40DA20(obj)) {
+                sub_4B7C90(obj);
+            }
+            return false;
+        }
+    }
+
+    run_info->path.flags &= 0x03;
+    run_info->path.field_E8 = path_create_info.from;
+    run_info->path.field_F0 = path_create_info.to;
+    run_info->path.curr = 0;
+    run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = target_loc;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        run_info->path.flags |= 0x01;
+    }
+
+    return true;
 }
 
 // 0x425BF0
@@ -4675,7 +4752,7 @@ void anim_create_path_max_length(int64_t a1, const char* msg, int value)
 }
 
 // 0x426320
-void sub_426320()
+int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj)
 {
     // TODO: Incomplete.
 }
