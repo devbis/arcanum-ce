@@ -7245,7 +7245,7 @@ bool sub_42C850(AnimRunInfo* run_info)
 // 0x42CA90
 bool sub_42CA90(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    return (run_info->field_C & 0x10) == 0;
 }
 
 // 0x42CAA0
