@@ -1010,7 +1010,48 @@ bool sub_560440(TigRect* rect, TigFile* stream)
 // 0x5604B0
 bool wmap_ui_load(GameLoadInfo* load_info)
 {
-    // TODO: Incomplete.
+    int type;
+    int cnt;
+    int idx;
+    int64_t loc;
+    int64_t sector_id;
+
+    if (load_info->stream == NULL) {
+        return false;
+    }
+
+    for (type = 0; type < 3; type++) {
+        if ((stru_5C9228[type].flags & 0x2) != 0) {
+            tig_debug_printf("WMapUI: Reading Saved Notes.\n");
+
+            if (tig_file_fread(&cnt, sizeof(cnt), 1, load_info->stream) != 1) {
+                return false;
+            }
+
+            tig_debug_printf("WMapUI: Reading Saved Notes: %d.\n", cnt);
+
+            if (stru_5C9228[type].num_notes == NULL) {
+                tig_debug_printf("WMapUI: Load: ERROR: Note Data Doesn't Match!\n");
+                exit(EXIT_FAILURE);
+            }
+
+            *stru_5C9228[type].num_notes = cnt;
+
+            for (idx = 0; idx < cnt; idx++) {
+                tig_debug_printf("WMapUI: Reading Individual Note: %d.\n", idx);
+
+                if (!wmap_ui_town_note_load(&(stru_5C9228[type].notes[idx]), load_info->stream)) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    sector_id = sub_4CFC50(loc);
+    sub_564F60(player_get_pc_obj(), sector_id);
+
+    return true;
 }
 
 // 0x5605C0
