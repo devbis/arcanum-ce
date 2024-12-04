@@ -2281,6 +2281,8 @@ bool sub_564210(WmapNote* note)
         v1->notes[index] = v1->notes[index + 1];
         index++;
     }
+
+    return true;
 }
 
 // 0x5642E0
