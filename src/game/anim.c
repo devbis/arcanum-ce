@@ -8467,7 +8467,49 @@ bool sub_42E720(AnimRunInfo* run_info)
 // 0x42E8B0
 bool sub_42E8B0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    int frame;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 10730, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    frame = tig_art_id_frame_get(art_id);
+    if (frame == 0) {
+        // FIXME: Useless.
+        tig_art_type(art_id);
+
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    if (frame == art_anim_data.action_frame - 1) {
+        run_info->field_C |= 0x04;
+    }
+
+    object_dec_current_aid(obj);
+    return true;
 }
 
 // 0x42E9B0
