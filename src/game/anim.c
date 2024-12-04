@@ -7866,7 +7866,58 @@ bool sub_42D7D0(AnimRunInfo* run_info)
 // 0x42D910
 bool sub_42D910(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+    int v1;
+    TigArtAnimData art_anim_data;
+    int frame;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 9948, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        tig_debug_printf("Anim: Warning: Goal Received NULL Object!\n");
+        return false;
+    }
+
+    // FIXME: Useless.
+    player_is_pc_obj(obj);
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        v1 = sub_503E20(art_id);
+        if (v1 < 17 || v1 > 19) {
+            return false;
+        }
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    frame = tig_art_id_frame_get(art_id);
+    if (frame == art_anim_data.num_frames - 1) {
+        // FIXME: Useless.
+        tig_art_type(art_id);
+
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    if (frame == art_anim_data.action_frame - 1) {
+        run_info->field_C |= 0x04;
+    }
+
+    object_inc_current_aid(obj);
+    return true;
 }
 
 // 0x42DA50
