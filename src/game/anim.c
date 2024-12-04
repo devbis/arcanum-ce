@@ -8138,6 +8138,8 @@ bool AGbeginStunAnim(AnimRunInfo* run_info)
 
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
         tig_debug_printf("Anim: AGbeginStunAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+        run_info->field_CFC = 100;
+        // NOTE: Looks wrong, other functions still set 0x10 and return true.
         return false;
     }
 
