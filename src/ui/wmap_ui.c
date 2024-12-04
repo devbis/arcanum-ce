@@ -1379,7 +1379,12 @@ bool sub_5615D0(int a1)
 // 0x561800
 void sub_561800(WmapCoords* coords, int64_t* loc_ptr)
 {
-    // TODO: Incomplete.
+    int x;
+    int y;
+
+    x = ((dword_66D6F8 - coords->x) << 6) + 32;
+    y = (coords->y << 6) + 32;
+    *loc_ptr = location_make(x, y);
 }
 
 // 0x561860
