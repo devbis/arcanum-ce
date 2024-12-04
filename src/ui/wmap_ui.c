@@ -2814,7 +2814,97 @@ void wmap_note_vbid_lock(WmapNote* note)
 // 0x565F00
 void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect)
 {
-    // TODO: Incomplete.
+    TigVideoBufferBlitInfo vb_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int offset_x;
+    int offset_y;
+    int min_x;
+    int min_y;
+    int max_x;
+    int max_y;
+    int idx;
+    S5C9228_F180 *entry;
+    int col;
+    int row;
+    TigRect bounds;
+
+    if (rect == NULL) {
+        return;
+    }
+
+    bounds.x = rect->x;
+    bounds.y = rect->y;
+    bounds.width = rect->width;
+    bounds.height = rect->height;
+
+    src_rect.width = 5;
+    src_rect.height = 5;
+
+    offset_x = stru_5C9228[0].field_34;
+    offset_y = stru_5C9228[0].field_38;
+
+    vb_blit_info.flags = TIG_VIDEO_BUFFER_BLIT_BLEND_ALPHA_CONST;
+    vb_blit_info.src_rect = &src_rect;
+    vb_blit_info.alpha[0] = 0;
+    vb_blit_info.alpha[1] = 0;
+    vb_blit_info.alpha[2] = 0;
+    vb_blit_info.alpha[3] = 0;
+    vb_blit_info.dst_video_buffer = video_buffer;
+    vb_blit_info.dst_rect = &dst_rect;
+
+    min_x = offset_x / stru_5C9228[0].field_16C;
+    if (min_x < 0) {
+        min_x = 0;
+    }
+
+    min_y = offset_y / stru_5C9228[0].field_170;
+    if (min_y < 0) {
+        min_y = 0;
+    }
+
+    idx = min_x + stru_5C9228[0].field_178 * min_y;
+    entry = &(stru_5C9228[0].field_180[idx]);
+
+    max_x = rect->width / entry->rect.width + min_x + 1;
+    if (max_x > stru_5C9228[0].field_178) {
+        max_x = stru_5C9228[0].field_178;
+    }
+
+    max_y = rect->height / entry->rect.height + min_y + 2;
+    if (max_y > stru_5C9228[0].field_17C) {
+        max_y = stru_5C9228[0].field_17C;
+    }
+
+    for (row = min_y; row < max_y; row++) {
+        for (col = min_x; col < max_x; col++) {
+            idx = col + stru_5C9228[0].field_178 * row;
+            entry = &(stru_5C9228[0].field_180[idx]);
+
+            src_rect.x = bounds.x + src_rect.width * min_x - offset_x;
+            src_rect.y = bounds.y + src_rect.height * min_y - offset_y;
+
+            if (tig_rect_intersection(&src_rect, &bounds, &dst_rect) == TIG_OK) {
+                src_rect.x = dst_rect.x - src_rect.x;
+                src_rect.y = dst_rect.y - src_rect.y;
+                src_rect.width = dst_rect.width;
+                src_rect.height = dst_rect.height;
+
+                if (sub_562FA0(idx)) {
+                    dst_rect.x = 0;
+                    dst_rect.y = 0;
+                    vb_blit_info.src_video_buffer = entry->video_buffer;
+
+                    if (tig_video_buffer_blit(&vb_blit_info) != TIG_OK) {
+                        tig_debug_printf("WMapUI: Zoomed Blit: ERROR: Blit FAILED!\n");
+                        return;
+                    }
+
+                    sub_562FC0(idx);
+                }
+            }
+        }
+    }
 }
 
 // 0x566130
