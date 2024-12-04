@@ -222,6 +222,7 @@ static bool sub_42F390(AnimRunInfo* run_info);
 static bool sub_42F5C0(AnimRunInfo* run_info);
 static bool sub_42F6A0(AnimRunInfo* run_info);
 static bool sub_42FA50(AnimRunInfo* run_info);
+static bool sub_42FD70(AnimRunInfo* run_info, int64_t obj, AnimPath* path, int64_t from, int64_t to);
 static bool sub_42FEA0(AnimRunInfo* run_info);
 static bool sub_42FEB0(AnimRunInfo* run_info);
 static bool sub_42FEC0(AnimRunInfo* run_info);
@@ -8639,9 +8640,43 @@ bool sub_42FA50(AnimRunInfo* run_info)
 }
 
 // 0x42FD70
-void sub_42FD70()
+bool sub_42FD70(AnimRunInfo* run_info, int64_t obj, AnimPath* path, int64_t from, int64_t to)
 {
-    // TODO: Incomplete.
+    ObjectList objects;
+    ObjectNode* node;
+
+    if ((path->flags & 0x01) != 0) {
+        if (!sub_4B8FF0(from, path->baseRot, &to)) {
+            return false;
+        }
+
+        if (path->curr > path->max - 2) {
+            sub_4407C0(to, OBJ_TM_CRITTER, &objects);
+            node = objects.head;
+            while (node != NULL) {
+                if (!sub_45D8D0(node->obj)) {
+                    break;
+                }
+                node = node->next;
+            }
+            object_list_destroy(&objects);
+
+            if (node != NULL) {
+                run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj = node->obj;
+                return true;
+            }
+        }
+
+        // FIXME: Useless.
+        obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
+
+        if (!sub_4D7110(to, false)
+            && !sub_43FD70(obj, from, path->baseRot, 0x03, NULL)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x42FEA0
