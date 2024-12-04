@@ -8353,7 +8353,45 @@ bool AGbeginKnockDownAnim(AnimRunInfo* run_info)
 // 0x42E590
 bool sub_42E590(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 10585, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (!sub_45D790(obj)) {
+        return false;
+    }
+
+    if (sub_4B6D70()
+        && (sub_4B6D80() == obj || !sub_4B7CD0(obj, 5))) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    art_id = sub_503E50(art_id, 8);
+    art_id = tig_art_id_frame_set(art_id, 0);
+
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        run_info->field_CFC = 1000 / art_anim_data.fps;
+    } else {
+        tig_debug_printf("Anim: AGbeginGetUpAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+        run_info->field_CFC = 100;
+        ASSERT(0); // 10617, "0"
+    }
+
+    object_set_current_aid(obj, art_id);
+
+    run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
+    run_info->field_C |= 0x10;
+
+    return true;
 }
 
 // 0x42E6B0
