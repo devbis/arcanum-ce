@@ -8998,7 +8998,30 @@ bool sub_4305D0(AnimRunInfo* run_info)
 // 0x430F20
 bool sub_430F20(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 12721, "obj != OBJ_HANDLE_NULL"
+
+    if ((run_info->field_C & 0x8000) != 0
+        || map_is_clearing_objects()
+        || obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    // FIXME: Useless.
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    art_id = sub_503E50(art_id, 0);
+    tig_art_id_frame_set(art_id, 0);
+
+    if (run_info->field_14 == run_info->current_goal
+        || run_info->field_14 == run_info->current_goal - 1) {
+        run_info->path.flags |= 0x01;
+    }
+
+    return true;
 }
 
 // 0x430FC0
