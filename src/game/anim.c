@@ -8169,7 +8169,7 @@ bool sub_42E070(AnimRunInfo* run_info)
     }
 
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_STUNNED) != 0) {
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_PARALYZED) != 0) {
         art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         v1 = sub_503E20(art_id);
         if (v1 < 17 || v1 > 19) {
@@ -8202,7 +8202,43 @@ bool sub_42E070(AnimRunInfo* run_info)
 // 0x42E1B0
 bool sub_42E1B0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 10416, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    art_id = sub_503E50(art_id, 9);
+    art_id = tig_art_id_frame_set(art_id, 0);
+    object_set_current_aid(obj, art_id);
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_PARALYZED) != 0) {
+        return false;
+    }
+
+    object_set_current_aid(obj, art_id);
+
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        run_info->field_CFC = 1000 / art_anim_data.fps;
+    } else {
+        tig_debug_printf("Anim: AGbeginKneelMHAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+        run_info->field_CFC = 100;
+    }
+
+    run_info->field_C |= 0x10;
+    return true;
 }
 
 // 0x42E2D0
