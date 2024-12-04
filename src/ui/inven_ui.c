@@ -3259,9 +3259,95 @@ void sub_578760(int64_t obj)
 }
 
 // 0x5788C0
-void sub_5788C0(int64_t a1, int64_t a2, int a3, int a4)
+void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location, int a4)
 {
-    // TODO: Incomplete.
+    int reason;
+    int64_t parent_obj;
+    int old_inventory_location;
+    int sound_id;
+    int obj_type;
+    int qty_fld;
+    int qty;
+
+    sub_4A51C0(player_get_pc_obj(), item_obj);
+
+    if (target_obj == qword_681450) {
+        reason = sub_466DA0(item_obj);
+        if (reason == 0) {
+            if (!item_parent(item_obj, &parent_obj)) {
+                return;
+            }
+
+            old_inventory_location = item_inventory_location_get(item_obj);
+            if (new_inventory_location < 1000 || new_inventory_location > 1008) {
+                if (target_obj == qword_6814F8) {
+                    sub_466310(item_obj, old_inventory_location, dword_68111C, 0);
+                    if (!sub_466390(item_obj, target_obj, new_inventory_location, dword_68111C)) {
+                        return;
+                    }
+                } else {
+                    sub_466310(item_obj, old_inventory_location, dword_681518, 0);
+                    if (!sub_466390(item_obj, target_obj, new_inventory_location, dword_681518)) {
+                        return;
+                    }
+                }
+            }
+
+            sub_45F920();
+
+            item_remove(item_obj);
+
+            if (sub_466510(item_obj, target_obj, NULL)) {
+                item_insert(item_obj, parent_obj, old_inventory_location);
+            } else {
+                item_insert(item_obj, target_obj, new_inventory_location);
+            }
+            sub_45F910();
+        } else {
+            if (item_parent(item_obj, &parent_obj)) {
+                sub_4673F0(item_obj, reason);
+            }
+        }
+
+        sound_id = sub_4F0BF0(item_obj, target_obj, OBJ_HANDLE_NULL, 1);
+        gsound_play_sfx_id(sound_id, 1);
+    } else {
+        obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
+        qword_739F70 = qword_681450;
+        dword_739F80 = new_inventory_location;
+        qword_739F78 = target_obj;
+        qword_739F68 = item_obj;
+
+        if ((a4 & 0x6) != 0) {
+            dword_681440 = -1;
+        }
+
+        dword_739F84 = dword_681440;
+        dword_739F60 = a4;
+
+        if ((obj_type == OBJ_TYPE_ITEM_GOLD || obj_type == OBJ_TYPE_AMMO)) {
+            sub_575770();
+
+            sub_462410(item_obj, &qty_fld);
+            qty = obj_field_int32_get(item_obj, qty_fld);
+            if (qty != 1) {
+                if (dword_683464 == 2
+                    && (a4 & 0x01) != 0
+                    && target_obj == qword_6814F8
+                    || (a4 & 0x20) != 0) {
+                    sub_578B80(qty);
+                } else {
+                    sub_551A80(13);
+                    sub_5506C0(9);
+                    sub_553990();
+                }
+
+                return;
+            }
+        }
+
+        sub_578B80(1);
+    }
 }
 
 // 0x578B80
