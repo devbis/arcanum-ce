@@ -252,6 +252,7 @@ static bool sub_432700(AnimRunInfo* run_info);
 static bool sub_432990(AnimRunInfo* run_info);
 static bool sub_432D50(AnimRunInfo* run_info);
 static bool sub_433270(AnimRunInfo* run_info);
+static int sub_437990(int64_t obj, tig_art_id_t art_id, int speed);
 
 // 0x5A1908
 static AnimID stru_5A1908 = { -1, -1, 0 };
@@ -8525,9 +8526,24 @@ void sub_42EDC0()
 }
 
 // 0x42EE90
-void sub_42EE90()
+void sub_42EE90(int64_t obj, DateTime* pause_time)
 {
-    // TODO: Incomplete.
+    int speed;
+    tig_art_id_t art_id;
+    int ms;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 11052, "obj != OBJ_HANDLE_NULL"
+    ASSERT(pause_time != NULL); // 11053, "pPauseTime != NULL"
+
+    speed = stat_level(obj, STAT_SPEED);
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    ms = 1000 / sub_437990(obj, art_id, speed);
+    if (ms < 30) {
+        ms = 30;
+    } else if (ms > 800) {
+        ms = 800;
+    }
+    pause_time->milliseconds = ms;
 }
 
 // 0x42EF60
@@ -10567,7 +10583,7 @@ void sub_437980()
 }
 
 // 0x437990
-void sub_437990()
+int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
 {
     // TODO: Incomplete.
 }
