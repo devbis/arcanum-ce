@@ -9087,7 +9087,7 @@ bool sub_431290(AnimRunInfo* run_info)
 // 0x431320
 bool sub_431320(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    return (run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x40) == 0;
 }
 
 // 0x431340
