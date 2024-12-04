@@ -82,5 +82,6 @@ void sub_436CF0();
 void sub_436FA0(int64_t obj);
 bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which);
 void sub_437980();
+bool sub_437CF0(int a1, int a2, int a3);
 
 #endif /* ARCANUM_GAME_ANIM_H_ */

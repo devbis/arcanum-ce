@@ -10653,9 +10653,9 @@ void sub_437C50()
 }
 
 // 0x437CF0
-void sub_437CF0()
+bool sub_437CF0(int a1, int a2, int a3)
 {
-    // TODO: Incomplete.
+    return true;
 }
 
 // 0x437D00
