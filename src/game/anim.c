@@ -4464,7 +4464,65 @@ bool sub_4254C0(AnimRunInfo* run_info)
 // 0x425590
 bool sub_425590(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t target_loc = 0;
+    int64_t v1;
+    int64_t weapon_obj;
+    int range;
+    int goal;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+
+    if (target_obj != OBJ_HANDLE_NULL) {
+        target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+        if (run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc != target_loc) {
+            run_info->path.flags |= 0x04;
+        }
+    }
+
+    if ((run_info->path.flags & 0x04) == 0 && target_loc != 0) {
+        if (sub_4294F0(source_obj, target_obj)) {
+            return false;
+        }
+
+        if (sub_4ADE00(source_obj, target_loc, &v1) < 26
+            && (v1 == OBJ_HANDLE_NULL || v1 == target_obj)) {
+            weapon_obj = sub_4B23B0(source_obj);
+            if (weapon_obj != OBJ_HANDLE_NULL) {
+                range = item_weapon_range(weapon_obj, source_obj);
+                for (goal = 0; goal < run_info->current_goal; goal++) {
+                    run_info->goals[goal].params[AGDATA_RANGE_DATA].data = range;
+                }
+                run_info->path.flags |= 0x04;
+            }
+        }
+    }
+
+    if ((run_info->path.flags & 0x0C) == 0) {
+        return false;
+    }
+
+    sub_430FC0(run_info);
+
+    if (run_info->current_goal > 0) {
+        // TODO: Check.
+        run_info->goals[run_info->current_goal - 1].params[AGDATA_SCRATCH_VAL4].data = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
+    }
+
+    run_info->path.flags &= ~0x04;
+    run_info->path.flags |= 0x01;
+
+    run_info->path.flags &= ~0x30;
+
+    if ((run_info->path.flags & 0x08) != 0
+        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        run_info->field_C |= 0x02;
+    }
+
+    return true;
 }
 
 // 0x425740
