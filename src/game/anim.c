@@ -5590,7 +5590,30 @@ bool sub_428E10(AnimRunInfo* run_info)
 // 0x429040
 bool sub_429040(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_loc;
+    int64_t item_obj;
+    int64_t parent_obj;
+
+    source_obj = run_info->params[0].obj;
+    target_loc = run_info->params[1].loc;
+    item_obj = run_info->params[3].loc;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 6526, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(target_loc != 0); // 6527, "targetLoc != 0"
+    ASSERT(item_obj != OBJ_HANDLE_NULL); // 6528, "itemObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || target_loc == 0
+        || item_obj == OBJ_HANDLE_NULL
+        || !item_parent(item_obj, &parent_obj)
+        || source_obj != parent_obj) {
+        return false;
+    }
+
+    sub_462FC0(source_obj, item_obj, target_loc);
+
+    return true;
 }
 
 // 0x429160
