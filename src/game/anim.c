@@ -257,6 +257,7 @@ static bool sub_432990(AnimRunInfo* run_info);
 static bool sub_432D50(AnimRunInfo* run_info);
 static bool sub_433270(AnimRunInfo* run_info);
 static int sub_437990(int64_t obj, tig_art_id_t art_id, int speed);
+static bool sub_437C50(AnimRunInfo* run_info, int end, int64_t* x, int64_t* y);
 
 // 0x5A1908
 static AnimID stru_5A1908 = { -1, -1, 0 };
@@ -11342,9 +11343,26 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
 }
 
 // 0x437C50
-void sub_437C50()
+bool sub_437C50(AnimRunInfo* run_info, int end, int64_t* x, int64_t* y)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int idx;
+
+    if (run_info != NULL
+        && run_info->field_20 != OBJ_HANDLE_NULL
+        && run_info->path.field_E8 != 0) {
+        loc = run_info->path.field_E8;
+        for (idx = 0; idx <= end; idx++) {
+            sub_4B8FF0(loc, run_info->path.rotations[idx], &loc);
+        }
+    }
+
+    if (x != NULL && y != NULL) {
+        *x = LOCATION_GET_X(loc);
+        *y = LOCATION_GET_Y(loc);
+    }
+
+    return true;
 }
 
 // 0x437CF0
