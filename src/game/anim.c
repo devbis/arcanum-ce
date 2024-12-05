@@ -6073,7 +6073,76 @@ bool sub_429C80(AnimRunInfo* run_info)
 // 0x429CD0
 bool sub_429CD0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int fore;
+    int back;
+    int light;
+    int spell;
+    tig_art_id_t art_id;
+    int goal;
+
+    obj = run_info->params[0].obj;
+    spell = run_info->params[1].data;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 7156, "obj != OBJ_HANDLE_NULL"
+
+    if ((run_info->field_C & 0x8000) != 0
+        || map_is_clearing_objects()
+        || obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data &= ~0x40;
+
+    if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x80) != 0) {
+        return false;
+    }
+
+    fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
+    light = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data;
+
+    if (back != -5) {
+        if (fore != -1) {
+            sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, fore, TIG_ART_ID_INVALID);
+        }
+
+        if (back != -1) {
+            sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, fore, TIG_ART_ID_INVALID);
+        }
+    } else {
+        sub_43ECF0(obj, OBJ_F_UNDERLAY, fore, TIG_ART_ID_INVALID);
+    }
+
+    if (light != -1) {
+        object_set_overlay_light(obj, light, 0, TIG_ART_ID_INVALID, 0);
+    }
+
+    if ((run_info->field_C & 0x08) == 0 && spell != -1) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_456FA0(spell, 1);
+        }
+
+        run_info->cur_stack_data->params[AGDATA_SPELL_DATA].data = -1;
+
+        for (goal = 0; goal < run_info->current_goal; goal++) {
+            if (run_info->goals[goal].params[AGDATA_SPELL_DATA].data == spell) {
+                run_info->goals[goal].params[AGDATA_SPELL_DATA].data = -1;
+            }
+        }
+    }
+
+    if ((run_info->field_C & 0x200000) == 0) {
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = sub_503E50(art_id, 0);
+        art_id = tig_art_id_frame_set(art_id, 0);
+        object_set_current_aid(obj, art_id);
+
+        sub_430490(obj, 0, 0);
+    }
+
+    return true;
 }
 
 // 0x429E70
