@@ -78,6 +78,7 @@ static bool sub_425930(AnimRunInfo* run_info);
 static bool sub_425BF0(PathCreateInfo* path_create_info, bool a2);
 static bool sub_425D60(AnimRunInfo* run_info);
 static bool sub_426040(AnimRunInfo* run_info);
+static void anim_create_path_max_length(int64_t a1, const char* msg, int value);
 static int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj);
 static int sub_426500(int64_t obj, int64_t a2, AnimPath* path, unsigned int flags);
 static bool sub_426840(AnimRunInfo* run_info);
