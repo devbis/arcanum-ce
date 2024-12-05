@@ -5726,7 +5726,53 @@ bool sub_4294A0(AnimRunInfo* run_info)
 // 0x4294F0
 bool sub_4294F0(int64_t source_obj, int64_t target_obj)
 {
-    // TODO: Incomplete.
+    int64_t target_loc;
+    int64_t v1;
+    AnimPath path;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 6747, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(target_obj != OBJ_HANDLE_NULL); // 6748, "targetObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || source_obj == OBJ_HANDLE_NULL
+        || !sub_45D790(source_obj)
+        || (obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(source_obj, OBJ_F_TYPE))
+        && !sub_45D790(source_obj)) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))
+        && sub_45D8D0(target_obj)) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_BODY_OF_AIR) != 0
+        && (obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_ELEMENTAL) == 0) {
+        return false;
+    }
+
+    target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+
+    sub_4ADE00(source_obj, target_loc, &v1);
+
+    if (v1 != OBJ_HANDLE_NULL && v1 != target_obj) {
+        path.flags = 0;
+        path.maxPathLength = 0;
+        path.absMaxPathLength = 0;
+        path.curr = 0;
+        path.max = 0;
+        path.baseRot = 0;
+
+        if (!sub_426500(source_obj, target_loc, &path, 0x01)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x4296D0
