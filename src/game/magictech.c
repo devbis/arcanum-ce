@@ -1939,7 +1939,52 @@ void sub_4510F0()
 // 0x4514E0
 void MTComponentAGoal_ProcFunc()
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    int64_t new_loc;
+    AnimGoalData goal_data;
+    tig_art_id_t art_id;
+    int rot;
+
+    switch (dword_5E761C->data.agoal.goal) {
+    case AG_KNOCKBACK:
+        if (dword_5E75F0->parent_obj.obj != OBJ_HANDLE_NULL) {
+            loc = obj_field_int64_get(dword_5E75F0->parent_obj.obj, OBJ_F_LOCATION);
+        } else {
+            loc = stru_5E6D28.field_18;
+        }
+
+        if (loc != 0) {
+            new_loc = obj_field_int64_get(stru_5E6D28.field_20, OBJ_F_LOCATION);
+            if (loc == new_loc) {
+                art_id = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_CURRENT_AID);
+                rot = (tig_art_id_rotation_get(art_id) + 4) % 8;
+            } else {
+                rot = sub_4B8D50(loc, new_loc);
+            }
+
+            sub_434E80(stru_5E6D28.field_20, rot, 4, dword_5E75F0->parent_obj.obj);
+        }
+        break;
+    case AG_FOLLOW:
+        if (dword_5E75F0->parent_obj.obj != OBJ_HANDLE_NULL) {
+            critter_follow(qword_5E75B8, dword_5E75F0->parent_obj.obj, true);
+        }
+        break;
+    case AG_KNOCK_DOWN:
+        sub_435A90(stru_5E6D28.field_20);
+        break;
+    default:
+        if (dword_5E75F0->parent_obj.obj != OBJ_HANDLE_NULL
+            && sub_44D500(&goal_data, stru_5E6D28.field_20, dword_5E761C->data.agoal.goal)) {
+            goal_data.params[AGDATA_TARGET_OBJ].obj = dword_5E75F0->parent_obj.obj;
+            if ((dword_5E761C->data.agoal.subgoal & 1) != 0) {
+                sub_44DBE0(stru_5E75C0, &goal_data);
+            } else {
+                sub_44D520(&goal_data, &stru_5E75C0);
+            }
+        }
+        break;
+    }
 }
 
 // 0x4516D0
