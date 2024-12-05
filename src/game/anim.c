@@ -9978,7 +9978,73 @@ void sub_432D90(int64_t obj)
 // 0x433020
 void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int v1;
+    unsigned int critter_flags;
+    unsigned int spell_flags;
+    AnimFxNode fx;
+
+    (void)a3;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (a2 == 0) {
+        return;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return;
+    }
+
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_BLOOD_SPLOTCHES) != 0) {
+        return;
+    }
+
+    v1 = a2 - 1;
+    if (v1 == 0) {
+        // FIXME: Useless.
+        obj_field_int32_get(player_get_pc_obj(), OBJ_F_PC_FLAGS);
+
+        critter_flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+        spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
+
+        if (violence_filter == 0 && (spell_flags & OSF_STONED) == 0) {
+            if ((critter_flags & OCF_UNDEAD) != 0) {
+                v1 = 6;
+            } else if ((critter_flags & OCF_MECHANICAL) != 0) {
+                v1 = 7;
+            }
+        } else {
+            v1 = 7;
+        }
+    }
+
+    if (combat->field_5C > 5 && v1 == 0) {
+        if (combat->field_5C < 10) {
+            v1 = 8;
+        } else if (combat->field_5C < 15) {
+            v1 = 9;
+        } else {
+            v1 = 10;
+        }
+    }
+
+    sub_4CCD20(&stru_5DE670, &fx, obj, -1, v1);
+    fx.field_1C = 1;
+    fx.field_20 = 3;
+    animfx_add(&fx);
+
+    magictech_anim_play_hit_fx(obj, combat);
 }
 
 // 0x433170
