@@ -10283,9 +10283,37 @@ bool sub_434DE0(int64_t obj)
 }
 
 // 0x434E80
-void sub_434E80()
+bool sub_434E80(int64_t target_obj, int rot, int range, int64_t source_obj)
 {
-    // TODO: Incomplete.
+    int distance;
+    int64_t loc;
+    AnimGoalData goal_data;
+
+    ASSERT(range > 0); // 15830, "range > 0"
+
+    if (target_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    for (distance = 0; distance < range; distance++) {
+        if (!sub_4B8FF0(loc, rot, &loc)) {
+            return false;
+        }
+    }
+
+    if (!sub_44D4E0(&goal_data, target_obj, AG_KNOCKBACK)) {
+        return false;
+    }
+
+    goal_data.params[AGDATA_TARGET_TILE].loc = loc;
+    goal_data.params[AGDATA_SCRATCH_OBJ].obj = source_obj;
+
+    if (!sub_44D520(&goal_data, &stru_5A1908)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x434F80
