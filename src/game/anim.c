@@ -5894,7 +5894,52 @@ bool sub_4298D0(AnimRunInfo* run_info)
 // 0x429960
 bool sub_429960(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t source_loc;
+    int64_t target_loc;
+    int64_t weapon_obj;
+    int range;
+    int64_t v1;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 6949, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(target_obj != OBJ_HANDLE_NULL); // 6950, "targetObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || target_obj == OBJ_HANDLE_NULL
+        || (obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return false;
+    }
+
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    weapon_obj = sub_4B23B0(source_obj);
+
+    if (weapon_obj == OBJ_HANDLE_NULL) {
+        range = 1;
+    } else {
+        range = item_weapon_range(weapon_obj, source_obj);
+        if (range < 0) {
+            range = 1;
+        }
+    }
+
+    if (sub_4B96F0(source_loc, target_loc) > range) {
+        return false;
+    }
+
+    if (sub_4ADE00(source_obj, target_loc, &v1) >= 26) {
+        return false;
+    }
+
+    if (v1 != OBJ_HANDLE_NULL && v1 != target_obj) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x429AD0
