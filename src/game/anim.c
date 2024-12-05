@@ -44,7 +44,7 @@ static bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream);
 static bool sub_4229A0(AnimGoalData* goal_data, TigFile* stream);
 static bool sub_422A50(void* data, Ryan* a2, int type, TigFile* stream);
 static int anim_goal_pending_active_goals_count();
-static bool sub_436220(int64_t a1, int64_t a2, int64_t a3);
+static bool sub_436220(int64_t obj, int64_t target_obj, int64_t item_obj);
 static bool sub_4363E0(int64_t a1, int64_t a2);
 static bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr);
 static void sub_436CB0(AnimID anim_id);
@@ -10897,9 +10897,53 @@ bool sub_436040(int64_t obj, int64_t tether_loc, int radius)
 }
 
 // 0x436220
-bool sub_436220(int64_t a1, int64_t a2, int64_t a3)
+bool sub_436220(int64_t obj, int64_t target_obj, int64_t item_obj)
 {
-    // TODO: Incomplete.
+    AnimGoalData goal_data;
+    TigArtAnimData art_anim_data;
+    tig_art_id_t art_id;
+    int frame;
+    int v1;
+
+    if (!sub_4348E0(obj, 4)) {
+        return false;
+    }
+
+    if (!sub_44D4E0(&goal_data, obj, AG_USE_SKILL_ON)) {
+        return false;
+    }
+
+    goal_data.params[AGDATA_TARGET_OBJ].obj = target_obj;
+    goal_data.params[AGDATA_SCRATCH_OBJ].obj = item_obj;
+    goal_data.params[AGDATA_SKILL_DATA].data = SKILL_PICK_LOCKS;
+    goal_data.params[AGDATA_FLAGS_DATA].data |= 0x400;
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    art_id = sub_503E50(art_id, 12);
+
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        return false;
+    }
+
+    frame = art_anim_data.num_frames - 2;
+    if (frame < 1) {
+        frame = 1;
+    }
+
+    v1 = 10 * art_anim_data.fps / frame + 1;
+    if (tech_skill_get_training(obj, TECH_SKILL_PICK_LOCKS) >= TRAINING_APPRENTICE) {
+        v1 /= 2;
+    }
+
+    goal_data.params[AGDATA_SCRATCH_VAL3].data = v1;
+
+    if (!sub_44D520(&goal_data, &stru_5A1908)) {
+        return false;
+    }
+
+    sub_436ED0(stru_5A1908);
+
+    return true;
 }
 
 // 0x4363E0
