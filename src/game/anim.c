@@ -6509,7 +6509,78 @@ bool sub_42A630(AnimRunInfo* run_info)
 // 0x42A720
 bool sub_42A720(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t v1;
+    int64_t source_loc;
+    ObjectList objects;
+    ObjectNode* node;
+    CombatContext combat;
+    int dam;
+    bool v2;
+    bool v3;
+    int aptitude;
+
+    source_obj = run_info->params[0].obj;
+    v1 = run_info->params[1].obj;
+    v2 = false;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 7650, "sourceObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    sub_4407C0(source_loc, 0x1FFE0, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        sub_4B2210(source_obj, node->obj, &combat);
+        combat.field_30 = v1;
+        if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x4000) != 0) {
+            dam = 1;
+            v3 = true;
+        } else {
+            dam = 3;
+            v3 = false;
+        }
+
+        if (v1 != OBJ_HANDLE_NULL) {
+            aptitude = stat_level(v1, STAT_MAGICK_TECH_APTITUDE);
+            if (aptitude > 0) {
+                dam += 5 * aptitude / 100 - 1;
+            }
+        }
+
+        if (v3) {
+            combat.field_44[0] = dam;
+        } else {
+            combat.field_44[3] = dam;
+        }
+
+        if ((v1 == OBJ_HANDLE_NULL || v1 != node->obj)
+            && sub_45DDA0(node->obj) != v1) {
+            sub_4A9650(v1, node->obj, 1, 0);
+
+            if (sub_4B6D70()
+                && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data != sub_4B80D0()) {
+                v2 = true;
+                combat.field_44[0] *= 2;
+                combat.field_44[3] *= 2;
+                sub_4B4390(&combat);
+            }
+        } else {
+            sub_4B4390(&combat);
+        }
+
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (v2) {
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data = sub_4B80D0();
+    }
+
+    return true;
 }
 
 // 0x42A930
