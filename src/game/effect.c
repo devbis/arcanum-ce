@@ -119,7 +119,7 @@ static const char* off_5B9C58[] = {
     "resistmagic",
 };
 
-static_assert(sizeof(off_5B9C58) / sizeof(off_5B9C58[0]) == DAMAGE_TYPE_COUNT, "wrong size");
+static_assert(sizeof(off_5B9C58) / sizeof(off_5B9C58[0]) == RESISTANCE_TYPE_COUNT, "wrong size");
 
 // 0x5B9C6C
 static const char* off_5B9C6C[] = {

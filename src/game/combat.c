@@ -47,6 +47,7 @@ static void sub_4B6410(CombatContext* combat);
 static int sub_4B65A0();
 static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
 static void sub_4B6680(CombatContext* combat);
+static void sub_4B6860(CombatContext* combat);
 static int sub_4B6930(CombatContext* combat);
 static void sub_4B6B90(CombatContext* combat);
 static void sub_4B7080();
@@ -112,6 +113,15 @@ static int dword_5B57BC[14] = {
 static int dword_5B57FC[2] = {
     0,
     10,
+};
+
+// 0x5B5804
+static int dword_5B5804[5] = {
+    RESISTANCE_TYPE_NORMAL,
+    RESISTANCE_TYPE_POISON,
+    RESISTANCE_TYPE_ELECTRICAL,
+    RESISTANCE_TYPE_FIRE,
+    RESISTANCE_TYPE_NORMAL,
 };
 
 // 0x5FC178
@@ -1585,9 +1595,39 @@ void sub_4B6680(CombatContext* combat)
 }
 
 // 0x4B6860
-void sub_4B6860()
+void sub_4B6860(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int idx;
+    int resistance;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return;
+    }
+
+    if (combat->field_20 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if ((combat->field_58 & 0x1000000) != 0) {
+        return;
+    }
+
+    if (combat->weapon_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+        && (obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_IGNORE_RESISTANCE) != 0) {
+        return;
+    }
+
+    for (idx = 0; idx < 5; idx++) {
+        resistance = sub_43D6D0(combat->field_20, dword_5B5804[idx], false);
+        if (idx == 4) {
+            resistance = 3 * resistance / 4;
+        }
+        if (resistance > 0) {
+            combat->field_44[idx] -= resistance * combat->field_44[idx] / 100;
+        }
+    }
 }
 
 // 0x4B6930
