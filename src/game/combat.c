@@ -83,7 +83,7 @@ static int dword_5B5798[] = {
 };
 
 // 0x5B57A8
-static int dword_5B57A8[] = {
+static int dword_5B57A8[TRAINING_COUNT] = {
     0,
     10,
     50,
@@ -564,9 +564,212 @@ void sub_4B2F60(CombatContext* combat)
 }
 
 // 0x4B3170
-void sub_4B3170(CombatContext* combat)
+int sub_4B3170(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    bool was_in_bed = false;
+    int sound_id;
+
+    if (combat->field_20 != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->field_20, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
+        int64_t critter_obj = obj_field_handle_get(combat->field_20, OBJ_F_SCENERY_WHOS_IN_ME);
+        if (critter_obj != OBJ_HANDLE_NULL) {
+            critter_leave_bed(critter_obj, combat->field_20);
+
+            combat->field_20 = critter_obj;
+            combat->field_28 = critter_obj;
+
+            was_in_bed = true;
+        }
+    }
+
+    if (combat->field_40 != 0) {
+        combat->flags |= 0x01;
+    } else {
+        combat->field_40 = sub_4B65A0();
+    }
+
+    if (!sub_4B65D0(combat->weapon_obj, combat->field_8, 1, 0)) {
+        combat->flags |= 0x400;
+
+        sound_id = sub_4F0BF0(combat->weapon_obj, combat->field_8, combat->field_20, 3);
+        sub_41B930(sound_id, 1, combat->field_8);
+
+        if (obj_field_int32_get(combat->field_8, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            sub_4ADFF0(combat->field_8);
+        } else {
+            sub_4B83E0(combat->field_8, combat->field_20);
+        }
+
+        return 0;
+    }
+
+    sound_id = sub_4F0BF0(combat->weapon_obj, combat->field_8, combat->field_20, 2);
+    sub_41B930(sound_id, 1, combat->field_8);
+
+    bool is_melee = true;
+    if ((combat->flags & 0x200) != 0
+        && (combat->skill == SKILL_THROWING
+            || obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_MISSILE_AID) != -1)) {
+        is_melee = false;
+    }
+
+    if (combat->field_20 != combat->field_28) {
+        combat->flags |= 0x800;
+    }
+
+    if (is_melee && combat->field_20 != OBJ_HANDLE_NULL) {
+        int v1 = sub_4B2810(combat->weapon_obj);
+        if ((combat->flags & 0x800) != 0) {
+            sub_4A9650(combat->field_8, combat->field_20, v1, 1);
+        } else {
+            sub_4A9650(combat->field_8, combat->field_20, v1, 0);
+        }
+    }
+
+    int v2 = 0;
+    if (combat->weapon_obj != OBJ_HANDLE_NULL && combat->skill != SKILL_THROWING) {
+        v2 = sub_461700(combat->weapon_obj, combat->field_8);
+    }
+
+    if (random_between(1, 100) <= v2) {
+        combat->flags |= 0x04;
+    } else if ((combat->flags & 0x100) != 0) {
+        combat->flags |= 0x02;
+    } else {
+        if ((combat->flags & 0x200) != 0) {
+            int64_t blocking_obj;
+
+            sub_4ADE00(combat->field_8, combat->target_loc, &blocking_obj);
+            if (blocking_obj != OBJ_HANDLE_NULL) {
+                combat->field_20 = blocking_obj;
+            }
+        }
+
+        int v3 = 0;
+        if (combat->weapon_obj != OBJ_HANDLE_NULL && combat->skill != SKILL_THROWING) {
+            v3 = sub_461620(combat->weapon_obj, combat->field_8, combat->field_20);
+        }
+
+        bool cont = true;
+        if (random_between(1, 100) <= v3) {
+            if (combat->skill == SKILL_MELEE
+                && combat->weapon_obj != OBJ_HANDLE_NULL
+                && obj_field_int32_get(combat->weapon_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) > 0) {
+                combat->flags |= 0x20000;
+            } else {
+                cont = false;
+            }
+        }
+
+        if (cont) {
+            if (combat->field_20 != OBJ_HANDLE_NULL
+                && !obj_type_is_critter(obj_field_int32_get(combat->field_20, OBJ_F_TYPE))) {
+                combat->flags |= 0x02;
+                cont = false;
+            }
+        }
+
+        if (cont) {
+            Tanya v4;
+
+            sub_4C7090(&v4);
+            sub_4440E0(combat->field_8, &(v4.field_0));
+            sub_4440E0(combat->field_20, &(v4.field_30));
+            v4.field_60 = combat->target_loc;
+            sub_4440E0(combat->weapon_obj, &(v4.field_68));
+            v4.field_A4 = combat->field_40;
+            v4.field_9C = combat->skill;
+
+            if ((combat->flags & 0x01) != 0) {
+                v4.field_98 |= 0x08;
+            }
+
+            if ((combat->flags & 0x8000) != 0) {
+                v4.field_98 |= 0x8000;
+            }
+
+            if ((combat->flags & 0x20000) != 0) {
+                v4.field_98 |= 0x10000;
+            }
+
+            v4.field_A0 = 0;
+
+            if (was_in_bed) {
+                v4.field_A0 -= 30;
+            }
+
+            if (!sub_4C7160(&v4)) {
+                return 0;
+            }
+
+            if ((v4.field_98 & 0x1) != 0) {
+                combat->flags |= 0x02;
+            }
+
+            if ((v4.field_98 & 0x10) != 0) {
+                combat->flags |= 0x04;
+            }
+
+            if (combat->field_20 != OBJ_HANDLE_NULL
+                && (combat->flags & 0x02) != 0) {
+                sub_4C7090(&v4);
+                sub_4440E0(combat->field_20, &(v4.field_0));
+                v4.field_9C = SKILL_DODGE;
+                if (!sub_4C7160(&v4)) {
+                    return 0;
+                }
+
+                if ((v4.field_98 & 0x01) != 0) {
+                    MesFileEntry mes_file_entry;
+
+                    mes_file_entry.num = 11; // "Dodge!"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, 0, mes_file_entry.str);
+
+                    combat->flags &= ~0x06;
+
+                    if ((v4.field_98 & 0x10) != 0) {
+                        int training = basic_skill_get_training(combat->field_20, BASIC_SKILL_DODGE);
+                        if (random_between(1, 100) <= dword_5B57A8[training]) {
+                            combat->flags |= 0x04;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (combat->field_8 != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->field_8, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        if (sub_4F5270(combat->field_8, 2)) {
+            combat->flags |= 0x06;
+        }
+    } else if (combat->field_20 != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->field_20, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        if (sub_4F5270(combat->field_20, 3)) {
+            combat->flags &= ~0x02;
+            combat->flags |= 0x04;
+        }
+    }
+
+    if ((combat->flags & 0x02) == 0 && (combat->flags & 0x04) != 0) {
+        sub_4B6410(combat);
+    }
+
+    if ((combat->flags & 0x200) != 0) {
+        sub_4B39B0(combat);
+    } else {
+        sub_4B3770(combat);
+    }
+
+    sub_4377C0(combat, combat->field_8, combat->field_8, 1);
+
+    if (is_melee) {
+        sub_4B6B90(combat);
+        return sub_4B6930(combat);
+    }
+
+    return 0;
 }
 
 // 0x4B3770
