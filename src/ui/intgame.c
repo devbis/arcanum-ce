@@ -3876,9 +3876,12 @@ void intgame_mt_button_disable()
 }
 
 // 0x5570A0
-void sub_5570A0()
+void sub_5570A0(int64_t obj)
 {
-    // TODO: Incomplete.
+    qword_64C690 = obj;
+    if (qword_64C690 != OBJ_HANDLE_NULL) {
+        sub_57CCF0(player_get_pc_obj(), qword_64C690);
+    }
 }
 
 // 0x5570D0
