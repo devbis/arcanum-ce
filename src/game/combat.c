@@ -16,6 +16,7 @@
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
+#include "game/mt_item.h"
 #include "game/multiplayer.h"
 #include "game/obj_private.h"
 #include "game/obj.h"
@@ -28,6 +29,7 @@
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/text_floater.h"
+#include "game/trap.h"
 
 static void turn_based_changed();
 static void fast_turn_based_changed();
@@ -830,7 +832,586 @@ void sub_4B4320(int64_t obj)
 // 0x4B4390
 void sub_4B4390(CombatContext* combat)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    unsigned int dam_flags;
+    int dam;
+    MesFileEntry mes_file_entry;
+    char str[80];
+    unsigned int spell_flags = 0;
+    bool weapon_dropped = false;
+
+    if (!sub_4A2BA0()) {
+        if (sub_4B5520(combat) || (tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+    }
+
+    if (combat->field_20 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    obj_type = obj_field_int32_get(combat->field_20, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)) {
+        unsigned int critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+        spell_flags = obj_field_int32_get(combat->field_20, OBJ_F_SPELL_FLAGS);
+
+        if ((critter_flags & (OCF_UNDEAD | OCF_MECHANICAL)) != 0) {
+            combat->field_44[1] = 0;
+        } else if ((spell_flags & OSF_STONED) != 0) {
+            combat->field_44[0] = 0;
+            combat->field_44[1] = 0;
+            combat->field_44[2] = 0;
+            combat->field_44[3] = 0;
+            combat->field_44[4] = 0;
+        }
+    }
+
+    if (!dword_5FC26C) {
+        bool def;
+
+        dword_5FC26C = true;
+        def = sub_441980(combat->field_8, combat->field_20, OBJ_HANDLE_NULL, SAP_TAKING_DAMAGE, 0);
+        dword_5FC26C = false;
+
+        if (!def) {
+            return;
+        }
+    }
+
+    if ((obj_field_int32_get(combat->field_20, OBJ_F_FLAGS) & (OF_DESTROYED | OF_INVULNERABLE)) != 0) {
+        return;
+    }
+
+    if (obj_type_is_critter(obj_type)
+        && (obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS2) & OCF2_NIGH_INVULNERABLE) != 0
+        && (combat->weapon_obj == OBJ_HANDLE_NULL
+            || (obj_field_int32_get(combat->weapon_obj, OBJ_F_ITEM_FLAGS) & OIF_UBER) == 0)) {
+        int idx;
+
+        for (idx = 0; idx < 5; idx++) {
+            combat->field_44[idx] = 0;
+        }
+
+        return;
+    }
+
+    if (obj_type == OBJ_TYPE_WALL) {
+        return;
+    }
+
+    if ((combat->flags & 0x04) != 0) {
+        sub_4B5F40(combat);
+    }
+
+    sub_4B6860(combat);
+
+    dam_flags = combat->field_58;
+    if ((dam_flags & 0x05) != 0) {
+        dam = sub_43D600(combat->field_20);
+    } else {
+        dam = combat->field_44[0] + combat->field_44[2] + combat->field_44[3];
+    }
+
+    if (combat->field_44[3] > 0) {
+        dam_flags |= 0x100000;
+    }
+
+    if (combat->weapon_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+        && (obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DAMAGE_ARMOR) != 0) {
+        dam_flags |= 0x100000;
+    }
+
+    if (sub_40DA20(combat->field_8)) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0) {
+            combat->field_60 = gamelib_get_game_difficulty();
+        }
+
+        switch (combat->field_60) {
+        case 0:
+            dam += dam / 2;
+            break;
+        case 2:
+            dam -= dam / 4;
+            break;
+        }
+    }
+
+    if ((dam_flags & 0x20) != 0) {
+        dam *= 3;
+    } else if ((dam_flags & 0x10) != 0) {
+        dam *= 2;
+    } else if ((dam_flags & 0x08) != 0) {
+        dam += dam / 2;
+    }
+
+    if (obj_type_is_critter(obj_type)) {
+        // 0x4B475F
+        if ((combat->flags & 0x80000) != 0) {
+            combat->flags |= 0x02;
+            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                || (tig_net_flags & TIG_NET_HOST) != 0) {
+                sub_4B6930(combat);
+            }
+        }
+
+        if (sub_45D8D0(combat->field_20)) {
+            return;
+        }
+
+        if ((combat->flags & 0x04) != 0) {
+            int inventory_location;
+            int64_t item_obj;
+
+            for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+                item_obj = item_wield_get(combat->field_20, inventory_location);
+                if (item_obj != OBJ_HANDLE_NULL
+                    && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+                    sub_441980(combat->field_8, item_obj, combat->field_20, SAP_TAKING_DAMAGE, 0);
+                }
+            }
+        }
+
+        int tf_type;
+        if (obj_type == OBJ_TYPE_PC) {
+            tf_type = TF_TYPE_RED;
+        } else if (obj_type == OBJ_TYPE_NPC
+            && sub_45DDA0(combat->field_20) == player_get_pc_obj()) {
+            tf_type = TF_TYPE_YELLOW;
+        } else {
+            tf_type = TF_TYPE_WHITE;
+        }
+
+        if ((combat->flags & 0x18) != 0) {
+            mes_file_entry.num = 2; // "Critical miss"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            tf_add(combat->field_8, tf_type, mes_file_entry.str);
+        } else if ((combat->flags & 0x04) != 0) {
+            mes_file_entry.num = 12; // "Critical hit"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            tf_add(combat->field_20, tf_type, mes_file_entry.str);
+        }
+
+        if ((dam_flags & 0x20) != 0) {
+            mes_file_entry.num = 15; // "Damage +200%"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            tf_add(combat->field_20, tf_type, mes_file_entry.str);
+        } else if ((dam_flags & 0x10) != 0) {
+            mes_file_entry.num = 14; // "Damage +100%"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            tf_add(combat->field_20, tf_type, mes_file_entry.str);
+        } else if ((dam_flags & 0x08) != 0) {
+            mes_file_entry.num = 13; // "Damage +50%"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            tf_add(combat->field_20, tf_type, mes_file_entry.str);
+        }
+
+        unsigned int critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);
+        if ((dam_flags & 0x40) != 0
+            && (critter_flags & OCF_STUNNED) == 0
+            && (dam_flags & 0x180) == 0) {
+            sub_4CBB80(combat->field_8, combat->field_20);
+            critter_flags |= OCF_STUNNED;
+
+            if (((tig_net_flags & TIG_NET_CONNECTED) == 0
+                    || (tig_net_flags & TIG_NET_HOST) != 0)
+                && !sub_4357B0(combat->field_20)) {
+                critter_flags &= ~OCF_STUNNED;
+            }
+
+            obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+
+            mes_file_entry.num = 16; // "Stunned"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            tf_add(combat->field_20, tf_type, mes_file_entry.str);
+        }
+
+        if ((dam_flags & 0x180) != 0) {
+            sub_4CBBF0(combat->field_8, combat->field_20);
+            sub_4CBE00(combat->field_8, combat->field_20);
+            sub_435A90(combat->field_20);
+
+            if ((dam_flags & 0x100) == 0) {
+                mes_file_entry.num = 18; // "Knocked down"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            } else if (!sub_45D800(combat->field_20)) {
+                int fatigue_damage = sub_45D670(combat->field_20);
+
+                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                    combat->field_64 = random_between(10, 20);
+                }
+
+                critter_fatigue_damage_set(combat->field_20, combat->field_64 + fatigue_damage);
+
+                mes_file_entry.num = 17; // "Unconscious"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            }
+        }
+
+        if ((dam_flags & 0x1000) != 0) {
+            sub_4E9F70(combat->field_20, 50, EFFECT_CAUSE_INJURY);
+            sub_4F5690(combat->field_20, combat->field_8, 3);
+
+            mes_file_entry.num = 3; // "Scarred"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            tf_add(combat->field_20, tf_type, mes_file_entry.str);
+        }
+
+        if ((dam_flags & 0x200) != 0) {
+            if ((critter_flags & OCF_BLINDED) == 0) {
+                critter_flags |= OCF_BLINDED;
+                obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+                sub_4F5690(combat->field_20, combat->field_8, 0);
+
+                mes_file_entry.num = 4; // "Blinded"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            }
+        }
+
+        if ((dam_flags & 0x400) != 0) {
+            if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) == 0) {
+                critter_flags |= OCF_CRIPPLED_ARMS_ONE;
+                obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+                sub_4F5690(combat->field_20, combat->field_8, 1);
+
+                mes_file_entry.num = 5; // "Crippled arm"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            } else if ((critter_flags & OCF_CRIPPLED_ARMS_BOTH) == 0
+                && random_between(1, 100) <= 50) {
+                critter_flags |= OCF_CRIPPLED_ARMS_BOTH;
+                obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+                sub_4F5690(combat->field_20, combat->field_8, 1);
+
+                mes_file_entry.num = 5; // "Crippled arm"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            }
+
+            int64_t weapon_obj = item_wield_get(combat->field_20, 1004);
+            if (weapon_obj != OBJ_HANDLE_NULL
+                && sub_464D20(weapon_obj, 1004, combat->field_20)) {
+                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                    item_drop_nearby(weapon_obj);
+                }
+
+                mes_file_entry.num = 19; // "Weapon dropped"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+
+                weapon_dropped = true;
+            }
+
+            int64_t item_obj = item_wield_get(combat->field_20, 1005);
+            if (item_obj != OBJ_HANDLE_NULL
+                && sub_464D20(item_obj, 1005, combat->field_20)) {
+                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                    item_drop_nearby(weapon_obj);
+                }
+
+                mes_file_entry.num = 20; // "Item dropped"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            }
+        }
+
+        if ((dam_flags & 0x800) != 0) {
+            if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) == 0) {
+                critter_flags |= OCF_CRIPPLED_LEGS_BOTH;
+                obj_field_int32_set(combat->field_20, OBJ_F_CRITTER_FLAGS, critter_flags);
+                sub_4F5690(combat->field_20, combat->field_8, 1);
+
+                mes_file_entry.num = 6; // "Crippled leg"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            }
+        }
+
+        if ((dam_flags & 0x100000) != 0) {
+            int64_t armor_obj = sub_4B54B0(combat->field_20, combat->field_40);
+            if (armor_obj != OBJ_HANDLE_NULL) {
+                object_set_hp_damage(armor_obj, object_get_hp_damage(armor_obj) + 10);
+
+                if (sub_43D600(armor_obj) > 0) {
+                    mes_file_entry.num = 7; // "Armor damaged"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, tf_type, mes_file_entry.str);
+                } else {
+                    sub_43F1C0(armor_obj, combat->field_8);
+
+                    mes_file_entry.num = 24; // "Armor broken"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, tf_type, mes_file_entry.str);
+                }
+            }
+        }
+
+        if ((dam_flags & 0x80000) != 0) {
+            int64_t item_obj = item_wield_get(combat->field_20, 1000);
+            if (item_obj != OBJ_HANDLE_NULL) {
+                item_drop_nearby(item_obj);
+
+                mes_file_entry.num = 20; // "Item dropped"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+            }
+        }
+
+        int64_t weapon_obj = sub_4B23B0(combat->field_20);
+        if (weapon_obj != OBJ_HANDLE_NULL) {
+            if ((obj_field_int32_get(weapon_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
+                dam_flags &= ~0x1C000;
+            }
+
+            if ((dam_flags & 0x4000) != 0) {
+                object_set_hp_damage(weapon_obj, object_get_hp_damage(weapon_obj) + 10);
+
+                if (sub_43D600(weapon_obj) > 0) {
+                    mes_file_entry.num = 8; // "Weapon damaged"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, tf_type, mes_file_entry.str);
+                } else {
+                    sub_43F1C0(weapon_obj, combat->field_8);
+
+                    mes_file_entry.num = 23; // "Weapon broken"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, tf_type, mes_file_entry.str);
+
+                    weapon_dropped = true;
+                }
+            }
+
+            if ((dam_flags & 0x10000) != 0) {
+                dam_flags |= 0x8000;
+                sub_44C820(combat->field_20);
+            }
+
+            if ((dam_flags & 0x8000) != 0) {
+                sub_43CCA0(weapon_obj);
+
+                mes_file_entry.num = 22; // "Weapon destroyed"
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+                tf_add(combat->field_20, tf_type, mes_file_entry.str);
+
+                weapon_dropped = true;
+            } else {
+                if ((dam_flags & 0x40000) != 0) {
+                    sub_4B65D0(weapon_obj, combat->field_20, 0, true);
+
+                    mes_file_entry.num = 9; // "Ammo lost"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, tf_type, mes_file_entry.str);
+                } else if ((dam_flags & 0x20000) != 0) {
+                    sub_4B65D0(weapon_obj, combat->field_20, 5, false);
+
+                    mes_file_entry.num = 9; // "Ammo lost"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, tf_type, mes_file_entry.str);
+                }
+
+                if ((dam_flags & 0x2000) != 0) {
+                    item_drop_nearby(weapon_obj);
+
+                    mes_file_entry.num = 19; // "Weapon dropped"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->field_20, tf_type, mes_file_entry.str);
+
+                    weapon_dropped = true;
+                }
+            }
+        }
+
+        if (dam > 0
+            && (obj_field_int32_get(combat->field_20, OBJ_F_SPELL_FLAGS) & OSF_MIRRORED) != 0) {
+            sub_459A20(combat->field_20);
+        }
+
+        int hp_ratio_before;
+
+        if (dam > 0) {
+            combat->field_58 |= 0x200000;
+            hp_ratio_before = sub_4AB400(combat->field_20);
+        }
+
+        mes_file_entry.num = 1; // "HT"
+        mes_get_msg(combat_mes_file, &mes_file_entry);
+        sprintf(str, "%s %d", mes_file_entry.str, dam);
+
+        combat->field_5C = dam;
+
+        int hp_dam = object_get_hp_damage(combat->field_20) + dam;
+        if (hp_dam < 0) {
+            hp_dam = 0;
+        }
+        object_set_hp_damage(combat->field_20, hp_dam);
+
+        if (dam > 0) {
+            int64_t leader_obj = sub_45DDA0(combat->field_20);
+            if (leader_obj != OBJ_HANDLE_NULL
+                && hp_ratio_before >= 20
+                && sub_4AB400(combat->field_20) < 20) {
+                sub_4AEAB0(combat->field_20, leader_obj);
+            }
+        }
+
+        if ((critter_flags & OCF_FATIGUE_IMMUNE) == 0) {
+            if (combat->field_44[4] > 0) {
+                mes_file_entry.num = 10;
+                mes_get_msg(combat_mes_file, &mes_file_entry);
+
+                sprintf(&(str[strlen(str)]), " %d %s", combat->field_44[4], mes_file_entry.str);
+
+                critter_fatigue_damage_set(combat->field_20,
+                    critter_fatigue_damage_get(combat->field_20) + combat->field_44[4]);
+            }
+        }
+
+        if (text_floaters_get() == 2 && str[0] != '\0') {
+            tf_add(combat->field_20, tf_type, str);
+        }
+
+        int poison = stat_get_base(combat->field_20, STAT_POISON_LEVEL) + combat->field_44[1];
+        if (poison < 0) {
+            poison = 0;
+        }
+        stat_set_base(combat->field_20, STAT_POISON_LEVEL, poison);
+
+
+        if (combat->field_44[1] > 0 && text_floaters_get() == 2) {
+            mes_file_entry.num = 0;
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+            sprintf(str, "%s %+d", mes_file_entry.str, combat->field_44[1]);
+            tf_add(combat->field_20, TF_TYPE_GREEN, str);
+        }
+
+        if (combat->field_30 != OBJ_HANDLE_NULL
+            && obj_type == OBJ_TYPE_NPC
+            && (spell_flags & OSF_STONED) == 0) {
+            int remaining_experience = obj_field_int32_get(combat->field_20, OBJ_F_NPC_EXPERIENCE_POOL);
+            if (remaining_experience > 0) {
+                int dam_ratio = 100 * dam / sub_43D5A0(combat->field_20);
+                int awarded_experience = obj_field_int32_get(combat->field_20, OBJ_F_NPC_EXPERIENCE_WORTH) * dam_ratio / 100;
+                if (awarded_experience > remaining_experience) {
+                    awarded_experience = remaining_experience;
+                }
+                obj_field_int32_set(combat->field_20, OBJ_F_NPC_EXPERIENCE_POOL, remaining_experience - awarded_experience);
+
+                if (obj_field_int32_get(combat->field_30, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                    sub_45F110(combat->field_30, awarded_experience);
+                }
+            }
+        }
+
+        if (sub_45D8D0(combat->field_20)) {
+            int v2;
+
+            if ((dam_flags & 0x04) != 0 || dam <= 20) {
+                v2 = 7;
+            } else if (combat->field_40 == 1) {
+                v2 = 17;
+            } else if (combat->field_40 == 3) {
+                v2 = 19;
+            } else {
+                v2 = 18;
+            }
+
+            sub_45DA20(combat->field_20, combat->field_30, v2);
+
+            if (obj_type == OBJ_TYPE_NPC
+                && sub_45DDA0(combat->field_20) == player_get_pc_obj()) {
+                sub_460780();
+            }
+        } else if (obj_type == OBJ_TYPE_NPC) {
+            sub_4A84F0(combat->field_20);
+
+            if (sub_45DDA0(combat->field_20) == player_get_pc_obj()) {
+                sub_460780();
+            }
+        }
+
+        if (combat->field_8 != OBJ_HANDLE_NULL) {
+            sub_4CBAD0(combat->field_8, combat, combat->field_20);
+
+            if ((combat->flags & 0x40000) != 0) {
+                sub_4CBE70(combat->field_8, combat->weapon_obj, combat->field_20);
+            } else {
+                sub_4CBE70(combat->field_8, OBJ_HANDLE_NULL, combat->field_20);
+            }
+        }
+
+        sub_4B5580(combat);
+
+        if (weapon_dropped) {
+            sub_4B83E0(combat->field_20, combat->field_8);
+        }
+    } else {
+        // 0x4B462E
+        if (obj_type == OBJ_TYPE_PORTAL
+            || obj_type == OBJ_TYPE_CONTAINER) {
+            int material = obj_field_int32_get(combat->field_20, OBJ_F_MATERIAL);
+            dam -= dword_5B57BC[material];
+        }
+
+        if (dam < 0) {
+            dam = 0;
+        } else if (dam > 0) {
+            combat->field_58 |= 0x200000;
+        }
+
+        int hp_dam = object_get_hp_damage(combat->field_20) + dam;
+        if (hp_dam < 0) {
+            hp_dam = 0;
+        }
+        object_set_hp_damage(combat->field_20, hp_dam);
+
+        if (text_floaters_get() == 2) {
+            mes_file_entry.num = 1; // "HT"
+            mes_get_msg(combat_mes_file, &mes_file_entry);
+
+            sprintf(str, "%s %d", mes_file_entry.str, dam);
+            tf_add(combat->field_20, TF_TYPE_WHITE, str);
+        }
+
+        if (sub_43D600(combat->field_20) > 0) {
+            if (combat->field_30 != OBJ_HANDLE_NULL) {
+                sub_4AEE50(combat->field_30, combat->field_20, 1, 2);
+                sub_4B5580(combat);
+            }
+        } else {
+            if (trap_type(combat->field_20) != 0) {
+                int64_t triggerer_obj = (combat->flags & 0x200) == 0
+                    ? combat->field_8
+                    : OBJ_HANDLE_NULL;
+                sub_4BCB00(triggerer_obj, combat->field_20);
+            }
+
+            sub_43F1C0(combat->field_20, combat->field_8);
+
+            if (combat->field_30 != OBJ_HANDLE_NULL) {
+                sub_4AEE50(combat->field_30, combat->field_20, 0, 2);
+            }
+        }
+    }
+
+    if (!sub_4A2BA0() && (tig_net_flags & TIG_NET_HOST) != 0) {
+        Packet20 pkt;
+
+        pkt.type = 20;
+        sub_4F0640(combat->field_8, &(pkt.field_70));
+        sub_4F0640(combat->weapon_obj, &(pkt.field_88));
+        sub_4F0640(combat->field_20, &(pkt.field_A0));
+        sub_4F0640(combat->field_28, &(pkt.field_B8));
+        sub_4F0640(combat->field_30, &(pkt.field_D0));
+        pkt.combat = *combat;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
 }
 
 // 0x4B54B0
