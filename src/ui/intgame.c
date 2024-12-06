@@ -3858,7 +3858,7 @@ void intgame_mt_button_disable()
 
         tig_art_frame_data(art_id, &art_frame_data);
 
-        if (tig_art_interface_id(184, 0, 0, 0, &art_id) != TIG_OK) {
+        if (tig_art_interface_id_create(184, 0, 0, 0, &art_id) != TIG_OK) {
             tig_debug_printf("Intgame: intgame_mt_button_disable: ERROR: Can't find Interface Art: %d!\n", 184);
         }
 
