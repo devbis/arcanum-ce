@@ -3744,9 +3744,10 @@ void sub_556A90(int a1, bool a2)
 }
 
 // 0x556B70
-void sub_556B70()
+void sub_556B70(int a1)
 {
-    // TODO: Incomplete.
+    dword_64C534 = a1;
+    sub_556B90(a1);
 }
 
 // 0x556B90
