@@ -1,5 +1,6 @@
 #include "game/skill.h"
 
+#include "game/ai.h"
 #include "game/anim.h"
 #include "game/background.h"
 #include "game/critter.h"
@@ -12,6 +13,7 @@
 #include "game/player.h"
 #include "game/random.h"
 #include "game/stat.h"
+#include "game/trap.h"
 
 #define FIRST_BASIC_SKILL_NAME_ID 0
 #define FIRST_TECH_SKILL_NAME_ID (FIRST_BASIC_SKILL_NAME_ID + BASIC_SKILL_COUNT)
@@ -1050,7 +1052,6 @@ void sub_4C7090(Tanya* a1)
     sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_0));
     sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_30));
     a1->field_60 = 0;
-    a1->field_64 = 0;
     a1->field_A0 = 0;
     a1->field_9C = -1;
 }
@@ -1066,7 +1067,522 @@ bool sub_4C7120(Tanya* a1)
 // 0x4C7160
 bool sub_4C7160(Tanya* a1)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t target_loc;
+    int64_t item_obj;
+    int skill;
+    int basic_skill;
+    int tech_skill;
+    int training;
+    int effectiveness;
+    int difficulty;
+    bool is_success;
+    bool is_critical;
+    bool is_fate = false;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return false;
+    }
+
+    source_obj = a1->field_0.obj;
+    target_obj = a1->field_30.obj;
+    target_loc = a1->field_60;
+    item_obj = a1->field_68.obj;
+    skill = a1->field_9C;
+
+    if (IS_TECH_SKILL(skill)) {
+        basic_skill = -1;
+        tech_skill = GET_TECH_SKILL(skill);
+        effectiveness = sub_4C69F0(source_obj, tech_skill, target_obj);
+        training = tech_skill_get_training(source_obj, tech_skill);
+    } else {
+        basic_skill = GET_BASIC_SKILL(skill);
+        tech_skill = -1;
+        effectiveness = sub_4C62E0(source_obj, basic_skill, target_obj);
+        training = basic_skill_get_training(source_obj, basic_skill);
+    }
+
+    difficulty = a1->field_A0 + sub_4C8430(a1);
+
+    int modifier = basic_skill == BASIC_SKILL_GAMBLING
+        ? sub_4C6560()
+        : random_between(1, 100);
+
+    is_success = difficulty + modifier <= effectiveness
+        || (a1->field_98 & 0x1000) != 0;
+
+    int crit_roll = random_between(1, 100);
+    if (is_success) {
+        is_critical = sub_4C81A0(crit_roll, effectiveness, a1);
+    } else {
+        if (basic_skill == BASIC_SKILL_MELEE
+            && training >= TRAINING_MASTER) {
+            is_critical = false;
+        } else {
+            is_critical = sub_4C82E0(crit_roll, effectiveness, a1);
+        }
+    }
+
+    if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        if (basic_skill == BASIC_SKILL_GAMBLING
+            && sub_4F5270(source_obj, 6)) {
+            is_success = true;
+            is_critical = true;
+        } else if (basic_skill == BASIC_SKILL_HEAL
+            && sub_4F5270(source_obj, 7)) {
+            is_success = true;
+            is_critical = true;
+        } else if (basic_skill == BASIC_SKILL_PICK_POCKET
+            && sub_4F5270(source_obj, 8)) {
+            is_success = true;
+            is_critical = true;
+        } else if (tech_skill == TECH_SKILL_REPAIR
+            && sub_4F5270(source_obj, 9)) {
+            is_success = true;
+            is_critical = true;
+            is_fate = true;
+        } else if (tech_skill == TECH_SKILL_PICK_LOCKS
+            && sub_4F5270(source_obj, 10)) {
+            is_success = true;
+            is_critical = true;
+        } else if (tech_skill == TECH_SKILL_DISARM_TRAPS
+            && sub_4F5270(source_obj, 11)) {
+            is_success = true;
+            is_critical = true;
+        }
+    }
+
+    switch (skill) {
+    case SKILL_DODGE:
+        if (sub_45D800(source_obj)
+            || (obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0
+            || (obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+            is_success = false;
+            is_critical = false;
+        }
+        break;
+    case SKILL_PICK_POCKET: {
+        if ((a1->field_98 & 0x2) == 0) {
+            if (is_success) {
+                int64_t parent_obj;
+                if (item_parent(item_obj, &parent_obj) && parent_obj == target_obj) {
+                    bool moved;
+                    switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
+                    case OBJ_TYPE_ITEM_GOLD: {
+                        int qty = item_gold_get(item_obj);
+                        if (qty > 100) {
+                            qty = 100;
+                        }
+
+                        moved = sub_464830(target_obj, source_obj, qty, item_obj);
+                        break;
+                    }
+                    case OBJ_TYPE_AMMO: {
+                        int ammo_type = obj_field_int32_get(item_obj, OBJ_F_AMMO_TYPE);
+                        int qty = item_ammo_quantity_get(item_obj, ammo_type);
+                        if (qty > 20) {
+                            qty = 20;
+                        }
+                        moved = item_ammo_move(target_obj, source_obj, qty, ammo_type, item_obj);
+                        break;
+                    }
+                    default:
+                        moved = sub_4617F0(item_obj, source_obj);
+                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                            sub_407EF0(source_obj);
+                            sub_407EF0(item_obj);
+                        }
+                        break;
+                    }
+
+                    if (moved) {
+                        sub_45DC90(source_obj, target_obj, 0);
+
+                        unsigned int critter_flags2 = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS2);
+                        critter_flags2 |= OCF2_ITEM_STOLEN;
+                        obj_field_int32_set(target_obj, OBJ_F_CRITTER_FLAGS2, critter_flags2);
+
+                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                            Packet129 pkt;
+
+                            pkt.type = 129;
+                            pkt.oid = sub_407EF0(target_obj);
+                            pkt.fld = OBJ_F_CRITTER_FLAGS2;
+                            pkt.subtype = 0;
+                            pkt.val = critter_flags2;
+                            tig_net_send_app_all(&pkt, sizeof(pkt));
+                        }
+                    } else {
+                        is_success = false;
+                        is_critical = false;
+                    }
+                } else {
+                    is_success = false;
+                    is_critical = false;
+                }
+            } else {
+                if (is_critical
+                    || (training == TRAINING_NONE && sub_45F060(target_obj, STAT_PERCEPTION, 0))) {
+                    sub_441980(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
+                    if (sub_441980(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
+                        if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
+                            || critter_leader_get(target_obj) != source_obj) {
+                            sub_4A9650(source_obj, target_obj, 1, 0);
+                        }
+                    }
+                }
+            }
+
+            if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                if (skill_callbacks.field_4 != NULL) {
+                    skill_callbacks.field_4(source_obj, target_obj, item_obj, is_success);
+                }
+            }
+        } else {
+            if (is_success) {
+                int64_t parent_obj;
+                if (item_parent(item_obj, &parent_obj) && parent_obj == source_obj) {
+                    bool moved;
+                    switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
+                    case OBJ_TYPE_ITEM_GOLD: {
+                        int qty = item_gold_get(item_obj);
+                        if (qty > 100) {
+                            qty = 100;
+                        }
+                        moved = sub_464830(source_obj, target_obj, qty, item_obj);
+                        break;
+                    }
+                    case OBJ_TYPE_AMMO: {
+                        int ammo_type = obj_field_int32_get(item_obj, OBJ_F_AMMO_TYPE);
+                        int qty = item_ammo_quantity_get(item_obj, ammo_type);
+                        if (qty > 20) {
+                            qty = 20;
+                        }
+                        moved = item_ammo_move(source_obj, target_obj, qty, ammo_type, item_obj);
+                        break;
+                    }
+                    default:
+                        moved = sub_4617F0(item_obj, target_obj);
+                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                            Packet128 pkt;
+
+                            pkt.type = 128;
+                            pkt.target_oid = sub_407EF0(target_obj);
+                            pkt.item_oid = sub_407EF0(item_obj);
+                            tig_net_send_app_all(&pkt, sizeof(pkt));
+                        }
+                        break;
+                    }
+
+                    if (!moved) {
+                        is_success = false;
+                        is_critical = false;
+                    }
+                }
+            } else {
+                if (training < TRAINING_MASTER
+                    && (is_critical
+                        || (training == TRAINING_NONE && sub_45F060(target_obj, STAT_PERCEPTION, 0)))) {
+                    sub_441980(target_obj, source_obj, item_obj, SAP_CAUGHT_THIEF, 0);
+                    if (sub_441980(source_obj, target_obj, item_obj, SAP_CATCHING_THIEF_PC, 0)) {
+                        if (obj_field_int32_get(target_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC
+                            || critter_leader_get(target_obj) != source_obj) {
+                            sub_4A9650(source_obj, target_obj, 1, 0);
+                        }
+                    }
+                }
+            }
+
+            if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                if (skill_callbacks.field_8 != NULL) {
+                    skill_callbacks.field_8(source_obj, target_obj, item_obj, is_success);
+                }
+            }
+        }
+        break;
+    }
+    case SKILL_SPOT_TRAP:
+        if (!is_success
+            && !is_critical
+            && training >= TRAINING_MASTER
+            && difficulty + random_between(1, 100) <= effectiveness) {
+            is_success = true;
+        }
+        if (is_success) {
+            if (training < TRAINING_EXPERT
+                && trap_type(target_obj) == TRAP_TYPE_MAGICAL) {
+                is_success = false;
+                is_critical = false;
+            }
+        }
+        break;
+    case SKILL_HEAL: {
+        CombatContext combat;
+
+        sub_4B2210(source_obj, target_obj, &combat);
+
+        if (is_success) {
+            int heal = basic_skill_level(source_obj, BASIC_SKILL_HEAL);
+            if (training != TRAINING_NONE) {
+                heal = 3 * heal / 2;
+            }
+            if (heal < 1) {
+                heal = 1;
+            }
+            if (training == TRAINING_MASTER || is_critical) {
+                combat.field_44[0] = heal;
+                sub_4EA2E0(target_obj, EFFECT_CAUSE_INJURY);
+
+                unsigned int critter_flags = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS);
+                if ((critter_flags & OCF_BLINDED) != 0) {
+                    critter_flags &= ~OCF_BLINDED;
+                } else if ((critter_flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
+                    critter_flags &= ~OCF_CRIPPLED_ARMS_BOTH;
+                } else if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) != 0) {
+                    critter_flags &= ~OCF_CRIPPLED_ARMS_ONE;
+                } else if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
+                    critter_flags &= ~OCF_CRIPPLED_LEGS_BOTH;
+                }
+                obj_field_int32_set(target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+
+                Packet129 pkt;
+                pkt.type = 129;
+                pkt.oid = sub_407EF0(target_obj);
+                pkt.fld = OBJ_F_CRITTER_FLAGS;
+                pkt.subtype = 0;
+                pkt.val = critter_flags;
+                tig_net_send_app_all(&pkt, sizeof(pkt));
+            } else {
+                combat.field_44[0] = random_between(1, heal);
+            }
+
+            sub_4B58C0(&combat);
+        } else {
+            if (is_critical && training >= TRAINING_EXPERT) {
+                is_critical = false;
+            }
+        }
+
+        if (item_obj != OBJ_HANDLE_NULL
+            && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+            && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_HEALING_ITEM) != 0) {
+            int charges = obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_COUNT_REMAINING);
+            if (!is_success && is_critical) {
+                charges -= 5;
+            } else {
+                charges -= 1;
+            }
+            if (charges > 0) {
+                obj_field_int32_set(item_obj, OBJ_F_GENERIC_USAGE_COUNT_REMAINING, charges);
+            } else {
+                sub_43CCA0(item_obj);
+            }
+        }
+        break;
+    }
+    case SKILL_REPAIR: {
+        Packet88 pkt;
+        int durability_dam_by_training[3];
+
+        memset(&pkt, 0, sizeof(pkt));
+
+        durability_dam_by_training[TRAINING_NONE] = 10;
+        durability_dam_by_training[TRAINING_APPRENTICE] = 5;
+        durability_dam_by_training[TRAINING_EXPERT] = 1;
+
+        pkt.type = 88;
+        pkt.source_oid = sub_407EF0(source_obj);
+        pkt.target_oid = sub_407EF0(target_obj);
+        pkt.field_40 = 1;
+
+        int hp = object_get_hp_damage(target_obj);
+        if (hp <= 0
+            && (tig_art_item_id_destroyed_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 0
+                || training != TRAINING_MASTER)) {
+            pkt.field_4 |= 0x10;
+            if (player_is_pc_obj(source_obj)) {
+                if (skill_callbacks.lock_no_repair != NULL) {
+                    skill_callbacks.lock_no_repair(source_obj, target_obj, is_success);
+                }
+            }
+        } else {
+            int v1;
+            if (is_fate) {
+                v1 = sub_43D5A0(target_obj);
+            } else {
+                v1 = effectiveness * sub_43D5A0(target_obj) / 100;
+            }
+
+            if (v1 <= 0) {
+                if (effectiveness > 0 || (a1->field_98 & 0x1000) != 0) {
+                    v1 = 1;
+                } else {
+                    v1 = 0;
+                    is_success = false;
+                }
+            }
+
+            int v2 = hp - v1;
+            if (v2 < 0) {
+                v2 = 0;
+            }
+
+            object_set_hp_damage(target_obj, v2);
+
+            pkt.field_4 |= 0x01;
+            pkt.field_8 = v2;
+
+            int durability_dam;
+            if (training == TRAINING_MASTER) {
+                if (tig_art_item_id_destroyed_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) != 0) {
+                    durability_dam = 5;
+
+                    tig_art_id_t art_id = obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID);
+                    art_id = tig_art_item_id_destroyed_set(art_id, 0);
+                    object_set_current_aid(target_obj, art_id);
+
+                    is_success = true;
+                    pkt.field_4 |= 0x02;
+                } else if (is_critical && !is_success) {
+                    durability_dam = 1;
+                } else {
+                    durability_dam = 0;
+                }
+            } else {
+                durability_dam = durability_dam_by_training[training];
+            }
+
+            if (durability_dam > 0) {
+                int dam = durability_dam * sub_43D5A0(target_obj) / 100;
+                object_set_hp_adj(target_obj, object_get_hp_adj(target_obj) - dam);
+
+                pkt.field_4 |= 0x04;
+                pkt.field_C = object_get_hp_adj(target_obj);
+            }
+
+            pkt.field_4 |= 0x08;
+
+            if (player_is_pc_obj(source_obj)) {
+                if (skill_callbacks.field_14 != NULL) {
+                    skill_callbacks.field_14(source_obj, target_obj, is_success);
+                }
+            }
+        }
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+        break;
+    }
+    case SKILL_PICK_LOCKS: {
+        Packet89 pkt;
+
+        pkt.type = 89;
+        pkt.field_4 = 0;
+        pkt.source_oid = sub_407EF0(source_obj);
+        pkt.target_oid = sub_407EF0(target_obj);
+        pkt.field_38 = is_success;
+
+        if (object_is_locked(target_obj)) {
+            if (is_success) {
+                pkt.field_4 |= 0x04;
+                sub_441DD0(target_obj, false);
+                sub_4AEE50(source_obj, target_obj, 0, 0);
+            } else {
+                if (is_critical) {
+                    pkt.field_4 |= 0x02;
+                    sub_441F10(target_obj, true);
+                }
+
+                sub_4AEE50(source_obj, target_obj, 1, 0);
+            }
+
+            pkt.field_4 |= 0x08;
+            if (sub_4C83E0(source_obj)) {
+                if (skill_callbacks.lock_pick_output_func != NULL) {
+                    skill_callbacks.lock_pick_output_func(source_obj, target_obj, is_success);
+                }
+            }
+        } else {
+            if (is_success) {
+                pkt.field_4 |= 0x01;
+                sub_441DD0(target_obj, true);
+
+                pkt.field_4 |= 0x08;
+
+                if (player_is_pc_obj(source_obj)) {
+                    if (skill_callbacks.lock_pick_output_func != NULL) {
+                        skill_callbacks.lock_pick_output_func(source_obj, target_obj, is_success);
+                    }
+                }
+            }
+        }
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+        break;
+    }
+    case SKILL_DISARM_TRAPS: {
+        Packet91 pkt;
+
+        pkt.type = 91;
+        pkt.source_oid = sub_407EF0(source_obj);
+        pkt.target_oid = sub_407EF0(target_obj);
+        pkt.field_38 = is_success;
+        pkt.field_3C = 0;
+
+        if ((a1->field_98 & 0x04) != 0) {
+            if (!is_success
+                && !is_critical
+                && training >= TRAINING_MASTER
+                && difficulty + random_between(1, 100) <= effectiveness) {
+                is_success = true;
+            }
+
+            sub_4BC7B0(source_obj, target_obj, &is_success, &is_critical);
+
+            pkt.field_38 = is_success;
+            pkt.field_3C |= 0x02;
+
+            if (sub_4C83E0(source_obj)) {
+                if (skill_callbacks.trap_output_func != NULL) {
+                    skill_callbacks.trap_output_func(source_obj, target_obj, is_success);
+                }
+            }
+        } else {
+            pkt.field_3C |= 0x01;
+            if (player_is_pc_obj(source_obj)) {
+                if (skill_callbacks.field_C != NULL) {
+                    skill_callbacks.field_C(source_obj, target_obj, is_success);
+                }
+            }
+        }
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+        break;
+    }
+    default:
+        break;
+    }
+
+    if (is_success) {
+        a1->field_98 |= 0x1;
+    } else {
+        a1->field_98 &= ~0x1;
+    }
+
+    if (is_critical) {
+        a1->field_98 |= 0x10;
+    } else {
+        a1->field_98 &= ~0x10;
+    }
+
+    return true;
 }
 
 // 0x4C81A0
