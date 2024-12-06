@@ -7,6 +7,7 @@
 #include "game/effect.h"
 #include "game/gamelib.h"
 #include "game/item.h"
+#include "game/light.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
@@ -191,6 +192,19 @@ static int dword_5B7090[21] = {
     3000,
     4000,
     5000,
+};
+
+// 0x5B70E4
+static int dword_5B70E4[9] = {
+    50,
+    30,
+    30,
+    30,
+    70,
+    70,
+    1000,
+    1000,
+    1000,
 };
 
 // 0x5FF424
@@ -1674,7 +1688,305 @@ bool sub_4C83E0(int64_t obj)
 // 0x4C8430
 int sub_4C8430(Tanya* a1)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t item_obj;
+    int skill;
+    int basic_skill;
+    int tech_skill;
+    int effectiveness;
+    int training;
+    int difficulty;
+
+    source_obj = a1->field_0.obj;
+    target_obj = a1->field_30.obj;
+    item_obj = a1->field_68.obj;
+    skill = a1->field_9C;
+
+    if (IS_TECH_SKILL(skill)) {
+        basic_skill = -1;
+        tech_skill = GET_TECH_SKILL(skill);
+        effectiveness = sub_4C69F0(source_obj, tech_skill, target_obj);
+        training = tech_skill_get_training(source_obj, tech_skill);
+    } else {
+        basic_skill = GET_BASIC_SKILL(skill);
+        tech_skill = -1;
+        effectiveness = sub_4C62E0(source_obj, basic_skill, target_obj);
+        training = basic_skill_get_training(source_obj, basic_skill);
+    }
+
+    difficulty = a1->field_A0;
+    if (target_obj != OBJ_HANDLE_NULL) {
+        a1->field_60 = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    }
+
+    if (item_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+        int to_hit = obj_field_int32_get(item_obj, OBJ_F_WEAPON_BONUS_TO_HIT);
+        if ((a1->field_98 & 0x10000) == 0) {
+            int adj = obj_field_int32_get(item_obj, OBJ_F_WEAPON_MAGIC_HIT_ADJ);
+            to_hit += sub_461590(item_obj, source_obj, adj);
+        }
+
+        difficulty -= to_hit;
+
+        int strength = stat_level(source_obj, STAT_STRENGTH) - item_weapon_min_strength(item_obj, source_obj);
+        if (strength < 0) {
+            difficulty += -strength * 5;
+            a1->field_98 |= 0x40;
+        }
+    }
+
+    int target_type;
+    if (target_obj != OBJ_HANDLE_NULL) {
+        target_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
+    }
+
+    if ((dword_5B6F64[skill] & 0x08) != 0
+        && target_obj != OBJ_HANDLE_NULL
+        && obj_type_is_critter(target_type)) {
+        unsigned int critter_flags = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS);
+
+        if ((critter_flags & OCF_PARALYZED) != 0) {
+            difficulty -= 50;
+        } else if (sub_45D800(target_obj)) {
+            difficulty -= 50;
+        } else if (sub_503E20(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID))
+            || (critter_flags & OCF_STUNNED) != 0) {
+            difficulty -= 30;
+        } else if ((critter_flags & OCF_SLEEPING) != 0) {
+            difficulty -= 50;
+        } else if (basic_skill != BASIC_SKILL_PROWLING
+            && !combat_critter_is_combat_mode_active(target_obj)
+            && sub_4AF260(target_obj, source_obj)
+            && sub_4AF470(target_obj, source_obj, 1)) {
+            difficulty -= 30;
+        }
+    }
+
+    if ((dword_5B6F64[skill] & 0x01) != 0 && target_obj != OBJ_HANDLE_NULL) {
+        if ((a1->field_98 & 0x08) != 0) {
+            int v1 = sub_4B5F30(a1->field_A4);
+            if (tech_skill == TECH_SKILL_FIREARMS
+                && training >= TRAINING_EXPERT) {
+                v1 = 2 * v1 / 3;
+            }
+            difficulty -= v1;
+        }
+
+        if ((a1->field_98 & 0x8000) == 0
+            || basic_skill_get_training(source_obj, BASIC_SKILL_BACKSTAB) == TRAINING_NONE) {
+            difficulty += effectiveness * (object_get_ac(target_obj, false) / 2) / 100;
+        }
+    }
+
+    if ((dword_5B6F64[skill] & 0x02) != 0) {
+        int64_t dist = sub_4B96F0(a1->field_60, obj_field_int64_get(source_obj, OBJ_F_LOCATION));
+        if (dist > INT_MAX) {
+            return 1000000;
+        }
+
+        if (item_obj != OBJ_HANDLE_NULL) {
+            int range;
+            if (basic_skill == BASIC_SKILL_THROWING) {
+                range = item_throwing_distance(item_obj, source_obj);
+            } else {
+                range = obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+                    ? item_weapon_range(item_obj, source_obj)
+                    : 10;
+            }
+
+            if (dist > range) {
+                difficulty += 1000000;
+                a1->field_98 |= 0x80;
+            }
+        }
+
+        if (basic_skill != BASIC_SKILL_BOW
+            && basic_skill != BASIC_SKILL_THROWING
+            && (tech_skill != TECH_SKILL_FIREARMS || training < TRAINING_MASTER)) {
+            int extra_dist = (int)dist - stat_level(source_obj, STAT_PERCEPTION) / 2;
+            if (extra_dist > 0) {
+                difficulty += 5 * extra_dist;
+                a1->field_98 |= 0x100;
+            }
+        }
+
+        int64_t blocking_obj;
+        int v2 = sub_4ADE00(source_obj, a1->field_60, &blocking_obj);
+        if (blocking_obj != OBJ_HANDLE_NULL) {
+            difficulty += 1000000;
+            a1->field_98 |= 0x20000;
+        } else if (v2 > 0) {
+            difficulty += v2;
+            a1->field_98 |= 0x200;
+        }
+    }
+
+    unsigned int critter_flags = obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS);
+    if ((critter_flags & OCF_UNDEAD) == 0
+        && ((dword_5B6F64[skill] & 0x04) != 0 || (a1->field_98 & 0x4000) != 0)) {
+        bool v3 = true;
+        if ((basic_skill == BASIC_SKILL_MELEE
+            || tech_skill == TECH_SKILL_PICK_LOCKS) && training >= TRAINING_EXPERT) {
+            v3 = false;
+        }
+
+        if ((((a1->field_98 & 0x4000) == 0
+                && basic_skill != BASIC_SKILL_SPOT_TRAP
+                && tech_skill != TECH_SKILL_DISARM_TRAPS)
+            || training < TRAINING_APPRENTICE) && v3) {
+            int v4;
+            if ((a1->field_98 & 0x4000) != 0) {
+                v4 = sub_4DCE10(source_obj) & 0xFF;
+            } else if (target_obj != OBJ_HANDLE_NULL) {
+                v4 = sub_4DCE10(target_obj) & 0xFF;
+            } else {
+                v4 = sub_4D9240(a1->field_60, 0, 0) & 0xFF;
+            }
+
+            int v5 = 30 * (255 - v4) / 255;
+
+            if ((critter_flags & OCF_LIGHT_XLARGE) != 0) {
+                v5 /= 4;
+            } else if ((critter_flags & OCF_LIGHT_LARGE) != 0) {
+                v5 /= 3;
+            } else if ((critter_flags & OCF_LIGHT_MEDIUM) != 0) {
+                v5 /= 2;
+            } else if ((critter_flags & OCF_LIGHT_SMALL) != 0) {
+                v5 = 2 * v5 / 3;
+            }
+
+            if ((a1->field_98 & 0x4000) != 0) {
+                if (!sub_45FB90(target_obj)) {
+                    v5 = 30 - v5;
+                }
+            } else if (sub_45FB90(source_obj)) {
+                v5 = 30 - v5;
+            }
+
+            if (v5 > 0) {
+                difficulty += v5;
+                a1->field_98 |= 0x400;
+            }
+        }
+    }
+
+    if ((dword_5B6F64[skill] & 0x80) != 0
+        || (critter_flags & OCF_BLINDED) == 0) {
+        difficulty += 30;
+        a1->field_98 |= 0x800;
+    }
+
+    if ((dword_5B6F64[skill] & 0x100) != 0) {
+        if ((critter_flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
+            difficulty += 50;
+            a1->field_98 |= 0x800;
+        } else if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) != 0) {
+            difficulty += 20;
+            a1->field_98 |= 0x800;
+        }
+    }
+
+    if ((dword_5B6F64[skill] & 0x200) != 0) {
+        if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
+            difficulty += 30;
+            a1->field_98 |= 0x800;
+        }
+    }
+
+    switch (skill) {
+    case SKILL_PICK_POCKET: {
+        int inventory_location = item_inventory_location_get(item_obj);
+        if (inventory_location >= 1000 && inventory_location <= 1008) {
+            difficulty += dword_5B70E4[inventory_location - 1000];
+        }
+
+        int width;
+        int height;
+        item_inv_icon_size(item_obj, &width, &height);
+
+        int penalty = 5 * width * height;
+        if (training >= TRAINING_EXPERT) {
+            penalty /= 2;
+        }
+
+        difficulty += penalty;
+        break;
+    }
+    case SKILL_PROWLING: {
+        if ((a1->field_98 & 0x4000) != 0) {
+            int64_t blocking_obj;
+            int v6 = sub_4ADE00(target_obj,
+                obj_field_int64_get(source_obj, OBJ_F_LOCATION),
+                &blocking_obj);
+            if (blocking_obj != OBJ_HANDLE_NULL) {
+                difficulty = -100;
+                break;
+            }
+
+            if (training < TRAINING_EXPERT && v6 == 0) {
+                difficulty += 50;
+            }
+        } else if ((a1->field_98 & 0x2000) != 0) {
+            for (int inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+                int64_t inv_item_obj = item_wield_get(source_obj, inventory_location);
+                if (inv_item_obj != OBJ_HANDLE_NULL
+                    && obj_field_int32_get(inv_item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+                    int penalty = obj_field_int32_get(inv_item_obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ);
+                    penalty += sub_461590(inv_item_obj,
+                        source_obj,
+                        obj_field_int32_get(inv_item_obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ));
+                    if (training >= TRAINING_APPRENTICE) {
+                        penalty /= 2;
+                    }
+                    difficulty -= penalty;
+                }
+            }
+        }
+        break;
+    }
+    case SKILL_HEAL:
+        if (item_obj != OBJ_HANDLE_NULL
+            && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+            && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_HEALING_ITEM) != 0) {
+            difficulty -= obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS);
+        }
+        break;
+    case SKILL_PICK_LOCKS:
+        if (target_obj != OBJ_HANDLE_NULL
+            && (target_type == OBJ_TYPE_PORTAL || target_type == OBJ_TYPE_CONTAINER)) {
+            if (item_obj != OBJ_HANDLE_NULL
+                && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+                && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
+                difficulty -= obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS);
+            }
+
+            int lock_difficulty;
+            if (target_type == OBJ_TYPE_PORTAL) {
+                lock_difficulty = obj_field_int32_get(target_obj, OBJ_F_PORTAL_LOCK_DIFFICULTY);
+            } else {
+                lock_difficulty = obj_field_int32_get(target_obj, OBJ_F_CONTAINER_LOCK_DIFFICULTY);
+            }
+
+            if (training >= TRAINING_MASTER && lock_difficulty > 0) {
+                lock_difficulty /= 2;
+            }
+
+            difficulty += lock_difficulty;
+        } else {
+            difficulty += 1000000;
+        }
+        break;
+    case SKILL_DISARM_TRAPS:
+        if (target_obj != OBJ_HANDLE_NULL
+            && target_type == OBJ_TYPE_TRAP) {
+            difficulty += obj_field_int32_get(target_obj, OBJ_F_TRAP_DIFFICULTY);
+        }
+        break;
+    }
+
+    return difficulty;
 }
 
 // 0x4C8E60
