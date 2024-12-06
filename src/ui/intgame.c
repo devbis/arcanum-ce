@@ -3777,7 +3777,7 @@ void sub_556B90(int a1)
         button_handle = stru_5C64C0[3].button_handle;
         break;
     case 4:
-        stru_5C64C0[2].button_handle;
+        button_handle = stru_5C64C0[2].button_handle;
         break;
     }
 
