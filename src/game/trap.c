@@ -498,7 +498,7 @@ bool trap_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x4BC7B0
-void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, int* a3, int* a4)
+void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is_critical_ptr)
 {
     int disarm_item_name;
     int64_t prototype_handle;
@@ -507,19 +507,19 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, int* a3, int* a4)
     Packet70 pkt;
 
     if (trap_type(trap_obj) == TRAP_TYPE_INVALID) {
-        *a3 = 0;
-        *a4 = 0;
+        *is_success_ptr = false;
+        *is_critical_ptr = false;
         return;
     }
 
     if (!sub_4BBFE0(pc_obj, trap_obj)) {
-        *a3 = 0;
-        *a4 = 0;
+        *is_success_ptr = false;
+        *is_critical_ptr = false;
         return;
     }
 
-    if (*a3) {
-        if (*a4
+    if (*is_success_ptr) {
+        if (*is_critical_ptr
             && tech_skill_get_training(pc_obj, TECH_SKILL_DISARM_TRAPS) >= TRAINING_EXPERT
             && get_disarm_item_name(trap_obj, &disarm_item_name)) {
             prototype_handle = sub_4685A0(disarm_item_name);
@@ -542,8 +542,10 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, int* a3, int* a4)
             }
         }
         sub_4BC220(trap_obj);
-    } else if (*a4) {
-        sub_441980(pc_obj, trap_obj, OBJ_HANDLE_NULL, 1, 0);
+    } else {
+        if (*is_critical_ptr) {
+            sub_441980(pc_obj, trap_obj, OBJ_HANDLE_NULL, 1, 0);
+        }
     }
 }
 
