@@ -6,6 +6,12 @@
 #include "game/timeevent.h"
 #include "game/script.h"
 
+typedef enum TrapType {
+    TRAP_TYPE_INVALID,
+    TRAP_TYPE_NONMAGICAL,
+    TRAP_TYPE_MAGICAL,
+} TrapType;
+
 bool trap_init(GameInitInfo* init_info);
 void trap_exit();
 bool trap_timeevent_process(TimeEvent* timeevent);
