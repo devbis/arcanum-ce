@@ -4,12 +4,14 @@
 
 #include "game/ai.h"
 #include "game/anim.h"
+#include "game/antiteleport.h"
 #include "game/area.h"
 #include "game/critter.h"
 #include "game/gamelib.h"
+#include "game/gsound.h"
 #include "game/location.h"
-#include "game/map.h"
 #include "game/magictech.h"
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/obj.h"
 #include "game/player.h"
@@ -110,7 +112,7 @@ typedef struct S5C9228 {
     /* 01A4 */ char str[260];
     /* 02A8 */ TigRect field_2A8;
     /* 02B8 */ TigVideoBuffer* video_buffer;
-    /* 02BC */ void(*field_2BC)(int x, int y, int* coords);
+    /* 02BC */ void(*field_2BC)(int x, int y, WmapCoords* coords);
 } S5C9228;
 
 static_assert(sizeof(S5C9228) == 0x2C0, "wrong size");
@@ -168,7 +170,8 @@ static bool sub_5615D0(int a1);
 static void sub_561800(WmapCoords* coords, int64_t* loc_ptr);
 static bool sub_561860(int64_t loc);
 static bool wmap_ui_message_filter(TigMessage* msg);
-static bool sub_5627F0(long long a1);
+static bool sub_5627B0(WmapCoords* coords);
+static bool sub_5627F0(int64_t loc);
 static void sub_562800(int id);
 static void sub_562880(WmapCoords* coords);
 static void sub_562A20(int x, int y);
@@ -189,12 +192,13 @@ static void sub_563590(WmapCoords* a1, bool a2);
 static void sub_563610();
 static void sub_563750(int direction);
 static void sub_563790(int a1, int a2);
-static void sub_563AC0(int x, int y, int* coords);
-static void sub_563B10(int x, int y, int* coords);
-static void sub_563C00(int x, int y, int* coords);
+static void sub_563AC0(int x, int y, WmapCoords* coords);
+static void sub_563B10(int x, int y, WmapCoords* coords);
+static void sub_563C00(int x, int y, WmapCoords* coords);
 static bool sub_563C60(WmapNote* note);
 static void sub_563D50(WmapNote* note);
 static void sub_563D80(int a1, int a2);
+static WmapNote* sub_563D90(int id);
 static bool sub_563DE0(WmapCoords* coords, int* id);
 static bool sub_563E00(WmapCoords* coords, int* id, int a3);
 static bool sub_563F00(WmapCoords* coords, int64_t* a2);
@@ -1442,29 +1446,583 @@ bool sub_561860(int64_t loc)
     sub_4D3380(&teleport_data);
 }
 
+// TODO: Review, split.
+//
 // 0x5618B0
 bool wmap_ui_message_filter(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    MesFileEntry mes_file_entry;
+    char str[48];
+    John v2;
+    bool v3 = false;
+
+    sub_563610();
+
+    v1 = &(stru_5C9228[dword_66D868]);
+
+    if (msg->type == TIG_MESSAGE_MOUSE) {
+        switch (msg->data.mouse.event) {
+        case TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN:
+            if (msg->data.mouse.x < v1->field_14
+                || msg->data.mouse.y < v1->field_18
+                || msg->data.mouse.x >= v1->field_14 + v1->field_1C
+                || msg->data.mouse.y >= v1->field_18 + v1->field_20) {
+                if (dword_66D8AC == 4) {
+                    sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
+                    return true;
+                }
+                return false;
+            }
+
+            if (v1->field_2BC != NULL) {
+                v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+            }
+
+            switch (dword_66D868) {
+            case 0:
+                switch (dword_66D8AC) {
+                case 0: {
+                    if (stru_64E048[0].field_3C8) {
+                        if (sub_564780(&stru_64E7E8, &dword_5C9AD8)) {
+                            sub_5649D0(stru_64E048[0].field_0[dword_5C9AD8].field_4);
+                            sub_5615D0(1);
+                            stru_64E048[0].field_3C8 = 0;
+                            return true;
+                        }
+
+                        if (sub_5627B0(&stru_64E7E8) && sub_5643E0(&stru_64E7E8)) {
+                            dword_5C9AD8 = stru_64E048[0].field_3C0 - 1;
+                            sub_5615D0(1);
+                            stru_64E048[0].field_3C8 = 0;
+                            return true;
+                        }
+
+                        return true;
+                    }
+
+                    if (!dword_66D9C8) {
+                        return true;
+                    }
+
+                    v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+
+                    int64_t loc;
+                    sub_561800(&stru_64E7E8, &loc);
+
+                    int area = area_get_nearest_known_area(loc, player_get_pc_obj(), qword_66D850);
+                    if (area <= 0) {
+                        return true;
+                    }
+
+                    loc = area_get_location(area);
+                    if (loc == 0 || dword_5C9220 == -1) {
+                        return true;
+                    }
+
+                    int64_t pc_obj = player_get_pc_obj();
+                    if (antiteleport_check_can_teleport(pc_obj, loc)) {
+                        if (player_is_pc_obj(qword_66D888)) {
+                            sub_4507B0(qword_66D888, dword_5C9220);
+                        }
+
+                        if (area_get_last_known_area(pc_obj) == area) {
+                            area_reset_last_known_area(pc_obj);
+                        }
+
+                        sub_561860(loc);
+                        sub_560F40();
+                    } else {
+                        mes_file_entry.num = 640;
+                        mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+                        sub_460610(mes_file_entry.str);
+                    }
+
+                    return true;
+                }
+                case 1:
+                    if (!dword_66D880) {
+                        return true;
+                    }
+
+                    sub_562AF0(msg->data.mouse.x, msg->data.mouse.y);
+
+                    if (!sub_5627B0(&stru_64E7E8)) {
+                        return true;
+                    }
+
+                    sub_564830(dword_5C9AD8, &stru_64E7E8);
+
+                    return true;
+                case 3: {
+                    int id;
+                    if (sub_563DE0(&stru_64E7E8, &id)) {
+                        sub_564360(id);
+                    } else {
+                        sub_563F90(&stru_64E7E8);
+                    }
+                    return true;
+                }
+                case 4:
+                    sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
+                    return true;
+                default:
+                    return true;
+                }
+            case 2:
+                switch (dword_66D8AC) {
+                case 0:
+                    if (stru_64E048[1].field_3C8) {
+                        if (sub_564780(&stru_64E7E8, &dword_5C9AD8)) {
+                            sub_5649D0(stru_64E048[1].field_0[dword_5C9AD8].field_4);
+                            stru_64E048[1].field_3C8 = 0;
+                            return true;
+                        }
+
+                        if (sub_5627B0(&stru_64E7E8) && sub_5643E0(&stru_64E7E8)) {
+                            dword_5C9AD8 = stru_64E048[1].field_3C0 - 1;
+                            stru_64E048[1].field_3C8 = 0;
+                            return true;
+                        }
+                    }
+                    return true;
+                case 4:
+                    sub_562A20(msg->data.mouse.x, msg->data.mouse.y);
+                    return true;
+                default:
+                    return true;
+                }
+            default:
+                return true;
+            }
+        case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+            switch (dword_66D868) {
+            case 0:
+                stru_64E048[0].field_3C8 = dword_66D880 != 0;
+                if (dword_66D8AC == 1 || dword_66D8AC == 4) {
+                    sub_5615D0(0);
+                }
+                break;
+            case 1:
+                if (!dword_66D874
+                    && msg->data.mouse.x >= v1->field_14
+                    && msg->data.mouse.y >= v1->field_18
+                    && msg->data.mouse.x < v1->field_14 + v1->field_1C
+                    && msg->data.mouse.y < v1->field_18 + v1->field_20
+                    && dword_66D8AC == 0) {
+                    sub_563B10(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+                    sub_562B70(0);
+                    sub_563590(&stru_64E7E8, 0);
+                    sub_563270();
+                }
+                break;
+            case 2:
+                stru_64E048[1].field_3C8 = 1;
+                if (dword_66D8AC == 1 || dword_66D8AC == 4) {
+                    sub_5615D0(0);
+                }
+                break;
+            }
+
+            if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                sub_560F40();
+                return true;
+            }
+
+            return false;
+        case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP: {
+            if (dword_66D8AC == 3) {
+                if (dword_66D868 == 0) {
+                    sub_5615D0(0);
+                    return true;
+                }
+                return false;
+            }
+
+            int idx = dword_66D868 == 2 ? 1 : 0;
+            if (dword_5C9AD8 == -1) {
+                dword_5C9AD8 = stru_64E048[idx].field_3C0 - 1;
+            }
+
+            if (dword_5C9AD8 >= 0) {
+                sub_564840(dword_5C9AD8);
+                if (dword_5C9AD8 >= stru_64E048[idx].field_3C0) {
+                    dword_5C9AD8 = stru_64E048[idx].field_3C0 - 1;
+                }
+            }
+
+            if (dword_66D8AC == 2) {
+                sub_5615D0(0);
+            }
+
+            return true;
+        }
+        case TIG_MESSAGE_MOUSE_MOVE:
+            if (msg->data.mouse.x >= v1->field_14
+                && msg->data.mouse.y >= v1->field_18
+                && msg->data.mouse.x < v1->field_14 + v1->field_1C
+                && msg->data.mouse.y < v1->field_18 + v1->field_20) {
+                if (dword_66D868 == 0 || dword_66D868 == 1) {
+                    v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+                    sub_562880(&stru_64E7E8);
+                } else if (dword_66D868 == 2) {
+                    v3 = true;
+                } else {
+                    sub_562880(&stru_64E7E8);
+                    v3 = true;
+                }
+            }
+
+            switch (dword_66D868) {
+            case 0:
+                switch (dword_66D8AC) {
+                case 0:
+                    if (v3) {
+                        v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+
+                        int id;
+                        if (sub_563DE0(&stru_64E7E8, &id)) {
+                            if (v1->field_198 != id) {
+                                WmapNote* note = sub_563D90(id);
+                                if (note->id < 200) {
+                                    v1->field_198 = id;
+                                    sub_550770(-1, area_get_description(note->id));
+                                }
+                            }
+                        }
+                    } else {
+                        if (v1->field_198 != -1) {
+                            v1->field_198 = -1;
+                            sub_550720();
+                        }
+                    }
+
+                    return true;
+                case 1:
+                    if (v1) {
+                        sub_562AF0(msg->data.mouse.x, msg->data.mouse.y);
+                        if (sub_5627B0(&stru_64E7E8)) {
+                            sub_564830(dword_5C9AD8, &stru_64E7E8);
+                        }
+                    }
+
+                    return true;
+                default:
+                    return true;
+                }
+            case 1: {
+                if (!v3) {
+                    return true;
+                }
+
+                v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+
+                int id;
+                if (sub_563DE0(&stru_64E7E8, &id)) {
+                    if (v1->field_198 != id) {
+                        WmapNote* note = sub_563D90(id);
+                        if (note->id < 200) {
+                            v1->field_198 = id;
+                            sub_550770(-1, area_get_description(note->id));
+                        }
+                    }
+                } else {
+                    if (v1->field_198 != -1) {
+                        v1->field_198 = -1;
+                        sub_550720();
+                    }
+                }
+
+                return true;
+            }
+            case 2:
+                switch (dword_66D8AC) {
+                case 0:
+                    if (v3) {
+                        v1->field_2BC(msg->data.mouse.x, msg->data.mouse.y, &stru_64E7E8);
+
+                        int id;
+                        if (sub_563DE0(&stru_64E7E8, &id)) {
+                            if (v1->field_198 != id) {
+                                WmapNote* note = sub_563D90(id);
+                                sub_550770(-1, note->str);
+                            }
+                        }
+                    } else {
+                        if (v1->field_198 != -1) {
+                            v1->field_198 = -1;
+                            sub_550720();
+                        }
+                    }
+
+                    return true;
+                case 1:
+                    if (v3) {
+                        sub_562AF0(msg->data.mouse.x, msg->data.mouse.y);
+                        if (!sub_5627B0(&stru_64E7E8)) {
+                            return true;
+                        }
+                    }
+
+                    return true;
+                default:
+                    return true;
+                }
+            default:
+                return true;
+            }
+        }
+    }
+
+    switch (msg->type) {
+    case TIG_MESSAGE_BUTTON:
+        switch (msg->data.button.state) {
+        case TIG_BUTTON_STATE_PRESSED:
+            if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
+                if (dword_66D8AC != 2 && sub_5615D0(4)) {
+                    sub_562A20(msg->data.button.x, msg->data.button.y);
+                }
+                return true;
+            }
+            return false;
+        case TIG_BUTTON_STATE_RELEASED:
+            if (msg->data.button.button_handle == stru_5C9B50[0].button_handle) {
+                if (!dword_66D874) {
+                    sub_562B70(0);
+                    return true;
+                }
+
+                if (!dword_66D9C8) {
+                    sub_562B70(2);
+                    return true;
+                }
+
+                return true;
+            }
+
+            if (msg->data.button.button_handle == stru_5C9B50[1].button_handle) {
+                sub_562B70(1);
+                return true;
+            }
+
+            if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
+                if (v1->field_44 != 0 || dword_66D8A8) {
+                    dword_66D8A8 = false;
+                } else {
+                    sub_563590(&(v1->field_3C), true);
+                }
+                return true;
+            }
+
+            if (msg->data.button.button_handle == stru_5C9B80.button_handle) {
+                if (dword_66D8AC == 3) {
+                    sub_5615D0(0);
+                }
+
+                if (dword_66D8AC == 0) {
+                    if (dword_66D880) {
+                        if (stru_64E048[dword_66D868 == 2 ? 1 : 0].field_3C0 > 0) {
+                            dword_5C9AD8 = -1;
+
+                            if (sub_5615D0(2)) {
+                                TimeEvent timeevent;
+                                DateTime datetime;
+
+                                timeevent.type = TIMEEVENT_TYPE_WORLDMAP;
+                                sub_45A950(&datetime, 50);
+                                sub_45B800(&timeevent, &datetime);
+
+                                return true;
+                            }
+                        }
+                    } else {
+                        if (dword_66D868 == 2 && stru_64E048[1].field_3C0 > 0) {
+                            sub_433640(player_get_pc_obj(),
+                                stru_64E048[1].field_0[0].loc);
+
+                            for (int idx = 1; idx < stru_64E048[1].field_3C0; idx++) {
+                                sub_433A00(player_get_pc_obj(),
+                                    stru_64E048[1].field_0[idx].loc,
+                                    (tig_net_flags & TIG_NET_CONNECTED) != 0
+                                        && (tig_net_flags & TIG_NET_HOST) == 0);
+                            }
+
+                            sub_436D20(0x80000, 0);
+                            sub_560F40();
+                        }
+                    }
+                    return true;
+                } else if (dword_66D8AC == 2) {
+                    sub_5615D0(0);
+                }
+
+                return true;
+            }
+
+            return false;
+        case TIG_BUTTON_STATE_MOUSE_INSIDE:
+            mes_file_entry.num = -1;
+
+            if (msg->data.button.button_handle == stru_5C9B50[0].button_handle) {
+                mes_file_entry.num = 501;
+            } else if (msg->data.button.button_handle == stru_5C9B50[1].button_handle) {
+                mes_file_entry.num = 502;
+            } else if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
+                mes_file_entry.num = 510;
+            } else if (msg->data.button.button_handle == stru_5C9B80.button_handle) {
+                mes_file_entry.num = 512;
+            } else {
+                return false;
+            }
+
+            if (mes_search(wmap_ui_worldmap_mes_file, &mes_file_entry)) {
+                mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+                sprintf(str, "%s\n%s", wmap_ui_action, mes_file_entry.str);
+                v2.type = 6;
+                v2.str = str;
+                sub_550750(&v2);
+            } else {
+                tig_debug_printf("WmapUI: ERROR: Hover Text for button is Unreachable!\n");
+            }
+            return true;
+        case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
+            mes_file_entry.num = -1;
+
+            if (msg->data.button.button_handle == stru_5C9B50[0].button_handle) {
+                mes_file_entry.num = 501;
+                sub_550720();
+                return true;
+            }
+
+            if (msg->data.button.button_handle == stru_5C9B50[1].button_handle) {
+                mes_file_entry.num = 502;
+                sub_550720();
+                return true;
+            }
+
+            if (msg->data.button.button_handle == stru_5C9B70.button_handle) {
+                mes_file_entry.num = 510;
+                sub_550720();
+                return true;
+            }
+
+            if (msg->data.button.button_handle == stru_5C9B80.button_handle) {
+                mes_file_entry.num = 512;
+                sub_550720();
+                return true;
+            }
+
+            return false;
+        default:
+            return false;
+        }
+    case TIG_MESSAGE_CHAR:
+        return textedit_ui_process_message(msg);
+    case TIG_MESSAGE_KEYBOARD:
+        if (dword_66D898) {
+            return textedit_ui_process_message(msg);
+        }
+
+        switch (msg->data.keyboard.key) {
+        case DIK_Z:
+            if (msg->data.keyboard.pressed) {
+                return false;
+            }
+
+            if (dword_66D8AC == 2) {
+                sub_562B70(2);
+                return true;
+            }
+
+            gsound_play_sfx_id(0, 1);
+
+            if (dword_66D868 != 1) {
+                sub_562B70(1);
+                return true;
+            }
+
+            if (!dword_66D874) {
+                sub_562B70(0);
+                return true;
+            }
+
+            return true;
+        case DIK_HOME:
+            if (dword_66D8AC != 2) {
+                gsound_play_sfx_id(0, 1);
+                sub_563590(&(v1->field_3C), true);
+            }
+            return true;
+        case DIK_LEFT:
+            if (dword_66D8AC != 2) {
+                gsound_play_sfx_id(0, 1);
+                sub_563750(6);
+            }
+            return true;
+        case DIK_UP:
+            if (dword_66D8AC != 2) {
+                gsound_play_sfx_id(0, 1);
+                sub_563750(0);
+            }
+            return true;
+        case DIK_RIGHT:
+            if (dword_66D8AC != 2) {
+                gsound_play_sfx_id(0, 1);
+                sub_563750(2);
+            }
+            return true;
+        case DIK_DOWN:
+            if (dword_66D8AC != 2) {
+                gsound_play_sfx_id(0, 1);
+                sub_563750(4);
+            }
+            return true;
+        case DIK_DELETE:
+            if (msg->data.keyboard.pressed) {
+                return false;
+            }
+
+            // TODO: Incomplete.
+            return true;
+        case DIK_D:
+            if (!msg->data.keyboard.pressed
+                && sub_402CB0() >= 3
+                && !dword_66D868) {
+                gsound_play_sfx_id(0, 1);
+
+                for (int area = area_get_count() - 1; area > 0; area--) {
+                    area_set_known(player_get_pc_obj(), area);
+                    sub_562800(area);
+                }
+
+                v1->field_48();
+            }
+            return true;
+        default:
+            return false;
+        }
+    default:
+        return false;
+    }
 }
 
 // 0x5627B0
-bool sub_5627B0(int a1)
+bool sub_5627B0(WmapCoords* coords)
 {
-    long long v1;
+    int64_t loc;
 
     if (dword_66D868 == 2) {
         return 1;
     }
 
-    sub_561800(a1, &v1);
-    return sub_5627F0(v1);
+    sub_561800(coords, &loc);
+    return sub_5627F0(loc);
 }
 
 // 0x5627F0
-bool sub_5627F0(long long a1)
+bool sub_5627F0(int64_t loc)
 {
-    (void)a1;
+    (void)loc;
 
     return true;
 }
@@ -2025,23 +2583,23 @@ void sub_563790(int a1, int a2)
 }
 
 // 0x563AC0
-void sub_563AC0(int x, int y, int* coords)
+void sub_563AC0(int x, int y, WmapCoords* coords)
 {
-    coords[0] = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
-    coords[1] = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - stru_5C9B08.y;
+    coords->x = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
+    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - stru_5C9B08.y;
 }
 
 // 0x563B10
-void sub_563B10(int x, int y, int* coords)
+void sub_563B10(int x, int y, WmapCoords* coords)
 {
     // TODO: Incomplete.
 }
 
 // 0x563C00
-void sub_563C00(int x, int y, int* coords)
+void sub_563C00(int x, int y, WmapCoords* coords)
 {
-    coords[0] = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
-    coords[1] = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - stru_5C9B08.y;
+    coords->x = x + stru_5C9228[dword_66D868].field_34 - stru_5C9228[dword_66D868].rect.x;
+    coords->y = y + stru_5C9228[dword_66D868].field_38 - stru_5C9228[dword_66D868].rect.y - stru_5C9B08.y;
 }
 
 // 0x563C60
@@ -2347,20 +2905,22 @@ bool sub_5643C0(const char* str)
 }
 
 // 0x5643E0
-void sub_5643E0()
+bool sub_5643E0(WmapCoords* coords)
 {
     // TODO: Incomplete.
 }
 
 // 0x564780
-void sub_564780()
+bool sub_564780(WmapCoords* coords, int* a2)
 {
     // TODO: Incomplete.
 }
 
 // 0x564830
-void sub_564830()
+void sub_564830(int a1, WmapCoords* coords)
 {
+    (void)a1;
+    (void)coords;
 }
 
 // 0x564840
