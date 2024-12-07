@@ -5309,7 +5309,129 @@ bool sub_427990(AnimRunInfo* run_info)
 // 0x4280D0
 bool sub_4280D0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t range;
+    int64_t source_loc;
+    int64_t target_loc;
+    unsigned int path_create_flags;
+    PathCreateInfo path_create_info;
+    int max_rotation;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 5870, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(target_obj != OBJ_HANDLE_NULL); // 5871, "targetObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || target_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        sub_44EBF0(run_info);
+        return true;
+    }
+
+    run_info->field_14 = run_info->current_goal;
+
+    if ((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return false;
+    }
+
+    range = run_info->cur_stack_data->params[AGDATA_RANGE_DATA].data;
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    max_rotation = sub_426320(&(run_info->path), source_loc, target_loc, source_obj);
+
+    run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = target_loc;
+
+    path_create_flags = 0;
+    if (range == -1 || range != 0) {
+        path_create_flags = 0x01;
+    }
+
+    path_create_info.obj = source_obj;
+    path_create_info.max_rotations = max_rotation;
+    path_create_info.from = source_loc;
+    path_create_info.to = target_loc;
+    path_create_info.field_20 = path_create_flags;
+
+    if ((run_info->field_C & 0x4000) == 0) {
+        path_create_info.field_20 &= ~0x01;
+    }
+
+    if (sub_425BF0(&path_create_info, false)) {
+        run_info->path.max = sub_41F3C0(&path_create_info);
+    } else {
+        run_info->path.max = 0;
+    }
+
+    run_info->path.field_E8 = path_create_info.from;
+    run_info->path.field_F0 = path_create_info.to;
+
+    if (run_info->path.max != 0) {
+        run_info->path.curr = 0;
+        run_info->path.flags &= ~0x03;
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_4ED510(run_info->id,
+                run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
+                run_info);
+        }
+
+        return true;
+    }
+
+    if (path_create_flags == path_create_info.field_20
+        || (run_info->field_C & 0x4000) != 0) {
+        if (!sub_40DA20(source_obj)) {
+            sub_4B7C90(source_obj);
+        }
+        return false;
+    }
+
+    path_create_info.field_20 = path_create_flags;
+    if (!sub_425BF0(&path_create_info, false)) {
+        if (!sub_40DA20(source_obj)) {
+            sub_4B7C90(source_obj);
+        }
+        return false;
+    }
+
+    run_info->path.max = sub_41F3C0(&path_create_info);
+    run_info->path.field_E8 = path_create_info.from;
+    run_info->path.field_F0 = path_create_info.to;
+
+    if (run_info->path.max == 0) {
+        if (!sub_40DA20(source_obj)) {
+            sub_4B7C90(source_obj);
+        }
+        return false;
+    }
+
+    run_info->path.flags &= ~0x03;
+    run_info->path.curr = 0;
+
+    if (range > 0) {
+        run_info->path.max -= (int)range + 1;
+        if (run_info->path.max < 1) {
+            if (!sub_40DA20(source_obj)) {
+                sub_4B7C90(source_obj);
+            }
+            return false;
+        }
+    }
+
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4ED510(run_info->id,
+            run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
+            run_info);
+    }
+
+    return true;
 }
 
 // 0x4284A0
