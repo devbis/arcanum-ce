@@ -19,6 +19,7 @@
 #include "game/reaction.h"
 #include "game/script.h"
 #include "game/skill.h"
+#include "game/spell.h"
 #include "game/stat.h"
 #include "game/timeevent.h"
 #include "game/trap.h"
@@ -1211,9 +1212,117 @@ int sub_462C30(int64_t a1, int64_t a2)
 }
 
 // 0x462CC0
-int sub_462CC0(int64_t a1, int64_t a2, int64_t a3)
+void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 {
-    // TODO: Incomplete.
+    int64_t parent_obj;
+    int item_type;
+    S4F2810 v1;
+
+    if (item_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        if (player_is_pc_obj(source_obj)) {
+            sub_4EF6F0(source_obj, item_obj, target_obj);
+        }
+        return;
+    }
+
+    item_parent(item_obj, &parent_obj);
+
+    item_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
+    if (item_type == OBJ_TYPE_ITEM_SCROLL) {
+        int spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1);
+        int min_intelligence = sub_4B1750(spell);
+        if (min_intelligence > stat_level(source_obj, STAT_INTELLIGENCE)) {
+            if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                sub_4673F0(source_obj, ITEM_CANNOT_DUMB);
+            }
+            return;
+        }
+    }
+
+    if (target_obj == OBJ_HANDLE_NULL
+        && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_NEEDS_TARGET) != 0) {
+        sub_4EE060(source_obj, item_obj);
+        return;
+    }
+
+    if (trap_is_trap_device(item_obj)) {
+        sub_4BC2E0(source_obj, item_obj, target_obj);
+        return;
+    }
+
+    if (!sub_441980(source_obj, item_obj, target_obj, SAP_USE, 0)) {
+        sub_4B7CD0(source_obj, 4);
+        return;
+    }
+
+    if (obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE) != 0
+        || (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_IS_MAGICAL) != 0) {
+        sub_4F2810(&v1, target_obj);
+        sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
+        sub_4CBF70(item_obj, target_obj);
+
+        if (item_type == OBJ_TYPE_ITEM_FOOD) {
+            sub_4574D0(item_obj);
+            sub_43CCA0(item_obj);
+            return;
+        }
+
+        if (item_type != OBJ_TYPE_ITEM_SCROLL) {
+            sub_4574D0(item_obj);
+            sub_43CCA0(item_obj);
+            return;
+        }
+    }
+
+    sub_4B7CD0(source_obj, 4);
+
+    if (item_type == OBJ_TYPE_ITEM_WRITTEN) {
+        sub_4606F0(item_obj, source_obj);
+        return;
+    }
+
+    if (item_type == OBJ_TYPE_ITEM_GENERIC) {
+        unsigned int generic_flags = obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS);
+
+        if ((generic_flags & OGF_IS_LOCKPICK) != 0) {
+            if (object_is_lockable(target_obj)) {
+                sub_4352C0(source_obj, item_obj, target_obj, SKILL_PICK_LOCKS, 0);
+            }
+        } else if ((generic_flags & OGF_IS_HEALING_ITEM) != 0) {
+            sub_4352C0(source_obj, item_obj, target_obj, SKILL_HEAL, 0);
+        }
+
+        return;
+    }
+
+    if (item_type == OBJ_TYPE_ITEM_FOOD) {
+        if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            MesFileEntry mes_file_entry;
+            John v1;
+
+            mes_file_entry.num = 201;
+            mes_get_msg(item_mes_file, &mes_file_entry);
+            v1.type = 4;
+            v1.str = mes_file_entry.str;
+            sub_460630(&v1);
+
+            sub_4574D0(item_obj);
+            sub_43CCA0(item_obj);
+        }
+
+        return;
+    }
+
+    if (item_type == OBJ_TYPE_ITEM_SCROLL) {
+        sub_4574D0(item_obj);
+        sub_43CCA0(item_obj);
+        return;
+    }
 }
 
 // 0x462FC0
