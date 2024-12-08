@@ -21,6 +21,7 @@
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
+#include "game/text_floater.h"
 #include "game/timeevent.h"
 #include "game/trap.h"
 #include "game/ui.h"
@@ -43,6 +44,7 @@ typedef struct ItemRemoveInfo {
 
 static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
+static bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location);
 static bool sub_462170(int64_t a1, int64_t a2, int64_t a3);
 static bool sub_462230(int64_t a1, int64_t a2, int64_t a3);
 static bool sub_463240(int64_t critter_obj, int lock_id);
@@ -575,15 +577,90 @@ void item_inv_icon_size(object_id_t item_id, int* width, int* height)
 }
 
 // 0x4617F0
-bool sub_4617F0(int64_t a1, int64_t a2)
+bool sub_4617F0(int64_t item_obj, int64_t critter_obj)
 {
-    return sub_461810(a1, a2, -1);
+    return sub_461810(item_obj, critter_obj, -1);
 }
 
 // 0x461810
-bool sub_461810(int64_t a1, int64_t a2, int inventory_location)
+bool sub_461810(int64_t item_obj, int64_t critter_obj, int inventory_location)
 {
-    // TODO: Incomplete.
+    int64_t existing_item_obj;
+    bool v1;
+    int rc;
+    int new_inventory_location;
+    int slots[960];
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        Packet28 pkt;
+
+        pkt.type = 28;
+        sub_4F0640(item_obj, &(pkt.item_oid));
+        sub_4F0640(critter_obj, &(pkt.critter_oid));
+        pkt.inventory_location = inventory_location;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        return true;
+    }
+
+    if (item_parent(item_obj, NULL)) {
+        return sub_461CA0(item_obj, critter_obj, inventory_location);
+    }
+
+    if (!sub_441980(critter_obj, item_obj, OBJ_HANDLE_NULL, SAP_GET, 0)) {
+        return false;
+    }
+
+    existing_item_obj = OBJ_HANDLE_NULL;
+    v1 = false;
+
+    if (inventory_location != -1
+        && inventory_location >= 1000 && inventory_location <= 1008) {
+        existing_item_obj = item_wield_get(critter_obj, inventory_location);
+        v1 = true;
+    }
+
+    rc = sub_466510(item_obj, critter_obj, &new_inventory_location);
+    if (rc != ITEM_CANNOT_OK
+        && (rc != ITEM_CANNOT_NO_ROOM
+            || existing_item_obj != OBJ_HANDLE_NULL
+            || !v1)) {
+        switch (obj_field_int32_get(critter_obj, OBJ_F_TYPE)) {
+        case OBJ_TYPE_PC:
+            sub_4673F0(critter_obj, rc);
+            break;
+        case OBJ_TYPE_NPC:
+            tf_add(critter_obj, TF_TYPE_WHITE, item_cannot_msg(rc));
+            break;
+        }
+        return false;
+    }
+
+    sub_4417A0(item_obj, critter_obj);
+
+    if (inventory_location != -1) {
+        if (!v1) {
+            sub_466260(critter_obj, slots);
+            if (sub_466390(item_obj, critter_obj, inventory_location, slots)) {
+                item_insert(item_obj, critter_obj, inventory_location);
+            } else {
+                item_insert(item_obj, critter_obj, new_inventory_location);
+            }
+        } else {
+            if (existing_item_obj == OBJ_HANDLE_NULL) {
+                item_insert(item_obj, critter_obj, inventory_location);
+            } else {
+                item_insert(item_obj, critter_obj, new_inventory_location);
+            }
+        }
+    } else {
+        item_insert(item_obj, critter_obj, new_inventory_location);
+    }
+
+    sub_468110(item_obj);
+
+    return true;
 }
 
 // 0x461A70
@@ -669,7 +746,7 @@ bool item_drop_ex(int64_t item_obj, int distance)
 }
 
 // 0x461CA0
-void sub_461CA0()
+bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
 {
     // TODO: Incomplete.
 }
