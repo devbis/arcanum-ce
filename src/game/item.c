@@ -59,7 +59,7 @@ static bool item_insert_failure(ItemInsertInfo* item_insert_info);
 static bool sub_466EF0(int64_t obj, int64_t loc);
 static const char* item_cannot_msg(int reason);
 static void sub_4677B0(int64_t a1, int64_t a2, int a3);
-static void sub_467CB0(int64_t a1, int64_t a2, int a3);
+static void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location);
 static bool item_force_remove_failure(ItemRemoveInfo* item_remove_info);
 static bool sub_467E70();
 static void sub_467E80(int64_t a1, int64_t a2);
@@ -3326,30 +3326,30 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
 }
 
 // 0x467CB0
-void sub_467CB0(int64_t a1, int64_t a2, int a3)
+void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
 {
     tig_art_id_t aid;
 
-    switch (a3) {
+    switch (inventory_location) {
     case 1004:
     case 1005:
-        aid = sub_465020(a2);
-        object_set_current_aid(a2, aid);
+        aid = sub_465020(parent_obj);
+        object_set_current_aid(parent_obj, aid);
 
-        if (player_is_pc_obj(a2)) {
+        if (player_is_pc_obj(parent_obj)) {
             sub_4605D0();
         }
         break;
     case 1006:
-        if (sub_465AE0(OBJ_HANDLE_NULL, a2, &aid)) {
-            object_set_current_aid(a2, aid);
+        if (sub_465AE0(OBJ_HANDLE_NULL, parent_obj, &aid)) {
+            object_set_current_aid(parent_obj, aid);
         }
         break;
     }
 
-    sub_4CBFC0(a1, a2);
-    sub_467E80(a1, a2);
-    sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
+    sub_4CBFC0(item_obj, parent_obj);
+    sub_467E80(item_obj, parent_obj);
+    sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
 }
 
 // 0x467E00
