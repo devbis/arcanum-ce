@@ -6032,7 +6032,7 @@ bool sub_429160(AnimRunInfo* run_info)
 
     source_obj = run_info->params[0].obj;
     target_loc = run_info->params[1].loc;
-    item_obj = run_info->params[3].loc;
+    item_obj = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
 
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 6563, "sourceObj != OBJ_HANDLE_NULL"
     ASSERT(target_loc != 0); // 6564, "targetLoc != 0"
@@ -6054,8 +6054,8 @@ bool sub_429160(AnimRunInfo* run_info)
     v1.field_60 = target_loc;
     sub_4440E0(item_obj, &(v1.field_68));
 
-    if (run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj != -1) {
-        sub_4440E0(run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj, run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data);
+    if (item_obj != -1) {
+        sub_4440E0(item_obj, &(v1.field_68));
     }
 
     if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x01) != 0) {
