@@ -35,8 +35,8 @@ typedef struct ItemInsertInfo {
 static_assert(sizeof(ItemInsertInfo) == 0x18, "wrong size");
 
 typedef struct ItemRemoveInfo {
-    /* 0000 */ int64_t field_0;
-    /* 0008 */ int64_t field_8;
+    /* 0000 */ int64_t item_obj;
+    /* 0008 */ int64_t parent_obj;
 } ItemRemoveInfo;
 
 static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
@@ -3358,11 +3358,11 @@ bool item_force_remove_failure(ItemRemoveInfo* item_remove_info)
     char name[256];
     unsigned int flags;
 
-    sub_441B60(item_remove_info->field_0, item_remove_info->field_0, name);
+    sub_441B60(item_remove_info->item_obj, item_remove_info->item_obj, name);
     tig_debug_printf("MP: Item: item_force_remove_failure: adding to %s OIF_MP_INSERTED.\n", name);
-    flags = obj_field_int32_get(item_remove_info->field_0, OBJ_F_ITEM_FLAGS);
+    flags = obj_field_int32_get(item_remove_info->item_obj, OBJ_F_ITEM_FLAGS);
     flags |= OIF_MP_INSERTED;
-    obj_field_int32_set(item_remove_info->field_0, OBJ_F_ITEM_FLAGS, flags);
+    obj_field_int32_set(item_remove_info->item_obj, OBJ_F_ITEM_FLAGS, flags);
     FREE(item_remove_info);
 
     return true;
