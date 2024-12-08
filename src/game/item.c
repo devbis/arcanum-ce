@@ -55,6 +55,7 @@ static bool sub_466A00(int64_t a1, int64_t key_obj);
 static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466AA0(int64_t critter_obj, int64_t a2);
 static void sub_466BD0(int64_t key_ring_obj);
+static bool item_insert_success(ItemInsertInfo* item_insert_info);
 static bool item_insert_failure(ItemInsertInfo* item_insert_info);
 static bool sub_466EF0(int64_t obj, int64_t loc);
 static const char* item_cannot_msg(int reason);
@@ -2948,6 +2949,33 @@ void sub_466BD0(int64_t key_ring_obj)
     }
 
     obj_field_int32_set(key_ring_obj, OBJ_F_ITEM_INV_AID, aid);
+}
+
+// 0x466C40
+bool item_insert_success(ItemInsertInfo* item_insert_info)
+{
+    Packet24 pkt;
+    unsigned int item_flags;
+
+    if (item_insert_info != NULL) {
+        pkt.type = 24;
+        sub_4F0640(item_insert_info->item_obj, &(pkt.item_oid));
+        sub_4F0640(item_insert_info->parent_obj, &(pkt.parent_oid));
+        item_insert_info->inventory_location = item_insert_info->inventory_location;
+
+        sub_4A2BC0();
+        item_insert(item_insert_info->item_obj, item_insert_info->parent_obj, item_insert_info->inventory_location);
+        item_flags = obj_field_int32_get(item_insert_info->item_obj, OBJ_F_ITEM_FLAGS);
+        item_flags |= OIF_MP_INSERTED;
+        obj_field_int32_set(item_insert_info->item_obj, OBJ_F_ITEM_FLAGS, item_flags);
+        sub_4A2BD0();
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        FREE(item_insert_info);
+    }
+
+    return true;
 }
 
 // 0x466CF0
