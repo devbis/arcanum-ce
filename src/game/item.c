@@ -1694,9 +1694,72 @@ void sub_463B30(int64_t obj, bool a2)
 }
 
 // 0x463C60
-void sub_463C60()
+void sub_463C60(int64_t obj)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    TigRect obj_rect;
+    ObjectList objects;
+    ObjectNode* node;
+    bool v1;
+    int64_t v2;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (item_inventory_source(obj) == 0) {
+        return;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+
+    if (obj_type_is_critter(obj_type)) {
+        if (sub_45D8D0(obj)
+            || (obj_type == OBJ_TYPE_NPC
+                && sub_45DDA0(obj) != OBJ_HANDLE_NULL)) {
+            return;
+        }
+
+        sub_463E20(obj);
+        return;
+    }
+
+    if (obj_type == OBJ_TYPE_CONTAINER) {
+        if ((obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & 0x400) != 0) {
+            sub_463E20(obj);
+            return;
+        }
+
+        object_get_rect(obj, 0x08, &obj_rect);
+
+        if (obj_rect.x >= stru_5E8808.x + stru_5E8808.width
+            || obj_rect.y >= stru_5E8808.height + stru_5E8808.y
+            || stru_5E8808.x >= obj_rect.x + obj_rect.width
+            || stru_5E8808.y >= obj_rect.y + obj_rect.height) {
+            v1 = true;
+            sub_440FC0(obj, OBJ_TM_NPC, &objects);
+            node = objects.head;
+            while (node != NULL) {
+                if (sub_45F650(node->obj) == obj) {
+                    v2 = node->obj;
+                    if (!sub_45D8D0(node->obj)
+                        && !sub_45DDA0(node->obj)) {
+                        v1 = false;
+                    }
+                    break;
+                }
+                node = node->next;
+            }
+            object_list_destroy(&objects);
+
+            if (!v1) {
+                sub_463C60(v2);
+                sub_463E20(obj);
+            }
+        } else {
+            sub_4640C0(obj);
+        }
+    }
 }
 
 // 0x463E20
