@@ -2711,10 +2711,115 @@ int item_weapon_min_strength(int64_t item_obj, int64_t critter_obj)
     return min_strength;
 }
 
+// TODO: Lots of jumps, check.
+//
 // 0x465F70
 void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type, int skill, bool a5, int* min_dam_ptr, int* max_dam_ptr)
 {
-    // TODO: Incomplete.
+    int min_dam;
+    int max_dam;
+    int massive_dam;
+    int bonus_dam;
+    int v1;
+    int64_t item_obj;
+    int unarmed_dam;
+
+    if (skill == SKILL_MELEE) {
+        bonus_dam = stat_level(critter_obj, STAT_DAMAGE_BONUS);
+        v1 = sub_4C6510(critter_obj);
+    }
+
+    if (weapon_obj != OBJ_HANDLE_NULL) {
+        if (skill == SKILL_THROWING) {
+            sub_462330(weapon_obj, damage_type, &min_dam, &max_dam);
+        } else {
+            min_dam = obj_arrayfield_int32_get(weapon_obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, damage_type);
+            max_dam = obj_arrayfield_int32_get(weapon_obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, damage_type);
+        }
+    } else {
+        unarmed_dam = 0;
+
+        if (skill == SKILL_MELEE) {
+            item_obj = item_wield_get(critter_obj, 1007);
+            if (item_obj != OBJ_HANDLE_NULL) {
+                unarmed_dam = obj_field_int32_get(item_obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE);
+            }
+        }
+
+        if (sub_45F730(critter_obj)) {
+            min_dam = sub_407470(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type);
+            max_dam = sub_407470(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type + 1);
+        } else {
+            if (damage_type != 0 && damage_type != 4) {
+                *min_dam_ptr = 0;
+                *max_dam_ptr = 0;
+                return;
+            }
+
+            max_dam = unarmed_dam + 5;
+            min_dam = unarmed_dam - 25;
+
+            if (min_dam < 1) {
+                min_dam = 1;
+            }
+        }
+    }
+
+    if (skill == SKILL_MELEE) {
+        if (v1 != 100) {
+            max_dam = min_dam + (v1 * (max_dam - min_dam) + 50) / 100;
+        }
+    }
+
+    if (skill == SKILL_MELEE && weapon_obj == OBJ_HANDLE_NULL) {
+        massive_dam = 2 * max_dam;
+    } else {
+        massive_dam = 3 * max_dam;
+    }
+
+    if ((damage_type == 0
+            || damage_type == 4)
+        && skill == SKILL_MELEE) {
+        if (min_dam <= 0 || min_dam + bonus_dam > 0) {
+            min_dam += bonus_dam;
+        } else {
+            min_dam = 1;
+        }
+
+        if (max_dam <= 0 || max_dam + bonus_dam > 0) {
+            max_dam += bonus_dam;
+        } else {
+            max_dam = 1;
+        }
+    }
+
+    if (weapon_obj != OBJ_HANDLE_NULL && !a5) {
+        if (obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+            int adj = obj_arrayfield_int32_get(weapon_obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, damage_type);
+            adj = sub_461590(weapon_obj, critter_obj, adj);
+            min_dam += adj;
+            max_dam += adj;
+        }
+    }
+
+    if (min_dam < 0) {
+        min_dam = 0;
+    }
+
+    if (min_dam > massive_dam) {
+        min_dam = massive_dam;
+    }
+
+    if (max_dam < 0) {
+        max_dam = 0;
+    }
+
+    if (max_dam > massive_dam) {
+        max_dam = massive_dam;
+    }
+
+    *min_dam_ptr = min_dam;
+    *max_dam_ptr = max_dam;
 }
 
 // 0x466230
