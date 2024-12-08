@@ -27,9 +27,9 @@
 #define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
 
 typedef struct ItemInsertInfo {
-    /* 0000 */ int64_t field_0;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ int64_t field_10;
+    /* 0000 */ int64_t item_obj;
+    /* 0008 */ int64_t parent_obj;
+    /* 0010 */ int inventory_location;
 } ItemInsertInfo;
 
 static_assert(sizeof(ItemInsertInfo) == 0x18, "wrong size");
@@ -2956,11 +2956,11 @@ bool item_insert_failure(ItemInsertInfo* item_insert_info)
     char name[256];
     unsigned int flags;
 
-    sub_441B60(item_insert_info->field_0, item_insert_info->field_0, name);
+    sub_441B60(item_insert_info->item_obj, item_insert_info->item_obj, name);
     tig_debug_printf("MP: Item: item_insert_failure: removing from %s OIF_MP_INSERTED.\n", name);
-    flags = obj_field_int32_get(item_insert_info->field_0, OBJ_F_ITEM_FLAGS);
-    flags |= OIF_MP_INSERTED;
-    obj_field_int32_set(item_insert_info->field_0, OBJ_F_ITEM_FLAGS, flags);
+    flags = obj_field_int32_get(item_insert_info->item_obj, OBJ_F_ITEM_FLAGS);
+    flags &= ~OIF_MP_INSERTED;
+    obj_field_int32_set(item_insert_info->item_obj, OBJ_F_ITEM_FLAGS, flags);
     FREE(item_insert_info);
 
     return true;
