@@ -5199,7 +5199,64 @@ bool sub_4270B0(AnimRunInfo* run_info)
 // 0x427110
 bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    int rot;
+    int64_t adjacent_loc;
+    ObjectList objects;
+    ObjectNode* node;
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+    if ((run_info->path.flags & 0x01) != 0) {
+        rot = tig_art_id_rotation_get(art_id);
+    } else {
+        rot = run_info->path.rotations[run_info->path.curr];
+    }
+
+    if ((run_info->path.flags & 0x02) != 0) {
+        return false;
+    }
+
+    if (!sub_4B8FF0(loc, rot, &adjacent_loc)) {
+        return false;
+    }
+
+    if (run_info->path.curr > run_info->path.max - 2) {
+        sub_4407C0(adjacent_loc, OBJ_TM_CRITTER, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            if (!sub_45D8D0(node->obj)) {
+                run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj = node->obj;
+                break;
+            }
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
+
+    if ((run_info->field_C & 0x400) != 0
+        && sub_425760(obj, loc, adjacent_loc, rot)) {
+        return true;
+    }
+
+    if (run_info->path.curr < run_info->path.max) {
+        sub_4407C0(adjacent_loc, OBJ_TM_TRAP, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            if (!sub_4BBFE0(obj, node->obj)
+                && sub_4BBE40(obj, node->obj)) {
+                break;
+            }
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+
+        if (node != NULL) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x4272E0
