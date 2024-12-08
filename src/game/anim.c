@@ -12415,6 +12415,10 @@ bool sub_437C50(AnimRunInfo* run_info, int end, int64_t* x, int64_t* y)
 // 0x437CF0
 bool sub_437CF0(int a1, int a2, int a3)
 {
+    (void)a1;
+    (void)a2;
+    (void)a3;
+
     return true;
 }
 
