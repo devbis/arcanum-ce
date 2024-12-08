@@ -48,7 +48,6 @@ static int64_t item_gold_obj(int64_t obj);
 static int64_t item_find_key_ring(int64_t critter_obj);
 static bool sub_464200(int64_t a1, int64_t a2);
 static int sub_465010(int64_t obj);
-static tig_art_id_t sub_465020(int64_t obj);
 static tig_art_id_t sub_4650D0(int64_t critter_obj);
 static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
 static bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr);
@@ -2207,7 +2206,39 @@ int sub_465010(int64_t obj)
 // 0x465020
 tig_art_id_t sub_465020(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t weapon_obj;
+    int64_t armor_obj;
+    int weapon_type;
+    int v1;
+    tig_art_id_t art_id;
+
+    if (combat_critter_is_combat_mode_active(obj)) {
+        weapon_obj = item_wield_get(obj, 1004);
+        if (weapon_obj != OBJ_HANDLE_NULL) {
+            weapon_type = tig_art_item_id_subtype_get(obj_field_int32_get(weapon_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
+            if (weapon_type == TIG_ART_WEAPON_TYPE_NO_WEAPON) {
+                tig_debug_printf("Item: ERROR: Item found with invalid item_use_aid_fragment!\n");
+                weapon_type = TIG_ART_WEAPON_TYPE_UNARMED;
+            }
+        }
+
+        armor_obj = item_wield_get(obj, 1005);
+        if (armor_obj != OBJ_HANDLE_NULL
+            && obj_field_int32_get(armor_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+            v1 = 1;
+        } else {
+            v1 = 0;
+        }
+    } else {
+        weapon_type = TIG_ART_WEAPON_TYPE_NO_WEAPON;
+        v1 = 0;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    art_id = sub_504100(art_id, weapon_type);
+    art_id = sub_504180(art_id, v1);
+
+    return art_id;
 }
 
 // 0x4650D0

@@ -111,6 +111,7 @@ bool item_wield_set(int64_t item_obj, int inventory_location);
 bool sub_464C50(int64_t obj, int inventory_location);
 bool sub_464C80(int64_t item_obj);
 int sub_464D20(int64_t a1, int a2, int64_t a3);
+tig_art_id_t sub_465020(int64_t obj);
 void sub_465170(int64_t a1, int a2, int64_t a3);
 void sub_4654F0(int64_t a, int64_t b);
 void sub_465530(int64_t obj);
