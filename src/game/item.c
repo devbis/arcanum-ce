@@ -3012,7 +3012,22 @@ void item_remove(int64_t obj)
 // 0x466E50
 void sub_466E50(int64_t obj, int64_t loc)
 {
-    // TODO: Incomplete.
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        Packet27 pkt;
+
+        pkt.type = 27;
+        sub_4F0640(obj, &(pkt.oid));
+        pkt.loc = loc;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+        return;
+    }
+
+    if (!sub_466EF0(obj, loc)) {
+        sub_4415C0(obj, loc);
+    }
+
+    sub_468090(obj, 172800000);
 }
 
 // 0x466EF0
