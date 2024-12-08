@@ -80,7 +80,7 @@ static bool sub_425D60(AnimRunInfo* run_info);
 static bool sub_426040(AnimRunInfo* run_info);
 static void anim_create_path_max_length(int64_t a1, const char* msg, int value);
 static int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj);
-static int sub_426500(int64_t obj, int64_t a2, AnimPath* path, unsigned int flags);
+static int sub_426500(int64_t obj, int64_t from, AnimPath* path, unsigned int flags);
 static bool sub_426840(AnimRunInfo* run_info);
 static bool sub_4268F0(AnimRunInfo* run_info);
 static bool sub_4269D0(AnimRunInfo* run_info);
@@ -4956,17 +4956,103 @@ int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj)
 }
 
 // 0x426500
-int sub_426500(int64_t obj, int64_t a2, AnimPath* path, unsigned int flags)
+int sub_426500(int64_t obj, int64_t from, AnimPath* path, unsigned int flags)
 {
     ASSERT(obj != OBJ_HANDLE_NULL); // 4493, "obj != OBJ_HANDLE_NULL"
 
-    return sub_426560(obj, obj_field_int64_get(obj, OBJ_F_LOCATION), a2, path, flags);
+    return sub_426560(obj, obj_field_int64_get(obj, OBJ_F_LOCATION), from, path, flags);
 }
 
 // 0x426560
-bool sub_426560(int64_t obj, int64_t a2, int64_t a3, AnimPath* path, unsigned int flags)
+bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned int flags)
 {
-    // TODO: Incomplete.
+    int v1;
+    uint8_t* rotations;
+    tig_art_id_t art_id;
+    int rot;
+    int offset_x;
+    int offset_y;
+    bool v2 = true;
+    int64_t adjacent_loc;
+    PathCreateInfo path_create_info;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 4511, "obj != OBJ_HANDLE_NULL"
+
+    v1 = sub_426320(path, from, to, obj);
+
+    if ((flags & 0x1000) != 0) {
+        v1 = 200;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_POLYMORPHED) != 0) {
+        flags |= 0x02;
+        flags |= 0x04;
+    }
+
+    if (!sub_45F570(obj)) {
+        flags |= 0x04;
+    }
+
+    if (critter_is_concealed(obj)
+        && basic_skill_get_training(obj, BASIC_SKILL_PROWLING) <= 0) {
+        flags |= 0x200;
+    }
+
+    rotations = path->rotations;
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    rot = tig_art_id_rotation_get(art_id);
+    offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+
+    if (offset_x != 0 || offset_y != 0) {
+        v1--;
+        rotations++;
+        v2 = false;
+
+        if (!sub_4B8FF0(from, rot, &adjacent_loc)) {
+            return false;
+        }
+
+        if (!sub_4D7110(adjacent_loc, false)
+            && !sub_43FD70(obj, from, rot, sub_41F570(flags), NULL)) {
+            from = adjacent_loc;
+        } else {
+            if (from != adjacent_loc) {
+                return false;
+            }
+        }
+    }
+
+    path_create_info.to = to;
+    path_create_info.obj = obj;
+    path_create_info.from = from;
+    path_create_info.max_rotations = v1;
+    path_create_info.rotations = rotations;
+    path_create_info.field_20 = flags;
+
+    if (sub_425BF0(&path_create_info, true)) {
+        path->max = sub_41F3C0(&path_create_info);
+    } else {
+        path->max = 0;
+    }
+
+    if (path->max == 0) {
+        if (!sub_40DA20(obj)) {
+            sub_4B7C90(obj);
+        }
+        return false;
+    }
+
+    path->curr = 0;
+    path->flags &= ~0x03;
+    path->field_E8 = from;
+    path->field_F0 = to;
+
+    if (!v2) {
+        path->rotations[0] = rot;
+    }
+
+    return true;
 }
 
 // 0x426840
