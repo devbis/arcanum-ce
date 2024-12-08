@@ -5075,7 +5075,138 @@ bool sub_4269D0(AnimRunInfo* run_info)
 // 0x426A80
 bool sub_426A80(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int range;
+    int64_t source_loc;
+    int64_t target_loc;
+    int rot;
+    int dist;
+    int v1;
+    unsigned int path_create_flags;
+    uint8_t* rotations;
+    int offset_x;
+    int offset_y;
+    PathCreateInfo path_create_info;
+    tig_art_id_t art_id;
+    bool v2 = true;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 4782, "sourceObj != OBJ_HANLDE_NULL"
+    ASSERT(target_obj != OBJ_HANDLE_NULL); // 4783, "targetObj != OBJ_HANLDE_NULL"
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        sub_44EBF0(run_info);
+        return true;
+    }
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || target_obj == OBJ_HANDLE_NULL) {
+        if (!sub_40DA20(source_obj)) {
+            sub_4B7C90(source_obj);
+        }
+        return false;
+    }
+
+    range = run_info->cur_stack_data->params[AGDATA_RANGE_DATA].data;
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+
+    if ((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return false;
+    }
+
+    rot = sub_4B8D50(target_loc, source_loc);
+    for (dist = 0; dist < range; dist++) {
+        if (!sub_4B8FF0(target_loc, rot, &target_loc)) {
+            ASSERT(0); // 4812, "0"
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = target_loc;
+    run_info->field_14 = run_info->current_goal;
+
+    v1 = sub_426320(&(run_info->path), source_loc, target_loc, source_obj);
+
+    path_create_flags = 0;
+    if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_POLYMORPHED) != 0) {
+        path_create_flags |= 0x02;
+        path_create_flags |= 0x04;
+    }
+
+    if ((run_info->field_C & 0x400) != 0) {
+        path_create_flags |= 0x08;
+        path_create_flags |= 0x10;
+        path_create_flags |= 0x20;
+        path_create_flags |= 0x40;
+    }
+
+    rotations = run_info->path.rotations;
+    offset_x = obj_field_int32_get(source_obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(source_obj, OBJ_F_OFFSET_Y);
+    if (offset_x != 0 || offset_y != 0) {
+        v1--;
+        rotations++;
+        v2 = false;
+    }
+
+    path_create_info.obj = source_obj;
+    path_create_info.from = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    path_create_info.max_rotations = v1;
+    path_create_info.to = target_loc;
+    path_create_info.rotations = rotations;
+    path_create_info.field_20 = path_create_flags;
+
+    if (!sub_425BF0(&path_create_info, true)) {
+        if (!sub_40DA20(source_obj)) {
+            sub_4B7C90(source_obj);
+        }
+        return false;
+    }
+
+    run_info->path.max = sub_41F3C0(&path_create_info);
+    run_info->path.field_E8 = path_create_info.from;
+    run_info->path.field_F0 = path_create_info.to;
+
+    if (run_info->path.max == 0) {
+        if (!sub_40DA20(source_obj)) {
+            sub_4B7C90(source_obj);
+        }
+        return false;
+    }
+
+    if (path_create_info.field_24) {
+        run_info->path.flags |= 0x20;
+        sub_4AF1D0(source_obj);
+    }
+
+    run_info->path.curr = 0;
+    run_info->path.flags &= ~0x03;
+
+    if (!v2) {
+        art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
+        rot = tig_art_id_rotation_get(art_id);
+        if (rot == run_info->path.rotations[1]) {
+            run_info->path.curr = 1;
+        } else {
+            rot = (rot + 4) % 8;
+            tig_art_id_rotation_set(art_id, rot);
+            object_set_current_aid(source_obj, art_id);
+            run_info->path.rotations[0] = rot;
+        }
+    }
+
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4ED510(run_info->id,
+            run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
+            run_info);
+    }
+
+    return true;
 }
 
 // 0x426E80
