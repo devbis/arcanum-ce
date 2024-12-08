@@ -43,6 +43,8 @@ static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
 static bool sub_462170(int64_t a1, int64_t a2, int64_t a3);
 static bool sub_462230(int64_t a1, int64_t a2, int64_t a3);
+static bool sub_463240(int64_t critter_obj, int lock_id);
+static bool sub_463340(int lock_id, int key_id);
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
 static int64_t item_find_key_ring(int64_t critter_obj);
@@ -1309,15 +1311,57 @@ int64_t item_find_key_ring(int64_t critter_obj)
 }
 
 // 0x463240
-void sub_463240()
+bool sub_463240(int64_t critter_obj, int lock_id)
 {
-    // TODO: Incomplete.
+    int inv_cnt;
+    int inv_idx;
+    int64_t item_obj;
+    int key_id;
+    int keyring_cnt;
+    int keyring_idx;
+
+    if (lock_id == 0) {
+        return false;
+    }
+
+    inv_cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
+    for (inv_idx = 0; inv_idx < inv_cnt; inv_idx++) {
+        item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, inv_idx);
+
+        switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
+        case OBJ_TYPE_ITEM_KEY:
+            key_id = obj_field_int32_get(item_obj, OBJ_F_KEY_KEY_ID);
+            if (sub_463340(lock_id, key_id)) {
+                return true;
+            }
+            break;
+        case OBJ_TYPE_ITEM_KEY_RING:
+            keyring_cnt = obj_arrayfield_length_get(item_obj, OBJ_F_KEY_RING_LIST_IDX);
+            for (keyring_idx = 0; keyring_idx < keyring_cnt; keyring_idx++) {
+                key_id = sub_407470(item_obj, OBJ_F_KEY_RING_LIST_IDX, keyring_idx);
+                if (sub_463340(lock_id, key_id)) {
+                    return true;
+                }
+            }
+            break;
+        }
+    }
+
+    return false;
 }
 
 // 0x463340
-void sub_463340()
+bool sub_463340(int lock_id, int key_id)
 {
-    // TODO: Incomplete.
+    if (lock_id == 0 || key_id == 0) {
+        return false;
+    }
+
+    if (lock_id == 1 || key_id == 1) {
+        return true;
+    }
+
+    return lock_id == key_id;
 }
 
 // 0x463370
