@@ -2411,6 +2411,8 @@ int64_t item_wield_get(int64_t obj, int inventory_location)
                 validated = true;
                 index = -1;
             }
+
+            continue;
         }
 
         if (!item_is_item(item_obj)) {
