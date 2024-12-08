@@ -6072,7 +6072,12 @@ bool sub_428E10(AnimRunInfo* run_info)
     item_obj = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
 
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 6453, "sourceObj != OBJ_HANDLE_NULL"
-    ASSERT(target_obj != OBJ_HANDLE_NULL); // 6453, "targetObj != OBJ_HANDLE_NULL"
+
+    if (target_obj == OBJ_HANDLE_NULL) {
+        target_obj = item_obj;
+
+        ASSERT(target_obj != OBJ_HANDLE_NULL); // 6456, "targetObj != OBJ_HANDLE_NULL"
+    }
 
     if (source_obj == OBJ_HANDLE_NULL
         || target_obj == OBJ_HANDLE_NULL
