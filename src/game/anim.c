@@ -10545,7 +10545,41 @@ bool sub_431130(AnimRunInfo* run_info)
 // 0x431150
 bool sub_431150(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int v1;
+    int dy;
+    int offset_x;
+    int offset_y;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 12839, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    v1 = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    if (v1 > 0) {
+        dy = 2;
+        v1++;
+        if (v1 > 5) {
+            v1 = -1;
+        }
+    } else {
+        dy = -2;
+        v1--;
+        if (v1 < -5) {
+            v1 = 1;
+        }
+    }
+
+    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data = v1;
+    offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+    object_set_offset(obj, offset_x, offset_y + dy);
+
+    return true;
 }
 
 // 0x4311F0
