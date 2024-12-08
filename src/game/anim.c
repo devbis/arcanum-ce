@@ -5922,7 +5922,106 @@ bool sub_428930(AnimRunInfo* run_info)
 // 0x428A10
 bool sub_428A10(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    unsigned int spell_flags;
+    int64_t source_loc;
+    int64_t target_loc;
+    int rot;
+    int obj_type;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 6318, "sourceObj != OBJ_HANDLE_NULL"
+
+    if (target_obj == OBJ_HANDLE_NULL) {
+        target_obj = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
+
+        ASSERT(target_obj != OBJ_HANDLE_NULL); // 6321, "targetObj != OBJ_HANDLE_NULL"
+    }
+
+    if (source_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (!sub_4B7CD0(source_obj, 2)) {
+        return false;
+    }
+
+    spell_flags = obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS);
+
+    if (target_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+    target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+    rot = sub_4B8D50(source_loc, target_loc);
+
+    if ( sub_425840(source_obj, source_loc, target_loc, rot, target_obj)) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_424070(source_obj, 2, false, false);
+        }
+        return false;
+    }
+
+    obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
+    switch (obj_type) {
+    case OBJ_TYPE_PORTAL:
+        if (!sub_441980(source_obj, target_obj, source_obj, SAP_USE, 0)) {
+            return false;
+        }
+        return true;
+    case OBJ_TYPE_CONTAINER:
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_4EE310(source_obj, target_obj);
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                sub_424070(source_obj, 2, false, false);
+            }
+        }
+        return true;
+    case OBJ_TYPE_SCENERY:
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_424070(source_obj, 2, false, false);
+        }
+        if (tig_art_scenery_id_type_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == TIG_ART_SCENERY_TYPE_BEDS) {
+            sub_460820(target_obj);
+            return true;
+        }
+        if (!sub_441980(source_obj, target_obj, source_obj, SAP_USE, 0)) {
+            return false;
+        }
+        return true;
+    case OBJ_TYPE_PC:
+    case OBJ_TYPE_NPC:
+        if ((spell_flags & OSF_POLYMORPHED) != 0
+            || sub_423300(target_obj, NULL)) {
+            return false;
+        }
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_4EE310(source_obj, target_obj);
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                sub_424070(source_obj, 2, false, false);
+            }
+        }
+        return true;
+    default:
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            sub_424070(source_obj, 2, false, false);
+        }
+        if (!sub_441980(source_obj, target_obj, source_obj, SAP_USE, 0)) {
+            return false;
+        }
+        return true;
+    }
 }
 
 // 0x428CD0
