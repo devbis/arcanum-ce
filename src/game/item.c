@@ -748,7 +748,81 @@ bool item_drop_ex(int64_t item_obj, int distance)
 // 0x461CA0
 bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
 {
-    // TODO: Incomplete.
+    int64_t parent_obj;
+    int64_t existing_item_obj;
+    bool v1;
+    int rc;
+    int new_inventory_location;
+    int slots[960];
+
+    if (!item_parent(item_obj, &parent_obj)) {
+        return sub_461810(item_obj, critter_obj, inventory_location);
+    }
+
+    if (!sub_441980(parent_obj, critter_obj, item_obj, SAP_TRANSFER, 0)) {
+        return false;
+    }
+
+    existing_item_obj = OBJ_HANDLE_NULL;
+    v1 = false;
+
+    if (inventory_location != -1
+        && inventory_location >= 1000 && inventory_location <= 1008) {
+        existing_item_obj = item_wield_get(critter_obj, inventory_location);
+        v1 = true;
+    }
+
+    rc = sub_466510(item_obj, critter_obj, &new_inventory_location);
+    if (rc != ITEM_CANNOT_OK
+        && (rc != ITEM_CANNOT_NO_ROOM
+            || existing_item_obj != OBJ_HANDLE_NULL
+            || !v1)) {
+        if (obj_field_int32_get(parent_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            sub_4673F0(parent_obj, rc);
+        }
+
+        if (obj_field_int32_get(critter_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            sub_4673F0(critter_obj, rc);
+        }
+
+        return false;
+    }
+
+    item_remove(item_obj);
+
+    if (inventory_location != -1) {
+        if (v1) {
+            if (existing_item_obj == OBJ_HANDLE_NULL) {
+                item_insert(item_obj, critter_obj, inventory_location);
+            }
+        }
+    } else {
+        item_insert(item_obj, critter_obj, new_inventory_location);
+    }
+
+    if (inventory_location != -1) {
+        if (!v1) {
+            sub_466260(critter_obj, slots);
+            if (sub_466390(item_obj, critter_obj, inventory_location, slots)) {
+                item_insert(item_obj, critter_obj, inventory_location);
+            } else {
+                item_insert(item_obj, critter_obj, new_inventory_location);
+            }
+        } else {
+            if (existing_item_obj == OBJ_HANDLE_NULL) {
+                item_insert(item_obj, critter_obj, inventory_location);
+            } else {
+                item_insert(item_obj, critter_obj, new_inventory_location);
+            }
+        }
+    } else {
+        item_insert(item_obj, critter_obj, new_inventory_location);
+    }
+
+    sub_468110(item_obj);
+    sub_468090(item_obj, 172800000);
+
+    return true;
 }
 
 // 0x461F20
