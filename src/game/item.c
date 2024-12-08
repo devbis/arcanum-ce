@@ -60,6 +60,7 @@ static bool sub_466EF0(int64_t obj, int64_t loc);
 static const char* item_cannot_msg(int reason);
 static void sub_4677B0(int64_t a1, int64_t a2, int a3);
 static void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location);
+static bool item_force_remove_success(ItemRemoveInfo* item_remove_info);
 static bool item_force_remove_failure(ItemRemoveInfo* item_remove_info);
 static bool sub_467E70();
 static void sub_467E80(int64_t a1, int64_t a2);
@@ -3350,6 +3351,32 @@ void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
     sub_4CBFC0(item_obj, parent_obj);
     sub_467E80(item_obj, parent_obj);
     sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
+}
+
+// 0x467D60
+bool item_force_remove_success(ItemRemoveInfo* item_remove_info)
+{
+    Packet25 pkt;
+    unsigned int item_flags;
+
+    if (item_remove_info != NULL) {
+        pkt.type = 25;
+        sub_4F0640(item_remove_info->item_obj, &(pkt.item_oid));
+        sub_4F0640(item_remove_info->parent_obj, &(pkt.parent_oid));
+
+        sub_4A2BC0();
+        item_force_remove(item_remove_info->item_obj, item_remove_info->parent_obj);
+        item_flags = obj_field_int32_get(item_remove_info->item_obj, OBJ_F_ITEM_FLAGS);
+        item_flags &= ~OIF_MP_INSERTED;
+        obj_field_int32_set(item_remove_info->item_obj, OBJ_F_ITEM_FLAGS, item_flags);
+        sub_4A2BD0();
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        FREE(item_remove_info);
+    }
+
+    return true;
 }
 
 // 0x467E00
