@@ -5934,7 +5934,62 @@ bool sub_428CD0(AnimRunInfo* run_info)
 // 0x428E10
 bool sub_428E10(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t item_obj;
+    Tanya v1;
+    unsigned int flags;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+    item_obj = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 6453, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(target_obj != OBJ_HANDLE_NULL); // 6453, "targetObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || target_obj == OBJ_HANDLE_NULL
+        || (obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+        return false;
+    }
+
+    if (item_obj != OBJ_HANDLE_NULL) {
+        int64_t actual_parent_obj;
+
+        if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0
+            || !item_parent(item_obj, &actual_parent_obj)
+            || actual_parent_obj != source_obj) {
+            return false;
+        }
+    }
+
+    sub_4C7090(&v1);
+    v1.field_9C = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
+    v1.field_A0 = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
+
+    if (target_obj == -1) {
+        target_obj = OBJ_HANDLE_NULL;
+    }
+
+    sub_4440E0(source_obj, &(v1.field_0));
+    sub_4440E0(target_obj, &(v1.field_30));
+    sub_4440E0(item_obj, &(v1.field_68));
+
+    if (item_obj != -1) {
+        sub_4440E0(item_obj, &(v1.field_68));
+    }
+
+    flags = run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data;
+    if ((flags & 0x01) != 0) {
+        v1.field_98 |= 0x02;
+    }
+    if ((flags & 0x2000) != 0) {
+        v1.field_98 |= 0x1000;
+    }
+
+    sub_4C7160(&v1);
+
+    return true;
 }
 
 // 0x429040
