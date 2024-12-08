@@ -3180,9 +3180,149 @@ void sub_4677B0(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x467860
-void item_force_remove(int64_t a1, int64_t a2)
+void item_force_remove(int64_t item_obj, int64_t parent_obj)
 {
-    // TODO: Incomplete.
+    bool is_pc = false;
+    char name[256];
+    unsigned int item_flags;
+    int64_t actual_parent_obj;
+    int parent_type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int stack_fld;
+    int encubmrance_level;
+    int cnt;
+    int idx;
+    int inventory_location;
+
+    dword_5E8820 = false;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_MP_INSERTED) == 0) {
+            if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
+                sub_441B60(item_obj, item_obj, name);
+                tig_debug_printf("MP: Item: cannot item_force_remove( %s ) it is not flagged OIF_MP_INSERTED.\n", name);
+                return;
+            }
+
+            item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+            item_flags |= OIF_MP_INSERTED;
+            obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, item_flags);
+        }
+
+        if (!sub_4A2BA0()) {
+            ItemRemoveInfo* remove_info = (ItemRemoveInfo*)MALLOC(sizeof(*remove_info));
+            remove_info->item_obj = item_obj;
+            remove_info->parent_obj = parent_obj;
+            sub_4A3230(sub_407EF0(item_obj),
+                item_force_remove_success,
+                remove_info,
+                item_force_remove_failure,
+                remove_info);
+
+            item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+            item_flags &= ~OIF_MP_INSERTED;
+            obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, item_flags);
+
+            return;
+        }
+
+        item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+        item_flags &= ~OIF_MP_INSERTED;
+        obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, item_flags);
+    }
+
+    if (item_parent(item_obj, &actual_parent_obj)) {
+        if (actual_parent_obj != parent_obj) {
+            dword_5E8820 = true;
+            tig_debug_printf("Warning: item_force_remove called on item with different parent.\n");
+        }
+        is_pc = player_is_pc_obj(parent_obj);
+    } else {
+        dword_5E8820 = true;
+        tig_debug_printf("Warning: item_force_remove called on item that doesn't think it has a parent.\n");
+    }
+
+    sub_457450(item_obj);
+
+    parent_type = obj_field_int32_get(parent_obj, OBJ_F_TYPE);
+
+    if (parent_type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else {
+        stack_fld = sub_462410(item_obj, NULL);
+        if (stack_fld != -1) {
+            obj_field_handle_set(parent_obj, stack_fld, OBJ_HANDLE_NULL);
+        }
+
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+        encubmrance_level = sub_45F790(parent_obj);
+    }
+
+    cnt = obj_field_int32_get(parent_obj, inventory_num_fld);
+    for (idx = 0; idx < cnt; idx++) {
+        if (item_obj == obj_arrayfield_handle_get(parent_obj, inventory_list_fld, idx)) {
+            break;
+        }
+    }
+
+    if (idx >= cnt) {
+        dword_5E8820 = true;
+        tig_debug_printf("Item: item_force_remove: ERROR: Couldn't match object in parent!\n");
+        return;
+    }
+
+    inventory_location = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_LOCATION);
+
+    cnt--;
+    while (idx < cnt) {
+        int64_t tmp_item_obj = obj_arrayfield_handle_get(parent_obj, inventory_list_fld, idx + 1);
+        obj_arrayfield_obj_set(parent_obj, inventory_list_fld, idx, tmp_item_obj);
+    }
+
+    obj_arrayfield_length_set(parent_obj, inventory_list_fld, cnt);
+    obj_field_int32_set(parent_obj, inventory_num_fld, cnt);
+
+    if (!dword_5E8820) {
+        obj_field_int32_set(item_obj, OBJ_F_ITEM_INV_LOCATION, -1);
+    }
+
+    if (inventory_location >= 1000 && inventory_location <= 1008) {
+        sub_467CB0(item_obj, parent_obj, inventory_location);
+    } else if (inventory_location >= 2000 && inventory_location <= 2009) {
+        if (is_pc) {
+            sub_460540(inventory_location - 2000);
+        }
+    }
+
+    if (is_pc) {
+        sub_4602A0(item_obj, 1, inventory_location);
+    }
+
+    sub_4CCC00(parent_obj);
+    sub_4CC130(item_obj, parent_obj);
+
+    if (parent_type == OBJ_TYPE_CONTAINER) {
+        if (!dword_5E87E4 && dword_5E8800 > 0) {
+            sub_463540(parent_obj);
+        }
+    } else {
+        sub_45F820(parent_obj, encubmrance_level);
+        if (parent_type == OBJ_TYPE_NPC) {
+            unsigned int npc_flags = obj_field_int32_get(parent_obj, OBJ_F_NPC_FLAGS);
+            npc_flags |= ONF_CHECK_WIELD;
+            obj_field_int32_set(parent_obj, OBJ_F_NPC_FLAGS, npc_flags);
+        }
+    }
+
+    sub_466D60(parent_obj);
+    sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_REMOVE_ITEM, 0);
+
+    if (is_pc) {
+        sub_460790(4, 1);
+    }
 }
 
 // 0x467CB0

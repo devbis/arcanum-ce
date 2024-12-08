@@ -146,7 +146,7 @@ void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4);
 void sub_467520(int64_t obj);
 bool item_decay_timeevent_process(TimeEvent* timeevent);
 bool item_can_decay(int64_t obj);
-void item_force_remove(int64_t a1, int64_t a2);
+void item_force_remove(int64_t item_obj, int64_t parent_obj);
 bool sub_468090(int64_t obj, int ms);
 void sub_468180();
 void sub_468190();
