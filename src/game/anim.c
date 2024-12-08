@@ -5928,7 +5928,30 @@ bool sub_428A10(AnimRunInfo* run_info)
 // 0x428CD0
 bool sub_428CD0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int64_t item_obj;
+    int64_t actual_parent_obj;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+    item_obj = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 6415, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(target_obj != OBJ_HANDLE_NULL); // 6418, "targetObj != OBJ_HANDLE_NULL"
+    ASSERT(item_obj != OBJ_HANDLE_NULL); // 6419, "itemObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || target_obj == OBJ_HANDLE_NULL
+        || item_obj == OBJ_HANDLE_NULL
+        || !item_parent(item_obj, &actual_parent_obj)
+        || source_obj != actual_parent_obj) {
+        return false;
+    }
+
+    sub_462CC0(source_obj, item_obj, target_obj);
+
+    return true;
 }
 
 // 0x428E10
