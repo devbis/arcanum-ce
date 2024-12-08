@@ -5297,7 +5297,79 @@ bool sub_427720(AnimRunInfo* run_info)
 // 0x427730
 bool sub_427730(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int64_t source_loc;
+    int64_t target_loc;
+    PathCreateInfo path_create_info;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL);
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        sub_44EBF0(run_info);
+        return true;
+    }
+
+    run_info->field_14 = run_info->current_goal;
+    target_loc = run_info->params[1].loc;
+    source_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+    if (target_loc == 0
+        || target_loc == -1) {
+        return false;
+    }
+
+    path_create_info.max_rotations = sub_426320(&(run_info->path), source_loc, target_loc, obj);
+    path_create_info.from = source_loc;
+    path_create_info.to = target_loc;
+    path_create_info.obj = obj;
+    path_create_info.rotations = run_info->path.rotations;
+
+    if ((run_info->field_C & 0x4000) == 0) {
+        path_create_info.field_20 = 0;
+        if (sub_425BF0(&path_create_info, true)) {
+            run_info->path.max = sub_41F3C0(&path_create_info);
+        } else {
+            run_info->path.max = 0;
+        }
+        run_info->path.field_E8 = path_create_info.from;
+        run_info->path.field_F0 = path_create_info.to;
+    } else {
+        run_info->path.max = 0;
+    }
+
+    if (run_info->path.max == 0) {
+        path_create_info.field_20 = 1;
+        if (sub_425BF0(&path_create_info, true)) {
+            run_info->path.max = sub_41F3C0(&path_create_info);
+            run_info->path.field_E8 = path_create_info.from;
+            run_info->path.field_F0 = path_create_info.to;
+        }
+
+        if (run_info->path.max == 0) {
+            if (!sub_40DA20(obj)) {
+                sub_4B7C90(obj);
+            }
+            return false;
+        }
+    }
+
+    run_info->path.curr = 0;
+    run_info->path.flags &= ~0x03;
+
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4ED510(run_info->id,
+            run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
+            run_info);
+    }
+
+    return true;
 }
 
 // 0x427990
