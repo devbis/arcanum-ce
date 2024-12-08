@@ -6002,7 +6002,7 @@ bool sub_429040(AnimRunInfo* run_info)
 
     source_obj = run_info->params[0].obj;
     target_loc = run_info->params[1].loc;
-    item_obj = run_info->params[3].loc;
+    item_obj = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
 
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 6526, "sourceObj != OBJ_HANDLE_NULL"
     ASSERT(target_loc != 0); // 6527, "targetLoc != 0"
