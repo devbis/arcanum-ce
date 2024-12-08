@@ -11944,7 +11944,72 @@ void sub_4364D0(int64_t obj)
 // 0x436720
 bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    ObjectList objects;
+    ObjectNode* node;
+    int cnt;
+    bool rc;
+
+    ASSERT(source_obj_ptr != NULL); // 16880, "pSourceObj != NULL"
+    ASSERT((*source_obj_ptr) != OBJ_HANDLE_NULL); // 16881, "(*pSourceObj) != OBJ_HANDLE_NULL"
+    ASSERT(block_obj_ptr != NULL); // 16882, "pBlockObj != NULL"
+
+    if (source_obj_ptr == NULL
+        || *source_obj_ptr == OBJ_HANDLE_NULL
+        || sub_44E8C0(*source_obj_ptr, NULL)) {
+        return false;
+    }
+
+    cnt = 0;
+    loc = obj_field_int64_get(*source_obj_ptr, OBJ_F_LOCATION);
+    sub_4407C0(loc, OBJ_TM_CRITTER, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if (!sub_45D8D0(node->obj)
+            && !sub_44E8C0(node->obj, NULL)) {
+            cnt++;
+        }
+        node = node->next;
+    }
+
+    rc = false;
+    if (cnt > 1) {
+        node = objects.head;
+        while (node != NULL) {
+            if (!sub_45D8D0(node->obj)
+                && !sub_44E8C0(node->obj, NULL)
+                && obj_field_int32_get(node->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+                && node->obj == *source_obj_ptr) {
+                break;
+            }
+            node = node->next;
+        }
+
+        if (node != NULL) {
+            *block_obj_ptr = node->obj;
+
+            if (obj_field_int32_get(*source_obj_ptr, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+                if (obj_field_int32_get(*block_obj_ptr, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+                    if (*source_obj_ptr < *block_obj_ptr) {
+                        *block_obj_ptr = *source_obj_ptr;
+                        *source_obj_ptr = node->obj;
+                    }
+                }
+            } else {
+                if (obj_field_int32_get(*block_obj_ptr, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                    if (*source_obj_ptr < *block_obj_ptr) {
+                        *block_obj_ptr = *source_obj_ptr;
+                        *source_obj_ptr = node->obj;
+                    }
+                }
+            }
+
+            rc = true;
+        }
+    }
+
+    object_list_destroy(&objects);
+    return rc;
 }
 
 // 0x436960
