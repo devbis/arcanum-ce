@@ -56,6 +56,7 @@ static void sub_466A50(int64_t key_obj, int64_t key_ring_obj);
 static void sub_466AA0(int64_t critter_obj, int64_t a2);
 static void sub_466BD0(int64_t key_ring_obj);
 static bool item_insert_failure(ItemInsertInfo* item_insert_info);
+static bool sub_466EF0(int64_t obj, int64_t loc);
 static const char* item_cannot_msg(int reason);
 static void sub_4677B0(int64_t a1, int64_t a2, int a3);
 static void sub_467CB0(int64_t a1, int64_t a2, int a3);
@@ -3014,9 +3015,60 @@ void sub_466E50(int64_t obj, int64_t loc)
 }
 
 // 0x466EF0
-void sub_466EF0(int64_t a1, int64_t a2)
+bool sub_466EF0(int64_t obj, int64_t loc)
 {
-    // TODO: Incomplete.
+    ObjectList objects;
+    ObjectNode* node;
+    int inventory_location;
+    int64_t new_container_obj;
+    bool rc = false;
+
+    sub_4407C0(loc, OBJ_TM_CONTAINER, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if (sub_49B290(node->obj) == 3023) {
+            inventory_location = sub_4664C0(obj, node->obj);
+            if (inventory_location != -1) {
+                item_insert(obj, node->obj, inventory_location);
+                object_list_destroy(&objects);
+                return true;
+            }
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    new_container_obj = OBJ_HANDLE_NULL;
+    sub_4407C0(loc, OBJ_TM_ITEM, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if (new_container_obj == OBJ_HANDLE_NULL) {
+            if (!mp_object_create(3023, loc, &new_container_obj)) {
+                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                    rc = false;
+                } else {
+                    rc = true;
+                }
+                break;
+            }
+        }
+
+        sub_4617F0(node->obj, new_container_obj);
+
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (new_container_obj != OBJ_HANDLE_NULL) {
+        inventory_location = sub_4664C0(obj, new_container_obj);
+        if (inventory_location != -1) {
+            item_insert(obj, new_container_obj, inventory_location);
+            return true;
+        }
+    }
+
+    return rc;
 }
 
 // 0x4670A0
