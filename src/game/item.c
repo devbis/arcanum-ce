@@ -12,6 +12,7 @@
 #include "game/multiplayer.h"
 #include "game/obj_private.h"
 #include "game/object.h"
+#include "game/party.h"
 #include "game/player.h"
 #include "game/proto.h"
 #include "game/random.h"
@@ -1367,7 +1368,71 @@ bool sub_463340(int lock_id, int key_id)
 // 0x463370
 bool sub_463370(int64_t obj, int key_id)
 {
-    // TODO: Incomplete.
+    int64_t leader_obj;
+    ObjectList objects;
+    ObjectNode* node;
+    int64_t party_member_obj;
+    int iter;
+    int player;
+
+    leader_obj = sub_45DDA0(obj);
+    if (leader_obj == OBJ_HANDLE_NULL) {
+        leader_obj = critter_leader_get(obj);
+        if (leader_obj == OBJ_HANDLE_NULL) {
+            leader_obj = obj;
+        }
+    }
+
+    if (sub_463240(leader_obj, key_id)) {
+        return true;
+    }
+
+    sub_441260(leader_obj, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        if (sub_463240(node->obj, key_id)) {
+            break;
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (node != NULL) {
+        return true;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_local_server_get_options() & TIG_NET_SERVER_KEY_SHARING) != 0) {
+        if (sub_40DA20(obj)) {
+            party_member_obj = party_find_first(obj, &iter);
+            while (party_member_obj != OBJ_HANDLE_NULL) {
+                if (sub_463240(party_member_obj, key_id)) {
+                    return true;
+                }
+                party_member_obj = party_find_next(&iter);
+            }
+        } else {
+            player = sub_4BA020(obj);
+            if (player != -1) {
+                sub_440FC0(obj, OBJ_TM_PC, &objects);
+                node = objects.head;
+                while (node != NULL) {
+                    if (sub_4BA020(node->obj) == player
+                        && sub_463240(node->obj, key_id)) {
+                        break;
+                    }
+                    node = node->next;
+                }
+                object_list_destroy(&objects);
+
+                if (node != NULL) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 // 0x463540
