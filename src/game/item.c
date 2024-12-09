@@ -3758,6 +3758,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     while (idx < cnt) {
         int64_t tmp_item_obj = obj_arrayfield_handle_get(parent_obj, inventory_list_fld, idx + 1);
         obj_arrayfield_obj_set(parent_obj, inventory_list_fld, idx, tmp_item_obj);
+        idx++;
     }
 
     obj_arrayfield_length_set(parent_obj, inventory_list_fld, cnt);
