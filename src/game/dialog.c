@@ -1364,12 +1364,13 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
     int v40;
     bool inverse;
     int64_t v2;
+    char code[3];
 
     if (a2 == NULL || a2[0] == '\0') {
         return true;
     }
 
-    a2[2] = '\0';
+    code[2] = '\0';
 
     pch = a2;
     while (*pch != '\0') {
@@ -1381,16 +1382,16 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         }
 
-        a2[0] = *pch++;
+        code[0] = *pch++;
         if (*pch == '\0') {
             break;
         }
 
-        a2[1] = *pch++;
+        code[1] = *pch++;
 
         value = atoi(pch);
         for (cond = 0; cond < DIALOG_COND_COUNT; cond++) {
-            if (strcmpi(off_5A06BC[cond], a2) == 0) {
+            if (strcmpi(off_5A06BC[cond], code) == 0) {
                 break;
             }
         }
@@ -1859,12 +1860,13 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
     ObjectNode* node;
     bool v57 = true;
     bool v59 = false;
+    char code[3];
 
     if (a2 == NULL || a2[0] == '\0') {
         return true;
     }
 
-    a2[2] = '\0';
+    code[2] = '\0';
 
     pch = a2;
     while (*pch != '\0') {
@@ -1876,16 +1878,16 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             break;
         }
 
-        a2[0] = *pch++;
+        code[0] = *pch++;
         if (*pch == '\0') {
             break;
         }
 
-        a2[1] = *pch++;
+        code[1] = *pch++;
 
         value = atoi(pch);
         for (act = 0; act < DIALOG_ACTION_COUNT; act++) {
-            if (strcmpi(off_5A0750[act], a2) == 0) {
+            if (strcmpi(off_5A0750[act], code) == 0) {
                 break;
             }
         }
