@@ -758,7 +758,7 @@ void sub_56B6F0()
 
     node = followers.head;
     while (node != NULL) {
-        sub_4440E0(dword_67BC08[index].obj, &(dword_67BC08[index]));
+        sub_4440E0(node->obj, &(dword_67BC08[index]));
         node = node->next;
     }
 
