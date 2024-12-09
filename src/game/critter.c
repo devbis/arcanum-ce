@@ -28,7 +28,6 @@
 #include "game/text_floater.h"
 #include "game/ui.h"
 
-static void sub_45DC90(int64_t a1, int64_t a2, bool a3);
 static void sub_45E040(int64_t obj);
 static bool sub_45E8D0(TimeEvent* timeevent);
 static bool sub_45EA80(TimeEvent* timeevent);
