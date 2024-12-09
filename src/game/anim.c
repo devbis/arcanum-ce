@@ -7126,22 +7126,22 @@ bool sub_429ED0(AnimRunInfo* run_info)
 // 0x429F00
 bool sub_429F00(AnimRunInfo* run_info)
 {
-    int v1;
-    int v2;
-    int v3;
-    int v4;
-    int v5;
-    int v6;
-    int v7;
+    tig_art_id_t art_id;
+    tig_art_id_t light_art_id;
+    tig_color_t light_color;
+    int overlay_fore_idx;
+    int overlay_back_idx;
+    int overlay_light_idx;
+    int fx_idx;
 
     if (!sub_456A90(run_info->params[0].data)) {
         return false;
     }
 
-    if (!sub_456D20(run_info->params[0].data, &v1, &v2, &v3, &v4, &v5, &v6, &v7)) {
-        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = -1;
-        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data = -1;
-        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data = -1;
+    if (!sub_456D20(run_info->params[0].data, &art_id, &light_art_id, &light_color, &overlay_fore_idx, &overlay_back_idx, &overlay_light_idx, &fx_idx)) {
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data = -1;
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data = -1;
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = -1;
         return false;
     }
 
@@ -7149,13 +7149,13 @@ bool sub_429F00(AnimRunInfo* run_info)
         run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
     }
 
-    run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = v1;
-    run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data = v7;
-    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data = v2;
-    run_info->cur_stack_data->params[AGDATA_RANGE_DATA].data = v3;
-    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data = v4;
-    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data = v5;
-    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = v6;
+    run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
+    run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data = fx_idx;
+    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data = light_art_id;
+    run_info->cur_stack_data->params[AGDATA_RANGE_DATA].data = light_color;
+    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data = overlay_fore_idx;
+    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data = overlay_back_idx;
+    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = overlay_light_idx;
     run_info->field_C |= 0x2000;
 
     return true;
