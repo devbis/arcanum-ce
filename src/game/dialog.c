@@ -1336,9 +1336,9 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
             return cnt;
         }
 
-        if (entry->data.val != -1 || entry->data.val == gender) {
-            if ((entry->field_C < 0 && intelligence <= entry->field_C)
-                || (entry->field_C > 0 && intelligence >= entry->field_C)) {
+        if (entry->data.val == -1 || entry->data.val == gender) {
+            if ((entry->field_C < 0 && intelligence <= -entry->field_C)
+                || (entry->field_C >= 0 && intelligence >= entry->field_C)) {
                 if (entry->field_10 == NULL || sub_4150D0(a1, entry->field_10)) {
                     a2[cnt++] = entry->field_0;
                 }
