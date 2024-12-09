@@ -376,7 +376,7 @@ int sub_461370(object_id_t item_obj, object_id_t owner_obj)
     weight = obj_field_int32_get(item_obj, OBJ_F_ITEM_WEIGHT);
 
     if (owner_obj != OBJ_HANDLE_NULL) {
-        weight_adj = obj_field_int32_get(owner_obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ);
+        weight_adj = obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ);
         weight += sub_461590(item_obj, owner_obj, weight_adj);
     }
 
