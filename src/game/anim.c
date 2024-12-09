@@ -11047,7 +11047,42 @@ bool sub_4332E0(int64_t obj, int which_anim)
 // 0x433440
 bool sub_433440(int64_t obj, int rotation)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    AnimID anim_id;
+    AnimGoalData goal_data;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    if (tig_art_id_rotation_get(art_id) == rotation) {
+        return true;
+    }
+
+    if (!sub_45D790(obj)) {
+        return true;
+    }
+
+    if (sub_4B6D70() && sub_4B6D80() != obj) {
+        return true;
+    }
+
+    if (sub_423300(obj, NULL)) {
+        return true;
+    }
+
+    if (!sub_44D4E0(&goal_data, obj, AG_ROTATE)) {
+        return true;
+    }
+
+    goal_data.params[AGDATA_SCRATCH_VAL1].data = rotation;
+    sub_423300(obj, &anim_id);
+    if (!sub_44D520(&goal_data, &anim_id)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x433580
