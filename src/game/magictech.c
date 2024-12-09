@@ -1594,16 +1594,16 @@ void sub_450090(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int ma
     info->field_0 = mes_file_entry.str;
 
     mes_file_entry.num = num + 50 * magictech;
-    mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
+    mes_get_msg(msg_file, &mes_file_entry);
     magictech_build_aoe_info(info, mes_file_entry.str);
 
     mes_file_entry.num++;
-    mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
+    mes_get_msg(msg_file, &mes_file_entry);
     sub_4578F0(info, mes_file_entry.str);
 
     mes_file_entry.num++;
     if (mes_search(msg_file, &mes_file_entry)) {
-        mes_get_msg(magictech_spell_mes_file, &mes_file_entry);
+        mes_get_msg(msg_file, &mes_file_entry);
         sub_457B20(info, mes_file_entry.str);
     }
 
