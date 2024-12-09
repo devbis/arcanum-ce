@@ -3459,16 +3459,16 @@ int sub_466DA0(int64_t obj)
 }
 
 // 0x466E00
-void item_remove(int64_t obj)
+void item_remove(int64_t item_obj)
 {
-    int64_t owner_obj;
+    int64_t parent_obj;
 
-    if (!item_parent(obj, &owner_obj)) {
+    if (!item_parent(item_obj, &parent_obj)) {
         tig_debug_printf("Warning: item_remove called on item that doesn't think it has a parent.");
         return;
     }
 
-    item_force_remove(owner_obj, obj);
+    item_force_remove(item_obj, parent_obj);
 }
 
 // 0x466E50

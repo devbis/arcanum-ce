@@ -138,7 +138,7 @@ bool sub_466510(int64_t a1, int64_t a2, int* a3);
 void item_insert(int64_t a1, int64_t a2, int a3);
 void sub_466D60(int64_t obj);
 int sub_466DA0(int64_t obj);
-void item_remove(int64_t obj);
+void item_remove(int64_t item_obj);
 void sub_466E50(int64_t obj, int64_t loc);
 void sub_4670A0(int64_t a1, int a2);
 void sub_4673F0(int64_t obj, int reason);
