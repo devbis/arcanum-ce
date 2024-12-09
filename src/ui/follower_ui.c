@@ -756,11 +756,13 @@ void sub_56B6F0()
         dword_67BC08 = (FollowerInfo*)REALLOC(dword_67BC08, sizeof(*dword_67BC08) * dword_67BC14);
     }
 
+    index = 0;
     node = followers.head;
     while (node != NULL) {
-        sub_4440E0(node->obj, &(dword_67BC08[index]));
+        sub_4440E0(node->obj, &(dword_67BC08[index++]));
         node = node->next;
     }
+    dword_67BC58 = index;
 
     object_list_destroy(&followers);
 
