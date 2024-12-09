@@ -394,7 +394,7 @@ bool sub_56A9D0(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            for (index = 0; index < 9; index++) {
+            for (index = 0; index < 6; index++) {
                 if (msg->data.button.button_handle == dword_67BB38[index]) {
                     qword_67BC20 = player_get_pc_obj();
                     sub_444130(&dword_67BC08[dword_67BC10 + index]);
