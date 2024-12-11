@@ -177,7 +177,7 @@ bool hotkey_ui_start(int a1, TigRect* rect, int a3, bool a4)
     if (a3 != -1) {
         for (index = 0; index < 2; index++) {
             v1 = &(stru_683518[index]);
-            sub_557B20(v1->field_C)->art_num = v1->field_8 == 2 || v1->field_8 != 3
+            sub_557B20(index)->art_num = v1->field_8 == 2 || v1->field_8 != 3
                 ? sub_579F70(v1->field_C)
                 : sub_4B1570(v1->field_C);
             sub_54AA60(dword_683510, &stru_6835C8, sub_557B20(index), 0x1);
