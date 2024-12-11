@@ -1252,10 +1252,10 @@ void intgame_hotkeys_recover()
 
             stru_683518[index].field_8 = 2;
             stru_683518[index].field_C = sub_557B50(index);
-            sub_557B20(index)->art_num = sub_579F70(index);
+            sub_557B20(index)->art_num = sub_579F70(stru_683518[index].field_C);
 
             button_handle = sub_557B20(index)->button_handle;
-            if (button_handle == TIG_BUTTON_HANDLE_INVALID) {
+            if (button_handle != TIG_BUTTON_HANDLE_INVALID) {
                 tig_art_interface_id_create(sub_557B20(index)->art_num, 0, 0, 0, &art_id);
                 tig_button_set_art(button_handle, art_id);
             }
