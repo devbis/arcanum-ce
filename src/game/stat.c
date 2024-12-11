@@ -597,7 +597,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
     obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, before);
 
     if (value < before) {
-        if (!sub_4C6B50(obj, value, after)) {
+        if (!sub_4C6B50(obj, stat, after)) {
             return before;
         }
 
@@ -629,10 +629,10 @@ int stat_set_base(object_id_t obj, int stat, int value)
         }
         break;
     case STAT_GENDER:
-        sub_4EA2E0(stat, 9);
+        sub_4EA2E0(obj, EFFECT_CAUSE_GENDER);
         break;
     case STAT_RACE:
-        sub_4EA2E0(stat, 0);
+        sub_4EA2E0(obj, EFFECT_CAUSE_RACE);
         break;
     }
 
