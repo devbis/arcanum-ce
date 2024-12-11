@@ -980,7 +980,7 @@ void sub_53FBB0()
     }
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_BACKGROUND) {
-        char str[400];
+        char str[MAX_STRING];
         char* curr;
         size_t pos;
         size_t end;
