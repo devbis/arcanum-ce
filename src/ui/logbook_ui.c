@@ -687,7 +687,7 @@ int sub_53F8F0(int a1, int a2)
         v6 = false;
     }
 
-    while (a1 != v2 + v5) {
+    while (v2 != v5 + a2) {
         v7 = sub_53F9E0(v2, &v9, v6, v4);
         v4 = false;
         if (v7 > 0 && v7 <= v9.height) {
