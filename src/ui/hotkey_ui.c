@@ -116,7 +116,7 @@ bool hotkey_ui_init(GameInitInfo* init_info)
 
     for (index = 0; index < 2; index++) {
         v1 = &(stru_683518[index]);
-        v1->field_8 = 1;
+        v1->field_8 = 2;
         v1->field_C = sub_557B50(index);
         sub_557B20(index)->art_num = sub_579F70(v1->field_C);
     }
