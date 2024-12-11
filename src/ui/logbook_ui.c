@@ -1017,7 +1017,7 @@ void sub_53FBB0()
                         break;
                     }
 
-                    truncate_pos = pos;
+                    truncate_pos = pos + 1;
                 }
             }
 
@@ -1038,6 +1038,8 @@ void sub_53FBB0()
 
         dword_63FAE4[dword_648938] = prev_truncate_pos + end;
         tig_font_pop();
+
+        return;
     }
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_KEYS) {
