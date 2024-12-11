@@ -61,7 +61,7 @@ bool townmap_mod_load()
 
     if (!mes_load("rules\\townmap.mes", &townmap_mes_file)) {
         townmap_mes_file = MES_FILE_HANDLE_INVALID;
-        return;
+        return true;
     }
 
     townmap_entries_cnt = mes_num_entries(townmap_mes_file);
