@@ -97,7 +97,7 @@ static void sub_40D470(Object* object, int fld);
 static bool sub_40D560(TigFile* stream);
 static bool obj_check_version_stream(TigFile* stream);
 static void sub_40D5D0(void* mem);
-static bool obj_check_version_memory(void* mem);
+static bool obj_check_version_memory(uint8_t** data);
 static bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info);
 
 // 0x59BE00
@@ -4261,11 +4261,11 @@ void sub_40D5D0(void* mem)
 }
 
 // 0x40D5F0
-bool obj_check_version_memory(void* mem)
+bool obj_check_version_memory(uint8_t** data)
 {
     int version;
 
-    sub_4E4C50(&version, sizeof(version), mem);
+    sub_4E4C50(&version, sizeof(version), data);
     if (version != OBJ_FILE_VERSION) {
         tig_debug_printf("Object file format version mismatch: (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
     }
