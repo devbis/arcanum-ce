@@ -2727,9 +2727,10 @@ void sub_40A740(int fld, int* start_ptr, int* length_ptr)
     *length_ptr = 0;
     if (*start_ptr + 1 < fld) {
         index = fld - (*start_ptr + 1);
-        do {
-            *length_ptr++;
-        } while (index != 0);
+        while (index != 0) {
+            (*length_ptr)++;
+            index--;
+        }
     }
 }
 
