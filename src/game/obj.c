@@ -1844,7 +1844,19 @@ Object* sub_408710(int64_t* obj_handle_ptr)
 // 0x408020
 ObjectID sub_408020(int64_t obj, int a2)
 {
-    // TODO: Incomplete.
+    Object* object;
+
+    object = obj_lock(obj);
+    if (objid_is_valid(object->field_8) && object->field_8.type != OID_TYPE_NULL) {
+        sub_4E52F0(object->field_8);
+    }
+
+    object->field_8 = sub_4E6540(a2);
+    sub_4E4FD0(object->field_8, obj);
+
+    obj_unlock(obj);
+
+    return object->field_8;
 }
 
 // 0x4082C0
