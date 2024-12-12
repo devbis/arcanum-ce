@@ -322,6 +322,9 @@ int object_get_ac(object_id_t obj, bool a2)
                 ac += item_armor_ac_adj(obj, item_obj, a2);
             }
         }
+
+        ac = effect_adjust_stat_level(obj, STAT_AC_ADJUSTMENT, ac);
+        ac += stat_level(obj, STAT_AC_ADJUSTMENT);
     } else if (type == OBJ_TYPE_ITEM_ARMOR) {
         ac += item_armor_ac_adj(obj, OBJ_HANDLE_NULL, a2);
     }
