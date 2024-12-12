@@ -1584,6 +1584,8 @@ bool gamelib_copy_version(char* long_version, char* short_version, char* locale)
     if (locale != NULL) {
         strncpy(locale, gamelib_get_locale(), GAMELIB_LOCALE_LENGTH - 1);
     }
+
+    return true;
 }
 
 // 0x404640
