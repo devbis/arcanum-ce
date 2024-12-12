@@ -653,6 +653,24 @@ void sub_405800(int type, int64_t* obj_ptr)
     *obj_ptr = handle;
 }
 
+// 0x405B30
+void sub_405B30(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr)
+{
+    Object* object;
+
+    sub_4058E0(proto_obj, loc, obj_ptr);
+
+    object = obj_lock(*obj_ptr);
+    if (object->field_8.type != OID_TYPE_NULL) {
+        sub_4E52F0(object->field_8);
+    }
+
+    object->field_8 = oid;
+
+    sub_4E4FD0(oid, *obj_ptr);
+    obj_unlock(*obj_ptr);
+}
+
 // 0x405BC0
 bool sub_405BC0(int64_t obj)
 {
