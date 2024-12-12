@@ -835,6 +835,7 @@ bool obj_write(TigFile* stream, int64_t obj_handle)
 bool obj_read(TigFile* stream, int64_t* obj_handle_ptr)
 {
     ObjectID oid;
+    bool ret;
 
     if (!obj_check_version_stream(stream)) {
         return false;
@@ -845,10 +846,12 @@ bool obj_read(TigFile* stream, int64_t* obj_handle_ptr)
     }
 
     if (oid.type == OID_TYPE_BLOCKED) {
-        return sub_4097B0(stream, obj_handle_ptr, oid);
+        ret = sub_4097B0(stream, obj_handle_ptr, oid);
     } else {
-        return sub_409AA0(stream, obj_handle_ptr, oid);
+        ret = sub_409AA0(stream, obj_handle_ptr, oid);
     }
+
+    return ret;
 }
 
 // 0x4066B0
