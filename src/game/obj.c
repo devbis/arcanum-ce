@@ -3260,7 +3260,32 @@ void sub_40BE70(Object* object)
 // 0x40BF00
 bool sub_40BF00(void* entry, int index)
 {
-    // TODO: Incomplete.
+    ObjectID oid;
+    unsigned int flags;
+
+    oid = *(ObjectID*)entry;
+
+    if (oid.type != OID_TYPE_NULL) {
+        if (sub_4E5470(oid.d.h)) {
+            flags = obj_field_int32_get(oid.d.h, OBJ_F_FLAGS);
+            if ((flags & OF_DESTROYED) != 0
+                && (flags & OF_EXTINCT) == 0) {
+                oid.type = OID_TYPE_NULL;
+                *(ObjectID*)entry = oid;
+                return true;
+            }
+
+            oid = sub_407EF0(oid.d.h);
+        } else {
+            oid = sub_4E5280(oid.d.h);
+        }
+
+        *(ObjectID*)entry = oid;
+
+        return oid.type != OID_TYPE_NULL;
+    }
+
+    return true;
 }
 
 // 0x40BFC0
