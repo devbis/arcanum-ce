@@ -2842,21 +2842,19 @@ void redraw_inven(bool a1)
     // 0x577837
     art_blit_info.flags = 0;
     if (text_rects != NULL) {
-        if (dword_681514) {
-            for (index = 0; index < 9; index++) {
-                if (!v1[index]) {
-                    tig_art_interface_id_create(dword_5CAF58[index], 0, 0, 0, &(art_blit_info.art_id));
+        for (index = 0; index < 9; index++) {
+            if (!v1[index]) {
+                tig_art_interface_id_create(dword_5CAF58[index], 0, 0, 0, &(art_blit_info.art_id));
 
-                    dst_rect.x = text_rects[index].x;
-                    dst_rect.y = text_rects[index].y;
-                    dst_rect.width = text_rects[index].width;
-                    dst_rect.height = text_rects[index].height;
+                dst_rect.x = text_rects[index].x;
+                dst_rect.y = text_rects[index].y;
+                dst_rect.width = text_rects[index].width;
+                dst_rect.height = text_rects[index].height;
 
-                    src_rect.width = stru_5CAC58[index].width;
-                    src_rect.height = stru_5CAC58[index].height;
+                src_rect.width = stru_5CAC58[index].width;
+                src_rect.height = stru_5CAC58[index].height;
 
-                    tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
-                }
+                tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
             }
         }
     }
