@@ -3508,7 +3508,7 @@ void sub_40C610(Object* object)
     int cnt;
 
     cnt = sub_40C030(object->type);
-    object->field_4C = (int*)MALLOC(sizeof(int) * cnt);
+    object->field_4C = (int*)CALLOC(sizeof(int) * cnt, 1);
 }
 
 // 0x40C640
