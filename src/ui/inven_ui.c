@@ -2540,7 +2540,7 @@ void redraw_inven(bool a1)
     }
 
     // 0x576DFE
-    if (dword_683464 = 0
+    if (dword_683464 == 0
         || dword_683464 == 5
         || dword_683464 == 6) {
         text_rects = stru_5CAEF8;
