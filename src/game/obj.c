@@ -4241,8 +4241,11 @@ bool obj_check_version_stream(TigFile* stream)
 {
     int version;
 
-    if (!obj_read_raw(&version, sizeof(version), stream)
-        || version != OBJ_FILE_VERSION) {
+    if (!obj_read_raw(&version, sizeof(version), stream)) {
+        return false;
+    }
+
+    if (version != OBJ_FILE_VERSION) {
         tig_debug_printf("Object file format version mismatch (read: %d, expected: %d).\n", version, OBJ_FILE_VERSION);
         return false;
     }
