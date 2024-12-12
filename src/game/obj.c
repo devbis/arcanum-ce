@@ -3234,7 +3234,28 @@ void sub_40BD20(Object* object)
 // 0x40BDB0
 void sub_40BDB0(Object* object)
 {
-    // TODO: Incomplete.
+    int idx;
+    int fld;
+    ObjectID oid;
+    int64_t obj;
+
+    for (idx = 0; idx < dword_5D1130; idx++) {
+        fld = dword_5D1128[idx];
+        if (sub_40C260(object->type, fld)
+            && sub_40D320(object, fld)) {
+            sub_408A20(object, fld, &oid);
+            if (oid.type != OID_TYPE_NULL) {
+                obj = objp_perm_lookup(oid);
+                if (obj != OBJ_HANDLE_NULL) {
+                    oid.type = OID_TYPE_HANDLE;
+                    oid.d.h = obj;
+                } else {
+                    oid.type = OID_TYPE_NULL;
+                }
+                sub_408760(object, fld, &oid);
+            }
+        }
+    }
 }
 
 // 0x40BE70
