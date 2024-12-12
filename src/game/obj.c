@@ -802,7 +802,8 @@ void sub_406520(int64_t obj_handle)
     if ((flags & 0x1) != 0) {
         sub_40BDB0(object);
         sub_40BE70(object);
-        sub_408760(object, OBJ_F_INTERNAL_FLAGS, flags & ~0x1);
+        flags &= ~0x1;
+        sub_408760(object, OBJ_F_INTERNAL_FLAGS, &flags);
         // NOTE: Probably should be outside of this condition block, otherwise
         // object might remain locked.
         obj_unlock(obj_handle);
