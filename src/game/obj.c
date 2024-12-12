@@ -1671,7 +1671,38 @@ void sub_407D50(int64_t obj, int fld)
 // 0x407EF0
 ObjectID sub_407EF0(int64_t obj)
 {
-    // TODO: Incomplete.
+    ObjectID oid;
+    Object* object;
+
+    if (sub_4E5470(obj)) {
+        object = obj_lock(obj);
+        if (object->field_8.type == OID_TYPE_NULL) {
+            if (!obj_is_editor
+                && sub_43D940(obj)
+                && sub_43D990(obj)) {
+                objid_id_perm_by_load_order(&(object->field_8), obj);
+            } else {
+                sub_4E62A0(&(object->field_8));
+            }
+
+            sub_4E4FD0(object->field_8, obj);
+            object->field_8.type = OID_TYPE_A;
+        }
+
+        oid = object->field_8;
+        obj_unlock(obj);
+
+        if (!objid_is_valid(oid)) {
+            tig_debug_println("! obj_get_id found invalid id");
+            tig_debug_printf("! -- object with bad id has base aid of: ");
+            sub_408430(obj_field_int32_get(obj, OBJ_F_AID));
+            oid.type = OID_TYPE_NULL;
+        }
+    } else {
+        oid = sub_4E5280(obj);
+    }
+
+    return oid;
 }
 
 // 0x408430
