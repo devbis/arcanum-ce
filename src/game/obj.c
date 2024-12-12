@@ -874,6 +874,27 @@ void sub_4066B0(uint8_t** a1, int* a2, int64_t obj)
     *a2 = v1.field_4 - v1.field_0;
 }
 
+// 0x406730
+bool sub_406730(uint8_t* data, int64_t* obj_ptr)
+{
+    ObjectID oid;
+    bool ret;
+
+    if (!obj_check_version_memory(&data)) {
+        return false;
+    }
+
+    sub_4E4C50(&oid, sizeof(oid), &data);
+    data -= sizeof(oid);
+
+    if (oid.type == OID_TYPE_BLOCKED) {
+        ret = sub_409D30(data, obj_ptr);
+    } else {
+        ret = sub_409F10(data, obj_ptr);
+    }
+
+    return ret;
+}
 
 // 0x4067C0
 int sub_4067C0(int64_t obj)
