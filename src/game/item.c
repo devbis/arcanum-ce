@@ -2463,7 +2463,7 @@ int64_t item_gold_create(int amount, int64_t loc)
     int64_t gold_obj;
 
     if (mp_object_create(9056, loc, &gold_obj)) {
-        sub_4EFDD0(loc, OBJ_F_GOLD_QUANTITY, amount);
+        sub_4EFDD0(gold_obj, OBJ_F_GOLD_QUANTITY, amount);
     }
 
     return gold_obj;
