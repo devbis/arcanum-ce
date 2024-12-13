@@ -203,18 +203,18 @@ void sub_57B180(int64_t bed_obj)
             dword_6834B0 = false;
             return;
         }
-    }
 
-    if (!critter_enter_bed(pc_obj, bed_obj)) {
-        // That bed is occupied.
-        mes_file_entry.num = 10;
-        mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
+        if (!critter_enter_bed(pc_obj, bed_obj)) {
+            // That bed is occupied.
+            mes_file_entry.num = 10;
+            mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
 
-        v1.type = 4;
-        v1.str = mes_file_entry.str;
-        sub_460630(&v1);
-        dword_6834B0 = false;
-        return;
+            v1.type = 4;
+            v1.str = mes_file_entry.str;
+            sub_460630(&v1);
+            dword_6834B0 = false;
+            return;
+        }
     }
 
     // NOTE: I'm not sure how to make it pretty without goto.
