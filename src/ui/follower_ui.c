@@ -237,6 +237,11 @@ void follower_ui_exit()
     }
 
     follower_ui_initialized = false;
+
+    // FIX: Memory leak.
+    tig_font_destroy(dword_67BC28);
+    tig_font_destroy(dword_67BC18);
+    tig_font_destroy(dword_67BB5C);
 }
 
 // 0x56A880

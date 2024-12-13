@@ -111,6 +111,9 @@ void cyclic_ui_exit()
 
     tig_font_destroy(dword_684244);
     tig_font_destroy(dword_6839B8);
+
+    // FIX: Memory leak.
+    tig_font_destroy(dword_684240);
 }
 
 // 0x57F6D0
