@@ -2025,7 +2025,86 @@ void sub_463C60(int64_t obj)
 // 0x463E20
 void sub_463E20(int64_t obj)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    int inventory_source_fld;
+    int source_id;
+    InvenSourceSet set;
+    int64_t loc;
+    bool v1;
+    int64_t pc_obj;
+    int race;
+    int gender;
+    int background;
+    int qty;
+    int idx;
+    int64_t item_obj;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        sub_4EFBA0(obj);
+        return;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    v1 = false;
+    if (obj_type == OBJ_TYPE_CONTAINER) {
+        inventory_source_fld = OBJ_F_CONTAINER_INVENTORY_SOURCE;
+        if ((obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & 0x200) != 0) {
+            if (dword_5E87E4) {
+                return;
+            }
+            v1 = true;
+        }
+    } else if (obj_type_is_critter(obj_type)) {
+        inventory_source_fld = OBJ_F_CRITTER_INVENTORY_SOURCE;
+    } else {
+        return;
+    }
+
+    source_id = obj_field_int32_get(obj, inventory_source_fld);
+
+    sub_4EFAE0(obj, 1);
+
+    if (source_id != 0) {
+        loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        invensource_get_id_list(source_id, &set);
+
+        if (v1) {
+            pc_obj = player_get_pc_obj();
+            if (pc_obj != OBJ_HANDLE_NULL) {
+                gender = stat_level(pc_obj, STAT_GENDER);
+                race = stat_level(pc_obj, STAT_RACE);
+                background = background_obj_get_background(pc_obj);
+
+            }
+        }
+
+        qty = random_between(set.default_rate, set.default_basic_prototype);
+        if (qty > 0) {
+            sub_464830(OBJ_HANDLE_NULL, obj, qty, OBJ_HANDLE_NULL);
+        }
+
+        for (idx = 0; idx < set.field_4; idx++) {
+            if (random_between(1, 100) <= set.rate[idx]
+                && mp_object_create(set.basic_prototype[idx], loc, &item_obj)) {
+                if (!sub_4617F0(item_obj, obj)) {
+                    sub_43CCA0(item_obj);
+                }
+            }
+        }
+
+        if (obj_type == OBJ_TYPE_NPC) {
+            sub_4654F0(obj, OBJ_HANDLE_NULL);
+        }
+
+        if (v1) {
+            sub_4EFDD0(obj, inventory_source_fld, 0);
+
+            unsigned int container_flags = obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS);
+            container_flags &= ~0x200;
+            sub_4EFDD0(obj, OBJ_F_CONTAINER_FLAGS, container_flags);
+        }
+    }
 }
 
 // 0x4640C0
