@@ -11060,7 +11060,86 @@ bool sub_432D50(AnimRunInfo* run_info)
 // 0x432D90
 void sub_432D90(int64_t obj)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t loc;
+    int offset_x;
+    int offset_y;
+    int64_t blood_obj;
+    tig_art_id_t blood_art_id;
+    tig_art_id_t obj_art_id;
+    TigArtAnimData art_anim_data;
+    AnimGoalData goal_data;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    pc_obj = player_get_pc_obj();
+
+    // FIXME: Useless.
+    obj_field_int32_get(pc_obj, OBJ_F_PC_FLAGS);
+
+    if (violence_filter != 0) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_UNDEAD | OCF_MECHANICAL)) != 0) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_ELEMENTAL) != 0) {
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0
+        && !anim_editor) {
+        return;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+    object_create(sub_4685A0(4028), loc, &blood_obj);
+    blood_art_id = obj_field_int32_get(blood_obj, OBJ_F_CURRENT_AID);
+
+    // FIXME: Useless.
+    sub_503F60(obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
+
+    if (anim_editor) {
+        obj_art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        if (tig_art_anim_data(obj_art_id, &art_anim_data) == TIG_OK) {
+            obj_art_id = tig_art_id_frame_set(obj_art_id, art_anim_data.num_frames - 1);
+        }
+        object_set_current_aid(obj, obj_art_id);
+        return;
+    }
+
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        Packet70 pkt;
+
+        pkt.type = 70;
+        pkt.subtype = 5;
+        pkt.s5.oid = sub_407EF0(obj);
+        pkt.s5.loc = loc;
+        pkt.s5.offset_x = offset_x;
+        pkt.s5.offset_y = offset_y;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (sub_44D4E0(&goal_data, obj, AG_ANIMATE)) {
+        goal_data.params[AGDATA_ANIM_ID].data = blood_art_id;
+        if (sub_44D520(&goal_data, NULL)) {
+            sub_45EBE0(obj);
+        } else {
+            tig_debug_printf("Anim: AGapplyBloodEffect: ERROR: Blood object failed to animate!\n");
+            sub_43CCA0(obj);
+        }
+    }
 }
 
 // 0x433020
