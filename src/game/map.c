@@ -1200,8 +1200,9 @@ bool map_save_difs()
         } while (sub_408390(&obj, &iter));
     }
 
+    tig_file_fclose(stream2);
+
     if (size < sizeof(oid)) {
-        tig_file_fclose(stream2);
         tig_file_remove(path2);
     }
 
