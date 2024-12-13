@@ -8481,6 +8481,8 @@ bool sub_42BD40(AnimRunInfo* run_info)
         tig_debug_printf("Anim: AGsetObjArtAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
         run_info->field_CFC = 100;
     }
+
+    return true;
 }
 
 // 0x42BE50
