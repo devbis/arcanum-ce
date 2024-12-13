@@ -8727,7 +8727,75 @@ bool sub_42C390(AnimRunInfo* run_info)
 // 0x42C440
 bool sub_42C440(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int new_rot;
+    int rot;
+    int next_rot;
+    int delta;
+    tig_art_id_t art_id;
+    bool rc = true;
+
+    obj = run_info->params[0].obj;
+    new_rot = run_info->params[1].data;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 8959, "obj != OBJ_HANDLE_NULL"
+    ASSERT(new_rot >= 0); // 8960, "newRot >= 0"
+    ASSERT(new_rot < 8); // 8961, "newRot < tig_art_rotation_max"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    rot = tig_art_id_rotation_get(art_id);
+    if (rot == new_rot) {
+        return false;
+    }
+
+    if (sub_4B6D70()
+        && sub_4B6D80() != obj) {
+        return true;
+    }
+
+    if (sub_4B8040(obj)) {
+        next_rot = new_rot;
+        rc = false;
+    } else {
+        // NOTE: Original code is probably different.
+        delta = rot - new_rot;
+
+        if (delta <= 0) {
+            next_rot = delta >= -4 ? rot + 1 : rot + 7;
+        } else {
+            next_rot = delta < 4 ? rot + 7 : rot + 1;
+        }
+
+        if (next_rot < 0) {
+            next_rot = 8 - (next_rot % 8);
+        } else {
+            next_rot = next_rot % 8;
+        }
+    }
+
+    art_id = tig_art_id_rotation_set(art_id, next_rot);
+
+    if (tig_art_exists(art_id) != TIG_OK) {
+        return false;
+    }
+
+    object_set_current_aid(obj, art_id);
+    run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
+
+    return rc;
 }
 
 // 0x42C610
