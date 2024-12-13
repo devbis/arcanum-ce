@@ -5117,7 +5117,7 @@ bool sub_4268F0(AnimRunInfo* run_info)
 
     source_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     run_info->path.baseRot = sub_4B8D50(source_loc, target_loc);
-    run_info->path.max = sub_4201C0(source_loc, target_loc, &(run_info->path.rotations));
+    run_info->path.max = sub_4201C0(source_loc, target_loc, run_info->path.rotations);
     if (run_info->path.max == 0) {
         return false;
     }
