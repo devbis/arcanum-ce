@@ -7777,9 +7777,6 @@ bool sub_42ACD0(AnimRunInfo* run_info)
 {
     int64_t source_obj;
     int64_t target_obj;
-    int v1;
-    int64_t source_loc;
-    int64_t target_loc;
     int target_type;
 
     source_obj = run_info->params[0].obj;
@@ -8602,8 +8599,6 @@ bool sub_42C0F0(AnimRunInfo* run_info)
 {
     int64_t source_obj;
     int64_t target_obj;
-    unsigned int flags;
-    int v2;
     int64_t source_loc;
     int64_t target_loc;
     int rotation;
