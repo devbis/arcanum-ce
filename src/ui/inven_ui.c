@@ -2722,7 +2722,7 @@ void redraw_inven(bool a1)
                 weapon_too_heavy = false;
                 if (inventory_location == 1004) {
                     weapon_min_str = item_weapon_min_strength(item_obj, qword_6814F8);
-                    if (stat_level(qword_6814F8, STAT_STRENGTH < weapon_min_str)) {
+                    if (stat_level(qword_6814F8, STAT_STRENGTH) < weapon_min_str) {
                         dst_rect = text_rects[4];
                         tig_window_tint(inven_ui_window_handle,
                             &dst_rect,
