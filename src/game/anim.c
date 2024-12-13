@@ -5514,7 +5514,112 @@ bool sub_4272E0(AnimRunInfo* run_info)
 // 0x4273B0
 bool sub_4273B0(int64_t obj, int64_t loc, int rotation, int a4, int64_t* obj_ptr)
 {
-    // TODO: Incomplete.
+    ObjectList objects;
+    ObjectNode* node;
+    tig_art_id_t art_id;
+    int obj_rot;
+    bool v1;
+
+    if ((rotation & 1) == 0) {
+        return false;
+    }
+
+    v1 = false;
+    if (obj_ptr != NULL) {
+        *obj_ptr = OBJ_HANDLE_NULL;
+    }
+
+    sub_4407C0(loc, OBJ_TM_WALL, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+        obj_rot = tig_art_id_rotation_get(art_id);
+        if ((obj_rot & 1) == 0) {
+            obj_rot++;
+        }
+        if (obj_rot == rotation) {
+            switch (tig_art_wall_id_p_piece_get(art_id)) {
+            case 9:
+            case 11:
+            case 12:
+            case 15:
+            case 16:
+            case 20:
+                object_list_destroy(&objects);
+                return false;
+            case 10:
+            case 13:
+            case 14:
+            case 17:
+            case 18:
+            case 19:
+                v1 = true;
+                break;
+            }
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (v1) {
+        sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+        if (objects.head != NULL) {
+            if (obj_ptr != NULL) {
+                *obj_ptr = objects.head->obj;
+            }
+        }
+        object_list_destroy(&objects);
+        return true;
+    }
+
+    if (!sub_4B8FF0(loc, rotation, &loc)) {
+        return false;
+    }
+
+    sub_4407C0(loc, OBJ_TM_WALL, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+        obj_rot = tig_art_id_rotation_get(art_id);
+        if ((obj_rot & 1) ==0) {
+            obj_rot++;
+        }
+        if (obj_rot == (rotation + 4) % 8) {
+            switch (tig_art_wall_id_p_piece_get(art_id)) {
+            case 9:
+            case 11:
+            case 12:
+            case 15:
+            case 16:
+            case 20:
+                object_list_destroy(&objects);
+                return false;
+            case 10:
+            case 13:
+            case 14:
+            case 17:
+            case 18:
+            case 19:
+                v1 = true;
+                break;
+            }
+        }
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (v1) {
+        sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+        if (objects.head != NULL) {
+            if (obj_ptr != NULL) {
+                *obj_ptr = objects.head->obj;
+            }
+        }
+        object_list_destroy(&objects);
+        return true;
+    }
+
+    return false;
 }
 
 // 0x427640
