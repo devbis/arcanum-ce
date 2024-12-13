@@ -5198,8 +5198,8 @@ bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height,
         for (index = 0; index < 3; index++) {
             if (info->x >= stru_5C3680[index].x
                 && info->x < stru_5C3680[index].x + stru_5C3680[index].width
-                && info->y >= stru_5C3680[index].y
-                && info->y < stru_5C3680[index].y + stru_5C3680[index].height) {
+                && info->y + 441 >= stru_5C3680[index].y
+                && info->y + 441 < stru_5C3680[index].y + stru_5C3680[index].height) {
                 break;
             }
         }
@@ -5209,7 +5209,7 @@ bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int height,
         }
 
         button_data.window_handle = dword_5C3670[index];
-        button_data.x -= stru_5C3680[index].y;
+        button_data.x -= stru_5C3680[index].x;
     } else {
         button_data.window_handle = dword_5C3624;
         button_data.y -= stru_5C3628.y;
