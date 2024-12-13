@@ -14,6 +14,7 @@
 #include "game/gsound.h"
 #include "game/item.h"
 #include "game/magictech.h"
+#include "game/map.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
@@ -1017,7 +1018,151 @@ void combat_critter_activate_combat_mode(int64_t obj)
 // 0x4B3F80
 void combat_critter_toggle_combat_mode(int64_t obj)
 {
-    // TODO: Incomplete.
+    bool v1 = false;
+    bool combat_mode_is_active;
+    bool is_pc;
+    int obj_type;
+    bool is_tb;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+
+    is_pc = player_is_pc_obj(obj);
+    combat_mode_is_active = combat_critter_is_combat_mode_active(obj);
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+
+    if (!obj_type_is_critter(obj_type) || !sub_45D8D0(obj)) {
+        if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+            return;
+        }
+
+        if (obj_type_is_critter(obj_type)) {
+            unsigned int critter_flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+            if ((critter_flags & OCF_PARALYZED) != 0) {
+                return;
+            }
+
+            if (combat_mode_is_active) {
+                if ((critter_flags & OCF_STUNNED) != 0) {
+                    return;
+                }
+            } else {
+                if (!sub_45D790(obj)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) != 0 || is_pc) {
+            Packet19 pkt;
+
+            pkt.type = 19;
+            pkt.oid = sub_407EF0(obj);
+            pkt.active = combat_mode_is_active;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+    }
+
+    is_tb = combat_is_turn_based();
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+    if (sub_503E20(art_id) == 0) {
+        v1 = true;
+        if (!is_pc && !sub_45D8D0(obj)) {
+            return;
+        }
+    }
+
+    unsigned int critter_flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+    unsigned int critter_flags2 = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+
+    if (combat_mode_is_active) {
+        obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, critter_flags & ~OCF_COMBAT_MODE_ACTIVE);
+        ai_target_unlock(obj);
+
+        int v2 = sub_503E20(art_id);
+        if (v2 == 20 || v2 == 21) {
+            art_id = sub_503E50(art_id, 0);
+        }
+
+        art_id = sub_504100(art_id, 0);
+        art_id = sub_504180(art_id, 0);
+
+        if (is_pc) {
+            if (is_tb) {
+                combat_callbacks.field_8();
+                combat_turn_based_end();
+            }
+            gsound_stop_combat_music(obj);
+        }
+
+        if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0
+            && !player_is_pc_obj(obj)) {
+            sub_43D0E0(obj, OF_INVISIBLE);
+        }
+    } else {
+        obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, critter_flags | OCF_COMBAT_MODE_ACTIVE);
+
+        art_id = sub_504100(art_id, 1);
+
+        if (is_pc && is_tb) {
+            sub_40FED0();
+
+            if (!combat_turn_based_start()) {
+                return;
+            }
+
+            combat_callbacks.field_4();
+
+            if (dword_5FC22C) {
+                sub_4B6E70(obj);
+            }
+        }
+
+        gsound_start_combat_music(obj);
+    }
+
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        tig_debug_printf("Combat: combat_critter_toggle_combat_mode: Failed to grab art: %u!\n", art_id);
+        obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+        return;
+    }
+
+    if (tig_art_id_frame_get(art_id) >= art_anim_data.num_frames) {
+        art_id = tig_art_id_frame_set(art_id, 0);
+    }
+
+    object_set_current_aid(obj, art_id);
+    object_set_current_aid(obj, sub_465020(obj));
+
+    if (combat_mode_is_active) {
+        if (is_pc) {
+            combat_callbacks.field_0(0);
+        }
+
+        if (!v1 && sub_4234F0(obj)) {
+            sub_424070(obj, 3, 0, 0);
+        }
+    } else {
+        if (is_pc) {
+            combat_callbacks.field_0(1);
+            sub_4AA580(obj);
+        }
+
+        if (!v1 && !is_tb) {
+            sub_435BD0(obj);
+        }
+    }
+
+    if ((critter_flags2 & OCF2_COMBAT_TOGGLE_FX) != 0) {
+        sub_456E60(obj, 223);
+    }
 }
 
 // 0x4B4320
