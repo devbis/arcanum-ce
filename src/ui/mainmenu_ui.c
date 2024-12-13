@@ -146,6 +146,7 @@ static bool main_menu_button_create_ex(MainMenuButtonInfo *info, int width, int 
 static void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str, TigRect* rect, unsigned int flags);
 static void sub_546DD0();
 static void mainmenu_ui_create_shared_radio_buttons();
+static bool sub_546EE0(TigMessage* msg);
 static void mainmenu_ui_refresh_button_text(int btn, unsigned int flags);
 static void sub_547EF0();
 static void sub_5480C0(int a1);
@@ -5672,9 +5673,598 @@ void mainmenu_ui_create_shared_radio_buttons()
 }
 
 // 0x546EE0
-void sub_546EE0()
+bool sub_546EE0(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    MainMenuWindowInfo* window;
+    int idx;
+    MesFileEntry mes_file_entry;
+    MesFileEntry description_mes_file_entry;
+    John v1;
+    char str[MAX_STRING];
+    int v2;
+
+    window = main_menu_window_info[dword_64C414];
+
+    if (dword_64C414 == 17) {
+        if (sub_5862D0(msg, dword_5C3624)) {
+            return true;
+        }
+    }
+
+    if (sub_5695F0()) {
+        return false;
+    }
+
+    if (msg->type == TIG_MESSAGE_MOUSE) {
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN) {
+            if (window->field_78 > 0
+                && window->field_5C.x >= msg->data.mouse.x
+                && window->field_5C.y >= msg->data.mouse.y
+                && msg->data.mouse.x < window->field_5C.x + window->field_5C.width
+                && msg->data.mouse.y < window->field_5C.y + window->field_5C.height) {
+                if (window->field_80 != NULL) {
+                    window->field_80(msg->data.mouse.x - window->field_70, msg->data.mouse.y - window->field_74 - stru_5C3628.y);
+                    return true;
+                }
+            }
+
+            if (dword_64C414 != 8
+                && (msg->data.mouse.x < stru_5C3648.x
+                    || msg->data.mouse.y < stru_5C3648.y
+                    || msg->data.mouse.x >= stru_5C3648.x + stru_5C3648.width
+                    || msg->data.mouse.y >= stru_5C3648.y + stru_5C3648.height)) {
+                sub_549450();
+            }
+        }
+
+        switch (msg->data.mouse.event) {
+        case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+            switch (dword_64C414) {
+            case 0:
+            case 1:
+                sub_5417A0(0);
+                dword_64C414 = 2;
+                sub_541740();
+                return true;
+            case 6:
+                if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                    if (stru_5C36B0[dword_64C244][0]) {
+                        if (!sub_589430()) {
+                            sub_5412D0();
+                        }
+                    } else {
+                        gsound_play_sfx_id(0, 1);
+                        sub_5417A0(1);
+                    }
+                    return true;
+                }
+                break;
+            case 7:
+                if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                    if (dword_64C450) {
+                        sub_5412D0();
+                    } else {
+                        sub_5417A0(1);
+                    }
+                    return true;
+                }
+                break;
+            case 8:
+                if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                    sub_5412D0();
+                    return true;
+                }
+                break;
+            case 17:
+                if (msg->data.mouse.x >= stru_5C3FE0.x
+                    && msg->data.mouse.y - stru_5C3628.y >= stru_5C3FE0.y
+                    && msg->data.mouse.x < stru_5C3FE0.x + stru_5C3FE0.width
+                    && msg->data.mouse.y - stru_5C3628.y < stru_5C3FE0.y + stru_5C3FE0.height) {
+                    gsound_play_sfx_id(0, 1);
+                    sub_545FD0(msg->data.mouse.x, msg->data.mouse.y - stru_5C3628.y);
+                    return true;
+                }
+
+                if (msg->data.mouse.x >= stru_5C3FF0.x
+                    && msg->data.mouse.y - stru_5C3628.y >= stru_5C3FF0.y
+                    && msg->data.mouse.x < stru_5C3FF0.x + stru_5C3FF0.width
+                    && msg->data.mouse.y - stru_5C3628.y < stru_5C3FF0.y + stru_5C3FF0.height) {
+                    gsound_play_sfx_id(0, 1);
+                    sub_545FD0(msg->data.mouse.x, msg->data.mouse.y - stru_5C3628.y);
+                    return true;
+                }
+                break;
+            }
+
+            if (window->field_6C != NULL
+                && window->field_5C.width > 0
+                && msg->data.mouse.x >= window->field_5C.x
+                && msg->data.mouse.y - stru_5C3628.y >= window->field_5C.y
+                && msg->data.mouse.x < window->field_5C.x + window->field_5C.width
+                && msg->data.mouse.y - stru_5C3628.y < window->field_5C.y + window->field_5C.height) {
+                gsound_play_sfx_id(0, 1);
+                window->field_6C(msg->data.mouse.x - window->field_5C.x, msg->data.mouse.y - window->field_5C.y - stru_5C3628.y);
+                return true;
+            }
+
+            return false;
+        case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
+        case TIG_MESSAGE_MOUSE_MIDDLE_BUTTON_UP:
+            switch (dword_64C414) {
+            case 0:
+            case 1:
+                sub_5417A0(0);
+                dword_64C414 = 2;
+                sub_541740();
+                return true;
+            }
+            return false;
+        case TIG_MESSAGE_MOUSE_IDLE:
+
+            if (window->field_20 != NULL) {
+                window->field_20(msg->data.mouse.x, msg->data.mouse.y);
+                return true;
+            }
+            return false;
+        default:
+            return false;
+        }
+    }
+
+    if (msg->type == TIG_MESSAGE_BUTTON) {
+        switch (msg->data.button.state) {
+        case TIG_BUTTON_STATE_PRESSED:
+            if (window->field_10 != NULL && window->field_10(msg->data.button.button_handle)) {
+                return true;
+            }
+            return false;
+        case TIG_BUTTON_STATE_RELEASED:
+            if (window->field_14 != NULL && window->field_14(msg->data.button.button_handle)) {
+                return true;
+            }
+
+            for (idx = 0; idx < window->num_buttons; idx++) {
+                if (msg->data.button.button_handle == window->buttons[idx].button_handle) {
+                    if (window->buttons[idx].field_10 > 0) {
+                        if (window->execute_func != NULL) {
+                            dword_5C3FB8 = window->execute_func(idx);
+                            if (dword_5C3FB8 == 0) {
+                                return true;
+                            }
+                        }
+
+                        sub_5417A0(0);
+                        dword_64C414 = window->buttons[idx].field_10;
+                        sub_541740();
+                        return true;
+                    }
+
+                    if (window->buttons[idx].field_10 == 0) {
+                        sub_5412D0();
+                        if (stru_5C36B0[dword_64C244][1]
+                            || dword_64C414 == 2
+                            || dword_64C414 == 3 ) {
+                            mainmenu_ui_exit_game();
+                        }
+                        dword_64C414 = 0;
+                        return true;
+                    }
+
+                    if (window->buttons[idx].field_10 == -2) {
+                        sub_5417A0(1);
+                        if (dword_64C414 == 0) {
+                            sub_5412D0();
+                        }
+                    }
+                    return true;
+                }
+            }
+
+            return false;
+        case TIG_BUTTON_STATE_MOUSE_INSIDE:
+            if (window->field_18 != NULL) {
+                window->field_18(msg->data.button.button_handle);
+            }
+
+            for (idx = 0; idx < window->num_buttons; idx++) {
+                if (msg->data.button.button_handle == window->buttons[idx].button_handle) {
+                    break;
+                }
+            }
+
+            if (idx < window->num_buttons) {
+                if (window->num != -1) {
+                    mainmenu_ui_refresh_button_text(idx, 0x2);
+                }
+
+                v2 = window->buttons[idx].field_2C;
+            } else {
+                v2 = -1;
+            }
+
+            if (v2 == 0) {
+                if (msg->data.button.button_handle == stru_5C45D8.button_handle) {
+                    v2 = stru_5C45D8.field_2C;
+                } else if (msg->data.button.button_handle == stru_5C4838.button_handle) {
+                    v2 = stru_5C4838.field_2C;
+                } else {
+                    return false;
+                }
+            }
+
+            if (v2 > 0) {
+                mes_file_entry.num = 6999;
+                if (!mes_search(mainmenu_ui_mainmenu_mes_file, &mes_file_entry)) {
+                    tig_debug_printf("MMUI: ERROR: Hover Text for button is Unreachable!\n");
+                    return false;
+                }
+
+                mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
+
+                description_mes_file_entry.num = v2;
+                mes_get_msg(mainmenu_ui_mainmenu_mes_file, &description_mes_file_entry);
+
+                sprintf(str, "%s\n%s", mes_file_entry.str, description_mes_file_entry.str);
+
+                v1.type = 6;
+                v1.str = str;
+                sub_550750(&v1);
+                return true;
+            }
+
+            return false;
+        case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
+            if (window->field_1C != NULL) {
+                window->field_1C(msg->data.button.button_handle);
+            }
+
+            for (idx = 0; idx < window->num_buttons; idx++) {
+                if (msg->data.button.button_handle == window->buttons[idx].button_handle) {
+                    break;
+                }
+            }
+
+            if (idx < window->num_buttons) {
+                if (window->num != -1) {
+                    mainmenu_ui_refresh_button_text(idx, 0);
+                }
+
+                v2 = window->buttons[idx].field_2C;
+            } else {
+                v2 = -1;
+            }
+
+            if (v2 == 0) {
+                if (msg->data.button.button_handle == stru_5C45D8.button_handle) {
+                    v2 = stru_5C45D8.field_2C;
+                } else if (msg->data.button.button_handle == stru_5C4838.button_handle) {
+                    v2 = stru_5C4838.field_2C;
+                } else {
+                    return false;
+                }
+            }
+
+            if (v2 > 0) {
+                sub_550720();
+                return true;
+            }
+
+            return false;
+        default:
+            return false;
+        }
+    }
+
+    if (msg->type == TIG_MESSAGE_KEYBOARD) {
+        if (msg->data.keyboard.pressed) {
+            return false;
+        }
+
+        switch (dword_64C414) {
+        case 0:
+            return false;
+        case 1:
+            sub_5417A0(0);
+            dword_64C414 = 2;
+            sub_541740();
+            return true;
+        case 2:
+            if (msg->data.keyboard.key == DIK_ESCAPE
+                && dword_64C43C > 1) {
+                gsound_play_sfx_id(0, 1);
+                sub_5412D0();
+                dword_64C414 = 0;
+                mainmenu_ui_exit_game();
+            }
+            return false;
+        case 6:
+            if (msg->data.keyboard.key == DIK_O) {
+                if (!stru_5C36B0[dword_64C244][1]) {
+                    sub_5412D0();
+                }
+                return true;
+            }
+            return false;
+        case 7:
+            switch (msg->data.keyboard.key) {
+            case DIK_ESCAPE:
+                gsound_play_sfx_id(0, 1);
+                sub_5417A0(1);
+                if (dword_64C414 == 0) {
+                    sub_5412D0();
+                }
+                return true;
+            case DIK_UP:
+                sub_543060();
+                return true;
+            case DIK_DOWN:
+                sub_5430D0();
+                return true;
+            case DIK_BACK:
+            case DIK_DELETE:
+                gsound_play_sfx_id(0, 1);
+                sub_543160();
+                return true;
+            case DIK_RETURN:
+            case DIK_NUMPADENTER:
+                sub_5480C0(2);
+                return true;
+            }
+            return false;
+        case 8:
+            switch (msg->data.keyboard.key) {
+            case DIK_ESCAPE:
+                gsound_play_sfx_id(0, 1);
+                sub_5417A0(1);
+                if (dword_64C414 == 0) {
+                    sub_5412D0();
+                }
+                return true;
+            case DIK_UP:
+                sub_544210();
+                return true;
+            case DIK_DOWN:
+                sub_544250();
+                return true;
+            case DIK_BACK:
+            case DIK_DELETE:
+                gsound_play_sfx_id(0, 1);
+                sub_544320();
+                return true;
+            case DIK_RETURN:
+            case DIK_NUMPADENTER:
+                sub_5480C0(2);
+                return true;
+            }
+            return false;
+        case 17:
+            if (msg->data.keyboard.key == DIK_ESCAPE) {
+                gsound_play_sfx_id(0, 1);
+                tig_net_reset_connection();
+                sub_5417A0(1);
+                if (dword_64C414 == 0) {
+                    sub_5412D0();
+                }
+                return true;
+            }
+            return false;
+        case 22:
+            switch (msg->data.keyboard.key) {
+            case DIK_ESCAPE:
+                gsound_play_sfx_id(0, 1);
+                sub_5417A0(1);
+                if (dword_64C414 == 0) {
+                    sub_5412D0();
+                }
+                return true;
+            case DIK_UP:
+                if (dword_5C3618 > 0 ) {
+                    dword_5C3618--;
+                    mainmenu_ui_refresh_multiplayer_select_char(0);
+                    sub_5806F0(stru_64C2A8);
+                    return true;
+                }
+                return false;
+            case DIK_DOWN:
+                if (dword_5C3618 < dword_64C420 - 1) {
+                    dword_5C3618++;
+                    mainmenu_ui_refresh_multiplayer_select_char(0);
+                    sub_5806F0(stru_64C2A8);
+                    return true;
+                }
+                return false;
+            case DIK_BACK:
+            case DIK_DELETE:
+                if (dword_5C3618 >= 0 && dword_5C3618 < dword_64C420) {
+                    TigWindowModalDialogInfo modal_dialog_info;
+                    TigWindowModalDialogChoice choice;
+                    char str[MAX_STRING];
+                    char path[TIG_MAX_PATH];
+
+                    modal_dialog_info.x = 237;
+                    modal_dialog_info.y = 232;
+                    modal_dialog_info.process = NULL;
+                    modal_dialog_info.redraw = sub_4045A0;
+
+                    if (dword_64C41C[dword_5C3618] != OBJ_HANDLE_NULL) {
+                        mes_file_entry.num = 2050;
+                        mes_get_msg(sub_549840(), &mes_file_entry);
+
+                        sub_441B60(dword_64C41C[dword_5C3618], dword_64C41C[dword_5C3618], str);
+                        snprintf(path, sizeof(path), mes_file_entry.str, str);
+
+                        modal_dialog_info.text = path;
+                        modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK_CANCEL;
+                        tig_window_modal_dialog(&modal_dialog_info, &choice);
+
+                        if (choice == TIG_WINDOW_MODAL_DIALOG_CHOICE_OK) {
+                            objid_id_to_str(str, sub_407EF0(dword_64C41C[dword_5C3618]));
+                            snprintf(path, sizeof(path), "Players\\%s.mpc", str);
+                            tig_file_remove(path);
+                            snprintf(path, sizeof(path), "Players\\%s_b.bmp", str);
+                            tig_file_remove(path);
+                            snprintf(path, sizeof(path), "Players\\%s.bmp", str);
+                            tig_file_remove(path);
+
+                            dword_5C3618 = -1;
+
+                            if (dword_64C41C != NULL) {
+                                FREE(dword_64C41C);
+                                dword_64C420 = 0;
+                            }
+
+                            sub_4A3D70(&dword_64C41C, &dword_64C420);
+                        }
+                    } else {
+                        mes_file_entry.num = 2051;
+                        mes_get_msg(sub_549840(), &mes_file_entry);
+
+                        modal_dialog_info.text = mes_file_entry.str;
+                        modal_dialog_info.type = TIG_WINDOW_MODAL_DIALOG_TYPE_OK;
+                        tig_window_modal_dialog(&modal_dialog_info, &choice);
+                    }
+
+                    mainmenu_ui_refresh_multiplayer_select_char(0);
+                    sub_5806F0(stru_64C2A8);
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        default:
+            return false;
+        }
+    }
+
+    if (msg->type == TIG_MESSAGE_CHAR) {
+        if (sub_549A60()) {
+            return false;
+        }
+
+        if ((dword_64C414 == 15 || dword_64C414 == 14)
+            && msg->data.character.ch == '\r'
+            && sub_552070() != 9) {
+            gsound_play_sfx_id(0, 1);
+            sub_5480C0(2);
+            return true;
+        }
+
+        for (idx = 0; idx < window->num_buttons; idx++) {
+            bool hidden;
+            tig_button_is_hidden(window->buttons[idx].button_handle, &hidden);
+            if (!hidden && msg->data.character.ch == window->buttons[idx].field_14) {
+                break;
+            }
+        }
+
+        if (idx >= window->num_buttons) {
+            return false;
+        }
+
+        if (window->buttons[idx].art_num == -1) {
+            gsound_play_sfx_id(3027, 1);
+        } else {
+            gsound_play_sfx_id(0, 1);
+        }
+
+        if (window->buttons[idx].field_10 > 0) {
+            if (window->execute_func != NULL) {
+                dword_5C3FB8 = window->execute_func(idx);
+                if (!dword_5C3FB8) {
+                    return true;
+                }
+            }
+
+            sub_5417A0(0);
+            dword_64C414 = window->buttons[idx].field_10;
+            sub_541740();
+            return true;
+        }
+
+        if (window->buttons[idx].field_10 == 0) {
+            sub_5412D0();
+            if (stru_5C36B0[dword_64C244][1] || dword_64C414 == 2 || dword_64C414 == 3) {
+                mainmenu_ui_exit_game();
+            }
+            dword_64C414 = 0;
+            return true;
+        }
+
+        if (window->buttons[idx].field_10 == -2) {
+            sub_5417A0(1);
+            if (dword_64C414 == 0) {
+                sub_5412D0();
+            }
+            return true;
+        }
+
+        if (window->buttons[idx].field_10 == -1) {
+            switch (dword_64C414) {
+            case 3:
+                switch (idx) {
+                case 3:
+                    if (!sub_541690()) {
+                        // FIXME: Looks wrong.
+                        tig_button_hide(3);
+
+                        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                            // FIXME: Looks wrong.
+                            return sub_549310(3);
+                        }
+
+                        // FIXME: Looks wrong.
+                        sub_4A38B0(sub_549310, 3);
+                    }
+                    return true;
+                case 4:
+                    if (!stru_5C36B0[dword_64C244][0]) {
+                        sub_5417A0(1);
+
+                        if (!dword_64C414) {
+                            sub_5412D0();
+                        }
+                    }
+                    return true;
+                }
+
+                return true;
+            case 4:
+                switch (idx) {
+                case 1:
+                    if (!sub_541690()) {
+                        // FIXME: Looks wrong.
+                        tig_button_hide(1);
+
+                        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                            // FIXME: Looks wrong.
+                            return sub_549310(1);
+                        }
+
+                        // FIXME: Looks wrong.
+                        sub_4A38B0(sub_549310, 3);
+                    }
+                    return true;
+                case 2:
+                    if (!stru_5C36B0[dword_64C244][0]) {
+                        sub_5417A0(1);
+
+                        if (!dword_64C414) {
+                            sub_5412D0();
+                        }
+                    }
+                    return true;
+                }
+
+                return true;
+            }
+
+            return true;
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 // 0x547E00
