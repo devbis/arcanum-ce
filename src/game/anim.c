@@ -5077,10 +5077,12 @@ bool sub_426840(AnimRunInfo* run_info)
         return false;
     }
 
-    // TODO: Incomplete.
+    if (target_loc == -1) {
+        return false;
+    }
 
     source_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    run_info->path.max = sub_4201C0(source_loc, target_loc, &(run_info->path.rotations));
+    run_info->path.max = sub_4201C0(source_loc, target_loc, run_info->path.rotations);
     if (run_info->path.max == 0) {
         return false;
     }
