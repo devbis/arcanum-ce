@@ -1729,7 +1729,7 @@ void timeevent_load_nodes_to_map(const char* name)
     }
 
     for (index = 0; index < count; index++) {
-        if (timeevent_load_node(&timeevent, stream)) {
+        if (!timeevent_load_node(&timeevent, stream)) {
             break;
         }
 
