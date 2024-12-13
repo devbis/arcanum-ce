@@ -400,6 +400,7 @@ void dialog_exit()
             mes_unload(dword_5D19F4[index]);
         }
     }
+    FREE(dword_5D19F4);
 
     for (index = 0; index < dword_5D1A04; index++) {
         if (dword_5D1A08[index].path[0] != '\0') {
