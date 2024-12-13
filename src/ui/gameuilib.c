@@ -158,7 +158,7 @@ void gameuilib_reset()
 {
     int index;
 
-    for (index = 0; index < MODULE_COUNT; index--) {
+    for (index = 0; index < MODULE_COUNT; index++) {
         if (gameuilib_modules[index].reset_func != NULL) {
             gameuilib_modules[index].reset_func();
         }
