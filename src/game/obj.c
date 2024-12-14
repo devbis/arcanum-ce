@@ -3725,8 +3725,8 @@ void sub_40C7F0(Object* dst, Object* src, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(src->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN]);
-    sub_4E4280(&v1, &(dst->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN]));
+    v1.ptr = &(src->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+    sub_4E4280(&v1, &(dst->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]));
 }
 
 // 0x40C840
@@ -3735,7 +3735,7 @@ void sub_40C840(Object* object, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN]);
+    v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
     sub_4E3FA0(&v1);
 }
 
