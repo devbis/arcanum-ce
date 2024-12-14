@@ -3208,11 +3208,12 @@ bool anim_load_internal(GameLoadInfo* load_info)
         }
 
         if (extent_size > 0) {
-            while (idx < extent_size) {
+            while (extent_size > 0) {
                 if (!sub_4227F0(&(anim_run_info[idx]), load_info->stream)) {
                     return false;
                 }
                 idx++;
+                extent_size--;
             }
         } else if (extent_size < 0) {
             idx += -extent_size;
@@ -3239,7 +3240,7 @@ bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fread(&(run_info->field_14), 4, 1, stream) != 1) return false;
     if (!sub_443AD0(&(run_info->field_20), 0, stream) ) return false;
     if (tig_file_fread(&(run_info->field_28), 8, 1, stream) != 1) return false;
-    if (tig_file_fread(&(run_info->current_goal), 8, 1, stream) != 1) return false;
+    if (tig_file_fread(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
     for (index = 0; index <= run_info->current_goal; index++) {
         if (!sub_4229A0(&(run_info->goals[index]), stream)) {
