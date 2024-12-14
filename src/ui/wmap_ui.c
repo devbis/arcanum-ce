@@ -161,6 +161,8 @@ static bool wmap_ui_town_note_load(WmapNote* note, TigFile* stream);
 static bool sub_5606B0(TigRect* rect, TigFile* stream);
 static void sub_5607E0();
 static bool wmap_load_worldmap_info();
+static void sub_560EE0();
+static void sub_560EF0();
 static bool wmap_ui_create();
 static void sub_561430(long long location);
 static void sub_561490(long long location, WmapCoords* coords);
@@ -1138,7 +1140,128 @@ void sub_560790(int64_t a1, int a2)
 // 0x5607E0
 void sub_5607E0()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t loc;
+    int64_t sector_id;
+    MesFileEntry mes_file_entry;
+    John v1;
+
+    if (wmap_ui_created) {
+        sub_560F40();
+        return;
+    }
+
+    pc_obj = player_get_pc_obj();
+
+    if (pc_obj == OBJ_HANDLE_NULL
+        || sub_45D8D0(pc_obj)
+        || sub_45D800(pc_obj)) {
+        return;
+    }
+
+    if (sub_560740()) {
+        mes_file_entry.num = 602; // "You cannot access the World Map during an encounter."
+        mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+
+        v1.type = 6;
+        v1.str = mes_file_entry.str;
+        sub_550750(&v1);
+
+        return;
+    }
+
+    loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
+    sector_id = sub_4CFC50(loc);
+    if (sub_4D0EE0(sector_id)) {
+        mes_file_entry.num = 605; // "The World Map is not available."
+        mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+
+        v1.type = 6;
+        v1.str = mes_file_entry.str;
+        sub_550750(&v1);
+
+        return;
+    }
+
+    if (combat_critter_is_combat_mode_active(pc_obj)) {
+        if (!sub_4B3D90(pc_obj)) {
+            mes_file_entry.num = 600; // "You cannot access the World Map during combat."
+            mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+
+            v1.type = 6;
+            v1.str = mes_file_entry.str;
+            sub_550750(&v1);
+
+            return;
+        }
+        combat_critter_deactivate_combat_mode(pc_obj);
+    }
+
+    if (!wmap_load_worldmap_info()) {
+        if (dword_66D9C8) {
+            sub_452650(pc_obj);
+            return;
+        }
+
+        mes_file_entry.num = 605; // "The World Map is not available."
+        mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+
+        v1.type = 6;
+        v1.str = mes_file_entry.str;
+        sub_550750(&v1);
+
+        return;
+    }
+
+    if (dword_66D9C8) {
+        dword_66D874 = 0;
+    } else {
+        sub_560EF0();
+    }
+
+    if (wmap_ui_created) {
+        sub_560F40();
+        return;
+    }
+
+    if (!sub_551A80(0)) {
+        return;
+    }
+
+    if (!sub_551A80(5)) {
+        return;
+    }
+
+    sub_424070(player_get_pc_obj(), 4, false, true);
+
+    if (!wmap_ui_create()) {
+        sub_560F40();
+        sub_551A80(0);
+
+        if (dword_66D9C8) {
+            sub_452650(pc_obj);
+            return;
+        }
+
+        mes_file_entry.num = 605; // "The World Map is not available."
+        mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
+
+        v1.type = 6;
+        v1.str = mes_file_entry.str;
+        sub_550750(&v1);
+
+        return;
+    }
+
+    if (dword_66D874 != 0) {
+        sub_562B70(2);
+    } else if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        sub_560F40();
+    }
+
+    stru_5C9228[dword_66D868].field_48();
+
+    sub_460790(3, 0);
 }
 
 // 0x560AA0
