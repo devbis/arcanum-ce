@@ -189,7 +189,7 @@ static bool sub_563200(int a1, int a2);
 static void sub_563210(int a1, int a2);
 static void sub_563270();
 static void sub_5632A0(int direction);
-static void sub_563300(int direction);
+static void sub_563300(int direction, int a2, int a3, int a4);
 static void sub_563590(WmapCoords* a1, bool a2);
 static void sub_563610();
 static void sub_563750(int direction);
@@ -2698,9 +2698,107 @@ void sub_5632A0(int direction)
 }
 
 // 0x563300
-void sub_563300(int direction)
+void sub_563300(int direction, int a2, int a3, int a4)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    TigRect one;
+    TigRect two;
+    TigRect three;
+    int dx;
+    int dy;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+    one = v1->rect;
+    two = stru_5C9B38;
+    three = one;
+
+    switch (direction) {
+    case 0:
+        dx = 0;
+        dy = a4;
+        one.height = a4;
+        three.width = 0;
+        break;
+    case 1:
+        dx = -a4;
+        dy = a4;
+        one.height = a4;
+        two.x = stru_5C9B38.x - a4;
+        three.x += three.width - a4;
+        three.y += dy;
+        three.width = dy;
+        three.height -= dy;
+        break;
+    case 2:
+        dx = -a4;
+        dy = 0;
+        one.width = 0;
+        two.x = stru_5C9B38.x - a4;
+        two.width += a4;
+        three.x += three.width - a4;
+        three.width = a4;
+        break;
+    case 3:
+        dx = -a4;
+        dy = -a4;
+        one.height = stru_5C9B38.height + a4;
+        one.y = one.height + three.y - (a4 + stru_5C9B38.height);
+        two.width = 0;
+        three.x += three.width - a4;
+        three.width = a4;
+        three.height -= a4;
+        break;
+    case 4:
+        dx = 0;
+        dy = -a4;
+        one.height = stru_5C9B38.height + a4;
+        one.y = one.height + three.y - (stru_5C9B38.height + a4);
+        two.width = 0;
+        three.width = 0;
+        break;
+    case 5:
+        dx = a4;
+        dy = -a4;
+        one.y = one.height + three.y - (stru_5C9B38.height + a4);
+        one.height = stru_5C9B38.height + a4;
+        two.width = 0;
+        three.x += three.width - a4;
+        three.width = a4;
+        three.height -= a4;
+        break;
+    case 6:
+        dx = a4;
+        dy = 0;
+        one.width = 0;
+        three.width = a4;
+        two.width = a4 + stru_5C9B38.width;
+        break;
+    case 7:
+        dx = a4;
+        dy = a4;
+        one.height = a4;
+        two.x = stru_5C9B38.x - a4;
+        three.y = dy + three.y;
+        three.width = dy;
+        three.height -= dy;
+        break;
+    }
+
+    tig_window_scroll_rect(wmap_ui_window, &(v1->rect), dx, dy);
+
+    if (v1->field_4C != NULL) {
+        if (one.width != 0) {
+            v1->field_4C(&one);
+        }
+
+        if (three.width != 0) {
+            v1->field_4C(&three);
+        }
+
+        if (two.width != 0) {
+            v1->field_4C(&two);
+        }
+    }
 }
 
 // 0x563590
