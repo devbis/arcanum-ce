@@ -2841,7 +2841,26 @@ void sub_563AC0(int x, int y, WmapCoords* coords)
 // 0x563B10
 void sub_563B10(int x, int y, WmapCoords* coords)
 {
-    // TODO: Incomplete.
+    TigRect rect;
+    int64_t width;
+    int64_t height;
+
+    rect = stru_5C9228[dword_66D868].rect;
+
+    if (sub_5614F0()) {
+        width = 2000;
+        height = 2000;
+    } else {
+        int64_t limit_x;
+        int64_t limit_y;
+        location_get_limits(&limit_x, &limit_y);
+
+        width = limit_x / 64;
+        height = limit_y / 64;
+    }
+
+    coords->x = (int)(((x - rect.x) * width) / rect.width);
+    coords->y = (int)(((y - rect.y - stru_5C9B08.y) * height) / rect.height);
 }
 
 // 0x563C00
