@@ -244,7 +244,7 @@ static void wmap_note_vbid_lock(WmapNote* note);
 static void sub_565F00(TigVideoBuffer* video_buffer, TigRect* rect);
 static void wmap_town_refresh_rect(TigRect* rect);
 static void sub_566A80(S5C9228 *a1, TigRect *a2, TigRect *a3);
-static void sub_566D10(int a1, int* a2, TigRect* a3, TigRect* a4, S5C9228* a5);
+static void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, S5C9228* a5);
 
 // 0x5C9220
 static int dword_5C9220 = -1;
@@ -3982,7 +3982,174 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
 // 0x5657A0
 void sub_5657A0(TigRect* rect)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    TigRect tmp_rect;
+    TigVideoBufferBlitInfo vb_blit_info;
+    TigRect vb_src_rect;
+    TigRect vb_dst_rect;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int offset_x;
+    int offset_y;
+    S5C9228_F180* v2;
+    int min_x;
+    int min_y;
+    int max_x;
+    int max_y;
+    int x;
+    int y;
+    int idx;
+    WmapNote* note;
+    int area;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+
+    if (rect == NULL) {
+        rect = &(v1->rect);
+    }
+
+    tmp_rect = *rect;
+
+    tig_window_fill(wmap_ui_window, &tmp_rect, tig_color_make(0, 0, 0));
+
+    if (v1->field_68[0] == '\0') {
+        return;
+    }
+
+    offset_x = v1->field_34;
+    offset_y = v1->field_38;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    vb_src_rect.width = 5;
+    vb_src_rect.height = 5;
+
+    vb_blit_info.flags = 0;
+    vb_blit_info.src_rect = &vb_src_rect;
+    vb_blit_info.dst_rect = &vb_dst_rect;
+
+    if (!tig_window_vbid_get(wmap_ui_window, &(vb_blit_info.dst_video_buffer)) != TIG_OK) {
+        tig_debug_printf("WMapUI: Zoomed Blit: ERROR: Blit FAILED!\n");
+        return;
+    }
+
+    min_x = offset_x / v1->field_16C;
+    if (min_x < 0) {
+        min_x = 0;
+    }
+
+    min_y = offset_y / v1->field_170;
+    if (min_y < 0) {
+        min_y = 0;
+    }
+
+    v2 = &(v1->field_180[min_y * v1->field_178 + min_x]);
+
+    max_x = tmp_rect.width / v2->rect.width + min_x + 1;
+    if (max_x > v1->field_178) {
+        max_x = v1->field_178;
+    }
+
+    max_y = tmp_rect.height / v2->rect.height + min_y + 2;
+    if (max_y > v1->field_17C) {
+        max_y = v1->field_17C;
+    }
+
+    for (y = min_y; y < max_y; y++) {
+        for (x = min_x; x < max_x; x++) {
+            idx = y * v1->field_178 + x;
+            v2 = &(v1->field_180[idx]);
+            vb_src_rect.x = tmp_rect.x + vb_src_rect.width * x - offset_x;
+            vb_src_rect.y = tmp_rect.y + vb_src_rect.height * y - offset_y;
+            vb_src_rect.width = v2->rect.width;
+            vb_src_rect.height = v2->rect.height;
+
+            if (tig_rect_intersection(&vb_src_rect, &tmp_rect, &vb_dst_rect) != TIG_OK) {
+                break;
+            }
+
+            vb_src_rect.x = vb_dst_rect.x - vb_src_rect.x;
+            vb_src_rect.y = vb_dst_rect.y - vb_src_rect.y;
+            vb_src_rect.width = vb_dst_rect.width;
+            vb_src_rect.height = vb_dst_rect.height;
+
+            if (sub_562FA0(idx)) {
+                vb_blit_info.src_video_buffer = v2->video_buffer;
+                if (tig_video_buffer_blit(&vb_blit_info) != TIG_OK) {
+                    tig_debug_printf("WMapUI: Zoomed Blit: ERROR: Blit FAILED!\n");
+                    return;
+                }
+
+                sub_562FC0(idx);
+            }
+        }
+    }
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    vb_src_rect.x = 0;
+    vb_src_rect.y = 0;
+
+    vb_dst_rect.x = 0;
+    vb_dst_rect.y = 0;
+
+    for (idx = 0; idx < *v1->num_notes; idx++) {
+        note = &(v1->notes[idx]);
+        if (stru_5C9160[note->field_28].field_14 == 1
+            && sub_565CF0(note)) {
+            sub_566D10(note->field_28, &(note->coords), &tmp_rect, rect, v1);
+            sub_565D00(note, &tmp_rect, rect);
+        }
+    }
+
+    sub_566A80(v1, &tmp_rect, rect);
+
+    area = area_get_last_known_area(player_get_pc_obj());
+    if (area != AREA_UNKNOWN) {
+        WmapCoords coords;
+
+        sub_561490(area_get_location(area), &coords);
+        sub_566D10(7, &coords, &tmp_rect, rect, v1);
+    }
+
+    offset_x = v1->field_3C.x - stru_5C9160[4].width / 2 - v1->field_34;
+    offset_y = v1->field_3C.y + stru_5C9160[4].height / -2 - v1->field_38;
+
+    vb_dst_rect.x = offset_x + tmp_rect.x;
+    vb_dst_rect.y = offset_y + tmp_rect.y;
+    vb_dst_rect.width = stru_5C9160[4].width;
+    vb_dst_rect.height = stru_5C9160[4].height;
+
+    if (tig_rect_intersection(&vb_dst_rect, rect, &vb_dst_rect) == TIG_OK) {
+        dst_rect = vb_dst_rect;
+        vb_dst_rect.x -= tmp_rect.x + offset_x;
+        vb_dst_rect.y -= tmp_rect.y + offset_y;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = stru_5C9160[4].data.art_id;
+        art_blit_info.src_rect = &vb_dst_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        art_blit_info.dst_video_buffer = dword_64E7F4;
+        tig_window_blit_art(wmap_ui_window, &art_blit_info);
+    }
+
+    if (tig_rect_intersection(&stru_5C9B38, rect, &dst_rect) == TIG_OK) {
+        src_rect.x = stru_5C9B38.x - dst_rect.x;
+        src_rect.y = stru_5C9B38.y - dst_rect.y;
+        src_rect.width = dword_66D8B4 - (stru_5C9B38.x - dst_rect.x);
+        src_rect.height = dword_66D8B8 - (stru_5C9B38.y - dst_rect.y);
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = wmap_ui_nav_cvr_art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+        tig_window_blit_art(wmap_ui_window, &art_blit_info);
+    }
 }
 
 // 0x565CF0
@@ -4499,7 +4666,7 @@ void sub_566CC0(int64_t* location_ptr)
 }
 
 // 0x566D10
-void sub_566D10(int a1, int* a2, TigRect* a3, TigRect* a4, S5C9228* a5)
+void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, S5C9228* a5)
 {
     int dx;
     int dy;
@@ -4507,8 +4674,8 @@ void sub_566D10(int a1, int* a2, TigRect* a3, TigRect* a4, S5C9228* a5)
     TigRect src_rect;
     TigRect dst_rect;
 
-    dx = a2[0] - src_rect.width / 2 - a5->field_34;
-    dy = a2[1] - src_rect.height / 2 - a5->field_38;
+    dx = coords->x - src_rect.width / 2 - a5->field_34;
+    dy = coords->y - src_rect.height / 2 - a5->field_38;
 
     src_rect.x = a3->x + dx;
     src_rect.y = a3->y + dy;
