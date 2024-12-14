@@ -1753,6 +1753,7 @@ void sub_583D90(TigRect* rect)
 
     while (pos > 0) {
         str[pos - 1] = '*';
+        pos--;
     }
 
     font_desc.width = 0;
@@ -1874,6 +1875,7 @@ void sub_584150(TigRect* rect)
 
     while (pos > 0) {
         str[pos - 1] = '*';
+        pos--;
     }
 
     dst_rect.x = 327;
@@ -1905,6 +1907,7 @@ void sub_584150(TigRect* rect)
 
     while (pos > 0) {
         str[pos - 1] = '*';
+        pos--;
     }
 
     dst_rect.x = 327;
