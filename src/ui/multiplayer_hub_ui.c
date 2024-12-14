@@ -2359,6 +2359,7 @@ void sub_5850C0(int x, int y)
             && y >= stru_5CC5F8[index].y && y <= stru_5CC5F8[index].y + 42) {
             break;
         }
+        index++;
     }
 
     switch (stru_5CC5F8[index].num) {
