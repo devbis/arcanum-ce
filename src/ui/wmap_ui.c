@@ -429,6 +429,12 @@ static int dword_66D898;
 // 0x66D89C
 static int dword_66D89C;
 
+// 0x66D8A0
+static int dword_66D8A0;
+
+// 0x66D8A4
+static int dword_66D8A4;
+
 // 0x66D8A8
 static bool dword_66D8A8;
 
@@ -1267,7 +1273,124 @@ void sub_5607E0()
 // 0x560AA0
 bool wmap_load_worldmap_info()
 {
-    // TODO: Incomplete.
+    const char* name;
+    char path[TIG_MAX_PATH];
+    MesFileEntry mes_file_entry;
+    char* str;
+    int wmap;
+    int idx;
+    S5C9228_F180* v1;
+    S5C9228* v2;
+    int map_keyed_to;
+
+    name = sub_402FE0();
+    if (*name == '\0') {
+        return false;
+    }
+
+    if (strcmp(byte_66D8BC, name) == 0) {
+        return false;
+    }
+
+    strcpy(byte_66D8BC, name);
+
+    tig_str_parse_set_separator(',');
+
+    sprintf(path, "WorldMap\\WorldMap.mes");
+    if (mes_load(path, &dword_66D6FC)) {
+        mes_file_entry.num = 20;
+        mes_get_msg(dword_66D6FC, &mes_file_entry);
+        str = mes_file_entry.str;
+        tig_str_parse_value(&str, &dword_66D858);
+        tig_str_parse_value(&str, &dword_66D85C);
+
+        mes_file_entry.num = 50;
+        if (map_get_worldmap(sub_40FF40(), &wmap) && wmap != -1) {
+            mes_file_entry.num += wmap;
+        }
+        mes_get_msg(dword_66D6FC, &mes_file_entry);
+        str = mes_file_entry.str;
+        tig_str_parse_value(&str, &stru_5C9228[0].field_178);
+        tig_str_parse_value(&str, &stru_5C9228[0].field_17C);
+
+        if (stru_5C9228[0].field_180 == NULL) {
+            stru_5C9228[0].field_174 = stru_5C9228[0].field_178 * stru_5C9228[0].field_17C;
+            stru_5C9228[0].field_180 = (S5C9228_F180*)CALLOC(stru_5C9228[0].field_174, sizeof(S5C9228_F180));
+
+            // FIXME: Meaningless, calloc already zeroes it out.
+            for (idx = 0; idx < stru_5C9228[0].field_174; idx++) {
+                stru_5C9228[0].field_180[idx].flags = 0;
+            }
+        }
+
+        tig_str_parse_str_value(&str, stru_5C9228[0].field_68);
+
+        if (!sub_562FA0(0)) {
+            tig_debug_printf("wmap_load_worldmap_info: ERROR: wmTileArtLockMode failed!\n");
+            exit(EXIT_FAILURE);
+        }
+
+        stru_5C9228[0].field_16C = stru_5C9228[0].field_180->rect.width;
+        stru_5C9228[0].field_170 = stru_5C9228[0].field_180->rect.height;
+        stru_5C9228[0].field_58 = stru_5C9228[0].field_16C * stru_5C9228[0].field_178;
+        stru_5C9228[0].field_5C = stru_5C9228[0].field_170 * stru_5C9228[0].field_17C;
+        sub_562FC0(0);
+        sub_562FE0(0);
+
+        tig_str_parse_named_str_value(&str, "ZoomedName:", stru_5C9228[0].str);
+
+        dword_66D87C = 0;
+        if (tig_str_parse_named_value(&str, "MapKeyedTo:", &map_keyed_to)) {
+            dword_66D87C = map_keyed_to;
+        }
+
+        for (idx = 0; idx < stru_5C9228[0].field_174; idx++) {
+            v1 = &(stru_5C9228[0].field_180[idx]);
+            if ((v1->flags & 0x02) == 0) {
+                v1->flags = 0x02;
+                v1->rect.width = 0;
+                v1->rect.height = 0;
+                v1->field_18 = NULL;
+                v1->field_1C = 0;
+            }
+        }
+    } else {
+        stru_5C9228[0].field_178 = 8;
+        stru_5C9228[0].field_17C = 8;
+        dword_66D858 = 0;
+        stru_5C9228[0].field_16C = 250;
+        stru_5C9228[0].field_170 = 250;
+        dword_66D85C = 0;
+        stru_5C9228[0].field_68[0] = '\0';
+        stru_5C9228[0].field_58 = 2000;
+        stru_5C9228[0].field_5C = 2000;
+        stru_5C9228[0].str[0] = '\0';
+    }
+
+    for (idx = 0; idx < 3; idx++) {
+        v2 = &(stru_5C9228[idx]);
+        if (v2->rect.width > 0) {
+            v2->field_24 = v2->rect.width / 2;
+            v2->field_28 = v2->rect.height / 2;
+            v2->field_2C = stru_5C9228[0].field_178 * stru_5C9228[0].field_16C - v2->field_24;
+            v2->field_30 = stru_5C9228[0].field_17C * stru_5C9228[0].field_170 - v2->field_28;
+        }
+
+        if (v2->num_notes != NULL && idx != 2) {
+            *v2->num_notes = 0;
+        }
+
+        v2->field_198 = -1;
+    }
+
+    dword_5C9AD8 = -1;
+    dword_66D8A0 = stru_5C9160[5].width;
+    dword_66D8A4 = stru_5C9160[5].height;
+    qword_66D850 = 320;
+    sub_560EE0();
+    dword_66D9BC = 1;
+
+    return true;
 }
 
 // 0x560EE0
