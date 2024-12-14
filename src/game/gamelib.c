@@ -2,19 +2,76 @@
 
 #include <stdio.h>
 
+#include "game/ai.h"
+#include "game/anim_private.h"
+#include "game/anim.h"
+#include "game/animfx.h"
+#include "game/antiteleport.h"
+#include "game/area.h"
+#include "game/background.h"
+#include "game/bless.h"
+#include "game/brightness.h"
+#include "game/broadcast.h"
 #include "game/ci.h"
+#include "game/ci.h"
+#include "game/critter.h"
+#include "game/curse.h"
+#include "game/description.h"
+#include "game/dialog.h"
 #include "game/facade.h"
+#include "game/gameinit.h"
+#include "game/gfade.h"
 #include "game/gmovie.h"
+#include "game/gsound.h"
+#include "game/invensource.h"
+#include "game/item_effect.h"
+#include "game/item.h"
+#include "game/jumppoint.h"
+#include "game/level.h"
 #include "game/li.h"
+#include "game/light_scheme.h"
+#include "game/light.h"
+#include "game/magictech.h"
+#include "game/map.h"
 #include "game/mes.h"
+#include "game/monstergen.h"
+#include "game/mt_ai.h"
+#include "game/mt_item.h"
+#include "game/mt_obj_node.h"
+#include "game/multiplayer.h"
+#include "game/name.h"
+#include "game/newspaper.h"
+#include "game/party.h"
 #include "game/player.h"
 #include "game/portrait.h"
+#include "game/quest.h"
+#include "game/random.h"
+#include "game/reaction.h"
+#include "game/reputation.h"
+#include "game/roof.h"
+#include "game/rumor.h"
+#include "game/script_name.h"
+#include "game/script.h"
+#include "game/sector_script.h"
 #include "game/sector.h"
+#include "game/skill.h"
+#include "game/spell.h"
 #include "game/stat.h"
 #include "game/tb.h"
 #include "game/tc.h"
+#include "game/tech.h"
+#include "game/teleport.h"
+#include "game/text_floater.h"
 #include "game/tile_block.h"
+#include "game/tile_script.h"
+#include "game/tile.h"
+#include "game/timeevent.h"
+#include "game/townmap.h"
+#include "game/trap.h"
+#include "game/ui.h"
 #include "game/wall.h"
+#include "game/wallcheck.h"
+#include "game/wp.h"
 
 #define GAMELIB_LONG_VERSION_LENGTH 40
 #define GAMELIB_SHORT_VERSION_LENGTH 36
@@ -74,68 +131,68 @@ static void sub_405070();
 
 // 0x59A330
 static GameLibModule gamelib_modules[MODULE_COUNT] = {
-    { "Description" },
-    { "Item-Effect" },
-    { "Teleport" },
-    { "Sector" },
-    { "Random" },
-    { "Critter" },
-    { "Name" },
-    { "ScriptName" },
-    { "Portait" },
-    { "AnimFX" },
-    { "Script" },
-    { "MagicTech" },
-    { "MT-AT" },
-    { "MT-Item" },
-    { "Spell" },
-    { "Stat" },
-    { "Level" },
-    { "Map" },
-    { "LightScheme" },
-    { "MagicTech-Post" },
-    { "Player" },
-    { "Area" },
-    { "Facade" },
-    { "TC" },
-    { "Dialog" },
-    { "Skill" },
-    { "SoundGame" },
-    { "Item" },
-    { "Combat" },
-    { "TimeEvent" },
-    { "Rumor" },
-    { "Quest" },
-    { "Bless" },
-    { "Curse" },
-    { "AI" },
-    { "Broadcast" },
-    { "Anim" },
-    { "Anim-Private" },
-    { "Multiplayer" },
-    { "Tech" },
-    { "Background" },
-    { "Reputation" },
-    { "Reaction" },
-    { "Tile-Script" },
-    { "Sector-Script" },
-    { "WP" },
-    { "Inven-Source" },
-    { "Newspaper" },
-    { "TownMap" },
-    { "GMovie" },
-    { "Brightness" },
-    { "GFade" },
-    { "Anti-Teleport" },
-    { "Trap" },
-    { "WallCheck" },
-    { "LI" },
-    { "CI" },
-    { "TileBlock" },
-    { "MT-Obj-Node" },
-    { "MonsterGen" },
-    { "Party" },
-    { "gameinit" },
+    { "Description", description_init, NULL, description_mod_load, description_mod_unload, description_exit, NULL, NULL, NULL, NULL },
+    { "Item-Effect", item_effect_init, NULL, item_effect_mod_load, item_effect_mod_unload, item_effect_exit, NULL, NULL, NULL, NULL },
+    { "Teleport", teleport_init, teleport_reset, NULL, NULL, teleport_exit, teleport_ping, NULL, NULL, NULL },
+    { "Sector", sub_4D10C0, sub_4D10D0, NULL, NULL, sub_4D10E0, NULL, NULL, sub_4D1150, sub_4D12B0, NULL },
+    { "Random", random_init, NULL, NULL, NULL, random_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Critter", critter_init, NULL, NULL, NULL, critter_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Name", name_init, NULL, NULL, NULL, name_exit, NULL, NULL, NULL, NULL },
+    { "ScriptName", script_name_init, NULL, script_name_mod_load, script_name_mod_unload, script_name_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Portait", portrait_init, NULL, NULL, NULL, portrait_exit, NULL, NULL, NULL, NULL, NULL },
+    { "AnimFX", animfx_init, NULL, NULL, NULL, animfx_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Script", script_init, script_reset, script_mod_load, script_mod_unload, script_exit, NULL, NULL, script_save, script_load, NULL },
+    { "MagicTech", magictech_init, magictech_reset, NULL, NULL, magictech_exit, NULL, NULL, NULL, NULL, NULL },
+    { "MT-AT", mt_ai_init, mt_ai_reset, NULL, NULL, mt_ai_exit, NULL, NULL, NULL, NULL, NULL },
+    { "MT-Item", mt_item_init, NULL, NULL, NULL, mt_item_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Spell", spell_init, NULL, NULL, NULL, spell_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Stat", stat_init, NULL, NULL, NULL, stat_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Level", level_init, NULL, NULL, NULL, level_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Map", map_init, map_reset, map_mod_load, map_mod_unload, map_exit, map_ping, map_update_view, map_save, map_load, map_resize },
+    { "LightScheme", light_scheme_init, light_scheme_reset, light_scheme_mod_load,light_scheme_mod_unload, light_scheme_exit, NULL, NULL, light_scheme_save, light_scheme_load, NULL },
+    { "MagicTech-Post", magictech_post_init, NULL, NULL, NULL, NULL, NULL, NULL, magictech_post_save, magictech_post_load, NULL },
+    { "Player", player_init, player_reset,0, NULL, player_exit, NULL, NULL, player_save, player_load, NULL },
+    { "Area", area_init, area_reset, area_mod_load, area_mod_unload, area_exit, NULL, NULL, area_save, area_load, NULL },
+    { "Facade", facade_init, NULL, NULL, NULL, facade_exit, NULL, sub_4C9E00, NULL, NULL, facade_resize },
+    { "TC", tc_init, NULL, NULL, NULL, tc_exit, NULL, NULL, NULL, NULL, tc_resize },
+    { "Dialog", dialog_init, NULL, NULL, NULL, dialog_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Skill", skill_init, NULL, NULL, NULL, skill_exit, NULL, NULL, skill_save, skill_load, NULL },
+    { "SoundGame", gsound_init, gsound_reset, gsound_mod_load, gsound_mod_unload, gsound_exit, gsound_ping, NULL, gsound_save, gsound_load, NULL },
+    { "Item", item_init, NULL, NULL, NULL, item_exit, NULL, NULL, NULL, NULL, item_resize },
+    { "Combat", combat_init, combat_reset,0, NULL, combat_exit, NULL, NULL, combat_save, combat_load, NULL },
+    { "TimeEvent", timeevent_init, timeevent_reset, NULL, NULL, timeevent_exit, timeevent_ping, NULL, timeevent_save, timeevent_load, NULL },
+    { "Rumor", rumor_init, rumor_reset, rumor_mod_load, rumor_mod_unload, rumor_exit, NULL, NULL, rumor_save, rumor_load, NULL },
+    { "Quest", quest_init, quest_reset, quest_mod_load, quest_mod_unload, quest_exit, NULL, NULL, quest_save, quest_load, NULL },
+    { "Bless", NULL, NULL, bless_mod_load, bless_mod_unload, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "Curse", NULL, NULL, curse_mod_load, curse_mod_unload, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "AI", ai_init, NULL, ai_mod_load, ai_mod_unload, ai_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Broadcast", broadcast_init, NULL, NULL, NULL, broadcast_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Anim", anim_init, anim_reset, NULL, NULL,anim_exit, NULL, NULL, anim_save, anim_load, NULL },
+    { "Anim-Private", anim_private_init, anim_private_reset, NULL, NULL, anim_private_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Multiplayer", multiplayer_init, multiplayer_reset, multiplayer_mod_load, multiplayer_mod_unload, multiplayer_exit, multiplayer_ping, NULL, multiplayer_save, mutliplayer_load, NULL },
+    { "Tech", tech_init, NULL, NULL, NULL, tech_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Background", background_init, NULL, NULL, NULL, background_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Reputation", reputation_init, NULL, reputation_mod_load, reputation_mod_unload, reputation_exit, NULL,0, NULL, NULL, NULL },
+    { "Reaction", reaction_init, NULL, NULL, NULL, reaction_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Tile-Script", tile_script_init, tile_script_reset, NULL, NULL, tile_script_exit,0, sub_4C05E0, NULL, NULL, tile_script_resize },
+    { "Sector-Script", sector_script_init, sector_script_reset, NULL, NULL, sector_script_exit, NULL, NULL, NULL, NULL, NULL },
+    { "WP", wp_init, NULL, NULL, NULL, wp_exit, NULL, sub_4BFDB0, NULL, NULL, wp_resize },
+    { "Inven-Source", invensource_init, NULL, NULL, NULL, invensource_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Newspaper", newspaper_init, newspaper_reset, NULL, NULL, newspaper_exit, NULL, NULL, newspaper_save, newspaper_load, NULL },
+    { "TownMap", NULL, townmap_reset, townmap_mod_load, townmap_mod_unload, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "GMovie", NULL, NULL, gmovie_mod_load, gmovie_mod_unload, NULL, NULL, NULL, NULL, NULL, NULL },
+    { "Brightness", brightness_init, NULL, NULL, NULL, brightness_exit, NULL, NULL, NULL, NULL, NULL },
+    { "GFade", gfade_init, NULL, NULL, NULL, gfade_exit, NULL, NULL, NULL, NULL, gfade_resize },
+    { "Anti-Teleport", antiteleport_init, NULL, antiteleport_mod_load, antiteleport_mod_unload, antiteleport_exit, NULL, NULL, NULL, NULL, NULL },
+    { "Trap", trap_init, NULL, NULL, NULL, trap_exit, NULL, NULL, NULL, NULL, NULL },
+    { "WallCheck", wallcheck_init, wallcheck_reset, NULL, NULL, wallcheck_exit, sub_437E10, NULL, NULL, NULL, NULL },
+    { "LI", li_init, NULL, NULL, NULL, li_exit, NULL, NULL, NULL, NULL, li_resize },
+    { "CI", ci_init, NULL, NULL, NULL, ci_exit, NULL, NULL, NULL, NULL, NULL },
+    { "TileBlock", tileblock_init, NULL, NULL, NULL, tileblock_exit, NULL, sub_4BB060, NULL, NULL, tileblock_resize },
+    { "MT-Obj-Node", mt_obj_node_init, NULL, NULL, NULL, mt_obj_node_exit, NULL, NULL, NULL, NULL, NULL },
+    { "MonsterGen", monstergen_init, monstergen_reset, NULL, NULL, monstergen_exit, NULL, NULL, monstergen_save, monstergen_load, monstergen_resize },
+    { "Party", party_init, party_reset, NULL,0, party_exit, NULL, NULL, NULL, NULL, NULL },
+    { "gameinit", gameinit_init, gameinit_reset, gameinit_mod_load, gameinit_mod_unload, gameinit_exit, NULL, NULL, NULL, NULL, NULL },
 };
 
 // 0x59ADD8
