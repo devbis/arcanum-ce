@@ -236,6 +236,7 @@ static void sub_565130(int a1);
 static bool sub_565140();
 static void sub_565170(WmapCoords* coords);
 static void sub_565230();
+static void sub_5656B0(int x, int y, WmapCoords* coords);
 static void sub_5657A0(TigRect* rect);
 static bool sub_565CF0(WmapNote* note);
 static void sub_565D00(WmapNote* note, TigRect* a2, TigRect* a3);
@@ -3783,9 +3784,39 @@ void sub_565230()
 }
 
 // 0x5656B0
-void sub_5656B0()
+void sub_5656B0(int x, int y, WmapCoords* coords)
 {
-    // TODO: Incomplete.
+    TigRect rect;
+    int64_t width;
+    int64_t height;
+    int offset_x;
+    int offset_y;
+
+    rect = stru_5C9228[dword_66D868].rect;
+
+    if (sub_5614F0()) {
+        width = 2000;
+        height = 2000;
+    } else {
+        int64_t limit_x;
+        int64_t limit_y;
+        location_get_limits(&limit_x, &limit_y);
+
+        width = limit_x / 64;
+        height = limit_y / 64;
+    }
+
+    offset_x = x - rect.x;
+    if (offset_x == 0) {
+        offset_x = 1;
+    }
+    coords->x = (int)(offset_x * rect.width / width);
+
+    offset_y = y - rect.y;
+    if (offset_y == 0) {
+        offset_y = 1;
+    }
+    coords->y = (int)(offset_y * rect.height / height);
 }
 
 // 0x5657A0
