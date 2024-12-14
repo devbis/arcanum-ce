@@ -3360,7 +3360,7 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
         dst_rect.width = window->field_5C.width;
         dst_rect.height = window->field_5C.height + 5;
 
-        if (tig_window_fill(dword_5C3624, &dst_rect, tig_color_make(0, 0, 0)) == TIG_OK) {
+        if (tig_window_fill(dword_5C3624, &dst_rect, tig_color_make(0, 0, 0)) != TIG_OK) {
             tig_debug_printf("mmUIMPLoadGameRefreshFunc: ERROR: tig_window_fill2 failed!\n");
             exit(EXIT_FAILURE);
         }
