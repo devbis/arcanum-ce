@@ -478,51 +478,6 @@ static tig_timestamp_t dword_66D9D0;
 // 0x66D9D4
 static WmapNote* dword_66D9D4;
 
-static S5C9228 s = {
-    6,
-    { 150, 52, 501, 365 },
-    0x96,
-    0x34,
-    0x1F5,
-    0x16D,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    sub_563270,
-    sub_5657A0,
-    sub_5632A0,
-    -1,
-    0,
-    0,
-    0,
-    0,
-    { 0 },
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    stru_64FBD8,
-    200,
-    &dword_66D86C,
-    200,
-    -1,
-    0,
-    0,
-    { 0 },
-    { 0 },
-    NULL,
-    sub_563AC0,
-};
-
 // NOTE: Rare case - this array is put behind uninitialized stuff because it
 // obtains references to many internal state variables.
 //
