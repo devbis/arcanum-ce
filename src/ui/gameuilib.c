@@ -257,9 +257,7 @@ bool gameuilib_save()
                 tig_debug_printf("gameuilib_save(): save function %d (%s) failed\n",
                     index,
                     gameuilib_modules[index].name);
-                tig_file_fclose(stream);
-                tig_file_remove(SAVE_CURRENT_DATA2_SAV);
-                return false;
+                break;
             }
 
             tig_file_fgetpos(stream, &pos);
@@ -272,11 +270,16 @@ bool gameuilib_save()
 
             if (tig_file_fwrite(&sentinel, sizeof(sentinel), 1, stream) != 1) {
                 tig_debug_printf("gameuilib_save(): ERROR: Sentinel Failed to Save!\n");
-                tig_file_fclose(stream);
-                tig_file_remove(SAVE_CURRENT_DATA2_SAV);
-                return false;
+                break;
             }
         }
+    }
+
+    tig_file_fclose(stream);
+
+    if (index < MODULE_COUNT) {
+        tig_file_remove(SAVE_CURRENT_DATA2_SAV);
+        return false;
     }
 
     return true;
@@ -320,8 +323,7 @@ bool gameuilib_load()
                 tig_debug_printf("gameuilib_load(): load function %d (%s) failed\n",
                     index,
                     gameuilib_modules[index].name);
-                tig_file_fclose(stream);
-                return false;
+                break;
             }
 
             tig_file_fgetpos(stream, &pos);
@@ -334,16 +336,20 @@ bool gameuilib_load()
 
             if (tig_file_fread(&sentinel, sizeof(sentinel), 1, stream) != 1) {
                 tig_debug_printf("gameuilib_load(): ERROR: Load Sentinel Failed to Load!");
-                tig_file_fclose(stream);
-                return false;
+                break;
             }
 
             if (sentinel != SENTINEL) {
                 tig_debug_printf("gameuilib_load(): ERROR: Load Sentinel Failed to Match!");
-                tig_file_fclose(stream);
-                return false;
+                break;
             }
         }
+    }
+
+    tig_file_fclose(stream);
+
+    if (index < MODULE_COUNT) {
+        return false;
     }
 
     return true;
