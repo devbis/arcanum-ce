@@ -202,7 +202,7 @@ static void sub_563D50(WmapNote* note);
 static void sub_563D80(int a1, int a2);
 static WmapNote* sub_563D90(int id);
 static bool sub_563DE0(WmapCoords* coords, int* id);
-static bool sub_563E00(WmapCoords* coords, int* id, int a3);
+static bool sub_563E00(WmapCoords* coords, int* idx_ptr, int a3);
 static bool sub_563F00(WmapCoords* coords, int64_t* a2);
 static void sub_563F90(WmapCoords* coords);
 static void sub_564030(WmapNote* note);
@@ -3119,9 +3119,53 @@ bool sub_563DE0(WmapCoords* coords, int* id)
 }
 
 // 0x563E00
-bool sub_563E00(WmapCoords* coords, int* id, int a3)
+bool sub_563E00(WmapCoords* coords, int* idx_ptr, int a3)
 {
-    // TODO: Incomplete.
+    int dx;
+    int dy;
+    S5C9228* v1;
+    int idx;
+    WmapNote* note;
+
+    switch (a3) {
+    case 0:
+    case 2:
+        dx = dword_66D890 / 2;
+        dy = dword_66D894 / 2;
+        break;
+    case 1:
+        dx = 20;
+        dy = 20;
+        break;
+    default:
+        if (idx_ptr != NULL) {
+            *idx_ptr = -1;
+        }
+        return false;
+    }
+
+    v1 = &(stru_5C9228[a3]);
+    if (v1->notes != NULL) {
+        for (idx = *v1->num_notes - 1; idx >= 0; idx--) {
+            note = &(v1->notes[idx]);
+            if (stru_5C9160[note->field_28].field_14
+                && coords->x >= note->coords.x - dx
+                && coords->x <= note->coords.x + dx
+                && coords->y >= note->coords.y - dy
+                && coords->y <= note->coords.y + dy) {
+                if (idx_ptr != NULL) {
+                    *idx_ptr = idx;
+                }
+                return true;
+            }
+        }
+    }
+
+    if (idx_ptr != NULL) {
+        *idx_ptr = -1;
+    }
+
+    return false;
 }
 
 // 0x563F00
