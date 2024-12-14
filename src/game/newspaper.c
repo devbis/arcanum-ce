@@ -51,7 +51,7 @@ void newspaper_exit()
 // 0x4BF0C0
 bool newspaper_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(off_6876D0, sizeof(TWENTY_FIVE) * sizeof(*off_6876D0), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(off_6876D0, sizeof(*off_6876D0) * TWENTY_FIVE, 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_6876CC, sizeof(dword_6876CC), 1, load_info->stream) != 1) return false;
 
     return true;
@@ -60,7 +60,7 @@ bool newspaper_load(GameLoadInfo* load_info)
 // 0x4BF100
 bool newspaper_save(TigFile* stream)
 {
-    if (tig_file_fwrite(off_6876D0, sizeof(TWENTY_FIVE) * sizeof(*off_6876D0), 1, stream) != 1) return false;
+    if (tig_file_fwrite(off_6876D0, sizeof(*off_6876D0) * TWENTY_FIVE, 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_6876CC, sizeof(dword_6876CC), 1, stream) != 1) return false;
 
     return true;
