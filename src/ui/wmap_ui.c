@@ -217,7 +217,7 @@ static void sub_564320(TextEdit* textedit);
 static void sub_564360(int id);
 static bool sub_5643C0(const char* str);
 static bool sub_5643E0(WmapCoords* coords);
-static bool sub_564780(WmapCoords* coords, int* a2);
+static bool sub_564780(WmapCoords* coords, int* idx_ptr);
 static void sub_564830(int a1, WmapCoords* coords);
 static void sub_564840(int a1);
 static void sub_5648E0(int a1, int a2, bool a3);
@@ -3399,9 +3399,32 @@ bool sub_5643E0(WmapCoords* coords)
 }
 
 // 0x564780
-bool sub_564780(WmapCoords* coords, int* a2)
+bool sub_564780(WmapCoords* coords, int* idx_ptr)
 {
-    // TODO: Incomplete.
+    int v1;
+    int dx;
+    int dy;
+    int idx;
+
+    v1 = 0;
+    dx = dword_66D8A0 / 2 + 5;
+    dy = dword_66D8A4 / 2 + 5;
+
+    if (dword_66D868 == 2) {
+        v1 = 1;
+    }
+
+    for (idx = stru_64E048[v1].field_3C0 - 1; idx >= 0; idx--) {
+        if (coords->x >= stru_64E048[v1].field_0[idx].coords.x - dx
+            && coords->x <= stru_64E048[v1].field_0[idx].coords.x + dx
+            && coords->y >= stru_64E048[v1].field_0[idx].coords.y - dy
+            && coords->y <= stru_64E048[v1].field_0[idx].coords.y + dy) {
+            *idx_ptr = idx;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x564830
