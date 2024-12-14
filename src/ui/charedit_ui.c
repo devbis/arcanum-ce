@@ -3458,6 +3458,9 @@ bool sub_55E110()
         mes_get_msg(charedit_mes_file, &mes_file_entry);
     }
 
+    // Skip "Electrical".
+    num++;
+
     for (index = 0; index < 13; index++) {
         if (index < 8) {
             stru_5C81E0[index].str = stat_get_name(stru_5C81E0[index].value);
@@ -3467,9 +3470,6 @@ bool sub_55E110()
             stru_5C81E0[index].str = mes_file_entry.str;
         }
     }
-
-    // Skip "Electrical".
-    num++;
 
     for (index = 0; index < 23; index++) {
         mes_file_entry.num = num++;
