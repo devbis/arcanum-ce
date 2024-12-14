@@ -1241,7 +1241,7 @@ void sub_55A240()
     }
 
     sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[0]), &(v2[0]), -1, 3);
-    sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[3]), &(v2[3]), -1, 1);
+    sub_55B880(dword_64CA64, dword_64CDD0, &(stru_5C8150[3]), &(v2[3]), -1, 1);
 
     if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 3);
