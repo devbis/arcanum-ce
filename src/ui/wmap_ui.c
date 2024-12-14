@@ -378,6 +378,9 @@ static TigRect stru_66D708;
 // 0x66D718
 static WmapNote stru_66D718;
 
+// 0x66D848
+static tig_sound_handle_t dword_66D848;
+
 // 0x66D850
 static int64_t qword_66D850;
 
@@ -1667,7 +1670,81 @@ bool sub_5614F0()
 // 0x5615D0
 bool sub_5615D0(int a1)
 {
-    // TODO: Incomplete.
+    bool v1 = false;
+    S5C9228* v2;
+    tig_art_id_t art_id;
+    int64_t pc_obj;
+    int64_t loc;
+
+    v2 = &(stru_5C9228[dword_66D868]);
+    if (dword_66D8AC != a1) {
+        switch (a1) {
+        case 0:
+            stru_64E048[0].field_3C8 = dword_66D880 != 0;
+            break;
+        case 2:
+            if (!sub_565140()) {
+                return false;
+            }
+
+            sub_550DA0(2, &stru_64FBC8);
+            sub_57D640();
+            pc_obj = player_get_pc_obj();
+            if (pc_obj != OBJ_HANDLE_NULL
+                && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
+                sub_45E1E0(pc_obj);
+                sub_4AA4A0(pc_obj);
+            }
+            gsound_stop_all(25);
+            dword_66D848 = gsound_play_music_indefinitely("sound\\music\\arcanum.mp3", 25);
+            break;
+        case 3:
+            dword_5C9AD8 = -1;
+            tig_art_interface_id_create(21u, 0, 0, 0, &art_id);
+            tig_mouse_cursor_set_art_id(art_id);
+            v1 = true;
+            break;
+        }
+
+        switch (dword_66D8AC) {
+        case 1:
+            sub_564940();
+            v1 = true;
+            break;
+        case 2:
+            tig_sound_destroy(dword_66D848);
+            pc_obj = player_get_pc_obj();
+            if (pc_obj != OBJ_HANDLE_NULL
+                && (obj_field_int32_get(pc_obj, OBJ_F_FLAGS) & OF_OFF) != 0) {
+                sub_45E1E0(pc_obj);
+                sub_4AA580(pc_obj);
+            }
+            timeevent_clear_all_typed(TIMEEVENT_TYPE_WORLDMAP);
+            dword_66D8AC = a1;
+            sub_550DA0(1, &stru_64FBC8);
+            sub_561800(&(v2->field_3C), &loc);
+            sub_561860(loc);
+            sub_5649F0(loc);
+            break;
+        case 3:
+            sub_564070(1);
+            tig_art_interface_id_create(0, 0, 0, 0, &art_id);
+            tig_mouse_cursor_set_art_id(art_id);
+            break;
+        case 4:
+            tig_button_state_change(stru_5C9B70.button_handle, 1);
+            break;
+        }
+
+        dword_66D8AC = a1;
+
+        if (v1) {
+            sub_5649C0();
+            stru_5C9228[dword_66D868].field_48();
+        }
+    }
+
+    return true;
 }
 
 // 0x561800
