@@ -2280,9 +2280,7 @@ void sub_584CB0(TigRect* rect)
                 && text_rect.y < rect->y + rect->height)) {
             sub_584C30(&text_rect);
 
-            mes_file_entry.num = stru_5CC5F8[index].num;
-            mes_get_msg(sub_549840(), &mes_file_entry);
-            copy = STRDUP(mes_file_entry.str);
+            copy = STRDUP(sub_585630(stru_5CC5F8[index].num));
 
             font_desc.width = 0;
             font_desc.str = copy;
