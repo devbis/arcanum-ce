@@ -5709,7 +5709,7 @@ bool sub_546EE0(TigMessage* msg)
             }
 
             if (dword_64C414 != 8
-                && (msg->data.mouse.x < stru_5C3648.x
+                || (msg->data.mouse.x < stru_5C3648.x
                     || msg->data.mouse.y < stru_5C3648.y
                     || msg->data.mouse.x >= stru_5C3648.x + stru_5C3648.width
                     || msg->data.mouse.y >= stru_5C3648.y + stru_5C3648.height)) {
