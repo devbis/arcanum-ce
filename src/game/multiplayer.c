@@ -1654,7 +1654,25 @@ int sub_4A5840(int64_t obj, mes_file_handle_t mes_file)
 // 0x4A5920
 int sub_4A5920(int64_t obj, mes_file_handle_t mes_file, int num)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry1;
+    MesFileEntry mes_file_entry2;
+
+    mes_file_entry1.num = num;
+    mes_file_entry2.num = num + 10;
+
+    if (mes_search(mes_file, &mes_file_entry2)) {
+        mes_get_msg(mes_file, &mes_file_entry2);
+        if (sub_4A5D80(obj, mes_file_entry2.str)) {
+            return 0;
+        }
+    }
+
+    if (mes_search(mes_file, &mes_file_entry1)) {
+        mes_get_msg(mes_file, &mes_file_entry1);
+        return sub_4A5E10(obj, mes_file_entry1.str);
+    }
+
+    return 0;
 }
 
 // 0x4A59F0
