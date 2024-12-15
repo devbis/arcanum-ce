@@ -808,7 +808,9 @@ void sub_43FCE0(object_id_t obj)
         if (current_aid != next_aid) {
             dword_5E2EB4(&dirty_rect);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, next_aid);
-            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj,
+                OBJ_F_RENDER_FLAGS,
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             sub_4423E0(obj, 0, 0);
         }
     }
