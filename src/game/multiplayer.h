@@ -3,6 +3,7 @@
 
 #include "game/context.h"
 #include "game/obj.h"
+#include "game/matchmaker.h"
 
 typedef void(Func5F0E08)();
 typedef void(Func5F0DF8)(int);
@@ -41,15 +42,15 @@ void sub_4A4280();
 bool sub_4A4320();
 bool sub_4A47D0(int64_t obj, char* str);
 bool sub_4A4C40(int64_t obj, int size, char* path);
-int multiplayer_mm_init(int a1);
+int multiplayer_mm_init(MatchmakerInitInfo* init_info);
 void multiplayer_mm_exit();
 int multiplayer_mm_is_active();
 int multiplayer_mm_ping();
-int multiplayer_mm_motd_get(int a1, int a2, int a3, int a4);
-int multiplayer_mm_login(int a1, int a2);
-int multiplayer_mm_create_account(int a1, int a2, int a3);
-int multiplayer_mm_version_needs_upgrade(int a1);
-int multiplayer_mm_ad_rgb_get(int a1, int a2, int a3);
+int multiplayer_mm_motd_get(char* a1, int a2, char* a3, int a4);
+int multiplayer_mm_login(const char* account, const char* password);
+int multiplayer_mm_create_account(const char* account, const char* password, const char* a3);
+int multiplayer_mm_version_needs_upgrade(const char* version);
+int multiplayer_mm_ad_rgb_get(uint8_t** rgb_ptr, int* width_ptr, int* height_ptr);
 int multiplayer_mm_ad_release();
 int multiplayer_mm_ad_clicked();
 int multiplayer_mm_register(int a1);
@@ -60,7 +61,7 @@ int multiplayer_mm_chatserver_list_free(void* chatservers);
 int multiplayer_mm_chatserver_join(int a1);
 int multiplayer_mm_chatroom_list_get(void** chatrooms, int* count);
 int multiplayer_mm_chatroom_list_free(void* chatrooms);
-int multiplayer_mm_chatroom_join(int a1, int a2);
+int multiplayer_mm_chatroom_join(MatchmakerChatroom* room, int a2);
 int multiplayer_mm_chatroom_members_get(void** members, int* count);
 int multiplayer_mm_chatroom_members_free(void* members);
 int multiplayer_mm_chatroom_create(const char* a1, const char* a2);

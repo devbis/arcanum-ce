@@ -11,7 +11,6 @@
 #include "game/item.h"
 #include "game/magictech.h"
 #include "game/map.h"
-#include "game/matchmaker.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/obj_private.h"
@@ -1311,9 +1310,9 @@ void sub_4A4D60()
 }
 
 // 0x4A4EB0
-int multiplayer_mm_init(int a1)
+int multiplayer_mm_init(MatchmakerInitInfo* init_info)
 {
-    return matchmaker_init(a1);
+    return matchmaker_init(init_info);
 }
 
 // 0x4A4EC0
@@ -1335,33 +1334,33 @@ int multiplayer_mm_ping()
 }
 
 // 0x4A4EF0
-int multiplayer_mm_motd_get(int a1, int a2, int a3, int a4)
+int multiplayer_mm_motd_get(char* a1, int a2, char* a3, int a4)
 {
-    return matchmaker_motd_get(a1, a2, a3, a4);;
+    return matchmaker_motd_get(a1, a2, a3, a4);
 }
 
 // 0x4A4F10
-int multiplayer_mm_login(int a1, int a2)
+int multiplayer_mm_login(const char* a1, const char* a2)
 {
     return matchmaker_login(a1, a2);
 }
 
 // 0x4A4F30
-int multiplayer_mm_create_account(int a1, int a2, int a3)
+int multiplayer_mm_create_account(const char* account, const char* password, const char* a3)
 {
-    return matchmaker_create_account(a1, a2, a3);
+    return matchmaker_create_account(account, password, a3);
 }
 
 // 0x4A4F50
-int multiplayer_mm_version_needs_upgrade(int a1)
+int multiplayer_mm_version_needs_upgrade(const char* version)
 {
-    return matchmaker_version_needs_upgrade(a1);
+    return matchmaker_version_needs_upgrade(version);
 }
 
 // 0x4A4F60
-int multiplayer_mm_ad_rgb_get(int a1, int a2, int a3)
+int multiplayer_mm_ad_rgb_get(uint8_t** rgb_ptr, int* width_ptr, int* height_ptr)
 {
-    return matchmaker_ad_rgb_get(a1, a2, a3);
+    return matchmaker_ad_rgb_get(rgb_ptr, width_ptr, height_ptr);
 }
 
 // 0x4A4F80
@@ -1425,9 +1424,9 @@ int multiplayer_mm_chatroom_list_free(void* chatrooms)
 }
 
 // 0x4A5050
-int multiplayer_mm_chatroom_join(int a1, int a2)
+int multiplayer_mm_chatroom_join(MatchmakerChatroom* room, int a2)
 {
-    return matchmaker_chatroom_join(a1, a2);
+    return matchmaker_chatroom_join(room, a2);
 }
 
 // 0x4A5070
