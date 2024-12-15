@@ -746,7 +746,9 @@ void sub_43FB80(object_id_t obj, int index)
     if (tig_art_id_frame_get(aid) != 0) {
         aid = tig_art_id_frame_set(aid, 0);
         sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
-        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+        obj_field_int32_set(obj,
+            OBJ_F_RENDER_FLAGS,
+            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
         sub_4D9590(obj, true);
     }
 }
