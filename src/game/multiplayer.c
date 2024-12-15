@@ -446,6 +446,7 @@ bool multiplayer_save(TigFile* stream)
         return false;
     }
 
+    cnt = 0;
     node = dword_5F0DEC;
     while (node != NULL) {
         cnt++;
