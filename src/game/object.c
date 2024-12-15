@@ -1096,7 +1096,7 @@ void object_lighting_changed()
     object_lighting = settings_get_value(&settings, "object lighting");
     if (object_lighting < 0) {
         object_lighting = 0;
-    } else if (object_lighting > 1) { {
+    } else if (object_lighting > 1) {
         object_lighting = 1;
     }
     dword_5E2EB4(NULL);
