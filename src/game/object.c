@@ -560,6 +560,8 @@ bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
         OBJ_F_SCENERY_FLAGS,
         obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & ~0x400);
     sub_43D280(obj, OF_OFF);
+
+    return true;
 }
 
 // 0x43F630
