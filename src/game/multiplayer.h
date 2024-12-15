@@ -42,6 +42,7 @@ void sub_4A4280();
 bool sub_4A4320();
 bool sub_4A47D0(int64_t obj, char* str);
 bool sub_4A4C40(int64_t obj, int size, char* path);
+void sub_4A4D60(MatchmakerInitInfo* init_info);
 int multiplayer_mm_init(MatchmakerInitInfo* init_info);
 void multiplayer_mm_exit();
 int multiplayer_mm_is_active();

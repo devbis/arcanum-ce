@@ -1304,9 +1304,48 @@ bool sub_4A4C40(int64_t obj, int size, char* path)
 }
 
 // 0x4A4D60
-void sub_4A4D60()
+void sub_4A4D60(MatchmakerInitInfo* init_info)
 {
-    // TODO: Incomplete.
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+
+    init_info->locale = gamelib_get_locale();
+    init_info->default_locale = "en";
+    init_info->field_18 = sub_460D10;
+    init_info->field_1C = sub_460D30;
+    init_info->field_20 = sub_460D50;
+    init_info->field_24 = sub_460D70;
+    init_info->field_28 = sub_460DB0;
+    init_info->field_2C = sub_460D90;
+    init_info->field_30 = sub_460DD0;
+
+    if (mes_load("Rules\\Matchmaker.mes", &mes_file)) {
+        mes_file_entry.num = 1;
+        mes_get_msg(mes_file, &mes_file_entry);
+        strncpy(byte_5E8D50, mes_file_entry.str, sizeof(byte_5E8D50));
+        init_info->product = byte_5E8D50;
+
+        mes_file_entry.num = 2;
+        mes_get_msg(mes_file, &mes_file_entry);
+        strncpy(byte_5E8DB8, mes_file_entry.str, sizeof(byte_5E8DB8));
+        init_info->default_server = byte_5E8DB8;
+
+        mes_file_entry.num = 3;
+        mes_get_msg(mes_file, &mes_file_entry);
+        init_info->default_port = atoi(mes_file_entry.str);
+
+        mes_file_entry.num = 4;
+        mes_get_msg(mes_file, &mes_file_entry);
+        strncpy(byte_5F0D18, mes_file_entry.str, sizeof(byte_5F0D18));
+        init_info->preferred_servers = byte_5F0D18;
+
+        mes_unload(mes_file);
+    } else {
+        init_info->product = "Arcanum";
+        init_info->default_server = "arcanum.m1.sierra.com";
+        init_info->default_port = 15101;
+        init_info->preferred_servers = "arcanum.m1.sierra.com:15101;arcanum.m2.sierra.com:15101;arcanum.m3.sierra.com:15101";
+    }
 }
 
 // 0x4A4EB0
