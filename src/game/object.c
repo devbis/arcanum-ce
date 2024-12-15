@@ -712,7 +712,7 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
 }
 
 // 0x43FAB0
-void sub_43F9F0(object_id_t obj, int fld, int index)
+void sub_43FAB0(object_id_t obj, int fld, int index)
 {
     tig_art_id_t current_aid;
     tig_art_id_t prev_aid;
@@ -727,7 +727,9 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
             : current_aid;
         if (current_aid != prev_aid) {
             sub_4074E0(obj, fld, index, prev_aid);
-            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj,
+                OBJ_F_RENDER_FLAGS,
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
             dword_5E2EB4(&dirty_rect);
