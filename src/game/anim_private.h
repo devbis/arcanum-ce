@@ -139,15 +139,14 @@ typedef struct AnimID {
 static_assert(sizeof(AnimID) == 0xC, "wrong size");
 
 typedef struct AGModifyData {
-    /* 0000 */  AnimID id;
-    /* 000C */  int field_C;
-    /* 0010 */  int field_10;
-    /* 0014 */  int field_14;
-    /* 0018 */  int field_18;
-    /* 001C */  int field_1C;
-    /* 0020 */  int64_t location;
-    /* 0028 */  tig_art_id_t current_aid;
-    /* 002C */  int field_2C;
+    /* 0000 */ AnimID id;
+    /* 000C */ int field_C;
+    /* 0010 */ int field_10;
+    /* 0014 */ int field_14;
+    /* 0018 */ int64_t field_18;
+    /* 0020 */ int64_t location;
+    /* 0028 */ tig_art_id_t current_aid;
+    /* 002C */ int field_2C;
 } AGModifyData;
 
 static_assert(sizeof(AGModifyData) == 0x30, "wrong size");

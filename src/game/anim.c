@@ -12691,8 +12691,7 @@ void sub_437460(AGModifyData* modify_data)
     modify_data->location = 0;
     modify_data->field_C = 0;
     modify_data->field_10 = 0;
-    modify_data->field_1C = 0;
-    modify_data->field_14 = 0;
+    modify_data->field_14 = -1;
     modify_data->current_aid = TIG_ART_ID_INVALID;
     modify_data->field_2C = -1;
 }
