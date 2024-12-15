@@ -673,11 +673,13 @@ void object_dec_current_aid(object_id_t obj)
             if (tig_art_frame_data(prev_aid, &art_frame_data) == TIG_OK) {
                 if (art_frame_data.offset_x != 0 || art_frame_data.offset_y != 0) {
                     sub_4423E0(prev_aid,
-                        art_frame_data.offset_x + obj_field_int32_get(OBJ_F_OFFSET_X),
-                        art_frame_data.offset_y + obj_field_int32_get(OBJ_F_OFFSET_Y));
+                        art_frame_data.offset_x + obj_field_int32_get(obj, OBJ_F_OFFSET_X),
+                        art_frame_data.offset_y + obj_field_int32_get(obj, OBJ_F_OFFSET_Y));
                 }
             }
-            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+            obj_field_int32_set(obj,
+                OBJ_F_RENDER_FLAGS,
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
             dword_5E2EB4(&dirty_rect);
