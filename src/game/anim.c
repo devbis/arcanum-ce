@@ -12108,9 +12108,95 @@ void sub_434400()
 }
 
 // 0x4346A0
-void anim_goal_follow_obj(int64_t a1, int64_t a2)
+bool anim_goal_follow_obj(int64_t source_obj, int64_t target_obj)
 {
-    // TODO: Incomplete.
+    AnimID anim_id;
+    AnimRunInfo* run_info;
+    bool v1 = false;
+    AnimGoalData goal_data;
+    int range;
+    int64_t source_loc;
+    int64_t target_loc;
+
+    if (source_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (obj_field_int32_get(source_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+        tig_debug_printf("Anim: anim_goal_follow_obj: ERROR: Goal only valid on NPCs!\n");
+        return false;
+    }
+
+    if (sub_423300(source_obj, &anim_id)) {
+        run_info = &(anim_run_info[anim_id.slot_num]);
+        if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x1000) == 0) {
+            if (run_info->cur_stack_data->type != AG_ANIM_FIDGET) {
+                return false;
+            }
+
+            v1 = true;
+        }
+    }
+
+    if (!sub_4348E0(source_obj, 0)) {
+        return false;
+    }
+
+    if (!sub_44D500(&goal_data, source_obj, AG_FOLLOW)) {
+        return false;
+    }
+
+    goal_data.params[AGDATA_TARGET_OBJ].obj = target_obj;
+
+    range = 4;
+    if ((obj_field_int32_get(source_obj, OBJ_F_NPC_FLAGS) & ONF_AI_SPREAD_OUT) != 0) {
+        range = 7;
+    }
+
+    if (sub_44E710(source_obj, &goal_data, &anim_id)) {
+        run_info = &(anim_run_info[anim_id.slot_num]);
+        switch (run_info->cur_stack_data->type) {
+        // NOTE: Not sure why this one was specified explicitly.
+        case AG_RUN_NEAR_OBJ:
+            sub_4364D0(source_obj);
+            return true;
+        case AG_MOVE_NEAR_OBJ:
+        case AG_ATTEMPT_MOVE_NEAR:
+            source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+            target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+            if (sub_4B96F0(source_loc, target_loc) <= range) {
+                sub_4364D0(source_obj);
+                return true;
+            }
+            break;
+        default:
+            sub_4364D0(source_obj);
+            return true;
+        }
+    } else {
+        source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+        target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+        if (sub_4B96F0(source_loc, target_loc) <= range) {
+            sub_4364D0(source_obj);
+            return true;
+        }
+    }
+
+    if (v1) {
+        sub_44E2C0(&anim_id, PRIORITY_HIGHEST);
+    }
+
+    if (!sub_424070(source_obj, 3, false, false)) {
+        return false;
+    }
+
+    goal_data.params[AGDATA_FLAGS_DATA].data |= 0x1000;
+
+    if (!sub_44D520(&goal_data, &stru_5A1908)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4348E0
