@@ -12102,9 +12102,81 @@ bool sub_4341C0(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x434400
-void sub_434400()
+bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
 {
-    // TODO: Incomplete.
+    AnimRunInfo* run_info;
+    AnimGoalData goal_data;
+
+    if (!sub_4339A0(source_obj)) {
+        return false;
+    }
+
+    if (!sub_44E830(source_obj, AG_RUN_TO_TILE, &stru_5A1908)) {
+        if (sub_44D4E0(&goal_data, source_obj, AG_RUN_NEAR_TILE)) {
+            goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
+            goal_data.params[AGDATA_RANGE_DATA].data = range;
+            if (sub_44D520(&goal_data, &stru_5A1908)) {
+                if (sub_45F790(source_obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+                    turn_on_running(stru_5A1908);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    run_info = &(anim_run_info[stru_5A1908.slot_num]);
+    if ((run_info->field_C & 0x40) == 0
+        && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        run_info->field_C |= 0x40;
+    }
+
+    if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc == target_loc) {
+        return true;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        int64_t obj;
+        Packet8 pkt;
+
+        obj = run_info->goals[0].params[AGDATA_SELF_OBJ].obj;
+
+        run_info->path.flags |= 0x04;
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            run_info->goals[0].params[AGDATA_TARGET_TILE].loc = target_loc;
+            sub_44D0C0(run_info);
+        }
+
+        sub_437460(&(pkt.modify_data));
+        pkt.modify_data.id = stru_5A1908;
+        pkt.modify_data.field_C = run_info->field_C;
+        pkt.modify_data.field_10 = run_info->path.flags;
+
+        pkt.type = 8;
+        pkt.modify_data.field_14 = 5;
+        pkt.modify_data.field_18 = target_loc;
+        pkt.field_40 = run_info->field_28;
+        pkt.modify_data.field_2C = run_info->path.curr;
+        pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+        pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            run_info->id.field_8++;
+        }
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        return true;
+    }
+
+    run_info->goals[0].params[AGDATA_TARGET_TILE].loc = target_loc;
+    run_info->path.flags |= 0x04;
+
+    return true;
 }
 
 // 0x4346A0
