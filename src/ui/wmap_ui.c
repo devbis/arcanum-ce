@@ -4629,8 +4629,8 @@ void sub_566D10(int a1, WmapCoords* coords, TigRect* a3, TigRect* a4, S5C9228* a
     TigRect src_rect;
     TigRect dst_rect;
 
-    dx = coords->x - src_rect.width / 2 - a5->field_34;
-    dy = coords->y - src_rect.height / 2 - a5->field_38;
+    dx = coords->x - stru_5C9160[a1].width / 2 - a5->field_34;
+    dy = coords->y - stru_5C9160[a1].height / 2 - a5->field_38;
 
     src_rect.x = a3->x + dx;
     src_rect.y = a3->y + dy;
