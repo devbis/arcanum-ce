@@ -11940,7 +11940,6 @@ bool sub_433640(int64_t obj, int64_t loc)
     AnimID anim_id;
     AnimRunInfo* run_info;
     AnimGoalData goal_data;
-    AGModifyData modify_data;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0) {
