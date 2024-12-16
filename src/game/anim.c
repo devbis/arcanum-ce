@@ -10405,7 +10405,37 @@ bool sub_42E9B0(AnimRunInfo* run_info)
 // 0x42EDC0
 void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bool a4, int* a5)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    bool concealed;
+
+    art_id = *art_id_ptr;
+    concealed = critter_is_concealed(obj);
+
+    if (concealed && basic_skill_get_training(obj, BASIC_SKILL_PROWLING) < TRAINING_EXPERT) {
+        *art_id_ptr = sub_503E50(art_id, 3);
+        return;
+    }
+
+    art_id = sub_503E50(art_id, 1);
+    if (run_info->current_goal <= 0
+        || !a4
+        || (concealed
+            && basic_skill_get_training(obj, BASIC_SKILL_PROWLING) < TRAINING_MASTER)) {
+        *art_id_ptr = art_id;
+        return;
+    }
+
+    if (sub_45D700(obj) <= 0) {
+        run_info->field_C &= ~0x40;
+        *art_id_ptr = art_id;
+        return;
+    }
+
+    art_id = sub_503E50(art_id, 6);
+    if (a5 != NULL) {
+        *a5 = 1;
+    }
+    *art_id_ptr = art_id;
 }
 
 // 0x42EE90
