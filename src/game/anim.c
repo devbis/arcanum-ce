@@ -11762,7 +11762,30 @@ void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
 // 0x433170
 void sub_433170(int64_t obj)
 {
-    // TODO: Incomplete.
+    tig_art_id_t art_id;
+    int idx;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (tig_art_eye_candy_id_create(0, 0, 0, 0, 0, 0, 4, &art_id) != TIG_OK) {
+        ASSERT(0); // 14478, "0"
+        return;
+    }
+
+    for (idx = 0; idx < 7; idx++) {
+        if (sub_407470(obj, OBJ_F_OVERLAY_FORE, idx) == art_id) {
+            return;
+        }
+    }
+
+    for (idx = 0; idx < 7; idx++) {
+        if (sub_407470(obj, OBJ_F_OVERLAY_FORE, idx) == TIG_ART_ID_INVALID) {
+            sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, idx, art_id);
+            return;
+        }
+    }
 }
 
 // 0x433220
