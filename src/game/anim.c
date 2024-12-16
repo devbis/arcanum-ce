@@ -11420,7 +11420,59 @@ bool sub_431A40(AnimRunInfo* run_info)
 // 0x431B20
 bool sub_431B20(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int overlay_fore;
+    int overlay_back;
+    int overlay_light;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 13355, "obj != OBJ_HANDLE_NULL"
+
+    if ((run_info->field_C & 0x8000) != 0
+        || map_is_clearing_objects()
+        || obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data &= ~0x40;
+    if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x80) != 0) {
+        return false;
+    }
+
+    overlay_fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    overlay_back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
+    overlay_light = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data;
+
+    if (overlay_fore != -1 || overlay_back != -1) {
+        if (overlay_back != -5) {
+            if (overlay_fore != -1) {
+                sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, overlay_fore, -1);
+            }
+            if (overlay_back != -1) {
+                sub_43ECF0(obj, OBJ_F_OVERLAY_BACK, overlay_back, -1);
+            }
+        } else {
+            sub_43ECF0(obj, OBJ_F_UNDERLAY, overlay_fore, -1);
+        }
+    } else {
+        if (overlay_light == -1) {
+            return false;
+        }
+    }
+
+    if (overlay_light != -1) {
+        object_set_overlay_light(obj, overlay_light, 0, TIG_ART_ID_INVALID, 0);
+    }
+
+    if (run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data != TIG_SOUND_HANDLE_INVALID) {
+        if ((run_info->field_C & 0x20000) == 0) {
+            tig_sound_destroy(run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data);
+        }
+        run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
+    }
+
+    return true;
 }
 
 // 0x431C40
