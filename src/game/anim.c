@@ -12311,6 +12311,7 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range)
         pkt.field_40 = run_info->field_28;
         pkt.modify_data.field_2C = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
 
@@ -12389,6 +12390,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
         pkt.field_40 = run_info->field_28;
         pkt.modify_data.field_2C = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
 
