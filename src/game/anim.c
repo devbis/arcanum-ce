@@ -257,6 +257,7 @@ static bool sub_4322A0(AnimRunInfo* run_info);
 static bool sub_4324D0(AnimRunInfo* run_info);
 static bool sub_432700(AnimRunInfo* run_info);
 static bool sub_432990(AnimRunInfo* run_info);
+static bool sub_432CF0(int64_t critter_obj);
 static bool sub_432D50(AnimRunInfo* run_info);
 static bool sub_433270(AnimRunInfo* run_info);
 static int sub_437990(int64_t obj, tig_art_id_t art_id, int speed);
@@ -11558,7 +11559,114 @@ bool sub_432700(AnimRunInfo* run_info)
 // 0x432990
 bool sub_432990(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int obj_type;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    int frame;
+    int64_t target_obj;
+    int v1;
+    int64_t weapon_obj;
+    int delay;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 14089, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+
+    if (obj_type_is_critter(obj_type)
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    frame = tig_art_id_frame_get(art_id);
+    if (frame == art_anim_data.num_frames - 1) {
+        // FIXME: Useless.
+        tig_art_type(art_id);
+
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    if (frame == art_anim_data.action_frame - 1) {
+        run_info->field_C |= 0x04;
+    }
+
+    target_obj = run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj;
+
+    if (!sub_4B6D70() && obj_type_is_critter(obj_type)) {
+        v1 = sub_5040D0(art_id);
+        if (v1 == 6 || v1 == 10) {
+            if (frame == art_anim_data.action_frame + 2
+                && sub_432CF0(obj)
+                && (obj_type == OBJ_TYPE_PC
+                    || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
+                && !sub_4294F0(obj, target_obj)) {
+                art_id = tig_art_id_frame_set(art_id, v1 - 3);
+                art_id = tig_art_id_rotation_set(art_id, sub_441B20(obj, target_obj));
+                object_set_current_aid(obj, art_id);
+                run_info->field_C &= ~0x0C;
+            } else {
+                object_inc_current_aid(obj);
+            }
+        } else {
+            if (v1 == 8
+                && frame == art_anim_data.action_frame
+                && sub_432CF0(obj)
+                && (obj_type == OBJ_TYPE_PC
+                    || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
+                && sub_4294F0(obj, target_obj)) {
+                art_id = tig_art_id_frame_set(art_id, v1 - 3);
+                art_id = tig_art_id_rotation_set(art_id, sub_441B20(obj, target_obj));
+                object_set_current_aid(obj, art_id);
+                run_info->field_C &= ~0x0C;
+            } else {
+                object_inc_current_aid(obj);
+            }
+        }
+    } else {
+        object_inc_current_aid(obj);
+    }
+
+    if ((run_info->field_C & 0x80) != 0) {
+        if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+            run_info->field_CFC = 1000 / art_anim_data.fps;
+        } else {
+            tig_debug_printf("Anim: AGupdateAnimAttack: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+            run_info->field_CFC = 100;
+        }
+
+        sub_42EE90(obj, &(run_info->field_CF8));
+
+        weapon_obj = item_wield_get(obj, 1004);
+        delay = run_info->field_CFC - 10 * (item_weapon_magic_speed(weapon_obj, obj) - 10);
+        if (delay < 30) {
+            delay = 30;
+        } else if (delay > 800) {
+            delay = 800;
+        }
+
+        run_info->field_CFC = delay;
+        run_info->field_C &= ~0x80;
+    }
+
+    return true;
 }
 
 // 0x432CF0
