@@ -55,7 +55,7 @@ bool sub_433440(int64_t obj, int rotation);
 bool sub_433580(int64_t obj);
 bool sub_433640(int64_t a1, int64_t a2);
 bool sub_433C80(int64_t obj, int64_t loc);
-bool sub_4341C0(int64_t a1, int64_t a2, int a3);
+bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range);
 bool sub_434400(int64_t source_obj, int64_t target_loc, int range);
 bool anim_goal_follow_obj(int64_t source_obj, int64_t target_obj);
 bool sub_4348E0(int64_t obj, int action_points);
