@@ -249,6 +249,7 @@ static bool sub_431320(AnimRunInfo* run_info);
 static bool sub_431340(AnimRunInfo* run_info);
 static void sub_431550(AnimRunInfo* run_info, int64_t obj);
 static bool sub_4315B0(AnimRunInfo* run_info);
+static void sub_431960(AnimRunInfo* run_info, int64_t obj);
 static void sub_4319F0(AnimRunInfo* run_info, int64_t obj);
 static bool sub_431A40(AnimRunInfo* run_info);
 static bool sub_431B20(AnimRunInfo* run_info);
@@ -11601,7 +11602,130 @@ void sub_431550(AnimRunInfo* run_info, int64_t obj)
 // 0x4315B0
 bool sub_4315B0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int overlay_fore;
+    int overlay_back;
+    int overlay_light;
+    tig_art_id_t art_id;
+    int range;
+    tig_art_id_t light_art_id;
+    TigArtAnimData art_anim_data;
+    int frame = 0;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 13155, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data |= 0x40;
+    run_info->field_CFC = 100;
+
+    overlay_fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    overlay_back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
+    overlay_light = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data;
+    light_art_id = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data;
+    art_id = run_info->cur_stack_data->params[AGDATA_ANIM_ID].data;
+    range = run_info->cur_stack_data->params[AGDATA_RANGE_DATA].data;
+
+    if (overlay_fore == -1
+        && overlay_back == -1
+        && overlay_light == -1) {
+        return true;
+    }
+
+    if ((run_info->field_C & 0x2000) == 0) {
+        AnimFxList* animfx_list;
+        AnimFxNode node;
+
+        animfx_list = animfx_list_get(run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data);
+        sub_4CCD20(animfx_list, &node, obj, -1, run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data);
+        node.art_id_ptr = &art_id;
+        if (!sub_4CD7A0(&node)) {
+            return false;
+        }
+
+        overlay_fore = node.overlay_fore_index;
+        overlay_back = node.overlay_back_index;
+        overlay_light = node.overlay_light_index;
+
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data = overlay_fore;
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data = overlay_back;
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = overlay_light;
+
+        run_info->field_C |= 0x2000;
+    }
+
+    if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+        tig_debug_printf("Anim: AGbeginAnimEyeCandy: ERROR: aid %d failed to load!\n", art_id);
+        ASSERT(0); // 13208, "0"
+        return false;
+    }
+
+    run_info->field_CFC = 1000 / art_anim_data.fps;
+
+    if ((run_info->field_C & 0x800) != 0) {
+        frame = random_between(0, art_anim_data.num_frames - 1);
+    }
+
+    if (overlay_back != -5) {
+        if (overlay_fore == -1) {
+            return false;
+        }
+
+        if (art_id != TIG_ART_ID_INVALID) {
+            art_id = tig_art_eye_candy_id_type_set(art_id, 0);
+            sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, overlay_fore, art_id);
+        }
+
+        art_id = sub_407470(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
+        if (art_id != TIG_ART_ID_INVALID
+            && tig_art_id_frame_get(art_id) != 0) {
+            art_id = tig_art_id_frame_set(art_id, frame);
+            sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, overlay_fore, art_id);
+        }
+
+        if (overlay_back != -1) {
+            art_id = tig_art_eye_candy_id_type_set(art_id, 1);
+            sub_43ECF0(obj, OBJ_F_OVERLAY_BACK, overlay_back, art_id);
+
+            art_id = sub_407470(obj, OBJ_F_OVERLAY_BACK, overlay_back);
+            if (art_id != TIG_ART_ID_INVALID
+                && tig_art_id_frame_get(art_id) != 0) {
+                art_id = tig_art_id_frame_set(art_id, frame);
+                sub_43ECF0(obj, OBJ_F_OVERLAY_BACK, overlay_back, art_id);
+            }
+        }
+    } else {
+        if (overlay_fore == -1) {
+            return false;
+        }
+
+        art_id = tig_art_eye_candy_id_type_set(art_id, 2);
+        sub_43ECF0(obj, OBJ_F_UNDERLAY, overlay_fore, art_id);
+
+        art_id = sub_407470(obj, OBJ_F_UNDERLAY, overlay_fore);
+        if (tig_art_id_frame_get(art_id) != 0) {
+            art_id = tig_art_id_frame_set(art_id, frame);
+            sub_43ECF0(obj, OBJ_F_UNDERLAY, overlay_fore, art_id);
+        }
+    }
+
+    if (overlay_light != -1) {
+        ASSERT(light_art_id != 0); // 13270, "lightAid != 0"
+
+        if (light_art_id != TIG_ART_ID_INVALID) {
+            object_set_overlay_light(obj, overlay_light, 0x20, -1, range);
+            object_set_overlay_light(obj, overlay_light, 0x20, light_art_id, range);
+            sub_43FB80(obj, overlay_light);
+        }
+    }
+
+    sub_431960(run_info, obj);
+
+    return true;
 }
 
 // 0x431960
