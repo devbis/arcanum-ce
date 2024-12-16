@@ -12180,13 +12180,89 @@ bool sub_434AE0(int64_t attacker_obj, int64_t target_obj)
 // 0x434B00
 bool sub_434B00(int64_t attacker_obj, int64_t target_obj, int a3)
 {
-    ASSERT(attacker_obj != target_obj); // attackerObj != targetObj
+    int64_t weapon_obj;
+    unsigned int spell_flags;
+    unsigned int critter_flags2;
+    AnimGoalData goal_data;
+    int64_t source_obj;
+    int64_t block_obj;
+
+    ASSERT(attacker_obj != target_obj); // 15680, "attackerObj != targetObj"
 
     if (attacker_obj == target_obj) {
         return false;
     }
 
-    // TODO: Incomplete.
+    weapon_obj = item_wield_get(attacker_obj, 1004);
+    if (weapon_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+        && (obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DEFAULT_THROWS) != 0
+        && !sub_466DA0(weapon_obj)) {
+        item_remove(weapon_obj);
+
+        return sub_434F80(attacker_obj, weapon_obj, obj_field_int64_get(target_obj, OBJ_F_LOCATION));
+    }
+
+    if (!sub_4348E0(attacker_obj, sub_4B7C30(attacker_obj))) {
+        return false;
+    }
+
+    spell_flags = obj_field_int32_get(attacker_obj, OBJ_F_SPELL_FLAGS);
+    critter_flags2 = obj_field_int32_get(attacker_obj, OBJ_F_CRITTER_FLAGS2);
+
+    if ((spell_flags & OSF_BODY_OF_AIR) != 0
+        && (critter_flags2 & OCF2_ELEMENTAL) == 0) {
+        sub_4364D0(attacker_obj);
+        return false;
+    }
+
+    if (!sub_44D500(&goal_data, attacker_obj, AG_ATTACK)) {
+        sub_4364D0(attacker_obj);
+        return false;
+    }
+
+    goal_data.params[AGDATA_TARGET_OBJ].obj = target_obj;
+
+    if (sub_44E6F0(attacker_obj, &goal_data)) {
+        sub_4364D0(attacker_obj);
+        return false;
+    }
+
+    source_obj = attacker_obj;
+    if (sub_436720(&source_obj, &block_obj)) {
+        sub_4363E0(block_obj, source_obj);
+        return false;
+    }
+
+    if (!sub_424070(attacker_obj, 3, false, false)) {
+        sub_4364D0(attacker_obj);
+        return false;
+    }
+
+    if ((obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_USING_BOOMERANG) != 0) {
+        sub_4364D0(attacker_obj);
+        return false;
+    }
+
+    goal_data.params[AGDATA_SCRATCH_VAL5].data = a3;
+
+    if (!sub_44D520(&goal_data, &stru_5A1908)) {
+        sub_4364D0(attacker_obj);
+        return false;
+    }
+
+    if (obj_field_int32_get(attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            && sub_45D700(attacker_obj) > 8) {
+            turn_on_running(stru_5A1908);
+        }
+    } else {
+        if (get_always_run(attacker_obj)) {
+            turn_on_running(stru_5A1908);
+        }
+    }
+
+    return true;
 }
 
 // 0x434DE0
