@@ -994,11 +994,11 @@ void wmap_rnd_encounter_build_object(int name, int64_t loc, int64_t* obj_ptr)
 }
 
 // 0x5595B0
-bool sub_5595B0(int a1)
+bool sub_5595B0(TimeEvent* timeevent)
 {
     long long location;
 
-    (void)a1;
+    (void)timeevent;
 
     sub_559640();
 
