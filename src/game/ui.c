@@ -557,12 +557,12 @@ void sub_460B20()
 }
 
 // 0x460B30
-int sub_460B30(TimeEvent* timeevent)
+bool sub_460B30(TimeEvent* timeevent)
 {
     if (ui_callbacks.field_10C != NULL) {
         return ui_callbacks.field_10C(timeevent);
     } else {
-        return 0;
+        return false;
     }
 }
 

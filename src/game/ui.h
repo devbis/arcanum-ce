@@ -273,7 +273,7 @@ void sub_460AD0(int a1);
 void sub_460AF0();
 int sub_460B00(int a1, S4F2810* a2);
 void sub_460B20();
-int sub_460B30(TimeEvent* timeevent);
+bool sub_460B30(TimeEvent* timeevent);
 void sub_460B50(int64_t a1, int64_t a2);
 void sub_460B80(int a1);
 int sub_460BA0();
