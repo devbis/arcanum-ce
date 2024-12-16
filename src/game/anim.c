@@ -11553,7 +11553,92 @@ bool sub_4324D0(AnimRunInfo* run_info)
 // 0x432700
 bool sub_432700(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t target_obj;
+    int source_obj_type;
+    int action_points;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    int64_t weapon_obj;
+    int delay;
+    int sound_id;
+
+    source_obj = run_info->params[0].obj;
+    target_obj = run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 13985, "sourceObj != OBJ_HANDLE_NULL"
+    ASSERT(target_obj != OBJ_HANDLE_NULL); // 13986, "targetObj != OBJ_HANDLE_NULL"
+
+    if (source_obj == OBJ_HANDLE_NULL
+        || target_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
+        return false;
+    }
+
+    source_obj_type = obj_field_int32_get(source_obj, OBJ_F_TYPE);
+
+    if (obj_type_is_critter(source_obj_type)
+        && (obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return false;
+    }
+
+    action_points = sub_4B7C30(source_obj);
+    if (!sub_4B7CD0(source_obj, action_points)) {
+        sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
+        return false;
+    }
+
+    art_id = run_info->params[1].data;
+    if (art_id != TIG_ART_ID_INVALID) {
+        object_set_current_aid(source_obj, art_id);
+    } else {
+        art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_frame_set(art_id, 0);
+        object_set_current_aid(source_obj, art_id);
+    }
+
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        run_info->field_CFC = 1000 / art_anim_data.fps;
+    } else {
+        tig_debug_printf("Anim: AGbeginAnimAttack: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+        run_info->field_CFC = 100;
+    }
+
+    sub_42EE90(source_obj, &(run_info->field_CF8));
+
+    weapon_obj = item_wield_get(source_obj, 1004);
+
+    delay = run_info->field_CFC - 10 * (item_weapon_magic_speed(weapon_obj, source_obj) - 10);
+    if (delay < 30) {
+        delay = 30;
+    } else if (delay > 800) {
+        delay = 800;
+    }
+    run_info->field_CFC = delay;
+
+    if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0
+        && player_is_pc_obj(source_obj)) {
+        sub_43D280(source_obj, OF_INVISIBLE);
+    }
+
+    run_info->field_C |= 0x10;
+
+    if (obj_type_is_critter(source_obj_type) && random_between(1, 4) == 1) {
+        sound_id = sub_4F0ED0(source_obj, 4);
+        sub_41B930(sound_id, 1, source_obj);
+    }
+
+    sub_4CBD40(source_obj, target_obj);
+    sub_4377C0(NULL, source_obj, source_obj, 0);
+
+    if (art_anim_data.action_frame < 1) {
+        run_info->field_C |= 0x04;
+    }
+
+    return true;
 }
 
 // 0x432990
