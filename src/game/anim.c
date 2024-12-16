@@ -11132,7 +11132,73 @@ bool sub_430F20(AnimRunInfo* run_info)
 // 0x430FC0
 int sub_430FC0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int action_points;
+    tig_art_id_t art_id;
+    int v1;
+    unsigned int critter_flags;
+    unsigned int critter_flags2;
+    int fatigue_dam;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 12753, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    action_points = 2;
+
+    if (run_info->current_goal > 0 && (run_info->field_C & 0x40) != 0) {
+        if (sub_45D700(obj) > 0) {
+            if (combat_critter_is_combat_mode_active(obj)) {
+                v1 = 5;
+
+                run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data++;
+
+                critter_flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
+                critter_flags2 = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
+
+                if ((critter_flags & OCF_FATIGUE_LIMITING) != 0) {
+                    v1 *= 4;
+                }
+
+                if ((critter_flags2 & OCF2_FATIGUE_DRAINING) != 0) {
+                    v1 /= 4;
+                    if (v1 == 0) {
+                        v1 = 1;
+                    }
+                }
+
+                if (run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data >= v1) {
+                    run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 0;
+
+                    fatigue_dam = critter_fatigue_damage_get(obj);
+
+                    if (critter_fatigue_damage_set(obj, fatigue_dam) == 0) {
+                        return false;
+                    }
+                }
+            }
+
+            action_points = 1;
+        } else {
+            art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+            art_id = sub_503E50(art_id, 1);
+            object_set_current_aid(obj, art_id);
+
+            run_info->field_C &= ~0x40;
+        }
+    }
+
+    if (!sub_4B7CD0(obj, action_points)) {
+        dword_5DE6E4 = 0;
+        sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
+        return false;
+    }
+
+    return true;
 }
 
 // 0x431130
