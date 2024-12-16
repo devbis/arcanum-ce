@@ -506,7 +506,7 @@ int sub_4B2810(int64_t obj)
 }
 
 // 0x4B2870
-void sub_4B2870()
+void sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, int64_t projectile_obj, int range, int64_t cur_loc, int64_t a7)
 {
     // TODO: Incomplete.
 }

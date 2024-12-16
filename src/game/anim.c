@@ -10662,7 +10662,108 @@ bool sub_42F5C0(AnimRunInfo* run_info)
 // 0x42F6A0
 bool sub_42F6A0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t projectile_obj;
+    int64_t target_obj;
+    int idx;
+    int cnt;
+    int64_t parent_obj;
+    int64_t target_loc;
+    int64_t v1;
+    int offset_x;
+    int offset_y;
+    int64_t projectile_loc;
+    tig_art_id_t art_id;
+    int64_t projectile_loc_x;
+    int64_t projectile_loc_y;
+    int64_t new_loc;
+    int64_t new_loc_x;
+    int64_t new_loc_y;
+
+    ASSERT(run_info != NULL); // 11492, "pRunInfo != NULL"
+
+    projectile_obj = run_info->params[0].obj;
+    target_obj = run_info->params[1].obj;
+
+    ASSERT(projectile_obj != OBJ_HANDLE_NULL); // 11496, "projObj != OBJ_HANDLE_NULL"
+
+    cnt = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data;
+    dword_5DE6CC = 35;
+    if (cnt == 0) {
+        cnt = 4;
+        dword_5DE6CC = 35;
+    }
+
+    if (projectile_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    parent_obj = run_info->cur_stack_data->params[AGDATA_PARENT_OBJ].obj;
+    target_loc = run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc;
+    v1 = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
+
+    if ((run_info->path.flags & 0x01) != 0) {
+        return true;
+    }
+
+    for (idx = 0; idx < cnt; idx++) {
+        offset_x = obj_field_int32_get(projectile_obj, OBJ_F_OFFSET_X);
+        offset_y = obj_field_int32_get(projectile_obj, OBJ_F_OFFSET_Y);
+        projectile_loc = obj_field_int64_get(projectile_obj, OBJ_F_LOCATION);
+
+        art_id = obj_field_int32_get(projectile_obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_frame_inc(art_id);
+        object_set_current_aid(projectile_obj, art_id);
+
+        offset_x += run_info->path.rotations[run_info->path.curr];
+        offset_y += run_info->path.rotations[run_info->path.curr + 1];
+
+        sub_4B8680(projectile_loc, &projectile_loc_x, &projectile_loc_y);
+
+        new_loc_x = projectile_loc_x + offset_x + 40;
+        new_loc_y = projectile_loc_y + offset_y + 20;
+
+        if (!sub_4B8730(new_loc_x, new_loc_y, &new_loc)) {
+            tig_debug_printf("Anim: AGupdateAnimProjectileMoveStraight: ERROR: location_at() failed: Loc: (%I64d x %I64d)!\n",
+                new_loc_x,
+                new_loc_y);
+            ASSERT(0); // 11594, "0"
+            return false;
+        }
+
+        if (new_loc != projectile_loc) {
+            int range = (int)sub_4B96F0(run_info->cur_stack_data->params[AGDATA_ORIGINAL_TILE].loc,
+                obj_field_int64_get(projectile_obj, OBJ_F_LOCATION));
+            sub_4B2870(parent_obj, target_obj, target_loc, projectile_obj, range, new_loc, v1);
+
+            if ((run_info->field_C & 0x02) != 0) {
+                return false;
+            }
+
+            if ((run_info->field_C & 0x01) == 0) {
+                return false;
+            }
+
+            if ((obj_field_int32_get(projectile_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+                return false;
+            }
+
+            sub_4B8680(new_loc, &new_loc_x, &new_loc_y);
+            offset_x += (int)(projectile_loc_x - new_loc_x);
+            offset_y += (int)(projectile_loc_y - new_loc_y);
+        }
+
+        sub_43E770(projectile_obj, new_loc, offset_x, offset_y);
+
+        run_info->path.curr += 2;
+
+        if (run_info->path.curr >= run_info->path.max) {
+            sub_4B8FF0(new_loc, run_info->path.rotations[0], &new_loc);
+            run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = new_loc;
+            run_info->path.curr = 0;
+        }
+    }
+
+    return true;
 }
 
 // 0x42FA50
