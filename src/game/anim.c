@@ -10562,7 +10562,71 @@ bool sub_42F2D0(AnimRunInfo* run_info)
 // 0x42F390
 bool sub_42F390(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int v1;
+    int idx;
+    int offset_x;
+    int offset_y;
+    int64_t loc;
+    tig_art_id_t art_id;
+    int64_t loc_x;
+    int64_t loc_y;
+    int64_t new_loc;
+    int64_t new_loc_x;
+    int64_t new_loc_y;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 11385, "obj != OBJ_HANDLE_NULL"
+
+    v1 = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data;
+    dword_5DE6CC = 35;
+
+    if (v1 == 0) {
+        v1 = 4;
+        dword_5DE6CC = 35;
+    }
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    for (idx = 0; idx < v1; idx++) {
+        offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+        offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+        loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_frame_inc(art_id);
+        object_set_current_aid(obj, art_id);
+
+        // TODO: Looks odd, check.
+        offset_x += run_info->path.rotations[run_info->path.curr];
+        offset_y += run_info->path.rotations[run_info->path.curr + 1];
+
+        sub_4B8680(loc, &loc_x, &loc_y);
+        if (!sub_4B8730(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
+            ASSERT(0); // 11433, "0"
+            exit(EXIT_FAILURE);
+        }
+
+        if (new_loc != loc) {
+            sub_4B8680(new_loc, &new_loc_x, &new_loc_y);
+            offset_x += (int)(new_loc_x - loc_x);
+            offset_y += (int)(new_loc_y - loc_y);
+        }
+
+        sub_43E770(obj, new_loc, offset_x, offset_y);
+
+        run_info->path.curr += 2;
+
+        if (run_info->path.curr >= run_info->path.max) {
+            run_info->field_C &= ~0x10;
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x42F5C0
