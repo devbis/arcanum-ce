@@ -221,6 +221,7 @@ static bool sub_42E8B0(AnimRunInfo* run_info);
 static bool sub_42E9B0(AnimRunInfo* run_info);
 static void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bool a4, int* a5);
 static void sub_42EE90(int64_t obj, DateTime* pause_time);
+static bool sub_42EF60(int a1, int a2, int a3);
 static bool sub_42F000(AnimRunInfo* run_info);
 static bool sub_42F140(AnimRunInfo* run_info);
 static bool sub_42F2D0(AnimRunInfo* run_info);
@@ -10500,7 +10501,53 @@ bool sub_42EF60(int a1, int a2, int a3)
 // 0x42F000
 bool sub_42F000(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int x_shifts[] = {
+        0,
+        40,
+        80,
+        40,
+        0,
+        -40,
+        -80,
+        -40,
+    };
+
+    int y_shifts[] = {
+        -40,
+        -20,
+        0,
+        20,
+        40,
+        20,
+        0,
+        -20,
+    };
+
+    int64_t obj;
+    int64_t loc;
+    int offset_x;
+    int offset_y;
+    int rot;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 11248, "obj != OBJ_HANDLE_NULL";
+
+    // FIXME: Useless.
+    obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+    rot = run_info->path.rotations[run_info->path.curr];
+
+    if (!sub_4B8FF0(loc, rot, &loc)) {
+        return false;
+    }
+
+    sub_43E770(obj, loc, offset_x - x_shifts[rot], offset_y - y_shifts[rot]);
+
+    return true;
 }
 
 // 0x42F140
