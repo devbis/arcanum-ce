@@ -72,6 +72,7 @@ static bool sub_425430(AnimRunInfo* run_info);
 static bool sub_4254C0(AnimRunInfo* run_info);
 static bool sub_425590(AnimRunInfo* run_info);
 static bool sub_425740(AnimRunInfo* run_info);
+static bool sub_425760(int64_t obj, int64_t loc, int64_t adjacent_loc, int rot);
 static void sub_4257E0(int64_t obj, unsigned int* flags_ptr);
 static bool sub_425840(int64_t a1, int64_t a2, int64_t a3, int a4, int64_t a5);
 static bool sub_425930(AnimRunInfo* run_info);
@@ -4296,7 +4297,75 @@ bool sub_424D90(AnimRunInfo* run_info)
 // 0x424E00
 bool sub_424E00(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t source_obj;
+    int64_t source_loc;
+    int64_t target_loc;
+    int rot;
+    int64_t adjacent_locs[8];
+    int64_t adjacent_objs[8];
+    int idx;
+
+    source_obj = run_info->params[0].obj;
+
+    ASSERT(source_obj != OBJ_HANDLE_NULL); // 3344, "sourceObj != OBJ_HANDLE_NULL"
+
+    // TODO: Unclear if it checks loc or obj.
+    if (run_info->params[1].loc != 0) {
+        dword_5DE6CC = 0;
+        return true;
+    }
+
+    source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
+
+    if (run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj != OBJ_HANDLE_NULL) {
+        target_loc = obj_field_int64_get(run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj, OBJ_F_LOCATION);
+    } else {
+        target_loc = 0;
+    }
+
+    rot = random_between(0, 8);
+
+    for (idx = rot; idx < 8; idx++) {
+        if (sub_4B8FF0(source_loc, idx, &(adjacent_locs[idx]))) {
+            adjacent_objs[idx] = OBJ_HANDLE_NULL;
+            if (!sub_425760(source_obj, source_loc, adjacent_locs[idx], rot)) {
+                run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = adjacent_locs[idx];
+                return true;
+            }
+        }
+    }
+
+    for (idx = 0; idx < rot; idx++) {
+        if (sub_4B8FF0(source_loc, idx, &(adjacent_locs[idx]))) {
+            adjacent_objs[idx] = OBJ_HANDLE_NULL;
+            if (!sub_425760(source_obj, source_loc, adjacent_locs[idx], idx)) {
+                run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = adjacent_locs[idx];
+                return true;
+            }
+        }
+    }
+
+    for (idx = rot; idx < 8; idx++) {
+        if (adjacent_locs[idx] != target_loc) {
+            if (sub_4363E0(source_obj, adjacent_objs[idx])) {
+                dword_5DE6CC = 1000;
+                run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = adjacent_locs[idx];
+                return true;
+            }
+        }
+    }
+
+    for (idx = 0; idx < rot; idx++) {
+        if (adjacent_locs[idx] != target_loc) {
+            if (sub_4363E0(source_obj, adjacent_objs[idx])) {
+                dword_5DE6CC = 1000;
+                run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = adjacent_locs[idx];
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 // 0x425130
@@ -4534,17 +4603,17 @@ bool sub_425740(AnimRunInfo* run_info)
 }
 
 // 0x425760
-bool sub_425760(int64_t a1, int64_t a2, int64_t a3, int a4)
+bool sub_425760(int64_t obj, int64_t loc, int64_t adjacent_loc, int rot)
 {
     unsigned int flags = 0;
 
-    sub_4257E0(a1, &flags);
+    sub_4257E0(obj, &flags);
 
-    if (sub_4D7110(a3, false)) {
+    if (sub_4D7110(adjacent_loc, false)) {
         return true;
     }
 
-    return sub_43FD70(a1, a2, a4, flags, 0);
+    return sub_43FD70(obj, loc, rot, flags, NULL);
 }
 
 // 0x4257E0
