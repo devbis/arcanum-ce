@@ -12048,9 +12048,67 @@ bool sub_4339A0(int64_t obj)
 }
 
 // 0x433A00
-void sub_433A00()
+bool sub_433A00(int64_t obj, int64_t loc, bool a3)
 {
-    // TODO: Incomplete.
+    AnimID anim_id;
+    AnimGoalData goal_data;
+    AnimRunInfo* run_info;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        if (sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)
+            && anim_id_to_run_info(&anim_id, &run_info)
+            && run_info->goals[run_info->current_goal].params[AGDATA_TARGET_TILE].loc == loc) {
+            return false;
+        }
+
+        Packet4 pkt;
+
+        pkt.type = 4;
+        pkt.subtype = 2;
+        sub_4F0640(obj, &(pkt.oid));
+        pkt.loc = loc;
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        return true;
+    }
+
+    if (!sub_4339A0(obj)) {
+        return false;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && get_always_run(obj)) {
+        return sub_434030(obj, loc);
+    }
+
+    if (sub_44E830(obj, AG_MOVE_TO_TILE, &stru_5A1908) || a3) {
+        run_info = &(anim_run_info[stru_5A1908.slot_num]);
+        if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc == loc) {
+            return true;
+        }
+
+        sub_44D500(&goal_data, obj, AG_MOVE_TO_TILE);
+        goal_data.params[AGDATA_TARGET_TILE].loc = loc;
+
+        if (!sub_44DBE0(stru_5A1908, &goal_data)) {
+            return false;
+        }
+    } else {
+        sub_44D500(&goal_data, obj, AG_MOVE_TO_TILE);
+        goal_data.params[AGDATA_TARGET_TILE].loc = loc;
+
+        if (!sub_424070(obj, 3, false, false)) {
+            return false;
+        }
+
+        if (!sub_44D520(&goal_data, &stru_5A1908)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x433C80
@@ -12060,20 +12118,20 @@ bool sub_433C80(int64_t obj, int64_t loc)
 }
 
 // 0x434030
-bool sub_434030(int64_t a1, int64_t a2)
+bool sub_434030(int64_t obj, int64_t loc)
 {
     AnimRunInfo* run_info;
     AnimGoalData goal_data;
 
-    if (!sub_4339A0(a1)) {
+    if (!sub_4339A0(obj)) {
         return false;
     }
 
-    if (!sub_44E830(a1, 4, &stru_5A1908)) {
-        sub_44D500(&goal_data, a1, 4);
-        goal_data.params[AGDATA_TARGET_TILE].loc = a2;
+    if (!sub_44E830(obj, AG_RUN_TO_TILE, &stru_5A1908)) {
+        sub_44D500(&goal_data, obj, AG_RUN_TO_TILE);
+        goal_data.params[AGDATA_TARGET_TILE].loc = loc;
 
-        if (!sub_424070(a1, 3, false, false)) {
+        if (!sub_424070(obj, 3, false, false)) {
             return false;
         }
 
@@ -12086,9 +12144,9 @@ bool sub_434030(int64_t a1, int64_t a2)
 
     run_info = &(anim_run_info[stru_5A1908.slot_num]);
     run_info->field_C |= 0x40;
-    if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc != a2) {
-        sub_44D500(&goal_data, a1, 3);
-        goal_data.params[AGDATA_TARGET_TILE].loc = a2;
+    if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc != loc) {
+        sub_44D500(&goal_data, obj, 3);
+        goal_data.params[AGDATA_TARGET_TILE].loc = loc;
         sub_44DBE0(stru_5A1908, &goal_data);
     }
 
