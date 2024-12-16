@@ -219,6 +219,8 @@ static bool sub_42E6B0(AnimRunInfo* run_info);
 static bool sub_42E720(AnimRunInfo* run_info);
 static bool sub_42E8B0(AnimRunInfo* run_info);
 static bool sub_42E9B0(AnimRunInfo* run_info);
+static void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bool a4, int* a5);
+static void sub_42EE90(int64_t obj, DateTime* pause_time);
 static bool sub_42F000(AnimRunInfo* run_info);
 static bool sub_42F140(AnimRunInfo* run_info);
 static bool sub_42F2D0(AnimRunInfo* run_info);
@@ -10265,11 +10267,143 @@ bool sub_42E8B0(AnimRunInfo* run_info)
 // 0x42E9B0
 bool sub_42E9B0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    unsigned int spell_flags;
+    int obj_type;
+    tig_art_id_t art_id;
+    int v1;
+    int v2;
+    TigArtAnimData art_anim_data;
+    int64_t loc;
+    int64_t next_loc;
+    int rot;
+
+    if ((run_info->field_C & 0x100) != 0) {
+        return false;
+    }
+
+    if ((run_info->field_C & 0x20) != 0) {
+        run_info->field_C |= 0x10;
+        return true;
+    }
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 10798, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
+    if ((spell_flags & OSF_STONED) != 0) {
+        return false;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return false;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    v1 = sub_503E20(art_id);
+    run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data = art_id;
+    if (sub_503E20(art_id) == 5
+        && critter_is_concealed(obj)) {
+        run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data = sub_503E50(run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data, 0);
+    }
+
+    v2 = 2;
+    sub_42EDC0(run_info, obj, &art_id, (run_info->field_C & 0x40) != 0, &v2);
+
+    if (!sub_4B7790(obj, v2)) {
+        sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
+        return false;
+    }
+
+    if (sub_4B8040(obj)) {
+        loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        while (combat_get_action_points() > 0) {
+            if (!sub_430FC0(run_info)) {
+                break;
+            }
+
+            if (sub_427110(run_info, obj, loc)) {
+                break;
+            }
+
+            rot = run_info->path.rotations[run_info->path.curr++];
+            sub_4B8FF0(loc, rot, &next_loc);
+            loc = next_loc;
+
+            if (run_info->path.curr >= run_info->path.max) {
+                break;
+            }
+        }
+
+        sub_43E770(obj, loc, 0, 0);
+        run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = loc;
+        run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
+
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_rotation_set(art_id, run_info->path.rotations[run_info->path.curr - 1]);
+        object_set_current_aid(obj, art_id);
+
+        return false;
+    }
+
+    art_id = tig_art_id_rotation_set(art_id, run_info->path.rotations[0]);
+    if (v1 != sub_503E20(art_id)) {
+        art_id = tig_art_id_frame_set(art_id, 0);
+    }
+    object_set_current_aid(obj, art_id);
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    if (!sub_4B8FF0(loc, run_info->path.rotations[0], &next_loc)) {
+        return false;
+    }
+
+    if ((run_info->path.rotations[0] & 1) != 0) {
+        run_info->field_28 = 0;
+    } else {
+        run_info->field_28 = next_loc;
+    }
+
+    if ((run_info->field_C & 0x400) != 0) {
+        if ((run_info->path.flags & 0x01) != 0) {
+            rot = tig_art_id_rotation_get(art_id);
+        } else {
+            rot = run_info->path.rotations[run_info->path.curr];
+        }
+
+        if (sub_425760(obj, loc, next_loc, rot)) {
+            return false;
+        }
+    }
+
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        run_info->field_CFC = 1000 / art_anim_data.fps;
+    } else {
+        tig_debug_printf("Anim: AGbeginAnimMove: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+        run_info->field_CFC = 100;
+    }
+
+    sub_42EE90(obj, &(run_info->field_CF8));
+
+    if ((spell_flags & OSF_SHRUNK) != 0) {
+        run_info->field_CFC *= 2;
+    }
+
+    run_info->path.curr = 0;
+    run_info->path.flags &= ~0x03;
+    run_info->field_C |= 0x30;
+
+    return true;
 }
 
 // 0x42EDC0
-void sub_42EDC0()
+void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bool a4, int* a5)
 {
     // TODO: Incomplete.
 }
@@ -12550,7 +12684,6 @@ void turn_on_running(AnimID anim_id)
             pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
             pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
             pkt.field_40 = run_info->field_28;
-            pkt.field_44 = run_info->field_2C;
 
             if ((tig_net_flags & TIG_NET_HOST) != 0) {
                 run_info->id.field_8++;
@@ -12641,7 +12774,6 @@ void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2)
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
         pkt.field_40 = run_info->field_28;
-        pkt.field_44 = run_info->field_2C;
 
         if ((tig_net_flags & TIG_NET_HOST) != 0) {
             run_info->id.field_8++;
