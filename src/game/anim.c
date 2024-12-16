@@ -10474,7 +10474,62 @@ bool sub_42F000(AnimRunInfo* run_info)
 // 0x42F140
 bool sub_42F140(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int offset_x;
+    int offset_y;
+    tig_art_id_t art_id;
+    int64_t loc;
+    int rot;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 11279, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+
+    run_info->path.curr++;
+    if (run_info->path.curr >= run_info->path.max) {
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = sub_503E50(art_id, 0);
+        art_id = tig_art_id_frame_set(art_id, 0);
+        object_set_current_aid(obj, art_id);
+
+        run_info->field_C &= ~0x30;
+        sub_430490(obj, 0, 0);
+
+        return false;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    rot = run_info->path.rotations[run_info->path.curr];
+    if ((rot & 0x1) != 0) {
+        run_info->field_28 = 0;
+    } else if (!sub_4B8FF0(loc, rot, &(run_info->field_28))) {
+        run_info->path.curr = run_info->path.max + 1;
+    }
+
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    art_id = sub_503E50(art_id, 13);
+    art_id = tig_art_id_rotation_set(art_id, rot);
+    sub_430490(obj, -offset_x, -offset_y);
+
+    if ((run_info->field_C & 0x40) != 0) {
+        art_id = sub_503E50(art_id, 6);
+    } else {
+        art_id = sub_503E50(art_id, 1);
+    }
+
+    art_id = tig_art_id_frame_set(art_id, 0);
+    object_set_current_aid(obj, art_id);
+
+    run_info->field_C |= 0x10;
+
+    return true;
 }
 
 // 0x42F2D0
