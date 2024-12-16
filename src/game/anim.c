@@ -10612,8 +10612,8 @@ bool sub_42F390(AnimRunInfo* run_info)
 
         if (new_loc != loc) {
             sub_4B8680(new_loc, &new_loc_x, &new_loc_y);
-            offset_x += (int)(new_loc_x - loc_x);
-            offset_y += (int)(new_loc_y - loc_y);
+            offset_x += (int)(loc_x - new_loc_x);
+            offset_y += (int)(loc_y - new_loc_y);
         }
 
         sub_43E770(obj, new_loc, offset_x, offset_y);
@@ -10667,7 +10667,81 @@ bool sub_42F6A0(AnimRunInfo* run_info)
 // 0x42FA50
 bool sub_42FA50(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int idx;
+    int offset_x;
+    int offset_y;
+    int64_t loc;
+    tig_art_id_t art_id;
+    int64_t loc_x;
+    int64_t loc_y;
+    int64_t new_loc;
+    int64_t new_loc_x;
+    int64_t new_loc_y;
+    CombatContext combat;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 11622, "obj != OBJ_HANDLE_NULL"
+
+    dword_5DE6CC = 35;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        run_info->field_C &= ~0x10;
+        return false;
+    }
+
+    for (idx = 0; idx < 4; idx++) {
+        offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+        offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+        loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+        art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        if (!sub_503E20(art_id)) {
+            art_id = tig_art_id_frame_inc(art_id);
+            object_set_current_aid(obj, art_id);
+        }
+
+        offset_x += run_info->path.rotations[run_info->path.curr];
+        offset_y += run_info->path.rotations[run_info->path.curr + 1];
+
+        sub_4B8680(loc, &loc_x, &loc_y);
+        if (!sub_4B8730(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
+            ASSERT(0); // 11691, "0"
+            exit(EXIT_FAILURE);
+        }
+
+        if (new_loc != loc) {
+            if (sub_42FD70(run_info, obj, &(run_info->path), loc, new_loc)) {
+                sub_43E770(obj, loc, 0, 0);
+                sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
+                combat.field_44[0] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
+                combat.field_44[4] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
+                combat.field_30 = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
+                sub_4B4390(&combat);
+
+                if ((run_info->field_C & 0x1) != 0) {
+                    run_info->field_C &= ~0x10;
+                }
+
+                return false;
+            }
+
+            sub_4B8680(new_loc, &new_loc_x, &new_loc_y);
+            offset_x += (int)(loc_x - new_loc_x);
+            offset_y += (int)(loc_y - new_loc_y);
+        }
+
+        sub_43E770(obj, new_loc, offset_x, offset_y);
+
+        run_info->path.curr += 2;
+        if (run_info->path.curr >= run_info->path.max) {
+            run_info->field_C &= ~0x10;
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x42FD70
