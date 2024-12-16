@@ -12356,12 +12356,18 @@ bool sub_435BD0(int64_t critter_obj)
 // 0x435CE0
 bool sub_435CE0(int64_t critter_obj)
 {
-    ASSERT(critter_obj != OBJ_HANDLE_NULL); // critterObj != OBJ_HANDLE_NULL
+    ASSERT(critter_obj != OBJ_HANDLE_NULL); // 16444, "critterObj != OBJ_HANDLE_NULL"
     if (critter_obj == OBJ_HANDLE_NULL) return false;
 
-    if (!obj_type_is_critter(obj_field_int32_get(critter_obj, OBJ_F_TYPE))
-        || (obj_field_int32_get(critter_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_AUTO_ANIMATES) != 0
-        || sub_4B6D70()) {
+    if (!obj_type_is_critter(obj_field_int32_get(critter_obj, OBJ_F_TYPE))) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(critter_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_AUTO_ANIMATES) == 0) {
+        return false;
+    }
+
+    if (sub_4B6D70()) {
         return false;
     }
 
