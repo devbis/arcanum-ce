@@ -10461,9 +10461,40 @@ void sub_42EE90(int64_t obj, DateTime* pause_time)
 }
 
 // 0x42EF60
-void sub_42EF60()
+bool sub_42EF60(int a1, int a2, int a3)
 {
-    // TODO: Incomplete.
+    switch (a1) {
+    case 0:
+        return a3 > 0 ? false : true;
+    case 1:
+        if (a3 > 0) {
+            return false;
+        } else {
+            return a2 < 0 ? false : true;
+        }
+    case 2:
+        return a2 < 0 ? false : true;
+    case 3:
+        return a3 < 0 || a2 < 0 ? false : true;
+    case 4:
+        return a3 < 0 ? false : true;
+    case 5:
+        if (a3 < 0) {
+            return false;
+        } else {
+            return a2 > 0 ? false : true;
+        }
+    case 6:
+        return a2 > 0 ? false : true;
+    case 7:
+        if (a3 > 0) {
+            return false;
+        } else {
+            return a2 > 0 ? false : true;
+        }
+    }
+
+    return false;
 }
 
 // 0x42F000
