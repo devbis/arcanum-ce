@@ -12113,7 +12113,114 @@ bool sub_433A00(int64_t obj, int64_t loc, bool a3)
 // 0x433C80
 bool sub_433C80(int64_t obj, int64_t loc)
 {
-    // TODO: Incomplete.
+    AnimID anim_id;
+    AnimRunInfo* run_info;
+    AnimGoalData goal_data;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        if (sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)
+            && anim_id_to_run_info(&anim_id, &run_info)
+            && run_info->goals[run_info->current_goal].params[AGDATA_TARGET_TILE].loc == loc) {
+            return false;
+        }
+
+        Packet4 pkt;
+
+        pkt.type = 4;
+        pkt.subtype = 1;
+        sub_4F0640(obj, &(pkt.oid));
+        pkt.loc = loc;
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        return true;
+    }
+
+    if (!sub_4339A0(obj)) {
+        return false;
+    }
+
+    if (!sub_44E830(obj, AG_RUN_TO_TILE, &stru_5A1908)) {
+        sub_44D500(&goal_data, obj, AG_RUN_TO_TILE);
+        goal_data.params[AGDATA_TARGET_TILE].loc = loc;
+
+        if (!sub_424070(obj, 3, false, false)) {
+            return false;
+        }
+
+        if (!sub_44D520(&goal_data, &stru_5A1908)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    run_info = &(anim_run_info[stru_5A1908.slot_num]);
+    run_info->field_C |= 0x40;
+
+    // TODO: Looks wrong, checking for 0 immediately after OR'ing 0x40.
+    if (run_info->field_C == 0
+        && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        run_info->field_C |= 0x40;
+    }
+
+    if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc == loc) {
+        return true;
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        int64_t self_obj;
+        Packet8 pkt;
+
+        self_obj = run_info->goals[0].params[AGDATA_SELF_OBJ].obj;
+
+        run_info->path.flags |= 0x04;
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
+            run_info->field_C |= 0x40;
+
+            if (run_info->field_C == 0
+                && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+                run_info->field_C |= 0x40;
+            }
+
+            sub_44D0C0(run_info);
+        }
+
+        sub_437460(&(pkt.modify_data));
+        pkt.type = 8;
+        pkt.modify_data.id = stru_5A1908;
+        pkt.modify_data.field_C = run_info->field_C;
+        pkt.modify_data.field_10 = run_info->path.flags;
+        pkt.modify_data.field_14 = 5;
+        pkt.modify_data.field_18 = loc;
+        pkt.modify_data.field_2C = run_info->path.curr;
+        pkt.field_40 = run_info->field_28;
+        pkt.modify_data.location = obj_field_int64_get(self_obj, OBJ_F_LOCATION);
+        pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        pkt.offset_x = obj_field_int32_get(self_obj, OBJ_F_OFFSET_X);
+        pkt.offset_y = obj_field_int32_get(self_obj, OBJ_F_OFFSET_Y);
+
+        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            run_info->id.field_8++;
+        }
+
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        return true;
+    }
+
+    run_info->path.flags |= 0x04;
+    run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
+
+    if (run_info->field_C == 0
+        && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        run_info->field_C |= 0x40;
+    }
+
+    return true;
 }
 
 // 0x434030
