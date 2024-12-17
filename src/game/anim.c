@@ -3085,11 +3085,7 @@ bool sub_4221C0(AnimRunInfo* run_info, TigFile* stream)
     }
 
     if (tig_file_fwrite(&(run_info->path), sizeof(run_info->path), 1, stream) != 1) return false;
-
-    // FIXME: Strange case with 0xCF8 / 0xCFC: writing 8 bytes, while 0xCFC is
-    // definitely separate field (something FPS related).
-    if (tig_file_fwrite(&(run_info->field_CF8), 8, 1, stream) != 1) return false;
-
+    if (tig_file_fwrite(&(run_info->pause_time), sizeof(run_info->pause_time), 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->field_18), sizeof(run_info->field_18), 1, stream) != 1) return false;
 
     return true;
@@ -3256,11 +3252,7 @@ bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream)
     }
 
     if (tig_file_fread(&(run_info->path), sizeof(run_info->path), 1, stream) != 1) return false;
-
-    // FIXME: Strange case with 0xCF8 / 0xCFC: writing 8 bytes, while 0xCFC is
-    // definitely separate field (something FPS related).
-    if (tig_file_fread(&(run_info->field_CF8), 8, 1, stream) != 1) return false;
-
+    if (tig_file_fread(&(run_info->pause_time), sizeof(run_info->pause_time), 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->field_18), sizeof(run_info->field_18), 1, stream) != 1) return false;
 
     if (run_info->current_goal >= 0) {
@@ -7393,10 +7385,10 @@ bool sub_42A010(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C &= ~0x0C;
@@ -8554,10 +8546,10 @@ bool sub_42BD40(AnimRunInfo* run_info)
 
     run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGsetObjArtAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     return true;
@@ -9086,10 +9078,10 @@ bool sub_42CB10(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C &= ~0x0C;
@@ -9198,10 +9190,10 @@ bool sub_42CDF0(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C &= ~0x0C;
@@ -9285,10 +9277,10 @@ bool sub_42D080(AnimRunInfo* run_info)
     }
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimOpenDoor: Failed to find Aid: %d, defaulting to 10 fps!\n", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C &= ~0xC;
@@ -9333,10 +9325,10 @@ bool sub_42D1C0(AnimRunInfo* run_info)
     }
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimOpenDoor: Failed to find Aid: %d, defaulting to 10 fps!\n", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C &= ~0xC;
@@ -9399,10 +9391,10 @@ bool sub_42D300(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimPickLock: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C &= ~0x0C;
@@ -9513,10 +9505,10 @@ bool sub_42D570(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimDying: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C |= 0x10;
@@ -9608,10 +9600,10 @@ bool sub_42D7D0(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimJump: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C |= 0x10;
@@ -9718,10 +9710,10 @@ bool sub_42DA50(AnimRunInfo* run_info)
     }
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimLoopAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     ASSERT(run_info->cur_stack_data != NULL); // 10074, "pRunInfo->pCurStackData != NULL"
@@ -9894,12 +9886,12 @@ bool AGbeginStunAnim(AnimRunInfo* run_info)
 
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
         tig_debug_printf("Anim: AGbeginStunAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
         // NOTE: Looks wrong, other functions still set 0x10 and return true.
         return false;
     }
 
-    run_info->field_CFC = 1000 / art_anim_data.fps;
+    run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     run_info->field_C |= 0x10;
 
     return true;
@@ -9989,10 +9981,10 @@ bool sub_42E1B0(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginKneelMHAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C |= 0x10;
@@ -10095,10 +10087,10 @@ bool AGbeginKnockDownAnim(AnimRunInfo* run_info)
 
     run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginKnockDownAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->field_C |= 0x10;
@@ -10135,10 +10127,10 @@ bool sub_42E590(AnimRunInfo* run_info)
     art_id = tig_art_id_frame_set(art_id, 0);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginGetUpAnim: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
         ASSERT(0); // 10617, "0"
     }
 
@@ -10196,18 +10188,18 @@ bool sub_42E720(AnimRunInfo* run_info)
     art_id = run_info->params[1].data;
     if (art_id != TIG_ART_ID_INVALID) {
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-            run_info->field_CFC = 1000 / art_anim_data.fps;
+            run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
         } else {
             tig_debug_printf("Anim: AGbeginAnimAnimReverse: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-            run_info->field_CFC = 100;
+            run_info->pause_time.milliseconds = 100;
         }
     } else {
         art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-            run_info->field_CFC = 1000 / art_anim_data.fps;
+            run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
         } else {
             tig_debug_printf("Anim: AGbeginAnimAnimReverse: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-            run_info->field_CFC = 100;
+            run_info->pause_time.milliseconds = 100;
         }
 
         art_id = tig_art_id_frame_set(art_id, art_anim_data.num_frames - 1);
@@ -10387,16 +10379,16 @@ bool sub_42E9B0(AnimRunInfo* run_info)
     }
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimMove: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
-    sub_42EE90(obj, &(run_info->field_CF8));
+    sub_42EE90(obj, &(run_info->pause_time));
 
     if ((spell_flags & OSF_SHRUNK) != 0) {
-        run_info->field_CFC *= 2;
+        run_info->pause_time.milliseconds *= 2;
     }
 
     run_info->path.curr = 0;
@@ -10627,10 +10619,10 @@ bool sub_42F2D0(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimMoveStraight: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->path.flags &= ~0x1;
@@ -10724,10 +10716,10 @@ bool sub_42F5C0(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimMoveStraight: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
     run_info->path.flags &= ~0x1;
@@ -11443,7 +11435,7 @@ bool sub_4311F0(AnimRunInfo* run_info)
 
     run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data |= ~0x20;
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data = 1;
-    run_info->field_CFC = 100;
+    run_info->pause_time.milliseconds = 100;
     offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
     offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
     object_set_offset(obj, offset_x, offset_y - 15);
@@ -11621,7 +11613,7 @@ bool sub_4315B0(AnimRunInfo* run_info)
     }
 
     run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data |= 0x40;
-    run_info->field_CFC = 100;
+    run_info->pause_time.milliseconds = 100;
 
     overlay_fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
     overlay_back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
@@ -11664,7 +11656,7 @@ bool sub_4315B0(AnimRunInfo* run_info)
         return false;
     }
 
-    run_info->field_CFC = 1000 / art_anim_data.fps;
+    run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
 
     if ((run_info->field_C & 0x800) != 0) {
         frame = random_between(0, art_anim_data.num_frames - 1);
@@ -12000,7 +11992,7 @@ bool sub_431E50(AnimRunInfo* run_info)
     }
 
     run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data |= 0x40;
-    run_info->field_CFC = 100;
+    run_info->pause_time.milliseconds = 100;
 
     overlay_fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
     overlay_back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
@@ -12043,7 +12035,7 @@ bool sub_431E50(AnimRunInfo* run_info)
         return false;
     }
 
-    run_info->field_CFC = 1000 / art_anim_data.fps;
+    run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
 
     if ((run_info->field_C & 0x800) != 0) {
         frame = random_between(1, art_anim_data.num_frames - 1);
@@ -12423,23 +12415,23 @@ bool sub_432700(AnimRunInfo* run_info)
     }
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-        run_info->field_CFC = 1000 / art_anim_data.fps;
+        run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
     } else {
         tig_debug_printf("Anim: AGbeginAnimAttack: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-        run_info->field_CFC = 100;
+        run_info->pause_time.milliseconds = 100;
     }
 
-    sub_42EE90(source_obj, &(run_info->field_CF8));
+    sub_42EE90(source_obj, &(run_info->pause_time));
 
     weapon_obj = item_wield_get(source_obj, 1004);
 
-    delay = run_info->field_CFC - 10 * (item_weapon_magic_speed(weapon_obj, source_obj) - 10);
+    delay = run_info->pause_time.milliseconds - 10 * (item_weapon_magic_speed(weapon_obj, source_obj) - 10);
     if (delay < 30) {
         delay = 30;
     } else if (delay > 800) {
         delay = 800;
     }
-    run_info->field_CFC = delay;
+    run_info->pause_time.milliseconds = delay;
 
     if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0
         && player_is_pc_obj(source_obj)) {
@@ -12553,23 +12545,23 @@ bool sub_432990(AnimRunInfo* run_info)
 
     if ((run_info->field_C & 0x80) != 0) {
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-            run_info->field_CFC = 1000 / art_anim_data.fps;
+            run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
         } else {
             tig_debug_printf("Anim: AGupdateAnimAttack: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
-            run_info->field_CFC = 100;
+            run_info->pause_time.milliseconds = 100;
         }
 
-        sub_42EE90(obj, &(run_info->field_CF8));
+        sub_42EE90(obj, &(run_info->pause_time));
 
         weapon_obj = item_wield_get(obj, 1004);
-        delay = run_info->field_CFC - 10 * (item_weapon_magic_speed(weapon_obj, obj) - 10);
+        delay = run_info->pause_time.milliseconds - 10 * (item_weapon_magic_speed(weapon_obj, obj) - 10);
         if (delay < 30) {
             delay = 30;
         } else if (delay > 800) {
             delay = 800;
         }
 
-        run_info->field_CFC = delay;
+        run_info->pause_time.milliseconds = delay;
         run_info->field_C &= ~0x80;
     }
 

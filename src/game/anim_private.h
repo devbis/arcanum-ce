@@ -222,8 +222,7 @@ typedef struct AnimRunInfo {
     /* 0BF0 */ AnimGoalData* cur_stack_data;
     /* 0BFC */ int field_BFC;
     /* 0C00 */ AnimPath path;
-    /* 0CF8 */ int field_CF8;
-    /* 0CFC */ int field_CFC;
+    /* 0CF8 */ DateTime pause_time;
     /* 0D00 */ AnimRunInfoParam params[3];
     /* 0D18 */ int field_D18;
     /* 0D1C */ int field_D1C;
