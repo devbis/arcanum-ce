@@ -1069,9 +1069,53 @@ bool sub_44E710(int64_t obj, AnimGoalData* goal_data, AnimID* anim_id)
 }
 
 // 0x44E830
-bool sub_44E830(int64_t obj, int a2, AnimID* anim_id)
+bool sub_44E830(int64_t obj, int goal_type, AnimID* anim_id)
 {
-    // TODO: Incomplete.
+    int slot;
+    int idx;
+    AnimRunInfo* run_info;
+    AnimGoalNode* goal_node;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    slot = sub_44D2F0(obj);
+    if (slot == -1) {
+        return false;
+    }
+
+    run_info = &(anim_run_info[slot]);
+
+    if (goal_type == -1) {
+        return false;
+    }
+
+    if (goal_type == run_info->goals[0].type) {
+        if (anim_id != NULL) {
+            *anim_id = run_info->id;
+        }
+
+        return true;
+    }
+
+    goal_node = off_5B03D0[goal_type];
+
+    for (idx = 0; idx < 3; idx++) {
+        if (goal_node->field_14[idx] == -1) {
+            break;
+        }
+
+        if (goal_node->field_14[idx] == run_info->goals[0].type) {
+            if (anim_id != NULL) {
+                *anim_id = run_info->id;
+            }
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x44E8C0
