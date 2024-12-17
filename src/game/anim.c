@@ -12268,7 +12268,108 @@ bool sub_4322A0(AnimRunInfo* run_info)
 // 0x4324D0
 bool sub_4324D0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int overlay_fore;
+    int overlay_back;
+    int overlay_light;
+    tig_art_id_t art_id;
+    TigArtAnimData art_anim_data;
+    int frame;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 13860, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    overlay_fore = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    overlay_back = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data;
+    overlay_light = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data;
+
+    if (overlay_fore != -1 || overlay_back != -1) {
+        if (overlay_back != -5) {
+            if (overlay_fore != -1) {
+                art_id = sub_407470(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
+                if (art_id == TIG_ART_ID_INVALID) {
+                    tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                    return false;
+                }
+
+                if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+                    return true;
+                }
+
+                frame = tig_art_id_frame_get(art_id);
+                if (frame % 3 == 1) {
+                    sub_42A720(run_info);
+                }
+
+                if (frame == 0) {
+                    return false;
+                }
+
+                sub_43FAB0(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
+
+                if (frame == art_anim_data.action_frame - 1) {
+                    run_info->field_C |= 0x04;
+                }
+            }
+
+            if (overlay_back != -1) {
+                art_id = sub_407470(obj, OBJ_F_OVERLAY_BACK, overlay_back);
+                if (art_id == TIG_ART_ID_INVALID) {
+                    tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                    return false;
+                }
+
+                if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+                    return true;
+                }
+
+                frame = tig_art_id_frame_get(art_id);
+                if (frame == 0) {
+                    return false;
+                }
+
+                sub_43FAB0(obj, OBJ_F_OVERLAY_BACK, overlay_back);
+            }
+        } else {
+            art_id = sub_407470(obj, OBJ_F_UNDERLAY, overlay_fore);
+            if (art_id == TIG_ART_ID_INVALID) {
+                tig_debug_printf("Anim: AGupdateAnimEyeCandy: Error: No Art!\n");
+                return false;
+            }
+
+            if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
+                return true;
+            }
+
+            frame = tig_art_id_frame_get(art_id);
+            if (frame == 0) {
+                return false;
+            }
+
+            sub_43FAB0(obj, OBJ_F_UNDERLAY, overlay_fore);
+
+            if (frame == art_anim_data.action_frame - 1) {
+                run_info->field_C |= 0x04;
+            }
+        }
+    } else {
+        if (overlay_light != -1) {
+            return false;
+        }
+    }
+
+    if (overlay_light != -1) {
+        sub_43FCB0(obj, overlay_light);
+    }
+
+    sub_431550(run_info, obj);
+
+    return true;
 }
 
 // 0x432700
