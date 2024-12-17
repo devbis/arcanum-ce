@@ -363,8 +363,8 @@ static AnimGoalNode stru_5A5FD0 = {
     0,
     0,
     0,
-    7,
-    4,
+    AG_MOVE_NEAR_TILE,
+    AG_RUN_TO_TILE,
     -1,
     {
         { sub_424D90, 0, 5, -1, 2, 0, 0x30000000, 0 },
@@ -392,9 +392,9 @@ static AnimGoalNode stru_5A61D0 = {
     0,
     0,
     0,
-    7,
-    3,
-    0x37,
+    AG_MOVE_NEAR_TILE,
+    AG_MOVE_TO_TILE,
+    AG_RUN_NEAR_TILE,
     {
         { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
         { sub_424D90, 0, 5, -1, 3, 0, 0x30000000, 0 },
@@ -479,9 +479,9 @@ static AnimGoalNode stru_5A67D0 = {
     0,
     0,
     0,
-    4,
-    3,
-    0x37,
+    AG_RUN_TO_TILE,
+    AG_MOVE_TO_TILE,
+    AG_RUN_NEAR_TILE,
     {
         { sub_424D90, 0, 5, -1, 2, 0, 0x30000000, 0 },
         { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
@@ -769,7 +769,7 @@ static AnimGoalNode stru_5A7BD0 = {
     0,
     0,
     0,
-    0x13,
+    AG_ATTEMPT_ATTACK,
     -1,
     -1,
     {
@@ -798,8 +798,8 @@ static AnimGoalNode stru_5A7DD0 = {
     0,
     0,
     0,
-    0x12,
-    0x14,
+    AG_ATTACK,
+    AG_KILL,
     -1,
     {
         { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
@@ -827,7 +827,7 @@ static AnimGoalNode stru_5A7FD0 = {
     0,
     0,
     0,
-    0x13,
+    AG_ATTEMPT_ATTACK,
     -1,
     -1,
     {
@@ -914,8 +914,8 @@ static AnimGoalNode stru_5A85D0 = {
     0,
     0,
     0,
-    0x38,
-    8,
+    AG_RUN_NEAR_OBJ,
+    AG_MOVE_NEAR_OBJ,
     -1,
     {
         { sub_42BF40, 0, -1, -1, 0x90000000, 0, 2, 0 },
@@ -972,7 +972,7 @@ static AnimGoalNode stru_5A89D0 = {
     0,
     0,
     0,
-    0x1B,
+    AG_ATTEMPT_SPELL,
     -1,
     -1,
     {
@@ -1001,7 +1001,7 @@ static AnimGoalNode stru_5A8BD0 = {
     0,
     0,
     0,
-    0x1A,
+    AG_THROW_SPELL,
     -1,
     -1,
     {
@@ -1813,8 +1813,8 @@ static AnimGoalNode stru_5AC3D0 = {
     0,
     0,
     0,
-    7,
-    4,
+    AG_MOVE_NEAR_TILE,
+    AG_RUN_TO_TILE,
     -1,
     {
         { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
@@ -2103,7 +2103,7 @@ static AnimGoalNode stru_5AD7D0 = {
     0,
     0,
     0,
-    7,
+    AG_MOVE_NEAR_TILE,
     -1,
     -1,
     {
@@ -2132,7 +2132,7 @@ static AnimGoalNode stru_5AD9D0 = {
     0,
     0,
     0,
-    7,
+    AG_MOVE_NEAR_TILE,
     -1,
     -1,
     {
@@ -2190,9 +2190,9 @@ static AnimGoalNode stru_5ADDD0 = {
     0,
     0,
     0,
-    7,
-    4,
-    3,
+    AG_MOVE_NEAR_TILE,
+    AG_RUN_TO_TILE,
+    AG_MOVE_TO_TILE,
     {
         { sub_424E00, 0, 5, -1, 0x30000000, 0, 2, 0xFFFFFFFD },
         { sub_424D90, 0, 5, -1, 3, 0, 0x30000000, 0 },
@@ -2219,8 +2219,8 @@ static AnimGoalNode stru_5ADFD0 = {
     1,
     0,
     0,
-    0x38,
-    8,
+    AG_RUN_NEAR_OBJ,
+    AG_MOVE_NEAR_OBJ,
     -1,
     {
         { sub_42BF40, 0, -1, -1, 0x90000000, 0, 2, 0 },
@@ -2335,7 +2335,7 @@ static AnimGoalNode stru_5AE7D0 = {
     1,
     0,
     0,
-    0x1B,
+    AG_ATTEMPT_SPELL,
     -1,
     -1,
     {
@@ -2364,7 +2364,7 @@ static AnimGoalNode stru_5AE9D0 = {
     1,
     0,
     0,
-    0x1A,
+    AG_THROW_SPELL,
     -1,
     -1,
     {
@@ -2596,7 +2596,7 @@ static AnimGoalNode stru_5AF9D0 = {
     0,
     0,
     0,
-    0x1B,
+    AG_ATTEMPT_SPELL,
     -1,
     -1,
     {
@@ -2625,7 +2625,7 @@ static AnimGoalNode stru_5AFBD0 = {
     0,
     0,
     0,
-    0x1A,
+    AG_THROW_SPELL,
     -1,
     -1,
     {
