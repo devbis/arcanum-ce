@@ -1065,7 +1065,65 @@ bool sub_44E6F0(int64_t obj, AnimGoalData* goal_data)
 // 0x44E710
 bool sub_44E710(int64_t obj, AnimGoalData* goal_data, AnimID* anim_id)
 {
-    // TODO: Incomplete.
+    int prev_slot;
+    int slot;
+    AnimRunInfo* run_info;
+    AnimGoalNode* goal_node;
+    int goal_type;
+    int idx;
+    int param;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    slot = sub_44D2F0(obj);
+    while (slot != -1) {
+        prev_slot = slot;
+
+        run_info = &(anim_run_info[slot]);
+
+        if (goal_data->type != -1) {
+            // NOTE: Original code is slightly different but does the same
+            // thing.
+            goal_node = off_5B03D0[goal_data->type];
+
+            for (idx = -1; idx < 3; idx++) {
+                goal_type = idx == -1
+                    ? goal_data->type
+                    : goal_node->field_14[idx];
+                if (goal_type == -1) {
+                    break;
+                }
+
+                if (goal_type == run_info->goals[0].type) {
+                    for (param = 0; param < 5; param++) {
+                        if (goal_data->params[param].obj != run_info->goals[0].params[param].obj) {
+                            break;
+                        }
+                    }
+
+                    if (param >= 5) {
+                        if (anim_id != NULL) {
+                            *anim_id = run_info->id;
+                        }
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        slot = sub_44D340(slot, obj);
+
+        ASSERT(slot != prev_slot); // 4293, "animRunIndex != lastAnimRunIndex"
+
+        if (slot == prev_slot) {
+            return false;
+        }
+    }
+
+    return false;
 }
 
 // 0x44E830
