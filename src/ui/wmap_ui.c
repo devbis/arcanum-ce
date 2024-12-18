@@ -193,7 +193,7 @@ static void sub_563300(int direction, int a2, int a3, int a4);
 static void sub_563590(WmapCoords* a1, bool a2);
 static void sub_563610();
 static void sub_563750(int direction);
-static void sub_563790(int a1, int a2);
+static void sub_563790(int direction, int scale);
 static void sub_563AC0(int x, int y, WmapCoords* coords);
 static void sub_563B10(int x, int y, WmapCoords* coords);
 static void sub_563C00(int x, int y, WmapCoords* coords);
@@ -2957,9 +2957,151 @@ void sub_563770(int direction)
 }
 
 // 0x563790
-void sub_563790(int a1, int a2)
+void sub_563790(int direction, int scale)
 {
-    // TODO: Incomplete.
+    S5C9228* v1;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
+    int offset_x;
+    int offset_y;
+    TigRect rect;
+
+    sx = scale * dword_5C9B94;
+    sy = scale * dword_5C9B98;
+
+    v1 = &(stru_5C9228[dword_66D868]);
+
+    dx = 0;
+    dy = 0;
+
+    switch (direction) {
+    case 0:
+        dy = -sy;
+        break;
+    case 1:
+        dx = sx;
+        dy = -sy;
+        break;
+    case 2:
+        dx = sx;
+        break;
+    case 3:
+        dx = sx;
+        dy = sy;
+        break;
+    case 4:
+        dy = sy;
+        break;
+    case 5:
+        dx = -sx;
+        dy = sy;
+        break;
+    case 6:
+        dx = -sx;
+        break;
+    case 7:
+        dx = -sx;
+        dy = -sy;
+        break;
+    }
+
+    offset_x = v1->field_34;
+    offset_y = v1->field_38;
+
+    v1->field_34 += dx;
+    v1->field_38 += dy;
+
+    if (v1->field_34 < 0) {
+        v1->field_34 = 0;
+    } else if (v1->field_34 > v1->field_60) {
+        v1->field_34 = v1->field_60;
+    }
+
+    if (v1->field_38 < 0) {
+        v1->field_38 = 0;
+    } else if (v1->field_38 > v1->field_64) {
+        v1->field_38 = v1->field_64;
+    }
+
+    dx = v1->field_34 - offset_x;
+    dy = v1->field_38 - offset_y;
+    if (dx == 0 && dy == 0) {
+        return;
+    }
+
+    if (v1->field_4C == NULL) {
+        return;
+    }
+
+    if (dword_66D868 != 2) {
+        v1->field_4C(&(v1->rect));
+    }
+
+    tig_window_scroll_rect(wmap_ui_window,
+        &(v1->rect),
+        -dx,
+        -dy);
+
+    if (dx > 0) {
+        rect.x = stru_5C9B38.x - dx;
+        rect.y = stru_5C9B38.y;
+        rect.width = stru_5C9B38.width + dx;
+        rect.height = stru_5C9B38.height;
+        if (dy > 0) {
+            rect.y -= dy;
+            rect.height += dy;
+        }
+        v1->field_4C(&rect);
+
+        rect = v1->rect;
+        rect.x += rect.width - dx;
+        rect.width = dx;
+        if (dy > 0) {
+            rect.y -= dy;
+            rect.height += dy;
+        }
+        v1->field_4C(&rect);
+    } else if (dx < 0) {
+        rect.x = stru_5C9B38.x;
+        rect.y = stru_5C9B38.y;
+        rect.height = stru_5C9B38.height;
+        rect.width = stru_5C9B38.width - dx;
+        if (dy > 0) {
+            rect.y -= dy;
+            rect.height += dy;
+        }
+        v1->field_4C(&rect);
+
+        rect = v1->rect;
+        rect.width = -dx;
+        if (dy > 0) {
+            rect.y -= dy;
+            rect.height += dy;
+        }
+        v1->field_4C(&rect);
+    }
+
+    if (dy > 0) {
+        rect.x = stru_5C9B38.x;
+        rect.y = stru_5C9B38.y - dy;
+        rect.width = stru_5C9B38.width;
+        rect.height = stru_5C9B38.height + dy;
+        v1->field_4C(&rect);
+
+        rect = v1->rect;
+        rect.y += rect.height - dy;
+        rect.height = dy;
+        v1->field_4C(&rect);
+    } else if (dy < 0) {
+        rect = stru_5C9B38;
+        v1->field_4C(&rect);
+
+        rect = v1->rect;
+        rect.height = -dy;
+        v1->field_4C(&rect);
+    }
 }
 
 // 0x563AC0
