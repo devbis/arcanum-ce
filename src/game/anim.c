@@ -11022,7 +11022,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
     }
 
     if ((run_info->field_C & 0x200) == 0 && sub_45D8D0(obj)) {
-        sub_43D0E0(obj, 0x404);
+        sub_43D0E0(obj, OF_FLAT | OF_NO_BLOCK);
 
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
             if (player_is_pc_obj(obj)) {
@@ -11030,7 +11030,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
             }
         }
 
-        sub_4CBC60(0, obj);
+        sub_4CBC60(OBJ_HANDLE_NULL, obj);
     }
 
     return true;
