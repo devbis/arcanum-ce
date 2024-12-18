@@ -8897,7 +8897,7 @@ bool sub_42C650(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 9055, "obj != OBJ_HANDLE_NULL"
     ASSERT(new_rot >= 0); // 9056, "newRot >= 0"
-    ASSERT(new_rot < TIG_ART_ARMOR_TYPE_PLATE_CLASSIC); // 9057, "newRot < tig_art_rotation_max"
+    ASSERT(new_rot < 8); // 9057, "newRot < tig_art_rotation_max"
 
     if (obj == OBJ_HANDLE_NULL) {
         return false;
