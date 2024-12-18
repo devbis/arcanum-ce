@@ -4280,8 +4280,10 @@ bool sub_424D00(AnimRunInfo* run_info)
 bool sub_424D90(AnimRunInfo* run_info)
 {
     int64_t obj;
+    int64_t loc;
 
     obj = run_info->params[0].obj;
+    loc = run_info->params[1].loc;
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 3321, "obj != OBJ_HANDLE_NULL"
 
@@ -4289,7 +4291,7 @@ bool sub_424D90(AnimRunInfo* run_info)
         return false;
     }
 
-    return obj_field_int64_get(obj, OBJ_F_LOCATION) == obj_field_int64_get(run_info->params[1].obj, OBJ_F_LOCATION);
+    return obj_field_int64_get(obj, OBJ_F_LOCATION) == loc;
 }
 
 // 0x424E00
