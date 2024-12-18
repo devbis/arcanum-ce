@@ -2518,10 +2518,10 @@ void sub_562B70(int a1)
                 art_blit_info.dst_rect = &dst_rect;
                 tig_window_blit_art(wmap_ui_window, &art_blit_info);
             }
-
-            stru_5C9228[dword_66D868].field_48();
-            sub_562880(&stru_64E7E8);
         }
+
+        stru_5C9228[dword_66D868].field_48();
+        sub_562880(&stru_64E7E8);
     }
 }
 
