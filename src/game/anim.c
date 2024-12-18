@@ -4880,6 +4880,7 @@ bool sub_426040(AnimRunInfo* run_info)
     obj = run_info->params[0].obj;
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 4297, "obj != OBJ_HANDLE_NULL"
+
     if (obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -4912,8 +4913,13 @@ bool sub_426040(AnimRunInfo* run_info)
     }
 
     run_info->field_C |= 0x400;
+
     rc = sub_426500(obj, run_info->params[1].loc, &(run_info->path), flags | 0x78);
-    sub_4ED510(run_info->id, run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc, run_info);
+
+    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4ED510(run_info->id, run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc, run_info);
+    }
+
     return rc;
 }
 
