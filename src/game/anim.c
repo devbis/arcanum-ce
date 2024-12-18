@@ -12691,13 +12691,13 @@ void sub_432D90(int64_t obj)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    if (sub_44D4E0(&goal_data, obj, AG_ANIMATE)) {
+    if (sub_44D4E0(&goal_data, blood_obj, AG_ANIMATE)) {
         goal_data.params[AGDATA_ANIM_ID].data = blood_art_id;
         if (sub_44D520(&goal_data, NULL)) {
-            sub_45EBE0(obj);
+            sub_45EBE0(blood_obj);
         } else {
             tig_debug_printf("Anim: AGapplyBloodEffect: ERROR: Blood object failed to animate!\n");
-            sub_43CCA0(obj);
+            sub_43CCA0(blood_obj);
         }
     }
 }
