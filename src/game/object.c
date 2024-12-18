@@ -640,7 +640,7 @@ void object_inc_current_aid(object_id_t obj)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, next_aid);
             if (tig_art_frame_data(next_aid, &art_frame_data) == TIG_OK) {
                 if (art_frame_data.offset_x != 0 || art_frame_data.offset_y != 0) {
-                    sub_4423E0(next_aid,
+                    sub_4423E0(obj,
                         art_frame_data.offset_x + obj_field_int32_get(obj, OBJ_F_OFFSET_X),
                         art_frame_data.offset_y + obj_field_int32_get(obj, OBJ_F_OFFSET_Y));
                 }
@@ -672,7 +672,7 @@ void object_dec_current_aid(object_id_t obj)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, prev_aid);
             if (tig_art_frame_data(prev_aid, &art_frame_data) == TIG_OK) {
                 if (art_frame_data.offset_x != 0 || art_frame_data.offset_y != 0) {
-                    sub_4423E0(prev_aid,
+                    sub_4423E0(obj,
                         art_frame_data.offset_x + obj_field_int32_get(obj, OBJ_F_OFFSET_X),
                         art_frame_data.offset_y + obj_field_int32_get(obj, OBJ_F_OFFSET_Y));
                 }
