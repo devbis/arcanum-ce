@@ -8478,7 +8478,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
 bool sub_42BC10(AnimRunInfo* run_info)
 {
     int64_t obj;
-    int v1;
+    int anim;
     int64_t pc_obj;
     tig_art_id_t art_id;
 
@@ -8491,20 +8491,20 @@ bool sub_42BC10(AnimRunInfo* run_info)
         return false;
     }
 
-    v1 = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+    anim = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
 
     // FIXME: Meaningless.
     pc_obj = player_get_pc_obj();
     obj_field_int32_get(pc_obj, OBJ_F_PC_FLAGS);
 
     if (violence_filter != 0) {
-        v1 = 7;
+        anim = 7;
     }
 
     combat_critter_deactivate_combat_mode(obj);
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, v1);
+    art_id = sub_503E50(art_id, anim);
     art_id = tig_art_id_frame_set(art_id, 0);
     if (tig_art_exists(art_id) != TIG_OK) {
         if (violence_filter != 0) {
@@ -8513,7 +8513,7 @@ bool sub_42BC10(AnimRunInfo* run_info)
         }
 
         art_id = sub_503E50(art_id, 18);
-        tig_debug_printf("Anim: Error: Missing Death Art: %d: Using Default\n", v1);
+        tig_debug_printf("Anim: Error: Missing Death Art: %d: Using Default\n", anim);
     }
 
     if (tig_art_exists(art_id) != TIG_OK) {
