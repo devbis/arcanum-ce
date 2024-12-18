@@ -10994,7 +10994,7 @@ bool sub_42FEC0(AnimRunInfo* run_info)
 bool sub_42FED0(AnimRunInfo* run_info)
 {
     int64_t obj;
-    int64_t location;
+    int64_t loc;
 
     obj = run_info->params[0].obj;
     if (obj == OBJ_HANDLE_NULL) {
@@ -11002,9 +11002,9 @@ bool sub_42FED0(AnimRunInfo* run_info)
         return false;
     }
 
-    location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    if (!sub_4D7110(location, false)) {
-        sub_432D90(location);
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    if (!sub_4D7110(loc, false)) {
+        sub_432D90(obj);
     }
 
     return true;
