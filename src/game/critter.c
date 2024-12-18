@@ -490,7 +490,7 @@ void sub_45D900(int64_t obj)
     sub_4A2BC0();
 
     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
-    combat.field_58 |= 0x1;
+    combat.field_58 |= 0x4;
     sub_4B4390(&combat);
 
     object_set_hp_damage(obj, 32000);
