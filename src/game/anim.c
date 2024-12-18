@@ -13772,7 +13772,7 @@ bool sub_435080(int64_t obj, int a2)
 {
     AnimGoalData goal_data;
 
-    if (obj != OBJ_HANDLE_NULL) {
+    if (obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
