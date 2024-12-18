@@ -13,7 +13,7 @@ typedef struct TownMapInfo {
     /* 0018 */ int height;
     /* 001C */ int field_1C;
     /* 0020 */ int64_t loc;
-    /* 0028 */ int field_28;
+    /* 0028 */ float field_28;
     /* 002C */ int field_2C;
 } TownMapInfo;
 

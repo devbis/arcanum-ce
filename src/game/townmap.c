@@ -212,8 +212,8 @@ bool townmap_info(int map, TownMapInfo* tmi)
 
     stru_5FC4C8.x = 0;
     stru_5FC4C8.y = 0;
-    stru_5FC4C8.width = tmi->field_C / tmi->width * tmi->field_28;
-    stru_5FC4C8.height = tmi->field_10 / tmi->height * tmi->field_28;
+    stru_5FC4C8.width = (int)(tmi->field_C / tmi->width * tmi->field_28);
+    stru_5FC4C8.height = (int)(tmi->field_10 / tmi->height * tmi->field_28);
 
     townmap_info_cache = *tmi;
 
@@ -257,8 +257,8 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
 
     loc_ptr = 0;
 
-    v1 = (x / tmi->field_28) - tmi->field_C / 2;
-    v2 = (y / tmi->field_28) - tmi->field_10 / 2;
+    v1 = (int)(x / tmi->field_28) - tmi->field_C / 2;
+    v2 = (int)(y / tmi->field_28) - tmi->field_10 / 2;
 
     sub_4B8680(tmi->loc, &v3, &v4);
     sub_4B8730(v1 + v3, v2 + v4, &loc);
