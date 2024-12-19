@@ -272,6 +272,7 @@ void tf_ping(tig_timestamp_t timestamp)
                 } else {
                     sub_4D5A60(&v3, cur_node, &v4);
                     if (tig_rect_intersection(&v4, &v3, &v4) == TIG_OK) {
+                        sub_4D5AA0(cur_node);
                         tf_iso_invalidate_rect(&v4);
                     }
                     prev_node = cur_node;
