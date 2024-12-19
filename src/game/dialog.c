@@ -2381,12 +2381,124 @@ void sub_416B00(char* dst, char* src, DialogEntryNode* a3)
 bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
 {
     DialogEntry v1;
+    char* pch;
+    int values[100];
+    int cnt;
+    int v2;
+    int v3;
+    int v4;
 
     v1.field_0 = a1;
     sub_416AB0(a3->field_0, &v1);
 
     if (strcmpi(v1.field_4, "a:") == 0) {
         sub_418390(a3->field_460[a2], a3, 1000);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.field_4, "b:") == 0) {
+        if (critter_leader_get(a3->npc_obj) == a3->pc_obj) {
+            sub_4182D0(a3->field_460[a2], a3, 1600, 1699);
+        } else {
+            sub_4182D0(a3->field_460[a2], a3, 300, 399);
+        }
+        a3->field_17F0[a2] = 3;
+        a3->field_1804[a2] = v1.field_14;
+    } else if (strnicmp(v1.field_4, "c:", 2) == 0) {
+        sub_418460(a3->field_460[a2], a3);
+        a3->field_17F0[a2] = 24;
+        a3->field_1804[a2] = v1.field_14;
+    } else if (strnicmp(v1.field_4, "d:", 2) == 0) {
+        pch = strchr(v1.field_4, ',');
+        cnt = sub_417F90(values, pch + 1);
+        if (!sub_419E20(a3->pc_obj, values, cnt)) {
+            return false;
+        }
+        sub_4182D0(a3->field_460[a2], a3, 1300, 1399);
+
+        pch = a3->field_460[a2];
+        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        a3->field_17F0[a2] = 18;
+        a3->field_1804[a2] = v1.field_14;
+        a3->field_1818[a2] = 0;
+    } else if (strcmpi(v1.field_4, "e:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 400, 499);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.field_4, "f:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 800, 899);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.field_4, "h:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 700, 799);
+        a3->field_17F0[a2] = 11;
+        a3->field_1804[a2] = v1.field_14;
+    } else if (strcmpi(v1.field_4, "i:") == 0) {
+        sub_417590(v1.field_14, &v2, &v3);
+        sub_419190(a2, v2, v3, a3);
+    } else if (strcmpi(v1.field_4, "k:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 1500, 1599);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.field_4, "l:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 2300, 2399);
+        a3->field_17F0[a2] = 30;
+        a3->field_1804[a2] = v1.field_14;
+    } else if (strcmpi(v1.field_4, "n:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 100, 199);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strcmpi(v1.field_4, "p:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 1900, 1999);
+        a3->field_17F0[a2] = 25;
+        a3->field_1804[a2] = v1.field_14;
+    } else if (strnicmp(v1.field_4, "q:", 2) == 0) {
+        v4 = sub_4C4C00(a3->pc_obj, a3->npc_obj, atoi(v1.field_4 + 2));
+        if (v4 != -1) {
+            return sub_416C10(v4, a2, a3);
+        }
+        return false;
+    } else if (strnicmp(v1.field_4, "r:", 2) == 0) {
+        sub_418390(a3->field_460[a2], a3, 2000);
+
+        pch = a3->field_460[a2];
+        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        a3->field_17F0[a2] = 8;
+        a3->field_1804[a2] = v1.field_14;
+    } else if (strcmpi(v1.field_4, "s:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 200, 299);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(v1.field_4, "r:", 2) == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 500, 599);
+
+        pch = a3->field_460[a2];
+        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        a3->field_17F0[a2] = 5;
+        a3->field_1804[a2] = v1.field_14;
+    } else if (strnicmp(v1.field_4, "u:", 2) == 0) {
+        v4 = atoi(v1.field_4 + 2);
+        if (sub_4AE570(a3->npc_obj, a3->pc_obj, sub_4C91F0(a3->npc_obj, v4), v4)) {
+            return false;
+        }
+
+        sub_419A00(a2, v4, v1.field_14, a3);
+    } else if (strcmpi(v1.field_4, "w:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 1800, 1899);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(v1.field_4, "x:", 2) == 0) {
+        pch = strchr(v1.field_4, ',');
+        cnt = sub_417F90(values, pch + 1);
+        if (!sub_419E20(a3->pc_obj, values, cnt)) {
+            return false;
+        }
+
+        sub_4182D0(a3->field_460[a2], a3, 1400, 1499);
+        pch = a3->field_460[a2];
+        strcpy(&(pch[strlen(pch) + 1]), v1.field_4 + 2);
+        a3->field_17F0[a2] = 21;
+        a3->field_1804[a2] = v1.field_14;
+        a3->field_1818[a2] = 0;
+    } else if (strcmpi(v1.field_4, "y:") == 0) {
+        sub_4182D0(a3->field_460[a2], a3, 1, 99);
+        sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
+    } else if (strnicmp(v1.field_4, "z:", 2) == 0) {
+        sub_419AC0(a2, atoi(v1.field_4 + 2), v1.field_14, a3);
+    } else {
+        sub_416B00(a3->field_460[a2], v1.field_4, a3);
         sub_417590(v1.field_14, &(a3->field_17F0[a2]), &(a3->field_1804[a2]));
     }
 
