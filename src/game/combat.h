@@ -20,6 +20,17 @@ typedef struct CombatCallbacks {
 
 static_assert(sizeof(CombatCallbacks) == 0x14, "wrong size");
 
+// NOTE: The values does not match ResistanceType enum, even though both
+// have 5 members.
+typedef enum DamageType {
+    DAMAGE_TYPE_NORMAL,
+    DAMAGE_TYPE_POISON,
+    DAMAGE_TYPE_ELECTRICAL,
+    DAMAGE_TYPE_FIRE,
+    DAMAGE_TYPE_FATIGUE,
+    DAMAGE_TYPE_COUNT,
+} DamageType;
+
 typedef struct CombatContext {
     /* 0000 */ int flags;
     /* 0004 */ int field_4;
@@ -32,7 +43,7 @@ typedef struct CombatContext {
     /* 0030 */ int64_t field_30;
     /* 0038 */ int64_t target_loc;
     /* 0040 */ int field_40;
-    /* 0044 */ int field_44[5];
+    /* 0044 */ int field_44[DAMAGE_TYPE_COUNT];
     /* 0058 */ int field_58;
     /* 005C */ int field_5C;
     /* 0060 */ int field_60;
