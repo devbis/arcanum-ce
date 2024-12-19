@@ -10,7 +10,7 @@ typedef struct TextFloaterNode {
     /* 0000 */ int field_0;
     /* 0004 */ TigVideoBuffer* video_buffer;
     /* 0008 */ TigRect rect;
-    /* 0018 */ uint8_t field_18;
+    /* 0018 */ uint8_t opacity;
     /* 001C */ struct TextFloaterNode* next;
 } TextFloaterNode;
 
@@ -345,7 +345,7 @@ void sub_4D5310(UnknownContext *a1)
                         src_rect.width = dst_rect.width;
                         src_rect.height = dst_rect.height;
                         window_blit_info.src_video_buffer = node->video_buffer;
-                        window_blit_info.alpha[0] = node->field_18;
+                        window_blit_info.alpha[0] = node->opacity;
                         tig_window_blit(&window_blit_info);
                     }
                     node = node->next;
@@ -696,11 +696,11 @@ void sub_4D5AA0(TextFloaterNode *node)
     }
 
     if (v2 > 2 * dword_602898) {
-        node->field_18 = 255;
+        node->opacity = 255;
     } else if (v2 > v1) {
-        node->field_18 = (uint8_t)((float)(v2 - v1) / (2 * dword_602898 - v1) * 255.0f);
+        node->opacity = (uint8_t)((float)(v2 - v1) / (2 * dword_602898 - v1) * 255.0f);
     } else {
-        node->field_18 = 0;
+        node->opacity = 0;
     }
 }
 
