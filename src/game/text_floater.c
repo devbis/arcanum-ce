@@ -697,7 +697,7 @@ void sub_4D5AA0(TextFloaterNode *node)
     if (v2 > 2 * dword_602898) {
         node->field_18 = 255;
     } else if (v2 > v1) {
-        node->field_18 = (uint8_t)((v2 - v1) / (2 * dword_602898 - v1) * 255.0f);
+        node->field_18 = (uint8_t)((float)(v2 - v1) / (2 * dword_602898 - v1) * 255.0f);
     } else {
         node->field_18 = 0;
     }
