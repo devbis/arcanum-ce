@@ -881,20 +881,20 @@ bool sub_4F2D20(S603CB8* a1)
             return true;
         }
 
-        if ((tgt & 0x80008000) == 0) {
+        if ((tgt & 0x8000800000000000) == 0) {
             return false;
         }
     }
 
-    if ((tgt & 0x8000) == 0) {
+    if ((tgt & 0x800000000000) == 0) {
         return true;
     }
 
     if (a1->field_28 == 0) {
-        return (tgt & 0x80000000) != 0;
+        return (tgt & 0x8000000000000000) != 0;
     }
 
-    if ((tgt & 0x10000) != 0) {
+    if ((tgt & 0x1000000000000) != 0) {
         if (a1->source_obj == OBJ_HANDLE_NULL
             || a1->field_28 != obj_field_int64_get(a1->field_20, OBJ_F_LOCATION)) {
             return false;
@@ -919,7 +919,7 @@ bool sub_4F2D20(S603CB8* a1)
         }
     }
 
-    if ((tgt & 0x40000) != 0) {
+    if ((tgt & 0x4000000000000) != 0) {
         bool v51 = true;
 
         if (sub_4D7110(a1->field_28, false)) {
@@ -945,7 +945,7 @@ bool sub_4F2D20(S603CB8* a1)
         }
     }
 
-    if ((tgt & 0x80000) != 0) {
+    if ((tgt & 0x8000000000000) != 0) {
         bool v54 = true;
 
         if (sub_4D7110(a1->field_28, false)) {
@@ -971,13 +971,13 @@ bool sub_4F2D20(S603CB8* a1)
         }
     }
 
-    if ((tgt & 0x200000) != 0
+    if ((tgt & 0x20000000000000) != 0
         // TODO: Sames args looks wrong, check.
         && sub_4B96F0(a1->field_38, a1->field_38) > a1->field_0->radius) {
         return false;
     }
 
-    if ((tgt & 0x1000000) != 0
+    if ((tgt & 0x100000000000000) != 0
         && a1->field_18 != 0
         && a1->field_28 != 0) {
         if (tig_art_tile_id_type_get(sub_4D70B0(a1->field_28)) != tig_art_tile_id_type_get(sub_4D70B0(a1->field_18))) {
