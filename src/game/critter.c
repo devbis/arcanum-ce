@@ -1727,7 +1727,7 @@ bool sub_45F570(long long obj)
     case TIG_ART_TYPE_CRITTER:
         return true;
     case TIG_ART_TYPE_MONSTER:
-        return sub_503F20(art_id) == 2;
+        return tig_art_monster_id_specie_get(art_id) == TIG_ART_MONSTER_SPECIE_ORC;
     default:
         return false;
     }

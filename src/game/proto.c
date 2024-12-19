@@ -16432,7 +16432,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     case 2:
         tig_file_fprintf(stream, "%s: %d %d\n",
             off_5B38C8[PROTO_F_ART_NUMBER_AND_PALETTE],
-            sub_503F20(art_id),
+            tig_art_monster_id_specie_get(art_id),
             tig_art_id_palette_get(art_id));
         break;
     default:

@@ -8463,7 +8463,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
             sub_503E20(art_id));
         tig_debug_printf(" Weapon: %d, Specie: %d!\n",
             sub_5040D0(art_id),
-            sub_503F20(art_id));
+            tig_art_monster_id_specie_get(art_id));
 
         return false;
     }
