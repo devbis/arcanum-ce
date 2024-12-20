@@ -3859,8 +3859,8 @@ bool sub_423FF0(int64_t obj)
 bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4)
 {
     Packet9 pkt;
-    int v1 = -1;
-    int v2;
+    int prev_slot = -1;
+    int slot;
 
     ASSERT(priority_level >= PRIORITY_NONE && priority_level < PRIORITY_HIGHEST); // (priorityLevel >= priorityNone)&&(priorityLevel <= priorityHighest)
 
@@ -3891,27 +3891,20 @@ bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4)
         }
     }
 
-    if (!a3) {
+    if (a3) {
         priority_level = PRIORITY_NONE;
     }
 
-    v2 = sub_44D2F0(obj);
-    if (v2 == -1) {
-        return true;
-    }
-
-    while (v2 != v1) {
-        v1 = v2;
-        if (!sub_44E2C0(&(anim_run_info[v2].id), priority_level)) {
+    slot = sub_44D2F0(obj);
+    while (slot != -1 && slot != prev_slot) {
+        prev_slot = slot;
+        if (!sub_44E2C0(&(anim_run_info[slot].id), priority_level)) {
             return false;
         }
-        v2 = sub_44D340(v2, obj);
-        if (v2 == -1) {
-            return true;
-        }
+        slot = sub_44D340(slot, obj);
     }
 
-    return false;
+    return true;
 }
 
 // 0x424250
