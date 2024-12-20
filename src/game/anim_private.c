@@ -467,11 +467,9 @@ bool mp_deallocate_run_index(AnimID* anim_id)
             }
         }
 
-        if (run_info->current_goal >= 0) {
-            for (stack_index = run_info->current_goal; stack_index <= run_info->current_goal; stack_index++) {
-                if (run_info->goals[stack_index].type >= 0 && run_info->goals[stack_index].type < ANIM_GOAL_MAX) {
-                    sub_44C8F0(run_info, off_5B03D0[run_info->goals[stack_index].type]);
-                }
+        for (stack_index = 0; stack_index <= run_info->current_goal; stack_index++) {
+            if (run_info->goals[stack_index].type >= 0 && run_info->goals[stack_index].type < ANIM_GOAL_MAX) {
+                sub_44C8F0(run_info, off_5B03D0[run_info->goals[stack_index].type]);
             }
         }
 
