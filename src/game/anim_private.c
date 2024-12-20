@@ -349,6 +349,7 @@ bool sub_44CCB0(AnimID* anim_id)
     }
 
     run_info = &(anim_run_info[index]);
+    run_info->id.slot_num = index;
     run_info->id.field_4 = dword_6876E4++;
     run_info->id.field_8 = 0;
     run_info->field_C = 1;
