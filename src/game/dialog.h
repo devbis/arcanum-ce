@@ -81,6 +81,7 @@ void sub_413880(int64_t a1, int64_t a2, char* a3);
 void sub_413910(int64_t a1, int64_t a2, char* a3);
 void sub_4139A0(int64_t a1, int64_t a2, char* a3);
 void sub_413A30(DialogEntryNode* a1, bool a2);
+void sub_413A90(int64_t a1, int64_t a2, int a3, char* a4, int* a5);
 void sub_413EA0(int64_t a1, int64_t a2, char* a3, int* a4);
 void sub_413F50(int64_t a1, int64_t a2, int a3, char* a4, int* a5);
 void sub_414020(int64_t a1, int64_t a2, int a3, char* a4);
