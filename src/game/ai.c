@@ -2520,12 +2520,12 @@ int sub_4ADB50(int64_t npc_obj, int64_t pc_obj)
     pc_alignment = stat_level(pc_obj, STAT_ALIGNMENT);
     if (pc_alignment > npc_alignment) {
         if ((critter_flags2 & OCF2_CHECK_ALIGN_GOOD) != 0
-            && pc_alignment - npc_alignment <= params.field_18 - 100) {
+            && pc_alignment - npc_alignment > params.field_18 - 100) {
             return 1;
         }
     } else {
         if ((critter_flags2 & OCF2_CHECK_ALIGN_BAD) != 0
-            && npc_alignment - pc_alignment <= params.field_1C - 100) {
+            && npc_alignment - pc_alignment > params.field_1C - 100) {
             return 2;
         }
     }
