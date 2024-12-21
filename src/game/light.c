@@ -59,6 +59,7 @@ static void sub_4DE7F0();
 static bool sub_4DE820(TimeEvent* timeevent);
 static void sub_4DE870(LightCreateInfo* create_info, Light30** light_ptr);
 static void sub_4DE900(UnknownContext* ctx);
+static void sub_4DF1D0(TigRect* rect);
 
 // 0x602E10
 static int light_bpp;
@@ -1412,9 +1413,36 @@ void sub_4DE900(UnknownContext* ctx)
 }
 
 // 0x4DF1D0
-void sub_4DF1D0()
+void sub_4DF1D0(TigRect* rect)
 {
-    // TODO: Incomplete.
+    int64_t x1;
+    int64_t y1;
+    int64_t x2;
+    int64_t y2;
+    int64_t loc1;
+    int64_t loc2;
+
+    x1 = rect->x;
+    y1 = rect->y;
+    x2 = rect->x + rect->width - 1;
+    y2 = rect->y + rect->height - 1;
+
+    if (sub_4B8730(x1, y1, &loc1)) {
+        sub_4B8680(loc1, &x1, &y1);
+        x1 -= 40;
+        y1 -= 20;
+
+        if (sub_4B8730(x2, y2, &loc2)) {
+            sub_4B8680(loc2, &x2, &y2);
+            x2 += 80 + 40;
+            y2 += 40 + 20;
+
+            rect->x = (int)(x1);
+            rect->y = (int)(y1);
+            rect->width = (int)(x2 - x1 + 1);
+            rect->height = (int)(y2 - y2 + 1);
+        }
+    }
 }
 
 // 0x4DF310
