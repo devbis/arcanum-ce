@@ -1540,7 +1540,18 @@ bool sub_4ABC70(Ai* ai)
 // 0x4ABE20
 int sub_4ABE20(Ai* ai)
 {
-    // TODO: Incomplete.
+    AiParams ai_params;
+
+    if (ai->leader_obj != OBJ_HANDLE_NULL
+        && sub_4AB400(ai->obj) > 50
+        && sub_4AB400(ai->leader_obj) > 50
+        && !sub_4ABEB0(ai->obj, ai->danger_source)) {
+        return 0;
+    }
+
+    sub_4AAA60(ai->obj, &ai_params);
+
+    return ai_params.field_3C > 1 ? 50 : 25;
 }
 
 // 0x4ABEB0
