@@ -21,6 +21,7 @@ void sub_573630(int64_t obj);
 void sub_5736E0();
 void sub_573730();
 void sub_573740(int64_t a1, bool a2);
+void sub_573840();
 bool sub_575080(int64_t a1, int64_t a2);
 void sub_575770();
 void sub_575930();
