@@ -470,11 +470,11 @@ void sub_412F60(int dlg)
 // 0x412FD0
 bool sub_412FD0(DialogEntryNode* a1)
 {
-    int64_t loc1;
-    int64_t loc2;
+    int64_t pc_loc;
+    int64_t npc_loc;
     int64_t tmp;
-    int64_t y1;
-    int64_t y2;
+    int64_t pc_loc_y;
+    int64_t npc_loc_y;
 
     if (sub_4AD800(a1->npc_obj, a1->pc_obj, 0) != 0) {
         return false;
@@ -484,14 +484,14 @@ bool sub_412FD0(DialogEntryNode* a1)
 
     if (sub_45D8D0(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
         if (player_is_pc_obj(a1->pc_obj)) {
-            loc1 = obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION);
-            loc2 = obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION);
-            sub_4B8680(loc1, &tmp, &y1);
-            sub_4B8680(loc2, &tmp, &y2);
-            if (y2 > y1) {
-                sub_4B8CE0(loc2);
+            pc_loc = obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION);
+            npc_loc = obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION);
+            sub_4B8680(pc_loc, &tmp, &pc_loc_y);
+            sub_4B8680(npc_loc, &tmp, &npc_loc_y);
+            if (npc_loc_y > pc_loc_y) {
+                sub_4B8CE0(npc_loc);
             } else {
-                sub_4B8CE0(loc1);
+                sub_4B8CE0(pc_loc);
             }
         }
 
