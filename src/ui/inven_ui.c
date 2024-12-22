@@ -48,7 +48,7 @@ static void sub_578330(int64_t a1, int64_t a2);
 static void sub_5786C0(int64_t obj);
 static void sub_578760(int64_t obj);
 static void sub_5788C0(int64_t a1, int64_t a2, int a3, int a4);
-static void sub_579770(int64_t obj, int64_t a2);
+static void sub_579770(int64_t from_obj, int64_t to_obj);
 static bool sub_579840(int64_t obj, bool a2);
 static void sub_579B60(int64_t obj);
 static void sub_579C40();
@@ -3453,25 +3453,25 @@ int64_t sub_579760()
 }
 
 // 0x579770
-void sub_579770(int64_t obj, int64_t a2)
+void sub_579770(int64_t from_obj, int64_t to_obj)
 {
-    int64_t* item_objs;
+    int64_t* items;
     int cnt;
-    int index;
-    int v1;
+    int idx;
+    int inventory_location;
 
-    qword_681450 = obj;
+    qword_681450 = from_obj;
 
-    cnt = item_get_all(obj, &item_objs);
-    for (index = 0; index < cnt; index++) {
-        if ((obj_field_int32_get(item_objs[index], OBJ_F_FLAGS) & OF_OFF) == 0
-            && (obj_field_int32_get(item_objs[index], OBJ_F_ITEM_FLAGS) & OIF_NO_DISPLAY) == 0
-            && !sub_466510(item_objs[index], a2, &v1)) {
-            sub_5788C0(item_objs[index], a2, v1, 0x21);
+    cnt = item_list_get(from_obj, &items);
+    for (idx = 0; idx < cnt; idx++) {
+        if ((obj_field_int32_get(items[idx], OBJ_F_FLAGS) & OF_OFF) == 0
+            && (obj_field_int32_get(items[idx], OBJ_F_ITEM_FLAGS) & OIF_NO_DISPLAY) == 0
+            && !sub_466510(items[idx], to_obj, &inventory_location)) {
+            sub_5788C0(items[idx], to_obj, inventory_location, 0x21);
         }
     }
 
-    sub_462920(item_objs);
+    item_list_free(items);
 }
 
 // 0x579840
