@@ -1842,6 +1842,9 @@ void sub_4B5580(CombatContext* combat)
     case 12:
         dam = 5;
         break;
+    default:
+        dam = 0;
+        break;
     }
 
     if (combat->weapon_obj != OBJ_HANDLE_NULL) {
