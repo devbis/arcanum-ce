@@ -2736,6 +2736,8 @@ tig_art_id_t sub_465020(int64_t obj)
                 tig_debug_printf("Item: ERROR: Item found with invalid item_use_aid_fragment!\n");
                 weapon_type = TIG_ART_WEAPON_TYPE_UNARMED;
             }
+        } else {
+            weapon_type = TIG_ART_WEAPON_TYPE_UNARMED;
         }
 
         armor_obj = item_wield_get(obj, 1005);
