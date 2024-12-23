@@ -114,7 +114,7 @@ void sub_437E50(int64_t a1)
 // 0x4384F0
 void wallcheck_flush()
 {
-    // TODO: Incomplete.
+    wallcheck_reset();
 }
 
 // 0x438500
