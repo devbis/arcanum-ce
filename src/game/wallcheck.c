@@ -14,8 +14,7 @@ typedef struct S5E0A10 {
 static_assert(sizeof(S5E0A10) == 0x10, "wrong size");
 
 typedef struct S5E0E20 {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
+    /* 0000 */ unsigned int flags;
     /* 0008 */ int64_t sector_id;
     /* 0010 */ int64_t obj;
     /* 0018 */ int64_t field_18;
@@ -77,8 +76,8 @@ void wallcheck_reset()
 
     if (dword_5E2E24 > 0) {
         for (index = 0; index < dword_5E2E24; index++) {
-            stru_5E0E20[index].field_0 &= ~0x2;
-            stru_5E0E20[index].field_0 |= 0x1;
+            stru_5E0E20[index].flags &= ~0x2;
+            stru_5E0E20[index].flags |= 0x1;
         }
 
         sub_438830();
@@ -151,7 +150,7 @@ void sub_438570(int64_t obj, int64_t sector_id, int type)
         memcpy(&(stru_5E0E20[index + 1]),
             &(stru_5E0E20[index]),
             sizeof(*stru_5E0E20) * (dword_5E2E24 - index));
-        stru_5E0E20[index].field_0 = 0;
+        stru_5E0E20[index].flags = 0;
         stru_5E0E20[index].sector_id = sector_id;
         stru_5E0E20[index].obj = obj;
         stru_5E0E20[index].field_18 = sub_4395E0(obj_field_int64_get(obj, OBJ_F_LOCATION));
@@ -162,11 +161,11 @@ void sub_438570(int64_t obj, int64_t sector_id, int type)
     }
 
     if (type == 1 || type == 16) {
-        stru_5E0E20[index].field_0 = 6;
+        stru_5E0E20[index].flags = 0x04 | 0x02;
     } else if (type == 2 || type == 32) {
-        stru_5E0E20[index].field_0 = 10;
+        stru_5E0E20[index].flags = 0x08 | 0x02;
     } else {
-        stru_5E0E20[index].field_0 = 14;
+        stru_5E0E20[index].flags = 0x08 | 0x04 | 0x02;
     }
 }
 
@@ -255,7 +254,7 @@ void sub_438830()
     unsigned int new_wall_flags;
 
     for (idx = 0; idx < dword_5E2E24; idx++) {
-        if ((stru_5E0E20[idx].field_0 & 0x01) != 0) {
+        if ((stru_5E0E20[idx].flags & 0x01) != 0) {
             wall_flags = obj_field_int32_get(stru_5E0E20[idx].obj, OBJ_F_WALL_FLAGS);
             if ((wall_flags & 0x01) == 0) {
                 wall_flags &= ~(0x04 | 0x02);
@@ -275,14 +274,14 @@ void sub_438830()
                 &(stru_5E0E20[idx + 1]),
                 sizeof(stru_5E0E20[0]) * (dword_5E2E24 - idx - 1));
             dword_5E2E24--;
-        } else if ((stru_5E0E20[idx].field_0 & 0x02) != 0) {
+        } else if ((stru_5E0E20[idx].flags & 0x02) != 0) {
             wall_flags = obj_field_int32_get(stru_5E0E20[idx].obj, OBJ_F_WALL_FLAGS);
             if ((wall_flags & 0x01) == 0) {
                 wall_flags &= ~(0x04 | 0x02);
 
-                if (((stru_5E0E20[idx].field_0) & (0x08 | 0x04)) == (0x08 | 0x04)) {
+                if (((stru_5E0E20[idx].flags) & (0x08 | 0x04)) == (0x08 | 0x04)) {
                     new_wall_flags = 0x04 | 0x02;
-                } else if ((stru_5E0E20[idx].field_0 & (0x08 | 0x04)) == 0x04) {
+                } else if ((stru_5E0E20[idx].flags & (0x08 | 0x04)) == 0x04) {
                     new_wall_flags = 0x02;
                 } else {
                     new_wall_flags = 0x04;
@@ -300,7 +299,7 @@ void sub_438830()
                 }
             }
 
-            stru_5E0E20[idx].field_0 &= ~0x02;
+            stru_5E0E20[idx].flags &= ~0x02;
         }
     }
 }
