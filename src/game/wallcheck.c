@@ -263,7 +263,7 @@ void wallcheck_roof_faded_clear(int64_t a1)
         sub_439F20(a1);
         memcpy(&(stru_5E0A10[index]),
             &(stru_5E0A10[index + 1]),
-            sizeof(*stru_5E0A10) * (dword_5E2E28 + (index + 1)));
+            sizeof(*stru_5E0A10) * (dword_5E2E28 - index - 1));
         dword_5E2E28--;
     }
 }
