@@ -791,16 +791,6 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
     item_remove(item_obj);
 
     if (inventory_location != -1) {
-        if (v1) {
-            if (existing_item_obj == OBJ_HANDLE_NULL) {
-                item_insert(item_obj, critter_obj, inventory_location);
-            }
-        }
-    } else {
-        item_insert(item_obj, critter_obj, new_inventory_location);
-    }
-
-    if (inventory_location != -1) {
         if (!v1) {
             sub_466260(critter_obj, slots);
             if (sub_466390(item_obj, critter_obj, inventory_location, slots)) {
