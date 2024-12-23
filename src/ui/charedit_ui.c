@@ -769,7 +769,7 @@ static int dword_64DF10[8][TECH_COUNT];
 static int64_t qword_64E010;
 
 // 0x64E018
-static bool charedit_created;
+bool charedit_created;
 
 // 0x64E01C
 static int dword_64E01C;
