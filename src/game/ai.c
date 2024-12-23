@@ -3350,8 +3350,8 @@ int sub_4AF640(int64_t a1, int64_t a2)
     int idx;
     int64_t new_loc;
     int rotation;
-    int64_t v2;
-    int v3;
+    int64_t block_obj;
+    int block_obj_type;
 
     loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
     loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
@@ -3384,7 +3384,7 @@ int sub_4AF640(int64_t a1, int64_t a2)
                 flags |= 0x10;
             }
 
-            cnt += sub_43FDC0(OBJ_HANDLE_NULL, loc1, rotation, flags, &v2, &v3, 0);
+            cnt += sub_43FDC0(OBJ_HANDLE_NULL, loc1, rotation, flags, &block_obj, &block_obj_type, 0);
             loc1 = new_loc;
         }
     }
