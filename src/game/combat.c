@@ -35,7 +35,7 @@
 static void turn_based_changed();
 static void fast_turn_based_changed();
 static void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t missile_art_id);
-static void sub_4B2690(int64_t a1, int64_t a2, int64_t a3, CombatContext* combat, bool a5);
+static void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat, bool a5);
 static int sub_4B2810(int64_t obj);
 static void sub_4B2F60(CombatContext* combat);
 static void sub_4B3770(CombatContext* combat);
@@ -478,9 +478,55 @@ void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat)
 }
 
 // 0x4B2690
-void sub_4B2690(int64_t a1, int64_t a2, int64_t a3, CombatContext* combat, bool a5)
+void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat, bool a5)
 {
-    // TODO: Incomplete.
+    unsigned int proj_flags;
+    int64_t weapon_obj;
+    int64_t loc;
+    int v1;
+    unsigned int critter_flags2;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        return;
+    }
+
+    proj_flags = obj_field_int32_get(proj_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT);
+    if ((proj_flags & 0x40) != 0) {
+        weapon_obj = obj_field_handle_get(proj_obj, OBJ_F_PROJECTILE_PARENT_WEAPON);
+        loc = obj_field_int64_get(proj_obj, OBJ_F_LOCATION);
+        sub_4EDF20(weapon_obj, loc, 0, 0, false);
+        sub_4EFEE0(weapon_obj, OF_OFF);
+        sub_43CCA0(proj_obj);
+    } else if ((proj_flags & 0x1000) != 0) {
+        if (a5 && (proj_flags && 0x2000) == 0) {
+            proj_flags |= 0x2000;
+            sub_4EFDD0(proj_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT, proj_flags);
+            if (!sub_435A00(proj_obj, obj_field_int64_get(a2, OBJ_F_LOCATION), a3)) {
+                sub_4B2690(proj_obj, a2, a3, combat, true);
+                return;
+            }
+        } else {
+            critter_flags2 = obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS2);
+            critter_flags2 &= ~OCF2_USING_BOOMERANG;
+            sub_4EFDD0(a2, OBJ_F_CRITTER_FLAGS2, critter_flags2);
+
+            sub_43CCA0(proj_obj);
+            sub_4A9AD0(a2, a3);
+        }
+    } else {
+        sub_43CCA0(proj_obj);
+    }
+
+    if (combat != NULL
+        && combat->field_20 != OBJ_HANDLE_NULL) {
+        v1 = sub_4B2810(combat->weapon_obj);
+        if ((combat->flags & 0x800) != 0) {
+            sub_4A9650(combat->field_8, combat->field_20, v1, 0x01);
+        } else {
+            sub_4A9650(combat->field_8, combat->field_20, v1, 0);
+        }
+    }
 }
 
 // 0x4B2810
