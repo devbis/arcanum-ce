@@ -172,7 +172,29 @@ void sub_438570(int64_t obj, int64_t sector_id, int type)
 // 0x4386B0
 bool sub_4386B0(int64_t obj, int* index_ptr)
 {
-    // TODO: Incomplete.
+    int l;
+    int r;
+    int m;
+    int64_t curr;
+
+    l = 0;
+    r = dword_5E2E24 - 1;
+    while (l <= r) {
+        m = (l + r) / 2;
+        curr = stru_5E0E20[m].obj;
+
+        if (curr < obj) {
+            l = m + 1;
+        } else if (curr > obj) {
+            r = m - 1;
+        } else {
+            *index_ptr = m;
+            return true;
+        }
+    }
+
+    *index_ptr = l;
+    return false;
 }
 
 // 0x438720
