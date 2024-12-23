@@ -1,5 +1,6 @@
 #include "game/wallcheck.h"
 
+#include "game/object.h"
 #include "game/player.h"
 #include "game/roof.h"
 #include "game/sector.h"
@@ -27,6 +28,7 @@ static bool sub_4386B0(int64_t obj, int* index_ptr);
 static void sub_438720(int64_t a1);
 static bool sub_4387C0(int64_t a1, int* index_ptr);
 static void sub_438830();
+static void wallcheck_roof_faded_clear(int64_t a1);
 
 // 0x5A3E90
 static bool dword_5A3E90 = true;
@@ -246,7 +248,61 @@ bool sub_4387C0(int64_t a1, int* index_ptr)
 // 0x438830
 void sub_438830()
 {
-    // TODO: Incomplete.
+    int idx;
+    unsigned int wall_flags;
+    unsigned int render_flags;
+    TigRect obj_rect;
+    unsigned int new_wall_flags;
+
+    for (idx = 0; idx < dword_5E2E24; idx++) {
+        if ((stru_5E0E20[idx].field_0 & 0x01) != 0) {
+            wall_flags = obj_field_int32_get(stru_5E0E20[idx].obj, OBJ_F_WALL_FLAGS);
+            if ((wall_flags & 0x01) == 0) {
+                wall_flags &= ~(0x04 | 0x02);
+                obj_field_int32_set(stru_5E0E20[idx].obj, OBJ_F_WALL_FLAGS, wall_flags);
+
+                render_flags = obj_field_int32_get(stru_5E0E20[idx].obj, OBJ_F_RENDER_FLAGS);
+                render_flags &= ~ORF_01000000;
+                obj_field_int32_set(stru_5E0E20[idx].obj, OBJ_F_RENDER_FLAGS, render_flags);
+
+                object_get_rect(stru_5E0E20[idx].obj, 0, &obj_rect);
+                dword_5E0A00(&obj_rect);
+            }
+
+            wallcheck_roof_faded_clear(stru_5E0E20[idx].field_18);
+
+            memcpy(&(stru_5E0E20[idx]),
+                &(stru_5E0E20[idx + 1]),
+                sizeof(stru_5E0E20[0]) * (dword_5E2E24 - idx - 1));
+            dword_5E2E24--;
+        } else if ((stru_5E0E20[idx].field_0 & 0x02) != 0) {
+            wall_flags = obj_field_int32_get(stru_5E0E20[idx].obj, OBJ_F_WALL_FLAGS);
+            if ((wall_flags & 0x01) == 0) {
+                wall_flags &= ~(0x04 | 0x02);
+
+                if (((stru_5E0E20[idx].field_0) & (0x08 | 0x04)) == (0x08 | 0x04)) {
+                    new_wall_flags = 0x04 | 0x02;
+                } else if ((stru_5E0E20[idx].field_0 & (0x08 | 0x04)) == 0x04) {
+                    new_wall_flags = 0x02;
+                } else {
+                    new_wall_flags = 0x04;
+                }
+
+                if (new_wall_flags != wall_flags) {
+                    obj_field_int32_set(stru_5E0E20[idx].obj, OBJ_F_WALL_FLAGS, wall_flags | new_wall_flags);
+
+                    render_flags = obj_field_int32_get(stru_5E0E20[idx].obj, OBJ_F_RENDER_FLAGS);
+                    render_flags &= ~ORF_01000000;
+                    obj_field_int32_set(stru_5E0E20[idx].obj, OBJ_F_RENDER_FLAGS, render_flags);
+
+                    object_get_rect(stru_5E0E20[idx].obj, 0, &obj_rect);
+                    dword_5E0A00(&obj_rect);
+                }
+            }
+
+            stru_5E0E20[idx].field_0 &= ~0x02;
+        }
+    }
 }
 
 // 0x438A50
