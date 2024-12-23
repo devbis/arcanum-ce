@@ -2761,10 +2761,10 @@ void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags
     LocRect loc_rect;
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    loc_rect.x1 = loc - radius;
-    loc_rect.y1 = loc - radius;
-    loc_rect.x2 = loc + radius;
-    loc_rect.y2 = loc + radius;
+    loc_rect.x1 = LOCATION_GET_X(loc) - radius;
+    loc_rect.y1 = LOCATION_GET_Y(loc) - radius;
+    loc_rect.x2 = LOCATION_GET_X(loc) + radius;
+    loc_rect.y2 = LOCATION_GET_Y(loc) + radius;
     sub_440B40(&loc_rect, flags, objects);
 }
 
