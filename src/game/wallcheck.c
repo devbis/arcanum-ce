@@ -5,8 +5,7 @@
 #include "game/sector.h"
 
 typedef struct S5E0A10 {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
+    /* 0000 */ int64_t field_0;
     /* 0008 */ int field_8;
     /* 000C */ int field_C;
 } S5E0A10;
@@ -219,7 +218,29 @@ void sub_438720(int64_t a1)
 // 0x4387C0
 bool sub_4387C0(int64_t a1, int* index_ptr)
 {
-    // TODO: Incomplete.
+    int l;
+    int r;
+    int m;
+    int64_t curr;
+
+    l = 0;
+    r = dword_5E2E28 - 1;
+    while (l <= r) {
+        m = (l + r) / 2;
+        curr = stru_5E0A10[m].field_0;
+
+        if (curr < a1) {
+            l = m + 1;
+        } else if (curr > a1) {
+            r = m - 1;
+        } else {
+            *index_ptr = m;
+            return true;
+        }
+    }
+
+    *index_ptr = l;
+    return false;
 }
 
 // 0x438830
