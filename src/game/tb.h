@@ -2,7 +2,9 @@
 #define ARCANUM_GAME_TB_H_
 
 #include "game/context.h"
-#include "game/obj.h"
+
+#define TB_EXPIRE_NEVER -2
+#define TB_EXPIRE_DEFAULT -1
 
 typedef enum TbType {
     TB_TYPE_WHITE,
@@ -22,7 +24,7 @@ void tb_toggle();
 void tb_ping(unsigned int time);
 void tb_render(UnknownContext* render_info);
 void tb_add(int64_t obj, int type, const char* str);
-void sub_4D6160(object_id_t object_id, int a2);
+void tb_expire_in(int64_t obj, int seconds);
 void tb_move(int64_t obj, int64_t loc, int offset_x, int offset_y);
 void tb_remove(int64_t obj);
 void tb_clear();

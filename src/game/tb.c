@@ -286,19 +286,19 @@ void tb_add(int64_t obj, int type, const char* str)
 }
 
 // 0x4D6160
-void sub_4D6160(object_id_t object_id, int a2)
+void tb_expire_in(int64_t obj, int seconds)
 {
     int index;
 
     for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
         if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
-            if (tb_text_blocks[index].obj == object_id) {
-                if (a2 == -2) {
+            if (tb_text_blocks[index].obj == obj) {
+                if (seconds == TB_EXPIRE_NEVER) {
                     tb_text_blocks[index].flags |= TEXT_BLOCK_PERMANENT;
                 } else {
                     tb_text_blocks[index].flags &= ~TEXT_BLOCK_PERMANENT;
                     tb_text_blocks[index].time = gamelib_ping_time;
-                    tb_text_blocks[index].duration = (a2 >= 0) ? 1000 * a2 : tb_text_duration;
+                    tb_text_blocks[index].duration = (seconds >= 0) ? 1000 * seconds : tb_text_duration;
                 }
                 return;
             }

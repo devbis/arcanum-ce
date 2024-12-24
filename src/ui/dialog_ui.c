@@ -49,8 +49,8 @@ static bool sub_5681B0(DialogUiEntry* entry);
 static bool sub_568280(DialogUiEntry *a1);
 static void sub_568480(DialogUiEntry* entry, int a2);
 static void sub_5684C0(DialogUiEntry* entry);
-static void sub_568540(int64_t a1, int64_t a2, int a3, int a4, const char* str, int a6);
-static void sub_5686C0(int64_t a1, int64_t a2, int a3, int a4, const char* str);
+static void sub_568540(int64_t a1, int64_t a2, int type, int expires_in, const char* str, int a6);
+static void sub_5686C0(int64_t a1, int64_t a2, int type, int expires_in, const char* str);
 static void sub_5688D0(int64_t a1, long long obj, int a4);
 static void sub_5689B0();
 
@@ -186,8 +186,8 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             if (entry->field_8.field_17E8 == 4) {
                 sub_568540(entry->field_8.npc_obj,
                     entry->field_8.pc_obj,
-                    0,
-                    -1,
+                    TB_TYPE_WHITE,
+                    TB_EXPIRE_DEFAULT,
                     entry->field_8.field_70,
                     entry->field_8.field_458);
                 sub_413280(&(entry->field_8));
@@ -287,7 +287,7 @@ void sub_5678D0(long long obj, int a2)
         sub_412F40(entry->field_4);
     }
 
-    sub_4D6160(entry->field_8.npc_obj, -1);
+    tb_expire_in(entry->field_8.npc_obj, TB_EXPIRE_DEFAULT);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0) {
@@ -459,7 +459,11 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
     bool is_pc;
 
     is_pc = player_is_pc_obj(entry->field_8.pc_obj);
-    sub_5686C0(entry->field_8.pc_obj, entry->field_8.npc_obj, 2, -1, entry->field_8.field_460[a2]);
+    sub_5686C0(entry->field_8.pc_obj,
+        entry->field_8.npc_obj,
+        TB_TYPE_GREEN,
+        TB_EXPIRE_DEFAULT,
+        entry->field_8.field_460[a2]);
     mp_tb_remove(entry->field_8.npc_obj);
     sub_5689B0();
     sub_413130(&(entry->field_8), a2);
@@ -487,7 +491,12 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
         }
         break;
     case 4:
-        sub_568540(entry->field_8.npc_obj, entry->field_8.pc_obj, 0, -1, entry->field_8.field_70, entry->field_8.field_458);
+        sub_568540(entry->field_8.npc_obj,
+            entry->field_8.pc_obj,
+            TB_TYPE_WHITE,
+            TB_EXPIRE_DEFAULT,
+            entry->field_8.field_70,
+            entry->field_8.field_458);
         sub_5678D0(entry->field_8.pc_obj, 0);
         break;
     case 5:
@@ -586,7 +595,7 @@ void sub_5681C0(long long a1, long long a2)
     char text[1000];
 
     sub_4132A0(a2, a1, text);
-    sub_568540(a2, a1, 0, -1, text, -1);
+    sub_568540(a2, a1, TB_TYPE_WHITE, TB_EXPIRE_DEFAULT, text, -1);
 }
 
 // 0x568220
@@ -666,11 +675,12 @@ bool sub_568280(DialogUiEntry *a1)
 // 0x568430
 void sub_568430(int64_t a1, int64_t a2, const char* a3, int a4)
 {
-    int font;
+    int type;
 
-    // TODO: Unclear.
-    font = obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC ? 0 : 2;
-    sub_568540(a1, a2, font, -1, a3, a4);
+    type = obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC
+        ? TB_TYPE_WHITE
+        : TB_TYPE_GREEN;
+    sub_568540(a1, a2, type, TB_EXPIRE_DEFAULT, a3, a4);
 }
 
 // 0x568480
@@ -688,7 +698,12 @@ void sub_5684C0(DialogUiEntry* entry)
 {
     int index;
 
-    sub_568540(entry->field_8.npc_obj, entry->field_8.pc_obj, 0, -2, entry->field_8.field_70, entry->field_8.field_458);
+    sub_568540(entry->field_8.npc_obj,
+        entry->field_8.pc_obj,
+        TB_TYPE_WHITE,
+        TB_EXPIRE_NEVER,
+        entry->field_8.field_70,
+        entry->field_8.field_458);
 
     if (player_is_pc_obj(entry->field_8.pc_obj)) {
         sub_553370();
@@ -700,7 +715,7 @@ void sub_5684C0(DialogUiEntry* entry)
 }
 
 // 0x568540
-void sub_568540(int64_t obj, int64_t a2, int type, int a4, const char* str, int a6)
+void sub_568540(int64_t obj, int64_t a2, int type, int expires_in, const char* str, int a6)
 {
     Packet44 pkt;
 
@@ -714,7 +729,7 @@ void sub_568540(int64_t obj, int64_t a2, int type, int a4, const char* str, int 
         pkt.d.d.field_8 = sub_407EF0(obj);
         pkt.d.d.field_20 = sub_407EF0(a2);
         pkt.d.d.field_38 = type;
-        pkt.d.d.field_3C = a4;
+        pkt.d.d.field_3C = expires_in;
         pkt.d.d.field_40 = 0;
         strncpy(pkt.d.d.field_44, str, 1000);
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -729,12 +744,12 @@ void sub_568540(int64_t obj, int64_t a2, int type, int a4, const char* str, int 
 
     tb_remove(obj);
     tb_add(obj, type, str);
-    sub_4D6160(obj, a4);
+    tb_expire_in(obj, expires_in);
     sub_5688D0(obj, a2, a6);
 }
 
 // 0x5686C0
-void sub_5686C0(int64_t obj, int64_t a2, int type, int a4, const char* str)
+void sub_5686C0(int64_t obj, int64_t a2, int type, int expires_in, const char* str)
 {
     Packet44 pkt;
 
@@ -748,7 +763,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int a4, const char* str)
         pkt.d.d.field_8 = sub_407EF0(obj);
         pkt.d.d.field_20 = sub_407EF0(a2);
         pkt.d.d.field_38 = type;
-        pkt.d.d.field_3C = a4;
+        pkt.d.d.field_3C = expires_in;
         pkt.d.d.field_40 = 1;
         strncpy(pkt.d.d.field_44, str, 1000);
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -764,7 +779,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int a4, const char* str)
     if (!player_is_pc_obj(obj)) {
         tb_remove(obj);
         tb_add(obj, type, str);
-        sub_4D6160(obj, a4);
+        tb_expire_in(obj, expires_in);
     }
 }
 
@@ -795,7 +810,7 @@ void sub_568880(long long obj, int a2, int a3, int type, int a5, int a6, const c
 
     tb_remove(obj);
     tb_add(obj, type, str);
-    sub_4D6160(obj, a5);
+    tb_expire_in(obj, a5);
 }
 
 // 0x5688D0
