@@ -143,13 +143,17 @@ void tc_resize(ResizeInfo* resize_info)
 }
 
 // 0x4C95F0
-void sub_4C95F0(UnknownContext* info)
+void tc_render(UnknownContext* render_info)
 {
-    if (!tc_editor) {
-        if (dword_5FF568) {
-            sub_4C9BE0(*info->rects);
-        }
+    if (tc_editor) {
+        return;
     }
+
+    if (!dword_5FF568) {
+        return;
+    }
+
+    sub_4C9BE0(*render_info->rects);
 }
 
 // 0x4C9620
