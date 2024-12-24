@@ -18,6 +18,7 @@ void tb_exit();
 void tb_resize(ResizeInfo* resize_info);
 bool tb_update_view(ViewOptions* view_options);
 void tb_close();
+void tb_toggle();
 void tb_ping(unsigned int time);
 void tb_render(UnknownContext* render_info);
 void sub_4D5FE0(int64_t obj, int type, const char* str);

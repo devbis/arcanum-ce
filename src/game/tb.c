@@ -61,7 +61,7 @@ static S602930 stru_602930[EIGHT];
 static GameContextF8* dword_602AB0;
 
 // 0x602AB4
-static bool dword_602AB4;
+static bool tb_enabled;
 
 // 0x602AB8
 static int tb_text_duration;
@@ -100,7 +100,7 @@ bool tb_init(GameInitInfo* init_info)
     stru_602920.height = window_data.rect.height;
     dword_602AB0 = init_info->field_8;
     tb_view_options.type = VIEW_TYPE_ISOMETRIC;
-    dword_602AB4 = 1;
+    tb_enabled = true;
     dword_602AC4 = tig_color_make(0, 0, 255);
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY | TIG_VIDEO_BUFFER_CREATE_COLOR_KEY;
@@ -180,9 +180,9 @@ void tb_close()
 }
 
 // 0x4D5E90
-void sub_4D5E90()
+void tb_toggle()
 {
-    dword_602AB4 = 1 - dword_602AB4;
+    tb_enabled = !tb_enabled;
 }
 
 // 0x4D5EB0
@@ -211,7 +211,7 @@ void tb_render(UnknownContext* render_info)
     TigRect intersection;
     TigRect src_rect;
 
-    if (!dword_602AB4) {
+    if (!tb_enabled) {
         return;
     }
 
