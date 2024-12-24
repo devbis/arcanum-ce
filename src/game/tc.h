@@ -7,7 +7,7 @@ bool tc_init(GameInitInfo* init_info);
 void tc_exit();
 void tc_resize(ResizeInfo* resize_info);
 void tc_render(UnknownContext* render_info);
-void sub_4C9620(int dx, int dy);
+void tc_scroll(int dx, int dy);
 void sub_4C96C0();
 void sub_4C96F0();
 void sub_4C9720();

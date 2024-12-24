@@ -157,29 +157,35 @@ void tc_render(UnknownContext* render_info)
 }
 
 // 0x4C9620
-void sub_4C9620(int dx, int dy)
+void tc_scroll(int dx, int dy)
 {
     TigRect rect;
 
-    if (!tc_editor && dword_5FF568) {
-        rect = stru_5FF4F8;
-
-        if (dx < 0) {
-            rect.x += dx;
-            rect.width -= dx;
-        } else if (dx > 0) {
-            rect.width += dx;
-        }
-
-        if (dy < 0) {
-            rect.y += dy;
-            rect.height -= dy;
-        } else if (dy > 0) {
-            rect.height += dy;
-        }
-
-        tc_iso_window_invalidate_rect(&rect);
+    if (tc_editor) {
+        return;
     }
+
+    if (!dword_5FF568) {
+        return;
+    }
+
+    rect = stru_5FF4F8;
+
+    if (dx < 0) {
+        rect.x += dx;
+        rect.width -= dx;
+    } else if (dx > 0) {
+        rect.width += dx;
+    }
+
+    if (dy < 0) {
+        rect.y += dy;
+        rect.height -= dy;
+    } else if (dy > 0) {
+        rect.height += dy;
+    }
+
+    tc_iso_window_invalidate_rect(&rect);
 }
 
 // 0x4C96C0

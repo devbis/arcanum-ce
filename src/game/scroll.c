@@ -370,7 +370,7 @@ void sub_40E630(int64_t dx, int64_t dy)
     }
 
     // TODO: Wrong, check.
-    sub_4C9620((int)v3, (int)v4);
+    tc_scroll((int)v3, (int)v4);
 
     if (!scroll_init_info.editor) {
         int64_t loc;
