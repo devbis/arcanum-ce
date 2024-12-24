@@ -116,7 +116,7 @@ static bool dword_5E2E38;
 static bool roof_editor;
 
 // 0x5E2E40
-static bool dword_5E2E40;
+static bool roof_enabled;
 
 // 0x5E2E44
 static tig_window_handle_t roof_window_handle;
@@ -137,7 +137,7 @@ bool roof_init(GameInitInfo* init_info)
     dword_5E2E34 = init_info->field_8;
     roof_view_options.type = VIEW_TYPE_ISOMETRIC;
     roof_editor = init_info->editor;
-    dword_5E2E40 = true;
+    roof_enabled = true;
 
     if (!mes_load("art\\roof\\roofshade.mes", &mes_file)) {
         return false;
@@ -194,6 +194,12 @@ bool sub_439100(ViewOptions* view_options)
     return true;
 }
 
+// 0x439120
+void roof_toggle()
+{
+    roof_enabled = !roof_enabled;
+}
+
 // 0x439140
 void roof_render(UnknownContext* render_info)
 {
@@ -210,7 +216,7 @@ void roof_render(UnknownContext* render_info)
     TigRect roof_rect;
     TigRectListNode* node;
 
-    if (!dword_5E2E40) {
+    if (!roof_enabled) {
         return;
     }
 
@@ -447,7 +453,7 @@ bool sub_439890(int x, int y)
     tig_art_id_t aid;
     TigRect rect;
 
-    if (!dword_5E2E40) {
+    if (!roof_enabled) {
         return false;
     }
 
@@ -614,7 +620,7 @@ bool sub_439FA0(int64_t loc)
 {
     tig_art_id_t aid;
 
-    if (dword_5E2E40) {
+    if (roof_enabled) {
         aid = sub_4396A0(loc);
         if (aid != TIG_ART_ID_INVALID
             && sub_5048D0(aid) == 0
@@ -640,7 +646,7 @@ bool sub_43A030(int64_t loc, int a2)
 {
     tig_art_id_t aid;
 
-    if (!dword_5E2E40) {
+    if (!roof_enabled) {
         return false;
     }
 
