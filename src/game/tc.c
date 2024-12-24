@@ -21,7 +21,7 @@ static TigRect tc_iso_window_rect;
 static tig_font_handle_t dword_5FF530;
 
 // 0x5FF534
-static GameContextF8* dword_5FF534;
+static GameContextF8* tc_iso_window_invalidate_rect;
 
 // 0x5FF538
 static tig_font_handle_t dword_5FF538;
@@ -66,7 +66,7 @@ bool tc_init(GameInitInfo* init_info)
 
         tc_iso_window_handle = init_info->iso_window_handle;
         tc_iso_window_rect = window_data.rect;
-        dword_5FF534 = init_info->field_8;
+        tc_iso_window_invalidate_rect = init_info->field_8;
 
         stru_5FF508.x = 0;
         stru_5FF508.y = 0;
@@ -120,7 +120,7 @@ void tc_exit()
         tig_video_buffer_destroy(dword_5FF53C);
         tig_video_buffer_destroy(dword_5FF518);
         tc_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
-        dword_5FF534 = NULL;
+        tc_iso_window_invalidate_rect = NULL;
     }
 }
 
@@ -178,7 +178,7 @@ void sub_4C9620(int dx, int dy)
             rect.height += dy;
         }
 
-        dword_5FF534(&rect);
+        tc_iso_window_invalidate_rect(&rect);
     }
 }
 
@@ -188,7 +188,7 @@ void sub_4C96C0()
     if (!tc_editor) {
         if (!dword_5FF568) {
             dword_5FF568 = true;
-            dword_5FF534(&stru_5FF4F8);
+            tc_iso_window_invalidate_rect(&stru_5FF4F8);
         }
     }
 }
@@ -199,7 +199,7 @@ void sub_4C96F0()
     if (!tc_editor) {
         if (dword_5FF568) {
             dword_5FF568 = false;
-            dword_5FF534(&stru_5FF4F8);
+            tc_iso_window_invalidate_rect(&stru_5FF4F8);
         }
     }
 }
@@ -218,7 +218,7 @@ void sub_4C9720()
         dword_5FF554[3] = NULL;
         dword_5FF554[4] = NULL;
 
-        dword_5FF534(&stru_5FF4F8);
+        tc_iso_window_invalidate_rect(&stru_5FF4F8);
 
         dword_5B7218 = -1;
         dword_5FF544 = 0;
@@ -283,7 +283,7 @@ void sub_4C9810(int index, const char* str)
         }
 
         if (dword_5FF568) {
-            dword_5FF534(&stru_5FF4F8);
+            tc_iso_window_invalidate_rect(&stru_5FF4F8);
         }
 
         if (mouse_inside && dword_5B7218 != index) {
