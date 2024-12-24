@@ -460,7 +460,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
 
     is_pc = player_is_pc_obj(entry->field_8.pc_obj);
     sub_5686C0(entry->field_8.pc_obj, entry->field_8.npc_obj, 2, -1, entry->field_8.field_460[a2]);
-    sub_4EF630(entry->field_8.npc_obj);
+    mp_tb_remove(entry->field_8.npc_obj);
     sub_5689B0();
     sub_413130(&(entry->field_8), a2);
     sub_567D60(entry);
@@ -727,7 +727,7 @@ void sub_568540(int64_t obj, int64_t a2, int type, int a4, const char* str, int 
         sub_433440(obj, sub_441B20(obj, a2));
     }
 
-    sub_4D62B0(obj);
+    tb_remove(obj);
     tb_add(obj, type, str);
     sub_4D6160(obj, a4);
     sub_5688D0(obj, a2, a6);
@@ -762,7 +762,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int a4, const char* str)
     }
 
     if (!player_is_pc_obj(obj)) {
-        sub_4D62B0(obj);
+        tb_remove(obj);
         tb_add(obj, type, str);
         sub_4D6160(obj, a4);
     }
@@ -793,7 +793,7 @@ void sub_568880(long long obj, int a2, int a3, int type, int a5, int a6, const c
         }
     }
 
-    sub_4D62B0(obj);
+    tb_remove(obj);
     tb_add(obj, type, str);
     sub_4D6160(obj, a5);
 }

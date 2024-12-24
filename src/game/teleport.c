@@ -291,7 +291,7 @@ bool sub_4D3760(int64_t obj, int64_t loc)
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
 
     if ((flags & OF_TEXT) != 0) {
-        sub_4EF630(obj);
+        mp_tb_remove(obj);
     }
 
     if ((flags & OF_TEXT_FLOATER) != 0) {

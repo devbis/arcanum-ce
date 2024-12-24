@@ -1223,11 +1223,11 @@ void sub_4EF5C0(int64_t obj)
 }
 
 // 0x4EF630
-void sub_4EF630(int64_t obj)
+void mp_tb_remove(int64_t obj)
 {
     Packet116 pkt;
 
-    sub_4D62B0(obj);
+    tb_remove(obj);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 116;
@@ -1244,7 +1244,7 @@ void sub_4EF690(Packet116* pkt)
     if (pkt->field_8 == 0) {
         switch (pkt->field_4) {
         case 0:
-            sub_4D62B0(objp_perm_lookup(pkt->oid));
+            tb_remove(objp_perm_lookup(pkt->oid));
             break;
         case 1:
             sub_4D56C0(objp_perm_lookup(pkt->oid));

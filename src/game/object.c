@@ -191,7 +191,7 @@ void sub_43CFF0(object_id_t obj)
 
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
     if ((flags & OF_TEXT) != 0) {
-        sub_4D62B0(obj);
+        tb_remove(obj);
     }
     if ((flags & OF_TEXT_FLOATER) != 0) {
         sub_4D56C0(obj);

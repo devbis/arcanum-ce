@@ -330,23 +330,23 @@ void tb_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
 }
 
 // 0x4D62B0
-void sub_4D62B0(object_id_t object_id)
+void tb_remove(int64_t obj)
 {
     int index;
     unsigned int flags;
 
     for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-            if (stru_602930[index].object_id == object_id) {
+            if (stru_602930[index].object_id == obj) {
                 sub_4D6350(&(stru_602930[index]));
                 return;
             }
         }
     }
 
-    flags = obj_field_int32_get(object_id, OBJ_F_FLAGS);
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
     flags &= ~OF_TEXT;
-    obj_field_int32_set(object_id, OBJ_F_FLAGS, flags);
+    obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 }
 
 // 0x4D6320
