@@ -419,7 +419,7 @@ void tf_add(int64_t obj, int type, const char* str)
 }
 
 // 0x4D5570
-void sub_4D5570(int64_t obj, int64_t loc, int offset_x, int offset_y)
+void tf_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
 {
     TextFloaterList* list;
     TextFloaterNode* node;
