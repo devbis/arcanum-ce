@@ -25,6 +25,7 @@ static void sub_4D6350(TextBlock* tb);
 static void sub_4D63B0(TextBlock* tb, TigRect* rect);
 static void sub_4D6410(TextBlock* tb, long long location, int offset_x, int offset_y, TigRect* rect);
 static void tb_text_duration_changed();
+static TextBlock* find_text_block(int64_t obj);
 
 // 0x5B8EA0
 static uint8_t tb_colors[TB_TYPE_COUNT][3] = {
@@ -288,65 +289,57 @@ void tb_add(int64_t obj, int type, const char* str)
 // 0x4D6160
 void tb_expire_in(int64_t obj, int seconds)
 {
-    int index;
+    TextBlock* tb;
 
-    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
-        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
-            if (tb_text_blocks[index].obj == obj) {
-                if (seconds == TB_EXPIRE_NEVER) {
-                    tb_text_blocks[index].flags |= TEXT_BLOCK_PERMANENT;
-                } else {
-                    tb_text_blocks[index].flags &= ~TEXT_BLOCK_PERMANENT;
-                    tb_text_blocks[index].time = gamelib_ping_time;
-                    tb_text_blocks[index].duration = (seconds >= 0) ? 1000 * seconds : tb_text_duration;
-                }
-                return;
-            }
-        }
+
+    tb = find_text_block(obj);
+    if (tb == NULL) {
+        return;
+    }
+
+    if (seconds == TB_EXPIRE_NEVER) {
+        tb->flags |= TEXT_BLOCK_PERMANENT;
+    } else {
+        tb->flags &= ~TEXT_BLOCK_PERMANENT;
+        tb->time = gamelib_ping_time;
+        tb->duration = (seconds >= 0) ? 1000 * seconds : tb_text_duration;
     }
 }
 
 // 0x4D6210
 void tb_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
 {
-    int index;
+    TextBlock* tb;
     TigRect rect;
     TigRect temp_rect;
 
-    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
-        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
-            if (tb_text_blocks[index].obj == obj) {
-                sub_4D63B0(&(tb_text_blocks[index]), &rect);
-
-                sub_4D6410(&(tb_text_blocks[index]), loc, offset_x, offset_y, &temp_rect);
-
-                tig_rect_union(&rect, &temp_rect, &rect);
-                tb_iso_window_invalidate_rect(&rect);
-
-                return;
-            }
-        }
+    tb = find_text_block(obj);
+    if (tb == NULL) {
+        return;
     }
+
+    sub_4D63B0(tb, &rect);
+
+    sub_4D6410(tb, loc, offset_x, offset_y, &temp_rect);
+
+    tig_rect_union(&rect, &temp_rect, &rect);
+    tb_iso_window_invalidate_rect(&rect);
 }
 
 // 0x4D62B0
 void tb_remove(int64_t obj)
 {
-    int index;
+    TextBlock* tb;
     unsigned int flags;
 
-    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
-        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
-            if (tb_text_blocks[index].obj == obj) {
-                sub_4D6350(&(tb_text_blocks[index]));
-                return;
-            }
-        }
+    tb = find_text_block(obj);
+    if (tb != NULL) {
+        sub_4D6350(tb);
+    } else {
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags &= ~OF_TEXT;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
     }
-
-    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-    flags &= ~OF_TEXT;
-    obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 }
 
 // 0x4D6320
@@ -540,4 +533,18 @@ static void tb_text_duration_changed()
             tb_text_blocks[index].duration = 1000 * tb_text_duration;
         }
     }
+}
+
+TextBlock* find_text_block(int64_t obj)
+{
+    int idx;
+
+    for (idx = 0; idx < MAX_TEXT_BLOCKS; idx++) {
+        if ((tb_text_blocks[idx].flags & TEXT_BLOCK_IN_USE) != 0
+            && tb_text_blocks[idx].obj == obj) {
+            return &(tb_text_blocks[idx]);
+        }
+    }
+
+    return NULL;
 }
