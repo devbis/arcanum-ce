@@ -307,7 +307,7 @@ void sub_4D6160(object_id_t object_id, int a2)
 }
 
 // 0x4D6210
-void sub_4D6210(object_id_t object_id, long long location, int offset_x, int offset_y)
+void tb_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
 {
     int index;
     TigRect rect;
@@ -315,10 +315,10 @@ void sub_4D6210(object_id_t object_id, long long location, int offset_x, int off
 
     for (index = 0; index < EIGHT; index++) {
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-            if (stru_602930[index].object_id == object_id) {
+            if (stru_602930[index].object_id == obj) {
                 sub_4D63B0(&(stru_602930[index]), &rect);
 
-                sub_4D6410(&(stru_602930[index]), location, offset_x, offset_y, &temp_rect);
+                sub_4D6410(&(stru_602930[index]), loc, offset_x, offset_y, &temp_rect);
 
                 tig_rect_union(&rect, &temp_rect, &rect);
                 tb_iso_window_invalidate_rect(&rect);
