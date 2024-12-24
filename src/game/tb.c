@@ -4,27 +4,26 @@
 #include "game/object.h"
 
 #define TEXT_DURATION_KEY "text duration"
-#define EIGHT 8
+#define MAX_TEXT_BLOCKS 8
 
-#define S602930_FLAG_0x1 0x1
-#define S602930_FLAG_0x2 0x2
+#define TEXT_BLOCK_IN_USE 0x0001
+#define TEXT_BLOCK_PERMANENT 0x0002
 
-typedef struct S602930 {
-    unsigned int flags;
-    int field_4;
-    object_id_t object_id;
-    unsigned int time;
-    int duration;
-    TigVideoBuffer* video_buffer;
-    TigRect rect;
-    int field_2C;
-} S602930;
+typedef struct TextBlock {
+    /* 0000 */ unsigned int flags;
+    /* 0008 */ int64_t obj;
+    /* 0010 */ unsigned int time;
+    /* 0014 */ int duration;
+    /* 0018 */ TigVideoBuffer* video_buffer;
+    /* 001C */ TigRect rect;
+    /* 002C */ int field_2C;
+} TextBlock;
 
-static_assert(sizeof(S602930) == 0x30, "wrong size");
+static_assert(sizeof(TextBlock) == 0x30, "wrong size");
 
-static void sub_4D6350(S602930* a1);
-static void sub_4D63B0(S602930* a1, TigRect* rect);
-static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset_y, TigRect* rect);
+static void sub_4D6350(TextBlock* tb);
+static void sub_4D63B0(TextBlock* tb, TigRect* rect);
+static void sub_4D6410(TextBlock* tb, long long location, int offset_x, int offset_y, TigRect* rect);
 static void tb_text_duration_changed();
 
 // 0x5B8EA0
@@ -55,7 +54,7 @@ static int dword_5B8EC0[9][8] = {
 static TigRect tb_iso_window_bounds;
 
 // 0x602930
-static S602930 stru_602930[EIGHT];
+static TextBlock tb_text_blocks[MAX_TEXT_BLOCKS];
 
 // 0x602AB0
 static GameContextF8* tb_iso_window_invalidate_rect;
@@ -111,10 +110,10 @@ bool tb_init(GameInitInfo* init_info)
 
     dword_602AC0 = tig_color_make(0, 0, 0);
 
-    for (index = 0; index < EIGHT; index++) {
-        if (tig_video_buffer_create(&vb_create_info, &(stru_602930[index].video_buffer)) != TIG_OK) {
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if (tig_video_buffer_create(&vb_create_info, &(tb_text_blocks[index].video_buffer)) != TIG_OK) {
             while (--index >= 0) {
-                tig_video_buffer_destroy(stru_602930[index].video_buffer);
+                tig_video_buffer_destroy(tb_text_blocks[index].video_buffer);
             }
             return false;
         }
@@ -151,8 +150,8 @@ void tb_exit()
         tig_font_destroy(tb_fonts[index]);
     }
 
-    for (index = 0; index < EIGHT; index++) {
-        tig_video_buffer_destroy(stru_602930[index].video_buffer);
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        tig_video_buffer_destroy(tb_text_blocks[index].video_buffer);
     }
 
     tb_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
@@ -191,12 +190,13 @@ void tb_ping(unsigned int time)
     int index;
     TigRect rect;
 
-    for (index = 0; index < EIGHT; index++) {
-        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0 && (stru_602930[index].flags & S602930_FLAG_0x2) == 0) {
-            if (tig_timer_between(stru_602930[index].time, time) > stru_602930[index].duration) {
-                sub_4D63B0(&(stru_602930[index]), &rect);
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0
+            && (tb_text_blocks[index].flags & TEXT_BLOCK_PERMANENT) == 0) {
+            if (tig_timer_between(tb_text_blocks[index].time, time) > tb_text_blocks[index].duration) {
+                sub_4D63B0(&(tb_text_blocks[index]), &rect);
                 tb_iso_window_invalidate_rect(&rect);
-                sub_4D6350(&(stru_602930[index]));
+                sub_4D6350(&(tb_text_blocks[index]));
             }
         }
     }
@@ -219,18 +219,18 @@ void tb_render(UnknownContext* render_info)
         return;
     }
 
-    for (index = 0; index < EIGHT; index++) {
-        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-            sub_4D63B0(&(stru_602930[index]), &rect);
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
+            sub_4D63B0(&(tb_text_blocks[index]), &rect);
 
             node = *render_info->rects;
             while (node != NULL) {
                 if (tig_rect_intersection(&rect, &(node->rect), &intersection) == TIG_OK) {
-                    src_rect.x = intersection.x + stru_602930[index].rect.x - rect.x;
-                    src_rect.y = intersection.y + stru_602930[index].rect.y - rect.y;
+                    src_rect.x = intersection.x + tb_text_blocks[index].rect.x - rect.x;
+                    src_rect.y = intersection.y + tb_text_blocks[index].rect.y - rect.y;
                     src_rect.width = intersection.width;
                     src_rect.height = intersection.height;
-                    tig_window_copy_from_vbuffer(tb_iso_window_handle, &intersection, stru_602930[index].video_buffer, &src_rect);
+                    tig_window_copy_from_vbuffer(tb_iso_window_handle, &intersection, tb_text_blocks[index].video_buffer, &src_rect);
                 }
                 node = node->next;
             }
@@ -246,17 +246,17 @@ void tb_add(int64_t obj, int type, const char* str)
     int v2 = -1;
     TigRect dirty_rect;
 
-    for (index = 0; index < 8; index++) {
-        if ((stru_602930[index].flags & 0x1) != 0) {
-            if (stru_602930[index].object_id != OBJ_HANDLE_NULL
-                && stru_602930[index].object_id == obj) {
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
+            if (tb_text_blocks[index].obj != OBJ_HANDLE_NULL
+                && tb_text_blocks[index].obj == obj) {
                 v1 = index;
                 break;
             }
 
             if (v1 == -1
-                || ((stru_602930[index].flags & 0x2) == 0
-                    && stru_602930[index].time < stru_602930[index - 1].time)) {
+                || ((tb_text_blocks[index].flags & TEXT_BLOCK_PERMANENT) == 0
+                    && tb_text_blocks[index].time < tb_text_blocks[index - 1].time)) {
                 v1 = index;
             }
         } else {
@@ -265,23 +265,23 @@ void tb_add(int64_t obj, int type, const char* str)
     }
 
     if (v2 == -1) {
-        sub_4D6350(&(stru_602930[v1]));
+        sub_4D6350(&(tb_text_blocks[v1]));
         v2 = v1;
     }
 
-    tig_video_buffer_fill(stru_602930[v2].video_buffer, &stru_5B8EB0, dword_602AC4);
+    tig_video_buffer_fill(tb_text_blocks[v2].video_buffer, &stru_5B8EB0, dword_602AC4);
     tig_font_push(tb_fonts[type]);
-    tig_font_write(stru_602930[v2].video_buffer, str, &stru_5B8EB0, &dirty_rect);
+    tig_font_write(tb_text_blocks[v2].video_buffer, str, &stru_5B8EB0, &dirty_rect);
     tig_font_pop();
 
-    stru_602930[v2].time = gamelib_ping_time;
-    stru_602930[v2].duration = tb_text_duration;
-    stru_602930[v2].flags = 1;
-    stru_602930[v2].object_id = obj;
-    stru_602930[v2].rect = dirty_rect;
-    stru_602930[v2].field_2C = -1;
+    tb_text_blocks[v2].time = gamelib_ping_time;
+    tb_text_blocks[v2].duration = tb_text_duration;
+    tb_text_blocks[v2].flags = TEXT_BLOCK_IN_USE;
+    tb_text_blocks[v2].obj = obj;
+    tb_text_blocks[v2].rect = dirty_rect;
+    tb_text_blocks[v2].field_2C = -1;
     sub_43D0E0(obj, OF_TEXT);
-    sub_4D63B0(&(stru_602930[v2]), &dirty_rect);
+    sub_4D63B0(&(tb_text_blocks[v2]), &dirty_rect);
     tb_iso_window_invalidate_rect(&dirty_rect);
 }
 
@@ -290,15 +290,15 @@ void sub_4D6160(object_id_t object_id, int a2)
 {
     int index;
 
-    for (index = 0; index < EIGHT; index++) {
-        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-            if (stru_602930[index].object_id == object_id) {
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
+            if (tb_text_blocks[index].obj == object_id) {
                 if (a2 == -2) {
-                    stru_602930[index].flags |= S602930_FLAG_0x2;
+                    tb_text_blocks[index].flags |= TEXT_BLOCK_PERMANENT;
                 } else {
-                    stru_602930[index].flags &= ~S602930_FLAG_0x2;
-                    stru_602930[index].time = gamelib_ping_time;
-                    stru_602930[index].duration = (a2 >= 0) ? 1000 * a2 : tb_text_duration;
+                    tb_text_blocks[index].flags &= ~TEXT_BLOCK_PERMANENT;
+                    tb_text_blocks[index].time = gamelib_ping_time;
+                    tb_text_blocks[index].duration = (a2 >= 0) ? 1000 * a2 : tb_text_duration;
                 }
                 return;
             }
@@ -313,12 +313,12 @@ void tb_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
     TigRect rect;
     TigRect temp_rect;
 
-    for (index = 0; index < EIGHT; index++) {
-        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-            if (stru_602930[index].object_id == obj) {
-                sub_4D63B0(&(stru_602930[index]), &rect);
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
+            if (tb_text_blocks[index].obj == obj) {
+                sub_4D63B0(&(tb_text_blocks[index]), &rect);
 
-                sub_4D6410(&(stru_602930[index]), loc, offset_x, offset_y, &temp_rect);
+                sub_4D6410(&(tb_text_blocks[index]), loc, offset_x, offset_y, &temp_rect);
 
                 tig_rect_union(&rect, &temp_rect, &rect);
                 tb_iso_window_invalidate_rect(&rect);
@@ -335,10 +335,10 @@ void tb_remove(int64_t obj)
     int index;
     unsigned int flags;
 
-    for (index = 0; index < EIGHT; index++) {
-        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-            if (stru_602930[index].object_id == obj) {
-                sub_4D6350(&(stru_602930[index]));
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
+            if (tb_text_blocks[index].obj == obj) {
+                sub_4D6350(&(tb_text_blocks[index]));
                 return;
             }
         }
@@ -354,45 +354,45 @@ void tb_clear()
 {
     int index;
 
-    for (index = 0; index < EIGHT; index++) {
-        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-            sub_4D6350(&(stru_602930[index]));
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0) {
+            sub_4D6350(&(tb_text_blocks[index]));
         }
     }
 }
 
 // 0x4D6350
-static void sub_4D6350(S602930* a1)
+static void sub_4D6350(TextBlock* tb)
 {
     TigRect rect;
     unsigned int flags;
 
-    sub_4D63B0(a1, &rect);
+    sub_4D63B0(tb, &rect);
     tb_iso_window_invalidate_rect(&rect);
 
-    flags = obj_field_int32_get(a1->object_id, OBJ_F_FLAGS);
+    flags = obj_field_int32_get(tb->obj, OBJ_F_FLAGS);
     flags &= ~OF_TEXT;
-    obj_field_int32_set(a1->object_id, OBJ_F_FLAGS, flags);
+    obj_field_int32_set(tb->obj, OBJ_F_FLAGS, flags);
 
-    a1->flags = 0;
-    a1->object_id = OBJ_HANDLE_NULL;
+    tb->flags = 0;
+    tb->obj = OBJ_HANDLE_NULL;
 }
 
 // 0x4D63B0
-static void sub_4D63B0(S602930* a1, TigRect* rect)
+static void sub_4D63B0(TextBlock* tb, TigRect* rect)
 {
     int64_t location;
     int offset_x;
     int offset_y;
 
-    location = obj_field_int64_get(a1->object_id, OBJ_F_LOCATION);
-    offset_x = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_X);
-    offset_y = obj_field_int32_get(a1->object_id, OBJ_F_OFFSET_Y);
-    sub_4D6410(a1, location, offset_x, offset_y, rect);
+    location = obj_field_int64_get(tb->obj, OBJ_F_LOCATION);
+    offset_x = obj_field_int32_get(tb->obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(tb->obj, OBJ_F_OFFSET_Y);
+    sub_4D6410(tb, location, offset_x, offset_y, rect);
 }
 
 // 0x4D6410
-static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset_y, TigRect* rect)
+static void sub_4D6410(TextBlock* tb, long long location, int offset_x, int offset_y, TigRect* rect)
 {
     int64_t x;
     int64_t y;
@@ -404,8 +404,10 @@ static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset
     x += offset_x + 40;
     y += offset_y + 20;
 
-    if (x < INT_MIN || x > INT_MAX
-        || y < INT_MIN || y > INT_MAX) {
+    if (x < INT_MIN
+        || x > INT_MAX
+        || y < INT_MIN
+        || y > INT_MAX) {
         rect->x = 0;
         rect->y = 0;
         rect->width = 0;
@@ -413,11 +415,11 @@ static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset
         return;
     }
 
-    rect->width = a1->rect.width;
-    rect->height = a1->rect.height;
+    rect->width = tb->rect.width;
+    rect->height = tb->rect.height;
 
-    if (a1->field_2C == -1) {
-        a1->field_2C = 0;
+    if (tb->field_2C == -1) {
+        tb->field_2C = 0;
 
         v1 = 0;
         if (x >= 380) {
@@ -483,13 +485,13 @@ static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset
             }
         }
 
-        a1->field_2C = dword_5B8EC0[v1][index];
+        tb->field_2C = dword_5B8EC0[v1][index];
     }
 
     rect->x = (int)x;
     rect->y = (int)y;
 
-    switch (a1->field_2C) {
+    switch (tb->field_2C) {
     case 0:
         rect->x -= rect->width / 2;
         rect->y -= rect->height + 100;
@@ -532,9 +534,10 @@ static void tb_text_duration_changed()
 
     tb_text_duration = settings_get_value(&settings, TEXT_DURATION_KEY) * 125 * 8;
 
-    for (index = 0; index < EIGHT; index++) {
-        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0 && (stru_602930[index].flags & S602930_FLAG_0x2) == 0) {
-            stru_602930[index].duration = 1000 * tb_text_duration;
+    for (index = 0; index < MAX_TEXT_BLOCKS; index++) {
+        if ((tb_text_blocks[index].flags & TEXT_BLOCK_IN_USE) != 0
+            && (tb_text_blocks[index].flags & TEXT_BLOCK_PERMANENT) == 0) {
+            tb_text_blocks[index].duration = 1000 * tb_text_duration;
         }
     }
 }
