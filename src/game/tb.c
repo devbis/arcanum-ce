@@ -203,7 +203,7 @@ void tb_ping(unsigned int time)
 }
 
 // 0x4D5F10
-void sub_4D5F10(UnknownContext* ctx)
+void tb_render(UnknownContext* render_info)
 {
     int index;
     TigRect rect;
@@ -211,24 +211,28 @@ void sub_4D5F10(UnknownContext* ctx)
     TigRect intersection;
     TigRect src_rect;
 
-    if (dword_602AB4) {
-        if (tb_view_options.type == VIEW_TYPE_ISOMETRIC) {
-            for (index = 0; index < EIGHT; index++) {
-                if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
-                    sub_4D63B0(&(stru_602930[index]), &rect);
+    if (!dword_602AB4) {
+        return;
+    }
 
-                    node = *ctx->rects;
-                    while (node != NULL) {
-                        if (tig_rect_intersection(&rect, &(node->rect), &intersection) == TIG_OK) {
-                            src_rect.x = intersection.x + stru_602930[index].rect.x - rect.x;
-                            src_rect.y = intersection.y + stru_602930[index].rect.y - rect.y;
-                            src_rect.width = intersection.width;
-                            src_rect.height = intersection.height;
-                            tig_window_copy_from_vbuffer(tb_iso_window_handle, &intersection, stru_602930[index].video_buffer, &src_rect);
-                        }
-                        node = node->next;
-                    }
+    if (tb_view_options.type != VIEW_TYPE_ISOMETRIC) {
+        return;
+    }
+
+    for (index = 0; index < EIGHT; index++) {
+        if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0) {
+            sub_4D63B0(&(stru_602930[index]), &rect);
+
+            node = *render_info->rects;
+            while (node != NULL) {
+                if (tig_rect_intersection(&rect, &(node->rect), &intersection) == TIG_OK) {
+                    src_rect.x = intersection.x + stru_602930[index].rect.x - rect.x;
+                    src_rect.y = intersection.y + stru_602930[index].rect.y - rect.y;
+                    src_rect.width = intersection.width;
+                    src_rect.height = intersection.height;
+                    tig_window_copy_from_vbuffer(tb_iso_window_handle, &intersection, stru_602930[index].video_buffer, &src_rect);
                 }
+                node = node->next;
             }
         }
     }
