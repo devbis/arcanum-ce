@@ -219,33 +219,35 @@ void tc_hide()
 }
 
 // 0x4C9720
-void sub_4C9720()
+void tc_clear()
 {
-    if (!tc_editor) {
-        tig_video_buffer_fill(dword_5FF518,
-            &stru_5FF508,
-            tig_color_make(0, 0, 0));
+    if (tc_editor) {
+        return;
+    }
 
-        dword_5FF554[0] = NULL;
-        dword_5FF554[1] = NULL;
-        dword_5FF554[2] = NULL;
-        dword_5FF554[3] = NULL;
-        dword_5FF554[4] = NULL;
+    tig_video_buffer_fill(dword_5FF518,
+        &stru_5FF508,
+        tig_color_make(0, 0, 0));
 
-        tc_iso_window_invalidate_rect(&stru_5FF4F8);
+    dword_5FF554[0] = NULL;
+    dword_5FF554[1] = NULL;
+    dword_5FF554[2] = NULL;
+    dword_5FF554[3] = NULL;
+    dword_5FF554[4] = NULL;
 
-        dword_5B7218 = -1;
-        dword_5FF544 = 0;
+    tc_iso_window_invalidate_rect(&stru_5FF4F8);
 
-        stru_5FF4F8.width = 400;
-        stru_5FF4F8.height = 100;
-        stru_5FF4F8.x = (tc_iso_window_rect.width - 400) / 2;
+    dword_5B7218 = -1;
+    dword_5FF544 = 0;
 
-        if (tc_iso_window_rect.height == 400) {
-            stru_5FF4F8.y = 299;
-        } else {
-            stru_5FF4F8.y = tc_iso_window_rect.height - 181;
-        }
+    stru_5FF4F8.width = 400;
+    stru_5FF4F8.height = 100;
+    stru_5FF4F8.x = (tc_iso_window_rect.width - 400) / 2;
+
+    if (tc_iso_window_rect.height == 400) {
+        stru_5FF4F8.y = 299;
+    } else {
+        stru_5FF4F8.y = tc_iso_window_rect.height - 181;
     }
 }
 

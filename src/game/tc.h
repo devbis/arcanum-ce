@@ -10,7 +10,7 @@ void tc_render(UnknownContext* render_info);
 void tc_scroll(int dx, int dy);
 void tc_show();
 void tc_hide();
-void sub_4C9720();
+void tc_clear();
 void sub_4C9810(int index, const char* str);
 int sub_4C9A10(TigMessage* msg);
 int sub_4C9B90(const char* str);
