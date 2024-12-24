@@ -21,7 +21,7 @@ void tb_close();
 void tb_toggle();
 void tb_ping(unsigned int time);
 void tb_render(UnknownContext* render_info);
-void sub_4D5FE0(int64_t obj, int type, const char* str);
+void tb_add(int64_t obj, int type, const char* str);
 void sub_4D6160(object_id_t object_id, int a2);
 void sub_4D6210(object_id_t object_id, long long location, int offset_x, int offset_y);
 void sub_4D62B0(object_id_t object_id);

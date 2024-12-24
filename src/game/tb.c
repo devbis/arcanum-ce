@@ -239,7 +239,7 @@ void tb_render(UnknownContext* render_info)
 }
 
 // 0x4D5FE0
-void sub_4D5FE0(int64_t obj, int type, const char* str)
+void tb_add(int64_t obj, int type, const char* str)
 {
     int index;
     int v1 = -1;

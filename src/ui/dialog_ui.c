@@ -728,7 +728,7 @@ void sub_568540(int64_t obj, int64_t a2, int type, int a4, const char* str, int 
     }
 
     sub_4D62B0(obj);
-    sub_4D5FE0(obj, type, str);
+    tb_add(obj, type, str);
     sub_4D6160(obj, a4);
     sub_5688D0(obj, a2, a6);
 }
@@ -763,7 +763,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int a4, const char* str)
 
     if (!player_is_pc_obj(obj)) {
         sub_4D62B0(obj);
-        sub_4D5FE0(obj, type, str);
+        tb_add(obj, type, str);
         sub_4D6160(obj, a4);
     }
 }
@@ -794,7 +794,7 @@ void sub_568880(long long obj, int a2, int a3, int type, int a5, int a6, const c
     }
 
     sub_4D62B0(obj);
-    sub_4D5FE0(obj, type, str);
+    tb_add(obj, type, str);
     sub_4D6160(obj, a5);
 }
 
