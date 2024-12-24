@@ -107,7 +107,7 @@ static uint8_t roof_partial_opacity;
 static uint8_t roof_full_transparency;
 
 // 0x5E2E34
-static GameContextF8* dword_5E2E34;
+static GameContextF8* roof_iso_window_invalidate_rect;
 
 // 0x5E2E38
 static bool dword_5E2E38;
@@ -119,7 +119,7 @@ static bool roof_editor;
 static bool roof_enabled;
 
 // 0x5E2E44
-static tig_window_handle_t roof_window_handle;
+static tig_window_handle_t roof_iso_window_handle;
 
 // 0x5E2E48
 static uint8_t roof_full_opacity;
@@ -133,8 +133,8 @@ bool roof_init(GameInitInfo* init_info)
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
 
-    roof_window_handle = init_info->iso_window_handle;
-    dword_5E2E34 = init_info->field_8;
+    roof_iso_window_handle = init_info->iso_window_handle;
+    roof_iso_window_invalidate_rect = init_info->field_8;
     roof_view_options.type = VIEW_TYPE_ISOMETRIC;
     roof_editor = init_info->editor;
     roof_enabled = true;
@@ -177,14 +177,14 @@ bool roof_init(GameInitInfo* init_info)
 // 0x4390D0
 void roof_exit()
 {
-    roof_window_handle = TIG_WINDOW_HANDLE_INVALID;
-    dword_5E2E34 = NULL;
+    roof_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
+    roof_iso_window_invalidate_rect = NULL;
 }
 
 // 0x4390F0
 void roof_resize(ResizeInfo* resize_info)
 {
-    roof_window_handle = resize_info->iso_window_handle;
+    roof_iso_window_handle = resize_info->iso_window_handle;
 }
 
 // 0x439100
@@ -350,7 +350,7 @@ void roof_render(UnknownContext* render_info)
                             }
 
                             art_blit_info.scratch_video_buffer = dword_739E7C;
-                            tig_window_blit_art(roof_window_handle, &art_blit_info);
+                            tig_window_blit_art(roof_iso_window_handle, &art_blit_info);
                         }
                         node = node->next;
                     }
@@ -438,7 +438,7 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
         && y > INT_MIN
         && y < INT_MAX) {
         sub_43A140((int)x, (int)y, aid, &rect);
-        dword_5E2E34(&rect);
+        roof_iso_window_invalidate_rect(&rect);
     }
 
     return true;
@@ -683,8 +683,8 @@ bool sub_43A030(int64_t loc, int a2)
 void roof_blit_flags_set(unsigned int flags)
 {
     roof_blit_flags = flags;
-    if (dword_5E2E34 != NULL) {
-        dword_5E2E34(0);
+    if (roof_iso_window_invalidate_rect != NULL) {
+        roof_iso_window_invalidate_rect(NULL);
     }
 }
 
