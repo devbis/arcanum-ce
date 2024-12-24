@@ -25,6 +25,6 @@ void tb_add(int64_t obj, int type, const char* str);
 void sub_4D6160(object_id_t object_id, int a2);
 void tb_move(int64_t obj, int64_t loc, int offset_x, int offset_y);
 void tb_remove(int64_t obj);
-void sub_4D6320();
+void tb_clear();
 
 #endif /* ARCANUM_GAME_TB_H_ */

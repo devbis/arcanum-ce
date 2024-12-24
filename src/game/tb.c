@@ -137,7 +137,7 @@ bool tb_init(GameInitInfo* init_info)
 // 0x4D5DB0
 void tb_reset()
 {
-    sub_4D6320();
+    tb_clear();
 }
 
 // 0x4D5DC0
@@ -145,7 +145,7 @@ void tb_exit()
 {
     int index;
 
-    sub_4D6320();
+    tb_clear();
 
     for (index = 0; index < TB_TYPE_COUNT; index++) {
         tig_font_destroy(tb_fonts[index]);
@@ -176,7 +176,7 @@ bool tb_update_view(ViewOptions* view_options)
 // 0x4D5E80
 void tb_close()
 {
-    sub_4D6320();
+    tb_clear();
 }
 
 // 0x4D5E90
@@ -350,7 +350,7 @@ void tb_remove(int64_t obj)
 }
 
 // 0x4D6320
-void sub_4D6320()
+void tb_clear()
 {
     int index;
 
