@@ -303,7 +303,7 @@ void tf_ping(tig_timestamp_t timestamp)
 }
 
 // 0x4D5310
-void sub_4D5310(UnknownContext *a1)
+void tf_render(UnknownContext *render_info)
 {
     TextFloaterList* list;
     TextFloaterNode* node;
@@ -333,7 +333,7 @@ void sub_4D5310(UnknownContext *a1)
     while (list != NULL) {
         sub_4D5870(list, &tf_rect);
 
-        rect_node = *a1->rects;
+        rect_node = *render_info->rects;
         while (rect_node != NULL) {
             if (tig_rect_intersection(&(rect_node->rect), &tf_rect, &rect) == TIG_OK) {
                 node = list->head;
