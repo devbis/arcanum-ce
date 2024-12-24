@@ -58,7 +58,7 @@ static TigRect stru_602920;
 static S602930 stru_602930[EIGHT];
 
 // 0x602AB0
-static GameContextF8* dword_602AB0;
+static GameContextF8* tb_iso_window_invalidate_rect;
 
 // 0x602AB4
 static bool tb_enabled;
@@ -98,7 +98,7 @@ bool tb_init(GameInitInfo* init_info)
     stru_602920.y = 0;
     stru_602920.width = window_data.rect.width;
     stru_602920.height = window_data.rect.height;
-    dword_602AB0 = init_info->field_8;
+    tb_iso_window_invalidate_rect = init_info->field_8;
     tb_view_options.type = VIEW_TYPE_ISOMETRIC;
     tb_enabled = true;
     dword_602AC4 = tig_color_make(0, 0, 255);
@@ -156,7 +156,7 @@ void tb_exit()
     }
 
     tb_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
-    dword_602AB0 = NULL;
+    tb_iso_window_invalidate_rect = NULL;
 }
 
 // 0x4D5E20
@@ -195,7 +195,7 @@ void tb_ping(unsigned int time)
         if ((stru_602930[index].flags & S602930_FLAG_0x1) != 0 && (stru_602930[index].flags & S602930_FLAG_0x2) == 0) {
             if (tig_timer_between(stru_602930[index].time, time) > stru_602930[index].duration) {
                 sub_4D63B0(&(stru_602930[index]), &rect);
-                dword_602AB0(&rect);
+                tb_iso_window_invalidate_rect(&rect);
                 sub_4D6350(&(stru_602930[index]));
             }
         }
@@ -282,7 +282,7 @@ void sub_4D5FE0(int64_t obj, int type, const char* str)
     stru_602930[v2].field_2C = -1;
     sub_43D0E0(obj, OF_TEXT);
     sub_4D63B0(&(stru_602930[v2]), &dirty_rect);
-    dword_602AB0(&dirty_rect);
+    tb_iso_window_invalidate_rect(&dirty_rect);
 }
 
 // 0x4D6160
@@ -321,7 +321,7 @@ void sub_4D6210(object_id_t object_id, long long location, int offset_x, int off
                 sub_4D6410(&(stru_602930[index]), location, offset_x, offset_y, &temp_rect);
 
                 tig_rect_union(&rect, &temp_rect, &rect);
-                dword_602AB0(&rect);
+                tb_iso_window_invalidate_rect(&rect);
 
                 return;
             }
@@ -368,7 +368,7 @@ static void sub_4D6350(S602930* a1)
     unsigned int flags;
 
     sub_4D63B0(a1, &rect);
-    dword_602AB0(&rect);
+    tb_iso_window_invalidate_rect(&rect);
 
     flags = obj_field_int32_get(a1->object_id, OBJ_F_FLAGS);
     flags &= ~OF_TEXT;
