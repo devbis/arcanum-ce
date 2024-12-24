@@ -2987,7 +2987,7 @@ void sub_5529C0()
 bool sub_553320(void(*func)(TigMessage* msg))
 {
     dword_64C6CC = func;
-    sub_4C96C0();
+    tc_show();
     sub_551A80(0);
     sub_551A80(3);
 
@@ -2998,7 +2998,7 @@ bool sub_553320(void(*func)(TigMessage* msg))
 void sub_553350()
 {
     dword_64C6CC = NULL;
-    sub_4C96F0();
+    tc_hide();
     sub_551A80(0);
 }
 

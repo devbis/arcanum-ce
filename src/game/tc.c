@@ -48,7 +48,7 @@ static tig_window_handle_t tc_iso_window_handle;
 static const char* dword_5FF554[5];
 
 // 0x5FF568
-static bool dword_5FF568;
+static bool tc_active;
 
 // 0x4C9280
 bool tc_init(GameInitInfo* init_info)
@@ -127,18 +127,18 @@ void tc_exit()
 // 0x4C95A0
 void tc_resize(ResizeInfo* resize_info)
 {
-    bool v1;
+    bool was_active;
 
-    v1 = dword_5FF568;
-    if (v1) {
-        sub_4C96F0();
+    was_active = tc_active;
+    if (was_active) {
+        tc_hide();
     }
 
     tc_iso_window_handle = resize_info->iso_window_handle;
     tc_iso_window_rect = resize_info->field_4;
 
-    if (v1) {
-        sub_4C96C0();
+    if (was_active) {
+        tc_show();
     }
 }
 
@@ -149,7 +149,7 @@ void tc_render(UnknownContext* render_info)
         return;
     }
 
-    if (!dword_5FF568) {
+    if (!tc_active) {
         return;
     }
 
@@ -165,7 +165,7 @@ void tc_scroll(int dx, int dy)
         return;
     }
 
-    if (!dword_5FF568) {
+    if (!tc_active) {
         return;
     }
 
@@ -189,25 +189,33 @@ void tc_scroll(int dx, int dy)
 }
 
 // 0x4C96C0
-void sub_4C96C0()
+void tc_show()
 {
-    if (!tc_editor) {
-        if (!dword_5FF568) {
-            dword_5FF568 = true;
-            tc_iso_window_invalidate_rect(&stru_5FF4F8);
-        }
+    if (tc_editor) {
+        return;
     }
+
+    if (tc_active) {
+        return;
+    }
+
+    tc_active = true;
+    tc_iso_window_invalidate_rect(&stru_5FF4F8);
 }
 
 // 0x4C96F0
-void sub_4C96F0()
+void tc_hide()
 {
-    if (!tc_editor) {
-        if (dword_5FF568) {
-            dword_5FF568 = false;
-            tc_iso_window_invalidate_rect(&stru_5FF4F8);
-        }
+    if (tc_editor) {
+        return;
     }
+
+    if (!tc_active) {
+        return;
+    }
+
+    tc_active = false;
+    tc_iso_window_invalidate_rect(&stru_5FF4F8);
 }
 
 // 0x4C9720
@@ -288,7 +296,7 @@ void sub_4C9810(int index, const char* str)
             stru_5FF4F8.x = (tc_iso_window_rect.width - stru_5FF4F8.width) / 2;
         }
 
-        if (dword_5FF568) {
+        if (tc_active) {
             tc_iso_window_invalidate_rect(&stru_5FF4F8);
         }
 
@@ -312,7 +320,7 @@ int sub_4C9A10(TigMessage* msg)
         return -1;
     }
 
-    if (!dword_5FF568) {
+    if (!tc_active) {
         return -1;
     }
 
