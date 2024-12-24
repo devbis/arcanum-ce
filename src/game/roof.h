@@ -7,7 +7,7 @@ bool roof_init(GameInitInfo* init_info);
 void roof_exit();
 void roof_resize(ResizeInfo* resize_info);
 bool sub_439100(ViewOptions* view_options);
-void sub_439140(UnknownContext* info);
+void roof_render(UnknownContext* render_info);
 int64_t sub_4395E0(int64_t a1);
 bool sub_439890(int x, int y);
 void sub_439D30(int64_t loc);

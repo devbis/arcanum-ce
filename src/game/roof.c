@@ -195,7 +195,7 @@ bool sub_439100(ViewOptions* view_options)
 }
 
 // 0x439140
-void sub_439140(UnknownContext* info)
+void roof_render(UnknownContext* render_info)
 {
     TigArtBlitInfo art_blit_info;
     TigRect dst_rect;
@@ -205,8 +205,8 @@ void sub_439140(UnknownContext* info)
     int64_t x;
     unsigned int flags;
     tig_art_id_t aid;
-    int64_t cur_x;
-    int64_t cur_y;
+    int64_t loc_x;
+    int64_t loc_y;
     TigRect roof_rect;
     TigRectListNode* node;
 
@@ -225,20 +225,20 @@ void sub_439140(UnknownContext* info)
         flags = 0;
     }
 
-    loc_rect = *info->field_4;
+    loc_rect = *render_info->field_4;
 
     for (y = loc_rect.y1; y <= loc_rect.y2; y += 4) {
         for (x = loc_rect.x1; x <= loc_rect.x2; x += 4) {
-            aid = sub_4396A0(x | y);
+            aid = sub_4396A0(LOCATION_MAKE(x, y));
             if (aid != TIG_ART_ID_INVALID
                 && !sub_5048D0(aid)) {
-                sub_439640(x | y, &cur_x, &cur_y);
-                if (cur_x > INT_MIN
-                    && cur_x < INT_MAX
-                    && cur_y > INT_MIN
-                    && cur_y < INT_MAX) {
+                sub_439640(LOCATION_MAKE(x, y), &loc_x, &loc_y);
+                if (loc_x > INT_MIN
+                    && loc_x < INT_MAX
+                    && loc_y > INT_MIN
+                    && loc_y < INT_MAX) {
                     sub_43A140((int)x, (int)y, aid, &roof_rect);
-                    node = *info->rects;
+                    node = *render_info->rects;
                     while (node != NULL) {
                         if (tig_rect_intersection(&roof_rect, &node->rect, &dst_rect) == TIG_OK) {
                             src_rect.x = dst_rect.x - roof_rect.x;
