@@ -28,7 +28,7 @@ static void sub_4D6410(S602930* a1, long long location, int offset_x, int offset
 static void tb_text_duration_changed();
 
 // 0x5B8EA0
-static uint8_t byte_5B8EA0[TB_TYPE_COUNT][3] = {
+static uint8_t tb_colors[TB_TYPE_COUNT][3] = {
     { 255, 255, 255 },
     { 255, 0, 0 },
     { 0, 255, 0 },
@@ -79,7 +79,7 @@ static int dword_602AC4;
 static ViewOptions tb_view_options;
 
 // 0x602AD0
-static tig_font_handle_t dword_602AD0[TB_TYPE_COUNT];
+static tig_font_handle_t tb_fonts[TB_TYPE_COUNT];
 
 // 0x4D5B80
 bool tb_init(GameInitInfo* init_info)
@@ -124,8 +124,8 @@ bool tb_init(GameInitInfo* init_info)
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
 
     for (index = 0; index < TB_TYPE_COUNT; index++) {
-        font.color = tig_color_make(byte_5B8EA0[index][0], byte_5B8EA0[index][1], byte_5B8EA0[index][2]);
-        tig_font_create(&font, &(dword_602AD0[index]));
+        font.color = tig_color_make(tb_colors[index][0], tb_colors[index][1], tb_colors[index][2]);
+        tig_font_create(&font, &(tb_fonts[index]));
     }
 
     settings_add(&settings, TEXT_DURATION_KEY, "6", tb_text_duration_changed);
@@ -148,7 +148,7 @@ void tb_exit()
     sub_4D6320();
 
     for (index = 0; index < TB_TYPE_COUNT; index++) {
-        tig_font_destroy(dword_602AD0[index]);
+        tig_font_destroy(tb_fonts[index]);
     }
 
     for (index = 0; index < EIGHT; index++) {
@@ -270,7 +270,7 @@ void sub_4D5FE0(int64_t obj, int type, const char* str)
     }
 
     tig_video_buffer_fill(stru_602930[v2].video_buffer, &stru_5B8EB0, dword_602AC4);
-    tig_font_push(dword_602AD0[type]);
+    tig_font_push(tb_fonts[type]);
     tig_font_write(stru_602930[v2].video_buffer, str, &stru_5B8EB0, &dirty_rect);
     tig_font_pop();
 
