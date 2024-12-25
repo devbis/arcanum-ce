@@ -373,10 +373,12 @@ int sub_4395C0(int a1)
 }
 
 // 0x4395E0
-int64_t sub_4395E0(int64_t a1)
+int64_t sub_4395E0(int64_t loc)
 {
-    return ((a1 & 0xFFFFFFFF) - (a1 & 0xFFFFFFFF) % 4 + 2)
-        | (((a1 >> 32) - (a1 >> 32) % 4 + 2) << 32);
+    int64_t x = LOCATION_GET_X(loc);
+    int64_t y = LOCATION_GET_Y(loc);
+
+    return LOCATION_MAKE(x - x % 4 + 2, y - y % 4 + 2);
 }
 
 // 0x439640

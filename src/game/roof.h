@@ -9,7 +9,7 @@ void roof_resize(ResizeInfo* resize_info);
 bool sub_439100(ViewOptions* view_options);
 void roof_toggle();
 void roof_render(UnknownContext* render_info);
-int64_t sub_4395E0(int64_t a1);
+int64_t sub_4395E0(int64_t loc);
 bool sub_439890(int x, int y);
 void sub_439D30(int64_t loc);
 void sub_439EA0(int64_t a1);
