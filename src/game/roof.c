@@ -9,7 +9,7 @@
 
 static int sub_4395A0(int64_t loc);
 static int sub_4395C0(int a1);
-static void sub_439640(int64_t a1, int64_t* x, int64_t* y);
+static void sub_439640(int64_t loc, int64_t* x, int64_t* y);
 static tig_art_id_t sub_4396A0(int64_t loc);
 static bool sub_439700(int64_t loc, tig_art_id_t aid);
 static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
@@ -382,12 +382,13 @@ int64_t sub_4395E0(int64_t loc)
 }
 
 // 0x439640
-void sub_439640(int64_t a1, int64_t* x, int64_t* y)
+void sub_439640(int64_t loc, int64_t* x, int64_t* y)
 {
-    sub_4B8680(sub_4395E0(a1), x, y);
+    loc = sub_4395E0(loc);
+    sub_4B8680(loc, x, y);
 
-    *x = location_make(location_get_x(*x) - 120, location_get_y(*x) - 120);
-    *y = location_make(location_get_y(*y) - 200, location_get_y(*y) - 120);
+    *x -= 120;
+    *y -= 200;
 }
 
 // 0x4396A0
