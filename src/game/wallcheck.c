@@ -270,10 +270,13 @@ void sub_438830()
 
             wallcheck_roof_faded_clear(stru_5E0E20[idx].field_18);
 
+            sector_unlock(stru_5E0E20[idx].sector_id);
+
             memcpy(&(stru_5E0E20[idx]),
                 &(stru_5E0E20[idx + 1]),
                 sizeof(stru_5E0E20[0]) * (dword_5E2E24 - idx - 1));
             dword_5E2E24--;
+            idx--;
         } else if ((stru_5E0E20[idx].flags & 0x02) != 0) {
             wall_flags = obj_field_int32_get(stru_5E0E20[idx].obj, OBJ_F_WALL_FLAGS);
             if ((wall_flags & 0x01) == 0) {
