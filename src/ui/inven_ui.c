@@ -3361,7 +3361,7 @@ void sub_578B80(int a1)
     if (qword_739F70 != OBJ_HANDLE_NULL) {
         pkt->field_28 = sub_407EF0(qword_739F70);
     } else {
-        pkt->field_28.type = 0;
+        pkt->field_28.type = OID_TYPE_NULL;
     }
 
     pkt->field_58 = dword_739F80;
@@ -3369,31 +3369,31 @@ void sub_578B80(int a1)
     if (qword_739F68 != OBJ_HANDLE_NULL) {
         pkt->field_10 = sub_407EF0(qword_739F68);
     } else {
-        pkt->field_10.type = 0;
+        pkt->field_10.type = OID_TYPE_NULL;
     }
 
     if (qword_739F78 != OBJ_HANDLE_NULL) {
         pkt->field_40 = sub_407EF0(qword_739F78);
     } else {
-        pkt->field_40.type = 0;
+        pkt->field_40.type = OID_TYPE_NULL;
     }
 
     if (qword_682C78 != OBJ_HANDLE_NULL) {
         pkt->field_70 = sub_407EF0(qword_682C78);
     } else {
-        pkt->field_70.type = 0;
+        pkt->field_70.type = OID_TYPE_NULL;
     }
 
     if (qword_6813A8 != OBJ_HANDLE_NULL) {
         pkt->field_88 = sub_407EF0(qword_6813A8);
     } else {
-        pkt->field_88.type = 0;
+        pkt->field_88.type = OID_TYPE_NULL;
     }
 
     if (qword_6814F8 != OBJ_HANDLE_NULL) {
         pkt->field_A0 = sub_407EF0(qword_6814F8);
     } else {
-        pkt->field_A0.type = 0;
+        pkt->field_A0.type = OID_TYPE_NULL;
     }
 
     pkt->field_60 = a1;
@@ -3405,7 +3405,7 @@ void sub_578B80(int a1)
             byte_682BEC);
         objid_id_to_str(byte_6812FC, pkt->field_10);
 
-        if (pkt->field_40.type) {
+        if (pkt->field_40.type != OID_TYPE_NULL) {
             sub_441B60(objp_perm_lookup(pkt->field_40),
                 objp_perm_lookup(pkt->field_40),
                 byte_6813C0);
@@ -3413,7 +3413,7 @@ void sub_578B80(int a1)
             strcpy(byte_6813C0, "nobody");
         }
 
-        if (pkt->field_28.type) {
+        if (pkt->field_28.type != OID_TYPE_NULL) {
             sub_441B60(objp_perm_lookup(pkt->field_28),
                 objp_perm_lookup(pkt->field_28),
                 byte_681468);
