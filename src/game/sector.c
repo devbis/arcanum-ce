@@ -967,7 +967,7 @@ void sub_4D0E70(tig_art_id_t art_id)
         dword_6017F0 = (tig_art_id_t*)REALLOC(dword_6017F0, sizeof(*dword_6017F0) * dword_6017C4);
     }
 
-    dword_6017F0[dword_6017D8] = art_id;
+    dword_6017F0[dword_6017D8++] = art_id;
 }
 
 // 0x4D0EE0
