@@ -640,12 +640,12 @@ bool sub_439FA0(int64_t loc)
 }
 
 // 0x439FF0
-bool sub_439FF0(int64_t a1, int64_t a2, int a3)
+bool sub_439FF0(int64_t x, int64_t y, int a3)
 {
-    int64_t v1;
+    int64_t loc;
 
-    sub_4B8730(a1, a2, &v1);
-    return sub_43A030(v1, a3);
+    sub_4B8730(x, y, &loc);
+    return sub_43A030(loc, a3);
 }
 
 // 0x43A030

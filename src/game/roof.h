@@ -16,7 +16,7 @@ void sub_439EA0(int64_t a1);
 void sub_439EE0(int64_t loc);
 void sub_439F20(int64_t loc);
 bool sub_439FA0(int64_t loc);
-bool sub_439FF0(int64_t a1, int64_t a2, int a3);
+bool sub_439FF0(int64_t x, int64_t y, int a3);
 bool sub_43A030(int64_t loc, int a2);
 void roof_blit_flags_set(unsigned int flags);
 unsigned int roof_blit_flags_get();
