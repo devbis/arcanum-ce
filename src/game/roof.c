@@ -605,7 +605,8 @@ void sub_439EE0(int64_t loc)
 
     aid = sub_4396A0(loc);
     if (sub_504940(aid) == 0) {
-        sub_439700(loc, sub_504970(aid, 1));
+        aid = sub_504970(aid, 1);
+        sub_439700(loc, aid);
     }
 }
 
@@ -616,7 +617,8 @@ void sub_439F20(int64_t loc)
 
     aid = sub_4396A0(loc);
     if (sub_504940(aid) != 0) {
-        sub_439700(loc, sub_504970(aid, 0));
+        aid = sub_504970(aid, 0);
+        sub_439700(loc, aid);
     }
 }
 
