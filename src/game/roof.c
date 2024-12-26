@@ -243,7 +243,7 @@ void roof_render(UnknownContext* render_info)
                     && loc_x < INT_MAX
                     && loc_y > INT_MIN
                     && loc_y < INT_MAX) {
-                    sub_43A140((int)x, (int)y, aid, &roof_rect);
+                    sub_43A140((int)loc_x, (int)loc_y, aid, &roof_rect);
                     node = *render_info->rects;
                     while (node != NULL) {
                         if (tig_rect_intersection(&roof_rect, &node->rect, &dst_rect) == TIG_OK) {
@@ -349,6 +349,7 @@ void roof_render(UnknownContext* render_info)
                                 }
                             }
 
+                            art_blit_info.flags |= TIG_ART_BLT_SCRATCH_VALID;
                             art_blit_info.scratch_video_buffer = dword_739E7C;
                             tig_window_blit_art(roof_iso_window_handle, &art_blit_info);
                         }
