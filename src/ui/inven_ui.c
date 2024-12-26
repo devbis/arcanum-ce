@@ -2019,11 +2019,11 @@ void sub_574FD0(bool a1)
 // 0x575080
 bool sub_575080(int64_t a1, int64_t a2)
 {
-    if (inven_ui_create && a2 == qword_6813A8) {
+    if (inven_ui_created && a2 == qword_6813A8) {
         return true;
     }
 
-    if (sub_4AD800(a2, a1, 0)) {
+    if (sub_4AD800(a2, a1, 0) != 0) {
         return false;
     }
 
