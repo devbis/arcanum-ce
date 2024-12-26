@@ -49,7 +49,7 @@ static void sub_4D2F80();
 static void sub_4D2F90();
 static int sub_4D2FB0(const tig_art_id_t* a, const tig_art_id_t* b);
 static void sub_4D3000(int64_t a1);
-static void sub_4D3050(int a1);
+static void sub_4D3050(int idx);
 static bool sub_4D30A0();
 static bool sub_4D31C0(const char* a1, const char* a2);
 
@@ -2172,11 +2172,11 @@ void sub_4D3000(int64_t a1)
 }
 
 // 0x4D3050
-void sub_4D3050(int a1)
+void sub_4D3050(int idx)
 {
-    memcpy(&(dword_601794[a1]),
-        &(dword_601794[a1 + 1]),
-        sizeof(*dword_601794) * (dword_601790 + 0x1FFFFFFF * (a1 + 1)));
+    memcpy(&(dword_601794[idx]),
+        &(dword_601794[idx + 1]),
+        sizeof(*dword_601794) * (dword_601790 - idx - 1));
     dword_601790--;
     dword_601798 = true;
 }
