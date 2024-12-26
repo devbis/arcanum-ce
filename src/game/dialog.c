@@ -3114,6 +3114,8 @@ void sub_418480(char* str, DialogEntryNode* a2, int start)
             start += 50 * critter_social_class_get(a2->npc_obj);
         }
 
+        sub_418250(gd);
+
         cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
         mes_file_entry.num = start + random_between(0, cnt - 1);
         mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
