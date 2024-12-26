@@ -431,6 +431,8 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
     sector->roofs.art_ids[sub_4395A0(v1)] = aid;
     sector->roofs.field_0 = 0;
 
+    sector_unlock(sector_id);
+
     if (aid == TIG_ART_ID_INVALID) {
         aid = old_aid;
     }
