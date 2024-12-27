@@ -2255,7 +2255,7 @@ void sub_4B5F40(CombatContext* combat)
     npc_attacks_pc = target_obj_type == OBJ_TYPE_PC
         && attacker_obj_type == OBJ_TYPE_NPC;
 
-    critter_crit_hit_chart = obj_field_int32_get(combat->weapon_obj, OBJ_F_CRITTER_CRIT_HIT_CHART);
+    critter_crit_hit_chart = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_CRIT_HIT_CHART);
 
     if (combat->weapon_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
