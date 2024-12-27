@@ -13,7 +13,7 @@ static void sub_439640(int64_t loc, int64_t* x, int64_t* y);
 static tig_art_id_t sub_4396A0(int64_t loc);
 static bool sub_439700(int64_t loc, tig_art_id_t aid);
 static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
-static void sub_43A1A0(int64_t loc, int a2, int a3);
+static void roof_fill(int64_t loc, int a2, int a3);
 
 // 0x5A53A0
 static unsigned int roof_blit_flags = TIG_ART_BLT_BLEND_ALPHA_CONST;
@@ -589,14 +589,14 @@ void sub_439D30(int64_t loc)
 
     v9 = sub_5048D0(aid);
     if (v8 != v9) {
-        sub_43A1A0(sub_4395E0(loc), 1 - v9, -1);
+        roof_fill(sub_4395E0(loc), 1 - v9, -1);
     }
 }
 
 // 0x439EA0
 void sub_439EA0(int64_t a1)
 {
-    sub_43A1A0(sub_4395E0(a1), 0, -1);
+    roof_fill(sub_4395E0(a1), 0, -1);
 }
 
 // 0x439EE0
@@ -721,61 +721,63 @@ void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect)
 }
 
 // 0x43A1A0
-void sub_43A1A0(int64_t loc, int a2, int a3)
+void roof_fill(int64_t loc, int a2, int a3)
 {
     tig_art_id_t aid;
     int v1;
-    int v2;
 
     aid = sub_4396A0(loc);
-    while (aid != TIG_ART_ID_INVALID && sub_5048D0(aid) != a2) {
-        if (a3 != -1) {
-            v1 = sub_504840(aid);
-            switch (a3) {
-            case 1:
-                switch (v1) {
-                case 0:
-                case 1:
-                case 4:
-                    return;
-                };
-                break;
-            case 3:
-                switch (v1) {
-                case 0:
-                case 2:
-                case 7:
-                    return;
-                }
-                break;
-            case 5:
-                switch (v1) {
-                case 9:
-                case 7:
-                case 11:
-                    return;
-                }
-                break;
-            default:
-                if (a3 == 7) {
-                    switch (v1) {
-                    case 4:
-                    case 9:
-                    case 10:
-                        return;
-                    }
-                }
-                break;
-            }
-        }
-
-        v2 = sub_504900(aid, a2);
-        sub_439700(loc, v2);
-        sub_43A1A0(location_make(location_get_x(loc) + 4, location_get_y(loc) + 4), a2, 5);
-        sub_43A1A0(location_make(location_get_x(loc) - 4, location_get_y(loc) - 4), a2, 1);
-        sub_43A1A0(location_make(location_get_x(loc) + 4, location_get_y(loc) + 4), a2, 3);
-
-        a3 = 7;
-        aid = sub_4396A0(location_make(location_get_x(loc) - 4, location_get_y(loc) - 4));
+    if (aid == TIG_ART_ID_INVALID) {
+        return;
     }
+
+    if (sub_5048D0(aid) == a2) {
+        return;
+    }
+
+    if (a3 != -1) {
+        v1 = sub_504840(aid);
+        switch (a3) {
+        case 1:
+            switch (v1) {
+            case 0:
+            case 1:
+            case 4:
+                return;
+            };
+            break;
+        case 3:
+            switch (v1) {
+            case 0:
+            case 2:
+            case 7:
+                return;
+            }
+            break;
+        case 5:
+            switch (v1) {
+            case 9:
+            case 7:
+            case 11:
+                return;
+            }
+            break;
+        case 7:
+            switch (v1) {
+            case 4:
+            case 9:
+            case 10:
+                return;
+            }
+            break;
+        }
+    }
+
+    aid = sub_504900(aid, a2);
+    sub_439700(loc, aid);
+
+    roof_fill(location_make(location_get_x(loc) + 4, location_get_y(loc)), a2, 5);
+    roof_fill(location_make(location_get_x(loc) - 4, location_get_y(loc)), a2, 1);
+    roof_fill(location_make(location_get_x(loc), location_get_y(loc) + 4), a2, 3);
+    roof_fill(location_make(location_get_x(loc), location_get_y(loc) - 4), a2, 7);
 }
