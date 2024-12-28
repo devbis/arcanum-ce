@@ -296,7 +296,7 @@ void main_loop()
     TigMessage message;
     int index;
     TigMouseState mouse_state;
-    int coords[2];
+    int64_t mouse_loc;
     char version_str[40];
     char mouse_state_str[20];
     char story_state_str[80];
@@ -530,8 +530,10 @@ void main_loop()
                                 break;
                             case DIK_E:
                                 tig_mouse_get_state(&mouse_state);
-                                sub_4B8730(mouse_state.x, mouse_state.y, coords);
-                                sprintf(mouse_state_str, "x: %d, y: %d", coords[0], coords[1]);
+                                sub_4B8730(mouse_state.x, mouse_state.y, &mouse_loc);
+                                sprintf(mouse_state_str, "x: %d, y: %d",
+                                    (int)LOCATION_GET_X(mouse_loc),
+                                    (int)LOCATION_GET_Y(mouse_loc));
                                 tig_debug_printf("%s\n", mouse_state_str);
                                 sub_550770(-1, mouse_state_str);
                                 break;
