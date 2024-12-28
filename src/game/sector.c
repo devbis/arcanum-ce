@@ -1602,7 +1602,6 @@ bool sub_4D1A30(int64_t id, Sector* sector)
             if (!objlist_load(&(sector->objects), sec_stream, v2)) {
                 tig_debug_printf("Error loading objects from sector file %s\n", sec_path);
                 tig_file_fclose(sec_stream);
-                tig_file_fclose(dif_stream);
                 return false;
             }
         }
