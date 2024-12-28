@@ -123,7 +123,7 @@ static mes_file_handle_t dword_5D5480;
 static int dword_5D5484[TWO];
 
 // 0x5D548C
-static int dword_5D548C;
+static tig_timestamp_t dword_5D548C;
 
 // NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
 // compatibility.
@@ -479,14 +479,11 @@ bool gsound_save(TigFile* stream)
 }
 
 // 0x41B2A0
-void gsound_ping(int a1)
+void gsound_ping(tig_timestamp_t timestamp)
 {
-    int delta;
-
     if (gsound_initialized) {
-        delta = abs(a1 - dword_5D548C);
-        if (delta > 250) {
-            dword_5D548C = a1;
+        if (abs(timestamp - dword_5D548C) > 250) {
+            dword_5D548C = timestamp;
             sub_41BAF0();
         }
     }

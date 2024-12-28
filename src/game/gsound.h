@@ -12,7 +12,7 @@ bool gsound_mod_load();
 void gsound_mod_unload();
 bool gsound_load(GameLoadInfo* load_info);
 bool gsound_save(TigFile* stream);
-void gsound_ping(int a1);
+void gsound_ping(tig_timestamp_t timestamp);
 void gsound_flush();
 tig_sound_handle_t gsound_play_sfx(const char* path, int loops, int volume, int extra_volume, int id);
 tig_sound_handle_t gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume);
