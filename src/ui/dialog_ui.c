@@ -215,11 +215,11 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             sub_433440(a1, sub_441B20(a1, a2));
 
             if (critter_is_concealed(a1)) {
-                sub_45EE30(a1, false);
+                critter_set_concealed(a1, false);
             }
 
             if (critter_is_concealed(a2)) {
-                sub_45EE30(a2, false);
+                critter_set_concealed(a2, false);
             }
 
             entry->field_1854 = a3;

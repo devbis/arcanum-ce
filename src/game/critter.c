@@ -32,7 +32,7 @@ static void sub_45E040(int64_t obj);
 static bool sub_45E8D0(TimeEvent* timeevent);
 static bool sub_45EA80(TimeEvent* timeevent);
 static bool sub_45ECB0(TimeEvent* timeevent);
-static void sub_45EE90(int64_t obj, bool a2);
+static void critter_set_concealed_internal(int64_t obj, bool concealed);
 
 // 0x5B304C
 static int dword_5B304C = -1;
@@ -725,7 +725,7 @@ bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force)
 
         sub_436FA0(follower_obj);
         sub_4EE190();
-        sub_45EE30(follower_obj, critter_is_concealed(leader_obj));
+        critter_set_concealed(follower_obj, critter_is_concealed(leader_obj));
 
         if ((obj_field_int32_get(leader_obj, OBJ_F_SPELL_FLAGS) & OSF_TEMPUS_FUGIT) != 0) {
             flags = obj_field_int32_get(follower_obj, OBJ_F_SPELL_FLAGS);
@@ -813,7 +813,7 @@ void sub_45E040(int64_t obj)
     sub_4EE190();
 
     if (critter_is_concealed(obj)) {
-        sub_45EE30(obj, false);
+        critter_set_concealed(obj, false);
     }
 }
 
@@ -1406,25 +1406,24 @@ bool critter_is_concealed(int64_t obj)
 }
 
 // 0x45EE30
-void sub_45EE30(int64_t obj, bool a2)
+void critter_set_concealed(int64_t obj, bool concealed)
 {
     ObjectList objects;
     ObjectNode* node;
 
-    sub_45EE90(obj, a2);
-    sub_441260(obj, &objects);
+    critter_set_concealed_internal(obj, concealed);
 
+    sub_441260(obj, &objects);
     node = objects.head;
     while (node != NULL) {
-        sub_45EE90(obj, a2);
+        critter_set_concealed_internal(node->obj, concealed);
         node = node->next;
     }
-
     object_list_destroy(&objects);
 }
 
 // 0x45EE90
-void sub_45EE90(int64_t obj, bool a2)
+void critter_set_concealed_internal(int64_t obj, bool concealed)
 {
     tig_art_id_t art_id;
     tig_art_id_t new_art_id;
@@ -1439,14 +1438,14 @@ void sub_45EE90(int64_t obj, bool a2)
 
         pkt.type = 33;
         sub_4440E0(obj, &(pkt.field_8));
-        pkt.field_38 = a2;
+        pkt.field_38 = concealed;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
     sub_424070(obj, 5, false, false);
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    if (a2) {
+    if (concealed) {
         new_art_id = sub_45EFA0(art_id);
         if (new_art_id == art_id) {
             return;
@@ -1457,7 +1456,7 @@ void sub_45EE90(int64_t obj, bool a2)
     }
 
     flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
-    if (a2) {
+    if (concealed) {
         flags |= OCF_IS_CONCEALED | OCF_MOVING_SILENTLY;
     } else {
         flags &= ~(OCF_IS_CONCEALED | OCF_MOVING_SILENTLY);
@@ -1469,7 +1468,7 @@ void sub_45EE90(int64_t obj, bool a2)
         sub_43F030(obj);
     }
 
-    if (!a2) {
+    if (!concealed) {
         if (combat_critter_is_combat_mode_active(obj)) {
             sub_435BD0(obj);
         }

@@ -200,7 +200,7 @@ void skill_ui_preprocess(int64_t obj, int type)
 
     switch (type) {
     case 0:
-        sub_45EE30(obj, !critter_is_concealed(obj));
+        critter_set_concealed(obj, !critter_is_concealed(obj));
         break;
     case 1:
     case 2:

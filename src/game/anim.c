@@ -7998,7 +7998,7 @@ bool sub_42AFB0(AnimRunInfo* run_info)
         leader_obj = critter_leader_get(obj);
         if (leader_obj == OBJ_HANDLE_NULL
             || !critter_is_concealed(leader_obj)) {
-            sub_45EE30(obj, false);
+            critter_set_concealed(obj, false);
         }
     }
 

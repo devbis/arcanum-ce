@@ -80,7 +80,7 @@ void sub_45EC80(int64_t obj);
 bool critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent);
 bool sub_45ED70(int64_t obj);
 bool critter_is_concealed(int64_t obj);
-void sub_45EE30(int64_t obj, bool a2);
+void critter_set_concealed(int64_t obj, bool concealed);
 tig_art_id_t sub_45EFA0(tig_art_id_t art_id);
 bool sub_45EFF0(int64_t a, int64_t b);
 bool sub_45F060(int64_t obj, int stat, int mod);
