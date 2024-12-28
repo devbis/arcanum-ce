@@ -1756,7 +1756,7 @@ bool sub_4D2460(Sector* sector, const char* base_path)
         return false;
     }
 
-    if (!sector_script_list_save(&(sector->tile_scripts), stream)) {
+    if (!sector_script_list_save(&(sector->sector_scripts), stream)) {
         tig_debug_printf("Error saving sector scripts to sector data file %s\n", path);
         tig_file_fclose(stream);
         tig_file_remove(path);
