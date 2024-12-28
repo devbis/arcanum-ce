@@ -185,7 +185,7 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
     { "GFade", gfade_init, NULL, NULL, NULL, gfade_exit, NULL, NULL, NULL, NULL, gfade_resize },
     { "Anti-Teleport", antiteleport_init, NULL, antiteleport_mod_load, antiteleport_mod_unload, antiteleport_exit, NULL, NULL, NULL, NULL, NULL },
     { "Trap", trap_init, NULL, NULL, NULL, trap_exit, NULL, NULL, NULL, NULL, NULL },
-    { "WallCheck", wallcheck_init, wallcheck_reset, NULL, NULL, wallcheck_exit, sub_437E10, NULL, NULL, NULL, NULL },
+    { "WallCheck", wallcheck_init, wallcheck_reset, NULL, NULL, wallcheck_exit, wallcheck_ping, NULL, NULL, NULL, NULL },
     { "LI", li_init, NULL, NULL, NULL, li_exit, NULL, NULL, NULL, NULL, li_resize },
     { "CI", ci_init, NULL, NULL, NULL, ci_exit, NULL, NULL, NULL, NULL, NULL },
     { "TileBlock", tileblock_init, NULL, NULL, NULL, tileblock_exit, NULL, sub_4BB060, NULL, NULL, tileblock_resize },

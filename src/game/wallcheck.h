@@ -6,7 +6,7 @@
 bool wallcheck_init(GameInitInfo* init_info);
 void wallcheck_reset();
 void wallcheck_exit();
-void sub_437E10();
+void wallcheck_ping(tig_timestamp_t timestamp);
 void sub_437E50(int64_t a1);
 void wallcheck_flush();
 void sub_438500(bool enabled);

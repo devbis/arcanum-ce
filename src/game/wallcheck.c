@@ -661,7 +661,7 @@ static int dword_5E2E24;
 static int dword_5E2E28;
 
 // 0x5DE6E8
-static bool dword_5DE6E8;
+static bool wallcheck_dirty;
 
 // 0x5DE6F0
 static ObjectList stru_5DE6F0[34][3];
@@ -692,7 +692,7 @@ void wallcheck_reset()
 
     qword_5E0E18 = 0;
     dword_5E0E10 = 0;
-    dword_5DE6E8 = 0;
+    wallcheck_dirty = false;
 }
 
 // 0x437E00
@@ -703,12 +703,14 @@ void wallcheck_exit()
 }
 
 // 0x437E10
-void sub_437E10()
+void wallcheck_ping(tig_timestamp_t timestamp)
 {
-    if (dword_5DE6E8) {
+    (void)timestamp;
+
+    if (wallcheck_dirty) {
         sub_439D30(qword_5E0A08);
         sub_437E50(qword_5E0A08);
-        dword_5DE6E8 = false;
+        wallcheck_dirty = false;
     }
 }
 
@@ -940,7 +942,7 @@ void sub_438530(int64_t obj)
 {
     if (player_is_pc_obj(obj)) {
         qword_5E0A08 = obj_field_int64_get(obj, OBJ_F_LOCATION);
-        dword_5DE6E8 = true;
+        wallcheck_dirty = true;
     }
 }
 
