@@ -67,7 +67,7 @@ int multiplayer_mm_chatroom_members_get(void** members, int* count);
 int multiplayer_mm_chatroom_members_free(void* members);
 int multiplayer_mm_chatroom_create(const char* a1, const char* a2);
 int multiplayer_mm_chatroom_mesg(const char* msg);
-void multiplayer_ping();
+void multiplayer_ping(tig_timestamp_t timestamp);
 void sub_4A5510(int64_t obj, int value);
 void sub_4A5570(int64_t obj, int value);
 int sub_4A55D0(int player);

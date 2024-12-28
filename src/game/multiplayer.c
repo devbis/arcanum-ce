@@ -1541,8 +1541,10 @@ void sub_4A5460()
 }
 
 // 0x4A5490
-void multiplayer_ping()
+void multiplayer_ping(tig_timestamp_t timestamp)
 {
+    (void)timestamp;
+
     if (multiplayer_mm_is_active()) {
         multiplayer_mm_ping();
     }
