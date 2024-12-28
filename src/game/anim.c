@@ -14061,16 +14061,16 @@ bool sub_435870(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_ar
 }
 
 // 0x435A00
-bool sub_435A00(int64_t obj, int64_t a2, int64_t a3)
+bool sub_435A00(int64_t proj_obj, int64_t a2, int64_t a3)
 {
     AnimID anim_id;
     AnimRunInfo* run_info;
 
-    if (obj == OBJ_HANDLE_NULL) {
+    if (proj_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (!sub_44E830(obj, 36, &anim_id)) {
+    if (!sub_44E830(proj_obj, AG_PROJECTILE, &anim_id)) {
         return false;
     }
 
