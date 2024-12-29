@@ -129,7 +129,7 @@ bool compact_ui_create()
     CompactUiComponent* comp;
     TigWindowData window_data;
 
-    if (compact_ui_initialized) {
+    if (!compact_ui_initialized) {
         // FIXME: Should be false?
         return true;
     }
