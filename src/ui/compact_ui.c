@@ -45,10 +45,10 @@ static bool compact_ui_hotkey_bar_message_filter(TigMessage* msg);
 static void compact_ui_hotkey_bar_draw(int a1);
 
 // 0x5CA198
-static tig_window_handle_t dword_5CA198 = TIG_WINDOW_HANDLE_INVALID;
+static tig_window_handle_t compact_ui_message_window_handle = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5CA1A0
-static TigRect stru_5CA1A0 = { 210, 479, 385, 84 };
+static TigRect compact_ui_message_window_frame = { 210, 479, 385, 84 };
 
 // 0x5CA1B0
 static CompactUiComponent compact_ui_components[MAX_COMPONENTS] = {
@@ -161,15 +161,15 @@ bool compact_ui_create()
         comp->draw(0);
     }
 
-    window_data.rect = stru_5CA1A0;
+    window_data.rect = compact_ui_message_window_frame;
     window_data.flags = 0;
     window_data.color_key = tig_color_make(5, 5, 5);
 
-    if (tig_window_create(&window_data, &dword_5CA198) != TIG_OK) {
+    if (tig_window_create(&window_data, &compact_ui_message_window_handle) != TIG_OK) {
         return false;
     }
 
-    tig_window_hide(dword_5CA198);
+    tig_window_hide(compact_ui_message_window_handle);
 
     compact_ui_created = true;
 
@@ -187,9 +187,9 @@ bool compact_ui_destroy()
         }
     }
 
-    if (dword_5CA198 != TIG_WINDOW_HANDLE_INVALID) {
-        tig_window_destroy(dword_5CA198);
-        dword_5CA198 = TIG_WINDOW_HANDLE_INVALID;
+    if (compact_ui_message_window_handle != TIG_WINDOW_HANDLE_INVALID) {
+        tig_window_destroy(compact_ui_message_window_handle);
+        compact_ui_message_window_handle = TIG_WINDOW_HANDLE_INVALID;
     }
 
     compact_ui_created = false;
@@ -218,21 +218,21 @@ tig_window_handle_t sub_568D20()
 {
     TigRect rect;
 
-    if (dword_5CA198 == TIG_WINDOW_HANDLE_INVALID) {
+    if (compact_ui_message_window_handle == TIG_WINDOW_HANDLE_INVALID) {
         return TIG_WINDOW_HANDLE_INVALID;
     }
 
-    if (tig_window_is_hidden(dword_5CA198)) {
+    if (tig_window_is_hidden(compact_ui_message_window_handle)) {
         rect.x = 0;
         rect.y = 0;
-        rect.width = stru_5CA1A0.width;
-        rect.height = stru_5CA1A0.height;
+        rect.width = compact_ui_message_window_frame.width;
+        rect.height = compact_ui_message_window_frame.height;
 
-        tig_window_fill(dword_5CA198, &rect, tig_color_make(5, 5, 5));
-        tig_window_box(dword_5CA198, &rect, tig_color_make(9, 9, 9));
+        tig_window_fill(compact_ui_message_window_handle, &rect, tig_color_make(5, 5, 5));
+        tig_window_box(compact_ui_message_window_handle, &rect, tig_color_make(9, 9, 9));
 
         if (!sub_567400(player_get_pc_obj())) {
-            if (tig_window_show(dword_5CA198) != TIG_OK) {
+            if (tig_window_show(compact_ui_message_window_handle) != TIG_OK) {
                 return TIG_WINDOW_HANDLE_INVALID;
             }
         }
@@ -241,7 +241,7 @@ tig_window_handle_t sub_568D20()
     sub_57D3E0(TIMEEVENT_TYPE_WORLDMAP, -1);
     sub_57D370(TIMEEVENT_TYPE_WORLDMAP, -1, 3000);
 
-    return dword_5CA198;
+    return compact_ui_message_window_handle;
 }
 
 // 0x568E70
@@ -249,26 +249,26 @@ void sub_568E70()
 {
     TigRect rect;
 
-    if (dword_5CA198 == TIG_WINDOW_HANDLE_INVALID) {
+    if (compact_ui_message_window_handle == TIG_WINDOW_HANDLE_INVALID) {
         return;
     }
 
-    if (tig_window_is_hidden(dword_5CA198)) {
+    if (tig_window_is_hidden(compact_ui_message_window_handle)) {
         return;
     }
 
     rect.x = 0;
     rect.y = 0;
-    rect.width = stru_5CA1A0.width;
-    rect.height = stru_5CA1A0.height;
-    tig_window_box(dword_5CA198, &rect, tig_color_make(9, 9, 9));
+    rect.width = compact_ui_message_window_frame.width;
+    rect.height = compact_ui_message_window_frame.height;
+    tig_window_box(compact_ui_message_window_handle, &rect, tig_color_make(9, 9, 9));
 }
 
 // 0x568F20
 void sub_568F20()
 {
-    if (dword_5CA198 != TIG_WINDOW_HANDLE_INVALID) {
-        tig_window_hide(dword_5CA198);
+    if (compact_ui_message_window_handle != TIG_WINDOW_HANDLE_INVALID) {
+        tig_window_hide(compact_ui_message_window_handle);
     }
 }
 
@@ -277,14 +277,14 @@ void sub_568F40()
 {
     TigRect rect;
 
-    if (dword_5CA198 != TIG_WINDOW_HANDLE_INVALID) {
+    if (compact_ui_message_window_handle != TIG_WINDOW_HANDLE_INVALID) {
         rect.x = 0;
         rect.y = 0;
-        rect.width = stru_5CA1A0.width;
-        rect.height = stru_5CA1A0.height;
+        rect.width = compact_ui_message_window_frame.width;
+        rect.height = compact_ui_message_window_frame.height;
 
-        tig_window_fill(dword_5CA198, &rect, tig_color_make(5, 5, 5));
-        tig_window_box(dword_5CA198, &rect, tig_color_make(9, 9, 9));
+        tig_window_fill(compact_ui_message_window_handle, &rect, tig_color_make(5, 5, 5));
+        tig_window_box(compact_ui_message_window_handle, &rect, tig_color_make(9, 9, 9));
     }
 
     sub_57D3E0(14, -1);
