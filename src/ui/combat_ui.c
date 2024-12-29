@@ -22,7 +22,7 @@ static void sub_56F2F0(tig_window_handle_t window_handle, TigRect* rect, tig_col
 static void sub_56F430(int a1);
 static void sub_56F840();
 static void sub_56F990(int64_t obj);
-static bool sub_56F9B0(TigMessage* msg);
+static bool combat_ui_message_filter(TigMessage* msg);
 
 // 0x5CAA20
 static TigRect stru_5CAA20 = { 617, 577, 124, 14 };
@@ -232,7 +232,7 @@ void combat_ui_create()
     window_data.rect = rect;
     window_data.background_color = art_anim_data.color_key;
     window_data.color_key = art_anim_data.color_key;
-    window_data.message_filter = sub_56F9B0;
+    window_data.message_filter = combat_ui_message_filter;
 
     if (tig_window_create(&window_data, &dword_5CAA18) != TIG_OK) {
         return;
@@ -265,7 +265,7 @@ void combat_ui_create()
     window_data.rect = stru_5CAA20;
     window_data.background_color = art_anim_data.color_key;
     window_data.color_key = tig_color_make(0, 0, 255);
-    window_data.message_filter = sub_56F9B0;
+    window_data.message_filter = combat_ui_message_filter;
 
     if (tig_window_create(&window_data, &dword_5CAA1C) != TIG_OK) {
         return;
@@ -635,7 +635,7 @@ void sub_56F990(int64_t obj)
 }
 
 // 0x56F9B0
-bool sub_56F9B0(TigMessage* msg)
+bool combat_ui_message_filter(TigMessage* msg)
 {
     int64_t obj;
     AnimID anim_id_1;
