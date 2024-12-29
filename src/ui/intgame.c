@@ -771,7 +771,7 @@ void intgame_resize(ResizeInfo* resize_info)
     }
 
     if (resize_info->field_14.height == 400) {
-        hotkey_ui_start(dword_64C4F8[1], &stru_5C6390[1].x, dword_64C4F8[1], 0);
+        hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
 
         for (index = 0; index < 5; index++) {
             tig_window_hide(dword_5C6378[index]);
@@ -795,6 +795,8 @@ void intgame_resize(ResizeInfo* resize_info)
         tig_window_fill(dword_5C7288,
             &rect,
             tig_color_make(5, 5, 5));
+
+        hotkey_ui_start(dword_5C7288, &(window_data.rect), TIG_WINDOW_HANDLE_INVALID, true);
 
         for (index = 0; index < 5; index++) {
             if (sub_57C520(index)) {
