@@ -272,7 +272,7 @@ void follower_ui_resize(ResizeInfo* resize_info)
 
     rects = intgame_is_compact_interface() ? stru_5CA420 : stru_5CA3F0;
     for (index = 6; index < 9; index++) {
-        stru_5CA360[index] = rects[index];
+        stru_5CA360[index] = rects[index - 6];
     }
 
     for (index = 6; index < 9; index++) {
