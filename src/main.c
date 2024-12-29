@@ -571,7 +571,7 @@ void main_loop()
                                 settings_set_value(&settings, "shadows", 1 - settings_get_value(&settings, "shadows"));
                                 break;
                             case DIK_BACKSLASH:
-                                sub_438500(!sub_438520());
+                                wallcheck_set_enabled(!wallcheck_is_enabled());
                                 break;
                             case DIK_NUMPAD7:
                                 if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {

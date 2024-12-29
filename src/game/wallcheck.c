@@ -49,7 +49,7 @@ static void sub_438830();
 static void wallcheck_roof_faded_clear(int64_t a1);
 
 // 0x5A3E90
-static bool dword_5A3E90 = true;
+static bool wallcheck_enabled = true;
 
 // 0x5A3E94
 static uint8_t byte_5A3E94[4][4] = {
@@ -730,7 +730,7 @@ void sub_437E50(int64_t loc)
     int64_t tmp_y;
     unsigned int v3;
 
-    if (!dword_5A3E90) {
+    if (!wallcheck_enabled) {
         return;
     }
 
@@ -924,17 +924,17 @@ void wallcheck_flush()
 }
 
 // 0x438500
-void sub_438500(bool enabled)
+void wallcheck_set_enabled(bool enabled)
 {
-    if (dword_5A3E90 != enabled) {
-        dword_5A3E90 = enabled;
+    if (wallcheck_enabled != enabled) {
+        wallcheck_enabled = enabled;
     }
 }
 
 // 0x438520
-bool sub_438520()
+bool wallcheck_is_enabled()
 {
-    return dword_5A3E90;
+    return wallcheck_enabled;
 }
 
 // 0x438530
