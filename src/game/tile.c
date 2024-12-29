@@ -694,7 +694,7 @@ void tile_render_iso(UnknownContext* render_info)
     int center_y;
     int v15;
     int v42;
-    bool v43;
+    bool blit_info_initialized;
     int v38;
 
     v1 = render_info->field_8;
@@ -732,7 +732,7 @@ void tile_render_iso(UnknownContext* render_info)
             for (v15 = 0; v15 < v3->width; v15++) {
                 if (sector_lock_results[v15]) {
                     for (v42 = 0; v42 < v3->field_44[v15]; v42++) {
-                        v43 = false;
+                        blit_info_initialized = false;
                         art_blit_info.art_id = sectors[v15]->tiles.art_ids[indexes[v15]];
                         tile_type = tig_art_tile_id_type_get(art_blit_info.art_id);
                         if (!sub_439FF0(center_x + 40, center_y + 20, 0)) {
@@ -747,8 +747,8 @@ void tile_render_iso(UnknownContext* render_info)
                                     src_rect.width = dst_rect.width;
                                     src_rect.height = dst_rect.height;
 
-                                    if (!v43) {
-                                        v43 = true;
+                                    if (!blit_info_initialized) {
+                                        blit_info_initialized = true;
 
                                         art_blit_info.dst_video_buffer = dword_602DF0;
                                         art_blit_info.field_14 = v36;
@@ -757,12 +757,12 @@ void tile_render_iso(UnknownContext* render_info)
 
                                         if (sub_4DA360(center_x, center_y, color, v51)) {
                                             art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_LERP;
-                                            if (dword_602E00) {
+                                            if (!dword_602E00) {
                                                 art_blit_info.flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
                                             }
                                         } else if (v51[0] != color || dword_602E00) {
                                             art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_CONST;
-                                            if (dword_602E00) {
+                                            if (!dword_602E00) {
                                                 art_blit_info.flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
                                             }
                                         } else {
