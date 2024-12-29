@@ -351,7 +351,7 @@ void compact_ui_health_bar_draw(int a1)
 
     rect1.x = 1;
     rect1.width = 23;
-    rect1.y = 100 * (100 * object_get_hp_damage(pc_obj) / sub_43D5A0(pc_obj)) / 100;
+    rect1.y = 100 * (100 * object_get_hp_damage(pc_obj) / sub_43D5A0(pc_obj)) / 100 + 1;
     if (rect1.y > 100) {
         rect1.y = 100;
     }
@@ -392,10 +392,9 @@ void compact_ui_health_bar_draw(int a1)
     tig_window_text_write(compact_ui_components[0].window_handle, str, &rect1);
     tig_font_pop();
 
-    // NOTE: Original code is a bit odd (max is 101), probably worth checking.
     rect1.x = 25;
     rect1.width = 23;
-    rect1.y = 100 * (100 * critter_fatigue_damage_get(pc_obj) / sub_45D670(pc_obj)) / 100;
+    rect1.y = 100 * (100 * critter_fatigue_damage_get(pc_obj) / sub_45D670(pc_obj)) / 100 + 1;
     if (rect1.y > 100) {
         rect1.y = 100;
     }
