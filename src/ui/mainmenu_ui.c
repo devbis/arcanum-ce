@@ -164,13 +164,13 @@ static void won_account_changed();
 static void won_password_changed();
 static void selected_char_id_changed();
 static void sub_5496F0(int num);
-static void sub_549850();
-static void sub_549910();
+static void mainmenu_fonts_init();
+static void mainmenu_fonts_exit();
 static bool sub_549A10(TigWindowModalDialogChoice* choice_ptr);
 static void sub_549A80();
 
 // 0x5993D0
-static int dword_5993D0[MM_FONT_COUNT] = {
+static int mainmenu_font_nums[MM_FONT_COUNT] = {
     229,
     26,
     27,
@@ -178,7 +178,7 @@ static int dword_5993D0[MM_FONT_COUNT] = {
 };
 
 // 0x5993E0
-static int dword_5993E0[MM_COLOR_COUNT][3] = {
+static int mainmenu_font_colors[MM_COLOR_COUNT][3] = {
     { 255, 255, 255 },
     { 255, 0, 0 },
     { 0, 0, 255 },
@@ -2125,7 +2125,7 @@ static MesFileEntry stru_64C0E8;
 static char byte_64C0F0[128];
 
 // 0x64C170
-static tig_font_handle_t dword_64C170[MM_FONT_COUNT][MM_COLOR_COUNT];
+static tig_font_handle_t mainmenu_fonts[MM_FONT_COUNT][MM_COLOR_COUNT];
 
 // 0x64C210
 static tig_font_handle_t dword_64C210[2];
@@ -2276,7 +2276,7 @@ bool mainmenu_ui_init(GameInitInfo* init_info)
     settings_add(&settings, "selected_char_id", "", selected_char_id_changed);
     selected_char_id_changed();
 
-    sub_549850();
+    mainmenu_fonts_init();
 
     for (index = 0; index < 3; index++) {
         font_desc.flags = 0;
@@ -2372,7 +2372,7 @@ void mainmenu_ui_exit()
     sub_5412E0(true);
     settings_set_obj_value(&settings, "selected_char_id", stru_64C248);
     serverlist_ui_exit();
-    sub_549910();
+    mainmenu_fonts_exit();
 
     for (index = 0; index < 3; index++) {
         tig_font_destroy(dword_64C228[0][index]);
@@ -7439,33 +7439,36 @@ mes_file_handle_t sub_549840()
 }
 
 // 0x549850
-void sub_549850()
+void mainmenu_fonts_init()
 {
-    int group;
-    int index;
+    int fnt;
+    int clr;
     TigFont font_info;
 
-    for (group = 0; group < MM_FONT_COUNT; group++) {
-        tig_art_interface_id_create(dword_5993D0[group], 0, 0, 0, &(font_info.art_id));
+    font_info.flags = 0;
+    font_info.str = NULL;
 
-        for (index = 0; index < MM_COLOR_COUNT; index++) {
-            font_info.color = tig_color_make(dword_5993E0[index][0],
-                dword_5993E0[index][1],
-                dword_5993E0[index][2]);
-            tig_font_create(&font_info, &(dword_64C170[group][index]));
+    for (fnt = 0; fnt < MM_FONT_COUNT; fnt++) {
+        tig_art_interface_id_create(mainmenu_font_nums[fnt], 0, 0, 0, &(font_info.art_id));
+
+        for (clr = 0; clr < MM_COLOR_COUNT; clr++) {
+            font_info.color = tig_color_make(mainmenu_font_colors[clr][0],
+                mainmenu_font_colors[clr][1],
+                mainmenu_font_colors[clr][2]);
+            tig_font_create(&font_info, &(mainmenu_fonts[fnt][clr]));
         }
     }
 }
 
 // 0x549910
-void sub_549910()
+void mainmenu_fonts_exit()
 {
-    int group;
-    int index;
+    int fnt;
+    int clr;
 
-    for (group = 0; group < MM_FONT_COUNT; group++) {
-        for (index = 0; index < MM_COLOR_COUNT; index++) {
-            tig_font_destroy(dword_64C170[group][index]);
+    for (fnt = 0; fnt < MM_FONT_COUNT; fnt++) {
+        for (clr = 0; clr < MM_COLOR_COUNT; clr++) {
+            tig_font_destroy(mainmenu_fonts[fnt][clr]);
         }
     }
 }
@@ -7473,7 +7476,7 @@ void sub_549910()
 // 0x549940
 tig_font_handle_t sub_549940(int font, int color)
 {
-    return dword_64C170[font][color];
+    return mainmenu_fonts[font][color];
 }
 
 // 0x549960
