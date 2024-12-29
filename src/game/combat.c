@@ -2866,7 +2866,31 @@ void sub_4B6E70(int64_t obj)
     }
 
     if (dword_5FC240->obj != obj) {
+        dword_5FC240 = stru_5FC180.head;
+        while (dword_5FC240 != NULL) {
+            if (dword_5FC240->obj == obj) {
+                break;
+            }
+            dword_5FC240 = dword_5FC240->next;
+        }
 
+        if (dword_5FC240 == NULL) {
+            tig_debug_printf("Combat: TB: Note: Couldn't change to 'Who's' Turn, inserting them in list.\n");
+            combat_turn_based_add_critter(obj);
+            dword_5FC240 = stru_5FC180.head;
+            while (dword_5FC240 != NULL) {
+                if (dword_5FC240->obj == obj) {
+                    break;
+                }
+                dword_5FC240 = dword_5FC240->next;
+            }
+
+            if (dword_5FC240 == NULL) {
+                tig_debug_printf("Combat: TB: ERROR: Couldn't change to 'Who's' Turn AFTER inserting them in list...DISABLING TB-COMBAT!\n");
+                settings_set_value(&settings, "turn-based", 0);
+                return;
+            }
+        }
     }
 
     combat_action_points = stat_level(obj, STAT_SPEED);
