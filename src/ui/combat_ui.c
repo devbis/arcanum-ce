@@ -493,10 +493,10 @@ void sub_56F430(int a1)
         src_rect.width = art_frame_data.width;
         src_rect.height = art_frame_data.height;
 
-        src_rect.x = 0;
-        src_rect.y = 10;
-        src_rect.width = art_frame_data.width;
-        src_rect.height = art_frame_data.height;
+        dst_rect.x = 0;
+        dst_rect.y = 10;
+        dst_rect.width = art_frame_data.width;
+        dst_rect.height = art_frame_data.height;
 
         art_blit_info.flags = 0;
         art_blit_info.src_rect = &src_rect;
