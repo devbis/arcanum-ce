@@ -4,15 +4,32 @@
 #include "game/context.h"
 #include "game/timeevent.h"
 
-typedef struct John {
+typedef enum UiMessageType {
+    UI_MSG_TYPE_LEVEL,
+    UI_MSG_TYPE_POISON,
+    UI_MSG_TYPE_CURSE,
+    UI_MSG_TYPE_BLESS,
+    UI_MSG_TYPE_EXCLAMATION,
+    UI_MSG_TYPE_QUESTION,
+    UI_MSG_TYPE_FEEDBACK,
+    UI_MSG_TYPE_SKILL,
+    UI_MSG_TYPE_SPELL,
+    UI_MSG_TYPE_COLLEGE,
+    UI_MSG_TYPE_TECH,
+    UI_MSG_TYPE_DEGREE,
+    UI_MSG_TYPE_STAT,
+    UI_MSG_TYPE_SCHEMATIC,
+} UiMessageType;
+
+typedef struct UiMessage {
     int type;
     const char* str;
     int field_8;
     int field_C;
     int64_t field_10;
-} John;
+} UiMessage;
 
-static_assert(sizeof(John) == 0x18, "wrong size");
+static_assert(sizeof(UiMessage) == 0x18, "wrong size");
 
 // TODO: Remove forward declarations.
 typedef struct Packet81 Packet81;
@@ -52,7 +69,7 @@ typedef void(UI_CALLBACKS_FUNC_70)();
 typedef void(UI_CALLBACKS_FUNC_74)();
 typedef void(UI_CALLBACKS_FUNC_78)(int64_t a1, void* a3, int a4);
 typedef void(UI_CALLBACKS_FUNC_7C)(const char* a1);
-typedef void(UI_CALLBACKS_FUNC_80)(John* a1);
+typedef void(UI_CALLBACKS_FUNC_80)(UiMessage* ui_message);
 typedef void(UI_CALLBACKS_FUNC_84)(int a1);
 typedef void(UI_CALLBACKS_FUNC_88)();
 typedef void(UI_CALLBACKS_FUNC_8C)(int64_t a1, int64_t a2);
@@ -240,8 +257,8 @@ void sub_4605C0();
 void sub_4605D0();
 void sub_4605E0(int64_t a1, void* a2, int a3);
 void sub_460610(const char* a1);
-void sub_460630(John* a1);
-void sub_460650(John* a1, unsigned int milliseconds);
+void sub_460630(UiMessage* ui_message);
+void sub_460650(UiMessage* ui_message, unsigned int milliseconds);
 void sub_4606C0(int a1);
 void sub_4606E0();
 void sub_4606F0(int64_t a1, int64_t a2);

@@ -3403,17 +3403,17 @@ bool sub_4AF800(int64_t obj, int64_t a2)
 // 0x4AF860
 void sub_4AF860()
 {
-    John v1;
+    UiMessage ui_message;
 
     dword_5B50CC = !dword_5B50CC;
 
-    v1.type = 4;
+    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
     if (dword_5B50CC) {
-        v1.str = "NPC fighting is ON";
+        ui_message.str = "NPC fighting is ON";
     } else {
-        v1.str = "NPC fighting is OFF";
+        ui_message.str = "NPC fighting is OFF";
     }
-    sub_460630(&v1);
+    sub_460630(&ui_message);
 }
 
 // 0x4AF8C0

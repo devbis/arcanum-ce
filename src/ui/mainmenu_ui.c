@@ -3714,7 +3714,7 @@ bool sub_543220()
 bool sub_5432B0(const char* name)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     sub_542200();
 
@@ -3728,9 +3728,9 @@ bool sub_5432B0(const char* name)
             mes_file_entry.num = 5000; // "Game Loaded Successfully."
             mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
-            v1.type = 4;
-            v1.str = mes_file_entry.str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = mes_file_entry.str;
+            sub_460630(&ui_message);
 
             dword_64C418 = 0;
             sub_5412D0();
@@ -3744,9 +3744,9 @@ bool sub_5432B0(const char* name)
     mes_file_entry.num = 5001; // "Save Game Corrupt!  Load Failed!"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
-    v1.type = 4;
-    v1.str = mes_file_entry.str;
-    sub_460630(&v1);
+    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+    ui_message.str = mes_file_entry.str;
+    sub_460630(&ui_message);
 
     return false;
 }
@@ -3839,7 +3839,7 @@ bool mainmenu_ui_execute_save_game(int btn)
     char fname[_MAX_FNAME];
     const char* name;
     MesFileEntry mes_file_entry;
-    John v3;
+    UiMessage ui_message;
     int num;
 
     (void)btn;
@@ -3919,9 +3919,9 @@ bool mainmenu_ui_execute_save_game(int btn)
         mes_file_entry.num = 5003; // "Save Game Corrupt!  Save Failed!"
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
-        v3.type = 4;
-        v3.str = mes_file_entry.str;
-        sub_460630(&v3);
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = mes_file_entry.str;
+        sub_460630(&ui_message);
 
         return false;
     }
@@ -3929,9 +3929,9 @@ bool mainmenu_ui_execute_save_game(int btn)
     mes_file_entry.num = 5002; // "Game Saved Successfully."
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
 
-    v3.type = 4;
-    v3.str = mes_file_entry.str;
-    sub_460630(&v3);
+    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+    ui_message.str = mes_file_entry.str;
+    sub_460630(&ui_message);
     sub_5412D0();
     byte_64C2F8[0] = '\0';
 
@@ -5885,7 +5885,7 @@ bool sub_546EE0(TigMessage* msg)
     int idx;
     MesFileEntry mes_file_entry;
     MesFileEntry description_mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     char str[MAX_STRING];
     int v2;
 
@@ -6112,9 +6112,9 @@ bool sub_546EE0(TigMessage* msg)
 
                 sprintf(str, "%s\n%s", mes_file_entry.str, description_mes_file_entry.str);
 
-                v1.type = 6;
-                v1.str = str;
-                sub_550750(&v1);
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                ui_message.str = str;
+                sub_550750(&ui_message);
                 return true;
             }
 
@@ -7384,14 +7384,14 @@ void sub_5496E0()
 void sub_5496F0(int num)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     mes_file_entry.num = num;
     if (mes_search(mainmenu_ui_mainmenu_mes_file, &mes_file_entry)) {
         mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry);
-        v1.type = 6;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
         tig_window_display();
     }
 }

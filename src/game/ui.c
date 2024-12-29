@@ -16,7 +16,7 @@ void ui_init(UiCallbacks* callbacks)
         ui_callbacks = *callbacks;
     }
 
-    tig_idxtable_init(&stru_5E87C8, sizeof(John));
+    tig_idxtable_init(&stru_5E87C8, sizeof(UiMessage));
 }
 
 // 0x460150
@@ -28,15 +28,15 @@ void ui_exit()
 // 0x460160
 bool ui_timeevent_process(TimeEvent* timeevent)
 {
-    John v1;
+    UiMessage ui_message;
 
     if (timeevent->params[0].integer_value != 0) {
         tig_debug_printf("UI: Unknown type of timeevent passed to ui_timeevent_process (%d).\n",
             timeevent->params[0].integer_value);
     } else {
-        tig_idxtable_get(&stru_5E87C8, timeevent->params[1].integer_value, &v1);
-        sub_460630(&v1);
-        FREE(v1.str);
+        tig_idxtable_get(&stru_5E87C8, timeevent->params[1].integer_value, &ui_message);
+        sub_460630(&ui_message);
+        FREE(ui_message.str);
     }
 
     return true;
@@ -281,15 +281,15 @@ void sub_460610(const char* a1)
 }
 
 // 0x460630
-void sub_460630(John* a1)
+void sub_460630(UiMessage* ui_message)
 {
     if (ui_callbacks.field_80 != NULL) {
-        ui_callbacks.field_80(a1);
+        ui_callbacks.field_80(ui_message);
     }
 }
 
 // 0x460650
-void sub_460650(John* a1, unsigned int milliseconds)
+void sub_460650(UiMessage* ui_message, unsigned int milliseconds)
 {
     int id;
 
@@ -297,12 +297,12 @@ void sub_460650(John* a1, unsigned int milliseconds)
     TimeEvent timeevent;
 
     id = dword_5E87D8++;
-    a1->str = STRDUP(a1->str);
+    ui_message->str = STRDUP(ui_message->str);
     timeevent.type = TIMEEVENT_TYPE_UI;
     timeevent.params[0].integer_value = 0;
     timeevent.params[1].integer_value = id;
     sub_45A950(&datetime, milliseconds);
-    tig_idxtable_set(&stru_5E87C8, id, a1);
+    tig_idxtable_set(&stru_5E87C8, id, ui_message);
     sub_45B800(&timeevent, &datetime);
 }
 

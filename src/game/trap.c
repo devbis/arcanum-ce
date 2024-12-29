@@ -263,7 +263,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
     Script scr;
     AnimFxNode animfx;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     if (!sub_4A2BA0()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
@@ -310,9 +310,9 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
             mes_file_entry.num = 0;
             mes_get_msg(trap_mes_file, &mes_file_entry);
 
-            v1.type = 4;
-            v1.str = mes_file_entry.str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = mes_file_entry.str;
+            sub_460630(&ui_message);
         }
     }
 }
@@ -345,7 +345,7 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
 {
     Script scr;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int64_t target_loc;
     int target_type;
     int spl;
@@ -367,9 +367,9 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
             mes_file_entry.num = 2;
             mes_get_msg(trap_mes_file, &mes_file_entry);
 
-            v1.type = 4;
-            v1.str = mes_file_entry.str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = mes_file_entry.str;
+            sub_460630(&ui_message);
 
             return false;
         }
@@ -397,7 +397,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
 {
     Script scr;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int spl;
     int64_t prototype_handle;
     int64_t trap_obj;
@@ -435,9 +435,9 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
         mes_file_entry.num = 3;
         mes_get_msg(trap_mes_file, &mes_file_entry);
 
-        v1.type = 4;
-        v1.str = mes_file_entry.str;
-        sub_460630(&v1);
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = mes_file_entry.str;
+        sub_460630(&ui_message);
 
         return false;
     }

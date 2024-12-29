@@ -442,7 +442,7 @@ void schematic_ui_destroy()
 bool schematic_ui_message_filter(TigMessage* msg)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tech;
     Packet79 pkt;
 
@@ -466,7 +466,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == dword_680E3C) {
-                if (qword_680E28 != 0) {
+                if (qword_680E28 != OBJ_HANDLE_NULL) {
                     sub_57CCF0(qword_680E60, qword_680E28);
                 }
                 return true;
@@ -475,35 +475,35 @@ bool schematic_ui_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == stru_5CA850[2].button_handle) {
                 mes_file_entry.num = 3;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                v1.type = 6;
-                v1.str = mes_file_entry.str;
-                sub_550750(&v1);
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                ui_message.str = mes_file_entry.str;
+                sub_550750(&ui_message);
                 return true;
             }
 
             if (msg->data.button.button_handle == stru_5CA850[3].button_handle) {
                 mes_file_entry.num = 4;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                v1.type = 6;
-                v1.str = mes_file_entry.str;
-                sub_550750(&v1);
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                ui_message.str = mes_file_entry.str;
+                sub_550750(&ui_message);
                 return true;
             }
 
             if (msg->data.button.button_handle == stru_5CA850[4].button_handle) {
                 mes_file_entry.num = 5;
                 mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                v1.type = 6;
-                v1.str = mes_file_entry.str;
-                sub_550750(&v1);
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                ui_message.str = mes_file_entry.str;
+                sub_550750(&ui_message);
                 return true;
             }
 
             for (tech = 0; tech < TECH_COUNT; tech++) {
                 if (msg->data.button.button_handle == stru_5CA8A0[tech].button_handle) {
-                    v1.type = 10;
-                    v1.field_8 = tech;
-                    sub_550750(&v1);
+                    ui_message.type = UI_MSG_TYPE_TECH;
+                    ui_message.field_8 = tech;
+                    sub_550750(&ui_message);
                     return true;
                 }
             }
@@ -608,16 +608,16 @@ bool schematic_ui_message_filter(TigMessage* msg)
                 case 1:
                     mes_file_entry.num = 0;
                     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                    v1.type = 4;
-                    v1.str = mes_file_entry.str;
-                    sub_550750(&v1);
+                    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+                    ui_message.str = mes_file_entry.str;
+                    sub_550750(&ui_message);
                     break;
                 case 2:
                     mes_file_entry.num = 1;
                     mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-                    v1.type = 4;
-                    v1.str = mes_file_entry.str;
-                    sub_550750(&v1);
+                    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+                    ui_message.str = mes_file_entry.str;
+                    sub_550750(&ui_message);
                     break;
                 }
                 return true;
@@ -1163,16 +1163,16 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
 bool sub_56E950(int a1, int64_t a2, long long obj)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     (void)a2;
 
     if (a1 && player_is_pc_obj(obj)) {
         mes_file_entry.num = 2;
         mes_get_msg(schematic_ui_text_mes_file, &mes_file_entry);
-        v1.type = 4;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
         sub_56DDC0();
         gsound_play_sfx_id(dword_680E6C + 3018, 1);
     }

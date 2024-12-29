@@ -581,7 +581,7 @@ static int dword_64C534;
 static tig_font_handle_t dword_64C538;
 
 // 0x64C540
-static S64C540 stru_64C540[10];
+static UiMessage stru_64C540[10];
 
 // 0x64C630
 static bool intgame_big_window_locked;
@@ -650,7 +650,7 @@ static void(*dword_64C6CC)(TigMessage* msg);
 static int dword_64C6D0;
 
 // 0x64C6D4
-static void(*dword_64C6D4)(John* a1);
+static void(*dword_64C6D4)(UiMessage* ui_message);
 
 // 0x64C6D8
 static int dword_64C6D8;
@@ -1298,7 +1298,7 @@ void intgame_ammo_icon_refresh(tig_art_id_t art_id)
 void sub_54B5D0(TigMessage* msg)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int button_state;
     TigWindowData window_data;
     int index;
@@ -1349,10 +1349,10 @@ void sub_54B5D0(TigMessage* msg)
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_IDLE) {
             if (dword_64C674 != -1) {
                 mes_file_entry.num = dword_64C674;
-                v1.type = 6;
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
                 if (mes_search(intgame_mes_file, &mes_file_entry)) {
-                    v1.str = mes_file_entry.str;
-                    sub_550750(&v1);
+                    ui_message.str = mes_file_entry.str;
+                    sub_550750(&ui_message);
                 }
             }
 
@@ -2163,32 +2163,32 @@ void sub_550720()
 }
 
 // 0x550750
-void sub_550750(John* a1)
+void sub_550750(UiMessage* ui_message)
 {
-    sub_552770(a1);
+    sub_552770(ui_message);
     if (dword_64C6D4 != NULL) {
-        dword_64C6D4(a1);
+        dword_64C6D4(ui_message);
     }
 }
 
 // 0x550770
 void sub_550770(int a1, const char* str)
 {
-    John v1;
+    UiMessage ui_message;
 
     (void)a1;
 
     if (dword_64C6D4 != NULL) {
-        v1.type = 6;
-        v1.str = str;
-        dword_64C6D4(&v1);
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = str;
+        dword_64C6D4(&ui_message);
     } else if (dword_64C6B4) {
         sub_5509C0(str, &(stru_5C6D60[intgame_iso_window_type].rect));
     }
 }
 
 // 0x5507D0
-void sub_5507D0(void(*func)(John* a1))
+void sub_5507D0(void(*func)(UiMessage* ui_message))
 {
     dword_64C6D4 = func;
 }
@@ -2196,47 +2196,47 @@ void sub_5507D0(void(*func)(John* a1))
 // 0x5507E0
 void sub_5507E0(int spl)
 {
-    John v1;
+    UiMessage ui_message;
 
     if (intgame_iso_window_type != 0) {
         sub_5509C0(spell_get_name(spl), &(stru_5C6D60[intgame_iso_window_type].rect));
     } else {
-        v1.type = 8;
-        v1.field_8 = spl;
-        v1.field_C = 0;
-        v1.field_10 = player_get_pc_obj();
-        sub_550750(&v1);
-        sub_552770(&v1);
+        ui_message.type = UI_MSG_TYPE_SPELL;
+        ui_message.field_8 = spl;
+        ui_message.field_C = 0;
+        ui_message.field_10 = player_get_pc_obj();
+        sub_550750(&ui_message);
+        sub_552770(&ui_message);
     }
 }
 
 // 0x550860
 void sub_550860(int college)
 {
-    John v1;
+    UiMessage ui_message;
 
     if (intgame_iso_window_type != 0) {
         sub_5509C0(college_get_name(college), &(stru_5C6D60[intgame_iso_window_type].rect));
     } else {
-        v1.type = 9;
-        v1.field_8 = college;
-        sub_550750(&v1);
-        sub_552770(&v1);
+        ui_message.type = UI_MSG_TYPE_COLLEGE;
+        ui_message.field_8 = college;
+        sub_550750(&ui_message);
+        sub_552770(&ui_message);
     }
 }
 
 // 0x5508C0
 void sub_5508C0(int value)
 {
-    John v1;
+    UiMessage ui_message;
 
     if (intgame_iso_window_type != 0) {
         sub_5509C0(sub_57A700(value), &(stru_5C6D60[intgame_iso_window_type].rect));
     } else {
-        v1.type = 7;
-        v1.field_8 = sub_57A6A0(value);
-        v1.field_C = 0;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_SKILL;
+        ui_message.field_8 = sub_57A6A0(value);
+        ui_message.field_C = 0;
+        sub_550750(&ui_message);
     }
 }
 
@@ -3967,14 +3967,14 @@ void sub_557370()
 void sub_557670()
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     mes_file_entry.num = 2000;
     mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 }
 
 // 0x5576B0
@@ -4002,15 +4002,15 @@ void sub_5576B0()
 void sub_557730(int index)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     mes_file_entry.num = index + 3000;
     if (mes_search(intgame_mes_file, &mes_file_entry)) {
         mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-        v1.type = 6;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
     }
 }
 

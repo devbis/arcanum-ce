@@ -279,7 +279,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
     int cnt;
     int index;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int player;
 
     schematic = obj_field_int32_get(written_obj, OBJ_F_WRITTEN_TEXT_START_LINE);
@@ -298,9 +298,9 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
         mes_file_entry.num = 89; // "You have learned a new schematic!"
         mes_get_msg(tech_mes_file, &mes_file_entry);
 
-        v1.type = 13;
-        v1.str = mes_file_entry.str;
-        v1.field_8 = schematic;
+        ui_message.type = UI_MSG_TYPE_SCHEMATIC;
+        ui_message.str = mes_file_entry.str;
+        ui_message.field_8 = schematic;
 
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
             player = sub_4A2B10(pc_obj);
@@ -309,7 +309,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
             }
 
             if (player != 0) {
-                sub_4EDA60(&v1, player, 0);
+                sub_4EDA60(&ui_message, player, 0);
                 return;
             }
         }
@@ -317,9 +317,9 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
         mes_file_entry.num = 88; // "You already know this schematic."
         mes_get_msg(tech_mes_file, &mes_file_entry);
 
-        v1.type = 13;
-        v1.str = mes_file_entry.str;
-        v1.field_8 = schematic;
+        ui_message.type = UI_MSG_TYPE_SCHEMATIC;
+        ui_message.str = mes_file_entry.str;
+        ui_message.field_8 = schematic;
 
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
             player = sub_4A2B10(pc_obj);
@@ -328,13 +328,13 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
             }
 
             if (player != 0) {
-                sub_4EDA60(&v1, player, 0);
+                sub_4EDA60(&ui_message, player, 0);
                 return;
             }
         }
     }
 
-    sub_460630(&v1);
+    sub_460630(&ui_message);
 }
 
 // 0x4B02B0

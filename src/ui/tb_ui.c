@@ -256,11 +256,11 @@ void sub_57CBC0(long long a1, long long a2)
 // 0x57CBE0
 void sub_57CBE0(const char* str)
 {
-    John v1;
+    UiMessage ui_message;
 
-    v1.type = 4;
-    v1.str = str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+    ui_message.str = str;
+    sub_550750(&ui_message);
 }
 
 // 0x57CC10

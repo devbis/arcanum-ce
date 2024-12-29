@@ -1109,7 +1109,7 @@ void sub_5607E0()
     int64_t loc;
     int64_t sector_id;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     if (wmap_ui_created) {
         sub_560F40();
@@ -1128,9 +1128,9 @@ void sub_5607E0()
         mes_file_entry.num = 602; // "You cannot access the World Map during an encounter."
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
-        v1.type = 6;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
 
         return;
     }
@@ -1141,9 +1141,9 @@ void sub_5607E0()
         mes_file_entry.num = 605; // "The World Map is not available."
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
-        v1.type = 6;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
 
         return;
     }
@@ -1153,9 +1153,9 @@ void sub_5607E0()
             mes_file_entry.num = 600; // "You cannot access the World Map during combat."
             mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
-            v1.type = 6;
-            v1.str = mes_file_entry.str;
-            sub_550750(&v1);
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
 
             return;
         }
@@ -1171,9 +1171,9 @@ void sub_5607E0()
         mes_file_entry.num = 605; // "The World Map is not available."
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
-        v1.type = 6;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
 
         return;
     }
@@ -1211,9 +1211,9 @@ void sub_5607E0()
         mes_file_entry.num = 605; // "The World Map is not available."
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
-        v1.type = 6;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
 
         return;
     }
@@ -1452,13 +1452,13 @@ bool wmap_ui_create()
         if (stru_5C9228[0].field_68[0] == '\0'
             && !dword_66D874) {
             MesFileEntry mes_file_entry;
-            John v1;
+            UiMessage ui_message;
 
             mes_file_entry.num = 605;
             mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
-            v1.type = 6;
-            v1.str = mes_file_entry.str;
-            sub_550750(&v1);
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
             return false;
         }
 
@@ -1736,7 +1736,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
     S5C9228* v1;
     MesFileEntry mes_file_entry;
     char str[48];
-    John v2;
+    UiMessage ui_message;
     bool v3 = false;
 
     sub_563610();
@@ -2160,9 +2160,9 @@ bool wmap_ui_message_filter(TigMessage* msg)
             if (mes_search(wmap_ui_worldmap_mes_file, &mes_file_entry)) {
                 mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
                 sprintf(str, "%s\n%s", wmap_ui_action, mes_file_entry.str);
-                v2.type = 6;
-                v2.str = str;
-                sub_550750(&v2);
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                ui_message.str = str;
+                sub_550750(&ui_message);
             } else {
                 tig_debug_printf("WmapUI: ERROR: Hover Text for button is Unreachable!\n");
             }
@@ -2426,7 +2426,7 @@ void sub_562AF0(int x, int y)
 void sub_562B70(int a1)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int v2;
     tig_art_id_t art_id;
     TigArtAnimData art_anim_data;
@@ -2447,9 +2447,9 @@ void sub_562B70(int a1)
             mes_file_entry.num = 605;
             mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 
-            v1.type = 6;
-            v1.str = mes_file_entry.str;
-            sub_550750(&v1);
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
             return;
         }
         break;

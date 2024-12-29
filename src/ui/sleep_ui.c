@@ -126,7 +126,7 @@ void sub_57B180(int64_t bed_obj)
     int64_t sector_id;
     int townmap;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     bool halt;
 
     pc_obj = player_get_pc_obj();
@@ -149,9 +149,9 @@ void sub_57B180(int64_t bed_obj)
         mes_file_entry.num = 11;
         mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
 
-        v1.type = 4;
-        v1.str = mes_file_entry.str;
-        sub_460630(&v1);
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = mes_file_entry.str;
+        sub_460630(&ui_message);
 
         dword_6834B0 = false;
         return;
@@ -167,9 +167,9 @@ void sub_57B180(int64_t bed_obj)
                 mes_file_entry.num = 20;
                 mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
 
-                v1.type = 4;
-                v1.str = mes_file_entry.str;
-                sub_460630(&v1);
+                ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+                ui_message.str = mes_file_entry.str;
+                sub_460630(&ui_message);
                 return;
             }
             dword_6834B0 = true;
@@ -182,9 +182,9 @@ void sub_57B180(int64_t bed_obj)
             mes_file_entry.num = 9;
             mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
 
-            v1.type = 4;
-            v1.str = mes_file_entry.str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = mes_file_entry.str;
+            sub_460630(&ui_message);
             dword_6834B0 = false;
             return;
         }
@@ -197,9 +197,9 @@ void sub_57B180(int64_t bed_obj)
             mes_file_entry.num = 8;
             mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
 
-            v1.type = 4;
-            v1.str = mes_file_entry.str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = mes_file_entry.str;
+            sub_460630(&ui_message);
             dword_6834B0 = false;
             return;
         }
@@ -209,9 +209,9 @@ void sub_57B180(int64_t bed_obj)
             mes_file_entry.num = 10;
             mes_get_msg(sleep_ui_mes_file, &mes_file_entry);
 
-            v1.type = 4;
-            v1.str = mes_file_entry.str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = mes_file_entry.str;
+            sub_460630(&ui_message);
             dword_6834B0 = false;
             return;
         }

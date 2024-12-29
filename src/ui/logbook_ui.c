@@ -441,7 +441,7 @@ bool logbook_ui_message_filter(TigMessage* msg)
 {
     int index;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
@@ -478,9 +478,9 @@ bool logbook_ui_message_filter(TigMessage* msg)
                     mes_file_entry.num = index;
                     mes_get_msg(logbook_ui_mes_file, &mes_file_entry);
 
-                    v1.type = 6;
-                    v1.str = mes_file_entry.str;
-                    sub_550750(&v1);
+                    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                    ui_message.str = mes_file_entry.str;
+                    sub_550750(&ui_message);
 
                     return true;
                 }

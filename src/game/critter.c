@@ -1856,7 +1856,7 @@ void sub_45F820(int64_t obj, int value)
     int encumbrance_level;
     int v1;
     MesFileEntry mes_file_entry;
-    John v2;
+    UiMessage ui_message;
 
     encumbrance_level = sub_45F790(obj);
     if (encumbrance_level == value) {
@@ -1881,9 +1881,9 @@ void sub_45F820(int64_t obj, int value)
         mes_file_entry.num = 11 + encumbrance_level;
         mes_get_msg(critter_mes_file, &mes_file_entry);
 
-        v2.type = 4;
-        v2.str = mes_file_entry.str;
-        sub_460630(&v2);
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = mes_file_entry.str;
+        sub_460630(&ui_message);
     }
 
     if (dword_5B3050[encumbrance_level] != 0) {

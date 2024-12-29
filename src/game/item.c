@@ -1444,13 +1444,13 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
     if (item_type == OBJ_TYPE_ITEM_FOOD) {
         if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             MesFileEntry mes_file_entry;
-            John v1;
+            UiMessage ui_message;
 
             mes_file_entry.num = 201;
             mes_get_msg(item_mes_file, &mes_file_entry);
-            v1.type = 4;
-            v1.str = mes_file_entry.str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = mes_file_entry.str;
+            sub_460630(&ui_message);
 
             sub_4574D0(item_obj);
             sub_43CCA0(item_obj);
@@ -3644,15 +3644,15 @@ const char* item_cannot_msg(int reason)
 // 0x4673F0
 void sub_4673F0(int64_t obj, int reason)
 {
-    John v1;
+    UiMessage ui_message;
     const char* str;
 
     if (player_is_pc_obj(obj)) {
         str = item_cannot_msg(reason);
         if (str != NULL) {
-            v1.type = 4;
-            v1.str = str;
-            sub_460630(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = str;
+            sub_460630(&ui_message);
         }
     }
 }

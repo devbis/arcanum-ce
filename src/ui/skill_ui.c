@@ -411,7 +411,7 @@ bool sub_57A710(int64_t a1, int64_t a2)
 bool sub_57A770(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tf_type;
 
     (void)a2;
@@ -427,9 +427,9 @@ bool sub_57A770(int64_t obj, int a2, int a3, bool success)
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 
     tf_add(obj, tf_type, mes_file_entry.str);
 
@@ -440,7 +440,7 @@ bool sub_57A770(int64_t obj, int a2, int a3, bool success)
 bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tf_type;
     int client_id;
 
@@ -459,15 +459,15 @@ bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
 
     if (player_is_pc_obj(obj)) {
-        sub_550750(&v1);
+        sub_550750(&ui_message);
     } else {
         client_id = sub_4A2B10(obj);
         if (client_id != -1) {
-            sub_4EDA60(&v1, client_id, 0);
+            sub_4EDA60(&ui_message, client_id, 0);
         }
     }
 
@@ -486,7 +486,7 @@ bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tf_type;
     int client_id;
 
@@ -505,15 +505,15 @@ bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
 
     if (player_is_pc_obj(obj)) {
-        sub_550750(&v1);
+        sub_550750(&ui_message);
     } else {
         client_id = sub_4A2B10(obj);
         if (client_id != -1) {
-            sub_4EDA60(&v1, client_id, 0);
+            sub_4EDA60(&ui_message, client_id, 0);
         }
     }
 
@@ -530,7 +530,7 @@ bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 bool sub_57A990(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tf_type;
 
     (void)a2;
@@ -546,9 +546,9 @@ bool sub_57A990(int64_t obj, int a2, int a3, bool success)
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 
     tf_add(obj, tf_type, mes_file_entry.str);
 
@@ -559,7 +559,7 @@ bool sub_57A990(int64_t obj, int a2, int a3, bool success)
 bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tf_type;
 
     (void)a2;
@@ -575,9 +575,9 @@ bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 
     tf_add(obj, tf_type, mes_file_entry.str);
 
@@ -588,7 +588,7 @@ bool skill_ui_trap(int64_t obj, int a2, int a3, bool success)
 bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tf_type;
 
     (void)a2;
@@ -604,9 +604,9 @@ bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 
     tf_add(obj, tf_type, mes_file_entry.str);
 
@@ -617,14 +617,14 @@ bool sub_57AA90(int64_t obj, int a2, int a3, bool success)
 bool skill_ui_no_repair(int64_t obj)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     mes_file_entry.num = 505; // "That is not in need of repair."
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 
     tf_add(obj, TF_TYPE_RED, mes_file_entry.str);
 
@@ -635,7 +635,7 @@ bool skill_ui_no_repair(int64_t obj)
 bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int tf_type;
 
     (void)a2;
@@ -651,9 +651,9 @@ bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success)
 
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 
     tf_add(obj, tf_type, mes_file_entry.str);
 
@@ -664,14 +664,14 @@ bool skill_ui_lock_pick(int64_t obj, int a2, int a3, bool success)
 bool skill_ui_no_lock(int64_t obj)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     mes_file_entry.num = 512; // "That has no lock."
     mes_get_msg(skill_ui_mes_file, &mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_550750(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_550750(&ui_message);
 
     tf_add(obj, TF_TYPE_RED, mes_file_entry.str);
 

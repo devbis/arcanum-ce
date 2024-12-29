@@ -104,7 +104,7 @@ void curse_add(object_id_t obj, int curse)
     int cnt;
     DateTime datetime;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
@@ -141,10 +141,10 @@ void curse_add(object_id_t obj, int curse)
         mes_file_entry.num = 1000;
         mes_get_msg(curse_mes_file, &mes_file_entry);
 
-        v1.type = 3;
-        v1.str = mes_file_entry.str;
-        v1.field_8 = curse;
-        sub_460630(&v1);
+        ui_message.type = UI_MSG_TYPE_CURSE;
+        ui_message.str = mes_file_entry.str;
+        ui_message.field_8 = curse;
+        sub_460630(&ui_message);
 
         sub_460790(1, 1);
     }

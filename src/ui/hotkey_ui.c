@@ -814,7 +814,7 @@ bool sub_57E8D0(int a1)
 {
     int64_t parent_obj;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     int obj_type;
     int index;
     S683518* hotkey;
@@ -858,9 +858,9 @@ bool sub_57E8D0(int a1)
             mes_file_entry.num = 4000;
             mes_get_msg(sub_557B10(), &mes_file_entry);
 
-            v1.type = 6;
-            v1.str = mes_file_entry.str;
-            sub_550750(&v1);
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
 
             dword_6839B0 = false;
             sub_575770();

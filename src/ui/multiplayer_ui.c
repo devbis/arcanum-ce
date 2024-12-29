@@ -324,7 +324,7 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
     int num;
     int confirmation_num = -1;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     char* pc_player_name;
     char str[128];
     int client_id;
@@ -371,14 +371,14 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
     sprintf(str, mes_file_entry.str, pc_player_name);
     FREE(pc_player_name);
 
-    v1.type = 4;
-    v1.str = str;
+    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+    ui_message.str = str;
     if (player_is_pc_obj(a1)) {
-        sub_550750(&v1);
+        sub_550750(&ui_message);
     } else {
         client_id = sub_4A2B10(a1);
         if (client_id != -1) {
-            sub_4EDA60(&v1, client_id, 0);
+            sub_4EDA60(&ui_message, client_id, 0);
         }
     }
 
@@ -390,14 +390,14 @@ void sub_5704E0(int64_t a1, int64_t a2, int type)
         sprintf(str, mes_file_entry.str, pc_player_name);
         FREE(pc_player_name);
 
-        v1.type = 4;
-        v1.str = str;
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = str;
         if (player_is_pc_obj(a2)) {
-            sub_550750(&v1);
+            sub_550750(&ui_message);
         } else {
             client_id = sub_4A2B10(a2);
             if (client_id != -1) {
-                sub_4EDA60(&v1, client_id, 0);
+                sub_4EDA60(&ui_message, client_id, 0);
             }
         }
     }
@@ -607,7 +607,7 @@ bool sub_570BC0(TigMessage* msg)
 {
     Packet46 pkt;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     char str[200];
 
     if (msg->type == TIG_MESSAGE_BUTTON
@@ -636,9 +636,9 @@ bool sub_570BC0(TigMessage* msg)
                 tig_net_client_info_get_name(dword_5CABF0),
                 dword_5CABF0);
 
-            v1.type = 4;
-            v1.str = str;
-            sub_550750(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = str;
+            sub_550750(&ui_message);
             dword_5CABF0 = -1;
             sub_570890();
             return true;
@@ -667,9 +667,9 @@ bool sub_570BC0(TigMessage* msg)
                 tig_net_client_info_get_name(dword_5CABF0),
                 dword_5CABF0);
 
-            v1.type = 4;
-            v1.str = str;
-            sub_550750(&v1);
+            ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+            ui_message.str = str;
+            sub_550750(&ui_message);
             dword_5CABF0 = -1;
             sub_570890();
             return true;

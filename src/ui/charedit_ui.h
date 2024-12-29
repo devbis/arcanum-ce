@@ -5,7 +5,7 @@
 #include "game/ui.h"
 #include "ui/types.h"
 
-extern John stru_5C8990;
+extern UiMessage stru_5C8990;
 extern const char* dword_64D3C4[23];
 extern bool charedit_created;
 

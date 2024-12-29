@@ -106,14 +106,14 @@ bool spell_ui_load(GameLoadInfo* load_info)
 void sub_57BC30()
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     mes_file_entry.num = 606;
     sub_44FDC0(&mes_file_entry);
 
-    v1.type = 6;
-    v1.str = mes_file_entry.str;
-    sub_460630(&v1);
+    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+    ui_message.str = mes_file_entry.str;
+    sub_460630(&ui_message);
 }
 
 // FIXME: Probably returns error code where 0 is success.
@@ -309,7 +309,7 @@ void sub_57C0E0()
 void sub_57C110(S4F2810* a1)
 {
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     MagicTechSerializedData v2;
 
     if (!sub_45D8D0(qword_683500) && !sub_45D800(qword_683500)) {
@@ -322,9 +322,9 @@ void sub_57C110(S4F2810* a1)
         } else {
             sub_455A20(&v2, qword_6834F8, dword_5CB3A0);
             if (a1->field_8) {
-                v2.field_D0 = a1->field_0;
+                v2.target_loc = a1->field_0;
             } else {
-                sub_4440E0(a1->field_0, &(v2.field_70));
+                sub_4440E0(a1->field_0, &(v2.target_obj));
             }
 
             if (sub_456BC0(&v2)) {
@@ -334,9 +334,9 @@ void sub_57C110(S4F2810* a1)
                 mes_file_entry.num = 604;
                 sub_44FDC0(&mes_file_entry);
 
-                v1.type = 6;
-                v1.str = mes_file_entry.str;
-                sub_460630(&v1);
+                ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                ui_message.str = mes_file_entry.str;
+                sub_460630(&ui_message);
             }
         }
     }

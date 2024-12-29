@@ -490,7 +490,7 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
     tig_art_id_t art_id;
     int err;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
 
     if (a1 == OBJ_HANDLE_NULL) {
         return false;
@@ -522,9 +522,9 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
                     mes_file_entry.num = err;
                     mes_get_msg(inven_ui_mes_file, &mes_file_entry);
 
-                    v1.type = 4;
-                    v1.str = mes_file_entry.str;
-                    sub_550750(&v1);
+                    ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+                    ui_message.str = mes_file_entry.str;
+                    sub_550750(&ui_message);
 
                     gsound_play_sfx_id(sub_4F0FD0(a2, 2), 1);
                     return false;
@@ -659,7 +659,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     TigRect rect;
     TigButtonData button_data;
     MesFileEntry mes_file_entry;
-    John v1;
+    UiMessage ui_message;
     S550DA0 v2;
     tig_art_id_t art_id;
     tig_button_handle_t button_group[2];
@@ -1034,9 +1034,9 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
         mes_file_entry.num = 7;
         mes_get_msg(inven_ui_mes_file, &mes_file_entry);
 
-        v1.type = 4;
-        v1.str = mes_file_entry.str;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_EXCLAMATION;
+        ui_message.str = mes_file_entry.str;
+        sub_550750(&ui_message);
     }
 
     dword_6814F0 = 0;

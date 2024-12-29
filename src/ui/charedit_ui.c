@@ -421,7 +421,7 @@ static S5C8150 stru_5C8E50[15] = {
 };
 
 // 0x5C8990
-John stru_5C8990 = { 4, 0, 0, 0, 0 };
+UiMessage stru_5C8990 = { 4, 0, 0, 0, 0 };
 
 static S5C8CA8 stru_5C89A8[32] = {
     { 141, 21, 66, 66, 0x64, TIG_BUTTON_HANDLE_INVALID },
@@ -1578,7 +1578,7 @@ bool sub_55A5C0(TigMessage* msg)
 // 0x55AE70
 void sub_55AE70(int a1)
 {
-    John v1;
+    UiMessage ui_message;
     MesFileEntry mes_file_entry;
     int value;
 
@@ -1587,53 +1587,53 @@ void sub_55AE70(int a1)
     }
 
     if (a1 >= 109 && a1 <= 116) {
-        v1.type = 12;
-        v1.field_8 = dword_5C8124[a1 - 109];
-        value = stat_get_base(qword_64E010, v1.field_8);
-        if (value < stat_get_max_value(qword_64E010, v1.field_8)) {
-            v1.field_C = sub_4B0F50(value + 1);
+        ui_message.type = UI_MSG_TYPE_STAT;
+        ui_message.field_8 = dword_5C8124[a1 - 109];
+        value = stat_get_base(qword_64E010, ui_message.field_8);
+        if (value < stat_get_max_value(qword_64E010, ui_message.field_8)) {
+            ui_message.field_C = sub_4B0F50(value + 1);
         } else {
-            v1.field_C = 0;
+            ui_message.field_C = 0;
         }
         mes_file_entry.num = a1;
         if (mes_search(charedit_mes_file, &mes_file_entry)) {
-            v1.str = mes_file_entry.str;
-            sub_550750(&v1);
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
         }
     } else if (a1 >= 1000 && a1 < 1999) {
-        v1.type = 7;
-        v1.field_8 = a1 - 1000;
-        if (IS_TECH_SKILL(v1.field_8)) {
-            v1.field_C = sub_4C6B20(sub_4C6580(qword_64E010, GET_TECH_SKILL(v1.field_8)) + 4);
+        ui_message.type = UI_MSG_TYPE_SKILL;
+        ui_message.field_8 = a1 - 1000;
+        if (IS_TECH_SKILL(ui_message.field_8)) {
+            ui_message.field_C = sub_4C6B20(sub_4C6580(qword_64E010, GET_TECH_SKILL(ui_message.field_8)) + 4);
         } else {
-            v1.field_C = sub_4C64E0(sub_4C5E50(qword_64E010, GET_BASIC_SKILL(v1.field_8)) + 4);
+            ui_message.field_C = sub_4C64E0(sub_4C5E50(qword_64E010, GET_BASIC_SKILL(ui_message.field_8)) + 4);
         }
-        sub_550750(&v1);
+        sub_550750(&ui_message);
     } else if (a1 >= 2000 && a1 < 2999) {
-        v1.type = 8;
-        v1.field_8 = a1 - 2000;
-        v1.field_C = sub_4B1650(a1 - 2000);
-        v1.field_10 = qword_64E010;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_SPELL;
+        ui_message.field_8 = a1 - 2000;
+        ui_message.field_C = sub_4B1650(a1 - 2000);
+        ui_message.field_10 = qword_64E010;
+        sub_550750(&ui_message);
     } else if (a1 >= 3000 && a1 < 3999) {
-        v1.type = 9;
-        v1.field_8 = a1 - 3000;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_COLLEGE;
+        ui_message.field_8 = a1 - 3000;
+        sub_550750(&ui_message);
     } else if (a1 >= 4000 && a1 < 4999) {
-        v1.type = 10;
-        v1.field_8 = a1 - 4000;
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_TECH;
+        ui_message.field_8 = a1 - 4000;
+        sub_550750(&ui_message);
     } else if (a1 >= 5000 && a1 < 5999) {
-        v1.type = 11;
-        v1.field_8 = a1 - 5000;
-        v1.field_C = tech_get_cost_for_degree(v1.field_8 % DEGREE_COUNT);
-        sub_550750(&v1);
+        ui_message.type = UI_MSG_TYPE_DEGREE;
+        ui_message.field_8 = a1 - 5000;
+        ui_message.field_C = tech_get_cost_for_degree(ui_message.field_8 % DEGREE_COUNT);
+        sub_550750(&ui_message);
     } else {
-        v1.type = 6;
+        ui_message.type = UI_MSG_TYPE_FEEDBACK;
         mes_file_entry.num = a1;
         if (mes_search(charedit_mes_file, &mes_file_entry)) {
-            v1.str = mes_file_entry.str;
-            sub_550750(&v1);
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
         }
     }
 }

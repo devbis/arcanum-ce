@@ -301,7 +301,7 @@ int sub_4A6980(int old_level, int new_level)
 // 0x4A69C0
 void sub_4A69C0(int64_t pc_obj)
 {
-    John v1;
+    UiMessage ui_message;
     int old_level;
     int cur_level;
     int max_level;
@@ -327,8 +327,8 @@ void sub_4A69C0(int64_t pc_obj)
         return;
     }
 
-    v1.type = 0;
-    v1.str = str;
+    ui_message.type = UI_MSG_TYPE_LEVEL;
+    ui_message.str = str;
 
     old_level = cur_level;
 
@@ -343,10 +343,10 @@ void sub_4A69C0(int64_t pc_obj)
             unspent_points += sub_4A6980(cur_level - 1, cur_level);
             stat_set_base(pc_obj, STAT_UNSPENT_POINTS, unspent_points);
 
-            v1.field_8 = cur_level;
+            ui_message.field_8 = cur_level;
 
             if (level_auto_level_scheme_get(pc_obj) != 0) {
-                v1.field_C = -1;
+                ui_message.field_C = -1;
                 if (sub_4A7030(pc_obj, str)) {
                     mes_file_entry.num = 1;
                     mes_get_msg(level_mes_file, &mes_file_entry);
@@ -354,12 +354,12 @@ void sub_4A69C0(int64_t pc_obj)
                     strcat(str, mes_file_entry.str);
                 }
             } else {
-                v1.field_C = unspent_points;
+                ui_message.field_C = unspent_points;
                 str[0] = '\0';
             }
 
             if (player_is_pc_obj(pc_obj)) {
-                sub_460630(&v1);
+                sub_460630(&ui_message);
                 sub_460790(0, 1);
                 sub_460240(pc_obj);
                 sub_460260(pc_obj);
