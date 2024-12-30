@@ -1999,4 +1999,6 @@ void timeevent_debug_node(TimeEventNode* node, int node_index)
                 node->te.params[index].float_value);
         }
     }
+
+    tig_debug_printf("\n");
 }
