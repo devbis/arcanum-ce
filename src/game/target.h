@@ -5,10 +5,14 @@
 #include "game/mt_obj_node.h"
 
 typedef struct S4F2810 {
-    /* 0000 */ int64_t field_0;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
+    union {
+        /* 0000 */ int64_t obj;
+        /* 0000 */ int64_t loc;
+    };
+    /* 0008 */ int is_loc;
 } S4F2810;
+
+static_assert(sizeof(S4F2810) == 0x10, "wrong size");
 
 typedef struct S603D20 {
     /* 0000 */ uint64_t aoe_flags;

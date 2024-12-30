@@ -246,8 +246,8 @@ void sub_57A1F0(S4F2810* a1)
         sub_4440E0(qword_683490, &(pkt.field_8));
         pkt.field_38 = dword_5CB270;
         pkt.field_40 = *a1;
-        if (!a1->field_8) {
-            pkt.field_50 = sub_407EF0(a1->field_0);
+        if (!a1->is_loc) {
+            pkt.field_50 = sub_407EF0(a1->obj);
         }
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
@@ -279,37 +279,37 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
 
     switch (skill) {
     case SKILL_PICK_POCKET:
-        if (!a1->field_8
+        if (!a1->is_loc
             && is_pc
             && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             sub_57A1A0();
 
             spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
 
-            if ((obj_field_int32_get(a1->field_0, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0) {
-                if (sub_57A5E0(a1->field_0)) {
+            if ((obj_field_int32_get(a1->obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0) {
+                if (sub_57A5E0(a1->obj)) {
                     if (player_is_pc_obj(obj)) {
                         mes_file_entry.num = 525; // "You cannot pickpocket this creature."
                         mes_get_msg(skill_ui_mes_file, &mes_file_entry);
                         tf_add(obj, TF_TYPE_WHITE, mes_file_entry.str);
                     }
-                } else if (sub_45D8D0(a1->field_0)) {
-                    if (sub_441980(obj, a1->field_0, obj, SAP_USE, 0)
+                } else if (sub_45D8D0(a1->obj)) {
+                    if (sub_441980(obj, a1->obj, obj, SAP_USE, 0)
                         && (spell_flags & OSF_POLYMORPHED) == 0
-                        && !sub_423300(a1->field_0, 0)) {
-                        sub_4602D0(obj, a1->field_0);
+                        && !sub_423300(a1->obj, 0)) {
+                        sub_4602D0(obj, a1->obj);
                     }
                 } else {
-                    sub_57A710(obj, a1->field_0);
+                    sub_57A710(obj, a1->obj);
                 }
             }
         }
         return;
     case SKILL_REPAIR:
-        if (!a1->field_8) {
+        if (!a1->is_loc) {
             sub_4C7090(&v2);
             sub_4440E0(obj, &(v2.field_0));
-            sub_4440E0(a1->field_0, &(v2.field_30));
+            sub_4440E0(a1->obj, &(v2.field_30));
             sub_4440E0(OBJ_HANDLE_NULL, &(v2.field_68));
             v2.field_98 = 0;
             v2.field_9C = 12;
@@ -317,10 +317,10 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
         }
         return;
     case SKILL_DISARM_TRAPS:
-        if (!a1->field_8 && sub_4B7CD0(obj, 4)) {
+        if (!a1->is_loc && sub_4B7CD0(obj, 4)) {
             sub_4C7090(&v2);
             sub_4440E0(obj, &(v2.field_0));
-            sub_4440E0(a1->field_0, &(v2.field_30));
+            sub_4440E0(a1->obj, &(v2.field_30));
             sub_4440E0(OBJ_HANDLE_NULL, &(v2.field_68));
             v2.field_98 = 4;
             v2.field_9C = 15;
@@ -329,8 +329,8 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
         }
         return;
     default:
-        if (!a1->field_8) {
-            sub_4C6F90(obj, skill, a1->field_0, 0);
+        if (!a1->is_loc) {
+            sub_4C6F90(obj, skill, a1->obj, 0);
         }
         return;
     }
@@ -379,7 +379,7 @@ int sub_57A6C0(int a1, S4F2810* a2)
 
     v1 = dword_5CB240[a1];
     if (v1 == -1) {
-        complexity = obj_field_int32_get(a2->field_0, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+        complexity = obj_field_int32_get(a2->obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
         if (a1 == 3 && complexity >= 20) {
             v1 = SKILL_REPAIR;
         }

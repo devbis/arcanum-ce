@@ -321,10 +321,10 @@ void sub_57C110(S4F2810* a1)
             sub_460610(mes_file_entry.str);
         } else {
             sub_455A20(&v2, qword_6834F8, dword_5CB3A0);
-            if (a1->field_8) {
-                v2.target_loc = a1->field_0;
+            if (a1->is_loc) {
+                v2.target_loc = a1->loc;
             } else {
-                sub_4440E0(a1->field_0, &(v2.target_obj));
+                sub_4440E0(a1->obj, &(v2.target_obj));
             }
 
             if (sub_456BC0(&v2)) {

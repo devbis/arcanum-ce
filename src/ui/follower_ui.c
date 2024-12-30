@@ -556,14 +556,14 @@ void sub_56B180(S4F2810* a1)
 
     sub_56B280();
     if (!sub_45D8D0(qword_67BC20) && !sub_45D800(qword_67BC20)) {
-        if (a1->field_8) {
+        if (a1->is_loc) {
             // Walk
             num = 0;
-            bcast.loc = a1->field_0;
+            bcast.loc = a1->loc;
         } else {
             // Attack
             num = 1;
-            bcast.loc = obj_field_int64_get(a1->field_0, OBJ_F_LOCATION);
+            bcast.loc = obj_field_int64_get(a1->obj, OBJ_F_LOCATION);
         }
 
         mes_file_entry.num = num;

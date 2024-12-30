@@ -165,18 +165,18 @@ bool sub_4F2680(S4F2680* a1)
 {
     stru_603CB8.source_obj = a1->field_0;
 
-    if (a1->field_10->field_8) {
-        stru_603CB8.field_38 = a1->field_10->field_0;
-        stru_603CB8.field_28 = a1->field_10->field_0;
+    if (a1->field_10->is_loc) {
+        stru_603CB8.field_38 = a1->field_10->loc;
+        stru_603CB8.field_28 = a1->field_10->loc;
         stru_603CB8.field_20 = 0;
         stru_603CB8.field_30 = 0;
     } else {
-        if ((obj_field_int32_get(a1->field_10->field_0, OBJ_F_FLAGS) & OF_CLICK_THROUGH) != 0) {
+        if ((obj_field_int32_get(a1->field_10->obj, OBJ_F_FLAGS) & OF_CLICK_THROUGH) != 0) {
             return false;
         }
 
-        stru_603CB8.field_30 = a1->field_10->field_0;
-        stru_603CB8.field_20 = a1->field_10->field_0;
+        stru_603CB8.field_30 = a1->field_10->obj;
+        stru_603CB8.field_20 = a1->field_10->obj;
         stru_603CB8.field_28 = OBJ_HANDLE_NULL;
         stru_603CB8.field_38 = OBJ_HANDLE_NULL;
     }
@@ -190,9 +190,9 @@ bool sub_4F2680(S4F2680* a1)
         return false;
     }
 
-    if (!a1->field_10->field_8) {
-        if (a1->field_10->field_0 != OBJ_HANDLE_NULL) {
-            stru_603CB8.field_28 = obj_field_int64_get(a1->field_10->field_0, OBJ_F_LOCATION);
+    if (!a1->field_10->is_loc) {
+        if (a1->field_10->obj != OBJ_HANDLE_NULL) {
+            stru_603CB8.field_28 = obj_field_int64_get(a1->field_10->obj, OBJ_F_LOCATION);
             stru_603CB8.field_38 = stru_603CB8.field_28;
         }
         if (sub_4F2D20(&stru_603CB8) && stru_603D20.aoe_flags) {
@@ -207,15 +207,15 @@ bool sub_4F2680(S4F2680* a1)
 // 0x4F27F0
 void sub_4F27F0(S4F2810* a1, int64_t loc)
 {
-    a1->field_0 = loc;
-    a1->field_8 = 1;
+    a1->loc = loc;
+    a1->is_loc = 1;
 }
 
 // 0x4F2810
 void sub_4F2810(S4F2810* a1, int64_t obj)
 {
-    a1->field_0 = obj;
-    a1->field_8 = 0;
+    a1->obj = obj;
+    a1->is_loc = 0;
 }
 
 // 0x4F2830

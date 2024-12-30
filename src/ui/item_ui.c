@@ -165,8 +165,8 @@ void sub_571CB0(S4F2810* a1)
         && (obj_field_int32_get(qword_6810D8, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
         sub_4C7090(&v1);
         sub_4440E0(pc_obj, &(v1.field_0));
-        if (!a1->field_8) {
-            sub_4440E0(a1->field_0, &(v1.field_30));
+        if (!a1->is_loc) {
+            sub_4440E0(a1->obj, &(v1.field_30));
         }
         v1.field_9C = SKILL_PICK_LOCKS;
         v1.field_68.obj = item_find_first_generic(v1.field_0.obj, OGF_IS_LOCKPICK);
@@ -193,18 +193,18 @@ void sub_571CB0(S4F2810* a1)
         item_flags = obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS);
     }
 
-    if (a1->field_8) {
+    if (a1->is_loc) {
         if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
-            sub_462FC0(pc_obj, v2, a1->field_0);
+            sub_462FC0(pc_obj, v2, a1->loc);
         } else if (trap_is_trap_device(v2)) {
-            sub_4355F0(pc_obj, a1->field_0, v2, 0);
+            sub_4355F0(pc_obj, a1->loc, v2, 0);
         } else {
-            sub_434F80(pc_obj, v2, a1->field_0);
+            sub_434F80(pc_obj, v2, a1->loc);
         }
     } else {
         if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
             range = magictech_get_range(obj_field_int32_get(v2, OBJ_F_ITEM_SPELL_1));
-            if (range < sub_441AE0(pc_obj, a1->field_0)) {
+            if (range < sub_441AE0(pc_obj, a1->obj)) {
                 range = -1;
             }
         }
@@ -219,14 +219,14 @@ void sub_571CB0(S4F2810* a1)
             || ((item_flags & OIF_IS_MAGICAL) != 0
                 && range != -1
                 && (item_flags & OIF_NO_RANGED_USE) == 0)) {
-            sub_462CC0(pc_obj, v2, a1->field_0);
+            sub_462CC0(pc_obj, v2, a1->obj);
             sub_571C80();
             return;
         }
 
         if ((item_flags & OIF_IS_MAGICAL))
 
-        sub_435450(pc_obj, a1->field_0, v2, 0);
+        sub_435450(pc_obj, a1->obj, v2, 0);
         if (tig_kb_is_key_pressed(DIK_LSHIFT)) {
             sub_436C80();
             sub_571C80();
