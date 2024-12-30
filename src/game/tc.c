@@ -403,7 +403,6 @@ void sub_4C9BE0(TigRectListNode* node)
     win_to_vb_blt.type = TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER;
     win_to_vb_blt.vb_blit_flags = 0;
     win_to_vb_blt.src_window_handle = tc_iso_window_handle;
-    win_to_vb_blt.src_video_buffer = dword_5FF53C;
     win_to_vb_blt.src_rect = &src_rect;
     win_to_vb_blt.dst_video_buffer = dword_5FF53C;
     win_to_vb_blt.dst_rect = &dst_rect;
