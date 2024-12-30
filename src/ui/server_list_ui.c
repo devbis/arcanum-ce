@@ -355,7 +355,7 @@ void sub_5860D0(TigRect* rect)
 }
 
 // 0x586150
-void sub_586150(int a1, int a2, int* a3)
+void sub_586150(int a1, int a2, void* a3)
 {
     MesFileEntry mes_file_entry;
     TigWindowModalDialogInfo modal_dialog_info;
@@ -378,7 +378,8 @@ void sub_586150(int a1, int a2, int* a3)
     switch (a1) {
     case 8:
         if ((sub_529520() == -1 || sub_529520() == a2) && a3 != NULL) {
-            switch (*a3) {
+            // TODO: Get rid of cast.
+            switch (*(int*)a3) {
             case 0:
                 mes_file_entry.num = 2242; // "Could not connect to server."
                 break;
@@ -413,7 +414,8 @@ void sub_586150(int a1, int a2, int* a3)
         break;
     case 14:
         if (a3 != NULL) {
-            tig_net_xfer_status(*a3, path, &progress);
+            // TODO: Get rid of cast.
+            tig_net_xfer_status(*(int*)a3, path, &progress);
             sub_588FF0(path, progress, sub_549820());
         }
         break;

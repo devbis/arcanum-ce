@@ -6,7 +6,7 @@
 
 bool mp_ctrl_ui_init(GameInitInfo* init_info);
 void mp_ctrl_ui_exit();
-void sub_569C70(int a1, int a2, const char* a3);
+void sub_569C70(int a1, int a2, void* a3);
 void sub_569DA0();
 bool mp_ctrl_ui_process_callback(TimeEvent* timeevent);
 bool sub_569F20(tig_window_handle_t window_handle);

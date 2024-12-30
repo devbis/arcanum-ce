@@ -33,7 +33,7 @@ void mp_ctrl_ui_exit()
 }
 
 // 0x569C70
-void sub_569C70(int a1, int a2, const char* a3)
+void sub_569C70(int a1, int a2, void* a3)
 {
     sub_586150(a1, a2, a3);
 
