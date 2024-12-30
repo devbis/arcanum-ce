@@ -18,7 +18,6 @@ typedef enum TeleportFlags {
 
 typedef struct TeleportData {
     /* 0000 */ unsigned int flags;
-    /* 0004 */ int field_4;
     /* 0008 */ int64_t obj;
     /* 0010 */ int64_t loc;
     /* 0018 */ int map;
@@ -30,7 +29,6 @@ typedef struct TeleportData {
     /* 0040 */ FadeData fade_in;
     /* 0054 */ int sound_id;
     /* 0058 */ int time;
-    /* 005C */ int field_5C;
 } TeleportData;
 
 // See 0x4D3380.
@@ -39,9 +37,9 @@ static_assert(sizeof(TeleportData) == 0x60, "wrong size");
 bool teleport_init(GameInitInfo* init_info);
 bool teleport_reset();
 void teleport_exit();
-void teleport_ping();
-bool sub_4D3380(TeleportData* teleport_data);
-bool sub_4D3410();
-bool sub_4D3420(int64_t obj);
+void teleport_ping(tig_timestamp_t timestamp);
+bool teleport_do(TeleportData* teleport_data);
+bool teleport_is_teleporting();
+bool teleport_is_teleporting_obj(int64_t obj);
 
 #endif /* ARCANUM_GAME_TELEPORT_H_ */

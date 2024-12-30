@@ -950,7 +950,7 @@ void sub_4101D0(int64_t location, int64_t a2)
             teleport_data.obj = a2;
             teleport_data.loc = jumppoint.field_18;
             teleport_data.map = jumppoint.field_10;
-            sub_4D3380(&teleport_data);
+            teleport_do(&teleport_data);
 
             dword_5D1220--;
         }

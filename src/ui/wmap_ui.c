@@ -1725,7 +1725,7 @@ bool sub_561860(int64_t loc)
     teleport_data.obj = player_get_pc_obj();
     teleport_data.loc = loc;
     teleport_data.map = sub_40FF50(MAP_TYPE_START_MAP);
-    sub_4D3380(&teleport_data);
+    return teleport_do(&teleport_data);
 }
 
 // TODO: Review, split.

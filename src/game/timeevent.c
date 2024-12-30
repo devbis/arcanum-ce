@@ -1256,7 +1256,7 @@ void timeevent_clear_for_map_close()
     timeevent_clear_all_typed(TIMEEVENT_TYPE_WORLDMAP);
     timeevent_clear_all_typed(TIMEEVENT_TYPE_TELEPORTED);
 
-    if (sub_4D3410()) {
+    if (teleport_is_teleporting()) {
         if (map_get_name(sub_40FF40(), &name)) {
             timeevent_save_nodes_to_map(name);
             anim_save_nodes_to_map(name);
@@ -1655,7 +1655,7 @@ int sub_45C500(TimeEventNode* node)
 
     for (index = 0; index < TIMEEVENT_PARAM_COUNT; index++) {
         if ((dword_5B2794[index][TIMEEVENT_PARAM_TYPE_OBJECT] & stru_5B2188[node->te.type].flags) != 0) {
-            if (sub_4D3420(node->te.params[index].object_value)) {
+            if (teleport_is_teleporting_obj(node->te.params[index].object_value)) {
                 count1++;
             } else {
                 count2++;

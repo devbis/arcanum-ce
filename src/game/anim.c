@@ -3383,7 +3383,7 @@ void anim_break_nodes_to_map(const char* map)
     for (idx = 0; idx < 216; idx++) {
         run_info = &(anim_run_info[idx]);
         if ((run_info->field_C & 0x1) != 0) {
-            if (!sub_4D3420(run_info->field_20)
+            if (!teleport_is_teleporting_obj(run_info->field_20)
                 || !off_5B03D0[run_info->goals[0].type]->field_C) {
                 sub_44E2C0(&(run_info->id), 6);
             } else if (sub_4221C0(run_info, stream)) {

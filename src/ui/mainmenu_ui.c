@@ -2545,7 +2545,7 @@ void sub_5412E0(bool a1)
                 teleport_data.fade_in.steps = 64;
                 teleport_data.fade_in.duration = 3.0f;
                 teleport_data.fade_in.color = tig_color_make(0, 0, 0);
-                sub_4D3380(&teleport_data);
+                teleport_do(&teleport_data);
 
                 gsound_stop_all(0);
 

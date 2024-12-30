@@ -22,56 +22,56 @@
 #include "game/ui.h"
 #include "game/wallcheck.h"
 
-typedef struct S6018B8 {
+typedef struct TeleportObjectNode {
     int64_t loc;
     int64_t obj;
-    struct S6018B8* next;
-} S6018B8;
+    struct TeleportObjectNode* next;
+} TeleportObjectNode;
 
 // See 0x4D3F00.
-static_assert(sizeof(S6018B8) == 0x18, "wrong size");
+static_assert(sizeof(TeleportObjectNode) == 0x18, "wrong size");
 
-static bool sub_4D3460(TeleportData* teleport_data);
-static bool sub_4D3760(int64_t obj, int64_t loc);
+static bool teleport_process(TeleportData* teleport_data);
+static bool schedule_teleport_obj_recursively(int64_t obj, int64_t loc);
 static bool sub_4D39A0(TeleportData* teleport_data);
 static void sub_4D3D60(int64_t obj);
 static void sub_4D3E20(int64_t obj);
 static void sub_4D3E80();
-static S6018B8* sub_4D3EB0();
-static void sub_4D3EE0(S6018B8* node);
-static void sub_4D3F00();
-static void sub_4D3F30();
+static TeleportObjectNode* teleport_obj_node_create();
+static void teleport_obj_node_destroy(TeleportObjectNode* node);
+static void teleport_obj_node_reserve();
+static void teleport_clear();
 
 // 0x601840
-static S6018B8* dword_601840;
+static TeleportObjectNode* teleport_obj_node_head;
 
 // 0x601844
-static bool dword_601844;
+static bool teleport_pending;
 
 // 0x601848
-static GameContextF8* dword_601848;
+static GameContextF8* teleport_iso_window_invalidate_rect;
 
 // 0x60184C
-static bool dword_60184C;
+static bool teleport_processing;
 
 // 0x601850
-static GameContextFC* dword_601850;
+static GameContextFC* teleport_iso_window_redraw;
 
 // 0x601858
-static TeleportData stru_601858;
+static TeleportData current_teleport_data;
 
 // 0x6018B8
-static S6018B8* off_6018B8;
+static TeleportObjectNode* teleport_free_head;
 
 // 0x6018BC
-static bool dword_6018BC;
+static bool teleport_is_teleporting_pc;
 
 // 0x4D32D0
 bool teleport_init(GameInitInfo* init_info)
 {
-    dword_601848 = init_info->field_8;
-    dword_601850 = init_info->field_C;
-    dword_601844 = false;
+    teleport_iso_window_invalidate_rect = init_info->field_8;
+    teleport_iso_window_redraw = init_info->field_C;
+    teleport_pending = false;
 
     return true;
 }
@@ -79,8 +79,9 @@ bool teleport_init(GameInitInfo* init_info)
 // 0x4D3300
 bool teleport_reset()
 {
-    sub_4D3F30();
-    dword_601844 = false;
+    teleport_clear();
+    teleport_pending = false;
+
     return true;
 }
 
@@ -91,42 +92,44 @@ void teleport_exit()
 }
 
 // 0x4D3330
-void teleport_ping()
+void teleport_ping(tig_timestamp_t timestamp)
 {
-    if (dword_601844) {
-        dword_60184C = true;
-        sub_4D3460(&stru_601858);
-        dword_60184C = false;
+    (void)timestamp;
 
-        dword_601844 = false;
+    if (teleport_pending) {
+        teleport_processing = true;
+        teleport_process(&current_teleport_data);
+        teleport_processing = false;
 
-        if ((stru_601858.flags & TELEPORT_0x80000000) != 0
-            && (stru_601858.flags & TELEPORT_0x0020) != 0) {
+        teleport_pending = false;
+
+        if ((current_teleport_data.flags & TELEPORT_0x80000000) != 0
+            && (current_teleport_data.flags & TELEPORT_0x0020) != 0) {
             sub_402FA0();
         }
     }
 }
 
 // 0x4D3380
-bool sub_4D3380(TeleportData* teleport_data)
+bool teleport_do(TeleportData* teleport_data)
 {
-    if (dword_601844) {
-        if ((stru_601858.flags & TELEPORT_0x80000000) != 0) {
+    if (teleport_pending) {
+        if ((current_teleport_data.flags & TELEPORT_0x80000000) != 0) {
             return false;
         }
     }
 
-    stru_601858 = *teleport_data;
-    dword_601844 = true;
+    current_teleport_data = *teleport_data;
+    teleport_pending = true;
 
     if (player_is_pc_obj(teleport_data->obj)) {
-        stru_601858.flags |= TELEPORT_0x80000000;
+        current_teleport_data.flags |= TELEPORT_0x80000000;
 
-        if ((stru_601858.flags & TELEPORT_FADE_OUT) != 0) {
-            sub_4BDFA0(&(stru_601858.fade_out));
+        if ((current_teleport_data.flags & TELEPORT_FADE_OUT) != 0) {
+            sub_4BDFA0(&(current_teleport_data.fade_out));
         }
 
-        if ((stru_601858.flags & TELEPORT_0x0020) != 0) {
+        if ((current_teleport_data.flags & TELEPORT_0x0020) != 0) {
             sub_402FC0();
             sub_402F90();
         }
@@ -136,17 +139,17 @@ bool sub_4D3380(TeleportData* teleport_data)
 }
 
 // 0x4D3410
-bool sub_4D3410()
+bool teleport_is_teleporting()
 {
-    return dword_60184C;
+    return teleport_processing;
 }
 
 // 0x4D3420
-bool sub_4D3420(int64_t obj)
+bool teleport_is_teleporting_obj(int64_t obj)
 {
-    S6018B8* node;
+    TeleportObjectNode* node;
 
-    node = dword_601840;
+    node = teleport_obj_node_head;
     while (node != NULL) {
         if (node->obj == obj) {
             return true;
@@ -158,7 +161,7 @@ bool sub_4D3420(int64_t obj)
 }
 
 // 0x4D3460
-bool sub_4D3460(TeleportData* teleport_data)
+bool teleport_process(TeleportData* teleport_data)
 {
     int map;
 
@@ -219,9 +222,9 @@ bool sub_4D3460(TeleportData* teleport_data)
         object_list_destroy(&objects);
     }
 
-    sub_4D3760(teleport_data->obj, teleport_data->loc);
+    schedule_teleport_obj_recursively(teleport_data->obj, teleport_data->loc);
 
-    if (dword_6018BC) {
+    if (teleport_is_teleporting_pc) {
         sub_43CB70();
         wallcheck_flush();
     }
@@ -236,7 +239,7 @@ bool sub_4D3460(TeleportData* teleport_data)
         return false;
     }
 
-    if (dword_6018BC) {
+    if (teleport_is_teleporting_pc) {
         ObjectID oid;
         int64_t obj;
 
@@ -247,7 +250,7 @@ bool sub_4D3460(TeleportData* teleport_data)
             oid = sub_407EF0(sub_45DDA0(teleport_data->obj));
         }
 
-        dword_6018BC = false;
+        teleport_is_teleporting_pc = false;
 
         if (teleport_data->map != map) {
             if (!map_open_in_game(teleport_data->map, false, false)) {
@@ -268,8 +271,8 @@ bool sub_4D3460(TeleportData* teleport_data)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
         if ((teleport_data->flags & TELEPORT_FADE_IN) != 0) {
-            dword_601848(NULL);
-            dword_601850();
+            teleport_iso_window_invalidate_rect(NULL);
+            teleport_iso_window_redraw();
             tig_window_display();
             sub_4BDFA0(&(teleport_data->fade_in));
         }
@@ -279,13 +282,13 @@ bool sub_4D3460(TeleportData* teleport_data)
 }
 
 // 0x4D3760
-bool sub_4D3760(int64_t obj, int64_t loc)
+bool schedule_teleport_obj_recursively(int64_t obj, int64_t loc)
 {
     int obj_type;
     unsigned int flags;
     int inventory_num_fld;
     int inventory_list_fld;
-    S6018B8* node;
+    TeleportObjectNode* node;
 
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
@@ -314,7 +317,7 @@ bool sub_4D3760(int64_t obj, int64_t loc)
                     }
                 }
 
-                if (!sub_4D3760(obj_node->obj, loc)) {
+                if (!schedule_teleport_obj_recursively(obj_node->obj, loc)) {
                     object_list_destroy(&objects);
                     return false;
                 }
@@ -356,20 +359,20 @@ bool sub_4D3760(int64_t obj, int64_t loc)
         for (index = 0; index < cnt; index++) {
             item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
             item_loc = obj_field_int64_get(item_obj, OBJ_F_LOCATION);
-            if (!sub_4D3760(item_obj, item_loc)) {
+            if (!schedule_teleport_obj_recursively(item_obj, item_loc)) {
                 return false;
             }
         }
     }
 
-    node = sub_4D3EB0();
+    node = teleport_obj_node_create();
     node->loc = loc;
     node->obj = obj;
-    node->next = dword_601840;
-    dword_601840 = node;
+    node->next = teleport_obj_node_head;
+    teleport_obj_node_head = node;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        dword_6018BC = true;
+        teleport_is_teleporting_pc = true;
     }
 
     return true;
@@ -383,7 +386,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
     char curr_map_path[TIG_MAX_PATH];
     char* dst_map_name;
     char dst_map_path[TIG_MAX_PATH];
-    S6018B8* node;
+    TeleportObjectNode* node;
     unsigned int flags;
     char path[TIG_MAX_PATH];
     TigFile* stream;
@@ -407,19 +410,19 @@ bool sub_4D39A0(TeleportData* teleport_data)
         strcat(dst_map_path, dst_map_name);
         tig_file_mkdir_ex(dst_map_path);
 
-        node = dword_601840;
+        node = teleport_obj_node_head;
         while (node != NULL) {
             sub_4D3E20(node->obj);
             node = node->next;
         }
 
-        node = dword_601840;
+        node = teleport_obj_node_head;
         while (node != NULL) {
             sub_4064B0(node->obj);
             node = node->next;
         }
 
-        node = dword_601840;
+        node = teleport_obj_node_head;
         while (node != NULL) {
             flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
             flags |= OF_DYNAMIC;
@@ -450,7 +453,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
             node = node->next;
         }
 
-        node = dword_601840;
+        node = teleport_obj_node_head;
         while (node != NULL) {
             sub_406520(node->obj);
             node = node->next;
@@ -460,7 +463,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
         return true;
     }
 
-    node = dword_601840;
+    node = teleport_obj_node_head;
     while (node != NULL) {
         if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
             sub_4D3D60(node->obj);
@@ -529,65 +532,65 @@ void sub_4D3E20(int64_t obj)
 // 0x4D3E80
 void sub_4D3E80()
 {
-    S6018B8* next;
+    TeleportObjectNode* next;
 
-    while (dword_601840 != NULL) {
-        next = dword_601840->next;
-        sub_4D3EE0(dword_601840);
-        dword_601840 = next;
+    while (teleport_obj_node_head != NULL) {
+        next = teleport_obj_node_head->next;
+        teleport_obj_node_destroy(teleport_obj_node_head);
+        teleport_obj_node_head = next;
     }
 }
 
 // 0x4D3EB0
-S6018B8* sub_4D3EB0()
+TeleportObjectNode* teleport_obj_node_create()
 {
-    S6018B8* node;
+    TeleportObjectNode* node;
 
-    node = off_6018B8;
+    node = teleport_free_head;
     if (node == NULL) {
-        sub_4D3F00();
-        node = off_6018B8;
+        teleport_obj_node_reserve();
+        node = teleport_free_head;
     }
 
-    off_6018B8 = node->next;
+    teleport_free_head = node->next;
     node->next = NULL;
 
     return node;
 }
 
 // 0x4D3EE0
-void sub_4D3EE0(S6018B8* node)
+void teleport_obj_node_destroy(TeleportObjectNode* node)
 {
-    node->next = off_6018B8;
-    off_6018B8 = node;
+    node->next = teleport_free_head;
+    teleport_free_head = node;
 }
 
 // 0x4D3F00
-void sub_4D3F00()
+void teleport_obj_node_reserve()
 {
     int index;
-    S6018B8* node;
+    TeleportObjectNode* node;
 
-    if (off_6018B8 == NULL) {
+    if (teleport_free_head == NULL) {
         for (index = 0; index < 32; index++) {
-            node = (S6018B8*)MALLOC(sizeof(*node));
-            node->next = off_6018B8;
-            off_6018B8 = node;
+            node = (TeleportObjectNode*)MALLOC(sizeof(*node));
+            node->next = teleport_free_head;
+            teleport_free_head = node;
         }
     }
 }
 
 // 0x4D3F30
-void sub_4D3F30()
+void teleport_clear()
 {
-    S6018B8* curr;
-    S6018B8* next;
+    TeleportObjectNode* curr;
+    TeleportObjectNode* next;
 
-    curr = off_6018B8;
+    curr = teleport_free_head;
     while (curr != NULL) {
         next = curr->next;
         FREE(curr);
         curr = next;
     }
-    off_6018B8 = NULL;
+    teleport_free_head = NULL;
 }
