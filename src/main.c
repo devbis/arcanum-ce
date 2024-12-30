@@ -44,7 +44,7 @@ static void handle_mouse_scroll();
 static void handle_keyboard_scroll();
 
 // 0x59A040
-static float flt_59A040 = 1.0f;
+static float gamma = 1.0f;
 
 // 0x5CFF00
 static int dword_5CFF00;
@@ -591,19 +591,17 @@ void main_loop()
                                 break;
                             case DIK_G:
                                 if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
-                                    flt_59A040 = 1.0f;
-                                    tig_video_set_gamma(flt_59A040);
+                                    gamma = 1.0f;
+                                    tig_video_set_gamma(gamma);
+                                } else if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                                    if (gamma > 0.1f) {
+                                        gamma -= 0.1f;
+                                        tig_video_set_gamma(gamma);
+                                    }
                                 } else {
-                                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
-                                        if (flt_59A040 > 0.1f) {
-                                            flt_59A040 -= 0.1f;
-                                            tig_video_set_gamma(flt_59A040);
-                                        }
-                                    } else {
-                                        if (flt_59A040 < 1.9f) {
-                                            flt_59A040 += 0.1f;
-                                            tig_video_set_gamma(flt_59A040);
-                                        }
+                                    if (gamma < 1.9f) {
+                                        gamma += 0.1f;
+                                        tig_video_set_gamma(gamma);
                                     }
                                 }
                                 break;
