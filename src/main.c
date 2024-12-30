@@ -506,7 +506,19 @@ void main_loop()
                                 break;
                             case DIK_4:
                                 if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
-                                    // TODO: Incomplete (give $1000).
+                                    UiMessage ui_message;
+
+                                    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                                    ui_message.str = "Cheater! Here's $1000!";
+                                    sub_460630(&ui_message);
+
+                                    int64_t gold_obj;
+                                    object_create(sub_4685A0(9056),
+                                        obj_field_int64_get(pc_obj, OBJ_F_LOCATION),
+                                        &gold_obj);
+                                    obj_field_int32_set(gold_obj, OBJ_F_GOLD_QUANTITY, 1000);
+                                    sub_4617F0(gold_obj, pc_obj);
+                                    sub_4605D0();
                                 }
                                 break;
                             }
