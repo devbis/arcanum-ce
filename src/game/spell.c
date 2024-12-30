@@ -223,13 +223,13 @@ bool spell_init(GameInitInfo* init_info)
     dword_5F8730 = init_info->field_8;
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
-        mes_file_entry.num = index;
+        mes_file_entry.num = index + FIRST_COLLEGE_NAME_ID;
         sub_44FDC0(&mes_file_entry);
         college_names[index] = mes_file_entry.str;
     }
 
     for (index = 0; index < SPELL_COUNT; index++) {
-        mes_file_entry.num = index;
+        mes_file_entry.num = index + FIRST_SPELL_DESCRIPTION_ID;
         sub_44FDC0(&mes_file_entry);
         spells[index].description = mes_file_entry.str;
     }
