@@ -150,8 +150,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         intgame_toggle_interface();
     }
 
-    if (strstr(lpCmdLine, "-patchlvl") != NULL) {
-        sub_404640();
+    pch = strstr(lpCmdLine, "-patchlvl");
+    if (pch != NULL) {
+        sub_404640(pch + 9);
     }
 
     init_info.width = 800;

@@ -83,7 +83,7 @@ void sub_4044A0(int a1, int a2);
 int gamelib_get_game_difficulty();
 void sub_4045A0();
 bool gamelib_copy_version(char* long_version, char* short_version, char* locale);
-void sub_404640();
+void sub_404640(const char* patch_lvl);
 const char* gamelib_get_locale();
 
 #endif /* ARCANUM_GAME_GAMELIB_H_ */
