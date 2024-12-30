@@ -323,54 +323,53 @@ void scroll_stop_scrolling()
 // 0x40E630
 void sub_40E630(int64_t dx, int64_t dy)
 {
-    int64_t v1;
-    int64_t v2;
-    int64_t v3;
-    int64_t v4;
+    int64_t old_origin_x;
+    int64_t old_origin_y;
+    int64_t new_origin_x;
+    int64_t new_origin_y;
     TigRect rect;
 
     scroll_init_info.field_C();
 
-    sub_4B8AD0(&v1, &v2);
+    location_get_origin(&old_origin_x, &old_origin_y);
     sub_4B8B30(dx, dy);
-    sub_4B8AD0(&v3, &v4);
+    location_get_origin(&new_origin_x, &new_origin_y);
 
-    if (v1 == v3 && v2 == v4) {
+    if (old_origin_x == new_origin_x && old_origin_y == new_origin_y) {
         return;
     }
 
-    v3 -= v1;
-    v4 -= v2;
-    tig_window_scroll(scroll_init_info.iso_window_handle, (int)v3, (int)v4);
+    dx = new_origin_x - old_origin_x;
+    dy = new_origin_y - old_origin_y;
+    tig_window_scroll(scroll_init_info.iso_window_handle, (int)dx, (int)dy);
 
-    if (v3 > 0) {
+    if (dx > 0) {
         rect = scroll_rect;
-        rect.width = (int)v3;
+        rect.width = (int)dx;
         scroll_init_info.field_8(&rect);
-    } else if (v3 < 0) {
+    } else if (dx < 0) {
         rect = scroll_rect;
-        rect.x += (int)dx;
+        rect.x = rect.width + (int)dx;
         rect.width = -((int)dx);
         scroll_init_info.field_8(&rect);
     }
 
-    if (v3 != 0 && v4 != 0) {
+    if (dx != 0 && dy != 0) {
         scroll_init_info.field_C();
     }
 
-    if (v4 < 0) {
+    if (dy < 0) {
         rect = scroll_rect;
-        rect.y += scroll_rect.height + (int)v4;
-        rect.height -= (int)v4;
+        rect.y += rect.height + (int)dy;
+        rect.height = -(int)dy;
         scroll_init_info.field_8(&rect);
-    } else if (v4 > 0) {
+    } else if (dy > 0) {
         rect = scroll_rect;
-        rect.y = (int)v4;
+        rect.height = (int)dy;
         scroll_init_info.field_8(&rect);
     }
 
-    // TODO: Wrong, check.
-    tc_scroll((int)v3, (int)v4);
+    tc_scroll((int)dx, (int)dy);
 
     if (!scroll_init_info.editor) {
         int64_t loc;
