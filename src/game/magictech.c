@@ -97,7 +97,7 @@ static void sub_4554B0(MagicTechLock* a1, int64_t obj);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechLock** lock_ptr);
 static bool sub_455820(MagicTechLock* lock);
-static void sub_4558D0(int slot);
+static void magictech_id_free_lock(int slot);
 static void sub_455960(MagicTechLock* lock);
 static void sub_4559E0(MagicTechLock* lock);
 static void sub_456CD0(MagicTechLock* a1);
@@ -2745,7 +2745,7 @@ bool sub_455820(MagicTechLock* lock)
 }
 
 // 0x4558D0
-void sub_4558D0(int slot)
+void magictech_id_free_lock(int slot)
 {
     MagicTechLock* lock;
     Packet54 pkt;
@@ -2928,7 +2928,7 @@ void sub_456FA0(int magictech, unsigned int flags)
             sub_4507D0(magictech_locks[magictech].source_obj.obj,
                 magictech_locks[magictech].spell);
         }
-        sub_4558D0(magictech);
+        magictech_id_free_lock(magictech);
     }
 }
 
