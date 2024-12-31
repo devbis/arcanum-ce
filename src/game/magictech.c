@@ -2922,8 +2922,8 @@ void sub_456F70(int magictech)
 void sub_456FA0(int magictech, unsigned int flags)
 {
     if (magictech != -1
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0)
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            || (tig_net_flags & TIG_NET_HOST) != 0)) {
         if ((flags & 0x1) != 0) {
             sub_4507D0(magictech_locks[magictech].source_obj.obj,
                 magictech_locks[magictech].spell);
