@@ -2689,8 +2689,12 @@ void magictech_id_new_lock(MagicTechLock** lock_ptr)
             magictech_locks[index].action = 0;
             *lock_ptr = &(magictech_locks[index]);
             dword_6876DC++;
+            return;
         }
     }
+
+    tig_debug_printf("magictech_id_new_lock: Error: ran out of id's!\n");
+    exit(EXIT_FAILURE);
 }
 
 // 0x4557C0
