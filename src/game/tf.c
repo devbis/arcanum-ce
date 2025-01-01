@@ -315,7 +315,7 @@ void tf_render(UnknownContext *render_info)
     TigRectListNode* rect_node;
     TigRect rect;
 
-    if (tf_level == 0) {
+    if (tf_level == TF_LEVEL_NEVER) {
         return;
     }
 

@@ -12,6 +12,12 @@ typedef enum TextFloaterType {
     TF_TYPE_COUNT,
 } TextFloaterType;
 
+typedef enum TextFloaterLevel {
+    TF_LEVEL_NEVER,
+    TF_LEVEL_MINIMAL,
+    TF_LEVEL_VERBOSE,
+} TextFloaterLevel;
+
 bool tf_init(GameInitInfo* init_info);
 void tf_resize(ResizeInfo* resize_info);
 void tf_reset();
