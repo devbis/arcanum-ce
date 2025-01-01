@@ -493,7 +493,7 @@ static int* dword_5D10F0;
 static int dword_5D10F4;
 
 // 0x5D10F8
-static bool obj_is_editor;
+static bool obj_editor;
 
 // 0x5D10FC
 static int16_t word_5D10FC;
@@ -547,9 +547,9 @@ bool obj_init(GameInitInfo* init_info)
     dword_5D10F0 = (int*)CALLOC(21, sizeof(int));
     dword_5D1100 = (int*)CALLOC(21, sizeof(int));
     object_fields_count_per_type = (int16_t*)CALLOC(18, sizeof(int16_t));
-    obj_is_editor = init_info->editor;
+    obj_editor = init_info->editor;
     sub_4E59B0();
-    sub_4E4CD0(sizeof(Object), obj_is_editor);
+    sub_4E4CD0(sizeof(Object), obj_editor);
     sub_4E3F80();
     obj_find_init();
     sub_40A400();
@@ -593,7 +593,7 @@ void sub_405250()
     sub_4E3F90();
     sub_4E5A50();
     sub_4E59B0();
-    sub_4E4CD0(sizeof(Object), obj_is_editor);
+    sub_4E4CD0(sizeof(Object), obj_editor);
     sub_4E3F80();
 }
 
@@ -836,7 +836,7 @@ void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
         || object->type == OBJ_TYPE_CONTAINER
         || obj_type_is_critter(object->type)
         || obj_type_is_item(object->type)
-        || !obj_is_editor) {
+        || !obj_editor) {
         sub_4E62A0(&(object->field_8));
         sub_4E4FD0(object->field_8, obj);
     } else {
@@ -2063,7 +2063,7 @@ ObjectID sub_407EF0(int64_t obj)
     if (sub_4E5470(obj)) {
         object = obj_lock(obj);
         if (object->field_8.type == OID_TYPE_NULL) {
-            if (!obj_is_editor
+            if (!obj_editor
                 && sub_43D940(obj)
                 && sub_43D990(obj)) {
                 objid_id_perm_by_load_order(&(object->field_8), obj);
