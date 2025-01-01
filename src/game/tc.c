@@ -370,7 +370,7 @@ int sub_4C9A10(TigMessage* msg)
 }
 
 // 0x4C9B90
-int sub_4C9B90(const char* str)
+int tc_check_size(const char* str)
 {
     TigFont font;
     int width;

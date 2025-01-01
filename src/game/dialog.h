@@ -95,7 +95,7 @@ void sub_4145D0(int64_t a1, int64_t a2, char* a3);
 void sub_414660(int64_t a1, int64_t a2, char* a3);
 void sub_4146F0(int64_t a1, int64_t a2, char* a3);
 void sub_414780(int64_t a1, int64_t a2, char* a3);
-void sub_418030();
+void dialog_check();
 void sub_4182C0();
 void sub_418A00(int a1, int* a2, int* a3);
 

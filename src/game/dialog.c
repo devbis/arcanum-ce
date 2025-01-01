@@ -192,8 +192,8 @@ static int sub_417E00(const DialogEntry* a, const DialogEntry* b);
 static void sub_417E20(DialogEntry* a1, const DialogEntry* a2);
 static void sub_417F40(DialogEntry* a1);
 static int sub_417F90(int* values, char* str);
-static void sub_4181D0(int a1);
-static void sub_418250(int a1);
+static void dialog_check_generated(int gd);
+static void sub_418250(int gd);
 static void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end);
 static void sub_418390(char* str, DialogEntryNode* a2, int start);
 static void sub_418460(char* str, DialogEntryNode* a2);
@@ -2935,7 +2935,7 @@ int sub_417F90(int* values, char* str)
 }
 
 // 0x418030
-void sub_418030()
+void dialog_check()
 {
     TigFileList file_list;
     unsigned int index;
@@ -2943,7 +2943,7 @@ void sub_418030()
     int dlg;
     int entry_index;
     DialogEntry* v2;
-    int v3;
+    int overflow;
     DialogEntry tmp;
 
     tig_file_list_create(&file_list, "dlg\\*.dlg");
@@ -2954,9 +2954,9 @@ void sub_418030()
             for (entry_index = 0; entry_index < dword_5D1A08[dlg].entries_length; entry_index++) {
                 v2 = &(dword_5D1A08[dlg].entries[entry_index]);
                 if (v2->field_C) {
-                    v3 = sub_4C9B90(v2->field_4);
-                    if (v3 > 0) {
-                        tig_debug_printf("PC response %d too long by %d pixels\n", v2->field_0, v3);
+                    overflow = tc_check_size(v2->field_4);
+                    if (overflow > 0) {
+                        tig_debug_printf("PC response %d too long by %d pixels\n", v2->field_0, overflow);
                     }
 
                     if (v2->field_14 > 0) {
@@ -2976,43 +2976,43 @@ void sub_418030()
     }
     tig_file_list_destroy(&file_list);
 
-    sub_4181D0(0);
-    sub_4181D0(1);
-    sub_4181D0(6);
-    sub_4181D0(7);
-    sub_4181D0(16);
-    sub_4181D0(17);
-    sub_4181D0(18);
-    sub_4181D0(19);
+    dialog_check_generated(GD_PC2M);
+    dialog_check_generated(GD_PC2F);
+    dialog_check_generated(GD_CLS_PC2M);
+    dialog_check_generated(GD_CLS_PC2F);
+    dialog_check_generated(GD_DUMB_PC2M);
+    dialog_check_generated(GD_DUMB_PC2F);
+    dialog_check_generated(GD_CLS_DUMB_PC2M);
+    dialog_check_generated(GD_CLS_DUMB_PC2F);
 }
 
 // 0x4181D0
-void sub_4181D0(int a1)
+void dialog_check_generated(int gd)
 {
     MesFileEntry mes_file_entry;
-    int v1;
+    int overflow;
 
-    tig_debug_printf("Checking generated dialog file mes\\%s.mes\n", off_5A063C[a1]);
-    sub_418250(a1);
+    tig_debug_printf("Checking generated dialog file mes\\%s.mes\n", off_5A063C[gd]);
+    sub_418250(gd);
 
-    if (mes_find_first(dword_5D19F4[a1], &mes_file_entry)) {
+    if (mes_find_first(dword_5D19F4[gd], &mes_file_entry)) {
         do {
-            v1 = sub_4C9B90(mes_file_entry.str);
-            if (v1 > 0) {
-                tig_debug_printf("Generated response %d too long by %d pixels\n", mes_file_entry.num, v1);
+            overflow = tc_check_size(mes_file_entry.str);
+            if (overflow > 0) {
+                tig_debug_printf("Generated response %d too long by %d pixels\n", mes_file_entry.num, overflow);
             }
-        } while (mes_find_next(dword_5D19F4[a1], &mes_file_entry));
+        } while (mes_find_next(dword_5D19F4[gd], &mes_file_entry));
     }
 }
 
 // 0x418250
-void sub_418250(int a1)
+void sub_418250(int gd)
 {
     char path[TIG_MAX_PATH];
 
-    if (dword_5D19F4[a1] == MES_FILE_HANDLE_INVALID) {
-        sprintf(path, "mes\\%s.mes", off_5A063C[a1]);
-        if (!mes_load(path, &(dword_5D19F4[a1]))) {
+    if (dword_5D19F4[gd] == MES_FILE_HANDLE_INVALID) {
+        sprintf(path, "mes\\%s.mes", off_5A063C[gd]);
+        if (!mes_load(path, &(dword_5D19F4[gd]))) {
             tig_debug_printf("Cannot open generated dialog file %s\n", path);
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
         }

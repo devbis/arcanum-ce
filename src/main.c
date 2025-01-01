@@ -201,7 +201,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     }
 
     if (strstr(lpCmdLine, "-dialogcheck") != NULL) {
-        sub_418030();
+        dialog_check();
     }
 
     if (strstr(lpCmdLine, "-dialognumber") != NULL) {
