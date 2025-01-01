@@ -165,7 +165,7 @@ static char* map_name;
 static int dword_5D11FC;
 
 // 0x5D1200
-static bool dword_5D1200;
+static bool map_editor;
 
 // 0x5D1204
 static MapListInfo* map_list_info;
@@ -218,7 +218,7 @@ bool map_init(GameInitInfo* init_info)
 
     map_gender_check_enabled = 0;
     dword_5D11F0 = true;
-    dword_5D1200 = init_info->editor;
+    map_editor = init_info->editor;
     dword_5D11EC = 0;
 
     return true;
@@ -616,7 +616,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: loading mobile dynamic objects...");
     tig_timer_now(&timestamp);
-    if (!dword_5D1200) {
+    if (!map_editor) {
         if (!map_load_dynamic(a2)) {
             tig_debug_println("Error reading dynamic mobile objects\n");
                 map_close();
@@ -898,7 +898,7 @@ void map_flush(unsigned int flags)
         tig_debug_println("Error: map_save_preprocess failed in map_flush.");
     }
 
-    if (dword_5D1200) {
+    if (map_editor) {
         if (!map_save_objects()) {
             tig_debug_println("Error: map_save_objects failed in map_flush.");
         }
@@ -918,7 +918,7 @@ void map_flush(unsigned int flags)
     terrain_flush();
     townmap_flush();
 
-    if (dword_5D1200) {
+    if (map_editor) {
         sprintf(path, "%s\\startloc.txt", map_folder);
         if (qword_5D11E0 != 0) {
             stream = tig_file_fopen(path, "wt");
@@ -1299,7 +1299,7 @@ bool map_load_mobile(const char* a1, const char* a2)
     TigFile* stream;
     GUID guid;
 
-    if (dword_5D1200) {
+    if (map_editor) {
         sprintf(path, "%s\\*.mob", a1);
         tig_file_list_create(&file_list, path);
         for (idx = 0; idx < file_list.count; idx++) {
@@ -1545,7 +1545,7 @@ void sub_4115D0(const char* name)
                 tig_str_parse_value(&str, &v1);
                 tig_str_parse_value(&str, &v2);
 
-                if (!dword_5D1200) {
+                if (!map_editor) {
                     sub_41BD50(v1, v2);
                 }
             }
