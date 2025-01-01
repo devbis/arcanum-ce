@@ -1132,21 +1132,19 @@ void sub_4EFA10()
 }
 
 // 0x4EFA70
-void sub_4EFA70(int a1, int a2, int a3)
+void sub_4EFA70(AnimID anim_id)
 {
     Packet120 pkt;
 
     pkt.type = 120;
-    pkt.data.field_4 = a1;
-    pkt.data.field_8 = a2;
-    pkt.data.field_C = a3;
+    pkt.anim_id = anim_id;
     tig_net_send_app_all(&pkt, sizeof(pkt));
 }
 
 // 0x4EFAB0
 void sub_4EFAB0(Packet120* pkt)
 {
-    sub_44E2C0(&(pkt->data), 6);
+    sub_44E2C0(&(pkt->anim_id), 6);
 
     if ((tig_net_flags & TIG_NET_HOST) != 0) {
         tig_net_send_app_all(pkt, sizeof(*pkt));

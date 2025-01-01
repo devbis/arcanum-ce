@@ -957,11 +957,7 @@ static_assert(sizeof(Packet118) == 0x38, "wrong size");
 
 typedef struct Packet120 {
     /* 0000 */ int type;
-    /* 0004 */ struct {
-        int field_4;
-        int field_8;
-        int field_C;
-    } data;
+    /* 0004 */ AnimID anim_id;
 } Packet120;
 
 static_assert(sizeof(Packet120) == 0x10, "wrong size");
