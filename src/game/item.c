@@ -136,7 +136,7 @@ static int dword_5B3308[5] = {
 static char** item_ammunition_type_names;
 
 // 0x5E87E4
-static bool dword_5E87E4;
+static bool item_editor;
 
 // 0x5E87E8
 static bool dword_5E87E8;
@@ -178,7 +178,7 @@ bool item_init(GameInitInfo* init_info)
     stru_5E8808.width = window_data.rect.width;
     stru_5E8808.height = window_data.rect.height;
 
-    dword_5E87E4 = init_info->editor;
+    item_editor = init_info->editor;
 
     if (!mes_load("mes\\item.mes", &item_mes_file)) {
         return false;
@@ -2042,7 +2042,7 @@ void sub_463E20(int64_t obj)
     if (obj_type == OBJ_TYPE_CONTAINER) {
         inventory_source_fld = OBJ_F_CONTAINER_INVENTORY_SOURCE;
         if ((obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & 0x200) != 0) {
-            if (dword_5E87E4) {
+            if (item_editor) {
                 return;
             }
             v1 = true;
@@ -4403,7 +4403,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     sub_4CC130(item_obj, parent_obj);
 
     if (parent_type == OBJ_TYPE_CONTAINER) {
-        if (!dword_5E87E4 && dword_5E8800 > 0) {
+        if (!item_editor && dword_5E8800 > 0) {
             sub_463540(parent_obj);
         }
     } else {
@@ -4588,7 +4588,7 @@ bool item_can_decay(int64_t obj)
         return false;
     }
 
-    if (dword_5E87E4 != 0) {
+    if (item_editor) {
         return false;
     }
 
