@@ -426,15 +426,15 @@ void options_ui_text_duration_set(int value)
 // 0x5898A0
 void options_ui_floats_get(int* value_ptr, unsigned char* enabled_ptr)
 {
-    *value_ptr = text_floaters_get();
+    *value_ptr = tf_level_get();
     *enabled_ptr = true;
 }
 
 // 0x5898C0
 void options_ui_floats_set(int value)
 {
-    if (text_floaters_get() != value) {
-        text_floaters_set(value);
+    if (tf_level_get() != value) {
+        tf_level_set(value);
     }
 }
 

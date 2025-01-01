@@ -88,7 +88,7 @@ tig_timestamp_t  dword_6028E4;
 static tig_window_handle_t tf_iso_window_handle;
 
 // 0x6028EC
-static int text_floaters;
+static int tf_level;
 
 // 0x6028F0
 static TextFloaterNode* tf_free_node_head;
@@ -100,7 +100,7 @@ static TigRect stru_6028F8;
 static tig_font_handle_t tf_fonts[TF_TYPE_COUNT];
 
 // 0x4D4E20
-bool text_floater_init(GameInitInfo* init_info)
+bool tf_init(GameInitInfo* init_info)
 {
     TigWindowData window_data;
     TigFont font_desc;
@@ -155,20 +155,20 @@ bool text_floater_init(GameInitInfo* init_info)
 }
 
 // 0x4D5050
-void text_floater_resize(ResizeInfo* resize_info)
+void tf_resize(ResizeInfo* resize_info)
 {
     stru_6028B0 = resize_info->field_14;
     tf_iso_window_handle = resize_info->iso_window_handle;
 }
 
 // 0x4D5090
-void text_floater_reset()
+void tf_reset()
 {
     tf_clear();
 }
 
 // 0x4D5DC0
-void text_floater_exit()
+void tf_exit()
 {
     int index;
     TextFloaterNode* next_node;
@@ -202,29 +202,29 @@ void text_floater_exit()
 }
 
 // 0x4D5130
-bool text_floater_update_view(ViewOptions* view_options)
+bool tf_update_view(ViewOptions* view_options)
 {
     text_floater_view_options = *view_options;
     return true;
 }
 
 // 0x4D5150
-void text_floater_map_close()
+void tf_map_close()
 {
     tf_clear();
 }
 
 // 0x4D5160
-int text_floaters_set(int value)
+int tf_level_set(int value)
 {
     text_floaters_set_internal(value);
-    return text_floaters;
+    return tf_level;
 }
 
 // 0x4D5180
-int text_floaters_get()
+int tf_level_get()
 {
-    return text_floaters;
+    return tf_level;
 }
 
 // 0x4D5190
@@ -315,7 +315,7 @@ void tf_render(UnknownContext *render_info)
     TigRectListNode* rect_node;
     TigRect rect;
 
-    if (text_floaters == 0) {
+    if (tf_level == 0) {
         return;
     }
 
@@ -715,7 +715,7 @@ void text_floaters_set_internal(int value)
 // 0x4D5B40
 void text_floaters_changed()
 {
-    text_floaters = settings_get_value(&settings, TEXT_FLOATERS_KEY);
+    tf_level = settings_get_value(&settings, TEXT_FLOATERS_KEY);
 }
 
 // 0x4D5B60

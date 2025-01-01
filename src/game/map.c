@@ -127,7 +127,7 @@ static MapModule map_modules[] = {
     { "Terrain", terrain_init, terrain_reset, NULL, NULL, terrain_exit, NULL, NULL, NULL, NULL, sub_4E7B90, terrain_close, NULL },
     { "Sector", sector_init, sector_reset, NULL, NULL, sector_exit, NULL, sector_update_view, NULL, NULL, NULL, sub_4CF320, sector_resize },
     { "TB", tb_init, tb_reset, NULL, NULL, tb_exit, tb_ping, tb_update_view, NULL, NULL, NULL, tb_close, tb_resize },
-    { "TF", text_floater_init, text_floater_reset, NULL, NULL, text_floater_exit, tf_ping, text_floater_update_view, NULL, NULL, NULL, text_floater_map_close, text_floater_resize },
+    { "TF", tf_init, tf_reset, NULL, NULL, tf_exit, tf_ping, tf_update_view, NULL, NULL, NULL, tf_map_close, tf_resize },
     { "Wall", wall_init, NULL, NULL, NULL, wall_exit, NULL, wall_update_view, NULL, NULL, NULL, NULL, wall_resize },
     { "JumpPoint", jumppoint_init, jumppoint_reset, NULL, NULL, jumppoint_exit, NULL, jumppoint_update_view, NULL, NULL, sub_4E3050, jumppoint_close, jumppoint_resize },
 };

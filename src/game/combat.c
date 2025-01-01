@@ -1853,7 +1853,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if (text_floaters_get() == 2 && str[0] != '\0') {
+        if (tf_level_get() == 2 && str[0] != '\0') {
             tf_add(combat->field_20, tf_type, str);
         }
 
@@ -1864,7 +1864,7 @@ void sub_4B4390(CombatContext* combat)
         stat_set_base(combat->field_20, STAT_POISON_LEVEL, poison);
 
 
-        if (combat->field_44[1] > 0 && text_floaters_get() == 2) {
+        if (combat->field_44[1] > 0 && tf_level_get() == 2) {
             mes_file_entry.num = 0;
             mes_get_msg(combat_mes_file, &mes_file_entry);
             sprintf(str, "%s %+d", mes_file_entry.str, combat->field_44[1]);
@@ -1951,7 +1951,7 @@ void sub_4B4390(CombatContext* combat)
         }
         object_set_hp_damage(combat->field_20, hp_dam);
 
-        if (text_floaters_get() == 2) {
+        if (tf_level_get() == 2) {
             mes_file_entry.num = 1; // "HT"
             mes_get_msg(combat_mes_file, &mes_file_entry);
 
@@ -2125,7 +2125,7 @@ void sub_4B5580(CombatContext* combat)
             mes_get_msg(combat_mes_file, &mes_file_entry);
             strcpy(str, mes_file_entry.str);
         } else {
-            if (text_floaters_get() == 2) {
+            if (tf_level_get() == 2) {
                 mes_file_entry.num = 1; // "HT"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
                 sprintf(str, "%d %s", dam, mes_file_entry.str);

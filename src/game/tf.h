@@ -12,14 +12,14 @@ typedef enum TextFloaterType {
     TF_TYPE_COUNT,
 } TextFloaterType;
 
-bool text_floater_init(GameInitInfo* init_info);
-void text_floater_resize(ResizeInfo* resize_info);
-void text_floater_reset();
-void text_floater_exit();
-bool text_floater_update_view(ViewOptions* view_options);
-void text_floater_map_close();
-int text_floaters_set(int value);
-int text_floaters_get();
+bool tf_init(GameInitInfo* init_info);
+void tf_resize(ResizeInfo* resize_info);
+void tf_reset();
+void tf_exit();
+bool tf_update_view(ViewOptions* view_options);
+void tf_map_close();
+int tf_level_set(int value);
+int tf_level_get();
 void tf_ping(tig_timestamp_t timestamp);
 void tf_render(UnknownContext *render_info);
 void tf_add(int64_t obj, int type, const char* str);
