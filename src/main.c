@@ -267,7 +267,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     }
 
     if (strstr(lpCmdLine, "-logcheck") != NULL) {
-        sub_5407F0();
+        logbook_check();
     }
 
     tig_debug_printf("[Beginning Game]\n");

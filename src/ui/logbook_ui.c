@@ -1253,7 +1253,7 @@ void sub_5407B0(char* buffer, int index)
 }
 
 // 0x5407F0
-void sub_5407F0()
+void logbook_check()
 {
     int index;
     char buffer[2000];
