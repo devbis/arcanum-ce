@@ -377,7 +377,7 @@ static void effect_parse(int num, char* text)
 }
 
 // 0x4E9F70
-void sub_4E9F70(int64_t obj, int effect, int cause)
+void effect_add(int64_t obj, int effect, int cause)
 {
     int strength;
     int encumbrance_level;
@@ -438,7 +438,7 @@ void sub_4E9F70(int64_t obj, int effect, int cause)
 }
 
 // 0x4EA100
-void sub_4EA100(int64_t obj, int effect)
+void effect_remove_one_typed(int64_t obj, int effect)
 {
     int cnt;
     int index;
@@ -475,7 +475,7 @@ void sub_4EA100(int64_t obj, int effect)
 }
 
 // 0x4EA200
-void sub_4EA200(int64_t obj, int effect)
+void effect_remove_all_typed(int64_t obj, int effect)
 {
     int cnt;
     int index;
@@ -511,7 +511,7 @@ void sub_4EA200(int64_t obj, int effect)
 }
 
 // 0x4EA2E0
-void sub_4EA2E0(int64_t obj, int cause)
+void effect_remove_one_caused_by(int64_t obj, int cause)
 {
     int cnt;
     int index;
@@ -546,7 +546,7 @@ void sub_4EA2E0(int64_t obj, int cause)
 }
 
 // 0x4EA3C0
-void sub_4EA3C0(int64_t obj, int cause)
+void effect_remove_all_caused_by(int64_t obj, int cause)
 {
     int cnt;
     int index;

@@ -2944,7 +2944,7 @@ void sub_4A6010(int64_t obj)
 
     for (index = 0; index < 10; index++) {
         if (index < 0 || index > 2) {
-            sub_4EA2E0(obj, index);
+            effect_remove_one_caused_by(obj, index);
         }
     }
 

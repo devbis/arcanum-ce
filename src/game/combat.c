@@ -1633,7 +1633,7 @@ void sub_4B4390(CombatContext* combat)
         }
 
         if ((dam_flags & 0x1000) != 0) {
-            sub_4E9F70(combat->field_20, 50, EFFECT_CAUSE_INJURY);
+            effect_add(combat->field_20, 50, EFFECT_CAUSE_INJURY);
             sub_4F5690(combat->field_20, combat->field_8, 3);
 
             mes_file_entry.num = 3; // "Scarred"
@@ -2198,7 +2198,7 @@ void sub_4B58C0(CombatContext* combat)
     if ((combat->field_58 & 0x1000) != 0
         && (combat->field_58 & 0x1) == 0) {
         for (index = 0; index < 5; index++) {
-            sub_4EA2E0(combat->field_20, 7);
+            effect_remove_one_caused_by(combat->field_20, EFFECT_CAUSE_INJURY);
         }
     }
 
@@ -2270,7 +2270,7 @@ void sub_4B58C0(CombatContext* combat)
         }
 
         for (index = 0; index < 5; index++) {
-            sub_4EA2E0(combat->field_20, 7);
+            effect_remove_one_caused_by(combat->field_20, EFFECT_CAUSE_INJURY);
         }
 
         critter_flags = obj_field_int32_get(combat->field_20, OBJ_F_CRITTER_FLAGS);

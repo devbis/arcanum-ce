@@ -135,7 +135,7 @@ void bless_add(object_id_t obj, int bless)
     // TODO: Rethink cast.
     obj_arrayfield_int64_set(obj, OBJ_F_PC_BLESSING_TS_IDX, cnt, *(int64_t*)&datetime);
 
-    sub_4E9F70(obj, bless, 3);
+    effect_add(obj, bless, EFFECT_CAUSE_BLESS);
 
     if (player_is_pc_obj(obj)) {
         mes_file_entry.num = 1000;
@@ -197,7 +197,7 @@ void bless_remove(object_id_t obj, int bless)
 
             obj_arrayfield_length_set(obj, OBJ_F_PC_BLESSING_IDX, cnt - 1);
             obj_arrayfield_length_set(obj, OBJ_F_PC_BLESSING_TS_IDX, cnt - 1);
-            sub_4EA100(obj, bless_get_effect(bless));
+            effect_remove_one_typed(obj, bless_get_effect(bless));
 
             if (player_is_pc_obj(obj)) {
                 sub_460790(1, 1);

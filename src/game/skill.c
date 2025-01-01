@@ -1347,7 +1347,7 @@ bool sub_4C7160(Tanya* a1)
             }
             if (training == TRAINING_MASTER || is_critical) {
                 combat.field_44[0] = heal;
-                sub_4EA2E0(target_obj, EFFECT_CAUSE_INJURY);
+                effect_remove_one_caused_by(target_obj, EFFECT_CAUSE_INJURY);
 
                 unsigned int critter_flags = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS);
                 if ((critter_flags & OCF_BLINDED) != 0) {

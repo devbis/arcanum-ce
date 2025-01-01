@@ -220,7 +220,7 @@ void sub_4C25E0(int64_t obj, int background, int background_text)
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_EFFECT;
     if (mes_file_entry.num != 0) {
         mes_get_msg(background_mes_file, &mes_file_entry);
-        sub_4E9F70(obj, atoi(mes_file_entry.str), 1);
+        effect_add(obj, atoi(mes_file_entry.str), EFFECT_CAUSE_BACKGROUND);
     }
 }
 
@@ -229,7 +229,7 @@ void background_obj_clear(object_id_t obj)
 {
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 0);
     obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 0);
-    sub_4EA2E0(obj, 1);
+    effect_remove_one_caused_by(obj, EFFECT_CAUSE_BACKGROUND);
 }
 
 // 0x4C2690

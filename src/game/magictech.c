@@ -2544,7 +2544,7 @@ void sub_451C40(int magictech, int64_t obj)
 
             flags &= ~OCF2_PERMA_POLYMORPH;
             obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
-            sub_4EA100(obj, 156);
+            effect_remove_one_typed(obj, 156);
         }
         break;
     }
@@ -2571,12 +2571,12 @@ void MTComponentEffect_ProcFunc()
 
     if (dword_5E761C->data.effect.add_remove == 0) {
         while (cnt > 0) {
-            sub_4EA100(stru_5E6D28.field_20, dword_5E761C->data.effect.num);
+            effect_remove_one_typed(stru_5E6D28.field_20, dword_5E761C->data.effect.num);
             cnt--;
         }
     } else {
         while (cnt > 0) {
-            sub_4E9F70(stru_5E6D28.field_20,
+            effect_add(stru_5E6D28.field_20,
                 dword_5E761C->data.effect.num,
                 dword_5E761C->data.effect.cause);
             cnt--;

@@ -2249,7 +2249,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int effect = script_get_value(action->op_type[1], action->op_value[1], state);
         int cause = script_get_value(action->op_type[2], action->op_value[2], state);
         for (int idx = 0; idx < cnt; idx++) {
-            sub_4E9F70(handles[idx], effect, cause);
+            effect_add(handles[idx], effect, cause);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;
@@ -2258,7 +2258,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         int effect = script_get_value(action->op_type[1], action->op_value[1], state);
         for (int idx = 0; idx < cnt; idx++) {
-            sub_4EA100(handles[idx], effect);
+            effect_remove_one_typed(handles[idx], effect);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;

@@ -629,10 +629,10 @@ int stat_set_base(object_id_t obj, int stat, int value)
         }
         break;
     case STAT_GENDER:
-        sub_4EA2E0(obj, EFFECT_CAUSE_GENDER);
+        effect_remove_one_caused_by(obj, EFFECT_CAUSE_GENDER);
         break;
     case STAT_RACE:
-        sub_4EA2E0(obj, EFFECT_CAUSE_RACE);
+        effect_remove_one_caused_by(obj, EFFECT_CAUSE_RACE);
         break;
     }
 
@@ -693,11 +693,11 @@ int stat_set_base(object_id_t obj, int stat, int value)
         break;
     case STAT_GENDER:
         if (value == GENDER_FEMALE) {
-            sub_4E9F70(obj, 330, 9);
+            effect_add(obj, 330, EFFECT_CAUSE_GENDER);
         }
         break;
     case STAT_RACE:
-        sub_4E9F70(obj, value + 64, 0);
+        effect_add(obj, value + 64, EFFECT_CAUSE_RACE);
         break;
     }
 

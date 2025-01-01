@@ -135,7 +135,7 @@ void curse_add(object_id_t obj, int curse)
     // TODO: Rethink cast.
     obj_arrayfield_int64_set(obj, OBJ_F_PC_CURSE_TS_IDX, cnt, *(int64_t*)&datetime);
 
-    sub_4E9F70(obj, curse, 4);
+    effect_add(obj, curse, EFFECT_CAUSE_CURSE);
 
     if (player_is_pc_obj(obj)) {
         mes_file_entry.num = 1000;
@@ -197,7 +197,7 @@ void curse_remove(object_id_t obj, int curse)
 
             obj_arrayfield_length_set(obj, OBJ_F_PC_CURSE_IDX, cnt - 1);
             obj_arrayfield_length_set(obj, OBJ_F_PC_CURSE_TS_IDX, cnt - 1);
-            sub_4EA100(obj, curse_get_effect(curse));
+            effect_remove_one_typed(obj, curse_get_effect(curse));
 
             if (player_is_pc_obj(obj)) {
                 sub_460790(1, 1);
