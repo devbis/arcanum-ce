@@ -1851,28 +1851,26 @@ int critter_encumbrance_level_get(long long obj)
 }
 
 // 0x45F820
-void sub_45F820(int64_t obj, int value)
+void critter_encumbrance_level_recalc(int64_t obj, int prev_encumbrance_level)
 {
     int encumbrance_level;
-    int v1;
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
     encumbrance_level = critter_encumbrance_level_get(obj);
-    if (encumbrance_level == value) {
+    if (encumbrance_level == prev_encumbrance_level) {
         return;
     }
 
     sub_4EA200(obj, 158);
 
-    v1 = encumbrance_level;
-    while (v1 > 0) {
-        sub_4E9F70(obj, 158, 5);
+    for (int lvl = 0; lvl < encumbrance_level; lvl++) {
+        sub_4E9F70(obj, 158, EFFECT_CAUSE_ITEM);
     }
 
     if (encumbrance_level == ENCUMBRANCE_LEVEL_SEVERE) {
-        sub_4E9F70(obj, 158, 5);
-        sub_4E9F70(obj, 158, 5);
+        sub_4E9F70(obj, 158, EFFECT_CAUSE_ITEM);
+        sub_4E9F70(obj, 158, EFFECT_CAUSE_ITEM);
     }
 
     sub_436FA0(obj);

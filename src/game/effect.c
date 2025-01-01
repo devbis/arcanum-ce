@@ -380,7 +380,7 @@ static void effect_parse(int num, char* text)
 void sub_4E9F70(int64_t obj, int effect, int cause)
 {
     int strength;
-    int encumbrance;
+    int encumbrance_level;
     int v1;
     int v2;
     int diff;
@@ -407,7 +407,7 @@ void sub_4E9F70(int64_t obj, int effect, int cause)
     }
 
     strength = stat_level(obj, STAT_STRENGTH);
-    encumbrance = critter_encumbrance_level_get(obj);
+    encumbrance_level = critter_encumbrance_level_get(obj);
     v1 = sub_43D5A0(obj);
     v2 = sub_45D670(obj);
 
@@ -421,7 +421,7 @@ void sub_4E9F70(int64_t obj, int effect, int cause)
         cause);
 
     if (strength != stat_level(obj, STAT_STRENGTH)) {
-        sub_45F820(obj, encumbrance);
+        critter_encumbrance_level_recalc(obj, encumbrance_level);
     }
 
     diff = sub_43D5A0(obj) - v1;
@@ -605,7 +605,7 @@ int sub_4EA4A0(object_id_t obj, int effect_id)
 void sub_4EA520(int64_t obj, int start)
 {
     int strength;
-    int encumbrance;
+    int encumbrance_level;
     int v1;
     int v2;
     int end;
@@ -617,7 +617,7 @@ void sub_4EA520(int64_t obj, int start)
     }
 
     strength = stat_level(obj, STAT_STRENGTH);
-    encumbrance = critter_encumbrance_level_get(obj);
+    encumbrance_level = critter_encumbrance_level_get(obj);
     v1 = sub_43D5A0(obj);
     v2 = sub_45D670(obj);
 
@@ -634,7 +634,7 @@ void sub_4EA520(int64_t obj, int start)
     obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, end);
 
     if (strength != stat_level(obj, STAT_STRENGTH)) {
-        sub_45F820(obj, encumbrance);
+        critter_encumbrance_level_recalc(obj, encumbrance_level);
     }
 
     diff = sub_43D5A0(obj) - v1;

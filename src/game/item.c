@@ -3712,7 +3712,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     }
 
     if (parent_obj_type != OBJ_TYPE_CONTAINER) {
-        sub_45F820(parent_obj, encumbrance_level);
+        critter_encumbrance_level_recalc(parent_obj, encumbrance_level);
     }
 
     if (parent_obj_type == OBJ_TYPE_NPC) {
@@ -4407,7 +4407,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
             sub_463540(parent_obj);
         }
     } else {
-        sub_45F820(parent_obj, encubmrance_level);
+        critter_encumbrance_level_recalc(parent_obj, encubmrance_level);
         if (parent_type == OBJ_TYPE_NPC) {
             unsigned int npc_flags = obj_field_int32_get(parent_obj, OBJ_F_NPC_FLAGS);
             npc_flags |= ONF_CHECK_WIELD;

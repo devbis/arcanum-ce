@@ -98,7 +98,7 @@ int critter_teleport_map_get(long long obj);
 void sub_45F710(long long obj);
 bool sub_45F730(long long obj);
 int critter_encumbrance_level_get(long long obj);
-void sub_45F820(int64_t obj, int value);
+void critter_encumbrance_level_recalc(int64_t obj, int value);
 void sub_45F910();
 void sub_45F920();
 const char* critter_encumbrance_level_name(int level);

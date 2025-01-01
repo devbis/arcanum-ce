@@ -640,7 +640,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
 
     switch (stat) {
     case STAT_STRENGTH:
-        sub_45F820(obj, encumbrance_level);
+        critter_encumbrance_level_recalc(obj, encumbrance_level);
         break;
     case STAT_INTELLIGENCE:
         if (player_is_pc_obj(obj)) {
