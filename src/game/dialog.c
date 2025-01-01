@@ -373,7 +373,7 @@ static int dword_5D1A04;
 static Dialog* dword_5D1A08;
 
 // 0x5D1A0C
-static bool dialog_show_numbers;
+static bool dialog_numbers_enabled;
 
 // 0x412D40
 bool dialog_init(GameInitInfo* init_info)
@@ -2504,7 +2504,7 @@ bool sub_416C10(int a1, int a2, DialogEntryNode* a3)
 
     a3->field_182C[a2] = v1.field_18;
 
-    if (dialog_show_numbers) {
+    if (dialog_numbers_enabled) {
         char str[20];
         size_t len;
         size_t pos;
@@ -3020,9 +3020,9 @@ void dialog_load_generated(int gd)
 }
 
 // 0x4182C0
-void sub_4182C0()
+void dialog_enable_numbers()
 {
-    dialog_show_numbers = true;
+    dialog_numbers_enabled = true;
 }
 
 // 0x4182D0

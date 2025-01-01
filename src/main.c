@@ -205,7 +205,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     }
 
     if (strstr(lpCmdLine, "-dialognumber") != NULL) {
-        sub_4182C0();
+        dialog_enable_numbers();
     }
 
     if (strstr(lpCmdLine, "-gendercheck") != NULL) {
