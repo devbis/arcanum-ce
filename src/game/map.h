@@ -10,7 +10,7 @@ typedef enum MapType {
     MAP_TYPE_COUNT,
 } MapType;
 
-bool map_init(GameContext* ctx);
+bool map_init(GameInitInfo* init_info);
 void map_reset();
 void map_resize(ResizeContext* ctx);
 bool map_mod_load();

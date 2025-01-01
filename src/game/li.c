@@ -21,7 +21,7 @@ static TigVideoBuffer* li_indicator_vb;
 static TigRect li_indicator_bounds;
 
 // 0x4BB9A0
-bool li_init(GameContext* init_info)
+bool li_init(GameInitInfo* init_info)
 {
     TigArtFrameData art_frame_data;
     TigWindowData window_data;

@@ -131,7 +131,7 @@ bool game_time_is_day();
 void datetime_set_start_year(int year);
 void datetime_set_start_hour(int ratio);
 int sub_45AD70();
-bool timeevent_init(GameContext* ctx);
+bool timeevent_init(GameInitInfo* init_info);
 bool timeevent_set_funcs(TimeEventFuncs* funcs);
 void timeevent_reset();
 void timeevent_exit();

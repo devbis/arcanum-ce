@@ -11,19 +11,17 @@ typedef enum ViewType {
     VIEW_TYPE_TOP_DOWN,
 } ViewType;
 
-typedef void(GameContextF8)(TigRect* rect);
-typedef bool(GameContextFC)();
+typedef void(IsoInvalidateRectFunc)(TigRect* rect);
+typedef bool(IsoRedrawFunc)();
 
-typedef struct GameContext {
+typedef struct GameInitInfo {
     bool editor;
     tig_window_handle_t iso_window_handle;
-    GameContextF8* field_8; // invalidate_func
-    GameContextFC* field_C; // redraw_func
-} GameContext;
+    IsoInvalidateRectFunc* invalidate_rect_func;
+    IsoRedrawFunc* redraw_func;
+} GameInitInfo;
 
-typedef GameContext GameInitInfo;
-
-static_assert(sizeof(GameContext) == 0x10, "wrong size");
+static_assert(sizeof(GameInitInfo) == 0x10, "wrong size");
 
 typedef struct ResizeContext {
     int iso_window_handle;

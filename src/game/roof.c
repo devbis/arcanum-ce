@@ -107,7 +107,7 @@ static uint8_t roof_partial_opacity;
 static uint8_t roof_full_transparency;
 
 // 0x5E2E34
-static GameContextF8* roof_iso_window_invalidate_rect;
+static IsoInvalidateRectFunc* roof_iso_window_invalidate_rect;
 
 // 0x5E2E38
 static bool dword_5E2E38;
@@ -134,7 +134,7 @@ bool roof_init(GameInitInfo* init_info)
     MesFileEntry mes_file_entry;
 
     roof_iso_window_handle = init_info->iso_window_handle;
-    roof_iso_window_invalidate_rect = init_info->field_8;
+    roof_iso_window_invalidate_rect = init_info->invalidate_rect_func;
     roof_view_options.type = VIEW_TYPE_ISOMETRIC;
     roof_editor = init_info->editor;
     roof_enabled = true;

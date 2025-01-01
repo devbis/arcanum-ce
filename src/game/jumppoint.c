@@ -17,7 +17,7 @@ static JumpPoint* jumppoints;
 static tig_art_id_t dword_603558;
 
 // 0x60355C
-static GameContextF8* jumppoint_iso_invalidate_rect;
+static IsoInvalidateRectFunc* jumppoint_iso_invalidate_rect;
 
 // 0x603560
 static char byte_603560[TIG_MAX_PATH];
@@ -50,7 +50,7 @@ static bool jumppoint_editor;
 bool jumppoint_init(GameInitInfo* init_info)
 {
     jumppoint_iso_window_handle = init_info->iso_window_handle;
-    jumppoint_iso_invalidate_rect = init_info->field_8;
+    jumppoint_iso_invalidate_rect = init_info->invalidate_rect_func;
     jumppoint_editor = init_info->editor;
     jumppoint_view_options.type = VIEW_TYPE_ISOMETRIC;
 

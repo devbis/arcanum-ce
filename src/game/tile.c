@@ -46,7 +46,7 @@ static uint8_t* dword_602DE4;
 static uint8_t* dword_602DE8;
 
 // 0x602DEC
-static GameContextF8* tile_invalidate_rect;
+static IsoInvalidateRectFunc* tile_invalidate_rect;
 
 // 0x602DF0
 static TigVideoBuffer* dword_602DF0;
@@ -75,7 +75,7 @@ bool tile_init(GameInitInfo* init_info)
 
     dword_602E00 = tig_video_3d_check_initialized() == TIG_OK;
     tile_iso_window_handle = init_info->iso_window_handle;
-    tile_invalidate_rect = init_info->field_8;
+    tile_invalidate_rect = init_info->invalidate_rect_func;
     tile_view_options.type = VIEW_TYPE_ISOMETRIC;
     tile_visible = true;
 

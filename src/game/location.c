@@ -13,7 +13,7 @@ static int64_t location_limit_y;
 static int64_t location_screen_center_y;
 
 // 0x5FC298
-static GameContextF8* location_iso_invalidate_rect;
+static IsoInvalidateRectFunc* location_iso_invalidate_rect;
 
 // 0x5FC2A0
 static int64_t location_screen_center_x;
@@ -56,7 +56,7 @@ bool location_init(GameInitInfo* init_info)
     }
 
     location_iso_window_handle = init_info->iso_window_handle;
-    location_iso_invalidate_rect = init_info->field_8;
+    location_iso_invalidate_rect = init_info->invalidate_rect_func;
 
     location_iso_window_bounds.x = 0;
     location_iso_window_bounds.y = 0;

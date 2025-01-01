@@ -19,7 +19,7 @@ static bool sub_40EA50(tig_art_id_t art_id);
 static unsigned int scroll_fps = 1000;
 
 // 0x5D1168
-static GameContext scroll_init_info;
+static GameInitInfo scroll_init_info;
 
 // 0x5D1180
 static location_t scroll_center;
@@ -329,7 +329,7 @@ void sub_40E630(int64_t dx, int64_t dy)
     int64_t new_origin_y;
     TigRect rect;
 
-    scroll_init_info.field_C();
+    scroll_init_info.redraw_func();
 
     location_get_origin(&old_origin_x, &old_origin_y);
     sub_4B8B30(dx, dy);
@@ -346,27 +346,27 @@ void sub_40E630(int64_t dx, int64_t dy)
     if (dx > 0) {
         rect = scroll_rect;
         rect.width = (int)dx;
-        scroll_init_info.field_8(&rect);
+        scroll_init_info.invalidate_rect_func(&rect);
     } else if (dx < 0) {
         rect = scroll_rect;
         rect.x = rect.width + (int)dx;
         rect.width = -((int)dx);
-        scroll_init_info.field_8(&rect);
+        scroll_init_info.invalidate_rect_func(&rect);
     }
 
     if (dx != 0 && dy != 0) {
-        scroll_init_info.field_C();
+        scroll_init_info.redraw_func();
     }
 
     if (dy < 0) {
         rect = scroll_rect;
         rect.y += rect.height + (int)dy;
         rect.height = -(int)dy;
-        scroll_init_info.field_8(&rect);
+        scroll_init_info.invalidate_rect_func(&rect);
     } else if (dy > 0) {
         rect = scroll_rect;
         rect.height = (int)dy;
-        scroll_init_info.field_8(&rect);
+        scroll_init_info.invalidate_rect_func(&rect);
     }
 
     tc_scroll((int)dx, (int)dy);

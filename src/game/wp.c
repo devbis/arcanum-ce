@@ -25,7 +25,7 @@ static int dword_5FC638;
 static ViewOptions wp_view_options;
 
 // 0x5FC648
-static GameContextF8* dword_5FC648;
+static IsoInvalidateRectFunc* dword_5FC648;
 
 // 0x5FC64C
 static bool dword_5FC64C;
@@ -55,7 +55,7 @@ bool wp_init(GameInitInfo* init_info)
     int index;
 
     wp_iso_window_handle = init_info->iso_window_handle;
-    dword_5FC648 = init_info->field_8;
+    dword_5FC648 = init_info->invalidate_rect_func;
     wp_editor = init_info->editor;
     wp_view_options.type = VIEW_TYPE_ISOMETRIC;
 

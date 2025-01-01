@@ -9,7 +9,7 @@ static void object_node_remove_all();
 static ObjectNode* object_node_head;
 
 // 0x4E9920
-bool object_node_init(GameContext* init_info)
+bool object_node_init(GameInitInfo* init_info)
 {
     (void)init_info;
 

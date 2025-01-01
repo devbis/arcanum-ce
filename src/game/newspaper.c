@@ -19,7 +19,7 @@ static int dword_6876CC;
 static int* off_6876D0;
 
 // 0x4BF060
-bool newspaper_init(GameContext* init_info)
+bool newspaper_init(GameInitInfo* init_info)
 {
     (void)init_info;
 

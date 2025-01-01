@@ -6,7 +6,7 @@
 static bool fade_have_gamma_control;
 
 // 0x5FC4B0
-static GameContextF8* dword_5FC4B0;
+static IsoInvalidateRectFunc* dword_5FC4B0;
 
 // 0x5FC4B4
 static TigVideoBuffer* fade_iso_video_buffer;
@@ -15,7 +15,7 @@ static TigVideoBuffer* fade_iso_video_buffer;
 static tig_font_handle_t dword_5FC4B8;
 
 // 0x5FC4BC
-static GameContextFC* dword_5FC4BC;
+static IsoRedrawFunc* dword_5FC4BC;
 
 // 0x5FC4C0
 static int fade_iso_window_handle;
@@ -26,8 +26,8 @@ bool gfade_init(GameInitInfo* init_info)
     TigFont font;
 
     fade_iso_window_handle = init_info->iso_window_handle;
-    dword_5FC4B0 = init_info->field_8;
-    dword_5FC4BC = init_info->field_C;
+    dword_5FC4B0 = init_info->invalidate_rect_func;
+    dword_5FC4BC = init_info->redraw_func;
 
     if (tig_window_vbid_get(fade_iso_window_handle, &fade_iso_video_buffer) != TIG_OK) {
         return false;

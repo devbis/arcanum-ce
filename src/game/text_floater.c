@@ -70,7 +70,7 @@ static TigRect stru_6028B0;
 static tig_color_t dword_6028C0;
 
 // 0x6028C4
-static GameContextF8* tf_iso_invalidate_rect;
+static IsoInvalidateRectFunc* tf_iso_invalidate_rect;
 
 // 0x6028C8
 static tig_color_t dword_6028C8;
@@ -119,7 +119,7 @@ bool text_floater_init(GameInitInfo* init_info)
     stru_6028B0.height = window_data.rect.height;
 
     text_floater_view_options.type = VIEW_TYPE_ISOMETRIC;
-    tf_iso_invalidate_rect = init_info->field_8;
+    tf_iso_invalidate_rect = init_info->invalidate_rect_func;
 
     dword_6028C8 = tig_color_make(0, 0, 255);
     dword_6028C0 = tig_color_make(0, 0, 0);

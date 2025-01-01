@@ -100,7 +100,7 @@ static TigVideoBufferData stru_602E68;
 static TigPalette light_outdoor_palette;
 
 // 0x602E8C
-static GameContextF8* light_iso_window_invalidate_rect;
+static IsoInvalidateRectFunc* light_iso_window_invalidate_rect;
 
 // 0x602E90
 static bool light_shadows_enabled;
@@ -188,7 +188,7 @@ bool light_init(GameInitInfo* init_info)
     dword_602E58 = (TigPalette*)CALLOC(7, sizeof(*dword_602E58));
     sub_4F8330();
     light_iso_window_handle = init_info->iso_window_handle;
-    light_iso_window_invalidate_rect = init_info->field_8;
+    light_iso_window_invalidate_rect = init_info->invalidate_rect_func;
     light_editor = init_info->editor;
     light_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_602ECC = true;

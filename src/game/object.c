@@ -167,7 +167,7 @@ tig_color_t object_hover_color;
 static int dword_5E2EB0;
 
 // 0x5E2EB4
-static GameContextF8* object_iso_invalidate_rect;
+static IsoInvalidateRectFunc* object_iso_invalidate_rect;
 
 // 0x5E2EB8
 static ViewOptions object_view_options;
@@ -247,7 +247,7 @@ bool object_init(GameInitInfo* init_info)
     }
 
     object_iso_window_handle = init_info->iso_window_handle;
-    object_iso_invalidate_rect = init_info->field_8;
+    object_iso_invalidate_rect = init_info->invalidate_rect_func;
     object_view_options.type = VIEW_TYPE_ISOMETRIC;
     object_editor = init_info->editor;
 

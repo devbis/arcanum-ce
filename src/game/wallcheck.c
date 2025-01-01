@@ -637,7 +637,7 @@ static int dword_5A5330[8] = {
 };
 
 // 0x5E0A00
-static GameContextF8* dword_5E0A00;
+static IsoInvalidateRectFunc* dword_5E0A00;
 
 // 0x5E0A08
 static int64_t qword_5E0A08;
@@ -671,7 +671,7 @@ bool wallcheck_init(GameInitInfo* init_info)
 {
     dword_5E2E24 = 0;
     dword_5E2E28 = 0;
-    dword_5E0A00 = init_info->field_8;
+    dword_5E0A00 = init_info->invalidate_rect_func;
 
     return true;
 }

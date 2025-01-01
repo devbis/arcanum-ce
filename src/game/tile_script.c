@@ -23,7 +23,7 @@ static tig_art_id_t dword_5FC868;
 static bool tile_script_editor;
 
 // 0x5FC870
-static GameContextF8* tile_script_iso_invalidate_rect;
+static IsoInvalidateRectFunc* tile_script_iso_invalidate_rect;
 
 // 0x5FC874
 static bool tile_script_initialized;
@@ -44,7 +44,7 @@ static tig_art_id_t dword_5FC888;
 bool tile_script_init(GameInitInfo* init_info)
 {
     tile_script_iso_window_handle = init_info->iso_window_handle;
-    tile_script_iso_invalidate_rect = init_info->field_8;
+    tile_script_iso_invalidate_rect = init_info->invalidate_rect_func;
     tile_script_editor = init_info->editor;
     tile_script_view_options.type = VIEW_TYPE_ISOMETRIC;
 

@@ -20,7 +20,7 @@ static bool wall_editor;
 static int dword_603434;
 
 // 0x603438
-static GameContextF8* wall_iso_window_invalidate_rect;
+static IsoInvalidateRectFunc* wall_iso_window_invalidate_rect;
 
 // 0x60343C
 static tig_window_handle_t wall_iso_window_handle;
@@ -37,7 +37,7 @@ bool wall_init(GameInitInfo* init_info)
     TigWindowData window_data;
 
     wall_iso_window_handle = init_info->iso_window_handle;
-    wall_iso_window_invalidate_rect = init_info->field_8;
+    wall_iso_window_invalidate_rect = init_info->invalidate_rect_func;
 
     if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
         return false;

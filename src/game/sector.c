@@ -101,7 +101,7 @@ static SectorCacheEntry* sector_cache_entries;
 static SectorLoadFunc* sector_load_func;
 
 // 0x6017B8
-static GameContextF8* sector_iso_window_invalidate_rect;
+static IsoInvalidateRectFunc* sector_iso_window_invalidate_rect;
 
 // 0x6017BC
 static int dword_6017BC;
@@ -183,7 +183,7 @@ bool sector_init(GameInitInfo* init_info)
 {
     dword_601820 = NULL;
     sector_iso_window_handle = init_info->iso_window_handle;
-    sector_iso_window_invalidate_rect = init_info->field_8;
+    sector_iso_window_invalidate_rect = init_info->invalidate_rect_func;
     sector_view_options.type = VIEW_TYPE_ISOMETRIC;
     dword_601830 = false;
     dword_6017AC = tig_color_make(255, 255, 0);

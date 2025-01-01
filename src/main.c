@@ -191,8 +191,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     tig_mouse_hide();
 
     game_init_info.editor = false;
-    game_init_info.field_8 = sub_5581A0;
-    game_init_info.field_C = iso_redraw;
+    game_init_info.invalidate_rect_func = sub_5581A0;
+    game_init_info.redraw_func = iso_redraw;
 
     if (!gamelib_init(&game_init_info)) {
         tig_window_destroy(game_init_info.iso_window_handle);

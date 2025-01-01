@@ -229,7 +229,7 @@ static char* stat_short_names[STAT_COUNT];
 static int64_t qword_5F8728;
 
 // 0x4B0340
-bool stat_init(GameContext* init_info)
+bool stat_init(GameInitInfo* init_info)
 {
     MesFileEntry mes_file_entry;
     int index;

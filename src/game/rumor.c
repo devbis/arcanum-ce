@@ -39,7 +39,7 @@ static int* dword_5FF420;
 static uint8_t* dword_6876C8;
 
 // 0x4C5500
-bool rumor_init(GameContext* init_info)
+bool rumor_init(GameInitInfo* init_info)
 {
     (void)init_info;
 

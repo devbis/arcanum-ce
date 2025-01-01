@@ -49,13 +49,13 @@ static TeleportObjectNode* teleport_obj_node_head;
 static bool teleport_pending;
 
 // 0x601848
-static GameContextF8* teleport_iso_window_invalidate_rect;
+static IsoInvalidateRectFunc* teleport_iso_window_invalidate_rect;
 
 // 0x60184C
 static bool teleport_processing;
 
 // 0x601850
-static GameContextFC* teleport_iso_window_redraw;
+static IsoRedrawFunc* teleport_iso_window_redraw;
 
 // 0x601858
 static TeleportData current_teleport_data;
@@ -69,8 +69,8 @@ static bool teleport_is_teleporting_pc;
 // 0x4D32D0
 bool teleport_init(GameInitInfo* init_info)
 {
-    teleport_iso_window_invalidate_rect = init_info->field_8;
-    teleport_iso_window_redraw = init_info->field_C;
+    teleport_iso_window_invalidate_rect = init_info->invalidate_rect_func;
+    teleport_iso_window_redraw = init_info->redraw_func;
     teleport_pending = false;
 
     return true;

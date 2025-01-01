@@ -16,7 +16,7 @@ static bool tileblock_editor;
 static tig_art_id_t tileblock_iso_aid;
 
 // 0x5FC37C
-static GameContextF8* tileblock_invalidate_rect;
+static IsoInvalidateRectFunc* tileblock_invalidate_rect;
 
 // 0x5FC380
 static bool tileblock_visible;
@@ -31,7 +31,7 @@ static tig_window_handle_t tileblock_iso_window;
 bool tileblock_init(GameInitInfo* init_info)
 {
     tileblock_iso_window = init_info->iso_window_handle;
-    tileblock_invalidate_rect = init_info->field_8;
+    tileblock_invalidate_rect = init_info->invalidate_rect_func;
     tileblock_editor = init_info->editor;
     tileblock_view_options.type = VIEW_TYPE_ISOMETRIC;
 

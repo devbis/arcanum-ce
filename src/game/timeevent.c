@@ -503,9 +503,9 @@ bool timeevent_do_nothing(TimeEvent* timeevent)
 }
 
 // 0x45AD90
-bool timeevent_init(GameContext* ctx)
+bool timeevent_init(GameInitInfo* init_info)
 {
-    dword_5E85F0 = ctx->editor;
+    dword_5E85F0 = init_info->editor;
 
     if (!timeevent_initialized) {
         dword_5E7638[0] = 0;

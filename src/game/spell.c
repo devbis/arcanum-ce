@@ -200,7 +200,7 @@ static int spell_icons[SPELL_COUNT] = {
 };
 
 // 0x5F8730
-static GameContextF8* dword_5F8730;
+static IsoInvalidateRectFunc* dword_5F8730;
 
 // 0x5F8734
 static char* college_mastery_descriptions[COLLEGE_COUNT];
@@ -220,7 +220,7 @@ bool spell_init(GameInitInfo* init_info)
     MesFileEntry mes_file_entry;
     int index;
 
-    dword_5F8730 = init_info->field_8;
+    dword_5F8730 = init_info->invalidate_rect_func;
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_NAME_ID;

@@ -58,7 +58,7 @@ static TigRect tb_iso_window_bounds;
 static TextBlock tb_text_blocks[MAX_TEXT_BLOCKS];
 
 // 0x602AB0
-static GameContextF8* tb_iso_window_invalidate_rect;
+static IsoInvalidateRectFunc* tb_iso_window_invalidate_rect;
 
 // 0x602AB4
 static bool tb_enabled;
@@ -98,7 +98,7 @@ bool tb_init(GameInitInfo* init_info)
     tb_iso_window_bounds.y = 0;
     tb_iso_window_bounds.width = window_data.rect.width;
     tb_iso_window_bounds.height = window_data.rect.height;
-    tb_iso_window_invalidate_rect = init_info->field_8;
+    tb_iso_window_invalidate_rect = init_info->invalidate_rect_func;
     tb_view_options.type = VIEW_TYPE_ISOMETRIC;
     tb_enabled = true;
     dword_602AC4 = tig_color_make(0, 0, 255);

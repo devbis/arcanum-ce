@@ -122,7 +122,7 @@ static int dword_5E2FA4;
 static int* script_gl_flags;
 
 // 0x5E2FAC
-static GameContextF8* script_iso_invalidate_rect;
+static IsoInvalidateRectFunc* script_iso_invalidate_rect;
 
 // 0x5E2FB0
 static AnimFxList stru_5E2FB0;
@@ -131,7 +131,7 @@ static AnimFxList stru_5E2FB0;
 static bool script_editor;
 
 // 0x5E2FE0
-static GameContextFC* script_iso_window_redraw;
+static IsoRedrawFunc* script_iso_window_redraw;
 
 // 0x5E2FE4
 static int dword_5E2FE4;
@@ -174,8 +174,8 @@ bool script_init(GameInitInfo* init_info)
         script_gl_flags[index] = 0;
     }
 
-    script_iso_invalidate_rect = init_info->field_8;
-    script_iso_window_redraw = init_info->field_C;
+    script_iso_invalidate_rect = init_info->invalidate_rect_func;
+    script_iso_window_redraw = init_info->redraw_func;
 
     if (!script_editor) {
         if (!animfx_list_init(&stru_5E2FB0)) {

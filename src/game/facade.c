@@ -17,7 +17,7 @@ static int dword_5FF574;
 static int64_t qword_5FF578;
 
 // 0x5FF580
-static GameContextF8* dword_5FF580;
+static IsoInvalidateRectFunc* dword_5FF580;
 
 // 0x5FF584
 static bool facade_editor;
@@ -44,7 +44,7 @@ static TigVideoBuffer** dword_5FF5A4;
 bool facade_init(GameInitInfo* init_info)
 {
     facade_iso_window_handle = init_info->iso_window_handle;
-    dword_5FF580 = init_info->field_8;
+    dword_5FF580 = init_info->invalidate_rect_func;
     facade_editor = init_info->editor;
     facade_view_options.type = VIEW_TYPE_ISOMETRIC;
     facade_initialized = true;

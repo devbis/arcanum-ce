@@ -186,7 +186,7 @@ static int dword_5D1214[MAP_TYPE_COUNT];
 static int dword_5D1220;
 
 // 0x40EA90
-bool map_init(GameContext* ctx)
+bool map_init(GameInitInfo* init_info)
 {
     if (dword_5D11F0) {
         return true;
@@ -198,7 +198,7 @@ bool map_init(GameContext* ctx)
 
     for (int index = 0; index < MAP_MODULE_COUNT; index++) {
         if (map_modules[index].init_func != NULL) {
-            if (!map_modules[index].init_func(ctx)) {
+            if (!map_modules[index].init_func(init_info)) {
                 tig_debug_printf("map_init(): init function %d (%s) failed\n", map_modules[index].name);
 
                 while (--index >= 0) {
@@ -218,7 +218,7 @@ bool map_init(GameContext* ctx)
 
     map_gender_check_enabled = 0;
     dword_5D11F0 = true;
-    dword_5D1200 = ctx->editor;
+    dword_5D1200 = init_info->editor;
     dword_5D11EC = 0;
 
     return true;

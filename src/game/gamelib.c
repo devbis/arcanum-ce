@@ -85,7 +85,7 @@
 #define TEN 10
 #define MODULE_COUNT 62
 
-typedef bool(GameInitFunc)(GameContext* ctx);
+typedef bool(GameInitFunc)(GameInitInfo* init_info);
 typedef void(GameResetFunc)();
 typedef bool(GameModuleLoadFunc)();
 typedef void(GameModuleUnloadFunc)();
@@ -342,8 +342,8 @@ bool gamelib_init(GameInitInfo* init_info)
         gamelib_splash(init_info->iso_window_handle);
     }
 
-    init_info->field_8 = sub_402D30;
-    init_info->field_C = sub_402E50;
+    init_info->invalidate_rect_func = sub_402D30;
+    init_info->redraw_func = sub_402E50;
 
     stru_5D0E88 = *init_info;
 

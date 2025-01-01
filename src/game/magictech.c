@@ -1115,7 +1115,7 @@ static S603CB8_F50 stru_5E3518;
 static mes_file_handle_t dword_5E6D20;
 
 // 0x5E6D24
-static GameContextF8* dword_5E6D24;
+static IsoInvalidateRectFunc* dword_5E6D24;
 
 // 0x5E6D28
 static S603CB8 stru_5E6D28;
@@ -1238,12 +1238,12 @@ static int dword_6876DC;
 MagicTechLock* magictech_locks;
 
 // 0x44EF50
-bool magictech_init(GameContext* init_info)
+bool magictech_init(GameInitInfo* init_info)
 {
     MesFileEntry mes_file_entry;
     int index;
 
-    dword_5E6D24 = init_info->field_8;
+    dword_5E6D24 = init_info->invalidate_rect_func;
     magictech_editor = init_info->editor;
     magictech_component_names = (char**)CALLOC(25, sizeof(char*));
     magictech_locks = (MagicTechLock*)CALLOC(512, sizeof(MagicTechLock));

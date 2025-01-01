@@ -52,7 +52,7 @@ static int* quest_states;
 static Quest* quests;
 
 // 0x4C45C0
-bool quest_init(GameContext* init_info)
+bool quest_init(GameInitInfo* init_info)
 {
     (void)init_info;
 

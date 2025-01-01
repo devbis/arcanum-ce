@@ -21,7 +21,7 @@ static TigRect tc_iso_window_rect;
 static tig_font_handle_t dword_5FF530;
 
 // 0x5FF534
-static GameContextF8* tc_iso_window_invalidate_rect;
+static IsoInvalidateRectFunc* tc_iso_window_invalidate_rect;
 
 // 0x5FF538
 static tig_font_handle_t dword_5FF538;
@@ -66,7 +66,7 @@ bool tc_init(GameInitInfo* init_info)
 
         tc_iso_window_handle = init_info->iso_window_handle;
         tc_iso_window_rect = window_data.rect;
-        tc_iso_window_invalidate_rect = init_info->field_8;
+        tc_iso_window_invalidate_rect = init_info->invalidate_rect_func;
 
         stru_5FF508.x = 0;
         stru_5FF508.y = 0;
