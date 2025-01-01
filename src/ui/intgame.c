@@ -6916,7 +6916,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
             0x2);
     }
 
-    value = sub_461370(item_obj, critter_obj);
+    value = item_weight(item_obj, critter_obj);
     mes_file_entry.num = 4; // "Weight"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
     suffix.num = 5; // "stone"

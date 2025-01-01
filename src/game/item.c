@@ -366,7 +366,7 @@ int item_inventory_location_get(object_id_t object_id)
 }
 
 // 0x461370
-int sub_461370(object_id_t item_obj, object_id_t owner_obj)
+int item_weight(int64_t item_obj, int64_t owner_obj)
 {
     int weight;
     int weight_adj;
@@ -412,7 +412,7 @@ int item_total_weight(object_id_t obj)
     weight = 0;
     for (index = 0; index < count; index++) {
         item_obj = obj_arrayfield_handle_get(obj, inventory_list_idx_field, index);
-        weight += sub_461370(item_obj, obj);
+        weight += item_weight(item_obj, obj);
     }
 
     return weight;
@@ -939,7 +939,7 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj)
         distance += distance / 2;
     }
 
-    weight = sub_461370(item_obj, critter_obj) / 10;
+    weight = item_weight(item_obj, critter_obj) / 10;
     if (weight < 1) {
         weight = 1;
     }
@@ -969,7 +969,7 @@ void sub_462330(int64_t item_obj, int index, int* min_damage, int* max_damage)
     if (index == 0) {
         owner_obj = OBJ_HANDLE_NULL;
         item_parent(item_obj, &owner_obj);
-        weight = sub_461370(item_obj, owner_obj);
+        weight = item_weight(item_obj, owner_obj);
 
         *min_damage = (weight + 99) / 100;
         // TODO: Unclear math.
@@ -3584,7 +3584,7 @@ bool sub_466510(int64_t item_obj, int64_t parent_obj, int* inventory_location_pt
             && item_find_key_ring(parent_obj) != OBJ_HANDLE_NULL) {
             inventory_location = 0;
         } else {
-            if (item_total_weight(parent_obj) + sub_461370(item_obj, parent_obj) > stat_level(parent_obj, STAT_CARRY_WEIGHT)) {
+            if (item_total_weight(parent_obj) + item_weight(item_obj, parent_obj) > stat_level(parent_obj, STAT_CARRY_WEIGHT)) {
                 return ITEM_CANNOT_TOO_HEAVY;
             }
         }

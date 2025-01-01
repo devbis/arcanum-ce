@@ -54,6 +54,7 @@ void sub_460FF0(int64_t critter_obj);
 bool item_parent(object_id_t object_id, object_id_t* parent_object_id);
 bool item_is_item(object_id_t object_id);
 int item_inventory_location_get(object_id_t object_id);
+int item_weight(int64_t item_obj, int64_t owner_obj);
 int item_total_weight(object_id_t obj);
 int sub_4614A0(object_id_t item_id, object_id_t owner_id);
 int item_magic_tech_complexity(object_id_t item_id);
