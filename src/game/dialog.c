@@ -193,7 +193,7 @@ static void sub_417E20(DialogEntry* a1, const DialogEntry* a2);
 static void sub_417F40(DialogEntry* a1);
 static int sub_417F90(int* values, char* str);
 static void dialog_check_generated(int gd);
-static void sub_418250(int gd);
+static void dialog_load_generated(int gd);
 static void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end);
 static void sub_418390(char* str, DialogEntryNode* a2, int start);
 static void sub_418460(char* str, DialogEntryNode* a2);
@@ -2993,7 +2993,7 @@ void dialog_check_generated(int gd)
     int overflow;
 
     tig_debug_printf("Checking generated dialog file mes\\%s.mes\n", off_5A063C[gd]);
-    sub_418250(gd);
+    dialog_load_generated(gd);
 
     if (mes_find_first(dword_5D19F4[gd], &mes_file_entry)) {
         do {
@@ -3006,7 +3006,7 @@ void dialog_check_generated(int gd)
 }
 
 // 0x418250
-void sub_418250(int gd)
+void dialog_load_generated(int gd)
 {
     char path[TIG_MAX_PATH];
 
@@ -3041,7 +3041,8 @@ void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end)
             ? GD_PC2M
             : GD_PC2F;
     }
-    sub_418250(gd);
+
+    dialog_load_generated(gd);
 
     cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, end);
     mes_file_entry.num = start + random_between(0, cnt - 1);
@@ -3066,7 +3067,8 @@ void sub_418390(char* str, DialogEntryNode* a2, int start)
             ? GD_CLS_PC2M
             : GD_CLS_PC2F;
     }
-    sub_418250(gd);
+
+    dialog_load_generated(gd);
 
     cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
     mes_file_entry.num = start + random_between(0, cnt - 1);
@@ -3114,7 +3116,7 @@ void sub_418480(char* str, DialogEntryNode* a2, int start)
             start += 50 * critter_social_class_get(a2->npc_obj);
         }
 
-        sub_418250(gd);
+        dialog_load_generated(gd);
 
         cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
         mes_file_entry.num = start + random_between(0, cnt - 1);
@@ -3160,7 +3162,8 @@ void sub_4185F0(char* str, DialogEntryNode* a2, int start)
                 start += 50 * (race + 1);
             }
         }
-        sub_418250(gd);
+
+        dialog_load_generated(gd);
 
         cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, start + 49);
         mes_file_entry.num = start + random_between(0, cnt - 1);
@@ -3189,7 +3192,8 @@ void sub_418780(char* str, DialogEntryNode* a2, int start, int end)
                 ? GD_NPC_F2M
                 : GD_NPC_F2F;
         }
-        sub_418250(gd);
+
+        dialog_load_generated(gd);
 
         cnt = mes_entries_count_in_range(dword_5D19F4[gd], start, end);
         mes_file_entry.num = start + random_between(0, cnt - 1);
@@ -4045,20 +4049,25 @@ void sub_41A3E0(int a1, DialogEntryNode* a2)
 void sub_41A440(char* buffer, DialogEntryNode* a2)
 {
     int v1;
-    int v2;
+    int gd;
     MesFileEntry mes_file_entry;
 
     v1 = sub_445090();
     if (!sub_418870(buffer, a2, v1 + 10000)) {
         if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-            v2 = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE ? 29 : 28;
+            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_STO_M2F
+                : GD_STO_M2M;
         } else {
-            v2 = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE ? 31 : 30;
+            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                ? GD_STO_F2M
+                : GD_STO_F2F;
         }
 
+        dialog_load_generated(gd);
+
         mes_file_entry.num = stat_level(a2->npc_obj, STAT_RACE) + 100 * v1;
-        sub_418250(v2);
-        mes_get_msg(dword_5D19F4[v2], &mes_file_entry);
+        mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
         sub_416B00(buffer, mes_file_entry.str, a2);
         a2->field_458 = -1;
     }
