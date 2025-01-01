@@ -2268,7 +2268,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
             return true;
         case DIK_D:
             if (!msg->data.keyboard.pressed
-                && sub_402CB0() >= 3
+                && gamelib_cheat_level_get() >= 3
                 && !dword_66D868) {
                 gsound_play_sfx_id(0, 1);
 

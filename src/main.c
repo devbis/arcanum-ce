@@ -438,7 +438,7 @@ void main_loop()
                         }
                         break;
                     case DIK_F11:
-                        if (sub_402CB0() >= 3) {
+                        if (gamelib_cheat_level_get() >= 3) {
                             for (index = 0; index < SPELL_COUNT; index++) {
                                 sub_4B1790(pc_obj, index, true);
                             }
@@ -465,7 +465,7 @@ void main_loop()
                     }
 
                     if (!textedit_ui_is_focused()) {
-                        if (sub_402CB0() >= 3) {
+                        if (gamelib_cheat_level_get() >= 3) {
                             switch (message.data.keyboard.key) {
                             case DIK_H:
                                 sub_45C1C0(3600000);
@@ -489,7 +489,7 @@ void main_loop()
                             }
                         }
 
-                        if (sub_402CB0() >= 2) {
+                        if (gamelib_cheat_level_get() >= 2) {
                             switch (message.data.keyboard.key) {
                             case DIK_D:
                                 if (light_scheme_get() == LIGHT_SCHEME_DEFAULT_LIGHTING) {
@@ -530,7 +530,7 @@ void main_loop()
                             }
                         }
 
-                        if (sub_402CB0() >= 1) {
+                        if (gamelib_cheat_level_get() >= 1) {
                             switch (message.data.keyboard.key) {
                             case DIK_V:
                                 gamelib_copy_version(version_str, NULL, NULL);

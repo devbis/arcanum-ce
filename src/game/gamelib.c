@@ -770,9 +770,11 @@ bool gamelib_in_reset()
 }
 
 // 0x402CB0
-int sub_402CB0()
+int gamelib_cheat_level_get()
 {
-    return 0;
+    // NOTE: Make testing a little bit easier, but probably should be turned off
+    // for release.
+    return 3;
 }
 
 // 0x402CC0

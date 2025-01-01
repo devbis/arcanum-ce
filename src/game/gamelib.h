@@ -62,7 +62,7 @@ bool gamelib_mod_load(const char* path);
 bool gamelib_mod_guid(GUID* guid_ptr);
 void gamelib_mod_unload();
 bool gamelib_in_reset();
-int sub_402CB0();
+int gamelib_cheat_level_get();
 void sub_402D30(TigRect* rect);
 bool sub_402E50();
 void sub_402F90();
