@@ -1127,7 +1127,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
 
-        encumbrance_level = sub_45F790(critter_obj);
+        encumbrance_level = critter_encumbrance_level_get(critter_obj);
         if (dword_5B3050[encumbrance_level] != 0) {
             sub_45E820(critter_obj, 1, dword_5B3050[encumbrance_level]);
         }
@@ -1827,7 +1827,7 @@ bool sub_45F730(long long obj)
 }
 
 // 0x45F790
-int sub_45F790(long long obj)
+int critter_encumbrance_level_get(long long obj)
 {
     int current_weight;
     int max_weight;
@@ -1858,7 +1858,7 @@ void sub_45F820(int64_t obj, int value)
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
-    encumbrance_level = sub_45F790(obj);
+    encumbrance_level = critter_encumbrance_level_get(obj);
     if (encumbrance_level == value) {
         return;
     }

@@ -8592,7 +8592,7 @@ bool sub_42B940(AnimRunInfo* run_info)
     ASSERT(run_info != OBJ_HANDLE_NULL); // 8503, "pRunInfo != NULL"
     ASSERT(run_info->field_20); // 8504, "pRunInfo->animObj != OBJ_HANDLE_NULL"
 
-    if (sub_45F790(run_info->field_20) >= ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+    if (critter_encumbrance_level_get(run_info->field_20) >= ENCUMBRANCE_LEVEL_SIGNIFICANT) {
         return false;
     }
 
@@ -13470,7 +13470,7 @@ bool sub_433640(int64_t obj, int64_t loc)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && get_always_run(obj)
-        && sub_45F790(obj) < 4) {
+        && critter_encumbrance_level_get(obj) < 4) {
         return sub_433C80(obj, loc);
     }
 
@@ -13659,7 +13659,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
 
     // TODO: Looks wrong, checking for 0 immediately after OR'ing 0x40.
     if (run_info->field_C == 0
-        && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
         run_info->field_C |= 0x40;
     }
 
@@ -13680,7 +13680,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
             run_info->field_C |= 0x40;
 
             if (run_info->field_C == 0
-                && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+                && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
                 run_info->field_C |= 0x40;
             }
 
@@ -13714,7 +13714,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
     run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
 
     if (run_info->field_C == 0
-        && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
         run_info->field_C |= 0x40;
     }
 
@@ -13843,7 +13843,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
             goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
             goal_data.params[AGDATA_RANGE_DATA].data = range;
             if (sub_44D520(&goal_data, &stru_5A1908)) {
-                if (sub_45F790(source_obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+                if (critter_encumbrance_level_get(source_obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
                     turn_on_running(stru_5A1908);
                 }
 
@@ -13856,7 +13856,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
 
     run_info = &(anim_run_info[stru_5A1908.slot_num]);
     if ((run_info->field_C & 0x40) == 0
-        && sub_45F790(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
         run_info->field_C |= 0x40;
     }
 
@@ -14997,7 +14997,7 @@ void turn_on_running(AnimID anim_id)
     }
 
     obj = run_info->goals[0].params[AGDATA_SELF_OBJ].obj;
-    if (sub_45F790(obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+    if (critter_encumbrance_level_get(obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
             if ((tig_net_flags & TIG_NET_HOST) != 0) {
                 run_info->field_C |= 0x40;

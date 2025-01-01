@@ -3667,7 +3667,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
         inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
         inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
     } else {
-        encumbrance_level = sub_45F790(parent_obj);
+        encumbrance_level = critter_encumbrance_level_get(parent_obj);
 
         if (item_obj_type == OBJ_TYPE_ITEM_KEY_RING) {
             sub_466AA0(parent_obj, item_obj);
@@ -4355,7 +4355,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
 
         inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
         inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
-        encubmrance_level = sub_45F790(parent_obj);
+        encubmrance_level = critter_encumbrance_level_get(parent_obj);
     }
 
     cnt = obj_field_int32_get(parent_obj, inventory_num_fld);

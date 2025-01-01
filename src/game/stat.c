@@ -620,7 +620,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
 
     switch (stat) {
     case STAT_STRENGTH:
-        encumbrance_level = sub_45F790(obj);
+        encumbrance_level = critter_encumbrance_level_get(obj);
         break;
     case STAT_POISON_LEVEL:
         // Maximized constitution grants poison immunity.

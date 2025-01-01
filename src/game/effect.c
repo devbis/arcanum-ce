@@ -407,7 +407,7 @@ void sub_4E9F70(int64_t obj, int effect, int cause)
     }
 
     strength = stat_level(obj, STAT_STRENGTH);
-    encumbrance = sub_45F790(obj);
+    encumbrance = critter_encumbrance_level_get(obj);
     v1 = sub_43D5A0(obj);
     v2 = sub_45D670(obj);
 
@@ -617,7 +617,7 @@ void sub_4EA520(int64_t obj, int start)
     }
 
     strength = stat_level(obj, STAT_STRENGTH);
-    encumbrance = sub_45F790(obj);
+    encumbrance = critter_encumbrance_level_get(obj);
     v1 = sub_43D5A0(obj);
     v2 = sub_45D670(obj);
 

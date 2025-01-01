@@ -2656,7 +2656,7 @@ void redraw_inven(bool a1)
             mes_file_entry1.num = 10;
             mes_get_msg(inven_ui_mes_file, &mes_file_entry1);
 
-            encumbrance_level = sub_45F790(qword_682C78);
+            encumbrance_level = critter_encumbrance_level_get(qword_682C78);
             carry_weight = stat_level(qword_682C78, STAT_CARRY_WEIGHT);
 
             sprintf(&(byte_68241C[pos]),
@@ -2807,7 +2807,7 @@ void redraw_inven(bool a1)
         mes_file_entry1.num = 10;
         mes_get_msg(inven_ui_mes_file, &mes_file_entry1);
 
-        encumbrance_level = sub_45F790(qword_6814F8);
+        encumbrance_level = critter_encumbrance_level_get(qword_6814F8);
         carry_weight = stat_level(qword_6814F8, STAT_CARRY_WEIGHT);
 
         sprintf(str,
