@@ -518,13 +518,13 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
 }
 
 // 0x4C62B0
-const char* basic_skill_get_name(int skill)
+char* basic_skill_get_name(int skill)
 {
     return basic_skill_names[skill];
 }
 
 // 0x4C62C0
-const char* basic_skill_get_description(int skill)
+char* basic_skill_get_description(int skill)
 {
     return basic_skill_descriptions[skill];
 }
@@ -878,13 +878,13 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
 }
 
 // 0x4C69A0
-const char* tech_skill_get_name(int skill)
+char* tech_skill_get_name(int skill)
 {
     return tech_skill_names[skill];
 }
 
 // 0x4C69B0
-const char* tech_skill_get_description(int skill)
+char* tech_skill_get_description(int skill)
 {
     return tech_skill_descriptions[skill];
 }
@@ -896,7 +896,7 @@ int sub_4C69C0(int skill)
 }
 
 // 0x4C69D0
-const char* training_get_name(int training)
+char* training_get_name(int training)
 {
     return training_names[training];
 }

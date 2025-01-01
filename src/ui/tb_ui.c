@@ -41,7 +41,7 @@ static void sub_57CAF0(long long obj);
 static void sub_57CB10(long long a1, long long a2);
 static void sub_57CB80(long long a1, long long a2);
 static void sub_57CBC0(long long a1, long long a2);
-static void sub_57CBE0(const char* str);
+static void sub_57CBE0(char* str);
 static void sub_57CC10(long long obj);
 static void sub_57CC70(int64_t a1, int64_t a2);
 static void sub_57CDC0();
@@ -227,7 +227,7 @@ void sub_57CBC0(long long a1, long long a2)
 }
 
 // 0x57CBE0
-void sub_57CBE0(const char* str)
+void sub_57CBE0(char* str)
 {
     UiMessage ui_message;
 

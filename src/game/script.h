@@ -372,7 +372,7 @@ int script_local_counter_get(int64_t obj, int index, int counter);
 void script_local_counter_set(int64_t obj, int index, int counter, int value);
 int sub_445090();
 void sub_4450A0(int value);
-const char* sub_4450F0(int story_state_num);
+char* sub_4450F0(int story_state_num);
 bool script_timeevent_process(TimeEvent* timeevent);
 int sub_44BCC0(Script* scr);
 bool sub_44C310(Script* scr, unsigned int* flags_ptr);

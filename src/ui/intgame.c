@@ -82,7 +82,7 @@ static void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location)
 static bool sub_5501C0();
 static bool sub_5503F0(int a1, int a2);
 static void iso_interface_window_disable(int window_type);
-static void sub_5509C0(const char* str, TigRect* rect);
+static void sub_5509C0(char* str, TigRect* rect);
 static bool sub_550A10(tig_window_handle_t window_handle, char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
 static bool intgame_spells_init();
 static void intgame_spells_show_college_spells(int group);
@@ -113,19 +113,19 @@ static void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig
 static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int num, bool a4, tig_window_handle_t window_handle);
 static void sub_553960();
 static void sub_553A70(TigMessage* msg);
-static void sub_553F70(int64_t a1, int64_t a2, const char* a3);
+static void sub_553F70(int64_t a1, int64_t a2, char* a3);
 static void sub_554560(tig_window_handle_t window_handle, int art_num);
 static void sub_554640(int a1, int a2, TigRect* rect, int value);
 static void sub_554830(int64_t a1, int64_t a2);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
 static int sub_554C20(int64_t item_obj);
-static void sub_554F10(int64_t a1, int64_t a2, const char* a3);
+static void sub_554F10(int64_t a1, int64_t a2, char* a3);
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
-static void sub_555D80(int64_t a1, int64_t a2, const char* str);
-static void sub_555EC0(int64_t a1, int64_t a2, const char* a3);
-static void sub_556040(int64_t a1, int64_t a2, const char* a3);
+static void sub_555D80(int64_t a1, int64_t a2, char* str);
+static void sub_555EC0(int64_t a1, int64_t a2, char* a3);
+static void sub_556040(int64_t a1, int64_t a2, char* a3);
 static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
 static void sub_556B90(int a1);
 static void sub_556C20(int64_t obj);
@@ -3920,7 +3920,7 @@ void sub_550750(UiMessage* ui_message)
 }
 
 // 0x550770
-void sub_550770(int a1, const char* str)
+void sub_550770(int a1, char* str)
 {
     UiMessage ui_message;
 
@@ -4004,7 +4004,7 @@ void sub_550930()
 }
 
 // 0x5509C0
-void sub_5509C0(const char* str, TigRect* rect)
+void sub_5509C0(char* str, TigRect* rect)
 {
     if (dword_64C6B4) {
         if (stru_5C6D60[intgame_iso_window_type].rect.width != 0) {
@@ -5958,7 +5958,7 @@ void sub_553A70(TigMessage* msg)
 }
 
 // 0x553BE0
-void sub_553BE0(int64_t a1, int64_t a2, const char* str)
+void sub_553BE0(int64_t a1, int64_t a2, char* str)
 {
     int type;
 
@@ -6107,7 +6107,7 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
 }
 
 // 0x553F70
-void sub_553F70(int64_t a1, int64_t critter_obj, const char* a3)
+void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
 {
     int obj_type;
     bool is_detecting_alignment;
@@ -6690,7 +6690,7 @@ int sub_554C20(int64_t item_obj)
 }
 
 // 0x554F10
-void sub_554F10(int64_t critter_obj, int64_t item_obj, const char* a3)
+void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
 {
     int obj_type;
     int64_t parent_obj;
@@ -7147,7 +7147,7 @@ void sub_555B50(int64_t obj, char* buffer)
 }
 
 // 0x555D80
-void sub_555D80(int64_t a1, int64_t scenery_obj, const char* str)
+void sub_555D80(int64_t a1, int64_t scenery_obj, char* str)
 {
     int art_num;
     char buffer[2000];
@@ -7183,7 +7183,7 @@ void sub_555D80(int64_t a1, int64_t scenery_obj, const char* str)
 }
 
 // 0x555EC0
-void sub_555EC0(int64_t a1, int64_t portal_obj, const char* a3)
+void sub_555EC0(int64_t a1, int64_t portal_obj, char* a3)
 {
     int portrait;
     unsigned int portal_flags;
@@ -7226,7 +7226,7 @@ void sub_555EC0(int64_t a1, int64_t portal_obj, const char* a3)
 }
 
 // 0x556040
-void sub_556040(int64_t a1, int64_t container_obj, const char* a3)
+void sub_556040(int64_t a1, int64_t container_obj, char* a3)
 {
     int portrait;
     unsigned int container_flags;

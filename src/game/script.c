@@ -578,7 +578,7 @@ void sub_4450A0(int value)
 }
 
 // 0x4450F0
-const char* sub_4450F0(int story_state_num)
+char* sub_4450F0(int story_state_num)
 {
     MesFileEntry mes_file_entry;
 

@@ -727,7 +727,7 @@ static tig_font_handle_t dword_64D3BC;
 static const char* charedit_quest_str;
 
 // 0x64D3C4
-const char* dword_64D3C4[23];
+char* dword_64D3C4[23];
 
 // 0x64D420
 static tig_font_handle_t dword_64D420;

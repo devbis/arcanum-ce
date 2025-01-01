@@ -1652,7 +1652,7 @@ void sub_44FDC0(MesFileEntry* mes_file_entry)
 }
 
 // 0x44FDE0
-const char* magictech_spell_name(int num)
+char* magictech_spell_name(int num)
 {
     MesFileEntry mes_file_entry;
 

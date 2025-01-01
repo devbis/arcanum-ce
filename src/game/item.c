@@ -65,7 +65,7 @@ static void sub_466BD0(int64_t key_ring_obj);
 static bool item_insert_success(ItemInsertInfo* item_insert_info);
 static bool item_insert_failure(ItemInsertInfo* item_insert_info);
 static bool sub_466EF0(int64_t obj, int64_t loc);
-static const char* item_cannot_msg(int reason);
+static char* item_cannot_msg(int reason);
 static int sub_4675A0(int64_t item_obj, int64_t parent_obj, int* slots);
 static int sub_4676A0(int64_t item_obj, int64_t parent_obj, int* slots);
 static void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location);
@@ -4075,7 +4075,7 @@ void sub_4670A0(int64_t parent_obj, int a2)
 }
 
 // 0x4673B0
-const char* item_cannot_msg(int reason)
+char* item_cannot_msg(int reason)
 {
     MesFileEntry mes_file_entry;
 
@@ -4093,7 +4093,7 @@ const char* item_cannot_msg(int reason)
 void sub_4673F0(int64_t obj, int reason)
 {
     UiMessage ui_message;
-    const char* str;
+    char* str;
 
     if (player_is_pc_obj(obj)) {
         str = item_cannot_msg(reason);

@@ -142,7 +142,7 @@ int background_get_description(int background)
 }
 
 // 0x4C24E0
-const char* background_description_get_text(int num)
+char* background_description_get_text(int num)
 {
     MesFileEntry mes_file_entry;
 
@@ -165,7 +165,7 @@ const char* background_description_get_text(int num)
 // the hood like `background_description_get_name` do?
 //
 // 0x4C2530
-const char* background_description_get_body(int num)
+char* background_description_get_body(int num)
 {
     MesFileEntry mes_file_entry;
     char* pch;
@@ -191,9 +191,9 @@ const char* background_description_get_body(int num)
 }
 
 // 0x4C2590
-const char* background_description_get_name(int num)
+char* background_description_get_name(int num)
 {
-    const char* text;
+    char* text;
     char* pch;
 
     text = background_description_get_text(num);

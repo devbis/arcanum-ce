@@ -81,11 +81,11 @@ static bool sub_542460(tig_button_handle_t button_handle);
 static void sub_5424F0(int a1, int a2);
 static void sub_542560();
 static void mmUIMPLoadGameRefreshFunc(TigRect* rect);
-static void sub_542D00(const char* str, TigRect* rect, tig_font_handle_t font);
-static void sub_542DF0(const char* str, TigRect* rect, tig_font_handle_t font);
-static void sub_542EA0(const char* str, TigRect* rect, tig_font_handle_t font);
+static void sub_542D00(char* str, TigRect* rect, tig_font_handle_t font);
+static void sub_542DF0(char* str, TigRect* rect, tig_font_handle_t font);
+static void sub_542EA0(char* str, TigRect* rect, tig_font_handle_t font);
 static void mmUITextWriteCenteredToArray(const char* str, TigRect* rects, int cnt, tig_font_handle_t font);
-static const char* sub_543040(int index);
+static char* sub_543040(int index);
 static void sub_543060();
 static void sub_5430D0();
 static bool sub_543160();
@@ -651,7 +651,7 @@ static int dword_5C4070[3] = {
 };
 
 // 0x5C407C
-static const char* off_5C407C = "...";
+static char off_5C407C[] = "...";
 
 // 0x5C4080
 static MainMenuButtonInfo stru_5C4080[5] = {
@@ -3326,8 +3326,8 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
     char str[20];
     tig_font_handle_t font;
     int area;
-    const char* area_name;
-    const char* story_state_desc;
+    char* area_name;
+    char* story_state_desc;
 
     window = main_menu_window_info[dword_64C414];
     tig_art_interface_id_create(window->background_art_num, 0, 0, 0, &art_id);
@@ -3370,7 +3370,7 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
         if (stru_64BBF8.count) {
             int index;
             int max_y;
-            const char* name;
+            char* name;
 
             max_y = dst_rect.y + dst_rect.height - 1;
 
@@ -3523,7 +3523,7 @@ void mmUIMPLoadGameRefreshFunc(TigRect* rect)
 }
 
 // 0x542D00
-void sub_542D00(const char* str, TigRect* rect, tig_font_handle_t font)
+void sub_542D00(char* str, TigRect* rect, tig_font_handle_t font)
 {
     TigFont font_desc;
     TigRect text_rect;
@@ -3556,7 +3556,7 @@ void sub_542D00(const char* str, TigRect* rect, tig_font_handle_t font)
 }
 
 // 0x542DF0
-void sub_542DF0(const char* str, TigRect* rect, tig_font_handle_t font)
+void sub_542DF0(char* str, TigRect* rect, tig_font_handle_t font)
 {
     TigFont font_desc;
     TigRect text_rect;
@@ -3577,7 +3577,7 @@ void sub_542DF0(const char* str, TigRect* rect, tig_font_handle_t font)
 }
 
 // 0x542EA0
-void sub_542EA0(const char* str, TigRect* rect, tig_font_handle_t font)
+void sub_542EA0(char* str, TigRect* rect, tig_font_handle_t font)
 {
     TigFont font_desc;
     TigRect text_rect;
@@ -3604,7 +3604,7 @@ void mmUITextWriteCenteredToArray(const char* str, TigRect* rects, int cnt, tig_
 }
 
 // 0x543040
-const char* sub_543040(int index)
+char* sub_543040(int index)
 {
     if (stru_64BBF8.paths != NULL) {
         return stru_64BBF8.paths[index] + 8;
@@ -4010,8 +4010,8 @@ void mmUIMPSaveGameRefreshFunc(TigRect* rect)
     char str[20];
     tig_font_handle_t font;
     int area;
-    const char* area_name;
-    const char* story_state_desc;
+    char* area_name;
+    char* story_state_desc;
 
     window = main_menu_window_info[dword_64C414];
     tig_art_interface_id_create(window->background_art_num, 0, 0, 0, &art_id);
@@ -4059,7 +4059,7 @@ void mmUIMPSaveGameRefreshFunc(TigRect* rect)
             font = window->field_90 == idx ? dword_64C240 : dword_64C210[0];
             tig_font_push(font);
 
-            const char* name;
+            char* name;
             if (idx > 0) {
                 name = sub_543040(idx - 1);
             } else if (idx == 0) {
@@ -4470,7 +4470,7 @@ void sub_5446F0()
 void sub_5447B0(TigRect* rect)
 {
     int64_t pc_obj;
-    const char* str;
+    char* str;
     MesFileEntry mes_file_entry;
 
     pc_obj = player_get_pc_obj();

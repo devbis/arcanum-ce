@@ -1180,7 +1180,7 @@ bool sub_56E950(int a1, int64_t a2, long long obj)
 }
 
 // 0x56E9D0
-const char* sub_56E9D0(int schematic)
+char* sub_56E9D0(int schematic)
 {
     SchematicInfo schematic_info;
     MesFileEntry mes_file_entry;
@@ -1193,7 +1193,7 @@ const char* sub_56E9D0(int schematic)
 }
 
 // 0x56EA10
-const char* sub_56EA10(int a1, int a2)
+char* sub_56EA10(int a1, int a2)
 {
     return sub_56E9D0(sub_4B0320(a1, a2));
 }

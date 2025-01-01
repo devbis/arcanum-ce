@@ -287,7 +287,7 @@ size_t sub_4B15A0(int spell)
 }
 
 // 0x4B1600
-const char* spell_get_name(int spell)
+char* spell_get_name(int spell)
 {
     if (spell == 10000 || spell == -1) {
         return "";
@@ -297,7 +297,7 @@ const char* spell_get_name(int spell)
 }
 
 // 0x4B1620
-const char* spell_get_description(int spell)
+char* spell_get_description(int spell)
 {
     if (spell == 10000 || spell == -1) {
         return "";
@@ -477,13 +477,13 @@ bool sub_4B19B0(int64_t obj, int spell)
 }
 
 // 0x4B1A40
-const char* college_get_name(int college)
+char* college_get_name(int college)
 {
     return college_names[college];
 }
 
 // 0x4B1A50
-const char* college_get_description(int college)
+char* college_get_description(int college)
 {
     if (sub_4B1CB0(player_get_pc_obj()) == college) {
         return college_mastery_descriptions[college];

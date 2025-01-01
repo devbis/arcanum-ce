@@ -67,7 +67,7 @@ void item_effect_mod_unload()
 }
 
 // 0x4D4080
-const char* item_effect_get_text(int num)
+char* item_effect_get_text(int num)
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;

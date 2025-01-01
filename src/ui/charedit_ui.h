@@ -6,7 +6,7 @@
 #include "ui/types.h"
 
 extern UiMessage stru_5C8990;
-extern const char* dword_64D3C4[23];
+extern char* dword_64D3C4[23];
 extern bool charedit_created;
 
 bool charedit_init(GameInitInfo* init_info);

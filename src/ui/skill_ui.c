@@ -71,7 +71,7 @@ static uint64_t qword_5CB250[FOUR] = {
 static int dword_5CB270 = -1;
 
 // 0x683478
-static const char* dword_683478[FOUR];
+static char* dword_683478[FOUR];
 
 // 0x683488
 static mes_file_handle_t skill_ui_mes_file;
@@ -389,7 +389,7 @@ int sub_57A6C0(int a1, S4F2810* a2)
 }
 
 // 0x57A700
-const char* sub_57A700(int index)
+char* sub_57A700(int index)
 {
     return dword_683478[index];
 }

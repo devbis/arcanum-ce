@@ -134,25 +134,25 @@ void tech_set_defaults(object_id_t obj)
 }
 
 // 0x4AFE10
-const char* tech_get_name(int tech)
+char* tech_get_name(int tech)
 {
     return tech_names[tech];
 }
 
 // 0x4AFE20
-const char* tech_get_description(int tech)
+char* tech_get_description(int tech)
 {
     return tech_descriptions[tech];
 }
 
 // 0x4AFE30
-const char* degree_get_name(int degree)
+char* degree_get_name(int degree)
 {
     return degree_names[degree];
 }
 
 // 0x4AFE40
-const char* degree_get_description(int degree, int tech)
+char* degree_get_description(int degree, int tech)
 {
     return degree_descriptions[tech][degree];
 }
