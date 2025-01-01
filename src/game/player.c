@@ -11,16 +11,16 @@
 #include "game/ui.h"
 
 // 0x5D1138
-static ObjectID stru_5D1138;
+static ObjectID player_pc_oid;
 
 // 0x5D1150
-static object_id_t qword_5D1150;
+static int64_t qword_5D1150;
 
 // 0x5D1158
-static object_id_t pcObj;
+static int64_t player_pc_obj;
 
 // 0x5D1160
-static int64_t qword_5D1160;
+static int64_t player_pc_prototype_obj;
 
 // 0x739E5C
 bool player_editor;
@@ -28,7 +28,7 @@ bool player_editor;
 // 0x40D6C0
 bool player_init(GameInitInfo* init_info)
 {
-    stru_5D1138.type = OID_TYPE_NULL;
+    player_pc_oid.type = OID_TYPE_NULL;
     player_editor = init_info->editor;
 
     return true;
@@ -37,9 +37,9 @@ bool player_init(GameInitInfo* init_info)
 // 0x40D6E0
 void player_reset()
 {
-    if (pcObj != OBJ_HANDLE_NULL) {
-        pcObj = OBJ_HANDLE_NULL;
-        stru_5D1138.type = OID_TYPE_NULL;
+    if (player_pc_obj != OBJ_HANDLE_NULL) {
+        player_pc_obj = OBJ_HANDLE_NULL;
+        player_pc_oid.type = OID_TYPE_NULL;
     }
 
     qword_5D1150 = OBJ_HANDLE_NULL;
@@ -48,8 +48,8 @@ void player_reset()
 // 0x40D720
 void player_exit()
 {
-    if (pcObj != OBJ_HANDLE_NULL) {
-        pcObj = OBJ_HANDLE_NULL;
+    if (player_pc_obj != OBJ_HANDLE_NULL) {
+        player_pc_obj = OBJ_HANDLE_NULL;
     }
 
     qword_5D1150 = OBJ_HANDLE_NULL;
@@ -64,11 +64,11 @@ bool player_save(TigFile* stream)
         return false;
     }
 
-    if (pcObj == OBJ_HANDLE_NULL) {
+    if (player_pc_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    temp_object_id = sub_407EF0(pcObj);
+    temp_object_id = sub_407EF0(player_pc_obj);
     if (tig_file_fwrite(&temp_object_id, sizeof(temp_object_id), 1, stream) != 1) {
         return false;
     }
@@ -90,13 +90,13 @@ bool player_load(GameLoadInfo* load_info)
         return false;
     }
 
-    stru_5D1138 = temp_object_id;
-    pcObj = objp_perm_lookup(temp_object_id);
-    if (pcObj == OBJ_HANDLE_NULL) {
+    player_pc_oid = temp_object_id;
+    player_pc_obj = objp_perm_lookup(temp_object_id);
+    if (player_pc_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    location = obj_field_int64_get(pcObj, OBJ_F_LOCATION);
+    location = obj_field_int64_get(player_pc_obj, OBJ_F_LOCATION);
     scroll_set_center(location);
     sub_4B8CE0(location);
     sub_4604E0();
@@ -107,8 +107,8 @@ bool player_load(GameLoadInfo* load_info)
 // 0x40D860
 void sub_40D860()
 {
-    if (stru_5D1138.type != OID_TYPE_NULL) {
-        pcObj = objp_perm_lookup(stru_5D1138);
+    if (player_pc_oid.type != OID_TYPE_NULL) {
+        player_pc_obj = objp_perm_lookup(player_pc_oid);
     }
 }
 
@@ -136,7 +136,7 @@ void player_create()
     tig_debug_printf("player_create: loc: X: %d, Y: %d\n",
         (int)LOCATION_GET_X(loc),
         (int)LOCATION_GET_Y(loc));
-    if (!object_create(qword_5D1150, loc, &pcObj)) {
+    if (!object_create(qword_5D1150, loc, &player_pc_obj)) {
         tig_debug_printf("player_create: Error: failed to create player!\n");
         exit(EXIT_FAILURE);
     }
@@ -146,20 +146,20 @@ void player_create()
         exit(EXIT_FAILURE);
     }
 
-    obj_field_int32_set(pcObj, OBJ_F_AID, art_id);
-    obj_field_int32_set(pcObj, OBJ_F_CURRENT_AID, art_id);
+    obj_field_int32_set(player_pc_obj, OBJ_F_AID, art_id);
+    obj_field_int32_set(player_pc_obj, OBJ_F_CURRENT_AID, art_id);
 
-    stru_5D1138 = sub_407EF0(pcObj);
+    player_pc_oid = sub_407EF0(player_pc_obj);
 }
 
 // 0x40D9F0
-bool player_is_pc_obj(object_id_t object_id)
+bool player_is_pc_obj(int64_t object_id)
 {
-    return object_id != OBJ_HANDLE_NULL && object_id == pcObj;
+    return object_id != OBJ_HANDLE_NULL && object_id == player_pc_obj;
 }
 
 // 0x40DA20
-bool sub_40DA20(object_id_t object_id)
+bool sub_40DA20(int64_t object_id)
 {
     if (object_id != OBJ_HANDLE_NULL) {
         return obj_field_int32_get(object_id, OBJ_F_TYPE) == OBJ_TYPE_PC;
@@ -169,16 +169,16 @@ bool sub_40DA20(object_id_t object_id)
 }
 
 // 0x40DA50
-object_id_t player_get_pc_obj()
+int64_t player_get_pc_obj()
 {
-    object_id_t obj = pcObj;
+    int64_t obj = player_pc_obj;
 
     if (obj != OBJ_HANDLE_NULL) {
-        if (sub_4E5470(pcObj) || stru_5D1138.type == OID_TYPE_NULL) {
-            obj = pcObj;
+        if (sub_4E5470(player_pc_obj) || player_pc_oid.type == OID_TYPE_NULL) {
+            obj = player_pc_obj;
         } else {
-            pcObj = objp_perm_lookup(stru_5D1138);
-            obj = pcObj;
+            player_pc_obj = objp_perm_lookup(player_pc_oid);
+            obj = player_pc_obj;
         }
     }
 
@@ -188,90 +188,90 @@ object_id_t player_get_pc_obj()
 // 0x40DAB0
 bool sub_40DAB0()
 {
-    if (pcObj == OBJ_HANDLE_NULL) {
+    if (player_pc_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    sub_43CCA0(pcObj);
-    pcObj = OBJ_HANDLE_NULL;
-    stru_5D1138.type = OID_TYPE_NULL;
+    sub_43CCA0(player_pc_obj);
+    player_pc_obj = OBJ_HANDLE_NULL;
+    player_pc_oid.type = OID_TYPE_NULL;
 
     return true;
 }
 
 // 0x40DAF0
-bool sub_40DAF0(object_id_t obj)
+bool sub_40DAF0(int64_t obj)
 {
-    pcObj = obj;
+    player_pc_obj = obj;
     if (obj != OBJ_HANDLE_NULL) {
-        stru_5D1138 = sub_407EF0(obj);
+        player_pc_oid = sub_407EF0(obj);
         sub_4604E0();
     } else {
-        stru_5D1138.type = OID_TYPE_NULL;
+        player_pc_oid.type = OID_TYPE_NULL;
     }
 
     return true;
 }
 
 // 0x40DB50
-void sub_40DB50(PlayerSpec* player_spec)
+void player_create_info_init(PlayerCreateInfo* player_create_info)
 {
-    player_spec->field_0 = OBJ_HANDLE_NULL;
-    player_spec->loc = 0;
-    player_spec->field_28 = 0;
-    player_spec->field_2C = -1;
+    player_create_info->obj = OBJ_HANDLE_NULL;
+    player_create_info->loc = 0;
+    player_create_info->flags = 0;
+    player_create_info->basic_prototype = -1;
 }
 
 // 0x40DB70
-bool player_obj_create_player(PlayerSpec* player_spec)
+bool player_obj_create_player(PlayerCreateInfo* player_create_info)
 {
-    object_id_t old_handle = OBJ_HANDLE_NULL;
+    int64_t old_handle = OBJ_HANDLE_NULL;
     int64_t loc;
     char str[80];
 
-    if (player_spec->field_2C == -1) {
-        qword_5D1160 = sub_468570(15);
+    if (player_create_info->basic_prototype != -1) {
+        player_pc_prototype_obj = objp_perm_lookup(sub_407EF0(sub_4685A0(player_create_info->basic_prototype)));
     } else {
-        qword_5D1160 = objp_perm_lookup(sub_407EF0(sub_4685A0(player_spec->field_2C)));
+        player_pc_prototype_obj = sub_468570(OBJ_TYPE_PC);
     }
 
-    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x2) != 0) {
-        loc = player_spec->loc;
+    if ((player_create_info->flags & PLAYER_CREATE_INFO_LOC) != 0) {
+        loc = player_create_info->loc;
     } else {
-        // TODO: Looks that same as above, check.
-        loc = player_spec->loc;
+        // TODO: Looks the same as above, check.
+        loc = player_create_info->loc;
     }
 
-    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x1) != 0) {
-        old_handle = player_spec->field_0;
+    if ((player_create_info->flags & PLAYER_CREATE_INFO_OBJ) != 0) {
+        old_handle = player_create_info->obj;
     }
 
-    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x4) == 0) {
-        if (pcObj != OBJ_HANDLE_NULL) {
+    if ((player_create_info->flags & PLAYER_CREATE_INFO_NETWORK) == 0) {
+        if (player_pc_obj != OBJ_HANDLE_NULL) {
             sub_40DAB0();
         }
     }
 
-    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x1) != 0) {
-        objid_id_to_str(str, player_spec->field_8);
+    if ((player_create_info->flags & PLAYER_CREATE_INFO_OBJ) != 0) {
+        objid_id_to_str(str, player_create_info->oid);
         tig_debug_printf("player_obj_create_player: Player ID: %s\n", str);
-        if (!sub_43CBF0(qword_5D1160, loc, player_spec->field_8, &(player_spec->field_0))) {
+        if (!sub_43CBF0(player_pc_prototype_obj, loc, player_create_info->oid, &(player_create_info->obj))) {
             tig_debug_printf("player_obj_create_player: Error: failed to create player!\n");
             exit(EXIT_FAILURE);
         }
     } else {
-        if (!object_create(qword_5D1160, loc, &(player_spec->field_0))) {
+        if (!object_create(player_pc_prototype_obj, loc, &(player_create_info->obj))) {
             tig_debug_printf("player_obj_create_player: Error: failed to create player!\n");
             exit(EXIT_FAILURE);
         }
 
-        player_spec->field_8 = sub_407EF0(player_spec->field_0);
-        objid_id_to_str(str, player_spec->field_8);
+        player_create_info->oid = sub_407EF0(player_create_info->obj);
+        objid_id_to_str(str, player_create_info->oid);
         tig_debug_printf("player_obj_create_player: Player ID: %s\n", str);
     }
 
-    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x1) != 0) {
-        if (old_handle != player_spec->field_0) {
+    if ((player_create_info->flags & PLAYER_CREATE_INFO_OBJ) != 0) {
+        if (old_handle != player_create_info->obj) {
             // FIXME: Using println with newline character.
             tig_debug_println("ERROR: : object_create created new handle instead of using current one!\n");
         }
@@ -280,18 +280,18 @@ bool player_obj_create_player(PlayerSpec* player_spec)
     tig_debug_printf("player_obj_create_player: StartLoc: X: %d, Y: %d\n",
         (int)LOCATION_GET_X(loc),
         (int)LOCATION_GET_Y(loc));
-    obj_field_int64_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_DEST, loc);
-    obj_field_int32_set(player_spec->field_0, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
+    obj_field_int64_set(player_create_info->obj, OBJ_F_CRITTER_TELEPORT_DEST, loc);
+    obj_field_int32_set(player_create_info->obj, OBJ_F_CRITTER_TELEPORT_MAP, sub_40FF40());
 
-    if ((player_spec->field_28 & PLAYER_SPEC_FLAG_0x4) == 0) {
-        pcObj = player_spec->field_0;
-        stru_5D1138 = sub_407EF0(pcObj);
-        tig_debug_printf("pcObj == %I64u\n", pcObj);
+    if ((player_create_info->flags & PLAYER_CREATE_INFO_NETWORK) == 0) {
+        player_pc_obj = player_create_info->obj;
+        player_pc_oid = sub_407EF0(player_pc_obj);
+        tig_debug_printf("pcObj == %I64u\n", player_pc_obj);
     }
 
-    level_set_level(player_spec->field_0, 1);
-    sub_463E20(player_spec->field_0);
-    obj_field_int32_set(player_spec->field_0, OBJ_F_CRITTER_INVENTORY_SOURCE, 0);
+    level_set_level(player_create_info->obj, 1);
+    sub_463E20(player_create_info->obj);
+    obj_field_int32_set(player_create_info->obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 0);
     sub_4604E0();
 
     return true;

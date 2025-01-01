@@ -4,19 +4,19 @@
 #include "game/context.h"
 #include "game/obj.h"
 
-#define PLAYER_SPEC_FLAG_0x1 0x1
-#define PLAYER_SPEC_FLAG_0x2 0x2
-#define PLAYER_SPEC_FLAG_0x4 0x4
+#define PLAYER_CREATE_INFO_OBJ 0x0001
+#define PLAYER_CREATE_INFO_LOC 0x0002
+#define PLAYER_CREATE_INFO_NETWORK 0x0004
 
-typedef struct PlayerSpec {
-    object_id_t field_0;
-    ObjectID field_8;
+typedef struct PlayerCreateInfo {
+    int64_t obj;
+    ObjectID oid;
     int64_t loc;
-    int field_28;
-    int field_2C;
-} PlayerSpec;
+    unsigned int flags;
+    int basic_prototype;
+} PlayerCreateInfo;
 
-static_assert(sizeof(PlayerSpec) == 0x30, "wrong size");
+static_assert(sizeof(PlayerCreateInfo) == 0x30, "wrong size");
 
 bool player_init(GameInitInfo* init_info);
 void player_reset();
@@ -25,12 +25,12 @@ bool player_save(TigFile* stream);
 bool player_load(GameLoadInfo* load_info);
 void sub_40D860();
 void player_create();
-bool player_is_pc_obj(object_id_t object_id);
-bool sub_40DA20(object_id_t object_id);
-object_id_t player_get_pc_obj();
+bool player_is_pc_obj(int64_t object_id);
+bool sub_40DA20(int64_t object_id);
+int64_t player_get_pc_obj();
 bool sub_40DAB0();
-bool sub_40DAF0(object_id_t obj);
-void sub_40DB50(PlayerSpec* player_spec);
-bool player_obj_create_player(PlayerSpec* player_spec);
+bool sub_40DAF0(int64_t obj);
+void player_create_info_init(PlayerCreateInfo* player_create_info);
+bool player_obj_create_player(PlayerCreateInfo* player_create_info);
 
 #endif /* ARCANUM_GAME_PLAYER_H_ */

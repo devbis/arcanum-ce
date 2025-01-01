@@ -4443,18 +4443,15 @@ void sub_5446D0()
 // 0x5446F0
 void sub_5446F0()
 {
-    int64_t pc_obj;
-    PlayerSpec player_create_info;
+    PlayerCreateInfo player_create_info;
 
     dword_64C458 = 0;
     dword_64C414 = 12;
     sub_4A2BC0();
 
-    pc_obj = player_get_pc_obj();
-
-    sub_40DB50(&player_create_info);
-    player_create_info.loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
-    player_create_info.field_2C = 16066;
+    player_create_info_init(&player_create_info);
+    player_create_info.loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    player_create_info.basic_prototype = 16066;
     if (!player_obj_create_player(&player_create_info)) {
         tig_debug_printf("MainMenu-UI: mainmenu_ui_create_pick_new_or_pregen: ERROR: Player Creation Failed!\n");
         exit(EXIT_FAILURE);
@@ -5099,27 +5096,22 @@ bool sub_5459F0(tig_button_handle_t button_handle)
 // 0x545B60
 bool mmUIPregenCharExecuteFunc(int btn)
 {
-    int64_t pc_obj;
-    PlayerSpec player_create_info;
+    PlayerCreateInfo player_create_info;
     MesFileEntry mes_file_entry;
     int index;
-    int64_t new_pc_obj;
     int flag;
 
     (void)btn;
 
     dword_64C418 = 1;
 
-    pc_obj = player_get_pc_obj();
-    sub_40DB50(&player_create_info);
-    player_create_info.loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
-    player_create_info.field_2C = dword_5C5308 + 16066;
+    player_create_info_init(&player_create_info);
+    player_create_info.loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
+    player_create_info.basic_prototype = dword_5C5308 + 16066;
     if (!player_obj_create_player(&player_create_info)) {
         tig_debug_printf("MainMenu-UI: mmUIPregenCharExecuteFunc: ERROR: Player Creation Failed!\n");
         exit(EXIT_FAILURE);
     }
-
-    new_pc_obj = player_create_info.field_0;
 
     for (index = 0; index < dword_5C361C - 1; index++) {
         mes_file_entry.num = 551 + index;
@@ -5130,7 +5122,7 @@ bool mmUIPregenCharExecuteFunc(int btn)
         }
     }
 
-    sub_4654F0(new_pc_obj, OBJ_HANDLE_NULL);
+    sub_4654F0(player_create_info.obj, OBJ_HANDLE_NULL);
     sub_5412D0();
 
     return true;

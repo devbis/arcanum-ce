@@ -207,7 +207,7 @@ typedef struct S5E8940 {
 static_assert(sizeof(S5E8940) == 0x10, "wrong size");
 
 static void sub_49CB80(S5E8AD0* a1);
-static void multiplayer_start_play(PlayerSpec* player_create_info);
+static void multiplayer_start_play(PlayerCreateInfo* player_create_info);
 static bool sub_49D570(TimeEvent* timeevent);
 static void multiplayer_handle_message(void* msg);
 static void sub_4A1F30(int64_t obj, int64_t location, int dx, int dy);
@@ -675,7 +675,7 @@ bool sub_49CC70(const char* a1, const char* a2)
     char str[512];
     int map;
     char* map_name;
-    PlayerSpec player_create_info;
+    PlayerCreateInfo player_create_info;
     int idx;
     char pc_file_base_name[40];
     char src[TIG_MAX_PATH];
@@ -771,9 +771,9 @@ bool sub_49CC70(const char* a1, const char* a2)
 
         multiplayer_start_play(&player_create_info);
         sub_52A950();
-        sub_4B8CE0(obj_field_int64_get(player_create_info.field_0, OBJ_F_LOCATION));
+        sub_4B8CE0(obj_field_int64_get(player_create_info.obj, OBJ_F_LOCATION));
 
-        objid_id_to_str(pc_file_base_name, sub_407EF0(player_create_info.field_0));
+        objid_id_to_str(pc_file_base_name, sub_407EF0(player_create_info.obj));
         sprintf(dst, "%s\\Players", ".\\data\\temp");
         if (!tig_file_is_directory(dst)) {
             tig_file_mkdir(dst);
@@ -796,7 +796,7 @@ bool sub_49CC70(const char* a1, const char* a2)
 }
 
 // 0x49D100
-void multiplayer_start_play(PlayerSpec* player_create_info)
+void multiplayer_start_play(PlayerCreateInfo* player_create_info)
 {
     int64_t loc;
     int poison;
@@ -806,7 +806,7 @@ void multiplayer_start_play(PlayerSpec* player_create_info)
     DateTime datetime;
     TimeEvent timeevent;
 
-    sub_40DB50(player_create_info);
+    player_create_info_init(player_create_info);
     sub_410280(&loc);
     player_create_info->loc = location_make(1, 1);
     mes_load("mes\\MultiPlayer.mes", &mes_file);
@@ -818,19 +818,19 @@ void multiplayer_start_play(PlayerSpec* player_create_info)
     modal_dialog_info.redraw = sub_4045A0;
 
     if (sub_4A40D0(0)) {
-        if (!sub_4420D0(sub_4A4180(0), &(player_create_info->field_0), player_create_info->loc)) {
+        if (!sub_4420D0(sub_4A4180(0), &(player_create_info->obj), player_create_info->loc)) {
             exit(EXIT_FAILURE);
         }
 
-        stru_5E8AD0[0].field_8 = sub_407EF0(player_create_info->field_0);
-        sub_40DAF0(player_create_info->field_0);
-        critter_fatigue_damage_set(player_create_info->field_0, 0);
-        object_set_hp_damage(player_create_info->field_0, 0);
-        sub_43D280(player_create_info->field_0, OF_OFF);
+        stru_5E8AD0[0].field_8 = sub_407EF0(player_create_info->obj);
+        sub_40DAF0(player_create_info->obj);
+        critter_fatigue_damage_set(player_create_info->obj, 0);
+        object_set_hp_damage(player_create_info->obj, 0);
+        sub_43D280(player_create_info->obj, OF_OFF);
 
-        poison = stat_get_base(player_create_info->field_0, STAT_POISON_LEVEL);
+        poison = stat_get_base(player_create_info->obj, STAT_POISON_LEVEL);
         if (poison != 0) {
-            stat_set_base(player_create_info->field_0, STAT_POISON_LEVEL, poison);
+            stat_set_base(player_create_info->obj, STAT_POISON_LEVEL, poison);
         }
     } else {
         mes_file_entry.num = 903;
@@ -839,25 +839,25 @@ void multiplayer_start_play(PlayerSpec* player_create_info)
         modal_dialog_info.text = mes_file_entry.str;
         tig_window_modal_dialog(&modal_dialog_info, NULL);
 
-        player_create_info->field_0 = OBJ_HANDLE_NULL;
-        player_create_info->field_28 = 0x2;
+        player_create_info->obj = OBJ_HANDLE_NULL;
+        player_create_info->flags = PLAYER_CREATE_INFO_LOC;
         if (!player_obj_create_player(player_create_info)) {
             tig_debug_printf("MP: multiplayer_start_play could not create_player");
             exit(EXIT_FAILURE);
         }
 
-        stru_5E8AD0[0].field_8 = player_create_info->field_8;
-        obj_field_string_set(player_create_info->field_0, OBJ_F_PC_PLAYER_NAME, tig_net_client_info_get_name(0));
+        stru_5E8AD0[0].field_8 = player_create_info->oid;
+        obj_field_string_set(player_create_info->obj, OBJ_F_PC_PLAYER_NAME, tig_net_client_info_get_name(0));
     }
 
-    sub_4A6010(player_create_info->field_0);
-    sub_4A5670(player_create_info->field_0);
-    sub_4EDF20(player_create_info->field_0, loc, 0, 0, false);
+    sub_4A6010(player_create_info->obj);
+    sub_4A5670(player_create_info->obj);
+    sub_4EDF20(player_create_info->obj, loc, 0, 0, false);
 
     datetime.days = 0;
     datetime.milliseconds = 0;
     timeevent.type = TIMEEVENT_TYPE_TELEPORTED;
-    timeevent.params[0].object_value = player_create_info->field_0;
+    timeevent.params[0].object_value = player_create_info->obj;
     sub_45B800(&timeevent, &datetime);
 
     mes_unload(mes_file);
