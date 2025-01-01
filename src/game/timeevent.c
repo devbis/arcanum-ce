@@ -177,7 +177,7 @@ static TimeEventNode* dword_5E7638[TIME_TYPE_COUNT];
 static TimeEventNode* dword_5E7E14[TIME_TYPE_COUNT];
 
 // 0x5E85F0
-static int dword_5E85F0;
+static bool timeevent_editor;
 
 // 0x5E85F8
 static DateTime stru_5E85F8;
@@ -505,7 +505,7 @@ bool timeevent_do_nothing(TimeEvent* timeevent)
 // 0x45AD90
 bool timeevent_init(GameInitInfo* init_info)
 {
-    dword_5E85F0 = init_info->editor;
+    timeevent_editor = init_info->editor;
 
     if (!timeevent_initialized) {
         dword_5E7638[0] = 0;
@@ -1061,7 +1061,7 @@ bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime,
         return false;
     }
 
-    if (dword_5E85F0 != 0) {
+    if (timeevent_editor) {
         return false;
     }
 
@@ -1159,7 +1159,7 @@ bool sub_45BAF0(TimeEvent* timeevent)
         return false;
     }
 
-    if (dword_5E85F0 != 0) {
+    if (timeevent_editor) {
         return false;
     }
 
