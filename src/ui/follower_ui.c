@@ -266,7 +266,7 @@ void follower_ui_reset()
 }
 
 // 0x56A8D0
-void follower_ui_resize(ResizeInfo* resize_info)
+void follower_ui_resize(GameResizeInfo* resize_info)
 {
     TigRect* rects;
     int index;

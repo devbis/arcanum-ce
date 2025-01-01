@@ -99,7 +99,7 @@ extern Ryan stru_5E2F60;
 extern int64_t object_hover_obj;
 
 bool object_init(GameInitInfo* init_info);
-void object_resize(ResizeInfo* resize_info);
+void object_resize(GameResizeInfo* resize_info);
 void object_reset();
 void object_exit();
 void object_ping(tig_timestamp_t timestamp);

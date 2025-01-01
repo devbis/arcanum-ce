@@ -82,7 +82,7 @@ static void* light_indoor_palette;
 static int dword_602E44;
 
 // 0x602E48
-static TigRect light_iso_window_bounds;
+static TigRect light_iso_content_rect;
 
 // 0x602E58
 static TigPalette* dword_602E58;
@@ -204,10 +204,10 @@ bool light_init(GameInitInfo* init_info)
         return false;
     }
 
-    light_iso_window_bounds.x = 0;
-    light_iso_window_bounds.y = 0;
-    light_iso_window_bounds.width = window_data.rect.width;
-    light_iso_window_bounds.height = window_data.rect.height;
+    light_iso_content_rect.x = 0;
+    light_iso_content_rect.y = 0;
+    light_iso_content_rect.width = window_data.rect.width;
+    light_iso_content_rect.height = window_data.rect.height;
 
     dword_60340C = tig_video_3d_check_initialized() == TIG_OK;
 
@@ -247,10 +247,10 @@ void light_exit()
 }
 
 // 0x4D8160
-void light_resize(ResizeContext* resize_info)
+void light_resize(GameResizeInfo* resize_info)
 {
-    light_iso_window_handle = resize_info->iso_window_handle;
-    light_iso_window_bounds = resize_info->field_14;
+    light_iso_window_handle = resize_info->window_handle;
+    light_iso_content_rect = resize_info->content_rect;
     sub_4DE060();
 
     if (!sub_4DDF50()) {
@@ -339,7 +339,7 @@ void light_render(UnknownContext* render_info)
         return;
     }
 
-    sub_4B8730(light_iso_window_bounds.width / 2, light_iso_window_bounds.height / 2, &center_loc);
+    sub_4B8730(light_iso_content_rect.width / 2, light_iso_content_rect.height / 2, &center_loc);
     sub_4B8680(center_loc, &cx, &cy);
     cx += 40;
     cy += 20;
@@ -1991,10 +1991,10 @@ bool sub_4DDF50()
 {
     sub_4DE060();
 
-    dword_602E44 = light_iso_window_bounds.width + 320;
+    dword_602E44 = light_iso_content_rect.width + 320;
     dword_603418 = dword_602E44 / 40 + 1;
 
-    dword_602EA4 = light_iso_window_bounds.height + 160;
+    dword_602EA4 = light_iso_content_rect.height + 160;
     dword_60341C = dword_602EA4 / 20 + 1;
 
     TigVideoBufferCreateInfo vb_create_info;
@@ -2568,7 +2568,7 @@ void light_invalidate_rect(TigRect* rect, bool invalidate_objects)
     if (rect != NULL) {
         dirty_rect = *rect;
     } else {
-        dirty_rect = light_iso_window_bounds;
+        dirty_rect = light_iso_content_rect;
     }
 
     dirty_rect.x -= 40;

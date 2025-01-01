@@ -150,7 +150,7 @@ void combat_ui_reset()
 }
 
 // 0x56EC00
-void combat_ui_resize(ResizeInfo* resize_info)
+void combat_ui_resize(GameResizeInfo* resize_info)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -162,8 +162,8 @@ void combat_ui_resize(ResizeInfo* resize_info)
         return;
     }
 
-    stru_680EC0.x = resize_info->field_4.x + resize_info->field_4.width - art_frame_data.width - 2;
-    stru_680EC0.y = resize_info->field_4.y + art_frame_data.height + 4;
+    stru_680EC0.x = resize_info->window_rect.x + resize_info->window_rect.width - art_frame_data.width - 2;
+    stru_680EC0.y = resize_info->window_rect.y + art_frame_data.height + 4;
 
     if (combat_ui_created) {
         if (intgame_is_compact_interface()) {

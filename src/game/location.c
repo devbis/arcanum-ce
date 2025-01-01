@@ -4,7 +4,7 @@
 #include "game/target.h"
 
 // 0x5FC278
-static TigRect location_iso_window_bounds;
+static TigRect location_iso_content_rect;
 
 // 0x5FC288
 static int64_t location_limit_y;
@@ -58,10 +58,10 @@ bool location_init(GameInitInfo* init_info)
     location_iso_window_handle = init_info->iso_window_handle;
     location_iso_invalidate_rect = init_info->invalidate_rect_func;
 
-    location_iso_window_bounds.x = 0;
-    location_iso_window_bounds.y = 0;
-    location_iso_window_bounds.width = window_data.rect.width;
-    location_iso_window_bounds.height = window_data.rect.height;
+    location_iso_content_rect.x = 0;
+    location_iso_content_rect.y = 0;
+    location_iso_content_rect.width = window_data.rect.width;
+    location_iso_content_rect.height = window_data.rect.height;
 
     location_origin_x = 0;
     location_origin_y = 0;
@@ -84,12 +84,12 @@ void location_exit()
 }
 
 // 0x4B8540
-void location_resize(ResizeContext* resize_info)
+void location_resize(GameResizeInfo* resize_info)
 {
-    location_iso_window_bounds = resize_info->field_14;
-    location_iso_window_handle = resize_info->iso_window_handle;
-    location_screen_center_x = location_iso_window_bounds.width / 2;
-    location_screen_center_y = location_iso_window_bounds.height / 2;
+    location_iso_content_rect = resize_info->content_rect;
+    location_iso_window_handle = resize_info->window_handle;
+    location_screen_center_x = location_iso_content_rect.width / 2;
+    location_screen_center_y = location_iso_content_rect.height / 2;
 }
 
 // 0x4B85A0
@@ -119,7 +119,7 @@ bool location_update_view(ViewOptions* view_options)
     }
 
     if (view_options->zoom >= 12 && view_options->zoom <= 64) {
-        location_origin_x = location_iso_window_bounds.width;
+        location_origin_x = location_iso_content_rect.width;
         location_origin_y = 0;
         location_view_options = *view_options;
         sub_4B8CE0(v1);
@@ -215,8 +215,8 @@ void sub_4B8940(int64_t location, int64_t* x, int64_t* y)
         location_origin_y = 0;
         sub_4B8680(0, &x1, &y1);
         sub_4B8680(location, &x2, &y2);
-        *x = x1 + location_iso_window_bounds.width / 2 - x2 - saved_x;
-        *y = y1 + location_iso_window_bounds.height / 2 - y2 - saved_y;
+        *x = x1 + location_iso_content_rect.width / 2 - x2 - saved_x;
+        *y = y1 + location_iso_content_rect.height / 2 - y2 - saved_y;
 
         location_origin_x = saved_x;
         location_origin_y = saved_y;
@@ -246,17 +246,17 @@ void sub_4B8B30(int64_t dx, int64_t dy)
                     return;
                 }
 
-                if (!sub_4B8730(-dx, location_iso_window_bounds.height - dy, &tmp)) {
+                if (!sub_4B8730(-dx, location_iso_content_rect.height - dy, &tmp)) {
                     return;
                 }
             }
         } else {
             if (dy + location_origin_y + qword_5FC2D8 > location_screen_center_y) {
-                if (!sub_4B8730(location_iso_window_bounds.width - dx, -dy, &tmp)) {
+                if (!sub_4B8730(location_iso_content_rect.width - dx, -dy, &tmp)) {
                     return;
                 }
 
-                if (!sub_4B8730(location_iso_window_bounds.width - dx, location_iso_window_bounds.height - dy, &tmp)) {
+                if (!sub_4B8730(location_iso_content_rect.width - dx, location_iso_content_rect.height - dy, &tmp)) {
                     return;
                 }
             }
@@ -275,7 +275,7 @@ void sub_4B8CE0(int64_t location)
 
     sub_4B8940(location, &x, &y);
     sub_4B8B30(x, y);
-    location_iso_invalidate_rect(&location_iso_window_bounds);
+    location_iso_invalidate_rect(&location_iso_content_rect);
     if (dword_5FC2F8 != NULL) {
         dword_5FC2F8(location);
     }
@@ -436,7 +436,7 @@ bool sub_4B9130(TigRect* rect, LocRect* loc_rect)
     if (rect != NULL) {
         frame = *rect;
     } else {
-        frame = location_iso_window_bounds;
+        frame = location_iso_content_rect;
     }
 
     sub_4B98B0(frame.x, frame.y, &tmp, &(loc_rect->y1));

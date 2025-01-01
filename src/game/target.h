@@ -164,7 +164,7 @@ extern const char* off_5BC428[];
 bool target_init(GameInitInfo* init_info);
 void target_exit();
 void target_reset();
-void target_resize(ResizeInfo* resize_info);
+void target_resize(GameResizeInfo* resize_info);
 void sub_4F25B0(uint64_t flags);
 uint64_t sub_4F25D0();
 void sub_4F25E0(S603D20* a1);

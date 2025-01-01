@@ -52,7 +52,7 @@ static_assert(sizeof(Shadow) == 0x10, "wrong size");
 
 bool light_init(GameInitInfo* init_info);
 void light_exit();
-void light_resize(ResizeContext* resize_info);
+void light_resize(GameResizeInfo* resize_info);
 bool light_update_view(ViewOptions* view_options);
 void sub_4D81F0();
 void sub_4D8210();

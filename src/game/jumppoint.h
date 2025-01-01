@@ -19,7 +19,7 @@ static_assert(sizeof(JumpPoint) == 0x20, "wrong size");
 bool jumppoint_init(GameInitInfo* init_info);
 void jumppoint_reset();
 void jumppoint_exit();
-void jumppoint_resize(ResizeInfo* resize_info);
+void jumppoint_resize(GameResizeInfo* resize_info);
 void sub_4E3050(MapResetInfo* a1);
 bool jumppoint_open(const char* a1, const char* a2);
 void jumppoint_close();

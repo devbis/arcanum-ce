@@ -281,9 +281,9 @@ void sector_exit()
 }
 
 // 0x4CF2C0
-void sector_resize(ResizeInfo* resize_info)
+void sector_resize(GameResizeInfo* resize_info)
 {
-    sector_iso_window_handle = resize_info->iso_window_handle;
+    sector_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4CF320

@@ -90,9 +90,9 @@ void wp_exit()
 }
 
 // 0x4BFDA0
-void wp_resize(ResizeInfo* resize_info)
+void wp_resize(GameResizeInfo* resize_info)
 {
-    wp_iso_window_handle = resize_info->iso_window_handle;
+    wp_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4BFDB0

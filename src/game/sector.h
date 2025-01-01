@@ -38,7 +38,7 @@ typedef bool(SectorLockFunc)(const char* path);
 bool sector_init(GameInitInfo* init_info);
 void sector_reset();
 void sector_exit();
-void sector_resize(ResizeInfo* resize_info);
+void sector_resize(GameResizeInfo* resize_info);
 void sub_4CF320();
 bool sector_update_view(ViewOptions* view_options);
 void sub_4CF360(SectorLockFunc* func);

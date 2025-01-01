@@ -28,7 +28,7 @@ static location_t scroll_center;
 static int dword_5D1188;
 
 // 0x5D1190
-static TigRect scroll_rect;
+static TigRect scroll_iso_content_rect;
 
 // 0x5D11A0
 static int dword_5D11A0;
@@ -60,10 +60,10 @@ bool scroll_init(GameInitInfo* init_info)
         return false;
     }
 
-    scroll_rect.width = window_data.rect.width;
-    scroll_rect.height = window_data.rect.height;
-    scroll_rect.y = 0;
-    scroll_rect.x = 0;
+    scroll_iso_content_rect.width = window_data.rect.width;
+    scroll_iso_content_rect.height = window_data.rect.height;
+    scroll_iso_content_rect.y = 0;
+    scroll_iso_content_rect.x = 0;
 
     scroll_init_info = *init_info;
 
@@ -88,10 +88,10 @@ void scroll_reset()
 }
 
 // 0x40E020
-void scroll_resize(ResizeContext* ctx)
+void scroll_resize(GameResizeInfo* resize_info)
 {
-    scroll_rect = ctx->field_14;
-    scroll_init_info.iso_window_handle = ctx->iso_window_handle;
+    scroll_iso_content_rect = resize_info->content_rect;
+    scroll_init_info.iso_window_handle = resize_info->window_handle;
 }
 
 // 0x40E060
@@ -192,8 +192,8 @@ void scroll_start_scrolling_in_direction(int direction)
     center_x = LOCATION_MAKE(LOCATION_GET_X(center_x) + 40, LOCATION_GET_Y(center_x) + 40);
     center_y = LOCATION_MAKE(LOCATION_GET_X(center_y) + 20, LOCATION_GET_Y(center_y) + 20);
 
-    v1 = scroll_rect.width / 2;
-    v2 = scroll_rect.height / 2;
+    v1 = scroll_iso_content_rect.width / 2;
+    v2 = scroll_iso_content_rect.height / 2;
 
     v3 = abs(v1 - dx - (int)center_x);
     v4 = abs(v2 - dy - (int)center_y);
@@ -344,11 +344,11 @@ void sub_40E630(int64_t dx, int64_t dy)
     tig_window_scroll(scroll_init_info.iso_window_handle, (int)dx, (int)dy);
 
     if (dx > 0) {
-        rect = scroll_rect;
+        rect = scroll_iso_content_rect;
         rect.width = (int)dx;
         scroll_init_info.invalidate_rect_func(&rect);
     } else if (dx < 0) {
-        rect = scroll_rect;
+        rect = scroll_iso_content_rect;
         rect.x = rect.width + (int)dx;
         rect.width = -((int)dx);
         scroll_init_info.invalidate_rect_func(&rect);
@@ -359,12 +359,12 @@ void sub_40E630(int64_t dx, int64_t dy)
     }
 
     if (dy < 0) {
-        rect = scroll_rect;
+        rect = scroll_iso_content_rect;
         rect.y += rect.height + (int)dy;
         rect.height = -(int)dy;
         scroll_init_info.invalidate_rect_func(&rect);
     } else if (dy > 0) {
-        rect = scroll_rect;
+        rect = scroll_iso_content_rect;
         rect.height = (int)dy;
         scroll_init_info.invalidate_rect_func(&rect);
     }
@@ -374,7 +374,7 @@ void sub_40E630(int64_t dx, int64_t dy)
     if (!scroll_init_info.editor) {
         int64_t loc;
 
-        sub_4B8730(scroll_rect.width / 2, scroll_rect.height / 2, &loc);
+        sub_4B8730(scroll_iso_content_rect.width / 2, scroll_iso_content_rect.height / 2, &loc);
         if (loc != qword_5D11B8) {
             sub_41C6D0(loc);
             qword_5D11B8 = loc;

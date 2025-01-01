@@ -47,7 +47,7 @@ typedef void(GameUiModuleUnloadFunc)();
 typedef void(GameUiExitFunc)();
 typedef bool(GameUiSaveFunc)(TigFile* stream);
 typedef bool(GameUiLoadFunc)(GameLoadInfo* load_info);
-typedef void(GameUiResizeFunc)(ResizeInfo* resize_info);
+typedef void(GameUiResizeFunc)(GameResizeInfo* resize_info);
 
 typedef struct GameUiLibModule {
     const char* name;
@@ -166,7 +166,7 @@ void gameuilib_reset()
 }
 
 // 0x53E700
-void gameuilib_resize(ResizeContext* resize_info)
+void gameuilib_resize(GameResizeInfo* resize_info)
 {
     int index;
 

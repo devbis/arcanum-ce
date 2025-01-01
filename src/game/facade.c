@@ -60,9 +60,9 @@ void facade_exit()
 }
 
 // 0x4C9DF0
-void facade_resize(ResizeInfo* resize_info)
+void facade_resize(GameResizeInfo* resize_info)
 {
-    facade_iso_window_handle = resize_info->iso_window_handle;
+    facade_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4C9E00

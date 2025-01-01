@@ -45,7 +45,7 @@ static DateTime stru_5B5EC0[8] = {
 static uint8_t* off_5FC350;
 
 // 0x5FC358
-static TigRect stru_5FC358;
+static TigRect monstergen_iso_content_rect;
 
 // 0x4BA380
 bool monstergen_init(GameInitInfo* init_info)
@@ -56,10 +56,10 @@ bool monstergen_init(GameInitInfo* init_info)
         return false;
     }
 
-    stru_5FC358.x = 0;
-    stru_5FC358.y = 0;
-    stru_5FC358.width = window_data.rect.width;
-    stru_5FC358.height = window_data.rect.height;
+    monstergen_iso_content_rect.x = 0;
+    monstergen_iso_content_rect.y = 0;
+    monstergen_iso_content_rect.width = window_data.rect.width;
+    monstergen_iso_content_rect.height = window_data.rect.height;
 
     off_5FC350 = (uint8_t*)CALLOC(256, 1);
 
@@ -83,9 +83,9 @@ void monstergen_exit()
 }
 
 // 0x4BA430
-void monstergen_resize(ResizeInfo* resize_info)
+void monstergen_resize(GameResizeInfo* resize_info)
 {
-    stru_5FC358 = resize_info->field_14;
+    monstergen_iso_content_rect = resize_info->content_rect;
 }
 
 // 0x4BA460
@@ -232,10 +232,10 @@ bool sub_4BA790(int64_t obj, DateTime* datetime)
 
         if ((generator_info.field_0 & 0x4) != 0) {
             object_get_rect(obj, 0x8, &rect);
-            if (rect.x < stru_5FC358.width + stru_5FC358.x
-                && rect.y < stru_5FC358.height + stru_5FC358.y
-                && stru_5FC358.x < rect.x + rect.width
-                && stru_5FC358.y < rect.y + rect.height) {
+            if (rect.x < monstergen_iso_content_rect.width + monstergen_iso_content_rect.x
+                && rect.y < monstergen_iso_content_rect.height + monstergen_iso_content_rect.y
+                && monstergen_iso_content_rect.x < rect.x + rect.width
+                && monstergen_iso_content_rect.y < rect.y + rect.height) {
                 break;
             }
         }
@@ -315,10 +315,10 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
 
                     dx = (int)(target_x - x + rect.x);
                     dy = (int)(target_y - y + rect.y);
-                    if (dx >= stru_5FC358.x + stru_5FC358.width
-                        || dy >= stru_5FC358.y + stru_5FC358.height
-                        || stru_5FC358.x >= dx + rect.width
-                        || stru_5FC358.y >= dy + rect.height) {
+                    if (dx >= monstergen_iso_content_rect.x + monstergen_iso_content_rect.width
+                        || dy >= monstergen_iso_content_rect.y + monstergen_iso_content_rect.height
+                        || monstergen_iso_content_rect.x >= dx + rect.width
+                        || monstergen_iso_content_rect.y >= dy + rect.height) {
                         break;
                     }
                 }

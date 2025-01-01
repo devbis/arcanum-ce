@@ -64,7 +64,7 @@ static int float_speed;
 static ViewOptions text_floater_view_options;
 
 // 0x6028B0
-static TigRect stru_6028B0;
+static TigRect tf_iso_content_rect;
 
 // 0x6028C0
 static tig_color_t dword_6028C0;
@@ -113,10 +113,10 @@ bool tf_init(GameInitInfo* init_info)
 
     tf_iso_window_handle = init_info->iso_window_handle;
 
-    stru_6028B0.x = 0;
-    stru_6028B0.y = 0;
-    stru_6028B0.width = window_data.rect.width;
-    stru_6028B0.height = window_data.rect.height;
+    tf_iso_content_rect.x = 0;
+    tf_iso_content_rect.y = 0;
+    tf_iso_content_rect.width = window_data.rect.width;
+    tf_iso_content_rect.height = window_data.rect.height;
 
     text_floater_view_options.type = VIEW_TYPE_ISOMETRIC;
     tf_iso_invalidate_rect = init_info->invalidate_rect_func;
@@ -155,10 +155,10 @@ bool tf_init(GameInitInfo* init_info)
 }
 
 // 0x4D5050
-void tf_resize(ResizeInfo* resize_info)
+void tf_resize(GameResizeInfo* resize_info)
 {
-    stru_6028B0 = resize_info->field_14;
-    tf_iso_window_handle = resize_info->iso_window_handle;
+    tf_iso_content_rect = resize_info->content_rect;
+    tf_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4D5090

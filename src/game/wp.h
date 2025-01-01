@@ -5,7 +5,7 @@
 
 bool wp_init(GameInitInfo* init_info);
 void wp_exit();
-void wp_resize(ResizeInfo* resize_info);
+void wp_resize(GameResizeInfo* resize_info);
 bool sub_4BFDB0(ViewOptions* view_options);
 bool sub_4BFDD0();
 void sub_4BFDE0();

@@ -23,15 +23,13 @@ typedef struct GameInitInfo {
 
 static_assert(sizeof(GameInitInfo) == 0x10, "wrong size");
 
-typedef struct ResizeContext {
-    int iso_window_handle;
-    TigRect field_4;
-    TigRect field_14;
-} ResizeContext;
+typedef struct GameResizeInfo {
+    tig_window_handle_t window_handle;
+    TigRect window_rect;
+    TigRect content_rect;
+} GameResizeInfo;
 
-typedef ResizeContext ResizeInfo;
-
-static_assert(sizeof(ResizeContext) == 0x24, "wrong size");
+static_assert(sizeof(GameResizeInfo) == 0x24, "wrong size");
 
 typedef struct LoadContext {
     int version;

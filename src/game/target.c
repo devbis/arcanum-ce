@@ -46,7 +46,7 @@ static int dword_5BC48C[12] = {
 static PathCreateInfo stru_603B88;
 
 // 0x603BB0
-static TigRect stru_603BB0;
+static TigRect target_iso_content_rect;
 
 // 0x603BC4
 static int8_t byte_603BC4[200];
@@ -87,7 +87,7 @@ bool target_init(GameInitInfo* init_info)
         return false;
     }
 
-    stru_603BB0 = window_data.rect;
+    target_iso_content_rect = window_data.rect;
     sub_4F2600(&stru_603CB8, &stru_603D20, OBJ_HANDLE_NULL);
     target_initialized = true;
 
@@ -107,9 +107,9 @@ void target_reset()
 }
 
 // 0x4F2580
-void target_resize(ResizeInfo* resize_info)
+void target_resize(GameResizeInfo* resize_info)
 {
-    stru_603BB0 = resize_info->field_14;
+    target_iso_content_rect = resize_info->content_rect;
 }
 
 // 0x4F25B0
@@ -223,19 +223,19 @@ bool sub_4F2830(TigMouseMessageData* mouse, S4F2810* a2, bool fullscreen)
     int x;
     int y;
 
-    if (mouse->x < stru_603BB0.x
-        || mouse->x >= stru_603BB0.x + stru_603BB0.width
-        || mouse->y < stru_603BB0.y
-        || mouse->y >= stru_603BB0.y + stru_603BB0.height) {
+    if (mouse->x < target_iso_content_rect.x
+        || mouse->x >= target_iso_content_rect.x + target_iso_content_rect.width
+        || mouse->y < target_iso_content_rect.y
+        || mouse->y >= target_iso_content_rect.y + target_iso_content_rect.height) {
         return false;
     }
 
-    x = mouse->x - stru_603BB0.x;
+    x = mouse->x - target_iso_content_rect.x;
     y = mouse->y;
 
     // FIXME: Looks odd, why `x` is not treat in the same way?
     if (!fullscreen) {
-        y -= stru_603BB0.y;
+        y -= target_iso_content_rect.y;
     }
 
     return sub_4F28A0(x, y, a2);
@@ -396,9 +396,9 @@ bool sub_4F2CB0(int x, int y, S4F2810* a3, uint64_t tgt, bool fullscreen)
     uint64_t old_tgt;
     bool rc;
 
-    x -= stru_603BB0.x;
+    x -= target_iso_content_rect.x;
     if (!fullscreen) {
-        y -= stru_603BB0.y;
+        y -= target_iso_content_rect.y;
     }
 
     old_tgt = sub_4F25D0();

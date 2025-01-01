@@ -182,9 +182,9 @@ void roof_exit()
 }
 
 // 0x4390F0
-void roof_resize(ResizeInfo* resize_info)
+void roof_resize(GameResizeInfo* resize_info)
 {
-    roof_iso_window_handle = resize_info->iso_window_handle;
+    roof_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x439100

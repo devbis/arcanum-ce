@@ -154,7 +154,7 @@ static mes_file_handle_t item_mes_file;
 static int dword_5E8800;
 
 // 0x5E8808
-static TigRect stru_5E8808;
+static TigRect item_iso_content_rect;
 
 // 0x5E8818
 static int64_t qword_5E8818;
@@ -173,10 +173,10 @@ bool item_init(GameInitInfo* init_info)
         return false;
     }
 
-    stru_5E8808.x = 0;
-    stru_5E8808.y = 0;
-    stru_5E8808.width = window_data.rect.width;
-    stru_5E8808.height = window_data.rect.height;
+    item_iso_content_rect.x = 0;
+    item_iso_content_rect.y = 0;
+    item_iso_content_rect.width = window_data.rect.width;
+    item_iso_content_rect.height = window_data.rect.height;
 
     item_editor = init_info->editor;
 
@@ -215,9 +215,9 @@ void item_exit()
 }
 
 // 0x460FC0
-void item_resize(ResizeInfo *resize_info)
+void item_resize(GameResizeInfo *resize_info)
 {
-    stru_5E8808 = resize_info->field_14;
+    item_iso_content_rect = resize_info->content_rect;
 }
 
 // 0x460FF0
@@ -1984,10 +1984,10 @@ void sub_463C60(int64_t obj)
 
         object_get_rect(obj, 0x08, &obj_rect);
 
-        if (obj_rect.x >= stru_5E8808.x + stru_5E8808.width
-            || obj_rect.y >= stru_5E8808.height + stru_5E8808.y
-            || stru_5E8808.x >= obj_rect.x + obj_rect.width
-            || stru_5E8808.y >= obj_rect.y + obj_rect.height) {
+        if (obj_rect.x >= item_iso_content_rect.x + item_iso_content_rect.width
+            || obj_rect.y >= item_iso_content_rect.height + item_iso_content_rect.y
+            || item_iso_content_rect.x >= obj_rect.x + obj_rect.width
+            || item_iso_content_rect.y >= obj_rect.y + obj_rect.height) {
             v1 = true;
             sub_440FC0(obj, OBJ_TM_NPC, &objects);
             node = objects.head;

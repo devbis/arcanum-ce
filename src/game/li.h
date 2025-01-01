@@ -5,7 +5,7 @@
 
 bool li_init(GameInitInfo* init_info);
 void li_exit();
-void li_resize(ResizeInfo* resize_info);
+void li_resize(GameResizeInfo* resize_info);
 void sub_4BBC00();
 void sub_4BBC10();
 int sub_4BBC20();

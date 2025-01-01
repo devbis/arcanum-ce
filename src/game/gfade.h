@@ -16,7 +16,7 @@ static_assert(sizeof(FadeData) == 0x14, "wrong size");
 
 bool gfade_init(GameInitInfo* init_info);
 void gfade_exit();
-void gfade_resize(ResizeInfo* resize_info);
+void gfade_resize(GameResizeInfo* resize_info);
 void sub_4BDFA0(FadeData* fade_data);
 bool gfade_timeevent_process(TimeEvent* timeevent);
 

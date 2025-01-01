@@ -51,7 +51,7 @@ typedef bool(MapSaveFunc)(TigFile* stream);
 typedef bool(MapLoadFunc)(GameLoadInfo* load_info);
 typedef void(MapCloseFunc)();
 typedef void(MapFlushFunc)(MapResetInfo* reset_info);
-typedef void(MapResizeFunc)(ResizeInfo* resize_info);
+typedef void(MapResizeFunc)(GameResizeInfo* resize_info);
 
 typedef struct MapModule {
     const char* name;
@@ -266,11 +266,11 @@ void map_reset()
 }
 
 // 0x40ECE0
-void map_resize(ResizeContext* ctx)
+void map_resize(GameResizeInfo* resize_info)
 {
     for (int index = 0; index < MAP_MODULE_COUNT; index++) {
         if (map_modules[index].resize_func != NULL) {
-            map_modules[index].resize_func(ctx);
+            map_modules[index].resize_func(resize_info);
         }
     }
 }

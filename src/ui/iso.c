@@ -21,7 +21,7 @@ static int dword_64C710;
 static tig_window_handle_t iso_window_handle;
 
 // 0x64C718
-static TigRect stru_64C718;
+static TigRect iso_content_rect;
 
 // 0x557DF0
 bool iso_init(GameInitInfo* init_info)
@@ -35,11 +35,11 @@ bool iso_init(GameInitInfo* init_info)
 
     iso_window_handle = init_info->iso_window_handle;
 
-    stru_64C718.x = 0;
-    stru_64C718.y = 0;
-    stru_64C718.width = window_data.rect.width;
-    stru_64C718.height = window_data.rect.height;
-    sub_558130(&stru_64C718);
+    iso_content_rect.x = 0;
+    iso_content_rect.y = 0;
+    iso_content_rect.width = window_data.rect.width;
+    iso_content_rect.height = window_data.rect.height;
+    sub_558130(&iso_content_rect);
 
     iso_interface_create(iso_window_handle);
     iso_interface_created = true;
@@ -67,11 +67,11 @@ void iso_reset()
 }
 
 // 0x557ED0
-void iso_resize(ResizeInfo* resize_info)
+void iso_resize(GameResizeInfo* resize_info)
 {
-    iso_window_handle = resize_info->iso_window_handle;
-    stru_64C718 = resize_info->field_14;
-    sub_5581A0(&stru_64C718);
+    iso_window_handle = resize_info->window_handle;
+    iso_content_rect = resize_info->content_rect;
+    sub_5581A0(&iso_content_rect);
 }
 
 // 0x557F30
@@ -93,7 +93,7 @@ void sub_557FD0(const char* str)
     TigWindowData window_data;
     TigFont font;
 
-    rect = stru_64C718;
+    rect = iso_content_rect;
     if (tig_window_data(iso_window_handle, &window_data) == TIG_OK) {
         rect = window_data.rect;
     }
@@ -131,8 +131,8 @@ void sub_558130(TigRect* rect)
     if (rect != NULL) {
         stru_64C6F8 = *rect;
     } else {
-        stru_64C6F8 = stru_64C718;
-        sub_5581A0(&stru_64C718);
+        stru_64C6F8 = iso_content_rect;
+        sub_5581A0(&iso_content_rect);
     }
 }
 

@@ -11,7 +11,7 @@ static void sub_4E25B0(int64_t obj);
 static void sub_4E2C50(int64_t obj);
 
 // 0x603420
-static TigRect wall_iso_window_bounds;
+static TigRect wall_iso_content_rect;
 
 // 0x603430
 static bool wall_editor;
@@ -43,10 +43,10 @@ bool wall_init(GameInitInfo* init_info)
         return false;
     }
 
-    wall_iso_window_bounds.x = 0;
-    wall_iso_window_bounds.y = 0;
-    wall_iso_window_bounds.width = window_data.rect.width;
-    wall_iso_window_bounds.height = window_data.rect.height;
+    wall_iso_content_rect.x = 0;
+    wall_iso_content_rect.y = 0;
+    wall_iso_content_rect.width = window_data.rect.width;
+    wall_iso_content_rect.height = window_data.rect.height;
 
     wall_view_options.type = VIEW_TYPE_ISOMETRIC;
     wall_editor = init_info->editor;
@@ -64,10 +64,10 @@ void wall_exit()
 }
 
 // 0x4DF480
-void wall_resize(ResizeInfo* resize_info)
+void wall_resize(GameResizeInfo* resize_info)
 {
-    wall_iso_window_handle = resize_info->iso_window_handle;
-    wall_iso_window_bounds = resize_info->field_14;
+    wall_iso_window_handle = resize_info->window_handle;
+    wall_iso_content_rect = resize_info->content_rect;
 }
 
 // 0x4DF4C0
@@ -159,9 +159,9 @@ void sub_4E1C00(UnknownContext* render_info)
             while (node != NULL) {
                 sub_4B8680(loc, &loc_x, &loc_y);
                 if (loc_x >= -wall_view_options.zoom
-                    && loc_x <= wall_iso_window_bounds.width
+                    && loc_x <= wall_iso_content_rect.width
                     && loc_y >= -wall_view_options.zoom
-                    && loc_y <= wall_iso_window_bounds.height) {
+                    && loc_y <= wall_iso_content_rect.height) {
                     aid = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
                     rotation = tig_art_id_rotation_get(aid);
                     if ((rotation & 1) != 0) {

@@ -12,7 +12,7 @@ typedef enum MapType {
 
 bool map_init(GameInitInfo* init_info);
 void map_reset();
-void map_resize(ResizeContext* ctx);
+void map_resize(GameResizeInfo* resize_info);
 bool map_mod_load();
 void map_mod_unload();
 void map_exit();

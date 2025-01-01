@@ -91,14 +91,14 @@ void tile_exit()
 }
 
 // 0x4D68C0
-void tile_resize(ResizeContext* ctx)
+void tile_resize(GameResizeInfo* resize_info)
 {
-    if (tig_window_vbid_get(ctx->iso_window_handle, &dword_602DF0) != TIG_OK) {
+    if (tig_window_vbid_get(resize_info->window_handle, &dword_602DF0) != TIG_OK) {
         tig_debug_printf("tile_resize: ERROR: couldn't grab window vbid!");
         exit(EXIT_FAILURE);
     }
 
-    tile_iso_window_handle = ctx->iso_window_handle;
+    tile_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4D6900

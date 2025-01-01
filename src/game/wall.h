@@ -5,7 +5,7 @@
 
 bool wall_init(GameInitInfo* init_info);
 void wall_exit();
-void wall_resize(ResizeInfo* resize_info);
+void wall_resize(GameResizeInfo* resize_info);
 bool wall_update_view(ViewOptions* view_options);
 void wall_toggle();
 void wall_render(UnknownContext* render_info);

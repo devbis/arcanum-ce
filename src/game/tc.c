@@ -125,7 +125,7 @@ void tc_exit()
 }
 
 // 0x4C95A0
-void tc_resize(ResizeInfo* resize_info)
+void tc_resize(GameResizeInfo* resize_info)
 {
     bool was_active;
 
@@ -134,8 +134,8 @@ void tc_resize(ResizeInfo* resize_info)
         tc_hide();
     }
 
-    tc_iso_window_handle = resize_info->iso_window_handle;
-    tc_iso_window_rect = resize_info->field_4;
+    tc_iso_window_handle = resize_info->window_handle;
+    tc_iso_window_rect = resize_info->window_rect;
 
     if (was_active) {
         tc_show();

@@ -79,9 +79,9 @@ void tile_script_exit()
 }
 
 // 0x4C05D0
-void tile_script_resize(ResizeInfo* resize_info)
+void tile_script_resize(GameResizeInfo* resize_info)
 {
-    tile_script_iso_window_handle = resize_info->iso_window_handle;
+    tile_script_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4C05E0

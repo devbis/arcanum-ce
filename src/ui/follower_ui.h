@@ -7,7 +7,7 @@
 bool follower_ui_init(GameInitInfo* init_info);
 void follower_ui_exit();
 void follower_ui_reset();
-void follower_ui_resize(ResizeInfo* resize_info);
+void follower_ui_resize(GameResizeInfo* resize_info);
 bool follower_ui_load(GameLoadInfo* load_info);
 bool follower_ui_save(TigFile* stream);
 void sub_56B180(S4F2810* a1);

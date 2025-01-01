@@ -56,9 +56,9 @@ void gfade_exit()
 }
 
 // 0x4BDF80
-void gfade_resize(ResizeInfo* resize_info)
+void gfade_resize(GameResizeInfo* resize_info)
 {
-    fade_iso_window_handle = resize_info->iso_window_handle;
+    fade_iso_window_handle = resize_info->window_handle;
     tig_window_vbid_get(fade_iso_window_handle, &fade_iso_video_buffer);
 }
 

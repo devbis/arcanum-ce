@@ -76,7 +76,7 @@ void li_exit()
 }
 
 // 0x4BBB20
-void li_resize(ResizeInfo* resize_info)
+void li_resize(GameResizeInfo* resize_info)
 {
     TigArtFrameData art_frame_data;
     TigWindowData window_data;
@@ -88,7 +88,7 @@ void li_resize(ResizeInfo* resize_info)
         exit(EXIT_FAILURE);
     }
 
-    if (tig_window_data(resize_info->iso_window_handle, &window_data) != TIG_OK) {
+    if (tig_window_data(resize_info->window_handle, &window_data) != TIG_OK) {
         tig_debug_printf("li_resize: ERROR: couldn't grab window data!");
         exit(EXIT_FAILURE);
     }

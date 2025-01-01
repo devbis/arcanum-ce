@@ -6,7 +6,7 @@
 bool gameuilib_init(GameInitInfo* init_info);
 void gameuilib_exit();
 void gameuilib_reset();
-void gameuilib_resize(ResizeInfo* resize_info);
+void gameuilib_resize(GameResizeInfo* resize_info);
 bool gameuilib_mod_load();
 void gameuilib_mod_unload();
 bool gameuilib_save();

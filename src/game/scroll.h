@@ -20,7 +20,7 @@ typedef void(ScrollFunc)(int direction);
 bool scroll_init(GameInitInfo* init_info);
 void scroll_exit();
 void scroll_reset();
-void scroll_resize(ResizeInfo* resize_info);
+void scroll_resize(GameResizeInfo* resize_info);
 bool scroll_update_view(ViewOptions* view_options);
 void scroll_start_scrolling_in_direction(int direction);
 void scroll_stop_scrolling();

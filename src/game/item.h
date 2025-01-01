@@ -49,7 +49,7 @@ typedef enum ItemCannot {
 
 bool item_init(GameInitInfo* init_info);
 void item_exit();
-void item_resize(ResizeInfo *resize_info);
+void item_resize(GameResizeInfo *resize_info);
 void sub_460FF0(int64_t critter_obj);
 bool item_parent(object_id_t object_id, object_id_t* parent_object_id);
 bool item_is_item(object_id_t object_id);

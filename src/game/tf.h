@@ -19,7 +19,7 @@ typedef enum TextFloaterLevel {
 } TextFloaterLevel;
 
 bool tf_init(GameInitInfo* init_info);
-void tf_resize(ResizeInfo* resize_info);
+void tf_resize(GameResizeInfo* resize_info);
 void tf_reset();
 void tf_exit();
 bool tf_update_view(ViewOptions* view_options);

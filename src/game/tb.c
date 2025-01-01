@@ -52,7 +52,7 @@ static int dword_5B8EC0[9][8] = {
 };
 
 // 0x602920
-static TigRect tb_iso_window_bounds;
+static TigRect tb_iso_content_rect;
 
 // 0x602930
 static TextBlock tb_text_blocks[MAX_TEXT_BLOCKS];
@@ -94,10 +94,10 @@ bool tb_init(GameInitInfo* init_info)
     }
 
     tb_iso_window_handle = init_info->iso_window_handle;
-    tb_iso_window_bounds.x = 0;
-    tb_iso_window_bounds.y = 0;
-    tb_iso_window_bounds.width = window_data.rect.width;
-    tb_iso_window_bounds.height = window_data.rect.height;
+    tb_iso_content_rect.x = 0;
+    tb_iso_content_rect.y = 0;
+    tb_iso_content_rect.width = window_data.rect.width;
+    tb_iso_content_rect.height = window_data.rect.height;
     tb_iso_window_invalidate_rect = init_info->invalidate_rect_func;
     tb_view_options.type = VIEW_TYPE_ISOMETRIC;
     tb_enabled = true;
@@ -160,10 +160,10 @@ void tb_exit()
 }
 
 // 0x4D5E20
-void tb_resize(ResizeInfo* resize_info)
+void tb_resize(GameResizeInfo* resize_info)
 {
-    tb_iso_window_bounds = resize_info->field_14;
-    tb_iso_window_handle = resize_info->iso_window_handle;
+    tb_iso_content_rect = resize_info->content_rect;
+    tb_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4D5E60
@@ -470,10 +470,10 @@ static void sub_4D6410(TextBlock* tb, long long location, int offset_x, int offs
                 break;
             }
 
-            if (rect->x >= tb_iso_window_bounds.x
-                && rect->y >= tb_iso_window_bounds.y
-                && rect->x + rect->width <= tb_iso_window_bounds.x + tb_iso_window_bounds.width
-                && rect->y + rect->height <= tb_iso_window_bounds.y + tb_iso_window_bounds.height) {
+            if (rect->x >= tb_iso_content_rect.x
+                && rect->y >= tb_iso_content_rect.y
+                && rect->x + rect->width <= tb_iso_content_rect.x + tb_iso_content_rect.width
+                && rect->y + rect->height <= tb_iso_content_rect.y + tb_iso_content_rect.height) {
                 break;
             }
         }

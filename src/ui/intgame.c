@@ -989,21 +989,21 @@ void intgame_reset()
 }
 
 // 0x549F60
-void intgame_resize(ResizeInfo* resize_info)
+void intgame_resize(GameResizeInfo* resize_info)
 {
     int index;
     TigWindowData window_data;
     TigRect rect;
 
     sub_57DA50();
-    dword_64C52C = resize_info->iso_window_handle;
+    dword_64C52C = resize_info->window_handle;
 
     if (dword_5C7288 != TIG_WINDOW_HANDLE_INVALID) {
         tig_window_destroy(dword_5C7288);
         dword_5C7288 = TIG_WINDOW_HANDLE_INVALID;
     }
 
-    if (resize_info->field_14.height == 400) {
+    if (resize_info->content_rect.height == 400) {
         hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
 
         for (index = 0; index < 5; index++) {
@@ -8132,7 +8132,7 @@ void intgame_set_fullscreen()
 void intgame_toggle_interface()
 {
     TigWindowData window_data;
-    ResizeInfo resize_info;
+    GameResizeInfo resize_info;
     int index;
 
     if (!intgame_fullscreen) {
@@ -8141,7 +8141,7 @@ void intgame_toggle_interface()
 
     tig_debug_printf("Resizing Iso View...");
 
-    resize_info.iso_window_handle = dword_64C52C;
+    resize_info.window_handle = dword_64C52C;
     intgame_compact_interface = !intgame_compact_interface;
 
     if (intgame_iso_window != TIG_WINDOW_HANDLE_INVALID) {
@@ -8150,12 +8150,12 @@ void intgame_toggle_interface()
             exit(EXIT_FAILURE);
         }
 
-        resize_info.field_4 = window_data.rect;
-        resize_info.field_14 = window_data.rect;
+        resize_info.window_rect = window_data.rect;
+        resize_info.content_rect = window_data.rect;
 
         if (!intgame_is_compact_interface()) {
-            resize_info.field_14.x = 0;
-            resize_info.field_14.y = 41;
+            resize_info.content_rect.x = 0;
+            resize_info.content_rect.y = 41;
         }
 
         if (intgame_compact_interface) {
@@ -8172,8 +8172,8 @@ void intgame_toggle_interface()
         } else {
             stru_64C510 = stru_5C63B0;
 
-            resize_info.field_4.height = 400;
-            resize_info.field_14.height = 400;
+            resize_info.window_rect.height = 400;
+            resize_info.content_rect.height = 400;
 
             gamelib_resize(&resize_info);
             gameuilib_resize(&resize_info);

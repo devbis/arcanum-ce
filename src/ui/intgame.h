@@ -12,7 +12,7 @@ extern tig_font_handle_t dword_739F88;
 
 bool intgame_init(GameInitInfo* init_info);
 void intgame_reset();
-void intgame_resize(ResizeInfo* resize_info);
+void intgame_resize(GameResizeInfo* resize_info);
 void intgame_exit();
 bool intgame_save(TigFile* stream);
 bool intgame_load(GameLoadInfo* load_info);

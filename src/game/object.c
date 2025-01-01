@@ -155,7 +155,7 @@ static tig_color_t object_reaction_colors[REACTION_COUNT];
 bool dword_5E2E94;
 
 // 0x5E2E98
-static TigRect object_iso_window_bounds;
+static TigRect object_iso_content_rect;
 
 // 0x5E2EA8
 tig_art_id_t object_hover_underlay_art_id;
@@ -206,7 +206,7 @@ static bool dword_5E2F28;
 static bool object_lighting;
 
 // 0x5E2F30
-static TigRect object_iso_window_bounds_ex;
+static TigRect object_iso_content_rect_ex;
 
 // 0x5E2F44
 static ObjectRenderColorsNode* dword_5E2F44;
@@ -251,15 +251,15 @@ bool object_init(GameInitInfo* init_info)
     object_view_options.type = VIEW_TYPE_ISOMETRIC;
     object_editor = init_info->editor;
 
-    object_iso_window_bounds.x = 0;
-    object_iso_window_bounds.y = 0;
-    object_iso_window_bounds.width = window_data.rect.width;
-    object_iso_window_bounds.height = window_data.rect.height;
+    object_iso_content_rect.x = 0;
+    object_iso_content_rect.y = 0;
+    object_iso_content_rect.width = window_data.rect.width;
+    object_iso_content_rect.height = window_data.rect.height;
 
-    object_iso_window_bounds_ex.x = -256;
-    object_iso_window_bounds_ex.y = -256;
-    object_iso_window_bounds_ex.width = window_data.rect.width + 512;
-    object_iso_window_bounds_ex.height = window_data.rect.height + 512;
+    object_iso_content_rect_ex.x = -256;
+    object_iso_content_rect_ex.y = -256;
+    object_iso_content_rect_ex.width = window_data.rect.width + 512;
+    object_iso_content_rect_ex.height = window_data.rect.height + 512;
 
     qword_5E2F50 = window_data.rect.width / 40 / 2 + 2;
     qword_5E2E60 = window_data.rect.height / 20 / 2 + 2;
@@ -304,16 +304,16 @@ bool object_init(GameInitInfo* init_info)
 }
 
 // 0x43A570
-void object_resize(ResizeInfo* resize_info)
+void object_resize(GameResizeInfo* resize_info)
 {
-    object_iso_window_handle = resize_info->iso_window_handle;
-    object_iso_window_bounds = resize_info->field_14;
-    object_iso_window_bounds_ex.x = object_iso_window_bounds.x - 256;
-    object_iso_window_bounds_ex.y = object_iso_window_bounds.y - 256;
-    object_iso_window_bounds_ex.width = object_iso_window_bounds.width + 512;
-    object_iso_window_bounds_ex.height = object_iso_window_bounds.height + 512;
-    qword_5E2F50 = object_iso_window_bounds.width / 40 / 2 + 2;
-    qword_5E2E60 = object_iso_window_bounds.height / 20 / 2 + 2;
+    object_iso_window_handle = resize_info->window_handle;
+    object_iso_content_rect = resize_info->content_rect;
+    object_iso_content_rect_ex.x = object_iso_content_rect.x - 256;
+    object_iso_content_rect_ex.y = object_iso_content_rect.y - 256;
+    object_iso_content_rect_ex.width = object_iso_content_rect.width + 512;
+    object_iso_content_rect_ex.height = object_iso_content_rect.height + 512;
+    qword_5E2F50 = object_iso_content_rect.width / 40 / 2 + 2;
+    qword_5E2E60 = object_iso_content_rect.height / 20 / 2 + 2;
 }
 
 // 0x43A650
@@ -401,10 +401,10 @@ void object_ping(tig_timestamp_t timestamp)
         return;
     }
 
-    bounds.x = object_iso_window_bounds.x - object_iso_window_bounds.width;
-    bounds.y = object_iso_window_bounds.y - object_iso_window_bounds.height;
-    bounds.width = object_iso_window_bounds.width * 2;
-    bounds.height = object_iso_window_bounds.height * 2;
+    bounds.x = object_iso_content_rect.x - object_iso_content_rect.width;
+    bounds.y = object_iso_content_rect.y - object_iso_content_rect.height;
+    bounds.width = object_iso_content_rect.width * 2;
+    bounds.height = object_iso_content_rect.height * 2;
 
     while (dword_5E2E70 != NULL) {
         next = dword_5E2E70->next;
@@ -1148,7 +1148,7 @@ void sub_43C690(UnknownContext* render_info)
 void object_invalidate_rect(TigRect* rect)
 {
     if (rect == NULL) {
-        rect = &object_iso_window_bounds;
+        rect = &object_iso_content_rect;
     }
 
     if (dword_5E2E70 != NULL) {
@@ -1842,10 +1842,10 @@ void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
         loc_y = 0;
     }
 
-    if ((int)loc_x < object_iso_window_bounds_ex.x
-        || (int)loc_y < object_iso_window_bounds_ex.y
-        || (int)loc_x >= object_iso_window_bounds_ex.x + object_iso_window_bounds_ex.width
-        || (int)loc_y >= object_iso_window_bounds_ex.y + object_iso_window_bounds_ex.height) {
+    if ((int)loc_x < object_iso_content_rect_ex.x
+        || (int)loc_y < object_iso_content_rect_ex.y
+        || (int)loc_x >= object_iso_content_rect_ex.x + object_iso_content_rect_ex.width
+        || (int)loc_y >= object_iso_content_rect_ex.y + object_iso_content_rect_ex.height) {
         rect->x = 0;
         rect->y = 0;
         rect->width = 0;

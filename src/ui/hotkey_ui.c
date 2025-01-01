@@ -141,7 +141,7 @@ void hotkey_ui_exit()
 }
 
 // 0x57D810
-void hotkey_ui_resize(ResizeInfo* resize_info)
+void hotkey_ui_resize(GameResizeInfo* resize_info)
 {
     (void)resize_info;
 

@@ -56,9 +56,9 @@ bool sub_4BB060(ViewOptions* view_info)
 }
 
 // 0x4BB080
-void tileblock_resize(ResizeInfo* resize_info)
+void tileblock_resize(GameResizeInfo* resize_info)
 {
-    tileblock_iso_window = resize_info->iso_window_handle;
+    tileblock_iso_window = resize_info->window_handle;
 }
 
 // 0x4BB090

@@ -5,7 +5,7 @@
 
 bool tc_init(GameInitInfo* init_info);
 void tc_exit();
-void tc_resize(ResizeInfo* resize_info);
+void tc_resize(GameResizeInfo* resize_info);
 void tc_render(UnknownContext* render_info);
 void tc_scroll(int dx, int dy);
 void tc_show();

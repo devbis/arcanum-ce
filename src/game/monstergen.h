@@ -7,7 +7,7 @@
 bool monstergen_init(GameInitInfo* init_info);
 void monstergen_reset();
 void monstergen_exit();
-void monstergen_resize(ResizeInfo* resize_info);
+void monstergen_resize(GameResizeInfo* resize_info);
 bool monstergen_load(GameLoadInfo* load_info);
 bool monstergen_save(TigFile* stream);
 bool sub_4BA790(int64_t obj, DateTime* datetime);

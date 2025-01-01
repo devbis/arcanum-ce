@@ -78,9 +78,9 @@ void jumppoint_exit()
 }
 
 // 0x4E3040
-void jumppoint_resize(ResizeInfo* resize_info)
+void jumppoint_resize(GameResizeInfo* resize_info)
 {
-    jumppoint_iso_window_handle = resize_info->iso_window_handle;
+    jumppoint_iso_window_handle = resize_info->window_handle;
 }
 
 // 0x4E3050

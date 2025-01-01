@@ -53,7 +53,7 @@ bool gamelib_init(GameInitInfo* init_info);
 void gamelib_reset();
 void gamelib_exit();
 void gamelib_ping();
-void gamelib_resize(ResizeInfo* resize_info);
+void gamelib_resize(GameResizeInfo* resize_info);
 void gamelib_default_module_name_set(const char* name);
 const char* gamelib_default_module_name_get();
 void gamelib_modlist_create(GameModuleList* module_list, int type);

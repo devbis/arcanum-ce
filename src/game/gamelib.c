@@ -94,7 +94,7 @@ typedef void(GamePingFunc)(unsigned int time);
 typedef void(GameUpdateViewFunc)(ViewOptions* view_options);
 typedef bool(GameSaveFunc)(TigFile* stream);
 typedef bool(GameLoadFunc)(LoadContext* ctx);
-typedef void(GameResizeFunc)(ResizeContext* ctx);
+typedef void(GameResizeFunc)(GameResizeInfo* resize_info);
 
 typedef struct GameLibModule {
     const char* name;
@@ -214,7 +214,7 @@ static TigRectListNode* dword_5D000C;
 static bool dword_5D0010;
 
 // 0x5D0018
-static TigRect stru_5D0018;
+static TigRect gamelib_iso_content_rect;
 
 // 0x5D0028
 static char byte_5D0028[TEN][MAX_PATH];
@@ -354,10 +354,10 @@ bool gamelib_init(GameInitInfo* init_info)
     dword_5D10C0 = window_data.rect.width / 4;
     dword_5D0D80 = window_data.rect.height / 4;
 
-    stru_5D0018.x = 0;
-    stru_5D0018.y = 0;
-    stru_5D0018.width = window_data.rect.width;
-    stru_5D0018.height = window_data.rect.height;
+    gamelib_iso_content_rect.x = 0;
+    gamelib_iso_content_rect.y = 0;
+    gamelib_iso_content_rect.width = window_data.rect.width;
+    gamelib_iso_content_rect.height = window_data.rect.height;
 
     stru_5D0D60.x = -256;
     stru_5D0D60.y = -256;
@@ -509,23 +509,23 @@ void gamelib_ping()
 }
 
 // 0x4025C0
-void gamelib_resize(ResizeInfo* resize_info)
+void gamelib_resize(GameResizeInfo* resize_info)
 {
     TigVideoBufferCreateInfo vb_create_info;
     int index;
     TigRect bounds;
     TigRect frame;
 
-    stru_5D0E88.iso_window_handle = resize_info->iso_window_handle;
-    stru_5D0018 = resize_info->field_14;
+    stru_5D0E88.iso_window_handle = resize_info->window_handle;
+    gamelib_iso_content_rect = resize_info->content_rect;
 
-    dword_5D0D78 = resize_info->field_4.x;
-    dword_5D0D7C = resize_info->field_4.y;
+    dword_5D0D78 = resize_info->window_rect.x;
+    dword_5D0D7C = resize_info->window_rect.y;
 
-    stru_5D0D60.x = stru_5D0018.x - 256;
-    stru_5D0D60.y = stru_5D0018.y - 256;
-    stru_5D0D60.width = stru_5D0018.width + 512;
-    stru_5D0D60.height = stru_5D0018.height + 512;
+    stru_5D0D60.x = gamelib_iso_content_rect.x - 256;
+    stru_5D0D60.y = gamelib_iso_content_rect.y - 256;
+    stru_5D0D60.width = gamelib_iso_content_rect.width + 512;
+    stru_5D0D60.height = gamelib_iso_content_rect.height + 512;
 
     if (dword_739E7C != NULL) {
         tig_video_buffer_destroy(dword_739E7C);
@@ -533,8 +533,8 @@ void gamelib_resize(ResizeInfo* resize_info)
     }
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
-    vb_create_info.width = stru_5D0018.width;
-    vb_create_info.height = stru_5D0018.height;
+    vb_create_info.width = gamelib_iso_content_rect.width;
+    vb_create_info.height = gamelib_iso_content_rect.height;
     vb_create_info.color_key = tig_color_make(0, 255, 0);
     vb_create_info.background_color = vb_create_info.color_key;
     if (tig_video_buffer_create(&vb_create_info, &dword_739E7C) != TIG_OK) {
@@ -549,7 +549,7 @@ void gamelib_resize(ResizeInfo* resize_info)
     }
 
     if (dword_5D0E98 != NULL) {
-        bounds = resize_info->field_4;
+        bounds = resize_info->window_rect;
         bounds.x = 0;
         bounds.y = 0;
         if (tig_rect_intersection(&(dword_5D0E98->rect), &bounds, &frame) == TIG_OK) {
@@ -811,11 +811,11 @@ void sub_402D30(TigRect* rect)
     if (rect != NULL) {
         dirty_rect = *rect;
 
-        if (tig_rect_intersection(&dirty_rect, &stru_5D0018, &dirty_rect) != TIG_OK) {
+        if (tig_rect_intersection(&dirty_rect, &gamelib_iso_content_rect, &dirty_rect) != TIG_OK) {
             return;
         }
     } else {
-        dirty_rect = stru_5D0018;
+        dirty_rect = gamelib_iso_content_rect;
     }
 
     if (dword_5D0D74) {
@@ -1445,7 +1445,7 @@ bool gamelib_saveinfo_init(const char* name, const char* description, GameSaveIn
 
     win_blit_info.type = TIG_WINDOW_BLT_WINDOW_TO_VIDEO_BUFFER;
     win_blit_info.src_window_handle = stru_5D0E88.iso_window_handle;
-    win_blit_info.src_rect = &stru_5D0018;
+    win_blit_info.src_rect = &gamelib_iso_content_rect;
     win_blit_info.dst_video_buffer = save_info->thumbnail_video_buffer;
     win_blit_info.dst_rect = &dst_rect;
     win_blit_info.vb_blit_flags = 0;
