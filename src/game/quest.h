@@ -24,6 +24,15 @@ typedef struct QuestInfo {
 
 static_assert(sizeof(QuestInfo) == 0x18, "wrong size");
 
+typedef struct PcQuestState {
+    /* 0000 */ int field_0;
+    /* 0004 */ int field_4;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
+} PcQuestState;
+
+static_assert(sizeof(PcQuestState) == 0x10, "wrong size");
+
 bool quest_init(GameInitInfo* init_info);
 void quest_reset();
 void quest_exit();
@@ -39,6 +48,7 @@ int sub_4C5070(int64_t obj, int num);
 int quest_get_state(int id);
 int quest_set_state(int id, int state);
 void quest_copy_description(object_id_t object_id, int quest_id, char* buffer);
+int quest_copy_state(int64_t obj, QuestInfo* quests1);
 int quest_get_xp(int xp_level);
 bool sub_4C5400(int64_t a1, int64_t a2);
 

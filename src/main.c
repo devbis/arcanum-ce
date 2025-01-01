@@ -10,6 +10,7 @@
 #include "game/gamelib.h"
 #include "game/gmovie.h"
 #include "game/gsound.h"
+#include "game/item.h"
 #include "game/level.h"
 #include "game/light_scheme.h"
 #include "game/location.h"
@@ -19,7 +20,9 @@
 #include "game/name.h"
 #include "game/obj.h"
 #include "game/object.h"
+#include "game/path.h"
 #include "game/player.h"
+#include "game/proto.h"
 #include "game/roof.h"
 #include "game/roof.h"
 #include "game/script.h"
@@ -60,6 +63,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     tig_art_id_t cursor_art_id;
     location_t pc_starting_location;
     char msg[80];
+
+    (void)hPrevInstance;
+    (void)nShowCmd;
 
     init_info.texture_width = 1024;
     init_info.texture_height = 1024;
@@ -124,7 +130,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     if (pch != NULL) {
         value = atoi(pch + 10);
         if (value > 0) {
-            sub_421AC0(value);
+            path_set_limit(value);
         }
     }
 
@@ -133,7 +139,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         // FIXME: Length is wrong, should be 14.
         value = atoi(pch + 10);
         if (value > 0) {
-            sub_421AE0(value);
+            path_set_time_limit(value);
         }
     }
 
@@ -159,8 +165,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     init_info.height = 600;
     init_info.bpp = 16;
     init_info.instance = hInstance;
-    init_info.art_file_path_resolver = gamelib_art_file_path_resolver;
-    init_info.art_id_reset_func = gamelib_art_id_reset;
+    init_info.art_file_path_resolver = sub_41DAE0;
+    init_info.art_id_reset_func = sub_41D510;
     init_info.sound_file_path_resolver = gsound_resolve_path;
 
     if (tig_init(&init_info) != TIG_OK) {
@@ -185,8 +191,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     tig_mouse_hide();
 
     game_init_info.editor = false;
-    game_init_info.invalidate_func = sub_5581A0;
-    game_init_info.redraw_func = iso_redraw;
+    game_init_info.field_8 = sub_5581A0;
+    game_init_info.field_C = iso_redraw;
 
     if (!gamelib_init(&game_init_info)) {
         tig_window_destroy(game_init_info.iso_window_handle);
@@ -373,7 +379,7 @@ void main_loop()
                     switch (message.data.keyboard.key) {
                     case DIK_ESCAPE:
                         if (sub_567A10()
-                            || sub_560F90()
+                            || wmap_ui_is_created()
                             || (tig_net_flags & TIG_NET_CONNECTED) != 0
                             || sub_4B6D70()
                             && player_get_pc_obj() != sub_4B6D80()) {
@@ -403,7 +409,7 @@ void main_loop()
                         break;
                     case DIK_F7:
                         if (!sub_45D8D0(player_get_pc_obj())) {
-                            if (sub_560F90()) {
+                            if (wmap_ui_is_created()) {
                                 sub_560F40();
                                 tig_ping();
                                 gamelib_ping();
@@ -433,15 +439,15 @@ void main_loop()
                         break;
                     case DIK_F11:
                         if (sub_402CB0() >= 3) {
-                            for (index = 0; index < 80; index++) {
-                                sub_4B1790(pc_obj, index, 1);
+                            for (index = 0; index < SPELL_COUNT; index++) {
+                                sub_4B1790(pc_obj, index, true);
                             }
 
                             stat_set_base(pc_obj, STAT_INTELLIGENCE, 20);
                             stat_set_base(pc_obj, STAT_WILLPOWER, 20);
 
-                            for (index = 0; index < 80; index++) {
-                                sub_4B1790(pc_obj, index, 1);
+                            for (index = 0; index < SPELL_COUNT; index++) {
+                                sub_4B1790(pc_obj, index, true);
                             }
 
                             sub_44FE20();
@@ -542,6 +548,12 @@ void main_loop()
                                 sub_550770(-1, version_str);
                                 break;
                             case DIK_E:
+                                critter_debug_obj(player_get_pc_obj());
+                                timeevent_debug_lists();
+                                magictech_debug_lists();
+                                anim_stats();
+                                break;
+                            case DIK_X:
                                 tig_mouse_get_state(&mouse_state);
                                 sub_4B8730(mouse_state.x, mouse_state.y, &mouse_loc);
                                 sprintf(mouse_state_str, "x: %d, y: %d",
@@ -555,28 +567,28 @@ void main_loop()
                                 sub_550770(-1, story_state_str);
                                 break;
                             case DIK_LBRACKET:
-                                switch (sub_442040()) {
+                                switch (object_blit_flags_get()) {
                                 case 0:
-                                    sub_442010(TIG_ART_BLT_BLEND_ALPHA_CONST);
+                                    object_blit_flags_set(TIG_ART_BLT_BLEND_ALPHA_CONST);
                                     break;
                                 case TIG_ART_BLT_BLEND_ALPHA_CONST:
-                                    sub_442010(TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S);
+                                    object_blit_flags_set(TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S);
                                     break;
                                 case TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S:
-                                    sub_442010(0);
+                                    object_blit_flags_set(0);
                                     break;
                                 }
                                 break;
                             case DIK_RBRACKET:
-                                switch (sub_43A130()) {
+                                switch (roof_blit_flags_get()) {
                                 case 0:
-                                    sub_43A110(TIG_ART_BLT_BLEND_ALPHA_CONST);
+                                    roof_blit_flags_set(TIG_ART_BLT_BLEND_ALPHA_CONST);
                                     break;
                                 case TIG_ART_BLT_BLEND_ALPHA_CONST:
-                                    sub_43A110(TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S);
+                                    roof_blit_flags_set(TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S);
                                     break;
                                 case TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S:
-                                    sub_43A110(0);
+                                    roof_blit_flags_set(0);
                                     break;
                                 }
                                 break;

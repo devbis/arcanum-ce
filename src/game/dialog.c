@@ -3209,7 +3209,7 @@ bool sub_418870(char* str, DialogEntryNode* a2, int a3)
     DialogEntry entry;
     bool v1;
 
-    sub_407840(a2->npc_obj, OBJ_F_SCRIPTS_IDX, SAP_31, &scr);
+    sub_407840(a2->npc_obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG_OVERRIDE, &scr);
 
     if (scr.num == 0) {
         return false;
@@ -3850,9 +3850,9 @@ void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4)
     MagicTechSerializedData v1;
 
     sub_455A20(&v1, a4->npc_obj, a1);
-    sub_4440E0(a4->pc_obj, &(v1.field_70));
+    sub_4440E0(a4->pc_obj, &(v1.target_obj));
     if (!sub_45DDA0(a4->npc_obj)) {
-        v1.field_DC |= 0x2;
+        v1.flags |= 0x2;
     }
     sub_455AC0(&v1);
     sub_418480(a4->field_70, a4, 15000);

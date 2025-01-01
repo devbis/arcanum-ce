@@ -3,9 +3,9 @@
 #include "game/critter.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
-#include "game/name.h"
 #include "game/obj.h"
 #include "game/object.h"
+#include "game/path.h"
 #include "game/player.h"
 #include "game/random.h"
 #include "game/stat.h"
@@ -152,7 +152,6 @@ void sub_4F2600(S603CB8 *a1, S603D20 *a2, int64_t a3)
     a1->field_48 = 0;
     a1->field_28 = 0;
     a1->field_20 = 0;
-    a1->field_4C = 0;
     a1->field_60 = 0;
 
     if (a2 != NULL) {

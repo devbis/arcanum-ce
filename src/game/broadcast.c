@@ -1,29 +1,53 @@
 #include "game/broadcast.h"
 
+#include "game/ai.h"
+#include "game/anim.h"
+#include "game/critter.h"
 #include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
 #include "game/player.h"
 #include "game/text_filter.h"
+#include "game/ui.h"
 
-typedef struct S5FF404 {
-    char* field_0;
-    int field_4;
-} S5FF404;
+typedef enum BroadcastCommandType {
+    BROADCAST_CMD_TYPE_NONE,
+    BROADCAST_CMD_TYPE_LEAVE,
+    BROADCAST_CMD_TYPE_WAIT,
+    BROADCAST_CMD_TYPE_FOLLOW,
+    BROADCAST_CMD_TYPE_MOVE,
+    BROADCAST_CMD_TYPE_STAY_CLOSE,
+    BROADCAST_CMD_TYPE_SPREAD_OUT,
+    BROADCAST_CMD_TYPE_CURSE,
+    BROADCAST_CMD_TYPE_JOIN,
+    BROADCAST_CMD_TYPE_DISBAND,
+    BROADCAST_CMD_TYPE_ATTACK,
+    BROADCAST_CMD_TYPE_WALK_HERE,
+    BROADCAST_CMD_TYPE_BACK_OFF,
+    BROADCAST_CMD_TYPE_FOLLOW_OTHER,
+    BROADCAST_CMD_TYPE_COUNT,
+} BroadcastCommandType;
+
+typedef struct BroadcastCommand {
+    char* str;
+    int type;
+} BroadcastCommand;
 
 static int broadcast_match_str_to_base_type(const char* str);
 static int sub_4C3B40(const char* str);
 static void sub_4C3B90();
 
 // 0x5FDC4C
-static const char* dword_5FDC4C[14];
+static char* broadcast_cmd_type_lookup[BROADCAST_CMD_TYPE_COUNT];
 
 // 0x5FDC84
-static mes_file_handle_t dword_5FDC84;
+static mes_file_handle_t broadcast_mes_file;
 
 // 0x5FDC88
 static Func5FDC88* dword_5FDC88;
 
 // 0x5FDC8C
-static mes_file_handle_t dword_5FDC8C;
+static mes_file_handle_t broadcast_multiplayer_mes_file;
 
 // 0x5FDC90
 static char byte_5FDC90[6][1000];
@@ -32,10 +56,10 @@ static char byte_5FDC90[6][1000];
 static bool broadcast_initialized;
 
 // 0x5FF404
-static S5FF404* dword_5FF404;
+static BroadcastCommand* broadcast_commands;
 
 // 0x5FF408
-static int dword_5FF408;
+static int num_broadcast_commands;
 
 // 0x4C2C10
 bool broadcast_init(GameInitInfo* init_info)
@@ -48,25 +72,25 @@ bool broadcast_init(GameInitInfo* init_info)
 
     dword_5FDC88 = NULL;
 
-    if (!mes_load("mes\\broadcast.mes", &dword_5FDC84)) {
+    if (!mes_load("mes\\broadcast.mes", &broadcast_mes_file)) {
         tig_debug_printf("broadcast_init: ERROR: couldn't load message file: mes\\broadcast.mes!\n");
         exit(EXIT_FAILURE);
     }
 
-    if (!mes_load("mes\\MultiPlayer.mes", &dword_5FDC8C)) {
+    if (!mes_load("mes\\MultiPlayer.mes", &broadcast_multiplayer_mes_file)) {
         tig_debug_printf("broadcast_init: ERROR: couldn't load message file: %s!\n", "mes\\MultiPlayer.mes");
         exit(EXIT_FAILURE);
     }
 
     mes_file_entry.num = 100;
-    while (mes_search(dword_5FDC84, &mes_file_entry)) {
-        mes_get_msg(dword_5FDC84, &mes_file_entry);
-        dword_5FF404 = (S5FF404*)REALLOC(dword_5FF404, sizeof(*dword_5FF404) * (dword_5FF408 + 1));
-        if (dword_5FF404 == NULL) {
+    while (mes_search(broadcast_mes_file, &mes_file_entry)) {
+        mes_get_msg(broadcast_mes_file, &mes_file_entry);
+        broadcast_commands = (BroadcastCommand*)REALLOC(broadcast_commands, sizeof(*broadcast_commands) * (num_broadcast_commands + 1));
+        if (broadcast_commands == NULL) {
             tig_debug_printf("broadcast_init: ERROR: realloc failed!\n");
             exit(EXIT_FAILURE);
         }
-        dword_5FF404[dword_5FF408++].field_0 = mes_file_entry.str;
+        broadcast_commands[num_broadcast_commands++].str = mes_file_entry.str;
         mes_file_entry.num++;
     }
 
@@ -78,16 +102,16 @@ bool broadcast_init(GameInitInfo* init_info)
     tig_str_parse_set_separator(',');
 
     mes_file_entry.num = 0;
-    for (index = 0; index < 14; index++) {
+    for (index = 0; index < BROADCAST_CMD_TYPE_COUNT; index++) {
         mes_get_msg(mes_file, &mes_file_entry);
-        dword_5FDC4C[index] = mes_file_entry.str;
+        broadcast_cmd_type_lookup[index] = mes_file_entry.str;
         mes_file_entry.num++;
     }
 
     mes_file_entry.num = 100;
-    for (index = 0; index < dword_5FF408; index++) {
+    for (index = 0; index < num_broadcast_commands; index++) {
         mes_get_msg(mes_file, &mes_file_entry);
-        dword_5FF404[index].field_4 = broadcast_match_str_to_base_type(mes_file_entry.str);
+        broadcast_commands[index].type = broadcast_match_str_to_base_type(mes_file_entry.str);
         mes_file_entry.num++;
     }
 
@@ -109,18 +133,18 @@ bool broadcast_init(GameInitInfo* init_info)
 // 0x4C2E20
 void broadcast_exit()
 {
-    if (dword_5FF404 != NULL) {
-        FREE(dword_5FF404);
-        dword_5FF404 = NULL;
+    if (broadcast_commands != NULL) {
+        FREE(broadcast_commands);
+        broadcast_commands = NULL;
     }
 
-    dword_5FF408 = 0;
+    num_broadcast_commands = 0;
 
-    if (!mes_unload(dword_5FDC84)) {
+    if (!mes_unload(broadcast_mes_file)) {
         tig_debug_printf("broadcast_exit: ERROR: couldn't unload message file: bcMessID!\n");
     }
 
-    if (!mes_unload(dword_5FDC8C)) {
+    if (!mes_unload(broadcast_multiplayer_mes_file)) {
         tig_debug_printf("broadcast_exit: ERROR: couldn't unload message file: mp_mes_id!\n");
     }
 
@@ -140,8 +164,8 @@ int broadcast_match_str_to_base_type(const char* str)
 {
     int index;
 
-    for (index = 0; index < 14; index++) {
-        if (strcmpi(str, dword_5FDC4C[index]) == 0) {
+    for (index = 0; index < BROADCAST_CMD_TYPE_COUNT; index++) {
+        if (strcmpi(str, broadcast_cmd_type_lookup[index]) == 0) {
             return index;
         }
     }
@@ -198,9 +222,9 @@ int sub_4C3B40(const char* str)
         str++;
     }
 
-    for (index = 0; index < dword_5FF408; index++) {
-        if (strcmpi(str, dword_5FF404[index].field_0) == 0) {
-            return dword_5FF404[index].field_4;
+    for (index = 0; index < num_broadcast_commands; index++) {
+        if (strcmpi(str, broadcast_commands[index].str) == 0) {
+            return broadcast_commands[index].type;
         }
     }
 
@@ -215,7 +239,7 @@ void sub_4C3B90()
 
     for (index = 0; index < 6; index++) {
         mes_file_entry.num = 500 + index;
-        mes_get_msg(dword_5FDC84, &mes_file_entry);
+        mes_get_msg(broadcast_mes_file, &mes_file_entry);
         strncpy(byte_5FDC90[index], mes_file_entry.str, 1000);
     }
 }

@@ -1,22 +1,28 @@
 #include "game/location.h"
 
+#include "game/path.h"
+#include "game/target.h"
+
 // 0x5FC278
-static TigRect stru_5FC278;
+static TigRect location_iso_window_bounds;
 
 // 0x5FC288
 static int64_t location_limit_y;
 
 // 0x5FC290
-static int64_t qword_5FC290;
+static int64_t location_screen_center_y;
 
 // 0x5FC298
-static GameContextF8* dword_5FC298;
+static GameContextF8* location_iso_invalidate_rect;
 
 // 0x5FC2A0
-static int64_t qword_5FC2A0;
+static int64_t location_screen_center_x;
+
+// 0x5FC2A8
+static int8_t byte_5FC2A8[30];
 
 // 0x5FC2C8
-static bool location_is_in_editor;
+static bool location_editor;
 
 // 0x5FC2CC
 static int location_iso_window_handle;
@@ -28,10 +34,10 @@ static ViewOptions location_view_options;
 static int64_t qword_5FC2D8;
 
 // 0x5FC2E0
-static int64_t qword_5FC2E0;
+static int64_t location_origin_x;
 
 // 0x5FC2E8
-static int64_t qword_5FC2E8;
+static int64_t location_origin_y;
 
 // 0x5FC2F0
 static int64_t location_limit_x;
@@ -50,21 +56,24 @@ bool location_init(GameInitInfo* init_info)
     }
 
     location_iso_window_handle = init_info->iso_window_handle;
-    dword_5FC298 = init_info->field_8;
+    location_iso_invalidate_rect = init_info->field_8;
 
-    stru_5FC278.x = 0;
-    stru_5FC278.y = 0;
-    stru_5FC278.width = window_data.rect.width;
-    stru_5FC278.height = window_data.rect.height;
+    location_iso_window_bounds.x = 0;
+    location_iso_window_bounds.y = 0;
+    location_iso_window_bounds.width = window_data.rect.width;
+    location_iso_window_bounds.height = window_data.rect.height;
 
-    qword_5FC2E0 = 0;
-    qword_5FC2E8 = 0;
+    location_origin_x = 0;
+    location_origin_y = 0;
+
+    location_screen_center_x = window_data.rect.width / 2;
+    location_screen_center_y = window_data.rect.height / 2;
 
     location_set_limits(0x100000000, 0x100000000);
     sub_4B8CE0(sub_4B9810());
 
     location_view_options.type = VIEW_TYPE_ISOMETRIC;
-    location_is_in_editor = init_info->editor;
+    location_editor = init_info->editor;
 
     return true;
 }
@@ -77,10 +86,10 @@ void location_exit()
 // 0x4B8540
 void location_resize(ResizeContext* resize_info)
 {
-    stru_5FC278 = resize_info->field_14;
+    location_iso_window_bounds = resize_info->field_14;
     location_iso_window_handle = resize_info->iso_window_handle;
-    qword_5FC2A0 = stru_5FC278.width / 2;
-    qword_5FC290 = stru_5FC278.height / 2;
+    location_screen_center_x = location_iso_window_bounds.width / 2;
+    location_screen_center_y = location_iso_window_bounds.height / 2;
 }
 
 // 0x4B85A0
@@ -88,7 +97,7 @@ bool location_update_view(ViewOptions* view_options)
 {
     int64_t v1;
 
-    if (!sub_4B8730(qword_5FC2A0, qword_5FC290, &v1)) {
+    if (!sub_4B8730(location_screen_center_x, location_screen_center_y, &v1)) {
         return false;
     }
 
@@ -102,16 +111,16 @@ bool location_update_view(ViewOptions* view_options)
     }
 
     if (view_options->type == VIEW_TYPE_ISOMETRIC) {
-        qword_5FC2E0 = 0;
-        qword_5FC2E8 = 0;
+        location_origin_x = 0;
+        location_origin_y = 0;
         location_view_options = *view_options;
         sub_4B8CE0(v1);
         return true;
     }
 
     if (view_options->zoom >= 12 && view_options->zoom <= 64) {
-        qword_5FC2E0 = stru_5FC278.width;
-        qword_5FC2E8 = 0;
+        location_origin_x = location_iso_window_bounds.width;
+        location_origin_y = 0;
         location_view_options = *view_options;
         sub_4B8CE0(v1);
         return true;
@@ -124,12 +133,68 @@ bool location_update_view(ViewOptions* view_options)
 void sub_4B8680(int64_t location, int64_t* x, int64_t* y)
 {
     if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
-        *x = qword_5FC2E0 + 40 * (LOCATION_GET_Y(location) - LOCATION_GET_X(location) - 1);
-        *y = qword_5FC2E8 + 20 * (LOCATION_GET_X(location) + LOCATION_GET_Y(location));
+        *x = location_origin_x + 40 * (LOCATION_GET_Y(location) - LOCATION_GET_X(location) - 1);
+        *y = location_origin_y + 20 * (LOCATION_GET_Y(location) + LOCATION_GET_X(location));
     } else {
-        *x = qword_5FC2E0 - location_view_options.zoom * LOCATION_GET_X(location);
-        *y = qword_5FC2E8 + location_view_options.zoom * LOCATION_GET_Y(location);
+        *x = location_origin_x - location_view_options.zoom * LOCATION_GET_X(location);
+        *y = location_origin_y + location_view_options.zoom * LOCATION_GET_Y(location);
     }
+}
+
+// 0x4B8730
+bool sub_4B8730(int64_t x, int64_t y, int64_t* location_ptr)
+{
+    int64_t new_x;
+    int64_t new_y;
+    int64_t dx;
+    int64_t dy;
+
+    if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
+        dy = y - location_origin_y;
+        dx = (x - location_origin_x) >> 1;
+
+        if (dy - dx < INT_MIN) {
+            return false;
+        }
+
+        new_x = (dy - dx) / 40;
+        if (dy - dx < 0) {
+            new_x--;
+        }
+
+        if (new_x < 0 || new_x >= location_limit_x) {
+            return false;
+        }
+
+        if (dy + dx > INT_MAX) {
+            return false;
+        }
+
+        new_y = (dy + dx) / 40;
+        if (dy + dx < 0) {
+            new_y--;
+        }
+
+        if (new_y < 0 || new_y >= location_limit_y) {
+            return false;
+        }
+
+        *location_ptr = LOCATION_MAKE(new_x, new_y);
+    } else {
+        new_x = (location_origin_x + location_view_options.zoom - x - 1) / location_view_options.zoom;
+        if (new_x < 0 || new_x >= location_limit_x) {
+            return false;
+        }
+
+        new_y = (y - location_origin_y) / location_view_options.zoom;
+        if (new_y < 0 || new_y >= location_limit_y) {
+            return false;
+        }
+
+        *location_ptr = LOCATION_MAKE(new_x, new_y);
+    }
+
+    return true;
 }
 
 // 0x4B8940
@@ -143,30 +208,63 @@ void sub_4B8940(int64_t location, int64_t* x, int64_t* y)
     int64_t y2;
 
     if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
-        saved_x = qword_5FC2E0;
-        saved_y = qword_5FC2E8;
+        saved_x = location_origin_x;
+        saved_y = location_origin_y;
 
-        qword_5FC2E0 = 0;
-        qword_5FC2E8 = 0;
+        location_origin_x = 0;
+        location_origin_y = 0;
         sub_4B8680(0, &x1, &y1);
         sub_4B8680(location, &x2, &y2);
-        *x = x1 + stru_5FC278.width / 2 - x2 - saved_x;
-        *y = y1 + stru_5FC278.height / 2 - y2 - saved_y;
+        *x = x1 + location_iso_window_bounds.width / 2 - x2 - saved_x;
+        *y = y1 + location_iso_window_bounds.height / 2 - y2 - saved_y;
 
-        qword_5FC2E0 = saved_x;
-        qword_5FC2E8 = saved_y;
+        location_origin_x = saved_x;
+        location_origin_y = saved_y;
     } else {
         sub_4B8680(location, &x1, &y1);
-        *x = qword_5FC2A0 - (location_view_options.zoom / 2 + x1);
-        *y = qword_5FC290 - (location_view_options.zoom / 2 + y1);
+        *x = location_screen_center_x - (location_view_options.zoom / 2 + x1);
+        *y = location_screen_center_y - (location_view_options.zoom / 2 + y1);
     }
 }
 
 // 0x4B8AD0
-void sub_4B8AD0(int64_t* a1, int64_t* a2)
+void location_get_origin(int64_t* origin_x, int64_t* origin_y)
 {
-    *a1 = qword_5FC2E0;
-    *a2 = qword_5FC2E8;
+    *origin_x = location_origin_x;
+    *origin_y = location_origin_y;
+}
+
+// 0x4B8B30
+void sub_4B8B30(int64_t dx, int64_t dy)
+{
+    int64_t tmp;
+
+    if (!location_editor && location_view_options.type == VIEW_TYPE_ISOMETRIC) {
+        if (dx + location_origin_x > location_screen_center_x) {
+            if (dy + location_origin_y + qword_5FC2D8 > location_screen_center_y) {
+                if (!sub_4B8730(-dx, -dy, &tmp)) {
+                    return;
+                }
+
+                if (!sub_4B8730(-dx, location_iso_window_bounds.height - dy, &tmp)) {
+                    return;
+                }
+            }
+        } else {
+            if (dy + location_origin_y + qword_5FC2D8 > location_screen_center_y) {
+                if (!sub_4B8730(location_iso_window_bounds.width - dx, -dy, &tmp)) {
+                    return;
+                }
+
+                if (!sub_4B8730(location_iso_window_bounds.width - dx, location_iso_window_bounds.height - dy, &tmp)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    location_origin_x += dx;
+    location_origin_y += dy;
 }
 
 // 0x4B8CE0
@@ -177,7 +275,7 @@ void sub_4B8CE0(int64_t location)
 
     sub_4B8940(location, &x, &y);
     sub_4B8B30(x, y);
-    dword_5FC298(&stru_5FC278);
+    location_iso_invalidate_rect(&location_iso_window_bounds);
     if (dword_5FC2F8 != NULL) {
         dword_5FC2F8(location);
     }
@@ -187,6 +285,200 @@ void sub_4B8CE0(int64_t location)
 void location_set_func_5FC2F8(LocationFunc5FC2F8* func)
 {
     dword_5FC2F8 = func;
+}
+
+// NOTE: Original code is likely different.
+//
+// 0x4B8D50
+int sub_4B8D50(int64_t a, int64_t b)
+{
+    int dx;
+    int dy;
+    int sx;
+    int sy;
+    int ddx;
+    int ddy;
+    int rot;
+
+    dx = (int)location_get_x(b) - (int)location_get_x(a);
+    dy = (int)location_get_y(b) - (int)location_get_y(a);
+
+    ddx = 2 * abs(dx);
+    ddy = 2 * abs(dy);
+
+    if (dx < 0) {
+        sx = -1;
+    } else if (dx > 0) {
+        sx = 1;
+    } else {
+        sx = 0;
+    }
+
+    if (dy < 0) {
+        sy = -1;
+    } else if (dy > 0) {
+        sy = 1;
+    } else {
+        sy = 0;
+    }
+
+    if (ddx > ddy) {
+        if (ddy - ddx / 2 < 0) {
+            sy = 0;
+        }
+    } else {
+        if (ddx - ddy / 2 < 0) {
+            sx = 0;
+        }
+    }
+
+    if (sy >= 0) {
+        if (sx >= 0) {
+            if (sy > 0) {
+                if (sx > 0) {
+                    rot = 4;
+                } else {
+                    rot = 3;
+                }
+            } else {
+                rot = 5;
+            }
+        } else if (sy > 0) {
+            rot = 2;
+        } else {
+            rot = 1;
+        }
+    } else if (sx > -1) {
+        if (sx > 0) {
+            rot = 6;
+        } else {
+            rot = 7;
+        }
+    } else {
+        rot = 0;
+    }
+
+    return rot;
+}
+
+// 0x4B8FF0
+bool sub_4B8FF0(int64_t loc, int direction, int64_t* new_loc_ptr)
+{
+    int x;
+    int y;
+
+    x = (int)location_get_x(loc);
+    y = (int)location_get_y(loc);
+
+    switch (direction) {
+    case 0:
+        x -= 1;
+        y -= 1;
+        break;
+    case 1:
+        x -= 1;
+        break;
+    case 2:
+        x -= 1;
+        y += 1;
+        break;
+    case 3:
+        y += 1;
+        break;
+    case 4:
+        x += 1;
+        y += 1;
+        break;
+    case 5:
+        x += 1;
+        break;
+    case 6:
+        x += 1;
+        y -= 1;
+        break;
+    case 7:
+        y -= 1;
+        break;
+    }
+
+    if (x < 0 || x >= location_limit_x
+        || y < 0 || y >= location_limit_y) {
+        return false;
+    }
+
+    *new_loc_ptr = location_make(x, y);
+
+    return true;
+}
+
+// 0x4B90D0
+bool sub_4B90D0(int64_t loc, int rot, int range, int64_t* new_loc_ptr)
+{
+    int dist;
+
+    *new_loc_ptr = loc;
+
+    for (dist = 0; dist < range; dist++) {
+        if (!sub_4B8FF0(*new_loc_ptr, rot, new_loc_ptr)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// 0x4B9130
+bool sub_4B9130(TigRect* rect, LocRect* loc_rect)
+{
+    TigRect frame;
+    uint64_t tmp;
+
+    if (rect != NULL) {
+        frame = *rect;
+    } else {
+        frame = location_iso_window_bounds;
+    }
+
+    sub_4B98B0(frame.x, frame.y, &tmp, &(loc_rect->y1));
+    sub_4B98B0(frame.x + frame.width, frame.y, &(loc_rect->x1), &tmp);
+    sub_4B98B0(frame.x, frame.y + frame.height, &(loc_rect->x2), &tmp);
+    sub_4B98B0(frame.x + frame.width, frame.y + frame.height, &tmp, &(loc_rect->y2));
+
+    if (loc_rect->x1 > loc_rect->x2
+        || loc_rect->y1 > loc_rect->y2) {
+        return false;
+    }
+
+    if (loc_rect->x1 < 0) {
+        loc_rect->x1 = 0;
+    } else if (loc_rect->x1 >= location_limit_x) {
+        loc_rect->x1 = location_limit_x - 1;
+    }
+
+    if (loc_rect->x2 < 0) {
+        loc_rect->x2 = 0;
+    } else if (loc_rect->x2 >= location_limit_x) {
+        loc_rect->x2 = location_limit_x - 1;
+    }
+
+    if (loc_rect->y1 < 0) {
+        loc_rect->y1 = 0;
+    } else if (loc_rect->y1 >= location_limit_y) {
+        loc_rect->y1 = location_limit_y - 1;
+    }
+
+    if (loc_rect->y2 < 0) {
+        loc_rect->y2 = 0;
+    } else if (loc_rect->y2 >= location_limit_y) {
+        loc_rect->y2 = location_limit_y - 1;
+    }
+
+    if (loc_rect->x1 == loc_rect->x2
+        || loc_rect->y1 == loc_rect->y2) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4B93F0
@@ -201,6 +493,62 @@ void sub_4B93F0(int a1, int a2, int* a3, int* a4)
     *a4 = v1 + v2;
 }
 
+// 0x4B9420
+bool sub_4B9420(int64_t* loc_ptr, int* a2, int* a3)
+{
+    int64_t x;
+    int64_t y;
+    int64_t new_loc;
+    int64_t new_x;
+    int64_t new_y;
+
+    sub_4B8680(*loc_ptr, &x, &y);
+    x += *a2 + 40;
+    y += *a3 + 20;
+
+    if (!sub_4B8730(x, y, &new_loc)) {
+        return false;
+    }
+
+    if (*loc_ptr == new_loc) {
+        return false;
+    }
+
+    sub_4B8680(new_loc, &new_x, &new_y);
+
+    *a2 = (int)(x - (new_x + 40));
+    *a3 = (int)(y - (new_y + 20));
+    *loc_ptr = new_loc;
+
+    return true;
+}
+
+// NOTE: Original code is likely different.
+//
+// 0x4B96F0
+int64_t sub_4B96F0(int64_t a, int64_t b)
+{
+    int dx;
+    int dy;
+
+    dx = (int)LOCATION_GET_X(a) - (int)LOCATION_GET_X(b);
+    dy = (int)LOCATION_GET_Y(a) - (int)LOCATION_GET_Y(b);
+
+    if (dx < 0) {
+        dx = -dx;
+    }
+
+    if (dy < 0) {
+        dy = -dy;
+    }
+
+    if (dx > dy) {
+        return dx;
+    } else {
+        return dy;
+    }
+}
+
 // 0x4B9760
 bool location_set_limits(int64_t x, int64_t y)
 {
@@ -208,8 +556,8 @@ bool location_set_limits(int64_t x, int64_t y)
         return false;
     }
 
-    qword_5FC2E0 = 0;
-    qword_5FC2E8 = 0;
+    location_origin_x = 0;
+    location_origin_y = 0;
     location_limit_x = x;
     location_limit_y = y;
     qword_5FC2D8 = 20 * y;
@@ -227,7 +575,7 @@ void location_get_limits(int64_t* x, int64_t* y)
 // 0x4B9810
 int64_t sub_4B9810()
 {
-    return (location_limit_x >> 1) | ((location_limit_y >> 1) << 32);
+    return location_make(location_limit_x / 2, location_limit_y / 2);
 }
 
 // 0x4B98B0
@@ -237,12 +585,67 @@ void sub_4B98B0(int64_t a1, int64_t a2, int64_t* a3, int64_t* a4)
     int v2;
 
     if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
-        v1 = (a1 - qword_5FC2E0) >> 1;
-        v2 = a2 - qword_5FC2E8;
+        v1 = (int)((a1 - location_origin_x) / 2);
+        v2 = (int)(a2 - location_origin_y);
         *a3 = (v2 - v1) / 40;
         *a4 = (v1 + v2) / 40;
     } else {
-        *a3 = (qword_5FC2E0 + location_view_options.zoom - a1 - 1) / location_view_options.zoom;
-        *a4 = (a2 - qword_5FC2E8) / location_view_options.zoom;
+        *a3 = (location_origin_x + location_view_options.zoom - a1 - 1) / location_view_options.zoom;
+        *a4 = (a2 - location_origin_y) / location_view_options.zoom;
     }
+}
+
+// 0x4B99C0
+bool sub_4B99C0(int64_t from, int64_t* to)
+{
+    S603D20 v1;
+    PathCreateInfo path_create_info;
+    S603CB8 v2;
+    S603CB8_F50 v3;
+    int idx;
+
+    sub_4F25E0(&v1);
+    v1.aoe_flags = Tgt_Tile_Empty;
+    v1.radius = 3;
+    sub_4F2600(&v2, NULL, OBJ_HANDLE_NULL);
+
+    v2.field_0 = &v1;
+    v2.field_18 = from;
+    v2.field_28 = from;
+    v2.field_38 = from;
+    if (sub_4F2D20(&v2)) {
+        if (to != NULL) {
+            *to = from;
+        }
+        return true;
+    }
+
+    v2.field_50 = &v3;
+    v1.aoe_flags |= Tgt_Damaged_Poisoned;
+    sub_4F40B0(&v2);
+
+    for (idx = 0; idx < v3.cnt; idx++) {
+        if (v3.entries[idx].loc != 0) {
+            v2.field_28 = v3.entries[idx].loc;
+            if (sub_4F2D20(&v2)) {
+                path_create_info.obj = OBJ_HANDLE_NULL;
+                path_create_info.from = from;
+                path_create_info.to = v3.entries[idx].loc;
+                path_create_info.max_rotations = sizeof(byte_5FC2A8);
+                path_create_info.rotations = byte_5FC2A8;
+                path_create_info.field_20 = 0x16;
+                if (sub_41F3C0(&path_create_info)) {
+                    if (to != NULL) {
+                        *to = v3.entries[idx].loc;
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+
+    if (to != NULL) {
+        *to = from;
+    }
+    return false;
 }

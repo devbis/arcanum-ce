@@ -11,7 +11,7 @@ extern int dword_6839B0;
 bool hotkey_ui_init(GameInitInfo* init_info);
 void hotkey_ui_exit();
 void hotkey_ui_resize(ResizeInfo* resize_info);
-bool hotkey_ui_start(int a1, TigRect* rect, int a3, bool a4);
+bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t a3, bool a4);
 void sub_57DA50();
 void sub_57DAB0();
 bool sub_57DB40(TigFile* stream);

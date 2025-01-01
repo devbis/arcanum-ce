@@ -3,7 +3,12 @@
 
 #include "game/context.h"
 #include "game/mes.h"
+#include "game/target.h"
+#include "game/timeevent.h"
+#include "game/ui.h"
 #include "ui/types.h"
+
+extern tig_font_handle_t dword_739F88;
 
 bool intgame_init(GameInitInfo* init_info);
 void intgame_reset();
@@ -11,7 +16,7 @@ void intgame_resize(ResizeInfo* resize_info);
 void intgame_exit();
 bool intgame_save(TigFile* stream);
 bool intgame_load(GameLoadInfo* load_info);
-bool iso_interface_create(tig_window_handle_t window_handle);
+void iso_interface_create(tig_window_handle_t window_handle);
 void iso_interface_destroy();
 void sub_54AA30();
 bool sub_54AA60(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* button_info, unsigned int flags);
@@ -20,9 +25,13 @@ void sub_54AC70(UiButtonInfo* button_info);
 void sub_54AEE0(int a1);
 void sub_54B3A0();
 void sub_54B3C0();
-void sub_54B5D0(TigMessage* msg);
+bool sub_54B5D0(TigMessage* msg);
 bool sub_54DC80(TigMessage* msg);
 void sub_54DE50(TigMessage* msg);
+void sub_54EA80(S4F2810* a1);
+bool sub_54EB50();
+void sub_54FCF0(S683518* a1);
+void sub_550150(S683518* a1);
 void sub_5506C0(int window_type);
 void sub_550720();
 void sub_550750(UiMessage* ui_message);
@@ -37,31 +46,39 @@ bool sub_551000(int x, int y);
 void sub_551080();
 void sub_551160();
 bool sub_5517A0(TigMessage* msg);
+bool intgame_get_location_under_cursor(int64_t* loc_ptr);
 int sub_551A00();
 bool sub_551A80(int a1);
 int sub_551F70(int a1);
-void sub_552070();
+int sub_552070();
 void sub_552080(int window_type);
 void sub_552160(const char* str, tig_font_handle_t font);
-bool intgame_clock_process_callback();
-bool sub_553320(void(*func)(TigMessage* msg));
+void intgame_text_edit_refresh_color(const char* str, tig_font_handle_t font, tig_color_t color, bool a4);
+bool intgame_clock_process_callback(TimeEvent* timeevent);
+bool sub_553320(bool(*func)(TigMessage* msg));
 void sub_553350();
 void sub_553370();
 void sub_553380(int a1, const char* str);
-void sub_5533A0(TigMessage* msg);
+int sub_5533A0(TigMessage* msg);
 int sub_5533B0();
 void sub_553620(int index, tig_art_id_t art_id);
 void sub_553910(int index, bool a2);
 void sub_553990();
 void sub_553A60(int art_num);
 void sub_553BE0(int64_t a1, int64_t a2, const char* str);
+bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr);
 tig_art_id_t sub_554BE0(int64_t obj);
+void sub_556220(int64_t obj);
 void sub_5566B0(int64_t obj);
 void sub_556A90(int a1, bool a2);
+void sub_556B70(int a1);
 void sub_556E60();
 void sub_5570A0(int64_t obj);
+void sub_5570D0(int64_t obj, bool a2, int a3);
+void sub_5571C0(int64_t obj);
 bool intgame_big_window_lock(TigWindowMessageFilterFunc* func, tig_window_handle_t* window_handle_ptr);
 void intgame_big_window_unlock();
+void sub_557370(int64_t a1, int64_t a2);
 void sub_557670();
 void sub_5576B0();
 void sub_557730(int index);
@@ -83,5 +100,7 @@ UiButtonInfo* sub_557B20(int index);
 void sub_557B30(int index, int x, int y);
 int sub_557B50(int index);
 int sub_557B60();
+int sub_557C00();
+int sub_557CF0();
 
 #endif /* ARCANUM_UI_INTGAME_H_ */

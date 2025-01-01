@@ -58,8 +58,7 @@ typedef struct S603CB8 {
     /* 0030 */ int64_t field_30;
     /* 0038 */ int64_t field_38;
     /* 0040 */ int64_t field_40;
-    /* 0048 */ int field_48;
-    /* 004C */ int field_4C;
+    /* 0048 */ int64_t field_48;
     /* 0050 */ S603CB8_F50* field_50;
     /* 0054 */ MagicTechObjectNode** field_54;
     /* 0058 */ MagicTechObjectNode** field_58;

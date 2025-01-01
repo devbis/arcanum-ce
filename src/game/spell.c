@@ -116,7 +116,7 @@ static int college_icons[COLLEGE_COUNT] = {
 };
 
 // 0x5B5630
-static int dword_5B5630[SPELL_COUNT] = {
+static int spell_icons[SPELL_COUNT] = {
     12,
     13,
     14,
@@ -270,7 +270,7 @@ void spell_set_defaults(int64_t obj)
 int sub_4B1570(int spell)
 {
     if (spell >= 0 && spell < SPELL_COUNT) {
-        return dword_5B5630[spell];
+        return spell_icons[spell];
     }
 
     return sub_459F90(spell) ? 36 : 35;
@@ -381,7 +381,7 @@ int spell_get_minimum_level(int spell)
 }
 
 // 0x4B1790
-bool sub_4B1790(int64_t obj, int spell, bool a3)
+bool sub_4B1790(int64_t obj, int spell, bool force)
 {
     int v1;
     int v2;
@@ -396,7 +396,7 @@ bool sub_4B1790(int64_t obj, int spell, bool a3)
             pkt.type = 48;
             pkt.player = sub_4A2B10(obj);
             pkt.spell = spell;
-            pkt.field_C = a3;
+            pkt.field_C = force;
             tig_net_send_app_all(&pkt, sizeof(pkt));
             return true;
         }
@@ -404,14 +404,14 @@ bool sub_4B1790(int64_t obj, int spell, bool a3)
         pkt.type = 49;
         pkt.player = sub_4A2B10(obj);
         pkt.spell = spell;
-        pkt.field_C = a3;
+        pkt.field_C = force;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
     v1 = spell % 5 + 1;
     v2 = sub_4B1AB0(obj, spell / 5);
 
-    if (!a3) {
+    if (!force) {
         if (v1 != v2 + 1) {
             return false;
         }
@@ -468,9 +468,10 @@ bool sub_4B19B0(int64_t obj, int spell)
 
     cost = sub_4B1650(spell);
     magic_points = stat_get_base(obj, STAT_MAGICK_POINTS);
-    stat_set_base(obj, STAT_MAGICK_POINTS, magic_points - cost);
+    magic_points -= cost;
+    stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
 
-    sub_4B1B30(obj, spell, spell % 5 - 1);
+    sub_4B1B30(obj, spell / 5, spell % 5 - 1);
 
     return true;
 }

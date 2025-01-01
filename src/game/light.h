@@ -5,13 +5,24 @@
 #include "game/obj.h"
 #include "game/timeevent.h"
 
-#define LIGHT_HANDLE_INVALID 0
-#define SHADOW_HANDLE_INVALID 0
+#define SHADOW_HANDLE_MAX 5
 
-typedef unsigned int light_handle_t;
-typedef unsigned int shadow_handle_t;
+// clang-format off
+#define LF_OFF          0x00000001
+#define LF_DARK         0x00000002
+#define LF_ANIMATING    0x00000004
+#define LF_INDOOR       0x00000008
+#define LF_OUTDOOR      0x00000010
+#define LF_00000020     0x00000020
+#define LF_MODIFIED     0x00000080
+#define LF_08000000     0x08000000
+#define LF_OVERLAY_0    0x10000000
+#define LF_OVERLAY_1    0x20000000
+#define LF_OVERLAY_2    0x40000000
+#define LF_OVERLAY_3    0x80000000
+// clang-format on
 
-typedef struct Light30 {
+typedef struct Light {
     /* 0000 */ int64_t obj;
     /* 0008 */ int64_t loc;
     /* 0010 */ int offset_x;
@@ -24,39 +35,68 @@ typedef struct Light30 {
     /* 0024 */ tig_color_t tint_color;
     /* 0028 */ TigPalette palette;
     /* 002C */ int field_2C;
-} Light30;
+} Light;
 
 // See 0x4DDD20.
-static_assert(sizeof(Light30) == 0x30, "wrong size");
+static_assert(sizeof(Light) == 0x30, "wrong size");
+
+typedef struct Shadow {
+    /* 0000 */ tig_art_id_t art_id;
+    /* 0004 */ TigPalette palette;
+    /* 0008 */ tig_color_t color;
+    /* 000C */ struct Shadow* next;
+} Shadow;
+
+// See 4DE7C0.
+static_assert(sizeof(Shadow) == 0x10, "wrong size");
 
 bool light_init(GameInitInfo* init_info);
 void light_exit();
 void light_resize(ResizeContext* resize_info);
 bool light_update_view(ViewOptions* view_options);
 void sub_4D81F0();
-void sub_4D8350(UnknownContext* ctx);
+void sub_4D8210();
+void sub_4D8320();
+void light_render(UnknownContext* render_info);
 void light_build_color(uint8_t red, uint8_t green, uint8_t blue, unsigned int* color);
 void light_get_color_components(unsigned int color, uint8_t* red, uint8_t* green, uint8_t* blue);
 tig_color_t light_get_outdoor_color();
 tig_color_t light_get_indoor_color();
 void light_set_colors(tig_color_t indoor_color, tig_color_t outdoor_color);
-void sub_4D8590(Light30* light);
-void sub_4D8620(Light30* light);
+void light_start_animating(Light* light);
+void light_stop_animating(Light* light);
 bool light_timeevent_process(TimeEvent* timeevent);
-bool sub_4D94D0(TigFile* stream, Light30** a2);
-bool sub_4D94F0(TigFile* stream, Light30* a2);
-void sub_4D9570(Light30* light);
+tig_color_t sub_4D9240(int64_t loc, int offset_x, int offset_y);
+bool light_is_modified(Light* light);
+void light_clear_modified(Light* light);
+bool light_read_dif(TigFile* stream, Light** light_ptr);
+bool light_write_dif(TigFile* stream, Light* light);
+void sub_4D9570(Light* light);
+void sub_4D9590(int64_t obj, bool a2);
 void sub_4D9990(int64_t obj);
 void sub_4D9A90(object_id_t object_id);
+bool sub_4D9B20(int64_t obj);
 void sub_4DA310(object_id_t object_id);
+bool sub_4DA360(int x, int y, tig_color_t color, tig_color_t* a4);
+void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr);
 uint8_t sub_4DCE10(int64_t obj);
-bool sub_4DD110(Light30* light);
-void light_get_rect(Light30* light, TigRect* rect);
-void light_set_location(Light30* light, int64_t loc);
-int64_t light_get_location(Light30* light);
-void sub_4DDA70(Light30* light, int offset_x, int offset_y);
-bool sub_4DDD20(TigFile* stream, Light30** a2);
-bool sub_4DDD70(TigFile* stream, Light30* a2);
-void sub_4DF310(TigRect* rect, bool invalidate);
+void light_set_flags(int64_t obj, unsigned int flags);
+void light_unset_flags(int64_t obj, unsigned int flags);
+void sub_4DD020(int64_t obj, int64_t loc, int offset_x, int offset_y);
+void sub_4DD0A0(object_id_t object_id, int offset_x, int offset_y);
+bool sub_4DD110(Light* light);
+void light_get_rect(Light* light, TigRect* rect);
+void light_set_flags_internal(Light* light, unsigned int flags);
+void light_unset_flags_internal(Light* light, unsigned int flags);
+unsigned int light_get_flags(Light* light);
+void light_inc_frame(Light* light);
+void light_dec_frame(Light* light);
+void light_cycle_rotation(Light* light);
+void light_set_location(Light* light, int64_t loc);
+int64_t light_get_location(Light* light);
+void light_set_offset(Light* light, int offset_x, int offset_y);
+bool light_read(TigFile* stream, Light** light_ptr);
+bool light_write(TigFile* stream, Light* light);
+void light_invalidate_rect(TigRect* rect, bool invalidate_objects);
 
 #endif /* ARCANUM_GAME_LIGHT_H_ */

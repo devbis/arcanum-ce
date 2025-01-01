@@ -142,14 +142,20 @@ static bool combat_editor;
 // 0x5FC1F8
 static AnimFxList stru_5FC1F8;
 
+// NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
+// compatibility.
+//
 // 0x5FC224
-static bool combat_turn_based;
+static int combat_turn_based;
 
 // 0x5FC228
 static bool combat_fast_turn_based;
 
+// NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
+// compatibility.
+//
 // 0x5FC22C
-static bool dword_5FC22C;
+static int dword_5FC22C;
 
 // 0x5FC230
 static int dword_5FC230;
@@ -552,9 +558,189 @@ int sub_4B2810(int64_t obj)
 }
 
 // 0x4B2870
-void sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, int64_t projectile_obj, int range, int64_t cur_loc, int64_t a7)
+bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, int64_t proj_obj, int range, int64_t cur_loc, int64_t a7)
 {
-    // TODO: Incomplete.
+    unsigned int proj_flags;
+    unsigned int proj_dam_flags;
+    int64_t weapon_obj;
+    int64_t proj_loc;
+    int hit_loc;
+    int weapon_obj_type;
+    int64_t attacker_loc;
+    int64_t attacker_to_target_dist;
+    int64_t proj_to_target_dist;
+    int scale;
+    int64_t block_obj = OBJ_HANDLE_NULL;
+    int block_obj_type;
+    int dam = 0;
+
+    proj_flags = obj_field_int32_get(proj_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT);
+    proj_dam_flags = obj_field_int32_get(proj_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE);
+    weapon_obj = obj_field_handle_get(proj_obj, OBJ_F_PROJECTILE_PARENT_WEAPON);
+    proj_loc = obj_field_int64_get(proj_obj, OBJ_F_LOCATION);
+    hit_loc = obj_field_int32_get(proj_obj, OBJ_F_PROJECTILE_HIT_LOC);
+
+    if (weapon_obj != OBJ_HANDLE_NULL) {
+        weapon_obj_type = obj_field_int32_get(weapon_obj, OBJ_F_TYPE);
+    } else {
+        weapon_obj_type = -1;
+    }
+
+    if (weapon_obj_type != 5) {
+        attacker_loc = obj_field_int64_get(attacker_obj, OBJ_F_LOCATION);
+        attacker_to_target_dist = sub_4B96F0(attacker_loc, target_loc);
+        proj_to_target_dist = sub_4B96F0(proj_loc, target_loc);
+        if (attacker_to_target_dist > 0
+            && proj_to_target_dist > 0
+            && proj_to_target_dist < attacker_to_target_dist) {
+            if (attacker_to_target_dist - proj_to_target_dist * 2 > 0
+                && attacker_to_target_dist - proj_to_target_dist != 0) {
+                scale = (int)(200 - 150 * (attacker_to_target_dist - proj_to_target_dist) / attacker_to_target_dist);
+            } else {
+                range = (int)(200 + 150 * (attacker_to_target_dist - proj_to_target_dist) / attacker_to_target_dist);
+            }
+        } else {
+            scale = 50;
+        }
+
+        tig_debug_printf("Scaling to %d\n", scale);
+        object_set_blit_scale(proj_obj, scale);
+    }
+
+    if (proj_loc == target_loc) {
+        if (target_obj == OBJ_HANDLE_NULL
+            || (proj_flags & 0x2000) != 0) {
+            sub_4B2690(proj_obj, attacker_obj, a7, NULL, true);
+
+            if (weapon_obj != OBJ_HANDLE_NULL) {
+                sub_441980(attacker_obj, weapon_obj, target_obj, SAP_HIT, 0);
+
+                if ((proj_flags & 0x04) != 0
+                    && weapon_obj_type == OBJ_TYPE_WEAPON) {
+                    sub_441980(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_HIT, 0);
+                }
+
+                sub_4CBDB0(attacker_obj, weapon_obj, target_loc);
+            }
+
+            return false;
+        }
+
+        unsigned int new_proj_flags = proj_flags;
+        new_proj_flags &= ~0x02;
+        new_proj_flags |= 0x800 | 0x20;
+        obj_field_int32_set(proj_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT, new_proj_flags);
+    }
+
+    if ((proj_flags & 0x2000) != 0) {
+        return false;
+    }
+
+    if ((proj_flags & 0x02) != 0) {
+        if (target_obj != OBJ_HANDLE_NULL
+            && proj_loc == obj_field_int64_get(target_obj, OBJ_F_LOCATION)) {
+            block_obj = target_obj;
+
+            if ((proj_flags & 0x100) != 0) {
+                dam = hit_loc;
+                hit_loc = 0;
+            }
+        }
+    } else {
+        if ((proj_flags & 0x20) != 0) {
+            sub_43FDC0(proj_obj,
+                proj_obj,
+                sub_4B8D50(proj_obj, cur_loc),
+                0x08 | 0x04 | 0x01,
+                &block_obj,
+                &block_obj_type,
+                NULL);
+        }
+
+        if (block_obj == OBJ_HANDLE_NULL) {
+            ObjectList objects;
+            ObjectNode* node;
+
+            sub_4407C0(proj_loc, OBJ_TM_CRITTER, &objects);
+            node = objects.head;
+            while (node != NULL) {
+                if (!sub_45D8D0(node->obj)
+                    && node->obj != target_obj
+                    && node->obj != attacker_obj
+                    && random_between(1, 3) == 1) {
+                    block_obj = node->obj;
+                    break;
+                }
+                node = node->next;
+            }
+            object_list_destroy(&objects);
+        }
+
+        if (block_obj != OBJ_HANDLE_NULL) {
+            proj_dam_flags = 0;
+
+            proj_flags &= ~0x04;
+            proj_flags |= 0x800 | 0x02;
+
+            dam = (proj_flags & 0x100) != 0 ? hit_loc : 0;
+            hit_loc = 0;
+        }
+    }
+
+    if (block_obj != OBJ_HANDLE_NULL) {
+        CombatContext combat;
+
+        sub_4B2210(attacker_obj, block_obj, &combat);
+
+        if (target_obj != OBJ_HANDLE_NULL) {
+            combat.field_28 = target_obj;
+        }
+
+        combat.flags = proj_flags | 0x40000 | 0x200;
+        combat.field_58 = proj_dam_flags;
+        combat.field_44[0] = dam;
+        combat.field_40 = hit_loc;
+        combat.weapon_obj = weapon_obj;
+        combat.skill = item_weapon_skill(weapon_obj);
+        combat.flags &= ~0xC000;
+        sub_4B2690(proj_obj, attacker_obj, target_obj, &combat, 1);
+        sub_4B2F60(&combat);
+        sub_4B6B90(&combat);
+        sub_4CBDB0(attacker_obj,
+            weapon_obj,
+            obj_field_int64_get(block_obj, OBJ_F_LOCATION));
+        return sub_4B6930(&combat);
+    }
+
+    int weapon_range;
+    if ((proj_flags & 0x100) != 0) {
+        weapon_range = 20;
+    } else if ((proj_flags & 0x40) != 0) {
+        weapon_range = item_throwing_distance(weapon_obj, attacker_obj);
+    } else {
+        weapon_range = item_weapon_range(weapon_obj, attacker_obj);
+    }
+
+    if (range > weapon_range) {
+        if (proj_obj != OBJ_HANDLE_NULL) {
+            proj_loc = obj_field_int64_get(proj_obj, OBJ_F_LOCATION);
+        }
+
+        sub_4B2690(proj_obj, attacker_obj, target_obj, NULL, true);
+
+        if (weapon_obj != OBJ_HANDLE_NULL) {
+            sub_441980(attacker_obj, weapon_obj, target_obj, SAP_MISS, 0);
+
+            if ((proj_flags & 0x04) != 0
+                && weapon_obj_type == OBJ_TYPE_WEAPON) {
+                sub_441980(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_MISS, 0);
+            }
+
+            sub_4CBDB0(attacker_obj, weapon_obj, proj_loc);
+        }
+    }
+
+    return false;
 }
 
 // 0x4B2F60

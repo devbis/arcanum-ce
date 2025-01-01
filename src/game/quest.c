@@ -484,8 +484,10 @@ void quest_copy_description(object_id_t obj, int num, char* buffer)
     }
 }
 
+// FIXME: Rename `quests1`.
+//
 // 0x4C52E0
-int quest_copy_state(int64_t obj, QuestInfo* quests)
+int quest_copy_state(int64_t obj, QuestInfo* quests1)
 {
     int index;
     PcQuestStateInfo pc_quest_state[2000];
@@ -500,17 +502,17 @@ int quest_copy_state(int64_t obj, QuestInfo* quests)
     cnt = 0;
     for (index = 0; index < 2000; index++) {
         if ((pc_quest_state[index].state & ~0x100) != QUEST_STATE_UNKNOWN) {
-            quests[cnt].num = index;
-            quests[cnt].timestamp = pc_quest_state[index].timestamp;
+            quests1[cnt].num = index;
+            quests1[cnt].timestamp = datetime_to_uint64(pc_quest_state[index].timestamp);
             if ((pc_quest_state[index].state & 0x100) != 0) {
-                quests[cnt].state = QUEST_STATE_BOTCHED;
+                quests1[cnt].state = QUEST_STATE_BOTCHED;
             } else {
-                quests[cnt].state = pc_quest_state[index].state;
+                quests1[cnt].state = pc_quest_state[index].state;
             }
         }
     }
 
-    qsort(quests, cnt, sizeof(*quests), quest_compare);
+    qsort(quests1, cnt, sizeof(*quests1), quest_compare);
 
     return cnt;
 }

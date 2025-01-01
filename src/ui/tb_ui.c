@@ -58,33 +58,6 @@ static bool sub_57CFB0();
 static bool sub_57D080();
 static bool sub_57D150(const char* name, const char* a2);
 
-// 0x5E2E6C
-static int dword_5E2E6C;
-
-// 0x5E2E68
-static int dword_5E2E68;
-
-// 0x5E2E94
-static int dword_5E2E94;
-
-// 0x5E2EA8
-static tig_art_id_t dword_5E2EA8;
-
-// 0x5E2EAC
-static tig_color_t dword_5E2EAC;
-
-// 0x5E2ECC
-static tig_art_id_t dword_5E2ECC;
-
-// 0x5E2F60
-static Ryan stru_5E2F60;
-
-// 0x5E2F90
-static int64_t qword_5E2F90;
-
-// 0x64E018
-static bool dword_64E018;
-
 // 0x57C6E0
 bool tb_ui_init(GameInitInfo* init_info)
 {
@@ -350,13 +323,13 @@ void sub_57CE10()
     sub_551A80(0);
     sub_551A80(0);
 
-    if (qword_5E2F90 != OBJ_HANDLE_NULL) {
-        dword_5E2E94 = 0;
-        qword_5E2F90 = OBJ_HANDLE_NULL;
+    if (object_hover_obj != OBJ_HANDLE_NULL) {
+        dword_5E2E94 = false;
+        object_hover_obj = OBJ_HANDLE_NULL;
 
-        dword_5E2EAC = tig_color_make(255, 255, 255);
-        tig_art_interface_id_create(467, dword_5E2E6C, 1, 0, &dword_5E2EA8);
-        tig_art_interface_id_create(468, dword_5E2E68, 1, 0, &dword_5E2ECC);
+        object_hover_color = tig_color_make(255, 255, 255);
+        tig_art_interface_id_create(467, dword_5E2E6C, 1, 0, &object_hover_underlay_art_id);
+        tig_art_interface_id_create(468, dword_5E2E68, 1, 0, &object_hover_overlay_art_id);
         sub_443EB0(OBJ_HANDLE_NULL, &stru_5E2F60);
     }
 }
@@ -402,7 +375,7 @@ void ui_charedit_error_msg(int type, int a2)
         sub_55F1A0();
         break;
     case 3:
-        if (dword_64E018) {
+        if (charedit_created) {
             stru_5C8990.str = dword_64D3C4[19];
             sub_550750(&stru_5C8990);
         }

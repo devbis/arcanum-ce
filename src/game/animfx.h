@@ -3,6 +3,9 @@
 
 #include "game/context.h"
 
+#define ANIM_WEAPON_EYE_CANDY_POWER_GATHER 0
+#define ANIMFX_WEAPON_TYPE_COUNT 5
+
 typedef enum AnimFxListEntryFlags {
     ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY = 0x01,
     ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY = 0x02,
@@ -16,12 +19,12 @@ typedef enum AnimFxListEntryFlags {
 } AnimFxListEntryFlags;
 
 typedef struct AnimFxListEntry {
-    tig_art_id_t eye_candy_art_id;
-    unsigned int flags;
-    int sound;
-    tig_art_id_t light_art_id;
-    int light_color;
-    int projectile_speed;
+    /* 0000 */ tig_art_id_t eye_candy_art_id;
+    /* 0004 */ unsigned int flags;
+    /* 0008 */ int sound;
+    /* 000C */ tig_art_id_t light_art_id;
+    /* 0010 */ unsigned int light_color;
+    /* 0014 */ int projectile_speed;
 } AnimFxListEntry;
 
 static_assert(sizeof(AnimFxListEntry) == 0x18, "wrong size");
@@ -31,52 +34,67 @@ typedef enum AnimFxListFlags {
 } AnimFxListFlags;
 
 typedef struct AnimFxList {
-    const char* path;
-    unsigned int flags;
-    int field_8;
-    int field_C;
-    int field_10;
-    int field_14;
-    int field_18;
-    int field_1C;
-    int field_20;
-    int* field_24;
-    AnimFxListEntry* entries;
-} AnimFxList;
-
-static_assert(sizeof(AnimFxList) == 0x2C, "wrong size");
-
-typedef struct AnimFxNode {
-    /* 0000 */ int list;
-    /* 0004 */ int field_4;
-    /* 0008 */ int64_t obj;
+    /* 0000 */ const char* path;
+    /* 0004 */ unsigned int flags;
+    /* 0008 */ int field_8;
+    /* 000C */ int field_C;
     /* 0010 */ int field_10;
     /* 0014 */ int field_14;
     /* 0018 */ int field_18;
     /* 001C */ int field_1C;
     /* 0020 */ int field_20;
+    /* 0024 */ int* field_24;
+    /* 0028 */ AnimFxListEntry* entries;
+} AnimFxList;
+
+static_assert(sizeof(AnimFxList) == 0x2C, "wrong size");
+
+typedef enum AnimFxNodeFlags {
+    ANIMFX_PLAY_REVERSE = 0x0001,
+    ANIMFX_PLAY_STACK = 0x0002,
+    ANIMFX_PLAY_DESTROY = 0x0004,
+    ANIMFX_PLAY_CALLBACK = 0x0008,
+    ANIMFX_PLAY_END_CALLBACK = 0x0010,
+    ANIMFX_PLAY_RANDOM_START = 0x0020,
+    ANIMFX_PLAY_FIRE_DMG = 0x0040,
+    ANIMFX_PLAY_CHECK_ALREADY = 0x0080,
+    ANIMFX_PLAY_NO_ID = 0x0100,
+    ANIMFX_PLAY_ICE_DMG = 0x0240,
+} AnimFxNodeFlags;
+
+typedef struct AnimFxNode {
+    /* 0000 */ AnimFxList* list;
+    /* 0004 */ int field_4;
+    /* 0008 */ int64_t obj;
+    /* 0010 */ int64_t field_10;
+    /* 0018 */ int field_18;
+    /* 001C */ int field_1C;
+    /* 0020 */ int field_20;
     /* 0024 */ int field_24;
     /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
-    /* 0040 */ int field_40;
-    /* 0044 */ int field_44;
+    /* 002C */ tig_art_id_t* art_id_ptr;
+    /* 0030 */ tig_art_id_t* light_art_id_ptr;
+    /* 0034 */ tig_color_t* light_color_ptr;
+    /* 0038 */ int overlay_fore_index;
+    /* 003C */ int overlay_back_index;
+    /* 0040 */ int overlay_light_index;
+    /* 0044 */ int sound_id;
     /* 0048 */ int rotation;
-    /* 004C */ int field_4C;
+    /* 004C */ int scale;
 } AnimFxNode;
 
 static_assert(sizeof(AnimFxNode) == 0x50, "wrong size");
 
 extern const char* off_5B7658[];
-extern int dword_5B7680[];
+extern unsigned int dword_5B7680[];
 
 bool animfx_init(GameInitInfo* init_info);
 void animfx_exit();
 void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5);
 void sub_4CCD80(AnimFxNode* node);
+bool sub_4CCDD0(AnimFxNode* node);
+bool animfx_add(AnimFxNode* node);
+bool sub_4CD7A0(AnimFxNode* node);
 void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4);
 bool animfx_list_init(AnimFxList* list);
 bool animfx_list_load(AnimFxList* list);

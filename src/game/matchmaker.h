@@ -4,19 +4,19 @@
 #include <winsock2.h>
 
 typedef struct MatchmakerInitInfo {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
+    /* 0000 */ const char* product;
+    /* 0004 */ const char* locale;
+    /* 0008 */ const char* default_locale;
+    /* 000C */ const char* default_server;
+    /* 0010 */ int default_port;
+    /* 0014 */ const char* preferred_servers;
+    /* 0018 */ void* field_18;
+    /* 001C */ void* field_1C;
+    /* 0020 */ void* field_20;
+    /* 0024 */ void* field_24;
+    /* 0028 */ void* field_28;
+    /* 002C */ void* field_2C;
+    /* 0030 */ void* field_30;
 } MatchmakerInitInfo;
 
 static_assert(sizeof(MatchmakerInitInfo) == 0x34, "wrong size");

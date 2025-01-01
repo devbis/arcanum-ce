@@ -818,14 +818,14 @@ void sub_402D30(TigRect* rect)
 
     if (dword_5D0D74) {
         if (dword_5D000C != NULL) {
-            sub_52D480(dword_5D000C, &dirty_rect);
+            sub_52D480(&dword_5D000C, &dirty_rect);
         } else {
             dword_5D000C = tig_rect_node_create();
             dword_5D000C->rect = dirty_rect;
         }
     } else {
         if (dword_5D0E98 != NULL) {
-            sub_52D480(dword_5D0E98, &dirty_rect);
+            sub_52D480(&dword_5D0E98, &dirty_rect);
         } else {
             dword_5D0E98 = tig_rect_node_create();
             dword_5D0E98->rect = dirty_rect;
@@ -842,23 +842,23 @@ bool sub_402E50()
     TigRectListNode* node;
     TigRectListNode* next;
     TigRect rect;
-    int64_t v1[4];
-    int v2[68];
+    LocRect loc_rect;
+    SomeSectorStuff v2;
     Sector601808* v3;
     UnknownContext v4;
 
     if (dword_59ADD8 > 0 && dword_5D0010) {
         dword_5D0D74 = true;
 
-        if (sub_4B9130(&stru_5D0D60, v1)) {
+        if (sub_4B9130(&stru_5D0D60, &loc_rect)) {
             if (gamelib_view_options.type == VIEW_TYPE_ISOMETRIC) {
-                sub_4D0090(v1, v2);
+                sub_4D0090(&loc_rect, &v2);
             }
 
-            v3 = sub_4D02E0(v1);
+            v3 = sub_4D02E0(&loc_rect);
             v4.field_0 = &stru_5D0D60;
-            v4.field_4 = v1;
-            v4.field_8 = v2;
+            v4.field_4 = &loc_rect;
+            v4.field_8 = &v2;
             v4.field_C = v3;
             v4.rects = &dword_5D0E98;
             dword_5D10AC(&v4);
@@ -1648,8 +1648,9 @@ bool gamelib_copy_version(char* long_version, char* short_version, char* locale)
 }
 
 // 0x404640
-void sub_404640()
+void sub_404640(const char* patch_lvl)
 {
+    (void)patch_lvl;
 }
 
 // 0x404650
@@ -1680,14 +1681,14 @@ const char* gamelib_get_locale()
 void sub_4046F0(void* info)
 {
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        sub_4D8350(info);
-        sub_4D6950(info);
+        light_render(info);
+        tile_render(info);
         sub_43C690(info);
-        sub_43B390(info);
-        sub_439140(info);
-        sub_4D5F10(info);
-        sub_4D5310(info);
-        sub_4C95F0(info);
+        object_render(info);
+        roof_render(info);
+        tb_render(info);
+        tf_render(info);
+        tc_render(info);
         tig_video_3d_end_scene();
     }
 }
@@ -1706,18 +1707,18 @@ void sub_404740(UnknownContext* info)
     }
 
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        sub_4D8350(info);
-        sub_4D6950(info);
+        light_render(info);
+        tile_render(info);
         sub_4C9E70(info);
         sub_4E3320(info);
         sub_4C0630(info);
-        sub_4BB0C0(info);
-        sub_43B390(info);
+        tileblock_render(info);
+        object_render(info);
         sub_4CF390(info);
-        sub_4DF500(info);
+        wall_render(info);
         sub_4BFE00(info);
-        sub_439140(info);
-        sub_4D5F10(info);
+        roof_render(info);
+        tb_render(info);
         tig_video_3d_end_scene();
     }
 }

@@ -150,7 +150,7 @@ void hotkey_ui_resize(ResizeInfo* resize_info)
 }
 
 // 0x57D840
-bool hotkey_ui_start(int a1, TigRect* rect, int a3, bool a4)
+bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t a3, bool a4)
 {
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
@@ -174,7 +174,7 @@ bool hotkey_ui_start(int a1, TigRect* rect, int a3, bool a4)
     dword_6839A8 = art_frame_data.width;
     dword_6839AC = art_frame_data.height;
 
-    if (a3 != -1) {
+    if (dword_683510 != TIG_WINDOW_HANDLE_INVALID) {
         for (index = 0; index < 2; index++) {
             v1 = &(stru_683518[index]);
             sub_557B20(index)->art_num = v1->field_8 == 2 || v1->field_8 != 3

@@ -1,7 +1,10 @@
 #include "game/terrain.h"
 
+#include <stdio.h>
+
 #include "game/mes.h"
 #include "game/random.h"
+#include "game/tile.h"
 
 #define FIRST_TERRAIN_COLOR_ID 100
 #define FIRST_TERRAIN_TRANSITION_ID 200
@@ -19,24 +22,71 @@ typedef struct TerrainHeader {
 
 static_assert(sizeof(TerrainHeader) == 0x20, "wrong size");
 
+static void sub_4E80C0(int a1, int a2, TigVideoBuffer* vb, TigRect* rect);
 static const char* terrain_base_name(int terrain_type);
 static int terrain_match_base_name(const char* base_name);
 static void terrain_color(int terrain_type, int* red, int* green, int* blue);
 static void sub_4E8CE0(int a1, int a2, int a3, int a4, uint16_t* value);
+static int sub_4E8D60(int a1, int a2, int a3);
 static int64_t sub_4E8E60(int a1);
 static bool terrain_init_types();
 static bool sub_4E8F40();
 static bool terrain_init_transitions();
 static bool terrain_parse_transition(char* str, int* from_terrain_type, int* to_terrain_type);
 static bool sub_4E92B0(int from, int to, bool* transitions, int* a4);
+static bool sub_4E9310(int* a1, int a2, int a3, bool* transitions);
 static uint16_t sub_4E93A0(int from, int to);
 static bool sub_4E93E0(int from, int to);
+static int sub_4E9410(int64_t a1);
+static void sub_4E9470(void* dst, uint16_t* src);
+static void sub_4E9490(void* dst, void* src, int size);
+static uint16_t* sub_4E9540(int64_t a1);
+static bool sub_4E9580(TigFile* stream);
+static bool sub_4E9680(TigFile* stream);
+
+// 0x5B9968
+static int64_t qword_5B9968[] = {
+    -1,
+    1,
+    (2 << 26) | 1,
+    (1 << 26) | 1,
+    (2 << 26) | 3,
+    0,
+    (2 << 26) | 2,
+    -1,
+    3,
+    2,
+    -1,
+    -1,
+    (1 << 26) | 3,
+    -1,
+    -1,
+    -1,
+};
+
+// 0x5B99E8
+static int dword_5B99E8[] = {
+    1,
+    3,
+    2,
+    6,
+    4,
+    12,
+    8,
+    9,
+};
 
 // 0x603748
 static int dword_603748[TERRAIN_TYPE_MAX];
 
 // 0x6037C8
 static char byte_6037C8[TIG_MAX_PATH];
+
+// 0x6038CC
+static int dword_6038CC;
+
+// 0x6038D0
+static int16_t* dword_6038D0[4];
 
 // 0x6038E0
 static bool terrain_editor;
@@ -67,6 +117,9 @@ static mes_file_handle_t terrain_mes_file;
 
 // 0x603A20
 static int dword_603A20[TERRAIN_TYPE_MAX];
+
+// 0x603AA0
+static int64_t qword_603AA0[4];
 
 // 0x4E7B00
 bool terrain_init(GameInitInfo* init_info)
@@ -141,15 +194,101 @@ void sub_4E7B90(MapResetInfo* reset_info)
 
 
 // 0x4E7CB0
-void terrain_open()
+bool terrain_open(const char* a1, const char* a2)
 {
-    // TODO: Incomplete.
+    TigFile* stream;
+    bool v1 = false;
+
+    terrain_close();
+
+    sprintf(byte_6038E4, "%s\\terrain.tdf", a1);
+
+    if (terrain_editor) {
+        sprintf(byte_6037C8, "%s\\terrain.tdf", a2);
+    }
+
+    stream = tig_file_fopen(byte_6037C8, "rb");
+    if (stream == NULL) {
+        stream = tig_file_fopen(byte_6038E4, "rb");
+        if (stream == NULL) {
+            tig_debug_printf("Terrain file doesn't exist [%s]\n", byte_6038E4);
+            return false;
+        }
+    }
+
+    if (tig_file_fread(&terrain_header, sizeof(terrain_header), 1, stream) != 1) {
+        tig_debug_println("Unable to read terrain header");
+        tig_file_fclose(stream);
+        return false;
+    }
+
+    if (terrain_header.version != 1.2f) {
+        tig_debug_println("Wrong terrain header version");
+        tig_file_fclose(stream);
+        return false;
+    }
+
+    dword_603A18 = tig_file_filelength(stream) - sizeof(terrain_header);
+
+    if ((terrain_header.field_4 & 0x1) != 0) {
+        if (terrain_editor) {
+            v1 = true;
+            dword_603A18 = sizeof(int16_t) * terrain_header.field_8 * terrain_header.field_10;
+        } else {
+            int index;
+
+            for (index = 0; index < 4; index++) {
+                dword_6038D0[index] = (int16_t*)MALLOC(sizeof(int16_t) * terrain_header.field_8);
+                qword_603AA0[index] = -1;
+            }
+
+            dword_6038CC = 0;
+        }
+    }
+
+    dword_6039EC = (uint16_t*)MALLOC(dword_603A18);
+
+    if (v1) {
+        if (!sub_4E9580(stream)) {
+            tig_debug_println("Unable to decompress terrain data");
+            tig_file_fclose(stream);
+            return false;
+        }
+
+        terrain_header.field_4 &= ~0x1;
+    } else {
+        if (tig_file_fread(dword_6039EC, dword_603A18, 1, stream) != 1) {
+            tig_debug_println("Unable to read terrain data");
+            tig_file_fclose(stream);
+            return false;
+        }
+    }
+
+    tig_file_fclose(stream);
+
+    return true;
 }
 
 // 0x4E7E80
 void terrain_close()
 {
-    // TODO: Incomplete.
+    int index;
+
+    if ((terrain_header.field_4 & 0x1) != 0) {
+        for (index = 0; index < 4; index++) {
+            FREE(dword_6038D0[index]);
+        }
+    }
+
+    if (dword_6039EC != NULL) {
+        FREE(dword_6039EC);
+        dword_6039EC = NULL;
+    }
+
+    memset(&terrain_header, 0, sizeof(terrain_header));
+    byte_6038E4[0] = '\0';
+    byte_6037C8[0] = '\0';
+    dword_603A10 = 0;
 }
 
 // 0x4E7EF0
@@ -169,21 +308,112 @@ void sub_4E7EF0()
 }
 
 // 0x4E7F90
-void sub_4E7F90()
+bool sub_4E7F90()
 {
-    // TODO: Incomplete.
+    TigVideoBufferCreateInfo vb_create_info;
+    TigVideoBuffer* vb;
+    TigRect rect;
+    TigVideoBufferSaveToBmpInfo vb_to_bmp_info;
+    char drive[_MAX_DRIVE];
+    char dir[_MAX_DIR];
+    char fname[_MAX_FNAME];
+
+    if (!terrain_editor) {
+        return false;
+    }
+
+    if ((terrain_header.field_4 & 0x1) != 0) {
+        return false;
+    }
+
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
+    vb_create_info.width = (int)terrain_header.field_8; // TODO: Check casts.
+    vb_create_info.height = (int)terrain_header.field_10;
+    vb_create_info.background_color = 0;
+    if (tig_video_buffer_create(&vb_create_info, &vb) != TIG_OK) {
+        return false;
+    }
+
+    rect.x = 0;
+    rect.y = 0;
+    rect.width = (int)terrain_header.field_8; // TODO: Check casts.
+    rect.height = (int)terrain_header.field_10;
+    sub_4E80C0(0, 0, vb, &rect);
+
+    vb_to_bmp_info.flags = 0;
+    vb_to_bmp_info.video_buffer = vb;
+    _splitpath(byte_6038E4, drive, dir, fname, NULL);
+    // NOTE: Original is slightly different and looks wrong.
+    _makepath(vb_to_bmp_info.path, drive, dir, fname, "bmp");
+    vb_to_bmp_info.rect = NULL;
+    if (tig_video_buffer_save_to_bmp(&vb_to_bmp_info) != TIG_OK) {
+        // FIXME: Leaking `vb`.
+        return false;
+    }
+
+    tig_video_buffer_destroy(vb);
+
+    return true;
 }
 
 // 0x4E80C0
-void sub_4E80C0()
+void sub_4E80C0(int a1, int a2, TigVideoBuffer* vb, TigRect* rect)
 {
     // TODO: Incomplete.
 }
 
 // 0x4E84C0
-void terrain_sector_path()
+void terrain_sector_path(int64_t sector_id, char* path)
 {
-    // TODO: Incomplete.
+    uint16_t tid;
+    int base;
+    int v1;
+    int v2;
+    int v3;
+    int64_t v4;
+    const char* to;
+    const char* from;
+
+    tid = sub_4E87F0(sector_id);
+    base = sub_4E8DC0(tid);
+
+    if (base < 0 || base >= dword_603A14) {
+        tig_debug_printf("Error: Invalid base in terrain_sector_path\n  tid: %d  base: %d\n", tid, base);
+    }
+
+    v1 = sub_4E8DD0(tid);
+    v2 = sub_4E8DE0(tid);
+    if (base == v1 || v2 == 0) {
+        v3 = sub_4E8DF0(tid);
+        v4 = sub_4E8E60(v3);
+
+        to = terrain_base_name(base);
+        if (to == NULL) {
+            tig_debug_printf("Error: terrain_base_name failed in terrain_sector_path\n  tid: %d  base: $d\n", tid);
+        }
+
+        strcpy(path, "terrain\\");
+        strcat(path, to);
+    } else {
+        v4 = qword_5B9968[v2];
+        if (v4 != -1) {
+            from = terrain_base_name(base);
+            to = terrain_base_name(v1);
+        } else {
+            from = terrain_base_name(v1);
+            to = terrain_base_name(base);
+            v4 = qword_5B9968[15 - v2];
+        }
+
+        strcpy(path, "terrain\\");
+        strcat(path, from);
+        strcat(path, " to ");
+        strcat(path, to);
+    }
+
+    strcat(path, "\\");
+    _i64toa(v4, &(path[strlen(path)]), 10);
+    strcat(path, ".sec");
 }
 
 // 0x4E86F0
@@ -195,7 +425,7 @@ void sub_4E86F0(Sector* sector)
     tig_art_tile_id_create(7, 7, 15, 0, 0, 0, 0, 0, &art_id);
 
     for (index = 0; index < 4096; index++) {
-        sector->tiles.field_0[index] = sub_4D7480(art_id, 7, 0, 15);
+        sector->tiles.art_ids[index] = sub_4D7480(art_id, 7, 0, 15);
     }
 }
 
@@ -222,6 +452,38 @@ void terrain_flush()
             }
         }
     }
+}
+
+// 0x4E87F0
+uint16_t sub_4E87F0(int64_t loc)
+{
+    int idx;
+    int64_t x;
+    int64_t y;
+
+    x = loc & 0x3FFFFFF;
+    y = loc >> 26;
+    if (x >= terrain_header.field_8
+        || y < 0
+        || y >= terrain_header.field_10) {
+        return -1;
+    }
+
+    if ((terrain_header.field_4 & 0x1) == 0) {
+        return dword_6039EC[x + y * terrain_header.field_8];
+    }
+
+    for (idx = 0; idx < 4; idx++) {
+        if (qword_603AA0[idx] == y) {
+            break;
+        }
+    }
+
+    if (idx == 4) {
+        idx = sub_4E9410(y);
+    }
+
+    return dword_6038D0[idx][x];
 }
 
 // 0x4E8B20
@@ -303,6 +565,12 @@ void sub_4E8CE0(int a1, int a2, int a3, int a4, uint16_t* value)
     *value = (uint16_t)(a4 | (a3 << 2) | (a2 << 4) | (a1 << 11));
 }
 
+// 0x4E8D60
+int sub_4E8D60(int a1, int a2, int a3)
+{
+    // TODO: Incomplete.
+}
+
 // 0x4E8DC0
 int sub_4E8DC0(uint16_t a1)
 {
@@ -327,7 +595,7 @@ int sub_4E8DF0(uint16_t a1)
     return a1 & 3;
 }
 
-// 0x_4E8E00
+// 0x4E8E00
 bool sub_4E8E00(int64_t a1)
 {
     uint16_t v1;
@@ -373,9 +641,9 @@ bool terrain_init_types()
         if (pch != NULL) {
             dword_603A20[index] = 1;
 
-            while (isspace(*pch)) {
+            do {
                 pch--;
-            }
+            } while (isspace(*pch));
 
             pch[1] = '\0';
         }
@@ -498,7 +766,7 @@ bool terrain_parse_transition(char* str, int* from_terrain_type, int* to_terrain
     *pch = ' ';
 
     to = terrain_match_base_name(pch + 4);
-    if (to = -1) {
+    if (to == -1) {
         return false;
     }
 
@@ -530,6 +798,39 @@ bool sub_4E92B0(int from, int to, bool* transitions, int* a4)
     return result;
 }
 
+// 0x4E9310
+bool sub_4E9310(int* a1, int a2, int a3, bool* transitions)
+{
+    int v4;
+    int v6;
+    int v7;
+
+    v6 = 0;
+    for (v4 = 0; v4 < dword_603A14; v4++) {
+        if (transitions[v6 + a1[a2]]) {
+            for (v7 = 0; v7 <= a2; v7++) {
+                if (v4 == a1[v7]) {
+                    break;
+                }
+            }
+
+            if (v7 > a2) {
+                a1[a2 + 1] = v4;
+                if (v4 == a3) {
+                    return true;
+                }
+
+                if (sub_4E9310(a1, a2 + 1, a3, transitions)) {
+                    return true;
+                }
+            }
+        }
+        v6 += dword_603A14;
+    }
+
+    return false;
+}
+
 // 0x4E93A0
 uint16_t sub_4E93A0(int from, int to)
 {
@@ -549,4 +850,79 @@ bool sub_4E93E0(int from, int to)
 
     terrain_type = sub_4E8DC0(sub_4E93A0(from, to));
     return terrain_type == from || terrain_type == to;
+}
+
+// 0x4E9410
+int sub_4E9410(int64_t a1)
+{
+    int slot;
+
+    slot = dword_6038CC;
+    sub_4E9470(dword_6038D0[slot], sub_4E9540(a1));
+    qword_603AA0[slot] = a1;
+    dword_6038CC = (slot + 1) % 4;
+
+    return slot;
+}
+
+// 0x4E9470
+void sub_4E9470(void* dst, uint16_t* src)
+{
+    sub_4E9490(dst, (uint32_t*)src + 1, *(uint32_t*)src);
+}
+
+// 0x4E9490
+void sub_4E9490(void* dst, void* src, int size)
+{
+    z_stream strm;
+    int rc;
+
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    strm.next_in = src;
+    strm.avail_in = 0;
+
+    rc = inflateInit(&strm);
+    if (rc != Z_OK) {
+        tig_debug_printf("Error decompressing terrain data\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strm.next_out = dst;
+    strm.avail_in = size;
+    strm.next_in = src;
+    strm.avail_out = 2 * (int)terrain_header.field_8;
+
+    rc = inflate(&strm, Z_FINISH);
+    if (rc != Z_OK && rc != Z_STREAM_END) {
+        tig_debug_printf("Error decompressing terrain data\n");
+        exit(EXIT_FAILURE);
+    }
+
+    inflateEnd(&strm);
+}
+
+// 0x4E9540
+uint16_t* sub_4E9540(int64_t a1)
+{
+    int64_t v1;
+    uint16_t* v2 = dword_6039EC;
+
+    for (v1 = 0; v1 < a1; v1++) {
+        v2 = (uint16_t*)((uint8_t*)v2 + *(uint32_t*)v2 + 4);
+    }
+    return v2;
+}
+
+// 0x4E9580
+bool sub_4E9580(TigFile* stream)
+{
+    // TODO: Incomplete.
+}
+
+// 0x4E9680
+bool sub_4E9680(TigFile* stream)
+{
+    // TODO: Incomplete.
 }

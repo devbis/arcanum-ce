@@ -1,16 +1,23 @@
 #ifndef ARCANUM_GAME_MAGICTECH_H_
 #define ARCANUM_GAME_MAGICTECH_H_
 
+#include "game/combat.h"
 #include "game/context.h"
-#include "game/obj.h"
-#include "game/object.h"
 #include "game/mes.h"
 #include "game/mt_obj_node.h"
+#include "game/obj.h"
+#include "game/object.h"
 #include "game/timeevent.h"
 
 #define MT_80 80
 #define MT_140 140
 #define MT_SPELL_COUNT 223
+
+#define MAGICTECH_BEGIN 0
+#define MAGICTECH_MAINTAIN 1
+#define MAGICTECH_END 2
+#define MAGICTECH_CALLBACK 3
+#define MAGICTECH_END_CALLBACK 4
 
 typedef enum MagicTechComponent {
     MTC_NOOP,
@@ -67,6 +74,8 @@ typedef enum MagicTechItemTriggers {
     MTIT_RANDOM_CHANCE_UNCOMMON = 0x400,
     MTIT_RANDOM_CHANCE_COMMON = 0x800,
     MTIT_RANDOM_CHANCE_FREQUENT = 0x10,
+    MTIT_TARGET_ATTACKER_ANY = MTIT_TARGET_ATTACKER | MTIT_TARGET_ATTACKER_WEAPON | MTIT_TARGET_ATTACKER_ARMOR | MTIT_TARGET_ATTACKER_WEAPON_MELEE,
+    MTIT_RANDOM_CHANCE_ANY = MTIT_RANDOM_CHANCE_RARE | MTIT_RANDOM_CHANCE_UNCOMMON | MTIT_RANDOM_CHANCE_COMMON | MTIT_RANDOM_CHANCE_FREQUENT,
 } MagicTechItemTriggers;
 
 typedef struct MagicTechEffectInfo {
@@ -190,29 +199,54 @@ typedef struct MagicTechE8 {
     MagicTechEffectInfo* field_4;
 } MagicTechE8;
 
-typedef struct MagicTechInfoAI {
-    /* 0000 */ int flee;
-    /* 0004 */ int summon;
-    /* 0008 */ int defensive1;
-    /* 000C */ int offensive;
-    /* 0010 */ int healing_light;
-    /* 0014 */ int healing_medium;
-    /* 0018 */ int healing_heavy;
-    /* 001C */ int cure_poison;
-    /* 0020 */ int fatigue_recover;
-    /* 0024 */ int resurrect;
-    /* 0028 */ int defensive2;
+// NOTE: Usage in 0x4CC310 implies array-like access.
+typedef union MagicTechInfoAI {
+    struct {
+        /* 0000 */ int flee;
+        /* 0004 */ int summon;
+        /* 0008 */ int defensive1;
+        /* 000C */ int offensive;
+        /* 0010 */ int healing_light;
+        /* 0014 */ int healing_medium;
+        /* 0018 */ int healing_heavy;
+        /* 001C */ int cure_poison;
+        /* 0020 */ int fatigue_recover;
+        /* 0024 */ int resurrect;
+        /* 0028 */ int defensive2;
+    };
+    int values[11];
 } MagicTechInfoAI;
 
 // See 0x450090.
 static_assert(sizeof(MagicTechInfoAI) == 0x2C, "wrong size");
 
+typedef struct MagicTechResistance {
+    int stat;
+    int value;
+} MagicTechResistance;
+
+static_assert(sizeof(MagicTechResistance) == 0x8, "wrong size");
+
+typedef struct MagicTechAoe {
+    /* 0000 */ uint64_t aoe_flags;
+    /* 0008 */ unsigned int aoe_spell_flags;
+    /* 000C */ unsigned int aoe_no_spell_flags;
+    /* 0010 */ int radius;
+    /* 0014 */ int count;
+} MagicTechAoe;
+
+static_assert(sizeof(MagicTechAoe) == 0x18, "wrong size");
+
+typedef struct MagicTechCasterTargetPair {
+    int caster;
+    int target;
+} MagicTechCasterTargetPair;
+
 typedef struct MagicTechInfo {
     /* 0000 */ const char* field_0;
     /* 0004 */ int iq;
     /* 0008 */ int cost;
-    /* 000C */ int resist_stat;
-    /* 0010 */ int resist_value;
+    /* 000C */ MagicTechResistance resistance;
     /* 0014 */ int maintain[2];
     /* 001C */ int duration1;
     /* 0020 */ int duration2;
@@ -222,49 +256,11 @@ typedef struct MagicTechInfo {
     /* 0030 */ int range;
     /* 0034 */ unsigned int flags;
     /* 0038 */ unsigned int item_triggers;
-    /* 003C */ int begin_caster;
-    /* 0040 */ int begin_target;
-    /* 0044 */ int maintain_caster;
-    /* 0048 */ int maintain_target;
-    /* 004C */ int end_caster;
-    /* 0050 */ int end_target;
-    /* 0054 */ int callback_caster;
-    /* 0058 */ int callback_target;
-    /* 005C */ int end_callback_caster;
-    /* 0060 */ int end_callback_target;
+    /* 003C */ MagicTechCasterTargetPair pairs[5];
     /* 0064 */ int missile;
     /* 0068 */ int casting_anim;
     /* 006C */ int field_6C;
-    /* 0070 */ int field_70;
-    /* 0074 */ int field_74;
-    /* 0078 */ int field_78;
-    /* 007C */ int field_7C;
-    /* 0080 */ int field_80;
-    /* 0084 */ int field_84;
-    /* 0088 */ int field_88;
-    /* 008C */ int field_8C;
-    /* 0090 */ int field_90;
-    /* 0094 */ int field_94;
-    /* 0098 */ int field_98;
-    /* 009C */ int field_9C;
-    /* 00A0 */ int field_A0;
-    /* 00A4 */ int field_A4;
-    /* 00A8 */ int field_A8;
-    /* 00AC */ int field_AC;
-    /* 00B0 */ int field_B0;
-    /* 00B4 */ int field_B4;
-    /* 00B8 */ int field_B8;
-    /* 00BC */ int field_BC;
-    /* 00C0 */ int field_C0;
-    /* 00C4 */ int field_C4;
-    /* 00C8 */ int field_C8;
-    /* 00CC */ int field_CC;
-    /* 00D0 */ int field_D0;
-    /* 00D4 */ int field_D4;
-    /* 00D8 */ int field_D8;
-    /* 00DC */ int field_DC;
-    /* 00E0 */ int field_E0;
-    /* 00E4 */ int field_E4;
+    /* 0070 */ MagicTechAoe field_70[5];
     /* 00E8 */ MagicTechE8 field_E8[5];
     /* 0110 */ int no_stack;
     /* 0114 */ int field_114;
@@ -301,19 +297,37 @@ typedef struct MagicTechLock {
 static_assert(sizeof(MagicTechLock) == 0x158, "wrong size");
 
 typedef struct MagicTechSerializedData {
-    /* 0000 */ int field_0;
+    /* 0000 */ int spell;
     /* 0004 */ int field_4;
-    /* 0008 */ FollowerInfo field_8;
+    /* 0008 */ FollowerInfo source_obj;
     /* 0038 */ int64_t loc;
-    /* 0040 */ FollowerInfo field_40;
-    /* 0070 */ FollowerInfo field_70;
+    /* 0040 */ FollowerInfo parent_obj;
+    /* 0070 */ FollowerInfo target_obj;
     /* 00A0 */ FollowerInfo field_A0;
-    /* 00D0 */ int64_t field_D0;
+    /* 00D0 */ int64_t target_loc;
     /* 00D8 */ int field_D8;
-    /* 00DC */ int field_DC;
+    /* 00DC */ unsigned int flags;
 } MagicTechSerializedData;
 
 static_assert(sizeof(MagicTechSerializedData) == 0xE0, "wrong size");
+
+typedef struct MagicTechSummonInfo {
+    /* 0000 */ FollowerInfo field_0;
+    /* 0030 */ FollowerInfo field_30;
+    /* 0060 */ ObjectID field_60;
+    /* 0078 */ int64_t loc;
+    /* 0080 */ int64_t* field_80;
+    /* 0084 */ int field_84;
+    /* 0088 */ ObjectID field_88;
+    /* 00A0 */ int64_t field_A0;
+    /* 00A8 */ ObjectID field_A8;
+    /* 00C0 */ int palette;
+    /* 00C4 */ int field_C4;
+    /* 00C8 */ int field_C8;
+    /* 00CC */ int field_CC;
+} MagicTechSummonInfo;
+
+static_assert(sizeof(MagicTechSummonInfo) == 0xD0, "wrong size");
 
 extern const char* off_5BA10C[31];
 extern const char* off_5BA188[32];
@@ -365,18 +379,29 @@ void sub_4507B0(object_id_t obj, int magictech);
 bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech);
 bool sub_450940(int magictech);
 int sub_450B40(int64_t obj);
+void magictech_effect_summon(MagicTechSummonInfo* summon_info);
 void sub_451070(MagicTechLock* a1);
 void sub_451BB0(int64_t obj, int magictech);
+void sub_452650(int64_t obj);
 void magictech_process(int64_t obj, void* a2, int a3);
-void sub_454920(int64_t obj, int num, int max);
+int sub_453B20(int64_t a1, int64_t a2, int magictech);
+int sub_453CC0(int64_t a1, int64_t item_obj, int64_t a3);
+bool sub_454920(int64_t obj, int num, int max);
+void magictech_component_obj_flag(int64_t a1, int64_t a2, int a3, int a4, int a5, int64_t a6, int64_t a7);
 bool sub_4557C0(int slot, MagicTechLock** lock_ptr);
 void sub_455A20(MagicTechSerializedData* a1, int64_t obj, int a3);
 void sub_455AC0(MagicTechSerializedData* a1);
+bool sub_4564E0(MagicTechSerializedData* a1);
 bool sub_456A10(int64_t a1, int64_t a2, int64_t a3);
+bool sub_456A90(int magictech);
 bool sub_456BC0(MagicTechSerializedData* a1);
+bool sub_456D20(int magictech, tig_art_id_t* art_id_ptr, tig_art_id_t* light_art_id_ptr, tig_color_t* light_color_ptr, int* a5, int* a6, int* a7, int* a8);
 void sub_456E00(int magictech);
 void sub_456E60(int64_t obj, int a2);
+void sub_456EC0(int64_t obj, int spell);
+void sub_456F70(int magictech);
 void sub_456FA0(int magictech, unsigned int flags);
+void sub_457000(int magictech, int action);
 void sub_457060(MagicTechLock* a1);
 void sub_457100();
 void sub_457110(int magictech);
@@ -390,12 +415,15 @@ const char* magictech_get_name(int magictech);
 tig_art_id_t sub_458B70(int magictech);
 void sub_458C00(int spell, int64_t obj);
 int sub_458CA0(int magictech);
-bool sub_459040(int64_t a1, unsigned int flags, int64_t* a3);
-bool sub_459170(int64_t a1, unsigned int flags, int64_t* a3);
+bool sub_459040(int64_t obj, unsigned int flags, int64_t* parent_obj_ptr);
+bool sub_459170(int64_t obj, unsigned int flags, int* index_ptr);
 bool sub_459380(int64_t obj, int magictech);
 bool sub_4593F0(int64_t obj, int a2);
 bool magictech_timeevent_process(TimeEvent* timeevent);
 bool sub_459500(int index);
+bool magictech_recharge_timeevent_process(TimeEvent* timeevent);
+void sub_459740(int64_t obj);
+void sub_4598D0(int64_t obj);
 void sub_459A20(int64_t obj);
 void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat);
 bool sub_459C10(int64_t obj, int magictech);

@@ -4,315 +4,23 @@
 #include "game/area.h"
 #include "game/critter.h"
 #include "game/gsound.h"
+#include "game/item.h"
+#include "game/map.h"
+#include "game/multiplayer.h"
+#include "game/obj_private.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/proto.h"
 #include "game/random.h"
 #include "game/sector.h"
 #include "game/spell.h"
+#include "game/tb.h"
+#include "game/text_floater.h"
+#include "game/tile.h"
 #include "game/townmap.h"
 #include "game/ui.h"
-
-typedef struct Packet29 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-} Packet29;
-
-static_assert(sizeof(Packet29) == 0x20, "wrong size");
-
-typedef struct Packet35 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int damage;
-} Packet35;
-
-static_assert(sizeof(Packet35) == 0x28, "wrong size");
-
-typedef struct Packet72 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-} Packet72;
-
-static_assert(sizeof(Packet72) == 0x20, "wrong size");
-
-typedef struct Packet85 {
-    /* 0000 */ int type;
-    /* 0004 */ int extra_length;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet85;
-
-static_assert(sizeof(Packet85) == 0x28, "wrong size");
-
-typedef struct Packet87 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ int field_38;
-} Packet87;
-
-static_assert(sizeof(Packet87) == 0x40, "wrong size");
-
-typedef struct Packet90 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ int field_38;
-} Packet90;
-
-static_assert(sizeof(Packet90) == 0x40, "wrong size");
-
-typedef struct Packet92 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ tig_art_id_t art_id;
-} Packet92;
-
-static_assert(sizeof(Packet92) == 0x28, "wrong size");
-
-typedef struct Packet94 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-} Packet94;
-
-static_assert(sizeof(Packet94) == 0x20, "wrong size");
-
-typedef struct Packet95 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-} Packet95;
-
-static_assert(sizeof(Packet95) == 0x20, "wrong size");
-
-typedef struct Packet96 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet96;
-
-static_assert(sizeof(Packet96) == 0x28, "wrong size");
-
-typedef struct Packet99 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int64_t location;
-    /* 0028 */ int dx;
-    /* 002C */ int dy;
-    /* 0030 */ int field_30;
-} Packet99;
-
-static_assert(sizeof(Packet99) == 0x38, "wrong size");
-
-typedef struct Packet100 {
-    /* 0000 */ int type;
-    /* 0004 */ int subtype;
-    union {
-        struct {
-            /* 0008 */ int field_8;
-            /* 000C */ int field_C;
-        } a;
-        struct {
-            /* 0008 */ ObjectID field_8;
-        } b;
-        struct {
-            /* 0008 */ int field_8;
-            /* 0010 */ ObjectID field_10;
-            /* 0028 */ ObjectID field_28;
-        } c;
-        struct {
-            /* 0008 */ ObjectID field_8;
-            /* 0020 */ ObjectID field_20;
-        } s;
-        struct {
-            /* 0008 */ ObjectID field_8;
-            /* 0020 */ int field_20;
-        } x;
-        struct {
-            /* 0008 */ ObjectID field_8;
-            /* 0020 */ ObjectID field_20;
-            /* 0038 */ int field_38;
-            /* 003C */ int field_3C;
-        } z;
-    } d;
-} Packet100;
-
-static_assert(sizeof(Packet100) == 0x40, "wrong size");
-
-typedef struct Packet103 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet103;
-
-static_assert(sizeof(Packet103) == 0x28, "wrong size");
-
-typedef struct Packet106 {
-    /* 0000 */ int type;
-    /* 0004 */ int subtype;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ ObjectID oid;
-} Packet106;
-
-static_assert(sizeof(Packet106) == 0x28, "wrong size");
-
-typedef struct Packet107 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-} Packet107;
-
-static_assert(sizeof(Packet107) == 0x20, "wrong size");
-
-typedef struct Packet108 {
-    /* 0000 */ int type;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ bool field_10;
-} Packet108;
-
-static_assert(sizeof(Packet108) == 0x18, "wrong size");
-
-typedef struct Packet109 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet109;
-
-static_assert(sizeof(Packet109) == 0x28, "wrong size");
-
-typedef struct Packet110 {
-    /* 0000 */ int type;
-    /* 0004 */ int map;
-    /* 0008 */ int field_8;
-} Packet110;
-
-static_assert(sizeof(Packet110) == 0xC, "wrong size");
-
-typedef struct Packet111 {
-    /* 0000 */ int type;
-    /* 0004 */ tig_art_id_t art_id;
-} Packet111;
-
-static_assert(sizeof(Packet111) == 0x8, "wrong size");
-
-typedef struct Packet112 {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ ObjectID oid;
-} Packet112;
-
-static_assert(sizeof(Packet112) == 0x28, "wrong size");
-
-typedef struct Packet116 {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 0010 */ ObjectID oid;
-} Packet116;
-
-static_assert(sizeof(Packet116) == 0x28, "wrong size");
-
-typedef struct Packet117 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ ObjectID field_38;
-} Packet117;
-
-static_assert(sizeof(Packet117) == 0x50, "wrong size");
-
-typedef struct Packet118 {
-    /* 0000 */ int type;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-} Packet118;
-
-static_assert(sizeof(Packet118) == 0x38, "wrong size");
-
-typedef struct Packet120 {
-    /* 0000 */ int type;
-    /* 0004 */ struct {
-        int field_4;
-        int field_8;
-        int field_C;
-    } data;
-} Packet120;
-
-static_assert(sizeof(Packet120) == 0x10, "wrong size");
-
-typedef struct Packet121 {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet121;
-
-static_assert(sizeof(Packet121) == 0x28, "wrong size");
-
-typedef struct Packet122 {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ ObjectID oid;
-} Packet122;
-
-static_assert(sizeof(Packet122) == 0x20, "wrong size");
-
-typedef struct Packet129 {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int fld;
-    /* 0024 */ int subtype;
-    union {
-        struct {
-            /* 0028 */ int field_28;
-        } a;
-        struct {
-            /* 0028 */ int field_28;
-        } b;
-        struct {
-            /* 0028 */ int field_28;
-        } c;
-        struct {
-            /* 0028 */ ObjectID oid;
-        } d;
-        struct {
-            /* 0028 */ int field_28;
-            /* 0030 */ ObjectID oid;
-        } e;
-        struct {
-            /* 0028 */ int field_28;
-            /* 002C */ int field_2C;
-        } f;
-        struct {
-            /* 0028 */ int field_28;
-            /* 002C */ int field_2C;
-        } g;
-        struct {
-            /* 0028 */ tig_art_id_t art_id;
-        } h;
-        struct {
-            /* 0028 */ int field_28;
-            /* 002C */ int field_2C;
-            /* 0030 */ int field_30;
-        } i;
-        struct {
-            /* 0028 */ unsigned int flags;
-        } j;
-    } d;
-} Packet129;
-
-static_assert(sizeof(Packet129) == 0x48, "wrong size");
-
-typedef struct Packet130 {
-    /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ ObjectID oid;
-    /* 0020 */ int fld;
-    /* 0024 */ int length;
-} Packet130;
-
-static_assert(sizeof(Packet130) == 0x28, "wrong size");
+#include "game/wall.h"
 
 // 0x5BB998
 static int dword_5BB998[6] = {
@@ -325,15 +33,51 @@ static int dword_5BB998[6] = {
 };
 
 // 0x4ED510
-void sub_4ED510()
+void sub_4ED510(AnimID anim_id, int64_t loc, AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int size;
+    Packet16* pkt;
+
+    // NOTE: The size of this packet is unclear. It consists of two chunks -
+    // fixed length header and rotations array. The rotations array appended
+    // at +0x58 offset implying header size (including padding) to be 0x58,
+    // but the original code allocates 0x60 bytes for it.
+    size = sizeof(*pkt) + 8 + run_info->path.max;
+    pkt = (Packet16*)MALLOC(size);
+    pkt->type = 16;
+    pkt->anim_id = anim_id;
+    pkt->loc = loc;
+    pkt->path_flags = run_info->path.flags;
+    pkt->path_base_rot = run_info->path.baseRot;
+    pkt->path_curr = run_info->path.curr;
+    pkt->path_max = run_info->path.max;
+    pkt->path_subsequence = run_info->path.subsequence;
+    pkt->path_max_path_length = run_info->path.maxPathLength;
+    pkt->path_abs_max_path_length = run_info->path.absMaxPathLength;
+    pkt->field_48 = run_info->path.field_E8;
+    pkt->field_50 = run_info->path.field_F0;
+    pkt->offset_x = obj_field_int32_get(run_info->field_20, OBJ_F_OFFSET_X);
+    pkt->offset_y = obj_field_int32_get(run_info->field_20, OBJ_F_OFFSET_Y);
+    pkt->art_id = obj_field_int32_get(run_info->field_20, OBJ_F_CURRENT_AID);
+    pkt->anim_flags = run_info->field_C;
+    memcpy((uint8_t*)(pkt + 1), run_info->path.rotations, run_info->path.max);
+    tig_net_send_app_all(&pkt, size);
+    FREE(pkt);
 }
 
 // 0x4ED630
-void sub_4ED630()
+void sub_4ED630(Packet16* pkt, AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    run_info->path.flags = pkt->path_flags;
+    run_info->path.baseRot = pkt->path_base_rot;
+    run_info->path.curr = pkt->path_curr;
+    run_info->path.max = pkt->path_max;
+    run_info->path.subsequence = pkt->path_subsequence;
+    run_info->path.maxPathLength = pkt->path_max_path_length;
+    run_info->path.absMaxPathLength = pkt->path_abs_max_path_length;
+    run_info->path.field_E8 = pkt->field_48;
+    run_info->path.field_F0 = pkt->field_50;
+    memcpy(run_info->path.rotations, (uint8_t*)(pkt + 1), run_info->path.max);
 }
 
 // 0x4ED6C0
@@ -363,21 +107,64 @@ void sub_4ED720(int64_t obj, int damage)
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 35;
         sub_4F0640(obj, &(pkt.oid));
-        pkt.damage = damage;
+        pkt.dam = damage;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4ED780
-void sub_4ED780()
+bool sub_4ED780(int64_t obj, int quest, int state, int64_t a4)
 {
-    // TODO: Incomplete.
+    int player;
+    char str[256];
+    char v1[40];
+    Packet39 pkt;
+
+    player = sub_4A2B10(obj);
+
+    if (player == -1) {
+        return false;
+    }
+
+    sub_441B60(obj, obj, str);
+
+    // FIXME: Probably useless.
+    objid_id_to_str(v1, sub_407EF0(obj));
+    objid_id_to_str(v1, sub_407EF0(a4));
+
+    pkt.type = 39;
+    sub_4440E0(obj, &(pkt.field_8));
+    pkt.quest = quest;
+    pkt.state = state;
+    sub_4440E0(a4, &(pkt.field_40));
+    tig_net_send_app_except(&pkt, sizeof(pkt), player);
+
+    return true;
 }
 
 // 0x4ED8B0
-void sub_4ED8B0()
+bool mp_object_create(int name, int64_t loc, int64_t* obj_ptr)
 {
-    // TODO: Incomplete.
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if ((tig_net_flags & TIG_NET_HOST) != 0
+            && object_create(sub_4685A0(name), loc, obj_ptr)) {
+            Packet70 pkt;
+
+            pkt.type = 70;
+            pkt.subtype = 0;
+            pkt.s0.name = name;
+            pkt.s0.oid = sub_407EF0(*obj_ptr);
+            pkt.s0.loc = loc;
+            pkt.s0.field_30 = 0;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+            return true;
+        }
+
+        *obj_ptr = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    return object_create(sub_4685A0(name), loc, obj_ptr);
 }
 
 // 0x4ED9E0
@@ -391,9 +178,20 @@ void sub_4ED9E0(int64_t obj)
 }
 
 // 0x4EDA60
-void sub_4EDA60()
+void sub_4EDA60(UiMessage* ui_message, int player, int a3)
 {
-    // TODO: Incomplete.
+    Packet84* pkt;
+    int extra_length;
+
+    extra_length = (int)strlen(ui_message->str) + 1;
+    pkt = (Packet84*)MALLOC(sizeof(*pkt) + extra_length);
+    pkt->type = 84;
+    pkt->extra_length = extra_length;
+    pkt->field_8 = a3;
+    pkt->ui_message = *ui_message;
+    strncpy((char*)(pkt + 1), ui_message->str, extra_length);
+    tig_net_send_app(pkt, sizeof(*pkt) + extra_length, player);
+    FREE(pkt);
 }
 
 // 0x4EDB70
@@ -402,13 +200,13 @@ void sub_4EDB70(int64_t obj, int a3, const char* str)
     Packet85* pkt;
     int extra_length;
 
-    extra_length = strlen(str);
+    extra_length = (int)strlen(str) + 1;
     pkt = (Packet85*)MALLOC(sizeof(*pkt) + extra_length);
     pkt->type = 85;
     pkt->extra_length = extra_length;
     pkt->oid = sub_407EF0(obj);
     pkt->field_20 = a3;
-    strncpy(pkt + 1, str, extra_length);
+    strncpy((char*)(pkt + 1), str, extra_length);
     tig_net_send_app_all(pkt, sizeof(*pkt) + extra_length);
     FREE(pkt);
 }
@@ -493,7 +291,7 @@ void sub_4EDDE0(int64_t obj)
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) != 0) {
         pkt.type = 95;
-        pkt.oid.type = 0;
+        pkt.oid.type = OID_TYPE_NULL;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -501,7 +299,8 @@ void sub_4EDDE0(int64_t obj)
 // 0x4EDE40
 void sub_4EDE40(Packet95* pkt)
 {
-    if (pkt->oid.type == 0 || player_is_pc_obj(objp_perm_lookup(pkt->oid))) {
+    if (pkt->oid.type == OID_TYPE_NULL
+        || player_is_pc_obj(objp_perm_lookup(pkt->oid))) {
         sub_4601C0();
     }
 }
@@ -1211,7 +1010,7 @@ void sub_4EF5C0(int64_t obj)
 {
     Packet116 pkt;
 
-    sub_4D56C0(obj);
+    tf_remove(obj);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 116;
@@ -1247,7 +1046,7 @@ void sub_4EF690(Packet116* pkt)
             tb_remove(objp_perm_lookup(pkt->oid));
             break;
         case 1:
-            sub_4D56C0(objp_perm_lookup(pkt->oid));
+            tf_remove(objp_perm_lookup(pkt->oid));
             break;
         }
     }
@@ -1260,7 +1059,7 @@ void sub_4EF6F0(int64_t a1, int64_t a2, int64_t a3)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0) {
-        sub_4445A0(a1, a2, a3);
+        sub_462CC0(a1, a2, a3);
         return;
     }
 
@@ -1321,7 +1120,7 @@ void sub_4EF8B0(Packet118* pkt)
 }
 
 // 0x4EF920
-void sub_4EF920()
+bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr)
 {
     // TODO: Incomplete.
 }
@@ -1456,7 +1255,7 @@ void sub_4EFDD0(int64_t obj, int fld, int value)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 129;
-        pkt.subtype = 1;
+        pkt.subtype = 0;
         pkt.oid = sub_407EF0(obj);
         pkt.d.a.field_28 = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -1484,7 +1283,7 @@ void sub_4EFEE0(int64_t obj, unsigned int flags)
 {
     Packet129 pkt;
 
-    sub_43D0E0(obj, flags);
+    sub_43D280(obj, flags);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 129;
@@ -1526,7 +1325,7 @@ void mp_obj_field_obj_set(int64_t obj, int fld, int64_t value)
         if (value != OBJ_HANDLE_NULL) {
             pkt.d.d.oid = sub_407EF0(value);
         } else {
-            pkt.d.d.oid.type = 0;
+            pkt.d.d.oid.type = OID_TYPE_NULL;
         }
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1551,7 +1350,7 @@ void sub_4F0070(int64_t obj, int fld, int index, int64_t value)
         if (value != OBJ_HANDLE_NULL) {
             pkt.d.e.oid = sub_407EF0(value);
         } else {
-            pkt.d.e.oid.type = 0;
+            pkt.d.e.oid.type = OID_TYPE_NULL;
         }
         pkt.d.e.field_28 = index;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -1578,9 +1377,21 @@ void sub_4F0150(int64_t obj, int fld, int index, int value)
 }
 
 // 0x4F01D0
-void sub_4F01D0(int64_t obj, int fld, int index, int value)
+void sub_4F01D0(int64_t obj, int fld, int index, Script* value)
 {
-    // TODO: Incomplete.
+    Packet129 pkt;
+
+    sub_4078A0(obj, fld, index, value);
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        pkt.type = 129;
+        pkt.subtype = P129_SUBTYPE_SCRIPT;
+        pkt.oid = sub_407EF0(obj);
+        pkt.fld = fld;
+        pkt.scr_val.idx = index;
+        pkt.scr_val.scr = *value;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
 }
 
 // 0x4F0270
@@ -1593,11 +1404,11 @@ void obj_f_set_int32_with_network(int64_t obj, int fld, int index, int value)
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) != 0) {
         pkt.type = 129;
-        pkt.subtype = 7;
+        pkt.subtype = P129_SUBTYPE_INT32_ARRAY;
         sub_4F0640(obj, &(pkt.oid));
         pkt.fld = fld;
-        pkt.d.g.field_28 = index;
-        pkt.d.g.field_2C = value;
+        pkt.int32_array_val.idx = index;
+        pkt.int32_array_val.value = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -1623,7 +1434,7 @@ void sub_4F0360(int64_t obj, int fld, int index, int value)
 {
     Packet129 pkt;
 
-    sub_43ECF0(obj, fld, value);
+    sub_43ECF0(obj, fld, index, value);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 129;
@@ -1727,14 +1538,14 @@ void sub_4F0640(int64_t obj, ObjectID* oid_ptr)
     if (obj != OBJ_HANDLE_NULL) {
         *oid_ptr = sub_407EF0(obj);
     } else {
-        oid_ptr->type = 0;
+        oid_ptr->type = OID_TYPE_NULL;
     }
 }
 
 // 0x4F0690
 void sub_4F0690(ObjectID oid, int64_t* obj_ptr)
 {
-    if (oid.type != 0) {
+    if (oid.type != OID_TYPE_NULL) {
         *obj_ptr = objp_perm_lookup(oid);
     } else {
         *obj_ptr = OBJ_HANDLE_NULL;
@@ -1760,7 +1571,7 @@ void sub_4F06E0(int64_t a1, int64_t a2)
         obj_field_int32_set(a1, OBJ_F_PORTAL_FLAGS, flags);
         object_set_current_aid(a1, art_id);
         sound_id = sub_4F1050(a1, 0);
-        sub_441980(a2, a1, 0, 0, 30, 0);
+        sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_BUST, 0);
         sub_41B930(sound_id, 1, a1);
     } else {
         sub_43CCA0(a1);
@@ -1770,9 +1581,30 @@ void sub_4F06E0(int64_t a1, int64_t a2)
 }
 
 // 0x4F0790
-void sub_4F0790()
+void sub_4F0790(int64_t obj, bool a2)
 {
-    // TODO: Incomplete.
+    int64_t loc;
+    ObjectList objects;
+    ObjectNode* node;
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+    sub_4407C0(loc, OBJ_TM_WALL, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        sub_4E18F0(node->obj, a2);
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        sub_43CF70(node->obj);
+        sub_43CFF0(node->obj);
+        node = node->next;
+    }
+    object_list_destroy(&objects);
 }
 
 // 0x4F08C0
@@ -1924,7 +1756,7 @@ bool sub_4F0A90(int64_t door_obj)
 }
 
 // 0x4F0BF0
-void sub_4F0BF0()
+int sub_4F0BF0(int64_t a1, int64_t a2, int64_t a3, int a4)
 {
     // TODO: Incomplete.
 }

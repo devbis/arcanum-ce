@@ -3,11 +3,13 @@
 
 #include <tig/tig.h>
 
+#include "game/light.h"
 #include "game/sector_block_list.h"
+#include "game/sector_tile_list.h"
 
 typedef struct SectorLightList {
     SectorBlockListNode* head;
-    int field_4;
+    bool modified;
 } SectorLightList;
 
 static_assert(sizeof(SectorLightList) == 0x8, "wrong size");
@@ -15,9 +17,14 @@ static_assert(sizeof(SectorLightList) == 0x8, "wrong size");
 bool sector_light_list_init(SectorLightList* list);
 bool sector_light_list_reset(SectorLightList* list);
 bool sector_light_list_exit(SectorLightList* list);
-bool sub_4F71C0(SectorLightList* list, int a2);
-void sub_4F7200(SectorLightList* list, int a2);
-bool sub_4F7250(SectorLightList* list, int a2, int a3, int a4, int a5, int a6);
-bool sub_4F7710(SectorLightList* list);
+bool sector_light_list_add(SectorLightList* list, Light* light);
+bool sector_light_list_remove(SectorLightList* list, Light* light);
+bool sector_light_list_update(SectorLightList* list, Light* light, int64_t loc, int offset_x, int offset_y);
+bool sector_light_list_load(SectorLightList* list, TigFile* stream, int64_t sector_id);
+bool sector_light_list_load_with_dif(SectorLightList* list, TigFile* sec_stream, TigFile* dif_stream, int64_t sector_id);
+bool sector_light_list_save(SectorLightList* list, TigFile* stream);
+bool sector_light_list_is_modified(SectorLightList* list);
+bool sector_light_list_save_with_dif(SectorLightList* list, TigFile* stream);
+void sector_light_list_fold(SectorLightList* list, int64_t sector_id, SectorTileList* tiles);
 
 #endif /* ARCANUM_GAME_SECTOR_LIST_LIST_H_ */

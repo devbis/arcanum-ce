@@ -1,8 +1,11 @@
 #include "game/animfx.h"
 
+#include "game/anim.h"
 #include "game/gsound.h"
 #include "game/light.h"
 #include "game/mes.h"
+#include "game/object.h"
+#include "game/teleport.h"
 
 #define ANIMFX_LIST_CAPACITY 10
 #define BLEND_COUNT 7
@@ -14,6 +17,7 @@ typedef enum EffectType {
     EFFECT_TYPE_COUNT,
 } EffectType;
 
+static bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj);
 static void sub_4CDCD0(AnimFxList* list);
 static bool animfx_list_load_internal(AnimFxList* list);
 static void animfx_build_eye_candy_effect(int index, char* str);
@@ -35,17 +39,17 @@ const char* off_5B7658[] = {
 };
 
 // 0x5B7680
-int dword_5B7680[] = {
-    0x01,
-    0x02,
-    0x04,
-    0x08,
-    0x10,
-    0x20,
-    0x40,
-    0x80,
-    0x100,
-    0x240,
+unsigned int dword_5B7680[] = {
+    ANIMFX_PLAY_REVERSE,
+    ANIMFX_PLAY_STACK,
+    ANIMFX_PLAY_DESTROY,
+    ANIMFX_PLAY_CALLBACK,
+    ANIMFX_PLAY_END_CALLBACK,
+    ANIMFX_PLAY_RANDOM_START,
+    ANIMFX_PLAY_FIRE_DMG,
+    ANIMFX_PLAY_CHECK_ALREADY,
+    ANIMFX_PLAY_NO_ID,
+    ANIMFX_PLAY_ICE_DMG,
 };
 
 // 0x5B76A8
@@ -123,6 +127,9 @@ static int dword_5B772C[] = {
 
 static_assert(sizeof(dword_5B772C) / sizeof(dword_5B772C[0]) == SCALE_COUNT, "wrong size");
 
+// 0x601700
+static AnimID stru_601700;
+
 // 0x60170C
 static AnimFxList* dword_60170C[ANIMFX_LIST_CAPACITY];
 
@@ -162,18 +169,17 @@ void sub_4CCD20(AnimFxList* list, AnimFxNode* node, int64_t obj, int a4, int a5)
     node->list = list;
     node->obj = obj;
     node->field_18 = a5;
-    node->field_10 = 0;
+    node->field_10 = OBJ_HANDLE_NULL;
     node->field_28 = a4;
     node->field_1C = 0;
     node->field_20 = -1;
-    node->field_14 = 0;
-    node->field_2C = 0;
-    node->field_30 = 0;
-    node->field_34 = 0;
+    node->art_id_ptr = NULL;
+    node->light_art_id_ptr = NULL;
+    node->light_color_ptr = NULL;
     node->field_24 = 0;
-    node->field_44 = -1;
+    node->sound_id = -1;
     node->rotation = 0;
-    node->field_4C = 4;
+    node->scale = 4;
 }
 
 // 0x4CCD80
@@ -184,10 +190,604 @@ void sub_4CCD80(AnimFxNode* node)
     dword_601738 = node->list;
     art_id = dword_601738->entries[node->field_18].eye_candy_art_id;
     sub_502290(art_id);
-    if ((dword_601738->entries[node->field_18].flags & 0x2) != 0) {
+    if ((dword_601738->entries[node->field_18].flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
         art_id = tig_art_eye_candy_id_type_set(art_id, 1);
         sub_502290(art_id);
     }
+}
+
+// 0x4CCDD0
+bool sub_4CCDD0(AnimFxNode* node)
+{
+    AnimFxListEntry* entry;
+    unsigned int num;
+    int index;
+    tig_art_id_t art_id;
+
+    dword_601738 = node->list;
+
+    if (node->obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return false;
+    }
+
+    if (node->field_18 >= dword_601738->field_14) {
+        tig_debug_printf("AnimFX: animfx_id_get: Warning: AnimFXID Out of Range: %d.\n", node->field_18);
+        return false;
+    }
+
+    entry = &(dword_601738->entries[node->field_18]);
+    if (entry->eye_candy_art_id == TIG_ART_ID_INVALID) {
+        return false;
+    }
+
+    if ((node->field_24 & ANIMFX_PLAY_CHECK_ALREADY) != 0
+        && sub_424560(node->obj, entry->eye_candy_art_id, node->field_28)) {
+        return false;
+    }
+
+    num = tig_art_num_get(entry->eye_candy_art_id);
+
+    if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
+        for (index = 0; index < 7; index++) {
+            art_id = sub_407470(node->obj, OBJ_F_OVERLAY_FORE, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                return true;
+            }
+        }
+    }
+
+    if ((entry->flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
+        for (index = 0; index < 7; index++) {
+            art_id = sub_407470(node->obj, OBJ_F_OVERLAY_BACK, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                return true;
+            }
+        }
+    }
+
+    if ((entry->flags & ANIMFX_LIST_ENTRY_UNDERLAY) != 0) {
+        for (index = 0; index < 4; index++) {
+            art_id = sub_407470(node->obj, OBJ_F_UNDERLAY, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                return true;
+            }
+        }
+    }
+
+    if (entry->light_art_id != TIG_ART_ID_INVALID) {
+        for (index = 0; index < 4; index++) {
+            // FIXME: Original code looks odd. Apparently it does not assign
+            // light art id to a variable and the check below refer to the
+            // `art_id` from earlier loops. In some circumstances that value
+            // is set to `num`, which is obviously wrong.
+            art_id = sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+// 0x4CCF70
+bool animfx_add(AnimFxNode* node)
+{
+    AnimFxListEntry* entry;
+    tig_art_id_t base_eye_candy_art_id;
+    tig_art_id_t eye_candy_art_id = TIG_ART_ID_INVALID;
+    unsigned int eye_candy_art_num;
+    int overlay_fore_index = -1;
+    int overlay_back_index = -1;
+    int overlay_light_index = -1;
+    int scale = 4;
+    bool sound_was_set = false;
+    bool rc = true;
+
+    dword_601738 = node->list;
+
+    if (node->obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return false;
+    }
+
+    if (teleport_is_teleporting() && !teleport_is_teleporting_obj(node->obj)) {
+        return false;
+    }
+
+    if (node->field_18 >= dword_601738->field_14) {
+        tig_debug_printf("AnimFX: animfx_id_get: Warning: (Weapon?) AnimFXID Out of Range: %d.\n", node->field_18);
+        return false;
+    }
+
+    entry = &(dword_601738->entries[node->field_18]);
+
+    if (entry->eye_candy_art_id != TIG_ART_ID_INVALID) {
+        int index;
+        tig_art_id_t art_id;
+
+        if ((node->field_24 & ANIMFX_PLAY_CHECK_ALREADY) != 0
+            && sub_424560(node->obj, entry->eye_candy_art_id, node->field_28)) {
+            return false;
+        }
+
+        if ((node->field_24 & ANIMFX_PLAY_CHECK_ALREADY) != 0) {
+            if ((obj_type_is_critter(obj_field_int32_get(node->obj, OBJ_F_TYPE)))) {
+                art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+                switch (tig_art_type(art_id)) {
+                case TIG_ART_TYPE_CRITTER:
+                    switch (sub_503EA0(art_id)) {
+                    case 0:
+                    case 4:
+                        scale = 3;
+                        break;
+                    case 1:
+                    case 2:
+                        scale = 1;
+                        break;
+                    case 3:
+                        scale = 4;
+                        break;
+                    default:
+                        tig_debug_printf("animfx_add: Error: race out of range!\n");
+                        scale = 3;
+                        break;
+                    }
+                    break;
+                case TIG_ART_TYPE_MONSTER:
+                    switch (tig_art_monster_id_specie_get(art_id)) {
+                    case 0:
+                    case 1:
+                        scale = 1;
+                        break;
+                    default:
+                        scale = 3;
+                        break;
+                    }
+                    break;
+                case TIG_ART_TYPE_UNIQUE_NPC:
+                    break;
+                default:
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
+
+        base_eye_candy_art_id = entry->eye_candy_art_id;
+        if (node->rotation != 0) {
+            base_eye_candy_art_id = tig_art_id_rotation_set(base_eye_candy_art_id, node->rotation);
+        }
+
+        eye_candy_art_num = tig_art_num_get(eye_candy_art_id);
+
+        if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
+            int found = 0;
+
+            for (index = 0; index < 7; index++) {
+                art_id = sub_407470(node->obj, OBJ_F_OVERLAY_FORE, index);
+                if (art_id == TIG_ART_ID_INVALID) {
+                    break;
+                }
+
+                if (node->field_20 > 0
+                    && tig_art_num_get(art_id) == eye_candy_art_num) {
+                    found++;
+                    if (found > node->field_20) {
+                        return false;
+                    }
+                }
+            }
+
+            if (index >= 7) {
+                return false;
+            }
+
+            eye_candy_art_id = tig_art_eye_candy_id_type_set(base_eye_candy_art_id, 0);
+            if (tig_art_exists(eye_candy_art_id) == TIG_OK) {
+                if (node->scale == 4) {
+                    if ((entry->flags & ANIMFX_LIST_ENTRY_CAN_AUTOSCALE) != 0) {
+                        eye_candy_art_id = tig_art_eye_candy_id_scale_set(eye_candy_art_id, scale);
+                    }
+                } else {
+                    eye_candy_art_id = tig_art_eye_candy_id_scale_set(eye_candy_art_id, node->scale);
+                }
+
+                if (!node->field_1C) {
+                    sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, index, eye_candy_art_id);
+                }
+
+                overlay_fore_index = index;
+            }
+        }
+
+        if ((entry->flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
+            int found = 0;
+
+            for (index = 0; index < 7; index++) {
+                art_id = sub_407470(node->obj, OBJ_F_OVERLAY_BACK, index);
+                if (art_id == TIG_ART_ID_INVALID) {
+                    break;
+                }
+
+                if (node->field_20 > 0
+                    && tig_art_num_get(art_id) == eye_candy_art_num) {
+                    found++;
+                    if (found > node->field_20) {
+                        if (!node->field_1C) {
+                            if (overlay_fore_index != -1) {
+                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+
+            if (index >= 7) {
+                if (!node->field_1C) {
+                    if (overlay_fore_index != -1) {
+                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                    }
+                }
+                return false;
+            }
+
+            eye_candy_art_id = base_eye_candy_art_id;
+            if (tig_art_exists(eye_candy_art_id) == TIG_OK) {
+                eye_candy_art_id = tig_art_eye_candy_id_type_set(eye_candy_art_id, 1);
+                if (node->scale == 4) {
+                    if ((entry->flags & ANIMFX_LIST_ENTRY_CAN_AUTOSCALE) != 0) {
+                        eye_candy_art_id = tig_art_eye_candy_id_scale_set(eye_candy_art_id, scale);
+                    }
+                } else {
+                    eye_candy_art_id = tig_art_eye_candy_id_scale_set(eye_candy_art_id, node->scale);
+                }
+            }
+
+            if (!node->field_1C) {
+                sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, index, eye_candy_art_id);
+            }
+
+            overlay_back_index = index;
+        }
+
+        if ((entry->flags & ANIMFX_LIST_ENTRY_UNDERLAY) != 0) {
+            int found = 0;
+
+            for (index = 0; index < 4; index++) {
+                art_id = sub_407470(node->obj, OBJ_F_UNDERLAY, index);
+                if (art_id == TIG_ART_ID_INVALID) {
+                    break;
+                }
+
+                if (node->field_20 > 0
+                    && tig_art_num_get(art_id) == eye_candy_art_num) {
+                    found++;
+                    if (found > node->field_20) {
+                        if (!node->field_1C) {
+                            if (overlay_fore_index != -1) {
+                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                            }
+
+                            if (overlay_back_index != -1) {
+                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+
+            if (index >= 4) {
+                if (!node->field_1C) {
+                    if (overlay_fore_index != -1) {
+                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                    }
+
+                    if (overlay_back_index != -1) {
+                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                    }
+                }
+                return false;
+            }
+
+            eye_candy_art_id = tig_art_eye_candy_id_type_set(base_eye_candy_art_id, 2);
+            if (tig_art_exists(eye_candy_art_id) == TIG_OK) {
+                if (node->scale == 4) {
+                    if ((entry->flags & ANIMFX_LIST_ENTRY_CAN_AUTOSCALE) != 0) {
+                        eye_candy_art_id = tig_art_eye_candy_id_scale_set(eye_candy_art_id, scale);
+                    }
+                } else {
+                    eye_candy_art_id = tig_art_eye_candy_id_scale_set(eye_candy_art_id, node->scale);
+                }
+            }
+
+            if (!node->field_1C) {
+                sub_43ECF0(node->obj, OBJ_F_UNDERLAY, index, eye_candy_art_id);
+            }
+
+            overlay_fore_index = index;
+            overlay_back_index = -5;
+        }
+
+        if (entry->light_art_id != TIG_ART_ID_INVALID) {
+            int found = 0;
+
+            for (index = 0; index < 4; index++) {
+                art_id = sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+                if (art_id == TIG_ART_ID_INVALID) {
+                    break;
+                }
+
+                if (node->field_20 > 0
+                    && tig_art_num_get(art_id) == eye_candy_art_num) {
+                    found++;
+                    if (found > node->field_20) {
+                        if (!node->field_1C) {
+                            if (overlay_fore_index != -1) {
+                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                            }
+
+                            if (overlay_back_index != -1) {
+                                sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+
+            if (index >= 4) {
+                if (!node->field_1C) {
+                    if (overlay_fore_index != -1) {
+                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_FORE, overlay_fore_index, TIG_ART_ID_INVALID);
+                    }
+
+                    if (overlay_back_index != -1) {
+                        sub_43ECF0(node->obj, OBJ_F_OVERLAY_BACK, overlay_back_index, TIG_ART_ID_INVALID);
+                    }
+                }
+                return false;
+            }
+
+            if (tig_art_exists(entry->light_art_id) == TIG_OK) {
+                overlay_light_index = index;
+                if (!node->field_1C) {
+                    object_set_overlay_light(node->obj, index, 0x20, entry->light_art_id, entry->light_color);
+                }
+            }
+        }
+
+        node->sound_id = entry->sound;
+
+        if ((entry->flags & ANIMFX_LIST_ENTRY_ANIMATES) != 0
+            && node->field_1C
+            && overlay_fore_index != -1) {
+            int goal_type;
+            AnimGoalData goal_data;
+
+            if ((node->field_24 & (ANIMFX_PLAY_CALLBACK | ANIMFX_PLAY_END_CALLBACK)) != 0) {
+                if ((node->field_24 & ANIMFX_PLAY_CALLBACK) != 0) {
+                    if ((node->field_24 & ANIMFX_PLAY_REVERSE) != 0) {
+                        goal_type = AG_EYE_CANDY_REVERSE_CALLBACK;
+                    } else {
+                        goal_type = AG_EYE_CANDY_CALLBACK;
+                    }
+                } else {
+                    if ((node->field_24 & ANIMFX_PLAY_REVERSE) != 0) {
+                        goal_type = AG_EYE_CANDY_REVERSE_END_CALLBACK;
+                    } else {
+                        goal_type = AG_EYE_CANDY_END_CALLBACK;
+                    }
+                }
+            } else {
+                if ((node->field_24 & ANIMFX_PLAY_REVERSE) != 0) {
+                    if ((node->field_24 & ANIMFX_PLAY_FIRE_DMG) != 0) {
+                        goal_type = AG_EYE_CANDY_REVERSE_FIRE_DMG;
+                    } else {
+                        goal_type = AG_EYE_CANDY_REVERSE;
+                    }
+                } else {
+                    if ((node->field_24 & ANIMFX_PLAY_FIRE_DMG) != 0) {
+                        goal_type = AG_EYE_CANDY_FIRE_DMG;
+                    } else {
+                        goal_type = AG_EYE_CANDY;
+                    }
+                }
+            }
+
+            if (sub_44D500(&goal_data, node->obj, goal_type)) {
+                goal_data.params[AGDATA_ANIM_ID].data = eye_candy_art_id;
+                if ((node->field_24 & ANIMFX_PLAY_NO_ID) != 0) {
+                    goal_data.params[AGDATA_SPELL_DATA].data = -1;
+                } else {
+                    goal_data.params[AGDATA_SPELL_DATA].data = node->field_28;
+                }
+
+                goal_data.params[AGDATA_SCRATCH_VAL2].data = overlay_back_index;
+                goal_data.params[AGDATA_SCRATCH_VAL1].data = overlay_fore_index;
+                goal_data.params[AGDATA_SCRATCH_VAL3].data = overlay_light_index;
+                goal_data.params[AGDATA_SCRATCH_VAL4].data = node->field_18;
+                goal_data.params[AGDATA_SKILL_DATA].data = animfx_list_find(dword_601738);
+                goal_data.params[AGDATA_SCRATCH_VAL5].data = entry->light_art_id;
+                goal_data.params[AGDATA_RANGE_DATA].data = entry->light_color;
+                goal_data.params[AGDATA_FLAGS_DATA].data = (entry->flags & ANIMFX_LIST_ENTRY_LOOPS) != 0 ? 0x80 : 0;
+
+                if ((node->field_24 & ANIMFX_PLAY_RANDOM_START) != 0) {
+                    goal_data.params[AGDATA_FLAGS_DATA].data |= 0x800;
+                }
+
+                if ((node->field_24 & ANIMFX_PLAY_ICE_DMG) != 0) {
+                    goal_data.params[AGDATA_FLAGS_DATA].data |= 0x4000;
+                }
+
+                goal_data.params[AGDATA_PARENT_OBJ].data = node->field_10;
+
+                if (entry->sound != -1) {
+                    if ((node->field_24 & 0x1) != 0
+                        && dword_601738->field_20 > 0) {
+                        int sound_id;
+                        char path[TIG_MAX_PATH];
+
+                        sound_id = 8 - node->sound_id % dword_601738->field_10 + node->sound_id;
+                        if (gsound_resolve_path(sound_id, path) == TIG_OK) {
+                            node->sound_id = sound_id;
+                        }
+                    }
+
+                    sound_was_set = true;
+                    goal_data.params[AGDATA_ANIM_ID_PREVIOUS].data = node->sound_id;
+                }
+
+                if ((node->field_24 & ANIMFX_PLAY_STACK) != 0) {
+                    sub_44DBE0(stru_601700, &goal_data);
+                } else {
+                    sub_44D520(&goal_data, &stru_601700);
+                }
+
+                if ((node->field_24 & ANIMFX_PLAY_DESTROY) != 0) {
+                    if (sub_44D500(&goal_data, node->obj, AG_DESTROY_OBJ)) {
+                        sub_44DBE0(stru_601700, &goal_data);
+                    }
+                }
+            }
+        }
+    } else {
+        if ((entry->flags & ANIMFX_LIST_ENTRY_TRANSLUCENCY) != 0
+            || (entry->flags & ANIMFX_LIST_ENTRY_TINTING) != 0) {
+            object_add_flags(node->obj, OF_TRANSLUCENT);
+        } else {
+            rc = false;
+        }
+    }
+
+    if (!sound_was_set) {
+        if (entry->sound != -1) {
+            sub_41B930(entry->sound, 1, node->obj);
+            node->sound_id = entry->sound;
+        }
+    }
+
+    if (node->art_id_ptr != NULL) {
+        *node->art_id_ptr = eye_candy_art_id;
+    }
+
+    if (node->light_art_id_ptr != NULL) {
+        *node->light_art_id_ptr = entry->light_art_id;
+    }
+
+    if (node->light_color_ptr != NULL) {
+        *node->light_color_ptr = entry->light_color;
+    }
+
+    node->overlay_fore_index = overlay_fore_index;
+    node->overlay_back_index = overlay_back_index;
+    node->overlay_light_index = overlay_light_index;
+
+    return rc;
+}
+
+// 0x4CD7A0
+bool sub_4CD7A0(AnimFxNode* node)
+{
+    AnimFxListEntry* entry;
+    int overlay_fore_index = -1;
+    int overlay_back_index = -1;
+    int overlay_light_index = -1;
+    int index;
+    tig_art_id_t art_id;
+
+    if (node == NULL) {
+        return false;
+    }
+
+    if (node->obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (node->art_id_ptr == NULL) {
+        return false;
+    }
+
+    dword_601738 = node->list;
+    entry = &(dword_601738->entries[node->field_18]);
+
+    if (*node->art_id_ptr != TIG_ART_ID_INVALID) {
+        if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
+            for (index = 0; index < 7; index++) {
+                if (sub_407470(node->obj, OBJ_F_OVERLAY_FORE, index) == TIG_ART_ID_INVALID) {
+                    art_id = tig_art_eye_candy_id_type_set(entry->eye_candy_art_id, 0);
+                    if (tig_art_exists(art_id) == TIG_OK) {
+                        overlay_fore_index = index;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if ((entry->flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
+            for (index = 0; index < 7; index++) {
+                if (sub_407470(node->obj, OBJ_F_OVERLAY_BACK, index) == TIG_ART_ID_INVALID) {
+                    if (tig_art_exists(entry->eye_candy_art_id) == TIG_OK) {
+                        overlay_back_index = index;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if ((entry->flags & ANIMFX_LIST_ENTRY_UNDERLAY) != 0) {
+            for (index = 0; index < 4; index++) {
+                if (sub_407470(node->obj, OBJ_F_UNDERLAY, index) == TIG_ART_ID_INVALID) {
+                    art_id = tig_art_eye_candy_id_type_set(entry->eye_candy_art_id, 2);
+                    if (tig_art_exists(art_id) == TIG_OK) {
+                        overlay_fore_index = index;
+                        overlay_back_index = -5;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (entry->light_art_id != TIG_ART_ID_INVALID) {
+            for (index = 0; index < 4; index++) {
+                if (sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index) == TIG_ART_ID_INVALID) {
+                    if (tig_art_exists(entry->light_art_id) == TIG_OK) {
+                        overlay_light_index = index;
+                    }
+                }
+            }
+        }
+    }
+
+    node->overlay_fore_index = overlay_fore_index;
+    node->overlay_back_index = overlay_back_index;
+    node->overlay_light_index = overlay_light_index;
+
+    return true;
 }
 
 // 0x4CD940
@@ -209,11 +809,94 @@ void animfx_remove(AnimFxList* list, int64_t obj, int index, int a4)
         return;
     }
 
-    if ((list->entries[index].flags & 0x20) != 0) {
+    if ((list->entries[index].flags & ANIMFX_LIST_ENTRY_ANIMATES) != 0) {
         sub_4243E0(obj, list->entries[index].eye_candy_art_id, a4);
     } else {
         sub_4CD9C0(&(list->entries[index]), obj);
     }
+}
+
+// 0x4CD9C0
+bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
+{
+    unsigned int num;
+    int index;
+    tig_art_id_t art_id;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return false;
+    }
+
+    if (entry->eye_candy_art_id == TIG_ART_ID_INVALID) {
+        return false;
+    }
+
+    num = tig_art_num_get(entry->eye_candy_art_id);
+
+    if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
+        for (index = 0; index < 7; index++) {
+            art_id = sub_407470(obj, OBJ_F_OVERLAY_FORE, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                sub_43ECF0(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
+                break;
+            }
+        }
+    }
+
+    if ((entry->flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
+        for (index = 0; index < 7; index++) {
+            art_id = sub_407470(obj, OBJ_F_OVERLAY_BACK, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                sub_43ECF0(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
+                break;
+            }
+        }
+    }
+
+    if ((entry->flags & ANIMFX_LIST_ENTRY_UNDERLAY) != 0) {
+        for (index = 0; index < 4; index++) {
+            art_id = sub_407470(obj, OBJ_F_UNDERLAY, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                sub_43ECF0(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
+                break;
+            }
+        }
+    }
+
+    if (entry->light_art_id != TIG_ART_ID_INVALID) {
+        for (index = 0; index < 4; index++) {
+            // FIXME: Original code looks odd. Apparently it does not assign
+            // light art id to a variable and the check below refer to the
+            // `art_id` from earlier loops. In some circumstances that value
+            // is set to memory address of `entry`, which is obviously wrong.
+            art_id = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+            if (art_id == TIG_ART_ID_INVALID) {
+                break;
+            }
+
+            if (tig_art_num_get(art_id) == num) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 // 0x4CDB30
@@ -491,7 +1174,7 @@ void animfx_build_eye_candy_effect(int index, char* str)
         int green;
         int blue;
         if (tig_str_parse_named_complex_value3(&curr, "Light Color:", '@', &red, &green, &blue)) {
-            light_build_color(red, green, blue, &(entry->light_color));
+            light_build_color((uint8_t)red, (uint8_t)green, (uint8_t)blue, &(entry->light_color));
         } else {
             light_build_color(255, 255, 255, &(entry->light_color));
         }

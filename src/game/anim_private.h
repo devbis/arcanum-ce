@@ -101,12 +101,24 @@ typedef enum AnimGoal {
     ANIM_GOAL_MAX,
 } AnimGoal;
 
+typedef enum AgDataType {
+    AGDATATYPE_INT,
+    AGDATATYPE_OBJ,
+    AGDATATYPE_LOC,
+    AGDATATYPE_SOUND,
+} AgDataType;
+
 struct AnimRunInfo;
 
 typedef struct AnimGoalSubNode {
     /* 0000 */ bool(*func)(struct AnimRunInfo* run_info);
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
+    union {
+        struct {
+        /* 0004 */ int field_4;
+        /* 0008 */ int field_8;
+        };
+        int params[2];
+    };
     /* 000C */ int field_C;
     /* 0010 */ int field_10;
     /* 0014 */ int field_14;
@@ -122,9 +134,7 @@ typedef struct AnimGoalNode {
     /* 0008 */ int field_8;
     /* 000C */ int field_C;
     /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
-    /* 001C */ int field_1C;
+    /* 0014 */ int field_14[3];
     /* 0020 */ AnimGoalSubNode subnodes[15];
 } AnimGoalNode;
 
@@ -214,8 +224,7 @@ typedef struct AnimRunInfo {
     /* 0014 */ int field_14;
     /* 0018 */ DateTime field_18;
     /* 0020 */ int64_t field_20; // animObj
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
+    /* 0028 */ int64_t field_28;
     /* 0030 */ int current_goal;
     /* 0034 */ int field_34;
     /* 0038 */ AnimGoalData goals[8];
@@ -236,7 +245,9 @@ typedef struct AnimRunInfo {
 
 static_assert(sizeof(AnimRunInfo) == 0xD38, "wrong size");
 
+extern const char* off_5A164C[];
 extern int dword_5A5978;
+extern int dword_5A597C[AGDATA_COUNT];
 extern bool dword_5E34F4;
 extern void(*dword_5E34F8)();
 extern bool in_anim_load;
@@ -248,6 +259,7 @@ extern int dword_739E44;
 
 extern AnimRunInfo anim_run_info[216];
 
+void sub_44C840(AnimRunInfo* run_info, AnimGoalNode* goal_node);
 bool sub_44C9A0(AnimRunInfo* run_info);
 bool anim_private_init(GameInitInfo* init_info);
 void anim_private_exit();
@@ -275,12 +287,15 @@ bool sub_44E2C0(AnimID* anim_id, int priority);
 bool anim_find_first_of_type(int64_t obj, int type, AnimID* anim_id);
 bool anim_find_next_of_type(int64_t obj, int type, AnimID* anim_id);
 bool sub_44E6F0(int64_t obj, AnimGoalData* goal_data);
-void sub_44E4D0(int64_t a1, int a2, int a3);
+bool sub_44E4D0(int64_t a1, int a2, int a3);
 bool sub_44E710(int64_t obj, AnimGoalData* goal_data, AnimID* anim_id);
 bool sub_44E830(int64_t obj, int goal_type, AnimID* anim_id);
+bool sub_44E8C0(int64_t obj, AnimID* anim_id);
+bool sub_44E940(int64_t a1, AnimID* anim_id, int64_t a2);
 bool sub_44EB40(int64_t obj, int64_t from, int64_t to);
 void sub_44EBD0(AnimPath* path);
 void sub_44EBE0(AnimPath* path);
+void sub_44EBF0(AnimRunInfo* run_info);
 void sub_44EEC0(int index);
 void anim_stats();
 

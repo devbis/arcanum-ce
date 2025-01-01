@@ -23,7 +23,7 @@ typedef enum UiMessageType {
 
 typedef struct UiMessage {
     int type;
-    const char* str;
+    char* str;
     int field_8;
     int field_C;
     int64_t field_10;

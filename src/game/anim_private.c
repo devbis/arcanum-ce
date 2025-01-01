@@ -2,6 +2,9 @@
 
 #include "game/anim.h"
 #include "game/critter.h"
+#include "game/gamelib.h"
+#include "game/item.h"
+#include "game/map.h"
 #include "game/mp_utils.h"
 #include "game/obj_private.h"
 #include "game/player.h"
@@ -17,7 +20,7 @@ static void sub_44ED90(AnimGoalData* goal_data);
 static void anim_stat(AnimRunInfo* run_info);
 
 // 0x5A164C
-static const char* off_5A164C[] = {
+const char* off_5A164C[] = {
     "ag_animate",
     "ag_animate_loop",
     "ag_anim_fidget",
@@ -134,6 +137,31 @@ static const char* off_5B0530[] = {
 
 // 0x5A5978
 int dword_5A5978 = -1;
+
+// 0x5A597C
+int dword_5A597C[AGDATA_COUNT] = {
+    AGDATATYPE_OBJ,
+    AGDATATYPE_OBJ,
+    AGDATATYPE_OBJ,
+    AGDATATYPE_OBJ,
+    AGDATATYPE_OBJ,
+    AGDATATYPE_LOC,
+    AGDATATYPE_LOC,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_INT,
+    AGDATATYPE_SOUND,
+};
 
 // 0x5B052C
 static int dword_5B052C = -1;
@@ -913,7 +941,91 @@ bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
 // 0x44DD80
 bool sub_44DD80(AnimRunInfo* run_info, AnimGoalSubNode* goal_subnode)
 {
-    // TODO: Incomplete.
+    int idx;
+    int64_t obj;
+
+    for (idx = 0; idx < 5; idx++) {
+        obj = run_info->cur_stack_data->params[idx].obj;
+        if (obj != OBJ_HANDLE_NULL) {
+            if (map_is_clearing_objects()) {
+                for (idx = 0; idx < 5; idx++) {
+                    run_info->cur_stack_data->params[idx].obj = OBJ_HANDLE_NULL;
+                }
+                run_info->field_20 = OBJ_HANDLE_NULL;
+                return false;
+            }
+
+            if (!sub_4E5470(obj)) {
+                if (!sub_443F80(&obj, &(run_info->cur_stack_data->field_B0[idx]))) {
+                    tig_debug_printf("Anim: ERROR: Object validate recovery FAILED!\n");
+                    run_info->cur_stack_data->params[idx].obj = OBJ_HANDLE_NULL;
+                    ASSERT(0); // 3808, "0"
+                    return false;
+                }
+
+                run_info->cur_stack_data->params[idx].obj = obj;
+            }
+        }
+    }
+
+    run_info->field_20 = run_info->cur_stack_data->params[AGDATA_SELF_OBJ].obj;
+
+    if (goal_subnode != NULL) {
+        for (idx = 0; idx < 2; idx++) {
+            int param = goal_subnode->params[idx];
+            if (param < 0) {
+                run_info->params[idx].data = 0;
+            } else if (param < AGDATA_COUNT) {
+                switch (dword_5A597C[param]) {
+                case AGDATATYPE_OBJ:
+                    run_info->params[idx].obj = run_info->cur_stack_data->params[param].obj;
+                    break;
+                case AGDATATYPE_LOC:
+                    run_info->params[idx].loc = run_info->cur_stack_data->params[param].loc;
+                    break;
+                default:
+                    run_info->params[idx].data = run_info->cur_stack_data->params[param].data;
+                    break;
+                }
+            } else {
+                switch (param) {
+                case 31:
+                    run_info->params[idx].obj = obj_field_int64_get(run_info->cur_stack_data->params[AGDATA_SELF_OBJ].obj, OBJ_F_LOCATION);
+                    break;
+                case 32: {
+                    int64_t parent_obj;
+                    int64_t item_obj = run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj;
+                    if (obj_type_is_item(obj_field_int32_get(item_obj, OBJ_F_TYPE))
+                        && item_parent(item_obj, &parent_obj)) {
+                        run_info->params[idx].loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
+                        obj_field_int64_set(item_obj, OBJ_F_LOCATION, run_info->params[idx].loc);
+                    } else {
+                        run_info->params[idx].loc = obj_field_int64_get(item_obj, OBJ_F_LOCATION);
+                    }
+                    break;
+                }
+                case 33:
+                    run_info->params[idx].obj = OBJ_HANDLE_NULL;
+                    break;
+                case 34:
+                    if (run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc != 0) {
+                        run_info->params[idx].loc = run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc;
+                    } else {
+                        if (run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj != OBJ_HANDLE_NULL) {
+                            run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = obj_field_int64_get(run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj, OBJ_F_LOCATION);
+                        }
+
+                        run_info->params[idx].loc = run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc;
+                    }
+                    break;
+                }
+            }
+        }
+
+        run_info->params[2].data = goal_subnode->field_C;
+    }
+
+    return true;
 }
 
 // 0x44E050
@@ -1005,13 +1117,131 @@ bool sub_44E2A0(TimeEvent* timeevent)
 // 0x44E2C0
 bool sub_44E2C0(AnimID* anim_id, int priority)
 {
-    // TODO: Incomplete.
+    AnimRunInfo* run_info;
+    bool in_reset;
+    AnimGoalNode* goal_node;
+    int idx;
+    bool freed;
+
+    ASSERT(anim_id != NULL); // 4034, "pAnimID != NULL"
+    ASSERT(anim_id->slot_num < 216); // 4035, "pAnimID->slotNum < ANIM_MAX_CURRENT_ANIMS"
+
+    if (!anim_id_to_run_info(anim_id, &run_info)) {
+        return false;
+    }
+
+    in_reset = gamelib_in_reset();
+
+    if ((run_info->field_C & 0x01) == 0) {
+        return false;
+    }
+
+    if (!in_reset) {
+        if (run_info->current_goal != -1) {
+            goal_node = off_5B03D0[run_info->goals[run_info->current_goal].type];
+
+            ASSERT(goal_node != NULL); // 4070, "pGoalNode != NULL"
+
+            if (priority < PRIORITY_HIGHEST) {
+                if (goal_node->field_8) {
+                    return true;
+                }
+
+                if (goal_node->priority_level == 5) {
+                    return false;
+                }
+            }
+
+            if (goal_node->priority_level == 3 && priority < 3) {
+                if (priority < 3) {
+                    return false;
+                }
+            } else if (goal_node->priority_level == 2) {
+                if (priority < 2) {
+                    return false;
+                }
+            } else if (priority <= goal_node->priority_level) {
+                return false;
+            }
+        }
+    }
+
+    run_info->field_C |= 0x02;
+
+    if (anim_id->slot_num == dword_5A5978) {
+        return true;
+    }
+
+    dword_5B052C = anim_id->slot_num;
+    timeevent_clear_all_ex(TIMEEVENT_TYPE_ANIM, sub_44E2A0);
+
+    if (run_info->current_goal != -1) {
+        if (run_info->cur_stack_data == NULL) {
+            run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
+        }
+
+        for (idx = run_info->current_goal; idx >= 0; idx--) {
+            goal_node = off_5B03D0[run_info->goals[idx].type];
+            if (!in_reset) {
+                if (goal_node->subnodes[14].func != NULL) {
+                    if (sub_44DD80(run_info, &(goal_node->subnodes[14]))) {
+                        goal_node->subnodes[14].func(run_info);
+                    }
+                }
+            }
+        }
+    }
+
+    freed = anim_free_run_index(anim_id);
+    sub_423E60("Interrupt Slot");
+
+    return freed;
 }
 
 // 0x44E4D0
-void sub_44E4D0(int64_t a1, int a2, int a3)
+bool sub_44E4D0(int64_t obj, int goal_type, int a3)
 {
-    // TODO: Incomplete.
+    int priority;
+    AnimGoalNode* goal_node;
+    int prev_slot = -1;
+    int slot;
+    AnimRunInfo* run_info;
+
+    if (a3 != -1) {
+        goal_node = off_5B03D0[a3];
+
+        ASSERT(goal_node != NULL); // 4156, "pGoalNode != NULL"
+
+        priority = goal_node->priority_level;
+
+        ASSERT(priority >= PRIORITY_NONE && priority <= PRIORITY_HIGHEST); // 4166, "(priorityLevel >= priorityNone)&&(priorityLevel <= priorityHighest)"
+
+        if (goal_node->field_8) {
+            priority = PRIORITY_NONE;
+        }
+    } else {
+        priority = PRIORITY_HIGHEST;
+    }
+
+    slot = sub_44D2F0(obj);
+    while (slot != -1 && slot != prev_slot) {
+        prev_slot = slot;
+
+        run_info = &(anim_run_info[slot]);
+        if (run_info->goals[0].type == goal_type) {
+            if (!sub_44E2C0(&(run_info->id), priority)) {
+                return false;
+            }
+        } else if (run_info->cur_stack_data->type == goal_type) {
+            if (!sub_44E2C0(&(run_info->id), priority)) {
+                return false;
+            }
+        }
+
+        slot = sub_44D340(slot, obj);
+    }
+
+    return true;
 }
 
 // 0x44E5F0
@@ -1199,9 +1429,91 @@ bool sub_44E8C0(int64_t obj, AnimID* anim_id)
 }
 
 // 0x44E940
-void sub_44E940()
+bool sub_44E940(int64_t obj, AnimID* anim_id, int64_t a2)
 {
-    // TODO: Incomplete.
+    int slot;
+    int goal_type;
+    AnimRunInfo* run_info;
+    AnimGoalNode* goal_node;
+    int idx;
+    int64_t leader_obj;
+    int64_t target_leader_obj;
+    ObjectList objects;
+    ObjectNode* node;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    slot = sub_44D2F0(obj);
+    if (slot == -1) {
+        return false;
+    }
+
+    run_info = &(anim_run_info[slot]);
+
+    goal_type = AG_ATTACK;
+    goal_node = off_5B03D0[goal_type];
+
+    for (idx = -1; idx < 3; idx++) {
+        if (idx != -1) {
+            goal_type = goal_node->field_14[idx];
+        }
+
+        if (goal_type == -1) {
+            break;
+        }
+
+        if (goal_type == run_info->goals[0].type) {
+            if (a2 == OBJ_HANDLE_NULL) {
+                if (anim_id != NULL) {
+                    *anim_id = run_info->id;
+                }
+                return true;
+            }
+
+            leader_obj = sub_45DDA0(a2);
+            if (leader_obj == OBJ_HANDLE_NULL) {
+                leader_obj = a2;
+            }
+
+            target_leader_obj = sub_45DDA0(run_info->goals[0].params[AGDATA_TARGET_OBJ].obj);
+            if (target_leader_obj == OBJ_HANDLE_NULL) {
+                target_leader_obj = run_info->goals[0].params[AGDATA_TARGET_OBJ].obj;
+            }
+
+            if (leader_obj == target_leader_obj) {
+                if (anim_id != NULL) {
+                    *anim_id = run_info->id;
+                }
+                return true;
+            }
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                sub_441310(a2, &objects);
+                node = objects.head;
+                while (node != NULL) {
+                    if (node->obj == run_info->goals[0].params[AGDATA_TARGET_OBJ].obj) {
+                        break;
+                    }
+                    node = node->next;
+                }
+                object_list_destroy(&objects);
+
+                if (node != NULL) {
+                    if (anim_id != NULL) {
+                        *anim_id = run_info->id;
+                    }
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    return false;
 }
 
 // 0x44EAD0

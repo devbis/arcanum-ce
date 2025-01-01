@@ -191,7 +191,7 @@ void sub_4C57E0(int64_t obj, int rumor)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && !sub_4C58D0(obj, rumor)) {
-        sub_4C58A0(obj, rumor, timestamp);
+        sub_4C58A0(obj, rumor, datetime_to_uint64(datetime));
     }
 }
 

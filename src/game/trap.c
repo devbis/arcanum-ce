@@ -478,7 +478,7 @@ void sub_4BC690(int spl, int64_t loc, int delay, int64_t item_obj)
         sub_45B800(&timeevent, &datetime);
     } else {
         sub_455A20(&v1, OBJ_HANDLE_NULL, spl);
-        v1.field_D0 = loc;
+        v1.target_loc = loc;
         sub_455AC0(&v1);
 
         if (item_obj != OBJ_HANDLE_NULL) {
@@ -528,11 +528,12 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
                 if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                     && (tig_net_flags & TIG_NET_HOST) != 0) {
                     pkt.type = 70;
-                    pkt.field_4 = 0;
-                    pkt.field_10 = sub_407EF0(pc_obj);
-                    pkt.loc = loc;
-                    pkt.field_38 = sub_407EF0(trap_obj);
-                    pkt.field_30 = 1;
+                    pkt.subtype = 0;
+                    pkt.s0.name = disarm_item_name;
+                    pkt.s0.oid = sub_407EF0(pc_obj);
+                    pkt.s0.loc = loc;
+                    pkt.s0.field_38 = sub_407EF0(trap_obj);
+                    pkt.s0.field_30 = 1;
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
 
@@ -716,7 +717,7 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
     switch (invocation->script->num) {
     case TRAP_SCRIPT_MAGICAL:
         sub_455A20(&v1, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
-        sub_4440E0(obj, &(v1.field_70));
+        sub_4440E0(obj, &(v1.target_obj));
         sub_455AC0(&v1);
         return;
     case TRAP_SCRIPT_MECHANICAL:
@@ -771,7 +772,7 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
 
     if (((invocation->script->hdr.counters >> 18) & 0xFF) != 0) {
         sub_455A20(&v1, OBJ_HANDLE_NULL, (invocation->script->hdr.counters >> 18) & 0xFF);
-        sub_4440E0(obj, &(v1.field_70));
+        sub_4440E0(obj, &(v1.target_obj));
         sub_455AC0(&v1);
     }
 }

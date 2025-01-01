@@ -633,6 +633,8 @@ typedef enum ObjectCritterFlags {
 // clang-format on
 } ObjectCritterFlags;
 
+#define OCF_CRIPPLED (OCF_CRIPPLED_ARMS_ONE | OCF_CRIPPLED_ARMS_BOTH | OCF_CRIPPLED_LEGS_BOTH)
+#define OCF_INJURED (OCF_BLINDED | OCF_CRIPPLED)
 #define OCF_LIGHT_ANY (OCF_LIGHT_XLARGE | OCF_LIGHT_LARGE | OCF_LIGHT_MEDIUM | OCF_LIGHT_SMALL)
 
 typedef enum ObjectCritterFlags2 {
@@ -710,6 +712,7 @@ typedef enum ObjectNpcFlags {
     ONF_LOOK_FOR_AMMO     = 0x08000000,
     ONF_BACKING_OFF       = 0x10000000,
     ONF_NO_ATTACK         = 0x20000000,
+    ONF_40000000          = 0x40000000,
 // clang-format on
 } ObjectNpcFlags;
 
@@ -719,10 +722,14 @@ typedef enum ObjectTrapFlags {
 // clang-format on
 } ObjectTrapFlags;
 
-#define OBJECT_FLAG_0x0008 0x0008
-#define OBJECT_FLAG_0x1000 0x1000
-
-#define OBJECT_RENDER_FLAG_0x80000000 0x80000000
+#define ORF_01000000 0x01000000
+#define ORF_02000000 0x02000000
+#define ORF_04000000 0x04000000
+#define ORF_08000000 0x08000000
+#define ORF_10000000 0x10000000
+#define ORF_20000000 0x20000000
+#define ORF_40000000 0x40000000
+#define ORF_80000000 0x80000000
 
 typedef struct ObjectID_P {
     long long location;
@@ -756,8 +763,8 @@ typedef struct Object {
     /* 0020 */ ObjectID field_20;
     /* 0038 */ int64_t prototype_handle;
     /* 0040 */ int field_40;
-    /* 0044 */ int16_t field_44;
-    /* 0046 */ int16_t field_46;
+    /* 0044 */ int16_t modified;
+    /* 0046 */ int16_t num_fields;
     /* 0048 */ int* field_48;
     /* 004C */ int* field_4C;
     /* 0050 */ int* field_50;
@@ -774,6 +781,8 @@ void sub_405250();
 bool obj_validate_system(unsigned int flags);
 void sub_405790(int64_t obj_handle);
 void sub_405800(int type, int64_t* obj_ptr);
+void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr);
+void sub_405B30(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr);
 void sub_408D60(Object* object, int fld, int* value_ptr);
 void sub_408E70(Object* object, int fld, int value);
 bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr);
@@ -781,12 +790,16 @@ bool sub_405BC0(int64_t obj);
 void sub_405BF0(int64_t obj);
 void sub_405CC0(int64_t obj);
 void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle);
+void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj);
+void sub_406210(int64_t* copy, int64_t obj, ObjectID* oids);
+void sub_4063A0(int64_t obj, ObjectID** oids_ptr, int* cnt_ptr);
 void sub_4064B0(int64_t obj_handle);
 void sub_406520(int64_t obj_handle);
 bool obj_write(TigFile* stream, int64_t obj_handle);
 bool obj_read(TigFile* stream, int64_t* obj_handle_ptr);
 void sub_4066B0(uint8_t** a1, int* a2, int64_t obj);
-int sub_4067C0(int64_t obj);
+bool sub_406730(uint8_t* data, int64_t* obj_ptr);
+int obj_is_modified(int64_t obj);
 bool obj_dif_write(TigFile* stream, int64_t obj_handle);
 bool obj_dif_read(TigFile* stream, int64_t obj);
 void sub_406B80(int64_t obj_handle);
@@ -816,17 +829,18 @@ void sub_407960(int64_t obj_handle, int fld, int index, void* value);
 int obj_arrayfield_length_get(int64_t obj_handle, int fld);
 void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length);
 void sub_407BA0(int64_t obj, int fld, int cnt, void* data);
+void sub_407C30(int64_t obj, int fld, int cnt, void* data);
+void sub_407D50(int64_t obj, int fld);
 ObjectID sub_407EF0(int64_t obj);
 ObjectID sub_408020(int64_t obj, int a2);
-bool sub_4082C0(int64_t* obj_ptr, int* index_ptr);
-bool sub_408390(int64_t* obj_ptr, int* index_ptr);
+bool sub_4082C0(int64_t* obj_ptr, int* iter_ptr);
+bool sub_408390(int64_t* obj_ptr, int* iter_ptr);
 Object* obj_lock(int64_t obj_handle);
 void obj_unlock(int64_t obj_handle);
 int sub_40C030(ObjectType object_type);
 bool sub_40C260(int type, int fld);
 bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback);
 int64_t obj_get_prototype_handle(Object* object);
-void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4);
 
 // NOTE: Seen in some assertions in `anim.c`.
 static inline bool obj_type_is_critter(int type)
@@ -838,6 +852,24 @@ static inline bool obj_type_is_critter(int type)
 static inline bool obj_type_is_item(int type)
 {
     return type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC;
+}
+
+// NOTE: Convenience.
+static inline bool inventory_fields_from_obj_type(int type, int* inventory_num_fld, int* inventory_list_idx_fld)
+{
+    if (type == OBJ_TYPE_CONTAINER) {
+        *inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        *inventory_list_idx_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+        return true;
+    }
+
+    if (obj_type_is_critter(type)) {
+        *inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        *inventory_list_idx_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+        return true;
+    }
+
+    return false;
 }
 
 #endif /* ARCANUM_GAME_OBJ_H_ */

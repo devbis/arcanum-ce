@@ -32,44 +32,8 @@ typedef struct Sector {
 
 static_assert(sizeof(Sector) == 0x8868, "wrong size");
 
-// TODO: Better name, size assertion.
-typedef struct Sector601808 {
-    /* 0000 */ int64_t id;
-    /* 0008 */ int64_t field_8;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-    /* 0018 */ struct Sector601808* next;
-    /* 001C */ int field_1C;
-} Sector601808;
-
-// TODO: Better name.
-typedef struct SomeSectorStuffEntry {
-    /* 0000 */ int width;
-    /* 0004 */ int field_4;
-    /* 0008 */ int64_t field_8[3];
-    /* 0020 */ int64_t field_20[3];
-    /* 0038 */ int field_38[3];
-    /* 0044 */ int field_44[3];
-    /* 0050 */ int field_50;
-    /* 0054 */ int field_54;
-} SomeSectorStuffEntry;
-
-static_assert(sizeof(SomeSectorStuffEntry) == 0x58, "wrong size");
-
-// TODO: Better name.
-typedef struct SomeSectorStuff {
-    /* 0000 */ int height;
-    /* 0004 */ int field_4;
-    /* 0008 */ SomeSectorStuffEntry field_8[3];
-} SomeSectorStuff;
-
-static_assert(sizeof(SomeSectorStuff) == 0x110, "wrong size");
-
 typedef bool(SectorEnumerateFunc)(Sector* sector);
 typedef bool(SectorLockFunc)(const char* path);
-
-// See 0x4D13D0.
-static_assert(sizeof(Sector601808) == 0x20, "wrong size");
 
 bool sector_init(GameInitInfo* init_info);
 void sector_reset();
@@ -80,31 +44,40 @@ bool sector_update_view(ViewOptions* view_options);
 void sub_4CF360(SectorLockFunc* func);
 void sub_4CF370();
 void sub_4CF390(UnknownContext* info);
-bool sub_4CF790(int64_t a1, int64_t a2);
-void sub_4CF7E0(int64_t* a1, int64_t* a2);
+bool sector_limits_set(int64_t x, int64_t y);
+void sector_limits_get(int64_t* x, int64_t* y);
 int64_t sub_4CFC50(int64_t loc);
 int64_t sub_4CFC90(int64_t sector_id);
+bool sub_4CFFA0(int64_t sec, int rot, int64_t* new_sec_ptr);
 bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2);
 Sector601808* sub_4D02E0(LocRect* loc_rect);
 void sub_4D0400(Sector601808* node);
 bool sub_4D0440(const char* a1, const char* a2);
 bool sub_4D04A0(uint64_t a1);
+bool sub_4D04E0(int64_t id);
 bool sector_lock(int64_t id, Sector** sector_ptr);
 bool sector_unlock(int64_t id);
 void sub_4D0B40();
 void sector_flush(unsigned int flags);
+bool sub_4D0DE0(int64_t id);
 void sub_4D0E70(tig_art_id_t art_id);
+bool sub_4D0EE0(int64_t a1);
 void sub_4D0F00(int64_t a1, bool a2);
 void sub_4D0F40();
 bool sub_4D0F50(const char* a1, const char* a2);
 void sub_4D1040();
 void sub_4D1050();
 void sector_enumerate(SectorEnumerateFunc* func);
+bool sub_4D10C0(GameInitInfo* init_info);
+void sub_4D10D0();
+void sub_4D10E0();
+bool sub_4D1150(TigFile* stream);
+bool sub_4D12B0(GameLoadInfo* load_info);
 Sector601808* sub_4D13A0();
 int sub_4D2FC0(int64_t a1);
 
 #define SECTOR_X(a) ((a) & 0x3FFFFFF)
-#define SECTOR_Y(a) (((a) >> 32) & 0x3FFFFFF)
-#define SECTOR_FROM_XY(a, b) ((a) | ((b) << 32))
+#define SECTOR_Y(a) (((a) >> 26) & 0x3FFFFFF)
+#define SECTOR_FROM_XY(a, b) ((a) | ((b) << 26))
 
 #endif /* ARCANUM_GAME_LIB_SECTOR_H_ */

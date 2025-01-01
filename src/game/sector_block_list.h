@@ -12,7 +12,7 @@ typedef struct SectorBlockList {
 static_assert(sizeof(SectorBlockList) == 0x204, "wrong size");
 
 typedef struct SectorBlockListNode {
-    /* 0000 */ int field_0;
+    /* 0000 */ void* data;
     /* 0004 */ struct SectorBlockListNode* next;
 } SectorBlockListNode;
 

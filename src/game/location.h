@@ -7,21 +7,54 @@ typedef long long location_t;
 
 typedef void(LocationFunc5FC2F8)(int64_t);
 
+typedef struct LocRect {
+    int64_t x1;
+    int64_t y1;
+    int64_t x2;
+    int64_t y2;
+} LocRect;
+
 bool location_init(GameInitInfo* init_info);
 void location_exit();
 void location_resize(ResizeInfo* resize_info);
 bool location_update_view(ViewOptions* view_options);
 void sub_4B8680(int64_t location, int64_t* x, int64_t* y);
+bool sub_4B8730(int64_t x, int64_t y, int64_t* location_ptr);
 void sub_4B8940(int64_t location, int64_t* x, int64_t* y);
-void sub_4B8AD0(int64_t* a1, int64_t* a2);
+void location_get_origin(int64_t* origin_x, int64_t* origin_y);
+void sub_4B8B30(int64_t dx, int64_t dy);
 void sub_4B8CE0(int64_t location);
 void location_set_func_5FC2F8(LocationFunc5FC2F8* func);
+int sub_4B8D50(int64_t a, int64_t b);
+bool sub_4B8FF0(int64_t loc, int direction, int64_t* new_loc_ptr);
+bool sub_4B90D0(int64_t loc, int rot, int range, int64_t* new_loc_ptr);
+bool sub_4B9130(TigRect* rect, LocRect* loc_rect);
+void sub_4B93F0(int a1, int a2, int* a3, int* a4);
+bool sub_4B9420(int64_t* loc_ptr, int* a2, int* a3);
+int64_t sub_4B96F0(int64_t a, int64_t b);
 bool location_set_limits(int64_t x, int64_t y);
 void location_get_limits(int64_t* x, int64_t* y);
 int64_t sub_4B9810();
 void sub_4B98B0(int64_t a1, int64_t a2, int64_t* a3, int64_t* a4);
+bool sub_4B99C0(int64_t from, int64_t* to);
 
 #define LOCATION_GET_X(l) ((l) & 0xFFFFFFFF)
 #define LOCATION_GET_Y(l) (((l) >> 32) & 0xFFFFFFFF)
+#define LOCATION_MAKE(x, y) ((x) | (y) << 32)
+
+static int64_t location_get_x(int64_t location)
+{
+    return location & 0xFFFFFFFF;
+}
+
+static int64_t location_get_y(int64_t location)
+{
+    return (location >> 32) & 0xFFFFFFFF;
+}
+
+static int64_t location_make(int64_t x, int64_t y)
+{
+    return x | (y << 32);
+}
 
 #endif /* ARCANUM_GAME_LOCATION_H_ */

@@ -688,7 +688,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_debug_printf("map_open: setting initial map location and state...");
     tig_timer_now(&timestamp);
     location_set_limits(map_properties.field_8, map_properties.field_10);
-    sub_4CF790(map_properties.field_8 / 64, map_properties.field_10 / 64);
+    sector_limits_set(map_properties.field_8 / 64, map_properties.field_10 / 64);
     sub_4D0440(a1, a2);
     sub_4B8CE0(sub_4B9810());
     dword_5D1210 = 0;

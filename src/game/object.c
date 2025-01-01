@@ -1,44 +1,203 @@
 #include "game/object.h"
 
+#include "game/ai.h"
+#include "game/anim.h"
+#include "game/critter.h"
+#include "game/description.h"
 #include "game/effect.h"
 #include "game/gamelib.h"
+#include "game/gsound.h"
+#include "game/item.h"
+#include "game/light.h"
+#include "game/map.h"
+#include "game/mes.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
+#include "game/obj_private.h"
 #include "game/obj.h"
+#include "game/party.h"
 #include "game/player.h"
+#include "game/proto.h"
+#include "game/reaction.h"
+#include "game/roof.h"
+#include "game/scroll.h"
+#include "game/sector.h"
 #include "game/stat.h"
+#include "game/tb.h"
+#include "game/text_floater.h"
+#include "game/tile_script.h"
+#include "game/tile.h"
 #include "game/timeevent.h"
+#include "game/townmap.h"
+#include "game/trap.h"
+#include "game/ui.h"
+#include "game/wall.h"
+#include "game/wallcheck.h"
+
+typedef struct S5E2E74 {
+    /* 0000 */ TigArtBlitInfo blit_info;
+    /* 002C */ int order;
+    /* 0030 */ int rect_index;
+} S5E2E74;
+
+static_assert(sizeof(S5E2E74) == 0x34, "wrong size");
+
+typedef struct S5E2F8C {
+    /* 0000 */ TigRect src_rect;
+    /* 0010 */ TigRect dst_rect;
+} S5E2F8C;
+
+static_assert(sizeof(S5E2F8C) == 0x20, "wrong size");
+
+typedef struct ObjectRenderColors {
+    int colors[160];
+} ObjectRenderColors;
+
+static_assert(sizeof(ObjectRenderColors) == 0x280, "wrong size");
+
+typedef struct IndexedObjectRenderColors {
+    /* 0000 */ void* ptr;
+    /* 0004 */ ObjectRenderColors colors;
+} IndexedObjectRenderColors;
+
+static_assert(sizeof(IndexedObjectRenderColors) == 0x284, "wrong size");
+
+typedef struct ObjectRenderColorsNode {
+    IndexedObjectRenderColors* data;
+    struct ObjectRenderColorsNode* next;
+} ObjectRenderColorsNode;
+
+static_assert(sizeof(ObjectRenderColorsNode) == 0x8, "wrong size");
+
+typedef struct S4415C0 {
+    /* 0000 */ int64_t obj;
+    /* 0008 */ int64_t loc;
+} S4415C0;
+
+static_assert(sizeof(S4415C0) == 0x10, "wrong size");
+
+typedef struct S4417A0 {
+    /* 0000 */ int64_t item_obj;
+    /* 0008 */ int64_t parent_obj;
+} S4417A0;
+
+static_assert(sizeof(S4417A0) == 0x10, "wrong size");
+
+static void sub_43C5C0(UnknownContext* render_info);
+static void sub_43CEA0(int64_t obj, unsigned int flags, const char* path);
+static int sub_43D690(object_id_t obj);
+static int sub_43D630(object_id_t obj);
+static int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64_t* a6, int* a7, int* a8);
+static void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects);
+static bool sub_441710(S4415C0* entry);
+static bool sub_441780(S4415C0* entry);
+static bool sub_4418E0(S4417A0* entry);
+static bool sub_441960(S4417A0* entry);
+static bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid);
+static bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr);
+static bool sub_442260(int64_t obj, int64_t loc);
+static void sub_4423E0(int64_t obj, int offset_x, int offset_y);
+static void object_clear_render_palette(object_id_t obj);
+static void sub_442D90(int64_t obj, ObjectRenderColors* colors);
+static TigPalette object_get_render_palette(object_id_t obj);
+static void sub_442F10(object_id_t obj, const tig_color_t* colors);
+static void sub_442FA0(object_id_t obj);
+static ObjectRenderColors* sub_442FE0();
+static void sub_443010(ObjectRenderColors* colors);
+static void sub_443030();
+static void sub_443070();
+static void sub_4430B0(int64_t obj, bool a2);
+static void sub_443170(int64_t obj, TigArtBlitInfo* blit_info);
+static int sub_443440(TigArtBlitInfo* blit_info, int order);
+static void sub_443560();
+static int sub_443600(const S5E2E74* a, const S5E2E74* b);
+static void sub_443620(unsigned int flags, int scale, int x, int y, tig_art_id_t art_id, TigRect* rect);
+static void sub_4437C0(object_id_t obj);
+static bool sub_443880(TigRect* rect, tig_art_id_t art_id);
+static bool sub_444150();
+static void sub_444270(int64_t obj, int a2);
+static void object_lighting_changed();
+
+// 0x5A548C
+static int dword_5A548C[8] = {
+    50,
+    63,
+    75,
+    87,
+    100,
+    130,
+    160,
+    200,
+};
 
 // 0x5A54AC
-static int dword_5A54AC = 256;
+static unsigned int object_blit_flags = TIG_ART_BLT_BLEND_ALPHA_CONST;
 
 // 0x5E2E60
 static int64_t qword_5E2E60;
+
+// 0x5E2E68
+int dword_5E2E68;
+
+// 0x5E2E6C
+int dword_5E2E6C;
 
 // 0x5E2E70
 static TigRectListNode* dword_5E2E70;
 
 // 0x5E2E74
-static void* dword_5E2E74;
+static S5E2E74* dword_5E2E74;
+
+// 0x5E2E78
+static tig_color_t object_reaction_colors[REACTION_COUNT];
+
+// 0x5E2E94
+bool dword_5E2E94;
 
 // 0x5E2E98
-static TigRect stru_5E2E98;
+static TigRect object_iso_window_bounds;
+
+// 0x5E2EA8
+tig_art_id_t object_hover_underlay_art_id;
+
+// 0x5E2EAC
+tig_color_t object_hover_color;
+
+// 0x5E2EB0
+static int dword_5E2EB0;
 
 // 0x5E2EB4
-static GameContextF8* dword_5E2EB4;
+static GameContextF8* object_iso_invalidate_rect;
 
 // 0x5E2EB8
 static ViewOptions object_view_options;
 
+// 0x5E2EC0
+static int object_hover_overlay_fps;
+
+// 0x5E2EC4
+static int object_hover_underlay_fps;
+
 // 0x5E2EC8
-static int dword_5E2EC8;
+static unsigned int dword_5E2EC8;
+
+// 0x5E2ECC
+tig_art_id_t object_hover_overlay_art_id;
 
 // 0x5E2ED0
 static bool object_dirty;
 
 // 0x5E2ED4
-static int dword_5E2ED4[18];
+static bool dword_5E2ED4[18];
+
+// 0x5E2F1C
+static int object_bpp;
+
+// 0x5E2F20
+static int dword_5E2F20;
 
 // 0x5E2F24
-static tig_window_handle_t object_window;
+static tig_window_handle_t object_iso_window_handle;
 
 // 0x5E2F28
 static bool dword_5E2F28;
@@ -47,7 +206,13 @@ static bool dword_5E2F28;
 static bool object_lighting;
 
 // 0x5E2F30
-static TigRect stru_5E2F30;
+static TigRect object_iso_window_bounds_ex;
+
+// 0x5E2F44
+static ObjectRenderColorsNode* dword_5E2F44;
+
+// 0x5E2F48
+static bool dword_5E2F48;
 
 // 0x5E2F50
 static int64_t qword_5E2F50;
@@ -55,23 +220,100 @@ static int64_t qword_5E2F50;
 // 0x5E2F58
 static bool object_editor;
 
+// 0x5E2F60
+Ryan stru_5E2F60;
+
 // 0x5E2F88
-static int dword_5E2F88;
+static unsigned int dword_5E2F88;
 
 // 0x5E2F8C
-static void* dword_5E2F8C;
+static S5E2F8C* dword_5E2F8C;
+
+// 0x5E2F90
+int64_t object_hover_obj;
+
+// 0x5E2F98
+static int dword_5E2F98;
+
+// 0x43A330
+bool object_init(GameInitInfo* init_info)
+{
+    TigWindowData window_data;
+    TigArtAnimData art_anim_data;
+    int idx;
+
+    if (tig_window_data(init_info->iso_window_handle, &window_data) != TIG_OK) {
+        return false;
+    }
+
+    object_iso_window_handle = init_info->iso_window_handle;
+    object_iso_invalidate_rect = init_info->field_8;
+    object_view_options.type = VIEW_TYPE_ISOMETRIC;
+    object_editor = init_info->editor;
+
+    object_iso_window_bounds.x = 0;
+    object_iso_window_bounds.y = 0;
+    object_iso_window_bounds.width = window_data.rect.width;
+    object_iso_window_bounds.height = window_data.rect.height;
+
+    object_iso_window_bounds_ex.x = -256;
+    object_iso_window_bounds_ex.y = -256;
+    object_iso_window_bounds_ex.width = window_data.rect.width + 512;
+    object_iso_window_bounds_ex.height = window_data.rect.height + 512;
+
+    qword_5E2F50 = window_data.rect.width / 40 / 2 + 2;
+    qword_5E2E60 = window_data.rect.height / 20 / 2 + 2;
+
+    for (idx = 0; idx < 18; idx++) {
+        dword_5E2ED4[idx] = true;
+    }
+
+    if (!sub_444150()) {
+        return false;
+    }
+
+    tig_art_interface_id_create(467, dword_5E2E6C, 1, 0, &object_hover_underlay_art_id);
+    tig_art_interface_id_create(468, dword_5E2E68, 1, 0, &object_hover_overlay_art_id);
+
+    tig_art_anim_data(object_hover_underlay_art_id, &art_anim_data);
+    object_hover_underlay_fps = 1000 / art_anim_data.fps;
+
+    tig_art_anim_data(object_hover_overlay_art_id, &art_anim_data);
+    object_hover_overlay_fps = 1000 / art_anim_data.fps;
+
+    if (object_editor) {
+        dword_5E2F88 = 0;
+        dword_5E2EC8 = 0;
+        dword_5E2F28 = 0;
+    } else {
+        dword_5E2F88 = OF_DESTROYED | OF_OFF;
+        dword_5E2EC8 = OF_DONTDRAW;
+    }
+
+    dword_5E2F48 = tig_video_3d_check_initialized() == TIG_OK;
+    if (!dword_5E2F48) {
+        object_blit_flags = TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D;
+    }
+
+    tig_video_get_bpp(&object_bpp);
+
+    settings_add(&settings, "object lighting", "1", object_lighting_changed);
+    object_lighting_changed();
+
+    return true;
+}
 
 // 0x43A570
 void object_resize(ResizeInfo* resize_info)
 {
-    object_window = resize_info->iso_window_handle;
-    stru_5E2E98 = resize_info->field_14;
-    stru_5E2F30.x = stru_5E2E98.x - 256;
-    stru_5E2F30.y = stru_5E2E98.y - 256;
-    stru_5E2F30.width = stru_5E2E98.width + 512;
-    stru_5E2F30.height = stru_5E2E98.height + 512;
-    qword_5E2F50 = stru_5E2E98.width / 40 / 2 + 2;
-    qword_5E2E60 = stru_5E2E98.height / 20 / 2 + 2;
+    object_iso_window_handle = resize_info->iso_window_handle;
+    object_iso_window_bounds = resize_info->field_14;
+    object_iso_window_bounds_ex.x = object_iso_window_bounds.x - 256;
+    object_iso_window_bounds_ex.y = object_iso_window_bounds.y - 256;
+    object_iso_window_bounds_ex.width = object_iso_window_bounds.width + 512;
+    object_iso_window_bounds_ex.height = object_iso_window_bounds.height + 512;
+    qword_5E2F50 = object_iso_window_bounds.width / 40 / 2 + 2;
+    qword_5E2E60 = object_iso_window_bounds.height / 20 / 2 + 2;
 }
 
 // 0x43A650
@@ -87,7 +329,7 @@ void object_reset()
     }
 
     for (index = 0; index < 18; index++) {
-        dword_5E2ED4[index] = 1;
+        dword_5E2ED4[index] = true;
     }
 }
 
@@ -102,8 +344,117 @@ void object_exit()
     object_reset();
     sub_443070();
 
-    object_window = TIG_WINDOW_HANDLE_INVALID;
-    dword_5E2EB4 = NULL;
+    object_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
+    object_iso_invalidate_rect = NULL;
+}
+
+// 0x43A6D0
+void object_ping(tig_timestamp_t timestamp)
+{
+    // 0x5E2F40
+    static tig_timestamp_t dword_5E2F40;
+
+    // 0x5E2E58
+    static tig_timestamp_t dword_5E2E58;
+
+    TigRect rect;
+    TigRect bounds;
+    TigRectListNode* next;
+    LocRect loc_rect;
+    SomeSectorStuff v1;
+    int col;
+    int row;
+    SomeSectorStuffEntry* v2;
+    int indexes[3];
+    int widths[3];
+    bool locks[3];
+    Sector* sectors[3];
+    int v4;
+    int v3;
+    ObjectNode* obj_node;
+    unsigned int render_flags;
+    TigRect obj_rect;
+
+    if (tig_timer_between(dword_5E2F40, timestamp) >= object_hover_underlay_fps) {
+        object_hover_underlay_art_id = tig_art_id_frame_inc(object_hover_underlay_art_id);
+        dword_5E2F40 = timestamp;
+        if (dword_5E2E94) {
+            sub_443880(&rect, object_hover_underlay_art_id);
+            object_iso_invalidate_rect(&rect);
+        }
+    }
+
+    if (tig_timer_between(dword_5E2E58, timestamp) >= object_hover_overlay_fps) {
+        object_hover_overlay_art_id = tig_art_id_frame_inc(object_hover_overlay_art_id);
+        dword_5E2E58 = timestamp;
+        if (dword_5E2E94) {
+            sub_443880(&rect, object_hover_overlay_art_id);
+            object_iso_invalidate_rect(&rect);
+        }
+    }
+
+    if (object_view_options.type != VIEW_TYPE_ISOMETRIC) {
+        return;
+    }
+
+    if (!object_dirty) {
+        return;
+    }
+
+    bounds.x = object_iso_window_bounds.x - object_iso_window_bounds.width;
+    bounds.y = object_iso_window_bounds.y - object_iso_window_bounds.height;
+    bounds.width = object_iso_window_bounds.width * 2;
+    bounds.height = object_iso_window_bounds.height * 2;
+
+    while (dword_5E2E70 != NULL) {
+        next = dword_5E2E70->next;
+        if (tig_rect_intersection(&(dword_5E2E70->rect), &bounds, &rect) == TIG_OK
+            && sub_4B9130(&rect, &loc_rect)
+            && sub_4D0090(&loc_rect, &v1)) {
+            for (col = 0; col < v1.height; col++) {
+                v2 = &(v1.field_8[col]);
+
+                for (row = 0; row < v2->width; row++) {
+                    indexes[row] = v2->field_38[row];
+                    widths[row] = 64 - v2->field_44[row];
+                    if (sub_4D04E0(v2->field_20[row])) {
+                        locks[row] = sector_lock(v2->field_20[row], &(sectors[row]));
+                    } else {
+                        locks[row] = false;
+                    }
+                }
+
+                for (v3 = 0; v3 < v2->field_50; v3++) {
+                    for (row = 0; row < v2->width; row++) {
+                        if (locks[row]) {
+                            for (v4 = 0; v4 < v2->field_44[row]; v4++) {
+                                obj_node = sectors[row]->objects.heads[indexes[row]];
+                                while (obj_node != NULL) {
+                                    render_flags = obj_field_int32_get(obj_node->obj, OBJ_F_RENDER_FLAGS);
+                                    render_flags &= ~(ORF_02000000 | ORF_04000000);
+                                    object_get_rect(obj_node->obj, 0x07, &obj_rect);
+                                    object_iso_invalidate_rect(&obj_rect);
+                                    obj_node = obj_node->next;
+                                }
+                                indexes[row]++;
+                            }
+                            indexes[row] += widths[row];
+                        }
+                    }
+                }
+
+                for (row = 0; row < v2->width; row++) {
+                    if (locks[row]) {
+                        sector_unlock(v2->field_20[row]);
+                    }
+                }
+            }
+        }
+        tig_rect_node_destroy(dword_5E2E70);
+        dword_5E2E70 = next;
+    }
+
+    object_dirty = false;
 }
 
 // 0x43AA40
@@ -120,15 +471,15 @@ void object_close()
 }
 
 // 0x43AA70
-bool sub_43AA70(int a1)
+bool sub_43AA70(int obj_type)
 {
-    return dword_5E2ED4[a1];
+    return dword_5E2ED4[obj_type];
 }
 
 // 0x43AA80
-void sub_43AA80(int a1)
+void sub_43AA80(int obj_type)
 {
-    dword_5E2ED4[a1] = 1 - dword_5E2ED4[a1];
+    dword_5E2ED4[obj_type] = !dword_5E2ED4[obj_type];
 }
 
 // 0x43AAA0
@@ -140,36 +491,674 @@ bool sub_43AAA0()
 // 0x43AAB0
 void sub_43AAB0()
 {
-    dword_5E2F28 = 1 - dword_5E2F28;
+    dword_5E2F28 = !dword_5E2F28;
     if (dword_5E2F28) {
-        dword_5E2F88 = 3;
-        dword_5E2EC8 = 256;
+        dword_5E2F88 = OF_DESTROYED | OF_OFF;
+        dword_5E2EC8 = OF_DONTDRAW;
     } else {
         dword_5E2F88 = 0;
         dword_5E2EC8 = 0;
     }
 }
 
-// 0x43CB10
-TigRect* object_invalidate_rect(TigRect* rect)
+// NOTE: Convenience uninline used in `object_render`.
+static inline bool object_render_check_rotation(int64_t obj)
 {
-    TigRect* ret;
+    tig_art_id_t art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    int rot = tig_art_id_rotation_get(art_id);
+    return rot != 0
+        && rot != 1
+        && rot != 6
+        && rot != 7;
+}
 
+// 0x43B390
+void object_render(UnknownContext* render_info)
+{
+    SomeSectorStuff* v1;
+    SomeSectorStuffEntry* v2;
+    bool is_detecting_invisible;
+    int col;
+    int row;
+    int64_t locations[3];
+    int indexes[3];
+    int widths[3];
+    bool locks[3];
+    Sector* sectors[3];
+    int v5[3];
+    int v3;
+    int v4;
+    ObjectNode* obj_node;
+    int obj_type;
+    int obj_flags;
+    int64_t loc;
+    int64_t loc_x;
+    int64_t loc_y;
+    int scale;
+    int idx;
+    tig_art_id_t art_id;
+    TigRect eye_candy_rect;
+    TigRectListNode* rect_node;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigRect tmp_rect;
+    int underlay_order = 0;
+    int flat_order = 200000000;
+    int shadow_order = 400000000;
+    int non_flat_order = 600000000;
+    int overlay_order = 700000000;
+    int order;
+    bool art_blit_info_initialized;
+    bool v71;
+
+    if (object_view_options.type != VIEW_TYPE_ISOMETRIC) {
+        return;
+    }
+
+    v1 = render_info->field_8;
+    is_detecting_invisible = sub_458A80(OSF_DETECTING_INVISIBLE);
+
+    for (col = 0; col < v1->height; col++) {
+        v2 = &(v1->field_8[col]);
+
+        for (row = 0; row < v2->width; row++) {
+            locations[row] = v2->field_8[row];
+            indexes[row] = v2->field_38[row];
+            widths[row] = 64 - v2->field_44[row];
+            v5[row] = -v2->field_44[row]; // TODO: Unclear.
+            locks[row] = sector_lock(v2->field_20[row], &(sectors[row]));
+        }
+
+        for (v3 = 0; v3 < v2->field_50; v3++) {
+            for (row = 0; row < v2->width; row++) {
+                if (locks[row]) {
+                    for (v4 = 0; v4 < v2->field_44[row]; v4++) {
+                        obj_node = sectors[row]->objects.heads[indexes[row]];
+                        if (obj_node != NULL) {
+                            loc = locations[row];
+
+                            if (!sub_43A030(loc, true)) {
+                                while (obj_node != NULL) {
+                                    obj_type = obj_field_int32_get(obj_node->obj, OBJ_F_TYPE);
+                                    if (dword_5E2ED4[obj_type]) {
+                                        obj_flags = obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS);
+                                        if ((dword_5E2F88 & obj_flags) == 0) {
+                                            if (obj_type != OBJ_TYPE_WALL
+                                                || (obj_field_int32_get(obj_node->obj, OBJ_F_WALL_FLAGS) & (OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT)) == 0
+                                                || object_render_check_rotation(obj_node->obj)
+                                                || !sub_439FA0(loc)) {
+                                                sub_4B8680(loc, &loc_x, &loc_y);
+                                                loc_x += obj_field_int32_get(obj_node->obj, OBJ_F_OFFSET_X);
+                                                loc_y += obj_field_int32_get(obj_node->obj, OBJ_F_OFFSET_Y);
+                                                scale = obj_field_int32_get(obj_node->obj, OBJ_F_BLIT_SCALE);
+
+                                                loc_x += 40;
+                                                loc_y += 20;
+
+                                                // 0x43B65B
+                                                if ((obj_flags & OF_HAS_UNDERLAYS) != 0) {
+                                                    for (idx = 0; idx < 4; idx++) {
+                                                        art_id = sub_407470(obj_node->obj, OBJ_F_UNDERLAY, idx);
+                                                        if (art_id != TIG_ART_ID_INVALID) {
+                                                            sub_443620(obj_flags, 100, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
+
+                                                            rect_node = *render_info->rects;
+                                                            while (rect_node != NULL) {
+                                                                if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                                                    src_rect.x = dst_rect.x - eye_candy_rect.x;
+                                                                    src_rect.y = dst_rect.y - eye_candy_rect.y;
+                                                                    src_rect.width = dst_rect.width;
+                                                                    src_rect.height = dst_rect.height;
+
+                                                                    art_blit_info.flags = 0;
+                                                                    if (tig_art_eye_candy_id_translucency_get(art_id) != 0) {
+                                                                        art_blit_info.flags |= TIG_ART_BLT_BLEND_ADD;
+                                                                    }
+
+                                                                    if (obj_type == OBJ_TYPE_NPC
+                                                                        && tig_art_num_get(art_id) == 433) {
+                                                                        // TODO: Incomplete.
+                                                                        art_blit_info.flags |= TIG_ART_BLT_BLEND_COLOR_CONST;
+                                                                        art_blit_info.color = object_reaction_colors[0];
+                                                                    }
+
+                                                                    art_blit_info.art_id = art_id;
+                                                                    art_blit_info.src_rect = &src_rect;
+                                                                    art_blit_info.dst_rect = &dst_rect;
+                                                                    sub_443440(&art_blit_info, underlay_order++);
+                                                                }
+                                                                rect_node = rect_node->next;
+                                                            }
+                                                        }
+                                                    }
+                                                } /* OF_HAS_UNDERLAYS */
+
+                                                // 0x43B7D6
+                                                if ((obj_flags & OF_HAS_OVERLAYS) != 0) {
+                                                    for (idx = 6; idx >= 0; idx--) {
+                                                        for (int fld = OBJ_F_OVERLAY_FORE; fld <= OBJ_F_OVERLAY_BACK; fld++) {
+                                                            art_id = sub_407470(obj_node->obj, fld, idx);
+                                                            if (art_id != TIG_ART_ID_INVALID) {
+                                                                sub_443620(obj_flags, scale, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
+
+                                                                rect_node = *render_info->rects;
+                                                                while (rect_node != NULL) {
+                                                                    if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                                                        src_rect.x = dst_rect.x - eye_candy_rect.x;
+                                                                        src_rect.y = dst_rect.y - eye_candy_rect.y;
+                                                                        src_rect.width = dst_rect.width;
+                                                                        src_rect.height = dst_rect.height;
+
+                                                                        art_blit_info.flags = 0;
+                                                                        if (tig_art_eye_candy_id_translucency_get(art_id) != 0) {
+                                                                            art_blit_info.flags |= TIG_ART_BLT_BLEND_ADD;
+                                                                        }
+
+                                                                        art_blit_info.art_id = art_id;
+                                                                        art_blit_info.src_rect = &src_rect;
+                                                                        art_blit_info.dst_rect = &dst_rect;
+
+                                                                        int scale_type = tig_art_eye_candy_id_scale_get(art_id);
+                                                                        int overlay_scale = scale_type != 4
+                                                                            ? scale * dword_5A548C[scale_type] / 100
+                                                                            : scale;
+
+                                                                        if (scale_type != 100) {
+                                                                            src_rect.x = (int)((float)src_rect.x / (float)overlay_scale * 100.0f);
+                                                                            src_rect.y = (int)((float)src_rect.y / (float)overlay_scale * 100.0f);
+                                                                            src_rect.width = (int)((float)src_rect.width / (float)overlay_scale * 100.0f);
+                                                                            src_rect.height = (int)((float)src_rect.height / (float)overlay_scale * 100.0f);
+                                                                        }
+
+                                                                        if ((obj_flags & OF_SHRUNK) != 0) {
+                                                                            src_rect.x *= 2;
+                                                                            src_rect.y *= 2;
+                                                                            src_rect.width *= 2;
+                                                                            src_rect.height *= 2;
+                                                                        }
+
+                                                                        if (obj_type == OBJ_TYPE_ITEM_ARMOR) {
+                                                                            order = non_flat_order++;
+                                                                        } else {
+                                                                            order = overlay_order++;
+                                                                        }
+
+                                                                        sub_443440(&art_blit_info, order);
+                                                                    }
+                                                                    rect_node = rect_node->next;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                } /* OF_HAS_OVERLAYS */
+
+                                                // 0x43B9FD
+                                                if (((obj_flags & OF_INVISIBLE) == 0 || is_detecting_invisible)
+                                                    && (dword_5E2EC8 & obj_flags) == 0) {
+                                                    art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_CONST | TIG_ART_BLT_BLEND_SUB;
+                                                    art_blit_info.src_rect = &src_rect;
+                                                    art_blit_info.dst_rect = &dst_rect;
+
+                                                    if ((obj_flags & OF_FLAT) == 0) {
+                                                        unsigned int render_flags = obj_field_int32_get(obj_node->obj, OBJ_F_RENDER_FLAGS);
+                                                        if ((render_flags & ORF_04000000) == 0) {
+                                                            if (sub_4D9B20(obj_node->obj)) {
+                                                                render_flags |= ORF_10000000;
+                                                            }
+                                                            render_flags |= ORF_04000000;
+                                                            obj_field_int32_set(obj_node->obj, OBJ_F_RENDER_FLAGS, render_flags);
+                                                        }
+
+                                                        if ((render_flags & ORF_10000000) != 0) {
+                                                            for (idx = 0; idx < SHADOW_HANDLE_MAX; idx++) {
+                                                                Shadow* shadow = (Shadow*)obj_arrayfield_int32_get(obj_node->obj, OBJ_F_SHADOW_HANDLES, idx); // TODO: x64
+                                                                if (shadow == NULL) {
+                                                                    break;
+                                                                }
+
+                                                                sub_443620(obj_flags, scale, (int)loc_x, (int)loc_y, shadow->art_id, &eye_candy_rect);
+                                                                art_blit_info.art_id = shadow->art_id;
+                                                                art_blit_info.color = shadow->color;
+
+                                                                if ((obj_flags & OF_WADING) != 0) {
+                                                                    art_blit_info.color = tig_color_mul(art_blit_info.color, tig_color_make(92, 92, 92));
+                                                                }
+
+                                                                rect_node = *render_info->rects;
+                                                                while (rect_node != NULL) {
+                                                                    if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                                                        src_rect.x = dst_rect.x - eye_candy_rect.x;
+                                                                        src_rect.y = dst_rect.y - eye_candy_rect.y;
+                                                                        src_rect.width = dst_rect.width;
+                                                                        src_rect.height = dst_rect.height;
+
+                                                                        if (scale != 100) {
+                                                                            src_rect.x = (int)((float)src_rect.x / (float)scale * 100.0f);
+                                                                            src_rect.y = (int)((float)src_rect.y / (float)scale * 100.0f);
+                                                                            src_rect.width = (int)((float)src_rect.width / (float)scale * 100.0f);
+                                                                            src_rect.height = (int)((float)src_rect.height / (float)scale * 100.0f);
+                                                                        }
+
+                                                                        if ((obj_flags & OF_SHRUNK) != 0) {
+                                                                            src_rect.x *= 2;
+                                                                            src_rect.y *= 2;
+                                                                            src_rect.width *= 2;
+                                                                            src_rect.height *= 2;
+                                                                        }
+
+                                                                        sub_443440(&art_blit_info, shadow_order++);
+                                                                    }
+                                                                    rect_node = rect_node->next;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    object_get_rect(obj_node->obj, 0, &eye_candy_rect);
+
+                                                    v71 = false;
+                                                    if ((obj_flags & OF_WADING) != 0 && (obj_flags & OF_WATER_WALKING) == 0) {
+                                                        tmp_rect = eye_candy_rect;
+                                                        if ((obj_flags & OF_FLAT) == 0) {
+                                                            tmp_rect.height = 15;
+                                                            tmp_rect.y = eye_candy_rect.height + eye_candy_rect.y - 15;
+                                                        } else {
+                                                            v71 = true;
+                                                        }
+
+                                                        art_blit_info_initialized = false;
+                                                        rect_node = *render_info->rects;
+                                                        while (rect_node != NULL) {
+                                                            if (tig_rect_intersection(&tmp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                                                if (!art_blit_info_initialized) {
+                                                                    sub_443170(obj_node->obj, &art_blit_info);
+
+                                                                    art_blit_info.flags &= ~0x19E80;
+                                                                    art_blit_info.flags |= TIG_ART_BLT_BLEND_ALPHA_CONST;
+                                                                    art_blit_info.src_rect = &src_rect;
+                                                                    art_blit_info.dst_rect = &dst_rect;
+                                                                    art_blit_info.alpha[0] = 92;
+
+                                                                    art_blit_info_initialized = true;
+
+                                                                    if ((obj_flags & OF_FLAT) == 0) {
+                                                                        order = non_flat_order++;
+                                                                    } else {
+                                                                        order = flat_order++;
+                                                                    }
+                                                                }
+
+                                                                src_rect.x = dst_rect.x - tmp_rect.x;
+                                                                src_rect.y = dst_rect.y - tmp_rect.y + eye_candy_rect.height - 15;
+                                                                src_rect.width = dst_rect.width;
+                                                                src_rect.height = dst_rect.height;
+
+                                                                if (scale != 100) {
+                                                                    src_rect.x = (int)((float)src_rect.x / (float)scale * 100.0f);
+                                                                    src_rect.y = (int)((float)src_rect.y / (float)scale * 100.0f);
+                                                                    src_rect.width = (int)((float)src_rect.width / (float)scale * 100.0f);
+                                                                    src_rect.height = (int)((float)src_rect.height / (float)scale * 100.0f);
+                                                                }
+
+                                                                if ((obj_flags & OF_SHRUNK) != 0) {
+                                                                    src_rect.x *= 2;
+                                                                    src_rect.y *= 2;
+                                                                    src_rect.width *= 2;
+                                                                    src_rect.height *= 2;
+                                                                }
+
+                                                                sub_443440(&art_blit_info, order);
+                                                            }
+                                                            rect_node = rect_node->next;
+                                                        }
+
+                                                        if ((obj_flags & OF_FLAT) == 0) {
+                                                            eye_candy_rect.height -= 15;
+                                                        }
+                                                    }
+
+                                                    // 0x43BF8F
+                                                    if (!v71) {
+                                                        art_blit_info_initialized = false;
+
+                                                        rect_node = *render_info->rects;
+                                                        while (rect_node != NULL) {
+                                                            if (tig_rect_intersection(&eye_candy_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                                                                if (!art_blit_info_initialized) {
+                                                                    sub_443170(obj_node->obj, &art_blit_info);
+                                                                    art_blit_info.src_rect = &src_rect;
+                                                                    art_blit_info.dst_rect = &dst_rect;
+
+                                                                    art_blit_info_initialized = true;
+
+                                                                    if ((obj_flags & OF_FLAT) == 0) {
+                                                                        order = non_flat_order++;
+                                                                    } else {
+                                                                        order = flat_order++;
+                                                                    }
+                                                                }
+
+                                                                src_rect.x = dst_rect.x - eye_candy_rect.x;
+                                                                src_rect.y = dst_rect.y - eye_candy_rect.y;
+                                                                src_rect.width = dst_rect.width;
+                                                                src_rect.height = dst_rect.height;
+
+                                                                if (scale != 100) {
+                                                                    object_iso_invalidate_rect(&eye_candy_rect);
+                                                                    src_rect.x = (int)((float)src_rect.x / (float)scale * 100.0f);
+                                                                    src_rect.y = (int)((float)src_rect.y / (float)scale * 100.0f);
+                                                                    src_rect.width = (int)((float)src_rect.width / (float)scale * 100.0f);
+                                                                    src_rect.height = (int)((float)src_rect.height / (float)scale * 100.0f);
+                                                                }
+
+                                                                if ((obj_flags & OF_SHRUNK) != 0) {
+                                                                    src_rect.x *= 2;
+                                                                    src_rect.y *= 2;
+                                                                    src_rect.width *= 2;
+                                                                    src_rect.height *= 2;
+                                                                }
+
+                                                                sub_443440(&art_blit_info, order);
+                                                            }
+                                                            rect_node = rect_node->next;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    obj_node = obj_node->next;
+                                }
+                            }
+                        }
+
+                        indexes[row]++;
+                        locations[row]++;
+                    }
+
+                    indexes[row] += widths[row];
+                    locations[row] = LOCATION_MAKE(LOCATION_GET_X(locations[row]) + v5[row], LOCATION_GET_Y(locations[row]) + 1); // TODO: Unclear.
+                }
+            }
+        }
+
+        for (row = 0; row < v2->width; row++) {
+            if (locks[row]) {
+                sector_unlock(v2->field_20[row]);
+            }
+        }
+    }
+
+    sub_43C5C0(render_info);
+    sub_443560();
+}
+
+// 0x43C270
+void sub_43C270(int64_t obj)
+{
+    TigRect rect;
+    int type;
+    int64_t pc_obj;
+    int reaction_level;
+    int reaction_type;
+
+    if (object_hover_obj != obj) {
+        if (sub_4437E0(&rect)) {
+            object_iso_invalidate_rect(&rect);
+        }
+
+        dword_5E2E94 = false;
+        object_hover_obj = obj;
+        object_hover_color = tig_color_make(255, 255, 255);
+
+        tig_art_interface_id_create(467, dword_5E2E6C, 1, 0, &object_hover_underlay_art_id);
+        tig_art_interface_id_create(468, dword_5E2E68, 1, 0, &object_hover_overlay_art_id);
+
+        if (object_hover_obj != OBJ_HANDLE_NULL) {
+            type = obj_field_int32_get(object_hover_obj, OBJ_F_TYPE);
+            if (type != OBJ_TYPE_WALL && type != OBJ_TYPE_PROJECTILE) {
+                if (type >= OBJ_TYPE_PC) {
+                    pc_obj = player_get_pc_obj();
+                    if (pc_obj == OBJ_HANDLE_NULL) {
+                        object_hover_obj = OBJ_HANDLE_NULL;
+                        sub_443EB0(OBJ_HANDLE_NULL, &stru_5E2F60);
+                        return;
+                    }
+
+                    dword_5E2E94 = true;
+
+                    if (type == OBJ_TYPE_NPC) {
+                        reaction_level = sub_4C0CC0(object_hover_obj, pc_obj);
+                        reaction_type = reaction_translate(reaction_level);
+                        object_hover_color = object_reaction_colors[reaction_type];
+
+                        if (combat_critter_is_combat_mode_active(pc_obj)) {
+                            tig_art_interface_id_create(555, dword_5E2E6C, 1, 0, &object_hover_underlay_art_id);
+                            tig_art_interface_id_create(555, dword_5E2E68, 1, 0, &object_hover_overlay_art_id);
+                        }
+                    }
+                }
+
+                if (sub_4437E0(&rect)) {
+                    object_iso_invalidate_rect(&rect);
+                }
+            }
+        }
+
+        sub_443EB0(object_hover_obj, &stru_5E2F60);
+    }
+}
+
+// 0x43C570
+int64_t sub_43C570()
+{
+    if (object_hover_obj != OBJ_HANDLE_NULL) {
+        if (sub_444020(&object_hover_obj, &stru_5E2F60)) {
+            return object_hover_obj;
+        }
+
+        sub_43C270(OBJ_HANDLE_NULL);
+    }
+
+    return OBJ_HANDLE_NULL;
+}
+
+// 0x43C5C0
+void sub_43C5C0(UnknownContext* render_info)
+{
+    TigRect rect;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigRectListNode* node;
+
+    if (dword_5E2E94) {
+        if (sub_443880(&rect, object_hover_underlay_art_id)) {
+            art_blit_info.flags = TIG_ART_BLT_BLEND_ADD | TIG_ART_BLT_BLEND_COLOR_CONST;
+            art_blit_info.art_id = object_hover_underlay_art_id;
+            art_blit_info.src_rect = &src_rect;
+            art_blit_info.dst_rect = &dst_rect;
+            art_blit_info.color = object_hover_color;
+
+            node = *render_info->rects;
+            while (node != NULL) {
+                if (tig_rect_intersection(&rect, &(node->rect), &dst_rect) == TIG_OK) {
+                    src_rect.x = dst_rect.x - rect.x;
+                    src_rect.y = dst_rect.y - rect.y;
+                    src_rect.width = dst_rect.width;
+                    src_rect.height = dst_rect.height;
+                    sub_443440(&art_blit_info, 99999999);
+                }
+                node = node->next;
+            }
+        }
+    }
+}
+
+// 0x43C690
+void sub_43C690(UnknownContext* render_info)
+{
+    TigRectListNode* rect_node;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    bool blit_info_initialized = false;
+
+    object_hover_obj = sub_43C570();
+
+    if (object_hover_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (dword_5E2E94) {
+        TigRect rect;
+
+        if (sub_443880(&rect, object_hover_overlay_art_id)) {
+            art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_CONST | TIG_ART_BLT_BLEND_ADD;
+            art_blit_info.art_id = object_hover_overlay_art_id;
+            art_blit_info.src_rect = &src_rect;
+            art_blit_info.dst_rect = &dst_rect;
+            art_blit_info.color = object_hover_color;
+
+            rect_node = *render_info->rects;
+            while (rect_node != NULL) {
+                if (tig_rect_intersection(&rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                    src_rect.y = dst_rect.y - rect.y;
+                    src_rect.x = dst_rect.x - rect.x;
+                    src_rect.width = dst_rect.width;
+                    src_rect.height = dst_rect.height;
+                    sub_443440(&art_blit_info, INT_MAX);
+                }
+                rect_node = rect_node->next;
+            }
+        }
+    } else {
+        int obj_type;
+        tig_color_t color;
+        bool is_detecting_invisible;
+        unsigned int flags;
+        TigRect obj_rect;
+        TigRect tmp_rect;
+
+        obj_type = obj_field_int32_get(object_hover_obj, OBJ_F_TYPE);
+        if (obj_type == OBJ_TYPE_WALL
+            || obj_type == OBJ_TYPE_PROJECTILE
+            || obj_type >= OBJ_TYPE_PC) {
+            return;
+        }
+
+        color = tig_color_make(200, 200, 200);
+        is_detecting_invisible = sub_458A80(OSF_DETECTING_INVISIBLE);
+        flags = obj_field_int32_get(object_hover_obj, OBJ_F_FLAGS);
+        if (!is_detecting_invisible
+            || (object_hover_obj & (OF_DONTDRAW | OF_INVISIBLE)) != 0) {
+            return;
+        }
+
+        object_get_rect(object_hover_obj, 0, &obj_rect);
+
+        if ((flags & OF_WADING) != 0 && (flags & OF_WATER_WALKING) == 0) {
+            tmp_rect = obj_rect;
+            tmp_rect.y = obj_rect.y + obj_rect.height - 15;
+            tmp_rect.height = 15;
+
+            rect_node = *render_info->rects;
+            while (rect_node != NULL) {
+                if (tig_rect_intersection(&tmp_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                    if (!blit_info_initialized) {
+                        sub_443170(object_hover_obj, &art_blit_info);
+
+                        art_blit_info.flags &= ~0x3DF80;
+                        art_blit_info.flags |= TIG_ART_BLT_BLEND_COLOR_CONST | TIG_ART_BLT_BLEND_ADD;
+                        art_blit_info.src_rect = &src_rect;
+                        art_blit_info.dst_rect = &dst_rect;
+
+                        if (!dword_5E2F48) {
+                            art_blit_info.flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+                        }
+
+                        art_blit_info.color = color;
+
+                        blit_info_initialized = true;
+                    }
+
+                    src_rect.x = dst_rect.x - tmp_rect.x;
+                    src_rect.y = dst_rect.y - tmp_rect.y + obj_rect.height - 15;
+                    src_rect.width = dst_rect.width;
+                    src_rect.height = dst_rect.height;
+
+                    if ((flags & OF_SHRUNK) != 0) {
+                        src_rect.x *= 2;
+                        src_rect.y *= 2;
+                        src_rect.width *= 2;
+                        src_rect.height *= 2;
+                    }
+
+                    sub_443440(&art_blit_info, INT_MAX);
+                }
+                rect_node = rect_node->next;
+            }
+
+            obj_rect.height -= 15;
+        }
+
+        blit_info_initialized = false;
+        rect_node = *render_info->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&obj_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
+                if (!blit_info_initialized) {
+                    sub_443170(object_hover_obj, &art_blit_info);
+
+                    art_blit_info.flags &= ~0x3DF80;
+                    art_blit_info.flags |= TIG_ART_BLT_BLEND_COLOR_CONST | TIG_ART_BLT_BLEND_ADD;
+                    art_blit_info.src_rect = &src_rect;
+                    art_blit_info.dst_rect = &dst_rect;
+
+                    if (!dword_5E2F48) {
+                        art_blit_info.flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+                    }
+
+                    art_blit_info.color = color;
+
+                    blit_info_initialized = true;
+                }
+
+                src_rect.x = dst_rect.x - obj_rect.x;
+                src_rect.y = dst_rect.y - obj_rect.y;
+                src_rect.width = dst_rect.width;
+                src_rect.height = dst_rect.height;
+
+                if ((flags & OF_SHRUNK) != 0) {
+                    src_rect.x *= 2;
+                    src_rect.y *= 2;
+                    src_rect.width *= 2;
+                    src_rect.height *= 2;
+                }
+
+                sub_443440(&art_blit_info, INT_MAX);
+            }
+
+            rect_node = rect_node->next;
+        }
+    }
+}
+
+// 0x43CB10
+void object_invalidate_rect(TigRect* rect)
+{
     if (rect == NULL) {
-        rect = &stru_5E2E98;
+        rect = &object_iso_window_bounds;
     }
 
     if (dword_5E2E70 != NULL) {
-        ret = sub_52D480(&dword_5E2E70, rect);
+        sub_52D480(&dword_5E2E70, rect);
     } else {
         dword_5E2E70 = tig_rect_node_create();
         dword_5E2E70->rect = *rect;
-        ret = dword_5E2E70;
     }
 
     object_dirty = true;
-
-    return ret;
 }
 
 // 0x43CB70
@@ -184,6 +1173,171 @@ void sub_43CB70()
     }
 }
 
+// 0x43CBA0
+bool object_create(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
+{
+    ObjectID oid;
+
+    oid.type = OID_TYPE_BLOCKED;
+    return sub_442130(proto_obj, loc, obj_ptr, oid);
+}
+
+// 0x43CBF0
+bool sub_43CBF0(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr)
+{
+    return sub_442130(proto_obj, loc, obj_ptr, oid);
+}
+
+// 0x43CC30
+bool sub_43CC30(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
+{
+    ObjectID oid;
+
+    oid.type = OID_TYPE_BLOCKED;
+    return sub_4421A0(proto_obj, loc, &oid, obj_ptr);
+}
+
+// 0x43CC70
+bool sub_43CC70(int64_t proto_obj, int64_t loc, ObjectID* oid, int64_t* obj_ptr)
+{
+    return sub_4421A0(proto_obj, loc, oid, obj_ptr);
+}
+
+// 0x43CCA0
+void sub_43CCA0(int64_t obj)
+{
+    char* folder;
+    TigRect rect;
+    int obj_type;
+    int64_t pc_obj;
+    int64_t parent_obj;
+    int64_t loc;
+    ObjectList objects;
+    ObjectNode* node;
+    unsigned int flags;
+
+    if (object_editor) {
+        sub_4102C0(NULL, &folder);
+        sub_43CEA0(obj, -1, folder);
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return;
+    }
+
+    if (!sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_DESTROY, 0)) {
+        return;
+    }
+
+    if (!sub_4A2BA0() && (tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4ED9E0(obj);
+    }
+
+    sub_4A2BC0();
+
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)) {
+        sub_45E180(obj);
+        sub_4AD7D0(obj);
+
+        if (obj_type == OBJ_TYPE_NPC) {
+            pc_obj = sub_4C1110(obj);
+            if (pc_obj != OBJ_HANDLE_NULL) {
+                sub_460A20(pc_obj, 0);
+            }
+        }
+
+        sub_4639E0(obj, true);
+    } else if (obj_type_is_item(obj_type)) {
+        if (item_parent(obj, &parent_obj)) {
+            loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
+            item_remove(obj);
+            sub_4415C0(obj, loc);
+        }
+    } else if (obj_type == OBJ_TYPE_CONTAINER) {
+        sub_4639E0(obj, true);
+    }
+
+    sub_423FF0(obj);
+    sub_459740(obj);
+    sub_4601D0(obj);
+    sub_443770(obj);
+
+    if (obj_type == OBJ_TYPE_WALL) {
+        loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+        node = objects.head;
+        while (node != NULL) {
+            sub_43CCA0(node->obj);
+            node = node->next;
+        }
+        object_list_destroy(&objects);
+    }
+
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    flags |= OF_DESTROYED;
+    obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+    sub_4A2BD0();
+}
+
+// 0x43CEA0
+void sub_43CEA0(int64_t obj, unsigned int flags, const char* path)
+{
+    TigRect rect;
+    int type;
+
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+
+    sub_463B30(obj, false);
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (type == OBJ_TYPE_PROJECTILE
+        || type == OBJ_TYPE_CONTAINER
+        || obj_type_is_critter(type)
+        || obj_type_is_item(type)) {
+        objf_solitary_delete(obj, path, ".mob");
+    }
+
+    switch (type) {
+    case OBJ_TYPE_WALL:
+        sub_4E18F0(obj, (flags & 0x1) != 0);
+        break;
+    case OBJ_TYPE_PORTAL:
+        sub_4F0790(obj, (flags & 0x1) != 0);
+        break;
+    default:
+        sub_43CF70(obj);
+        sub_43CFF0(obj);
+        break;
+    }
+}
+
+// 0x43CF70
+void sub_43CF70(int64_t obj)
+{
+    int64_t sector_id;
+    Sector* sector;
+
+    sub_443770(obj);
+
+    sector_id = sub_4CFC50(obj_field_int64_get(obj, OBJ_F_LOCATION));
+    if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
+        sector_lock(sector_id, &sector);
+        objlist_remove(&(sector->objects), obj);
+
+        // FIXME: Unused.
+        obj_field_int32_get(obj, OBJ_F_FLAGS);
+
+        sector_unlock(sector_id);
+    }
+}
+
 // 0x43CFF0
 void sub_43CFF0(object_id_t obj)
 {
@@ -194,7 +1348,7 @@ void sub_43CFF0(object_id_t obj)
         tb_remove(obj);
     }
     if ((flags & OF_TEXT_FLOATER) != 0) {
-        sub_4D56C0(obj);
+        tf_remove(obj);
     }
     sub_423FF0(obj);
     sub_459740(obj);
@@ -204,10 +1358,188 @@ void sub_43CFF0(object_id_t obj)
     sub_405BF0(obj);
 }
 
+// 0x43D0E0
+void sub_43D0E0(int64_t obj, unsigned int flags)
+{
+    TigRect rect;
+    unsigned int render_flags = 0;
+    unsigned int cur_render_flags;
+    unsigned int cur_flags;
+    unsigned int extra_flags = 0;
+
+    if ((flags & OF_FLAT) != 0) {
+        sub_4430B0(obj, true);
+        flags &= ~OF_FLAT;
+    }
+
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+
+    cur_flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+
+    // FIXME: Unused.
+    cur_render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+
+    if ((flags & OF_OFF) != 0) {
+        if ((cur_flags & OF_OFF) == 0) {
+            if ((cur_flags & OF_TEXT) != 0) {
+                tb_remove(obj);
+            }
+            if ((cur_flags & OF_TEXT_FLOATER) != 0) {
+                tf_remove(obj);
+            }
+            light_set_flags(obj, LF_OFF);
+            extra_flags |= OF_OFF;
+        }
+        flags &= ~OF_OFF;
+    }
+
+    if ((flags & OF_STONED) != 0) {
+        if ((cur_flags & OF_STONED) == 0) {
+            render_flags |= ORF_02000000;
+            extra_flags |= OF_STONED;
+        }
+        flags &= ~OF_STONED;
+    }
+
+    if ((flags & OF_FROZEN) != 0) {
+        if ((cur_flags & OF_FROZEN) == 0) {
+            render_flags |= ORF_02000000;
+            extra_flags |= OF_FROZEN;
+        }
+        flags &= ~OF_FROZEN;
+    }
+
+    if ((flags & OF_ANIMATED_DEAD) != 0) {
+        if ((cur_flags & OF_ANIMATED_DEAD) == 0) {
+            render_flags |= ORF_02000000;
+            extra_flags |= OF_ANIMATED_DEAD;
+        }
+        flags &= ~OF_ANIMATED_DEAD;
+    }
+
+    if ((flags & OF_DONTLIGHT) != 0) {
+        render_flags |= ORF_02000000;
+    }
+
+    obj_field_int32_set(obj,
+        OBJ_F_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_FLAGS) | flags | extra_flags);
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~render_flags);
+
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+}
+
+// 0x43D280
+void sub_43D280(int64_t obj, unsigned int flags)
+{
+    TigRect rect;
+    unsigned int render_flags = 0;
+    unsigned int cur_render_flags;
+    unsigned int cur_flags;
+    unsigned int extra_flags = 0;
+    bool visibility_changed = false;
+
+    if ((flags & OF_FLAT) != 0) {
+        sub_4430B0(obj, false);
+        flags &= ~OF_FLAT;
+    }
+
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+
+    cur_flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+
+    // FIXME: Unused.
+    cur_render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+
+    if ((flags & OF_OFF) != 0) {
+        render_flags |= ORF_04000000 | ORF_02000000 | ORF_01000000;
+        light_unset_flags(obj, LF_OFF);
+        extra_flags |= OF_OFF;
+        flags &= ~OF_OFF;
+        visibility_changed = true;
+    }
+
+    if ((flags & OF_STONED) != 0) {
+        if ((cur_flags & OF_STONED) != 0) {
+            render_flags |= ORF_02000000;
+            extra_flags |= OF_STONED;
+        }
+        flags &= ~OF_STONED;
+    }
+
+    if ((flags & OF_FROZEN) != 0) {
+        if ((cur_flags & OF_FROZEN) != 0) {
+            render_flags |= ORF_02000000;
+            extra_flags |= OF_FROZEN;
+        }
+        flags &= ~OF_FROZEN;
+    }
+
+    if ((flags & OF_ANIMATED_DEAD) != 0) {
+        if ((cur_flags & OF_ANIMATED_DEAD) != 0) {
+            render_flags |= ORF_02000000;
+            extra_flags |= OF_ANIMATED_DEAD;
+        }
+        flags &= ~OF_ANIMATED_DEAD;
+    }
+
+    if ((flags & OF_DONTLIGHT) != 0) {
+        render_flags |= ORF_02000000;
+    }
+
+    obj_field_int32_set(obj,
+        OBJ_F_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_FLAGS) & ~(flags | extra_flags));
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~render_flags);
+
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+
+    if (visibility_changed) {
+        if (!object_editor) {
+            sub_43F710(obj);
+        }
+    }
+}
+
 // 0x43D410
 int object_get_hp_pts(object_id_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_HP_PTS);
+}
+
+// 0x43D430
+int object_hp_pts_set(int64_t obj, int value)
+{
+    Packet51 pkt;
+
+    if (!sub_4A2BA0()) {
+        pkt.type = 51;
+        pkt.field_4 = 0;
+        pkt.field_8 = sub_407EF0(obj);
+        pkt.field_20 = value;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return value;
+        }
+    }
+
+    if (value < 0) {
+        value = 0;
+    }
+
+    obj_field_int32_set(obj, OBJ_F_HP_PTS, value);
+    sub_460240(obj);
+
+    return value;
 }
 
 // 0x43D4C0
@@ -305,6 +1637,59 @@ int sub_43D690(object_id_t obj)
     return object_get_hp_pts(obj);
 }
 
+// 0x43D6D0
+int sub_43D6D0(int64_t obj, int resistance_type, bool a2)
+{
+    int value;
+    int obj_type;
+    int inventory_location;
+    int64_t item_obj;
+    int adj;
+
+    value = obj_arrayfield_int32_get(obj, OBJ_F_RESISTANCE_IDX, resistance_type);
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+
+    if (obj_type_is_critter(obj_type)) {
+        for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+            item_obj = item_wield_get(obj, inventory_location);
+            if (item_obj != OBJ_HANDLE_NULL
+                && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+                adj = obj_arrayfield_int32_get(item_obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, resistance_type);
+                value += adj;
+
+                if (!a2
+                    || obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY) <= 0
+                    || item_is_identified(item_obj)) {
+                    adj = obj_arrayfield_int32_get(item_obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, resistance_type);
+                    value += sub_461590(item_obj, obj, adj);
+                }
+            }
+        }
+
+        if (resistance_type == RESISTANCE_TYPE_POISON) {
+            adj = 5 * (stat_level(obj, STAT_CONSTITUTION) - 4);
+            if (adj > 0) {
+                value += adj;
+            }
+        }
+
+        value = effect_adjust_resistance(obj, resistance_type, value);
+        if (obj_type == OBJ_TYPE_NPC) {
+            if (sub_45F730(obj)) {
+                return value;
+            }
+        }
+    }
+
+    if (value < 0) {
+        value = 0;
+    } else if (value > 95) {
+        value = 95;
+    }
+
+    return value;
+}
+
 // 0x43D880
 int object_get_ac(object_id_t obj, bool a2)
 {
@@ -366,6 +1751,352 @@ bool sub_43D990(object_id_t obj)
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0;
 }
 
+// 0x43D9F0
+bool sub_43D9F0(int x, int y, int64_t* obj_ptr, unsigned int flags)
+{
+    TigRect rect;
+    LocRect loc_rect;
+    SomeSectorStuff v1;
+
+    if (object_view_options.type == VIEW_TYPE_TOP_DOWN) {
+        return false;
+    }
+
+    if (sub_439890(x, y)) {
+        return false;
+    }
+
+    rect.x = x - 256;
+    rect.y = y - 256;
+    rect.width = 512;
+    rect.height = 512;
+
+    if (!sub_4B9130(&rect, &loc_rect)) {
+        return false;
+    }
+
+    if (!sub_4D0090(&loc_rect, &v1)) {
+        return false;
+    }
+
+    // TODO: Incomplete.
+
+    return false;
+}
+
+// 0x43DFD0
+void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
+{
+    unsigned int obj_flags;
+    int64_t loc;
+    int64_t loc_x;
+    int64_t loc_y;
+    int64_t limit_x;
+    int64_t limit_y;
+    TigArtFrameData art_frame_data;
+    int hot_x;
+    int hot_y;
+    int width;
+    int height;
+    int offset_x;
+    int offset_y;
+    int scale;
+    int base_x;
+    int base_y;
+    unsigned int render_flags;
+    int idx;
+    TigRect extra_rect;
+
+    obj_flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    if ((flags & 0x8) == 0 && (obj_flags & dword_5E2F88) != 0) {
+        rect->x = 0;
+        rect->y = 0;
+        rect->width = 0;
+        rect->height = 0;
+        return;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    location_get_limits(&limit_x, &limit_y);
+
+    if (LOCATION_GET_X(loc) < limit_x && LOCATION_GET_Y(loc) < limit_y) {
+        sub_4B8680(loc, &loc_x, &loc_y);
+
+        // NOTE: Where is `loc_y` validation?
+        if (loc_x < INT_MIN || loc_x > INT_MAX) {
+            rect->x = 0;
+            rect->y = 0;
+            rect->width = 0;
+            rect->height = 0;
+            return;
+        }
+    } else {
+        tig_debug_println("Error:  object_get_rect found object with location outside the limits for the current map");
+        tig_debug_printf("        x: 0x%I64x  y: 0x%I64x\n        limit_x: 0x%I64x  limit_y: 0x%I64x\n",
+            LOCATION_GET_X(loc),
+            LOCATION_GET_Y(loc),
+            limit_x,
+            limit_y);
+
+        loc_x = 0;
+        loc_y = 0;
+    }
+
+    if ((int)loc_x < object_iso_window_bounds_ex.x
+        || (int)loc_y < object_iso_window_bounds_ex.y
+        || (int)loc_x >= object_iso_window_bounds_ex.x + object_iso_window_bounds_ex.width
+        || (int)loc_y >= object_iso_window_bounds_ex.y + object_iso_window_bounds_ex.height) {
+        rect->x = 0;
+        rect->y = 0;
+        rect->width = 0;
+        rect->height = 0;
+        return;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ORF_08000000) != 0) {
+        rect->x = (int)loc_x - obj_field_int32_get(obj, OBJ_F_RENDER_X)
+            + obj_field_int32_get(obj, OBJ_F_OFFSET_X) + 40;
+        rect->y = (int)loc_y - obj_field_int32_get(obj, OBJ_F_RENDER_Y)
+            + obj_field_int32_get(obj, OBJ_F_OFFSET_Y) + 20;
+        rect->width = obj_field_int32_get(obj, OBJ_F_RENDER_WIDTH);
+        rect->height = obj_field_int32_get(obj, OBJ_F_RENDER_HEIGHT);
+        tig_debug_printf("Error: object_get_rect() running invalid code\n");
+        return;
+    }
+
+    if (tig_art_frame_data(obj_field_int32_get(obj, OBJ_F_CURRENT_AID), &art_frame_data) != TIG_OK) {
+        rect->x = 0;
+        rect->y = 0;
+        rect->width = 0;
+        rect->height = 0;
+        return;
+    }
+
+    hot_x = art_frame_data.hot_x;
+    hot_y = art_frame_data.hot_y;
+    width = art_frame_data.width;
+    height = art_frame_data.height;
+
+    offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+    scale = obj_field_int32_get(obj, OBJ_F_BLIT_SCALE);
+
+    if (scale != 100) {
+        hot_x = (int)((float)hot_x * (float)scale / 100.0f);
+        hot_y = (int)((float)hot_y * (float)scale / 100.0f);
+        width = (int)((float)width * (float)scale / 100.0f);
+        height = (int)((float)height * (float)scale / 100.0f);
+    }
+
+    if ((obj_flags & OF_SHRUNK) != 0) {
+        hot_x /= 2;
+        hot_y /= 2;
+        width /= 2;
+        height /= 2;
+    }
+
+    base_x = (int)loc_x + offset_x + 40;
+    base_y = (int)loc_y + offset_y + 20;
+
+    rect->x = base_x - hot_x;
+    rect->y = base_y - hot_y;
+    rect->width = width;
+    rect->height = height;
+
+    if (flags != 0) {
+        if ((flags & 0x2) != 0 && (obj_flags & OF_HAS_OVERLAYS) != 0) {
+            for (int fld = OBJ_F_OVERLAY_FORE; fld <= OBJ_F_OVERLAY_BACK; fld++) {
+                for (idx = 0; idx < 7; idx++) {
+                    tig_art_id_t art_id = sub_407470(obj, fld, idx);
+                    if (art_id != TIG_ART_ID_INVALID
+                        && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+                        int scale_type = tig_art_eye_candy_id_scale_get(art_id);
+                        int overlay_scale = scale_type != 4
+                            ? scale * dword_5A548C[scale_type] / 100
+                            : scale;
+
+                        hot_x = art_frame_data.hot_x;
+                        hot_y = art_frame_data.hot_y;
+                        height = art_frame_data.height;
+                        width = art_frame_data.width;
+
+                        if (overlay_scale != 100) {
+                            hot_x = (int)((float)hot_x * (float)overlay_scale / 100.0f);
+                            hot_y = (int)((float)hot_y * (float)overlay_scale / 100.0f);
+                            width = (int)((float)width * (float)overlay_scale / 100.0f);
+                            height = (int)((float)height * (float)overlay_scale / 100.0f);
+                        }
+
+                        if ((obj_flags & OF_SHRUNK) != 0) {
+                            hot_x /= 2;
+                            hot_y /= 2;
+                            width /= 2;
+                            height /= 2;
+                        }
+
+                        extra_rect.x = base_x - hot_x;
+                        extra_rect.y = base_y - hot_y;
+                        extra_rect.width = width;
+                        extra_rect.height = height;
+                        tig_rect_union(rect, &extra_rect, rect);
+                    }
+                }
+            }
+        }
+
+        if ((flags & 0x4) != 0 && (obj_flags & OF_HAS_UNDERLAYS) != 0) {
+            for (idx = 0; idx < 4; idx++) {
+                tig_art_id_t art_id = sub_407470(obj, OBJ_F_UNDERLAY, idx);
+                if (art_id != TIG_ART_ID_INVALID
+                    && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+                    hot_x = art_frame_data.hot_x;
+                    hot_y = art_frame_data.hot_y;
+                    height = art_frame_data.height;
+                    width = art_frame_data.width;
+
+                    // NOTE: Where is scaling?
+
+                    extra_rect.x = base_x - hot_x;
+                    extra_rect.y = base_y - hot_y;
+                    extra_rect.width = width;
+                    extra_rect.height = height;
+                    tig_rect_union(rect, &extra_rect, rect);
+                }
+            }
+        }
+
+        if ((flags & 0x1) != 0) {
+            render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+            if ((render_flags & ORF_04000000) == 0) {
+                if (sub_4D9B20(obj)) {
+                    render_flags |= ORF_10000000;
+                }
+                render_flags |= ORF_04000000;
+                obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
+            }
+
+            if ((render_flags & ORF_10000000) != 0) {
+                for (idx = 0; idx < SHADOW_HANDLE_MAX; idx++) {
+                    Shadow* shadow = (Shadow*)obj_arrayfield_int32_get(obj, OBJ_F_SHADOW_HANDLES, idx); // TODO: x64
+                    if (shadow == NULL) {
+                        break;
+                    }
+
+                    if (tig_art_frame_data(shadow->art_id, &art_frame_data) == TIG_OK) {
+                        hot_x = art_frame_data.hot_x;
+                        hot_y = art_frame_data.hot_y;
+                        height = art_frame_data.height;
+                        width = art_frame_data.width;
+
+                        if (scale != 100) {
+                            hot_x = (int)((float)hot_x * (float)scale / 100.0f);
+                            hot_y = (int)((float)hot_y * (float)scale / 100.0f);
+                            width = (int)((float)width * (float)scale / 100.0f);
+                            height = (int)((float)height * (float)scale / 100.0f);
+                        }
+
+                        if ((obj_flags & OF_SHRUNK) != 0) {
+                            hot_x /= 2;
+                            hot_y /= 2;
+                            width /= 2;
+                            height /= 2;
+                        }
+
+                        extra_rect.x = base_x - hot_x;
+                        extra_rect.y = base_y - hot_y;
+                        extra_rect.width = width;
+                        extra_rect.height = height;
+                        tig_rect_union(rect, &extra_rect, rect);
+                    }
+                }
+            }
+        }
+
+        if (obj == object_hover_obj) {
+            sub_4437E0(&extra_rect);
+            tig_rect_union(rect, &extra_rect, rect);
+        }
+    }
+
+    if ((obj_flags & OF_WADING) != 0 && (obj_flags & OF_WATER_WALKING) == 0) {
+        rect->y += 15;
+    }
+}
+
+// 0x43E770
+void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y)
+{
+    unsigned int flags;
+    int64_t cur_loc;
+    TigRect obj_rect;
+    int64_t cur_sector_id;
+    int64_t sector_id;
+    bool is_static;
+    Sector* sector;
+
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    if ((flags & OF_DESTROYED) != 0) {
+        return;
+    }
+
+    cur_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    if (cur_loc == loc) {
+        sub_4423E0(obj, offset_x, offset_y);
+        return;
+    }
+
+    if ((flags & OF_TEXT) != 0) {
+        tb_move(obj, loc, offset_x, offset_y);
+    }
+
+    if ((flags & OF_TEXT_FLOATER) != 0) {
+        tf_move(obj, loc, offset_x, offset_y);
+    }
+
+    object_get_rect(obj, 0x7, &obj_rect);
+    object_iso_invalidate_rect(&obj_rect);
+
+    cur_sector_id = sub_4CFC50(cur_loc);
+    sector_id = sub_4CFC50(loc);
+    is_static = sub_43D990(obj);
+
+    if (cur_sector_id == sector_id) {
+        if (is_static || sub_4D04E0(sector_id)) {
+            sector_lock(sector_id, &sector);
+            sub_4F12C0(&(sector->objects), obj, loc, offset_x, offset_y);
+            sector_unlock(sector_id);
+        } else {
+            obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
+            obj_field_int32_set(obj, OBJ_F_OFFSET_X, offset_x);
+            obj_field_int32_set(obj, OBJ_F_OFFSET_Y, offset_y);
+        }
+    } else {
+        if (is_static || sub_4D04E0(cur_sector_id)) {
+            sector_lock(cur_sector_id, &sector);
+            objlist_remove(&(sector->objects), obj);
+            sector_unlock(cur_sector_id);
+        }
+
+        obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
+        obj_field_int32_set(obj, OBJ_F_OFFSET_X, offset_x);
+        obj_field_int32_set(obj, OBJ_F_OFFSET_Y, offset_y);
+
+        if (is_static || sub_4D04E0(sector_id)) {
+            sector_lock(sector_id, &sector);
+            objlist_insert(&(sector->objects), obj);
+            sector_unlock(sector_id);
+        }
+    }
+
+    sub_4DD020(obj, loc, offset_x, offset_y);
+
+    if (cur_sector_id == sector_id) {
+        sub_444270(obj, 1);
+    } else {
+        sub_444270(obj, 2);
+    }
+}
+
 // 0x43EA20
 void sub_43EA20(int64_t a1, int64_t a2)
 {
@@ -375,7 +2106,7 @@ void sub_43EA20(int64_t a1, int64_t a2)
         if (!sub_4B99C0(a2, &v1)) {
             v1 = a2;
         }
-        sub_4EDF20(a1, v1, 0, 0, 0);
+        sub_4EDF20(a1, v1, 0, 0, false);
     }
 }
 
@@ -408,10 +2139,12 @@ void object_set_current_aid(object_id_t obj, tig_art_id_t aid)
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
-        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+        obj_field_int32_set(obj,
+            OBJ_F_RENDER_FLAGS,
+            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-        dword_5E2EB4(&dirty_rect);
+        object_iso_invalidate_rect(&dirty_rect);
         sub_43F710(obj);
     }
 }
@@ -419,38 +2152,94 @@ void object_set_current_aid(object_id_t obj, tig_art_id_t aid)
 // 0x43EBD0
 void object_set_light(object_id_t obj, unsigned int flags, tig_art_id_t aid, tig_color_t color)
 {
-    int light_handle;
+    Light* light;
 
     if (aid == TIG_ART_ID_INVALID) {
-        light_handle = obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE);
-        if (light_handle != 0) {
-            sub_4D8620(light_handle);
+        light = (Light*)obj_field_int32_get(obj, OBJ_F_LIGHT_HANDLE); // TODO: x64
+        if (light != NULL) {
+            light_stop_animating(light);
         }
     }
 
     obj_field_int32_set(obj, OBJ_F_LIGHT_FLAGS, flags);
     obj_field_int32_set(obj, OBJ_F_LIGHT_AID, aid);
     obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, color);
-    obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
     sub_4D9590(obj, true);
+}
+
+// 0x43ECF0
+void sub_43ECF0(int64_t obj, int fld, int index, int value)
+{
+    TigRect dirty_rect;
+    TigRect updated_rect;
+    unsigned int flags;
+    int overlay;
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return;
+    }
+
+    object_get_rect(obj, 0x7, &dirty_rect);
+    sub_4074E0(obj, fld, index, value);
+
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    flags &= ~(OF_HAS_OVERLAYS | OF_HAS_UNDERLAYS);
+
+    for (overlay = 0; overlay < 7; overlay++) {
+        if (sub_407470(obj, OBJ_F_OVERLAY_FORE, overlay) != TIG_ART_ID_INVALID) {
+            flags |= OF_HAS_OVERLAYS;
+            break;
+        }
+    }
+
+    if ((flags & OF_HAS_OVERLAYS) == 0) {
+        for (overlay = 0; overlay < 7; overlay++) {
+            if (sub_407470(obj, OBJ_F_OVERLAY_BACK, overlay) != TIG_ART_ID_INVALID) {
+                flags |= OF_HAS_OVERLAYS;
+                break;
+            }
+        }
+    }
+
+    for (overlay = 0; overlay < 4; overlay++) {
+        if (sub_407470(obj, OBJ_F_UNDERLAY, overlay) != TIG_ART_ID_INVALID) {
+            flags |= OF_HAS_UNDERLAYS;
+            break;
+        }
+    }
+
+    obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
+
+    object_get_rect(obj, 0x7, &updated_rect);
+    tig_rect_union(&dirty_rect, &updated_rect, &dirty_rect);
+    object_iso_invalidate_rect(&dirty_rect);
 }
 
 // 0x43EE10
 void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, tig_art_id_t aid, tig_color_t color)
 {
-    int light_handle;
+    Light* light;
 
     if (aid == TIG_ART_ID_INVALID) {
-        light_handle = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
-        if (light_handle != 0) {
-            sub_4D8620(light_handle);
+        light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+        if (light != NULL) {
+            light_stop_animating(light);
         }
     }
 
     sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_FLAGS, flags);
     sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_AID, aid);
     sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_COLOR, color);
-    obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
     sub_4D9590(obj, true);
 }
 
@@ -464,7 +2253,7 @@ void object_set_blit_scale(object_id_t obj, int value)
     obj_field_int32_set(obj, OBJ_F_BLIT_SCALE, value);
     object_get_rect(obj, 0x7, &update_rect);
     tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-    dword_5E2EB4(&dirty_rect);
+    object_iso_invalidate_rect(&dirty_rect);
 }
 
 // 0x43EF10
@@ -478,8 +2267,10 @@ void object_add_flags(object_id_t obj, unsigned int flags)
         sub_43D0E0(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-        dword_5E2EB4(&dirty_rect);
-        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
+        object_iso_invalidate_rect(&dirty_rect);
+        obj_field_int32_set(obj,
+            OBJ_F_RENDER_FLAGS,
+            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_04000000 | ORF_01000000));
     }
 }
 
@@ -494,8 +2285,10 @@ void object_remove_flags(object_id_t obj, unsigned int flags)
         sub_43D280(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-        dword_5E2EB4(&dirty_rect);
-        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x5000000);
+        object_iso_invalidate_rect(&dirty_rect);
+        obj_field_int32_set(obj,
+            OBJ_F_RENDER_FLAGS,
+            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_04000000 | ORF_01000000));
     }
 }
 
@@ -506,27 +2299,31 @@ void sub_43F030(object_id_t obj)
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &rect);
-        dword_5E2EB4(&rect);
-        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x7000000);
+        object_iso_invalidate_rect(&rect);
+        obj_field_int32_set(obj,
+            OBJ_F_RENDER_FLAGS,
+            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_04000000 | ORF_02000000 | ORF_01000000));
     }
 }
 
 // 0x43F090
-void sub_43F090(object_id_t obj)
+void object_cycle_palette(object_id_t obj)
 {
     tig_art_id_t aid;
     TigRect rect;
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-        aid = tig_art_palette_set(tig_art_palette_get(aid) + 1);
+        aid = tig_art_id_palette_set(aid, tig_art_id_palette_get(aid) + 1);
         if (sub_502E00(aid) == TIG_OK) {
-            aid = tig_art_palette_set(aid, 0);
+            aid = tig_art_id_palette_set(aid, 0);
         }
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
         object_get_rect(obj, 0, &rect);
-        dword_5E2EB4(&rect);
-        obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x3000000);
+        object_iso_invalidate_rect(&rect);
+        obj_field_int32_set(obj,
+            OBJ_F_RENDER_FLAGS,
+            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_02000000 | ORF_01000000));
     }
 }
 
@@ -538,15 +2335,171 @@ void sub_43F130(object_id_t obj, int palette)
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-        aid = tig_art_palette_set(aid, palette);
+        aid = tig_art_id_palette_set(aid, palette);
         // NOTE: Looks wrong.
         if (sub_502E00(aid) != TIG_OK) {
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
             object_get_rect(obj, 0, &rect);
-            dword_5E2EB4(&rect);
-            obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x2000000);
+            object_iso_invalidate_rect(&rect);
+            obj_field_int32_set(obj,
+                OBJ_F_RENDER_FLAGS,
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_02000000);
         }
     }
+}
+
+// 0x43F1C0
+void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
+{
+    ObjectList objects;
+    DateTime datetime;
+    TimeEvent timeevent;
+    int64_t loc;
+    unsigned int scenery_flags;
+    unsigned int trap_flags;
+    tig_art_id_t destroyed_art_id;
+    int sound_id;
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+        return;
+    }
+
+    sub_424070(obj, 5, 0, 1);
+
+    switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
+    case OBJ_TYPE_WALL:
+        sub_4E1490(obj, triggerer_obj);
+        break;
+    case OBJ_TYPE_PORTAL:
+        sub_4F06E0(obj, triggerer_obj);
+        break;
+    case OBJ_TYPE_CONTAINER:
+        if (sub_49B290(obj) == 3023) {
+            object_set_hp_damage(obj, 0);
+        } else {
+            sub_463730(obj, true);
+
+            loc = obj_field_int32_get(obj, OBJ_F_LOCATION);
+            sub_43CCA0(obj);
+            sub_4407C0(loc, 32740, &objects);
+            if (objects.head != NULL) {
+                sub_456E60(objects.head->obj, 1203);
+            }
+            object_list_destroy(&objects);
+        }
+        break;
+    case OBJ_TYPE_SCENERY:
+        scenery_flags = obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS);
+        if ((scenery_flags & OSCF_RESPAWNABLE) != 0) {
+            int scenery_respawn_delay;
+
+            sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+            scenery_flags |= 0x400;
+            obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags);
+            sub_43D0E0(obj, OF_OFF);
+
+            object_set_hp_damage(obj, 0);
+
+            // Setup respawn time event.
+            timeevent.type = TIMEEVENT_TYPE_SCENERY_RESPAWN;
+            timeevent.params[0].object_value = obj;
+
+            scenery_respawn_delay = obj_field_int32_get(obj, OBJ_F_SCENERY_RESPAWN_DELAY);
+            if (scenery_respawn_delay == 0) {
+                sub_45A950(&datetime, 0);
+                datetime.days = 1;
+            } else if (scenery_respawn_delay > 0) {
+                sub_45A950(&datetime, 8000 * scenery_respawn_delay);
+            } else {
+                sub_45A950(&datetime, -60000 * scenery_respawn_delay);
+            }
+
+            sub_45B800(&timeevent, &datetime);
+        } else {
+            destroyed_art_id = obj_field_int32_get(obj, OBJ_F_DESTROYED_AID);
+            if ((scenery_flags & OSCF_BUSTED) != 0) {
+                sub_43CCA0(obj);
+                sound_id = sub_4F1050(obj, 1);
+            } else {
+                if (destroyed_art_id != TIG_ART_ID_INVALID) {
+                    object_set_current_aid(obj, destroyed_art_id);
+                }
+
+                object_set_hp_damage(obj, sub_43D5A0(obj));
+                obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags | OSCF_BUSTED);
+                sound_id = sub_4F1050(obj, 0);
+                sub_43D0E0(obj, OF_INVULNERABLE);
+                sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+            }
+
+            sub_41B930(sound_id, 1, obj);
+        }
+        break;
+    case OBJ_TYPE_PROJECTILE:
+        // NOOP
+        return;
+    case OBJ_TYPE_WEAPON:
+    case OBJ_TYPE_AMMO:
+    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_ITEM_GENERIC:
+        if (tig_art_item_id_destroyed_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == 0) {
+            destroyed_art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+            destroyed_art_id = tig_art_item_id_destroyed_set(destroyed_art_id, 1);
+            object_set_current_aid(obj, destroyed_art_id);
+
+            destroyed_art_id = obj_field_int32_get(obj, OBJ_F_ITEM_INV_AID);
+            destroyed_art_id = tig_art_item_id_destroyed_set(destroyed_art_id, 1);
+            obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, destroyed_art_id);
+
+            object_set_hp_damage(obj, 0);
+
+            if (item_parent(obj, NULL) && !sub_464C80(obj)) {
+                item_drop(obj);
+            }
+
+            sound_id = sub_4F1050(obj, 0);
+            sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+        } else {
+            sub_43CCA0(obj);
+            sound_id = sub_4F1050(obj, 1);
+        }
+        sub_41B930(sound_id, 1, obj);
+        break;
+    case OBJ_TYPE_PC:
+    case OBJ_TYPE_NPC:
+        // NOOP
+        return;
+    case OBJ_TYPE_TRAP:
+        destroyed_art_id = obj_field_int32_get(obj, OBJ_F_DESTROYED_AID);
+        if (destroyed_art_id != TIG_ART_ID_INVALID) {
+            trap_flags = obj_field_int32_get(obj, OBJ_F_TRAP_FLAGS);
+            if ((trap_flags & 0x2) == 0) {
+                object_set_current_aid(obj, destroyed_art_id);
+                object_set_hp_damage(obj, 0);
+                obj_field_int32_set(obj, OBJ_F_TRAP_FLAGS, trap_flags | 0x2);
+                sound_id = sub_4F1050(obj, 0);
+                sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
+            } else {
+                sub_43CCA0(obj);
+                sound_id = sub_4F1050(obj, 1);
+            }
+        } else {
+            sub_43CCA0(obj);
+            sound_id = sub_4F1050(obj, 1);
+        }
+        sub_41B930(sound_id, 1, obj);
+        break;
+    }
+
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_08000000 | ORF_02000000 | ORF_01000000));
 }
 
 // 0x43F5F0
@@ -647,10 +2600,10 @@ void object_inc_current_aid(object_id_t obj)
             }
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
-                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-            dword_5E2EB4(&dirty_rect);
+            object_iso_invalidate_rect(&dirty_rect);
         }
     }
 }
@@ -679,10 +2632,10 @@ void object_dec_current_aid(object_id_t obj)
             }
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
-                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-            dword_5E2EB4(&dirty_rect);
+            object_iso_invalidate_rect(&dirty_rect);
         }
     }
 }
@@ -703,10 +2656,10 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
             sub_4074E0(obj, fld, index, next_aid);
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
-                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-            dword_5E2EB4(&dirty_rect);
+            object_iso_invalidate_rect(&dirty_rect);
         }
     }
 }
@@ -729,10 +2682,10 @@ void sub_43FAB0(object_id_t obj, int fld, int index)
             sub_4074E0(obj, fld, index, prev_aid);
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
-                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
             object_get_rect(obj, 0x7, &update_rect);
             tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
-            dword_5E2EB4(&dirty_rect);
+            object_iso_invalidate_rect(&dirty_rect);
         }
     }
 }
@@ -748,7 +2701,7 @@ void sub_43FB80(object_id_t obj, int index)
         sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
         obj_field_int32_set(obj,
             OBJ_F_RENDER_FLAGS,
-            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+            obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
         sub_4D9590(obj, true);
     }
 }
@@ -766,7 +2719,7 @@ void sub_43FBF0(object_id_t obj, int index)
             sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
-                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x80000000);
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
             sub_4D9590(obj, true);
         }
     }
@@ -775,27 +2728,27 @@ void sub_43FBF0(object_id_t obj, int index)
 // 0x43FC80
 void sub_43FC80(object_id_t obj, int index)
 {
-    int light_handle;
+    Light* light;
 
-    light_handle = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
-    if (light_handle != 0) {
-        sub_4DD720(light_handle);
+    light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+    if (light != NULL) {
+        light_inc_frame(light);
     }
 }
 
 // 0x43FCB0
 void sub_43FCB0(object_id_t obj, int index)
 {
-    int light_handle;
+    Light* light;
 
-    light_handle = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
-    if (light_handle != 0) {
-        sub_4DD830(light_handle);
+    light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+    if (light != NULL) {
+        light_dec_frame(light);
     }
 }
 
 // 0x43FCE0
-void sub_43FCE0(object_id_t obj)
+void object_cycle_rotation(object_id_t obj)
 {
     tig_art_id_t current_aid;
     tig_art_id_t next_aid;
@@ -806,18 +2759,1056 @@ void sub_43FCE0(object_id_t obj)
         current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         next_aid = tig_art_id_rotation_inc(current_aid);
         if (current_aid != next_aid) {
-            dword_5E2EB4(&dirty_rect);
+            object_iso_invalidate_rect(&dirty_rect);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, next_aid);
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
-                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x8000000);
+                obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
             sub_4423E0(obj, 0, 0);
         }
     }
 }
 
+// 0x43FD70
+bool sub_43FD70(int64_t a1, int64_t a2, int rotation, unsigned int flags, int* a5)
+{
+    int64_t block_obj;
+    int block_obj_type;
+
+    return sub_43FDC0(a1, a2, rotation, flags, &block_obj, &block_obj_type, a5) != 0
+        || block_obj != OBJ_HANDLE_NULL;
+}
+
+// 0x43FDC0
+int sub_43FDC0(int64_t a1, int64_t a2, int rotation, unsigned int flags, int64_t* block_obj_ptr, int* block_obj_type_ptr, int* a7)
+{
+    return sub_43FE00(a1, a2, rotation, rotation, flags, block_obj_ptr, block_obj_type_ptr, a7);
+}
+
+// 0x43FE00
+int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64_t* block_obj_ptr, int* block_obj_type_ptr, int* a8)
+{
+    bool done = false;
+    int cost = 0;
+    uint64_t tmp_loc;
+    ObjectList objects;
+    ObjectNode* node;
+    int obj_type;
+    tig_art_id_t art_id;
+    int art_rot;
+    int p_piece;
+    unsigned int obj_flags;
+
+    *block_obj_ptr = OBJ_HANDLE_NULL;
+
+    if (a8 != NULL) {
+        *a8 = 0;
+    }
+
+    if ((a3 & 1) == 0) {
+        int ccw_rot = (a3 + 7) % 8;
+        int cw_rot = a3 + 1;
+
+        cost += sub_43FE00(a1, a2, ccw_rot, a4, flags, block_obj_ptr, block_obj_type_ptr, a8);
+        if (*block_obj_ptr != OBJ_HANDLE_NULL) {
+            return cost;
+        }
+
+        if (!sub_4B8FF0(a2, ccw_rot, &tmp_loc)) {
+            return 1;
+        }
+
+        cost += sub_43FE00(a1, tmp_loc, cw_rot, a4, flags, block_obj_ptr, block_obj_type_ptr, a8);
+        if (*block_obj_ptr != OBJ_HANDLE_NULL) {
+            return cost;
+        }
+
+        cost += sub_43FE00(a1, a2, cw_rot, a4, flags, block_obj_ptr, block_obj_type_ptr, a8);
+        if (*block_obj_ptr != OBJ_HANDLE_NULL) {
+            return cost;
+        }
+
+        if (!sub_4B8FF0(a2, cw_rot, &tmp_loc)) {
+            return 1;
+        }
+
+        cost += sub_43FE00(a1, tmp_loc, ccw_rot, a4, flags, block_obj_ptr, block_obj_type_ptr, a8);
+
+        return cost;
+    }
+
+    sub_4407C0(a2, OBJ_TM_WALL | OBJ_TM_PORTAL, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        bool v1 = false;
+
+        obj_type = obj_field_int32_get(node->obj, OBJ_F_TYPE);
+        art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+        art_rot = tig_art_id_rotation_get(art_id);
+        if ((art_rot & 1) == 0) {
+            art_rot++;
+        }
+
+        if (art_rot == a3) {
+            if (obj_type == OBJ_TYPE_WALL) {
+                if ((flags & 0x20) != 0) {
+                    cost += 2;
+                } else {
+                    p_piece = tig_art_wall_id_p_piece_get(art_id);
+                    if (p_piece == 10
+                        || p_piece == 13
+                        || p_piece == 14
+                        || p_piece == 17
+                        || p_piece == 18
+                        || p_piece == 19
+                        || p_piece == 22
+                        || p_piece == 25
+                        || p_piece == 26
+                        || p_piece == 29
+                        || p_piece == 30
+                        || p_piece == 31
+                        || p_piece == 32) {
+                        if ((flags & 0x02) != 0 || (a4 & 1) == 0) {
+                            if (p_piece == 10
+                                || p_piece == 13
+                                || p_piece == 14
+                                || p_piece == 17
+                                || p_piece == 18
+                                || p_piece == 19) {
+                                done = true;
+                                *block_obj_ptr = node->obj;
+                                *block_obj_type_ptr = OBJ_TYPE_WALL;
+                                break;
+                            }
+                        } else {
+                            if (a8 != NULL
+                                && (p_piece == 10
+                                    || p_piece == 13
+                                    || p_piece == 14
+                                    || p_piece == 17
+                                    || p_piece == 18
+                                    || p_piece == 19)) {
+                                *a8 = 1;
+                            }
+                        }
+                    } else {
+                        if ((obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_PASSWALLED) == 0) {
+                            done = true;
+                            *block_obj_ptr = node->obj;
+                            *block_obj_type_ptr = OBJ_TYPE_WALL;
+                            break;
+                        }
+
+                        v1 = true;
+                    }
+                }
+            } else {
+                if (tig_art_id_damaged_get(art_id) != 512
+                    && !sub_4F08C0(node->obj)) {
+                    if ((flags & 0x20) != 0) {
+                        cost += 1;
+                    } else {
+                        v1 = true;
+                        if ((flags & 0x01) != 0
+                            || ((flags & 0x08) == 0
+                                && a1 != OBJ_HANDLE_NULL
+                                && sub_4AEB70(a1, node->obj, a3))) {
+                            done = true;
+                            *block_obj_ptr = node->obj;
+                            *block_obj_type_ptr = OBJ_TYPE_PORTAL;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ((flags & 0x08) != 0 && v1) {
+            obj_flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
+
+            if ((obj_flags & OF_SHOOT_THROUGH) != 0) {
+                done = true;
+                *block_obj_ptr = node->obj;
+                *block_obj_type_ptr = obj_type;
+                break;
+            }
+
+            if ((obj_flags & OF_SEE_THROUGH) != 0) {
+                if ((obj_flags & OF_PROVIDES_COVER) != 0) {
+                    cost += 20;
+                }
+            } else {
+                cost += 50;
+            }
+        }
+
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    if (done) {
+        return cost;
+    }
+
+    if (!sub_4B8FF0(a2, a3, &tmp_loc)) {
+        return 1;
+    }
+
+    if ((flags & 0x20) != 0) {
+        if (sub_4D7180(tmp_loc)) {
+            cost += 8;
+        }
+    }
+
+    sub_4407C0(tmp_loc, 0x3801F, &objects);
+    node = objects.head;
+    while (node != NULL) {
+        bool v2 = false;
+
+        obj_type = obj_field_int32_get(node->obj, OBJ_F_TYPE);
+        if (obj_type == OBJ_TYPE_WALL || obj_type == OBJ_TYPE_PORTAL) {
+            art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
+            art_rot = tig_art_id_rotation_get(art_id);
+            if ((art_rot & 1) == 0) {
+                art_rot++;
+            }
+
+            if ((art_rot + 4) % 8 == a3) {
+                if (obj_type == OBJ_TYPE_WALL) {
+                    if ((flags & 0x20) != 0) {
+                        cost += 2;
+                    } else {
+                        p_piece = tig_art_wall_id_p_piece_get(art_id);
+                        if (p_piece == 10
+                            || p_piece == 13
+                            || p_piece == 14
+                            || p_piece == 17
+                            || p_piece == 18
+                            || p_piece == 19
+                            || p_piece == 22
+                            || p_piece == 25
+                            || p_piece == 26
+                            || p_piece == 29
+                            || p_piece == 30
+                            || p_piece == 31
+                            || p_piece == 32) {
+                            if ((flags & 0x02) != 0
+                                || (a4 & 1) == 0) {
+                                if (p_piece == 10
+                                    || p_piece == 13
+                                    || p_piece == 14
+                                    || p_piece == 17
+                                    || p_piece == 18
+                                    || p_piece == 19) {
+                                    *block_obj_ptr = node->obj;
+                                    *block_obj_type_ptr = obj_type;
+                                    break;
+                                }
+                            } else {
+                                if (a8 != NULL
+                                    && (p_piece == 10
+                                        || p_piece == 13
+                                        || p_piece == 14
+                                        || p_piece == 17
+                                        || p_piece == 18
+                                        || p_piece == 19)) {
+                                    *a8 = 1;
+                                }
+                            }
+                        } else {
+                            if ((obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_PASSWALLED) == 0) {
+                                *block_obj_ptr = node->obj;
+                                *block_obj_type_ptr = obj_type;
+                                break;
+                            }
+
+                            v2 = true;
+                        }
+                    }
+                } else {
+                    if (tig_art_id_damaged_get(art_id) != 512
+                        && !sub_4F08C0(node->obj)) {
+                        if ((flags & 0x20) != 0) {
+                            cost += 1;
+                        } else {
+                            v2 = 1;
+                            if ((flags & 0x01) != 0
+                                || ((flags & 0x08) == 0
+                                    && a1 != OBJ_HANDLE_NULL
+                                    && sub_4AEB70(a1, node->obj, a3))) {
+                                *block_obj_ptr = node->obj;
+                                *block_obj_type_ptr = obj_type;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } else if ((flags & 0x30) == 0) {
+            if (obj_type_is_critter(obj_type)) {
+                v2 = true;
+                if ((flags & 0x04) == 0
+                    && !sub_45D8D0(node->obj)) {
+                    *block_obj_ptr = node->obj;
+                    *block_obj_type_ptr = obj_type;
+                    break;
+                }
+            } else {
+                v2 = true;
+                obj_flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
+                if ((obj_flags & OF_NO_BLOCK) == 0
+                    && ((flags & 0x08) == 0
+                        || (obj_flags & OF_SHOOT_THROUGH) == 0)) {
+                    *block_obj_ptr = node->obj;
+                    *block_obj_type_ptr = obj_type;
+                    break;
+                }
+            }
+        }
+
+        // 0x44063F
+        if ((flags & 0x08) != 0
+            && v2
+            && (!obj_type_is_critter(obj_type) || !sub_45D8D0(node->obj))) {
+            obj_flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
+            if ((obj_flags & OF_SHOOT_THROUGH) == 0) {
+                *block_obj_ptr = node->obj;
+                *block_obj_type_ptr = obj_type;
+                break;
+            }
+
+            if ((obj_flags & OF_SEE_THROUGH) != 0) {
+                if ((obj_flags & OF_PROVIDES_COVER) != 0) {
+                    cost += 20;
+                }
+            } else {
+                cost += 50;
+            }
+        }
+
+        node = node->next;
+    }
+    object_list_destroy(&objects);
+
+    return cost;
+}
+
+// 0x440700
+bool sub_440700(int64_t a1, int64_t a2, int rotation, unsigned int flags, int64_t* block_obj_ptr)
+{
+    int block_obj_type;
+
+    sub_43FE00(a1, a2, rotation, rotation, flags | 0x4 | 0x1, block_obj_ptr, &block_obj_type, NULL);
+
+    if (*block_obj_ptr == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (block_obj_type == OBJ_TYPE_WALL) {
+        return false;
+    }
+
+    return true;
+}
+
+// 0x4407C0
+void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
+{
+    bool types[18];
+    int64_t sector_id;
+    int64_t limit_x;
+    int64_t limit_y;
+    Sector* sector;
+    ObjectNode* new_node;
+    ObjectNode** parent_ptr;
+
+    memset(types, 0, sizeof(types));
+    if ((flags & OBJ_TM_WALL) != 0) types[OBJ_TYPE_WALL] = true;
+    if ((flags & OBJ_TM_PORTAL) != 0) types[OBJ_TYPE_PORTAL] = true;
+    if ((flags & OBJ_TM_CONTAINER) != 0) types[OBJ_TYPE_CONTAINER] = true;
+    if ((flags & OBJ_TM_SCENERY) != 0) types[OBJ_TYPE_SCENERY] = true;
+    if ((flags & OBJ_TM_PROJECTILE) != 0) types[OBJ_TYPE_PROJECTILE] = true;
+    if ((flags & OBJ_TM_WEAPON) != 0) types[OBJ_TYPE_WEAPON] = true;
+    if ((flags & OBJ_TM_AMMO) != 0) types[OBJ_TYPE_AMMO] = true;
+    if ((flags & OBJ_TM_ITEM_ARMOR) != 0) types[OBJ_TYPE_ITEM_ARMOR] = true;
+    if ((flags & OBJ_TM_ITEM_GOLD) != 0) types[OBJ_TYPE_ITEM_GOLD] = true;
+    if ((flags & OBJ_TM_ITEM_FOOD) != 0) types[OBJ_TYPE_ITEM_FOOD] = true;
+    if ((flags & OBJ_TM_ITEM_SCROLL) != 0) types[OBJ_TYPE_ITEM_SCROLL] = true;
+    if ((flags & OBJ_TM_ITEM_KEY) != 0) types[OBJ_TYPE_ITEM_KEY] = true;
+    if ((flags & OBJ_TM_ITEM_KEY_RING) != 0) types[OBJ_TYPE_ITEM_KEY_RING] = true;
+    if ((flags & OBJ_TM_ITEM_WRITTEN) != 0) types[OBJ_TYPE_ITEM_WRITTEN] = true;
+    if ((flags & OBJ_TM_ITEM_GENERIC) != 0) types[OBJ_TYPE_ITEM_GENERIC] = true;
+    if ((flags & OBJ_TM_PC) != 0) types[OBJ_TYPE_PC] = true;
+    if ((flags & OBJ_TM_NPC) != 0) types[OBJ_TYPE_NPC] = true;
+    if ((flags & OBJ_TM_TRAP) != 0) types[OBJ_TYPE_TRAP] = true;
+
+    objects->num_sectors = 0;
+    objects->head = NULL;
+    parent_ptr = &(objects->head);
+
+    sector_id = sub_4CFC50(loc);
+    sector_limits_get(&limit_x, &limit_y);
+
+    if (SECTOR_X(sector_id) < 0
+        || SECTOR_X(sector_id) >= limit_x
+        || SECTOR_Y(sector_id) < 0
+        || SECTOR_Y(sector_id) >= limit_y) {
+        tig_debug_println("Warning: trying to build a list of objects from\n  a sector that is out of range for this map.");
+        return;
+    }
+
+    if ((flags & (OBJ_TM_TRAP | OBJ_TM_SCENERY | OBJ_TM_PORTAL | OBJ_TM_WALL)) != 0
+        || sub_4D04E0(sector_id)) {
+        if (sector_lock(sector_id, &sector)) {
+            ObjectNode* node;
+
+            objects->sectors[objects->num_sectors++] = sector_id;
+
+            node = sector->objects.heads[sub_4D7090(loc)];
+            while (node != NULL) {
+                if ((dword_5E2F88 & obj_field_int32_get(node->obj, OBJ_F_TYPE)) == 0
+                    && types[obj_field_int32_get(node->obj, OBJ_F_TYPE)]) {
+                    new_node = object_node_create();
+                    new_node->obj = node->obj;
+                    new_node->next = NULL;
+
+                    *parent_ptr = new_node;
+                    parent_ptr = &((*parent_ptr)->next);
+                }
+                node = node->next;
+            }
+        }
+    } else {
+        int64_t obj;
+        FindNode* iter;
+
+        if (obj_find_walk_first(sector_id, &obj, &iter)) {
+            do {
+                if (!sub_43D940(obj)
+                    && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0
+                    && obj_field_int64_get(obj, OBJ_F_LOCATION) == loc
+                    && (dword_5E2F88 & obj_field_int32_get(obj, OBJ_F_TYPE)) == 0
+                    && types[obj_field_int32_get(obj, OBJ_F_TYPE)]) {
+                    new_node = object_node_create();
+                    new_node->obj = obj;
+                    new_node->next = NULL;
+
+                    *parent_ptr = new_node;
+                    parent_ptr = &((*parent_ptr)->next);
+                }
+            } while (obj_find_walk_next(&obj, &iter));
+        }
+    }
+
+    dword_5E2F98++;
+    return;
+}
+
+// 0x440B40
+void sub_440B40(LocRect* loc_rect, unsigned int flags, ObjectList* objects)
+{
+    bool types[18];
+    SomeSectorStuff v1;
+    SomeSectorStuffEntry* v2;
+    int col;
+    int row;
+    int64_t obj;
+    FindNode* iter;
+    int64_t loc;
+    ObjectNode** prev_ptr;
+    ObjectNode* new_node;
+    ObjectNode* obj_node;
+    int indexes[3];
+    int widths[3];
+    bool locks[3];
+    Sector* sectors[3];
+    int v3;
+    int v4;
+
+    memset(types, 0, sizeof(types));
+    if ((flags & OBJ_TM_WALL) != 0) types[OBJ_TYPE_WALL] = true;
+    if ((flags & OBJ_TM_PORTAL) != 0) types[OBJ_TYPE_PORTAL] = true;
+    if ((flags & OBJ_TM_CONTAINER) != 0) types[OBJ_TYPE_CONTAINER] = true;
+    if ((flags & OBJ_TM_SCENERY) != 0) types[OBJ_TYPE_SCENERY] = true;
+    if ((flags & OBJ_TM_PROJECTILE) != 0) types[OBJ_TYPE_PROJECTILE] = true;
+    if ((flags & OBJ_TM_WEAPON) != 0) types[OBJ_TYPE_WEAPON] = true;
+    if ((flags & OBJ_TM_AMMO) != 0) types[OBJ_TYPE_AMMO] = true;
+    if ((flags & OBJ_TM_ITEM_ARMOR) != 0) types[OBJ_TYPE_ITEM_ARMOR] = true;
+    if ((flags & OBJ_TM_ITEM_GOLD) != 0) types[OBJ_TYPE_ITEM_GOLD] = true;
+    if ((flags & OBJ_TM_ITEM_FOOD) != 0) types[OBJ_TYPE_ITEM_FOOD] = true;
+    if ((flags & OBJ_TM_ITEM_SCROLL) != 0) types[OBJ_TYPE_ITEM_SCROLL] = true;
+    if ((flags & OBJ_TM_ITEM_KEY) != 0) types[OBJ_TYPE_ITEM_KEY] = true;
+    if ((flags & OBJ_TM_ITEM_KEY_RING) != 0) types[OBJ_TYPE_ITEM_KEY_RING] = true;
+    if ((flags & OBJ_TM_ITEM_WRITTEN) != 0) types[OBJ_TYPE_ITEM_WRITTEN] = true;
+    if ((flags & OBJ_TM_ITEM_GENERIC) != 0) types[OBJ_TYPE_ITEM_GENERIC] = true;
+    if ((flags & OBJ_TM_PC) != 0) types[OBJ_TYPE_PC] = true;
+    if ((flags & OBJ_TM_NPC) != 0) types[OBJ_TYPE_NPC] = true;
+    if ((flags & OBJ_TM_TRAP) != 0) types[OBJ_TYPE_TRAP] = true;
+
+    objects->num_sectors = 0;
+    objects->head = NULL;
+
+    prev_ptr = &(objects->head);
+
+    if (!sub_4D0090(loc_rect, &v1)) {
+        return;
+    }
+
+    if ((flags & (OBJ_TM_TRAP | OBJ_TM_SCENERY | OBJ_TM_PORTAL | OBJ_TM_WALL)) == 0) {
+        for (col = 0; col < v1.height; col++) {
+            v2 = &(v1.field_8[col]);
+
+            for (row = 0; row < v2->width; row++) {
+                if (obj_find_walk_first(v2->field_20[row], &obj, &iter)) {
+                    do {
+                        if (!sub_43D940(obj)
+                            && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0
+                            && (dword_5E2F88 & obj_field_int32_get(obj, OBJ_F_FLAGS)) == 0
+                            && types[obj_field_int32_get(obj, OBJ_F_TYPE)]) {
+                            loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+                            if (LOCATION_GET_X(loc) >= loc_rect->x1
+                                && LOCATION_GET_X(loc) <= loc_rect->x2
+                                && LOCATION_GET_Y(loc) >= loc_rect->y1
+                                && LOCATION_GET_Y(loc) <= loc_rect->y2) {
+                                new_node = object_node_create();
+                                new_node->obj = obj;
+                                new_node->next = NULL;
+                                *prev_ptr = new_node;
+                                prev_ptr= &(new_node->next);
+                            }
+                        }
+                    } while (obj_find_walk_next(&obj, &iter));
+                }
+            }
+        }
+    } else {
+        for (col = 0; col < v1.height; col++) {
+            v2 = &(v1.field_8[col]);
+
+            for (row = 0; row < v2->width; row++) {
+                indexes[row] = v2->field_38[row];
+                widths[row] = 64 - v2->field_44[row];
+                locks[row] = sector_lock(v2->field_20[row], &(sectors[row]));
+
+                if (locks[row]) {
+                    objects->sectors[objects->num_sectors++] = v2->field_20[row];
+                }
+            }
+
+            for (v3 = 0; v3 < v2->field_50; v3++) {
+                for (row = 0; row < v2->width; row++) {
+                    if (locks[row]) {
+                        for (v4 = 0; v4 < v2->field_44[row]; v4++) {
+                            obj_node = sectors[row]->objects.heads[indexes[row]];
+                            while (obj_node != NULL) {
+                                if ((dword_5E2F88 & obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS)) != 0
+                                    && types[obj_field_int32_get(obj_node->obj, OBJ_F_TYPE)]) {
+                                    new_node = object_node_create();
+                                    new_node->obj = obj;
+                                    new_node->next = NULL;
+                                    *prev_ptr = new_node;
+                                    prev_ptr= &(new_node->next);
+                                }
+                                obj_node = obj_node->next;
+                            }
+
+                            indexes[row]++;
+                        }
+
+                        indexes[row] += widths[row];
+                    }
+                }
+            }
+        }
+    }
+
+    dword_5E2F98++;
+}
+
+// 0x440FC0
+void sub_440FC0(int64_t obj, unsigned int flags, ObjectList* objects)
+{
+    sub_440FF0(obj_field_int64_get(obj, OBJ_F_LOCATION), flags, objects);
+}
+
+// 0x440FF0
+void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects)
+{
+    TigWindowData window_data;
+    TigRect screen_rect;
+    int64_t center_loc;
+    int64_t center_x;
+    int64_t center_y;
+    int64_t x;
+    int64_t y;
+    LocRect loc_rect;
+
+    tig_window_data(object_iso_window_handle, &window_data);
+
+    screen_rect = window_data.rect;
+    sub_4B8730(window_data.rect.width / 2, window_data.rect.height / 2, &center_loc);
+    sub_4B8680(center_loc, &center_x, &center_y);
+    sub_4B8680(loc, &x, &y);
+
+    screen_rect.x = (int)(x - center_x);
+    screen_rect.y = (int)(y - center_y);
+
+    if (sub_4B9130(&screen_rect, &loc_rect)) {
+        sub_440B40(&loc_rect, flags, objects);
+    } else {
+        objects->num_sectors = 0;
+        objects->head = NULL;
+    }
+}
+
+// 0x4410E0
+int object_list_destroy(ObjectList* objects)
+{
+    ObjectNode* node;
+    ObjectNode* next;
+    int index;
+
+    node = objects->head;
+    while (node != NULL) {
+        next = node->next;
+        object_node_destroy(node);
+        node = next;
+    }
+
+    for (index = 0; index < objects->num_sectors; index++) {
+        sector_unlock(objects->sectors[index]);
+    }
+
+    return --dword_5E2F98;
+}
+
+// 0x441140
+bool sub_441140(ObjectList* objects, int64_t obj)
+{
+    ObjectNode* node;
+    ObjectNode* prev;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (objects->num_sectors > 0) {
+        return false;
+    }
+
+    node = objects->head;
+    prev = objects->head;
+    while (node != NULL) {
+        if (node->obj == obj) {
+            break;
+        }
+        prev = node;
+        node = node->next;
+    }
+
+    if (node == NULL) {
+        return false;
+    }
+
+    if (node == prev) {
+        objects->head = node->next;
+    } else {
+        prev->next = node->next;
+    }
+
+    if (objects->num_sectors > 0) {
+        sub_4CFC50(obj_field_int64_get(node->obj, OBJ_F_LOCATION));
+    }
+
+    object_node_destroy(node);
+
+    return true;
+}
+
+// 0x4411C0
+int object_get_followers(int64_t obj, ObjectList* objects)
+{
+    int cnt;
+    int index;
+    int64_t follower_obj;
+    ObjectNode** parent_ptr;
+    ObjectNode* node;
+
+    objects->num_sectors = 0;
+    objects->head = NULL;
+    parent_ptr = &(objects->head);
+
+    cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_FOLLOWER_IDX);
+    for (index = 0; index < cnt; index++) {
+        follower_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_FOLLOWER_IDX, index);
+
+        node = object_node_create();
+        node->obj = follower_obj;
+        node->next = NULL;
+
+        *parent_ptr = node;
+        parent_ptr = &((*parent_ptr)->next);
+    }
+
+    return ++dword_5E2F98;
+}
+
+// 0x441260
+void sub_441260(int64_t obj, ObjectList* objects)
+{
+    ObjectNode** parent_ptr;
+    ObjectNode* node;
+    int cnt;
+    ObjectList tmp_list;
+    ObjectNode* tmp_node;
+    ObjectNode* new_node;
+
+    objects->num_sectors = 0;
+    objects->head = NULL;
+    parent_ptr = &(objects->head);
+
+    object_get_followers(obj, objects);
+
+    cnt = 0;
+    node = objects->head;
+    while (node != NULL) {
+        node = node->next;
+        parent_ptr = &((*parent_ptr)->next);
+        cnt++;
+    }
+
+    node = objects->head;
+    while (node != NULL && cnt > 0) {
+        sub_441260(node->obj, &tmp_list);
+
+        tmp_node = tmp_list.head;
+        while (tmp_node != NULL) {
+            new_node = object_node_create();
+            new_node->obj = tmp_node->obj;
+            new_node->next = NULL;
+
+            *parent_ptr = new_node;
+            parent_ptr = &((*parent_ptr)->next);
+        }
+
+        object_list_destroy(&tmp_list);
+
+        node = node->next;
+        cnt--;
+    }
+}
+
+// 0x441310
+int sub_441310(int64_t obj, ObjectList* objects)
+{
+    ObjectNode* node;
+    int64_t party_member_obj;
+    int party_member_index;
+    ObjectNode** parent_ptr;
+
+    objects->num_sectors = 0;
+    objects->head = NULL;
+    parent_ptr = &(objects->head);
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        party_member_obj = party_find_first(obj, &party_member_index);
+        do {
+            node = object_node_create();
+            node->obj = party_member_obj;
+            node->next = NULL;
+
+            *parent_ptr = node;
+            parent_ptr = &((*parent_ptr)->next);
+        } while ((party_member_obj = party_find_next(&party_member_index)) != OBJ_HANDLE_NULL);
+    } else {
+        node = object_node_create();
+        node->obj = obj;
+        node->next = NULL;
+
+        objects->head = node;
+    }
+
+    return ++dword_5E2F98;
+}
+
+// 0x4413E0
+void sub_4413E0(int64_t obj, ObjectList* objects)
+{
+    ObjectNode** parent_ptr;
+    ObjectNode* node;
+    int cnt;
+    ObjectList tmp_list;
+    ObjectNode* tmp_node;
+    ObjectNode* new_node;
+
+    objects->num_sectors = 0;
+    objects->head = NULL;
+    parent_ptr = &(objects->head);
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+        sub_441310(obj, objects);
+
+        cnt = 0;
+        node = objects->head;
+        while (node != NULL) {
+            cnt++;
+            parent_ptr = &((*parent_ptr)->next);
+            node = node->next;
+        }
+
+        node = objects->head;
+        while (node != NULL && cnt > 0) {
+            sub_441260(node->obj, &tmp_list);
+
+            tmp_node = tmp_list.head;
+            while (tmp_node != NULL) {
+                new_node = object_node_create();
+                new_node->obj = tmp_node->obj;
+                new_node->next = NULL;
+                *parent_ptr = new_node;
+
+                parent_ptr = &((*parent_ptr)->next);
+                tmp_node = tmp_node->next;
+            }
+
+            object_list_destroy(&tmp_list);
+
+            node = node->next;
+            cnt--;
+        }
+    } else {
+        new_node = object_node_create();
+        new_node->obj = obj;
+        new_node->next = NULL;
+        *parent_ptr = new_node;
+    }
+}
+
+// 0x4414E0
+void sub_4414E0(ObjectList* dst, ObjectList* src)
+{
+    ObjectNode* dst_node;
+    ObjectNode* src_node;
+
+    src_node = src->head;
+    while (src_node != NULL) {
+        dst_node = dst->head;
+        while (dst_node != NULL) {
+            if (src_node->obj == dst_node->obj) {
+                break;
+            }
+            dst_node = dst_node->next;
+        }
+
+        if (dst_node == NULL) {
+            dst_node = object_node_create();
+            dst_node->obj = src_node->obj;
+            dst_node->next = dst->head;
+            dst->head = dst_node;
+        }
+
+        src_node = src_node->next;
+    }
+}
+
+// 0x441540
+int sub_441540(int64_t obj)
+{
+    int cnt = 0;
+    int party_member_index;
+
+    party_find_first(obj, &party_member_index);
+    do {
+        cnt++;
+    } while (party_find_next(&party_member_index) != OBJ_HANDLE_NULL);
+
+    return cnt;
+}
+
+// 0x4415C0
+void sub_4415C0(int64_t obj, int64_t loc)
+{
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || sub_4A2BA0()) {
+        unsigned int flags;
+        int64_t sector_id;
+        Sector* sector;
+        TigRect rect;
+
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        if ((flags & OF_DESTROYED) == 0) {
+            flags &= ~OF_INVENTORY;
+            obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+            obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
+            obj_field_int32_set(obj, OBJ_F_OFFSET_X, 0);
+            obj_field_int32_set(obj, OBJ_F_OFFSET_Y, 0);
+
+            sector_id = sub_4CFC50(loc);
+            if (sub_4D04E0(sector_id)) {
+                sector_lock(sector_id, &sector);
+                objlist_insert(&(sector->objects), obj);
+                sector_unlock(sector_id);
+            }
+
+            obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, 0);
+            sub_4D9590(obj, true);
+            sub_444270(obj, 2);
+            object_get_rect(obj, 0x07, &rect);
+            object_iso_invalidate_rect(&rect);
+        }
+    } else {
+        S4415C0* entry;
+
+        entry = (S4415C0*)MALLOC(sizeof(*entry));
+        entry->obj = obj;
+        entry->loc = loc;
+        sub_4A3230(sub_407EF0(obj), sub_441710, entry, sub_441780, entry);
+    }
+}
+
+// 0x441710
+bool sub_441710(S4415C0* entry)
+{
+    if (entry != NULL) {
+        Packet22 pkt;
+
+        sub_4A2BC0();
+
+        pkt.type = 22;
+        sub_4F0640(entry->obj, &(pkt.oid));
+        pkt.loc = entry->loc;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+
+        sub_4415C0(entry->obj, entry->loc);
+        sub_4A2BD0();
+        FREE(entry);
+    }
+
+    return true;
+}
+
+// 0x441780
+bool sub_441780(S4415C0* entry)
+{
+    FREE(entry);
+
+    return true;
+}
+
+// 0x4417A0
+void sub_4417A0(int64_t item_obj, int64_t parent_obj)
+{
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || sub_4A2BA0()) {
+        unsigned int flags;
+        TigRect rect;
+        int64_t loc;
+        int64_t sector_id;
+        Sector* sector;
+
+        flags = obj_field_int32_get(item_obj, OBJ_F_FLAGS);
+        if ((flags & OF_DESTROYED) == 0) {
+            sub_4D9990(item_obj);
+            sub_4D9A90(item_obj);
+            object_get_rect(item_obj, 0x07, &rect);
+            loc = obj_field_int64_get(item_obj, OBJ_F_LOCATION);
+            sector_id = sub_4CFC50(loc);
+            if (sub_4D04E0(sector_id)) {
+                sector_lock(sector_id, &sector);
+                objlist_remove(&(sector->objects), item_obj);
+                sector_unlock(sector_id);
+            }
+
+            flags |= OF_INVENTORY;
+            obj_field_int32_set(item_obj, OBJ_F_FLAGS, flags);
+            obj_field_handle_set(item_obj, OBJ_F_ITEM_PARENT, parent_obj);
+            object_iso_invalidate_rect(&rect);
+        }
+    } else {
+        S4417A0* entry;
+
+        entry = (S4417A0*)MALLOC(sizeof(*entry));
+        entry->item_obj = item_obj;
+        entry->parent_obj = parent_obj;
+        sub_4A3230(sub_407EF0(item_obj), sub_4418E0, entry, sub_441960, entry);
+    }
+}
+
+// 0x4418E0
+bool sub_4418E0(S4417A0* entry)
+{
+    if (entry != NULL) {
+        Packet23 pkt;
+
+        sub_4A2BC0();
+
+        pkt.type = 23;
+        sub_4F0640(entry->item_obj, &(pkt.item_oid));
+        sub_4F0640(entry->parent_obj, &(pkt.parent_oid));
+
+        sub_4417A0(entry->item_obj, entry->parent_obj);
+        sub_4A2BD0();
+        FREE(entry);
+    }
+
+    return true;
+}
+
+// 0x441960
+bool sub_441960(S4417A0* entry)
+{
+    FREE(entry);
+
+    return true;
+}
+
+// 0x441980
+bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, int attachment_point, int line)
+{
+    Script scr;
+    Script scr_before;
+    ScriptInvocation invocation;
+    bool rc;
+
+    if (object_editor) {
+        return true;
+    }
+
+    if (attachment_point == SAP_USE
+        && !sub_4BBFE0(triggerer_obj, attachee_obj)
+        && sub_4BBE40(triggerer_obj, attachee_obj)) {
+        return false;
+    }
+
+    sub_407840(attachee_obj, OBJ_F_SCRIPTS_IDX, attachment_point, &scr);
+
+    if (scr.num == 0) {
+        return true;
+    }
+
+    scr_before = scr;
+    invocation.script = &scr;
+    invocation.attachee_obj = attachee_obj;
+    invocation.triggerer_obj = triggerer_obj;
+    invocation.extra_obj = extra_obj;
+    invocation.field_20 = attachment_point;
+    invocation.line = line;
+    rc = sub_4449B0(&invocation);
+
+    if (scr.num != 0 || obj_field_int32_get(attachee_obj, OBJ_F_TYPE) != OBJ_TYPE_TRAP) {
+        if (scr_before.num != scr.num
+            || scr_before.hdr.flags != scr.hdr.flags
+            || scr_before.hdr.counters != scr.hdr.counters) {
+            sub_4F01D0(attachee_obj, OBJ_F_SCRIPTS_IDX, attachment_point, &scr);
+        }
+    } else {
+        sub_43CCA0(attachee_obj);
+    }
+
+    return rc;
+}
+
 // 0x441AE0
-int sub_441AE0(object_id_t obj1, object_id_t obj2)
+int64_t sub_441AE0(object_id_t obj1, object_id_t obj2)
 {
     int64_t location1;
     int64_t location2;
@@ -836,6 +3827,55 @@ int sub_441B20(object_id_t obj1, object_id_t obj2)
     location1 = obj_field_int64_get(obj1, OBJ_F_LOCATION);
     location2 = obj_field_int64_get(obj2, OBJ_F_LOCATION);
     return sub_4B8D50(location1, location2);
+}
+
+// 0x441B60
+void sub_441B60(int64_t a1, int64_t a2, char* buffer)
+{
+    int type;
+    const char* name;
+
+    buffer[0] = '\0';
+
+    type = obj_field_int32_get(a1, OBJ_F_TYPE);
+
+    // Special case for keys - key name is derived from key id and it is stored
+    // in a separate file (gamekey.mes).
+    if (type == OBJ_TYPE_ITEM_KEY) {
+        name = description_get_key_name(obj_field_int32_get(a1, OBJ_F_KEY_KEY_ID));
+        if (name != NULL) {
+            strcpy(buffer, name);
+        }
+        return;
+    }
+
+    // Special case for PC - name is stored in a specific object field.
+    if (type == OBJ_TYPE_PC) {
+        char* player_name;
+
+        obj_field_string_get(a1, OBJ_F_PC_PLAYER_NAME, &player_name);
+        if (player_name != NULL) {
+            strcpy(buffer, player_name);
+            FREE(player_name);
+        }
+
+        return;
+    }
+
+    // Special case for NPC - it's either description or unknown description
+    // depending on who's asking.
+    if (type == OBJ_TYPE_NPC) {
+        name = description_get_name(critter_description_get(a1, a2));
+        if (name != NULL) {
+            strcpy(buffer, name);
+        }
+        return;
+    }
+
+    name = description_get_name(obj_field_int32_get(a1, OBJ_F_DESCRIPTION));
+    if (name != NULL) {
+        strcpy(buffer, name);
+    }
 }
 
 // 0x441C70
@@ -888,7 +3928,7 @@ bool object_is_locked(object_id_t obj)
         return false;
     }
 
-    hour = game_time_hour();
+    hour = datetime_current_hour();
 
     if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED_DAY : OCOF_LOCKED_DAY)) != 0
         && (hour < 7 || hour > 21)) {
@@ -982,6 +4022,8 @@ bool sub_441F10(object_id_t obj, bool a2)
         flags |= (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED);
     }
     obj_field_int32_set(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
+
+    return true;
 }
 
 // 0x441FC0
@@ -996,19 +4038,316 @@ void sub_441FC0(object_id_t obj, int a2)
 }
 
 // 0x442010
-void sub_442010(int a1)
+void object_blit_flags_set(unsigned int flags)
 {
-    dword_5A54AC = a1;
-    if (dword_5E2EB4 != NULL) {
-        dword_5E2EB4(NULL);
+    object_blit_flags = flags;
+    if (object_iso_invalidate_rect != NULL) {
+        object_iso_invalidate_rect(NULL);
         sub_438530(player_get_pc_obj());
     }
 }
 
 // 0x442040
-int sub_442040()
+int object_blit_flags_get()
 {
-    return dword_5A54AC;
+    return object_blit_flags;
+}
+
+// 0x442050
+void sub_442050(uint8_t** data_ptr, int* size_ptr, int64_t obj)
+{
+    sub_4064B0(obj);
+    sub_4066B0(data_ptr, size_ptr, obj);
+    sub_406520(obj);
+}
+
+// 0x4420D0
+bool sub_4420D0(uint8_t* data, int64_t* obj_ptr, int64_t loc)
+{
+    if (!sub_406730(data, obj_ptr)) {
+        return false;
+    }
+
+    sub_406520(*obj_ptr);
+    obj_field_int64_set(*obj_ptr, OBJ_F_LOCATION, loc);
+    if (!sub_442260(*obj_ptr, loc)) {
+        return false;
+    }
+
+    return true;
+}
+
+// NOTE: a4 passed by value.
+//
+// 0x442130
+bool sub_442130(int64_t proto_obj, int64_t loc, int64_t* obj_ptr, ObjectID oid)
+{
+    if (oid.type == OID_TYPE_BLOCKED) {
+        sub_4058E0(proto_obj, loc, obj_ptr);
+    } else {
+        sub_405B30(proto_obj, loc, oid, obj_ptr);
+    }
+
+    return sub_442260(*obj_ptr, loc);
+}
+
+// 0x4421A0
+bool sub_4421A0(int64_t proto_obj, int64_t loc, ObjectID* a3, int64_t* obj_ptr)
+{
+    if (a3->type == OID_TYPE_BLOCKED) {
+        obj_perm_dup(obj_ptr, proto_obj);
+    } else {
+        sub_406210(obj_ptr, proto_obj, a3);
+    }
+
+    if (!sub_442260(*obj_ptr, loc)) {
+        return false;
+    }
+
+    sub_43E770(*obj_ptr, loc, 0, 0);
+
+    if (obj_field_int32_get(*obj_ptr, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        obj_field_int64_set(*obj_ptr, OBJ_F_NPC_STANDPOINT_DAY, loc);
+        obj_field_int64_set(*obj_ptr, OBJ_F_NPC_STANDPOINT_NIGHT, loc);
+    }
+
+    return true;
+}
+
+// 0x442260
+bool sub_442260(int64_t obj, int64_t loc)
+{
+    int type;
+    unsigned int flags;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int64_t item_obj;
+    int64_t sector_id;
+    Sector* sector;
+    TigRect rect;
+
+    type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (!object_editor) {
+        flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        flags |= OF_DYNAMIC;
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+        if (type == OBJ_TYPE_CONTAINER) {
+            inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+            inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+        } else if (obj_type_is_critter(type)) {
+            inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+            inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+        } else {
+            inventory_num_fld = -1;
+        }
+
+        if (inventory_num_fld != -1) {
+            cnt = obj_field_int32_get(obj, inventory_num_fld);
+            while (cnt != 0) {
+                item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, --cnt);
+                flags = obj_field_int32_get(item_obj, OBJ_F_FLAGS);
+                flags |= OF_DYNAMIC;
+                obj_field_int32_set(item_obj, OBJ_F_FLAGS, flags);
+            }
+        }
+    }
+
+    sector_id = sub_4CFC50(loc);
+    if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
+        sector_lock(sector_id, &sector);
+        objlist_insert(&(sector->objects), obj);
+        sector_unlock(sector_id);
+    }
+
+    sub_4D9590(obj, true);
+
+    if (!object_editor) {
+        if (type == OBJ_TYPE_NPC) {
+            sub_4AD6E0(obj);
+        }
+    }
+
+    sub_463C60(obj);
+    sub_444270(obj, 2);
+
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+
+    return true;
+}
+
+// 0x4423E0
+void sub_4423E0(int64_t obj, int offset_x, int offset_y)
+{
+    TigRect rect;
+    int64_t loc;
+    unsigned int flags;
+    int64_t sector_id;
+    Sector* sector;
+
+    object_get_rect(obj, 0x7, &rect);
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+
+    if ((flags & OF_TEXT) != 0) {
+        tb_move(obj, loc, offset_x, offset_y);
+    }
+
+    if ((flags & OF_TEXT_FLOATER) != 0) {
+        tf_move(obj, loc, offset_x, offset_y);
+    }
+
+    sector_id = sub_4CFC50(loc);
+    if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
+        sector_lock(sector_id, &sector);
+        sub_4F12C0(&(sector->objects), obj, loc, offset_x, offset_y);
+        sector_unlock(sector_id);
+    } else {
+        obj_field_int32_set(obj, OBJ_F_OFFSET_X, offset_x);
+        obj_field_int32_set(obj, OBJ_F_OFFSET_Y, offset_y);
+    }
+
+    sub_444270(obj, 0);
+    sub_4DD0A0(obj, offset_x, offset_y);
+}
+
+// 0x442520
+void sub_442520(int64_t obj)
+{
+    unsigned int render_flags;
+    unsigned int new_render_flags;
+    unsigned int flags;
+    TigRect obj_rect;
+
+    render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+    if ((obj_field_int32_get(obj, OBJ_F_BLIT_FLAGS) & (TIG_ART_BLT_BLEND_ADD | TIG_ART_BLT_BLEND_SUB | TIG_ART_BLT_BLEND_MUL)) != 0) {
+        render_flags &= ~(ORF_40000000 | ORF_20000000);
+        render_flags &= ~(TIG_ART_BLT_PALETTE_ORIGINAL
+            | TIG_ART_BLT_PALETTE_OVERRIDE
+            | TIG_ART_BLT_BLEND_ALPHA_AVG
+            | TIG_ART_BLT_BLEND_ALPHA_CONST
+            | TIG_ART_BLT_BLEND_ALPHA_SRC
+            | TIG_ART_BLT_BLEND_ALPHA_LERP_X
+            | TIG_ART_BLT_BLEND_ALPHA_LERP_Y
+            | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH
+            | TIG_ART_BLT_BLEND_COLOR_CONST
+            | TIG_ART_BLT_BLEND_COLOR_ARRAY
+            | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S
+            | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D
+            | TIG_ART_BLT_BLEND_COLOR_LERP);
+        render_flags |= ORF_02000000 | ORF_01000000;
+        obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
+        object_clear_render_palette(obj);
+        return;
+    }
+
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    if ((render_flags & ORF_01000000) == 0) {
+        new_render_flags = render_flags & ~(TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D
+            | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S
+            | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH
+            | TIG_ART_BLT_BLEND_ALPHA_LERP_Y
+            | TIG_ART_BLT_BLEND_ALPHA_LERP_X
+            | TIG_ART_BLT_BLEND_ALPHA_SRC
+            | TIG_ART_BLT_BLEND_ALPHA_CONST
+            | TIG_ART_BLT_BLEND_ALPHA_AVG);
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_WALL) {
+            switch (obj_field_int32_get(obj, OBJ_F_WALL_FLAGS) & (OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT)) {
+            case OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT:
+                obj_arrayfield_int32_set(obj, OBJ_F_RENDER_ALPHA, 0, 64);
+                new_render_flags |= object_blit_flags;
+                break;
+            case OWAF_TRANS_LEFT:
+                if (object_blit_flags == TIG_ART_BLT_BLEND_ALPHA_CONST) {
+                    obj_arrayfield_int32_set(obj, OBJ_F_RENDER_ALPHA, 0, 128);
+                    obj_arrayfield_int32_set(obj, OBJ_F_RENDER_ALPHA, 1, 255);
+                    new_render_flags |= TIG_ART_BLT_BLEND_ALPHA_LERP_X;
+                } else {
+                    new_render_flags |= object_blit_flags;
+                }
+                break;
+            case OWAF_TRANS_RIGHT:
+                if (object_blit_flags == TIG_ART_BLT_BLEND_ALPHA_CONST) {
+                    obj_arrayfield_int32_set(obj, OBJ_F_RENDER_ALPHA, 0, 255);
+                    obj_arrayfield_int32_set(obj, OBJ_F_RENDER_ALPHA, 1, 128);
+                    new_render_flags |= TIG_ART_BLT_BLEND_ALPHA_LERP_X;
+                } else {
+                    new_render_flags |= object_blit_flags;
+                }
+                break;
+            }
+        }
+
+        if ((new_render_flags & (TIG_ART_BLT_BLEND_ALPHA_STIPPLE_D
+                | TIG_ART_BLT_BLEND_ALPHA_STIPPLE_S
+                | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH
+                | TIG_ART_BLT_BLEND_ALPHA_LERP_Y
+                | TIG_ART_BLT_BLEND_ALPHA_LERP_X
+                | TIG_ART_BLT_BLEND_ALPHA_SRC
+                | TIG_ART_BLT_BLEND_ALPHA_CONST
+                | TIG_ART_BLT_BLEND_ALPHA_AVG)) != 0
+            && (flags & (OF_INVISIBLE | OF_TRANSLUCENT)) != 0) {
+            obj_arrayfield_int32_set(obj, OBJ_F_RENDER_ALPHA, 0, 128);
+            new_render_flags |= object_blit_flags;
+        }
+
+        render_flags = new_render_flags | ORF_01000000;
+        obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
+    }
+
+    if ((render_flags & ORF_02000000) == 0) {
+        ObjectRenderColors colors;
+        int cnt;
+        tig_color_t color;
+
+        new_render_flags = render_flags;
+        new_render_flags &= ~(ORF_40000000 | ORF_20000000);
+        new_render_flags &= ~(TIG_ART_BLT_BLEND_COLOR_LERP
+            | TIG_ART_BLT_BLEND_COLOR_ARRAY
+            | TIG_ART_BLT_BLEND_COLOR_CONST
+            | TIG_ART_BLT_PALETTE_OVERRIDE
+            | TIG_ART_BLT_PALETTE_ORIGINAL);
+        sub_4DC210(obj, colors.colors, &cnt);
+
+        if (cnt == 1) {
+            color = colors.colors[0];
+            new_render_flags |= ORF_20000000;
+        } else if (cnt == 2) {
+            new_render_flags |= ORF_40000000;
+            object_get_rect(obj, 0, &obj_rect);
+            color = colors.colors[obj_rect.width / 2];
+        } else {
+            color = colors.colors[0];
+            if (dword_5E2F48) {
+                new_render_flags |= ORF_20000000;
+            }
+        }
+
+        if ((flags & OF_FROZEN) != 0) {
+            // TODO: Incomplete.
+            switch (object_bpp) {
+            case 32:
+                color = tig_color_mul(color, tig_color_make(0, 128, 255));
+                break;
+            }
+        } else if ((flags & OF_ANIMATED_DEAD) != 0) {
+            // TODO: Incomplete.
+            switch (object_bpp) {
+            case 32:
+                color = tig_color_mul(color, tig_color_make(0, 255, 0));
+                break;
+            }
+        }
+
+        obj_field_int32_set(obj, OBJ_F_COLOR, color);
+        obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, new_render_flags | ORF_02000000);
+        sub_442D90(obj, &colors);
+    }
+
+    object_get_rect(obj, 0x07, &obj_rect);
+    object_iso_invalidate_rect(&obj_rect);
 }
 
 // 0x442D50
@@ -1016,23 +4355,88 @@ void object_clear_render_palette(object_id_t obj)
 {
     TigPalette palette;
 
-    palette = obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE);
+    palette = (TigPalette)obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE); // TODO: x64
     if (palette != NULL) {
         tig_palette_destroy(palette);
-        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, NULL);
+        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, 0); // TODO: x64
     }
 }
 
+// 0x442D90
+void sub_442D90(int64_t obj, ObjectRenderColors* colors)
+{
+    unsigned int obj_flags;
+    unsigned int render_flags;
+    unsigned int blit_flags;
+    TigPaletteModifyInfo palette_modify_info;
+    TigArtAnimData art_anim_data;
+    TigPalette render_palette;
+
+    palette_modify_info.flags = 0;
+    obj_flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+    blit_flags = obj_field_int32_get(obj, OBJ_F_BLIT_FLAGS);
+
+    if ((obj_flags & OF_STONED) != 0) {
+        render_flags |= TIG_ART_BLT_PALETTE_OVERRIDE;
+        palette_modify_info.flags |= TIG_PALETTE_MODIFY_GRAYSCALE;
+    }
+
+    if ((obj_flags & OF_DONTLIGHT) != 0
+        || (blit_flags & (TIG_ART_BLT_BLEND_MUL | TIG_ART_BLT_BLEND_ADD)) != 0) {
+        if (!dword_5E2F48) {
+            render_flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+        }
+        render_flags &= ~(ORF_40000000 | ORF_20000000);
+    }
+
+    if ((render_flags & ORF_20000000) != 0) {
+        if (dword_5E2F48) {
+            render_flags |= TIG_ART_BLT_BLEND_COLOR_CONST;
+        } else {
+            palette_modify_info.flags |= TIG_PALETTE_MODIFY_TINT;
+            palette_modify_info.tint_color = obj_field_int32_get(obj, OBJ_F_COLOR);
+            render_flags |= TIG_ART_BLT_PALETTE_OVERRIDE;
+        }
+    }
+
+    if ((render_flags & ORF_40000000) != 0) {
+        sub_442F10(obj, colors);
+        render_flags |= TIG_ART_BLT_BLEND_COLOR_ARRAY;
+        if (!dword_5E2F48) {
+            render_flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+        }
+    } else {
+        sub_442FA0(obj);
+    }
+
+    if ((render_flags & TIG_ART_BLT_PALETTE_OVERRIDE) != 0) {
+        render_palette = object_get_render_palette(obj);
+        if (tig_art_anim_data(obj_field_int32_get(obj, OBJ_F_CURRENT_AID), &art_anim_data) != TIG_OK) {
+            return;
+        }
+
+        palette_modify_info.src_palette = art_anim_data.palette2;
+        palette_modify_info.dst_palette = render_palette;
+        tig_palette_modify(&palette_modify_info);
+    } else {
+        object_clear_render_palette(obj);
+    }
+
+    obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
+}
+
 // 0x442ED0
-int object_get_render_palette(object_id_t obj)
+TigPalette object_get_render_palette(object_id_t obj)
 {
     TigPalette palette;
 
-    palette = obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE);
+    palette = (TigPalette)obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE); // TODO: x64
     if (palette == NULL) {
         palette = tig_palette_create();
-        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, palette);
+        obj_field_int32_set(obj, OBJ_F_RENDER_PALETTE, (int)palette); // TODO: x64
     }
+
     return palette;
 }
 
@@ -1044,10 +4448,10 @@ void sub_442F10(object_id_t obj, const tig_color_t* colors)
     TigArtFrameData art_frame_data;
     tig_color_t color;
 
-    render_colors = obj_field_int32_get(obj, OBJ_F_RENDER_COLORS);
+    render_colors = (int)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
     if (render_colors == NULL) {
         render_colors = sub_442FE0();
-        obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, render_colors);
+        obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, (int)render_colors); // TODO: x64
     }
 
     memcpy(render_colors, colors, sizeof(tig_color_t) * 160);
@@ -1065,12 +4469,301 @@ void sub_442F10(object_id_t obj, const tig_color_t* colors)
 // 0x442FA0
 void sub_442FA0(object_id_t obj)
 {
-    int colors;
+    ObjectRenderColors* colors;
 
-    colors = obj_field_int32_get(obj, OBJ_F_RENDER_COLORS);
-    if (colors != 0) {
+    colors = (ObjectRenderColors*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
+    if (colors != NULL) {
         sub_443010(colors);
         obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, 0);
+    }
+}
+
+// 0x442FE0
+ObjectRenderColors* sub_442FE0()
+{
+    ObjectRenderColorsNode* node;
+
+    node = dword_5E2F44;
+    if (node == NULL) {
+        sub_443030();
+        node = dword_5E2F44;
+    }
+
+    dword_5E2F44 = node->next;
+    node->next = NULL;
+
+    return &(node->data->colors);
+}
+
+// 0x443010
+void sub_443010(ObjectRenderColors* colors)
+{
+    ObjectRenderColorsNode* node;
+
+    // NOTE: Probably wrong.
+    node = (ObjectRenderColorsNode*)((uint8_t*)colors - sizeof(ObjectRenderColorsNode*));
+    node->next = dword_5E2F44;
+    dword_5E2F44 = node;
+}
+
+// 0x443030
+void sub_443030()
+{
+    int index;
+    ObjectRenderColorsNode* node;
+
+    for (index = 0; index < 16; index++) {
+        node = (ObjectRenderColorsNode*)MALLOC(sizeof(*node));
+        node->data = (IndexedObjectRenderColors*)MALLOC(sizeof(*node->data));
+        // Link back from data to node.
+        node->data->ptr = node;
+        node->next = dword_5E2F44;
+        dword_5E2F44 = node;
+    }
+}
+
+// 0x443070
+void sub_443070()
+{
+    ObjectRenderColorsNode* node;
+    ObjectRenderColorsNode* next;
+
+    node = dword_5E2F44;
+    while (node != NULL) {
+        next = node->next;
+        FREE(node->data);
+        FREE(node);
+        node = next;
+    }
+    dword_5E2F44 = NULL;
+}
+
+// 0x4430B0
+void sub_4430B0(int64_t obj, bool a2)
+{
+    TigRect rect;
+    int64_t sector_id;
+    Sector* sector;
+    unsigned int flags;
+
+    object_get_rect(obj, 0x7, &rect);
+    sector_id = sub_4CFC50(obj_field_int64_get(obj, OBJ_F_LOCATION));
+
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    if (a2) {
+        flags |= OF_FLAT;
+    } else {
+        flags &= ~OF_FLAT;
+    }
+    obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+    if (sub_4D04E0(sector_id)) {
+        sector_lock(sector_id, &sector);
+        objlist_remove(&(sector->objects), obj);
+        objlist_insert(&(sector->objects), obj);
+        sector_unlock(sector_id);
+    }
+
+    object_iso_invalidate_rect(&rect);
+}
+
+// 0x443170
+void sub_443170(int64_t obj, TigArtBlitInfo* blit_info)
+{
+    unsigned int render_flags;
+    unsigned int obj_flags;
+
+    render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+    if ((render_flags & (ORF_02000000 | ORF_01000000)) != (ORF_02000000 | ORF_01000000)) {
+        sub_442520(obj);
+        render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_FROZEN) != 0) {
+        blit_info->flags = TIG_ART_BLT_BLEND_ADD | TIG_ART_BLT_BLEND_COLOR_CONST;
+        if (!dword_5E2F48) {
+            blit_info->flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+        }
+    } else if ((obj_field_int32_get(obj, OBJ_F_BLIT_FLAGS) & TIG_ART_BLT_BLEND_ADD) != 0) {
+        blit_info->flags = TIG_ART_BLT_BLEND_ADD;
+        if (!dword_5E2F48) {
+            blit_info->flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+        }
+    } else if ((obj_field_int32_get(obj, OBJ_F_BLIT_FLAGS) & TIG_ART_BLT_BLEND_MUL) != 0) {
+        blit_info->flags = TIG_ART_BLT_BLEND_MUL;
+        if (!dword_5E2F48) {
+            blit_info->flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+        }
+    } else if ((obj_field_int32_get(obj, OBJ_F_BLIT_FLAGS) & TIG_ART_BLT_BLEND_ALPHA_CONST) != 0) {
+        if ((blit_info->flags & 0x1D00) == 0) {
+            blit_info->flags = TIG_ART_BLT_BLEND_ALPHA_CONST;
+            obj_arrayfield_int32_set(obj,
+                OBJ_F_RENDER_ALPHA,
+                0,
+                obj_field_int32_get(obj, OBJ_F_BLIT_ALPHA));
+        }
+    } else {
+        blit_info->flags = render_flags & ~(ORF_01000000
+            | ORF_02000000
+            | ORF_04000000
+            | ORF_08000000
+            | ORF_10000000
+            | ORF_20000000
+            | ORF_40000000
+            | ORF_80000000);
+    }
+
+    blit_info->art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+    if (tig_art_type(blit_info->art_id) == TIG_ART_TYPE_EYE_CANDY
+        && tig_art_eye_candy_id_translucency_get(blit_info->art_id)) {
+        blit_info->flags |= TIG_ART_BLT_BLEND_ADD;
+    }
+
+    if ((blit_info->flags & TIG_ART_BLT_PALETTE_OVERRIDE) != 0) {
+        blit_info->palette = (TigPalette)obj_field_int32_get(obj, OBJ_F_RENDER_PALETTE); // TODO: x64
+    }
+
+    if ((blit_info->flags & TIG_ART_BLT_BLEND_COLOR_ARRAY) != 0) {
+        blit_info->field_14 = (uint32_t*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
+    }
+
+    if ((blit_info->flags & TIG_ART_BLT_BLEND_COLOR_CONST) != 0) {
+        blit_info->color = obj_field_int32_get(obj, OBJ_F_COLOR);
+    }
+
+    if ((blit_info->flags & (TIG_ART_BLT_BLEND_ALPHA_CONST | TIG_ART_BLT_BLEND_ALPHA_LERP_X | TIG_ART_BLT_BLEND_ALPHA_LERP_Y | TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH))) {
+        blit_info->alpha[0] = (uint8_t)obj_arrayfield_int32_get(obj, OBJ_F_RENDER_ALPHA, 0);
+
+        if ((blit_info->flags & (TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH | TIG_ART_BLT_BLEND_ALPHA_LERP_X)) != 0) {
+            blit_info->alpha[1] = (uint8_t)obj_arrayfield_int32_get(obj, OBJ_F_RENDER_ALPHA, 1);
+        }
+
+        if ((blit_info->flags & (TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH | TIG_ART_BLT_BLEND_ALPHA_LERP_Y)) != 0) {
+            blit_info->alpha[2] = (uint8_t)obj_arrayfield_int32_get(obj, OBJ_F_RENDER_ALPHA, 2);
+        }
+
+        if ((blit_info->flags & TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH) != 0) {
+            blit_info->alpha[3] = (uint8_t)obj_arrayfield_int32_get(obj, OBJ_F_RENDER_ALPHA, 3);
+        }
+    }
+
+    if (object_editor) {
+        obj_flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+        if ((obj_flags & (OF_OFF | OF_DESTROYED)) != 0) {
+            blit_info->flags = TIG_ART_BLT_BLEND_ADD | TIG_ART_BLT_BLEND_COLOR_CONST;
+            if (!dword_5E2F48) {
+                blit_info->flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
+            }
+
+            if ((obj_flags & OF_DESTROYED) != 0) {
+                blit_info->color = tig_color_make(255, 0, 0);
+            } else {
+                blit_info->color = tig_color_make(0, 255, 0);
+            }
+        }
+    }
+}
+
+// 0x443440
+int sub_443440(TigArtBlitInfo* blit_info, int order)
+{
+    blit_info->flags |= TIG_ART_BLT_SCRATCH_VALID;
+    blit_info->scratch_video_buffer = dword_739E7C;
+    if (dword_5E2EB0 >= dword_5E2F20) {
+        dword_5E2F20 += 128;
+        dword_5E2E74 = (S5E2E74 *)REALLOC(dword_5E2E74, sizeof(*dword_5E2E74) * dword_5E2F20);
+        dword_5E2F8C = (S5E2F8C *)REALLOC(dword_5E2F8C, sizeof(*dword_5E2F8C) * dword_5E2F20);
+    }
+    dword_5E2E74[dword_5E2EB0].order = order;
+    dword_5E2E74[dword_5E2EB0].blit_info = *blit_info;
+    dword_5E2E74[dword_5E2EB0].rect_index = dword_5E2EB0;
+    dword_5E2F8C[dword_5E2EB0].src_rect = *blit_info->src_rect;
+    dword_5E2F8C[dword_5E2EB0].dst_rect = *blit_info->dst_rect;
+    return ++dword_5E2EB0;
+}
+
+// 0x443560
+void sub_443560()
+{
+    int index;
+
+    if (dword_5E2EB0 != 0) {
+        qsort(dword_5E2E74, dword_5E2EB0, sizeof(*dword_5E2E74), sub_443600);
+
+        for (index = 0; index < dword_5E2EB0; index++) {
+            dword_5E2E74[index].blit_info.src_rect = &dword_5E2F8C[dword_5E2E74[index].rect_index].src_rect;
+            dword_5E2E74[index].blit_info.dst_rect = &dword_5E2F8C[dword_5E2E74[index].rect_index].dst_rect;
+            tig_window_blit_art(object_iso_window_handle, &(dword_5E2E74[index].blit_info));
+        }
+
+        dword_5E2EB0 = 0;
+    }
+}
+
+// 0x443600
+int sub_443600(const S5E2E74* a, const S5E2E74* b)
+{
+    if (b->order > a->order) {
+        return -1;
+    } else if (b->order < a->order) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+// 0x443620
+void sub_443620(unsigned int flags, int scale, int x, int y, tig_art_id_t art_id, TigRect* rect)
+{
+    TigArtFrameData art_frame_data;
+    int scale_type;
+    int hot_x;
+    int hot_y;
+    int width;
+    int height;
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        rect->x = 0;
+        rect->y = 0;
+        rect->width = 0;
+        rect->height = 0;
+        return;
+    }
+
+    if (tig_art_type(art_id) == TIG_ART_TYPE_EYE_CANDY) {
+        scale_type = tig_art_eye_candy_id_scale_get(art_id);
+        if (scale_type != 4) {
+            scale = scale * dword_5A548C[scale_type] / 100;
+        }
+    }
+
+    hot_x = art_frame_data.hot_x;
+    hot_y = art_frame_data.hot_y;
+    width = art_frame_data.width;
+    height = art_frame_data.height;
+
+    if (scale != 100) {
+        hot_x = (int)((float)hot_x * (float)scale / 100.0f);
+        hot_y = (int)((float)hot_y * (float)scale / 100.0f);
+        width = (int)((float)width * (float)scale / 100.0f);
+        height = (int)((float)height * (float)scale / 100.0f);
+    }
+
+    if ((flags & OF_SHRUNK) != 0) {
+        hot_x /= 2;
+        hot_y /= 2;
+        width /= 2;
+        height /= 2;
+    }
+
+    rect->x = x - hot_x;
+    rect->y = y - hot_y;
+    rect->width = width;
+    rect->height = height;
+
+    if ((flags & OF_WADING) != 0
+        && (flags & OF_WATER_WALKING) == 0) {
+        rect->y += 15;
     }
 }
 
@@ -1079,15 +4772,459 @@ void sub_443770(object_id_t obj)
 {
     sub_4D9A90(obj);
     sub_4437C0(obj);
-    sub_442D50(obj);
+    object_clear_render_palette(obj);
     sub_442FA0(obj);
-    obj_field_int32_set(obj, obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~0x76000000);
+    obj_field_int32_set(obj,
+        OBJ_F_RENDER_FLAGS,
+        obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~(ORF_40000000
+            | ORF_20000000
+            | ORF_10000000
+            | ORF_04000000
+            | ORF_02000000));
 }
 
 // 0x4437C0
 void sub_4437C0(object_id_t obj)
 {
     sub_4DA310(obj);
+}
+
+// 0x4437E0
+bool sub_4437E0(TigRect* rect)
+{
+    TigRect tmp_rect;
+
+    object_hover_obj = sub_43C570();
+    if (object_hover_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (!dword_5E2E94) {
+        object_get_rect(object_hover_obj, 0, rect);
+        return true;
+    }
+
+    if (!sub_443880(rect, object_hover_underlay_art_id)) {
+        return sub_443880(rect, object_hover_overlay_art_id);
+    }
+
+    if (sub_443880(&tmp_rect, object_hover_overlay_art_id)) {
+        tig_rect_union(rect, &tmp_rect, rect);
+    }
+
+    return true;
+}
+
+// 0x443880
+bool sub_443880(TigRect* rect, tig_art_id_t art_id)
+{
+    TigArtFrameData art_frame_data;
+    int64_t loc;
+    int64_t x;
+    int64_t y;
+    unsigned int flags;
+
+    object_hover_obj = sub_43C570();
+    if (object_hover_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+        return false;
+    }
+
+    loc = obj_field_int64_get(object_hover_obj, OBJ_F_LOCATION);
+    sub_4B8680(loc, &x, &y);
+
+    x += obj_field_int32_get(object_hover_obj, OBJ_F_OFFSET_X);
+    y += obj_field_int32_get(object_hover_obj, OBJ_F_OFFSET_Y);
+
+    x += art_frame_data.offset_x - art_frame_data.hot_x;
+    y += art_frame_data.offset_y - art_frame_data.hot_y;
+
+    x += 40;
+    y += 20;
+
+    rect->x = (int)x;
+    rect->y = (int)y;
+    rect->width = art_frame_data.width;
+    rect->height = art_frame_data.height;
+
+    flags = obj_field_int32_get(object_hover_obj, OBJ_F_FLAGS);
+    if ((flags & OF_WADING) != 0
+        && (flags & OF_WATER_WALKING) == 0) {
+        rect->y += 15;
+    }
+
+    return true;
+}
+
+// 0x4439D0
+bool sub_4439D0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
+{
+    ObjectID oid;
+    int64_t loc;
+    int map;
+
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (a2 != NULL) {
+        oid = a2->objid;
+        loc = a2->location;
+        map = a2->map;
+    } else if (*obj_ptr != OBJ_HANDLE_NULL) {
+        oid = sub_407EF0(*obj_ptr);
+        loc = obj_field_int64_get(*obj_ptr, OBJ_F_LOCATION);
+        map = sub_40FF40();
+    } else {
+        oid.type = OID_TYPE_NULL;
+        loc = 0;
+        map = 0;
+    }
+
+    if (tig_file_fwrite(&oid, sizeof(oid), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&loc, sizeof(loc), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&map, sizeof(map), 1, stream) != 1) return false;
+
+    return true;
+}
+
+// 0x443AD0
+bool sub_443AD0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
+{
+    ObjectID oid;
+    int64_t loc;
+    int map;
+    ObjectList objects;
+    int64_t obj;
+    char buffer[40];
+
+    if (stream == NULL) {
+        return false;
+    }
+
+    if (obj_ptr == NULL) {
+        return false;
+    }
+
+    if (tig_file_fread(&oid, sizeof(oid), 1, stream) != 1) return false;
+    if (tig_file_fread(&loc, sizeof(loc), 1, stream) != 1) return false;
+    if (tig_file_fread(&map, sizeof(map), 1, stream) != 1) return false;
+
+    if (oid.type != OID_TYPE_NULL) {
+        if (loc != 0) {
+            sub_4407C0(loc, 0x3FFFF, &objects);
+            object_list_destroy(&objects);
+        }
+
+        obj = objp_perm_lookup(oid);
+        if (obj == OBJ_HANDLE_NULL) {
+            tig_debug_printf("Object: object_load_obj_handle_safe: Note: Couldn't match ObjID to HANDLE!\n");
+            objid_id_to_str(buffer, oid);
+            tig_debug_printf("  Info: MapID: %d, Loc: [%dx, %dy], Sector: %d, ID: %s\n",
+                map,
+                LOCATION_GET_X(loc),
+                LOCATION_GET_Y(loc),
+                sub_4CFC50(loc),
+                buffer);
+        }
+
+        *obj_ptr = obj;
+
+        if (a2 != NULL) {
+            a2->objid = oid;
+            a2->location = loc;
+            a2->map = map;
+        }
+    } else {
+        *obj_ptr = OBJ_HANDLE_NULL;
+
+        if (a2 != NULL) {
+            a2->objid.type = OID_TYPE_NULL;
+            a2->location = 0;
+            a2->map = 0;
+        }
+    }
+
+    return true;
+}
+
+// 0x443EB0
+void sub_443EB0(int64_t obj, Ryan* a2)
+{
+    if (obj != OBJ_HANDLE_NULL) {
+        if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+            a2->objid.type = OID_TYPE_NULL;
+            a2->objid.d.a = 0xBEEFBEEF;
+            a2->location = 0;
+            a2->map = 0;
+        } else {
+            a2->objid = sub_407EF0(obj);
+            if (sub_43D990(obj)) {
+                a2->location = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            } else {
+                a2->location = 0;
+            }
+            a2->map = sub_40FF40();
+        }
+    } else {
+        a2->objid.type = OID_TYPE_NULL;
+        a2->location = 0;
+        a2->map = 0;
+    }
+}
+
+// 0x443F80
+bool sub_443F80(int64_t* obj_ptr, Ryan* a2)
+{
+    ObjectList objects;
+
+    if (a2->objid.type == OID_TYPE_NULL) {
+        *obj_ptr = OBJ_HANDLE_NULL;
+        return true;
+    }
+
+    if (a2->location != 0) {
+        if (a2->map != sub_40FF40()) {
+            *obj_ptr = OBJ_HANDLE_NULL;
+            return false;
+        }
+
+        sub_4407C0(a2->location, 0x3FFFF, &objects);
+        object_list_destroy(&objects);
+    }
+
+    *obj_ptr = objp_perm_lookup(a2->objid);
+
+    return *obj_ptr != OBJ_HANDLE_NULL;
+}
+
+// 0x444020
+bool sub_444020(int64_t* obj_ptr, Ryan* a2)
+{
+    int64_t obj;
+
+    if (obj_ptr == NULL || a2 == NULL) {
+        // FIXME: Crash!
+        *obj_ptr = OBJ_HANDLE_NULL;
+        return false;
+    }
+
+    if (a2->objid.type != OID_TYPE_NULL
+        && *obj_ptr != OBJ_HANDLE_NULL
+        && !sub_4E5470(*obj_ptr)) {
+        if (!sub_443F80(&obj, a2)) {
+            tig_debug_printf("Object: ERROR: Object validate recovery FAILED!\n");
+            *obj_ptr = OBJ_HANDLE_NULL;
+            return false;
+        }
+
+        if (obj != OBJ_HANDLE_NULL
+            && (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_OFF | OF_DESTROYED)) != 0) {
+            obj = OBJ_HANDLE_NULL;
+        }
+
+        *obj_ptr = obj;
+    }
+
+    return true;
+}
+
+// 0x4440E0
+void sub_4440E0(int64_t obj, FollowerInfo* a2)
+{
+    if (a2 != NULL) {
+        a2->obj = obj;
+        sub_443EB0(obj, &(a2->field_8));
+    }
+}
+
+// 0x444110
+bool sub_444110(FollowerInfo* a1)
+{
+    if (a1 != NULL) {
+        return sub_443F80(&(a1->obj), &(a1->field_8));
+    } else {
+        return false;
+    }
+}
+
+// 0x444130
+bool sub_444130(FollowerInfo* a1)
+{
+    if (a1 != NULL) {
+        return sub_444020(&(a1->obj), &(a1->field_8));
+    } else {
+        return false;
+    }
+}
+
+// 0x444150
+bool sub_444150()
+{
+    mes_file_handle_t mes_file;
+    MesFileEntry mes_file_entry;
+    char* str;
+    int r;
+    int g;
+    int b;
+
+    if (!mes_load("rules\\reaction_colors.mes", &mes_file)) {
+        return false;
+    }
+
+    tig_str_parse_set_separator(',');
+
+    for (mes_file_entry.num = 0; mes_file_entry.num < REACTION_COUNT; mes_file_entry.num++) {
+        if (!mes_search(mes_file, &mes_file_entry)) {
+            tig_debug_printf("Missing entry %d in rules\\reaction_colors.mes", mes_file_entry.num);
+            mes_unload(mes_file);
+            return false;
+        }
+
+        str = mes_file_entry.str;
+        tig_str_parse_value(&str, &r);
+        tig_str_parse_value(&str, &g);
+        tig_str_parse_value(&str, &b);
+        object_reaction_colors[mes_file_entry.num] = tig_color_make(r, g, b);
+    }
+
+    mes_unload(mes_file);
+    return true;
+}
+
+// 0x444270
+void sub_444270(int64_t obj, int a2)
+{
+    unsigned int flags;
+    unsigned int render_flags;
+    int64_t loc;
+    TigRect rect;
+    int64_t v1;
+
+    flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
+    render_flags = obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS);
+    render_flags &= ~(ORF_04000000 | ORF_02000000);
+
+    if (a2 == 0) {
+        if (!object_lighting) {
+            obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
+        }
+
+        object_get_rect(obj, 0x7, &rect);
+        object_iso_invalidate_rect(&rect);
+        return;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+
+    if ((flags & OF_DISALLOW_WADING) == 0) {
+        if (sub_4D71A0(loc)) {
+            if ((flags & OF_WADING) == 0) {
+                sub_43D0E0(obj, OF_WADING);
+            }
+        } else {
+            if ((flags & OF_WADING) != 0) {
+                sub_43D280(obj, OF_WADING);
+            }
+        }
+    }
+
+    if (object_editor) {
+        obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
+        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+        object_get_rect(obj, 0x7, &rect);
+        object_iso_invalidate_rect(&rect);
+        return;
+    }
+
+    if (sub_40DA20(obj)) {
+        if (player_is_pc_obj(obj)) {
+            sub_4BE8F0(loc);
+            sub_439D30(loc);
+            sub_437E50(loc);
+            scroll_set_center(loc);
+        }
+
+        sub_4101D0(loc, obj);
+    }
+
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        sub_4C0980(loc, obj);
+    }
+
+    v1 = sub_43C570();
+    if (v1 != OBJ_HANDLE_NULL) {
+        if (v1 == obj || player_is_pc_obj(obj)) {
+            sub_4604F0(player_get_pc_obj(), v1);
+        }
+    }
+
+    if (a2 != 1) {
+        if (sub_40DA20(obj) && player_is_pc_obj(obj)) {
+            sub_4F2330(sub_4CFC50(loc), obj);
+        }
+        sub_4D9590(obj, true);
+    }
+
+    obj_field_int32_set(obj, OBJ_F_RENDER_FLAGS, render_flags);
+    object_get_rect(obj, 0x7, &rect);
+    object_iso_invalidate_rect(&rect);
+}
+
+// 0x444500
+int64_t sub_444500(int64_t loc)
+{
+    ObjectList objects;
+    ObjectNode* node;
+    int64_t obj = OBJ_HANDLE_NULL;
+
+    sub_4407C0(loc, OBJ_TM_SCENERY, &objects);
+
+    node = objects.head;
+    while (node != NULL) {
+        obj = node->obj;
+        if (sub_44E830(obj, AG_EYE_CANDY_FIRE_DMG, NULL)
+            || sub_44E830(obj, AG_ANIMATE_LOOP_FIRE_DMG, NULL)) {
+            break;
+        }
+        node = node->next;
+    }
+
+    object_list_destroy(&objects);
+
+    return obj;
+}
+
+// 0x4445A0
+void sub_4445A0(int64_t a1, int64_t a2)
+{
+    int type;
+    int64_t loc;
+
+    type = obj_field_int32_get(a2, OBJ_F_TYPE);
+    if (obj_type_is_critter(type)
+        || (obj_type_is_item(type) && (obj_field_int32_get(a2, OBJ_F_TYPE) & OF_INVENTORY) == 0)) {
+        if (sub_441AE0(a1, a2) > 1) {
+            if (player_is_pc_obj(a1)) {
+                sub_4606C0(0);
+            }
+        } else {
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                if ((tig_net_flags & TIG_NET_HOST) != 0) {
+                    loc = obj_field_int64_get(a1, OBJ_F_LOCATION);
+                    sub_4EDF20(a2, loc, 0, 0, false);
+                } else {
+                    sub_4EF830(a1, a2);
+                }
+            } else {
+                loc = obj_field_int64_get(a1, OBJ_F_LOCATION);
+                sub_43E770(a2, loc, 0, 0);
+            }
+        }
+    }
 }
 
 // 0x444690
@@ -1099,5 +5236,5 @@ void object_lighting_changed()
     } else if (object_lighting > 1) {
         object_lighting = 1;
     }
-    dword_5E2EB4(NULL);
+    object_iso_invalidate_rect(NULL);
 }

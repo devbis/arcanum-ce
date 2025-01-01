@@ -15,8 +15,8 @@
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
 #include "game/multiplayer.h"
-#include "game/name.h"
 #include "game/object.h"
+#include "game/path.h"
 #include "game/player.h"
 #include "game/proto.h"
 #include "game/random.h"
@@ -26,13 +26,8 @@
 #include "game/teleport.h"
 #include "game/tile.h"
 #include "game/timeevent.h"
-
-typedef enum AgDataType {
-    AGDATATYPE_INT,
-    AGDATATYPE_OBJ,
-    AGDATATYPE_LOC,
-    AGDATATYPE_SOUND,
-} AgDataType;
+#include "game/trap.h"
+#include "game/ui.h"
 
 static bool sub_421CE0(AnimID* anim_id, AnimRunInfo* run_info);
 static void violence_filter_changed();
@@ -42,19 +37,15 @@ static bool sub_422430(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* str
 static bool anim_load_internal(GameLoadInfo* load_info);
 static bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream);
 static bool sub_4229A0(AnimGoalData* goal_data, TigFile* stream);
-static bool sub_422A50(void* data, Ryan* a2, int type, TigFile* stream);
+static bool sub_422A50(AnimRunInfoParam* param, Ryan* a2, int type, TigFile* stream);
+static bool sub_423C80(AnimRunInfo* run_info, DateTime* a2, int delay);
+static void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** goal_node_ptr, AnimGoalData** goal_data_ptr, bool* a5);
 static int anim_goal_pending_active_goals_count();
 static bool sub_436220(int64_t obj, int64_t target_obj, int64_t item_obj);
 static bool sub_4363E0(int64_t a1, int64_t a2);
 static bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr);
 static void sub_436CB0(AnimID anim_id);
-static void sub_436D20(unsigned int flags1, unsigned int flags2);
-static void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2);
-static void sub_436ED0(AnimID anim_id);
 static void notify_speed_recalc(AnimID* anim_id);
-static bool sub_4372B0(int64_t a1, int64_t a2);
-static int num_goal_subslots_in_use(AnimID* anim_id);
-static bool is_anim_forever(AnimID* anim_id);
 static void sub_437460(AGModifyData* modify_data);
 static bool sub_4246C0(AnimRunInfo* run_info);
 static bool sub_4246D0(AnimRunInfo* run_info);
@@ -263,6 +254,7 @@ static bool sub_432990(AnimRunInfo* run_info);
 static bool sub_432CF0(int64_t critter_obj);
 static bool sub_432D50(AnimRunInfo* run_info);
 static bool sub_433270(AnimRunInfo* run_info);
+static bool sub_4339A0(int64_t obj);
 static int sub_437990(int64_t obj, tig_art_id_t art_id, int speed);
 static bool sub_437C50(AnimRunInfo* run_info, int end, int64_t* x, int64_t* y);
 
@@ -2734,31 +2726,6 @@ static AnimGoalNode stru_5B01D0 = {
     },
 };
 
-// 0x5A597C
-static int dword_5A597C[AGDATA_COUNT] = {
-    AGDATATYPE_OBJ,
-    AGDATATYPE_OBJ,
-    AGDATATYPE_OBJ,
-    AGDATATYPE_OBJ,
-    AGDATATYPE_OBJ,
-    AGDATATYPE_LOC,
-    AGDATATYPE_LOC,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_INT,
-    AGDATATYPE_SOUND,
-};
-
 // 0x5B03D0
 AnimGoalNode* off_5B03D0[] = {
     &stru_5A59D0, // AG_ANIMATE
@@ -2897,6 +2864,9 @@ static int dword_5DE6C0;
 
 // 0x5DE6C4
 static int dword_5DE6C4;
+
+// 0x5DE6CC
+static int dword_5DE6CC;
 
 // 0x5DE6D0
 static bool dword_5DE6D0;
@@ -3693,7 +3663,263 @@ void sub_423550(AnimRunInfo* run_info, int a2)
 // 0x423560
 bool anim_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    int run_index;
+    AnimRunInfo* run_info;
+    AnimGoalData* goal_data;
+    AnimGoalNode* goal_node;
+    AnimGoalSubNode* goal_subnode;
+    char str[128];
+    int state_change;
+    int delay;
+    bool err = false;
+    int num_loops = 0;
+
+    if (dword_5E34F4) {
+        anim_goal_interrupt_all_goals_of_priority(3);
+        dword_5E34F4 = false;
+    }
+
+    run_index = timeevent->params[0].integer_value;
+
+    ASSERT(run_index < 216); // 1965, "animRunIndex < ANIM_MAX_CURRENT_ANIMS"
+
+    run_info = &(anim_run_info[run_index]);
+    if (run_info->id.slot_num != run_index) {
+        sub_421E20(&(run_info->id), str);
+        tig_debug_printf("%s != %d:%d:%d\n",
+            str,
+            run_index,
+            timeevent->params[1].integer_value,
+            timeevent->params[2].integer_value);
+        return true;
+    }
+
+    if ((run_info->field_C & 0x01) == 0) {
+        return true;
+    }
+
+    if ((run_info->field_C & 0x10000) != 0) {
+        unsigned int delay = run_info->pause_time.milliseconds;
+        if (delay < 100) {
+            delay = 100;
+        }
+
+        return sub_423C80(run_info, &(timeevent->datetime), delay);
+    }
+
+    ASSERT(run_info->current_goal >= 0); // 2022, "pRunInfo->current_goal >= 0"
+
+    if (run_info->current_goal < 0) {
+        run_info->current_goal = 0;
+    }
+
+    goal_data = &(run_info->goals[run_info->current_goal]);
+    run_info->cur_stack_data = goal_data;
+
+    if (goal_data->type >= 0 && goal_data->type < ANIM_GOAL_MAX) {
+        goal_node = off_5B03D0[goal_data->type];
+
+        ASSERT(goal_node != NULL); // 2035, "pGoalNode != NULL"
+    } else {
+        run_info->field_C |= 0x02;
+        err = true;
+    }
+
+    if (!sub_44DD80(run_info, NULL)) {
+        return true;
+    }
+
+    if (run_info->field_20 != OBJ_HANDLE_NULL) {
+        if ((obj_field_int32_get(run_info->field_20, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+            ASSERT(0); // 2063, "!(object_flags_get(pRunInfo->animObj) & OF_DESTROYED)"
+        }
+
+        sub_423530(run_info);
+    } else {
+        run_info->field_C |= 0x02;
+        err = true;
+    }
+
+    dword_5A5978 = run_index;
+
+    while (!err) {
+        if (++num_loops > 100) {
+            tig_debug_printf("Anim: anim_timeevent_process: ERROR: Infinite loop detected in goal: %d, RunIdx: %d!\n",
+                run_info->cur_stack_data->type,
+                run_info->id.slot_num);
+
+            ASSERT(num_loops < 100); // 2088, "numLoops < ANIM_MAX_LOOPS_ALLOWED"
+
+            sub_4B7C90(run_info->field_20);
+            dword_5A5978 = -1;
+            sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
+            return true;
+        }
+
+        goal_subnode = &(goal_node->subnodes[run_info->field_10]);
+        if (!sub_44DD80(run_info, goal_subnode)) {
+            return true;
+        }
+
+        sub_423540(run_info);
+
+        bool rc = goal_subnode->func(run_info);
+
+        sub_423550(run_info, rc);
+
+        if ((run_info->field_C & 0x10000) != 0) {
+            err = true;
+        }
+
+        if ((run_info->field_C & 0x01) == 0) {
+            dword_5A5978 = -1;
+            return true;
+        }
+
+        if ((run_info->field_C & 0x02) != 0) {
+            err = true;
+            break;
+        }
+
+        state_change = rc ? goal_subnode->field_18 : goal_subnode->field_10;
+        delay = rc ? goal_subnode->field_1C : goal_subnode->field_14;
+
+        if ((state_change & 0xFF000000) != 0) {
+            if ((state_change & 0x10000000) != 0) {
+                run_info->field_10 = 0;
+                err = true;
+            }
+
+            if ((state_change & 0x38000000) == 0x38000000) {
+                sub_423D10(run_info, &state_change, &goal_node, &goal_data, &err);
+                sub_423D10(run_info, &state_change, &goal_node, &goal_data, &err);
+            }
+
+            if ((state_change & 0x30000000) == 0x30000000) {
+                sub_423D10(run_info, &state_change, &goal_node, &goal_data, &err);
+            }
+
+            if ((state_change & 0x40000000) != 0) {
+                if (run_info->current_goal < 7) {
+                    run_info->field_10 = 0;
+                    run_info->current_goal++;
+
+                    goal_data = &(run_info->goals[run_info->current_goal]);
+                    run_info->cur_stack_data = goal_data;
+
+                    if (run_info->current_goal > 0 && (state_change & 0x30000000) != 0x30000000) {
+                        *goal_data = run_info->goals[run_info->current_goal - 1];
+                    }
+
+                    goal_data->type = state_change & 0xFFF;
+                    goal_node = off_5B03D0[goal_data->type];
+                    sub_44C840(run_info, goal_node);
+                    sub_423E60("Running: PushGoal");
+                } else {
+                    sub_421E20(&(run_info->id), str);
+                    tig_debug_printf("Anim: ERROR: Attempt to PushGoal: Goal Stack too LARGE!!!  Killing the Animation Slot: AnimID: %s!\n", str);
+
+                    for (int idx = 0; idx < run_info->current_goal; idx++) {
+                        tig_debug_printf("\t[%d]: Goal: %s\n", idx++, off_5A164C[run_info->goals[idx].type]);
+                    }
+
+                    run_info->field_10 = 0;
+                    run_info->field_C |= 0x02;
+
+                    err = true;
+                }
+            }
+
+            if ((state_change & 0x90000000) == 0x90000000) {
+                run_info->field_C |= 0x02;
+                if (sub_4B6D70() && !player_is_pc_obj(run_info->field_20)) {
+                    sub_4B7CD0(run_info->field_20, sub_4B7C20());
+                }
+
+                for (int idx = 1; idx <= run_info->current_goal; idx++) {
+                    sub_423E60("Running: Goal Terminate");
+
+                    goal_subnode = &(off_5B03D0[run_info->goals[idx].type]->subnodes[14]);
+                    if (goal_subnode->func != NULL
+                        && sub_44DD80(run_info, goal_subnode)) {
+                        goal_subnode->func(run_info);
+                    }
+                }
+
+                goal_subnode = &(off_5B03D0[run_info->goals[0].type]->subnodes[14]);
+                if (goal_subnode->func != NULL
+                    && sub_44DD80(run_info, goal_subnode)) {
+                    goal_subnode->func(run_info);
+                }
+
+                run_info->field_10 = 0;
+                run_info->field_14 = -1;
+                run_info->path.flags |= 0x01;
+
+                err = true;
+            }
+        } else {
+            ASSERT(run_info->field_10 != state_change - 1); // 2334, "pRunInfo->current_state != (stateChange - 1)"
+
+            run_info->field_10 = state_change - 1;
+        }
+
+        if (delay != 0) {
+            err = true;
+            if (delay == -2) {
+                delay = run_info->pause_time.milliseconds;
+                break;
+            }
+
+            if (delay == -3) {
+                delay = dword_5DE6CC;
+                break;
+            }
+
+            if (delay != -4) {
+                break;
+            }
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                && (tig_net_flags & TIG_NET_HOST) == 0) {
+                delay = 0;
+                break;
+            }
+
+            delay = random_between(0, 300);
+        }
+    }
+
+    dword_5A5978 = -1;
+
+    if ((run_info->field_C & 0x02) != 0) {
+        if (run_info->field_20 == OBJ_HANDLE_NULL) {
+            return true;
+        }
+
+        bool rc = sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
+
+        if (!sub_4B6D70()) {
+            sub_4B4320(run_info->field_20);
+            return rc;
+        }
+
+        if (obj_type_is_critter(obj_field_int32_get(run_info->field_20, OBJ_F_TYPE))) {
+            sub_4B7010(run_info->field_20);
+        }
+
+        if (combat_get_action_points() > 0) {
+            sub_4B4320(run_info->field_20);
+        }
+
+        return rc;
+    }
+
+    if ((run_info->field_C & 0x01) != 0) {
+        return sub_423C80(run_info, &(timeevent->datetime), delay);
+    }
+
+    return true;
 }
 
 // 0x423C80
@@ -11272,7 +11498,271 @@ void set_always_run(bool value)
 // 0x4305D0
 bool sub_4305D0(AnimRunInfo* run_info)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    bool v1;
+    int64_t loc;
+    tig_art_id_t art_id;
+    int anim;
+    int rot;
+    unsigned int spell_flags;
+    int64_t new_loc;
+    int offset_x;
+    int offset_y;
+    AnimID anim_id;
+    TigArtAnimData art_anim_data;
+    int frame;
+    int sound_id;
+    int v2;
+    int v3;
+
+    obj = run_info->params[0].obj;
+
+    ASSERT(obj != OBJ_HANDLE_NULL); // 12268, "obj != OBJ_HANDLE_NULL"
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
+
+    // FIXME: Useless.
+    player_is_pc_obj(obj);
+
+    v1 = (run_info->field_C & 0x40) != 0;
+    run_info->field_C |= 0x100000;
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+
+    if (sub_503E20(art_id) == 0) {
+        return false;
+    }
+
+    rot = run_info->path.rotations[run_info->path.curr];
+    run_info->field_C |= 0x10;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (run_info->path.field_E8 != 0
+            && run_info->path.curr > 0) {
+            int64_t distance;
+            char str[40];
+            int64_t x;
+            int64_t y;
+
+            distance = sub_4B96F0(run_info->path.field_E8, loc);
+            sub_441B60(obj, obj, str);
+            tig_debug_printf("AGUpdateAnimMove: ERROR %s (%I64d tiles away @ %I64d, %I64d) are more than\n",
+                str,
+                distance,
+                LOCATION_GET_X(loc),
+                LOCATION_GET_Y(loc));
+            tig_debug_printf("                  anim_path_data.curr(%d) tiles away from where you started (%I64d,%I64d)\n",
+                run_info->path.curr,
+                LOCATION_GET_X(run_info->path.field_E8),
+                LOCATION_GET_Y(run_info->path.field_E8));
+
+            sub_437C50(run_info, run_info->path.curr, &x, &y);
+            tig_debug_printf("                  interrupting your animation at %I64d, %I64d\n", x, y);
+
+            art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+            if (critter_is_concealed(art_id)) {
+                art_id = sub_503E50(art_id, 5);
+            } else {
+                art_id = sub_503E50(art_id, 0);
+            }
+            object_set_current_aid(obj, art_id);
+
+            sub_4EDF20(obj, loc, 0, 0, false);
+            sub_424070(obj, 2, false, false);
+
+            return false;
+        }
+    }
+
+    if (v1) {
+        if (sub_503E20(art_id) != 6) {
+            sub_42EDC0(run_info, obj, &art_id, true, NULL);
+        }
+    }
+
+    spell_flags = obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
+    if ((spell_flags & OSF_FLOATING) != 0) {
+        if (!anim_find_first_of_type(obj, AG_FLOATING, &anim_id)) {
+            ASSERT(0); // 12354, "0"
+            exit(EXIT_FAILURE);
+        }
+
+        v2 = anim_run_info[anim_id.slot_num].cur_stack_data->params[AGDATA_SCRATCH_VAL1].data;
+        dword_5DE6E4 = 15 - 2 * v2;
+    }
+
+    new_loc = loc;
+    object_inc_current_aid(obj);
+
+    offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
+    offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
+
+    if (!sub_45F730(obj)) {
+        anim = sub_503E20(art_id);
+        if (anim == 1 || anim == 6) {
+            if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+                frame = tig_art_id_frame_get(art_id);
+                if (frame == 3 || frame == 8) {
+                    sound_id = sub_4F0ED0(obj, 7);
+                    sub_41B930(sound_id, 1, obj);
+                }
+            }
+        }
+    }
+
+    if ((run_info->path.flags & 0x02) != 0) {
+        if (sub_42EF60(rot, offset_x, offset_y)) {
+            if (run_info->field_28 == 0 || run_info->field_28 == new_loc) {
+                run_info->path.flags &= ~0x02;
+                run_info->path.curr++;
+
+                v3 = false;
+
+                rot = run_info->path.rotations[run_info->path.curr];
+                if ((rot & 1) != 0) {
+                    run_info->field_28 = 0;
+                } else if (!sub_4B8FF0(loc, rot, &(run_info->field_28))) {
+                    run_info->path.curr = run_info->path.max + 1;
+                }
+
+                if ((spell_flags & OSF_FLOATING) != 0) {
+                    offset_y = 15 - 2 * v2;
+                } else {
+                    offset_y = 0;
+                }
+
+                if ((spell_flags & (OSF_FLOATING | OSF_BODY_OF_AIR)) == 0) {
+                    ObjectList traps;
+
+                    sub_4407C0(new_loc, OBJ_TM_TRAP, &traps);
+                    if (traps.head != NULL) {
+                        sub_441980(obj, traps.head->obj, traps.head->obj, 1, 0);
+                        run_info->path.flags |= 0x08;
+                        run_info->path.curr = run_info->path.max;
+                    }
+                    object_list_destroy(&traps);
+                }
+
+                if (((tig_net_flags & TIG_NET_CONNECTED) == 0
+                        || (tig_net_flags & TIG_NET_HOST) != 0)
+                    && (spell_flags & (OSF_FLOATING | OSF_BODY_OF_AIR)) == 0
+                    && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_SLIP) == 0) {
+                    if (sub_4D71C0(new_loc)) {
+                        int dexterity = stat_level(obj, STAT_DEXTERITY);
+                        if (dexterity < 20 && random_between(1, 20) > dexterity + 6) {
+                            v3 = true;
+                            run_info->path.curr = run_info->path.max;
+                        }
+                    }
+                }
+
+                if (run_info->path.curr >= run_info->path.max) {
+                    anim = sub_503E20(run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data);
+                    art_id = sub_503E50(art_id, anim);
+                    art_id = tig_art_id_frame_set(art_id, 0);
+                    object_set_current_aid(obj, art_id);
+                    sub_430490(obj, 0, 0);
+
+                    run_info->field_C &= ~0x30;
+
+                    dword_5DE6E4 = 0;
+
+                    if (v3) {
+                        sub_435A90(obj);
+                    }
+
+                    return false;
+                }
+
+                rot = run_info->path.rotations[run_info->path.curr];
+                if (rot != run_info->path.rotations[run_info->path.curr - 1]) {
+                    sub_430490(obj, 0, 0);
+                    art_id = tig_art_id_rotation_set(art_id, rot);
+                    object_set_current_aid(obj, art_id);
+                }
+
+                run_info->path.flags &= ~0x10;
+
+                v3 = 2;
+                if (run_info->current_goal > 0
+                    && (run_info->field_C & 0x40) != 0
+                    && sub_45D700(obj) > 0) {
+                    v3 = 1;
+                }
+
+                if (!sub_4B7790(obj, v3)) {
+                    sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
+                    return false;
+                }
+            } else {
+                run_info->path.flags &= ~0x02;
+            }
+        }
+    } else {
+        if (sub_4B9420(&new_loc, &offset_x, &offset_y)) {
+            if ((spell_flags & OSF_FLOATING) != 0) {
+                offset_y += 2 * v2 - 15;
+            }
+
+            sub_43E770(obj, new_loc, offset_x, offset_y);
+            run_info->path.flags |= 0x02;
+
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                && (tig_net_flags & TIG_NET_HOST) != 0) {
+                // TODO: Incomplete.
+            }
+
+            if ((run_info->field_C & 0x80000) != 0
+                && player_is_pc_obj(obj)
+                && new_loc != loc) {
+                int64_t x;
+                int64_t y;
+
+                sub_4B8940(new_loc, &x, &y);
+
+                // NOTE: Original code compares by casting to double.
+                if (llabs(x) > 360) {
+                    sub_4B8CE0(new_loc);
+                }
+
+                // NOTE: Original code compares by casting to double.
+                if (llabs(y) > 180) {
+                    sub_4B8CE0(new_loc);
+                }
+            }
+
+            if (!sub_430FC0(run_info)) {
+                return false;
+            }
+        }
+    }
+
+    dword_5DE6E4 = 0;
+
+    if ((run_info->field_C & 0x80) != 0) {
+        if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+            run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
+        } else {
+            tig_debug_printf("Anim: AGupdateAnimMove: Failed to find Aid: %d, defaulting to 10 fps!", art_id);
+            run_info->pause_time.milliseconds = 100;
+        }
+
+        if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+            sub_42EE90(obj, &(run_info->pause_time));
+        }
+
+        if ((spell_flags & OSF_SHRUNK) != 0) {
+            run_info->pause_time.milliseconds *= 2;
+        }
+
+        run_info->field_C &= ~0x80;
+    }
+
+    return true;
 }
 
 // 0x430F20
@@ -14813,7 +15303,160 @@ void sub_437980()
 // 0x437990
 int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
 {
-    // TODO: Incomplete.
+    TigArtAnimData art_anim_data;
+    int fps;
+    int art_type;
+    int v1;
+    int v2;
+    int anim;
+    int v3;
+    int v12;
+    int v13;
+    int v14;
+
+    if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
+        fps = art_anim_data.fps;
+    } else {
+        fps = 10;
+    }
+
+    art_type = tig_art_type(art_id);
+    if (art_type != TIG_ART_TYPE_CRITTER
+        || art_type != TIG_ART_TYPE_MONSTER
+        || art_type != TIG_ART_TYPE_UNIQUE_NPC) {
+        return fps;
+    }
+
+    if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & (OSF_BODY_OF_WATER | OSF_BODY_OF_FIRE | OSF_BODY_OF_EARTH | OSF_BODY_OF_AIR)) != 0) {
+        return fps;
+    }
+
+    v1 = 0;
+    if (art_type == TIG_ART_TYPE_CRITTER) {
+        v2 = sub_503EA0(art_id);
+        if (v2 == 1 || v2 == 2) {
+            v1 = 4;
+        }
+    }
+
+    anim = sub_503E20(art_id);
+    v3 = sub_5040D0(art_id);
+    switch (anim) {
+    case 1:
+        v12 = v1 + 17;
+        v13 = v1 + 6;
+        v14 = v1 + 30;
+        break;
+    case 3:
+        v12 = v1 + 10;
+        v13 = v1 + 4;
+        v14 = v1 + 16;
+        break;
+    case 6:
+        v12 = v1 + 20;
+        v13 = v1 + 8;
+        v14 = v1 + 30;
+        break;
+    case 20:
+        switch (v3) {
+        case 1:
+        case 3:
+            v12 = 15;
+            v13 = 7;
+            v14 = 23;
+            break;
+        case 2:
+        case 8:
+            v12 = 10;
+            v13 = 6;
+            v14 = 14;
+            break;
+        case 4:
+        case 5:
+        case 7:
+            v12 = 14;
+            v13 = 8;
+            v14 = 20;
+            break;
+        case 6:
+            v12 = 8;
+            v13 = 3;
+            v14 = 12;
+            break;
+        case 10:
+            v12 = 6;
+            v13 = 3;
+            v14 = 10;
+            break;
+        case 13:
+            v12 = 12;
+            v13 = 8;
+            v14 = 16;
+            break;
+        default:
+            v12 = -1;
+            break;
+        }
+        break;
+    case 21:
+        switch (v3) {
+        case 1:
+            v12 = 13;
+            v13 = 8;
+            v14 = 18;
+            break;
+        case 2:
+        case 8:
+        case 13:
+            v12 = 10;
+            v13 = 6;
+            v14 = 14;
+            break;
+        case 3:
+            v12 = 14;
+            v13 = 8;
+            v14 = 20;
+            break;
+        case 4:
+        case 5:
+            v12 = 11;
+            v13 = 7;
+            v14 = 15;
+            break;
+        case 6:
+        case 10:
+            v12 = 6;
+            v13 = 3;
+            v14 = 10;
+            break;
+        case 7:
+            v12 = 13;
+            v13 = 9;
+            v14 = 17;
+            break;
+        default:
+            v12 = -1;
+            break;
+        }
+        break;
+    default:
+        v12 = -1;
+        break;
+    }
+
+    if (v12 != -1) {
+        if (speed < 8) {
+            fps = v13 + speed * (v12 - v13) / 8;
+        } else if (speed > 8) {
+            if (speed < 30) {
+                fps = v12 + speed * (v14 - v12) / 30;
+            } else {
+                fps = v14;
+            }
+        }
+    }
+
+    return fps;
 }
 
 // 0x437C50

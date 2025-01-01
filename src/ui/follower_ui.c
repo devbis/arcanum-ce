@@ -106,8 +106,11 @@ static int dword_67BC58;
 // 0x67BC5C
 static bool follower_ui_initialized;
 
+// NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
+// compatibility.
+//
 // 0x67BC60
-static bool dword_67BC60;
+static int dword_67BC60;
 
 // 0x67BC64
 static bool dword_67BC64;

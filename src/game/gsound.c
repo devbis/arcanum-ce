@@ -146,8 +146,11 @@ static int dword_5D55B0;
 // 0x5D55B8
 static int64_t sound_maximum_radius[TIG_SOUND_SIZE_COUNT];
 
+// NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
+// compatibility.
+//
 // 0x5D55D8
-static bool gsound_combat_music_active;
+static int gsound_combat_music_active;
 
 // 0x5D55E0
 static int64_t qword_5D55E0;

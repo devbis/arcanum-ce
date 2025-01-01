@@ -109,36 +109,36 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
 
                 if ((trig & MTIT_TARGET_ATTACKER_ANY) != 0) {
                     if ((trig & MTIT_TARGET_ATTACKER) != 0) {
-                        sub_4440E0(a3, &(v1.field_70));
+                        sub_4440E0(a3, &(v1.target_obj));
                     } else if ((trig & MTIT_TARGET_ATTACKER_WEAPON) != 0) {
                         if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, 1004), &(v1.field_70));
+                            sub_4440E0(item_wield_get(a3, 1004), &(v1.target_obj));
                         } else {
-                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.field_70));
+                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
                         }
                     } else if ((trig & MTIT_TARGET_ATTACKER_ARMOR) != 0) {
                         if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, 1006), &(v1.field_70));
+                            sub_4440E0(item_wield_get(a3, 1006), &(v1.target_obj));
                         } else {
-                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.field_70));
+                            sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
                         }
                     } else {
-                        sub_4440E0(OBJ_HANDLE_NULL, &(v1.field_70));
+                        sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
                     }
                 } else if ((trig & MTIT_PARENT_ATKS_LOCATION) != 0) {
-                    v1.field_D0 = a4;
+                    v1.target_loc = a4;
                 } else {
-                    sub_4440E0(a2, &(v1.field_70));
+                    sub_4440E0(a2, &(v1.target_obj));
                 }
 
                 v1.field_D8 = flags;
-                v1.field_DC |= 0x1;
+                v1.flags |= 0x1;
 
                 if (qword_5FF618 != OBJ_HANDLE_NULL) {
                     sub_4440E0(qword_5FF618, &(v1.field_A0));
                 }
 
-                if (v1.field_70.obj != OBJ_HANDLE_NULL || v1.field_D0 != 0) {
+                if (v1.target_obj.obj != OBJ_HANDLE_NULL || v1.target_loc != 0) {
                     sub_455AC0(&v1);
                 }
             }
@@ -385,13 +385,13 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
 
         if ((mt_item_triggers(spl) & flags) != 0) {
             sub_455A20(&v1, a1, sub_4CB790(spl));
-            sub_4440E0(a2, &(v1.field_70));
+            sub_4440E0(a2, &(v1.target_obj));
             sub_4573D0(&v1);
 
             sub_455A20(&v1, a1, sub_4CB790(spl));
-            sub_4440E0(a2, &(v1.field_70));
+            sub_4440E0(a2, &(v1.target_obj));
             v1.field_D8 = flags;
-            if (v1.field_70.obj != OBJ_HANDLE_NULL) {
+            if (v1.target_obj.obj != OBJ_HANDLE_NULL) {
                 sub_455AC0(&v1);
             }
         }

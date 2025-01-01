@@ -1,20 +1,64 @@
 #include "ui/intgame.h"
 
+#include <stdio.h>
+
+#include "game/ai.h"
+#include "game/anim.h"
+#include "game/bless.h"
+#include "game/broadcast.h"
+#include "game/combat.h"
+#include "game/critter.h"
+#include "game/curse.h"
 #include "game/gamelib.h"
+#include "game/gsound.h"
+#include "game/item_effect.h"
 #include "game/item.h"
+#include "game/level.h"
+#include "game/light.h"
 #include "game/magictech.h"
 #include "game/map.h"
+#include "game/mt_item.h"
+#include "game/obj_private.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/player.h"
+#include "game/portrait.h"
+#include "game/proto.h"
+#include "game/reaction.h"
+#include "game/scroll.h"
+#include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"
+#include "game/target.h"
+#include "game/tc.h"
+#include "game/tech.h"
 #include "game/timeevent.h"
+#include "ui/anim_ui.h"
+#include "ui/broadcast_ui.h"
+#include "ui/charedit_ui.h"
 #include "ui/compact_ui.h"
+#include "ui/dialog_ui.h"
+#include "ui/fate_ui.h"
+#include "ui/follower_ui.h"
 #include "ui/gameuilib.h"
 #include "ui/hotkey_ui.h"
+#include "ui/inven_ui.h"
+#include "ui/iso.h"
+#include "ui/item_ui.h"
+#include "ui/logbook_ui.h"
+#include "ui/mainmenu_ui.h"
+#include "ui/mp_ctrl_ui.h"
+#include "ui/multiplayer_ui.h"
 #include "ui/roller_ui.h"
+#include "ui/schematic_ui.h"
+#include "ui/scrollbar_ui.h"
+#include "ui/skill_ui.h"
+#include "ui/sleep_ui.h"
+#include "ui/spell_ui.h"
+#include "ui/tb_ui.h"
 #include "ui/textedit_ui.h"
+#include "ui/wmap_ui.h"
+#include "ui/written_ui.h"
 
 typedef struct IntgameIsoWindowTypeInfo {
     /* 0000 */ TigRect rect;
@@ -23,56 +67,74 @@ typedef struct IntgameIsoWindowTypeInfo {
 
 static_assert(sizeof(IntgameIsoWindowTypeInfo) == 0x14, "wrong size");
 
-typedef struct S64C540 {
-    /* 0000 */ int field_0;
-    /* 0004 */ void* field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
-} S64C540;
-
-static_assert(sizeof(S64C540) == 0x18, "wrong size");
-
 static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
 static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
+static void sub_54AD00(int type, int value, int digits);
+static void sub_54AF10(TigRect* rect);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
+static bool iso_interface_message_filter(TigMessage* msg);
 static void sub_54DBF0(int btn, int window_type);
+static void sub_54EB60();
+static void sub_54EBF0();
+static void sub_54ECD0();
+static void sub_54ED30(S4F2810* a1);
+static void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location);
+static bool sub_5501C0();
+static bool sub_5503F0(int a1, int a2);
+static void iso_interface_window_disable(int window_type);
 static void sub_5509C0(const char* str, TigRect* rect);
-static void sub_550A10(tig_window_handle_t window_handle, const char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
-static void sub_550C60(int group);
-static void sub_550CD0(int group);
+static bool sub_550A10(tig_window_handle_t window_handle, char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags);
+static bool intgame_spells_init();
+static void intgame_spells_show_college_spells(int group);
+static void intgame_spells_hide_college_spells(int group);
 static bool sub_550D20();
 static void sub_550D60();
 static void iso_interface_window_enable(int window_type);
 static void sub_551660();
 static int sub_551740(int x, int y);
 static void sub_5517F0();
-static void sub_5518C0(int x, int y);
+static bool sub_5518C0(int x, int y);
+static void sub_551910(TigMessage* msg);
 static void sub_551A10(int64_t obj);
 static void sub_551F20();
 static void sub_551F40();
+static void sub_551F80();
+static bool sub_552050(TigMouseMessageData* a1, S4F2810* a2);
 static void sub_5520D0(int window_type, int a2);
 static void sub_552130(int window_type);
+static void intgame_clock_refresh();
 static void sub_552740(int64_t obj, int a2);
+static void sub_552770(UiMessage* ui_message);
 static void sub_5528E0();
 static void sub_552930();
 static void sub_552960(bool play_sound);
+static void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound);
+static void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window_handle_t window_handle);
+static void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int num, bool a4, tig_window_handle_t window_handle);
 static void sub_553960();
+static void sub_553A70(TigMessage* msg);
+static void sub_553F70(int64_t a1, int64_t a2, const char* a3);
 static void sub_554560(tig_window_handle_t window_handle, int art_num);
+static void sub_554640(int a1, int a2, TigRect* rect, int value);
+static void sub_554830(int64_t a1, int64_t a2);
 static void sub_554B00(tig_window_handle_t window_handle, int art_num, int x, int y);
+static int sub_554C20(int64_t item_obj);
+static void sub_554F10(int64_t a1, int64_t a2, const char* a3);
 static void sub_555780(char* buffer, int num, int min, int max, int a5, bool a6);
 static void sub_555910(int64_t obj, char* buffer);
 static void sub_555B50(int64_t obj, char* buffer);
 static void sub_555D80(int64_t a1, int64_t a2, const char* str);
+static void sub_555EC0(int64_t a1, int64_t a2, const char* a3);
+static void sub_556040(int64_t a1, int64_t a2, const char* a3);
+static void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y);
 static void sub_556B90(int a1);
+static void sub_556C20(int64_t obj);
 static void sub_556EA0(int64_t item_obj);
 static void intgame_mt_button_enable();
 static void intgame_mt_button_disable();
 static bool intgame_big_window_create();
 static void intgame_big_window_destroy();
 static bool intgame_big_window_message_filter(TigMessage* msg);
-static void sub_557AC0(int group, int index, UiButtonInfo* button_info);
 
 // 0x5C6378
 static tig_window_handle_t dword_5C6378[5] = {
@@ -177,7 +239,7 @@ static UiButtonInfo stru_5C65F8[] = {
 };
 
 // 0x5C6618
-static UiButtonInfo stru_5C6618[] = {
+static UiButtonInfo intgame_college_buttons[COLLEGE_COUNT] = {
     { 201, 497, -1, TIG_BUTTON_HANDLE_INVALID },
     { 226, 497, -1, TIG_BUTTON_HANDLE_INVALID },
     { 251, 497, -1, TIG_BUTTON_HANDLE_INVALID },
@@ -197,7 +259,7 @@ static UiButtonInfo stru_5C6618[] = {
 };
 
 // 0x5C6718
-static UiButtonInfo stru_5C6718[80] = {
+static UiButtonInfo intgame_spell_buttons[SPELL_COUNT] = {
     { 284, 528, -1, TIG_BUTTON_HANDLE_INVALID },
     { 334, 528, -1, TIG_BUTTON_HANDLE_INVALID },
     { 384, 528, -1, TIG_BUTTON_HANDLE_INVALID },
@@ -388,6 +450,112 @@ static TigRect stru_5C6F80 = { 648, 5, 128, 30 };
 // 0x5C6F90
 static UiButtonInfo stru_5C6F90 = { 0, 0, -1, TIG_BUTTON_HANDLE_INVALID };
 
+// 0x5C6FA0
+static int dword_5C6FA0[RACE_COUNT] = {
+    375, // racehumanicon.art
+    378, // racehelficon.art
+    376, // raceelficon.art
+    377, // racehelficon.art
+    379, // racegnomeicon.art
+    380, // racehalflingicon.art
+    381, // racehorcicon.art
+    382, // racehogreicon.art
+    376, // raceelficon.art
+    382, // racehogreicon.art
+    381, // racehorcicon.art
+};
+
+// 0x5C6FCC
+static int dword_5C6FCC[6] = {
+    634,
+    390,
+    389,
+    388,
+    387,
+    386,
+};
+
+// 0x5C6FE4
+static int dword_5C6FE4[15] = {
+    391,
+    391,
+    391,
+    391,
+    391,
+    391,
+    392,
+    391,
+    395,
+    391,
+    392,
+    391,
+    391,
+    391,
+    391,
+};
+
+// 0x5C7020
+static int dword_5C7020[4] = {
+    398,
+    399,
+    400,
+    401,
+};
+
+// 0x5C7030
+static int dword_5C7030[9] = {
+    402,
+    402,
+    405,
+    405,
+    405,
+    408,
+    405,
+    405,
+    402,
+};
+
+// 0x5C7054
+static int dword_5C7054[7] = {
+    0,
+    405,
+    405,
+    405,
+    405,
+    411,
+    414,
+};
+
+// 0x5C7070
+static dword_5C7070[7] = {
+    428,
+    429,
+    431,
+    430,
+    428,
+    462,
+    428,
+};
+
+// 0x5C708C
+static int dword_5C708C[] = {
+    438, // "levelupicon.art" - Level Up Icon
+    439, // "poisoned_icon.art" - Poisoned Icon
+    440, // "hexedicon.art" - Cursed Icon
+    441, // "blessicon.art" - Blessed Icon
+    442, // "exclaimation_icon.art" - Exclamation Icon
+    443, // "question_icon.art" - Question Icon
+    444, // "levelupicon.art" - Arcanum Icon
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
 // 0x5C70C8
 static TigRect stru_5C70C8 = { 290, 63, 291, 19 };
 
@@ -461,6 +629,12 @@ static UiButtonInfo stru_5C71D0[10] = {
     { 555, 37, 782, TIG_BUTTON_HANDLE_INVALID },
 };
 
+// 0x5C7270
+static UiButtonInfo stru_5C7270 = { 216, 47, 772, TIG_BUTTON_HANDLE_INVALID };
+
+// 0x5C7280
+static uint64_t qword_5C7280 = Tgt_Object;
+
 // 0x5C7288
 static tig_window_handle_t dword_5C7288 = TIG_WINDOW_HANDLE_INVALID;
 
@@ -507,6 +681,62 @@ static int dword_5C72B4[] = {
 
 // 0x5C7308
 static int dword_5C7308 = -1;
+
+// 0x5C730C
+static int dword_5C730C[8] = {
+    0,
+    4,
+    9,
+    13,
+    14,
+    18,
+    23,
+    27,
+};
+
+// 0x5C732C
+static unsigned int dword_5C732C[8] = {
+    0x40,
+    0x80,
+    0x100,
+    0x200,
+    0x400,
+    0x800,
+    0x20000,
+    0x40000,
+};
+
+// 0x5C734C
+static int dword_5C734C[8] = {
+    586,
+    588,
+    587,
+    583,
+    585,
+    584,
+    845,
+    846,
+};
+
+// 0x5C736C
+static int dword_5C736C[6] = {
+    210,
+    248,
+    210,
+    248,
+    210,
+    248,
+};
+
+// 0x5C7384
+static int dword_5C7384[6] = {
+    84,
+    84,
+    104,
+    104,
+    124,
+    124,
+};
 
 // 0x5C739C
 static int intgame_iso_window_width = 800;
@@ -644,7 +874,7 @@ static int dword_64C6C4;
 static int dword_64C6C8;
 
 // 0x64C6CC
-static void(*dword_64C6CC)(TigMessage* msg);
+static bool(*dword_64C6CC)(TigMessage* msg);
 
 // 0x64C6D0
 static int dword_64C6D0;
@@ -664,11 +894,14 @@ static bool dword_64C6E0;
 // 0x64C6E4
 static TigVideoBuffer* dword_64C6E4;
 
+// 0x64C6E8
+static bool dword_64C6E8;
+
 // 0x64C6F0
 static unsigned int intgame_iso_window_flags;
 
 // 0x739F88
-static tig_font_handle_t dword_739F88;
+tig_font_handle_t dword_739F88;
 
 // 0x549B70
 bool intgame_init(GameInitInfo* init_info)
@@ -690,43 +923,43 @@ bool intgame_init(GameInitInfo* init_info)
     tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 255, 255);
-    tig_font_create_(&font, &dword_739F88);
+    tig_font_create(&font, &dword_739F88);
 
     font.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(100, 100, 255);
-    tig_font_create_(&font, &dword_64C470);
+    tig_font_create(&font, &dword_64C470);
 
     font.flags = 0;
     tig_art_interface_id_create(27, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 114, 0);
-    tig_font_create_(&font, &dword_64C538);
+    tig_font_create(&font, &dword_64C538);
 
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 255, 255);
-    tig_font_create_(&font, &dword_64C498);
+    tig_font_create(&font, &dword_64C498);
 
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 0, 0);
-    tig_font_create_(&font, &dword_64C49C);
+    tig_font_create(&font, &dword_64C49C);
 
     font.flags = 0;
     tig_art_interface_id_create(229, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(0, 0, 255);
-    tig_font_create_(&font, &dword_64C500);
+    tig_font_create(&font, &dword_64C500);
 
     font.flags = 0;
     tig_art_interface_id_create(230, 0, 0, 0, &(font.art_id));
     font.str = NULL;
     font.color = tig_color_make(255, 255, 255);
-    tig_font_create_(&font, &dword_64C4A0);
+    tig_font_create(&font, &dword_64C4A0);
 
     memcpy(dword_64C484, dword_5C6524, sizeof(dword_64C484));
     dword_64C534 = 2;
@@ -743,7 +976,7 @@ void intgame_reset()
     dword_64C6D8 = 0;
     sub_553990();
     sub_57DAB0();
-    intgame_clock_process_callback();
+    intgame_clock_process_callback(NULL);
     sub_552130(0);
 
     for (index = 0; index < 10; index++) {
@@ -845,7 +1078,7 @@ bool intgame_load(GameLoadInfo* load_info)
     if (tig_file_fread(&dword_64C530, sizeof(dword_64C530), 1, load_info->stream) != 1) return false;
 
     if (intgame_iso_window_type == 1) {
-        tig_button_state_change(stru_5C6618[dword_64C530].button_handle, TIG_BUTTON_STATE_PRESSED);
+        tig_button_state_change(intgame_college_buttons[dword_64C530].button_handle, TIG_BUTTON_STATE_PRESSED);
     }
 
     if (!sub_57DBA0(load_info)) return false;
@@ -870,7 +1103,7 @@ bool intgame_load(GameLoadInfo* load_info)
 }
 
 // 0x54A330
-bool iso_interface_create(tig_window_handle_t window_handle)
+void iso_interface_create(tig_window_handle_t window_handle)
 {
     TigWindowData window_data;
     TigVideoBufferCreateInfo vb_create_info;
@@ -899,16 +1132,17 @@ bool iso_interface_create(tig_window_handle_t window_handle)
     }
 
     window_data.flags = TIG_WINDOW_FLAG_0x02;
-    window_data.message_filter = sub_54C8E0;
+    window_data.message_filter = iso_interface_message_filter;
 
+    art_blit_info.flags = 0;
     art_blit_info.src_rect = &(window_data.rect);
     art_blit_info.dst_rect = &(window_data.rect);
 
     for (index = 0; index < 2; index++) {
         if (index == 0) {
-            tig_art_interface_id_create(185u, 0, 0, 0, &art_id);
+            tig_art_interface_id_create(185, 0, 0, 0, &art_id);
         } else {
-            tig_art_interface_id_create(184u, 0, 0, 0, &art_id);
+            tig_art_interface_id_create(184, 0, 0, 0, &art_id);
         }
 
         if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
@@ -986,7 +1220,7 @@ bool iso_interface_create(tig_window_handle_t window_handle)
 
     dword_64C6B8 = 0;
     dword_64C634[0] = 0;
-    sub_4F25B0(4, 0x8200);
+    sub_4F25B0(Tgt_Obj_No_T_Wall | Tgt_Tile);
     dword_64C6BC = 0;
 
     font_desc.str = NULL;
@@ -1012,7 +1246,7 @@ bool iso_interface_create(tig_window_handle_t window_handle)
     }
     dword_64C47C[1] = art_frame_data.width;
 
-    intgame_clock_process_callback();
+    intgame_clock_process_callback(NULL);
     sub_54AEE0(0);
     sub_54AEE0(1);
 
@@ -1025,7 +1259,7 @@ bool iso_interface_create(tig_window_handle_t window_handle)
     sub_54B3C0();
 
     for (index = 0; index < 10; index++) {
-        stru_64C540[index].field_4 = MALLOC(200);
+        stru_64C540[index].str = MALLOC(200);
     }
 
     dword_5C63D0 = sub_551740(stru_5C6548[8].x, stru_5C6548[8].y);
@@ -1077,7 +1311,7 @@ void iso_interface_destroy()
         tig_font_destroy(dword_64C670);
 
         for (index = 0; index < 10; index++) {
-            FREE(stru_64C540[index].field_4);
+            FREE(stru_64C540[index].str);
         }
 
         for (index = 0; index < 5; index++) {
@@ -1177,9 +1411,78 @@ void sub_54AC70(UiButtonInfo* button_info)
 }
 
 // 0x54AD00
-void sub_54AD00()
+void sub_54AD00(int type, int value, int digits)
 {
-    // TODO: Incomplete.
+    IntgameIsoWindowTypeInfo* info;
+    TigRect rect;
+    TigFont font_desc;
+    char format[12];
+    char str[80];
+    int pos;
+
+    if (!dword_64C6B4) {
+        return;
+    }
+
+    if (type == 4 && intgame_iso_window_type != 8) {
+        return;
+    }
+
+    info = &(stru_5C63F8[type]);
+
+    tig_font_push(dword_64C670);
+
+    if (type != 5) {
+        info->rect.height++;
+        tig_window_fill(info->window_handle,
+            &(info->rect),
+            tig_color_make(0, 0, 0));
+        info->rect.height--;
+    }
+
+    if (value < 0 && (type == 4 || type == 3)) {
+        if (value == -1) {
+            for (pos = 0; pos < digits; pos++) {
+                str[pos] = '-';
+            }
+            str[pos] = '\0';
+        } else {
+            for(pos = 0; pos < digits; pos++) {
+                str[pos] = '?';
+            }
+            str[pos] = '\0';
+        }
+    } else {
+        sprintf(format, "%%0%dd", digits);
+        sprintf(str, format, value);
+    }
+
+    font_desc.str = str;
+    font_desc.width = 0;
+    sub_535390(&font_desc);
+
+    if (font_desc.width < info->rect.width) {
+        rect.x = info->rect.x + (info->rect.width - font_desc.width) / 2;
+        rect.y = info->rect.y + (info->rect.height - font_desc.height) / 2;
+        rect.width = font_desc.width;
+        rect.height = font_desc.height;
+    } else {
+        font_desc.width = info->rect.width;
+        sub_535390(&font_desc);
+
+        if (font_desc.height > info->rect.height) {
+            tig_font_pop();
+            return;
+        }
+
+        rect.x = info->rect.x;
+        rect.y = info->rect.y + (info->rect.height - font_desc.height) / 2;
+        rect.width = font_desc.width;
+        rect.height = font_desc.height;
+    }
+
+    tig_window_text_write(info->window_handle, str, &rect);
+    tig_font_pop();
 }
 
 // 0x54AEE0
@@ -1196,9 +1499,145 @@ void sub_54AEE0(int a1)
 }
 
 // 0x54AF10
-void sub_54AF10()
+void sub_54AF10(TigRect* rect)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    TigRect rects[2];
+    int nums[2];
+    int poison;
+    int idx;
+    TigArtBlitInfo art_blit_info;
+    TigRect blit_rect;
+    TigRect tmp_rect;
+    TigRect dst_rect;
+    int value;
+    int fullness;
+    int filled_height;
+    int empty_height;
+
+    if (!dword_64C6B0) {
+        return;
+    }
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    rects[0] = stru_5C63D8;
+    rects[1] = stru_5C63E8;
+
+    poison = stat_level(pc_obj, STAT_POISON_LEVEL);
+    nums[0] = poison > 0 ? 17 : 18;
+    nums[1] = 19;
+
+    for (idx = 0; idx < 2; idx++) {
+        tmp_rect = rects[idx];
+        if (tig_rect_intersection(&tmp_rect, rect, &blit_rect) == TIG_OK) {
+            blit_rect.x -= stru_5C6390[1].x;
+            blit_rect.y -= stru_5C6390[1].y;
+            tig_art_interface_id_create(184, 0, 0, 0, &(art_blit_info.art_id));
+
+            art_blit_info.src_rect = &blit_rect;
+            art_blit_info.dst_rect = &blit_rect;
+            art_blit_info.flags = 0;
+            tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
+        }
+
+        if (idx == 0) {
+            value = sub_43D5A0(pc_obj);
+            if (value != 0) {
+                fullness = 100 * sub_43D600(pc_obj) / value;
+            } else {
+                fullness = 50;
+            }
+        } else {
+            value = sub_45D670(pc_obj);
+            if (value != 0) {
+                fullness = 100 * sub_45D700(pc_obj) / value;
+            } else {
+                fullness = 50;
+            }
+        }
+
+        filled_height = fullness * tmp_rect.height / 100;
+        empty_height = tmp_rect.height - filled_height;
+        if (empty_height > 0) {
+            tmp_rect.x = rects[idx].x;
+            tmp_rect.y = rects[idx].y;
+            tmp_rect.width = rects[idx].width;
+            tmp_rect.height = empty_height;
+
+            if (tig_rect_intersection(&tmp_rect, rect, &blit_rect) == TIG_OK) {
+                tmp_rect.x = blit_rect.x - tmp_rect.x;
+                tmp_rect.y = blit_rect.y - tmp_rect.y;
+                tmp_rect.width = blit_rect.width;
+                tmp_rect.height = blit_rect.height;
+                tig_art_interface_id_create(20, 0, 0, 0, &(art_blit_info.art_id));
+
+                dst_rect.width = tmp_rect.width;
+                dst_rect.height = tmp_rect.height;
+                dst_rect.x = blit_rect.x - stru_5C6390[1].x;
+                dst_rect.y = blit_rect.y - stru_5C6390[1].y;
+
+                art_blit_info.flags = 0;
+                art_blit_info.src_rect = &tmp_rect;
+                art_blit_info.dst_rect = &dst_rect;
+                tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
+            }
+        }
+
+        if (filled_height > 0) {
+            int v14;
+            int v15;
+            int v16;
+
+            tmp_rect.x = rects[idx].x;
+            tmp_rect.y = rects[idx].y;
+            tmp_rect.width = rects[idx].width;
+
+            v14 = 8;
+            v15 = filled_height + 8;
+            v16 = empty_height - 8;
+            if ( v15 > rects[idx].height )
+            {
+                v14 += rects[idx].height - v15;
+                v16 += v15 - rects[idx].height;
+                v15 = rects[idx].height;
+            }
+            tmp_rect.y += v16;
+            tmp_rect.height = v15;
+
+            if (tig_rect_intersection(&tmp_rect, rect, &blit_rect) == TIG_OK) {
+                tmp_rect.x = blit_rect.x - tmp_rect.x;
+                tmp_rect.y = blit_rect.y - v14 - tmp_rect.y + 8;
+                tmp_rect.width = blit_rect.width;
+                tmp_rect.height = blit_rect.height;
+                tig_art_interface_id_create(nums[idx], 0, 0, 0, &(art_blit_info.art_id));
+
+                dst_rect.x = blit_rect.x - stru_5C6390[1].x;
+                dst_rect.width = tmp_rect.width;
+                dst_rect.y = blit_rect.y - stru_5C6390[1].y;
+                dst_rect.height = tmp_rect.height;
+
+                art_blit_info.flags = 0;
+                art_blit_info.src_rect = &tmp_rect;
+                art_blit_info.dst_rect = &dst_rect;
+                tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
+            }
+        }
+
+        if (idx == 0) {
+            sub_54AD00(0, sub_43D600(pc_obj), 3);
+            if (poison > 0) {
+                sub_54AD00(5, poison, 3);
+            }
+        } else {
+            sub_54AD00(1, sub_45D700(pc_obj), 3);
+        }
+    }
+
+    compact_ui_draw();
 }
 
 // 0x54B3A0
@@ -1232,7 +1671,9 @@ void sub_54B3C0()
                 art_num = dword_5C728C[ammo_type];
             } else {
                 qty = obj_field_int32_get(item_obj, OBJ_F_ITEM_MANA_STORE);
-                art_num = 469;
+                if (qty > 0) {
+                    art_num = 469;
+                }
             }
         }
 
@@ -1247,7 +1688,7 @@ void sub_54B3C0()
 
     if (qword_64C688 != OBJ_HANDLE_NULL
         && intgame_iso_window_type == 8) {
-        if ((obj_field_in32_get(qword_64C688, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0) {
+        if ((obj_field_int32_get(qword_64C688, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0) {
             mana = obj_field_int32_get(qword_64C688, OBJ_F_ITEM_SPELL_MANA_STORE);
             if (mana >= 0) {
                 sub_54AD00(4, mana, 3);
@@ -1295,7 +1736,7 @@ void intgame_ammo_icon_refresh(tig_art_id_t art_id)
 }
 
 // 0x54B5D0
-void sub_54B5D0(TigMessage* msg)
+bool sub_54B5D0(TigMessage* msg)
 {
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
@@ -1322,7 +1763,8 @@ void sub_54B5D0(TigMessage* msg)
             return dword_64C6CC(msg);
         }
 
-        if (msg->data.keyboard.key != DIK_ESCAPE && msg->data.keyboard.key != DIK_O) {
+        if (msg->data.keyboard.key != DIK_ESCAPE
+            && msg->data.keyboard.key != DIK_O) {
             return dword_64C6CC(msg);
         }
 
@@ -1342,7 +1784,7 @@ void sub_54B5D0(TigMessage* msg)
     }
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
-        if (msg->data.mouse.event = TIG_MESSAGE_MOUSE_MOVE || sub_541680()) {
+        if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_MOVE || sub_541680()) {
             return false;
         }
 
@@ -1486,7 +1928,7 @@ void sub_54B5D0(TigMessage* msg)
                 if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
                     sub_5700C0();
                 } else {
-                    sub_57B180(0, 0);
+                    sub_57B180(OBJ_HANDLE_NULL);
                 }
                 return true;
             }
@@ -1519,10 +1961,10 @@ void sub_54B5D0(TigMessage* msg)
                 break;
             case 1:
                 for (index = 0; index < 5; index++) {
-                    if (stru_5C6718[5 * dword_64C530 + index].art_num != -1
-                        && msg->data.button.button_handle == stru_5C6718[5 * dword_64C530 + index].button_handle) {
+                    if (intgame_spell_buttons[5 * dword_64C530 + index].art_num != -1
+                        && msg->data.button.button_handle == intgame_spell_buttons[5 * dword_64C530 + index].button_handle) {
                         if (sub_4B1950(player_get_pc_obj(), 5 * dword_64C530 + index)) {
-                            sub_57EFA0(3, 5 * dword_64C530 + index, 0, 0);
+                            sub_57EFA0(3, 5 * dword_64C530 + index, OBJ_HANDLE_NULL);
                             sub_57BC70(player_get_pc_obj(), 5 * dword_64C530 + index);
                         }
                     }
@@ -1531,7 +1973,7 @@ void sub_54B5D0(TigMessage* msg)
             case 2:
                 for (index = 0; index < 4; index++) {
                     if (msg->data.button.button_handle == stru_5C6C68[index].button_handle) {
-                        sub_57EFA0(2, index, 0, 0);
+                        sub_57EFA0(2, index, OBJ_HANDLE_NULL);
                         sub_579FA0(player_get_pc_obj(), index);
                         return true;
                     }
@@ -1552,17 +1994,17 @@ void sub_54B5D0(TigMessage* msg)
                 break;
             case 6:
                 if (msg->data.button.button_handle == stru_5C6CA8[0].button_handle) {
-                    sub_5672A0();
+                    textedit_ui_clear();
                     return true;
                 }
 
                 if (msg->data.button.button_handle == stru_5C6CA8[1].button_handle) {
-                    sub_5672D0();
+                    textedit_ui_restore();
                     return true;
                 }
 
                 if (msg->data.button.button_handle == stru_5C6CA8[2].button_handle) {
-                    sub_567320();
+                    textedit_ui_commit();
                     return true;
                 }
                 break;
@@ -1604,7 +2046,7 @@ void sub_54B5D0(TigMessage* msg)
         } // msg->data.button.state == TIG_BUTTON_STATE_RELEASED
 
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
-            if (msg->data.button.state == stru_5C6480[1].button_handle) {
+            if (msg->data.button.button_handle == stru_5C6480[1].button_handle) {
                 if (tig_button_state_get(stru_5C6480[0].button_handle, &button_state) == TIG_OK
                     && button_state == TIG_BUTTON_STATE_PRESSED) {
                     tig_button_state_change(stru_5C6480[0].button_handle, TIG_BUTTON_STATE_RELEASED);
@@ -1613,7 +2055,7 @@ void sub_54B5D0(TigMessage* msg)
                 return true;
             }
 
-            if (msg->data.button.state == stru_5C6480[0].button_handle) {
+            if (msg->data.button.button_handle == stru_5C6480[0].button_handle) {
                 if (tig_button_state_get(stru_5C6480[1].button_handle, &button_state) == TIG_OK
                     && button_state == TIG_BUTTON_STATE_PRESSED) {
                     tig_button_state_change(stru_5C6480[1].button_handle, TIG_BUTTON_STATE_RELEASED);
@@ -1626,23 +2068,23 @@ void sub_54B5D0(TigMessage* msg)
             case 1:
                 for (index = 0; index < COLLEGE_COUNT; index++) {
                     if (college_get_art_num(index) != -1
-                        && msg->data.button.state == stru_5C6618[index].button_handle) {
-                        sub_550CD0(dword_64C530);
+                        && msg->data.button.button_handle == intgame_college_buttons[index].button_handle) {
+                        intgame_spells_hide_college_spells(dword_64C530);
                         dword_64C530 = index;
-                        sub_550C60(index);
+                        intgame_spells_show_college_spells(dword_64C530);
                         return true;
                     }
                 }
                 break;
             case 9:
-                if (msg->data.button.state == stru_5C6D08[1].button_handle) {
+                if (msg->data.button.button_handle == stru_5C6D08[1].button_handle) {
                     if (dword_64C678 < dword_64C478) {
                         dword_64C678++;
                         sub_553960();
                     }
                     return true;
                 }
-                if (msg->data.button.state == stru_5C6D08[2].button_handle) {
+                if (msg->data.button.button_handle == stru_5C6D08[2].button_handle) {
                     if (dword_64C678 > 0) {
                         dword_64C678--;
                         sub_553960();
@@ -1652,7 +2094,7 @@ void sub_54B5D0(TigMessage* msg)
                 break;
             case 6:
                 for (index = 3; index < 6; index++) {
-                    if (msg->data.button.state == stru_5C6CA8[index].button_handle) {
+                    if (msg->data.button.button_handle == stru_5C6CA8[index].button_handle) {
                         sub_564000(index - 3);
                         return true;
                     }
@@ -1677,9 +2119,9 @@ void sub_54B5D0(TigMessage* msg)
                 datetime_format_date(&datetime, time_str_buffer);
                 sprintf(&(buffer[strlen(buffer)]), "   %s: %s", mes_file_entry.str, time_str_buffer);
 
-                v1.type = 6;
-                v1.str = buffer;
-                sub_550750(&v1);
+                ui_message.type = 6;
+                ui_message.str = buffer;
+                sub_550750(&ui_message);
                 return true;
             }
 
@@ -1735,13 +2177,13 @@ void sub_54B5D0(TigMessage* msg)
             switch (intgame_iso_window_type) {
             case 1:
                 for (index = 0; index < 16; index++) {
-                    if (msg->data.button.button_handle == stru_5C6618[index].button_handle) {
+                    if (msg->data.button.button_handle == intgame_college_buttons[index].button_handle) {
                         sub_550860(index);
                         return true;
                     }
                 }
                 for (index = 0; index < 5; index++) {
-                    if (msg->data.button.button_handle == stru_5C6718[5 * dword_64C530 + index].button_handle) {
+                    if (msg->data.button.button_handle == intgame_spell_buttons[5 * dword_64C530 + index].button_handle) {
                         sub_5507E0(5 * dword_64C530 + index);
                         return true;
                     }
@@ -1766,7 +2208,7 @@ void sub_54B5D0(TigMessage* msg)
             case 0:
                 if (msg->data.button.button_handle == stru_5C65F8[1].button_handle) {
                     if (!sub_573620()) {
-                        art_id = tig_mouse_get_cursor_art_id();
+                        art_id = tig_mouse_cursor_get_art_id();
                         switch (tig_art_num_get(art_id)) {
                         case 0:
                         case 353:
@@ -1781,7 +2223,7 @@ void sub_54B5D0(TigMessage* msg)
                 }
                 if (msg->data.button.button_handle == stru_5C65F8[0].button_handle) {
                     if (!sub_573620()) {
-                        art_id = tig_mouse_get_cursor_art_id();
+                        art_id = tig_mouse_cursor_get_art_id();
                         switch (tig_art_num_get(art_id)) {
                         case 0:
                         case 353:
@@ -2000,7 +2442,7 @@ void sub_54B5D0(TigMessage* msg)
             break;
         case 'S':
         case 's':
-            sub_57B180(0, 0);
+            sub_57B180(OBJ_HANDLE_NULL);
             break;
         case 'T':
         case 't':
@@ -2025,9 +2467,11 @@ void sub_54B5D0(TigMessage* msg)
 }
 
 // 0x54C8E0
-void sub_54C8E0()
+bool iso_interface_message_filter(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    // NOTE: Strange case - this function is huge but it's binary identical to
+    // 0x54B5D0.
+    return sub_54B5D0(msg);
 }
 
 // 0x54DBF0
@@ -2051,85 +2495,1389 @@ void sub_54DBF0(int btn, int window_type)
 // 0x54DC80
 bool sub_54DC80(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int index;
+
+    // FIXME: No check for msg type.
+    if (msg->data.button.state != TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
+        return false;
+    }
+
+    sub_54ECD0();
+
+    if (msg->data.button.button_handle == stru_5C6480[1].button_handle
+        || msg->data.button.button_handle == stru_5C6480[0].button_handle
+        || msg->data.button.button_handle == stru_5C6480[2].button_handle
+        || msg->data.button.button_handle == stru_5C6480[3].button_handle
+        || msg->data.button.button_handle == stru_5C64C0[0].button_handle
+        || msg->data.button.button_handle == stru_5C64C0[1].button_handle
+        || msg->data.button.button_handle == stru_5C64C0[2].button_handle
+        || msg->data.button.button_handle == stru_5C64C0[3].button_handle
+        || msg->data.button.button_handle == stru_5C64C0[4].button_handle
+        || msg->data.button.button_handle == stru_5C6538.button_handle) {
+        dword_64C674 = -1;
+        sub_550720();
+        return true;
+    }
+
+    switch (intgame_iso_window_type) {
+    case 0:
+        if (msg->data.button.button_handle == stru_5C65F8[1].button_handle
+            || msg->data.button.button_handle == stru_5C65F8[0].button_handle) {
+            if (!sub_573620()) {
+                sub_553990();
+            }
+            return true;
+        }
+        if (msg->data.button.button_handle == stru_5C6F90.button_handle) {
+            sub_550930();
+        }
+        break;
+    case 1:
+    case 2:
+    case 8:
+        sub_550930();
+        break;
+    }
+
+    for (index = 0; index < 5; index++) {
+        if (msg->data.button.button_handle == stru_5C6E40[index].button_handle) {
+            sub_550930();
+            return true;
+        }
+    }
+
+    for (index = 0; index < 5; index++) {
+        if (msg->data.button.button_handle == stru_5C6E90[index].button_handle) {
+            sub_550930();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x54DE50
 void sub_54DE50(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t loc = 0;
+    S4F2810 v1;
+    TigMouseState mouse_state;
+    TigMessage fake_mouse_move;
+
+    pc_obj = player_get_pc_obj();
+
+    if (sub_4B6D70()) {
+        if (sub_4B6D80() != pc_obj) {
+            return;
+        }
+    }
+
+    if (msg->type == TIG_MESSAGE_KEYBOARD
+        && !textedit_ui_is_focused()
+        && !msg->data.keyboard.pressed
+        && (msg->data.keyboard.key >= DIK_1
+            || msg->data.keyboard.key <= DIK_0)) {
+        sub_57F1D0(msg->data.keyboard.key - DIK_1);
+    }
+
+    switch (sub_551A00()) {
+    case 0:
+        switch (msg->type) {
+        case TIG_MESSAGE_MOUSE:
+            switch (msg->data.mouse.event) {
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN:
+                if (sub_5517A0(msg)
+                    && sub_552050(&(msg->data.mouse), &v1)) {
+                    if (v1.is_loc) {
+                        if (sub_573620() != OBJ_HANDLE_NULL) {
+                            int64_t v2;
+
+                            v2 = sub_573620();
+                            if (sub_57DE00()) {
+                                sub_57E8B0();
+                                sub_573740(v2, false);
+                                if (sub_573620() != OBJ_HANDLE_NULL) {
+                                    v2 = sub_573620();
+                                }
+                            }
+
+                            if (!sub_57DE00()) {
+                                if (sub_45D790(pc_obj)) {
+                                    sub_573840();
+                                    sub_553990();
+                                    sub_434F80(pc_obj, v2, v1.loc);
+                                } else {
+                                    sub_575770();
+                                }
+                            }
+                        } else if (sub_45D790(pc_obj)
+                            && !tig_kb_is_key_pressed(DIK_LSHIFT)
+                            && !tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                            if ((tig_kb_is_key_pressed(DIK_LCONTROL)
+                                    || tig_kb_is_key_pressed(DIK_RCONTROL)
+                                    || tig_kb_is_key_pressed(DIK_NUMLOCK))
+                                && !settings_get_value(&settings, "always run")) {
+                                sub_433C80(pc_obj, v1.loc);
+                            } else {
+                                sub_433640(pc_obj, v1.loc);
+                            }
+
+                            if (dword_64C6D8) {
+                                sub_436CF0();
+                            }
+                            dword_64C6D8 = true;
+                        }
+                    } else if (!dword_64C6D8) {
+                        sub_54ED30(&v1);
+                    }
+                }
+                break;
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+                dword_64C6D8 = false;
+                break;
+            case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
+                if (pc_obj != OBJ_HANDLE_NULL) {
+                    unsigned int spell_flags;
+                    unsigned int critter_flags;
+
+                    spell_flags = obj_field_int32_get(pc_obj, OBJ_F_SPELL_FLAGS);
+                    critter_flags = obj_field_int32_get(pc_obj, OBJ_F_CRITTER_FLAGS);
+                    if ((spell_flags & OSF_STONED) == 0
+                        && (critter_flags & (OCF_PARALYZED | OCF_STUNNED)) == 0
+                        && sub_45D790(pc_obj)
+                        && !sub_45D730(pc_obj)) {
+                        if (combat_critter_is_combat_mode_active(pc_obj)) {
+                            if (sub_44E830(pc_obj, 2, NULL)
+                                || !sub_423300(pc_obj, 0)) {
+                                sub_54EBF0();
+                            }
+                        } else {
+                            if (critter_is_concealed(pc_obj)
+                                && !sub_423300(pc_obj, NULL)) {
+                                critter_set_concealed(pc_obj, false);
+                            }
+                        }
+
+                        if (sub_424070(pc_obj, 3, 0, 0)) {
+                            sub_4B4320(pc_obj);
+
+                            tig_mouse_get_state(&mouse_state);
+                            if (sub_4B8730(mouse_state.x, mouse_state.y, &loc)
+                                && sub_5517A0(msg)) {
+                                int64_t pc_loc;
+                                tig_art_id_t aid;
+                                int rotation;
+
+                                pc_loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
+                                aid = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
+                                rotation = sub_4B8D50(pc_loc, loc);
+                                if (!sub_423300(pc_obj, 0)) {
+                                    sub_433440(pc_obj, rotation);
+                                } else if (sub_44E830(pc_obj, 2, 0)) {
+                                    object_set_current_aid(pc_obj, tig_art_id_rotation_set(aid, rotation));
+                                }
+                            }
+                        }
+                    }
+
+                    if (sub_573620()) {
+                        sub_575770();
+                        sub_553990();
+                    }
+                }
+                break;
+            case TIG_MESSAGE_MOUSE_IDLE:
+                sub_551910(msg);
+            }
+            break;
+        case TIG_MESSAGE_KEYBOARD:
+            if (!textedit_ui_is_focused()
+                && !msg->data.keyboard.pressed) {
+                switch (msg->data.keyboard.key) {
+                case DIK_F1:
+                case DIK_F2:
+                case DIK_F3:
+                case DIK_F4:
+                case DIK_F5:
+                case DIK_F6:
+                    intgame_get_location_under_cursor(&loc);
+                    sub_4C3BE0(msg->data.keyboard.key - DIK_F1, loc);
+                    break;
+                case DIK_HOME:
+                    sub_54EB60();
+                    break;
+                }
+            }
+            break;
+        case TIG_MESSAGE_PING:
+            if (tig_mouse_get_state(&mouse_state) == TIG_OK) {
+                fake_mouse_move.timestamp = msg->timestamp;
+                fake_mouse_move.type = TIG_MESSAGE_MOUSE;
+                fake_mouse_move.data.mouse.x = mouse_state.x;
+                fake_mouse_move.data.mouse.y = mouse_state.y;
+                fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
+                fake_mouse_move.data.mouse.z = mouse_state.z;
+                sub_553A70(&fake_mouse_move);
+            }
+            break;
+        }
+        return;
+    case 1:
+        switch (msg->type) {
+        case TIG_MESSAGE_MOUSE:
+            switch (msg->data.mouse.event) {
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+                if (!inven_ui_is_created()) {
+                    if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
+                        sub_57C110(&v1);
+                    } else if (sub_4F2D10() == 0x100000) {
+                        sub_57BC30();
+                    }
+                }
+                break;
+            case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
+                sub_57BFF0();
+                break;
+            case TIG_MESSAGE_MOUSE_IDLE:
+                sub_551910(msg);
+                break;
+            }
+            break;
+        case TIG_MESSAGE_KEYBOARD:
+            if (!textedit_ui_is_focused()) {
+                if (!msg->data.keyboard.pressed) {
+                    switch (msg->data.keyboard.key) {
+                    case DIK_LMENU:
+                    case DIK_RMENU:
+                        if (!tig_kb_is_key_pressed(DIK_LMENU)
+                            && !tig_kb_is_key_pressed(DIK_RMENU)) {
+                            sub_57C0E0();
+                        }
+                        break;
+                    case DIK_F1:
+                    case DIK_F2:
+                    case DIK_F3:
+                    case DIK_F4:
+                    case DIK_F5:
+                    case DIK_F6:
+                        intgame_get_location_under_cursor(&loc);
+                        sub_4C3BE0(msg->data.keyboard.key - DIK_F1, loc);
+                        break;
+                    case DIK_HOME:
+                        sub_54EB60();
+                        break;
+                    }
+                } else {
+                    switch (msg->data.keyboard.key) {
+                    case DIK_LMENU:
+                    case DIK_RMENU:
+                        sub_57C0B0();
+                        break;
+                    }
+                }
+            }
+            break;
+        case TIG_MESSAGE_PING:
+            if (tig_mouse_get_state(&mouse_state) == TIG_OK) {
+                fake_mouse_move.timestamp = msg->timestamp;
+                fake_mouse_move.type = TIG_MESSAGE_MOUSE;
+                fake_mouse_move.data.mouse.x = mouse_state.x;
+                fake_mouse_move.data.mouse.y = mouse_state.y;
+                fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
+                fake_mouse_move.data.mouse.z = mouse_state.z;
+                sub_553A70(&fake_mouse_move);
+            }
+            break;
+        }
+        return;
+    case 2:
+        switch (msg->type) {
+        case TIG_MESSAGE_MOUSE:
+            switch (msg->data.mouse.event) {
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+                if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
+                    sub_57A1F0(&v1);
+                }
+                break;
+            case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
+                sub_57A1A0();
+                break;
+            }
+        }
+        return;
+    case 3:
+        switch (msg->type) {
+        case TIG_MESSAGE_MOUSE:
+            switch (msg->data.mouse.event) {
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN:
+                if (sub_5517A0(msg)
+                    && sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)
+                    && v1.is_loc
+                    && !sub_573620()
+                    && !sub_45D8D0(pc_obj)
+                    && !tig_kb_is_key_pressed(DIK_LSHIFT)
+                    && !tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                    if ((tig_kb_is_key_pressed(DIK_LCONTROL)
+                            || tig_kb_is_key_pressed(DIK_RCONTROL)
+                            || tig_kb_is_key_pressed(DIK_NUMLOCK))
+                        && !settings_get_value(&settings, "always run")) {
+                        sub_433C80(pc_obj, v1.loc);
+                    } else {
+                        sub_433640(pc_obj, v1.loc);
+                    }
+
+                    if (dword_64C6D8) {
+                        sub_436CF0();
+                    }
+                    dword_64C6D8 = true;
+                }
+                break;
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+                dword_64C6D8 = false;
+                break;
+            case TIG_MESSAGE_MOUSE_IDLE:
+                sub_551910(msg);
+                break;
+            }
+            break;
+        case TIG_MESSAGE_PING:
+            if (!dword_64C6CC
+                && tig_mouse_get_state(&mouse_state) == TIG_OK) {
+                fake_mouse_move.timestamp = msg->timestamp;
+                fake_mouse_move.type = TIG_MESSAGE_MOUSE;
+                fake_mouse_move.data.mouse.x = mouse_state.x;
+                fake_mouse_move.data.mouse.y = mouse_state.y;
+                fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
+                fake_mouse_move.data.mouse.z = mouse_state.z;
+                sub_553A70(&fake_mouse_move);
+            }
+            break;
+        }
+        return;
+    case 16:
+        switch (msg->type) {
+        case TIG_MESSAGE_MOUSE:
+            switch (msg->data.mouse.event) {
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+                if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
+                    sub_571CB0(&v1);
+                } else if (sub_4F2D10() == 0x100000) {
+                    sub_57BC30();
+                }
+                break;
+            case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
+                sub_571C80();
+                break;
+            case TIG_MESSAGE_MOUSE_IDLE:
+                sub_551910(msg);
+                break;
+            }
+            break;
+        case TIG_MESSAGE_PING:
+            if (tig_mouse_get_state(&mouse_state) == TIG_OK) {
+                fake_mouse_move.timestamp = msg->timestamp;
+                fake_mouse_move.type = TIG_MESSAGE_MOUSE;
+                fake_mouse_move.data.mouse.x = mouse_state.x;
+                fake_mouse_move.data.mouse.y = mouse_state.y;
+                fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
+                fake_mouse_move.data.mouse.z = mouse_state.z;
+                sub_553A70(&fake_mouse_move);
+            }
+            break;
+        }
+        return;
+    case 18:
+        switch (msg->type) {
+        case TIG_MESSAGE_MOUSE:
+            switch (msg->data.mouse.event) {
+            case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
+                if (sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)) {
+                    sub_56B180(&v1);
+                }
+                break;
+            case TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP:
+                sub_56B280();
+                break;
+            case TIG_MESSAGE_MOUSE_IDLE:
+                sub_551910(msg);
+                break;
+            }
+            break;
+        case TIG_MESSAGE_KEYBOARD:
+            if (textedit_ui_is_focused()
+                && !msg->data.keyboard.pressed) {
+                switch (msg->data.keyboard.key) {
+                case DIK_F1:
+                case DIK_F2:
+                case DIK_F3:
+                case DIK_F4:
+                case DIK_F5:
+                case DIK_F6:
+                    intgame_get_location_under_cursor(&loc);
+                    sub_4C3BE0(msg->data.keyboard.key - DIK_F1, loc);
+                    break;
+                case DIK_HOME:
+                    sub_54EB60();
+                    break;
+                }
+            }
+            break;
+        case TIG_MESSAGE_PING:
+            if (tig_mouse_get_state(&mouse_state) == TIG_OK) {
+                fake_mouse_move.timestamp = msg->timestamp;
+                fake_mouse_move.type = TIG_MESSAGE_MOUSE;
+                fake_mouse_move.data.mouse.x = mouse_state.x;
+                fake_mouse_move.data.mouse.y = mouse_state.y;
+                fake_mouse_move.data.mouse.event = TIG_MESSAGE_MOUSE_MOVE;
+                fake_mouse_move.data.mouse.z = mouse_state.z;
+                sub_553A70(&fake_mouse_move);
+            }
+            break;
+        }
+        return;
+    }
 }
 
 // 0x54EA80
-void sub_54EA80()
+void sub_54EA80(S4F2810* a1)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    S4F2680 v1;
+
+    pc_obj = player_get_pc_obj();
+
+    if (!sub_4B6D70() || sub_4B6D80() == pc_obj) {
+        v1.field_0 = pc_obj;
+        v1.field_8 = pc_obj;
+        v1.field_10 = a1;
+
+        switch (sub_551A00()) {
+        case 1:
+            if (sub_4F2680(&v1)) {
+                sub_57C110(a1);
+            }
+            break;
+        case 2:
+            if (sub_4F2680(&v1)) {
+                sub_57A1F0(a1);
+            }
+            break;
+        case 16:
+            if (sub_4F2680(&v1)) {
+                sub_571CB0(a1);
+            }
+            break;
+        default:
+            sub_54ED30(a1);
+            break;
+        }
+    }
 }
 
 // 0x54EB50
-void sub_54EB50()
+bool sub_54EB50()
 {
-    // TODO: Incomplete.
+    return sub_57DE00();
 }
 
 // 0x54EB60
 void sub_54EB60()
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int64_t loc;
+    int64_t x;
+    int64_t y;
+
+    obj = player_get_pc_obj();
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+    sub_4B8940(loc, &x, &y);
+
+    if (x != 0 || y != 0) {
+        sub_4B8CE0(loc);
+        iso_redraw();
+    } else {
+        if (sub_4B6D70()) {
+            obj = sub_4B6D80();
+            if (obj != OBJ_HANDLE_NULL) {
+                loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+                sub_4B8CE0(loc);
+                iso_redraw();
+            }
+        }
+    }
 }
 
 // 0x54EBF0
 void sub_54EBF0()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    MesFileEntry mes_file_entry;
+    UiMessage ui_message;
+    int64_t obj;
+
+    pc_obj = player_get_pc_obj();
+    if (sub_45D8D0(pc_obj)) {
+        return;
+    }
+
+    if (combat_critter_is_combat_mode_active(pc_obj)) {
+        if (sub_4B3D90(pc_obj)) {
+            combat_critter_deactivate_combat_mode(pc_obj);
+        } else {
+            mes_file_entry.num = 24;
+            mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+            ui_message.type = UI_MSG_TYPE_FEEDBACK;
+            ui_message.str = mes_file_entry.str;
+            sub_550750(&ui_message);
+        }
+    } else {
+        combat_critter_activate_combat_mode(pc_obj);
+    }
+
+    sub_5517F0();
+
+    obj = qword_64C690;
+    if (obj == OBJ_HANDLE_NULL) {
+        obj = sub_43C570();
+    }
+
+    if (obj != OBJ_HANDLE_NULL) {
+        sub_43C270(OBJ_HANDLE_NULL);
+        sub_43C270(obj);
+        if (obj != OBJ_HANDLE_NULL) {
+            sub_57CCF0(pc_obj, obj);
+        }
+    }
 }
 
 // 0x54ECD0
 void sub_54ECD0()
 {
-    // TODO: Incomplete.
+    if (qword_64C690 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (sub_43C570() != OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    sub_43C270(qword_64C690);
+    sub_43C270(OBJ_HANDLE_NULL);
+    sub_57CCF0(player_get_pc_obj(), qword_64C690);
 }
 
+// TODO: Lots of jumps, check.
+//
 // 0x54ED30
-void sub_54ED30()
+void sub_54ED30(S4F2810* a1)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t item_obj = OBJ_HANDLE_NULL;
+    int64_t target_loc = 0;
+    int target_type;
+    unsigned int spell_flags;
+    unsigned int critter_flags;
+    AnimGoalData goal_data;
+    AnimID anim_id;
+    int anim;
+    bool v26 = false;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (!sub_45D790(pc_obj)) {
+        return;
+    }
+
+    target_type = obj_field_int32_get(a1->obj, OBJ_F_TYPE);
+    if (!a1->is_loc && a1->obj == pc_obj) {
+        return;
+    }
+
+    spell_flags = obj_field_int32_get(pc_obj, OBJ_F_SPELL_FLAGS);
+    critter_flags = obj_field_int32_get(pc_obj, OBJ_F_CRITTER_FLAGS);
+
+    if ((spell_flags & OSF_STONED) != 0
+        && (critter_flags & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return;
+    }
+
+    if (sub_573620() != OBJ_HANDLE_NULL) {
+        if ((spell_flags & OSF_POLYMORPHED) != 0) {
+            return;
+        }
+
+        item_obj = sub_573620();
+        if (sub_57DE00()) {
+            sub_57E8B0();
+            sub_573740(item_obj, false);
+        }
+
+        if (sub_57DE00()) {
+            return;
+        }
+
+        target_loc = obj_field_int64_get(a1->obj, OBJ_F_LOCATION);
+        if (sub_573620() != OBJ_HANDLE_NULL) {
+            item_obj = sub_573620();
+        }
+
+        sub_573840();
+        sub_553990();
+
+        anim = AG_THROW_ITEM;
+    } else {
+        if (!combat_critter_is_combat_mode_active(pc_obj)) {
+            if (sub_44E940(a1->obj, 0, pc_obj)) {
+                combat_critter_activate_combat_mode(pc_obj);
+            }
+        }
+
+        if (combat_critter_is_combat_mode_active(pc_obj)) {
+            switch (target_type) {
+            case OBJ_TYPE_WALL:
+            case OBJ_TYPE_PORTAL:
+                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                        anim = AG_ATTEMPT_ATTACK;
+                    } else {
+                        anim = AG_ATTACK;
+                    }
+                } else {
+                    if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                        return;
+                    }
+
+                    anim = AG_USE_OBJECT;
+                    v26 = true;
+                }
+                break;
+            case OBJ_TYPE_CONTAINER:
+                if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                    return;
+                }
+
+                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                        anim = AG_ATTEMPT_ATTACK;
+                    } else {
+                        anim = AG_ATTACK;
+                    }
+                } else {
+                    anim = AG_USE_CONTAINER;
+                    v26 = true;
+                }
+                break;
+            case OBJ_TYPE_SCENERY:
+                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                        anim = AG_ATTEMPT_ATTACK;
+                    } else {
+                        anim = AG_ATTACK;
+                    }
+                } else {
+                    if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                        return;
+                    }
+
+                    anim = AG_USE_OBJECT;
+                    v26 = true;
+                }
+                break;
+            case OBJ_TYPE_WEAPON:
+            case OBJ_TYPE_AMMO:
+            case OBJ_TYPE_ITEM_ARMOR:
+            case OBJ_TYPE_ITEM_GOLD:
+            case OBJ_TYPE_ITEM_FOOD:
+            case OBJ_TYPE_ITEM_SCROLL:
+            case OBJ_TYPE_ITEM_KEY:
+            case OBJ_TYPE_ITEM_KEY_RING:
+            case OBJ_TYPE_ITEM_WRITTEN:
+            case OBJ_TYPE_ITEM_GENERIC:
+                if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                    return;
+                }
+
+                anim = AG_PICKUP_ITEM;
+                break;
+            case OBJ_TYPE_PC:
+            case OBJ_TYPE_NPC:
+                if (sub_45D8D0(a1->obj)) {
+                    if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                        anim = AG_USE_CONTAINER;
+                        v26 = true;
+                    }
+                } else {
+                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                        anim = AG_ATTEMPT_ATTACK;
+                    } else {
+                        anim = AG_ATTACK;
+                    }
+
+                    if (!a1->is_loc
+                        && player_is_pc_obj(sub_45DDA0(a1->obj)
+                        && !tig_kb_is_key_pressed(DIK_LMENU))) {
+                        return;
+                    }
+                }
+                break;
+            case OBJ_TYPE_TRAP:
+                anim = AG_MOVE_TO_TILE;
+                target_loc = obj_field_int64_get(a1->obj, OBJ_F_LOCATION);
+                break;
+            default:
+                return;
+            }
+
+            if (anim == AG_ATTACK || anim == AG_ATTEMPT_ATTACK) {
+                if ((spell_flags & OSF_BODY_OF_AIR) != 0) {
+                    MesFileEntry mes_file_entry;
+                    UiMessage ui_message;
+
+                    mes_file_entry.num = 25; // "You cannot attack in this form."
+                    mes_get_msg(intgame_mes_file, &mes_file_entry);
+                    ui_message.type = UI_MSG_TYPE_FEEDBACK;
+                    ui_message.str = mes_file_entry.str;
+                    sub_550750(&ui_message);
+                    return;
+                }
+            }
+        } else {
+            switch (target_type) {
+            case OBJ_TYPE_PORTAL:
+                if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                    return;
+                }
+
+                anim = AG_USE_OBJECT;
+                v26 = true;
+                break;
+            case OBJ_TYPE_CONTAINER:
+                if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                    return;
+                }
+
+                anim = AG_USE_CONTAINER;
+                v26 = true;
+                break;
+            case OBJ_TYPE_WEAPON:
+            case OBJ_TYPE_AMMO:
+            case OBJ_TYPE_ITEM_ARMOR:
+            case OBJ_TYPE_ITEM_GOLD:
+            case OBJ_TYPE_ITEM_FOOD:
+            case OBJ_TYPE_ITEM_SCROLL:
+            case OBJ_TYPE_ITEM_KEY:
+            case OBJ_TYPE_ITEM_KEY_RING:
+            case OBJ_TYPE_ITEM_WRITTEN:
+            case OBJ_TYPE_ITEM_GENERIC:
+                if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                    return;
+                }
+
+                if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                    sub_4445A0(pc_obj, a1->obj);
+                    return;
+                }
+
+                anim = AG_PICKUP_ITEM;
+                break;
+            case OBJ_TYPE_PC:
+            case OBJ_TYPE_NPC:
+                if (!sub_45D8D0(a1->obj)
+                    || (obj_field_int32_get(a1->obj, OBJ_F_SPELL_FLAGS) & OSF_SPOKEN_WITH_DEAD) != 0) {
+                    // FIXME: Useless.
+                    obj_field_int32_get(a1->obj, OBJ_F_CURRENT_AID);
+
+                    if (sub_40DA20(a1->obj)) {
+                        return;
+                    }
+
+                    anim = AG_TALK;
+                } else {
+                    if ((spell_flags & OSF_POLYMORPHED) != 0) {
+                        return;
+                    }
+
+                    if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
+                        sub_4445A0(pc_obj, a1->obj);
+                        return;
+                    }
+
+                    anim = AG_USE_CONTAINER;
+                    v26 = true;
+                }
+                break;
+            case OBJ_TYPE_TRAP:
+                anim = AG_MOVE_TO_TILE;
+                target_loc = obj_field_int64_get(a1->obj, OBJ_F_LOCATION);
+                break;
+            default:
+                return;
+            }
+        }
+    }
+
+    // 0x54F25B
+    if (!sub_44D500(&goal_data, pc_obj, anim)) {
+        return;
+    }
+
+    goal_data.params[AGDATA_TARGET_OBJ].obj = a1->obj;
+
+    if (target_loc != 0) {
+        goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
+    }
+
+    if (item_obj != OBJ_HANDLE_NULL) {
+        goal_data.params[AGDATA_SCRATCH_OBJ].obj = item_obj;
+    }
+
+    if (anim == AG_ATTACK || anim == AG_ATTEMPT_ATTACK) {
+        if (tig_kb_is_key_pressed(DIK_COMMA)) {
+            goal_data.params[AGDATA_SCRATCH_VAL3].data = 1;
+        } else if (tig_kb_is_key_pressed(DIK_PERIOD)) {
+            goal_data.params[AGDATA_SCRATCH_VAL3].data = 2;
+        } else if (tig_kb_is_key_pressed(DIK_SLASH)) {
+            goal_data.params[AGDATA_SCRATCH_VAL3].data = 3;
+        } else {
+            goal_data.params[AGDATA_SCRATCH_VAL3].data = 0;
+        }
+
+        int64_t weapon_obj = item_wield_get(pc_obj, 1004);
+        if (weapon_obj != OBJ_HANDLE_NULL
+            && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+            && (obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DEFAULT_THROWS) != 0
+            && !sub_466DA0(weapon_obj)) {
+            int64_t throwable_instance_obj = item_find_first_matching_prototype(pc_obj, weapon_obj);
+            if (throwable_instance_obj == OBJ_HANDLE_NULL) {
+                throwable_instance_obj = weapon_obj;
+            }
+
+            item_remove(throwable_instance_obj);
+
+            goal_data.params[AGDATA_TARGET_TILE].loc = obj_field_int64_get(a1->obj, OBJ_F_LOCATION);
+            goal_data.params[AGDATA_SCRATCH_OBJ].obj = throwable_instance_obj;
+
+            sub_434F80(pc_obj, throwable_instance_obj, obj_field_int64_get(a1->obj, OBJ_F_LOCATION));
+            return;
+        }
+    }
+
+    if (combat_auto_attack_get(pc_obj)) {
+        if (sub_44E6F0(pc_obj, &goal_data)
+            || !sub_424070(pc_obj, 3, 0, 0)) {
+            return;
+        }
+
+        unsigned int flags = 0;
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                flags |= 0x100;
+            } else if (tig_kb_is_key_pressed(DIK_LCONTROL)
+                || tig_kb_is_key_pressed(DIK_RCONTROL)
+                || ((!tig_kb_get_modifier(DIK_NUMLOCK) || get_always_run(pc_obj))
+                    && !tig_kb_is_key_pressed(DIK_LCONTROL)
+                    && !tig_kb_is_key_pressed(DIK_RCONTROL))) {
+                flags |= 0x40;
+            }
+
+            if (v26) {
+                flags |= 0x4000;
+            }
+        }
+
+        if (!sub_44D540(&goal_data, &anim_id, flags)) {
+            return;
+        }
+
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            return;
+        }
+    } else if (sub_423300(pc_obj, &anim_id)) {
+        // 0x54F68E
+        if (sub_4B6D70()) {
+            AnimID fidget_anim_id;
+            if (sub_44E830(pc_obj, AG_ANIM_FIDGET, &fidget_anim_id)
+                && sub_421D60(&anim_id, &fidget_anim_id)
+                && num_goal_subslots_in_use(&anim_id) < 4) {
+                if (is_anim_forever(&anim_id)) {
+                    if (sub_424070(pc_obj, 3, false, false)) {
+                        if (!sub_44D520(&goal_data, &anim_id)) {
+                            return;
+                        }
+                    }
+                } else {
+                    if (!sub_44DBE0(anim_id, &goal_data)) {
+                        return;
+                    }
+                }
+            }
+        } else if (sub_44E6F0(pc_obj, &goal_data)) {
+            if (anim == AG_ATTACK || anim == AG_ATTEMPT_ATTACK) {
+                if (num_goal_subslots_in_use(&anim_id) < 4) {
+                    if (is_anim_forever(&anim_id)) {
+                        if (sub_424070(pc_obj, 3, 0, 0)
+                            && !sub_44D520(&goal_data, &anim_id)) {
+                            return;
+                        }
+                    } else {
+                        if (!sub_44DBE0(anim_id, &goal_data)) {
+                            return;
+                        }
+                    }
+                }
+            } else {
+                if (sub_424070(pc_obj, 3, false, false)
+                    && sub_44D520(&goal_data, &anim_id)) {
+                    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                        sub_436C50(anim_id);
+                    } else if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                        turn_on_running(anim_id);
+                    } else {
+                        if (tig_kb_get_modifier(DIK_NUMLOCK)) {
+                            if (get_always_run(pc_obj)
+                                && !tig_kb_is_key_pressed(DIK_LCONTROL)
+                                && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                                turn_on_running(anim_id);
+                            }
+                        } else {
+                            if (!tig_kb_is_key_pressed(DIK_LCONTROL)
+                                && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                                turn_on_running(anim_id);
+                            }
+                        }
+                    }
+
+                    if (v26) {
+                        sub_436ED0(anim_id);
+                    }
+                }
+            }
+        } else if (sub_424070(pc_obj, 3, false, false)) {
+            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                && !tig_kb_is_key_pressed(DIK_LSHIFT)
+                && !tig_kb_is_key_pressed(DIK_RSHIFT)
+                && !tig_kb_is_key_pressed(DIK_LCONTROL)
+                && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                // NOTE: Some useless checks.
+            }
+
+            if (sub_44D520(&goal_data, &anim_id)
+                && (tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                    sub_436C50(anim_id);
+                } else if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                    turn_on_running(anim_id);
+                } else {
+                    if (tig_kb_get_modifier(DIK_NUMLOCK)) {
+                        if (get_always_run(pc_obj)
+                            && !tig_kb_is_key_pressed(DIK_LCONTROL)
+                            && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            turn_on_running(anim_id);
+                        }
+                    } else {
+                        if (!tig_kb_is_key_pressed(DIK_LCONTROL)
+                            && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                            turn_on_running(anim_id);
+                        }
+                    }
+                }
+
+                if (v26) {
+                    sub_436ED0(anim_id);
+                }
+            }
+        }
+    } else {
+        if (!sub_44D520(&goal_data, &anim_id)) {
+            return;
+        }
+    }
+
+    // 0x54FB19
+    if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+        sub_436C50(anim_id);
+    } else {
+        if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {
+            turn_on_running(anim_id);
+        } else {
+            if (tig_kb_get_modifier(DIK_NUMLOCK)) {
+                if (get_always_run(pc_obj)
+                    && !tig_kb_is_key_pressed(DIK_LCONTROL)
+                    && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                    turn_on_running(anim_id);
+                }
+            } else {
+                if (!tig_kb_is_key_pressed(DIK_LCONTROL)
+                    && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
+                    turn_on_running(anim_id);
+                }
+            }
+        }
+    }
+
+    if (v26) {
+        sub_436ED0(anim_id);
+    }
 }
 
 // 0x54FCF0
-void sub_54FCF0()
+void sub_54FCF0(S683518* a1)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t weapon_obj;
+    int64_t v1;
+    int64_t v2;
+
+    if ((a1->field_4 & 0x1) != 0) {
+        return;
+    }
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (sub_45D8D0(pc_obj)) {
+        return;
+    }
+
+    if (sub_45D800(pc_obj)) {
+        return;
+    }
+
+    if ((obj_field_int32_get(pc_obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return;
+    }
+
+    switch (a1->field_8) {
+    case 1:
+        sub_551A80(0);
+        sub_444130(&(a1->field_10));
+        if (obj_field_handle_get(a1->field_10.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
+            v2 = a1->field_10.obj;
+            if (obj_field_int32_get(v2, OBJ_F_TYPE) != OBJ_TYPE_ITEM_WRITTEN
+                || (sub_462C30(pc_obj, v2)
+                    && (obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) == 0)) {
+                v1 = item_find_first_matching_prototype(pc_obj, v2);
+                if (v1 != OBJ_HANDLE_NULL) {
+                    v2 = v1;
+                }
+            }
+
+            if (sub_462C30(pc_obj, v2)
+                || (obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) != 0) {
+                switch (obj_field_int32_get(v2, OBJ_F_TYPE)) {
+                case OBJ_TYPE_WEAPON:
+                    sub_550000(pc_obj, a1, 1004);
+                    break;
+                case OBJ_TYPE_AMMO:
+                case OBJ_TYPE_ITEM_GOLD:
+                    break;
+                case OBJ_TYPE_ITEM_ARMOR:
+                    sub_550000(pc_obj, a1, item_location_get(v2));
+                    break;
+                default:
+                    v1 = sub_573620();
+                    if (v1 != v2) {
+                        if (v1 != OBJ_HANDLE_NULL) {
+                            sub_575770();
+                        }
+                        inven_ui_destroy();
+                        sub_573740(v2, true);
+                    }
+                    break;
+                }
+            } else if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
+                sub_462CC0(pc_obj, v2, pc_obj);
+            } else {
+                sub_462CC0(pc_obj, v2, OBJ_HANDLE_NULL);
+            }
+        }
+        break;
+    case 2:
+        sub_579FA0(pc_obj, a1->field_C);
+        break;
+    case 3:
+        sub_579FA0(pc_obj, a1->field_C);
+        break;
+    case 4:
+        sub_444130(&(a1->field_10));
+
+        weapon_obj = item_wield_get(pc_obj, 1004);
+        if (obj_field_handle_get(a1->field_10.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
+            if (weapon_obj == a1->field_10.obj) {
+                sub_57C080(a1->field_10.obj, a1->field_C);
+            } else if (weapon_obj == OBJ_HANDLE_NULL || sub_464C80(weapon_obj)) {
+                if (item_wield_set(a1->field_10.obj, 1004)) {
+                    sub_57C080(a1->field_10.obj, a1->field_C);
+                }
+            }
+        }
+        break;
+    }
 }
 
 // 0x550000
-void sub_550000()
+void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location)
 {
-    // TODO: Incomplete.
+    int64_t item_obj;
+    int v1;
+    int sound_id;
+
+    item_obj = item_wield_get(critter_obj, inventory_location);
+    if (item_obj == a2->field_10.obj) {
+        return;
+    }
+
+    if (item_obj != OBJ_HANDLE_NULL) {
+        v1 = sub_464D20(a2->field_10.obj, inventory_location, critter_obj);
+        if (v1 != 0 && v1 != 4) {
+            sub_4673F0(critter_obj, v1);
+            return;
+        }
+
+        if (!sub_464C80(item_obj)) {
+            return;
+        }
+    }
+
+    v1 = sub_464D20(a2->field_10.obj, inventory_location, critter_obj);
+    if (v1 != 0) {
+        sub_4673F0(critter_obj, v1);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            item_wield_set(item_obj, inventory_location);
+        }
+        return;
+    }
+
+    if (!item_wield_set(a2->field_10.obj, inventory_location)) {
+        sub_4673F0(critter_obj, 0);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            item_wield_set(item_obj, inventory_location);
+        }
+        return;
+    }
+
+    if (item_obj != OBJ_HANDLE_NULL) {
+        sound_id = sub_4F0BF0(item_obj, critter_obj, OBJ_HANDLE_NULL, 1);
+    } else {
+        sound_id = inventory_location;
+    }
+
+    if (sound_id != -1) {
+        gsound_play_sfx_id(sound_id, 1);
+    }
+
+    sub_57E5A0(a2);
 }
 
 // 0x550150
-void sub_550150()
+void sub_550150(S683518* a1)
 {
-    // TODO: Incomplete.
+    if ((a1->field_4 & 0x1) == 0) {
+        switch (a1->field_8) {
+        case 1:
+            sub_57CCF0(player_get_pc_obj(), a1->field_10.obj);
+            break;
+        case 2:
+            sub_5508C0(a1->field_C);
+            break;
+        case 3:
+        case 4:
+            sub_5507E0(a1->field_C);
+            break;
+        }
+    }
 }
 
 // 0x5501C0
-void sub_5501C0()
+bool sub_5501C0()
 {
-    // TODO: Incomplete.
+    int index;
+    tig_button_handle_t college_radio_group[COLLEGE_COUNT];
+    int college_radio_group_size = 0;
+    int selected_college_index = 0;
+    tig_button_handle_t group[3];
+
+    for (index = 0; index < 2; index++) {
+        sub_54ABD0(&(stru_5C65F8[index]), 382, 41);
+    }
+
+    for (index = 0; index < COLLEGE_COUNT; index++) {
+        intgame_college_buttons[index].art_num = college_get_art_num(index);
+        if (intgame_college_buttons[index].art_num != -1) {
+            sub_54AAE0(&(intgame_college_buttons[index]));
+            college_radio_group[college_radio_group_size] = intgame_college_buttons[index].button_handle;
+
+            if (index == dword_64C530) {
+                selected_college_index = college_radio_group_size;
+            }
+
+            college_radio_group_size++;
+        }
+    }
+
+    for (index = 0; index < 4; index++) {
+        stru_5C6C68[index].art_num = sub_579F50(index);
+        if (stru_5C6C68[index].art_num != -1) {
+            sub_54AAE0(&(stru_5C6C68[index]));
+        }
+    }
+
+    intgame_spells_init();
+    sub_550D20();
+
+    for (index = 0; index < 5; index++) {
+        stru_64C4A8[index].x = stru_5C6D60[5].rect.x;
+        stru_64C4A8[index].y = stru_5C6D60[5].rect.y + stru_5C6D60[5].rect.y / 5;
+        stru_64C4A8[index].art_num = -1;
+        stru_64C4A8[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
+        sub_54ABD0(&(stru_64C4A8[index]), stru_5C6D60[5].rect.width, stru_5C6D60[5].rect.y / 5);
+    }
+
+    index = sub_551740(574, 506);
+    if (index != -1) {
+        sub_5708C0(dword_64C4F8[index], &(stru_5C6390[index]));
+    }
+
+    index = sub_551740(286, 524);
+    if (index != -1) {
+        sub_5701A0(dword_64C4F8[index], &(stru_5C6390[index]));
+    }
+
+    for (index = 0; index < 6; index++) {
+        sub_54AAE0(&(stru_5C6CA8[index]));
+    }
+
+    for (index = 3; index < 6; index++) {
+        group[index - 3] = stru_5C6CA8[index].button_handle;
+    }
+    tig_button_radio_group_create(3, group, 0);
+
+    for (index = 0; index < 5; index++) {
+        sub_54AAE0(&(stru_5C6D08[index]));
+    }
+
+    for (index = 1; index < 11; index++) {
+        iso_interface_window_disable(index);
+    }
+
+    sub_5503F0(0, 100);
+
+    tig_button_radio_group_create(college_radio_group_size,
+        college_radio_group,
+        selected_college_index);
+
+    intgame_iso_window_type = 0;
+
+    dword_5C6D58 = -1;
+
+    return true;
 }
 
 // 0x5503F0
-void sub_5503F0()
+bool sub_5503F0(int a1, int a2)
 {
-    // TODO: Incomplete.
+    int v1;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    v1 = sub_551740(stru_5C6548[a1].x, stru_5C6548[a1].y);
+    if (v1 == -1) {
+        return false;
+    }
+
+    tig_art_interface_id_create(stru_5C6548[a1].art_num, 0, 0, 0, &(art_blit_info.art_id));
+    tig_art_frame_data(art_blit_info.art_id, &art_frame_data);
+
+    src_rect.width = art_frame_data.width;
+    src_rect.height = a2 * art_frame_data.height / 100;
+    src_rect.x = 0;
+    src_rect.y = art_frame_data.height - src_rect.height;
+
+    dst_rect.width = src_rect.width;
+    dst_rect.height = src_rect.height;
+    dst_rect.x = stru_5C6548[a1].x - stru_5C6390[v1].x;
+    dst_rect.y = stru_5C6548[a1].y - stru_5C6390[v1].y;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+
+    return tig_window_blit_art(dword_64C4F8[v1], &art_blit_info);
 }
 
 // 0x5504F0
-void iso_interface_window_disable()
+void iso_interface_window_disable(int window_type)
 {
-    // TODO: Incomplete.
+    int index;
+
+    switch (window_type) {
+    case 0:
+        for (index = 0; index < 2; index++) {
+            tig_button_hide(stru_5C65F8[index].button_handle);
+        }
+        break;
+    case 1:
+        for (index = 0; index < COLLEGE_COUNT; index++) {
+            if (college_get_art_num(index) != -1) {
+                tig_button_hide(intgame_college_buttons[index].button_handle);
+            }
+        }
+        intgame_spells_hide_college_spells(dword_64C530);
+        break;
+    case 2:
+        for (index = 0; index < 4; index++) {
+            if (sub_579F50(index) != -1) {
+                tig_button_hide(stru_5C6C68[index].button_handle);
+            }
+        }
+        break;
+    case 3:
+        sub_5709E0();
+        break;
+    case 4:
+        break;
+    case 5:
+        for (index = 0; index < 5; index++) {
+            tig_button_hide(stru_64C4A8[index].button_handle);
+        }
+        break;
+    case 6:
+        for (index = 0; index < 6; index++) {
+            tig_button_hide(stru_5C6CA8[index].button_handle);
+        }
+        break;
+    case 7:
+        break;
+    case 8:
+        sub_550D60();
+        break;
+    case 9:
+        for (index = 0; index < 5; index++) {
+            tig_button_hide(stru_5C6D08[index].button_handle);
+        }
+        break;
+    case 10:
+        sub_5703B0();
+        break;
+    default:
+        tig_debug_printf("iso_interface_window_disable: ERROR: window type out of range!\n");
+        break;
+    }
+
+    dword_64C6E0 = false;
 }
 
 // 0x5506C0
@@ -2271,51 +4019,149 @@ void sub_5509C0(const char* str, TigRect* rect)
 }
 
 // 0x550A10
-void sub_550A10(tig_window_handle_t window_handle, const char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags)
+bool sub_550A10(tig_window_handle_t window_handle, char* str, TigRect* rect, tig_font_handle_t font, unsigned int flags)
 {
-    // TODO: Incomplete.
+    TigFont font_desc;
+    TigRect text_rect;
+    int width;
+    int rc;
+
+    if (!dword_64C6B4) {
+        return false;
+    }
+
+    tig_font_push(font);
+
+    font_desc.str = str;
+    font_desc.width = 0;
+    sub_535390(&font_desc);
+
+    text_rect.x = rect->x;
+    text_rect.y = rect->y;
+
+    if (intgame_is_compact_interface()) {
+        text_rect.x -= 210;
+        text_rect.y -= 59;
+    }
+
+    width = rect->width;
+    if ((flags & 0x10) != 0) {
+        width /= 2;
+        text_rect.x += width;
+    }
+
+    if (font_desc.width >= width) {
+        font_desc.width = width;
+        sub_535390(&font_desc);
+        if (font_desc.height > rect->height) {
+            font_desc.height = rect->height;
+        }
+    } else {
+        if ((flags & 0x4) != 0) {
+            text_rect.x += (width - font_desc.width) / 2;
+        } else if ((flags & 0x2) != 0) {
+            text_rect.x += width - font_desc.width;
+        }
+    }
+
+    if ((flags & 0x8) != 0) {
+        text_rect.y = rect->y + (rect->height - font_desc.height) / 2;
+
+        if (intgame_is_compact_interface()) {
+            text_rect.y -= 59;
+        }
+    }
+
+    text_rect.width = font_desc.width;
+    text_rect.height = font_desc.height;
+
+    if (intgame_is_compact_interface()) {
+        if (str[0] == '\0') {
+            // FIXME: Leaking font!
+            return true;
+        }
+
+        window_handle = sub_568D20();
+    }
+
+    rc = tig_window_text_write(window_handle, str, &text_rect);
+    if (rc != TIG_OK) {
+        if ((flags & 0x20) != 0) {
+            size_t pos;
+            char ch;
+
+            pos = strlen(str);
+            while (rc != TIG_OK && pos > 0) {
+                ch = str[pos - 1];
+                str[pos - 1] = '\0';
+                rc = tig_window_text_write(window_handle, str, &text_rect);
+                str[pos - 1] = ch;
+                pos--;
+            }
+        }
+    }
+
+    tig_font_pop();
+
+    return rc == TIG_OK;
 }
 
 // 0x550BD0
-void sub_550BD0()
+bool intgame_spells_init()
 {
-    // TODO: Incomplete.
+    int clg;
+    int spl;
+    int lvl;
+
+    for (clg = 0; clg < COLLEGE_COUNT; clg++) {
+        for (lvl = 0; lvl < 5; lvl++) {
+            spl = clg * 5 + lvl;
+            intgame_spell_buttons[spl].art_num = sub_4B1570(spl);
+            if (intgame_spell_buttons[spl].art_num != -1
+                && !sub_54AAE0(&(intgame_spell_buttons[spl]))) {
+                return false;
+            }
+        }
+
+        intgame_spells_hide_college_spells(clg);
+    }
+
+    return true;
 }
 
 // 0x550C60
-void sub_550C60(int group)
+void intgame_spells_show_college_spells(int clg)
 {
     int64_t pc_obj;
     int spl;
-    int index;
+    int lvl;
 
     pc_obj = player_get_pc_obj();
     if (pc_obj != OBJ_HANDLE_NULL) {
-        spl = group * 5;
-        for (index = 0; index < 5; index++) {
+        for (lvl = 0; lvl < 5; lvl++) {
+            spl = clg * 5 + lvl;
             if (!sub_4B1950(pc_obj, spl)) {
                 break;
             }
 
-            if (stru_5C6718[spl].button_handle != TIG_BUTTON_HANDLE_INVALID) {
-                tig_button_show(stru_5C6718[spl].button_handle);
+            if (intgame_spell_buttons[spl].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+                tig_button_show(intgame_spell_buttons[spl].button_handle);
             }
         }
     }
 }
 
 // 0x550CD0
-void sub_550CD0(int group)
+void intgame_spells_hide_college_spells(int clg)
 {
     int spl;
-    int index;
+    int lvl;
 
-    spl = group * 5;
-    for (index = 0; index < 5; index++) {
-        if (stru_5C6718[spl].button_handle != TIG_BUTTON_HANDLE_INVALID) {
-            tig_button_hide(stru_5C6718[spl].button_handle);
+    for (lvl = 0; lvl < 5; lvl++) {
+        spl = clg * 5 + lvl;
+        if (intgame_spell_buttons[spl].button_handle != TIG_BUTTON_HANDLE_INVALID) {
+            tig_button_hide(intgame_spell_buttons[spl].button_handle);
         }
-        spl++;
     }
 
     sub_5503F0(intgame_iso_window_type, 100);
@@ -2558,11 +4404,11 @@ void iso_interface_window_enable(int window_type)
         for (index = 0; index < COLLEGE_COUNT; index++) {
             if (college_get_art_num(index) != -1
                 && sub_4B1B00(pc_obj, index)) {
-                tig_button_show(stru_5C6618[index].button_handle);
+                tig_button_show(intgame_college_buttons[index].button_handle);
             }
         }
-        tig_button_state_change(stru_5C6618[dword_64C530].button_handle, TIG_BUTTON_STATE_PRESSED);
-        sub_550C60(dword_64C530);
+        tig_button_state_change(intgame_college_buttons[dword_64C530].button_handle, TIG_BUTTON_STATE_PRESSED);
+        intgame_spells_show_college_spells(dword_64C530);
         break;
     case 2:
         for (index = 0; index < 4; index++) {
@@ -2740,13 +4586,25 @@ void sub_5517F0()
 }
 
 // 0x551830
-void sub_551830()
+bool intgame_get_location_under_cursor(int64_t* loc_ptr)
 {
-    // TODO: Incomplete.
+    TigMouseState mouse_state;
+    S4F2810 v1;
+
+    if (tig_mouse_get_state(&mouse_state) == TIG_OK
+        && sub_5518C0(mouse_state.x, mouse_state.y)
+        && sub_4F2CB0(mouse_state.x, mouse_state.y, &v1, Tgt_Tile, intgame_fullscreen)
+        && v1.is_loc) {
+        *loc_ptr = v1.loc;
+        return true;
+    }
+
+    *loc_ptr = 0;
+    return false;
 }
 
 // 0x5518C0
-void sub_5518C0(int x, int y)
+bool sub_5518C0(int x, int y)
 {
     tig_window_handle_t window_handle;
     TigWindowData window_data;
@@ -2765,9 +4623,27 @@ void sub_5518C0(int x, int y)
 }
 
 // 0x551910
-void sub_551910()
+void sub_551910(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    S4F2810 v1;
+
+    if (sub_5517A0(msg)) {
+        sub_551F80();
+
+        if (!map_is_clearing_objects()) {
+            if (sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, qword_5C7280, intgame_fullscreen)) {
+                if (!v1.is_loc) {
+                    sub_57CCF0(player_get_pc_obj(), v1.obj);
+                    sub_43C270(v1.obj);
+                }
+            } else if (sub_4B6D70()
+                && sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, Tgt_Tile, intgame_fullscreen)
+                && v1.is_loc
+                && sub_551A00() == 0) {
+                sub_4B7830(player_get_pc_obj(), v1.loc);
+            }
+        }
+    }
 }
 
 // 0x551A00
@@ -2796,7 +4672,235 @@ void sub_551A10(int64_t obj)
 // 0x551A80
 bool sub_551A80(int a1)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int64_t obj;
+    int v19;
+    bool v1 = false;
+    bool v2 = false;
+    bool v17 = false;
+    bool v18 = false;
+
+    if (dword_64C6E8) {
+        return true;
+    }
+
+    while (1) {
+        dword_64C6E8 = true;
+        pc_obj = player_get_pc_obj();
+        v19 = dword_64C634[dword_64C6B8];
+
+        if (a1 != 0) {
+            dword_64C6B8++;
+            v18 = true;
+        } else {
+            if (dword_64C6B8 > 0) {
+                a1 = dword_64C634[--dword_64C6B8];
+                v2 = true;
+            }
+            if (!sub_573620()) {
+                sub_553990();
+            }
+        }
+
+        switch (v19) {
+        case 0:
+        case 18:
+            v1 = true;
+            sub_4F25B0(Tgt_Tile | Tgt_Obj_No_T_Wall);
+            break;
+        case 1:
+            v1 = true;
+            v17 = true;
+            sub_57BFF0();
+            sub_4B7AA0(player_get_pc_obj());
+            break;
+        case 2:
+            v1 = true;
+            v17 = true;
+            sub_57A1A0();
+            sub_4B7AE0(player_get_pc_obj());
+            break;
+        case 3:
+            sub_551A10(pc_obj);
+            v1 = 1;
+            if (v2) {
+                sub_5678D0(player_get_pc_obj(), 0);
+            } else {
+                sub_567A20(player_get_pc_obj());
+            }
+            break;
+        case 4:
+            if (a1 != 13) {
+                inven_ui_destroy();
+            }
+            v1 = true;
+            if (a1 != 13) {
+                sub_551F40();
+            }
+            break;
+        case 5:
+            v1 = true;
+            sub_560F40();
+            if (intgame_iso_window_type == 6) {
+                sub_5506C0(0);
+            }
+            scroll_set_scroll_func(NULL);
+            sub_551F40();
+            break;
+        case 6:
+            v1 = true;
+            sub_57B450();
+            break;
+        case 7:
+            v1 = true;
+            sub_53F090();
+            sub_551F40();
+            break;
+        case 8:
+            switch (a1) {
+            case 1:
+            case 2:
+            case 13:
+            case 16:
+                v1 = true;
+                break;
+            default:
+                v1 = false;
+                inven_ui_destroy();
+                break;
+            }
+
+            if (a1 != 13) {
+                sub_551F40();
+            }
+            break;
+        case 9:
+            v1 = true;
+            charedit_destroy();
+            sub_551F40();
+            break;
+        case 10:
+            if (a1 == 1
+                || a1 == 2) {
+                if (a1 != 13) {
+                    sub_551F40();
+                }
+            } else if (a1 != 13) {
+                inven_ui_destroy();
+            }
+            break;
+        case 11:
+            if (a1 != 13) {
+                inven_ui_destroy();
+                sub_551F40();
+            }
+            break;
+        case 13:
+            sub_5506C0(0);
+            obj = sub_579760();
+            if (tig_net_is_active()) {
+                sub_4F0470(obj, OIF_NO_DISPLAY);
+            } else {
+                unsigned int flags;
+
+                flags = obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS);
+                flags &= ~OIF_NO_DISPLAY;
+                obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, flags);
+            }
+
+            sub_576100(OBJ_HANDLE_NULL);
+            break;
+        case 14:
+            v1 = true;
+            sub_56D2D0();
+            sub_551F40();
+            break;
+        case 15:
+            v1 = true;
+            sub_56BC90();
+            sub_551F40();
+            break;
+        case 16:
+            sub_571C80();
+            if (sub_573620()) {
+                sub_575770();
+                sub_553990();
+            }
+            break;
+        case 19:
+        case 20:
+            if (a1 != 13) {
+                inven_ui_destroy();
+            }
+            v1 = true;
+            sub_551F40();
+            break;
+        }
+
+        switch (a1) {
+        case 0:
+        case 1:
+        case 2:
+            sub_5517F0();
+            break;
+        case 3:
+            sub_568F20();
+            if (!v18) {
+                sub_567A60(player_get_pc_obj());
+            }
+            break;
+        case 4:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 14:
+        case 15:
+        case 19:
+        case 20:
+            sub_551F20();
+            break;
+        case 5:
+            sub_551F20();
+            scroll_set_scroll_func(sub_563770);
+            break;
+        case 13:
+            obj = sub_579760();
+            if (tig_net_is_active()) {
+                sub_4F03E0(obj, OIF_NO_DISPLAY);
+            } else {
+                unsigned int flags;
+
+                flags = obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS);
+                flags |= OIF_NO_DISPLAY;
+                obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, flags);
+            }
+            sub_576100(OBJ_HANDLE_NULL);
+            break;
+        }
+
+        if (v1) {
+            if (sub_573620()) {
+                sub_575770();
+            }
+        }
+
+        dword_64C634[dword_64C6B8] = a1;
+        sub_553990();
+
+        v1 = false;
+        dword_64C6E8 = false;
+
+        if (!v17) {
+            return true;
+        }
+
+        a1 = 0;
+        v18 = false;
+        v2 = false;
+        v17 = false;
+    }
 }
 
 // 0x551F20
@@ -2828,17 +4932,40 @@ int sub_551F70(int a1)
 // 0x551F80
 void sub_551F80()
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj != OBJ_HANDLE_NULL) {
+        if (sub_551A00()) {
+            qword_5C7280 = Tgt_Object;
+            return;
+        }
+
+        if (combat_critter_is_combat_mode_active(pc_obj)) {
+            if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+                sub_4F25B0(Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall | Tgt_Tile);
+                qword_5C7280 = Tgt_Obj_No_Self | Tgt_Obj_No_T_Wall;
+            } else {
+                sub_4F25B0(Tgt_Obj_No_Self | Tgt_Obj_No_ST_Critter_Dead | Tgt_Obj_No_T_Wall | Tgt_Tile | Tgt_Non_Party_Critters);
+                qword_5C7280 = Tgt_Obj_No_Self | Tgt_Obj_No_ST_Critter_Dead | Tgt_Obj_No_T_Wall | Tgt_Non_Party_Critters;
+            }
+            return;
+        }
+    }
+
+    sub_4F25B0(Tgt_Obj_No_T_Wall | Tgt_Tile);
+    qword_5C7280 = Tgt_Object;
 }
 
 // 0x552050
-void sub_552050()
+bool sub_552050(TigMouseMessageData* a1, S4F2810* a2)
 {
-    // TODO: Incomplete.
+    sub_551F80();
+    return sub_4F2830(a1, a2, intgame_fullscreen);
 }
 
 // 0x552070
-void sub_552070()
+int sub_552070()
 {
     return intgame_iso_window_type;
 }
@@ -2891,29 +5018,203 @@ void sub_552160(const char* str, tig_font_handle_t font)
 }
 
 // 0x5521B0
-void intgame_text_edit_refresh_color()
+void intgame_text_edit_refresh_color(const char* str, tig_font_handle_t font, tig_color_t color, bool a4)
 {
-    // TODO: Incomplete.
+    tig_window_handle_t window_handle;
+    TigRect rect;
+    TigFont font_desc;
+
+    window_handle = stru_5C6D60[intgame_iso_window_type].window_handle;
+    rect = stru_5C6D60[intgame_iso_window_type].rect;
+
+    tig_window_fill(window_handle, &rect, color);
+
+    if (str != NULL && *str != '\0') {
+        tig_font_push(font);
+        font_desc.width = 0;
+        font_desc.str = str;
+        sub_535390(&font_desc);
+
+        // NOTE: Many jumps, check.
+        if (font_desc.width > rect.width && a4) {
+            while (font_desc.width > rect.width && *str != '\0') {
+                font_desc.width = 0;
+                font_desc.str = str++;
+                sub_535390(&font_desc);
+            }
+
+            if (*str == '\0') {
+                tig_font_pop();
+                return;
+            }
+
+        }
+
+        rect.width = font_desc.width;
+
+        tig_window_text_write(window_handle, str, &rect);
+        tig_font_pop();
+    } else {
+        rect.width = 0;
+    }
+
+    tig_font_push(font);
+    font_desc.width = 0;
+    font_desc.str = "*";
+    sub_535390(&font_desc);
+    rect.x += rect.width + 3;
+    rect.width = font_desc.width;
+    if (tig_window_text_write(window_handle, "*", &rect) != TIG_OK) {
+        tig_debug_printf("intgame_text_edit_refresh_color: ERROR: tig_window_text_write failed!\n");
+    }
+    tig_font_pop();
 }
 
 // 0x5522F0
 void intgame_clock_refresh()
 {
-    // TODO: Incomplete.
+    char str[32];
+    TigRect rect;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    TigFont font_desc;
+    DateTime datetime;
+    int v1;
+    int cycle;
+    int num_cycles;
+    int width;
+    int dst_x;
+    int dst_width;
+
+    if (!dword_64C6B4) {
+        return;
+    }
+
+    if (dword_64C6D0) {
+        sprintf(str, "%d Hours", datetime_current_hour());
+
+        rect.x = stru_5C6390[0].x + 650;
+        rect.y = stru_5C6390[0].y + 5;
+        rect.width = 50;
+        rect.height = 25;
+
+        font_desc.str = str;
+        font_desc.width = 0;
+        sub_535390(&font_desc);
+
+        if (tig_window_fill(dword_64C4F8[0], &rect, tig_color_make(0, 0, 0)) == TIG_OK) {
+            tig_window_text_write(dword_64C4F8[0], str, &rect);
+        }
+        return;
+    }
+
+    datetime = sub_45A7C0();
+    v1 = (dword_64C47C[1] + dword_64C47C[0]
+        + (datetime_seconds_since_reference_date(&datetime) + 73800) % 86400 * (dword_64C47C[1] + dword_64C47C[0]) / 86400
+        - stru_5C6F80.width / 2) % (dword_64C47C[1] + dword_64C47C[0]);
+    if (dword_5C7308 == v1) {
+        return;
+    }
+
+    tig_window_fill(dword_64C4F8[0], &stru_5C6F80, tig_color_make(0, 0, 0));
+
+    dst_x = stru_5C6F80.x;
+    dst_width = stru_5C6F80.width;
+
+    cycle = 0;
+    num_cycles = 0;
+    while (dst_width > 0 && num_cycles < 3) {
+        width = dword_64C47C[cycle];
+        if (cycle == 0) {
+            // 207: "clk_timestrip.art"
+            if (tig_art_interface_id_create(207, 0, 0, 0, &(art_blit_info.art_id)) != TIG_OK) {
+                tig_debug_printf("intgame_clock_refresh: ERROR: tig_art_interface_id_create failed!\n");
+                return;
+            }
+        } else {
+            int v2;
+            int idx;
+
+            v2 = (datetime_seconds_since_reference_date(&datetime) + 43200) % 28;
+
+            for (idx = 0; idx < 8; idx++) {
+                if (v2 <= dword_5C730C[idx]) {
+                    break;
+                }
+            }
+
+            // 208 - 215: "clk_moon#.art"
+            if (tig_art_interface_id_create(208 + idx, 0, 0, 0, &(art_blit_info.art_id)) != TIG_OK) {
+                tig_debug_printf("intgame_clock_refresh: ERROR: tig_art_interface_id_create2 failed!\n");
+                return;
+            }
+        }
+
+        dst_x = stru_5C6F80.x;
+        dst_width = stru_5C6F80.width;
+
+        if (v1 < width) {
+            src_rect.x = v1;
+            src_rect.y = 0;
+            src_rect.width = min(width - v1, dst_width);
+            src_rect.height = stru_5C6F80.height;
+
+            dst_rect.x = dst_x;
+            dst_rect.y = stru_5C6F80.y;
+            dst_rect.width = src_rect.width;
+            dst_rect.height = stru_5C6F80.height;
+
+            art_blit_info.flags = 0;
+            art_blit_info.src_rect = &src_rect;
+            art_blit_info.dst_rect = &dst_rect;
+            tig_window_blit_art(dword_64C4F8[0], &art_blit_info);
+
+            dst_x += src_rect.width;
+            dst_width -= src_rect.width;
+        } else {
+            v1 -= width;
+        }
+
+        cycle = 1 - cycle;
+        num_cycles++;
+    }
+
+    if (tig_art_interface_id_create(216, 0, 0, 0, &(art_blit_info.art_id)) != TIG_OK) {
+        tig_debug_printf("intgame_clock_refresh: ERROR: tig_art_interface_id_create3 failed!\n");
+        return;
+    }
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = 100;
+    src_rect.height = 100;
+
+    dst_rect.x = 708;
+    dst_rect.y = 6;
+    dst_rect.width = 100;
+    dst_rect.height = 100;
+
+    art_blit_info.flags = 0;
+    art_blit_info.src_rect = &src_rect;
+    art_blit_info.dst_rect = &dst_rect;
+    tig_window_blit_art(dword_64C4F8[0], &art_blit_info);
 }
 
 // 0x5526F0
-bool intgame_clock_process_callback()
+bool intgame_clock_process_callback(TimeEvent* timeevent)
 {
     DateTime datetime;
-    TimeEvent timeevent;
+    TimeEvent next_timeevent;
+
+    (void)timeevent;
 
     if (dword_64C6B4) {
         intgame_clock_refresh();
-        timeevent.type = TIMEEVENT_TYPE_CLOCK;
+        next_timeevent.type = TIMEEVENT_TYPE_CLOCK;
         sub_45A950(&datetime, 3600000);
         timeevent_clear_one_typed(TIMEEVENT_TYPE_CLOCK);
-        sub_45B800(&timeevent, &datetime);
+        sub_45B800(&next_timeevent, &datetime);
     }
 
     return true;
@@ -2930,9 +5231,52 @@ void sub_552740(int64_t obj, int a2)
 }
 
 // 0x552770
-void sub_552770()
+void sub_552770(UiMessage* ui_message)
 {
-    // TODO: Incomplete.
+    // 0x64C6EC
+    static tig_timestamp_t dword_64C6EC;
+
+    int v1;
+
+    if (ui_message->type >= 6 && ui_message->type <= 12) {
+        if (tig_timer_elapsed(dword_64C6EC) > 3000
+            && intgame_iso_window_type == 0) {
+            sub_550930();
+            sub_5529C0(stru_5C6D60[intgame_iso_window_type].window_handle, ui_message, 1);
+        }
+    } else {
+        tig_timer_now(&dword_64C6EC);
+
+        v1 = dword_64C6C4;
+        if (dword_64C6C0 >= 10) {
+            dword_64C6C4 = (dword_64C6C4 + 1) % 10;
+        } else {
+            dword_64C6C4 = dword_64C6C0;
+        }
+
+        if (dword_64C6C0 != 0
+            && (ui_message->type == 4
+                || ui_message->type == 5)) {
+            if (strcmpi(ui_message->str, stru_64C540[v1].str) == 0) {
+                dword_64C6C4 = v1;
+                dword_64C6C8 = v1;
+                sub_552960(1);
+                return;
+            }
+        }
+
+        if (dword_64C6C0 < 10) {
+            dword_64C6C0 += 1;
+        }
+
+        stru_64C540[dword_64C6C4].type = ui_message->type;
+        strncpy(stru_64C540[dword_64C6C4].str, ui_message->str, 200);
+        stru_64C540[dword_64C6C4].str[200 - 1] = '\0';
+        stru_64C540[dword_64C6C4].field_8 = ui_message->field_8;
+        stru_64C540[dword_64C6C4].field_C = ui_message->field_C;
+        dword_64C6C8 = dword_64C6C4;
+        sub_552960(1);
+    }
 }
 
 // 0x5528E0
@@ -2980,13 +5324,300 @@ void sub_552960(bool play_sound)
 }
 
 // 0x5529C0
-void sub_5529C0()
+void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool play_sound)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry1;
+    MesFileEntry mes_file_entry2;
+    char str[MAX_STRING];
+
+    if (intgame_is_compact_interface()) {
+        window_handle = sub_568D20();
+    }
+
+    switch (ui_message->type) {
+    case UI_MSG_TYPE_LEVEL:
+        sub_554560(window_handle, dword_5C708C[0]);
+
+        mes_file_entry1.num = 21; // "Level Up"
+        mes_get_msg(intgame_mes_file, &mes_file_entry1);
+        sub_550A10(window_handle, mes_file_entry1.str, &stru_5C70C8, dword_739F88, 0x1);
+
+        mes_file_entry1.num = 11; // "Congratulations! You are now level %d."
+        mes_get_msg(intgame_mes_file, &mes_file_entry1);
+        sprintf(str, mes_file_entry1.str, ui_message->field_8);
+        sub_550A10(window_handle, str, &stru_5C70D8, dword_64C498, 0x1);
+
+        if (ui_message->field_C != -1) {
+            mes_file_entry1.num = 11; // "You now have %d character point(s) to spend."
+            mes_get_msg(intgame_mes_file, &mes_file_entry1);
+            sprintf(str, mes_file_entry1.str, ui_message->field_8);
+            sub_550A10(window_handle, str, &stru_5C70E8, dword_64C498, 0x1);
+        } else {
+            sub_550A10(window_handle, ui_message->str, &stru_5C7128, dword_64C498, 0x1);
+        }
+
+        if (play_sound) {
+            gsound_play_sfx_id(3005, 1);
+        }
+        break;
+    case UI_MSG_TYPE_POISON:
+        sub_554560(window_handle, dword_5C708C[1]);
+        sub_550A10(window_handle, ui_message->str, &stru_5C70C8, dword_739F88, 0x1);
+
+        mes_file_entry1.num = 13; // "You have absorbed %d unit(s) of poison."
+        mes_get_msg(intgame_mes_file, &mes_file_entry1);
+        sprintf(str, mes_file_entry1.str, ui_message->field_8);
+        sub_550A10(window_handle, str, &stru_5C70D8, dword_64C49C, 0x1);
+
+        if (play_sound) {
+            gsound_play_sfx_id(3006, 1);
+        }
+        break;
+    case UI_MSG_TYPE_CURSE:
+        sub_554560(window_handle, dword_5C708C[2]);
+        sub_550A10(window_handle, ui_message->str, &stru_5C70C8, dword_739F88, 1);
+
+        curse_copy_description(ui_message->field_8, str);
+        sub_550A10(window_handle, str, &stru_5C7138, dword_64C498, 1);
+
+        if (play_sound) {
+            gsound_play_sfx_id(3003, 1);
+        }
+        break;
+    case UI_MSG_TYPE_BLESS:
+        sub_554560(window_handle, dword_5C708C[3]);
+        sub_550A10(window_handle, ui_message->str, &stru_5C70C8, dword_739F88, 1);
+
+        bless_copy_description(ui_message->field_8, str);
+        sub_550A10(window_handle, str, &stru_5C7138, dword_64C498, 1);
+
+        if (play_sound) {
+            gsound_play_sfx_id(3002, 1);
+        }
+        break;
+    case UI_MSG_TYPE_EXCLAMATION:
+        if (play_sound) {
+            gsound_play_sfx_id(3004, 1);
+        }
+        // FALLTHROUGH
+    case UI_MSG_TYPE_QUESTION:
+    case UI_MSG_TYPE_FEEDBACK: {
+        size_t pos = 0;
+        bool rc;
+
+        sub_554560(window_handle, dword_5C708C[ui_message->type]);
+
+        while (ui_message->str[pos] != '\0' && ui_message->str[pos] != '\n') {
+            pos++;
+        }
+
+        if (ui_message->str[pos] == '\n') {
+            ui_message->str[pos] = '\0';
+            sub_550A10(window_handle,
+                ui_message->str,
+                &stru_5C70C8,
+                dword_739F88,
+                1);
+            rc = sub_550A10(window_handle,
+                ui_message->str + pos + 1,
+                &stru_5C7138,
+                dword_64C498,
+                1);
+            ui_message->str[pos] = '\n';
+        } else {
+            rc = sub_550A10(window_handle, ui_message->str, &stru_5C7108, dword_64C498, 1);
+        }
+
+        if (!rc) {
+            sub_550930();
+            if (ui_message->str[pos] == '\n') {
+                ui_message->str[pos] = '\0';
+                sub_550A10(window_handle, ui_message->str,
+                    &stru_5C7148,
+                    dword_739F88,
+                    0x21);
+                sub_550A10(window_handle,
+                    ui_message->str + pos + 1,
+                    &stru_5C7168,
+                    dword_64C498,
+                    0x21);
+                ui_message->str[pos] = '\n';
+            } else {
+                sub_550A10(window_handle, ui_message->str, &stru_5C7158, dword_64C498, 0x21);
+            }
+        }
+        break;
+    }
+    case UI_MSG_TYPE_SKILL:
+        sub_554560(window_handle, dword_5C708C[6]);
+        sub_550A10(window_handle,
+            IS_TECH_SKILL(ui_message->field_8)
+                ? tech_skill_get_name(GET_TECH_SKILL(ui_message->field_8))
+                : basic_skill_get_name(GET_BASIC_SKILL(ui_message->field_8)),
+            &stru_5C70C8,
+            dword_739F88,
+            0x1);
+        sub_550A10(window_handle,
+            IS_TECH_SKILL(ui_message->field_8)
+                ? tech_skill_get_description(GET_TECH_SKILL(ui_message->field_8))
+                : basic_skill_get_description(GET_BASIC_SKILL(ui_message->field_8)),
+            &stru_5C7138,
+            dword_64C498,
+            0x1);
+
+        if (ui_message->field_C != 0) {
+            mes_file_entry1.num = 28 + IS_TECH_SKILL(ui_message->field_8)
+                ? tech_skill_get_stat(GET_TECH_SKILL(ui_message->field_8))
+                : basic_skill_get_stat(GET_BASIC_SKILL(ui_message->field_8));
+            mes_get_msg(intgame_mes_file, &mes_file_entry1);
+            sprintf(str, "%s: %d", mes_file_entry1.str, ui_message->field_C);
+            sub_550A10(window_handle, str, &stru_5C70C8, dword_64C49C, 0x2);
+        }
+        break;
+    case UI_MSG_TYPE_SPELL: {
+        sub_554560(window_handle, college_get_icon(ui_message->field_8 / 5));
+        sub_550A10(window_handle,
+            spell_get_name(ui_message->field_8),
+            &stru_5C70C8,
+            dword_739F88,
+            0x1);
+
+        mes_file_entry1.num = 73; // "Bonus to Heal skill"
+        mes_get_msg(intgame_mes_file, &mes_file_entry1);
+        sprintf(str, "%s: %d", mes_file_entry1.str, spell_get_iq(ui_message->field_8));
+        sub_550A10(window_handle, str, &stru_5C70D8, dword_64C498, 1);
+
+        mes_file_entry1.num = 59; // "Damage"
+        mes_get_msg(intgame_mes_file, &mes_file_entry1);
+
+        int v1;
+        int v2;
+        int v3;
+
+        v1 = sub_4B1660(ui_message->field_8, ui_message->field_10);
+        v2 = sub_4B16C0(ui_message->field_8, ui_message->field_10, &v3);
+        if (v3 == 1) {
+            mes_file_entry2.num = 74; // "second"
+            mes_get_msg(intgame_mes_file, &mes_file_entry2);
+            sprintf(str,
+                "%s: %d  (%d / %s)",
+                mes_file_entry1.str,
+                v1,
+                v2,
+                mes_file_entry2.str);
+        } else if (v3 > 1) {
+            mes_file_entry2.num = 75; // "seconds"
+            mes_get_msg(intgame_mes_file, &mes_file_entry2);
+            sprintf(str,
+                "%s: %d  (%d / %d %s)",
+                mes_file_entry1.str,
+                v1,
+                v2,
+                v3,
+                mes_file_entry2.str);
+        } else {
+            sprintf(str, "%s: %d", mes_file_entry1.str, v1);
+        }
+        sub_550A10(window_handle, str, &stru_5C70D8, dword_64C498, 2);
+
+        sub_550A10(window_handle,
+            spell_get_description(ui_message->field_8),
+            &stru_5C7128,
+            dword_64C498,
+            0x1);
+        break;
+    }
+    case UI_MSG_TYPE_COLLEGE:
+        sub_554560(window_handle, college_get_icon(ui_message->field_8));
+        sub_550A10(window_handle,
+            college_get_name(ui_message->field_8),
+            &stru_5C70C8,
+            dword_739F88, 1);
+        sub_550A10(window_handle,
+            college_get_description(ui_message->field_8),
+            &stru_5C7138,
+            dword_64C498,
+            1);
+        break;
+    case UI_MSG_TYPE_TECH:
+        sub_554560(window_handle, dword_5C708C[6]);
+        sub_550A10(window_handle,
+            tech_get_name(ui_message->field_8),
+            &stru_5C70C8,
+            dword_739F88,
+            1);
+        sub_550A10(window_handle,
+            tech_get_description(ui_message->field_8),
+            &stru_5C7138,
+            dword_64C498,
+            1);
+        break;
+    case UI_MSG_TYPE_DEGREE:
+        sub_554560(window_handle, dword_5C708C[6]);
+        sub_550A10(window_handle,
+            degree_get_name(ui_message->field_8 % 8),
+            &stru_5C70C8,
+            dword_739F88,
+            1);
+
+        mes_file_entry1.num = 17;
+        mes_get_msg(intgame_mes_file, &mes_file_entry1);
+        sprintf(str,
+            "%s: %d",
+            mes_file_entry1.str,
+            tech_get_min_intelligence_for_degree(ui_message->field_8 % 8));
+        sub_550A10(window_handle, str, &stru_5C70C8, dword_64C498, 2);
+
+        sub_550A10(window_handle,
+            degree_get_description(ui_message->field_8 % 8, ui_message->field_8 / 8),
+            &stru_5C7138,
+            dword_64C498, 1);
+        break;
+    case UI_MSG_TYPE_STAT: {
+        size_t pos = 0;
+
+        sub_554560(window_handle, dword_5C708C[6]);
+
+        while (ui_message->str[pos] != '\0' && ui_message->str[pos] != '\n') {
+            pos++;
+        }
+
+        if (ui_message->str[pos] == '\n') {
+            ui_message->str[pos] = '\0';
+            sub_550A10(window_handle,
+                ui_message->str,
+                &stru_5C70C8,
+                dword_739F88,
+                1);
+            sub_550A10(window_handle,
+                ui_message->str + pos + 1,
+                &stru_5C7138,
+                dword_64C498,
+                1);
+            ui_message->str[pos] = '\n';
+        } else {
+            sub_550A10(window_handle, ui_message->str, &stru_5C7108, dword_64C498, 1);
+        }
+        break;
+    }
+    case UI_MSG_TYPE_SCHEMATIC:
+        sub_554560(window_handle, dword_5C708C[6]);
+        sub_550A10(window_handle,
+            sub_56E9D0(ui_message->field_8),
+            &stru_5C70C8,
+            dword_739F88,
+            1);
+        sub_550A10(window_handle,
+            ui_message->str,
+            &stru_5C7138,
+            dword_64C498,
+            1);
+        break;
+    }
 }
 
 // 0x553320
-bool sub_553320(void(*func)(TigMessage* msg))
+bool sub_553320(bool(*func)(TigMessage* msg))
 {
     dword_64C6CC = func;
     tc_show();
@@ -3017,9 +5648,9 @@ void sub_553380(int a1, const char* str)
 }
 
 // 0x5533A0
-void sub_5533A0(TigMessage* msg)
+int sub_5533A0(TigMessage* msg)
 {
-    sub_4C9A10(msg);
+    return sub_4C9A10(msg);
 }
 
 // 0x5533B0
@@ -3029,9 +5660,91 @@ int sub_5533B0()
 }
 
 // 0x5533C0
-void sub_5533C0()
+void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window_handle_t window_handle)
 {
-    // TODO: Incomplete.
+    int64_t pc_obj;
+    int score;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    if (!dword_64C6B4) {
+        return;
+    }
+
+    if (art_id == TIG_ART_ID_INVALID) {
+        pc_obj = player_get_pc_obj();
+        if (pc_obj != OBJ_HANDLE_NULL) {
+            score = stat_level(pc_obj, STAT_INTELLIGENCE) / 4;
+        } else {
+            score = 5;
+        }
+
+        if (tig_art_interface_id_create(188 + index, 0, 0, 0, &art_id) == TIG_OK) {
+            tig_button_set_art(button->button_handle, art_id);
+            tig_button_hide(button->button_handle);
+        }
+
+        if (index < score) {
+            if (tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+                src_rect.x = 0;
+                src_rect.y = 0;
+                src_rect.width = art_frame_data.width;
+                src_rect.height = art_frame_data.height;
+
+                dst_rect.x = 0;
+                dst_rect.y = 0;
+                dst_rect.width = art_frame_data.width;
+                dst_rect.height = art_frame_data.height;
+
+                art_blit_info.flags = 0;
+                art_blit_info.art_id = art_id;
+                art_blit_info.src_rect = &src_rect;
+                art_blit_info.dst_rect = &dst_rect;
+
+                if (window_handle == dword_64C4F8[0]) {
+                    dst_rect.x = button->x;
+                    dst_rect.y = button->y;
+                } else {
+                    dst_rect.x = button->x - stru_5C6EE0[index].x;
+                    dst_rect.y = button->y - stru_5C6EE0[index].y;
+                }
+
+                tig_window_blit_art(window_handle, &art_blit_info);
+            }
+        } else {
+            if (tig_art_interface_id_create(628 + index, 0, 0, 0, &art_id) == TIG_OK
+                && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+                src_rect.x = 0;
+                src_rect.y = 0;
+                src_rect.width = art_frame_data.width;
+                src_rect.height = art_frame_data.height;
+
+                dst_rect.x = button->x - 1;
+                dst_rect.y = button->y - 1;
+                dst_rect.width = art_frame_data.width;
+                dst_rect.height = art_frame_data.height;
+
+                art_blit_info.flags = 0;
+                art_blit_info.art_id = art_id;
+                art_blit_info.src_rect = &src_rect;
+                art_blit_info.dst_rect = &dst_rect;
+
+                tig_window_blit_art(window_handle, &art_blit_info);
+            }
+        }
+
+        if (window_handle != dword_64C4F8[0]) {
+            tig_window_hide(dword_5C6378[index]);
+        }
+    } else {
+        if (window_handle != dword_64C4F8[0]) {
+            tig_window_show(dword_5C6378[index]);
+        }
+        tig_button_set_art(button->button_handle, art_id);
+        tig_button_show(button->button_handle);
+    }
 }
 
 // 0x553620
@@ -3044,9 +5757,93 @@ void sub_553620(int index, tig_art_id_t art_id)
 }
 
 // 0x553670
-void intgame_spell_maintain_refresh_func()
+void intgame_spell_maintain_refresh_func(tig_button_handle_t button_handle, UiButtonInfo* info, int num, bool a4, tig_window_handle_t window_handle)
 {
-    // TODO: Incomplete.
+    TigButtonData button_data;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    int current_num;
+    bool hidden;
+    tig_art_id_t art_id;
+
+    if (tig_button_data(button_handle, &button_data) != TIG_OK) {
+        return;
+    }
+
+    current_num = tig_art_num_get(button_data.art_id);
+    if (a4) {
+        if (current_num == num + 188 && tig_button_is_hidden(button_handle, &hidden) == TIG_OK) {
+            tig_button_show(button_handle);
+            if (tig_art_interface_id_create(num + 188, 0, 0, 0, &art_id) != TIG_OK) {
+                tig_debug_printf("intgame_spell_maintain_refresh_func: ERROR: tig_art_interface_id_create failed!\n");
+                return;
+            }
+
+            tig_button_set_art(button_handle, art_id);
+            if (tig_art_interface_id_create(num + 628, 0, 0, 0, &art_id) != TIG_OK) {
+                return;
+            }
+
+            if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+                return;
+            }
+
+            if (tig_art_interface_id_create(185, 0, 0, 0, &art_id) != TIG_OK) {
+                return;
+            }
+
+            src_rect.x = info->x - 1;
+            src_rect.y = info->y - 1;
+            src_rect.width = art_frame_data.width;
+            src_rect.height = art_frame_data.height;
+
+            dst_rect.x = src_rect.x;
+            dst_rect.y = info->y - 1;
+            dst_rect.width = art_frame_data.width;
+            dst_rect.height = art_frame_data.height;
+
+            art_blit_info.flags = 0;
+            art_blit_info.art_id = art_id;
+            art_blit_info.src_rect = &src_rect;
+            art_blit_info.dst_rect = &dst_rect;
+            tig_window_blit_art(window_handle, &art_blit_info);
+        } else if (current_num != num + 628) {
+            if (current_num == num + 188) {
+                if (tig_art_interface_id_create(num + 188, 0, 0, 0, &art_id)) {
+                    tig_button_set_art(button_handle, art_id);
+                    tig_button_hide(button_handle);
+                }
+
+                if (tig_art_interface_id_create(num + 628, 0, 0, 0, &art_id) != TIG_OK) {
+                    return;
+                }
+
+                if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
+                    return;
+                }
+
+                src_rect.x = info->x - 1;
+                src_rect.y = info->y - 1;
+                src_rect.width = art_frame_data.width;
+                src_rect.height = art_frame_data.height;
+
+                dst_rect.x = 0;
+                dst_rect.y = 0;
+                dst_rect.width = art_frame_data.width;
+                dst_rect.height = art_frame_data.height;
+
+                art_blit_info.flags = 0;
+                art_blit_info.art_id = art_id;
+                art_blit_info.src_rect = &dst_rect;
+                art_blit_info.dst_rect = &src_rect;
+                tig_window_blit_art(window_handle, &art_blit_info);
+            } else {
+                sub_57C370(num);
+            }
+        }
+    }
 }
 
 // 0x553910
@@ -3088,7 +5885,7 @@ void sub_553990()
 
     if (!sub_57DE00()) {
         // FIXME: Meaningless.
-        tig_mouse_get_cursor_art_id();
+        tig_mouse_cursor_get_art_id();
 
         art_num = dword_5C7178[sub_551A00()];
         if (art_num == -1) {
@@ -3121,9 +5918,43 @@ void sub_553A60(int art_num)
 }
 
 // 0x553A70
-void sub_553A70()
+void sub_553A70(TigMessage* msg)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    S4F2810 v1;
+
+    if (!sub_5517A0(msg)) {
+        return;
+    }
+
+    obj = sub_43C570();
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, qword_5C7280, intgame_fullscreen)) {
+        if (obj != v1.obj) {
+            sub_57CCF0(player_get_pc_obj(), v1.obj);
+            sub_43C270(v1.obj);
+        }
+    } else {
+        if (qword_64C690 != OBJ_HANDLE_NULL || sub_43C570() == OBJ_HANDLE_NULL) {
+            if (intgame_iso_window_type != 3) {
+                if (sub_4E5470(qword_64C690)) {
+                    sub_43C270(qword_64C690);
+                    sub_43C270(OBJ_HANDLE_NULL);
+                    sub_57CCF0(player_get_pc_obj(), qword_64C690);
+                }
+                qword_64C690 = OBJ_HANDLE_NULL;
+            }
+        } else {
+            if (intgame_iso_window_type != 3) {
+                sub_550770(-1, "");
+                sub_568F40();
+            }
+            sub_43C270(OBJ_HANDLE_NULL);
+        }
+    }
 }
 
 // 0x553BE0
@@ -3175,15 +6006,282 @@ void sub_553BE0(int64_t a1, int64_t a2, const char* str)
 }
 
 // 0x553D10
-void sub_553D10()
+bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
 {
-    // TODO: Incomplete.
+    unsigned int critter_flags;
+
+    *portrait_ptr = 432; // levelupicon.art
+
+    switch (obj_field_int32_get(a2, OBJ_F_TYPE)) {
+    case OBJ_TYPE_PORTAL:
+        *portrait_ptr = sub_504260(obj_field_int32_get(a2, OBJ_F_CURRENT_AID)) != 0
+            ? 436
+            : 786;
+        return false;
+    case OBJ_TYPE_CONTAINER:
+        switch (sub_49B290(a2)) {
+        case 3023:
+            *portrait_ptr = 832; // cont_junk.art
+            break;
+        case 3033:
+        case 3034:
+            *portrait_ptr = 834; // cont_safe.art
+            break;
+        case 3055:
+            *portrait_ptr = 835; // cont_trash.art
+            break;
+        case 3056:
+            *portrait_ptr = 833; // cont_body.art
+            break;
+        case 3057:
+            *portrait_ptr = 837; // cont_altar_good.art
+            break;
+        case 3058:
+            *portrait_ptr = 838; // cont_altar_neutral.art
+            break;
+        case 3059:
+            *portrait_ptr = 839; // cont_altar_evil.art
+            break;
+        case 3060:
+            *portrait_ptr = 836; // cont_trash.art
+            break;
+        default:
+            *portrait_ptr = 435; // containericon.art
+            break;
+        }
+        return false;
+    case OBJ_TYPE_SCENERY:
+        *portrait_ptr = 437;
+        return false;
+    case OBJ_TYPE_WEAPON:
+    case OBJ_TYPE_AMMO:
+    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_ITEM_GENERIC:
+        *portrait_ptr = sub_554C20(a2);
+        return false;
+    case OBJ_TYPE_PC:
+        *portrait_ptr = sub_4CEB80(a2);
+        return true;
+    case OBJ_TYPE_NPC:
+        if (sub_45DDA0(a2) == a1) {
+            int portrait = sub_4CEB80(a2);
+            if (portrait != 0) {
+                *portrait_ptr = portrait;
+                return true;
+            }
+        }
+
+        critter_flags = obj_field_int32_get(a2, OBJ_F_CRITTER_FLAGS);
+        if ((critter_flags & OCF_UNDEAD) != 0) {
+            *portrait_ptr = 384; // undead.art
+            return false;
+        }
+
+        if ((critter_flags & OCF_MONSTER) != 0) {
+            *portrait_ptr = 383; // monstericon.art
+            return false;
+        }
+
+        if ((critter_flags & OCF_ANIMAL) != 0) {
+            *portrait_ptr = 385; // animalicon.art
+            return false;
+        }
+
+        if ((critter_flags & OCF_MECHANICAL) != 0) {
+            *portrait_ptr = 434; // generaltechicon.art
+            return false;
+        }
+
+        // Generic race-specific icon.
+        *portrait_ptr = dword_5C6FA0[stat_level(a2, STAT_RACE)];
+        return false;
+    default:
+        return false;
+    }
 }
 
 // 0x553F70
-void sub_553F70()
+void sub_553F70(int64_t a1, int64_t critter_obj, const char* a3)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    bool is_detecting_alignment;
+    int alignment;
+    MesFileEntry mes_file_entry;
+    char str[80];
+    int64_t leader_obj;
+
+    obj_type = obj_field_int32_get(critter_obj, OBJ_F_TYPE);
+    sub_550930();
+
+    leader_obj = sub_45DDA0(critter_obj);
+
+
+    is_detecting_alignment = (obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_ALIGNMENT) != 0;
+
+    if (is_detecting_alignment) {
+        alignment = stat_level(critter_obj, STAT_ALIGNMENT);
+    }
+
+    if (a1 != critter_obj
+        && combat_critter_is_combat_mode_active(a1)
+        && !sub_45D8D0(critter_obj)) {
+        sub_554830(a1, critter_obj);
+    } else {
+        if (is_detecting_alignment) {
+            int v1 = (stat_get_max_value(critter_obj, STAT_ALIGNMENT) - stat_get_min_value(critter_obj, STAT_ALIGNMENT)) / 6;
+            int v2 = (alignment - stat_get_min_value(critter_obj, STAT_ALIGNMENT)) / v1;
+            if (v2 > 5) {
+                v2 = 5;
+            }
+            sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, dword_5C6FCC[v2]);
+        } else {
+            int portrait;
+
+            if (sub_553D10(a1, critter_obj, &portrait)) {
+                sub_5561D0(critter_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+            } else {
+                sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+            }
+        }
+    }
+
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        a3,
+        &stru_5C70C8,
+        dword_739F88,
+        0x1);
+
+    if (sub_45D8D0(critter_obj)) {
+        mes_file_entry.num = 16; // "Dead"
+        mes_get_msg(intgame_mes_file, &mes_file_entry);
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            mes_file_entry.str,
+            &stru_5C70D8,
+            dword_64C49C,
+            0x1);
+        return;
+    }
+
+    if (obj_type == OBJ_TYPE_NPC) {
+        if (critter_is_concealed(a1)) {
+            mes_file_entry.num = 37; // "Prowling state"
+            mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+            int v4;
+            int v3 = sub_4AF260(critter_obj, a1);
+            if (v3 != 0) {
+                v4 = sub_4AF470(critter_obj, a1, 0);
+                if (v4 >= v3) {
+                    v4 = v3;
+                }
+            } else {
+                v4 = 0;
+            }
+
+            if (critter_is_sleeping(critter_obj) && v4 == 0) {
+                v4 = 1;
+            }
+
+            MesFileEntry suffix;
+            switch (v3) {
+            case 0:
+                suffix.num = 42; // "Aware!!!"
+                break;
+            case 1:
+                suffix.num = 41; // "Perilous!"
+                break;
+            case 2:
+                suffix.num = 40; // "Dangerous"
+                break;
+            case 3:
+                suffix.num = 39; // "Risky"
+                break;
+            default:
+                suffix.num = 38; // "Safe"
+                break;
+            }
+
+            mes_get_msg(intgame_mes_file, &suffix);
+            sprintf(str, "%s: %s", mes_file_entry.str, suffix.str);
+        } else {
+            if (is_detecting_alignment) {
+                mes_file_entry.num = 36; // "Alignment"
+                mes_get_msg(intgame_mes_file, &mes_file_entry);
+                sprintf(str, "%s: %d", mes_file_entry.str, alignment / 10);
+            } else {
+                int reaction_value = sub_4C0CC0(critter_obj, a1);
+                int reaction_level = reaction_translate(reaction_value);
+                const char* reaction_name = reaction_get_name(reaction_level);
+
+                mes_file_entry.num = 1; // "Reaction"
+                mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+                sprintf(str,
+                    "%s: %d (%s)",
+                    mes_file_entry.str,
+                    reaction_value,
+                    reaction_name);
+            }
+        }
+
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            str,
+            &stru_5C70D8,
+            dword_64C498,
+            0x1);
+    }
+
+    mes_file_entry.num = 0; // "Level"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    sprintf(str, "%s: %d", mes_file_entry.str, stat_level(critter_obj, STAT_LEVEL));
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70D8,
+        dword_64C498,
+        0x2);
+
+    int cur_hp = sub_43D600(critter_obj);
+    int max_hp = sub_43D5A0(critter_obj);
+    int hp_ratio = 100 * cur_hp / max_hp;
+    if (stat_level(critter_obj, STAT_POISON_LEVEL) > 0) {
+        sub_554640(665, 666, &stru_5C70E8, hp_ratio);
+    } else {
+        sub_554640(463, 464, &stru_5C70E8, hp_ratio);
+    }
+
+    if (a1 == critter_obj || leader_obj == a1) {
+        sprintf(str, "%d/%d", cur_hp, max_hp);
+    } else {
+        sprintf(str, "%d%%", hp_ratio);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70E8,
+        dword_64C49C,
+        0x2);
+
+    int cur_fatigue = sub_45D700(critter_obj);
+    int max_fatigue = sub_45D670(critter_obj);
+    int fatigue_ratio = 100 * cur_fatigue / max_fatigue;
+    sub_554640(465, 466, &stru_5C70F8, fatigue_ratio);
+
+    if (a1 == critter_obj || leader_obj == a1) {
+        sprintf(str, "%d/%d", cur_fatigue, max_fatigue);
+    } else {
+        sprintf(str, "%d%%", fatigue_ratio);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70F8,
+        dword_64C500,
+        0x2);
 }
 
 // 0x554560
@@ -3225,15 +6323,175 @@ void sub_554560(tig_window_handle_t window_handle, int art_num)
 }
 
 // 0x554640
-void sub_554640()
+void sub_554640(int a1, int a2, TigRect* rect, int value)
 {
-    // TODO: Incomplete.
+    tig_window_handle_t window_handle;
+    tig_art_id_t art_id;
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+
+    window_handle = stru_5C6D60[intgame_iso_window_type].window_handle;
+    if (intgame_is_compact_interface()) {
+        window_handle = sub_568D20();
+    }
+
+    if (value < 0) {
+        value = 0;
+    } else if (value > 100) {
+        value = 100;
+    }
+
+    if (value != 0) {
+        tig_art_interface_id_create(a1, 0, 0, 0, &art_id);
+        tig_art_frame_data(art_id, &art_frame_data);
+
+        src_rect.x = 0;
+        src_rect.y = 0;
+        src_rect.width = value * art_frame_data.width / 100;
+        if (src_rect.width < art_frame_data.width) {
+            src_rect.width++;
+        }
+        src_rect.height = art_frame_data.height;
+
+        dst_rect.x = rect->x;
+        dst_rect.y = rect->y;
+        dst_rect.width = art_frame_data.width;
+        dst_rect.height = art_frame_data.height;
+
+        if (intgame_is_compact_interface()) {
+            dst_rect.x -= 210;
+            dst_rect.y -= 59;
+        }
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+
+        tig_window_blit_art(window_handle, &art_blit_info);
+    }
+
+    if (value != 100) {
+        tig_art_interface_id_create(a2, 0, 0, 0, &art_id);
+        tig_art_frame_data(art_id, &art_frame_data);
+
+        src_rect.x = art_frame_data.width - art_frame_data.width * (100 - value) / 100;
+        src_rect.y = 0;
+        src_rect.height = art_frame_data.height;
+        src_rect.width = art_frame_data.width * (100 - value) / 100;
+
+        dst_rect.x = src_rect.x + rect->x;
+        dst_rect.y = rect->y;
+        dst_rect.width = src_rect.width;
+        dst_rect.height = art_frame_data.height;
+
+        if (intgame_is_compact_interface()) {
+            dst_rect.x -= 210;
+            dst_rect.y -= 59;
+        }
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &dst_rect;
+
+        tig_window_blit_art(window_handle, &art_blit_info);
+    }
 }
 
 // 0x554830
-void sub_554830()
+void sub_554830(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    tig_window_handle_t window_handle;
+    int64_t weapon_obj;
+    int skill;
+    int v1;
+    Tanya v2;
+    int v3;
+    TigRect rect;
+    char str[20];
+    int v4;
+    int v5;
+    MesFileEntry mes_file_entry;
+
+    window_handle = stru_5C6D60[intgame_iso_window_type].window_handle;
+    if (intgame_is_compact_interface()) {
+        window_handle = sub_568D20();
+    }
+
+    sub_554B00(window_handle, 582, 207, 57);
+
+    weapon_obj = item_wield_get(a1, 1004);
+    skill = item_weapon_skill(weapon_obj);
+    if (IS_TECH_SKILL(skill)) {
+        v1 = sub_4C69F0(a1, GET_TECH_SKILL(skill), a2);
+    } else {
+        v1 = sub_4C62E0(a1, GET_BASIC_SKILL(skill), a2);
+    }
+
+    sub_4C7090(&v2);
+    sub_4440E0(a1, &(v2.field_0));
+    sub_4440E0(a2, &(v2.field_30));
+    sub_4440E0(weapon_obj, &(v2.field_68));
+    v2.field_9C = skill;
+
+    v1 -= sub_4C8430(&v2);
+
+    if (weapon_obj != OBJ_HANDLE_NULL
+        && skill != SKILL_THROWING) {
+        v3 = sub_461620(weapon_obj, a1, a2);
+        if (v3 > 0) {
+            if (v3 > 20) {
+                v2.field_98 |= 0x40000;
+            }
+            v1 -= v1 * v3 / 100;
+        }
+    }
+
+    if (v1 < 0 || (v2.field_98 & 0x20080) != 0) {
+        v1 = 0;
+    }
+
+    if ((v2.field_98 & 0x60FC0) != 0) {
+        rect.x = 215;
+        rect.y = 66;
+        rect.width = 64;
+        rect.height = 64;
+
+        sprintf(str, "%d%%", v1);
+        sub_550A10(window_handle, str, &rect, dword_64C4A0, 0x4);
+
+        v5 = 0;
+        for (v4 = 0; v4 < 8; v4++) {
+            if (v5 >= 6) {
+                break;
+            }
+
+            if ((dword_5C732C[v4] & v2.field_98) != 0) {
+                sub_554B00(window_handle,
+                    dword_5C734C[v4],
+                    dword_5C736C[v5],
+                    dword_5C7384[v5]);
+                v5++;
+            }
+        }
+    } else {
+        mes_file_entry.num = 20;
+        mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+        rect.x = 215;
+        rect.y = 85;
+        rect.width = 64;
+        rect.height = 64;
+
+        sub_550A10(window_handle, mes_file_entry.str, &rect, dword_64C498, 0x4);
+
+        sprintf(str, "%d%%", v1);
+        rect.y += 18;
+        sub_550A10(window_handle, str, &rect, dword_64C4A0, 0x4);
+    }
 }
 
 // 0x554B00
@@ -3288,15 +6546,404 @@ tig_art_id_t sub_554BE0(int64_t obj)
 }
 
 // 0x554C20
-void sub_554C20()
+int sub_554C20(int64_t item_obj)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    int complexity;
+    int num;
+    tig_art_id_t art_id;
+    int armor_coverage;
+
+    obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
+    complexity = obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+
+    if (item_is_identified(item_obj)
+        && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_HEXED) != 0) {
+        num = 440;
+
+        switch (obj_type) {
+        case OBJ_TYPE_WEAPON:
+            art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT);
+            switch (tig_art_item_id_subtype_get(art_id)) {
+            case TIG_ART_WEAPON_TYPE_BOW:
+                num = 792;
+                break;
+            case TIG_ART_WEAPON_TYPE_DAGGER:
+            case TIG_ART_WEAPON_TYPE_SWORD:
+            case TIG_ART_WEAPON_TYPE_AXE:
+            case TIG_ART_WEAPON_TYPE_MACE:
+            case TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD:
+            case TIG_ART_WEAPON_TYPE_STAFF:
+                num = 791;
+                break;
+            }
+            break;
+        case OBJ_TYPE_ITEM_ARMOR:
+            art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_AID);
+            armor_coverage = tig_art_item_id_armor_coverage_get(art_id);
+            switch (armor_coverage) {
+            case TIG_ART_ARMOR_COVERAGE_TORSO:
+                art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT);
+                switch (tig_art_item_id_subtype_get(art_id)) {
+                case TIG_ART_ARMOR_TYPE_VILLAGER:
+                case TIG_ART_ARMOR_TYPE_CITY_DWELLER:
+                    num = 794;
+                    break;
+                case TIG_ART_ARMOR_TYPE_ROBE:
+                    num = 797;
+                    break;
+                default:
+                    num = 793;
+                    break;
+                }
+                break;
+            case TIG_ART_ARMOR_COVERAGE_RING:
+                num = 796;
+                break;
+            case TIG_ART_ARMOR_COVERAGE_MEDALLION:
+                num = 795;
+                break;
+            default:
+                num = 793;
+                break;
+            }
+            break;
+        }
+        return num;
+    }
+
+    switch (obj_type) {
+    case OBJ_TYPE_WEAPON:
+        art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT);
+        num = dword_5C6FE4[tig_art_item_id_subtype_get(art_id)];
+        if (num > 0) {
+            num += 1;
+        } else if (num < 0) {
+            num += 2;
+        }
+        break;
+    case OBJ_TYPE_AMMO:
+        num = dword_5C7020[obj_field_int32_get(item_obj, OBJ_F_AMMO_TYPE)];
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_AID);
+        armor_coverage = tig_art_item_id_armor_coverage_get(art_id);
+        switch (armor_coverage) {
+        case TIG_ART_ARMOR_COVERAGE_TORSO:
+            art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT);
+            num = dword_5C7030[tig_art_item_id_subtype_get(art_id)];
+            break;
+        default:
+            num = dword_5C7054[armor_coverage];
+            break;
+        }
+        if (num > 0) {
+            num += 1;
+        } else if (num < 0) {
+            num += 2;
+        }
+        break;
+    case OBJ_TYPE_ITEM_GOLD:
+        num = 417;
+        break;
+    case OBJ_TYPE_ITEM_FOOD:
+        num = 423;
+        if (complexity > 0) {
+            num = 418;
+        } else if (complexity < 0) {
+            switch (obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE)) {
+            case TECH_HERBOLOGY:
+                num = 420;
+                break;
+            case TECH_CHEMISTRY:
+                num = 421;
+                break;
+            case TECH_THERAPEUTICS:
+                num = 419;
+                break;
+            }
+        }
+        break;
+    case OBJ_TYPE_ITEM_SCROLL:
+        num = 425;
+        break;
+    case OBJ_TYPE_ITEM_KEY:
+        num = 426;
+        break;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        num = 427;
+        break;
+    case OBJ_TYPE_ITEM_WRITTEN:
+        num = dword_5C7070[obj_field_int32_get(item_obj, OBJ_F_WRITTEN_SUBTYPE)];
+        break;
+    case OBJ_TYPE_ITEM_GENERIC:
+        num = 432;
+        if (complexity > 0) {
+            num = 433;
+        } else if (complexity < 0) {
+            num = 434;
+        }
+        break;
+    }
+
+    return num;
 }
 
 // 0x554F10
-void sub_554F10()
+void sub_554F10(int64_t critter_obj, int64_t item_obj, const char* a3)
 {
-    // TODO: Incomplete.
+    int obj_type;
+    int64_t parent_obj;
+    bool is_identified;
+    int complexity;
+    MesFileEntry mes_file_entry;
+    MesFileEntry suffix;
+    char str[MAX_STRING];
+    int quantity_fld;
+    int value;
+
+    obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
+    sub_550930();
+
+    if (item_parent(item_obj, &parent_obj)
+        && parent_obj != OBJ_HANDLE_NULL
+        && item_inventory_location_get(item_obj) >= 1000
+        && item_inventory_location_get(item_obj) <= 1008) {
+        critter_obj = parent_obj;
+    }
+
+    sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle,
+        sub_554C20(item_obj));
+
+    is_identified = item_is_identified(item_obj);
+    complexity = obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
+
+    if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_HEXED) != 0
+        && is_identified) {
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            a3,
+            &stru_5C70C8,
+            dword_64C538,
+            0x1);
+    } else {
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            a3,
+            &stru_5C70C8,
+            complexity > 0 ? dword_64C470 : dword_739F88,
+            0x1);
+    }
+
+    if (obj_type == OBJ_TYPE_WEAPON) {
+        value = item_weapon_magic_speed(item_obj, critter_obj);
+
+        mes_file_entry.num = 8; // "Speed"
+        mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+        sprintf(str, "%s: %d", mes_file_entry.str, value);
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            str,
+            &stru_5C70C8,
+            dword_64C49C,
+            0x2);
+    }
+
+    switch (obj_type) {
+    case OBJ_TYPE_WEAPON:
+        mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
+        mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
+        if (mes_file_entry.str != NULL
+            && *mes_file_entry.str != '\0'
+            && (complexity <= 0 || is_identified)) {
+            strcpy(str, mes_file_entry.str);
+        } else {
+            sub_555910(item_obj, str);
+        }
+        break;
+    case OBJ_TYPE_AMMO:
+    case OBJ_TYPE_ITEM_GOLD:
+        sub_462410(item_obj, &quantity_fld);
+        value = obj_field_int32_get(item_obj, quantity_fld);
+
+        mes_file_entry.num = 6; // "Quantity"
+        mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+        sprintf(str, "%s: %d", mes_file_entry.str, value);
+        break;
+    case OBJ_TYPE_ITEM_ARMOR:
+        mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
+        mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
+        if (mes_file_entry.str != NULL
+            && *mes_file_entry.str != '\0'
+            && (complexity <= 0 || is_identified)) {
+            strcpy(str, mes_file_entry.str);
+        } else {
+            sub_555B50(item_obj, str);
+        }
+        break;
+    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_ITEM_GENERIC:
+        str[0] = '\0';
+        if (complexity <= 0 || is_identified) {
+            mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
+            mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
+            if (mes_file_entry.str != NULL) {
+                strcpy(str, mes_file_entry.str);
+            }
+        }
+        if (obj_type == OBJ_TYPE_ITEM_GENERIC) {
+            unsigned int flags = obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS);
+            if ((flags & OGF_IS_LOCKPICK) != 0) {
+                mes_file_entry.num = 71; // "Bonus to Pick Locks skill"
+            } else if ((flags & OGF_IS_HEALING_ITEM) != 0) {
+                mes_file_entry.num = 72; // "Bonus to Heal skill"
+            } else {
+                mes_file_entry.num = -1;
+            }
+
+            if (mes_file_entry.num != -1) {
+                mes_get_msg(intgame_mes_file, &mes_file_entry);
+                sprintf(str,
+                    "%s: %+d%%",
+                    mes_file_entry.str,
+                    obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS));
+            }
+        }
+        break;
+    case OBJ_TYPE_ITEM_KEY:
+        str[0] = '\0';
+        break;
+    case OBJ_TYPE_ITEM_KEY_RING:
+        value = item_get_keys(item_obj, NULL);
+
+        mes_file_entry.num = 7; // "Keys"
+        mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+        sprintf(str, "%s: %d", mes_file_entry.str, value);
+        break;
+    }
+
+    if (str[0] != '\0' || !intgame_is_compact_interface()) {
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            str,
+            &stru_5C70D8,
+            dword_64C498,
+            0x1);
+    }
+
+    if (is_identified
+        && (obj_type == OBJ_TYPE_WEAPON
+            || obj_type == OBJ_TYPE_ITEM_ARMOR
+            || obj_type == OBJ_TYPE_ITEM_SCROLL)) {
+        if (complexity > 0) {
+            value = sub_4614A0(item_obj, critter_obj);
+
+            mes_file_entry.num = 2; // "Magic power available"
+            mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+            sprintf(str, "%s: %d%%", mes_file_entry.str, 100 * value / complexity);
+            sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+                str,
+                &stru_5C70E8,
+                dword_64C498,
+                0x1);
+        } else if (complexity < 0) {
+            value = sub_461700(item_obj, critter_obj);
+
+            mes_file_entry.num = 3; // "Aptitude adj to chance of critical failure"
+            mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+            sprintf(str, "%s: %+d%%", mes_file_entry.str, value);
+            sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+                str,
+                &stru_5C70E8,
+                dword_64C498,
+                0x1);
+        }
+    }
+
+    str[0] = '\0';
+    value = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE);
+
+    if (complexity > 0 && value != 0) {
+        mes_file_entry.num = 19; // "Uses"
+        mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+        if (is_identified) {
+            if (value > 0) {
+                sprintf(str, "%s: +", mes_file_entry.str);
+            } else {
+                sprintf(str, "%s: %d", mes_file_entry.str, value);
+            }
+        } else {
+            sprintf(str, "%s: ??", mes_file_entry.str);
+        }
+    } else {
+        switch (obj_type) {
+        case OBJ_TYPE_ITEM_GENERIC:
+            if ((obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_HEALING_ITEM) != 0) {
+                mes_file_entry.num = 19; // "Uses"
+                mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+                sprintf(str,
+                    "%s: %d",
+                    mes_file_entry.str,
+                    obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS));
+            }
+            break;
+        case OBJ_TYPE_WEAPON: {
+            int ammo_type = item_weapon_ammo_type(item_obj);
+            if (ammo_type != 10000) {
+                int consumption = obj_field_int32_get(item_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
+                if (consumption > 0) {
+                    sprintf(str,
+                        "%s: %d",
+                        ammunition_type_get_name(ammo_type),
+                        consumption);
+                }
+            }
+            break;
+        }
+        }
+    }
+
+    if (str[0] != '\0' || !intgame_is_compact_interface()) {
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            str,
+            &stru_5C70E8,
+            dword_64C498,
+            0x2);
+    }
+
+    value = sub_461370(item_obj, critter_obj);
+    mes_file_entry.num = 4; // "Weight"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    suffix.num = 5; // "stone"
+    mes_get_msg(intgame_mes_file, &suffix);
+    sprintf(str, "%s: %d %s", mes_file_entry.str, value, suffix.str);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70F8,
+        dword_64C49C,
+        0x1);
+
+    if (tig_art_item_id_destroyed_get(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID)) == 0) {
+        if (obj_type == OBJ_TYPE_WEAPON
+            || obj_type == OBJ_TYPE_ITEM_ARMOR
+            || (obj_type == OBJ_TYPE_ITEM_GENERIC
+                && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & 0x20) != 0)) {
+            sprintf(str,
+                "%d/%d",
+                sub_43D600(item_obj),
+                sub_43D5A0(item_obj));
+            sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+                str,
+                &stru_5C70F8,
+                dword_64C49C,
+                0x2);
+        }
+    }
 }
 
 // 0x555780
@@ -3322,7 +6969,7 @@ void sub_555780(char* buffer, int num, int min, int max, int adj, bool a6)
         if (a6) {
             sprintf(tmp, "%+d", min);
         } else {
-            sprintf("%d", min);
+            sprintf(tmp, "%d", min);
         }
         strcat(buffer, tmp);
     }
@@ -3500,7 +7147,7 @@ void sub_555B50(int64_t obj, char* buffer)
 }
 
 // 0x555D80
-void sub_555D80(int64_t a1, int64_t a2, const char* str)
+void sub_555D80(int64_t a1, int64_t scenery_obj, const char* str)
 {
     int art_num;
     char buffer[2000];
@@ -3508,8 +7155,8 @@ void sub_555D80(int64_t a1, int64_t a2, const char* str)
     if (str[0] != '\0') {
         sub_550930();
 
-        if (sub_553D10(a1, a2, &art_num)) {
-            sub_5561D0(a2, art_num, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+        if (sub_553D10(a1, scenery_obj, &art_num)) {
+            sub_5561D0(scenery_obj, art_num, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
         } else {
             sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, art_num);
         }
@@ -3520,8 +7167,8 @@ void sub_555D80(int64_t a1, int64_t a2, const char* str)
             dword_739F88,
             1);
 
-        if ((obj_field_int32_get(a2, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
-            sprintf(buffer, sub_43D600(a2), sub_43D5A0(a2));
+        if ((obj_field_int32_get(scenery_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
+            sprintf(buffer, "%d/%d", sub_43D600(scenery_obj), sub_43D5A0(scenery_obj));
             sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
                 buffer,
                 &stru_5C70F8,
@@ -3529,34 +7176,234 @@ void sub_555D80(int64_t a1, int64_t a2, const char* str)
                 2);
         }
 
-        if ((obj_field_int32_get(a2, OBJ_F_SCENERY_FLAGS) & OSCF_MARKS_TOWNMAP) != 0) {
-            sub_564AF0(a2);
+        if ((obj_field_int32_get(scenery_obj, OBJ_F_SCENERY_FLAGS) & OSCF_MARKS_TOWNMAP) != 0) {
+            sub_564AF0(scenery_obj);
         }
     }
 }
 
 // 0x555EC0
-void sub_555EC0()
+void sub_555EC0(int64_t a1, int64_t portal_obj, const char* a3)
 {
-    // TODO: Incomplete.
+    int portrait;
+    unsigned int portal_flags;
+    MesFileEntry mes_file_entry;
+    char str[MAX_STRING];
+
+    sub_550930();
+
+    if (sub_553D10(a1, portal_obj, &portrait)) {
+        sub_5561D0(portal_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+    } else {
+        sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+    }
+
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, a3, &stru_5C70C8, dword_739F88, 1);
+
+    portal_flags = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_FLAGS);
+    if ((portal_flags & OPF_JAMMED) != 0) {
+        mes_file_entry.num = 26; // "Jammed"
+    } else if ((portal_flags & OPF_MAGICALLY_HELD) != 0) {
+        mes_file_entry.num = 27; // "Magically held"
+    } else if (object_is_locked(portal_obj)) {
+        mes_file_entry.num = 9; // "Locked"
+    } else {
+        mes_file_entry.num = 10; // "Unlocked"
+    }
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        mes_file_entry.str,
+        &stru_5C70F8,
+        dword_64C49C,
+        1);
+
+    sprintf(str, "%d/%d", sub_43D600(portal_obj), sub_43D5A0(portal_obj));
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70F8,
+        dword_64C49C,
+        2);
 }
 
 // 0x556040
-void sub_556040()
+void sub_556040(int64_t a1, int64_t container_obj, const char* a3)
 {
-    // TODO: Incomplete.
+    int portrait;
+    unsigned int container_flags;
+    MesFileEntry mes_file_entry;
+    char str[MAX_STRING];
+
+    sub_550930();
+    if (sub_553D10(a1, container_obj, &portrait)) {
+        sub_5561D0(container_obj, portrait, stru_5C6D60[intgame_iso_window_type].window_handle, 217, 69);
+    } else {
+        sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, portrait);
+    }
+
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle, a3, &stru_5C70C8, dword_739F88, 1);
+
+    container_flags = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_FLAGS);
+    if ((container_flags & OCOF_JAMMED)) {
+        mes_file_entry.num = 26; // "Jammed"
+    } else if ((container_flags & OCOF_MAGICALLY_HELD) != 0) {
+        mes_file_entry.num = 27; // "Magically held"
+    } else if (object_is_locked(container_obj)) {
+        mes_file_entry.num = 9; // "Locked"
+    } else {
+        mes_file_entry.num = 10; // "Unlocked"
+    }
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        mes_file_entry.str,
+        &stru_5C70F8,
+        dword_64C49C,
+        1);
+
+    if ((obj_field_int32_get(container_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
+        sprintf(str, "%d/%d", sub_43D600(container_obj), sub_43D5A0(container_obj));
+        sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+            str,
+            &stru_5C70F8,
+            dword_64C49C,
+            2);
+    }
 }
 
 // 0x5561D0
-void sub_5561D0()
+void sub_5561D0(int64_t obj, int portrait, tig_window_handle_t window_handle, int x, int y)
 {
-    // TODO: Incomplete.
+    if (intgame_is_compact_interface()) {
+        window_handle = sub_568D20();
+        x -= 211;
+        y -= 59;
+    }
+
+    portrait_draw_native(obj, portrait, window_handle, x, y);
 }
 
 // 0x556220
-void sub_556220()
+void sub_556220(int64_t obj)
 {
-    // TODO: Incomplete.
+    MesFileEntry mes_file_entry;
+    char str[MAX_STRING];
+    int64_t weapon_obj;
+    int skill;
+    int base_to_hit;
+    int min_dam;
+    int max_dam;
+
+    mes_file_entry.num = 57; // "Total Attack"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    sprintf(str, "%s: %d", mes_file_entry.str, item_total_attack(obj));
+
+    if (intgame_iso_window_type != 0) {
+        sub_550770(-1, str);
+        return;
+    }
+
+    sub_550930();
+
+    sub_554560(stru_5C6D60[intgame_iso_window_type].window_handle, 675);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70C8,
+        dword_739F88,
+        1);
+
+    weapon_obj = item_wield_get(obj, 1004);
+    skill = item_weapon_skill(weapon_obj);
+
+    mes_file_entry.num = 69; // "Base To Hit"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    if (IS_TECH_SKILL(skill)) {
+        base_to_hit = sub_4C69F0(obj, GET_TECH_SKILL(skill), OBJ_HANDLE_NULL);
+    } else {
+        base_to_hit = sub_4C62E0(obj, GET_BASIC_SKILL(skill), OBJ_HANDLE_NULL);
+    }
+
+    sprintf(str, "%s: %d%%", mes_file_entry.str, base_to_hit);
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70D8,
+        dword_64C498,
+        1);
+
+    mes_file_entry.num = 59; // "Fatigue"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    item_weapon_damage(weapon_obj, obj, 4, skill, 0, &min_dam, &max_dam);
+    if (max_dam != 0) {
+        sprintf(str, "%s: %d-%d", mes_file_entry.str, min_dam, max_dam);
+    } else {
+        sprintf(str, "%s: 0", mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70E8,
+        dword_64C498,
+        1);
+
+    mes_file_entry.num = 61; // "Fire Damage"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    item_weapon_damage(weapon_obj, obj, 3, skill, 0, &min_dam, &max_dam);
+    if (max_dam != 0) {
+        sprintf(str, "%s: %d-%d", mes_file_entry.str, min_dam, max_dam);
+    } else {
+        sprintf(str, "%s: 0", mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70F8,
+        dword_64C498,
+        1);
+
+    mes_file_entry.num = 58; // "Damage"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    item_weapon_damage(weapon_obj, obj, 0, skill, 0, &min_dam, &max_dam);
+    if (max_dam != 0) {
+        sprintf(str, "%s: %d-%d", mes_file_entry.str, min_dam, max_dam);
+    } else {
+        sprintf(str, "%s: 0", mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70D8,
+        dword_64C498,
+        0x11);
+
+    mes_file_entry.num = 60; // "Electrical Damage"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    item_weapon_damage(weapon_obj, obj, 2, skill, 0, &min_dam, &max_dam);
+    if (max_dam != 0) {
+        sprintf(str, "%s: %d-%d", mes_file_entry.str, min_dam, max_dam);
+    } else {
+        sprintf(str, "%s: 0", mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70E8,
+        dword_64C498,
+        0x11);
+
+    mes_file_entry.num = 62; // "Poison"
+    mes_get_msg(intgame_mes_file, &mes_file_entry);
+
+    item_weapon_damage(weapon_obj, obj, 2, skill, 0, &min_dam, &max_dam);
+    if (max_dam != 0) {
+        sprintf(str, "%s: %d-%d", mes_file_entry.str, min_dam, max_dam);
+    } else {
+        sprintf(str, "%s: 0", mes_file_entry.str);
+    }
+    sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
+        str,
+        &stru_5C70F8,
+        dword_64C498,
+        0x11);
 }
 
 // 0x5566B0
@@ -3569,7 +7416,7 @@ void sub_5566B0(int64_t obj)
     // Total Defense
     mes_file_entry.num = 63;
     mes_get_msg(intgame_mes_file, &mes_file_entry);
-    value = sub_464700(obj);
+    value = item_total_defence(obj);
     sprintf(buffer,
         "%s: %d",
         mes_file_entry.str,
@@ -3789,9 +7636,71 @@ void sub_556B90(int a1)
 }
 
 // 0x556C20
-void sub_556C20()
+void sub_556C20(int64_t obj)
 {
-    // TODO: Incomplete.
+    TigArtFrameData art_frame_data;
+    TigArtBlitInfo art_blit_info;
+    TigRect src_rect;
+    TigRect dst_rect;
+    tig_art_id_t art_id;
+    int cnt;
+    int index;
+
+    if (tig_art_interface_id_create(184, 0, 0, 0, &art_id) == TIG_OK) {
+        src_rect.x = 211;
+        src_rect.y = 37;
+        src_rect.width = 384;
+        src_rect.height = 14;
+
+        art_blit_info.flags = 0;
+        art_blit_info.art_id = art_id;
+        art_blit_info.src_rect = &src_rect;
+        art_blit_info.dst_rect = &src_rect;
+        tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
+    }
+
+    cnt = 11 * level_get_experience_points_to_next_level_in_percent(obj) / 10;
+    for (index = 0; index < cnt / 100; index++) {
+        if (tig_art_interface_id_create(stru_5C71D0[index].art_num, 0, 0, 0, &art_id) == TIG_OK
+            && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+            src_rect.x = 0;
+            src_rect.y = 0;
+            src_rect.width = art_frame_data.width;
+            src_rect.height = art_frame_data.height;
+
+            dst_rect.x = stru_5C71D0[index].x;
+            dst_rect.y = stru_5C71D0[index].y;
+            dst_rect.width = src_rect.width;
+            dst_rect.height = src_rect.height;
+
+            art_blit_info.flags = 0;
+            art_blit_info.art_id = art_id;
+            art_blit_info.src_rect = &src_rect;
+            art_blit_info.dst_rect = &dst_rect;
+            tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
+        }
+    }
+
+    if (cnt % 100 != 0) {
+        if (tig_art_interface_id_create(stru_5C7270.art_num, 0, 0, 0, &art_id) == TIG_OK
+            && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
+            src_rect.x = 0;
+            src_rect.y = 0;
+            src_rect.width = art_frame_data.width * (cnt % 100) / 100;
+            src_rect.height = art_frame_data.height;
+
+            dst_rect.x = stru_5C7270.x;
+            dst_rect.y = stru_5C7270.y;
+            dst_rect.width = src_rect.width;
+            dst_rect.height = src_rect.height;
+
+            art_blit_info.flags = 0;
+            art_blit_info.art_id = art_id;
+            art_blit_info.src_rect = &src_rect;
+            art_blit_info.dst_rect = &dst_rect;
+            tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
+        }
+    }
 }
 
 // 0x556E60
@@ -3887,15 +7796,56 @@ void sub_5570A0(int64_t obj)
 }
 
 // 0x5570D0
-void sub_5570D0()
+void sub_5570D0(int64_t obj, bool a2, int a3)
 {
-    // TODO: Incomplete.
+    int index;
+    S683518* v1;
+
+    for (index = 0; index < 10; index++) {
+        v1 = sub_57F240(index);
+        if (a2 && v1->field_10.obj == obj) {
+            sub_57EF90(index);
+        }
+
+        if (v1->field_8 == 1 && v1->field_10.obj != OBJ_HANDLE_NULL) {
+            v1->field_40 = item_count_items_matching_prototype(player_get_pc_obj(), v1->field_10.obj);
+            intgame_hotkey_refresh(index);
+        }
+    }
+
+    if (a2) {
+        sub_57F2C0(obj, a2);
+        if (qword_64C688 == obj && intgame_iso_window_type == 8) {
+            sub_5506C0(0);
+            qword_64C688 = OBJ_HANDLE_NULL;
+        }
+
+        if (a3 == 1004) {
+            intgame_mt_button_disable();
+        }
+    } else {
+        intgame_mt_button_enable();
+    }
+
+    if (sub_57DE00()) {
+        sub_553990();
+        dword_6839B0 = 0;
+        dword_5CB4E4 = -1;
+    }
 }
 
 // 0x5571C0
-void sub_5571C0()
+void sub_5571C0(int64_t obj)
 {
-    // TODO: Incomplete.
+    if (player_is_pc_obj(obj)) {
+        sub_57D350(0, -1);
+    }
+
+    if (sub_43C570() == obj || qword_64C690 == obj) {
+        sub_57CCF0(player_get_pc_obj(), obj);
+    }
+
+    sub_56B4D0(obj);
 }
 
 // 0x557230
@@ -3958,9 +7908,99 @@ void intgame_big_window_unlock()
 }
 
 // 0x557370
-void sub_557370()
+void sub_557370(int64_t a1, int64_t a2)
 {
-    // TODO: Incomplete.
+    unsigned int spell_flags;
+    unsigned int critter_flags;
+    int obj_type;
+
+    if (a1 == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    if (!sub_45D790(a1)) {
+        return;
+    }
+
+    if (a2 == a1) {
+        return;
+    }
+
+    spell_flags = obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS);
+    critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
+
+    if ((spell_flags & OSF_STONED) != 0
+        || (critter_flags & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
+        return;
+    }
+
+    obj_type = obj_field_int32_get(a2, OBJ_F_TYPE);
+
+    // NOTE: The code below omit some unused checks from the original code. I'm
+    // not sure if it's a bug or not.
+    switch (sub_551A00()) {
+    case 0:
+        if (sub_573620() == OBJ_HANDLE_NULL) {
+            switch (obj_type) {
+            case OBJ_TYPE_WALL:
+            case OBJ_TYPE_PORTAL:
+            case OBJ_TYPE_SCENERY:
+                if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+                    sub_4B78D0(a1, a2);
+                } else {
+                    if ((spell_flags & OSF_POLYMORPHED) == 0) {
+                        sub_4B79A0(a1, a2);
+                    }
+                }
+                break;
+            case OBJ_TYPE_CONTAINER:
+                if ((spell_flags & OSF_POLYMORPHED) == 0) {
+                    if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+                        sub_4B78D0(a1, a2);
+                    } else {
+                        sub_4B79A0(a1, a2);
+                    }
+                }
+                break;
+            case OBJ_TYPE_WEAPON:
+            case OBJ_TYPE_AMMO:
+            case OBJ_TYPE_ITEM_ARMOR:
+            case OBJ_TYPE_ITEM_GOLD:
+            case OBJ_TYPE_ITEM_FOOD:
+            case OBJ_TYPE_ITEM_SCROLL:
+            case OBJ_TYPE_ITEM_KEY:
+            case OBJ_TYPE_ITEM_KEY_RING:
+            case OBJ_TYPE_ITEM_WRITTEN:
+            case OBJ_TYPE_ITEM_GENERIC:
+                if ((spell_flags & OSF_POLYMORPHED) == 0) {
+                    sub_4B7A20(a1, a2);
+                }
+                break;
+            case OBJ_TYPE_PC:
+            case OBJ_TYPE_NPC:
+                if (sub_45D8D0(a2)) {
+                    if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
+                        sub_4B79A0(a1, a2);
+                    }
+                } else {
+                    if (!player_is_pc_obj(sub_45DDA0(a2)) || tig_kb_is_key_pressed(DIK_LALT)) {
+                        sub_4B78D0(a1, a2);
+                    }
+                }
+                break;
+            case OBJ_TYPE_TRAP:
+                sub_4B7830(a1, obj_field_int64_get(a2, OBJ_F_LOCATION));
+                break;
+            }
+        }
+        break;
+    case 1:
+        sub_4B7AA0(a1);
+        break;
+    case 2:
+        sub_4B7AE0(a1);
+        break;
+    }
 }
 
 // 0x557670
@@ -4142,7 +8182,7 @@ void intgame_toggle_interface()
                 tig_window_show(dword_64C4F8[index]);
             }
 
-            compat_ui_destroy();
+            compact_ui_destroy();
         }
     }
 
@@ -4162,10 +8202,10 @@ int sub_557AB0()
 }
 
 // 0x557AC0
-void sub_557AC0(int group, int index, UiButtonInfo* button_info)
+void sub_557AC0(int clg, int lvl, UiButtonInfo* button_info)
 {
     if (button_info != NULL) {
-        *button_info = stru_5C6718[group * 5 + index];
+        *button_info = intgame_spell_buttons[clg * 5 + lvl];
     }
 }
 
@@ -4232,13 +8272,87 @@ int sub_557B60()
 }
 
 // 0x557C00
-void sub_557C00()
+int sub_557C00()
 {
-    // TODO: Incomplete.
+    TigMouseState mouse_state;
+    TigButtonData button_data;
+    int x;
+    int y;
+    int index;
+    int64_t pc_obj;
+
+    if (intgame_iso_window_type != 8) {
+        return 5;
+    }
+
+    tig_mouse_get_state(&mouse_state);
+    x = mouse_state.x - stru_5C6390[1].x;
+    y = mouse_state.y - stru_5C6390[1].y;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return 5;
+    }
+
+    for (index = 0; index < 5; index++) {
+        if (tig_button_data(stru_5C6C18[index].button_handle, &button_data) != TIG_OK) {
+            return 6;
+        }
+
+        if (x >= button_data.x
+            && y >= button_data.y
+            && x < button_data.x + button_data.width
+            && y < button_data.y + button_data.height) {
+            if (!sub_45A030(mt_item_spell(qword_64C688, index))) {
+                return index;
+            } else {
+                return 5;
+            }
+        }
+    }
+
+    return 5;
 }
 
 // 0x557CF0
-void sub_557CF0()
+int sub_557CF0()
 {
-    // TODO: Incomplete.
+    TigMouseState mouse_state;
+    TigButtonData button_data;
+    int x;
+    int y;
+    int index;
+    int64_t pc_obj;
+
+    if (sub_557AA0() != 1) {
+        return 5;
+    }
+
+    tig_mouse_get_state(&mouse_state);
+    x = mouse_state.x - stru_5C6390[1].x;
+    y = mouse_state.y - stru_5C6390[1].y;
+
+    pc_obj = player_get_pc_obj();
+    if (pc_obj == OBJ_HANDLE_NULL) {
+        return 5;
+    }
+
+    for (index = 0; index < 5; index++) {
+        if (tig_button_data(intgame_spell_buttons[5 * dword_64C530 + index].button_handle, &button_data) != TIG_OK) {
+            return 6;
+        }
+
+        if (x >= button_data.x
+            && y >= button_data.y
+            && x < button_data.x + button_data.width
+            && y < button_data.y + button_data.height) {
+            if (sub_4B1950(pc_obj, 5 * dword_64C530 + index)) {
+                return index;
+            } else {
+                return 5;
+            }
+        }
+    }
+
+    return 5;
 }

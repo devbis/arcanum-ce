@@ -145,7 +145,7 @@ int sub_4CC2D0(const S600A20_Entry* a, const S600A20_Entry* b)
 int sub_4CC310(int spl)
 {
     return dword_5B7558 >= 0 && dword_5B7558 < 10 && mt_ai_initialized
-        ? magictech_spells[spl].ai.flee + dword_5B7558
+        ? magictech_spells[spl].ai.values[dword_5B7558]
         : -1;
 }
 

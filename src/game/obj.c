@@ -11,12 +11,12 @@
 #define OBJ_FILE_VERSION 119
 
 typedef struct ObjectFieldInfo {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
-    /* 0014 */ int field_14;
+    /* 0000 */ int simple_array_idx;
+    /* 0004 */ int complex_array_idx;
+    /* 0008 */ int change_array_idx;
+    /* 000C */ unsigned int mask;
+    /* 0010 */ int bit;
+    /* 0014 */ int cnt;
     /* 0018 */ int type;
 } ObjectFieldInfo;
 
@@ -38,7 +38,9 @@ static bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
 static bool sub_409980(TigFile* stream, int64_t obj);
 static bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid);
 static void sub_409CB0(void* mem, int64_t obj);
+static bool sub_409D30(uint8_t* data, int64_t* obj_ptr);
 static void sub_409E80(void* mem, int64_t obj);
+static bool sub_409F10(uint8_t* data, int64_t* obj_ptr);
 static bool sub_40A070(Object* object, int fld);
 static bool sub_40A0E0(Object* object, int fld);
 static bool sub_40A140(Object* object, int fld);
@@ -515,10 +517,10 @@ static Object* dword_5D1110;
 static S4E4BD0* dword_5D1118;
 
 // 0x5D111C
-static int dword_5D111C;
+static uint8_t* dword_5D111C;
 
 // 0x5D1120
-static int16_t* dword_5D1120;
+static int16_t* object_fields_count_per_type;
 
 // 0x5D1124
 static bool obj_initialized;
@@ -544,7 +546,7 @@ bool obj_init(GameInitInfo* init_info)
     object_fields = (ObjectFieldInfo*)CALLOC(OBJ_F_MAX, sizeof(ObjectFieldInfo));
     dword_5D10F0 = (int*)CALLOC(21, sizeof(int));
     dword_5D1100 = (int*)CALLOC(21, sizeof(int));
-    dword_5D1120 = (int16_t*)CALLOC(18, sizeof(int16_t));
+    object_fields_count_per_type = (int16_t*)CALLOC(18, sizeof(int16_t));
     obj_is_editor = init_info->editor;
     sub_4E59B0();
     sub_4E4CD0(sizeof(Object), obj_is_editor);
@@ -559,7 +561,7 @@ bool obj_init(GameInitInfo* init_info)
         word_5D10FC = 0;
         dword_5D10F4 = 0;
         obj_enumerate_fields(&object, sub_40C560);
-        dword_5D1120[index] = word_5D10FC;
+        object_fields_count_per_type[index] = word_5D10FC;
     }
 
     obj_initialized = true;
@@ -579,7 +581,7 @@ void obj_exit()
     FREE(object_fields);
     FREE(dword_5D10F0);
     FREE(dword_5D1100);
-    FREE(dword_5D1120);
+    FREE(object_fields_count_per_type);
 
     obj_initialized = false;
 }
@@ -598,7 +600,160 @@ void sub_405250()
 // 0x405280
 bool obj_validate_system(unsigned int flags)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int iter;
+    Object* object;
+    int obj_type;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int idx;
+
+    if (sub_4E53C0(&obj, &iter)) {
+        do {
+            if (!sub_4E5470(obj)) {
+                tig_debug_printf("!VS  Walk found invalid handle: %i64x\n", obj);
+                return false;
+            }
+
+            object = obj_lock(obj);
+            if (object->field_8.type != OID_TYPE_BLOCKED
+                && !objid_is_valid(object->field_8)) {
+                tig_debug_printf("!VS  Permanent id invalid: %i64x\n", obj);
+                obj_unlock(obj);
+                return false;
+            }
+            obj_type = object->type;
+            obj_unlock(obj);
+
+            if (sub_405BC0(obj)) {
+                if (obj_field_int32_get(obj, OBJ_F_TYPE) != obj_type) {
+                    tig_debug_println("!VS  Type get failed.");
+                    return false;
+                }
+
+                switch (obj_type) {
+                case OBJ_TYPE_WALL:
+                case OBJ_TYPE_PORTAL:
+                case OBJ_TYPE_SCENERY:
+                case OBJ_TYPE_PROJECTILE:
+                case OBJ_TYPE_WEAPON:
+                case OBJ_TYPE_AMMO:
+                case OBJ_TYPE_ITEM_ARMOR:
+                case OBJ_TYPE_ITEM_GOLD:
+                case OBJ_TYPE_ITEM_FOOD:
+                case OBJ_TYPE_ITEM_SCROLL:
+                case OBJ_TYPE_ITEM_KEY:
+                case OBJ_TYPE_ITEM_KEY_RING:
+                case OBJ_TYPE_ITEM_WRITTEN:
+                case OBJ_TYPE_ITEM_GENERIC:
+                case OBJ_TYPE_TRAP:
+                    inventory_num_fld = -1;
+                    inventory_list_fld = -1;
+                    break;
+                case OBJ_TYPE_CONTAINER:
+                    inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+                    inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+                    break;
+                case OBJ_TYPE_PC:
+                case OBJ_TYPE_NPC:
+                    inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+                    inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+                    break;
+                default:
+                    tig_debug_printf("!VS  Object type invalid: %d\n", obj_type);
+                    return false;
+                }
+
+                if (inventory_num_fld != -1) {
+                    cnt = obj_field_int32_get(obj, inventory_num_fld);
+                    if (cnt != obj_arrayfield_length_get(obj, inventory_list_fld)) {
+                        tig_debug_println("!VS  obj_f_critter_inventory_num doesn't match count for obj_f_critter_inventory_list_idx.");
+
+                        object = obj_lock(obj);
+                        sub_408760(object, inventory_num_fld, &cnt);
+                        obj_unlock(obj);
+                    }
+
+                    for (idx = 0; idx < cnt; idx++) {
+                        bool is_handle = false;
+                        bool is_id = false;
+                        int64_t item_obj = OBJ_HANDLE_NULL;
+                        ObjectID oid;
+                        int item_type;
+
+                        object = obj_lock(obj);
+                        sub_408BB0(object, inventory_list_fld, idx, &oid);
+                        obj_unlock(obj);
+
+                        if (oid.type != OID_TYPE_NULL) {
+                            if (oid.type == OID_TYPE_HANDLE) {
+                                item_obj = oid.d.h;
+                                if (!sub_4E5470(item_obj)) {
+                                    tig_debug_printf("!VS  Inventory entry is an invalid handle.  handle: %i64x\n", oid.d.h);
+                                    return false;
+                                }
+
+                                is_handle = true;
+                            } else {
+                                if (!objid_is_valid(oid)) {
+                                    // TODO: Unclear what is `a` and `b`.
+                                    tig_debug_printf("!VS  Inventory entry is neither a valid handle nor valid id.  a: %i64x  b: %i64x\n",
+                                        oid.d.h,
+                                        oid.d.h);
+                                }
+
+                                is_id = true;
+                            }
+
+                            if ((flags & 0x1) != 0 && !is_handle) {
+                                tig_debug_println("!VS  Inventory entry isn't a handle");
+                                return false;
+                            }
+
+                            if (is_id) {
+                                if (objid_is_equal(sub_407EF0(obj), oid)) {
+                                    tig_debug_println("!VS  Inventory entry has same id as ownder");
+                                    return false;
+                                }
+
+                                item_obj = objp_perm_lookup(oid);
+
+                                // TODO: Looks wrong, validates `obj` instead of `item_obj`.
+                                if (!sub_4E5470(obj)) {
+                                    tig_debug_printf("!VS  Inventory entry id resolved to invalid handle.  H: %i64x\n",  item_obj);
+                                }
+                            }
+
+                            if (item_obj == obj) {
+                                tig_debug_println("!VS  Inventory entry has samehandle as owner");
+                                return false;
+                            }
+
+                            item_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
+                            if (!obj_type_is_item(item_type)) {
+                                tig_debug_printf("!VS  Inventory entry is not an item.  Type is: %d", item_type);
+                                return false;
+                            }
+                        } else {
+                            tig_debug_println("!VS  Inventory entry is null.");
+
+                            object = obj_lock(obj);
+                            sub_408BB0(object, inventory_list_fld, cnt - 1, &oid);
+                            sub_4088B0(object, inventory_list_fld, idx, &oid);
+                            sub_408E70(object, inventory_list_fld, cnt - 1);
+                            cnt--;
+                            idx--;
+                            sub_408760(object, inventory_num_fld, &cnt);
+                            obj_unlock(obj);
+                        }
+                    }
+                }
+            }
+        } while (sub_4E5420(&obj, &iter));
+    }
+
+    return true;
 }
 
 // 0x405790
@@ -609,7 +764,7 @@ void sub_405790(int64_t obj_handle)
     object = obj_lock(obj_handle);
     tig_debug_printf("{{ Difs on object w/ aid:");
     sub_408430(obj_field_int32_get(obj_handle, OBJ_F_AID));
-    if (object->field_44 != 0) {
+    if (object->modified) {
         sub_40CBA0(object, sub_40D670);
         obj_unlock(obj_handle);
         tig_debug_println(" }}");
@@ -639,8 +794,8 @@ void sub_405800(int type, int64_t* obj_ptr)
         object->transient_properties[index] = -1;
     }
 
-    object->field_46 = dword_5D1120[type];
-    object->field_50 = MALLOC(4 * object->field_46);
+    object->num_fields = object_fields_count_per_type[type];
+    object->field_50 = MALLOC(4 * object->num_fields);
 
     dword_5D10F4 = 0;
     obj_enumerate_fields(object, sub_40C6B0);
@@ -651,6 +806,60 @@ void sub_405800(int type, int64_t* obj_ptr)
     sub_40C690(object);
 
     *obj_ptr = handle;
+}
+
+// 0x4058E0
+void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
+{
+    Object* object;
+    int64_t obj;
+    Object* prototype;
+    unsigned int flags;
+
+    object = sub_408710(&obj);
+    object->prototype_handle = OBJ_HANDLE_NULL;
+
+    prototype = obj_lock(proto_obj);
+    object->field_20 = prototype->field_8;
+    object->type = prototype->type;
+    object->field_40 = 0;
+    obj_unlock(proto_obj);
+
+    object->num_fields = 0;
+    object->modified = false;
+    sub_40C580(object);
+
+    object->field_50 = NULL;
+    memset(object->transient_properties, 0, sizeof(object->transient_properties));
+
+    if (object->type == OBJ_TYPE_PROJECTILE
+        || object->type == OBJ_TYPE_CONTAINER
+        || obj_type_is_critter(object->type)
+        || obj_type_is_item(object->type)
+        || !obj_is_editor) {
+        sub_4E62A0(&(object->field_8));
+        sub_4E4FD0(object->field_8, obj);
+    } else {
+        object->field_8.type = OID_TYPE_NULL;
+    }
+
+    obj_unlock(obj);
+
+    obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
+
+    if (object->type == OBJ_TYPE_NPC) {
+        obj_field_int64_set(obj, OBJ_F_CRITTER_TELEPORT_DEST, loc);
+        obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_DAY, loc);
+        obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_NIGHT, loc);
+
+        flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
+        flags |= ONF_WAYPOINTS_DAY;
+        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+    }
+
+    *obj_ptr = obj;
+
+    obj_find_add(obj);
 }
 
 // 0x405B30
@@ -762,9 +971,9 @@ void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
     new_object->type = object->type;
     new_object->field_8 = object->field_8;
     new_object->field_20 = object->field_20;
-    new_object->field_44 = object->field_44;
-    new_object->field_46 = object->field_46;
-    new_object->field_50 = (int*)CALLOC(4 * object->field_46, 1);
+    new_object->modified = object->modified;
+    new_object->num_fields = object->num_fields;
+    new_object->field_50 = (int*)CALLOC(4 * object->num_fields, 1);
 
     if (object->field_20.type != OID_TYPE_BLOCKED) {
         sub_40C5C0(new_object, object);
@@ -789,6 +998,139 @@ void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
     sub_464470(new_obj_handle, NULL, NULL);
 
     *new_obj_handle_ptr = new_obj_handle;
+}
+
+// 0x406010
+void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj)
+{
+    int64_t copy_obj;
+    Object* copy_object;
+    Object* existing_object;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int64_t existing_item_obj;
+    int64_t copy_item_obj;
+
+    existing_object = obj_lock(existing_obj);
+
+    copy_object = sub_408710(&copy_obj);
+    copy_object->type = existing_object->type;
+    copy_object->field_8 = existing_object->field_8;
+
+    if (copy_object->field_8.type != OID_TYPE_NULL) {
+        switch (copy_object->field_8.type) {
+        case OID_TYPE_GUID:
+        case OID_TYPE_P:
+            sub_4E62A0(&(copy_object->field_8));
+            sub_4E4FD0(copy_object->field_8, copy_obj);
+            break;
+        default:
+            tig_debug_println("ERROR: Unallowed ID type in obj_perm_dup");
+            copy_object->field_8.type = OID_TYPE_NULL;
+            break;
+        }
+    }
+
+    copy_object->field_20 = existing_object->field_20;
+    copy_object->field_40 = 0;
+    copy_object->num_fields = existing_object->num_fields;
+    copy_object->modified = false;
+    copy_object->field_50 = CALLOC(sizeof(intptr_t) * copy_object->num_fields, 1);
+    sub_40C5C0(copy_object, existing_object);
+    memset(copy_object->field_4C, 0, 4 * sub_40C030(copy_object->type));
+
+    dword_5D1108 = existing_object;
+    sub_40CBA0(copy_object, sub_40C7A0);
+    memset(copy_object->transient_properties, 0, sizeof(copy_object->transient_properties));
+
+    obj_unlock(existing_obj);
+    obj_unlock(copy_obj);
+
+    if (copy_object->type == OBJ_TYPE_CONTAINER) {
+        inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
+    } else if (obj_type_is_critter(copy_object->type)) {
+        inventory_num_fld = OBJ_F_CRITTER_INVENTORY_NUM;
+        inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
+    } else {
+        inventory_num_fld = -1;
+        inventory_list_fld = -1;
+    }
+
+    if (inventory_num_fld != -1) {
+        cnt = obj_field_int32_get(copy_obj, inventory_num_fld);
+        while (cnt != 0) {
+            cnt--;
+            existing_item_obj = obj_arrayfield_handle_get(copy_obj, inventory_list_fld, cnt);
+            obj_perm_dup(&copy_item_obj, existing_item_obj);
+            obj_arrayfield_obj_set(copy_obj, inventory_list_fld, cnt, copy_item_obj);
+            obj_field_handle_set(copy_item_obj, OBJ_F_ITEM_PARENT, copy_obj);
+        }
+    }
+
+    *copy_obj_ptr = copy_obj;
+
+    obj_find_add(copy_obj);
+}
+
+// 0x406210
+void sub_406210(int64_t* copy, int64_t obj, ObjectID* oids)
+{
+    Object* object;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int cnt;
+    int idx;
+    int64_t item_obj;
+
+    obj_perm_dup(copy, obj);
+
+    object = obj_lock(*copy);
+    if (object->field_8.type != OID_TYPE_NULL) {
+        sub_4E52F0(object->field_8);
+    }
+
+    sub_4E4FD0(*oids++, *copy);
+    obj_unlock(*copy);
+
+    if (inventory_fields_from_obj_type(obj_field_int32_get(*copy, OBJ_F_TYPE), &inventory_num_fld, &inventory_list_fld)) {
+        cnt = obj_field_int32_get(*copy, inventory_num_fld);
+        for (idx = cnt - 1; idx >= 0; idx--) {
+            item_obj = obj_arrayfield_handle_get(*copy, inventory_list_fld, idx);
+            object = obj_lock(item_obj);
+            if (object->field_8.type != OID_TYPE_NULL) {
+                sub_4E52F0(object->field_8);
+            }
+            sub_4E4FD0(*oids++, item_obj);
+            obj_unlock(item_obj);
+        }
+    }
+}
+
+// 0x4063A0
+void sub_4063A0(int64_t obj, ObjectID** oids_ptr, int* cnt_ptr)
+{
+    ObjectID* oids;
+    int cnt = 0;
+    int idx;
+    int inventory_num_fld;
+    int inventory_list_fld;
+    int64_t item_obj;
+
+    if (inventory_fields_from_obj_type(obj_field_int32_get(obj, OBJ_F_TYPE), &inventory_num_fld, &inventory_list_fld)) {
+        cnt = obj_field_int32_get(obj, inventory_num_fld);
+    }
+
+    oids = *oids_ptr = (ObjectID*)MALLOC(sizeof(*oids) * (cnt + 1));
+    *oids++ = sub_407EF0(obj);
+
+    for (idx = cnt - 1; idx >= 0; idx--) {
+        item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, idx);
+        *oids++ = sub_407EF0(item_obj);
+    }
+
+    *cnt_ptr = cnt + 1;
 }
 
 // 0x4064B0
@@ -920,16 +1262,16 @@ bool sub_406730(uint8_t* data, int64_t* obj_ptr)
 }
 
 // 0x4067C0
-int sub_4067C0(int64_t obj)
+int obj_is_modified(int64_t obj)
 {
     Object* object;
-    int v1;
+    bool modified;
 
     object = obj_lock(obj);
-    v1 = object->field_44;
+    modified = object->modified;
     obj_unlock(obj);
 
-    return v1;
+    return modified;
 }
 
 
@@ -943,7 +1285,7 @@ bool obj_dif_write(TigFile* stream, int64_t obj_handle)
     bool written;
 
     object = obj_lock(obj_handle);
-    if (object->field_44 == 0) {
+    if (object->modified == 0) {
         // FIXME: Object not unlocked.
         return false;
     }
@@ -1039,7 +1381,7 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
 
     cnt = sub_40C030(object->type);
     for (idx = 0; idx < cnt; idx++) {
-        if (obj_read_raw(&(object->field_4C[idx]), 4, stream)) {
+        if (!obj_read_raw(&(object->field_4C[idx]), 4, stream)) {
             tig_debug_println("Error in obj_dif_read:\n  Unable to read one of the modified flag vars.");
             obj_unlock(obj);
             return false;
@@ -1080,12 +1422,12 @@ void sub_406B80(int64_t obj_handle)
     int index;
 
     object = obj_lock(obj_handle);
-    if (object->field_44 != 0) {
+    if (object->modified) {
         cnt = sub_40C030(object->type);
         for (index = 0; index < cnt; index++) {
             object->field_4C[index] = 0;
         }
-        object->field_44 = 0;
+        object->modified = false;
     }
 }
 
@@ -1703,7 +2045,7 @@ void sub_407D50(int64_t obj, int fld)
                 sub_40D370(object, fld, true);
                 sub_40D400(object, fld, true);
             }
-            object->field_44 = -1;
+            object->modified = true;
             obj_unlock(obj);
         }
     } else {
@@ -1935,15 +2277,52 @@ ObjectID sub_408020(int64_t obj, int a2)
 }
 
 // 0x4082C0
-bool sub_4082C0(int64_t* obj_ptr, int* index_ptr)
+bool sub_4082C0(int64_t* obj_ptr, int* iter_ptr)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int iter;
+    Object* object;
+    bool v1;
+
+    if (sub_4E53C0(&obj, &iter)) {
+        do {
+            object = obj_lock(obj);
+            v1 = object->field_20.type == OID_TYPE_BLOCKED;
+            obj_unlock(obj);
+
+            if (!v1) {
+                *obj_ptr = obj;
+                *iter_ptr = iter;
+                return true;
+            }
+        } while (sub_4E5420(&obj, &iter));
+    }
+
+    return false;
 }
 
 // 0x408390
-bool sub_408390(int64_t* obj_ptr, int* index_ptr)
+bool sub_408390(int64_t* obj_ptr, int* iter_ptr)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    int iter;
+    Object* object;
+    bool v1;
+
+    iter = *iter_ptr;
+    while (sub_4E5420(&obj, &iter)) {
+        object = obj_lock(obj);
+        v1 = object->field_20.type == OID_TYPE_BLOCKED;
+        obj_unlock(obj);
+
+        if (!v1) {
+            *obj_ptr = obj;
+            *iter_ptr = iter;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // 0x408720
@@ -1971,13 +2350,14 @@ void sub_408760(Object* object, int fld, void* value_ptr)
     } else {
         if (sub_40D320(object, fld)) {
             v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+            sub_40D400(object, fld, true);
         } else {
             sub_40D450(object, fld);
             sub_40D370(object, fld, true);
             v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
             sub_40D400(object, fld, true);
         }
-        object->field_44 = 1;
+        object->modified = true;
     }
 
     v1.type = object_fields[fld].type;
@@ -2010,26 +2390,33 @@ void sub_4088B0(Object* object, int fld, int index, void* value_ptr)
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
         v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
     } else {
-        // TODO: Incomplete.
+        if (!sub_40D350(object, fld)) {
+            if (!sub_40D320(object, fld)) {
+                sub_40D2A0(object, fld);
+            }
+        }
+        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        sub_40D400(object, fld, true);
+        object->modified = true;
     }
 
-    v1.field_8 = index;
+    v1.idx = index;
     v1.type = object_fields[fld].type;
 
     switch (v1.type) {
     case SA_TYPE_INT32_ARRAY:
     case SA_TYPE_UINT32_ARRAY:
-        v1.storage.value = *(unsigned int*)value_ptr;
+        v1.storage.value = *(int*)value_ptr;
         break;
     case SA_TYPE_INT64_ARRAY:
     case SA_TYPE_UINT64_ARRAY:
         v1.storage.value64 = *(uint64_t*)value_ptr;
         break;
     case SA_TYPE_SCRIPT:
-        // TODO: Unclear.
+        v1.storage.scr = *(Script*)value_ptr;
         break;
     case SA_TYPE_QUEST:
-        // TODO: Unclear.
+        v1.storage.quest = *(PcQuestState*)value_ptr;
         break;
     case SA_TYPE_HANDLE_ARRAY:
         v1.storage.oid = *(ObjectID*)value_ptr;
@@ -2069,7 +2456,7 @@ void sub_408A20(Object* object, int fld, void* value_ptr)
         proto_handle = obj_get_prototype_handle(object);
         proto = obj_lock(proto_handle);
         index = sub_40CB40(proto, fld);
-        v1.ptr = &(object->field_50[index]);
+        v1.ptr = &(proto->field_50[index]);
         sub_4E4180(&v1);
         obj_unlock(proto_handle);
     }
@@ -2093,7 +2480,49 @@ void sub_408A20(Object* object, int fld, void* value_ptr)
 // 0x408BB0
 void sub_408BB0(Object* object, int fld, int index, void* value)
 {
-    // TODO: Incomplete.
+    ObjSa v1;
+    int64_t proto_handle;
+    Object* proto;
+
+    v1.idx = index;
+    v1.type = object_fields[fld].type;
+
+    if (object->field_20.type == OID_TYPE_BLOCKED) {
+        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        sub_4E4180(&v1);
+    } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
+        v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+        sub_4E4180(&v1);
+    } else if (sub_40D350(object, fld)) {
+        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        sub_4E4180(&v1);
+    } else {
+        proto_handle = obj_get_prototype_handle(object);
+        proto = obj_lock(proto_handle);
+        v1.ptr = &(proto->field_50[sub_40CB40(proto, fld)]);
+        sub_4E4180(&v1);
+        obj_unlock(proto_handle);
+    }
+
+    switch (v1.type) {
+    case SA_TYPE_INT32_ARRAY:
+    case SA_TYPE_UINT32_ARRAY:
+        *(int*)value = v1.storage.value;
+        break;
+    case SA_TYPE_INT64_ARRAY:
+    case SA_TYPE_UINT64_ARRAY:
+        *(int64_t*)value = v1.storage.value64;
+        break;
+    case SA_TYPE_SCRIPT:
+        *(Script*)value = v1.storage.scr;
+        break;
+    case SA_TYPE_QUEST:
+        *(PcQuestState*)value = v1.storage.quest;
+        break;
+    case SA_TYPE_HANDLE_ARRAY:
+        *(ObjectID*)value = v1.storage.oid;
+        break;
+    }
 }
 
 // 0x408D60
@@ -2146,11 +2575,11 @@ void sub_408E70(Object* object, int fld, int value)
 
         v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
         sub_40D400(object, fld, true);
-        object->field_44 = 1;
+        object->modified = true;
     }
 
     v1.type = object_fields[fld].type;
-    v1.field_8 = value;
+    v1.idx = value;
     sub_4E4B70(&v1);
 }
 
@@ -2435,7 +2864,57 @@ bool sub_4096B0(TigFile* stream, int64_t obj)
 // 0x4097B0
 bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    Object* object;
+    int size;
+
+    object = sub_408710(&obj);
+    object->field_20 = oid;
+    object->prototype_handle = OBJ_HANDLE_NULL;
+
+    if (!obj_read_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    if (!obj_read_raw(&(object->type), sizeof(object->type), stream)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    size = 4 * sub_40C030(object->type);
+    object->field_4C = MALLOC(size);
+    if (!obj_read_raw(object->field_4C, size, stream)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    object->field_40 = 0;
+    object->modified = false;
+    object->num_fields = object_fields_count_per_type[object->type];
+    object->field_50 = CALLOC(4 * object->num_fields, 1);
+
+    dword_5D10F4 = 0;
+    dword_5D110C = stream;
+    if (!obj_enumerate_fields(object, sub_40A140)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    memset(object->transient_properties, -1, sizeof(object->transient_properties));
+
+    if (object->field_8.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->field_8, obj);
+    }
+
+    obj_unlock(obj);
+    *obj_ptr = obj;
+
+    return true;
 }
 
 // 0x409980
@@ -2461,7 +2940,7 @@ bool sub_409980(TigFile* stream, int64_t obj)
         return false;
     }
 
-    if (!obj_write_raw(&(object->field_46), sizeof(object->field_46), stream)) {
+    if (!obj_write_raw(&(object->num_fields), sizeof(object->num_fields), stream)) {
         obj_unlock(obj);
         return false;
     }
@@ -2485,7 +2964,64 @@ bool sub_409980(TigFile* stream, int64_t obj)
 // 0x409AA0
 bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 {
-    // TODO: Incomplete.
+    int64_t obj;
+    Object* object;
+
+    object = sub_408710(&obj);
+    object->field_20 = oid;
+    object->prototype_handle = OBJ_HANDLE_NULL;
+
+    if (!obj_read_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    if (!obj_read_raw(&(object->type), sizeof(object->type), stream)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    if (!obj_read_raw(&(object->num_fields), sizeof(object->num_fields), stream)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    object->field_40 = 0;
+    object->modified = false;
+    sub_40C580(object);
+
+    object->field_50 = MALLOC(sizeof(*object->field_50) * object->num_fields);
+
+    if (!obj_read_raw(object->field_48, sizeof(object->field_48) * sub_40C030(object->type), stream)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    dword_5D110C = stream;
+    if (!sub_40CBA0(object, object_field_read)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    memset(object->transient_properties, 0, sizeof(object->transient_properties));
+
+    if (object->field_8.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->field_8, obj);
+    }
+
+    obj_unlock(obj);
+
+    obj_field_int32_set(obj, OBJ_F_INTERNAL_FLAGS, 0x1);
+
+    *obj_ptr = obj;
+    obj_find_add(obj);
+
+    return true;
 }
 
 // 0x409CB0
@@ -2506,6 +3042,48 @@ void sub_409CB0(S4E4BD0* mem, int64_t obj)
     obj_unlock(obj);
 }
 
+// 0x409D30
+bool sub_409D30(uint8_t* data, int64_t* obj_ptr)
+{
+    int64_t obj;
+    Object* object;
+    int size;
+
+    object = sub_408710(&obj);
+    sub_4E4C50(&(object->field_20), sizeof(object->field_20), &data);
+    object->prototype_handle = OBJ_HANDLE_NULL;
+    sub_4E4C50(&(object->field_8), sizeof(object->field_8), &data);
+    sub_4E4C50(&(object->type), sizeof(object->type), &data);
+
+    size = sizeof(*object->field_4C) * sub_40C030(object->type);
+    object->field_4C = MALLOC(size);
+    sub_4E4C50(object->field_4C, size, &data);
+
+    object->field_40 = 0;
+    object->modified = false;
+    object->num_fields = object_fields_count_per_type[object->type];
+    object->field_50 = CALLOC(sizeof(intptr_t) * object->num_fields, 1);
+
+    dword_5D10F4 = 0;
+    dword_5D111C = data;
+    if (!obj_enumerate_fields(object, sub_40A1B0)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    memset(object->transient_properties, -1, sizeof(object->transient_properties));
+
+    if (object->field_8.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->field_8, obj);
+    }
+
+    obj_unlock(obj);
+    *obj_ptr = obj;
+
+    return true;
+}
+
 // 0x409E80
 void sub_409E80(S4E4BD0* mem, int64_t obj)
 {
@@ -2516,7 +3094,7 @@ void sub_409E80(S4E4BD0* mem, int64_t obj)
     sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
     sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
     sub_4E4C00(&(object->type), sizeof(object->type), mem);
-    sub_4E4C00(&(object->field_46), sizeof(object->field_46), mem);
+    sub_4E4C00(&(object->num_fields), sizeof(object->num_fields), mem);
     cnt = sub_40C030(object->type);
     sub_4E4C00(object->field_48, sizeof(object->field_48[0]) * cnt, mem);
     dword_5D1118 = mem;
@@ -2526,9 +3104,46 @@ void sub_409E80(S4E4BD0* mem, int64_t obj)
 }
 
 // 0x409F10
-void sub_409F10()
+bool sub_409F10(uint8_t* data, int64_t* obj_ptr)
 {
-    // TODO: Incomplete.
+    Object* object;
+    int64_t obj;
+
+    object = sub_408710(&obj);
+    sub_4E4C50(&(object->field_20), sizeof(object->field_20), &data);
+    object->prototype_handle = OBJ_HANDLE_NULL;
+    sub_4E4C50(&(object->field_8), sizeof(object->field_8), &data);
+    sub_4E4C50(&(object->type), sizeof(object->type), &data);
+    sub_4E4C50(&(object->num_fields), sizeof(object->num_fields), &data);
+
+    object->field_40 = 0;
+    object->modified = false;
+    sub_40C580(object);
+
+    object->field_50 = CALLOC(sizeof(intptr_t) * object->num_fields, 1);
+    sub_4E4C50(object->field_48, 4 * sub_40C030(object->type), &data);
+
+    dword_5D111C = data;
+    if (!sub_40CBA0(object, sub_40A2D0)) {
+        obj_unlock(obj);
+        sub_4E4FB0(obj);
+        return false;
+    }
+
+    memset(object->transient_properties, 0, sizeof(object->transient_properties));
+
+    if (object->field_8.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->field_8, obj);
+    }
+
+    obj_unlock(obj);
+
+    obj_field_int32_set(obj, OBJ_F_INTERNAL_FLAGS, 0x1);
+
+    *obj_ptr = obj;
+    obj_find_add(obj);
+
+    return true;
 }
 
 // 0x40A070
@@ -2644,7 +3259,7 @@ bool sub_40A2D0(Object* object, int fld, ObjectFieldInfo* info)
 // 0x40A310
 bool object_field_write_if_dif(Object* object, int fld, ObjectFieldInfo* info)
 {
-    if ((object->field_4C[info->field_8] & info->field_C) == 0) {
+    if ((object->field_4C[info->change_array_idx] & info->mask) == 0) {
         return true;
     }
 
@@ -2659,11 +3274,11 @@ bool object_field_write_if_dif(Object* object, int fld, ObjectFieldInfo* info)
 // 0x40A370
 bool object_field_read_if_dif(Object* object, int fld, ObjectFieldInfo* info)
 {
-    if ((object->field_4C[info->field_8] & info->field_C) == 0) {
+    if ((object->field_4C[info->change_array_idx] & info->mask) == 0) {
         return true;
     }
 
-    if ((object->field_48[info->field_8] & info->field_C) == 0) {
+    if ((object->field_48[info->change_array_idx] & info->mask) == 0) {
         sub_40D470(object, fld);
         sub_40D3A0(object, info, true);
     }
@@ -2684,7 +3299,7 @@ void sub_40A400()
     int v1;
     int v2;
     int v3;
-    int v4;
+    int idx;
     int v5;
     int v6;
     int v7;
@@ -2697,13 +3312,13 @@ void sub_40A400()
 
     for (fld = OBJ_F_BEGIN; fld < OBJ_F_TOTAL_NORMAL; fld++) {
         info = &(object_fields[fld]);
-        if (info->type == 1) {
+        if (info->type == SA_TYPE_BEGIN) {
             sub_40B8E0(fld);
-            info->field_4 = -1;
-            info->field_8 = -1;
-            info->field_C = 0;
-            info->field_10 = 0;
-            info->field_0 = -1;
+            info->complex_array_idx = -1;
+            info->change_array_idx = -1;
+            info->mask = 0;
+            info->bit = 0;
+            info->simple_array_idx = -1;
 
             switch (fld) {
             case OBJ_F_BEGIN:
@@ -2742,12 +3357,12 @@ void sub_40A400()
             }
 
             dword_5D1100[sub_40A790(fld)] = v2;
-        } else if (info->type == 2) {
-            info->field_4 = -1;
-            info->field_8 = -1;
-            info->field_C = 0;
-            info->field_10 = 0;
-            info->field_0 = -1;
+        } else if (info->type == SA_TYPE_END) {
+            info->complex_array_idx = -1;
+            info->change_array_idx = -1;
+            info->mask = 0;
+            info->bit = 0;
+            info->simple_array_idx = -1;
 
             switch (fld) {
             case OBJ_F_END:
@@ -2764,27 +3379,27 @@ void sub_40A400()
                 break;
             }
         } else {
-            sub_40A740(fld, &v3, &v4);
-            info->field_0 = v2++;
-            info->field_8 = v4 / 32 + dword_5D10F0[sub_40A790(v3)];
-            info->field_10 = v4 % 32;
-            info->field_C = 1 << info->field_10;
+            sub_40A740(fld, &v3, &idx);
+            info->simple_array_idx = v2++;
+            info->change_array_idx = idx / 32 + dword_5D10F0[sub_40A790(v3)];
+            info->bit = idx % 32;
+            info->mask = 1 << info->bit;
 
             switch (info->type) {
-            case 3:
-            case 4:
-            case 11:
-            case 12:
-                info->field_4 = -1;
+            case SA_TYPE_INT32:
+            case SA_TYPE_INT64:
+            case SA_TYPE_STRING:
+            case SA_TYPE_HANDLE:
+                info->complex_array_idx = -1;
                 break;
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 13:
-                info->field_4 = v1++;
+            case SA_TYPE_INT32_ARRAY:
+            case SA_TYPE_INT64_ARRAY:
+            case SA_TYPE_UINT32_ARRAY:
+            case SA_TYPE_UINT64_ARRAY:
+            case SA_TYPE_SCRIPT:
+            case SA_TYPE_QUEST:
+            case SA_TYPE_HANDLE_ARRAY:
+                info->complex_array_idx = v1++;
                 break;
             }
         }
@@ -2792,10 +3407,10 @@ void sub_40A400()
 
     for (fld = OBJ_F_TOTAL_NORMAL; fld < OBJ_F_MAX; fld++) {
         info = &(object_fields[fld]);
-        info->field_4 = -1;
-        info->field_8 = -1;
-        info->field_C = 0;
-        info->field_10 = 0;
+        info->complex_array_idx = -1;
+        info->change_array_idx = -1;
+        info->mask = 0;
+        info->bit = 0;
     }
 }
 
@@ -2840,365 +3455,365 @@ void sub_40A7B0()
     int fld;
 
     for (fld = OBJ_F_BEGIN; fld <= OBJ_F_TOTAL_NORMAL; fld++) {
-        object_fields[fld].field_14 = object_fields[fld].type <= 0 || object_fields[fld].field_14 > 2;
+        object_fields[fld].cnt = object_fields[fld].type > SA_TYPE_INVALID && object_fields[fld].type <= SA_TYPE_END ? 0 : 1;
     }
 
-    for (fld = OBJ_F_TOTAL_NORMAL; fld < OBJ_F_END; fld++) {
-        object_fields[fld].field_14 = 0;
+    for (fld = OBJ_F_TOTAL_NORMAL; fld < OBJ_F_MAX; fld++) {
+        object_fields[fld].cnt = 0;
     }
 
-    object_fields[OBJ_F_RESISTANCE_IDX].field_14 = 5;
-    object_fields[OBJ_F_WEAPON_DAMAGE_LOWER_IDX].field_14 = 5;
-    object_fields[OBJ_F_WEAPON_DAMAGE_UPPER_IDX].field_14 = 5;
-    object_fields[OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX].field_14 = 5;
-    object_fields[OBJ_F_ARMOR_RESISTANCE_ADJ_IDX].field_14 = 5;
-    object_fields[OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX].field_14 = 5;
-    object_fields[OBJ_F_CRITTER_STAT_BASE_IDX].field_14 = STAT_COUNT;
-    object_fields[OBJ_F_CRITTER_BASIC_SKILL_IDX].field_14 = BASIC_SKILL_COUNT;
-    object_fields[OBJ_F_CRITTER_TECH_SKILL_IDX].field_14 = TECH_SKILL_COUNT;
-    object_fields[OBJ_F_RENDER_ALPHA].field_14 = 4;
-    object_fields[OBJ_F_SHADOW_HANDLES].field_14 = 5;
+    object_fields[OBJ_F_RESISTANCE_IDX].cnt = 5;
+    object_fields[OBJ_F_WEAPON_DAMAGE_LOWER_IDX].cnt = 5;
+    object_fields[OBJ_F_WEAPON_DAMAGE_UPPER_IDX].cnt = 5;
+    object_fields[OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX].cnt = 5;
+    object_fields[OBJ_F_ARMOR_RESISTANCE_ADJ_IDX].cnt = 5;
+    object_fields[OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX].cnt = 5;
+    object_fields[OBJ_F_CRITTER_STAT_BASE_IDX].cnt = STAT_COUNT;
+    object_fields[OBJ_F_CRITTER_BASIC_SKILL_IDX].cnt = BASIC_SKILL_COUNT;
+    object_fields[OBJ_F_CRITTER_TECH_SKILL_IDX].cnt = TECH_SKILL_COUNT;
+    object_fields[OBJ_F_RENDER_ALPHA].cnt = 4;
+    object_fields[OBJ_F_SHADOW_HANDLES].cnt = 5;
 }
 
 // 0x40A8A0
 void sub_40A8A0()
 {
-    object_fields[OBJ_F_BEGIN].type = 1;
-    object_fields[OBJ_F_CURRENT_AID].type = 3;
-    object_fields[OBJ_F_LOCATION].type = 4;
-    object_fields[OBJ_F_OFFSET_X].type = 3;
-    object_fields[OBJ_F_OFFSET_Y].type = 3;
-    object_fields[OBJ_F_SHADOW].type = 3;
-    object_fields[OBJ_F_OVERLAY_FORE].type = 7;
-    object_fields[OBJ_F_OVERLAY_BACK].type = 7;
-    object_fields[OBJ_F_UNDERLAY].type = 7;
-    object_fields[OBJ_F_BLIT_FLAGS].type = 3;
-    object_fields[OBJ_F_BLIT_COLOR].type = 3;
-    object_fields[OBJ_F_BLIT_ALPHA].type = 3;
-    object_fields[OBJ_F_BLIT_SCALE].type = 3;
-    object_fields[OBJ_F_LIGHT_FLAGS].type = 3;
-    object_fields[OBJ_F_LIGHT_AID].type = 3;
-    object_fields[OBJ_F_LIGHT_COLOR].type = 3;
-    object_fields[OBJ_F_OVERLAY_LIGHT_FLAGS].type = 7;
-    object_fields[OBJ_F_OVERLAY_LIGHT_AID].type = 7;
-    object_fields[OBJ_F_OVERLAY_LIGHT_COLOR].type = 7;
-    object_fields[OBJ_F_FLAGS].type = 3;
-    object_fields[OBJ_F_SPELL_FLAGS].type = 3;
-    object_fields[OBJ_F_BLOCKING_MASK].type = 3;
-    object_fields[OBJ_F_NAME].type = 3;
-    object_fields[OBJ_F_DESCRIPTION].type = 3;
-    object_fields[OBJ_F_AID].type = 3;
-    object_fields[OBJ_F_DESTROYED_AID].type = 3;
-    object_fields[OBJ_F_AC].type = 3;
-    object_fields[OBJ_F_HP_PTS].type = 3;
-    object_fields[OBJ_F_HP_ADJ].type = 3;
-    object_fields[OBJ_F_MATERIAL].type = 3;
-    object_fields[OBJ_F_HP_DAMAGE].type = 3;
-    object_fields[OBJ_F_RESISTANCE_IDX].type = 5;
-    object_fields[OBJ_F_SCRIPTS_IDX].type = 9;
-    object_fields[OBJ_F_SOUND_EFFECT].type = 3;
-    object_fields[OBJ_F_CATEGORY].type = 3;
-    object_fields[OBJ_F_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_END].type = 2;
-    object_fields[OBJ_F_WALL_BEGIN].type = 1;
-    object_fields[OBJ_F_WALL_FLAGS].type = 3;
-    object_fields[OBJ_F_WALL_PAD_I_1].type = 3;
-    object_fields[OBJ_F_WALL_PAD_I_2].type = 3;
-    object_fields[OBJ_F_WALL_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_WALL_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_WALL_END].type = 2;
-    object_fields[OBJ_F_PORTAL_BEGIN].type = 1;
-    object_fields[OBJ_F_PORTAL_FLAGS].type = 3;
-    object_fields[OBJ_F_PORTAL_LOCK_DIFFICULTY].type = 3;
-    object_fields[OBJ_F_PORTAL_KEY_ID].type = 3;
-    object_fields[OBJ_F_PORTAL_NOTIFY_NPC].type = 3;
-    object_fields[OBJ_F_PORTAL_PAD_I_1].type = 3;
-    object_fields[OBJ_F_PORTAL_PAD_I_2].type = 3;
-    object_fields[OBJ_F_PORTAL_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_PORTAL_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_PORTAL_END].type = 2;
-    object_fields[OBJ_F_CONTAINER_BEGIN].type = 1;
-    object_fields[OBJ_F_CONTAINER_FLAGS].type = 3;
-    object_fields[OBJ_F_CONTAINER_LOCK_DIFFICULTY].type = 3;
-    object_fields[OBJ_F_CONTAINER_KEY_ID].type = 3;
-    object_fields[OBJ_F_CONTAINER_INVENTORY_NUM].type = 3;
-    object_fields[OBJ_F_CONTAINER_INVENTORY_LIST_IDX].type = 13;
-    object_fields[OBJ_F_CONTAINER_INVENTORY_SOURCE].type = 3;
-    object_fields[OBJ_F_CONTAINER_NOTIFY_NPC].type = 3;
-    object_fields[OBJ_F_CONTAINER_PAD_I_1].type = 3;
-    object_fields[OBJ_F_CONTAINER_PAD_I_2].type = 3;
-    object_fields[OBJ_F_CONTAINER_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_CONTAINER_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_CONTAINER_END].type = 2;
-    object_fields[OBJ_F_SCENERY_BEGIN].type = 1;
-    object_fields[OBJ_F_SCENERY_FLAGS].type = 3;
-    object_fields[OBJ_F_SCENERY_WHOS_IN_ME].type = 12;
-    object_fields[OBJ_F_SCENERY_RESPAWN_DELAY].type = 3;
-    object_fields[OBJ_F_SCENERY_PAD_I_2].type = 3;
-    object_fields[OBJ_F_SCENERY_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_SCENERY_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_SCENERY_END].type = 2;
-    object_fields[OBJ_F_PROJECTILE_BEGIN].type = 1;
-    object_fields[OBJ_F_PROJECTILE_FLAGS_COMBAT].type = 3;
-    object_fields[OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE].type = 3;
-    object_fields[OBJ_F_PROJECTILE_HIT_LOC].type = 3;
-    object_fields[OBJ_F_PROJECTILE_PARENT_WEAPON].type = 12;
-    object_fields[OBJ_F_PROJECTILE_PAD_I_1].type = 3;
-    object_fields[OBJ_F_PROJECTILE_PAD_I_2].type = 3;
-    object_fields[OBJ_F_PROJECTILE_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_PROJECTILE_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_PROJECTILE_END].type = 2;
-    object_fields[OBJ_F_ITEM_BEGIN].type = 1;
-    object_fields[OBJ_F_ITEM_FLAGS].type = 3;
-    object_fields[OBJ_F_ITEM_PARENT].type = 12;
-    object_fields[OBJ_F_ITEM_WEIGHT].type = 3;
-    object_fields[OBJ_F_ITEM_MAGIC_WEIGHT_ADJ].type = 3;
-    object_fields[OBJ_F_ITEM_WORTH].type = 3;
-    object_fields[OBJ_F_ITEM_MANA_STORE].type = 3;
-    object_fields[OBJ_F_ITEM_INV_AID].type = 3;
-    object_fields[OBJ_F_ITEM_INV_LOCATION].type = 3;
-    object_fields[OBJ_F_ITEM_USE_AID_FRAGMENT].type = 3;
-    object_fields[OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY].type = 3;
-    object_fields[OBJ_F_ITEM_DISCIPLINE].type = 3;
-    object_fields[OBJ_F_ITEM_DESCRIPTION_UNKNOWN].type = 3;
-    object_fields[OBJ_F_ITEM_DESCRIPTION_EFFECTS].type = 3;
-    object_fields[OBJ_F_ITEM_SPELL_1].type = 3;
-    object_fields[OBJ_F_ITEM_SPELL_2].type = 3;
-    object_fields[OBJ_F_ITEM_SPELL_3].type = 3;
-    object_fields[OBJ_F_ITEM_SPELL_4].type = 3;
-    object_fields[OBJ_F_ITEM_SPELL_5].type = 3;
-    object_fields[OBJ_F_ITEM_SPELL_MANA_STORE].type = 3;
-    object_fields[OBJ_F_ITEM_AI_ACTION].type = 3;
-    object_fields[OBJ_F_ITEM_PAD_I_1].type = 3;
-    object_fields[OBJ_F_ITEM_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_ITEM_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_ITEM_END].type = 2;
-    object_fields[OBJ_F_WEAPON_BEGIN].type = 1;
-    object_fields[OBJ_F_WEAPON_FLAGS].type = 3;
-    object_fields[OBJ_F_WEAPON_PAPER_DOLL_AID].type = 3;
-    object_fields[OBJ_F_WEAPON_BONUS_TO_HIT].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_HIT_ADJ].type = 3;
-    object_fields[OBJ_F_WEAPON_DAMAGE_LOWER_IDX].type = 5;
-    object_fields[OBJ_F_WEAPON_DAMAGE_UPPER_IDX].type = 5;
-    object_fields[OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX].type = 5;
-    object_fields[OBJ_F_WEAPON_SPEED_FACTOR].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_SPEED_ADJ].type = 3;
-    object_fields[OBJ_F_WEAPON_RANGE].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_RANGE_ADJ].type = 3;
-    object_fields[OBJ_F_WEAPON_MIN_STRENGTH].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_MIN_STRENGTH_ADJ].type = 3;
-    object_fields[OBJ_F_WEAPON_AMMO_TYPE].type = 3;
-    object_fields[OBJ_F_WEAPON_AMMO_CONSUMPTION].type = 3;
-    object_fields[OBJ_F_WEAPON_MISSILE_AID].type = 3;
-    object_fields[OBJ_F_WEAPON_VISUAL_EFFECT_AID].type = 3;
-    object_fields[OBJ_F_WEAPON_CRIT_HIT_CHART].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_HIT_EFFECT].type = 3;
-    object_fields[OBJ_F_WEAPON_CRIT_MISS_CHART].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE].type = 3;
-    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_MISS_EFFECT].type = 3;
-    object_fields[OBJ_F_WEAPON_PAD_I_1].type = 3;
-    object_fields[OBJ_F_WEAPON_PAD_I_2].type = 3;
-    object_fields[OBJ_F_WEAPON_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_WEAPON_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_WEAPON_END].type = 2;
-    object_fields[OBJ_F_AMMO_BEGIN].type = 1;
-    object_fields[OBJ_F_AMMO_FLAGS].type = 3;
-    object_fields[OBJ_F_AMMO_QUANTITY].type = 3;
-    object_fields[OBJ_F_AMMO_TYPE].type = 3;
-    object_fields[OBJ_F_AMMO_PAD_I_1].type = 3;
-    object_fields[OBJ_F_AMMO_PAD_I_2].type = 3;
-    object_fields[OBJ_F_AMMO_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_AMMO_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_AMMO_END].type = 2;
-    object_fields[OBJ_F_ARMOR_BEGIN].type = 1;
-    object_fields[OBJ_F_ARMOR_FLAGS].type = 3;
-    object_fields[OBJ_F_ARMOR_PAPER_DOLL_AID].type = 3;
-    object_fields[OBJ_F_ARMOR_AC_ADJ].type = 3;
-    object_fields[OBJ_F_ARMOR_MAGIC_AC_ADJ].type = 3;
-    object_fields[OBJ_F_ARMOR_RESISTANCE_ADJ_IDX].type = 5;
-    object_fields[OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX].type = 5;
-    object_fields[OBJ_F_ARMOR_SILENT_MOVE_ADJ].type = 3;
-    object_fields[OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ].type = 3;
-    object_fields[OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE].type = 3;
-    object_fields[OBJ_F_ARMOR_PAD_I_2].type = 3;
-    object_fields[OBJ_F_ARMOR_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_ARMOR_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_ARMOR_END].type = 2;
-    object_fields[OBJ_F_GOLD_BEGIN].type = 1;
-    object_fields[OBJ_F_GOLD_FLAGS].type = 3;
-    object_fields[OBJ_F_GOLD_QUANTITY].type = 3;
-    object_fields[OBJ_F_GOLD_PAD_I_1].type = 3;
-    object_fields[OBJ_F_GOLD_PAD_I_2].type = 3;
-    object_fields[OBJ_F_GOLD_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_GOLD_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_GOLD_END].type = 2;
-    object_fields[OBJ_F_FOOD_BEGIN].type = 1;
-    object_fields[OBJ_F_FOOD_FLAGS].type = 3;
-    object_fields[OBJ_F_FOOD_PAD_I_1].type = 3;
-    object_fields[OBJ_F_FOOD_PAD_I_2].type = 3;
-    object_fields[OBJ_F_FOOD_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_FOOD_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_FOOD_END].type = 2;
-    object_fields[OBJ_F_SCROLL_BEGIN].type = 1;
-    object_fields[OBJ_F_SCROLL_FLAGS].type = 3;
-    object_fields[OBJ_F_SCROLL_PAD_I_1].type = 3;
-    object_fields[OBJ_F_SCROLL_PAD_I_2].type = 3;
-    object_fields[OBJ_F_SCROLL_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_SCROLL_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_SCROLL_END].type = 2;
-    object_fields[OBJ_F_KEY_BEGIN].type = 1;
-    object_fields[OBJ_F_KEY_KEY_ID].type = 3;
-    object_fields[OBJ_F_KEY_PAD_I_1].type = 3;
-    object_fields[OBJ_F_KEY_PAD_I_2].type = 3;
-    object_fields[OBJ_F_KEY_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_KEY_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_KEY_END].type = 2;
-    object_fields[OBJ_F_KEY_RING_BEGIN].type = 1;
-    object_fields[OBJ_F_KEY_RING_FLAGS].type = 3;
-    object_fields[OBJ_F_KEY_RING_LIST_IDX].type = 7;
-    object_fields[OBJ_F_KEY_RING_PAD_I_1].type = 3;
-    object_fields[OBJ_F_KEY_RING_PAD_I_2].type = 3;
-    object_fields[OBJ_F_KEY_RING_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_KEY_RING_END].type = 2;
-    object_fields[OBJ_F_WRITTEN_BEGIN].type = 1;
-    object_fields[OBJ_F_WRITTEN_FLAGS].type = 3;
-    object_fields[OBJ_F_WRITTEN_SUBTYPE].type = 3;
-    object_fields[OBJ_F_WRITTEN_TEXT_START_LINE].type = 3;
-    object_fields[OBJ_F_WRITTEN_TEXT_END_LINE].type = 3;
-    object_fields[OBJ_F_WRITTEN_PAD_I_1].type = 3;
-    object_fields[OBJ_F_WRITTEN_PAD_I_2].type = 3;
-    object_fields[OBJ_F_WRITTEN_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_WRITTEN_END].type = 2;
-    object_fields[OBJ_F_GENERIC_BEGIN].type = 1;
-    object_fields[OBJ_F_GENERIC_FLAGS].type = 3;
-    object_fields[OBJ_F_GENERIC_USAGE_BONUS].type = 3;
-    object_fields[OBJ_F_GENERIC_USAGE_COUNT_REMAINING].type = 3;
-    object_fields[OBJ_F_GENERIC_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_GENERIC_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_GENERIC_END].type = 2;
-    object_fields[OBJ_F_CRITTER_BEGIN].type = 1;
-    object_fields[OBJ_F_CRITTER_FLAGS].type = 3;
-    object_fields[OBJ_F_CRITTER_FLAGS2].type = 3;
-    object_fields[OBJ_F_CRITTER_STAT_BASE_IDX].type = 5;
-    object_fields[OBJ_F_CRITTER_BASIC_SKILL_IDX].type = 5;
-    object_fields[OBJ_F_CRITTER_TECH_SKILL_IDX].type = 5;
-    object_fields[OBJ_F_CRITTER_SPELL_TECH_IDX].type = 7;
-    object_fields[OBJ_F_CRITTER_FATIGUE_PTS].type = 3;
-    object_fields[OBJ_F_CRITTER_FATIGUE_ADJ].type = 3;
-    object_fields[OBJ_F_CRITTER_FATIGUE_DAMAGE].type = 3;
-    object_fields[OBJ_F_CRITTER_CRIT_HIT_CHART].type = 3;
-    object_fields[OBJ_F_CRITTER_EFFECTS_IDX].type = 7;
-    object_fields[OBJ_F_CRITTER_EFFECT_CAUSE_IDX].type = 7;
-    object_fields[OBJ_F_CRITTER_FLEEING_FROM].type = 12;
-    object_fields[OBJ_F_CRITTER_PORTRAIT].type = 3;
-    object_fields[OBJ_F_CRITTER_GOLD].type = 12;
-    object_fields[OBJ_F_CRITTER_ARROWS].type = 12;
-    object_fields[OBJ_F_CRITTER_BULLETS].type = 12;
-    object_fields[OBJ_F_CRITTER_POWER_CELLS].type = 12;
-    object_fields[OBJ_F_CRITTER_FUEL].type = 12;
-    object_fields[OBJ_F_CRITTER_INVENTORY_NUM].type = 3;
-    object_fields[OBJ_F_CRITTER_INVENTORY_LIST_IDX].type = 13;
-    object_fields[OBJ_F_CRITTER_INVENTORY_SOURCE].type = 3;
-    object_fields[OBJ_F_CRITTER_DESCRIPTION_UNKNOWN].type = 3;
-    object_fields[OBJ_F_CRITTER_FOLLOWER_IDX].type = 13;
-    object_fields[OBJ_F_CRITTER_TELEPORT_DEST].type = 4;
-    object_fields[OBJ_F_CRITTER_TELEPORT_MAP].type = 3;
-    object_fields[OBJ_F_CRITTER_DEATH_TIME].type = 3;
-    object_fields[OBJ_F_CRITTER_AUTO_LEVEL_SCHEME].type = 3;
-    object_fields[OBJ_F_CRITTER_PAD_I_1].type = 3;
-    object_fields[OBJ_F_CRITTER_PAD_I_2].type = 3;
-    object_fields[OBJ_F_CRITTER_PAD_I_3].type = 3;
-    object_fields[OBJ_F_CRITTER_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_CRITTER_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_CRITTER_END].type = 2;
-    object_fields[OBJ_F_PC_BEGIN].type = 1;
-    object_fields[OBJ_F_PC_FLAGS].type = 3;
-    object_fields[OBJ_F_PC_FLAGS_FATE].type = 3;
-    object_fields[OBJ_F_PC_REPUTATION_IDX].type = 7;
-    object_fields[OBJ_F_PC_BACKGROUND].type = 3;
-    object_fields[OBJ_F_PC_BACKGROUND_TEXT].type = 3;
-    object_fields[OBJ_F_PC_REPUTATION_TS_IDX].type = 8;
-    object_fields[OBJ_F_PC_BACKGROUND].type = 3;
-    object_fields[OBJ_F_PC_QUEST_IDX].type = 10;
-    object_fields[OBJ_F_PC_BLESSING_IDX].type = 7;
-    object_fields[OBJ_F_PC_BLESSING_TS_IDX].type = 8;
-    object_fields[OBJ_F_PC_CURSE_IDX].type = 7;
-    object_fields[OBJ_F_PC_CURSE_TS_IDX].type = 8;
-    object_fields[OBJ_F_PC_PARTY_ID].type = 3;
-    object_fields[OBJ_F_PC_RUMOR_IDX].type = 8;
-    object_fields[OBJ_F_PC_PAD_IAS_2].type = 7;
-    object_fields[OBJ_F_PC_SCHEMATICS_FOUND_IDX].type = 7;
-    object_fields[OBJ_F_PC_LOGBOOK_EGO_IDX].type = 7;
-    object_fields[OBJ_F_PC_FOG_MASK].type = 3;
-    object_fields[OBJ_F_PC_PLAYER_NAME].type = 11;
-    object_fields[OBJ_F_PC_BANK_MONEY].type = 3;
-    object_fields[OBJ_F_PC_GLOBAL_FLAGS].type = 7;
-    object_fields[OBJ_F_PC_GLOBAL_VARIABLES].type = 7;
-    object_fields[OBJ_F_PC_PAD_I_1].type = 3;
-    object_fields[OBJ_F_PC_PAD_I_2].type = 3;
-    object_fields[OBJ_F_PC_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_PC_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_PC_END].type = 2;
-    object_fields[OBJ_F_NPC_BEGIN].type = 1;
-    object_fields[OBJ_F_NPC_FLAGS].type = 3;
-    object_fields[OBJ_F_NPC_LEADER].type = 12;
-    object_fields[OBJ_F_NPC_AI_DATA].type = 3;
-    object_fields[OBJ_F_NPC_COMBAT_FOCUS].type = 12;
-    object_fields[OBJ_F_NPC_WHO_HIT_ME_LAST].type = 12;
-    object_fields[OBJ_F_NPC_EXPERIENCE_WORTH].type = 3;
-    object_fields[OBJ_F_NPC_EXPERIENCE_POOL].type = 3;
-    object_fields[OBJ_F_NPC_WAYPOINTS_IDX].type = 8;
-    object_fields[OBJ_F_NPC_WAYPOINT_CURRENT].type = 3;
-    object_fields[OBJ_F_NPC_STANDPOINT_DAY].type = 4;
-    object_fields[OBJ_F_NPC_STANDPOINT_NIGHT].type = 4;
-    object_fields[OBJ_F_NPC_ORIGIN].type = 3;
-    object_fields[OBJ_F_NPC_FACTION].type = 3;
-    object_fields[OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER].type = 3;
-    object_fields[OBJ_F_NPC_SUBSTITUTE_INVENTORY].type = 12;
-    object_fields[OBJ_F_NPC_REACTION_BASE].type = 3;
-    object_fields[OBJ_F_NPC_SOCIAL_CLASS].type = 3;
-    object_fields[OBJ_F_NPC_REACTION_PC_IDX].type = 13;
-    object_fields[OBJ_F_NPC_REACTION_LEVEL_IDX].type = 7;
-    object_fields[OBJ_F_NPC_REACTION_TIME_IDX].type = 7;
-    object_fields[OBJ_F_NPC_WAIT].type = 3;
-    object_fields[OBJ_F_NPC_GENERATOR_DATA].type = 3;
-    object_fields[OBJ_F_NPC_PAD_I_1].type = 3;
-    object_fields[OBJ_F_NPC_DAMAGE_IDX].type = 7;
-    object_fields[OBJ_F_NPC_SHIT_LIST_IDX].type = 13;
-    object_fields[OBJ_F_NPC_END].type = 2;
-    object_fields[OBJ_F_TRAP_BEGIN].type = 1;
-    object_fields[OBJ_F_TRAP_FLAGS].type = 3;
-    object_fields[OBJ_F_TRAP_DIFFICULTY].type = 3;
-    object_fields[OBJ_F_TRAP_PAD_I_2].type = 3;
-    object_fields[OBJ_F_TRAP_PAD_IAS_1].type = 7;
-    object_fields[OBJ_F_TRAP_PAD_I64AS_1].type = 8;
-    object_fields[OBJ_F_TRAP_END].type = 2;
-    object_fields[OBJ_F_TOTAL_NORMAL].type = 0;
-    object_fields[OBJ_F_RENDER_COLOR].type = 3;
-    object_fields[OBJ_F_RENDER_COLORS].type = 3;
-    object_fields[OBJ_F_RENDER_PALETTE].type = 3;
-    object_fields[OBJ_F_RENDER_SCALE].type = 3;
-    object_fields[OBJ_F_RENDER_ALPHA].type = 5;
-    object_fields[OBJ_F_RENDER_X].type = 3;
-    object_fields[OBJ_F_RENDER_Y].type = 3;
-    object_fields[OBJ_F_RENDER_WIDTH].type = 3;
-    object_fields[OBJ_F_RENDER_HEIGHT].type = 3;
-    object_fields[OBJ_F_PALETTE].type = 3;
-    object_fields[OBJ_F_COLOR].type = 3;
-    object_fields[OBJ_F_COLORS].type = 3;
-    object_fields[OBJ_F_RENDER_FLAGS].type = 3;
-    object_fields[OBJ_F_TEMP_ID].type = 3;
-    object_fields[OBJ_F_LIGHT_HANDLE].type = 3;
-    object_fields[OBJ_F_OVERLAY_LIGHT_HANDLES].type = 7;
-    object_fields[OBJ_F_SHADOW_HANDLES].type = 5;
-    object_fields[OBJ_F_INTERNAL_FLAGS].type = 3;
-    object_fields[OBJ_F_FIND_NODE].type = 3;
-    object_fields[OBJ_F_TYPE].type = 3;
-    object_fields[OBJ_F_PROTOTYPE_HANDLE].type = 12;
+    object_fields[OBJ_F_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_CURRENT_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_LOCATION].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_OFFSET_X].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_OFFSET_Y].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SHADOW].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_OVERLAY_FORE].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_OVERLAY_BACK].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_UNDERLAY].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_BLIT_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_BLIT_COLOR].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_BLIT_ALPHA].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_BLIT_SCALE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_LIGHT_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_LIGHT_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_LIGHT_COLOR].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_OVERLAY_LIGHT_FLAGS].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_OVERLAY_LIGHT_AID].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_OVERLAY_LIGHT_COLOR].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SPELL_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_BLOCKING_MASK].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NAME].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_DESCRIPTION].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_DESTROYED_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_AC].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_HP_PTS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_HP_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_MATERIAL].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_HP_DAMAGE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RESISTANCE_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_SCRIPTS_IDX].type = SA_TYPE_SCRIPT;
+    object_fields[OBJ_F_SOUND_EFFECT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CATEGORY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_WALL_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_WALL_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WALL_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WALL_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WALL_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_WALL_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_WALL_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_PORTAL_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_PORTAL_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PORTAL_LOCK_DIFFICULTY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PORTAL_KEY_ID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PORTAL_NOTIFY_NPC].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PORTAL_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PORTAL_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PORTAL_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PORTAL_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_PORTAL_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_CONTAINER_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_CONTAINER_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_LOCK_DIFFICULTY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_KEY_ID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_INVENTORY_NUM].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_INVENTORY_LIST_IDX].type = SA_TYPE_HANDLE_ARRAY;
+    object_fields[OBJ_F_CONTAINER_INVENTORY_SOURCE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_NOTIFY_NPC].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CONTAINER_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_CONTAINER_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_CONTAINER_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_SCENERY_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_SCENERY_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SCENERY_WHOS_IN_ME].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_SCENERY_RESPAWN_DELAY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SCENERY_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SCENERY_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_SCENERY_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_SCENERY_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_PROJECTILE_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_PROJECTILE_FLAGS_COMBAT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PROJECTILE_FLAGS_COMBAT_DAMAGE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PROJECTILE_HIT_LOC].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PROJECTILE_PARENT_WEAPON].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_PROJECTILE_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PROJECTILE_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PROJECTILE_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PROJECTILE_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_PROJECTILE_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_ITEM_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_ITEM_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_PARENT].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_ITEM_WEIGHT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_MAGIC_WEIGHT_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_WORTH].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_MANA_STORE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_INV_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_INV_LOCATION].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_USE_AID_FRAGMENT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_DISCIPLINE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_DESCRIPTION_UNKNOWN].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_DESCRIPTION_EFFECTS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_SPELL_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_SPELL_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_SPELL_3].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_SPELL_4].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_SPELL_5].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_SPELL_MANA_STORE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_AI_ACTION].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ITEM_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_ITEM_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_ITEM_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_WEAPON_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_WEAPON_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_PAPER_DOLL_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_BONUS_TO_HIT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_HIT_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_DAMAGE_LOWER_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_WEAPON_DAMAGE_UPPER_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_WEAPON_SPEED_FACTOR].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_SPEED_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_RANGE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_RANGE_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MIN_STRENGTH].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_MIN_STRENGTH_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_AMMO_TYPE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_AMMO_CONSUMPTION].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MISSILE_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_VISUAL_EFFECT_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_CRIT_HIT_CHART].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_HIT_EFFECT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_CRIT_MISS_CHART].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_MAGIC_CRIT_MISS_EFFECT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WEAPON_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_WEAPON_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_WEAPON_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_AMMO_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_AMMO_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_AMMO_QUANTITY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_AMMO_TYPE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_AMMO_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_AMMO_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_AMMO_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_AMMO_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_AMMO_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_ARMOR_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_ARMOR_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_PAPER_DOLL_AID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_AC_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_MAGIC_AC_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_RESISTANCE_ADJ_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_ARMOR_SILENT_MOVE_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_ARMOR_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_ARMOR_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_ARMOR_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_GOLD_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_GOLD_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_GOLD_QUANTITY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_GOLD_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_GOLD_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_GOLD_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_GOLD_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_GOLD_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_FOOD_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_FOOD_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_FOOD_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_FOOD_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_FOOD_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_FOOD_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_FOOD_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_SCROLL_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_SCROLL_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SCROLL_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SCROLL_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_SCROLL_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_SCROLL_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_SCROLL_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_KEY_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_KEY_KEY_ID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_KEY_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_KEY_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_KEY_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_KEY_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_KEY_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_KEY_RING_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_KEY_RING_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_KEY_RING_LIST_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_KEY_RING_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_KEY_RING_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_KEY_RING_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_KEY_RING_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_WRITTEN_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_WRITTEN_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WRITTEN_SUBTYPE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WRITTEN_TEXT_START_LINE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WRITTEN_TEXT_END_LINE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WRITTEN_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WRITTEN_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_WRITTEN_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_WRITTEN_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_GENERIC_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_GENERIC_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_GENERIC_USAGE_BONUS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_GENERIC_USAGE_COUNT_REMAINING].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_GENERIC_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_GENERIC_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_GENERIC_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_CRITTER_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_CRITTER_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_FLAGS2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_STAT_BASE_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_CRITTER_BASIC_SKILL_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_CRITTER_TECH_SKILL_IDX].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_CRITTER_SPELL_TECH_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_CRITTER_FATIGUE_PTS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_FATIGUE_ADJ].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_FATIGUE_DAMAGE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_CRIT_HIT_CHART].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_EFFECTS_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_CRITTER_EFFECT_CAUSE_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_CRITTER_FLEEING_FROM].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_CRITTER_PORTRAIT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_GOLD].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_CRITTER_ARROWS].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_CRITTER_BULLETS].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_CRITTER_POWER_CELLS].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_CRITTER_FUEL].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_CRITTER_INVENTORY_NUM].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_INVENTORY_LIST_IDX].type = SA_TYPE_HANDLE_ARRAY;
+    object_fields[OBJ_F_CRITTER_INVENTORY_SOURCE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_DESCRIPTION_UNKNOWN].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_FOLLOWER_IDX].type = SA_TYPE_HANDLE_ARRAY;
+    object_fields[OBJ_F_CRITTER_TELEPORT_DEST].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_CRITTER_TELEPORT_MAP].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_DEATH_TIME].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_AUTO_LEVEL_SCHEME].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_PAD_I_3].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_CRITTER_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_CRITTER_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_CRITTER_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_PC_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_PC_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_FLAGS_FATE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_REPUTATION_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_BACKGROUND].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_BACKGROUND_TEXT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_REPUTATION_TS_IDX].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_PC_BACKGROUND].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_QUEST_IDX].type = SA_TYPE_QUEST;
+    object_fields[OBJ_F_PC_BLESSING_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_BLESSING_TS_IDX].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_PC_CURSE_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_CURSE_TS_IDX].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_PC_PARTY_ID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_RUMOR_IDX].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_PC_PAD_IAS_2].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_SCHEMATICS_FOUND_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_LOGBOOK_EGO_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_FOG_MASK].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_PLAYER_NAME].type = SA_TYPE_STRING;
+    object_fields[OBJ_F_PC_BANK_MONEY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_GLOBAL_FLAGS].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_GLOBAL_VARIABLES].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PC_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_PC_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_PC_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_NPC_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_NPC_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_LEADER].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_NPC_AI_DATA].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_COMBAT_FOCUS].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_NPC_WHO_HIT_ME_LAST].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_NPC_EXPERIENCE_WORTH].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_EXPERIENCE_POOL].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_WAYPOINTS_IDX].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_NPC_WAYPOINT_CURRENT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_STANDPOINT_DAY].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_NPC_STANDPOINT_NIGHT].type = SA_TYPE_INT64;
+    object_fields[OBJ_F_NPC_ORIGIN].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_FACTION].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_SUBSTITUTE_INVENTORY].type = SA_TYPE_HANDLE;
+    object_fields[OBJ_F_NPC_REACTION_BASE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_SOCIAL_CLASS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_REACTION_PC_IDX].type = SA_TYPE_HANDLE_ARRAY;
+    object_fields[OBJ_F_NPC_REACTION_LEVEL_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_NPC_REACTION_TIME_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_NPC_WAIT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_GENERATOR_DATA].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_PAD_I_1].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_NPC_DAMAGE_IDX].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_NPC_SHIT_LIST_IDX].type = SA_TYPE_HANDLE_ARRAY;
+    object_fields[OBJ_F_NPC_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_TRAP_BEGIN].type = SA_TYPE_BEGIN;
+    object_fields[OBJ_F_TRAP_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_TRAP_DIFFICULTY].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_TRAP_PAD_I_2].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_TRAP_PAD_IAS_1].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_TRAP_PAD_I64AS_1].type = SA_TYPE_UINT64_ARRAY;
+    object_fields[OBJ_F_TRAP_END].type = SA_TYPE_END;
+    object_fields[OBJ_F_TOTAL_NORMAL].type = SA_TYPE_INVALID;
+    object_fields[OBJ_F_RENDER_COLOR].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_COLORS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_PALETTE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_SCALE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_ALPHA].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_RENDER_X].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_Y].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_WIDTH].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_HEIGHT].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PALETTE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_COLOR].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_COLORS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_RENDER_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_TEMP_ID].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_LIGHT_HANDLE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_OVERLAY_LIGHT_HANDLES].type = SA_TYPE_UINT32_ARRAY;
+    object_fields[OBJ_F_SHADOW_HANDLES].type = SA_TYPE_INT32_ARRAY;
+    object_fields[OBJ_F_INTERNAL_FLAGS].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_FIND_NODE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_TYPE].type = SA_TYPE_INT32;
+    object_fields[OBJ_F_PROTOTYPE_HANDLE].type = SA_TYPE_HANDLE;
 }
 
 // 0x40B8E0
@@ -3216,7 +3831,7 @@ void sub_40B8E0(int fld)
     case OBJ_F_ITEM_BEGIN:
     case OBJ_F_CRITTER_BEGIN:
     case OBJ_F_TRAP_BEGIN:
-        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_PAD_I64AS_1].field_8 + 1;
+        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_PAD_I64AS_1].change_array_idx + 1;
         break;
     case OBJ_F_WEAPON_BEGIN:
     case OBJ_F_AMMO_BEGIN:
@@ -3228,11 +3843,11 @@ void sub_40B8E0(int fld)
     case OBJ_F_KEY_RING_BEGIN:
     case OBJ_F_WRITTEN_BEGIN:
     case OBJ_F_GENERIC_BEGIN:
-        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8 + 1;
+        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx + 1;
         break;
     case OBJ_F_PC_BEGIN:
     case OBJ_F_NPC_BEGIN:
-        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8 + 1;
+        dword_5D10F0[sub_40A790(fld)] = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].change_array_idx + 1;
         break;
     }
 }
@@ -3246,9 +3861,9 @@ void sub_40BAC0()
     dword_5D1134 = 0;
 
     for (fld = 0; fld < OBJ_F_TOTAL_NORMAL; fld++) {
-        if (object_fields[fld].type == 12) {
+        if (object_fields[fld].type == SA_TYPE_HANDLE) {
             dword_5D1130++;
-        } else if (object_fields[fld].type == 13) {
+        } else if (object_fields[fld].type == SA_TYPE_HANDLE_ARRAY) {
             dword_5D1134++;
         }
     }
@@ -3265,9 +3880,9 @@ void sub_40BAC0()
     dword_5D1134 = 0;
 
     for (fld = 0; fld < OBJ_F_TOTAL_NORMAL; fld++) {
-        if (object_fields[fld].type == 12) {
+        if (object_fields[fld].type == SA_TYPE_HANDLE) {
             dword_5D1128[dword_5D1130++] = fld;
-        } else if (object_fields[fld].type == 13) {
+        } else if (object_fields[fld].type == SA_TYPE_HANDLE_ARRAY) {
             dword_5D112C[dword_5D1134++] = fld;
         }
     }
@@ -3290,13 +3905,40 @@ void sub_40BBB0()
 // 0x40BBF0
 void sub_40BBF0(Object* object)
 {
-    // TODO: Incomplete.
-}
+    int idx;
+    int fld;
+    ObjectID oid;
+    unsigned int flags;
 
-// 0x4F0270
-void object_field_set_with_network(object_id_t object_id, int field, int a3, int a4)
-{
-    // TODO: Incomplete.
+    for (idx = 0; idx < dword_5D1130; idx++) {
+        fld = dword_5D1128[idx];
+        if (sub_40C260(object->type, fld)
+            && sub_40D320(object, fld)) {
+            sub_408A20(object, fld, &oid);
+            if (oid.type != OID_TYPE_NULL) {
+                if (oid.type == OID_TYPE_HANDLE) {
+                    if (sub_4E5470(oid.d.h)) {
+                        flags = obj_field_int32_get(oid.d.h, OBJ_F_FLAGS);
+                        if ((flags & OF_DESTROYED) == 0
+                            || (flags & OF_EXTINCT) != 0) {
+                            oid = sub_407EF0(oid.d.h);
+                            sub_408760(object, fld, &oid);
+                        } else {
+                            oid.type = OID_TYPE_NULL;
+                            sub_408760(object, fld, &oid);
+                        }
+                    } else {
+                        oid = sub_4E5280(oid.d.h);
+                        sub_408760(object, fld, &oid);
+                    }
+                } else {
+                    tig_debug_println("Found something other than a handle converting fields to ids.");
+                    oid.type = OID_TYPE_NULL;
+                    sub_408760(object, fld, &oid);
+                }
+            }
+        }
+    }
 }
 
 // 0x40BD20
@@ -3427,95 +4069,95 @@ int sub_40C030(ObjectType object_type)
 
     switch (object_type) {
     case OBJ_TYPE_WALL:
-        v1 = object_fields[OBJ_F_WALL_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_WALL_PAD_I64AS_1].change_array_idx;
         break;
     case OBJ_TYPE_PORTAL:
-        v1 = object_fields[OBJ_F_PORTAL_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_PORTAL_PAD_I64AS_1].change_array_idx;
         break;
     case OBJ_TYPE_CONTAINER:
-        v1 = object_fields[OBJ_F_CONTAINER_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_CONTAINER_PAD_I64AS_1].change_array_idx;
         break;
     case OBJ_TYPE_SCENERY:
-        v1 = object_fields[OBJ_F_SCENERY_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_SCENERY_PAD_I64AS_1].change_array_idx;
         break;
     case OBJ_TYPE_PROJECTILE:
-        v1 = object_fields[OBJ_F_PROJECTILE_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_PROJECTILE_PAD_I64AS_1].change_array_idx;
         break;
     case OBJ_TYPE_WEAPON:
-        v1 = object_fields[OBJ_F_WEAPON_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_WEAPON_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_AMMO:
-        v1 = object_fields[OBJ_F_AMMO_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_AMMO_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_ARMOR:
-        v1 = object_fields[OBJ_F_ARMOR_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_ARMOR_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_GOLD:
-        v1 = object_fields[OBJ_F_GOLD_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_GOLD_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_FOOD:
-        v1 = object_fields[OBJ_F_FOOD_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_FOOD_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_SCROLL:
-        v1 = object_fields[OBJ_F_SCROLL_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_SCROLL_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_KEY:
-        v1 = object_fields[OBJ_F_KEY_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_KEY_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_KEY_RING:
-        v1 = object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_WRITTEN:
-        v1 = object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_ITEM_GENERIC:
-        v1 = object_fields[OBJ_F_GENERIC_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_GENERIC_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_PC:
-        v1 = object_fields[OBJ_F_PC_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_PC_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_NPC:
         // NOTE: Probably wrong.
-        v1 = object_fields[OBJ_F_NPC_SHIT_LIST_IDX].field_8;
+        v1 = object_fields[OBJ_F_NPC_SHIT_LIST_IDX].change_array_idx;
         if (v1 == -1) {
-            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].field_8;
+            v1 = object_fields[OBJ_F_CRITTER_PAD_I64AS_1].change_array_idx;
         }
         break;
     case OBJ_TYPE_TRAP:
-        v1 = object_fields[OBJ_F_TRAP_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_TRAP_PAD_I64AS_1].change_array_idx;
         break;
     default:
         // NOTE: Original code returns `object_type`.
@@ -3523,7 +4165,7 @@ int sub_40C030(ObjectType object_type)
     }
 
     if (v1 == -1) {
-        v1 = object_fields[OBJ_F_PAD_I64AS_1].field_8;
+        v1 = object_fields[OBJ_F_PAD_I64AS_1].change_array_idx;
     }
 
     return v1 + 1;
@@ -3898,7 +4540,7 @@ int sub_40CB40(Object* object, int fld)
 {
     (void)object;
 
-    return object_fields[fld].field_0;
+    return object_fields[fld].simple_array_idx;
 }
 
 // 0x40CB60
@@ -4058,19 +4700,19 @@ bool sub_40CE20(Object* object, int start, int end, ObjEnumerateCallbackEx* call
     int index;
     int fld;
 
-    for (index = 0; index < object_fields[start + 1].field_8; index++) {
+    for (index = 0; index < object_fields[start + 1].change_array_idx; index++) {
         v1 += sub_4E5FE0(object->field_48[index], 32);
     }
 
-    v1 += sub_4E5FE0(object->field_48[index], object_fields[fld].field_10);
+    v1 += sub_4E5FE0(object->field_48[index], object_fields[start + 1].bit);
 
     for (fld = start + 1; fld < end; fld++) {
-        if ((object->field_48[object_fields[fld].field_8] & object_fields[fld].field_C) != 0) {
+        if ((object->field_48[object_fields[fld].change_array_idx] & object_fields[fld].mask) != 0) {
             if (!callback(object, v1, &(object_fields[fld]))) {
                 return false;
             }
 
-            if ((object->field_48[object_fields[fld].field_8] & object_fields[fld].field_C) != 0) {
+            if ((object->field_48[object_fields[fld].change_array_idx] & object_fields[fld].mask) != 0) {
                 v1++;
             }
         }
@@ -4225,18 +4867,18 @@ bool sub_40D170(Object* object, int start, int end, ObjEnumerateCallbackEx* call
     int index;
     int fld;
 
-    for (index = 0; index < object_fields[start + 1].field_8; index++) {
+    for (index = 0; index < object_fields[start + 1].change_array_idx; index++) {
         v1 += sub_4E5FE0(object->field_48[index], 32);
     }
 
-    v1 += sub_4E5FE0(object->field_48[index], object_fields[fld].field_10);
+    v1 += sub_4E5FE0(object->field_48[index], object_fields[start + 1].bit);
 
     for (fld = start + 1; fld < end; fld++) {
         if (!callback(object, v1, &(object_fields[fld]))) {
             return false;
         }
 
-        if ((object->field_48[object_fields[fld].field_8] & object_fields[fld].field_C) != 0) {
+        if ((object->field_48[object_fields[fld].change_array_idx] & object_fields[fld].mask) != 0) {
             v1++;
         }
     }
@@ -4250,11 +4892,11 @@ int sub_40D230(Object* object, int fld)
     int v1 = 0;
     int index;
 
-    for (index = 0; index < object_fields[fld].field_8; index++) {
+    for (index = 0; index < object_fields[fld].change_array_idx; index++) {
         v1 += sub_4E5FE0(object->field_48[index], 32);
     }
 
-    v1 += sub_4E5FE0(object->field_48[index], object_fields[fld].field_10);
+    v1 += sub_4E5FE0(object->field_48[index], object_fields[fld].bit);
 
     return v1;
 }
@@ -4281,7 +4923,7 @@ void sub_40D2A0(Object* object, int fld)
 // 0x40D320
 bool sub_40D320(Object* object, int fld)
 {
-    return (object->field_48[object_fields[fld].field_8] & object_fields[fld].field_C) != 0;
+    return (object->field_48[object_fields[fld].change_array_idx] & object_fields[fld].mask) != 0;
 }
 
 // 0x40D350
@@ -4300,25 +4942,25 @@ void sub_40D370(Object* object, int fld, bool enabled)
 void sub_40D3A0(Object* object, ObjectFieldInfo* info, int enabled)
 {
     if (enabled) {
-        object->field_48[info->field_8] |= info->field_C;
+        object->field_48[info->change_array_idx] |= info->mask;
     } else {
-        object->field_48[info->field_8] &= ~info->field_C;
+        object->field_48[info->change_array_idx] &= ~info->mask;
     }
 }
 
 // 0x40D3D0
 bool sub_40D3D0(Object* object, int fld)
 {
-    return (object->field_4C[object_fields[fld].field_8] & object_fields[fld].field_C) != 0;
+    return (object->field_4C[object_fields[fld].change_array_idx] & object_fields[fld].mask) != 0;
 }
 
 // 0x40D400
 void sub_40D400(Object* object, int fld, bool enabled)
 {
     if (enabled) {
-        object->field_4C[object_fields[fld].field_8] |= object_fields[fld].field_C;
+        object->field_4C[object_fields[fld].change_array_idx] |= object_fields[fld].mask;
     } else {
-        object->field_4C[object_fields[fld].field_8] &= ~object_fields[fld].field_C;
+        object->field_4C[object_fields[fld].change_array_idx] &= ~object_fields[fld].mask;
     }
 }
 
@@ -4333,10 +4975,10 @@ void sub_40D470(Object* object, int fld)
 {
     int index;
 
-    object->field_46++;
-    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->field_46);
+    object->num_fields++;
+    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->num_fields);
 
-    for (index = object->field_46 - 1; index > fld; index--) {
+    for (index = object->num_fields - 1; index > fld; index--) {
         object->field_50[index] = object->field_50[index - 1];
     }
 
@@ -4355,12 +4997,12 @@ void sub_40D4D0(Object* object, int fld)
     v2.ptr = &(object->field_50[v1]);
     sub_4E3FA0(&v2);
 
-    for (index = v1; index < object->field_46 - 1; index++) {
+    for (index = v1; index < object->num_fields - 1; index++) {
         object->field_50[index] = object->field_50[index + 1];
     }
 
-    object->field_46--;
-    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->field_46);
+    object->num_fields--;
+    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->num_fields);
 }
 
 // 0x40D560
@@ -4422,7 +5064,7 @@ bool sub_40D670(Object* object, int a2, ObjectFieldInfo* field_info)
 {
     (void)a2;
 
-    if ((object->field_4C[field_info->field_8] & field_info->field_C) != 0) {
+    if ((object->field_4C[field_info->change_array_idx] & field_info->mask) != 0) {
         tig_debug_printf("\t #%d", field_info - object_fields);
     }
     return true;

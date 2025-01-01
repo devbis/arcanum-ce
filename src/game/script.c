@@ -1,24 +1,116 @@
 #include "game/script.h"
 
-#include <tig/tig.h>
-
-#include "game/lib/object.h"
+#include "game/ai.h"
+#include "game/anim.h"
+#include "game/animfx.h"
+#include "game/area.h"
+#include "game/bless.h"
+#include "game/combat.h"
+#include "game/critter.h"
+#include "game/curse.h"
+#include "game/dialog.h"
+#include "game/effect.h"
+#include "game/gmovie.h"
+#include "game/gsound.h"
+#include "game/item.h"
+#include "game/level.h"
+#include "game/li.h"
+#include "game/location.h"
+#include "game/mes.h"
+#include "game/monstergen.h"
+#include "game/mp_utils.h"
+#include "game/multiplayer.h"
+#include "game/newspaper.h"
+#include "game/object.h"
+#include "game/player.h"
+#include "game/quest.h"
+#include "game/random.h"
+#include "game/reaction.h"
+#include "game/reputation.h"
+#include "game/rumor.h"
+#include "game/script_name.h"
+#include "game/scroll.h"
+#include "game/sector.h"
+#include "game/skill.h"
+#include "game/spell.h"
+#include "game/stat.h"
+#include "game/tb.h"
+#include "game/teleport.h"
+#include "game/trap.h"
+#include "game/ui.h"
 
 #define MAX_CACHE_ENTRIES 100
 #define MAX_GL_VARS 2000
 #define MAX_GL_FLAGS 100
 
+#define NEXT -1
+#define RETURN_AND_SKIP_DEFAULT -2
+#define RETURN_AND_RUN_DEFAULT -3
+
 typedef struct ScriptCacheEntry {
     /* 0000 */ int script_id;
-    /* 0008 */ long long datetime;
+    /* 0008 */ int64_t datetime;
     /* 0010 */ int ref_count;
-    /* 0014 */ void* file;
+    /* 0014 */ ScriptFile* file;
 } ScriptCacheEntry;
 
 static_assert(sizeof(ScriptCacheEntry) == 0x18, "wrong size");
 
+typedef struct ScriptState {
+    /* 0000 */ ScriptInvocation* invocation;
+    /* 0004 */ int field_4;
+    /* 0008 */ int loop_cnt;
+    /* 000C */ int field_C;
+    /* 0010 */ int script_num;
+    /* 0014 */ int field_14;
+    /* 0018 */ int64_t current_loop_obj;
+    /* 0020 */ int64_t objs[100];
+    /* 0340 */ ObjectList objects;
+    /* 0398 */ int field_398;
+    /* 039C */ int lc_vars[10];
+    /* 03C4 */ int field_3C4;
+    /* 03C8 */ int64_t lc_objs[10];
+} ScriptState;
+
+static_assert(sizeof(ScriptState) == 0x418, "wrong size");
+
+static int script_execute_condition(ScriptCondition* condition, int line, ScriptState* state);
+static int script_execute_action(ScriptAction* action, int index, ScriptState* state);
+static bool sub_44AFF0(TimeEvent* timeevent);
+static void sub_44B030(ScriptAction* action, ScriptState* state);
+static void sub_44B170(ScriptAction* action, ScriptState* state);
+static void sub_44B1F0(ScriptAction* action, ScriptState* state);
+static void sub_44B390(ScriptAction* action, ScriptState* state);
+static int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* state, int64_t* objs, ObjectList* l);
+static void sub_44B8F0(ScriptFocusObject type, ObjectList* l);
+static int64_t script_get_obj(ScriptFocusObject type, int index, ScriptState* state);
+static void script_set_obj(ScriptFocusObject type, int index, ScriptState* state, int64_t obj);
+static int script_get_value(ScriptValueType type, int index, ScriptState* state);
+static void script_set_value(ScriptValueType type, int index, ScriptState* state, int value);
+static int sub_44BC60(ScriptState* state);
+static bool sub_44C140(Script* scr, unsigned int index, ScriptCondition* entry);
+static bool sub_44C1B0(ScriptFile* script_file, unsigned int index, ScriptCondition* entry);
+static ScriptFile* script_lock(int script_id);
+static void script_unlock(int script_id);
+static bool script_file_create(ScriptFile** script_file_ptr);
+static bool script_file_destroy(ScriptFile* script_file);
+static bool cache_add(int cache_entry_id, int script_id);
+static void cache_remove(int cache_entry_id);
+static int cache_find(int script_id);
+static int sub_44C710(TigFile* stream, ScriptHeader* hdr);
+static bool sub_44C730(TigFile* stream, ScriptFile* script_file);
+static void sub_44C7A0(int64_t obj, int a2);
+static void sub_44C800(int64_t obj, int a2);
+
 // 0x5A56FC
-static int script_story_state_mes_file = -1;
+static mes_file_handle_t script_story_state_mes_file = MES_FILE_HANDLE_INVALID;
+
+// 0x5A5700
+int dword_5A5700[3] = {
+    997,
+    998,
+    999,
+};
 
 // 0x5E2FA0
 static int* script_gl_vars;
@@ -30,32 +122,38 @@ static int dword_5E2FA4;
 static int* script_gl_flags;
 
 // 0x5E2FAC
-static void* dword_5E2FAC;
+static GameContextF8* script_iso_invalidate_rect;
+
+// 0x5E2FB0
+static AnimFxList stru_5E2FB0;
 
 // 0x5E2FDC
-static int dword_5E2FDC;
+static bool script_editor;
 
 // 0x5E2FE0
-static int dword_5E2FE0;
+static GameContextFC* script_iso_window_redraw;
 
 // 0x5E2FE4
 static int dword_5E2FE4;
 
 // 0x5E2FE8
-static void* dword_5E2FE8;
+static Func5E2FE8* dword_5E2FE8;
 
 // 0x5E2FEC
-static void* dword_5E2FEC;
+static Func5E2FEC* dword_5E2FEC;
 
 // 0x5E2FF0
 static ScriptCacheEntry* script_cache_entries;
 
+// 0x5E2FF8
+static int64_t qword_5E2FF8;
+
 // 0x4446E0
-void script_init(GameInitInfo* init_info)
+bool script_init(GameInitInfo* init_info)
 {
     int index;
 
-    dword_5E2FDC = init_info->type;
+    script_editor = init_info->editor;
     script_cache_entries = (ScriptCacheEntry*)CALLOC(MAX_CACHE_ENTRIES, sizeof(ScriptCacheEntry));
     script_gl_vars = (int*)CALLOC(MAX_GL_VARS, sizeof(int));
     script_gl_flags = (int*)CALLOC(MAX_GL_FLAGS, sizeof(int));
@@ -76,10 +174,10 @@ void script_init(GameInitInfo* init_info)
         script_gl_flags[index] = 0;
     }
 
-    dword_5E2FAC = init_info->field_8;
-    dword_5E2FE0 = init_info->field_C;
+    script_iso_invalidate_rect = init_info->field_8;
+    script_iso_window_redraw = init_info->field_C;
 
-    if (dword_5E2FDC != EDITOR) {
+    if (!script_editor) {
         if (!animfx_list_init(&stru_5E2FB0)) {
             return false;
         }
@@ -90,7 +188,6 @@ void script_init(GameInitInfo* init_info)
         if (!animfx_list_load(&stru_5E2FB0)) {
             return false;
         }
-
     }
 
     return true;
@@ -126,13 +223,11 @@ void script_exit()
     }
 
     dword_5E2FA4 = 0;
-
-    dword_5E2FA4 = 0;
     FREE(script_cache_entries);
     FREE(script_gl_vars);
     FREE(script_gl_flags);
 
-    if (dword_5E2FDC != EDITOR) {
+    if (!script_editor) {
         animfx_list_exit(&stru_5E2FB0);
     }
 }
@@ -140,16 +235,17 @@ void script_exit()
 // 0x444890
 bool script_mod_load()
 {
-    message_load("mes\\storystate.mes", &script_story_state_mes_file);
+    mes_load("mes\\storystate.mes", &script_story_state_mes_file);
+
     return true;
 }
 
 // 0x4448B0
 void script_mod_unload()
 {
-    if (script_story_state_mes_file != -1) {
-        message_unload(script_story_state_mes_file);
-        script_story_state_mes_file = -1;
+    if (script_story_state_mes_file != MES_FILE_HANDLE_INVALID) {
+        mes_unload(script_story_state_mes_file);
+        script_story_state_mes_file = MES_FILE_HANDLE_INVALID;
     }
 }
 
@@ -164,7 +260,7 @@ bool script_load(GameLoadInfo* load_info)
 }
 
 // 0x444930
-void script_save(TigFile* stream)
+bool script_save(TigFile* stream)
 {
     if (tig_file_fwrite(script_gl_vars, sizeof(int) * MAX_GL_VARS, 1, stream) != 1) return false;
     if (tig_file_fwrite(script_gl_flags, sizeof(int) * MAX_GL_FLAGS, 1, stream) != 1) return false;
@@ -174,15 +270,134 @@ void script_save(TigFile* stream)
 }
 
 // 0x444990
-void sub_444990()
+void sub_444990(Func5E2FEC* a1, Func5E2FE8* a2)
 {
-    // TODO: Incomplete.
+    dword_5E2FEC = a1;
+    dword_5E2FE8 = a2;
 }
 
 // 0x4449B0
-void sub_4449B0()
+bool sub_4449B0(ScriptInvocation* invocation)
 {
-    // TODO: Incomplete.
+    unsigned int flags;
+    int attachee_type;
+    bool script_num_changed;
+    int saved_script_num;
+    ScriptState state;
+    ScriptFile* script_file;
+    int iter;
+    int line;
+    int next;
+    ScriptCondition statement;
+    bool run_default;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) == 0) {
+        // NOTE: Script at index 1 is not being checked, probably a bug.
+        if (invocation->script->num != dword_5A5700[0]
+            && invocation->script->num != dword_5A5700[2]) {
+            return false;
+        }
+    }
+
+    if (sub_4BCB70(invocation)) {
+        return false;
+    }
+
+    iter = 0;
+    run_default = false;
+
+    if (!sub_44C310(invocation->script, &flags)) {
+        return false;
+    }
+
+    script_num_changed = false;
+
+    if (invocation->attachee_obj != OBJ_HANDLE_NULL) {
+        attachee_type = obj_field_int32_get(invocation->attachee_obj, OBJ_F_TYPE);
+        if (attachee_type == OBJ_TYPE_NPC
+            && (obj_field_int32_get(invocation->attachee_obj, OBJ_F_NPC_FLAGS) & ONF_GENERATOR) != 0) {
+            return true;
+        }
+    }
+
+    if (invocation->field_20 == SAP_DIALOG && attachee_type == OBJ_TYPE_NPC) {
+        if (sub_45D8D0(invocation->attachee_obj) && (flags & 0x8) == 0) {
+            return true;
+        }
+
+        if (sub_4AF210(invocation->attachee_obj, NULL) && (flags & 0x10) == 0) {
+            return true;
+        }
+
+        if ((obj_field_int32_get(invocation->attachee_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
+            saved_script_num = invocation->script->num;
+            invocation->script->num = 2188;
+            script_num_changed = true;
+        }
+    }
+
+    state.invocation = invocation;
+    state.loop_cnt = 0;
+    state.script_num = -1;
+    state.current_loop_obj = OBJ_HANDLE_NULL;
+    memset(state.lc_vars, 0, sizeof(state.lc_vars));
+    memset(state.lc_objs, 0, sizeof(state.lc_objs));
+
+    script_file = script_lock(invocation->script->num);
+    if (script_file != NULL) {
+        line = invocation->line;
+
+        // NOTE: Original code is probably different.
+        for (iter = 0; iter < 1000; iter++) {
+            if (!sub_44C1B0(script_file, line, &statement)) {
+                run_default = false;
+                break;
+            }
+
+            next = script_execute_condition(&statement, line, &state);
+            if (next == NEXT) {
+                if (line < script_file->num_entries - 1) {
+                    line++;
+                } else {
+                    next = RETURN_AND_SKIP_DEFAULT;
+                }
+            } else {
+                line = next;
+            }
+
+            if (next == RETURN_AND_SKIP_DEFAULT
+                || next == RETURN_AND_RUN_DEFAULT
+                || next == -4) {
+                if ((flags & 0x4) != 0) {
+                    invocation->script->num = 0;
+                }
+
+                if (next == RETURN_AND_RUN_DEFAULT || next == -4) {
+                    run_default = true;
+                }
+                break;
+            }
+        }
+
+        script_unlock(invocation->script->num);
+    } else {
+        run_default = true;
+    }
+
+    if (state.script_num != -1) {
+        invocation->script->num = state.script_num;
+    }
+
+    if (script_num_changed) {
+        invocation->script->num = saved_script_num;
+    }
+
+    if (state.loop_cnt != 0) {
+        sub_44B8F0(state.field_398, &(state.objects));
+    }
+
+    return run_default;
 }
 
 // 0x444C80
@@ -194,18 +409,18 @@ int script_gl_var_get(int index)
 // 0x444C90
 void script_gl_var_set(int index, int value)
 {
-    if (!sub_4A2BA0()) {
-        unsigned char packet[16];
+    Packet124 pkt;
 
+    if (!sub_4A2BA0()) {
         if ((tig_net_flags & 0x2) == 0) {
             return;
         }
 
-        *(int*)(&(packet[0])) = 124;
-        *(int*)(&(packet[4])) = 1;
-        *(int*)(&(packet[8])) = index;
-        *(int*)(&(packet[12])) = value;
-        sub_5295F0(packet, sizeof(packet));
+        pkt.type = 124;
+        pkt.subtype = 1;
+        pkt.field_8 = index;
+        pkt.field_C = value;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
     script_gl_vars[index] = value;
@@ -220,18 +435,18 @@ int script_gl_flag_get(int index)
 // 0x444D20
 void script_gl_flag_set(int index, int value)
 {
-    if (!sub_4A2BA0()) {
-        unsigned char packet[16];
+    Packet124 pkt;
 
+    if (!sub_4A2BA0()) {
         if ((tig_net_flags & 0x2) == 0) {
             return;
         }
 
-        *(int*)(&(packet[0])) = 124;
-        *(int*)(&(packet[4])) = 2;
-        *(int*)(&(packet[8])) = index;
-        *(int*)(&(packet[12])) = value;
-        sub_5295F0(packet, sizeof(packet));
+        pkt.type = 124;
+        pkt.subtype = 2;
+        pkt.field_8 = index;
+        pkt.field_C = value;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
     script_gl_flags[index / 32] &= ~(1 << (index % 32));
@@ -239,7 +454,7 @@ void script_gl_flag_set(int index, int value)
 }
 
 // 0x444DB0
-int script_pc_gl_var_get(long long obj, int index)
+int script_pc_gl_var_get(int64_t obj, int index)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         return sub_407470(obj, OBJ_F_PC_GLOBAL_VARIABLES, index);
@@ -249,7 +464,7 @@ int script_pc_gl_var_get(long long obj, int index)
 }
 
 // 0x444DF0
-void script_pc_gl_var_set(long long obj, int index, int value)
+void script_pc_gl_var_set(int64_t obj, int index, int value)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         obj_f_set_int32_with_network(obj, OBJ_F_PC_GLOBAL_VARIABLES, index, value);
@@ -257,7 +472,7 @@ void script_pc_gl_var_set(long long obj, int index, int value)
 }
 
 // 0x444E30
-int script_pc_gl_flag_get(long long obj, int index)
+int script_pc_gl_flag_get(int64_t obj, int index)
 {
     int flags;
 
@@ -270,7 +485,7 @@ int script_pc_gl_flag_get(long long obj, int index)
 }
 
 // 0x444E90
-void script_pc_gl_flag_set(long long obj, int index, int value)
+void script_pc_gl_flag_set(int64_t obj, int index, int value)
 {
     int flags;
 
@@ -283,27 +498,56 @@ void script_pc_gl_flag_set(long long obj, int index, int value)
 }
 
 // 0x444F10
-void sub_444F10()
+bool script_local_flag_get(int64_t obj, int index, int flag)
 {
-    // TODO: Incomplete.
+    Script scr;
+
+    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+
+    return scr.num != 0 ? (scr.hdr.flags & (1 << flag)) != 0 : false;
 }
 
 // 0x444F60
-void sub_444F60()
+void script_local_flag_set(int64_t obj, int index, int flag, bool enabled)
 {
-    // TODO: Incomplete.
+    Script scr;
+
+    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+
+    if (scr.num != 0) {
+        if (enabled) {
+            scr.hdr.flags |= 1 << flag;
+        } else {
+            scr.hdr.flags &= ~(1 << flag);
+        }
+
+        sub_4F01D0(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+    }
 }
 
 // 0x444FD0
-void sub_444FD0()
+int script_local_counter_get(int64_t obj, int index, int counter)
 {
-    // TODO: Incomplete.
+    Script scr;
+
+    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+
+    return scr.num != 0 ? (scr.hdr.counters >> (8 * counter)) : 0;
 }
 
 // 0x445020
-void sub_445020()
+void script_local_counter_set(int64_t obj, int index, int counter, int value)
 {
-    // TODO: Incomplete.
+    Script scr;
+
+    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+
+    if (scr.num) {
+        scr.hdr.counters &= ~(0xFF << (8 * counter));
+        scr.hdr.counters |= value << (8 * counter);
+
+        sub_4F01D0(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+    }
 }
 
 // 0x445090
@@ -313,9 +557,24 @@ int sub_445090()
 }
 
 // 0x4450A0
-void sub_4450A0()
+void sub_4450A0(int value)
 {
-    // TODO: Incomplete.
+    Packet124 pkt;
+
+    if (!sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            return;
+        }
+
+        pkt.type = 124;
+        pkt.subtype = 0;
+        pkt.field_8 = value;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (value > dword_5E2FA4) {
+        dword_5E2FA4 = value;
+    }
 }
 
 // 0x4450F0
@@ -328,275 +587,2428 @@ const char* sub_4450F0(int story_state_num)
     }
 
     mes_file_entry.num = story_state_num;
-    if (!message_find(script_story_state_mes_file, &mes_file_entry)) {
+    if (!mes_search(script_story_state_mes_file, &mes_file_entry)) {
         return "";
     }
 
-    sub_4D43A0(script_story_state_mes_file, &mes_file_entry);
+    mes_get_msg(script_story_state_mes_file, &mes_file_entry);
 
-    return mes_file_entry.text;
+    return mes_file_entry.str;
 }
 
 // 0x445140
-void script_timeevent_process()
+bool script_timeevent_process(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    Script scr;
+    ScriptInvocation invocation;
+
+    scr.num = timeevent->params[0].integer_value;
+    sub_44BCC0(&scr);
+
+    invocation.script = &scr;
+    invocation.triggerer_obj = timeevent->params[2].object_value;
+    invocation.attachee_obj = timeevent->params[3].object_value;
+    invocation.field_20 = 1;
+    invocation.extra_obj = OBJ_HANDLE_NULL;
+    invocation.line = timeevent->params[1].integer_value;
+    sub_4449B0(&invocation);
+
+    return true;
 }
 
 // 0x4451B0
-void script_execute_condition()
+int script_execute_condition(ScriptCondition* condition, int line, ScriptState* state)
 {
-    // TODO: Incomplete.
+    int rc = -1;
+    int value;
+    int64_t objs[100];
+    ObjectList objects;
+    int cnt;
+    int index;
+    int matched;
+
+    switch (condition->type) {
+    case SCT_TRUE:
+        rc = script_execute_action(&(condition->action), line, state);
+        break;
+    case SCT_DAYTIME:
+        // it is daytime
+
+        if (game_time_is_day()) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_HAS_GOLD:
+        // (obj) has at least (num) gold
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        value = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (item_gold_get(objs[index]) >= value) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_LOCAL_FLAG:
+        // local flag (num) is set
+
+        value = script_get_value(condition->op_type[0], condition->op_value[0], state);
+        if ((state->invocation->script->hdr.flags & (1 << value)) != 0) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_EQ:
+        // (num) == (num)
+
+        if (script_get_value(condition->op_type[0], condition->op_value[0], state) == script_get_value(condition->op_type[1], condition->op_value[1], state)) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_LE:
+        // (num) <= (num)
+
+        if (script_get_value(condition->op_type[0], condition->op_value[0], state) <= script_get_value(condition->op_type[1], condition->op_value[1], state)) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_PC_QUEST_STATE: {
+        // PC (obj) has quest (num) in state (num)
+
+        int quest;
+        int quest_state;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        quest = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        quest_state = script_get_value(condition->op_type[2], condition->op_value[2], state);
+
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (sub_4C4CB0(objs[index], quest) == quest_state) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_GLOBAL_QUEST_STATE: {
+        // {quest (num) in global state (num)}
+
+        int quest;
+        int quest_state;
+
+        quest = script_get_value(condition->op_type[0], condition->op_value[0], state);
+        quest_state = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        if (quest_get_state(quest) == quest_state) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_HAS_BLESS: {
+        // (obj) has bless (num)
+
+        int bless;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        bless = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (bless_is_added_to(objs[index], bless)) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_HAS_CURSE: {
+        // (obj) has curse (num)
+
+        int curse;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        curse = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (curse_is_added_to(objs[index], curse)) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_MET_PC_BEFORE:
+        // npc (obj) has met pc (obj) before
+
+        objs[0] = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
+        if (sub_4C0C40(objs[0], objs[1])) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_OBJ_HAS_BAD_ASSOCIATES: {
+        // (obj) has bad associates
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (critter_has_bad_associates(objs[index])) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_POLYMORPHED: {
+        // (obj) is polymorphed
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_SPELL_FLAGS) & OSF_POLYMORPHED) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_SHRUNK: {
+        // (obj) is shrunk
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_SPELL_FLAGS) & OSF_SHRUNK) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_HAS_BODY_SPELL: {
+        // (obj) has a body spell
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_SPELL_FLAGS) & (OSF_BODY_OF_AIR | OSF_BODY_OF_EARTH | OSF_BODY_OF_FIRE | OSF_BODY_OF_WATER)) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_INVISIBLE: {
+        // (obj) is invisible
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_HAS_MIRROR_IMAGE: {
+        // (obj) has mirror image
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_SPELL_FLAGS) & OSF_MIRRORED) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_HAS_ITEM_NAMED: {
+        // (obj) has item named (num)
+
+        int name;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        name = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (item_find_by_name(objs[index], name) != OBJ_HANDLE_NULL) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_FOLLOWING_PC: {
+        // npc (obj) is a follower of pc (obj)
+
+        objs[0] = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
+        if (critter_leader_get(objs[0]) == objs[1]) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_MONSTER_OF_TYPE: {
+        // npc (obj) is a monster of specie (num)
+
+        int type;
+        tig_art_id_t art_id;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        type = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            art_id = obj_field_int32_get(objs[index], OBJ_F_AID);
+            if (tig_art_type(art_id) == TIG_ART_TYPE_MONSTER
+                && tig_art_monster_id_specie_get(art_id) == type) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_NAMED: {
+        // (obj) is named (num)
+
+        int name;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        name = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
+                && obj_field_int32_get(objs[index], OBJ_F_NAME) == name) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_WIELDING_ITEM: {
+        // (obj) is wielding item named (num)
+
+        int name;
+        int inventory_location;
+        int64_t item_obj;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        name = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            for (inventory_location = 1000; inventory_location < 1009; inventory_location++) {
+                item_obj = item_wield_get(objs[index], inventory_location);
+                if (item_obj != OBJ_HANDLE_NULL
+                    && obj_field_int32_get(item_obj, OBJ_F_NAME) == name) {
+                    matched++;
+                    break;
+                }
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_DEAD: {
+        // (obj) is dead
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (sub_45D8D0(objs[index])) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_HAS_MAX_FOLLOWERS: {
+        // (obj) has maximum followers
+
+        int max_followers;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (critter_is_pc(objs[index])) {
+                max_followers = stat_level(objs[index], STAT_MAX_FOLLOWERS);
+                if (max_followers == 0 || sub_45E3F0(objs[index], true) >= max_followers) {
+                    matched++;
+                }
+            } else {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_CAN_OPEN_CONTAINER:
+        // (obj) can open the container (obj)
+
+        objs[0] = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
+        if (sub_4AED80(objs[0], objs[1]) == 0) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_OBJ_HAS_SURRENDERED: {
+        // (obj) has surrendered
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (obj_field_int32_get(objs[index], OBJ_F_TYPE) == OBJ_TYPE_NPC
+                && sub_4AF210(objs[index], NULL)) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_IN_DIALOG: {
+        // (obj) is in dialog
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (obj_field_int32_get(objs[index], OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+                if (sub_4C1110(objs[index])) {
+                    matched++;
+                }
+            } else {
+                if (sub_460460(objs[index])) {
+                    matched++;
+                }
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_SWITCHED_OFF: {
+        // (obj) is switched off
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_FLAGS) & OF_OFF) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_CAN_SEE_OBJ:
+        // (obj) can see (obj)
+
+        objs[0] = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
+        if (sub_4AF260(objs[0], objs[1]) == 0) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_OBJ_CAN_HEAR_OBJ:
+        // (obj) can hear (obj)
+
+        objs[0] = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
+        if (sub_4AF470(objs[0], objs[1], 1) == 0) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_OBJ_IS_INVULNERABLE: {
+        // (obj) is invulnerable
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if ((obj_field_int32_get(objs[index], OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_IN_COMBAT: {
+        // (obj) is in combat
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (combat_critter_is_combat_mode_active(objs[index])) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_AT_LOCATION: {
+        // (obj) is at location X:(num) Y:(num)
+
+        int64_t obj;
+        int x;
+        int y;
+
+        obj = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        x = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        y = script_get_value(condition->op_type[2], condition->op_value[2], state);
+
+        if (location_make(x, y) == obj_field_int64_get(obj, OBJ_F_LOCATION)) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    }
+    case SCT_OBJ_HAS_REPUTATION: {
+        // (obj) has reputation (num)
+
+        int reputation;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        reputation = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (reputation_has(objs[index], reputation)) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_WITHIN_RANGE: {
+        // (obj) is within (num) tiles of location X:(num) Y:(num)
+
+        int64_t obj;
+        int range;
+        int x;
+        int y;
+
+        obj = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        range = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        x = script_get_value(condition->op_type[2], condition->op_value[2], state);
+        y = script_get_value(condition->op_type[3], condition->op_value[3], state);
+
+        if (sub_4B96F0(location_make(x, y), obj_field_int64_get(obj, OBJ_F_LOCATION)) <= range) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    }
+    case SCT_OBJ_IS_INFLUENCED_BY_SPELL: {
+        // (obj) is under the influence of spell (num)
+
+        int spl;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        spl = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (sub_459380(objs[index], spl)) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_OPEN: {
+        // (obj) is open
+
+        int64_t obj;
+        int type;
+        bool is_open;
+
+        obj = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        type = obj_field_int32_get(obj, OBJ_F_TYPE);
+        if (type == OBJ_TYPE_PORTAL) {
+            is_open = sub_4F08C0(obj);
+        } else if (type == OBJ_TYPE_CONTAINER) {
+            is_open = tig_art_id_frame_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) != 0;
+        } else {
+            is_open = false;
+        }
+
+        if (is_open) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    }
+    case SCT_OBJ_IS_ANIMAL: {
+        // (obj) is an animal
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (obj_field_int32_get(objs[index], OBJ_F_TYPE) == OBJ_TYPE_NPC
+                && (obj_field_int32_get(objs[index], OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_IS_UNDEAD: {
+        // (obj) is undead
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (obj_field_int32_get(objs[index], OBJ_F_TYPE) == OBJ_TYPE_NPC
+                && (obj_field_int32_get(objs[index], OBJ_F_CRITTER_FLAGS) & OCF_UNDEAD) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_OBJ_JILTED: {
+        // (obj) was jilted by a PC
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (obj_field_int32_get(objs[index], OBJ_F_TYPE) == OBJ_TYPE_NPC
+                && (obj_field_int32_get(objs[index], OBJ_F_NPC_FLAGS) & ONF_JILTED) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_RUMOR_KNOWN: {
+        // pc (obj) knows rumor (num)
+        int64_t obj;
+        int rumor;
+
+        obj = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        rumor = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        if (sub_4C58D0(obj, rumor)) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    }
+    case SCT_RUMOR_QUELLED: {
+        // rumor (num) has been quelled
+
+        int rumor;
+
+        rumor = script_get_value(condition->op_type[0], condition->op_value[0], state);
+        if (rumor_is_known(rumor)) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    }
+    case SCT_OBJ_IS_BUSTED: {
+        // (obj) is busted
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (object_is_destroyed(objs[index])) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_GLOBAL_FLAG: {
+        // global flag (num) is set
+
+        int num;
+
+        num = script_get_value(condition->op_type[0], condition->op_value[0], state);
+        if (script_gl_var_get(num)) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    }
+    case SCT_CAN_OPEN_PORTAL: {
+        // (obj) can open the portal (obj) in direction (num)
+
+        int direction;
+
+        objs[0] = script_get_obj(condition->op_type[0], condition->op_value[0], state);
+        objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
+        direction = script_get_value(condition->op_type[2], condition->op_value[2], state);
+
+        if (sub_4AEB70(objs[0], objs[1], direction) == 0) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_SECTOR_IS_BLOCKED: {
+        // sector at location X:(num) and Y:(num) is blocked
+
+        int x;
+        int y;
+
+        x = script_get_value(condition->op_type[0], condition->op_value[0], state);
+        y = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        if (sub_4D0EE0(sub_4CFC50(location_make(x, y)))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_MONSTERGEN_DISABLED: {
+        // monster generator (num) is disabled
+
+        int num;
+
+        num = script_get_value(condition->op_type[0], condition->op_value[0], state);
+        if (monstergen_is_disabled(num)) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    }
+    case SCT_IDENTIFIED: {
+        // (obj) is identified
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (item_is_identified(objs[index])) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_KNOWS_SPELL: {
+        // (obj) knows spell (num)
+
+        int spl;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        spl = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (sub_4B1950(objs[index], spl)) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_MASTERED_SPELL_COLLEGE: {
+        // (obj) has mastered spell college (num)
+
+        int college;
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        college = script_get_value(condition->op_type[1], condition->op_value[1], state);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (sub_4B1CB0(objs[index]) == college) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_50:
+        if (sub_4655C0()) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+        break;
+    case SCT_PROWLING: {
+        // (obj) is prowling
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (critter_is_concealed(objs[index])) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    case SCT_WAITING_FOR_LEADER: {
+        // (obj) is waiting for leader's return
+
+        cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
+        matched = 0;
+        for (index = 0; index < cnt; index++) {
+            if (obj_field_int32_get(objs[index], OBJ_F_TYPE) == OBJ_TYPE_NPC
+                && (obj_field_int32_get(objs[index], OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0) {
+                matched++;
+            }
+        }
+        sub_44B8F0(condition->op_type[0], &objects);
+        if (matched != 0
+            && (matched == cnt || sfo_is_any(condition->op_type[0]))) {
+            rc = script_execute_action(&(condition->action), line, state);
+        } else {
+            rc = script_execute_action(&(condition->els), line, state);
+        }
+    } break;
+    default:
+        break;
+    }
+
+    return rc;
 }
 
 // 0x447220
 int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
 {
-    int value1;
-    int value2;
-    long long obj;
+    ObjectList objects;
+    int64_t handles[100];
+    CombatContext combat;
 
     switch (action->type) {
     case SAT_RETURN_AND_SKIP_DEFAULT:
-        return -2;
+        return RETURN_AND_SKIP_DEFAULT;
     case SAT_RETURN_AND_RUN_DEFAULT:
-        return -3;
+        return RETURN_AND_RUN_DEFAULT;
     case SAT_GOTO:
         return script_get_value(action->op_type[0], action->op_value[0], state);
     case SAT_DIALOG:
-        if (dword_5E2FEC != NULL && sub_40DA20(state->field_0->triggerer_obj)) {
+        if (dword_5E2FEC != NULL && sub_40DA20(state->invocation->triggerer_obj)) {
             int num;
-            int scr[3];
+            Script scr;
 
             num = script_get_value(action->op_type[0], action->op_value[0], state);
-            sub_407840(state->field_0->attachee_obj, OBJ_F_SCRIPTS_IDX, state->field_0->field_20, scr);
+            sub_407840(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->field_20, &scr);
 
-            if (scr[0] != state->field_0->field_0->field_0
-                || scr[1] != state->field_0->field_0->field_4) {
-                scr[0] = state->field_0->field_0->field_0;
-                scr[1] = state->field_0->field_0->field_4;
-                sub_4078A0(state->field_0->attachee_obj, OBJ_F_SCRIPTS_IDX, state->field_0->field_20, scr);
+            if (scr.hdr.flags != state->invocation->script->hdr.flags
+                || scr.hdr.counters != state->invocation->script->hdr.counters) {
+                scr.hdr.flags = state->invocation->script->hdr.counters;
+                scr.hdr.counters = state->invocation->script->hdr.counters;
+                sub_4078A0(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->field_20, &scr);
             }
 
-            dword_5E2FEC(state->field_0->triggerer_obj,
-                state->field_0->attachee_obj,
-                state->field_0->field_0->script_num,
+            dword_5E2FEC(state->invocation->triggerer_obj,
+                state->invocation->attachee_obj,
+                state->invocation->script->num,
                 a2,
                 num);
         }
-        return -2;
+        return RETURN_AND_SKIP_DEFAULT;
     case SAT_REMOVE_THIS_SCRIPT:
         state->script_num = 0;
-        return -1;
+        return NEXT;
     case SAT_CHANGE_THIS_SCRIPT_TO_SCRIPT:
         state->script_num = script_get_value(action->op_type[0], action->op_value[0], state);
-        return -1;
+        return NEXT;
     case SAT_CALL_SCRIPT:
         sub_44B030(action, state);
-        return -1;
-    case SAT_SET_LOCAL_FLAG:
-        state->field_0->field_0->field_0 |= 1 << script_get_value(action->op_type[0], action->op_value[0], state);
-        return -1;
-    case SAT_CLEAR_LOCAL_FLAG:
-        state->field_0->field_0->field_0 &= ~(1 << script_get_value(action->op_type[0], action->op_value[0], state));
-        return -1;
+        return NEXT;
+    case SAT_SET_LOCAL_FLAG: {
+        int flag = script_get_value(action->op_type[0], action->op_value[0], state);
+        state->invocation->script->hdr.flags |= 1 << flag;
+        return NEXT;
+    }
+    case SAT_CLEAR_LOCAL_FLAG: {
+        int flag = script_get_value(action->op_type[0], action->op_value[0], state);
+        state->invocation->script->hdr.flags &= ~(1 << flag);
+        return NEXT;
+    }
     case SAT_ASSIGN_NUM:
         script_set_value(action->op_type[0], action->op_value[0], state,
             script_get_value(action->op_type[1], action->op_value[1], state));
-        return -1;
-    case SAT_ADD:
-        value1 = script_get_value(action->op_type[1], action->op_value[1], state);
-        value2 = script_get_value(action->op_type[2], action->op_value[2], state);
+        return NEXT;
+    case SAT_ADD: {
+        int value1 = script_get_value(action->op_type[1], action->op_value[1], state);
+        int value2 = script_get_value(action->op_type[2], action->op_value[2], state);
         script_set_value(action->op_type[0],
             action->op_value[0],
             state,
             value1 + value2);
-        return -1;
-    case SAT_SUBTRACT:
-        value1 = script_get_value(action->op_type[1], action->op_value[1], state);
-        value2 = script_get_value(action->op_type[2], action->op_value[2], state);
+        return NEXT;
+    }
+    case SAT_SUBTRACT: {
+        int value1 = script_get_value(action->op_type[1], action->op_value[1], state);
+        int value2 = script_get_value(action->op_type[2], action->op_value[2], state);
         script_set_value(action->op_type[0],
             action->op_value[0],
             state,
             value1 - value2);
-        return -1;
-    case SAT_MULTIPLY:
-        value1 = script_get_value(action->op_type[1], action->op_value[1], state);
-        value2 = script_get_value(action->op_type[2], action->op_value[2], state);
+        return NEXT;
+    }
+    case SAT_MULTIPLY: {
+        int value1 = script_get_value(action->op_type[1], action->op_value[1], state);
+        int value2 = script_get_value(action->op_type[2], action->op_value[2], state);
         script_set_value(action->op_type[0],
             action->op_value[0],
             state,
             value1 * value2);
-        return -1;
-    case SAT_DIVIDE:
-        value1 = script_get_value(action->op_type[1], action->op_value[1], state);
-        value2 = script_get_value(action->op_type[2], action->op_value[2], state);
+        return NEXT;
+    }
+    case SAT_DIVIDE: {
+        int value1 = script_get_value(action->op_type[1], action->op_value[1], state);
+        int value2 = script_get_value(action->op_type[2], action->op_value[2], state);
         if (value2 != 0) {
             script_set_value(action->op_type[0],
                 action->op_value[0],
                 state,
                 value1 + value2);
         }
-        return -1;
-    case SAT_ASSIGN_OBJ:
-        obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        return NEXT;
+    }
+    case SAT_ASSIGN_OBJ: {
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
         script_set_obj(action->op_type[0], action->op_value[0], state, obj);
-        return -1;
-    case SAT_SET_PC_QUEST_STATE:
-        if (1) {
-            int cnt;
-            int quest_num;
-            int quest_state;
-            int index;
+        return NEXT;
+    }
+    case SAT_SET_PC_QUEST_STATE: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int quest_num = script_get_value(action->op_type[1], action->op_value[1], state);
+        int quest_state = script_get_value(action->op_type[2], action->op_value[2], state);
 
-            cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, objs, &l);
-            quest_num = script_get_value(action->op_type[1], action->op_value[1], state);
-            quest_state = script_get_value(action->op_type[2], action->op_value[2], state);
-
-            for (index = 0; index < cnt; index++) {
-                sub_4C4D20(objs[index],
-                    quest_num,
-                    quest_state,
-                    state->field_0->attachee_obj);
-            }
-
-            sub_44B8F0(action->op_type[0], &l);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_4C4D20(handles[idx],
+                quest_num,
+                quest_state,
+                state->invocation->attachee_obj);
         }
-        return -1;
-    case SAT_SET_QUEST_GLOBAL_STATE:
-        if (1) {
-            int quest_num;
-            int quest_state;
 
-            quest_num = script_get_value(action->op_type[1], action->op_value[1], state);
-            quest_state = script_get_value(action->op_type[2], action->op_value[2], state);
-            quest_set_state(quest_num, quest_state);
-        }
-        return -1;
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_SET_QUEST_GLOBAL_STATE: {
+        int quest_num = script_get_value(action->op_type[0], action->op_value[0], state);
+        int quest_state = script_get_value(action->op_type[1], action->op_value[1], state);
+        quest_set_state(quest_num, quest_state);
+        return NEXT;
+    }
     case SAT_LOOP_FOR:
         if (state->loop_cnt != 0) {
             tig_debug_printf("Script: script_execute_action: sat_loop_for: ERROR: Already in a loop!\n");
-            return -1;
+            return NEXT;
         }
 
         state->field_4 = 0;
         state->field_C = a2 + 1;
-        state->field_38 = action->op_type[0];
+        state->field_398 = action->op_type[0];
         state->loop_cnt = script_resolve_focus_obj(action->op_type[0],
             action->op_value[0],
             state,
-            state->field_20,
-            &(state->l));
+            state->objs,
+            &(state->objects));
         if (state->loop_cnt != 0) {
-            state->current_loop_obj = state->field_20[state->field_4];
-            return -1;
+            state->current_loop_obj = state->objs[state->field_4];
+            return NEXT;
         }
 
-        sub_44B8F0(state->field_398, &(state->l));
+        sub_44B8F0(state->field_398, &(state->objects));
         return sub_44BC60(state);
     case SAT_LOOP_END:
         if (state->loop_cnt <= 0) {
             tig_debug_printf("Script: script_execute_action: sat_loop_end: ERROR: Not in a loop!\n");
-            return -1;
+            return NEXT;
         }
 
         if (++state->field_4 < state->loop_cnt) {
-            state->current_loop_obj = state->field_20[state->field_4];
+            state->current_loop_obj = state->objs[state->field_4];
             return state->field_C;
         }
 
         state->loop_cnt = 0;
-        sub_44B8F0(state->field_398, &(state->l));
-        return -1;
+        sub_44B8F0(state->field_398, &(state->objects));
+        return NEXT;
     case SAT_LOOP_BREAK:
         if (state->loop_cnt <= 0) {
             tig_debug_printf("Script: script_execute_action: sat_loop_break: ERROR: Not in a loop!\n");
-            return -1;
+            return NEXT;
         }
 
         state->loop_cnt = 0;
-        sub_44B8F0(state->field_398, &(state->l));
+        sub_44B8F0(state->field_398, &(state->objects));
         return sub_44BC60(state);
-    case SAT_CRITTER_FOLLOW:
-        if (1) {
-            long long follower;
-            long long leader;
-
-            follower = script_get_obj(action->op_type[0], action->op_value[0], state);
-            leader = script_get_obj(action->op_type[1], action->op_value[1], state);
-            critter_follow(follower, leader, true);
-        }
-        return -1;
-    case SAT_CRITTER_DISBAND:
-        if (1) {
-            long long obj;
-
-            obj = script_get_obj(action->op_type[0], action->op_value[0], state);;
-
-            critter_disband(obj, true);
-        }
-        return -1;
+    case SAT_CRITTER_FOLLOW: {
+        int64_t follower_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t leader_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        critter_follow(follower_obj, leader_obj, true);
+        return NEXT;
+    }
+    case SAT_CRITTER_DISBAND: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        critter_disband(obj, true);
+        return NEXT;
+    }
     case SAT_FLOAT_LINE:
         sub_44B1F0(action, state);
-        return -1
+        return NEXT;
     case SAT_PRINT_LINE:
         sub_44B390(action, state);
-        return -1;
+        return NEXT;
+    case SAT_ADD_BLESSING: {
+        int bless = script_get_value(action->op_type[0], action->op_value[0], state);
+        int cnt = script_resolve_focus_obj(action->op_type[1], action->op_value[1], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            bless_add(handles[idx], bless);
+        }
+        sub_44B8F0(action->op_type[1], &objects);
+        return NEXT;
+    }
+    case SAT_REMOVE_BLESSING: {
+        int bless = script_get_value(action->op_type[0], action->op_value[0], state);
+        int cnt = script_resolve_focus_obj(action->op_type[1], action->op_value[1], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            bless_remove(handles[idx], bless);
+        }
+        sub_44B8F0(action->op_type[1], &objects);
+        return NEXT;
+    }
+    case SAT_ADD_CURSE: {
+        int curse = script_get_value(action->op_type[0], action->op_value[0], state);
+        int cnt = script_resolve_focus_obj(action->op_type[1], action->op_value[1], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            curse_add(handles[idx], curse);
+        }
+        sub_44B8F0(action->op_type[1], &objects);
+        return NEXT;
+    }
+    case SAT_REMOVE_CURSE: {
+        int curse = script_get_value(action->op_type[0], action->op_value[0], state);
+        int cnt = script_resolve_focus_obj(action->op_type[1], action->op_value[1], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            curse_remove(handles[idx], curse);
+        }
+        sub_44B8F0(action->op_type[1], &objects);
+        return NEXT;
+    }
+    case SAT_GET_REACTION: {
+        int64_t npc_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t pc_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int reaction = sub_4C0CC0(npc_obj, pc_obj);
+        script_set_value(action->op_type[2], action->op_value[2], state, reaction);
+        return NEXT;
+    }
+    case SAT_SET_REACTION: {
+        int64_t npc_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t pc_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int reaction = script_get_value(action->op_type[2], action->op_value[1], state);
+        sub_4C0DE0(npc_obj, pc_obj, reaction - sub_4C0CC0(npc_obj, pc_obj));
+        return NEXT;
+    }
+    case SAT_ADJUST_REACTION: {
+        int64_t npc_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t pc_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int reaction = script_get_value(action->op_type[2], action->op_value[2], state);
+        sub_4C0DE0(npc_obj, pc_obj, reaction);
+        return NEXT;
+    }
+    case SAT_GET_ARMOR: {
+        int64_t item_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int armor = sub_504030(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID));
+        script_set_value(action->op_type[1], action->op_value[1], state, armor);
+        return NEXT;
+    }
+    case SAT_GET_STAT: {
+        int stat = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t critter_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int value = stat_level(critter_obj, stat);
+        if (stat == STAT_INTELLIGENCE
+            && value > LOW_INTELLIGENCE
+            && sub_45FC00(critter_obj)) {
+            value = 1;
+        }
+        script_set_value(action->op_type[2], action->op_value[2], state, value);
+        return NEXT;
+    }
+    case SAT_GET_OBJECT_TYPE: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int type = obj_field_int32_get(obj, OBJ_F_TYPE);
+        script_set_value(action->op_type[1], action->op_value[1], state, type);
+        return NEXT;
+    }
+    case SAT_ADJUST_GOLD: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int value = script_get_value(action->op_type[1], action->op_value[1], state);
+        if (value > 0) {
+            sub_464830(OBJ_HANDLE_NULL, obj, value, OBJ_HANDLE_NULL);
+        } else {
+            sub_464830(obj, OBJ_HANDLE_NULL, -value, OBJ_HANDLE_NULL);
+        }
+        return NEXT;
+    }
+    case SAT_ATTACK: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_4A9650(handles[idx], target_obj, 1, 2);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_RANDOM: {
+        int lower = script_get_value(action->op_type[0], action->op_value[0], state);
+        int upper = script_get_value(action->op_type[1], action->op_value[1], state);
+        int value = random_between(lower, upper);
+        script_set_value(action->op_type[2], action->op_value[2], state, value);
+        return NEXT;
+    }
+    case SAT_GET_SOCIAL_CLASS: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int social_class = obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
+            ? obj_field_int32_get(obj, OBJ_F_NPC_SOCIAL_CLASS)
+            : 0;
+        script_set_value(action->op_type[1], action->op_value[1], state, social_class);
+        return NEXT;
+    }
+    case SAT_GET_ORIGIN: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int origin = critter_origin_get(obj);
+        script_set_value(action->op_type[1], action->op_value[1], state, origin);
+        return NEXT;
+    }
+    case SAT_TRANSFORM_ATTACHEE_INTO_BASIC_PROTOTYPE: {
+        int64_t parent_obj;
+        int64_t loc;
+        int obj_type = obj_field_int32_get(state->invocation->attachee_obj, OBJ_F_TYPE);
+
+        if (obj_type_is_item(obj_type)
+            && item_parent(state->invocation->attachee_obj, &parent_obj)) {
+            loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
+        } else {
+            parent_obj = OBJ_HANDLE_NULL;
+            loc = obj_field_int64_get(state->invocation->attachee_obj, OBJ_F_LOCATION);
+        }
+
+        int fatigue_ratio = obj_type_is_critter(obj_type)
+            ? sub_4AB430(state->invocation->attachee_obj)
+            : 100;
+        int hp_ratio = sub_4AB400(state->invocation->attachee_obj);
+        tig_art_id_t art_id = obj_field_int32_get(state->invocation->attachee_obj, OBJ_F_CURRENT_AID);
+        int rotation = tig_art_id_rotation_get(art_id);
+        int proto = script_get_value(action->op_type[0], action->op_value[0], state);
+
+        int64_t new_obj;
+        if (mp_object_create(proto, loc, &new_obj)) {
+            sub_43CCA0(state->invocation->attachee_obj);
+            state->invocation->attachee_obj = new_obj;
+
+            int hp = sub_43D5A0(new_obj);
+            int hp_damage = hp * (100 - hp_ratio) / 100;
+            if (hp_damage < hp) {
+                object_set_hp_damage(new_obj, hp_damage);
+            } else {
+                object_set_hp_damage(new_obj, hp - 1);
+            }
+
+            art_id = obj_field_int32_get(new_obj, OBJ_F_CURRENT_AID);
+            art_id = tig_art_id_rotation_set(art_id, rotation);
+            sub_4EDCE0(new_obj, art_id);
+
+            obj_type = obj_field_int32_get(new_obj, OBJ_F_TYPE);
+            if (obj_type_is_critter(obj_type)) {
+                int fatigue_damage = sub_45D670(new_obj) * (100 - fatigue_ratio) / 100;
+                critter_fatigue_damage_set(new_obj, fatigue_damage);
+            }
+
+            if (obj_type_is_item(obj_type)) {
+                sub_4617F0(new_obj, parent_obj);
+            }
+        }
+
+        return NEXT;
+    }
+    case SAT_TRANSFER_ITEM: {
+        int name = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t from_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int64_t to_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        int64_t item_obj = item_find_by_name(from_obj, name);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            sub_4617F0(item_obj, to_obj);
+        }
+        return NEXT;
+    }
+    case SAT_GET_STORY_STATE: {
+        int story_state = sub_445090();
+        script_set_value(action->op_type[0], action->op_value[0], state, story_state);
+        return NEXT;
+    }
+    case SAT_SET_STORY_STATE: {
+        int story_state = script_get_value(action->op_type[0], action->op_value[0], state);
+        sub_4450A0(story_state);
+        return NEXT;
+    }
+    case SAT_TELEPORT: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int map = script_get_value(action->op_type[1], action->op_value[1], state);
+        int x = script_get_value(action->op_type[2], action->op_value[2], state);
+        int y = script_get_value(action->op_type[3], action->op_value[3], state);
+
+        TeleportData teleport_data;
+        teleport_data.map = map - 4999;
+        teleport_data.flags = 0;
+        teleport_data.obj = obj;
+        teleport_data.loc = location_make(x, y);
+        teleport_do(&teleport_data);
+
+        return NEXT;
+    }
+    case SAT_SET_DAY_STANDPOINT: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int x = script_get_value(action->op_type[1], action->op_value[1], state);
+        int y = script_get_value(action->op_type[2], action->op_value[2], state);
+
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_DAY, location_make(x, y));
+        }
+
+        return NEXT;
+    }
+    case SAT_SET_NIGHT_STANDPOINT: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int x = script_get_value(action->op_type[1], action->op_value[1], state);
+        int y = script_get_value(action->op_type[2], action->op_value[2], state);
+
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_NIGHT, location_make(x, y));
+        }
+
+        return NEXT;
+    }
+    case SAT_GET_SKILL: {
+        int skill = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int value = IS_TECH_SKILL(skill)
+            ? tech_skill_level(obj, GET_TECH_SKILL(skill))
+            : basic_skill_level(obj, GET_BASIC_SKILL(skill));
+        script_set_value(action->op_type[2], action->op_value[2], state, value);
+    }
+    case SAT_CAST_SPELL: {
+        int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int spell = script_get_value(action->op_type[1], action->op_value[1], state);
+        int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+
+        MagicTechSerializedData v1;
+        sub_455A20(&v1, source_obj, spell);
+        sub_4440E0(target_obj, &(v1.target_obj));
+        sub_455AC0(&v1);
+        return NEXT;
+    }
+    case SAT_MARK_MAP_LOCATION: {
+        int area = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t pc_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        area_set_known(pc_obj, area);
+        return NEXT;
+    }
+    case SAT_SET_RUMOR: {
+        int rumor = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_4C57E0(obj, rumor);
+        return NEXT;
+    }
+    case SAT_QUELL_RUMOR: {
+        int rumor = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        if (obj == player_get_pc_obj()) {
+            rumor_set_known(rumor);
+        }
+        return NEXT;
+    }
+    case SAT_CREATE_OBJECT: {
+        int proto = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t near_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int64_t loc = -1;
+        for (int attempt = 0; attempt < 10; attempt++) {
+            if (sub_4F4E40(near_obj, random_between(1, 3), &loc)) {
+                break;
+            }
+        }
+        if (loc == -1) {
+            loc = obj_field_int64_get(near_obj, OBJ_F_LOCATION);
+        }
+
+        int64_t new_obj;
+        mp_object_create(proto, loc, &new_obj);
+
+        if (obj_field_int32_get(new_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            unsigned int critter_flags = obj_field_int32_get(new_obj, OBJ_F_CRITTER_FLAGS);
+            critter_flags |= OCF_ENCOUNTER;
+            sub_4EFDD0(new_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+        }
+
+        return NEXT;
+    }
+    case SAT_GET_LOCK_STATE: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int num = script_get_value(action->op_type[1], action->op_value[1], state);
+        sub_4EEC10(obj, num);
+        return NEXT;
+    }
+    case SAT_CALL_SCRIPT_IN:
+    case SAT_CALL_SCRIPT_AT: {
+        int num = script_get_value(action->op_type[0], action->op_value[0], state);
+        int line = script_get_value(action->op_type[1], action->op_value[1], state);
+        int64_t triggerer_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        int64_t attachee_obj = script_get_obj(action->op_type[3], action->op_value[3], state);
+        int seconds = script_get_value(action->op_type[4], action->op_value[4], state);
+
+        DateTime datetime;
+        if (action->type == SAT_CALL_SCRIPT_AT) {
+            datetime = sub_45A7C0();
+            datetime.milliseconds += 86400000;
+            datetime_sub_milliseconds(&datetime, sub_45AD70());
+
+            int v1 = datetime_seconds_since_reference_date(&datetime) % 86400;
+            seconds = seconds % 86400 - v1 + (seconds % 86400 - v1 < 0 ? 86400 : 0);
+        }
+
+        TimeEvent timeevent;
+        timeevent.type = TIMEEVENT_TYPE_SCRIPT;
+        timeevent.params[0].integer_value = num;
+        timeevent.params[1].integer_value = line;
+        timeevent.params[2].object_value = triggerer_obj;
+        timeevent.params[3].object_value = attachee_obj;
+
+        sub_45A950(&datetime, 1000 * seconds);
+
+        if (action->type == SAT_CALL_SCRIPT_IN) {
+            datetime.milliseconds *= 8;
+        }
+
+        sub_45B800(&timeevent, &datetime);
+    }
+    case SAT_TOGGLE_STATE: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            if ((obj_field_int32_get(handles[idx], OBJ_F_FLAGS) & OF_OFF) != 0) {
+                sub_4EFEE0(handles[idx], OF_OFF);
+            } else {
+                sub_4EFF50(handles[idx], OF_OFF);
+            }
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_TOGGLE_INVULNERABILITY: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            if ((obj_field_int32_get(handles[idx], OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
+                sub_4EFEE0(handles[idx], OF_INVULNERABLE);
+            } else {
+                sub_4EFF50(handles[idx], OF_INVULNERABLE);
+            }
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_KILL: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_45D900(handles[idx]);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_CHANGE_ART_NUM: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int num = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            tig_art_id_t art_id = obj_field_int32_get(handles[idx], OBJ_F_CURRENT_AID);
+            art_id = tig_art_num_set(art_id, num);
+            art_id = tig_art_id_frame_set(art_id, 0);
+            if (tig_art_exists(art_id) == TIG_OK) {
+                sub_4F02F0(handles[idx], art_id);
+            }
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_DAMAGE: {
+
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int damage = script_get_value(action->op_type[1], action->op_value[1], state);
+        int type = script_get_value(action->op_type[2], action->op_value[2], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_4B2210(OBJ_HANDLE_NULL, handles[idx], &combat);
+            combat.field_44[type] = damage;
+            sub_4B4390(&combat);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_CAST_SPELL_ON: {
+        int spell = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t target_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+
+        MagicTechSerializedData v1;
+        sub_455A20(&v1, OBJ_HANDLE_NULL, spell);
+        sub_4440E0(target_obj, &(v1.target_obj));
+        sub_455AC0(&v1);
+
+        return NEXT;
+    }
+    case SAT_ACTION_PERFORM_ANIMATION: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int anim = script_get_value(action->op_type[1], action->op_value[1], state);
+        sub_4332E0(obj, anim);
+        return NEXT;
+    }
+    case SAT_GIVE_QUEST_XP: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int quest_level = script_get_value(action->op_type[1], action->op_value[1], state);
+        sub_45F110(obj, quest_get_xp(quest_level));
+        return NEXT;
+    }
+    case SAT_WRITTEN_UI_START_BOOK: {
+        int num = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_4EE290(obj, 0, num);
+        return NEXT;
+    }
+    case SAT_WRITTEN_UI_START_IMAGE: {
+        int num = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_4EE290(obj, 4, num);
+        return NEXT;
+    }
+    case SAT_CREATE_ITEM: {
+        int proto = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t parent_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int64_t loc = obj_field_int64_get(parent_obj, OBJ_F_LOCATION);
+        int64_t new_obj;
+        mp_object_create(proto, loc, &new_obj);
+        if (obj_type_is_item(obj_field_int32_get(new_obj, OBJ_F_TYPE))) {
+            sub_4617F0(new_obj, parent_obj);
+        }
+        return NEXT;
+    }
+    case SAT_ACTION_WAIT_FOR_LEADER: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        sub_4AA7A0(obj);
+        return NEXT;
+    }
+    case SAT_DESTROY: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        sub_43CCA0(obj);
+        return NEXT;
+    }
+    case SAT_ACTION_WALK_TO: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int x = script_get_value(action->op_type[1], action->op_value[1], state);
+        int y = script_get_value(action->op_type[2], action->op_value[2], state);
+        sub_4341C0(obj, location_make(x, y), AG_MOVE_TO_TILE);
+        return NEXT;
+    }
+    case SAT_GET_WEAPON_TYPE: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t weapon_obj = item_wield_get(obj, 1004);
+        int weapon_type = weapon_obj != OBJ_HANDLE_NULL
+            ? tig_art_item_id_subtype_get(obj_field_int32_get(weapon_obj, OBJ_F_ITEM_INV_AID))
+            : TIG_ART_WEAPON_TYPE_UNARMED;
+        script_set_value(action->op_type[1], action->op_value[1], state, weapon_type);
+        return NEXT;
+    }
+    case SAT_DISTANCE_BETWEEN: {
+        int64_t a = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t b = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int distance = (int)sub_441AE0(a, b);
+        script_set_value(action->op_type[2], action->op_value[2], state, distance);
+        return NEXT;
+    }
+    case SAT_ADD_REPUTATION: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int num = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            reputation_add(handles[idx], num);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_REMOVE_REPUTATION: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int num = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            reputation_remove(handles[idx], num);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_ACTION_RUN_TO: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int x = script_get_value(action->op_type[1], action->op_value[1], state);
+        int y = script_get_value(action->op_type[2], action->op_value[2], state);
+        sub_434400(obj, location_make(x, y), AG_MOVE_TO_TILE);
+        return NEXT;
+    }
+    case SAT_HEAL_HP: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int value = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            combat.field_44[0] = value;
+            sub_4B58C0(&combat);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_HEAL_FATIGUE: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int value = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            int v1 = sub_45D700(handles[idx]);
+
+            int fatigue_damage = critter_fatigue_damage_get(handles[idx] - value);
+            if (fatigue_damage < 0) {
+                fatigue_damage = 0;
+            }
+            sub_4ED720(handles[idx], fatigue_damage);
+
+            if (v1 <= 0 && sub_45D700(handles[idx]) > 0) {
+                sub_434DE0(handles[idx]);
+            }
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_ADD_EFFECT: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int effect = script_get_value(action->op_type[1], action->op_value[1], state);
+        int cause = script_get_value(action->op_type[2], action->op_value[2], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_4E9F70(handles[idx], effect, cause);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_REMOVE_EFFECT: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int effect = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_4EA100(handles[idx], effect);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_ACTION_USE_ITEM: {
+        int64_t source_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t item_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        int skill = script_get_value(action->op_type[3], action->op_value[3], state);
+        int modifier = script_get_value(action->op_type[4], action->op_value[4], state);
+        sub_4352C0(source_obj, item_obj, target_obj, skill, modifier);
+        return NEXT;
+    }
+    case SAT_GET_MAGICTECH_ADJUSTMENT: {
+        int value = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t item_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int64_t source_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        int64_t target_obj = script_get_obj(action->op_type[3], action->op_value[3], state);
+        int ratio = sub_461620(item_obj, source_obj, target_obj);
+        script_set_value(action->op_type[4], action->op_type[4], state, value * (100 - ratio) / 100);
+        return NEXT;
+    }
+    case SAT_CALL_SCRIPT_EX:
+        sub_44B170(action, state);
+        return NEXT;
+    case SAT_PLAY_SOUND: {
+        int sound_id = script_get_value(action->op_type[0], action->op_value[0], state);
+        sub_4EECB0(sound_id);
+        return NEXT;
+    }
+    case SAT_PLAY_SOUND_ON: {
+        int sound_id = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_4EED80(sound_id, 1, obj);
+        return NEXT;
+    }
+    case SAT_GET_AREA: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int area = sub_4CB6A0(obj);
+        script_set_value(action->op_type[1], action->op_value[1], state, area);
+        return NEXT;
+    }
+    case SAT_QUEUE_NEWSPAPER: {
+        int newspaper = script_get_value(action->op_type[0], action->op_value[0], state);
+        int priority = script_get_value(action->op_type[1], action->op_value[1], state);
+        newspaper_queue(newspaper, priority);
+        return NEXT;
+    }
+    case SAT_FLOAT_NEWSPAPER_HEADLINE: {
+        // TODO: Incomplete.
+        return NEXT;
+    }
+    case SAT_PLAY_SOUND_SCHEME: {
+        int v1 = script_get_value(action->op_type[0], action->op_value[0], state);
+        int v2 = script_get_value(action->op_type[1], action->op_value[1], state);
+        sub_4EEE00(v1, v2);
+        return NEXT;
+    }
+    case SAT_TOGGLE_OPEN_CLOSED: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        switch (obj_field_int32_get(obj, OBJ_F_TYPE)) {
+        case OBJ_TYPE_PORTAL:
+            sub_4EEF80(obj);
+            break;
+        case OBJ_TYPE_CONTAINER:
+            if (tig_art_id_frame_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == 0) {
+                sub_4EEF20(obj);
+            } else {
+                sub_4EEEC0(obj);
+            }
+            break;
+        }
+        return NEXT;
+    }
+    case SAT_GET_FACTION: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int faction = critter_faction_get(obj);
+        script_set_value(action->op_type[1], action->op_value[1], state, faction);
+        return NEXT;
+    }
+    case SAT_GET_SCROLL_DISTANCE:
+        script_set_value(action->op_type[0], action->op_value[0], state, scroll_get_distance());
+        return NEXT;
+    case SAT_GET_MAGICTECH_ADJUSTMENT_EX: {
+        int value = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t item_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int64_t source_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
+        int complexity = sub_461540(item_obj, source_obj);
+        script_set_value(action->op_type[3], action->op_type[3], state, (value * complexity + 50) / 100);
+        return NEXT;
+    }
+    case SAT_RENAME: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int name = script_get_value(action->op_type[1], action->op_value[1], state);
+        sub_4EFDD0(obj, OBJ_F_NAME, name);
+        return NEXT;
+    }
+    case SAT_ACTION_BECOME_PRONE: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        for (int idx = 0; idx < cnt; idx++) {
+            anim_goal_make_knockdown(handles[idx]);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_SET_WRITTEN_START: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int start = script_get_value(action->op_type[1], action->op_value[1], state);
+
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_WRITTEN) {
+            sub_4EFDD0(obj, OBJ_F_WRITTEN_TEXT_START_LINE, start);
+        }
+
+        return NEXT;
+    }
+    case SAT_GET_LOCATION: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+        int x = (int)LOCATION_GET_X(loc);
+        int y = (int)LOCATION_GET_Y(loc);
+        script_set_value(action->op_type[1], action->op_value[1], state, x);
+        script_set_value(action->op_type[2], action->op_value[2], state, y);
+        return NEXT;
+    }
+    case SAT_GET_DAY_SINCE_STARTUP: {
+        int days = datetime_get_day_since_reference_date();
+        script_set_value(action->op_type[0], action->op_value[0], state, days);
+        return NEXT;
+    }
+    case SAT_GET_CURRENT_HOUR: {
+        DateTime datetime = sub_45A7C0();
+        int hour = datetime_get_hour(&datetime);
+        script_set_value(action->op_type[0], action->op_value[0], state, hour);
+        return NEXT;
+    }
+    case SAT_GET_CURRENT_MINUTE: {
+        DateTime datetime = sub_45A7C0();
+        int minute = datetime_get_minute(&datetime);
+        script_set_value(action->op_type[0], action->op_value[0], state, minute);
+        return NEXT;
+    }
+    case SAT_CHANGE_SCRIPT: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int sap = script_get_value(action->op_type[1], action->op_value[1], state);
+        int num = script_get_value(action->op_type[2], action->op_value[2], state);
+        if (state->invocation->attachee_obj == obj
+            && state->invocation->field_20 == sap) {
+            state->script_num = num;
+        } else {
+            Script scr;
+            sub_407840(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
+            scr.num = num;
+            sub_4F01D0(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
+        }
+        return NEXT;
+    }
+    case SAT_SET_GLOBAL_FLAG: {
+        int flag = script_get_value(action->op_type[0], action->op_value[0], state);
+        script_gl_flag_set(flag, 1);
+        return NEXT;
+    }
+    case SAT_CLEAR_GLOBAL_FLAG: {
+        int flag = script_get_value(action->op_type[0], action->op_value[0], state);
+        script_gl_flag_set(flag, 0);
+        return NEXT;
+    }
+    case SAT_FADE_AND_TELEPORT: {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+            TeleportData teleport_data;
+            teleport_data.flags = TELEPORT_FADE_IN | TELEPORT_FADE_OUT;
+            teleport_data.fade_out.field_0 = 0;
+            teleport_data.fade_out.field_10 = 0;
+            teleport_data.fade_out.duration = 2.0f;
+            teleport_data.fade_out.color = tig_color_make(0, 0, 0);
+            teleport_data.fade_out.steps = 48;
+            teleport_data.fade_in.field_0 = 1;
+            teleport_data.fade_in.steps = 48;
+            teleport_data.fade_in.duration = 2.0f;
+
+            teleport_data.time = script_get_value(action->op_type[0], action->op_value[0], state);
+            if (teleport_data.time > 0) {
+                teleport_data.flags |= TELEPORT_TIME;
+            }
+
+            teleport_data.sound_id = script_get_value(action->op_type[1], action->op_value[1], state);
+            if (teleport_data.sound_id > 0) {
+                teleport_data.flags |= TELEPORT_SOUND;
+            }
+
+            teleport_data.movie1 = script_get_value(action->op_type[2], action->op_value[2], state);
+            if (teleport_data.movie1 > 0) {
+                teleport_data.flags |= TELEPORT_MOVIE1;
+            }
+
+            teleport_data.obj = script_get_obj(action->op_type[3], action->op_value[3], state);
+
+            int map = script_get_value(action->op_type[4], action->op_value[4], state);
+            int x = script_get_value(action->op_type[5], action->op_value[5], state);
+            int y = script_get_value(action->op_type[6], action->op_value[6], state);
+
+            teleport_data.map = map - 4999;
+            teleport_data.loc = location_make(x, y);
+            teleport_do(&teleport_data);
+        }
+        return NEXT;
+    }
+    case SAT_FADE: {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+            TeleportData teleport_data;
+            teleport_data.flags = 0;
+            teleport_data.fade_out.field_0 = 0;
+            teleport_data.fade_out.field_10 = 0;
+            teleport_data.fade_out.duration = 2.0f;
+            teleport_data.fade_out.color = tig_color_make(0, 0, 0);
+            teleport_data.fade_out.steps = 48;
+            sub_4BDFA0(&(teleport_data.fade_out));
+            tb_clear();
+
+            teleport_data.time = script_get_value(action->op_type[0], action->op_value[0], state);
+            teleport_data.sound_id = script_get_value(action->op_type[1], action->op_value[1], state);
+            teleport_data.movie1 = script_get_value(action->op_type[2], action->op_value[2], state);
+
+            if (teleport_data.time > 0) {
+                DateTime datetime;
+                sub_45A950(&datetime, 1000 * teleport_data.time);
+                sub_45C200(&datetime);
+            }
+
+            if (teleport_data.sound_id > 0) {
+                teleport_data.flags |= TELEPORT_SOUND;
+            }
+
+            if (teleport_data.movie1 > 0) {
+                if (teleport_data.sound_id > 0) {
+                    gmovie_play(teleport_data.movie1, 0, teleport_data.sound_id);
+                } else {
+                    gmovie_play(teleport_data.movie1, 0, 0);
+                }
+            } else {
+                if (teleport_data.sound_id > 0) {
+                    gsound_play_sfx_id(teleport_data.sound_id, 1);
+                }
+            }
+
+            int delay = script_get_value(action->op_type[3], action->op_value[3], state);
+            if (delay != 0) {
+                TimeEvent timeevent;
+                DateTime datetime;
+
+                sub_4BBC10();
+
+                timeevent.type = TIMEEVENT_TYPE_FADE;
+                timeevent.params[0].integer_value = 1;
+                timeevent.params[1].integer_value = tig_color_make(0, 0, 0);
+                timeevent.params[2].float_value = 2.0f;
+                timeevent.params[3].integer_value = 48;
+
+                sub_45A950(&datetime, 1000 * delay);
+                sub_45B800(&timeevent, &datetime);
+            } else {
+                teleport_data.fade_in.field_0 = 1;
+                teleport_data.fade_in.duration = 2.0f;
+                teleport_data.fade_in.steps = 48;
+                script_iso_invalidate_rect(NULL);
+                script_iso_window_redraw();
+                tig_window_display();
+                sub_4BDFA0(&(teleport_data.fade_in));
+            }
+        }
+        return NEXT;
+    }
+    case SAT_PLAY_SPELL_EYE_CANDY: {
+        int spell = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_456E60(obj, spell);
+        return NEXT;
+    }
+    case SAT_GET_HOURS_SINCE_STARTUP: {
+        DateTime datetime = sub_45A7C0();
+        int hours = datetime_get_hour_since_reference_date(&datetime);
+        script_set_value(action->op_type[0], action->op_value[0], state, hours);
+    }
+    case SAT_TOGGLE_SECTOR_BLOCKED: {
+        int x = script_get_value(action->op_type[0], action->op_value[0], state);
+        int y = script_get_value(action->op_type[1], action->op_value[1], state);
+        int64_t loc = location_make(x, y);
+        int64_t sector_id = sub_4CFC50(loc);
+        if (sub_4D0EE0(sector_id)) {
+            sub_4EF010(sector_id, false);
+        } else {
+            sub_4EF010(sector_id, true);
+        }
+        return NEXT;
+    }
+    case SAT_GET_HIT_POINTS: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        script_set_value(action->op_type[1], action->op_value[1], state, sub_43D600(obj));
+        script_set_value(action->op_type[2], action->op_value[2], state, sub_43D5A0(obj));
+        return NEXT;
+    }
+    case SAT_GET_FATIGUE_POINTS: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        script_set_value(action->op_type[1], action->op_value[1], state, sub_45D700(obj));
+        script_set_value(action->op_type[2], action->op_value[2], state, sub_45D670(obj));
+        return NEXT;
+    }
+    case SAT_ACTION_STOP_ATTACKING: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        sub_4AA4A0(obj);
+        return NEXT;
+    }
+    case SAT_TOGGLE_MONSTER_GENERATOR: {
+        int gen = script_get_value(action->op_type[0], action->op_value[0], state);
+        if (monstergen_is_disabled(gen)) {
+            monstergen_enable(gen);
+        } else {
+            monstergen_disable(gen);
+        }
+        return NEXT;
+    }
+    case SAT_GET_ARMOR_COVERAGE: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int coverage = item_armor_coverage(obj);
+        script_set_value(action->op_type[1], action->op_value[1], state, coverage);
+        return NEXT;
+    }
+    case SAT_GIVE_SPELL_MASTERY_IN_COLLEGE: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int college = script_get_value(action->op_type[1], action->op_value[1], state);
+        sub_4EF080(obj, college);
+        return NEXT;
+    }
+    case SAT_UNFOG_TOWNMAP: {
+        int map = script_get_value(action->op_type[0], action->op_value[0], state);
+        sub_4EF120(map, true);
+        return NEXT;
+    }
+    case SAT_START_WRITTEN_UI: {
+        int num = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_4EE290(obj, 6, num);
+        return NEXT;
+    }
+    case SAT_ACTION_TRY_TO_STEAL_100_COINS: {
+        int64_t thief_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int64_t victim_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        if (obj_type_is_critter(obj_field_int32_get(victim_obj, OBJ_F_TYPE))) {
+            int64_t gold_obj = obj_field_handle_get(victim_obj, OBJ_F_CRITTER_GOLD);
+            if (gold_obj != OBJ_HANDLE_NULL && item_gold_get(gold_obj) >= 100) {
+                sub_4350F0(thief_obj, victim_obj, gold_obj, SKILL_PICK_POCKET, 0);
+            }
+        }
+        return NEXT;
+    }
+    case SAT_STOP_SPELL_EYE_CANDY: {
+        int spell = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_456EC0(obj, spell);
+        return NEXT;
+    }
+    case SAT_GRANT_ONE_FATE_POINT: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+            int fate_points = stat_get_base(obj, STAT_FATE_POINTS);
+            stat_set_base(obj, STAT_FATE_POINTS, fate_points + 1);
+        }
+        return NEXT;
+    }
+    case SAT_CAST_FREE_SPELL: {
+        // TODO: Incomplete.
+        return NEXT;
+    }
+    case SAT_SET_PC_QUEST_UNBOTCHED: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int num = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_4C5070(handles[idx], num);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_PLAY_SCRIPT_EYE_CANDY: {
+        int num = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_44C7A0(obj, num);
+        return NEXT;
+    }
+    case SAT_ACTION_CAST_UNRESISTABLE_SPELL: {
+        // TODO: Incomplete.
+        return NEXT;
+    }
+    case SAT_ACTION_CAST_FREE_UNRESISTABLE_SPELL: {
+        // TODO: Incomplete.
+        return NEXT;
+    }
+    case SAT_TOUCH_ART: {
+        tig_art_id_t art_id = script_get_value(action->op_type[0], action->op_value[0], state);
+        sub_4EF190(art_id);
+        return NEXT;
+    }
+    case SAT_STOP_SCRIPT_EYE_CANDY: {
+        int num = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        sub_44C800(obj, num);
+        return NEXT;
+    }
+    case SAT_REMOVE_SCRIPT_CALL: {
+        dword_5E2FE4 = script_get_value(action->op_type[0], action->op_value[0], state);
+        qword_5E2FF8 = script_get_obj(action->op_type[1], action->op_value[1], state);
+        timeevent_clear_one_ex(TIMEEVENT_TYPE_SCRIPT, sub_44AFF0);
+        return NEXT;
+    }
+    case SAT_DESTROY_ITEM_NAMED: {
+        int name = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int64_t item_obj = item_find_by_name(obj, name);
+        if (item_obj != OBJ_HANDLE_NULL) {
+            sub_43CCA0(item_obj);
+        }
+        return NEXT;
+    }
+    case SAT_TOGGLE_ITEM_INVENTORY_DISPLAY: {
+        int64_t item_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        if (obj_type_is_item(obj_field_int32_get(item_obj, OBJ_F_TYPE))) {
+            unsigned int flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
+            if ((flags & OIF_NO_DISPLAY) != 0) {
+                flags &= ~OIF_NO_DISPLAY;
+            } else {
+                flags |= OIF_NO_DISPLAY;
+            }
+            sub_4EFDD0(item_obj, OBJ_F_ITEM_FLAGS, flags);
+        }
+        return NEXT;
+    }
+    case SAT_HEAL_POISON: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int value = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            int new_value = stat_get_base(handles[idx], STAT_POISON_LEVEL) - value;
+            if (new_value < 0) {
+                new_value = 0;
+            }
+            stat_set_base(handles[idx], STAT_POISON_LEVEL, new_value);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_START_SCHEMATIC_UI: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        if (obj != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                sub_460B50(obj, obj);
+            } else {
+                int64_t leader_obj = sub_45DDA0(obj);
+                if (leader_obj != OBJ_HANDLE_NULL) {
+                    sub_460B50(obj, leader_obj);
+                }
+            }
+        }
+        return NEXT;
+    }
+    case SAT_STOP_SPELL: {
+        int spell = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        if (obj != OBJ_HANDLE_NULL) {
+            sub_4593F0(obj, spell);
+        }
+        return NEXT;
+    }
+    case SAT_QUEUE_SLIDE: {
+        int slide = script_get_value(action->op_type[0], action->op_value[0], state);
+        sub_460B80(slide);
+        return NEXT;
+    }
+    case SAT_END_GAME_AND_PLAY_SLIDES: {
+        sub_460530();
+        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            && (tig_net_flags & TIG_NET_HOST) != 0) {
+            Packet124 pkt;
+            pkt.type = 124;
+            pkt.subtype = 3;
+            tig_net_send_app_all(&pkt, sizeof(pkt));
+        }
+        return NEXT;
+    }
+    case SAT_SET_ROTATION: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int rotation = script_get_value(action->op_type[1], action->op_value[1], state);
+        tig_art_id_t art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
+        art_id = tig_art_id_rotation_set(art_id, rotation);
+        sub_4EDCE0(obj, art_id);
+        return NEXT;
+    }
+    case SAT_SET_FACTION: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int faction = script_get_value(action->op_type[1], action->op_value[1], state);
+        critter_faction_set(obj, faction);
+        return NEXT;
+    }
+    case SAT_DRAIN_CHARGES: {
+        int qty = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        item_ammo_move(obj, OBJ_HANDLE_NULL, qty, AMMUNITION_TYPE_BATTERY, OBJ_HANDLE_NULL);
+        return NEXT;
+    }
+    case SAT_CAST_UNRESISTABLE_SPELL: {
+        // TODO: Incomplete.
+        return NEXT;
+    }
+    case SAT_ADJUST_STAT: {
+        int stat = script_get_value(action->op_type[0], action->op_value[0], state);
+        int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
+        int value = script_get_value(action->op_type[2], action->op_value[2], state);
+        if (obj != OBJ_HANDLE_NULL) {
+            stat_set_base(obj, stat, stat_get_base(obj, stat) + value);
+        }
+        return NEXT;
+    }
+    case SAT_APPLY_UNRESISTABLE_DAMAGE: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int damage = script_get_value(action->op_type[1], action->op_value[1], state);
+        int type = script_get_value(action->op_type[2], action->op_value[2], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            sub_4B2210(OBJ_HANDLE_NULL, handles[idx], &combat);
+            combat.field_44[type] = damage;
+            combat.field_58 |= 0x1000000;
+            sub_4B4390(&combat);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_SET_AUTOLEVEL_SCHEME: {
+        int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
+        int scheme = script_get_value(action->op_type[1], action->op_value[1], state);
+        for (int idx = 0; idx < cnt; idx++) {
+            level_auto_level_scheme_set(handles[idx], scheme);
+        }
+        sub_44B8F0(action->op_type[0], &objects);
+        return NEXT;
+    }
+    case SAT_SET_DAY_STANDPOINT_EX: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int x = script_get_value(action->op_type[1], action->op_value[1], state);
+        int y = script_get_value(action->op_type[2], action->op_value[2], state);
+        int map = script_get_value(action->op_type[3], action->op_value[3], state) - 4999;
+        int64_t loc = location_make(x, y);
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_DAY, loc);
+            sub_4EFDD0(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
+        }
+        return NEXT;
+    }
+    case SAT_SET_NIGHT_STANDPOINT_EX: {
+        int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
+        int x = script_get_value(action->op_type[1], action->op_value[1], state);
+        int y = script_get_value(action->op_type[2], action->op_value[2], state);
+        int map = script_get_value(action->op_type[3], action->op_value[3], state) - 4999;
+        int64_t loc = location_make(x, y);
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_NIGHT, loc);
+            sub_4EFDD0(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
+        }
+        return NEXT;
+    }
+    default:
+        return NEXT;
     }
 }
 
 // 0x44AFF0
-void sub_44AFF0()
+bool sub_44AFF0(TimeEvent* timeevent)
 {
-    // TODO: Incomplete.
+    return timeevent->params[0].integer_value == dword_5E2FE4
+        && timeevent->params[3].object_value == qword_5E2FF8;
 }
 
 // 0x44B030
-void sub_44B030()
+void sub_44B030(ScriptAction* action, ScriptState* state)
 {
-    // TODO: Incomplete.
+    Script scr;
+    ScriptInvocation invocation;
+    ObjectList triggerers;
+    ObjectList attachees;
+    int64_t triggerer_objs[100];
+    int64_t attachee_objs[100];
+    int triggerers_cnt;
+    int attachees_cnt;
+    int triggerer_idx;
+    int attachee_idx;
+
+    scr.num = script_get_value(action->op_type[0], action->op_value[0], state);
+    sub_44BCC0(&scr);
+
+    invocation.script = &scr;
+    invocation.line = script_get_value(action->op_type[1], action->op_value[1], state);
+    invocation.field_20 = state->invocation->field_20;
+
+    triggerers_cnt = script_resolve_focus_obj(action->op_type[2],
+        action->op_value[2],
+        state,
+        triggerer_objs,
+        &triggerers);
+    attachees_cnt = script_resolve_focus_obj(action->op_type[3],
+        action->op_value[3],
+        state,
+        attachee_objs,
+        &attachees);
+
+    for (triggerer_idx = 0; triggerer_idx < triggerers_cnt; triggerer_idx++) {
+        for (attachee_idx = 0; attachee_idx < attachees_cnt; attachee_idx++) {
+            invocation.extra_obj = OBJ_HANDLE_NULL;
+            invocation.triggerer_obj = triggerer_objs[triggerer_idx];
+            invocation.attachee_obj = attachee_objs[attachee_idx];
+            sub_4449B0(&invocation);
+        }
+    }
+
+    sub_44B8F0(action->op_type[2], &triggerers);
+    sub_44B8F0(action->op_type[3], &attachees);
 }
 
 // 0x44B170
 void sub_44B170(ScriptAction* action, ScriptState* state)
 {
-
-    sub_441980(script_get_obj(action->op_type[3], action->op_action[3], state),
-        script_get_obj(action->op_type[0], action->op_action[0], state),
-        0,
-        0,
+    sub_441980(script_get_obj(action->op_type[3], action->op_value[3], state),
+        script_get_obj(action->op_type[0], action->op_value[0], state),
+        OBJ_HANDLE_NULL,
         script_get_value(action->op_type[1], action->op_value[1], state),
         script_get_value(action->op_type[2], action->op_value[2], state));
 }
 
 // 0x44B1F0
-void sub_44B1F0()
+void sub_44B1F0(ScriptAction* action, ScriptState* state)
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    DialogEntryNode v1;
+    int64_t objs[100];
+    ObjectList objects;
+    int cnt;
+    int index;
+
+    if (dword_5E2FE8 == NULL) {
+        return;
+    }
+
+    if (state->invocation->script->num == 0) {
+        return;
+    }
+
+    if (!script_name_build_dlg_name(state->invocation->script->num, path)) {
+        return;
+    }
+
+    if (!sub_412E10(path, &(v1.field_0))) {
+        return;
+    }
+
+    sub_440FC0(state->invocation->triggerer_obj, OBJ_TM_PC, &objects);
+
+    if (objects.head == NULL) {
+        object_list_destroy(&objects);
+        return;
+    }
+
+    v1.pc_obj = objects.head->obj;
+    object_list_destroy(&objects);
+    v1.field_68 = script_get_value(action->op_type[0], action->op_value[0], state);
+    v1.field_6C = state->invocation->script->num;
+
+    cnt = script_resolve_focus_obj(action->op_type[1], action->op_value[1], state, objs, &objects);
+    for (index = 0; index < cnt; index++) {
+        v1.npc_obj = objs[index];
+        sub_413A30(&v1, true);
+        dword_5E2FE8(objs[index], v1.pc_obj, v1.field_70, v1.field_458);
+    }
+
+    sub_44B8F0(action->op_type[1], &objects);
+    sub_412F40(v1.field_0);
 }
 
 // 0x44B390
-void sub_44B390()
+void sub_44B390(ScriptAction* action, ScriptState* state)
 {
-    // TODO: Incomplete.
+    char path[TIG_MAX_PATH];
+    DialogEntryNode v1;
+    UiMessage ui_message;
+    int player;
+
+    if (state->invocation->script->num == 0) {
+        return;
+    }
+
+    if (!script_name_build_dlg_name(state->invocation->script->num, path)) {
+        return;
+    }
+
+    if (!sub_412E10(path, &(v1.field_0))) {
+        return;
+    }
+
+    if (state->invocation->attachee_obj == OBJ_HANDLE_NULL) {
+        return;
+    }
+
+    v1.npc_obj = state->invocation->attachee_obj;
+    v1.pc_obj = state->invocation->triggerer_obj;
+    v1.field_68 = script_get_value(action->op_type[0], action->op_value[1], state);
+    v1.field_68 = state->invocation->script->num;
+    sub_413A30(&v1, true);
+
+    ui_message.type = script_get_value(action->op_type[1], action->op_value[1], state);
+    ui_message.str = v1.field_70;
+    ui_message.field_8 = 0;
+
+    // TODO: Refactor.
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        player = sub_4A2B10(state->invocation->triggerer_obj);
+        if (player == -1) {
+            sub_412F40(v1.field_0);
+            return;
+        }
+
+        if (player != 0) {
+            sub_4EDA60(&ui_message, player, 0);
+            sub_412F40(v1.field_0);
+            return;
+        }
+    } else {
+        sub_460630(&ui_message);
+        sub_412F40(v1.field_0);
+    }
+
 }
 
 // 0x44B4E0
-int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* state, long long* objs, ObjectNodeList* l)
+int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* state, int64_t* objs, ObjectList* l)
 {
-    ObjectListNode* node;
+    ObjectNode* node;
     int cnt = 0;
 
     switch (type) {
     case SFO_TRIGGERER:
-        objs[cnt++] = state->field_0->triggerer_obj;
+        objs[cnt++] = state->invocation->triggerer_obj;
         break;
     case SFO_ATTACHEE:
-        objs[cnt++] = state->field_0->attachee_obj;
+        objs[cnt++] = state->invocation->attachee_obj;
         break;
     case SFO_EVERY_FOLLOWER:
     case SFO_ANY_FOLLOWER:
-        sub_4411C0(state->field_0->triggerer_obj, l);
+        object_get_followers(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -606,7 +3018,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERYONE_IN_PARTY:
     case SFO_ANYONE_IN_PARTY:
-        sub_441310(state->field_0->triggerer_obj, l);
+        sub_441310(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -616,7 +3028,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERYONE_IN_TEAM:
     case SFO_ANYONE_IN_TEAM:
-        sub_4413E0(state->field_0->triggerer_obj, l);
+        sub_4413E0(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -626,8 +3038,8 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERYONE_IN_VICINITY:
     case SFO_ANYONE_IN_VICINITY:
-        if (state->field_0->attachee_obj != NULL) {
-            sub_440FC0(state->field_0->attachee_obj, 0x18000, l);
+        if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
+            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_PC | OBJ_TM_NPC, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -648,11 +3060,11 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         objs[cnt++] = state->lc_objs[index];
         break;
     case SFO_EXTRA_OBJECT:
-        objs[cnt++] = state->field_0->extra_obj;
+        objs[cnt++] = state->invocation->extra_obj;
         break;
     case SFO_EVERYONE_IN_GROUP:
     case SFO_ANYONE_IN_GROUP:
-        sub_4411C0(state->field_0->triggerer_obj, l);
+        object_get_followers(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -661,12 +3073,12 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         }
 
         // FIXME: Possible overflow when cnt == 100.
-        objs[cnt++] = state->field_0->triggerer_obj;
+        objs[cnt++] = state->invocation->triggerer_obj;
         break;
     case SFO_EVERY_SCENERY_IN_VICINITY:
     case SFO_ANY_SCENERY_IN_VICINITY:
-        if (state->field_0->attachee_obj != NULL) {
-            sub_440FC0(state->field_0->attachee_obj, 0x8, l);
+        if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
+            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_SCENERY, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -682,8 +3094,8 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERY_CONTAINER_IN_VICINITY:
     case SFO_ANY_CONTAINER_IN_VICINITY:
-        if (state->field_0->attachee_obj != NULL) {
-            sub_440FC0(state->field_0->attachee_obj, 0x4, l);
+        if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
+            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_CONTAINER, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -699,8 +3111,8 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERY_PORTAL_IN_VICINITY:
     case SFO_ANY_PORTAL_IN_VICINITY:
-        if (state->field_0->attachee_obj != NULL) {
-            sub_440FC0(state->field_0->attachee_obj, 0x2, l);
+        if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
+            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_PORTAL, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -719,8 +3131,8 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERY_ITEM_IN_VICINITY:
     case SFO_ANY_ITEM_IN_VICINITY:
-        if (state->field_0->attachee_obj != NULL) {
-            sub_440FC0(state->field_0->attachee_obj, 0x7FE0, l);
+        if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
+            sub_440FC0(state->invocation->attachee_obj, 0x7FE0, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -740,7 +3152,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
 }
 
 // 0x44B8F0
-void sub_44B8F0(ScriptFocusObject type, ObjectNodeList* l)
+void sub_44B8F0(ScriptFocusObject type, ObjectList* l)
 {
     switch (type) {
     case SFO_EVERY_FOLLOWER:
@@ -751,9 +3163,6 @@ void sub_44B8F0(ScriptFocusObject type, ObjectNodeList* l)
     case SFO_ANYONE_IN_TEAM:
     case SFO_EVERYONE_IN_VICINITY:
     case SFO_ANYONE_IN_VICINITY:
-    case SFO_CURRENT_LOOPED_OBJECT:
-    case SFO_LOCAL_OBJECT:
-    case SFO_EXTRA_OBJECT:
     case SFO_EVERYONE_IN_GROUP:
     case SFO_ANYONE_IN_GROUP:
     case SFO_EVERY_SCENERY_IN_VICINITY:
@@ -765,17 +3174,17 @@ void sub_44B8F0(ScriptFocusObject type, ObjectNodeList* l)
     case SFO_EVERY_ITEM_IN_VICINITY:
     case SFO_ANY_ITEM_IN_VICINITY:
         if (l->head != NULL) {
-            sub_4410E0(l);
+            object_list_destroy(l);
         }
         break;
     }
 }
 
 // 0x44B960
-long long script_get_obj(ScriptFocusObject type, int index, ScriptState* state)
+int64_t script_get_obj(ScriptFocusObject type, int index, ScriptState* state)
 {
-    ObjectNodeList l;
-    long long objs[100];
+    ObjectList l;
+    int64_t objs[100];
 
     script_resolve_focus_obj(type, index, state, objs, &l);
     sub_44B8F0(type, &l);
@@ -784,14 +3193,14 @@ long long script_get_obj(ScriptFocusObject type, int index, ScriptState* state)
 }
 
 // 0x44B9B0
-void script_set_obj(ScriptFocusObject type, int index, ScriptState* state, long long obj)
+void script_set_obj(ScriptFocusObject type, int index, ScriptState* state, int64_t obj)
 {
     switch (type) {
     case SFO_TRIGGERER:
-        state->field_0->triggerer_obj = obj;
+        state->invocation->triggerer_obj = obj;
         break;
     case SFO_ATTACHEE:
-        state->field_0->attachee_obj = obj;
+        state->invocation->attachee_obj = obj;
         break;
     case SFO_CURRENT_LOOPED_OBJECT:
         state->current_loop_obj = obj;
@@ -800,7 +3209,7 @@ void script_set_obj(ScriptFocusObject type, int index, ScriptState* state, long 
         state->lc_objs[index] = obj;
         break;
     case SFO_EXTRA_OBJECT:
-        state->field_0->extra_obj = obj;
+        state->invocation->extra_obj = obj;
         break;
     }
 }
@@ -808,25 +3217,25 @@ void script_set_obj(ScriptFocusObject type, int index, ScriptState* state, long 
 // 0x44BA70
 int script_get_value(ScriptValueType type, int index, ScriptState* state)
 {
-    long long obj;
+    int64_t obj;
 
     switch (type) {
     case SVT_COUNTER:
-        return (state->field_0->field_0->field_4 >> (8 * index)) & 0xFF;
+        return (state->invocation->script->hdr.counters >> (8 * index)) & 0xFF;
     case SVT_GL_VAR:
-        return script_get_gl_var(index);
+        return script_gl_var_get(index);
     case SVT_LC_VAR:
         return state->lc_vars[index];
     case SVT_NUMBER:
         return index;
     case SVT_GL_FLAG:
-        return script_get_gl_flag(index);
+        return script_gl_flag_get(index);
     case SVT_PC_VAR:
         obj = script_get_obj(index >> 16, 0, state);
-        return script_get_pc_var(obj, index & 0xFFFF);
+        return script_pc_gl_var_get(obj, index & 0xFFFF);
     case SVT_PC_FLAG:
         obj = script_get_obj(index >> 16, 0, state);
-        return script_get_pc_flag(obj, index & 0xFFFF);
+        return script_pc_gl_flag_get(obj, index & 0xFFFF);
     }
 
     return index;
@@ -835,85 +3244,82 @@ int script_get_value(ScriptValueType type, int index, ScriptState* state)
 // 0x44BB50
 void script_set_value(ScriptValueType type, int index, ScriptState* state, int value)
 {
-    long long obj;
+    int64_t obj;
 
     switch (type) {
     case SVT_COUNTER:
-        state->field_0->field_0->field_4 &= ~(0xFF << (8 * index));
-        state->field_0->field_0->field_4 |= value << (8 * index);
+        state->invocation->script->hdr.counters &= ~(0xFF << (8 * index));
+        state->invocation->script->hdr.counters |= value << (8 * index);
         break;
     case SVT_GL_VAR:
-        script_set_gl_var(index, value);
+        script_gl_var_set(index, value);
         break;
     case SVT_LC_VAR:
         state->lc_vars[index] = value;
         break;
     case SVT_GL_FLAG:
-        script_set_gl_flag(index, value);
+        script_gl_flag_set(index, value);
         break;
     case SVT_PC_VAR:
         obj = script_get_obj(index >> 16, 0, state);
-        script_set_pc_var(obj, index & 0xFFFF, value);
+        script_pc_gl_var_set(obj, index & 0xFFFF, value);
         break;
     case SVT_PC_FLAG:
         obj = script_get_obj(index >> 16, 0, state);
-        script_set_pc_flag(obj, index & 0xFFFF, value);
+        script_pc_gl_flag_set(obj, index & 0xFFFF, value);
         break;
     }
 }
 
 // 0x44BC60
-void sub_44BC60()
+int sub_44BC60(ScriptState* state)
 {
-    // TODO: Incomplete.
+    unsigned int index;
+    ScriptCondition condition;
+
+    index = state->field_C;
+    while (sub_44C140(state->invocation->script, index, &condition)) {
+        if (condition.type == 0 && condition.action.type == 19) {
+            break;
+        }
+        index++;
+    }
+
+    return index + 1;
 }
 
 // 0x44BCC0
-void sub_44BCC0()
+int sub_44BCC0(Script* scr)
 {
-    // TODO: Incomplete.
-}
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    bool rc;
 
-// 0x44BD30
-void sub_44BD30()
-{
-    // TODO: Incomplete.
-}
+    if (!script_name_build_scr_name(scr->num, path)) {
+        return 0;
+    }
 
-// 0x44BD60
-void sub_44BD60()
-{
-    // TODO: Incomplete.
-}
+    stream = tig_file_fopen(path, "rb");
+    if (stream == NULL) {
+        return 0;
+    }
 
-// 0x44C0A0
-void sub_44C0A0()
-{
-    // TODO: Incomplete.
-}
+    rc = sub_44C710(stream, &(scr->hdr));
+    tig_file_fclose(stream);
 
-// 0x44C100
-void sub_44C100()
-{
-    // TODO: Incomplete.
-}
-
-// 0x44C130
-void sub_44C130()
-{
-    // TODO: Incomplete.
+    return rc;
 }
 
 // 0x44C140
-bool sub_44C140(void* a1, unsigned int index, ScriptFileEntry* entry)
+bool sub_44C140(Script* scr, unsigned int index, ScriptCondition* entry)
 {
     ScriptFile* script_file;
     bool success;
 
-    script_file = script_lock(a1->script_num);
+    script_file = script_lock(scr->num);
     if (script_file != NULL) {
         success = sub_44C1B0(script_file, index, entry);
-        script_unlock(a1->script_num);
+        script_unlock(scr->num);
         return success;
     }
 
@@ -921,10 +3327,11 @@ bool sub_44C140(void* a1, unsigned int index, ScriptFileEntry* entry)
 }
 
 // 0x44C1B0
-bool sub_44C1B0(ScriptFile* script_file, unsigned int index, ScriptFileEntry* entry)
+bool sub_44C1B0(ScriptFile* script_file, unsigned int index, ScriptCondition* entry)
 {
-    if (index < script_file->num_entries) {
-        memcpy(entry, &(script_file->entries[index]), sizeof(ScriptFileEntry));
+    // NOTE: Unsigned math.
+    if (index < (unsigned int)script_file->num_entries) {
+        *entry = script_file->entries[index];
         return true;
     }
 
@@ -932,14 +3339,14 @@ bool sub_44C1B0(ScriptFile* script_file, unsigned int index, ScriptFileEntry* en
 }
 
 // 0x44C310
-bool sub_44C310(void* a1, int* a2)
+bool sub_44C310(Script* scr, unsigned int* flags_ptr)
 {
     ScriptFile* script_file;
 
-    script_file = script_lock(a1->script_num);
+    script_file = script_lock(scr->num);
     if (script_file != NULL) {
-        *a2 = script_file->field_28;
-        script_unlock(a1->script_num);
+        *flags_ptr = script_file->flags;
+        script_unlock(scr->num);
         return true;
     }
 
@@ -951,15 +3358,15 @@ ScriptFile* script_lock(int script_id)
 {
     int cache_entry_id;
 
-    if (dword_5E2FDC == 1) {
-        // NOTE: Looks odd.
-        return script_id;
+    if (script_editor) {
+        // FIX: Original code returns `script_id` which is obviously wrong.
+        return NULL;
     }
 
     cache_entry_id = cache_find(script_id);
     if (script_cache_entries[cache_entry_id].script_id == script_id) {
         script_cache_entries[cache_entry_id].ref_count++;
-        script_cache_entries[cache_entry_id].datetime = sub_45A7C0();
+        script_cache_entries[cache_entry_id].datetime = datetime_to_uint64(sub_45A7C0());
         return script_cache_entries[cache_entry_id].file;
     }
 
@@ -969,7 +3376,7 @@ ScriptFile* script_lock(int script_id)
 
     if (cache_add(cache_entry_id, script_id)) {
         script_cache_entries[cache_entry_id].ref_count++;
-        script_cache_entries[cache_entry_id].datetime = sub_45A7C0();
+        script_cache_entries[cache_entry_id].datetime = datetime_to_uint64(sub_45A7C0());
         return script_cache_entries[cache_entry_id].file;
     }
 
@@ -981,10 +3388,12 @@ void script_unlock(int script_id)
 {
     int cache_entry_id;
 
-    if (dword_5E2FDC != 1) {
-        cache_entry_id = cache_find(script_id);
-        script_cache_entries[cache_entry_id].ref_count--;
+    if (!script_editor) {
+        return;
     }
+
+    cache_entry_id = cache_find(script_id);
+    script_cache_entries[cache_entry_id].ref_count--;
 }
 
 // 0x44C480
@@ -992,12 +3401,13 @@ bool script_file_create(ScriptFile** script_file_ptr)
 {
     ScriptFile* script_file;
 
-    script_file = *script_file_ptr = (ScriptFile*)MALLOC(sizeof(ScriptFile));
-    script_file->field_0 = 0;
-    script_file->field_28 = 0;
+    script_file = (ScriptFile*)MALLOC(sizeof(ScriptFile));
+    script_file->description[0] = '\0';
+    script_file->flags = 0;
     script_file->num_entries = 0;
-    script_file->cap_entries = 0;
+    script_file->max_entries = 0;
     script_file->entries = NULL;
+    *script_file_ptr = script_file;
 
     return true;
 }
@@ -1005,7 +3415,7 @@ bool script_file_create(ScriptFile** script_file_ptr)
 // 0x44C4B0
 bool script_file_destroy(ScriptFile* script_file)
 {
-    if (script_file->cap_entries > 0) {
+    if (script_file->max_entries > 0) {
         FREE(script_file->entries);
     }
 
@@ -1019,6 +3429,7 @@ bool cache_add(int cache_entry_id, int script_id)
 {
     char path[TIG_MAX_PATH];
     TigFile* stream;
+    ScriptHeader hdr;
 
     if (!script_name_build_scr_name(script_id, path)) {
         tig_debug_printf("Script: cache_add: ERROR: Failed to build script name: %d!\n", script_id);
@@ -1031,7 +3442,7 @@ bool cache_add(int cache_entry_id, int script_id)
         return false;
     }
 
-    if (!sub_44C710(script, vars)) {
+    if (!sub_44C710(stream, &hdr)) {
         tig_debug_printf("Script: cache_add: ERROR: Failed to load script variables: %d!\n", script_id);
         // FIXME: Leaking stream.
         return false;
@@ -1043,7 +3454,7 @@ bool cache_add(int cache_entry_id, int script_id)
         return false;
     }
 
-    if (sub_44C730(stream, script_cache_entries[cache_entry_id].file)) {
+    if (!sub_44C730(stream, script_cache_entries[cache_entry_id].file)) {
         tig_debug_printf("Script: cache_add: ERROR: Failed to load script code: %d!\n", script_id);
         // FIXME: Leaking stream.
         return false;
@@ -1061,21 +3472,59 @@ bool cache_add(int cache_entry_id, int script_id)
 void cache_remove(int cache_entry_id)
 {
     if (script_cache_entries[cache_entry_id].script_id) {
-        script_file_destroy(script_cache_entries[cache_entry_id].file)
+        script_file_destroy(script_cache_entries[cache_entry_id].file);
         script_cache_entries[cache_entry_id].script_id = 0;
     }
 }
 
 // 0x44C670
-void cache_find()
+int cache_find(int script_id)
 {
-    // TODO: Incomplete.
+    int idx;
+    int candidate = -1;
+    int best_candidate = -1;
+
+    for (idx = 0; idx < MAX_CACHE_ENTRIES; idx++) {
+        if (script_cache_entries[idx].script_id == script_id) {
+            return idx;
+        }
+
+        if (script_cache_entries[idx].script_id != 0) {
+            if (script_cache_entries[idx].ref_count == 0) {
+                if (candidate == -1) {
+                    candidate = idx;
+                } else {
+                    // TODO: Refactor.
+                    DateTime dt1 = datetime_from_uint64(script_cache_entries[candidate].datetime);
+                    DateTime dt2 = datetime_from_uint64(script_cache_entries[idx].datetime);
+                    if (datetime_compare(&dt1, &dt2) > 0) {
+                        candidate = idx;
+                    }
+                }
+            }
+        } else {
+            if (best_candidate == -1) {
+                best_candidate = idx;
+            }
+        }
+    }
+
+    if (best_candidate != -1) {
+        return best_candidate;
+    }
+
+    if (candidate != -1) {
+        return candidate;
+    }
+
+    tig_debug_printf("cache_find: Error: failed to find cache item!\n");
+    exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
 }
 
 // 0x44C710
-void sub_44C710()
+int sub_44C710(TigFile* stream, ScriptHeader* hdr)
 {
-    // TODO: Incomplete.
+    return tig_file_fread(hdr, sizeof(*hdr), 1, stream);
 }
 
 // 0x44C730
@@ -1086,8 +3535,8 @@ bool sub_44C730(TigFile* stream, ScriptFile* script_file)
     }
 
     if (script_file->num_entries > 0) {
-        script_file->entries = (ScriptFileEntry*)CALLOC(script_file->cap_entries, sizeof(ScriptFileEntry));
-        if (tig_file_fread(script_file->entries, sizeof(ScriptFileEntry), script_file->num_entries, stream) != script_file->num_entries) {
+        script_file->entries = (ScriptCondition*)CALLOC(script_file->max_entries, sizeof(ScriptCondition));
+        if (tig_file_fread(script_file->entries, sizeof(ScriptCondition), script_file->num_entries, stream) != script_file->num_entries) {
             // FIXME: Leaks entries.
             return false;
         }
@@ -1096,4 +3545,27 @@ bool sub_44C730(TigFile* stream, ScriptFile* script_file)
     }
 
     return true;
+}
+
+// 0x44C7A0
+void sub_44C7A0(int64_t obj, int a2)
+{
+    AnimFxNode fx;
+
+    sub_4CCD20(&stru_5E2FB0, &fx, obj, -1, a2);
+    fx.rotation = tig_art_id_rotation_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
+    fx.field_1C = 1;
+    animfx_add(&fx);
+}
+
+// 0x44C800
+void sub_44C800(int64_t obj, int a2)
+{
+    animfx_remove(&stru_5E2FB0, obj, a2, -1);
+}
+
+// 0x44C820
+void sub_44C820(int64_t obj)
+{
+    sub_44C7A0(obj, 55);
 }
