@@ -25,7 +25,7 @@
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/stat.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "game/ui.h"
 
 static void sub_45E040(int64_t obj);

@@ -27,7 +27,7 @@
 #include "game/tb.h"
 #include "game/teleport.h"
 #include "game/terrain.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "game/tile.h"
 #include "game/timeevent.h"
 #include "game/townmap.h"

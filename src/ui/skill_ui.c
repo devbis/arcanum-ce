@@ -12,7 +12,7 @@
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/target.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "ui/charedit_ui.h"
 #include "ui/dialog_ui.h"
 #include "ui/intgame.h"

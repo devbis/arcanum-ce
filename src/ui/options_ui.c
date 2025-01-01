@@ -8,7 +8,7 @@
 #include "game/obj.h"
 #include "game/player.h"
 #include "game/skill.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "ui/cyclic_ui.h"
 #include "ui/gameuilib.h"
 

@@ -61,7 +61,7 @@
 #include "game/tc.h"
 #include "game/tech.h"
 #include "game/teleport.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "game/tile_block.h"
 #include "game/tile_script.h"
 #include "game/tile.h"

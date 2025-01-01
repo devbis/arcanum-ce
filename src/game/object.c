@@ -24,7 +24,7 @@
 #include "game/sector.h"
 #include "game/stat.h"
 #include "game/tb.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "game/tile_script.h"
 #include "game/tile.h"
 #include "game/timeevent.h"

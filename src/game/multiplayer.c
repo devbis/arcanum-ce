@@ -25,7 +25,7 @@
 #include "game/stat.h"
 #include "game/tb.h"
 #include "game/tech.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "game/timeevent.h"
 #include "game/trap.h"
 #include "game/ui.h"

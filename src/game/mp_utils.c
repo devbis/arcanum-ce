@@ -16,7 +16,7 @@
 #include "game/sector.h"
 #include "game/spell.h"
 #include "game/tb.h"
-#include "game/text_floater.h"
+#include "game/tf.h"
 #include "game/tile.h"
 #include "game/townmap.h"
 #include "game/ui.h"

@@ -1,5 +1,5 @@
-#ifndef ARCANUM_GAME_TEXT_FLOATER_H_
-#define ARCANUM_GAME_TEXT_FLOATER_H_
+#ifndef ARCANUM_GAME_TF_H_
+#define ARCANUM_GAME_TF_H_
 
 #include "game/context.h"
 
@@ -27,4 +27,4 @@ void tf_move(int64_t obj, int64_t loc, int offset_x, int offset_y);
 void sub_4D5620(int64_t obj);
 void tf_remove(int64_t obj);
 
-#endif /* ARCANUM_GAME_TEXT_FLOATER_H_ */
+#endif /* ARCANUM_GAME_TF_H_ */
