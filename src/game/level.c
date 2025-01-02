@@ -118,7 +118,7 @@ static const char* level_scheme_misc[LEVEL_SCHEME_MISC_MAX] = {
 
 // 0x4A7ABE
 static MiscGetter* off_4A7ABE[LEVEL_SCHEME_MISC_MAX] = {
-    sub_43D5A0,
+    object_hp_max,
     critter_fatigue_max,
 };
 

@@ -1868,7 +1868,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             sub_43CCA0(state->invocation->attachee_obj);
             state->invocation->attachee_obj = new_obj;
 
-            int hp = sub_43D5A0(new_obj);
+            int hp = object_hp_max(new_obj);
             int hp_damage = hp * (100 - hp_ratio) / 100;
             if (hp_damage < hp) {
                 object_hp_damage_set(new_obj, hp_damage);
@@ -2556,7 +2556,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_GET_HIT_POINTS: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         script_set_value(action->op_type[1], action->op_value[1], state, sub_43D600(obj));
-        script_set_value(action->op_type[2], action->op_value[2], state, sub_43D5A0(obj));
+        script_set_value(action->op_type[2], action->op_value[2], state, object_hp_max(obj));
         return NEXT;
     }
     case SAT_GET_FATIGUE_POINTS: {

@@ -1861,7 +1861,7 @@ bool sub_4AB2F0(int64_t a1, int64_t a2)
 // 0x4AB400
 int sub_4AB400(int64_t obj)
 {
-    return 100 * sub_43D600(obj) / sub_43D5A0(obj);
+    return 100 * sub_43D600(obj) / object_hp_max(obj);
 }
 
 // 0x4AB430

@@ -1424,9 +1424,9 @@ bool sub_4C7160(Tanya* a1)
         } else {
             int v1;
             if (is_fate) {
-                v1 = sub_43D5A0(target_obj);
+                v1 = object_hp_max(target_obj);
             } else {
-                v1 = effectiveness * sub_43D5A0(target_obj) / 100;
+                v1 = effectiveness * object_hp_max(target_obj) / 100;
             }
 
             if (v1 <= 0) {
@@ -1469,7 +1469,7 @@ bool sub_4C7160(Tanya* a1)
             }
 
             if (durability_dam > 0) {
-                int dam = durability_dam * sub_43D5A0(target_obj) / 100;
+                int dam = durability_dam * object_hp_max(target_obj) / 100;
                 object_hp_adj_set(target_obj, object_hp_adj_get(target_obj) - dam);
 
                 pkt.field_4 |= 0x04;
@@ -1647,7 +1647,7 @@ bool sub_4C82E0(int a1, int a2, Tanya* a3)
 
     if (a3->field_68.obj != OBJ_HANDLE_NULL) {
         v3 = sub_43D600(a3->field_68.obj);
-        v4 = sub_43D5A0(a3->field_68.obj);
+        v4 = object_hp_max(a3->field_68.obj);
         if (v3 < v4) {
             v2 += 100 * (v4 - v3) / (v1 * v4);
         }

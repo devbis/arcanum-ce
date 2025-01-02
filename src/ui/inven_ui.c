@@ -3517,7 +3517,7 @@ void sub_578760(int64_t obj)
     int v2;
     tig_art_id_t art_id;
 
-    v1 = sub_43D5A0(obj);
+    v1 = object_hp_max(obj);
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_item_id_destroyed_get(art_id) != 0) {
         if (tech_skill_get_training(qword_682C78, TECH_SKILL_REPAIR) != TRAINING_MASTER) {

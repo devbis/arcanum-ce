@@ -871,7 +871,7 @@ int sub_461F80(int64_t a1, int64_t a2, int64_t a3, bool a4)
 
         v1 = worth * (sub_4C62E0(a2, BASIC_SKILL_HAGGLE, a1) / 2 + 50) / 100;
         v2 = sub_43D600(a1);
-        v3 = sub_43D5A0(a1);
+        v3 = object_hp_max(a1);
 
         if (v2 <v3) {
             v1 = v1 * v2 / v3;

@@ -126,7 +126,7 @@ int object_hp_adj_get(object_id_t obj);
 int object_hp_adj_set(object_id_t obj, int value);
 int object_hp_damage_get(object_id_t obj);
 int object_hp_damage_set(object_id_t obj, int value);
-int sub_43D5A0(object_id_t obj);
+int object_hp_max(object_id_t obj);
 int sub_43D600(object_id_t obj);
 int sub_43D6D0(int64_t obj, int resistance_type, bool a2);
 int object_get_ac(object_id_t obj, bool a2);

@@ -351,7 +351,7 @@ void compact_ui_health_bar_draw(int a1)
 
     rect1.x = 1;
     rect1.width = 23;
-    rect1.y = 100 * (100 * object_hp_damage_get(pc_obj) / sub_43D5A0(pc_obj)) / 100 + 1;
+    rect1.y = 100 * (100 * object_hp_damage_get(pc_obj) / object_hp_max(pc_obj)) / 100 + 1;
     if (rect1.y > 100) {
         rect1.y = 100;
     }

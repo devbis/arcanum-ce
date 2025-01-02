@@ -635,7 +635,7 @@ void sub_56B290()
             sub_56B510(dword_67BB60[index], portrait, 4, 4, 100, 50);
         }
 
-        hp = 100 * sub_43D600(follower_obj) / sub_43D5A0(follower_obj);
+        hp = 100 * sub_43D600(follower_obj) / object_hp_max(follower_obj);
         if (stat_level(follower_obj, STAT_POISON_LEVEL) > 20) {
             sub_56B510(dword_67BB60[index], 616, 3, 39, hp, 100);
         } else {

@@ -1876,7 +1876,7 @@ void sub_4B4390(CombatContext* combat)
             && (spell_flags & OSF_STONED) == 0) {
             int remaining_experience = obj_field_int32_get(combat->field_20, OBJ_F_NPC_EXPERIENCE_POOL);
             if (remaining_experience > 0) {
-                int dam_ratio = 100 * dam / sub_43D5A0(combat->field_20);
+                int dam_ratio = 100 * dam / object_hp_max(combat->field_20);
                 int awarded_experience = obj_field_int32_get(combat->field_20, OBJ_F_NPC_EXPERIENCE_WORTH) * dam_ratio / 100;
                 if (awarded_experience > remaining_experience) {
                     awarded_experience = remaining_experience;

@@ -16268,7 +16268,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 // 0x49BB40
 void sub_49BB40(long long obj, int a2)
 {
-    object_hp_adj_set(obj, object_hp_adj_get(obj) + a2 - sub_43D5A0(obj));
+    object_hp_adj_set(obj, object_hp_adj_get(obj) + a2 - object_hp_max(obj));
 }
 
 // 0x49BB70
@@ -16534,7 +16534,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
 
     tig_file_fprintf(stream, "%s: %d\n",
         off_5B38C8[PROTO_F_HIT_POINTS],
-        sub_43D5A0(obj));
+        object_hp_max(obj));
 
     for (index = 0; index < 36; index++) {
         sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);

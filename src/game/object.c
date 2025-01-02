@@ -1590,7 +1590,7 @@ int object_hp_damage_set(object_id_t obj, int value)
 }
 
 // 0x43D5A0
-int sub_43D5A0(object_id_t obj)
+int object_hp_max(object_id_t obj)
 {
     int value;
     int obj_type;
@@ -1606,7 +1606,7 @@ int sub_43D5A0(object_id_t obj)
 // 0x43D600
 int sub_43D600(object_id_t obj)
 {
-    return sub_43D5A0(obj) - object_hp_damage_get(obj);
+    return object_hp_max(obj) - object_hp_damage_get(obj);
 }
 
 // 0x43D630
@@ -2423,7 +2423,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
                     object_set_current_aid(obj, destroyed_art_id);
                 }
 
-                object_hp_damage_set(obj, sub_43D5A0(obj));
+                object_hp_damage_set(obj, object_hp_max(obj));
                 obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags | OSCF_BUSTED);
                 sound_id = sub_4F1050(obj, 0);
                 sub_43D0E0(obj, OF_INVULNERABLE);

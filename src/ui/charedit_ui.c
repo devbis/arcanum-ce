@@ -1746,7 +1746,7 @@ void sub_55B2A0(int stat)
     font = dword_64D3A8;
     switch (stat) {
     case CHAREDIT_STAT_HP_PTS:
-        value = sub_43D5A0(qword_64E010);
+        value = object_hp_max(qword_64E010);
         break;
     case CHAREDIT_STAT_FATIGUE_PTS:
         value = critter_fatigue_max(qword_64E010);
