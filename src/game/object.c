@@ -3806,14 +3806,14 @@ bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, 
 }
 
 // 0x441AE0
-int64_t sub_441AE0(object_id_t obj1, object_id_t obj2)
+int64_t object_dist(int64_t a, int64_t b)
 {
-    int64_t location1;
-    int64_t location2;
+    int64_t a_loc;
+    int64_t b_loc;
 
-    location1 = obj_field_int64_get(obj1, OBJ_F_LOCATION);
-    location2 = obj_field_int64_get(obj2, OBJ_F_LOCATION);
-    return location_dist(location1, location2);
+    a_loc = obj_field_int64_get(a, OBJ_F_LOCATION);
+    b_loc = obj_field_int64_get(b, OBJ_F_LOCATION);
+    return location_dist(a_loc, b_loc);
 }
 
 // 0x441B20
@@ -5205,7 +5205,7 @@ void sub_4445A0(int64_t a1, int64_t a2)
     type = obj_field_int32_get(a2, OBJ_F_TYPE);
     if (obj_type_is_critter(type)
         || (obj_type_is_item(type) && (obj_field_int32_get(a2, OBJ_F_TYPE) & OF_INVENTORY) == 0)) {
-        if (sub_441AE0(a1, a2) > 1) {
+        if (object_dist(a1, a2) > 1) {
             if (player_is_pc_obj(a1)) {
                 sub_4606C0(0);
             }

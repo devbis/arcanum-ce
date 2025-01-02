@@ -204,7 +204,7 @@ void sub_571CB0(S4F2810* a1)
     } else {
         if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
             range = magictech_get_range(obj_field_int32_get(v2, OBJ_F_ITEM_SPELL_1));
-            if (range < sub_441AE0(pc_obj, a1->obj)) {
+            if (range < object_dist(pc_obj, a1->obj)) {
                 range = -1;
             }
         }

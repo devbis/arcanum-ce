@@ -7232,7 +7232,7 @@ bool sub_4298D0(AnimRunInfo* run_info)
     }
 
     pc_obj = player_get_pc_obj();
-    if (sub_441AE0(source_obj, pc_obj) >= 30) {
+    if (object_dist(source_obj, pc_obj) >= 30) {
         return false;
     }
 
@@ -9394,7 +9394,7 @@ bool sub_42CDF0(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_441AE0(obj, player_get_pc_obj()) > 30) {
+    if (object_dist(obj, player_get_pc_obj()) > 30) {
         return false;
     }
 
@@ -9947,7 +9947,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
 
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 1;
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
-        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = sub_441AE0(obj, player_get_pc_obj()) < 30;
+        run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = object_dist(obj, player_get_pc_obj()) < 30;
     }
 
     run_info->field_C |= 0x10;
@@ -10008,7 +10008,7 @@ bool sub_42DCF0(AnimRunInfo* run_info)
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data = 0;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
-        if (sub_441AE0(obj, player_get_pc_obj()) >= 30) {
+        if (object_dist(obj, player_get_pc_obj()) >= 30) {
             run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 0;
             return false;
         }

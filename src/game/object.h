@@ -175,7 +175,7 @@ void sub_4414E0(ObjectList* dst, ObjectList* src);
 void sub_4415C0(int64_t obj, int64_t loc);
 void sub_4417A0(int64_t item_obj, int64_t parent_obj);
 bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, int a4, int a5);
-int64_t sub_441AE0(object_id_t obj1, object_id_t obj2);
+int64_t object_dist(int64_t a, int64_t b);
 int object_rot(int64_t a, int64_t b);
 void sub_441B60(int64_t a1, int64_t a2, char* buffer);
 void sub_441C70(object_id_t obj, int a2, int gender, int race);

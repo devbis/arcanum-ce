@@ -670,8 +670,8 @@ bool sub_4A8E70(Ai* ai)
 bool sub_4A8F90(int64_t obj, unsigned int flags)
 {
     int64_t nearest_obj = OBJ_HANDLE_NULL;
-    int64_t nearest_distance = 0;
-    int64_t distance;
+    int64_t nearest_dist = 0;
+    int64_t dist;
     bool found = false;
     int radius;
     ObjectList objects;
@@ -690,11 +690,11 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
         if ((obj_field_int32_get(node->obj, OBJ_F_ITEM_FLAGS) & (OIF_NO_DISPLAY | OIF_NO_NPC_PICKUP)) == 0
             && !sub_461F60(node->obj)
             && !sub_466510(node->obj, obj, NULL)) {
-            distance = sub_441AE0(obj, node->obj);
+            dist = object_dist(obj, node->obj);
             if (nearest_obj == OBJ_HANDLE_NULL
-                || nearest_distance < distance) {
+                || nearest_dist < dist) {
                 nearest_obj = node->obj;
-                nearest_distance = distance;
+                nearest_dist = dist;
             }
         }
         node = node->next;
@@ -1137,13 +1137,13 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
 void sub_4A9E10(int64_t a1, int64_t a2, int a3)
 {
     int radius;
-    int distance;
+    int dist;
     ObjectList objects;
     ObjectNode* node;
 
     radius = dword_5B50C0[a3];
-    distance = (int)sub_441AE0(a2, a1);
-    if (distance < 2 * dword_5B50C8) {
+    dist = (int)object_dist(a2, a1);
+    if (dist < 2 * dword_5B50C8) {
         sub_4AE4E0(a2, radius, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
@@ -1152,7 +1152,7 @@ void sub_4A9E10(int64_t a1, int64_t a2, int a3)
         }
         object_list_destroy(&objects);
     }
-    if (distance > 1) {
+    if (dist > 1) {
         sub_4AE4E0(a1, radius, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
@@ -1739,14 +1739,14 @@ bool sub_4AB030(int64_t a1, int64_t a2)
 
     sub_4AAA60(a1, &params);
 
-    return sub_441AE0(a1, a2) > params.field_10;
+    return object_dist(a1, a2) > params.field_10;
 }
 
 // 0x4AB0B0
 int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
 {
-    int64_t distance1;
-    int64_t distance2;
+    int64_t dist1;
+    int64_t dist2;
     int score1;
     int score2;
 
@@ -1774,13 +1774,13 @@ int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
         return a3;
     }
 
-    distance1 = sub_441AE0(a1, a3);
-    if (distance1 > 20) {
+    dist1 = object_dist(a1, a3);
+    if (dist1 > 20) {
         return a2;
     }
 
-    distance2 = sub_441AE0(a1, a2);
-    if (distance2 > 20) {
+    dist2 = object_dist(a1, a2);
+    if (dist2 > 20) {
         return a3;
     }
 
@@ -1793,11 +1793,11 @@ int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
     }
 
     if (random_between(1, 100) > 50) {
-        score1 = -((int)distance1);
-        score2 = -((int)distance2);
+        score1 = -((int)dist1);
+        score2 = -((int)dist2);
     } else {
-        score1 = stat_level(a3, STAT_LEVEL) - (int)distance1;
-        score2 = stat_level(a3, STAT_LEVEL) - (int)distance2;
+        score1 = stat_level(a3, STAT_LEVEL) - (int)dist1;
+        score2 = stat_level(a3, STAT_LEVEL) - (int)dist2;
     }
 
     if (score1 > score2) {
@@ -1926,7 +1926,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                 if (sub_4AF800(critter_obj, handles[idx])) {
                     ranges[idx] = 0;
                 } else {
-                    ranges[idx] = sub_441AE0(critter_obj, handles[idx]);
+                    ranges[idx] = object_dist(critter_obj, handles[idx]);
                 }
 
                 if (sub_45D800(handles[idx])) {
@@ -2085,12 +2085,12 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
         }
     }
 
-    if (!sub_441AE0(source_obj, target_obj) > 20) {
+    if (!object_dist(source_obj, target_obj) > 20) {
         return false;
     }
 
     if (source_leader_obj != OBJ_HANDLE_NULL
-        && sub_441AE0(source_leader_obj, target_obj) > 20) {
+        && object_dist(source_leader_obj, target_obj) > 20) {
         return false;
     }
 
@@ -2452,7 +2452,7 @@ void sub_4AC6E0(Ai* ai)
 
     sub_4AAA60(ai->obj, &params);
     npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
-    distance = sub_441AE0(ai->obj, ai->danger_source);
+    distance = object_dist(ai->obj, ai->danger_source);
     if (params.field_3C > 1 && distance < params.field_3C && random_between(1, 20) == 1) {
         npc_flags |= ONF_BACKING_OFF;
         npc_flags |= 0x40000000;
@@ -2467,7 +2467,7 @@ void sub_4AC7B0(Ai* ai)
 {
     AiParams ai_params;
     unsigned int npc_flags;
-    int combat_min_distance;
+    int combat_min_dist;
     PathCreateInfo path_create_info;
     int8_t rotations[100];
 
@@ -2475,19 +2475,19 @@ void sub_4AC7B0(Ai* ai)
 
     npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
     if ((npc_flags & ONF_BACKING_OFF) != 0) {
-            combat_min_distance = ai_params.field_3C;
-            if (combat_min_distance <= 1) {
-                combat_min_distance = 5;
+            combat_min_dist = ai_params.field_3C;
+            if (combat_min_dist <= 1) {
+                combat_min_dist = 5;
             }
 
-            if (sub_441AE0(ai->obj, ai->danger_source) < combat_min_distance) {
+            if (object_dist(ai->obj, ai->danger_source) < combat_min_dist) {
                 path_create_info.obj = ai->obj;
                 path_create_info.from = obj_field_int64_get(ai->obj, OBJ_F_LOCATION);
                 path_create_info.to = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
                 path_create_info.max_rotations = 100;
                 path_create_info.rotations = rotations;
                 path_create_info.field_20 = 0x800;
-                path_create_info.field_24 = combat_min_distance;
+                path_create_info.field_24 = combat_min_dist;
                 if (sub_41F3C0(&path_create_info)) {
                     sub_433C80(ai->obj, path_create_info.to);
                 } else {
@@ -2922,7 +2922,7 @@ bool sub_4AD420(int64_t obj)
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pc_obj = multiplayer_find_first_player_obj();
         while (pc_obj != OBJ_HANDLE_NULL) {
-            if (sub_441AE0(pc_obj, obj) <= 30) {
+            if (object_dist(pc_obj, obj) <= 30) {
                 return true;
             }
             pc_obj = multiplayer_find_next_player_obj();
@@ -2931,7 +2931,7 @@ bool sub_4AD420(int64_t obj)
         return false;
     }
 
-    if (sub_441AE0(player_get_pc_obj(), obj) <= 30) {
+    if (object_dist(player_get_pc_obj(), obj) <= 30) {
         return true;
     }
 
@@ -2957,7 +2957,7 @@ bool sub_4AD4D0(int64_t obj)
         return false;
     }
 
-    if (sub_441AE0(pc_leader_obj, obj) <= 30) {
+    if (object_dist(pc_leader_obj, obj) <= 30) {
         return false;
     }
 
@@ -2996,24 +2996,24 @@ int sub_4AD5D0(int64_t obj)
 int sub_4AD610(int64_t obj)
 {
     int64_t pc_obj;
-    int64_t distance;
-    int64_t max_distance;
+    int64_t dist;
+    int64_t nearest_dist;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        max_distance = -1;
+        nearest_dist = -1;
         pc_obj = multiplayer_find_first_player_obj();
         while (pc_obj != OBJ_HANDLE_NULL) {
-            distance = sub_441AE0(pc_obj, obj);
-            if (max_distance == -1 || distance < max_distance) {
-                max_distance = distance;
+            dist = object_dist(pc_obj, obj);
+            if (nearest_dist == -1 || dist < nearest_dist) {
+                nearest_dist = dist;
             }
             pc_obj = multiplayer_find_next_player_obj();
         }
     } else {
-        max_distance = sub_441AE0(player_get_pc_obj(), obj);
+        nearest_dist = object_dist(player_get_pc_obj(), obj);
     }
 
-    return max_distance >= 0 && max_distance <= 30 ? (int)max_distance : 30;
+    return nearest_dist >= 0 && nearest_dist <= 30 ? (int)nearest_dist : 30;
 }
 
 // 0x4AD6B0
@@ -4048,7 +4048,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
 
     perception = sub_4AF240(perception);
 
-    dist = sub_441AE0(source_obj, target_obj);
+    dist = object_dist(source_obj, target_obj);
     if (dist > 1000) {
         return 1000;
     }
@@ -4071,7 +4071,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
 int sub_4AF470(int64_t a1, int64_t a2, int a3)
 {
     unsigned int critter_flags;
-    int64_t distance;
+    int64_t dist;
     int perception;
     Tanya v1;
     int v2;
@@ -4085,8 +4085,8 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
         return 1000;
     }
 
-    distance = sub_441AE0(a1, a2);
-    if (distance > 1000) {
+    dist = object_dist(a1, a2);
+    if (dist > 1000) {
         return 1000;
     }
 
@@ -4117,8 +4117,8 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
     }
 
     v2 = (dword_5B50C0[a3] - dword_5B50C0[0] + sub_4AF240(perception - 4)) / 2 - sub_4AF640(a1, a2);
-    if ((int)distance > v2) {
-        return (int)distance - v2;
+    if ((int)dist > v2) {
+        return (int)dist - v2;
     }
 
     return 0;

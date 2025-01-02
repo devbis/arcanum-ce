@@ -2790,7 +2790,7 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
     int64_t equipped_item_obj;
     int best_item_worth;
     int64_t best_item_obj;
-    int64_t range;
+    int64_t dist;
     int best_ranged_weapon_worth;
     int64_t best_ranged_weapon_obj;
     int64_t item_obj;
@@ -2813,7 +2813,7 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
 
     best_ranged_weapon_obj = OBJ_HANDLE_NULL;
     if (target_obj != OBJ_HANDLE_NULL) {
-        range = sub_441AE0(critter_obj, target_obj);
+        dist = object_dist(critter_obj, target_obj);
         best_ranged_weapon_worth = INT_MIN;
     }
 
@@ -2871,7 +2871,7 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
                             || effective_total_dam > best_ranged_weapon_worth
                             || (effective_total_dam == best_ranged_weapon_worth
                                 && item_obj > best_ranged_weapon_obj))
-                        && item_weapon_range(item_obj, critter_obj) >= range) {
+                        && item_weapon_range(item_obj, critter_obj) >= dist) {
                         best_ranged_weapon_obj = item_obj;
                     }
                 }

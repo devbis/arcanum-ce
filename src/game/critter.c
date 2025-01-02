@@ -1367,7 +1367,7 @@ bool critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent)
         return true;
     }
 
-    if (sub_441AE0(obj, focus_obj) >= 30) {
+    if (object_dist(obj, focus_obj) >= 30) {
         obj_field_handle_set(obj, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
     } else {
         sub_45ED70(obj);
@@ -1776,7 +1776,7 @@ int64_t sub_45F650(int64_t obj)
         return OBJ_HANDLE_NULL;
     }
 
-    if (sub_441AE0(obj, substitute_inventory_obj) > 20) {
+    if (object_dist(obj, substitute_inventory_obj) > 20) {
         return OBJ_HANDLE_NULL;
     }
 

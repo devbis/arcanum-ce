@@ -2186,8 +2186,8 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_DISTANCE_BETWEEN: {
         int64_t a = script_get_obj(action->op_type[0], action->op_value[0], state);
         int64_t b = script_get_obj(action->op_type[0], action->op_value[0], state);
-        int distance = (int)sub_441AE0(a, b);
-        script_set_value(action->op_type[2], action->op_value[2], state, distance);
+        int dist = (int)object_dist(a, b);
+        script_set_value(action->op_type[2], action->op_value[2], state, dist);
         return NEXT;
     }
     case SAT_ADD_REPUTATION: {
