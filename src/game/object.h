@@ -120,7 +120,7 @@ void sub_43CF70(int64_t obj);
 void sub_43CFF0(object_id_t obj);
 void sub_43D0E0(int64_t obj, unsigned int flags);
 void sub_43D280(int64_t obj, unsigned int flags);
-int object_get_hp_pts(object_id_t obj);
+int object_hp_pts_get(object_id_t obj);
 int object_hp_pts_set(int64_t obj, int value);
 int object_hp_adj_get(object_id_t obj);
 int object_hp_adj_set(object_id_t obj, int value);

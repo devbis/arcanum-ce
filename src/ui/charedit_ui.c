@@ -1826,7 +1826,7 @@ int sub_55B4D0(int64_t obj, int stat)
     case CHAREDIT_STAT_3:
         return sub_43D600(obj);
     case CHAREDIT_STAT_HP_PTS:
-        return object_get_hp_pts(obj);
+        return object_hp_pts_get(obj);
     case CHAREDIT_STAT_5:
         return sub_45D700(obj);
     case CHAREDIT_STAT_FATIGUE_PTS:

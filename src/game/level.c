@@ -124,7 +124,7 @@ static MiscGetter* off_4A7ABE[LEVEL_SCHEME_MISC_MAX] = {
 
 // 0x4A7AF3
 static MiscGetter* off_4A7AF3[LEVEL_SCHEME_MISC_MAX] = {
-    object_get_hp_pts,
+    object_hp_pts_get,
     critter_fatigue_pts_get,
 };
 

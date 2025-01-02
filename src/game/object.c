@@ -1510,7 +1510,7 @@ void sub_43D280(int64_t obj, unsigned int flags)
 }
 
 // 0x43D410
-int object_get_hp_pts(object_id_t obj)
+int object_hp_pts_get(object_id_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_HP_PTS);
 }
@@ -1631,10 +1631,10 @@ int sub_43D690(object_id_t obj)
 
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)) {
-        return 4 * object_get_hp_pts(obj);
+        return 4 * object_hp_pts_get(obj);
     }
 
-    return object_get_hp_pts(obj);
+    return object_hp_pts_get(obj);
 }
 
 // 0x43D6D0
