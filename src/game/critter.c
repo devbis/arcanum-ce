@@ -266,12 +266,11 @@ bool critter_is_pc(long long obj)
 // 0x45D390
 int critter_fatigue_pts_get(long long obj)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_PTS);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
+
+    return obj_field_int32_get(obj, OBJ_F_CRITTER_FATIGUE_PTS);
 }
 
 // 0x45D3E0
@@ -381,21 +380,21 @@ int sub_45D670(long long obj)
     int cn;
     int wp;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        fatigue_pts = critter_fatigue_pts_get(obj);
-        fatigue_adj = critter_fatigue_adj_get(obj);
-        level = stat_level(obj, STAT_LEVEL);
-        cn = stat_level(obj, STAT_CONSTITUTION);
-        wp = stat_level(obj, STAT_WILLPOWER);
-        return effect_adjust_max_fatigue(obj, fatigue_pts * 4
-            + fatigue_adj
-            + 2 * (level + cn)
-            + wp
-            + 4);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
+
+    fatigue_pts = critter_fatigue_pts_get(obj);
+    fatigue_adj = critter_fatigue_adj_get(obj);
+    level = stat_level(obj, STAT_LEVEL);
+    cn = stat_level(obj, STAT_CONSTITUTION);
+    wp = stat_level(obj, STAT_WILLPOWER);
+
+    return effect_adjust_max_fatigue(obj, fatigue_pts * 4
+        + fatigue_adj
+        + 2 * (level + cn)
+        + wp
+        + 4);
 }
 
 // 0x45D700
@@ -407,15 +406,13 @@ int sub_45D700(long long obj)
 // 0x45D730
 bool sub_45D730(long long obj)
 {
-    int type;
     tig_art_id_t aid;
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
         return false;
     }
 
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return false;
     }
 
@@ -1833,8 +1830,7 @@ int critter_encumbrance_level_get(long long obj)
     int max_weight;
     int encumbrance_level;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return ENCUMBRANCE_LEVEL_SEVERE;
     }
 

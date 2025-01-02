@@ -1565,7 +1565,7 @@ int object_hp_damage_get(object_id_t obj)
 // 0x43D530
 int object_hp_damage_set(object_id_t obj, int value)
 {
-    int type;
+    int obj_type;
 
     if ((tig_net_flags & 0x1) != 0 && (tig_net_flags & 0x2) == 0) {
         return 0;
@@ -1578,8 +1578,8 @@ int object_hp_damage_set(object_id_t obj, int value)
     sub_4EFDD0(obj, OBJ_F_HP_DAMAGE, value);
 
     if (value > 0) {
-        type = obj_field_int32_get(obj, OBJ_F_TYPE);
-        if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+        obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+        if (obj_type_is_critter(obj_type)) {
             sub_45EAB0(obj);
         }
     }
@@ -1593,11 +1593,11 @@ int object_hp_damage_set(object_id_t obj, int value)
 int sub_43D5A0(object_id_t obj)
 {
     int value;
-    int type;
+    int obj_type;
 
     value = object_get_hp_adj(obj) + sub_43D690(obj);
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)) {
         value = effect_adjust_max_hit_points(obj, sub_43D630(obj) + value);
     }
     return value;
@@ -1612,10 +1612,10 @@ int sub_43D600(object_id_t obj)
 // 0x43D630
 int sub_43D630(object_id_t obj)
 {
-    int type;
+    int obj_type;
 
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)) {
         return stat_level(obj, STAT_WILLPOWER)
             + 2 * (stat_level(obj, STAT_STRENGTH) + stat_level(obj, STAT_LEVEL))
             + 4;
@@ -1627,10 +1627,10 @@ int sub_43D630(object_id_t obj)
 // 0x43D690
 int sub_43D690(object_id_t obj)
 {
-    int type;
+    int obj_type;
 
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)) {
         return 4 * object_get_hp_pts(obj);
     }
 
@@ -1694,13 +1694,13 @@ int sub_43D6D0(int64_t obj, int resistance_type, bool a2)
 int object_get_ac(object_id_t obj, bool a2)
 {
     int ac;
-    int type;
+    int obj_type;
     int index;
     object_id_t item_obj;
 
     ac = obj_field_int32_get(obj, OBJ_F_AC);
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type_is_critter(obj_type)) {
         for (index = 1000; index <= 1008; index++) {
             item_obj = item_wield_get(obj, index);
             if (item_obj != OBJ_HANDLE_NULL) {
@@ -1710,7 +1710,7 @@ int object_get_ac(object_id_t obj, bool a2)
 
         ac = effect_adjust_stat_level(obj, STAT_AC_ADJUSTMENT, ac);
         ac += stat_level(obj, STAT_AC_ADJUSTMENT);
-    } else if (type == OBJ_TYPE_ITEM_ARMOR) {
+    } else if (obj_type == OBJ_TYPE_ITEM_ARMOR) {
         ac += item_armor_ac_adj(obj, OBJ_HANDLE_NULL, a2);
     }
 
@@ -1726,12 +1726,11 @@ int object_get_ac(object_id_t obj, bool a2)
 // 0x43D940
 bool sub_43D940(object_id_t obj)
 {
-    int type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PROJECTILE
-        || type == OBJ_TYPE_CONTAINER
-        || type == OBJ_TYPE_PC
-        || type == OBJ_TYPE_NPC
-        || (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC)) {
+    int obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type == OBJ_TYPE_PROJECTILE
+        || obj_type == OBJ_TYPE_CONTAINER
+        || obj_type_is_critter(obj_type)
+        || obj_type_is_item(obj_type)) {
         return false;
     }
     return true;
@@ -1740,12 +1739,11 @@ bool sub_43D940(object_id_t obj)
 // 0x43D990
 bool sub_43D990(object_id_t obj)
 {
-    int type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PROJECTILE
-        || type == OBJ_TYPE_CONTAINER
-        || type == OBJ_TYPE_PC
-        || type == OBJ_TYPE_NPC
-        || (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC)) {
+    int obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+    if (obj_type == OBJ_TYPE_PROJECTILE
+        || obj_type == OBJ_TYPE_CONTAINER
+        || obj_type_is_critter(obj_type)
+        || obj_type_is_item(obj_type)) {
         return false;
     }
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DYNAMIC) == 0;
