@@ -25,7 +25,7 @@ static int dword_5FC638;
 static ViewOptions wp_view_options;
 
 // 0x5FC648
-static IsoInvalidateRectFunc* dword_5FC648;
+static IsoInvalidateRectFunc* wp_iso_window_invalidate_rect;
 
 // 0x5FC64C
 static bool dword_5FC64C;
@@ -55,7 +55,7 @@ bool wp_init(GameInitInfo* init_info)
     int index;
 
     wp_iso_window_handle = init_info->iso_window_handle;
-    dword_5FC648 = init_info->invalidate_rect_func;
+    wp_iso_window_invalidate_rect = init_info->invalidate_rect_func;
     wp_editor = init_info->editor;
     wp_view_options.type = VIEW_TYPE_ISOMETRIC;
 
@@ -167,7 +167,7 @@ void sub_4C00D0(int64_t obj)
     for (index = 0; index < cnt; index++) {
         waypoint = obj_arrayfield_int64_get(obj, OBJ_F_NPC_WAYPOINTS_IDX, index);
         if (sub_4C0280(waypoint, &rect)) {
-            dword_5FC648(&rect);
+            wp_iso_window_invalidate_rect(&rect);
         }
     }
 }
