@@ -1470,10 +1470,10 @@ bool sub_4C7160(Tanya* a1)
 
             if (durability_dam > 0) {
                 int dam = durability_dam * sub_43D5A0(target_obj) / 100;
-                object_set_hp_adj(target_obj, object_get_hp_adj(target_obj) - dam);
+                object_hp_adj_set(target_obj, object_hp_adj_get(target_obj) - dam);
 
                 pkt.field_4 |= 0x04;
-                pkt.field_C = object_get_hp_adj(target_obj);
+                pkt.field_C = object_hp_adj_get(target_obj);
             }
 
             pkt.field_4 |= 0x08;

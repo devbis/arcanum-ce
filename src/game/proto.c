@@ -16268,7 +16268,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 // 0x49BB40
 void sub_49BB40(long long obj, int a2)
 {
-    object_set_hp_adj(obj, object_get_hp_adj(obj) + a2 - sub_43D5A0(obj));
+    object_hp_adj_set(obj, object_hp_adj_get(obj) + a2 - sub_43D5A0(obj));
 }
 
 // 0x49BB70

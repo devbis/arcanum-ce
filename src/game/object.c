@@ -1543,13 +1543,13 @@ int object_hp_pts_set(int64_t obj, int value)
 }
 
 // 0x43D4C0
-int object_get_hp_adj(object_id_t obj)
+int object_hp_adj_get(object_id_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_HP_ADJ);
 }
 
 // 0x43D4E0
-int object_set_hp_adj(object_id_t obj, int value)
+int object_hp_adj_set(object_id_t obj, int value)
 {
     obj_field_int32_set(obj, OBJ_F_HP_ADJ, value);
     sub_460240(obj);
@@ -1595,7 +1595,7 @@ int sub_43D5A0(object_id_t obj)
     int value;
     int obj_type;
 
-    value = object_get_hp_adj(obj) + sub_43D690(obj);
+    value = object_hp_adj_get(obj) + sub_43D690(obj);
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)) {
         value = effect_adjust_max_hit_points(obj, sub_43D630(obj) + value);
