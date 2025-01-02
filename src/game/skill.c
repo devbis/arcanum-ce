@@ -1411,7 +1411,7 @@ bool sub_4C7160(Tanya* a1)
         pkt.target_oid = sub_407EF0(target_obj);
         pkt.field_40 = 1;
 
-        int hp = object_get_hp_damage(target_obj);
+        int hp = object_hp_damage_get(target_obj);
         if (hp <= 0
             && (tig_art_item_id_destroyed_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 0
                 || training != TRAINING_MASTER)) {
@@ -1443,7 +1443,7 @@ bool sub_4C7160(Tanya* a1)
                 v2 = 0;
             }
 
-            object_set_hp_damage(target_obj, v2);
+            object_hp_damage_set(target_obj, v2);
 
             pkt.field_4 |= 0x01;
             pkt.field_8 = v2;

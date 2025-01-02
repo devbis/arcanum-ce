@@ -493,7 +493,7 @@ void sub_45D900(int64_t obj)
     combat.field_58 |= 0x4;
     sub_4B4390(&combat);
 
-    object_set_hp_damage(obj, 32000);
+    object_hp_damage_set(obj, 32000);
 
     if (critter_editor) {
         tig_art_id_t art_id;
@@ -587,7 +587,7 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
         sub_45EBE0(a1);
     }
 
-    object_set_hp_damage(a1, 32000);
+    object_hp_damage_set(a1, 32000);
 
     if (a2 != OBJ_HANDLE_NULL) {
         sub_4CBC60(a2, a1);
@@ -1198,14 +1198,14 @@ void sub_45E910(int64_t critter_obj, int hours)
         return;
     }
 
-    dam = object_get_hp_damage(critter_obj);
+    dam = object_hp_damage_get(critter_obj);
     heal_rate = stat_level(critter_obj, STAT_HEAL_RATE);
     if (dam > 0) {
         dam -= heal_rate * hours;
         if (dam < 0) {
             dam = 0;
         }
-        object_set_hp_damage(critter_obj, dam);
+        object_hp_damage_set(critter_obj, dam);
     }
 
     dam = critter_fatigue_damage_get(critter_obj);

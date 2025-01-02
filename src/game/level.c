@@ -559,7 +559,7 @@ void level_set_level(int64_t obj, int level)
     }
 
     sub_4A7030(obj, NULL);
-    object_set_hp_damage(obj, 0);
+    object_hp_damage_set(obj, 0);
 }
 
 // 0x4A7030

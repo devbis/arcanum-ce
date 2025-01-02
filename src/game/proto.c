@@ -15663,7 +15663,7 @@ void sub_468930(long long obj, int description)
             sub_441C70(obj, 0, 1, 0);
             obj_field_string_set(obj, OBJ_F_PC_PLAYER_NAME, "none");
             obj_field_int32_set(obj, OBJ_F_CRITTER_PORTRAIT, 1005);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16067:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 76);
@@ -15676,7 +15676,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 108);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 39);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1039);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16068:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 77);
@@ -15689,7 +15689,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 24);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 40);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1040);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16069:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 78);
@@ -15702,7 +15702,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 20);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 41);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1041);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16070:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 79);
@@ -15715,7 +15715,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 25);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 42);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1042);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16071:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 80);
@@ -15728,7 +15728,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 20);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 43);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1043);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16072:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 81);
@@ -15741,7 +15741,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 22);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 44);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1044);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16073:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 82);
@@ -15754,7 +15754,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 20);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 45);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1045);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16074:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 83);
@@ -15767,7 +15767,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 24);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 46);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1046);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16075:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 84);
@@ -15780,7 +15780,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 23);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 47);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1047);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16076:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 85);
@@ -15793,7 +15793,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 22);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 48);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1048);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16077:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 86);
@@ -15806,7 +15806,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 26);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 49);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1049);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         case 16078:
             obj_field_int32_set(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME, 87);
@@ -15819,10 +15819,10 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CRITTER_INVENTORY_SOURCE, 26);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND, 50);
             obj_field_int32_set(obj, OBJ_F_PC_BACKGROUND_TEXT, 1050);
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         default:
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
             break;
         }
         break;
@@ -15985,7 +15985,7 @@ void sub_49B010(long long obj, int description)
     exp = sub_45F0B0(obj);
     obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
     obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
-    object_set_hp_damage(obj, 0);
+    object_hp_damage_set(obj, 0);
 }
 
 // 0x49B220
@@ -16072,7 +16072,7 @@ void sub_49B340(long long obj, int description)
         exp = sub_45F0B0(obj);
         obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_WORTH, exp);
         obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
-        object_set_hp_damage(obj, 0);
+        object_hp_damage_set(obj, 0);
 
         art_id = sub_45FA70(obj, &rgb);
         obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);

@@ -1717,7 +1717,7 @@ void sub_4B4390(CombatContext* combat)
         if ((dam_flags & 0x100000) != 0) {
             int64_t armor_obj = sub_4B54B0(combat->field_20, combat->field_40);
             if (armor_obj != OBJ_HANDLE_NULL) {
-                object_set_hp_damage(armor_obj, object_get_hp_damage(armor_obj) + 10);
+                object_hp_damage_set(armor_obj, object_hp_damage_get(armor_obj) + 10);
 
                 if (sub_43D600(armor_obj) > 0) {
                     mes_file_entry.num = 7; // "Armor damaged"
@@ -1751,7 +1751,7 @@ void sub_4B4390(CombatContext* combat)
             }
 
             if ((dam_flags & 0x4000) != 0) {
-                object_set_hp_damage(weapon_obj, object_get_hp_damage(weapon_obj) + 10);
+                object_hp_damage_set(weapon_obj, object_hp_damage_get(weapon_obj) + 10);
 
                 if (sub_43D600(weapon_obj) > 0) {
                     mes_file_entry.num = 8; // "Weapon damaged"
@@ -1826,11 +1826,11 @@ void sub_4B4390(CombatContext* combat)
 
         combat->field_5C = dam;
 
-        int hp_dam = object_get_hp_damage(combat->field_20) + dam;
+        int hp_dam = object_hp_damage_get(combat->field_20) + dam;
         if (hp_dam < 0) {
             hp_dam = 0;
         }
-        object_set_hp_damage(combat->field_20, hp_dam);
+        object_hp_damage_set(combat->field_20, hp_dam);
 
         if (dam > 0) {
             int64_t leader_obj = sub_45DDA0(combat->field_20);
@@ -1945,11 +1945,11 @@ void sub_4B4390(CombatContext* combat)
             combat->field_58 |= 0x200000;
         }
 
-        int hp_dam = object_get_hp_damage(combat->field_20) + dam;
+        int hp_dam = object_hp_damage_get(combat->field_20) + dam;
         if (hp_dam < 0) {
             hp_dam = 0;
         }
-        object_set_hp_damage(combat->field_20, hp_dam);
+        object_hp_damage_set(combat->field_20, hp_dam);
 
         if (tf_level_get() == TF_LEVEL_VERBOSE) {
             mes_file_entry.num = 1; // "HT"
@@ -2112,8 +2112,8 @@ void sub_4B5580(CombatContext* combat)
     if (dam > 0) {
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
             // Apply damage to the weapon.
-            object_set_hp_damage(combat->weapon_obj,
-                object_get_hp_damage(combat->weapon_obj) + dam);
+            object_hp_damage_set(combat->weapon_obj,
+                object_hp_damage_get(combat->weapon_obj) + dam);
 
             mes_file_entry.num = 8; // "Weapon damaged"
             if (sub_43D600(combat->weapon_obj) <= 0) {
@@ -2132,8 +2132,8 @@ void sub_4B5580(CombatContext* combat)
             }
 
             // Apply damage to the target.
-            object_set_hp_damage(combat->field_8,
-                object_get_hp_damage(combat->field_8) + dam);
+            object_hp_damage_set(combat->field_8,
+                object_hp_damage_get(combat->field_8) + dam);
         }
 
         if (str[0] != '\0') {
@@ -2264,7 +2264,7 @@ void sub_4B58C0(CombatContext* combat)
     }
 
     if ((combat->field_58 & 0x1) != 0) {
-        combat->field_44[0] = object_get_hp_damage(combat->field_20);
+        combat->field_44[0] = object_hp_damage_get(combat->field_20);
         if (combat->field_44[4] > 0) {
             combat->field_44[4] = critter_fatigue_damage_get(combat->field_20);
         }
@@ -2313,13 +2313,13 @@ void sub_4B58C0(CombatContext* combat)
         int new_dam;
         int cur_dam;
 
-        cur_dam = object_get_hp_damage(combat->field_20);
+        cur_dam = object_hp_damage_get(combat->field_20);
         if (cur_dam != 0) {
             new_dam = cur_dam - combat->field_44[0];
             if (new_dam < 0) {
                 new_dam = 0;
             }
-            object_set_hp_damage(combat->field_20, new_dam);
+            object_hp_damage_set(combat->field_20, new_dam);
         }
     }
 

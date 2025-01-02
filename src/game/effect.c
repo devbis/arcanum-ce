@@ -426,7 +426,7 @@ void effect_add(int64_t obj, int effect, int cause)
 
     diff = sub_43D5A0(obj) - v1;
     if (diff != 0) {
-        object_set_hp_damage(obj, object_get_hp_damage(obj) + diff);
+        object_hp_damage_set(obj, object_hp_damage_get(obj) + diff);
     }
 
     diff = sub_45D670(obj) - v2;
@@ -639,7 +639,7 @@ void sub_4EA520(int64_t obj, int start)
 
     diff = sub_43D5A0(obj) - v1;
     if (diff != 0) {
-        object_set_hp_damage(obj, object_get_hp_damage(obj) + diff);
+        object_hp_damage_set(obj, object_hp_damage_get(obj) + diff);
     }
 
     diff = sub_45D670(obj) - v2;

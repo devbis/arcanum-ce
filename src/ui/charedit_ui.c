@@ -877,7 +877,7 @@ bool charedit_create(int64_t obj, int a2)
     dword_64CDCC = a2;
 
     if (dword_64CDCC == 0) {
-        object_set_hp_damage(obj, 0);
+        object_hp_damage_set(obj, 0);
         critter_fatigue_damage_set(obj, 0);
     }
 
@@ -1162,7 +1162,7 @@ void charedit_destroy()
             sub_550DA0(0, 0);
         }
         if (dword_64CDCC == 0) {
-            object_set_hp_damage(qword_64E010, 0);
+            object_hp_damage_set(qword_64E010, 0);
             critter_fatigue_damage_set(qword_64E010, 0);
         }
         intgame_big_window_unlock();

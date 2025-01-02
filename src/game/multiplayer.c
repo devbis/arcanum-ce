@@ -825,7 +825,7 @@ void multiplayer_start_play(PlayerCreateInfo* player_create_info)
         stru_5E8AD0[0].field_8 = sub_407EF0(player_create_info->obj);
         sub_40DAF0(player_create_info->obj);
         critter_fatigue_damage_set(player_create_info->obj, 0);
-        object_set_hp_damage(player_create_info->obj, 0);
+        object_hp_damage_set(player_create_info->obj, 0);
         sub_43D280(player_create_info->obj, OF_OFF);
 
         poison = stat_get_base(player_create_info->obj, STAT_POISON_LEVEL);
@@ -2920,7 +2920,7 @@ void sub_4A6010(int64_t obj)
     int poison;
     int index;
 
-    object_set_hp_damage(obj, 0);
+    object_hp_damage_set(obj, 0);
     sub_4ED720(obj, 0);
     sub_4EFEE0(obj, 2);
     sub_4EFEE0(obj, 4);

@@ -1871,9 +1871,9 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             int hp = sub_43D5A0(new_obj);
             int hp_damage = hp * (100 - hp_ratio) / 100;
             if (hp_damage < hp) {
-                object_set_hp_damage(new_obj, hp_damage);
+                object_hp_damage_set(new_obj, hp_damage);
             } else {
-                object_set_hp_damage(new_obj, hp - 1);
+                object_hp_damage_set(new_obj, hp - 1);
             }
 
             art_id = obj_field_int32_get(new_obj, OBJ_F_CURRENT_AID);

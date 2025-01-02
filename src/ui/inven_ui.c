@@ -3528,7 +3528,7 @@ void sub_578760(int64_t obj)
 
         v2 = v1;
     } else {
-        v2 = object_get_hp_damage(obj);
+        v2 = object_hp_damage_get(obj);
     }
 
     if (v2 != 0) {

@@ -471,7 +471,7 @@ void main_loop()
                                 sub_45C1C0(3600000);
                                 break;
                             case DIK_N:
-                                object_set_hp_damage(pc_obj, 0);
+                                object_hp_damage_set(pc_obj, 0);
                                 critter_fatigue_damage_set(pc_obj, 0);
                                 sub_43D280(pc_obj, 1028);
                                 sub_45EC80(pc_obj);

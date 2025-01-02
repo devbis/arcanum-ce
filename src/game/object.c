@@ -1557,13 +1557,13 @@ int object_set_hp_adj(object_id_t obj, int value)
 }
 
 // 0x43D510
-int object_get_hp_damage(object_id_t obj)
+int object_hp_damage_get(object_id_t obj)
 {
     return obj_field_int32_get(obj, OBJ_F_HP_DAMAGE);
 }
 
 // 0x43D530
-int object_set_hp_damage(object_id_t obj, int value)
+int object_hp_damage_set(object_id_t obj, int value)
 {
     int type;
 
@@ -1606,7 +1606,7 @@ int sub_43D5A0(object_id_t obj)
 // 0x43D600
 int sub_43D600(object_id_t obj)
 {
-    return sub_43D5A0(obj) - object_get_hp_damage(obj);
+    return sub_43D5A0(obj) - object_hp_damage_get(obj);
 }
 
 // 0x43D630
@@ -2375,7 +2375,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
         break;
     case OBJ_TYPE_CONTAINER:
         if (sub_49B290(obj) == 3023) {
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
         } else {
             sub_463730(obj, true);
 
@@ -2398,7 +2398,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags);
             sub_43D0E0(obj, OF_OFF);
 
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
 
             // Setup respawn time event.
             timeevent.type = TIMEEVENT_TYPE_SCENERY_RESPAWN;
@@ -2425,7 +2425,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
                     object_set_current_aid(obj, destroyed_art_id);
                 }
 
-                object_set_hp_damage(obj, sub_43D5A0(obj));
+                object_hp_damage_set(obj, sub_43D5A0(obj));
                 obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags | OSCF_BUSTED);
                 sound_id = sub_4F1050(obj, 0);
                 sub_43D0E0(obj, OF_INVULNERABLE);
@@ -2457,7 +2457,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             destroyed_art_id = tig_art_item_id_destroyed_set(destroyed_art_id, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, destroyed_art_id);
 
-            object_set_hp_damage(obj, 0);
+            object_hp_damage_set(obj, 0);
 
             if (item_parent(obj, NULL) && !sub_464C80(obj)) {
                 item_drop(obj);
@@ -2481,7 +2481,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             trap_flags = obj_field_int32_get(obj, OBJ_F_TRAP_FLAGS);
             if ((trap_flags & 0x2) == 0) {
                 object_set_current_aid(obj, destroyed_art_id);
-                object_set_hp_damage(obj, 0);
+                object_hp_damage_set(obj, 0);
                 obj_field_int32_set(obj, OBJ_F_TRAP_FLAGS, trap_flags | 0x2);
                 sound_id = sub_4F1050(obj, 0);
                 sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);

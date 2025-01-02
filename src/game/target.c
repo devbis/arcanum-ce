@@ -765,14 +765,14 @@ bool sub_4F2D20(S603CB8* a1)
             }
 
             if ((tgt & 0x100000) != 0) {
-                if (object_get_hp_damage(a1->field_20) <= 0
+                if (object_hp_damage_get(a1->field_20) <= 0
                     && (!obj_type_is_critter(obj_type)
                         || (obj_field_int32_get(a1->field_20, OBJ_F_CRITTER_FLAGS) & OCF_INJURED) == 0)) {
                     qword_603D40 = 0x100000;
                     return false;
                 }
             } else if ((tgt & 0x40000000000) != 0) {
-                if (object_get_hp_damage(a1->field_20) > 0
+                if (object_hp_damage_get(a1->field_20) > 0
                     && (!obj_type_is_critter(obj_type)
                         || (obj_field_int32_get(a1->field_20, OBJ_F_CRITTER_FLAGS) & OCF_INJURED) != 0)) {
                     qword_603D40 = 0x40000000000;
@@ -815,7 +815,7 @@ bool sub_4F2D20(S603CB8* a1)
             }
 
             if ((tgt & 0x200000) != 0
-                && object_get_hp_damage(a1->field_20) <= 0) {
+                && object_hp_damage_get(a1->field_20) <= 0) {
                 if (!obj_type_is_critter(obj_type)) {
                     return false;
                 }
@@ -1646,7 +1646,7 @@ bool sub_4F5270(int64_t obj, int index)
 void sub_4F52D0(int64_t obj, int index)
 {
     if (index == 0) {
-        object_set_hp_damage(obj, 0);
+        object_hp_damage_set(obj, 0);
         stat_set_base(obj, STAT_POISON_LEVEL, 0);
         critter_fatigue_damage_set(obj, 0);
     }
