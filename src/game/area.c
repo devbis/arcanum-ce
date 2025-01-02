@@ -387,17 +387,17 @@ int get_nearest_area(int64_t loc)
 {
     int area;
     int nearest_area;
-    int64_t nearest_distance;
+    int64_t nearest_dist;
     int64_t distance;
 
     nearest_area = AREA_UNKNOWN;
-    nearest_distance = sub_4B96F0(area_get_location(0), loc);
+    nearest_dist = location_dist(area_get_location(0), loc);
 
     for (area = 1; area < area_count; area++) {
-        distance = sub_4B96F0(area_get_location(area), loc);
-        if (distance < nearest_distance) {
+        distance = location_dist(area_get_location(area), loc);
+        if (distance < nearest_dist) {
             nearest_area = area;
-            nearest_distance = distance;
+            nearest_dist = distance;
         }
     }
 
@@ -409,8 +409,8 @@ int area_get_nearest_known_area(int64_t loc, int64_t pc_obj, int64_t range)
 {
     int area;
     int nearest_area;
-    int64_t nearest_distance;
-    int64_t distance;
+    int64_t nearest_dist;
+    int64_t dist;
 
     if (pc_obj == OBJ_HANDLE_NULL
         || obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
@@ -419,14 +419,14 @@ int area_get_nearest_known_area(int64_t loc, int64_t pc_obj, int64_t range)
 
     // NOTE: Original code is different.
     nearest_area = AREA_UNKNOWN;
-    nearest_distance = range + 1;
+    nearest_dist = range + 1;
 
     for (area = 1; area < area_count; area++) {
-        distance = sub_4B96F0(area_get_location(area), loc);
-        if (distance < nearest_distance) {
+        dist = location_dist(area_get_location(area), loc);
+        if (dist < nearest_dist) {
             if (area_is_known(pc_obj, area)) {
                 nearest_area = area;
-                nearest_distance = distance;
+                nearest_dist = dist;
             }
         }
     }
@@ -439,13 +439,13 @@ int sub_4CB4D0(int64_t loc, bool a2)
 {
     int area;
     int nearest_area;
-    int64_t nearest_distance;
-    int64_t distance;
+    int64_t nearest_dist;
+    int64_t dist;
     int64_t radius;
 
     // NOTE: Original code is different.
     nearest_area = AREA_UNKNOWN;
-    nearest_distance = 99999;
+    nearest_dist = 99999;
 
     for (area = 1; area < area_count; area++) {
         radius = area_radiuses[area];
@@ -453,11 +453,11 @@ int sub_4CB4D0(int64_t loc, bool a2)
             radius = 64;
         }
 
-        distance = sub_4B96F0(area_get_location(area), loc);
-        if (distance < radius
-            && distance < nearest_distance) {
+        dist = location_dist(area_get_location(area), loc);
+        if (dist < radius
+            && dist < nearest_dist) {
             nearest_area = area;
-            nearest_distance = distance;
+            nearest_dist = dist;
         }
     }
 

@@ -528,7 +528,7 @@ bool sub_4B9420(int64_t* loc_ptr, int* a2, int* a3)
 // NOTE: Original code is likely different.
 //
 // 0x4B96F0
-int64_t sub_4B96F0(int64_t a, int64_t b)
+int64_t location_dist(int64_t a, int64_t b)
 {
     int dx;
     int dy;

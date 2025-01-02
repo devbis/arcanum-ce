@@ -844,7 +844,7 @@ bool sub_4F2D20(S603CB8* a1)
                 }
 
                 loc2 = obj_field_int64_get(a1->field_20, OBJ_F_LOCATION);
-                if (sub_4B96F0(loc1, loc2) > a1->field_0->radius) {
+                if (location_dist(loc1, loc2) > a1->field_0->radius) {
                     return false;
                 }
             }
@@ -972,7 +972,7 @@ bool sub_4F2D20(S603CB8* a1)
 
     if ((tgt & 0x20000000000000) != 0
         // TODO: Sames args looks wrong, check.
-        && sub_4B96F0(a1->field_38, a1->field_38) > a1->field_0->radius) {
+        && location_dist(a1->field_38, a1->field_38) > a1->field_0->radius) {
         return false;
     }
 

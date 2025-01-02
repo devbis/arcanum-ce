@@ -738,7 +738,7 @@ bool sub_558F30(WmapRndEncounterChart* chart, int64_t loc, int* value_ptr)
     int index;
 
     for (index = 0; index < chart->num_entries; index++) {
-        if (sub_4B96F0(chart->entries[index].loc, loc) <= chart->entries[index].radius) {
+        if (location_dist(chart->entries[index].loc, loc) <= chart->entries[index].radius) {
             *value_ptr = chart->entries[index].value;
             return true;
         }

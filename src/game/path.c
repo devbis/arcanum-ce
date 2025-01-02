@@ -153,7 +153,7 @@ int sub_41F6C0(PathCreateInfo* path_create_info)
 
     path_create_info->field_20 &= ~0x800;
 
-    dist = sub_4B96F0(path_create_info->from, path_create_info->to);
+    dist = location_dist(path_create_info->from, path_create_info->to);
 
     if (dist >= INT_MAX) {
         return 0;
@@ -201,7 +201,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
     int v2;
     int64_t obj;
 
-    if (sub_4B96F0(path_create_info->from, path_create_info->to) > 32) {
+    if (location_dist(path_create_info->from, path_create_info->to) > 32) {
         return 0;
     }
 

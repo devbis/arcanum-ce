@@ -3970,7 +3970,7 @@ void sub_41A150(int area, int a2, int a3, DialogEntryNode* a4)
     loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
     area_loc = area_get_location(area);
     rot = location_rot(loc, area_loc);
-    v3 = sub_4B96F0(loc, area_loc) / 3168;
+    v3 = location_dist(loc, area_loc) / 3168;
 
     if (v3 < 2) {
         v4 = 200;
@@ -4016,7 +4016,7 @@ void sub_41A290(int area, int a2, int a3, DialogEntryNode* a4)
     loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
     area_loc = area_get_location(area);
     rot = location_rot(loc, area_loc);
-    v3 = sub_4B96F0(loc, area_loc) / 3168;
+    v3 = location_dist(loc, area_loc) / 3168;
     v4 = v3 < 2 ? 600 : 700;
 
     sub_418780(buffer, a4, v4 + 10 * rot, v4 + 10 * rot + 9);

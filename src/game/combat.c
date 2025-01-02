@@ -588,8 +588,8 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
 
     if (weapon_obj_type != 5) {
         attacker_loc = obj_field_int64_get(attacker_obj, OBJ_F_LOCATION);
-        attacker_to_target_dist = sub_4B96F0(attacker_loc, target_loc);
-        proj_to_target_dist = sub_4B96F0(proj_loc, target_loc);
+        attacker_to_target_dist = location_dist(attacker_loc, target_loc);
+        proj_to_target_dist = location_dist(proj_loc, target_loc);
         if (attacker_to_target_dist > 0
             && proj_to_target_dist > 0
             && proj_to_target_dist < attacker_to_target_dist) {
@@ -1101,7 +1101,7 @@ void sub_4B39B0(CombatContext* combat)
         && !is_boomerangs
         && (combat->flags & 0x02) == 0) {
         range = (20 - basic_skill_level(combat->attacker_obj, BASIC_SKILL_THROWING)) / 5 + 1;
-        max_range = sub_4B96F0(loc, combat->target_loc);
+        max_range = location_dist(loc, combat->target_loc);
         if (range > max_range) {
             range = (int)max_range;
         }
@@ -3497,7 +3497,7 @@ bool sub_4B78D0(int64_t a1, int64_t a2)
     if (weapon_obj == OBJ_HANDLE_NULL || item_weapon_range(weapon_obj, a1) <= 1) {
         loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
         loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
-        if (sub_4B96F0(loc1, loc2) > 1) {
+        if (location_dist(loc1, loc2) > 1) {
             v1 += sub_4B7BA0(a1, loc2, 1);
         }
     }

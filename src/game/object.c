@@ -3813,7 +3813,7 @@ int64_t sub_441AE0(object_id_t obj1, object_id_t obj2)
 
     location1 = obj_field_int64_get(obj1, OBJ_F_LOCATION);
     location2 = obj_field_int64_get(obj2, OBJ_F_LOCATION);
-    return sub_4B96F0(location1, location2);
+    return location_dist(location1, location2);
 }
 
 // 0x441B20

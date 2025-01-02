@@ -4615,7 +4615,7 @@ bool sub_425130(AnimRunInfo* run_info)
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
 
-    if (sub_4B96F0(source_loc, target_loc) > range) {
+    if (location_dist(source_loc, target_loc) > range) {
         return false;
     }
 
@@ -4651,7 +4651,7 @@ bool sub_425270(AnimRunInfo* run_info)
     }
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
-    if (sub_4B96F0(source_loc, target_loc) > range) {
+    if (location_dist(source_loc, target_loc) > range) {
         return false;
     }
 
@@ -4685,7 +4685,7 @@ bool sub_425340(AnimRunInfo* run_info)
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
 
-    if (sub_4B96F0(source_loc, target_loc) > range) {
+    if (location_dist(source_loc, target_loc) > range) {
         return false;
     }
 
@@ -5204,7 +5204,7 @@ int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj)
             if (anim_path->absMaxPathLength > 0) {
                 anim_path->maxPathLength = anim_path->absMaxPathLength;
             } else {
-                estimate = (int)sub_4B96F0(from, to);
+                estimate = (int)location_dist(from, to);
                 if (estimate > anim_path->field_CC) {
                     anim_create_path_max_length(obj, "Estimated Distance is too large", estimate);
                 }
@@ -5224,7 +5224,7 @@ int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj)
             }
         }
     } else {
-        estimate = (int)sub_4B96F0(from, to);
+        estimate = (int)location_dist(from, to);
         if (estimate > anim_path->field_CC) {
             anim_create_path_max_length(obj, "Estimated Distance is too large", estimate);
             tig_debug_printf("   SrcLocAxis: (%d x %d)", (int)location_get_x(from), (int)location_get_y(from));
@@ -7275,7 +7275,7 @@ bool sub_429960(AnimRunInfo* run_info)
         }
     }
 
-    if (sub_4B96F0(source_loc, target_loc) > range) {
+    if (location_dist(source_loc, target_loc) > range) {
         return false;
     }
 
@@ -8152,7 +8152,7 @@ bool sub_42AE10(AnimRunInfo* run_info)
     v1 = sub_4AFBB0(source_obj);
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
-    return sub_4B96F0(source_loc, target_loc) < v1;
+    return location_dist(source_loc, target_loc) < v1;
 }
 
 // 0x42AF00
@@ -8890,7 +8890,7 @@ bool sub_42BFD0(AnimRunInfo* run_info)
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
-    return sub_4B96F0(source_loc, target_loc) < v2;
+    return location_dist(source_loc, target_loc) < v2;
 }
 
 // 0x42C0F0
@@ -9965,7 +9965,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
     sound_handle = run_info->goals[0].params[AGDATA_SOUND_HANDLE].data;
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     player_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
-    if (sub_4B96F0(player_loc, loc) > max_sound_distance) {
+    if (location_dist(player_loc, loc) > max_sound_distance) {
         if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
             tig_sound_destroy(sound_handle);
             run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
@@ -11030,7 +11030,7 @@ bool sub_42F6A0(AnimRunInfo* run_info)
         }
 
         if (new_loc != projectile_loc) {
-            int range = (int)sub_4B96F0(run_info->cur_stack_data->params[AGDATA_ORIGINAL_TILE].loc,
+            int range = (int)location_dist(run_info->cur_stack_data->params[AGDATA_ORIGINAL_TILE].loc,
                 obj_field_int64_get(projectile_obj, OBJ_F_LOCATION));
             sub_4B2870(parent_obj, target_obj, target_loc, projectile_obj, range, new_loc, v1);
 
@@ -11548,7 +11548,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
             int64_t x;
             int64_t y;
 
-            distance = sub_4B96F0(run_info->path.field_E8, loc);
+            distance = location_dist(run_info->path.field_E8, loc);
             sub_441B60(obj, obj, str);
             tig_debug_printf("AGUpdateAnimMove: ERROR %s (%I64d tiles away @ %I64d, %I64d) are more than\n",
                 str,
@@ -13964,7 +13964,7 @@ bool anim_goal_follow_obj(int64_t source_obj, int64_t target_obj)
         case AG_ATTEMPT_MOVE_NEAR:
             source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
             target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
-            if (sub_4B96F0(source_loc, target_loc) <= range) {
+            if (location_dist(source_loc, target_loc) <= range) {
                 sub_4364D0(source_obj);
                 return true;
             }
@@ -13976,7 +13976,7 @@ bool anim_goal_follow_obj(int64_t source_obj, int64_t target_obj)
     } else {
         source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
         target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
-        if (sub_4B96F0(source_loc, target_loc) <= range) {
+        if (location_dist(source_loc, target_loc) <= range) {
             sub_4364D0(source_obj);
             return true;
         }
@@ -14964,7 +14964,7 @@ bool sub_436960(int64_t a1, int64_t a2)
             return true;
         }
 
-        if (sub_4B96F0(obj_field_int64_get(a1, OBJ_F_LOCATION), obj_field_int64_get(a2, OBJ_F_LOCATION)) <= 7) {
+        if (location_dist(obj_field_int64_get(a1, OBJ_F_LOCATION), obj_field_int64_get(a2, OBJ_F_LOCATION)) <= 7) {
             return true;
         }
     }

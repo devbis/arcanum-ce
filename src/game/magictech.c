@@ -3550,7 +3550,7 @@ bool sub_454700(int64_t source_loc, int64_t target_loc, int64_t target_obj, int 
         return false;
     }
 
-    return sub_4B96F0(source_loc, target_loc) <= magictech_get_range(spell);
+    return location_dist(source_loc, target_loc) <= magictech_get_range(spell);
 }
 
 // 0x454790

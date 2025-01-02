@@ -1781,7 +1781,7 @@ int sub_4C8430(Tanya* a1)
     }
 
     if ((dword_5B6F64[skill] & 0x02) != 0) {
-        int64_t dist = sub_4B96F0(a1->field_60, obj_field_int64_get(source_obj, OBJ_F_LOCATION));
+        int64_t dist = location_dist(a1->field_60, obj_field_int64_get(source_obj, OBJ_F_LOCATION));
         if (dist > INT_MAX) {
             return 1000000;
         }

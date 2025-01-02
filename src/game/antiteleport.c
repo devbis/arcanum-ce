@@ -252,7 +252,7 @@ bool antiteleport_check_can_teleport(int64_t obj, int64_t extra_loc)
     int index;
     int area;
     int64_t loc;
-    int64_t distance;
+    int64_t dist;
 
     if (obj == OBJ_HANDLE_NULL) {
         return false;
@@ -279,16 +279,16 @@ bool antiteleport_check_can_teleport(int64_t obj, int64_t extra_loc)
     }
 
     for (index = 0; index < antiteleport_region_list.cnt; index++) {
-        distance = sub_4B96F0(loc, antiteleport_region_list.entries[index].location);
-        if (distance < antiteleport_region_list.entries[index].radius) {
+        dist = location_dist(loc, antiteleport_region_list.entries[index].location);
+        if (dist < antiteleport_region_list.entries[index].radius) {
             return false;
         }
     }
 
     if (extra_loc != 0) {
         for (index = 0; index < antiteleport_region_list.cnt; index++) {
-            distance = sub_4B96F0(extra_loc, antiteleport_region_list.entries[index].location);
-            if (distance < antiteleport_region_list.entries[index].radius) {
+            dist = location_dist(extra_loc, antiteleport_region_list.entries[index].location);
+            if (dist < antiteleport_region_list.entries[index].radius) {
                 return false;
             }
         }

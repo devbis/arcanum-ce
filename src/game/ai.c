@@ -2610,7 +2610,7 @@ bool sub_4ACBB0(int64_t obj, bool a2)
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     wp = obj_field_int32_get(obj, OBJ_F_NPC_WAYPOINT_CURRENT);
     next_loc = obj_arrayfield_int64_get(obj, OBJ_F_NPC_WAYPOINTS_IDX, wp);
-    if (sub_4B96F0(loc, next_loc) <= 3) {
+    if (location_dist(loc, next_loc) <= 3) {
         wp++;
         if (wp == obj_arrayfield_length_get(obj, OBJ_F_NPC_WAYPOINTS_IDX)) {
             wp = 0;
@@ -2656,7 +2656,7 @@ bool sub_4ACDB0(int64_t obj, bool a2)
     int hour;
     int64_t loc;
     unsigned int npc_flags;
-    int64_t distance;
+    int64_t dist;
     int wandering_range;
     int64_t bed_obj;
     TeleportData teleport_data;
@@ -2686,10 +2686,10 @@ bool sub_4ACDB0(int64_t obj, bool a2)
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-    distance = sub_4B96F0(standpoint_loc, loc);
+    dist = location_dist(standpoint_loc, loc);
 
     wandering_range = (npc_flags & (ONF_WANDERS_IN_DARK | ONF_WANDERS)) != 0 ? 4 : 1;
-    if (distance <= wandering_range) {
+    if (dist <= wandering_range) {
         if ((npc_flags & ONF_WAYPOINTS_BED) == 0) {
             npc_flags |= ONF_WAYPOINTS_BED;
             obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);

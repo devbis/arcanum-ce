@@ -3277,7 +3277,7 @@ bool sub_563F00(WmapCoords* coords, int64_t* a2)
 
     sub_561800(coords, &v1);
     pc_location = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
-    if (sub_4B96F0(v1, pc_location) < qword_66D850) {
+    if (location_dist(v1, pc_location) < qword_66D850) {
         sub_561490(pc_location, coords);
         *a2 = pc_location;
         return true;
@@ -3810,7 +3810,7 @@ int64_t sub_564EE0(WmapCoords* a1, WmapCoords* a2, DateTime* datetime)
 
     sub_561800(a1, &v1);
     sub_561800(a2, &v2);
-    v3 = (int)(sub_4B96F0(v1, v2) / 64);
+    v3 = (int)(location_dist(v1, v2) / 64);
 
     if (datetime != NULL) {
         sub_45A950(datetime, 3600000 * v3);

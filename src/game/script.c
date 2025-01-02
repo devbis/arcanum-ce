@@ -1217,7 +1217,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         x = script_get_value(condition->op_type[2], condition->op_value[2], state);
         y = script_get_value(condition->op_type[3], condition->op_value[3], state);
 
-        if (sub_4B96F0(location_make(x, y), obj_field_int64_get(obj, OBJ_F_LOCATION)) <= range) {
+        if (location_dist(location_make(x, y), obj_field_int64_get(obj, OBJ_F_LOCATION)) <= range) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
