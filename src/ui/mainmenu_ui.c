@@ -5262,7 +5262,7 @@ void sub_545E80(TigRect* rect)
 
     loc_rect.x1 = 0;
     loc_rect.y1 = 0;
-    location_get_limits(&(loc_rect.x2), &(loc_rect.y2));
+    location_limits_get(&(loc_rect.x2), &(loc_rect.y2));
     sub_440B40(&loc_rect, OBJ_TM_NPC, &objects);
 
     if (objects.head != NULL) {

@@ -1815,7 +1815,7 @@ void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
     }
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    location_get_limits(&limit_x, &limit_y);
+    location_limits_get(&limit_x, &limit_y);
 
     if (LOCATION_GET_X(loc) < limit_x && LOCATION_GET_Y(loc) < limit_y) {
         location_xy(loc, &loc_x, &loc_y);

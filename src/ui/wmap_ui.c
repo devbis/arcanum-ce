@@ -1469,7 +1469,7 @@ bool wmap_ui_create()
             int64_t limit_x;
             int64_t limit_y;
 
-            location_get_limits(&limit_x, &limit_y);
+            location_limits_get(&limit_x, &limit_y);
             stru_5C9228[dword_66D868].field_60 = (int)(limit_x / 64) - stru_5C9228[dword_66D868].rect.width;
             stru_5C9228[dword_66D868].field_64 = (int)(limit_y / 64) - stru_5C9228[dword_66D868].rect.height;
         }
@@ -1480,7 +1480,7 @@ bool wmap_ui_create()
             int64_t limit_x;
             int64_t limit_y;
 
-            location_get_limits(&limit_x, &limit_y);
+            location_limits_get(&limit_x, &limit_y);
             dword_66D6F8 = (int)(limit_x / 64);
         }
 
@@ -2352,7 +2352,7 @@ void sub_562880(WmapCoords* coords)
             if (sub_5614F0()) {
                 limit_x = 2000;
             } else {
-                location_get_limits(&limit_x, &limit_y);
+                location_limits_get(&limit_x, &limit_y);
                 limit_x /= 64;
             }
 
@@ -3126,7 +3126,7 @@ void sub_563B10(int x, int y, WmapCoords* coords)
     } else {
         int64_t limit_x;
         int64_t limit_y;
-        location_get_limits(&limit_x, &limit_y);
+        location_limits_get(&limit_x, &limit_y);
 
         width = limit_x / 64;
         height = limit_y / 64;
@@ -4057,7 +4057,7 @@ void sub_5656B0(int x, int y, WmapCoords* coords)
     } else {
         int64_t limit_x;
         int64_t limit_y;
-        location_get_limits(&limit_x, &limit_y);
+        location_limits_get(&limit_x, &limit_y);
 
         width = limit_x / 64;
         height = limit_y / 64;

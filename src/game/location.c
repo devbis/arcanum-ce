@@ -568,7 +568,7 @@ bool location_limits_set(int64_t x, int64_t y)
 }
 
 // 0x4B97E0
-void location_get_limits(int64_t* x, int64_t* y)
+void location_limits_get(int64_t* x, int64_t* y)
 {
     *x = location_limit_x;
     *y = location_limit_y;
