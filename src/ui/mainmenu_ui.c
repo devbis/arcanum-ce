@@ -2961,7 +2961,7 @@ void mainmenu_ui_create_options()
     if (stru_5C36B0[dword_64C244][0]) {
         pc_obj = player_get_pc_obj();
         loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
-        sub_4B8CE0(loc);
+        location_origin_set(loc);
         sub_550DA0(1, &v1);
     } else {
         sub_550DA0(2, &v1);
@@ -3128,7 +3128,7 @@ void mainmenu_ui_create_load_game()
     tig_art_interface_id_create(746, 0, 0, 0, &(v1.art_id));
 
     if (pc_obj != OBJ_HANDLE_NULL) {
-        sub_4B8CE0(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
+        location_origin_set(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
     }
 
     if (sub_40FF50(2) == sub_40FF40()) {
@@ -3809,7 +3809,7 @@ void mainmenu_ui_create_save_game()
     tig_art_interface_id_create(746, 0, 0, 0, &(v1.art_id));
 
     if (pc_obj != OBJ_HANDLE_NULL) {
-        sub_4B8CE0(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
+        location_origin_set(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
     }
 
     sub_550DA0(1, &v1);

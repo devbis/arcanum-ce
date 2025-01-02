@@ -771,7 +771,7 @@ bool sub_49CC70(const char* a1, const char* a2)
 
         multiplayer_start_play(&player_create_info);
         sub_52A950();
-        sub_4B8CE0(obj_field_int64_get(player_create_info.obj, OBJ_F_LOCATION));
+        location_origin_set(obj_field_int64_get(player_create_info.obj, OBJ_F_LOCATION));
 
         objid_id_to_str(pc_file_base_name, sub_407EF0(player_create_info.obj));
         sprintf(dst, "%s\\Players", ".\\data\\temp");

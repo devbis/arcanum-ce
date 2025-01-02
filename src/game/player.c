@@ -98,7 +98,7 @@ bool player_load(GameLoadInfo* load_info)
 
     location = obj_field_int64_get(player_pc_obj, OBJ_F_LOCATION);
     scroll_set_center(location);
-    sub_4B8CE0(location);
+    location_origin_set(location);
     sub_4604E0();
 
     return true;

@@ -319,7 +319,7 @@ void written_ui_create()
 
     obj = player_get_pc_obj();
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    sub_4B8CE0(location);
+    location_origin_set(location);
 
     v1.window_handle = written_ui_window;
     v1.rect = &stru_5CA4A8;

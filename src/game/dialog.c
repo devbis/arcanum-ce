@@ -489,9 +489,9 @@ bool sub_412FD0(DialogEntryNode* a1)
             location_xy(pc_loc, &tmp, &pc_loc_y);
             location_xy(npc_loc, &tmp, &npc_loc_y);
             if (npc_loc_y > pc_loc_y) {
-                sub_4B8CE0(npc_loc);
+                location_origin_set(npc_loc);
             } else {
-                sub_4B8CE0(pc_loc);
+                location_origin_set(pc_loc);
             }
         }
 

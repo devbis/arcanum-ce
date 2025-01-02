@@ -70,7 +70,7 @@ bool location_init(GameInitInfo* init_info)
     location_screen_center_y = window_data.rect.height / 2;
 
     location_set_limits(0x100000000, 0x100000000);
-    sub_4B8CE0(sub_4B9810());
+    location_origin_set(sub_4B9810());
 
     location_view_options.type = VIEW_TYPE_ISOMETRIC;
     location_editor = init_info->editor;
@@ -114,7 +114,7 @@ bool location_update_view(ViewOptions* view_options)
         location_origin_x = 0;
         location_origin_y = 0;
         location_view_options = *view_options;
-        sub_4B8CE0(loc);
+        location_origin_set(loc);
         return true;
     }
 
@@ -122,7 +122,7 @@ bool location_update_view(ViewOptions* view_options)
         location_origin_x = location_iso_content_rect.width;
         location_origin_y = 0;
         location_view_options = *view_options;
-        sub_4B8CE0(loc);
+        location_origin_set(loc);
         return true;
     }
 
@@ -268,14 +268,16 @@ void location_origin_scroll(int64_t dx, int64_t dy)
 }
 
 // 0x4B8CE0
-void sub_4B8CE0(int64_t location)
+void location_origin_set(int64_t location)
 {
-    int64_t x;
-    int64_t y;
+    int64_t sx;
+    int64_t sy;
 
-    sub_4B8940(location, &x, &y);
-    location_origin_scroll(x, y);
+    sub_4B8940(location, &sx, &sy);
+    location_origin_scroll(sx, sy);
+
     location_iso_invalidate_rect(&location_iso_content_rect);
+
     if (dword_5FC2F8 != NULL) {
         dword_5FC2F8(location);
     }

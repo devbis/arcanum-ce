@@ -690,7 +690,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
     location_set_limits(map_properties.field_8, map_properties.field_10);
     sector_limits_set(map_properties.field_8 / 64, map_properties.field_10 / 64);
     sub_4D0440(a1, a2);
-    sub_4B8CE0(sub_4B9810());
+    location_origin_set(sub_4B9810());
     dword_5D1210 = 0;
     pch = strrchr(a1, '\\');
     map = map_list_info_find(pch != NULL ? pch + 1 : a1);
@@ -768,7 +768,7 @@ bool map_open_in_game(int map, bool a2, bool a3)
     }
 
     qword_5D11E0 = info->x | (info->y << 32);
-    sub_4B8CE0(qword_5D11E0);
+    location_origin_set(qword_5D11E0);
 
     if (a2) {
         sub_40FE00(qword_5D11E0);

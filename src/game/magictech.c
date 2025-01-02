@@ -4005,7 +4005,7 @@ void sub_455350(int64_t obj, int64_t target_loc)
         sub_43E770(obj, source_loc, 0, 0);
 
         if (player_is_pc_obj(obj)) {
-            sub_4B8CE0(source_loc);
+            location_origin_set(source_loc);
         }
     }
 

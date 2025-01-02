@@ -1056,7 +1056,7 @@ bool charedit_create(int64_t obj, int a2)
     }
 
     sub_55B150();
-    sub_4B8CE0(obj_field_int64_get(qword_64E010, OBJ_F_LOCATION));
+    location_origin_set(obj_field_int64_get(qword_64E010, OBJ_F_LOCATION));
 
     v1.window_handle = dword_64CA64;
     v1.rect = &stru_5C8930;

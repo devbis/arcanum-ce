@@ -314,7 +314,7 @@ void main_loop()
 
     pc_obj = player_get_pc_obj();
     sub_43E770(pc_obj, location, 0, 0);
-    sub_4B8CE0(location);
+    location_origin_set(location);
 
     art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
     art_id = tig_art_id_frame_set(art_id, 0);

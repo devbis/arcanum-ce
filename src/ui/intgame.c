@@ -2998,14 +2998,14 @@ void sub_54EB60()
     sub_4B8940(loc, &x, &y);
 
     if (x != 0 || y != 0) {
-        sub_4B8CE0(loc);
+        location_origin_set(loc);
         iso_redraw();
     } else {
         if (sub_4B6D70()) {
             obj = sub_4B6D80();
             if (obj != OBJ_HANDLE_NULL) {
                 loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                sub_4B8CE0(loc);
+                location_origin_set(loc);
                 iso_redraw();
             }
         }
@@ -4663,7 +4663,7 @@ void sub_551A10(int64_t obj)
         location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         sub_4B8940(location, &x, &y);
         if (x != 0 || y != 0) {
-            sub_4B8CE0(location);
+            location_origin_set(location);
             iso_redraw();
         }
     }

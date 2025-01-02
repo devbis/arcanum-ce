@@ -412,7 +412,7 @@ void schematic_ui_create()
 
     sub_56DDC0();
 
-    sub_4B8CE0(obj_field_int64_get(qword_680E70, OBJ_F_LOCATION));
+    location_origin_set(obj_field_int64_get(qword_680E70, OBJ_F_LOCATION));
 
     v1.window_handle = schematic_ui_window;
     v1.rect = &stru_5CA840;

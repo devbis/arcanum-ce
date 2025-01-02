@@ -11726,12 +11726,12 @@ bool sub_4305D0(AnimRunInfo* run_info)
 
                 // NOTE: Original code compares by casting to double.
                 if (llabs(x) > 360) {
-                    sub_4B8CE0(new_loc);
+                    location_origin_set(new_loc);
                 }
 
                 // NOTE: Original code compares by casting to double.
                 if (llabs(y) > 180) {
-                    sub_4B8CE0(new_loc);
+                    location_origin_set(new_loc);
                 }
             }
 

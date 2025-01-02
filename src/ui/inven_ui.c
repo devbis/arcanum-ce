@@ -1010,7 +1010,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     sub_579C40();
     redraw_inven(true);
     qword_6810E0 = OBJ_HANDLE_NULL;
-    sub_4B8CE0(obj_field_int64_get(qword_6814F8, OBJ_F_LOCATION));
+    location_origin_set(obj_field_int64_get(qword_6814F8, OBJ_F_LOCATION));
 
     v2.window_handle = inven_ui_window_handle;
     if (dword_683464 == 0

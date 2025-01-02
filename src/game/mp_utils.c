@@ -340,7 +340,7 @@ void sub_4EDF20(int64_t obj, int64_t location, int dx, int dy, bool a7)
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0) {
         if (a7 && player_is_pc_obj(obj)) {
-            sub_4B8CE0(location);
+            location_origin_set(location);
         }
         sub_43E770(obj, location, dx, dy);
     }
@@ -367,7 +367,7 @@ void sub_4EDFF0(Packet99* pkt)
         sub_43E770(obj, pkt->location, pkt->dx, pkt->dy);
 
         if (pkt->field_30 && player_is_pc_obj(obj)) {
-            sub_4B8CE0(pkt->location);
+            location_origin_set(pkt->location);
         }
     }
 }

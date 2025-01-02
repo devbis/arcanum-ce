@@ -257,7 +257,7 @@ bool teleport_process(TeleportData* teleport_data)
                 return false;
             }
 
-            sub_4B8CE0(teleport_data->loc);
+            location_origin_set(teleport_data->loc);
             sub_40D860();
         }
 
