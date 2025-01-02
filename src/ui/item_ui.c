@@ -160,7 +160,7 @@ void sub_571CB0(S4F2810* a1)
         return;
     }
 
-    if (obj_field_int32_get(qword_6810D8, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+    if (obj_field_int32_get(qword_6810D8, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
         && !tig_kb_is_key_pressed(DIK_LCONTROL)
         && (obj_field_int32_get(qword_6810D8, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
         sub_4C7090(&v1);

@@ -639,14 +639,14 @@ bool obj_validate_system(unsigned int flags)
                 case OBJ_TYPE_PROJECTILE:
                 case OBJ_TYPE_WEAPON:
                 case OBJ_TYPE_AMMO:
-                case OBJ_TYPE_ITEM_ARMOR:
-                case OBJ_TYPE_ITEM_GOLD:
-                case OBJ_TYPE_ITEM_FOOD:
-                case OBJ_TYPE_ITEM_SCROLL:
-                case OBJ_TYPE_ITEM_KEY:
-                case OBJ_TYPE_ITEM_KEY_RING:
-                case OBJ_TYPE_ITEM_WRITTEN:
-                case OBJ_TYPE_ITEM_GENERIC:
+                case OBJ_TYPE_ARMOR:
+                case OBJ_TYPE_GOLD:
+                case OBJ_TYPE_FOOD:
+                case OBJ_TYPE_SCROLL:
+                case OBJ_TYPE_KEY:
+                case OBJ_TYPE_KEY_RING:
+                case OBJ_TYPE_WRITTEN:
+                case OBJ_TYPE_GENERIC:
                 case OBJ_TYPE_TRAP:
                     inventory_num_fld = -1;
                     inventory_list_fld = -1;
@@ -2646,17 +2646,17 @@ void sub_409000(int64_t obj)
     switch (type) {
     case OBJ_TYPE_WEAPON:
     case OBJ_TYPE_AMMO:
-    case OBJ_TYPE_ITEM_ARMOR:
-    case OBJ_TYPE_ITEM_GOLD:
-    case OBJ_TYPE_ITEM_FOOD:
-    case OBJ_TYPE_ITEM_SCROLL:
-    case OBJ_TYPE_ITEM_KEY:
-    case OBJ_TYPE_ITEM_KEY_RING:
-    case OBJ_TYPE_ITEM_WRITTEN:
-    case OBJ_TYPE_ITEM_GENERIC:
-        if (type == OBJ_TYPE_ITEM_KEY) {
+    case OBJ_TYPE_ARMOR:
+    case OBJ_TYPE_GOLD:
+    case OBJ_TYPE_FOOD:
+    case OBJ_TYPE_SCROLL:
+    case OBJ_TYPE_KEY:
+    case OBJ_TYPE_KEY_RING:
+    case OBJ_TYPE_WRITTEN:
+    case OBJ_TYPE_GENERIC:
+        if (type == OBJ_TYPE_KEY) {
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 0);
-        } else if (type == OBJ_TYPE_ITEM_GOLD) {
+        } else if (type == OBJ_TYPE_GOLD) {
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
         } else {
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
@@ -2749,7 +2749,7 @@ void sub_409000(int64_t obj)
         sub_409640(obj, TIG_ART_ITEM_TYPE_AMMO);
         tig_art_item_id_create(0, 0, 0, 0, 0, 1, 0, 0, &art_id);
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         sub_409640(obj, TIG_ART_ITEM_TYPE_ARMOR);
         tig_art_item_id_create(0, 1, 0, 0, 4, 2, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
@@ -2759,32 +2759,32 @@ void sub_409000(int64_t obj)
         obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
         obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, OARF_SIZE_MEDIUM);
         break;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         sub_409640(obj, TIG_ART_ITEM_TYPE_GOLD);
         obj_field_int32_set(obj, OBJ_F_GOLD_QUANTITY, 1);
         tig_art_item_id_create(0, 0, 0, 0, 0, 3, 0, 0, &art_id);
         break;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         sub_409640(obj, TIG_ART_ITEM_TYPE_FOOD);
         tig_art_item_id_create(0, 0, 0, 0, 0, 4, 0, 0, &art_id);
         break;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         sub_409640(obj, TIG_ART_ITEM_TYPE_SCROLL);
         tig_art_item_id_create(0, 0, 0, 0, 0, 5, 0, 0, &art_id);
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         sub_409640(obj, TIG_ART_ITEM_TYPE_KEY);
         tig_art_item_id_create(0, 0, 0, 0, 0, 6, 0, 0, &art_id);
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         sub_409640(obj, TIG_ART_ITEM_TYPE_KEY_RING);
         tig_art_item_id_create(0, 0, 0, 0, 0, 7, 0, 0, &art_id);
         break;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         sub_409640(obj, TIG_ART_ITEM_TYPE_WRITTEN);
         tig_art_item_id_create(0, 0, 0, 0, 0, 8, 0, 0, &art_id);
         break;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         sub_409640(obj, TIG_ART_ITEM_TYPE_GENERIC);
         tig_art_item_id_create(0, 0, 0, 0, 0, 9, 0, 0, &art_id);
         break;
@@ -4095,49 +4095,49 @@ int sub_40C030(ObjectType object_type)
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         v1 = object_fields[OBJ_F_ARMOR_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         v1 = object_fields[OBJ_F_GOLD_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         v1 = object_fields[OBJ_F_FOOD_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         v1 = object_fields[OBJ_F_SCROLL_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         v1 = object_fields[OBJ_F_KEY_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         v1 = object_fields[OBJ_F_KEY_RING_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         v1 = object_fields[OBJ_F_WRITTEN_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
         }
         break;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         v1 = object_fields[OBJ_F_GENERIC_PAD_I64AS_1].change_array_idx;
         if (v1 == -1) {
             v1 = object_fields[OBJ_F_ITEM_PAD_I64AS_1].change_array_idx;
@@ -4202,28 +4202,28 @@ bool sub_40C260(int type, int fld)
     case OBJ_TYPE_AMMO:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_AMMO_BEGIN && fld < OBJ_F_AMMO_END);
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_ARMOR_BEGIN && fld < OBJ_F_ARMOR_END);
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_GOLD_BEGIN && fld < OBJ_F_GOLD_END);
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_FOOD_BEGIN && fld < OBJ_F_FOOD_END);
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_SCROLL_BEGIN && fld < OBJ_F_SCROLL_END);
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_KEY_BEGIN && fld < OBJ_F_KEY_END);
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_KEY_RING_BEGIN && fld < OBJ_F_KEY_RING_END);
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_WRITTEN_BEGIN && fld < OBJ_F_WRITTEN_END);
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         return (fld > OBJ_F_ITEM_BEGIN && fld < OBJ_F_ITEM_END)
             || (fld > OBJ_F_GENERIC_BEGIN && fld < OBJ_F_GENERIC_END);
     case OBJ_TYPE_PC:
@@ -4430,7 +4430,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4438,7 +4438,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4446,7 +4446,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4454,7 +4454,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4462,7 +4462,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4470,7 +4470,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4478,7 +4478,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4486,7 +4486,7 @@ bool obj_enumerate_fields(Object* object, ObjEnumerateCallback* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         if (!obj_enumerate_fields_in_range(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4603,7 +4603,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4611,7 +4611,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4619,7 +4619,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4627,7 +4627,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4635,7 +4635,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4643,7 +4643,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4651,7 +4651,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4659,7 +4659,7 @@ bool sub_40CBA0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         if (!sub_40CE20(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4770,7 +4770,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4778,7 +4778,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4786,7 +4786,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4794,7 +4794,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4802,7 +4802,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4810,7 +4810,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4818,7 +4818,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }
@@ -4826,7 +4826,7 @@ bool sub_40CEF0(Object* object, ObjEnumerateCallbackEx* callback)
             return false;
         }
         break;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         if (!sub_40D170(object, OBJ_F_ITEM_BEGIN, OBJ_F_ITEM_END, callback)) {
             return false;
         }

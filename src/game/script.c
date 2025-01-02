@@ -2368,7 +2368,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int start = script_get_value(action->op_type[1], action->op_value[1], state);
 
-        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_WRITTEN) {
+        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_WRITTEN) {
             sub_4EFDD0(obj, OBJ_F_WRITTEN_TEXT_START_LINE, start);
         }
 

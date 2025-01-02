@@ -1184,7 +1184,7 @@ bool sub_4C7160(Tanya* a1)
                 if (item_parent(item_obj, &parent_obj) && parent_obj == target_obj) {
                     bool moved;
                     switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
-                    case OBJ_TYPE_ITEM_GOLD: {
+                    case OBJ_TYPE_GOLD: {
                         int qty = item_gold_get(item_obj);
                         if (qty > 100) {
                             qty = 100;
@@ -1260,7 +1260,7 @@ bool sub_4C7160(Tanya* a1)
                 if (item_parent(item_obj, &parent_obj) && parent_obj == source_obj) {
                     bool moved;
                     switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
-                    case OBJ_TYPE_ITEM_GOLD: {
+                    case OBJ_TYPE_GOLD: {
                         int qty = item_gold_get(item_obj);
                         if (qty > 100) {
                             qty = 100;
@@ -1380,7 +1380,7 @@ bool sub_4C7160(Tanya* a1)
         }
 
         if (item_obj != OBJ_HANDLE_NULL
-            && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+            && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
             && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_HEALING_ITEM) != 0) {
             int charges = obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_COUNT_REMAINING);
             if (!is_success && is_critical) {
@@ -1932,7 +1932,7 @@ int sub_4C8430(Tanya* a1)
             for (int inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
                 int64_t inv_item_obj = item_wield_get(source_obj, inventory_location);
                 if (inv_item_obj != OBJ_HANDLE_NULL
-                    && obj_field_int32_get(inv_item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+                    && obj_field_int32_get(inv_item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
                     int penalty = obj_field_int32_get(inv_item_obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ);
                     penalty += sub_461590(inv_item_obj,
                         source_obj,
@@ -1948,7 +1948,7 @@ int sub_4C8430(Tanya* a1)
     }
     case SKILL_HEAL:
         if (item_obj != OBJ_HANDLE_NULL
-            && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+            && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
             && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_HEALING_ITEM) != 0) {
             difficulty -= obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS);
         }
@@ -1957,7 +1957,7 @@ int sub_4C8430(Tanya* a1)
         if (target_obj != OBJ_HANDLE_NULL
             && (target_type == OBJ_TYPE_PORTAL || target_type == OBJ_TYPE_CONTAINER)) {
             if (item_obj != OBJ_HANDLE_NULL
-                && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+                && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
                 && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
                 difficulty -= obj_field_int32_get(item_obj, OBJ_F_GENERIC_USAGE_BONUS);
             }

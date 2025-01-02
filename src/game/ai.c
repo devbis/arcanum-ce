@@ -718,29 +718,29 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
         case OBJ_TM_AMMO:
             item_type = OBJ_TYPE_AMMO;
             break;
-        case OBJ_TM_ITEM_ARMOR:
-            item_type = OBJ_TYPE_ITEM_ARMOR;
+        case OBJ_TM_ARMOR:
+            item_type = OBJ_TYPE_ARMOR;
             break;
-        case OBJ_TM_ITEM_GOLD:
-            item_type = OBJ_TYPE_ITEM_GOLD;
+        case OBJ_TM_GOLD:
+            item_type = OBJ_TYPE_GOLD;
             break;
-        case OBJ_TM_ITEM_FOOD:
-            item_type = OBJ_TYPE_ITEM_FOOD;
+        case OBJ_TM_FOOD:
+            item_type = OBJ_TYPE_FOOD;
             break;
-        case OBJ_TM_ITEM_SCROLL:
-            item_type = OBJ_TYPE_ITEM_SCROLL;
+        case OBJ_TM_SCROLL:
+            item_type = OBJ_TYPE_SCROLL;
             break;
-        case OBJ_TM_ITEM_KEY:
-            item_type = OBJ_TYPE_ITEM_KEY;
+        case OBJ_TM_KEY:
+            item_type = OBJ_TYPE_KEY;
             break;
-        case OBJ_TM_ITEM_KEY_RING:
-            item_type = OBJ_TYPE_ITEM_KEY_RING;
+        case OBJ_TM_KEY_RING:
+            item_type = OBJ_TYPE_KEY_RING;
             break;
-        case OBJ_TM_ITEM_WRITTEN:
-            item_type = OBJ_TYPE_ITEM_WRITTEN;
+        case OBJ_TM_WRITTEN:
+            item_type = OBJ_TYPE_WRITTEN;
             break;
-        case OBJ_TM_ITEM_GENERIC:
-            item_type = OBJ_TYPE_ITEM_GENERIC;
+        case OBJ_TM_GENERIC:
+            item_type = OBJ_TYPE_GENERIC;
             break;
         default:
             return false;
@@ -2338,8 +2338,8 @@ void sub_4AC250(Ai* ai)
             sub_4574D0(ai->field_20);
 
             switch (obj_field_int32_get(ai->field_20, OBJ_F_TYPE)) {
-            case OBJ_TYPE_ITEM_FOOD:
-            case OBJ_TYPE_ITEM_SCROLL:
+            case OBJ_TYPE_FOOD:
+            case OBJ_TYPE_SCROLL:
                 sub_43CCA0(ai->field_20);
                 break;
             }
@@ -3562,7 +3562,7 @@ int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill)
     switch (skill) {
     case SKILL_HEAL:
         if (a3 == OBJ_HANDLE_NULL
-            || obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_ITEM_GENERIC
+            || obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_GENERIC
             || (obj_field_int32_get(a3, OBJ_F_GENERIC_FLAGS) & 0x8) == 0) {
             return 1;
         }
@@ -3583,7 +3583,7 @@ int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill)
         return 0;
     case SKILL_DISARM_TRAPS:
         if (a3 != OBJ_HANDLE_NULL) {
-            if (obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_ITEM_GENERIC
+            if (obj_field_int32_get(a3, OBJ_F_TYPE) != OBJ_TYPE_GENERIC
                 || (obj_field_int32_get(a3, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) == 0) {
                 return 1;
             }

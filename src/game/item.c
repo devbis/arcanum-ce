@@ -349,7 +349,7 @@ bool item_is_item(object_id_t object_id)
 
     if (object_id != OBJ_HANDLE_NULL) {
         type = obj_field_int32_get(object_id, OBJ_F_TYPE);
-        if (type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC) {
+        if (obj_type_is_item(type)) {
             return true;
         }
     }
@@ -372,7 +372,7 @@ int item_weight(int64_t item_obj, int64_t owner_obj)
     int weight_adj;
     int quantity_fld;
 
-    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GOLD) {
+    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_GOLD) {
         return 0;
     }
 
@@ -737,7 +737,7 @@ bool item_drop_ex(int64_t item_obj, int distance)
             flags |= ONF_LOOK_FOR_WEAPON;
             obj_field_int32_set(parent_obj, OBJ_F_NPC_FLAGS, flags);
             break;
-        case OBJ_TYPE_ITEM_ARMOR:
+        case OBJ_TYPE_ARMOR:
             flags = obj_field_int32_get(parent_obj, OBJ_F_NPC_FLAGS);
             flags |= ONF_LOOK_FOR_ARMOR;
             obj_field_int32_set(parent_obj, OBJ_F_NPC_FLAGS, flags);
@@ -850,7 +850,7 @@ int sub_461F80(int64_t a1, int64_t a2, int64_t a3, bool a4)
     int v2;
     int v3;
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GOLD) {
+    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_GOLD) {
         if (a4) {
             return item_gold_get(a1);
         } else {
@@ -990,7 +990,7 @@ int sub_462410(object_id_t item_id, int* quantity_field_ptr)
     int ammo_type;
 
     switch (obj_field_int32_get(item_id, OBJ_F_TYPE)) {
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         rc = OBJ_F_CRITTER_GOLD;
         quantity_field = OBJ_F_GOLD_QUANTITY;
         break;
@@ -1164,7 +1164,7 @@ int64_t item_find_first_generic(int64_t obj, unsigned int flags)
     cnt = obj_field_int32_get(obj, inventory_num_fld);
     for (index = 0; index < cnt; index++) {
         item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
-        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
             && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & flags) != 0) {
             return item_obj;
         }
@@ -1377,7 +1377,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
     item_parent(item_obj, &parent_obj);
 
     item_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
-    if (item_type == OBJ_TYPE_ITEM_SCROLL) {
+    if (item_type == OBJ_TYPE_SCROLL) {
         int spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1);
         int min_intelligence = sub_4B1750(spell);
         if (min_intelligence > stat_level(source_obj, STAT_INTELLIGENCE)) {
@@ -1410,13 +1410,13 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
         sub_4CBF70(item_obj, target_obj);
 
-        if (item_type == OBJ_TYPE_ITEM_FOOD) {
+        if (item_type == OBJ_TYPE_FOOD) {
             sub_4574D0(item_obj);
             sub_43CCA0(item_obj);
             return;
         }
 
-        if (item_type != OBJ_TYPE_ITEM_SCROLL) {
+        if (item_type != OBJ_TYPE_SCROLL) {
             sub_4574D0(item_obj);
             sub_43CCA0(item_obj);
             return;
@@ -1425,12 +1425,12 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 
     sub_4B7CD0(source_obj, 4);
 
-    if (item_type == OBJ_TYPE_ITEM_WRITTEN) {
+    if (item_type == OBJ_TYPE_WRITTEN) {
         sub_4606F0(item_obj, source_obj);
         return;
     }
 
-    if (item_type == OBJ_TYPE_ITEM_GENERIC) {
+    if (item_type == OBJ_TYPE_GENERIC) {
         unsigned int generic_flags = obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS);
 
         if ((generic_flags & OGF_IS_LOCKPICK) != 0) {
@@ -1444,7 +1444,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         return;
     }
 
-    if (item_type == OBJ_TYPE_ITEM_FOOD) {
+    if (item_type == OBJ_TYPE_FOOD) {
         if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             MesFileEntry mes_file_entry;
             UiMessage ui_message;
@@ -1462,7 +1462,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         return;
     }
 
-    if (item_type == OBJ_TYPE_ITEM_SCROLL) {
+    if (item_type == OBJ_TYPE_SCROLL) {
         sub_4574D0(item_obj);
         sub_43CCA0(item_obj);
         return;
@@ -1504,13 +1504,13 @@ void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
         sub_4CBF70(item_obj, 0);
     } else {
         sub_4B7CD0(obj, 4);
-        if (obj_type == OBJ_TYPE_ITEM_WRITTEN) {
+        if (obj_type == OBJ_TYPE_WRITTEN) {
             sub_4606F0(item_obj, obj);
             return;
         }
     }
 
-    if (obj_type == OBJ_TYPE_ITEM_FOOD || obj_type == OBJ_TYPE_ITEM_SCROLL) {
+    if (obj_type == OBJ_TYPE_FOOD || obj_type == OBJ_TYPE_SCROLL) {
         sub_4574D0(item_obj);
         sub_43CCA0(item_obj);
     }
@@ -1526,7 +1526,7 @@ int item_get_keys(int64_t obj, int* key_ids)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)) {
         obj = item_find_key_ring(obj);
-    } else if (obj_type != OBJ_TYPE_ITEM_KEY_RING) {
+    } else if (obj_type != OBJ_TYPE_KEY_RING) {
         return 0;
     }
 
@@ -1553,7 +1553,7 @@ int64_t item_find_key_ring(int64_t critter_obj)
     cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
     for (index = 0; index < cnt; index++) {
         item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
-        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_KEY_RING) {
+        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_KEY_RING) {
             key_ring_obj = item_obj;
             if (obj_arrayfield_length_get(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX) > 0) {
                 return key_ring_obj;
@@ -1583,13 +1583,13 @@ bool sub_463240(int64_t critter_obj, int lock_id)
         item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, inv_idx);
 
         switch (obj_field_int32_get(item_obj, OBJ_F_TYPE)) {
-        case OBJ_TYPE_ITEM_KEY:
+        case OBJ_TYPE_KEY:
             key_id = obj_field_int32_get(item_obj, OBJ_F_KEY_KEY_ID);
             if (sub_463340(lock_id, key_id)) {
                 return true;
             }
             break;
-        case OBJ_TYPE_ITEM_KEY_RING:
+        case OBJ_TYPE_KEY_RING:
             keyring_cnt = obj_arrayfield_length_get(item_obj, OBJ_F_KEY_RING_LIST_IDX);
             for (keyring_idx = 0; keyring_idx < keyring_cnt; keyring_idx++) {
                 key_id = sub_407470(item_obj, OBJ_F_KEY_RING_LIST_IDX, keyring_idx);
@@ -2368,7 +2368,7 @@ int item_total_defence(int64_t obj)
 // 0x464780
 int item_gold_get(int64_t obj)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_ITEM_GOLD) {
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_GOLD) {
         obj = item_gold_obj(obj);
     }
 
@@ -2664,7 +2664,7 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
             return ITEM_CANNOT_CRIPPLED;
         }
 
-        if (item_obj_type == OBJ_TYPE_ITEM_ARMOR) {
+        if (item_obj_type == OBJ_TYPE_ARMOR) {
             art_id = sub_4650D0(critter_obj);
             art_id = sub_504180(art_id, 1);
             if (tig_art_exists(art_id) != TIG_OK) {
@@ -2734,7 +2734,7 @@ tig_art_id_t sub_465020(int64_t obj)
 
         armor_obj = item_wield_get(obj, 1005);
         if (armor_obj != OBJ_HANDLE_NULL
-            && obj_field_int32_get(armor_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+            && obj_field_int32_get(armor_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
             v1 = 1;
         } else {
             v1 = 0;
@@ -2768,7 +2768,7 @@ tig_art_id_t sub_4650D0(int64_t critter_obj)
 
     item_obj = item_wield_get(critter_obj, 1005);
     if (item_obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+        && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
         v2 = 1;
     } else {
         v2 = 0;
@@ -2937,7 +2937,7 @@ int item_location_get(int64_t obj)
     int type;
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_ITEM_ARMOR) {
+    if (type == OBJ_TYPE_ARMOR) {
         switch (item_armor_coverage(obj)) {
         case TIG_ART_ARMOR_COVERAGE_HELMET:
             return 1000;
@@ -2958,7 +2958,7 @@ int item_location_get(int64_t obj)
         if (type == OBJ_TYPE_WEAPON) {
             return 1004;
         }
-        if (type == OBJ_TYPE_ITEM_GENERIC
+        if (type == OBJ_TYPE_GENERIC
             && (obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) & OGF_USES_TORCH_SHIELD_LOCATION) != 0) {
             return 1005;
         }
@@ -3161,7 +3161,7 @@ int item_armor_ac_adj(int64_t item_obj, int64_t owner_obj, bool a3)
     int ac_adj;
     int magic_ac_adj;
 
-    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) != OBJ_TYPE_ITEM_ARMOR) {
+    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) != OBJ_TYPE_ARMOR) {
         return 0;
     }
 
@@ -3187,7 +3187,7 @@ int item_armor_coverage(int64_t obj)
 
     if (obj == OBJ_HANDLE_NULL
         || !item_is_item(obj)
-        || obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_ITEM_ARMOR) {
+        || obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_ARMOR) {
         return -1;
     }
 
@@ -3580,7 +3580,7 @@ bool sub_466510(int64_t item_obj, int64_t parent_obj, int* inventory_location_pt
 
     inventory_location = -1;
     if (obj_type_is_critter(obj_field_int32_get(parent_obj, OBJ_F_TYPE))) {
-        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_KEY
+        if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_KEY
             && item_find_key_ring(parent_obj) != OBJ_HANDLE_NULL) {
             inventory_location = 0;
         } else {
@@ -3669,7 +3669,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     } else {
         encumbrance_level = critter_encumbrance_level_get(parent_obj);
 
-        if (item_obj_type == OBJ_TYPE_ITEM_KEY_RING) {
+        if (item_obj_type == OBJ_TYPE_KEY_RING) {
             sub_466AA0(parent_obj, item_obj);
         }
 
@@ -3736,7 +3736,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     }
 
     if (parent_obj_type != OBJ_TYPE_CONTAINER
-        && item_obj_type == OBJ_TYPE_ITEM_KEY) {
+        && item_obj_type == OBJ_TYPE_KEY) {
         sub_466A00(parent_obj, item_obj);
     }
 }
@@ -3798,7 +3798,7 @@ void sub_466AA0(int64_t critter_obj, int64_t a2)
         cnt = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_INVENTORY_NUM);
         while (cnt > 0) {
             item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, cnt - 1);
-            if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_KEY) {
+            if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_KEY) {
                 sub_466A50(item_obj, a2);
             }
             cnt--;

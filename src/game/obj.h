@@ -356,14 +356,14 @@ typedef enum ObjectType {
     OBJ_TYPE_PROJECTILE,
     OBJ_TYPE_WEAPON,
     OBJ_TYPE_AMMO,
-    OBJ_TYPE_ITEM_ARMOR,
-    OBJ_TYPE_ITEM_GOLD,
-    OBJ_TYPE_ITEM_FOOD,
-    OBJ_TYPE_ITEM_SCROLL,
-    OBJ_TYPE_ITEM_KEY,
-    OBJ_TYPE_ITEM_KEY_RING,
-    OBJ_TYPE_ITEM_WRITTEN,
-    OBJ_TYPE_ITEM_GENERIC,
+    OBJ_TYPE_ARMOR,
+    OBJ_TYPE_GOLD,
+    OBJ_TYPE_FOOD,
+    OBJ_TYPE_SCROLL,
+    OBJ_TYPE_KEY,
+    OBJ_TYPE_KEY_RING,
+    OBJ_TYPE_WRITTEN,
+    OBJ_TYPE_GENERIC,
     OBJ_TYPE_PC,
     OBJ_TYPE_NPC,
     OBJ_TYPE_TRAP,
@@ -851,7 +851,7 @@ static inline bool obj_type_is_critter(int type)
 // If `obj_type_is_critter` exists, `obj_type_is_item` should also be there.
 static inline bool obj_type_is_item(int type)
 {
-    return type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_ITEM_GENERIC;
+    return type >= OBJ_TYPE_WEAPON && type <= OBJ_TYPE_GENERIC;
 }
 
 // NOTE: Convenience.

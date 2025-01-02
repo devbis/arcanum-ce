@@ -2026,7 +2026,7 @@ int64_t sub_450A50(object_id_t obj)
     if (type != OBJ_TYPE_PC
         && type != OBJ_TYPE_NPC
         && type >= OBJ_TYPE_WEAPON
-        && type <= OBJ_TYPE_ITEM_GENERIC
+        && type <= OBJ_TYPE_GENERIC
         && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_INVENTORY) != 0) {
         return obj_field_handle_get(obj, OBJ_F_ITEM_PARENT);
     }

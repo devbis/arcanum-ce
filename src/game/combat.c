@@ -1547,7 +1547,7 @@ void sub_4B4390(CombatContext* combat)
             for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
                 item_obj = item_wield_get(combat->field_20, inventory_location);
                 if (item_obj != OBJ_HANDLE_NULL
-                    && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+                    && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
                     sub_441980(combat->field_8, item_obj, combat->field_20, SAP_TAKING_DAMAGE, 0);
                 }
             }

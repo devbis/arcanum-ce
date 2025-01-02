@@ -846,7 +846,7 @@ bool sub_57E8D0(int a1)
 
         obj_type = obj_field_int32_get(stru_683960.obj, OBJ_F_TYPE);
         if (obj_type == OBJ_TYPE_AMMO
-            || obj_type == OBJ_TYPE_ITEM_GOLD) {
+            || obj_type == OBJ_TYPE_GOLD) {
             dword_6839B0 = false;
             sub_575770();
             sub_553990();

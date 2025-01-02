@@ -3026,7 +3026,7 @@ void redraw_inven(bool a1)
                 case OBJ_TYPE_WEAPON:
                     art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_WEAPON_PAPER_DOLL_AID);
                     break;
-                case OBJ_TYPE_ITEM_ARMOR:
+                case OBJ_TYPE_ARMOR:
                     art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_ARMOR_PAPER_DOLL_AID);
                     break;
                 default:
@@ -3243,7 +3243,7 @@ void redraw_inven(bool a1)
             item_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
             item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
             if ((item_flags & OIF_NO_DISPLAY) != 0) {
-                if (!a1 || (item_type != OBJ_TYPE_ITEM_GOLD || item_type != OBJ_TYPE_AMMO)) {
+                if (!a1 || (item_type != OBJ_TYPE_GOLD || item_type != OBJ_TYPE_AMMO)) {
                     continue;
                 }
                 item_flags &= ~OIF_NO_DISPLAY;
@@ -3277,7 +3277,7 @@ void redraw_inven(bool a1)
                     case OBJ_TYPE_WEAPON:
                         art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_WEAPON_PAPER_DOLL_AID);
                         break;
-                    case OBJ_TYPE_ITEM_ARMOR:
+                    case OBJ_TYPE_ARMOR:
                         art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_ARMOR_PAPER_DOLL_AID);
                         break;
                     default:
@@ -3613,7 +3613,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
         dword_739F84 = dword_681440;
         dword_739F60 = a4;
 
-        if ((obj_type == OBJ_TYPE_ITEM_GOLD || obj_type == OBJ_TYPE_AMMO)) {
+        if ((obj_type == OBJ_TYPE_GOLD || obj_type == OBJ_TYPE_AMMO)) {
             sub_575770();
 
             sub_462410(item_obj, &qty_fld);

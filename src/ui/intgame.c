@@ -3194,14 +3194,14 @@ void sub_54ED30(S4F2810* a1)
                 break;
             case OBJ_TYPE_WEAPON:
             case OBJ_TYPE_AMMO:
-            case OBJ_TYPE_ITEM_ARMOR:
-            case OBJ_TYPE_ITEM_GOLD:
-            case OBJ_TYPE_ITEM_FOOD:
-            case OBJ_TYPE_ITEM_SCROLL:
-            case OBJ_TYPE_ITEM_KEY:
-            case OBJ_TYPE_ITEM_KEY_RING:
-            case OBJ_TYPE_ITEM_WRITTEN:
-            case OBJ_TYPE_ITEM_GENERIC:
+            case OBJ_TYPE_ARMOR:
+            case OBJ_TYPE_GOLD:
+            case OBJ_TYPE_FOOD:
+            case OBJ_TYPE_SCROLL:
+            case OBJ_TYPE_KEY:
+            case OBJ_TYPE_KEY_RING:
+            case OBJ_TYPE_WRITTEN:
+            case OBJ_TYPE_GENERIC:
                 if ((spell_flags & OSF_POLYMORPHED) != 0) {
                     return;
                 }
@@ -3270,14 +3270,14 @@ void sub_54ED30(S4F2810* a1)
                 break;
             case OBJ_TYPE_WEAPON:
             case OBJ_TYPE_AMMO:
-            case OBJ_TYPE_ITEM_ARMOR:
-            case OBJ_TYPE_ITEM_GOLD:
-            case OBJ_TYPE_ITEM_FOOD:
-            case OBJ_TYPE_ITEM_SCROLL:
-            case OBJ_TYPE_ITEM_KEY:
-            case OBJ_TYPE_ITEM_KEY_RING:
-            case OBJ_TYPE_ITEM_WRITTEN:
-            case OBJ_TYPE_ITEM_GENERIC:
+            case OBJ_TYPE_ARMOR:
+            case OBJ_TYPE_GOLD:
+            case OBJ_TYPE_FOOD:
+            case OBJ_TYPE_SCROLL:
+            case OBJ_TYPE_KEY:
+            case OBJ_TYPE_KEY_RING:
+            case OBJ_TYPE_WRITTEN:
+            case OBJ_TYPE_GENERIC:
                 if ((spell_flags & OSF_POLYMORPHED) != 0) {
                     return;
                 }
@@ -3564,7 +3564,7 @@ void sub_54FCF0(S683518* a1)
         sub_444130(&(a1->field_10));
         if (obj_field_handle_get(a1->field_10.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
             v2 = a1->field_10.obj;
-            if (obj_field_int32_get(v2, OBJ_F_TYPE) != OBJ_TYPE_ITEM_WRITTEN
+            if (obj_field_int32_get(v2, OBJ_F_TYPE) != OBJ_TYPE_WRITTEN
                 || (sub_462C30(pc_obj, v2)
                     && (obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) == 0)) {
                 v1 = item_find_first_matching_prototype(pc_obj, v2);
@@ -3580,9 +3580,9 @@ void sub_54FCF0(S683518* a1)
                     sub_550000(pc_obj, a1, 1004);
                     break;
                 case OBJ_TYPE_AMMO:
-                case OBJ_TYPE_ITEM_GOLD:
+                case OBJ_TYPE_GOLD:
                     break;
-                case OBJ_TYPE_ITEM_ARMOR:
+                case OBJ_TYPE_ARMOR:
                     sub_550000(pc_obj, a1, item_location_get(v2));
                     break;
                 default:
@@ -5983,14 +5983,14 @@ void sub_553BE0(int64_t a1, int64_t a2, char* str)
                 break;
             case OBJ_TYPE_WEAPON:
             case OBJ_TYPE_AMMO:
-            case OBJ_TYPE_ITEM_ARMOR:
-            case OBJ_TYPE_ITEM_GOLD:
-            case OBJ_TYPE_ITEM_FOOD:
-            case OBJ_TYPE_ITEM_SCROLL:
-            case OBJ_TYPE_ITEM_KEY:
-            case OBJ_TYPE_ITEM_KEY_RING:
-            case OBJ_TYPE_ITEM_WRITTEN:
-            case OBJ_TYPE_ITEM_GENERIC:
+            case OBJ_TYPE_ARMOR:
+            case OBJ_TYPE_GOLD:
+            case OBJ_TYPE_FOOD:
+            case OBJ_TYPE_SCROLL:
+            case OBJ_TYPE_KEY:
+            case OBJ_TYPE_KEY_RING:
+            case OBJ_TYPE_WRITTEN:
+            case OBJ_TYPE_GENERIC:
                 sub_554F10(a1, a2, str);
                 break;
             case OBJ_TYPE_PC:
@@ -6055,14 +6055,14 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
         return false;
     case OBJ_TYPE_WEAPON:
     case OBJ_TYPE_AMMO:
-    case OBJ_TYPE_ITEM_ARMOR:
-    case OBJ_TYPE_ITEM_GOLD:
-    case OBJ_TYPE_ITEM_FOOD:
-    case OBJ_TYPE_ITEM_SCROLL:
-    case OBJ_TYPE_ITEM_KEY:
-    case OBJ_TYPE_ITEM_KEY_RING:
-    case OBJ_TYPE_ITEM_WRITTEN:
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_ARMOR:
+    case OBJ_TYPE_GOLD:
+    case OBJ_TYPE_FOOD:
+    case OBJ_TYPE_SCROLL:
+    case OBJ_TYPE_KEY:
+    case OBJ_TYPE_KEY_RING:
+    case OBJ_TYPE_WRITTEN:
+    case OBJ_TYPE_GENERIC:
         *portrait_ptr = sub_554C20(a2);
         return false;
     case OBJ_TYPE_PC:
@@ -6578,7 +6578,7 @@ int sub_554C20(int64_t item_obj)
                 break;
             }
             break;
-        case OBJ_TYPE_ITEM_ARMOR:
+        case OBJ_TYPE_ARMOR:
             art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_AID);
             armor_coverage = tig_art_item_id_armor_coverage_get(art_id);
             switch (armor_coverage) {
@@ -6625,7 +6625,7 @@ int sub_554C20(int64_t item_obj)
     case OBJ_TYPE_AMMO:
         num = dword_5C7020[obj_field_int32_get(item_obj, OBJ_F_AMMO_TYPE)];
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         art_id = obj_field_int32_get(item_obj, OBJ_F_ITEM_INV_AID);
         armor_coverage = tig_art_item_id_armor_coverage_get(art_id);
         switch (armor_coverage) {
@@ -6643,10 +6643,10 @@ int sub_554C20(int64_t item_obj)
             num += 2;
         }
         break;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         num = 417;
         break;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         num = 423;
         if (complexity > 0) {
             num = 418;
@@ -6664,19 +6664,19 @@ int sub_554C20(int64_t item_obj)
             }
         }
         break;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         num = 425;
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         num = 426;
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         num = 427;
         break;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         num = dword_5C7070[obj_field_int32_get(item_obj, OBJ_F_WRITTEN_SUBTYPE)];
         break;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         num = 432;
         if (complexity > 0) {
             num = 433;
@@ -6760,7 +6760,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         }
         break;
     case OBJ_TYPE_AMMO:
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         sub_462410(item_obj, &quantity_fld);
         value = obj_field_int32_get(item_obj, quantity_fld);
 
@@ -6769,7 +6769,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
 
         sprintf(str, "%s: %d", mes_file_entry.str, value);
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
         mes_file_entry.str = item_effect_get_text(mes_file_entry.num);
         if (mes_file_entry.str != NULL
@@ -6780,10 +6780,10 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
             sub_555B50(item_obj, str);
         }
         break;
-    case OBJ_TYPE_ITEM_FOOD:
-    case OBJ_TYPE_ITEM_SCROLL:
-    case OBJ_TYPE_ITEM_WRITTEN:
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_FOOD:
+    case OBJ_TYPE_SCROLL:
+    case OBJ_TYPE_WRITTEN:
+    case OBJ_TYPE_GENERIC:
         str[0] = '\0';
         if (complexity <= 0 || is_identified) {
             mes_file_entry.num = obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS);
@@ -6792,7 +6792,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
                 strcpy(str, mes_file_entry.str);
             }
         }
-        if (obj_type == OBJ_TYPE_ITEM_GENERIC) {
+        if (obj_type == OBJ_TYPE_GENERIC) {
             unsigned int flags = obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS);
             if ((flags & OGF_IS_LOCKPICK) != 0) {
                 mes_file_entry.num = 71; // "Bonus to Pick Locks skill"
@@ -6811,10 +6811,10 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
             }
         }
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         str[0] = '\0';
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         value = item_get_keys(item_obj, NULL);
 
         mes_file_entry.num = 7; // "Keys"
@@ -6834,8 +6834,8 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
 
     if (is_identified
         && (obj_type == OBJ_TYPE_WEAPON
-            || obj_type == OBJ_TYPE_ITEM_ARMOR
-            || obj_type == OBJ_TYPE_ITEM_SCROLL)) {
+            || obj_type == OBJ_TYPE_ARMOR
+            || obj_type == OBJ_TYPE_SCROLL)) {
         if (complexity > 0) {
             value = sub_4614A0(item_obj, critter_obj);
 
@@ -6881,7 +6881,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
         }
     } else {
         switch (obj_type) {
-        case OBJ_TYPE_ITEM_GENERIC:
+        case OBJ_TYPE_GENERIC:
             if ((obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_HEALING_ITEM) != 0) {
                 mes_file_entry.num = 19; // "Uses"
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
@@ -6930,8 +6930,8 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
 
     if (tig_art_item_id_destroyed_get(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID)) == 0) {
         if (obj_type == OBJ_TYPE_WEAPON
-            || obj_type == OBJ_TYPE_ITEM_ARMOR
-            || (obj_type == OBJ_TYPE_ITEM_GENERIC
+            || obj_type == OBJ_TYPE_ARMOR
+            || (obj_type == OBJ_TYPE_GENERIC
                 && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & 0x20) != 0)) {
             sprintf(str,
                 "%d/%d",
@@ -7964,14 +7964,14 @@ void sub_557370(int64_t a1, int64_t a2)
                 break;
             case OBJ_TYPE_WEAPON:
             case OBJ_TYPE_AMMO:
-            case OBJ_TYPE_ITEM_ARMOR:
-            case OBJ_TYPE_ITEM_GOLD:
-            case OBJ_TYPE_ITEM_FOOD:
-            case OBJ_TYPE_ITEM_SCROLL:
-            case OBJ_TYPE_ITEM_KEY:
-            case OBJ_TYPE_ITEM_KEY_RING:
-            case OBJ_TYPE_ITEM_WRITTEN:
-            case OBJ_TYPE_ITEM_GENERIC:
+            case OBJ_TYPE_ARMOR:
+            case OBJ_TYPE_GOLD:
+            case OBJ_TYPE_FOOD:
+            case OBJ_TYPE_SCROLL:
+            case OBJ_TYPE_KEY:
+            case OBJ_TYPE_KEY_RING:
+            case OBJ_TYPE_WRITTEN:
+            case OBJ_TYPE_GENERIC:
                 if ((spell_flags & OSF_POLYMORPHED) == 0) {
                     sub_4B7A20(a1, a2);
                 }

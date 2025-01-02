@@ -85,14 +85,14 @@ static int dword_5B37FC[OBJ_TYPE_COUNT] = {
     /*    OBJ_TYPE_PROJECTILE */ 5028,
     /*        OBJ_TYPE_WEAPON */ 6029,
     /*          OBJ_TYPE_AMMO */ 7038,
-    /*    OBJ_TYPE_ITEM_ARMOR */ 8042,
-    /*     OBJ_TYPE_ITEM_GOLD */ 9056,
-    /*     OBJ_TYPE_ITEM_FOOD */ 10057,
-    /*   OBJ_TYPE_ITEM_SCROLL */ 11059,
-    /*      OBJ_TYPE_ITEM_KEY */ 12060,
-    /* OBJ_TYPE_ITEM_KEY_RING */ 13061,
-    /*  OBJ_TYPE_ITEM_WRITTEN */ 14062,
-    /*  OBJ_TYPE_ITEM_GENERIC */ 15065,
+    /*         OBJ_TYPE_ARMOR */ 8042,
+    /*          OBJ_TYPE_GOLD */ 9056,
+    /*          OBJ_TYPE_FOOD */ 10057,
+    /*        OBJ_TYPE_SCROLL */ 11059,
+    /*           OBJ_TYPE_KEY */ 12060,
+    /*      OBJ_TYPE_KEY_RING */ 13061,
+    /*       OBJ_TYPE_WRITTEN */ 14062,
+    /*       OBJ_TYPE_GENERIC */ 15065,
     /*            OBJ_TYPE_PC */ 16066,
     /*           OBJ_TYPE_NPC */ 17067,
     /*          OBJ_TYPE_TRAP */ 26000,
@@ -109,14 +109,14 @@ static int dword_5B384C[OBJ_TYPE_COUNT] = {
     /*    OBJ_TYPE_PROJECTILE */ 5029,
     /*        OBJ_TYPE_WEAPON */ 6179,
     /*          OBJ_TYPE_AMMO */ 7042,
-    /*    OBJ_TYPE_ITEM_ARMOR */ 8293,
-    /*     OBJ_TYPE_ITEM_GOLD */ 9057,
-    /*     OBJ_TYPE_ITEM_FOOD */ 10145,
-    /*   OBJ_TYPE_ITEM_SCROLL */ 11143,
-    /*      OBJ_TYPE_ITEM_KEY */ 12063,
-    /* OBJ_TYPE_ITEM_KEY_RING */ 13062,
-    /*  OBJ_TYPE_ITEM_WRITTEN */ 14130,
-    /*  OBJ_TYPE_ITEM_GENERIC */ 15213,
+    /*         OBJ_TYPE_ARMOR */ 8293,
+    /*          OBJ_TYPE_GOLD */ 9057,
+    /*          OBJ_TYPE_FOOD */ 10145,
+    /*        OBJ_TYPE_SCROLL */ 11143,
+    /*           OBJ_TYPE_KEY */ 12063,
+    /*      OBJ_TYPE_KEY_RING */ 13062,
+    /*       OBJ_TYPE_WRITTEN */ 14130,
+    /*       OBJ_TYPE_GENERIC */ 15213,
     /*            OBJ_TYPE_PC */ 16079,
     /*           OBJ_TYPE_NPC */ 17317,
     /*          OBJ_TYPE_TRAP */ 26008,
@@ -403,21 +403,21 @@ int sub_468720(ObjectType object_type)
         return 2000;
     case OBJ_TYPE_AMMO:
         return 2400;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         return 2800;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         return 3200;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         return 3600;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         return 4000;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         return 4400;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         return 4800;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         return 5200;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         return 5600;
     case OBJ_TYPE_PC:
         return 6000;
@@ -6313,7 +6313,7 @@ void sub_468930(long long obj, int description)
             break;
         }
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         switch (description) {
@@ -11216,7 +11216,7 @@ void sub_468930(long long obj, int description)
         }
         sub_49B2E0(obj);
         break;
-    case OBJ_TYPE_ITEM_GOLD:
+    case OBJ_TYPE_GOLD:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         tig_art_item_id_create(0, 0, 0, 0, 0, 3, 0, 0, &art_id);
@@ -11227,7 +11227,7 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
         break;
-    case OBJ_TYPE_ITEM_FOOD:
+    case OBJ_TYPE_FOOD:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 0x180);
@@ -12571,7 +12571,7 @@ void sub_468930(long long obj, int description)
             break;
         }
         break;
-    case OBJ_TYPE_ITEM_SCROLL:
+    case OBJ_TYPE_SCROLL:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 384);
@@ -12623,7 +12623,7 @@ void sub_468930(long long obj, int description)
         }
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
         break;
-    case OBJ_TYPE_ITEM_KEY:
+    case OBJ_TYPE_KEY:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -12660,7 +12660,7 @@ void sub_468930(long long obj, int description)
             break;
         }
         break;
-    case OBJ_TYPE_ITEM_KEY_RING:
+    case OBJ_TYPE_KEY_RING:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         tig_art_item_id_create(1, 0, 0, 0, 0, 7, 0, 0, &art_id);
@@ -12675,7 +12675,7 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
         break;
-    case OBJ_TYPE_ITEM_WRITTEN:
+    case OBJ_TYPE_WRITTEN:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 128);
@@ -13559,7 +13559,7 @@ void sub_468930(long long obj, int description)
             break;
         }
         break;
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_GENERIC:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         tig_art_item_id_create(14, 0, 0, 0, 0, 9, 0, 0, &art_id);

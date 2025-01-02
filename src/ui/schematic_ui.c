@@ -980,7 +980,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
     case OBJ_TYPE_WEAPON:
         art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_WEAPON_PAPER_DOLL_AID);
         break;
-    case OBJ_TYPE_ITEM_ARMOR:
+    case OBJ_TYPE_ARMOR:
         art_blit_info.art_id = obj_field_int32_get(item_obj, OBJ_F_ARMOR_PAPER_DOLL_AID);
         break;
     default:

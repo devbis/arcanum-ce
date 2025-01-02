@@ -678,7 +678,7 @@ void object_render(UnknownContext* render_info)
                                                                             src_rect.height *= 2;
                                                                         }
 
-                                                                        if (obj_type == OBJ_TYPE_ITEM_ARMOR) {
+                                                                        if (obj_type == OBJ_TYPE_ARMOR) {
                                                                             order = non_flat_order++;
                                                                         } else {
                                                                             order = overlay_order++;
@@ -1653,7 +1653,7 @@ int sub_43D6D0(int64_t obj, int resistance_type, bool a2)
         for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
             item_obj = item_wield_get(obj, inventory_location);
             if (item_obj != OBJ_HANDLE_NULL
-                && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_ARMOR) {
+                && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
                 adj = obj_arrayfield_int32_get(item_obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, resistance_type);
                 value += adj;
 
@@ -1710,7 +1710,7 @@ int object_get_ac(object_id_t obj, bool a2)
 
         ac = effect_adjust_stat_level(obj, STAT_AC_ADJUSTMENT, ac);
         ac += stat_level(obj, STAT_AC_ADJUSTMENT);
-    } else if (obj_type == OBJ_TYPE_ITEM_ARMOR) {
+    } else if (obj_type == OBJ_TYPE_ARMOR) {
         ac += item_armor_ac_adj(obj, OBJ_HANDLE_NULL, a2);
     }
 
@@ -2438,14 +2438,14 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
         return;
     case OBJ_TYPE_WEAPON:
     case OBJ_TYPE_AMMO:
-    case OBJ_TYPE_ITEM_ARMOR:
-    case OBJ_TYPE_ITEM_GOLD:
-    case OBJ_TYPE_ITEM_FOOD:
-    case OBJ_TYPE_ITEM_SCROLL:
-    case OBJ_TYPE_ITEM_KEY:
-    case OBJ_TYPE_ITEM_KEY_RING:
-    case OBJ_TYPE_ITEM_WRITTEN:
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_ARMOR:
+    case OBJ_TYPE_GOLD:
+    case OBJ_TYPE_FOOD:
+    case OBJ_TYPE_SCROLL:
+    case OBJ_TYPE_KEY:
+    case OBJ_TYPE_KEY_RING:
+    case OBJ_TYPE_WRITTEN:
+    case OBJ_TYPE_GENERIC:
         if (tig_art_item_id_destroyed_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) == 0) {
             destroyed_art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
             destroyed_art_id = tig_art_item_id_destroyed_set(destroyed_art_id, 1);
@@ -2531,14 +2531,14 @@ bool object_is_destroyed(object_id_t obj)
         return (obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & OSCF_BUSTED) != 0;
     case OBJ_TYPE_WEAPON:
     case OBJ_TYPE_AMMO:
-    case OBJ_TYPE_ITEM_ARMOR:
-    case OBJ_TYPE_ITEM_GOLD:
-    case OBJ_TYPE_ITEM_FOOD:
-    case OBJ_TYPE_ITEM_SCROLL:
-    case OBJ_TYPE_ITEM_KEY:
-    case OBJ_TYPE_ITEM_KEY_RING:
-    case OBJ_TYPE_ITEM_WRITTEN:
-    case OBJ_TYPE_ITEM_GENERIC:
+    case OBJ_TYPE_ARMOR:
+    case OBJ_TYPE_GOLD:
+    case OBJ_TYPE_FOOD:
+    case OBJ_TYPE_SCROLL:
+    case OBJ_TYPE_KEY:
+    case OBJ_TYPE_KEY_RING:
+    case OBJ_TYPE_WRITTEN:
+    case OBJ_TYPE_GENERIC:
         return tig_art_item_id_destroyed_get(obj_field_int32_get(obj, OBJ_F_CURRENT_AID)) != 0;
     case OBJ_TYPE_TRAP:
         return (obj_field_int32_get(obj, OBJ_F_TRAP_FLAGS) & OTF_BUSTED) != 0;
@@ -3128,14 +3128,14 @@ void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
     if ((flags & OBJ_TM_PROJECTILE) != 0) types[OBJ_TYPE_PROJECTILE] = true;
     if ((flags & OBJ_TM_WEAPON) != 0) types[OBJ_TYPE_WEAPON] = true;
     if ((flags & OBJ_TM_AMMO) != 0) types[OBJ_TYPE_AMMO] = true;
-    if ((flags & OBJ_TM_ITEM_ARMOR) != 0) types[OBJ_TYPE_ITEM_ARMOR] = true;
-    if ((flags & OBJ_TM_ITEM_GOLD) != 0) types[OBJ_TYPE_ITEM_GOLD] = true;
-    if ((flags & OBJ_TM_ITEM_FOOD) != 0) types[OBJ_TYPE_ITEM_FOOD] = true;
-    if ((flags & OBJ_TM_ITEM_SCROLL) != 0) types[OBJ_TYPE_ITEM_SCROLL] = true;
-    if ((flags & OBJ_TM_ITEM_KEY) != 0) types[OBJ_TYPE_ITEM_KEY] = true;
-    if ((flags & OBJ_TM_ITEM_KEY_RING) != 0) types[OBJ_TYPE_ITEM_KEY_RING] = true;
-    if ((flags & OBJ_TM_ITEM_WRITTEN) != 0) types[OBJ_TYPE_ITEM_WRITTEN] = true;
-    if ((flags & OBJ_TM_ITEM_GENERIC) != 0) types[OBJ_TYPE_ITEM_GENERIC] = true;
+    if ((flags & OBJ_TM_ARMOR) != 0) types[OBJ_TYPE_ARMOR] = true;
+    if ((flags & OBJ_TM_GOLD) != 0) types[OBJ_TYPE_GOLD] = true;
+    if ((flags & OBJ_TM_FOOD) != 0) types[OBJ_TYPE_FOOD] = true;
+    if ((flags & OBJ_TM_SCROLL) != 0) types[OBJ_TYPE_SCROLL] = true;
+    if ((flags & OBJ_TM_KEY) != 0) types[OBJ_TYPE_KEY] = true;
+    if ((flags & OBJ_TM_KEY_RING) != 0) types[OBJ_TYPE_KEY_RING] = true;
+    if ((flags & OBJ_TM_WRITTEN) != 0) types[OBJ_TYPE_WRITTEN] = true;
+    if ((flags & OBJ_TM_GENERIC) != 0) types[OBJ_TYPE_GENERIC] = true;
     if ((flags & OBJ_TM_PC) != 0) types[OBJ_TYPE_PC] = true;
     if ((flags & OBJ_TM_NPC) != 0) types[OBJ_TYPE_NPC] = true;
     if ((flags & OBJ_TM_TRAP) != 0) types[OBJ_TYPE_TRAP] = true;
@@ -3231,14 +3231,14 @@ void sub_440B40(LocRect* loc_rect, unsigned int flags, ObjectList* objects)
     if ((flags & OBJ_TM_PROJECTILE) != 0) types[OBJ_TYPE_PROJECTILE] = true;
     if ((flags & OBJ_TM_WEAPON) != 0) types[OBJ_TYPE_WEAPON] = true;
     if ((flags & OBJ_TM_AMMO) != 0) types[OBJ_TYPE_AMMO] = true;
-    if ((flags & OBJ_TM_ITEM_ARMOR) != 0) types[OBJ_TYPE_ITEM_ARMOR] = true;
-    if ((flags & OBJ_TM_ITEM_GOLD) != 0) types[OBJ_TYPE_ITEM_GOLD] = true;
-    if ((flags & OBJ_TM_ITEM_FOOD) != 0) types[OBJ_TYPE_ITEM_FOOD] = true;
-    if ((flags & OBJ_TM_ITEM_SCROLL) != 0) types[OBJ_TYPE_ITEM_SCROLL] = true;
-    if ((flags & OBJ_TM_ITEM_KEY) != 0) types[OBJ_TYPE_ITEM_KEY] = true;
-    if ((flags & OBJ_TM_ITEM_KEY_RING) != 0) types[OBJ_TYPE_ITEM_KEY_RING] = true;
-    if ((flags & OBJ_TM_ITEM_WRITTEN) != 0) types[OBJ_TYPE_ITEM_WRITTEN] = true;
-    if ((flags & OBJ_TM_ITEM_GENERIC) != 0) types[OBJ_TYPE_ITEM_GENERIC] = true;
+    if ((flags & OBJ_TM_ARMOR) != 0) types[OBJ_TYPE_ARMOR] = true;
+    if ((flags & OBJ_TM_GOLD) != 0) types[OBJ_TYPE_GOLD] = true;
+    if ((flags & OBJ_TM_FOOD) != 0) types[OBJ_TYPE_FOOD] = true;
+    if ((flags & OBJ_TM_SCROLL) != 0) types[OBJ_TYPE_SCROLL] = true;
+    if ((flags & OBJ_TM_KEY) != 0) types[OBJ_TYPE_KEY] = true;
+    if ((flags & OBJ_TM_KEY_RING) != 0) types[OBJ_TYPE_KEY_RING] = true;
+    if ((flags & OBJ_TM_WRITTEN) != 0) types[OBJ_TYPE_WRITTEN] = true;
+    if ((flags & OBJ_TM_GENERIC) != 0) types[OBJ_TYPE_GENERIC] = true;
     if ((flags & OBJ_TM_PC) != 0) types[OBJ_TYPE_PC] = true;
     if ((flags & OBJ_TM_NPC) != 0) types[OBJ_TYPE_NPC] = true;
     if ((flags & OBJ_TM_TRAP) != 0) types[OBJ_TYPE_TRAP] = true;
@@ -3839,7 +3839,7 @@ void sub_441B60(int64_t a1, int64_t a2, char* buffer)
 
     // Special case for keys - key name is derived from key id and it is stored
     // in a separate file (gamekey.mes).
-    if (type == OBJ_TYPE_ITEM_KEY) {
+    if (type == OBJ_TYPE_KEY) {
         name = description_get_key_name(obj_field_int32_get(a1, OBJ_F_KEY_KEY_ID));
         if (name != NULL) {
             strcpy(buffer, name);

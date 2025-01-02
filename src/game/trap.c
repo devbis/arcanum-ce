@@ -182,7 +182,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
     }
 
     type = obj_field_int32_get(trap_obj, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_ITEM_GENERIC
+    if (type == OBJ_TYPE_GENERIC
         && (obj_field_int32_get(trap_obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_TRAP_DEVICE) != 0) {
         return false;
     }
@@ -577,7 +577,7 @@ bool get_disarm_item_name(int64_t trap_obj, int* name_ptr)
 bool trap_is_trap_device(int64_t obj)
 {
     return obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_ITEM_GENERIC
+        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
         && (obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) & OGF_IS_TRAP_DEVICE) != 0;
 }
 
