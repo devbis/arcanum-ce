@@ -235,7 +235,7 @@ void location_origin_get(int64_t* sx, int64_t* sy)
 }
 
 // 0x4B8B30
-void sub_4B8B30(int64_t dx, int64_t dy)
+void location_origin_scroll(int64_t dx, int64_t dy)
 {
     int64_t tmp;
 
@@ -274,7 +274,7 @@ void sub_4B8CE0(int64_t location)
     int64_t y;
 
     sub_4B8940(location, &x, &y);
-    sub_4B8B30(x, y);
+    location_origin_scroll(x, y);
     location_iso_invalidate_rect(&location_iso_content_rect);
     if (dword_5FC2F8 != NULL) {
         dword_5FC2F8(location);

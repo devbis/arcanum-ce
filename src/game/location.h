@@ -22,7 +22,7 @@ void location_xy(int64_t loc, int64_t* sx, int64_t* sy);
 bool location_at(int64_t sx, int64_t sy, int64_t* loc_ptr);
 void sub_4B8940(int64_t location, int64_t* x, int64_t* y);
 void location_origin_get(int64_t* sx, int64_t* sy);
-void sub_4B8B30(int64_t dx, int64_t dy);
+void location_origin_scroll(int64_t dx, int64_t dy);
 void sub_4B8CE0(int64_t location);
 void location_set_func_5FC2F8(LocationFunc5FC2F8* func);
 int sub_4B8D50(int64_t a, int64_t b);
