@@ -32,7 +32,7 @@ bool sub_4B9130(TigRect* rect, LocRect* loc_rect);
 void sub_4B93F0(int a1, int a2, int* a3, int* a4);
 bool sub_4B9420(int64_t* loc_ptr, int* a2, int* a3);
 int64_t location_dist(int64_t a, int64_t b);
-bool location_set_limits(int64_t x, int64_t y);
+bool location_limits_set(int64_t x, int64_t y);
 void location_get_limits(int64_t* x, int64_t* y);
 int64_t sub_4B9810();
 void sub_4B98B0(int64_t a1, int64_t a2, int64_t* a3, int64_t* a4);

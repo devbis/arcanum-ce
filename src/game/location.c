@@ -69,7 +69,7 @@ bool location_init(GameInitInfo* init_info)
     location_screen_center_x = window_data.rect.width / 2;
     location_screen_center_y = window_data.rect.height / 2;
 
-    location_set_limits(0x100000000, 0x100000000);
+    location_limits_set(0x100000000, 0x100000000);
     location_origin_set(sub_4B9810());
 
     location_view_options.type = VIEW_TYPE_ISOMETRIC;
@@ -552,7 +552,7 @@ int64_t location_dist(int64_t a, int64_t b)
 }
 
 // 0x4B9760
-bool location_set_limits(int64_t x, int64_t y)
+bool location_limits_set(int64_t x, int64_t y)
 {
     if (x > 0x100000000 || y > 0x100000000) {
         return false;
