@@ -267,7 +267,7 @@ void sub_4C0A40(int64_t sector_id, int tile, TigRect* rect)
 
     loc = (tile >> 6) + ((sector_id >> 26) << 6);
     loc |= (tile & 0x3F) + ((sector_id & 0x3FFFFFF) << 6);
-    sub_4B8680(loc, &x, &y);
+    location_xy(loc, &x, &y);
 
     if (x < INT_MIN || x > INT_MAX
         || y < INT_MIN || y > INT_MAX) {

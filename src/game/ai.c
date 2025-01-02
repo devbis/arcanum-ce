@@ -3342,7 +3342,7 @@ int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr)
     flags = 0x08 | 0x04;
     offset_x = obj_field_int32_get(source_obj, OBJ_F_OFFSET_X);
     offset_y = obj_field_int32_get(source_obj, OBJ_F_OFFSET_Y);
-    sub_4B8680(source_loc, &source_loc_x, &source_loc_y);
+    location_xy(source_loc, &source_loc_x, &source_loc_y);
 
     for (idx = 0; idx < cnt; idx += 2) {
         if (source_loc == target_loc) {
@@ -4158,7 +4158,7 @@ int sub_4AF640(int64_t source_obj, int64_t target_obj)
 
     offset_x = obj_field_int32_get(source_obj, OBJ_F_OFFSET_X);
     offset_y = obj_field_int32_get(source_obj, OBJ_F_OFFSET_Y);
-    sub_4B8680(source_loc, &source_loc_x, &source_loc_y);
+    location_xy(source_loc, &source_loc_x, &source_loc_y);
 
     for (idx = 0; idx < v1; idx += 2) {
         if (source_loc == target_loc) {

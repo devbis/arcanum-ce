@@ -130,14 +130,14 @@ bool location_update_view(ViewOptions* view_options)
 }
 
 // 0x4B8680
-void sub_4B8680(int64_t location, int64_t* x, int64_t* y)
+void location_xy(int64_t loc, int64_t* sx, int64_t* sy)
 {
     if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
-        *x = location_origin_x + 40 * (LOCATION_GET_Y(location) - LOCATION_GET_X(location) - 1);
-        *y = location_origin_y + 20 * (LOCATION_GET_Y(location) + LOCATION_GET_X(location));
+        *sx = location_origin_x + 40 * (LOCATION_GET_Y(loc) - LOCATION_GET_X(loc) - 1);
+        *sy = location_origin_y + 20 * (LOCATION_GET_Y(loc) + LOCATION_GET_X(loc));
     } else {
-        *x = location_origin_x - location_view_options.zoom * LOCATION_GET_X(location);
-        *y = location_origin_y + location_view_options.zoom * LOCATION_GET_Y(location);
+        *sx = location_origin_x - location_view_options.zoom * LOCATION_GET_X(loc);
+        *sy = location_origin_y + location_view_options.zoom * LOCATION_GET_Y(loc);
     }
 }
 
@@ -213,15 +213,15 @@ void sub_4B8940(int64_t location, int64_t* x, int64_t* y)
 
         location_origin_x = 0;
         location_origin_y = 0;
-        sub_4B8680(0, &x1, &y1);
-        sub_4B8680(location, &x2, &y2);
+        location_xy(0, &x1, &y1);
+        location_xy(location, &x2, &y2);
         *x = x1 + location_iso_content_rect.width / 2 - x2 - saved_x;
         *y = y1 + location_iso_content_rect.height / 2 - y2 - saved_y;
 
         location_origin_x = saved_x;
         location_origin_y = saved_y;
     } else {
-        sub_4B8680(location, &x1, &y1);
+        location_xy(location, &x1, &y1);
         *x = location_screen_center_x - (location_view_options.zoom / 2 + x1);
         *y = location_screen_center_y - (location_view_options.zoom / 2 + y1);
     }
@@ -502,7 +502,7 @@ bool sub_4B9420(int64_t* loc_ptr, int* a2, int* a3)
     int64_t new_x;
     int64_t new_y;
 
-    sub_4B8680(*loc_ptr, &x, &y);
+    location_xy(*loc_ptr, &x, &y);
     x += *a2 + 40;
     y += *a3 + 20;
 
@@ -514,7 +514,7 @@ bool sub_4B9420(int64_t* loc_ptr, int* a2, int* a3)
         return false;
     }
 
-    sub_4B8680(new_loc, &new_x, &new_y);
+    location_xy(new_loc, &new_x, &new_y);
 
     *a2 = (int)(x - (new_x + 40));
     *a3 = (int)(y - (new_y + 20));

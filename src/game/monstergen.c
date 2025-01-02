@@ -295,7 +295,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
     loc = obj_field_int64_get(generator_info->obj, OBJ_F_LOCATION);
     art_id = sub_4D70B0(loc);
     tile_type = tig_art_tile_id_type_get(art_id);
-    sub_4B8680(loc, &x, &y);
+    location_xy(loc, &x, &y);
     object_get_rect(generator_info->obj, 0x8, &rect);
 
     gen_cnt = 0;
@@ -311,7 +311,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
                         break;
                     }
 
-                    sub_4B8680(target_loc, &target_x, &target_y);
+                    location_xy(target_loc, &target_x, &target_y);
 
                     dx = (int)(target_x - x + rect.x);
                     dy = (int)(target_y - y + rect.y);

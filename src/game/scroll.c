@@ -188,7 +188,7 @@ void scroll_start_scrolling_in_direction(int direction)
         return;
     }
 
-    sub_4B8680(scroll_center, &center_x, &center_y);
+    location_xy(scroll_center, &center_x, &center_y);
     center_x = LOCATION_MAKE(LOCATION_GET_X(center_x) + 40, LOCATION_GET_Y(center_x) + 40);
     center_y = LOCATION_MAKE(LOCATION_GET_X(center_y) + 20, LOCATION_GET_Y(center_y) + 20);
 

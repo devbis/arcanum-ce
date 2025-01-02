@@ -344,11 +344,11 @@ int sub_4201C0(int64_t from, int64_t to, uint8_t* rotations)
     v1.field_18 = 0;
     v1.rotations = rotations;
 
-    sub_4B8680(from, &from_x, &from_y);
+    location_xy(from, &from_x, &from_y);
     from_x += 40;
     from_y += 20;
 
-    sub_4B8680(to, &to_x, &to_y);
+    location_xy(to, &to_x, &to_y);
     to_x += 40;
     to_y += 20;
 
@@ -468,11 +468,11 @@ int sub_420660(int64_t from, int64_t to, uint8_t* rotations)
     v1.field_18 = 0;
     v1.rotations = NULL;
 
-    sub_4B8680(from, &from_x, &from_y);
+    location_xy(from, &from_x, &from_y);
     from_x += 40;
     from_y += 20;
 
-    sub_4B8680(to, &to_x, &to_y);
+    location_xy(to, &to_x, &to_y);
     to_x += 40;
     to_y += 20;
 

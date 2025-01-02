@@ -392,7 +392,7 @@ static void sub_4D6410(TextBlock* tb, long long location, int offset_x, int offs
     int v1;
     int index;
 
-    sub_4B8680(location, &x, &y);
+    location_xy(location, &x, &y);
 
     x += offset_x + 40;
     y += offset_y + 20;

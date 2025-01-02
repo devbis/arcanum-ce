@@ -2855,8 +2855,8 @@ int sub_4B6A00(int64_t loc1, int64_t loc2)
         return 0;
     }
 
-    sub_4B8680(loc1, &x1, &y1);
-    sub_4B8680(loc2, &x2, &y2);
+    location_xy(loc1, &x1, &y1);
+    location_xy(loc2, &x2, &y2);
 
     v1 = atan2((double)(y2 - y1), (double)(x2 - x1));
     if (v1 < 0.0) {

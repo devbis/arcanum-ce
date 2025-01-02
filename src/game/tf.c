@@ -614,7 +614,7 @@ void sub_4D58C0(int64_t loc, int offset_x, int offset_y, TigRect* rect)
     int64_t x;
     int64_t y;
 
-    sub_4B8680(loc, &x, &y);
+    location_xy(loc, &x, &y);
 
     rect->x = (int)x + offset_x - 60;
     rect->y = (int)y + offset_y + 20 - 5 * dword_602898 - 90;

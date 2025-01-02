@@ -353,7 +353,7 @@ void sub_4CF390(UnknownContext* info)
                 }
 
                 location = location_make(sector_x + 63, sector_y);
-                sub_4B8680(location, &location_x, &location_y);
+                location_xy(location, &location_x, &location_y);
 
                 x = location_x & 0xFFFFFFFF;
                 y = location_y & 0xFFFFFFFF;

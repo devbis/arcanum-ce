@@ -340,7 +340,7 @@ void light_render(UnknownContext* render_info)
     }
 
     location_at(light_iso_content_rect.width / 2, light_iso_content_rect.height / 2, &center_loc);
-    sub_4B8680(center_loc, &cx, &cy);
+    location_xy(center_loc, &cx, &cy);
     cx += 40;
     cy += 20;
 
@@ -460,7 +460,7 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
     TigArtAnimData art_anim_data;
     unsigned int color;
 
-    sub_4B8680(loc, &loc_x, &loc_y);
+    location_xy(loc, &loc_x, &loc_y);
 
     if (loc_x < INT_MIN
         || loc_x > INT_MAX
@@ -873,7 +873,7 @@ bool sub_4D9B20(int64_t obj)
         + tig_color_blue_grayscale_table[(color & tig_color_blue_mask) >> tig_color_blue_shift];
 
     if (light_shadows_enabled) {
-        sub_4B8680(loc, &loc_x, &loc_y);
+        location_xy(loc, &loc_x, &loc_y);
         loc_x += obj_field_int32_get(obj, OBJ_F_OFFSET_X) + 40 - stru_602ED8.width / 2;
         loc_y += obj_field_int32_get(obj, OBJ_F_OFFSET_Y) + 20 - stru_602ED8.height / 2;
 
@@ -909,7 +909,7 @@ bool sub_4D9B20(int64_t obj)
                     light = (Light*)light_node->data;
                     if ((light->flags & 0x43) == 0
                         && light->obj != obj) {
-                        sub_4B8680(light->loc, &loc_x, &loc_y);
+                        location_xy(light->loc, &loc_x, &loc_y);
                         lx = (int)loc_x + light->offset_x + 40;
                         ly = (int)loc_y + light->offset_y + 20;
 
@@ -1120,7 +1120,7 @@ void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr)
 
         int64_t loc_x;
         int64_t loc_y;
-        sub_4B8680(loc, &loc_x, &loc_y);
+        location_xy(loc, &loc_x, &loc_y);
         int v87 = (int)LOCATION_GET_X(loc);
         int v88 = (int)LOCATION_GET_Y(loc);
 
@@ -2137,7 +2137,7 @@ void light_get_rect_internal(Light* light, TigRect* rect)
     rect->width = 0;
     rect->height = 0;
 
-    sub_4B8680(light->loc, &x, &y);
+    location_xy(light->loc, &x, &y);
     if (x >= INT_MIN && x < INT_MAX
         && y >= INT_MIN && y < INT_MAX) {
         if (tig_art_frame_data(light->art_id, &art_frame_data) == TIG_OK) {
@@ -2434,7 +2434,7 @@ void light_render_internal(UnknownContext* render_info)
                             }
 
                             location_at(rect_node->rect.x, rect_node->rect.y, &loc);
-                            sub_4B8680(loc, &loc_x, &loc_y);
+                            location_xy(loc, &loc_x, &loc_y);
 
                             int max_x = rect_node->rect.x + rect_node->rect.width - 1;
                             int max_y = rect_node->rect.y + rect_node->rect.height - 1;
@@ -2543,12 +2543,12 @@ void sub_4DF1D0(TigRect* rect)
     y2 = rect->y + rect->height - 1;
 
     if (location_at(x1, y1, &loc1)) {
-        sub_4B8680(loc1, &x1, &y1);
+        location_xy(loc1, &x1, &y1);
         x1 -= 40;
         y1 -= 20;
 
         if (location_at(x2, y2, &loc2)) {
-            sub_4B8680(loc2, &x2, &y2);
+            location_xy(loc2, &x2, &y2);
             x2 += 80 + 40;
             y2 += 40 + 20;
 

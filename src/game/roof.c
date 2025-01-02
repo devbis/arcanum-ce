@@ -386,7 +386,7 @@ int64_t sub_4395E0(int64_t loc)
 void sub_439640(int64_t loc, int64_t* x, int64_t* y)
 {
     loc = sub_4395E0(loc);
-    sub_4B8680(loc, x, y);
+    location_xy(loc, x, y);
 
     *x -= 120;
     *y -= 200;

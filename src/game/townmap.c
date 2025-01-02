@@ -233,8 +233,8 @@ void sub_4BE670(TownMapInfo* tmi, int64_t loc, int* a3, int* a4)
     *a3 = 0;
     *a4 = 0;
 
-    sub_4B8680(tmi->loc, &x1, &y1);
-    sub_4B8680(loc, &x2, &y2);
+    location_xy(tmi->loc, &x1, &y1);
+    location_xy(loc, &x2, &y2);
 
     v1 = x2 + tmi->field_C / 2 - x1;
     v2 = y2 + tmi->field_10 / 2 - y1;
@@ -260,7 +260,7 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
     v1 = (int)(x / tmi->field_28) - tmi->field_C / 2;
     v2 = (int)(y / tmi->field_28) - tmi->field_10 / 2;
 
-    sub_4B8680(tmi->loc, &v3, &v4);
+    location_xy(tmi->loc, &v3, &v4);
     location_at(v1 + v3, v2 + v4, &loc);
     *loc_ptr = loc;
 }
@@ -294,8 +294,8 @@ bool sub_4BE8F0(int64_t loc)
     }
 
     if (townmap_info(sector->townmap_info, &tmi)) {
-        sub_4B8680(tmi.loc, &v1, &v2);
-        sub_4B8680(loc, &v3, &v4);
+        location_xy(tmi.loc, &v1, &v2);
+        location_xy(loc, &v3, &v4);
 
         v5 = v3 + tmi.field_C / 2 - v1;
         v6 = v4 + tmi.field_10 / 2 - v2;

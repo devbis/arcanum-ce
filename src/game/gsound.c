@@ -671,10 +671,10 @@ tig_sound_handle_t sub_41B870(int id, int loops, int64_t location, int size)
 
     if (qword_5D1A28 == OBJ_HANDLE_NULL) {
         qword_5D1A28 = location;
-        sub_4B8680(location, &qword_5D55E8, &qword_5D55E0);
+        location_xy(location, &qword_5D55E8, &qword_5D55E0);
     }
 
-    sub_4B8680(location, &x, &y);
+    location_xy(location, &x, &y);
 
     return sub_41B7D0(id, loops, x - qword_5D55E8, y - qword_5D55E0, size);
 }
@@ -1289,10 +1289,10 @@ void sub_41C6D0(int64_t location)
     int64_t x;
     int64_t y;
     if (gsound_initialized) {
-        sub_4B8680(location, &x, &y);
+        location_xy(location, &x, &y);
 
         if (qword_5D1A28 != 0) {
-            sub_4B8680(qword_5D1A28, &qword_5D55E8, &qword_5D55E0);
+            location_xy(qword_5D1A28, &qword_5D55E8, &qword_5D55E0);
         }
 
         sub_41C690(x - qword_5D55E8, y - qword_5D55E0);
@@ -1308,7 +1308,7 @@ void sub_41C780(tig_sound_handle_t sound_handle, int64_t location)
     int volume;
     int extra_volume;
 
-    sub_4B8680(location, &x, &y);
+    location_xy(location, &x, &y);
     x -= qword_5D55E8;
     y -= qword_5D55E0;
     tig_sound_set_position(sound_handle, x, y);

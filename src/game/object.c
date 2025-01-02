@@ -588,7 +588,7 @@ void object_render(UnknownContext* render_info)
                                                 || (obj_field_int32_get(obj_node->obj, OBJ_F_WALL_FLAGS) & (OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT)) == 0
                                                 || object_render_check_rotation(obj_node->obj)
                                                 || !sub_439FA0(loc)) {
-                                                sub_4B8680(loc, &loc_x, &loc_y);
+                                                location_xy(loc, &loc_x, &loc_y);
                                                 loc_x += obj_field_int32_get(obj_node->obj, OBJ_F_OFFSET_X);
                                                 loc_y += obj_field_int32_get(obj_node->obj, OBJ_F_OFFSET_Y);
                                                 scale = obj_field_int32_get(obj_node->obj, OBJ_F_BLIT_SCALE);
@@ -1818,7 +1818,7 @@ void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
     location_get_limits(&limit_x, &limit_y);
 
     if (LOCATION_GET_X(loc) < limit_x && LOCATION_GET_Y(loc) < limit_y) {
-        sub_4B8680(loc, &loc_x, &loc_y);
+        location_xy(loc, &loc_x, &loc_y);
 
         // NOTE: Where is `loc_y` validation?
         if (loc_x < INT_MIN || loc_x > INT_MAX) {
@@ -3345,8 +3345,8 @@ void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects)
 
     screen_rect = window_data.rect;
     location_at(window_data.rect.width / 2, window_data.rect.height / 2, &center_loc);
-    sub_4B8680(center_loc, &center_x, &center_y);
-    sub_4B8680(loc, &x, &y);
+    location_xy(center_loc, &center_x, &center_y);
+    location_xy(loc, &x, &y);
 
     screen_rect.x = (int)(x - center_x);
     screen_rect.y = (int)(y - center_y);
@@ -4832,7 +4832,7 @@ bool sub_443880(TigRect* rect, tig_art_id_t art_id)
     }
 
     loc = obj_field_int64_get(object_hover_obj, OBJ_F_LOCATION);
-    sub_4B8680(loc, &x, &y);
+    location_xy(loc, &x, &y);
 
     x += obj_field_int32_get(object_hover_obj, OBJ_F_OFFSET_X);
     y += obj_field_int32_get(object_hover_obj, OBJ_F_OFFSET_Y);

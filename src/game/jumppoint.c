@@ -272,7 +272,7 @@ void jumppoint_get_rect(int jumppoint, TigRect* rect)
     int64_t y;
     TigArtFrameData art_frame_data;
 
-    sub_4B8680(jumppoints[jumppoint].location, &x, &y);
+    location_xy(jumppoints[jumppoint].location, &x, &y);
     if (x >= INT_MIN && x < INT_MAX
         && y >= INT_MIN && y < INT_MAX) {
         if (jumppoint_view_options.type == 1) {

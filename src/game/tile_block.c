@@ -252,7 +252,7 @@ void tileblock_get_rect_internal(int64_t sector_id, int tile, TigRect* rect)
     TigArtFrameData art_frame_data;
 
     loc = location_make(SECTOR_X(sector_id) + TILE_X(tile), SECTOR_Y(sector_id) + TILE_Y(tile));
-    sub_4B8680(loc, &x, &y);
+    location_xy(loc, &x, &y);
 
     if (x > INT_MIN && x < INT_MAX
         && y > INT_MIN && y < INT_MAX) {

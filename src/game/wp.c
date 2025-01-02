@@ -226,7 +226,7 @@ bool sub_4C0280(int64_t location, TigRect* rect)
     int64_t y;
     TigArtFrameData art_frame_data;
 
-    sub_4B8680(location, &x, &y);
+    location_xy(location, &x, &y);
 
     if (x < INT_MIN || x >= INT_MAX
         || y < INT_MIN && y >= INT_MAX) {

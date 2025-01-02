@@ -124,7 +124,7 @@ void sub_4C9E70(UnknownContext* info)
         while (x <= loc_rect.x2) {
             art_blit_info.art_id = dword_5FF5A0[index];
             if (art_blit_info.art_id != TIG_ART_ID_INVALID) {
-                sub_4B8680(LOCATION_MAKE(x, y), &tile_x, &tile_y);
+                location_xy(LOCATION_MAKE(x, y), &tile_x, &tile_y);
                 tile_rect.x = (int)tile_x;
                 tile_rect.y = (int)tile_y;
 
@@ -284,16 +284,16 @@ void sub_4CA7C0(TigRect* rect)
 
     switch (facade_view_options.type) {
     case VIEW_TYPE_ISOMETRIC:
-        sub_4B8680(qword_5FF578, &tmp, &min_y);
-        sub_4B8680(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578) + dword_5FF574, LOCATION_GET_Y(qword_5FF578)), &min_x, &tmp);
-        sub_4B8680(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578), LOCATION_GET_Y(qword_5FF578) + dword_5FF574), &max_x, &tmp);
-        sub_4B8680(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578) + dword_5FF574, LOCATION_GET_Y(qword_5FF578) + dword_5FF574), &tmp, &max_y);
+        location_xy(qword_5FF578, &tmp, &min_y);
+        location_xy(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578) + dword_5FF574, LOCATION_GET_Y(qword_5FF578)), &min_x, &tmp);
+        location_xy(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578), LOCATION_GET_Y(qword_5FF578) + dword_5FF574), &max_x, &tmp);
+        location_xy(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578) + dword_5FF574, LOCATION_GET_Y(qword_5FF578) + dword_5FF574), &tmp, &max_y);
         max_x += 80;
         max_y += 40;
         break;
     case VIEW_TYPE_TOP_DOWN:
-        sub_4B8680(qword_5FF578, &min_x, &min_y);
-        sub_4B8680(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578) + dword_5FF574, LOCATION_GET_Y(qword_5FF578) + dword_5FF574), &max_x, &max_y);
+        location_xy(qword_5FF578, &min_x, &min_y);
+        location_xy(LOCATION_MAKE(LOCATION_GET_X(qword_5FF578) + dword_5FF574, LOCATION_GET_Y(qword_5FF578) + dword_5FF574), &max_x, &max_y);
         max_x += facade_view_options.zoom;
         max_y += facade_view_options.zoom;
         break;

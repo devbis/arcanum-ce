@@ -486,8 +486,8 @@ bool sub_412FD0(DialogEntryNode* a1)
         if (player_is_pc_obj(a1->pc_obj)) {
             pc_loc = obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION);
             npc_loc = obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION);
-            sub_4B8680(pc_loc, &tmp, &pc_loc_y);
-            sub_4B8680(npc_loc, &tmp, &npc_loc_y);
+            location_xy(pc_loc, &tmp, &pc_loc_y);
+            location_xy(npc_loc, &tmp, &npc_loc_y);
             if (npc_loc_y > pc_loc_y) {
                 sub_4B8CE0(npc_loc);
             } else {

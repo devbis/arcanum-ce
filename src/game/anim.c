@@ -10904,14 +10904,14 @@ bool sub_42F390(AnimRunInfo* run_info)
         offset_x += run_info->path.rotations[run_info->path.curr];
         offset_y += run_info->path.rotations[run_info->path.curr + 1];
 
-        sub_4B8680(loc, &loc_x, &loc_y);
+        location_xy(loc, &loc_x, &loc_y);
         if (!location_at(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
             ASSERT(0); // 11433, "0"
             exit(EXIT_FAILURE);
         }
 
         if (new_loc != loc) {
-            sub_4B8680(new_loc, &new_loc_x, &new_loc_y);
+            location_xy(new_loc, &new_loc_x, &new_loc_y);
             offset_x += (int)(loc_x - new_loc_x);
             offset_y += (int)(loc_y - new_loc_y);
         }
@@ -11016,7 +11016,7 @@ bool sub_42F6A0(AnimRunInfo* run_info)
         offset_x += run_info->path.rotations[run_info->path.curr];
         offset_y += run_info->path.rotations[run_info->path.curr + 1];
 
-        sub_4B8680(projectile_loc, &projectile_loc_x, &projectile_loc_y);
+        location_xy(projectile_loc, &projectile_loc_x, &projectile_loc_y);
 
         new_loc_x = projectile_loc_x + offset_x + 40;
         new_loc_y = projectile_loc_y + offset_y + 20;
@@ -11046,7 +11046,7 @@ bool sub_42F6A0(AnimRunInfo* run_info)
                 return false;
             }
 
-            sub_4B8680(new_loc, &new_loc_x, &new_loc_y);
+            location_xy(new_loc, &new_loc_x, &new_loc_y);
             offset_x += (int)(projectile_loc_x - new_loc_x);
             offset_y += (int)(projectile_loc_y - new_loc_y);
         }
@@ -11106,7 +11106,7 @@ bool sub_42FA50(AnimRunInfo* run_info)
         offset_x += run_info->path.rotations[run_info->path.curr];
         offset_y += run_info->path.rotations[run_info->path.curr + 1];
 
-        sub_4B8680(loc, &loc_x, &loc_y);
+        location_xy(loc, &loc_x, &loc_y);
         if (!location_at(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
             ASSERT(0); // 11691, "0"
             exit(EXIT_FAILURE);
@@ -11128,7 +11128,7 @@ bool sub_42FA50(AnimRunInfo* run_info)
                 return false;
             }
 
-            sub_4B8680(new_loc, &new_loc_x, &new_loc_y);
+            location_xy(new_loc, &new_loc_x, &new_loc_y);
             offset_x += (int)(loc_x - new_loc_x);
             offset_y += (int)(loc_y - new_loc_y);
         }

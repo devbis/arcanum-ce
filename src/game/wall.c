@@ -157,7 +157,7 @@ void sub_4E1C00(UnknownContext* render_info)
             sub_4407C0(loc, OBJ_TM_WALL, &walls);
             node = walls.head;
             while (node != NULL) {
-                sub_4B8680(loc, &loc_x, &loc_y);
+                location_xy(loc, &loc_x, &loc_y);
                 if (loc_x >= -wall_view_options.zoom
                     && loc_x <= wall_iso_content_rect.width
                     && loc_y >= -wall_view_options.zoom
@@ -249,7 +249,7 @@ void sub_4E1EB0(UnknownContext* render_info)
     center = (wall_view_options.zoom - size) / 2;
     for (y = loc_rect.y1; y <= loc_rect.y2; y += 4) {
         for (x = loc_rect.x1; x <= loc_rect.x2; x += 4) {
-            sub_4B8680(LOCATION_MAKE(x, y), &loc_x, &loc_y);
+            location_xy(LOCATION_MAKE(x, y), &loc_x, &loc_y);
             rect.x = center + (int)loc_x;
             rect.y = center + (int)loc_y;
 

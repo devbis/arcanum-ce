@@ -18,7 +18,7 @@ bool location_init(GameInitInfo* init_info);
 void location_exit();
 void location_resize(GameResizeInfo* resize_info);
 bool location_update_view(ViewOptions* view_options);
-void sub_4B8680(int64_t location, int64_t* x, int64_t* y);
+void location_xy(int64_t loc, int64_t* sx, int64_t* sy);
 bool location_at(int64_t sx, int64_t sy, int64_t* loc_ptr);
 void sub_4B8940(int64_t location, int64_t* x, int64_t* y);
 void location_get_origin(int64_t* origin_x, int64_t* origin_y);

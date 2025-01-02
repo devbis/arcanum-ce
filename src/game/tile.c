@@ -398,7 +398,7 @@ void sub_4D7820(int64_t loc, tig_art_id_t art_id)
         sector->tiles.dif = 1;
         sector_unlock(sector_id);
 
-        sub_4B8680(loc, &x, &y);
+        location_xy(loc, &x, &y);
         if (x > INT_MIN && x < INT_MAX
             && y > INT_MIN && y < INT_MAX) {
             rect.x = (int)x;
@@ -625,7 +625,7 @@ void tile_render_topdown(UnknownContext* render_info)
         if (sector_lock(sector_node->id, &sector)) {
             tile = sub_4D7090(sector_node->field_8);
             skip = 64 - sector_node->field_10;
-            sub_4B8680(sector_node->field_8, &loc_x, &loc_y);
+            location_xy(sector_node->field_8, &loc_x, &loc_y);
 
             for (y = 0; y < sector_node->field_14; y++) {
                 tile_rect.x = (int)loc_x;
@@ -720,7 +720,7 @@ void tile_render_iso(UnknownContext* render_info)
             sector_lock_results[v4] = sector_lock(v3->field_20[v4], &(sectors[v4]));
         }
 
-        sub_4B8680(v3->field_8[0], &loc_x, &loc_y);
+        location_xy(v3->field_8[0], &loc_x, &loc_y);
 
         v10 = 0;
         v11 = 0;
