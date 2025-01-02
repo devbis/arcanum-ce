@@ -302,7 +302,7 @@ void sub_4CC580(S5FF620* a1)
     dword_5B7558 = v1->field_10;
 
     if (combat_critter_is_combat_mode_active(v1->obj)
-        && sub_4AB430(v1->obj) <= 50) {
+        && ai_critter_fatigue_ratio(v1->obj) <= 50) {
         sub_4CC810(v1);
         if (!dword_6016F4) {
             magictech_build_ai_action_list(v1);

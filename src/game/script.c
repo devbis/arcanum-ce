@@ -1856,7 +1856,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         }
 
         int fatigue_ratio = obj_type_is_critter(obj_type)
-            ? sub_4AB430(state->invocation->attachee_obj)
+            ? ai_critter_fatigue_ratio(state->invocation->attachee_obj)
             : 100;
         int hp_ratio = ai_object_hp_ratio(state->invocation->attachee_obj);
         tig_art_id_t art_id = obj_field_int32_get(state->invocation->attachee_obj, OBJ_F_CURRENT_AID);

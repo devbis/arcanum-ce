@@ -35,7 +35,7 @@ void sub_4AA8C0(int64_t obj, bool force);
 bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent);
 bool ai_is_fighting(int64_t obj);
 int ai_object_hp_ratio(int64_t obj);
-int sub_4AB430(int64_t obj);
+int ai_critter_fatigue_ratio(int64_t obj);
 int64_t sub_4ABBC0(int64_t obj);
 bool ai_timeevent_process(TimeEvent* timeevent);
 void sub_4AD6E0(int64_t obj);

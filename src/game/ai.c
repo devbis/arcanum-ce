@@ -531,7 +531,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
     }
 
     if (ai->danger_type != 0) {
-        if (sub_4AB430(ai->obj) < 20) {
+        if (ai_critter_fatigue_ratio(ai->obj) < 20) {
             sub_4CCA90(&v2, ai->obj, 8);
             v1.flags = 0x8;
             v1.entries = v2.field_30[8].entries;
@@ -1865,7 +1865,7 @@ int ai_object_hp_ratio(int64_t obj)
 }
 
 // 0x4AB430
-int sub_4AB430(int64_t obj)
+int ai_critter_fatigue_ratio(int64_t obj)
 {
     return 100 * critter_fatigue_current(obj) / critter_fatigue_max(obj);
 }
@@ -3626,7 +3626,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
         if (a3 != OBJ_HANDLE_NULL
             && (COLLEGE_FROM_SPELL(magictech) != COLLEGE_NECROMANTIC_WHITE
                 || (ai_object_hp_ratio(a3) > 30
-                    && sub_4AB430(a1) < 80))
+                    && ai_critter_fatigue_ratio(a1) < 80))
             && sub_453CC0(a1, item_obj, a3) >= 38) {
             return 8;
         }
@@ -3636,7 +3636,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
         }
 
         if (obj_type == OBJ_TYPE_NPC) {
-            if (!sub_45DDA0(a1) && sub_4AB430(a1) < 20) {
+            if (!sub_45DDA0(a1) && ai_critter_fatigue_ratio(a1) < 20) {
                 return 2;
             }
 
