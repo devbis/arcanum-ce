@@ -320,7 +320,7 @@ void sub_53F020(int64_t obj)
     }
 
     if (obj != OBJ_HANDLE_NULL
-        && !sub_45D8D0(player_get_pc_obj())
+        && !critter_is_dead(player_get_pc_obj())
         && sub_551A80(0)
         && sub_551A80(7)) {
         qword_63FAD8 = obj;

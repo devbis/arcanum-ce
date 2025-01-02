@@ -309,8 +309,8 @@ void sub_56D130(long long a1, long long a2)
 
     if (a1 == OBJ_HANDLE_NULL
         || a2 == OBJ_HANDLE_NULL
-        || sub_45D8D0(a1)
-        || sub_45D8D0(a2)
+        || critter_is_dead(a1)
+        || critter_is_dead(a2)
         || !sub_551A80(0)
         || !sub_551A80(14)) {
         return;

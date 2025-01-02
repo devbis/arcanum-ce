@@ -96,7 +96,7 @@ void sub_56FBF0(long long obj)
     }
 
     if (obj != 0) {
-        if (!sub_45D8D0(obj)) {
+        if (!critter_is_dead(obj)) {
             qword_680ED8 = obj;
             fate_ui_create();
         }

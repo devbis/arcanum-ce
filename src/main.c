@@ -408,7 +408,7 @@ void main_loop()
                         }
                         break;
                     case DIK_F7:
-                        if (!sub_45D8D0(player_get_pc_obj())) {
+                        if (!critter_is_dead(player_get_pc_obj())) {
                             if (wmap_ui_is_created()) {
                                 sub_560F40();
                                 tig_ping();

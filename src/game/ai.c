@@ -318,7 +318,7 @@ bool sub_4A8570(Ai* ai)
     unsigned int npc_flags;
     int64_t leader_obj;
 
-    if (sub_45D8D0(ai->obj)) {
+    if (critter_is_dead(ai->obj)) {
         return false;
     }
 
@@ -411,7 +411,7 @@ bool sub_4A8570(Ai* ai)
     if ((npc_flags & ONF_DEMAINTAIN_SPELLS) != 0) {
         leader_obj = critter_leader_get(ai->obj);
         if (leader_obj == OBJ_HANDLE_NULL
-            || sub_45D8D0(leader_obj)
+            || critter_is_dead(leader_obj)
             || !combat_critter_is_combat_mode_active(leader_obj)) {
             npc_flags &= ~ONF_DEMAINTAIN_SPELLS;
             obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
@@ -510,7 +510,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
         return false;
     }
 
-    if (sub_45D8D0(obj)) {
+    if (critter_is_dead(obj)) {
         sub_4CCA90(&v2, ai->obj, 9);
         v1.flags = 0x8;
         v1.entries = v2.field_30[9].entries;
@@ -861,7 +861,7 @@ void sub_4A9560(AiRedirect* ai_redirect)
     sub_440FC0(ai_redirect->field_8, OBJ_TM_PC | OBJ_TM_NPC, &objects);
     node = objects.head;
     while (node != NULL) {
-        if (!sub_45D8D0(node->obj)
+        if (!critter_is_dead(node->obj)
             && node->obj != ai_redirect->field_0
             && node->obj != ai_redirect->field_8
             && (ai_redirect->min_iq <= 0
@@ -897,7 +897,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
     target_obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     if (obj_type_is_critter(target_obj_type)) {
         if ((obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NIGH_INVULNERABLE) != 0
-            || sub_45D8D0(target_obj)) {
+            || critter_is_dead(target_obj)) {
             return;
         }
 
@@ -1091,7 +1091,7 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
 
     target_obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     if (obj_type_is_critter(target_obj_type)) {
-        if (source_obj == target_obj || sub_45D8D0(source_obj)) {
+        if (source_obj == target_obj || critter_is_dead(source_obj)) {
             return;
         }
 
@@ -1209,7 +1209,7 @@ void sub_4AA0D0(int64_t obj)
 
     node = npcs.head;
     while (node != NULL) {
-        if (!sub_45D8D0(node->obj)
+        if (!critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && sub_45DDA0(node->obj) != obj
             && (sub_4AF260(node->obj, obj) == 0 || !sub_4AF470(node->obj, obj, 0))) {
@@ -1236,7 +1236,7 @@ void sub_4AA1B0(int64_t a1, int64_t a2)
         sub_4AE4E0(a2, 3, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
-            if (!sub_45D8D0(node->obj)
+            if (!critter_is_dead(node->obj)
                 && (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0
                 && critter_faction_same(a1, node->obj)) {
                 ai_danger_source(node->obj, &danger_type, &danger_obj);
@@ -1386,7 +1386,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
     char str[1000];
     int v1;
 
-    if (sub_45D8D0(a1)) {
+    if (critter_is_dead(a1)) {
         return;
     }
 
@@ -2033,7 +2033,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
     target_obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
 
     if (obj_type_is_critter(target_obj_type)) {
-        if (sub_45D8D0(target_obj)) {
+        if (critter_is_dead(target_obj)) {
             return false;
         }
 
@@ -2437,7 +2437,7 @@ void sub_4AC660(Ai* ai)
     obj_field_obj_get(ai->obj, OBJ_F_CRITTER_FLEEING_FROM, &fleeing_from_obj);
 
     if (fleeing_from_obj == OBJ_HANDLE_NULL
-        || sub_45D8D0(fleeing_from_obj)
+        || critter_is_dead(fleeing_from_obj)
         || sub_45D800(fleeing_from_obj)) {
         ai->danger_type = sub_4AABE0(ai->obj, 0, OBJ_HANDLE_NULL, 0);
     }
@@ -2545,7 +2545,7 @@ bool sub_4AC910(Ai* ai, int64_t a2)
     sub_4AE4E0(ai->danger_source, v1, &objects, OBJ_TM_NPC);
     node = objects.head;
     while (node != NULL) {
-        if (!sub_45D8D0(node->obj)
+        if (!critter_is_dead(node->obj)
             && sub_4AE3A0(ai->obj, node->obj)) {
             break;
         }
@@ -2844,7 +2844,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
 
     skip = false;
     v1 = false;
-    if (!sub_45D8D0(obj) && timeevent->params[1].integer_value != 0) {
+    if (!critter_is_dead(obj) && timeevent->params[1].integer_value != 0) {
         npc_flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
         npc_flags |= ONF_CHECK_WIELD;
         obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, npc_flags);
@@ -2878,7 +2878,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
             sub_4A84F0(obj);
         }
     } else {
-        if (!sub_4B6D70() && !sub_45D8D0(obj)) {
+        if (!sub_4B6D70() && !critter_is_dead(obj)) {
             sub_424070(obj, 4, false, true);
         }
 
@@ -2911,7 +2911,7 @@ bool sub_4AD420(int64_t obj)
 {
     int64_t pc_obj;
 
-    if (sub_45D8D0(obj)) {
+    if (critter_is_dead(obj)) {
         return false;
     }
 
@@ -2944,7 +2944,7 @@ bool sub_4AD4D0(int64_t obj)
     int64_t pc_leader_obj;
     int64_t v1;
 
-    if (sub_45D8D0(obj)) {
+    if (critter_is_dead(obj)) {
         return false;
     }
 
@@ -3103,7 +3103,7 @@ int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3)
             return 5;
         }
 
-        if (sub_45D8D0(npc_obj)) {
+        if (critter_is_dead(npc_obj)) {
             return (spell_flags & OSF_SPOKEN_WITH_DEAD) == 0 ? 1 : 0;
         }
 
@@ -3530,7 +3530,7 @@ int64_t sub_4AE450(int64_t a1, int64_t a2)
 {
     int64_t combat_focus_obj;
 
-    if (sub_45D8D0(a2)
+    if (critter_is_dead(a2)
         && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_NPC
         && obj_field_obj_get(a2, OBJ_F_NPC_COMBAT_FOCUS, &combat_focus_obj)
         && combat_focus_obj != OBJ_HANDLE_NULL
@@ -3911,7 +3911,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4)
     while (node != NULL) {
         if ((obj_field_int32_get(node->obj, OBJ_F_NAME) == notify_npc
                 || critter_social_class_get(node->obj) == SOCIAL_CLASS_GUARD)
-            && !sub_45D8D0(node->obj)
+            && !critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && (!sub_4AF260(node->obj, critter_obj)
                 || !sub_4AF470(node->obj, critter_obj, a4))) {
@@ -4191,7 +4191,7 @@ int sub_4AF640(int64_t source_obj, int64_t target_obj)
 // 0x4AF800
 bool sub_4AF800(int64_t obj, int64_t a2)
 {
-    return !sub_45D8D0(a2)
+    return !critter_is_dead(a2)
         && stat_level(obj, STAT_INTELLIGENCE) < 5
         && obj_field_int32_get(a2, OBJ_F_NAME) == CLOCKWORK_DECOY;
 }

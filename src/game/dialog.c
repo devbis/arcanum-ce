@@ -482,7 +482,7 @@ bool sub_412FD0(DialogEntryNode* a1)
 
     sub_4C1020(a1->npc_obj, a1->pc_obj);
 
-    if (sub_45D8D0(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
+    if (critter_is_dead(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
         if (player_is_pc_obj(a1->pc_obj)) {
             pc_loc = obj_field_int64_get(a1->pc_obj, OBJ_F_LOCATION);
             npc_loc = obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION);
@@ -535,7 +535,7 @@ void sub_413130(DialogEntryNode* a1, int a2)
             return;
         }
 
-        if (sub_45D8D0(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
+        if (critter_is_dead(a1->npc_obj) || sub_4AE120(a1->npc_obj, a1->pc_obj) == 0) {
             sub_414810(v1, v2, v3, a2, a1);
         } else {
             sub_4185F0(a1->field_70, a1, 1000);
@@ -3531,7 +3531,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
         }
     }
 
-    if ((flags[0] & 0x2) == 0 && sub_45D8D0(a1->npc_obj)) {
+    if ((flags[0] & 0x2) == 0 && critter_is_dead(a1->npc_obj)) {
         if (!sub_4197D0(flags[0], values[0], a1)) {
             sub_418780(a1->field_70, a1, 1500, 1599);
         }

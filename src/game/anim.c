@@ -5739,7 +5739,7 @@ bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
         sub_4407C0(adjacent_loc, OBJ_TM_CRITTER, &objects);
         node = objects.head;
         while (node != NULL) {
-            if (!sub_45D8D0(node->obj)) {
+            if (!critter_is_dead(node->obj)) {
                 run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj = node->obj;
                 break;
             }
@@ -7049,7 +7049,7 @@ bool sub_429450(AnimRunInfo* run_info)
     }
 
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        && sub_45D8D0(obj)) {
+        && critter_is_dead(obj)) {
         return false;
     }
 
@@ -7094,7 +7094,7 @@ bool sub_4294F0(int64_t source_obj, int64_t target_obj)
     }
 
     if (obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))
-        && sub_45D8D0(target_obj)) {
+        && critter_is_dead(target_obj)) {
         return false;
     }
 
@@ -7183,7 +7183,7 @@ bool sub_429760(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_45D8D0(target_obj)) {
+    if (critter_is_dead(target_obj)) {
         return false;
     }
 
@@ -8555,7 +8555,7 @@ bool sub_42B7F0(AnimRunInfo* run_info)
         &objects);
     node = objects.head;
     while (node != NULL) {
-        if (!sub_45D8D0(node->obj)) {
+        if (!critter_is_dead(node->obj)) {
             object_list_destroy(&objects);
             return false;
         }
@@ -8633,7 +8633,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
         combat_critter_activate_combat_mode(target_obj);
     } else {
         leader_obj = sub_45DDA0(target_obj);
-        if (leader_obj == OBJ_HANDLE_NULL && !sub_45D8D0(leader_obj)) {
+        if (leader_obj == OBJ_HANDLE_NULL && !critter_is_dead(leader_obj)) {
             combat_critter_activate_combat_mode(leader_obj);
         }
     }
@@ -11160,7 +11160,7 @@ bool sub_42FD70(AnimRunInfo* run_info, int64_t obj, AnimPath* path, int64_t from
             sub_4407C0(to, OBJ_TM_CRITTER, &objects);
             node = objects.head;
             while (node != NULL) {
-                if (!sub_45D8D0(node->obj)) {
+                if (!critter_is_dead(node->obj)) {
                     break;
                 }
                 node = node->next;
@@ -11240,7 +11240,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((run_info->field_C & 0x200) == 0 && sub_45D8D0(obj)) {
+    if ((run_info->field_C & 0x200) == 0 && critter_is_dead(obj)) {
         sub_43D0E0(obj, OF_FLAT | OF_NO_BLOCK);
 
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
@@ -14589,7 +14589,7 @@ bool sub_435A90(int64_t critter_obj)
         return false;
     }
 
-    if (sub_45D8D0(art_id)) {
+    if (critter_is_dead(art_id)) {
         return false;
     }
 
@@ -14885,7 +14885,7 @@ bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr)
     sub_4407C0(loc, OBJ_TM_CRITTER, &objects);
     node = objects.head;
     while (node != NULL) {
-        if (!sub_45D8D0(node->obj)
+        if (!critter_is_dead(node->obj)
             && !sub_44E8C0(node->obj, NULL)) {
             cnt++;
         }
@@ -14896,7 +14896,7 @@ bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr)
     if (cnt > 1) {
         node = objects.head;
         while (node != NULL) {
-            if (!sub_45D8D0(node->obj)
+            if (!critter_is_dead(node->obj)
                 && !sub_44E8C0(node->obj, NULL)
                 && obj_field_int32_get(node->obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
                 && node->obj == *source_obj_ptr) {

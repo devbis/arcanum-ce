@@ -158,7 +158,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
         sub_552080(timeevent->params[1].integer_value);
         break;
     case 10:
-        if (sub_45D8D0(player_get_pc_obj())) {
+        if (critter_is_dead(player_get_pc_obj())) {
             if (sub_573620() != OBJ_HANDLE_NULL) {
                 sub_575770();
             }

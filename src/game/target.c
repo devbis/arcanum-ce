@@ -293,7 +293,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
         sub_440FC0(pc_obj, OBJ_TM_PC | OBJ_TM_NPC, &dead_critters);
         node = mp_party_members.head;
         while (node != NULL) {
-            if (sub_45D8D0(node->obj)) {
+            if (critter_is_dead(node->obj)) {
                 sub_43D0E0(node->obj, OF_CANCEL);
             }
             node = node->next;
@@ -357,7 +357,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
     if ((stru_603D20.aoe_flags & Tgt_No_ST_Critter_Dead) != 0) {
         node = mp_party_members.head;
         while (node != NULL) {
-            if (sub_45D8D0(node->obj)) {
+            if (critter_is_dead(node->obj)) {
                 sub_43D280(node->obj, OF_CANCEL);
             }
             node = node->next;
@@ -500,11 +500,11 @@ bool sub_4F2D20(S603CB8* a1)
                 }
 
                 if ((tgt & 0x100) != 0) {
-                    if (!sub_45D8D0(a1->field_20)) {
+                    if (!critter_is_dead(a1->field_20)) {
                         return false;
                     }
                 } else if ((tgt & 0x80000000) != 0) {
-                    if (sub_45D8D0(a1->field_20)) {
+                    if (critter_is_dead(a1->field_20)) {
                         return false;
                     }
                 }
@@ -692,7 +692,7 @@ bool sub_4F2D20(S603CB8* a1)
 
             if ((tgt & 0x40) == 0) {
                 if ((tgt & 0x80000000) != 0
-                    && sub_45D8D0(a1->field_20)) {
+                    && critter_is_dead(a1->field_20)) {
                     return false;
                 }
 

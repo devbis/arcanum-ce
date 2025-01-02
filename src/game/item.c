@@ -1966,7 +1966,7 @@ void sub_463C60(int64_t obj)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
 
     if (obj_type_is_critter(obj_type)) {
-        if (sub_45D8D0(obj)
+        if (critter_is_dead(obj)
             || (obj_type == OBJ_TYPE_NPC
                 && sub_45DDA0(obj) != OBJ_HANDLE_NULL)) {
             return;
@@ -1994,7 +1994,7 @@ void sub_463C60(int64_t obj)
             while (node != NULL) {
                 if (sub_45F650(node->obj) == obj) {
                     v2 = node->obj;
-                    if (!sub_45D8D0(node->obj)
+                    if (!critter_is_dead(node->obj)
                         && !sub_45DDA0(node->obj)) {
                         v1 = false;
                     }

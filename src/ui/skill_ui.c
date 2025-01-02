@@ -150,12 +150,12 @@ void sub_579FA0(int64_t obj, int type)
 
     pc_obj = player_get_pc_obj();
     if (pc_obj != obj) {
-        if (sub_45D8D0(pc_obj)
+        if (critter_is_dead(pc_obj)
             || sub_45D800(pc_obj)) {
             return;
         }
 
-        if (sub_45D8D0(obj)
+        if (critter_is_dead(obj)
             || sub_45D800(obj)) {
             return;
         }
@@ -270,7 +270,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
     MesFileEntry mes_file_entry;
     Tanya v2;
 
-    if (sub_45D8D0(obj)) {
+    if (critter_is_dead(obj)) {
         return;
     }
 
@@ -293,7 +293,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
                         mes_get_msg(skill_ui_mes_file, &mes_file_entry);
                         tf_add(obj, TF_TYPE_WHITE, mes_file_entry.str);
                     }
-                } else if (sub_45D8D0(a1->obj)) {
+                } else if (critter_is_dead(a1->obj)) {
                     if (sub_441980(obj, a1->obj, obj, SAP_USE, 0)
                         && (spell_flags & OSF_POLYMORPHED) == 0
                         && !sub_423300(a1->obj, 0)) {

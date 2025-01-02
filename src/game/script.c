@@ -322,7 +322,7 @@ bool sub_4449B0(ScriptInvocation* invocation)
     }
 
     if (invocation->field_20 == SAP_DIALOG && attachee_type == OBJ_TYPE_NPC) {
-        if (sub_45D8D0(invocation->attachee_obj) && (flags & 0x8) == 0) {
+        if (critter_is_dead(invocation->attachee_obj) && (flags & 0x8) == 0) {
             return true;
         }
 
@@ -998,7 +998,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         cnt = script_resolve_focus_obj(condition->op_type[0], condition->op_value[0], state, objs, &objects);
         matched = 0;
         for (index = 0; index < cnt; index++) {
-            if (sub_45D8D0(objs[index])) {
+            if (critter_is_dead(objs[index])) {
                 matched++;
             }
         }

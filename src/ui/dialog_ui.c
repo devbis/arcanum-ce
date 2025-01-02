@@ -143,7 +143,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
     char str[2000];
     Packet44 pkt;
 
-    if (sub_45D8D0(a1)) {
+    if (critter_is_dead(a1)) {
         return;
     }
 
@@ -736,7 +736,7 @@ void sub_568540(int64_t obj, int64_t a2, int type, int expires_in, const char* s
     }
 
     if (a2 != OBJ_HANDLE_NULL
-        && !sub_45D8D0(obj)
+        && !critter_is_dead(obj)
         && !sub_423300(obj, 0)) {
         sub_424070(obj, 3, 0, 1);
         sub_433440(obj, sub_441B20(obj, a2));
@@ -770,7 +770,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int expires_in, const char* s
     }
 
     if (a2 != OBJ_HANDLE_NULL
-        && !sub_45D8D0(obj)
+        && !critter_is_dead(obj)
         && !sub_423300(obj, 0)) {
         sub_424070(obj, 3, 0, 1);
         sub_433440(obj, sub_441B20(obj, a2));

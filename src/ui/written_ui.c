@@ -225,7 +225,7 @@ void sub_56BB60(int64_t written_obj, int64_t pc_obj)
         return;
     }
 
-    if (sub_45D8D0(pc_obj)) {
+    if (critter_is_dead(pc_obj)) {
         return;
     }
 

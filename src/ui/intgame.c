@@ -2815,7 +2815,7 @@ void sub_54DE50(TigMessage* msg)
                     && sub_4F2830(&(msg->data.mouse), &v1, intgame_fullscreen)
                     && v1.is_loc
                     && !sub_573620()
-                    && !sub_45D8D0(pc_obj)
+                    && !critter_is_dead(pc_obj)
                     && !tig_kb_is_key_pressed(DIK_LSHIFT)
                     && !tig_kb_is_key_pressed(DIK_RSHIFT)) {
                     if ((tig_kb_is_key_pressed(DIK_LCONTROL)
@@ -3021,7 +3021,7 @@ void sub_54EBF0()
     int64_t obj;
 
     pc_obj = player_get_pc_obj();
-    if (sub_45D8D0(pc_obj)) {
+    if (critter_is_dead(pc_obj)) {
         return;
     }
 
@@ -3210,7 +3210,7 @@ void sub_54ED30(S4F2810* a1)
                 break;
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
-                if (sub_45D8D0(a1->obj)) {
+                if (critter_is_dead(a1->obj)) {
                     if (tig_kb_is_key_pressed(DIK_LMENU) || tig_kb_is_key_pressed(DIK_RMENU)) {
                         anim = AG_USE_CONTAINER;
                         v26 = true;
@@ -3291,7 +3291,7 @@ void sub_54ED30(S4F2810* a1)
                 break;
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
-                if (!sub_45D8D0(a1->obj)
+                if (!critter_is_dead(a1->obj)
                     || (obj_field_int32_get(a1->obj, OBJ_F_SPELL_FLAGS) & OSF_SPOKEN_WITH_DEAD) != 0) {
                     // FIXME: Useless.
                     obj_field_int32_get(a1->obj, OBJ_F_CURRENT_AID);
@@ -3546,7 +3546,7 @@ void sub_54FCF0(S683518* a1)
         return;
     }
 
-    if (sub_45D8D0(pc_obj)) {
+    if (critter_is_dead(pc_obj)) {
         return;
     }
 
@@ -6130,7 +6130,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
 
     if (a1 != critter_obj
         && combat_critter_is_combat_mode_active(a1)
-        && !sub_45D8D0(critter_obj)) {
+        && !critter_is_dead(critter_obj)) {
         sub_554830(a1, critter_obj);
     } else {
         if (is_detecting_alignment) {
@@ -6157,7 +6157,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
         dword_739F88,
         0x1);
 
-    if (sub_45D8D0(critter_obj)) {
+    if (critter_is_dead(critter_obj)) {
         mes_file_entry.num = 16; // "Dead"
         mes_get_msg(intgame_mes_file, &mes_file_entry);
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
@@ -7978,7 +7978,7 @@ void sub_557370(int64_t a1, int64_t a2)
                 break;
             case OBJ_TYPE_PC:
             case OBJ_TYPE_NPC:
-                if (sub_45D8D0(a2)) {
+                if (critter_is_dead(a2)) {
                     if (tig_kb_is_key_pressed(DIK_LALT) || tig_kb_is_key_pressed(DIK_RALT)) {
                         sub_4B79A0(a1, a2);
                     }

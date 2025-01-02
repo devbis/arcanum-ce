@@ -73,7 +73,7 @@ int sub_41F3C0(PathCreateInfo* path_create_info)
         while (node != NULL) {
             if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_NO_BLOCK) != 0) {
                 if (!obj_type_is_critter(obj_field_int32_get(node->obj, OBJ_F_TYPE))
-                    || !sub_45D8D0(node->obj)) {
+                    || !critter_is_dead(node->obj)) {
                     break;
                 }
             }

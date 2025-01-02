@@ -3046,7 +3046,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
             if (obj_type_is_critter(obj_type)) {
                 v2 = true;
                 if ((flags & 0x04) == 0
-                    && !sub_45D8D0(node->obj)) {
+                    && !critter_is_dead(node->obj)) {
                     *block_obj_ptr = node->obj;
                     *block_obj_type_ptr = obj_type;
                     break;
@@ -3067,7 +3067,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
         // 0x44063F
         if ((flags & 0x08) != 0
             && v2
-            && (!obj_type_is_critter(obj_type) || !sub_45D8D0(node->obj))) {
+            && (!obj_type_is_critter(obj_type) || !critter_is_dead(node->obj))) {
             obj_flags = obj_field_int32_get(node->obj, OBJ_F_FLAGS);
             if ((obj_flags & OF_SHOOT_THROUGH) == 0) {
                 *block_obj_ptr = node->obj;

@@ -513,7 +513,7 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
         return false;
     }
 
-    if (sub_45D8D0(a1)) {
+    if (critter_is_dead(a1)) {
         return false;
     }
 

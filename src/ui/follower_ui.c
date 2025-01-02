@@ -558,7 +558,7 @@ void sub_56B180(S4F2810* a1)
     char str[MAX_STRING];
 
     sub_56B280();
-    if (!sub_45D8D0(qword_67BC20) && !sub_45D800(qword_67BC20)) {
+    if (!critter_is_dead(qword_67BC20) && !sub_45D800(qword_67BC20)) {
         if (a1->is_loc) {
             // Walk
             num = 0;

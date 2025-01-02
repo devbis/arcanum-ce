@@ -152,7 +152,7 @@ bool sub_57BC70(int64_t obj, int spl)
         return true;
     }
 
-    if (sub_45D8D0(qword_683500)) {
+    if (critter_is_dead(qword_683500)) {
         return true;
     }
 
@@ -312,7 +312,7 @@ void sub_57C110(S4F2810* a1)
     UiMessage ui_message;
     MagicTechSerializedData v2;
 
-    if (!sub_45D8D0(qword_683500) && !sub_45D800(qword_683500)) {
+    if (!critter_is_dead(qword_683500) && !sub_45D800(qword_683500)) {
         if (obj_type_is_critter(obj_field_int32_get(qword_6834F8, OBJ_F_TYPE))
             && !magictech_can_charge_spell_fatigue(qword_683500, dword_5CB3A0)) {
             // Not enough Energy.

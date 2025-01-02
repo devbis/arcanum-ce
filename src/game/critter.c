@@ -429,7 +429,7 @@ bool sub_45D730(long long obj)
 bool sub_45D790(long long obj)
 {
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0
-        && !sub_45D8D0(obj)
+        && !critter_is_dead(obj)
         && !sub_45D800(obj)
         && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_STUNNED | OCF_PARALYZED)) == 0
         && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0;
@@ -454,7 +454,7 @@ bool critter_is_sleeping(int64_t obj)
 }
 
 // 0x45D8D0
-bool sub_45D8D0(long long obj)
+bool critter_is_dead(long long obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
         return object_hp_current(obj) <= 0;
@@ -1065,7 +1065,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
         return true;
     }
 
-    if (sub_45D8D0(critter_obj)) {
+    if (critter_is_dead(critter_obj)) {
         return true;
     }
 
@@ -1191,7 +1191,7 @@ void sub_45E910(int64_t critter_obj, int hours)
         return;
     }
 
-    if (sub_45D8D0(critter_obj)) {
+    if (critter_is_dead(critter_obj)) {
         return;
     }
 
@@ -1301,7 +1301,7 @@ bool critter_decay_timeevent_process(TimeEvent* timeevent)
     }
 
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        && sub_45D8D0(obj)) {
+        && critter_is_dead(obj)) {
         tig_debug_printf("Critter: critter_decay_timeevent_process: ERROR: Attempt to Decay a LIVE critter!\n");
         return false;
     }
@@ -1358,7 +1358,7 @@ bool critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent)
 
     obj = timeevent->params[0].object_value;
     if (obj == OBJ_HANDLE_NULL
-        || !sub_45D8D0(obj)) {
+        || !critter_is_dead(obj)) {
         return true;
     }
 
@@ -1577,7 +1577,7 @@ void sub_45F110(int64_t obj, int xp_gain)
         sub_440FC0(obj, OBJ_TM_PC, &objects);
         node = objects.head;
         while (node != NULL) {
-            if (!sub_45D8D0(node->obj)
+            if (!critter_is_dead(node->obj)
                 && node->obj != OBJ_HANDLE_NULL
                 && sub_4BA020(node->obj) == v1) {
                 cnt++;
@@ -1592,7 +1592,7 @@ void sub_45F110(int64_t obj, int xp_gain)
 
         node = objects.head;
         while (node != NULL) {
-            if (!sub_45D8D0(node->obj)
+            if (!critter_is_dead(node->obj)
                 && node->obj != OBJ_HANDLE_NULL
                 && sub_4BA020(node->obj) == v1) {
                 xp = stat_get_base(node->obj, STAT_EXPERIENCE_POINTS);
@@ -1605,7 +1605,7 @@ void sub_45F110(int64_t obj, int xp_gain)
         object_list_destroy(&objects);
         sub_4EDDE0(OBJ_HANDLE_NULL);
     } else {
-        if (!sub_45D8D0(obj)) {
+        if (!critter_is_dead(obj)) {
             xp = stat_get_base(obj, STAT_EXPERIENCE_POINTS);
             xp += effect_adjust_xp_gain(obj, xp_gain);
             stat_set_base(obj, STAT_EXPERIENCE_POINTS, xp);

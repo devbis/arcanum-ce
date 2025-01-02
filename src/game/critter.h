@@ -54,7 +54,7 @@ bool sub_45D730(long long obj);
 bool sub_45D790(long long obj);
 bool sub_45D800(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
-bool sub_45D8D0(long long obj);
+bool critter_is_dead(long long obj);
 void sub_45D900(int64_t obj);
 void sub_45DA20(int64_t a1, int64_t a2, int a3);
 void sub_45DC90(int64_t a1, int64_t a2, bool a3);;

@@ -664,7 +664,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
             sub_4407C0(proj_loc, OBJ_TM_CRITTER, &objects);
             node = objects.head;
             while (node != NULL) {
-                if (!sub_45D8D0(node->obj)
+                if (!critter_is_dead(node->obj)
                     && node->obj != target_obj
                     && node->obj != attacker_obj
                     && random_between(1, 3) == 1) {
@@ -1262,7 +1262,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
     combat_mode_is_active = combat_critter_is_combat_mode_active(obj);
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
 
-    if (!obj_type_is_critter(obj_type) || !sub_45D8D0(obj)) {
+    if (!obj_type_is_critter(obj_type) || !critter_is_dead(obj)) {
         if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0) {
             return;
         }
@@ -1306,7 +1306,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
 
     if (sub_503E20(art_id) == 0) {
         v1 = true;
-        if (!is_pc && !sub_45D8D0(obj)) {
+        if (!is_pc && !critter_is_dead(obj)) {
             return;
         }
     }
@@ -1536,7 +1536,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if (sub_45D8D0(combat->field_20)) {
+        if (critter_is_dead(combat->field_20)) {
             return;
         }
 
@@ -1889,7 +1889,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if (sub_45D8D0(combat->field_20)) {
+        if (critter_is_dead(combat->field_20)) {
             int v2;
 
             if ((dam_flags & 0x04) != 0 || dam <= 20) {
@@ -2202,7 +2202,7 @@ void sub_4B58C0(CombatContext* combat)
         }
     }
 
-    if (sub_45D8D0(combat->field_20)) {
+    if (critter_is_dead(combat->field_20)) {
         if ((combat->field_58 & 0x2) == 0) {
             return;
         }
@@ -3883,7 +3883,7 @@ void sub_4B80E0(int64_t obj)
         flags |= dword_5B5818[reaction_type];
         obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
 
-        if (sub_45D8D0(obj) || sub_4B7DC0(obj)) {
+        if (critter_is_dead(obj) || sub_4B7DC0(obj)) {
             animfx_remove(&stru_5FC1F8, obj, 0, -1);
         } else {
             sub_4CCD20(&stru_5FC1F8, &node, obj, -1, 0);

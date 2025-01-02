@@ -79,7 +79,7 @@ void sub_571AA0(int64_t a1, int64_t a2)
     }
 
     if ((obj_field_int32_get(a1, OBJ_F_FLAGS) & OF_OFF) != 0
-        && !sub_45D8D0(a1)
+        && !critter_is_dead(a1)
         && !sub_45D800(a1)) {
         return;
     }
@@ -152,7 +152,7 @@ void sub_571CB0(S4F2810* a1)
 
     pc_obj = player_get_pc_obj();
 
-    if (sub_45D8D0(pc_obj)) {
+    if (critter_is_dead(pc_obj)) {
         return;
     }
 

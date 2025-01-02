@@ -380,7 +380,7 @@ void sub_4A69C0(int64_t pc_obj)
     sub_440FC0(pc_obj, OBJ_TM_NPC, &objects);
     node = objects.head;
     while (node != NULL) {
-        if (!sub_45D8D0(node->obj)
+        if (!critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0
             && sub_45DDA0(node->obj) == pc_obj) {
             sub_4A6CB0(node->obj, old_level, cur_level);

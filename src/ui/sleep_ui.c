@@ -131,7 +131,7 @@ void sub_57B180(int64_t bed_obj)
 
     pc_obj = player_get_pc_obj();
 
-    if (sub_45D8D0(pc_obj)) {
+    if (critter_is_dead(pc_obj)) {
         return;
     }
 
@@ -440,7 +440,7 @@ bool sleep_ui_process_callback(TimeEvent* timeevent)
         object_list_destroy(&objects);
     }
 
-    if (!sub_45D8D0(qword_6834A8)) {
+    if (!critter_is_dead(qword_6834A8)) {
         if (timeevent->params[0].integer_value > 1) {
             timeevent->params[0].integer_value -= 1;
             sub_45A950(&datetime, 200);

@@ -869,7 +869,7 @@ bool charedit_create(int64_t obj, int a2)
     }
 
     pc_obj = player_get_pc_obj();
-    if (sub_45D8D0(pc_obj) || !sub_551A80(0) || !sub_551A80(9)) {
+    if (critter_is_dead(pc_obj) || !sub_551A80(0) || !sub_551A80(9)) {
         return false;
     }
 
