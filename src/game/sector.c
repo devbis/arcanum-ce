@@ -316,7 +316,7 @@ void sub_4CF370()
 }
 
 // 0x4CF390
-void sub_4CF390(UnknownContext* info)
+void sector_render(UnknownContext* render_info)
 {
     Sector601808* node;
     int sector_x;
@@ -333,113 +333,117 @@ void sub_4CF390(UnknownContext* info)
     TigRect dirty_rect;
     TigRectListNode* rect_node;
 
-    if (dword_601830) {
-        if (sector_view_options.type == VIEW_TYPE_TOP_DOWN) {
-            node = info->field_C;
-            while (node != NULL) {
-                sector_x = SECTOR_X(node->id);
-                sector_y = SECTOR_Y(node->id);
+    if (!dword_601830) {
+        return;
+    }
 
-                townmap = sub_4BE380(node->id);
-                if (townmap != 0) {
-                    int red = townmap * (255 / townmap_count());
-                    if ((townmap & 1) != 0) {
-                        color = tig_color_make(red, 255 - red, 0);
-                    } else {
-                        color = tig_color_make(red, 0, 255 - red);
-                    }
-                } else {
-                    color = dword_6017AC;
-                }
+    if (sector_view_options.type != VIEW_TYPE_TOP_DOWN) {
+        return;
+    }
 
-                location = location_make(sector_x + 63, sector_y);
-                location_xy(location, &location_x, &location_y);
+    node = render_info->field_C;
+    while (node != NULL) {
+        sector_x = SECTOR_X(node->id);
+        sector_y = SECTOR_Y(node->id);
 
-                x = location_x & 0xFFFFFFFF;
-                y = location_y & 0xFFFFFFFF;
-                size = sector_view_options.zoom * 64;
-
-                rect.x = x;
-                rect.y = y;
-                rect.width = size;
-                rect.height = 1;
-
-                rect_node = *info->rects;
-                while (rect_node != NULL) {
-                    if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
-                        tig_window_box(sector_iso_window_handle, &dirty_rect, color);
-                    }
-                    rect_node = rect_node->next;
-                }
-
-                rect.x = x;
-                rect.y = y;
-                rect.width = 1;
-                rect.height = size;
-
-                rect_node = *info->rects;
-                while (rect_node != NULL) {
-                    if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
-                        tig_window_box(sector_iso_window_handle, &dirty_rect, color);
-                    }
-                    rect_node = rect_node->next;
-                }
-
-                rect.x = size + x - 1;
-                rect.y = y;
-                rect.width = 1;
-                rect.height = size;
-
-                rect_node = *info->rects;
-                while (rect_node != NULL) {
-                    if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
-                        tig_window_box(sector_iso_window_handle, &dirty_rect, color);
-                    }
-                    rect_node = rect_node->next;
-                }
-
-                rect.x = x;
-                rect.y = size + y - 1;
-                rect.width = size;
-                rect.height = 1;
-
-                rect_node = *info->rects;
-                while (rect_node != NULL) {
-                    if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
-                        tig_window_box(sector_iso_window_handle, &dirty_rect, color);
-                    }
-                    rect_node = rect_node->next;
-                }
-
-                rect.x = size / 2 - sector_view_options.zoom / 2 + x - 1;
-                rect.y = y - sector_view_options.zoom;
-                rect.width = 2;
-                rect.height = 2 * sector_view_options.zoom;
-
-                rect_node = *info->rects;
-                while (rect_node != NULL) {
-                    if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
-                        tig_window_box(sector_iso_window_handle, &dirty_rect, dword_601828);
-                    }
-                    rect_node = rect_node->next;
-                }
-
-                rect.x = x - sector_view_options.zoom;
-                rect.y = size / 2 + y - 1;
-                rect.width = 2 * sector_view_options.zoom;
-                rect.height = 2;
-
-                rect_node = *info->rects;
-                while (rect_node != NULL) {
-                    if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
-                        tig_window_box(sector_iso_window_handle, &dirty_rect, dword_601828);
-                    }
-                    rect_node = rect_node->next;
-                }
-
-                node = node->next;
+        townmap = sub_4BE380(node->id);
+        if (townmap != 0) {
+            int red = townmap * (255 / townmap_count());
+            if ((townmap & 1) != 0) {
+                color = tig_color_make(red, 255 - red, 0);
+            } else {
+                color = tig_color_make(red, 0, 255 - red);
             }
+        } else {
+            color = dword_6017AC;
         }
+
+        location = location_make(sector_x + 63, sector_y);
+        location_xy(location, &location_x, &location_y);
+
+        x = location_x & 0xFFFFFFFF;
+        y = location_y & 0xFFFFFFFF;
+        size = sector_view_options.zoom * 64;
+
+        rect.x = x;
+        rect.y = y;
+        rect.width = size;
+        rect.height = 1;
+
+        rect_node = *render_info->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
+                tig_window_box(sector_iso_window_handle, &dirty_rect, color);
+            }
+            rect_node = rect_node->next;
+        }
+
+        rect.x = x;
+        rect.y = y;
+        rect.width = 1;
+        rect.height = size;
+
+        rect_node = *render_info->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
+                tig_window_box(sector_iso_window_handle, &dirty_rect, color);
+            }
+            rect_node = rect_node->next;
+        }
+
+        rect.x = size + x - 1;
+        rect.y = y;
+        rect.width = 1;
+        rect.height = size;
+
+        rect_node = *render_info->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
+                tig_window_box(sector_iso_window_handle, &dirty_rect, color);
+            }
+            rect_node = rect_node->next;
+        }
+
+        rect.x = x;
+        rect.y = size + y - 1;
+        rect.width = size;
+        rect.height = 1;
+
+        rect_node = *render_info->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
+                tig_window_box(sector_iso_window_handle, &dirty_rect, color);
+            }
+            rect_node = rect_node->next;
+        }
+
+        rect.x = size / 2 - sector_view_options.zoom / 2 + x - 1;
+        rect.y = y - sector_view_options.zoom;
+        rect.width = 2;
+        rect.height = 2 * sector_view_options.zoom;
+
+        rect_node = *render_info->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
+                tig_window_box(sector_iso_window_handle, &dirty_rect, dword_601828);
+            }
+            rect_node = rect_node->next;
+        }
+
+        rect.x = x - sector_view_options.zoom;
+        rect.y = size / 2 + y - 1;
+        rect.width = 2 * sector_view_options.zoom;
+        rect.height = 2;
+
+        rect_node = *render_info->rects;
+        while (rect_node != NULL) {
+            if (tig_rect_intersection(&rect, &(rect_node->rect), &dirty_rect) == TIG_OK) {
+                tig_window_box(sector_iso_window_handle, &dirty_rect, dword_601828);
+            }
+            rect_node = rect_node->next;
+        }
+
+        node = node->next;
     }
 }
 

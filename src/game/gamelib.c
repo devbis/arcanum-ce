@@ -1716,7 +1716,7 @@ void sub_404740(UnknownContext* info)
         sub_4C0630(info);
         tileblock_render(info);
         object_render(info);
-        sub_4CF390(info);
+        sector_render(info);
         wall_render(info);
         sub_4BFE00(info);
         roof_render(info);
