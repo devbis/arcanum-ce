@@ -2332,7 +2332,7 @@ void MTComponentDamage_ProcFunc()
 
     sub_4B2210(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20, &combat);
 
-    combat.field_58 |= dword_5E761C->data.damage.damage_flags;
+    combat.dam_flags |= dword_5E761C->data.damage.damage_flags;
 
     sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
 
@@ -2343,7 +2343,7 @@ void MTComponentDamage_ProcFunc()
     dam_min = dword_5E761C->data.damage.damage_min;
     dam_max = dword_5E761C->data.damage.damage_max;
 
-    if ((combat.field_58 & 0x800000) != 0) {
+    if ((combat.dam_flags & 0x800000) != 0) {
         if (obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
             int aptitude = dword_5E75F0->parent_obj.aptitude;;
             if (aptitude > 0) {
@@ -2354,19 +2354,19 @@ void MTComponentDamage_ProcFunc()
             }
         }
 
-        combat.field_58 &= ~0x800000;
+        combat.dam_flags &= ~0x800000;
     }
 
-    if ((combat.field_58 & 0x01) != 0) {
+    if ((combat.dam_flags & 0x01) != 0) {
         if (dword_5E761C->data.damage.damage_type == DAMAGE_TYPE_FATIGUE) {
-            combat.field_44[DAMAGE_TYPE_FATIGUE] = critter_fatigue_current(stru_5E6D28.field_20) + 10;
-            combat.field_58 &= ~0x01;
+            combat.dam[DAMAGE_TYPE_FATIGUE] = critter_fatigue_current(stru_5E6D28.field_20) + 10;
+            combat.dam_flags &= ~0x01;
         }
     } else {
         if (dword_5E761C->data.damage.damage_type < DAMAGE_TYPE_COUNT) {
-            combat.field_44[dword_5E761C->data.damage.damage_type] = random_between(dam_min, dam_max);
+            combat.dam[dword_5E761C->data.damage.damage_type] = random_between(dam_min, dam_max);
         } else {
-            combat.field_44[DAMAGE_TYPE_NORMAL] = random_between(dam_min, dam_max);
+            combat.dam[DAMAGE_TYPE_NORMAL] = random_between(dam_min, dam_max);
         }
     }
 
@@ -2374,12 +2374,12 @@ void MTComponentDamage_ProcFunc()
 
     if (dword_5E761C->data.damage.damage_type < DAMAGE_TYPE_COUNT) {
         if (dword_5E75F0->field_144 != 0) {
-            if ((combat.field_58 & 0x04) == 0) {
-                int resisted = dword_5E75F0->field_144 * combat.field_44[dword_5E761C->data.damage.damage_type] / 100;
+            if ((combat.dam_flags & 0x04) == 0) {
+                int resisted = dword_5E75F0->field_144 * combat.dam[dword_5E761C->data.damage.damage_type] / 100;
                 if (resisted == 0) {
                     resisted = 1;
                 }
-                combat.field_44[dword_5E761C->data.damage.damage_type] -= resisted;
+                combat.dam[dword_5E761C->data.damage.damage_type] -= resisted;
                 sub_4B4390(&combat);
             }
         } else {
@@ -2389,11 +2389,11 @@ void MTComponentDamage_ProcFunc()
         sub_4B5810(&combat);
     }
 
-    dword_5E75D0 = obj_field_int32_get(combat.field_20, OBJ_F_FLAGS);
+    dword_5E75D0 = obj_field_int32_get(combat.target_obj, OBJ_F_FLAGS);
 
     if ((dword_5E75D0 & (OF_DESTROYED | OF_OFF)) == 0
-        && (combat.field_58 & 0x200000) != 0) {
-        sub_433020(combat.field_20, 1, dword_5E761C->data.damage.damage_type, &combat);
+        && (combat.dam_flags & 0x200000) != 0) {
+        sub_433020(combat.target_obj, 1, dword_5E761C->data.damage.damage_type, &combat);
     }
 }
 
@@ -2659,11 +2659,11 @@ void MTComponentHeal_ProcFunc()
 
     if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
         sub_4B2210(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20, &combat);
-        combat.field_58 |= dword_5E761C->data.heal.damage_flags;
-        if ((combat.field_58 & 0x1) == 0) {
+        combat.dam_flags |= dword_5E761C->data.heal.damage_flags;
+        if ((combat.dam_flags & 0x1) == 0) {
             heal_min = dword_5E761C->data.heal.damage_min;
             heal_max = dword_5E761C->data.heal.damage_max;
-            if ((combat.field_58 & 0x800000) != 0
+            if ((combat.dam_flags & 0x800000) != 0
                 && obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
                 if (dword_5E75F0->parent_obj.aptitude > 0) {
                     heal_max = heal_min + dword_5E75F0->parent_obj.aptitude * (heal_max - heal_min) / 100;
@@ -2671,15 +2671,15 @@ void MTComponentHeal_ProcFunc()
                 } else {
                     heal_max = heal_min;
                 }
-                combat.field_58 &= ~0x800000;
+                combat.dam_flags &= ~0x800000;
             }
 
-            if (dword_5E761C->data.heal.damage_type == 1) {
-                combat.field_44[1] = random_between(heal_min, heal_max);
-            } else if (dword_5E761C->data.heal.damage_type == 4) {
-                combat.field_44[4] = random_between(heal_min, heal_max);
+            if (dword_5E761C->data.heal.damage_type == DAMAGE_TYPE_POISON) {
+                combat.dam[DAMAGE_TYPE_POISON] = random_between(heal_min, heal_max);
+            } else if (dword_5E761C->data.heal.damage_type == DAMAGE_TYPE_FATIGUE) {
+                combat.dam[DAMAGE_TYPE_FATIGUE] = random_between(heal_min, heal_max);
             } else {
-                combat.field_44[0] = random_between(heal_min, heal_max);
+                combat.dam[DAMAGE_TYPE_NORMAL] = random_between(heal_min, heal_max);
             }
         }
 
@@ -3782,11 +3782,11 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 sub_43D280(obj, OF_WATER_WALKING);
                 if (sub_4D7110(obj_field_int64_get(obj, OBJ_F_LOCATION), false)) {
                     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
-                    combat.field_58 |= 0x01;
+                    combat.dam_flags |= 0x01;
                     sub_4B4390(&combat);
 
                     // FIXME: Meaningless.
-                    obj_field_int32_get(combat.field_20, OBJ_F_FLAGS);
+                    obj_field_int32_get(combat.target_obj, OBJ_F_FLAGS);
                 }
             } else if ((a4 & OSF_STONED) != 0) {
                 sub_43D280(obj, OF_STONED);
@@ -6402,7 +6402,7 @@ void magictech_anim_play_hit_fx(int64_t obj, CombatContext* combat)
     if ((spell_flags & OSF_ENTANGLED) != 0) {
         if (sub_459170(obj, OSF_ENTANGLED, &magictech)) {
             if (!sub_459C10(obj, magictech)) {
-                sub_45A520(combat->field_8, obj);
+                sub_45A520(combat->attacker_obj, obj);
                 magictech_interrupt_delayed(magictech);
             }
         }

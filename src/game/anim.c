@@ -7900,9 +7900,9 @@ bool sub_42A720(AnimRunInfo* run_info)
         }
 
         if (v3) {
-            combat.field_44[0] = dam;
+            combat.dam[DAMAGE_TYPE_NORMAL] = dam;
         } else {
-            combat.field_44[3] = dam;
+            combat.dam[DAMAGE_TYPE_FIRE] = dam;
         }
 
         if ((v1 == OBJ_HANDLE_NULL || v1 != node->obj)
@@ -7912,8 +7912,8 @@ bool sub_42A720(AnimRunInfo* run_info)
             if (sub_4B6D70()
                 && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data != sub_4B80D0()) {
                 v2 = true;
-                combat.field_44[0] *= 2;
-                combat.field_44[3] *= 2;
+                combat.dam[DAMAGE_TYPE_NORMAL] *= 2;
+                combat.dam[DAMAGE_TYPE_FIRE] *= 2;
                 sub_4B4390(&combat);
             }
         } else {
@@ -11116,8 +11116,8 @@ bool sub_42FA50(AnimRunInfo* run_info)
             if (sub_42FD70(run_info, obj, &(run_info->path), loc, new_loc)) {
                 sub_43E770(obj, loc, 0, 0);
                 sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
-                combat.field_44[0] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
-                combat.field_44[4] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
+                combat.dam[DAMAGE_TYPE_NORMAL] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
+                combat.dam[DAMAGE_TYPE_FATIGUE] = random_between(1, (run_info->path.max - run_info->path.curr) / 2);
                 combat.field_30 = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
                 sub_4B4390(&combat);
 

@@ -32,21 +32,19 @@ typedef enum DamageType {
 } DamageType;
 
 typedef struct CombatContext {
-    /* 0000 */ int flags;
-    /* 0004 */ int field_4;
-    /* 0008 */ int64_t field_8;
+    /* 0000 */ unsigned int flags;
+    /* 0008 */ int64_t attacker_obj;
     /* 0010 */ int64_t weapon_obj;
     /* 0018 */ int skill;
-    /* 001C */ int field_1C;
-    /* 0020 */ int64_t field_20;
+    /* 0020 */ int64_t target_obj;
     /* 0028 */ int64_t field_28;
     /* 0030 */ int64_t field_30;
     /* 0038 */ int64_t target_loc;
-    /* 0040 */ int field_40;
-    /* 0044 */ int field_44[DAMAGE_TYPE_COUNT];
-    /* 0058 */ int field_58;
+    /* 0040 */ int hit_loc;
+    /* 0044 */ int dam[DAMAGE_TYPE_COUNT];
+    /* 0058 */ unsigned int dam_flags;
     /* 005C */ int field_5C;
-    /* 0060 */ int field_60;
+    /* 0060 */ int game_difficulty;
     /* 0064 */ int field_64;
 } CombatContext;
 

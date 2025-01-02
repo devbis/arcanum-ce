@@ -892,13 +892,13 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
                 } else {
                     damage = 1;
                 }
-                combat.field_44[0] = damage;
+                combat.dam[DAMAGE_TYPE_NORMAL] = damage;
                 combat.flags |= 0x80;
                 sub_4B4390(&combat);
             }
 
-            if ((combat.field_58 & 0x200000) != 0) {
-                sub_433020(combat.field_20, 2, 1, &combat);
+            if ((combat.dam_flags & 0x200000) != 0) {
+                sub_433020(combat.target_obj, 2, 1, &combat);
             }
 
             sub_4B1350(obj, poison, 0);

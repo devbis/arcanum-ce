@@ -1346,7 +1346,7 @@ bool sub_4C7160(Tanya* a1)
                 heal = 1;
             }
             if (training == TRAINING_MASTER || is_critical) {
-                combat.field_44[0] = heal;
+                combat.dam[DAMAGE_TYPE_NORMAL] = heal;
                 effect_remove_one_caused_by(target_obj, EFFECT_CAUSE_INJURY);
 
                 unsigned int critter_flags = obj_field_int32_get(target_obj, OBJ_F_CRITTER_FLAGS);
@@ -1369,7 +1369,7 @@ bool sub_4C7160(Tanya* a1)
                 pkt.val = critter_flags;
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             } else {
-                combat.field_44[0] = random_between(1, heal);
+                combat.dam[DAMAGE_TYPE_NORMAL] = random_between(1, heal);
             }
 
             sub_4B58C0(&combat);

@@ -2105,7 +2105,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int type = script_get_value(action->op_type[2], action->op_value[2], state);
         for (int idx = 0; idx < cnt; idx++) {
             sub_4B2210(OBJ_HANDLE_NULL, handles[idx], &combat);
-            combat.field_44[type] = damage;
+            combat.dam[type] = damage;
             sub_4B4390(&combat);
         }
         sub_44B8F0(action->op_type[0], &objects);
@@ -2219,7 +2219,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         int value = script_get_value(action->op_type[1], action->op_value[1], state);
         for (int idx = 0; idx < cnt; idx++) {
-            combat.field_44[0] = value;
+            combat.dam[DAMAGE_TYPE_NORMAL] = value;
             sub_4B58C0(&combat);
         }
         sub_44B8F0(action->op_type[0], &objects);
@@ -2783,8 +2783,8 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int type = script_get_value(action->op_type[2], action->op_value[2], state);
         for (int idx = 0; idx < cnt; idx++) {
             sub_4B2210(OBJ_HANDLE_NULL, handles[idx], &combat);
-            combat.field_44[type] = damage;
-            combat.field_58 |= 0x1000000;
+            combat.dam[type] = damage;
+            combat.dam_flags |= 0x1000000;
             sub_4B4390(&combat);
         }
         sub_44B8F0(action->op_type[0], &objects);
