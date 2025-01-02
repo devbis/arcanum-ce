@@ -403,7 +403,7 @@ void compact_ui_health_bar_draw(int a1)
         &rect1,
         tig_color_make(0, 0, 255));
 
-    sprintf(str, "%02d", sub_45D700(pc_obj));
+    sprintf(str, "%02d", critter_fatigue_current(pc_obj));
     tig_font_push(sub_549940(0, 0));
     font_desc.width = 0;
     font_desc.str = str;

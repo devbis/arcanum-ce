@@ -2359,7 +2359,7 @@ void MTComponentDamage_ProcFunc()
 
     if ((combat.field_58 & 0x01) != 0) {
         if (dword_5E761C->data.damage.damage_type == DAMAGE_TYPE_FATIGUE) {
-            combat.field_44[DAMAGE_TYPE_FATIGUE] = sub_45D700(stru_5E6D28.field_20) + 10;
+            combat.field_44[DAMAGE_TYPE_FATIGUE] = critter_fatigue_current(stru_5E6D28.field_20) + 10;
             combat.field_58 &= ~0x01;
         }
     } else {

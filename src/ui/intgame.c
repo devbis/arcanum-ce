@@ -1554,7 +1554,7 @@ void sub_54AF10(TigRect* rect)
         } else {
             value = critter_fatigue_max(pc_obj);
             if (value != 0) {
-                fullness = 100 * sub_45D700(pc_obj) / value;
+                fullness = 100 * critter_fatigue_current(pc_obj) / value;
             } else {
                 fullness = 50;
             }
@@ -1633,7 +1633,7 @@ void sub_54AF10(TigRect* rect)
                 sub_54AD00(5, poison, 3);
             }
         } else {
-            sub_54AD00(1, sub_45D700(pc_obj), 3);
+            sub_54AD00(1, critter_fatigue_current(pc_obj), 3);
         }
     }
 
@@ -6267,7 +6267,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
         dword_64C49C,
         0x2);
 
-    int cur_fatigue = sub_45D700(critter_obj);
+    int cur_fatigue = critter_fatigue_current(critter_obj);
     int max_fatigue = critter_fatigue_max(critter_obj);
     int fatigue_ratio = 100 * cur_fatigue / max_fatigue;
     sub_554640(465, 466, &stru_5C70F8, fatigue_ratio);

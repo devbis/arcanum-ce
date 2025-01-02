@@ -1867,7 +1867,7 @@ int sub_4AB400(int64_t obj)
 // 0x4AB430
 int sub_4AB430(int64_t obj)
 {
-    return 100 * sub_45D700(obj) / critter_fatigue_max(obj);
+    return 100 * critter_fatigue_current(obj) / critter_fatigue_max(obj);
 }
 
 // 0x4AB460
@@ -3645,7 +3645,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
             }
         }
 
-        if (sub_4B1660(magictech, a1) >= sub_45D700(a1)) {
+        if (sub_4B1660(magictech, a1) >= critter_fatigue_current(a1)) {
             return 2;
         }
 

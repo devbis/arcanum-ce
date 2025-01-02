@@ -10648,7 +10648,7 @@ void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bo
         return;
     }
 
-    if (sub_45D700(obj) <= 0) {
+    if (critter_fatigue_current(obj) <= 0) {
         run_info->field_C &= ~0x40;
         *art_id_ptr = art_id;
         return;
@@ -11690,7 +11690,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                 v3 = 2;
                 if (run_info->current_goal > 0
                     && (run_info->field_C & 0x40) != 0
-                    && sub_45D700(obj) > 0) {
+                    && critter_fatigue_current(obj) > 0) {
                     v3 = 1;
                 }
 
@@ -11816,7 +11816,7 @@ int sub_430FC0(AnimRunInfo* run_info)
     action_points = 2;
 
     if (run_info->current_goal > 0 && (run_info->field_C & 0x40) != 0) {
-        if (sub_45D700(obj) > 0) {
+        if (critter_fatigue_current(obj) > 0) {
             if (combat_critter_is_combat_mode_active(obj)) {
                 v1 = 5;
 
@@ -14026,7 +14026,7 @@ bool sub_4348E0(int64_t obj, int action_points)
         return true;
     }
 
-    if (100 * sub_45D700(obj) / critter_fatigue_max(obj) > 35) {
+    if (100 * critter_fatigue_current(obj) / critter_fatigue_max(obj) > 35) {
         return true;
     }
 
@@ -14139,7 +14139,7 @@ bool sub_434B00(int64_t attacker_obj, int64_t target_obj, int a3)
 
     if (obj_field_int32_get(attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            && sub_45D700(attacker_obj) > 8) {
+            && critter_fatigue_current(attacker_obj) > 8) {
             turn_on_running(stru_5A1908);
         }
     } else {
@@ -14302,7 +14302,7 @@ bool sub_4350F0(int64_t obj, int64_t a2, int64_t a3, int a6, int a7)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            && sub_45D700(obj) > 8) {
+            && critter_fatigue_current(obj) > 8) {
             turn_on_running(stru_5A1908);
         }
     } else {
@@ -14344,7 +14344,7 @@ bool sub_4352C0(int64_t obj, int64_t a2, int64_t a4, int a5, int a6)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            && sub_45D700(obj) > 8) {
+            && critter_fatigue_current(obj) > 8) {
             turn_on_running(stru_5A1908);
         }
     } else {
@@ -14389,7 +14389,7 @@ bool sub_435450(int64_t obj, int64_t a2, int64_t a3, unsigned int a4)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            && sub_45D700(obj) > 8) {
+            && critter_fatigue_current(obj) > 8) {
             turn_on_running(stru_5A1908);
         }
     } else {

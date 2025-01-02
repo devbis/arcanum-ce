@@ -2229,7 +2229,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         int value = script_get_value(action->op_type[1], action->op_value[1], state);
         for (int idx = 0; idx < cnt; idx++) {
-            int v1 = sub_45D700(handles[idx]);
+            int v1 = critter_fatigue_current(handles[idx]);
 
             int fatigue_damage = critter_fatigue_damage_get(handles[idx] - value);
             if (fatigue_damage < 0) {
@@ -2237,7 +2237,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             }
             sub_4ED720(handles[idx], fatigue_damage);
 
-            if (v1 <= 0 && sub_45D700(handles[idx]) > 0) {
+            if (v1 <= 0 && critter_fatigue_current(handles[idx]) > 0) {
                 sub_434DE0(handles[idx]);
             }
         }
@@ -2561,7 +2561,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     }
     case SAT_GET_FATIGUE_POINTS: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
-        script_set_value(action->op_type[1], action->op_value[1], state, sub_45D700(obj));
+        script_set_value(action->op_type[1], action->op_value[1], state, critter_fatigue_current(obj));
         script_set_value(action->op_type[2], action->op_value[2], state, critter_fatigue_max(obj));
         return NEXT;
     }

@@ -398,7 +398,7 @@ int critter_fatigue_max(long long obj)
 }
 
 // 0x45D700
-int sub_45D700(long long obj)
+int critter_fatigue_current(long long obj)
 {
     return critter_fatigue_max(obj) - critter_fatigue_damage_get(obj);
 }
@@ -442,7 +442,7 @@ bool sub_45D800(int64_t obj)
         || (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
             && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC)
         || ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_UNDEAD) == 0
-            && sub_45D700(obj) <= 0);
+            && critter_fatigue_current(obj) <= 0);
 }
 
 // 0x45D870
@@ -1082,7 +1082,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
         if (dam > 0) {
             // TODO: Figure out math.
             dam -= v3 * stat_level(critter_obj, STAT_HEAL_RATE);
-            v4 = sub_45D700(critter_obj);
+            v4 = critter_fatigue_current(critter_obj);
             if (dam < 0) {
                 dam = 0;
             }
@@ -1098,14 +1098,14 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             }
 
-            if (v4 <= 0 && sub_45D700(critter_obj) > 0) {
+            if (v4 <= 0 && critter_fatigue_current(critter_obj) > 0) {
                 sub_434DE0(critter_obj);
             }
         }
         break;
     case 1:
         // TODO: Figure out math.
-        v4 = sub_45D700(critter_obj);
+        v4 = critter_fatigue_current(critter_obj);
         if (v4 >= 5) {
             if (v4 - v3 < 5) {
                 v3 = 1;

@@ -2330,14 +2330,14 @@ void sub_4B58C0(CombatContext* combat)
 
         cur_dam = critter_fatigue_damage_get(combat->field_20);
         if (cur_dam != 0) {
-            v3 = sub_45D700(combat->field_20);
+            v3 = critter_fatigue_current(combat->field_20);
             new_dam = cur_dam - combat->field_44[4];
             if (new_dam < 0) {
                 new_dam = 0;
             }
             critter_fatigue_damage_set(combat->field_20, new_dam);
 
-            if (v3 <= 0 && sub_45D700(combat->field_20) > 0) {
+            if (v3 <= 0 && critter_fatigue_current(combat->field_20) > 0) {
                 sub_434DE0(combat->field_20);
             }
         }
@@ -3450,7 +3450,7 @@ bool sub_4B7790(int64_t obj, int a2)
         return true;
     }
 
-    if (combat_action_points > 0 && is_pc && sub_45D700(obj) > 1) {
+    if (combat_action_points > 0 && is_pc && critter_fatigue_current(obj) > 1) {
         return true;
     }
 
@@ -3643,7 +3643,7 @@ bool sub_4B7CD0(int64_t obj, int action_points)
         return true;
     }
 
-    if (combat_action_points > 0 && is_pc && sub_45D700(obj) > 1) {
+    if (combat_action_points > 0 && is_pc && critter_fatigue_current(obj) > 1) {
         sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
         combat.flags |= 0x80;
         combat.field_44[4] = 2;
