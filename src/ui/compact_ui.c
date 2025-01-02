@@ -394,7 +394,7 @@ void compact_ui_health_bar_draw(int a1)
 
     rect1.x = 25;
     rect1.width = 23;
-    rect1.y = 100 * (100 * critter_fatigue_damage_get(pc_obj) / sub_45D670(pc_obj)) / 100 + 1;
+    rect1.y = 100 * (100 * critter_fatigue_damage_get(pc_obj) / critter_fatigue_max(pc_obj)) / 100 + 1;
     if (rect1.y > 100) {
         rect1.y = 100;
     }

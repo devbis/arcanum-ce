@@ -646,7 +646,7 @@ void sub_56B290()
             tig_window_tint(dword_67BB60[index], &rect, color, 0);
         }
 
-        fatigue = 100 * sub_45D700(follower_obj) / sub_45D670(follower_obj);
+        fatigue = 100 * sub_45D700(follower_obj) / critter_fatigue_max(follower_obj);
         sub_56B510(dword_67BB60[index], 504, 3, 44, fatigue, 100);
     }
 

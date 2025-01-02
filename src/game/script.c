@@ -1882,7 +1882,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
 
             obj_type = obj_field_int32_get(new_obj, OBJ_F_TYPE);
             if (obj_type_is_critter(obj_type)) {
-                int fatigue_damage = sub_45D670(new_obj) * (100 - fatigue_ratio) / 100;
+                int fatigue_damage = critter_fatigue_max(new_obj) * (100 - fatigue_ratio) / 100;
                 critter_fatigue_damage_set(new_obj, fatigue_damage);
             }
 
@@ -2562,7 +2562,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_GET_FATIGUE_POINTS: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         script_set_value(action->op_type[1], action->op_value[1], state, sub_45D700(obj));
-        script_set_value(action->op_type[2], action->op_value[2], state, sub_45D670(obj));
+        script_set_value(action->op_type[2], action->op_value[2], state, critter_fatigue_max(obj));
         return NEXT;
     }
     case SAT_ACTION_STOP_ATTACKING: {

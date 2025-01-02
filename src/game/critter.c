@@ -372,13 +372,13 @@ int critter_fatigue_damage_set(long long obj, int value)
 }
 
 // 0x45D670
-int sub_45D670(long long obj)
+int critter_fatigue_max(long long obj)
 {
     int fatigue_pts;
     int fatigue_adj;
     int level;
-    int cn;
-    int wp;
+    int constitution;
+    int willpower;
 
     if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
@@ -387,20 +387,20 @@ int sub_45D670(long long obj)
     fatigue_pts = critter_fatigue_pts_get(obj);
     fatigue_adj = critter_fatigue_adj_get(obj);
     level = stat_level(obj, STAT_LEVEL);
-    cn = stat_level(obj, STAT_CONSTITUTION);
-    wp = stat_level(obj, STAT_WILLPOWER);
+    constitution = stat_level(obj, STAT_CONSTITUTION);
+    willpower = stat_level(obj, STAT_WILLPOWER);
 
     return effect_adjust_max_fatigue(obj, fatigue_pts * 4
         + fatigue_adj
-        + 2 * (level + cn)
-        + wp
+        + 2 * (level + constitution)
+        + willpower
         + 4);
 }
 
 // 0x45D700
 int sub_45D700(long long obj)
 {
-    return sub_45D670(obj) - critter_fatigue_damage_get(obj);
+    return critter_fatigue_max(obj) - critter_fatigue_damage_get(obj);
 }
 
 // 0x45D730

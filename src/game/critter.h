@@ -48,7 +48,7 @@ int critter_fatigue_adj_get(long long obj);
 int critter_fatigue_adj_set(long long obj, int value);
 int critter_fatigue_damage_get(long long obj);
 int critter_fatigue_damage_set(long long obj, int value);
-int sub_45D670(long long obj);
+int critter_fatigue_max(long long obj);
 int sub_45D700(long long obj);
 bool sub_45D730(long long obj);
 bool sub_45D790(long long obj);

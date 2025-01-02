@@ -409,7 +409,7 @@ void effect_add(int64_t obj, int effect, int cause)
     strength = stat_level(obj, STAT_STRENGTH);
     encumbrance_level = critter_encumbrance_level_get(obj);
     v1 = sub_43D5A0(obj);
-    v2 = sub_45D670(obj);
+    v2 = critter_fatigue_max(obj);
 
     sub_4074E0(obj,
         OBJ_F_CRITTER_EFFECTS_IDX,
@@ -429,7 +429,7 @@ void effect_add(int64_t obj, int effect, int cause)
         object_hp_damage_set(obj, object_hp_damage_get(obj) + diff);
     }
 
-    diff = sub_45D670(obj) - v2;
+    diff = critter_fatigue_max(obj) - v2;
     if (diff != 0) {
         critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
     }
@@ -619,7 +619,7 @@ void sub_4EA520(int64_t obj, int start)
     strength = stat_level(obj, STAT_STRENGTH);
     encumbrance_level = critter_encumbrance_level_get(obj);
     v1 = sub_43D5A0(obj);
-    v2 = sub_45D670(obj);
+    v2 = critter_fatigue_max(obj);
 
     end = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX) - 1;
     while (start < end) {
@@ -642,7 +642,7 @@ void sub_4EA520(int64_t obj, int start)
         object_hp_damage_set(obj, object_hp_damage_get(obj) + diff);
     }
 
-    diff = sub_45D670(obj) - v2;
+    diff = critter_fatigue_max(obj) - v2;
     if (diff != 0) {
         critter_fatigue_damage_set(obj, critter_fatigue_damage_get(obj) + diff);
     }

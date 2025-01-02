@@ -14026,7 +14026,7 @@ bool sub_4348E0(int64_t obj, int action_points)
         return true;
     }
 
-    if (100 * sub_45D700(obj) / sub_45D670(obj) > 35) {
+    if (100 * sub_45D700(obj) / critter_fatigue_max(obj) > 35) {
         return true;
     }
 

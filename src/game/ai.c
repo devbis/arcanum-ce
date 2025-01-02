@@ -1867,7 +1867,7 @@ int sub_4AB400(int64_t obj)
 // 0x4AB430
 int sub_4AB430(int64_t obj)
 {
-    return 100 * sub_45D700(obj) / sub_45D670(obj);
+    return 100 * sub_45D700(obj) / critter_fatigue_max(obj);
 }
 
 // 0x4AB460

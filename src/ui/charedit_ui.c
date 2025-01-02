@@ -1749,7 +1749,7 @@ void sub_55B2A0(int stat)
         value = sub_43D5A0(qword_64E010);
         break;
     case CHAREDIT_STAT_FATIGUE_PTS:
-        value = sub_45D670(qword_64E010);
+        value = critter_fatigue_max(qword_64E010);
         break;
     default:
         value = sub_55B4D0(qword_64E010, stat);

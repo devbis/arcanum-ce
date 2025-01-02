@@ -1617,7 +1617,7 @@ void sub_4B4390(CombatContext* combat)
                 mes_get_msg(combat_mes_file, &mes_file_entry);
                 tf_add(combat->field_20, tf_type, mes_file_entry.str);
             } else if (!sub_45D800(combat->field_20)) {
-                int fatigue_damage = sub_45D670(combat->field_20);
+                int fatigue_damage = critter_fatigue_max(combat->field_20);
 
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0) {
