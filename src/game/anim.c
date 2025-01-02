@@ -6483,7 +6483,7 @@ bool sub_428550(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4AEB70(self_obj, door_obj, sub_441B20(self_obj, door_obj))) {
+    if (sub_4AEB70(self_obj, door_obj, object_rot(self_obj, door_obj))) {
         sound_id = sub_4F1010(door_obj, 2);
         sub_41B930(sound_id, 1, door_obj);
         return false;
@@ -6540,7 +6540,7 @@ bool sub_428690(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4AEB70(source_obj, portal_obj, sub_441B20(source_obj, portal_obj)) != 0) {
+    if (sub_4AEB70(source_obj, portal_obj, object_rot(source_obj, portal_obj)) != 0) {
         return false;
     }
 
@@ -6562,7 +6562,7 @@ bool sub_428750(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4AEB70(v1, door_obj, sub_441B20(v1, door_obj)) == 0) {
+    if (sub_4AEB70(v1, door_obj, object_rot(v1, door_obj)) == 0) {
         return false;
     }
 
@@ -6594,7 +6594,7 @@ bool sub_4287E0(AnimRunInfo* run_info)
     }
 
     // FIXME: Probably wrong.
-    sub_4AEB70(source_obj, door_obj, sub_441B20(source_obj, door_obj));
+    sub_4AEB70(source_obj, door_obj, object_rot(source_obj, door_obj));
 
     return false;
 }
@@ -6626,7 +6626,7 @@ bool sub_4288A0(AnimRunInfo* run_info)
         return true;
     }
 
-    if (sub_4AEB70(source_obj, v1, sub_441B20(source_obj, v1)) != 0) {
+    if (sub_4AEB70(source_obj, v1, object_rot(source_obj, v1)) != 0) {
         return false;
     }
 
@@ -13009,7 +13009,7 @@ bool sub_432990(AnimRunInfo* run_info)
                     || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
                 && !sub_4294F0(obj, target_obj)) {
                 art_id = tig_art_id_frame_set(art_id, v1 - 3);
-                art_id = tig_art_id_rotation_set(art_id, sub_441B20(obj, target_obj));
+                art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
                 object_set_current_aid(obj, art_id);
                 run_info->field_C &= ~0x0C;
             } else {
@@ -13023,7 +13023,7 @@ bool sub_432990(AnimRunInfo* run_info)
                     || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
                 && sub_4294F0(obj, target_obj)) {
                 art_id = tig_art_id_frame_set(art_id, v1 - 3);
-                art_id = tig_art_id_rotation_set(art_id, sub_441B20(obj, target_obj));
+                art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
                 object_set_current_aid(obj, art_id);
                 run_info->field_C &= ~0x0C;
             } else {

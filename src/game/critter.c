@@ -1494,7 +1494,7 @@ bool sub_45EFF0(int64_t a, int64_t b)
     int v2;
     int v3;
 
-    v1 = sub_441B20(a, b);
+    v1 = object_rot(a, b);
     v2 = tig_art_id_rotation_get(obj_field_int32_get(a, OBJ_F_CURRENT_AID));
     v3 = (v1 - v2 + 8) % 8;
 

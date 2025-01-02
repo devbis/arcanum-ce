@@ -503,7 +503,7 @@ bool sub_572340()
 // 0x572370
 bool sub_572370(int64_t a1, int64_t a2, int a3)
 {
-    int rotation;
+    int rot;
     tig_art_id_t art_id;
     int err;
     MesFileEntry mes_file_entry;
@@ -522,9 +522,9 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
     }
 
     if (a3 == 2 || a3 == 3) {
-        rotation = sub_441B20(a1, a2);
+        rot = object_rot(a1, a2);
         art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
-        art_id = tig_art_id_rotation_set(art_id, rotation);
+        art_id = tig_art_id_rotation_set(art_id, rot);
         object_set_current_aid(a1, art_id);
         if (sub_4AF260(a1, a2) != 0) {
             return false;

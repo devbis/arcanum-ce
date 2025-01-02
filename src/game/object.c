@@ -3817,14 +3817,14 @@ int64_t sub_441AE0(object_id_t obj1, object_id_t obj2)
 }
 
 // 0x441B20
-int sub_441B20(object_id_t obj1, object_id_t obj2)
+int object_rot(int64_t a, int64_t b)
 {
-    int64_t location1;
-    int64_t location2;
+    int64_t a_loc;
+    int64_t b_loc;
 
-    location1 = obj_field_int64_get(obj1, OBJ_F_LOCATION);
-    location2 = obj_field_int64_get(obj2, OBJ_F_LOCATION);
-    return location_rot(location1, location2);
+    a_loc = obj_field_int64_get(a, OBJ_F_LOCATION);
+    b_loc = obj_field_int64_get(b, OBJ_F_LOCATION);
+    return location_rot(a_loc, b_loc);
 }
 
 // 0x441B60

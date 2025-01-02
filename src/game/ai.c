@@ -970,7 +970,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
             }
 
             if (target_obj_type == OBJ_TYPE_NPC) {
-                sub_433440(target_obj, sub_441B20(target_obj, source_obj));
+                sub_433440(target_obj, object_rot(target_obj, source_obj));
 
                 leader_obj = critter_leader_get(target_obj);
 
@@ -2004,7 +2004,7 @@ int64_t sub_4AB460(int64_t critter_obj)
 
     if (danger_source_obj == OBJ_HANDLE_NULL) {
         if (v1 != OBJ_HANDLE_NULL) {
-            sub_433440(critter_obj, sub_441B20(critter_obj, v1));
+            sub_433440(critter_obj, object_rot(critter_obj, v1));
         }
     }
 

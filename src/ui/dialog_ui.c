@@ -212,7 +212,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             }
 
             sub_424070(a1, 3, 0, true);
-            sub_433440(a1, sub_441B20(a1, a2));
+            sub_433440(a1, object_rot(a1, a2));
 
             if (critter_is_concealed(a1)) {
                 critter_set_concealed(a1, false);
@@ -739,7 +739,7 @@ void sub_568540(int64_t obj, int64_t a2, int type, int expires_in, const char* s
         && !critter_is_dead(obj)
         && !sub_423300(obj, 0)) {
         sub_424070(obj, 3, 0, 1);
-        sub_433440(obj, sub_441B20(obj, a2));
+        sub_433440(obj, object_rot(obj, a2));
     }
 
     tb_remove(obj);
@@ -773,7 +773,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int expires_in, const char* s
         && !critter_is_dead(obj)
         && !sub_423300(obj, 0)) {
         sub_424070(obj, 3, 0, 1);
-        sub_433440(obj, sub_441B20(obj, a2));
+        sub_433440(obj, object_rot(obj, a2));
     }
 
     if (!player_is_pc_obj(obj)) {
