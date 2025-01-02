@@ -525,7 +525,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
         }
     }
 
-    v3 = sub_4AB400(obj);
+    v3 = ai_object_hp_ratio(obj);
     if (v3 > 30 && !a3) {
         return false;
     }
@@ -821,7 +821,7 @@ void sub_4A92D0(Ai* ai)
         sub_4AAF50(ai);
         break;
     case 3:
-        if (sub_4AB400(ai->obj) >= 80 && random_between(1, 500) == 1) {
+        if (ai_object_hp_ratio(ai->obj) >= 80 && random_between(1, 500) == 1) {
             ai->danger_type = sub_4AABE0(ai->obj, 0, OBJ_HANDLE_NULL, &(ai->field_30));
         }
         break;
@@ -1836,11 +1836,11 @@ bool sub_4AB2F0(int64_t a1, int64_t a2)
 
     sub_4AAA60(a1, &ai_params);
 
-    if (sub_4AB400(a2) < ai_params.field_C) {
+    if (ai_object_hp_ratio(a2) < ai_params.field_C) {
         return false;
     }
 
-    if (sub_4AB400(a2) <= ai_params.field_0) {
+    if (ai_object_hp_ratio(a1) <= ai_params.field_0) {
         return true;
     }
 
@@ -1859,7 +1859,7 @@ bool sub_4AB2F0(int64_t a1, int64_t a2)
 }
 
 // 0x4AB400
-int sub_4AB400(int64_t obj)
+int ai_object_hp_ratio(int64_t obj)
 {
     return 100 * object_hp_current(obj) / object_hp_max(obj);
 }
@@ -2191,8 +2191,8 @@ int sub_4ABE20(Ai* ai)
     AiParams ai_params;
 
     if (ai->leader_obj != OBJ_HANDLE_NULL
-        && sub_4AB400(ai->obj) > 50
-        && sub_4AB400(ai->leader_obj) > 50
+        && ai_object_hp_ratio(ai->obj) > 50
+        && ai_object_hp_ratio(ai->leader_obj) > 50
         && !sub_4ABEB0(ai->obj, ai->danger_source)) {
         return 0;
     }
@@ -3625,7 +3625,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
 
         if (a3 != OBJ_HANDLE_NULL
             && (COLLEGE_FROM_SPELL(magictech) != COLLEGE_NECROMANTIC_WHITE
-                || (sub_4AB400(a3) > 30
+                || (ai_object_hp_ratio(a3) > 30
                     && sub_4AB430(a1) < 80))
             && sub_453CC0(a1, item_obj, a3) >= 38) {
             return 8;
@@ -3664,7 +3664,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
 
         if (a3 != OBJ_HANDLE_NULL
             && (COLLEGE_FROM_SPELL(magictech) != COLLEGE_NECROMANTIC_WHITE
-                || sub_4AB400(a3) > 30)
+                || ai_object_hp_ratio(a3) > 30)
             && sub_453B20(a1, a3, magictech) >= 38) {
             return 8;
         }

@@ -1817,7 +1817,7 @@ void sub_4B4390(CombatContext* combat)
 
         if (dam > 0) {
             combat->field_58 |= 0x200000;
-            hp_ratio_before = sub_4AB400(combat->field_20);
+            hp_ratio_before = ai_object_hp_ratio(combat->field_20);
         }
 
         mes_file_entry.num = 1; // "HT"
@@ -1836,7 +1836,7 @@ void sub_4B4390(CombatContext* combat)
             int64_t leader_obj = sub_45DDA0(combat->field_20);
             if (leader_obj != OBJ_HANDLE_NULL
                 && hp_ratio_before >= 20
-                && sub_4AB400(combat->field_20) < 20) {
+                && ai_object_hp_ratio(combat->field_20) < 20) {
                 sub_4AEAB0(combat->field_20, leader_obj);
             }
         }
