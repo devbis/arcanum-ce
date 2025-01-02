@@ -1,5 +1,5 @@
-#ifndef ARCANUM_GAME_LIB_SECTOR_H_
-#define ARCANUM_GAME_LIB_SECTOR_H_
+#ifndef ARCANUM_GAME_SECTOR_H_
+#define ARCANUM_GAME_SECTOR_H_
 
 #include "game/context.h"
 #include "game/sector_block_list.h"
@@ -80,4 +80,4 @@ int sub_4D2FC0(int64_t a1);
 #define SECTOR_Y(a) (((a) >> 26) & 0x3FFFFFF)
 #define SECTOR_FROM_XY(a, b) ((a) | ((b) << 26))
 
-#endif /* ARCANUM_GAME_LIB_SECTOR_H_ */
+#endif /* ARCANUM_GAME_SECTOR_H_ */

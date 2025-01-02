@@ -1,5 +1,5 @@
-#ifndef ARCANUM_GAME_LIB_SPELL_H_
-#define ARCANUM_GAME_LIB_SPELL_H_
+#ifndef ARCANUM_GAME_SPELL_H_
+#define ARCANUM_GAME_SPELL_H_
 
 #include "game/context.h"
 
@@ -143,4 +143,4 @@ void sub_4B1CF0(int64_t obj, int a2);
 
 #define COLLEGE_FROM_SPELL(spell) ((spell / 5))
 
-#endif /* ARCANUM_GAME_LIB_SPELL_H_ */
+#endif /* ARCANUM_GAME_SPELL_H_ */
