@@ -1718,7 +1718,7 @@ void sub_404740(UnknownContext* info)
         object_render(info);
         sector_render(info);
         wall_render(info);
-        sub_4BFE00(info);
+        wp_render(info);
         roof_render(info);
         tb_render(info);
         tig_video_3d_end_scene();

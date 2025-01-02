@@ -14,7 +14,7 @@ static_assert(sizeof(S5FC668) == 0x10, "wrong size");
 
 static void sub_4C0090();
 static void sub_4C00D0(int64_t obj);
-static void sub_4C0140(S5FC668* a1, UnknownContext* a2);
+static void sub_4C0140(S5FC668* a1, UnknownContext* render_info);
 static bool sub_4C0280(int64_t location, TigRect* rect);
 static void sub_4C0370();
 
@@ -116,7 +116,7 @@ void sub_4BFDE0()
 }
 
 // 0x4BFE00
-void sub_4BFE00(void* a1)
+void wp_render(UnknownContext* render_info)
 {
     int index;
 
@@ -131,7 +131,7 @@ void sub_4BFE00(void* a1)
     sub_4C0370();
 
     for (index = 0; index < dword_5FC654; index++) {
-        sub_4C0140(&(stru_5FC668[index]), a1);
+        sub_4C0140(&(stru_5FC668[index]), render_info);
     }
 }
 
@@ -173,7 +173,7 @@ void sub_4C00D0(int64_t obj)
 }
 
 // 0x4C0140
-void sub_4C0140(S5FC668* a1, UnknownContext* a2)
+void sub_4C0140(S5FC668* a1, UnknownContext* render_info)
 {
     TigArtBlitInfo art_blit_info;
     TigRect src_rect;
@@ -199,7 +199,7 @@ void sub_4C0140(S5FC668* a1, UnknownContext* a2)
         art_id = TIG_ART_ID_INVALID;
         loc = obj_arrayfield_int64_get(a1->obj, OBJ_F_NPC_WAYPOINTS_IDX, idx);
         if (sub_4C0280(loc, &wp_rect)) {
-            node = *a2->rects;
+            node = *render_info->rects;
             while (node != NULL) {
                 if (tig_rect_intersection(&wp_rect, &(node->rect), &dst_rect) == TIG_OK) {
                     if (art_id == TIG_ART_ID_INVALID) {
