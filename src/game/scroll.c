@@ -331,9 +331,9 @@ void sub_40E630(int64_t dx, int64_t dy)
 
     scroll_init_info.redraw_func();
 
-    location_get_origin(&old_origin_x, &old_origin_y);
+    location_origin_get(&old_origin_x, &old_origin_y);
     sub_4B8B30(dx, dy);
-    location_get_origin(&new_origin_x, &new_origin_y);
+    location_origin_get(&new_origin_x, &new_origin_y);
 
     if (old_origin_x == new_origin_x && old_origin_y == new_origin_y) {
         return;

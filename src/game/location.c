@@ -228,10 +228,10 @@ void sub_4B8940(int64_t location, int64_t* x, int64_t* y)
 }
 
 // 0x4B8AD0
-void location_get_origin(int64_t* origin_x, int64_t* origin_y)
+void location_origin_get(int64_t* sx, int64_t* sy)
 {
-    *origin_x = location_origin_x;
-    *origin_y = location_origin_y;
+    *sx = location_origin_x;
+    *sy = location_origin_y;
 }
 
 // 0x4B8B30
