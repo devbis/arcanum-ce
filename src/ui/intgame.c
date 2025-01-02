@@ -1547,7 +1547,7 @@ void sub_54AF10(TigRect* rect)
         if (idx == 0) {
             value = object_hp_max(pc_obj);
             if (value != 0) {
-                fullness = 100 * sub_43D600(pc_obj) / value;
+                fullness = 100 * object_hp_current(pc_obj) / value;
             } else {
                 fullness = 50;
             }
@@ -1628,7 +1628,7 @@ void sub_54AF10(TigRect* rect)
         }
 
         if (idx == 0) {
-            sub_54AD00(0, sub_43D600(pc_obj), 3);
+            sub_54AD00(0, object_hp_current(pc_obj), 3);
             if (poison > 0) {
                 sub_54AD00(5, poison, 3);
             }
@@ -6247,7 +6247,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
         dword_64C498,
         0x2);
 
-    int cur_hp = sub_43D600(critter_obj);
+    int cur_hp = object_hp_current(critter_obj);
     int max_hp = object_hp_max(critter_obj);
     int hp_ratio = 100 * cur_hp / max_hp;
     if (stat_level(critter_obj, STAT_POISON_LEVEL) > 0) {
@@ -6935,7 +6935,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
                 && (obj_field_int32_get(item_obj, OBJ_F_GENERIC_FLAGS) & 0x20) != 0)) {
             sprintf(str,
                 "%d/%d",
-                sub_43D600(item_obj),
+                object_hp_current(item_obj),
                 object_hp_max(item_obj));
             sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
                 str,
@@ -7168,7 +7168,7 @@ void sub_555D80(int64_t a1, int64_t scenery_obj, char* str)
             1);
 
         if ((obj_field_int32_get(scenery_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
-            sprintf(buffer, "%d/%d", sub_43D600(scenery_obj), object_hp_max(scenery_obj));
+            sprintf(buffer, "%d/%d", object_hp_current(scenery_obj), object_hp_max(scenery_obj));
             sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
                 buffer,
                 &stru_5C70F8,
@@ -7217,7 +7217,7 @@ void sub_555EC0(int64_t a1, int64_t portal_obj, char* a3)
         dword_64C49C,
         1);
 
-    sprintf(str, "%d/%d", sub_43D600(portal_obj), object_hp_max(portal_obj));
+    sprintf(str, "%d/%d", object_hp_current(portal_obj), object_hp_max(portal_obj));
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70F8,
@@ -7260,7 +7260,7 @@ void sub_556040(int64_t a1, int64_t container_obj, char* a3)
         1);
 
     if ((obj_field_int32_get(container_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) == 0) {
-        sprintf(str, "%d/%d", sub_43D600(container_obj), object_hp_max(container_obj));
+        sprintf(str, "%d/%d", object_hp_current(container_obj), object_hp_max(container_obj));
         sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
             str,
             &stru_5C70F8,

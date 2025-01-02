@@ -1646,7 +1646,7 @@ bool sub_4C82E0(int a1, int a2, Tanya* a3)
     v2 = (100 - a2) / v1;
 
     if (a3->field_68.obj != OBJ_HANDLE_NULL) {
-        v3 = sub_43D600(a3->field_68.obj);
+        v3 = object_hp_current(a3->field_68.obj);
         v4 = object_hp_max(a3->field_68.obj);
         if (v3 < v4) {
             v2 += 100 * (v4 - v3) / (v1 * v4);

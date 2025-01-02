@@ -1487,7 +1487,7 @@ void sub_4B4390(CombatContext* combat)
 
     dam_flags = combat->field_58;
     if ((dam_flags & 0x05) != 0) {
-        dam = sub_43D600(combat->field_20);
+        dam = object_hp_current(combat->field_20);
     } else {
         dam = combat->field_44[0] + combat->field_44[2] + combat->field_44[3];
     }
@@ -1719,7 +1719,7 @@ void sub_4B4390(CombatContext* combat)
             if (armor_obj != OBJ_HANDLE_NULL) {
                 object_hp_damage_set(armor_obj, object_hp_damage_get(armor_obj) + 10);
 
-                if (sub_43D600(armor_obj) > 0) {
+                if (object_hp_current(armor_obj) > 0) {
                     mes_file_entry.num = 7; // "Armor damaged"
                     mes_get_msg(combat_mes_file, &mes_file_entry);
                     tf_add(combat->field_20, tf_type, mes_file_entry.str);
@@ -1753,7 +1753,7 @@ void sub_4B4390(CombatContext* combat)
             if ((dam_flags & 0x4000) != 0) {
                 object_hp_damage_set(weapon_obj, object_hp_damage_get(weapon_obj) + 10);
 
-                if (sub_43D600(weapon_obj) > 0) {
+                if (object_hp_current(weapon_obj) > 0) {
                     mes_file_entry.num = 8; // "Weapon damaged"
                     mes_get_msg(combat_mes_file, &mes_file_entry);
                     tf_add(combat->field_20, tf_type, mes_file_entry.str);
@@ -1959,7 +1959,7 @@ void sub_4B4390(CombatContext* combat)
             tf_add(combat->field_20, TF_TYPE_WHITE, str);
         }
 
-        if (sub_43D600(combat->field_20) > 0) {
+        if (object_hp_current(combat->field_20) > 0) {
             if (combat->field_30 != OBJ_HANDLE_NULL) {
                 sub_4AEE50(combat->field_30, combat->field_20, 1, 2);
                 sub_4B5580(combat);
@@ -2101,7 +2101,7 @@ void sub_4B5580(CombatContext* combat)
             break;
         }
     } else {
-        int hp = sub_43D600(combat->field_8);
+        int hp = object_hp_current(combat->field_8);
         if (dam >= hp) {
             dam = hp - 1;
         }
@@ -2116,7 +2116,7 @@ void sub_4B5580(CombatContext* combat)
                 object_hp_damage_get(combat->weapon_obj) + dam);
 
             mes_file_entry.num = 8; // "Weapon damaged"
-            if (sub_43D600(combat->weapon_obj) <= 0) {
+            if (object_hp_current(combat->weapon_obj) <= 0) {
                 sub_43F1C0(combat->weapon_obj, combat->field_8);
                 mes_file_entry.num = 23; // "Weapon broken"
                 sub_4B83E0(combat->field_8, combat->field_20);

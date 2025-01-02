@@ -457,7 +457,7 @@ bool critter_is_sleeping(int64_t obj)
 bool sub_45D8D0(long long obj)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        return sub_43D600(obj) <= 0;
+        return object_hp_current(obj) <= 0;
     } else {
         return true;
     }

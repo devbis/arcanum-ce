@@ -1604,7 +1604,7 @@ int object_hp_max(object_id_t obj)
 }
 
 // 0x43D600
-int sub_43D600(object_id_t obj)
+int object_hp_current(object_id_t obj)
 {
     return object_hp_max(obj) - object_hp_damage_get(obj);
 }

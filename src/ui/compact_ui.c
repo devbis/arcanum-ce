@@ -381,7 +381,7 @@ void compact_ui_health_bar_draw(int a1)
             tig_color_make(255, 0, 0));
     }
 
-    sprintf(str, "%02d", sub_43D600(pc_obj));
+    sprintf(str, "%02d", object_hp_current(pc_obj));
     tig_font_push(sub_549940(0, 0));
     font_desc.width = 0;
     font_desc.str = str;

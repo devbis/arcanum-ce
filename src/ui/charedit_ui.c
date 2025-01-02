@@ -1824,7 +1824,7 @@ int sub_55B4D0(int64_t obj, int stat)
     case CHAREDIT_STAT_XP_TO_NEXT_LEVEL:
         return level_get_experience_points_to_next_level(obj);
     case CHAREDIT_STAT_3:
-        return sub_43D600(obj);
+        return object_hp_current(obj);
     case CHAREDIT_STAT_HP_PTS:
         return object_hp_pts_get(obj);
     case CHAREDIT_STAT_5:
