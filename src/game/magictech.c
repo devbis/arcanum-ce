@@ -2137,7 +2137,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
         int rot;
 
         summoner_loc = obj_field_int64_get(summon_info->field_0.obj, OBJ_F_LOCATION);
-        rot = sub_4B8D50(summon_info->loc, summoner_loc);
+        rot = location_rot(summon_info->loc, summoner_loc);
 
         art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         art_id = tig_art_id_rotation_set(art_id, rot);
@@ -2229,7 +2229,7 @@ void MTComponentAGoal_ProcFunc()
                 art_id = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_CURRENT_AID);
                 rot = (tig_art_id_rotation_get(art_id) + 4) % 8;
             } else {
-                rot = sub_4B8D50(loc, new_loc);
+                rot = location_rot(loc, new_loc);
             }
 
             sub_434E80(stru_5E6D28.field_20, rot, 4, dword_5E75F0->parent_obj.obj);
@@ -4402,7 +4402,7 @@ void sub_455C30(MagicTechSerializedData* a1)
         loc = v1->target_obj.obj != OBJ_HANDLE_NULL
             ? obj_field_int64_get(v1->target_obj.obj, OBJ_F_LOCATION)
             : v1->target_obj.loc;
-        rot = sub_4B8D50(v1->source_obj.loc, loc);
+        rot = location_rot(v1->source_obj.loc, loc);
         tig_art_id_rotation_set(art_id, rot);
     }
 

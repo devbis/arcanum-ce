@@ -122,7 +122,7 @@ void scroll_start_scrolling_in_direction(int direction)
     int v4;
     bool v5;
     int64_t loc;
-    int rotation;
+    int rot;
 
     if (!scroll_init_info.editor) {
         if ((unsigned int)tig_timer_between(dword_5D117C, gamelib_ping_time) < scroll_fps) {
@@ -207,10 +207,10 @@ void scroll_start_scrolling_in_direction(int direction)
 
     location_at(v1, v2, &loc);
 
-    rotation = sub_4B8D50(loc, scroll_center);
-    if (rotation == (direction - 1) % 8
-        || rotation == (direction + 1) % 8
-        || rotation == direction) {
+    rot = location_rot(loc, scroll_center);
+    if (rot == (direction - 1) % 8
+        || rot == (direction + 1) % 8
+        || rot == direction) {
         tig_art_interface_id_create(direction + 679, 0, 0, 0, &art_id);
         sub_40EA50(art_id);
         sub_40E630(dx, dy);

@@ -902,7 +902,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
     int64_t dx;
     int64_t dy;
     int64_t pc_obj;
-    int rotation;
+    int rot;
     tig_art_id_t art_id;
 
     if (random_between(1, 100) < 51) {
@@ -949,9 +949,9 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
             object_list_destroy(&objects);
 
             if (obj != OBJ_HANDLE_NULL) {
-                rotation = sub_4B8D50(loc, qword_64C760);
+                rot = location_rot(loc, qword_64C760);
                 art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-                art_id = tig_art_id_rotation_set(art_id, rotation);
+                art_id = tig_art_id_rotation_set(art_id, rot);
                 object_set_current_aid(obj, art_id);
             }
         }

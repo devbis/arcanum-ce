@@ -3353,7 +3353,7 @@ int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr)
         offset_y += offsets[idx + 1];
         location_at(source_loc_x + offset_x + 40, source_loc_y + offset_y + 20, &new_loc);
         if (new_loc != source_loc) {
-            rot = sub_4B8D50(source_loc, new_loc);
+            rot = location_rot(source_loc, new_loc);
             if (new_loc == target_loc) {
                 flags |= 0x10;
             }
@@ -4139,7 +4139,7 @@ int sub_4AF640(int64_t source_obj, int64_t target_obj)
     int64_t source_loc_y;
     int idx;
     int64_t new_loc;
-    int rotation;
+    int rot;
     int64_t block_obj;
     int block_obj_type;
 
@@ -4169,14 +4169,14 @@ int sub_4AF640(int64_t source_obj, int64_t target_obj)
         offset_y += offsets[idx + 1];
         location_at(source_loc_x + offset_x + 40, source_loc_y + offset_y + 20, &new_loc);
         if (new_loc != source_loc) {
-            rotation = sub_4B8D50(source_loc, new_loc);
+            rot = location_rot(source_loc, new_loc);
             if (new_loc == target_loc) {
                 flags |= 0x10;
             }
 
             cnt += sub_43FDC0(OBJ_HANDLE_NULL,
                 source_loc,
-                rotation,
+                rot,
                 flags,
                 &block_obj,
                 &block_obj_type,

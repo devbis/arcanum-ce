@@ -292,7 +292,7 @@ void location_set_func_5FC2F8(LocationFunc5FC2F8* func)
 // NOTE: Original code is likely different.
 //
 // 0x4B8D50
-int sub_4B8D50(int64_t a, int64_t b)
+int location_rot(int64_t a, int64_t b)
 {
     int dx;
     int dy;

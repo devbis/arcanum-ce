@@ -4595,7 +4595,7 @@ bool sub_425130(AnimRunInfo* run_info)
     int range;
     int64_t source_loc;
     int64_t target_loc;
-    int direction;
+    int rot;
 
     source_obj = run_info->params[0].obj;
     target_obj = run_info->params[1].obj;
@@ -4619,8 +4619,8 @@ bool sub_425130(AnimRunInfo* run_info)
         return false;
     }
 
-    direction = sub_4B8D50(source_loc, target_loc);
-    if (sub_425840(source_obj, source_loc, target_loc, direction, target_obj)) {
+    rot = location_rot(source_loc, target_loc);
+    if (sub_425840(source_obj, source_loc, target_loc, rot, target_obj)) {
         return false;
     }
 
@@ -5411,7 +5411,7 @@ bool sub_4268F0(AnimRunInfo* run_info)
     }
 
     source_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    run_info->path.baseRot = sub_4B8D50(source_loc, target_loc);
+    run_info->path.baseRot = location_rot(source_loc, target_loc);
     run_info->path.max = sub_4201C0(source_loc, target_loc, run_info->path.rotations);
     if (run_info->path.max == 0) {
         return false;
@@ -5502,7 +5502,7 @@ bool sub_426A80(AnimRunInfo* run_info)
         return false;
     }
 
-    rot = sub_4B8D50(target_loc, source_loc);
+    rot = location_rot(target_loc, source_loc);
     for (dist = 0; dist < range; dist++) {
         if (!sub_4B8FF0(target_loc, rot, &target_loc)) {
             ASSERT(0); // 4812, "0"
@@ -6705,7 +6705,7 @@ bool sub_428A10(AnimRunInfo* run_info)
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
-    rot = sub_4B8D50(source_loc, target_loc);
+    rot = location_rot(source_loc, target_loc);
 
     if ( sub_425840(source_obj, source_loc, target_loc, rot, target_obj)) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0
@@ -8900,7 +8900,7 @@ bool sub_42C0F0(AnimRunInfo* run_info)
     int64_t target_obj;
     int64_t source_loc;
     int64_t target_loc;
-    int rotation;
+    int rot;
     tig_art_id_t art_id;
 
     source_obj = run_info->params[0].obj;
@@ -8929,10 +8929,10 @@ bool sub_42C0F0(AnimRunInfo* run_info)
 
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
-    rotation = sub_4B8D50(source_loc, target_loc);
+    rot = location_rot(source_loc, target_loc);
 
     art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
-    art_id = tig_art_id_rotation_set(art_id, rotation);
+    art_id = tig_art_id_rotation_set(art_id, rot);
     if (tig_art_exists(art_id) == TIG_OK) {
         object_set_current_aid(source_obj, art_id);
         run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
@@ -8948,7 +8948,7 @@ bool sub_42C240(AnimRunInfo* run_info)
     int64_t target_obj;
     int64_t source_loc;
     int64_t target_loc;
-    int rotation;
+    int rot;
     tig_art_id_t art_id;
 
     source_obj = run_info->params[0].obj;
@@ -8977,9 +8977,9 @@ bool sub_42C240(AnimRunInfo* run_info)
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
-    rotation = sub_4B8D50(target_loc, source_loc);
+    rot = location_rot(target_loc, source_loc);
     art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
-    art_id = tig_art_id_rotation_set(art_id, rotation);
+    art_id = tig_art_id_rotation_set(art_id, rot);
     if (tig_art_exists(art_id) == TIG_OK) {
         object_set_current_aid(source_obj, art_id);
         run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
@@ -8994,7 +8994,7 @@ bool sub_42C390(AnimRunInfo* run_info)
     int64_t source_obj;
     int64_t source_loc;
     int64_t target_loc;
-    int rotation;
+    int rot;
     tig_art_id_t art_id;
 
     source_obj = run_info->params[0].obj;
@@ -9007,9 +9007,9 @@ bool sub_42C390(AnimRunInfo* run_info)
     }
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
-    rotation = sub_4B8D50(source_loc, target_loc);
+    rot = location_rot(source_loc, target_loc);
     art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
-    art_id = tig_art_id_rotation_set(art_id, rotation);
+    art_id = tig_art_id_rotation_set(art_id, rot);
     if (tig_art_exists(art_id) == TIG_OK) {
         object_set_current_aid(source_obj, art_id);
         run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
@@ -9206,7 +9206,7 @@ bool sub_42C850(AnimRunInfo* run_info)
         target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
 
         art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
-        art_id = tig_art_id_rotation_set(art_id, sub_4B8D50(source_loc, target_loc));
+        art_id = tig_art_id_rotation_set(art_id, location_rot(source_loc, target_loc));
         if (tig_art_exists(art_id) == TIG_OK) {
             object_set_current_aid(source_obj, art_id);
         }

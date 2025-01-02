@@ -650,7 +650,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
         if ((proj_flags & 0x20) != 0) {
             sub_43FDC0(proj_obj,
                 proj_obj,
-                sub_4B8D50(proj_obj, cur_loc),
+                location_rot(proj_loc, cur_loc),
                 0x08 | 0x04 | 0x01,
                 &block_obj,
                 &block_obj_type,

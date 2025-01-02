@@ -1227,7 +1227,7 @@ void sub_4F40B0(S603CB8* a1)
     }
 
     if ((v2->aoe_flags & Tgt_Tile_Radius_Wall_Naked) != 0) {
-        int rotation;
+        int rot;
         int sx;
         int sy;
         int range;
@@ -1248,12 +1248,12 @@ void sub_4F40B0(S603CB8* a1)
         }
 
         if (a1->field_18 != 0 && a1->field_38 != 0) {
-            rotation = sub_4B8D50(a1->field_18, a1->field_38);
+            rot = location_rot(a1->field_18, a1->field_38);
         } else {
-            rotation = 0;
+            rot = 0;
         }
 
-        switch (rotation) {
+        switch (rot) {
         case 1:
             sx = 0;
             sy = -1;

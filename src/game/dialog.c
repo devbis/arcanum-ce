@@ -3959,18 +3959,18 @@ void sub_41A0F0(int a1, int a2, int a3, DialogEntryNode* a4)
 }
 
 // 0x41A150
-void sub_41A150(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_41A150(int area, int a2, int a3, DialogEntryNode* a4)
 {
     int64_t loc;
-    int64_t v1;
-    int v2;
+    int64_t area_loc;
+    int rot;
     int64_t v3;
     int v4;
 
     loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
-    v1 = area_get_location(a1);
-    v2 = sub_4B8D50(loc, v1);
-    v3 = sub_4B96F0(loc, v1) / 3168;
+    area_loc = area_get_location(area);
+    rot = location_rot(loc, area_loc);
+    v3 = sub_4B96F0(loc, area_loc) / 3168;
 
     if (v3 < 2) {
         v4 = 200;
@@ -3980,7 +3980,7 @@ void sub_41A150(int a1, int a2, int a3, DialogEntryNode* a4)
         v4 = 400;
     }
 
-    sub_418780(a4->field_70, a4, v4 + 10 * v2, v4 + 10 * v2 + 9);
+    sub_418780(a4->field_70, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
 
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;
@@ -4004,22 +4004,22 @@ void sub_41A230(int a1, int a2, int a3, DialogEntryNode* a4)
 }
 
 // 0x41A290
-void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4)
+void sub_41A290(int area, int a2, int a3, DialogEntryNode* a4)
 {
     int64_t loc;
-    int64_t v1;
-    int v2;
+    int64_t area_loc;
+    int rot;
     int64_t v3;
     int v4;
     char buffer[1000];
 
     loc = obj_field_int64_get(a4->npc_obj, OBJ_F_LOCATION);
-    v1 = area_get_location(a1);
-    v2 = sub_4B8D50(loc, v1);
-    v3 = sub_4B96F0(loc, v1) / 3168;
+    area_loc = area_get_location(area);
+    rot = location_rot(loc, area_loc);
+    v3 = sub_4B96F0(loc, area_loc) / 3168;
     v4 = v3 < 2 ? 600 : 700;
 
-    sub_418780(buffer, a4, v4 + 10 * v2, v4 + 10 * v2 + 9);
+    sub_418780(buffer, a4, v4 + 10 * rot, v4 + 10 * rot + 9);
 
     if (v3 < 2) {
         strcpy(a4->field_70, buffer);
@@ -4032,7 +4032,7 @@ void sub_41A290(int a1, int a2, int a3, DialogEntryNode* a4)
     a4->field_1804[0] = a3;
     a4->field_182C[0] = NULL;
     a4->field_45C = 1;
-    area_set_known(a4->pc_obj, a1);
+    area_set_known(a4->pc_obj, area);
 }
 
 // 0x41A3E0

@@ -2667,15 +2667,15 @@ void sub_54DE50(TigMessage* msg)
                                 && sub_5517A0(msg)) {
                                 int64_t pc_loc;
                                 tig_art_id_t aid;
-                                int rotation;
+                                int rot;
 
                                 pc_loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
                                 aid = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
-                                rotation = sub_4B8D50(pc_loc, loc);
+                                rot = location_rot(pc_loc, loc);
                                 if (!sub_423300(pc_obj, 0)) {
-                                    sub_433440(pc_obj, rotation);
+                                    sub_433440(pc_obj, rot);
                                 } else if (sub_44E830(pc_obj, 2, 0)) {
-                                    object_set_current_aid(pc_obj, tig_art_id_rotation_set(aid, rotation));
+                                    object_set_current_aid(pc_obj, tig_art_id_rotation_set(aid, rot));
                                 }
                             }
                         }

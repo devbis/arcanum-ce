@@ -160,7 +160,7 @@ int sub_41F6C0(PathCreateInfo* path_create_info)
     }
 
     range = path_create_info->field_24 - (int)dist;
-    base_rot = sub_4B8D50(path_create_info->from, path_create_info->to);
+    base_rot = location_rot(path_create_info->from, path_create_info->to);
 
     v2 = 0;
     for (idx = 0; idx < 8; idx++) {
@@ -217,7 +217,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
             break;
         }
 
-        rot = sub_4B8D50(loc, path_create_info->to);
+        rot = location_rot(loc, path_create_info->to);
         path_create_info->rotations[idx] = (uint8_t)rot;
         sub_4B8FF0(loc, rot, &adjacent_loc);
 
