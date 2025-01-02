@@ -2663,7 +2663,7 @@ void sub_54DE50(TigMessage* msg)
                             sub_4B4320(pc_obj);
 
                             tig_mouse_get_state(&mouse_state);
-                            if (sub_4B8730(mouse_state.x, mouse_state.y, &loc)
+                            if (location_at(mouse_state.x, mouse_state.y, &loc)
                                 && sub_5517A0(msg)) {
                                 int64_t pc_loc;
                                 tig_art_id_t aid;

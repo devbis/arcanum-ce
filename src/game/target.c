@@ -309,7 +309,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
     }
 
     if (!ret) {
-        if (sub_4B8730(x, y, &loc)) {
+        if (location_at(x, y, &loc)) {
             sub_4407C0(loc, OBJ_TM_ALL & ~OBJ_TM_PROJECTILE, &objects);
             node = objects.head;
             while (node != NULL) {

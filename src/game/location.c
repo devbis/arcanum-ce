@@ -95,9 +95,9 @@ void location_resize(GameResizeInfo* resize_info)
 // 0x4B85A0
 bool location_update_view(ViewOptions* view_options)
 {
-    int64_t v1;
+    int64_t loc;
 
-    if (!sub_4B8730(location_screen_center_x, location_screen_center_y, &v1)) {
+    if (!location_at(location_screen_center_x, location_screen_center_y, &loc)) {
         return false;
     }
 
@@ -114,7 +114,7 @@ bool location_update_view(ViewOptions* view_options)
         location_origin_x = 0;
         location_origin_y = 0;
         location_view_options = *view_options;
-        sub_4B8CE0(v1);
+        sub_4B8CE0(loc);
         return true;
     }
 
@@ -122,7 +122,7 @@ bool location_update_view(ViewOptions* view_options)
         location_origin_x = location_iso_content_rect.width;
         location_origin_y = 0;
         location_view_options = *view_options;
-        sub_4B8CE0(v1);
+        sub_4B8CE0(loc);
         return true;
     }
 
@@ -142,7 +142,7 @@ void sub_4B8680(int64_t location, int64_t* x, int64_t* y)
 }
 
 // 0x4B8730
-bool sub_4B8730(int64_t x, int64_t y, int64_t* location_ptr)
+bool location_at(int64_t sx, int64_t sy, int64_t* loc_ptr)
 {
     int64_t new_x;
     int64_t new_y;
@@ -150,8 +150,8 @@ bool sub_4B8730(int64_t x, int64_t y, int64_t* location_ptr)
     int64_t dy;
 
     if (location_view_options.type == VIEW_TYPE_ISOMETRIC) {
-        dy = y - location_origin_y;
-        dx = (x - location_origin_x) >> 1;
+        dy = sy - location_origin_y;
+        dx = (sx - location_origin_x) >> 1;
 
         if (dy - dx < INT_MIN) {
             return false;
@@ -179,19 +179,19 @@ bool sub_4B8730(int64_t x, int64_t y, int64_t* location_ptr)
             return false;
         }
 
-        *location_ptr = LOCATION_MAKE(new_x, new_y);
+        *loc_ptr = LOCATION_MAKE(new_x, new_y);
     } else {
-        new_x = (location_origin_x + location_view_options.zoom - x - 1) / location_view_options.zoom;
+        new_x = (location_origin_x + location_view_options.zoom - sx - 1) / location_view_options.zoom;
         if (new_x < 0 || new_x >= location_limit_x) {
             return false;
         }
 
-        new_y = (y - location_origin_y) / location_view_options.zoom;
+        new_y = (sy - location_origin_y) / location_view_options.zoom;
         if (new_y < 0 || new_y >= location_limit_y) {
             return false;
         }
 
-        *location_ptr = LOCATION_MAKE(new_x, new_y);
+        *loc_ptr = LOCATION_MAKE(new_x, new_y);
     }
 
     return true;
@@ -242,21 +242,21 @@ void sub_4B8B30(int64_t dx, int64_t dy)
     if (!location_editor && location_view_options.type == VIEW_TYPE_ISOMETRIC) {
         if (dx + location_origin_x > location_screen_center_x) {
             if (dy + location_origin_y + qword_5FC2D8 > location_screen_center_y) {
-                if (!sub_4B8730(-dx, -dy, &tmp)) {
+                if (!location_at(-dx, -dy, &tmp)) {
                     return;
                 }
 
-                if (!sub_4B8730(-dx, location_iso_content_rect.height - dy, &tmp)) {
+                if (!location_at(-dx, location_iso_content_rect.height - dy, &tmp)) {
                     return;
                 }
             }
         } else {
             if (dy + location_origin_y + qword_5FC2D8 > location_screen_center_y) {
-                if (!sub_4B8730(location_iso_content_rect.width - dx, -dy, &tmp)) {
+                if (!location_at(location_iso_content_rect.width - dx, -dy, &tmp)) {
                     return;
                 }
 
-                if (!sub_4B8730(location_iso_content_rect.width - dx, location_iso_content_rect.height - dy, &tmp)) {
+                if (!location_at(location_iso_content_rect.width - dx, location_iso_content_rect.height - dy, &tmp)) {
                     return;
                 }
             }
@@ -506,7 +506,7 @@ bool sub_4B9420(int64_t* loc_ptr, int* a2, int* a3)
     x += *a2 + 40;
     y += *a3 + 20;
 
-    if (!sub_4B8730(x, y, &new_loc)) {
+    if (!location_at(x, y, &new_loc)) {
         return false;
     }
 

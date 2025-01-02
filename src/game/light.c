@@ -339,7 +339,7 @@ void light_render(UnknownContext* render_info)
         return;
     }
 
-    sub_4B8730(light_iso_content_rect.width / 2, light_iso_content_rect.height / 2, &center_loc);
+    location_at(light_iso_content_rect.width / 2, light_iso_content_rect.height / 2, &center_loc);
     sub_4B8680(center_loc, &cx, &cy);
     cx += 40;
     cy += 20;
@@ -2433,7 +2433,7 @@ void light_render_internal(UnknownContext* render_info)
                                 tig_art_anim_data(light->art_id, &art_anim_data);
                             }
 
-                            sub_4B8730(rect_node->rect.x, rect_node->rect.y, &loc);
+                            location_at(rect_node->rect.x, rect_node->rect.y, &loc);
                             sub_4B8680(loc, &loc_x, &loc_y);
 
                             int max_x = rect_node->rect.x + rect_node->rect.width - 1;
@@ -2542,12 +2542,12 @@ void sub_4DF1D0(TigRect* rect)
     x2 = rect->x + rect->width - 1;
     y2 = rect->y + rect->height - 1;
 
-    if (sub_4B8730(x1, y1, &loc1)) {
+    if (location_at(x1, y1, &loc1)) {
         sub_4B8680(loc1, &x1, &y1);
         x1 -= 40;
         y1 -= 20;
 
-        if (sub_4B8730(x2, y2, &loc2)) {
+        if (location_at(x2, y2, &loc2)) {
             sub_4B8680(loc2, &x2, &y2);
             x2 += 80 + 40;
             y2 += 40 + 20;

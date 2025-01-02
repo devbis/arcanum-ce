@@ -3351,7 +3351,7 @@ int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr)
 
         offset_x += offsets[idx];
         offset_y += offsets[idx + 1];
-        sub_4B8730(source_loc_x + offset_x + 40, source_loc_y + offset_y + 20, &new_loc);
+        location_at(source_loc_x + offset_x + 40, source_loc_y + offset_y + 20, &new_loc);
         if (new_loc != source_loc) {
             rot = sub_4B8D50(source_loc, new_loc);
             if (new_loc == target_loc) {
@@ -4167,7 +4167,7 @@ int sub_4AF640(int64_t source_obj, int64_t target_obj)
 
         offset_x += offsets[idx];
         offset_y += offsets[idx + 1];
-        sub_4B8730(source_loc_x + offset_x + 40, source_loc_y + offset_y + 20, &new_loc);
+        location_at(source_loc_x + offset_x + 40, source_loc_y + offset_y + 20, &new_loc);
         if (new_loc != source_loc) {
             rotation = sub_4B8D50(source_loc, new_loc);
             if (new_loc == target_loc) {

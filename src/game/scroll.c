@@ -205,7 +205,7 @@ void scroll_start_scrolling_in_direction(int direction)
         return;
     }
 
-    sub_4B8730(v1, v2, &loc);
+    location_at(v1, v2, &loc);
 
     rotation = sub_4B8D50(loc, scroll_center);
     if (rotation == (direction - 1) % 8
@@ -374,7 +374,7 @@ void sub_40E630(int64_t dx, int64_t dy)
     if (!scroll_init_info.editor) {
         int64_t loc;
 
-        sub_4B8730(scroll_iso_content_rect.width / 2, scroll_iso_content_rect.height / 2, &loc);
+        location_at(scroll_iso_content_rect.width / 2, scroll_iso_content_rect.height / 2, &loc);
         if (loc != qword_5D11B8) {
             sub_41C6D0(loc);
             qword_5D11B8 = loc;

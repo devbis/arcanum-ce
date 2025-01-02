@@ -3344,7 +3344,7 @@ void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects)
     tig_window_data(object_iso_window_handle, &window_data);
 
     screen_rect = window_data.rect;
-    sub_4B8730(window_data.rect.width / 2, window_data.rect.height / 2, &center_loc);
+    location_at(window_data.rect.width / 2, window_data.rect.height / 2, &center_loc);
     sub_4B8680(center_loc, &center_x, &center_y);
     sub_4B8680(loc, &x, &y);
 

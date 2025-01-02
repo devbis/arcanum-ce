@@ -10905,7 +10905,7 @@ bool sub_42F390(AnimRunInfo* run_info)
         offset_y += run_info->path.rotations[run_info->path.curr + 1];
 
         sub_4B8680(loc, &loc_x, &loc_y);
-        if (!sub_4B8730(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
+        if (!location_at(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
             ASSERT(0); // 11433, "0"
             exit(EXIT_FAILURE);
         }
@@ -11021,7 +11021,7 @@ bool sub_42F6A0(AnimRunInfo* run_info)
         new_loc_x = projectile_loc_x + offset_x + 40;
         new_loc_y = projectile_loc_y + offset_y + 20;
 
-        if (!sub_4B8730(new_loc_x, new_loc_y, &new_loc)) {
+        if (!location_at(new_loc_x, new_loc_y, &new_loc)) {
             tig_debug_printf("Anim: AGupdateAnimProjectileMoveStraight: ERROR: location_at() failed: Loc: (%I64d x %I64d)!\n",
                 new_loc_x,
                 new_loc_y);
@@ -11107,7 +11107,7 @@ bool sub_42FA50(AnimRunInfo* run_info)
         offset_y += run_info->path.rotations[run_info->path.curr + 1];
 
         sub_4B8680(loc, &loc_x, &loc_y);
-        if (!sub_4B8730(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
+        if (!location_at(loc_x + offset_x + 40, loc_y + offset_y + 20, &new_loc)) {
             ASSERT(0); // 11691, "0"
             exit(EXIT_FAILURE);
         }

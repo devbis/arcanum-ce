@@ -463,7 +463,7 @@ bool sub_439890(int x, int y)
         return false;
     }
 
-    if (!sub_4B8730(x, y + 120, &loc)) {
+    if (!location_at(x, y + 120, &loc)) {
         return false;
     }
 
@@ -645,7 +645,7 @@ bool sub_439FF0(int64_t x, int64_t y, int a3)
 {
     int64_t loc;
 
-    sub_4B8730(x, y, &loc);
+    location_at(x, y, &loc);
     return sub_43A030(loc, a3);
 }
 

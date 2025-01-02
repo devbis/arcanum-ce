@@ -308,7 +308,7 @@ void main_loop()
     char mouse_state_str[20];
     char story_state_str[80];
 
-    if (!sub_4B8730(400, 200, &location)) {
+    if (!location_at(400, 200, &location)) {
         return;
     }
 
@@ -555,7 +555,7 @@ void main_loop()
                                 break;
                             case DIK_X:
                                 tig_mouse_get_state(&mouse_state);
-                                sub_4B8730(mouse_state.x, mouse_state.y, &mouse_loc);
+                                location_at(mouse_state.x, mouse_state.y, &mouse_loc);
                                 sprintf(mouse_state_str, "x: %d, y: %d",
                                     (int)LOCATION_GET_X(mouse_loc),
                                     (int)LOCATION_GET_Y(mouse_loc));

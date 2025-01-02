@@ -261,7 +261,7 @@ void sub_4BE780(TownMapInfo* tmi, int x, int y, int64_t* loc_ptr)
     v2 = (int)(y / tmi->field_28) - tmi->field_10 / 2;
 
     sub_4B8680(tmi->loc, &v3, &v4);
-    sub_4B8730(v1 + v3, v2 + v4, &loc);
+    location_at(v1 + v3, v2 + v4, &loc);
     *loc_ptr = loc;
 }
 
