@@ -8,130 +8,134 @@
 // designated as unsigned.
 //
 // 0x4F5330
-void sub_4F5330(int64_t a1, int64_t a2)
+void logbook_add_kill(int64_t pc_obj, int64_t npc_obj)
 {
     int desc;
     int value;
 
-    desc = critter_description_get(a2, a1);
+    desc = critter_description_get(npc_obj, pc_obj);
 
-    value = obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 0);
-    obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 0, value + 1);
+    value = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_TOTAL_KILLS);
+    obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_TOTAL_KILLS, value + 1);
 
-    value = stat_level(a2, STAT_LEVEL);
-    if (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 2)
-        || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 1) == 0) {
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 2, value);
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 1, desc);
+    value = stat_level(npc_obj, STAT_LEVEL);
+    if (value >= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_LEVEL)
+        || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_NAME) == 0) {
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_LEVEL, value);
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_NAME, desc);
     }
-    if (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 4)
-        || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 3) == 0) {
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 4, value);
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 3, desc);
+    if (value >= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_LEAST_POWERFUL_LEVEL)
+        || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_LEAST_POWERFUL_NAME) == 0) {
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_LEAST_POWERFUL_LEVEL, value);
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_LEAST_POWERFUL_NAME, desc);
     }
 
-    value = stat_level(a2, STAT_ALIGNMENT);
+    value = stat_level(npc_obj, STAT_ALIGNMENT);
     if (value > 0
-        && (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 6)
-            || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 5) == 0)) {
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 6, value);
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 5, desc);
+        && (value >= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_VALUE)
+            || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_NAME) == 0)) {
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_VALUE, value);
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_NAME, desc);
     }
     if (value < 0
-        && (value <= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 8)
-            || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 7) == 0)) {
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 8, value);
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 7, desc);
+        && (value <= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_EVIL_VALUE)
+            || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_EVIL_NAME) == 0)) {
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_EVIL_VALUE, value);
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_EVIL_NAME, desc);
     }
 
-    value = stat_level(a2, STAT_MAGICK_TECH_APTITUDE);
+    value = stat_level(npc_obj, STAT_MAGICK_TECH_APTITUDE);
     if (value > 0
-        && (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 10)
-            || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 9) == 0)) {
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 10, value);
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 9, desc);
+        && (value >= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_VALUE)
+            || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_NAME) == 0)) {
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_VALUE, value);
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_NAME, desc);
     }
     if (value < 0
-        && (value <= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 12)
-            || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 11) == 0)) {
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 12, value);
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 11, desc);
+        && (value <= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_TECH_VALUE)
+            || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_TECH_NAME) == 0)) {
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_TECH_VALUE, value);
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_TECH_NAME, desc);
     }
 }
 
 // 0x4F5590
-void sub_4F5590(int64_t obj, int* a2)
+void logbook_get_kills(int64_t pc_obj, int* values)
 {
-    a2[0] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 0);
-    a2[1] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 1);
-    a2[2] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 2);
-    a2[3] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 3);
-    a2[4] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 4);
-    a2[5] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 5);
-    a2[6] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 6);
-    a2[7] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 7);
-    a2[8] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 8);
-    a2[9] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 9);
-    a2[10] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 10);
-    a2[11] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 11);
-    a2[12] = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 12);
+    values[LBK_TOTAL_KILLS] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_TOTAL_KILLS);
+    values[LBK_MOST_POWERFUL_NAME] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_NAME);
+    values[LBK_MOST_POWERFUL_LEVEL] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_LEVEL);
+    values[LBK_LEAST_POWERFUL_NAME] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_LEAST_POWERFUL_NAME);
+    values[LBK_LEAST_POWERFUL_LEVEL] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_LEAST_POWERFUL_LEVEL);
+    values[LBK_MOST_GOOD_NAME] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_NAME);
+    values[LBK_MOST_GOOD_VALUE] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_VALUE);
+    values[LBK_MOST_EVIL_NAME] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_EVIL_NAME);
+    values[LBK_MOST_EVIL_VALUE] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_EVIL_VALUE);
+    values[LBK_MOST_MAGICAL_NAME] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_NAME);
+    values[LBK_MOST_MAGICAL_VALUE] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_VALUE);
+    values[LBK_MOST_TECH_NAME] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_TECH_NAME);
+    values[LBK_MOST_TECH_VALUE] = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_TECH_VALUE);
 }
 
 // 0x4F5690
-void sub_4F5690(int64_t a1, int64_t a2, int a3)
+void logbook_add_injury(int64_t pc_obj, int64_t inflicted_by_obj, int injury)
 {
     int type;
     int desc;
     int index;
 
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (inflicted_by_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 
-    type = obj_field_int32_get(a2, OBJ_F_TYPE);
+    type = obj_field_int32_get(inflicted_by_obj, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
         return;
     }
 
-    if (a1 == a2) {
-        desc = 30286;
+    if (pc_obj == inflicted_by_obj) {
+        desc = 30286; // "yourself (self-inflicted)"
     } else if (type == OBJ_TYPE_PC) {
-        desc = 30287;
+        desc = 30287; // "another Player"
     } else {
-        desc = critter_description_get(a2, a1);
+        desc = critter_description_get(inflicted_by_obj, pc_obj);
     }
 
     index = 64;
-    while (obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index)) {
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index++, desc);
-        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index++, a3);
+    while (obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, index)) {
+        index += 2;
     }
+
+    obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, index, desc);
+    obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, index + 1, injury);
 }
 
 // 0x4F5770
-int sub_4F5770(int64_t obj, int* a2, int* a3)
+int logbook_find_first_injury(int64_t obj, int* desc_ptr, int* injury_ptr)
 {
-    *a2 = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 64);
-    if (*a2 == 0) {
+    *desc_ptr = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 64);
+    if (*desc_ptr == 0) {
         return 0;
     }
 
-    *a3 = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 65);
+    *injury_ptr = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, 65);
+
     return 64;
 }
 
 // 0x4F57C0
-int sub_4F57C0(int64_t obj, int a2, int* a3, int* a4)
+int logbook_find_next_injury(int64_t obj, int idx, int* desc_ptr, int* injury_ptr)
 {
-    *a3 = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, a2 + 2);
-    if (*a3 == 0) {
+    *desc_ptr = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, idx + 2);
+    if (*desc_ptr == 0) {
         return 0;
     }
 
-    *a4 = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, a2 + 3);
-    return a2 + 2;
+    *injury_ptr = obj_arrayfield_uint32_get(obj, OBJ_F_PC_LOGBOOK_EGO_IDX, idx + 3);
+
+    return idx + 2;
 }

@@ -160,7 +160,7 @@ static tig_font_handle_t dword_64893C;
 static int dword_648938;
 
 // 0x648940
-static int dword_648940[13];
+static int dword_648940[LBK_COUNT];
 
 // 0x648974
 static int dword_648974;
@@ -912,12 +912,12 @@ void sub_53FBB0()
     }
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_KILLS_AND_INJURES) {
-        int v1;
-        int v2;
+        int desc;
+        int injury;
         unsigned int flags;
         int cnt;
 
-        sub_4F5590(qword_63FAD8, dword_648940);
+        logbook_get_kills(qword_63FAD8, dword_648940);
 
         for (index = 0; index < 9; index++) {
             dword_648988[index] = dword_648934;
@@ -925,19 +925,19 @@ void sub_53FBB0()
 
         dword_648938 = 9;
 
-        index = sub_4F5770(qword_63FAD8, &v1, &v2);
+        index = logbook_find_first_injury(qword_63FAD8, &desc, &injury);
         while (index != 0) {
-            dword_63FAE4[dword_648938] = v1;
-            stru_6429D8[dword_648938].milliseconds = v2;
+            dword_63FAE4[dword_648938] = desc;
+            stru_6429D8[dword_648938].milliseconds = injury;
             dword_648988[dword_648938] = dword_6429C4;
             dword_648938++;
-            index = sub_4F57C0(qword_63FAD8, index, &v1, &v2);
+            index = logbook_find_next_injury(qword_63FAD8, index, &desc, &injury);
         }
 
         flags = obj_field_int32_get(qword_63FAD8, OBJ_F_CRITTER_FLAGS);
         if ((flags & OCF_BLINDED) != 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
-                if (stru_6429D8[index].milliseconds == 0) {
+                if (stru_6429D8[index].milliseconds == LBI_BLINDED) {
                     dword_648988[index] = dword_648934;
                     break;
                 }
@@ -945,7 +945,7 @@ void sub_53FBB0()
         }
         if ((flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
-                if (stru_6429D8[index].milliseconds == 2) {
+                if (stru_6429D8[index].milliseconds == LBI_CRIPPLED_LEG) {
                     dword_648988[index] = dword_648934;
                     break;
                 }
@@ -953,7 +953,7 @@ void sub_53FBB0()
         }
         if ((flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
-                if (stru_6429D8[index].milliseconds == 1) {
+                if (stru_6429D8[index].milliseconds == LBI_CRIPPLED_ARM) {
                     dword_648988[index] = dword_648934;
                     break;
                 }
@@ -961,7 +961,7 @@ void sub_53FBB0()
         }
         if ((flags & OCF_CRIPPLED_ARMS_ONE) != 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
-                if (stru_6429D8[index].milliseconds == 1) {
+                if (stru_6429D8[index].milliseconds == LBI_CRIPPLED_ARM) {
                     dword_648988[index] = dword_648934;
                     break;
                 }
@@ -970,7 +970,7 @@ void sub_53FBB0()
         cnt = sub_4EA4A0(qword_63FAD8, 50);
         if (cnt > 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
-                if (stru_6429D8[index].milliseconds == 3) {
+                if (stru_6429D8[index].milliseconds == LBI_SCARRED) {
                     dword_648988[index] = dword_648934;
                     break;
                 }
@@ -1169,9 +1169,9 @@ void sub_540550(char* buffer, int index)
 void sub_5405C0(char* buffer, int index)
 {
     MesFileEntry mes_file_entry;
-    const char* extra;
+    const char* desc_str;
     char tmp[80];
-    int v1;
+    int desc;
 
     if (index < 7) {
         mes_file_entry.num = 26 + index;
@@ -1179,34 +1179,40 @@ void sub_5405C0(char* buffer, int index)
 
         // NOTE: Original code is slightly different but does the same thing.
         if (index == 0) {
-            itoa(dword_648940[0], tmp, 10);
+            itoa(dword_648940[LBK_TOTAL_KILLS], tmp, 10);
             sprintf(buffer, "%s: %s", mes_file_entry.str, tmp);
         } else {
             switch (index) {
             case 1:
-                v1 = dword_648940[1];
+                desc = dword_648940[LBK_MOST_POWERFUL_NAME];
                 break;
             case 2:
-                v1 = dword_648940[3];
+                desc = dword_648940[LBK_LEAST_POWERFUL_NAME];
                 break;
             case 3:
-                v1 = dword_648940[5];
+                desc = dword_648940[LBK_MOST_GOOD_NAME];
                 break;
             case 4:
-                v1 = dword_648940[7];
+                desc = dword_648940[LBK_MOST_EVIL_NAME];
                 break;
             case 5:
-                v1 = dword_648940[9];
+                desc = dword_648940[LBK_MOST_MAGICAL_NAME];
                 break;
             case 6:
-                v1 = dword_648940[11];
+                desc = dword_648940[LBK_MOST_TECH_NAME];
                 break;
             default:
                 __assume(0);
             }
 
-            if (v1 > 0 && (extra = description_get_name(dword_63FAE4[index])) != NULL) {
-                sprintf(buffer, "%s: %s", mes_file_entry.str, extra);
+            if (desc > 0) {
+                desc_str = description_get_name(desc);
+            } else {
+                desc_str = NULL;
+            }
+
+            if (desc_str != NULL) {
+                sprintf(buffer, "%s: %s", mes_file_entry.str, desc_str);
             } else {
                 sprintf(buffer, "%s: -----", mes_file_entry.str);
             }
@@ -1221,9 +1227,9 @@ void sub_5405C0(char* buffer, int index)
         mes_file_entry.num = stru_6429D8[index].milliseconds + 34;
         mes_get_msg(logbook_ui_mes_file, &mes_file_entry);
 
-        extra = description_get_name(dword_63FAE4[index]);
-        if (extra != NULL) {
-            sprintf(buffer, "%s %s", mes_file_entry.str, extra);
+        desc_str = description_get_name(dword_63FAE4[index]);
+        if (desc_str != NULL) {
+            sprintf(buffer, "%s %s", mes_file_entry.str, desc_str);
         }
     }
 }

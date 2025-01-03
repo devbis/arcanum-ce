@@ -552,7 +552,7 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
                 sub_45F110(a2, 20 * obj_field_int32_get(a1, OBJ_F_NPC_EXPERIENCE_WORTH) / 100);
                 obj_field_int32_set(a1, OBJ_F_NPC_EXPERIENCE_WORTH, 0);
                 sub_45DC90(a2, a1, true);
-                sub_4F5330(a2, a1);
+                logbook_add_kill(a2, a1);
 
                 object_get_followers(a2, &followers);
                 node = followers.head;

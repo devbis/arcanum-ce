@@ -1637,7 +1637,7 @@ void sub_4B4390(CombatContext* combat)
 
         if ((dam_flags & 0x1000) != 0) {
             effect_add(combat->target_obj, 50, EFFECT_CAUSE_INJURY);
-            sub_4F5690(combat->target_obj, combat->attacker_obj, 3);
+            logbook_add_injury(combat->target_obj, combat->attacker_obj, LBI_SCARRED);
 
             mes_file_entry.num = 3; // "Scarred"
             mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -1648,7 +1648,7 @@ void sub_4B4390(CombatContext* combat)
             if ((critter_flags & OCF_BLINDED) == 0) {
                 critter_flags |= OCF_BLINDED;
                 obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
-                sub_4F5690(combat->target_obj, combat->attacker_obj, 0);
+                logbook_add_injury(combat->target_obj, combat->attacker_obj, LBI_BLINDED);
 
                 mes_file_entry.num = 4; // "Blinded"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -1660,7 +1660,7 @@ void sub_4B4390(CombatContext* combat)
             if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) == 0) {
                 critter_flags |= OCF_CRIPPLED_ARMS_ONE;
                 obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
-                sub_4F5690(combat->target_obj, combat->attacker_obj, 1);
+                logbook_add_injury(combat->target_obj, combat->attacker_obj, LBI_CRIPPLED_ARM);
 
                 mes_file_entry.num = 5; // "Crippled arm"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -1669,7 +1669,7 @@ void sub_4B4390(CombatContext* combat)
                 && random_between(1, 100) <= 50) {
                 critter_flags |= OCF_CRIPPLED_ARMS_BOTH;
                 obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
-                sub_4F5690(combat->target_obj, combat->attacker_obj, 1);
+                logbook_add_injury(combat->target_obj, combat->attacker_obj, LBI_CRIPPLED_ARM);
 
                 mes_file_entry.num = 5; // "Crippled arm"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -1709,7 +1709,7 @@ void sub_4B4390(CombatContext* combat)
             if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) == 0) {
                 critter_flags |= OCF_CRIPPLED_LEGS_BOTH;
                 obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
-                sub_4F5690(combat->target_obj, combat->attacker_obj, 1);
+                logbook_add_injury(combat->target_obj, combat->attacker_obj, LBI_CRIPPLED_LEG);
 
                 mes_file_entry.num = 6; // "Crippled leg"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
