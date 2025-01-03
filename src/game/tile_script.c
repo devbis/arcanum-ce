@@ -11,7 +11,7 @@ typedef struct TileScript {
 
 static_assert(sizeof(TileScript) == 0x18, "wrong size");
 
-static bool sub_4C07B0(int64_t loc, TileScript* tile_script);
+static bool tile_script_get(int64_t loc, TileScript* tile_script);
 static bool sub_4C0830(TileScript* tile_script);
 static bool sub_4C0930(int64_t loc);
 static void sub_4C0A40(int64_t sector_id, int tile, TigRect* rect);
@@ -168,7 +168,7 @@ void tile_script_render(UnknownContext* render_info)
 }
 
 // 0x4C07B0
-bool sub_4C07B0(int64_t loc, TileScript* tile_script)
+bool tile_script_get(int64_t loc, TileScript* tile_script)
 {
     int64_t sector_id;
     Sector* sector;
@@ -221,7 +221,7 @@ void sub_4C08E0(int64_t old_loc, int64_t new_loc)
 {
     TileScript tile_script;
 
-    if (sub_4C07B0(old_loc, &tile_script)) {
+    if (tile_script_get(old_loc, &tile_script)) {
         sub_4C0930(old_loc);
         tile_script.loc = new_loc;
         sub_4C0830(&tile_script);
@@ -233,7 +233,7 @@ bool sub_4C0930(int64_t loc)
 {
     TileScript tile_script;
 
-    if (!sub_4C07B0(loc, &tile_script)) {
+    if (!tile_script_get(loc, &tile_script)) {
         return false;
     }
 
@@ -250,7 +250,7 @@ void sub_4C0980(int64_t loc, int64_t triggerer_obj)
     Script scr;
     ScriptInvocation invocation;
 
-    if (sub_4C07B0(loc, &tile_script)) {
+    if (tile_script_get(loc, &tile_script)) {
         scr = tile_script.scr;
 
         invocation.script = &(tile_script.scr);
