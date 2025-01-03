@@ -12,7 +12,7 @@ typedef struct TileScript {
 static_assert(sizeof(TileScript) == 0x18, "wrong size");
 
 static bool tile_script_get(int64_t loc, TileScript* tile_script);
-static bool sub_4C0830(TileScript* tile_script);
+static bool tile_script_set(TileScript* tile_script);
 static bool sub_4C0930(int64_t loc);
 static void tile_script_get_rect(int64_t sector_id, int tile, TigRect* rect);
 
@@ -189,7 +189,7 @@ bool tile_script_get(int64_t loc, TileScript* tile_script)
 }
 
 // 0x4C0830
-bool sub_4C0830(TileScript* tile_script)
+bool tile_script_set(TileScript* tile_script)
 {
     int tile;
     int64_t sector_id;
@@ -224,7 +224,7 @@ void sub_4C08E0(int64_t old_loc, int64_t new_loc)
     if (tile_script_get(old_loc, &tile_script)) {
         sub_4C0930(old_loc);
         tile_script.loc = new_loc;
-        sub_4C0830(&tile_script);
+        tile_script_set(&tile_script);
     }
 }
 
@@ -238,7 +238,7 @@ bool sub_4C0930(int64_t loc)
     }
 
     tile_script.scr.num = 0;
-    sub_4C0830(&tile_script);
+    tile_script_set(&tile_script);
 
     return true;
 }
@@ -267,7 +267,7 @@ void tile_script_exec(int64_t loc, int64_t triggerer_obj)
     if (invocation.script->num != scr.num
         || invocation.script->hdr.flags != scr.hdr.flags
         || invocation.script->hdr.counters != scr.hdr.counters) {
-        sub_4C0830(&tile_script);
+        tile_script_set(&tile_script);
     }
 }
 
