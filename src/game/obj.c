@@ -1898,19 +1898,19 @@ void obj_arrayfield_script_get(int64_t obj, int fld, int index, void* value)
 }
 
 // 0x4078A0
-void sub_4078A0(int64_t obj_handle, int fld, int index, void* value)
+void obj_arrayfield_script_set(int64_t obj, int fld, int index, void* value)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_4088B0(object, fld, index, value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x407900

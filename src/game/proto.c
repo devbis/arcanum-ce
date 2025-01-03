@@ -1993,9 +1993,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             scr.num = 29006;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             scr.num = 29006;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             break;
         case 6044:
             tig_art_item_id_create(8, 0, 0, 0, 6, 0, 0, 0, &art_id);
@@ -2625,9 +2625,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
             scr.num = 28001;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28002;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
         case 6065:
@@ -2808,7 +2808,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
             scr.num = 28003;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             obj_field_int32_set(obj, OBJ_F_NAME, 2027);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -2841,9 +2841,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
             scr.num = 28004;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28005;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
         case 6072:
@@ -3690,7 +3690,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             scr.num = 28007;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 6100:
@@ -3723,7 +3723,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
             scr.num = 28006;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29693);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -6030,7 +6030,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29695);
             scr.num = 2486;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             break;
         case 6172:
             tig_art_item_id_create(10, 0, 0, 0, 7, 0, 0, 0, &art_id);
@@ -6463,9 +6463,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             scr.num = 30303;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28005;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             switch (description) {
             case 8061:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
@@ -6602,9 +6602,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 10;
             scr.num = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8064:
@@ -6693,9 +6693,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 125);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8052:
@@ -6720,9 +6720,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 2;
             scr.num = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8053:
@@ -6816,9 +6816,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF7602FF;
             scr.hdr.counters |= 0x760200;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
         case 8060:
@@ -6910,9 +6910,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             scr.num = 28008;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28009;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
             case 8079:
@@ -7025,9 +7025,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             scr.num = 30303;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28005;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             switch (description) {
             case 8081:
                 obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
@@ -7080,9 +7080,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8F05FF;
             scr.hdr.counters |= 0x8F0500;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
             case 8082:
@@ -7175,9 +7175,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x0F;
             scr.num = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8084:
@@ -7205,9 +7205,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             scr.num = 30020;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30021;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
             case 8085:
@@ -7517,9 +7517,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x05;
             scr.num = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8104:
@@ -7879,9 +7879,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x05;
             scr.num = 30287;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30288;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 7);
             switch (description) {
             case 8124:
@@ -8063,9 +8063,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             scr.num = 30020;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30021;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
             case 8137:
@@ -8321,9 +8321,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             scr.num = 28010;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28011;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -8443,7 +8443,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 2807);
             scr.num = 1341;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
         case 8160:
@@ -8465,9 +8465,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8602FF;
             scr.hdr.counters |= 0x860200;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
         case 8161:
@@ -8560,9 +8560,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8701FF;
             scr.hdr.counters |= 0x870100;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
         case 8166:
@@ -8729,9 +8729,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8805FF;
             scr.hdr.counters |= 0x880500;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
         case 8175:
@@ -8756,9 +8756,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x02;
             scr.num = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8176:
@@ -8783,9 +8783,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x04;
             scr.num = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8177:
@@ -8810,9 +8810,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x05;
             scr.num = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8178:
@@ -8837,9 +8837,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x01;
             scr.num = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8179:
@@ -8862,9 +8862,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8A01FF;
             scr.hdr.counters |= 0x8A0100;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8180:
@@ -8887,9 +8887,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8B02FF;
             scr.hdr.counters |= 0x8B0200;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
         case 8181:
@@ -8910,9 +8910,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8182:
@@ -8933,9 +8933,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8183:
@@ -8958,9 +8958,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8C02FF;
             scr.hdr.counters |= 0x8C0200;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8184:
@@ -8981,9 +8981,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             scr.num = 28017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 8185:
@@ -9066,9 +9066,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 2048);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8189:
@@ -9091,9 +9091,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8190:
@@ -9183,7 +9183,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_NAME, 2866);
             scr.num = 29016;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             break;
         case 8195:
             tig_art_item_id_create(5, 0, 0, 0, 0, 2, 1, 0, &art_id);
@@ -9277,9 +9277,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF8E08FF;
             scr.hdr.counters |= 0x8E0800;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
         case 8199:
@@ -9300,9 +9300,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8200:
@@ -9323,9 +9323,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             scr.num = 30020;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30021;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 18);
             break;
         case 8201:
@@ -9383,9 +9383,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFFD501FF;
             scr.hdr.counters |= 0xD50100;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -9410,9 +9410,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFFD804FF;
             scr.hdr.counters |= 0xD80400;
             scr.num = 30293;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30294;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -9436,9 +9436,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFFD702FF;
             scr.hdr.counters |= 0xD70200;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
             break;
@@ -9463,9 +9463,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFFD601FF;
             scr.hdr.counters |= 0xD60100;
             scr.num = 28012;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28013;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 64);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -9488,9 +9488,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 2806);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             break;
         case 8208:
         case 8209:
@@ -10711,9 +10711,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8265:
@@ -10737,9 +10737,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8266:
@@ -10762,9 +10762,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8267:
@@ -10787,9 +10787,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.num = 30291;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30292;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         case 8268:
@@ -11001,9 +11001,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x02;
             scr.num = 28014;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 28015;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             break;
         case 8278:
             tig_art_item_id_create(14, 0, 0, 0, 0, 2, 5, 0, &art_id);
@@ -11208,9 +11208,9 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFFE703FF;
             scr.hdr.counters |= 0xE70300;
             scr.num = 30289;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
             scr.num = 30290;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_OFF, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
         }
@@ -11491,7 +11491,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             scr.num = 30282;
             scr.hdr.counters = 0x32002314;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12253,7 +12253,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 3619);
             scr.num = 2545;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x100000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -12391,7 +12391,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             scr.num = 30282;
             scr.hdr.counters = 0x50002550;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12410,7 +12410,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             scr.num = 30282;
             scr.hdr.counters = 0x3201271E;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12429,7 +12429,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             scr.num = 30282;
             scr.hdr.counters = 0x50012946;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12448,7 +12448,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             scr.num = 30282;
             scr.hdr.counters = 0x32022B78;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12467,7 +12467,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
             scr.num = 30282;
             scr.hdr.counters = 0x50032D78;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x300000);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x1);
@@ -12734,9 +12734,9 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5212);
             obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, 1030);
             scr.num = 1146;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             scr.num = 1145;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12775,7 +12775,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             scr.num = 1832;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             tig_art_item_id_create(2, 0, 0, 0, 0, 8, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
@@ -12787,7 +12787,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5229);
             obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, 1020);
             scr.num = 1891;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
@@ -13577,8 +13577,8 @@ void sub_468930(long long obj, int description)
             tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             scr.num = 1022;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -13777,7 +13777,7 @@ void sub_468930(long long obj, int description)
             scr.num = 30001;
             scr.hdr.counters &= 0xFFFF190F;
             scr.hdr.counters |= 0x190F;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
@@ -13938,8 +13938,8 @@ void sub_468930(long long obj, int description)
             tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             scr.num = 1343;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -13989,7 +13989,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             scr.num = 1436;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_NAME, 5639);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
@@ -14005,7 +14005,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             scr.num = 1435;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_EXAMINE, &scr);
             obj_field_int32_set(obj, OBJ_F_NAME, 5641);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
@@ -14062,7 +14062,7 @@ void sub_468930(long long obj, int description)
             scr.num = 30001;
             scr.hdr.counters &= 0xFF0000;
             scr.hdr.counters |= 0x8C000A05;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, 4);
             break;
@@ -14278,8 +14278,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
             scr.num = 29017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             break;
@@ -14415,7 +14415,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_NAME, 5614);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1048960);
             scr.num = 2942;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15127:
             tig_art_item_id_create(82, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -14430,7 +14430,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 150);
             obj_field_int32_set(obj, OBJ_F_NAME, 5628);
             scr.num = 2947;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             break;
         case 15128:
             tig_art_item_id_create(83, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -14506,8 +14506,8 @@ void sub_468930(long long obj, int description)
             tig_art_item_id_create(96, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             scr.num = 30008;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -14873,7 +14873,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29714);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 2097600);
             scr.num = 28019;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_AI_ACTION, 3);
             break;
         case 15160:
@@ -15057,8 +15057,8 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 350);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2200);
             scr.num = 30008;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             obj_field_int32_set(obj, OBJ_F_GENERIC_FLAGS, obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) | 0x20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
@@ -15107,7 +15107,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 128);
             scr.num = 29019;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15176:
             tig_art_item_id_create(14, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15179,7 +15179,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
             obj_field_int32_set(obj, OBJ_F_NAME, 6698);
             scr.num = 2631;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
             break;
@@ -15281,11 +15281,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401A900;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2914;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15189:
             tig_art_item_id_create(160, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15301,11 +15301,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401AB00;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2916;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15190:
             tig_art_item_id_create(162, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15321,11 +15321,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401A800;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2913;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15191:
             tig_art_item_id_create(166, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15341,11 +15341,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401AA00;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2915;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15192:
             tig_art_item_id_create(161, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15361,11 +15361,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401AF00;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2920;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15193:
             tig_art_item_id_create(165, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15381,11 +15381,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401AD00;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2918;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15194:
             tig_art_item_id_create(163, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15401,11 +15401,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401AE00;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2919;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15195:
             tig_art_item_id_create(164, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15421,11 +15421,11 @@ void sub_468930(long long obj, int description)
             scr.hdr.counters &= 0xFF;
             scr.hdr.counters |= 0x401AC00;
             scr.num = 30017;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             scr.num = 30018;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_REMOVE_ITEM, &scr);
             scr.num = 2917;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             break;
         case 15196:
             tig_art_item_id_create(169, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15465,7 +15465,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
             obj_field_int32_set(obj, OBJ_F_NAME, 5620);
             scr.num = 30283;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_INSERT_ITEM, &scr);
             break;
         case 15199:
             tig_art_item_id_create(71, 0, 0, 0, 0, 9, 0, 0, &art_id);
@@ -15639,8 +15639,8 @@ void sub_468930(long long obj, int description)
             tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             scr.num = 30300;
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HIT, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
@@ -15848,7 +15848,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30000;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26001:
@@ -15858,7 +15858,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30001;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26002:
@@ -15868,7 +15868,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30002;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26003:
@@ -15878,7 +15878,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30003;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26004:
@@ -15888,7 +15888,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30004;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26005:
@@ -15898,7 +15898,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30005;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26006:
@@ -15908,7 +15908,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30006;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
         case 26007:
@@ -15917,7 +15917,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             scr.num = 30007;
             sub_44BCC0(&scr);
-            sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
+            obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_USE, &scr);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
         }
@@ -15959,23 +15959,23 @@ void sub_49B010(long long obj, int description)
         sub_49AFF0(obj, 17082);
         obj_field_int32_set(obj, OBJ_F_CRITTER_DESCRIPTION_UNKNOWN, 27311);
         scr.num = 1498;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG, &scr);
+        obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG, &scr);
         scr.num = 1499;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_FIRST_HEARTBEAT, &scr);
+        obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_FIRST_HEARTBEAT, &scr);
         break;
     case 27319:
         sub_49AFF0(obj, 17082);
         scr.num = 30117;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
+        obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
         scr.num = 30118;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_DYING, &scr);
+        obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_DYING, &scr);
         break;
     case 27320:
         sub_49AFF0(obj, 17082);
         scr.num = 30119;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
+        obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_HEARTBEAT, &scr);
         scr.num = 30120;
-        sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, SAP_DYING, &scr);
+        obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_DYING, &scr);
         break;
     default:
         sub_49B220(obj, description);
@@ -16196,7 +16196,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                 case PROTO_F_SCRIPT:
                     scr.num = v3;
                     scr.hdr.counters = v4;
-                    sub_4078A0(obj, OBJ_F_SCRIPTS_IDX, v2, &scr);
+                    obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, v2, &scr);
                     break;
                 case PROTO_F_DAMAGE_RESISTANCE:
                     obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, v2);

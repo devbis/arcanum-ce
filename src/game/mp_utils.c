@@ -1379,7 +1379,7 @@ void sub_4F01D0(int64_t obj, int fld, int index, Script* value)
 {
     Packet129 pkt;
 
-    sub_4078A0(obj, fld, index, value);
+    obj_arrayfield_script_set(obj, fld, index, value);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 129;

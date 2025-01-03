@@ -1563,7 +1563,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
                 || scr.hdr.counters != state->invocation->script->hdr.counters) {
                 scr.hdr.flags = state->invocation->script->hdr.counters;
                 scr.hdr.counters = state->invocation->script->hdr.counters;
-                sub_4078A0(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->attachment_point, &scr);
+                obj_arrayfield_script_set(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->attachment_point, &scr);
             }
 
             dword_5E2FEC(state->invocation->triggerer_obj,
