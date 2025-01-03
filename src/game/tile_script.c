@@ -13,7 +13,7 @@ static_assert(sizeof(TileScript) == 0x18, "wrong size");
 
 static bool tile_script_get(int64_t loc, TileScript* tile_script);
 static bool tile_script_set(TileScript* tile_script);
-static bool sub_4C0930(int64_t loc);
+static bool tile_script_remove(int64_t loc);
 static void tile_script_get_rect(int64_t sector_id, int tile, TigRect* rect);
 
 // 0x5FC868
@@ -225,14 +225,14 @@ void tile_script_move(int64_t old_loc, int64_t new_loc)
         return;
     }
 
-    sub_4C0930(old_loc);
+    tile_script_remove(old_loc);
 
     tile_script.loc = new_loc;
     tile_script_set(&tile_script);
 }
 
 // 0x4C0930
-bool sub_4C0930(int64_t loc)
+bool tile_script_remove(int64_t loc)
 {
     TileScript tile_script;
 
