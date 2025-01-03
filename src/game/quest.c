@@ -354,7 +354,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
     }
 
     pc_quest_state.timestamp = sub_45A7C0();
-    sub_407960(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_set(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     if (state == QUEST_STATE_COMPLETED) {
         stat_set_base(obj,
@@ -416,7 +416,7 @@ int sub_4C5070(int64_t obj, int num)
     obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     pc_quest_state.state &= ~0x100;
     pc_quest_state.timestamp = sub_45A7C0();
-    sub_407960(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_set(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     if (player_is_pc_obj(obj)) {
         if (pc_quest_state.state == QUEST_STATE_COMPLETED) {
