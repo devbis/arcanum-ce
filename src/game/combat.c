@@ -1487,7 +1487,7 @@ void sub_4B4390(CombatContext* combat)
     sub_4B6860(combat);
 
     dam_flags = combat->dam_flags;
-    if ((dam_flags & 0x05) != 0) {
+    if ((dam_flags & (CDF_FULL | CDF_DEATH)) != 0) {
         dam = object_hp_current(combat->target_obj);
     } else {
         dam = combat->dam[DAMAGE_TYPE_NORMAL]
@@ -1496,13 +1496,13 @@ void sub_4B4390(CombatContext* combat)
     }
 
     if (combat->dam[DAMAGE_TYPE_FIRE] > 0) {
-        dam_flags |= 0x100000;
+        dam_flags |= CDF_DAMAGE_ARMOR;
     }
 
     if (combat->weapon_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
         && (obj_field_int32_get(combat->weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DAMAGE_ARMOR) != 0) {
-        dam_flags |= 0x100000;
+        dam_flags |= CDF_DAMAGE_ARMOR;
     }
 
     if (sub_40DA20(combat->attacker_obj)) {
@@ -1521,11 +1521,11 @@ void sub_4B4390(CombatContext* combat)
         }
     }
 
-    if ((dam_flags & 0x20) != 0) {
+    if ((dam_flags & CDF_BONUS_DAM_200) != 0) {
         dam *= 3;
-    } else if ((dam_flags & 0x10) != 0) {
+    } else if ((dam_flags & CDF_BONUS_DAM_100) != 0) {
         dam *= 2;
-    } else if ((dam_flags & 0x08) != 0) {
+    } else if ((dam_flags & CDF_BONUS_DAM_50) != 0) {
         dam += dam / 2;
     }
 
@@ -1576,24 +1576,24 @@ void sub_4B4390(CombatContext* combat)
             tf_add(combat->target_obj, tf_type, mes_file_entry.str);
         }
 
-        if ((dam_flags & 0x20) != 0) {
+        if ((dam_flags & CDF_BONUS_DAM_200) != 0) {
             mes_file_entry.num = 15; // "Damage +200%"
             mes_get_msg(combat_mes_file, &mes_file_entry);
             tf_add(combat->target_obj, tf_type, mes_file_entry.str);
-        } else if ((dam_flags & 0x10) != 0) {
+        } else if ((dam_flags & CDF_BONUS_DAM_100) != 0) {
             mes_file_entry.num = 14; // "Damage +100%"
             mes_get_msg(combat_mes_file, &mes_file_entry);
             tf_add(combat->target_obj, tf_type, mes_file_entry.str);
-        } else if ((dam_flags & 0x08) != 0) {
+        } else if ((dam_flags & CDF_BONUS_DAM_50) != 0) {
             mes_file_entry.num = 13; // "Damage +50%"
             mes_get_msg(combat_mes_file, &mes_file_entry);
             tf_add(combat->target_obj, tf_type, mes_file_entry.str);
         }
 
         unsigned int critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
-        if ((dam_flags & 0x40) != 0
+        if ((dam_flags & CDF_STUN) != 0
             && (critter_flags & OCF_STUNNED) == 0
-            && (dam_flags & 0x180) == 0) {
+            && (dam_flags & (CDF_KNOCKDOWN | CDF_KNOCKOUT)) == 0) {
             sub_4CBB80(combat->attacker_obj, combat->target_obj);
             critter_flags |= OCF_STUNNED;
 
@@ -1610,32 +1610,34 @@ void sub_4B4390(CombatContext* combat)
             tf_add(combat->target_obj, tf_type, mes_file_entry.str);
         }
 
-        if ((dam_flags & 0x180) != 0) {
+        if ((dam_flags & (CDF_KNOCKDOWN | CDF_KNOCKOUT)) != 0) {
             sub_4CBBF0(combat->attacker_obj, combat->target_obj);
             sub_4CBE00(combat->attacker_obj, combat->target_obj);
             sub_435A90(combat->target_obj);
 
-            if ((dam_flags & 0x100) == 0) {
-                mes_file_entry.num = 18; // "Knocked down"
-                mes_get_msg(combat_mes_file, &mes_file_entry);
-                tf_add(combat->target_obj, tf_type, mes_file_entry.str);
-            } else if (!sub_45D800(combat->target_obj)) {
-                int fatigue_damage = critter_fatigue_max(combat->target_obj);
+            if ((dam_flags & CDF_KNOCKOUT) != 0) {
+                if (!sub_45D800(combat->target_obj)) {
+                    int max_fatigue = critter_fatigue_max(combat->target_obj);
 
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0) {
-                    combat->field_64 = random_between(10, 20);
+                    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+                        || (tig_net_flags & TIG_NET_HOST) != 0) {
+                        combat->field_64 = random_between(10, 20);
+                    }
+
+                    critter_fatigue_damage_set(combat->target_obj, combat->field_64 + max_fatigue);
+
+                    mes_file_entry.num = 17; // "Unconscious"
+                    mes_get_msg(combat_mes_file, &mes_file_entry);
+                    tf_add(combat->target_obj, tf_type, mes_file_entry.str);
                 }
-
-                critter_fatigue_damage_set(combat->target_obj, combat->field_64 + fatigue_damage);
-
-                mes_file_entry.num = 17; // "Unconscious"
+            } else {
+                mes_file_entry.num = 18; // "Knocked down"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
                 tf_add(combat->target_obj, tf_type, mes_file_entry.str);
             }
         }
 
-        if ((dam_flags & 0x1000) != 0) {
+        if ((dam_flags & CDF_SCAR) != 0) {
             effect_add(combat->target_obj, 50, EFFECT_CAUSE_INJURY);
             logbook_add_injury(combat->target_obj, combat->attacker_obj, LBI_SCARRED);
 
@@ -1644,7 +1646,7 @@ void sub_4B4390(CombatContext* combat)
             tf_add(combat->target_obj, tf_type, mes_file_entry.str);
         }
 
-        if ((dam_flags & 0x200) != 0) {
+        if ((dam_flags & CDF_BLIND) != 0) {
             if ((critter_flags & OCF_BLINDED) == 0) {
                 critter_flags |= OCF_BLINDED;
                 obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
@@ -1656,7 +1658,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if ((dam_flags & 0x400) != 0) {
+        if ((dam_flags & CDF_CRIPPLE_ARM) != 0) {
             if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) == 0) {
                 critter_flags |= OCF_CRIPPLED_ARMS_ONE;
                 obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
@@ -1705,7 +1707,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if ((dam_flags & 0x800) != 0) {
+        if ((dam_flags & CDF_CRIPPLE_LEG) != 0) {
             if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) == 0) {
                 critter_flags |= OCF_CRIPPLED_LEGS_BOTH;
                 obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
@@ -1717,7 +1719,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if ((dam_flags & 0x100000) != 0) {
+        if ((dam_flags & CDF_DAMAGE_ARMOR) != 0) {
             int64_t armor_obj = sub_4B54B0(combat->target_obj, combat->hit_loc);
             if (armor_obj != OBJ_HANDLE_NULL) {
                 object_hp_damage_set(armor_obj, object_hp_damage_get(armor_obj) + 10);
@@ -1736,7 +1738,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if ((dam_flags & 0x80000) != 0) {
+        if ((dam_flags & CDF_DROP_ITEM) != 0) {
             int64_t item_obj = item_wield_get(combat->target_obj, 1000);
             if (item_obj != OBJ_HANDLE_NULL) {
                 item_drop_nearby(item_obj);
@@ -1753,7 +1755,7 @@ void sub_4B4390(CombatContext* combat)
                 dam_flags &= ~0x1C000;
             }
 
-            if ((dam_flags & 0x4000) != 0) {
+            if ((dam_flags & CDF_DAMAGE_WEAPON) != 0) {
                 object_hp_damage_set(weapon_obj, object_hp_damage_get(weapon_obj) + 10);
 
                 if (object_hp_current(weapon_obj) > 0) {
@@ -1772,11 +1774,11 @@ void sub_4B4390(CombatContext* combat)
             }
 
             if ((dam_flags & 0x10000) != 0) {
-                dam_flags |= 0x8000;
+                dam_flags |= CDF_DESTROY_WEAPON;
                 sub_44C820(combat->target_obj);
             }
 
-            if ((dam_flags & 0x8000) != 0) {
+            if ((dam_flags & CDF_DESTROY_WEAPON) != 0) {
                 sub_43CCA0(weapon_obj);
 
                 mes_file_entry.num = 22; // "Weapon destroyed"
@@ -1785,13 +1787,13 @@ void sub_4B4390(CombatContext* combat)
 
                 weapon_dropped = true;
             } else {
-                if ((dam_flags & 0x40000) != 0) {
+                if ((dam_flags & CDF_DESTROY_AMMO) != 0) {
                     sub_4B65D0(weapon_obj, combat->target_obj, 0, true);
 
                     mes_file_entry.num = 9; // "Ammo lost"
                     mes_get_msg(combat_mes_file, &mes_file_entry);
                     tf_add(combat->target_obj, tf_type, mes_file_entry.str);
-                } else if ((dam_flags & 0x20000) != 0) {
+                } else if ((dam_flags & CDF_LOST_AMMO) != 0) {
                     sub_4B65D0(weapon_obj, combat->target_obj, 5, false);
 
                     mes_file_entry.num = 9; // "Ammo lost"
@@ -1799,7 +1801,7 @@ void sub_4B4390(CombatContext* combat)
                     tf_add(combat->target_obj, tf_type, mes_file_entry.str);
                 }
 
-                if ((dam_flags & 0x2000) != 0) {
+                if ((dam_flags & CDF_DROP_WEAPON) != 0) {
                     item_drop_nearby(weapon_obj);
 
                     mes_file_entry.num = 19; // "Weapon dropped"
@@ -1898,7 +1900,7 @@ void sub_4B4390(CombatContext* combat)
         if (critter_is_dead(combat->target_obj)) {
             int v2;
 
-            if ((dam_flags & 0x04) != 0 || dam <= 20) {
+            if ((dam_flags & CDF_DEATH) != 0 || dam <= 20) {
                 v2 = 7;
             } else if (combat->hit_loc == 1) {
                 v2 = 17;
@@ -2201,15 +2203,15 @@ void sub_4B58C0(CombatContext* combat)
         return;
     }
 
-    if ((combat->dam_flags & 0x1000) != 0
-        && (combat->dam_flags & 0x1) == 0) {
+    if ((combat->dam_flags & CDF_SCAR) != 0
+        && (combat->dam_flags & CDF_FULL) == 0) {
         for (index = 0; index < 5; index++) {
             effect_remove_one_caused_by(combat->target_obj, EFFECT_CAUSE_INJURY);
         }
     }
 
     if (critter_is_dead(combat->target_obj)) {
-        if ((combat->dam_flags & 0x2) == 0) {
+        if ((combat->dam_flags & CDF_RESURRECT) == 0) {
             return;
         }
     }
@@ -2269,7 +2271,7 @@ void sub_4B58C0(CombatContext* combat)
         }
     }
 
-    if ((combat->dam_flags & 0x1) != 0) {
+    if ((combat->dam_flags & CDF_FULL) != 0) {
         combat->dam[DAMAGE_TYPE_NORMAL] = object_hp_damage_get(combat->target_obj);
         if (combat->dam[DAMAGE_TYPE_FATIGUE] > 0) {
             combat->dam[DAMAGE_TYPE_FATIGUE] = critter_fatigue_damage_get(combat->target_obj);
@@ -2298,17 +2300,17 @@ void sub_4B58C0(CombatContext* combat)
         }
     } else {
         critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
-        if ((combat->dam_flags & 0x200) != 0
+        if ((combat->dam_flags & CDF_BLIND) != 0
             && (critter_flags & OCF_BLINDED) != 0) {
             critter_flags &= ~OCF_BLINDED;
             obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
         }
-        if ((combat->dam_flags & 0x400) != 0
+        if ((combat->dam_flags & CDF_CRIPPLE_ARM) != 0
             && (critter_flags & (OCF_CRIPPLED_ARMS_ONE | OCF_CRIPPLED_ARMS_BOTH)) != 0) {
             critter_flags &= ~(OCF_CRIPPLED_ARMS_ONE | OCF_CRIPPLED_ARMS_BOTH);
             obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
         }
-        if ((combat->dam_flags & 0x800) != 0
+        if ((combat->dam_flags & CDF_CRIPPLE_LEG) != 0
             && (critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
             critter_flags &= ~OCF_BLINDED;
             obj_field_int32_set(combat->target_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
@@ -2470,11 +2472,11 @@ void sub_4B5F40(CombatContext* combat)
 
     if (!npc_attacks_pc) {
         if (random_between(1, 100) <= chance + 10) {
-            combat->dam_flags |= 0x20;
+            combat->dam_flags |= CDF_BONUS_DAM_200;
         } else if (random_between(1, 100) <= chance + 30) {
-            combat->dam_flags |= 0x10;
+            combat->dam_flags |= CDF_BONUS_DAM_100;
         } else if (random_between(1, 100) <= chance + 60) {
-            combat->dam_flags |= 0x8;
+            combat->dam_flags |= CDF_BONUS_DAM_50;
         }
     }
 
@@ -2495,12 +2497,13 @@ void sub_4B5F40(CombatContext* combat)
 
             if (random_between(1, 100) <= difficulty
                 && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
-                combat->dam_flags |= 0x40;
+                combat->dam_flags |= CDF_STUN;
+
                 if (target_obj_type != OBJ_TYPE_PC
                     && (critter_flags & OCF_FATIGUE_IMMUNE) == 0
                     && random_between(1, 100) < difficulty
                     && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
-                    combat->dam_flags |= 0x100;
+                    combat->dam_flags |= CDF_KNOCKOUT;
                 }
             }
 
@@ -2510,7 +2513,7 @@ void sub_4B5F40(CombatContext* combat)
                     if (critter_crit_hit_chart != 5 && combat->hit_loc == 2) {
                         if (random_between(1, 100) <= chance + 1
                             && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
-                            combat->dam_flags |= 0x400;
+                            combat->dam_flags |= CDF_CRIPPLE_ARM;
                         }
                         break;
                     }
@@ -2518,7 +2521,7 @@ void sub_4B5F40(CombatContext* combat)
                     if (combat->hit_loc == 3) {
                         if (random_between(1, 100) <= chance + 1
                             && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
-                            combat->dam_flags |= 0x800;
+                            combat->dam_flags |= CDF_CRIPPLE_LEG;
                         }
                         break;
                     }
@@ -2528,7 +2531,7 @@ void sub_4B5F40(CombatContext* combat)
                     if (crit_hit_chart == 1) {
                         if (item_obj != OBJ_HANDLE_NULL
                             && random_between(1, 100) <= chance + 5) {
-                            combat->dam_flags |= 0x80000;
+                            combat->dam_flags |= CDF_DROP_ITEM;
                             break;
                         }
                     }
@@ -2536,7 +2539,7 @@ void sub_4B5F40(CombatContext* combat)
                     if (!npc_attacks_pc
                         && random_between(1, 100) <= chance + (item_obj == OBJ_HANDLE_NULL ? 1 : 0)
                         && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, 0)) {
-                        combat->dam_flags |= 0x200;
+                        combat->dam_flags |= CDF_BLIND;
                         break;
                     }
                 }
@@ -2546,7 +2549,7 @@ void sub_4B5F40(CombatContext* combat)
                 && ((combat->flags & 0x8) == 0
                     || sub_4EA4A0(combat->target_obj, 50) <= 0)
                 && random_between(1, 100) <= chance + 5) {
-                combat->dam_flags |= 0x1000;
+                combat->dam_flags |= CDF_SCAR;
             }
         }
 
@@ -2562,29 +2565,29 @@ void sub_4B5F40(CombatContext* combat)
             }
 
             if (random_between(1, 100) <= difficulty) {
-                combat->dam_flags |= 0x80;
+                combat->dam_flags |= CDF_KNOCKDOWN;
             }
         }
     }
 
-    if (sub_4B23B0(combat->target_obj)) {
+    if (sub_4B23B0(combat->target_obj) != OBJ_HANDLE_NULL) {
         if (random_between(1, 100) <= chance + 10) {
-            combat->dam_flags |= 0x4000;
+            combat->dam_flags |= CDF_DAMAGE_WEAPON;
         }
 
         if (!npc_attacks_pc
             && random_between(1, 100) <= chance + 10) {
-            combat->dam_flags |= 0x2000;
+            combat->dam_flags |= CDF_DROP_WEAPON;
         }
     }
 
-    if (sub_4B54B0(combat->target_obj, combat->hit_loc)
+    if (sub_4B54B0(combat->target_obj, combat->hit_loc) != OBJ_HANDLE_NULL
         && random_between(1, 100) <= chance + 10) {
-        combat->dam_flags |= 0x100000;
+        combat->dam_flags |= CDF_DAMAGE_ARMOR;
     }
 
     if (combat->dam_flags == 0) {
-        combat->dam_flags = 0x8;
+        combat->dam_flags = CDF_BONUS_DAM_50;
     }
 }
 
@@ -2626,7 +2629,7 @@ void sub_4B6410(CombatContext* combat)
     if (random_between(1, 100) <= 50) {
         combat->flags |= 0x4;
         if (crit_miss_chart != 5 && random_between(1, 100) <= chance + 1) {
-            combat->dam_flags |= 0x8000;
+            combat->dam_flags |= CDF_DESTROY_WEAPON;
         }
 
         if ((crit_miss_chart == 6
@@ -2638,9 +2641,9 @@ void sub_4B6410(CombatContext* combat)
 
         if (item_weapon_ammo_type(combat->weapon_obj) != 10000) {
             if (random_between(1, 100) <= chance + 1) {
-                combat->dam_flags |= 0x40000;
+                combat->dam_flags |= CDF_DESTROY_AMMO;
             } else if (random_between(1, 100) <= chance + 11) {
-                combat->dam_flags |= 0x20000;
+                combat->dam_flags |= CDF_LOST_AMMO;
             }
         }
 
@@ -2779,7 +2782,7 @@ void sub_4B6860(CombatContext* combat)
         return;
     }
 
-    if ((combat->dam_flags & 0x1000000) != 0) {
+    if ((combat->dam_flags & CDF_IGNORE_RESISTANCE) != 0) {
         return;
     }
 

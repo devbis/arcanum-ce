@@ -413,15 +413,15 @@ static const char* off_5B0D14[] = {
 // 0x5B0D3C
 static unsigned int dword_5B0D3C[] = {
     0,
-    1,
-    2,
+    CDF_FULL,
+    CDF_RESURRECT,
     0x400002,
-    4,
-    0x40,
-    0x1000,
-    0x800000,
-    0x2000,
-    0x0E00,
+    CDF_DEATH,
+    CDF_STUN,
+    CDF_SCAR,
+    CDF_SCALE,
+    CDF_DROP_WEAPON,
+    CDF_BLIND | CDF_CRIPPLE_ARM | CDF_CRIPPLE_LEG,
 };
 
 // 0x5B0D64
@@ -2344,7 +2344,7 @@ void MTComponentDamage_ProcFunc()
     dam_min = dword_5E761C->data.damage.damage_min;
     dam_max = dword_5E761C->data.damage.damage_max;
 
-    if ((combat.dam_flags & 0x800000) != 0) {
+    if ((combat.dam_flags & CDF_SCALE) != 0) {
         if (obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
             int aptitude = dword_5E75F0->parent_obj.aptitude;;
             if (aptitude > 0) {
@@ -2355,13 +2355,13 @@ void MTComponentDamage_ProcFunc()
             }
         }
 
-        combat.dam_flags &= ~0x800000;
+        combat.dam_flags &= ~CDF_SCALE;
     }
 
-    if ((combat.dam_flags & 0x01) != 0) {
+    if ((combat.dam_flags & CDF_FULL) != 0) {
         if (dword_5E761C->data.damage.damage_type == DAMAGE_TYPE_FATIGUE) {
             combat.dam[DAMAGE_TYPE_FATIGUE] = critter_fatigue_current(stru_5E6D28.field_20) + 10;
-            combat.dam_flags &= ~0x01;
+            combat.dam_flags &= ~CDF_FULL;
         }
     } else {
         if (dword_5E761C->data.damage.damage_type < DAMAGE_TYPE_COUNT) {
@@ -2375,7 +2375,7 @@ void MTComponentDamage_ProcFunc()
 
     if (dword_5E761C->data.damage.damage_type < DAMAGE_TYPE_COUNT) {
         if (dword_5E75F0->field_144 != 0) {
-            if ((combat.dam_flags & 0x04) == 0) {
+            if ((combat.dam_flags & CDF_DEATH) == 0) {
                 int resisted = dword_5E75F0->field_144 * combat.dam[dword_5E761C->data.damage.damage_type] / 100;
                 if (resisted == 0) {
                     resisted = 1;
@@ -2661,10 +2661,10 @@ void MTComponentHeal_ProcFunc()
     if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
         sub_4B2210(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20, &combat);
         combat.dam_flags |= dword_5E761C->data.heal.damage_flags;
-        if ((combat.dam_flags & 0x1) == 0) {
+        if ((combat.dam_flags & CDF_FULL) == 0) {
             heal_min = dword_5E761C->data.heal.damage_min;
             heal_max = dword_5E761C->data.heal.damage_max;
-            if ((combat.dam_flags & 0x800000) != 0
+            if ((combat.dam_flags & CDF_SCALE) != 0
                 && obj_type_is_critter(dword_5E75F0->parent_obj.type)) {
                 if (dword_5E75F0->parent_obj.aptitude > 0) {
                     heal_max = heal_min + dword_5E75F0->parent_obj.aptitude * (heal_max - heal_min) / 100;
@@ -2672,7 +2672,7 @@ void MTComponentHeal_ProcFunc()
                 } else {
                     heal_max = heal_min;
                 }
-                combat.dam_flags &= ~0x800000;
+                combat.dam_flags &= ~CDF_SCALE;
             }
 
             if (dword_5E761C->data.heal.damage_type == DAMAGE_TYPE_POISON) {
@@ -3783,7 +3783,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 sub_43D280(obj, OF_WATER_WALKING);
                 if (sub_4D7110(obj_field_int64_get(obj, OBJ_F_LOCATION), false)) {
                     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
-                    combat.dam_flags |= 0x01;
+                    combat.dam_flags |= CDF_FULL;
                     sub_4B4390(&combat);
 
                     // FIXME: Meaningless.

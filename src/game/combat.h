@@ -31,6 +31,31 @@ typedef enum DamageType {
     DAMAGE_TYPE_COUNT,
 } DamageType;
 
+// clang-format off
+#define CDF_FULL                0x00000001
+#define CDF_RESURRECT           0x00000002
+#define CDF_DEATH               0x00000004
+#define CDF_BONUS_DAM_50        0x00000008
+#define CDF_BONUS_DAM_100       0x00000010
+#define CDF_BONUS_DAM_200       0x00000020
+#define CDF_STUN                0x00000040
+#define CDF_KNOCKDOWN           0x00000080
+#define CDF_KNOCKOUT            0x00000100
+#define CDF_BLIND               0x00000200
+#define CDF_CRIPPLE_ARM         0x00000400
+#define CDF_CRIPPLE_LEG         0x00000800
+#define CDF_SCAR                0x00001000
+#define CDF_DROP_WEAPON         0x00002000
+#define CDF_DAMAGE_WEAPON       0x00004000
+#define CDF_DESTROY_WEAPON      0x00008000
+#define CDF_LOST_AMMO           0x00020000
+#define CDF_DESTROY_AMMO        0x00040000
+#define CDF_DROP_ITEM           0x00080000
+#define CDF_DAMAGE_ARMOR        0x00100000
+#define CDF_SCALE               0x00800000
+#define CDF_IGNORE_RESISTANCE   0x01000000
+// clang-format on
+
 typedef struct CombatContext {
     /* 0000 */ unsigned int flags;
     /* 0008 */ int64_t attacker_obj;
