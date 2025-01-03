@@ -610,7 +610,7 @@ void sub_4BCB00(int64_t a1, int64_t a2)
     invocation.triggerer_obj = a1;
     invocation.extra_obj = OBJ_HANDLE_NULL;
     invocation.line = 0;
-    invocation.field_20 = 1;
+    invocation.attachment_point = SAP_USE;
     invocation.attachee_obj = a2;
     invocation.script = &scr;
     sub_4449B0(&invocation);

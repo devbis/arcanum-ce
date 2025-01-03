@@ -260,7 +260,7 @@ void tile_script_exec(int64_t loc, int64_t triggerer_obj)
     invocation.attachee_obj = OBJ_HANDLE_NULL;
     invocation.extra_obj = OBJ_HANDLE_NULL;
     invocation.line = 0;
-    invocation.field_20 = SAP_USE;
+    invocation.attachment_point = SAP_USE;
     invocation.triggerer_obj = triggerer_obj;
     sub_4449B0(&invocation);
 

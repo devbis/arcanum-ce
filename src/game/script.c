@@ -321,7 +321,7 @@ bool sub_4449B0(ScriptInvocation* invocation)
         }
     }
 
-    if (invocation->field_20 == SAP_DIALOG && attachee_type == OBJ_TYPE_NPC) {
+    if (invocation->attachment_point == SAP_DIALOG && attachee_type == OBJ_TYPE_NPC) {
         if (critter_is_dead(invocation->attachee_obj) && (flags & 0x8) == 0) {
             return true;
         }
@@ -608,7 +608,7 @@ bool script_timeevent_process(TimeEvent* timeevent)
     invocation.script = &scr;
     invocation.triggerer_obj = timeevent->params[2].object_value;
     invocation.attachee_obj = timeevent->params[3].object_value;
-    invocation.field_20 = 1;
+    invocation.attachment_point = SAP_USE;
     invocation.extra_obj = OBJ_HANDLE_NULL;
     invocation.line = timeevent->params[1].integer_value;
     sub_4449B0(&invocation);
@@ -1557,13 +1557,13 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             Script scr;
 
             num = script_get_value(action->op_type[0], action->op_value[0], state);
-            sub_407840(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->field_20, &scr);
+            sub_407840(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->attachment_point, &scr);
 
             if (scr.hdr.flags != state->invocation->script->hdr.flags
                 || scr.hdr.counters != state->invocation->script->hdr.counters) {
                 scr.hdr.flags = state->invocation->script->hdr.counters;
                 scr.hdr.counters = state->invocation->script->hdr.counters;
-                sub_4078A0(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->field_20, &scr);
+                sub_4078A0(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->attachment_point, &scr);
             }
 
             dword_5E2FEC(state->invocation->triggerer_obj,
@@ -2405,7 +2405,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int sap = script_get_value(action->op_type[1], action->op_value[1], state);
         int num = script_get_value(action->op_type[2], action->op_value[2], state);
         if (state->invocation->attachee_obj == obj
-            && state->invocation->field_20 == sap) {
+            && state->invocation->attachment_point == sap) {
             state->script_num = num;
         } else {
             Script scr;
@@ -2854,7 +2854,7 @@ void sub_44B030(ScriptAction* action, ScriptState* state)
 
     invocation.script = &scr;
     invocation.line = script_get_value(action->op_type[1], action->op_value[1], state);
-    invocation.field_20 = state->invocation->field_20;
+    invocation.attachment_point = state->invocation->attachment_point;
 
     triggerers_cnt = script_resolve_focus_obj(action->op_type[2],
         action->op_value[2],

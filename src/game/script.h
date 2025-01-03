@@ -343,8 +343,7 @@ typedef struct ScriptInvocation {
     /* 0008 */ int64_t triggerer_obj;
     /* 0010 */ int64_t attachee_obj;
     /* 0018 */ int64_t extra_obj;
-    /* 0020 */ int field_20;
-    /* 0024 */ int field_24;
+    /* 0020 */ int attachment_point;
 } ScriptInvocation;
 
 extern int dword_5A5700[3];

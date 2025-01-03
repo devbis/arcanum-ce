@@ -3788,7 +3788,7 @@ bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, 
     invocation.attachee_obj = attachee_obj;
     invocation.triggerer_obj = triggerer_obj;
     invocation.extra_obj = extra_obj;
-    invocation.field_20 = attachment_point;
+    invocation.attachment_point = attachment_point;
     invocation.line = line;
     rc = sub_4449B0(&invocation);
 

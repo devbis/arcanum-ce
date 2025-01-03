@@ -108,7 +108,7 @@ void sub_569720(int type)
     scr.num = dword_5A5700[type];
 
     invocation.script = &scr;
-    invocation.field_20 = 1;
+    invocation.attachment_point = SAP_USE;
     invocation.triggerer_obj = OBJ_HANDLE_NULL;
     invocation.attachee_obj = OBJ_HANDLE_NULL;
     invocation.extra_obj = OBJ_HANDLE_NULL;

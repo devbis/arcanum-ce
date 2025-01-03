@@ -705,7 +705,7 @@ void sub_4F2330(int64_t sector_id, int64_t obj)
         prev_scr = scr;
 
         invocation.script = &scr;
-        invocation.field_20 = 1;
+        invocation.attachment_point = SAP_USE;
         invocation.triggerer_obj = obj;
         invocation.attachee_obj = OBJ_HANDLE_NULL;
         invocation.extra_obj = OBJ_HANDLE_NULL;
