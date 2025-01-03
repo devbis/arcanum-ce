@@ -179,10 +179,5 @@ int64_t sub_4F2D10();
 bool sub_4F2D20(S603CB8* a1);
 void sub_4F40B0(S603CB8* a1);
 bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr);
-void sub_4F5330(int64_t a1, int64_t a2);
-void sub_4F5590(int64_t obj, int* a2);
-void sub_4F5690(int64_t a1, int64_t a2, int a3);
-int sub_4F5770(int64_t obj, int* a2, int* a3);
-int sub_4F57C0(int64_t obj, int a2, int* a3, int* a4);
 
 #endif /* ARCANUM_GAME_TARGET_H_ */

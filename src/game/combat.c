@@ -14,6 +14,7 @@
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/item.h"
+#include "game/logbook.h"
 #include "game/magictech.h"
 #include "game/map.h"
 #include "game/mes.h"

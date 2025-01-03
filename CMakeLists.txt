@@ -86,6 +86,8 @@ set(SRCS
     "src/game/light.h"
     "src/game/location.c"
     "src/game/location.h"
+    "src/game/logbook.c"
+    "src/game/logbook.h"
     "src/game/magictech.c"
     "src/game/magictech.h"
     "src/game/map.c"

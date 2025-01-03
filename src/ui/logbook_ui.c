@@ -11,6 +11,7 @@
 #include "game/gsound.h"
 #include "game/item.h"
 #include "game/location.h"
+#include "game/logbook.h"
 #include "game/mes.h"
 #include "game/player.h"
 #include "game/quest.h"
