@@ -5752,7 +5752,7 @@ tig_art_id_t sub_458AE0(int magictech)
         return TIG_ART_ID_INVALID;
     }
 
-    if (tig_art_interface_id_create(sub_4B1570(v1->spell), 0, 0, 0, &art_id) != TIG_OK) {
+    if (tig_art_interface_id_create(spell_get_icon(v1->spell), 0, 0, 0, &art_id) != TIG_OK) {
         return TIG_ART_ID_INVALID;
     }
 

@@ -4116,7 +4116,7 @@ bool intgame_spells_init()
     for (clg = 0; clg < COLLEGE_COUNT; clg++) {
         for (lvl = 0; lvl < 5; lvl++) {
             spl = clg * 5 + lvl;
-            intgame_spell_buttons[spl].art_num = sub_4B1570(spl);
+            intgame_spell_buttons[spl].art_num = spell_get_icon(spl);
             if (intgame_spell_buttons[spl].art_num != -1
                 && !sub_54AAE0(&(intgame_spell_buttons[spl]))) {
                 return false;
@@ -4173,7 +4173,7 @@ bool sub_550D20()
     int index;
 
     for (index = 0; index < 5; index++) {
-        stru_5C6C18[index].art_num = sub_4B1570(0);
+        stru_5C6C18[index].art_num = spell_get_icon(0);
         if (stru_5C6C18[index].art_num != -1) {
             if (!sub_54AAE0(&(stru_5C6C18[index]))) {
                 return false;
@@ -4523,7 +4523,7 @@ void sub_551660()
             if (spl != -1
                 && !sub_459FC0(spl)
                 && stru_5C6C18[index].art_num != -1) {
-                stru_5C6C18[index].art_num = sub_4B1570(spl);
+                stru_5C6C18[index].art_num = spell_get_icon(spl);
                 tig_art_interface_id_create(stru_5C6C18[index].art_num, 0, 0, 0, &art_id);
                 tig_button_set_art(stru_5C6C18[index].button_handle, art_id);
                 tig_button_show(stru_5C6C18[index].button_handle);

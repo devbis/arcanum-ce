@@ -2546,7 +2546,7 @@ void sub_55CA70(int a1, int a2)
     TigPaletteModifyInfo palette_modify_info;
     TigPalette tmp_palette;
 
-    art_num = sub_4B1570(a1 + 5 * dword_64E024);
+    art_num = spell_get_icon(a1 + 5 * dword_64E024);
     if (art_num != -1) {
         tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
         tig_art_frame_data(art_id, &art_frame_data);

@@ -267,7 +267,7 @@ void spell_set_defaults(int64_t obj)
 }
 
 // 0x4B1570
-int sub_4B1570(int spell)
+int spell_get_icon(int spell)
 {
     if (spell >= 0 && spell < SPELL_COUNT) {
         return spell_icons[spell];

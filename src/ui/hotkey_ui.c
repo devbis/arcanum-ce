@@ -179,7 +179,7 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
             v1 = &(stru_683518[index]);
             sub_557B20(index)->art_num = v1->field_8 == 2 || v1->field_8 != 3
                 ? sub_579F70(v1->field_C)
-                : sub_4B1570(v1->field_C);
+                : spell_get_icon(v1->field_C);
             sub_54AA60(dword_683510, &stru_6835C8, sub_557B20(index), 0x1);
         }
     }
@@ -464,7 +464,7 @@ bool intgame_load_hotkey(S683518* hotkey, TigFile* stream)
             return false;
         }
 
-        hotkey->info.art_num = sub_4B1570(hotkey->field_C);
+        hotkey->info.art_num = spell_get_icon(hotkey->field_C);
         tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
         hotkey->field_40 = -1;
 
@@ -486,7 +486,7 @@ bool intgame_load_hotkey(S683518* hotkey, TigFile* stream)
             return false;
         }
 
-        hotkey->info.art_num = sub_4B1570(hotkey->field_C);
+        hotkey->info.art_num = spell_get_icon(hotkey->field_C);
         tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
         hotkey->field_40 = -1;
 
@@ -740,13 +740,13 @@ bool sub_57E5D0()
         case 3:
             dword_683958 = hotkey->field_8;
             dword_68395C = hotkey->field_C;
-            tig_art_interface_id_create(sub_4B1570(hotkey->field_C), 0, 0, 0, &art_id);
+            tig_art_interface_id_create(spell_get_icon(hotkey->field_C), 0, 0, 0, &art_id);
             break;
         case 4:
             dword_683958 = hotkey->field_8;
             stru_683960 = hotkey->field_10;
             dword_68395C = hotkey->field_C;
-            tig_art_interface_id_create(sub_4B1570(dword_68395C), 0, 0, 0, &art_id);
+            tig_art_interface_id_create(spell_get_icon(dword_68395C), 0, 0, 0, &art_id);
             break;
         default:
             // Should be unreachable.
@@ -789,7 +789,7 @@ bool sub_57E5D0()
             dword_683958 = 4;
             sub_4440E0(sub_557B00(), &stru_683960);
             dword_68395C = spl;
-            dword_6839A0 = sub_4B1570(spl);
+            dword_6839A0 = spell_get_icon(spl);
             tig_art_interface_id_create(dword_6839A0, 0, 0, 0, &art_id);
             intgame_hotkey_mouse_load(art_id, true);
             dword_6839B0 = true;
@@ -938,13 +938,13 @@ bool sub_57E8D0(int a1)
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
         case 3:
             hotkey->field_C = dword_68395C;
-            hotkey->info.art_num = sub_4B1570(dword_68395C);
+            hotkey->info.art_num = spell_get_icon(dword_68395C);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
             break;
         case 4:
             hotkey->field_10 = stru_683960;
             hotkey->field_C = dword_68395C;
-            hotkey->info.art_num = sub_4B1570(dword_68395C);
+            hotkey->info.art_num = spell_get_icon(dword_68395C);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->field_44));
             break;
         }
@@ -1095,7 +1095,7 @@ void sub_57EFA0(int a1, int a2, int64_t obj)
             && stru_683518[0].field_C == a2) {
             return;
         }
-        tig_art_interface_id_create(sub_4B1570(a2), 0, 0, 0, &new_art_id);
+        tig_art_interface_id_create(spell_get_icon(a2), 0, 0, 0, &new_art_id);
         break;
     case 4:
         if (stru_683518[0].field_8 == 3
@@ -1103,7 +1103,7 @@ void sub_57EFA0(int a1, int a2, int64_t obj)
             && stru_683518[0].field_10.obj == obj) {
             return;
         }
-        tig_art_interface_id_create(sub_4B1570(a2), 0, 0, 0, &new_art_id);
+        tig_art_interface_id_create(spell_get_icon(a2), 0, 0, 0, &new_art_id);
         break;
     default:
         // Unreachable;
