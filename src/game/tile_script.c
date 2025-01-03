@@ -14,7 +14,7 @@ static_assert(sizeof(TileScript) == 0x18, "wrong size");
 static bool tile_script_get(int64_t loc, TileScript* tile_script);
 static bool sub_4C0830(TileScript* tile_script);
 static bool sub_4C0930(int64_t loc);
-static void sub_4C0A40(int64_t sector_id, int tile, TigRect* rect);
+static void tile_script_get_rect(int64_t sector_id, int tile, TigRect* rect);
 
 // 0x5FC868
 static tig_art_id_t tile_script_iso_art_id;
@@ -147,7 +147,7 @@ void tile_script_render(UnknownContext* render_info)
         if (sector_lock(sector_node->id, &sector)) {
             tile_script_node = sector->tile_scripts.head;
             while (tile_script_node != NULL) {
-                sub_4C0A40(sector_node->id, tile_script_node->id, &tile_rect);
+                tile_script_get_rect(sector_node->id, tile_script_node->id, &tile_rect);
                 rect_node = *render_info->rects;
                 while (rect_node != NULL) {
                     if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
@@ -210,7 +210,7 @@ bool sub_4C0830(TileScript* tile_script)
 
     sector_unlock(sector_id);
 
-    sub_4C0A40(sector_id, tile, &dirty_rect);
+    tile_script_get_rect(sector_id, tile, &dirty_rect);
     tile_script_iso_invalidate_rect(&dirty_rect);
 
     return true;
@@ -270,19 +270,21 @@ void sub_4C0980(int64_t loc, int64_t triggerer_obj)
 }
 
 // 0x4C0A40
-void sub_4C0A40(int64_t sector_id, int tile, TigRect* rect)
+void tile_script_get_rect(int64_t sector_id, int tile, TigRect* rect)
 {
     int64_t loc;
     int64_t x;
     int64_t y;
     TigArtFrameData art_frame_data;
 
-    loc = (tile >> 6) + ((sector_id >> 26) << 6);
-    loc |= (tile & 0x3F) + ((sector_id & 0x3FFFFFF) << 6);
+    loc = location_make((SECTOR_X(sector_id) << 6) | TILE_X(tile),
+        (SECTOR_Y(sector_id) << 6) | TILE_Y(tile));
     location_xy(loc, &x, &y);
 
-    if (x < INT_MIN || x > INT_MAX
-        || y < INT_MIN || y > INT_MAX) {
+    if (x < INT_MIN
+        || x > INT_MAX
+        || y < INT_MIN
+        || y > INT_MAX) {
         rect->x = 0;
         rect->y = 0;
         rect->width = 0;
