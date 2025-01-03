@@ -1203,7 +1203,7 @@ bool sub_4C7160(SkillInvocation* skill_invocation)
                         break;
                     }
                     default:
-                        moved = sub_4617F0(item_obj, source_obj);
+                        moved = item_transfer(item_obj, source_obj);
                         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
                             sub_407EF0(source_obj);
                             sub_407EF0(item_obj);
@@ -1278,7 +1278,7 @@ bool sub_4C7160(SkillInvocation* skill_invocation)
                         break;
                     }
                     default:
-                        moved = sub_4617F0(item_obj, target_obj);
+                        moved = item_transfer(item_obj, target_obj);
                         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
                             Packet128 pkt;
 

@@ -1151,7 +1151,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
             return false;
         }
 
-        sub_4617F0(prod_obj, a2);
+        item_transfer(prod_obj, a2);
     }
 
     sub_4EE0F0(1, a2, a3);

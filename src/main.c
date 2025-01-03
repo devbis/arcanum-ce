@@ -523,7 +523,7 @@ void main_loop()
                                         obj_field_int64_get(pc_obj, OBJ_F_LOCATION),
                                         &gold_obj);
                                     obj_field_int32_set(gold_obj, OBJ_F_GOLD_QUANTITY, 1000);
-                                    sub_4617F0(gold_obj, pc_obj);
+                                    item_transfer(gold_obj, pc_obj);
                                     sub_4605D0();
                                 }
                                 break;

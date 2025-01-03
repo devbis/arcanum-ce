@@ -950,7 +950,7 @@ bool sub_57E8D0(int a1)
         }
 
         if (v2 != OBJ_HANDLE_NULL && v3 != OBJ_HANDLE_NULL) {
-            sub_4617F0(v2, v3);
+            item_transfer(v2, v3);
         }
 
         hotkey->field_8 = dword_683958;
@@ -1025,7 +1025,7 @@ void sub_57EE30(int64_t obj, int inventory_location)
             item_parent(hotkey->field_10.obj, &v1);
             item_drop(hotkey->field_10.obj);
             if (v1 != OBJ_HANDLE_NULL) {
-                sub_4617F0(hotkey->field_10.obj, v1);
+                item_transfer(hotkey->field_10.obj, v1);
             }
         }
     }
@@ -1047,7 +1047,7 @@ bool sub_57EED0(int64_t obj, int inventory_location)
             item_parent(hotkey->field_10.obj, &v1);
             item_drop(hotkey->field_10.obj);
             if (v1 != OBJ_HANDLE_NULL) {
-                sub_4617F0(hotkey->field_10.obj, v1);
+                item_transfer(hotkey->field_10.obj, v1);
             }
         }
     }

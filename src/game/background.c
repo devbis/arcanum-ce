@@ -279,7 +279,7 @@ void sub_4C26F0(int64_t obj)
                 flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
                 flags |= OIF_IDENTIFIED;
                 obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, flags);
-                sub_4617F0(item_obj, obj);
+                item_transfer(item_obj, obj);
             }
             tok = strtok(NULL, " \t\n");
         }

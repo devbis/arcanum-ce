@@ -8022,7 +8022,7 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0) {
-        return sub_4617F0(target_obj, source_obj);
+        return item_transfer(target_obj, source_obj);
     }
 
     return true;

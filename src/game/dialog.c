@@ -2011,7 +2011,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                 }
 
                 if (item_obj != OBJ_HANDLE_NULL) {
-                    sub_4617F0(item_obj, a1->pc_obj);
+                    item_transfer(item_obj, a1->pc_obj);
                     item_parent(item_obj, &parent_obj);
                     if (parent_obj != a1->pc_obj) {
                         item_remove(item_obj);
@@ -2034,7 +2034,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                 }
 
                 if (item_obj != OBJ_HANDLE_NULL) {
-                    sub_4617F0(item_obj, a1->npc_obj);
+                    item_transfer(item_obj, a1->npc_obj);
                     item_parent(item_obj, &parent_obj);
                     if (parent_obj != a1->npc_obj) {
                         if (sub_45DDA0(a1->npc_obj) != OBJ_HANDLE_NULL) {
@@ -4184,7 +4184,7 @@ void sub_41A8C0(int a1, int a2, int a3, DialogEntryNode* a4)
 
     loc = obj_field_int64_get(a4->pc_obj, OBJ_F_LOCATION);
     obj = sub_4BF210(a1, loc);
-    sub_4617F0(obj, a4->pc_obj);
+    item_transfer(obj, a4->pc_obj);
     sub_418480(a4->field_70, a4, 15000);
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;

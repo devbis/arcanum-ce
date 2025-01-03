@@ -1163,7 +1163,7 @@ void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, in
         sub_4B3170(&combat);
     } else {
         sub_4415C0(weapon_obj, attacker_loc);
-        sub_4617F0(weapon_obj, attacker_obj);
+        item_transfer(weapon_obj, attacker_obj);
     }
 }
 

@@ -2739,7 +2739,7 @@ int sub_4A5710(int64_t obj, mes_file_handle_t mes_file)
     if (money_amt > 0) {
         mp_object_create(9056, location, &money_obj);
         sub_4EFDD0(money_obj, OBJ_F_GOLD_QUANTITY, money_amt);
-        sub_4617F0(money_obj, obj);
+        item_transfer(money_obj, obj);
     }
     return money_amt;
 }

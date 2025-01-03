@@ -538,7 +538,7 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
                 }
 
                 sub_4A2BC0();
-                sub_4617F0(disarm_item_obj, pc_obj);
+                item_transfer(disarm_item_obj, pc_obj);
                 sub_4A2BD0();
             }
         }

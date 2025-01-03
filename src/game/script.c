@@ -1887,7 +1887,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             }
 
             if (obj_type_is_item(obj_type)) {
-                sub_4617F0(new_obj, parent_obj);
+                item_transfer(new_obj, parent_obj);
             }
         }
 
@@ -1899,7 +1899,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t to_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
         int64_t item_obj = item_find_by_name(from_obj, name);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4617F0(item_obj, to_obj);
+            item_transfer(item_obj, to_obj);
         }
         return NEXT;
     }
@@ -2153,7 +2153,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t new_obj;
         mp_object_create(proto, loc, &new_obj);
         if (obj_type_is_item(obj_field_int32_get(new_obj, OBJ_F_TYPE))) {
-            sub_4617F0(new_obj, parent_obj);
+            item_transfer(new_obj, parent_obj);
         }
         return NEXT;
     }

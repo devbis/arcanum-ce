@@ -278,7 +278,7 @@ void sub_460FF0(int64_t critter_obj)
         }
 
         if (object_create(proto_obj, loc, &new_item_obj)) {
-            sub_4617F0(new_item_obj, critter_obj);
+            item_transfer(new_item_obj, critter_obj);
 
             if (sub_464D20(new_item_obj, 1006, critter_obj)) {
                 sub_43CCA0(new_item_obj);
@@ -298,7 +298,7 @@ void sub_460FF0(int64_t critter_obj)
                 }
 
                 if (object_create(proto_obj, loc, &new_item_obj)) {
-                    sub_4617F0(new_item_obj, critter_obj);
+                    item_transfer(new_item_obj, critter_obj);
                 }
             }
         }
@@ -307,14 +307,14 @@ void sub_460FF0(int64_t critter_obj)
     if (tech_skill_get_base(critter_obj, TECH_SKILL_PICK_LOCKS) > 0) {
         proto_obj = sub_4685A0(15178);
         if (object_create(proto_obj, loc, &new_item_obj)) {
-            sub_4617F0(new_item_obj, critter_obj);
+            item_transfer(new_item_obj, critter_obj);
         }
     }
 
     if (basic_skill_get_base(critter_obj, BASIC_SKILL_HEAL) > 0) {
         proto_obj = sub_4685A0(15179);
         if (object_create(proto_obj, loc, &new_item_obj)) {
-            sub_4617F0(new_item_obj, critter_obj);
+            item_transfer(new_item_obj, critter_obj);
         }
     }
 }
@@ -580,13 +580,13 @@ void item_inv_icon_size(object_id_t item_id, int* width, int* height)
 }
 
 // 0x4617F0
-bool sub_4617F0(int64_t item_obj, int64_t critter_obj)
+bool item_transfer(int64_t item_obj, int64_t critter_obj)
 {
-    return sub_461810(item_obj, critter_obj, -1);
+    return item_transfer_ex(item_obj, critter_obj, -1);
 }
 
 // 0x461810
-bool sub_461810(int64_t item_obj, int64_t critter_obj, int inventory_location)
+bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_location)
 {
     int64_t existing_item_obj;
     bool v1;
@@ -759,7 +759,7 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
     int slots[960];
 
     if (!item_parent(item_obj, &parent_obj)) {
-        return sub_461810(item_obj, critter_obj, inventory_location);
+        return item_transfer_ex(item_obj, critter_obj, inventory_location);
     }
 
     if (!sub_441980(parent_obj, critter_obj, item_obj, SAP_TRANSFER, 0)) {
@@ -2079,7 +2079,7 @@ void sub_463E20(int64_t obj)
         for (idx = 0; idx < set.field_4; idx++) {
             if (random_between(1, 100) <= set.rate[idx]
                 && mp_object_create(set.basic_prototype[idx], loc, &item_obj)) {
-                if (!sub_4617F0(item_obj, obj)) {
+                if (!item_transfer(item_obj, obj)) {
                     sub_43CCA0(item_obj);
                 }
             }
@@ -2439,7 +2439,7 @@ bool item_gold_transfer(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_
             } else {
                 loc = obj_field_int64_get(to_obj, OBJ_F_LOCATION);
                 gold_obj = item_gold_create(qty, loc);
-                sub_4617F0(gold_obj, to_obj);
+                item_transfer(gold_obj, to_obj);
             }
         }
 
@@ -3093,7 +3093,7 @@ bool item_ammo_transfer(int64_t from_obj, int64_t to_obj, int qty, int ammo_type
             to_ammo_obj = item_ammo_create(qty,
                 ammo_type,
                 obj_field_int64_get(to_obj, OBJ_F_LOCATION));
-            sub_4617F0(to_ammo_obj, to_obj);
+            item_transfer(to_ammo_obj, to_obj);
         }
     }
 
@@ -3968,7 +3968,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
             }
         }
 
-        sub_4617F0(node->obj, new_container_obj);
+        item_transfer(node->obj, new_container_obj);
 
         node = node->next;
     }
@@ -4143,7 +4143,7 @@ void sub_467520(int64_t obj)
             inventory_location = item_inventory_location_get(item_obj);
             if (inventory_location >= 2000 && inventory_location <= 2009) {
                 item_drop(item_obj);
-                sub_4617F0(item_obj, obj);
+                item_transfer(item_obj, obj);
             }
         }
     }
