@@ -11,6 +11,7 @@
 #include "game/combat.h"
 #include "game/critter.h"
 #include "game/effect.h"
+#include "game/fate.h"
 #include "game/gsound.h"
 #include "game/item.h"
 #include "game/light_scheme.h"

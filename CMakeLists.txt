@@ -56,6 +56,8 @@ set(SRCS
     "src/game/effect.h"
     "src/game/facade.c"
     "src/game/facade.h"
+    "src/game/fate.c"
+    "src/game/fate.h"
     "src/game/gameinit.c"
     "src/game/gameinit.h"
     "src/game/gamelib.c"

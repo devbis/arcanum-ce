@@ -3,6 +3,7 @@
 #include "game/ai.h"
 #include "game/critter.h"
 #include "game/effect.h"
+#include "game/fate.h"
 #include "game/magictech.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
@@ -10,7 +11,6 @@
 #include "game/obj.h"
 #include "game/reputation.h"
 #include "game/stat.h"
-#include "game/target.h"
 
 static int sub_4C0D00(int64_t a1, int64_t a2, unsigned int flags);
 static int sub_4C1290(int64_t a1, int64_t a2);

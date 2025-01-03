@@ -5,6 +5,7 @@
 #include "game/background.h"
 #include "game/critter.h"
 #include "game/effect.h"
+#include "game/fate.h"
 #include "game/gamelib.h"
 #include "game/item.h"
 #include "game/light.h"

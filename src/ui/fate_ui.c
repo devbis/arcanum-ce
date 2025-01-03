@@ -1,8 +1,8 @@
 #include "ui/fate_ui.h"
 
 #include "game/critter.h"
+#include "game/fate.h"
 #include "game/mes.h"
-#include "game/target.h"
 #include "ui/charedit_ui.h"
 #include "ui/intgame.h"
 #include "ui/types.h"

@@ -10,6 +10,7 @@
 #include "game/ci.h"
 #include "game/critter.h"
 #include "game/effect.h"
+#include "game/fate.h"
 #include "game/gamelib.h"
 #include "game/gsound.h"
 #include "game/item.h"
