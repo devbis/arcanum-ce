@@ -1725,20 +1725,20 @@ void obj_arrayfield_int32_set(int64_t obj_handle, int fld, int index, int value)
 }
 
 // 0x407470
-int sub_407470(int64_t obj_handle, int fld, int index)
+unsigned int obj_arrayfield_uint32_get(int64_t obj, int fld, int index)
 {
     Object* object;
     int value;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return 0;
     }
 
     sub_408BB0(object, fld, index, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 
     return value;
 }

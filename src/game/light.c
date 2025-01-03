@@ -608,7 +608,7 @@ void sub_4D93B0(Light* light)
             sub_4D9570(light);
         } else {
             for (index = 0; index < 4; index++) {
-                if ((Light*)sub_407470(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index) == light) { // TODO: x64
+                if ((Light*)obj_arrayfield_uint32_get(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index) == light) { // TODO: x64
                     sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index, 0); // TODO: x64
                     sub_4D9510(light);
                     sub_4D9570(light);
@@ -734,15 +734,15 @@ void sub_4D9590(int64_t obj, bool a2)
     }
 
     for (overlay = 0; overlay < 4; overlay++) {
-        art_id = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, overlay);
-        light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, overlay); // TODO: x64
+        art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, overlay);
+        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, overlay); // TODO: x64
         if (art_id != TIG_ART_ID_INVALID) {
-            color = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_COLOR, overlay);
+            color = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_COLOR, overlay);
             light_get_color_components(color, &r, &g, &b);
             if (light != NULL) {
                 light_get_rect(light, &updated_rect);
                 light_set_aid(light, art_id);
-                light_set_flags_internal(light, sub_407470(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay));
+                light_set_flags_internal(light, obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay));
                 light_set_custom_color(light, r, g, b);
                 light_get_rect(light, &tmp_rect);
                 tig_rect_union(&updated_rect, &tmp_rect, &updated_rect);
@@ -788,7 +788,7 @@ void sub_4D9990(int64_t obj)
     }
 
     for (index = 0; index < 4; index++) {
-        light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
+        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
         if (light != NULL) {
             sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, index, light->flags);
             sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, light->art_id);
@@ -815,7 +815,7 @@ void sub_4D9A90(object_id_t object_id)
         }
 
         for (index = 0; index < 4; index++) {
-            light = (Light*)sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+            light = (Light*)obj_arrayfield_uint32_get(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
             if (light != NULL) {
                 sub_4D93B0(light);
             }
@@ -1362,15 +1362,15 @@ void light_set_flags(int64_t obj, unsigned int flags)
     }
 
     for (idx = 0; idx < 4; idx++) {
-        light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
+        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
         if (light != NULL) {
             light_set_flags_internal(light, flags);
         } else {
-            if (sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, idx) != TIG_ART_ID_INVALID) {
+            if (obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, idx) != TIG_ART_ID_INVALID) {
                 sub_4074E0(obj,
                     OBJ_F_OVERLAY_LIGHT_FLAGS,
                     idx,
-                    sub_407470(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, idx) | flags);
+                    obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, idx) | flags);
             }
         }
     }
@@ -1394,15 +1394,15 @@ void light_unset_flags(int64_t obj, unsigned int flags)
     }
 
     for (idx = 0; idx < 4; idx++) {
-        light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
+        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
         if (light != NULL) {
             light_unset_flags_internal(light, flags);
         } else {
-            if (sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, idx) != TIG_ART_ID_INVALID) {
+            if (obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, idx) != TIG_ART_ID_INVALID) {
                 sub_4074E0(obj,
                     OBJ_F_OVERLAY_LIGHT_FLAGS,
                     idx,
-                    sub_407470(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, idx) & ~flags);
+                    obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, idx) & ~flags);
             }
         }
     }
@@ -1420,7 +1420,7 @@ void sub_4DD020(int64_t obj, int64_t loc, int offset_x, int offset_y)
     }
 
     for (idx = 0; idx < 4; idx++) {
-        light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
+        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
         if (light != NULL) {
             sub_4DD320(light, loc, offset_x, offset_y);
         }
@@ -1439,7 +1439,7 @@ void sub_4DD0A0(object_id_t object_id, int offset_x, int offset_y)
     }
 
     for (idx = 0; idx < 4; idx++) {
-        light = (Light*)sub_407470(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
+        light = (Light*)obj_arrayfield_uint32_get(object_id, OBJ_F_OVERLAY_LIGHT_HANDLES, idx); // TODO: x64
         if (light != NULL) {
             sub_4DD500(light, offset_x, offset_y);
         }
@@ -1960,7 +1960,7 @@ bool sub_4DDD90(Sector* sector)
                         }
 
                         for (index = 0; index < 4; index++) {
-                            light = (Light*)sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+                            light = (Light*)obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
                             if (light != NULL) {
                                 sector_light_list_add(&(sector->lights), light);
                             }

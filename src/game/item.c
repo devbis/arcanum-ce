@@ -1536,7 +1536,7 @@ int item_get_keys(int64_t obj, int* key_ids)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_KEY_RING_LIST_IDX);
     for (index = 0; index < cnt; index++) {
-        key_ids[index] = sub_407470(obj, OBJ_F_KEY_RING_LIST_IDX, index);
+        key_ids[index] = obj_arrayfield_uint32_get(obj, OBJ_F_KEY_RING_LIST_IDX, index);
     }
 
     return cnt;
@@ -1592,7 +1592,7 @@ bool sub_463240(int64_t critter_obj, int lock_id)
         case OBJ_TYPE_KEY_RING:
             keyring_cnt = obj_arrayfield_length_get(item_obj, OBJ_F_KEY_RING_LIST_IDX);
             for (keyring_idx = 0; keyring_idx < keyring_cnt; keyring_idx++) {
-                key_id = sub_407470(item_obj, OBJ_F_KEY_RING_LIST_IDX, keyring_idx);
+                key_id = obj_arrayfield_uint32_get(item_obj, OBJ_F_KEY_RING_LIST_IDX, keyring_idx);
                 if (sub_463340(lock_id, key_id)) {
                     return true;
                 }
@@ -3366,8 +3366,8 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
         }
 
         if (sub_45F730(critter_obj)) {
-            min_dam = sub_407470(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type);
-            max_dam = sub_407470(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type + 1);
+            min_dam = obj_arrayfield_uint32_get(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type);
+            max_dam = obj_arrayfield_uint32_get(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type + 1);
         } else {
             if (damage_type != 0 && damage_type != 4) {
                 *min_dam_ptr = 0;
@@ -3786,7 +3786,7 @@ void sub_466AA0(int64_t critter_obj, int64_t a2)
         index = obj_arrayfield_length_get(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX);
         cnt = obj_arrayfield_length_get(a2, OBJ_F_KEY_RING_LIST_IDX);
         while (cnt > 0) {
-            key_id = sub_407470(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
+            key_id = obj_arrayfield_uint32_get(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
             obj_arrayfield_length_set(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
             sub_4074E0(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX, index++, key_id);
             cnt--;

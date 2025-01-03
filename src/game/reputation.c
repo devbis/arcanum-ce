@@ -237,7 +237,7 @@ int reputation_reaction_adj(int64_t pc_obj, int64_t npc_obj)
         faction = critter_faction_get(npc_obj);
 
         for (rep_idx = 0; rep_idx < cnt; rep_idx++) {
-            rep = sub_407470(pc_obj, OBJ_F_PC_REPUTATION_IDX, rep_idx);
+            rep = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, rep_idx);
             for (eff_idx = 0; eff_idx < dword_5FC8B0[rep - 1000].num_effects; eff_idx++) {
                 effect = &(dword_5FC8B0[rep - 1000].effects[eff_idx]);
                 if ((effect->origin == 0 || effect->origin == origin)
@@ -278,7 +278,7 @@ int reputation_copy_state(int64_t pc_obj, ReputationStateEntry* entries)
 
     cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     for (index = 0; index < cnt; index++) {
-        entries[index].reputation = sub_407470(pc_obj, OBJ_F_PC_REPUTATION_IDX, index);
+        entries[index].reputation = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, index);
         entries[index].timestamp = obj_arrayfield_int64_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index);
     }
 
@@ -297,7 +297,7 @@ bool reputation_has(int64_t pc_obj, int reputation)
 
     cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(pc_obj, OBJ_F_PC_REPUTATION_IDX, index) == reputation) {
+        if (obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, index) == reputation) {
             return true;
         }
     }
@@ -368,7 +368,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
     // Find index of the reputation in the reputation array.
     cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(pc_obj, OBJ_F_PC_REPUTATION_IDX, index) == reputation) {
+        if (obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, index) == reputation) {
             break;
         }
     }
@@ -381,8 +381,8 @@ void reputation_remove(int64_t pc_obj, int reputation)
     // Move subsequent entries one slot down.
     for (; index < cnt - 1; index++) {
         // TODO: Does not look right.
-        next_rep = sub_407470(pc_obj, OBJ_F_PC_REPUTATION_IDX, 2 * index);
-        next_ts = sub_407470(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, 2 * index);
+        next_rep = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, 2 * index);
+        next_ts = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, 2 * index);
         sub_4074E0(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, next_rep);
         obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, next_ts);
     }
@@ -432,7 +432,7 @@ int sub_4C1F80(int64_t pc_obj, int64_t npc_obj)
 
     selected = 0;
     for (index = 0; index < cnt; index++) {
-        rep = sub_407470(pc_obj, OBJ_F_PC_REPUTATION_IDX, index) - 1000;
+        rep = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, index) - 1000;
         for (eff = 0; eff < dword_5FC8B0[rep].num_effects; eff++) {
             effect = &(dword_5FC8B0[rep].effects[eff]);
             if ((effect->origin == 0 || effect->origin == origin)
@@ -506,7 +506,7 @@ bool sub_4C21E0(int64_t pc_obj, int faction)
 
     cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     for (rep_idx = 0; rep_idx < cnt; rep_idx++) {
-        rep = sub_407470(pc_obj, OBJ_F_PC_REPUTATION_IDX, rep_idx) - 1000;
+        rep = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, rep_idx) - 1000;
         for (fac_idx = 0; fac_idx < 3; fac_idx++) {
             if (dword_5FC8B0[rep].factions[fac_idx] == faction) {
                 return true;

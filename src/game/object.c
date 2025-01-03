@@ -599,7 +599,7 @@ void object_render(UnknownContext* render_info)
                                                 // 0x43B65B
                                                 if ((obj_flags & OF_HAS_UNDERLAYS) != 0) {
                                                     for (idx = 0; idx < 4; idx++) {
-                                                        art_id = sub_407470(obj_node->obj, OBJ_F_UNDERLAY, idx);
+                                                        art_id = obj_arrayfield_uint32_get(obj_node->obj, OBJ_F_UNDERLAY, idx);
                                                         if (art_id != TIG_ART_ID_INVALID) {
                                                             sub_443620(obj_flags, 100, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
 
@@ -638,7 +638,7 @@ void object_render(UnknownContext* render_info)
                                                 if ((obj_flags & OF_HAS_OVERLAYS) != 0) {
                                                     for (idx = 6; idx >= 0; idx--) {
                                                         for (int fld = OBJ_F_OVERLAY_FORE; fld <= OBJ_F_OVERLAY_BACK; fld++) {
-                                                            art_id = sub_407470(obj_node->obj, fld, idx);
+                                                            art_id = obj_arrayfield_uint32_get(obj_node->obj, fld, idx);
                                                             if (art_id != TIG_ART_ID_INVALID) {
                                                                 sub_443620(obj_flags, scale, (int)loc_x, (int)loc_y, art_id, &eye_candy_rect);
 
@@ -1905,7 +1905,7 @@ void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
         if ((flags & 0x2) != 0 && (obj_flags & OF_HAS_OVERLAYS) != 0) {
             for (int fld = OBJ_F_OVERLAY_FORE; fld <= OBJ_F_OVERLAY_BACK; fld++) {
                 for (idx = 0; idx < 7; idx++) {
-                    tig_art_id_t art_id = sub_407470(obj, fld, idx);
+                    tig_art_id_t art_id = obj_arrayfield_uint32_get(obj, fld, idx);
                     if (art_id != TIG_ART_ID_INVALID
                         && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
                         int scale_type = tig_art_eye_candy_id_scale_get(art_id);
@@ -1944,7 +1944,7 @@ void object_get_rect(int64_t obj, unsigned int flags, TigRect* rect)
 
         if ((flags & 0x4) != 0 && (obj_flags & OF_HAS_UNDERLAYS) != 0) {
             for (idx = 0; idx < 4; idx++) {
-                tig_art_id_t art_id = sub_407470(obj, OBJ_F_UNDERLAY, idx);
+                tig_art_id_t art_id = obj_arrayfield_uint32_get(obj, OBJ_F_UNDERLAY, idx);
                 if (art_id != TIG_ART_ID_INVALID
                     && tig_art_frame_data(art_id, &art_frame_data) == TIG_OK) {
                     hot_x = art_frame_data.hot_x;
@@ -2187,7 +2187,7 @@ void sub_43ECF0(int64_t obj, int fld, int index, int value)
     flags &= ~(OF_HAS_OVERLAYS | OF_HAS_UNDERLAYS);
 
     for (overlay = 0; overlay < 7; overlay++) {
-        if (sub_407470(obj, OBJ_F_OVERLAY_FORE, overlay) != TIG_ART_ID_INVALID) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_FORE, overlay) != TIG_ART_ID_INVALID) {
             flags |= OF_HAS_OVERLAYS;
             break;
         }
@@ -2195,7 +2195,7 @@ void sub_43ECF0(int64_t obj, int fld, int index, int value)
 
     if ((flags & OF_HAS_OVERLAYS) == 0) {
         for (overlay = 0; overlay < 7; overlay++) {
-            if (sub_407470(obj, OBJ_F_OVERLAY_BACK, overlay) != TIG_ART_ID_INVALID) {
+            if (obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_BACK, overlay) != TIG_ART_ID_INVALID) {
                 flags |= OF_HAS_OVERLAYS;
                 break;
             }
@@ -2203,7 +2203,7 @@ void sub_43ECF0(int64_t obj, int fld, int index, int value)
     }
 
     for (overlay = 0; overlay < 4; overlay++) {
-        if (sub_407470(obj, OBJ_F_UNDERLAY, overlay) != TIG_ART_ID_INVALID) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_UNDERLAY, overlay) != TIG_ART_ID_INVALID) {
             flags |= OF_HAS_UNDERLAYS;
             break;
         }
@@ -2226,7 +2226,7 @@ void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, ti
     Light* light;
 
     if (aid == TIG_ART_ID_INVALID) {
-        light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+        light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
         if (light != NULL) {
             light_stop_animating(light);
         }
@@ -2648,7 +2648,7 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        current_aid = sub_407470(obj, fld, index);
+        current_aid = obj_arrayfield_uint32_get(obj, fld, index);
         next_aid = tig_art_id_frame_inc(current_aid);
         if (current_aid != next_aid) {
             sub_4074E0(obj, fld, index, next_aid);
@@ -2672,7 +2672,7 @@ void sub_43FAB0(object_id_t obj, int fld, int index)
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        current_aid = sub_407470(obj, fld, index);
+        current_aid = obj_arrayfield_uint32_get(obj, fld, index);
         prev_aid = tig_art_id_frame_get(current_aid) > 0
             ? tig_art_id_frame_dec(current_aid)
             : current_aid;
@@ -2693,7 +2693,7 @@ void sub_43FB80(object_id_t obj, int index)
 {
     tig_art_id_t aid;
 
-    aid = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+    aid = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
     if (tig_art_id_frame_get(aid) != 0) {
         aid = tig_art_id_frame_set(aid, 0);
         sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
@@ -2710,7 +2710,7 @@ void sub_43FBF0(object_id_t obj, int index)
     tig_art_id_t aid;
     TigArtAnimData art_anim_data;
 
-    aid = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+    aid = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
     if (tig_art_anim_data(aid, &art_anim_data) == TIG_OK) {
         if (tig_art_id_frame_get(aid) != art_anim_data.num_frames - 1) {
             aid = tig_art_id_frame_set(aid, art_anim_data.num_frames - 1);
@@ -2728,7 +2728,7 @@ void sub_43FC80(object_id_t obj, int index)
 {
     Light* light;
 
-    light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+    light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
     if (light != NULL) {
         light_inc_frame(light);
     }
@@ -2739,7 +2739,7 @@ void sub_43FCB0(object_id_t obj, int index)
 {
     Light* light;
 
-    light = (Light*)sub_407470(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
+    light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index); // TODO: x64
     if (light != NULL) {
         light_dec_frame(light);
     }

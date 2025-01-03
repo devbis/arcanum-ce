@@ -71,7 +71,7 @@ int sub_4C4200(object_id_t obj, BlessInfo* blessings)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_BLESSING_IDX);
     for (index = 0; index < cnt; index++) {
-        blessings[index].id = sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index);
+        blessings[index].id = obj_arrayfield_uint32_get(obj, OBJ_F_PC_BLESSING_IDX, index);
         blessings[index].ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_BLESSING_TS_IDX, index);
     }
 
@@ -90,7 +90,7 @@ bool bless_is_added_to(object_id_t obj, int bless)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_BLESSING_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index) == bless) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_PC_BLESSING_IDX, index) == bless) {
             return true;
         }
     }
@@ -186,9 +186,9 @@ void bless_remove(object_id_t obj, int bless)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_BLESSING_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index) == bless) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_PC_BLESSING_IDX, index) == bless) {
             while (index < cnt - 1) {
-                tmp_bless = sub_407470(obj, OBJ_F_PC_BLESSING_IDX, index + 1);
+                tmp_bless = obj_arrayfield_uint32_get(obj, OBJ_F_PC_BLESSING_IDX, index + 1);
                 tmp_ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_BLESSING_TS_IDX, index + 1);
                 sub_4074E0(obj, OBJ_F_PC_BLESSING_IDX, index, tmp_bless);
                 obj_arrayfield_int64_set(obj, OBJ_F_PC_BLESSING_TS_IDX, index, tmp_ts);

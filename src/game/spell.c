@@ -513,7 +513,7 @@ int sub_4B1AB0(int64_t obj, int a2)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return sub_407470(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2);
+        return obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2);
     } else {
         return 0;
     }
@@ -605,7 +605,7 @@ int sub_4B1CB0(int64_t object_id)
     type = obj_field_int32_get(object_id, OBJ_F_TYPE);
     if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
         // TODO: Figure out constant meaning.
-        return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16);
+        return obj_arrayfield_uint32_get(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16);
     } else {
         return -1;
     }

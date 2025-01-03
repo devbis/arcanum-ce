@@ -465,7 +465,7 @@ void effect_remove_one_typed(int64_t obj, int effect)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
             sub_4EA520(obj, index);
             break;
         }
@@ -502,7 +502,7 @@ void effect_remove_all_typed(int64_t obj, int effect)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect) {
             sub_4EA520(obj, index);
             index--;
             cnt--;
@@ -538,7 +538,7 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
             sub_4EA520(obj, index);
             break;
         }
@@ -573,7 +573,7 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index) == cause) {
             sub_4EA520(obj, index);
             index--;
             cnt--;
@@ -592,7 +592,7 @@ int sub_4EA4A0(object_id_t obj, int effect_id)
         || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         cnt = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX);
         for (index = 0; index < cnt; index++) {
-            if (sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect_id) {
+            if (obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index) == effect_id) {
                 effect_count++;
             }
         }
@@ -623,10 +623,10 @@ void sub_4EA520(int64_t obj, int start)
 
     end = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX) - 1;
     while (start < end) {
-        data = sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, start + 1);
+        data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, start + 1);
         sub_4074E0(obj, OBJ_F_CRITTER_EFFECTS_IDX, start, data);
 
-        data = sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start + 1);
+        data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start + 1);
         sub_4074E0(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start, data);
     }
 
@@ -680,9 +680,9 @@ int sub_4EA6C0(int64_t obj, int id, int value, Effect* tbl, bool a5)
     }
 
     for (index = 0; index < cnt; index++) {
-        effect = sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index);
+        effect = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index);
         if (a5) {
-            cause = sub_407470(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index);
+            cause = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, index);
             switch (cause) {
             case EFFECT_CAUSE_RACE:
             case EFFECT_CAUSE_BACKGROUND:
@@ -854,7 +854,7 @@ void effect_debug_obj(object_id_t obj)
         for (index = 0; index < cnt; index++) {
             tig_debug_printf("\t\tEffect %d: ID: %d\n",
                 index,
-                sub_407470(obj, OBJ_F_CRITTER_EFFECTS_IDX, index));
+                obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, index));
         }
     }
 }

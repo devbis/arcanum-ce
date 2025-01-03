@@ -71,7 +71,7 @@ int sub_4C3D50(object_id_t obj, CurseInfo* curses)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     for (index = 0; index < cnt; index++) {
-        curses[index].id = sub_407470(obj, OBJ_F_PC_CURSE_IDX, index);
+        curses[index].id = obj_arrayfield_uint32_get(obj, OBJ_F_PC_CURSE_IDX, index);
         curses[index].ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_CURSE_TS_IDX, index);
     }
 
@@ -90,7 +90,7 @@ bool curse_is_added_to(object_id_t obj, int curse)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_PC_CURSE_IDX, index) == curse) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_PC_CURSE_IDX, index) == curse) {
             return true;
         }
     }
@@ -186,9 +186,9 @@ void curse_remove(object_id_t obj, int curse)
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(obj, OBJ_F_PC_CURSE_IDX, index) == curse) {
+        if (obj_arrayfield_uint32_get(obj, OBJ_F_PC_CURSE_IDX, index) == curse) {
             while (index < cnt - 1) {
-                tmp_curse = sub_407470(obj, OBJ_F_PC_CURSE_IDX, index + 1);
+                tmp_curse = obj_arrayfield_uint32_get(obj, OBJ_F_PC_CURSE_IDX, index + 1);
                 tmp_ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_CURSE_TS_IDX, index + 1);
                 sub_4074E0(obj, OBJ_F_PC_CURSE_IDX, index, tmp_curse);
                 obj_arrayfield_int64_set(obj, OBJ_F_PC_CURSE_TS_IDX, index, tmp_ts);

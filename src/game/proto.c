@@ -16560,8 +16560,8 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     }
 
     for (index = PROTO_F_NORMAL_DAMAGE; index <= PROTO_F_FATIGUE_DAMAGE; index++) {
-        min_damage = sub_407470(obj, OBJ_F_NPC_DAMAGE_IDX, index * 2);
-        max_damage = sub_407470(obj, OBJ_F_NPC_DAMAGE_IDX, index * 2 + 1);
+        min_damage = obj_arrayfield_uint32_get(obj, OBJ_F_NPC_DAMAGE_IDX, index * 2);
+        max_damage = obj_arrayfield_uint32_get(obj, OBJ_F_NPC_DAMAGE_IDX, index * 2 + 1);
         if (min_damage != 0 || max_damage != 0) {
             tig_file_fprintf(stream, "%s: %d %d\n",
                 off_5B38C8[index],

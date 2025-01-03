@@ -456,7 +456,7 @@ bool sub_4C12F0(int64_t npc_obj, int64_t pc_obj, bool a3, int* a4)
     for (index = 0; index < 10; index++) {
         if ((index != 0 || a3)
             && pc_obj == obj_arrayfield_handle_get(npc_obj, OBJ_F_NPC_REACTION_PC_IDX, index)) {
-            *a4 = sub_407470(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
+            *a4 = obj_arrayfield_uint32_get(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
             return true;
         }
     }
@@ -504,10 +504,10 @@ void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value)
     v1 = sub_4C15A0(value);
     for (index = 0; index < 10; index++) {
         if (index != 0) {
-            reaction_level = sub_407470(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
+            reaction_level = obj_arrayfield_uint32_get(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index);
 
             // FIXME: Unused.
-            sub_407470(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index);
+            obj_arrayfield_uint32_get(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index);
 
             v2 = sub_4C15A0(reaction_level);
             if (v2 < v1 && (candidate == -1 || v2 < v3)) {

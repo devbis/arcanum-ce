@@ -333,7 +333,7 @@ void sub_56D130(long long a1, long long a2)
         if (schematic_ui_num_found_schematics > 0) {
             schematic_ui_found_schematics = (int*)MALLOC(sizeof(int) * schematic_ui_num_found_schematics);
             for (index = 0; index < schematic_ui_num_found_schematics; index++) {
-                schematic_ui_found_schematics[index] = sub_407470(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index);
+                schematic_ui_found_schematics[index] = obj_arrayfield_uint32_get(a1, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index);
 
                 tech = sub_56DB00(schematic_ui_found_schematics[index]);
                 schematic_ui_num_found_schematics_by_tech[tech]++;

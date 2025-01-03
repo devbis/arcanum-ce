@@ -165,7 +165,7 @@ int tech_get_degree(long long object_id, int tech)
         return 0;
     }
 
-    return sub_407470(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
+    return obj_arrayfield_uint32_get(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
 }
 
 // 0x4AFEC0
@@ -286,7 +286,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
 
     cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX);
     for (index = 0; index < cnt; index++) {
-        if (sub_407470(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index) == schematic) {
+        if (obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index) == schematic) {
             break;
         }
     }

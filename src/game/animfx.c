@@ -233,7 +233,7 @@ bool sub_4CCDD0(AnimFxNode* node)
 
     if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
         for (index = 0; index < 7; index++) {
-            art_id = sub_407470(node->obj, OBJ_F_OVERLAY_FORE, index);
+            art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_FORE, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
@@ -246,7 +246,7 @@ bool sub_4CCDD0(AnimFxNode* node)
 
     if ((entry->flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
         for (index = 0; index < 7; index++) {
-            art_id = sub_407470(node->obj, OBJ_F_OVERLAY_BACK, index);
+            art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_BACK, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
@@ -259,7 +259,7 @@ bool sub_4CCDD0(AnimFxNode* node)
 
     if ((entry->flags & ANIMFX_LIST_ENTRY_UNDERLAY) != 0) {
         for (index = 0; index < 4; index++) {
-            art_id = sub_407470(node->obj, OBJ_F_UNDERLAY, index);
+            art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_UNDERLAY, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
@@ -276,7 +276,7 @@ bool sub_4CCDD0(AnimFxNode* node)
             // light art id to a variable and the check below refer to the
             // `art_id` from earlier loops. In some circumstances that value
             // is set to `num`, which is obviously wrong.
-            art_id = sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+            art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
@@ -387,7 +387,7 @@ bool animfx_add(AnimFxNode* node)
             int found = 0;
 
             for (index = 0; index < 7; index++) {
-                art_id = sub_407470(node->obj, OBJ_F_OVERLAY_FORE, index);
+                art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_FORE, index);
                 if (art_id == TIG_ART_ID_INVALID) {
                     break;
                 }
@@ -427,7 +427,7 @@ bool animfx_add(AnimFxNode* node)
             int found = 0;
 
             for (index = 0; index < 7; index++) {
-                art_id = sub_407470(node->obj, OBJ_F_OVERLAY_BACK, index);
+                art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_BACK, index);
                 if (art_id == TIG_ART_ID_INVALID) {
                     break;
                 }
@@ -478,7 +478,7 @@ bool animfx_add(AnimFxNode* node)
             int found = 0;
 
             for (index = 0; index < 4; index++) {
-                art_id = sub_407470(node->obj, OBJ_F_UNDERLAY, index);
+                art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_UNDERLAY, index);
                 if (art_id == TIG_ART_ID_INVALID) {
                     break;
                 }
@@ -537,7 +537,7 @@ bool animfx_add(AnimFxNode* node)
             int found = 0;
 
             for (index = 0; index < 4; index++) {
-                art_id = sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+                art_id = obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index);
                 if (art_id == TIG_ART_ID_INVALID) {
                     break;
                 }
@@ -738,7 +738,7 @@ bool sub_4CD7A0(AnimFxNode* node)
     if (*node->art_id_ptr != TIG_ART_ID_INVALID) {
         if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
             for (index = 0; index < 7; index++) {
-                if (sub_407470(node->obj, OBJ_F_OVERLAY_FORE, index) == TIG_ART_ID_INVALID) {
+                if (obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_FORE, index) == TIG_ART_ID_INVALID) {
                     art_id = tig_art_eye_candy_id_type_set(entry->eye_candy_art_id, 0);
                     if (tig_art_exists(art_id) == TIG_OK) {
                         overlay_fore_index = index;
@@ -750,7 +750,7 @@ bool sub_4CD7A0(AnimFxNode* node)
 
         if ((entry->flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
             for (index = 0; index < 7; index++) {
-                if (sub_407470(node->obj, OBJ_F_OVERLAY_BACK, index) == TIG_ART_ID_INVALID) {
+                if (obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_BACK, index) == TIG_ART_ID_INVALID) {
                     if (tig_art_exists(entry->eye_candy_art_id) == TIG_OK) {
                         overlay_back_index = index;
                     }
@@ -761,7 +761,7 @@ bool sub_4CD7A0(AnimFxNode* node)
 
         if ((entry->flags & ANIMFX_LIST_ENTRY_UNDERLAY) != 0) {
             for (index = 0; index < 4; index++) {
-                if (sub_407470(node->obj, OBJ_F_UNDERLAY, index) == TIG_ART_ID_INVALID) {
+                if (obj_arrayfield_uint32_get(node->obj, OBJ_F_UNDERLAY, index) == TIG_ART_ID_INVALID) {
                     art_id = tig_art_eye_candy_id_type_set(entry->eye_candy_art_id, 2);
                     if (tig_art_exists(art_id) == TIG_OK) {
                         overlay_fore_index = index;
@@ -774,7 +774,7 @@ bool sub_4CD7A0(AnimFxNode* node)
 
         if (entry->light_art_id != TIG_ART_ID_INVALID) {
             for (index = 0; index < 4; index++) {
-                if (sub_407470(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index) == TIG_ART_ID_INVALID) {
+                if (obj_arrayfield_uint32_get(node->obj, OBJ_F_OVERLAY_LIGHT_AID, index) == TIG_ART_ID_INVALID) {
                     if (tig_art_exists(entry->light_art_id) == TIG_OK) {
                         overlay_light_index = index;
                     }
@@ -839,7 +839,7 @@ bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
 
     if ((entry->flags & ANIMFX_LIST_ENTRY_FOREGROUND_OVERLAY) != 0) {
         for (index = 0; index < 7; index++) {
-            art_id = sub_407470(obj, OBJ_F_OVERLAY_FORE, index);
+            art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_FORE, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
@@ -853,7 +853,7 @@ bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
 
     if ((entry->flags & ANIMFX_LIST_ENTRY_BACKGROUND_OVERLAY) != 0) {
         for (index = 0; index < 7; index++) {
-            art_id = sub_407470(obj, OBJ_F_OVERLAY_BACK, index);
+            art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_BACK, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
@@ -867,7 +867,7 @@ bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
 
     if ((entry->flags & ANIMFX_LIST_ENTRY_UNDERLAY) != 0) {
         for (index = 0; index < 4; index++) {
-            art_id = sub_407470(obj, OBJ_F_UNDERLAY, index);
+            art_id = obj_arrayfield_uint32_get(obj, OBJ_F_UNDERLAY, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
@@ -885,7 +885,7 @@ bool sub_4CD9C0(AnimFxListEntry* entry, int64_t obj)
             // light art id to a variable and the check below refer to the
             // `art_id` from earlier loops. In some circumstances that value
             // is set to memory address of `entry`, which is obviously wrong.
-            art_id = sub_407470(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
+            art_id = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
             if (art_id == TIG_ART_ID_INVALID) {
                 break;
             }
