@@ -129,7 +129,7 @@ void tech_set_defaults(object_id_t obj)
 
     // TODO: Use enum.
     for (index = 17; index < 25; index++) {
-        sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, index, 0);
+        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, index, 0);
     }
 }
 

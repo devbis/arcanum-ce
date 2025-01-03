@@ -3765,7 +3765,7 @@ void sub_466A50(int64_t key_obj, int64_t key_ring_obj)
 
     index = obj_arrayfield_length_get(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX);
     key_id = obj_field_int32_get(key_obj, OBJ_F_KEY_KEY_ID);
-    sub_4074E0(key_ring_obj,
+    obj_arrayfield_uint32_set(key_ring_obj,
         OBJ_F_KEY_RING_LIST_IDX,
         index,
         key_id);
@@ -3788,7 +3788,7 @@ void sub_466AA0(int64_t critter_obj, int64_t a2)
         while (cnt > 0) {
             key_id = obj_arrayfield_uint32_get(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
             obj_arrayfield_length_set(a2, OBJ_F_KEY_RING_LIST_IDX, cnt - 1);
-            sub_4074E0(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX, index++, key_id);
+            obj_arrayfield_uint32_set(key_ring_obj, OBJ_F_KEY_RING_LIST_IDX, index++, key_id);
             cnt--;
         }
 

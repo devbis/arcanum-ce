@@ -816,7 +816,7 @@ void obj_field_string_set(int64_t obj_handle, int fld, const char* value);
 int obj_arrayfield_int32_get(int64_t obj_handle, int fld, int index);
 void obj_arrayfield_int32_set(int64_t obj_handle, int fld, int index, int value);
 unsigned int obj_arrayfield_uint32_get(int64_t obj, int fld, int index);
-void sub_4074E0(int64_t obj_handle, int fld, int index, int value);
+void obj_arrayfield_uint32_set(int64_t obj, int fld, int index, unsigned int value);
 int64_t obj_arrayfield_int64_get(int64_t obj_handle, int fld, int index);
 void obj_arrayfield_int64_set(int64_t obj_handle, int fld, int index, int64_t value);
 int64_t obj_arrayfield_handle_get(int64_t obj_handle, int fld, int index);

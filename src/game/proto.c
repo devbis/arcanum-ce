@@ -16214,24 +16214,24 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                     obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 4, v2);
                     break;
                 case PROTO_F_NORMAL_DAMAGE:
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 0, v2);
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 1, v3);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 0, v2);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 1, v3);
                     break;
                 case PROTO_F_POISON_DAMAGE:
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 2, v2);
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 3, v3);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 2, v2);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 3, v3);
                     break;
                 case PROTO_F_ELECTRICAL_DAMAGE:
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 4, v2);
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 5, v3);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 4, v2);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 5, v3);
                     break;
                 case PROTO_F_FIRE_DAMAGE:
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 6, v2);
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 7, v3);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 6, v2);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 7, v3);
                     break;
                 case PROTO_F_FATIGUE_DAMAGE:
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 8, v2);
-                    sub_4074E0(obj, OBJ_F_NPC_DAMAGE_IDX, 9, v3);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 8, v2);
+                    obj_arrayfield_uint32_set(obj, OBJ_F_NPC_DAMAGE_IDX, 9, v3);
                     break;
                 case PROTO_F_SOUND_BANK:
                     obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, v2);

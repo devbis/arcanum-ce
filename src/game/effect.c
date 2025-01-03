@@ -411,11 +411,11 @@ void effect_add(int64_t obj, int effect, int cause)
     v1 = object_hp_max(obj);
     v2 = critter_fatigue_max(obj);
 
-    sub_4074E0(obj,
+    obj_arrayfield_uint32_set(obj,
         OBJ_F_CRITTER_EFFECTS_IDX,
         obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX),
         effect);
-    sub_4074E0(obj,
+    obj_arrayfield_uint32_set(obj,
         OBJ_F_CRITTER_EFFECT_CAUSE_IDX,
         obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX),
         cause);
@@ -624,10 +624,10 @@ void sub_4EA520(int64_t obj, int start)
     end = obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECTS_IDX) - 1;
     while (start < end) {
         data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECTS_IDX, start + 1);
-        sub_4074E0(obj, OBJ_F_CRITTER_EFFECTS_IDX, start, data);
+        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, start, data);
 
         data = obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start + 1);
-        sub_4074E0(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start, data);
+        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, start, data);
     }
 
     obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, end);

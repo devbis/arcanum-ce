@@ -2181,7 +2181,7 @@ void sub_43ECF0(int64_t obj, int fld, int index, int value)
     }
 
     object_get_rect(obj, 0x7, &dirty_rect);
-    sub_4074E0(obj, fld, index, value);
+    obj_arrayfield_uint32_set(obj, fld, index, value);
 
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
     flags &= ~(OF_HAS_OVERLAYS | OF_HAS_UNDERLAYS);
@@ -2232,9 +2232,9 @@ void object_set_overlay_light(object_id_t obj, int index, unsigned int flags, ti
         }
     }
 
-    sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_FLAGS, flags);
-    sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_AID, aid);
-    sub_4074E0(obj, index, OBJ_F_OVERLAY_LIGHT_COLOR, color);
+    obj_arrayfield_uint32_set(obj, index, OBJ_F_OVERLAY_LIGHT_FLAGS, flags);
+    obj_arrayfield_uint32_set(obj, index, OBJ_F_OVERLAY_LIGHT_AID, aid);
+    obj_arrayfield_uint32_set(obj, index, OBJ_F_OVERLAY_LIGHT_COLOR, color);
     obj_field_int32_set(obj,
         OBJ_F_RENDER_FLAGS,
         obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
@@ -2651,7 +2651,7 @@ void sub_43F9F0(object_id_t obj, int fld, int index)
         current_aid = obj_arrayfield_uint32_get(obj, fld, index);
         next_aid = tig_art_id_frame_inc(current_aid);
         if (current_aid != next_aid) {
-            sub_4074E0(obj, fld, index, next_aid);
+            obj_arrayfield_uint32_set(obj, fld, index, next_aid);
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
                 obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
@@ -2677,7 +2677,7 @@ void sub_43FAB0(object_id_t obj, int fld, int index)
             ? tig_art_id_frame_dec(current_aid)
             : current_aid;
         if (current_aid != prev_aid) {
-            sub_4074E0(obj, fld, index, prev_aid);
+            obj_arrayfield_uint32_set(obj, fld, index, prev_aid);
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
                 obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_08000000);
@@ -2696,7 +2696,7 @@ void sub_43FB80(object_id_t obj, int index)
     aid = obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, index);
     if (tig_art_id_frame_get(aid) != 0) {
         aid = tig_art_id_frame_set(aid, 0);
-        sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
+        obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
         obj_field_int32_set(obj,
             OBJ_F_RENDER_FLAGS,
             obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);
@@ -2714,7 +2714,7 @@ void sub_43FBF0(object_id_t obj, int index)
     if (tig_art_anim_data(aid, &art_anim_data) == TIG_OK) {
         if (tig_art_id_frame_get(aid) != art_anim_data.num_frames - 1) {
             aid = tig_art_id_frame_set(aid, art_anim_data.num_frames - 1);
-            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
+            obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, aid);
             obj_field_int32_set(obj,
                 OBJ_F_RENDER_FLAGS,
                 obj_field_int32_get(obj, OBJ_F_RENDER_FLAGS) & ~ORF_80000000);

@@ -129,7 +129,7 @@ void bless_add(object_id_t obj, int bless)
     }
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_BLESSING_IDX);
-    sub_4074E0(obj, OBJ_F_PC_BLESSING_IDX, cnt, bless);
+    obj_arrayfield_uint32_set(obj, OBJ_F_PC_BLESSING_IDX, cnt, bless);
 
     datetime = sub_45A7C0();
     // TODO: Rethink cast.
@@ -190,7 +190,7 @@ void bless_remove(object_id_t obj, int bless)
             while (index < cnt - 1) {
                 tmp_bless = obj_arrayfield_uint32_get(obj, OBJ_F_PC_BLESSING_IDX, index + 1);
                 tmp_ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_BLESSING_TS_IDX, index + 1);
-                sub_4074E0(obj, OBJ_F_PC_BLESSING_IDX, index, tmp_bless);
+                obj_arrayfield_uint32_set(obj, OBJ_F_PC_BLESSING_IDX, index, tmp_bless);
                 obj_arrayfield_int64_set(obj, OBJ_F_PC_BLESSING_TS_IDX, index, tmp_ts);
                 index++;
             }

@@ -1397,7 +1397,7 @@ void obj_f_set_int32_with_network(int64_t obj, int fld, int index, int value)
 {
     Packet129 pkt;
 
-    sub_4074E0(obj, fld, index, value);
+    obj_arrayfield_uint32_set(obj, fld, index, value);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) != 0) {

@@ -332,7 +332,7 @@ void reputation_add(int64_t pc_obj, int reputation)
     }
 
     index = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
-    sub_4074E0(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, reputation);
+    obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, reputation);
     obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, datetime_to_uint64(sub_45A7C0()));
 
     if (player_is_pc_obj(pc_obj)) {
@@ -383,7 +383,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
         // TODO: Does not look right.
         next_rep = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, 2 * index);
         next_ts = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, 2 * index);
-        sub_4074E0(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, next_rep);
+        obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, next_rep);
         obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, next_ts);
     }
 

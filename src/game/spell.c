@@ -260,10 +260,10 @@ void spell_set_defaults(int64_t obj)
     int college;
 
     for (college = 0; college < COLLEGE_COUNT; college++) {
-        sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);
+        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college, 0);
     }
 
-    sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, COLLEGE_COUNT, -1);
+    obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, COLLEGE_COUNT, -1);
 }
 
 // 0x4B1570
@@ -618,7 +618,7 @@ void sub_4B1CF0(int64_t obj, int a2)
         || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
         if (sub_4B1C70(obj, a2)) {
             // TODO: Figure out constant meaning.
-            sub_4074E0(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, 16, a2);
+            obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, 16, a2);
         }
     }
 }

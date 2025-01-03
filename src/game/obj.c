@@ -1744,19 +1744,19 @@ unsigned int obj_arrayfield_uint32_get(int64_t obj, int fld, int index)
 }
 
 // 0x4074E0
-void sub_4074E0(int64_t obj_handle, int fld, int index, int value)
+void obj_arrayfield_uint32_set(int64_t obj, int fld, int index, unsigned int value)
 {
     Object* object;
 
-    object = obj_lock(obj_handle);
+    object = obj_lock(obj);
     if (!sub_40C260(object->type, fld)) {
         object_field_not_exists(object, fld);
-        obj_unlock(obj_handle);
+        obj_unlock(obj);
         return;
     }
 
     sub_4088B0(object, fld, index, &value);
-    obj_unlock(obj_handle);
+    obj_unlock(obj);
 }
 
 // 0x407540
@@ -2630,16 +2630,16 @@ void sub_409000(int64_t obj)
     obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, tig_color_make(255, 255, 255));
 
     for (index = 0; index < 7; index++) {
-        sub_4074E0(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
-        sub_4074E0(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
+        obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_FORE, index, TIG_ART_ID_INVALID);
+        obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_BACK, index, TIG_ART_ID_INVALID);
     }
 
     for (index = 0; index < 4; index++) {
-        sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
+        obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
     }
 
     for (index = 0; index < 4; index++) {
-        sub_4074E0(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
+        obj_arrayfield_uint32_set(obj, OBJ_F_UNDERLAY, index, TIG_ART_ID_INVALID);
     }
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);

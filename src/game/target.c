@@ -1674,46 +1674,46 @@ void sub_4F5330(int64_t a1, int64_t a2)
     desc = critter_description_get(a2, a1);
 
     value = obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 0);
-    sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 0, value + 1);
+    obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 0, value + 1);
 
     value = stat_level(a2, STAT_LEVEL);
     if (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 2)
         || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 1) == 0) {
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 2, value);
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 1, desc);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 2, value);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 1, desc);
     }
     if (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 4)
         || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 3) == 0) {
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 4, value);
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 3, desc);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 4, value);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 3, desc);
     }
 
     value = stat_level(a2, STAT_ALIGNMENT);
     if (value > 0
         && (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 6)
             || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 5) == 0)) {
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 6, value);
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 5, desc);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 6, value);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 5, desc);
     }
     if (value < 0
         && (value <= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 8)
             || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 7) == 0)) {
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 8, value);
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 7, desc);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 8, value);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 7, desc);
     }
 
     value = stat_level(a2, STAT_MAGICK_TECH_APTITUDE);
     if (value > 0
         && (value >= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 10)
             || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 9) == 0)) {
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 10, value);
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 9, desc);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 10, value);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 9, desc);
     }
     if (value < 0
         && (value <= (int)obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 12)
             || obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 11) == 0)) {
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 12, value);
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 11, desc);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 12, value);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, 11, desc);
     }
 }
 
@@ -1765,8 +1765,8 @@ void sub_4F5690(int64_t a1, int64_t a2, int a3)
 
     index = 64;
     while (obj_arrayfield_uint32_get(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index)) {
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index++, desc);
-        sub_4074E0(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index++, a3);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index++, desc);
+        obj_arrayfield_uint32_set(a1, OBJ_F_PC_LOGBOOK_EGO_IDX, index++, a3);
     }
 }
 

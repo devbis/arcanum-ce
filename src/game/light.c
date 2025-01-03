@@ -609,7 +609,7 @@ void sub_4D93B0(Light* light)
         } else {
             for (index = 0; index < 4; index++) {
                 if ((Light*)obj_arrayfield_uint32_get(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index) == light) { // TODO: x64
-                    sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index, 0); // TODO: x64
+                    obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index, 0); // TODO: x64
                     sub_4D9510(light);
                     sub_4D9570(light);
                     break;
@@ -758,7 +758,7 @@ void sub_4D9590(int64_t obj, bool a2)
                 create_info.g = g;
                 create_info.b = b;
                 create_func(&create_info, &light);
-                sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, overlay, (int)light); // TODO: x64
+                obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, overlay, (int)light); // TODO: x64
             }
         } else {
             if (light != NULL) {
@@ -790,12 +790,12 @@ void sub_4D9990(int64_t obj)
     for (index = 0; index < 4; index++) {
         light = (Light*)obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_HANDLES, index);
         if (light != NULL) {
-            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, index, light->flags);
-            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, light->art_id);
+            obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, index, light->flags);
+            obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, light->art_id);
             light_build_color(light->r, light->g, light->b, &color);
-            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_COLOR, index, color);
+            obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_COLOR, index, color);
         } else {
-            sub_4074E0(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
+            obj_arrayfield_uint32_set(obj, OBJ_F_OVERLAY_LIGHT_AID, index, TIG_ART_ID_INVALID);
         }
     }
 }
@@ -1367,7 +1367,7 @@ void light_set_flags(int64_t obj, unsigned int flags)
             light_set_flags_internal(light, flags);
         } else {
             if (obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, idx) != TIG_ART_ID_INVALID) {
-                sub_4074E0(obj,
+                obj_arrayfield_uint32_set(obj,
                     OBJ_F_OVERLAY_LIGHT_FLAGS,
                     idx,
                     obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, idx) | flags);
@@ -1399,7 +1399,7 @@ void light_unset_flags(int64_t obj, unsigned int flags)
             light_unset_flags_internal(light, flags);
         } else {
             if (obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_AID, idx) != TIG_ART_ID_INVALID) {
-                sub_4074E0(obj,
+                obj_arrayfield_uint32_set(obj,
                     OBJ_F_OVERLAY_LIGHT_FLAGS,
                     idx,
                     obj_arrayfield_uint32_get(obj, OBJ_F_OVERLAY_LIGHT_FLAGS, idx) & ~flags);
@@ -1500,7 +1500,7 @@ void light_set_flags_internal(Light* light, unsigned int flags)
                 __assume(0);
             }
 
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay, light->flags);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay, light->flags);
         }
     }
 
@@ -1551,7 +1551,7 @@ void light_unset_flags_internal(Light* light, unsigned int flags)
                 __assume(0);
             }
 
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay, light->flags);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_FLAGS, overlay, light->flags);
         }
     }
 
@@ -1670,7 +1670,7 @@ void light_inc_frame(Light* light)
                 }
             }
 
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
         }
 
         light_get_rect_internal(light, &updated_rect);
@@ -1720,7 +1720,7 @@ void light_dec_frame(Light* light)
                 }
             }
 
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
         }
 
         light_get_rect_internal(light, &updated_rect);
@@ -1770,7 +1770,7 @@ void light_cycle_rotation(Light* light)
                 }
             }
 
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, overlay, light->art_id);
         }
 
         light_get_rect_internal(light, &updated_rect);
@@ -1817,13 +1817,13 @@ void light_set_aid(Light* light, tig_art_id_t art_id)
         if ((light->flags & LF_08000000) != 0) {
             obj_field_int32_set(light->obj, OBJ_F_LIGHT_AID, art_id);
         } else if ((light->flags & LF_OVERLAY_0) != 0) {
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 0, art_id);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 0, art_id);
         } else if ((light->flags & LF_OVERLAY_1) != 0) {
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 1, art_id);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 1, art_id);
         } else if ((light->flags & LF_OVERLAY_2) != 0) {
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 2, art_id);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 2, art_id);
         } else if ((light->flags & LF_OVERLAY_3) != 0) {
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 3, art_id);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_AID, 3, art_id);
         }
     }
 }
@@ -1869,7 +1869,7 @@ void light_set_custom_color(Light* light, uint8_t r, uint8_t g, uint8_t b)
                 __assume(0);
             }
 
-            sub_4074E0(light->obj, OBJ_F_OVERLAY_LIGHT_COLOR, overlay, color);
+            obj_arrayfield_uint32_set(light->obj, OBJ_F_OVERLAY_LIGHT_COLOR, overlay, color);
         }
     }
 
