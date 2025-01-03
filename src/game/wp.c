@@ -28,7 +28,7 @@ static ViewOptions wp_view_options;
 static IsoInvalidateRectFunc* wp_iso_window_invalidate_rect;
 
 // 0x5FC64C
-static bool dword_5FC64C;
+static bool wp_enabled;
 
 // 0x5FC650
 static bool wp_initialized;
@@ -71,7 +71,7 @@ bool wp_init(GameInitInfo* init_info)
         stru_5FC668[index].obj = OBJ_HANDLE_NULL;
     }
 
-    dword_5FC64C = true;
+    wp_enabled = true;
     wp_initialized = true;
 
     return true;
@@ -104,15 +104,15 @@ bool wp_update_view(ViewOptions* view_options)
 }
 
 // 0x4BFDD0
-bool sub_4BFDD0()
+bool wp_is_enabled()
 {
-    return dword_5FC64C;
+    return wp_enabled;
 }
 
 // 0x4BFDE0
-void sub_4BFDE0()
+void wp_toggle()
 {
-    dword_5FC64C = !dword_5FC64C;
+    wp_enabled = !wp_enabled;
 }
 
 // 0x4BFE00
@@ -120,7 +120,7 @@ void wp_render(UnknownContext* render_info)
 {
     int index;
 
-    if (!dword_5FC64C) {
+    if (!wp_enabled) {
         return;
     }
 
