@@ -244,28 +244,30 @@ bool sub_4C0930(int64_t loc)
 }
 
 // 0x4C0980
-void sub_4C0980(int64_t loc, int64_t triggerer_obj)
+void tile_script_exec(int64_t loc, int64_t triggerer_obj)
 {
     TileScript tile_script;
     Script scr;
     ScriptInvocation invocation;
 
-    if (tile_script_get(loc, &tile_script)) {
-        scr = tile_script.scr;
+    if (!tile_script_get(loc, &tile_script)) {
+        return;
+    }
 
-        invocation.script = &(tile_script.scr);
-        invocation.attachee_obj = OBJ_HANDLE_NULL;
-        invocation.extra_obj = OBJ_HANDLE_NULL;
-        invocation.line = 0;
-        invocation.field_20 = SAP_USE;
-        invocation.triggerer_obj = triggerer_obj;
-        sub_4449B0(&invocation);
+    scr = tile_script.scr;
 
-        if (invocation.script->num != scr.num
-            || invocation.script->hdr.flags != scr.hdr.flags
-            || invocation.script->hdr.counters != scr.hdr.counters) {
-            sub_4C0830(&tile_script);
-        }
+    invocation.script = &(tile_script.scr);
+    invocation.attachee_obj = OBJ_HANDLE_NULL;
+    invocation.extra_obj = OBJ_HANDLE_NULL;
+    invocation.line = 0;
+    invocation.field_20 = SAP_USE;
+    invocation.triggerer_obj = triggerer_obj;
+    sub_4449B0(&invocation);
+
+    if (invocation.script->num != scr.num
+        || invocation.script->hdr.flags != scr.hdr.flags
+        || invocation.script->hdr.counters != scr.hdr.counters) {
+        sub_4C0830(&tile_script);
     }
 }
 

@@ -5150,7 +5150,7 @@ void sub_444270(int64_t obj, int a2)
     }
 
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
-        sub_4C0980(loc, obj);
+        tile_script_exec(loc, obj);
     }
 
     v1 = sub_43C570();

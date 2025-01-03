@@ -3998,7 +3998,7 @@ void sub_455350(int64_t obj, int64_t target_loc)
                 break;
             }
 
-            sub_4C0980(source_loc, obj);
+            tile_script_exec(source_loc, obj);
         }
 
         sub_424070(obj, 5, false, true);
