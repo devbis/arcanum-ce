@@ -19,7 +19,7 @@ static bool sub_4C0280(int64_t location, TigRect* rect);
 static void sub_4C0370();
 
 // 0x5FC638
-static int dword_5FC638;
+static int wp_iso_art_num_frames;
 
 // 0x5FC640
 static ViewOptions wp_view_options;
@@ -37,7 +37,7 @@ static bool wp_initialized;
 static int dword_5FC654;
 
 // 0x5FC658
-static tig_art_id_t dword_5FC658;
+static tig_art_id_t wp_iso_art_id;
 
 // 0x5FC65C
 static bool wp_editor;
@@ -59,13 +59,13 @@ bool wp_init(GameInitInfo* init_info)
     wp_editor = init_info->editor;
     wp_view_options.type = VIEW_TYPE_ISOMETRIC;
 
-    tig_art_interface_id_create(672, 0, 0, 0, &dword_5FC658);
+    tig_art_interface_id_create(672, 0, 0, 0, &wp_iso_art_id);
 
-    if (tig_art_anim_data(dword_5FC658, &art_anim_data) != TIG_OK) {
+    if (tig_art_anim_data(wp_iso_art_id, &art_anim_data) != TIG_OK) {
         return false;
     }
 
-    dword_5FC638 = art_anim_data.num_frames;
+    wp_iso_art_num_frames = art_anim_data.num_frames;
 
     for (index = 0; index < 32; index++) {
         stru_5FC668[index].obj = OBJ_HANDLE_NULL;
@@ -203,7 +203,7 @@ void sub_4C0140(S5FC668* a1, UnknownContext* render_info)
             while (node != NULL) {
                 if (tig_rect_intersection(&wp_rect, &(node->rect), &dst_rect) == TIG_OK) {
                     if (art_id == TIG_ART_ID_INVALID) {
-                        art_id = tig_art_id_frame_set(dword_5FC658, idx < dword_5FC638 ? idx : dword_5FC638 - 1);
+                        art_id = tig_art_id_frame_set(wp_iso_art_id, idx < wp_iso_art_num_frames ? idx : wp_iso_art_num_frames - 1);
                         art_blit_info.art_id = art_id;
                     }
 
@@ -237,7 +237,7 @@ bool sub_4C0280(int64_t location, TigRect* rect)
         return false;
     }
 
-    if (tig_art_frame_data(dword_5FC658, &art_frame_data) != TIG_OK) {
+    if (tig_art_frame_data(wp_iso_art_id, &art_frame_data) != TIG_OK) {
         return false;
     }
 
