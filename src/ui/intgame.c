@@ -6431,7 +6431,7 @@ void sub_554830(int64_t a1, int64_t a2)
         v1 = sub_4C62E0(a1, GET_BASIC_SKILL(skill), a2);
     }
 
-    sub_4C7090(&skill_invocation);
+    skill_invocation_init(&skill_invocation);
     sub_4440E0(a1, &(skill_invocation.source));
     sub_4440E0(a2, &(skill_invocation.target));
     sub_4440E0(weapon_obj, &(skill_invocation.item));

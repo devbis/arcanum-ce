@@ -163,7 +163,7 @@ void sub_571CB0(S4F2810* a1)
     if (obj_field_int32_get(qword_6810D8, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
         && !tig_kb_is_key_pressed(DIK_LCONTROL)
         && (obj_field_int32_get(qword_6810D8, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
-        sub_4C7090(&skill_invocation);
+        skill_invocation_init(&skill_invocation);
         sub_4440E0(pc_obj, &(skill_invocation.source));
         if (!a1->is_loc) {
             sub_4440E0(a1->obj, &(skill_invocation.target));

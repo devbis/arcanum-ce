@@ -6843,7 +6843,7 @@ bool sub_428E10(AnimRunInfo* run_info)
         }
     }
 
-    sub_4C7090(&skill_invocation);
+    skill_invocation_init(&skill_invocation);
     skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
     skill_invocation.modifier = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
 
@@ -6927,7 +6927,7 @@ bool sub_429160(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4C7090(&skill_invocation);
+    skill_invocation_init(&skill_invocation);
     skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
     skill_invocation.modifier = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
     sub_4440E0(source_obj, &(skill_invocation.source));
@@ -7707,7 +7707,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4C7090(&skill_invocation);
+    skill_invocation_init(&skill_invocation);
 
     skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
 
@@ -7794,7 +7794,7 @@ bool sub_42A4E0(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4C7090(&skill_invocation);
+    skill_invocation_init(&skill_invocation);
 
     skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
 

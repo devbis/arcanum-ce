@@ -3890,7 +3890,7 @@ void sub_579B60(int64_t obj)
     SkillInvocation skill_invocation;
 
     if (sub_579840(obj, 1)) {
-        sub_4C7090(&skill_invocation);
+        skill_invocation_init(&skill_invocation);
         sub_4440E0(qword_6814F8, &(skill_invocation.source));
         sub_4440E0(qword_682C78, &(skill_invocation.target));
         sub_4440E0(obj, &(skill_invocation.item));

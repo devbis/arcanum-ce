@@ -146,7 +146,7 @@ bool sub_4C6F90(int64_t a1, int a2, int64_t a3, int a4);
 bool sub_4C6FD0(int64_t a1, int64_t a2, int64_t a3);
 bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3);
 bool sub_4C7050(int64_t a1, int a2, int64_t a3);
-void sub_4C7090(SkillInvocation* skill_invocation);
+void skill_invocation_init(SkillInvocation* skill_invocation);
 bool sub_4C7120(SkillInvocation* skill_invocation);
 bool sub_4C7160(SkillInvocation* skill_invocation);
 int sub_4C8430(SkillInvocation* skill_invocation);

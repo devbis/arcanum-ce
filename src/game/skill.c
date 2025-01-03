@@ -1059,7 +1059,7 @@ bool sub_4C7050(int64_t a1, int a2, int64_t a3)
 }
 
 // 0x4C7090
-void sub_4C7090(SkillInvocation* skill_invocation)
+void skill_invocation_init(SkillInvocation* skill_invocation)
 {
     skill_invocation->flags = 0;
     sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation->item));
@@ -1997,7 +1997,7 @@ void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0) {
-        sub_4C7090(&skill_invocation);
+        skill_invocation_init(&skill_invocation);
         skill_invocation.flags |= 0x1000;
         skill_invocation.skill = SKILL_REPAIR;
         sub_4440E0(a2, &(skill_invocation.source));

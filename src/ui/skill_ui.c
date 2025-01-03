@@ -196,7 +196,7 @@ void skill_ui_preprocess(int64_t obj, int type)
     dword_5CB270 = type;
 
     tgt = qword_5CB250[type];
-    sub_4C7090(&skill_invocation);
+    skill_invocation_init(&skill_invocation);
 
     switch (type) {
     case 0:
@@ -307,7 +307,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
         return;
     case SKILL_REPAIR:
         if (!a1->is_loc) {
-            sub_4C7090(&skill_invocation);
+            skill_invocation_init(&skill_invocation);
             sub_4440E0(obj, &(skill_invocation.source));
             sub_4440E0(a1->obj, &(skill_invocation.target));
             sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation.item));
@@ -318,7 +318,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
         return;
     case SKILL_DISARM_TRAPS:
         if (!a1->is_loc && sub_4B7CD0(obj, 4)) {
-            sub_4C7090(&skill_invocation);
+            skill_invocation_init(&skill_invocation);
             sub_4440E0(obj, &(skill_invocation.source));
             sub_4440E0(a1->obj, &(skill_invocation.target));
             sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation.item));

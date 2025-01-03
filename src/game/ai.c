@@ -4030,7 +4030,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
         int diff;
 
         prowling = sub_4C62E0(target_obj, BASIC_SKILL_PROWLING, source_obj);
-        sub_4C7090(&skill_invocation);
+        skill_invocation_init(&skill_invocation);
         sub_4440E0(target_obj, &(skill_invocation.source));
         sub_4440E0(source_obj, &(skill_invocation.target));
         skill_invocation.flags |= 0x4000;
@@ -4100,7 +4100,7 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
         int diff;
 
         prowling = sub_4C62E0(a2, BASIC_SKILL_PROWLING, a1);
-        sub_4C7090(&script_invocation);
+        skill_invocation_init(&script_invocation);
         sub_4440E0(a2, &(script_invocation.source));
         sub_4440E0(a1, &(script_invocation.target));
         script_invocation.flags |= 0x2000;

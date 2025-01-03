@@ -197,7 +197,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
     }
 
     if (!sub_458A80(OSF_DETECTING_INVISIBLE)) {
-        sub_4C7090(&skill_invocation);
+        skill_invocation_init(&skill_invocation);
         sub_4440E0(pc_obj, &(skill_invocation.source));
         sub_4440E0(trap_obj, &(skill_invocation.target));
         skill_invocation.skill = SKILL_SPOT_TRAP;
