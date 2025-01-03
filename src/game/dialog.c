@@ -1896,14 +1896,14 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
         switch (act) {
         case DIALOG_ACTION_GOLD:
             if (value > 0) {
-                sub_464830(OBJ_HANDLE_NULL, a1->pc_obj, value, OBJ_HANDLE_NULL);
+                item_gold_transfer(OBJ_HANDLE_NULL, a1->pc_obj, value, OBJ_HANDLE_NULL);
             } else if (value < 0) {
                 int total_gold;
 
                 value = -value;
 
                 total_gold = item_gold_get(a1->pc_obj);
-                sub_464830(a1->pc_obj, a1->npc_obj, value, OBJ_HANDLE_NULL);
+                item_gold_transfer(a1->pc_obj, a1->npc_obj, value, OBJ_HANDLE_NULL);
 
                 value -= total_gold;
                 if (value > 0) {
@@ -1915,7 +1915,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                         }
 
                         total_gold = item_gold_get(node->obj);
-                        sub_464830(node->obj, a1->npc_obj, value, OBJ_HANDLE_NULL);
+                        item_gold_transfer(node->obj, a1->npc_obj, value, OBJ_HANDLE_NULL);
 
                         node = node->next;
                     }
@@ -3313,7 +3313,7 @@ void sub_418B30(int a1, DialogEntryNode* a2)
             pkt.field_40.type = OID_TYPE_NULL;
         }
 
-        sub_464830(a2->pc_obj, a2->npc_obj, a1, OBJ_HANDLE_NULL);
+        item_gold_transfer(a2->pc_obj, a2->npc_obj, a1, OBJ_HANDLE_NULL);
         sub_414810(a2->field_17F0[2], a2->field_1804[2], a2->field_1818[2], 2, a2);
     }
 }

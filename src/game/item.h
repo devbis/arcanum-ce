@@ -107,7 +107,7 @@ void sub_464470(int64_t obj, int* a2, int* a3);
 int item_total_attack(int64_t critter_obj);
 int item_total_defence(int64_t critter_obj);
 int item_gold_get(int64_t obj);
-bool sub_464830(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_obj);
+bool item_gold_transfer(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_obj);
 int64_t item_gold_create(int amount, int64_t loc);
 int64_t item_wield_get(int64_t obj, int inventory_location);
 bool item_wield_set(int64_t item_obj, int inventory_location);

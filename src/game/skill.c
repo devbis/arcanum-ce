@@ -1190,7 +1190,7 @@ bool sub_4C7160(SkillInvocation* skill_invocation)
                             qty = 100;
                         }
 
-                        moved = sub_464830(target_obj, source_obj, qty, item_obj);
+                        moved = item_gold_transfer(target_obj, source_obj, qty, item_obj);
                         break;
                     }
                     case OBJ_TYPE_AMMO: {
@@ -1265,7 +1265,7 @@ bool sub_4C7160(SkillInvocation* skill_invocation)
                         if (qty > 100) {
                             qty = 100;
                         }
-                        moved = sub_464830(source_obj, target_obj, qty, item_obj);
+                        moved = item_gold_transfer(source_obj, target_obj, qty, item_obj);
                         break;
                     }
                     case OBJ_TYPE_AMMO: {
@@ -2003,7 +2003,7 @@ void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4)
         sub_4440E0(a2, &(skill_invocation.source));
         sub_4440E0(a1, &(skill_invocation.target));
         sub_4C7160(&skill_invocation);
-        sub_464830(a3, a2, a4, OBJ_HANDLE_NULL);
+        item_gold_transfer(a3, a2, a4, OBJ_HANDLE_NULL);
         sub_4EE3A0(a3, a1);
     } else {
         pkt.type = 126;

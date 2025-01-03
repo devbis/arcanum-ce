@@ -642,7 +642,7 @@ void sub_572640(int64_t a1, int64_t a2, int a3)
             v3 = sub_462540(v1, v2, 0);
             while (v3 != OBJ_HANDLE_NULL) {
                 amt = item_gold_get(v3);
-                sub_464830(v1, v2, amt, v3);
+                item_gold_transfer(v1, v2, amt, v3);
                 v3 = sub_462540(v1, v2, 0);
             }
         }

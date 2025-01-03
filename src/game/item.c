@@ -2073,7 +2073,7 @@ void sub_463E20(int64_t obj)
 
         qty = random_between(set.default_rate, set.default_basic_prototype);
         if (qty > 0) {
-            sub_464830(OBJ_HANDLE_NULL, obj, qty, OBJ_HANDLE_NULL);
+            item_gold_transfer(OBJ_HANDLE_NULL, obj, qty, OBJ_HANDLE_NULL);
         }
 
         for (idx = 0; idx < set.field_4; idx++) {
@@ -2396,7 +2396,7 @@ int64_t item_gold_obj(int64_t obj)
 }
 
 // 0x464830
-bool sub_464830(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_obj)
+bool item_gold_transfer(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_obj)
 {
     int from_qty;
     int to_qty;
@@ -4116,7 +4116,7 @@ void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4)
         flags = obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS);
         flags |= OIF_IDENTIFIED;
         obj_field_int32_set(a1, OBJ_F_ITEM_FLAGS, flags);
-        sub_464830(a3, a2, a4, OBJ_HANDLE_NULL);
+        item_gold_transfer(a3, a2, a4, OBJ_HANDLE_NULL);
         sub_4EE3A0(a3, a1);
     } else {
         pkt.type = 125;

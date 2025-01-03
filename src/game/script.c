@@ -1806,9 +1806,9 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int value = script_get_value(action->op_type[1], action->op_value[1], state);
         if (value > 0) {
-            sub_464830(OBJ_HANDLE_NULL, obj, value, OBJ_HANDLE_NULL);
+            item_gold_transfer(OBJ_HANDLE_NULL, obj, value, OBJ_HANDLE_NULL);
         } else {
-            sub_464830(obj, OBJ_HANDLE_NULL, -value, OBJ_HANDLE_NULL);
+            item_gold_transfer(obj, OBJ_HANDLE_NULL, -value, OBJ_HANDLE_NULL);
         }
         return NEXT;
     }

@@ -265,7 +265,7 @@ void sub_4C26F0(int64_t obj)
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_MONEY;
     mes_get_msg(background_mes_file, &mes_file_entry);
 
-    sub_464830(OBJ_HANDLE_NULL, obj, atoi(mes_file_entry.str), OBJ_HANDLE_NULL);
+    item_gold_transfer(OBJ_HANDLE_NULL, obj, atoi(mes_file_entry.str), OBJ_HANDLE_NULL);
 
     mes_file_entry.num = BACKGROUND_BLOCK_SIZE * background + BACKGROUND_F_ITEMS;
     if (mes_search(background_mes_file, &mes_file_entry)) {
