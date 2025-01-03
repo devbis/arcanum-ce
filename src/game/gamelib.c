@@ -188,7 +188,7 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
     { "WallCheck", wallcheck_init, wallcheck_reset, NULL, NULL, wallcheck_exit, wallcheck_ping, NULL, NULL, NULL, NULL },
     { "LI", li_init, NULL, NULL, NULL, li_exit, NULL, NULL, NULL, NULL, li_resize },
     { "CI", ci_init, NULL, NULL, NULL, ci_exit, NULL, NULL, NULL, NULL, NULL },
-    { "TileBlock", tileblock_init, NULL, NULL, NULL, tileblock_exit, NULL, sub_4BB060, NULL, NULL, tileblock_resize },
+    { "TileBlock", tileblock_init, NULL, NULL, NULL, tileblock_exit, NULL, tileblock_update_view, NULL, NULL, tileblock_resize },
     { "MT-Obj-Node", mt_obj_node_init, NULL, NULL, NULL, mt_obj_node_exit, NULL, NULL, NULL, NULL, NULL },
     { "MonsterGen", monstergen_init, monstergen_reset, NULL, NULL, monstergen_exit, NULL, NULL, monstergen_save, monstergen_load, monstergen_resize },
     { "Party", party_init, party_reset, NULL,0, party_exit, NULL, NULL, NULL, NULL, NULL },

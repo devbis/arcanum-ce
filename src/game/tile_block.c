@@ -49,7 +49,7 @@ void tileblock_exit()
 }
 
 // 0x4BB060
-bool sub_4BB060(ViewOptions* view_info)
+bool tileblock_update_view(ViewOptions* view_info)
 {
     tileblock_view_options = *view_info;
     return true;

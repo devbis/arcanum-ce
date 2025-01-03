@@ -5,7 +5,7 @@
 
 bool tileblock_init(GameInitInfo* init_info);
 void tileblock_exit();
-bool sub_4BB060(ViewOptions* view_info);
+bool tileblock_update_view(ViewOptions* view_info);
 void tileblock_resize(GameResizeInfo* resize_info);
 bool tileblock_is_visible();
 void tileblock_toggle();
