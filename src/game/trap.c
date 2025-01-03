@@ -212,7 +212,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
             }
         }
 
-        if (!sub_4C7160(&skill_invocation)) {
+        if (!skill_invocation_run(&skill_invocation)) {
             return false;
         }
 

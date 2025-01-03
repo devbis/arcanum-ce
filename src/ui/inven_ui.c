@@ -3896,7 +3896,7 @@ void sub_579B60(int64_t obj)
         sub_4440E0(obj, &(skill_invocation.item));
         skill_invocation.skill = SKILL_GAMBLING;
         skill_invocation.modifier = 0;
-        if (sub_4C7160(&skill_invocation)) {
+        if (skill_invocation_run(&skill_invocation)) {
             // FIXME: Unclear flags.
             sub_5788C0(obj, qword_6814F8, 0, (skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0 ? 0x12 : 0x11);
             dword_681440 = -1;

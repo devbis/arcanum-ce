@@ -368,7 +368,7 @@ int sub_57A6A0(int index)
 // 0x57A6B0
 void sub_57A6B0(SkillInvocation* skill_invocation)
 {
-    sub_4C7160(skill_invocation);
+    skill_invocation_run(skill_invocation);
 }
 
 // 0x57A6C0

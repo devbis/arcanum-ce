@@ -6867,7 +6867,7 @@ bool sub_428E10(AnimRunInfo* run_info)
         skill_invocation.flags |= 0x1000;
     }
 
-    sub_4C7160(&skill_invocation);
+    skill_invocation_run(&skill_invocation);
 
     return true;
 }
@@ -6942,7 +6942,7 @@ bool sub_429160(AnimRunInfo* run_info)
         skill_invocation.flags |= 0x02;
     }
 
-    sub_4C7160(&skill_invocation);
+    skill_invocation_run(&skill_invocation);
 
     return true;
 }
@@ -7726,7 +7726,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
         skill_invocation.flags |= 0x2;
     }
 
-    sub_4C7160(&skill_invocation);
+    skill_invocation_run(&skill_invocation);
 
     if ((skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0) {
         run_info->field_C |= 0x40000;
@@ -7813,7 +7813,7 @@ bool sub_42A4E0(AnimRunInfo* run_info)
         skill_invocation.flags |= 0x2;
     }
 
-    sub_4C7160(&skill_invocation);
+    skill_invocation_run(&skill_invocation);
 
     return true;
 }

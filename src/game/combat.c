@@ -931,7 +931,7 @@ int sub_4B3170(CombatContext* combat)
                 skill_invocation.modifier -= 30;
             }
 
-            if (!sub_4C7160(&skill_invocation)) {
+            if (!skill_invocation_run(&skill_invocation)) {
                 return 0;
             }
 
@@ -948,7 +948,7 @@ int sub_4B3170(CombatContext* combat)
                 skill_invocation_init(&skill_invocation);
                 sub_4440E0(combat->target_obj, &(skill_invocation.source));
                 skill_invocation.skill = SKILL_DODGE;
-                if (!sub_4C7160(&skill_invocation)) {
+                if (!skill_invocation_run(&skill_invocation)) {
                     return 0;
                 }
 

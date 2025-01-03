@@ -151,7 +151,7 @@ bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3);
 bool sub_4C7050(int64_t a1, int a2, int64_t a3);
 void skill_invocation_init(SkillInvocation* skill_invocation);
 bool sub_4C7120(SkillInvocation* skill_invocation);
-bool sub_4C7160(SkillInvocation* skill_invocation);
+bool skill_invocation_run(SkillInvocation* skill_invocation);
 int sub_4C8430(SkillInvocation* skill_invocation);
 void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4);
 bool get_follower_skills(int64_t obj);
