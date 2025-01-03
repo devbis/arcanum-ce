@@ -3898,7 +3898,7 @@ void sub_579B60(int64_t obj)
         skill_invocation.modifier = 0;
         if (sub_4C7160(&skill_invocation)) {
             // FIXME: Unclear flags.
-            sub_5788C0(obj, qword_6814F8, 0, (skill_invocation.flags & 0x1) != 0 ? 0x12 : 0x11);
+            sub_5788C0(obj, qword_6814F8, 0, (skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0 ? 0x12 : 0x11);
             dword_681440 = -1;
         }
     }

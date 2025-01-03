@@ -7728,7 +7728,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
 
     sub_4C7160(&skill_invocation);
 
-    if ((skill_invocation.flags & 0x1) != 0) {
+    if ((skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0) {
         run_info->field_C |= 0x40000;
     }
 

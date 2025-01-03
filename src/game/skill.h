@@ -85,6 +85,9 @@ typedef struct SkillCallbacks {
 
 static_assert(sizeof(SkillCallbacks) == 0x24, "wrong size");
 
+#define SKILL_INVOCATION_SUCCESS 0x00000001
+#define SKILL_INVOCATION_CRITICAL 0x00000010
+
 typedef struct SkillInvocation {
     /* 0000 */ FollowerInfo source;
     /* 0030 */ FollowerInfo target;

@@ -935,11 +935,11 @@ int sub_4B3170(CombatContext* combat)
                 return 0;
             }
 
-            if ((skill_invocation.flags & 0x1) != 0) {
+            if ((skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0) {
                 combat->flags |= 0x02;
             }
 
-            if ((skill_invocation.flags & 0x10) != 0) {
+            if ((skill_invocation.flags & SKILL_INVOCATION_CRITICAL) != 0) {
                 combat->flags |= 0x04;
             }
 

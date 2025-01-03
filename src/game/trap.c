@@ -216,7 +216,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
             return false;
         }
 
-        if ((skill_invocation.flags & 0x1) == 0) {
+        if ((skill_invocation.flags & SKILL_INVOCATION_SUCCESS) == 0) {
             return false;
         }
     }

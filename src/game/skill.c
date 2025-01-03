@@ -1585,15 +1585,15 @@ bool sub_4C7160(SkillInvocation* skill_invocation)
     }
 
     if (is_success) {
-        skill_invocation->flags |= 0x1;
+        skill_invocation->flags |= SKILL_INVOCATION_SUCCESS;
     } else {
-        skill_invocation->flags &= ~0x1;
+        skill_invocation->flags &= ~SKILL_INVOCATION_SUCCESS;
     }
 
     if (is_critical) {
-        skill_invocation->flags |= 0x10;
+        skill_invocation->flags |= SKILL_INVOCATION_CRITICAL;
     } else {
-        skill_invocation->flags &= ~0x10;
+        skill_invocation->flags &= ~SKILL_INVOCATION_CRITICAL;
     }
 
     return true;
