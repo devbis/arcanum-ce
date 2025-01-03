@@ -6,10 +6,10 @@
 #include "game/obj.h"
 #include "game/stat.h"
 
-static void sub_4F52D0(int64_t obj, int index);
+static void fate_apply(int64_t obj, int index);
 
 // 0x5BC48C
-static int dword_5BC48C[12] = {
+static unsigned int fate_flags[FATE_COUNT] = {
     0x0000,
     0x0001,
     0x0002,
@@ -25,26 +25,27 @@ static int dword_5BC48C[12] = {
 };
 
 // 0x603D48
-static void(*dword_603D48)(int64_t obj, int index);
+static void(*fate_callback)(int64_t obj, int index);
 
 // 0x4F5090
-bool sub_4F5090(int64_t obj, int index)
+bool fate_is_activated(int64_t obj, int fate)
 {
-    return (obj_field_int32_get(obj, OBJ_F_PC_FLAGS_FATE) & dword_5BC48C[index]) != 0;
+    return (obj_field_int32_get(obj, OBJ_F_PC_FLAGS_FATE) & fate_flags[fate]) != 0;
 }
 
 // 0x4F50C0
-bool sub_4F50C0(int64_t obj, int index)
+bool fate_activate(int64_t obj, int fate)
 {
     unsigned int flags;
-    Packet36 pkt;
     int fate_points;
 
     if (!sub_4A2BA0()) {
+        PacketFateStateSet pkt;
+
         pkt.type = 36;
-        sub_4440E0(obj, &(pkt.field_8));
-        pkt.field_38 = index;
-        pkt.field_3C = 1;
+        sub_4440E0(obj, &(pkt.oid));
+        pkt.fate = fate;
+        pkt.action = 1;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
@@ -53,7 +54,7 @@ bool sub_4F50C0(int64_t obj, int index)
     }
 
     flags = obj_field_int32_get(obj, OBJ_F_PC_FLAGS_FATE);
-    if ((dword_5BC48C[index] & flags) != 0) {
+    if ((fate_flags[fate] & flags) != 0) {
         return false;
     }
 
@@ -64,27 +65,28 @@ bool sub_4F50C0(int64_t obj, int index)
 
     stat_set_base(obj, STAT_FATE_POINTS, fate_points - 1);
 
-    if (dword_5BC48C[index] != 0) {
-        obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags | dword_5BC48C[index]);
+    if (fate_flags[fate] != 0) {
+        obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags | fate_flags[fate]);
     } else {
-        sub_4F52D0(obj, index);
+        fate_apply(obj, fate);
     }
 
     return true;
 }
 
 // 0x4F51B0
-bool sub_4F51B0(int64_t obj, int index)
+bool fate_deactivate(int64_t obj, int fate)
 {
     unsigned int flags;
-    Packet36 pkt;
     int fate_points;
 
     if (!sub_4A2BA0()) {
+        PacketFateStateSet pkt;
+
         pkt.type = 36;
-        sub_4440E0(obj, &(pkt.field_8));
-        pkt.field_38 = index;
-        pkt.field_3C = 0;
+        sub_4440E0(obj, &(pkt.oid));
+        pkt.fate = fate;
+        pkt.action = 0;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
@@ -93,11 +95,11 @@ bool sub_4F51B0(int64_t obj, int index)
     }
 
     flags = obj_field_int32_get(obj, OBJ_F_PC_FLAGS_FATE);
-    if ((dword_5BC48C[index] & flags) == 0) {
+    if ((fate_flags[fate] & flags) == 0) {
         return false;
     }
 
-    obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags & ~dword_5BC48C[index]);
+    obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags & ~fate_flags[fate]);
 
     fate_points = stat_get_base(obj, STAT_FATE_POINTS);
     stat_set_base(obj, STAT_FATE_POINTS, fate_points + 1);
@@ -106,41 +108,41 @@ bool sub_4F51B0(int64_t obj, int index)
 }
 
 // 0x4F5270
-bool sub_4F5270(int64_t obj, int index)
+bool fate_resolve(int64_t obj, int fate)
 {
     unsigned int flags;
 
     flags = obj_field_int32_get(obj, OBJ_F_PC_FLAGS_FATE);
-    if ((flags & dword_5BC48C[index]) == 0) {
+    if ((flags & fate_flags[fate]) == 0) {
         return false;
     }
 
-    flags &= ~dword_5BC48C[index];
+    flags &= ~fate_flags[fate];
     obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags);
 
-    if (dword_603D48 != NULL) {
-        dword_603D48(obj, index);
+    if (fate_callback != NULL) {
+        fate_callback(obj, fate);
     }
 
     return true;
 }
 
 // 0x4F52D0
-void sub_4F52D0(int64_t obj, int index)
+void fate_apply(int64_t obj, int fate)
 {
-    if (index == 0) {
+    if (fate == FATE_FULL_HEAL) {
         object_hp_damage_set(obj, 0);
         stat_set_base(obj, STAT_POISON_LEVEL, 0);
         critter_fatigue_damage_set(obj, 0);
     }
 
-    if (dword_603D48 != NULL) {
-        dword_603D48(obj, index);
+    if (fate_callback != NULL) {
+        fate_callback(obj, fate);
     }
 }
 
 // 0x4F5320
-void sub_4F5320(void(*func)(int64_t obj, int index))
+void fate_set_callback(FateCallback* cb)
 {
-    dword_603D48 = func;
+    fate_callback = cb;
 }

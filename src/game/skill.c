@@ -1142,28 +1142,28 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
     if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if (basic_skill == BASIC_SKILL_GAMBLING
-            && sub_4F5270(source_obj, 6)) {
+            && fate_resolve(source_obj, FATE_CRIT_SUCCESS_GAMBLING)) {
             is_success = true;
             is_critical = true;
         } else if (basic_skill == BASIC_SKILL_HEAL
-            && sub_4F5270(source_obj, 7)) {
+            && fate_resolve(source_obj, FATE_CRIT_SUCCESS_HEAL)) {
             is_success = true;
             is_critical = true;
         } else if (basic_skill == BASIC_SKILL_PICK_POCKET
-            && sub_4F5270(source_obj, 8)) {
+            && fate_resolve(source_obj, FATE_CRIT_SUCCESS_PICK_POCKET)) {
             is_success = true;
             is_critical = true;
         } else if (tech_skill == TECH_SKILL_REPAIR
-            && sub_4F5270(source_obj, 9)) {
+            && fate_resolve(source_obj, FATE_CRIT_SUCCESS_REPAIR)) {
             is_success = true;
             is_critical = true;
             is_fate = true;
         } else if (tech_skill == TECH_SKILL_PICK_LOCKS
-            && sub_4F5270(source_obj, 10)) {
+            && fate_resolve(source_obj, FATE_CRIT_SUCCESS_PICK_LOCKS)) {
             is_success = true;
             is_critical = true;
         } else if (tech_skill == TECH_SKILL_DISARM_TRAPS
-            && sub_4F5270(source_obj, 11)) {
+            && fate_resolve(source_obj, FATE_CRIT_SUCCESS_DISARM_TRAPS)) {
             is_success = true;
             is_critical = true;
         }

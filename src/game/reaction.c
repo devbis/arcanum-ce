@@ -338,7 +338,7 @@ void sub_4C1020(int64_t npc_obj, int64_t pc_obj)
     }
 
     v1 = sub_4C1290(npc_obj, pc_obj);
-    if (v1 < 100 && sub_4F5270(pc_obj, 1)) {
+    if (v1 < 100 && fate_resolve(pc_obj, FATE_FORCE_GOOD_REACTION)) {
         v1 = 100;
     }
 

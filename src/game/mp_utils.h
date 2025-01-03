@@ -287,15 +287,15 @@ typedef struct Packet35 {
 
 static_assert(sizeof(Packet35) == 0x28, "wrong size");
 
-typedef struct Packet36 {
+typedef struct PacketFateStateSet {
     /* 0000 */ int type;
     /* 0004 */ int field_4;
-    /* 0008 */ FollowerInfo field_8;
-    /* 0038 */ int field_38;
-    /* 003C */ int field_3C;
-} Packet36;
+    /* 0008 */ FollowerInfo oid;
+    /* 0038 */ int fate;
+    /* 003C */ int action;
+} PacketFateStateSet;
 
-static_assert(sizeof(Packet36) == 0x40, "wrong size");
+static_assert(sizeof(PacketFateStateSet) == 0x40, "wrong size");
 
 typedef struct Packet37 {
     int type;

@@ -3257,7 +3257,7 @@ bool sub_4537B0()
 
     if (dword_5E75F0->parent_obj.obj != stru_5E6D28.field_20) {
         if (obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_TYPE) == OBJ_TYPE_PC
-            && sub_4F5270(stru_5E6D28.field_20, 4)) {
+            && fate_resolve(stru_5E6D28.field_20, FATE_SAVE_AGAINST_MAGICK)) {
             dword_5E75A0 = 100;
             dword_5E75F0->field_144 = 10;
         } else {
@@ -6448,7 +6448,7 @@ bool sub_459C10(int64_t obj, int magictech)
 
     if (v1->parent_obj.obj != obj
         && (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-            || !sub_4F5270(obj, 4))) {
+            || !fate_resolve(obj, FATE_SAVE_AGAINST_MAGICK))) {
         resistance = obj_arrayfield_int32_get(obj, OBJ_F_RESISTANCE_IDX, RESISTANCE_TYPE_MAGIC);
         if (!dword_5E75A8) {
             int aptitude = stat_level(obj, STAT_MAGICK_TECH_APTITUDE);

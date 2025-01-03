@@ -66,7 +66,7 @@ bool fate_ui_init(GameInitInfo* init_info)
     tig_font_create(&font_info, &fate_ui_font);
 
     fate_ui_initialized = true;
-    sub_4F5320(sub_56FF40);
+    fate_set_callback(sub_56FF40);
 
     return true;
 }
@@ -178,7 +178,7 @@ void fate_ui_create()
         sub_54AA60(fate_ui_window,
             &window_rect,
             &(stru_5CAAE8[index]),
-            sub_4F5090(qword_680ED8, index)
+            fate_is_activated(qword_680ED8, index)
                 ? TIG_BUTTON_FLAG_0x10
                 : TIG_BUTTON_FLAG_0x02);
     }
@@ -207,14 +207,14 @@ bool fate_ui_message_filter(TigMessage* msg)
         for (index = 0; index < NUM_BUTTONS; index++) {
             if (stru_5CAAE8[index].button_handle == msg->data.button.button_handle) {
                 if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED
-                    && !sub_4F50C0(qword_680ED8, index)) {
+                    && !fate_activate(qword_680ED8, index)) {
                     tig_button_state_change(stru_5CAAE8[index].button_handle, TIG_BUTTON_STATE_RELEASED);
                     tig_button_state_change(stru_5CAAE8[index].button_handle, TIG_BUTTON_STATE_MOUSE_INSIDE);
                     return true;
                 }
 
                 if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
-                    && sub_4F51B0(qword_680ED8, index)) {
+                    && fate_deactivate(qword_680ED8, index)) {
                     return true;
                 }
 

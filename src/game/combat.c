@@ -975,12 +975,12 @@ int sub_4B3170(CombatContext* combat)
 
     if (combat->attacker_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if (sub_4F5270(combat->attacker_obj, 2)) {
+        if (fate_resolve(combat->attacker_obj, FATE_CRIT_HIT)) {
             combat->flags |= 0x06;
         }
     } else if (combat->target_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if (sub_4F5270(combat->target_obj, 3)) {
+        if (fate_resolve(combat->target_obj, FATE_CRIT_MISS)) {
             combat->flags &= ~0x02;
             combat->flags |= 0x04;
         }
