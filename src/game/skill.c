@@ -24,7 +24,7 @@
 
 static int sub_4C5F70(int value);
 static int sub_4C6560();
-static bool sub_4C81A0(int a1, int a2, SkillInvocation* skill_invocation);
+static bool skill_invocation_check_crit_hit(int a1, int a2, SkillInvocation* skill_invocation);
 static bool sub_4C82E0(int a1, int a2, SkillInvocation* skill_invocation);
 static bool sub_4C83E0(int64_t obj);
 
@@ -1129,7 +1129,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
     int crit_roll = random_between(1, 100);
     if (is_success) {
-        is_critical = sub_4C81A0(crit_roll, effectiveness, skill_invocation);
+        is_critical = skill_invocation_check_crit_hit(crit_roll, effectiveness, skill_invocation);
     } else {
         if (basic_skill == BASIC_SKILL_MELEE
             && training >= TRAINING_MASTER) {
@@ -1600,38 +1600,38 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 }
 
 // 0x4C81A0
-bool sub_4C81A0(int a1, int a2, SkillInvocation* skill_invocation)
+bool skill_invocation_check_crit_hit(int roll, int effectiveness, SkillInvocation* skill_invocation)
 {
     int v1;
-    int v2;
+    int chance;
 
     v1 = (dword_5B6F64[skill_invocation->skill] & 0x400) != 0 ? 20 : 2;
-    v2 = a2 / v1;
+    chance = effectiveness / v1;
 
     if ((skill_invocation->flags & 0x8) != 0) {
-        v2 += sub_4B5F30(skill_invocation->hit_loc) / -5;
+        chance += sub_4B5F30(skill_invocation->hit_loc) / -5;
     }
 
     if (skill_invocation->item.obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(skill_invocation->item.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
         && (skill_invocation->flags & 0x10000) == 0) {
-        v2 += sub_461590(skill_invocation->item.obj,
+        chance += sub_461590(skill_invocation->item.obj,
             skill_invocation->source.obj,
             obj_field_int32_get(skill_invocation->item.obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE));
     }
 
     if ((skill_invocation->flags & 0x8000) != 0) {
-        v2 += 2 * basic_skill_level(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB);
-        v2 -= stat_level(skill_invocation->target.obj, STAT_LEVEL);
+        chance += 2 * basic_skill_level(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB);
+        chance -= stat_level(skill_invocation->target.obj, STAT_LEVEL);
 
         if (basic_skill_get_training(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB) == TRAINING_MASTER) {
-            v2 += 20;
+            chance += 20;
         }
     }
 
-    v2 = effect_adjust_crit_hit_chance(skill_invocation->source.obj, v2);
+    chance = effect_adjust_crit_hit_chance(skill_invocation->source.obj, chance);
 
-    return a1 <= v2;
+    return roll <= chance;
 }
 
 // 0x4C82E0
