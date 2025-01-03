@@ -11,7 +11,7 @@ bool tile_script_update_view(ViewOptions* view_options);
 bool tile_script_is_enabled();
 void tile_script_toggle();
 void tile_script_render(UnknownContext* render_info);
-void sub_4C08E0(int64_t old_loc, int64_t new_loc);
+void tile_script_move(int64_t old_loc, int64_t new_loc);
 void tile_script_exec(int64_t loc, int64_t triggerer_obj);
 
 #endif /* ARCANUM_GAME_TILE_SCRIPT_H_ */

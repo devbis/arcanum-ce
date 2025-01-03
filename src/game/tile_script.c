@@ -217,15 +217,18 @@ bool tile_script_set(TileScript* tile_script)
 }
 
 // 0x4C08E0
-void sub_4C08E0(int64_t old_loc, int64_t new_loc)
+void tile_script_move(int64_t old_loc, int64_t new_loc)
 {
     TileScript tile_script;
 
-    if (tile_script_get(old_loc, &tile_script)) {
-        sub_4C0930(old_loc);
-        tile_script.loc = new_loc;
-        tile_script_set(&tile_script);
+    if (!tile_script_get(old_loc, &tile_script)) {
+        return;
     }
+
+    sub_4C0930(old_loc);
+
+    tile_script.loc = new_loc;
+    tile_script_set(&tile_script);
 }
 
 // 0x4C0930
