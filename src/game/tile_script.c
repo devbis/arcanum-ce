@@ -29,7 +29,7 @@ static IsoInvalidateRectFunc* tile_script_iso_invalidate_rect;
 static bool tile_script_initialized;
 
 // 0x5FC878
-static bool dword_5FC878;
+static bool tile_script_enabled;
 
 // 0x5FC87C
 static tig_window_handle_t tile_script_iso_window_handle;
@@ -52,7 +52,7 @@ bool tile_script_init(GameInitInfo* init_info)
     tig_art_interface_id_create(476, 0, 0, 0, &tile_script_td_art_id);
 
     tile_script_initialized = true;
-    dword_5FC878 = true;
+    tile_script_enabled = true;
 
     sub_4F6310();
 
@@ -92,6 +92,18 @@ bool tile_script_update_view(ViewOptions* view_options)
     return true;
 }
 
+// 0x4C0600
+bool tile_script_is_enabled()
+{
+    return tile_script_enabled;
+}
+
+// 0x4C0610
+void tile_script_toggle()
+{
+    tile_script_enabled = !tile_script_enabled;
+}
+
 // 0x4C0630
 void tile_script_render(UnknownContext* render_info)
 {
@@ -105,7 +117,7 @@ void tile_script_render(UnknownContext* render_info)
     TigRect tile_rect;
     TigRectListNode* rect_node;
 
-    if (!dword_5FC878) {
+    if (!tile_script_enabled) {
         return;
     }
 
