@@ -22,8 +22,8 @@
 #define FOUR 4
 
 static bool sub_57A5E0(int64_t obj);
-static void sub_57A620(Tanya* a1);
-static void sub_57A6B0(Tanya* a1);
+static void sub_57A620(SkillInvocation* skill_invocation);
+static void sub_57A6B0(SkillInvocation* skill_invocation);
 static bool sub_57A710(int64_t a1, int64_t a2);
 static bool sub_57A770(int64_t obj, int a2, int a3, bool success);
 static bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6);
@@ -189,14 +189,14 @@ void skill_ui_preprocess(int64_t obj, int type)
 {
     bool is_pc;
     uint64_t tgt;
-    Tanya v3;
+    SkillInvocation skill_invocation;
 
     is_pc = player_is_pc_obj(obj);
     qword_683490 = obj;
     dword_5CB270 = type;
 
     tgt = qword_5CB250[type];
-    sub_4C7090(&v3);
+    sub_4C7090(&skill_invocation);
 
     switch (type) {
     case 0:
@@ -268,7 +268,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
     int skill;
     unsigned int spell_flags;
     MesFileEntry mes_file_entry;
-    Tanya v2;
+    SkillInvocation skill_invocation;
 
     if (critter_is_dead(obj)) {
         return;
@@ -307,25 +307,25 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3)
         return;
     case SKILL_REPAIR:
         if (!a1->is_loc) {
-            sub_4C7090(&v2);
-            sub_4440E0(obj, &(v2.field_0));
-            sub_4440E0(a1->obj, &(v2.field_30));
-            sub_4440E0(OBJ_HANDLE_NULL, &(v2.field_68));
-            v2.field_98 = 0;
-            v2.field_9C = 12;
-            sub_57A6B0(&v2);
+            sub_4C7090(&skill_invocation);
+            sub_4440E0(obj, &(skill_invocation.source));
+            sub_4440E0(a1->obj, &(skill_invocation.target));
+            sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation.item));
+            skill_invocation.flags = 0;
+            skill_invocation.skill = SKILL_REPAIR;
+            sub_57A6B0(&skill_invocation);
         }
         return;
     case SKILL_DISARM_TRAPS:
         if (!a1->is_loc && sub_4B7CD0(obj, 4)) {
-            sub_4C7090(&v2);
-            sub_4440E0(obj, &(v2.field_0));
-            sub_4440E0(a1->obj, &(v2.field_30));
-            sub_4440E0(OBJ_HANDLE_NULL, &(v2.field_68));
-            v2.field_98 = 4;
-            v2.field_9C = 15;
-            sub_57A620(&v2);
-            sub_57A6B0(&v2);
+            sub_4C7090(&skill_invocation);
+            sub_4440E0(obj, &(skill_invocation.source));
+            sub_4440E0(a1->obj, &(skill_invocation.target));
+            sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation.item));
+            skill_invocation.flags = 4;
+            skill_invocation.skill = SKILL_DISARM_TRAPS;
+            sub_57A620(&skill_invocation);
+            sub_57A6B0(&skill_invocation);
         }
         return;
     default:
@@ -344,17 +344,17 @@ bool sub_57A5E0(int64_t obj)
 }
 
 // 0x57A620
-void sub_57A620(Tanya* a1)
+void sub_57A620(SkillInvocation* skill_invocation)
 {
     int64_t obj;
     char str[1000];
 
     if (!tig_kb_is_key_pressed(DIK_LCONTROL) && !tig_kb_is_key_pressed(DIK_RCONTROL)) {
-        obj = a1->field_0.obj;
-        sub_4C9050(a1);
-        if (obj != a1->field_0.obj) {
-            sub_4139A0(a1->field_0.obj, obj, str);
-            sub_568430(a1->field_0.obj, obj, str, 0);
+        obj = skill_invocation->source.obj;
+        sub_4C9050(skill_invocation);
+        if (obj != skill_invocation->source.obj) {
+            sub_4139A0(skill_invocation->source.obj, obj, str);
+            sub_568430(skill_invocation->source.obj, obj, str, 0);
         }
     }
 }
@@ -366,9 +366,9 @@ int sub_57A6A0(int index)
 }
 
 // 0x57A6B0
-void sub_57A6B0(Tanya* a1)
+void sub_57A6B0(SkillInvocation* skill_invocation)
 {
-    sub_4C7160(a1);
+    sub_4C7160(skill_invocation);
 }
 
 // 0x57A6C0

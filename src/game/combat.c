@@ -903,56 +903,56 @@ int sub_4B3170(CombatContext* combat)
         }
 
         if (cont) {
-            Tanya v4;
+            SkillInvocation skill_invocation;
 
-            sub_4C7090(&v4);
-            sub_4440E0(combat->attacker_obj, &(v4.field_0));
-            sub_4440E0(combat->target_obj, &(v4.field_30));
-            v4.field_60 = combat->target_loc;
-            sub_4440E0(combat->weapon_obj, &(v4.field_68));
-            v4.field_A4 = combat->hit_loc;
-            v4.field_9C = combat->skill;
+            sub_4C7090(&skill_invocation);
+            sub_4440E0(combat->attacker_obj, &(skill_invocation.source));
+            sub_4440E0(combat->target_obj, &(skill_invocation.target));
+            skill_invocation.target_loc = combat->target_loc;
+            sub_4440E0(combat->weapon_obj, &(skill_invocation.item));
+            skill_invocation.hit_loc = combat->hit_loc;
+            skill_invocation.skill = combat->skill;
 
             if ((combat->flags & 0x01) != 0) {
-                v4.field_98 |= 0x08;
+                skill_invocation.flags |= 0x08;
             }
 
             if ((combat->flags & 0x8000) != 0) {
-                v4.field_98 |= 0x8000;
+                skill_invocation.flags |= 0x8000;
             }
 
             if ((combat->flags & 0x20000) != 0) {
-                v4.field_98 |= 0x10000;
+                skill_invocation.flags |= 0x10000;
             }
 
-            v4.field_A0 = 0;
+            skill_invocation.modifier = 0;
 
             if (was_in_bed) {
-                v4.field_A0 -= 30;
+                skill_invocation.modifier -= 30;
             }
 
-            if (!sub_4C7160(&v4)) {
+            if (!sub_4C7160(&skill_invocation)) {
                 return 0;
             }
 
-            if ((v4.field_98 & 0x1) != 0) {
+            if ((skill_invocation.flags & 0x1) != 0) {
                 combat->flags |= 0x02;
             }
 
-            if ((v4.field_98 & 0x10) != 0) {
+            if ((skill_invocation.flags & 0x10) != 0) {
                 combat->flags |= 0x04;
             }
 
             if (combat->target_obj != OBJ_HANDLE_NULL
                 && (combat->flags & 0x02) != 0) {
-                sub_4C7090(&v4);
-                sub_4440E0(combat->target_obj, &(v4.field_0));
-                v4.field_9C = SKILL_DODGE;
-                if (!sub_4C7160(&v4)) {
+                sub_4C7090(&skill_invocation);
+                sub_4440E0(combat->target_obj, &(skill_invocation.source));
+                skill_invocation.skill = SKILL_DODGE;
+                if (!sub_4C7160(&skill_invocation)) {
                     return 0;
                 }
 
-                if ((v4.field_98 & 0x01) != 0) {
+                if ((skill_invocation.flags & 0x01) != 0) {
                     MesFileEntry mes_file_entry;
 
                     mes_file_entry.num = 11; // "Dodge!"
@@ -961,7 +961,7 @@ int sub_4B3170(CombatContext* combat)
 
                     combat->flags &= ~0x06;
 
-                    if ((v4.field_98 & 0x10) != 0) {
+                    if ((skill_invocation.flags & 0x10) != 0) {
                         int training = basic_skill_get_training(combat->target_obj, BASIC_SKILL_DODGE);
                         if (random_between(1, 100) <= dword_5B57A8[training]) {
                             combat->flags |= 0x04;

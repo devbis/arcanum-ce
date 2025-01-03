@@ -67,20 +67,6 @@ typedef struct FollowerInfo {
 
 static_assert(sizeof(FollowerInfo) == 0x30, "wrong size");
 
-// TODO: Better name.
-typedef struct Tanya {
-    /* 0000 */ FollowerInfo field_0;
-    /* 0030 */ FollowerInfo field_30;
-    /* 0060 */ int64_t field_60;
-    /* 0068 */ FollowerInfo field_68;
-    /* 0098 */ int field_98;
-    /* 009C */ int field_9C;
-    /* 00A0 */ int field_A0;
-    /* 00A4 */ int field_A4;
-} Tanya;
-
-static_assert(sizeof(Tanya) == 0xA8, "wrong size");
-
 typedef struct ObjectList {
     /* 0000 */ int num_sectors;
     /* 0008 */ int64_t sectors[9];

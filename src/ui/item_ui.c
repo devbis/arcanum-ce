@@ -143,7 +143,7 @@ void sub_571C80()
 void sub_571CB0(S4F2810* a1)
 {
     int64_t pc_obj;
-    Tanya v1;
+    SkillInvocation skill_invocation;
     int spell_mana_store = 0;
     unsigned int item_flags = 0;
     int range = -1;
@@ -163,23 +163,23 @@ void sub_571CB0(S4F2810* a1)
     if (obj_field_int32_get(qword_6810D8, OBJ_F_TYPE) == OBJ_TYPE_GENERIC
         && !tig_kb_is_key_pressed(DIK_LCONTROL)
         && (obj_field_int32_get(qword_6810D8, OBJ_F_GENERIC_FLAGS) & OGF_IS_LOCKPICK) != 0) {
-        sub_4C7090(&v1);
-        sub_4440E0(pc_obj, &(v1.field_0));
+        sub_4C7090(&skill_invocation);
+        sub_4440E0(pc_obj, &(skill_invocation.source));
         if (!a1->is_loc) {
-            sub_4440E0(a1->obj, &(v1.field_30));
+            sub_4440E0(a1->obj, &(skill_invocation.target));
         }
-        v1.field_9C = SKILL_PICK_LOCKS;
-        v1.field_68.obj = item_find_first_generic(v1.field_0.obj, OGF_IS_LOCKPICK);
-        sub_4C9050(&v1);
+        skill_invocation.skill = SKILL_PICK_LOCKS;
+        skill_invocation.item.obj = item_find_first_generic(skill_invocation.source.obj, OGF_IS_LOCKPICK);
+        sub_4C9050(&skill_invocation);
 
-        if (pc_obj == v1.field_0.obj) {
+        if (pc_obj == skill_invocation.source.obj) {
             v2 = qword_6810D8;
         } else {
-            v2 = item_find_first_generic(v1.field_0.obj, OGF_IS_LOCKPICK);
-            sub_4139A0(v1.field_0.obj, pc_obj, str);
-            sub_568430(v1.field_0.obj, pc_obj, str, 0);
+            v2 = item_find_first_generic(skill_invocation.source.obj, OGF_IS_LOCKPICK);
+            sub_4139A0(skill_invocation.source.obj, pc_obj, str);
+            sub_568430(skill_invocation.source.obj, pc_obj, str, 0);
             if (v2 == OBJ_HANDLE_NULL) {
-                sub_4352C0(v1.field_0.obj, OBJ_HANDLE_NULL, v1.field_30.obj, SKILL_PICK_LOCKS, 0);
+                sub_4352C0(skill_invocation.source.obj, OBJ_HANDLE_NULL, skill_invocation.target.obj, SKILL_PICK_LOCKS, 0);
                 sub_571C80();
                 return;
             }

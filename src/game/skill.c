@@ -24,8 +24,8 @@
 
 static int sub_4C5F70(int value);
 static int sub_4C6560();
-static bool sub_4C81A0(int a1, int a2, Tanya* a3);
-static bool sub_4C82E0(int a1, int a2, Tanya* a3);
+static bool sub_4C81A0(int a1, int a2, SkillInvocation* skill_invocation);
+static bool sub_4C82E0(int a1, int a2, SkillInvocation* skill_invocation);
 static bool sub_4C83E0(int64_t obj);
 
 // 0x5B6F04
@@ -1059,27 +1059,27 @@ bool sub_4C7050(int64_t a1, int a2, int64_t a3)
 }
 
 // 0x4C7090
-void sub_4C7090(Tanya* a1)
+void sub_4C7090(SkillInvocation* skill_invocation)
 {
-    a1->field_98 = 0;
-    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_68));
-    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_0));
-    sub_4440E0(OBJ_HANDLE_NULL, &(a1->field_30));
-    a1->field_60 = 0;
-    a1->field_A0 = 0;
-    a1->field_9C = -1;
+    skill_invocation->flags = 0;
+    sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation->item));
+    sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation->source));
+    sub_4440E0(OBJ_HANDLE_NULL, &(skill_invocation->target));
+    skill_invocation->target_loc = 0;
+    skill_invocation->modifier = 0;
+    skill_invocation->skill = -1;
 }
 
 // 0x4C7120
-bool sub_4C7120(Tanya* a1)
+bool sub_4C7120(SkillInvocation* skill_invocation)
 {
-    return sub_444130(&(a1->field_0))
-        && sub_444130(&(a1->field_30))
-        && sub_444130(&(a1->field_68));
+    return sub_444130(&(skill_invocation->source))
+        && sub_444130(&(skill_invocation->target))
+        && sub_444130(&(skill_invocation->item));
 }
 
 // 0x4C7160
-bool sub_4C7160(Tanya* a1)
+bool sub_4C7160(SkillInvocation* skill_invocation)
 {
     int64_t source_obj;
     int64_t target_obj;
@@ -1100,11 +1100,11 @@ bool sub_4C7160(Tanya* a1)
         return false;
     }
 
-    source_obj = a1->field_0.obj;
-    target_obj = a1->field_30.obj;
-    target_loc = a1->field_60;
-    item_obj = a1->field_68.obj;
-    skill = a1->field_9C;
+    source_obj = skill_invocation->source.obj;
+    target_obj = skill_invocation->target.obj;
+    target_loc = skill_invocation->target_loc;
+    item_obj = skill_invocation->item.obj;
+    skill = skill_invocation->skill;
 
     if (IS_TECH_SKILL(skill)) {
         basic_skill = -1;
@@ -1118,24 +1118,24 @@ bool sub_4C7160(Tanya* a1)
         training = basic_skill_get_training(source_obj, basic_skill);
     }
 
-    difficulty = a1->field_A0 + sub_4C8430(a1);
+    difficulty = skill_invocation->modifier + sub_4C8430(skill_invocation);
 
     int modifier = basic_skill == BASIC_SKILL_GAMBLING
         ? sub_4C6560()
         : random_between(1, 100);
 
     is_success = difficulty + modifier <= effectiveness
-        || (a1->field_98 & 0x1000) != 0;
+        || (skill_invocation->flags & 0x1000) != 0;
 
     int crit_roll = random_between(1, 100);
     if (is_success) {
-        is_critical = sub_4C81A0(crit_roll, effectiveness, a1);
+        is_critical = sub_4C81A0(crit_roll, effectiveness, skill_invocation);
     } else {
         if (basic_skill == BASIC_SKILL_MELEE
             && training >= TRAINING_MASTER) {
             is_critical = false;
         } else {
-            is_critical = sub_4C82E0(crit_roll, effectiveness, a1);
+            is_critical = sub_4C82E0(crit_roll, effectiveness, skill_invocation);
         }
     }
 
@@ -1178,7 +1178,7 @@ bool sub_4C7160(Tanya* a1)
         }
         break;
     case SKILL_PICK_POCKET: {
-        if ((a1->field_98 & 0x2) == 0) {
+        if ((skill_invocation->flags & 0x2) == 0) {
             if (is_success) {
                 int64_t parent_obj;
                 if (item_parent(item_obj, &parent_obj) && parent_obj == target_obj) {
@@ -1430,7 +1430,7 @@ bool sub_4C7160(Tanya* a1)
             }
 
             if (v1 <= 0) {
-                if (effectiveness > 0 || (a1->field_98 & 0x1000) != 0) {
+                if (effectiveness > 0 || (skill_invocation->flags & 0x1000) != 0) {
                     v1 = 1;
                 } else {
                     v1 = 0;
@@ -1548,7 +1548,7 @@ bool sub_4C7160(Tanya* a1)
         pkt.field_38 = is_success;
         pkt.field_3C = 0;
 
-        if ((a1->field_98 & 0x04) != 0) {
+        if ((skill_invocation->flags & 0x04) != 0) {
             if (!is_success
                 && !is_critical
                 && training >= TRAINING_MASTER
@@ -1585,82 +1585,82 @@ bool sub_4C7160(Tanya* a1)
     }
 
     if (is_success) {
-        a1->field_98 |= 0x1;
+        skill_invocation->flags |= 0x1;
     } else {
-        a1->field_98 &= ~0x1;
+        skill_invocation->flags &= ~0x1;
     }
 
     if (is_critical) {
-        a1->field_98 |= 0x10;
+        skill_invocation->flags |= 0x10;
     } else {
-        a1->field_98 &= ~0x10;
+        skill_invocation->flags &= ~0x10;
     }
 
     return true;
 }
 
 // 0x4C81A0
-bool sub_4C81A0(int a1, int a2, Tanya* a3)
+bool sub_4C81A0(int a1, int a2, SkillInvocation* skill_invocation)
 {
     int v1;
     int v2;
 
-    v1 = (dword_5B6F64[a3->field_9C] & 0x400) != 0 ? 20 : 2;
+    v1 = (dword_5B6F64[skill_invocation->skill] & 0x400) != 0 ? 20 : 2;
     v2 = a2 / v1;
 
-    if ((a3->field_98 & 0x8) != 0) {
-        v2 += sub_4B5F30(a3->field_A4) / -5;
+    if ((skill_invocation->flags & 0x8) != 0) {
+        v2 += sub_4B5F30(skill_invocation->hit_loc) / -5;
     }
 
-    if (a3->field_68.obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(a3->field_68.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
-        && (a3->field_98 & 0x10000) == 0) {
-        v2 += sub_461590(a3->field_68.obj,
-            a3->field_0.obj,
-            obj_field_int32_get(a3->field_68.obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE));
+    if (skill_invocation->item.obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(skill_invocation->item.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+        && (skill_invocation->flags & 0x10000) == 0) {
+        v2 += sub_461590(skill_invocation->item.obj,
+            skill_invocation->source.obj,
+            obj_field_int32_get(skill_invocation->item.obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE));
     }
 
-    if ((a3->field_98 & 0x8000) != 0) {
-        v2 += 2 * basic_skill_level(a3->field_0.obj, BASIC_SKILL_BACKSTAB);
-        v2 -= stat_level(a3->field_30.obj, STAT_LEVEL);
+    if ((skill_invocation->flags & 0x8000) != 0) {
+        v2 += 2 * basic_skill_level(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB);
+        v2 -= stat_level(skill_invocation->target.obj, STAT_LEVEL);
 
-        if (basic_skill_get_training(a3->field_0.obj, BASIC_SKILL_BACKSTAB) == TRAINING_MASTER) {
+        if (basic_skill_get_training(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB) == TRAINING_MASTER) {
             v2 += 20;
         }
     }
 
-    v2 = effect_adjust_crit_hit_chance(a3->field_0.obj, v2);
+    v2 = effect_adjust_crit_hit_chance(skill_invocation->source.obj, v2);
 
     return a1 <= v2;
 }
 
 // 0x4C82E0
-bool sub_4C82E0(int a1, int a2, Tanya* a3)
+bool sub_4C82E0(int a1, int a2, SkillInvocation* skill_invocation)
 {
     int v1;
     int v2;
     int v3;
     int v4;
 
-    v1 = (dword_5B6F64[a3->field_9C] & 0x400) != 0 ? 7 : 2;
+    v1 = (dword_5B6F64[skill_invocation->skill] & 0x400) != 0 ? 7 : 2;
     v2 = (100 - a2) / v1;
 
-    if (a3->field_68.obj != OBJ_HANDLE_NULL) {
-        v3 = object_hp_current(a3->field_68.obj);
-        v4 = object_hp_max(a3->field_68.obj);
+    if (skill_invocation->item.obj != OBJ_HANDLE_NULL) {
+        v3 = object_hp_current(skill_invocation->item.obj);
+        v4 = object_hp_max(skill_invocation->item.obj);
         if (v3 < v4) {
             v2 += 100 * (v4 - v3) / (v1 * v4);
         }
 
-        if (obj_field_int32_get(a3->field_68.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
-            && (a3->field_98 & 0x10000) == 0) {
-            v2 += sub_461590(a3->field_68.obj,
-                a3->field_0.obj,
-                obj_field_int32_get(a3->field_68.obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE));
+        if (obj_field_int32_get(skill_invocation->item.obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
+            && (skill_invocation->flags & 0x10000) == 0) {
+            v2 += sub_461590(skill_invocation->item.obj,
+                skill_invocation->source.obj,
+                obj_field_int32_get(skill_invocation->item.obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE));
         }
     }
 
-    v2 = effect_adjust_crit_fail_chance(a3->field_0.obj, v2);
+    v2 = effect_adjust_crit_fail_chance(skill_invocation->source.obj, v2);
     if (v2 < 2) {
         v2 = 2;
     }
@@ -1686,7 +1686,7 @@ bool sub_4C83E0(int64_t obj)
 }
 
 // 0x4C8430
-int sub_4C8430(Tanya* a1)
+int sub_4C8430(SkillInvocation* skill_invocation)
 {
     int64_t source_obj;
     int64_t target_obj;
@@ -1698,10 +1698,10 @@ int sub_4C8430(Tanya* a1)
     int training;
     int difficulty;
 
-    source_obj = a1->field_0.obj;
-    target_obj = a1->field_30.obj;
-    item_obj = a1->field_68.obj;
-    skill = a1->field_9C;
+    source_obj = skill_invocation->source.obj;
+    target_obj = skill_invocation->target.obj;
+    item_obj = skill_invocation->item.obj;
+    skill = skill_invocation->skill;
 
     if (IS_TECH_SKILL(skill)) {
         basic_skill = -1;
@@ -1715,15 +1715,15 @@ int sub_4C8430(Tanya* a1)
         training = basic_skill_get_training(source_obj, basic_skill);
     }
 
-    difficulty = a1->field_A0;
+    difficulty = skill_invocation->modifier;
     if (target_obj != OBJ_HANDLE_NULL) {
-        a1->field_60 = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
+        skill_invocation->target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     }
 
     if (item_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
         int to_hit = obj_field_int32_get(item_obj, OBJ_F_WEAPON_BONUS_TO_HIT);
-        if ((a1->field_98 & 0x10000) == 0) {
+        if ((skill_invocation->flags & 0x10000) == 0) {
             int adj = obj_field_int32_get(item_obj, OBJ_F_WEAPON_MAGIC_HIT_ADJ);
             to_hit += sub_461590(item_obj, source_obj, adj);
         }
@@ -1733,7 +1733,7 @@ int sub_4C8430(Tanya* a1)
         int strength = stat_level(source_obj, STAT_STRENGTH) - item_weapon_min_strength(item_obj, source_obj);
         if (strength < 0) {
             difficulty += -strength * 5;
-            a1->field_98 |= 0x40;
+            skill_invocation->flags |= 0x40;
         }
     }
 
@@ -1765,8 +1765,8 @@ int sub_4C8430(Tanya* a1)
     }
 
     if ((dword_5B6F64[skill] & 0x01) != 0 && target_obj != OBJ_HANDLE_NULL) {
-        if ((a1->field_98 & 0x08) != 0) {
-            int v1 = sub_4B5F30(a1->field_A4);
+        if ((skill_invocation->flags & 0x08) != 0) {
+            int v1 = sub_4B5F30(skill_invocation->hit_loc);
             if (tech_skill == TECH_SKILL_FIREARMS
                 && training >= TRAINING_EXPERT) {
                 v1 = 2 * v1 / 3;
@@ -1774,14 +1774,14 @@ int sub_4C8430(Tanya* a1)
             difficulty -= v1;
         }
 
-        if ((a1->field_98 & 0x8000) == 0
+        if ((skill_invocation->flags & 0x8000) == 0
             || basic_skill_get_training(source_obj, BASIC_SKILL_BACKSTAB) == TRAINING_NONE) {
             difficulty += effectiveness * (object_get_ac(target_obj, false) / 2) / 100;
         }
     }
 
     if ((dword_5B6F64[skill] & 0x02) != 0) {
-        int64_t dist = location_dist(a1->field_60, obj_field_int64_get(source_obj, OBJ_F_LOCATION));
+        int64_t dist = location_dist(skill_invocation->target_loc, obj_field_int64_get(source_obj, OBJ_F_LOCATION));
         if (dist > INT_MAX) {
             return 1000000;
         }
@@ -1798,7 +1798,7 @@ int sub_4C8430(Tanya* a1)
 
             if (dist > range) {
                 difficulty += 1000000;
-                a1->field_98 |= 0x80;
+                skill_invocation->flags |= 0x80;
             }
         }
 
@@ -1808,41 +1808,41 @@ int sub_4C8430(Tanya* a1)
             int extra_dist = (int)dist - stat_level(source_obj, STAT_PERCEPTION) / 2;
             if (extra_dist > 0) {
                 difficulty += 5 * extra_dist;
-                a1->field_98 |= 0x100;
+                skill_invocation->flags |= 0x100;
             }
         }
 
         int64_t blocking_obj;
-        int v2 = sub_4ADE00(source_obj, a1->field_60, &blocking_obj);
+        int v2 = sub_4ADE00(source_obj, skill_invocation->target_loc, &blocking_obj);
         if (blocking_obj != OBJ_HANDLE_NULL) {
             difficulty += 1000000;
-            a1->field_98 |= 0x20000;
+            skill_invocation->flags |= 0x20000;
         } else if (v2 > 0) {
             difficulty += v2;
-            a1->field_98 |= 0x200;
+            skill_invocation->flags |= 0x200;
         }
     }
 
     unsigned int critter_flags = obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS);
     if ((critter_flags & OCF_UNDEAD) == 0
-        && ((dword_5B6F64[skill] & 0x04) != 0 || (a1->field_98 & 0x4000) != 0)) {
+        && ((dword_5B6F64[skill] & 0x04) != 0 || (skill_invocation->flags & 0x4000) != 0)) {
         bool v3 = true;
         if ((basic_skill == BASIC_SKILL_MELEE
             || tech_skill == TECH_SKILL_PICK_LOCKS) && training >= TRAINING_EXPERT) {
             v3 = false;
         }
 
-        if ((((a1->field_98 & 0x4000) == 0
+        if ((((skill_invocation->flags & 0x4000) == 0
                 && basic_skill != BASIC_SKILL_SPOT_TRAP
                 && tech_skill != TECH_SKILL_DISARM_TRAPS)
             || training < TRAINING_APPRENTICE) && v3) {
             int v4;
-            if ((a1->field_98 & 0x4000) != 0) {
+            if ((skill_invocation->flags & 0x4000) != 0) {
                 v4 = sub_4DCE10(source_obj) & 0xFF;
             } else if (target_obj != OBJ_HANDLE_NULL) {
                 v4 = sub_4DCE10(target_obj) & 0xFF;
             } else {
-                v4 = sub_4D9240(a1->field_60, 0, 0) & 0xFF;
+                v4 = sub_4D9240(skill_invocation->target_loc, 0, 0) & 0xFF;
             }
 
             int v5 = 30 * (255 - v4) / 255;
@@ -1857,7 +1857,7 @@ int sub_4C8430(Tanya* a1)
                 v5 = 2 * v5 / 3;
             }
 
-            if ((a1->field_98 & 0x4000) != 0) {
+            if ((skill_invocation->flags & 0x4000) != 0) {
                 if (!sub_45FB90(target_obj)) {
                     v5 = 30 - v5;
                 }
@@ -1867,7 +1867,7 @@ int sub_4C8430(Tanya* a1)
 
             if (v5 > 0) {
                 difficulty += v5;
-                a1->field_98 |= 0x400;
+                skill_invocation->flags |= 0x400;
             }
         }
     }
@@ -1875,23 +1875,23 @@ int sub_4C8430(Tanya* a1)
     if ((dword_5B6F64[skill] & 0x80) != 0
         || (critter_flags & OCF_BLINDED) == 0) {
         difficulty += 30;
-        a1->field_98 |= 0x800;
+        skill_invocation->flags |= 0x800;
     }
 
     if ((dword_5B6F64[skill] & 0x100) != 0) {
         if ((critter_flags & OCF_CRIPPLED_ARMS_BOTH) != 0) {
             difficulty += 50;
-            a1->field_98 |= 0x800;
+            skill_invocation->flags |= 0x800;
         } else if ((critter_flags & OCF_CRIPPLED_ARMS_ONE) != 0) {
             difficulty += 20;
-            a1->field_98 |= 0x800;
+            skill_invocation->flags |= 0x800;
         }
     }
 
     if ((dword_5B6F64[skill] & 0x200) != 0) {
         if ((critter_flags & OCF_CRIPPLED_LEGS_BOTH) != 0) {
             difficulty += 30;
-            a1->field_98 |= 0x800;
+            skill_invocation->flags |= 0x800;
         }
     }
 
@@ -1915,7 +1915,7 @@ int sub_4C8430(Tanya* a1)
         break;
     }
     case SKILL_PROWLING: {
-        if ((a1->field_98 & 0x4000) != 0) {
+        if ((skill_invocation->flags & 0x4000) != 0) {
             int64_t blocking_obj;
             int v6 = sub_4ADE00(target_obj,
                 obj_field_int64_get(source_obj, OBJ_F_LOCATION),
@@ -1928,7 +1928,7 @@ int sub_4C8430(Tanya* a1)
             if (training < TRAINING_EXPERT && v6 == 0) {
                 difficulty += 50;
             }
-        } else if ((a1->field_98 & 0x2000) != 0) {
+        } else if ((skill_invocation->flags & 0x2000) != 0) {
             for (int inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
                 int64_t inv_item_obj = item_wield_get(source_obj, inventory_location);
                 if (inv_item_obj != OBJ_HANDLE_NULL
@@ -1992,17 +1992,17 @@ int sub_4C8430(Tanya* a1)
 // 0x4C8E60
 void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4)
 {
-    Tanya v1;
+    SkillInvocation skill_invocation;
     Packet126 pkt;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0) {
-        sub_4C7090(&v1);
-        v1.field_98 |= 0x1000;
-        v1.field_9C = 12;
-        sub_4440E0(a2, &(v1.field_0));
-        sub_4440E0(a1, &(v1.field_30));
-        sub_4C7160(&v1);
+        sub_4C7090(&skill_invocation);
+        skill_invocation.flags |= 0x1000;
+        skill_invocation.skill = SKILL_REPAIR;
+        sub_4440E0(a2, &(skill_invocation.source));
+        sub_4440E0(a1, &(skill_invocation.target));
+        sub_4C7160(&skill_invocation);
         sub_464830(a3, a2, a4, OBJ_HANDLE_NULL);
         sub_4EE3A0(a3, a1);
     } else {
@@ -2052,7 +2052,7 @@ void set_follower_skills(bool enabled)
 }
 
 // 0x4C9050
-void sub_4C9050(Tanya* a1)
+void sub_4C9050(SkillInvocation* skill_invocation)
 {
     int skill_level;
     ObjectList objects;
@@ -2060,22 +2060,22 @@ void sub_4C9050(Tanya* a1)
     int v1;
     int64_t v2;
 
-    if (obj_field_int32_get(a1->field_0.obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(skill_invocation->source.obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return;
     }
 
-    if (!get_follower_skills(a1->field_0.obj)) {
+    if (!get_follower_skills(skill_invocation->source.obj)) {
         return;
     }
 
-    if (IS_TECH_SKILL(a1->field_9C)) {
-        skill_level = sub_4C69F0(a1->field_0.obj, GET_TECH_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
-        v2 = a1->field_0.obj;
+    if (IS_TECH_SKILL(skill_invocation->skill)) {
+        skill_level = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+        v2 = skill_invocation->source.obj;
         sub_441260(v2, &objects);
         node = objects.head;
         while (node != NULL) {
-            sub_4440E0(node->obj, &(a1->field_0));
-            v1 = sub_4C69F0(a1->field_0.obj, GET_TECH_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
+            sub_4440E0(node->obj, &(skill_invocation->source));
+            v1 = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
             if (v1 > skill_level) {
                 skill_level = v1;
                 v2 = node->obj;
@@ -2084,13 +2084,13 @@ void sub_4C9050(Tanya* a1)
         }
         // FIXME: Probably leaks `objects`?
     } else {
-        skill_level = sub_4C62E0(a1->field_0.obj, GET_BASIC_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
-        v2 = a1->field_0.obj;
+        skill_level = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
+        v2 = skill_invocation->source.obj;
         sub_441260(v2, &objects);
         node = objects.head;
         while (node != NULL) {
-            sub_4440E0(node->obj, &(a1->field_0));
-            v1 = sub_4C62E0(a1->field_0.obj, GET_BASIC_SKILL(a1->field_9C), a1->field_30.obj) - sub_4C8430(a1);
+            sub_4440E0(node->obj, &(skill_invocation->source));
+            v1 = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
             if (v1 > skill_level) {
                 skill_level = v1;
                 v2 = node->obj;
@@ -2101,7 +2101,7 @@ void sub_4C9050(Tanya* a1)
         // FIXME: Probably leaks `objects`?
     }
 
-    sub_4440E0(v2, &(a1->field_0));
+    sub_4440E0(v2, &(skill_invocation->source));
 }
 
 // 0x4C91F0

@@ -6812,7 +6812,7 @@ bool sub_428E10(AnimRunInfo* run_info)
     int64_t source_obj;
     int64_t target_obj;
     int64_t item_obj;
-    Tanya v1;
+    SkillInvocation skill_invocation;
     unsigned int flags;
 
     source_obj = run_info->params[0].obj;
@@ -6843,31 +6843,31 @@ bool sub_428E10(AnimRunInfo* run_info)
         }
     }
 
-    sub_4C7090(&v1);
-    v1.field_9C = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
-    v1.field_A0 = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
+    sub_4C7090(&skill_invocation);
+    skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
+    skill_invocation.modifier = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
 
     if (target_obj == -1) {
         target_obj = OBJ_HANDLE_NULL;
     }
 
-    sub_4440E0(source_obj, &(v1.field_0));
-    sub_4440E0(target_obj, &(v1.field_30));
-    sub_4440E0(item_obj, &(v1.field_68));
+    sub_4440E0(source_obj, &(skill_invocation.source));
+    sub_4440E0(target_obj, &(skill_invocation.target));
+    sub_4440E0(item_obj, &(skill_invocation.item));
 
     if (item_obj != -1) {
-        sub_4440E0(item_obj, &(v1.field_68));
+        sub_4440E0(item_obj, &(skill_invocation.item));
     }
 
     flags = run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data;
     if ((flags & 0x01) != 0) {
-        v1.field_98 |= 0x02;
+        skill_invocation.flags |= 0x02;
     }
     if ((flags & 0x2000) != 0) {
-        v1.field_98 |= 0x1000;
+        skill_invocation.flags |= 0x1000;
     }
 
-    sub_4C7160(&v1);
+    sub_4C7160(&skill_invocation);
 
     return true;
 }
@@ -6908,7 +6908,7 @@ bool sub_429160(AnimRunInfo* run_info)
     int64_t target_loc;
     int64_t item_obj;
     int64_t parent_obj;
-    Tanya v1;
+    SkillInvocation skill_invocation;
 
     source_obj = run_info->params[0].obj;
     target_loc = run_info->params[1].loc;
@@ -6927,22 +6927,22 @@ bool sub_429160(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4C7090(&v1);
-    v1.field_9C = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
-    v1.field_A0 = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
-    sub_4440E0(source_obj, &(v1.field_0));
-    v1.field_60 = target_loc;
-    sub_4440E0(item_obj, &(v1.field_68));
+    sub_4C7090(&skill_invocation);
+    skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
+    skill_invocation.modifier = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
+    sub_4440E0(source_obj, &(skill_invocation.source));
+    skill_invocation.target_loc = target_loc;
+    sub_4440E0(item_obj, &(skill_invocation.item));
 
     if (item_obj != -1) {
-        sub_4440E0(item_obj, &(v1.field_68));
+        sub_4440E0(item_obj, &(skill_invocation.item));
     }
 
     if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x01) != 0) {
-        v1.field_98 |= 0x02;
+        skill_invocation.flags |= 0x02;
     }
 
-    sub_4C7160(&v1);
+    sub_4C7160(&skill_invocation);
 
     return true;
 }
@@ -7683,7 +7683,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
 {
     int64_t source_obj;
     int64_t target_obj;
-    Tanya v1;
+    SkillInvocation skill_invocation;
 
     source_obj = run_info->params[0].obj;
     target_obj = run_info->params[1].obj;
@@ -7707,28 +7707,28 @@ bool sub_42A2A0(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4C7090(&v1);
+    sub_4C7090(&skill_invocation);
 
-    v1.field_9C = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
+    skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
 
     if (target_obj == -1) {
         target_obj = OBJ_HANDLE_NULL;
     }
 
-    sub_4440E0(source_obj, &(v1.field_0));
-    sub_4440E0(target_obj, &(v1.field_30));
+    sub_4440E0(source_obj, &(skill_invocation.source));
+    sub_4440E0(target_obj, &(skill_invocation.target));
 
     if (run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj != -1) {
-        sub_4440E0(run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj, &(v1.field_68));
+        sub_4440E0(run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj, &(skill_invocation.item));
     }
 
     if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x1) != 0) {
-        v1.field_98 |= 0x2;
+        skill_invocation.flags |= 0x2;
     }
 
-    sub_4C7160(&v1);
+    sub_4C7160(&skill_invocation);
 
-    if ((v1.field_98 & 0x1) != 0) {
+    if ((skill_invocation.flags & 0x1) != 0) {
         run_info->field_C |= 0x40000;
     }
 
@@ -7778,7 +7778,7 @@ bool sub_42A4E0(AnimRunInfo* run_info)
 {
     int64_t source_obj;
     int64_t target_obj;
-    Tanya v1;
+    SkillInvocation skill_invocation;
 
     source_obj = run_info->params[0].obj;
     target_obj = run_info->params[1].obj;
@@ -7794,26 +7794,26 @@ bool sub_42A4E0(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4C7090(&v1);
+    sub_4C7090(&skill_invocation);
 
-    v1.field_9C = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
+    skill_invocation.skill = run_info->cur_stack_data->params[AGDATA_SKILL_DATA].data;
 
     if (target_obj == -1) {
         target_obj = OBJ_HANDLE_NULL;
     }
 
-    sub_4440E0(source_obj, &(v1.field_0));
-    sub_4440E0(target_obj, &(v1.field_30));
+    sub_4440E0(source_obj, &(skill_invocation.source));
+    sub_4440E0(target_obj, &(skill_invocation.target));
 
     if (run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj != -1) {
-        sub_4440E0(run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj, &(v1.field_68));
+        sub_4440E0(run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj, &(skill_invocation.item));
     }
 
     if ((run_info->cur_stack_data->params[AGDATA_FLAGS_DATA].data & 0x1) != 0) {
-        v1.field_98 |= 0x2;
+        skill_invocation.flags |= 0x2;
     }
 
-    sub_4C7160(&v1);
+    sub_4C7160(&skill_invocation);
 
     return true;
 }

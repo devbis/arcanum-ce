@@ -85,6 +85,19 @@ typedef struct SkillCallbacks {
 
 static_assert(sizeof(SkillCallbacks) == 0x24, "wrong size");
 
+typedef struct SkillInvocation {
+    /* 0000 */ FollowerInfo source;
+    /* 0030 */ FollowerInfo target;
+    /* 0060 */ int64_t target_loc;
+    /* 0068 */ FollowerInfo item;
+    /* 0098 */ unsigned int flags;
+    /* 009C */ int skill;
+    /* 00A0 */ int modifier;
+    /* 00A4 */ int hit_loc;
+} SkillInvocation;
+
+static_assert(sizeof(SkillInvocation) == 0xA8, "wrong size");
+
 extern const char* off_5B6FF4[BASIC_SKILL_COUNT];
 extern const char* off_5B7024[TECH_SKILL_COUNT];
 extern const char* off_5B7034[TRAINING_COUNT];
@@ -133,14 +146,14 @@ bool sub_4C6F90(int64_t a1, int a2, int64_t a3, int a4);
 bool sub_4C6FD0(int64_t a1, int64_t a2, int64_t a3);
 bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3);
 bool sub_4C7050(int64_t a1, int a2, int64_t a3);
-void sub_4C7090(Tanya* a1);
-bool sub_4C7120(Tanya* a1);
-bool sub_4C7160(Tanya* a1);
-int sub_4C8430(Tanya* a1);
+void sub_4C7090(SkillInvocation* skill_invocation);
+bool sub_4C7120(SkillInvocation* skill_invocation);
+bool sub_4C7160(SkillInvocation* skill_invocation);
+int sub_4C8430(SkillInvocation* skill_invocation);
 void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4);
 bool get_follower_skills(int64_t obj);
 void set_follower_skills(bool enabled);
-void sub_4C9050(Tanya* a1);
+void sub_4C9050(SkillInvocation* skill_invocation);
 int64_t sub_4C91F0(int64_t obj, int skill);
 
 #endif /* ARCANUM_GAME_SKILL_H_ */

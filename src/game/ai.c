@@ -3998,7 +3998,7 @@ int sub_4AF240(int value)
 int sub_4AF260(int64_t source_obj, int64_t target_obj)
 {
     int perception;
-    Tanya v1;
+    SkillInvocation skill_invocation;
     int64_t dist;
     int v3;
     int64_t target_loc;
@@ -4030,13 +4030,13 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
         int diff;
 
         prowling = sub_4C62E0(target_obj, BASIC_SKILL_PROWLING, source_obj);
-        sub_4C7090(&v1);
-        sub_4440E0(target_obj, &(v1.field_0));
-        sub_4440E0(source_obj, &(v1.field_30));
-        v1.field_98 |= 0x4000;
-        v1.field_9C = BASIC_SKILL_PROWLING;
+        sub_4C7090(&skill_invocation);
+        sub_4440E0(target_obj, &(skill_invocation.source));
+        sub_4440E0(source_obj, &(skill_invocation.target));
+        skill_invocation.flags |= 0x4000;
+        skill_invocation.skill = BASIC_SKILL_PROWLING;
 
-        diff = prowling - sub_4C8430(&v1);
+        diff = prowling - sub_4C8430(&skill_invocation);
         if (diff < 0) {
             diff = 0;
         } else if (diff > 100) {
@@ -4073,7 +4073,7 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
     unsigned int critter_flags;
     int64_t dist;
     int perception;
-    Tanya v1;
+    SkillInvocation script_invocation;
     int v2;
 
     critter_flags = obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS);
@@ -4100,13 +4100,13 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
         int diff;
 
         prowling = sub_4C62E0(a2, BASIC_SKILL_PROWLING, a1);
-        sub_4C7090(&v1);
-        sub_4440E0(a2, &(v1.field_0));
-        sub_4440E0(a1, &(v1.field_30));
-        v1.field_98 |= 0x2000;
-        v1.field_9C = BASIC_SKILL_PROWLING;
+        sub_4C7090(&script_invocation);
+        sub_4440E0(a2, &(script_invocation.source));
+        sub_4440E0(a1, &(script_invocation.target));
+        script_invocation.flags |= 0x2000;
+        script_invocation.skill = BASIC_SKILL_PROWLING;
 
-        diff = prowling - sub_4C8430(&v1);
+        diff = prowling - sub_4C8430(&script_invocation);
         if (diff < 0) {
             diff = 0;
         } else if (diff > 100) {

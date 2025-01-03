@@ -6408,7 +6408,7 @@ void sub_554830(int64_t a1, int64_t a2)
     int64_t weapon_obj;
     int skill;
     int v1;
-    Tanya v2;
+    SkillInvocation skill_invocation;
     int v3;
     TigRect rect;
     char str[20];
@@ -6431,30 +6431,30 @@ void sub_554830(int64_t a1, int64_t a2)
         v1 = sub_4C62E0(a1, GET_BASIC_SKILL(skill), a2);
     }
 
-    sub_4C7090(&v2);
-    sub_4440E0(a1, &(v2.field_0));
-    sub_4440E0(a2, &(v2.field_30));
-    sub_4440E0(weapon_obj, &(v2.field_68));
-    v2.field_9C = skill;
+    sub_4C7090(&skill_invocation);
+    sub_4440E0(a1, &(skill_invocation.source));
+    sub_4440E0(a2, &(skill_invocation.target));
+    sub_4440E0(weapon_obj, &(skill_invocation.item));
+    skill_invocation.skill = skill;
 
-    v1 -= sub_4C8430(&v2);
+    v1 -= sub_4C8430(&skill_invocation);
 
     if (weapon_obj != OBJ_HANDLE_NULL
         && skill != SKILL_THROWING) {
         v3 = sub_461620(weapon_obj, a1, a2);
         if (v3 > 0) {
             if (v3 > 20) {
-                v2.field_98 |= 0x40000;
+                skill_invocation.flags |= 0x40000;
             }
             v1 -= v1 * v3 / 100;
         }
     }
 
-    if (v1 < 0 || (v2.field_98 & 0x20080) != 0) {
+    if (v1 < 0 || (skill_invocation.flags & 0x20080) != 0) {
         v1 = 0;
     }
 
-    if ((v2.field_98 & 0x60FC0) != 0) {
+    if ((skill_invocation.flags & 0x60FC0) != 0) {
         rect.x = 215;
         rect.y = 66;
         rect.width = 64;
@@ -6469,7 +6469,7 @@ void sub_554830(int64_t a1, int64_t a2)
                 break;
             }
 
-            if ((dword_5C732C[v4] & v2.field_98) != 0) {
+            if ((dword_5C732C[v4] & skill_invocation.flags) != 0) {
                 sub_554B00(window_handle,
                     dword_5C734C[v4],
                     dword_5C736C[v5],

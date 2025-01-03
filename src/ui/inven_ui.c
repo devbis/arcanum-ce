@@ -3887,18 +3887,18 @@ bool sub_579840(int64_t obj, bool a2)
 // 0x579B60
 void sub_579B60(int64_t obj)
 {
-    Tanya v1;
+    SkillInvocation skill_invocation;
 
     if (sub_579840(obj, 1)) {
-        sub_4C7090(&v1);
-        sub_4440E0(qword_6814F8, &(v1.field_0));
-        sub_4440E0(qword_682C78, &(v1.field_30));
-        sub_4440E0(obj, &(v1.field_68));
-        v1.field_9C = 8;
-        v1.field_A0 = 0;
-        if (sub_4C7160(&v1)) {
+        sub_4C7090(&skill_invocation);
+        sub_4440E0(qword_6814F8, &(skill_invocation.source));
+        sub_4440E0(qword_682C78, &(skill_invocation.target));
+        sub_4440E0(obj, &(skill_invocation.item));
+        skill_invocation.skill = SKILL_GAMBLING;
+        skill_invocation.modifier = 0;
+        if (sub_4C7160(&skill_invocation)) {
             // FIXME: Unclear flags.
-            sub_5788C0(obj, qword_6814F8, 0, (v1.field_98 & 0x1) != 0 ? 0x12 : 0x11);
+            sub_5788C0(obj, qword_6814F8, 0, (skill_invocation.flags & 0x1) != 0 ? 0x12 : 0x11);
             dword_681440 = -1;
         }
     }

@@ -169,7 +169,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
 {
     int type;
     Script scr;
-    Tanya v1;
+    SkillInvocation skill_invocation;
     int64_t item_obj;
 
     if (pc_obj == OBJ_HANDLE_NULL) {
@@ -197,26 +197,26 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
     }
 
     if (!sub_458A80(OSF_DETECTING_INVISIBLE)) {
-        sub_4C7090(&v1);
-        sub_4440E0(pc_obj, &(v1.field_0));
-        sub_4440E0(trap_obj, &(v1.field_30));
-        v1.field_9C = 7;
+        sub_4C7090(&skill_invocation);
+        sub_4440E0(pc_obj, &(skill_invocation.source));
+        sub_4440E0(trap_obj, &(skill_invocation.target));
+        skill_invocation.skill = SKILL_SPOT_TRAP;
 
         item_obj = item_wield_get(pc_obj, 1005);
         if (item_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(item_obj, OBJ_F_NAME) == 2866
             && item_ammo_quantity_get(pc_obj, 2) > 0) {
-            v1.field_A0 = stat_level(pc_obj, STAT_MAGICK_TECH_APTITUDE);
-            if (v1.field_A0 > 0) {
-                v1.field_A0 = 0;
+            skill_invocation.modifier = stat_level(pc_obj, STAT_MAGICK_TECH_APTITUDE);
+            if (skill_invocation.modifier > 0) {
+                skill_invocation.modifier = 0;
             }
         }
 
-        if (!sub_4C7160(&v1)) {
+        if (!sub_4C7160(&skill_invocation)) {
             return false;
         }
 
-        if ((v1.field_98 & 0x1) == 0) {
+        if ((skill_invocation.flags & 0x1) == 0) {
             return false;
         }
     }
