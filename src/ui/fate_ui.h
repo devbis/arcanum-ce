@@ -6,7 +6,7 @@
 bool fate_ui_init(GameInitInfo* init_info);
 void fate_ui_reset();
 void fate_ui_exit();
-void sub_56FBF0(long long obj);
-void sub_56FC40();
+void fate_ui_open(int64_t obj);
+void fate_ui_close();
 
 #endif /* ARCANUM_UI_FATE_UI_H_ */

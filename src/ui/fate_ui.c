@@ -7,18 +7,16 @@
 #include "ui/intgame.h"
 #include "ui/types.h"
 
-#define NUM_BUTTONS 12
-
 static void fate_ui_create();
 static void fate_ui_destroy();
 static bool fate_ui_message_filter(TigMessage* msg);
-static void sub_56FF40(long long obj, int btn);
+static void fate_ui_handle_fate_resolved(int64_t obj, int fate);
 
 // 0x5CAAE0
 static tig_window_handle_t fate_ui_window = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5CAAE8
-static UiButtonInfo stru_5CAAE8[NUM_BUTTONS] = {
+static UiButtonInfo fate_ui_buttons[FATE_COUNT] = {
     { 223, 4, 293, TIG_BUTTON_HANDLE_INVALID },
     { 223, 22, 293, TIG_BUTTON_HANDLE_INVALID },
     { 223, 40, 293, TIG_BUTTON_HANDLE_INVALID },
@@ -37,7 +35,7 @@ static UiButtonInfo stru_5CAAE8[NUM_BUTTONS] = {
 static tig_font_handle_t fate_ui_font;
 
 // 0x680ED8
-static long long qword_680ED8;
+static int64_t fate_ui_obj;
 
 // 0x680EE0
 static int fate_ui_mes;
@@ -66,7 +64,7 @@ bool fate_ui_init(GameInitInfo* init_info)
     tig_font_create(&font_info, &fate_ui_font);
 
     fate_ui_initialized = true;
-    fate_set_callback(sub_56FF40);
+    fate_set_callback(fate_ui_handle_fate_resolved);
 
     return true;
 }
@@ -75,7 +73,7 @@ bool fate_ui_init(GameInitInfo* init_info)
 void fate_ui_reset()
 {
     if (fate_ui_created) {
-        sub_56FC40();
+        fate_ui_close();
     }
 }
 
@@ -88,27 +86,28 @@ void fate_ui_exit()
 }
 
 // 0x56FBF0
-void sub_56FBF0(long long obj)
+void fate_ui_open(int64_t obj)
 {
     if (fate_ui_created) {
-        sub_56FC40();
+        fate_ui_close();
         return;
     }
 
-    if (obj != 0) {
-        if (!critter_is_dead(obj)) {
-            qword_680ED8 = obj;
-            fate_ui_create();
-        }
+    if (obj == OBJ_HANDLE_NULL
+        || critter_is_dead(obj)) {
+        return;
     }
+
+    fate_ui_obj = obj;
+    fate_ui_create();
 }
 
 // 0x56FC40
-void sub_56FC40()
+void fate_ui_close()
 {
     if (fate_ui_created) {
         fate_ui_destroy();
-        qword_680ED8 = 0;
+        fate_ui_obj = OBJ_HANDLE_NULL;
     }
 }
 
@@ -121,7 +120,6 @@ void fate_ui_create()
     TigRect button_rect;
     TigWindowData window_data;
     TigArtBlitInfo blit_info;
-    int index;
     MesFileEntry mes_file_entry;
 
     if (fate_ui_created) {
@@ -146,7 +144,7 @@ void fate_ui_create()
     window_data.message_filter = fate_ui_message_filter;
     if (tig_window_create(&window_data, &fate_ui_window) != TIG_OK) {
         tig_debug_printf("fate_ui_create: ERROR: window create failed!\n");
-        exit(0);
+        exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
     }
 
     window_rect.x = 0;
@@ -165,8 +163,8 @@ void fate_ui_create()
     button_rect.width = window_rect.width - 11;
     button_rect.height = 18;
 
-    for (index = 0; index < NUM_BUTTONS; index++) {
-        mes_file_entry.num = index;
+    for (int fate = 0; fate < FATE_COUNT; fate++) {
+        mes_file_entry.num = fate;
         mes_get_msg(fate_ui_mes, &mes_file_entry);
         tig_window_text_write(fate_ui_window, mes_file_entry.str, &button_rect);
         button_rect.y += button_rect.height;
@@ -174,11 +172,11 @@ void fate_ui_create()
 
     tig_font_pop();
 
-    for (index = 0; index < NUM_BUTTONS; index++) {
+    for (int fate = 0; fate < FATE_COUNT; fate++) {
         sub_54AA60(fate_ui_window,
             &window_rect,
-            &(stru_5CAAE8[index]),
-            fate_is_activated(qword_680ED8, index)
+            &(fate_ui_buttons[fate]),
+            fate_is_activated(fate_ui_obj, fate)
                 ? TIG_BUTTON_FLAG_0x10
                 : TIG_BUTTON_FLAG_0x02);
     }
@@ -200,21 +198,19 @@ void fate_ui_destroy()
 // 0x56FE70
 bool fate_ui_message_filter(TigMessage* msg)
 {
-    int index;
-
     switch (msg->type) {
     case TIG_MESSAGE_BUTTON:
-        for (index = 0; index < NUM_BUTTONS; index++) {
-            if (stru_5CAAE8[index].button_handle == msg->data.button.button_handle) {
+        for (int fate = 0; fate < FATE_COUNT; fate++) {
+            if (fate_ui_buttons[fate].button_handle == msg->data.button.button_handle) {
                 if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED
-                    && !fate_activate(qword_680ED8, index)) {
-                    tig_button_state_change(stru_5CAAE8[index].button_handle, TIG_BUTTON_STATE_RELEASED);
-                    tig_button_state_change(stru_5CAAE8[index].button_handle, TIG_BUTTON_STATE_MOUSE_INSIDE);
+                    && !fate_activate(fate_ui_obj, fate)) {
+                    tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_RELEASED);
+                    tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_MOUSE_INSIDE);
                     return true;
                 }
 
                 if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
-                    && fate_deactivate(qword_680ED8, index)) {
+                    && fate_deactivate(fate_ui_obj, fate)) {
                     return true;
                 }
 
@@ -226,7 +222,7 @@ bool fate_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_KEYBOARD:
         if (msg->data.keyboard.key == DIK_SPACE
             && msg->data.keyboard.pressed == 1) {
-            sub_56FC40();
+            fate_ui_close();
             return true;
         }
     }
@@ -235,10 +231,11 @@ bool fate_ui_message_filter(TigMessage* msg)
 }
 
 // 0x56FF40
-void sub_56FF40(long long obj, int btn)
+void fate_ui_handle_fate_resolved(int64_t obj, int fate)
 {
-    if (qword_680ED8 == obj) {
-        tig_button_state_change(stru_5CAAE8[btn].button_handle, TIG_BUTTON_STATE_RELEASED);
+    if (fate_ui_obj == obj) {
+        tig_button_state_change(fate_ui_buttons[fate].button_handle, TIG_BUTTON_STATE_RELEASED);
     }
+
     sub_55A230();
 }

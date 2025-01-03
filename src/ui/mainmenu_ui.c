@@ -2669,7 +2669,7 @@ void sub_541710()
     sub_57B450();
     sub_560F40();
     sub_53F090();
-    sub_56FC40();
+    fate_ui_close();
     sub_56D2D0();
     gamelib_reset();
     gameuilib_reset();
@@ -2978,7 +2978,7 @@ void sub_541D40()
     sub_57B450();
     sub_560F40();
     sub_53F090();
-    sub_56FC40();
+    fate_ui_close();
     sub_56D2D0();
 }
 
@@ -3150,7 +3150,7 @@ void sub_542200()
     sub_57B450();
     sub_560F40();
     sub_53F090();
-    sub_56FC40();
+    fate_ui_close();
     sub_56D2D0();
 }
 

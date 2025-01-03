@@ -1920,7 +1920,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == stru_5C64C0[4].button_handle) {
-                sub_56FBF0(player_get_pc_obj());
+                fate_ui_open(player_get_pc_obj());
                 return true;
             }
 
@@ -2430,7 +2430,7 @@ bool sub_54B5D0(TigMessage* msg)
             break;
         case 'F':
         case 'f':
-            sub_56FBF0(player_get_pc_obj());
+            fate_ui_open(player_get_pc_obj());
             break;
         case 'I':
         case 'i':
