@@ -1199,7 +1199,7 @@ bool sub_4C7160(SkillInvocation* skill_invocation)
                         if (qty > 20) {
                             qty = 20;
                         }
-                        moved = item_ammo_move(target_obj, source_obj, qty, ammo_type, item_obj);
+                        moved = item_ammo_transfer(target_obj, source_obj, qty, ammo_type, item_obj);
                         break;
                     }
                     default:
@@ -1274,7 +1274,7 @@ bool sub_4C7160(SkillInvocation* skill_invocation)
                         if (qty > 20) {
                             qty = 20;
                         }
-                        moved = item_ammo_move(source_obj, target_obj, qty, ammo_type, item_obj);
+                        moved = item_ammo_transfer(source_obj, target_obj, qty, ammo_type, item_obj);
                         break;
                     }
                     default:

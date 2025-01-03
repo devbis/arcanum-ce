@@ -3047,7 +3047,7 @@ int64_t item_ammo_obj(object_id_t obj, int ammo_type)
 }
 
 // 0x4658E0
-bool item_ammo_move(int64_t from_obj, int64_t to_obj, int qty, int ammo_type, int64_t ammo_obj)
+bool item_ammo_transfer(int64_t from_obj, int64_t to_obj, int qty, int ammo_type, int64_t ammo_obj)
 {
     int remaining_qty;
     int64_t to_ammo_obj;

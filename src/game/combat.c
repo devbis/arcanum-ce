@@ -2676,13 +2676,13 @@ bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
     qty = item_ammo_quantity_get(critter_obj, ammo_type);
 
     if (a4) {
-        item_ammo_move(critter_obj, OBJ_HANDLE_NULL, qty, ammo_type, OBJ_HANDLE_NULL);
+        item_ammo_transfer(critter_obj, OBJ_HANDLE_NULL, qty, ammo_type, OBJ_HANDLE_NULL);
         return true;
     }
 
     consumption = a3 * obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
     if (qty >= consumption) {
-        item_ammo_move(critter_obj, OBJ_HANDLE_NULL, consumption, ammo_type, OBJ_HANDLE_NULL);
+        item_ammo_transfer(critter_obj, OBJ_HANDLE_NULL, consumption, ammo_type, OBJ_HANDLE_NULL);
         return true;
     }
 

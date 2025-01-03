@@ -1127,7 +1127,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
     loc = obj_field_int64_get(a2, OBJ_F_LOCATION);
 
     if (obj_field_int32_get(ingridient1_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
-        item_ammo_move(a2,
+        item_ammo_transfer(a2,
             OBJ_HANDLE_NULL,
             1,
             obj_field_int32_get(ingridient1_obj, OBJ_F_AMMO_QUANTITY),
@@ -1137,7 +1137,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
     }
 
     if (obj_field_int32_get(ingridient2_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
-        item_ammo_move(a2,
+        item_ammo_transfer(a2,
             OBJ_HANDLE_NULL,
             1,
             obj_field_int32_get(ingridient2_obj, OBJ_F_AMMO_QUANTITY),
