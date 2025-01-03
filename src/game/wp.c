@@ -96,7 +96,7 @@ void wp_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4BFDB0
-bool sub_4BFDB0(ViewOptions* view_options)
+bool wp_update_view(ViewOptions* view_options)
 {
     wp_view_options = *view_options;
 
