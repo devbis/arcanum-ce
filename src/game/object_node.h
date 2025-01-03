@@ -4,9 +4,8 @@
 #include "game/context.h"
 
 typedef struct ObjectNode {
-    int64_t obj;
-    struct ObjectNode* next;
-    int field_C;
+    /* 0000 */ int64_t obj;
+    /* 0004 */ struct ObjectNode* next;
 } ObjectNode;
 
 // See 0x4E9990.
