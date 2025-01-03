@@ -1713,7 +1713,7 @@ void sub_404740(UnknownContext* info)
         tile_render(info);
         sub_4C9E70(info);
         sub_4E3320(info);
-        sub_4C0630(info);
+        tile_script_render(info);
         tileblock_render(info);
         object_render(info);
         sector_render(info);

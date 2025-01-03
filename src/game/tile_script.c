@@ -93,7 +93,7 @@ bool tile_script_update_view(ViewOptions* view_options)
 }
 
 // 0x4C0630
-void sub_4C0630(UnknownContext* a1)
+void tile_script_render(UnknownContext* render_info)
 {
     TigArtBlitInfo art_blit_info;
     TigArtFrameData art_frame_data;
@@ -130,13 +130,13 @@ void sub_4C0630(UnknownContext* a1)
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
 
-    sector_node = a1->field_C;
+    sector_node = render_info->field_C;
     while (sector_node != NULL) {
         if (sector_lock(sector_node->id, &sector)) {
             tile_script_node = sector->tile_scripts.head;
             while (tile_script_node != NULL) {
                 sub_4C0A40(sector_node->id, tile_script_node->id, &tile_rect);
-                rect_node = *a1->rects;
+                rect_node = *render_info->rects;
                 while (rect_node != NULL) {
                     if (tig_rect_intersection(&tile_rect, &(rect_node->rect), &dst_rect) == TIG_OK) {
                         src_rect.x = dst_rect.x - tile_rect.x;
