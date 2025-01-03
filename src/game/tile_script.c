@@ -85,7 +85,7 @@ void tile_script_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4C05E0
-bool sub_4C05E0(ViewOptions* view_options)
+bool tile_script_update_view(ViewOptions* view_options)
 {
     tile_script_view_options = *view_options;
 

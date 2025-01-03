@@ -174,7 +174,7 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
     { "Background", background_init, NULL, NULL, NULL, background_exit, NULL, NULL, NULL, NULL, NULL },
     { "Reputation", reputation_init, NULL, reputation_mod_load, reputation_mod_unload, reputation_exit, NULL,0, NULL, NULL, NULL },
     { "Reaction", reaction_init, NULL, NULL, NULL, reaction_exit, NULL, NULL, NULL, NULL, NULL },
-    { "Tile-Script", tile_script_init, tile_script_reset, NULL, NULL, tile_script_exit,0, sub_4C05E0, NULL, NULL, tile_script_resize },
+    { "Tile-Script", tile_script_init, tile_script_reset, NULL, NULL, tile_script_exit,0, tile_script_update_view, NULL, NULL, tile_script_resize },
     { "Sector-Script", sector_script_init, sector_script_reset, NULL, NULL, sector_script_exit, NULL, NULL, NULL, NULL, NULL },
     { "WP", wp_init, NULL, NULL, NULL, wp_exit, NULL, wp_update_view, NULL, NULL, wp_resize },
     { "Inven-Source", invensource_init, NULL, NULL, NULL, invensource_exit, NULL, NULL, NULL, NULL, NULL },
