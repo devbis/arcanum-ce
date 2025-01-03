@@ -824,7 +824,7 @@ bool obj_arrayfield_obj_get(int64_t obj_handle, int fld, int index, int64_t* val
 void obj_arrayfield_obj_set(int64_t obj_handle, int fld, int index, int64_t value);
 void obj_arrayfield_script_get(int64_t obj, int fld, int index, void* value);
 void obj_arrayfield_script_set(int64_t obj, int fld, int index, void* value);
-void sub_407900(int64_t obj_handle, int fld, int index, void* value);
+void obj_arrayfield_pc_quest_get(int64_t obj, int fld, int index, void* value);
 void sub_407960(int64_t obj_handle, int fld, int index, void* value);
 int obj_arrayfield_length_get(int64_t obj_handle, int fld);
 void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length);

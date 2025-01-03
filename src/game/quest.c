@@ -245,7 +245,7 @@ int sub_4C4CB0(int64_t obj, int num)
         return quest_get_state(num);
     }
 
-    sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     state = pc_quest_state.state;
     if ((state & 0x100) != 0) {
@@ -346,7 +346,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
         }
     }
 
-    sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     if (state == QUEST_STATE_BOTCHED) {
         pc_quest_state.state |= 0x100;
     } else {
@@ -401,7 +401,7 @@ int sub_4C5070(int64_t obj, int num)
 
     if (!sub_4A2BA0()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
-            sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+            obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
             return pc_quest_state.state;
         }
 
@@ -413,7 +413,7 @@ int sub_4C5070(int64_t obj, int num)
 
     quest_states[num - 1000] = QUEST_STATE_ACCEPTED;
 
-    sub_407900(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
+    obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     pc_quest_state.state &= ~0x100;
     pc_quest_state.timestamp = sub_45A7C0();
     sub_407960(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
