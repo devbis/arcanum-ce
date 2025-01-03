@@ -502,7 +502,7 @@ bool script_local_flag_get(int64_t obj, int index, int flag)
 {
     Script scr;
 
-    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+    obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
 
     return scr.num != 0 ? (scr.hdr.flags & (1 << flag)) != 0 : false;
 }
@@ -512,7 +512,7 @@ void script_local_flag_set(int64_t obj, int index, int flag, bool enabled)
 {
     Script scr;
 
-    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+    obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
 
     if (scr.num != 0) {
         if (enabled) {
@@ -530,7 +530,7 @@ int script_local_counter_get(int64_t obj, int index, int counter)
 {
     Script scr;
 
-    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+    obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
 
     return scr.num != 0 ? (scr.hdr.counters >> (8 * counter)) : 0;
 }
@@ -540,7 +540,7 @@ void script_local_counter_set(int64_t obj, int index, int counter, int value)
 {
     Script scr;
 
-    sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+    obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
 
     if (scr.num) {
         scr.hdr.counters &= ~(0xFF << (8 * counter));
@@ -1557,7 +1557,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             Script scr;
 
             num = script_get_value(action->op_type[0], action->op_value[0], state);
-            sub_407840(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->attachment_point, &scr);
+            obj_arrayfield_script_get(state->invocation->attachee_obj, OBJ_F_SCRIPTS_IDX, state->invocation->attachment_point, &scr);
 
             if (scr.hdr.flags != state->invocation->script->hdr.flags
                 || scr.hdr.counters != state->invocation->script->hdr.counters) {
@@ -2409,7 +2409,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             state->script_num = num;
         } else {
             Script scr;
-            sub_407840(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
+            obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
             scr.num = num;
             sub_4F01D0(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
         }

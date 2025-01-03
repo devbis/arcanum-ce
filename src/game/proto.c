@@ -16537,7 +16537,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
         object_hp_max(obj));
 
     for (index = 0; index < 36; index++) {
-        sub_407840(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+        obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
         if (scr[2] != 0) {
             tig_file_fprintf(stream, "%s: %d %d %d %d %d %d\n",
                 off_5B38C8[PROTO_F_SCRIPT],

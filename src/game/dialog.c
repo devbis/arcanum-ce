@@ -3213,7 +3213,7 @@ bool sub_418870(char* str, DialogEntryNode* a2, int a3)
     DialogEntry entry;
     bool v1;
 
-    sub_407840(a2->npc_obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG_OVERRIDE, &scr);
+    obj_arrayfield_script_get(a2->npc_obj, OBJ_F_SCRIPTS_IDX, SAP_DIALOG_OVERRIDE, &scr);
 
     if (scr.num == 0) {
         return false;

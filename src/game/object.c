@@ -3777,7 +3777,7 @@ bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, 
         return false;
     }
 
-    sub_407840(attachee_obj, OBJ_F_SCRIPTS_IDX, attachment_point, &scr);
+    obj_arrayfield_script_get(attachee_obj, OBJ_F_SCRIPTS_IDX, attachment_point, &scr);
 
     if (scr.num == 0) {
         return true;

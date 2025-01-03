@@ -136,7 +136,7 @@ int trap_type(int64_t obj)
 {
     Script scr;
 
-    sub_407840(obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
     return trap_type_from_scr(&scr);
 }
 
@@ -187,7 +187,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
         return false;
     }
 
-    sub_407840(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
     if (trap_type_from_scr(&scr) == TRAP_TYPE_INVALID) {
         return false;
     }
@@ -297,7 +297,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
         if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
             sub_43D280(trap_obj, OF_DONTDRAW);
         } else {
-            sub_407840(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+            obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
                 sub_4CCD20(&stru_5FC460, &animfx, trap_obj, -1, 3 * scr.num - 90000 - 2);
                 animfx.field_1C = 1;
@@ -330,7 +330,7 @@ void sub_4BC220(int64_t trap_obj)
         if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
             sub_43CCA0(trap_obj);
         } else {
-            sub_407840(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+            obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
                 animfx_remove(&stru_5FC460, trap_obj, 3 * scr.num - 90000 - 2, -1);
             }
@@ -360,7 +360,7 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
     if (spl == 10000) {
         // Check if we can trap the target object - it should be either a door
         // or a container with no use script.
-        sub_407840(target_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+        obj_arrayfield_script_get(target_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
         if (scr.num != 0
             || (target_type != OBJ_TYPE_PORTAL && target_type != OBJ_TYPE_CONTAINER)) {
             // You cannot trap that!
@@ -374,7 +374,7 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
             return false;
         }
 
-        sub_407840(item_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+        obj_arrayfield_script_get(item_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
         sub_4078A0(target_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
         sub_43CCA0(item_obj);
         sub_43D0E0(target_obj, OF_TRAP_PC);
@@ -442,7 +442,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
         return false;
     }
 
-    sub_407840(item_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_get(item_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
     if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
         name = dword_5B5F60[scr.num - TRAP_SCRIPT_FIRST];
     } else {
@@ -555,7 +555,7 @@ bool get_disarm_item_name(int64_t trap_obj, int* name_ptr)
 {
     Script scr;
 
-    sub_407840(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
     if (scr.num < TRAP_SCRIPT_FIRST || scr.num >= TRAP_SCRIPT_COUNT) {
         return false;
     }
@@ -605,7 +605,7 @@ void sub_4BCB00(int64_t a1, int64_t a2)
     Script scr;
     ScriptInvocation invocation;
 
-    sub_407840(a2, OBJ_F_SCRIPTS_IDX, 1, &scr);
+    obj_arrayfield_script_get(a2, OBJ_F_SCRIPTS_IDX, 1, &scr);
 
     invocation.triggerer_obj = a1;
     invocation.extra_obj = OBJ_HANDLE_NULL;
@@ -790,7 +790,7 @@ int64_t find_trap_source(int64_t obj, uint8_t id)
 
     node = objects.head;
     while (node != NULL) {
-        sub_407840(node->obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
+        obj_arrayfield_script_get(node->obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
         if (scr.num == TRAP_SCRIPT_TRAP_SOURCE && ((scr.hdr.counters >> 16) & 0xFF) == id) {
             trap_source_obj = node->obj;
             break;
