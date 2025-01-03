@@ -146,9 +146,9 @@ void quest_mod_unload()
 }
 
 // 0x4C4800
-bool quest_load(LoadContext* ctx)
+bool quest_load(GameLoadInfo* load_info)
 {
-    if (tig_file_fread(quest_states, sizeof(*quest_states) * MAX_QUEST, 1, ctx->stream) != 1) {
+    if (tig_file_fread(quest_states, sizeof(*quest_states) * MAX_QUEST, 1, load_info->stream) != 1) {
         return false;
     }
 

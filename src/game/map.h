@@ -18,7 +18,7 @@ void map_mod_unload();
 void map_exit();
 void map_ping(unsigned int time);
 bool map_save(TigFile* stream);
-bool map_load(LoadContext* ctx);
+bool map_load(GameLoadInfo* load_info);
 void map_update_view(ViewOptions* view_options);
 bool map_open(const char* a1, const char* a2, bool a3);
 bool map_open_in_game(int map, bool a2, bool a3);

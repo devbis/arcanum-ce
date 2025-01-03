@@ -93,7 +93,7 @@ typedef void(GameExitFunc)();
 typedef void(GamePingFunc)(unsigned int time);
 typedef void(GameUpdateViewFunc)(ViewOptions* view_options);
 typedef bool(GameSaveFunc)(TigFile* stream);
-typedef bool(GameLoadFunc)(LoadContext* ctx);
+typedef bool(GameLoadFunc)(GameLoadInfo* load_info);
 typedef void(GameResizeFunc)(GameResizeInfo* resize_info);
 
 typedef struct GameLibModule {

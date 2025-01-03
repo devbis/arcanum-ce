@@ -423,7 +423,7 @@ bool map_save(TigFile* stream)
 }
 
 // 0x40F080
-bool map_load(LoadContext* ctx)
+bool map_load(GameLoadInfo* load_info)
 {
     int sentinel;
     unsigned int load_start;
@@ -441,7 +441,7 @@ bool map_load(LoadContext* ctx)
     tig_timer_now(&start);
 
     char name[MAX_PATH];
-    if (tig_file_fgets(name, sizeof(name), ctx->stream) == NULL) {
+    if (tig_file_fgets(name, sizeof(name), load_info->stream) == NULL) {
         map_close();
         return false;
     }
@@ -452,7 +452,7 @@ bool map_load(LoadContext* ctx)
     }
 
     char folder[MAX_PATH];
-    if (tig_file_fgets(folder, sizeof(folder), ctx->stream) == NULL) {
+    if (tig_file_fgets(folder, sizeof(folder), load_info->stream) == NULL) {
         map_close();
         return false;
     }
@@ -469,13 +469,13 @@ bool map_load(LoadContext* ctx)
             tig_debug_printf("map_load: Function %d (%s)", index, map_modules[index].name);
             tig_timer_now(&start);
 
-            if (!map_modules[index].load_func(ctx)) {
+            if (!map_modules[index].load_func(load_info)) {
                 tig_debug_printf("map_load(): error calling map load func %d (%s)\n", index, map_modules[index].name);
                 map_close();
                 return false;
             }
 
-            if (tig_file_fread(&sentinel, sizeof(sentinel), 1, ctx->stream) != 1) {
+            if (tig_file_fread(&sentinel, sizeof(sentinel), 1, load_info->stream) != 1) {
                 tig_debug_printf("map_load: ERROR: Load Sentinel Failed to Load!\n");
                 // FIXME: Missing map_close?
                 return false;
@@ -488,7 +488,7 @@ bool map_load(LoadContext* ctx)
             }
 
             int pos;
-            tig_file_fgetpos(ctx->stream, &pos);
+            tig_file_fgetpos(load_info->stream, &pos);
             tig_debug_printf(" read to: %lu, Total: (%lu), Time (ms): %d\n",
                 pos,
                 start_pos - pos,

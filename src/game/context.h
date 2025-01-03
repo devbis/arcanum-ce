@@ -31,14 +31,12 @@ typedef struct GameResizeInfo {
 
 static_assert(sizeof(GameResizeInfo) == 0x24, "wrong size");
 
-typedef struct LoadContext {
+typedef struct GameLoadInfo {
     int version;
     TigFile* stream;
-} LoadContext;
+} GameLoadInfo;
 
-typedef LoadContext GameLoadInfo;
-
-static_assert(sizeof(LoadContext) == 0x8, "wrong size");
+static_assert(sizeof(GameLoadInfo) == 0x8, "wrong size");
 
 typedef struct ViewOptions {
     int type;

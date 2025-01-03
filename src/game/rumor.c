@@ -94,7 +94,7 @@ void rumor_mod_unload()
 }
 
 // 0x4C55F0
-bool rumor_load(LoadContext* load_info)
+bool rumor_load(GameLoadInfo* load_info)
 {
     if (tig_file_fread(dword_6876C8, TWO_FIVE_ONE, 1, load_info->stream) != 1) return false;
 

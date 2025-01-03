@@ -674,36 +674,36 @@ bool timeevent_save_node(TimeEventTypeInfo* timeevent_type_info, TimeEventNode* 
 }
 
 // 0x45B120
-bool timeevent_load(LoadContext* ctx)
+bool timeevent_load(GameLoadInfo* load_info)
 {
     int time_type;
     int count;
     int index;
     TimeEvent timeevent;
 
-    if (ctx->stream == NULL) {
+    if (load_info->stream == NULL) {
         return false;
     }
 
-    if (tig_file_fread(&stru_5E85F8, sizeof(stru_5E85F8), 1, ctx->stream) != 1) {
+    if (tig_file_fread(&stru_5E85F8, sizeof(stru_5E85F8), 1, load_info->stream) != 1) {
         return false;
     }
 
-    if (tig_file_fread(&stru_5E8600, sizeof(stru_5E8600), 1, ctx->stream) != 1) {
+    if (tig_file_fread(&stru_5E8600, sizeof(stru_5E8600), 1, load_info->stream) != 1) {
         return false;
     }
 
-    if (tig_file_fread(&stru_5E8608, sizeof(stru_5E8608), 1, ctx->stream) != 1) {
+    if (tig_file_fread(&stru_5E8608, sizeof(stru_5E8608), 1, load_info->stream) != 1) {
         return false;
     }
 
     for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
-        if (tig_file_fread(&count, sizeof(count), 1, ctx->stream) != 1) {
+        if (tig_file_fread(&count, sizeof(count), 1, load_info->stream) != 1) {
             return false;
         }
 
         for (index = 0; index < count; index++) {
-            if (!timeevent_load_node(&timeevent, ctx->stream)) {
+            if (!timeevent_load_node(&timeevent, load_info->stream)) {
                 return false;
             }
 

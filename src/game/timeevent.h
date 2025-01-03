@@ -136,7 +136,7 @@ bool timeevent_set_funcs(TimeEventFuncs* funcs);
 void timeevent_reset();
 void timeevent_exit();
 bool timeevent_save(TigFile* stream);
-bool timeevent_load(LoadContext* ctx);
+bool timeevent_load(GameLoadInfo* load_info);
 bool sub_45B300();
 void sub_45B320();
 void sub_45B340();
