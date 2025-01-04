@@ -1170,7 +1170,7 @@ void mp_object_flags_set(int64_t obj, unsigned int flags);
 void mp_obj_field_obj_set(int64_t obj, int fld, int64_t value);
 void sub_4F0070(int64_t obj, int fld, int index, int64_t value);
 void sub_4F0150(int64_t obj, int fld, int index, int value);
-void sub_4F01D0(int64_t obj, int fld, int index, Script* value);
+void mp_obj_arrayfield_script_set(int64_t obj, int fld, int index, Script* value);
 void obj_f_set_int32_with_network(int64_t obj, int fld, int index, int value);
 void sub_4F02F0(int64_t obj, tig_art_id_t art_id);
 void sub_4F0360(int64_t obj, int fld, int index, int value);

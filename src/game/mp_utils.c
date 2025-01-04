@@ -1375,7 +1375,7 @@ void sub_4F0150(int64_t obj, int fld, int index, int value)
 }
 
 // 0x4F01D0
-void sub_4F01D0(int64_t obj, int fld, int index, Script* value)
+void mp_obj_arrayfield_script_set(int64_t obj, int fld, int index, Script* value)
 {
     Packet129 pkt;
 

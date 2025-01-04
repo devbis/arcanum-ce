@@ -521,7 +521,7 @@ void script_local_flag_set(int64_t obj, int index, int flag, bool enabled)
             scr.hdr.flags &= ~(1 << flag);
         }
 
-        sub_4F01D0(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+        mp_obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
     }
 }
 
@@ -546,7 +546,7 @@ void script_local_counter_set(int64_t obj, int index, int counter, int value)
         scr.hdr.counters &= ~(0xFF << (8 * counter));
         scr.hdr.counters |= value << (8 * counter);
 
-        sub_4F01D0(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
+        mp_obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, index, &scr);
     }
 }
 
@@ -2411,7 +2411,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             Script scr;
             obj_arrayfield_script_get(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
             scr.num = num;
-            sub_4F01D0(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
+            mp_obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, sap, &scr);
         }
         return NEXT;
     }

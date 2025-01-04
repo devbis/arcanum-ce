@@ -3796,7 +3796,7 @@ bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, 
         if (scr_before.num != scr.num
             || scr_before.hdr.flags != scr.hdr.flags
             || scr_before.hdr.counters != scr.hdr.counters) {
-            sub_4F01D0(attachee_obj, OBJ_F_SCRIPTS_IDX, attachment_point, &scr);
+            mp_obj_arrayfield_script_set(attachee_obj, OBJ_F_SCRIPTS_IDX, attachment_point, &scr);
         }
     } else {
         sub_43CCA0(attachee_obj);
