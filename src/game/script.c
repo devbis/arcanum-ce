@@ -2176,7 +2176,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     }
     case SAT_GET_WEAPON_TYPE: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
-        int64_t weapon_obj = item_wield_get(obj, 1004);
+        int64_t weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
         int weapon_type = weapon_obj != OBJ_HANDLE_NULL
             ? tig_art_item_id_subtype_get(obj_field_int32_get(weapon_obj, OBJ_F_ITEM_INV_AID))
             : TIG_ART_WEAPON_TYPE_UNARMED;

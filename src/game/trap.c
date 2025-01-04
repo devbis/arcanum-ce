@@ -202,7 +202,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
         sub_4440E0(trap_obj, &(skill_invocation.target));
         skill_invocation.skill = SKILL_SPOT_TRAP;
 
-        item_obj = item_wield_get(pc_obj, 1005);
+        item_obj = item_wield_get(pc_obj, ITEM_INV_LOC_SHIELD);
         if (item_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(item_obj, OBJ_F_NAME) == 2866
             && item_ammo_quantity_get(pc_obj, 2) > 0) {

@@ -411,7 +411,7 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
 // 0x4B23B0
 int64_t sub_4B23B0(int64_t obj)
 {
-    return item_wield_get(obj, 1004);
+    return item_wield_get(obj, ITEM_INV_LOC_WEAPON);
 }
 
 // 0x4B23D0
@@ -1547,7 +1547,7 @@ void sub_4B4390(CombatContext* combat)
             int inventory_location;
             int64_t item_obj;
 
-            for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+            for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
                 item_obj = item_wield_get(combat->target_obj, inventory_location);
                 if (item_obj != OBJ_HANDLE_NULL
                     && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
@@ -1678,9 +1678,9 @@ void sub_4B4390(CombatContext* combat)
                 tf_add(combat->target_obj, tf_type, mes_file_entry.str);
             }
 
-            int64_t weapon_obj = item_wield_get(combat->target_obj, 1004);
+            int64_t weapon_obj = item_wield_get(combat->target_obj, ITEM_INV_LOC_WEAPON);
             if (weapon_obj != OBJ_HANDLE_NULL
-                && sub_464D20(weapon_obj, 1004, combat->target_obj)) {
+                && sub_464D20(weapon_obj, ITEM_INV_LOC_WEAPON, combat->target_obj)) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0) {
                     item_drop_nearby(weapon_obj);
@@ -1693,9 +1693,9 @@ void sub_4B4390(CombatContext* combat)
                 weapon_dropped = true;
             }
 
-            int64_t item_obj = item_wield_get(combat->target_obj, 1005);
-            if (item_obj != OBJ_HANDLE_NULL
-                && sub_464D20(item_obj, 1005, combat->target_obj)) {
+            int64_t shield_obj = item_wield_get(combat->target_obj, ITEM_INV_LOC_SHIELD);
+            if (shield_obj != OBJ_HANDLE_NULL
+                && sub_464D20(shield_obj, ITEM_INV_LOC_SHIELD, combat->target_obj)) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0) {
                     item_drop_nearby(weapon_obj);
@@ -1738,10 +1738,10 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        if ((dam_flags & CDF_DROP_ITEM) != 0) {
-            int64_t item_obj = item_wield_get(combat->target_obj, 1000);
-            if (item_obj != OBJ_HANDLE_NULL) {
-                item_drop_nearby(item_obj);
+        if ((dam_flags & CDF_DROP_HELMET) != 0) {
+            int64_t helmet_obj = item_wield_get(combat->target_obj, ITEM_INV_LOC_HELMET);
+            if (helmet_obj != OBJ_HANDLE_NULL) {
+                item_drop_nearby(helmet_obj);
 
                 mes_file_entry.num = 20; // "Item dropped"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -2007,13 +2007,13 @@ int64_t sub_4B54B0(int64_t obj, int a2)
 {
     switch (a2) {
     case 1:
-        return item_wield_get(obj, 1000);
+        return item_wield_get(obj, ITEM_INV_LOC_HELMET);
     case 2:
-        return item_wield_get(obj, 1007);
+        return item_wield_get(obj, ITEM_INV_LOC_GAUNTLET);
     case 3:
-        return item_wield_get(obj, 1008);
+        return item_wield_get(obj, ITEM_INV_LOC_BOOTS);
     default:
-        return item_wield_get(obj, 1006);
+        return item_wield_get(obj, ITEM_INV_LOC_ARMOR);
     }
 }
 
@@ -2421,7 +2421,7 @@ void sub_4B5F40(CombatContext* combat)
     int chance;
     int critter_crit_hit_chart;
     unsigned int critter_flags;
-    int64_t item_obj;
+    int64_t helmet_obj;
     int difficulty;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
@@ -2483,7 +2483,7 @@ void sub_4B5F40(CombatContext* combat)
     if (critter_crit_hit_chart != 2) {
         critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
         if ((critter_flags & OCF_UNDEAD) == 0) {
-            item_obj = item_wield_get(combat->target_obj, 1000);
+            helmet_obj = item_wield_get(combat->target_obj, ITEM_INV_LOC_HELMET);
 
             difficulty = chance + 5;
 
@@ -2491,7 +2491,7 @@ void sub_4B5F40(CombatContext* combat)
                 difficulty += 10;
             }
 
-            if (combat->hit_loc == 1 && item_obj == OBJ_HANDLE_NULL) {
+            if (combat->hit_loc == 1 && helmet_obj == OBJ_HANDLE_NULL) {
                 difficulty += 10;
             }
 
@@ -2529,15 +2529,15 @@ void sub_4B5F40(CombatContext* combat)
 
                 if (combat->hit_loc == 1) {
                     if (crit_hit_chart == 1) {
-                        if (item_obj != OBJ_HANDLE_NULL
+                        if (helmet_obj != OBJ_HANDLE_NULL
                             && random_between(1, 100) <= chance + 5) {
-                            combat->dam_flags |= CDF_DROP_ITEM;
+                            combat->dam_flags |= CDF_DROP_HELMET;
                             break;
                         }
                     }
 
                     if (!npc_attacks_pc
-                        && random_between(1, 100) <= chance + (item_obj == OBJ_HANDLE_NULL ? 1 : 0)
+                        && random_between(1, 100) <= chance + (helmet_obj == OBJ_HANDLE_NULL ? 1 : 0)
                         && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, 0)) {
                         combat->dam_flags |= CDF_BLIND;
                         break;
@@ -3498,7 +3498,7 @@ bool sub_4B78D0(int64_t a1, int64_t a2)
     }
 
     v1 = sub_4B7C30(a1);
-    weapon_obj = item_wield_get(a1, 1004);
+    weapon_obj = item_wield_get(a1, ITEM_INV_LOC_WEAPON);
     if (weapon_obj == OBJ_HANDLE_NULL || item_weapon_range(weapon_obj, a1) <= 1) {
         loc1 = obj_field_int64_get(a1, OBJ_F_LOCATION);
         loc2 = obj_field_int64_get(a2, OBJ_F_LOCATION);
@@ -3601,7 +3601,7 @@ int sub_4B7C30(int64_t obj)
     int speed;
     int v1;
 
-    weapon_obj = item_wield_get(obj, 1004);
+    weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
     speed = item_weapon_magic_speed(weapon_obj, obj);
     if (speed > 24) {
         v1 = 1;
@@ -4031,6 +4031,6 @@ void sub_4B83E0(int64_t obj, int64_t a2)
             || (tig_net_flags & TIG_NET_HOST) != 0)
         && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && combat_auto_switch_weapons_get(obj)) {
-        sub_465170(obj, 1004, a2);
+        sub_465170(obj, ITEM_INV_LOC_WEAPON, a2);
     }
 }

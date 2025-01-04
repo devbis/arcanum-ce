@@ -384,7 +384,7 @@ void sub_4CC810(S5FF620* a1)
     int cnt;
     int index;
 
-    item_obj = item_wield_get(a1->obj, 1004);
+    item_obj = item_wield_get(a1->obj, ITEM_INV_LOC_WEAPON);
     if (item_obj != OBJ_HANDLE_NULL
         && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_HEXED) != 0) {
         sub_4CC930(a1, item_obj);

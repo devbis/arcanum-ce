@@ -1644,7 +1644,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         return false;
     }
 
-    if (inventory_location >= 1000 && inventory_location <= 1008) {
+    if (IS_WEAR_INV_LOC(inventory_location)) {
         if (dword_683464 == 1) {
             if (qword_681450 != qword_6814F8 && v2 != qword_6814F8 && !dword_6810FC) {
                 sub_575770();
@@ -1843,7 +1843,7 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
 
     if (dword_683464 == 0) {
         inventory_location = item_inventory_location_get(v1);
-        if (inventory_location < 1000 || inventory_location > 1008) {
+        if (!IS_WEAR_INV_LOC(inventory_location)) {
             inventory_location = item_location_get(v1);
             if (inventory_location == -1
                 && sub_462C30(qword_6814F8, v1) == ITEM_CANNOT_OK) {
@@ -2195,7 +2195,7 @@ bool sub_5755A0(S5754C0* entry)
     art_id = obj_field_int32_get(entry->field_8, OBJ_F_ITEM_INV_AID);
 
     if ((entry->x == -1 && entry->y == -1)
-        || (entry->field_24 >= 1000 && entry->field_24 <= 1008)
+        || IS_WEAR_INV_LOC(entry->field_24)
         || (entry->field_24 >= 2000 && entry->field_24 <= 2009)) {
         entry->x = 0;
         entry->y = 0;
@@ -2295,20 +2295,19 @@ void sub_575930()
     }
 
     if (!sub_4642C0(qword_6810E0, qword_681450)) {
-        if (dword_6810E8 >= 1000
-            && dword_6810E8 <= 1008
+        if (IS_WEAR_INV_LOC(dword_6810E8)
             && item_wield_get(qword_681450, dword_6810E8) == OBJ_HANDLE_NULL) {
             item_insert(qword_6810E0, qword_681450, dword_6810E8);
         } else if (dword_6810E8 >= 2000
             && dword_6810E8 <= 2009
             && !sub_465690(qword_681450, dword_6810E8)) {
             item_insert(qword_6810E0, qword_681450, dword_6810E8);
-        } else if (!(dword_6810E8 >= 1000 && dword_6810E8 <= 1008)
+        } else if (!IS_WEAR_INV_LOC(dword_6810E8)
             && !(dword_6810E8 >= 2000 && dword_6810E8 <= 2009)
             && qword_681450 == qword_6814F8
             && sub_466390(qword_6810E0, qword_6814F8, dword_6810E8, dword_68111C)) {
             item_insert(qword_6810E0, qword_681450, dword_6810E8);
-        } else if (!(dword_6810E8 >= 1000 && dword_6810E8 <= 1008)
+        } else if (!IS_WEAR_INV_LOC(dword_6810E8)
             && !(dword_6810E8 >= 2000 && dword_6810E8 <= 2009)
             && qword_681450 == qword_6813A8
             && sub_466390(qword_6810E0, qword_6813A8, dword_6810E8, dword_681518)) {
@@ -2460,7 +2459,7 @@ int64_t sub_575FA0(int x, int y, int64_t* parent_obj_ptr)
 
     inventory_location = sub_575CB0(x, y, &parent_obj);
     if (inventory_location != -1) {
-        if (inventory_location >= 1000 && inventory_location <= 1008) {
+        if (IS_WEAR_INV_LOC(inventory_location)) {
             item_obj = item_wield_get(parent_obj, inventory_location);
         } else if (inventory_location >= 2000 && inventory_location <= 2009) {
             item_obj = sub_465690(parent_obj, inventory_location);
@@ -3004,13 +3003,13 @@ void redraw_inven(bool a1)
         }
 
         // 0x57730A
-        if (inventory_location >= 1000 && inventory_location <= 1008) {
+        if (IS_WEAR_INV_LOC(inventory_location)) {
             if (dword_683464 == 0
                 || dword_68150C == 1
                 || dword_683464 == 5
                 || dword_683464 == 6) {
                 weapon_too_heavy = false;
-                if (inventory_location == 1004) {
+                if (inventory_location == ITEM_INV_LOC_WEAPON) {
                     weapon_min_str = item_weapon_min_strength(item_obj, qword_6814F8);
                     if (stat_level(qword_6814F8, STAT_STRENGTH) < weapon_min_str) {
                         dst_rect = text_rects[4];
@@ -3257,11 +3256,11 @@ void redraw_inven(bool a1)
                 continue;
             }
 
-            if (inventory_location >= 1000 && inventory_location <= 1008) {
+            if (IS_WEAR_INV_LOC(inventory_location)) {
                 // 0x577CA0
                 if (dword_681514) {
                     weapon_too_heavy = false;
-                    if (inventory_location == 1004) {
+                    if (inventory_location == ITEM_INV_LOC_WEAPON) {
                         weapon_min_str = item_weapon_min_strength(item_obj, target_obj);
                         if (stat_level(target_obj, STAT_STRENGTH) < weapon_min_str) {
                             dst_rect = text_rects[4];
@@ -3465,8 +3464,7 @@ void sub_578330(int64_t a1, int64_t a2)
         dword_681440 = sub_461F80(a1, qword_682C78, qword_6814F8, 0);
         if (dword_681440 != 0) {
             if ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) != 0
-                || (item_inventory_location_get(a1) >= 1000
-                    && item_inventory_location_get(a1) <= 1008)) {
+                || IS_WEAR_INV_LOC(item_inventory_location_get(a1))) {
                 sub_4135B0(qword_682C78, qword_6814F8, byte_68241C);
                 pos = strlen(byte_68241C);
             } else {
@@ -3567,7 +3565,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
             }
 
             old_inventory_location = item_inventory_location_get(item_obj);
-            if (new_inventory_location < 1000 || new_inventory_location > 1008) {
+            if (!IS_WEAR_INV_LOC(new_inventory_location)) {
                 if (target_obj == qword_6814F8) {
                     sub_466310(item_obj, old_inventory_location, dword_68111C, 0);
                     if (!sub_466390(item_obj, target_obj, new_inventory_location, dword_68111C)) {
@@ -3846,7 +3844,7 @@ bool sub_579840(int64_t obj, bool a2)
     }
 
     training = basic_skill_get_training(qword_682C78, BASIC_SKILL_GAMBLING);
-    if (item_inventory_location_get(obj) >= 1000 && item_inventory_location_get(obj) <= 1008) {
+    if (IS_WEAR_INV_LOC(item_inventory_location_get(obj))) {
         if (training < TRAINING_EXPERT) {
             if (!a2) {
                 sub_414020(qword_682C78, qword_6814F8, 5, byte_68241C);

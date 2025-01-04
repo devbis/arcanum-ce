@@ -1650,7 +1650,7 @@ int sub_43D6D0(int64_t obj, int resistance_type, bool a2)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
 
     if (obj_type_is_critter(obj_type)) {
-        for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+        for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
             item_obj = item_wield_get(obj, inventory_location);
             if (item_obj != OBJ_HANDLE_NULL
                 && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
@@ -1701,7 +1701,7 @@ int object_get_ac(object_id_t obj, bool a2)
     ac = obj_field_int32_get(obj, OBJ_F_AC);
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)) {
-        for (index = 1000; index <= 1008; index++) {
+        for (index = FIRST_WEAR_INV_LOC; index <= LAST_WEAR_INV_LOC; index++) {
             item_obj = item_wield_get(obj, index);
             if (item_obj != OBJ_HANDLE_NULL) {
                 ac += item_armor_ac_adj(obj, item_obj, a2);

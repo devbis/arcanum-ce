@@ -1898,8 +1898,8 @@ int sub_4C8430(SkillInvocation* skill_invocation)
     switch (skill) {
     case SKILL_PICK_POCKET: {
         int inventory_location = item_inventory_location_get(item_obj);
-        if (inventory_location >= 1000 && inventory_location <= 1008) {
-            difficulty += dword_5B70E4[inventory_location - 1000];
+        if (IS_WEAR_INV_LOC(inventory_location)) {
+            difficulty += dword_5B70E4[inventory_location - FIRST_WEAR_INV_LOC];
         }
 
         int width;
@@ -1929,7 +1929,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
                 difficulty += 50;
             }
         } else if ((skill_invocation->flags & 0x2000) != 0) {
-            for (int inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+            for (int inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
                 int64_t inv_item_obj = item_wield_get(source_obj, inventory_location);
                 if (inv_item_obj != OBJ_HANDLE_NULL
                     && obj_field_int32_get(inv_item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {

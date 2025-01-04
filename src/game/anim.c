@@ -8642,7 +8642,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
     v2 = sub_503E20(art_id);
 
     flags = obj_field_int32_get(target_obj, OBJ_F_FLAGS);
-    weapon_obj = item_wield_get(source_obj, 1004);
+    weapon_obj = item_wield_get(source_obj, ITEM_INV_LOC_WEAPON);
     if (weapon_obj != OBJ_HANDLE_NULL
         && (obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_BOOMERANGS) != 0) {
         v1 = 14;
@@ -12914,7 +12914,7 @@ bool sub_432700(AnimRunInfo* run_info)
 
     sub_42EE90(source_obj, &(run_info->pause_time));
 
-    weapon_obj = item_wield_get(source_obj, 1004);
+    weapon_obj = item_wield_get(source_obj, ITEM_INV_LOC_WEAPON);
 
     delay = run_info->pause_time.milliseconds - 10 * (item_weapon_magic_speed(weapon_obj, source_obj) - 10);
     if (delay < 30) {
@@ -13044,7 +13044,7 @@ bool sub_432990(AnimRunInfo* run_info)
 
         sub_42EE90(obj, &(run_info->pause_time));
 
-        weapon_obj = item_wield_get(obj, 1004);
+        weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
         delay = run_info->pause_time.milliseconds - 10 * (item_weapon_magic_speed(weapon_obj, obj) - 10);
         if (delay < 30) {
             delay = 30;
@@ -13062,23 +13062,23 @@ bool sub_432990(AnimRunInfo* run_info)
 // 0x432CF0
 bool sub_432CF0(int64_t critter_obj)
 {
-    int64_t item_obj;
+    int64_t weapon_obj;
     int ammo_type;
     int qty;
     int consumption;
 
-    item_obj = item_wield_get(critter_obj, 1004);
-    if (item_obj == OBJ_HANDLE_NULL) {
+    weapon_obj = item_wield_get(critter_obj, ITEM_INV_LOC_WEAPON);
+    if (weapon_obj == OBJ_HANDLE_NULL) {
         return true;
     }
 
-    ammo_type = item_weapon_ammo_type(item_obj);
+    ammo_type = item_weapon_ammo_type(weapon_obj);
     if (ammo_type == 10000) {
         return true;
     }
 
     qty = item_ammo_quantity_get(critter_obj, ammo_type);
-    consumption = obj_field_int32_get(item_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
+    consumption = obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION);
     if (qty >= consumption) {
         return true;
     }
@@ -14079,7 +14079,7 @@ bool sub_434B00(int64_t attacker_obj, int64_t target_obj, int a3)
         return false;
     }
 
-    weapon_obj = item_wield_get(attacker_obj, 1004);
+    weapon_obj = item_wield_get(attacker_obj, ITEM_INV_LOC_WEAPON);
     if (weapon_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
         && (obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DEFAULT_THROWS) != 0
@@ -15262,7 +15262,7 @@ bool sub_4377C0(CombatContext* combat, int64_t obj, int64_t a3, int which)
 
             weapon_obj = combat->weapon_obj;
         } else {
-            weapon_obj = item_wield_get(obj, 1004);
+            weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
         }
     } else if (obj_type == OBJ_TYPE_WEAPON) {
         weapon_obj = obj;

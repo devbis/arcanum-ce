@@ -619,7 +619,7 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
     v1 = false;
 
     if (inventory_location != -1
-        && inventory_location >= 1000 && inventory_location <= 1008) {
+        && IS_WEAR_INV_LOC(inventory_location)) {
         existing_item_obj = item_wield_get(critter_obj, inventory_location);
         v1 = true;
     }
@@ -770,7 +770,7 @@ bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location)
     v1 = false;
 
     if (inventory_location != -1
-        && inventory_location >= 1000 && inventory_location <= 1008) {
+        && IS_WEAR_INV_LOC(inventory_location)) {
         existing_item_obj = item_wield_get(critter_obj, inventory_location);
         v1 = true;
     }
@@ -925,7 +925,7 @@ bool sub_462230(int64_t a1, int64_t a2, int64_t a3)
     // TODO: Review.
     return basic_skill_get_training(a3, BASIC_SKILL_HAGGLE) >= TRAINING_MASTER
         || ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) == 0
-            && (item_inventory_location_get(a1) < 1000 || item_inventory_location_get(a1) > 1008));
+            && !IS_WEAR_INV_LOC(item_inventory_location_get(a1)));
 }
 
 // 0x4622A0
@@ -1073,7 +1073,7 @@ int64_t sub_462540(int64_t a1, int64_t a2, unsigned int flags)
         inventory_location = item_inventory_location_get(item_obj);
 
         if ((flags & 0x01) != 0) {
-            if (inventory_location >= 1000 && inventory_location <= 1008) {
+            if (IS_WEAR_INV_LOC(inventory_location)) {
                 continue;
             }
         }
@@ -2320,7 +2320,7 @@ int item_total_attack(int64_t critter_obj)
     int min_dam;
     int max_dam;
 
-    weapon_obj = item_wield_get(critter_obj, 1004);
+    weapon_obj = item_wield_get(critter_obj, ITEM_INV_LOC_WEAPON);
     skill = item_weapon_skill(weapon_obj);
     if (IS_TECH_SKILL(skill)) {
         v1 = sub_4C69F0(critter_obj, GET_TECH_SKILL(skill), OBJ_HANDLE_NULL);
@@ -2573,7 +2573,7 @@ bool sub_464C80(int64_t item_obj)
     int v1;
 
     inventory_location = item_inventory_location_get(item_obj);
-    if (inventory_location >= 1000 && inventory_location <= 1008) {
+    if (IS_WEAR_INV_LOC(inventory_location)) {
         if (sub_466DA0(item_obj) != ITEM_CANNOT_OK) {
             return false;
         }
@@ -2624,10 +2624,10 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
     item_obj_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
 
     switch (inventory_location) {
-    case 1004:
+    case ITEM_INV_LOC_WEAPON:
         weapon_flags = obj_field_int32_get(item_obj, OBJ_F_WEAPON_FLAGS);
         if ((weapon_flags & OWF_TWO_HANDED) && (weapon_flags & OWF_HAND_COUNT_FIXED) != 0) {
-            if (item_wield_get(critter_obj, 1005) != OBJ_HANDLE_NULL) {
+            if (item_wield_get(critter_obj, ITEM_INV_LOC_SHIELD) != OBJ_HANDLE_NULL) {
                 return ITEM_CANNOT_NO_FREE_HAND;
             }
 
@@ -2651,8 +2651,8 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
             return ITEM_CANNOT_NOT_WIELDABLE;
         }
         break;
-    case 1005:
-        weapon_obj = item_wield_get(critter_obj, 1004);
+    case ITEM_INV_LOC_SHIELD:
+        weapon_obj = item_wield_get(critter_obj, ITEM_INV_LOC_WEAPON);
         if (weapon_obj != OBJ_HANDLE_NULL) {
             weapon_flags = obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS);
             if ((weapon_flags & OWF_TWO_HANDED) && (weapon_flags & OWF_HAND_COUNT_FIXED) != 0) {
@@ -2672,7 +2672,7 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
             }
         }
         break;
-    case 1006:
+    case ITEM_INV_LOC_ARMOR:
         armor_flags = obj_field_int32_get(item_obj, OBJ_F_ARMOR_FLAGS);
         if ((sub_465C90(stat_level(critter_obj, STAT_RACE)) & armor_flags) == 0) {
             return ITEM_CANNOT_WRONG_WEARABLE_SIZE;
@@ -2721,7 +2721,7 @@ tig_art_id_t sub_465020(int64_t obj)
     tig_art_id_t art_id;
 
     if (combat_critter_is_combat_mode_active(obj)) {
-        weapon_obj = item_wield_get(obj, 1004);
+        weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
         if (weapon_obj != OBJ_HANDLE_NULL) {
             weapon_type = tig_art_item_id_subtype_get(obj_field_int32_get(weapon_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
             if (weapon_type == TIG_ART_WEAPON_TYPE_NO_WEAPON) {
@@ -2732,7 +2732,7 @@ tig_art_id_t sub_465020(int64_t obj)
             weapon_type = TIG_ART_WEAPON_TYPE_UNARMED;
         }
 
-        armor_obj = item_wield_get(obj, 1005);
+        armor_obj = item_wield_get(obj, ITEM_INV_LOC_SHIELD);
         if (armor_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(armor_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
             v1 = 1;
@@ -2759,14 +2759,14 @@ tig_art_id_t sub_4650D0(int64_t critter_obj)
     int v2;
     tig_art_id_t art_id;
 
-    item_obj = item_wield_get(critter_obj, 1004);
+    item_obj = item_wield_get(critter_obj, ITEM_INV_LOC_WEAPON);
     if (item_obj != OBJ_HANDLE_NULL) {
         v1 = tig_art_item_id_subtype_get(obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
     } else {
         v1 = 1;
     }
 
-    item_obj = item_wield_get(critter_obj, 1005);
+    item_obj = item_wield_get(critter_obj, ITEM_INV_LOC_SHIELD);
     if (item_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
         v2 = 1;
@@ -2802,7 +2802,7 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
 
     if (equipped_item_obj != OBJ_HANDLE_NULL) {
         if (sub_464D20(equipped_item_obj, inventory_location, critter_obj) == ITEM_CANNOT_OK
-            && inventory_location != 1004) {
+            && inventory_location != ITEM_INV_LOC_WEAPON) {
             best_item_worth = item_worth(equipped_item_obj);
         } else {
             sub_464C50(critter_obj, inventory_location);
@@ -2820,7 +2820,7 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
     for (idx = 0; idx < cnt; idx++) {
         item_obj = obj_arrayfield_handle_get(critter_obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, idx);
         if (sub_464D20(item_obj, inventory_location, critter_obj) == ITEM_CANNOT_OK) {
-            if (inventory_location == 1004) {
+            if (inventory_location == ITEM_INV_LOC_WEAPON) {
                 int ammo_type = item_weapon_ammo_type(item_obj);
                 if (ammo_type == 10000
                     || obj_field_int32_get(item_obj, OBJ_F_WEAPON_AMMO_CONSUMPTION) <= item_ammo_quantity_get(critter_obj, ammo_type)) {
@@ -2875,8 +2875,7 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
                         best_ranged_weapon_obj = item_obj;
                     }
                 }
-            } else if (item_inventory_location_get(item_obj) < 1000
-                || item_inventory_location_get(item_obj) > 1008) {
+            } else if (!IS_WEAR_INV_LOC(item_inventory_location_get(item_obj))) {
                 int worth = item_worth(item_obj);
                 if (worth > best_item_worth) {
                     best_item_worth = worth;
@@ -2892,7 +2891,7 @@ void sub_465170(int64_t critter_obj, int inventory_location, int64_t target_obj)
 
     if (best_item_obj != OBJ_HANDLE_NULL) {
         item_wield_set(best_item_obj, inventory_location);
-    } else if (inventory_location == 1004) {
+    } else if (inventory_location == ITEM_INV_LOC_WEAPON) {
         sub_464C50(critter_obj, inventory_location);
     }
 }
@@ -2902,7 +2901,7 @@ void sub_4654F0(int64_t critter_obj, int64_t target_obj)
 {
     int inventory_location;
 
-    for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+    for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
         sub_465170(critter_obj, inventory_location, target_obj);
     }
 }
@@ -2913,7 +2912,7 @@ void sub_465530(int64_t obj)
     int inventory_location;
     int64_t item_obj;
 
-    for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+    for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
         item_obj = item_wield_get(obj, inventory_location);
         if (item_obj != OBJ_HANDLE_NULL) {
             dword_5E87E8 = true;
@@ -2940,27 +2939,27 @@ int item_location_get(int64_t obj)
     if (type == OBJ_TYPE_ARMOR) {
         switch (item_armor_coverage(obj)) {
         case TIG_ART_ARMOR_COVERAGE_HELMET:
-            return 1000;
+            return ITEM_INV_LOC_HELMET;
         case TIG_ART_ARMOR_COVERAGE_RING:
-            return 1001;
+            return ITEM_INV_LOC_RING1;
         case TIG_ART_ARMOR_COVERAGE_MEDALLION:
-            return 1003;
+            return ITEM_INV_LOC_MEDALLION;
         case TIG_ART_ARMOR_COVERAGE_SHIELD:
-            return 1005;
+            return ITEM_INV_LOC_SHIELD;
         case TIG_ART_ARMOR_COVERAGE_TORSO:
-            return 1006;
+            return ITEM_INV_LOC_ARMOR;
         case TIG_ART_ARMOR_COVERAGE_GAUNTLETS:
-            return 1007;
+            return ITEM_INV_LOC_GAUNTLET;
         case TIG_ART_ARMOR_COVERAGE_BOOTS:
-            return 1008;
+            return ITEM_INV_LOC_BOOTS;
         }
     } else {
         if (type == OBJ_TYPE_WEAPON) {
-            return 1004;
+            return ITEM_INV_LOC_WEAPON;
         }
         if (type == OBJ_TYPE_GENERIC
             && (obj_field_int32_get(obj, OBJ_F_GENERIC_FLAGS) & OGF_USES_TORCH_SHIELD_LOCATION) != 0) {
-            return 1005;
+            return ITEM_INV_LOC_SHIELD;
         }
     }
     return -1;
@@ -3315,7 +3314,7 @@ int item_weapon_min_strength(int64_t item_obj, int64_t critter_obj)
     flags = obj_field_int32_get(item_obj, OBJ_F_WEAPON_FLAGS);
     if (critter_obj != OBJ_HANDLE_NULL
         && (flags & OWF_HAND_COUNT_FIXED) == 0) {
-        main_weapon_obj = item_wield_get(critter_obj, 1005);
+        main_weapon_obj = item_wield_get(critter_obj, ITEM_INV_LOC_SHIELD);
         if ((flags & OWF_TWO_HANDED) != 0) {
             if (main_weapon_obj != OBJ_HANDLE_NULL) {
                 min_strength += 4;
@@ -3340,7 +3339,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
     int massive_dam;
     int bonus_dam;
     int v1;
-    int64_t item_obj;
+    int64_t gauntlet_obj;
     int unarmed_dam;
 
     if (skill == SKILL_MELEE) {
@@ -3359,9 +3358,9 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
         unarmed_dam = 0;
 
         if (skill == SKILL_MELEE) {
-            item_obj = item_wield_get(critter_obj, 1007);
-            if (item_obj != OBJ_HANDLE_NULL) {
-                unarmed_dam = obj_field_int32_get(item_obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE);
+            gauntlet_obj = item_wield_get(critter_obj, ITEM_INV_LOC_GAUNTLET);
+            if (gauntlet_obj != OBJ_HANDLE_NULL) {
+                unarmed_dam = obj_field_int32_get(gauntlet_obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE);
             }
         }
 
@@ -3494,7 +3493,7 @@ void sub_466310(int64_t item_obj, int inventory_location, int* a3, int idx)
     int width;
     int height;
 
-    if (inventory_location >= 1000 && inventory_location <= 1008) {
+    if (IS_WEAR_INV_LOC(inventory_location)) {
         return;
     }
 
@@ -3523,7 +3522,7 @@ bool sub_466390(int64_t item_obj, int64_t obj, int inventory_location, int* a4)
     int height;
     int64_t existing_item_obj;
 
-    if (inventory_location >= 1000 && inventory_location <= 1008) {
+    if (IS_WEAR_INV_LOC(inventory_location)) {
         return false;
     }
 
@@ -3707,7 +3706,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
 
     sub_4CBAA0(item_obj, parent_obj);
 
-    if (inventory_location >= 1000 && inventory_location <= 1008) {
+    if (IS_WEAR_INV_LOC(inventory_location)) {
         sub_4677B0(item_obj, parent_obj, inventory_location);
     }
 
@@ -3887,7 +3886,7 @@ int sub_466DA0(int64_t obj)
         return ITEM_CANNOT_NOT_DROPPABLE;
     }
 
-    if (item_inventory_location_get(obj) < 1000 || item_inventory_location_get(obj) > 1008) {
+    if (!IS_WEAR_INV_LOC(item_inventory_location_get(obj))) {
         return ITEM_CANNOT_OK;
     }
 
@@ -4023,8 +4022,7 @@ void sub_4670A0(int64_t parent_obj, int a2)
 
     for (idx = 0; idx < cnt; idx++) {
         inventory_location = item_inventory_location_get(items[idx]);
-        if ((inventory_location >= 1000
-                && inventory_location <= 1008)
+        if (IS_WEAR_INV_LOC(inventory_location)
             || (inventory_location >= 2000
                 && inventory_location <= 2009)) {
             item_obj = items[cnt - 1];
@@ -4255,8 +4253,8 @@ void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
     tig_art_id_t aid;
 
     switch (inventory_location) {
-    case 1004:
-    case 1005:
+    case ITEM_INV_LOC_WEAPON:
+    case ITEM_INV_LOC_SHIELD:
         aid = sub_465020(parent_obj);
         object_set_current_aid(parent_obj, aid);
 
@@ -4264,7 +4262,7 @@ void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
             sub_4605D0();
         }
         break;
-    case 1006:
+    case ITEM_INV_LOC_ARMOR:
         if (sub_465AE0(item_obj, parent_obj, &aid)) {
             object_set_current_aid(parent_obj, aid);
         }
@@ -4387,7 +4385,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
         obj_field_int32_set(item_obj, OBJ_F_ITEM_INV_LOCATION, -1);
     }
 
-    if (inventory_location >= 1000 && inventory_location <= 1008) {
+    if (IS_WEAR_INV_LOC(inventory_location)) {
         sub_467CB0(item_obj, parent_obj, inventory_location);
     } else if (inventory_location >= 2000 && inventory_location <= 2009) {
         if (is_pc) {
@@ -4429,8 +4427,8 @@ void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
     tig_art_id_t aid;
 
     switch (inventory_location) {
-    case 1004:
-    case 1005:
+    case ITEM_INV_LOC_WEAPON:
+    case ITEM_INV_LOC_SHIELD:
         aid = sub_465020(parent_obj);
         object_set_current_aid(parent_obj, aid);
 
@@ -4438,7 +4436,7 @@ void sub_467CB0(int64_t item_obj, int64_t parent_obj, int inventory_location)
             sub_4605D0();
         }
         break;
-    case 1006:
+    case ITEM_INV_LOC_ARMOR:
         if (sub_465AE0(OBJ_HANDLE_NULL, parent_obj, &aid)) {
             object_set_current_aid(parent_obj, aid);
         }
@@ -4518,7 +4516,7 @@ void sub_467E80(int64_t a1, int64_t a2)
     if (a1 == OBJ_HANDLE_NULL
         || (obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY) != 0) {
         light_flags = 0;
-        for (inventory_location = 1000; inventory_location <= 1008; inventory_location++) {
+        for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
             item_obj = item_wield_get(a2, inventory_location);
             if (item_obj != OBJ_HANDLE_NULL) {
                 light_size = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_LIGHT_ANY;

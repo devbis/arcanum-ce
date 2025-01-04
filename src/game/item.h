@@ -5,6 +5,20 @@
 #include "game/obj.h"
 #include "game/timeevent.h"
 
+#define ITEM_INV_LOC_HELMET 1000
+#define ITEM_INV_LOC_RING1 1001
+#define ITEM_INV_LOC_RING2 1002
+#define ITEM_INV_LOC_MEDALLION 1003
+#define ITEM_INV_LOC_WEAPON 1004
+#define ITEM_INV_LOC_SHIELD 1005
+#define ITEM_INV_LOC_ARMOR 1006
+#define ITEM_INV_LOC_GAUNTLET 1007
+#define ITEM_INV_LOC_BOOTS 1008
+
+#define FIRST_WEAR_INV_LOC ITEM_INV_LOC_HELMET
+#define LAST_WEAR_INV_LOC ITEM_INV_LOC_BOOTS
+#define IS_WEAR_INV_LOC(x) ((x) >= FIRST_WEAR_INV_LOC && (x) <= LAST_WEAR_INV_LOC)
+
 typedef enum ItemCannot {
     ITEM_CANNOT_OK,
     ITEM_CANNOT_TOO_HEAVY, // The item is too heavy.

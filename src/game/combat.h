@@ -50,7 +50,7 @@ typedef enum DamageType {
 #define CDF_DESTROY_WEAPON      0x00008000
 #define CDF_LOST_AMMO           0x00020000
 #define CDF_DESTROY_AMMO        0x00040000
-#define CDF_DROP_ITEM           0x00080000
+#define CDF_DROP_HELMET         0x00080000
 #define CDF_DAMAGE_ARMOR        0x00100000
 #define CDF_SCALE               0x00800000
 #define CDF_IGNORE_RESISTANCE   0x01000000

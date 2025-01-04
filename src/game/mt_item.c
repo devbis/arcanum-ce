@@ -112,13 +112,13 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
                         sub_4440E0(a3, &(v1.target_obj));
                     } else if ((trig & MTIT_TARGET_ATTACKER_WEAPON) != 0) {
                         if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, 1004), &(v1.target_obj));
+                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_WEAPON), &(v1.target_obj));
                         } else {
                             sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
                         }
                     } else if ((trig & MTIT_TARGET_ATTACKER_ARMOR) != 0) {
                         if (a3 != OBJ_HANDLE_NULL) {
-                            sub_4440E0(item_wield_get(a3, 1006), &(v1.target_obj));
+                            sub_4440E0(item_wield_get(a3, ITEM_INV_LOC_ARMOR), &(v1.target_obj));
                         } else {
                             sub_4440E0(OBJ_HANDLE_NULL, &(v1.target_obj));
                         }

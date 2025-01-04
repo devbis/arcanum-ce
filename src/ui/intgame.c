@@ -1663,7 +1663,7 @@ void sub_54B3C0()
     pc_obj = player_get_pc_obj();
 
     if (pc_obj != OBJ_HANDLE_NULL) {
-        item_obj = item_wield_get(pc_obj, 1004);
+        item_obj = item_wield_get(pc_obj, ITEM_INV_LOC_WEAPON);
         if (item_obj != OBJ_HANDLE_NULL) {
             ammo_type = item_weapon_ammo_type(item_obj);
             if (ammo_type != 10000) {
@@ -3351,7 +3351,7 @@ void sub_54ED30(S4F2810* a1)
             goal_data.params[AGDATA_SCRATCH_VAL3].data = 0;
         }
 
-        int64_t weapon_obj = item_wield_get(pc_obj, 1004);
+        int64_t weapon_obj = item_wield_get(pc_obj, ITEM_INV_LOC_WEAPON);
         if (weapon_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
             && (obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS) & OWF_DEFAULT_THROWS) != 0
@@ -3577,7 +3577,7 @@ void sub_54FCF0(S683518* a1)
                 || (obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) != 0) {
                 switch (obj_field_int32_get(v2, OBJ_F_TYPE)) {
                 case OBJ_TYPE_WEAPON:
-                    sub_550000(pc_obj, a1, 1004);
+                    sub_550000(pc_obj, a1, ITEM_INV_LOC_WEAPON);
                     break;
                 case OBJ_TYPE_AMMO:
                 case OBJ_TYPE_GOLD:
@@ -3612,12 +3612,12 @@ void sub_54FCF0(S683518* a1)
     case 4:
         sub_444130(&(a1->field_10));
 
-        weapon_obj = item_wield_get(pc_obj, 1004);
+        weapon_obj = item_wield_get(pc_obj, ITEM_INV_LOC_WEAPON);
         if (obj_field_handle_get(a1->field_10.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
             if (weapon_obj == a1->field_10.obj) {
                 sub_57C080(a1->field_10.obj, a1->field_C);
             } else if (weapon_obj == OBJ_HANDLE_NULL || sub_464C80(weapon_obj)) {
-                if (item_wield_set(a1->field_10.obj, 1004)) {
+                if (item_wield_set(a1->field_10.obj, ITEM_INV_LOC_WEAPON)) {
                     sub_57C080(a1->field_10.obj, a1->field_C);
                 }
             }
@@ -6423,7 +6423,7 @@ void sub_554830(int64_t a1, int64_t a2)
 
     sub_554B00(window_handle, 582, 207, 57);
 
-    weapon_obj = item_wield_get(a1, 1004);
+    weapon_obj = item_wield_get(a1, ITEM_INV_LOC_WEAPON);
     skill = item_weapon_skill(weapon_obj);
     if (IS_TECH_SKILL(skill)) {
         v1 = sub_4C69F0(a1, GET_TECH_SKILL(skill), a2);
@@ -6707,8 +6707,7 @@ void sub_554F10(int64_t critter_obj, int64_t item_obj, char* a3)
 
     if (item_parent(item_obj, &parent_obj)
         && parent_obj != OBJ_HANDLE_NULL
-        && item_inventory_location_get(item_obj) >= 1000
-        && item_inventory_location_get(item_obj) <= 1008) {
+        && IS_WEAR_INV_LOC(item_inventory_location_get(item_obj))) {
         critter_obj = parent_obj;
     }
 
@@ -7311,7 +7310,7 @@ void sub_556220(int64_t obj)
         dword_739F88,
         1);
 
-    weapon_obj = item_wield_get(obj, 1004);
+    weapon_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
     skill = item_weapon_skill(weapon_obj);
 
     mes_file_entry.num = 69; // "Base To Hit"
@@ -7722,7 +7721,7 @@ void sub_556EA0(int64_t item_obj)
     if (item_obj != OBJ_HANDLE_NULL) {
         qword_64C688 = item_obj;
     } else {
-        qword_64C688 = item_wield_get(player_get_pc_obj(), 1004);
+        qword_64C688 = item_wield_get(player_get_pc_obj(), ITEM_INV_LOC_WEAPON);
     }
     sub_5506C0(8);
 }
@@ -7738,7 +7737,7 @@ void intgame_mt_button_enable()
 
     if (tig_button_is_hidden(intgame_mt_button_info.button_handle, &hidden) == TIG_OK && hidden) {
         obj = player_get_pc_obj();
-        item_obj = item_wield_get(obj, 1004);
+        item_obj = item_wield_get(obj, ITEM_INV_LOC_WEAPON);
         if (item_obj != OBJ_HANDLE_NULL) {
             mana_store = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE);
             flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);

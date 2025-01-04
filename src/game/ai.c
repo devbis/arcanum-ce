@@ -401,7 +401,7 @@ bool sub_4A8570(Ai* ai)
         npc_flags &= ~ONF_CHECK_WIELD;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
     } else if ((npc_flags & ONF_CHECK_WEAPON) != 0) {
-        sub_465170(ai->obj, 1004, ai->danger_source);
+        sub_465170(ai->obj, ITEM_INV_LOC_WEAPON, ai->danger_source);
 
         npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
         npc_flags &= ~ONF_CHECK_WEAPON;
