@@ -49,7 +49,7 @@ void sub_430460();
 void sub_430490(int64_t obj, int offset_x, int offset_y);
 bool get_always_run(int64_t obj);
 void set_always_run(bool value);
-bool sub_4332E0(int64_t obj, int which_anim);
+bool anim_goal_animate(int64_t obj, int anim);
 void sub_432D90(int64_t obj);
 void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat);
 void sub_433170(int64_t obj);

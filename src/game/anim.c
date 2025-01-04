@@ -13324,25 +13324,25 @@ bool sub_433270(AnimRunInfo* run_info)
 }
 
 // 0x4332E0
-bool sub_4332E0(int64_t obj, int which_anim)
+bool anim_goal_animate(int64_t obj, int anim)
 {
     int obj_type;
     AnimGoalData goal_data;
     tig_art_id_t art_id;
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 14570, obj != OBJ_HANDLE_NULL
-    ASSERT(which_anim >= 0); // 14571, whichAnim >= 0
-    ASSERT(which_anim < 26); // 14572, whichAnim < tig_art_anim_max
+    ASSERT(anim >= 0); // 14571, whichAnim >= 0
+    ASSERT(anim < 26); // 14572, whichAnim < tig_art_anim_max
 
     if (obj == OBJ_HANDLE_NULL
-        || which_anim < 0
-        || which_anim >= 26) {
+        || anim < 0
+        || anim >= 26) {
         return false;
     }
 
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)
-        && which_anim == 10
+        && anim == 10
         && sub_44D4E0(&goal_data, obj, AG_ANIMATE_KNEEL_MAGIC_HANDS)) {
         sub_44D520(&goal_data, 0);
         return true;
@@ -13353,7 +13353,7 @@ bool sub_4332E0(int64_t obj, int which_anim)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    goal_data.params[AGDATA_ANIM_ID].data = tig_art_id_anim_set(art_id, which_anim);
+    goal_data.params[AGDATA_ANIM_ID].data = tig_art_id_anim_set(art_id, anim);
     if (!sub_44D520(&goal_data, 0)) {
         return false;
     }

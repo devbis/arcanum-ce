@@ -2125,7 +2125,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_ACTION_PERFORM_ANIMATION: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int anim = script_get_value(action->op_type[1], action->op_value[1], state);
-        sub_4332E0(obj, anim);
+        anim_goal_animate(obj, anim);
         return NEXT;
     }
     case SAT_GIVE_QUEST_XP: {
