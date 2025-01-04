@@ -1277,7 +1277,7 @@ void sub_4EFE50(int64_t obj, int fld, int64_t value)
 }
 
 // 0x4EFEE0
-void sub_4EFEE0(int64_t obj, unsigned int flags)
+void mp_object_flags_unset(int64_t obj, unsigned int flags)
 {
     Packet129 pkt;
 

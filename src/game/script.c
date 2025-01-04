@@ -2056,7 +2056,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         for (int idx = 0; idx < cnt; idx++) {
             if ((obj_field_int32_get(handles[idx], OBJ_F_FLAGS) & OF_OFF) != 0) {
-                sub_4EFEE0(handles[idx], OF_OFF);
+                mp_object_flags_unset(handles[idx], OF_OFF);
             } else {
                 sub_4EFF50(handles[idx], OF_OFF);
             }
@@ -2068,7 +2068,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         for (int idx = 0; idx < cnt; idx++) {
             if ((obj_field_int32_get(handles[idx], OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
-                sub_4EFEE0(handles[idx], OF_INVULNERABLE);
+                mp_object_flags_unset(handles[idx], OF_INVULNERABLE);
             } else {
                 sub_4EFF50(handles[idx], OF_INVULNERABLE);
             }

@@ -2922,8 +2922,8 @@ void sub_4A6010(int64_t obj)
 
     object_hp_damage_set(obj, 0);
     sub_4ED720(obj, 0);
-    sub_4EFEE0(obj, 2);
-    sub_4EFEE0(obj, 4);
+    mp_object_flags_unset(obj, OF_OFF);
+    mp_object_flags_unset(obj, OF_FLAT);
 
     flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
     flags &= ~0xFC03D0FF;

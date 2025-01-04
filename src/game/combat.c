@@ -504,7 +504,7 @@ void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat,
         weapon_obj = obj_field_handle_get(proj_obj, OBJ_F_PROJECTILE_PARENT_WEAPON);
         loc = obj_field_int64_get(proj_obj, OBJ_F_LOCATION);
         sub_4EDF20(weapon_obj, loc, 0, 0, false);
-        sub_4EFEE0(weapon_obj, OF_OFF);
+        mp_object_flags_unset(weapon_obj, OF_OFF);
         sub_43CCA0(proj_obj);
     } else if ((proj_flags & 0x1000) != 0) {
         if (a5 && (proj_flags && 0x2000) == 0) {

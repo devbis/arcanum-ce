@@ -185,7 +185,7 @@ bool sub_4BA720(int64_t obj)
 
     flags &= ~ONF_GENERATOR;
     sub_4EFDD0(obj, OBJ_F_NPC_FLAGS, flags);
-    sub_4EFEE0(obj, 0x400002);
+    mp_object_flags_unset(obj, OF_INVULNERABLE | OF_OFF);
 
     return true;
 }
