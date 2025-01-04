@@ -7083,13 +7083,13 @@ bool sub_4294F0(int64_t source_obj, int64_t target_obj)
 
     if (source_obj == OBJ_HANDLE_NULL
         || source_obj == OBJ_HANDLE_NULL
-        || !sub_45D790(source_obj)
+        || !critter_is_active(source_obj)
         || (obj_field_int32_get(target_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
         return false;
     }
 
     if (obj_type_is_critter(obj_field_int32_get(source_obj, OBJ_F_TYPE))
-        && !sub_45D790(source_obj)) {
+        && !critter_is_active(source_obj)) {
         return false;
     }
 
@@ -10340,7 +10340,7 @@ bool sub_42E590(AnimRunInfo* run_info)
         return false;
     }
 
-    if (!sub_45D790(obj)) {
+    if (!critter_is_active(obj)) {
         return false;
     }
 
@@ -10379,7 +10379,7 @@ bool sub_42E6B0(AnimRunInfo* run_info)
     ASSERT(obj != OBJ_HANDLE_NULL); // 10638, obj != OBJ_HANDLE_NULL
     if (obj == OBJ_HANDLE_NULL) return false;
 
-    if (!sub_45D790(obj)) {
+    if (!critter_is_active(obj)) {
         return false;
     }
 
@@ -11413,7 +11413,7 @@ bool sub_4303D0(int64_t obj)
 {
     if (!sub_423300(obj, 0)
         && !combat_critter_is_combat_mode_active(obj)
-        && sub_45D790(obj)) {
+        && critter_is_active(obj)) {
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
             || !player_is_pc_obj(sub_4C1110(obj))) {
             if (!sub_503E20(obj_field_int32_get(obj, OBJ_F_CURRENT_AID))) {
@@ -13377,7 +13377,7 @@ bool sub_433440(int64_t obj, int rotation)
         return true;
     }
 
-    if (!sub_45D790(obj)) {
+    if (!critter_is_active(obj)) {
         return true;
     }
 
@@ -13539,7 +13539,7 @@ bool sub_433640(int64_t obj, int64_t loc)
 bool sub_4339A0(int64_t obj)
 {
     return obj != OBJ_HANDLE_NULL
-        && sub_45D790(obj)
+        && critter_is_active(obj)
         && (!sub_4B6D70() || sub_4B6D80() == obj)
         && (sub_40DA20(obj) || !sub_4C1110(obj));
 }
@@ -14006,7 +14006,7 @@ bool sub_4348E0(int64_t obj, int action_points)
         return false;
     }
 
-    if (!sub_45D790(obj)) {
+    if (!critter_is_active(obj)) {
         return false;
     }
 
@@ -14475,7 +14475,7 @@ bool sub_4357B0(int64_t obj)
         return false;
     }
 
-    if (!sub_45D790(obj)) {
+    if (!critter_is_active(obj)) {
         return false;
     }
 
@@ -14715,7 +14715,7 @@ bool sub_435D70(int64_t critter_obj)
     ASSERT(obj_type_is_critter(obj_type)); // obj_type_is_critter(objType)
     if (obj_type != OBJ_TYPE_NPC) return false;
 
-    return sub_45D790(critter_obj)
+    return critter_is_active(critter_obj)
         && !sub_423300(critter_obj, 0)
         && sub_44D4E0(&goal_data, critter_obj, AG_UNCONCEAL)
         && sub_44D520(&goal_data, &stru_5A1908);
@@ -14742,7 +14742,7 @@ bool sub_435E60(int64_t obj, int64_t tether_loc, int radius)
     if ((!sub_4B6D70() || sub_4B6D80() == obj)
         && radius > 0
         && obj_type_is_critter(obj_type)
-        && sub_45D790(obj)
+        && critter_is_active(obj)
         && !sub_423300(obj, NULL)) {
         source_obj = obj;
         if (sub_436720(&source_obj, &block_obj)) {
@@ -14781,7 +14781,7 @@ bool sub_436040(int64_t obj, int64_t tether_loc, int radius)
     if ((!sub_4B6D70() || sub_4B6D80() == obj)
         && radius > 0
         && obj_type_is_critter(obj_type)
-        && sub_45D790(obj)
+        && critter_is_active(obj)
         && !sub_423300(obj, NULL)) {
         source_obj = obj;
         if (sub_436720(&source_obj, &block_obj)) {

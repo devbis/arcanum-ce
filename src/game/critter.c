@@ -427,7 +427,7 @@ bool sub_45D730(long long obj)
 }
 
 // 0x45D790
-bool sub_45D790(long long obj)
+bool critter_is_active(long long obj)
 {
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0
         && !critter_is_dead(obj)
@@ -1460,7 +1460,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
     }
     obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
 
-    if (sub_45D790(obj)) {
+    if (critter_is_active(obj)) {
         object_set_current_aid(obj, new_art_id);
         sub_43F030(obj);
     }

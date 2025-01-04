@@ -1988,7 +1988,7 @@ bool inven_ui_message_filter(TigMessage* msg)
     if (dword_683464 == 1
         && qword_6810E0 == OBJ_HANDLE_NULL
         && sub_551A00() != 13
-        && (critter_is_sleeping(qword_682C78) || !sub_45D790(qword_682C78))) {
+        && (critter_is_sleeping(qword_682C78) || !critter_is_active(qword_682C78))) {
         v45 = true;
     }
 

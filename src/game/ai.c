@@ -997,7 +997,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
                             npc_flags |= ONF_JILTED;
                             obj_field_int32_set(target_obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-                            if (sub_45D790(target_obj)) {
+                            if (critter_is_active(target_obj)) {
                                 if (dword_5F8488 != NULL) {
                                     sub_413A90(target_obj, source_obj, rc, str, &v2);
                                     dword_5F8488(target_obj, source_obj, str, v2);
@@ -1005,7 +1005,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
                             }
                         } else {
                             if (random_between(1, 3) == 1
-                                && sub_45D790(target_obj)) {
+                                && critter_is_active(target_obj)) {
                                 if (dword_5F8488 != NULL) {
                                     sub_413A90(target_obj, source_obj, rc, str, &v2);
                                     dword_5F8488(target_obj, source_obj, str, v2);
@@ -1101,7 +1101,7 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
                 && !combat_critter_is_combat_mode_active(target_obj)
                 && !a5
                 && dword_5F8488 != NULL) {
-                if (sub_45D790(source_obj)) {
+                if (critter_is_active(source_obj)) {
                     sub_414370(source_obj, a2, rc, str, &v1);
                     dword_5F8488(source_obj, a2, str, v1);
                 }
@@ -1413,7 +1413,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
             || sub_4AB0B0(a1, danger_source_obj, a2) == a2) {
             sub_4AB2A0(a1, a2);
         } else {
-            if (sub_45D790(a1)) {
+            if (critter_is_active(a1)) {
                 sub_413EA0(a1, a2, str, &v1);
                 dword_5F8488(a1, a2, str, v1);
             }
@@ -1633,7 +1633,7 @@ int sub_4AABE0(int64_t a1, int a2, int64_t a3, int* a4)
     if (a2 == 2 || a2 == 3) {
         if (dword_5F8488 != NULL
             && (critter_flags & (OCF_FLEEING | OCF_SURRENDERED)) == 0) {
-            if (sub_45D790(a1)) {
+            if (critter_is_active(a1)) {
                 sub_413EA0(a1, a3, str, &v2);
                 dword_5F8488(a1, a3, str, v2);
             }
@@ -2392,7 +2392,7 @@ void sub_4AC380(Ai* ai)
                 npc_flags |= ONF_JILTED;
                 obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-                if (dword_5F8488 != NULL && sub_45D790(ai->obj)) {
+                if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
                     sub_414290(ai->obj, ai->leader_obj, v1, str, &v3);
                     dword_5F8488(ai->obj, ai->leader_obj, str, v3);
                 }
@@ -2403,7 +2403,7 @@ void sub_4AC380(Ai* ai)
 
                 v2 = sub_4ADB50(ai->obj, ai->leader_obj);
                 if (v2 != 0) {
-                    if (dword_5F8488 != NULL && sub_45D790(ai->obj)) {
+                    if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
                         sub_414290(ai->obj, ai->leader_obj, v2, str, &v3);
                         dword_5F8488(ai->obj, ai->leader_obj, str, v3);
                     }
@@ -2969,7 +2969,7 @@ bool sub_4AD4D0(int64_t obj)
         return false;
     }
 
-    if (!sub_45D790(obj)) {
+    if (!critter_is_active(obj)) {
         return false;
     }
 
@@ -3700,7 +3700,7 @@ void sub_4AE9E0(int64_t a1, bool a2)
             if (cnt != 0) {
                 rnd = cnt > 1 ? random_between(0, cnt - 1) : 0;
                 follower_obj = obj_arrayfield_handle_get(a1, OBJ_F_CRITTER_FOLLOWER_IDX, rnd);
-                if (sub_45D790(follower_obj)) {
+                if (critter_is_active(follower_obj)) {
                     sub_413F50(follower_obj, a1, a2, str, &v1);
                     dword_5F8488(follower_obj, a1, str, v1);
                 }
@@ -3925,8 +3925,8 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4)
                     if (sub_4C0CC0(node->obj, pc_obj) <= ai_params.field_28) {
                         sub_4A9650(critter_obj, node->obj, a4, 0);
                     }
-                    if (sub_45D790(node->obj)) {
-                        if (dword_5F8488 != NULL && sub_45D790(node->obj)) {
+                    if (critter_is_active(node->obj)) {
+                        if (dword_5F8488 != NULL && critter_is_active(node->obj)) {
                             sub_414130(node->obj, critter_obj, str, &v2);
                             dword_5F8488(node->obj, critter_obj, str, v2);
                         }

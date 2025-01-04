@@ -1193,7 +1193,7 @@ bool sub_4B3D90(int64_t obj)
         return true;
     }
 
-    if (!sub_45D790(obj)) {
+    if (!critter_is_active(obj)) {
         return true;
     }
 
@@ -1208,7 +1208,7 @@ bool sub_4B3D90(int64_t obj)
     while (npc_node != NULL && ret) {
         combat_focus_obj = obj_field_handle_get(npc_node->obj, OBJ_F_NPC_COMBAT_FOCUS);
         if (combat_focus_obj == obj) {
-            if (sub_45D790(npc_node->obj) && ai_is_fighting(npc_node->obj)) {
+            if (critter_is_active(npc_node->obj) && ai_is_fighting(npc_node->obj)) {
                 ret = false;
                 break;
             }
@@ -1216,7 +1216,7 @@ bool sub_4B3D90(int64_t obj)
             pc_node = pcs.head;
             while (pc_node != NULL) {
                 if (combat_focus_obj == obj
-                    && sub_45D790(npc_node->obj)
+                    && critter_is_active(npc_node->obj)
                     && ai_is_fighting(npc_node->obj)) {
                     ret = false;
                     break;
@@ -1280,7 +1280,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
                     return;
                 }
             } else {
-                if (!sub_45D790(obj)) {
+                if (!critter_is_active(obj)) {
                     return;
                 }
             }
@@ -2993,7 +2993,7 @@ void sub_4B6D20()
     if (combat_is_turn_based()) {
         settings_set_value(&settings, "turn-based", 0);
     } else {
-        if (sub_45D790(player_get_pc_obj())) {
+        if (critter_is_active(player_get_pc_obj())) {
             settings_set_value(&settings, "turn-based", 1);
         }
     }
@@ -3307,7 +3307,7 @@ bool combat_turn_based_begin_turn()
     }
 
     if (dword_5FC240 == NULL) {
-        if (sub_45D790(pc_obj)) {
+        if (critter_is_active(pc_obj)) {
             node = stru_5FC180.head;
             dword_5FC250 = 0;
             dword_5FC240 = node;
@@ -3343,7 +3343,7 @@ bool sub_4B7580(ObjectNode* object_node)
         return true;
     }
 
-    if (!sub_45D790(object_node->obj)) {
+    if (!critter_is_active(object_node->obj)) {
         sub_427000(object_node->obj);
         return true;
     }

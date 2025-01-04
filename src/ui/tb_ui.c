@@ -241,7 +241,7 @@ void sub_57CC10(long long obj)
 {
     if (player_is_pc_obj(obj)) {
         sub_57D350(1, -1);
-        if (!sub_45D790(obj)) {
+        if (!critter_is_active(obj)) {
             sub_575770();
         }
     }
