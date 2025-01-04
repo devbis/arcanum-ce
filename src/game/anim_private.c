@@ -502,7 +502,7 @@ bool mp_deallocate_run_index(AnimID* anim_id)
             }
         }
 
-        sub_421DE0(&(run_info->id));
+        anim_id_init(&(run_info->id));
         run_info->cur_stack_data = NULL;
         run_info->field_20 = OBJ_HANDLE_NULL;
         run_info->field_C = 0;
@@ -518,7 +518,7 @@ bool mp_deallocate_run_index(AnimID* anim_id)
             }
         }
     } else {
-        sub_421DE0(&(run_info->id));
+        anim_id_init(&(run_info->id));
         run_info->cur_stack_data = NULL;
         run_info->field_20 = 0;
         run_info->field_C = 0;
@@ -734,7 +734,7 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, unsigned int flags)
     pkt.offset_y = obj_field_int32_get(anim_data->params[AGDATA_SELF_OBJ].obj, OBJ_F_OFFSET_Y);
     pkt.field_8 = sub_45A7C0();
     pkt.field_1A4 = flags;
-    sub_421DE0(&(pkt.field_198));
+    anim_id_init(&(pkt.field_198));
     for (index = 0; index < 5; index++) {
         sub_443EB0(anim_data->params[index].obj, &(anim_data->field_B0[index]));
     }
@@ -756,7 +756,7 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, unsigned int flags)
     } else {
         tig_net_send_app_all(&pkt, sizeof(pkt));
         if (anim_id != NULL) {
-            sub_421DE0(anim_id);
+            anim_id_init(anim_id);
         }
         return true;
     }
@@ -1253,7 +1253,7 @@ bool anim_find_first_of_type(int64_t obj, int type, AnimID* anim_id)
         anim_id = &tmp_anim_id;
     }
 
-    sub_421DE0(anim_id);
+    anim_id_init(anim_id);
     return anim_find_next_of_type(obj, type, anim_id);
 }
 

@@ -2995,7 +2995,7 @@ bool sub_421D60(AnimID* a, AnimID* b)
 }
 
 // 0x421DE0
-void sub_421DE0(AnimID* anim_id)
+void anim_id_init(AnimID* anim_id)
 {
     ASSERT(anim_id != NULL); // pAnimID != NULL
 
@@ -3576,7 +3576,7 @@ bool sub_423300(int64_t obj, AnimID* anim_id)
     }
 
     if (anim_id != NULL) {
-        sub_421DE0(anim_id);
+        anim_id_init(anim_id);
     }
 
     return false;
@@ -4193,7 +4193,7 @@ bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int a3)
     unsigned int num;
     AnimRunInfo* run_info;
 
-    sub_421DE0(&prev_anim_id);
+    anim_id_init(&prev_anim_id);
 
     if (obj == OBJ_HANDLE_NULL) {
         return true;
@@ -4239,7 +4239,7 @@ bool sub_424560(int64_t obj, tig_art_id_t eye_candy_id, int a3)
     unsigned int num;
     AnimRunInfo* run_info;
 
-    sub_421DE0(&prev_anim_id);
+    anim_id_init(&prev_anim_id);
 
     if (obj == OBJ_HANDLE_NULL) {
         return false;
@@ -15219,7 +15219,7 @@ void sub_437460(AGModifyData* modify_data)
 {
     ASSERT(modify_data != NULL); // pAGModifyData != NULL
 
-    sub_421DE0(&(modify_data->id));
+    anim_id_init(&(modify_data->id));
     modify_data->field_18 = 0;
     modify_data->location = 0;
     modify_data->field_C = 0;

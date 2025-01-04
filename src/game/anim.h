@@ -21,7 +21,7 @@ void anim_break_nodes_to_map(const char* map);
 void anim_save_nodes_to_map(const char* map);
 void anim_load_nodes_from_map(const char* map);
 bool sub_421D60(AnimID* a, AnimID* b);
-void sub_421DE0(AnimID* anim_id);
+void anim_id_init(AnimID* anim_id);
 void anim_id_to_str(AnimID* anim_id, char* buffer);
 bool anim_save(TigFile* stream);
 bool anim_load(GameLoadInfo* load_info);
