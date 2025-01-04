@@ -151,12 +151,12 @@ void sub_579FA0(int64_t obj, int type)
     pc_obj = player_get_pc_obj();
     if (pc_obj != obj) {
         if (critter_is_dead(pc_obj)
-            || sub_45D800(pc_obj)) {
+            || critter_is_unconscious(pc_obj)) {
             return;
         }
 
         if (critter_is_dead(obj)
-            || sub_45D800(obj)) {
+            || critter_is_unconscious(obj)) {
             return;
         }
     }
@@ -255,8 +255,8 @@ void sub_57A1F0(S4F2810* a1)
         }
     }
 
-    if ((pc_obj == qword_683490 || !sub_45D800(pc_obj))
-        && !sub_45D800(qword_683490)) {
+    if ((pc_obj == qword_683490 || !critter_is_unconscious(pc_obj))
+        && !critter_is_unconscious(qword_683490)) {
         sub_57A320(a1, qword_683490, dword_5CB270);
     }
 }

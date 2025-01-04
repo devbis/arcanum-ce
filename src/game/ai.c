@@ -385,7 +385,7 @@ bool sub_4A8570(Ai* ai)
         }
     }
 
-    if (sub_45D800(ai->obj)) {
+    if (critter_is_unconscious(ai->obj)) {
         return false;
     }
 
@@ -1766,11 +1766,11 @@ int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
         return a3;
     }
 
-    if (sub_45D800(a3)) {
+    if (critter_is_unconscious(a3)) {
         return a2;
     }
 
-    if (sub_45D800(a2)) {
+    if (critter_is_unconscious(a2)) {
         return a3;
     }
 
@@ -1929,7 +1929,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                     ranges[idx] = object_dist(critter_obj, handles[idx]);
                 }
 
-                if (sub_45D800(handles[idx])) {
+                if (critter_is_unconscious(handles[idx])) {
                     ranges[idx] += 1000;
                 }
             }
@@ -2037,7 +2037,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
             return false;
         }
 
-        if (sub_45D800(target_obj)) {
+        if (critter_is_unconscious(target_obj)) {
             if ((obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS) & OCF_NON_LETHAL_COMBAT) != 0) {
                 return false;
             }
@@ -2438,7 +2438,7 @@ void sub_4AC660(Ai* ai)
 
     if (fleeing_from_obj == OBJ_HANDLE_NULL
         || critter_is_dead(fleeing_from_obj)
-        || sub_45D800(fleeing_from_obj)) {
+        || critter_is_unconscious(fleeing_from_obj)) {
         ai->danger_type = sub_4AABE0(ai->obj, 0, OBJ_HANDLE_NULL, 0);
     }
 }
@@ -3107,7 +3107,7 @@ int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3)
             return (spell_flags & OSF_SPOKEN_WITH_DEAD) == 0 ? 1 : 0;
         }
 
-        if (sub_45D800(npc_obj)) {
+        if (critter_is_unconscious(npc_obj)) {
             return 6;
         }
 
@@ -4008,7 +4008,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
         return 1000;
     }
 
-    if (sub_45D800(source_obj)) {
+    if (critter_is_unconscious(source_obj)) {
         return 1000;
     }
 
@@ -4081,7 +4081,7 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
         return 1000;
     }
 
-    if (sub_45D800(a1)) {
+    if (critter_is_unconscious(a1)) {
         return 1000;
     }
 

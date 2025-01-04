@@ -353,7 +353,7 @@ int critter_fatigue_damage_set(long long obj, int value)
         value = 0;
     }
 
-    v1 = sub_45D800(obj);
+    v1 = critter_is_unconscious(obj);
 
     obj_field_int32_set(obj, OBJ_F_CRITTER_FATIGUE_DAMAGE, value);
     sub_460260(obj);
@@ -361,7 +361,7 @@ int critter_fatigue_damage_set(long long obj, int value)
     if (value != 0 && !sub_405BC0(obj)) {
         sub_45E820(obj, 0, 80000);
 
-        if (!v1 && sub_45D800(obj)) {
+        if (!v1 && critter_is_unconscious(obj)) {
             sub_457450(obj);
             sub_4CBBF0(OBJ_HANDLE_NULL, obj);
             sub_435A90(obj);
@@ -431,17 +431,16 @@ bool sub_45D790(long long obj)
 {
     return (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) == 0
         && !critter_is_dead(obj)
-        && !sub_45D800(obj)
+        && !critter_is_unconscious(obj)
         && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & (OCF_STUNNED | OCF_PARALYZED)) == 0
         && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) == 0;
 }
 
 // 0x45D800
-bool sub_45D800(int64_t obj)
+bool critter_is_unconscious(int64_t obj)
 {
     return obj == OBJ_HANDLE_NULL
-        || (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-            && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC)
+        || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
         || ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_UNDEAD) == 0
             && critter_fatigue_current(obj) <= 0);
 }

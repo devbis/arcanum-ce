@@ -147,7 +147,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
         return;
     }
 
-    if (sub_45D800(a1)) {
+    if (critter_is_unconscious(a1)) {
         return;
     }
 

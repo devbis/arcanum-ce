@@ -214,7 +214,7 @@ bool teleport_process(TeleportData* teleport_data)
         object_get_followers(teleport_data->obj, &objects);
         node = objects.head;
         while (node != NULL) {
-            if (sub_45D800(node->obj)) {
+            if (critter_is_unconscious(node->obj)) {
                 sub_4AA7A0(node->obj);
             }
             node = node->next;

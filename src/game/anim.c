@@ -10289,7 +10289,7 @@ bool sub_42E460(AnimRunInfo* run_info)
     ASSERT(self_obj != OBJ_HANDLE_NULL); // 10534, "selfObj != OBJ_HANDLE_NULL"
     if (self_obj == OBJ_HANDLE_NULL) return false;
 
-    return !sub_45D800(self_obj);
+    return !critter_is_unconscious(self_obj);
 }
 
 // 0x42E4B0

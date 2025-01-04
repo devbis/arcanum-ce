@@ -157,7 +157,7 @@ void text_filter_sleeping_exit()
 // 0x4F6B70
 bool text_filter_sleeping_validate(int64_t obj)
 {
-    return sub_45D800(obj) || critter_is_sleeping(obj);
+    return critter_is_unconscious(obj) || critter_is_sleeping(obj);
 }
 
 // 0x4F6BB0

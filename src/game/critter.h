@@ -52,7 +52,7 @@ int critter_fatigue_max(long long obj);
 int critter_fatigue_current(long long obj);
 bool sub_45D730(long long obj);
 bool sub_45D790(long long obj);
-bool sub_45D800(int64_t obj);
+bool critter_is_unconscious(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
 bool critter_is_dead(long long obj);
 void sub_45D900(int64_t obj);

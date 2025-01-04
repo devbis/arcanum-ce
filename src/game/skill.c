@@ -1171,7 +1171,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
 
     switch (skill) {
     case SKILL_DODGE:
-        if (sub_45D800(source_obj)
+        if (critter_is_unconscious(source_obj)
             || (obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_STONED) != 0
             || (obj_field_int32_get(source_obj, OBJ_F_CRITTER_FLAGS) & (OCF_PARALYZED | OCF_STUNNED)) != 0) {
             is_success = false;
@@ -1749,7 +1749,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
 
         if ((critter_flags & OCF_PARALYZED) != 0) {
             difficulty -= 50;
-        } else if (sub_45D800(target_obj)) {
+        } else if (critter_is_unconscious(target_obj)) {
             difficulty -= 50;
         } else if (sub_503E20(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID))
             || (critter_flags & OCF_STUNNED) != 0) {

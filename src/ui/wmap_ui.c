@@ -1120,7 +1120,7 @@ void sub_5607E0()
 
     if (pc_obj == OBJ_HANDLE_NULL
         || critter_is_dead(pc_obj)
-        || sub_45D800(pc_obj)) {
+        || critter_is_unconscious(pc_obj)) {
         return;
     }
 

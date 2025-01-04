@@ -144,7 +144,7 @@ void sub_57B180(int64_t bed_obj)
         return;
     }
 
-    if (sub_45D800(pc_obj)) {
+    if (critter_is_unconscious(pc_obj)) {
         // You are unconscious already.
         mes_file_entry.num = 11;
         mes_get_msg(sleep_ui_mes_file, &mes_file_entry);

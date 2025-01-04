@@ -1616,7 +1616,7 @@ void sub_4B4390(CombatContext* combat)
             sub_435A90(combat->target_obj);
 
             if ((dam_flags & CDF_KNOCKOUT) != 0) {
-                if (!sub_45D800(combat->target_obj)) {
+                if (!critter_is_unconscious(combat->target_obj)) {
                     int max_fatigue = critter_fatigue_max(combat->target_obj);
 
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0

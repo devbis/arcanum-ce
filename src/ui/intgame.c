@@ -3550,7 +3550,7 @@ void sub_54FCF0(S683518* a1)
         return;
     }
 
-    if (sub_45D800(pc_obj)) {
+    if (critter_is_unconscious(pc_obj)) {
         return;
     }
 
