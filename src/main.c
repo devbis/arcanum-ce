@@ -318,7 +318,7 @@ void main_loop()
 
     art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
     art_id = tig_art_id_frame_set(art_id, 0);
-    art_id = sub_503E50(art_id, 0);
+    art_id = tig_art_id_anim_set(art_id, 0);
     object_set_current_aid(pc_obj, art_id);
 
     object_flags_unset(pc_obj, OF_OFF);

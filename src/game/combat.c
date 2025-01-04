@@ -1322,7 +1322,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
 
         int v2 = sub_503E20(art_id);
         if (v2 == 20 || v2 == 21) {
-            art_id = sub_503E50(art_id, 0);
+            art_id = tig_art_id_anim_set(art_id, 0);
         }
 
         art_id = sub_504100(art_id, 0);
@@ -2232,7 +2232,7 @@ void sub_4B58C0(CombatContext* combat)
     }
 
     art_id = obj_field_int32_get(combat->target_obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 0);
+    art_id = tig_art_id_anim_set(art_id, 0);
     art_id = tig_art_id_frame_set(art_id, 0);
     object_set_current_aid(combat->target_obj, art_id);
 

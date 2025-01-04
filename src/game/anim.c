@@ -7483,7 +7483,7 @@ bool sub_429CD0(AnimRunInfo* run_info)
 
     if ((run_info->field_C & 0x200000) == 0) {
         art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-        art_id = sub_503E50(art_id, 0);
+        art_id = tig_art_id_anim_set(art_id, 0);
         art_id = tig_art_id_frame_set(art_id, 0);
         object_set_current_aid(obj, art_id);
 
@@ -8214,7 +8214,7 @@ bool sub_42AFB0(AnimRunInfo* run_info)
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 0);
+    art_id = tig_art_id_anim_set(art_id, 0);
     art_id = tig_art_id_frame_set(art_id, 0);
     object_set_current_aid(obj, art_id);
 
@@ -8262,9 +8262,9 @@ bool sub_42B090(AnimRunInfo* run_info)
 
     if (obj_type_is_critter(obj_type)) {
         if (critter_is_concealed(obj)) {
-            art_id = sub_503E50(art_id, 5);
+            art_id = tig_art_id_anim_set(art_id, 5);
         } else {
-            art_id = sub_503E50(art_id, 0);
+            art_id = tig_art_id_anim_set(art_id, 0);
         }
 
         art_id = tig_art_id_frame_set(art_id, 0);
@@ -8322,9 +8322,9 @@ bool sub_42B250(AnimRunInfo* run_info)
 
     if (obj_type_is_critter(obj_type)) {
         if (critter_is_concealed(obj)) {
-            art_id = sub_503E50(art_id, 5);
+            art_id = tig_art_id_anim_set(art_id, 5);
         } else {
-            art_id = sub_503E50(art_id, 0);
+            art_id = tig_art_id_anim_set(art_id, 0);
         }
 
         art_id = tig_art_id_frame_set(art_id, 0);
@@ -8393,9 +8393,9 @@ bool sub_42B440(AnimRunInfo* run_info)
 
     if (obj_type_is_critter(obj_type)) {
         if (critter_is_concealed(obj)) {
-            art_id = sub_503E50(art_id, 5);
+            art_id = tig_art_id_anim_set(art_id, 5);
         } else {
-            art_id = sub_503E50(art_id, 0);
+            art_id = tig_art_id_anim_set(art_id, 0);
         }
 
         art_id = tig_art_id_frame_set(art_id, 0);
@@ -8668,7 +8668,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(source_obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, v2);
+    art_id = tig_art_id_anim_set(art_id, v2);
     art_id = tig_art_id_frame_set(art_id, 0);
     if (tig_art_exists(art_id) != TIG_OK) {
         // FIXME: Unused.
@@ -8723,7 +8723,7 @@ bool sub_42BC10(AnimRunInfo* run_info)
     combat_critter_deactivate_combat_mode(obj);
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, anim);
+    art_id = tig_art_id_anim_set(art_id, anim);
     art_id = tig_art_id_frame_set(art_id, 0);
     if (tig_art_exists(art_id) != TIG_OK) {
         if (violence_filter != 0) {
@@ -8731,7 +8731,7 @@ bool sub_42BC10(AnimRunInfo* run_info)
             return false;
         }
 
-        art_id = sub_503E50(art_id, 18);
+        art_id = tig_art_id_anim_set(art_id, 18);
         tig_debug_printf("Anim: Error: Missing Death Art: %d: Using Default\n", anim);
     }
 
@@ -8763,7 +8763,7 @@ bool sub_42BD40(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, run_info->params[2].data);
+    art_id = tig_art_id_anim_set(art_id, run_info->params[2].data);
     art_id = tig_art_id_frame_set(art_id, 0);
     if (tig_art_exists(art_id) != TIG_OK) {
         return false;
@@ -10087,7 +10087,7 @@ bool AGbeginStunAnim(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 23);
+    art_id = tig_art_id_anim_set(art_id, 23);
     art_id = tig_art_id_frame_set(art_id, 0);
     object_set_current_aid(obj, art_id);
 
@@ -10192,7 +10192,7 @@ bool sub_42E1B0(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 9);
+    art_id = tig_art_id_anim_set(art_id, 9);
     art_id = tig_art_id_frame_set(art_id, 0);
     object_set_current_aid(obj, art_id);
 
@@ -10252,7 +10252,7 @@ bool sub_42E2D0(AnimRunInfo* run_info)
     frame = tig_art_id_frame_get(art_id);
     if (frame == art_anim_data.num_frames - 1) {
         if (sub_503E20(art_id) != 9) {
-            art_id = sub_503E50(art_id, 9);
+            art_id = tig_art_id_anim_set(art_id, 9);
             if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
                 return false;
             }
@@ -10264,7 +10264,7 @@ bool sub_42E2D0(AnimRunInfo* run_info)
             return false;
         } else {
             art_id = tig_art_id_frame_set(art_id, 0);
-            art_id = sub_503E50(art_id, 10);
+            art_id = tig_art_id_anim_set(art_id, 10);
             object_set_current_aid(obj, art_id);
             run_info->field_C &= ~0x04;
             return true;
@@ -10308,7 +10308,7 @@ bool AGbeginKnockDownAnim(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 7);
+    art_id = tig_art_id_anim_set(art_id, 7);
     art_id = tig_art_id_frame_set(art_id, 0);
     object_set_current_aid(obj, art_id);
 
@@ -10350,7 +10350,7 @@ bool sub_42E590(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 8);
+    art_id = tig_art_id_anim_set(art_id, 8);
     art_id = tig_art_id_frame_set(art_id, 0);
 
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
@@ -10534,7 +10534,7 @@ bool sub_42E9B0(AnimRunInfo* run_info)
     run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data = art_id;
     if (sub_503E20(art_id) == 5
         && critter_is_concealed(obj)) {
-        run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data = sub_503E50(run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data, 0);
+        run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data = tig_art_id_anim_set(run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data, 0);
     }
 
     v2 = 2;
@@ -10635,11 +10635,11 @@ void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bo
     concealed = critter_is_concealed(obj);
 
     if (concealed && basic_skill_get_training(obj, BASIC_SKILL_PROWLING) < TRAINING_EXPERT) {
-        *art_id_ptr = sub_503E50(art_id, 3);
+        *art_id_ptr = tig_art_id_anim_set(art_id, 3);
         return;
     }
 
-    art_id = sub_503E50(art_id, 1);
+    art_id = tig_art_id_anim_set(art_id, 1);
     if (run_info->current_goal <= 0
         || !a4
         || (concealed
@@ -10654,7 +10654,7 @@ void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bo
         return;
     }
 
-    art_id = sub_503E50(art_id, 6);
+    art_id = tig_art_id_anim_set(art_id, 6);
     if (a5 != NULL) {
         *a5 = 1;
     }
@@ -10795,7 +10795,7 @@ bool sub_42F140(AnimRunInfo* run_info)
     run_info->path.curr++;
     if (run_info->path.curr >= run_info->path.max) {
         art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-        art_id = sub_503E50(art_id, 0);
+        art_id = tig_art_id_anim_set(art_id, 0);
         art_id = tig_art_id_frame_set(art_id, 0);
         object_set_current_aid(obj, art_id);
 
@@ -10814,14 +10814,14 @@ bool sub_42F140(AnimRunInfo* run_info)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 13);
+    art_id = tig_art_id_anim_set(art_id, 13);
     art_id = tig_art_id_rotation_set(art_id, rot);
     sub_430490(obj, -offset_x, -offset_y);
 
     if ((run_info->field_C & 0x40) != 0) {
-        art_id = sub_503E50(art_id, 6);
+        art_id = tig_art_id_anim_set(art_id, 6);
     } else {
-        art_id = sub_503E50(art_id, 1);
+        art_id = tig_art_id_anim_set(art_id, 1);
     }
 
     art_id = tig_art_id_frame_set(art_id, 0);
@@ -11354,7 +11354,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
                 art_id = obj_field_int32_get(qword_5DE6D8, OBJ_F_CURRENT_AID);
                 art_id = tig_art_id_frame_set(art_id, 0);
                 if (sub_459380(qword_5DE6D8, 172)) {
-                    art_id = sub_503E50(art_id, 23);
+                    art_id = tig_art_id_anim_set(art_id, 23);
                     v1 = true;
                 }
 
@@ -11363,7 +11363,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
                 sub_44D4E0(&goal_data, qword_5DE6D8, AG_ANIM_FIDGET);
                 if (!sub_44D520(&goal_data, NULL)) {
                     if (v1) {
-                        art_id = sub_503E50(art_id, 0);
+                        art_id = tig_art_id_anim_set(art_id, 0);
                         object_set_current_aid(qword_5DE6D8, art_id);
                     }
                 }
@@ -11565,9 +11565,9 @@ bool sub_4305D0(AnimRunInfo* run_info)
 
             art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
             if (critter_is_concealed(art_id)) {
-                art_id = sub_503E50(art_id, 5);
+                art_id = tig_art_id_anim_set(art_id, 5);
             } else {
-                art_id = sub_503E50(art_id, 0);
+                art_id = tig_art_id_anim_set(art_id, 0);
             }
             object_set_current_aid(obj, art_id);
 
@@ -11662,7 +11662,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
 
                 if (run_info->path.curr >= run_info->path.max) {
                     anim = sub_503E20(run_info->cur_stack_data->params[AGDATA_ANIM_ID_PREVIOUS].data);
-                    art_id = sub_503E50(art_id, anim);
+                    art_id = tig_art_id_anim_set(art_id, anim);
                     art_id = tig_art_id_frame_set(art_id, 0);
                     object_set_current_aid(obj, art_id);
                     sub_430490(obj, 0, 0);
@@ -11783,7 +11783,7 @@ bool sub_430F20(AnimRunInfo* run_info)
 
     // FIXME: Useless.
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 0);
+    art_id = tig_art_id_anim_set(art_id, 0);
     tig_art_id_frame_set(art_id, 0);
 
     if (run_info->field_14 == run_info->current_goal
@@ -11850,7 +11850,7 @@ int sub_430FC0(AnimRunInfo* run_info)
             action_points = 1;
         } else {
             art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-            art_id = sub_503E50(art_id, 1);
+            art_id = tig_art_id_anim_set(art_id, 1);
             object_set_current_aid(obj, art_id);
 
             run_info->field_C &= ~0x40;
@@ -13353,7 +13353,7 @@ bool sub_4332E0(int64_t obj, int which_anim)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    goal_data.params[AGDATA_ANIM_ID].data = sub_503E50(art_id, which_anim);
+    goal_data.params[AGDATA_ANIM_ID].data = tig_art_id_anim_set(art_id, which_anim);
     if (!sub_44D520(&goal_data, 0)) {
         return false;
     }
@@ -14170,7 +14170,7 @@ bool sub_434DE0(int64_t obj)
         return false;
     }
 
-    goal_data.params[AGDATA_ANIM_ID].data = sub_503E50(art_id, 8);
+    goal_data.params[AGDATA_ANIM_ID].data = tig_art_id_anim_set(art_id, 8);
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {
         return false;
@@ -14623,7 +14623,7 @@ bool anim_goal_make_knockdown(int64_t obj)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 7);
+    art_id = tig_art_id_anim_set(art_id, 7);
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
         art_id = tig_art_id_frame_set(art_id, art_anim_data.num_frames - 1);
     } else {
@@ -14822,7 +14822,7 @@ bool sub_436220(int64_t obj, int64_t target_obj, int64_t item_obj)
     goal_data.params[AGDATA_FLAGS_DATA].data |= 0x400;
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 12);
+    art_id = tig_art_id_anim_set(art_id, 12);
 
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
         return false;

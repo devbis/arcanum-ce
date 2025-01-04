@@ -2775,7 +2775,7 @@ tig_art_id_t sub_4650D0(int64_t critter_obj)
     }
 
     art_id = obj_field_int32_get(critter_obj, OBJ_F_CURRENT_AID);
-    art_id = sub_503E50(art_id, 20);
+    art_id = tig_art_id_anim_set(art_id, 20);
     art_id = sub_504100(art_id, v1);
     art_id = sub_504180(art_id, v2);
 

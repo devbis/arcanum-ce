@@ -497,7 +497,7 @@ void critter_kill(int64_t obj)
         TigArtAnimData art_anim_data;
 
         art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-        art_id = sub_503E50(art_id, 7);
+        art_id = tig_art_id_anim_set(art_id, 7);
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
             art_id = tig_art_id_frame_set(art_id, art_anim_data.num_frames - 1);
         }
@@ -1448,7 +1448,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
             return;
         }
     } else {
-        new_art_id = sub_503E50(art_id, 0);
+        new_art_id = tig_art_id_anim_set(art_id, 0);
         new_art_id = tig_art_id_frame_set(new_art_id, 0);
     }
 
@@ -1478,7 +1478,7 @@ tig_art_id_t sub_45EFA0(tig_art_id_t art_id)
     tig_art_id_t new_art_id;
     TigArtAnimData art_anim_data;
 
-    new_art_id = sub_503E50(art_id, 5);
+    new_art_id = tig_art_id_anim_set(art_id, 5);
     if (tig_art_exists(new_art_id) == TIG_OK
         && tig_art_anim_data(new_art_id, &art_anim_data) == TIG_OK) {
         return tig_art_id_frame_set(new_art_id, art_anim_data.num_frames - 1);

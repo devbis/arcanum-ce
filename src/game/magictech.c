@@ -3009,7 +3009,7 @@ void sub_452CD0(int64_t obj, tig_art_id_t art_id)
 
     current_art_id = obj_field_int32_get(obj, OBJ_F_AID);
     current_art_id = tig_art_id_rotation_set(current_art_id, rotation);
-    current_art_id = sub_503E50(current_art_id, v2);
+    current_art_id = tig_art_id_anim_set(current_art_id, v2);
     current_art_id = tig_art_id_frame_set(current_art_id, 0);
     object_set_current_aid(obj, current_art_id);
 
@@ -4450,7 +4450,7 @@ void sub_455C30(MagicTechSerializedData* a1)
                 if (info->casting_anim != -1) {
                     tig_art_id_t art_id = obj_field_int32_get(v1->parent_obj.obj, OBJ_F_CURRENT_AID);
                     art_id = tig_art_id_frame_set(art_id, 0);
-                    art_id = sub_503E50(art_id, info->casting_anim);
+                    art_id = tig_art_id_anim_set(art_id, info->casting_anim);
                     goal_data.params[AGDATA_ANIM_ID].data = art_id;
                 }
 
@@ -4469,7 +4469,7 @@ void sub_455C30(MagicTechSerializedData* a1)
             if (info->casting_anim != -1) {
                 tig_art_id_t art_id = obj_field_int32_get(v1->parent_obj.obj, OBJ_F_CURRENT_AID);
                 art_id = tig_art_id_frame_set(art_id, 0);
-                art_id = sub_503E50(art_id, info->casting_anim);
+                art_id = tig_art_id_anim_set(art_id, info->casting_anim);
                 goal_data.params[AGDATA_ANIM_ID].data = art_id;
             }
 
