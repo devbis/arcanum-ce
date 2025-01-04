@@ -2668,7 +2668,7 @@ void sub_541710()
     charedit_destroy();
     sub_57B450();
     sub_560F40();
-    sub_53F090();
+    logbook_ui_close();
     fate_ui_close();
     sub_56D2D0();
     gamelib_reset();
@@ -2977,7 +2977,7 @@ void sub_541D40()
     charedit_destroy();
     sub_57B450();
     sub_560F40();
-    sub_53F090();
+    logbook_ui_close();
     fate_ui_close();
     sub_56D2D0();
 }
@@ -3149,7 +3149,7 @@ void sub_542200()
     charedit_destroy();
     sub_57B450();
     sub_560F40();
-    sub_53F090();
+    logbook_ui_close();
     fate_ui_close();
     sub_56D2D0();
 }

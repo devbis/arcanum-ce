@@ -297,7 +297,7 @@ void logbook_ui_reset()
     int index;
 
     if (logbook_ui_created) {
-        sub_53F090();
+        logbook_ui_close();
     }
 
     logbook_ui_tab = LOGBOOK_UI_TAB_RUMORS_AND_NOTES;
@@ -316,7 +316,7 @@ void logbook_ui_reset()
 void logbook_ui_open(int64_t obj)
 {
     if (logbook_ui_created) {
-        sub_53F090();
+        logbook_ui_close();
         return;
     }
 
@@ -341,7 +341,7 @@ void logbook_ui_open(int64_t obj)
 }
 
 // 0x53F090
-void sub_53F090()
+void logbook_ui_close()
 {
     if (logbook_ui_created
         && sub_551A80(0)) {
@@ -456,7 +456,7 @@ bool logbook_ui_message_filter(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_MOUSE) {
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
-            sub_53F090();
+            logbook_ui_close();
             return true;
         }
         return false;

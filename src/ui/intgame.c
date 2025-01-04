@@ -4753,7 +4753,7 @@ bool sub_551A80(int a1)
             break;
         case 7:
             v1 = true;
-            sub_53F090();
+            logbook_ui_close();
             sub_551F40();
             break;
         case 8:
