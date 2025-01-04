@@ -1647,7 +1647,7 @@ void magictech_load_nodes_from_map(const char* map)
 }
 
 // 0x44FDC0
-void sub_44FDC0(MesFileEntry* mes_file_entry)
+void magictech_get_msg(MesFileEntry* mes_file_entry)
 {
     mes_get_msg(magictech_spell_mes_file, mes_file_entry);
 }
@@ -6621,7 +6621,7 @@ void sub_45A540(int64_t a1)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = 605;
-    sub_44FDC0(&mes_file_entry);
+    magictech_get_msg(&mes_file_entry);
     sub_460610(mes_file_entry.str);
     sub_456E60(a1, 643);
 }

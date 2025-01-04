@@ -109,7 +109,7 @@ void sub_57BC30()
     UiMessage ui_message;
 
     mes_file_entry.num = 606;
-    sub_44FDC0(&mes_file_entry);
+    magictech_get_msg(&mes_file_entry);
 
     ui_message.type = UI_MSG_TYPE_FEEDBACK;
     ui_message.str = mes_file_entry.str;
@@ -317,7 +317,7 @@ void sub_57C110(S4F2810* a1)
             && !magictech_can_charge_spell_fatigue(qword_683500, dword_5CB3A0)) {
             // Not enough Energy.
             mes_file_entry.num = 600;
-            sub_44FDC0(&mes_file_entry);
+            magictech_get_msg(&mes_file_entry);
             sub_460610(mes_file_entry.str);
         } else {
             sub_455A20(&v2, qword_6834F8, dword_5CB3A0);
@@ -332,7 +332,7 @@ void sub_57C110(S4F2810* a1)
             } else {
                 // You cannot see the target.
                 mes_file_entry.num = 604;
-                sub_44FDC0(&mes_file_entry);
+                magictech_get_msg(&mes_file_entry);
 
                 ui_message.type = UI_MSG_TYPE_FEEDBACK;
                 ui_message.str = mes_file_entry.str;

@@ -224,25 +224,25 @@ bool spell_init(GameInitInfo* init_info)
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_NAME_ID;
-        sub_44FDC0(&mes_file_entry);
+        magictech_get_msg(&mes_file_entry);
         college_names[index] = mes_file_entry.str;
     }
 
     for (index = 0; index < SPELL_COUNT; index++) {
         mes_file_entry.num = index + FIRST_SPELL_DESCRIPTION_ID;
-        sub_44FDC0(&mes_file_entry);
+        magictech_get_msg(&mes_file_entry);
         spells[index].description = mes_file_entry.str;
     }
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_DESCRIPTION_ID;
-        sub_44FDC0(&mes_file_entry);
+        magictech_get_msg(&mes_file_entry);
         college_descriptions[index] = mes_file_entry.str;
     }
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
         mes_file_entry.num = index + FIRST_COLLEGE_MASTERY_DESCRIPTION_ID;
-        sub_44FDC0(&mes_file_entry);
+        magictech_get_msg(&mes_file_entry);
         college_mastery_descriptions[index] = mes_file_entry.str;
     }
 
