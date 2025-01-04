@@ -2112,7 +2112,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
                 sub_43F710(obj);
            }
         } else {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 tig_debug_println("MP: MagicTech: magictech_effect_summon called without MP set correctly, tell smoret@troikagames.com");
                 return;
             }
@@ -2431,7 +2431,7 @@ void MTComponentDispel_ProcFunc()
 // 0x451BB0
 void sub_451BB0(int64_t obj, int magictech)
 {
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         Packet74 pkt;
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
@@ -3617,7 +3617,7 @@ bool sub_454920(int64_t obj, int num, int max)
 {
     int spell_mana_store;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return false;
         }

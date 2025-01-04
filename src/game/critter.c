@@ -281,7 +281,7 @@ int critter_fatigue_pts_set(long long obj, int value)
         return 0;
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         Packet51 pkt;
 
         pkt.type = 51;
@@ -472,7 +472,7 @@ void critter_kill(int64_t obj)
         return;
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         Packet104 pkt;
 
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
@@ -484,7 +484,7 @@ void critter_kill(int64_t obj)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    sub_4A2BC0();
+    multiplayer_lock();
 
     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
     combat.dam_flags |= CDF_DEATH;
@@ -506,7 +506,7 @@ void critter_kill(int64_t obj)
         sub_432D90(obj);
     }
 
-    sub_4A2BD0();
+    multiplayer_unlock();
 }
 
 // 0x45DA20
@@ -1426,7 +1426,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
     tig_art_id_t new_art_id;
     unsigned int flags;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         Packet33 pkt;
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {

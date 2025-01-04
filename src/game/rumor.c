@@ -124,7 +124,7 @@ void rumor_set_known(int rumor)
     int v2;
     Packet37 pkt;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
@@ -177,7 +177,7 @@ void sub_4C57E0(int64_t obj, int rumor)
     Packet38 pkt;
 
     datetime = sub_45A7C0();
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }

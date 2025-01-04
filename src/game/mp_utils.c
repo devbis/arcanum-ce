@@ -697,9 +697,9 @@ void sub_4EEB90(Packet102* pkt)
     int64_t pc_obj;
 
     pc_obj = objp_perm_lookup(pkt->oid);
-    sub_4A2BC0();
+    multiplayer_lock();
     area_reset_last_known_area(pc_obj);
-    sub_4A2BD0();
+    multiplayer_unlock();
 }
 
 // 0x4EEBD0
@@ -708,9 +708,9 @@ void sub_4EEBD0(Packet101* pkt)
     int64_t pc_obj;
 
     pc_obj = objp_perm_lookup(pkt->oid);
-    sub_4A2BC0();
+    multiplayer_lock();
     area_set_known(pc_obj, pkt->area);
-    sub_4A2BD0();
+    multiplayer_unlock();
 }
 
 // 0x4EEC10
@@ -1163,7 +1163,7 @@ void sub_4EFAE0(int64_t obj, int a2)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) != 0) {
-        if (!sub_4A2BA0()) {
+        if (!multiplayer_is_locked()) {
             pkt.type = 121;
             sub_4F0640(obj, &(pkt.oid));
             pkt.field_20 = a2;
@@ -1177,10 +1177,10 @@ void sub_4EFB50(Packet121* pkt)
 {
     int64_t obj;
 
-    sub_4A2BC0();
+    multiplayer_lock();
     sub_4F0690(pkt->oid, &obj);
     sub_463B30(obj, pkt->field_20);
-    sub_4A2BD0();
+    multiplayer_unlock();
 }
 
 // 0x4EFBA0
@@ -1225,7 +1225,7 @@ void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3)
 void sub_4EFCD0(Packet124* pkt)
 {
     if ((tig_net_flags & TIG_NET_HOST) == 0) {
-        sub_4A2BC0();
+        multiplayer_lock();
         switch (pkt->subtype) {
         case 0:
             sub_4450A0(pkt->field_8);
@@ -1240,7 +1240,7 @@ void sub_4EFCD0(Packet124* pkt)
             sub_460530();
             break;
         }
-        sub_4A2BD0();
+        multiplayer_unlock();
     }
 }
 

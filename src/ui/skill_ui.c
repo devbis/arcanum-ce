@@ -170,7 +170,7 @@ void sub_579FA0(int64_t obj, int type)
 
     if ((qword_5CB250[type] & 0x2000000) != 0
         || sub_551A80(0)) {
-        if (!sub_4A2BA0()) {
+        if (!multiplayer_is_locked()) {
             pkt.type = 30;
             sub_4440E0(pc_obj, &(pkt.field_8));
             pkt.field_38 = type;
@@ -241,7 +241,7 @@ void sub_57A1F0(S4F2810* a1)
 
     pc_obj = player_get_pc_obj();
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         pkt.type = 31;
         sub_4440E0(qword_683490, &(pkt.field_8));
         pkt.field_38 = dword_5CB270;

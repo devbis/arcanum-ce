@@ -1069,7 +1069,7 @@ bool charedit_create(int64_t obj, int a2)
     if (dword_64CDCC != 3) {
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0
             || (tig_net_flags & TIG_NET_HOST) != 0
-            || sub_4A2BA0()) {
+            || multiplayer_is_locked()) {
             for (index = 0; index < 23; index++) {
                 dword_64D304[index] = sub_55B4D0(qword_64E010, index);
             }
@@ -1370,7 +1370,7 @@ bool sub_55A5C0(TigMessage* msg)
 
                     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                         && (tig_net_flags & TIG_NET_HOST) == 0
-                        && !sub_4A2BA0()) {
+                        && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
                         pkt.type = 127;
@@ -1415,7 +1415,7 @@ bool sub_55A5C0(TigMessage* msg)
 
                     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                         && (tig_net_flags & TIG_NET_HOST) == 0
-                        && !sub_4A2BA0()) {
+                        && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
                         pkt.type = 127;
@@ -2943,7 +2943,7 @@ bool sub_55D3A0(TigMessage* msg)
                 if (msg->data.button.button_handle == stru_5C8430[index].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                         && (tig_net_flags & TIG_NET_HOST) == 0
-                        && !sub_4A2BA0()) {
+                        && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
                         pkt.type = 127;
@@ -2962,7 +2962,7 @@ bool sub_55D3A0(TigMessage* msg)
                 if (msg->data.button.button_handle == stru_5C8530[index].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                         && (tig_net_flags & TIG_NET_HOST) == 0
-                        && !sub_4A2BA0()) {
+                        && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
                         pkt.type = 127;
@@ -3046,7 +3046,7 @@ bool sub_55D6F0(TigMessage* msg)
                 if (msg->data.button.button_handle == stru_5C8430[index + 12].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
-                        || sub_4A2BA0()) {
+                        || multiplayer_is_locked()) {
                         sub_57ACD0(qword_64E010, stru_5C8430[index + 12].art_num + 12);
                     } else {
                         pkt.type = 127;
@@ -3062,7 +3062,7 @@ bool sub_55D6F0(TigMessage* msg)
                 if (msg->data.button.button_handle == stru_5C8530[index + 12].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
-                        || sub_4A2BA0()) {
+                        || multiplayer_is_locked()) {
                         if (tech_skill_get_base(qword_64E010, stru_5C8530[index + 12].art_num) == dword_64C82C[stru_5C8530[index + 12].art_num]) {
                             stru_5C8990.str = dword_64D3C4[6];
                             sub_550750(&stru_5C8990);
@@ -3187,7 +3187,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
-                    || sub_4A2BA0()) {
+                    || multiplayer_is_locked()) {
                     tech_ui_inc_degree(qword_64E010, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
@@ -3203,7 +3203,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
-                    || sub_4A2BA0()) {
+                    || multiplayer_is_locked()) {
                     tech_ui_dec_degree(qword_64E010, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
@@ -3312,7 +3312,7 @@ bool sub_55DC60(TigMessage* msg)
             if (msg->data.button.button_handle == spell_plus_bid) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
-                    || sub_4A2BA0()) {
+                    || multiplayer_is_locked()) {
                     v1 = sub_4B1AB0(qword_64E010, dword_64E024);
                     sub_57C540(qword_64E010, 5 * dword_64E024 + v1);
                 } else {
@@ -3329,7 +3329,7 @@ bool sub_55DC60(TigMessage* msg)
             if (msg->data.button.button_handle == spell_minus_bid) {
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
-                    || sub_4A2BA0()) {
+                    || multiplayer_is_locked()) {
                     v1 = sub_4B1AB0(qword_64E010, dword_64E024);
                     if (v1 == dword_64D364[dword_64E024]) {
                         stru_5C8990.str = dword_64D3C4[10];

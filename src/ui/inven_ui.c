@@ -2267,7 +2267,7 @@ void sub_575770()
 
     if (item_parent(qword_6810E0, &parent_obj)
         && obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_INV_LOCATION) != -1) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || !sub_4A2BA0()) {
+        if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || !multiplayer_is_locked()) {
             sub_4A51C0(player_get_pc_obj(), qword_6810E0);
         }
 

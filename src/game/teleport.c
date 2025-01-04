@@ -197,7 +197,7 @@ bool teleport_process(TeleportData* teleport_data)
         teleport_data->map = map;
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return false;
         }

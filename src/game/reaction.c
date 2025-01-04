@@ -242,7 +242,7 @@ void sub_4C0DE0(int64_t npc_obj, int64_t pc_obj, int value)
     int adjusted_value;
     unsigned int flags;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }

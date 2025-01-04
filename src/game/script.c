@@ -411,7 +411,7 @@ void script_gl_var_set(int index, int value)
 {
     Packet124 pkt;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & 0x2) == 0) {
             return;
         }
@@ -437,7 +437,7 @@ void script_gl_flag_set(int index, int value)
 {
     Packet124 pkt;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & 0x2) == 0) {
             return;
         }
@@ -561,7 +561,7 @@ void sub_4450A0(int value)
 {
     Packet124 pkt;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }

@@ -556,7 +556,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
     }
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && !sub_4A2BA0()) {
+        && !multiplayer_is_locked()) {
         SetBaseStatPacket pkt;
 
         pkt.type = 50;

@@ -396,7 +396,7 @@ void effect_add(int64_t obj, int effect, int cause)
             pkt.field_24 = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 return;
             }
         }
@@ -453,7 +453,7 @@ void effect_remove_one_typed(int64_t obj, int effect)
             pkt.field_20 = effect;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 return;
             }
         }
@@ -490,7 +490,7 @@ void effect_remove_all_typed(int64_t obj, int effect)
             pkt.field_20 = effect;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 return;
             }
         }
@@ -526,7 +526,7 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
             pkt.field_20 = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 return;
             }
         }
@@ -561,7 +561,7 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
             pkt.field_20 = cause;
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 return;
             }
         }

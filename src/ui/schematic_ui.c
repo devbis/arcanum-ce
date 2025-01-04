@@ -1084,7 +1084,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
-        && !sub_4A2BA0()) {
+        && !multiplayer_is_locked()) {
         return true;
     }
 

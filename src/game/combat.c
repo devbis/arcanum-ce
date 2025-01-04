@@ -1113,7 +1113,7 @@ void sub_4B39B0(CombatContext* combat)
         combat->flags |= 0x20;
     }
 
-    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
         // FIXME: Unused.
         rotation = tig_art_id_rotation_get(obj_field_int32_get(combat->attacker_obj, OBJ_F_CURRENT_AID));
 
@@ -1287,7 +1287,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
         }
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) != 0 || is_pc) {
             Packet19 pkt;
 
@@ -1422,7 +1422,7 @@ void sub_4B4390(CombatContext* combat)
     unsigned int spell_flags = 0;
     bool weapon_dropped = false;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if (sub_4B5520(combat) || (tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
@@ -1988,7 +1988,7 @@ void sub_4B4390(CombatContext* combat)
         }
     }
 
-    if (!sub_4A2BA0() && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!multiplayer_is_locked() && (tig_net_flags & TIG_NET_HOST) != 0) {
         Packet20 pkt;
 
         pkt.type = 20;
@@ -2183,7 +2183,7 @@ void sub_4B58C0(CombatContext* combat)
     bool v2 = false;
     tig_art_id_t art_id;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }

@@ -486,7 +486,7 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
 
     skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill);
     current_training = (skill_value >> 6) & 3;
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         SetSkillTrainingPacket pkt;
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
@@ -785,7 +785,7 @@ int tech_skill_set_base(int64_t obj, int skill, int value)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
-        && !sub_4A2BA0()) {
+        && !multiplayer_is_locked()) {
         return 0;
     }
 
@@ -846,7 +846,7 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
 
     skill_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill);
     current_training = (skill_value >> 6) & 3;
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         SetSkillTrainingPacket pkt;
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {

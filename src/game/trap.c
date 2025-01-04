@@ -265,7 +265,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
@@ -537,9 +537,9 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
                     tig_net_send_app_all(&pkt, sizeof(pkt));
                 }
 
-                sub_4A2BC0();
+                multiplayer_lock();
                 item_transfer(disarm_item_obj, pc_obj);
-                sub_4A2BD0();
+                multiplayer_unlock();
             }
         }
         sub_4BC220(trap_obj);

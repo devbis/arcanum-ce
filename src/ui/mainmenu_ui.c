@@ -3207,9 +3207,9 @@ bool sub_5422C0(int btn)
     }
 
     sub_4A4270();
-    sub_4A2BC0();
+    multiplayer_lock();
     sub_4A3D00(1);
-    sub_4A2BD0();
+    multiplayer_unlock();
     sub_541710();
     sub_4A4280();
     sub_49CC50();
@@ -4447,7 +4447,7 @@ void sub_5446F0()
 
     dword_64C458 = 0;
     dword_64C414 = 12;
-    sub_4A2BC0();
+    multiplayer_lock();
 
     player_create_info_init(&player_create_info);
     player_create_info.loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
@@ -5151,7 +5151,7 @@ bool sub_545C70(tig_button_handle_t button_handle)
             uint8_t* v1;
             int v2;
 
-            sub_4A2BD0();
+            multiplayer_unlock();
             if (!sub_4A4320()) {
                 tig_debug_printf("MainMenu_UI: Could not save multiplayer character.\n");
                 return true;

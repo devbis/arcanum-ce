@@ -39,7 +39,7 @@ bool fate_activate(int64_t obj, int fate)
     unsigned int flags;
     int fate_points;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         PacketFateStateSet pkt;
 
         pkt.type = 36;
@@ -80,7 +80,7 @@ bool fate_deactivate(int64_t obj, int fate)
     unsigned int flags;
     int fate_points;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         PacketFateStateSet pkt;
 
         pkt.type = 36;

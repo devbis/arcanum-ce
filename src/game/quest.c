@@ -319,7 +319,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
     }
 
     old_state = sub_4C4CB0(obj, num);
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return old_state;
         }
@@ -399,7 +399,7 @@ int sub_4C5070(int64_t obj, int num)
         return state;
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
             return pc_quest_state.state;
@@ -454,7 +454,7 @@ int quest_set_state(int num, int state)
         return old_state;
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return state;
         }

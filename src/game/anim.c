@@ -4299,7 +4299,7 @@ bool sub_4246E0(AnimRunInfo* run_info)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
-        && !sub_4A2BA0()) {
+        && !multiplayer_is_locked()) {
         return true;
     }
 
@@ -4355,7 +4355,7 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
 
     ASSERT(obj_ptr != NULL); // 3074, "obj != NULL"
 
-    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
         proto_obj = sub_4685A0(5028);
 
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0

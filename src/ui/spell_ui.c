@@ -510,7 +510,7 @@ void sub_57C540(int64_t obj, int index)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || sub_4A2BA0()) {
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
         if (!sub_4B1790(obj, index, 0)) {
             if (spell_get_minimum_level(index) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();

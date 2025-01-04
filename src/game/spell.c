@@ -388,7 +388,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
     int magic_points;
     int cost;
 
-    if (!sub_4A2BA0() && sub_40DA20(obj)) {
+    if (!multiplayer_is_locked() && sub_40DA20(obj)) {
         PlayerBuySpellPacket pkt;
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {

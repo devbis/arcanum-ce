@@ -167,7 +167,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
     }
 
     entry = sub_567420(a1);
-    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
         if (a3 != 0 && script_name_build_dlg_name(a3, path)) {
             if (!sub_412E10(path, &(entry->field_4))) {
                 return;
@@ -559,7 +559,7 @@ bool sub_5680A0(TigMessage* msg)
         return true;
     }
 
-    if (sub_4A2BA0() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
         if (!sub_567E30(entry, v1)) {
             sub_5517A0(msg);
         }
@@ -719,7 +719,7 @@ void sub_568540(int64_t obj, int64_t a2, int type, int expires_in, const char* s
 {
     Packet44 pkt;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }
@@ -753,7 +753,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int expires_in, const char* s
 {
     Packet44 pkt;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
         }

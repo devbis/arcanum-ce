@@ -183,7 +183,7 @@ int tech_inc_degree(int64_t obj, int tech)
     degree = tech_get_degree(obj, tech);
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
-        && !sub_4A2BA0()) {
+        && !multiplayer_is_locked()) {
         return degree;
     }
 
@@ -230,7 +230,7 @@ int tech_dec_degree(int64_t obj, int tech)
     degree = tech_get_degree(obj, tech);
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
-        && !sub_4A2BA0()) {
+        && !multiplayer_is_locked()) {
             return degree;
     }
 

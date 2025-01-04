@@ -348,7 +348,7 @@ static void(*off_5F0E04)();
 static Func5F0E08* dword_5F0E08;
 
 // 0x5F0E0C
-static int dword_5F0E0C;
+static int multiplayer_lock_cnt;
 
 // 0x5F0E10
 static int dword_5F0E10;
@@ -603,9 +603,9 @@ bool multiplayer_mod_load()
 // 0x49CB60
 void multiplayer_mod_unload()
 {
-    sub_4A2BC0();
+    multiplayer_lock();
     sub_4A3D00(true);
-    sub_4A2BD0();
+    multiplayer_unlock();
 }
 
 // 0x49CB80
@@ -627,7 +627,7 @@ void sub_49CB80(S5E8AD0* a1)
 // 0x49CBD0
 bool sub_49CBD0()
 {
-    dword_5F0E0C = 0;
+    multiplayer_lock_cnt = 0;
     if (tig_net_start_client() != TIG_OK) {
         return FALSE;
     }
@@ -650,7 +650,7 @@ bool sub_49CC20()
     tig_net_on_message(NULL);
     v1 = sub_5280F0();
     dword_5F0E00 = false;
-    dword_5F0E0C = 0;
+    multiplayer_lock_cnt = 0;
     return !v1;
 }
 
@@ -1135,22 +1135,22 @@ int64_t sub_4A2B60(int player)
 }
 
 // 0x4A2BA0
-bool sub_4A2BA0()
+bool multiplayer_is_locked()
 {
-    return (tig_net_flags & TIG_NET_CONNECTED) != 0 ? dword_5F0E0C > 0 : true;
+    return (tig_net_flags & TIG_NET_CONNECTED) != 0 ? multiplayer_lock_cnt > 0 : true;
 }
 
 // 0x4A2BC0
-void sub_4A2BC0()
+void multiplayer_lock()
 {
-    dword_5F0E0C++;
+    multiplayer_lock_cnt++;
 }
 
 // 0x4A2BD0
-void sub_4A2BD0()
+void multiplayer_unlock()
 {
-    if (dword_5F0E0C > 0) {
-        dword_5F0E0C--;
+    if (multiplayer_lock_cnt > 0) {
+        multiplayer_lock_cnt--;
     }
 }
 
@@ -1583,7 +1583,7 @@ bool sub_4A39F0(const char* path, int64_t obj)
     uint8_t* data;
     int size;
 
-    sub_4A2BC0();
+    multiplayer_lock();
     sub_407EF0(obj);
     sub_463730(obj, true);
 
@@ -1640,7 +1640,7 @@ bool sub_4A39F0(const char* path, int64_t obj)
     stream = tig_file_fopen(path, "wb");
     if (stream == NULL) {
         FREE(data); // FIX: Leak.
-        sub_4A2BD0();
+        multiplayer_unlock();
         return false;
     }
 
@@ -1674,7 +1674,7 @@ bool sub_4A39F0(const char* path, int64_t obj)
         sub_4A43B0(obj, scheme_rule, scheme_name);
         tig_file_fclose(stream);
         FREE(data);
-        sub_4A2BD0();
+        multiplayer_unlock();
 
         return true;
     } while (0);
@@ -1682,7 +1682,7 @@ bool sub_4A39F0(const char* path, int64_t obj)
     tig_file_fclose(stream);
 
     FREE(data);
-    sub_4A2BD0();
+    multiplayer_unlock();
 
     return false;
 }
@@ -2574,7 +2574,7 @@ void sub_4A53B0(int64_t a1, int64_t a2)
 {
     int client_id;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         Packet97 pkt;
 
         pkt.type = 97;

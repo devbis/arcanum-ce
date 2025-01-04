@@ -302,7 +302,7 @@ bool area_set_known(int64_t pc_obj, int area)
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 if ((tig_net_flags & TIG_NET_HOST) != 0) {
                     pkt.type = 101;
                     pkt.oid = sub_407EF0(pc_obj);
@@ -362,7 +362,7 @@ void area_reset_last_known_area(int64_t pc_obj)
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-            if (!sub_4A2BA0()) {
+            if (!multiplayer_is_locked()) {
                 if ((tig_net_flags & TIG_NET_HOST) == 0) {
                     return;
                 }

@@ -1230,11 +1230,11 @@ void sub_43CCA0(int64_t obj)
         return;
     }
 
-    if (!sub_4A2BA0() && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!multiplayer_is_locked() && (tig_net_flags & TIG_NET_HOST) != 0) {
         sub_4ED9E0(obj);
     }
 
-    sub_4A2BC0();
+    multiplayer_lock();
 
     object_get_rect(obj, 0x7, &rect);
     object_iso_invalidate_rect(&rect);
@@ -1282,7 +1282,7 @@ void sub_43CCA0(int64_t obj)
     flags |= OF_DESTROYED;
     obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
 
-    sub_4A2BD0();
+    multiplayer_unlock();
 }
 
 // 0x43CEA0
@@ -1520,7 +1520,7 @@ int object_hp_pts_set(int64_t obj, int value)
 {
     Packet51 pkt;
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         pkt.type = 51;
         pkt.field_4 = 0;
         pkt.field_8 = sub_407EF0(obj);
@@ -3626,7 +3626,7 @@ int sub_441540(int64_t obj)
 // 0x4415C0
 void sub_4415C0(int64_t obj, int64_t loc)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || sub_4A2BA0()) {
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
         unsigned int flags;
         int64_t sector_id;
         Sector* sector;
@@ -3669,7 +3669,7 @@ bool sub_441710(S4415C0* entry)
     if (entry != NULL) {
         Packet22 pkt;
 
-        sub_4A2BC0();
+        multiplayer_lock();
 
         pkt.type = 22;
         sub_4F0640(entry->obj, &(pkt.oid));
@@ -3677,7 +3677,7 @@ bool sub_441710(S4415C0* entry)
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
         sub_4415C0(entry->obj, entry->loc);
-        sub_4A2BD0();
+        multiplayer_unlock();
         FREE(entry);
     }
 
@@ -3696,7 +3696,7 @@ bool sub_441780(S4415C0* entry)
 void sub_4417A0(int64_t item_obj, int64_t parent_obj)
 {
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || sub_4A2BA0()) {
+        || multiplayer_is_locked()) {
         unsigned int flags;
         TigRect rect;
         int64_t loc;
@@ -3737,14 +3737,14 @@ bool sub_4418E0(S4417A0* entry)
     if (entry != NULL) {
         Packet23 pkt;
 
-        sub_4A2BC0();
+        multiplayer_lock();
 
         pkt.type = 23;
         sub_4F0640(entry->item_obj, &(pkt.item_oid));
         sub_4F0640(entry->parent_obj, &(pkt.parent_oid));
 
         sub_4417A0(entry->item_obj, entry->parent_obj);
-        sub_4A2BD0();
+        multiplayer_unlock();
         FREE(entry);
     }
 

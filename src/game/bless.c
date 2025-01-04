@@ -114,7 +114,7 @@ void bless_add(object_id_t obj, int bless)
         return;
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         ChangeBlessPacket pkt;
 
         if (!(tig_net_flags & TIG_NET_HOST) == 0) {
@@ -170,7 +170,7 @@ void bless_remove(object_id_t obj, int bless)
         return;
     }
 
-    if (!sub_4A2BA0()) {
+    if (!multiplayer_is_locked()) {
         ChangeBlessPacket pkt;
 
         if (!(tig_net_flags & TIG_NET_HOST) == 0) {

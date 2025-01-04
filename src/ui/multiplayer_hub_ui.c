@@ -1454,7 +1454,7 @@ void sub_5836A0()
     char* player_name;
 
     if (dword_5C3618 >= 0 && dword_5C3618 < dword_64C420) {
-        sub_4A2BD0();
+        multiplayer_unlock();
         sub_442050(&data, &size, dword_64C41C[dword_5C3618]);
         obj_field_string_get(dword_64C41C[dword_5C3618], OBJ_F_PC_PLAYER_NAME, &player_name);
 
@@ -2449,9 +2449,9 @@ bool sub_585270(int num)
         rect.width = 0;
         if (stru_686740.count != 0) {
             sub_4A4270();
-            sub_4A2BC0();
+            multiplayer_lock();
             sub_4A3D00(1);
-            sub_4A2BD0();
+            multiplayer_unlock();
             sub_541710();
             sub_4A4280();
             sub_49CC50();
