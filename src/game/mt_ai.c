@@ -295,7 +295,7 @@ void sub_4CC580(S5FF620* a1)
         v1->field_10 = a1->field_10;
     }
 
-    v1->field_8 = sub_45DDA0(a1->obj);
+    v1->field_8 = critter_pc_leader_get(a1->obj);
     v1->field_18 = a1->field_18;
 
     dword_6016F4 = 0;

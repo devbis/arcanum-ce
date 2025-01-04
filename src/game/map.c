@@ -1570,7 +1570,7 @@ void map_disable_objects()
                 location = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 sector_id = sub_4CFC50(location);
                 if (!sub_4D0DE0(sector_id) && !player_is_pc_obj(obj)) {
-                    if (sub_45DDA0(obj) != player_get_pc_obj()) {
+                    if (critter_pc_leader_get(obj) != player_get_pc_obj()) {
                         flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
                         flags |= OF_OFF;
                         obj_field_int32_set(obj, OBJ_F_FLAGS, flags);

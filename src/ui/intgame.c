@@ -3223,7 +3223,7 @@ void sub_54ED30(S4F2810* a1)
                     }
 
                     if (!a1->is_loc
-                        && player_is_pc_obj(sub_45DDA0(a1->obj)
+                        && player_is_pc_obj(critter_pc_leader_get(a1->obj)
                         && !tig_kb_is_key_pressed(DIK_LMENU))) {
                         return;
                     }
@@ -6069,7 +6069,7 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
         *portrait_ptr = sub_4CEB80(a2);
         return true;
     case OBJ_TYPE_NPC:
-        if (sub_45DDA0(a2) == a1) {
+        if (critter_pc_leader_get(a2) == a1) {
             int portrait = sub_4CEB80(a2);
             if (portrait != 0) {
                 *portrait_ptr = portrait;
@@ -6119,7 +6119,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     obj_type = obj_field_int32_get(critter_obj, OBJ_F_TYPE);
     sub_550930();
 
-    leader_obj = sub_45DDA0(critter_obj);
+    leader_obj = critter_pc_leader_get(critter_obj);
 
 
     is_detecting_alignment = (obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_ALIGNMENT) != 0;
@@ -7983,7 +7983,7 @@ void sub_557370(int64_t a1, int64_t a2)
                         sub_4B79A0(a1, a2);
                     }
                 } else {
-                    if (!player_is_pc_obj(sub_45DDA0(a2)) || tig_kb_is_key_pressed(DIK_LALT)) {
+                    if (!player_is_pc_obj(critter_pc_leader_get(a2)) || tig_kb_is_key_pressed(DIK_LALT)) {
                         sub_4B78D0(a1, a2);
                     }
                 }

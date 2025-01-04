@@ -58,7 +58,7 @@ bool critter_is_dead(long long obj);
 void sub_45D900(int64_t obj);
 void sub_45DA20(int64_t a1, int64_t a2, int a3);
 void sub_45DC90(int64_t a1, int64_t a2, bool a3);;
-int64_t sub_45DDA0(int64_t obj);
+int64_t critter_pc_leader_get(int64_t obj);
 int64_t critter_leader_get(int64_t obj);
 void critter_leader_set(int64_t follower_obj, int64_t leader_obj);
 bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force);

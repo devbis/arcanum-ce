@@ -657,7 +657,7 @@ void sub_56B290()
 void sub_56B4D0(int64_t obj)
 {
     if (dword_67BC60) {
-        if (sub_45DDA0(obj) == player_get_pc_obj()) {
+        if (critter_pc_leader_get(obj) == player_get_pc_obj()) {
             sub_56B290();
         }
     }

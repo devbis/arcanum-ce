@@ -575,7 +575,7 @@ bool sub_4F2D20(S603CB8* a1)
                 }
 
                 if ((tgt & 0xC00000000000000) != 0) {
-                    if (sub_45DDA0(a1->field_20) == OBJ_HANDLE_NULL
+                    if (critter_pc_leader_get(a1->field_20) == OBJ_HANDLE_NULL
                         && !sub_40DA20(a1->field_20)) {
                         return false;
                     }
@@ -586,8 +586,8 @@ bool sub_4F2D20(S603CB8* a1)
                         int64_t v1;
                         int64_t v2;
 
-                        v1 = sub_45DDA0(a1->field_20);
-                        v2 = sub_45DDA0(a1->self_obj);
+                        v1 = critter_pc_leader_get(a1->field_20);
+                        v2 = critter_pc_leader_get(a1->self_obj);
                         if (v1 == a1->self_obj
                             || (v1 == v2 && v1 != OBJ_HANDLE_NULL)
                             || v2 == a1->field_20) {
@@ -617,8 +617,8 @@ bool sub_4F2D20(S603CB8* a1)
                         int64_t v1;
                         int64_t v2;
 
-                        v1 = sub_45DDA0(a1->field_20);
-                        v2 = sub_45DDA0(a1->field_40);
+                        v1 = critter_pc_leader_get(a1->field_20);
+                        v2 = critter_pc_leader_get(a1->field_40);
                         if (v1 == a1->field_40
                             || (v1 == v2 && v1 != OBJ_HANDLE_NULL)
                             || v2 == a1->field_20) {
@@ -682,8 +682,8 @@ bool sub_4F2D20(S603CB8* a1)
                         int64_t v1;
                         int64_t v2;
 
-                        v1 = sub_45DDA0(a1->field_20);
-                        v2 = sub_45DDA0(a1->self_obj);
+                        v1 = critter_pc_leader_get(a1->field_20);
+                        v2 = critter_pc_leader_get(a1->self_obj);
                         if (v1 == a1->self_obj
                             || (v1 == v2 && v1 != OBJ_HANDLE_NULL)
                             || v2 == a1->field_20) {
@@ -713,8 +713,8 @@ bool sub_4F2D20(S603CB8* a1)
                         int64_t v1;
                         int64_t v2;
 
-                        v1 = sub_45DDA0(a1->field_20);
-                        v2 = sub_45DDA0(a1->field_40);
+                        v1 = critter_pc_leader_get(a1->field_20);
+                        v2 = critter_pc_leader_get(a1->field_40);
                         if (v1 == a1->field_40
                             || (v1 == v2 && v1 != OBJ_HANDLE_NULL)
                             || v2 == a1->field_20) {

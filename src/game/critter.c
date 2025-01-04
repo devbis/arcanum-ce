@@ -176,7 +176,7 @@ bool critter_faction_same(long long obj1, long long obj2)
             return false;
         }
 
-        if (sub_45DDA0(obj2) == obj1) {
+        if (critter_pc_leader_get(obj2) == obj1) {
             return true;
         }
 
@@ -189,7 +189,7 @@ bool critter_faction_same(long long obj1, long long obj2)
     }
 
     if (obj_type2 == OBJ_TYPE_PC) {
-        if (sub_45DDA0(obj1) == obj2) {
+        if (critter_pc_leader_get(obj1) == obj2) {
             return true;
         }
 
@@ -201,8 +201,8 @@ bool critter_faction_same(long long obj1, long long obj2)
         return sub_4C21E0(obj2, faction);
     }
 
-    v1 = sub_45DDA0(obj1);
-    if (v1 != OBJ_HANDLE_NULL && v1 == sub_45DDA0(obj2)) {
+    v1 = critter_pc_leader_get(obj1);
+    if (v1 != OBJ_HANDLE_NULL && v1 == critter_pc_leader_get(obj2)) {
         return true;
     }
 
@@ -541,7 +541,7 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
 
         if (a2 != OBJ_HANDLE_NULL) {
             if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-                a2 = sub_45DDA0(a2);
+                a2 = critter_pc_leader_get(a2);
             }
 
             if (a2 != OBJ_HANDLE_NULL) {
@@ -650,7 +650,7 @@ void sub_45DC90(int64_t a1, int64_t a2, bool a3)
 }
 
 // 0x45DDA0
-int64_t sub_45DDA0(int64_t obj)
+int64_t critter_pc_leader_get(int64_t obj)
 {
     int64_t leader_obj = obj;
 
@@ -660,7 +660,7 @@ int64_t sub_45DDA0(int64_t obj)
 
     do {
         leader_obj = critter_leader_get(leader_obj);
-    } while (leader_obj != OBJ_HANDLE_NULL && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC);
+    } while (leader_obj != OBJ_HANDLE_NULL && obj_field_int32_get(leader_obj, OBJ_F_TYPE) != OBJ_TYPE_PC);
 
     return leader_obj;
 }
@@ -890,7 +890,7 @@ bool sub_45E2E0(int64_t a1, int64_t a2)
         if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             v1 = a1;
         } else {
-            v1 = sub_45DDA0(a1);
+            v1 = critter_pc_leader_get(a1);
             if (v1 != OBJ_HANDLE_NULL) {
                 v3 = sub_4BA020(v1);
             }
@@ -902,7 +902,7 @@ bool sub_45E2E0(int64_t a1, int64_t a2)
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             v2 = a2;
         } else {
-            v2 = sub_45DDA0(a2);
+            v2 = critter_pc_leader_get(a2);
             if (v2 != OBJ_HANDLE_NULL) {
                 v4 = sub_4BA020(v2);
             }
@@ -1245,7 +1245,7 @@ bool critter_resting_timeevent_process(TimeEvent* timeevent)
     }
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-        && !sub_45DDA0(obj)) {
+        && critter_pc_leader_get(obj) == OBJ_HANDLE_NULL) {
         sub_45E910(obj, hours);
     }
 
@@ -1679,7 +1679,7 @@ bool critter_has_bad_associates(int64_t obj)
     unsigned int flags;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-        obj = sub_45DDA0(obj);
+        obj = critter_pc_leader_get(obj);
         if (obj == OBJ_HANDLE_NULL) {
             return false;
         }

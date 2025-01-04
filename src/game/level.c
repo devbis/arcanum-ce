@@ -382,7 +382,7 @@ void sub_4A69C0(int64_t pc_obj)
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0
-            && sub_45DDA0(node->obj) == pc_obj) {
+            && critter_pc_leader_get(node->obj) == pc_obj) {
             sub_4A6CB0(node->obj, old_level, cur_level);
         }
         node = node->next;

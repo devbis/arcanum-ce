@@ -7906,7 +7906,7 @@ bool sub_42A720(AnimRunInfo* run_info)
         }
 
         if ((v1 == OBJ_HANDLE_NULL || v1 != node->obj)
-            && sub_45DDA0(node->obj) != v1) {
+            && critter_pc_leader_get(node->obj) != v1) {
             sub_4A9650(v1, node->obj, 1, 0);
 
             if (sub_4B6D70()
@@ -8632,7 +8632,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
     if (sub_40DA20(target_obj)) {
         combat_critter_activate_combat_mode(target_obj);
     } else {
-        leader_obj = sub_45DDA0(target_obj);
+        leader_obj = critter_pc_leader_get(target_obj);
         if (leader_obj == OBJ_HANDLE_NULL && !critter_is_dead(leader_obj)) {
             combat_critter_activate_combat_mode(leader_obj);
         }

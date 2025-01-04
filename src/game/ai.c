@@ -467,7 +467,7 @@ bool sub_4A8940(Ai* ai)
         return true;
     }
 
-    v2 = sub_45DDA0(ai->obj);
+    v2 = critter_pc_leader_get(ai->obj);
     if (v2 == OBJ_HANDLE_NULL) {
         v2 = ai->leader_obj;
     }
@@ -942,7 +942,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
         }
 
         if (obj_type_is_critter(target_obj_type)) {
-            v1 = sub_45DDA0(target_obj);
+            v1 = critter_pc_leader_get(target_obj);
             if (v1 == OBJ_HANDLE_NULL) {
                 v1 = target_obj;
             }
@@ -1211,7 +1211,7 @@ void sub_4AA0D0(int64_t obj)
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
-            && sub_45DDA0(node->obj) != obj
+            && critter_pc_leader_get(node->obj) != obj
             && (sub_4AF260(node->obj, obj) == 0 || !sub_4AF470(node->obj, obj, 0))) {
             sub_4A9650(obj, node->obj, 0, 0);
         }
@@ -1260,7 +1260,7 @@ void sub_4AA300(int64_t a1, int64_t a2)
     int obj_type;
     int reaction;
 
-    v1 = sub_45DDA0(a2);
+    v1 = critter_pc_leader_get(a2);
     if (v1 == OBJ_HANDLE_NULL) {
         v1 = a2;
     }
@@ -1326,7 +1326,7 @@ void sub_4AA4A0(int64_t obj)
             sub_424070(obj, 3, 0, 0);
             combat_critter_deactivate_combat_mode(obj);
         }
-        if (sub_45DDA0(obj)) {
+        if (critter_pc_leader_get(obj) != OBJ_HANDLE_NULL) {
             flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
             flags |= ONF_NO_ATTACK;
             obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
@@ -1358,7 +1358,7 @@ void sub_4AA580(int64_t obj)
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
     switch (type) {
     case OBJ_TYPE_NPC:
-        if (sub_45DDA0(obj)) {
+        if (critter_pc_leader_get(obj) != OBJ_HANDLE_NULL) {
             flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
             flags &= ~ONF_NO_ATTACK;
             obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
@@ -2952,7 +2952,7 @@ bool sub_4AD4D0(int64_t obj)
         return false;
     }
 
-    pc_leader_obj = sub_45DDA0(obj);
+    pc_leader_obj = critter_pc_leader_get(obj);
     if (pc_leader_obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -3149,7 +3149,7 @@ int sub_4AD950(int64_t npc_obj, int64_t pc_obj, bool a3)
                 return 0;
             }
         } else {
-            if (sub_45DDA0(npc_obj)) {
+            if (critter_pc_leader_get(npc_obj) != OBJ_HANDLE_NULL) {
                 return 0;
             }
         }
@@ -3223,7 +3223,7 @@ int sub_4ADB50(int64_t npc_obj, int64_t pc_obj)
                 return 0;
             }
         } else {
-            if (sub_45DDA0(npc_obj)) {
+            if (critter_pc_leader_get(npc_obj) != OBJ_HANDLE_NULL) {
                 return 0;
             }
         }
@@ -3273,7 +3273,7 @@ int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3)
                 return 0;
             }
         } else {
-            if (sub_45DDA0(a1)) {
+            if (critter_pc_leader_get(a1) != OBJ_HANDLE_NULL) {
                 return 0;
             }
         }
@@ -3437,7 +3437,7 @@ int sub_4AE120(int64_t a1, int64_t a2)
     AiParams ai_params;
 
     if (sub_4AB990(a1, a2)) {
-        pc_leader_obj = sub_45DDA0(a1);
+        pc_leader_obj = critter_pc_leader_get(a1);
         obj_type = obj_field_int32_get(a2, OBJ_F_TYPE);
 
         if (sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_WILL_KOS, 0) != 0) {
@@ -3588,7 +3588,8 @@ int sub_4AE570(int64_t a1, int64_t a2, int64_t a3, int skill)
                 return 1;
             }
         } else {
-            if (a1 == OBJ_HANDLE_NULL || !sub_45DDA0(a1)) {
+            if (a1 == OBJ_HANDLE_NULL
+                || critter_pc_leader_get(a1) == OBJ_HANDLE_NULL) {
                 return 1;
             }
         }
@@ -3636,7 +3637,8 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
         }
 
         if (obj_type == OBJ_TYPE_NPC) {
-            if (!sub_45DDA0(a1) && ai_critter_fatigue_ratio(a1) < 20) {
+            if (critter_pc_leader_get(a1) == OBJ_HANDLE_NULL
+                && ai_critter_fatigue_ratio(a1) < 20) {
                 return 2;
             }
 
@@ -3769,7 +3771,8 @@ int sub_4AEB70(int64_t obj, int64_t portal, int a3)
     }
     if ((flags & OPF_ALWAYS_LOCKED) == 0) {
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            if (!sub_45DDA0(obj) || sub_4AECA0(portal, a3)) {
+            if (critter_pc_leader_get(obj) == OBJ_HANDLE_NULL
+                || sub_4AECA0(portal, a3)) {
                 return 0;
             }
         } else if (sub_4AECA0(portal, a3)) {
@@ -3876,7 +3879,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4)
         pc_obj = critter_obj;
         break;
     case OBJ_TYPE_NPC:
-        pc_obj = sub_45DDA0(critter_obj);
+        pc_obj = critter_pc_leader_get(critter_obj);
         break;
     default:
         pc_obj = OBJ_HANDLE_NULL;
@@ -4219,7 +4222,7 @@ void sub_4AF8C0(int64_t a1, int64_t a2)
     ObjectList objects;
     ObjectNode* node;
 
-    v1 = sub_45DDA0(a2);
+    v1 = critter_pc_leader_get(a2);
     if (v1 == OBJ_HANDLE_NULL) {
         v1 = a2;
     }
@@ -4242,12 +4245,12 @@ void sub_4AF930(int64_t a1, int64_t a2)
     int index;
 
     if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-        v1 = sub_45DDA0(a2);
+        v1 = critter_pc_leader_get(a2);
     } else {
         v1 = a2;
     }
 
-    if ((v1 == OBJ_HANDLE_NULL || v1 != sub_45DDA0(a1))
+    if ((v1 == OBJ_HANDLE_NULL || v1 != critter_pc_leader_get(a1))
         && !sub_4AFB30(a1, a2)) {
         index = obj_arrayfield_length_get(a1, OBJ_F_NPC_SHIT_LIST_IDX);
         obj_arrayfield_obj_set(a1, OBJ_F_NPC_SHIT_LIST_IDX, index, a2);

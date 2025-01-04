@@ -1560,7 +1560,7 @@ void sub_4B4390(CombatContext* combat)
         if (obj_type == OBJ_TYPE_PC) {
             tf_type = TF_TYPE_RED;
         } else if (obj_type == OBJ_TYPE_NPC
-            && sub_45DDA0(combat->target_obj) == player_get_pc_obj()) {
+            && critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
             tf_type = TF_TYPE_YELLOW;
         } else {
             tf_type = TF_TYPE_WHITE;
@@ -1838,7 +1838,7 @@ void sub_4B4390(CombatContext* combat)
         object_hp_damage_set(combat->target_obj, hp_dam);
 
         if (dam > 0) {
-            int64_t leader_obj = sub_45DDA0(combat->target_obj);
+            int64_t leader_obj = critter_pc_leader_get(combat->target_obj);
             if (leader_obj != OBJ_HANDLE_NULL
                 && hp_ratio_before >= 20
                 && ai_object_hp_ratio(combat->target_obj) < 20) {
@@ -1913,13 +1913,13 @@ void sub_4B4390(CombatContext* combat)
             sub_45DA20(combat->target_obj, combat->field_30, v2);
 
             if (obj_type == OBJ_TYPE_NPC
-                && sub_45DDA0(combat->target_obj) == player_get_pc_obj()) {
+                && critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
                 sub_460780();
             }
         } else if (obj_type == OBJ_TYPE_NPC) {
             sub_4A84F0(combat->target_obj);
 
-            if (sub_45DDA0(combat->target_obj) == player_get_pc_obj()) {
+            if (critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
                 sub_460780();
             }
         }
@@ -2370,7 +2370,7 @@ void sub_4B58C0(CombatContext* combat)
     }
 
     if (type == OBJ_TYPE_NPC) {
-        if (sub_45DDA0(combat->target_obj) == player_get_pc_obj()) {
+        if (critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
             sub_460780();
         }
     }
@@ -2669,7 +2669,7 @@ bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4)
     int consumption;
 
     if (obj_field_int32_get(critter_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-        && !sub_45DDA0(critter_obj)) {
+        && critter_pc_leader_get(critter_obj) == OBJ_HANDLE_NULL) {
         return true;
     }
 
@@ -3741,7 +3741,7 @@ void sub_4B7EB0()
         do {
             process = true;
             if (obj_field_int32_get(node->obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-                leader_obj = sub_45DDA0(node->obj);
+                leader_obj = critter_pc_leader_get(node->obj);
                 if (leader_obj == OBJ_HANDLE_NULL
                     || (obj_field_int32_get(node->obj, OBJ_F_TYPE) != OBJ_TYPE_PC)) {
                     process = false;

@@ -241,7 +241,7 @@ bool sub_4BBFE0(int64_t pc_obj, int64_t trap_obj)
     }
 
     flags = obj_field_int32_get(trap_obj, OBJ_F_FLAGS);
-    if (type != OBJ_TYPE_PC && !sub_45DDA0(pc_obj)) {
+    if (type != OBJ_TYPE_PC && critter_pc_leader_get(pc_obj) == OBJ_HANDLE_NULL) {
         return (flags & OF_TRAP_PC) == 0;
     }
 
@@ -284,7 +284,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
             }
             break;
         case OBJ_TYPE_NPC:
-            if (!sub_45DDA0(pc_obj)) {
+            if (critter_pc_leader_get(pc_obj) == OBJ_HANDLE_NULL) {
                 return;
             }
             break;
@@ -855,7 +855,7 @@ int sub_4BD340(int64_t trap_obj)
 bool sub_4BD430(int64_t pc_obj, int64_t trap_obj)
 {
     if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-        pc_obj = sub_45DDA0(pc_obj);
+        pc_obj = critter_pc_leader_get(pc_obj);
     }
 
     return sub_4BD480(pc_obj, trap_obj) != 0;

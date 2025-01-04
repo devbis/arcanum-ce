@@ -557,7 +557,7 @@ void sub_4132A0(int64_t a1, int64_t a2, char* buffer)
 
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
-        if (sub_45DDA0(a1) == a2) {
+        if (critter_pc_leader_get(a1) == a2) {
             sub_419260(&v1, "1 0, 2 0, 3 0, 4 0, 5 0, 6 0, 7 0, 8 0");
         } else {
             sub_419260(&v1, NULL);
@@ -2037,7 +2037,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                     item_transfer(item_obj, a1->npc_obj);
                     item_parent(item_obj, &parent_obj);
                     if (parent_obj != a1->npc_obj) {
-                        if (sub_45DDA0(a1->npc_obj) != OBJ_HANDLE_NULL) {
+                        if (critter_pc_leader_get(a1->npc_obj) != OBJ_HANDLE_NULL) {
                             item_remove(item_obj);
                             sub_466E50(item_obj, obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION));
                         } else {
@@ -3832,7 +3832,7 @@ void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4)
     unsigned int flags;
     int64_t v1;
 
-    if (sub_45DDA0(a4->npc_obj)) {
+    if (critter_pc_leader_get(a4->npc_obj) != OBJ_HANDLE_NULL) {
         flags = 0;
     } else {
         flags = 0x2000;
@@ -3855,7 +3855,7 @@ void sub_419D50(int a1, int a2, int a3, DialogEntryNode* a4)
 
     sub_455A20(&v1, a4->npc_obj, a1);
     sub_4440E0(a4->pc_obj, &(v1.target_obj));
-    if (!sub_45DDA0(a4->npc_obj)) {
+    if (critter_pc_leader_get(a4->npc_obj) == OBJ_HANDLE_NULL) {
         v1.flags |= 0x2;
     }
     sub_455AC0(&v1);

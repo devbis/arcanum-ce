@@ -1628,7 +1628,7 @@ bool sub_463370(int64_t obj, int key_id)
     int iter;
     int player;
 
-    leader_obj = sub_45DDA0(obj);
+    leader_obj = critter_pc_leader_get(obj);
     if (leader_obj == OBJ_HANDLE_NULL) {
         leader_obj = critter_leader_get(obj);
         if (leader_obj == OBJ_HANDLE_NULL) {
@@ -1968,7 +1968,7 @@ void sub_463C60(int64_t obj)
     if (obj_type_is_critter(obj_type)) {
         if (critter_is_dead(obj)
             || (obj_type == OBJ_TYPE_NPC
-                && sub_45DDA0(obj) != OBJ_HANDLE_NULL)) {
+                && critter_pc_leader_get(obj) != OBJ_HANDLE_NULL)) {
             return;
         }
 
@@ -1995,7 +1995,7 @@ void sub_463C60(int64_t obj)
                 if (sub_45F650(node->obj) == obj) {
                     v2 = node->obj;
                     if (!critter_is_dead(node->obj)
-                        && !sub_45DDA0(node->obj)) {
+                        && critter_pc_leader_get(node->obj) == OBJ_HANDLE_NULL) {
                         v1 = false;
                     }
                     break;

@@ -647,7 +647,7 @@ void sub_572640(int64_t a1, int64_t a2, int a3)
             }
         }
 
-        if (!sub_45DDA0(a2)) {
+        if (critter_pc_leader_get(a2) == OBJ_HANDLE_NULL) {
             item_identify_all(a2);
             item_identify_all(v1);
         }

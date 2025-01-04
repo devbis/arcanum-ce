@@ -271,7 +271,7 @@ void sub_4C0DE0(int64_t npc_obj, int64_t pc_obj, int value)
 
     if (value < 0
         && stat_is_maximized(pc_obj, STAT_CHARISMA)
-        && sub_45DDA0(npc_obj) == pc_obj) {
+        && critter_pc_leader_get(npc_obj) == pc_obj) {
         return;
     }
 

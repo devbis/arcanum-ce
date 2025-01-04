@@ -2712,7 +2712,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                 sub_460B50(obj, obj);
             } else {
-                int64_t leader_obj = sub_45DDA0(obj);
+                int64_t leader_obj = critter_pc_leader_get(obj);
                 if (leader_obj != OBJ_HANDLE_NULL) {
                     sub_460B50(obj, leader_obj);
                 }

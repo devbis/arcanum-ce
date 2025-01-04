@@ -1039,7 +1039,7 @@ void sub_44E050(int64_t a1, int64_t a2)
         if (run_info->goals[0].type == AG_ATTACK
             || run_info->goals[1].type == AG_ATTEMPT_ATTACK) {
             if (run_info->goals[0].params[AGDATA_TARGET_OBJ].obj == a2
-                || sub_45DDA0(run_info->goals[0].params[AGDATA_TARGET_OBJ].obj) == a2) {
+                || critter_pc_leader_get(run_info->goals[0].params[AGDATA_TARGET_OBJ].obj) == a2) {
                 sub_44E2C0(&anim_id, 5);
             }
         }
@@ -1472,12 +1472,12 @@ bool sub_44E940(int64_t obj, AnimID* anim_id, int64_t a2)
                 return true;
             }
 
-            leader_obj = sub_45DDA0(a2);
+            leader_obj = critter_pc_leader_get(a2);
             if (leader_obj == OBJ_HANDLE_NULL) {
                 leader_obj = a2;
             }
 
-            target_leader_obj = sub_45DDA0(run_info->goals[0].params[AGDATA_TARGET_OBJ].obj);
+            target_leader_obj = critter_pc_leader_get(run_info->goals[0].params[AGDATA_TARGET_OBJ].obj);
             if (target_leader_obj == OBJ_HANDLE_NULL) {
                 target_leader_obj = run_info->goals[0].params[AGDATA_TARGET_OBJ].obj;
             }
