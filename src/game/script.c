@@ -2058,7 +2058,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             if ((obj_field_int32_get(handles[idx], OBJ_F_FLAGS) & OF_OFF) != 0) {
                 mp_object_flags_unset(handles[idx], OF_OFF);
             } else {
-                sub_4EFF50(handles[idx], OF_OFF);
+                mp_object_flags_set(handles[idx], OF_OFF);
             }
         }
         sub_44B8F0(action->op_type[0], &objects);
@@ -2070,7 +2070,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             if ((obj_field_int32_get(handles[idx], OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
                 mp_object_flags_unset(handles[idx], OF_INVULNERABLE);
             } else {
-                sub_4EFF50(handles[idx], OF_INVULNERABLE);
+                mp_object_flags_set(handles[idx], OF_INVULNERABLE);
             }
         }
         sub_44B8F0(action->op_type[0], &objects);

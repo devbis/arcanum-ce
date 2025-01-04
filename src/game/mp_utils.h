@@ -1166,7 +1166,7 @@ void sub_4EEE00(int a1, int a2);
 void sub_4EFDD0(int64_t obj, int fld, int value);
 void sub_4EFE50(int64_t obj, int fld, int64_t value);
 void mp_object_flags_unset(int64_t obj, unsigned int flags);
-void sub_4EFF50(int64_t obj, unsigned int flags);
+void mp_object_flags_set(int64_t obj, unsigned int flags);
 void mp_obj_field_obj_set(int64_t obj, int fld, int64_t value);
 void sub_4F0070(int64_t obj, int fld, int index, int64_t value);
 void sub_4F0150(int64_t obj, int fld, int index, int value);
