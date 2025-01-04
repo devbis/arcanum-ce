@@ -1412,7 +1412,7 @@ void mp_obj_arrayfield_uint32_set(int64_t obj, int fld, int index, int value)
 }
 
 // 0x4F02F0
-void sub_4F02F0(int64_t obj, tig_art_id_t art_id)
+void mp_object_set_current_aid(int64_t obj, tig_art_id_t art_id)
 {
     Packet129 pkt;
 
