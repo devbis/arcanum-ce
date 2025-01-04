@@ -417,9 +417,8 @@ bool sub_45D730(long long obj)
         return false;
     }
 
-    // NOTE: Looks wrong, `sub_503E20` always returns 0 for pc/npc.
     aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    if (sub_503E20(aid) != 7) {
+    if (tig_art_id_anim_get(aid) != 7) {
         return false;
     }
 

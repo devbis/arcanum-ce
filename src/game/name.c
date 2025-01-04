@@ -651,14 +651,14 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
         int v2;
         int v3;
         int v4;
-        int v5;
+        int anim;
         int v6;
 
         v1 = sub_504030(aid);
         v2 = sub_503EA0(aid);
         v3 = sub_503FB0(aid);
         v4 = sub_504150(aid);
-        v5 = sub_503E20(aid);
+        anim = tig_art_id_anim_get(aid);
         v6 = sub_5040D0(aid);
 
         if (v2 == 4 && v3 == 0) {
@@ -674,28 +674,28 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
             }
         }
 
-        sub_41DA40(v3 + 2 * v2, dword_5D55F0, dword_5D560C, &v5, &v6);
+        sub_41DA40(v3 + 2 * v2, dword_5D55F0, dword_5D560C, &anim, &v6);
 
-        if (v5 == 24) {
+        if (anim == 24) {
             v1 = 0;
             v4 = 0;
             v6 = 0;
             v3 = 0;
-        } else if (v5 == 23) {
+        } else if (anim == 23) {
             v6 = 1;
             v4 = 0;
         } else {
-            if (v6 == 1 && (v5 == 3 || v5 == 5)) {
+            if (v6 == 1 && (anim == 3 || anim == 5)) {
                 v6 = 0;
-            } else if (v5 >= 6 && v5 <= 19) {
+            } else if (anim >= 6 && anim <= 19) {
                 v6 = 0;
                 v4 = 0;
-            } else if (v5 == 1) {
+            } else if (anim == 1) {
                 v4 = 0;
             }
         }
 
-        tig_art_critter_id_create(v3, v2, v1, v4, 0, 0, v5, v6, 0, &aid);
+        tig_art_critter_id_create(v3, v2, v1, v4, 0, 0, anim, v6, 0, &aid);
         break;
     }
     case TIG_ART_TYPE_PORTAL:
@@ -741,65 +741,65 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
         int v1;
         int num;
         int v2;
-        int v3;
+        int anim;
         int v4;
 
         v1 = sub_504030(aid);
         num = tig_art_monster_id_specie_get(aid);
         v2 = sub_504150(aid);
-        v3 = sub_503E20(aid);
+        anim = tig_art_id_anim_get(aid);
         v4 = sub_5040D0(aid);
-        sub_41DA40(num, dword_5D5618, dword_5D5608, &v3, &v4);
+        sub_41DA40(num, dword_5D5618, dword_5D5608, &anim, &v4);
 
-        if (v3 == 24) {
+        if (anim == 24) {
             v1 = 0;
             v2 = 0;
             v4 = 0;
-        } else if (v3 == 23) {
+        } else if (anim == 23) {
             v4 = 1;
             v2 = 0;
         } else {
-            if (v4 == 1 && (v3 == 3 || v3 == 5)) {
+            if (v4 == 1 && (anim == 3 || anim == 5)) {
                 v4 = 0;
-            } else if (v3 >= 6 && v3 <= 19) {
+            } else if (anim >= 6 && anim <= 19) {
                 v4 = 0;
                 v2 = 0;
-            } else if (v3 == 1) {
+            } else if (anim == 1) {
                 v2 = 0;
             }
         }
 
-        tig_art_monster_id_create(num, v1, v2, 0, 0, v3, v4, 0, &aid);
+        tig_art_monster_id_create(num, v1, v2, 0, 0, anim, v4, 0, &aid);
         break;
     }
     case TIG_ART_TYPE_UNIQUE_NPC: {
         int num;
         int v1;
-        int v2;
+        int anim;
         int v3;
 
         num = tig_art_num_get(aid);
         v1 = sub_504150(aid);
-        v2 = sub_503E20(aid);
+        anim = tig_art_id_anim_get(aid);
         v3 = sub_5040D0(aid);
-        sub_41DA40(num, dword_5D5600, dword_5D5610, &v2, &v3);
-        if (v2 == 24) {
+        sub_41DA40(num, dword_5D5600, dword_5D5610, &anim, &v3);
+        if (anim == 24) {
             v1 = 0;
             v3 = 0;
-        } else if (v2 == 23) {
+        } else if (anim == 23) {
             v1 = 0;
             v3 = 1;
         } else {
-            if (v3 == 1 && (v2 == 3 || v2 == 5)) {
+            if (v3 == 1 && (anim == 3 || anim == 5)) {
                 v3 = 0;
-            } else if (v2 >= 6 && v2 <= 19) {
+            } else if (anim >= 6 && anim <= 19) {
                 v3 = 0;
                 v1 = 0;
-            } else if (v2 == 1) {
+            } else if (anim == 1) {
                 v1 = 0;
             }
         }
-        tig_art_unique_npc_id_create(num, v1, 0, 0, v2, v3, 0, &aid);
+        tig_art_unique_npc_id_create(num, v1, 0, 0, anim, v3, 0, &aid);
         break;
     }
     case TIG_ART_TYPE_EYE_CANDY:
@@ -868,7 +868,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         int v1;
         int v2;
         char v3;
-        int v4;
+        int anim;
         const char* v5;
         const char* v6;
         int v7;
@@ -887,9 +887,9 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         } else {
             v3 = byte_5A11A0[sub_503FB0(aid)];
         }
-        v4 = sub_503E20(aid);
+        anim = tig_art_id_anim_get(aid);
         v5 = off_5A11A4[v2];
-        if (v4 == 24) {
+        if (anim == 24) {
             v6 = "XX";
             v3 = byte_5A11A0[2];
         } else {
@@ -913,7 +913,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
             v6,
             v8,
             v10,
-            'a' + v4);
+            'a' + anim);
         return TIG_OK;
     }
     case TIG_ART_TYPE_PORTAL:
@@ -963,7 +963,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         }
         return TIG_OK;
     case TIG_ART_TYPE_MONSTER: {
-        int v1;
+        int anim;
         int v2;
         const char* v3;
         int v4;
@@ -976,9 +976,9 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
             return TIG_ERR_16;
         }
 
-        v1 = sub_503E20(aid);
+        anim = tig_art_id_anim_get(aid);
         v2 = sub_504030(aid);
-        v3 = v1 != 24 ? off_5A11B8[v2] : "XX";
+        v3 = anim != 24 ? off_5A11B8[v2] : "XX";
         v4 = sub_504150(aid);
         v5 = byte_5A119C[v4];
         v6 = sub_5040D0(aid);
@@ -995,11 +995,11 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
             v3,
             v5,
             v7,
-            'a' + v1);
+            'a' + anim);
         return TIG_OK;
     }
     case TIG_ART_TYPE_UNIQUE_NPC: {
-        int v1;
+        int anim;
         int v2;
         char v3;
         int v4;
@@ -1010,7 +1010,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
             return TIG_ERR_16;
         }
 
-        v1 = sub_503E20(aid);
+        anim = tig_art_id_anim_get(aid);
         v2 = sub_504150(aid);
         v3 = byte_5A119C[v2];
         v4 = sub_5040D0(aid);
@@ -1026,7 +1026,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
             mes_file_entry.str,
             v3,
             v5,
-            'a' + v1);
+            'a' + anim);
         return TIG_OK;
     }
     case TIG_ART_TYPE_EYE_CANDY:

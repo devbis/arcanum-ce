@@ -1306,7 +1306,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
 
-    if (sub_503E20(art_id) == 0) {
+    if (tig_art_id_anim_get(art_id) == 0) {
         v1 = true;
         if (!is_pc && !critter_is_dead(obj)) {
             return;
@@ -1320,8 +1320,8 @@ void combat_critter_toggle_combat_mode(int64_t obj)
         obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, critter_flags & ~OCF_COMBAT_MODE_ACTIVE);
         ai_target_unlock(obj);
 
-        int v2 = sub_503E20(art_id);
-        if (v2 == 20 || v2 == 21) {
+        int anim = tig_art_id_anim_get(art_id);
+        if (anim == 20 || anim == 21) {
             art_id = tig_art_id_anim_set(art_id, 0);
         }
 

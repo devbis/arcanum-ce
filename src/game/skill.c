@@ -1751,7 +1751,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
             difficulty -= 50;
         } else if (critter_is_unconscious(target_obj)) {
             difficulty -= 50;
-        } else if (sub_503E20(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID))
+        } else if (tig_art_id_anim_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 7
             || (critter_flags & OCF_STUNNED) != 0) {
             difficulty -= 30;
         } else if ((critter_flags & OCF_SLEEPING) != 0) {

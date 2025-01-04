@@ -2988,7 +2988,7 @@ void sub_452CD0(int64_t obj, tig_art_id_t art_id)
     int v1;
     unsigned int flags;
     int rotation;
-    int v2;
+    int anim;
     tig_art_id_t current_art_id;
 
     if (tig_art_type(art_id) == TIG_ART_TYPE_MONSTER) {
@@ -3005,11 +3005,11 @@ void sub_452CD0(int64_t obj, tig_art_id_t art_id)
     }
 
     rotation = tig_art_id_rotation_get(art_id);
-    v2 = sub_503E20(art_id);
+    anim = tig_art_id_anim_get(art_id);
 
     current_art_id = obj_field_int32_get(obj, OBJ_F_AID);
     current_art_id = tig_art_id_rotation_set(current_art_id, rotation);
-    current_art_id = tig_art_id_anim_set(current_art_id, v2);
+    current_art_id = tig_art_id_anim_set(current_art_id, anim);
     current_art_id = tig_art_id_frame_set(current_art_id, 0);
     object_set_current_aid(obj, current_art_id);
 
