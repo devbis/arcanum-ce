@@ -1941,13 +1941,13 @@ bool sub_4DDD90(Sector* sector)
                             }
                         } else {
                             if ((obj_flags & OF_OFF) != 0) {
-                                sub_43D280(node->obj, OF_OFF);
+                                object_flags_unset(node->obj, OF_OFF);
                                 update = true;
                             }
                         }
                     } else {
                         if ((obj_flags & OF_OFF) != 0) {
-                            sub_43D280(node->obj, OF_OFF);
+                            object_flags_unset(node->obj, OF_OFF);
                             update = true;
                         }
                     }

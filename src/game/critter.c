@@ -843,7 +843,7 @@ void sub_45E1E0(int64_t obj)
     ObjectNode* node;
 
     func = (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) != 0
-        ? sub_43D280
+        ? object_flags_unset
         : object_flags_set;
 
     func(obj, OF_OFF);
@@ -1655,7 +1655,7 @@ void critter_leave_bed(int64_t obj, int64_t bed)
         return;
     }
 
-    sub_43D280(obj, OF_DONTDRAW);
+    object_flags_unset(obj, OF_DONTDRAW);
 
     flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
     flags &= ~OCF_SLEEPING;

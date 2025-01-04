@@ -1434,7 +1434,7 @@ void object_flags_set(int64_t obj, unsigned int flags)
 }
 
 // 0x43D280
-void sub_43D280(int64_t obj, unsigned int flags)
+void object_flags_unset(int64_t obj, unsigned int flags)
 {
     TigRect rect;
     unsigned int render_flags = 0;
@@ -2280,7 +2280,7 @@ void object_remove_flags(object_id_t obj, unsigned int flags)
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        sub_43D280(obj, flags);
+        object_flags_unset(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
         object_iso_invalidate_rect(&dirty_rect);
@@ -2510,7 +2510,7 @@ bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
     obj_field_int32_set(obj,
         OBJ_F_SCENERY_FLAGS,
         obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & ~0x400);
-    sub_43D280(obj, OF_OFF);
+    object_flags_unset(obj, OF_OFF);
 
     return true;
 }
@@ -5125,7 +5125,7 @@ void sub_444270(int64_t obj, int a2)
             }
         } else {
             if ((flags & OF_WADING) != 0) {
-                sub_43D280(obj, OF_WADING);
+                object_flags_unset(obj, OF_WADING);
             }
         }
     }

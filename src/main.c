@@ -321,7 +321,7 @@ void main_loop()
     art_id = sub_503E50(art_id, 0);
     object_set_current_aid(pc_obj, art_id);
 
-    sub_43D280(pc_obj, OF_OFF);
+    object_flags_unset(pc_obj, OF_OFF);
     sub_430460();
     sub_551160();
     sub_54AEE0(0);
@@ -473,7 +473,7 @@ void main_loop()
                             case DIK_N:
                                 object_hp_damage_set(pc_obj, 0);
                                 critter_fatigue_damage_set(pc_obj, 0);
-                                sub_43D280(pc_obj, 1028);
+                                object_flags_unset(pc_obj, OF_NO_BLOCK | OF_FLAT);
                                 sub_45EC80(pc_obj);
                                 break;
                             case DIK_GRAVE:

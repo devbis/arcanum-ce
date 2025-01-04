@@ -295,7 +295,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
         object_flags_set(trap_obj, OF_TRAP_SPOTTED);
 
         if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
-            sub_43D280(trap_obj, OF_DONTDRAW);
+            object_flags_unset(trap_obj, OF_DONTDRAW);
         } else {
             obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {

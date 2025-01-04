@@ -313,20 +313,20 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
 
 
     if ((stru_603D20.aoe_flags & Tgt_No_Self) != 0) {
-        sub_43D280(pc_obj, OF_CANCEL);
+        object_flags_unset(pc_obj, OF_CANCEL);
     }
 
     if ((stru_603D20.aoe_flags & Tgt_Non_Party) != 0) {
         node = party_members.head;
         while (node != NULL) {
-            sub_43D280(node->obj, OF_CANCEL);
+            object_flags_unset(node->obj, OF_CANCEL);
             node = node->next;
         }
 
         if ((tig_net_flags & TIG_NET_HOST) != 0) {
             node = mp_party_members.head;
             while (node != NULL) {
-                sub_43D280(node->obj, OF_CANCEL);
+                object_flags_unset(node->obj, OF_CANCEL);
                 node = node->next;
             }
         }
@@ -336,7 +336,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
         node = mp_party_members.head;
         while (node != NULL) {
             if (critter_is_dead(node->obj)) {
-                sub_43D280(node->obj, OF_CANCEL);
+                object_flags_unset(node->obj, OF_CANCEL);
             }
             node = node->next;
         }

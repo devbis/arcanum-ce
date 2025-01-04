@@ -826,7 +826,7 @@ void multiplayer_start_play(PlayerCreateInfo* player_create_info)
         sub_40DAF0(player_create_info->obj);
         critter_fatigue_damage_set(player_create_info->obj, 0);
         object_hp_damage_set(player_create_info->obj, 0);
-        sub_43D280(player_create_info->obj, OF_OFF);
+        object_flags_unset(player_create_info->obj, OF_OFF);
 
         poison = stat_get_base(player_create_info->obj, STAT_POISON_LEVEL);
         if (poison != 0) {
@@ -1310,7 +1310,7 @@ void sub_4A30D0(ObjectID oid)
         if (node != NULL) {
             node->field_34--;
             if (node->field_34 == 0) {
-                sub_43D280(obj, OF_MULTIPLAYER_LOCK);
+                object_flags_unset(obj, OF_MULTIPLAYER_LOCK);
                 sub_4A3170(oid);
             }
         }

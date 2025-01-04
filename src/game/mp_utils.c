@@ -1281,7 +1281,7 @@ void sub_4EFEE0(int64_t obj, unsigned int flags)
 {
     Packet129 pkt;
 
-    sub_43D280(obj, flags);
+    object_flags_unset(obj, flags);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 129;
@@ -1723,7 +1723,7 @@ bool sub_4F0A90(int64_t door_obj)
         if (rotation == 6 || rotation == 0) {
             if (frame >= 4 && frame <= 6) {
                 if (frame == 4) {
-                    sub_43D280(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK | OF_SEE_THROUGH);
+                    object_flags_unset(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK | OF_SEE_THROUGH);
                     art_id = tig_art_id_frame_set(art_id, 0);
                 } else {
                     art_id = tig_art_id_frame_set(art_id, frame - 1);
@@ -1734,7 +1734,7 @@ bool sub_4F0A90(int64_t door_obj)
         } else {
             if (frame >= 1 && frame <= 3) {
                 if (frame == 1) {
-                    sub_43D280(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK | OF_SEE_THROUGH);
+                    object_flags_unset(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK | OF_SEE_THROUGH);
                     art_id = tig_art_id_frame_set(art_id, 0);
                 } else {
                     art_id = tig_art_id_frame_set(art_id, frame - 1);
@@ -1745,7 +1745,7 @@ bool sub_4F0A90(int64_t door_obj)
         }
     } else {
         art_id = tig_art_id_frame_set(art_id, 0);
-        sub_43D280(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK);
+        object_flags_unset(door_obj, OF_SHOOT_THROUGH | OF_NO_BLOCK);
     }
 
     object_set_current_aid(door_obj, art_id);

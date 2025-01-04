@@ -3774,13 +3774,13 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 }
             } else if ((a4 & OSF_INVISIBLE) != 0) {
                 if (!player_is_pc_obj(obj)) {
-                    sub_43D280(obj, OF_INVISIBLE);
+                    object_flags_unset(obj, OF_INVISIBLE);
                 }
                 object_remove_flags(obj, OF_TRANSLUCENT);
             } else if ((a4 & OSF_SHRUNK) != 0) {
                 object_remove_flags(obj, OF_SHRUNK);
             } else if ((a4 & OSF_WATER_WALKING) != 0) {
-                sub_43D280(obj, OF_WATER_WALKING);
+                object_flags_unset(obj, OF_WATER_WALKING);
                 if (sub_4D7110(obj_field_int64_get(obj, OBJ_F_LOCATION), false)) {
                     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
                     combat.dam_flags |= CDF_FULL;
@@ -3790,7 +3790,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                     obj_field_int32_get(combat.target_obj, OBJ_F_FLAGS);
                 }
             } else if ((a4 & OSF_STONED) != 0) {
-                sub_43D280(obj, OF_STONED);
+                object_flags_unset(obj, OF_STONED);
             } else if ((a4 & OSF_MIND_CONTROLLED) != 0) {
                 if (obj_type == OBJ_TYPE_NPC) {
                     obj_field_int32_set(obj, OBJ_F_SPELL_FLAGS, flags);
@@ -3806,7 +3806,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
             break;
         case OBJ_F_CRITTER_FLAGS:
             if ((a4 & OCF_UNDEAD) != 0) {
-                sub_43D280(obj, OF_ANIMATED_DEAD);
+                object_flags_unset(obj, OF_ANIMATED_DEAD);
             } else if ((a4 & OCF_FLEEING) != 0) {
                 sub_4AF170(obj);
                 return;
@@ -3816,7 +3816,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
             break;
         case OBJ_F_FLAGS:
             if ((a4 & OF_DONTDRAW) != 0) {
-                sub_43D280(obj, OF_DONTDRAW);
+                object_flags_unset(obj, OF_DONTDRAW);
 
                 if (obj_type_is_critter(obj_type)) {
                     obj_field_int32_set(obj,

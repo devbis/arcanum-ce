@@ -2240,7 +2240,7 @@ void sub_4B58C0(CombatContext* combat)
 
     sub_4B5E90(combat->target_loc);
     sub_4AF170(combat->target_obj);
-    sub_43D280(combat->target_obj, OF_FLAT | OF_NO_BLOCK);
+    object_flags_unset(combat->target_obj, OF_FLAT | OF_NO_BLOCK);
 
     critter_flags = obj_field_int32_get(combat->target_obj, OBJ_F_CRITTER_FLAGS);
     critter_flags &= ~OCF_STUNNED;

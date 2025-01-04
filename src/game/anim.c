@@ -4876,7 +4876,7 @@ bool sub_425840(int64_t a1, int64_t a2, int64_t a3, int a4, int64_t a5)
     }
 
     if (!v1) {
-        sub_43D280(a5, OF_NO_BLOCK);
+        object_flags_unset(a5, OF_NO_BLOCK);
     }
 
     return v2;
@@ -6137,7 +6137,7 @@ bool sub_427990(AnimRunInfo* run_info)
         run_info->path.flags &= ~0x03;
 
         if (v1) {
-            sub_43D280(target_obj, OF_OFF);
+            object_flags_unset(target_obj, OF_OFF);
             run_info->path.max--;
         }
 
@@ -6181,7 +6181,7 @@ bool sub_427990(AnimRunInfo* run_info)
         }
 
         if (v1) {
-            sub_43D280(target_obj, OF_OFF);
+            object_flags_unset(target_obj, OF_OFF);
             run_info->path.max--;
         }
 
@@ -6195,7 +6195,7 @@ bool sub_427990(AnimRunInfo* run_info)
     }
 
     if (v1) {
-        sub_43D280(target_obj, OF_OFF);
+        object_flags_unset(target_obj, OF_OFF);
     }
 
     if (range != 0 || orig_range == 0) {
@@ -12926,7 +12926,7 @@ bool sub_432700(AnimRunInfo* run_info)
 
     if ((obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0
         && player_is_pc_obj(source_obj)) {
-        sub_43D280(source_obj, OF_INVISIBLE);
+        object_flags_unset(source_obj, OF_INVISIBLE);
     }
 
     run_info->field_C |= 0x10;
