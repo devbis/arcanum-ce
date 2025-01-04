@@ -31,6 +31,14 @@ typedef enum DamageType {
     DAMAGE_TYPE_COUNT,
 } DamageType;
 
+typedef enum HitLocation {
+    HIT_LOC_TORSO,
+    HIT_LOC_HEAD,
+    HIT_LOC_ARM,
+    HIT_LOC_LEG,
+    HIT_LOC_COUNT,
+} HitLocation;
+
 // clang-format off
 #define CDF_FULL                0x00000001
 #define CDF_RESURRECT           0x00000002
@@ -85,8 +93,8 @@ int64_t combat_critter_weapon(int64_t critter_obj);
 void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat);
 bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, int64_t projectile_obj, int range, int64_t cur_loc, int64_t a7);
 int sub_4B3170(CombatContext* combat);
-void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int a3);
-void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int a5);
+void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int hit_loc);
+void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int hit_loc);
 bool combat_critter_is_combat_mode_active(int64_t obj);
 bool sub_4B3D90(int64_t obj);
 void combat_critter_deactivate_combat_mode(int64_t obj);
@@ -95,7 +103,7 @@ void sub_4B4320(int64_t obj);
 void sub_4B4390(CombatContext* combat);
 void sub_4B5810(CombatContext* combat);
 void sub_4B58C0(CombatContext* combat);
-int sub_4B5F30(int a1);
+int sub_4B5F30(int hit_loc);
 int sub_4B6A00(int64_t loc1, int64_t loc2);
 tig_art_id_t sub_4B6B10(tig_art_id_t aid, int v2);
 bool combat_set_callbacks(CombatCallbacks* callbacks);

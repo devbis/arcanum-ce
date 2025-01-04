@@ -8062,7 +8062,7 @@ bool sub_42AB90(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4B3C00(source_obj, item_obj, target_obj, target_loc, 0);
+    sub_4B3C00(source_obj, item_obj, target_obj, target_loc, HIT_LOC_TORSO);
 
     run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj = OBJ_HANDLE_NULL;
 

@@ -43,13 +43,13 @@ static void sub_4B2F60(CombatContext* combat);
 static void sub_4B3770(CombatContext* combat);
 static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
-static int64_t sub_4B54B0(int64_t obj, int a2);
+static int64_t sub_4B54B0(int64_t obj, int hit_loc);
 static bool sub_4B5520(CombatContext* combat);
 static void sub_4B5580(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
 static void sub_4B5F40(CombatContext* combat);
 static void sub_4B6410(CombatContext* combat);
-static int sub_4B65A0();
+static int combat_random_hit_loc();
 static bool sub_4B65D0(int64_t weapon_obj, int64_t critter_obj, int a3, bool a4);
 static void sub_4B6680(CombatContext* combat);
 static void sub_4B6860(CombatContext* combat);
@@ -78,7 +78,7 @@ static struct {
 };
 
 // 0x5B5798
-static int dword_5B5798[] = {
+static int dword_5B5798[HIT_LOC_COUNT] = {
     0,
     -50,
     -30,
@@ -645,7 +645,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
 
             if ((proj_flags & 0x100) != 0) {
                 dam = hit_loc;
-                hit_loc = 0;
+                hit_loc = HIT_LOC_TORSO;
             }
         }
     } else {
@@ -685,7 +685,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
             proj_flags |= 0x800 | 0x02;
 
             dam = (proj_flags & 0x100) != 0 ? hit_loc : 0;
-            hit_loc = 0;
+            hit_loc = HIT_LOC_TORSO;
         }
     }
 
@@ -817,10 +817,10 @@ int sub_4B3170(CombatContext* combat)
         }
     }
 
-    if (combat->hit_loc != 0) {
+    if (combat->hit_loc != HIT_LOC_TORSO) {
         combat->flags |= 0x01;
     } else {
-        combat->hit_loc = sub_4B65A0();
+        combat->hit_loc = combat_random_hit_loc();
     }
 
     if (!sub_4B65D0(combat->weapon_obj, combat->attacker_obj, 1, 0)) {
@@ -1130,18 +1130,18 @@ void sub_4B39B0(CombatContext* combat)
 }
 
 // 0x4B3BB0
-void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int a3)
+void sub_4B3BB0(int64_t attacker_obj, int64_t target_obj, int hit_loc)
 {
     CombatContext combat;
 
     sub_4B2210(attacker_obj, target_obj, &combat);
-    combat.hit_loc = a3;
+    combat.hit_loc = hit_loc;
     combat.flags |= 0x50000;
     sub_4B3170(&combat);
 }
 
 // 0x4B3C00
-void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int a5)
+void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, int64_t target_loc, int hit_loc)
 {
     int64_t attacker_loc;
     CombatContext combat;
@@ -1153,7 +1153,7 @@ void sub_4B3C00(int64_t attacker_obj, int64_t weapon_obj, int64_t target_obj, in
 
     if (sub_441980(attacker_obj, weapon_obj, target_obj, SAP_THROW, 0)) {
         sub_4B2210(attacker_obj, target_obj, &combat);
-        combat.hit_loc = a5;
+        combat.hit_loc = hit_loc;
         combat.weapon_obj = weapon_obj;
         if (target_obj == OBJ_HANDLE_NULL) {
             combat.target_loc = target_loc;
@@ -1902,9 +1902,9 @@ void sub_4B4390(CombatContext* combat)
 
             if ((dam_flags & CDF_DEATH) != 0 || dam <= 20) {
                 v2 = 7;
-            } else if (combat->hit_loc == 1) {
+            } else if (combat->hit_loc == HIT_LOC_HEAD) {
                 v2 = 17;
-            } else if (combat->hit_loc == 3) {
+            } else if (combat->hit_loc == HIT_LOC_LEG) {
                 v2 = 19;
             } else {
                 v2 = 18;
@@ -2003,14 +2003,14 @@ void sub_4B4390(CombatContext* combat)
 }
 
 // 0x4B54B0
-int64_t sub_4B54B0(int64_t obj, int a2)
+int64_t sub_4B54B0(int64_t obj, int hit_loc)
 {
-    switch (a2) {
-    case 1:
+    switch (hit_loc) {
+    case HIT_LOC_HEAD:
         return item_wield_get(obj, ITEM_INV_LOC_HELMET);
-    case 2:
+    case HIT_LOC_ARM:
         return item_wield_get(obj, ITEM_INV_LOC_GAUNTLET);
-    case 3:
+    case HIT_LOC_LEG:
         return item_wield_get(obj, ITEM_INV_LOC_BOOTS);
     default:
         return item_wield_get(obj, ITEM_INV_LOC_ARMOR);
@@ -2406,9 +2406,9 @@ void sub_4B5E90(int64_t loc)
 }
 
 // 0x4B5F30
-int sub_4B5F30(int a1)
+int sub_4B5F30(int hit_loc)
 {
-    return dword_5B5798[a1];
+    return dword_5B5798[hit_loc];
 }
 
 // 0x4B5F40
@@ -2491,7 +2491,7 @@ void sub_4B5F40(CombatContext* combat)
                 difficulty += 10;
             }
 
-            if (combat->hit_loc == 1 && helmet_obj == OBJ_HANDLE_NULL) {
+            if (combat->hit_loc == HIT_LOC_HEAD && helmet_obj == OBJ_HANDLE_NULL) {
                 difficulty += 10;
             }
 
@@ -2510,7 +2510,7 @@ void sub_4B5F40(CombatContext* combat)
             // NOTE: Not sure how to reimplement it without goto.
             do {
                 if (critter_crit_hit_chart != 4) {
-                    if (critter_crit_hit_chart != 5 && combat->hit_loc == 2) {
+                    if (critter_crit_hit_chart != 5 && combat->hit_loc == HIT_LOC_ARM) {
                         if (random_between(1, 100) <= chance + 1
                             && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
                             combat->dam_flags |= CDF_CRIPPLE_ARM;
@@ -2518,7 +2518,7 @@ void sub_4B5F40(CombatContext* combat)
                         break;
                     }
 
-                    if (combat->hit_loc == 3) {
+                    if (combat->hit_loc == HIT_LOC_LEG) {
                         if (random_between(1, 100) <= chance + 1
                             && !sub_45F060(combat->target_obj, STAT_CONSTITUTION, -5)) {
                             combat->dam_flags |= CDF_CRIPPLE_LEG;
@@ -2527,7 +2527,7 @@ void sub_4B5F40(CombatContext* combat)
                     }
                 }
 
-                if (combat->hit_loc == 1) {
+                if (combat->hit_loc == HIT_LOC_HEAD) {
                     if (crit_hit_chart == 1) {
                         if (helmet_obj != OBJ_HANDLE_NULL
                             && random_between(1, 100) <= chance + 5) {
@@ -2560,7 +2560,7 @@ void sub_4B5F40(CombatContext* combat)
                 difficulty += 5;
             }
 
-            if (combat->hit_loc == 3) {
+            if (combat->hit_loc == HIT_LOC_LEG) {
                 difficulty += 10;
             }
 
@@ -2652,13 +2652,13 @@ void sub_4B6410(CombatContext* combat)
 }
 
 // 0x4B65A0
-int sub_4B65A0()
+int combat_random_hit_loc()
 {
     int value = random_between(1, 100);
-    if (value <= 70) return 0;
-    if (value <= 85) return 1;
-    if (value <= 95) return 2;
-    return 3;
+    if (value <= 70) return HIT_LOC_TORSO;
+    if (value <= 85) return HIT_LOC_LEG;
+    if (value <= 95) return HIT_LOC_ARM;
+    return HIT_LOC_HEAD;
 }
 
 // 0x4B65D0
