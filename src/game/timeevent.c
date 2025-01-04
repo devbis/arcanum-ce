@@ -302,7 +302,7 @@ void sub_45A950(DateTime* datetime, unsigned int milliseconds)
 }
 
 // 0x45A970
-int datetime_compare(DateTime* datetime1, DateTime* datetime2)
+int datetime_compare(const DateTime* datetime1, const DateTime* datetime2)
 {
     if (datetime2->days > datetime1->days) return -1;
     if (datetime2->days < datetime1->days) return 1;
