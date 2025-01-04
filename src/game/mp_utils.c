@@ -1356,7 +1356,7 @@ void sub_4F0070(int64_t obj, int fld, int index, int64_t value)
 }
 
 // 0x4F0150
-void sub_4F0150(int64_t obj, int fld, int index, int value)
+void mp_obj_arrayfield_int32_set(int64_t obj, int fld, int index, int value)
 {
     Packet129 pkt;
 

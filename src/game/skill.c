@@ -427,7 +427,7 @@ int basic_skill_set_base(int64_t obj, int skill, int value)
         return current_value & 63;
     }
 
-    sub_4F0150(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, value | current_value & ~63);
+    mp_obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill, value | current_value & ~63);
 
     return value;
 }
@@ -804,7 +804,7 @@ int tech_skill_set_base(int64_t obj, int skill, int value)
         return current_value & 63;
     }
 
-    sub_4F0150(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, value | current_value & ~63);
+    mp_obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, value | current_value & ~63);
 
     tech_points = stat_get_base(obj, STAT_TECH_POINTS);
     tech_points += value - (current_value & 63);
