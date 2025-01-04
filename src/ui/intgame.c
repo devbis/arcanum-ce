@@ -1900,7 +1900,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == stru_5C64C0[0].button_handle) {
-                sub_53F020(player_get_pc_obj());
+                logbook_ui_open(player_get_pc_obj());
                 return true;
             }
 

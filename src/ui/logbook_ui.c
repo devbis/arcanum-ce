@@ -115,7 +115,7 @@ static int dword_63CBF0;
 static int dword_63CBF4[3000];
 
 // 0x63FAD8
-static int64_t qword_63FAD8;
+static int64_t logbook_ui_obj;
 
 // 0x63FAE0
 static tig_font_handle_t dword_63FAE0;
@@ -268,7 +268,7 @@ bool logbook_ui_init(GameInitInfo* init_info)
     dword_64879C[0] = 0;
 
     logbook_ui_tab = LOGBOOK_UI_TAB_RUMORS_AND_NOTES;
-    qword_63FAD8 = 0;
+    logbook_ui_obj = OBJ_HANDLE_NULL;
     dword_648798 = 1;
     logbook_ui_initialized = true;
 
@@ -307,28 +307,37 @@ void logbook_ui_reset()
     }
     dword_64879C[0] = 0;
 
-    qword_63FAD8 = 0;
+    logbook_ui_obj = OBJ_HANDLE_NULL;
     dword_64897C = -1;
     dword_648798 = 1;
 }
 
 // 0x53F020
-void sub_53F020(int64_t obj)
+void logbook_ui_open(int64_t obj)
 {
     if (logbook_ui_created) {
         sub_53F090();
         return;
     }
 
-    if (obj != OBJ_HANDLE_NULL
-        && !critter_is_dead(player_get_pc_obj())
-        && sub_551A80(0)
-        && sub_551A80(7)) {
-        qword_63FAD8 = obj;
-        logbook_ui_create();
+    if (obj == OBJ_HANDLE_NULL) {
+        return;
     }
 
+    if (critter_is_dead(player_get_pc_obj())) {
+        return;
+    }
 
+    if (!sub_551A80(0)) {
+        return;
+    }
+
+    if (!sub_551A80(7)) {
+        return;
+    }
+
+    logbook_ui_obj = obj;
+    logbook_ui_create();
 }
 
 // 0x53F090
@@ -337,7 +346,7 @@ void sub_53F090()
     if (logbook_ui_created
         && sub_551A80(0)) {
         logbook_ui_destroy();
-        qword_63FAD8 = OBJ_HANDLE_NULL;
+        logbook_ui_obj = OBJ_HANDLE_NULL;
     }
 }
 
@@ -405,7 +414,7 @@ void logbook_ui_create()
     }
     tig_button_radio_group_create(LOGBOOK_UI_TAB_COUNT, button_handles, logbook_ui_tab);
 
-    location_origin_set(obj_field_int64_get(qword_63FAD8, OBJ_F_LOCATION));
+    location_origin_set(obj_field_int64_get(logbook_ui_obj, OBJ_F_LOCATION));
 
     v1.window_handle = logbook_ui_window;
     v1.rect = &stru_5C3418;
@@ -809,7 +818,7 @@ void sub_53FBB0()
     if (logbook_ui_tab == LOGBOOK_UI_TAB_RUMORS_AND_NOTES) {
         RumorInfo rumors[2000]; // NOTE: Forces `alloca(72000)`.
 
-        dword_648938 = rumor_copy_state(qword_63FAD8, rumors);
+        dword_648938 = rumor_copy_state(logbook_ui_obj, rumors);
 
         if (dword_648980) {
             dword_648938 = mes_num_entries(quotes_mes_file);
@@ -834,7 +843,7 @@ void sub_53FBB0()
     if (logbook_ui_tab == LOGBOOK_UI_TAB_QUESTS) {
         QuestInfo quests[2000]; // NOTE: Forces `alloca(48000)`.
 
-        dword_648938 = quest_copy_state(qword_63FAD8, quests);
+        dword_648938 = quest_copy_state(logbook_ui_obj, quests);
 
         for (index = 0; index < dword_648938; index++) {
             dword_63FAE4[index] = quests[index].num;
@@ -865,7 +874,7 @@ void sub_53FBB0()
         ReputationStateEntry reps[2000]; // NOTE: Forces `alloca(32000)`.
 
 
-        dword_648938 = reputation_copy_state(qword_63FAD8, reps);
+        dword_648938 = reputation_copy_state(logbook_ui_obj, reps);
 
         for (index = 0; index < dword_648938; index++) {
             dword_63FAE4[index] = reps[index].reputation;
@@ -886,8 +895,8 @@ void sub_53FBB0()
         int curse_idx;
         int idx;
 
-        num_blessings = sub_4C4200(qword_63FAD8, blessings);
-        num_curses = sub_4C3D50(qword_63FAD8, curses);
+        num_blessings = sub_4C4200(logbook_ui_obj, blessings);
+        num_curses = sub_4C3D50(logbook_ui_obj, curses);
         dword_648938 = num_blessings + num_curses;
 
         bless_idx = 0;
@@ -917,7 +926,7 @@ void sub_53FBB0()
         unsigned int flags;
         int cnt;
 
-        logbook_get_kills(qword_63FAD8, dword_648940);
+        logbook_get_kills(logbook_ui_obj, dword_648940);
 
         for (index = 0; index < 9; index++) {
             dword_648988[index] = dword_648934;
@@ -925,16 +934,16 @@ void sub_53FBB0()
 
         dword_648938 = 9;
 
-        index = logbook_find_first_injury(qword_63FAD8, &desc, &injury);
+        index = logbook_find_first_injury(logbook_ui_obj, &desc, &injury);
         while (index != 0) {
             dword_63FAE4[dword_648938] = desc;
             stru_6429D8[dword_648938].milliseconds = injury;
             dword_648988[dword_648938] = dword_6429C4;
             dword_648938++;
-            index = logbook_find_next_injury(qword_63FAD8, index, &desc, &injury);
+            index = logbook_find_next_injury(logbook_ui_obj, index, &desc, &injury);
         }
 
-        flags = obj_field_int32_get(qword_63FAD8, OBJ_F_CRITTER_FLAGS);
+        flags = obj_field_int32_get(logbook_ui_obj, OBJ_F_CRITTER_FLAGS);
         if ((flags & OCF_BLINDED) != 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
                 if (stru_6429D8[index].milliseconds == LBI_BLINDED) {
@@ -967,7 +976,7 @@ void sub_53FBB0()
                 }
             }
         }
-        cnt = sub_4EA4A0(qword_63FAD8, 50);
+        cnt = sub_4EA4A0(logbook_ui_obj, 50);
         if (cnt > 0) {
             for (index = dword_648938 - 1; index >= 9; index--) {
                 if (stru_6429D8[index].milliseconds == LBI_SCARRED) {
@@ -991,7 +1000,7 @@ void sub_53FBB0()
         char ch;
 
         dword_648938 = 1;
-        dword_63FAE4[0] = background_obj_get_background_text(qword_63FAD8);
+        dword_63FAE4[0] = background_obj_get_background_text(logbook_ui_obj);
         dword_648988[0] = dword_648934;
 
         strcpy(str, background_description_get_body(dword_63FAE4[0]));
@@ -1044,7 +1053,7 @@ void sub_53FBB0()
     }
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_KEYS) {
-        dword_648938 = item_get_keys(qword_63FAD8, dword_63FAE4);
+        dword_648938 = item_get_keys(logbook_ui_obj, dword_63FAE4);
         if (dword_648938 > 0) {
             for (index = 0; index < dword_648938; index++) {
                 dword_648988[index] = dword_648934;
@@ -1073,7 +1082,7 @@ void sub_540310(char* buffer, int index)
         pos = strlen(buffer);
         buffer[pos] = '\n';
 
-        sub_4C5920(qword_63FAD8, dword_63FAE4[index], &(buffer[pos + 1]));
+        sub_4C5920(logbook_ui_obj, dword_63FAE4[index], &(buffer[pos + 1]));
     }
 }
 
@@ -1134,7 +1143,7 @@ void sub_540470(char* buffer, int index)
     pos = strlen(buffer);
     buffer[pos] = '\n';
 
-    quest_copy_description(qword_63FAD8, dword_63FAE4[index], &(buffer[pos + 1]));
+    quest_copy_description(logbook_ui_obj, dword_63FAE4[index], &(buffer[pos + 1]));
 }
 
 // 0x540510
