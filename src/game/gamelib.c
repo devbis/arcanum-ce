@@ -153,7 +153,7 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
     { "MagicTech-Post", magictech_post_init, NULL, NULL, NULL, NULL, NULL, NULL, magictech_post_save, magictech_post_load, NULL },
     { "Player", player_init, player_reset,0, NULL, player_exit, NULL, NULL, player_save, player_load, NULL },
     { "Area", area_init, area_reset, area_mod_load, area_mod_unload, area_exit, NULL, NULL, area_save, area_load, NULL },
-    { "Facade", facade_init, NULL, NULL, NULL, facade_exit, NULL, sub_4C9E00, NULL, NULL, facade_resize },
+    { "Facade", facade_init, NULL, NULL, NULL, facade_exit, NULL, facade_update_view, NULL, NULL, facade_resize },
     { "TC", tc_init, NULL, NULL, NULL, tc_exit, NULL, NULL, NULL, NULL, tc_resize },
     { "Dialog", dialog_init, NULL, NULL, NULL, dialog_exit, NULL, NULL, NULL, NULL, NULL },
     { "Skill", skill_init, NULL, NULL, NULL, skill_exit, NULL, NULL, skill_save, skill_load, NULL },
@@ -1711,7 +1711,7 @@ void sub_404740(UnknownContext* info)
     if (tig_video_3d_begin_scene() == TIG_OK) {
         light_render(info);
         tile_render(info);
-        sub_4C9E70(info);
+        facade_render(info);
         sub_4E3320(info);
         tile_script_render(info);
         tileblock_render(info);

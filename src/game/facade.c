@@ -17,7 +17,7 @@ static int dword_5FF574;
 static int64_t qword_5FF578;
 
 // 0x5FF580
-static IsoInvalidateRectFunc* dword_5FF580;
+static IsoInvalidateRectFunc* facade_iso_invalidate_rect;
 
 // 0x5FF584
 static bool facade_editor;
@@ -44,7 +44,7 @@ static TigVideoBuffer** dword_5FF5A4;
 bool facade_init(GameInitInfo* init_info)
 {
     facade_iso_window_handle = init_info->iso_window_handle;
-    dword_5FF580 = init_info->invalidate_rect_func;
+    facade_iso_invalidate_rect = init_info->invalidate_rect_func;
     facade_editor = init_info->editor;
     facade_view_options.type = VIEW_TYPE_ISOMETRIC;
     facade_initialized = true;
@@ -66,13 +66,13 @@ void facade_resize(GameResizeInfo* resize_info)
 }
 
 // 0x4C9E00
-bool sub_4C9E00(ViewOptions* view_options)
+bool facade_update_view(ViewOptions* view_options)
 {
     if (dword_5FF5A0 != NULL) {
         sub_4CA240();
         facade_view_options = *view_options;
         sub_4CA0F0(dword_5FF588, LOCATION_GET_X(qword_5FF578), LOCATION_GET_Y(qword_5FF578));
-        dword_5FF580(NULL);
+        facade_iso_invalidate_rect(NULL);
     } else {
         facade_view_options = *view_options;
     }
@@ -81,7 +81,7 @@ bool sub_4C9E00(ViewOptions* view_options)
 }
 
 // 0x4C9E70
-void sub_4C9E70(UnknownContext* info)
+void facade_render(UnknownContext* info)
 {
     LocRect loc_rect;
     int start_x;
@@ -174,7 +174,7 @@ void sub_4CA0F0(int a1, int a2, int a3)
 
     if (sub_4F6CF0(a1, &dword_5FF5A0, &dword_5FF574, &dword_5FF570)) {
         dword_5FF588 = a1;
-        qword_5FF578 = LOCATION_MAKE(a2 - dword_5FF574 / 2, a3 - dword_5FF570 / 2);
+        qword_5FF578 = location_make(a2 - dword_5FF574 / 2, a3 - dword_5FF570 / 2);
 
         if (facade_view_options.type == VIEW_TYPE_TOP_DOWN) {
             dword_5FF5A4 = (TigVideoBuffer**)MALLOC(sizeof(*dword_5FF5A4) * dword_5FF570 * dword_5FF574);
@@ -195,7 +195,7 @@ void sub_4CA0F0(int a1, int a2, int a3)
         }
 
         sub_4CA7C0(&rect);
-        dword_5FF580(&rect);
+        facade_iso_invalidate_rect(&rect);
     }
 }
 
@@ -234,10 +234,10 @@ bool sub_4CA6B0(LocRect* loc_rect, int* a2, int* a3)
     int64_t max_x;
     int64_t max_y;
 
-    min_x = LOCATION_MAKE(LOCATION_GET_X(qword_5FF578), 0);
-    min_y = LOCATION_MAKE(0, LOCATION_GET_Y(qword_5FF578));
-    max_x = LOCATION_MAKE(LOCATION_GET_X(qword_5FF578) + dword_5FF574 - 1, 0);
-    max_y = LOCATION_MAKE(0, LOCATION_GET_Y(qword_5FF578) + dword_5FF570 - 1);
+    min_x = location_make(LOCATION_GET_X(qword_5FF578), 0);
+    min_y = location_make(0, LOCATION_GET_Y(qword_5FF578));
+    max_x = location_make(LOCATION_GET_X(qword_5FF578) + dword_5FF574 - 1, 0);
+    max_y = location_make(0, LOCATION_GET_Y(qword_5FF578) + dword_5FF570 - 1);
 
     if (loc_rect->x1 < min_x) {
         loc_rect->x1 = min_x;
