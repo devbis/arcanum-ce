@@ -138,7 +138,7 @@ bool object_is_destroyed(object_id_t obj);
 void sub_43F710(object_id_t obj);
 void object_inc_current_aid(object_id_t obj);
 void object_dec_current_aid(object_id_t obj);
-void sub_43F9F0(object_id_t obj, int fld, int index);
+void object_eye_candy_aid_inc(object_id_t obj, int fld, int index);
 void sub_43FAB0(object_id_t obj, int fld, int index);
 void sub_43FB80(object_id_t obj, int index);
 void sub_43FBF0(object_id_t obj, int index);

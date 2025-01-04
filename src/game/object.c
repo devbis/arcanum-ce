@@ -2639,7 +2639,7 @@ void object_dec_current_aid(object_id_t obj)
 }
 
 // 0x43F9F0
-void sub_43F9F0(object_id_t obj, int fld, int index)
+void object_eye_candy_aid_inc(object_id_t obj, int fld, int index)
 {
     tig_art_id_t current_aid;
     tig_art_id_t next_aid;

@@ -12001,7 +12001,7 @@ bool sub_431340(AnimRunInfo* run_info)
                     return false;
                 }
 
-                sub_43F9F0(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
+                object_eye_candy_aid_inc(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
                     run_info->field_C |= 0x04;
@@ -12024,7 +12024,7 @@ bool sub_431340(AnimRunInfo* run_info)
                     return false;
                 }
 
-                sub_43F9F0(obj, OBJ_F_OVERLAY_BACK, overlay_back);
+                object_eye_candy_aid_inc(obj, OBJ_F_OVERLAY_BACK, overlay_back);
             }
         } else {
             art_id = obj_arrayfield_uint32_get(obj, OBJ_F_UNDERLAY, overlay_fore);
@@ -12042,7 +12042,7 @@ bool sub_431340(AnimRunInfo* run_info)
                     return false;
                 }
 
-                sub_43F9F0(obj, OBJ_F_UNDERLAY, overlay_fore);
+                object_eye_candy_aid_inc(obj, OBJ_F_UNDERLAY, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
                     run_info->field_C |= 0x04;
@@ -12686,7 +12686,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
                     return false;
                 }
 
-                sub_43F9F0(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
+                object_eye_candy_aid_inc(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
                     run_info->field_C |= 0x04;
@@ -12709,7 +12709,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
                     return false;
                 }
 
-                sub_43F9F0(obj, OBJ_F_OVERLAY_BACK, overlay_back);
+                object_eye_candy_aid_inc(obj, OBJ_F_OVERLAY_BACK, overlay_back);
             }
         } else {
             art_id = obj_arrayfield_uint32_get(obj, OBJ_F_UNDERLAY, overlay_fore);
@@ -12727,7 +12727,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
                 return false;
             }
 
-            sub_43F9F0(obj, OBJ_F_UNDERLAY, overlay_fore);
+            object_eye_candy_aid_inc(obj, OBJ_F_UNDERLAY, overlay_fore);
 
             if (frame == art_anim_data.action_frame - 1) {
                 run_info->field_C |= 0x04;
