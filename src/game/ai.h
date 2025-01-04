@@ -8,6 +8,13 @@
 typedef void(Func5F8488)(int64_t, int64_t, const char*, int);
 typedef void(Func5F848C)(int64_t, int);
 
+typedef enum AiDangerSourceType {
+    AI_DANGER_SOURCE_TYPE_NONE,
+    AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS,
+    AI_DANGER_SOURCE_TYPE_FLEE,
+    AI_DANGER_SOURCE_TYPE_SURRENDER,
+} AiDangerSourceType;
+
 typedef struct AiRedirect {
     /* 0000 */ int64_t field_0;
     /* 0008 */ int64_t field_8;
