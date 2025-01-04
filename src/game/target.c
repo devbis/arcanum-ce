@@ -246,14 +246,14 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
     v1.field_10 = a3;
 
     if ((stru_603D20.aoe_flags & Tgt_No_Self) != 0) {
-        sub_43D0E0(pc_obj, OF_CANCEL);
+        object_flags_set(pc_obj, OF_CANCEL);
     }
 
     if ((stru_603D20.aoe_flags & Tgt_Non_Party) != 0) {
         sub_441260(pc_obj, &party_members);
         node = party_members.head;
         while (node != NULL) {
-            sub_43D0E0(node->obj, OF_CANCEL);
+            object_flags_set(node->obj, OF_CANCEL);
             node = node->next;
         }
 
@@ -261,7 +261,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
             sub_441310(pc_obj, &mp_party_members);
             node = mp_party_members.head;
             while (node != NULL) {
-                sub_43D0E0(node->obj, OF_CANCEL);
+                object_flags_set(node->obj, OF_CANCEL);
                 node = node->next;
             }
         }
@@ -272,7 +272,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
         node = mp_party_members.head;
         while (node != NULL) {
             if (critter_is_dead(node->obj)) {
-                sub_43D0E0(node->obj, OF_CANCEL);
+                object_flags_set(node->obj, OF_CANCEL);
             }
             node = node->next;
         }

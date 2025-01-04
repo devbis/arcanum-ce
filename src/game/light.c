@@ -1936,7 +1936,7 @@ bool sub_4DDD90(Sector* sector)
                     if (tig_art_tile_id_type_get(sector->tiles.art_ids[tile]) != 0) {
                         if (is_day) {
                             if ((obj_flags & OF_OFF) == 0) {
-                                sub_43D0E0(node->obj, OF_OFF);
+                                object_flags_set(node->obj, OF_OFF);
                                 update = true;
                             }
                         } else {

@@ -4399,7 +4399,7 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
 
-        sub_43D0E0(*obj_ptr, OF_DONTLIGHT);
+        object_flags_set(*obj_ptr, OF_DONTLIGHT);
 
         if (art_id != TIG_ART_ID_INVALID) {
             if (target_obj != OBJ_HANDLE_NULL) {
@@ -4487,7 +4487,7 @@ bool sub_424D00(AnimRunInfo* run_info)
     if (tig_art_type(art_id) != TIG_ART_TYPE_WALL
         || p_piece == 0
         || p_piece == 2) {
-        sub_43D0E0(obj, OF_OFF);
+        object_flags_set(obj, OF_OFF);
     }
 
     sub_43CCA0(obj);
@@ -4867,7 +4867,7 @@ bool sub_425840(int64_t a1, int64_t a2, int64_t a3, int a4, int64_t a5)
     }
 
     if ((obj_field_int32_get(a5, OBJ_F_FLAGS) & OF_NO_BLOCK) == 0) {
-        sub_43D0E0(a5, OF_NO_BLOCK);
+        object_flags_set(a5, OF_NO_BLOCK);
         v1 = false;
     }
 
@@ -6097,7 +6097,7 @@ bool sub_427990(AnimRunInfo* run_info)
         v1 = true;
         v2 = 1;
         range = 0;
-        sub_43D0E0(target_obj, OF_OFF);
+        object_flags_set(target_obj, OF_OFF);
         break;
     }
 
@@ -11241,7 +11241,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
     }
 
     if ((run_info->field_C & 0x200) == 0 && critter_is_dead(obj)) {
-        sub_43D0E0(obj, OF_FLAT | OF_NO_BLOCK);
+        object_flags_set(obj, OF_FLAT | OF_NO_BLOCK);
 
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
             if (player_is_pc_obj(obj)) {

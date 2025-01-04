@@ -1262,7 +1262,7 @@ bool sub_4A2EC0(ObjectID item_oid, ObjectID parent_oid, int player)
         lock->field_34++;
         return true;
     } else {
-        sub_43D0E0(item_obj, OF_MULTIPLAYER_LOCK);
+        object_flags_set(item_obj, OF_MULTIPLAYER_LOCK);
         sub_4A3030(item_oid, parent_oid, player);
         return true;
     }

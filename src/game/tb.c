@@ -281,7 +281,7 @@ void tb_add(int64_t obj, int type, const char* str)
     tb_text_blocks[v2].obj = obj;
     tb_text_blocks[v2].rect = dirty_rect;
     tb_text_blocks[v2].field_2C = -1;
-    sub_43D0E0(obj, OF_TEXT);
+    object_flags_set(obj, OF_TEXT);
     sub_4D63B0(&(tb_text_blocks[v2]), &dirty_rect);
     tb_iso_window_invalidate_rect(&dirty_rect);
 }

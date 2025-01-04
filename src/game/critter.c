@@ -502,7 +502,7 @@ void sub_45D900(int64_t obj)
             art_id = tig_art_id_frame_set(art_id, art_anim_data.num_frames - 1);
         }
         object_set_current_aid(obj, art_id);
-        sub_43D0E0(obj, OF_FLAT | OF_NO_BLOCK);
+        object_flags_set(obj, OF_FLAT | OF_NO_BLOCK);
         sub_432D90(obj);
     }
 
@@ -844,12 +844,12 @@ void sub_45E1E0(int64_t obj)
 
     func = (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) != 0
         ? sub_43D280
-        : sub_43D0E0;
+        : object_flags_set;
 
     func(obj, OF_OFF);
 
     critter_flags2 = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
-    if (func == sub_43D0E0) {
+    if (func == object_flags_set) {
         critter_flags2 |= OCF2_SAFE_OFF;
     } else {
         critter_flags2 &= ~OCF2_SAFE_OFF;
@@ -865,7 +865,7 @@ void sub_45E1E0(int64_t obj)
             func(node->obj, OF_OFF);
 
             critter_flags2 = obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS2);
-            if (func == sub_43D0E0) {
+            if (func == object_flags_set) {
                 critter_flags2 |= OCF2_SAFE_OFF;
             } else {
                 critter_flags2 &= ~OCF2_SAFE_OFF;
@@ -1633,7 +1633,7 @@ bool critter_enter_bed(int64_t obj, int64_t bed)
     obj_field_handle_set(bed, OBJ_F_SCENERY_WHOS_IN_ME, obj);
     object_inc_current_aid(bed);
 
-    sub_43D0E0(obj, OF_DONTDRAW);
+    object_flags_set(obj, OF_DONTDRAW);
 
     bed_location = obj_field_int64_get(bed, OBJ_F_LOCATION);
     obj_location = obj_field_int64_get(bed, OBJ_F_LOCATION);

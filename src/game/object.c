@@ -1359,7 +1359,7 @@ void sub_43CFF0(object_id_t obj)
 }
 
 // 0x43D0E0
-void sub_43D0E0(int64_t obj, unsigned int flags)
+void object_flags_set(int64_t obj, unsigned int flags)
 {
     TigRect rect;
     unsigned int render_flags = 0;
@@ -2262,7 +2262,7 @@ void object_add_flags(object_id_t obj, unsigned int flags)
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
         object_get_rect(obj, 0x7, &dirty_rect);
-        sub_43D0E0(obj, flags);
+        object_flags_set(obj, flags);
         object_get_rect(obj, 0x7, &update_rect);
         tig_rect_union(&dirty_rect, &update_rect, &dirty_rect);
         object_iso_invalidate_rect(&dirty_rect);
@@ -2394,7 +2394,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             scenery_flags |= 0x400;
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags);
-            sub_43D0E0(obj, OF_OFF);
+            object_flags_set(obj, OF_OFF);
 
             object_hp_damage_set(obj, 0);
 
@@ -2426,7 +2426,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
                 object_hp_damage_set(obj, object_hp_max(obj));
                 obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags | OSCF_BUSTED);
                 sound_id = sub_4F1050(obj, 0);
-                sub_43D0E0(obj, OF_INVULNERABLE);
+                object_flags_set(obj, OF_INVULNERABLE);
                 sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             }
 
@@ -5121,7 +5121,7 @@ void sub_444270(int64_t obj, int a2)
     if ((flags & OF_DISALLOW_WADING) == 0) {
         if (sub_4D71A0(loc)) {
             if ((flags & OF_WADING) == 0) {
-                sub_43D0E0(obj, OF_WADING);
+                object_flags_set(obj, OF_WADING);
             }
         } else {
             if ((flags & OF_WADING) != 0) {

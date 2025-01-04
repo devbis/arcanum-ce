@@ -104,7 +104,7 @@ bool sub_43CBF0(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr);
 void sub_43CCA0(int64_t obj);
 void sub_43CF70(int64_t obj);
 void sub_43CFF0(object_id_t obj);
-void sub_43D0E0(int64_t obj, unsigned int flags);
+void object_flags_set(int64_t obj, unsigned int flags);
 void sub_43D280(int64_t obj, unsigned int flags);
 int object_hp_pts_get(object_id_t obj);
 int object_hp_pts_set(int64_t obj, int value);

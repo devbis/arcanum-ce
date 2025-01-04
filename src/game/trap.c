@@ -292,7 +292,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
             return;
         }
 
-        sub_43D0E0(trap_obj, OF_TRAP_SPOTTED);
+        object_flags_set(trap_obj, OF_TRAP_SPOTTED);
 
         if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
             sub_43D280(trap_obj, OF_DONTDRAW);
@@ -377,7 +377,7 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
         obj_arrayfield_script_get(item_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
         obj_arrayfield_script_set(target_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
         sub_43CCA0(item_obj);
-        sub_43D0E0(target_obj, OF_TRAP_PC);
+        object_flags_set(target_obj, OF_TRAP_PC);
         sub_4BC090(pc_obj, target_obj, 1);
 
         return true;
@@ -421,7 +421,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
 
         if (prototype_handle != OBJ_HANDLE_NULL) {
             if (object_create(prototype_handle, target_loc, &trap_obj)) {
-                sub_43D0E0(trap_obj, OF_TRAP_PC);
+                object_flags_set(trap_obj, OF_TRAP_PC);
                 sub_4BC090(pc_obj, trap_obj, 1);
             }
         }
@@ -455,7 +455,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
     }
 
     obj_arrayfield_script_set(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
-    sub_43D0E0(trap_obj, OF_TRAP_PC);
+    object_flags_set(trap_obj, OF_TRAP_PC);
     sub_4BC090(pc_obj, trap_obj, 1);
     sub_43CCA0(item_obj);
 

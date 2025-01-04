@@ -2146,7 +2146,7 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
         object_set_current_aid(obj, art_id);
 
         critter_set_concealed(obj, true);
-        sub_43D0E0(obj, OF_DONTDRAW);
+        object_flags_set(obj, OF_DONTDRAW);
 
         obj_field_int32_set(obj,
             OBJ_F_CRITTER_FLAGS2,
@@ -3685,15 +3685,15 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 }
             } else if ((a4 & OSF_INVISIBLE) != 0) {
                 if (!player_is_pc_obj(obj)) {
-                    sub_43D0E0(obj, OF_INVISIBLE);
+                    object_flags_set(obj, OF_INVISIBLE);
                 }
                 object_add_flags(obj, OF_TRANSLUCENT);
             } else if ((a4 & OSF_SHRUNK) != 0) {
                 object_add_flags(obj, OF_SHRUNK);
             } else if ((a4 & OSF_WATER_WALKING) != 0) {
-                sub_43D0E0(obj, OF_WATER_WALKING);
+                object_flags_set(obj, OF_WATER_WALKING);
             } else if ((a4 & OSF_STONED) != 0) {
-                sub_43D0E0(obj, OF_STONED);
+                object_flags_set(obj, OF_STONED);
             } else if ((a4 & OSF_ENTANGLED) != 0) {
                 sub_44E4D0(obj, AG_MOVE_TO_TILE, -1);
                 sub_44E4D0(obj, AG_ATTEMPT_MOVE_NEAR, -1);
@@ -3731,7 +3731,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
             break;
         case OBJ_F_CRITTER_FLAGS:
             if ((a4 & OCF_UNDEAD) != 0) {
-                sub_43D0E0(obj, OF_ANIMATED_DEAD);
+                object_flags_set(obj, OF_ANIMATED_DEAD);
             } else if ((a4 & OCF_FLEEING) != 0) {
                 sub_4AF130(obj, a2);
                 return;
@@ -3747,7 +3747,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
             break;
         case OBJ_F_FLAGS:
             if ((a4 & OF_DONTDRAW) != 0) {
-                sub_43D0E0(obj, OF_DONTDRAW);
+                object_flags_set(obj, OF_DONTDRAW);
 
                 if (obj_type_is_critter(obj_type)) {
                     obj_field_int32_set(obj,

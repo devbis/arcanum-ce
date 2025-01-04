@@ -411,7 +411,7 @@ void tf_add(int64_t obj, int type, const char* str)
     tig_font_write(cur_node->video_buffer, str, &stru_6028D0, &(cur_node->rect));
     tig_font_pop();
 
-    sub_43D0E0(obj, OF_TEXT_FLOATER);
+    object_flags_set(obj, OF_TEXT_FLOATER);
     sub_4D5AA0(cur_node);
 
     sub_4D5A30(cur_list, cur_node, &rect);

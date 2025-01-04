@@ -1338,7 +1338,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
 
         if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0
             && !player_is_pc_obj(obj)) {
-            sub_43D0E0(obj, OF_INVISIBLE);
+            object_flags_set(obj, OF_INVISIBLE);
         }
     } else {
         obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, critter_flags | OCF_COMBAT_MODE_ACTIVE);
