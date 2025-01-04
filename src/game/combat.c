@@ -43,7 +43,7 @@ static void sub_4B2F60(CombatContext* combat);
 static void sub_4B3770(CombatContext* combat);
 static void sub_4B39B0(CombatContext* combat);
 static void combat_critter_toggle_combat_mode(int64_t obj);
-static int64_t sub_4B54B0(int64_t obj, int hit_loc);
+static int64_t combat_critter_armor(int64_t critter_obj, int hit_loc);
 static bool sub_4B5520(CombatContext* combat);
 static void sub_4B5580(CombatContext* combat);
 static void sub_4B5E90(int64_t loc);
@@ -1720,7 +1720,7 @@ void sub_4B4390(CombatContext* combat)
         }
 
         if ((dam_flags & CDF_DAMAGE_ARMOR) != 0) {
-            int64_t armor_obj = sub_4B54B0(combat->target_obj, combat->hit_loc);
+            int64_t armor_obj = combat_critter_armor(combat->target_obj, combat->hit_loc);
             if (armor_obj != OBJ_HANDLE_NULL) {
                 object_hp_damage_set(armor_obj, object_hp_damage_get(armor_obj) + 10);
 
@@ -2003,17 +2003,17 @@ void sub_4B4390(CombatContext* combat)
 }
 
 // 0x4B54B0
-int64_t sub_4B54B0(int64_t obj, int hit_loc)
+int64_t combat_critter_armor(int64_t critter_obj, int hit_loc)
 {
     switch (hit_loc) {
     case HIT_LOC_HEAD:
-        return item_wield_get(obj, ITEM_INV_LOC_HELMET);
+        return item_wield_get(critter_obj, ITEM_INV_LOC_HELMET);
     case HIT_LOC_ARM:
-        return item_wield_get(obj, ITEM_INV_LOC_GAUNTLET);
+        return item_wield_get(critter_obj, ITEM_INV_LOC_GAUNTLET);
     case HIT_LOC_LEG:
-        return item_wield_get(obj, ITEM_INV_LOC_BOOTS);
+        return item_wield_get(critter_obj, ITEM_INV_LOC_BOOTS);
     default:
-        return item_wield_get(obj, ITEM_INV_LOC_ARMOR);
+        return item_wield_get(critter_obj, ITEM_INV_LOC_ARMOR);
     }
 }
 
@@ -2581,7 +2581,7 @@ void sub_4B5F40(CombatContext* combat)
         }
     }
 
-    if (sub_4B54B0(combat->target_obj, combat->hit_loc) != OBJ_HANDLE_NULL
+    if (combat_critter_armor(combat->target_obj, combat->hit_loc) != OBJ_HANDLE_NULL
         && random_between(1, 100) <= chance + 10) {
         combat->dam_flags |= CDF_DAMAGE_ARMOR;
     }
