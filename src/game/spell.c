@@ -534,7 +534,7 @@ int sub_4B1B30(int64_t obj, int a2, int a3)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        obj_f_set_int32_with_network(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
+        mp_obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
         return a3;
     } else {
         return 0;

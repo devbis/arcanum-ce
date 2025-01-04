@@ -1393,7 +1393,7 @@ void mp_obj_arrayfield_script_set(int64_t obj, int fld, int index, Script* value
 }
 
 // 0x4F0270
-void obj_f_set_int32_with_network(int64_t obj, int fld, int index, int value)
+void mp_obj_arrayfield_uint32_set(int64_t obj, int fld, int index, int value)
 {
     Packet129 pkt;
 

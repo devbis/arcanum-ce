@@ -210,7 +210,7 @@ int tech_set_degree(long long object_id, int tech, int value)
         return 0;
     }
 
-    obj_f_set_int32_with_network(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
+    mp_obj_arrayfield_uint32_set(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
 
     return value;
 }
@@ -292,7 +292,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
     }
 
     if (index >= cnt) {
-        obj_f_set_int32_with_network(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index, schematic);
+        mp_obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index, schematic);
         sub_43CCA0(written_obj);
 
         mes_file_entry.num = 89; // "You have learned a new schematic!"

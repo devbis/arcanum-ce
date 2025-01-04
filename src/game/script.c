@@ -467,7 +467,7 @@ int script_pc_gl_var_get(int64_t obj, int index)
 void script_pc_gl_var_set(int64_t obj, int index, int value)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        obj_f_set_int32_with_network(obj, OBJ_F_PC_GLOBAL_VARIABLES, index, value);
+        mp_obj_arrayfield_uint32_set(obj, OBJ_F_PC_GLOBAL_VARIABLES, index, value);
     }
 }
 
@@ -493,7 +493,7 @@ void script_pc_gl_flag_set(int64_t obj, int index, int value)
         flags = obj_arrayfield_uint32_get(obj, OBJ_F_PC_GLOBAL_FLAGS, index / 32);
         flags &= ~(1 << (index % 32));
         flags |= value << (index % 32);
-        obj_f_set_int32_with_network(obj, OBJ_F_PC_GLOBAL_FLAGS, index / 32, flags);
+        mp_obj_arrayfield_uint32_set(obj, OBJ_F_PC_GLOBAL_FLAGS, index / 32, flags);
     }
 }
 

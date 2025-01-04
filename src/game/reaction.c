@@ -527,8 +527,8 @@ void sub_4C1360(int64_t npc_obj, int64_t pc_obj, int value)
 void sub_4C1490(int64_t npc_obj, int64_t pc_obj, int level, int index)
 {
     sub_4F0070(npc_obj, OBJ_F_NPC_REACTION_PC_IDX, index, pc_obj);
-    obj_f_set_int32_with_network(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index, level);
-    obj_f_set_int32_with_network(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index, datetime_current_second());
+    mp_obj_arrayfield_uint32_set(npc_obj, OBJ_F_NPC_REACTION_LEVEL_IDX, index, level);
+    mp_obj_arrayfield_uint32_set(npc_obj, OBJ_F_NPC_REACTION_TIME_IDX, index, datetime_current_second());
     sub_460240(npc_obj);
     sub_4B80E0(npc_obj);
 }
