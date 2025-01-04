@@ -644,7 +644,7 @@ bool animfx_add(AnimFxNode* node)
                     goal_data.params[AGDATA_FLAGS_DATA].data |= 0x4000;
                 }
 
-                goal_data.params[AGDATA_PARENT_OBJ].data = node->field_10;
+                goal_data.params[AGDATA_PARENT_OBJ].obj = node->field_10;
 
                 if (entry->sound != -1) {
                     if ((node->field_24 & 0x1) != 0
