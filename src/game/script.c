@@ -2761,7 +2761,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_DRAIN_CHARGES: {
         int qty = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        item_ammo_transfer(obj, OBJ_HANDLE_NULL, qty, AMMUNITION_TYPE_BATTERY, OBJ_HANDLE_NULL);
+        item_ammo_transfer(obj, OBJ_HANDLE_NULL, qty, TIG_ART_AMMO_TYPE_CHARGE, OBJ_HANDLE_NULL);
         return NEXT;
     }
     case SAT_CAST_UNRESISTABLE_SPELL: {

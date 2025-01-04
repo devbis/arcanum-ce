@@ -5,25 +5,6 @@
 #include "game/obj.h"
 #include "game/timeevent.h"
 
-typedef enum AmmunitionType {
-    AMMUNITION_TYPE_ARROW,
-    AMMUNITION_TYPE_BULLET,
-    AMMUNITION_TYPE_BATTERY,
-    AMMUNITION_TYPE_FUEL,
-    AMMUNITION_TYPE_COUNT,
-} AmmunitionType;
-
-typedef enum ArmorCoverageType {
-    ARMOR_COVERAGE_TYPE_TORSO,
-    ARMOR_COVERAGE_TYPE_SHIELD,
-    ARMOR_COVERAGE_TYPE_HELMET,
-    ARMOR_COVERAGE_TYPE_GAUNTLETS,
-    ARMOR_COVERAGE_TYPE_BOOTS,
-    ARMOR_COVERAGE_TYPE_RING,
-    ARMOR_COVERAGE_TYPE_MEDALLION,
-    ARMOR_COVERAGE_TYPE_COUNT,
-} ArmorCoverageType;
-
 typedef enum ItemCannot {
     ITEM_CANNOT_OK,
     ITEM_CANNOT_TOO_HEAVY, // The item is too heavy.

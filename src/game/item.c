@@ -28,7 +28,7 @@
 #include "game/ui.h"
 
 #define FIRST_AMMUNITION_TYPE_ID 0
-#define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + AMMUNITION_TYPE_COUNT)
+#define FIRST_ARMOR_COVERAGE_TYPE_ID (FIRST_AMMUNITION_TYPE_ID + TIG_ART_AMMO_TYPE_COUNT)
 
 typedef struct ItemInsertInfo {
     /* 0000 */ int64_t item_obj;
@@ -78,7 +78,7 @@ static bool sub_468110(int64_t obj);
 static bool sub_468150(TimeEvent* timeevent);
 
 // 0x5B32A0
-static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
+static int dword_5B32A0[TIG_ART_AMMO_TYPE_COUNT] = {
     OBJ_F_CRITTER_ARROWS,
     OBJ_F_CRITTER_BULLETS,
     OBJ_F_CRITTER_POWER_CELLS,
@@ -86,7 +86,7 @@ static int dword_5B32A0[AMMUNITION_TYPE_COUNT] = {
 };
 
 // 0x5B32B0
-static int dword_5B32B0[AMMUNITION_TYPE_COUNT] = {
+static int dword_5B32B0[TIG_ART_AMMO_TYPE_COUNT] = {
     7038,
     7039,
     7040,
@@ -184,16 +184,16 @@ bool item_init(GameInitInfo* init_info)
         return false;
     }
 
-    item_ammunition_type_names = (char**)CALLOC(AMMUNITION_TYPE_COUNT, sizeof(*item_ammunition_type_names));
-    item_armor_coverage_type_names = (char**)CALLOC(ARMOR_COVERAGE_TYPE_COUNT, sizeof(*item_armor_coverage_type_names));
+    item_ammunition_type_names = (char**)CALLOC(TIG_ART_AMMO_TYPE_COUNT, sizeof(*item_ammunition_type_names));
+    item_armor_coverage_type_names = (char**)CALLOC(TIG_ART_ARMOR_COVERAGE_COUNT, sizeof(*item_armor_coverage_type_names));
 
-    for (index = 0; index < AMMUNITION_TYPE_COUNT; index++) {
+    for (index = 0; index < TIG_ART_AMMO_TYPE_COUNT; index++) {
         msg.num = index + FIRST_AMMUNITION_TYPE_ID;
         mes_get_msg(item_mes_file, &msg);
         item_ammunition_type_names[index] = msg.str;
     }
 
-    for (index = 0; index < ARMOR_COVERAGE_TYPE_COUNT; index++) {
+    for (index = 0; index < TIG_ART_ARMOR_COVERAGE_COUNT; index++) {
         msg.num = index + FIRST_ARMOR_COVERAGE_TYPE_ID;
         mes_get_msg(item_mes_file, &msg);
         item_armor_coverage_type_names[index] = msg.str;
@@ -3263,13 +3263,13 @@ int item_weapon_skill(int64_t obj)
     ammo_type = item_weapon_ammo_type(obj);
     if (tech_complexity > 0
         && obj_field_int32_get(obj, OBJ_F_WEAPON_RANGE) >= 3
-        && (ammo_type == AMMUNITION_TYPE_BULLET
-            || ammo_type == AMMUNITION_TYPE_FUEL
-            || ammo_type == AMMUNITION_TYPE_BATTERY)) {
+        && (ammo_type == TIG_ART_AMMO_TYPE_BULLET
+            || ammo_type == TIG_ART_AMMO_TYPE_FUEL
+            || ammo_type == TIG_ART_AMMO_TYPE_CHARGE)) {
         return SKILL_FIREARMS;
     }
 
-    if (ammo_type == AMMUNITION_TYPE_ARROW) {
+    if (ammo_type == TIG_ART_AMMO_TYPE_ARROW) {
         return SKILL_BOW;
     }
 
