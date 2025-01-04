@@ -323,13 +323,13 @@ bool sub_44CB70(TimeEvent* timeevent)
 bool anim_goal_restart(AnimID* anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
     TimeEvent timeevent;
 
     ASSERT(anim_id != NULL); // pAnimID != NULL
 
     if (!anim_id_to_run_info(anim_id, &run_info)) {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: anim_goal_restart: could not turn animID into a AnimRunInfo %s.\n");
         return false;
     }
@@ -477,13 +477,13 @@ bool anim_allocate_this_run_index(AnimID* anim_id)
 bool mp_deallocate_run_index(AnimID* anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
     int stack_index;
 
     ASSERT(anim_id != NULL); // pAnimID != NULL
 
     if (!anim_id_to_run_info(anim_id, &run_info)) {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: mp_deallocate_run_index: could not turn animID into a AnimRunInfo %s.\n", str);
         return false;
     }
@@ -546,13 +546,13 @@ void sub_44D0D0(AnimID* anim_id, int a2)
 bool anim_mp_reap_run_index(AnimID* anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
 
     ASSERT(tig_net_is_active()); // tig_net_is_active()
     ASSERT(anim_id != NULL); // pAnimID != NULL
 
     if (!anim_id_to_run_info(anim_id, &run_info)) {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: anim_mp_reap_run_index: could not turn animID into a AnimRunInfo %s.\n", str);
         return false;
     }
@@ -566,12 +566,12 @@ bool anim_mp_reap_run_index(AnimID* anim_id)
 bool anim_free_run_index(AnimID* anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
 
     ASSERT(anim_id != NULL); // pAnimID != NULL
 
     if (!anim_id_to_run_info(anim_id, &run_info)) {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: anim_free_run_index: could not turn animID into a AnimRunInfo %s.\n", str);
         return false;
     }
@@ -844,7 +844,7 @@ bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int 
 bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
     int idx;
 
     ASSERT(goal_data != NULL); // 3655, "pGoalRegData != NULL"
@@ -860,7 +860,7 @@ bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
     }
 
     if (!anim_id_to_run_info(&anim_id, &run_info)) {
-        sub_421E20(&anim_id, str);
+        anim_id_to_str(&anim_id, str);
         tig_debug_printf("Anim: anim_subgoal_add_func: could not turn animID into a AnimRunInfo %s.\n", str);
         return false;
     }

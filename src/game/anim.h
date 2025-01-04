@@ -9,6 +9,8 @@
 #define PRIORITY_NONE 0
 #define PRIORITY_HIGHEST 6
 
+#define ANIM_ID_STR_SIZE 36
+
 extern AnimGoalNode* off_5B03D0[];
 
 bool anim_init(GameInitInfo* init_info);
@@ -20,7 +22,7 @@ void anim_save_nodes_to_map(const char* map);
 void anim_load_nodes_from_map(const char* map);
 bool sub_421D60(AnimID* a, AnimID* b);
 void sub_421DE0(AnimID* anim_id);
-void sub_421E20(AnimID* anim_id, char* buffer);
+void anim_id_to_str(AnimID* anim_id, char* buffer);
 bool anim_save(TigFile* stream);
 bool anim_load(GameLoadInfo* load_info);
 void sub_4232F0();

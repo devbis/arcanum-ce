@@ -3005,12 +3005,12 @@ void sub_421DE0(AnimID* anim_id)
 }
 
 // 0x421E20
-void sub_421E20(AnimID* anim_id, char* buffer)
+void anim_id_to_str(AnimID* anim_id, char* buffer)
 {
     ASSERT(anim_id != NULL); // pAnimID != NULL
     ASSERT(buffer != NULL); // str != NULL
 
-    _snprintf(buffer, 36,
+    _snprintf(buffer, ANIM_ID_STR_SIZE,
         "[%d:%dr%d]",
         anim_id->slot_num,
         anim_id->field_4,
@@ -3685,7 +3685,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
     run_info = &(anim_run_info[run_index]);
     if (run_info->id.slot_num != run_index) {
-        sub_421E20(&(run_info->id), str);
+        anim_id_to_str(&(run_info->id), str);
         tig_debug_printf("%s != %d:%d:%d\n",
             str,
             run_index,
@@ -3816,7 +3816,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
                     sub_44C840(run_info, goal_node);
                     sub_423E60("Running: PushGoal");
                 } else {
-                    sub_421E20(&(run_info->id), str);
+                    anim_id_to_str(&(run_info->id), str);
                     tig_debug_printf("Anim: ERROR: Attempt to PushGoal: Goal Stack too LARGE!!!  Killing the Animation Slot: AnimID: %s!\n", str);
 
                     for (int idx = 0; idx < run_info->current_goal; idx++) {
@@ -8570,7 +8570,7 @@ bool sub_42B7F0(AnimRunInfo* run_info)
 void anim_goal_reset_position_mp(AnimID* anim_id, int64_t obj, int64_t loc, tig_art_id_t art_id, unsigned int flags, int offset_x, int offset_y)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
 
     if (art_id != TIG_ART_ID_INVALID) {
         object_set_current_aid(obj, art_id);
@@ -8581,7 +8581,7 @@ void anim_goal_reset_position_mp(AnimID* anim_id, int64_t obj, int64_t loc, tig_
     if (anim_id_to_run_info(anim_id, &run_info)) {
         run_info->field_C = flags;
     } else {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: anim_goal_reset_position_mp: Could not convert ID (%s) to slot!\n", str);
     }
 }
@@ -14986,12 +14986,12 @@ bool sub_436960(int64_t a1, int64_t a2)
 void turn_on_running(AnimID anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
     int64_t obj;
     Packet8 pkt;
 
     if (!anim_id_to_run_info(&anim_id, &run_info)) {
-        sub_421E20(&anim_id, str);
+        anim_id_to_str(&anim_id, str);
         tig_debug_printf("Anim: turn_on_running: could not turn animID into a AnimRunInfo %s.\n", str);
         return;
     }
@@ -15076,12 +15076,12 @@ void sub_436D20(unsigned int flags1, unsigned int flags2)
 void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
     int64_t obj;
     Packet8 pkt;
 
     if (!anim_id_to_run_info(&anim_id, &run_info)) {
-        sub_421E20(&anim_id, str);
+        anim_id_to_str(&anim_id, str);
         tig_debug_printf("Anim: turn_on_flags: could not turn animID into a AnimRunInfo %s.\n", str);
         return;
     }
@@ -15130,10 +15130,10 @@ void sub_436ED0(AnimID anim_id)
 void notify_speed_recalc(AnimID* anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
 
     if (!anim_id_to_run_info(anim_id, &run_info)) {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: notify_speed_recalc: could not turn animID into a AnimRunInfo %s.\n", str);
         return;
     }
@@ -15187,10 +15187,10 @@ bool sub_4372B0(int64_t a1, int64_t a2)
 int num_goal_subslots_in_use(AnimID* anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
 
     if (!anim_id_to_run_info(anim_id, &run_info)) {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: num_goal_subslots_in_use: could not turn animID into a AnimRunInfo %s.\n", str);
         return 0;
     }
@@ -15202,10 +15202,10 @@ int num_goal_subslots_in_use(AnimID* anim_id)
 bool is_anim_forever(AnimID* anim_id)
 {
     AnimRunInfo* run_info;
-    char str[36];
+    char str[ANIM_ID_STR_SIZE];
 
     if (!anim_id_to_run_info(anim_id, &run_info)) {
-        sub_421E20(anim_id, str);
+        anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: is_anim_forever: could not turn animID into a AnimRunInfo %s.\n", str);
         return false;
     }
