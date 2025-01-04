@@ -1938,7 +1938,7 @@ bool critter_can_backstab(int64_t obj, int64_t tgt)
         return false;
     }
 
-    weapon_obj = sub_4B23B0(obj);
+    weapon_obj = combat_critter_weapon(obj);
     if (weapon_obj == OBJ_HANDLE_NULL) {
         return false;
     }

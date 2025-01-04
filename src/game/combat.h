@@ -81,7 +81,7 @@ void combat_reset();
 bool combat_save(TigFile* stream);
 bool combat_load(GameLoadInfo* load_info);
 void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat);
-int64_t sub_4B23B0(int64_t obj);
+int64_t combat_critter_weapon(int64_t critter_obj);
 void sub_4B2650(int64_t a1, int64_t a2, CombatContext* combat);
 bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, int64_t projectile_obj, int range, int64_t cur_loc, int64_t a7);
 int sub_4B3170(CombatContext* combat);

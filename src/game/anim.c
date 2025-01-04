@@ -4779,7 +4779,7 @@ bool sub_425590(AnimRunInfo* run_info)
 
         if (sub_4ADE00(source_obj, target_loc, &v1) < 26
             && (v1 == OBJ_HANDLE_NULL || v1 == target_obj)) {
-            weapon_obj = sub_4B23B0(source_obj);
+            weapon_obj = combat_critter_weapon(source_obj);
             if (weapon_obj != OBJ_HANDLE_NULL) {
                 range = item_weapon_range(weapon_obj, source_obj);
                 for (goal = 0; goal < run_info->current_goal; goal++) {
@@ -7264,7 +7264,7 @@ bool sub_429960(AnimRunInfo* run_info)
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
     target_loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
-    weapon_obj = sub_4B23B0(source_obj);
+    weapon_obj = combat_critter_weapon(source_obj);
 
     if (weapon_obj == OBJ_HANDLE_NULL) {
         range = 1;
@@ -7304,7 +7304,7 @@ bool sub_429AD0(AnimRunInfo* run_info)
         return false;
     }
 
-    weapon_obj = sub_4B23B0(source_obj);
+    weapon_obj = combat_critter_weapon(source_obj);
     if (weapon_obj == OBJ_HANDLE_NULL) {
         return false;
     }
@@ -7949,7 +7949,7 @@ bool sub_42A930(AnimRunInfo* run_info)
         return false;
     }
 
-    weapon_obj = sub_4B23B0(source_obj);
+    weapon_obj = combat_critter_weapon(source_obj);
     return item_weapon_range(weapon_obj, source_obj) > 1;
 }
 

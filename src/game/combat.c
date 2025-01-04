@@ -362,7 +362,7 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
     if (attacker_obj != OBJ_HANDLE_NULL) {
         type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
         if (obj_type_is_critter(type)) {
-            combat->weapon_obj = sub_4B23B0(attacker_obj);
+            combat->weapon_obj = combat_critter_weapon(attacker_obj);
         } else {
             combat->weapon_obj = OBJ_HANDLE_NULL;
         }
@@ -409,9 +409,9 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
 }
 
 // 0x4B23B0
-int64_t sub_4B23B0(int64_t obj)
+int64_t combat_critter_weapon(int64_t critter_obj)
 {
-    return item_wield_get(obj, ITEM_INV_LOC_WEAPON);
+    return item_wield_get(critter_obj, ITEM_INV_LOC_WEAPON);
 }
 
 // 0x4B23D0
@@ -1749,7 +1749,7 @@ void sub_4B4390(CombatContext* combat)
             }
         }
 
-        int64_t weapon_obj = sub_4B23B0(combat->target_obj);
+        int64_t weapon_obj = combat_critter_weapon(combat->target_obj);
         if (weapon_obj != OBJ_HANDLE_NULL) {
             if ((obj_field_int32_get(weapon_obj, OBJ_F_FLAGS) & OF_INVULNERABLE) != 0) {
                 dam_flags &= ~0x1C000;
@@ -2570,7 +2570,7 @@ void sub_4B5F40(CombatContext* combat)
         }
     }
 
-    if (sub_4B23B0(combat->target_obj) != OBJ_HANDLE_NULL) {
+    if (combat_critter_weapon(combat->target_obj) != OBJ_HANDLE_NULL) {
         if (random_between(1, 100) <= chance + 10) {
             combat->dam_flags |= CDF_DAMAGE_WEAPON;
         }
