@@ -2142,7 +2142,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             sub_45F110(a1->pc_obj, quest_get_xp(value));
             break;
         case DIALOG_ACTION_NK:
-            sub_45D900(a1->npc_obj);
+            critter_kill(a1->npc_obj);
             break;
         case DIALOG_ACTION_RP:
             if (value > 0) {

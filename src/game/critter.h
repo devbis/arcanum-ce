@@ -55,7 +55,7 @@ bool critter_is_active(long long obj);
 bool critter_is_unconscious(int64_t obj);
 bool critter_is_sleeping(int64_t obj);
 bool critter_is_dead(long long obj);
-void sub_45D900(int64_t obj);
+void critter_kill(int64_t obj);
 void sub_45DA20(int64_t a1, int64_t a2, int a3);
 void sub_45DC90(int64_t a1, int64_t a2, bool a3);;
 int64_t critter_pc_leader_get(int64_t obj);

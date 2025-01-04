@@ -464,7 +464,7 @@ bool critter_is_dead(long long obj)
 }
 
 // 0x45D900
-void sub_45D900(int64_t obj)
+void critter_kill(int64_t obj)
 {
     CombatContext combat;
 

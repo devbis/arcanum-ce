@@ -2079,7 +2079,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_KILL: {
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         for (int idx = 0; idx < cnt; idx++) {
-            sub_45D900(handles[idx]);
+            critter_kill(handles[idx]);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;
