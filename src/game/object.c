@@ -2663,7 +2663,7 @@ void object_eye_candy_aid_inc(object_id_t obj, int fld, int index)
 }
 
 // 0x43FAB0
-void sub_43FAB0(object_id_t obj, int fld, int index)
+void object_eye_candy_aid_dec(object_id_t obj, int fld, int index)
 {
     tig_art_id_t current_aid;
     tig_art_id_t prev_aid;
