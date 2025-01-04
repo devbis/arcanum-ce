@@ -106,7 +106,7 @@ static ObjectRenderColors* sub_442FE0();
 static void sub_443010(ObjectRenderColors* colors);
 static void sub_443030();
 static void sub_443070();
-static void sub_4430B0(int64_t obj, bool a2);
+static void object_toggle_flat(int64_t obj, bool a2);
 static void sub_443170(int64_t obj, TigArtBlitInfo* blit_info);
 static int sub_443440(TigArtBlitInfo* blit_info, int order);
 static void sub_443560();
@@ -1368,7 +1368,7 @@ void sub_43D0E0(int64_t obj, unsigned int flags)
     unsigned int extra_flags = 0;
 
     if ((flags & OF_FLAT) != 0) {
-        sub_4430B0(obj, true);
+        object_toggle_flat(obj, true);
         flags &= ~OF_FLAT;
     }
 
@@ -1444,7 +1444,7 @@ void sub_43D280(int64_t obj, unsigned int flags)
     bool visibility_changed = false;
 
     if ((flags & OF_FLAT) != 0) {
-        sub_4430B0(obj, false);
+        object_toggle_flat(obj, false);
         flags &= ~OF_FLAT;
     }
 
@@ -4537,7 +4537,7 @@ void sub_443070()
 }
 
 // 0x4430B0
-void sub_4430B0(int64_t obj, bool a2)
+void object_toggle_flat(int64_t obj, bool flat)
 {
     TigRect rect;
     int64_t sector_id;
@@ -4548,7 +4548,7 @@ void sub_4430B0(int64_t obj, bool a2)
     sector_id = sub_4CFC50(obj_field_int64_get(obj, OBJ_F_LOCATION));
 
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-    if (a2) {
+    if (flat) {
         flags |= OF_FLAT;
     } else {
         flags &= ~OF_FLAT;
