@@ -679,9 +679,9 @@ bool skill_ui_no_lock(int64_t obj)
 }
 
 // 0x57AC50
-void sub_57AC50(int64_t obj, int skill, int a3)
+void skill_ui_adjust_skill(int64_t obj, int skill, int action)
 {
-    switch (a3) {
+    switch (action) {
     case 1:
         skill_ui_inc_skill(obj, skill);
         break;

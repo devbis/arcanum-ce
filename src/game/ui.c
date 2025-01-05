@@ -138,6 +138,14 @@ void sub_460380(S4F2810 *a1, int64_t obj, int a3)
     }
 }
 
+// 0x4603B0
+void ui_adjust_skill(int64_t obj, int skill, int action)
+{
+    if (ui_callbacks.adjust_skill != NULL) {
+        ui_callbacks.adjust_skill(obj, skill, action);
+    }
+}
+
 // 0x4603E0
 void sub_4603E0(int64_t obj, int a3, int a4)
 {

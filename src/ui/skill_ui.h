@@ -18,7 +18,7 @@ void sub_57A320(S4F2810 *a1, int64_t obj, int a3);
 int sub_57A6A0(int index);
 int sub_57A6C0(int a1, S4F2810* a2);
 char* sub_57A700(int index);
-void sub_57AC50(int64_t obj, int skill, int a3);
+void skill_ui_adjust_skill(int64_t obj, int skill, int action);
 void sub_57AC90(int64_t obj, int skill, int a3);
 void skill_ui_inc_skill(int64_t obj, int skill);
 void skill_ui_dec_skill(int64_t obj, int skill);
