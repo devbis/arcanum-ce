@@ -89,7 +89,7 @@ static void sub_55B720(int64_t obj, int stat, int value);
 static void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C8150* a3, const char** list, int a5, int a6);
 static bool charedit_create_skills_win();
 static void sub_55BD10(int group);
-static void sub_55BF20();
+static void charedit_refresh_skills_win();
 static bool charedit_create_tech_win();
 static void charedit_draw_tech_degree_icon(int index);
 static void charedit_refresh_tech_win();
@@ -1664,7 +1664,7 @@ void sub_55B150()
     sub_55B1B0();
     switch (dword_64E01C) {
     case 0:
-        sub_55BF20();
+        charedit_refresh_skills_win();
         break;
     case 1:
         charedit_refresh_tech_win();
@@ -2148,11 +2148,11 @@ void sub_55BD10(int group)
     }
 
     sub_55B880(charedit_skills_win, dword_64D3A8, &stru_5C82F0[4 * dword_64E020], v2, -1, 4);
-    sub_55BF20();
+    charedit_refresh_skills_win();
 }
 
 // 0x55BF20
-void sub_55BF20()
+void charedit_refresh_skills_win()
 {
     tig_art_id_t skills_win_art_id;
     TigArtFrameData skills_win_art_frame_data;
