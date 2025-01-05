@@ -53,6 +53,14 @@ typedef enum ChareditStat {
     CHAREDIT_STAT_COUNT,
 } ChareditStat;
 
+typedef enum ChareditSkillGroup {
+    CHAREDIT_SKILL_GROUP_COMBAT,
+    CHAREDIT_SKILL_GROUP_THIEVING,
+    CHAREDIT_SKILL_GROUP_SOCIAL,
+    CHAREDIT_SKILL_GROUP_TECHNOLOGICAL,
+    CHAREDIT_SKILL_GROUP_COUNT,
+} ChareditSkillGroup;
+
 typedef struct S5C8150 {
     const char* str;
     int x;
@@ -231,7 +239,7 @@ static S5C8150 stru_5C81E0[] = {
 };
 
 // 0x5C82B0
-static S5C87D0 stru_5C82B0[4] = {
+static S5C87D0 charedit_skill_group_buttons[CHAREDIT_SKILL_GROUP_COUNT] = {
     { 21, 17, TIG_BUTTON_HANDLE_INVALID, 302 },
     { 75, 17, TIG_BUTTON_HANDLE_INVALID, 303 },
     { 129, 17, TIG_BUTTON_HANDLE_INVALID, 304 },
@@ -2001,7 +2009,7 @@ bool charedit_create_skills_win()
     TigButtonData button_data;
     TigArtFrameData art_frame_data;
     int index;
-    tig_button_handle_t button_handles[4];
+    tig_button_handle_t button_handles[CHAREDIT_SKILL_GROUP_COUNT];
 
     tig_art_interface_id_create(29, 0, 0, 0, &art_id);
     if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
@@ -2047,19 +2055,19 @@ bool charedit_create_skills_win()
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
-    for (index = 0; index < 4; index++) {
-        button_data.x = stru_5C82B0[index].x;
-        button_data.y = stru_5C82B0[index].y;
-        tig_art_interface_id_create(stru_5C82B0[index].art_num, 0, 0, 0, &(button_data.art_id));
-        if (tig_button_create(&button_data, &(stru_5C82B0[index].button_handle)) != TIG_OK) {
+    for (index = 0; index < CHAREDIT_SKILL_GROUP_COUNT; index++) {
+        button_data.x = charedit_skill_group_buttons[index].x;
+        button_data.y = charedit_skill_group_buttons[index].y;
+        tig_art_interface_id_create(charedit_skill_group_buttons[index].art_num, 0, 0, 0, &(button_data.art_id));
+        if (tig_button_create(&button_data, &(charedit_skill_group_buttons[index].button_handle)) != TIG_OK) {
             tig_window_destroy(charedit_skills_win);
             return false;
         }
 
-        button_handles[index] = stru_5C82B0[index].button_handle;
+        button_handles[index] = charedit_skill_group_buttons[index].button_handle;
     }
 
-    tig_button_radio_group_create(4, button_handles, dword_64E020);
+    tig_button_radio_group_create(CHAREDIT_SKILL_GROUP_COUNT, button_handles, dword_64E020);
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.mouse_down_snd_id = -1;
@@ -2881,8 +2889,8 @@ bool sub_55D3A0(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         switch (msg->data.button.state) {
         case TIG_BUTTON_STATE_MOUSE_INSIDE:
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C82B0[index].button_handle) {
+            for (index = 0; index < CHAREDIT_SKILL_GROUP_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skill_group_buttons[index].button_handle) {
                     dword_64CA58 = index + 135;
                     return true;
                 }
@@ -2908,8 +2916,8 @@ bool sub_55D3A0(TigMessage* msg)
             }
             break;
         case TIG_BUTTON_STATE_MOUSE_OUTSIDE:
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C82B0[index].button_handle) {
+            for (index = 0; index < CHAREDIT_SKILL_GROUP_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skill_group_buttons[index].button_handle) {
                     dword_64CA58 = -1;
                     sub_550720();
                     return true;
@@ -2985,8 +2993,8 @@ bool sub_55D3A0(TigMessage* msg)
                 }
             }
 
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C82B0[index].button_handle) {
+            for (index = 0; index < CHAREDIT_SKILL_GROUP_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skill_group_buttons[index].button_handle) {
                     sub_55BD10(index);
                     return true;
                 }
