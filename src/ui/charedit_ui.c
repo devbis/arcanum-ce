@@ -2965,7 +2965,7 @@ bool sub_55D3A0(TigMessage* msg)
                         return true;
                     }
 
-                    sub_57ACD0(qword_64E010, charedit_skills_plus_buttons[index].art_num);
+                    skill_ui_inc_skill(qword_64E010, charedit_skills_plus_buttons[index].art_num);
                     return true;
                 }
 
@@ -3060,7 +3060,7 @@ bool sub_55D6F0(TigMessage* msg)
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
                         || multiplayer_is_locked()) {
-                        sub_57ACD0(qword_64E010, charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
+                        skill_ui_inc_skill(qword_64E010, charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                     } else {
                         pkt.type = 127;
                         pkt.field_4 = 1;
@@ -4024,7 +4024,7 @@ void sub_55F450(int player, int type, int param)
         break;
     case 1:
     case 2:
-        sub_57ACD0(obj, param);
+        skill_ui_inc_skill(obj, param);
         break;
     case 3:
         tech_ui_inc_degree(obj, param);

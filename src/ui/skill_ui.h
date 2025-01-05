@@ -20,7 +20,7 @@ int sub_57A6C0(int a1, S4F2810* a2);
 char* sub_57A700(int index);
 void sub_57AC50(int64_t obj, int skill, int a3);
 void sub_57AC90(int64_t obj, int skill, int a3);
-void sub_57ACD0(int64_t obj, int skill);
+void skill_ui_inc_skill(int64_t obj, int skill);
 void skill_ui_dec_skill(int64_t obj, int skill);
 
 #endif /* ARCANUM_UI_SKILL_UI_H_ */
