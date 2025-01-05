@@ -271,23 +271,23 @@ static S5C8150 stru_5C83F0[4] = {
 };
 
 // 0x5C8430
-static S5C87D0 stru_5C8430[16] = {
-    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 0 },
-    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 1 },
-    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 2 },
-    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 3 },
-    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 4 },
-    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 5 },
-    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 6 },
-    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 7 },
-    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 8 },
-    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 9 },
-    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 10 },
-    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 11 },
-    { 192, 84, TIG_BUTTON_HANDLE_INVALID, 0 },
-    { 192, 150, TIG_BUTTON_HANDLE_INVALID, 1 },
-    { 192, 216, TIG_BUTTON_HANDLE_INVALID, 2 },
-    { 192, 282, TIG_BUTTON_HANDLE_INVALID, 3 },
+static S5C87D0 charedit_skills_plus_buttons[SKILL_COUNT] = {
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_BOW },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_DODGE },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_MELEE },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_THROWING },
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_BACKSTAB },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_PICK_POCKET },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_PROWLING },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_SPOT_TRAP },
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_GAMBLING },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_HAGGLE },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_HEAL },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, BASIC_SKILL_PERSUATION },
+    { 192, 84, TIG_BUTTON_HANDLE_INVALID, TECH_SKILL_REPAIR },
+    { 192, 150, TIG_BUTTON_HANDLE_INVALID, TECH_SKILL_FIREARMS },
+    { 192, 216, TIG_BUTTON_HANDLE_INVALID, TECH_SKILL_PICK_LOCKS },
+    { 192, 282, TIG_BUTTON_HANDLE_INVALID, TECH_SKILL_DISARM_TRAPS },
 };
 
 // 0x5C8530
@@ -2027,10 +2027,10 @@ bool charedit_create_skills_win()
     button_data.mouse_exit_snd_id = -1;
 
     tig_art_interface_id_create(624, 0, 0, 0, &(button_data.art_id));
-    for (index = 0; index < 16; index++) {
-        button_data.x = stru_5C8430[index].x;
-        button_data.y = stru_5C8430[index].y;
-        if (tig_button_create(&button_data, &(stru_5C8430[index].button_handle)) != TIG_OK) {
+    for (index = 0; index < SKILL_COUNT; index++) {
+        button_data.x = charedit_skills_plus_buttons[index].x;
+        button_data.y = charedit_skills_plus_buttons[index].y;
+        if (tig_button_create(&button_data, &(charedit_skills_plus_buttons[index].button_handle)) != TIG_OK) {
             tig_window_destroy(charedit_skills_win);
             return false;
         }
@@ -2092,7 +2092,7 @@ void sub_55BD10(int group)
     int trainings[4];
 
     for (index = 0; index < SKILL_COUNT; index++) {
-        tig_button_hide(stru_5C8430[index].button_handle);
+        tig_button_hide(charedit_skills_plus_buttons[index].button_handle);
         tig_button_hide(stru_5C8530[index].button_handle);
     }
 
@@ -2100,7 +2100,7 @@ void sub_55BD10(int group)
 
     if (dword_64CDCC != 2) {
         for (index = 0; index < 4; index++) {
-            tig_button_show(stru_5C8430[4 * dword_64E020 + index].button_handle);
+            tig_button_show(charedit_skills_plus_buttons[4 * dword_64E020 + index].button_handle);
             tig_button_show(stru_5C8530[4 * dword_64E020 + index].button_handle);
         }
     }
@@ -2895,9 +2895,9 @@ bool sub_55D3A0(TigMessage* msg)
                 }
             }
 
-            for (index = 0; index < 12; index++) {
-                if (msg->data.button.button_handle == stru_5C8430[index].button_handle) {
-                    dword_64CA58 = stru_5C8430[index].art_num + 1000;
+            for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skills_plus_buttons[index].button_handle) {
+                    dword_64CA58 = charedit_skills_plus_buttons[index].art_num + 1000;
                     return true;
                 }
 
@@ -2924,8 +2924,8 @@ bool sub_55D3A0(TigMessage* msg)
                 }
             }
 
-            for (index = 0; index < 12; index++) {
-                if (msg->data.button.button_handle == stru_5C8430[index].button_handle) {
+            for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skills_plus_buttons[index].button_handle) {
                     dword_64CA58 = -1;
                     sub_550720();
                     return true;
@@ -2939,8 +2939,8 @@ bool sub_55D3A0(TigMessage* msg)
             }
             break;
         case TIG_BUTTON_STATE_PRESSED:
-            for (index = 0; index < 12; index++) {
-                if (msg->data.button.button_handle == stru_5C8430[index].button_handle) {
+            for (index = 0; index < BASIC_SKILL_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skills_plus_buttons[index].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                         && (tig_net_flags & TIG_NET_HOST) == 0
                         && !multiplayer_is_locked()) {
@@ -2949,13 +2949,13 @@ bool sub_55D3A0(TigMessage* msg)
                         pkt.type = 127;
                         pkt.field_4 = 1;
                         pkt.field_8 = 1;
-                        pkt.field_C = stru_5C8430[index].art_num;
+                        pkt.field_C = charedit_skills_plus_buttons[index].art_num;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
 
                         return true;
                     }
 
-                    sub_57ACD0(qword_64E010, stru_5C8430[index].art_num);
+                    sub_57ACD0(qword_64E010, charedit_skills_plus_buttons[index].art_num);
                     return true;
                 }
 
@@ -2968,17 +2968,17 @@ bool sub_55D3A0(TigMessage* msg)
                         pkt.type = 127;
                         pkt.field_4 = 2;
                         pkt.field_8 = 1;
-                        pkt.field_C = stru_5C8430[index].art_num;
+                        pkt.field_C = charedit_skills_plus_buttons[index].art_num;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
 
                         return true;
                     }
 
-                    if (basic_skill_get_base(qword_64E010, stru_5C8430[index].art_num) == dword_64C7B8[stru_5C8530[index].art_num]) {
+                    if (basic_skill_get_base(qword_64E010, charedit_skills_plus_buttons[index].art_num) == dword_64C7B8[stru_5C8530[index].art_num]) {
                         stru_5C8990.str = dword_64D3C4[6];
                         sub_550750(&stru_5C8990);
                     } else {
-                        sub_57AEB0(qword_64E010, stru_5C8430[index].art_num);
+                        sub_57AEB0(qword_64E010, charedit_skills_plus_buttons[index].art_num);
                     }
 
                     return true;
@@ -3007,13 +3007,13 @@ bool sub_55D6F0(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_BUTTON) {
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_INSIDE) {
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C8430[index + 12].button_handle) {
-                    dword_64CA58 = stru_5C8430[index + 12].art_num + 1012;
+            for (index = 0; index < TECH_SKILL_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
+                    dword_64CA58 = charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 1012;
                     return true;
                 }
 
-                if (msg->data.button.button_handle == stru_5C8530[index + 12].button_handle) {
+                if (msg->data.button.button_handle == stru_5C8530[BASIC_SKILL_COUNT + index].button_handle) {
                     dword_64CA58 = stru_5C8530[12 + index].art_num + 1012;
                     return true;
                 }
@@ -3024,14 +3024,14 @@ bool sub_55D6F0(TigMessage* msg)
 
         if (msg->data.button.state == TIG_BUTTON_STATE_MOUSE_OUTSIDE) {
             // NOTE: Original code is buggy.
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C8430[index + 12].button_handle) {
+            for (index = 0; index < TECH_SKILL_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
                     dword_64CA58 = -1;
                     sub_550720();
                     return true;
                 }
 
-                if (msg->data.button.button_handle == stru_5C8530[index + 12].button_handle) {
+                if (msg->data.button.button_handle == stru_5C8530[BASIC_SKILL_COUNT + index].button_handle) {
                     dword_64CA58 = -1;
                     sub_550720();
                     return true;
@@ -3042,38 +3042,38 @@ bool sub_55D6F0(TigMessage* msg)
         }
 
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C8430[index + 12].button_handle) {
+            for (index = 0; index < TECH_SKILL_COUNT; index++) {
+                if (msg->data.button.button_handle == charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
                         || multiplayer_is_locked()) {
-                        sub_57ACD0(qword_64E010, stru_5C8430[index + 12].art_num + 12);
+                        sub_57ACD0(qword_64E010, charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                     } else {
                         pkt.type = 127;
                         pkt.field_4 = 1;
                         pkt.field_8 = 2;
-                        pkt.field_C = stru_5C8430[index + 12].art_num + 12;
+                        pkt.field_C = charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                     }
 
                     return true;
                 }
 
-                if (msg->data.button.button_handle == stru_5C8530[index + 12].button_handle) {
+                if (msg->data.button.button_handle == stru_5C8530[BASIC_SKILL_COUNT + index].button_handle) {
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
                         || multiplayer_is_locked()) {
-                        if (tech_skill_get_base(qword_64E010, stru_5C8530[index + 12].art_num) == dword_64C82C[stru_5C8530[index + 12].art_num]) {
+                        if (tech_skill_get_base(qword_64E010, stru_5C8530[BASIC_SKILL_COUNT + index].art_num) == dword_64C82C[stru_5C8530[BASIC_SKILL_COUNT + index].art_num]) {
                             stru_5C8990.str = dword_64D3C4[6];
                             sub_550750(&stru_5C8990);
                         } else {
-                            sub_57AEB0(qword_64E010, stru_5C8530[index + 12].art_num + 12);
+                            sub_57AEB0(qword_64E010, stru_5C8530[BASIC_SKILL_COUNT + index].art_num + 12);
                         }
                     } else {
                         pkt.type = 127;
                         pkt.field_4 = 2;
                         pkt.field_8 = 2;
-                        pkt.field_C = stru_5C8530[index + 12].art_num + 12;
+                        pkt.field_C = stru_5C8530[BASIC_SKILL_COUNT + index].art_num + 12;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
                     }
 
