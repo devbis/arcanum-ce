@@ -87,7 +87,7 @@ static int sub_55B410(int stat);
 static int sub_55B4D0(int64_t obj, int stat);
 static void sub_55B720(int64_t obj, int stat, int value);
 static void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C8150* a3, const char** list, int a5, int a6);
-static bool sub_55BAB0();
+static bool charedit_create_skills_win();
 static void sub_55BD10(int group);
 static void sub_55BF20();
 static bool charedit_create_tech_win();
@@ -628,7 +628,7 @@ static tig_window_handle_t dword_64CA64;
 static tig_font_handle_t dword_64CA68;
 
 // 0x64CA6C
-static tig_window_handle_t dword_64CA6C;
+static tig_window_handle_t charedit_skills_win;
 
 // 0x64CA70
 static mes_file_handle_t charedit_mes_file;
@@ -813,7 +813,7 @@ bool charedit_init(GameInitInfo* init_info)
         return false;
     }
 
-    if (!sub_55BAB0()) {
+    if (!charedit_create_skills_win()) {
         sub_55EBA0();
         tig_window_destroy(charedit_spells_win);
         tig_window_destroy(charedit_tech_win);
@@ -821,7 +821,7 @@ bool charedit_init(GameInitInfo* init_info)
         return false;
     }
 
-    tig_window_hide(dword_64CA6C);
+    tig_window_hide(charedit_skills_win);
     tig_window_hide(charedit_spells_win);
     tig_window_hide(charedit_tech_win);
     tig_window_hide(dword_64CA60);
@@ -833,7 +833,7 @@ bool charedit_init(GameInitInfo* init_info)
 void charedit_exit()
 {
     sub_55EBA0();
-    tig_window_destroy(dword_64CA6C);
+    tig_window_destroy(charedit_skills_win);
     tig_window_destroy(charedit_spells_win);
     tig_window_destroy(charedit_tech_win);
     tig_window_destroy(dword_64CA60);
@@ -1015,11 +1015,11 @@ bool charedit_create(int64_t obj, int a2)
         return false;
     }
 
-    tig_window_show(dword_64CA6C);
+    tig_window_show(charedit_skills_win);
     tig_window_show(charedit_spells_win);
     tig_window_show(charedit_tech_win);
     tig_window_show(dword_64CA60);
-    sub_51E850(dword_64CA6C);
+    sub_51E850(charedit_skills_win);
 
     if (dword_64CDCC == 2) {
         for (index = 0; index < 15; index++) {
@@ -1166,7 +1166,7 @@ void charedit_destroy()
             critter_fatigue_damage_set(qword_64E010, 0);
         }
         intgame_big_window_unlock();
-        tig_window_hide(dword_64CA6C);
+        tig_window_hide(charedit_skills_win);
         tig_window_hide(charedit_spells_win);
         tig_window_hide(charedit_tech_win);
         tig_window_hide(dword_64CA60);
@@ -1480,7 +1480,7 @@ bool sub_55A5C0(TigMessage* msg)
                 if (dword_64E01C == 3) {
                     sub_55F0D0();
                 }
-                sub_51E850(dword_64CA6C);
+                sub_51E850(charedit_skills_win);
                 dword_64E01C = 0;
                 sub_55B150();
                 return true;
@@ -1918,7 +1918,7 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
 
     tig_window_data(window_handle, &window_data);
 
-    if (window_handle == dword_64CA6C) {
+    if (window_handle == charedit_skills_win) {
         num = 29;
     } else if (window_handle == charedit_tech_win) {
         num = 30;
@@ -1994,7 +1994,7 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
 }
 
 // 0x55BAB0
-bool sub_55BAB0()
+bool charedit_create_skills_win()
 {
     tig_art_id_t art_id;
     TigWindowData window_data;
@@ -2015,12 +2015,12 @@ bool sub_55BAB0()
     window_data.rect.height = art_frame_data.height;
     window_data.background_color = 0;
     window_data.message_filter = sub_55D3A0;
-    if (tig_window_create(&window_data, &dword_64CA6C) != TIG_OK) {
+    if (tig_window_create(&window_data, &charedit_skills_win) != TIG_OK) {
         return false;
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01 | TIG_BUTTON_FLAG_HIDDEN;
-    button_data.window_handle = dword_64CA6C;
+    button_data.window_handle = charedit_skills_win;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
     button_data.mouse_enter_snd_id = -1;
@@ -2031,7 +2031,7 @@ bool sub_55BAB0()
         button_data.x = stru_5C8430[index].x;
         button_data.y = stru_5C8430[index].y;
         if (tig_button_create(&button_data, &(stru_5C8430[index].button_handle)) != TIG_OK) {
-            tig_window_destroy(dword_64CA6C);
+            tig_window_destroy(charedit_skills_win);
             return false;
         }
     }
@@ -2041,7 +2041,7 @@ bool sub_55BAB0()
         button_data.x = stru_5C8530[index].x;
         button_data.y = stru_5C8530[index].y;
         if (tig_button_create(&button_data, &(stru_5C8530[index].button_handle)) != TIG_OK) {
-            tig_window_destroy(dword_64CA6C);
+            tig_window_destroy(charedit_skills_win);
             return false;
         }
     }
@@ -2052,7 +2052,7 @@ bool sub_55BAB0()
         button_data.y = stru_5C82B0[index].y;
         tig_art_interface_id_create(stru_5C82B0[index].art_num, 0, 0, 0, &(button_data.art_id));
         if (tig_button_create(&button_data, &(stru_5C82B0[index].button_handle)) != TIG_OK) {
-            tig_window_destroy(dword_64CA6C);
+            tig_window_destroy(charedit_skills_win);
             return false;
         }
 
@@ -2120,9 +2120,9 @@ void sub_55BD10(int group)
     art_blit_info.flags = 0;
     art_blit_info.src_rect = &rect;
     art_blit_info.dst_rect = &rect;
-    tig_window_blit_art(dword_64CA6C, &art_blit_info);
+    tig_window_blit_art(charedit_skills_win, &art_blit_info);
 
-    sub_55B880(dword_64CA6C, dword_64D3A8, &stru_5C82F0[4 * dword_64E020], 0, -1, 4);
+    sub_55B880(charedit_skills_win, dword_64D3A8, &stru_5C82F0[4 * dword_64E020], 0, -1, 4);
 
     for (index = 0; index < 4; index++) {
         if (dword_64E020 < 3) {
@@ -2147,7 +2147,7 @@ void sub_55BD10(int group)
         v2[index] = v1[index];
     }
 
-    sub_55B880(dword_64CA6C, dword_64D3A8, &stru_5C82F0[4 * dword_64E020], v2, -1, 4);
+    sub_55B880(charedit_skills_win, dword_64D3A8, &stru_5C82F0[4 * dword_64E020], v2, -1, 4);
     sub_55BF20();
 }
 
@@ -2207,7 +2207,7 @@ void sub_55BF20()
         dst_rect.height = gauge_art_frame_data.height;
 
         art_blit_info.art_id = skills_win_art_id;
-        tig_window_blit_art(dword_64CA6C, &art_blit_info);
+        tig_window_blit_art(charedit_skills_win, &art_blit_info);
 
         if (skill_level != 0) {
             src_rect.x = 0;
@@ -2221,7 +2221,7 @@ void sub_55BF20()
             dst_rect.height = src_rect.height;
 
             art_blit_info.art_id = gauge_art_id;
-            tig_window_blit_art(dword_64CA6C, &art_blit_info);
+            tig_window_blit_art(charedit_skills_win, &art_blit_info);
         }
 
         index++;
