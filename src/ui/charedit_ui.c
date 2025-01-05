@@ -61,6 +61,8 @@ typedef enum ChareditSkillGroup {
     CHAREDIT_SKILL_GROUP_COUNT,
 } ChareditSkillGroup;
 
+#define CHAREDIT_SKILLS_PER_GROUP 4
+
 typedef struct S5C8150 {
     const char* str;
     int x;
@@ -467,7 +469,7 @@ static S5C8CA8 stru_5C89A8[32] = {
 };
 
 // 0x5C8CA8
-static S5C8CA8 stru_5C8CA8[4] = {
+static S5C8CA8 charedit_skills_hover_areas[CHAREDIT_SKILLS_PER_GROUP] = {
     { 520, 126, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
     { 520, 192, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
     { 520, 258, 200, 60, 0, TIG_BUTTON_HANDLE_INVALID },
@@ -2074,12 +2076,12 @@ bool charedit_create_skills_win()
     button_data.mouse_up_snd_id = -1;
     button_data.art_id = TIG_ART_ID_INVALID;
 
-    for (index = 0; index < 4; index++) {
-        button_data.x = stru_5C8CA8[index].x - 503;
-        button_data.y = stru_5C8CA8[index].y - 63;
-        button_data.width = stru_5C8CA8[index].width;
-        button_data.height = stru_5C8CA8[index].height;
-        tig_button_create(&button_data, &(stru_5C8CA8[index].button_handle));
+    for (index = 0; index < CHAREDIT_SKILLS_PER_GROUP; index++) {
+        button_data.x = charedit_skills_hover_areas[index].x - 503;
+        button_data.y = charedit_skills_hover_areas[index].y - 63;
+        button_data.width = charedit_skills_hover_areas[index].width;
+        button_data.height = charedit_skills_hover_areas[index].height;
+        tig_button_create(&button_data, &(charedit_skills_hover_areas[index].button_handle));
         // FIXME: No error checking as seen above.
     }
 
@@ -2896,8 +2898,8 @@ bool sub_55D3A0(TigMessage* msg)
                 }
             }
 
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C8CA8[index].button_handle) {
+            for (index = 0; index < CHAREDIT_SKILLS_PER_GROUP; index++) {
+                if (msg->data.button.button_handle == charedit_skills_hover_areas[index].button_handle) {
                     dword_64CA58 = 4 * dword_64E020 + 1000 + index;
                     return true;
                 }
@@ -2924,8 +2926,8 @@ bool sub_55D3A0(TigMessage* msg)
                 }
             }
 
-            for (index = 0; index < 4; index++) {
-                if (msg->data.button.button_handle == stru_5C8CA8[index].button_handle) {
+            for (index = 0; index < CHAREDIT_SKILLS_PER_GROUP; index++) {
+                if (msg->data.button.button_handle == charedit_skills_hover_areas[index].button_handle) {
                     dword_64CA58 = -1;
                     sub_550720();
                     return true;
