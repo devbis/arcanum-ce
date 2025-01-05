@@ -686,7 +686,7 @@ void sub_57AC50(int64_t obj, int skill, int a3)
         sub_57ACD0(obj, skill);
         break;
     case -1:
-        sub_57AEB0(obj, skill);
+        skill_ui_dec_skill(obj, skill);
         break;
     }
 }
@@ -777,7 +777,7 @@ void sub_57ACD0(int64_t obj, int skill)
 }
 
 // 0x57AEB0
-void sub_57AEB0(int64_t obj, int skill)
+void skill_ui_dec_skill(int64_t obj, int skill)
 {
     bool is_pc;
     int base;

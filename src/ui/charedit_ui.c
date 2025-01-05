@@ -2970,6 +2970,9 @@ bool sub_55D3A0(TigMessage* msg)
                 }
 
                 if (msg->data.button.button_handle == charedit_skills_minus_buttons[index].button_handle) {
+                    // FIX: Original code has mess with plus/minus buttons, but
+                    // it does not affect outcome as both plus/minus buttons
+                    // refer to the same skills.
                     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                         && (tig_net_flags & TIG_NET_HOST) == 0
                         && !multiplayer_is_locked()) {
@@ -2978,17 +2981,17 @@ bool sub_55D3A0(TigMessage* msg)
                         pkt.type = 127;
                         pkt.field_4 = 2;
                         pkt.field_8 = 1;
-                        pkt.field_C = charedit_skills_plus_buttons[index].art_num;
+                        pkt.field_C = charedit_skills_minus_buttons[index].art_num;
                         tig_net_send_app_all(&pkt, sizeof(pkt));
 
                         return true;
                     }
 
-                    if (basic_skill_get_base(qword_64E010, charedit_skills_plus_buttons[index].art_num) == dword_64C7B8[charedit_skills_minus_buttons[index].art_num]) {
+                    if (basic_skill_get_base(qword_64E010, charedit_skills_minus_buttons[index].art_num) == dword_64C7B8[charedit_skills_minus_buttons[index].art_num]) {
                         stru_5C8990.str = dword_64D3C4[6];
                         sub_550750(&stru_5C8990);
                     } else {
-                        sub_57AEB0(qword_64E010, charedit_skills_plus_buttons[index].art_num);
+                        skill_ui_dec_skill(qword_64E010, charedit_skills_minus_buttons[index].art_num);
                     }
 
                     return true;
@@ -3077,7 +3080,7 @@ bool sub_55D6F0(TigMessage* msg)
                             stru_5C8990.str = dword_64D3C4[6];
                             sub_550750(&stru_5C8990);
                         } else {
-                            sub_57AEB0(qword_64E010, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
+                            skill_ui_dec_skill(qword_64E010, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                         }
                     } else {
                         pkt.type = 127;
@@ -4111,7 +4114,7 @@ void sub_55F5F0(int player, int type, int param)
             sub_4EDA60(&stru_5C8990, player, 0);
             return;
         }
-        sub_57AEB0(obj, param);
+        skill_ui_dec_skill(obj, param);
         break;
     case 2:
         if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C9D4[player][param]) {
@@ -4119,7 +4122,7 @@ void sub_55F5F0(int player, int type, int param)
             sub_4EDA60(&stru_5C8990, player, 0);
             return;
         }
-        sub_57AEB0(obj, param);
+        skill_ui_dec_skill(obj, param);
         break;
     case 3:
         tech_ui_dec_degree(obj, param);
