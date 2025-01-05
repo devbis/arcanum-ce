@@ -692,12 +692,12 @@ void skill_ui_adjust_skill(int64_t obj, int skill, int action)
 }
 
 // 0x57AC90
-void sub_57AC90(int64_t obj, int skill, int a3)
+void skill_ui_set_training(int64_t obj, int skill, int training)
 {
     if (IS_TECH_SKILL(skill)) {
-        basic_skill_set_training(obj, GET_TECH_SKILL(skill), a3);
+        basic_skill_set_training(obj, GET_TECH_SKILL(skill), training);
     } else {
-        tech_skill_set_training(obj, GET_BASIC_SKILL(skill), a3);
+        tech_skill_set_training(obj, GET_BASIC_SKILL(skill), training);
     }
 }
 

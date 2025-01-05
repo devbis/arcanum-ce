@@ -147,10 +147,10 @@ void ui_adjust_skill(int64_t obj, int skill, int action)
 }
 
 // 0x4603E0
-void sub_4603E0(int64_t obj, int a3, int a4)
+void ui_set_skill_training(int64_t obj, int skill, int training)
 {
-    if (ui_callbacks.field_38 != NULL) {
-        ui_callbacks.field_38(obj, a3, a4);
+    if (ui_callbacks.set_skill_training != NULL) {
+        ui_callbacks.set_skill_training(obj, skill, training);
     }
 }
 
