@@ -144,7 +144,7 @@ int sub_4C6AF0(int64_t obj, int skill);
 int sub_4C6B00(int64_t obj, int skill);
 int tech_skill_get_stat(int skill);
 int sub_4C6B20(int a1);
-bool sub_4C6B50(int64_t obj, int stat, int value);
+bool skill_check_stat(int64_t obj, int stat, int value);
 bool sub_4C6F90(int64_t a1, int a2, int64_t a3, int a4);
 bool sub_4C6FD0(int64_t a1, int64_t a2, int64_t a3);
 bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3);

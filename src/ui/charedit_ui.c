@@ -1447,7 +1447,7 @@ bool sub_55A5C0(TigMessage* msg)
                         }
 
                         if (dword_5C8124[index] != -1
-                            && !sub_4C6B50(qword_64E010, dword_5C8124[index], value - 1)) {
+                            && !skill_check_stat(qword_64E010, dword_5C8124[index], value - 1)) {
                             stru_5C8990.str = dword_64D3C4[11];
                             sub_550750(&stru_5C8990);
                             return true;
@@ -4074,7 +4074,7 @@ void sub_55F5F0(int player, int type, int param)
             }
 
             if (dword_5C8124[param] != -1
-                && !sub_4C6B50(obj, dword_5C8124[param], value - 1)) {
+                && !skill_check_stat(obj, dword_5C8124[param], value - 1)) {
                 stru_5C8990.str = dword_64D3C4[11];
                 sub_4EDA60(&stru_5C8990, player, 0);
                 return;

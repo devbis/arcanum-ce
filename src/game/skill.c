@@ -1012,7 +1012,7 @@ int sub_4C6B20(int a1)
 }
 
 // 0x4C6B50
-bool sub_4C6B50(int64_t obj, int stat, int value)
+bool skill_check_stat(int64_t obj, int stat, int value)
 {
     int skill;
 

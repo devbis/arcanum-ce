@@ -597,7 +597,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
     obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, before);
 
     if (value < before) {
-        if (!sub_4C6B50(obj, stat, after)) {
+        if (!skill_check_stat(obj, stat, after)) {
             return before;
         }
 
