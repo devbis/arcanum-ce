@@ -307,7 +307,7 @@ char* spell_get_description(int spell)
 }
 
 // 0x4B1650
-int sub_4B1650(int spell)
+int spell_cost(int spell)
 {
     (void)spell;
 
@@ -430,7 +430,7 @@ bool spell_add(int64_t obj, int spell, bool force)
             return false;
         }
 
-        cost = sub_4B1650(spell);
+        cost = spell_cost(spell);
     } else  {
         cost = new_spell_level - spell_level;
         if (cost < 0) {
@@ -472,7 +472,7 @@ bool spell_remove(int64_t obj, int spell)
         return false;
     }
 
-    cost = sub_4B1650(spell);
+    cost = spell_cost(spell);
     magic_points = stat_get_base(obj, STAT_MAGICK_POINTS);
     magic_points -= cost;
     stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);

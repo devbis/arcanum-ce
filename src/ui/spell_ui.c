@@ -502,7 +502,7 @@ void spell_ui_add(int64_t obj, int spell)
     int cost;
     int unspent_points;
 
-    cost = sub_4B1650(spell);
+    cost = spell_cost(spell);
     unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
 
     if (cost > unspent_points) {
@@ -560,7 +560,7 @@ void spell_ui_remove(int64_t obj, int spell)
     int cost;
     int unspent_points;
 
-    cost = sub_4B1650(spell);
+    cost = spell_cost(spell);
     unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
     if (spell_remove(obj, spell)) {
         sub_57F340(spell);

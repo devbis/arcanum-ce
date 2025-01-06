@@ -837,7 +837,7 @@ int sub_4A7890(int64_t obj, int college, int score)
     current_value = spell_college_level_get(obj, college);
     while (current_value < score) {
         spl = current_value + 5 * college;
-        cost = sub_4B1650(spl);
+        cost = spell_cost(spl);
         unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;

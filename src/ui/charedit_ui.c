@@ -1622,7 +1622,7 @@ void sub_55AE70(int a1)
     } else if (a1 >= 2000 && a1 < 2999) {
         ui_message.type = UI_MSG_TYPE_SPELL;
         ui_message.field_8 = a1 - 2000;
-        ui_message.field_C = sub_4B1650(a1 - 2000);
+        ui_message.field_C = spell_cost(a1 - 2000);
         ui_message.field_10 = qword_64E010;
         sub_550750(&ui_message);
     } else if (a1 >= 3000 && a1 < 3999) {

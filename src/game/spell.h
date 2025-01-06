@@ -118,7 +118,7 @@ int spell_get_icon(int spell);
 size_t sub_4B15A0(int spell);
 char* spell_get_name(int spell);
 char* spell_get_description(int spell);
-int sub_4B1650(int spell);
+int spell_cost(int spell);
 int sub_4B1660(int spell, int64_t obj);
 int sub_4B16C0(int spell, int64_t obj, int* a3);
 int sub_4B1740(int spell);
