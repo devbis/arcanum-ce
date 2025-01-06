@@ -16512,7 +16512,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     // parsed.
 
     for (college = 0; college < COLLEGE_COUNT; college++) {
-        num_spl = sub_4B1AB0(obj, college);
+        num_spl = spell_college_level_get(obj, college);
         for (spl = 0; spl < num_spl; spl++) {
             tig_file_fprintf(stream, "%s: %s\n",
                 off_5B38C8[PROTO_F_SPELL],

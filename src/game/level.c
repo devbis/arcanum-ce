@@ -834,7 +834,7 @@ int sub_4A7890(int64_t obj, int college, int score)
     int willpower;
     int rc;
 
-    current_value = sub_4B1AB0(obj, college);
+    current_value = spell_college_level_get(obj, college);
     while (current_value < score) {
         spl = current_value + 5 * college;
         cost = sub_4B1650(spl);

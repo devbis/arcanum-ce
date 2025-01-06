@@ -409,7 +409,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
     }
 
     v1 = spell % 5 + 1;
-    v2 = sub_4B1AB0(obj, spell / 5);
+    v2 = spell_college_level_get(obj, spell / 5);
 
     if (!force) {
         if (v1 != v2 + 1) {
@@ -453,7 +453,7 @@ bool sub_4B1950(int64_t obj, int spell)
 {
     return obj != OBJ_HANDLE_NULL
         && spell >= 0 && spell < SPELL_COUNT
-        && spell % 5 + 1 <= sub_4B1AB0(obj, spell / 5);
+        && spell % 5 + 1 <= spell_college_level_get(obj, spell / 5);
 }
 
 // 0x4B19B0
@@ -462,7 +462,7 @@ bool sub_4B19B0(int64_t obj, int spell)
     int cost;
     int magic_points;
 
-    if (sub_4B1AB0(obj, spell / 5) != spell % 5 + 1) {
+    if (spell_college_level_get(obj, spell / 5) != spell % 5 + 1) {
         return false;
     }
 
@@ -509,21 +509,20 @@ int college_get_icon(int college)
 }
 
 // 0x4B1AB0
-int sub_4B1AB0(int64_t obj, int a2)
+int spell_college_level_get(int64_t obj, int college)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        return obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
+
+    return obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college);
 }
 
 // 0x4B1B00
 bool sub_4B1B00(int64_t obj, int a2)
 {
     if (obj != OBJ_HANDLE_NULL) {
-        return sub_4B1AB0(obj, a2) > 0;
+        return spell_college_level_get(obj, a2) > 0;
     } else {
         return false;
     }
@@ -552,7 +551,7 @@ bool sub_4B1B90(int64_t obj, int intelligence)
 
     v1 = 0;
     for (college = 0; college < COLLEGE_COUNT; college++) {
-        for (v2 = 0; v2 < sub_4B1AB0(obj, college); v2++) {
+        for (v2 = 0; v2 < spell_college_level_get(obj, college); v2++) {
             if (sub_4B1750(v1 + v2) > intelligence) {
                 return false;
             }
@@ -575,7 +574,7 @@ bool sub_4B1C00(int64_t obj, int willpower)
 
     v1 = 0;
     for (college = 0; college < COLLEGE_COUNT; college++) {
-        for (v2 = 0; v2 < sub_4B1AB0(obj, college); v2++) {
+        for (v2 = 0; v2 < spell_college_level_get(obj, college); v2++) {
             if (spell_get_iq(v1 + v2) > willpower) {
                 return false;
             }
@@ -591,7 +590,7 @@ bool sub_4B1C00(int64_t obj, int willpower)
 bool sub_4B1C70(int64_t object_id, int a2)
 {
     if (sub_4B1CB0(object_id) == -1) {
-        return sub_4B1AB0(object_id, a2) >= 5;
+        return spell_college_level_get(object_id, a2) >= 5;
     } else {
         return false;
     }

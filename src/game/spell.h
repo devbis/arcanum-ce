@@ -132,7 +132,7 @@ char* college_get_name(int college);
 char* college_get_description(int college);
 int college_get_art_num(int college);
 int college_get_icon(int college);
-int sub_4B1AB0(int64_t obj, int a2);
+int spell_college_level_get(int64_t obj, int college);
 bool sub_4B1B00(int64_t obj, int a2);
 int sub_4B1B30(int64_t obj, int a2, int a3);
 bool sub_4B1B90(int64_t obj, int intelligence);

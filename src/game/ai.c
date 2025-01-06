@@ -3693,7 +3693,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
         }
 
         if ((obj_field_int32_get(a1, OBJ_F_NPC_FLAGS) & ONF_CAST_HIGHEST) != 0
-            && sub_4B1AB0(a1, COLLEGE_FROM_SPELL(magictech)) + 5 * COLLEGE_FROM_SPELL(magictech) - 1 != magictech) {
+            && spell_college_level_get(a1, COLLEGE_FROM_SPELL(magictech)) + 5 * COLLEGE_FROM_SPELL(magictech) - 1 != magictech) {
             return 4;
         }
 

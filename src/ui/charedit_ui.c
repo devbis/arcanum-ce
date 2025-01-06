@@ -1089,7 +1089,7 @@ bool charedit_create(int64_t obj, int a2)
             }
 
             for (index = 0; index < COLLEGE_COUNT; index++) {
-                dword_64D364[index] = sub_4B1AB0(qword_64E010, index);
+                dword_64D364[index] = spell_college_level_get(qword_64E010, index);
             }
 
             for (index = 0; index < BASIC_SKILL_COUNT; index++) {
@@ -2649,7 +2649,7 @@ void charedit_refresh_spells_win()
 
     tig_window_blit_art(charedit_spells_win, &art_blit_info);
 
-    cnt = sub_4B1AB0(qword_64E010, dword_64E024);
+    cnt = spell_college_level_get(qword_64E010, dword_64E024);
 
     // TODO: Refactor v1.
     v1 = cnt;
@@ -3266,12 +3266,12 @@ bool sub_55DC60(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == spell_plus_bid) {
-                dword_64D360 = sub_4B1AB0(qword_64E010, dword_64E024) + 5 * (dword_64E024 + 400);
+                dword_64D360 = spell_college_level_get(qword_64E010, dword_64E024) + 5 * (dword_64E024 + 400);
                 return true;
             }
 
             if (msg->data.button.button_handle == spell_minus_bid) {
-                dword_64D360 = sub_4B1AB0(qword_64E010, dword_64E024) - 1 + 5 * (dword_64E024 + 400);
+                dword_64D360 = spell_college_level_get(qword_64E010, dword_64E024) - 1 + 5 * (dword_64E024 + 400);
                 return true;
             }
 
@@ -3326,7 +3326,7 @@ bool sub_55DC60(TigMessage* msg)
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || multiplayer_is_locked()) {
-                    v1 = sub_4B1AB0(qword_64E010, dword_64E024);
+                    v1 = spell_college_level_get(qword_64E010, dword_64E024);
                     sub_57C540(qword_64E010, 5 * dword_64E024 + v1);
                 } else {
                     pkt.type = 127;
@@ -3343,7 +3343,7 @@ bool sub_55DC60(TigMessage* msg)
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || multiplayer_is_locked()) {
-                    v1 = sub_4B1AB0(qword_64E010, dword_64E024);
+                    v1 = spell_college_level_get(qword_64E010, dword_64E024);
                     if (v1 == dword_64D364[dword_64E024]) {
                         stru_5C8990.str = dword_64D3C4[10];
                         sub_550750(&stru_5C8990);
@@ -3962,7 +3962,7 @@ void sub_55F360(int player)
     }
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
-        dword_64CDDC[player][index] = sub_4B1AB0(obj, index);
+        dword_64CDDC[player][index] = spell_college_level_get(obj, index);
     }
 
     for (index = 0; index < BASIC_SKILL_COUNT; index++) {
@@ -4030,7 +4030,7 @@ void sub_55F450(int player, int type, int param)
         tech_ui_inc_degree(obj, param);
         break;
     case 4:
-        sub_57C540(obj, sub_4B1AB0(obj, param) + 5 * param);
+        sub_57C540(obj, spell_college_level_get(obj, param) + 5 * param);
         break;
     }
 }
@@ -4128,7 +4128,7 @@ void sub_55F5F0(int player, int type, int param)
         tech_ui_dec_degree(obj, param);
         break;
     case 4:
-        value = sub_4B1AB0(obj, param);
+        value = spell_college_level_get(obj, param);
         if (value == dword_64CDDC[player][param]) {
             stru_5C8990.str = dword_64D3C4[10];
             sub_4EDA60(&stru_5C8990, player, 0);

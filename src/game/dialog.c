@@ -1831,7 +1831,7 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_SC:
             v39 = sub_4167C0(pch);
-            v40 = sub_4B1AB0(a1->pc_obj, value);
+            v40 = spell_college_level_get(a1->pc_obj, value);
             if (v39 > 0) {
                 if (v40 < v39) {
                     return false;
@@ -3705,7 +3705,7 @@ void sub_419830(int a1, int a2, DialogEntryNode* a3)
     int index;
 
     sub_418480(a3->field_70, a3, 14000);
-    v1 = sub_4B1AB0(a3->npc_obj, 12);
+    v1 = spell_college_level_get(a3->npc_obj, 12);
     v3 = 0;
     switch (a1) {
     case 0:
