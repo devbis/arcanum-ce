@@ -519,7 +519,7 @@ int spell_college_level_get(int64_t obj, int college)
 }
 
 // 0x4B1B00
-bool sub_4B1B00(int64_t obj, int a2)
+bool spell_college_is_known(int64_t obj, int a2)
 {
     if (obj != OBJ_HANDLE_NULL) {
         return spell_college_level_get(obj, a2) > 0;

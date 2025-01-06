@@ -4403,7 +4403,7 @@ void iso_interface_window_enable(int window_type)
     case 1:
         for (index = 0; index < COLLEGE_COUNT; index++) {
             if (college_get_art_num(index) != -1
-                && sub_4B1B00(pc_obj, index)) {
+                && spell_college_is_known(pc_obj, index)) {
                 tig_button_show(intgame_college_buttons[index].button_handle);
             }
         }
