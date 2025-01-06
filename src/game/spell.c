@@ -459,12 +459,16 @@ bool sub_4B1950(int64_t obj, int spell)
 }
 
 // 0x4B19B0
-bool sub_4B19B0(int64_t obj, int spell)
+bool spell_remove(int64_t obj, int spell)
 {
+    int college;
+    int spell_level;
     int cost;
     int magic_points;
 
-    if (spell_college_level_get(obj, spell / 5) != spell % 5 + 1) {
+    college = COLLEGE_FROM_SPELL(spell);
+    spell_level = LEVEL_FROM_SPELL(spell);
+    if (spell_college_level_get(obj, college) != spell_level + 1) {
         return false;
     }
 
@@ -473,7 +477,7 @@ bool sub_4B19B0(int64_t obj, int spell)
     magic_points -= cost;
     stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
 
-    spell_college_level_set(obj, spell / 5, spell % 5 - 1);
+    spell_college_level_set(obj, college, spell_level);
 
     return true;
 }

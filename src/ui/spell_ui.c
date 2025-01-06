@@ -562,7 +562,7 @@ void sub_57C670(int64_t obj, int index)
 
     cost = sub_4B1650(index);
     unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
-    if (sub_4B19B0(obj, index)) {
+    if (spell_remove(obj, index)) {
         sub_57F340(index);
         stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
 
