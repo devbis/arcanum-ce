@@ -24,6 +24,6 @@ void sub_57C3F0(int index);
 void sub_57C4B0();
 bool sub_57C520(int index);
 void sub_57C540(int64_t obj, int index);
-void sub_57C670(int64_t obj, int index);
+void spell_ui_remove(int64_t obj, int spell);
 
 #endif /* ARCANUM_UI_SPELL_UI_H_ */

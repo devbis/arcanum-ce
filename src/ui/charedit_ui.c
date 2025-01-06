@@ -3348,7 +3348,7 @@ bool sub_55DC60(TigMessage* msg)
                         stru_5C8990.str = dword_64D3C4[10];
                         sub_550750(&stru_5C8990);
                     } else {
-                        sub_57C670(qword_64E010, 5 * dword_64E024 + v1 - 1);
+                        spell_ui_remove(qword_64E010, 5 * dword_64E024 + v1 - 1);
                     }
                 } else {
                     pkt.type = 127;
@@ -4135,7 +4135,7 @@ void sub_55F5F0(int player, int type, int param)
             return;
         }
 
-        sub_57C670(obj, value + 5 * param - 1);
+        spell_ui_remove(obj, value + 5 * param - 1);
         break;
     }
 }

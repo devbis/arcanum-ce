@@ -555,15 +555,15 @@ void sub_57C540(int64_t obj, int index)
 }
 
 // 0x57C670
-void sub_57C670(int64_t obj, int index)
+void spell_ui_remove(int64_t obj, int spell)
 {
     int cost;
     int unspent_points;
 
-    cost = sub_4B1650(index);
+    cost = sub_4B1650(spell);
     unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
-    if (spell_remove(obj, index)) {
-        sub_57F340(index);
+    if (spell_remove(obj, spell)) {
+        sub_57F340(spell);
         stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
 
         if (charedit_is_created()) {
