@@ -375,7 +375,7 @@ int spell_get_iq(int spell)
 }
 
 // 0x4B1770
-int spell_get_minimum_level(int spell)
+int spell_min_level(int spell)
 {
     return spell_minimum_levels[spell % FIVE];
 }
@@ -416,7 +416,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
             return false;
         }
 
-        if (spell_get_minimum_level(spell) > stat_level(obj, STAT_LEVEL)) {
+        if (spell_min_level(spell) > stat_level(obj, STAT_LEVEL)) {
             return false;
         }
 

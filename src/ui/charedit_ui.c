@@ -2686,7 +2686,7 @@ void charedit_refresh_spells_win()
         sprintf(spell_minimum_levels[index],
             "%s: %d",
             charedit_minimum_level_str,
-            spell_get_minimum_level(spells[index]));
+            spell_min_level(spells[index]));
         charedit_spell_minimum_level_labels[index].str = spell_minimum_levels[index];
     }
 

@@ -512,7 +512,7 @@ void sub_57C540(int64_t obj, int index)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
         if (!sub_4B1790(obj, index, 0)) {
-            if (spell_get_minimum_level(index) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_min_level(index) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }
@@ -532,7 +532,7 @@ void sub_57C540(int64_t obj, int index)
         }
 
         if (!sub_4B1790(obj, index, 0)) {
-            if (spell_get_minimum_level(index) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_min_level(index) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }

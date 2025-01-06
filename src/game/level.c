@@ -848,7 +848,7 @@ int sub_4A7890(int64_t obj, int college, int score)
             current_value++;
             spl++;
         } else {
-            if (spell_get_minimum_level(spl) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_min_level(spl) > stat_level(obj, STAT_LEVEL)) {
                 return 2;
             }
 
