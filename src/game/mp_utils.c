@@ -897,24 +897,24 @@ void sub_4EF060(Packet108* pkt)
 }
 
 // 0x4EF080
-void sub_4EF080(int64_t obj, int a2)
+void mp_spell_mastery_set(int64_t obj, int college)
 {
-    Packet109 pkt;
+    PacketSpellMasterySet pkt;
 
-    sub_4B1CF0(obj, a2);
+    spell_mastery_set(obj, college);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 109;
         pkt.oid = sub_407EF0(obj);
-        pkt.field_20 = a2;
+        pkt.college = college;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4EF0F0
-void sub_4EF0F0(Packet109* pkt)
+void sub_4EF0F0(PacketSpellMasterySet* pkt)
 {
-    sub_4B1CF0(objp_perm_lookup(pkt->oid), pkt->field_20);
+    spell_mastery_set(objp_perm_lookup(pkt->oid), pkt->college);
 }
 
 // 0x4EF120

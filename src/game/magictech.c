@@ -1933,7 +1933,8 @@ bool sub_4507D0(object_id_t obj, int magictech)
     }
 
     cost = magictech_spells[magictech].cost;
-    if (magictech >= 0 && magictech < MT_80 && sub_4B1CB0(obj) == magictech / 5) {
+    if (magictech >= 0 && magictech < MT_80
+        && spell_mastery_get(obj) == COLLEGE_FROM_SPELL(magictech)) {
         cost /= 2;
         if ((cost & 1) != 0) {
             cost++;
@@ -3949,7 +3950,7 @@ void sub_455250(MagicTechLock* a1, DateTime* datetime)
 
     if (a1->spell >= 0
         && a1->spell < MT_80
-        && sub_4B1CB0(a1->parent_obj.obj) == a1->spell / 5) {
+        && spell_mastery_get(a1->parent_obj.obj) == COLLEGE_FROM_SPELL(a1->spell)) {
         millis *= 2;
     }
 

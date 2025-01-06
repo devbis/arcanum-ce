@@ -25,6 +25,8 @@ typedef enum College {
 
 static_assert(COLLEGE_COUNT == 16, "wrong size");
 
+#define SPELL_MASTERY_IDX COLLEGE_COUNT
+
 typedef enum Spell {
     SPELL_DISARM,
     SPELL_UNLOCKING_CANTRIP,
@@ -137,9 +139,9 @@ bool spell_college_is_known(int64_t obj, int college);
 int spell_college_level_set(int64_t obj, int college, int level);
 bool spell_check_intelligence(int64_t obj, int intelligence);
 bool spell_check_willpower(int64_t obj, int willpower);
-bool sub_4B1C70(int64_t obj, int a2);
-int sub_4B1CB0(int64_t obj);
-void sub_4B1CF0(int64_t obj, int a2);
+bool spell_can_become_master_of_college(int64_t obj, int college);
+int spell_mastery_get(int64_t obj);
+void spell_mastery_set(int64_t obj, int college);
 
 #define COLLEGE_FROM_SPELL(spell) ((spell) / 5)
 #define LEVEL_FROM_SPELL(spell) ((spell) % 5)

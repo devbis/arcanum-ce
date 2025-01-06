@@ -324,7 +324,7 @@ int sub_4B1660(int spell, int64_t object_id)
         cost *= 2;
     }
 
-    if (sub_4B1CB0(object_id) == spell / 5) {
+    if (spell_mastery_get(object_id) == COLLEGE_FROM_SPELL(spell)) {
         cost /= 2;
     }
 
@@ -346,7 +346,7 @@ int sub_4B16C0(int spell, int64_t obj, int* a3)
 
     if (a3 != NULL) {
         *a3 = maintain[1];
-        if (sub_4B1CB0(obj) == spell / 5) {
+        if (spell_mastery_get(obj) == COLLEGE_FROM_SPELL(spell)) {
             *a3 *= 2;
         }
     }
@@ -491,7 +491,7 @@ char* college_get_name(int college)
 // 0x4B1A50
 char* college_get_description(int college)
 {
-    if (sub_4B1CB0(player_get_pc_obj()) == college) {
+    if (spell_mastery_get(player_get_pc_obj()) == college) {
         return college_mastery_descriptions[college];
     } else {
         return college_descriptions[college];
@@ -589,37 +589,39 @@ bool spell_check_willpower(int64_t obj, int willpower)
 }
 
 // 0x4B1C70
-bool sub_4B1C70(int64_t object_id, int a2)
+bool spell_can_become_master_of_college(int64_t obj, int college)
 {
-    if (sub_4B1CB0(object_id) == -1) {
-        return spell_college_level_get(object_id, a2) >= 5;
-    } else {
+    if (spell_mastery_get(obj) == -1) {
         return false;
     }
+
+    if (spell_college_level_get(obj, college) < 5) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4B1CB0
-int sub_4B1CB0(int64_t object_id)
+int spell_mastery_get(int64_t obj)
 {
-    int type;
-
-    type = obj_field_int32_get(object_id, OBJ_F_TYPE);
-    if (type == OBJ_TYPE_PC || type == OBJ_TYPE_NPC) {
-        // TODO: Figure out constant meaning.
-        return obj_arrayfield_uint32_get(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, 16);
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return -1;
     }
+
+    return obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, SPELL_MASTERY_IDX);
 }
 
 // 0x4B1CF0
-void sub_4B1CF0(int64_t obj, int a2)
+void spell_mastery_set(int64_t obj, int college)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        if (sub_4B1C70(obj, a2)) {
-            // TODO: Figure out constant meaning.
-            obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, 16, a2);
-        }
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        return;
     }
+
+    if (!spell_can_become_master_of_college(obj, college)) {
+        return;
+    }
+
+    obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, SPELL_MASTERY_IDX, college);
 }

@@ -897,13 +897,13 @@ typedef struct Packet108 {
 
 static_assert(sizeof(Packet108) == 0x18, "wrong size");
 
-typedef struct Packet109 {
+typedef struct PacketSpellMasterySet {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
-    /* 0020 */ int field_20;
-} Packet109;
+    /* 0020 */ int college;
+} PacketSpellMasterySet;
 
-static_assert(sizeof(Packet109) == 0x28, "wrong size");
+static_assert(sizeof(PacketSpellMasterySet) == 0x28, "wrong size");
 
 typedef struct Packet110 {
     /* 0000 */ int type;
@@ -1147,7 +1147,7 @@ void sub_4EEEC0(int64_t obj);
 void sub_4EEF20(int64_t obj);
 void sub_4EEF80(int64_t obj);
 void sub_4EF010(int64_t a1, bool a2);
-void sub_4EF080(int64_t obj, int a2);
+void mp_spell_mastery_set(int64_t obj, int college);
 void sub_4EF120(int map, int a2);
 void sub_4EF190(tig_art_id_t art_id);
 void sub_4EECB0(int sound_id);
