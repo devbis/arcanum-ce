@@ -68,7 +68,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_7C = sub_57CBE0;
     callbacks.field_80 = sub_550750;
     callbacks.field_58 = sub_57CCF0;
-    callbacks.field_48 = sub_57C540;
+    callbacks.field_48 = spell_ui_add;
     callbacks.field_4C = sub_57C290;
     callbacks.field_50 = sub_57C320;
     callbacks.field_54 = sub_57C4B0;

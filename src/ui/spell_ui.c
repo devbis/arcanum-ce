@@ -497,12 +497,12 @@ bool sub_57C520(int index)
 }
 
 // 0x57C540
-void sub_57C540(int64_t obj, int index)
+void spell_ui_add(int64_t obj, int spell)
 {
     int cost;
     int unspent_points;
 
-    cost = sub_4B1650(index);
+    cost = sub_4B1650(spell);
     unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
 
     if (cost > unspent_points) {
@@ -511,13 +511,13 @@ void sub_57C540(int64_t obj, int index)
     }
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
-        if (!spell_add(obj, index, false)) {
-            if (spell_min_level(index) > stat_level(obj, STAT_LEVEL)) {
+        if (!spell_add(obj, spell, false)) {
+            if (spell_min_level(spell) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }
 
-            if (spell_min_intelligence(index) > stat_level(obj, STAT_INTELLIGENCE)) {
+            if (spell_min_intelligence(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
                 sub_55F1A0();
             } else {
                 sub_55F200(6);
@@ -527,17 +527,17 @@ void sub_57C540(int64_t obj, int index)
         }
     } else {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
-            spell_add(obj, index, false);
+            spell_add(obj, spell, false);
             return;
         }
 
-        if (!spell_add(obj, index, false)) {
-            if (spell_min_level(index) > stat_level(obj, STAT_LEVEL)) {
+        if (!spell_add(obj, spell, false)) {
+            if (spell_min_level(spell) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }
 
-            if (spell_min_intelligence(index) > stat_level(obj, STAT_INTELLIGENCE)) {
+            if (spell_min_intelligence(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
                 sub_55F1A0();
             } else {
                 sub_55F200(6);

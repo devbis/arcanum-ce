@@ -3327,7 +3327,7 @@ bool sub_55DC60(TigMessage* msg)
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || multiplayer_is_locked()) {
                     v1 = spell_college_level_get(qword_64E010, dword_64E024);
-                    sub_57C540(qword_64E010, 5 * dword_64E024 + v1);
+                    spell_ui_add(qword_64E010, 5 * dword_64E024 + v1);
                 } else {
                     pkt.type = 127;
                     pkt.field_4 = 1;
@@ -4030,7 +4030,7 @@ void sub_55F450(int player, int type, int param)
         tech_ui_inc_degree(obj, param);
         break;
     case 4:
-        sub_57C540(obj, spell_college_level_get(obj, param) + 5 * param);
+        spell_ui_add(obj, spell_college_level_get(obj, param) + 5 * param);
         break;
     }
 }
