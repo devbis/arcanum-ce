@@ -2067,7 +2067,7 @@ bool sub_54B5D0(TigMessage* msg)
             switch (intgame_iso_window_type) {
             case 1:
                 for (index = 0; index < COLLEGE_COUNT; index++) {
-                    if (college_get_art_num(index) != -1
+                    if (spell_college_small_icon(index) != -1
                         && msg->data.button.button_handle == intgame_college_buttons[index].button_handle) {
                         intgame_spells_hide_college_spells(dword_64C530);
                         dword_64C530 = index;
@@ -3713,7 +3713,7 @@ bool sub_5501C0()
     }
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
-        intgame_college_buttons[index].art_num = college_get_art_num(index);
+        intgame_college_buttons[index].art_num = spell_college_small_icon(index);
         if (intgame_college_buttons[index].art_num != -1) {
             sub_54AAE0(&(intgame_college_buttons[index]));
             college_radio_group[college_radio_group_size] = intgame_college_buttons[index].button_handle;
@@ -3831,7 +3831,7 @@ void iso_interface_window_disable(int window_type)
         break;
     case 1:
         for (index = 0; index < COLLEGE_COUNT; index++) {
-            if (college_get_art_num(index) != -1) {
+            if (spell_college_small_icon(index) != -1) {
                 tig_button_hide(intgame_college_buttons[index].button_handle);
             }
         }
@@ -4402,7 +4402,7 @@ void iso_interface_window_enable(int window_type)
         break;
     case 1:
         for (index = 0; index < COLLEGE_COUNT; index++) {
-            if (college_get_art_num(index) != -1
+            if (spell_college_small_icon(index) != -1
                 && spell_college_is_known(pc_obj, index)) {
                 tig_button_show(intgame_college_buttons[index].button_handle);
             }
@@ -5475,7 +5475,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         }
         break;
     case UI_MSG_TYPE_SPELL: {
-        sub_554560(window_handle, college_get_icon(ui_message->field_8 / 5));
+        sub_554560(window_handle, spell_college_large_icon(ui_message->field_8 / 5));
         sub_550A10(window_handle,
             spell_get_name(ui_message->field_8),
             &stru_5C70C8,
@@ -5528,7 +5528,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         break;
     }
     case UI_MSG_TYPE_COLLEGE:
-        sub_554560(window_handle, college_get_icon(ui_message->field_8));
+        sub_554560(window_handle, spell_college_large_icon(ui_message->field_8));
         sub_550A10(window_handle,
             college_get_name(ui_message->field_8),
             &stru_5C70C8,

@@ -75,44 +75,48 @@ static int spell_minimum_levels[FIVE] = {
     15,
 };
 
+// Small circle-shaped spell college icons (24x24).
+//
 // 0x5B55B0
-static int college_art_nums[COLLEGE_COUNT] = {
-    11,
-    44,
-    38,
-    92,
-    50,
-    86,
-    56,
-    98,
-    62,
-    68,
-    74,
-    104,
-    110,
-    80,
-    116,
-    122,
+static int spell_college_small_icons[COLLEGE_COUNT] = {
+    /*         CONVEYANCE*/ 11,
+    /*         DIVINATION*/ 44,
+    /*                AIR*/ 38,
+    /*              EARTH*/ 92,
+    /*               FIRE*/ 50,
+    /*              WATER*/ 86,
+    /*              FORCE*/ 56,
+    /*             MENTAL*/ 98,
+    /*               META*/ 62,
+    /*              MORPH*/ 68,
+    /*             NATURE*/ 74,
+    /*  NECROMANTIC_BLACK*/ 104,
+    /*  NECROMANTIC_WHITE*/ 110,
+    /*           PHANTASM*/ 80,
+    /*          SUMMONING*/ 116,
+    /*           TEMPORAL*/ 122,
 };
 
+// Large square-shaped spell college icon (64x64).
+//
 // 0x5B55F0
-static int college_icons[COLLEGE_COUNT] = {
-    446,
-    447,
-    448,
-    449,
-    450,
-    451,
-    452,
-    453,
-    454,
-    455,
-    456,
-    457,
-    458,
-    459,
-    460,
-    461,
+static int spell_college_large_icons[COLLEGE_COUNT] = {
+    /*         CONVEYANCE*/ 446,
+    /*         DIVINATION*/ 447,
+    /*                AIR*/ 448,
+    /*              EARTH*/ 449,
+    /*               FIRE*/ 450,
+    /*              WATER*/ 451,
+    /*              FORCE*/ 452,
+    /*             MENTAL*/ 453,
+    /*               META*/ 454,
+    /*              MORPH*/ 455,
+    /*             NATURE*/ 456,
+    /*  NECROMANTIC_BLACK*/ 457,
+    /*  NECROMANTIC_WHITE*/ 458,
+    /*           PHANTASM*/ 459,
+    /*          SUMMONING*/ 460,
+    /*           TEMPORAL*/ 461,
 };
 
 // 0x5B5630
@@ -500,18 +504,18 @@ char* college_get_description(int college)
 }
 
 // 0x4B1A80
-int college_get_art_num(int college)
+int spell_college_small_icon(int college)
 {
-    return college_art_nums[college];
+    return spell_college_small_icons[college];
 }
 
 // 0x4B1A90
-int college_get_icon(int college)
+int spell_college_large_icon(int college)
 {
     if (college >= 0 && college < COLLEGE_COUNT) {
-        return college_icons[college];
+        return spell_college_large_icons[college];
     } else {
-        return college_icons[0];
+        return spell_college_large_icons[0];
     }
 }
 

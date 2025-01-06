@@ -2521,7 +2521,7 @@ bool charedit_create_spells_win()
     button_data.mouse_exit_snd_id = -1;
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
-        art_num = college_get_art_num(index);
+        art_num = spell_college_small_icon(index);
         if (art_num != -1) {
             tig_art_interface_id_create(art_num, 0, 0, 0, &(button_data.art_id));
             button_data.x = charedit_college_buttons[index].x - 503;
