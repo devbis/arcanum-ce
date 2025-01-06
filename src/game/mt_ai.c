@@ -419,7 +419,7 @@ void magictech_build_ai_action_list(S5FF620* a1)
 
     if (stat_level(a1->obj, STAT_MAGICK_POINTS) > 0) {
         for (index = 0; index < v1->cnt; index++) {
-            if (sub_4B1950(a1->obj, v1->entries[index].spell)) {
+            if (spell_is_known(a1->obj, v1->entries[index].spell)) {
                 sub_4CCAD0(v1->entries[index].spell);
             }
         }

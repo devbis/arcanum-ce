@@ -128,7 +128,7 @@ int spell_min_intelligence(int spell);
 int spell_min_willpower(int spell);
 int spell_min_level(int spell);
 bool spell_add(int64_t obj, int spell, bool force);
-bool sub_4B1950(int64_t obj, int spell);
+bool spell_is_known(int64_t obj, int spell);
 bool spell_remove(int64_t obj, int spell);
 char* college_get_name(int college);
 char* college_get_description(int college);

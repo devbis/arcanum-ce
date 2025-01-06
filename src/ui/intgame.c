@@ -1963,7 +1963,7 @@ bool sub_54B5D0(TigMessage* msg)
                 for (index = 0; index < 5; index++) {
                     if (intgame_spell_buttons[5 * dword_64C530 + index].art_num != -1
                         && msg->data.button.button_handle == intgame_spell_buttons[5 * dword_64C530 + index].button_handle) {
-                        if (sub_4B1950(player_get_pc_obj(), 5 * dword_64C530 + index)) {
+                        if (spell_is_known(player_get_pc_obj(), 5 * dword_64C530 + index)) {
                             sub_57EFA0(3, 5 * dword_64C530 + index, OBJ_HANDLE_NULL);
                             sub_57BC70(player_get_pc_obj(), 5 * dword_64C530 + index);
                         }
@@ -4140,7 +4140,7 @@ void intgame_spells_show_college_spells(int clg)
     if (pc_obj != OBJ_HANDLE_NULL) {
         for (lvl = 0; lvl < 5; lvl++) {
             spl = clg * 5 + lvl;
-            if (!sub_4B1950(pc_obj, spl)) {
+            if (!spell_is_known(pc_obj, spl)) {
                 break;
             }
 
@@ -8345,7 +8345,7 @@ int sub_557CF0()
             && y >= button_data.y
             && x < button_data.x + button_data.width
             && y < button_data.y + button_data.height) {
-            if (sub_4B1950(pc_obj, 5 * dword_64C530 + index)) {
+            if (spell_is_known(pc_obj, 5 * dword_64C530 + index)) {
                 return index;
             } else {
                 return 5;

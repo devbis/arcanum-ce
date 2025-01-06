@@ -1453,7 +1453,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         spl = script_get_value(condition->op_type[1], condition->op_value[1], state);
         matched = 0;
         for (index = 0; index < cnt; index++) {
-            if (sub_4B1950(objs[index], spl)) {
+            if (spell_is_known(objs[index], spl)) {
                 matched++;
             }
         }

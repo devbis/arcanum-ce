@@ -451,11 +451,12 @@ bool spell_add(int64_t obj, int spell, bool force)
     return true;
 }
 
-bool sub_4B1950(int64_t obj, int spell)
+// 0x4B1950
+bool spell_is_known(int64_t obj, int spell)
 {
     return obj != OBJ_HANDLE_NULL
         && spell >= 0 && spell < SPELL_COUNT
-        && spell % 5 + 1 <= spell_college_level_get(obj, spell / 5);
+        && LEVEL_FROM_SPELL(spell) + 1 <= spell_college_level_get(obj, COLLEGE_FROM_SPELL(spell));
 }
 
 // 0x4B19B0
