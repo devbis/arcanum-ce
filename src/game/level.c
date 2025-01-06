@@ -852,7 +852,7 @@ int sub_4A7890(int64_t obj, int college, int score)
                 return 2;
             }
 
-            if (sub_4B1750(spl) > stat_level(obj, STAT_INTELLIGENCE)) {
+            if (spell_min_intelligence(spl) > stat_level(obj, STAT_INTELLIGENCE)) {
                 intelligence = stat_get_base(obj, STAT_INTELLIGENCE);
                 rc = sub_4A75E0(obj, STAT_INTELLIGENCE, intelligence + 1);
             } else {

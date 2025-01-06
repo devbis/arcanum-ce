@@ -1379,7 +1379,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
     item_type = obj_field_int32_get(item_obj, OBJ_F_TYPE);
     if (item_type == OBJ_TYPE_SCROLL) {
         int spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1);
-        int min_intelligence = sub_4B1750(spell);
+        int min_intelligence = spell_min_intelligence(spell);
         if (min_intelligence > stat_level(source_obj, STAT_INTELLIGENCE)) {
             if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                 sub_4673F0(source_obj, ITEM_CANNOT_DUMB);

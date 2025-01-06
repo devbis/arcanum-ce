@@ -363,7 +363,7 @@ int sub_4B1740(int spell)
 }
 
 // 0x4B1750
-int sub_4B1750(int spell)
+int spell_min_intelligence(int spell)
 {
     return sub_4502E0(spell);
 }
@@ -420,7 +420,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
             return false;
         }
 
-        if (sub_4B1750(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
+        if (spell_min_intelligence(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
             return false;
         }
 
@@ -552,7 +552,7 @@ bool sub_4B1B90(int64_t obj, int intelligence)
     v1 = 0;
     for (college = 0; college < COLLEGE_COUNT; college++) {
         for (v2 = 0; v2 < spell_college_level_get(obj, college); v2++) {
-            if (sub_4B1750(v1 + v2) > intelligence) {
+            if (spell_min_intelligence(v1 + v2) > intelligence) {
                 return false;
             }
         }

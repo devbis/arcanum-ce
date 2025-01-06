@@ -122,7 +122,7 @@ int sub_4B1650(int spell);
 int sub_4B1660(int spell, int64_t obj);
 int sub_4B16C0(int spell, int64_t obj, int* a3);
 int sub_4B1740(int spell);
-int sub_4B1750(int spell);
+int spell_min_intelligence(int spell);
 int spell_min_willpower(int spell);
 int spell_min_level(int spell);
 bool sub_4B1790(int64_t obj, int spell, bool force);

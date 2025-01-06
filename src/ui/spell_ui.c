@@ -517,7 +517,7 @@ void sub_57C540(int64_t obj, int index)
                 return;
             }
 
-            if (sub_4B1750(index) > stat_level(obj, STAT_INTELLIGENCE)) {
+            if (spell_min_intelligence(index) > stat_level(obj, STAT_INTELLIGENCE)) {
                 sub_55F1A0();
             } else {
                 sub_55F200(6);
@@ -537,7 +537,7 @@ void sub_57C540(int64_t obj, int index)
                 return;
             }
 
-            if (sub_4B1750(index) > stat_level(obj, STAT_INTELLIGENCE)) {
+            if (spell_min_intelligence(index) > stat_level(obj, STAT_INTELLIGENCE)) {
                 sub_55F1A0();
             } else {
                 sub_55F200(6);

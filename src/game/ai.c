@@ -3684,7 +3684,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
             return 2;
         }
 
-        if (sub_4B1750(magictech) > stat_level(a1, STAT_INTELLIGENCE)) {
+        if (spell_min_intelligence(magictech) > stat_level(a1, STAT_INTELLIGENCE)) {
             return 3;
         }
 
