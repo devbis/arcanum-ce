@@ -3688,7 +3688,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
             return 3;
         }
 
-        if (spell_get_iq(magictech) > stat_level(a1, STAT_WILLPOWER)) {
+        if (spell_min_willpower(magictech) > stat_level(a1, STAT_WILLPOWER)) {
             return 7;
         }
 

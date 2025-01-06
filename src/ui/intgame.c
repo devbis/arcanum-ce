@@ -5484,7 +5484,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
 
         mes_file_entry1.num = 73; // "Bonus to Heal skill"
         mes_get_msg(intgame_mes_file, &mes_file_entry1);
-        sprintf(str, "%s: %d", mes_file_entry1.str, spell_get_iq(ui_message->field_8));
+        sprintf(str, "%s: %d", mes_file_entry1.str, spell_min_willpower(ui_message->field_8));
         sub_550A10(window_handle, str, &stru_5C70D8, dword_64C498, 1);
 
         mes_file_entry1.num = 59; // "Damage"

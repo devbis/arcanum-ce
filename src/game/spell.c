@@ -369,7 +369,7 @@ int sub_4B1750(int spell)
 }
 
 // 0x4B1760
-int spell_get_iq(int spell)
+int spell_min_willpower(int spell)
 {
     return magictech_get_iq(spell);
 }
@@ -424,7 +424,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
             return false;
         }
 
-        if (spell_get_iq(spell) > stat_level(obj, STAT_WILLPOWER)) {
+        if (spell_min_willpower(spell) > stat_level(obj, STAT_WILLPOWER)) {
             return false;
         }
 
@@ -575,7 +575,7 @@ bool sub_4B1C00(int64_t obj, int willpower)
     v1 = 0;
     for (college = 0; college < COLLEGE_COUNT; college++) {
         for (v2 = 0; v2 < spell_college_level_get(obj, college); v2++) {
-            if (spell_get_iq(v1 + v2) > willpower) {
+            if (spell_min_willpower(v1 + v2) > willpower) {
                 return false;
             }
         }
