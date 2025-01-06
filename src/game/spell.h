@@ -125,7 +125,7 @@ int sub_4B1740(int spell);
 int spell_min_intelligence(int spell);
 int spell_min_willpower(int spell);
 int spell_min_level(int spell);
-bool sub_4B1790(int64_t obj, int spell, bool force);
+bool spell_add(int64_t obj, int spell, bool force);
 bool sub_4B1950(int64_t obj, int spell);
 bool sub_4B19B0(int64_t obj, int spell);
 char* college_get_name(int college);
@@ -141,6 +141,7 @@ bool sub_4B1C70(int64_t obj, int a2);
 int sub_4B1CB0(int64_t obj);
 void sub_4B1CF0(int64_t obj, int a2);
 
-#define COLLEGE_FROM_SPELL(spell) ((spell / 5))
+#define COLLEGE_FROM_SPELL(spell) ((spell) / 5)
+#define LEVEL_FROM_SPELL(spell) ((spell) % 5)
 
 #endif /* ARCANUM_GAME_SPELL_H_ */

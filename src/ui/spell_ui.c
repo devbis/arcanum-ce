@@ -511,7 +511,7 @@ void sub_57C540(int64_t obj, int index)
     }
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
-        if (!sub_4B1790(obj, index, 0)) {
+        if (!spell_add(obj, index, false)) {
             if (spell_min_level(index) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
@@ -527,11 +527,11 @@ void sub_57C540(int64_t obj, int index)
         }
     } else {
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
-            sub_4B1790(obj, index, 0);
+            spell_add(obj, index, false);
             return;
         }
 
-        if (!sub_4B1790(obj, index, 0)) {
+        if (!spell_add(obj, index, false)) {
             if (spell_min_level(index) > stat_level(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;

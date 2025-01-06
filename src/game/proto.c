@@ -16179,7 +16179,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                     stat_set_base(obj, v2, v3);
                     break;
                 case PROTO_F_SPELL:
-                    sub_4B1790(obj, v2, 1);
+                    spell_add(obj, v2, true);
                     break;
                 case PROTO_F_FACTION:
                     obj_field_int32_set(obj, OBJ_F_NPC_FACTION, v2);

@@ -843,7 +843,7 @@ int sub_4A7890(int64_t obj, int college, int score)
             return 1;
         }
 
-        if (sub_4B1790(obj, spl, 0)) {
+        if (spell_add(obj, spl, 0)) {
             stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_value++;
             spl++;

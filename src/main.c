@@ -440,14 +440,14 @@ void main_loop()
                     case DIK_F11:
                         if (gamelib_cheat_level_get() >= 3) {
                             for (index = 0; index < SPELL_COUNT; index++) {
-                                sub_4B1790(pc_obj, index, true);
+                                spell_add(pc_obj, index, true);
                             }
 
                             stat_set_base(pc_obj, STAT_INTELLIGENCE, 20);
                             stat_set_base(pc_obj, STAT_WILLPOWER, 20);
 
                             for (index = 0; index < SPELL_COUNT; index++) {
-                                sub_4B1790(pc_obj, index, true);
+                                spell_add(pc_obj, index, true);
                             }
 
                             sub_44FE20();

@@ -381,10 +381,11 @@ int spell_min_level(int spell)
 }
 
 // 0x4B1790
-bool sub_4B1790(int64_t obj, int spell, bool force)
+bool spell_add(int64_t obj, int spell, bool force)
 {
-    int v1;
-    int v2;
+    int college;
+    int new_spell_level;
+    int spell_level;
     int magic_points;
     int cost;
 
@@ -408,11 +409,12 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
-    v1 = spell % 5 + 1;
-    v2 = spell_college_level_get(obj, spell / 5);
+    college = COLLEGE_FROM_SPELL(spell);
+    new_spell_level = LEVEL_FROM_SPELL(spell) + 1;
+    spell_level = spell_college_level_get(obj, college);
 
     if (!force) {
-        if (v1 != v2 + 1) {
+        if (new_spell_level != spell_level + 1) {
             return false;
         }
 
@@ -430,7 +432,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
 
         cost = sub_4B1650(spell);
     } else  {
-        cost = v1 - v2;
+        cost = new_spell_level - spell_level;
         if (cost < 0) {
             return true;
         }
@@ -440,7 +442,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
     magic_points += cost;
     stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
 
-    spell_college_level_set(obj, spell / 5, v1);
+    spell_college_level_set(obj, college, new_spell_level);
 
     if (player_is_pc_obj(obj)) {
         sub_4601C0();
