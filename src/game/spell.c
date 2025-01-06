@@ -567,24 +567,22 @@ bool spell_check_intelligence(int64_t obj, int intelligence)
     return true;
 }
 
-// TODO: Review.
-//
 // 0x4B1C00
-bool sub_4B1C00(int64_t obj, int willpower)
+bool spell_check_willpower(int64_t obj, int willpower)
 {
     int college;
-    int v1;
-    int v2;
+    int cnt;
+    int level;
+    int spell;
 
-    v1 = 0;
     for (college = 0; college < COLLEGE_COUNT; college++) {
-        for (v2 = 0; v2 < spell_college_level_get(obj, college); v2++) {
-            if (spell_min_willpower(v1 + v2) > willpower) {
+        cnt = spell_college_level_get(obj, college);
+        for (level = 0; level < cnt; level++) {
+            spell = college * 5 + level;
+            if (spell_min_willpower(spell) > willpower) {
                 return false;
             }
         }
-
-        v1 += 5;
     }
 
     return true;

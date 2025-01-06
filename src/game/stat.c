@@ -611,7 +611,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
             }
             break;
         case STAT_WILLPOWER:
-            if (!sub_4B1C00(obj, after)) {
+            if (!spell_check_willpower(obj, after)) {
                 return before;
             }
             break;

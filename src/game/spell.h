@@ -136,7 +136,7 @@ int spell_college_level_get(int64_t obj, int college);
 bool spell_college_is_known(int64_t obj, int college);
 int spell_college_level_set(int64_t obj, int college, int level);
 bool spell_check_intelligence(int64_t obj, int intelligence);
-bool sub_4B1C00(int64_t obj, int willpower);
+bool spell_check_willpower(int64_t obj, int willpower);
 bool sub_4B1C70(int64_t obj, int a2);
 int sub_4B1CB0(int64_t obj);
 void sub_4B1CF0(int64_t obj, int a2);
