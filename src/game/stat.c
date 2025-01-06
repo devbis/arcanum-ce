@@ -606,7 +606,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
             if (!spell_check_intelligence(obj, after)) {
                 return before;
             }
-            if (!sub_4B02B0(obj, after)) {
+            if (!tech_check_intelligence(obj, after)) {
                 return before;
             }
             break;

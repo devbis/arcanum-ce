@@ -46,7 +46,7 @@ int tech_get_cost_for_degree(int a1);
 int sub_4B00B0(object_id_t obj, int tech);
 int tech_get_min_intelligence_for_degree(int degree);
 void tech_learn_schematic(int64_t pc_obj, int64_t written_obj);
-bool sub_4B02B0(object_id_t obj, int intelligence);
+bool tech_check_intelligence(int64_t obj, int intelligence);
 int sub_4B0320(int a1, int a2);
 
 #endif /* ARCANUM_GAME_TECH_H_ */

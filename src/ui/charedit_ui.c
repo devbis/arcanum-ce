@@ -1461,7 +1461,7 @@ bool sub_55A5C0(TigMessage* msg)
                         }
 
                         if (param == CHAREDIT_STAT_INTELLIGENCE_BASE
-                            && !sub_4B02B0(qword_64E010, value - 1)) {
+                            && !tech_check_intelligence(qword_64E010, value - 1)) {
                             stru_5C8990.str = dword_64D3C4[14];
                             sub_550750(&stru_5C8990);
                             return true;
@@ -4088,7 +4088,7 @@ void sub_55F5F0(int player, int type, int param)
             }
 
             if (stru_5C8028[param].art_num == CHAREDIT_STAT_INTELLIGENCE_BASE
-                && !sub_4B02B0(obj, value - 1)) {
+                && !tech_check_intelligence(obj, value - 1)) {
                 stru_5C8990.str = dword_64D3C4[14];
                 sub_4EDA60(&stru_5C8990, player, 0);
                 return;

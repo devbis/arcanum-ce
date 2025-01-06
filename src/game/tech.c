@@ -338,13 +338,12 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
 }
 
 // 0x4B02B0
-bool sub_4B02B0(object_id_t obj, int intelligence)
+bool tech_check_intelligence(int64_t obj, int intelligence)
 {
     int tech;
     int degree;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return true;
     }
 
