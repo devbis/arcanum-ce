@@ -603,7 +603,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
 
         switch (stat) {
         case STAT_INTELLIGENCE:
-            if (!sub_4B1B90(obj, after)) {
+            if (!spell_check_intelligence(obj, after)) {
                 return before;
             }
             if (!sub_4B02B0(obj, after)) {

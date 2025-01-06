@@ -546,24 +546,22 @@ int spell_college_level_set(int64_t obj, int college, int level)
     return level;
 }
 
-// TODO: Review.
-//
 // 0x4B1B90
-bool sub_4B1B90(int64_t obj, int intelligence)
+bool spell_check_intelligence(int64_t obj, int intelligence)
 {
     int college;
-    int v1;
-    int v2;
+    int cnt;
+    int level;
+    int spell;
 
-    v1 = 0;
     for (college = 0; college < COLLEGE_COUNT; college++) {
-        for (v2 = 0; v2 < spell_college_level_get(obj, college); v2++) {
-            if (spell_min_intelligence(v1 + v2) > intelligence) {
+        cnt = spell_college_level_get(obj, college);
+        for (level = 0; level < cnt; level++) {
+            spell = college * 5 + level;
+            if (spell_min_intelligence(spell) > intelligence) {
                 return false;
             }
         }
-
-        v1 += 5;
     }
 
     return true;
