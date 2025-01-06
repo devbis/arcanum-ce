@@ -5490,33 +5490,33 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         mes_file_entry1.num = 59; // "Damage"
         mes_get_msg(intgame_mes_file, &mes_file_entry1);
 
-        int v1;
-        int v2;
-        int v3;
+        int cast_cost;
+        int maintain_cost;
+        int maintain_period;
 
-        v1 = sub_4B1660(ui_message->field_8, ui_message->field_10);
-        v2 = sub_4B16C0(ui_message->field_8, ui_message->field_10, &v3);
-        if (v3 == 1) {
+        cast_cost = spell_cast_cost(ui_message->field_8, ui_message->field_10);
+        maintain_cost = spell_maintain_cost(ui_message->field_8, ui_message->field_10, &maintain_period);
+        if (maintain_period == 1) {
             mes_file_entry2.num = 74; // "second"
             mes_get_msg(intgame_mes_file, &mes_file_entry2);
             sprintf(str,
                 "%s: %d  (%d / %s)",
                 mes_file_entry1.str,
-                v1,
-                v2,
+                cast_cost,
+                maintain_cost,
                 mes_file_entry2.str);
-        } else if (v3 > 1) {
+        } else if (maintain_period > 1) {
             mes_file_entry2.num = 75; // "seconds"
             mes_get_msg(intgame_mes_file, &mes_file_entry2);
             sprintf(str,
                 "%s: %d  (%d / %d %s)",
                 mes_file_entry1.str,
-                v1,
-                v2,
-                v3,
+                cast_cost,
+                maintain_cost,
+                maintain_period,
                 mes_file_entry2.str);
         } else {
-            sprintf(str, "%s: %d", mes_file_entry1.str, v1);
+            sprintf(str, "%s: %d", mes_file_entry1.str, cast_cost);
         }
         sub_550A10(window_handle, str, &stru_5C70D8, dword_64C498, 2);
 

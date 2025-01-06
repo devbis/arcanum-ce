@@ -3680,7 +3680,7 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
             }
         }
 
-        if (sub_4B1660(magictech, a1) >= critter_fatigue_current(a1)) {
+        if (spell_cast_cost(magictech, a1) >= critter_fatigue_current(a1)) {
             return 2;
         }
 

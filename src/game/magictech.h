@@ -227,6 +227,14 @@ typedef struct MagicTechResistance {
 
 static_assert(sizeof(MagicTechResistance) == 0x8, "wrong size");
 
+typedef struct MagicTechMaintenanceInfo {
+    /* 0000 */ int cost;
+    /* 0004 */ int period;
+} MagicTechMaintenanceInfo;
+
+static_assert(sizeof(MagicTechMaintenanceInfo) == 0x8, "wrong size");
+
+
 typedef struct MagicTechAoe {
     /* 0000 */ uint64_t aoe_flags;
     /* 0008 */ unsigned int aoe_spell_flags;
@@ -247,7 +255,7 @@ typedef struct MagicTechInfo {
     /* 0004 */ int iq;
     /* 0008 */ int cost;
     /* 000C */ MagicTechResistance resistance;
-    /* 0014 */ int maintain[2];
+    /* 0014 */ MagicTechMaintenanceInfo maintenance;
     /* 001C */ int duration1;
     /* 0020 */ int duration2;
     /* 0024 */ int duration_stat;
@@ -372,7 +380,7 @@ int magictech_get_iq(int magictech);
 int magictech_get_cost(int magictech);
 bool sub_450370(int magictech);
 bool sub_4503A0(int magictech);
-int* magictech_get_maintain1(int magictech);
+MagicTechMaintenanceInfo* magictech_get_maintenance(int magictech);
 int magictech_get_duration1(int magictech);
 bool sub_450420(int64_t obj, int cost, bool a3, int magictech);
 void sub_4507B0(object_id_t obj, int magictech);

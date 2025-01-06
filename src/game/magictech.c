@@ -1893,16 +1893,16 @@ bool sub_450370(int magictech)
 bool sub_4503A0(int magictech)
 {
     if (magictech_initialized) {
-        return magictech_spells[magictech].maintain[1] > 0;
+        return magictech_spells[magictech].maintenance.period > 0;
     } else {
         return false;
     }
 }
 
 // 0x4503E0
-int* magictech_get_maintain1(int magictech)
+MagicTechMaintenanceInfo* magictech_get_maintenance(int magictech)
 {
-    return magictech_spells[magictech].maintain;
+    return &(magictech_spells[magictech].maintenance);
 }
 
 // 0x450400
@@ -1982,7 +1982,6 @@ bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech)
 bool sub_450940(int magictech)
 {
     MagicTechLock* v1;
-    int* maintain;
     int cost;
 
     if (!sub_4557C0(magictech, &v1)) {
@@ -1998,8 +1997,7 @@ bool sub_450940(int magictech)
     if (v1->action == 0) {
         cost = magictech_spells[magictech].cost;
     } else {
-        maintain = magictech_get_maintain1(magictech);
-        cost = maintain[0];
+        cost = magictech_get_maintenance(magictech)->cost;
     }
 
     if (dword_5E75FC) {
@@ -3101,7 +3099,7 @@ bool sub_4532F0(int64_t obj, int magictech)
         return true;
     }
 
-    cost = magictech_get_maintain1(magictech)[0];
+    cost = magictech_get_maintenance(magictech)->cost;
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
         && stat_level(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
@@ -3120,7 +3118,7 @@ bool sub_453370(int64_t obj, int magictech, int a3)
         return true;
     }
 
-    cost = magictech_get_maintain1(magictech)[0];
+    cost = magictech_get_maintenance(magictech)->cost;
     v1 = a3 * cost / 100;
     if (v1 == 0) {
         v1 = 1;
@@ -3278,7 +3276,7 @@ bool sub_4537B0()
 
             if (resistance > 0
                 && (dword_5E7598->flags & 0x80) == 0
-                && dword_5E7598->maintain[1] <= 0) {
+                && dword_5E7598->maintenance.period <= 0) {
                 if (dword_5E7620->stat != -1) {
                     v1 = dword_5E75F0->field_144 / 10;
                 } else {
@@ -3319,7 +3317,7 @@ bool sub_4537B0()
                     dword_5E75F0->field_144 = 50;
                 }
             } else {
-                if (dword_5E7598->maintain[1] == 0) {
+                if (dword_5E7598->maintenance.period == 0) {
                     return false;
                 }
             }
@@ -3355,7 +3353,7 @@ int sub_453B20(int64_t a1, int64_t a2, int spell)
             }
             if (resistance > 0
                 && (info->flags & 0x80) == 0
-                && info->maintain[1] <= 0) {
+                && info->maintenance.period <= 0) {
                 if (info->resistance.stat != -1) {
                     v2 = resistance / 10;
                 } else {
@@ -3377,7 +3375,7 @@ int sub_453B20(int64_t a1, int64_t a2, int spell)
                 int v3 = info->resistance.value + stat_level(a2, info->resistance.stat) - v2;
                 if (v3 > 0 && random_between(1, 20) <= v3) {
                     if ((info->flags & 0x80) == 0) {
-                        if (info->maintain[1] == 0) {
+                        if (info->maintenance.period == 0) {
                             resistance = 100;
                         }
                     } else {
@@ -3521,7 +3519,7 @@ bool sub_4545E0(MagicTechLock* a1)
             && (magictech_spells[magictech_locks[idx].spell].flags & 0x04) == 0
             && magictech_locks[idx].parent_obj.obj == a1->parent_obj.obj
             && (magictech_locks[idx].field_13C & 0x04) != 0
-            && magictech_spells[magictech_locks[idx].spell].maintain[1] > 0) {
+            && magictech_spells[magictech_locks[idx].spell].maintenance.period > 0) {
             cnt++;
         }
     }
@@ -5074,7 +5072,7 @@ void sub_457450(int64_t obj)
         if (magictech_locks[index].source_obj.obj == obj) {
             info = &(magictech_spells[magictech_locks[index].spell]);
             if ((info->flags & 0x4) == 0
-                && (info->item_triggers == 0 || info->maintain[1] > 0)) {
+                && (info->item_triggers == 0 || info->maintenance.period > 0)) {
                 magictech_interrupt_delayed(magictech_locks[index].field_0);
             }
         }
@@ -5124,8 +5122,8 @@ void sub_457580(MagicTechInfo* info, int magictech)
     info->cost = 0;
     info->flags = 0;
     info->item_triggers = 0;
-    info->maintain[0] = 0;
-    info->maintain[1] = 0;
+    info->maintenance.cost = 0;
+    info->maintenance.period = 0;
     info->duration1 = 0;
     info->duration2 = -1;
     info->duration_stat = 0;
@@ -5257,8 +5255,8 @@ void sub_4578F0(MagicTechInfo* info, char* str)
     }
 
     if (tig_str_parse_named_complex_value(&curr, "Maintain:", '@', &value1, &value2)) {
-        info->maintain[0] = value1;
-        info->maintain[1] = value2;
+        info->maintenance.cost = value1;
+        info->maintenance.period = value2;
     }
 
     if (tig_str_parse_named_complex_value(&curr, "Duration:", '@', &value1, &value2)) {
@@ -6422,7 +6420,7 @@ bool sub_459C10(int64_t obj, int magictech)
 {
     MagicTechLock* v1;
     MagicTechInfo* info;
-    int* maintain;
+    MagicTechMaintenanceInfo* maintenance;
     int resistance;
     int roll;
     int v2;
@@ -6434,7 +6432,7 @@ bool sub_459C10(int64_t obj, int magictech)
     }
 
     info = &(magictech_spells[v1->spell]);
-    maintain = magictech_get_maintain1(v1->spell);
+    maintenance = magictech_get_maintenance(v1->spell);
     if ((info->flags & 0x04) != 0
         || (v1->field_13C & 0x10) != 0
         || obj == OBJ_HANDLE_NULL) {
@@ -6460,7 +6458,7 @@ bool sub_459C10(int64_t obj, int magictech)
 
         roll = random_between(1, 100);
         v2 = roll < resistance ? resistance - roll : 0;
-        if (resistance > 0 && (info->flags & 0x80) == 0 && maintain[1] <= 0) {
+        if (resistance > 0 && (info->flags & 0x80) == 0 && maintenance->period <= 0) {
             if (info->resistance.stat != -1) {
                 v3 = v2 / 10;
             } else {

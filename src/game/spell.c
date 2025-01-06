@@ -315,16 +315,16 @@ int spell_cost(int spell)
 }
 
 // 0x4B1660
-int sub_4B1660(int spell, int64_t object_id)
+int spell_cast_cost(int spell, int64_t obj)
 {
     int cost;
 
     cost = magictech_get_cost(spell);
-    if (stat_level(object_id, STAT_RACE) == RACE_DWARF) {
+    if (stat_level(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
-    if (spell_mastery_get(object_id) == COLLEGE_FROM_SPELL(spell)) {
+    if (spell_mastery_get(obj) == COLLEGE_FROM_SPELL(spell)) {
         cost /= 2;
     }
 
@@ -332,26 +332,26 @@ int sub_4B1660(int spell, int64_t object_id)
 }
 
 // 0x4B16C0
-int sub_4B16C0(int spell, int64_t obj, int* a3)
+int spell_maintain_cost(int spell, int64_t obj, int* period_ptr)
 {
-    int* maintain;
-    int value;
+    MagicTechMaintenanceInfo* maintenance;
+    int cost;
 
-    maintain = magictech_get_maintain1(spell);
+    maintenance = magictech_get_maintenance(spell);
 
-    value = maintain[0];
+    cost = maintenance->cost;
     if (stat_level(obj, STAT_RACE) == RACE_DWARF) {
-        value *= 2;
+        cost *= 2;
     }
 
-    if (a3 != NULL) {
-        *a3 = maintain[1];
+    if (period_ptr != NULL) {
+        *period_ptr = maintenance->period;
         if (spell_mastery_get(obj) == COLLEGE_FROM_SPELL(spell)) {
-            *a3 *= 2;
+            *period_ptr *= 2;
         }
     }
 
-    return value;
+    return cost;
 }
 
 // 0x4B1740
