@@ -134,7 +134,7 @@ int college_get_art_num(int college);
 int college_get_icon(int college);
 int spell_college_level_get(int64_t obj, int college);
 bool sub_4B1B00(int64_t obj, int a2);
-int sub_4B1B30(int64_t obj, int a2, int a3);
+int spell_college_level_set(int64_t obj, int college, int level);
 bool sub_4B1B90(int64_t obj, int intelligence);
 bool sub_4B1C00(int64_t obj, int willpower);
 bool sub_4B1C70(int64_t obj, int a2);

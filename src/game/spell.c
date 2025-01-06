@@ -440,7 +440,7 @@ bool sub_4B1790(int64_t obj, int spell, bool force)
     magic_points += cost;
     stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
 
-    sub_4B1B30(obj, spell / 5, v1);
+    spell_college_level_set(obj, spell / 5, v1);
 
     if (player_is_pc_obj(obj)) {
         sub_4601C0();
@@ -471,7 +471,7 @@ bool sub_4B19B0(int64_t obj, int spell)
     magic_points -= cost;
     stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
 
-    sub_4B1B30(obj, spell / 5, spell % 5 - 1);
+    spell_college_level_set(obj, spell / 5, spell % 5 - 1);
 
     return true;
 }
@@ -529,15 +529,15 @@ bool sub_4B1B00(int64_t obj, int a2)
 }
 
 // 0x4B1B30
-int sub_4B1B30(int64_t obj, int a2, int a3)
+int spell_college_level_set(int64_t obj, int college, int level)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
-        || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        mp_obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, a2, a3);
-        return a3;
-    } else {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
+
+    mp_obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, college, level);
+
+    return level;
 }
 
 // TODO: Review.
