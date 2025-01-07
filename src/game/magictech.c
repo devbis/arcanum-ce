@@ -4439,7 +4439,7 @@ void sub_455C30(MagicTechSerializedData* a1)
 
         if (sub_44E830(v1->parent_obj.obj, AG_THROW_SPELL, &anim_id)) {
             if (num_goal_subslots_in_use(&anim_id) < 4
-                && !sub_4B6D70()
+                && !combat_turn_based_is_active()
                 && sub_44D500(&goal_data, v1->parent_obj.obj, anim)) {
                 goal_data.params[AGDATA_SPELL_DATA].data = v1->field_0;
                 goal_data.params[AGDATA_TARGET_OBJ].obj = v1->target_obj.obj;
@@ -4539,7 +4539,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
     info = &(magictech_spells[a1->spell]);
 
     if (a1->parent_obj.obj != OBJ_HANDLE_NULL
-        && sub_4B6D70()
+        && combat_turn_based_is_active()
         && combat_turn_based_whos_turn_get() != a1->parent_obj.obj
         && obj_type_is_critter(obj_field_int32_get(a1->parent_obj.obj, OBJ_F_TYPE))) {
         return false;

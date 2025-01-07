@@ -3832,7 +3832,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
             if ((state_change & 0x90000000) == 0x90000000) {
                 run_info->field_C |= 0x02;
-                if (sub_4B6D70() && !player_is_pc_obj(run_info->field_20)) {
+                if (combat_turn_based_is_active() && !player_is_pc_obj(run_info->field_20)) {
                     sub_4B7CD0(run_info->field_20, sub_4B7C20());
                 }
 
@@ -3899,7 +3899,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
         bool rc = sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
 
-        if (!sub_4B6D70()) {
+        if (!combat_turn_based_is_active()) {
             sub_4B4320(run_info->field_20);
             return rc;
         }
@@ -4285,7 +4285,7 @@ bool sub_4246D0(AnimRunInfo* run_info)
 {
     (void)run_info;
 
-    return sub_4B6D70() == 0;
+    return combat_turn_based_is_active() == 0;
 }
 
 // 0x4246E0
@@ -5655,7 +5655,7 @@ bool sub_426F60(AnimRunInfo* run_info)
         return false;
     }
 
-    if (!sub_4B6D70()) {
+    if (!combat_turn_based_is_active()) {
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data--;
     }
 
@@ -5678,7 +5678,7 @@ bool sub_427000(int64_t obj)
     AnimID anim_id;
     AnimRunInfo* run_info;
 
-    if (sub_4B6D70()
+    if (combat_turn_based_is_active()
         && combat_turn_based_whos_turn_get() == obj
         && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_STUNNED) != 0
         && sub_44E830(obj, AG_ANIMATE_STUNNED, &anim_id)
@@ -7063,7 +7063,7 @@ bool sub_4294A0(AnimRunInfo* run_info)
 
     rc = sub_4294F0(run_info->params[0].obj, run_info->params[1].obj);
     if (!rc) {
-        if (sub_4B6D70()) {
+        if (combat_turn_based_is_active()) {
             sub_4B7C90(run_info->params[0].obj);
         }
     }
@@ -7195,7 +7195,7 @@ bool sub_429760(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         return false;
     }
 
@@ -7909,7 +7909,7 @@ bool sub_42A720(AnimRunInfo* run_info)
             && critter_pc_leader_get(node->obj) != v1) {
             sub_4A9650(v1, node->obj, 1, 0);
 
-            if (sub_4B6D70()
+            if (combat_turn_based_is_active()
                 && run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL6].data != sub_4B80D0()) {
                 v2 = true;
                 combat.dam[DAMAGE_TYPE_NORMAL] *= 2;
@@ -8546,7 +8546,7 @@ bool sub_42B7F0(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         return false;
     }
 
@@ -9055,7 +9055,7 @@ bool sub_42C440(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4B6D70()
+    if (combat_turn_based_is_active()
         && combat_turn_based_whos_turn_get() != obj) {
         return true;
     }
@@ -10344,7 +10344,7 @@ bool sub_42E590(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4B6D70()
+    if (combat_turn_based_is_active()
         && (combat_turn_based_whos_turn_get() == obj || !sub_4B7CD0(obj, 5))) {
         return false;
     }
@@ -11307,7 +11307,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
     tig_art_id_t art_id;
     AnimGoalData goal_data;
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         return true;
     }
 
@@ -13000,7 +13000,7 @@ bool sub_432990(AnimRunInfo* run_info)
 
     target_obj = run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj;
 
-    if (!sub_4B6D70() && obj_type_is_critter(obj_type)) {
+    if (!combat_turn_based_is_active() && obj_type_is_critter(obj_type)) {
         v1 = sub_5040D0(art_id);
         if (v1 == 6 || v1 == 10) {
             if (frame == art_anim_data.action_frame + 2
@@ -13381,7 +13381,7 @@ bool anim_goal_rotate(int64_t obj, int rot)
         return true;
     }
 
-    if (sub_4B6D70() && combat_turn_based_whos_turn_get() != obj) {
+    if (combat_turn_based_is_active() && combat_turn_based_whos_turn_get() != obj) {
         return true;
     }
 
@@ -13540,7 +13540,7 @@ bool sub_4339A0(int64_t obj)
 {
     return obj != OBJ_HANDLE_NULL
         && critter_is_active(obj)
-        && (!sub_4B6D70() || combat_turn_based_whos_turn_get() == obj)
+        && (!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == obj)
         && (sub_40DA20(obj) || !sub_4C1110(obj));
 }
 
@@ -14010,7 +14010,7 @@ bool sub_4348E0(int64_t obj, int action_points)
         return false;
     }
 
-    if (!sub_4B6D70()) {
+    if (!combat_turn_based_is_active()) {
         return true;
     }
 
@@ -14701,7 +14701,7 @@ bool sub_435CE0(int64_t critter_obj)
         return false;
     }
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         return false;
     }
 
@@ -14767,7 +14767,7 @@ bool sub_435E60(int64_t obj, int64_t tether_loc, int radius)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     ASSERT(obj_type_is_critter(obj_type)); // obj_type_is_critter(objType)
 
-    if ((!sub_4B6D70() || combat_turn_based_whos_turn_get() == obj)
+    if ((!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == obj)
         && radius > 0
         && obj_type_is_critter(obj_type)
         && critter_is_active(obj)
@@ -14806,7 +14806,7 @@ bool sub_436040(int64_t obj, int64_t tether_loc, int radius)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     ASSERT(obj_type_is_critter(obj_type)); // obj_type_is_critter(objType)
 
-    if ((!sub_4B6D70() || combat_turn_based_whos_turn_get() == obj)
+    if ((!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == obj)
         && radius > 0
         && obj_type_is_critter(obj_type)
         && critter_is_active(obj)

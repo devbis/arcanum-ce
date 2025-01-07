@@ -351,13 +351,13 @@ bool sub_4A8570(Ai* ai)
     }
 
     if (combat_critter_is_combat_mode_active(ai->obj)) {
-        if (!sub_4B6D70()) {
+        if (!combat_turn_based_is_active()) {
             sub_441980(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_END_COMBAT, 0);
         }
         sub_441980(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_START_COMBAT, 0);
     }
 
-    if (sub_4B6D70() && combat_turn_based_whos_turn_get() != ai->obj) {
+    if (combat_turn_based_is_active() && combat_turn_based_whos_turn_get() != ai->obj) {
         return false;
     }
 
@@ -1070,7 +1070,7 @@ void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj)
 
     if (!combat_critter_is_combat_mode_active(attacker_obj)) {
         combat_critter_activate_combat_mode(attacker_obj);
-        if (sub_4B6D70()) {
+        if (combat_turn_based_is_active()) {
             combat_turn_based_whos_turn_set(target_obj);
         }
     }
@@ -2317,7 +2317,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
 // 0x4AC180
 void sub_4AC180(Ai* ai)
 {
-    if (!sub_4B6D70() || combat_turn_based_whos_turn_get() == ai->obj) {
+    if (!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == ai->obj) {
         if ((obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) != 0) {
              sub_4AC7B0(ai);
              return;
@@ -2902,7 +2902,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
                     return true;
                 }
 
-                if (!sub_4B6D70()
+                if (!combat_turn_based_is_active()
                     && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_ENCOUNTER) != 0) {
                     object_destroy(obj);
                 }
@@ -2912,7 +2912,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
             sub_4A84F0(obj);
         }
     } else {
-        if (!sub_4B6D70() && !critter_is_dead(obj)) {
+        if (!combat_turn_based_is_active() && !critter_is_dead(obj)) {
             sub_424070(obj, 4, false, true);
         }
 
@@ -2923,7 +2923,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
         }
 
         if (!sub_4AD4D0(obj) && !v1) {
-            if (!sub_4B6D70()
+            if (!combat_turn_based_is_active()
                 && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_ENCOUNTER) != 0) {
                 object_destroy(obj);
             }
@@ -2949,7 +2949,7 @@ bool sub_4AD420(int64_t obj)
         return false;
     }
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         return false;
     }
 
@@ -2982,7 +2982,7 @@ bool sub_4AD4D0(int64_t obj)
         return false;
     }
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         return false;
     }
 

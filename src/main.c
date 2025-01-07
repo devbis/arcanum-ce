@@ -381,7 +381,7 @@ void main_loop()
                         if (sub_567A10()
                             || wmap_ui_is_created()
                             || (tig_net_flags & TIG_NET_CONNECTED) != 0
-                            || sub_4B6D70()
+                            || combat_turn_based_is_active()
                             && player_get_pc_obj() != combat_turn_based_whos_turn_get()) {
                             mainmenu_ui_start(3);
                         } else {
@@ -417,7 +417,7 @@ void main_loop()
                                 tig_window_display();
                             }
 
-                            if (!sub_4B6D70() || player_get_pc_obj() == combat_turn_based_whos_turn_get()) {
+                            if (!combat_turn_based_is_active() || player_get_pc_obj() == combat_turn_based_whos_turn_get()) {
                                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
                                     sub_551A80(0);
                                     sub_551A80(0);

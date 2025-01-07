@@ -157,7 +157,7 @@ static bool combat_fast_turn_based;
 // compatibility.
 //
 // 0x5FC22C
-static int dword_5FC22C;
+static int combat_turn_based_active;
 
 // 0x5FC230
 static int dword_5FC230;
@@ -259,10 +259,10 @@ bool combat_save(TigFile* stream)
 
     if (stream == NULL) return false;
     if (tig_file_fwrite(&combat_turn_based, sizeof(combat_turn_based), 1, stream) != 1) return false;
-    if (tig_file_fwrite(&dword_5FC22C, sizeof(dword_5FC22C), 1, stream) != 1) return false;
+    if (tig_file_fwrite(&combat_turn_based_active, sizeof(combat_turn_based_active), 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_5FC230, sizeof(dword_5FC230), 1, stream) != 1) return false;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return true;
     }
 
@@ -296,10 +296,10 @@ bool combat_load(GameLoadInfo* load_info)
 
     if (load_info->stream == NULL) return false;
     if (tig_file_fread(&combat_turn_based, sizeof(combat_turn_based), 1, load_info->stream) != 1) return false;
-    if (tig_file_fread(&dword_5FC22C, sizeof(dword_5FC22C), 1, load_info->stream) != 1) return false;
+    if (tig_file_fread(&combat_turn_based_active, sizeof(combat_turn_based_active), 1, load_info->stream) != 1) return false;
     if (tig_file_fread(&dword_5FC230, sizeof(dword_5FC230), 1, load_info->stream) != 1) return false;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return true;
     }
 
@@ -307,7 +307,7 @@ bool combat_load(GameLoadInfo* load_info)
 
     if (tig_file_fread(&combat_action_points, sizeof(combat_action_points), 1, load_info->stream) != 1) return false;
     saved_action_points = combat_action_points;
-    dword_5FC22C = false;
+    combat_turn_based_active = false;
 
     if (!combat_turn_based_start()) {
         return false;
@@ -1354,7 +1354,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
 
             combat_callbacks.field_4();
 
-            if (dword_5FC22C) {
+            if (combat_turn_based_active) {
                 combat_turn_based_whos_turn_set(obj);
             }
         }
@@ -1405,7 +1405,7 @@ void sub_4B4320(int64_t obj)
     if (obj != OBJ_HANDLE_NULL
         && (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
             || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-        && ((!dword_5FC22C && combat_critter_is_combat_mode_active(obj))
+        && ((!combat_turn_based_active && combat_critter_is_combat_mode_active(obj))
             || (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_AUTO_ANIMATES) != 0)) {
         anim_goal_fidget(obj);
     }
@@ -3000,9 +3000,9 @@ void sub_4B6D20()
 }
 
 // 0x4B6D70
-bool sub_4B6D70()
+bool combat_turn_based_is_active()
 {
-    return dword_5FC22C;
+    return combat_turn_based_active;
 }
 
 // 0x4B6D80
@@ -3050,7 +3050,7 @@ void combat_debug(int64_t obj, const char* msg)
 // 0x4B6E70
 void combat_turn_based_whos_turn_set(int64_t obj)
 {
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return;
     }
 
@@ -3141,7 +3141,7 @@ void sub_4B7080()
     DateTime datetime;
     TimeEvent timeevent;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return;
     }
 
@@ -3180,7 +3180,7 @@ bool combat_tb_timeevent_process(TimeEvent* timeevent)
 
     combat_debug(OBJ_HANDLE_NULL, "TimeEvent Process");
 
-    if (dword_5FC22C) {
+    if (combat_turn_based_active) {
         if (dword_5FC240 != NULL
             && sub_40DA20(dword_5FC240->obj)
             && combat_action_points > 0) {
@@ -3208,7 +3208,8 @@ bool combat_turn_based_start()
     ObjectNode* node;
 
     combat_debug(OBJ_HANDLE_NULL, "TB Start");
-    if (dword_5FC22C) {
+
+    if (combat_turn_based_active) {
         return true;
     }
 
@@ -3238,7 +3239,8 @@ bool combat_turn_based_start()
         node = node->next;
     }
 
-    dword_5FC22C = true;
+    combat_turn_based_active = true;
+
     return combat_turn_based_begin_turn();
 }
 
@@ -3258,9 +3260,10 @@ void combat_turn_based_end()
 
     combat_debug(OBJ_HANDLE_NULL, "TB End");
 
-    if (dword_5FC22C) {
-        dword_5FC22C = false;
-        sub_423FE0(0);
+    if (combat_turn_based_active) {
+        combat_turn_based_active = false;
+
+        sub_423FE0(NULL);
 
         if (!in_combat_reset) {
             node = stru_5FC180.head;
@@ -3440,7 +3443,7 @@ bool sub_4B7790(int64_t obj, int a2)
 {
     bool is_pc;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return true;
     }
 
@@ -3471,7 +3474,7 @@ bool sub_4B7830(int64_t a1, int64_t a2)
 {
     int type;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return sub_4B7790(a1, 0);
     }
 
@@ -3493,7 +3496,7 @@ bool sub_4B78D0(int64_t a1, int64_t a2)
     int64_t loc1;
     int64_t loc2;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return sub_4B7790(a1, 0);
     }
 
@@ -3517,7 +3520,7 @@ bool sub_4B79A0(int64_t a1, int64_t a2)
     int64_t loc2;
     int v1;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return sub_4B7790(a1, 0);
     }
 
@@ -3537,7 +3540,7 @@ bool sub_4B7A20(int64_t a1, int64_t a2)
     int64_t loc2;
     int v1;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return sub_4B7790(a1, 0);
     }
 
@@ -3553,7 +3556,7 @@ bool sub_4B7A20(int64_t a1, int64_t a2)
 // 0x4B7AA0
 bool sub_4B7AA0(int64_t obj)
 {
-    if (dword_5FC22C) {
+    if (combat_turn_based_active) {
         return sub_4B7790(obj, 4);
     } else {
         return sub_4B7790(obj, 0);
@@ -3563,7 +3566,7 @@ bool sub_4B7AA0(int64_t obj)
 // 0x4B7AE0
 bool sub_4B7AE0(int64_t obj)
 {
-    if (dword_5FC22C) {
+    if (combat_turn_based_active) {
         return sub_4B7790(obj, 4);
     } else {
         return sub_4B7790(obj, 0);
@@ -3620,7 +3623,7 @@ int sub_4B7C30(int64_t obj)
 // 0x4B7C90
 void sub_4B7C90(int64_t obj)
 {
-    if (dword_5FC22C
+    if (combat_turn_based_active
         && dword_5FC240->obj == obj) {
         combat_action_points = 0;
         combat_turn_based_next_subturn();
@@ -3633,7 +3636,7 @@ bool sub_4B7CD0(int64_t obj, int action_points)
     bool is_pc;
     CombatContext combat;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return true;
     }
 
@@ -3686,7 +3689,7 @@ void combat_turn_based_add_critter(int64_t obj)
     ObjectNode* prev = NULL;
     ObjectNode* curr;
 
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return;
     }
 
@@ -3825,7 +3828,7 @@ void sub_4B7EB0()
 // 0x4B8040
 bool sub_4B8040(int64_t obj)
 {
-    if (!dword_5FC22C) {
+    if (!combat_turn_based_active) {
         return false;
     }
 
@@ -3882,7 +3885,7 @@ void sub_4B80E0(int64_t obj)
     unsigned int flags;
     AnimFxNode node;
 
-    if (dword_5FC22C) {
+    if (combat_turn_based_active) {
         pc_obj = player_get_pc_obj();
         reaction_level = sub_4C0CC0(obj, pc_obj);
         reaction_type = reaction_translate(reaction_level);
@@ -3934,7 +3937,7 @@ bool combat_auto_attack_get(int64_t obj)
 {
     int player;
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         return false;
     }
 

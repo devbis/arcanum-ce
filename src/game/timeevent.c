@@ -831,7 +831,7 @@ void timeevent_ping(tig_timestamp_t timestamp)
         }
     } else {
         if (!sub_45B300()) {
-            if (!sub_4B6D70()) {
+            if (!combat_turn_based_is_active()) {
                 datetime_add_milliseconds(&stru_5E8600, 8 * delta);
             }
             datetime_add_milliseconds(&stru_5E8608, 8 * delta);

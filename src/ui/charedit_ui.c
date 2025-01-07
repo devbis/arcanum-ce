@@ -1571,7 +1571,7 @@ bool sub_55A5C0(TigMessage* msg)
         if (toupper(msg->data.character.ch) == 'X'
             && (tig_net_flags & TIG_NET_CONNECTED) == 0
             && dword_64CDCC == 1
-            && (!sub_4B6D70()
+            && (!combat_turn_based_is_active()
                 || combat_turn_based_whos_turn_get() == player_get_pc_obj())) {
             gamelib_save("ExportSave", "Export-Save");
             sub_4A6470(player_get_pc_obj());

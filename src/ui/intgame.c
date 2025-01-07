@@ -1771,7 +1771,7 @@ bool sub_54B5D0(TigMessage* msg)
         return false;
     }
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         if (!player_is_pc_obj(combat_turn_based_whos_turn_get())) {
             if (msg->type != TIG_MESSAGE_KEYBOARD
                 && msg->type == TIG_MESSAGE_CHAR
@@ -2567,7 +2567,7 @@ void sub_54DE50(TigMessage* msg)
 
     pc_obj = player_get_pc_obj();
 
-    if (sub_4B6D70()) {
+    if (combat_turn_based_is_active()) {
         if (combat_turn_based_whos_turn_get() != pc_obj) {
             return;
         }
@@ -2947,7 +2947,8 @@ void sub_54EA80(S4F2810* a1)
 
     pc_obj = player_get_pc_obj();
 
-    if (!sub_4B6D70() || combat_turn_based_whos_turn_get() == pc_obj) {
+    if (!combat_turn_based_is_active()
+        || combat_turn_based_whos_turn_get() == pc_obj) {
         v1.field_0 = pc_obj;
         v1.field_8 = pc_obj;
         v1.field_10 = a1;
@@ -3001,7 +3002,7 @@ void sub_54EB60()
         location_origin_set(loc);
         iso_redraw();
     } else {
-        if (sub_4B6D70()) {
+        if (combat_turn_based_is_active()) {
             obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL) {
                 loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
@@ -3403,7 +3404,7 @@ void sub_54ED30(S4F2810* a1)
         }
     } else if (sub_423300(pc_obj, &anim_id)) {
         // 0x54F68E
-        if (sub_4B6D70()) {
+        if (combat_turn_based_is_active()) {
             AnimID fidget_anim_id;
             if (sub_44E830(pc_obj, AG_ANIM_FIDGET, &fidget_anim_id)
                 && sub_421D60(&anim_id, &fidget_anim_id)
@@ -4636,7 +4637,7 @@ void sub_551910(TigMessage* msg)
                     sub_57CCF0(player_get_pc_obj(), v1.obj);
                     sub_43C270(v1.obj);
                 }
-            } else if (sub_4B6D70()
+            } else if (combat_turn_based_is_active()
                 && sub_4F2CB0(msg->data.mouse.x, msg->data.mouse.y, &v1, Tgt_Tile, intgame_fullscreen)
                 && v1.is_loc
                 && sub_551A00() == 0) {
