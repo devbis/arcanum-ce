@@ -4159,7 +4159,7 @@ bool anim_goal_interrupt_all_goals_of_priority(int priority_level)
 
     for (index = 0; index < 216; index++) {
         if ((anim_run_info[index].field_C & 0x1) != 0
-            && !sub_44E2C0(&(anim_run_info[index].id), PRIORITY_HIGHEST)) {
+            && !sub_44E2C0(&(anim_run_info[index].id), priority_level)) {
             tig_debug_printf("Anim: anim_goal_interrupt_all_goals_of_priority: ERROR: Failed to interrupt slot: %d!\n", index);
         }
     }
