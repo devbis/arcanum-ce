@@ -1314,7 +1314,8 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
     gender = stat_level(a1->pc_obj, STAT_GENDER);
     intelligence = stat_level(a1->pc_obj, STAT_INTELLIGENCE);
 
-    if (intelligence > LOW_INTELLIGENCE && sub_45FC00(a1->pc_obj)) {
+    if (intelligence > LOW_INTELLIGENCE
+        && critter_is_dumb(a1->pc_obj)) {
         intelligence = 1;
     }
 
@@ -3032,7 +3033,7 @@ void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end)
     int cnt;
     MesFileEntry mes_file_entry;
 
-    if (sub_45FC00(a2->pc_obj)) {
+    if (critter_is_dumb(a2->pc_obj)) {
         gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_DUMB_PC2M
             : GD_DUMB_PC2F;
@@ -3058,7 +3059,7 @@ void sub_418390(char* str, DialogEntryNode* a2, int start)
     int cnt;
     MesFileEntry mes_file_entry;
 
-    if (sub_45FC00(a2->pc_obj)) {
+    if (critter_is_dumb(a2->pc_obj)) {
         gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_CLS_DUMB_PC2M
             : GD_CLS_DUMB_PC2F;
@@ -3092,7 +3093,7 @@ void sub_418480(char* str, DialogEntryNode* a2, int start)
     MesFileEntry mes_file_entry;
 
     if (!sub_418870(str, a2, start / 1000 + 9999)) {
-        if (sub_45FC00(a2->npc_obj)) {
+        if (critter_is_dumb(a2->npc_obj)) {
             if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
                 gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_CLS_DUMB_M2M
@@ -3136,7 +3137,7 @@ void sub_4185F0(char* str, DialogEntryNode* a2, int start)
     int race;
 
     if (!sub_418870(str, a2, start / 1000 + 10999)) {
-        if (sub_45FC00(a2->npc_obj)) {
+        if (critter_is_dumb(a2->npc_obj)) {
             if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
                 gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_RCE_DUMB_M2M

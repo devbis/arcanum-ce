@@ -1790,7 +1790,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int value = stat_level(critter_obj, stat);
         if (stat == STAT_INTELLIGENCE
             && value > LOW_INTELLIGENCE
-            && sub_45FC00(critter_obj)) {
+            && critter_is_dumb(critter_obj)) {
             value = 1;
         }
         script_set_value(action->op_type[2], action->op_value[2], state, value);

@@ -2007,23 +2007,26 @@ bool critter_has_dark_sight(int64_t critter_obj)
 }
 
 // 0x45FC00
-bool sub_45FC00(int64_t obj)
+bool critter_is_dumb(int64_t critter_obj)
 {
     int background;
 
-    if (obj == OBJ_HANDLE_NULL
-        || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+    if (critter_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (stat_level(obj, STAT_INTELLIGENCE) <= 4) {
+    if (!obj_type_is_critter(obj_field_int32_get(critter_obj, OBJ_F_TYPE))) {
+        return false;
+    }
+
+    if (stat_level(critter_obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
         return true;
     }
 
-    background = background_obj_get_background(obj);
-    if (background == 55
-        || background == 74
-        || background == 75) {
+    background = background_obj_get_background(critter_obj);
+    if (background == BACKGROUND_IDIOT_SAVANT
+        || background == BACKGROUND_FRANKENSTEIN_MONSTER
+        || background == BACKGROUND_BRIDE_OF_FRANKENSTEIN) {
         return true;
     }
 
