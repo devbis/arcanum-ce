@@ -362,7 +362,7 @@ int basic_skill_level(int64_t obj, int skill)
         return 0;
     }
 
-    if (skill == BASIC_SKILL_MELEE && sub_45F730(obj)) {
+    if (skill == BASIC_SKILL_MELEE && critter_is_monstrous(obj)) {
         v1 = 20;
     } else {
         v1 = sub_4C5E50(obj, skill);
@@ -445,7 +445,7 @@ int basic_skill_get_training(int64_t obj, int skill)
         return 0;
     }
 
-    if (skill == BASIC_SKILL_MELEE && sub_45F730(obj)) {
+    if (skill == BASIC_SKILL_MELEE && critter_is_monstrous(obj)) {
         melee = basic_skill_level(obj, BASIC_SKILL_MELEE);
         level = stat_level(obj, STAT_LEVEL);
 

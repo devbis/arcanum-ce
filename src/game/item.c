@@ -3364,7 +3364,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
             }
         }
 
-        if (sub_45F730(critter_obj)) {
+        if (critter_is_monstrous(critter_obj)) {
             min_dam = obj_arrayfield_uint32_get(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type);
             max_dam = obj_arrayfield_uint32_get(critter_obj, OBJ_F_NPC_DAMAGE_IDX, 2 * damage_type + 1);
         } else {

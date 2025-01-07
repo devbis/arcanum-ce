@@ -1219,7 +1219,7 @@ void sub_55A240()
 
     if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 5);
-    } else if (sub_45F730(qword_64E010)) {
+    } else if (critter_is_monstrous(qword_64E010)) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
     } else {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 2);
@@ -1255,7 +1255,7 @@ void sub_55A240()
 
     if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 3);
-    } else if (!sub_45F730(qword_64E010)) {
+    } else if (!critter_is_monstrous(qword_64E010)) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 2);
     }
 }

@@ -11601,7 +11601,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
     offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
     offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
 
-    if (!sub_45F730(obj)) {
+    if (!critter_is_monstrous(obj)) {
         anim = tig_art_id_anim_get(art_id);
         if (anim == 1 || anim == 6) {
             if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {

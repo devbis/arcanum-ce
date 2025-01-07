@@ -1804,19 +1804,18 @@ void sub_45F710(long long obj)
 }
 
 // 0x45F730
-bool sub_45F730(long long obj)
+bool critter_is_monstrous(int64_t critter_obj)
 {
-    if (obj == 0) {
+    if (critter_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(critter_obj, OBJ_F_TYPE))) {
         return false;
     }
 
-    // TODO: Use constants.
-    if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & 0x2000800C) == 0) {
+    unsigned int critter_flags = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_FLAGS);
+    if ((critter_flags & (OCF_MECHANICAL | OCF_MONSTER | OCF_ANIMAL | OCF_UNDEAD)) == 0) {
         return false;
     }
 

@@ -680,7 +680,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
     int item_type;
     int64_t item_obj;
 
-    if (sub_45F730(obj)) {
+    if (critter_is_monstrous(obj)) {
         return false;
     }
 
@@ -2006,7 +2006,7 @@ int64_t sub_4AB460(int64_t critter_obj)
                             || candidate_danger_type == AI_DANGER_SOURCE_TYPE_SURRENDER)) {
                         if (sub_4AE3A0(critter_obj, handles[idx])
                             || (critter_social_class_get(critter_obj) == SOCIAL_CLASS_GUARD
-                                && sub_45F730(candidate_obj)
+                                && critter_is_monstrous(candidate_obj)
                                 && critter_leader_get(candidate_obj) == OBJ_HANDLE_NULL)) {
                             if (!sub_4ADCC0(critter_obj, candidate_obj, leader_obj)) {
                                 concealed = critter_is_concealed(candidate_obj);
@@ -3517,7 +3517,7 @@ int sub_4AE120(int64_t a1, int64_t a2)
                         && danger_source_obj != OBJ_HANDLE_NULL
                         && (sub_4AE3A0(a1, danger_source_obj)
                             || (critter_social_class_get(a1) == SOCIAL_CLASS_GUARD)
-                                && sub_45F730(a2)
+                                && critter_is_monstrous(a2)
                                 && critter_leader_get(a2) == OBJ_HANDLE_NULL)
                         && !sub_4ADCC0(a1, a2, critter_leader_get(a1))) {
                         return 4;

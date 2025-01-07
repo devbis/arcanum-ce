@@ -96,7 +96,7 @@ void critter_spread_out_enable(int64_t npc_obj);
 int64_t sub_45F650(int64_t obj);
 int critter_teleport_map_get(long long obj);
 void sub_45F710(long long obj);
-bool sub_45F730(long long obj);
+bool critter_is_monstrous(int64_t critter_obj);
 int critter_encumbrance_level_get(long long obj);
 void critter_encumbrance_level_recalc(int64_t obj, int value);
 void sub_45F910();

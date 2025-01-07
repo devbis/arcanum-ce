@@ -542,7 +542,7 @@ int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
     int pc_race;
 
     if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS) & ONF_ALOOF) == 0
-        && !sub_45F730(npc_obj)) {
+        && !critter_is_monstrous(npc_obj)) {
         modifier = stat_level(pc_obj, STAT_REACTION_MODIFIER);
         npc_race = stat_level(npc_obj, STAT_RACE);
         pc_race = stat_level(pc_obj, STAT_RACE);
