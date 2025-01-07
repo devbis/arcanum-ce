@@ -967,7 +967,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
 
     if (dword_683464 == 1 && critter_leader_get(qword_682C78) == a1) {
         dword_6810FC = 1;
-        if (sub_45E590(qword_682C78) != qword_682C78) {
+        if (critter_follower_next(qword_682C78) != qword_682C78) {
             button_data.flags = TIG_BUTTON_FLAG_0x01;
             button_data.window_handle = inven_ui_window_handle;
             tig_art_interface_id_create(757, 0, 0, 0, &(button_data.art_id));
@@ -2013,11 +2013,11 @@ void sub_574FD0(bool a1)
 
     if (a1) {
         do {
-            v1 = sub_45E590(v1);
+            v1 = critter_follower_next(v1);
         } while (!sub_575080(qword_6814F8, v1));
     } else {
         do {
-            v1 = sub_45E4F0(v1);
+            v1 = critter_follower_prev(v1);
         } while (!sub_575080(qword_6814F8, v1));
     }
 

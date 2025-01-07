@@ -963,7 +963,7 @@ int sub_45E460(int64_t critter_obj, bool exclude_forced_followers)
 }
 
 // 0x45E4F0
-int64_t sub_45E4F0(int64_t critter_obj)
+int64_t critter_follower_prev(int64_t critter_obj)
 {
     int64_t prev_obj;
     int64_t prev_candidate_obj;
@@ -1006,7 +1006,7 @@ int64_t sub_45E4F0(int64_t critter_obj)
 }
 
 // 0x45E590
-int64_t sub_45E590(int64_t critter_obj)
+int64_t critter_follower_next(int64_t critter_obj)
 {
     int64_t next_obj;
     int64_t leader_obj;

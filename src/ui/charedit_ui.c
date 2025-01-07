@@ -1127,7 +1127,7 @@ bool charedit_create(int64_t obj, int a2)
 
     if (dword_64CDCC == 2
         && critter_leader_get(qword_64E010) == pc_obj
-        && sub_45E590(qword_64E010) != qword_64E010) {
+        && critter_follower_next(qword_64E010) != qword_64E010) {
         button_data.flags = TIG_BUTTON_FLAG_0x01;
         button_data.window_handle = dword_64CA64;
 
@@ -1655,9 +1655,9 @@ void sub_55B0E0(bool a1)
     int v2;
 
     if (a1) {
-        v1 = sub_45E590(qword_64E010);
+        v1 = critter_follower_next(qword_64E010);
     } else {
-        v1 = sub_45E4F0(qword_64E010);
+        v1 = critter_follower_prev(qword_64E010);
     }
 
     if (v1 != qword_64E010) {
