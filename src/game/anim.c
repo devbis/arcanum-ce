@@ -14034,7 +14034,7 @@ bool sub_4348E0(int64_t obj, int action_points)
 }
 
 // 0x434980
-bool sub_434980(int64_t obj, int64_t a2)
+bool anim_goal_flee(int64_t obj, int64_t from_obj)
 {
     AnimGoalData goal_data;
 
@@ -14046,7 +14046,7 @@ bool sub_434980(int64_t obj, int64_t a2)
         return false;
     }
 
-    goal_data.params[AGDATA_TARGET_OBJ].obj = a2;
+    goal_data.params[AGDATA_TARGET_OBJ].obj = from_obj;
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {
         return false;

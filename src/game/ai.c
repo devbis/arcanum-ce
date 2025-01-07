@@ -1445,7 +1445,7 @@ void sub_4AA620(int64_t a1, int64_t a2)
                 sub_413EA0(a1, a2, str, &v1);
                 dword_5F8488(a1, a2, str, v1);
             }
-            sub_434980(a1, a2);
+            anim_goal_flee(a1, a2);
         }
         break;
     }
@@ -2458,7 +2458,7 @@ void sub_4AC380(Ai* ai)
 void sub_4AC620(Ai* ai)
 {
     sub_4AABE0(ai->obj, AI_DANGER_SOURCE_TYPE_SURRENDER, ai->danger_source, 0);
-    sub_434980(ai->obj, ai->danger_source);
+    anim_goal_flee(ai->obj, ai->danger_source);
 }
 
 // 0x4AC660

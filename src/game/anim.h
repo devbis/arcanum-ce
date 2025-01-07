@@ -66,7 +66,7 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range);
 bool sub_434400(int64_t source_obj, int64_t target_loc, int range);
 bool anim_goal_follow_obj(int64_t source_obj, int64_t target_obj);
 bool sub_4348E0(int64_t obj, int action_points);
-bool sub_434980(int64_t obj, int64_t a2);
+bool anim_goal_flee(int64_t obj, int64_t flee_from);
 bool sub_434AE0(int64_t attacker_obj, int64_t target_obj);
 bool sub_434B00(int64_t attacker_obj, int64_t target_obj, int a3);
 bool sub_434DE0(int64_t obj);
