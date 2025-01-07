@@ -14471,7 +14471,7 @@ bool anim_goal_pickup_item(int64_t obj, int64_t item_obj)
 }
 
 // 0x4357B0
-bool sub_4357B0(int64_t obj)
+bool anim_goal_animate_stunned(int64_t obj)
 {
     AnimGoalData goal_data;
 

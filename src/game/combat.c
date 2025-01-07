@@ -1599,7 +1599,7 @@ void sub_4B4390(CombatContext* combat)
 
             if (((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0)
-                && !sub_4357B0(combat->target_obj)) {
+                && !anim_goal_animate_stunned(combat->target_obj)) {
                 critter_flags &= ~OCF_STUNNED;
             }
 
