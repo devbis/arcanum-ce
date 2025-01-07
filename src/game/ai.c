@@ -1058,25 +1058,27 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
 }
 
 // 0x4A9AD0
-void sub_4A9AD0(int64_t a1, int64_t a2)
+void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj)
 {
-    if (a1 != a2) {
-        if (dword_5F848C != NULL) {
-            dword_5F848C(a1, 0);
-        }
+    if (attacker_obj == target_obj) {
+        return;
+    }
 
-        if (!combat_critter_is_combat_mode_active(a1)) {
-            combat_critter_activate_combat_mode(a1);
-            if (sub_4B6D70()) {
-                sub_4B6E70(a2);
-            }
-        }
+    if (dword_5F848C != NULL) {
+        dword_5F848C(attacker_obj, 0);
+    }
 
-        if (!sub_423300(a1, 0) || sub_423470(a1)) {
-            if (combat_auto_attack_get(a1)) {
-                if (!sub_44E830(a1, 19, 0)) {
-                    sub_434AE0(a1, a2);
-                }
+    if (!combat_critter_is_combat_mode_active(attacker_obj)) {
+        combat_critter_activate_combat_mode(attacker_obj);
+        if (sub_4B6D70()) {
+            sub_4B6E70(target_obj);
+        }
+    }
+
+    if (!sub_423300(attacker_obj, NULL) || sub_423470(attacker_obj)) {
+        if (combat_auto_attack_get(attacker_obj)) {
+            if (!sub_44E830(attacker_obj, AG_ATTEMPT_ATTACK, NULL)) {
+                anim_goal_attack(attacker_obj, target_obj);
             }
         }
     }
@@ -2490,7 +2492,7 @@ void sub_4AC6E0(Ai* ai)
         npc_flags |= 0x40000000;
         obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
     } else if (!sub_4AC910(ai, distance)) {
-        sub_434B00(ai->obj, ai->danger_source, ai->field_30);
+        anim_goal_attack_ex(ai->obj, ai->danger_source, ai->field_30);
     }
 }
 

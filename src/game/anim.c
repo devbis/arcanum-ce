@@ -14058,13 +14058,13 @@ bool anim_goal_flee(int64_t obj, int64_t from_obj)
 }
 
 // 0x434AE0
-bool sub_434AE0(int64_t attacker_obj, int64_t target_obj)
+bool anim_goal_attack(int64_t attacker_obj, int64_t target_obj)
 {
-    return sub_434B00(attacker_obj, target_obj, -1);
+    return anim_goal_attack_ex(attacker_obj, target_obj, -1);
 }
 
 // 0x434B00
-bool sub_434B00(int64_t attacker_obj, int64_t target_obj, int a3)
+bool anim_goal_attack_ex(int64_t attacker_obj, int64_t target_obj, int sound_id)
 {
     int64_t weapon_obj;
     unsigned int spell_flags;
@@ -14130,7 +14130,7 @@ bool sub_434B00(int64_t attacker_obj, int64_t target_obj, int a3)
         return false;
     }
 
-    goal_data.params[AGDATA_SCRATCH_VAL5].data = a3;
+    goal_data.params[AGDATA_SCRATCH_VAL5].data = sound_id;
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {
         sub_4364D0(attacker_obj);
