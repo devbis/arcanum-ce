@@ -241,7 +241,7 @@ void map_reset()
 
         tig_debug_printf("map_reset: interrupting anims...");
         tig_timer_now(&start);
-        sub_424250();
+        anim_goal_interrupt_all_goals();
         tig_debug_printf("done. Time (ms): %d\n", tig_timer_elapsed(start));
 
         tig_debug_printf("map_reset: closing map...");

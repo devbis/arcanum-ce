@@ -1246,7 +1246,7 @@ void timeevent_clear_for_map_close()
 {
     char* name;
 
-    sub_424250();
+    anim_goal_interrupt_all_goals();
 
     timeevent_clear_all_typed(TIMEEVENT_TYPE_ANIM);
     timeevent_clear_all_typed(TIMEEVENT_TYPE_MAGICTECH);

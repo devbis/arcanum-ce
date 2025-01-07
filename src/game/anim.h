@@ -36,7 +36,7 @@ void sub_423FC0();
 void sub_423FE0(void(*func)());
 bool sub_423FF0(int64_t obj);
 bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4);
-bool sub_424250();
+bool anim_goal_interrupt_all_goals();
 bool anim_goal_interrupt_all_goals_of_priority(int priority_level);
 bool anim_goal_interrupt_all_for_tb_combat();
 bool sub_4243E0(int64_t obj, tig_art_id_t eye_candy_id, int a3);

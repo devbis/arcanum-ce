@@ -4134,7 +4134,7 @@ bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4)
 }
 
 // 0x424250
-bool sub_424250()
+bool anim_goal_interrupt_all_goals()
 {
     int index;
 
