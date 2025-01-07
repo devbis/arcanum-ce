@@ -3328,25 +3328,25 @@ bool sub_4537B0()
 }
 
 // 0x453B20
-int sub_453B20(int64_t a1, int64_t a2, int spell)
+int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell)
 {
     MagicTechInfo* info;
     int obj_type;
-    int resistance;
+    int resistance = 0;
     int v2 = 0;
 
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (target_obj == OBJ_HANDLE_NULL) {
         return 0;
     }
 
-    obj_type = obj_field_int32_get(a2, OBJ_F_TYPE);
+    obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     info = &(magictech_spells[spell]);
 
     if ((info->flags & 0x04) != 0) {
-        if (a1 != a2) {
-            resistance = obj_arrayfield_int32_get(a2, OBJ_F_RESISTANCE_IDX, RESISTANCE_TYPE_MAGIC);
+        if (attacker_obj != target_obj) {
+            resistance = obj_arrayfield_int32_get(target_obj, OBJ_F_RESISTANCE_IDX, RESISTANCE_TYPE_MAGIC);
             if (!dword_5E75A8) {
-                int aptitude = stat_level(a2, STAT_MAGICK_TECH_APTITUDE);
+                int aptitude = stat_level(target_obj, STAT_MAGICK_TECH_APTITUDE);
                 if (aptitude < 0) {
                     resistance = 100 - (100 - resistance) * (aptitude + 100) / 100;
                 }
@@ -3364,15 +3364,15 @@ int sub_453B20(int64_t a1, int64_t a2, int spell)
             }
         }
 
-        if (a1 != a2) {
+        if (attacker_obj != target_obj) {
             if (info->resistance.stat != -1
                 && obj_type_is_critter(obj_type)) {
                 if (info->resistance.stat == STAT_WILLPOWER
-                    && stat_is_maximized(a2, STAT_WILLPOWER)) {
+                    && stat_is_maximized(target_obj, STAT_WILLPOWER)) {
                     return 100;
                 }
 
-                int v3 = info->resistance.value + stat_level(a2, info->resistance.stat) - v2;
+                int v3 = info->resistance.value + stat_level(target_obj, info->resistance.stat) - v2;
                 if (v3 > 0 && random_between(1, 20) <= v3) {
                     if ((info->flags & 0x80) == 0) {
                         if (info->maintenance.period == 0) {
