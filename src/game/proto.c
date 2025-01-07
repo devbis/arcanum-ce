@@ -16074,7 +16074,7 @@ void sub_49B340(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_NPC_EXPERIENCE_POOL, exp);
         object_hp_damage_set(obj, 0);
 
-        art_id = sub_45FA70(obj, &rgb);
+        art_id = critter_light_get(obj, &rgb);
         obj_field_int32_set(obj, OBJ_F_LIGHT_AID, art_id);
         obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
 

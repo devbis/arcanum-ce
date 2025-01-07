@@ -105,7 +105,7 @@ const char* critter_encumbrance_level_name(int level);
 int critter_encumbrance_level_ratio(int level);
 int critter_description_get(long long a, long long b);
 bool critter_can_backstab(int64_t obj, int64_t tgt);
-tig_art_id_t sub_45FA70(long long obj, unsigned int* rgb);
+tig_art_id_t critter_light_get(int64_t critter_obj, unsigned int* color_ptr);
 bool sub_45FB90(int64_t obj);
 bool sub_45FC00(int64_t obj);
 void critter_debug_obj(object_id_t obj);

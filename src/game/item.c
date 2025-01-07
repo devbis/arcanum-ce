@@ -4555,7 +4555,7 @@ void sub_467E80(int64_t a1, int64_t a2)
 
         obj_field_int32_set(a2, OBJ_F_CRITTER_FLAGS, critter_flags);
 
-        aid = sub_45FA70(a2, &color);
+        aid = critter_light_get(a2, &color);
         object_set_light(a2, 0, aid, color);
     }
 }

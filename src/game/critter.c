@@ -1958,27 +1958,27 @@ bool critter_can_backstab(int64_t obj, int64_t tgt)
 }
 
 // 0x45FA70
-tig_art_id_t sub_45FA70(long long obj, unsigned int* rgb)
+tig_art_id_t critter_light_get(int64_t critter_obj, unsigned int* color_ptr)
 {
     tig_art_id_t art_id;
-    int flags;
+    unsigned int critter_flags;
 
-    flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
-    if ((flags & OCF_LIGHT_XLARGE) != 0) {
+    critter_flags = obj_field_int32_get(critter_obj, OBJ_F_CRITTER_FLAGS);
+    if ((critter_flags & OCF_LIGHT_XLARGE) != 0) {
         tig_art_light_id_create(1, 0, 0, 0, &art_id);
-        light_build_color(244, 255, 255, rgb);
-    } else if ((flags & OCF_LIGHT_LARGE) != 0) {
+        light_build_color(244, 255, 255, color_ptr);
+    } else if ((critter_flags & OCF_LIGHT_LARGE) != 0) {
         tig_art_light_id_create(1, 0, 0, 0, &art_id);
-        light_build_color(255, 214, 172, rgb);
-    } else if ((flags & OCF_LIGHT_MEDIUM) != 0) {
+        light_build_color(255, 214, 172, color_ptr);
+    } else if ((critter_flags & OCF_LIGHT_MEDIUM) != 0) {
         tig_art_light_id_create(1, 0, 0, 0, &art_id);
-        light_build_color(236, 138, 85, rgb);
-    } else if ((flags & OCF_LIGHT_SMALL) != 0) {
+        light_build_color(236, 138, 85, color_ptr);
+    } else if ((critter_flags & OCF_LIGHT_SMALL) != 0) {
         tig_art_light_id_create(1, 0, 0, 0, &art_id);
-        light_build_color(167, 88, 58, rgb);
+        light_build_color(167, 88, 58, color_ptr);
     } else {
         art_id = TIG_ART_ID_INVALID;
-        light_build_color(0, 0, 0, rgb);
+        light_build_color(0, 0, 0, color_ptr);
     }
 
     return art_id;
