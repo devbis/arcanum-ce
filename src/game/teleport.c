@@ -298,7 +298,7 @@ bool schedule_teleport_obj_recursively(int64_t obj, int64_t loc)
     }
 
     if ((flags & OF_TEXT_FLOATER) != 0) {
-        sub_4EF5C0(obj);
+        mp_tf_remove(obj);
     }
 
     if (obj_type_is_critter(obj_type)) {

@@ -1006,16 +1006,16 @@ void sub_4EF540()
 }
 
 // 0x4EF5C0
-void sub_4EF5C0(int64_t obj)
+void mp_tf_remove(int64_t obj)
 {
-    Packet116 pkt;
+    PacketTextRemove pkt;
 
     tf_remove(obj);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 116;
-        pkt.field_4 = 1;
-        pkt.field_8 = 0;
+        pkt.subtype = 1;
+        pkt.action = 0;
         pkt.oid = sub_407EF0(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
@@ -1024,24 +1024,24 @@ void sub_4EF5C0(int64_t obj)
 // 0x4EF630
 void mp_tb_remove(int64_t obj)
 {
-    Packet116 pkt;
+    PacketTextRemove pkt;
 
     tb_remove(obj);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 116;
-        pkt.field_4 = 0;
-        pkt.field_8 = 0;
+        pkt.subtype = 0;
+        pkt.action = 0;
         pkt.oid = sub_407EF0(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4EF690
-void sub_4EF690(Packet116* pkt)
+void mp_handle_text_remove(PacketTextRemove* pkt)
 {
-    if (pkt->field_8 == 0) {
-        switch (pkt->field_4) {
+    if (pkt->action == 0) {
+        switch (pkt->subtype) {
         case 0:
             tb_remove(objp_perm_lookup(pkt->oid));
             break;

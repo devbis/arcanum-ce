@@ -929,14 +929,14 @@ typedef struct Packet112 {
 
 static_assert(sizeof(Packet112) == 0x28, "wrong size");
 
-typedef struct Packet116 {
+typedef struct PacketTextRemove {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
+    /* 0004 */ int subtype;
+    /* 0008 */ int action;
     /* 0010 */ ObjectID oid;
-} Packet116;
+} PacketTextRemove;
 
-static_assert(sizeof(Packet116) == 0x28, "wrong size");
+static_assert(sizeof(PacketTextRemove) == 0x28, "wrong size");
 
 typedef struct Packet117 {
     /* 0000 */ int type;
@@ -1152,7 +1152,7 @@ void sub_4EF120(int map, int a2);
 void sub_4EF190(tig_art_id_t art_id);
 void sub_4EECB0(int sound_id);
 void sub_4EF1E0(int64_t a1, int64_t obj);
-void sub_4EF5C0(int64_t obj);
+void mp_tf_remove(int64_t obj);
 void mp_tb_remove(int64_t obj);
 void sub_4EF6F0(int64_t a1, int64_t a2, int64_t a3);
 void sub_4EF830(int64_t a1, int64_t a2);
