@@ -453,7 +453,7 @@ void tf_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
 }
 
 // 0x4D5620
-void sub_4D5620(int64_t obj)
+void tf_notify_killed(int64_t obj)
 {
     TextFloaterList* list;
     TextFloaterNode* node;

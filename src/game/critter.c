@@ -519,7 +519,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
         return;
     }
 
-    sub_4D5620(victim_obj);
+    tf_notify_killed(victim_obj);
 
     if (!sub_441980(killer_obj, victim_obj, OBJ_HANDLE_NULL, SAP_DYING, 0)) {
         return;
