@@ -72,7 +72,7 @@ bool sub_434B00(int64_t attacker_obj, int64_t target_obj, int a3);
 bool sub_434DE0(int64_t obj);
 bool sub_434E80(int64_t a1, int a2, int a3, int64_t obj);;
 bool sub_434F80(int64_t obj, int64_t a2, int64_t a3);
-bool sub_435080(int64_t obj, int a2);
+bool anim_goal_dying(int64_t obj, int anim);
 bool sub_4350F0(int64_t obj, int64_t a2, int64_t a3, int a6, int a7);
 bool sub_4352C0(int64_t obj, int64_t a2, int64_t a4, int a5, int a6);
 bool sub_435450(int64_t obj, int64_t a2, int64_t a3, unsigned int a4);

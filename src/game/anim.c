@@ -14251,7 +14251,7 @@ bool sub_434F80(int64_t obj, int64_t a2, int64_t a3)
 }
 
 // 0x435080
-bool sub_435080(int64_t obj, int a2)
+bool anim_goal_dying(int64_t obj, int anim)
 {
     AnimGoalData goal_data;
 
@@ -14263,7 +14263,7 @@ bool sub_435080(int64_t obj, int a2)
         return false;
     }
 
-    goal_data.params[AGDATA_SCRATCH_VAL1].data = a2;
+    goal_data.params[AGDATA_SCRATCH_VAL1].data = anim;
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {
         return false;

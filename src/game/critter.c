@@ -581,7 +581,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
         object_set_current_aid(victim_obj, art_id);
     }
 
-    sub_435080(victim_obj, anim);
+    anim_goal_dying(victim_obj, anim);
 
     if ((obj_field_int32_get(victim_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_DECAY) == 0) {
         critter_decay_schedule(victim_obj);
