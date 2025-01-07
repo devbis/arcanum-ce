@@ -1472,7 +1472,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
 
     if (!concealed) {
         if (combat_critter_is_combat_mode_active(obj)) {
-            sub_435BD0(obj);
+            anim_goal_fidget(obj);
         }
     }
 }

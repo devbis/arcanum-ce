@@ -83,7 +83,7 @@ bool anim_goal_projectile(int64_t source_obj, int64_t missile_obj, tig_art_id_t 
 bool sub_435A00(int64_t proj_obj, int64_t a2, int64_t a3);
 bool anim_goal_knockdown(int64_t obj);
 bool anim_goal_make_knockdown(int64_t obj);
-bool sub_435BD0(int64_t critter_obj);
+bool anim_goal_fidget(int64_t critter_obj);
 bool sub_435CE0(int64_t obj);
 bool sub_435D70(int64_t critter_obj);
 bool sub_435E60(int64_t obj, int64_t tether_loc, int radius);

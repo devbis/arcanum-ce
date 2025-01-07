@@ -1390,7 +1390,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
         }
 
         if (!v1 && !is_tb) {
-            sub_435BD0(obj);
+            anim_goal_fidget(obj);
         }
     }
 
@@ -1407,7 +1407,7 @@ void sub_4B4320(int64_t obj)
             || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
         && ((!dword_5FC22C && combat_critter_is_combat_mode_active(obj))
             || (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_AUTO_ANIMATES) != 0)) {
-        sub_435BD0(obj);
+        anim_goal_fidget(obj);
     }
 }
 

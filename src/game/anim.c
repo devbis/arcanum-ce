@@ -14641,7 +14641,7 @@ bool anim_goal_make_knockdown(int64_t obj)
 }
 
 // 0x435BD0
-bool sub_435BD0(int64_t critter_obj)
+bool anim_goal_fidget(int64_t critter_obj)
 {
     int obj_type;
     tig_art_id_t art_id;
@@ -14656,8 +14656,12 @@ bool sub_435BD0(int64_t critter_obj)
     }
 
     obj_type = obj_field_int32_get(critter_obj, OBJ_F_TYPE);
-    ASSERT(obj_type_is_critter(obj_type)); // 16405, obj_type_is_critter(objType)
-    if (obj_type != OBJ_TYPE_NPC) return false;
+
+    ASSERT(obj_type_is_critter(obj_type)); // 16405, "obj_type_is_critter(objType)"
+
+    if (obj_type != OBJ_TYPE_NPC) {
+        return false;
+    }
 
     if (!sub_4348E0(critter_obj, 0)) {
         return false;
@@ -14701,7 +14705,7 @@ bool sub_435CE0(int64_t critter_obj)
         return false;
     }
 
-    sub_435BD0(critter_obj);
+    anim_goal_fidget(critter_obj);
 
     return true;
 }
