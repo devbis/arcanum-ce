@@ -2568,7 +2568,7 @@ void sub_43F710(object_id_t obj)
                     sub_423FF0(obj);
                 }
             } else {
-                sub_433580(obj);
+                anim_goal_animate_loop(obj);
             }
         }
     }

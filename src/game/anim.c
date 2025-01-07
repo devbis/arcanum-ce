@@ -13403,7 +13403,7 @@ bool anim_goal_rotate(int64_t obj, int rot)
 }
 
 // 0x433580
-bool sub_433580(int64_t obj)
+bool anim_goal_animate_loop(int64_t obj)
 {
     tig_art_id_t art_id;
     int goal_type;
