@@ -1613,7 +1613,7 @@ void sub_4B4390(CombatContext* combat)
         if ((dam_flags & (CDF_KNOCKDOWN | CDF_KNOCKOUT)) != 0) {
             sub_4CBBF0(combat->attacker_obj, combat->target_obj);
             sub_4CBE00(combat->attacker_obj, combat->target_obj);
-            sub_435A90(combat->target_obj);
+            anim_goal_knockdown(combat->target_obj);
 
             if ((dam_flags & CDF_KNOCKOUT) != 0) {
                 if (!critter_is_unconscious(combat->target_obj)) {

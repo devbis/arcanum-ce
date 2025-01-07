@@ -2241,7 +2241,7 @@ void MTComponentAGoal_ProcFunc()
         }
         break;
     case AG_KNOCK_DOWN:
-        sub_435A90(stru_5E6D28.field_20);
+        anim_goal_knockdown(stru_5E6D28.field_20);
         break;
     default:
         if (dword_5E75F0->parent_obj.obj != OBJ_HANDLE_NULL

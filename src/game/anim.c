@@ -11672,7 +11672,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                     dword_5DE6E4 = 0;
 
                     if (v3) {
-                        sub_435A90(obj);
+                        anim_goal_knockdown(obj);
                     }
 
                     return false;
@@ -14579,7 +14579,7 @@ bool sub_435A00(int64_t proj_obj, int64_t a2, int64_t a3)
 }
 
 // 0x435A90
-bool sub_435A90(int64_t critter_obj)
+bool anim_goal_knockdown(int64_t critter_obj)
 {
     tig_art_id_t art_id;
     AnimGoalData goal_data;
@@ -14593,15 +14593,15 @@ bool sub_435A90(int64_t critter_obj)
         return false;
     }
 
-    if (critter_is_dead(art_id)) {
+    if (critter_is_dead(critter_obj)) {
         return false;
     }
 
-    if (!sub_424070(art_id, 5, false, false)) {
+    if (!sub_424070(critter_obj, 5, false, false)) {
         return false;
     }
 
-    if (!sub_44D4E0(&goal_data, critter_obj, 62)) {
+    if (!sub_44D4E0(&goal_data, critter_obj, AG_KNOCK_DOWN)) {
         return false;
     }
 
