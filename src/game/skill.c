@@ -1858,11 +1858,13 @@ int sub_4C8430(SkillInvocation* skill_invocation)
             }
 
             if ((skill_invocation->flags & 0x4000) != 0) {
-                if (!sub_45FB90(target_obj)) {
+                if (!critter_has_dark_sight(target_obj)) {
                     v5 = 30 - v5;
                 }
-            } else if (sub_45FB90(source_obj)) {
-                v5 = 30 - v5;
+            } else {
+                if (critter_has_dark_sight(source_obj)) {
+                    v5 = 30 - v5;
+                }
             }
 
             if (v5 > 0) {

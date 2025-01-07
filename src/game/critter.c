@@ -1985,15 +1985,21 @@ tig_art_id_t critter_light_get(int64_t critter_obj, unsigned int* color_ptr)
 }
 
 // 0x45FB90
-bool sub_45FB90(int64_t obj)
+bool critter_has_dark_sight(int64_t critter_obj)
 {
-    if (obj == OBJ_HANDLE_NULL
-        || !obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+    if (critter_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (background_obj_get_background(obj) == 78
-        || (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_DARK_SIGHT) != 0) {
+    if (!obj_type_is_critter(obj_field_int32_get(critter_obj, OBJ_F_TYPE))) {
+        return false;
+    }
+
+    if (background_obj_get_background(critter_obj) == BACKGROUND_DARK_SIGHT) {
+        return true;
+    }
+
+    if ((obj_field_int32_get(critter_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_DARK_SIGHT) != 0) {
         return true;
     }
 
