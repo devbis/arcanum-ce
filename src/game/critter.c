@@ -556,6 +556,7 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
                 node = followers.head;
                 while (node != NULL) {
                     sub_441980(a1, node->obj, a2, SAP_LEADER_KILLING, 0);
+                    node = node->next;
                 }
                 object_list_destroy(&followers);
             }
