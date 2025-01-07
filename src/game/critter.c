@@ -581,7 +581,7 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
     sub_435080(a1, a3);
 
     if ((obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_DECAY) == 0) {
-        sub_45EBE0(a1);
+        critter_decay_schedule(a1);
     }
 
     object_hp_damage_set(a1, 32000);
@@ -1313,7 +1313,7 @@ bool critter_decay_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x45EBE0
-bool sub_45EBE0(int64_t obj)
+bool critter_decay_schedule(int64_t obj)
 {
     int type;
     TimeEvent timeevent;

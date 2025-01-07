@@ -13177,7 +13177,7 @@ void sub_432D90(int64_t obj)
     if (sub_44D4E0(&goal_data, blood_obj, AG_ANIMATE)) {
         goal_data.params[AGDATA_ANIM_ID].data = blood_art_id;
         if (sub_44D520(&goal_data, NULL)) {
-            sub_45EBE0(blood_obj);
+            critter_decay_schedule(blood_obj);
         } else {
             tig_debug_printf("Anim: AGapplyBloodEffect: ERROR: Blood object failed to animate!\n");
             sub_43CCA0(blood_obj);
