@@ -534,7 +534,7 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
     sub_4B80E0(a1);
 
     if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        sub_45ED70(a1);
+        critter_npc_combat_focus_wipe_schedule(a1);
         obj_field_handle_set(a1, OBJ_F_NPC_COMBAT_FOCUS, a2);
         sub_4AA1B0(a1, a2);
 
@@ -1353,42 +1353,42 @@ bool sub_45ECB0(TimeEvent* timeevent)
 // 0x45ECE0
 bool critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent)
 {
-    int64_t obj;
-    int64_t focus_obj;
+    int64_t npc_obj;
+    int64_t combat_focus_obj;
 
-    obj = timeevent->params[0].object_value;
-    if (obj == OBJ_HANDLE_NULL
-        || !critter_is_dead(obj)) {
+    npc_obj = timeevent->params[0].object_value;
+    if (npc_obj == OBJ_HANDLE_NULL
+        || !critter_is_dead(npc_obj)) {
         return true;
     }
 
-    obj_field_obj_get(obj, OBJ_F_NPC_COMBAT_FOCUS, &focus_obj);
-    if (focus_obj == OBJ_HANDLE_NULL) {
+    obj_field_obj_get(npc_obj, OBJ_F_NPC_COMBAT_FOCUS, &combat_focus_obj);
+    if (combat_focus_obj == OBJ_HANDLE_NULL) {
         return true;
     }
 
-    if (object_dist(obj, focus_obj) >= 30) {
-        obj_field_handle_set(obj, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
+    if (object_dist(npc_obj, combat_focus_obj) >= 30) {
+        obj_field_handle_set(npc_obj, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
     } else {
-        sub_45ED70(obj);
+        critter_npc_combat_focus_wipe_schedule(npc_obj);
     }
 
     return true;
 }
 
 // 0x45ED70
-bool sub_45ED70(int64_t obj)
+bool critter_npc_combat_focus_wipe_schedule(int64_t npc_obj)
 {
     TimeEvent timeevent;
     DateTime datetime;
 
-    if (obj == OBJ_HANDLE_NULL
-        || !sub_405BC0(obj)) {
+    if (npc_obj == OBJ_HANDLE_NULL
+        || !sub_405BC0(npc_obj)) {
         return false;
     }
 
     timeevent.type = TIMEEVENT_TYPE_COMBAT_FOCUS_WIPE;
-    timeevent.params[0].object_value = obj;
+    timeevent.params[0].object_value = npc_obj;
     timeevent.params[1].integer_value = sub_45A7F0();
     sub_45A950(&datetime, 600000);
     return sub_45B800(&timeevent, &datetime);
