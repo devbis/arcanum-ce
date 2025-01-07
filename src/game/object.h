@@ -101,7 +101,7 @@ void object_invalidate_rect(TigRect* rect);
 void sub_43CB70();
 bool object_create(int64_t proto_obj, int64_t loc, int64_t* obj_ptr);
 bool sub_43CBF0(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr);
-void sub_43CCA0(int64_t obj);
+void object_destroy(int64_t obj);
 void sub_43CF70(int64_t obj);
 void sub_43CFF0(object_id_t obj);
 void object_flags_set(int64_t obj, unsigned int flags);

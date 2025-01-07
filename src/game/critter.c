@@ -1309,7 +1309,7 @@ bool critter_decay_timeevent_process(TimeEvent* timeevent)
         sub_463860(obj, true);
     }
 
-    sub_43CCA0(obj);
+    object_destroy(obj);
 
     return true;
 }

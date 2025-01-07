@@ -1133,7 +1133,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
             obj_field_int32_get(ingridient1_obj, OBJ_F_AMMO_QUANTITY),
             ingridient1_obj);
     } else {
-        sub_43CCA0(ingridient1_obj);
+        object_destroy(ingridient1_obj);
     }
 
     if (obj_field_int32_get(ingridient2_obj, OBJ_F_TYPE) == OBJ_TYPE_AMMO) {
@@ -1143,7 +1143,7 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
             obj_field_int32_get(ingridient2_obj, OBJ_F_AMMO_QUANTITY),
             ingridient2_obj);
     } else {
-        sub_43CCA0(ingridient2_obj);
+        object_destroy(ingridient2_obj);
     }
 
     for (qty = 0; qty < info.qty; qty++) {

@@ -1696,7 +1696,7 @@ bool sub_4A3D00(bool a1)
         if (dword_5F0DE4 != NULL) {
             for (idx = 0; idx < dword_5F0DE8; idx++) {
                 if (dword_5F0DE4[idx] != OBJ_HANDLE_NULL) {
-                    sub_43CCA0(dword_5F0DE4[idx]);
+                    object_destroy(dword_5F0DE4[idx]);
                 }
             }
         }

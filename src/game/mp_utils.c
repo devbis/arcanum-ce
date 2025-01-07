@@ -1572,7 +1572,7 @@ void sub_4F06E0(int64_t a1, int64_t a2)
         sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_BUST, 0);
         sub_41B930(sound_id, 1, a1);
     } else {
-        sub_43CCA0(a1);
+        object_destroy(a1);
         sound_id = sub_4F1050(a1, 1);
         sub_41B930(sound_id, 1, a1);
     }

@@ -1204,9 +1204,8 @@ bool sub_43CC70(int64_t proto_obj, int64_t loc, ObjectID* oid, int64_t* obj_ptr)
 }
 
 // 0x43CCA0
-void sub_43CCA0(int64_t obj)
+void object_destroy(int64_t obj)
 {
-    char* folder;
     TigRect rect;
     int obj_type;
     int64_t pc_obj;
@@ -1217,6 +1216,7 @@ void sub_43CCA0(int64_t obj)
     unsigned int flags;
 
     if (object_editor) {
+        char* folder;
         sub_4102C0(NULL, &folder);
         sub_43CEA0(obj, -1, folder);
         return;
@@ -1272,7 +1272,7 @@ void sub_43CCA0(int64_t obj)
         sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
         node = objects.head;
         while (node != NULL) {
-            sub_43CCA0(node->obj);
+            object_destroy(node->obj);
             node = node->next;
         }
         object_list_destroy(&objects);
@@ -2378,7 +2378,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             sub_463730(obj, true);
 
             loc = obj_field_int32_get(obj, OBJ_F_LOCATION);
-            sub_43CCA0(obj);
+            object_destroy(obj);
             sub_4407C0(loc, 32740, &objects);
             if (objects.head != NULL) {
                 sub_456E60(objects.head->obj, 1203);
@@ -2416,7 +2416,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
         } else {
             destroyed_art_id = obj_field_int32_get(obj, OBJ_F_DESTROYED_AID);
             if ((scenery_flags & OSCF_BUSTED) != 0) {
-                sub_43CCA0(obj);
+                object_destroy(obj);
                 sound_id = sub_4F1050(obj, 1);
             } else {
                 if (destroyed_art_id != TIG_ART_ID_INVALID) {
@@ -2464,7 +2464,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             sound_id = sub_4F1050(obj, 0);
             sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
         } else {
-            sub_43CCA0(obj);
+            object_destroy(obj);
             sound_id = sub_4F1050(obj, 1);
         }
         sub_41B930(sound_id, 1, obj);
@@ -2484,11 +2484,11 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
                 sound_id = sub_4F1050(obj, 0);
                 sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
             } else {
-                sub_43CCA0(obj);
+                object_destroy(obj);
                 sound_id = sub_4F1050(obj, 1);
             }
         } else {
-            sub_43CCA0(obj);
+            object_destroy(obj);
             sound_id = sub_4F1050(obj, 1);
         }
         sub_41B930(sound_id, 1, obj);
@@ -3799,7 +3799,7 @@ bool sub_441980(int64_t triggerer_obj, int64_t attachee_obj, int64_t extra_obj, 
             mp_obj_arrayfield_script_set(attachee_obj, OBJ_F_SCRIPTS_IDX, attachment_point, &scr);
         }
     } else {
-        sub_43CCA0(attachee_obj);
+        object_destroy(attachee_obj);
     }
 
     return rc;

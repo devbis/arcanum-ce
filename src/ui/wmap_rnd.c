@@ -936,7 +936,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
             if (sub_4D7110(loc, 0)) {
                 pc_obj = player_get_pc_obj();
                 if (!sub_4F4E40(pc_obj, 6, &loc) || sub_4D7110(loc, 0)) {
-                    sub_43CCA0(obj);
+                    object_destroy(obj);
                     obj = OBJ_HANDLE_NULL;
                 } else {
                     sub_43E770(obj, loc, 0, 0);
@@ -947,7 +947,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
             node = objects.head;
             while (node != NULL) {
                 if (node->obj != obj) {
-                    sub_43CCA0(obj);
+                    object_destroy(obj);
                     obj = OBJ_HANDLE_NULL;
                 }
                 node = node->next;

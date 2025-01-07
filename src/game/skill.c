@@ -1392,7 +1392,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             if (charges > 0) {
                 obj_field_int32_set(item_obj, OBJ_F_GENERIC_USAGE_COUNT_REMAINING, charges);
             } else {
-                sub_43CCA0(item_obj);
+                object_destroy(item_obj);
             }
         }
         break;

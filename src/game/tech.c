@@ -293,7 +293,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
 
     if (index >= cnt) {
         mp_obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_SCHEMATICS_FOUND_IDX, index, schematic);
-        sub_43CCA0(written_obj);
+        object_destroy(written_obj);
 
         mes_file_entry.num = 89; // "You have learned a new schematic!"
         mes_get_msg(tech_mes_file, &mes_file_entry);

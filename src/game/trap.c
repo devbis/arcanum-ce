@@ -328,7 +328,7 @@ void sub_4BC220(int64_t trap_obj)
 
     if (trap_type(trap_obj) != TRAP_TYPE_INVALID) {
         if (obj_field_int32_get(trap_obj, OBJ_F_TYPE) == OBJ_TYPE_TRAP) {
-            sub_43CCA0(trap_obj);
+            object_destroy(trap_obj);
         } else {
             obj_arrayfield_script_get(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
             if (scr.num >= TRAP_SCRIPT_FIRST && scr.num < TRAP_SCRIPT_COUNT) {
@@ -376,14 +376,14 @@ bool sub_4BC2E0(int64_t pc_obj, int64_t item_obj, int64_t target_obj)
 
         obj_arrayfield_script_get(item_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
         obj_arrayfield_script_set(target_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
-        sub_43CCA0(item_obj);
+        object_destroy(item_obj);
         object_flags_set(target_obj, OF_TRAP_PC);
         sub_4BC090(pc_obj, target_obj, 1);
 
         return true;
     }
 
-    sub_43CCA0(item_obj);
+    object_destroy(item_obj);
     if (spl == 176) {
         sub_4AA0D0(pc_obj);
     }
@@ -405,7 +405,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
 
     spl = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_2);
     if (spl != 10000) {
-        sub_43CCA0(item_obj);
+        object_destroy(item_obj);
         switch (spl) {
         case 176:
             sub_4AA0D0(pc_obj);
@@ -457,7 +457,7 @@ bool sub_4BC480(int64_t pc_obj, int64_t item_obj, int64_t target_loc)
     obj_arrayfield_script_set(trap_obj, OBJ_F_SCRIPTS_IDX, 1, &scr);
     object_flags_set(trap_obj, OF_TRAP_PC);
     sub_4BC090(pc_obj, trap_obj, 1);
-    sub_43CCA0(item_obj);
+    object_destroy(item_obj);
 
     return true;
 }
@@ -482,7 +482,7 @@ void sub_4BC690(int spl, int64_t loc, int delay, int64_t item_obj)
         sub_455AC0(&v1);
 
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_43CCA0(item_obj);
+            object_destroy(item_obj);
         }
     }
 }

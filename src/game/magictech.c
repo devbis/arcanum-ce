@@ -2408,7 +2408,7 @@ void MTComponentDestroy_ProcFunc()
 
     spell_flags = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_SPELL_FLAGS);
     if (!dword_5E75F0->field_144 || (spell_flags & OSF_SUMMONED) != 0) {
-        sub_43CCA0(stru_5E6D28.field_20);
+        object_destroy(stru_5E6D28.field_20);
 
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0
             && (tig_net_flags & TIG_NET_HOST) != 0) {
@@ -2535,7 +2535,7 @@ void sub_451C40(int magictech, int64_t obj)
             obj_field_int32_set(obj, OBJ_F_SPELL_FLAGS, flags);
         }
         if ((flags & OSF_SUMMONED) != 0) {
-            sub_43CCA0(obj);
+            object_destroy(obj);
         }
 
         flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);

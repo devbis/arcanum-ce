@@ -2372,7 +2372,7 @@ void sub_4AC250(Ai* ai)
             switch (obj_field_int32_get(ai->field_20, OBJ_F_TYPE)) {
             case OBJ_TYPE_FOOD:
             case OBJ_TYPE_SCROLL:
-                sub_43CCA0(ai->field_20);
+                object_destroy(ai->field_20);
                 break;
             }
         }
@@ -2902,7 +2902,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
 
                 if (!sub_4B6D70()
                     && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_ENCOUNTER) != 0) {
-                    sub_43CCA0(obj);
+                    object_destroy(obj);
                 }
 
                 return true;
@@ -2923,7 +2923,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
         if (!sub_4AD4D0(obj) && !v1) {
             if (!sub_4B6D70()
                 && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_ENCOUNTER) != 0) {
-                sub_43CCA0(obj);
+                object_destroy(obj);
             }
 
             return true;

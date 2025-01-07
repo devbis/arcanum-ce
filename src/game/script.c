@@ -1865,7 +1865,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
 
         int64_t new_obj;
         if (mp_object_create(proto, loc, &new_obj)) {
-            sub_43CCA0(state->invocation->attachee_obj);
+            object_destroy(state->invocation->attachee_obj);
             state->invocation->attachee_obj = new_obj;
 
             int hp = object_hp_max(new_obj);
@@ -2164,7 +2164,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     }
     case SAT_DESTROY: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
-        sub_43CCA0(obj);
+        object_destroy(obj);
         return NEXT;
     }
     case SAT_ACTION_WALK_TO: {
@@ -2676,7 +2676,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
         int64_t item_obj = item_find_by_name(obj, name);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_43CCA0(item_obj);
+            object_destroy(item_obj);
         }
         return NEXT;
     }

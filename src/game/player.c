@@ -192,7 +192,7 @@ bool sub_40DAB0()
         return false;
     }
 
-    sub_43CCA0(player_pc_obj);
+    object_destroy(player_pc_obj);
     player_pc_obj = OBJ_HANDLE_NULL;
     player_pc_oid.type = OID_TYPE_NULL;
 

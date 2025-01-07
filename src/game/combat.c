@@ -505,7 +505,7 @@ void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat,
         loc = obj_field_int64_get(proj_obj, OBJ_F_LOCATION);
         sub_4EDF20(weapon_obj, loc, 0, 0, false);
         mp_object_flags_unset(weapon_obj, OF_OFF);
-        sub_43CCA0(proj_obj);
+        object_destroy(proj_obj);
     } else if ((proj_flags & 0x1000) != 0) {
         if (a5 && (proj_flags && 0x2000) == 0) {
             proj_flags |= 0x2000;
@@ -519,11 +519,11 @@ void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat,
             critter_flags2 &= ~OCF2_USING_BOOMERANG;
             sub_4EFDD0(a2, OBJ_F_CRITTER_FLAGS2, critter_flags2);
 
-            sub_43CCA0(proj_obj);
+            object_destroy(proj_obj);
             sub_4A9AD0(a2, a3);
         }
     } else {
-        sub_43CCA0(proj_obj);
+        object_destroy(proj_obj);
     }
 
     if (combat != NULL
@@ -1779,7 +1779,7 @@ void sub_4B4390(CombatContext* combat)
             }
 
             if ((dam_flags & CDF_DESTROY_WEAPON) != 0) {
-                sub_43CCA0(weapon_obj);
+                object_destroy(weapon_obj);
 
                 mes_file_entry.num = 22; // "Weapon destroyed"
                 mes_get_msg(combat_mes_file, &mes_file_entry);
@@ -2396,7 +2396,7 @@ void sub_4B5E90(int64_t loc)
             obj = node->obj;
             object_list_destroy(&objects);
             sub_45EC80(obj);
-            sub_43CCA0(obj);
+            object_destroy(obj);
             return;
         }
         node = node->next;

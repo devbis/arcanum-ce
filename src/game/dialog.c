@@ -2042,7 +2042,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
                             item_remove(item_obj);
                             sub_466E50(item_obj, obj_field_int64_get(a1->npc_obj, OBJ_F_LOCATION));
                         } else {
-                            sub_43CCA0(item_obj);
+                            object_destroy(item_obj);
                         }
                     }
                 }

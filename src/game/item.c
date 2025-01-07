@@ -281,7 +281,7 @@ void sub_460FF0(int64_t critter_obj)
             item_transfer(new_item_obj, critter_obj);
 
             if (sub_464D20(new_item_obj, 1006, critter_obj)) {
-                sub_43CCA0(new_item_obj);
+                object_destroy(new_item_obj);
 
                 switch (sub_465C90(race)) {
                 case 1:
@@ -1412,13 +1412,13 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 
         if (item_type == OBJ_TYPE_FOOD) {
             sub_4574D0(item_obj);
-            sub_43CCA0(item_obj);
+            object_destroy(item_obj);
             return;
         }
 
         if (item_type != OBJ_TYPE_SCROLL) {
             sub_4574D0(item_obj);
-            sub_43CCA0(item_obj);
+            object_destroy(item_obj);
             return;
         }
     }
@@ -1456,7 +1456,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
             sub_460630(&ui_message);
 
             sub_4574D0(item_obj);
-            sub_43CCA0(item_obj);
+            object_destroy(item_obj);
         }
 
         return;
@@ -1464,7 +1464,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 
     if (item_type == OBJ_TYPE_SCROLL) {
         sub_4574D0(item_obj);
-        sub_43CCA0(item_obj);
+        object_destroy(item_obj);
         return;
     }
 }
@@ -1512,7 +1512,7 @@ void sub_462FC0(int64_t obj, int64_t item_obj, int64_t loc)
 
     if (obj_type == OBJ_TYPE_FOOD || obj_type == OBJ_TYPE_SCROLL) {
         sub_4574D0(item_obj);
-        sub_43CCA0(item_obj);
+        object_destroy(item_obj);
     }
 }
 
@@ -1712,14 +1712,14 @@ bool sub_463540(int64_t container_obj)
     if (sub_49B290(container_obj) == 3023) {
         cnt = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_INVENTORY_NUM);
         if (cnt == 0) {
-            sub_43CCA0(container_obj);
+            object_destroy(container_obj);
             rc = true;
         } else if (cnt == 1) {
             item_obj = obj_arrayfield_handle_get(container_obj, OBJ_F_CONTAINER_INVENTORY_LIST_IDX, 0);
             item_remove(item_obj);
 
             loc = obj_field_int64_get(container_obj, OBJ_F_LOCATION);
-            sub_43CCA0(container_obj);
+            object_destroy(container_obj);
             sub_466E50(item_obj, loc);
             rc = true;
         }
@@ -1853,7 +1853,7 @@ void sub_463860(int64_t obj, bool a2)
                 }
             } else {
                 sub_4415C0(item_obj, loc);
-                sub_43CCA0(item_obj);
+                object_destroy(item_obj);
             }
         }
     }
@@ -1938,7 +1938,7 @@ void sub_463B30(int64_t obj, bool a2)
         } else {
             item_force_remove(item_obj, obj);
             sub_4415C0(item_obj, loc);
-            sub_43CCA0(item_obj);
+            object_destroy(item_obj);
         }
 
         cnt = obj_field_int32_get(obj, inventory_num_fld);
@@ -2080,7 +2080,7 @@ void sub_463E20(int64_t obj)
             if (random_between(1, 100) <= set.rate[idx]
                 && mp_object_create(set.basic_prototype[idx], loc, &item_obj)) {
                 if (!item_transfer(item_obj, obj)) {
-                    sub_43CCA0(item_obj);
+                    object_destroy(item_obj);
                 }
             }
         }
@@ -2424,7 +2424,7 @@ bool item_gold_transfer(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_
                 }
 
                 if (from_qty == qty) {
-                    sub_43CCA0(gold_obj);
+                    object_destroy(gold_obj);
                 } else {
                     sub_4EFDD0(gold_obj, OBJ_F_GOLD_QUANTITY, from_qty - qty);
                 }
@@ -3076,7 +3076,7 @@ bool item_ammo_transfer(int64_t from_obj, int64_t to_obj, int qty, int ammo_type
             }
 
             if (remaining_qty == qty) {
-                sub_43CCA0(ammo_obj);
+                object_destroy(ammo_obj);
             } else {
                 sub_4EFDD0(ammo_obj, OBJ_F_AMMO_QUANTITY, remaining_qty - qty);
             }
@@ -3687,7 +3687,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
             sub_4415C0(item_obj, obj_field_int64_get(parent_obj, OBJ_F_LOCATION));
             sub_466D60(parent_obj);
             sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
-            sub_43CCA0(item_obj);
+            object_destroy(item_obj);
             return;
         }
 
@@ -3768,7 +3768,7 @@ void sub_466A50(int64_t key_obj, int64_t key_ring_obj)
         OBJ_F_KEY_RING_LIST_IDX,
         index,
         key_id);
-    sub_43CCA0(key_obj);
+    object_destroy(key_obj);
 }
 
 // 0x466AA0
@@ -4568,7 +4568,7 @@ bool item_decay_timeevent_process(TimeEvent* timeevent)
     obj = timeevent->params[0].object_value;
     if (dword_5E8800 > 0) {
         if (item_can_decay(obj)) {
-            sub_43CCA0(obj);
+            object_destroy(obj);
         }
     } else {
         sub_468090(obj, 60000);

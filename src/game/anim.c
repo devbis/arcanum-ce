@@ -4490,7 +4490,7 @@ bool sub_424D00(AnimRunInfo* run_info)
         object_flags_set(obj, OF_OFF);
     }
 
-    sub_43CCA0(obj);
+    object_destroy(obj);
 
     return true;
 }
@@ -7507,7 +7507,7 @@ bool sub_429E70(AnimRunInfo* run_info)
     }
 
     if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_DESTROYED) == 0) {
-        sub_43CCA0(obj);
+        object_destroy(obj);
     }
 
     return true;
@@ -11286,7 +11286,7 @@ bool sub_42FFE0(AnimRunInfo* run_info)
 
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     if (sub_4D7110(location, false)) {
-        sub_43CCA0(obj);
+        object_destroy(obj);
     }
 
     return true;
@@ -13180,7 +13180,7 @@ void sub_432D90(int64_t obj)
             critter_decay_schedule(blood_obj);
         } else {
             tig_debug_printf("Anim: AGapplyBloodEffect: ERROR: Blood object failed to animate!\n");
-            sub_43CCA0(blood_obj);
+            object_destroy(blood_obj);
         }
     }
 }
