@@ -170,7 +170,7 @@ static WmapRndEncounterChart wmap_rnd_power_chart;
 static bool dword_64C790;
 
 // 0x64C794
-static bool dword_64C794;
+static bool wmap_rnd_disabled;
 
 // 0x64C798
 static WmapRndEncounterTable* wmap_rnd_encounter_tables;
@@ -209,7 +209,7 @@ bool wmap_rnd_mod_load()
     char* str;
     int value;
 
-    if (dword_64C794) {
+    if (wmap_rnd_disabled) {
         return true;
     }
 
@@ -357,12 +357,14 @@ bool wmap_rnd_mod_load()
 // 0x558700
 void wmap_rnd_mod_unload()
 {
-    if (!dword_64C794) {
-        if (dword_64C790) {
-            sub_558AF0();
-            sub_558B50();
-            dword_64C790 = false;
-        }
+    if (wmap_rnd_disabled) {
+        return;
+    }
+
+    if (dword_64C790) {
+        sub_558AF0();
+        sub_558B50();
+        dword_64C790 = false;
     }
 }
 
@@ -383,7 +385,7 @@ bool wmap_rnd_save(TigFile* stream)
 
     num_entries = 0;
     save_info = NULL;
-    if (!dword_64C794
+    if (!wmap_rnd_disabled
         && dword_64C790
         && wmap_rnd_encounter_tables != NULL) {
         for (table_idx = 0; table_idx < wmap_rnd_num_encounter_tables; table_idx++) {
@@ -453,7 +455,7 @@ bool wmap_rnd_load(GameLoadInfo* load_info)
             return false;
         }
 
-        if (!dword_64C794
+        if (!wmap_rnd_disabled
             && dword_64C790
             && wmap_rnd_num_encounter_tables != 0
             && wmap_rnd_encounter_tables != NULL) {
@@ -478,9 +480,9 @@ bool wmap_rnd_load(GameLoadInfo* load_info)
 }
 
 // 0x5589D0
-void sub_5589D0()
+void wmap_rnd_disable()
 {
-    dword_64C794 = 1;
+    wmap_rnd_disabled = true;
 }
 
 // 0x5589E0
@@ -681,7 +683,11 @@ bool sub_558DE0(int64_t loc)
 {
     int hour;
 
-    if (dword_64C794 || !dword_64C790) {
+    if (wmap_rnd_disabled) {
+        return false;
+    }
+
+    if (!dword_64C790) {
         return false;
     }
 

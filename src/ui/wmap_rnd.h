@@ -11,7 +11,7 @@ bool wmap_rnd_mod_load();
 void wmap_rnd_mod_unload();
 bool wmap_rnd_save(TigFile* stream);
 bool wmap_rnd_load(GameLoadInfo* load_info);
-void sub_5589D0();
+void wmap_rnd_disable();
 bool sub_5595B0(TimeEvent* timeevent);
 void sub_559640();
 

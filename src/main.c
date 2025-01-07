@@ -115,7 +115,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     }
 
     if (strstr(lpCmdLine, "-norandom") != NULL) {
-        sub_5589D0();
+        wmap_rnd_disable();
     }
 
     if (strstr(lpCmdLine, "-nonmsmousez") != NULL) {
