@@ -2139,7 +2139,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             script_pc_gl_flag_set(a1->pc_obj, value, sub_4167C0(pch));
             break;
         case DIALOG_ACTION_XP:
-            sub_45F110(a1->pc_obj, quest_get_xp(value));
+            critter_give_xp(a1->pc_obj, quest_get_xp(value));
             break;
         case DIALOG_ACTION_NK:
             critter_kill(a1->npc_obj);

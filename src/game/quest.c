@@ -276,7 +276,7 @@ void sub_4C4D20(int64_t obj, int num, int state, int64_t a4)
     }
 
     if (state == QUEST_STATE_COMPLETED) {
-        sub_45F110(obj, quest_get_xp(quests[num].experience_level));
+        critter_give_xp(obj, quest_get_xp(quests[num].experience_level));
     }
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {

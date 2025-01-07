@@ -547,7 +547,7 @@ void sub_45DA20(int64_t a1, int64_t a2, int a3)
                 ObjectList followers;
                 ObjectNode* node;
 
-                sub_45F110(a2, 20 * obj_field_int32_get(a1, OBJ_F_NPC_EXPERIENCE_WORTH) / 100);
+                critter_give_xp(a2, 20 * obj_field_int32_get(a1, OBJ_F_NPC_EXPERIENCE_WORTH) / 100);
                 obj_field_int32_set(a1, OBJ_F_NPC_EXPERIENCE_WORTH, 0);
                 sub_45DC90(a2, a1, true);
                 logbook_add_kill(a2, a1);
@@ -1537,9 +1537,9 @@ int sub_45F0B0(int64_t obj)
 }
 
 // 0x45F110
-void sub_45F110(int64_t obj, int xp_gain)
+void critter_give_xp(int64_t obj, int xp_gain)
 {
-    int v1;
+    int player;
     int cnt;
     ObjectList objects;
     ObjectNode* node;
@@ -1567,19 +1567,19 @@ void sub_45F110(int64_t obj, int xp_gain)
             return;
         }
 
-        v1 = sub_4BA020(obj);
+        player = sub_4BA020(obj);
     } else {
-        v1 = -1;
+        player = -1;
     }
 
-    if (v1 != -1) {
+    if (player != -1) {
         cnt = 0;
         sub_440FC0(obj, OBJ_TM_PC, &objects);
         node = objects.head;
         while (node != NULL) {
             if (!critter_is_dead(node->obj)
                 && node->obj != OBJ_HANDLE_NULL
-                && sub_4BA020(node->obj) == v1) {
+                && sub_4BA020(node->obj) == player) {
                 cnt++;
             }
             node = node->next;
@@ -1594,7 +1594,7 @@ void sub_45F110(int64_t obj, int xp_gain)
         while (node != NULL) {
             if (!critter_is_dead(node->obj)
                 && node->obj != OBJ_HANDLE_NULL
-                && sub_4BA020(node->obj) == v1) {
+                && sub_4BA020(node->obj) == player) {
                 xp = stat_get_base(node->obj, STAT_EXPERIENCE_POINTS);
                 xp += effect_adjust_xp_gain(node->obj, xp_gain);
                 stat_set_base(node->obj, STAT_EXPERIENCE_POINTS, xp);

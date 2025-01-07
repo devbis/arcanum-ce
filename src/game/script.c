@@ -2131,7 +2131,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_GIVE_QUEST_XP: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int quest_level = script_get_value(action->op_type[1], action->op_value[1], state);
-        sub_45F110(obj, quest_get_xp(quest_level));
+        critter_give_xp(obj, quest_get_xp(quest_level));
         return NEXT;
     }
     case SAT_WRITTEN_UI_START_BOOK: {

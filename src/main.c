@@ -501,11 +501,11 @@ void main_loop()
                                 break;
                             case DIK_Y:
                                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
-                                    sub_45F110(pc_obj, level_get_experience_points_to_next_level(pc_obj));
+                                    critter_give_xp(pc_obj, level_get_experience_points_to_next_level(pc_obj));
                                 } else if ((tig_net_flags & TIG_NET_HOST) != 0) {
                                     party_member_obj = multiplayer_find_first_player_obj();
                                     while (party_member_obj != OBJ_HANDLE_NULL) {
-                                        sub_45F110(party_member_obj, level_get_experience_points_to_next_level(party_member_obj));
+                                        critter_give_xp(party_member_obj, level_get_experience_points_to_next_level(party_member_obj));
                                         party_member_obj = multiplayer_find_next_player_obj();
                                     }
                                 }

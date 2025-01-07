@@ -1892,7 +1892,7 @@ void sub_4B4390(CombatContext* combat)
                 obj_field_int32_set(combat->target_obj, OBJ_F_NPC_EXPERIENCE_POOL, remaining_experience - awarded_experience);
 
                 if (obj_field_int32_get(combat->field_30, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                    sub_45F110(combat->field_30, awarded_experience);
+                    critter_give_xp(combat->field_30, awarded_experience);
                 }
             }
         }
