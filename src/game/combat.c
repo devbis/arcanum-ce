@@ -1898,19 +1898,19 @@ void sub_4B4390(CombatContext* combat)
         }
 
         if (critter_is_dead(combat->target_obj)) {
-            int v2;
+            int anim;
 
             if ((dam_flags & CDF_DEATH) != 0 || dam <= 20) {
-                v2 = 7;
+                anim = 7;
             } else if (combat->hit_loc == HIT_LOC_HEAD) {
-                v2 = 17;
+                anim = 17;
             } else if (combat->hit_loc == HIT_LOC_LEG) {
-                v2 = 19;
+                anim = 19;
             } else {
-                v2 = 18;
+                anim = 18;
             }
 
-            sub_45DA20(combat->target_obj, combat->field_30, v2);
+            critter_notify_killed(combat->target_obj, combat->field_30, anim);
 
             if (obj_type == OBJ_TYPE_NPC
                 && critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {

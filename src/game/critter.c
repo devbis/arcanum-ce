@@ -509,85 +509,88 @@ void critter_kill(int64_t obj)
 }
 
 // 0x45DA20
-void sub_45DA20(int64_t a1, int64_t a2, int a3)
+void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
 {
     int64_t leader_obj;
+    int64_t pc_killer_obj;
     tig_art_id_t art_id;
 
-    if (a1 == OBJ_HANDLE_NULL) {
+    if (victim_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    sub_4D5620(a1);
+    sub_4D5620(victim_obj);
 
-    if (!sub_441980(a2, a1, OBJ_HANDLE_NULL, SAP_DYING, 0)) {
+    if (!sub_441980(killer_obj, victim_obj, OBJ_HANDLE_NULL, SAP_DYING, 0)) {
         return;
     }
 
-    if ((obj_field_int32_get(a1, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+    if ((obj_field_int32_get(victim_obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
         return;
     }
 
-    combat_critter_deactivate_combat_mode(a1);
-    obj_field_int32_set(a1, OBJ_F_CRITTER_DEATH_TIME, datetime_current_second());
-    sub_459740(a1);
-    sub_4B80E0(a1);
+    combat_critter_deactivate_combat_mode(victim_obj);
+    obj_field_int32_set(victim_obj, OBJ_F_CRITTER_DEATH_TIME, datetime_current_second());
+    sub_459740(victim_obj);
+    sub_4B80E0(victim_obj);
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        critter_npc_combat_focus_wipe_schedule(a1);
-        obj_field_handle_set(a1, OBJ_F_NPC_COMBAT_FOCUS, a2);
-        sub_4AA1B0(a1, a2);
+    if (obj_field_int32_get(victim_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        critter_npc_combat_focus_wipe_schedule(victim_obj);
+        obj_field_handle_set(victim_obj, OBJ_F_NPC_COMBAT_FOCUS, killer_obj);
+        sub_4AA1B0(victim_obj, killer_obj);
 
-        if (a2 != OBJ_HANDLE_NULL) {
-            if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-                a2 = critter_pc_leader_get(a2);
+        if (killer_obj != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(killer_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+                pc_killer_obj = killer_obj;
+            } else {
+                pc_killer_obj = critter_pc_leader_get(killer_obj);
             }
 
-            if (a2 != OBJ_HANDLE_NULL) {
+            if (pc_killer_obj != OBJ_HANDLE_NULL) {
                 ObjectList followers;
                 ObjectNode* node;
 
-                critter_give_xp(a2, 20 * obj_field_int32_get(a1, OBJ_F_NPC_EXPERIENCE_WORTH) / 100);
-                obj_field_int32_set(a1, OBJ_F_NPC_EXPERIENCE_WORTH, 0);
-                sub_45DC90(a2, a1, true);
-                logbook_add_kill(a2, a1);
+                critter_give_xp(pc_killer_obj, 20 * obj_field_int32_get(victim_obj, OBJ_F_NPC_EXPERIENCE_WORTH) / 100);
+                obj_field_int32_set(victim_obj, OBJ_F_NPC_EXPERIENCE_WORTH, 0);
+                sub_45DC90(pc_killer_obj, victim_obj, true);
+                logbook_add_kill(pc_killer_obj, victim_obj);
 
-                object_get_followers(a2, &followers);
+                object_get_followers(pc_killer_obj, &followers);
                 node = followers.head;
                 while (node != NULL) {
-                    sub_441980(a1, node->obj, a2, SAP_LEADER_KILLING, 0);
+                    sub_441980(victim_obj, node->obj, pc_killer_obj, SAP_LEADER_KILLING, 0);
                     node = node->next;
                 }
                 object_list_destroy(&followers);
             }
         }
 
-        leader_obj = critter_leader_get(a1);
+        leader_obj = critter_leader_get(victim_obj);
         if (leader_obj != OBJ_HANDLE_NULL) {
-            critter_disband(a1, true);
+            critter_disband(victim_obj, true);
         }
-        critter_leader_set(a1, leader_obj);
-        sub_4BAB30(a1);
+        critter_leader_set(victim_obj, leader_obj);
+        sub_4BAB30(victim_obj);
     } else {
-        sub_467520(a1);
+        sub_467520(victim_obj);
     }
 
-    art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
+    art_id = obj_field_int32_get(victim_obj, OBJ_F_CURRENT_AID);
     if (sub_5040D0(art_id)) {
         art_id = sub_504100(art_id, 0);
-        object_set_current_aid(a1, art_id);
+        object_set_current_aid(victim_obj, art_id);
     }
 
-    sub_435080(a1, a3);
+    sub_435080(victim_obj, anim);
 
-    if ((obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_DECAY) == 0) {
-        critter_decay_schedule(a1);
+    if ((obj_field_int32_get(victim_obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_DECAY) == 0) {
+        critter_decay_schedule(victim_obj);
     }
 
-    object_hp_damage_set(a1, 32000);
+    object_hp_damage_set(victim_obj, 32000);
 
-    if (a2 != OBJ_HANDLE_NULL) {
-        sub_4CBC60(a2, a1);
+    if (killer_obj != OBJ_HANDLE_NULL) {
+        sub_4CBC60(killer_obj, victim_obj);
     }
 }
 
