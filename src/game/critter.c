@@ -1730,27 +1730,27 @@ bool sub_45F570(long long obj)
 }
 
 // 0x45F5C0
-void sub_45F5C0(long long obj)
+void critter_spread_out_disable(int64_t npc_obj)
 {
-    int flags;
+    unsigned int npc_flags;
 
-    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-    if ((flags & ONF_AI_SPREAD_OUT) != 0) {
-        flags &= ~ONF_AI_SPREAD_OUT;
-        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
+    npc_flags = obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS);
+    if ((npc_flags & ONF_AI_SPREAD_OUT) != 0) {
+        npc_flags &= ~ONF_AI_SPREAD_OUT;
+        obj_field_int32_set(npc_obj, OBJ_F_NPC_FLAGS, npc_flags);
     }
 }
 
 // 0x45F600
-void sub_45F600(long long obj)
+void critter_spread_out_enable(int64_t npc_obj)
 {
-    int flags;
+    unsigned int npc_flags;
 
-    flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
-    if ((flags & ONF_AI_SPREAD_OUT) == 0) {
-        flags |= ONF_AI_SPREAD_OUT;
-        obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
-        sub_436960(obj, critter_leader_get(obj));
+    npc_flags = obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS);
+    if ((npc_flags & ONF_AI_SPREAD_OUT) == 0) {
+        npc_flags |= ONF_AI_SPREAD_OUT;
+        obj_field_int32_set(npc_obj, OBJ_F_NPC_FLAGS, npc_flags);
+        sub_436960(npc_obj, critter_leader_get(npc_obj));
     }
 }
 

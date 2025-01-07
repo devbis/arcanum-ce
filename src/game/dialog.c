@@ -2104,10 +2104,10 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             sub_4450A0(value);
             break;
         case DIALOG_ACTION_SC:
-            sub_45F5C0(a1->npc_obj);
+            critter_spread_out_disable(a1->npc_obj);
             break;
         case DIALOG_ACTION_SO:
-            sub_45F600(a1->npc_obj);
+            critter_spread_out_enable(a1->npc_obj);
             break;
         case DIALOG_ACTION_UW: {
             int v43;
