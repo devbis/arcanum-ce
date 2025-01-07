@@ -230,7 +230,7 @@ void sub_571CB0(S4F2810* a1)
 
         if ((item_flags & OIF_IS_MAGICAL))
 
-        sub_435450(pc_obj, a1->obj, v2, 0);
+        anim_goal_use_item_on_obj(pc_obj, a1->obj, v2, 0);
         if (tig_kb_is_key_pressed(DIK_LSHIFT)) {
             sub_436C80();
             sub_571C80();

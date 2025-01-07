@@ -2384,7 +2384,7 @@ void sub_4AC250(Ai* ai)
 // 0x4AC320
 void sub_4AC320(Ai* ai)
 {
-    sub_435450(ai->obj,
+    anim_goal_use_item_on_obj(ai->obj,
         ai->danger_source,
         ai->field_20,
         0);
