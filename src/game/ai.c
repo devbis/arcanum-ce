@@ -702,7 +702,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
     }
 
     if (nearest_obj != OBJ_HANDLE_NULL
-        && sub_4356C0(obj, nearest_obj)) {
+        && anim_goal_pickup_item(obj, nearest_obj)) {
         found = true;
     }
     object_list_destroy(&objects);
@@ -762,7 +762,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
                 && (obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & (OIF_NO_DISPLAY | OIF_NO_NPC_PICKUP)) == 0
                 && !sub_461F60(item_obj)
                 && !sub_466510(item_obj, obj, NULL)
-                && sub_4356C0(obj, item_obj)) {
+                && anim_goal_pickup_item(obj, item_obj)) {
                 found = true;
                 break;
             }

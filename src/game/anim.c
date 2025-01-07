@@ -14434,28 +14434,32 @@ bool anim_goal_use_item_on_loc(int64_t obj, int64_t target_loc, int64_t item_obj
 }
 
 // 0x4356C0
-bool sub_4356C0(int64_t a1, int64_t a2)
+bool anim_goal_pickup_item(int64_t obj, int64_t item_obj)
 {
     AnimGoalData goal_data;
 
-    if (a1 == OBJ_HANDLE_NULL || a2 == OBJ_HANDLE_NULL) {
+    if (obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (!sub_4348E0(a1, 4)) {
+    if (item_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_NPC
+    if (!sub_4348E0(obj, 4)) {
+        return false;
+    }
+
+    if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
         && !sub_4681A0()) {
         return false;
     }
 
-    if (!sub_44D4E0(&goal_data, a1, AG_PICKUP_ITEM)) {
+    if (!sub_44D4E0(&goal_data, obj, AG_PICKUP_ITEM)) {
         return false;
     }
 
-    goal_data.params[AGDATA_TARGET_OBJ].obj = a2;
+    goal_data.params[AGDATA_TARGET_OBJ].obj = item_obj;
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {
         return false;
