@@ -1300,13 +1300,15 @@ bool critter_decay_timeevent_process(TimeEvent* timeevent)
         return true;
     }
 
-    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        && critter_is_dead(obj)) {
-        tig_debug_printf("Critter: critter_decay_timeevent_process: ERROR: Attempt to Decay a LIVE critter!\n");
-        return false;
+    if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
+        if (!critter_is_dead(obj)) {
+            tig_debug_printf("Critter: critter_decay_timeevent_process: ERROR: Attempt to Decay a LIVE critter!\n");
+            return false;
+        }
+
+        sub_463860(obj, true);
     }
 
-    sub_463860(obj, true);
     sub_43CCA0(obj);
 
     return true;
