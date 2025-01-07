@@ -4603,8 +4603,8 @@ void wmap_town_refresh_rect(TigRect* rect)
     while (node != NULL) {
         loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
         sub_4BE670(&stru_64E7F8, loc, &offset_x, &offset_y);
-        offset_x -= stru_5C9160[4].width / 2 - stru_5C9228[2].field_34;
-        offset_y -= stru_5C9160[4].height / 2 - stru_5C9228[2].field_38;
+        offset_x -= stru_5C9160[4].width / 2 + stru_5C9228[2].field_34;
+        offset_y -= stru_5C9160[4].height / 2 + stru_5C9228[2].field_38;
 
         vb_dst_rect.x = bounds.x + offset_x;
         vb_dst_rect.y = bounds.y + offset_y;
@@ -4635,8 +4635,8 @@ void wmap_town_refresh_rect(TigRect* rect)
             if (!player_is_pc_obj(node->obj)) {
                 loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
                 sub_4BE670(&stru_64E7F8, loc, &offset_x, &offset_y);
-                offset_x -= stru_5C9160[4].width / 2 - stru_5C9228[2].field_34;
-                offset_y -= stru_5C9160[4].height / 2 - stru_5C9228[2].field_38;
+                offset_x -= stru_5C9160[4].width / 2 + stru_5C9228[2].field_34;
+                offset_y -= stru_5C9160[4].height / 2 + stru_5C9228[2].field_38;
 
                 vb_dst_rect.x = bounds.x + offset_x;
                 vb_dst_rect.y = bounds.y + offset_y;
