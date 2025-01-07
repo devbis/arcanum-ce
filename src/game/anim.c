@@ -14273,12 +14273,12 @@ bool anim_goal_dying(int64_t obj, int anim)
 }
 
 // 0x4350F0
-bool sub_4350F0(int64_t obj, int64_t a2, int64_t a3, int a6, int a7)
+bool anim_goal_use_skill_on(int64_t obj, int64_t target_obj, int64_t item_obj, int skill, unsigned int flags)
 {
     AnimGoalData goal_data;
 
-    if (a6 == SKILL_PICK_LOCKS) {
-        return sub_436220(obj, a2, a3);
+    if (skill == SKILL_PICK_LOCKS) {
+        return sub_436220(obj, target_obj, item_obj);
     }
 
     if (!sub_4348E0(obj, 4)) {
@@ -14289,10 +14289,10 @@ bool sub_4350F0(int64_t obj, int64_t a2, int64_t a3, int a6, int a7)
         return false;
     }
 
-    goal_data.params[AGDATA_TARGET_OBJ].obj = a2;
-    goal_data.params[AGDATA_SCRATCH_OBJ].obj = a3;
-    goal_data.params[AGDATA_SKILL_DATA].data = a6;
-    goal_data.params[AGDATA_FLAGS_DATA].data |= a7;
+    goal_data.params[AGDATA_TARGET_OBJ].obj = target_obj;
+    goal_data.params[AGDATA_SCRATCH_OBJ].obj = item_obj;
+    goal_data.params[AGDATA_SKILL_DATA].data = skill;
+    goal_data.params[AGDATA_FLAGS_DATA].data |= flags;
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {
         return false;

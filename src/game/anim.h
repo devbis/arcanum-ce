@@ -73,7 +73,7 @@ bool anim_goal_get_up(int64_t obj);
 bool anim_goal_knockback(int64_t target_obj, int rot, int range, int64_t source_obj);
 bool anim_goal_throw_item(int64_t obj, int64_t item_obj, int64_t target_loc);
 bool anim_goal_dying(int64_t obj, int anim);
-bool sub_4350F0(int64_t obj, int64_t a2, int64_t a3, int a6, int a7);
+bool anim_goal_use_skill_on(int64_t obj, int64_t target_obj, int64_t item_obj, int skill, unsigned int flags);
 bool sub_4352C0(int64_t obj, int64_t a2, int64_t a4, int a5, int a6);
 bool sub_435450(int64_t obj, int64_t a2, int64_t a3, unsigned int a4);
 bool sub_4355F0(int64_t obj, int64_t a2, int64_t a3, unsigned int flags);

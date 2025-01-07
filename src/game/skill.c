@@ -1036,27 +1036,27 @@ bool skill_check_stat(int64_t obj, int stat, int value)
 }
 
 // 0x4C6F90
-bool sub_4C6F90(int64_t a1, int a2, int64_t a3, int a4)
+bool sub_4C6F90(int64_t obj, int skill, int64_t target_obj, unsigned int flags)
 {
-    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, a2, a4);
+    return anim_goal_use_skill_on(obj, target_obj, OBJ_HANDLE_NULL, skill, flags);
 }
 
 // 0x4C6FD0
-bool sub_4C6FD0(int64_t a1, int64_t a2, int64_t a3)
+bool sub_4C6FD0(int64_t obj, int64_t target_obj, int64_t item_obj)
 {
-    return sub_4350F0(a1, a2, a3, 5, 0);
+    return anim_goal_use_skill_on(obj, target_obj, item_obj, SKILL_PICK_POCKET, 0);
 }
 
 // 0x4C7010
-bool sub_4C7010(int64_t a1, int64_t a2, int64_t a3)
+bool sub_4C7010(int64_t obj, int64_t target_obj, int64_t item_obj)
 {
-    return sub_4350F0(a1, a2, a3, 5, 1);
+    return anim_goal_use_skill_on(obj, target_obj, item_obj, SKILL_PICK_POCKET, 1);
 }
 
 // 0x4C7050
-bool sub_4C7050(int64_t a1, int a2, int64_t a3)
+bool sub_4C7050(int64_t obj, int a2, int64_t target_obj)
 {
-    return sub_4350F0(a1, a3, OBJ_HANDLE_NULL, 15, 2 << a2);
+    return anim_goal_use_skill_on(obj, target_obj, OBJ_HANDLE_NULL, 15, 2 << a2);
 }
 
 // 0x4C7090

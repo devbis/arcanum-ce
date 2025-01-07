@@ -2393,7 +2393,7 @@ void sub_4AC320(Ai* ai)
 // 0x4AC350
 void sub_4AC350(Ai* ai)
 {
-    sub_4350F0(ai->obj,
+    anim_goal_use_skill_on(ai->obj,
         ai->danger_source,
         ai->field_20,
         ai->field_1C,

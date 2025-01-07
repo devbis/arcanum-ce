@@ -2608,7 +2608,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         if (obj_type_is_critter(obj_field_int32_get(victim_obj, OBJ_F_TYPE))) {
             int64_t gold_obj = obj_field_handle_get(victim_obj, OBJ_F_CRITTER_GOLD);
             if (gold_obj != OBJ_HANDLE_NULL && item_gold_get(gold_obj) >= 100) {
-                sub_4350F0(thief_obj, victim_obj, gold_obj, SKILL_PICK_POCKET, 0);
+                anim_goal_use_skill_on(thief_obj, victim_obj, gold_obj, SKILL_PICK_POCKET, 0);
             }
         }
         return NEXT;

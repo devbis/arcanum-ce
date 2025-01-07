@@ -3831,7 +3831,7 @@ void sub_419C30(int a1, int a2, DialogEntryNode* a3)
 void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4)
 {
     unsigned int flags;
-    int64_t v1;
+    int64_t item_obj;
 
     if (critter_pc_leader_get(a4->npc_obj) != OBJ_HANDLE_NULL) {
         flags = 0;
@@ -3839,8 +3839,8 @@ void sub_419CB0(int a1, int a2, int a3, DialogEntryNode* a4)
         flags = 0x2000;
     }
 
-    v1 = sub_4C91F0(a4->npc_obj, a1);
-    sub_4350F0(a4->npc_obj, a4->pc_obj, v1, a1, flags);
+    item_obj = sub_4C91F0(a4->npc_obj, a1);
+    anim_goal_use_skill_on(a4->npc_obj, a4->pc_obj, item_obj, a1, flags);
     sub_418480(a4->field_70, a4, 15000);
     a4->field_45C = 1;
     sub_418390(a4->field_460[0], a4, 1000);
