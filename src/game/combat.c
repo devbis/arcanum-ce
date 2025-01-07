@@ -1355,7 +1355,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
             combat_callbacks.field_4();
 
             if (dword_5FC22C) {
-                sub_4B6E70(obj);
+                combat_turn_based_whos_turn_set(obj);
             }
         }
 
@@ -3048,7 +3048,7 @@ void combat_debug(int64_t obj, const char* msg)
 }
 
 // 0x4B6E70
-void sub_4B6E70(int64_t obj)
+void combat_turn_based_whos_turn_set(int64_t obj)
 {
     if (!dword_5FC22C) {
         return;
@@ -3360,7 +3360,7 @@ void combat_turn_based_subturn_start()
 {
     if (dword_5FC240 != NULL) {
         combat_debug(dword_5FC240->obj, "SubTurn Start");
-        sub_4B6E70(dword_5FC240->obj);
+        combat_turn_based_whos_turn_set(dword_5FC240->obj);
         sub_4B7790(dword_5FC240->obj, 0);
     } else {
         tig_debug_printf("Combat: combat_turn_based_subturn_start: ERROR: Couldn't start TB Combat Turn due to no Active Critters!\n");

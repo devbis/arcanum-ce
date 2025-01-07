@@ -1071,7 +1071,7 @@ void sub_4A9AD0(int64_t attacker_obj, int64_t target_obj)
     if (!combat_critter_is_combat_mode_active(attacker_obj)) {
         combat_critter_activate_combat_mode(attacker_obj);
         if (sub_4B6D70()) {
-            sub_4B6E70(target_obj);
+            combat_turn_based_whos_turn_set(target_obj);
         }
     }
 

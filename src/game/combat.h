@@ -112,7 +112,7 @@ bool sub_4B6C90(bool turn_based);
 void sub_4B6D20();
 bool sub_4B6D70();
 int64_t sub_4B6D80();
-void sub_4B6E70(int64_t obj);
+void combat_turn_based_whos_turn_set(int64_t obj);
 void sub_4B7010(int64_t obj);
 bool combat_tb_timeevent_process(TimeEvent* timeevent);
 void combat_turn_based_next_subturn();
