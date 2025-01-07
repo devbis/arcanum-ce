@@ -1000,18 +1000,18 @@ void wmap_rnd_encounter_build_object(int name, int64_t loc, int64_t* obj_ptr)
 }
 
 // 0x5595B0
-bool sub_5595B0(TimeEvent* timeevent)
+bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
 {
-    long long location;
+    int64_t loc;
 
     (void)timeevent;
 
     sub_559640();
 
     if (sub_40FF40() == sub_40FF50(MAP_TYPE_START_MAP)
-        && !sub_4CB6A0(player_get_pc_obj())) {
-        sub_566CC0(&location);
-        if (sub_558DE0(location)) {
+        && sub_4CB6A0(player_get_pc_obj()) == AREA_UNKNOWN) {
+        sub_566CC0(&loc);
+        if (sub_558DE0(loc)) {
             if (wmap_ui_is_created()) {
                 sub_560F40();
                 sub_560720();

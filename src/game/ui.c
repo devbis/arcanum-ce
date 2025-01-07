@@ -565,10 +565,10 @@ void sub_460B20()
 }
 
 // 0x460B30
-bool sub_460B30(TimeEvent* timeevent)
+bool ui_wmap_rnd_timeevent_process(TimeEvent* timeevent)
 {
-    if (ui_callbacks.field_10C != NULL) {
-        return ui_callbacks.field_10C(timeevent);
+    if (ui_callbacks.wmap_rnd_timeevent_process != NULL) {
+        return ui_callbacks.wmap_rnd_timeevent_process(timeevent);
     } else {
         return false;
     }

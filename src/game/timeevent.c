@@ -129,7 +129,7 @@ static TimeEventTypeInfo stru_5B2188[] = {
     { "UI", false, TIME_EVENT_TYPE_FLAG_0x0008 | TIME_EVENT_TYPE_FLAG_0x0001, TIME_TYPE_REAL_TIME, ui_timeevent_process },
     { "Teleported", false, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, sub_43EAC0 },
     { "Scenery Respawn", true, TIME_EVENT_TYPE_FLAG_0x0002, TIME_TYPE_GAME_TIME, object_scenery_respawn_timeevent_process },
-    { "Random Encounter", true, 0, TIME_TYPE_GAME_TIME, sub_460B30 },
+    { "Random Encounter", true, 0, TIME_TYPE_GAME_TIME, ui_wmap_rnd_timeevent_process },
 };
 
 static_assert(sizeof(stru_5B2188) / sizeof(stru_5B2188[0]) == TIMEEVENT_TYPE_COUNT, "wrong size");

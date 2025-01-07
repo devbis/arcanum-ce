@@ -132,7 +132,7 @@ bool tb_ui_init(GameInitInfo* init_info)
     callbacks.field_100 = sub_553990;
     callbacks.field_104 = sub_57A6C0;
     callbacks.field_108 = sub_575770;
-    callbacks.field_10C = sub_5595B0;
+    callbacks.wmap_rnd_timeevent_process = wmap_rnd_timeevent_process;
     callbacks.field_114 = sub_569AA0;
     callbacks.field_118 = gameuilib_mod_load;
     callbacks.field_11C = sub_57CFB0;
