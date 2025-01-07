@@ -199,7 +199,7 @@ void sub_571CB0(S4F2810* a1)
         } else if (trap_is_trap_device(v2)) {
             sub_4355F0(pc_obj, a1->loc, v2, 0);
         } else {
-            sub_434F80(pc_obj, v2, a1->loc);
+            anim_goal_throw_item(pc_obj, v2, a1->loc);
         }
     } else {
         if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {

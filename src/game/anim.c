@@ -14086,7 +14086,7 @@ bool anim_goal_attack_ex(int64_t attacker_obj, int64_t target_obj, int sound_id)
         && !sub_466DA0(weapon_obj)) {
         item_remove(weapon_obj);
 
-        return sub_434F80(attacker_obj, weapon_obj, obj_field_int64_get(target_obj, OBJ_F_LOCATION));
+        return anim_goal_throw_item(attacker_obj, weapon_obj, obj_field_int64_get(target_obj, OBJ_F_LOCATION));
     }
 
     if (!sub_4348E0(attacker_obj, sub_4B7C30(attacker_obj))) {
@@ -14214,17 +14214,17 @@ bool anim_goal_knockback(int64_t target_obj, int rot, int range, int64_t source_
 }
 
 // 0x434F80
-bool sub_434F80(int64_t obj, int64_t a2, int64_t a3)
+bool anim_goal_throw_item(int64_t obj, int64_t item_obj, int64_t target_loc)
 {
     AnimGoalData goal_data;
 
-    ASSERT(a2 != OBJ_HANDLE_NULL); // itemObj != OBJ_HANDLE_NULL
+    ASSERT(item_obj != OBJ_HANDLE_NULL); // itemObj != OBJ_HANDLE_NULL
 
     if (!sub_4348E0(obj, 0)) {
         return false;
     }
 
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (item_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
@@ -14232,8 +14232,8 @@ bool sub_434F80(int64_t obj, int64_t a2, int64_t a3)
         return false;
     }
 
-    goal_data.params[AGDATA_TARGET_TILE].loc = a3;
-    goal_data.params[AGDATA_SCRATCH_OBJ].obj = a2;
+    goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
+    goal_data.params[AGDATA_SCRATCH_OBJ].obj = item_obj;
 
     if (sub_44E6F0(obj, &goal_data)) {
         return false;

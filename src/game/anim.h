@@ -71,7 +71,7 @@ bool anim_goal_attack(int64_t attacker_obj, int64_t target_obj);
 bool anim_goal_attack_ex(int64_t attacker_obj, int64_t target_obj, int sound_id);
 bool anim_goal_get_up(int64_t obj);
 bool anim_goal_knockback(int64_t target_obj, int rot, int range, int64_t source_obj);
-bool sub_434F80(int64_t obj, int64_t a2, int64_t a3);
+bool anim_goal_throw_item(int64_t obj, int64_t item_obj, int64_t target_loc);
 bool anim_goal_dying(int64_t obj, int anim);
 bool sub_4350F0(int64_t obj, int64_t a2, int64_t a3, int a6, int a7);
 bool sub_4352C0(int64_t obj, int64_t a2, int64_t a4, int a5, int a6);

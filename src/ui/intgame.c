@@ -2606,7 +2606,7 @@ void sub_54DE50(TigMessage* msg)
                                 if (critter_is_active(pc_obj)) {
                                     sub_573840();
                                     sub_553990();
-                                    sub_434F80(pc_obj, v2, v1.loc);
+                                    anim_goal_throw_item(pc_obj, v2, v1.loc);
                                 } else {
                                     sub_575770();
                                 }
@@ -3366,7 +3366,7 @@ void sub_54ED30(S4F2810* a1)
             goal_data.params[AGDATA_TARGET_TILE].loc = obj_field_int64_get(a1->obj, OBJ_F_LOCATION);
             goal_data.params[AGDATA_SCRATCH_OBJ].obj = throwable_instance_obj;
 
-            sub_434F80(pc_obj, throwable_instance_obj, obj_field_int64_get(a1->obj, OBJ_F_LOCATION));
+            anim_goal_throw_item(pc_obj, throwable_instance_obj, obj_field_int64_get(a1->obj, OBJ_F_LOCATION));
             return;
         }
     }

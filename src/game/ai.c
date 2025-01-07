@@ -2592,7 +2592,7 @@ bool sub_4AC910(Ai* ai, int64_t a2)
     }
 
     loc = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
-    sub_434F80(ai->obj, item_obj, loc);
+    anim_goal_throw_item(ai->obj, item_obj, loc);
 
     return true;
 }
