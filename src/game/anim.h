@@ -79,7 +79,7 @@ bool anim_goal_use_item_on_obj(int64_t obj, int64_t target_obj, int64_t item_obj
 bool anim_goal_use_item_on_loc(int64_t obj, int64_t target_loc, int64_t item_obj, unsigned int flags);
 bool anim_goal_pickup_item(int64_t obj, int64_t item_obj);
 bool anim_goal_animate_stunned(int64_t obj);
-bool sub_435870(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_art_id, int a4, int a5, int64_t target_obj, int64_t target_loc, int64_t weapon_obj);
+bool anim_goal_projectile(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_art_id, int a4, int a5, int64_t target_obj, int64_t target_loc, int64_t weapon_obj);
 bool sub_435A00(int64_t proj_obj, int64_t a2, int64_t a3);
 bool sub_435A90(int64_t obj);
 bool anim_goal_make_knockdown(int64_t obj);

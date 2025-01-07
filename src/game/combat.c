@@ -468,7 +468,7 @@ void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t
         }
 
         sub_4EFDD0(missile_obj, OBJ_F_PROJECTILE_FLAGS_COMBAT, combat->flags);
-        sub_435870(combat->attacker_obj,
+        anim_goal_projectile(combat->attacker_obj,
             missile_obj,
             missile_art_id,
             a3,

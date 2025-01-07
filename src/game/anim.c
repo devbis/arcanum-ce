@@ -14504,7 +14504,7 @@ bool anim_goal_animate_stunned(int64_t obj)
 }
 
 // 0x435870
-bool sub_435870(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_art_id, int a4, int a5, int64_t target_obj, int64_t target_loc, int64_t weapon_obj)
+bool anim_goal_projectile(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_art_id, int a4, int a5, int64_t target_obj, int64_t target_loc, int64_t weapon_obj)
 {
     AnimGoalData goal_data;
     int64_t loc;
