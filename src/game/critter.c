@@ -1755,7 +1755,7 @@ void critter_spread_out_enable(int64_t npc_obj)
     if ((npc_flags & ONF_AI_SPREAD_OUT) == 0) {
         npc_flags |= ONF_AI_SPREAD_OUT;
         obj_field_int32_set(npc_obj, OBJ_F_NPC_FLAGS, npc_flags);
-        sub_436960(npc_obj, critter_leader_get(npc_obj));
+        anim_goal_attempt_spread_out(npc_obj, critter_leader_get(npc_obj));
     }
 }
 

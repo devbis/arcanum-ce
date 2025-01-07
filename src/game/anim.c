@@ -14961,43 +14961,43 @@ bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr)
 }
 
 // 0x436960
-bool sub_436960(int64_t a1, int64_t a2)
+bool anim_goal_attempt_spread_out(int64_t obj, int64_t target_obj)
 {
     AnimID anim_id;
     AnimGoalData goal_data;
     AnimRunInfo* run_info;
 
-    if (!sub_4348E0(a1, 0)) {
+    if (!sub_4348E0(obj, 0)) {
         return false;
     }
 
-    if (!sub_44D500(&goal_data, a1, 69)) {
+    if (!sub_44D500(&goal_data, obj, AG_ATTEMPT_SPREAD_OUT)) {
         return false;
     }
 
-    goal_data.params[AGDATA_TARGET_OBJ].obj = a2;
+    goal_data.params[AGDATA_TARGET_OBJ].obj = target_obj;
 
-    if (sub_44E710(a1, &goal_data, &anim_id)) {
+    if (sub_44E710(obj, &goal_data, &anim_id)) {
         run_info = &(anim_run_info[anim_id.slot_num]);
 
         // FIXME: Unused.
-        obj_field_int32_get(a1, OBJ_F_NPC_FLAGS);
+        obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
 
-        if (run_info->cur_stack_data->type == 56) {
+        if (run_info->cur_stack_data->type == AG_RUN_NEAR_OBJ) {
             return true;
         }
 
-        if (run_info->cur_stack_data->type != 8
-            && run_info->cur_stack_data->type != 61) {
+        if (run_info->cur_stack_data->type != AG_MOVE_NEAR_OBJ
+            && run_info->cur_stack_data->type != AG_ATTEMPT_MOVE_NEAR) {
             return true;
         }
 
-        if (location_dist(obj_field_int64_get(a1, OBJ_F_LOCATION), obj_field_int64_get(a2, OBJ_F_LOCATION)) <= 7) {
+        if (location_dist(obj_field_int64_get(obj, OBJ_F_LOCATION), obj_field_int64_get(target_obj, OBJ_F_LOCATION)) <= 7) {
             return true;
         }
     }
 
-    if (!sub_424070(a1, 3, false, false)) {
+    if (!sub_424070(obj, 3, false, false)) {
         return false;
     }
 

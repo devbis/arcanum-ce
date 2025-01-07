@@ -89,7 +89,7 @@ bool anim_goal_unconceal(int64_t critter_obj);
 bool sub_435E60(int64_t obj, int64_t tether_loc, int radius);
 bool sub_436040(int64_t obj, int64_t tether_loc, int radius);
 void sub_4364D0(int64_t obj);
-bool sub_436960(int64_t a1, int64_t a2);
+bool anim_goal_attempt_spread_out(int64_t a1, int64_t a2);
 void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2);
 void turn_on_running(AnimID anim_id);
 void sub_436C20();
