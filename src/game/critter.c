@@ -1427,7 +1427,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
     unsigned int flags;
 
     if (!multiplayer_is_locked()) {
-        Packet33 pkt;
+        PacketCritterConcealSet pkt;
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             return;
@@ -1435,7 +1435,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
 
         pkt.type = 33;
         sub_4440E0(obj, &(pkt.field_8));
-        pkt.field_38 = concealed;
+        pkt.concealed = concealed;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 

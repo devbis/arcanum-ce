@@ -263,13 +263,13 @@ typedef struct Packet31 {
 
 static_assert(sizeof(Packet31) == 0x68, "wrong size");
 
-typedef struct Packet33 {
+typedef struct PacketCritterConcealSet {
     /* 0000 */ int type;
     /* 0008 */ FollowerInfo field_8;
-    /* 0038 */ int field_38;
-} Packet33;
+    /* 0038 */ int concealed;
+} PacketCritterConcealSet;
 
-static_assert(sizeof(Packet33) == 0x40, "wrong size");
+static_assert(sizeof(PacketCritterConcealSet) == 0x40, "wrong size");
 
 typedef struct Packet34 {
     /* 0000 */ int type;
