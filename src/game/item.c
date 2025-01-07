@@ -1410,17 +1410,13 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         sub_4605E0(item_obj, &v1, mt_item_spell(item_obj, 0));
         sub_4CBF70(item_obj, target_obj);
 
-        if (item_type == OBJ_TYPE_FOOD) {
+        if (item_type == OBJ_TYPE_FOOD
+            || item_type == OBJ_TYPE_SCROLL) {
             sub_4574D0(item_obj);
             object_destroy(item_obj);
-            return;
         }
 
-        if (item_type != OBJ_TYPE_SCROLL) {
-            sub_4574D0(item_obj);
-            object_destroy(item_obj);
-            return;
-        }
+        return;
     }
 
     sub_4B7CD0(source_obj, 4);
