@@ -3824,7 +3824,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 }
 
                 if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_AUTO_ANIMATES) != 0) {
-                    sub_435D70(obj);
+                    anim_goal_unconceal(obj);
                 }
 
                 return;

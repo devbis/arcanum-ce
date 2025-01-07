@@ -14711,22 +14711,42 @@ bool sub_435CE0(int64_t critter_obj)
 }
 
 // 0x435D70
-bool sub_435D70(int64_t critter_obj)
+bool anim_goal_unconceal(int64_t critter_obj)
 {
     int obj_type;
     AnimGoalData goal_data;
 
-    ASSERT(critter_obj != OBJ_HANDLE_NULL); // critterObj != OBJ_HANDLE_NULL
-    if (critter_obj == OBJ_HANDLE_NULL) return false;
+    ASSERT(critter_obj != OBJ_HANDLE_NULL); // 16472, "critterObj != OBJ_HANDLE_NULL"
+
+    if (critter_obj == OBJ_HANDLE_NULL) {
+        return false;
+    }
 
     obj_type = obj_field_int32_get(critter_obj, OBJ_F_TYPE);
-    ASSERT(obj_type_is_critter(obj_type)); // obj_type_is_critter(objType)
-    if (obj_type != OBJ_TYPE_NPC) return false;
 
-    return critter_is_active(critter_obj)
-        && !sub_423300(critter_obj, 0)
-        && sub_44D4E0(&goal_data, critter_obj, AG_UNCONCEAL)
-        && sub_44D520(&goal_data, &stru_5A1908);
+    ASSERT(obj_type_is_critter(obj_type)); // 16478, "obj_type_is_critter(objType)"
+
+    if (obj_type != OBJ_TYPE_NPC) {
+        return false;
+    }
+
+    if (!critter_is_active(critter_obj)) {
+        return false;
+    }
+
+    if (sub_423300(critter_obj, NULL)) {
+        return false;
+    }
+
+    if (!sub_44D4E0(&goal_data, critter_obj, AG_UNCONCEAL)) {
+        return false;
+    }
+
+    if (!sub_44D520(&goal_data, &stru_5A1908)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x435E60
