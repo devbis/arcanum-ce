@@ -14180,7 +14180,7 @@ bool anim_goal_get_up(int64_t obj)
 }
 
 // 0x434E80
-bool sub_434E80(int64_t target_obj, int rot, int range, int64_t source_obj)
+bool anim_goal_knockback(int64_t target_obj, int rot, int range, int64_t source_obj)
 {
     int distance;
     int64_t loc;

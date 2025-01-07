@@ -2232,7 +2232,7 @@ void MTComponentAGoal_ProcFunc()
                 rot = location_rot(loc, new_loc);
             }
 
-            sub_434E80(stru_5E6D28.field_20, rot, 4, dword_5E75F0->parent_obj.obj);
+            anim_goal_knockback(stru_5E6D28.field_20, rot, 4, dword_5E75F0->parent_obj.obj);
         }
         break;
     case AG_FOLLOW:
