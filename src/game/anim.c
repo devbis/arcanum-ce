@@ -14402,15 +14402,15 @@ bool anim_goal_use_item_on_obj(int64_t obj, int64_t target_obj, int64_t item_obj
 }
 
 // 0x4355F0
-bool sub_4355F0(int64_t obj, int64_t a2, int64_t a3, unsigned int flags)
+bool anim_goal_use_item_on_loc(int64_t obj, int64_t target_loc, int64_t item_obj, unsigned int flags)
 {
     AnimGoalData goal_data;
 
-    if (a2 == 0) {
+    if (target_loc == 0) {
         return false;
     }
 
-    if (a3 == 0) {
+    if (item_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
@@ -14418,12 +14418,12 @@ bool sub_4355F0(int64_t obj, int64_t a2, int64_t a3, unsigned int flags)
         return false;
     }
 
-    if (!sub_44D4E0(&goal_data, obj, 41)) {
+    if (!sub_44D4E0(&goal_data, obj, AG_USE_ITEM_ON_TILE)) {
         return false;
     }
 
-    goal_data.params[AGDATA_TARGET_TILE].loc = a2;
-    goal_data.params[AGDATA_SCRATCH_OBJ].obj = a3;
+    goal_data.params[AGDATA_TARGET_TILE].loc = target_loc;
+    goal_data.params[AGDATA_SCRATCH_OBJ].obj = item_obj;
     goal_data.params[AGDATA_FLAGS_DATA].data |= flags;
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {

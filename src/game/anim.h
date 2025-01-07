@@ -76,7 +76,7 @@ bool anim_goal_dying(int64_t obj, int anim);
 bool anim_goal_use_skill_on(int64_t obj, int64_t target_obj, int64_t item_obj, int skill, unsigned int flags);
 bool anim_goal_use_item_on_obj_with_skill(int64_t obj, int64_t item_obj, int64_t target_obj, int skill, int modifier);
 bool anim_goal_use_item_on_obj(int64_t obj, int64_t target_obj, int64_t item_obj, unsigned int flags);
-bool sub_4355F0(int64_t obj, int64_t a2, int64_t a3, unsigned int flags);
+bool anim_goal_use_item_on_loc(int64_t obj, int64_t a2, int64_t a3, unsigned int flags);
 bool sub_4356C0(int64_t a1, int64_t a2);
 bool sub_4357B0(int64_t obj);
 bool sub_435870(int64_t source_obj, int64_t missile_obj, tig_art_id_t missile_art_id, int a4, int a5, int64_t target_obj, int64_t target_loc, int64_t weapon_obj);

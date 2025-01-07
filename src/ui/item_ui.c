@@ -147,7 +147,7 @@ void sub_571CB0(S4F2810* a1)
     int spell_mana_store = 0;
     unsigned int item_flags = 0;
     int range = -1;
-    int64_t v2;
+    int64_t item_obj;
     char str[1000];
 
     pc_obj = player_get_pc_obj();
@@ -173,12 +173,12 @@ void sub_571CB0(S4F2810* a1)
         sub_4C9050(&skill_invocation);
 
         if (pc_obj == skill_invocation.source.obj) {
-            v2 = qword_6810D8;
+            item_obj = qword_6810D8;
         } else {
-            v2 = item_find_first_generic(skill_invocation.source.obj, OGF_IS_LOCKPICK);
+            item_obj = item_find_first_generic(skill_invocation.source.obj, OGF_IS_LOCKPICK);
             sub_4139A0(skill_invocation.source.obj, pc_obj, str);
             sub_568430(skill_invocation.source.obj, pc_obj, str, 0);
-            if (v2 == OBJ_HANDLE_NULL) {
+            if (item_obj == OBJ_HANDLE_NULL) {
                 anim_goal_use_item_on_obj_with_skill(skill_invocation.source.obj,
                     OBJ_HANDLE_NULL,
                     skill_invocation.target.obj,
@@ -189,25 +189,25 @@ void sub_571CB0(S4F2810* a1)
             }
         }
     } else {
-        v2 = qword_6810D8;
+        item_obj = qword_6810D8;
     }
 
-    if (v2 != OBJ_HANDLE_NULL) {
-        spell_mana_store = obj_field_int32_get(v2, OBJ_F_ITEM_SPELL_MANA_STORE);
-        item_flags = obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS);
+    if (item_obj != OBJ_HANDLE_NULL) {
+        spell_mana_store = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_MANA_STORE);
+        item_flags = obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS);
     }
 
     if (a1->is_loc) {
         if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
-            sub_462FC0(pc_obj, v2, a1->loc);
-        } else if (trap_is_trap_device(v2)) {
-            sub_4355F0(pc_obj, a1->loc, v2, 0);
+            sub_462FC0(pc_obj, item_obj, a1->loc);
+        } else if (trap_is_trap_device(item_obj)) {
+            anim_goal_use_item_on_loc(pc_obj, a1->loc, item_obj, 0);
         } else {
-            anim_goal_throw_item(pc_obj, v2, a1->loc);
+            anim_goal_throw_item(pc_obj, item_obj, a1->loc);
         }
     } else {
         if (spell_mana_store != 0 || (item_flags & OIF_IS_MAGICAL) != 0) {
-            range = magictech_get_range(obj_field_int32_get(v2, OBJ_F_ITEM_SPELL_1));
+            range = magictech_get_range(obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1));
             if (range < object_dist(pc_obj, a1->obj)) {
                 range = -1;
             }
@@ -223,14 +223,14 @@ void sub_571CB0(S4F2810* a1)
             || ((item_flags & OIF_IS_MAGICAL) != 0
                 && range != -1
                 && (item_flags & OIF_NO_RANGED_USE) == 0)) {
-            sub_462CC0(pc_obj, v2, a1->obj);
+            sub_462CC0(pc_obj, item_obj, a1->obj);
             sub_571C80();
             return;
         }
 
         if ((item_flags & OIF_IS_MAGICAL))
 
-        anim_goal_use_item_on_obj(pc_obj, a1->obj, v2, 0);
+        anim_goal_use_item_on_obj(pc_obj, a1->obj, item_obj, 0);
         if (tig_kb_is_key_pressed(DIK_LSHIFT)) {
             sub_436C80();
             sub_571C80();
