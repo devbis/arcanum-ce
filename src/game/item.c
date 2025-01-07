@@ -1431,10 +1431,18 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
 
         if ((generic_flags & OGF_IS_LOCKPICK) != 0) {
             if (object_is_lockable(target_obj)) {
-                sub_4352C0(source_obj, item_obj, target_obj, SKILL_PICK_LOCKS, 0);
+                anim_goal_use_item_on_obj_with_skill(source_obj,
+                    item_obj,
+                    target_obj,
+                    SKILL_PICK_LOCKS,
+                    0);
             }
         } else if ((generic_flags & OGF_IS_HEALING_ITEM) != 0) {
-            sub_4352C0(source_obj, item_obj, target_obj, SKILL_HEAL, 0);
+            anim_goal_use_item_on_obj_with_skill(source_obj,
+                item_obj,
+                target_obj,
+                SKILL_HEAL,
+                0);
         }
 
         return;

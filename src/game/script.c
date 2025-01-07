@@ -2269,7 +2269,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t target_obj = script_get_obj(action->op_type[2], action->op_value[2], state);
         int skill = script_get_value(action->op_type[3], action->op_value[3], state);
         int modifier = script_get_value(action->op_type[4], action->op_value[4], state);
-        sub_4352C0(source_obj, item_obj, target_obj, skill, modifier);
+        anim_goal_use_item_on_obj_with_skill(source_obj, item_obj, target_obj, skill, modifier);
         return NEXT;
     }
     case SAT_GET_MAGICTECH_ADJUSTMENT: {

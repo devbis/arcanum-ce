@@ -179,7 +179,11 @@ void sub_571CB0(S4F2810* a1)
             sub_4139A0(skill_invocation.source.obj, pc_obj, str);
             sub_568430(skill_invocation.source.obj, pc_obj, str, 0);
             if (v2 == OBJ_HANDLE_NULL) {
-                sub_4352C0(skill_invocation.source.obj, OBJ_HANDLE_NULL, skill_invocation.target.obj, SKILL_PICK_LOCKS, 0);
+                anim_goal_use_item_on_obj_with_skill(skill_invocation.source.obj,
+                    OBJ_HANDLE_NULL,
+                    skill_invocation.target.obj,
+                    SKILL_PICK_LOCKS,
+                    0);
                 sub_571C80();
                 return;
             }
