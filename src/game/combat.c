@@ -2334,19 +2334,19 @@ void sub_4B58C0(CombatContext* combat)
     if (combat->dam[DAMAGE_TYPE_FATIGUE] > 0) {
         int new_dam;
         int cur_dam;
-        int v3;
+        int fatigue;
 
         cur_dam = critter_fatigue_damage_get(combat->target_obj);
         if (cur_dam != 0) {
-            v3 = critter_fatigue_current(combat->target_obj);
+            fatigue = critter_fatigue_current(combat->target_obj);
             new_dam = cur_dam - combat->dam[DAMAGE_TYPE_FATIGUE];
             if (new_dam < 0) {
                 new_dam = 0;
             }
             critter_fatigue_damage_set(combat->target_obj, new_dam);
 
-            if (v3 <= 0 && critter_fatigue_current(combat->target_obj) > 0) {
-                sub_434DE0(combat->target_obj);
+            if (fatigue <= 0 && critter_fatigue_current(combat->target_obj) > 0) {
+                anim_goal_get_up(combat->target_obj);
             }
         }
     }

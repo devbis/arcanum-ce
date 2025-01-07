@@ -14152,7 +14152,7 @@ bool anim_goal_attack_ex(int64_t attacker_obj, int64_t target_obj, int sound_id)
 }
 
 // 0x434DE0
-bool sub_434DE0(int64_t obj)
+bool anim_goal_get_up(int64_t obj)
 {
     AnimGoalData goal_data;
     tig_art_id_t art_id;

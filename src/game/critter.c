@@ -1050,7 +1050,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
     int v1;
     int v2;
     int v3;
-    int v4;
+    int fatigue;
     int dam;
     int encumbrance_level;
 
@@ -1085,7 +1085,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
         if (dam > 0) {
             // TODO: Figure out math.
             dam -= v3 * stat_level(critter_obj, STAT_HEAL_RATE);
-            v4 = critter_fatigue_current(critter_obj);
+            fatigue = critter_fatigue_current(critter_obj);
             if (dam < 0) {
                 dam = 0;
             }
@@ -1093,7 +1093,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
 
             if ((tig_net_flags & TIG_NET_CONNECTED) != 0
                 && (tig_net_flags & TIG_NET_HOST) != 0) {
-                Packet35 pkt;
+                PacketCritterFatigueDamageSet pkt;
 
                 pkt.type = 35;
                 pkt.oid = sub_407EF0(critter_obj);
@@ -1101,16 +1101,16 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             }
 
-            if (v4 <= 0 && critter_fatigue_current(critter_obj) > 0) {
-                sub_434DE0(critter_obj);
+            if (fatigue <= 0 && critter_fatigue_current(critter_obj) > 0) {
+                anim_goal_get_up(critter_obj);
             }
         }
         break;
     case 1:
         // TODO: Figure out math.
-        v4 = critter_fatigue_current(critter_obj);
-        if (v4 >= 5) {
-            if (v4 - v3 < 5) {
+        fatigue = critter_fatigue_current(critter_obj);
+        if (fatigue >= 5) {
+            if (fatigue - v3 < 5) {
                 v3 = 1;
             }
             dam += v3;
@@ -1119,7 +1119,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
 
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0
             && (tig_net_flags & TIG_NET_HOST) != 0) {
-            Packet35 pkt;
+            PacketCritterFatigueDamageSet pkt;
 
             pkt.type = 35;
             pkt.oid = sub_407EF0(critter_obj);

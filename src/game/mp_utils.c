@@ -100,7 +100,7 @@ bool sub_4ED6C0(int64_t obj)
 // 0x4ED720
 void sub_4ED720(int64_t obj, int damage)
 {
-    Packet35 pkt;
+    PacketCritterFatigueDamageSet pkt;
 
     critter_fatigue_damage_set(obj, damage);
 
