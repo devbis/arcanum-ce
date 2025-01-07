@@ -1006,7 +1006,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
 
     (void)timeevent;
 
-    sub_559640();
+    wmap_rnd_schedule();
 
     if (sub_40FF40() == sub_40FF50(MAP_TYPE_START_MAP)
         && sub_4CB6A0(player_get_pc_obj()) == AREA_UNKNOWN) {
@@ -1025,7 +1025,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x559640
-void sub_559640()
+void wmap_rnd_schedule()
 {
     TimeEvent timeevent;
     DateTime datetime;

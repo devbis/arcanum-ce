@@ -2556,7 +2556,8 @@ void sub_5412E0(bool a1)
                 timeevent.type = TIMEEVENT_TYPE_NEWSPAPERS;
                 sub_45A950(&datetime, 86400000 - sub_45AD70());
                 sub_45B800(&timeevent, &datetime);
-                sub_559640();
+
+                wmap_rnd_schedule();
             }
         }
 

@@ -13,6 +13,6 @@ bool wmap_rnd_save(TigFile* stream);
 bool wmap_rnd_load(GameLoadInfo* load_info);
 void wmap_rnd_disable();
 bool wmap_rnd_timeevent_process(TimeEvent* timeevent);
-void sub_559640();
+void wmap_rnd_schedule();
 
 #endif /* ARCANUM_UI_WMAP_RND_H_ */
