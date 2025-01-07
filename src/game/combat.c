@@ -1197,7 +1197,7 @@ bool sub_4B3D90(int64_t obj)
         return true;
     }
 
-    if (sub_44E830(obj, 19, NULL)) {
+    if (sub_44E830(obj, AG_ATTEMPT_ATTACK, NULL)) {
         return false;
     }
 
@@ -1215,7 +1215,7 @@ bool sub_4B3D90(int64_t obj)
         } else {
             pc_node = pcs.head;
             while (pc_node != NULL) {
-                if (combat_focus_obj == obj
+                if (combat_focus_obj == pc_node->obj
                     && critter_is_active(npc_node->obj)
                     && ai_is_fighting(npc_node->obj)) {
                     ret = false;
