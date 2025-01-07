@@ -1612,7 +1612,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             || dword_683464) {
             v3 = qword_6810E0;
             sub_575770();
-            if (!sub_4B6D70() || sub_4B6D80() == qword_6814F8) {
+            if (!sub_4B6D70() || combat_turn_based_whos_turn_get() == qword_6814F8) {
                 if (tig_kb_is_key_pressed(DIK_LSHIFT)
                     || tig_kb_is_key_pressed(DIK_RSHIFT)) {
                     sub_462CC0(qword_6814F8, v3, qword_6814F8);
@@ -1848,7 +1848,7 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
             if (inventory_location == -1
                 && sub_462C30(qword_6814F8, v1) == ITEM_CANNOT_OK) {
                 if (!sub_4B6D70()
-                    || sub_4B6D80() == qword_6814F8) {
+                    || combat_turn_based_whos_turn_get() == qword_6814F8) {
                     sub_462CC0(qword_6814F8, v1, qword_6814F8);
                 }
 

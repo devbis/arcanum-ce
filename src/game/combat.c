@@ -3006,7 +3006,7 @@ bool sub_4B6D70()
 }
 
 // 0x4B6D80
-int64_t sub_4B6D80()
+int64_t combat_turn_based_whos_turn_get()
 {
     if (dword_5FC240 != NULL) {
         return dword_5FC240->obj;
@@ -3829,7 +3829,7 @@ bool sub_4B8040(int64_t obj)
         return false;
     }
 
-    if (sub_4B6D80() != obj) {
+    if (combat_turn_based_whos_turn_get() != obj) {
         return false;
     }
 

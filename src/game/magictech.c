@@ -4540,7 +4540,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
 
     if (a1->parent_obj.obj != OBJ_HANDLE_NULL
         && sub_4B6D70()
-        && sub_4B6D80() != a1->parent_obj.obj
+        && combat_turn_based_whos_turn_get() != a1->parent_obj.obj
         && obj_type_is_critter(obj_field_int32_get(a1->parent_obj.obj, OBJ_F_TYPE))) {
         return false;
     }

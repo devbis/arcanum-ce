@@ -5679,7 +5679,7 @@ bool sub_427000(int64_t obj)
     AnimRunInfo* run_info;
 
     if (sub_4B6D70()
-        && sub_4B6D80() == obj
+        && combat_turn_based_whos_turn_get() == obj
         && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_STUNNED) != 0
         && sub_44E830(obj, AG_ANIMATE_STUNNED, &anim_id)
         && anim_id_to_run_info(&anim_id, &run_info)) {
@@ -9056,7 +9056,7 @@ bool sub_42C440(AnimRunInfo* run_info)
     }
 
     if (sub_4B6D70()
-        && sub_4B6D80() != obj) {
+        && combat_turn_based_whos_turn_get() != obj) {
         return true;
     }
 
@@ -10345,7 +10345,7 @@ bool sub_42E590(AnimRunInfo* run_info)
     }
 
     if (sub_4B6D70()
-        && (sub_4B6D80() == obj || !sub_4B7CD0(obj, 5))) {
+        && (combat_turn_based_whos_turn_get() == obj || !sub_4B7CD0(obj, 5))) {
         return false;
     }
 
@@ -13381,7 +13381,7 @@ bool anim_goal_rotate(int64_t obj, int rot)
         return true;
     }
 
-    if (sub_4B6D70() && sub_4B6D80() != obj) {
+    if (sub_4B6D70() && combat_turn_based_whos_turn_get() != obj) {
         return true;
     }
 
@@ -13540,7 +13540,7 @@ bool sub_4339A0(int64_t obj)
 {
     return obj != OBJ_HANDLE_NULL
         && critter_is_active(obj)
-        && (!sub_4B6D70() || sub_4B6D80() == obj)
+        && (!sub_4B6D70() || combat_turn_based_whos_turn_get() == obj)
         && (sub_40DA20(obj) || !sub_4C1110(obj));
 }
 
@@ -14014,7 +14014,7 @@ bool sub_4348E0(int64_t obj, int action_points)
         return true;
     }
 
-    if (sub_4B6D80() != obj) {
+    if (combat_turn_based_whos_turn_get() != obj) {
         return false;
     }
 
@@ -14767,7 +14767,7 @@ bool sub_435E60(int64_t obj, int64_t tether_loc, int radius)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     ASSERT(obj_type_is_critter(obj_type)); // obj_type_is_critter(objType)
 
-    if ((!sub_4B6D70() || sub_4B6D80() == obj)
+    if ((!sub_4B6D70() || combat_turn_based_whos_turn_get() == obj)
         && radius > 0
         && obj_type_is_critter(obj_type)
         && critter_is_active(obj)
@@ -14806,7 +14806,7 @@ bool sub_436040(int64_t obj, int64_t tether_loc, int radius)
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     ASSERT(obj_type_is_critter(obj_type)); // obj_type_is_critter(objType)
 
-    if ((!sub_4B6D70() || sub_4B6D80() == obj)
+    if ((!sub_4B6D70() || combat_turn_based_whos_turn_get() == obj)
         && radius > 0
         && obj_type_is_critter(obj_type)
         && critter_is_active(obj)

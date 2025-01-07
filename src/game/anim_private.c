@@ -833,7 +833,7 @@ bool sub_44D730(AnimGoalData* goal_data, AnimID* anim_id, bool a3, unsigned int 
     timeevent.params[2].integer_value = 3333;
     sub_45A950(&datetime, 5);
 
-    if (!sub_4B6D70() || sub_4B6D80() == run_info->field_20) {
+    if (!sub_4B6D70() || combat_turn_based_whos_turn_get() == run_info->field_20) {
         return sub_45B800(&timeevent, &datetime);
     } else {
         return sub_45B820(&timeevent);

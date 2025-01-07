@@ -315,7 +315,7 @@ void sub_56EFA0(int a1)
         return;
     }
 
-    if (!player_is_pc_obj(sub_4B6D80())) {
+    if (!player_is_pc_obj(combat_turn_based_whos_turn_get())) {
         return;
     }
 
@@ -546,7 +546,7 @@ void sub_56F660()
 
     sub_56F840();
 
-    obj = sub_4B6D80();
+    obj = combat_turn_based_whos_turn_get();
     if (!player_is_pc_obj(obj)) {
         if (dword_680EB4 >= TWENTY) {
             dword_680EB4 = 0;
@@ -609,7 +609,7 @@ void sub_56F840()
         return;
     }
 
-    obj = sub_4B6D80();
+    obj = combat_turn_based_whos_turn_get();
     if (player_is_pc_obj(obj)) {
         return;
     }
@@ -645,7 +645,7 @@ bool combat_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_BUTTON:
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
             && msg->data.button.button_handle == stru_5CAA38.button_handle) {
-            obj = sub_4B6D80();
+            obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL
                 && player_is_pc_obj(obj)
                 && (!sub_423300(obj, &anim_id_1)
@@ -660,7 +660,7 @@ bool combat_ui_message_filter(TigMessage* msg)
         if (!textedit_ui_is_focused()
             && !msg->data.keyboard.pressed
             && msg->data.keyboard.key == DIK_E) {
-            obj = sub_4B6D80();
+            obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL
                 && player_is_pc_obj(obj)
                 && (!sub_423300(obj, &anim_id_1)

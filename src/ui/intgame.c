@@ -1772,7 +1772,7 @@ bool sub_54B5D0(TigMessage* msg)
     }
 
     if (sub_4B6D70()) {
-        if (!player_is_pc_obj(sub_4B6D80())) {
+        if (!player_is_pc_obj(combat_turn_based_whos_turn_get())) {
             if (msg->type != TIG_MESSAGE_KEYBOARD
                 && msg->type == TIG_MESSAGE_CHAR
                 && msg->data.character.ch == ' ') {
@@ -2568,7 +2568,7 @@ void sub_54DE50(TigMessage* msg)
     pc_obj = player_get_pc_obj();
 
     if (sub_4B6D70()) {
-        if (sub_4B6D80() != pc_obj) {
+        if (combat_turn_based_whos_turn_get() != pc_obj) {
             return;
         }
     }
@@ -2947,7 +2947,7 @@ void sub_54EA80(S4F2810* a1)
 
     pc_obj = player_get_pc_obj();
 
-    if (!sub_4B6D70() || sub_4B6D80() == pc_obj) {
+    if (!sub_4B6D70() || combat_turn_based_whos_turn_get() == pc_obj) {
         v1.field_0 = pc_obj;
         v1.field_8 = pc_obj;
         v1.field_10 = a1;
@@ -3002,7 +3002,7 @@ void sub_54EB60()
         iso_redraw();
     } else {
         if (sub_4B6D70()) {
-            obj = sub_4B6D80();
+            obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL) {
                 loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
                 location_origin_set(loc);

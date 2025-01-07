@@ -357,7 +357,7 @@ bool sub_4A8570(Ai* ai)
         sub_441980(ai->danger_source, ai->obj, OBJ_HANDLE_NULL, SAP_START_COMBAT, 0);
     }
 
-    if (sub_4B6D70() && sub_4B6D80() != ai->obj) {
+    if (sub_4B6D70() && combat_turn_based_whos_turn_get() != ai->obj) {
         return false;
     }
 
@@ -2317,7 +2317,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
 // 0x4AC180
 void sub_4AC180(Ai* ai)
 {
-    if (!sub_4B6D70() || sub_4B6D80() == ai->obj) {
+    if (!sub_4B6D70() || combat_turn_based_whos_turn_get() == ai->obj) {
         if ((obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) != 0) {
              sub_4AC7B0(ai);
              return;
