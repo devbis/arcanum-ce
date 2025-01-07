@@ -56,7 +56,7 @@ void sub_432D90(int64_t obj);
 void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat);
 void sub_433170(int64_t obj);
 void sub_433220(int64_t obj);
-bool sub_433440(int64_t obj, int rotation);
+bool anim_goal_rotate(int64_t obj, int rot);
 bool sub_433580(int64_t obj);
 bool sub_433640(int64_t a1, int64_t a2);
 bool sub_433A00(int64_t obj, int64_t loc, bool a3);

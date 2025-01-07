@@ -2673,7 +2673,7 @@ void sub_54DE50(TigMessage* msg)
                                 aid = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
                                 rot = location_rot(pc_loc, loc);
                                 if (!sub_423300(pc_obj, 0)) {
-                                    sub_433440(pc_obj, rot);
+                                    anim_goal_rotate(pc_obj, rot);
                                 } else if (sub_44E830(pc_obj, 2, 0)) {
                                     object_set_current_aid(pc_obj, tig_art_id_rotation_set(aid, rot));
                                 }

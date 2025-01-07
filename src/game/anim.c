@@ -13362,7 +13362,7 @@ bool anim_goal_animate(int64_t obj, int anim)
 }
 
 // 0x433440
-bool sub_433440(int64_t obj, int rotation)
+bool anim_goal_rotate(int64_t obj, int rot)
 {
     tig_art_id_t art_id;
     AnimID anim_id;
@@ -13373,7 +13373,7 @@ bool sub_433440(int64_t obj, int rotation)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    if (tig_art_id_rotation_get(art_id) == rotation) {
+    if (tig_art_id_rotation_get(art_id) == rot) {
         return true;
     }
 
@@ -13393,7 +13393,7 @@ bool sub_433440(int64_t obj, int rotation)
         return true;
     }
 
-    goal_data.params[AGDATA_SCRATCH_VAL1].data = rotation;
+    goal_data.params[AGDATA_SCRATCH_VAL1].data = rot;
     sub_423300(obj, &anim_id);
     if (!sub_44D520(&goal_data, &anim_id)) {
         return false;
