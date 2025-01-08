@@ -1308,7 +1308,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
 
-    if (tig_art_id_anim_get(art_id) == 0) {
+    if (tig_art_id_anim_get(art_id) == 5) {
         v1 = true;
         if (!is_pc && !critter_is_dead(obj)) {
             return;
