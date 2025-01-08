@@ -3708,7 +3708,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     obj_field_int32_set(item_obj, OBJ_F_ITEM_INV_LOCATION, inventory_location);
     obj_field_handle_set(item_obj, OBJ_F_ITEM_PARENT, parent_obj);
 
-    sub_4CBAA0(item_obj, parent_obj);
+    mt_item_notify_pickup(item_obj, parent_obj);
 
     if (IS_WEAR_INV_LOC(inventory_location)) {
         sub_4677B0(item_obj, parent_obj, inventory_location);

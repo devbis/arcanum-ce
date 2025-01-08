@@ -149,10 +149,10 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
 }
 
 // 0x4CBAA0
-void sub_4CBAA0(int64_t a1, int64_t a2)
+void mt_item_notify_pickup(int64_t item_obj, int64_t parent_obj)
 {
     // FIXME: Cast.
-    sub_4CB800(a1, a2, OBJ_HANDLE_NULL, (unsigned int)MTIT_PICKUP);
+    sub_4CB800(item_obj, parent_obj, OBJ_HANDLE_NULL, (unsigned int)MTIT_PICKUP);
 }
 
 // 0x4CBAD0
