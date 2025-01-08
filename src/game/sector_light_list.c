@@ -134,7 +134,7 @@ bool sector_light_list_load(SectorLightList* list, TigFile* stream, int64_t sect
         }
 
         if (sector_id != -1) {
-            sec = sub_4D7090(light_get_location(light));
+            sec = tile_id_from_loc(light_get_location(light));
             // TODO: Check.
             loc = LOCATION_MAKE(SECTOR_X(sec) + x, SECTOR_Y(sec) + y);
             light_set_location(light, loc);
@@ -263,7 +263,7 @@ void sector_light_list_fold(SectorLightList* list, int64_t sector_id, SectorTile
                 if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_SCENERY
                     && (obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & OSCF_NOCTURNAL) != 0) {
                     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                    tile = sub_4D7090(loc);
+                    tile = tile_id_from_loc(loc);
                     if (tig_art_tile_id_type_get(tiles->art_ids[tile]) == 0) {
                         if ((flags & OF_OFF) != 0) {
                             obj_field_int32_set(obj, OBJ_F_FLAGS, flags & ~OF_OFF);

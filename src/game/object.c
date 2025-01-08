@@ -3180,7 +3180,7 @@ void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
 
             objects->sectors[objects->num_sectors++] = sector_id;
 
-            node = sector->objects.heads[sub_4D7090(loc)];
+            node = sector->objects.heads[tile_id_from_loc(loc)];
             while (node != NULL) {
                 if ((dword_5E2F88 & obj_field_int32_get(node->obj, OBJ_F_TYPE)) == 0
                     && types[obj_field_int32_get(node->obj, OBJ_F_TYPE)]) {

@@ -673,7 +673,7 @@ bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2)
         for (x = 0; x < width; x++) {
             a2->field_8[y].field_8[x] = LOCATION_MAKE(horizontal[x], vertical[y]);
             a2->field_8[y].field_20[x] = sector_id_from_loc(a2->field_8[y].field_8[x]);
-            a2->field_8[y].field_38[x] = sub_4D7090(a2->field_8[y].field_8[x]);
+            a2->field_8[y].field_38[x] = tile_id_from_loc(a2->field_8[y].field_8[x]);
             a2->field_8[y].field_44[x] = (int)(horizontal[x + 1] - horizontal[x]);
         }
 

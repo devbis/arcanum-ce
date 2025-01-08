@@ -156,7 +156,7 @@ bool objlist_load(SectorObjectList* list, TigFile* stream, int64_t sector_id)
         }
 
         if (sector_id != -1) {
-            sec = sub_4D7090(obj_field_int64_get(obj, OBJ_F_LOCATION));
+            sec = tile_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
             loc = LOCATION_MAKE((((sec & 0x3FFFFFF) << 6) + x), (((sec >> 26) & 0x3FFFFFF) << 6) + y);
             obj_field_int64_set(obj, OBJ_F_LOCATION, loc);
             sub_406B80(obj);
@@ -255,7 +255,7 @@ bool objlist_load_with_difs(SectorObjectList* list, TigFile* sec_stream, TigFile
 
         if (sector_id != -1) {
             loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            tile = sub_4D7090(loc);
+            tile = tile_id_from_loc(loc);
             obj_field_int64_set(obj, OBJ_F_LOCATION, LOCATION_MAKE(x + (tile & 0x3F), y + ((tile >> 6) & 0x3F)));
             sub_406B80(obj);
         }
@@ -571,7 +571,7 @@ void sub_4F20A0(SectorObjectList* list, ObjectNode* new_node)
     new_obj_type = obj_field_int32_get(new_node->obj, OBJ_F_TYPE);
     new_obj_flags = obj_field_int32_get(new_node->obj, OBJ_F_FLAGS);
     sub_4F2230(new_node->obj, &v1, &v2);
-    new_obj_tile = sub_4D7090(new_obj_loc);
+    new_obj_tile = tile_id_from_loc(new_obj_loc);
 
     node_ptr = &(list->heads[new_obj_tile]);
     while (*node_ptr != NULL) {
@@ -655,7 +655,7 @@ bool objlist_remove_internal(SectorObjectList* list, int64_t obj, ObjectNode** n
     ObjectNode* node;
     ObjectNode* prev;
 
-    tile = sub_4D7090(obj_field_int64_get(obj, OBJ_F_LOCATION));
+    tile = tile_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
     node = list->heads[tile];
     prev = list->heads[tile];
     while (node != NULL) {

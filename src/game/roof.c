@@ -364,7 +364,7 @@ void roof_render(UnknownContext* render_info)
 // 0x4395A0
 int sub_4395A0(int64_t loc)
 {
-    return sub_4395C0(sub_4D7090(loc));
+    return sub_4395C0(tile_id_from_loc(loc));
 }
 
 // 0x4395C0
@@ -506,7 +506,7 @@ void sub_439D30(int64_t loc)
     }
 
     v1 = sub_504840(aid);
-    tile = sub_4D7090(loc);
+    tile = tile_id_from_loc(loc);
     v5 = tile & 3;
     v6 = (tile >> 6) % 4;
 

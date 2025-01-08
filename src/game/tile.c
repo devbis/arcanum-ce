@@ -135,13 +135,13 @@ void tile_render(UnknownContext* render_info)
 }
 
 // 0x4D7090
-int sub_4D7090(int64_t loc)
+int tile_id_from_loc(int64_t loc)
 {
     int tile_x;
     int tile_y;
 
-    tile_x = loc & 0x3F;
-    tile_y = (loc >> 32) & 0x3F;
+    tile_x = LOCATION_GET_X(loc) & 0x3F;
+    tile_y = LOCATION_GET_Y(loc) & 0x3F;
 
     return TILE_MAKE(tile_x, tile_y);
 }
@@ -159,7 +159,7 @@ tig_art_id_t sub_4D70B0(int64_t loc)
         return TIG_ART_ID_INVALID;
     }
 
-    tile = sub_4D7090(loc);
+    tile = tile_id_from_loc(loc);
     art_id = sector->tiles.art_ids[tile];
     sector_unlock(sector_id);
 
@@ -392,7 +392,7 @@ void sub_4D7820(int64_t loc, tig_art_id_t art_id)
 
     sector_id = sector_id_from_loc(loc);
     if (sector_lock(sector_id, &sector)) {
-        tile = sub_4D7090(loc);
+        tile = tile_id_from_loc(loc);
         sector->tiles.art_ids[tile] = art_id;
         sector->tiles.difmask[tile / 32] |= 1 << (tile & 31);
         sector->tiles.dif = 1;
@@ -623,7 +623,7 @@ void tile_render_topdown(UnknownContext* render_info)
     sector_node = render_info->field_C;
     while (sector_node != NULL) {
         if (sector_lock(sector_node->id, &sector)) {
-            tile = sub_4D7090(sector_node->field_8);
+            tile = tile_id_from_loc(sector_node->field_8);
             skip = 64 - sector_node->field_10;
             location_xy(sector_node->field_8, &loc_x, &loc_y);
 

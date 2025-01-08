@@ -180,7 +180,7 @@ bool tile_script_get(int64_t loc, TileScript* tile_script)
         return false;
     }
 
-    tile = sub_4D7090(loc);
+    tile = tile_id_from_loc(loc);
     rc = tile_script_list_get(&(sector->tile_scripts), tile, &(tile_script->scr));
     tile_script->loc = loc;
     sector_unlock(sector_id);
@@ -196,7 +196,7 @@ bool tile_script_set(TileScript* tile_script)
     Sector* sector;
     TigRect dirty_rect;
 
-    tile = sub_4D7090(tile_script->loc);
+    tile = tile_id_from_loc(tile_script->loc);
     sector_id = sector_id_from_loc(tile_script->loc);
     if (!sector_lock(sector_id, &sector)) {
         return false;
