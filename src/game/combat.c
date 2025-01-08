@@ -358,7 +358,9 @@ void sub_4B2210(int64_t attacker_obj, int64_t target_obj, CombatContext* combat)
 {
     int type;
 
+    combat->flags = 0;
     combat->attacker_obj = attacker_obj;
+
     if (attacker_obj != OBJ_HANDLE_NULL) {
         type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
         if (obj_type_is_critter(type)) {
