@@ -284,25 +284,25 @@ void sub_4CBDB0(int64_t a1, int64_t a2, int64_t a3)
 }
 
 // 0x4CBE00
-void sub_4CBE00(int64_t a1, int64_t a2)
+void mt_item_notify_target_going_unconscious(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
     int index;
     int64_t item_obj;
 
-    if (a1 == OBJ_HANDLE_NULL) {
+    if (attacker_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    type = obj_field_int32_get(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
     for (index = 0; index < 9; index++) {
-        item_obj = item_wield_get(a1, 1000 + index);
+        item_obj = item_wield_get(attacker_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, a1, a2, MTIT_TARGET_GOING_UNCONSCIOUS);
+            sub_4CB800(item_obj, attacker_obj, target_obj, MTIT_TARGET_GOING_UNCONSCIOUS);
         }
     }
 }

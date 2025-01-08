@@ -1614,7 +1614,7 @@ void sub_4B4390(CombatContext* combat)
 
         if ((dam_flags & (CDF_KNOCKDOWN | CDF_KNOCKOUT)) != 0) {
             mt_item_notify_parent_going_unconscious(combat->attacker_obj, combat->target_obj);
-            sub_4CBE00(combat->attacker_obj, combat->target_obj);
+            mt_item_notify_target_going_unconscious(combat->attacker_obj, combat->target_obj);
             anim_goal_knockdown(combat->target_obj);
 
             if ((dam_flags & CDF_KNOCKOUT) != 0) {
