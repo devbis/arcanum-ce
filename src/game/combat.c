@@ -752,11 +752,11 @@ void sub_4B2F60(CombatContext* combat)
 {
     int sound_id;
 
-    if ((combat->flags & 0x2) != 0) {
+    if ((combat->flags & CF_HIT) != 0) {
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
             sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_HIT, 0);
 
-            if ((combat->flags & 0x4) != 0
+            if ((combat->flags & CF_CRITICAL) != 0
                 && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
                 sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_HIT, 0);
             }
@@ -770,7 +770,7 @@ void sub_4B2F60(CombatContext* combat)
         sub_4B6680(combat);
         sub_4B4390(combat);
 
-        if ((combat->flags & 0x4) != 0) {
+        if ((combat->flags & CF_CRITICAL) != 0) {
             sound_id = sub_4F0ED0(combat->target_obj, 0);
             sub_41B930(sound_id, 1, combat->target_obj);
 
@@ -792,7 +792,7 @@ void sub_4B2F60(CombatContext* combat)
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
             sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_MISS, 0);
 
-            if ((combat->flags & 0x04) != 0
+            if ((combat->flags & CF_CRITICAL) != 0
                 && obj_field_int32_get(combat->weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
                 sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_MISS, 0);
             }
@@ -820,7 +820,7 @@ int sub_4B3170(CombatContext* combat)
     }
 
     if (combat->hit_loc != HIT_LOC_TORSO) {
-        combat->flags |= 0x01;
+        combat->flags |= CF_AIM;
     } else {
         combat->hit_loc = combat_random_hit_loc();
     }
@@ -869,9 +869,9 @@ int sub_4B3170(CombatContext* combat)
     }
 
     if (random_between(1, 100) <= v2) {
-        combat->flags |= 0x04;
+        combat->flags |= CF_CRITICAL;
     } else if ((combat->flags & 0x100) != 0) {
-        combat->flags |= 0x02;
+        combat->flags |= CF_HIT;
     } else {
         if ((combat->flags & 0x200) != 0) {
             int64_t blocking_obj;
@@ -901,7 +901,7 @@ int sub_4B3170(CombatContext* combat)
         if (cont) {
             if (combat->target_obj != OBJ_HANDLE_NULL
                 && !obj_type_is_critter(obj_field_int32_get(combat->target_obj, OBJ_F_TYPE))) {
-                combat->flags |= 0x02;
+                combat->flags |= CF_HIT;
                 cont = false;
             }
         }
@@ -917,7 +917,7 @@ int sub_4B3170(CombatContext* combat)
             skill_invocation.hit_loc = combat->hit_loc;
             skill_invocation.skill = combat->skill;
 
-            if ((combat->flags & 0x01) != 0) {
+            if ((combat->flags & CF_AIM) != 0) {
                 skill_invocation.flags |= 0x08;
             }
 
@@ -940,15 +940,15 @@ int sub_4B3170(CombatContext* combat)
             }
 
             if ((skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0) {
-                combat->flags |= 0x02;
+                combat->flags |= CF_HIT;
             }
 
             if ((skill_invocation.flags & SKILL_INVOCATION_CRITICAL) != 0) {
-                combat->flags |= 0x04;
+                combat->flags |= CF_CRITICAL;
             }
 
             if (combat->target_obj != OBJ_HANDLE_NULL
-                && (combat->flags & 0x02) != 0) {
+                && (combat->flags & CF_HIT) != 0) {
                 skill_invocation_init(&skill_invocation);
                 sub_4440E0(combat->target_obj, &(skill_invocation.source));
                 skill_invocation.skill = SKILL_DODGE;
@@ -963,12 +963,12 @@ int sub_4B3170(CombatContext* combat)
                     mes_get_msg(combat_mes_file, &mes_file_entry);
                     tf_add(combat->target_obj, 0, mes_file_entry.str);
 
-                    combat->flags &= ~0x06;
+                    combat->flags &= ~(CF_HIT | CF_CRITICAL);
 
                     if ((skill_invocation.flags & 0x10) != 0) {
                         int training = basic_skill_get_training(combat->target_obj, BASIC_SKILL_DODGE);
                         if (random_between(1, 100) <= dword_5B57A8[training]) {
-                            combat->flags |= 0x04;
+                            combat->flags |= CF_CRITICAL;
                         }
                     }
                 }
@@ -979,17 +979,18 @@ int sub_4B3170(CombatContext* combat)
     if (combat->attacker_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if (fate_resolve(combat->attacker_obj, FATE_CRIT_HIT)) {
-            combat->flags |= 0x06;
+            combat->flags |= CF_HIT | CF_CRITICAL;
         }
     } else if (combat->target_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         if (fate_resolve(combat->target_obj, FATE_CRIT_MISS)) {
-            combat->flags &= ~0x02;
-            combat->flags |= 0x04;
+            combat->flags &= ~CF_HIT;
+            combat->flags |= CF_CRITICAL;
         }
     }
 
-    if ((combat->flags & 0x02) == 0 && (combat->flags & 0x04) != 0) {
+    if ((combat->flags & CF_HIT) == 0
+        && (combat->flags & CF_CRITICAL) != 0) {
         sub_4B6410(combat);
     }
 
@@ -1015,11 +1016,11 @@ void sub_4B3770(CombatContext* combat)
     int sound_id;
     CombatContext body_of_fire;
 
-    if ((combat->flags & 0x2) != 0) {
+    if ((combat->flags & CF_HIT) != 0) {
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
             sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_HIT, 0);
 
-            if ((combat->flags & 0x4) != 0) {
+            if ((combat->flags & CF_CRITICAL) != 0) {
                 sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_HIT, 0);
             }
         }
@@ -1032,7 +1033,7 @@ void sub_4B3770(CombatContext* combat)
         sub_4B6680(combat);
         sub_4B4390(combat);
 
-        if ((combat->flags & 0x4) != 0) {
+        if ((combat->flags & CF_CRITICAL) != 0) {
             sound_id = sub_4F0ED0(combat->target_obj, 0);
             sub_41B930(sound_id, 1, combat->target_obj);
 
@@ -1060,7 +1061,7 @@ void sub_4B3770(CombatContext* combat)
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
             sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_MISS, 0);
 
-            if ((combat->flags & 0x4) != 0) {
+            if ((combat->flags & CF_CRITICAL) != 0) {
                 sub_441980(combat->attacker_obj, combat->weapon_obj, combat->target_obj, SAP_CRITICAL_MISS, 0);
             }
         }
@@ -1103,7 +1104,7 @@ void sub_4B39B0(CombatContext* combat)
     loc = obj_field_int64_get(combat->attacker_obj, OBJ_F_LOCATION);
     if (combat->skill == BASIC_SKILL_THROWING
         && !is_boomerangs
-        && (combat->flags & 0x02) == 0) {
+        && (combat->flags & CF_HIT) == 0) {
         range = (20 - basic_skill_level(combat->attacker_obj, BASIC_SKILL_THROWING)) / 5 + 1;
         max_range = location_dist(loc, combat->target_loc);
         if (range > max_range) {
@@ -1482,7 +1483,7 @@ void sub_4B4390(CombatContext* combat)
         return;
     }
 
-    if ((combat->flags & 0x04) != 0) {
+    if ((combat->flags & CF_CRITICAL) != 0) {
         sub_4B5F40(combat);
     }
 
@@ -1533,8 +1534,8 @@ void sub_4B4390(CombatContext* combat)
 
     if (obj_type_is_critter(obj_type)) {
         // 0x4B475F
-        if ((combat->flags & 0x80000) != 0) {
-            combat->flags |= 0x02;
+        if ((combat->flags & CF_TRAP) != 0) {
+            combat->flags |= CF_HIT;
             if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                 || (tig_net_flags & TIG_NET_HOST) != 0) {
                 sub_4B6930(combat);
@@ -1545,7 +1546,7 @@ void sub_4B4390(CombatContext* combat)
             return;
         }
 
-        if ((combat->flags & 0x04) != 0) {
+        if ((combat->flags & CF_CRITICAL) != 0) {
             int inventory_location;
             int64_t item_obj;
 
@@ -1572,7 +1573,7 @@ void sub_4B4390(CombatContext* combat)
             mes_file_entry.num = 2; // "Critical miss"
             mes_get_msg(combat_mes_file, &mes_file_entry);
             tf_add(combat->attacker_obj, tf_type, mes_file_entry.str);
-        } else if ((combat->flags & 0x04) != 0) {
+        } else if ((combat->flags & CF_CRITICAL) != 0) {
             mes_file_entry.num = 12; // "Critical hit"
             mes_get_msg(combat_mes_file, &mes_file_entry);
             tf_add(combat->target_obj, tf_type, mes_file_entry.str);
@@ -2468,7 +2469,7 @@ void sub_4B5F40(CombatContext* combat)
 
     chance = effect_adjust_crit_hit_effect(combat->attacker_obj, chance);
 
-    if ((combat->flags & 0x1) != 0) {
+    if ((combat->flags & CF_AIM) != 0) {
         chance += 10;
     }
 
@@ -2620,16 +2621,16 @@ void sub_4B6410(CombatContext* combat)
 
     chance = effect_adjust_crit_fail_effect(combat->attacker_obj, chance);
 
-    combat->flags &= ~0x1;
-    combat->flags &= ~0x4;
+    combat->flags &= ~CF_AIM;
+    combat->flags &= ~CF_CRITICAL;
     combat->flags |= 0x8;
-    combat->flags |= 0x2;
+    combat->flags |= CF_HIT;
 
     combat->target_obj = combat->attacker_obj;
     combat->target_loc = obj_field_int64_get(combat->target_obj, OBJ_F_LOCATION);
 
     if (random_between(1, 100) <= 50) {
-        combat->flags |= 0x4;
+        combat->flags |= CF_CRITICAL;
         if (crit_miss_chart != 5 && random_between(1, 100) <= chance + 1) {
             combat->dam_flags |= CDF_DESTROY_WEAPON;
         }
@@ -2815,8 +2816,8 @@ int sub_4B6930(CombatContext* combat)
 
     if (combat->target_obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(obj_field_int32_get(combat->target_obj, OBJ_F_TYPE))
-        && (combat->flags & 0x02) != 0) {
-        if ((combat->flags & 0x04) != 0) {
+        && (combat->flags & CF_HIT) != 0) {
+        if ((combat->flags & CF_CRITICAL) != 0) {
             v1 = 6;
         } else {
             for (index = 0; index < 4; index++) {
@@ -2916,16 +2917,16 @@ void sub_4B6B90(CombatContext* combat)
         return;
     }
 
-    if (combat->target_obj == combat->attacker_obj) {
+    if (critter_pc_leader_get(combat->target_obj) == combat->attacker_obj) {
         return;
     }
 
-    if ((combat->flags & 0x2) == 0) {
+    if ((combat->flags & CF_HIT) == 0) {
         return;
     }
 
     if ((combat->target_obj == combat->field_28)) {
-        if ((combat->flags & 0x4) != 0) {
+        if ((combat->flags & CF_CRITICAL) != 0) {
             sub_4AE9E0(combat->attacker_obj, false);
         }
     } else {

@@ -723,7 +723,8 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
     case TRAP_SCRIPT_MECHANICAL:
         sub_4B2210(invocation->attachee_obj, obj, &combat);
         combat.field_30 = sub_4BD950(invocation->attachee_obj);
-        combat.flags |= 0x80300;
+        combat.flags |= CF_TRAP;
+        combat.flags |= 0x300;
         combat.dam[DAMAGE_TYPE_NORMAL] = random_between(invocation->script->hdr.counters & 0xFF, (invocation->script->hdr.counters >> 8) & 0xFF);
         sub_4B4390(&combat);
         break;
@@ -741,28 +742,32 @@ void trigger_trap(int64_t obj, ScriptInvocation* invocation)
     case TRAP_SCRIPT_BULLET:
         sub_4B2210(invocation->attachee_obj, obj, &combat);
         combat.field_30 = sub_4BD950(invocation->attachee_obj);
-        combat.flags |= 0x80300;
+        combat.flags |= CF_TRAP;
+        combat.flags |= 0x300;
         combat.dam[DAMAGE_TYPE_NORMAL] = random_between(invocation->script->hdr.counters & 0xFF, (invocation->script->hdr.counters >> 8) & 0xFF);
         sub_4B4390(&combat);
         break;
     case TRAP_SCRIPT_FIRE:
         sub_4B2210(invocation->attachee_obj, obj, &combat);
         combat.field_30 = sub_4BD950(invocation->attachee_obj);
-        combat.flags |= 0x80300;
+        combat.flags |= CF_TRAP;
+        combat.flags |= 0x300;
         combat.dam[DAMAGE_TYPE_FIRE] = random_between(invocation->script->hdr.counters & 0xFF, (invocation->script->hdr.counters >> 8) & 0xFF);
         sub_4B4390(&combat);
         break;
     case TRAP_SCRIPT_ELECTRICAL:
         sub_4B2210(invocation->attachee_obj, obj, &combat);
         combat.field_30 = sub_4BD950(invocation->attachee_obj);
-        combat.flags |= 0x80300;
+        combat.flags |= CF_TRAP;
+        combat.flags |= 0x300;
         combat.dam[DAMAGE_TYPE_ELECTRICAL] = random_between(invocation->script->hdr.counters & 0xFF, (invocation->script->hdr.counters >> 8) & 0xFF);
         sub_4B4390(&combat);
         break;
     case TRAP_SCRIPT_POISON:
         sub_4B2210(invocation->attachee_obj, obj, &combat);
         combat.field_30 = sub_4BD950(invocation->attachee_obj);
-        combat.flags |= 0x80300;
+        combat.flags |= CF_TRAP;
+        combat.flags |= 0x300;
         combat.dam[DAMAGE_TYPE_POISON] = random_between(invocation->script->hdr.counters & 0xFF, (invocation->script->hdr.counters >> 8) & 0xFF);
         sub_4B4390(&combat);
         break;
