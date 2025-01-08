@@ -156,28 +156,28 @@ void mt_item_notify_pickup(int64_t item_obj, int64_t parent_obj)
 }
 
 // 0x4CBAD0
-void sub_4CBAD0(int64_t a1, CombatContext* combat, int64_t a3)
+void mt_item_notify_parent_hit(int64_t attacker_obj, CombatContext* combat, int64_t target_obj)
 {
     unsigned int flags;
     int index;
     int64_t item_obj;
 
-    if (a3 == OBJ_HANDLE_NULL) {
+    if (target_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
     flags = MTIT_PARENT_HIT;
     if ((combat->flags & 0x40000) != 0
         && (combat->weapon_obj == OBJ_HANDLE_NULL
-            || item_weapon_range(combat->weapon_obj, a1) <= 1)) {
+            || item_weapon_range(combat->weapon_obj, attacker_obj) <= 1)) {
         flags |= MTIT_TARGET_ATTACKER_WEAPON_MELEE;
     }
 
-    if (obj_type_is_critter(obj_field_int32_get(a3, OBJ_F_TYPE))) {
+    if (obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))) {
         for (index = 0; index < 9; index++) {
-            item_obj = item_wield_get(a3, 1000 + index);
+            item_obj = item_wield_get(target_obj, 1000 + index);
             if (item_obj != OBJ_HANDLE_NULL) {
-                sub_4CB800(item_obj, a3, a1, flags);
+                sub_4CB800(item_obj, target_obj, attacker_obj, flags);
             }
         }
     }
