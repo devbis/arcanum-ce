@@ -2739,7 +2739,7 @@ bool sub_4ACDB0(int64_t obj, bool a2)
             }
 
             if ((npc_flags & ONF_WANDERS_IN_DARK) != 0) {
-                sub_436040(obj, standpoint_loc, 4);
+                anim_goal_wander_seek_darkness(obj, standpoint_loc, 4);
                 return true;
             }
 
