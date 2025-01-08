@@ -14749,22 +14749,23 @@ bool anim_goal_unconceal(int64_t critter_obj)
 }
 
 // 0x435E60
-bool sub_435E60(int64_t obj, int64_t tether_loc, int radius)
+bool anim_goal_wander(int64_t obj, int64_t tether_loc, int radius)
 {
     int obj_type;
     int64_t source_obj;
     int64_t block_obj = OBJ_HANDLE_NULL;
     AnimGoalData goal_data;
 
-    ASSERT(tether_loc != 0); // tetherLoc != 0
-    ASSERT(radius > 0); // radius > 0
+    ASSERT(tether_loc != 0); // 16507, "tetherLoc != 0"
+    ASSERT(radius > 0); // 16508, "radius > 0"
 
     if (obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    ASSERT(obj_type_is_critter(obj_type)); // obj_type_is_critter(objType)
+
+    ASSERT(obj_type_is_critter(obj_type)); // 16513, "obj_type_is_critter(objType)"
 
     if ((!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == obj)
         && radius > 0
@@ -14776,8 +14777,8 @@ bool sub_435E60(int64_t obj, int64_t tether_loc, int radius)
             anim_goal_please_move(block_obj, source_obj);
         } else if (sub_44D4E0(&goal_data, obj, AG_WANDER)) {
             goal_data.params[AGDATA_RANGE_DATA].data = radius;
-            goal_data.params[AGDATA_SCRATCH_VAL1].data = tether_loc & 0xFFFFFFFF;
-            goal_data.params[AGDATA_SCRATCH_VAL2].data = (tether_loc >> 32) & 0xFFFFFFFF;
+            goal_data.params[AGDATA_SCRATCH_VAL1].data = (int)LOCATION_GET_X(tether_loc);
+            goal_data.params[AGDATA_SCRATCH_VAL2].data = (int)LOCATION_GET_Y(tether_loc);
             if (sub_44D520(&goal_data, &stru_5A1908)) {
                 return true;
             }

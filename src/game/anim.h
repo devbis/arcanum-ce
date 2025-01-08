@@ -86,7 +86,7 @@ bool anim_goal_make_knockdown(int64_t obj);
 bool anim_goal_fidget(int64_t critter_obj);
 bool sub_435CE0(int64_t obj);
 bool anim_goal_unconceal(int64_t critter_obj);
-bool sub_435E60(int64_t obj, int64_t tether_loc, int radius);
+bool anim_goal_wander(int64_t obj, int64_t tether_loc, int radius);
 bool anim_goal_wander_seek_darkness(int64_t obj, int64_t tether_loc, int radius);
 bool anim_goal_please_move(int64_t obj, int64_t target_obj);
 void sub_4364D0(int64_t obj);

@@ -2734,7 +2734,7 @@ bool sub_4ACDB0(int64_t obj, bool a2)
 
         if (!is_sleeping) {
             if ((npc_flags & ONF_WANDERS) != 0) {
-                sub_435E60(obj, standpoint_loc, 4);
+                anim_goal_wander(obj, standpoint_loc, 4);
                 return true;
             }
 
