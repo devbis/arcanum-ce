@@ -1026,7 +1026,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
                             if (random_between(1, 3) == 1
                                 && critter_is_active(target_obj)) {
                                 if (dword_5F8488 != NULL) {
-                                    sub_413A90(target_obj, source_obj, rc, str, &v2);
+                                    sub_413DF0(target_obj, source_obj, str, &v2);
                                     dword_5F8488(target_obj, source_obj, str, v2);
                                 }
                             }
