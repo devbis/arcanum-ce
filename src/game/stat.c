@@ -366,7 +366,7 @@ int stat_level(object_id_t obj, int stat)
             // NOTE: Persuation bonus is applied via effects.
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = tile_art_id_at(location);
-            if (sub_4EBB30(art_id)) {
+            if (a_name_tile_is_sinkable(art_id)) {
                 if (stat == STAT_STRENGTH) {
                     value += 2;
                 } else {
@@ -433,7 +433,7 @@ int stat_level(object_id_t obj, int stat)
         case BACKGROUND_NATURE_MAGE:
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = tile_art_id_at(location);
-            if (!sub_4EBBA0(art_id)) {
+            if (!a_name_tile_is_natural(art_id)) {
                 value -= 4;
             } else {
                 value += 4;

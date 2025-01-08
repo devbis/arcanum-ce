@@ -933,9 +933,9 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
             sub_5594E0(k, &dx, &dy);
             loc = LOCATION_MAKE(LOCATION_GET_X(origin) + dx, LOCATION_GET_Y(origin) + dy);
             wmap_rnd_encounter_build_object(entry->field_18[index], loc, &obj);
-            if (sub_4D7110(loc, 0)) {
+            if (tile_is_blocking(loc, 0)) {
                 pc_obj = player_get_pc_obj();
-                if (!sub_4F4E40(pc_obj, 6, &loc) || sub_4D7110(loc, 0)) {
+                if (!sub_4F4E40(pc_obj, 6, &loc) || tile_is_blocking(loc, 0)) {
                     object_destroy(obj);
                     obj = OBJ_HANDLE_NULL;
                 } else {

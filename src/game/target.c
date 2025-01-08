@@ -899,7 +899,7 @@ bool sub_4F2D20(S603CB8* a1)
     if ((tgt & 0x4000000000000) != 0) {
         bool v51 = true;
 
-        if (sub_4D7110(a1->field_28, false)) {
+        if (tile_is_blocking(a1->field_28, false)) {
             return false;
         }
 
@@ -925,7 +925,7 @@ bool sub_4F2D20(S603CB8* a1)
     if ((tgt & 0x8000000000000) != 0) {
         bool v54 = true;
 
-        if (sub_4D7110(a1->field_28, false)) {
+        if (tile_is_blocking(a1->field_28, false)) {
             return false;
         }
 

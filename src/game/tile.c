@@ -167,7 +167,7 @@ tig_art_id_t tile_art_id_at(int64_t loc)
 }
 
 // 0x4D7110
-bool sub_4D7110(int64_t loc, bool a2)
+bool tile_is_blocking(int64_t loc, bool a2)
 {
     tig_art_id_t art_id;
     bool v1;
@@ -181,10 +181,11 @@ bool sub_4D7110(int64_t loc, bool a2)
         return sub_504AC0(art_id) == 0;
     }
 
-    v1 = sub_4EBAB0(art_id);
+    v1 = a_name_tile_is_blocking(art_id);
     if (a2) {
         if (v1) {
-            sub_4D71A0(loc);
+            // FIXME: Useless.
+            tile_is_sinkable(loc);
         }
         v1 = false;
     }
@@ -193,21 +194,21 @@ bool sub_4D7110(int64_t loc, bool a2)
 }
 
 // 0x4D7180
-bool sub_4D7180(int64_t loc)
+bool tile_is_soundproof(int64_t loc)
 {
-    return sub_4EBBC0(tile_art_id_at(loc));
+    return a_name_tile_is_soundproof(tile_art_id_at(loc));
 }
 
 // 0x4D71A0
-bool sub_4D71A0(int64_t loc)
+bool tile_is_sinkable(int64_t loc)
 {
-    return sub_4EBB30(tile_art_id_at(loc));
+    return a_name_tile_is_sinkable(tile_art_id_at(loc));
 }
 
 // 0x4D71C0
-bool sub_4D71C0(int64_t loc)
+bool tile_is_slippery(int64_t loc)
 {
-    return sub_4EBB80(tile_art_id_at(loc));
+    return a_name_tile_is_slippery(tile_art_id_at(loc));
 }
 
 // 0x4D71E0

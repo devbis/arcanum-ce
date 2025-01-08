@@ -64,7 +64,7 @@ int sub_41F3C0(PathCreateInfo* path_create_info)
         ObjectNode* node;
 
         if ((path_create_info->field_20 & 0x08) == 0
-            && sub_4D7110(path_create_info->to, v1)) {
+            && tile_is_blocking(path_create_info->to, v1)) {
             return 0;
         }
 
@@ -225,7 +225,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
             if (adjacent_loc != path_create_info->to
                 || (path_create_info->field_20 & 0x01) == 0) {
                 if ((path_create_info->field_20 & 0x08) == 0
-                    && sub_4D7110(adjacent_loc, v1)) {
+                    && tile_is_blocking(adjacent_loc, v1)) {
                     break;
                 }
 

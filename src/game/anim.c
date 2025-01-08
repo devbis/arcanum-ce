@@ -4828,7 +4828,7 @@ bool sub_425760(int64_t obj, int64_t loc, int64_t adjacent_loc, int rot)
 
     sub_4257E0(obj, &flags);
 
-    if (sub_4D7110(adjacent_loc, false)) {
+    if (tile_is_blocking(adjacent_loc, false)) {
         return true;
     }
 
@@ -4862,7 +4862,7 @@ bool sub_425840(int64_t a1, int64_t a2, int64_t a3, int a4, int64_t a5)
 
     sub_4257E0(a1, &flags);
 
-    if (sub_4D7110(a3, false)) {
+    if (tile_is_blocking(a3, false)) {
         return true;
     }
 
@@ -5308,7 +5308,7 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
             return false;
         }
 
-        if (!sub_4D7110(adjacent_loc, false)
+        if (!tile_is_blocking(adjacent_loc, false)
             && !sub_43FD70(obj, from, rot, sub_41F570(flags), NULL)) {
             from = adjacent_loc;
         } else {
@@ -11176,7 +11176,7 @@ bool sub_42FD70(AnimRunInfo* run_info, int64_t obj, AnimPath* path, int64_t from
         // FIXME: Useless.
         obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS);
 
-        if (!sub_4D7110(to, false)
+        if (!tile_is_blocking(to, false)
             && !sub_43FD70(obj, from, path->baseRot, 0x03, NULL)) {
             return false;
         }
@@ -11222,7 +11222,7 @@ bool sub_42FED0(AnimRunInfo* run_info)
     }
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    if (!sub_4D7110(loc, false)) {
+    if (!tile_is_blocking(loc, false)) {
         sub_432D90(obj);
     }
 
@@ -11285,7 +11285,7 @@ bool sub_42FFE0(AnimRunInfo* run_info)
     }
 
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    if (sub_4D7110(location, false)) {
+    if (tile_is_blocking(location, false)) {
         object_destroy(obj);
     }
 
@@ -11651,7 +11651,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                         || (tig_net_flags & TIG_NET_HOST) != 0)
                     && (spell_flags & (OSF_FLOATING | OSF_BODY_OF_AIR)) == 0
                     && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_SLIP) == 0) {
-                    if (sub_4D71C0(new_loc)) {
+                    if (tile_is_slippery(new_loc)) {
                         int dexterity = stat_level(obj, STAT_DEXTERITY);
                         if (dexterity < 20 && random_between(1, 20) > dexterity + 6) {
                             v3 = true;

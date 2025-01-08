@@ -2971,7 +2971,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
     }
 
     if ((flags & 0x20) != 0) {
-        if (sub_4D7180(tmp_loc)) {
+        if (tile_is_soundproof(tmp_loc)) {
             cost += 8;
         }
     }
@@ -5137,7 +5137,7 @@ void sub_444270(int64_t obj, int a2)
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
 
     if ((flags & OF_DISALLOW_WADING) == 0) {
-        if (sub_4D71A0(loc)) {
+        if (tile_is_sinkable(loc)) {
             if ((flags & OF_WADING) == 0) {
                 object_flags_set(obj, OF_WADING);
             }

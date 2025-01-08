@@ -5,6 +5,13 @@
 #include "game/mes.h"
 #include "game/obj_private.h"
 
+#define TF_BLOCK 0x01
+#define TF_SINKABLE 0x02
+#define TF_FLYABLE 0x04
+#define TF_SLIPPERY 0x08
+#define TF_NATURAL 0x10
+#define TF_SOUNDPROOF 0x20
+
 #define WS_NOWINDOWS 0x01
 #define WS_NODOORS 0x02
 #define WS_FENCE 0x04
@@ -33,7 +40,7 @@ static bool sub_4EB7D0(const char* name, int* index_ptr);
 static bool sub_4EB860(int a1, int a2, bool* a3, int* a4);
 static bool sub_4EB8D0(int* a1, int a2, int a3, bool* a4);
 static tig_art_id_t sub_4EB970(tig_art_id_t a, tig_art_id_t b);
-static uint8_t sub_4EBAD0(tig_art_id_t aid);
+static uint8_t a_name_tile_id_flags(tig_art_id_t aid);
 static int8_t sub_4EBE90(int a1, int a2, int a3, int a4, int a5, int a6);
 static bool sub_4EC020();
 static bool sub_4EC0C0();
@@ -463,22 +470,22 @@ bool load_tile_names()
             while (*pch != '\0' && *pch != ' ') {
                 switch (*pch) {
                 case 's':
-                    flags |= 0x02;
+                    flags |= TF_SINKABLE;
                     break;
                 case 'b':
-                    flags |= 0x01;
+                    flags |= TF_BLOCK;
                     break;
                 case 'f':
-                    flags |= 0x05;
+                    flags |= TF_BLOCK | TF_FLYABLE;
                     break;
                 case 'i':
-                    flags |= 0x08;
+                    flags |= TF_SLIPPERY;
                     break;
                 case 'n':
-                    flags |= 0x10;
+                    flags |= TF_NATURAL;
                     break;
                 case 'p':
-                    flags |= 0x20;
+                    flags |= TF_SOUNDPROOF;
                     break;
                 }
                 pch++;
@@ -739,15 +746,15 @@ bool sub_4EBA30(tig_art_id_t a, tig_art_id_t b)
 }
 
 // 0x4EBAB0
-bool sub_4EBAB0(tig_art_id_t aid)
+bool a_name_tile_is_blocking(tig_art_id_t aid)
 {
     return aid != TIG_ART_ID_INVALID
-        ? (sub_4EBAD0(aid) & 0x01) != 0
+        ? (a_name_tile_id_flags(aid) & TF_BLOCK) != 0
         : false;
 }
 
 // 0x4EBAD0
-uint8_t sub_4EBAD0(tig_art_id_t aid)
+uint8_t a_name_tile_id_flags(tig_art_id_t aid)
 {
     int type;
     int num;
@@ -773,39 +780,39 @@ uint8_t sub_4EBAD0(tig_art_id_t aid)
 }
 
 // 0x4EBB30
-bool sub_4EBB30(tig_art_id_t aid)
+bool a_name_tile_is_sinkable(tig_art_id_t aid)
 {
     return aid != TIG_ART_ID_INVALID
-        ? (sub_4EBAD0(aid) & 0x02) != 0
+        ? (a_name_tile_id_flags(aid) & TF_SINKABLE) != 0
         : false;
 }
 
 // 0x4EBB80
-bool sub_4EBB80(tig_art_id_t aid)
+bool a_name_tile_is_slippery(tig_art_id_t aid)
 {
     return aid != TIG_ART_ID_INVALID
-        ? (sub_4EBAD0(aid) & 0x08) != 0
+        ? (a_name_tile_id_flags(aid) & TF_SLIPPERY) != 0
         : false;
 }
 
 // 0x4EBBA0
-bool sub_4EBBA0(tig_art_id_t aid)
+bool a_name_tile_is_natural(tig_art_id_t aid)
 {
     return aid != TIG_ART_ID_INVALID
-        ? (sub_4EBAD0(aid) & 0x10) != 0
+        ? (a_name_tile_id_flags(aid) & TF_NATURAL) != 0
         : false;
 }
 
 // 0x4EBBC0
-bool sub_4EBBC0(tig_art_id_t aid)
+bool a_name_tile_is_soundproof(tig_art_id_t aid)
 {
     return aid != TIG_ART_ID_INVALID
-        ? (sub_4EBAD0(aid) & 0x20) != 0
+        ? (a_name_tile_id_flags(aid) & TF_SOUNDPROOF) != 0
         : false;
 }
 
 // 0x4EBBE0
-int sub_4EBBE0(tig_art_id_t aid)
+int a_name_tile_sound(tig_art_id_t aid)
 {
     int type;
     int num;

@@ -1798,7 +1798,7 @@ int sub_4F0ED0(int64_t obj, int a2)
     } else {
         loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
         tile_art_id = tile_art_id_at(loc);
-        tile_sound_type = sub_4EBBE0(tile_art_id);
+        tile_sound_type = a_name_tile_sound(tile_art_id);
         base = dword_5BB998[tile_sound_type];
         if (v1 == 3
             && (tile_sound_type == 5

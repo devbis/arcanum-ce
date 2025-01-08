@@ -3780,7 +3780,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 object_remove_flags(obj, OF_SHRUNK);
             } else if ((a4 & OSF_WATER_WALKING) != 0) {
                 object_flags_unset(obj, OF_WATER_WALKING);
-                if (sub_4D7110(obj_field_int64_get(obj, OBJ_F_LOCATION), false)) {
+                if (tile_is_blocking(obj_field_int64_get(obj, OBJ_F_LOCATION), false)) {
                     sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
                     combat.dam_flags |= CDF_FULL;
                     sub_4B4390(&combat);
