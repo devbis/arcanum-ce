@@ -12936,7 +12936,7 @@ bool sub_432700(AnimRunInfo* run_info)
         sub_41B930(sound_id, 1, source_obj);
     }
 
-    sub_4CBD40(source_obj, target_obj);
+    mt_item_notify_parent_attacks_obj(source_obj, target_obj);
     sub_4377C0(NULL, source_obj, source_obj, 0);
 
     if (art_anim_data.action_frame < 1) {

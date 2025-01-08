@@ -252,22 +252,22 @@ void mt_item_notify_parent_dying(int64_t killer_obj, int64_t victim_obj)
 }
 
 // 0x4CBD40
-void sub_4CBD40(int64_t a1, int64_t a2)
+void mt_item_notify_parent_attacks_obj(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
     int index;
     int64_t item_obj;
 
-    type = obj_field_int32_get(a1, OBJ_F_TYPE);
+    type = obj_field_int32_get(attacker_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
-    qword_5FF618 = a1;
+    qword_5FF618 = attacker_obj;
     for (index = 0; index < 9; index++) {
-        item_obj = item_wield_get(a1, 1000 + index);
+        item_obj = item_wield_get(attacker_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, a1, a2, MTIT_PARENT_ATKS_OPPONENT);
+            sub_4CB800(item_obj, attacker_obj, target_obj, MTIT_PARENT_ATKS_OPPONENT);
         }
     }
 }
