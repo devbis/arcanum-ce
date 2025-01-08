@@ -618,9 +618,27 @@ void object_render(UnknownContext* render_info)
 
                                                                     if (obj_type == OBJ_TYPE_NPC
                                                                         && tig_art_num_get(art_id) == 433) {
-                                                                        // TODO: Incomplete.
-                                                                        art_blit_info.flags |= TIG_ART_BLT_BLEND_COLOR_CONST;
-                                                                        art_blit_info.color = object_reaction_colors[0];
+                                                                        unsigned int reaction_flags = obj_field_int32_get(obj_node->obj, OBJ_F_CRITTER_FLAGS2) & (OCF2_REACTION_0 | OCF2_REACTION_1 | OCF2_REACTION_2 | OCF2_REACTION_3 | OCF2_REACTION_4 | OCF2_REACTION_5 | OCF2_REACTION_6);
+                                                                        if (reaction_flags != 0) {
+                                                                            reaction_flags >>= 14;
+
+                                                                            int reaction = 0;
+                                                                            while (reaction_flags != 0) {
+                                                                                reaction_flags >>= 1;
+                                                                                reaction++;
+                                                                            }
+
+                                                                            reaction--;
+
+                                                                            if (reaction < 0) {
+                                                                                reaction = 0;
+                                                                            } else if (reaction > REACTION_COUNT) {
+                                                                                reaction = REACTION_COUNT;
+                                                                            }
+
+                                                                            art_blit_info.flags |= TIG_ART_BLT_BLEND_COLOR_CONST;
+                                                                            art_blit_info.color = object_reaction_colors[reaction];
+                                                                        }
                                                                     }
 
                                                                     art_blit_info.art_id = art_id;
