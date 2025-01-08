@@ -143,13 +143,13 @@ typedef struct Packet16 {
 // NOTE: May be wrong, see 0x4ED510.
 static_assert(sizeof(Packet16) == 0x58, "wrong size");
 
-typedef struct Packet19 {
+typedef struct PacketCombatModeSet {
     /* 0000 */ int type;
     /* 0008 */ ObjectID oid;
     /* 0020 */ bool active;
-} Packet19;
+} PacketCombatModeSet;
 
-static_assert(sizeof(Packet19) == 0x28, "wrong size");
+static_assert(sizeof(PacketCombatModeSet) == 0x28, "wrong size");
 
 typedef struct Packet20 {
     /* 0000 */ int type;

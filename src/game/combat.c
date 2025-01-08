@@ -1291,7 +1291,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
 
     if (!multiplayer_is_locked()) {
         if ((tig_net_flags & TIG_NET_HOST) != 0 || is_pc) {
-            Packet19 pkt;
+            PacketCombatModeSet pkt;
 
             pkt.type = 19;
             pkt.oid = sub_407EF0(obj);
