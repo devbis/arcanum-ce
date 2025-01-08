@@ -340,7 +340,7 @@ int stat_level(object_id_t obj, int stat)
             // - Willpower -2
             // - Strength +2
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = sub_4D70B0(location);
+            art_id = tile_art_id_at(location);
             if (tig_art_tile_id_type_get(art_id) == 0) {
                 if (stat == STAT_INTELLIGENCE) {
                     value += 2;
@@ -365,7 +365,7 @@ int stat_level(object_id_t obj, int stat)
             //
             // NOTE: Persuation bonus is applied via effects.
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = sub_4D70B0(location);
+            art_id = tile_art_id_at(location);
             if (sub_4EBB30(art_id)) {
                 if (stat == STAT_STRENGTH) {
                     value += 2;
@@ -423,7 +423,7 @@ int stat_level(object_id_t obj, int stat)
             break;
         case BACKGROUND_SKY_MAGE:
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = sub_4D70B0(location);
+            art_id = tile_art_id_at(location);
             if (tig_art_tile_id_type_get(art_id) == 0) {
                 value -= 4;
             } else {
@@ -432,7 +432,7 @@ int stat_level(object_id_t obj, int stat)
             break;
         case BACKGROUND_NATURE_MAGE:
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = sub_4D70B0(location);
+            art_id = tile_art_id_at(location);
             if (!sub_4EBBA0(art_id)) {
                 value -= 4;
             } else {

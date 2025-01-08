@@ -10,7 +10,7 @@ bool tile_update_view(ViewOptions* view_options);
 void tile_toggle_visibility();
 void tile_render(UnknownContext* render_info);
 int tile_id_from_loc(int64_t loc);
-tig_art_id_t sub_4D70B0(int64_t loc);
+tig_art_id_t tile_art_id_at(int64_t loc);
 bool sub_4D7110(int64_t loc, bool a2);
 bool sub_4D7180(int64_t loc);
 bool sub_4D71A0(int64_t loc);

@@ -147,7 +147,7 @@ int tile_id_from_loc(int64_t loc)
 }
 
 // 0x4D70B0
-tig_art_id_t sub_4D70B0(int64_t loc)
+tig_art_id_t tile_art_id_at(int64_t loc)
 {
     int64_t sector_id;
     Sector* sector;
@@ -176,7 +176,7 @@ bool sub_4D7110(int64_t loc, bool a2)
         return true;
     }
 
-    art_id = sub_4D70B0(loc);
+    art_id = tile_art_id_at(loc);
     if (tig_art_type(art_id) == TIG_ART_TYPE_FACADE) {
         return sub_504AC0(art_id) == 0;
     }
@@ -195,19 +195,19 @@ bool sub_4D7110(int64_t loc, bool a2)
 // 0x4D7180
 bool sub_4D7180(int64_t loc)
 {
-    return sub_4EBBC0(sub_4D70B0(loc));
+    return sub_4EBBC0(tile_art_id_at(loc));
 }
 
 // 0x4D71A0
 bool sub_4D71A0(int64_t loc)
 {
-    return sub_4EBB30(sub_4D70B0(loc));
+    return sub_4EBB30(tile_art_id_at(loc));
 }
 
 // 0x4D71C0
 bool sub_4D71C0(int64_t loc)
 {
-    return sub_4EBB80(sub_4D70B0(loc));
+    return sub_4EBB80(tile_art_id_at(loc));
 }
 
 // 0x4D71E0
@@ -221,7 +221,7 @@ void sub_4D7430(int64_t loc)
 {
     tig_art_id_t art_id;
 
-    art_id = sub_4D70B0(loc);
+    art_id = tile_art_id_at(loc);
     do {
         if (art_id != TIG_ART_ID_INVALID) {
             art_id = sub_503800(art_id, sub_5037B0(art_id) + 1);

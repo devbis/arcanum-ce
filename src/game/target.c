@@ -957,7 +957,7 @@ bool sub_4F2D20(S603CB8* a1)
     if ((tgt & 0x100000000000000) != 0
         && a1->field_18 != 0
         && a1->field_28 != 0) {
-        if (tig_art_tile_id_type_get(sub_4D70B0(a1->field_28)) != tig_art_tile_id_type_get(sub_4D70B0(a1->field_18))) {
+        if (tig_art_tile_id_type_get(tile_art_id_at(a1->field_28)) != tig_art_tile_id_type_get(tile_art_id_at(a1->field_18))) {
             return false;
         }
     }

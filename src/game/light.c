@@ -490,7 +490,7 @@ bool sub_4D89E0(int64_t loc, int offset_x, int offset_y, int a4, tig_color_t* co
     outdoor_color = light_get_outdoor_color();
 
     if (a4) {
-        if (tig_art_tile_id_type_get(sub_4D70B0(loc))) {
+        if (tig_art_tile_id_type_get(tile_art_id_at(loc))) {
             *color_ptr = outdoor_color;
         } else {
             *color_ptr = indoor_color;
@@ -862,7 +862,7 @@ bool sub_4D9B20(int64_t obj)
     }
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    if (tig_art_tile_id_type_get(sub_4D70B0(loc)) == 0) {
+    if (tig_art_tile_id_type_get(tile_art_id_at(loc)) == 0) {
         color = light_get_indoor_color();
     } else {
         color = light_get_outdoor_color();
@@ -1108,7 +1108,7 @@ void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr)
     if (obj_type == OBJ_TYPE_WALL) {
         tig_color_t indoor_color = light_get_indoor_color();
         tig_color_t outdoor_color = light_get_outdoor_color();
-        tig_color_t tile_color = tig_art_tile_id_type_get(sub_4D70B0(loc)) == 0
+        tig_color_t tile_color = tig_art_tile_id_type_get(tile_art_id_at(loc)) == 0
             ? indoor_color
             : outdoor_color;
 

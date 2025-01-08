@@ -658,7 +658,7 @@ bool sub_43A030(int64_t loc, int a2)
         return false;
     }
 
-    aid = sub_4D70B0(loc);
+    aid = tile_art_id_at(loc);
     if (tig_art_tile_id_type_get(aid) != 0) {
         return false;
     }

@@ -3845,12 +3845,12 @@ bool sub_4AECA0(int64_t obj, int a2)
         new_loc = tmp_loc;
     }
 
-    aid = sub_4D70B0(loc);
+    aid = tile_art_id_at(loc);
     if (tig_art_tile_id_type_get(aid) != 0) {
         return false;
     }
 
-    aid = sub_4D70B0(new_loc);
+    aid = tile_art_id_at(new_loc);
     if (tig_art_tile_id_type_get(aid) == 0) {
         return false;
     }

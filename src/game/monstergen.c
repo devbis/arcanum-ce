@@ -293,7 +293,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
     unsigned int flags;
 
     loc = obj_field_int64_get(generator_info->obj, OBJ_F_LOCATION);
-    art_id = sub_4D70B0(loc);
+    art_id = tile_art_id_at(loc);
     tile_type = tig_art_tile_id_type_get(art_id);
     location_xy(loc, &x, &y);
     object_get_rect(generator_info->obj, 0x8, &rect);
@@ -306,7 +306,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
             for (attempt = 0; attempt < 10; attempt++) {
                 distance = random_between(1, 5);
                 if (sub_4F4E40(generator_info->obj, distance, &target_loc)
-                    && tile_type == tig_art_tile_id_type_get(sub_4D70B0(target_loc))) {
+                    && tile_type == tig_art_tile_id_type_get(tile_art_id_at(target_loc))) {
                     if ((generator_info->field_0 & 0x4) == 0) {
                         break;
                     }
