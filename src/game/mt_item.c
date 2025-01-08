@@ -352,9 +352,9 @@ void sub_4CBF70(int64_t a1, int64_t a2)
 }
 
 // 0x4CBFC0
-void sub_4CBFC0(int64_t a1, int64_t a2)
+void mt_item_notify_unwear(int64_t item_obj, int64_t parent_obj)
 {
-    sub_4CBFF0(a1, a2, MTIT_UNWEAR);
+    sub_4CBFF0(item_obj, parent_obj, MTIT_UNWEAR);
 }
 
 // 0x4CBFF0
