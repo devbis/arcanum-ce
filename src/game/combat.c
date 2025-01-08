@@ -1930,9 +1930,9 @@ void sub_4B4390(CombatContext* combat)
             mt_item_notify_parent_hit(combat->attacker_obj, combat, combat->target_obj);
 
             if ((combat->flags & 0x40000) != 0) {
-                sub_4CBE70(combat->attacker_obj, combat->weapon_obj, combat->target_obj);
+                mt_item_notify_parent_dmgs_obj(combat->attacker_obj, combat->weapon_obj, combat->target_obj);
             } else {
-                sub_4CBE70(combat->attacker_obj, OBJ_HANDLE_NULL, combat->target_obj);
+                mt_item_notify_parent_dmgs_obj(combat->attacker_obj, OBJ_HANDLE_NULL, combat->target_obj);
             }
         }
 
