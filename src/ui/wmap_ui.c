@@ -1022,7 +1022,7 @@ bool wmap_ui_load(GameLoadInfo* load_info)
     }
 
     loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     sub_564F60(player_get_pc_obj(), sector_id);
 
     return true;
@@ -1136,7 +1136,7 @@ void sub_5607E0()
     }
 
     loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (sub_4D0EE0(sector_id)) {
         mes_file_entry.num = 605; // "The World Map is not available."
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
@@ -1361,7 +1361,7 @@ void sub_560EE0()
 void sub_560EF0()
 {
     dword_66D880 = 0;
-    dword_66D874 = sub_4BE380(sub_4CFC50(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION)));
+    dword_66D874 = sub_4BE380(sector_id_from_loc(obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION)));
     if (sub_40FF40() == dword_66D87C) {
         if (dword_66D874 == 0) {
             dword_66D880 = 1;
@@ -3663,10 +3663,10 @@ void sub_564AF0(int64_t obj)
     WmapNote note;
 
     pc_loc = obj_field_int64_get(player_get_pc_obj(), OBJ_F_LOCATION);
-    pc_townmap = sub_4BE380(sub_4CFC50(pc_loc));
+    pc_townmap = sub_4BE380(sector_id_from_loc(pc_loc));
 
     obj_loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    obj_townmap = sub_4BE380(sub_4CFC50(obj_loc));
+    obj_townmap = sub_4BE380(sector_id_from_loc(obj_loc));
 
     if (pc_townmap != obj_townmap) {
         return;
@@ -3824,7 +3824,7 @@ void sub_564F60(long long a1, long long a2)
 {
     dword_66D874 = sub_4BE380(a2);
     if (dword_66D874) {
-        sub_564A70(a1, sub_4CFC90(a2));
+        sub_564A70(a1, sector_loc_from_id(a2));
         wmap_ui_town_notes_load();
         sub_4607B0(2);
     } else {
@@ -3931,11 +3931,11 @@ void sub_565170(WmapCoords* coords)
     int64_t v1;
 
     sub_561800(coords, &loc);
-    sub_4CFFA0(sub_4CFC50(loc), byte_64E828[dword_65E968], &v1);
+    sub_4CFFA0(sector_id_from_loc(loc), byte_64E828[dword_65E968], &v1);
 
     dword_65E968++;
     if (dword_65E968 < stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
-        sub_561490(sub_4CFC90(v1), coords);
+        sub_561490(sector_loc_from_id(v1), coords);
     } else {
         sub_561490(stru_64E048[0].field_0[0].loc, coords);
     }

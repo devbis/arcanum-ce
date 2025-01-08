@@ -159,7 +159,7 @@ void sub_57B180(int64_t bed_obj)
 
     if (bed_obj == OBJ_HANDLE_NULL) {
         loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
-        sector_id = sub_4CFC50(loc);
+        sector_id = sector_id_from_loc(loc);
         townmap = sub_4BE380(sector_id);
         if (townmap != 0) {
             if (!sub_4BECC0(townmap)) {

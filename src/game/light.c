@@ -578,7 +578,7 @@ void sub_4D9310(LightCreateInfo* create_info, Light** light_ptr)
 
     sub_4DE870(create_info, light_ptr);
     if (*light_ptr != NULL) {
-        sector_id = sub_4CFC50(create_info->loc);
+        sector_id = sector_id_from_loc(create_info->loc);
         if (sub_4DD110(*light_ptr) || sub_4D04E0(sector_id)) {
             sector_lock(sector_id, &sector);
             sector_light_list_add(&(sector->lights), *light_ptr);
@@ -656,7 +656,7 @@ void sub_4D9510(Light* light)
     int64_t sector_id;
     Sector* sector;
 
-    sector_id = sub_4CFC50(light->loc);
+    sector_id = sector_id_from_loc(light->loc);
     if (sub_4DD110(light) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
         sector_light_list_remove(&(sector->lights), light);
@@ -1586,8 +1586,8 @@ void sub_4DD320(Light* light, int64_t loc, int offset_x, int offset_y)
 
     light_get_rect_internal(light, &dirty_rect);
 
-    old_sector_id = sub_4CFC50(light->loc);
-    new_sector_id = sub_4CFC50(loc);
+    old_sector_id = sector_id_from_loc(light->loc);
+    new_sector_id = sector_id_from_loc(loc);
     v1 = sub_4DD110(light);
 
     if (old_sector_id == new_sector_id) {
@@ -2211,7 +2211,7 @@ void sub_4DE4F0(Light* light, int offset_x, int offset_y)
 
     if (light->offset_x != offset_x || light->offset_y != offset_y) {
         light_get_rect_internal(light, &dirty_rect);
-        sector_id = sub_4CFC50(light->loc);
+        sector_id = sector_id_from_loc(light->loc);
         if (sub_4DD110(light) || sub_4D04E0(sector_id)) {
             sector_lock(sector_id, &sector);
             sector_light_list_update(&(sector->lights), light, light->loc, offset_x, offset_y);

@@ -200,7 +200,7 @@ bool tileblock_is_tile_blocked(int64_t loc)
     int tile;
     bool blocked;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (sector_lock(sector_id, &sector)) {
         tile = sub_4D7090(loc);
         blocked = (sector->blocks.mask[tile / 32] & (1 << (tile % 32))) != 0;
@@ -219,7 +219,7 @@ void tileblock_set_tile_blocked(int64_t loc, bool blocked)
     int tile;
     TigRect rect;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     tile = sub_4D7090(loc);
     if (sector_lock(sector_id, &sector)) {
         if (blocked) {
@@ -238,7 +238,7 @@ void tileblock_set_tile_blocked(int64_t loc, bool blocked)
 // 0x4BB550
 void tileblock_get_rect(int64_t loc, TigRect* rect)
 {
-    tileblock_get_rect_internal(sub_4CFC50(loc),
+    tileblock_get_rect_internal(sector_id_from_loc(loc),
         sub_4D7090(loc),
         rect);
 }

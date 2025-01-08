@@ -1344,7 +1344,7 @@ void sub_43CF70(int64_t obj)
 
     sub_443770(obj);
 
-    sector_id = sub_4CFC50(obj_field_int64_get(obj, OBJ_F_LOCATION));
+    sector_id = sector_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
     if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
         objlist_remove(&(sector->objects), obj);
@@ -2072,8 +2072,8 @@ void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y)
     object_get_rect(obj, 0x7, &obj_rect);
     object_iso_invalidate_rect(&obj_rect);
 
-    cur_sector_id = sub_4CFC50(cur_loc);
-    sector_id = sub_4CFC50(loc);
+    cur_sector_id = sector_id_from_loc(cur_loc);
+    sector_id = sector_id_from_loc(loc);
     is_static = sub_43D990(obj);
 
     if (cur_sector_id == sector_id) {
@@ -3162,7 +3162,7 @@ void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
     objects->head = NULL;
     parent_ptr = &(objects->head);
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     sector_limits_get(&limit_x, &limit_y);
 
     if (SECTOR_X(sector_id) < 0
@@ -3433,7 +3433,7 @@ bool sub_441140(ObjectList* objects, int64_t obj)
     }
 
     if (objects->num_sectors > 0) {
-        sub_4CFC50(obj_field_int64_get(node->obj, OBJ_F_LOCATION));
+        sector_id_from_loc(obj_field_int64_get(node->obj, OBJ_F_LOCATION));
     }
 
     object_node_destroy(node);
@@ -3658,7 +3658,7 @@ void sub_4415C0(int64_t obj, int64_t loc)
             obj_field_int32_set(obj, OBJ_F_OFFSET_X, 0);
             obj_field_int32_set(obj, OBJ_F_OFFSET_Y, 0);
 
-            sector_id = sub_4CFC50(loc);
+            sector_id = sector_id_from_loc(loc);
             if (sub_4D04E0(sector_id)) {
                 sector_lock(sector_id, &sector);
                 objlist_insert(&(sector->objects), obj);
@@ -3727,7 +3727,7 @@ void sub_4417A0(int64_t item_obj, int64_t parent_obj)
             sub_4D9A90(item_obj);
             object_get_rect(item_obj, 0x07, &rect);
             loc = obj_field_int64_get(item_obj, OBJ_F_LOCATION);
-            sector_id = sub_4CFC50(loc);
+            sector_id = sector_id_from_loc(loc);
             if (sub_4D04E0(sector_id)) {
                 sector_lock(sector_id, &sector);
                 objlist_remove(&(sector->objects), item_obj);
@@ -4170,7 +4170,7 @@ bool sub_442260(int64_t obj, int64_t loc)
         }
     }
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
         objlist_insert(&(sector->objects), obj);
@@ -4215,7 +4215,7 @@ void sub_4423E0(int64_t obj, int offset_x, int offset_y)
         tf_move(obj, loc, offset_x, offset_y);
     }
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (sub_43D990(obj) || sub_4D04E0(sector_id)) {
         sector_lock(sector_id, &sector);
         sub_4F12C0(&(sector->objects), obj, loc, offset_x, offset_y);
@@ -4563,7 +4563,7 @@ void object_toggle_flat(int64_t obj, bool flat)
     unsigned int flags;
 
     object_get_rect(obj, 0x7, &rect);
-    sector_id = sub_4CFC50(obj_field_int64_get(obj, OBJ_F_LOCATION));
+    sector_id = sector_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
 
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
     if (flat) {
@@ -4943,7 +4943,7 @@ bool sub_443AD0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
                 map,
                 LOCATION_GET_X(loc),
                 LOCATION_GET_Y(loc),
-                sub_4CFC50(loc),
+                sector_id_from_loc(loc),
                 buffer);
         }
 
@@ -5180,7 +5180,7 @@ void sub_444270(int64_t obj, int a2)
 
     if (a2 != 1) {
         if (sub_40DA20(obj) && player_is_pc_obj(obj)) {
-            sub_4F2330(sub_4CFC50(loc), obj);
+            sub_4F2330(sector_id_from_loc(loc), obj);
         }
         sub_4D9590(obj, true);
     }

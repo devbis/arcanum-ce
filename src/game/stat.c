@@ -521,7 +521,7 @@ int stat_get_base(object_id_t obj, int stat)
         case STAT_MAGICK_TECH_APTITUDE:
             bonus = (50 * stat_level(obj, STAT_MAGICK_POINTS) - 55 * stat_level(obj, STAT_TECH_POINTS)) / 10;
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            value = magictech_get_aptitude_adj(sub_4CFC50(location)) + bonus;
+            value = magictech_get_aptitude_adj(sector_id_from_loc(location)) + bonus;
             break;
         default:
             // Unreachable.

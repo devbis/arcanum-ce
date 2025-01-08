@@ -795,13 +795,13 @@ void sub_40FE00(int64_t loc)
     int dy;
     Sector* sector;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     x = SECTOR_X(sector_id) - 1;
     y = SECTOR_Y(sector_id) - 1;
 
     for (dy = 0; dy < 3; dy++) {
         for (dx = 0; dx < 3; dx++) {
-            sector_id = SECTOR_FROM_XY(x + dx, y + dy);
+            sector_id = SECTOR_MAKE(x + dx, y + dy);
             if (sector_lock(sector_id, &sector)) {
                 sector_unlock(sector_id);
             }
@@ -1568,7 +1568,7 @@ void map_disable_objects()
         do {
             if (!sub_43D990(obj)) {
                 location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-                sector_id = sub_4CFC50(location);
+                sector_id = sector_id_from_loc(location);
                 if (!sub_4D0DE0(sector_id) && !player_is_pc_obj(obj)) {
                     if (critter_pc_leader_get(obj) != player_get_pc_obj()) {
                         flags = obj_field_int32_get(obj, OBJ_F_FLAGS);

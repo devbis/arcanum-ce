@@ -571,16 +571,16 @@ bool sub_4CF810(unsigned int size)
 }
 
 // 0x4CFC50
-int64_t sub_4CFC50(int64_t loc)
+int64_t sector_id_from_loc(int64_t loc)
 {
-    int64_t x = LOCATION_GET_X(loc);
-    int64_t y = LOCATION_GET_Y(loc);
+    int64_t x = LOCATION_GET_X(loc) >> 6;
+    int64_t y = LOCATION_GET_Y(loc) >> 6;
 
-    return (((y >> 6) & 0x3FFFFFF) << 26) | ((x >> 6) & 0x3FFFFFF);
+    return SECTOR_MAKE(x, y);
 }
 
 // 0x4CFC90
-int64_t sub_4CFC90(int64_t sector_id)
+int64_t sector_loc_from_id(int64_t sector_id)
 {
     int64_t x = SECTOR_X(sector_id) << 6;
     int64_t y = SECTOR_Y(sector_id) << 6;
@@ -641,7 +641,7 @@ bool sub_4CFFA0(int64_t sec, int rot, int64_t* new_sec_ptr)
         return false;
     }
 
-    *new_sec_ptr = SECTOR_FROM_XY(x, y);
+    *new_sec_ptr = SECTOR_MAKE(x, y);
 
     return true;
 }
@@ -672,7 +672,7 @@ bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2)
 
         for (x = 0; x < width; x++) {
             a2->field_8[y].field_8[x] = LOCATION_MAKE(horizontal[x], vertical[y]);
-            a2->field_8[y].field_20[x] = sub_4CFC50(a2->field_8[y].field_8[x]);
+            a2->field_8[y].field_20[x] = sector_id_from_loc(a2->field_8[y].field_8[x]);
             a2->field_8[y].field_38[x] = sub_4D7090(a2->field_8[y].field_8[x]);
             a2->field_8[y].field_44[x] = (int)(horizontal[x + 1] - horizontal[x]);
         }
@@ -713,7 +713,7 @@ Sector601808* sub_4D02E0(LocRect* loc_rect)
             node = sub_4D13A0();
             node->next = prev;
             node->field_8 = LOCATION_MAKE(dword_6017E8[x], dword_6017EC[y]);
-            node->id = sub_4CFC50(node->field_8);
+            node->id = sector_id_from_loc(node->field_8);
             node->field_10 = (dword_6017E8[x + 1] & 0xFFFFFFFF) - (dword_6017E8[x] & 0xFFFFFFFF);
             node->field_14 = (dword_6017EC[y + 1] & 0xFFFFFFFF) - (dword_6017EC[y] & 0xFFFFFFFF);
             prev = node;

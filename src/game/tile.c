@@ -154,7 +154,7 @@ tig_art_id_t sub_4D70B0(int64_t loc)
     int tile;
     tig_art_id_t art_id;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (!sector_lock(sector_id, &sector)) {
         return TIG_ART_ID_INVALID;
     }
@@ -390,7 +390,7 @@ void sub_4D7820(int64_t loc, tig_art_id_t art_id)
     int64_t y;
     TigRect rect;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (sector_lock(sector_id, &sector)) {
         tile = sub_4D7090(loc);
         sector->tiles.art_ids[tile] = art_id;

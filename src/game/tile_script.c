@@ -175,7 +175,7 @@ bool tile_script_get(int64_t loc, TileScript* tile_script)
     int tile;
     bool rc;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (!sector_lock(sector_id, &sector)) {
         return false;
     }
@@ -197,7 +197,7 @@ bool tile_script_set(TileScript* tile_script)
     TigRect dirty_rect;
 
     tile = sub_4D7090(tile_script->loc);
-    sector_id = sub_4CFC50(tile_script->loc);
+    sector_id = sector_id_from_loc(tile_script->loc);
     if (!sector_lock(sector_id, &sector)) {
         return false;
     }

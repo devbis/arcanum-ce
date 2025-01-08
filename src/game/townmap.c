@@ -278,7 +278,7 @@ bool sub_4BE8F0(int64_t loc)
     int64_t v5;
     int64_t v6;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
 
     if (!sub_4D04A0(sector_id)) {
         return false;

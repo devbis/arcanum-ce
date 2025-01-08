@@ -718,7 +718,7 @@ bool sub_558DE0(int64_t loc)
     hour = datetime_current_hour();
     dword_64C73C = hour < 6 || hour >= 18;
 
-    if (sub_4BE380(sub_4CFC50(loc))) {
+    if (sub_4BE380(sector_id_from_loc(loc))) {
         return false;
     }
 
@@ -760,7 +760,7 @@ int wmap_rnd_determine_terrain(long long location)
     uint16_t v2;
     int v3;
 
-    v1 = sub_4CFC50(location);
+    v1 = sector_id_from_loc(location);
     v2 = sub_4E87F0(v1);
     if (!wmap_rnd_terrain_clear(v2)) {
         return 0;

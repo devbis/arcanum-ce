@@ -399,7 +399,7 @@ tig_art_id_t sub_4396A0(int64_t loc)
     Sector* sector;
     tig_art_id_t aid;
 
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     if (!sector_lock(sector_id, &sector)) {
         return TIG_ART_ID_INVALID;
     }
@@ -423,7 +423,7 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
     TigRect rect;
 
     v1 = sub_4395E0(loc);
-    sector_id = sub_4CFC50(v1);
+    sector_id = sector_id_from_loc(v1);
     if (!sector_lock(sector_id, &sector)) {
         return false;
     }

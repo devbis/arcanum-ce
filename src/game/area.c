@@ -471,7 +471,7 @@ int sub_4CB630(int64_t loc)
     int v2;
     int v3;
 
-    v1 = sub_4BE380(sub_4CFC50(loc));
+    v1 = sub_4BE380(sector_id_from_loc(loc));
     if (v1 == 0) {
         return AREA_UNKNOWN;
     }
@@ -481,7 +481,7 @@ int sub_4CB630(int64_t loc)
         return AREA_UNKNOWN;
     }
 
-    v3 = sub_4BE380(sub_4CFC50(area_get_location(v2)));
+    v3 = sub_4BE380(sector_id_from_loc(area_get_location(v2)));
     if (v3 == 0) {
         return AREA_UNKNOWN;
     }

@@ -1407,7 +1407,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
 
         x = script_get_value(condition->op_type[0], condition->op_value[0], state);
         y = script_get_value(condition->op_type[1], condition->op_value[1], state);
-        if (sub_4D0EE0(sub_4CFC50(location_make(x, y)))) {
+        if (sub_4D0EE0(sector_id_from_loc(location_make(x, y)))) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
@@ -2545,7 +2545,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int x = script_get_value(action->op_type[0], action->op_value[0], state);
         int y = script_get_value(action->op_type[1], action->op_value[1], state);
         int64_t loc = location_make(x, y);
-        int64_t sector_id = sub_4CFC50(loc);
+        int64_t sector_id = sector_id_from_loc(loc);
         if (sub_4D0EE0(sector_id)) {
             sub_4EF010(sector_id, false);
         } else {

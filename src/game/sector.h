@@ -46,8 +46,8 @@ void sub_4CF370();
 void sector_render(UnknownContext* render_info);
 bool sector_limits_set(int64_t x, int64_t y);
 void sector_limits_get(int64_t* x, int64_t* y);
-int64_t sub_4CFC50(int64_t loc);
-int64_t sub_4CFC90(int64_t sector_id);
+int64_t sector_id_from_loc(int64_t loc);
+int64_t sector_loc_from_id(int64_t sector_id);
 bool sub_4CFFA0(int64_t sec, int rot, int64_t* new_sec_ptr);
 bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2);
 Sector601808* sub_4D02E0(LocRect* loc_rect);
@@ -78,6 +78,6 @@ int sub_4D2FC0(int64_t a1);
 
 #define SECTOR_X(a) ((a) & 0x3FFFFFF)
 #define SECTOR_Y(a) (((a) >> 26) & 0x3FFFFFF)
-#define SECTOR_FROM_XY(a, b) ((a) | ((b) << 26))
+#define SECTOR_MAKE(a, b) ((a) | ((b) << 26))
 
 #endif /* ARCANUM_GAME_SECTOR_H_ */

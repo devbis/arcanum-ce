@@ -250,7 +250,7 @@ void obj_find_add(int64_t obj)
     FindSector* find_sector;
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    sector_id = sub_4CFC50(loc);
+    sector_id = sector_id_from_loc(loc);
     obj_find_node_allocate(&find_node);
     find_node->obj = obj;
     sub_4E3E90(sector_id, &find_sector);
@@ -288,7 +288,7 @@ void obj_find_move(int64_t obj)
     FindSector* find_sector;
 
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    sector_id = sub_4CFC50(location);
+    sector_id = sector_id_from_loc(location);
     find_node = (FindNode*)obj_field_int32_get(obj, OBJ_F_FIND_NODE); // TODO: x64
     if (find_node == NULL) {
         return;
