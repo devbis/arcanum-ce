@@ -16,7 +16,7 @@ void mt_item_notify_parent_stunned(int64_t a1, int64_t a2);
 void mt_item_notify_parent_going_unconscious(int64_t a1, int64_t a2);
 void mt_item_notify_parent_dying(int64_t a1, int64_t a2);
 void mt_item_notify_parent_attacks_obj(int64_t a1, int64_t a2);
-void sub_4CBDB0(int64_t a1, int64_t a2, int64_t a3);
+void mt_item_notify_parent_attacks_loc(int64_t a1, int64_t a2, int64_t a3);
 void mt_item_notify_target_going_unconscious(int64_t a1, int64_t a2);
 void sub_4CBE70(int64_t a1, int64_t a2, int64_t a3);
 void sub_4CBF70(int64_t a1, int64_t a2);

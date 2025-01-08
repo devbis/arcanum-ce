@@ -624,7 +624,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
                     sub_441980(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_HIT, 0);
                 }
 
-                sub_4CBDB0(attacker_obj, weapon_obj, target_loc);
+                mt_item_notify_parent_attacks_loc(attacker_obj, weapon_obj, target_loc);
             }
 
             return false;
@@ -710,7 +710,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
         sub_4B2690(proj_obj, attacker_obj, target_obj, &combat, 1);
         sub_4B2F60(&combat);
         sub_4B6B90(&combat);
-        sub_4CBDB0(attacker_obj,
+        mt_item_notify_parent_attacks_loc(attacker_obj,
             weapon_obj,
             obj_field_int64_get(block_obj, OBJ_F_LOCATION));
         return sub_4B6930(&combat);
@@ -740,7 +740,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
                 sub_441980(attacker_obj, weapon_obj, target_obj, SAP_CRITICAL_MISS, 0);
             }
 
-            sub_4CBDB0(attacker_obj, weapon_obj, proj_loc);
+            mt_item_notify_parent_attacks_loc(attacker_obj, weapon_obj, proj_loc);
         }
     }
 

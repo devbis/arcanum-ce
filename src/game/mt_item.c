@@ -273,14 +273,14 @@ void mt_item_notify_parent_attacks_obj(int64_t attacker_obj, int64_t target_obj)
 }
 
 // 0x4CBDB0
-void sub_4CBDB0(int64_t a1, int64_t a2, int64_t a3)
+void mt_item_notify_parent_attacks_loc(int64_t attacker_obj, int64_t weapon_obj, int64_t target_loc)
 {
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (weapon_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    qword_5FF618 = a1;
-    sub_4CB830(a2, a1, OBJ_HANDLE_NULL, a3, MTIT_PARENT_ATKS_LOCATION);
+    qword_5FF618 = attacker_obj;
+    sub_4CB830(weapon_obj, attacker_obj, OBJ_HANDLE_NULL, target_loc, MTIT_PARENT_ATKS_LOCATION);
 }
 
 // 0x4CBE00
