@@ -21,7 +21,7 @@ void mt_item_notify_target_going_unconscious(int64_t a1, int64_t a2);
 void sub_4CBE70(int64_t a1, int64_t a2, int64_t a3);
 void sub_4CBF70(int64_t a1, int64_t a2);
 void mt_item_notify_unwear(int64_t item_obj, int64_t parent_obj);
-void sub_4CC130(int64_t a1, int64_t a2);
+void mt_item_notify_drop(int64_t item_obj, int64_t parent_obj);
 bool sub_4CC160(int64_t item_obj);
 
 #endif /* ARCANUM_GAME_MT_ITEM_H_ */

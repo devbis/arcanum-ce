@@ -4402,7 +4402,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
     }
 
     sub_4CCC00(parent_obj);
-    sub_4CC130(item_obj, parent_obj);
+    mt_item_notify_drop(item_obj, parent_obj);
 
     if (parent_type == OBJ_TYPE_CONTAINER) {
         if (!item_editor && dword_5E8800 > 0) {

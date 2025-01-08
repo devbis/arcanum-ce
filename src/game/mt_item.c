@@ -399,9 +399,9 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
 }
 
 // 0x4CC130
-void sub_4CC130(int64_t a1, int64_t a2)
+void mt_item_notify_drop(int64_t item_obj, int64_t parent_obj)
 {
-    sub_4CBFF0(a1, a2, MTIT_DROP);
+    sub_4CBFF0(item_obj, parent_obj, MTIT_DROP);
 }
 
 // 0x4CC160
