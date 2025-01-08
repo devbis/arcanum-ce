@@ -590,7 +590,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
     object_hp_damage_set(victim_obj, 32000);
 
     if (killer_obj != OBJ_HANDLE_NULL) {
-        sub_4CBC60(killer_obj, victim_obj);
+        mt_item_notify_parent_dying(killer_obj, victim_obj);
     }
 }
 

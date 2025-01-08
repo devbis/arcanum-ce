@@ -11249,7 +11249,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
             }
         }
 
-        sub_4CBC60(OBJ_HANDLE_NULL, obj);
+        mt_item_notify_parent_dying(OBJ_HANDLE_NULL, obj);
     }
 
     return true;
