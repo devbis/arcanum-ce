@@ -38,7 +38,7 @@ static void turn_based_changed();
 static void fast_turn_based_changed();
 static void sub_4B24F0(CombatContext* combat, int64_t loc, int a3, int a4, tig_art_id_t missile_art_id);
 static void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat, bool a5);
-static int sub_4B2810(int64_t obj);
+static int combat_weapon_loudness(int64_t weapon_obj);
 static void sub_4B2F60(CombatContext* combat);
 static void sub_4B3770(CombatContext* combat);
 static void sub_4B39B0(CombatContext* combat);
@@ -493,7 +493,6 @@ void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat,
     unsigned int proj_flags;
     int64_t weapon_obj;
     int64_t loc;
-    int v1;
     unsigned int critter_flags2;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
@@ -530,35 +529,30 @@ void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat,
 
     if (combat != NULL
         && combat->target_obj != OBJ_HANDLE_NULL) {
-        v1 = sub_4B2810(combat->weapon_obj);
+        int loudness = combat_weapon_loudness(combat->weapon_obj);
         if ((combat->flags & 0x800) != 0) {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, v1, 0x01);
+            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 0x01);
         } else {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, v1, 0);
+            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 0);
         }
     }
 }
 
 // 0x4B2810
-int sub_4B2810(int64_t obj)
+int combat_weapon_loudness(int64_t weapon_obj)
 {
-    int flags;
-
-    if (obj == OBJ_HANDLE_NULL
-        || obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_WEAPON) {
-        return 1;
+    if (weapon_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(weapon_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON) {
+        unsigned int weapon_flags = obj_field_int32_get(weapon_obj, OBJ_F_WEAPON_FLAGS);
+        if ((weapon_flags & OWF_LOUD) != 0) {
+            return COMBAT_WEAPON_LOUDNESS_LOUD;
+        }
+        if ((weapon_flags & OWF_SILENT) != 0) {
+            return COMBAT_WEAPON_LOUDNESS_SILENT;
+        }
     }
 
-    flags = obj_field_int32_get(obj, OBJ_F_WEAPON_FLAGS);
-    if ((flags & OWF_LOUD) != 0) {
-        return 2;
-    }
-
-    if ((flags & OWF_SILENT) != 0) {
-        return 0;
-    }
-
-    return 1;
+    return COMBAT_WEAPON_LOUDNESS_NORMAL;
 }
 
 // 0x4B2870
@@ -855,11 +849,11 @@ int sub_4B3170(CombatContext* combat)
     }
 
     if (is_melee && combat->target_obj != OBJ_HANDLE_NULL) {
-        int v1 = sub_4B2810(combat->weapon_obj);
+        int loudness = combat_weapon_loudness(combat->weapon_obj);
         if ((combat->flags & 0x800) != 0) {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, v1, 1);
+            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 1);
         } else {
-            sub_4A9650(combat->attacker_obj, combat->target_obj, v1, 0);
+            sub_4A9650(combat->attacker_obj, combat->target_obj, loudness, 0);
         }
     }
 

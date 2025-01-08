@@ -94,8 +94,8 @@ static void sub_4A92D0(Ai* ai);
 static void sub_4A94C0(int64_t obj, int64_t tgt);
 static void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4);
 static void sub_4A9C00(int64_t a1, int64_t a2, int64_t a3, int a4, int a5, int a6);
-static void sub_4A9E10(int64_t a1, int64_t a2, int a3);
-static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4);
+static void sub_4A9E10(int64_t a1, int64_t a2, int loudness);
+static void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness);
 static void sub_4AA420(int64_t obj, int64_t a2);
 static void sub_4AA620(int64_t a1, int64_t a2);
 static bool sub_4AAA30(TimeEvent* timeevent);
@@ -164,13 +164,11 @@ static DateTime stru_5B5088[6] = {
 };
 
 // 0x5B50C0
-static int dword_5B50C0[] = {
+static int dword_5B50C0[COMBAT_WEAPON_LOUDNESS_COUNT] = {
     2,
     8,
+    15,
 };
-
-// 0x5B50C8
-static int dword_5B50C8 = 15;
 
 // 0x5B50CC
 static bool dword_5B50CC = true;
@@ -851,7 +849,7 @@ void sub_4A92D0(Ai* ai)
 void sub_4A94C0(int64_t obj, int64_t tgt)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC && obj != tgt) {
-        sub_4A9650(obj, tgt, 0, 0);
+        sub_4A9650(obj, tgt, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
         obj_field_handle_set(tgt, OBJ_F_NPC_COMBAT_FOCUS, obj);
         obj_field_handle_set(tgt, OBJ_F_NPC_WHO_HIT_ME_LAST, obj);
     }
@@ -895,7 +893,7 @@ void sub_4A9560(AiRedirect* ai_redirect)
 }
 
 // 0x4A9650
-void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int flags)
+void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags)
 {
     int target_obj_type;
     int source_obj_type;
@@ -984,7 +982,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int a3, unsigned int fla
                 sub_4A9B80(target_obj, source_obj, 0, (flags & 0x01) != 0);
 
                 if ((flags & 0x01) == 0) {
-                    sub_4A9E10(target_obj, source_obj, a3);
+                    sub_4A9E10(target_obj, source_obj, loudness);
                 }
             }
 
@@ -1161,20 +1159,20 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
 }
 
 // 0x4A9E10
-void sub_4A9E10(int64_t a1, int64_t a2, int a3)
+void sub_4A9E10(int64_t a1, int64_t a2, int loudness)
 {
     int radius;
     int dist;
     ObjectList objects;
     ObjectNode* node;
 
-    radius = dword_5B50C0[a3];
+    radius = dword_5B50C0[loudness];
     dist = (int)object_dist(a2, a1);
-    if (dist < 2 * dword_5B50C8) {
+    if (dist < 2 * dword_5B50C0[COMBAT_WEAPON_LOUDNESS_LOUD]) {
         sub_4AE4E0(a2, radius, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
-            sub_4A9F10(node->obj, a2, a1, a3);
+            sub_4A9F10(node->obj, a2, a1, loudness);
             node = node->next;
         }
         object_list_destroy(&objects);
@@ -1183,7 +1181,7 @@ void sub_4A9E10(int64_t a1, int64_t a2, int a3)
         sub_4AE4E0(a1, radius, &objects, OBJ_TM_NPC);
         node = objects.head;
         while (node != NULL) {
-            sub_4A9F10(node->obj, a2, a1, a3);
+            sub_4A9F10(node->obj, a2, a1, loudness);
             node = node->next;
         }
         object_list_destroy(&objects);
@@ -1191,7 +1189,7 @@ void sub_4A9E10(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x4A9F10
-void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4)
+void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int loudness)
 {
     int64_t leader_obj;
     int danger_type;
@@ -1208,18 +1206,18 @@ void sub_4A9F10(int64_t a1, int64_t a2, int64_t a3, int a4)
         }
 
         if (sub_4AE3A0(a1, a3)) {
-            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, a4) == 0) {
+            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a2);
             }
         } else if (sub_4AE3A0(a1, a2)) {
-            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, a4) == 0) {
+            if (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0) {
                 sub_4AA620(a1, a3);
             }
         } else if (critter_social_class_get(a1) != SOCIAL_CLASS_GUARD
             && (obj_field_int32_get(a1, OBJ_F_CRITTER_FLAGS) & OCF_NO_FLEE) == 0) {
             ai_danger_source(a1, &danger_type, NULL);
             if (danger_type == AI_DANGER_SOURCE_TYPE_NONE
-                && (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, a4) == 0)) {
+                && (sub_4AF260(a1, a3) == 0 || sub_4AF470(a1, a3, loudness) == 0)) {
                     sub_4AABE0(a1,
                         AI_DANGER_SOURCE_TYPE_FLEE,
                         a2,
@@ -1243,7 +1241,7 @@ void sub_4AA0D0(int64_t obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && critter_pc_leader_get(node->obj) != obj
             && (sub_4AF260(node->obj, obj) == 0 || !sub_4AF470(node->obj, obj, 0))) {
-            sub_4A9650(obj, node->obj, 0, 0);
+            sub_4A9650(obj, node->obj, COMBAT_WEAPON_LOUDNESS_SILENT, 0);
         }
         node = node->next;
     }
@@ -3895,7 +3893,7 @@ int sub_4AED80(int64_t a1, int64_t a2)
 }
 
 // 0x4AEE50
-void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4)
+void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
 {
     int64_t pc_obj;
     int notify_npc;
@@ -3952,13 +3950,13 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4)
             && !critter_is_dead(node->obj)
             && (obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
             && (!sub_4AF260(node->obj, critter_obj)
-                || !sub_4AF470(node->obj, critter_obj, a4))) {
+                || !sub_4AF470(node->obj, critter_obj, loudness))) {
             if (sub_441980(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
                 if (a3 && !critter_is_sleeping(node->obj)) {
                     sub_4C0DE0(node->obj, pc_obj, -20);
                     sub_4AAA60(node->obj, &ai_params);
                     if (sub_4C0CC0(node->obj, pc_obj) <= ai_params.field_28) {
-                        sub_4A9650(critter_obj, node->obj, a4, 0);
+                        sub_4A9650(critter_obj, node->obj, loudness, 0);
                     }
                     if (critter_is_active(node->obj)) {
                         if (dword_5F8488 != NULL && critter_is_active(node->obj)) {
@@ -3967,7 +3965,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int a4)
                         }
                     }
                 } else {
-                    sub_4A9650(critter_obj, node->obj, a4, 0);
+                    sub_4A9650(critter_obj, node->obj, loudness, 0);
                 }
             }
         }
@@ -4106,7 +4104,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
 }
 
 // 0x4AF470
-int sub_4AF470(int64_t a1, int64_t a2, int a3)
+int sub_4AF470(int64_t a1, int64_t a2, int loudness)
 {
     unsigned int critter_flags;
     int64_t dist;
@@ -4154,7 +4152,7 @@ int sub_4AF470(int64_t a1, int64_t a2, int a3)
         perception += perception * diff / -100;
     }
 
-    v2 = (dword_5B50C0[a3] - dword_5B50C0[0] + sub_4AF240(perception - 4)) / 2 - sub_4AF640(a1, a2);
+    v2 = (dword_5B50C0[loudness] - dword_5B50C0[COMBAT_WEAPON_LOUDNESS_SILENT] + sub_4AF240(perception - 4)) / 2 - sub_4AF640(a1, a2);
     if ((int)dist > v2) {
         return (int)dist - v2;
     }

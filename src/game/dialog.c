@@ -2230,7 +2230,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
     }
 
     if (v59) {
-        sub_4A9650(a1->pc_obj, a1->npc_obj, 1, 0);
+        sub_4A9650(a1->pc_obj, a1->npc_obj, COMBAT_WEAPON_LOUDNESS_NORMAL, 0);
     }
 
     return v57;

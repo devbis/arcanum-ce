@@ -20,6 +20,13 @@ typedef struct CombatCallbacks {
 
 static_assert(sizeof(CombatCallbacks) == 0x14, "wrong size");
 
+typedef enum CombatWeaponLoudness {
+    COMBAT_WEAPON_LOUDNESS_SILENT,
+    COMBAT_WEAPON_LOUDNESS_NORMAL,
+    COMBAT_WEAPON_LOUDNESS_LOUD,
+    COMBAT_WEAPON_LOUDNESS_COUNT,
+} CombatWeaponLoudness;
+
 // NOTE: The values does not match ResistanceType enum, even though both
 // have 5 members.
 typedef enum DamageType {
