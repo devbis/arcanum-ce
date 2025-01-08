@@ -1875,7 +1875,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
     }
 
     if ((dword_5B6F64[skill] & 0x80) != 0
-        || (critter_flags & OCF_BLINDED) == 0) {
+        && (critter_flags & OCF_BLINDED) != 0) {
         difficulty += 30;
         skill_invocation->flags |= 0x800;
     }
