@@ -363,7 +363,7 @@ int critter_fatigue_damage_set(long long obj, int value)
 
         if (!v1 && critter_is_unconscious(obj)) {
             sub_457450(obj);
-            sub_4CBBF0(OBJ_HANDLE_NULL, obj);
+            mt_item_notify_parent_going_unconscious(OBJ_HANDLE_NULL, obj);
             anim_goal_knockdown(obj);
             sub_4B7C90(obj);
         }

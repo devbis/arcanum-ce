@@ -13,7 +13,7 @@ void mt_item_notify_wear(int64_t item_obj, int64_t parent_obj);
 void mt_item_notify_pickup(int64_t item_obj, int64_t parent_obj);
 void mt_item_notify_parent_hit(int64_t a1, CombatContext* combat, int64_t a3);
 void mt_item_notify_parent_stunned(int64_t a1, int64_t a2);
-void sub_4CBBF0(int64_t a1, int64_t a2);
+void mt_item_notify_parent_going_unconscious(int64_t a1, int64_t a2);
 void sub_4CBC60(int64_t a1, int64_t a2);
 void sub_4CBD40(int64_t a1, int64_t a2);
 void sub_4CBDB0(int64_t a1, int64_t a2, int64_t a3);
