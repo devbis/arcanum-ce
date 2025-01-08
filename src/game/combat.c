@@ -1596,7 +1596,7 @@ void sub_4B4390(CombatContext* combat)
         if ((dam_flags & CDF_STUN) != 0
             && (critter_flags & OCF_STUNNED) == 0
             && (dam_flags & (CDF_KNOCKDOWN | CDF_KNOCKOUT)) == 0) {
-            sub_4CBB80(combat->attacker_obj, combat->target_obj);
+            mt_item_notify_parent_stunned(combat->attacker_obj, combat->target_obj);
             critter_flags |= OCF_STUNNED;
 
             if (((tig_net_flags & TIG_NET_CONNECTED) == 0

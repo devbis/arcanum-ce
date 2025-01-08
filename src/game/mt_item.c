@@ -184,25 +184,25 @@ void mt_item_notify_parent_hit(int64_t attacker_obj, CombatContext* combat, int6
 }
 
 // 0x4CBB80
-void sub_4CBB80(int64_t a1, int64_t a2)
+void mt_item_notify_parent_stunned(int64_t attacker_obj, int64_t target_obj)
 {
     int type;
     int index;
     int64_t item_obj;
 
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (target_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
-    type = obj_field_int32_get(a2, OBJ_F_TYPE);
+    type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     if (!obj_type_is_critter(type)) {
         return;
     }
 
     for (index = 0; index < 9; index++) {
-        item_obj = item_wield_get(a2, 1000 + index);
+        item_obj = item_wield_get(target_obj, 1000 + index);
         if (item_obj != OBJ_HANDLE_NULL) {
-            sub_4CB800(item_obj, a2, a1, MTIT_PARENT_STUNNED);
+            sub_4CB800(item_obj, target_obj, attacker_obj, MTIT_PARENT_STUNNED);
         }
     }
 }
