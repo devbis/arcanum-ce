@@ -4273,7 +4273,7 @@ void sub_4677B0(int64_t item_obj, int64_t parent_obj, int inventory_location)
         break;
     }
 
-    sub_4CB7D0(item_obj, parent_obj);
+    mt_item_notify_wear(item_obj, parent_obj);
     sub_467E80(item_obj, parent_obj);
     sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_WIELD_OFF, 0);
 }

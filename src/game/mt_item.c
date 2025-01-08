@@ -63,9 +63,9 @@ int mt_item_spell(int64_t obj_handle, int index)
 }
 
 // 0x4CB7D0
-void sub_4CB7D0(int64_t a1, int64_t a2)
+void mt_item_notify_wear(int64_t item_obj, int64_t parent_obj)
 {
-    sub_4CB800(a1, a2, OBJ_HANDLE_NULL, MTIT_WEAR);
+    sub_4CB800(item_obj, parent_obj, OBJ_HANDLE_NULL, MTIT_WEAR);
 }
 
 // 0x4CB800
