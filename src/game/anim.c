@@ -71,7 +71,7 @@ static bool sub_425D60(AnimRunInfo* run_info);
 static bool sub_426040(AnimRunInfo* run_info);
 static void anim_create_path_max_length(int64_t a1, const char* msg, int value);
 static int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj);
-static int sub_426500(int64_t obj, int64_t from, AnimPath* path, unsigned int flags);
+static int sub_426500(int64_t obj, int64_t to, AnimPath* path, unsigned int flags);
 static bool sub_426840(AnimRunInfo* run_info);
 static bool sub_4268F0(AnimRunInfo* run_info);
 static bool sub_4269D0(AnimRunInfo* run_info);
@@ -5250,11 +5250,11 @@ int sub_426320(AnimPath* anim_path, int64_t from, int64_t to, int64_t obj)
 }
 
 // 0x426500
-int sub_426500(int64_t obj, int64_t from, AnimPath* path, unsigned int flags)
+int sub_426500(int64_t obj, int64_t to, AnimPath* path, unsigned int flags)
 {
     ASSERT(obj != OBJ_HANDLE_NULL); // 4493, "obj != OBJ_HANDLE_NULL"
 
-    return sub_426560(obj, obj_field_int64_get(obj, OBJ_F_LOCATION), from, path, flags);
+    return sub_426560(obj, obj_field_int64_get(obj, OBJ_F_LOCATION), to, path, flags);
 }
 
 // 0x426560
@@ -5281,6 +5281,10 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
     if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_POLYMORPHED) != 0) {
         flags |= 0x02;
         flags |= 0x04;
+    }
+
+    if (!critter_can_open_portals(obj)) {
+        flags |= 0x02;
     }
 
     if (!sub_45F570(obj)) {
