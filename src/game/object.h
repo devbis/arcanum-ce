@@ -147,7 +147,7 @@ void sub_43FCB0(object_id_t obj, int index);
 void object_cycle_rotation(object_id_t obj);
 bool sub_43FD70(int64_t a1, int64_t a2, int rotation, unsigned int flags, int* a5);
 int sub_43FDC0(int64_t a1, int64_t a2, int rotation, unsigned int flags, int64_t* a5, int* a6, int* a7);
-bool sub_440700(int64_t a1, int64_t a2, int rotation, unsigned int flags, int64_t* a5);
+bool sub_440700(int64_t obj, int64_t loc, int rot, unsigned int flags, int64_t* block_obj_ptr);
 void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects);
 void sub_440B40(LocRect* loc_rect, unsigned int flags, ObjectList* objects);
 void sub_440FC0(int64_t obj, unsigned int flags, ObjectList* objects);

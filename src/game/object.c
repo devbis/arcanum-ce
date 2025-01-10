@@ -3110,17 +3110,17 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
 }
 
 // 0x440700
-bool sub_440700(int64_t a1, int64_t a2, int rotation, unsigned int flags, int64_t* block_obj_ptr)
+bool sub_440700(int64_t obj, int64_t loc, int rot, unsigned int flags, int64_t* block_obj_ptr)
 {
     int block_obj_type;
 
-    sub_43FE00(a1, a2, rotation, rotation, flags | 0x4 | 0x1, block_obj_ptr, &block_obj_type, NULL);
+    sub_43FE00(obj, loc, rot, rot, flags | 0x4 | 0x1, block_obj_ptr, &block_obj_type, NULL);
 
     if (*block_obj_ptr == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (block_obj_type == OBJ_TYPE_WALL) {
+    if (block_obj_type != OBJ_TYPE_PORTAL) {
         return false;
     }
 
