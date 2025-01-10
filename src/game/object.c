@@ -3182,7 +3182,7 @@ void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
 
             node = sector->objects.heads[tile_id_from_loc(loc)];
             while (node != NULL) {
-                if ((dword_5E2F88 & obj_field_int32_get(node->obj, OBJ_F_TYPE)) == 0
+                if ((dword_5E2F88 & obj_field_int32_get(node->obj, OBJ_F_FLAGS)) == 0
                     && types[obj_field_int32_get(node->obj, OBJ_F_TYPE)]) {
                     new_node = object_node_create();
                     new_node->obj = node->obj;
@@ -3203,7 +3203,7 @@ void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
                 if (!sub_43D940(obj)
                     && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0
                     && obj_field_int64_get(obj, OBJ_F_LOCATION) == loc
-                    && (dword_5E2F88 & obj_field_int32_get(obj, OBJ_F_TYPE)) == 0
+                    && (dword_5E2F88 & obj_field_int32_get(obj, OBJ_F_FLAGS)) == 0
                     && types[obj_field_int32_get(obj, OBJ_F_TYPE)]) {
                     new_node = object_node_create();
                     new_node->obj = obj;
