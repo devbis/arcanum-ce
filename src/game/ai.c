@@ -3830,7 +3830,7 @@ bool sub_4AECA0(int64_t obj, int a2)
     int64_t new_loc;
     int64_t tmp_loc;
 
-    loc = obj_field_int32_get(obj, OBJ_F_LOCATION);
+    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     rotation = tig_art_id_rotation_get(aid);
     if (!sub_4B8FF0(loc, rotation, &new_loc)) {
