@@ -5832,7 +5832,7 @@ void sub_546DD0()
         sub_549450();
         timeevent_clear_all_typed(TIMEEVENT_TYPE_MAINMENU);
 
-        for (index = 0; index < 10; index++) {
+        for (index = 0; index < 2; index++) {
             stru_64B870[index].art_id = TIG_ART_ID_INVALID;
         }
 
