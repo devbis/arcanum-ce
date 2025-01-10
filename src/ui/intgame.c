@@ -2576,8 +2576,8 @@ void sub_54DE50(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_KEYBOARD
         && !textedit_ui_is_focused()
         && !msg->data.keyboard.pressed
-        && (msg->data.keyboard.key >= DIK_1
-            || msg->data.keyboard.key <= DIK_0)) {
+        && msg->data.keyboard.key >= DIK_1
+        && msg->data.keyboard.key <= DIK_0) {
         sub_57F1D0(msg->data.keyboard.key - DIK_1);
     }
 
