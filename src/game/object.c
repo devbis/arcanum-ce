@@ -3317,7 +3317,7 @@ void sub_440B40(LocRect* loc_rect, unsigned int flags, ObjectList* objects)
                         for (v4 = 0; v4 < v2->field_44[row]; v4++) {
                             obj_node = sectors[row]->objects.heads[indexes[row]];
                             while (obj_node != NULL) {
-                                if ((dword_5E2F88 & obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS)) != 0
+                                if ((dword_5E2F88 & obj_field_int32_get(obj_node->obj, OBJ_F_FLAGS)) == 0
                                     && types[obj_field_int32_get(obj_node->obj, OBJ_F_TYPE)]) {
                                     new_node = object_node_create();
                                     new_node->obj = obj;
