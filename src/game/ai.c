@@ -2695,8 +2695,11 @@ bool sub_4ACDB0(int64_t obj, bool a2)
 
     is_sleeping = critter_is_sleeping(obj);
     if (!is_sleeping
-        && ((obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_OFF | OF_DONTDRAW)) != 0
-            || !ai_get_standpoint(obj, &standpoint_loc))) {
+        && (obj_field_int32_get(obj, OBJ_F_FLAGS) & (OF_OFF | OF_DONTDRAW)) != 0) {
+        return false;
+    }
+
+    if (!ai_get_standpoint(obj, &standpoint_loc)) {
         return false;
     }
 
