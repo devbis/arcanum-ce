@@ -708,7 +708,7 @@ void wallcheck_ping(tig_timestamp_t timestamp)
     (void)timestamp;
 
     if (wallcheck_dirty) {
-        sub_439D30(qword_5E0A08);
+        roof_recalc(qword_5E0A08);
         wallcheck_recalc(qword_5E0A08);
         wallcheck_dirty = false;
     }

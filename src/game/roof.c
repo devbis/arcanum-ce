@@ -490,7 +490,7 @@ bool sub_439890(int x, int y)
 }
 
 // 0x439D30
-void sub_439D30(int64_t loc)
+void roof_recalc(int64_t loc)
 {
     tig_art_id_t aid;
     int v1;
