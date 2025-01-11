@@ -47,7 +47,7 @@ static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
 static bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location);
 static bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_obj);
-static bool sub_462230(int64_t a1, int64_t a2, int64_t a3);
+static bool item_check_buy(int64_t item_obj, int64_t seller_npc_obj, int64_t buyer_pc_obj);
 static bool sub_463240(int64_t critter_obj, int lock_id);
 static bool sub_463340(int lock_id, int key_id);
 static bool sub_464150(TimeEvent* timeevent);
@@ -890,7 +890,7 @@ int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4)
         }
     } else {
         if (!a4) {
-            if (!sub_462230(item_obj, seller_obj, buyer_obj)) {
+            if (!item_check_buy(item_obj, seller_obj, buyer_obj)) {
                 return 0;
             }
         }
@@ -942,14 +942,21 @@ bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_
 }
 
 // 0x462230
-bool sub_462230(int64_t a1, int64_t a2, int64_t a3)
+bool item_check_buy(int64_t item_obj, int64_t seller_npc_obj, int64_t buyer_pc_obj)
 {
-    (void)a2;
+    (void)seller_npc_obj;
 
-    // TODO: Review.
-    return basic_skill_get_training(a3, BASIC_SKILL_HAGGLE) >= TRAINING_MASTER
-        || ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) == 0
-            && !IS_WEAR_INV_LOC(item_inventory_location_get(a1)));
+    if (basic_skill_get_training(buyer_pc_obj, BASIC_SKILL_HAGGLE) < TRAINING_MASTER) {
+        if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) != 0) {
+            return false;
+        }
+
+        if (IS_WEAR_INV_LOC(item_inventory_location_get(item_obj))) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x4622A0
