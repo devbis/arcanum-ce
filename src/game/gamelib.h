@@ -64,7 +64,7 @@ void gamelib_mod_unload();
 bool gamelib_in_reset();
 int gamelib_cheat_level_get();
 void sub_402D30(TigRect* rect);
-bool sub_402E50();
+bool gamelib_redraw();
 void sub_402F90();
 void sub_402FA0();
 void sub_402FC0();

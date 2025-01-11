@@ -120,7 +120,7 @@ void sub_557FD0(const char* str)
 // 0x558110
 bool iso_redraw()
 {
-    bool ret = sub_402E50();
+    bool ret = gamelib_redraw();
     sub_551080();
     return ret;
 }

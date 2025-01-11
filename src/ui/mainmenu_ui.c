@@ -2512,7 +2512,7 @@ void sub_5412E0(bool a1)
                 if (dword_5C4004) {
                     sub_40FED0();
                 }
-                sub_402E50();
+                gamelib_redraw();
             } else {
                 dword_64C418 = false;
 

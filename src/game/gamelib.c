@@ -211,7 +211,7 @@ static char byte_5CFF08[MAX_PATH];
 static TigRectListNode* dword_5D000C;
 
 // 0x5D0010
-static bool dword_5D0010;
+static bool gamelib_dirty;
 
 // 0x5D0018
 static TigRect gamelib_iso_content_rect;
@@ -240,7 +240,7 @@ static TigRect stru_5D0D60;
 static bool dword_5D0D70;
 
 // 0x5D0D74
-static bool dword_5D0D74;
+static bool in_redraw;
 
 // 0x5D0D78
 static int dword_5D0D78;
@@ -343,7 +343,7 @@ bool gamelib_init(GameInitInfo* init_info)
     }
 
     init_info->invalidate_rect_func = sub_402D30;
-    init_info->redraw_func = sub_402E50;
+    init_info->redraw_func = gamelib_redraw;
 
     stru_5D0E88 = *init_info;
 
@@ -818,7 +818,7 @@ void sub_402D30(TigRect* rect)
         dirty_rect = gamelib_iso_content_rect;
     }
 
-    if (dword_5D0D74) {
+    if (in_redraw) {
         if (dword_5D000C != NULL) {
             sub_52D480(&dword_5D000C, &dirty_rect);
         } else {
@@ -833,12 +833,12 @@ void sub_402D30(TigRect* rect)
             dword_5D0E98->rect = dirty_rect;
         }
 
-        dword_5D0010 = true;
+        gamelib_dirty = true;
     }
 }
 
 // 0x402E50
-bool sub_402E50()
+bool gamelib_redraw()
 {
     bool ret = false;
     TigRectListNode* node;
@@ -847,48 +847,53 @@ bool sub_402E50()
     LocRect loc_rect;
     SomeSectorStuff v2;
     Sector601808* v3;
-    UnknownContext v4;
+    UnknownContext render_info;
 
-    if (dword_59ADD8 > 0 && dword_5D0010) {
-        dword_5D0D74 = true;
-
-        if (sub_4B9130(&stru_5D0D60, &loc_rect)) {
-            if (gamelib_view_options.type == VIEW_TYPE_ISOMETRIC) {
-                sub_4D0090(&loc_rect, &v2);
-            }
-
-            v3 = sub_4D02E0(&loc_rect);
-            v4.field_0 = &stru_5D0D60;
-            v4.field_4 = &loc_rect;
-            v4.field_8 = &v2;
-            v4.field_C = v3;
-            v4.rects = &dword_5D0E98;
-            dword_5D10AC(&v4);
-            sub_4D0400(v3);
-
-            node = dword_5D0E98;
-            while (node != NULL) {
-                next = node->next;
-                rect = node->rect;
-                rect.x += dword_5D0D78;
-                rect.y += dword_5D0D7C;
-                tig_window_set_needs_display_in_rect(&rect);
-                tig_rect_node_destroy(node);
-                node = next;
-            }
-            ret = true;
-        }
-
-        node = dword_5D000C;
-        dword_5D000C = NULL;
-        dword_5D0E98 = node;
-
-        if (node == NULL) {
-            dword_5D0010 = false;
-        }
-
-        dword_5D0D74 = false;
+    if (dword_59ADD8 <= 0) {
+        return false;
     }
+
+    if (!gamelib_dirty) {
+        return false;
+    }
+
+    in_redraw = true;
+
+    if (sub_4B9130(&stru_5D0D60, &loc_rect)) {
+        if (gamelib_view_options.type == VIEW_TYPE_ISOMETRIC) {
+            sub_4D0090(&loc_rect, &v2);
+        }
+
+        v3 = sub_4D02E0(&loc_rect);
+        render_info.field_0 = &stru_5D0D60;
+        render_info.field_4 = &loc_rect;
+        render_info.field_8 = &v2;
+        render_info.field_C = v3;
+        render_info.rects = &dword_5D0E98;
+        dword_5D10AC(&render_info);
+        sub_4D0400(v3);
+
+        node = dword_5D0E98;
+        while (node != NULL) {
+            next = node->next;
+            rect = node->rect;
+            rect.x += dword_5D0D78;
+            rect.y += dword_5D0D7C;
+            tig_window_set_needs_display_in_rect(&rect);
+            tig_rect_node_destroy(node);
+            node = next;
+        }
+        ret = true;
+    }
+
+    dword_5D0E98 = dword_5D000C;
+    dword_5D000C = NULL;
+
+    if (dword_5D0E98 == NULL) {
+        gamelib_dirty = false;
+    }
+
+    in_redraw = false;
 
     return ret;
 }
@@ -1614,7 +1619,7 @@ void sub_4045A0()
     li_redraw();
     ci_redraw();
     sub_402D30(NULL);
-    sub_402E50();
+    gamelib_redraw();
     tig_window_set_needs_display_in_rect(NULL);
 }
 
