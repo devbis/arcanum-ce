@@ -70,7 +70,7 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj);
 void sub_462330(int64_t item_obj, int index, int* min_damage, int* max_damage);
 int sub_462410(object_id_t item_id, int* quantity_field_ptr);
 int64_t item_find_by_name(int64_t obj, int name);
-int64_t sub_462540(int64_t a1, int64_t a2, unsigned int flags);
+int64_t sub_462540(int64_t parent_obj, int64_t item_prototype_obj, unsigned int flags);
 int64_t item_find_first_of_type(int64_t obj, int type);
 int64_t item_find_first_generic(int64_t obj, unsigned int flags);
 int64_t item_find_first(object_id_t obj);

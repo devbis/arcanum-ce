@@ -1049,7 +1049,7 @@ int64_t item_find_by_name(int64_t obj, int name)
 }
 
 // 0x462540
-int64_t sub_462540(int64_t a1, int64_t a2, unsigned int flags)
+int64_t sub_462540(int64_t parent_obj, int64_t item_prototype_obj, unsigned int flags)
 {
     int inventory_num_fld;
     int inventory_list_fld;
@@ -1059,7 +1059,7 @@ int64_t sub_462540(int64_t a1, int64_t a2, unsigned int flags)
     int64_t item_obj;
     int inventory_location;
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+    if (obj_field_int32_get(parent_obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
         inventory_num_fld = OBJ_F_CONTAINER_INVENTORY_NUM;
         inventory_list_fld = OBJ_F_CONTAINER_INVENTORY_LIST_IDX;
     } else {
@@ -1067,9 +1067,9 @@ int64_t sub_462540(int64_t a1, int64_t a2, unsigned int flags)
         inventory_list_fld = OBJ_F_CRITTER_INVENTORY_LIST_IDX;
     }
 
-    cnt = obj_field_int32_get(a1, inventory_num_fld);
+    cnt = obj_field_int32_get(parent_obj, inventory_num_fld);
     for (idx = 0; idx < cnt; idx++) {
-        item_obj = obj_arrayfield_handle_get(a1, inventory_list_fld, idx);
+        item_obj = obj_arrayfield_handle_get(parent_obj, inventory_list_fld, idx);
         inventory_location = item_inventory_location_get(item_obj);
 
         if ((flags & 0x01) != 0) {
@@ -1084,8 +1084,12 @@ int64_t sub_462540(int64_t a1, int64_t a2, unsigned int flags)
             }
         }
 
+        if (obj_field_handle_get(item_obj, OBJ_F_PROTOTYPE_HANDLE) != item_prototype_obj) {
+            continue;
+        }
+
         if ((flags & 0x04) != 0) {
-            if (obj_field_int32_get(item_obj, OBJ_F_DESCRIPTION) != obj_field_int32_get(a2, OBJ_F_DESCRIPTION)) {
+            if (obj_field_int32_get(item_obj, OBJ_F_DESCRIPTION) != obj_field_int32_get(item_prototype_obj, OBJ_F_DESCRIPTION)) {
                 continue;
             }
         }
