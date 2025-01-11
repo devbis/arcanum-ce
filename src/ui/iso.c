@@ -71,7 +71,7 @@ void iso_resize(GameResizeInfo* resize_info)
 {
     iso_window_handle = resize_info->window_handle;
     iso_content_rect = resize_info->content_rect;
-    sub_5581A0(&iso_content_rect);
+    iso_invalidate_rect(&iso_content_rect);
 }
 
 // 0x557F30
@@ -132,12 +132,12 @@ void sub_558130(TigRect* rect)
         stru_64C6F8 = *rect;
     } else {
         stru_64C6F8 = iso_content_rect;
-        sub_5581A0(&iso_content_rect);
+        iso_invalidate_rect(&iso_content_rect);
     }
 }
 
 // 0x5581A0
-void sub_5581A0(TigRect* rect)
+void iso_invalidate_rect(TigRect* rect)
 {
-    sub_402D30(rect);
+    gamelib_invalidate_rect(rect);
 }

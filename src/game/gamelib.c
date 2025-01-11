@@ -208,7 +208,7 @@ static char arcanum2[260] = "Arcanum";
 static char byte_5CFF08[MAX_PATH];
 
 // 0x5D000C
-static TigRectListNode* dword_5D000C;
+static TigRectListNode* gamelib_pending_dirty_rects_head;
 
 // 0x5D0010
 static bool gamelib_dirty;
@@ -255,7 +255,7 @@ static int dword_5D0D80;
 static GameInitInfo stru_5D0E88;
 
 // 0x5D0E98
-static TigRectListNode* dword_5D0E98;
+static TigRectListNode* gamelib_dirty_rects_head;
 
 // 0x5D0E9C
 static int gamelib_game_difficulty;
@@ -342,7 +342,7 @@ bool gamelib_init(GameInitInfo* init_info)
         gamelib_splash(init_info->iso_window_handle);
     }
 
-    init_info->invalidate_rect_func = sub_402D30;
+    init_info->invalidate_rect_func = gamelib_invalidate_rect;
     init_info->redraw_func = gamelib_redraw;
 
     stru_5D0E88 = *init_info;
@@ -431,13 +431,13 @@ void gamelib_reset()
         tig_debug_printf("done. Time (ms): %d\n", duration);
     }
 
-    node = dword_5D0E98;
+    node = gamelib_dirty_rects_head;
     while (node != NULL) {
         next = node->next;
         tig_rect_node_destroy(node);
         node = next;
     }
-    dword_5D0E98 = NULL;
+    gamelib_dirty_rects_head = NULL;
 
     for (index = 0; index < MODULE_COUNT; index++) {
         if (gamelib_modules[index].reset_func != NULL) {
@@ -471,7 +471,7 @@ void gamelib_exit()
 
     mes_stats();
 
-    TigRectListNode* node = dword_5D0E98;
+    TigRectListNode* node = gamelib_dirty_rects_head;
     while (node != NULL) {
         TigRectListNode* next = node->next;
         tig_rect_node_destroy(node);
@@ -548,12 +548,12 @@ void gamelib_resize(GameResizeInfo* resize_info)
         }
     }
 
-    if (dword_5D0E98 != NULL) {
+    if (gamelib_dirty_rects_head != NULL) {
         bounds = resize_info->window_rect;
         bounds.x = 0;
         bounds.y = 0;
-        if (tig_rect_intersection(&(dword_5D0E98->rect), &bounds, &frame) == TIG_OK) {
-            dword_5D0E98->rect = frame;
+        if (tig_rect_intersection(&(gamelib_dirty_rects_head->rect), &bounds, &frame) == TIG_OK) {
+            gamelib_dirty_rects_head->rect = frame;
         }
     }
 }
@@ -794,7 +794,7 @@ void gamelib_update_view(ViewOptions* view_options)
 
     gamelib_view_options = *view_options;
 
-    sub_402D30(NULL);
+    gamelib_invalidate_rect(NULL);
 }
 
 // 0x402D10
@@ -804,7 +804,7 @@ void gamelib_get_view_options(ViewOptions* view_options)
 }
 
 // 0x402D30
-void sub_402D30(TigRect* rect)
+void gamelib_invalidate_rect(TigRect* rect)
 {
     TigRect dirty_rect;
 
@@ -819,18 +819,18 @@ void sub_402D30(TigRect* rect)
     }
 
     if (in_redraw) {
-        if (dword_5D000C != NULL) {
-            sub_52D480(&dword_5D000C, &dirty_rect);
+        if (gamelib_pending_dirty_rects_head != NULL) {
+            sub_52D480(&gamelib_pending_dirty_rects_head, &dirty_rect);
         } else {
-            dword_5D000C = tig_rect_node_create();
-            dword_5D000C->rect = dirty_rect;
+            gamelib_pending_dirty_rects_head = tig_rect_node_create();
+            gamelib_pending_dirty_rects_head->rect = dirty_rect;
         }
     } else {
-        if (dword_5D0E98 != NULL) {
-            sub_52D480(&dword_5D0E98, &dirty_rect);
+        if (gamelib_dirty_rects_head != NULL) {
+            sub_52D480(&gamelib_dirty_rects_head, &dirty_rect);
         } else {
-            dword_5D0E98 = tig_rect_node_create();
-            dword_5D0E98->rect = dirty_rect;
+            gamelib_dirty_rects_head = tig_rect_node_create();
+            gamelib_dirty_rects_head->rect = dirty_rect;
         }
 
         gamelib_dirty = true;
@@ -869,11 +869,11 @@ bool gamelib_redraw()
         render_info.field_4 = &loc_rect;
         render_info.field_8 = &v2;
         render_info.field_C = v3;
-        render_info.rects = &dword_5D0E98;
+        render_info.rects = &gamelib_dirty_rects_head;
         dword_5D10AC(&render_info);
         sub_4D0400(v3);
 
-        node = dword_5D0E98;
+        node = gamelib_dirty_rects_head;
         while (node != NULL) {
             next = node->next;
             rect = node->rect;
@@ -886,10 +886,10 @@ bool gamelib_redraw()
         ret = true;
     }
 
-    dword_5D0E98 = dword_5D000C;
-    dword_5D000C = NULL;
+    gamelib_dirty_rects_head = gamelib_pending_dirty_rects_head;
+    gamelib_pending_dirty_rects_head = NULL;
 
-    if (dword_5D0E98 == NULL) {
+    if (gamelib_dirty_rects_head == NULL) {
         gamelib_dirty = false;
     }
 
@@ -915,7 +915,7 @@ void sub_402FC0()
 {
     tig_window_fill(stru_5D0E88.iso_window_handle, NULL, 0);
     tig_window_display();
-    sub_402D30(NULL);
+    gamelib_invalidate_rect(NULL);
 }
 
 // 0x402FE0
@@ -1618,7 +1618,7 @@ void sub_4045A0()
 {
     li_redraw();
     ci_redraw();
-    sub_402D30(NULL);
+    gamelib_invalidate_rect(NULL);
     gamelib_redraw();
     tig_window_set_needs_display_in_rect(NULL);
 }
