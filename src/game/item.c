@@ -46,7 +46,7 @@ typedef struct ItemRemoveInfo {
 static_assert(sizeof(ItemRemoveInfo) == 0x10, "wrong size");
 
 static bool sub_461CA0(int64_t item_obj, int64_t critter_obj, int inventory_location);
-static bool sub_462170(int64_t a1, int64_t a2, int64_t a3);
+static bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_obj);
 static bool sub_462230(int64_t a1, int64_t a2, int64_t a3);
 static bool sub_463240(int64_t critter_obj, int lock_id);
 static bool sub_463340(int lock_id, int key_id);
@@ -862,7 +862,7 @@ int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4)
     worth = item_worth(item_obj);
     if (sub_40DA20(seller_obj)) {
         if (!a4) {
-            if (!sub_462170(item_obj, seller_obj, buyer_obj)) {
+            if (!item_check_sell(item_obj, seller_obj, buyer_obj)) {
                 return 0;
             }
         }
@@ -912,16 +912,33 @@ int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4)
 }
 
 // 0x462170
-bool sub_462170(int64_t a1, int64_t a2, int64_t a3)
+bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_obj)
 {
-    // TODO: Review.
-    return !sub_461F60(a1)
-        && (!tig_art_item_id_destroyed_get(obj_field_int32_get(a1, OBJ_F_CURRENT_AID)))
-        && (basic_skill_get_training(a2, BASIC_SKILL_HAGGLE) >= TRAINING_EXPERT
-            || (sub_441980(a1, a3, a2, SAP_BUY_OBJECT, 0) == 1
-                && sub_464200(a1, a3)))
-        && ((obj_field_int32_get(a3, OBJ_F_NPC_FLAGS) & ONF_FENCE) != 0
-            || (obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_STOLEN) == 0);
+    if (sub_461F60(item_obj)) {
+        return false;
+    }
+
+    if (tig_art_item_id_destroyed_get(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID))) {
+        return false;
+    }
+
+    if (basic_skill_get_training(seller_pc_obj, BASIC_SKILL_HAGGLE) < TRAINING_EXPERT) {
+        if (!sub_441980(item_obj, buyer_npc_obj, seller_pc_obj, SAP_BUY_OBJECT, 0)) {
+            return false;
+        }
+
+        if (!sub_464200(item_obj, buyer_npc_obj)) {
+            return false;
+        }
+    }
+
+    if ((obj_field_int32_get(buyer_npc_obj, OBJ_F_NPC_FLAGS) & ONF_FENCE) == 0) {
+        if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_STOLEN) != 0) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x462230
