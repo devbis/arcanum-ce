@@ -709,13 +709,13 @@ void wallcheck_ping(tig_timestamp_t timestamp)
 
     if (wallcheck_dirty) {
         sub_439D30(qword_5E0A08);
-        sub_437E50(qword_5E0A08);
+        wallcheck_recalc(qword_5E0A08);
         wallcheck_dirty = false;
     }
 }
 
 // 0x437E50
-void sub_437E50(int64_t loc)
+void wallcheck_recalc(int64_t loc)
 {
     int64_t tmp_loc;
     int v1;
@@ -748,10 +748,10 @@ void sub_437E50(int64_t loc)
             rot = tig_art_id_rotation_get(art_id);
             if (rot == 4 || rot == 5) {
                 v1 = 3;
-                tmp_loc--;
+                x--;
             } else if (rot == 2 || rot == 3) {
                 v2 = 3;
-                tmp_loc--;
+                y--;
             }
             node = node->next;
         }
@@ -763,7 +763,7 @@ void sub_437E50(int64_t loc)
             art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
             rot = tig_art_id_rotation_get(art_id);
             if (rot == 2 || rot == 3) {
-                tmp_loc--;
+                y--;
                 v2 = 3;
             }
             node = node->next;

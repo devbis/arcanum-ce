@@ -5160,7 +5160,7 @@ void sub_444270(int64_t obj, int a2)
         if (player_is_pc_obj(obj)) {
             sub_4BE8F0(loc);
             sub_439D30(loc);
-            sub_437E50(loc);
+            wallcheck_recalc(loc);
             scroll_set_center(loc);
         }
 
