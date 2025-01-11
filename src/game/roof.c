@@ -9,7 +9,7 @@
 
 static int sub_4395A0(int64_t loc);
 static int sub_4395C0(int a1);
-static void sub_439640(int64_t loc, int64_t* x, int64_t* y);
+static void roof_xy(int64_t loc, int64_t* sx, int64_t* sy);
 static tig_art_id_t roof_art_id_at(int64_t loc);
 static bool sub_439700(int64_t loc, tig_art_id_t aid);
 static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
@@ -238,7 +238,7 @@ void roof_render(UnknownContext* render_info)
             aid = roof_art_id_at(LOCATION_MAKE(x, y));
             if (aid != TIG_ART_ID_INVALID
                 && !sub_5048D0(aid)) {
-                sub_439640(LOCATION_MAKE(x, y), &loc_x, &loc_y);
+                roof_xy(LOCATION_MAKE(x, y), &loc_x, &loc_y);
                 if (loc_x > INT_MIN
                     && loc_x < INT_MAX
                     && loc_y > INT_MIN
@@ -383,13 +383,13 @@ int64_t sub_4395E0(int64_t loc)
 }
 
 // 0x439640
-void sub_439640(int64_t loc, int64_t* x, int64_t* y)
+void roof_xy(int64_t loc, int64_t* sx, int64_t* sy)
 {
     loc = sub_4395E0(loc);
-    location_xy(loc, x, y);
+    location_xy(loc, sx, sy);
 
-    *x -= 120;
-    *y -= 200;
+    *sx -= 120;
+    *sy -= 200;
 }
 
 // 0x4396A0
@@ -438,7 +438,7 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
         aid = old_aid;
     }
 
-    sub_439640(v1, &x, &y);
+    roof_xy(v1, &x, &y);
     if (x > INT_MIN
         && x < INT_MAX
         && y > INT_MIN
@@ -476,7 +476,7 @@ bool sub_439890(int x, int y)
         return false;
     }
 
-    sub_439640(loc, &loc_x, &loc_y);
+    roof_xy(loc, &loc_x, &loc_y);
     sub_43A140((int)loc_x, (int)loc_y, aid, &rect);
     if (x >= rect.x
         && y >= rect.y
