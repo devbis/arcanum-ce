@@ -985,26 +985,26 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj)
 }
 
 // 0x462330
-void sub_462330(int64_t item_obj, int index, int* min_damage, int* max_damage)
+void item_damage_min_max(int64_t item_obj, int damage_type, int* min_damage, int* max_damage)
 {
-    int64_t owner_obj;
+    int64_t parent_obj;
     int weight;
 
     if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_WEAPON
         && (obj_field_int32_get(item_obj, OBJ_F_WEAPON_FLAGS) & OWF_THROWABLE) != 0) {
-        *min_damage = obj_arrayfield_int32_get(item_obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, index);
-        *max_damage = obj_arrayfield_int32_get(item_obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, index);
+        *min_damage = obj_arrayfield_int32_get(item_obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, damage_type);
+        *max_damage = obj_arrayfield_int32_get(item_obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, damage_type);
         return;
     }
 
-    if (index == 0) {
-        owner_obj = OBJ_HANDLE_NULL;
-        item_parent(item_obj, &owner_obj);
-        weight = item_weight(item_obj, owner_obj);
+    if (damage_type == DAMAGE_TYPE_NORMAL) {
+        parent_obj = OBJ_HANDLE_NULL;
+        item_parent(item_obj, &parent_obj);
+
+        weight = item_weight(item_obj, parent_obj);
 
         *min_damage = (weight + 99) / 100;
-        // TODO: Unclear math.
-        *max_damage = *min_damage;
+        *max_damage = (weight + 49) / 50;
         return;
     }
 
@@ -3388,7 +3388,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
 
     if (weapon_obj != OBJ_HANDLE_NULL) {
         if (skill == SKILL_THROWING) {
-            sub_462330(weapon_obj, damage_type, &min_dam, &max_dam);
+            item_damage_min_max(weapon_obj, damage_type, &min_dam, &max_dam);
         } else {
             min_dam = obj_arrayfield_int32_get(weapon_obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, damage_type);
             max_dam = obj_arrayfield_int32_get(weapon_obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, damage_type);

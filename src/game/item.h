@@ -67,7 +67,7 @@ int item_worth(object_id_t item_id);
 bool sub_461F60(object_id_t item_id);
 int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4);
 int item_throwing_distance(int64_t item_obj, int64_t critter_obj);
-void sub_462330(int64_t item_obj, int index, int* min_damage, int* max_damage);
+void item_damage_min_max(int64_t item_obj, int damage_type, int* min_damage, int* max_damage);
 int sub_462410(object_id_t item_id, int* quantity_field_ptr);
 int64_t item_find_by_name(int64_t obj, int name);
 int64_t sub_462540(int64_t parent_obj, int64_t item_prototype_obj, unsigned int flags);
