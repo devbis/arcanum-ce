@@ -4272,14 +4272,14 @@ void sub_550DA0(int a1, S550DA0* a2)
         tig_window_blit_art(dword_64C520, &blit_info);
 
         sub_558130(&stru_64C698);
-        sub_402F90();
+        gamelib_renderlock_acquire();
         dword_64C6BC = 2;
         dword_5C72B0--;
         return;
     }
 
     if (dword_5C72B0 < 1) {
-        sub_402FA0();
+        gamelib_renderlock_release();
         dword_5C72B0++;
     }
 

@@ -105,7 +105,7 @@ void teleport_ping(tig_timestamp_t timestamp)
 
         if ((current_teleport_data.flags & TELEPORT_0x80000000) != 0
             && (current_teleport_data.flags & TELEPORT_0x0020) != 0) {
-            sub_402FA0();
+            gamelib_renderlock_release();
         }
     }
 }
@@ -131,7 +131,7 @@ bool teleport_do(TeleportData* teleport_data)
 
         if ((current_teleport_data.flags & TELEPORT_0x0020) != 0) {
             sub_402FC0();
-            sub_402F90();
+            gamelib_renderlock_acquire();
         }
     }
 

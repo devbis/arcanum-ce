@@ -196,7 +196,7 @@ static GameLibModule gamelib_modules[MODULE_COUNT] = {
 };
 
 // 0x59ADD8
-static int dword_59ADD8 = 1;
+static int gamelib_renderlock_cnt = 1;
 
 // 0x59ADDC
 static char arcanum1[260] = "Arcanum";
@@ -849,7 +849,7 @@ bool gamelib_redraw()
     Sector601808* v3;
     UnknownContext render_info;
 
-    if (dword_59ADD8 <= 0) {
+    if (gamelib_renderlock_cnt <= 0) {
         return false;
     }
 
@@ -899,15 +899,15 @@ bool gamelib_redraw()
 }
 
 // 0x402F90
-void sub_402F90()
+void gamelib_renderlock_acquire()
 {
-    dword_59ADD8--;
+    gamelib_renderlock_cnt--;
 }
 
 // 0x402FA0
-void sub_402FA0()
+void gamelib_renderlock_release()
 {
-    dword_59ADD8++;
+    gamelib_renderlock_cnt++;
 }
 
 // 0x402FC0
