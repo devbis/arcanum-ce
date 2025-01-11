@@ -76,7 +76,7 @@ int64_t item_find_first_generic(int64_t obj, unsigned int flags);
 int64_t item_find_first(object_id_t obj);
 int item_list_get(int64_t parent_obj, int64_t** items_ptr);
 void item_list_free(int64_t* list);
-int64_t item_find_first_matching_prototype(int64_t obj, int64_t a2);
+int64_t item_find_first_matching_prototype(int64_t parent_obj, int64_t existing_item_obj);
 int64_t sub_462A30(int64_t obj, int64_t a2);
 int item_count_items_matching_prototype(int64_t obj, int64_t a2);
 int sub_462C30(int64_t a1, int64_t a2);
