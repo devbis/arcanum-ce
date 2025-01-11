@@ -7,7 +7,7 @@
 #include "game/sector.h"
 #include "game/tile.h"
 
-static int sub_4395A0(int64_t loc);
+static int roof_id_from_loc(int64_t loc);
 static int sub_4395C0(int a1);
 static void roof_xy(int64_t loc, int64_t* sx, int64_t* sy);
 static tig_art_id_t roof_art_id_at(int64_t loc);
@@ -362,7 +362,7 @@ void roof_render(UnknownContext* render_info)
 }
 
 // 0x4395A0
-int sub_4395A0(int64_t loc)
+int roof_id_from_loc(int64_t loc)
 {
     return sub_4395C0(tile_id_from_loc(loc));
 }
@@ -404,7 +404,7 @@ tig_art_id_t roof_art_id_at(int64_t loc)
         return TIG_ART_ID_INVALID;
     }
 
-    aid = sector->roofs.art_ids[sub_4395A0(loc)];
+    aid = sector->roofs.art_ids[roof_id_from_loc(loc)];
 
     sector_unlock(sector_id);
 
@@ -428,8 +428,8 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
         return false;
     }
 
-    old_aid = sector->roofs.art_ids[sub_4395A0(v1)];
-    sector->roofs.art_ids[sub_4395A0(v1)] = aid;
+    old_aid = sector->roofs.art_ids[roof_id_from_loc(v1)];
+    sector->roofs.art_ids[roof_id_from_loc(v1)] = aid;
     sector->roofs.field_0 = 0;
 
     sector_unlock(sector_id);
