@@ -350,7 +350,7 @@ void roof_render(UnknownContext* render_info)
                             }
 
                             art_blit_info.flags |= TIG_ART_BLT_SCRATCH_VALID;
-                            art_blit_info.scratch_video_buffer = dword_739E7C;
+                            art_blit_info.scratch_video_buffer = gamelib_scratch_video_buffer;
                             tig_window_blit_art(roof_iso_window_handle, &art_blit_info);
                         }
                         node = node->next;

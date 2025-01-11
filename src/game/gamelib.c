@@ -309,7 +309,7 @@ unsigned int gamelib_ping_time;
 Settings settings;
 
 // 0x739E7C
-TigVideoBuffer* dword_739E7C;
+TigVideoBuffer* gamelib_scratch_video_buffer;
 
 // 0x4020F0
 bool gamelib_init(GameInitInfo* init_info)
@@ -369,7 +369,7 @@ bool gamelib_init(GameInitInfo* init_info)
     vb_create_info.height = window_data.rect.height;
     vb_create_info.color_key = tig_color_make(0, 255, 0);
     vb_create_info.background_color = vb_create_info.color_key;
-    if (tig_video_buffer_create(&vb_create_info, &dword_739E7C) != TIG_OK) {
+    if (tig_video_buffer_create(&vb_create_info, &gamelib_scratch_video_buffer) != TIG_OK) {
         return false;
     }
 
@@ -478,9 +478,9 @@ void gamelib_exit()
         node = next;
     }
 
-    if (dword_739E7C != NULL) {
-        tig_video_buffer_destroy(dword_739E7C);
-        dword_739E7C = NULL;
+    if (gamelib_scratch_video_buffer != NULL) {
+        tig_video_buffer_destroy(gamelib_scratch_video_buffer);
+        gamelib_scratch_video_buffer = NULL;
     }
 
     if (tig_file_is_directory("Save\\Current")) {
@@ -527,9 +527,9 @@ void gamelib_resize(GameResizeInfo* resize_info)
     stru_5D0D60.width = gamelib_iso_content_rect.width + 512;
     stru_5D0D60.height = gamelib_iso_content_rect.height + 512;
 
-    if (dword_739E7C != NULL) {
-        tig_video_buffer_destroy(dword_739E7C);
-        dword_739E7C = NULL;
+    if (gamelib_scratch_video_buffer != NULL) {
+        tig_video_buffer_destroy(gamelib_scratch_video_buffer);
+        gamelib_scratch_video_buffer = NULL;
     }
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
@@ -537,7 +537,7 @@ void gamelib_resize(GameResizeInfo* resize_info)
     vb_create_info.height = gamelib_iso_content_rect.height;
     vb_create_info.color_key = tig_color_make(0, 255, 0);
     vb_create_info.background_color = vb_create_info.color_key;
-    if (tig_video_buffer_create(&vb_create_info, &dword_739E7C) != TIG_OK) {
+    if (tig_video_buffer_create(&vb_create_info, &gamelib_scratch_video_buffer) != TIG_OK) {
         tig_debug_printf("gamelib_resize: ERROR: Failed to rebuild scratch buffer!\n");
         return;
     }

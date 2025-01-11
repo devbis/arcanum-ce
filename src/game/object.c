@@ -4684,7 +4684,7 @@ void sub_443170(int64_t obj, TigArtBlitInfo* blit_info)
 int sub_443440(TigArtBlitInfo* blit_info, int order)
 {
     blit_info->flags |= TIG_ART_BLT_SCRATCH_VALID;
-    blit_info->scratch_video_buffer = dword_739E7C;
+    blit_info->scratch_video_buffer = gamelib_scratch_video_buffer;
     if (dword_5E2EB0 >= dword_5E2F20) {
         dword_5E2F20 += 128;
         dword_5E2E74 = (S5E2E74 *)REALLOC(dword_5E2E74, sizeof(*dword_5E2E74) * dword_5E2F20);
