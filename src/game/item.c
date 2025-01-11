@@ -842,66 +842,73 @@ bool sub_461F60(object_id_t item_id)
 }
 
 // 0x461F80
-int sub_461F80(int64_t a1, int64_t a2, int64_t a3, bool a4)
+int item_cost(int64_t item_obj, int64_t seller_obj, int64_t buyer_obj, bool a4)
 {
     int worth;
     int mult;
-    int v1;
-    int v2;
-    int v3;
+    int cost;
+    int haggle;
+    int hp_current;
+    int hp_max;
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) == OBJ_TYPE_GOLD) {
+    if (obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_GOLD) {
         if (a4) {
-            return item_gold_get(a1);
+            return item_gold_get(item_obj);
         } else {
             return 0;
         }
     }
 
-    worth = item_worth(a1);
-    if (sub_40DA20(a2)) {
-        if (!a4 && !sub_462170(a1, a2, a3)) {
-            return 0;
+    worth = item_worth(item_obj);
+    if (sub_40DA20(seller_obj)) {
+        if (!a4) {
+            if (!sub_462170(item_obj, seller_obj, buyer_obj)) {
+                return 0;
+            }
         }
 
-        mult = obj_field_int32_get(a3, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER);
+        mult = obj_field_int32_get(buyer_obj, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER);
         if (mult > 100) {
             worth = worth * (3 * (100 - mult) / 8 + 100) / 100;
         }
 
-        v1 = worth * (sub_4C62E0(a2, BASIC_SKILL_HAGGLE, a1) / 2 + 50) / 100;
-        v2 = object_hp_current(a1);
-        v3 = object_hp_max(a1);
+        haggle = sub_4C62E0(seller_obj, BASIC_SKILL_HAGGLE, item_obj);
+        cost = worth * (haggle / 2 + 50) / 100;
+        hp_current = object_hp_current(item_obj);
+        hp_max = object_hp_max(item_obj);
 
-        if (v2 <v3) {
-            v1 = v1 * v2 / v3;
+        if (hp_current < hp_max) {
+            cost = cost * hp_current / hp_max;
         }
 
-        if (v1 < 0) {
+        if (cost < 0) {
             return 0;
         }
 
-        if (v1 == 1) {
+        if (cost == 1) {
             return 2;
+        }
+    } else {
+        if (!a4) {
+            if (!sub_462230(item_obj, seller_obj, buyer_obj)) {
+                return 0;
+            }
+        }
+
+        mult = obj_field_int32_get(seller_obj, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER);
+        haggle = sub_4C62E0(buyer_obj, BASIC_SKILL_HAGGLE, item_obj);
+        cost = sub_4C1150(seller_obj, buyer_obj, worth + worth * mult * (100 - haggle) / 10000);
+
+        if (cost <= worth) {
+            cost = worth + 1;
+        }
+
+        if (cost == 1 || cost == 2) {
+            cost = 3;
         }
     }
 
-    if (!a4 && !sub_462230(a1, a2, a3)) {
-        return 0;
-    }
-
-    mult = obj_field_int32_get(a3, OBJ_F_NPC_RETAIL_PRICE_MULTIPLIER);
-    v1 = sub_4C1150(a2, a3, worth + worth * mult * (100 - sub_4C62E0(a3, BASIC_SKILL_HAGGLE, a1) / 10000));
-
-    if (v1 <= worth) {
-        v1 = worth + 1;
-    }
-
-    if (v1 == 1 || v1 == 2) {
-        v1 = 3;
-    }
-
-    return v1;
+    return cost;
 }
 
 // 0x462170

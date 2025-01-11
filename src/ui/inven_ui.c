@@ -3437,7 +3437,7 @@ void sub_578330(int64_t a1, int64_t a2)
     }
 
     if (a2 == qword_6814F8) {
-        dword_681440 = sub_461F80(a1, qword_6814F8, qword_682C78, 0);
+        dword_681440 = item_cost(a1, qword_6814F8, qword_682C78, 0);
         if (dword_681440 != 0) {
             gold = item_gold_get(qword_682C78);
             if (sub_441980(a1, qword_682C78, qword_6814F8, SAP_BUY_OBJECT, 0)) {
@@ -3462,7 +3462,7 @@ void sub_578330(int64_t a1, int64_t a2)
             }
         }
     } else {
-        dword_681440 = sub_461F80(a1, qword_682C78, qword_6814F8, 0);
+        dword_681440 = item_cost(a1, qword_682C78, qword_6814F8, 0);
         if (dword_681440 != 0) {
             if ((obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS) & OIF_WONT_SELL) != 0
                 || IS_WEAR_INV_LOC(item_inventory_location_get(a1))) {
@@ -3531,7 +3531,7 @@ void sub_578760(int64_t obj)
     }
 
     if (v2 != 0) {
-        dword_681440 = v1 * (sub_461F80(obj, qword_6814F8, qword_682C78, 1) / 2) / v1;
+        dword_681440 = v1 * (item_cost(obj, qword_6814F8, qword_682C78, 1) / 2) / v1;
         if (dword_681440 < 2) {
             dword_681440 = 2;
         }
@@ -3767,7 +3767,7 @@ bool sub_578EA0(Packet81* pkt)
     if (v6 != OBJ_HANDLE_NULL
         && player_is_pc_obj(v6)
         && (v8 & 0x18) != 0) {
-        int gold = v7 * sub_461F80(v2, v4, v6, false);
+        int gold = v7 * item_cost(v2, v4, v6, false);
         if (gold > item_gold_get(v6)) {
             sub_414020(v4, v6, 4, byte_682804);
             sprintf(byte_68241C, byte_682804, gold);
@@ -3828,7 +3828,7 @@ bool sub_579840(int64_t obj, bool a2)
         return false;
     }
 
-    v1 = sub_461F80(obj, qword_682C78, qword_6814F8, 0);
+    v1 = item_cost(obj, qword_682C78, qword_6814F8, 0);
     if (v1 > sub_4C6520(qword_6814F8)) {
         if (!a2) {
             sub_414020(qword_682C78, qword_6814F8, 3, byte_68241C);
