@@ -120,8 +120,8 @@ typedef struct GameSaveEntry {
 static int sub_403D40(const GameSaveEntry* a, const GameSaveEntry* b);
 static int sub_403DB0(const GameSaveEntry* a, const GameSaveEntry* b);
 static void difficulty_changed();
-static void sub_4046F0(void* info);
-static void sub_404740(UnknownContext* info);
+static void gamelib_render_game(UnknownContext* render_info);
+static void gamelib_render_editor(UnknownContext* render_info);
 static void gamelib_logo();
 static void gamelib_splash(tig_window_handle_t window_handle);
 static void sub_404930();
@@ -270,7 +270,7 @@ static char byte_5D0EA4[MAX_PATH];
 static char byte_5D0FA8[MAX_PATH];
 
 // 0x5D10AC
-static void(*dword_5D10AC)(UnknownContext* info);
+static void(*gamelib_render_func)(UnknownContext* render_info);
 
 // 0x5D10B0
 static GUID stru_5D10B0;
@@ -374,9 +374,9 @@ bool gamelib_init(GameInitInfo* init_info)
     }
 
     if (init_info->editor) {
-        dword_5D10AC = sub_404740;
+        gamelib_render_func = gamelib_render_editor;
     } else {
-        dword_5D10AC = sub_4046F0;
+        gamelib_render_func = gamelib_render_game;
     }
 
     gamelib_view_options.type = VIEW_TYPE_ISOMETRIC;
@@ -870,7 +870,7 @@ bool gamelib_redraw()
         render_info.field_8 = &v2;
         render_info.field_C = v3;
         render_info.rects = &gamelib_dirty_rects_head;
-        dword_5D10AC(&render_info);
+        gamelib_render_func(&render_info);
         sub_4D0400(v3);
 
         node = gamelib_dirty_rects_head;
@@ -1685,47 +1685,47 @@ const char* gamelib_get_locale()
 }
 
 // 0x4046F0
-void sub_4046F0(void* info)
+void gamelib_render_game(UnknownContext* render_info)
 {
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        light_render(info);
-        tile_render(info);
-        sub_43C690(info);
-        object_render(info);
-        roof_render(info);
-        tb_render(info);
-        tf_render(info);
-        tc_render(info);
+        light_render(render_info);
+        tile_render(render_info);
+        sub_43C690(render_info);
+        object_render(render_info);
+        roof_render(render_info);
+        tb_render(render_info);
+        tf_render(render_info);
+        tc_render(render_info);
         tig_video_3d_end_scene();
     }
 }
 
 // 0x404740
-void sub_404740(UnknownContext* info)
+void gamelib_render_editor(UnknownContext* render_info)
 {
     TigRectListNode* node;
     tig_color_t color;
 
     color = tig_color_make(0, 0, 255);
-    node = *info->rects;
+    node = *render_info->rects;
     while (node != NULL) {
         tig_window_fill(stru_5D0E88.iso_window_handle, &(node->rect), color);
         node = node->next;
     }
 
     if (tig_video_3d_begin_scene() == TIG_OK) {
-        light_render(info);
-        tile_render(info);
-        facade_render(info);
-        sub_4E3320(info);
-        tile_script_render(info);
-        tileblock_render(info);
-        object_render(info);
-        sector_render(info);
-        wall_render(info);
-        wp_render(info);
-        roof_render(info);
-        tb_render(info);
+        light_render(render_info);
+        tile_render(render_info);
+        facade_render(render_info);
+        sub_4E3320(render_info);
+        tile_script_render(render_info);
+        tileblock_render(render_info);
+        object_render(render_info);
+        sector_render(render_info);
+        wall_render(render_info);
+        wp_render(render_info);
+        roof_render(render_info);
+        tb_render(render_info);
         tig_video_3d_end_scene();
     }
 }
