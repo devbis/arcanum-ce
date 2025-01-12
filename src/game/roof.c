@@ -10,8 +10,8 @@
 static int roof_id_from_loc(int64_t loc);
 static int sub_4395C0(int a1);
 static void roof_xy(int64_t loc, int64_t* sx, int64_t* sy);
-static tig_art_id_t roof_art_id_at(int64_t loc);
-static bool sub_439700(int64_t loc, tig_art_id_t aid);
+static tig_art_id_t roof_art_id_get(int64_t loc);
+static bool roof_art_id_set(int64_t loc, tig_art_id_t aid);
 static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
 static void roof_fill(int64_t loc, int a2, int a3);
 
@@ -235,7 +235,7 @@ void roof_render(UnknownContext* render_info)
 
     for (y = loc_rect.y1; y <= loc_rect.y2; y += 4) {
         for (x = loc_rect.x1; x <= loc_rect.x2; x += 4) {
-            aid = roof_art_id_at(LOCATION_MAKE(x, y));
+            aid = roof_art_id_get(LOCATION_MAKE(x, y));
             if (aid != TIG_ART_ID_INVALID
                 && !sub_5048D0(aid)) {
                 roof_xy(LOCATION_MAKE(x, y), &loc_x, &loc_y);
@@ -393,7 +393,7 @@ void roof_xy(int64_t loc, int64_t* sx, int64_t* sy)
 }
 
 // 0x4396A0
-tig_art_id_t roof_art_id_at(int64_t loc)
+tig_art_id_t roof_art_id_get(int64_t loc)
 {
     int64_t sector_id;
     Sector* sector;
@@ -412,18 +412,18 @@ tig_art_id_t roof_art_id_at(int64_t loc)
 }
 
 // 0x439700
-bool sub_439700(int64_t loc, tig_art_id_t aid)
+bool roof_art_id_set(int64_t loc, tig_art_id_t aid)
 {
-    int64_t sector_id;
+    int64_t sec;
     Sector* sector;
     tig_art_id_t old_aid;
-    int64_t x;
-    int64_t y;
+    int64_t sx;
+    int64_t sy;
     TigRect rect;
 
     loc = roof_normalize_loc(loc);
-    sector_id = sector_id_from_loc(loc);
-    if (!sector_lock(sector_id, &sector)) {
+    sec = sector_id_from_loc(loc);
+    if (!sector_lock(sec, &sector)) {
         return false;
     }
 
@@ -431,18 +431,18 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
     sector->roofs.art_ids[roof_id_from_loc(loc)] = aid;
     sector->roofs.field_0 = 0;
 
-    sector_unlock(sector_id);
+    sector_unlock(sec);
 
     if (aid == TIG_ART_ID_INVALID) {
         aid = old_aid;
     }
 
-    roof_xy(loc, &x, &y);
-    if (x > INT_MIN
-        && x < INT_MAX
-        && y > INT_MIN
-        && y < INT_MAX) {
-        sub_43A140((int)x, (int)y, aid, &rect);
+    roof_xy(loc, &sx, &sy);
+    if (sx > INT_MIN
+        && sx < INT_MAX
+        && sy > INT_MIN
+        && sy < INT_MAX) {
+        sub_43A140((int)sx, (int)sy, aid, &rect);
         roof_iso_window_invalidate_rect(&rect);
     }
 
@@ -466,7 +466,7 @@ bool sub_439890(int x, int y)
         return false;
     }
 
-    aid = roof_art_id_at(loc);
+    aid = roof_art_id_get(loc);
     if (aid == TIG_ART_ID_INVALID) {
         return false;
     }
@@ -499,7 +499,7 @@ void roof_recalc(int64_t loc)
     bool v8;
     bool v9;
 
-    aid = roof_art_id_at(loc);
+    aid = roof_art_id_get(loc);
     if (aid == TIG_ART_ID_INVALID) {
         return;
     }
@@ -603,10 +603,10 @@ void sub_439EE0(int64_t loc)
 {
     tig_art_id_t aid;
 
-    aid = roof_art_id_at(loc);
+    aid = roof_art_id_get(loc);
     if (sub_504940(aid) == 0) {
         aid = sub_504970(aid, 1);
-        sub_439700(loc, aid);
+        roof_art_id_set(loc, aid);
     }
 }
 
@@ -615,10 +615,10 @@ void sub_439F20(int64_t loc)
 {
     tig_art_id_t aid;
 
-    aid = roof_art_id_at(loc);
+    aid = roof_art_id_get(loc);
     if (sub_504940(aid) != 0) {
         aid = sub_504970(aid, 0);
-        sub_439700(loc, aid);
+        roof_art_id_set(loc, aid);
     }
 }
 
@@ -628,7 +628,7 @@ bool sub_439FA0(int64_t loc)
     tig_art_id_t aid;
 
     if (roof_enabled) {
-        aid = roof_art_id_at(loc);
+        aid = roof_art_id_get(loc);
         if (aid != TIG_ART_ID_INVALID
             && sub_5048D0(aid) == 0
             && sub_504940(aid) != 0) {
@@ -662,7 +662,7 @@ bool sub_43A030(int64_t loc, int a2)
         return false;
     }
 
-    aid = roof_art_id_at(location_make(location_get_x(loc) + 3, location_get_y(loc) + 3));
+    aid = roof_art_id_get(location_make(location_get_x(loc) + 3, location_get_y(loc) + 3));
     if (aid == TIG_ART_ID_INVALID) {
         return false;
     }
@@ -725,7 +725,7 @@ void roof_fill(int64_t loc, int a2, int a3)
     tig_art_id_t aid;
     int v1;
 
-    aid = roof_art_id_at(loc);
+    aid = roof_art_id_get(loc);
     if (aid == TIG_ART_ID_INVALID) {
         return;
     }
@@ -773,7 +773,7 @@ void roof_fill(int64_t loc, int a2, int a3)
     }
 
     aid = sub_504900(aid, a2);
-    sub_439700(loc, aid);
+    roof_art_id_set(loc, aid);
 
     roof_fill(location_make(location_get_x(loc) + 4, location_get_y(loc)), a2, 5);
     roof_fill(location_make(location_get_x(loc) - 4, location_get_y(loc)), a2, 1);
