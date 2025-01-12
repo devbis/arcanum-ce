@@ -731,8 +731,8 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
     case TIG_ART_TYPE_ROOF:
         aid = sub_504880(aid, 0);
         aid = tig_art_id_palette_set(aid, 0);
-        aid = sub_504900(aid, 0);
-        aid = sub_504970(aid, 0);
+        aid = tig_art_roof_id_fill_set(aid, 0);
+        aid = tig_art_roof_id_fade_set(aid, 0);
         break;
     case TIG_ART_TYPE_FACADE:
         tig_art_facade_id_create(tig_art_facade_id_num_get(aid), 0, tig_art_tile_id_type_get(aid), 0, 0, 0, &aid);

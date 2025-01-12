@@ -1018,7 +1018,7 @@ void sub_438720(int64_t a1)
     }
 
     if (++stru_5E0A10[index].field_8 == 1) {
-        sub_439EE0(a1);
+        roof_fade_on(a1);
     }
 }
 
@@ -1124,7 +1124,7 @@ void wallcheck_roof_faded_clear(int64_t a1)
     }
 
     if (stru_5E0A10[index].field_8-- == 1) {
-        sub_439F20(a1);
+        roof_fade_off(a1);
         memcpy(&(stru_5E0A10[index]),
             &(stru_5E0A10[index + 1]),
             sizeof(*stru_5E0A10) * (dword_5E2E28 - index - 1));

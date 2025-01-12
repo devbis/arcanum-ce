@@ -471,7 +471,7 @@ bool sub_4D39A0(TeleportData* teleport_data)
             if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                 && player_is_pc_obj(node->obj)) {
                 wallcheck_flush();
-                sub_439EA0(obj_field_int64_get(node->obj, OBJ_F_LOCATION));
+                roof_fill_off(obj_field_int64_get(node->obj, OBJ_F_LOCATION));
             }
 
             if ((tig_net_flags & TIG_NET_CONNECTED) != 0

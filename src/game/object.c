@@ -587,7 +587,7 @@ void object_render(UnknownContext* render_info)
                                             if (obj_type != OBJ_TYPE_WALL
                                                 || (obj_field_int32_get(obj_node->obj, OBJ_F_WALL_FLAGS) & (OWAF_TRANS_LEFT | OWAF_TRANS_RIGHT)) == 0
                                                 || object_render_check_rotation(obj_node->obj)
-                                                || !sub_439FA0(loc)) {
+                                                || !roof_is_faded(loc)) {
                                                 location_xy(loc, &loc_x, &loc_y);
                                                 loc_x += obj_field_int32_get(obj_node->obj, OBJ_F_OFFSET_X);
                                                 loc_y += obj_field_int32_get(obj_node->obj, OBJ_F_OFFSET_Y);

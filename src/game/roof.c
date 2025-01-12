@@ -13,7 +13,7 @@ static void roof_xy(int64_t loc, int64_t* sx, int64_t* sy);
 static tig_art_id_t roof_art_id_get(int64_t loc);
 static bool roof_art_id_set(int64_t loc, tig_art_id_t aid);
 static void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect);
-static void roof_fill(int64_t loc, int a2, int a3);
+static void roof_fill(int64_t loc, bool fill, int a3);
 
 // 0x5A53A0
 static unsigned int roof_blit_flags = TIG_ART_BLT_BLEND_ALPHA_CONST;
@@ -237,7 +237,7 @@ void roof_render(UnknownContext* render_info)
         for (x = loc_rect.x1; x <= loc_rect.x2; x += 4) {
             aid = roof_art_id_get(LOCATION_MAKE(x, y));
             if (aid != TIG_ART_ID_INVALID
-                && !sub_5048D0(aid)) {
+                && !tig_art_roof_id_fill_get(aid)) {
                 roof_xy(LOCATION_MAKE(x, y), &loc_x, &loc_y);
                 if (loc_x > INT_MIN
                     && loc_x < INT_MAX
@@ -257,7 +257,7 @@ void roof_render(UnknownContext* render_info)
                             art_blit_info.dst_rect = &dst_rect;
                             art_blit_info.flags = flags;
 
-                            if (sub_504940(aid)) {
+                            if (tig_art_roof_id_fade_get(aid)) {
                                 if (roof_blit_flags == TIG_ART_BLT_BLEND_ALPHA_CONST) {
                                     art_blit_info.flags |= TIG_ART_BLT_BLEND_ALPHA_LERP_BOTH;
 
@@ -471,7 +471,7 @@ bool sub_439890(int x, int y)
         return false;
     }
 
-    if (sub_5048D0(aid)) {
+    if (tig_art_roof_id_fill_get(aid)) {
         return false;
     }
 
@@ -496,8 +496,7 @@ void roof_recalc(int64_t loc)
     int tile;
     int v5;
     int v6;
-    bool v8;
-    bool v9;
+    bool fill;
 
     aid = roof_art_id_get(loc);
     if (aid == TIG_ART_ID_INVALID) {
@@ -511,127 +510,132 @@ void roof_recalc(int64_t loc)
 
     switch (v1) {
     case 0:
-        v8 = v6 > 1 && v5 < 3;
+        fill = v6 > 1 && v5 < 3;
         break;
     case 1:
-        v8 = v5 < 3;
+        fill = v5 < 3;
         break;
     case 2:
-        v8 = v6 > 1;
+        fill = v6 > 1;
         break;
     case 3:
         if (v5 >= 3 && v6 <= 1) {
-            v8 = false;
+            fill = false;
         } else {
-            v8 = true;
+            fill = true;
         }
         break;
     case 4:
         if (v5 >= 3) {
-            v8 = false;
+            fill = false;
         } else {
             if (v6 < 3) {
-                v8 = true;
+                fill = true;
             } else {
-                v8 = false;
+                fill = false;
             }
         }
         break;
     case 5:
         if (v5 >= 3) {
             if (v6 < 3) {
-                v8 = true;
+                fill = true;
             } else {
-                v8 = false;
+                fill = false;
             }
         } else {
-            v8 = true;
+            fill = true;
         }
         break;
     case 6:
-        v8 = v5 > 1 || v6 > 1;
+        fill = v5 > 1 || v6 > 1;
         break;
     case 7:
         if (v5 <= 1 || v6 <= 1) {
-            v8 = false;
+            fill = false;
         } else {
-            v8 = true;
+            fill = true;
         }
         break;
     case 8:
-        v8 = true;
+        fill = true;
         break;
     case 9:
         if (v5 <= 1) {
-            v8 = false;
+            fill = false;
         } else {
             if (v6 < 3) {
-                v8 = true;
+                fill = true;
             } else {
-                v8 = false;
+                fill = false;
             }
         }
         break;
     case 10:
-        v8 = v6 < 3;
+        fill = v6 < 3;
         break;
     case 11:
-        v8 = v5 > 1;
+        fill = v5 > 1;
         break;
     case 12:
-        v8 = v5 > 1 || v6 < 3;
+        fill = v5 > 1 || v6 < 3;
         break;
     default:
         // Should be unreachable.
         __assume(0);
     }
 
-    v9 = sub_5048D0(aid);
-    if (v8 != v9) {
-        roof_fill(roof_normalize_loc(loc), 1 - v9, -1);
+    if (tig_art_roof_id_fill_get(aid) != fill) {
+        roof_fill(roof_normalize_loc(loc), fill, -1);
     }
 }
 
 // 0x439EA0
-void sub_439EA0(int64_t loc)
+void roof_fill_off(int64_t loc)
 {
-    roof_fill(roof_normalize_loc(loc), 0, -1);
+    roof_fill(roof_normalize_loc(loc), false, -1);
+}
+
+// 0x439EC0
+void roof_fill_on(int64_t loc)
+{
+    roof_fill(roof_normalize_loc(loc), true, -1);
 }
 
 // 0x439EE0
-void sub_439EE0(int64_t loc)
+void roof_fade_on(int64_t loc)
 {
     tig_art_id_t aid;
 
     aid = roof_art_id_get(loc);
-    if (sub_504940(aid) == 0) {
-        aid = sub_504970(aid, 1);
+    if (!tig_art_roof_id_fade_get(aid)) {
+        aid = tig_art_roof_id_fade_set(aid, 1);
         roof_art_id_set(loc, aid);
     }
 }
 
 // 0x439F20
-void sub_439F20(int64_t loc)
+void roof_fade_off(int64_t loc)
 {
     tig_art_id_t aid;
 
     aid = roof_art_id_get(loc);
-    if (sub_504940(aid) != 0) {
-        aid = sub_504970(aid, 0);
+    if (tig_art_roof_id_fade_get(aid)) {
+        aid = tig_art_roof_id_fade_set(aid, 0);
         roof_art_id_set(loc, aid);
     }
 }
 
 // 0x439FA0
-bool sub_439FA0(int64_t loc)
+bool roof_is_faded(int64_t loc)
 {
     tig_art_id_t aid;
 
     if (roof_enabled) {
         aid = roof_art_id_get(loc);
         if (aid != TIG_ART_ID_INVALID
-            && sub_5048D0(aid) == 0
-            && sub_504940(aid) != 0) {
+            && !tig_art_roof_id_fill_get(aid)
+            && tig_art_roof_id_fade_get(aid)) {
             return true;
         }
     }
@@ -667,7 +671,7 @@ bool sub_43A030(int64_t loc, int a2)
         return false;
     }
 
-    if (sub_5048D0(aid)) {
+    if (tig_art_roof_id_fill_get(aid)) {
         return false;
     }
 
@@ -679,7 +683,7 @@ bool sub_43A030(int64_t loc, int a2)
         return true;
     }
 
-    if (sub_504940(aid)) {
+    if (tig_art_roof_id_fade_get(aid)) {
         return false;
     }
 
@@ -720,7 +724,7 @@ void sub_43A140(int x, int y, tig_art_id_t aid, TigRect* rect)
 }
 
 // 0x43A1A0
-void roof_fill(int64_t loc, int a2, int a3)
+void roof_fill(int64_t loc, bool fill, int a3)
 {
     tig_art_id_t aid;
     int v1;
@@ -730,7 +734,7 @@ void roof_fill(int64_t loc, int a2, int a3)
         return;
     }
 
-    if (sub_5048D0(aid) == a2) {
+    if (tig_art_roof_id_fill_get(aid) == fill) {
         return;
     }
 
@@ -772,11 +776,11 @@ void roof_fill(int64_t loc, int a2, int a3)
         }
     }
 
-    aid = sub_504900(aid, a2);
+    aid = tig_art_roof_id_fill_set(aid, fill);
     roof_art_id_set(loc, aid);
 
-    roof_fill(location_make(location_get_x(loc) + 4, location_get_y(loc)), a2, 5);
-    roof_fill(location_make(location_get_x(loc) - 4, location_get_y(loc)), a2, 1);
-    roof_fill(location_make(location_get_x(loc), location_get_y(loc) + 4), a2, 3);
-    roof_fill(location_make(location_get_x(loc), location_get_y(loc) - 4), a2, 7);
+    roof_fill(location_make(location_get_x(loc) + 4, location_get_y(loc)), fill, 5);
+    roof_fill(location_make(location_get_x(loc) - 4, location_get_y(loc)), fill, 1);
+    roof_fill(location_make(location_get_x(loc), location_get_y(loc) + 4), fill, 3);
+    roof_fill(location_make(location_get_x(loc), location_get_y(loc) - 4), fill, 7);
 }
