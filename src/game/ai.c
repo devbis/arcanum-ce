@@ -3778,15 +3778,14 @@ bool ai_critter_can_open_portals(int64_t obj)
 // 0x4AEB70
 int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir)
 {
-    int type;
-    unsigned int flags;
+    unsigned int portal_flags;
+    int key_id;
 
     if (object_is_destroyed(portal_obj)) {
         return AI_ATTEMPT_OPEN_PORTAL_OK;
     }
 
-    type = obj_field_int32_get(obj, OBJ_F_TYPE);
-    if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return AI_ATTEMPT_OPEN_PORTAL_NOT_CRITTER;
     }
 
@@ -3794,31 +3793,30 @@ int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir)
         return AI_ATTEMPT_OPEN_PORTAL_NOT_ALLOWED;
     }
 
-    if (obj_field_int32_get(portal_obj, OBJ_F_TYPE) != OBJ_TYPE_PORTAL) {
-        return AI_ATTEMPT_OPEN_PORTAL_OK;
-    }
-
-    flags = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_FLAGS);
-    if ((flags & OPF_JAMMED) != 0) {
-        return AI_ATTEMPT_OPEN_PORTAL_JAMMED;
-    }
-    if ((flags & OPF_MAGICALLY_HELD) != 0) {
-        return AI_ATTEMPT_OPEN_PORTAL_MAGICALLY_HELD;
-    }
-    if ((flags & OPF_ALWAYS_LOCKED) == 0) {
-        if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            if (critter_pc_leader_get(obj) == OBJ_HANDLE_NULL
-                || ai_is_indoor_to_outdoor_transition(portal_obj, dir)) {
+    if (obj_field_int32_get(portal_obj, OBJ_F_TYPE) == OBJ_TYPE_PORTAL) {
+        portal_flags = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_FLAGS);
+        if ((portal_flags & OPF_JAMMED) != 0) {
+            return AI_ATTEMPT_OPEN_PORTAL_JAMMED;
+        }
+        if ((portal_flags & OPF_MAGICALLY_HELD) != 0) {
+            return AI_ATTEMPT_OPEN_PORTAL_MAGICALLY_HELD;
+        }
+        if ((portal_flags & OPF_ALWAYS_LOCKED) == 0) {
+            if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+                if (critter_pc_leader_get(obj) == OBJ_HANDLE_NULL
+                    || ai_is_indoor_to_outdoor_transition(portal_obj, dir)) {
+                    return AI_ATTEMPT_OPEN_PORTAL_OK;
+                }
+            } else if (ai_is_indoor_to_outdoor_transition(portal_obj, dir)) {
                 return AI_ATTEMPT_OPEN_PORTAL_OK;
             }
-        } else if (ai_is_indoor_to_outdoor_transition(portal_obj, dir)) {
-            return AI_ATTEMPT_OPEN_PORTAL_OK;
         }
-    }
 
-    if (object_is_locked(portal_obj)) {
-        if (!sub_463370(obj, obj_field_int32_get(portal_obj, OBJ_F_PORTAL_KEY_ID))) {
-            return AI_ATTEMPT_OPEN_PORTAL_LOCKED;
+        if (object_is_locked(portal_obj)) {
+            key_id = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_KEY_ID);
+            if (!sub_463370(obj, key_id)) {
+                return AI_ATTEMPT_OPEN_PORTAL_LOCKED;
+            }
         }
     }
 
