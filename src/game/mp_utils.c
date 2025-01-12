@@ -56,10 +56,10 @@ void sub_4ED510(AnimID anim_id, int64_t loc, AnimRunInfo* run_info)
     pkt->path_abs_max_path_length = run_info->path.absMaxPathLength;
     pkt->field_48 = run_info->path.field_E8;
     pkt->field_50 = run_info->path.field_F0;
-    pkt->offset_x = obj_field_int32_get(run_info->field_20, OBJ_F_OFFSET_X);
-    pkt->offset_y = obj_field_int32_get(run_info->field_20, OBJ_F_OFFSET_Y);
-    pkt->art_id = obj_field_int32_get(run_info->field_20, OBJ_F_CURRENT_AID);
-    pkt->anim_flags = run_info->field_C;
+    pkt->offset_x = obj_field_int32_get(run_info->anim_obj, OBJ_F_OFFSET_X);
+    pkt->offset_y = obj_field_int32_get(run_info->anim_obj, OBJ_F_OFFSET_Y);
+    pkt->art_id = obj_field_int32_get(run_info->anim_obj, OBJ_F_CURRENT_AID);
+    pkt->anim_flags = run_info->flags;
     memcpy((uint8_t*)(pkt + 1), run_info->path.rotations, run_info->path.max);
     tig_net_send_app_all(&pkt, size);
     FREE(pkt);

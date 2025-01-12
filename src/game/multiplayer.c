@@ -2625,7 +2625,7 @@ void sub_4A54A0()
     char str[ANIM_ID_STR_SIZE];
 
     for (index = 0; index < 216; index++) {
-        if ((anim_run_info[index].field_C & 0x1) != 0) {
+        if ((anim_run_info[index].flags & 0x1) != 0) {
             if (!anim_goal_restart(&(anim_run_info[index].id))) {
                 // FIXME: Meaningless.
                 anim_id_to_str(&(anim_run_info[index].id), str);

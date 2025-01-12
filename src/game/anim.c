@@ -261,7 +261,7 @@ static bool sub_437C50(AnimRunInfo* run_info, int end, int64_t* x, int64_t* y);
 static AnimID stru_5A1908 = { -1, -1, 0 };
 
 // 0x5A59D0
-static AnimGoalNode stru_5A59D0 = {
+static AnimGoalNode anim_goal_node_animate = {
     6,
     3,
     0,
@@ -271,12 +271,12 @@ static AnimGoalNode stru_5A59D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { sub_42CB10, 0, 8, -1, 6, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_42CB10, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_TO_PAUSE, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -285,12 +285,12 @@ static AnimGoalNode stru_5A59D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A5BD0
-static AnimGoalNode stru_5A5BD0 = {
+static AnimGoalNode anim_goal_node_animate_loop = {
     4,
     1,
     0,
@@ -300,10 +300,10 @@ static AnimGoalNode stru_5A5BD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 4, 0 },
-        { sub_42DCF0, 0, -1, -1, 0x10000000, 0x320, 3, 0 },
-        { sub_42DDE0, 0, -1, -1, 0x10000000, -2, 0x10000000, -2 },
-        { sub_42DA50, 0, 8, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42DCF0, AGDATA_SELF_OBJ, -1, -1, 0x10000000, 800, AG_MOVE_TO_TILE, 0 },
+        { sub_42DDE0, AGDATA_SELF_OBJ, -1, -1, 0x10000000, -2, 0x10000000, -2 },
+        { sub_42DA50, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x90000000, 0, 0x10000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -319,7 +319,7 @@ static AnimGoalNode stru_5A5BD0 = {
 };
 
 // 0x5A5DD0
-static AnimGoalNode stru_5A5DD0 = {
+static AnimGoalNode anim_goal_node_animate_fidget = {
     5,
     1,
     0,
@@ -329,11 +329,11 @@ static AnimGoalNode stru_5A5DD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CF40, 0, -1, -1, 5, 0, 0x10000000, -2 },
-        { sub_42CDF0, 0, 8, -1, 4, 0, 0x10000000, -2 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_4298D0, 0, -1, -1, 0x90000000, 0, 3, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CF40, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x10000000, -2 },
+        { sub_42CDF0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_4298D0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, AG_MOVE_TO_TILE, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -343,12 +343,12 @@ static AnimGoalNode stru_5A5DD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A5FD0
-static AnimGoalNode stru_5A5FD0 = {
+static AnimGoalNode anim_goal_node_move_to_tile = {
     7,
     2,
     0,
@@ -358,13 +358,13 @@ static AnimGoalNode stru_5A5FD0 = {
     AG_RUN_TO_TILE,
     -1,
     {
-        { sub_424D90, 0, 5, -1, 2, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 5, 0, 0x40000005, 0 },
-        { sub_426040, 0, 5, -1, 7, 0, 6, 0 },
-        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000035, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_ANIM_FIDGET, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_426040, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_NEAR_TILE, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000000 | AG_ROTATE, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
@@ -372,12 +372,12 @@ static AnimGoalNode stru_5A5FD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A61D0
-static AnimGoalNode stru_5A61D0 = {
+static AnimGoalNode anim_goal_node_run_to_tile = {
     8,
     2,
     0,
@@ -387,26 +387,26 @@ static AnimGoalNode stru_5A61D0 = {
     AG_MOVE_TO_TILE,
     AG_RUN_NEAR_TILE,
     {
-        { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
-        { sub_424D90, 0, 5, -1, 3, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 6, 0, 0x40000005, 0 },
-        { sub_426040, 0, 5, -1, 8, 0, 7, 0 },
-        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000035, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_42B940, -1, -1, -1, AG_ANIM_FIDGET, 0, AG_ANIM_FIDGET, 0 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_426040, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000000 | AG_ROTATE, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A63D0
-static AnimGoalNode stru_5A63D0 = {
+static AnimGoalNode anim_goal_node_attempt_move = {
     0xC,
     2,
     0,
@@ -416,26 +416,26 @@ static AnimGoalNode stru_5A63D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 4, 0 },
-        { sub_4270B0, 0, -1, -1, 3, 0, 0xA, 0xFFFFFFFC },
-        { sub_4305D0, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_425740, 0, -1, -1, 0xC, 0, 5, 0 },
-        { sub_425430, 0, -1, -1, 6, 0, 0x30000000, 0 },
-        { sub_427640, 0, -1, -1, 7, 0, 0xB, 0 },
-        { sub_4272E0, 0, -1, -1, 9, 0, 8, 0 },
-        { sub_4284F0, 3, -1, -1, 9, 0, 0x5200000B, 0x32 },
-        { sub_42E9B0, 0, -1, -1, 0xA, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_4288A0, 0, 3, -1, 0x90000000, 0, 0x5000000E, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_RUN_TO_TILE, 0 },
+        { sub_4270B0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, AG_ATTEMPT_MOVE_STRAIGHT, -4 },
+        { sub_4305D0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_425430, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, 0x30000000, 0 },
+        { sub_427640, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_TILE, 0, AG_OPEN_DOOR, 0 },
+        { sub_4272E0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_STRAIGHT, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, AG_MOVE_STRAIGHT, 0, 0x52000000 | AG_OPEN_DOOR, 50 },
+        { sub_42E9B0, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_4288A0, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, 0x90000000, 0, 0x50000000 | AG_JUMP_WINDOW, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
-        { sub_430F20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_430F20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A65D0
-static AnimGoalNode stru_5A65D0 = {
+static AnimGoalNode anim_goal_node_move_to_pause = {
     3,
     2,
     0,
@@ -445,9 +445,9 @@ static AnimGoalNode stru_5A65D0 = {
     -1,
     -1,
     {
-        { sub_424D90, 0, 5, -1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_427710, 2, -1, -1, 0x90000000, 0, 0x90000000, 0x3E8 },
-        { sub_427720, 2, -1, -1, 0x90000000, 0, 0x90000000, 0x3E8 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_427710, AGDATA_BLOCK_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 1000 },
+        { sub_427720, AGDATA_BLOCK_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 1000 },
         { 0 },
         { 0 },
         { 0 },
@@ -464,7 +464,7 @@ static AnimGoalNode stru_5A65D0 = {
 };
 
 // 0x5A67D0
-static AnimGoalNode stru_5A67D0 = {
+static AnimGoalNode anim_goal_node_move_near_tile = {
     7,
     2,
     0,
@@ -474,13 +474,13 @@ static AnimGoalNode stru_5A67D0 = {
     AG_MOVE_TO_TILE,
     AG_RUN_NEAR_TILE,
     {
-        { sub_424D90, 0, 5, -1, 2, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 5, 0, 0x40000005, 0 },
-        { sub_427730, 0, 5, -1, 7, 0, 6, 0 },
-        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000035, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_ANIM_FIDGET, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_427730, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_NEAR_TILE, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000000 | AG_ROTATE, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
@@ -488,12 +488,12 @@ static AnimGoalNode stru_5A67D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A69D0
-static AnimGoalNode stru_5A69D0 = {
+static AnimGoalNode anim_goal_node_move_near_obj = {
     6,
     2,
     0,
@@ -503,12 +503,12 @@ static AnimGoalNode stru_5A69D0 = {
     -1,
     -1,
     {
-        { sub_425130, 0, 1, -1, 2, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 5, 0, 0x4000003D, 0 },
-        { sub_427990, 0, 1, -1, 6, 0, 0x4000003D, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ANIM_FIDGET, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_ATTEMPT_MOVE_NEAR, 0 },
+        { sub_427990, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, 0x40000000 | AG_ATTEMPT_MOVE_NEAR, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
@@ -517,12 +517,12 @@ static AnimGoalNode stru_5A69D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A6BD0
-static AnimGoalNode stru_5A6BD0 = {
+static AnimGoalNode anim_goal_node_move_straight = {
     4,
     3,
     0,
@@ -532,10 +532,10 @@ static AnimGoalNode stru_5A6BD0 = {
     -1,
     -1,
     {
-        { sub_424D90, 0, 5, -1, 2, 0, 0x30000000, 0 },
-        { sub_425740, 0, -1, -1, 3, 0, 0x4000000A, 0 },
-        { sub_426840, 0, 5, -1, 4, 0, 0x4000000A, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_ANIM_FIDGET, 0, 0x30000000, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ATTEMPT_MOVE_STRAIGHT, 0 },
+        { sub_426840, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ATTEMPT_MOVE_STRAIGHT, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
@@ -551,7 +551,7 @@ static AnimGoalNode stru_5A6BD0 = {
 };
 
 // 0x5A6DD0
-static AnimGoalNode stru_5A6DD0 = {
+static AnimGoalNode anim_goal_node_attempt_move_straight = {
     3,
     3,
     0,
@@ -561,9 +561,9 @@ static AnimGoalNode stru_5A6DD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42F390, 0, -1, -1, 0x30000000, -2, 0x10000000, 0xFFFFFFFD },
-        { sub_42F2D0, 0, -1, -1, 0x90000000, 0, 0x10000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42F390, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -3 },
+        { sub_42F2D0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -580,7 +580,7 @@ static AnimGoalNode stru_5A6DD0 = {
 };
 
 // 0x5A6FD0
-static AnimGoalNode stru_5A6FD0 = {
+static AnimGoalNode anim_goal_node_open_door = {
     5,
     3,
     0,
@@ -590,11 +590,11 @@ static AnimGoalNode stru_5A6FD0 = {
     -1,
     -1,
     {
-        { sub_4284A0, 3, -1, -1, 0x30000000, 0, 2, 0 },
-        { sub_4284F0, 3, -1, -1, 0x30000000, 0, 3, 0 },
-        { sub_428750, 3, 0, -1, 0x7100000C, 0, 4, 0 },
-        { sub_4287E0, 0, 3, -1, 5, 0, 0x4000000D, 0 },
-        { sub_428890, 0, 3, -1, 0x90000000, 0, 0x4000000F, 0 },
+        { sub_4284A0, AGDATA_SCRATCH_OBJ, -1, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, 0x30000000, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_428750, AGDATA_SCRATCH_OBJ, AGDATA_SELF_OBJ, -1, 0x71000000 | AG_ATTEMPT_OPEN_DOOR, 0, AG_RUN_TO_TILE, 0 },
+        { sub_4287E0, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, AG_ATTEMPT_MOVE, 0, 0x4000000 | AG_UNLOCK_DOOR, 0 },
+        { sub_428890, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, 0x90000000, 0, 0x40000000 | AG_PICKUP_ITEM, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -609,7 +609,7 @@ static AnimGoalNode stru_5A6FD0 = {
 };
 
 // 0x5A71D0
-static AnimGoalNode stru_5A71D0 = {
+static AnimGoalNode anim_goal_node_attempt_open_door = {
     8,
     3,
     1,
@@ -619,14 +619,14 @@ static AnimGoalNode stru_5A71D0 = {
     -1,
     -1,
     {
-        { sub_4284A0, 3, -1, -1, 0x30000000, 0, 2, 0 },
-        { sub_4284F0, 3, -1, -1, 0x90000000, 0, 3, 0 },
-        { sub_428690, 0, 3, -1, 0x90000000, 0, 4, 0 },
-        { sub_428750, 3, 0, -1, 6, 0, 5, 0 },
-        { sub_4287E0, 0, 3, -1, 0x90000000, 0, 0x7000000D, 0 },
-        { sub_428A10, 0, 3, -1, 0x90000000, 0, 7, 0 },
-        { sub_428550, 3, 0, -1, 0x90000000, 0, 8, 0 },
-        { sub_4246E0, 3, 0, 0x46, 0x90000000, 0, 0x31000000, 0 },
+        { sub_4284A0, AGDATA_SCRATCH_OBJ, -1, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, 0x90000000, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_428690, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_428750, AGDATA_SCRATCH_OBJ, AGDATA_SELF_OBJ, -1, AG_MOVE_TO_PAUSE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_4287E0, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, 0x90000000, 0, 0x70000000 | AG_UNLOCK_DOOR, 0 },
+        { sub_428A10, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, 0x90000000, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_428550, AGDATA_SCRATCH_OBJ, AGDATA_SELF_OBJ, -1, 0x90000000, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_4246E0, AGDATA_SCRATCH_OBJ, AGDATA_SELF_OBJ, AG_ANIMATE_DOOR_OPEN, 0x90000000, 0, 0x31000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -638,7 +638,7 @@ static AnimGoalNode stru_5A71D0 = {
 };
 
 // 0x5A73D0
-static AnimGoalNode stru_5A73D0 = {
+static AnimGoalNode anim_goal_node_jump_window = {
     0xB,
     3,
     0,
@@ -648,17 +648,17 @@ static AnimGoalNode stru_5A73D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42D910, 0, -1, -1, 6, -2, 7, 0 },
-        { sub_42BD40, 0, -1, 0xD, 0x90000000, 0, 4, 0 },
-        { sub_42C780, 0, -1, -1, 0x90000000, 0, 0xB, 0 },
-        { sub_42D7D0, 0, 8, -1, 0xA, 0, 0x10000000, 0 },
-        { sub_42BD40, 0, -1, 1, 0x90000000, 0, 9, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 8, 0 },
-        { sub_42F000, 0, 8, -1, 0x10000000, -2, 0x10000000, -2 },
-        { sub_42F140, 0, 8, -1, 0x90000000, 0, 0x31000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_4284F0, 3, -1, -1, 5, 0, 0x5200000B, 0x32 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42D910, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, -2, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0xD, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42C780, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, AG_OPEN_DOOR, 0 },
+        { sub_42D7D0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x10000000, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, AG_MOVE_STRAIGHT, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_42F000, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, 0x10000000, -2 },
+        { sub_42F140, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x90000000, 0, 0x31000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x52000000 | AG_OPEN_DOOR, 50 },
         { 0 },
         { 0 },
         { 0 },
@@ -667,7 +667,7 @@ static AnimGoalNode stru_5A73D0 = {
 };
 
 // 0x5A75D0
-static AnimGoalNode stru_5A75D0 = {
+static AnimGoalNode anim_goal_node_pickup_item = {
     0xA,
     3,
     0,
@@ -677,16 +677,16 @@ static AnimGoalNode stru_5A75D0 = {
     -1,
     -1,
     {
-        { sub_429370, 0, 1, -1, 2, 0, 0x90000000, 0 },
-        { sub_429380, 1, -1, -1, 0x90000000, 0, 3, 0 },
-        { sub_424D90, 0, 0x20, -1, 4, 0, 0x40000010, 0 },
-        { sub_429390, 0, 1, -1, 0x90000000, 0, 5, 0 },
-        { sub_4293A0, 1, -1, -1, 6, 0, 0xA, 0 },
-        { sub_4293B0, 0x21, -1, -1, 0x40000014, 0, 7, 0 },
-        { sub_4293C0, 0x21, -1, -1, 8, 0, 0x40000011, 0 },
-        { sub_429420, 0, 0x21, -1, 9, 0, 0x40000014, 0 },
-        { sub_429430, 0, 0x21, -1, 0x90000000, 0, 0x40000011, 0 },
-        { sub_42BEA0, -1, -1, 0, 0x90000000, 0, 0x40000008, 0 },
+        { sub_429370, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ANIM_FIDGET, 0, 0x90000000, 0 },
+        { sub_429380, AGDATA_TARGET_OBJ, -1, -1, 0x90000000, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_424D90, AGDATA_SELF_OBJ, 0x20, -1, 4, 0, 0x40000000 | AG_ATTEMPT_PICKUP, 0 },
+        { sub_429390, AGDATA_SELF_OBJ, 1, -1, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_4293A0, AGDATA_TARGET_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, AG_ATTEMPT_MOVE_STRAIGHT, 0 },
+        { sub_4293B0, AGDATA_NULL_OBJ, -1, -1, 0x40000000 | AG_KILL, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4293C0, AGDATA_NULL_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, 0, 0x40000000 | AG_PICKPOCKET, 0 },
+        { sub_429420, AGDATA_SELF_OBJ, AGDATA_NULL_OBJ, -1, AG_MOVE_STRAIGHT, 0, 0x40000000 | AG_KILL, 0 },
+        { sub_429430, AGDATA_SELF_OBJ, AGDATA_NULL_OBJ, -1, 0x90000000, 0, 0x40000000 | AG_PICKPOCKET, 0 },
+        { sub_42BEA0, -1, -1, 0, 0x90000000, 0, 0x40000000 | AG_MOVE_NEAR_OBJ, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -696,7 +696,7 @@ static AnimGoalNode stru_5A75D0 = {
 };
 
 // 0x5A77D0
-static AnimGoalNode stru_5A77D0 = {
+static AnimGoalNode anim_goal_node_attempt_pickup = {
     2,
     3,
     0,
@@ -706,8 +706,8 @@ static AnimGoalNode stru_5A77D0 = {
     -1,
     -1,
     {
-        { sub_42A9B0, 0, 1, -1, 2, 0, 2, 0 },
-        { sub_42BD40, 0, -1, 0, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42A9B0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ANIM_FIDGET, 0, AG_ANIM_FIDGET, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -725,7 +725,7 @@ static AnimGoalNode stru_5A77D0 = {
 };
 
 // 0x5A79D0
-static AnimGoalNode stru_5A79D0 = {
+static AnimGoalNode anim_goal_node_pickpocket = {
     1,
     3,
     0,
@@ -735,7 +735,7 @@ static AnimGoalNode stru_5A79D0 = {
     -1,
     -1,
     {
-        { sub_42BE80, -1, -1, 5, 0x90000000, 0, 0x40000021, 0 },
+        { sub_42BE80, -1, -1, SKILL_PICK_POCKET, 0x90000000, 0, 0x40000000 | AG_USE_SKILL_ON, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -754,7 +754,7 @@ static AnimGoalNode stru_5A79D0 = {
 };
 
 // 0x5A7BD0
-static AnimGoalNode stru_5A7BD0 = {
+static AnimGoalNode anim_goal_node_attack = {
     8,
     3,
     0,
@@ -764,14 +764,14 @@ static AnimGoalNode stru_5A7BD0 = {
     -1,
     -1,
     {
-        { sub_429450, 1, -1, -1, 0x30000000, 0, 2, 0 },
-        { sub_4294A0, 0, 1, -1, 0x90000000, 0, 3, 0 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { sub_429960, 0, 1, -1, 6, 0, 0x74000013, 0 },
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 7, 0 },
-        { sub_425130, 0, 1, -1, 0x4000004F, 0, 8, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_429450, AGDATA_TARGET_OBJ, -1, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_4294A0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_429960, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, 0x74000000 | AG_ATTEMPT_ATTACK, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, 1, -1, 0x40000000 | AG_MOVE_NEAR_OBJ_COMBAT, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
@@ -783,7 +783,7 @@ static AnimGoalNode stru_5A7BD0 = {
 };
 
 // 0x5A7DD0
-static AnimGoalNode stru_5A7DD0 = {
+static AnimGoalNode anim_goal_node_attempt_attack = {
     0xD,
     3,
     0,
@@ -793,26 +793,26 @@ static AnimGoalNode stru_5A7DD0 = {
     AG_KILL,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_432990, 0, -1, -1, 9, 0, 7, 0 },
-        { sub_42C0F0, 0, 1, -1, 0xA, 0, 4, 0 },
-        { sub_429960, 0, 1, -1, 0xC, 0, 5, 0 },
-        { sub_42B9C0, 0, 1, -1, 0xA, 0, 6, 0 },
-        { sub_432700, 0, 8, -1, 0xA, 0, 0x10000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 0xD, 0 },
-        { sub_42A630, 0, 1, -1, 0xA, 0, 0x10000000, -2 },
-        { sub_42A930, 0, -1, -1, 0xA, 0, 0xA, 0 },
-        { sub_42BD40, 0, -1, 0, 0xB, 0, 0xB, 0 },
-        { sub_432D50, 0, -1, -1, 0xC, 0, 0xC, 0 },
-        { sub_429760, 0, 1, -1, 0x30000000, 0, 0x74000012, 5 },
-        { sub_429960, 0, 1, -1, 0xC, 0, 8, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_432990, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_STRAIGHT, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42C0F0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_RUN_TO_TILE, 0 },
+        { sub_429960, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_OPEN_DOOR, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42B9C0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_432700, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x10000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_UNLOCK_DOOR, 0 },
+        { sub_42A630, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x10000000, -2 },
+        { sub_42A930, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_ATTEMPT_MOVE_STRAIGHT, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0, AG_OPEN_DOOR, 0, AG_OPEN_DOOR, 0 },
+        { sub_432D50, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, AG_ATTEMPT_OPEN_DOOR, 0 },
+        { sub_429760, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x30000000, 0, 0x74000000 | AG_ATTACK, 5 },
+        { sub_429960, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_OPEN_DOOR, 0, AG_MOVE_NEAR_OBJ, 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A7FD0
-static AnimGoalNode stru_5A7FD0 = {
+static AnimGoalNode anim_goal_node_kill = {
     7,
     3,
     0,
@@ -822,13 +822,13 @@ static AnimGoalNode stru_5A7FD0 = {
     -1,
     -1,
     {
-        { sub_429450, 1, -1, -1, 0x30000000, 0, 2, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_4294A0, 0, 1, -1, 0x90000000, 0, 5, 0 },
-        { sub_429B40, 0, 1, -1, 0x40000016, 0, 6, 0 },
-        { sub_429960, 0, 1, -1, 7, 0, 0x40000013, 0 },
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 0x40000008, 0 },
+        { sub_429450, AGDATA_TARGET_OBJ, -1, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_4294A0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_429B40, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_PICK_WEAPON, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_429960, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_NEAR_TILE, 0, 0x40000000 | AG_ATTEMPT_ATTACK, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 0x40000000 | AG_MOVE_NEAR_OBJ, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -836,12 +836,12 @@ static AnimGoalNode stru_5A7FD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A81D0
-static AnimGoalNode stru_5A81D0 = {
+static AnimGoalNode anim_goal_node_talk = {
     6,
     3,
     0,
@@ -851,12 +851,12 @@ static AnimGoalNode stru_5A81D0 = {
     -1,
     -1,
     {
-        { sub_42ACD0, 0, 1, -1, 0x30000000, 0, 2, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_42AE10, 0, 1, -1, 6, 0, 5, 0 },
-        { sub_42AF00, 0, 1, -1, 0x90000000, 0, 0x30000000, 0 },
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 0x40000008, 0 },
+        { sub_42ACD0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_42AE10, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42AF00, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, 0x30000000, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 0x40000000 | AG_MOVE_NEAR_OBJ, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -870,7 +870,7 @@ static AnimGoalNode stru_5A81D0 = {
 };
 
 // 0x5A83D0
-static AnimGoalNode stru_5A83D0 = {
+static AnimGoalNode anim_goal_node_chase = {
     4,
     3,
     0,
@@ -880,10 +880,10 @@ static AnimGoalNode stru_5A83D0 = {
     -1,
     -1,
     {
-        { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
-        { sub_42BF40, 0, -1, -1, 0x90000000, 0, 3, 0 },
-        { sub_425130, 0, 1, -1, 0x40000008, 0, 4, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x10000000, 0x64 },
+        { sub_42B940, -1, -1, -1, AG_ANIM_FIDGET, 0, AG_ANIM_FIDGET, 0 },
+        { sub_42BF40, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_MOVE_NEAR_OBJ, 0, 4, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x10000000, 100 },
         { 0 },
         { 0 },
         { 0 },
@@ -899,7 +899,7 @@ static AnimGoalNode stru_5A83D0 = {
 };
 
 // 0x5A85D0
-static AnimGoalNode stru_5A85D0 = {
+static AnimGoalNode anim_goal_node_follow = {
     5,
     2,
     0,
@@ -909,11 +909,11 @@ static AnimGoalNode stru_5A85D0 = {
     AG_MOVE_NEAR_OBJ,
     -1,
     {
-        { sub_42BF40, 0, -1, -1, 0x90000000, 0, 2, 0 },
-        { sub_42BFD0, 0, 1, -1, 3, 0, 3, 0 },
-        { sub_425130, 0, 1, -1, 4, 0, 5, 0 },
-        { sub_425340, 0, 1, -1, 0x70000038, 0, 0x70000008, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x10000000, 0x64 },
+        { sub_42BF40, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_42BFD0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_TILE, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_RUN_TO_TILE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_425340, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x70000000 | AG_RUN_NEAR_OBJ, 0, 0x70000000 | AG_MOVE_NEAR_OBJ, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x10000000, 100 },
         { 0 },
         { 0 },
         { 0 },
@@ -928,7 +928,7 @@ static AnimGoalNode stru_5A85D0 = {
 };
 
 // 0x5A87D0
-static AnimGoalNode stru_5A87D0 = {
+static AnimGoalNode anim_goal_node_flee = {
     4,
     3,
     0,
@@ -938,10 +938,10 @@ static AnimGoalNode stru_5A87D0 = {
     -1,
     -1,
     {
-        { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
-        { sub_42BEA0, -1, -1, 9, 0x90000000, 0, 3, 0 },
-        { sub_425130, 0, 1, -1, 4, 0, 0x40000034, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x30000000, -2 },
+        { sub_42B940, -1, -1, -1, AG_ANIM_FIDGET, 0, AG_ANIM_FIDGET, 0 },
+        { sub_42BEA0, -1, -1, 9, 0x90000000, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_MOVE_AWAY_FROM_OBJ, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x30000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -957,7 +957,7 @@ static AnimGoalNode stru_5A87D0 = {
 };
 
 // 0x5A89D0
-static AnimGoalNode stru_5A89D0 = {
+static AnimGoalNode anim_goal_node_throw_spell = {
     0xA,
     3,
     0,
@@ -967,26 +967,26 @@ static AnimGoalNode stru_5A89D0 = {
     -1,
     -1,
     {
-        { sub_429440, 1, -1, -1, 0xA, 0, 2, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_429B50, 0, 1, -1, 8, 0, 5, 0 },
-        { sub_429BB0, 0, 1, -1, 0x40000016, 0, 6, 0 },
-        { sub_429BC0, 0, 1, -1, 0xA, 0, 9, 0 },
-        { sub_42BEA0, -1, -1, 8, 0xA, 0, 0x40000008, 0 },
-        { sub_431A40, 0, -1, -1, 0xA, 0, 0xA, 0 },
-        { sub_42C850, 0, 1, -1, 0xA, 0, 0x7000001B, 0 },
-        { sub_429CD0, 0, 0xB, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_429440, AGDATA_TARGET_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_ANIM_FIDGET, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_429B50, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_NEAR_OBJ, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_429BB0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_PICK_WEAPON, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_429BC0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_MOVE_STRAIGHT, 0 },
+        { sub_42BEA0, -1, -1, AGDATA_ANIM_ID, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x40000000 | AG_MOVE_NEAR_OBJ, 0 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_ATTEMPT_MOVE_STRAIGHT, 0 },
+        { sub_42C850, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x70000000 | AG_ATTEMPT_SPELL, 0 },
+        { sub_429CD0, AGDATA_SELF_OBJ, AGDATA_SPELL_DATA, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A8BD0
-static AnimGoalNode stru_5A8BD0 = {
+static AnimGoalNode anim_goal_node_attempt_spell = {
     0xC,
     4,
     0,
@@ -996,26 +996,26 @@ static AnimGoalNode stru_5A8BD0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 0xB, 0 },
-        { sub_431340, 0, -1, -1, 8, -2, 4, 0 },
-        { sub_4315B0, 0, -1, -1, 0xC, 0, 0x10000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 5, 0 },
-        { sub_429C40, 0xB, -1, -1, 9, 0, 6, 0 },
-        { sub_424820, 0, 0x1F, 5, 8, 0, 7, 0 },
-        { sub_4246E0, 3, 0, 0x1C, 0x90000000, -2, 0x10000000, -2 },
-        { sub_431A40, 0, -1, -1, 0x90000000, 0, 0x30000000, 0 },
-        { sub_429C80, 0xB, -1, -1, 8, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_429F00, 0xB, -1, -1, 0xC, 0, 3, 0 },
-        { sub_429C80, 0xB, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_OPEN_DOOR, 0 },
+        { sub_431340, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, -2, AG_RUN_TO_TILE, 0 },
+        { sub_4315B0, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, 0x10000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_ATTEMPT_MOVE, 0 },
+        { sub_429C40, AGDATA_SPELL_DATA, -1, -1, AG_MOVE_STRAIGHT, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_424820, AGDATA_SELF_OBJ, AGDATA_SELF_TILE, 5, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4246E0, AGDATA_SCRATCH_OBJ, AGDATA_SELF_OBJ, AG_SHOOT_SPELL, 0x90000000, -2, 0x10000000, -2 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x30000000, 0 },
+        { sub_429C80, AGDATA_SPELL_DATA, -1, -1, AG_MOVE_NEAR_OBJ, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_429F00, AGDATA_SPELL_DATA, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_429C80, AGDATA_SPELL_DATA, -1, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
-        { sub_429CD0, 0, 0xB, 1, 0, 0, 0, 0 },
+        { sub_429CD0, AGDATA_SELF_OBJ, AGDATA_SPELL_DATA, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A8DD0
-static AnimGoalNode stru_5A8DD0 = {
+static AnimGoalNode anim_goal_node_shoot_spell = {
     9,
     3,
     0,
@@ -1025,26 +1025,26 @@ static AnimGoalNode stru_5A8DD0 = {
     -1,
     -1,
     {
-        { sub_424D90, 0, 0x22, -1, 2, 0, 4, 0 },
-        { sub_425740, 0, -1, -1, 3, 0, 8, 0 },
-        { sub_426840, 0, 0x22, -1, 0x90000000, 0, 8, 0 },
-        { sub_42A180, 0, 1, -1, 9, 0, 5, 0 },
-        { sub_429C80, 0xB, -1, -1, 0x90000000, 0, 6, 0 },
-        { sub_424D00, 0, -1, -1, 0x90000000, 0, 0x30000000, 0 },
-        { sub_42A200, 0, 0xB, -1, 6, 0, 6, 0 },
-        { sub_429ED0, 0xB, -1, -1, 0x90000000, 0, 0x4000004E, 0 },
-        { sub_42BEC0, 1, -1, -1, 0x30000000, 0, 1, 0 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_FORCE_TARGET_TILE, -1, AG_ANIM_FIDGET, 0, AG_RUN_TO_TILE, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_426840, AGDATA_SELF_OBJ, AGDATA_FORCE_TARGET_TILE, -1, 0x90000000, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_42A180, AGDATA_SELF_OBJ, 1, -1, AG_MOVE_STRAIGHT, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_429C80, AGDATA_SPELL_DATA, -1, -1, 0x90000000, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_424D00, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x30000000, 0 },
+        { sub_42A200, AGDATA_SELF_OBJ, AGDATA_SPELL_DATA, -1, AG_MOVE_TO_PAUSE, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_429ED0, AGDATA_SPELL_DATA, -1, -1, 0x90000000, 0, 0x40000000 | AG_ATTEMPT_MOVE_STRAIGHT_SPELL, 0 },
+        { sub_42BEC0, AGDATA_TARGET_OBJ, -1, -1, 0x30000000, 0, AG_ANIMATE_LOOP, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_429E70, 0, 0xB, 1, 0, 0, 0, 0 },
+        { sub_429E70, AGDATA_SELF_OBJ, AGDATA_SPELL_DATA, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A8FD0
-static AnimGoalNode stru_5A8FD0 = {
+static AnimGoalNode anim_goal_node_hit_by_spell = {
     4,
     3,
     0,
@@ -1054,10 +1054,10 @@ static AnimGoalNode stru_5A8FD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42FEC0, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_42FEB0, 0, 0xA, -1, 4, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42FEC0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_42FEB0, AGDATA_SELF_OBJ, AGDATA_ANIM_DATA, -1, AG_RUN_TO_TILE, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1073,7 +1073,7 @@ static AnimGoalNode stru_5A8FD0 = {
 };
 
 // 0x5A91D0
-static AnimGoalNode stru_5A91D0 = {
+static AnimGoalNode anim_goal_node_hit_by_weapon = {
     6,
     3,
     0,
@@ -1083,12 +1083,12 @@ static AnimGoalNode stru_5A91D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 5, -2, 0x10000000, -2 },
-        { sub_42BD40, 0, -1, 0x17, 0x90000000, 0, 4, 0 },
-        { sub_42CB10, 0, 8, -1, 6, 0, 0x10000000, 0 },
-        { sub_42BD40, 0, -1, 0, 0x90000000, 0, 0x90000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, -2, 0x10000000, -2 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 23, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42CB10, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_TO_PAUSE, 0, 0x10000000, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0, 0x90000000, 0, 0x90000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1102,7 +1102,7 @@ static AnimGoalNode stru_5A91D0 = {
 };
 
 // 0x5A93D0
-static AnimGoalNode stru_5A93D0 = {
+static AnimGoalNode anim_goal_node_dying = {
     9,
     5,
     0,
@@ -1112,26 +1112,26 @@ static AnimGoalNode stru_5A93D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42D6F0, 0, -1, -1, 7, 0, 0x10000000, -2 },
-        { sub_426F10, 0, -1, -1, 4, 0, 7, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 5, 0 },
-        { sub_42BC10, 0, -1, -1, 7, 0, 6, 0 },
-        { sub_42D570, 0, 8, -1, 7, 0, 0x10000000, 0 },
-        { sub_42FED0, 0, -1, -1, 8, 0, 9, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_42FF40, 0, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42D6F0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_TILE, 0, 0x10000000, -2 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42BC10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_TILE, 0, 6, 0 },
+        { sub_42D570, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_NEAR_TILE, 0, 0x10000000, 0 },
+        { sub_42FED0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_STRAIGHT, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42FF40, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42FFE0, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42FFE0, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A95D0
-static AnimGoalNode stru_5A95D0 = {
+static AnimGoalNode anim_goal_node_destroy_obj = {
     1,
     5,
     0,
@@ -1141,7 +1141,7 @@ static AnimGoalNode stru_5A95D0 = {
     -1,
     -1,
     {
-        { sub_424D00, 0, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_424D00, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1160,7 +1160,7 @@ static AnimGoalNode stru_5A95D0 = {
 };
 
 // 0x5A97D0
-static AnimGoalNode stru_5A97D0 = {
+static AnimGoalNode anim_goal_node_use_skill_on = {
     7,
     3,
     0,
@@ -1170,13 +1170,13 @@ static AnimGoalNode stru_5A97D0 = {
     -1,
     -1,
     {
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 2, 0 },
-        { sub_425130, 0, 1, 1, 3, 0, 5, 0 },
-        { sub_425740, 0, -1, -1, 4, 0, 0x40000005, 0 },
-        { sub_427990, 0, 1, -1, 6, 0, 0x40000005, 0 },
-        { sub_42A490, 0, 0xC, 1, 7, 0, 0x70000043, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
-        { sub_42A440, 0, 0xC, 1, 0x70000022, 0, 0x70000056, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, 1, 1, AG_MOVE_TO_TILE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_427990, AGDATA_SELF_OBJ, 1, -1, AG_MOVE_TO_PAUSE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_42A490, AGDATA_SELF_OBJ, AGDATA_SKILL_DATA, 1, AG_MOVE_NEAR_TILE, 0, 0x70000000 | AG_USE_PICKLOCK_SKILL_ON, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
+        { sub_42A440, AGDATA_SELF_OBJ, AGDATA_SKILL_DATA, 1, 0x70000000 | AG_ATTEMPT_USE_SKILL_ON, 0, 0x70000000 | AG_ATTEMPT_USE_PICKPOCKET_SKILL_ON, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1184,12 +1184,12 @@ static AnimGoalNode stru_5A97D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A99D0
-static AnimGoalNode stru_5A99D0 = {
+static AnimGoalNode anim_goal_node_attempt_use_skill_on = {
     9,
     3,
     0,
@@ -1199,26 +1199,26 @@ static AnimGoalNode stru_5A99D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 8, -2, 6, 0 },
-        { sub_42C0F0, 0, 1, -1, 0x90000000, 0, 4, 0 },
-        { sub_42BD40, 0, -1, 0xC, 0x90000000, 0, 5, 0 },
-        { sub_42CB10, 0, 8, -1, 9, 0, 0x10000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 7, 0 },
-        { sub_42A2A0, 0, 1, -1, 0x90000000, 0, 0x10000000, -2 },
-        { sub_42BD40, 0, -1, 0, 0x90000000, 0, 0x30000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, -2, AG_MOVE_TO_PAUSE, 0 },
+        { sub_42C0F0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0xC, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42CB10, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_STRAIGHT, 0, 0x10000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42A2A0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0, 0x90000000, 0, 0x30000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5A9BD0
-static AnimGoalNode stru_5A9BD0 = {
+static AnimGoalNode anim_goal_node_skill_conceal = {
     6,
     3,
     0,
@@ -1228,12 +1228,12 @@ static AnimGoalNode stru_5A9BD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 5, -2, 0x10000000, -2 },
-        { sub_42BD40, 0, -1, 5, 0x90000000, 0, 4, 0 },
-        { sub_42CB10, 0, 8, -1, 6, 0, 0x10000000, 0 },
-        { sub_42BD40, 0, -1, 5, 0x90000000, 0, 0x90000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, -2, 0x10000000, -2 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 5, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42CB10, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_TO_PAUSE, 0, 0x10000000, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 5, 0x90000000, 0, 0x90000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1247,7 +1247,7 @@ static AnimGoalNode stru_5A9BD0 = {
 };
 
 // 0x5A9DD0
-static AnimGoalNode stru_5A9DD0 = {
+static AnimGoalNode anim_goal_node_projectile = {
     7,
     5,
     0,
@@ -1257,13 +1257,13 @@ static AnimGoalNode stru_5A9DD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42F6A0, 0, 1, -1, 0x30000000, 0, 0x10000000, 0xFFFFFFFD },
-        { sub_424D90, 0, 5, -1, 4, 0, 0x30000000, 0 },
-        { sub_424BC0, 0, 1, -1, 0x30000000, 0, 5, 0 },
-        { sub_425740, 0, -1, -1, 6, 0, 7, 0 },
-        { sub_4269D0, 0, 5, -1, 0x30000000, 0, 7, 0 },
-        { sub_42F5C0, 0, -1, -1, 0x30000000, 0, 0x10000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42F6A0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x30000000, 0, 0x10000000, -3 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_RUN_TO_TILE, 0, 0x30000000, 0 },
+        { sub_424BC0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x30000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4269D0, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, 0x30000000, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42F5C0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, 0, 0x10000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1276,7 +1276,7 @@ static AnimGoalNode stru_5A9DD0 = {
 };
 
 // 0x5A9FD0
-static AnimGoalNode stru_5A9FD0 = {
+static AnimGoalNode anim_goal_node_throw_item = {
     9,
     3,
     0,
@@ -1286,26 +1286,26 @@ static AnimGoalNode stru_5A9FD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 8, -2, 6, 0 },
-        { sub_42BD40, 0, -1, 0xE, 8, 0, 4, 0 },
-        { sub_42C390, 0, 5, -1, 8, 0, 5, 0 },
-        { sub_42CB10, 0, 8, -1, 8, 0, 0x10000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 7, 0 },
-        { sub_42AB90, 0, 3, 5, 8, 0, 0x10000000, -2 },
-        { sub_42BD40, 0, -1, 0, 9, 0, 9, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, -2, AG_MOVE_TO_PAUSE, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 14, AG_MOVE_NEAR_OBJ, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42C390, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_NEAR_OBJ, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42CB10, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_NEAR_OBJ, 0, 0x10000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42AB90, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, 5, AG_MOVE_NEAR_OBJ, 0, 0x10000000, -2 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0, AG_MOVE_STRAIGHT, 0, AG_MOVE_STRAIGHT, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B440, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B440, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AA1D0
-static AnimGoalNode stru_5AA1D0 = {
+static AnimGoalNode anim_goal_node_use_object = {
     6,
     3,
     0,
@@ -1315,12 +1315,12 @@ static AnimGoalNode stru_5AA1D0 = {
     -1,
     -1,
     {
-        { sub_428930, 0, 1, -1, 0x90000000, 0, 2, 0 },
-        { sub_425130, 0, 1, -1, 0x40000008, 0, 3, 0 },
-        { sub_4284A0, 1, -1, -1, 4, 0, 5, 0 },
-        { sub_428A10, 0, 1, -1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_42BE50, 1, -1, -1, 0x90000000, 0, 6, 0 },
-        { sub_4284F0, 1, -1, -1, 0x70000031, 0, 0x7000000B, 0 },
+        { sub_428930, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_MOVE_NEAR_OBJ, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_4284A0, AGDATA_TARGET_OBJ, -1, -1, AG_RUN_TO_TILE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_428A10, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42BE50, AGDATA_TARGET_OBJ, -1, -1, 0x90000000, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_4284F0, AGDATA_TARGET_OBJ, -1, -1, 0x70000000 | AG_CLOSE_DOOR, 0, 0x70000000 | AG_OPEN_DOOR, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1334,7 +1334,7 @@ static AnimGoalNode stru_5AA1D0 = {
 };
 
 // 0x5AA3D0
-static AnimGoalNode stru_5AA3D0 = {
+static AnimGoalNode anim_goal_node_use_item_on_object = {
     3,
     3,
     0,
@@ -1344,9 +1344,9 @@ static AnimGoalNode stru_5AA3D0 = {
     -1,
     -1,
     {
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 2, 0 },
-        { sub_425130, 0, 1, -1, 0x40000008, 0, 3, 0 },
-        { sub_428CD0, 0, 1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_MOVE_NEAR_OBJ, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_428CD0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1363,7 +1363,7 @@ static AnimGoalNode stru_5AA3D0 = {
 };
 
 // 0x5AA5D0
-static AnimGoalNode stru_5AA5D0 = {
+static AnimGoalNode anim_goal_node_use_item_on_object_with_skill = {
     3,
     3,
     0,
@@ -1373,9 +1373,9 @@ static AnimGoalNode stru_5AA5D0 = {
     -1,
     -1,
     {
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 2, 0 },
-        { sub_425130, 0, 1, -1, 0x40000008, 0, 3, 0 },
-        { sub_428E10, 0, 1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_MOVE_NEAR_OBJ, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_428E10, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1392,7 +1392,7 @@ static AnimGoalNode stru_5AA5D0 = {
 };
 
 // 0x5AA7D0
-static AnimGoalNode stru_5AA7D0 = {
+static AnimGoalNode anim_goal_node_use_item_on_tile = {
     3,
     3,
     0,
@@ -1402,9 +1402,9 @@ static AnimGoalNode stru_5AA7D0 = {
     -1,
     -1,
     {
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 2, 0 },
-        { sub_425270, 0, 5, -1, 0x40000007, 0, 3, 0 },
-        { sub_429040, 0, 5, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425270, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, 0x40000000 | AG_MOVE_NEAR_TILE, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_429040, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1421,7 +1421,7 @@ static AnimGoalNode stru_5AA7D0 = {
 };
 
 // 0x5AA9D0
-static AnimGoalNode stru_5AA9D0 = {
+static AnimGoalNode anim_goal_node_use_item_on_tile_with_skill = {
     3,
     3,
     0,
@@ -1431,9 +1431,9 @@ static AnimGoalNode stru_5AA9D0 = {
     -1,
     -1,
     {
-        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, 2, 0 },
-        { sub_425270, 0, 5, -1, 0x40000007, 0, 3, 0 },
-        { sub_429160, 0, 5, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42BEA0, -1, -1, 1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425270, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, 0x40000000 | AG_MOVE_NEAR_TILE, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_429160, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1450,7 +1450,7 @@ static AnimGoalNode stru_5AA9D0 = {
 };
 
 // 0x5AABD0
-static AnimGoalNode stru_5AABD0 = {
+static AnimGoalNode anim_goal_node_knockback = {
     4,
     5,
     0,
@@ -1460,10 +1460,10 @@ static AnimGoalNode stru_5AABD0 = {
     -1,
     -1,
     {
-        { sub_424D90, 0, 5, -1, 2, 0, 0x30000000, 0 },
-        { sub_425740, 0, -1, -1, 3, 0, 0x40000040, 0 },
-        { sub_4268F0, 0, 5, -1, 4, 0, 0x40000040, 0 },
-        { sub_42FEA0, 0, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_ANIM_FIDGET, 0, 0x30000000, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000040, 0 },
+        { sub_4268F0, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_RUN_TO_TILE, 0, 0x40000040, 0 },
+        { sub_42FEA0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1479,7 +1479,7 @@ static AnimGoalNode stru_5AABD0 = {
 };
 
 // 0x5AADD0
-static AnimGoalNode stru_5AADD0 = {
+static AnimGoalNode anim_goal_node_floating = {
     4,
     5,
     1,
@@ -1489,10 +1489,10 @@ static AnimGoalNode stru_5AADD0 = {
     -1,
     -1,
     {
-        { sub_431130, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431150, 0, -1, -1, 4, 0x64, 0x10000000, 0x64 },
-        { sub_4311F0, 0, -1, -1, 0x90000000, 0, 0x10000000, 0 },
-        { sub_431290, 0, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_431130, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431150, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 100, 0x10000000, 100 },
+        { sub_4311F0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, 0 },
+        { sub_431290, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1508,7 +1508,7 @@ static AnimGoalNode stru_5AADD0 = {
 };
 
 // 0x5AAFD0
-static AnimGoalNode stru_5AAFD0 = {
+static AnimGoalNode anim_goal_node_eye_candy = {
     4,
     5,
     1,
@@ -1518,10 +1518,10 @@ static AnimGoalNode stru_5AAFD0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431340, 0, -1, -1, 4, 0, 0x10000000, -2 },
-        { sub_4315B0, 0, -1, -1, 0x90000000, 0, 0x10000000, -2 },
-        { sub_431A40, 0, -1, -1, 3, 0, 0x30000000, 0 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431340, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_4315B0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1532,12 +1532,12 @@ static AnimGoalNode stru_5AAFD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AB1D0
-static AnimGoalNode stru_5AB1D0 = {
+static AnimGoalNode anim_goal_node_eye_candy_reverse = {
     4,
     5,
     1,
@@ -1547,10 +1547,10 @@ static AnimGoalNode stru_5AB1D0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431C40, 0, -1, -1, 4, 0, 0x10000000, -2 },
-        { sub_431E50, 0, -1, -1, 0x90000000, 0, 0x10000000, -2 },
-        { sub_4321C0, 0, -1, -1, 3, 0, 0x30000000, 0 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431C40, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_431E50, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_4321C0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1561,12 +1561,12 @@ static AnimGoalNode stru_5AB1D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AB3D0
-static AnimGoalNode stru_5AB3D0 = {
+static AnimGoalNode anim_goal_node_eye_candy_callback = {
     6,
     5,
     1,
@@ -1576,12 +1576,12 @@ static AnimGoalNode stru_5AB3D0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431340, 0, -1, -1, 4, 0, 5, 0 },
-        { sub_4315B0, 0, -1, -1, 0x90000000, 0, 0x10000000, -2 },
-        { sub_431A40, 0, -1, -1, 3, 0, 0x30000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 6, 0 },
-        { sub_42A260, 0xB, -1, -1, 4, 0, 0x10000000, -2 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431340, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_4315B0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_MOVE_TO_PAUSE, 0 },
+        { sub_42A260, AGDATA_SPELL_DATA, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -1590,12 +1590,12 @@ static AnimGoalNode stru_5AB3D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AB5D0
-static AnimGoalNode stru_5AB5D0 = {
+static AnimGoalNode anim_goal_node_eye_candy_reverse_callback = {
     6,
     5,
     1,
@@ -1605,12 +1605,12 @@ static AnimGoalNode stru_5AB5D0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431C40, 0, -1, -1, 4, 0, 5, 0 },
-        { sub_431E50, 0, -1, -1, 0x90000000, 0, 0x10000000, -2 },
-        { sub_4321C0, 0, -1, -1, 3, 0, 0x30000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 6, 0 },
-        { sub_42A260, 0xB, -1, -1, 4, 0, 0x10000000, -2 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431C40, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_431E50, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_4321C0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_MOVE_TO_PAUSE, 0 },
+        { sub_42A260, AGDATA_SPELL_DATA, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -1619,12 +1619,12 @@ static AnimGoalNode stru_5AB5D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AB7D0
-static AnimGoalNode stru_5AB7D0 = {
+static AnimGoalNode anim_goal_node_close_door = {
     2,
     3,
     0,
@@ -1634,8 +1634,8 @@ static AnimGoalNode stru_5AB7D0 = {
     -1,
     -1,
     {
-        { sub_4284A0, 3, -1, -1, 0x30000000, 0, 2, 0 },
-        { sub_4284F0, 3, -1, -1, 0x70000032, 0, 0x90000000, 0 },
+        { sub_4284A0, AGDATA_SCRATCH_OBJ, -1, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, 0x70000000 | AG_ATTEMPT_CLOSE_DOOR, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1653,7 +1653,7 @@ static AnimGoalNode stru_5AB7D0 = {
 };
 
 // 0x5AB9D0
-static AnimGoalNode stru_5AB9D0 = {
+static AnimGoalNode anim_goal_node_attempt_close_door = {
     4,
     3,
     1,
@@ -1663,10 +1663,10 @@ static AnimGoalNode stru_5AB9D0 = {
     -1,
     -1,
     {
-        { sub_4284A0, 3, -1, -1, 0x30000000, 0, 2, 0 },
-        { sub_4284F0, 3, -1, -1, 3, 0, 0x90000000, 0 },
-        { sub_428620, 3, 0, -1, 0x90000000, 0, 4, 0 },
-        { sub_4246E0, 3, 0, 0x47, 0x90000000, 0, 0x30000000, 0 },
+        { sub_4284A0, AGDATA_SCRATCH_OBJ, -1, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x90000000, 0 },
+        { sub_428620, AGDATA_SCRATCH_OBJ, 0, -1, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_4246E0, AGDATA_SCRATCH_OBJ, 0, AG_ANIMATE_DOOR_CLOSED, 0x90000000, 0, 0x30000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1682,7 +1682,7 @@ static AnimGoalNode stru_5AB9D0 = {
 };
 
 // 0x5ABBD0
-static AnimGoalNode stru_5ABBD0 = {
+static AnimGoalNode anim_goal_node_animate_reverse = {
     4,
     3,
     0,
@@ -1692,10 +1692,10 @@ static AnimGoalNode stru_5ABBD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42E8B0, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_42E720, 0, 8, -1, 4, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42E8B0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_42E720, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_RUN_TO_TILE, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1706,12 +1706,12 @@ static AnimGoalNode stru_5ABBD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5ABDD0
-static AnimGoalNode stru_5ABDD0 = {
+static AnimGoalNode anim_goal_node_move_away_from_obj = {
     7,
     2,
     0,
@@ -1721,13 +1721,13 @@ static AnimGoalNode stru_5ABDD0 = {
     -1,
     -1,
     {
-        { sub_426F10, 0, -1, -1, 2, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 3, 0, 0x40000036, 0 },
-        { sub_425130, 0, 1, -1, 0x30000000, 0, 5, 0 },
-        { sub_425740, 0, -1, -1, 5, 0, 0x40000005, 0 },
-        { sub_426A80, 0, 1, -1, 6, 0, 0x40000005, 0 },
-        { sub_42C240, 0, 1, -1, 0x90000000, 0, 7, 0 },
-        { sub_4293D0, 0, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x30000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_426A80, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_42C240, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4293D0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1735,12 +1735,12 @@ static AnimGoalNode stru_5ABDD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5ABFD0
-static AnimGoalNode stru_5ABFD0 = {
+static AnimGoalNode anim_goal_node_rotate = {
     1,
     2,
     0,
@@ -1750,7 +1750,7 @@ static AnimGoalNode stru_5ABFD0 = {
     -1,
     -1,
     {
-        { sub_42C440, 0, 0xE, -1, 0x30000000, 0, 0x10000000, 0x1E },
+        { sub_42C440, AGDATA_SELF_OBJ, AGDATA_SCRATCH_VAL1, -1, 0x30000000, 0, 0x10000000, 30 },
         { 0 },
         { 0 },
         { 0 },
@@ -1764,12 +1764,12 @@ static AnimGoalNode stru_5ABFD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42C650, 0, 0xE, -1, 0, 0, 0, 0 },
+        { sub_42C650, AGDATA_SELF_OBJ, AGDATA_SCRATCH_VAL1, -1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AC1D0
-static AnimGoalNode stru_5AC1D0 = {
+static AnimGoalNode anim_goal_node_unconceal = {
     5,
     4,
     0,
@@ -1779,11 +1779,11 @@ static AnimGoalNode stru_5AC1D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42E8B0, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_42E6B0, 0, -1, -1, 5, 0, 4, 0 },
-        { sub_42E720, 0, 8, -1, 5, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42E8B0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_42E6B0, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42E720, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_ATTEMPT_MOVE, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1793,12 +1793,12 @@ static AnimGoalNode stru_5AC1D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42AFB0, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42AFB0, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AC3D0
-static AnimGoalNode stru_5AC3D0 = {
+static AnimGoalNode anim_goal_node_run_near_tile = {
     8,
     2,
     0,
@@ -1808,26 +1808,26 @@ static AnimGoalNode stru_5AC3D0 = {
     AG_RUN_TO_TILE,
     -1,
     {
-        { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
-        { sub_424D90, 0, 5, -1, 3, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 6, 0, 0x40000005, 0 },
-        { sub_427730, 0, 5, -1, 8, 0, 7, 0 },
-        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000035, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_42B940, -1, -1, -1, AG_ANIM_FIDGET, 0, AG_ANIM_FIDGET, 0 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_427730, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000000 | AG_ROTATE, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AC5D0
-static AnimGoalNode stru_5AC5D0 = {
+static AnimGoalNode anim_goal_node_run_near_obj = {
     7,
     2,
     0,
@@ -1837,13 +1837,13 @@ static AnimGoalNode stru_5AC5D0 = {
     -1,
     -1,
     {
-        { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
-        { sub_425130, 0, 1, -1, 3, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 6, 0, 0x40000005, 0 },
-        { sub_427990, 0, 1, -1, 7, 0, 0x40000005, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_42B940, -1, -1, -1, AG_ANIM_FIDGET, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_427990, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_NEAR_TILE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
@@ -1851,12 +1851,12 @@ static AnimGoalNode stru_5AC5D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AC7D0
-static AnimGoalNode stru_5AC7D0 = {
+static AnimGoalNode anim_goal_node_animate_stunned = {
     7,
     1,
     0,
@@ -1866,13 +1866,13 @@ static AnimGoalNode stru_5AC7D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42E070, 0, -1, -1, 7, 0, 0x10000000, -2 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { AGbeginStunAnim, 0, 8, -1, 6, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_426F60, 0, -1, -1, 5, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42E070, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_TILE, 0, 0x10000000, -2 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { AGbeginStunAnim, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_TO_PAUSE, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_426F60, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1880,12 +1880,12 @@ static AnimGoalNode stru_5AC7D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B250, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B250, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AC9D0
-static AnimGoalNode stru_5AC9D0 = {
+static AnimGoalNode anim_goal_node_eye_candy_end_callback = {
     5,
     5,
     1,
@@ -1895,11 +1895,11 @@ static AnimGoalNode stru_5AC9D0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431340, 0, -1, -1, 4, 0, 0x10000000, -2 },
-        { sub_4315B0, 0, -1, -1, 0x90000000, 0, 0x10000000, 0 },
-        { sub_42A280, 0xB, -1, -1, 5, 0, 5, 0 },
-        { sub_431A40, 0, -1, -1, 0x30000000, 0, 0x30000000, 0 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431340, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_4315B0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, 0 },
+        { sub_42A280, AGDATA_SPELL_DATA, -1, -1, AG_ATTEMPT_MOVE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, 0x30000000, 0, 0x30000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1909,12 +1909,12 @@ static AnimGoalNode stru_5AC9D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5ACBD0
-static AnimGoalNode stru_5ACBD0 = {
+static AnimGoalNode anim_goal_node_eye_candy_reverse_end_callback = {
     5,
     5,
     1,
@@ -1924,11 +1924,11 @@ static AnimGoalNode stru_5ACBD0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431C40, 0, -1, -1, 4, 0, 0x10000000, -2 },
-        { sub_431E50, 0, -1, -1, 0x90000000, 0, 0x10000000, 0 },
-        { sub_42A280, 0xB, -1, -1, 5, 0, 5, 0 },
-        { sub_4321C0, 0, -1, -1, 0x30000000, 0, 0x30000000, 0 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431C40, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_431E50, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, 0 },
+        { sub_42A280, AGDATA_SPELL_DATA, -1, -1, AG_ATTEMPT_MOVE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_4321C0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, 0, 0x30000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1938,12 +1938,12 @@ static AnimGoalNode stru_5ACBD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5ACDD0
-static AnimGoalNode stru_5ACDD0 = {
+static AnimGoalNode anim_goal_node_animate_kneel_magic_hands = {
     6,
     3,
     0,
@@ -1953,12 +1953,12 @@ static AnimGoalNode stru_5ACDD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42E2D0, 0, -1, -1, 0x70000033, 0, 0x10000000, -2 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { sub_42E1B0, 0, -1, -1, 6, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42E2D0, AGDATA_SELF_OBJ, -1, -1, 0x70000000 | AG_ANIMATE_REVERSE, 0, 0x10000000, -2 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_42E1B0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -1972,7 +1972,7 @@ static AnimGoalNode stru_5ACDD0 = {
 };
 
 // 0x5ACFD0
-static AnimGoalNode stru_5ACFD0 = {
+static AnimGoalNode anim_goal_node_attempt_move_near = {
     0xC,
     2,
     0,
@@ -1982,26 +1982,26 @@ static AnimGoalNode stru_5ACFD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 4, 0 },
-        { sub_4270B0, 0, -1, -1, 3, 0, 0xA, 0xFFFFFFFC },
-        { sub_4305D0, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_425740, 0, -1, -1, 0xC, 0, 5, 0 },
-        { sub_4254C0, 0, 1, -1, 6, 0, 0x30000000, 0 },
-        { sub_427640, 0, -1, -1, 7, 0, 0xB, 0 },
-        { sub_4272E0, 0, -1, -1, 9, 0, 8, 0 },
-        { sub_4284F0, 3, -1, -1, 9, 0, 0x5200000B, 0x32 },
-        { sub_42E9B0, 0, -1, -1, 0xA, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x30000000, 0, 0x30000000, 0 },
-        { sub_4288A0, 0, 3, -1, 0x90000000, 0, 0x5000000E, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_RUN_TO_TILE, 0 },
+        { sub_4270B0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, AG_ATTEMPT_MOVE_STRAIGHT, -4 },
+        { sub_4305D0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_4254C0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, 0x30000000, 0 },
+        { sub_427640, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_TILE, 0, 0xB, 0 },
+        { sub_4272E0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_STRAIGHT, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, AG_MOVE_STRAIGHT, 0, 0x52000000 | AG_OPEN_DOOR, 50 },
+        { sub_42E9B0, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x30000000, 0, 0x30000000, 0 },
+        { sub_4288A0, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, 0x90000000, 0, 0x50000000 | AG_JUMP_WINDOW, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
-        { sub_430F20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_430F20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AD1D0
-static AnimGoalNode stru_5AD1D0 = {
+static AnimGoalNode anim_goal_node_knock_down = {
     4,
     3,
     0,
@@ -2011,10 +2011,10 @@ static AnimGoalNode stru_5AD1D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 4, 0, 0x10000000, -2 },
-        { AGbeginKnockDownAnim, 0, -1, -1, 0x90000000, 0, 0x10000000, 0 },
-        { sub_42E460, 0, -1, -1, 0x30000000, 0, 0x7000003F, 0xC8 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { AGbeginKnockDownAnim, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, 0 },
+        { sub_42E460, AGDATA_SELF_OBJ, -1, -1, 0x30000000, 0, 0x70000000 | AG_ANIM_GET_UP, 200 },
         { 0 },
         { 0 },
         { 0 },
@@ -2030,7 +2030,7 @@ static AnimGoalNode stru_5AD1D0 = {
 };
 
 // 0x5AD3D0
-static AnimGoalNode stru_5AD3D0 = {
+static AnimGoalNode anim_goal_node_anim_get_up = {
     4,
     3,
     0,
@@ -2040,10 +2040,10 @@ static AnimGoalNode stru_5AD3D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 0x30000000, 0, 0x10000000, -2 },
-        { sub_42E590, 0, -1, -1, 4, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, 0x30000000, 0, 0x10000000, -2 },
+        { sub_42E590, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -2054,12 +2054,12 @@ static AnimGoalNode stru_5AD3D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AD5D0
-static AnimGoalNode stru_5AD5D0 = {
+static AnimGoalNode anim_goal_node_attempt_move_straight_knockback = {
     4,
     3,
     0,
@@ -2069,9 +2069,9 @@ static AnimGoalNode stru_5AD5D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42FA50, 0, -1, -1, 0x90000000, 0, 0x10000000, 0xFFFFFFFD },
-        { sub_42F2D0, 0, -1, -1, 0x90000000, 0, 0x10000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42FA50, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, -3 },
+        { sub_42F2D0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -2088,7 +2088,7 @@ static AnimGoalNode stru_5AD5D0 = {
 };
 
 // 0x5AD7D0
-static AnimGoalNode stru_5AD7D0 = {
+static AnimGoalNode anim_goal_node_wander = {
     1,
     3,
     0,
@@ -2098,7 +2098,7 @@ static AnimGoalNode stru_5AD7D0 = {
     -1,
     -1,
     {
-        { sub_425930, 0, -1, -1, 0x10000000, 0x12C, 0x70000007, 0x12C },
+        { sub_425930, AGDATA_SELF_OBJ, -1, -1, 0x10000000, 300, 0x70000000 | AG_MOVE_NEAR_TILE, 300 },
         { 0 },
         { 0 },
         { 0 },
@@ -2117,7 +2117,7 @@ static AnimGoalNode stru_5AD7D0 = {
 };
 
 // 0x5AD9D0
-static AnimGoalNode stru_5AD9D0 = {
+static AnimGoalNode anim_goal_node_wander_seek_darkness = {
     1,
     3,
     0,
@@ -2127,7 +2127,7 @@ static AnimGoalNode stru_5AD9D0 = {
     -1,
     -1,
     {
-        { sub_425D60, 0, -1, -1, 0x10000000, 0x12C, 0x70000007, 0x12C },
+        { sub_425D60, AGDATA_SELF_OBJ, -1, -1, 0x10000000, 300, 0x70000000 | AG_MOVE_NEAR_TILE, 300 },
         { 0 },
         { 0 },
         { 0 },
@@ -2146,7 +2146,7 @@ static AnimGoalNode stru_5AD9D0 = {
 };
 
 // 0x5ADBD0
-static AnimGoalNode stru_5ADBD0 = {
+static AnimGoalNode anim_goal_node_use_picklock_skill_on = {
     7,
     3,
     0,
@@ -2156,13 +2156,13 @@ static AnimGoalNode stru_5ADBD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42D440, 0, -1, -1, 6, -2, 0x10000000, -2 },
-        { sub_42C0F0, 0, 1, -1, 0x90000000, 0, 4, 0 },
-        { sub_42BD40, 0, -1, 0xC, 0x90000000, 0, 5, 0 },
-        { sub_42D300, 0, 8, -1, 7, 0, 0x10000000, -2 },
-        { sub_42A4E0, 0, 1, -1, 0x90000000, 0, 0x10000000, -2 },
-        { sub_42BD40, 0, -1, 0, 0x90000000, 0, 0x30000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42D440, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, -2, 0x10000000, -2 },
+        { sub_42C0F0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0xC, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42D300, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 7, 0, 0x10000000, -2 },
+        { sub_42A4E0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0, 0x90000000, 0, 0x30000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -2170,12 +2170,12 @@ static AnimGoalNode stru_5ADBD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5ADDD0
-static AnimGoalNode stru_5ADDD0 = {
+static AnimGoalNode anim_goal_node_please_move = {
     8,
     2,
     0,
@@ -2185,26 +2185,26 @@ static AnimGoalNode stru_5ADDD0 = {
     AG_RUN_TO_TILE,
     AG_MOVE_TO_TILE,
     {
-        { sub_424E00, 0, 5, -1, 0x30000000, 0, 2, 0xFFFFFFFD },
-        { sub_424D90, 0, 5, -1, 3, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 4, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 5, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 6, 0, 0x40000005, 0 },
-        { sub_426040, 0, 5, -1, 8, 0, 7, 0 },
-        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000035, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_424E00, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, 0x30000000, 0, AG_ANIM_FIDGET, -3 },
+        { sub_424D90, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_PAUSE, 0, 0x40000000 | AG_ATTEMPT_MOVE, 0 },
+        { sub_426040, AGDATA_SELF_OBJ, AGDATA_TARGET_TILE, -1, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42C610, -1, -1, -1, 0x90000000, 0, 0x40000000 | AG_ROTATE, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5ADFD0
-static AnimGoalNode stru_5ADFD0 = {
+static AnimGoalNode anim_goal_node_attempt_spread_out = {
     5,
     2,
     1,
@@ -2214,11 +2214,11 @@ static AnimGoalNode stru_5ADFD0 = {
     AG_MOVE_NEAR_OBJ,
     -1,
     {
-        { sub_42BF40, 0, -1, -1, 0x90000000, 0, 2, 0 },
-        { sub_42BFD0, 0, 1, -1, 3, 0, 0x40000034, 0 },
-        { sub_425130, 0, 1, -1, 4, 0, 5, 0 },
-        { sub_425340, 0, 1, -1, 0x70000038, 0, 0x70000008, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x10000000, 0x64 },
+        { sub_42BF40, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_42BFD0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_MOVE_AWAY_FROM_OBJ, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_RUN_TO_TILE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_425340, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x70000000 | AG_RUN_NEAR_OBJ, 0, 0x70000000 | AG_MOVE_NEAR_OBJ, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x10000000, 100 },
         { 0 },
         { 0 },
         { 0 },
@@ -2233,7 +2233,7 @@ static AnimGoalNode stru_5ADFD0 = {
 };
 
 // 0x5AE1D0
-static AnimGoalNode stru_5AE1D0 = {
+static AnimGoalNode anim_goal_node_animate_door_open = {
     4,
     3,
     0,
@@ -2243,10 +2243,10 @@ static AnimGoalNode stru_5AE1D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42D160, 0, -1, -1, 4, 0, 0x10000000, -2 },
-        { sub_42D080, 0, 8, -1, 0x30000000, 0, 0x10000000, -2 },
-        { sub_42B790, 0, -1, -1, 0x30000000, 0, 0x70000048, 0x5DC },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42D160, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_42D080, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x30000000, 0, 0x10000000, -2 },
+        { sub_42B790, AGDATA_SELF_OBJ, -1, -1, 0x30000000, 0, 0x70000000 | AG_PEND_CLOSING_DOOR, 1500 },
         { 0 },
         { 0 },
         { 0 },
@@ -2257,12 +2257,12 @@ static AnimGoalNode stru_5AE1D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B640, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B640, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AE3D0
-static AnimGoalNode stru_5AE3D0 = {
+static AnimGoalNode anim_goal_node_animate_door_closed = {
     3,
     3,
     0,
@@ -2272,9 +2272,9 @@ static AnimGoalNode stru_5AE3D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42D2A0, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_42D1C0, 0, 8, -1, 0x30000000, 0, 0x10000000, -2 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42D2A0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_42D1C0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x30000000, 0, 0x10000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -2286,12 +2286,12 @@ static AnimGoalNode stru_5AE3D0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B6F0, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B6F0, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AE5D0
-static AnimGoalNode stru_5AE5D0 = {
+static AnimGoalNode anim_goal_node_pend_closing_door = {
     1,
     3,
     0,
@@ -2301,7 +2301,7 @@ static AnimGoalNode stru_5AE5D0 = {
     -1,
     -1,
     {
-        { sub_42B7F0, 0, -1, -1, 0x10000000, 0x5DC, 0x70000047, 0x5DC },
+        { sub_42B7F0, AGDATA_SELF_OBJ, -1, -1, 0x10000000, 1500, 0x70000000 | AG_ANIMATE_DOOR_CLOSED, 1500 },
         { 0 },
         { 0 },
         { 0 },
@@ -2320,7 +2320,7 @@ static AnimGoalNode stru_5AE5D0 = {
 };
 
 // 0x5AE7D0
-static AnimGoalNode stru_5AE7D0 = {
+static AnimGoalNode anim_goal_node_throw_spell_friendly = {
     9,
     3,
     1,
@@ -2330,15 +2330,15 @@ static AnimGoalNode stru_5AE7D0 = {
     -1,
     -1,
     {
-        { sub_429440, 1, -1, -1, 0x30000000, 0, 2, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 3, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 4, 0 },
-        { sub_429B50, 0, 1, -1, 8, 0, 5, 0 },
-        { sub_429BB0, 0, 1, -1, 0x40000016, 0, 6, 0 },
-        { sub_429BC0, 0, 1, -1, 0x90000000, 0, 9, 0 },
-        { sub_42BEA0, -1, -1, 8, 0x90000000, 0, 0x40000008, 0 },
-        { sub_431A40, 0, -1, -1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_4246C0, -1, -1, -1, 0x90000000, 0, 0x7000001B, 0 },
+        { sub_429440, AGDATA_TARGET_OBJ, -1, -1, 0x30000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, AG_RUN_TO_TILE, 0 },
+        { sub_429B50, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_NEAR_OBJ, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_429BB0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_PICK_WEAPON, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_429BC0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_MOVE_STRAIGHT, 0 },
+        { sub_42BEA0, -1, -1, 8, 0x90000000, 0, 0x40000000 | AG_MOVE_NEAR_OBJ, 0 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_4246C0, -1, -1, -1, 0x90000000, 0, 0x70000000 | AG_ATTEMPT_SPELL, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -2349,7 +2349,7 @@ static AnimGoalNode stru_5AE7D0 = {
 };
 
 // 0x5AE9D0
-static AnimGoalNode stru_5AE9D0 = {
+static AnimGoalNode anim_goal_node_attempt_spell_friendly = {
     0xC,
     4,
     1,
@@ -2359,26 +2359,26 @@ static AnimGoalNode stru_5AE9D0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 0xB, 0 },
-        { sub_431340, 0, -1, -1, 8, -2, 4, 0 },
-        { sub_4315B0, 0, -1, -1, 0xC, 0, 0x10000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 5, 0 },
-        { sub_429C40, 0xB, -1, -1, 9, 0, 6, 0 },
-        { sub_424820, 0, 0x1F, 5, 8, 0, 7, 0 },
-        { sub_4246E0, 3, 0, 0x1C, 0x90000000, -2, 0x10000000, -2 },
-        { sub_431A40, 0, -1, -1, 0x90000000, 0, 0x30000000, 0 },
-        { sub_429C80, 0xB, -1, -1, 8, 0, 0x10000000, 0 },
-        { sub_4246C0, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_429F00, 0xB, -1, -1, 0xC, 0, 3, 0 },
-        { sub_429C80, 0xB, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_OPEN_DOOR, 0 },
+        { sub_431340, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, -2, AG_RUN_TO_TILE, 0 },
+        { sub_4315B0, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, 0x10000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_ATTEMPT_MOVE, 0 },
+        { sub_429C40, AGDATA_SPELL_DATA, -1, -1, AG_MOVE_STRAIGHT, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_424820, AGDATA_SELF_OBJ, AGDATA_SELF_TILE, 5, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4246E0, AGDATA_SCRATCH_OBJ, AGDATA_SELF_OBJ, AG_SHOOT_SPELL, 0x90000000, -2, 0x10000000, -2 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x30000000, 0 },
+        { sub_429C80, AGDATA_SPELL_DATA, -1, -1, AG_MOVE_NEAR_OBJ, 0, 0x10000000, 0 },
+        { sub_4246C0, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_429F00, AGDATA_SPELL_DATA, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_429C80, AGDATA_SPELL_DATA, -1, -1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
-        { sub_429CD0, 0, 0xB, 1, 0, 0, 0, 0 },
+        { sub_429CD0, AGDATA_SELF_OBJ, AGDATA_SPELL_DATA, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AEBD0
-static AnimGoalNode stru_5AEBD0 = {
+static AnimGoalNode anim_goal_node_eye_candy_fire_dmg = {
     5,
     5,
     1,
@@ -2388,11 +2388,11 @@ static AnimGoalNode stru_5AEBD0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_4322A0, 0, 4, -1, 4, 0, 0x10000000, -2 },
-        { sub_4315B0, 0, -1, -1, 0x90000000, 0, 5, 0 },
-        { sub_431A40, 0, -1, -1, 3, 0, 0x30000000, 0 },
-        { sub_42A720, 0, 4, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_4322A0, AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_4315B0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_42A720, AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ, -1, 0x90000000, 0, 0x10000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -2402,12 +2402,12 @@ static AnimGoalNode stru_5AEBD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AEDD0
-static AnimGoalNode stru_5AEDD0 = {
+static AnimGoalNode anim_goal_node_eye_candy_reverse_fire_dmg = {
     5,
     5,
     1,
@@ -2417,11 +2417,11 @@ static AnimGoalNode stru_5AEDD0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_4324D0, 0, 4, -1, 4, 0, 0x10000000, -2 },
-        { sub_431E50, 0, -1, -1, 0x90000000, 0, 5, 0 },
-        { sub_4321C0, 0, -1, -1, 3, 0, 0x30000000, 0 },
-        { sub_42A720, 0, 4, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_4324D0, AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ, -1, AG_RUN_TO_TILE, 0, 0x10000000, -2 },
+        { sub_431E50, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_4321C0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x30000000, 0 },
+        { sub_42A720, AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ, -1, 0x90000000, 0, 0x10000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -2431,12 +2431,12 @@ static AnimGoalNode stru_5AEDD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AEFD0
-static AnimGoalNode stru_5AEFD0 = {
+static AnimGoalNode anim_goal_node_animate_loop_fire_dmg = {
     5,
     1,
     0,
@@ -2446,11 +2446,11 @@ static AnimGoalNode stru_5AEFD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 4, 0 },
-        { sub_42DCF0, 0, -1, -1, 0x10000000, 0x320, 3, 0 },
-        { sub_42DDE0, 0, -1, -1, 5, 0, 0x10000000, -2 },
-        { sub_42DA50, 0, 8, -1, 0x90000000, 0, 5, 0 },
-        { sub_42A720, 0, 4, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42DCF0, AGDATA_SELF_OBJ, -1, -1, 0x10000000, 800, AG_MOVE_TO_TILE, 0 },
+        { sub_42DDE0, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x10000000, -2 },
+        { sub_42DA50, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42A720, AGDATA_SELF_OBJ, AGDATA_PARENT_OBJ, -1, 0x90000000, 0, 0x10000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -2465,7 +2465,7 @@ static AnimGoalNode stru_5AEFD0 = {
 };
 
 // 0x5AF1D0
-static AnimGoalNode stru_5AF1D0 = {
+static AnimGoalNode anim_goal_node_attempt_move_straight_spell = {
     3,
     3,
     0,
@@ -2475,9 +2475,9 @@ static AnimGoalNode stru_5AF1D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42F390, 0, -1, -1, 0x30000000, -2, 0x10000000, 0xFFFFFFFD },
-        { sub_42F2D0, 0, -1, -1, 0x90000000, 0, 0x10000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42F390, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -3 },
+        { sub_42F2D0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -2494,7 +2494,7 @@ static AnimGoalNode stru_5AF1D0 = {
 };
 
 // 0x5AF3D0
-static AnimGoalNode stru_5AF3D0 = {
+static AnimGoalNode anim_goal_node_move_near_obj_combat = {
     8,
     2,
     0,
@@ -2504,26 +2504,26 @@ static AnimGoalNode stru_5AF3D0 = {
     -1,
     -1,
     {
-        { sub_425130, 0, 1, -1, 2, 0, 0x30000000, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_425740, 0, -1, -1, 5, 0, 7, 0 },
-        { sub_4280D0, 0, 1, -1, 6, 0, 7, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
-        { sub_4296D0, 0, -1, -1, 8, 0, 8, 0 },
-        { sub_429AD0, 0, -1, -1, 0x4000003D, 0, 0x40000050, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ANIM_FIDGET, 0, 0x30000000, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4280D0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
+        { sub_4296D0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_429AD0, AGDATA_SELF_OBJ, -1, -1, 0x40000000 | AG_ATTEMPT_MOVE_NEAR, 0, 0x40000000 | AG_ATTEMPT_MOVE_NEAR_COMBAT, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AF5D0
-static AnimGoalNode stru_5AF5D0 = {
+static AnimGoalNode anim_goal_node_attempt_move_near_combat = {
     0xC,
     2,
     0,
@@ -2533,26 +2533,26 @@ static AnimGoalNode stru_5AF5D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 4, 0 },
-        { sub_4270B0, 0, -1, -1, 3, 0, 0xA, 0xFFFFFFFC },
-        { sub_4305D0, 0, -1, -1, 0x30000000, -2, 0x10000000, -2 },
-        { sub_425740, 0, -1, -1, 0xC, 0, 5, 0 },
-        { sub_425590, 0, 1, -1, 6, 0, 0x38000000, 0 },
-        { sub_427640, 0, -1, -1, 7, 0, 0xB, 0 },
-        { sub_4272E0, 0, -1, -1, 9, 0, 8, 0 },
-        { sub_4284F0, 3, -1, -1, 9, 0, 0x5200000B, 0x32 },
-        { sub_42E9B0, 0, -1, -1, 0xA, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_4288A0, 0, 3, -1, 0x90000000, 0, 0x5000000E, 0 },
-        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000006, 0x3E8 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_RUN_TO_TILE, 0 },
+        { sub_4270B0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, AG_ATTEMPT_MOVE_STRAIGHT, -4 },
+        { sub_4305D0, AGDATA_SELF_OBJ, -1, -1, 0x30000000, -2, 0x10000000, -2 },
+        { sub_425740, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_OPEN_DOOR, 0, 5, 0 },
+        { sub_425590, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, 0x38000000, 0 },
+        { sub_427640, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_TILE, 0, AG_OPEN_DOOR, 0 },
+        { sub_4272E0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_STRAIGHT, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_4284F0, AGDATA_SCRATCH_OBJ, -1, -1, AG_MOVE_STRAIGHT, 0, 0x52000000 | AG_OPEN_DOOR, 50 },
+        { sub_42E9B0, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_4288A0, AGDATA_SELF_OBJ, AGDATA_SCRATCH_OBJ, -1, 0x90000000, 0, 0x50000000 | AG_JUMP_WINDOW, 0 },
+        { sub_4246D0, -1, -1, -1, 0x90000000, 0, 0x50000000 | AG_MOVE_TO_PAUSE, 1000 },
         { 0 },
         { 0 },
-        { sub_430F20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_430F20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AF7D0
-static AnimGoalNode stru_5AF7D0 = {
+static AnimGoalNode anim_goal_node_use_container = {
     6,
     3,
     0,
@@ -2562,12 +2562,12 @@ static AnimGoalNode stru_5AF7D0 = {
     -1,
     -1,
     {
-        { sub_428930, 0, 1, -1, 0x90000000, 0, 2, 0 },
-        { sub_425130, 0, 1, -1, 0x40000008, 0, 3, 0 },
-        { sub_4284A0, 1, -1, -1, 4, 0, 5, 0 },
-        { sub_428A10, 0, 1, -1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_42BE50, 1, -1, -1, 0x90000000, 0, 6, 0 },
-        { sub_4284F0, 1, -1, -1, 0x70000031, 0, 0x7000000B, 0 },
+        { sub_428930, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_ANIM_FIDGET, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_MOVE_NEAR_OBJ, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_4284A0, AGDATA_TARGET_OBJ, -1, -1, AG_RUN_TO_TILE, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_428A10, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42BE50, AGDATA_TARGET_OBJ, -1, -1, 0x90000000, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_4284F0, AGDATA_TARGET_OBJ, -1, -1, 0x70000000 | AG_CLOSE_DOOR, 0, 0x70000000 | AG_OPEN_DOOR, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -2581,7 +2581,7 @@ static AnimGoalNode stru_5AF7D0 = {
 };
 
 // 0x5AF9D0
-static AnimGoalNode stru_5AF9D0 = {
+static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim = {
     0xA,
     3,
     0,
@@ -2591,26 +2591,26 @@ static AnimGoalNode stru_5AF9D0 = {
     -1,
     -1,
     {
-        { sub_429440, 1, -1, -1, 0xA, 0, 2, 0 },
-        { sub_426F10, 0, -1, -1, 3, 0, 0x4000003F, 0 },
-        { sub_426E80, 0, -1, -1, 4, 0, 0x40000036, 0 },
-        { sub_429B50, 0, 1, -1, 8, 0, 5, 0 },
-        { sub_429BB0, 0, 1, -1, 0x40000016, 0, 6, 0 },
-        { sub_429BC0, 0, 1, -1, 0xA, 0, 9, 0 },
-        { sub_42BEA0, -1, -1, 8, 0xA, 0, 0x40000008, 0 },
-        { sub_431A40, 0, -1, -1, 0xA, 0, 0xA, 0 },
-        { sub_42C850, 0, 1, -1, 0xA, 0, 0x70000053, 0 },
-        { sub_429CD0, 0, 0xB, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_429440, AGDATA_TARGET_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_ANIM_FIDGET, 0 },
+        { sub_426F10, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_TO_TILE, 0, 0x40000000 | AG_ANIM_GET_UP, 0 },
+        { sub_426E80, AGDATA_SELF_OBJ, -1, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_UNCONCEAL, 0 },
+        { sub_429B50, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_NEAR_OBJ, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_429BB0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x40000000 | AG_PICK_WEAPON, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_429BC0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_MOVE_STRAIGHT, 0 },
+        { sub_42BEA0, -1, -1, 8, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x40000000 | AG_MOVE_NEAR_OBJ, 0 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, AG_ATTEMPT_MOVE_STRAIGHT, 0 },
+        { sub_42C850, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_ATTEMPT_MOVE_STRAIGHT, 0, 0x70000000 | AG_ATTEMPT_SPELL_W_CAST_ANIM, 0 },
+        { sub_429CD0, AGDATA_SELF_OBJ, AGDATA_SPELL_DATA, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AFBD0
-static AnimGoalNode stru_5AFBD0 = {
+static AnimGoalNode anim_goal_node_attempt_spell_w_cast_anim = {
     0xE,
     4,
     0,
@@ -2620,26 +2620,26 @@ static AnimGoalNode stru_5AFBD0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 0xB, 0 },
-        { sub_42CC80, 0, -1, -1, 8, -2, 4, 0 },
-        { sub_4246C0, 0, -1, -1, 0xD, 0, 0x10000000, 0 },
-        { sub_42CAA0, 0, 8, -1, 0x10000000, -2, 5, 0 },
-        { sub_429C40, 0xB, -1, -1, 9, 0, 6, 0 },
-        { sub_424820, 0, 0x1F, 5, 8, 0, 7, 0 },
-        { sub_4246E0, 3, 0, 0x1C, 0x90000000, -2, 0x10000000, -2 },
-        { sub_4246C0, 0, -1, -1, 0x90000000, 0, 0x30000000, 0 },
-        { sub_429C80, 0xB, -1, -1, 8, 0, 0x10000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_4246C0, 0xB, -1, -1, 0xD, 0, 0xC, 0 },
-        { sub_42A010, 0, 9, -1, 0xD, 0, 3, 0 },
-        { sub_429C80, 0xB, -1, -1, 0x90000000, 0, 0x90000000, 0 },
-        { sub_4246C0, 0, -1, -1, 8, -2, 4, 0 },
-        { sub_429CD0, 0, 0xB, 1, 0, 0, 0, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_OPEN_DOOR, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, -2, AG_RUN_TO_TILE, 0 },
+        { sub_4246C0, AGDATA_SELF_OBJ, -1, -1, AG_UNLOCK_DOOR, 0, 0x10000000, 0 },
+        { sub_42CAA0, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, 0x10000000, -2, AG_ATTEMPT_MOVE, 0 },
+        { sub_429C40, AGDATA_SPELL_DATA, -1, -1, AG_MOVE_STRAIGHT, 0, AG_MOVE_TO_PAUSE, 0 },
+        { sub_424820, AGDATA_SELF_OBJ, AGDATA_SELF_TILE, 5, AG_MOVE_NEAR_OBJ, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_4246E0, AGDATA_SCRATCH_OBJ, AGDATA_SELF_OBJ, AG_SHOOT_SPELL, 0x90000000, -2, 0x10000000, -2 },
+        { sub_4246C0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x30000000, 0 },
+        { sub_429C80, AGDATA_SPELL_DATA, -1, -1, AG_MOVE_NEAR_OBJ, 0, 0x10000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_4246C0, AGDATA_SPELL_DATA, -1, -1, AG_UNLOCK_DOOR, 0, AG_ATTEMPT_OPEN_DOOR, 0 },
+        { sub_42A010, AGDATA_SELF_OBJ, AGDATA_ANIM_ID_PREVIOUS, -1, AG_UNLOCK_DOOR, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_429C80, AGDATA_SPELL_DATA, -1, -1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_4246C0, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, -2, AG_RUN_TO_TILE, 0 },
+        { sub_429CD0, AGDATA_SELF_OBJ, AGDATA_SPELL_DATA, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AFDD0
-static AnimGoalNode stru_5AFDD0 = {
+static AnimGoalNode anim_goal_node_throw_spell_w_cast_anim_secondary = {
     5,
     5,
     1,
@@ -2649,11 +2649,11 @@ static AnimGoalNode stru_5AFDD0 = {
     -1,
     -1,
     {
-        { sub_431320, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_431340, 0, -1, -1, 5, 0, 0x10000000, -2 },
-        { sub_429F00, 0xB, -1, -1, 0x90000000, 0, 4, -2 },
-        { sub_4315B0, 0, -1, -1, 0x90000000, 0, 0x10000000, -2 },
-        { sub_431A40, 0, -1, -1, 3, 0, 0x30000000, 0 },
+        { sub_431320, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_431340, AGDATA_SELF_OBJ, -1, -1, AG_ATTEMPT_MOVE, 0, 0x10000000, -2 },
+        { sub_429F00, AGDATA_SPELL_DATA, -1, -1, 0x90000000, 0, AG_RUN_TO_TILE, -2 },
+        { sub_4315B0, AGDATA_SELF_OBJ, -1, -1, 0x90000000, 0, 0x10000000, -2 },
+        { sub_431A40, AGDATA_SELF_OBJ, -1, -1, 3, 0, 0x30000000, 0 },
         { 0 },
         { 0 },
         { 0 },
@@ -2663,12 +2663,12 @@ static AnimGoalNode stru_5AFDD0 = {
         { 0 },
         { 0 },
         { 0 },
-        { sub_431B20, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_431B20, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5AFFD0
-static AnimGoalNode stru_5AFFD0 = {
+static AnimGoalNode anim_goal_node_back_off_from = {
     4,
     3,
     0,
@@ -2678,10 +2678,10 @@ static AnimGoalNode stru_5AFFD0 = {
     -1,
     -1,
     {
-        { sub_42B940, -1, -1, -1, 2, 0, 2, 0 },
-        { sub_42BEA0, -1, -1, 9, 0x90000000, 0, 3, 0 },
-        { sub_425130, 0, 1, -1, 4, 0, 0x40000034, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x30000000, -2 },
+        { sub_42B940, -1, -1, -1, AG_ANIM_FIDGET, 0, AG_ANIM_FIDGET, 0 },
+        { sub_42BEA0, -1, -1, 9, 0x90000000, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_425130, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_RUN_TO_TILE, 0, 0x40000000 | AG_MOVE_AWAY_FROM_OBJ, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x30000000, -2 },
         { 0 },
         { 0 },
         { 0 },
@@ -2697,7 +2697,7 @@ static AnimGoalNode stru_5AFFD0 = {
 };
 
 // 0x5B01D0
-static AnimGoalNode stru_5B01D0 = {
+static AnimGoalNode anim_goal_node_attempt_use_pickpocket_skill_on = {
     9,
     3,
     0,
@@ -2707,113 +2707,113 @@ static AnimGoalNode stru_5B01D0 = {
     -1,
     -1,
     {
-        { sub_42CA90, 0, -1, -1, 2, 0, 3, 0 },
-        { sub_42CC80, 0, -1, -1, 8, -2, 0x10000000, -2 },
-        { sub_42C0F0, 0, 1, -1, 0x90000000, 0, 4, 0 },
-        { sub_42A2A0, 0, 1, -1, 0x90000000, 0, 5, 0 },
-        { sub_42A430, 0, 1, -1, 6, 0, 8, 0 },
-        { sub_42BD40, 0, -1, 0xC, 0x90000000, 0, 7, 0 },
-        { sub_42CB10, 0, 8, -1, 9, 0, 0x10000000, 0 },
-        { sub_42BD40, 0, -1, 0, 0x90000000, 0, 0x30000000, 0 },
-        { sub_433270, 0, -1, 1, 0x90000000, 0, 0x90000000, 0 },
+        { sub_42CA90, AGDATA_SELF_OBJ, -1, -1, AG_ANIM_FIDGET, 0, AG_MOVE_TO_TILE, 0 },
+        { sub_42CC80, AGDATA_SELF_OBJ, -1, -1, AG_MOVE_NEAR_OBJ, -2, 0x10000000, -2 },
+        { sub_42C0F0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_RUN_TO_TILE, 0 },
+        { sub_42A2A0, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, 0x90000000, 0, AG_ATTEMPT_MOVE, 0 },
+        { sub_42A430, AGDATA_SELF_OBJ, AGDATA_TARGET_OBJ, -1, AG_MOVE_TO_PAUSE, 0, AG_MOVE_NEAR_OBJ, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0xC, 0x90000000, 0, AG_MOVE_NEAR_TILE, 0 },
+        { sub_42CB10, AGDATA_SELF_OBJ, AGDATA_ANIM_ID, -1, AG_MOVE_STRAIGHT, 0, 0x10000000, 0 },
+        { sub_42BD40, AGDATA_SELF_OBJ, -1, 0, 0x90000000, 0, 0x30000000, 0 },
+        { sub_433270, AGDATA_SELF_OBJ, -1, 1, 0x90000000, 0, 0x90000000, 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
         { 0 },
-        { sub_42B090, 0, -1, 1, 0, 0, 0, 0 },
+        { sub_42B090, AGDATA_SELF_OBJ, -1, 1, 0, 0, 0, 0 },
     },
 };
 
 // 0x5B03D0
-AnimGoalNode* off_5B03D0[] = {
-    &stru_5A59D0, // AG_ANIMATE
-    &stru_5A5BD0, // AG_ANIMATE_LOOP
-    &stru_5A5DD0, // AG_ANIM_FIDGET
-    &stru_5A5FD0, // AG_MOVE_TO_TILE
-    &stru_5A61D0, // AG_RUN_TO_TILE
-    &stru_5A63D0, // AG_ATTEMPT_MOVE
-    &stru_5A65D0, // AG_MOVE_TO_PAUSE
-    &stru_5A67D0, // AG_MOVE_NEAR_TILE
-    &stru_5A69D0, // AG_MOVE_NEAR_OBJ
-    &stru_5A6BD0, // AG_MOVE_STRAIGHT
-    &stru_5A6DD0, // AG_ATTEMPT_MOVE_STRAIGHT
-    &stru_5A6FD0, // AG_OPEN_DOOR
-    &stru_5A71D0, // AG_ATTEMPT_OPEN_DOOR
-    NULL, // AG_UNLOCK_DOOR
-    &stru_5A73D0, // AG_JUMP_WINDOW
-    &stru_5A75D0, // AG_PICKUP_ITEM
-    &stru_5A77D0, // AG_ATTEMPT_PICKUP
-    &stru_5A79D0, // AG_PICKPOCKET
-    &stru_5A7BD0, // AG_ATTACK
-    &stru_5A7DD0, // AG_ATTEMPT_ATTACK
-    &stru_5A7FD0, // AG_KILL
-    &stru_5A81D0, // AG_TALK
-    NULL, // AG_PICK_WEAPON
-    &stru_5A83D0, // AG_CHASE
-    &stru_5A85D0, // AG_FOLLOW
-    &stru_5A87D0, // AG_FLEE
-    &stru_5A89D0, // AG_THROW_SPELL
-    &stru_5A8BD0, // AG_ATTEMPT_SPELL
-    &stru_5A8DD0, // AG_SHOOT_SPELL
-    &stru_5A8FD0, // AG_HIT_BY_SPELL
-    &stru_5A91D0, // AG_HIT_BY_WEAPON
-    &stru_5A93D0, // AG_DYING
-    &stru_5A95D0, // AG_DESTROY_OBJ
-    &stru_5A97D0, // AG_USE_SKILL_ON
-    &stru_5A99D0, // AG_ATTEMPT_USE_SKILL_ON
-    &stru_5A9BD0, // AG_SKILL_CONCEAL
-    &stru_5A9DD0, // AG_PROJECTILE
-    &stru_5A9FD0, // AG_THROW_ITEM
-    &stru_5AA1D0, // AG_USE_OBJECT
-    &stru_5AA3D0, // AG_USE_ITEM_ON_OBJECT
-    &stru_5AA5D0, // AG_USE_ITEM_ON_OBJECT_WITH_SKILL
-    &stru_5AA7D0, // AG_USE_ITEM_ON_TILE
-    &stru_5AA9D0, // AG_USE_ITEM_ON_TILE_WITH_SKILL
-    &stru_5AABD0, // AG_KNOCKBACK
-    &stru_5AADD0, // AG_FLOATING
-    &stru_5AAFD0, // AG_EYE_CANDY
-    &stru_5AB1D0, // AG_EYE_CANDY_REVERSE
-    &stru_5AB3D0, // AG_EYE_CANDY_CALLBACK
-    &stru_5AB5D0, // AG_EYE_CANDY_REVERSE_CALLBACK
-    &stru_5AB7D0, // AG_CLOSE_DOOR
-    &stru_5AB9D0, // AG_ATTEMPT_CLOSE_DOOR
-    &stru_5ABBD0, // AG_ANIMATE_REVERSE
-    &stru_5ABDD0, // AG_MOVE_AWAY_FROM_OBJ
-    &stru_5ABFD0, // AG_ROTATE
-    &stru_5AC1D0, // AG_UNCONCEAL
-    &stru_5AC3D0, // AG_RUN_NEAR_TILE
-    &stru_5AC5D0, // AG_RUN_NEAR_OBJ
-    &stru_5AC7D0, // AG_ANIMATE_STUNNED
-    &stru_5AC9D0, // AG_EYE_CANDY_END_CALLBACK
-    &stru_5ACBD0, // AG_EYE_CANDY_REVERSE_END_CALLBACK
-    &stru_5ACDD0, // AG_ANIMATE_KNEEL_MAGIC_HANDS
-    &stru_5ACFD0, // AG_ATTEMPT_MOVE_NEAR
-    &stru_5AD1D0, // AG_KNOCK_DOWN
-    &stru_5AD3D0, // AG_ANIM_GET_UP
-    &stru_5AD5D0, // AG_ATTEMPT_MOVE_STRAIGHT_KNOCKBACK
-    &stru_5AD7D0, // AG_WANDER
-    &stru_5AD9D0, // AG_WANDER_SEEK_DARKNESS
-    &stru_5ADBD0, // AG_USE_PICKLOCK_SKILL_ON
-    &stru_5ADDD0, // AG_PLEASE_MOVE
-    &stru_5ADFD0, // AG_ATTEMPT_SPREAD_OUT
-    &stru_5AE1D0, // AG_ANIMATE_DOOR_OPEN
-    &stru_5AE3D0, // AG_ANIMATE_DOOR_CLOSED
-    &stru_5AE5D0, // AG_PEND_CLOSING_DOOR
-    &stru_5AE7D0, // AG_THROW_SPELL_FRIENDLY
-    &stru_5AE9D0, // AG_ATTEMPT_SPELL_FRIENDLY
-    &stru_5AEBD0, // AG_EYE_CANDY_FIRE_DMG
-    &stru_5AEDD0, // AG_EYE_CANDY_REVERSE_FIRE_DMG
-    &stru_5AEFD0, // AG_ANIMATE_LOOP_FIRE_DMG
-    &stru_5AF1D0, // AG_ATTEMPT_MOVE_STRAIGHT_SPELL
-    &stru_5AF3D0, // AG_MOVE_NEAR_OBJ_COMBAT
-    &stru_5AF5D0, // AG_ATTEMPT_MOVE_NEAR_COMBAT
-    &stru_5AF7D0, // AG_USE_CONTAINER
-    &stru_5AF9D0, // AG_THROW_SPELL_W_CAST_ANIM
-    &stru_5AFBD0, // AG_ATTEMPT_SPELL_W_CAST_ANIM
-    &stru_5AFDD0, // AG_THROW_SPELL_W_CAST_ANIM_2NDARY
-    &stru_5AFFD0, // AG_BACK_OFF_FROM
-    &stru_5B01D0, // AG_ATTEMPT_USE_PICKPOCKET_SKILL_ON
+AnimGoalNode* anim_goal_nodes[] = {
+    /*                          AG_ANIMATE */ &anim_goal_node_animate,
+    /*                     AG_ANIMATE_LOOP */ &anim_goal_node_animate_loop,
+    /*                      AG_ANIM_FIDGET */ &anim_goal_node_animate_fidget,
+    /*                     AG_MOVE_TO_TILE */ &anim_goal_node_move_to_tile,
+    /*                      AG_RUN_TO_TILE */ &anim_goal_node_run_to_tile,
+    /*                     AG_ATTEMPT_MOVE */ &anim_goal_node_attempt_move,
+    /*                    AG_MOVE_TO_PAUSE */ &anim_goal_node_move_to_pause,
+    /*                   AG_MOVE_NEAR_TILE */ &anim_goal_node_move_near_tile,
+    /*                    AG_MOVE_NEAR_OBJ */ &anim_goal_node_move_near_obj,
+    /*                    AG_MOVE_STRAIGHT */ &anim_goal_node_move_straight,
+    /*            AG_ATTEMPT_MOVE_STRAIGHT */ &anim_goal_node_attempt_move_straight,
+    /*                        AG_OPEN_DOOR */ &anim_goal_node_open_door,
+    /*                AG_ATTEMPT_OPEN_DOOR */ &anim_goal_node_attempt_open_door,
+    /*                      AG_UNLOCK_DOOR */ NULL,
+    /*                      AG_JUMP_WINDOW */ &anim_goal_node_jump_window,
+    /*                      AG_PICKUP_ITEM */ &anim_goal_node_pickup_item,
+    /*                   AG_ATTEMPT_PICKUP */ &anim_goal_node_attempt_pickup,
+    /*                       AG_PICKPOCKET */ &anim_goal_node_pickpocket,
+    /*                           AG_ATTACK */ &anim_goal_node_attack,
+    /*                   AG_ATTEMPT_ATTACK */ &anim_goal_node_attempt_attack,
+    /*                             AG_KILL */ &anim_goal_node_kill,
+    /*                             AG_TALK */ &anim_goal_node_talk,
+    /*                      AG_PICK_WEAPON */ NULL,
+    /*                            AG_CHASE */ &anim_goal_node_chase,
+    /*                           AG_FOLLOW */ &anim_goal_node_follow,
+    /*                             AG_FLEE */ &anim_goal_node_flee,
+    /*                      AG_THROW_SPELL */ &anim_goal_node_throw_spell,
+    /*                    AG_ATTEMPT_SPELL */ &anim_goal_node_attempt_spell,
+    /*                      AG_SHOOT_SPELL */ &anim_goal_node_shoot_spell,
+    /*                     AG_HIT_BY_SPELL */ &anim_goal_node_hit_by_spell,
+    /*                    AG_HIT_BY_WEAPON */ &anim_goal_node_hit_by_weapon,
+    /*                            AG_DYING */ &anim_goal_node_dying,
+    /*                      AG_DESTROY_OBJ */ &anim_goal_node_destroy_obj,
+    /*                     AG_USE_SKILL_ON */ &anim_goal_node_use_skill_on,
+    /*             AG_ATTEMPT_USE_SKILL_ON */ &anim_goal_node_attempt_use_skill_on,
+    /*                    AG_SKILL_CONCEAL */ &anim_goal_node_skill_conceal,
+    /*                       AG_PROJECTILE */ &anim_goal_node_projectile,
+    /*                       AG_THROW_ITEM */ &anim_goal_node_throw_item,
+    /*                       AG_USE_OBJECT */ &anim_goal_node_use_object,
+    /*               AG_USE_ITEM_ON_OBJECT */ &anim_goal_node_use_item_on_object,
+    /*    AG_USE_ITEM_ON_OBJECT_WITH_SKILL */ &anim_goal_node_use_item_on_object_with_skill,
+    /*                 AG_USE_ITEM_ON_TILE */ &anim_goal_node_use_item_on_tile,
+    /*      AG_USE_ITEM_ON_TILE_WITH_SKILL */ &anim_goal_node_use_item_on_tile_with_skill,
+    /*                        AG_KNOCKBACK */ &anim_goal_node_knockback,
+    /*                         AG_FLOATING */ &anim_goal_node_floating,
+    /*                        AG_EYE_CANDY */ &anim_goal_node_eye_candy,
+    /*                AG_EYE_CANDY_REVERSE */ &anim_goal_node_eye_candy_reverse,
+    /*               AG_EYE_CANDY_CALLBACK */ &anim_goal_node_eye_candy_callback,
+    /*       AG_EYE_CANDY_REVERSE_CALLBACK */ &anim_goal_node_eye_candy_reverse_callback,
+    /*                       AG_CLOSE_DOOR */ &anim_goal_node_close_door,
+    /*               AG_ATTEMPT_CLOSE_DOOR */ &anim_goal_node_attempt_close_door,
+    /*                  AG_ANIMATE_REVERSE */ &anim_goal_node_animate_reverse,
+    /*               AG_MOVE_AWAY_FROM_OBJ */ &anim_goal_node_move_away_from_obj,
+    /*                           AG_ROTATE */ &anim_goal_node_rotate,
+    /*                        AG_UNCONCEAL */ &anim_goal_node_unconceal,
+    /*                    AG_RUN_NEAR_TILE */ &anim_goal_node_run_near_tile,
+    /*                     AG_RUN_NEAR_OBJ */ &anim_goal_node_run_near_obj,
+    /*                  AG_ANIMATE_STUNNED */ &anim_goal_node_animate_stunned,
+    /*           AG_EYE_CANDY_END_CALLBACK */ &anim_goal_node_eye_candy_end_callback,
+    /*   AG_EYE_CANDY_REVERSE_END_CALLBACK */ &anim_goal_node_eye_candy_reverse_end_callback,
+    /*        AG_ANIMATE_KNEEL_MAGIC_HANDS */ &anim_goal_node_animate_kneel_magic_hands,
+    /*                AG_ATTEMPT_MOVE_NEAR */ &anim_goal_node_attempt_move_near,
+    /*                       AG_KNOCK_DOWN */ &anim_goal_node_knock_down,
+    /*                      AG_ANIM_GET_UP */ &anim_goal_node_anim_get_up,
+    /*  AG_ATTEMPT_MOVE_STRAIGHT_KNOCKBACK */ &anim_goal_node_attempt_move_straight_knockback,
+    /*                           AG_WANDER */ &anim_goal_node_wander,
+    /*             AG_WANDER_SEEK_DARKNESS */ &anim_goal_node_wander_seek_darkness,
+    /*            AG_USE_PICKLOCK_SKILL_ON */ &anim_goal_node_use_picklock_skill_on,
+    /*                      AG_PLEASE_MOVE */ &anim_goal_node_please_move,
+    /*               AG_ATTEMPT_SPREAD_OUT */ &anim_goal_node_attempt_spread_out,
+    /*                AG_ANIMATE_DOOR_OPEN */ &anim_goal_node_animate_door_open,
+    /*              AG_ANIMATE_DOOR_CLOSED */ &anim_goal_node_animate_door_closed,
+    /*                AG_PEND_CLOSING_DOOR */ &anim_goal_node_pend_closing_door,
+    /*             AG_THROW_SPELL_FRIENDLY */ &anim_goal_node_throw_spell_friendly,
+    /*           AG_ATTEMPT_SPELL_FRIENDLY */ &anim_goal_node_attempt_spell_friendly,
+    /*               AG_EYE_CANDY_FIRE_DMG */ &anim_goal_node_eye_candy_fire_dmg,
+    /*       AG_EYE_CANDY_REVERSE_FIRE_DMG */ &anim_goal_node_eye_candy_reverse_fire_dmg,
+    /*            AG_ANIMATE_LOOP_FIRE_DMG */ &anim_goal_node_animate_loop_fire_dmg,
+    /*      AG_ATTEMPT_MOVE_STRAIGHT_SPELL */ &anim_goal_node_attempt_move_straight_spell,
+    /*             AG_MOVE_NEAR_OBJ_COMBAT */ &anim_goal_node_move_near_obj_combat,
+    /*         AG_ATTEMPT_MOVE_NEAR_COMBAT */ &anim_goal_node_attempt_move_near_combat,
+    /*                    AG_USE_CONTAINER */ &anim_goal_node_use_container,
+    /*          AG_THROW_SPELL_W_CAST_ANIM */ &anim_goal_node_throw_spell_w_cast_anim,
+    /*        AG_ATTEMPT_SPELL_W_CAST_ANIM */ &anim_goal_node_attempt_spell_w_cast_anim,
+    /*   AG_THROW_SPELL_W_CAST_ANIM_2NDARY */ &anim_goal_node_throw_spell_w_cast_anim_secondary,
+    /*                    AG_BACK_OFF_FROM */ &anim_goal_node_back_off_from,
+    /*  AG_ATTEMPT_USE_PICKPOCKET_SKILL_ON */ &anim_goal_node_attempt_use_pickpocket_skill_on,
 };
 
 // 0x5DE608
@@ -2867,8 +2867,11 @@ static int dword_5DE6C4;
 // 0x5DE6CC
 static int dword_5DE6CC;
 
+// NOTE: It's `bool`, but needs to be 4 byte integer because of saving/reading
+// compatibility.
+//
 // 0x5DE6D0
-static bool dword_5DE6D0;
+static int dword_5DE6D0;
 
 // 0x5DE6D4
 static bool anim_editor;
@@ -3040,8 +3043,8 @@ bool sub_4221C0(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fwrite(&(run_info->id.slot_num), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->id.field_4), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->id.field_8), 4, 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(run_info->field_C), 4, 1, stream) != 1) return false;
-    if (tig_file_fwrite(&(run_info->field_10), 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(run_info->flags), 4, 1, stream) != 1) return false;
+    if (tig_file_fwrite(&(run_info->current_state), 4, 1, stream) != 1) return false;
     if (tig_file_fwrite(&(run_info->field_14), 4, 1, stream) != 1) return false;
     if (!sub_4439D0(&(run_info->goals[0].params[0].obj), &(run_info->goals[0].field_B0[0]), stream) ) return false;
     if (tig_file_fwrite(&(run_info->field_28), 8, 1, stream) != 1) return false;
@@ -3207,10 +3210,10 @@ bool sub_4227F0(AnimRunInfo* run_info, TigFile* stream)
     if (tig_file_fread(&(run_info->id.slot_num), 4, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->id.field_4), 4, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->id.field_8), 4, 1, stream) != 1) return false;
-    if (tig_file_fread(&(run_info->field_C), 4, 1, stream) != 1) return false;
-    if (tig_file_fread(&(run_info->field_10), 4, 1, stream) != 1) return false;
+    if (tig_file_fread(&(run_info->flags), 4, 1, stream) != 1) return false;
+    if (tig_file_fread(&(run_info->current_state), 4, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->field_14), 4, 1, stream) != 1) return false;
-    if (!sub_443AD0(&(run_info->field_20), 0, stream) ) return false;
+    if (!sub_443AD0(&(run_info->anim_obj), 0, stream) ) return false;
     if (tig_file_fread(&(run_info->field_28), 8, 1, stream) != 1) return false;
     if (tig_file_fread(&(run_info->current_goal), 4, 1, stream) != 1) return false;
 
@@ -3351,9 +3354,9 @@ void anim_break_nodes_to_map(const char* map)
 
     for (idx = 0; idx < 216; idx++) {
         run_info = &(anim_run_info[idx]);
-        if ((run_info->field_C & 0x1) != 0) {
-            if (!teleport_is_teleporting_obj(run_info->field_20)
-                || !off_5B03D0[run_info->goals[0].type]->field_C) {
+        if ((run_info->flags & 0x1) != 0) {
+            if (!teleport_is_teleporting_obj(run_info->anim_obj)
+                || !anim_goal_nodes[run_info->goals[0].type]->field_C) {
                 sub_44E2C0(&(run_info->id), 6);
             } else if (sub_4221C0(run_info, stream)) {
                 cnt++;
@@ -3449,7 +3452,7 @@ void anim_save_nodes_to_map(const char* map)
 
     for (idx = 0; idx < 216; idx++) {
         run_info = &(anim_run_info[idx]);
-        if ((run_info->field_C & 0x1) != 0) {
+        if ((run_info->flags & 0x1) != 0) {
             if (!sub_4221C0(run_info, stream)) {
                 ASSERT(0); // 1199, "0"
                 break;
@@ -3519,7 +3522,7 @@ void anim_load_nodes_from_map(const char* map)
             break;
         }
 
-        if ((anim_run_info[run_info.id.slot_num].field_C & 0x1) != 0) {
+        if ((anim_run_info[run_info.id.slot_num].flags & 0x1) != 0) {
             if (!sub_44CCB0(&anim_id)) {
                 tig_debug_printf("Anim: anim_load_nodes_from_map: ERROR: Failed to allocate a run slot!\n");
                 ASSERT(0); // 1282, "0"
@@ -3561,7 +3564,7 @@ bool sub_423300(int64_t obj, AnimID* anim_id)
     while (slot != -1 && slot != prev) {
         prev = slot;
 
-        goal_node = off_5B03D0[anim_run_info[slot].goals[0].type];
+        goal_node = anim_goal_nodes[anim_run_info[slot].goals[0].type];
         ASSERT(goal_node != NULL); // 1345, "pGoalNode != NULL"
 
         if (!goal_node->field_8) {
@@ -3592,7 +3595,7 @@ int sub_4233D0(int64_t obj)
     while (slot != -1 && slot != prev) {
         prev = slot;
 
-        goal_node = off_5B03D0[anim_run_info[slot].goals[0].type];
+        goal_node = anim_goal_nodes[anim_run_info[slot].goals[0].type];
         ASSERT(goal_node != NULL); // 1383, "pGoalNode != NULL"
 
         if (!goal_node->field_8) {
@@ -3693,11 +3696,11 @@ bool anim_timeevent_process(TimeEvent* timeevent)
         return true;
     }
 
-    if ((run_info->field_C & 0x01) == 0) {
+    if ((run_info->flags & 0x01) == 0) {
         return true;
     }
 
-    if ((run_info->field_C & 0x10000) != 0) {
+    if ((run_info->flags & 0x10000) != 0) {
         unsigned int delay = run_info->pause_time.milliseconds;
         if (delay < 100) {
             delay = 100;
@@ -3716,11 +3719,11 @@ bool anim_timeevent_process(TimeEvent* timeevent)
     run_info->cur_stack_data = goal_data;
 
     if (goal_data->type >= 0 && goal_data->type < ANIM_GOAL_MAX) {
-        goal_node = off_5B03D0[goal_data->type];
+        goal_node = anim_goal_nodes[goal_data->type];
 
         ASSERT(goal_node != NULL); // 2035, "pGoalNode != NULL"
     } else {
-        run_info->field_C |= 0x02;
+        run_info->flags |= 0x02;
         err = true;
     }
 
@@ -3728,14 +3731,14 @@ bool anim_timeevent_process(TimeEvent* timeevent)
         return true;
     }
 
-    if (run_info->field_20 != OBJ_HANDLE_NULL) {
-        if ((obj_field_int32_get(run_info->field_20, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
+    if (run_info->anim_obj != OBJ_HANDLE_NULL) {
+        if ((obj_field_int32_get(run_info->anim_obj, OBJ_F_FLAGS) & OF_DESTROYED) != 0) {
             ASSERT(0); // 2063, "!(object_flags_get(pRunInfo->animObj) & OF_DESTROYED)"
         }
 
         sub_423530(run_info);
     } else {
-        run_info->field_C |= 0x02;
+        run_info->flags |= 0x02;
         err = true;
     }
 
@@ -3749,13 +3752,13 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
             ASSERT(num_loops < 100); // 2088, "numLoops < ANIM_MAX_LOOPS_ALLOWED"
 
-            sub_4B7C90(run_info->field_20);
+            sub_4B7C90(run_info->anim_obj);
             dword_5A5978 = -1;
             sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
             return true;
         }
 
-        goal_subnode = &(goal_node->subnodes[run_info->field_10]);
+        goal_subnode = &(goal_node->subnodes[run_info->current_state]);
         if (!sub_44DD80(run_info, goal_subnode)) {
             return true;
         }
@@ -3766,16 +3769,16 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
         sub_423550(run_info, rc);
 
-        if ((run_info->field_C & 0x10000) != 0) {
+        if ((run_info->flags & 0x10000) != 0) {
             err = true;
         }
 
-        if ((run_info->field_C & 0x01) == 0) {
+        if ((run_info->flags & 0x01) == 0) {
             dword_5A5978 = -1;
             return true;
         }
 
-        if ((run_info->field_C & 0x02) != 0) {
+        if ((run_info->flags & 0x02) != 0) {
             err = true;
             break;
         }
@@ -3785,7 +3788,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
         if ((state_change & 0xFF000000) != 0) {
             if ((state_change & 0x10000000) != 0) {
-                run_info->field_10 = 0;
+                run_info->current_state = 0;
                 err = true;
             }
 
@@ -3800,7 +3803,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
             if ((state_change & 0x40000000) != 0) {
                 if (run_info->current_goal < 7) {
-                    run_info->field_10 = 0;
+                    run_info->current_state = 0;
                     run_info->current_goal++;
 
                     goal_data = &(run_info->goals[run_info->current_goal]);
@@ -3811,7 +3814,7 @@ bool anim_timeevent_process(TimeEvent* timeevent)
                     }
 
                     goal_data->type = state_change & 0xFFF;
-                    goal_node = off_5B03D0[goal_data->type];
+                    goal_node = anim_goal_nodes[goal_data->type];
                     sub_44C840(run_info, goal_node);
                     sub_423E60("Running: PushGoal");
                 } else {
@@ -3822,45 +3825,45 @@ bool anim_timeevent_process(TimeEvent* timeevent)
                         tig_debug_printf("\t[%d]: Goal: %s\n", idx++, off_5A164C[run_info->goals[idx].type]);
                     }
 
-                    run_info->field_10 = 0;
-                    run_info->field_C |= 0x02;
+                    run_info->current_state = 0;
+                    run_info->flags |= 0x02;
 
                     err = true;
                 }
             }
 
             if ((state_change & 0x90000000) == 0x90000000) {
-                run_info->field_C |= 0x02;
-                if (combat_turn_based_is_active() && !player_is_pc_obj(run_info->field_20)) {
-                    sub_4B7CD0(run_info->field_20, sub_4B7C20());
+                run_info->flags |= 0x02;
+                if (combat_turn_based_is_active() && !player_is_pc_obj(run_info->anim_obj)) {
+                    sub_4B7CD0(run_info->anim_obj, sub_4B7C20());
                 }
 
                 for (int idx = 1; idx <= run_info->current_goal; idx++) {
                     sub_423E60("Running: Goal Terminate");
 
-                    goal_subnode = &(off_5B03D0[run_info->goals[idx].type]->subnodes[14]);
+                    goal_subnode = &(anim_goal_nodes[run_info->goals[idx].type]->subnodes[14]);
                     if (goal_subnode->func != NULL
                         && sub_44DD80(run_info, goal_subnode)) {
                         goal_subnode->func(run_info);
                     }
                 }
 
-                goal_subnode = &(off_5B03D0[run_info->goals[0].type]->subnodes[14]);
+                goal_subnode = &(anim_goal_nodes[run_info->goals[0].type]->subnodes[14]);
                 if (goal_subnode->func != NULL
                     && sub_44DD80(run_info, goal_subnode)) {
                     goal_subnode->func(run_info);
                 }
 
-                run_info->field_10 = 0;
+                run_info->current_state = 0;
                 run_info->field_14 = -1;
                 run_info->path.flags |= 0x01;
 
                 err = true;
             }
         } else {
-            ASSERT(run_info->field_10 != state_change - 1); // 2334, "pRunInfo->current_state != (stateChange - 1)"
+            ASSERT(run_info->current_state != state_change - 1); // 2334, "pRunInfo->current_state != (stateChange - 1)"
 
-            run_info->field_10 = state_change - 1;
+            run_info->current_state = state_change - 1;
         }
 
         if (delay != 0) {
@@ -3891,30 +3894,30 @@ bool anim_timeevent_process(TimeEvent* timeevent)
 
     dword_5A5978 = -1;
 
-    if ((run_info->field_C & 0x02) != 0) {
-        if (run_info->field_20 == OBJ_HANDLE_NULL) {
+    if ((run_info->flags & 0x02) != 0) {
+        if (run_info->anim_obj == OBJ_HANDLE_NULL) {
             return true;
         }
 
         bool rc = sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
 
         if (!combat_turn_based_is_active()) {
-            sub_4B4320(run_info->field_20);
+            sub_4B4320(run_info->anim_obj);
             return rc;
         }
 
-        if (obj_type_is_critter(obj_field_int32_get(run_info->field_20, OBJ_F_TYPE))) {
-            sub_4B7010(run_info->field_20);
+        if (obj_type_is_critter(obj_field_int32_get(run_info->anim_obj, OBJ_F_TYPE))) {
+            sub_4B7010(run_info->anim_obj);
         }
 
         if (combat_get_action_points() > 0) {
-            sub_4B4320(run_info->field_20);
+            sub_4B4320(run_info->anim_obj);
         }
 
         return rc;
     }
 
-    if ((run_info->field_C & 0x01) != 0) {
+    if ((run_info->flags & 0x01) != 0) {
         return sub_423C80(run_info, &(timeevent->datetime), delay);
     }
 
@@ -3947,7 +3950,7 @@ void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** g
 {
     if (run_info->current_goal == 0
         && (*flags_ptr & 0x40000000) == 0) {
-        run_info->field_C |= 0x02;
+        run_info->flags |= 0x02;
     }
 
     if ((*goal_node_ptr)->subnodes[14].func != NULL
@@ -3959,7 +3962,7 @@ void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** g
 
     if ((*flags_ptr & 0x1000000) == 0) {
         run_info->path.maxPathLength = 0;
-        run_info->field_C &= ~0x83C;
+        run_info->flags &= ~0x83C;
     }
 
     if ((*flags_ptr & 0x2000000) != 0) {
@@ -3972,11 +3975,11 @@ void sub_423D10(AnimRunInfo* run_info, unsigned int* flags_ptr, AnimGoalNode** g
 
     if (run_info->current_goal >= 0) {
         *goal_data_ptr = &(run_info->goals[run_info->current_goal]);
-        *goal_node_ptr = off_5B03D0[(*goal_data_ptr)->type];
+        *goal_node_ptr = anim_goal_nodes[(*goal_data_ptr)->type];
         *a5 = false;
     } else {
         if ((*flags_ptr & 0x40000000) == 0) {
-            run_info->field_C |= 0x02;
+            run_info->flags |= 0x02;
         }
     }
 }
@@ -3994,7 +3997,7 @@ void sub_423E60(const char* msg)
             cnt);
 
         if (!in_anim_load) {
-            ASSERT(0);
+            ASSERT(0); // 2517, "0"
         }
     }
 }
@@ -4009,14 +4012,14 @@ int anim_goal_pending_active_goals_count()
 
     for (index = 0; index < 216; index++) {
         run_info = &(anim_run_info[index]);
-        if ((run_info->field_C & 0x1) != 0) {
+        if ((run_info->flags & 0x1) != 0) {
             for (stack_index = 0; stack_index <= run_info->current_goal; stack_index++) {
                 ASSERT(run_info->goals[stack_index].type >= 0); // pRunInfo->goal_stack[j].goal_type >= 0
                 ASSERT(run_info->goals[stack_index].type < ANIM_GOAL_MAX); // pRunInfo->goal_stack[j].goal_type < anim_goal_max
 
                 if (run_info->goals[stack_index].type >= 0 && run_info->goals[stack_index].type < ANIM_GOAL_MAX) {
-                    if (off_5B03D0[run_info->goals[stack_index].type]->priority_level >= 2
-                        && !off_5B03D0[run_info->goals[stack_index].type]->field_8) {
+                    if (anim_goal_nodes[run_info->goals[stack_index].type]->priority_level >= 2
+                        && !anim_goal_nodes[run_info->goals[stack_index].type]->field_8) {
                         cnt++;
                     }
                 } else {
@@ -4139,7 +4142,7 @@ bool anim_goal_interrupt_all_goals()
 
     if (dword_5E3500 > 0) {
         for (index = 0; index < 216; index++) {
-            if ((anim_run_info[index].field_C & 0x1) != 0
+            if ((anim_run_info[index].flags & 0x1) != 0
                 && !sub_44E2C0(&(anim_run_info[index].id), PRIORITY_HIGHEST)) {
                 return false;
             }
@@ -4157,7 +4160,7 @@ bool anim_goal_interrupt_all_goals_of_priority(int priority_level)
     ASSERT(priority_level >= PRIORITY_NONE && priority_level < PRIORITY_HIGHEST); // (priorityLevel >= priorityNone)&&(priorityLevel <= priorityHighest)
 
     for (index = 0; index < 216; index++) {
-        if ((anim_run_info[index].field_C & 0x1) != 0
+        if ((anim_run_info[index].flags & 0x1) != 0
             && !sub_44E2C0(&(anim_run_info[index].id), priority_level)) {
             tig_debug_printf("Anim: anim_goal_interrupt_all_goals_of_priority: ERROR: Failed to interrupt slot: %d!\n", index);
         }
@@ -4174,7 +4177,7 @@ bool anim_goal_interrupt_all_for_tb_combat()
 
     for (index = 0; index < 216; index++) {
         run_info = &(anim_run_info[index]);
-        if ((run_info->field_C & 0x1) != 0
+        if ((run_info->flags & 0x1) != 0
             && !sub_44C9A0(run_info)
             && !sub_44E2C0(&(run_info->id), 3)) {
             tig_debug_printf("Anim: anim_goal_interrupt_all_for_tb_combat: ERROR: Failed to interrupt slot: %d!\n", index);
@@ -4701,18 +4704,18 @@ bool sub_425430(AnimRunInfo* run_info)
     sub_430FC0(run_info);
 
     if (run_info->current_goal > 0) {
-        // TODO: Incomplete.
+        run_info->goals[run_info->current_goal - 1].params[AGDATA_SCRATCH_VAL4].data = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
     }
 
     run_info->path.flags &= ~0x4;
     run_info->path.flags |= 0x1;
 
-    run_info->field_C &= ~0x30;
+    run_info->flags &= ~0x30;
 
     if ((run_info->path.flags & 0x8) != 0
         && ((tig_net_flags & TIG_NET_CONNECTED) == 0
             || (tig_net_flags & TIG_NET_HOST) != 0)) {
-        run_info->field_C |= 0x2;
+        run_info->flags |= 0x2;
     }
 
     return true;
@@ -4733,18 +4736,18 @@ bool sub_4254C0(AnimRunInfo* run_info)
     sub_430FC0(run_info);
 
     if (run_info->current_goal > 0) {
-        // TODO: Incomplete.
+        run_info->goals[run_info->current_goal - 1].params[AGDATA_SCRATCH_VAL4].data = run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data;
     }
 
     run_info->path.flags &= ~0x4;
     run_info->path.flags |= 0x1;
 
-    run_info->field_C &= ~0x30;
+    run_info->flags &= ~0x30;
 
     if ((run_info->path.flags & 0x8) != 0
         && ((tig_net_flags & TIG_NET_CONNECTED) == 0
             || (tig_net_flags & TIG_NET_HOST) != 0)) {
-        run_info->field_C |= 0x2;
+        run_info->flags |= 0x2;
     }
 
     return true;
@@ -4808,7 +4811,7 @@ bool sub_425590(AnimRunInfo* run_info)
     if ((run_info->path.flags & 0x08) != 0
         && ((tig_net_flags & TIG_NET_CONNECTED) == 0
             || (tig_net_flags & TIG_NET_HOST) != 0)) {
-        run_info->field_C |= 0x02;
+        run_info->flags |= 0x02;
     }
 
     return true;
@@ -4950,7 +4953,7 @@ bool sub_425930(AnimRunInfo* run_info)
         }
     }
 
-    run_info->path.flags &= 0x03;
+    run_info->path.flags &= ~0x03;
     run_info->path.field_E8 = path_create_info.from;
     run_info->path.field_F0 = path_create_info.to;
     run_info->path.curr = 0;
@@ -5111,7 +5114,7 @@ bool sub_426040(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((run_info->field_C & 0x400) != 0) {
+    if ((run_info->flags & 0x400) != 0) {
         flags = 0x78;
     }
 
@@ -5126,11 +5129,11 @@ bool sub_426040(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((run_info->field_C & 0x400) != 0 || !sub_40DA20(obj)) {
+    if ((run_info->flags & 0x400) != 0 || !sub_40DA20(obj)) {
         return false;
     }
 
-    run_info->field_C |= 0x400;
+    run_info->flags |= 0x400;
 
     rc = sub_426500(obj, run_info->params[1].loc, &(run_info->path), flags | 0x78);
 
@@ -5524,7 +5527,7 @@ bool sub_426A80(AnimRunInfo* run_info)
         path_create_flags |= 0x04;
     }
 
-    if ((run_info->field_C & 0x400) != 0) {
+    if ((run_info->flags & 0x400) != 0) {
         path_create_flags |= 0x08;
         path_create_flags |= 0x10;
         path_create_flags |= 0x20;
@@ -5751,7 +5754,7 @@ bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
         object_list_destroy(&objects);
     }
 
-    if ((run_info->field_C & 0x400) != 0
+    if ((run_info->flags & 0x400) != 0
         && sub_425760(obj, loc, adjacent_loc, rot)) {
         return true;
     }
@@ -6010,7 +6013,7 @@ bool sub_427730(AnimRunInfo* run_info)
     path_create_info.obj = obj;
     path_create_info.rotations = run_info->path.rotations;
 
-    if ((run_info->field_C & 0x4000) == 0) {
+    if ((run_info->flags & 0x4000) == 0) {
         path_create_info.field_20 = 0;
         if (sub_425BF0(&path_create_info, true)) {
             run_info->path.max = sub_41F3C0(&path_create_info);
@@ -6122,7 +6125,7 @@ bool sub_427990(AnimRunInfo* run_info)
     path_create_info.rotations = run_info->path.rotations;
     path_create_info.field_20 = path_create_flags;
 
-    if ((run_info->field_C & 0x4000) == 0) {
+    if ((run_info->flags & 0x4000) == 0) {
         path_create_info.field_20 &= ~0x01;
     }
 
@@ -6154,7 +6157,7 @@ bool sub_427990(AnimRunInfo* run_info)
     }
 
     if (path_create_flags != path_create_info.field_20
-        && (run_info->field_C & 0x4000) == 0) {
+        && (run_info->flags & 0x4000) == 0) {
         path_create_info.field_20 = path_create_flags;
 
         if (!sub_425BF0(&path_create_info, true)) {
@@ -6213,7 +6216,7 @@ bool sub_427990(AnimRunInfo* run_info)
     path_create_info.from = source_loc;
     path_create_info.to = target_loc;
     path_create_info.max_rotations = max_rotations;
-    path_create_info.field_20 = (run_info->field_C & 0x4000) != 0 ? 0x01 : 0;
+    path_create_info.field_20 = (run_info->flags & 0x4000) != 0 ? 0x01 : 0;
 
     if (sub_425BF0(&path_create_info, true)) {
         run_info->path.max = sub_41F3C0(&path_create_info);
@@ -6237,7 +6240,7 @@ bool sub_427990(AnimRunInfo* run_info)
         return true;
     }
 
-    if (path_create_info.field_20 == 0x01 || (run_info->field_C & 0x4000) != 0) {
+    if (path_create_info.field_20 == 0x01 || (run_info->flags & 0x4000) != 0) {
         if (!sub_40DA20(source_obj)) {
             sub_4B7C90(source_obj);
         }
@@ -6337,7 +6340,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
     path_create_info.rotations = run_info->path.rotations;
     path_create_info.field_20 = path_create_flags;
 
-    if ((run_info->field_C & 0x4000) == 0) {
+    if ((run_info->flags & 0x4000) == 0) {
         path_create_info.field_20 &= ~0x01;
     }
 
@@ -6364,7 +6367,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
     }
 
     if (path_create_flags == path_create_info.field_20
-        || (run_info->field_C & 0x4000) != 0) {
+        || (run_info->flags & 0x4000) != 0) {
         if (!sub_40DA20(source_obj)) {
             sub_4B7C90(source_obj);
         }
@@ -7202,7 +7205,7 @@ bool sub_429760(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((run_info->field_C & 0x800) != 0) {
+    if ((run_info->flags & 0x800) != 0) {
         return false;
     }
 
@@ -7219,7 +7222,7 @@ bool sub_429760(AnimRunInfo* run_info)
     }
 
     run_info->path.maxPathLength = 0;
-    run_info->field_C &= ~0x83C;
+    run_info->flags &= ~0x83C;
 
     return true;
 }
@@ -7422,7 +7425,7 @@ bool sub_429C80(AnimRunInfo* run_info)
         sub_456E00(run_info->params[0].data);
     }
 
-    run_info->field_C |= 0xC;
+    run_info->flags |= 0xC;
 
     sub_456F70(run_info->params[0].data);
 
@@ -7445,7 +7448,7 @@ bool sub_429CD0(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 7156, "obj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0
+    if ((run_info->flags & 0x8000) != 0
         || map_is_clearing_objects()
         || obj == OBJ_HANDLE_NULL) {
         return false;
@@ -7477,7 +7480,7 @@ bool sub_429CD0(AnimRunInfo* run_info)
         object_set_overlay_light(obj, light, 0, TIG_ART_ID_INVALID, 0);
     }
 
-    if ((run_info->field_C & 0x08) == 0 && spell != -1) {
+    if ((run_info->flags & 0x08) == 0 && spell != -1) {
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0
             || (tig_net_flags & TIG_NET_HOST) != 0) {
             sub_456FA0(spell, 1);
@@ -7492,7 +7495,7 @@ bool sub_429CD0(AnimRunInfo* run_info)
         }
     }
 
-    if ((run_info->field_C & 0x200000) == 0) {
+    if ((run_info->flags & 0x200000) == 0) {
         art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         art_id = tig_art_id_anim_set(art_id, 0);
         art_id = tig_art_id_frame_set(art_id, 0);
@@ -7569,7 +7572,7 @@ bool sub_429F00(AnimRunInfo* run_info)
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL1].data = overlay_fore_idx;
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data = overlay_back_idx;
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = overlay_light_idx;
-    run_info->field_C |= 0x2000;
+    run_info->flags |= 0x2000;
 
     return true;
 }
@@ -7629,8 +7632,8 @@ bool sub_42A010(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C &= ~0x0C;
-    run_info->field_C |= 0x10;
+    run_info->flags &= ~0x0C;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -7740,7 +7743,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
     skill_invocation_run(&skill_invocation);
 
     if ((skill_invocation.flags & SKILL_INVOCATION_SUCCESS) != 0) {
-        run_info->field_C |= 0x40000;
+        run_info->flags |= 0x40000;
     }
 
     return true;
@@ -7749,7 +7752,7 @@ bool sub_42A2A0(AnimRunInfo* run_info)
 // 0x42A430
 bool sub_42A430(AnimRunInfo* run_info)
 {
-    return (run_info->field_C & 40000) != 0;
+    return (run_info->flags & 40000) != 0;
 }
 
 // 0x42A440
@@ -7765,7 +7768,7 @@ bool sub_42A440(AnimRunInfo* run_info)
         return false;
     }
 
-    return run_info->params[1].data == 5;
+    return run_info->params[1].data == SKILL_PICK_POCKET;
 }
 
 // 0x42A490
@@ -7781,7 +7784,7 @@ bool sub_42A490(AnimRunInfo* run_info)
         return false;
     }
 
-    return run_info->params[1].data == 14;
+    return run_info->params[1].data == SKILL_PICK_LOCKS;
 }
 
 // 0x42A4E0
@@ -8210,7 +8213,7 @@ bool sub_42AFB0(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 8028, "obj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0) {
+    if ((run_info->flags & 0x8000) != 0) {
         return false;
     }
 
@@ -8262,7 +8265,7 @@ bool sub_42B090(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 8068, "obj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0
+    if ((run_info->flags & 0x8000) != 0
         || map_is_clearing_objects()
         || obj == OBJ_HANDLE_NULL) {
         return false;
@@ -8294,7 +8297,7 @@ bool sub_42B090(AnimRunInfo* run_info)
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
         pkt.art_id = art_id;
-        pkt.flags = run_info->field_C;
+        pkt.flags = run_info->flags;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -8322,7 +8325,7 @@ bool sub_42B250(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 8202, "obj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0
+    if ((run_info->flags & 0x8000) != 0
         || map_is_clearing_objects()
         || obj == OBJ_HANDLE_NULL) {
         return false;
@@ -8364,7 +8367,7 @@ bool sub_42B250(AnimRunInfo* run_info)
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
         pkt.art_id = art_id;
-        pkt.flags = run_info->field_C;
+        pkt.flags = run_info->flags;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -8393,7 +8396,7 @@ bool sub_42B440(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 8276, "obj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0
+    if ((run_info->flags & 0x8000) != 0
         || map_is_clearing_objects()
         || obj == OBJ_HANDLE_NULL) {
         return false;
@@ -8441,7 +8444,7 @@ bool sub_42B440(AnimRunInfo* run_info)
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
         pkt.art_id = art_id;
-        pkt.flags = run_info->field_C;
+        pkt.flags = run_info->flags;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 
@@ -8457,7 +8460,7 @@ bool sub_42B640(AnimRunInfo* run_info)
 
     ASSERT(door_obj != OBJ_HANDLE_NULL); // 8351, "doorObj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0) {
+    if ((run_info->flags & 0x8000) != 0) {
         return false;
     }
 
@@ -8497,7 +8500,7 @@ bool sub_42B6F0(AnimRunInfo* run_info)
 
     ASSERT(door_obj != OBJ_HANDLE_NULL); // 8386, "doorObj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0) {
+    if ((run_info->flags & 0x8000) != 0) {
         return false;
     }
 
@@ -8590,7 +8593,7 @@ void anim_goal_reset_position_mp(AnimID* anim_id, int64_t obj, int64_t loc, tig_
     sub_43E770(obj, loc, offset_x, offset_y);
 
     if (anim_id_to_run_info(anim_id, &run_info)) {
-        run_info->field_C = flags;
+        run_info->flags = flags;
     } else {
         anim_id_to_str(anim_id, str);
         tig_debug_printf("Anim: anim_goal_reset_position_mp: Could not convert ID (%s) to slot!\n", str);
@@ -8601,13 +8604,13 @@ void anim_goal_reset_position_mp(AnimID* anim_id, int64_t obj, int64_t loc, tig_
 bool sub_42B940(AnimRunInfo* run_info)
 {
     ASSERT(run_info != OBJ_HANDLE_NULL); // 8503, "pRunInfo != NULL"
-    ASSERT(run_info->field_20); // 8504, "pRunInfo->animObj != OBJ_HANDLE_NULL"
+    ASSERT(run_info->anim_obj); // 8504, "pRunInfo->animObj != OBJ_HANDLE_NULL"
 
-    if (critter_encumbrance_level_get(run_info->field_20) >= ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+    if (critter_encumbrance_level_get(run_info->anim_obj) >= ENCUMBRANCE_LEVEL_SIGNIFICANT) {
         return false;
     }
 
-    run_info->field_C |= 0x40;
+    run_info->flags |= 0x40;
 
     return true;
 }
@@ -9229,21 +9232,21 @@ bool sub_42C850(AnimRunInfo* run_info)
 // 0x42CA90
 bool sub_42CA90(AnimRunInfo* run_info)
 {
-    return (run_info->field_C & 0x10) == 0;
+    return (run_info->flags & 0x10) == 0;
 }
 
 // 0x42CAA0
 bool sub_42CAA0(AnimRunInfo* run_info)
 {
-    if ((run_info->field_C & 0x4) == 0) {
+    if ((run_info->flags & 0x4) == 0) {
         return false;
     }
 
-    if ((run_info->field_C & 0x8) != 0) {
+    if ((run_info->flags & 0x8) != 0) {
         return false;
     }
 
-    run_info->field_C |= 0x8;
+    run_info->flags |= 0x8;
 
     return true;
 }
@@ -9322,8 +9325,8 @@ bool sub_42CB10(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C &= ~0x0C;
-    run_info->field_C |= 0x10;
+    run_info->flags &= ~0x0C;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -9368,7 +9371,7 @@ bool sub_42CC80(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -9377,12 +9380,12 @@ bool sub_42CC80(AnimRunInfo* run_info)
         // FIXME: Useless.
         tig_art_type(art_id);
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_inc_current_aid(obj);
@@ -9434,8 +9437,8 @@ bool sub_42CDF0(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C &= ~0x0C;
-    run_info->field_C |= 0x10;
+    run_info->flags &= ~0x0C;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -9469,7 +9472,7 @@ bool sub_42CF40(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -9483,12 +9486,12 @@ bool sub_42CF40(AnimRunInfo* run_info)
         // FIXME: Useless.
         tig_art_type(art_id);
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_inc_current_aid(obj);
@@ -9521,9 +9524,9 @@ bool sub_42D080(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C &= ~0xC;
+    run_info->flags &= ~0xC;
     sub_41B930(sub_4F1010(door_obj, 0), 1, door_obj);
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -9569,9 +9572,9 @@ bool sub_42D1C0(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C &= ~0xC;
+    run_info->flags &= ~0xC;
     sub_41B930(sub_4F1010(door_obj, 1), 1, door_obj);
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -9635,8 +9638,8 @@ bool sub_42D300(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C &= ~0x0C;
-    run_info->field_C |= 0x10;
+    run_info->flags &= ~0x0C;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -9663,7 +9666,7 @@ bool sub_42D440(AnimRunInfo* run_info)
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
 
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -9680,12 +9683,12 @@ bool sub_42D440(AnimRunInfo* run_info)
         // FIXME: Useless.
         tig_art_type(art_id);
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_inc_current_aid(obj);
@@ -9749,7 +9752,7 @@ bool sub_42D570(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -9773,7 +9776,7 @@ bool sub_42D6F0(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -9782,12 +9785,12 @@ bool sub_42D6F0(AnimRunInfo* run_info)
         // FIXME: Useless.
         tig_art_type(art_id);
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_inc_current_aid(obj);
@@ -9831,7 +9834,7 @@ bool sub_42D7D0(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -9844,7 +9847,7 @@ bool sub_42D7D0(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -9885,7 +9888,7 @@ bool sub_42D910(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -9894,12 +9897,12 @@ bool sub_42D910(AnimRunInfo* run_info)
         // FIXME: Useless.
         tig_art_type(art_id);
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_inc_current_aid(obj);
@@ -9961,9 +9964,9 @@ bool sub_42DA50(AnimRunInfo* run_info)
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = object_dist(obj, player_get_pc_obj()) < 30;
     }
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
-    if ((run_info->field_C & 0x20000) != 0) {
+    if ((run_info->flags & 0x20000) != 0) {
         return true;
     }
 
@@ -10056,14 +10059,14 @@ bool sub_42DDE0(AnimRunInfo* run_info)
     if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
         frame = tig_art_id_frame_get(art_id);
         if (frame == art_anim_data.num_frames - 1) {
-            run_info->field_C &= ~0x4;
+            run_info->flags &= ~0x4;
         }
         if (frame == art_anim_data.action_frame - 1) {
-            run_info->field_C |= 0x4;
+            run_info->flags |= 0x4;
         }
         return frame % 3 != 1;
     } else {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 }
@@ -10074,7 +10077,7 @@ bool sub_42DED0(AnimRunInfo* run_info)
     ASSERT(run_info != NULL); // 10259, pRunInfo != NULL
 
     if (run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data != TIG_SOUND_HANDLE_INVALID
-        && (run_info->field_C & 0x20000) == 0) {
+        && (run_info->flags & 0x20000) == 0) {
         tig_sound_destroy(run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data);
         run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
     }
@@ -10130,7 +10133,7 @@ bool AGbeginStunAnim(AnimRunInfo* run_info)
     }
 
     run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -10167,7 +10170,7 @@ bool sub_42E070(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -10175,12 +10178,12 @@ bool sub_42E070(AnimRunInfo* run_info)
     if (frame == art_anim_data.num_frames - 1) {
         // FIXME: Useless.
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_inc_current_aid(obj);
@@ -10225,7 +10228,7 @@ bool sub_42E1B0(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
     return true;
 }
 
@@ -10256,7 +10259,7 @@ bool sub_42E2D0(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -10271,19 +10274,19 @@ bool sub_42E2D0(AnimRunInfo* run_info)
             art_id = tig_art_id_frame_set(art_id, art_anim_data.num_frames - 1);
             object_set_current_aid(obj, art_id);
             run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = TIG_ART_ID_INVALID;
-            run_info->field_C &= ~0x04;
+            run_info->flags &= ~0x04;
             return false;
         } else {
             art_id = tig_art_id_frame_set(art_id, 0);
             art_id = tig_art_id_anim_set(art_id, 10);
             object_set_current_aid(obj, art_id);
-            run_info->field_C &= ~0x04;
+            run_info->flags &= ~0x04;
             return true;
         }
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_inc_current_aid(obj);
@@ -10331,7 +10334,7 @@ bool AGbeginKnockDownAnim(AnimRunInfo* run_info)
         run_info->pause_time.milliseconds = 100;
     }
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -10375,7 +10378,7 @@ bool sub_42E590(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     run_info->cur_stack_data->params[AGDATA_ANIM_ID].data = art_id;
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -10445,7 +10448,7 @@ bool sub_42E720(AnimRunInfo* run_info)
 
     object_set_current_aid(obj, art_id);
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -10477,7 +10480,7 @@ bool sub_42E8B0(AnimRunInfo* run_info)
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -10486,12 +10489,12 @@ bool sub_42E8B0(AnimRunInfo* run_info)
         // FIXME: Useless.
         tig_art_type(art_id);
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     object_dec_current_aid(obj);
@@ -10512,12 +10515,12 @@ bool sub_42E9B0(AnimRunInfo* run_info)
     int64_t next_loc;
     int rot;
 
-    if ((run_info->field_C & 0x100) != 0) {
+    if ((run_info->flags & 0x100) != 0) {
         return false;
     }
 
-    if ((run_info->field_C & 0x20) != 0) {
-        run_info->field_C |= 0x10;
+    if ((run_info->flags & 0x20) != 0) {
+        run_info->flags |= 0x10;
         return true;
     }
 
@@ -10549,7 +10552,7 @@ bool sub_42E9B0(AnimRunInfo* run_info)
     }
 
     v2 = 2;
-    sub_42EDC0(run_info, obj, &art_id, (run_info->field_C & 0x40) != 0, &v2);
+    sub_42EDC0(run_info, obj, &art_id, (run_info->flags & 0x40) != 0, &v2);
 
     if (!sub_4B7790(obj, v2)) {
         sub_44E2C0(&(run_info->id), PRIORITY_HIGHEST);
@@ -10604,7 +10607,7 @@ bool sub_42E9B0(AnimRunInfo* run_info)
         run_info->field_28 = next_loc;
     }
 
-    if ((run_info->field_C & 0x400) != 0) {
+    if ((run_info->flags & 0x400) != 0) {
         if ((run_info->path.flags & 0x01) != 0) {
             rot = tig_art_id_rotation_get(art_id);
         } else {
@@ -10631,7 +10634,7 @@ bool sub_42E9B0(AnimRunInfo* run_info)
 
     run_info->path.curr = 0;
     run_info->path.flags &= ~0x03;
-    run_info->field_C |= 0x30;
+    run_info->flags |= 0x30;
 
     return true;
 }
@@ -10660,7 +10663,7 @@ void sub_42EDC0(AnimRunInfo* run_info, int64_t obj, tig_art_id_t* art_id_ptr, bo
     }
 
     if (critter_fatigue_current(obj) <= 0) {
-        run_info->field_C &= ~0x40;
+        run_info->flags &= ~0x40;
         *art_id_ptr = art_id;
         return;
     }
@@ -10810,7 +10813,7 @@ bool sub_42F140(AnimRunInfo* run_info)
         art_id = tig_art_id_frame_set(art_id, 0);
         object_set_current_aid(obj, art_id);
 
-        run_info->field_C &= ~0x30;
+        run_info->flags &= ~0x30;
         sub_430490(obj, 0, 0);
 
         return false;
@@ -10829,7 +10832,7 @@ bool sub_42F140(AnimRunInfo* run_info)
     art_id = tig_art_id_rotation_set(art_id, rot);
     sub_430490(obj, -offset_x, -offset_y);
 
-    if ((run_info->field_C & 0x40) != 0) {
+    if ((run_info->flags & 0x40) != 0) {
         art_id = tig_art_id_anim_set(art_id, 6);
     } else {
         art_id = tig_art_id_anim_set(art_id, 1);
@@ -10838,7 +10841,7 @@ bool sub_42F140(AnimRunInfo* run_info)
     art_id = tig_art_id_frame_set(art_id, 0);
     object_set_current_aid(obj, art_id);
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -10865,7 +10868,7 @@ bool sub_42F2D0(AnimRunInfo* run_info)
 
     run_info->path.flags &= ~0x1;
     run_info->path.curr = 0;
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -10932,7 +10935,7 @@ bool sub_42F390(AnimRunInfo* run_info)
         run_info->path.curr += 2;
 
         if (run_info->path.curr >= run_info->path.max) {
-            run_info->field_C &= ~0x10;
+            run_info->flags &= ~0x10;
             return false;
         }
     }
@@ -10964,7 +10967,7 @@ bool sub_42F5C0(AnimRunInfo* run_info)
     run_info->path.curr = 0;
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = 0;
     run_info->cur_stack_data->params[AGDATA_ORIGINAL_TILE].loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     return true;
 }
@@ -11045,11 +11048,11 @@ bool sub_42F6A0(AnimRunInfo* run_info)
                 obj_field_int64_get(projectile_obj, OBJ_F_LOCATION));
             sub_4B2870(parent_obj, target_obj, target_loc, projectile_obj, range, new_loc, v1);
 
-            if ((run_info->field_C & 0x02) != 0) {
+            if ((run_info->flags & 0x02) != 0) {
                 return false;
             }
 
-            if ((run_info->field_C & 0x01) == 0) {
+            if ((run_info->flags & 0x01) == 0) {
                 return false;
             }
 
@@ -11099,7 +11102,7 @@ bool sub_42FA50(AnimRunInfo* run_info)
     dword_5DE6CC = 35;
 
     if (obj == OBJ_HANDLE_NULL) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -11132,8 +11135,8 @@ bool sub_42FA50(AnimRunInfo* run_info)
                 combat.field_30 = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
                 sub_4B4390(&combat);
 
-                if ((run_info->field_C & 0x1) != 0) {
-                    run_info->field_C &= ~0x10;
+                if ((run_info->flags & 0x1) != 0) {
+                    run_info->flags &= ~0x10;
                 }
 
                 return false;
@@ -11148,7 +11151,7 @@ bool sub_42FA50(AnimRunInfo* run_info)
 
         run_info->path.curr += 2;
         if (run_info->path.curr >= run_info->path.max) {
-            run_info->field_C &= ~0x10;
+            run_info->flags &= ~0x10;
             return false;
         }
     }
@@ -11251,7 +11254,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((run_info->field_C & 0x200) == 0 && critter_is_dead(obj)) {
+    if ((run_info->flags & 0x200) == 0 && critter_is_dead(obj)) {
         object_flags_set(obj, OF_FLAT | OF_NO_BLOCK);
 
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
@@ -11277,7 +11280,7 @@ bool sub_42FFE0(AnimRunInfo* run_info)
     obj = run_info->params[0].obj;
     ASSERT(obj != OBJ_HANDLE_NULL); // obj != OBJ_HANDLE_NULL
 
-    if ((run_info->field_C & 0x8000) != 0) {
+    if ((run_info->flags & 0x8000) != 0) {
         return false;
     }
 
@@ -11537,8 +11540,8 @@ bool sub_4305D0(AnimRunInfo* run_info)
     // FIXME: Useless.
     player_is_pc_obj(obj);
 
-    v1 = (run_info->field_C & 0x40) != 0;
-    run_info->field_C |= 0x100000;
+    v1 = (run_info->flags & 0x40) != 0;
+    run_info->flags |= 0x100000;
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
@@ -11548,7 +11551,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
     }
 
     rot = run_info->path.rotations[run_info->path.curr];
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) != 0) {
@@ -11678,7 +11681,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                     object_set_current_aid(obj, art_id);
                     sub_430490(obj, 0, 0);
 
-                    run_info->field_C &= ~0x30;
+                    run_info->flags &= ~0x30;
 
                     dword_5DE6E4 = 0;
 
@@ -11696,11 +11699,11 @@ bool sub_4305D0(AnimRunInfo* run_info)
                     object_set_current_aid(obj, art_id);
                 }
 
-                run_info->path.flags &= ~0x10;
+                run_info->flags &= ~0x10;
 
                 v3 = 2;
                 if (run_info->current_goal > 0
-                    && (run_info->field_C & 0x40) != 0
+                    && (run_info->flags & 0x40) != 0
                     && critter_fatigue_current(obj) > 0) {
                     v3 = 1;
                 }
@@ -11727,7 +11730,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                 // TODO: Incomplete.
             }
 
-            if ((run_info->field_C & 0x80000) != 0
+            if ((run_info->flags & 0x80000) != 0
                 && player_is_pc_obj(obj)
                 && new_loc != loc) {
                 int64_t x;
@@ -11754,7 +11757,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
 
     dword_5DE6E4 = 0;
 
-    if ((run_info->field_C & 0x80) != 0) {
+    if ((run_info->flags & 0x80) != 0) {
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
             run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
         } else {
@@ -11770,7 +11773,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
             run_info->pause_time.milliseconds *= 2;
         }
 
-        run_info->field_C &= ~0x80;
+        run_info->flags &= ~0x80;
     }
 
     return true;
@@ -11786,7 +11789,7 @@ bool sub_430F20(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 12721, "obj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0
+    if ((run_info->flags & 0x8000) != 0
         || map_is_clearing_objects()
         || obj == OBJ_HANDLE_NULL) {
         return false;
@@ -11826,7 +11829,7 @@ int sub_430FC0(AnimRunInfo* run_info)
 
     action_points = 2;
 
-    if (run_info->current_goal > 0 && (run_info->field_C & 0x40) != 0) {
+    if (run_info->current_goal > 0 && (run_info->flags & 0x40) != 0) {
         if (critter_fatigue_current(obj) > 0) {
             if (combat_critter_is_combat_mode_active(obj)) {
                 v1 = 5;
@@ -11864,7 +11867,7 @@ int sub_430FC0(AnimRunInfo* run_info)
             art_id = tig_art_id_anim_set(art_id, 1);
             object_set_current_aid(obj, art_id);
 
-            run_info->field_C &= ~0x40;
+            run_info->flags &= ~0x40;
         }
     }
 
@@ -12015,7 +12018,7 @@ bool sub_431340(AnimRunInfo* run_info)
                 object_eye_candy_aid_inc(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
-                    run_info->field_C |= 0x04;
+                    run_info->flags |= 0x04;
                 }
             }
 
@@ -12056,7 +12059,7 @@ bool sub_431340(AnimRunInfo* run_info)
                 object_eye_candy_aid_inc(obj, OBJ_F_UNDERLAY, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
-                    run_info->field_C |= 0x04;
+                    run_info->flags |= 0x04;
                 }
         }
     } else {
@@ -12130,7 +12133,7 @@ bool sub_4315B0(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((run_info->field_C & 0x2000) == 0) {
+    if ((run_info->flags & 0x2000) == 0) {
         AnimFxList* animfx_list;
         AnimFxNode node;
 
@@ -12149,7 +12152,7 @@ bool sub_4315B0(AnimRunInfo* run_info)
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data = overlay_back;
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = overlay_light;
 
-        run_info->field_C |= 0x2000;
+        run_info->flags |= 0x2000;
     }
 
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
@@ -12160,7 +12163,7 @@ bool sub_4315B0(AnimRunInfo* run_info)
 
     run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
 
-    if ((run_info->field_C & 0x800) != 0) {
+    if ((run_info->flags & 0x800) != 0) {
         frame = random_between(0, art_anim_data.num_frames - 1);
     }
 
@@ -12239,7 +12242,7 @@ void sub_431960(AnimRunInfo* run_info, int64_t obj)
             sound_handle = sub_41B930(goal_data->params[AGDATA_ANIM_ID_PREVIOUS].data, loops, obj);
             if (sound_handle != TIG_SOUND_HANDLE_INVALID) {
                 if (loops != 0) {
-                    run_info->field_C |= 0x20000;
+                    run_info->flags |= 0x20000;
                 } else {
                     goal_data->params[AGDATA_ANIM_ID_PREVIOUS].data = sound_handle;
                 }
@@ -12259,7 +12262,7 @@ void sub_4319F0(AnimRunInfo* run_info, int64_t obj)
 
     goal_data = run_info->cur_stack_data;
     if (goal_data->params[AGDATA_SOUND_HANDLE].data != TIG_SOUND_HANDLE_INVALID
-        && (run_info->field_C & 0x20000) == 0
+        && (run_info->flags & 0x20000) == 0
         && (goal_data->params[AGDATA_FLAGS_DATA].data & 0x80000000) != 0) {
         sub_41C780(goal_data->params[AGDATA_SOUND_HANDLE].data, obj_field_int64_get(obj, OBJ_F_LOCATION));
     }
@@ -12325,7 +12328,7 @@ bool sub_431B20(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 13355, "obj != OBJ_HANDLE_NULL"
 
-    if ((run_info->field_C & 0x8000) != 0
+    if ((run_info->flags & 0x8000) != 0
         || map_is_clearing_objects()
         || obj == OBJ_HANDLE_NULL) {
         return false;
@@ -12362,7 +12365,7 @@ bool sub_431B20(AnimRunInfo* run_info)
     }
 
     if (run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data != TIG_SOUND_HANDLE_INVALID) {
-        if ((run_info->field_C & 0x20000) == 0) {
+        if ((run_info->flags & 0x20000) == 0) {
             tig_sound_destroy(run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data);
         }
         run_info->cur_stack_data->params[AGDATA_SOUND_HANDLE].data = TIG_SOUND_HANDLE_INVALID;
@@ -12415,7 +12418,7 @@ bool sub_431C40(AnimRunInfo* run_info)
                 object_eye_candy_aid_dec(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
-                    run_info->field_C |= 0x04;
+                    run_info->flags |= 0x04;
                 }
             }
 
@@ -12456,7 +12459,7 @@ bool sub_431C40(AnimRunInfo* run_info)
             object_eye_candy_aid_dec(obj, OBJ_F_UNDERLAY, overlay_fore);
 
             if (frame == art_anim_data.action_frame - 1) {
-                run_info->field_C |= 0x04;
+                run_info->flags |= 0x04;
             }
         }
     } else {
@@ -12509,7 +12512,7 @@ bool sub_431E50(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((run_info->field_C & 0x2000) == 0) {
+    if ((run_info->flags & 0x2000) == 0) {
         AnimFxList* animfx_list;
         AnimFxNode node;
 
@@ -12528,7 +12531,7 @@ bool sub_431E50(AnimRunInfo* run_info)
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL2].data = overlay_back;
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL3].data = overlay_light;
 
-        run_info->field_C |= 0x2000;
+        run_info->flags |= 0x2000;
     }
 
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
@@ -12539,7 +12542,7 @@ bool sub_431E50(AnimRunInfo* run_info)
 
     run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
 
-    if ((run_info->field_C & 0x800) != 0) {
+    if ((run_info->flags & 0x800) != 0) {
         frame = random_between(1, art_anim_data.num_frames - 1);
     } else {
         frame = art_anim_data.num_frames - 1;
@@ -12700,7 +12703,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
                 object_eye_candy_aid_inc(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
-                    run_info->field_C |= 0x04;
+                    run_info->flags |= 0x04;
                 }
             }
 
@@ -12741,7 +12744,7 @@ bool sub_4322A0(AnimRunInfo* run_info)
             object_eye_candy_aid_inc(obj, OBJ_F_UNDERLAY, overlay_fore);
 
             if (frame == art_anim_data.action_frame - 1) {
-                run_info->field_C |= 0x04;
+                run_info->flags |= 0x04;
             }
         }
     } else {
@@ -12807,7 +12810,7 @@ bool sub_4324D0(AnimRunInfo* run_info)
                 object_eye_candy_aid_dec(obj, OBJ_F_OVERLAY_FORE, overlay_fore);
 
                 if (frame == art_anim_data.action_frame - 1) {
-                    run_info->field_C |= 0x04;
+                    run_info->flags |= 0x04;
                 }
             }
 
@@ -12848,7 +12851,7 @@ bool sub_4324D0(AnimRunInfo* run_info)
             object_eye_candy_aid_dec(obj, OBJ_F_UNDERLAY, overlay_fore);
 
             if (frame == art_anim_data.action_frame - 1) {
-                run_info->field_C |= 0x04;
+                run_info->flags |= 0x04;
             }
         }
     } else {
@@ -12940,7 +12943,7 @@ bool sub_432700(AnimRunInfo* run_info)
         object_flags_unset(source_obj, OF_INVISIBLE);
     }
 
-    run_info->field_C |= 0x10;
+    run_info->flags |= 0x10;
 
     if (obj_type_is_critter(source_obj_type) && random_between(1, 4) == 1) {
         sound_id = sub_4F0ED0(source_obj, 4);
@@ -12951,7 +12954,7 @@ bool sub_432700(AnimRunInfo* run_info)
     sub_4377C0(NULL, source_obj, source_obj, 0);
 
     if (art_anim_data.action_frame < 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     return true;
@@ -12992,7 +12995,7 @@ bool sub_432990(AnimRunInfo* run_info)
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
 
     if (tig_art_anim_data(art_id, &art_anim_data) != TIG_OK) {
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
@@ -13001,12 +13004,12 @@ bool sub_432990(AnimRunInfo* run_info)
         // FIXME: Useless.
         tig_art_type(art_id);
 
-        run_info->field_C &= ~0x10;
+        run_info->flags &= ~0x10;
         return false;
     }
 
     if (frame == art_anim_data.action_frame - 1) {
-        run_info->field_C |= 0x04;
+        run_info->flags |= 0x04;
     }
 
     target_obj = run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj;
@@ -13022,7 +13025,7 @@ bool sub_432990(AnimRunInfo* run_info)
                 art_id = tig_art_id_frame_set(art_id, v1 - 3);
                 art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
                 object_set_current_aid(obj, art_id);
-                run_info->field_C &= ~0x0C;
+                run_info->flags &= ~0x0C;
             } else {
                 object_inc_current_aid(obj);
             }
@@ -13036,7 +13039,7 @@ bool sub_432990(AnimRunInfo* run_info)
                 art_id = tig_art_id_frame_set(art_id, v1 - 3);
                 art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
                 object_set_current_aid(obj, art_id);
-                run_info->field_C &= ~0x0C;
+                run_info->flags &= ~0x0C;
             } else {
                 object_inc_current_aid(obj);
             }
@@ -13045,7 +13048,7 @@ bool sub_432990(AnimRunInfo* run_info)
         object_inc_current_aid(obj);
     }
 
-    if ((run_info->field_C & 0x80) != 0) {
+    if ((run_info->flags & 0x80) != 0) {
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
             run_info->pause_time.milliseconds = 1000 / art_anim_data.fps;
         } else {
@@ -13064,7 +13067,7 @@ bool sub_432990(AnimRunInfo* run_info)
         }
 
         run_info->pause_time.milliseconds = delay;
-        run_info->field_C &= ~0x80;
+        run_info->flags &= ~0x80;
     }
 
     return true;
@@ -13327,7 +13330,7 @@ bool sub_433270(AnimRunInfo* run_info)
         return false;
     }
 
-    if (player_is_pc_obj(run_info->field_20)) {
+    if (player_is_pc_obj(run_info->anim_obj)) {
         return true;
     }
 
@@ -13522,11 +13525,11 @@ bool sub_433640(int64_t obj, int64_t loc)
 
         pkt.type = 8;
         pkt.modify_data.id = stru_5A1908;
-        pkt.modify_data.field_C = run_info->field_C;
-        pkt.modify_data.field_10 = run_info->path.flags;
+        pkt.modify_data.flags = run_info->flags;
+        pkt.modify_data.path_flags = run_info->path.flags;
         pkt.modify_data.field_14 = 5;
-        pkt.modify_data.field_18 = loc;
-        pkt.modify_data.field_2C = run_info->path.curr;
+        pkt.modify_data.loc = loc;
+        pkt.modify_data.path_curr = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(self_obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(self_obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(self_obj, OBJ_F_OFFSET_X);
@@ -13666,12 +13669,12 @@ bool sub_433C80(int64_t obj, int64_t loc)
     }
 
     run_info = &(anim_run_info[stru_5A1908.slot_num]);
-    run_info->field_C |= 0x40;
+    run_info->flags |= 0x40;
 
     // TODO: Looks wrong, checking for 0 immediately after OR'ing 0x40.
-    if (run_info->field_C == 0
-        && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
-        run_info->field_C |= 0x40;
+    if (run_info->flags == 0
+        && critter_encumbrance_level_get(run_info->anim_obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        run_info->flags |= 0x40;
     }
 
     if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc == loc) {
@@ -13688,11 +13691,11 @@ bool sub_433C80(int64_t obj, int64_t loc)
 
         if ((tig_net_flags & TIG_NET_HOST) != 0) {
             run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
-            run_info->field_C |= 0x40;
+            run_info->flags |= 0x40;
 
-            if (run_info->field_C == 0
-                && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
-                run_info->field_C |= 0x40;
+            if (run_info->flags == 0
+                && critter_encumbrance_level_get(run_info->anim_obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+                run_info->flags |= 0x40;
             }
 
             sub_44D0C0(run_info);
@@ -13701,11 +13704,11 @@ bool sub_433C80(int64_t obj, int64_t loc)
         sub_437460(&(pkt.modify_data));
         pkt.type = 8;
         pkt.modify_data.id = stru_5A1908;
-        pkt.modify_data.field_C = run_info->field_C;
-        pkt.modify_data.field_10 = run_info->path.flags;
+        pkt.modify_data.flags = run_info->flags;
+        pkt.modify_data.path_flags = run_info->path.flags;
         pkt.modify_data.field_14 = 5;
-        pkt.modify_data.field_18 = loc;
-        pkt.modify_data.field_2C = run_info->path.curr;
+        pkt.modify_data.loc = loc;
+        pkt.modify_data.path_curr = run_info->path.curr;
         pkt.field_40 = run_info->field_28;
         pkt.modify_data.location = obj_field_int64_get(self_obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
@@ -13724,9 +13727,9 @@ bool sub_433C80(int64_t obj, int64_t loc)
     run_info->path.flags |= 0x04;
     run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
 
-    if (run_info->field_C == 0
-        && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
-        run_info->field_C |= 0x40;
+    if (run_info->flags == 0
+        && critter_encumbrance_level_get(run_info->anim_obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        run_info->flags |= 0x40;
     }
 
     return true;
@@ -13758,7 +13761,7 @@ bool sub_434030(int64_t obj, int64_t loc)
     }
 
     run_info = &(anim_run_info[stru_5A1908.slot_num]);
-    run_info->field_C |= 0x40;
+    run_info->flags |= 0x40;
     if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc != loc) {
         sub_44D500(&goal_data, obj, 3);
         goal_data.params[AGDATA_TARGET_TILE].loc = loc;
@@ -13811,14 +13814,14 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range)
 
         sub_437460(&(pkt.modify_data));
         pkt.modify_data.id = stru_5A1908;
-        pkt.modify_data.field_C = run_info->field_C;
-        pkt.modify_data.field_10 = run_info->path.flags;
+        pkt.modify_data.flags = run_info->flags;
+        pkt.modify_data.path_flags = run_info->path.flags;
 
         pkt.type = 8;
         pkt.modify_data.field_14 = 5;
-        pkt.modify_data.field_18 = target_loc;
+        pkt.modify_data.loc = target_loc;
         pkt.field_40 = run_info->field_28;
-        pkt.modify_data.field_2C = run_info->path.curr;
+        pkt.modify_data.path_curr = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
@@ -13866,9 +13869,9 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
     }
 
     run_info = &(anim_run_info[stru_5A1908.slot_num]);
-    if ((run_info->field_C & 0x40) == 0
-        && critter_encumbrance_level_get(run_info->field_20) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
-        run_info->field_C |= 0x40;
+    if ((run_info->flags & 0x40) == 0
+        && critter_encumbrance_level_get(run_info->anim_obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
+        run_info->flags |= 0x40;
     }
 
     if (run_info->goals[0].params[AGDATA_TARGET_TILE].loc == target_loc) {
@@ -13890,14 +13893,14 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
 
         sub_437460(&(pkt.modify_data));
         pkt.modify_data.id = stru_5A1908;
-        pkt.modify_data.field_C = run_info->field_C;
-        pkt.modify_data.field_10 = run_info->path.flags;
+        pkt.modify_data.flags = run_info->flags;
+        pkt.modify_data.path_flags = run_info->path.flags;
 
         pkt.type = 8;
         pkt.modify_data.field_14 = 5;
-        pkt.modify_data.field_18 = target_loc;
+        pkt.modify_data.loc = target_loc;
         pkt.field_40 = run_info->field_28;
-        pkt.modify_data.field_2C = run_info->path.curr;
+        pkt.modify_data.path_curr = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
@@ -14584,7 +14587,7 @@ bool sub_435A00(int64_t proj_obj, int64_t a2, int64_t a3)
     run_info->goals[0].params[AGDATA_SCRATCH_OBJ].obj = a3;
     run_info->goals[0].params[AGDATA_TARGET_OBJ].obj = run_info->goals[0].params[AGDATA_PARENT_OBJ].obj;
     run_info->path.flags = 1;
-    run_info->field_C &= ~0x10;
+    run_info->flags &= ~0x10;
 
     return true;
 }
@@ -15079,17 +15082,17 @@ void turn_on_running(AnimID anim_id)
     if (critter_encumbrance_level_get(obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
             if ((tig_net_flags & TIG_NET_HOST) != 0) {
-                run_info->field_C |= 0x40;
+                run_info->flags |= 0x40;
                 sub_44D0C0(run_info);
             }
 
             sub_437460(&(pkt.modify_data));
             pkt.modify_data.id = anim_id;
             pkt.type = 8;
-            pkt.modify_data.field_C = run_info->field_C;
-            pkt.modify_data.field_10 = run_info->path.flags;
+            pkt.modify_data.flags = run_info->flags;
+            pkt.modify_data.path_flags = run_info->path.flags;
             pkt.modify_data.field_14 = -1;
-            pkt.modify_data.field_2C = run_info->path.curr;
+            pkt.modify_data.path_curr = run_info->path.curr;
             pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
             pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
@@ -15102,7 +15105,7 @@ void turn_on_running(AnimID anim_id)
 
             tig_net_send_app_all(&pkt, sizeof(pkt));
         } else {
-            run_info->field_C |= 0x40;
+            run_info->flags |= 0x40;
         }
     }
 }
@@ -15169,17 +15172,17 @@ void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2)
         obj = run_info->goals[0].params[AGDATA_SELF_OBJ].obj;
 
         if ((tig_net_flags & TIG_NET_HOST) != 0) {
-            run_info->field_C |= flags1;
+            run_info->flags |= flags1;
             sub_44D0C0(run_info);
         }
 
         sub_437460(&(pkt.modify_data));
         pkt.modify_data.id = anim_id;
         pkt.type = 8;
-        pkt.modify_data.field_C = run_info->field_C;
-        pkt.modify_data.field_10 = run_info->path.flags;
+        pkt.modify_data.flags = run_info->flags;
+        pkt.modify_data.path_flags = run_info->path.flags;
         pkt.modify_data.field_14 = -1;
-        pkt.modify_data.field_2C = run_info->path.curr;
+        pkt.modify_data.path_curr = run_info->path.curr;
         pkt.modify_data.location = obj_field_int64_get(obj, OBJ_F_LOCATION);
         pkt.modify_data.current_aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
@@ -15192,7 +15195,7 @@ void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2)
 
         tig_net_send_app_all(&pkt, sizeof(pkt));
     } else {
-        run_info->field_C |= flags1;
+        run_info->flags |= flags1;
         run_info->path.flags |= flags2;
     }
 }
@@ -15218,7 +15221,7 @@ void notify_speed_recalc(AnimID* anim_id)
     }
 
     // FIXME: Should use obtained `run_info`, not lookup from the master table.
-    anim_run_info[anim_id->slot_num].field_C |= 0x80;
+    anim_run_info[anim_id->slot_num].flags |= 0x80;
 }
 
 // 0x436FA0
@@ -15299,13 +15302,13 @@ void sub_437460(AGModifyData* modify_data)
     ASSERT(modify_data != NULL); // pAGModifyData != NULL
 
     anim_id_init(&(modify_data->id));
-    modify_data->field_18 = 0;
+    modify_data->loc = 0;
     modify_data->location = 0;
-    modify_data->field_C = 0;
-    modify_data->field_10 = 0;
+    modify_data->flags = 0;
+    modify_data->path_flags = 0;
     modify_data->field_14 = -1;
     modify_data->current_aid = TIG_ART_ID_INVALID;
-    modify_data->field_2C = -1;
+    modify_data->path_curr = -1;
 }
 
 // 0x4374C0
@@ -15545,7 +15548,7 @@ bool sub_437C50(AnimRunInfo* run_info, int end, int64_t* x, int64_t* y)
     int idx;
 
     if (run_info != NULL
-        && run_info->field_20 != OBJ_HANDLE_NULL
+        && run_info->anim_obj != OBJ_HANDLE_NULL
         && run_info->path.field_E8 != 0) {
         loc = run_info->path.field_E8;
         for (idx = 0; idx <= end; idx++) {
@@ -15579,11 +15582,11 @@ void sub_437D00(AnimRunInfo* run_info)
 
     goal_data = &(run_info->goals[run_info->current_goal]);
     if (run_info->current_goal == 0) {
-        run_info->field_C |= 0x2;
+        run_info->flags |= 0x2;
     }
 
     if (goal_data->type >= 0 && goal_data->type < 87) {
-        goal_node = off_5B03D0[goal_data->type];
+        goal_node = anim_goal_nodes[goal_data->type];
         if (goal_node->subnodes[14].func != NULL
             && sub_44DD80(run_info, &(goal_node->subnodes[14]))) {
             goal_node->subnodes[14].func(run_info);
@@ -15597,5 +15600,5 @@ void sub_437D00(AnimRunInfo* run_info)
         run_info->cur_stack_data = &(run_info->goals[run_info->current_goal]);
     }
 
-    run_info->field_10 = 0;
+    run_info->current_state = 0;
 }

@@ -11,7 +11,7 @@
 
 #define ANIM_ID_STR_SIZE 36
 
-extern AnimGoalNode* off_5B03D0[];
+extern AnimGoalNode* anim_goal_nodes[];
 
 bool anim_init(GameInitInfo* init_info);
 void anim_exit();

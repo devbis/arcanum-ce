@@ -112,13 +112,7 @@ struct AnimRunInfo;
 
 typedef struct AnimGoalSubNode {
     /* 0000 */ bool(*func)(struct AnimRunInfo* run_info);
-    union {
-        struct {
-        /* 0004 */ int field_4;
-        /* 0008 */ int field_8;
-        };
-        int params[2];
-    };
+    /* 0004 */ int params[2];
     /* 000C */ int field_C;
     /* 0010 */ int field_10;
     /* 0014 */ int field_14;
@@ -129,7 +123,7 @@ typedef struct AnimGoalSubNode {
 static_assert(sizeof(AnimGoalSubNode) == 0x20, "wrong size");
 
 typedef struct AnimGoalNode {
-    /* 0000 */ int field_0;
+    /* 0000 */ int num_subnodes;
     /* 0004 */ int priority_level;
     /* 0008 */ int field_8;
     /* 000C */ int field_C;
@@ -150,13 +144,13 @@ static_assert(sizeof(AnimID) == 0xC, "wrong size");
 
 typedef struct AGModifyData {
     /* 0000 */ AnimID id;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
+    /* 000C */ int flags;
+    /* 0010 */ int path_flags;
     /* 0014 */ int field_14;
-    /* 0018 */ int64_t field_18;
+    /* 0018 */ int64_t loc;
     /* 0020 */ int64_t location;
     /* 0028 */ tig_art_id_t current_aid;
-    /* 002C */ int field_2C;
+    /* 002C */ int path_curr;
 } AGModifyData;
 
 static_assert(sizeof(AGModifyData) == 0x30, "wrong size");
@@ -192,9 +186,12 @@ typedef enum AgData {
     AGDATA_COUNT,
 } AgData;
 
+#define AGDATA_SELF_TILE 31
+#define AGDATA_NULL_OBJ 33
+#define AGDATA_FORCE_TARGET_TILE 34
+
 typedef struct AnimGoalData {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
     /* 0008 */ AnimRunInfoParam params[AGDATA_COUNT];
     /* 00B0 */ Ryan field_B0[5];
 } AnimGoalData;
@@ -219,17 +216,15 @@ static_assert(sizeof(AnimPath) == 0xF8, "wrong size");
 
 typedef struct AnimRunInfo {
     /* 0000 */ AnimID id;
-    /* 000C */ int field_C;
-    /* 0010 */ int field_10;
+    /* 000C */ unsigned int flags;
+    /* 0010 */ int current_state;
     /* 0014 */ int field_14;
     /* 0018 */ DateTime field_18;
-    /* 0020 */ int64_t field_20; // animObj
+    /* 0020 */ int64_t anim_obj;
     /* 0028 */ int64_t field_28;
     /* 0030 */ int current_goal;
-    /* 0034 */ int field_34;
     /* 0038 */ AnimGoalData goals[8];
     /* 0BF0 */ AnimGoalData* cur_stack_data;
-    /* 0BFC */ int field_BFC;
     /* 0C00 */ AnimPath path;
     /* 0CF8 */ DateTime pause_time;
     /* 0D00 */ AnimRunInfoParam params[3];
