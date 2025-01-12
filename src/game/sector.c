@@ -30,7 +30,7 @@ typedef struct S60180C {
 } S60180C;
 
 static bool sub_4CF810(unsigned int size);
-static void sub_4D0F70();
+static void sector_block_clear();
 static void sub_4D1100();
 static int sub_4D1310(int64_t a1, int64_t a2, int a3, int64_t* a4);
 static void sub_4D13D0();
@@ -50,10 +50,11 @@ static void sub_4D2ED0(Sector* sector);
 static void sub_4D2F80();
 static void sub_4D2F90();
 static int sub_4D2FB0(const tig_art_id_t* a, const tig_art_id_t* b);
-static void sub_4D3000(int64_t a1);
-static void sub_4D3050(int idx);
-static bool sub_4D30A0();
-static bool sub_4D31C0(const char* a1, const char* a2);
+static int sector_block_find(int64_t sec);
+static void sector_block_add(int64_t sec);
+static void sector_block_remove(int idx);
+static bool sector_block_save_internal();
+static bool sector_block_load_internal(const char* base_map_name, const char* current_map_name);
 
 // 0x5B7CD0
 static DateTime qword_5B7CD0 = { -1, -1 };
@@ -74,13 +75,13 @@ static SectorSaveFunc* sector_save_func;
 static bool in_sector_lock;
 
 // 0x601790
-static int dword_601790;
+static int sector_blocked_sectors_cnt;
 
 // 0x601794
-static int64_t* dword_601794;
+static int64_t* sector_blocked_sectors;
 
 // 0x601798
-static bool dword_601798;
+static bool sector_blocked_sectors_changed;
 
 // 0x60179C
 static char* dword_60179C;
@@ -938,7 +939,7 @@ void sector_flush(unsigned int flags)
         v1 += 0x3FFFFFFF;
     }
 
-    sub_4D30A0();
+    sector_block_save_internal();
 }
 
 // 0x4D0DE0
@@ -979,51 +980,56 @@ void sub_4D0E70(tig_art_id_t art_id)
 }
 
 // 0x4D0EE0
-bool sub_4D0EE0(int64_t a1)
+bool sector_is_blocked(int64_t sec)
 {
-    return sub_4D2FC0(a1) != -1;
+    return sector_block_find(sec) != -1;
 }
 
 // 0x4D0F00
-void sub_4D0F00(int64_t a1, bool a2)
+void sector_block_set(int64_t sec, bool blocked)
 {
-    int v1;
+    int idx;
 
-    v1 = sub_4D2FC0(a1);
-    if (a2) {
-        if (v1 == -1) {
-            sub_4D3000(a1);
+    idx = sector_block_find(sec);
+    if (blocked) {
+        if (idx == -1) {
+            sector_block_add(sec);
         }
     } else {
-        if (v1 != -1) {
-            sub_4D3050(v1);
+        if (idx != -1) {
+            sector_block_remove(idx);
         }
     }
 }
 
 // 0x4D0F40
-void sub_4D0F40()
+void sector_block_init()
 {
-    sub_4D0F70();
+    sector_block_clear();
 }
 
 // 0x4D0F50
-bool sub_4D0F50(const char* a1, const char* a2)
+bool sector_block_load(const char* base_map_name, const char* current_map_name)
 {
-    sub_4D0F70();
-    return sub_4D31C0(a1, a2);
+    sector_block_clear();
+
+    if (!sector_block_load_internal(base_map_name, current_map_name)) {
+        return false;
+    }
+
+    return true;
 }
 
 // 0x4D0F70
-void sub_4D0F70()
+void sector_block_clear()
 {
-    if (dword_601794 != NULL) {
-        FREE(dword_601794);
-        dword_601794 = NULL;
+    if (sector_blocked_sectors != NULL) {
+        FREE(sector_blocked_sectors);
+        sector_blocked_sectors = NULL;
     }
 
-    dword_601790 = 0;
-    dword_601798 = 0;
+    sector_blocked_sectors_cnt = 0;
+    sector_blocked_sectors_changed = false;
 }
 
 // 0x4D1040
@@ -2159,12 +2165,12 @@ int sub_4D2FB0(const tig_art_id_t* a, const tig_art_id_t* b)
 }
 
 // 0x4D2FC0
-int sub_4D2FC0(int64_t a1)
+int sector_block_find(int64_t sec)
 {
     int index;
 
-    for (index = 0; index < dword_601790; index++) {
-        if (dword_601794[index] == a1) {
+    for (index = 0; index < sector_blocked_sectors_cnt; index++) {
+        if (sector_blocked_sectors[index] == sec) {
             return index;
         }
     }
@@ -2173,31 +2179,31 @@ int sub_4D2FC0(int64_t a1)
 }
 
 // 0x4D3000
-void sub_4D3000(int64_t a1)
+void sector_block_add(int64_t sec)
 {
-    dword_601794 = (int64_t*)REALLOC(dword_601794, sizeof(*dword_601794) * (dword_601790 + 1));
-    dword_601794[dword_601790++] = a1;
-    dword_601798 = true;
+    sector_blocked_sectors = (int64_t*)REALLOC(sector_blocked_sectors, sizeof(*sector_blocked_sectors) * (sector_blocked_sectors_cnt + 1));
+    sector_blocked_sectors[sector_blocked_sectors_cnt++] = sec;
+    sector_blocked_sectors_changed = true;
 }
 
 // 0x4D3050
-void sub_4D3050(int idx)
+void sector_block_remove(int idx)
 {
-    memcpy(&(dword_601794[idx]),
-        &(dword_601794[idx + 1]),
-        sizeof(*dword_601794) * (dword_601790 - idx - 1));
-    dword_601790--;
-    dword_601798 = true;
+    memcpy(&(sector_blocked_sectors[idx]),
+        &(sector_blocked_sectors[idx + 1]),
+        sizeof(*sector_blocked_sectors) * (sector_blocked_sectors_cnt - idx - 1));
+    sector_blocked_sectors_cnt--;
+    sector_blocked_sectors_changed = true;
 }
 
 // 0x4D30A0
-bool sub_4D30A0()
+bool sector_block_save_internal()
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     TigFile* stream;
 
-    if (dword_601798) {
-        if (dword_601790 != 0) {
+    if (sector_blocked_sectors_changed) {
+        if (sector_blocked_sectors_cnt != 0) {
             sprintf(path, "%s\\map.sbf", dword_6017FC);
 
             stream = tig_file_fopen(path, "wb");
@@ -2205,12 +2211,12 @@ bool sub_4D30A0()
                 return false;
             }
 
-            if (tig_file_fwrite(&dword_601790, sizeof(dword_601790), 1, stream) != 1) {
+            if (tig_file_fwrite(&sector_blocked_sectors_cnt, sizeof(sector_blocked_sectors_cnt), 1, stream) != 1) {
                 tig_file_fclose(stream);
                 return false;
             }
 
-            if (tig_file_fwrite(dword_601794, sizeof(*dword_601794), dword_601790, stream) != dword_601790) {
+            if (tig_file_fwrite(sector_blocked_sectors, sizeof(*sector_blocked_sectors), sector_blocked_sectors_cnt, stream) != sector_blocked_sectors_cnt) {
                 tig_file_fclose(stream);
                 return false;
             }
@@ -2228,22 +2234,22 @@ bool sub_4D30A0()
             tig_file_fclose(stream);
         }
 
-        dword_601798 = false;
+        sector_blocked_sectors_changed = false;
     }
 
     return true;
 }
 
 // 0x4D31C0
-bool sub_4D31C0(const char* a1, const char* a2)
+bool sector_block_load_internal(const char* base_map_name, const char* current_map_name)
 {
     char path[MAX_PATH];
     TigFile* stream;
 
-    sprintf(path, "%s\\map.sbf", a2);
+    sprintf(path, "%s\\map.sbf", current_map_name);
 
     if (!tig_file_exists(path, NULL)) {
-        sprintf(path, "%s\\map.sbf", a1);
+        sprintf(path, "%s\\map.sbf", base_map_name);
         if (!tig_file_exists(path, NULL)) {
             return false;
         }
@@ -2254,13 +2260,13 @@ bool sub_4D31C0(const char* a1, const char* a2)
         return false;
     }
 
-    if (tig_file_fread(&dword_601790, sizeof(dword_601790), 1, stream) != 1) {
+    if (tig_file_fread(&sector_blocked_sectors_cnt, sizeof(sector_blocked_sectors_cnt), 1, stream) != 1) {
         tig_file_fclose(stream);
         return false;
     }
 
-    dword_601794 = (int64_t*)MALLOC(sizeof(*dword_601794) * dword_601790);
-    if (tig_file_fread(dword_601794, sizeof(*dword_601794), dword_601790, stream) != dword_601790) {
+    sector_blocked_sectors = (int64_t*)MALLOC(sizeof(*sector_blocked_sectors) * sector_blocked_sectors_cnt);
+    if (tig_file_fread(sector_blocked_sectors, sizeof(*sector_blocked_sectors), sector_blocked_sectors_cnt, stream) != sector_blocked_sectors_cnt) {
         tig_file_fclose(stream);
         return false;
     }

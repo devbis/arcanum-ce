@@ -1137,7 +1137,7 @@ void sub_5607E0()
 
     loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
     sector_id = sector_id_from_loc(loc);
-    if (sub_4D0EE0(sector_id)) {
+    if (sector_is_blocked(sector_id)) {
         mes_file_entry.num = 605; // "The World Map is not available."
         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
 

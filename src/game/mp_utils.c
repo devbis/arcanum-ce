@@ -876,24 +876,24 @@ void sub_4EEFE0(Packet107* pkt)
 }
 
 // 0x4EF010
-void sub_4EF010(int64_t a1, bool a2)
+void mp_sector_block_set(int64_t sec, bool blocked)
 {
-    Packet108 pkt;
+    PacketSectorBlockSet pkt;
 
-    sub_4D0F00(a1, a2);
+    sector_block_set(sec, blocked);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 108;
-        pkt.field_8 = a1;
-        pkt.field_10 = a2;
+        pkt.sec = sec;
+        pkt.blocked = blocked;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
 
 // 0x4EF060
-void sub_4EF060(Packet108* pkt)
+void sub_4EF060(PacketSectorBlockSet* pkt)
 {
-    sub_4D0F00(pkt->field_8, pkt->field_10);
+    sector_block_set(pkt->sec, pkt->blocked);
 }
 
 // 0x4EF080

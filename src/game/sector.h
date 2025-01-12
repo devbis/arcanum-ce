@@ -61,10 +61,10 @@ void sub_4D0B40();
 void sector_flush(unsigned int flags);
 bool sub_4D0DE0(int64_t id);
 void sub_4D0E70(tig_art_id_t art_id);
-bool sub_4D0EE0(int64_t a1);
-void sub_4D0F00(int64_t a1, bool a2);
-void sub_4D0F40();
-bool sub_4D0F50(const char* a1, const char* a2);
+bool sector_is_blocked(int64_t sec);
+void sector_block_set(int64_t sec, bool blocked);
+void sector_block_init();
+bool sector_block_load(const char* base_map_name, const char* current_map_name);
 void sub_4D1040();
 void sub_4D1050();
 void sector_enumerate(SectorEnumerateFunc* func);
@@ -74,7 +74,6 @@ void sub_4D10E0();
 bool sub_4D1150(TigFile* stream);
 bool sub_4D12B0(GameLoadInfo* load_info);
 Sector601808* sub_4D13A0();
-int sub_4D2FC0(int64_t a1);
 
 #define SECTOR_X(a) ((a) & 0x3FFFFFF)
 #define SECTOR_Y(a) (((a) >> 26) & 0x3FFFFFF)

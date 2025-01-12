@@ -679,8 +679,8 @@ bool map_open(const char* a1, const char* a2, bool a3)
 
     tig_debug_printf("map_open: sector blocking...");
     tig_timer_now(&timestamp);
-    if (!sub_4D0F50(map_name, map_folder)) {
-        sub_4D0F40();
+    if (!sector_block_load(map_name, map_folder)) {
+        sector_block_init();
     }
     duration = tig_timer_elapsed(timestamp);
     tig_debug_printf("done.  Time (ms): %d\n", duration);
