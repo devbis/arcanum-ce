@@ -6486,7 +6486,7 @@ bool sub_428550(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4AEB70(self_obj, door_obj, object_rot(self_obj, door_obj))) {
+    if (ai_attempt_open_portal(self_obj, door_obj, object_rot(self_obj, door_obj)) != AI_ATTEMPT_OPEN_PORTAL_OK) {
         sound_id = sub_4F1010(door_obj, 2);
         sub_41B930(sound_id, 1, door_obj);
         return false;
@@ -6524,6 +6524,7 @@ bool sub_428690(AnimRunInfo* run_info)
 {
     int64_t source_obj;
     int64_t portal_obj;
+    int rot;
 
     source_obj = run_info->params[0].obj;
     portal_obj = run_info->params[1].obj;
@@ -6543,7 +6544,8 @@ bool sub_428690(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4AEB70(source_obj, portal_obj, object_rot(source_obj, portal_obj)) != 0) {
+    rot = object_rot(source_obj, portal_obj);
+    if (ai_attempt_open_portal(source_obj, portal_obj, rot) != AI_ATTEMPT_OPEN_PORTAL_OK) {
         return false;
     }
 
@@ -6554,10 +6556,11 @@ bool sub_428690(AnimRunInfo* run_info)
 bool sub_428750(AnimRunInfo* run_info)
 {
     int64_t door_obj;
-    int64_t v1;
+    int64_t obj;
+    int rot;
 
     door_obj = run_info->params[0].obj;
-    v1 = run_info->params[1].obj;
+    obj = run_info->params[1].obj;
 
     ASSERT(door_obj != OBJ_HANDLE_NULL); // 6183, "doorObj != OBJ_HANDLE_NULL"
 
@@ -6565,7 +6568,8 @@ bool sub_428750(AnimRunInfo* run_info)
         return false;
     }
 
-    if (sub_4AEB70(v1, door_obj, object_rot(v1, door_obj)) == 0) {
+    rot = object_rot(obj, door_obj);
+    if (ai_attempt_open_portal(obj, door_obj, rot) == AI_ATTEMPT_OPEN_PORTAL_OK) {
         return false;
     }
 
@@ -6576,29 +6580,31 @@ bool sub_428750(AnimRunInfo* run_info)
 bool sub_4287E0(AnimRunInfo* run_info)
 {
     int64_t source_obj;
-    int64_t door_obj;
+    int64_t portal_obj;
+    int rot;
 
     source_obj = run_info->params[0].obj;
-    door_obj = run_info->params[1].obj;
+    portal_obj = run_info->params[1].obj;
 
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 6221, "sourceObj != OBJ_HANDLE_NULL"
-    ASSERT(door_obj != OBJ_HANDLE_NULL); // 6222, "portalObj != OBJ_HANDLE_NULL"
+    ASSERT(portal_obj != OBJ_HANDLE_NULL); // 6222, "portalObj != OBJ_HANDLE_NULL"
 
     if (source_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (door_obj == OBJ_HANDLE_NULL) {
+    if (portal_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if ((obj_field_int32_get(door_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
+    if ((obj_field_int32_get(portal_obj, OBJ_F_FLAGS) & (OF_DESTROYED | OF_OFF)) != 0) {
         return false;
     }
 
-    // FIXME: Probably wrong.
-    sub_4AEB70(source_obj, door_obj, object_rot(source_obj, door_obj));
+    rot = object_rot(source_obj, portal_obj);
+    ai_attempt_open_portal(source_obj, portal_obj, rot);
 
+    // NOTE: Returns `false`.
     return false;
 }
 
@@ -6614,10 +6620,11 @@ bool sub_428890(AnimRunInfo* run_info)
 bool sub_4288A0(AnimRunInfo* run_info)
 {
     int64_t source_obj;
-    int64_t v1;
+    int64_t portal_obj;
+    int rot;
 
     source_obj = run_info->params[0].obj;
-    v1 = run_info->params[1].obj;
+    portal_obj = run_info->params[1].obj;
 
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 6259, "sourceObj != OBJ_HANDLE_NULL"
 
@@ -6625,11 +6632,12 @@ bool sub_4288A0(AnimRunInfo* run_info)
         return false;
     }
 
-    if (v1 == OBJ_HANDLE_NULL) {
+    if (portal_obj == OBJ_HANDLE_NULL) {
         return true;
     }
 
-    if (sub_4AEB70(source_obj, v1, object_rot(source_obj, v1)) != 0) {
+    rot = object_rot(source_obj, portal_obj);
+    if (ai_attempt_open_portal(source_obj, portal_obj, rot) != 0) {
         return false;
     }
 

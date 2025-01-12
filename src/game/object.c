@@ -2928,7 +2928,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
                         if ((flags & 0x01) != 0
                             || ((flags & 0x08) == 0
                                 && a1 != OBJ_HANDLE_NULL
-                                && sub_4AEB70(a1, node->obj, a3))) {
+                                && ai_attempt_open_portal(a1, node->obj, a3) != AI_ATTEMPT_OPEN_PORTAL_OK)) {
                             done = true;
                             *block_obj_ptr = node->obj;
                             *block_obj_type_ptr = OBJ_TYPE_PORTAL;
@@ -3051,7 +3051,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
                             if ((flags & 0x01) != 0
                                 || ((flags & 0x08) == 0
                                     && a1 != OBJ_HANDLE_NULL
-                                    && sub_4AEB70(a1, node->obj, a3))) {
+                                    && ai_attempt_open_portal(a1, node->obj, a3) != AI_ATTEMPT_OPEN_PORTAL_OK)) {
                                 *block_obj_ptr = node->obj;
                                 *block_obj_type_ptr = obj_type;
                                 break;

@@ -1393,7 +1393,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
         direction = script_get_value(condition->op_type[2], condition->op_value[2], state);
 
-        if (sub_4AEB70(objs[0], objs[1], direction) == 0) {
+        if (ai_attempt_open_portal(objs[0], objs[1], direction) == AI_ATTEMPT_OPEN_PORTAL_OK) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);

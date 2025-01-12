@@ -3776,52 +3776,53 @@ bool ai_critter_can_open_portals(int64_t obj)
 }
 
 // 0x4AEB70
-int sub_4AEB70(int64_t obj, int64_t portal, int a3)
+int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir)
 {
     int type;
     unsigned int flags;
 
-    if (object_is_destroyed(portal)) {
-        return 0;
+    if (object_is_destroyed(portal_obj)) {
+        return AI_ATTEMPT_OPEN_PORTAL_OK;
     }
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (type != OBJ_TYPE_PC && type != OBJ_TYPE_NPC) {
-        return 5;
+        return AI_ATTEMPT_OPEN_PORTAL_NOT_CRITTER;
     }
 
-    if (!sub_441980(obj, portal, OBJ_HANDLE_NULL, 3, 0)) {
-        return 4;
+    if (!sub_441980(obj, portal_obj, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
+        return AI_ATTEMPT_OPEN_PORTAL_NOT_ALLOWED;
     }
 
-    if (obj_field_int32_get(portal, OBJ_F_TYPE) != OBJ_TYPE_PORTAL) {
-        return 0;
+    if (obj_field_int32_get(portal_obj, OBJ_F_TYPE) != OBJ_TYPE_PORTAL) {
+        return AI_ATTEMPT_OPEN_PORTAL_OK;
     }
 
-    flags = obj_field_int32_get(portal, OBJ_F_PORTAL_FLAGS);
+    flags = obj_field_int32_get(portal_obj, OBJ_F_PORTAL_FLAGS);
     if ((flags & OPF_JAMMED) != 0) {
-        return 2;
+        return AI_ATTEMPT_OPEN_PORTAL_JAMMED;
     }
     if ((flags & OPF_MAGICALLY_HELD) != 0) {
-        return 3;
+        return AI_ATTEMPT_OPEN_PORTAL_MAGICALLY_HELD;
     }
     if ((flags & OPF_ALWAYS_LOCKED) == 0) {
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
             if (critter_pc_leader_get(obj) == OBJ_HANDLE_NULL
-                || sub_4AECA0(portal, a3)) {
-                return 0;
+                || sub_4AECA0(portal_obj, dir)) {
+                return AI_ATTEMPT_OPEN_PORTAL_OK;
             }
-        } else if (sub_4AECA0(portal, a3)) {
-            return 0;
+        } else if (sub_4AECA0(portal_obj, dir)) {
+            return AI_ATTEMPT_OPEN_PORTAL_OK;
         }
     }
 
-    if (object_is_locked(portal)) {
-        // TODO: Review (convert from bool to int).
-        return !sub_463370(obj, obj_field_int32_get(portal, OBJ_F_PORTAL_KEY_ID));
+    if (object_is_locked(portal_obj)) {
+        if (!sub_463370(obj, obj_field_int32_get(portal_obj, OBJ_F_PORTAL_KEY_ID))) {
+            return AI_ATTEMPT_OPEN_PORTAL_LOCKED;
+        }
     }
 
-    return 0;
+    return AI_ATTEMPT_OPEN_PORTAL_OK;
 }
 
 // 0x4AECA0
