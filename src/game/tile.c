@@ -763,6 +763,7 @@ void tile_render_iso(UnknownContext* render_info)
                                             }
                                         } else if (v51[0] != color || dword_602E00) {
                                             art_blit_info.flags = TIG_ART_BLT_BLEND_COLOR_CONST;
+                                            art_blit_info.color = v51[0];
                                             if (!dword_602E00) {
                                                 art_blit_info.flags |= TIG_ART_BLT_PALETTE_ORIGINAL;
                                             }
