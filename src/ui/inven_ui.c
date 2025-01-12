@@ -534,8 +534,8 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
     if (a2 != OBJ_HANDLE_NULL && (a3 == 2 || a3 == 4)) {
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             if (a3 == 2) {
-                err = sub_4AED80(a1, a2);
-                if (err != 0) {
+                err = ai_attempt_open_container(a1, a2);
+                if (err != AI_ATTEMPT_OPEN_CONTAINER_OK) {
                     mes_file_entry.num = err;
                     mes_get_msg(inven_ui_mes_file, &mes_file_entry);
 

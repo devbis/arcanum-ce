@@ -24,6 +24,14 @@ typedef enum AiAttemptOpenPortal {
     AI_ATTEMPT_OPEN_PORTAL_NOT_CRITTER,
 } AiAttemptOpenPortal;
 
+typedef enum AiAttemptOpenContainer {
+    AI_ATTEMPT_OPEN_CONTAINER_OK,
+    AI_ATTEMPT_OPEN_CONTAINER_LOCKED,
+    AI_ATTEMPT_OPEN_CONTAINER_JAMMED,
+    AI_ATTEMPT_OPEN_CONTAINER_MAGICALLY_HELD,
+    AI_ATTEMPT_OPEN_CONTAINER_NOT_ALLOWED,
+} AiAttemptOpenContainer;
+
 typedef struct AiRedirect {
     /* 0000 */ int64_t field_0;
     /* 0008 */ int64_t field_8;
@@ -69,7 +77,7 @@ void sub_4AE9E0(int64_t a1, bool a2);
 void sub_4AEAB0(int64_t a1, int64_t a2);
 bool ai_critter_can_open_portals(int64_t obj);
 int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir);
-int sub_4AED80(int64_t a1, int64_t a2);
+int ai_attempt_open_container(int64_t obj, int64_t container_obj);
 void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness);
 void sub_4AF130(int64_t a1, int64_t a2);
 void sub_4AF170(int64_t obj);

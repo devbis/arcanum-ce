@@ -3863,37 +3863,41 @@ bool ai_is_indoor_to_outdoor_transition(int64_t portal_obj, int dir)
 }
 
 // 0x4AED80
-int sub_4AED80(int64_t a1, int64_t a2)
+int ai_attempt_open_container(int64_t obj, int64_t container_obj)
 {
     unsigned int container_flags;
     int key_id;
 
-    if (sub_49B290(a2) == 3023 || object_is_destroyed(a2)) {
-        return 0;
+    if (sub_49B290(container_obj) == 3023) {
+        return AI_ATTEMPT_OPEN_CONTAINER_OK;
     }
 
-    if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
-        return 4;
+    if (object_is_destroyed(container_obj)) {
+        return AI_ATTEMPT_OPEN_CONTAINER_OK;
     }
 
-    if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-        container_flags = obj_field_int32_get(a2, OBJ_F_CONTAINER_FLAGS);
+    if (!sub_441980(obj, container_obj, OBJ_HANDLE_NULL, SAP_UNLOCK, 0)) {
+        return AI_ATTEMPT_OPEN_CONTAINER_NOT_ALLOWED;
+    }
+
+    if (obj_field_int32_get(container_obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        container_flags = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_FLAGS);
         if ((container_flags & OCOF_JAMMED) != 0) {
-            return 2;
+            return AI_ATTEMPT_OPEN_CONTAINER_JAMMED;
         }
         if ((container_flags & OCOF_MAGICALLY_HELD) != 0) {
-            return 3;
+            return AI_ATTEMPT_OPEN_CONTAINER_MAGICALLY_HELD;
         }
 
-        if (object_is_locked(a2)) {
-            key_id = obj_field_int32_get(a2, OBJ_F_CONTAINER_KEY_ID);
-            if (!sub_463370(a1, key_id)) {
-                return 1;
+        if (object_is_locked(container_obj)) {
+            key_id = obj_field_int32_get(container_obj, OBJ_F_CONTAINER_KEY_ID);
+            if (!sub_463370(obj, key_id)) {
+                return AI_ATTEMPT_OPEN_CONTAINER_LOCKED;
             }
         }
     }
 
-    return 0;
+    return AI_ATTEMPT_OPEN_CONTAINER_OK;
 }
 
 // 0x4AEE50

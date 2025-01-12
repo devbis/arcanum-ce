@@ -1040,7 +1040,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
 
         objs[0] = script_get_obj(condition->op_type[0], condition->op_value[0], state);
         objs[1] = script_get_obj(condition->op_type[1], condition->op_value[1], state);
-        if (sub_4AED80(objs[0], objs[1]) == 0) {
+        if (ai_attempt_open_container(objs[0], objs[1]) == AI_ATTEMPT_OPEN_CONTAINER_OK) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
