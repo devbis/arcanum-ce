@@ -959,7 +959,7 @@ void sub_438570(int64_t obj, int64_t sector_id, int type)
         stru_5E0E20[index].flags = 0;
         stru_5E0E20[index].sector_id = sector_id;
         stru_5E0E20[index].obj = obj;
-        stru_5E0E20[index].field_18 = sub_4395E0(obj_field_int64_get(obj, OBJ_F_LOCATION));
+        stru_5E0E20[index].field_18 = roof_normalize_loc(obj_field_int64_get(obj, OBJ_F_LOCATION));
 
         sector_lock(sector_id, &sector);
         sub_438720(stru_5E0E20[index].field_18);

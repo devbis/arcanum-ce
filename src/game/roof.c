@@ -374,7 +374,7 @@ int sub_4395C0(int a1)
 }
 
 // 0x4395E0
-int64_t sub_4395E0(int64_t loc)
+int64_t roof_normalize_loc(int64_t loc)
 {
     int64_t x = LOCATION_GET_X(loc);
     int64_t y = LOCATION_GET_Y(loc);
@@ -385,7 +385,7 @@ int64_t sub_4395E0(int64_t loc)
 // 0x439640
 void roof_xy(int64_t loc, int64_t* sx, int64_t* sy)
 {
-    loc = sub_4395E0(loc);
+    loc = roof_normalize_loc(loc);
     location_xy(loc, sx, sy);
 
     *sx -= 120;
@@ -414,7 +414,6 @@ tig_art_id_t roof_art_id_at(int64_t loc)
 // 0x439700
 bool sub_439700(int64_t loc, tig_art_id_t aid)
 {
-    int64_t v1;
     int64_t sector_id;
     Sector* sector;
     tig_art_id_t old_aid;
@@ -422,14 +421,14 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
     int64_t y;
     TigRect rect;
 
-    v1 = sub_4395E0(loc);
-    sector_id = sector_id_from_loc(v1);
+    loc = roof_normalize_loc(loc);
+    sector_id = sector_id_from_loc(loc);
     if (!sector_lock(sector_id, &sector)) {
         return false;
     }
 
-    old_aid = sector->roofs.art_ids[roof_id_from_loc(v1)];
-    sector->roofs.art_ids[roof_id_from_loc(v1)] = aid;
+    old_aid = sector->roofs.art_ids[roof_id_from_loc(loc)];
+    sector->roofs.art_ids[roof_id_from_loc(loc)] = aid;
     sector->roofs.field_0 = 0;
 
     sector_unlock(sector_id);
@@ -438,7 +437,7 @@ bool sub_439700(int64_t loc, tig_art_id_t aid)
         aid = old_aid;
     }
 
-    roof_xy(v1, &x, &y);
+    roof_xy(loc, &x, &y);
     if (x > INT_MIN
         && x < INT_MAX
         && y > INT_MIN
@@ -589,14 +588,14 @@ void roof_recalc(int64_t loc)
 
     v9 = sub_5048D0(aid);
     if (v8 != v9) {
-        roof_fill(sub_4395E0(loc), 1 - v9, -1);
+        roof_fill(roof_normalize_loc(loc), 1 - v9, -1);
     }
 }
 
 // 0x439EA0
-void sub_439EA0(int64_t a1)
+void sub_439EA0(int64_t loc)
 {
-    roof_fill(sub_4395E0(a1), 0, -1);
+    roof_fill(roof_normalize_loc(loc), 0, -1);
 }
 
 // 0x439EE0
