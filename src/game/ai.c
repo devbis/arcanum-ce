@@ -144,7 +144,7 @@ static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
 static int64_t sub_4AE450(int64_t a1, int64_t a2);
 static int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech);
-static bool sub_4AECA0(int64_t a1, int a2);
+static bool ai_is_indoor_to_outdoor_transition(int64_t portal_obj, int dir);
 static int sub_4AF240(int value);
 static int sub_4AF640(int64_t source_obj, int64_t target_obj);
 static bool sub_4AF800(int64_t obj, int64_t a2);
@@ -3808,10 +3808,10 @@ int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir)
     if ((flags & OPF_ALWAYS_LOCKED) == 0) {
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
             if (critter_pc_leader_get(obj) == OBJ_HANDLE_NULL
-                || sub_4AECA0(portal_obj, dir)) {
+                || ai_is_indoor_to_outdoor_transition(portal_obj, dir)) {
                 return AI_ATTEMPT_OPEN_PORTAL_OK;
             }
-        } else if (sub_4AECA0(portal_obj, dir)) {
+        } else if (ai_is_indoor_to_outdoor_transition(portal_obj, dir)) {
             return AI_ATTEMPT_OPEN_PORTAL_OK;
         }
     }
@@ -3826,36 +3826,36 @@ int ai_attempt_open_portal(int64_t obj, int64_t portal_obj, int dir)
 }
 
 // 0x4AECA0
-bool sub_4AECA0(int64_t obj, int a2)
+bool ai_is_indoor_to_outdoor_transition(int64_t portal_obj, int dir)
 {
     int64_t loc;
     tig_art_id_t aid;
-    int rotation;
+    int rot;
     int64_t new_loc;
     int64_t tmp_loc;
 
-    loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    rotation = tig_art_id_rotation_get(aid);
-    if (!sub_4B8FF0(loc, rotation, &new_loc)) {
+    loc = obj_field_int64_get(portal_obj, OBJ_F_LOCATION);
+    aid = obj_field_int32_get(portal_obj, OBJ_F_CURRENT_AID);
+    rot = tig_art_id_rotation_get(aid);
+    if (!sub_4B8FF0(loc, rot, &new_loc)) {
         return false;
     }
 
-    if ((a2 + 4) % 8 == rotation
-        || (a2 + 5) % 8 == rotation
-        || (a2 + 3) % 8 == rotation) {
+    if ((dir + 4) % 8 == rot
+        || (dir + 5) % 8 == rot
+        || (dir + 3) % 8 == rot) {
         tmp_loc = new_loc;
         loc = new_loc;
         new_loc = tmp_loc;
     }
 
     aid = tile_art_id_at(loc);
-    if (tig_art_tile_id_type_get(aid) != 0) {
+    if (tig_art_tile_id_type_get(aid) != TIG_ART_TILE_TYPE_INDOOR) {
         return false;
     }
 
     aid = tile_art_id_at(new_loc);
-    if (tig_art_tile_id_type_get(aid) == 0) {
+    if (tig_art_tile_id_type_get(aid) == TIG_ART_TILE_TYPE_INDOOR) {
         return false;
     }
 
