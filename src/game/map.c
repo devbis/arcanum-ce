@@ -689,7 +689,7 @@ bool map_open(const char* a1, const char* a2, bool a3)
     tig_timer_now(&timestamp);
     location_limits_set(map_properties.field_8, map_properties.field_10);
     sector_limits_set(map_properties.field_8 / 64, map_properties.field_10 / 64);
-    sub_4D0440(a1, a2);
+    sector_map_name_set(a1, a2);
     location_origin_set(sub_4B9810());
     dword_5D1210 = 0;
     pch = strrchr(a1, '\\');
