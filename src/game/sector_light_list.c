@@ -156,7 +156,69 @@ bool sector_light_list_load(SectorLightList* list, TigFile* stream, int64_t sect
 // 0x4F7440
 bool sector_light_list_load_with_dif(SectorLightList* list, TigFile* sec_stream, TigFile* dif_stream, int64_t sector_id)
 {
-    // TODO: Incomplete.
+    int cnt;
+    int idx;
+    bool dif;
+    int extent;
+    int64_t x;
+    int64_t y;
+    Light* light;
+    int64_t loc;
+    int tile;
+
+    if (tig_file_fread(&cnt, sizeof(cnt), 1, sec_stream) != 1) {
+        return false;
+    }
+
+    if (sector_id != -1) {
+        x = SECTOR_X(sector_id);
+        y = SECTOR_Y(sector_id);
+    }
+
+    dif = false;
+    extent = 0;
+
+    for (idx = 0; idx < cnt; idx++) {
+        if (extent == 0) {
+            if (tig_file_fread(&extent, sizeof(extent), 1, dif_stream) != 1) {
+                break;
+            }
+
+            dif = (extent & 0x80000000) != 0;
+            extent &= ~0x80000000;
+        }
+
+        if (!light_read(sec_stream, &light)) {
+            break;
+        }
+
+        if (sector_id != -1) {
+            loc = light_get_location(light);
+            tile = tile_id_from_loc(loc);
+            light_set_location(light, LOCATION_MAKE(x + (tile & 0x3F), y + ((tile >> 6) & 0x3F)));
+            light_clear_modified(light);
+        }
+
+        if (dif) {
+            if (!light_read_dif(dif_stream, &light)) {
+                break;
+            }
+        }
+
+        extent--;
+
+        if (!sector_light_list_add(list, light)) {
+            break;
+        }
+    }
+
+    if (idx != cnt) {
+        return false;
+    }
+
+    list->modified = true;
+
+    return true;
 }
 
 // 0x4F7610
