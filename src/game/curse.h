@@ -3,10 +3,11 @@
 
 #include "game/context.h"
 #include "game/obj.h"
+#include "game/timeevent.h"
 
 typedef struct CurseInfo {
     /* 0000 */ int id;
-    /* 0008 */ int64_t ts;
+    /* 0008 */ DateTime datetime;
 } CurseInfo;
 
 static_assert(sizeof(CurseInfo) == 0x10, "wrong size");

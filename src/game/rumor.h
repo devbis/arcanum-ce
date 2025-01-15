@@ -3,12 +3,13 @@
 
 #include "game/context.h"
 #include "game/obj.h"
+#include "game/timeevent.h"
 
 // FIXME: Waste memory due to alignment (current size is 24 bytes, but could
 // be reduced to 16 just by rearranging `timestamp`).
 typedef struct RumorInfo {
     /* 0000 */ int num;
-    /* 0004 */ int64_t timestamp;
+    /* 0004 */ DateTime datetime;
     /* 0010 */ int known;
 } RumorInfo;
 

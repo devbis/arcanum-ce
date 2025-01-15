@@ -906,8 +906,8 @@ void timeevent_ping(tig_timestamp_t timestamp)
         dword_5E8624 = timestamp;
 
         pkt.type = 3;
-        pkt.field_8 = datetime_to_uint64(stru_5E8600);
-        pkt.field_10 = datetime_to_uint64(stru_5E8608);
+        pkt.field_8 = stru_5E8600.value;
+        pkt.field_10 = stru_5E8608.value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }

@@ -191,7 +191,7 @@ void sub_4C57E0(int64_t obj, int rumor)
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && !sub_4C58D0(obj, rumor)) {
-        sub_4C58A0(obj, rumor, datetime_to_uint64(datetime));
+        sub_4C58A0(obj, rumor, datetime.value);
     }
 }
 
@@ -255,7 +255,7 @@ void sub_4C59D0(int rumor, char* buffer)
 int rumor_copy_state(int64_t obj, RumorInfo* rumors)
 {
     int index;
-    int64_t timestamps[2000];
+    uint64_t timestamps[2000];
     int cnt;
 
     sub_407BA0(obj, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
@@ -264,7 +264,7 @@ int rumor_copy_state(int64_t obj, RumorInfo* rumors)
     for (index = 0; index < 2000; index++) {
         if (timestamps[index] != 0) {
             rumors[cnt].num = 1000 + index;
-            rumors[cnt].timestamp = timestamps[index];
+            rumors[cnt].datetime.value = timestamps[index];
             rumors[cnt].known = rumor_is_known(1000 + index);
             cnt++;
         }
@@ -278,14 +278,14 @@ int rumor_copy_state(int64_t obj, RumorInfo* rumors)
 // 0x4C5AF0
 int rumor_compare(const RumorInfo* a, const RumorInfo* b)
 {
-    return datetime_compare(&(a->timestamp), &(b->timestamp));
+    return datetime_compare(&(a->datetime), &(b->datetime));
 }
 
 // 0x4C5B10
 bool sub_4C5B10(int64_t a1, int64_t a2)
 {
     int index;
-    int64_t timestamps[2000];
+    uint64_t timestamps[2000];
 
     if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC
         || obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {

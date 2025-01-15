@@ -26,9 +26,8 @@ typedef struct Quest {
 static_assert(sizeof(Quest) == 0x64, "wrong size");
 
 typedef struct PcQuestStateInfo {
-    /* 0000 */ DateTime timestamp;
+    /* 0000 */ DateTime datetime;
     /* 0008 */ int state;
-    /* 000C */ int field_C;
 } PcQuestStateInfo;
 
 static_assert(sizeof(PcQuestStateInfo) == 0x10, "wrong size");
@@ -353,7 +352,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
         pc_quest_state.state = state;
     }
 
-    pc_quest_state.timestamp = sub_45A7C0();
+    pc_quest_state.datetime = sub_45A7C0();
     obj_arrayfield_pc_quest_set(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     if (state == QUEST_STATE_COMPLETED) {
@@ -415,7 +414,7 @@ int sub_4C5070(int64_t obj, int num)
 
     obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
     pc_quest_state.state &= ~0x100;
-    pc_quest_state.timestamp = sub_45A7C0();
+    pc_quest_state.datetime = sub_45A7C0();
     obj_arrayfield_pc_quest_set(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     if (player_is_pc_obj(obj)) {
@@ -503,7 +502,7 @@ int quest_copy_state(int64_t obj, QuestInfo* quests1)
     for (index = 0; index < 2000; index++) {
         if ((pc_quest_state[index].state & ~0x100) != QUEST_STATE_UNKNOWN) {
             quests1[cnt].num = index;
-            quests1[cnt].timestamp = datetime_to_uint64(pc_quest_state[index].timestamp);
+            quests1[cnt].datetime = pc_quest_state[index].datetime;
             if ((pc_quest_state[index].state & 0x100) != 0) {
                 quests1[cnt].state = QUEST_STATE_BOTCHED;
             } else {
@@ -520,7 +519,7 @@ int quest_copy_state(int64_t obj, QuestInfo* quests1)
 // 0x4C53A0
 int quest_compare(const QuestInfo* a, const QuestInfo* b)
 {
-    return datetime_compare(a->timestamp, b->timestamp);
+    return datetime_compare(&(a->datetime), &(b->datetime));
 }
 
 // 0x4C53C0

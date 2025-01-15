@@ -279,7 +279,7 @@ int reputation_copy_state(int64_t pc_obj, ReputationStateEntry* entries)
     cnt = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     for (index = 0; index < cnt; index++) {
         entries[index].reputation = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_REPUTATION_IDX, index);
-        entries[index].timestamp = obj_arrayfield_int64_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index);
+        entries[index].datetime.value = obj_arrayfield_int64_get(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index);
     }
 
     return cnt;
@@ -333,7 +333,7 @@ void reputation_add(int64_t pc_obj, int reputation)
 
     index = obj_arrayfield_length_get(pc_obj, OBJ_F_PC_REPUTATION_IDX);
     obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_REPUTATION_IDX, index, reputation);
-    obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, datetime_to_uint64(sub_45A7C0()));
+    obj_arrayfield_int64_set(pc_obj, OBJ_F_PC_REPUTATION_TS_IDX, index, sub_45A7C0().value);
 
     if (player_is_pc_obj(pc_obj)) {
         sub_460790(1, 1);

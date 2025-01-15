@@ -828,7 +828,7 @@ void sub_53FBB0()
         } else {
             for (index = 0; index < dword_648938; index++) {
                 dword_63FAE4[index] = rumors[index].num;
-                stru_6429D8[index] = datetime_from_uint64(rumors[index].timestamp);
+                stru_6429D8[index] = rumors[index].datetime;
                 if (rumors[index].known) {
                     dword_648988[index] = dword_6429C4;
                 } else {
@@ -847,7 +847,7 @@ void sub_53FBB0()
 
         for (index = 0; index < dword_648938; index++) {
             dword_63FAE4[index] = quests[index].num;
-            stru_6429D8[index] = datetime_from_uint64(quests[index].timestamp);
+            stru_6429D8[index] = quests[index].datetime;
             dword_63CBF4[index] = quests[index].state;
 
             switch (dword_63CBF4[index]) {
@@ -878,7 +878,7 @@ void sub_53FBB0()
 
         for (index = 0; index < dword_648938; index++) {
             dword_63FAE4[index] = reps[index].reputation;
-            stru_6429D8[index] = datetime_from_uint64(reps[index].timestamp);
+            stru_6429D8[index] = reps[index].datetime;
 
             dword_648988[index] = dword_648934;
         }
@@ -902,16 +902,15 @@ void sub_53FBB0()
         bless_idx = 0;
         curse_idx = 0;
         for (idx = 0; idx < dword_648938; idx++) {
-            // TODO: Get rid of cast.
             if (bless_idx < num_blessings
-                && (curse_idx == num_curses || datetime_compare((DateTime*)&(blessings[bless_idx].ts), (DateTime*)&(curses[curse_idx].ts)))) {
+                && (curse_idx == num_curses || datetime_compare(&(blessings[bless_idx].datetime), &(curses[curse_idx].datetime)))) {
                 dword_63FAE4[idx] = blessings[bless_idx].id;
-                stru_6429D8[idx] = datetime_from_uint64(blessings[bless_idx].ts);
+                stru_6429D8[idx] = blessings[bless_idx].datetime;
                 dword_648988[idx] = dword_64893C;
                 bless_idx++;
             } else {
                 dword_63FAE4[idx] = curses[curse_idx].id;
-                stru_6429D8[idx] = datetime_from_uint64(curses[curse_idx].ts);
+                stru_6429D8[idx] = curses[curse_idx].datetime;
                 dword_648988[idx] = dword_6429D0;
                 curse_idx++;
             }

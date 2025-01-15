@@ -2,10 +2,11 @@
 #define ARCANUM_GAME_REPUTATION_H_
 
 #include "game/context.h"
+#include "game/timeevent.h"
 
 typedef struct ReputationStateEntry {
     int reputation;
-    uint64_t timestamp;
+    DateTime datetime;
 } ReputationStateEntry;
 
 bool reputation_init(GameInitInfo* init_info);

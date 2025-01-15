@@ -49,7 +49,7 @@
 
 typedef struct ScriptCacheEntry {
     /* 0000 */ int script_id;
-    /* 0008 */ int64_t datetime;
+    /* 0008 */ DateTime datetime;
     /* 0010 */ int ref_count;
     /* 0014 */ ScriptFile* file;
 } ScriptCacheEntry;
@@ -3366,7 +3366,7 @@ ScriptFile* script_lock(int script_id)
     cache_entry_id = cache_find(script_id);
     if (script_cache_entries[cache_entry_id].script_id == script_id) {
         script_cache_entries[cache_entry_id].ref_count++;
-        script_cache_entries[cache_entry_id].datetime = datetime_to_uint64(sub_45A7C0());
+        script_cache_entries[cache_entry_id].datetime = sub_45A7C0();
         return script_cache_entries[cache_entry_id].file;
     }
 
@@ -3376,7 +3376,7 @@ ScriptFile* script_lock(int script_id)
 
     if (cache_add(cache_entry_id, script_id)) {
         script_cache_entries[cache_entry_id].ref_count++;
-        script_cache_entries[cache_entry_id].datetime = datetime_to_uint64(sub_45A7C0());
+        script_cache_entries[cache_entry_id].datetime = sub_45A7C0();
         return script_cache_entries[cache_entry_id].file;
     }
 
@@ -3494,10 +3494,7 @@ int cache_find(int script_id)
                 if (candidate == -1) {
                     candidate = idx;
                 } else {
-                    // TODO: Refactor.
-                    DateTime dt1 = datetime_from_uint64(script_cache_entries[candidate].datetime);
-                    DateTime dt2 = datetime_from_uint64(script_cache_entries[idx].datetime);
-                    if (datetime_compare(&dt1, &dt2) > 0) {
+                    if (datetime_compare(&(script_cache_entries[candidate].datetime), &(script_cache_entries[idx].datetime)) > 0) {
                         candidate = idx;
                     }
                 }

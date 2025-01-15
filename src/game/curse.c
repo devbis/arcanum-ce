@@ -72,7 +72,7 @@ int sub_4C3D50(object_id_t obj, CurseInfo* curses)
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     for (index = 0; index < cnt; index++) {
         curses[index].id = obj_arrayfield_uint32_get(obj, OBJ_F_PC_CURSE_IDX, index);
-        curses[index].ts = obj_arrayfield_int64_get(obj, OBJ_F_PC_CURSE_TS_IDX, index);
+        curses[index].datetime.value = obj_arrayfield_int64_get(obj, OBJ_F_PC_CURSE_TS_IDX, index);
     }
 
     return cnt;
@@ -102,7 +102,6 @@ bool curse_is_added_to(object_id_t obj, int curse)
 void curse_add(object_id_t obj, int curse)
 {
     int cnt;
-    DateTime datetime;
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
@@ -131,9 +130,7 @@ void curse_add(object_id_t obj, int curse)
     cnt = obj_arrayfield_length_get(obj, OBJ_F_PC_CURSE_IDX);
     obj_arrayfield_uint32_set(obj, OBJ_F_PC_CURSE_IDX, cnt, curse);
 
-    datetime = sub_45A7C0();
-    // TODO: Rethink cast.
-    obj_arrayfield_int64_set(obj, OBJ_F_PC_CURSE_TS_IDX, cnt, *(int64_t*)&datetime);
+    obj_arrayfield_int64_set(obj, OBJ_F_PC_CURSE_TS_IDX, cnt, sub_45A7C0().value);
 
     effect_add(obj, curse, EFFECT_CAUSE_CURSE);
 

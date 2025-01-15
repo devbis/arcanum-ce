@@ -61,9 +61,20 @@ typedef enum TimeEventParamType {
     TIMEEVENT_PARAM_TYPE_COUNT,
 } TimeEventParamType;
 
-typedef struct DateTime {
-    unsigned int days;
-    unsigned int milliseconds;
+// NOTE: The only way to ensure proper alignment in some structs is to denote
+// `DateTime` as 64-bit int. Otherwise things like `QuestInfo` and `RumorInfo`
+// would have different (smaller) size. However it does not explain why some
+// `DateTime` values are passed by reference, while others are passed by value.
+// The storage of TS values in object system is `uint64_t`. There is also
+// some code that relies on `DateTime` to be struct and I don't want to break or
+// refactor it. Because of these uncertanities this type is designated as a
+// union.
+typedef union DateTime {
+    struct {
+        unsigned int days;
+        unsigned int milliseconds;
+    };
+    uint64_t value;
 } DateTime;
 
 typedef union TimeEventParam {
@@ -160,15 +171,5 @@ bool sub_45C200(DateTime* datetime);
 void sub_45C580();
 void sub_45C720(int map);
 void timeevent_debug_lists();
-
-static inline uint64_t datetime_to_uint64(DateTime datetime)
-{
-    return *(uint64_t*)&datetime;
-}
-
-static inline DateTime datetime_from_uint64(uint64_t value)
-{
-    return *(DateTime*)&value;
-}
 
 #endif /* ARCANUM_GAME_TIMEEVENT_H_ */

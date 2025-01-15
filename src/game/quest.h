@@ -18,7 +18,7 @@ typedef enum QuestState {
 
 typedef struct QuestInfo {
     /* 0000 */ int num;
-    /* 0004 */ int64_t timestamp;
+    /* 0004 */ DateTime datetime;
     /* 0010 */ int state;
 } QuestInfo;
 
