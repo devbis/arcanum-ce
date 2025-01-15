@@ -2116,7 +2116,7 @@ int64_t sub_4C91F0(int64_t obj, int skill)
     case SKILL_HEAL:
         item_obj = item_find_first_generic(obj, OGF_IS_HEALING_ITEM);
         if (item_obj == OBJ_HANDLE_NULL) {
-            substitute_inventory_obj = sub_45F650(obj);
+            substitute_inventory_obj = critter_substitute_inventory_get(obj);
             if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
                 item_obj = item_find_first_generic(substitute_inventory_obj, OGF_IS_HEALING_ITEM);
             }
@@ -2125,7 +2125,7 @@ int64_t sub_4C91F0(int64_t obj, int skill)
     case SKILL_PICK_LOCKS:
         item_obj = item_find_first_generic(obj, OGF_IS_LOCKPICK);
         if (item_obj == OBJ_HANDLE_NULL) {
-            substitute_inventory_obj = sub_45F650(obj);
+            substitute_inventory_obj = critter_substitute_inventory_get(obj);
             if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
                 item_obj = item_find_first_generic(substitute_inventory_obj, OGF_IS_LOCKPICK);
             }

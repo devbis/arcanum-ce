@@ -1760,7 +1760,7 @@ void critter_spread_out_enable(int64_t npc_obj)
 }
 
 // 0x45F650
-int64_t sub_45F650(int64_t obj)
+int64_t critter_substitute_inventory_get(int64_t obj)
 {
     int64_t substitute_inventory_obj;
 

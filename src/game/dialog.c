@@ -1365,7 +1365,7 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
     int v39;
     int v40;
     bool inverse;
-    int64_t v2;
+    int64_t substitute_inventory_obj;
     char code[3];
 
     if (a2 == NULL || a2[0] == '\0') {
@@ -1514,11 +1514,11 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             if (value < 0) {
                 value = -value;
                 if (item_find_by_name(a1->npc_obj, value) == OBJ_HANDLE_NULL) {
-                    v2 = sub_45F650(a1->npc_obj);
-                    if (v2 == OBJ_HANDLE_NULL) {
+                    substitute_inventory_obj = critter_substitute_inventory_get(a1->npc_obj);
+                    if (substitute_inventory_obj == OBJ_HANDLE_NULL) {
                         return false;
                     }
-                    if (item_find_by_name(v2, value) == OBJ_HANDLE_NULL) {
+                    if (item_find_by_name(substitute_inventory_obj, value) == OBJ_HANDLE_NULL) {
                         return false;
                     }
                 }
@@ -1675,9 +1675,9 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
                     return false;
                 }
 
-                v2 = sub_45F650(a1->npc_obj);
-                if (v2 != OBJ_HANDLE_NULL) {
-                    if (item_find_by_name(v2, value) != OBJ_HANDLE_NULL) {
+                substitute_inventory_obj = critter_substitute_inventory_get(a1->npc_obj);
+                if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
+                    if (item_find_by_name(substitute_inventory_obj, value) != OBJ_HANDLE_NULL) {
                         return false;
                     }
                 }
@@ -2005,7 +2005,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
 
                 item_obj = item_find_by_name(a1->npc_obj, value);
                 if (item_obj == OBJ_HANDLE_NULL) {
-                    substitute_inventory_obj = sub_45F650(a1->npc_obj);
+                    substitute_inventory_obj = critter_substitute_inventory_get(a1->npc_obj);
                     if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
                         item_obj = item_find_by_name(substitute_inventory_obj, value);
                     }

@@ -5283,7 +5283,7 @@ void sub_545E80(TigRect* rect)
     sub_4C0F50(npc_obj, pc_obj);
     sub_463E20(npc_obj);
 
-    substitute_inventory_obj = sub_45F650(npc_obj);
+    substitute_inventory_obj = critter_substitute_inventory_get(npc_obj);
     if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
         sub_463E20(substitute_inventory_obj);
     }

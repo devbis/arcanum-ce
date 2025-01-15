@@ -93,7 +93,7 @@ bool critter_can_open_portals(long long obj);
 bool critter_can_jump_window(long long obj);
 void critter_spread_out_disable(int64_t npc_obj);
 void critter_spread_out_enable(int64_t npc_obj);
-int64_t sub_45F650(int64_t obj);
+int64_t critter_substitute_inventory_get(int64_t obj);
 int critter_teleport_map_get(long long obj);
 void sub_45F710(long long obj);
 bool critter_is_monstrous(int64_t critter_obj);

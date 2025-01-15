@@ -626,7 +626,7 @@ bool sub_572510(int64_t a1, int64_t a2, int a3)
 // 0x572640
 void sub_572640(int64_t a1, int64_t a2, int a3)
 {
-    int64_t v1;
+    int64_t substitute_inventory_obj;
     int64_t v2;
     int64_t v3;
     int amt;
@@ -636,20 +636,20 @@ void sub_572640(int64_t a1, int64_t a2, int a3)
     }
 
     if (a3 == 1) {
-        v1 = sub_45F650(a2);
-        if (v1 != OBJ_HANDLE_NULL) {
+        substitute_inventory_obj = critter_substitute_inventory_get(a2);
+        if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
             v2 = sub_468570(8);
-            v3 = sub_462540(v1, v2, 0);
+            v3 = sub_462540(substitute_inventory_obj, v2, 0);
             while (v3 != OBJ_HANDLE_NULL) {
                 amt = item_gold_get(v3);
-                item_gold_transfer(v1, v2, amt, v3);
-                v3 = sub_462540(v1, v2, 0);
+                item_gold_transfer(substitute_inventory_obj, v2, amt, v3);
+                v3 = sub_462540(substitute_inventory_obj, v2, 0);
             }
         }
 
         if (critter_pc_leader_get(a2) == OBJ_HANDLE_NULL) {
             item_identify_all(a2);
-            item_identify_all(v1);
+            item_identify_all(substitute_inventory_obj);
         }
     } else if (a3 == 2 || a3 == 4) {
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
@@ -947,7 +947,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
         dword_681510 = 4;
         if (dword_683464 == 1) {
             dword_681510 = 5;
-            qword_6813A8 = sub_45F650(qword_682C78);
+            qword_6813A8 = critter_substitute_inventory_get(qword_682C78);
             if (qword_6813A8 != OBJ_HANDLE_NULL) {
                 dword_681510 = 89;
             } else {

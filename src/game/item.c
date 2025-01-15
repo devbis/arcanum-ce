@@ -2030,7 +2030,7 @@ void sub_463C60(int64_t obj)
             sub_440FC0(obj, OBJ_TM_NPC, &objects);
             node = objects.head;
             while (node != NULL) {
-                if (sub_45F650(node->obj) == obj) {
+                if (critter_substitute_inventory_get(node->obj) == obj) {
                     v2 = node->obj;
                     if (!critter_is_dead(node->obj)
                         && critter_pc_leader_get(node->obj) == OBJ_HANDLE_NULL) {
@@ -2213,7 +2213,7 @@ bool sub_464200(int64_t a1, int64_t a2)
         }
     }
 
-    substitute_inventory_obj = sub_45F650(a2);
+    substitute_inventory_obj = critter_substitute_inventory_get(a2);
     if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
         return sub_464200(a1, substitute_inventory_obj);
     }
