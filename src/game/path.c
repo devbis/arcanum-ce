@@ -164,7 +164,7 @@ int sub_41F6C0(PathCreateInfo* path_create_info)
 
     v2 = 0;
     for (idx = 0; idx < 8; idx++) {
-        sub_4B90D0(path_create_info->from,
+        location_in_range(path_create_info->from,
             (base_rot + rotations[idx]) % 8,
             range,
             &(path_create_info->to));

@@ -1105,7 +1105,7 @@ void sub_4B39B0(CombatContext* combat)
             range = (int)max_range;
         }
 
-        sub_4B90D0(combat->target_loc, random_between(0, 7), range, &(combat->target_loc));
+        location_in_range(combat->target_loc, random_between(0, 7), range, &(combat->target_loc));
         combat->target_obj = OBJ_HANDLE_NULL;
         combat->flags |= 0x20;
     }

@@ -416,14 +416,14 @@ bool location_in_dir(int64_t loc, int dir, int64_t* new_loc_ptr)
 }
 
 // 0x4B90D0
-bool sub_4B90D0(int64_t loc, int rot, int range, int64_t* new_loc_ptr)
+bool location_in_range(int64_t loc, int dir, int range, int64_t* new_loc_ptr)
 {
     int dist;
 
     *new_loc_ptr = loc;
 
     for (dist = 0; dist < range; dist++) {
-        if (!location_in_dir(*new_loc_ptr, rot, new_loc_ptr)) {
+        if (!location_in_dir(*new_loc_ptr, dir, new_loc_ptr)) {
             return false;
         }
     }
