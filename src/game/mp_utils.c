@@ -1158,7 +1158,37 @@ void sub_4EF8B0(Packet118* pkt)
 // 0x4EF920
 bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr)
 {
-    // TODO: Incomplete.
+    bool ret = false;
+    ObjectID* oids;
+    int cnt;
+    Packet119* pkt;
+    int size;
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        || (tig_net_flags & TIG_NET_HOST) != 0) {
+        ret = sub_43CC30(obj, loc, obj_ptr);
+    }
+
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) != 0) {
+        sub_4063A0(*obj_ptr, &oids, &cnt);
+        size = sizeof(*pkt) + sizeof(*oids) * cnt;
+        pkt = (Packet119*)MALLOC(size);
+        memcpy(pkt + 1, oids, sizeof(*oids) * cnt);
+        FREE(oids);
+    }
+
+    // NOTE: Same condition?
+    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        && (tig_net_flags & TIG_NET_HOST) != 0) {
+        pkt->type = 119;
+        sub_4F0640(obj, &(pkt->oid));
+        pkt->loc = loc;
+        tig_net_send_app_all(pkt, size);
+        // FIXME: Leaking `pkt`.
+    }
+
+    return ret;
 }
 
 // 0x4EFA10

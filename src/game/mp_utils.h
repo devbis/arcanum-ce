@@ -955,6 +955,16 @@ typedef struct Packet118 {
 
 static_assert(sizeof(Packet118) == 0x38, "wrong size");
 
+typedef struct Packet119 {
+    /* 0000 */ int type;
+    /* 0008 */ ObjectID oid;
+    /* 0020 */ int64_t loc;
+    /* 0028 */ int field_28;
+    /* 002C */ int field_2C;
+} Packet119;
+
+static_assert(sizeof(Packet119) == 0x30, "wrong size");
+
 typedef struct Packet120 {
     /* 0000 */ int type;
     /* 0004 */ AnimID anim_id;
