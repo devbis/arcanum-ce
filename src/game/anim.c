@@ -4848,7 +4848,7 @@ void sub_4257E0(int64_t obj, unsigned int* flags_ptr)
         *flags_ptr |= 0x1;
     }
 
-    if (!sub_45F570(obj)) {
+    if (!critter_can_jump_window(obj)) {
         *flags_ptr |= 0x2;
     }
 }
@@ -4981,7 +4981,7 @@ bool sub_425BF0(PathCreateInfo* path_create_info, bool a2)
             path_create_info->flags |= 0x0002;
         }
 
-        if (!sub_45F570(path_create_info->obj)) {
+        if (!critter_can_jump_window(path_create_info->obj)) {
             path_create_info->flags |= 0x0004;
         }
 
@@ -5290,7 +5290,7 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
         flags |= 0x02;
     }
 
-    if (!sub_45F570(obj)) {
+    if (!critter_can_jump_window(obj)) {
         flags |= 0x04;
     }
 
@@ -6631,7 +6631,7 @@ bool sub_4288A0(AnimRunInfo* run_info)
 
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 6259, "sourceObj != OBJ_HANDLE_NULL"
 
-    if (!sub_45F570(source_obj)) {
+    if (!critter_can_jump_window(source_obj)) {
         return false;
     }
 

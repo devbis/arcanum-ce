@@ -90,7 +90,7 @@ bool critter_enter_bed(int64_t obj, int64_t bed);
 void critter_leave_bed(int64_t obj, int64_t bed);
 bool critter_has_bad_associates(int64_t obj);
 bool critter_can_open_portals(long long obj);
-bool sub_45F570(long long obj);
+bool critter_can_jump_window(long long obj);
 void critter_spread_out_disable(int64_t npc_obj);
 void critter_spread_out_enable(int64_t npc_obj);
 int64_t sub_45F650(int64_t obj);

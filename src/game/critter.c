@@ -1717,7 +1717,7 @@ bool critter_can_open_portals(long long obj)
 }
 
 // 0x45F570
-bool sub_45F570(long long obj)
+bool critter_can_jump_window(long long obj)
 {
     tig_art_id_t art_id;
     int type;
