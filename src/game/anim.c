@@ -6640,7 +6640,7 @@ bool sub_4288A0(AnimRunInfo* run_info)
     }
 
     rot = object_rot(source_obj, portal_obj);
-    if (ai_attempt_open_portal(source_obj, portal_obj, rot) != 0) {
+    if (ai_attempt_open_portal(source_obj, portal_obj, rot) != AI_ATTEMPT_OPEN_PORTAL_OK) {
         return false;
     }
 
