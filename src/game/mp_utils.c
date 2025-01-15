@@ -22,6 +22,42 @@
 #include "game/ui.h"
 #include "game/wall.h"
 
+// 0x5BB928
+static int dword_5BB928[14] = {
+    3,
+    3,
+    4,
+    4,
+    0,
+    2,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+};
+
+// 0x5BB960
+static int dword_5BB960[14] = {
+    3,
+    3,
+    4,
+    4,
+    0,
+    2,
+    5,
+    6,
+    0,
+    7,
+    0,
+    1,
+    0,
+    0,
+};
+
 // 0x5BB998
 static int dword_5BB998[6] = {
     2904,
@@ -1754,9 +1790,111 @@ bool sub_4F0A90(int64_t door_obj)
 }
 
 // 0x4F0BF0
-int sub_4F0BF0(int64_t a1, int64_t a2, int64_t a3, int a4)
+int sub_4F0BF0(int64_t item_obj, int64_t parent_obj, int64_t target_obj, int type)
 {
-    // TODO: Incomplete.
+    int sound_id = -1;
+    int sound_effect;
+    int material;
+    int item_sound;
+    int target_sound;
+    char path[TIG_MAX_PATH];
+
+    if (item_obj != OBJ_HANDLE_NULL) {
+        sound_effect = obj_field_int32_get(item_obj, OBJ_F_SOUND_EFFECT);
+    } else {
+        sound_effect = 0;
+    }
+
+    switch (type) {
+    case 0:
+        if (item_obj != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN) == 9056) {
+                sound_id = 5958;
+            } else {
+                material = obj_field_int32_get(item_obj, OBJ_F_MATERIAL);
+                item_sound = dword_5BB960[material];
+                if (item_sound == 2 && item_weight(item_obj, parent_obj) <= 2000) {
+                    item_sound = 1;
+                }
+                sound_id = 5950 + item_sound;
+            }
+        }
+        break;
+    case 1:
+        if (item_obj != OBJ_HANDLE_NULL) {
+            if (obj_field_int32_get(item_obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN) == 9056) {
+                sound_id = 5958;
+            } else {
+                material = obj_field_int32_get(item_obj, OBJ_F_MATERIAL);
+                item_sound = dword_5BB960[material];
+                if (item_sound == 2 && item_weight(item_obj, parent_obj) <= 2000) {
+                    item_sound = 1;
+                }
+                sound_id = 5960 + item_sound;
+            }
+        }
+        break;
+    case 2:
+        if (sound_effect != 0) {
+            sound_id = sound_effect;
+        }
+        break;
+    case 3:
+        if (sound_effect != 0) {
+            sound_id = sound_effect + 7;
+        }
+        break;
+    case 4:
+    case 6:
+        if (target_obj != OBJ_HANDLE_NULL) {
+            if (sound_effect != 0) {
+                if (type == 6) {
+                    sound_id = sound_effect + 6;
+                } else {
+                    sound_id = sound_effect + 4;
+                    if (random_between(0, 1) == 1) {
+                        sound_id++;
+                    }
+                }
+
+                if (!gsound_resolve_path(sound_id, path)) {
+                    break;
+                }
+            }
+
+            if (obj_type_is_critter(obj_field_int32_get(target_obj, OBJ_F_TYPE))) {
+                int64_t armor_obj = item_wield_get(target_obj, ITEM_INV_LOC_ARMOR);
+                if (armor_obj != OBJ_HANDLE_NULL) {
+                    target_obj = armor_obj;
+                }
+            }
+
+            material = obj_field_int32_get(target_obj, OBJ_F_MATERIAL);
+            target_sound = dword_5BB928[material];
+
+            if (item_obj != OBJ_HANDLE_NULL) {
+                material = obj_field_int32_get(item_obj, OBJ_F_MATERIAL);
+                item_sound = dword_5BB928[material];
+                if (item_sound == 2 && item_weight(item_obj, parent_obj) <= 2000) {
+                    item_sound = 1;
+                }
+            } else {
+                item_sound = 0;
+            }
+
+            sound_id = 3 * target_sound + random_between(0, 1) + 20 * item_sound + 7000;
+        }
+        break;
+    case 5:
+        if (item_obj != OBJ_HANDLE_NULL && sound_effect != 0) {
+            sound_id = sound_effect + 3;
+        } else {
+            sound_id = 4010;
+        }
+        break;
+    }
+
+    return sound_id;
 }
 
 // 0x4F0ED0

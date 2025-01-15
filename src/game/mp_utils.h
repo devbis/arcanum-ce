@@ -1186,7 +1186,7 @@ bool sub_4F08C0(int64_t obj);
 void sub_4F08F0(int64_t obj);
 bool sub_4F0950(int64_t door_obj);
 bool sub_4F0A90(int64_t door_obj);
-int sub_4F0BF0(int64_t a1, int64_t a2, int64_t a3, int a4);
+int sub_4F0BF0(int64_t item_obj, int64_t parent_obj, int64_t target_obj, int type);
 int sub_4F0ED0(int64_t obj, int a2);
 int sub_4F0FD0(int64_t obj, int a2);
 int sub_4F1010(int64_t obj, int a2);
