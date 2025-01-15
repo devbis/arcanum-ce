@@ -3994,7 +3994,7 @@ void sub_455350(int64_t obj, int64_t target_loc)
 
     if (path.max != 0) {
         for (path.curr = 0; path.curr < path.max; path.curr++) {
-            if (!sub_4B8FF0(source_loc, path.rotations[path.curr], &source_loc)) {
+            if (!location_in_dir(source_loc, path.rotations[path.curr], &source_loc)) {
                 break;
             }
 

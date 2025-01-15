@@ -1475,7 +1475,7 @@ bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr)
     rotation = random_between(0, 8);
 
     for (idx = 0; idx < distance; idx++) {
-        if (!sub_4B8FF0(to, rotation, &to)) {
+        if (!location_in_dir(to, rotation, &to)) {
             return false;
         }
     }
@@ -1510,7 +1510,7 @@ bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr)
                 }
             }
 
-            if (!sub_4B8FF0(to, byte_603BC4[dword_603C94], &to)) {
+            if (!location_in_dir(to, byte_603BC4[dword_603C94], &to)) {
                 return false;
             }
         }

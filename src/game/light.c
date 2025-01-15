@@ -1299,12 +1299,12 @@ void sub_4DC210(int64_t obj, int* colors, int* cnt_ptr)
             case 3:
                 offset_x = -20;
                 offset_y = -10;
-                sub_4B8FF0(loc, 3, &loc);
+                location_in_dir(loc, 3, &loc);
                 break;
             case 5:
                 offset_x = 20;
                 offset_y = -10;
-                sub_4B8FF0(loc, 5, &loc);
+                location_in_dir(loc, 5, &loc);
                 break;
             default:
                 offset_x = -20;

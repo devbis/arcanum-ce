@@ -3835,7 +3835,7 @@ bool ai_is_indoor_to_outdoor_transition(int64_t portal_obj, int dir)
     loc = obj_field_int64_get(portal_obj, OBJ_F_LOCATION);
     aid = obj_field_int32_get(portal_obj, OBJ_F_CURRENT_AID);
     rot = tig_art_id_rotation_get(aid);
-    if (!sub_4B8FF0(loc, rot, &new_loc)) {
+    if (!location_in_dir(loc, rot, &new_loc)) {
         return false;
     }
 

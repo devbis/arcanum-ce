@@ -26,7 +26,7 @@ void location_origin_scroll(int64_t dx, int64_t dy);
 void location_origin_set(int64_t location);
 void location_set_func_5FC2F8(LocationFunc5FC2F8* func);
 int location_rot(int64_t a, int64_t b);
-bool sub_4B8FF0(int64_t loc, int direction, int64_t* new_loc_ptr);
+bool location_in_dir(int64_t loc, int dir, int64_t* new_loc_ptr);
 bool sub_4B90D0(int64_t loc, int rot, int range, int64_t* new_loc_ptr);
 bool sub_4B9130(TigRect* rect, LocRect* loc_rect);
 void sub_4B93F0(int a1, int a2, int* a3, int* a4);

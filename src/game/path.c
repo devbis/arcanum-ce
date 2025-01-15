@@ -219,7 +219,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
 
         rot = location_rot(loc, path_create_info->to);
         path_create_info->rotations[idx] = (uint8_t)rot;
-        sub_4B8FF0(loc, rot, &adjacent_loc);
+        location_in_dir(loc, rot, &adjacent_loc);
 
         if ((path_create_info->flags & 0x40) == 0) {
             if (adjacent_loc != path_create_info->to

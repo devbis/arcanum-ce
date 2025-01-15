@@ -391,7 +391,7 @@ void sub_4E2C50(int64_t obj)
     p_piece = base_p_piece;
     adjacent_loc = loc;
     while (cw_size > 0) {
-        sub_4B8FF0(adjacent_loc, cw_rot, &adjacent_loc);
+        location_in_dir(adjacent_loc, cw_rot, &adjacent_loc);
         sub_4407C0(adjacent_loc, OBJ_TM_WALL, &walls);
         node = walls.head;
         while (node != NULL) {
@@ -415,7 +415,7 @@ void sub_4E2C50(int64_t obj)
     p_piece = base_p_piece;
     adjacent_loc = loc;
     while (ccw_size > 0) {
-        sub_4B8FF0(adjacent_loc, ccw_rot, &adjacent_loc);
+        location_in_dir(adjacent_loc, ccw_rot, &adjacent_loc);
         sub_4407C0(adjacent_loc, OBJ_TM_WALL, &walls);
         node = walls.head;
         while (node != NULL) {

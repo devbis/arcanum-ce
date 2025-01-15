@@ -364,7 +364,7 @@ int location_rot(int64_t a, int64_t b)
 }
 
 // 0x4B8FF0
-bool sub_4B8FF0(int64_t loc, int direction, int64_t* new_loc_ptr)
+bool location_in_dir(int64_t loc, int dir, int64_t* new_loc_ptr)
 {
     int x;
     int y;
@@ -372,7 +372,7 @@ bool sub_4B8FF0(int64_t loc, int direction, int64_t* new_loc_ptr)
     x = (int)location_get_x(loc);
     y = (int)location_get_y(loc);
 
-    switch (direction) {
+    switch (dir) {
     case 0:
         x -= 1;
         y -= 1;
@@ -403,8 +403,10 @@ bool sub_4B8FF0(int64_t loc, int direction, int64_t* new_loc_ptr)
         break;
     }
 
-    if (x < 0 || x >= location_limit_x
-        || y < 0 || y >= location_limit_y) {
+    if (x < 0
+        || x >= location_limit_x
+        || y < 0
+        || y >= location_limit_y) {
         return false;
     }
 
@@ -421,7 +423,7 @@ bool sub_4B90D0(int64_t loc, int rot, int range, int64_t* new_loc_ptr)
     *new_loc_ptr = loc;
 
     for (dist = 0; dist < range; dist++) {
-        if (!sub_4B8FF0(*new_loc_ptr, rot, new_loc_ptr)) {
+        if (!location_in_dir(*new_loc_ptr, rot, new_loc_ptr)) {
             return false;
         }
     }

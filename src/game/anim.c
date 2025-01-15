@@ -4547,7 +4547,7 @@ bool sub_424E00(AnimRunInfo* run_info)
     rot = random_between(0, 8);
 
     for (idx = rot; idx < 8; idx++) {
-        if (sub_4B8FF0(source_loc, idx, &(adjacent_locs[idx]))) {
+        if (location_in_dir(source_loc, idx, &(adjacent_locs[idx]))) {
             adjacent_objs[idx] = OBJ_HANDLE_NULL;
             if (!sub_425760(source_obj, source_loc, adjacent_locs[idx], rot)) {
                 run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = adjacent_locs[idx];
@@ -4557,7 +4557,7 @@ bool sub_424E00(AnimRunInfo* run_info)
     }
 
     for (idx = 0; idx < rot; idx++) {
-        if (sub_4B8FF0(source_loc, idx, &(adjacent_locs[idx]))) {
+        if (location_in_dir(source_loc, idx, &(adjacent_locs[idx]))) {
             adjacent_objs[idx] = OBJ_HANDLE_NULL;
             if (!sub_425760(source_obj, source_loc, adjacent_locs[idx], idx)) {
                 run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = adjacent_locs[idx];
@@ -5310,7 +5310,7 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
         rotations++;
         v2 = false;
 
-        if (!sub_4B8FF0(from, rot, &adjacent_loc)) {
+        if (!location_in_dir(from, rot, &adjacent_loc)) {
             return false;
         }
 
@@ -5510,7 +5510,7 @@ bool sub_426A80(AnimRunInfo* run_info)
 
     rot = location_rot(target_loc, source_loc);
     for (dist = 0; dist < range; dist++) {
-        if (!sub_4B8FF0(target_loc, rot, &target_loc)) {
+        if (!location_in_dir(target_loc, rot, &target_loc)) {
             ASSERT(0); // 4812, "0"
             exit(EXIT_FAILURE);
         }
@@ -5737,7 +5737,7 @@ bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
         return false;
     }
 
-    if (!sub_4B8FF0(loc, rot, &adjacent_loc)) {
+    if (!location_in_dir(loc, rot, &adjacent_loc)) {
         return false;
     }
 
@@ -5875,7 +5875,7 @@ bool sub_4273B0(int64_t obj, int64_t loc, int rotation, int a4, int64_t* obj_ptr
         return true;
     }
 
-    if (!sub_4B8FF0(loc, rotation, &loc)) {
+    if (!location_in_dir(loc, rotation, &loc)) {
         return false;
     }
 
@@ -10571,7 +10571,7 @@ bool sub_42E9B0(AnimRunInfo* run_info)
             }
 
             rot = run_info->path.rotations[run_info->path.curr++];
-            sub_4B8FF0(loc, rot, &next_loc);
+            location_in_dir(loc, rot, &next_loc);
             loc = next_loc;
 
             if (run_info->path.curr >= run_info->path.max) {
@@ -10597,7 +10597,7 @@ bool sub_42E9B0(AnimRunInfo* run_info)
     object_set_current_aid(obj, art_id);
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    if (!sub_4B8FF0(loc, run_info->path.rotations[0], &next_loc)) {
+    if (!location_in_dir(loc, run_info->path.rotations[0], &next_loc)) {
         return false;
     }
 
@@ -10776,7 +10776,7 @@ bool sub_42F000(AnimRunInfo* run_info)
     offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
     rot = run_info->path.rotations[run_info->path.curr];
 
-    if (!sub_4B8FF0(loc, rot, &loc)) {
+    if (!location_in_dir(loc, rot, &loc)) {
         return false;
     }
 
@@ -10823,7 +10823,7 @@ bool sub_42F140(AnimRunInfo* run_info)
     rot = run_info->path.rotations[run_info->path.curr];
     if ((rot & 0x1) != 0) {
         run_info->field_28 = 0;
-    } else if (!sub_4B8FF0(loc, rot, &(run_info->field_28))) {
+    } else if (!location_in_dir(loc, rot, &(run_info->field_28))) {
         run_info->path.curr = run_info->path.max + 1;
     }
 
@@ -11070,7 +11070,7 @@ bool sub_42F6A0(AnimRunInfo* run_info)
         run_info->path.curr += 2;
 
         if (run_info->path.curr >= run_info->path.max) {
-            sub_4B8FF0(new_loc, run_info->path.rotations[0], &new_loc);
+            location_in_dir(new_loc, run_info->path.rotations[0], &new_loc);
             run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = new_loc;
             run_info->path.curr = 0;
         }
@@ -11166,7 +11166,7 @@ bool sub_42FD70(AnimRunInfo* run_info, int64_t obj, AnimPath* path, int64_t from
     ObjectNode* node;
 
     if ((path->flags & 0x01) != 0) {
-        if (!sub_4B8FF0(from, path->baseRot, &to)) {
+        if (!location_in_dir(from, path->baseRot, &to)) {
             return false;
         }
 
@@ -11639,7 +11639,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                 rot = run_info->path.rotations[run_info->path.curr];
                 if ((rot & 1) != 0) {
                     run_info->field_28 = 0;
-                } else if (!sub_4B8FF0(loc, rot, &(run_info->field_28))) {
+                } else if (!location_in_dir(loc, rot, &(run_info->field_28))) {
                     run_info->path.curr = run_info->path.max + 1;
                 }
 
@@ -14208,7 +14208,7 @@ bool anim_goal_knockback(int64_t target_obj, int rot, int range, int64_t source_
 
     loc = obj_field_int64_get(target_obj, OBJ_F_LOCATION);
     for (distance = 0; distance < range; distance++) {
-        if (!sub_4B8FF0(loc, rot, &loc)) {
+        if (!location_in_dir(loc, rot, &loc)) {
             return false;
         }
     }
@@ -15552,7 +15552,7 @@ bool sub_437C50(AnimRunInfo* run_info, int end, int64_t* x, int64_t* y)
         && run_info->path.field_E8 != 0) {
         loc = run_info->path.field_E8;
         for (idx = 0; idx <= end; idx++) {
-            sub_4B8FF0(loc, run_info->path.rotations[idx], &loc);
+            location_in_dir(loc, run_info->path.rotations[idx], &loc);
         }
     }
 

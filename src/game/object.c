@@ -2830,7 +2830,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
             return cost;
         }
 
-        if (!sub_4B8FF0(a2, ccw_rot, &tmp_loc)) {
+        if (!location_in_dir(a2, ccw_rot, &tmp_loc)) {
             return 1;
         }
 
@@ -2844,7 +2844,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
             return cost;
         }
 
-        if (!sub_4B8FF0(a2, cw_rot, &tmp_loc)) {
+        if (!location_in_dir(a2, cw_rot, &tmp_loc)) {
             return 1;
         }
 
@@ -2966,7 +2966,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
         return cost;
     }
 
-    if (!sub_4B8FF0(a2, a3, &tmp_loc)) {
+    if (!location_in_dir(a2, a3, &tmp_loc)) {
         return 1;
     }
 
