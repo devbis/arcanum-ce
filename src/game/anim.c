@@ -4927,7 +4927,7 @@ bool sub_425930(AnimRunInfo* run_info)
     path_create_info.from = loc;
     path_create_info.to = target_loc;
     path_create_info.rotations = run_info->path.rotations;
-    path_create_info.field_20 = 0;
+    path_create_info.flags = 0;
 
     if (sub_425BF0(&path_create_info, 1)) {
         run_info->path.max = sub_41F3C0(&path_create_info);
@@ -4936,7 +4936,7 @@ bool sub_425930(AnimRunInfo* run_info)
     }
 
     if (run_info->path.max == 0 || run_info->path.max > range) {
-        path_create_info.field_20 = 0x01;
+        path_create_info.flags = 0x01;
         if (!sub_425BF0(&path_create_info, 1)) {
             if (!sub_40DA20(obj)) {
                 sub_4B7C90(obj);
@@ -4978,26 +4978,26 @@ bool sub_425BF0(PathCreateInfo* path_create_info, bool a2)
         }
 
         if (!critter_can_open_portals(path_create_info->obj)) {
-            path_create_info->field_20 |= 0x0002;
+            path_create_info->flags |= 0x0002;
         }
 
         if (!sub_45F570(path_create_info->obj)) {
-            path_create_info->field_20 |= 0x0004;
+            path_create_info->flags |= 0x0004;
         }
 
         if (critter_is_concealed(path_create_info->obj)
             && basic_skill_get_training(path_create_info->obj, BASIC_SKILL_PROWLING) <= 0) {
-            path_create_info->field_20 |= 0x0200;
+            path_create_info->flags |= 0x0200;
         }
 
         if (sub_43D6D0(path_create_info->obj, 1, false) < 45
             && stat_level(path_create_info->obj, STAT_STRENGTH) != 0) {
-            path_create_info->field_20 |= 0x0400;
+            path_create_info->flags |= 0x0400;
         }
 
         if (a2) {
             if (!combat_critter_is_combat_mode_active(path_create_info->obj)) {
-                path_create_info->field_20 |= 0x0010;
+                path_create_info->flags |= 0x0010;
             }
         }
     }
@@ -5052,7 +5052,7 @@ bool sub_425D60(AnimRunInfo* run_info)
     path_create_info.from = loc;
     path_create_info.to = target_loc;
     path_create_info.rotations = run_info->path.rotations;
-    path_create_info.field_20 = 0;
+    path_create_info.flags = 0;
 
     if (sub_425BF0(&path_create_info, 1)) {
         run_info->path.max = sub_41F3C0(&path_create_info);
@@ -5061,7 +5061,7 @@ bool sub_425D60(AnimRunInfo* run_info)
     }
 
     if (run_info->path.max == 0 || run_info->path.max > range) {
-        path_create_info.field_20 = 0x01;
+        path_create_info.flags = 0x01;
         if (!sub_425BF0(&path_create_info, 1)) {
             if (!sub_40DA20(obj)) {
                 sub_4B7C90(obj);
@@ -5329,7 +5329,7 @@ bool sub_426560(int64_t obj, int64_t from, int64_t to, AnimPath* path, unsigned 
     path_create_info.from = from;
     path_create_info.max_rotations = v1;
     path_create_info.rotations = rotations;
-    path_create_info.field_20 = flags;
+    path_create_info.flags = flags;
 
     if (sub_425BF0(&path_create_info, true)) {
         path->max = sub_41F3C0(&path_create_info);
@@ -5548,7 +5548,7 @@ bool sub_426A80(AnimRunInfo* run_info)
     path_create_info.max_rotations = v1;
     path_create_info.to = target_loc;
     path_create_info.rotations = rotations;
-    path_create_info.field_20 = path_create_flags;
+    path_create_info.flags = path_create_flags;
 
     if (!sub_425BF0(&path_create_info, true)) {
         if (!sub_40DA20(source_obj)) {
@@ -6014,7 +6014,7 @@ bool sub_427730(AnimRunInfo* run_info)
     path_create_info.rotations = run_info->path.rotations;
 
     if ((run_info->flags & 0x4000) == 0) {
-        path_create_info.field_20 = 0;
+        path_create_info.flags = 0;
         if (sub_425BF0(&path_create_info, true)) {
             run_info->path.max = sub_41F3C0(&path_create_info);
         } else {
@@ -6027,7 +6027,7 @@ bool sub_427730(AnimRunInfo* run_info)
     }
 
     if (run_info->path.max == 0) {
-        path_create_info.field_20 = 1;
+        path_create_info.flags = 1;
         if (sub_425BF0(&path_create_info, true)) {
             run_info->path.max = sub_41F3C0(&path_create_info);
             run_info->path.field_E8 = path_create_info.from;
@@ -6123,10 +6123,10 @@ bool sub_427990(AnimRunInfo* run_info)
     path_create_info.from = source_loc;
     path_create_info.to = target_loc;
     path_create_info.rotations = run_info->path.rotations;
-    path_create_info.field_20 = path_create_flags;
+    path_create_info.flags = path_create_flags;
 
     if ((run_info->flags & 0x4000) == 0) {
-        path_create_info.field_20 &= ~0x01;
+        path_create_info.flags &= ~0x01;
     }
 
     if (sub_425BF0(&path_create_info, false)) {
@@ -6156,9 +6156,9 @@ bool sub_427990(AnimRunInfo* run_info)
         return true;
     }
 
-    if (path_create_flags != path_create_info.field_20
+    if (path_create_flags != path_create_info.flags
         && (run_info->flags & 0x4000) == 0) {
-        path_create_info.field_20 = path_create_flags;
+        path_create_info.flags = path_create_flags;
 
         if (!sub_425BF0(&path_create_info, true)) {
             if (!sub_40DA20(source_obj)) {
@@ -6216,7 +6216,7 @@ bool sub_427990(AnimRunInfo* run_info)
     path_create_info.from = source_loc;
     path_create_info.to = target_loc;
     path_create_info.max_rotations = max_rotations;
-    path_create_info.field_20 = (run_info->flags & 0x4000) != 0 ? 0x01 : 0;
+    path_create_info.flags = (run_info->flags & 0x4000) != 0 ? 0x01 : 0;
 
     if (sub_425BF0(&path_create_info, true)) {
         run_info->path.max = sub_41F3C0(&path_create_info);
@@ -6240,14 +6240,14 @@ bool sub_427990(AnimRunInfo* run_info)
         return true;
     }
 
-    if (path_create_info.field_20 == 0x01 || (run_info->flags & 0x4000) != 0) {
+    if (path_create_info.flags == 0x01 || (run_info->flags & 0x4000) != 0) {
         if (!sub_40DA20(source_obj)) {
             sub_4B7C90(source_obj);
         }
         return false;
     }
 
-    path_create_info.field_20 = 0x01;
+    path_create_info.flags = 0x01;
 
     if (!sub_425BF0(&path_create_info, true)) {
         if (!sub_40DA20(source_obj)) {
@@ -6338,10 +6338,10 @@ bool sub_4280D0(AnimRunInfo* run_info)
     path_create_info.from = source_loc;
     path_create_info.to = target_loc;
     path_create_info.rotations = run_info->path.rotations;
-    path_create_info.field_20 = path_create_flags;
+    path_create_info.flags = path_create_flags;
 
     if ((run_info->flags & 0x4000) == 0) {
-        path_create_info.field_20 &= ~0x01;
+        path_create_info.flags &= ~0x01;
     }
 
     if (sub_425BF0(&path_create_info, false)) {
@@ -6366,7 +6366,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
         return true;
     }
 
-    if (path_create_flags == path_create_info.field_20
+    if (path_create_flags == path_create_info.flags
         || (run_info->flags & 0x4000) != 0) {
         if (!sub_40DA20(source_obj)) {
             sub_4B7C90(source_obj);
@@ -6374,7 +6374,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
         return false;
     }
 
-    path_create_info.field_20 = path_create_flags;
+    path_create_info.flags = path_create_flags;
     if (!sub_425BF0(&path_create_info, false)) {
         if (!sub_40DA20(source_obj)) {
             sub_4B7C90(source_obj);

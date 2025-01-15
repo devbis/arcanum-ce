@@ -37,7 +37,7 @@ int sub_41F3C0(PathCreateInfo* path_create_info)
 {
     bool v1 = false;
 
-    if ((path_create_info->field_20 & 0x800) != 0) {
+    if ((path_create_info->flags & 0x800) != 0) {
         return sub_41F6C0(path_create_info);
     }
 
@@ -47,23 +47,23 @@ int sub_41F3C0(PathCreateInfo* path_create_info)
         return 0;
     }
 
-    if ((path_create_info->field_20 & 0x08) != 0) {
+    if ((path_create_info->flags & 0x08) != 0) {
         v1 = true;
     }
 
-    if ((path_create_info->field_20 & 0x80) != 0) {
+    if ((path_create_info->flags & 0x80) != 0) {
         return sub_420660(path_create_info->from, path_create_info->to, path_create_info->rotations);
     }
 
-    if ((path_create_info->field_20 & 0x100) != 0) {
+    if ((path_create_info->flags & 0x100) != 0) {
         return sub_4201C0(path_create_info->from, path_create_info->to, path_create_info->rotations);
     }
 
-    if ((path_create_info->field_20 & 0x41) == 0) {
+    if ((path_create_info->flags & 0x41) == 0) {
         ObjectList objects;
         ObjectNode* node;
 
-        if ((path_create_info->field_20 & 0x08) == 0
+        if ((path_create_info->flags & 0x08) == 0
             && tile_is_blocking(path_create_info->to, v1)) {
             return 0;
         }
@@ -87,15 +87,15 @@ int sub_41F3C0(PathCreateInfo* path_create_info)
     }
 
     int v2 = 0;
-    if ((path_create_info->field_20 & 0x200) == 0) {
+    if ((path_create_info->flags & 0x200) == 0) {
         v2 = sub_41F840(path_create_info);
     }
 
     if (v2 == 0) {
-        if ((path_create_info->field_20 & 0x1000) != 0) {
+        if ((path_create_info->flags & 0x1000) != 0) {
             v2 = sub_420E30(path_create_info, 300);
         } else {
-            if ((path_create_info->field_20 & 0x20) != 0) {
+            if ((path_create_info->flags & 0x20) != 0) {
                 return 0;
             }
 
@@ -151,7 +151,7 @@ int sub_41F6C0(PathCreateInfo* path_create_info)
     rotations[6] = 1;
     rotations[7] = 0;
 
-    path_create_info->field_20 &= ~0x800;
+    path_create_info->flags &= ~0x800;
 
     dist = location_dist(path_create_info->from, path_create_info->to);
 
@@ -179,7 +179,7 @@ int sub_41F6C0(PathCreateInfo* path_create_info)
         }
     }
 
-    path_create_info->field_20 |= 0x800;
+    path_create_info->flags |= 0x800;
 
     if (v1 == 0 && v2 > 0) {
         path_create_info->to = loc;
@@ -205,11 +205,11 @@ int sub_41F840(PathCreateInfo* path_create_info)
         return 0;
     }
 
-    if ((path_create_info->field_20 & 0x08) != 0) {
+    if ((path_create_info->flags & 0x08) != 0) {
         v1 = true;
     }
 
-    flags = sub_41F570(path_create_info->field_20);
+    flags = sub_41F570(path_create_info->flags);
 
     loc = path_create_info->from;
     for (idx = 0; idx < path_create_info->max_rotations; idx++) {
@@ -221,10 +221,10 @@ int sub_41F840(PathCreateInfo* path_create_info)
         path_create_info->rotations[idx] = (uint8_t)rot;
         sub_4B8FF0(loc, rot, &adjacent_loc);
 
-        if ((path_create_info->field_20 & 0x40) == 0) {
+        if ((path_create_info->flags & 0x40) == 0) {
             if (adjacent_loc != path_create_info->to
-                || (path_create_info->field_20 & 0x01) == 0) {
-                if ((path_create_info->field_20 & 0x08) == 0
+                || (path_create_info->flags & 0x01) == 0) {
+                if ((path_create_info->flags & 0x08) == 0
                     && tile_is_blocking(adjacent_loc, v1)) {
                     break;
                 }
@@ -243,7 +243,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
                     break;
                 }
 
-                if ((path_create_info->field_20 & 0x400) != 0
+                if ((path_create_info->flags & 0x400) != 0
                     && sub_444500(adjacent_loc)) {
                     break;
                 }
@@ -258,7 +258,7 @@ int sub_41F840(PathCreateInfo* path_create_info)
         return 0;
     }
 
-    if ((path_create_info->field_20 & 0x01) != 0) {
+    if ((path_create_info->flags & 0x01) != 0) {
         idx--;
     }
 

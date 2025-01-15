@@ -885,7 +885,7 @@ bool sub_4F2D20(S603CB8* a1)
         stru_603B88.to = a1->field_28;
         stru_603B88.max_rotations = sizeof(byte_603BC4);
         stru_603B88.rotations = byte_603BC4;
-        stru_603B88.field_20 = 0x10;
+        stru_603B88.flags = 0x10;
 
         dword_603C98 = sub_41F3C0(&stru_603B88);
         qword_603CA8 = stru_603B88.from;
@@ -1485,7 +1485,7 @@ bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr)
     stru_603B88.to = to;
     stru_603B88.max_rotations = sizeof(byte_603BC4);
     stru_603B88.rotations = byte_603BC4;
-    stru_603B88.field_20 = 16;
+    stru_603B88.flags = 16;
 
     dword_603C98 = sub_41F3C0(&stru_603B88);
     qword_603CB0 = stru_603B88.to;

@@ -3989,7 +3989,7 @@ void sub_455350(int64_t obj, int64_t target_loc)
     path_create_info.obj = obj;
     path_create_info.max_rotations = sizeof(path.rotations) / sizeof(path.rotations[0]);
     path_create_info.rotations = path.rotations;
-    path_create_info.field_20 = 0x10;
+    path_create_info.flags = 0x10;
     path.max = sub_41F3C0(&path_create_info);
 
     if (path.max != 0) {

@@ -2518,7 +2518,7 @@ void sub_4AC7B0(Ai* ai)
                 path_create_info.to = obj_field_int64_get(ai->danger_source, OBJ_F_LOCATION);
                 path_create_info.max_rotations = 100;
                 path_create_info.rotations = rotations;
-                path_create_info.field_20 = 0x800;
+                path_create_info.flags = 0x800;
                 path_create_info.field_24 = combat_min_dist;
                 if (sub_41F3C0(&path_create_info)) {
                     sub_433C80(ai->obj, path_create_info.to);

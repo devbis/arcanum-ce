@@ -9,7 +9,7 @@ typedef struct PathCreateInfo {
     /* 0010 */ int64_t to;
     /* 0018 */ int max_rotations;
     /* 001C */ int8_t* rotations;
-    /* 0020 */ int field_20;
+    /* 0020 */ unsigned int flags;
     /* 0024 */ int field_24;
 } PathCreateInfo;
 
