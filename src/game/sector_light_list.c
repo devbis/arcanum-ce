@@ -297,7 +297,96 @@ bool sector_light_list_is_modified(SectorLightList* list)
 // 0x4F7760
 bool sector_light_list_save_with_dif(SectorLightList* list, TigFile* stream)
 {
-    // TODO: Incomplete.
+    SectorBlockListNode* node;
+    Light* light;
+    bool dif = false;
+    int extent = 0;
+    int pos = 0;
+    int write_pos;
+
+    node = list->head;
+    while (node != NULL) {
+        light = (Light*)node->data;
+        if (sub_4DD110(light)) {
+            if (light_is_modified(light)) {
+                if (!dif) {
+                    if (extent != 0) {
+                        if (tig_file_fwrite(&extent, sizeof(extent), 1, stream) != 1) {
+                            return false;
+                        }
+                    }
+
+                    pos = tig_file_ftell(stream);
+                    if (pos == -1) {
+                        return false;
+                    }
+
+                    extent = 0;
+                    if (tig_file_fwrite(&extent, sizeof(extent), 1, stream) != 1) {
+                        return false;
+                    }
+
+                    dif = true;
+                }
+
+                if (!light_write_dif(stream, light)) {
+                    return false;
+                }
+            } else {
+                if (dif) {
+                    write_pos = tig_file_ftell(stream);
+                    if (write_pos == -1) {
+                        return false;
+                    }
+
+                    if (tig_file_fseek(stream, pos, 0) != 0) {
+                        return false;
+                    }
+
+                    extent |= 0x80000000;
+                    if (tig_file_fwrite(&extent, sizeof(extent), 1, stream) != 1) {
+                        return false;
+                    }
+
+                    if (tig_file_fseek(stream, write_pos, 0) != 0) {
+                        return false;
+                    }
+
+                    dif = false;
+                    extent = 0;
+                }
+            }
+
+            extent++;
+        }
+        node = node->next;
+    }
+
+    if (dif) {
+        write_pos = tig_file_ftell(stream);
+        if (write_pos == -1) {
+            return false;
+        }
+
+        if (tig_file_fseek(stream, pos, 0) != 0) {
+            return false;
+        }
+
+        extent |= 0x80000000;
+        if (tig_file_fwrite(&extent, sizeof(extent), 1, stream) != 1) {
+            return false;
+        }
+
+        if (tig_file_fseek(stream, write_pos, 0) != 0) {
+            return false;
+        }
+    } else {
+        if (tig_file_fwrite(&extent, sizeof(extent), 1, stream) != 1) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // 0x4F7940
