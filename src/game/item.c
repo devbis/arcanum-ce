@@ -548,8 +548,7 @@ int sub_461700(int64_t item_obj, int64_t owner_obj)
         return 0;
     }
 
-    // TODO: Unclear math.
-    return 0;
+    return complexity * aptitude / -100;
 }
 
 // 0x461780
