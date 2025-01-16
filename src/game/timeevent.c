@@ -836,15 +836,15 @@ void timeevent_ping(tig_timestamp_t timestamp)
         }
     }
 
-    for (time_type = 0; time_type < 3; time_type++) {
+    for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
         switch (time_type) {
-        case 0:
+        case TIME_TYPE_REAL_TIME:
             datetime = &timeevent_real_time;
             break;
-        case 1:
+        case TIME_TYPE_GAME_TIME:
             datetime = &timeevent_game_time;
             break;
-        case 2:
+        case TIME_TYPE_ANIMATIONS:
             datetime = &timeevent_anim_time;
             break;
         default:
