@@ -53,7 +53,7 @@ static bool sub_463340(int lock_id, int key_id);
 static bool sub_464150(TimeEvent* timeevent);
 static int64_t item_gold_obj(int64_t obj);
 static int64_t item_find_key_ring(int64_t critter_obj);
-static bool sub_464200(int64_t a1, int64_t a2);
+static bool item_check_invensource_buy_list(int64_t item_obj, int64_t buyer_npc_obj);
 static int sub_465010(int64_t obj);
 static tig_art_id_t sub_4650D0(int64_t critter_obj);
 static int64_t item_ammo_obj(object_id_t obj, int ammo_type);
@@ -926,7 +926,7 @@ bool item_check_sell(int64_t item_obj, int64_t seller_pc_obj, int64_t buyer_npc_
             return false;
         }
 
-        if (!sub_464200(item_obj, buyer_npc_obj)) {
+        if (!item_check_invensource_buy_list(item_obj, buyer_npc_obj)) {
             return false;
         }
     }
@@ -2190,32 +2190,32 @@ int item_inventory_source(object_id_t obj)
 }
 
 // 0x464200
-bool sub_464200(int64_t a1, int64_t a2)
+bool item_check_invensource_buy_list(int64_t item_obj, int64_t buyer_npc_obj)
 {
     int invensource_id;
     InvenSourceSet set;
-    int index;
+    int idx;
     int basic_prototype;
     int64_t substitute_inventory_obj;
 
-    invensource_id = item_inventory_source(a2);
+    invensource_id = item_inventory_source(buyer_npc_obj);
     if (invensource_id != 0) {
         invensource_get_id_list(invensource_id, &set);
         if (set.buy_all) {
             return true;
         }
 
-        basic_prototype = sub_49B290(a1);
-        for (index = 0; index < set.buy_cnt; index++) {
-            if (set.buy_basic_prototype[index] == basic_prototype) {
+        basic_prototype = sub_49B290(item_obj);
+        for (idx = 0; idx < set.buy_cnt; idx++) {
+            if (set.buy_basic_prototype[idx] == basic_prototype) {
                 return true;
             }
         }
     }
 
-    substitute_inventory_obj = critter_substitute_inventory_get(a2);
-    if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
-        return sub_464200(a1, substitute_inventory_obj);
+    substitute_inventory_obj = critter_substitute_inventory_get(buyer_npc_obj);
+    if (substitute_inventory_obj == OBJ_HANDLE_NULL) {
+        return item_check_invensource_buy_list(item_obj, substitute_inventory_obj);
     }
 
     return false;
