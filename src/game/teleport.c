@@ -188,7 +188,7 @@ bool teleport_process(TeleportData* teleport_data)
             DateTime datetime;
 
             sub_45A950(&datetime, 1000 * teleport_data->time);
-            sub_45C200(&datetime);
+            timeevent_inc_datetime(&datetime);
         }
     }
 

@@ -424,7 +424,7 @@ bool sleep_ui_process_callback(TimeEvent* timeevent)
     int hours;
 
     sub_45A950(&datetime, 3600000);
-    sub_45C200(&datetime);
+    timeevent_inc_datetime(&datetime);
 
     next_timeevent.type = TIMEEVENT_TYPE_SLEEPING;
     if (!dword_6834B0) {

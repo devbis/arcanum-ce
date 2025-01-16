@@ -1521,11 +1521,11 @@ bool sub_45C1C0(unsigned int milliseconds)
 
     sub_45A950(&datetime, milliseconds);
     // NOTE: Uninline.
-    return sub_45C200(&datetime);
+    return timeevent_inc_datetime(&datetime);
 }
 
 // 0x45C200
-bool sub_45C200(DateTime* datetime)
+bool timeevent_inc_datetime(DateTime* datetime)
 {
     datetime_add_datetime(&timeevent_game_time, datetime);
     datetime_add_datetime(&timeevent_anim_time, datetime);

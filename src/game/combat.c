@@ -3425,7 +3425,7 @@ void combat_turn_based_end_turn()
 
     combat_debug(OBJ_HANDLE_NULL, "TB End Turn");
     sub_45A950(&datetime, 1000);
-    sub_45C200(&datetime);
+    timeevent_inc_datetime(&datetime);
     combat_turn_based_begin_turn();
 }
 

@@ -3757,7 +3757,7 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 
     sub_564EE0(&v8, &(v2->field_3C), &v9);
     if (!v0) {
-        sub_45C200(&v9);
+        timeevent_inc_datetime(&v9);
     }
 
     if (v1) {

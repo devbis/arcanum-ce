@@ -2484,7 +2484,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             if (teleport_data.time > 0) {
                 DateTime datetime;
                 sub_45A950(&datetime, 1000 * teleport_data.time);
-                sub_45C200(&datetime);
+                timeevent_inc_datetime(&datetime);
             }
 
             if (teleport_data.sound_id > 0) {
