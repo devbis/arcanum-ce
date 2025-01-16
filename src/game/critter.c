@@ -1343,7 +1343,7 @@ bool critter_decay_schedule(int64_t obj)
 }
 
 // 0x45EC80
-void sub_45EC80(int64_t obj)
+void critter_decay_cancel(int64_t obj)
 {
     qword_5E8650 = obj;
     timeevent_clear_one_ex(TIMEEVENT_TYPE_DECAY_DEAD_BODIE, sub_45ECB0);

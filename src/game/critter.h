@@ -76,7 +76,7 @@ bool critter_resting_timeevent_process(TimeEvent* timeevent);
 bool sub_45EAB0(int64_t obj);
 bool critter_decay_timeevent_process(TimeEvent* timeevent);
 bool critter_decay_schedule(int64_t obj);
-void sub_45EC80(int64_t obj);
+void critter_decay_cancel(int64_t obj);
 bool critter_npc_combat_focus_wipe_timeevent_process(TimeEvent* timeevent);
 bool critter_npc_combat_focus_wipe_schedule(int64_t obj);
 bool critter_is_concealed(int64_t obj);
