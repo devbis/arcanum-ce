@@ -913,7 +913,7 @@ void timeevent_ping(tig_timestamp_t timestamp)
 // 0x45B600
 void timeevent_node_destroy(TimeEventNode* node)
 {
-    free(node);
+    FREE(node);
 }
 
 // 0x45B610
@@ -1109,7 +1109,7 @@ bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime,
 // 0x45BA20
 TimeEventNode* timeevent_node_create()
 {
-    return (TimeEventNode*)malloc(sizeof(TimeEventNode));
+    return (TimeEventNode*)MALLOC(sizeof(TimeEventNode));
 }
 
 // 0x45BA30
