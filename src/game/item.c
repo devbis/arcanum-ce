@@ -2109,12 +2109,12 @@ void sub_463E20(int64_t obj)
             }
         }
 
-        qty = random_between(set.default_rate, set.default_basic_prototype);
+        qty = random_between(set.min_coins, set.max_coins);
         if (qty > 0) {
             item_gold_transfer(OBJ_HANDLE_NULL, obj, qty, OBJ_HANDLE_NULL);
         }
 
-        for (idx = 0; idx < set.field_4; idx++) {
+        for (idx = 0; idx < set.cnt; idx++) {
             if (random_between(1, 100) <= set.rate[idx]
                 && mp_object_create(set.basic_prototype[idx], loc, &item_obj)) {
                 if (!item_transfer(item_obj, obj)) {
@@ -2201,12 +2201,12 @@ bool sub_464200(int64_t a1, int64_t a2)
     invensource_id = item_inventory_source(a2);
     if (invensource_id != 0) {
         invensource_get_id_list(invensource_id, &set);
-        if (set.field_0) {
+        if (set.buy_all) {
             return true;
         }
 
         basic_prototype = sub_49B290(a1);
-        for (index = 0; index < set.field_8; index++) {
+        for (index = 0; index < set.buy_cnt; index++) {
             if (set.buy_basic_prototype[index] == basic_prototype) {
                 return true;
             }

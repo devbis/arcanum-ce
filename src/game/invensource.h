@@ -6,11 +6,11 @@
 #define INVEN_SOURCE_SET_SIZE 300
 
 typedef struct InvenSourceSet {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int default_rate;
-    /* 0010 */ int default_basic_prototype;
+    /* 0000 */ int buy_all;
+    /* 0004 */ int cnt;
+    /* 0008 */ int buy_cnt;
+    /* 000C */ int min_coins;
+    /* 0010 */ int max_coins;
     /* 0014 */ int rate[INVEN_SOURCE_SET_SIZE];
     /* 04C4 */ int basic_prototype[INVEN_SOURCE_SET_SIZE];
     /* 0974 */ int buy_basic_prototype[INVEN_SOURCE_SET_SIZE];

@@ -117,8 +117,8 @@ void invensource_get_id_list(int id, InvenSourceSet* set)
         tig_debug_printf("Range error in invensource_get_id_list, set: %d\n", id);
     }
 
-    set->field_4 = 0;
-    set->field_8 = 0;
+    set->cnt = 0;
+    set->buy_cnt = 0;
 }
 
 // 0x4BF640
@@ -141,7 +141,7 @@ bool parse_set_data(mes_file_handle_t invensource_mes_file, mes_file_handle_t in
 
         named_set = &(invensource_sets[mes_file_entry1.num - 1]);
         if (sub_4BF7B0(&mes_file_entry1, str)) {
-            named_set->set.field_8 = 0;
+            named_set->set.buy_cnt = 0;
             if (invensource_have_buy) {
                 mes_file_entry2.num = mes_file_entry1.num;
                 if (mes_search(invensourcebuy_mes_file, &mes_file_entry2)) {
@@ -152,8 +152,8 @@ bool parse_set_data(mes_file_handle_t invensource_mes_file, mes_file_handle_t in
                             off_5B64AC,
                             mes_file_entry1.num);
                         show_error(invensource_error);
-                        named_set->set.field_4 = 0;
-                        named_set->set.field_8 = 0;
+                        named_set->set.cnt = 0;
+                        named_set->set.buy_cnt = 0;
                     }
                 }
             }
@@ -163,8 +163,8 @@ bool parse_set_data(mes_file_handle_t invensource_mes_file, mes_file_handle_t in
                 off_5B64A8,
                 mes_file_entry1.num);
             show_error(invensource_error);
-            named_set->set.field_4 = 0;
-            named_set->set.field_8 = 0;
+            named_set->set.cnt = 0;
+            named_set->set.buy_cnt = 0;
         }
     }
 
@@ -219,9 +219,9 @@ bool sub_4BF7B0(MesFileEntry* mes_file_entry, char* str)
 
     tok = strtok(NULL, ",");
     if (tok == NULL) {
-        named_set->set.field_4 = 0;
-        named_set->set.default_rate = 0;
-        named_set->set.default_basic_prototype = 0;
+        named_set->set.cnt = 0;
+        named_set->set.min_coins = 0;
+        named_set->set.max_coins = 0;
         return true;
     }
 
@@ -254,8 +254,8 @@ bool sub_4BF7B0(MesFileEntry* mes_file_entry, char* str)
         basic_prototype = atoi(tok);
 
         if (is_first) {
-            named_set->set.default_rate = rate;
-            named_set->set.default_basic_prototype = basic_prototype;
+            named_set->set.min_coins = rate;
+            named_set->set.max_coins = basic_prototype;
             is_first = false;
         } else {
             if (!sub_468610(basic_prototype)) {
@@ -289,7 +289,7 @@ bool sub_4BF7B0(MesFileEntry* mes_file_entry, char* str)
         tok = strtok(NULL, ",");
     }
 
-    named_set->set.field_4 = cnt;
+    named_set->set.cnt = cnt;
     return true;
 }
 
@@ -316,18 +316,18 @@ bool sub_4BFAA0(MesFileEntry* mes_file_entry, char* str)
 
     tok = strtok(str, " ");
     if (tok == NULL) {
-        named_set->set.field_0 = 0;
-        named_set->set.field_8 = 0;
+        named_set->set.buy_all = false;
+        named_set->set.buy_cnt = 0;
         return true;
     }
 
     if (strcmp(strupr(tok), "ALL") == 0) {
-        named_set->set.field_0 = 1;
-        named_set->set.field_8 = 0;
+        named_set->set.buy_all = true;
+        named_set->set.buy_cnt = 0;
         return true;
     }
 
-    named_set->set.field_0 = 0;
+    named_set->set.buy_all = false;
 
     cnt = 0;
     while (tok != NULL) {
@@ -371,7 +371,7 @@ bool sub_4BFAA0(MesFileEntry* mes_file_entry, char* str)
         tok = strtok(NULL, " ");
     }
 
-    named_set->set.field_8 = cnt;
+    named_set->set.buy_cnt = cnt;
     return true;
 }
 
