@@ -171,10 +171,10 @@ static unsigned int dword_5B2794[][TIMEEVENT_PARAM_TYPE_COUNT] = {
 static_assert(sizeof(dword_5B2794) / sizeof(dword_5B2794[0]) == TIMEEVENT_PARAM_COUNT, "wrong size");
 
 // 0x5E7638
-static TimeEventNode* dword_5E7638[TIME_TYPE_COUNT];
+static TimeEventNode* timeevent_lists[TIME_TYPE_COUNT];
 
 // 0x5E7E14
-static TimeEventNode* dword_5E7E14[TIME_TYPE_COUNT];
+static TimeEventNode* timeevent_new_lists[TIME_TYPE_COUNT];
 
 // 0x5E85F0
 static bool timeevent_editor;
@@ -506,12 +506,13 @@ bool timeevent_init(GameInitInfo* init_info)
     timeevent_editor = init_info->editor;
 
     if (!timeevent_initialized) {
-        dword_5E7638[0] = 0;
-        dword_5E7638[1] = 0;
-        dword_5E7638[2] = 0;
-        dword_5E7E14[0] = 0;
-        dword_5E7E14[1] = 0;
-        dword_5E7E14[2] = 0;
+        timeevent_lists[TIME_TYPE_REAL_TIME] = NULL;
+        timeevent_lists[TIME_TYPE_GAME_TIME] = NULL;
+        timeevent_lists[TIME_TYPE_ANIMATIONS] = NULL;
+
+        timeevent_new_lists[TIME_TYPE_REAL_TIME] = NULL;
+        timeevent_new_lists[TIME_TYPE_GAME_TIME] = NULL;
+        timeevent_new_lists[TIME_TYPE_ANIMATIONS] = NULL;
 
         sub_45A950(&timeevent_real_time, 0);
         sub_45A950(&timeevent_game_time, datetime_start_time_in_milliseconds);
@@ -594,7 +595,7 @@ bool timeevent_save(TigFile* stream)
             return false;
         }
 
-        timeevent = dword_5E7638[index];
+        timeevent = timeevent_lists[index];
         while (timeevent != NULL) {
             info = &(stru_5B2188[timeevent->te.type]);
             // NOTE: Original code is slightly different. It uses bitwise AND
@@ -854,9 +855,9 @@ void timeevent_ping(tig_timestamp_t timestamp)
 
         // TimeEventNode objects are sorted by their datetime, so we are only
         // interested in head node.
-        while ((node = dword_5E7638[time_type]) != NULL
+        while ((node = timeevent_lists[time_type]) != NULL
             && datetime_compare(datetime, &(node->te.datetime)) >= 0) {
-            dword_5E7638[time_type] = node->next;
+            timeevent_lists[time_type] = node->next;
 
             info = &(stru_5B2188[node->te.type]);
 
@@ -972,7 +973,7 @@ void sub_45B750()
     TimeEventNode* node;
 
     for (index = 0; index < TIME_TYPE_COUNT; index++) {
-        node_ptr = &(dword_5E7E14[index]);
+        node_ptr = &(timeevent_new_lists[index]);
         while (*node_ptr != NULL) {
             node = *node_ptr;
             *node_ptr = node->next;
@@ -1073,9 +1074,9 @@ bool timeevent_add_base_offset_at_func(TimeEvent* timeevent, DateTime* datetime,
 
     time_type = stru_5B2188[timeevent->type].time_type;
     if (!timeevent_in_ping || dword_5E8620) {
-        node_ptr = &(dword_5E7638[time_type]);
+        node_ptr = &(timeevent_lists[time_type]);
     } else {
-        node_ptr = &(dword_5E7E14[time_type]);
+        node_ptr = &(timeevent_new_lists[time_type]);
     }
 
     while (*node_ptr != NULL) {
@@ -1181,9 +1182,9 @@ bool sub_45BB40(TimeEventNode* node)
 
     time_type = stru_5B2188[node->te.type].time_type;
     if (timeevent_in_ping) {
-        node_ptr = &(dword_5E7E14[time_type]);
+        node_ptr = &(timeevent_new_lists[time_type]);
     } else {
-        node_ptr = &(dword_5E7638[time_type]);
+        node_ptr = &(timeevent_lists[time_type]);
     }
 
     while (*node_ptr != NULL) {
@@ -1215,9 +1216,9 @@ void timeevent_clear()
     TimeEventNode* node;
 
     for (index = 0; index < TIME_TYPE_COUNT; index++) {
-        while (dword_5E7638[index] != NULL) {
-            node = dword_5E7638[index];
-            dword_5E7638[index] = node->next;
+        while (timeevent_lists[index] != NULL) {
+            node = timeevent_lists[index];
+            timeevent_lists[index] = node->next;
 
             if (stru_5B2188[node->te.type].exit_func != NULL) {
                 stru_5B2188[node->te.type].exit_func(&(node->te));
@@ -1226,9 +1227,9 @@ void timeevent_clear()
             timeevent_node_destroy(node);
         }
 
-        while (dword_5E7E14[index] != NULL) {
-            node = dword_5E7E14[index];
-            dword_5E7E14[index] = node->next;
+        while (timeevent_new_lists[index] != NULL) {
+            node = timeevent_new_lists[index];
+            timeevent_new_lists[index] = node->next;
 
             if (stru_5B2188[node->te.type].exit_func != NULL) {
                 stru_5B2188[node->te.type].exit_func(&(node->te));
@@ -1275,7 +1276,7 @@ bool timeevent_clear_all_typed(int list)
         return false;
     }
 
-    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list) {
@@ -1291,7 +1292,7 @@ bool timeevent_clear_all_typed(int list)
         }
     }
 
-    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_new_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list) {
@@ -1320,7 +1321,7 @@ bool timeevent_clear_one_typed(int list)
         return false;
     }
 
-    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list) {
@@ -1338,7 +1339,7 @@ bool timeevent_clear_one_typed(int list)
         node_ptr = &(node->next);
     }
 
-    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_new_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list) {
@@ -1369,7 +1370,7 @@ bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback)
         return false;
     }
 
-    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list && callback(&(node->te))) {
@@ -1385,7 +1386,7 @@ bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback)
         }
     }
 
-    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_new_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list && callback(&(node->te))) {
@@ -1414,7 +1415,7 @@ bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback)
         return false;
     }
 
-    node_ptr = &(dword_5E7638[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list && callback(&(node->te))) {
@@ -1432,7 +1433,7 @@ bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback)
         node_ptr = &(node->next);
     }
 
-    node_ptr = &(dword_5E7E14[stru_5B2188[list].time_type]);
+    node_ptr = &(timeevent_new_lists[stru_5B2188[list].time_type]);
     while (*node_ptr != NULL) {
         node = *node_ptr;
         if (node->te.type == list && callback(&(node->te))) {
@@ -1462,7 +1463,7 @@ bool sub_45C0E0(int list)
         return false;
     }
 
-    node = dword_5E7638[stru_5B2188[list].time_type];
+    node = timeevent_new_lists[stru_5B2188[list].time_type];
     while (node != NULL) {
         if (node->te.type == list) {
             return true;
@@ -1471,7 +1472,7 @@ bool sub_45C0E0(int list)
         node = node->next;
     }
 
-    node = dword_5E7638[stru_5B2188[list].time_type];
+    node = timeevent_lists[stru_5B2188[list].time_type];
     while (node != NULL) {
         if (node->te.type == list) {
             return true;
@@ -1492,7 +1493,7 @@ bool sub_45C140(int list, TimeEventEnumerateFunc* callback)
         return false;
     }
 
-    node = dword_5E7638[stru_5B2188[list].time_type];
+    node = timeevent_new_lists[stru_5B2188[list].time_type];
     while (node != NULL) {
         if (node->te.type == list && callback(&(node->te))) {
             return true;
@@ -1501,7 +1502,7 @@ bool sub_45C140(int list, TimeEventEnumerateFunc* callback)
         node = node->next;
     }
 
-    node = dword_5E7638[stru_5B2188[list].time_type];
+    node = timeevent_lists[stru_5B2188[list].time_type];
     while (node != NULL) {
         if (node->te.type == list && callback(&(node->te))) {
             return true;
@@ -1599,7 +1600,7 @@ void timeevent_save_nodes_to_map(const char* name)
     }
 
     for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
-        node_ptr = &(dword_5E7638[time_type]);
+        node_ptr = &(timeevent_lists[time_type]);
         while (*node_ptr != NULL) {
             node = *node_ptr;
             if (sub_45C500(node) < 0) {
@@ -1678,13 +1679,13 @@ void sub_45C580()
     char* name;
 
     for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
-        node = dword_5E7638[time_type];
+        node = timeevent_lists[time_type];
         while (node != NULL) {
             sub_45B620(node, true);
             node = node->next;
         }
 
-        node = dword_5E7E14[time_type];
+        node = timeevent_new_lists[time_type];
         while (node != NULL) {
             sub_45B620(node, true);
             node = node->next;
@@ -1820,7 +1821,7 @@ void timeevent_break_nodes_to_map(const char* name)
     }
 
     for (time_type = 0; time_type < TIME_TYPE_COUNT; time_type++) {
-        node_ptr = &(dword_5E7638[time_type]);
+        node_ptr = &(timeevent_lists[time_type]);
         while (*node_ptr != NULL) {
             node = *node_ptr;
             if (sub_45C500(node) > 0) {
@@ -1919,7 +1920,7 @@ void timeevent_debug_lists()
         datetime_format_datetime(&time, time_str);
         tig_debug_printf("\t[%s] Game Time: [%s]\n", off_5B2178[index], time_str);
 
-        node = dword_5E7638[index];
+        node = timeevent_new_lists[index];
         while (node != NULL) {
             time_type_counts[index]++;
             timeevent_type_counts[node->te.type]++;
@@ -1927,7 +1928,7 @@ void timeevent_debug_lists()
             node = node->next;
         }
 
-        node = dword_5E7638[index];
+        node = timeevent_lists[index];
         while (node != NULL) {
             time_type_counts[index]++;
             timeevent_type_counts[node->te.type]++;
