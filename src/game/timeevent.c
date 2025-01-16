@@ -180,13 +180,11 @@ static TimeEventNode* dword_5E7E14[TIME_TYPE_COUNT];
 static bool timeevent_editor;
 
 // 0x5E85F8
-static DateTime stru_5E85F8;
+static DateTime timeevent_time[TIME_TYPE_COUNT];
 
-// 0x5E8600
-static DateTime stru_5E8600;
-
-// 0x5E8608
-static DateTime stru_5E8608;
+#define timeevent_real_time (timeevent_time[TIME_TYPE_REAL_TIME])
+#define timeevent_game_time (timeevent_time[TIME_TYPE_GAME_TIME])
+#define timeevent_anim_time (timeevent_time[TIME_TYPE_ANIMATIONS])
 
 // 0x5E8610
 static tig_timestamp_t dword_5E8610;
@@ -215,7 +213,7 @@ static bool dword_5DE6E0;
 // 0x45A7C0
 DateTime sub_45A7C0()
 {
-    return stru_5E8600;
+    return timeevent_game_time;
 }
 
 // TODO: Check generated assembly (return value is eax:edx without first param?)
@@ -224,8 +222,8 @@ DateTime sub_45A7D0(DateTime* other)
 {
     DateTime new_time;
 
-    new_time.days = stru_5E8600.days - other->days;
-    new_time.milliseconds = stru_5E8600.milliseconds - other->milliseconds;
+    new_time.days = timeevent_game_time.days - other->days;
+    new_time.milliseconds = timeevent_game_time.milliseconds - other->milliseconds;
     return new_time;
 }
 
@@ -233,13 +231,13 @@ DateTime sub_45A7D0(DateTime* other)
 int sub_45A7F0()
 {
     // NOTE: Uninline.
-    return datetime_seconds_since_reference_date(&stru_5E8600);
+    return datetime_seconds_since_reference_date(&timeevent_game_time);
 }
 
 // 0x45A820
 int sub_45A820(unsigned int milliseconds)
 {
-    return datetime_seconds_since_reference_date(&stru_5E8600) - milliseconds;
+    return datetime_seconds_since_reference_date(&timeevent_game_time) - milliseconds;
 }
 
 // 0x45A840
@@ -269,7 +267,7 @@ int datetime_get_minute(DateTime* datetime)
 // 0x45A8D0
 int datetime_get_day_since_reference_date()
 {
-    return stru_5E8600.days + 1;
+    return timeevent_game_time.days + 1;
 }
 
 // 0x45A8E0
@@ -353,37 +351,37 @@ void datetime_add_datetime(DateTime* datetime, DateTime* other)
 // 0x45AAA0
 int datetime_current_hour()
 {
-    return stru_5E8600.milliseconds / 3600000 % 24;
+    return timeevent_game_time.milliseconds / 3600000 % 24;
 }
 
 // 0x45AAC0
 int datetime_current_minute()
 {
-    return stru_5E8600.milliseconds / 60000 % 60;
+    return timeevent_game_time.milliseconds / 60000 % 60;
 }
 
 // 0x45AAE0
 int datetime_current_second()
 {
-    return stru_5E8600.milliseconds / 1000 % 60;
+    return timeevent_game_time.milliseconds / 1000 % 60;
 }
 
 // 0x45AB00
 int datetime_current_day()
 {
-    return stru_5E8600.days / 30 % 12 + 1;
+    return timeevent_game_time.days / 30 % 12 + 1;
 }
 
 // 0x45AB20
 int datetime_current_month()
 {
-    return stru_5E8600.days % 30 + 1;
+    return timeevent_game_time.days % 30 + 1;
 }
 
 // 0x45AB40
 int datetime_current_year()
 {
-    return datetime_start_year + stru_5E8600.days / 360;
+    return datetime_start_year + timeevent_game_time.days / 360;
 }
 
 // 0x45AB70
@@ -483,8 +481,8 @@ void datetime_set_start_hour(int hour)
 {
     if (hour >= 0) {
         datetime_start_time_in_milliseconds = 3600000 * hour;
-        sub_45A950(&stru_5E8600, datetime_start_time_in_milliseconds);
-        sub_45A950(&stru_5E8608, datetime_start_time_in_milliseconds);
+        sub_45A950(&timeevent_game_time, datetime_start_time_in_milliseconds);
+        sub_45A950(&timeevent_anim_time, datetime_start_time_in_milliseconds);
     }
 }
 
@@ -515,9 +513,9 @@ bool timeevent_init(GameInitInfo* init_info)
         dword_5E7E14[1] = 0;
         dword_5E7E14[2] = 0;
 
-        sub_45A950(&stru_5E85F8, 0);
-        sub_45A950(&stru_5E8600, datetime_start_time_in_milliseconds);
-        sub_45A950(&stru_5E8608, datetime_start_time_in_milliseconds);
+        sub_45A950(&timeevent_real_time, 0);
+        sub_45A950(&timeevent_game_time, datetime_start_time_in_milliseconds);
+        sub_45A950(&timeevent_anim_time, datetime_start_time_in_milliseconds);
 
         tig_timer_now(&dword_5E8610);
 
@@ -551,9 +549,9 @@ bool timeevent_set_funcs(TimeEventFuncs* funcs)
 void timeevent_reset()
 {
     timeevent_clear();
-    sub_45A950(&stru_5E85F8, 0);
-    sub_45A950(&stru_5E8600, datetime_start_time_in_milliseconds);
-    sub_45A950(&stru_5E8608, datetime_start_time_in_milliseconds);
+    sub_45A950(&timeevent_real_time, 0);
+    sub_45A950(&timeevent_game_time, datetime_start_time_in_milliseconds);
+    sub_45A950(&timeevent_anim_time, datetime_start_time_in_milliseconds);
     tig_timer_now(&dword_5E8610);
 }
 
@@ -574,15 +572,15 @@ bool timeevent_save(TigFile* stream)
     int pos;
     TimeEventTypeInfo* info;
 
-    if (!tig_file_fwrite(&stru_5E85F8, sizeof(stru_5E85F8), 1, stream) != 1) {
+    if (!tig_file_fwrite(&timeevent_real_time, sizeof(timeevent_real_time), 1, stream) != 1) {
         return false;
     }
 
-    if (!tig_file_fwrite(&stru_5E8600, sizeof(stru_5E8600), 1, stream) != 1) {
+    if (!tig_file_fwrite(&timeevent_game_time, sizeof(timeevent_game_time), 1, stream) != 1) {
         return false;
     }
 
-    if (!tig_file_fwrite(&stru_5E8608, sizeof(stru_5E8608), 1, stream) != 1) {
+    if (!tig_file_fwrite(&timeevent_anim_time, sizeof(timeevent_anim_time), 1, stream) != 1) {
         return false;
     }
 
@@ -685,15 +683,15 @@ bool timeevent_load(GameLoadInfo* load_info)
         return false;
     }
 
-    if (tig_file_fread(&stru_5E85F8, sizeof(stru_5E85F8), 1, load_info->stream) != 1) {
+    if (tig_file_fread(&timeevent_real_time, sizeof(timeevent_real_time), 1, load_info->stream) != 1) {
         return false;
     }
 
-    if (tig_file_fread(&stru_5E8600, sizeof(stru_5E8600), 1, load_info->stream) != 1) {
+    if (tig_file_fread(&timeevent_game_time, sizeof(timeevent_game_time), 1, load_info->stream) != 1) {
         return false;
     }
 
-    if (tig_file_fread(&stru_5E8608, sizeof(stru_5E8608), 1, load_info->stream) != 1) {
+    if (tig_file_fread(&timeevent_anim_time, sizeof(timeevent_anim_time), 1, load_info->stream) != 1) {
         return false;
     }
 
@@ -818,36 +816,36 @@ void timeevent_ping(tig_timestamp_t timestamp)
     }
 
     timeevent_in_ping = true;
-    datetime_add_milliseconds(&stru_5E85F8, delta);
+    datetime_add_milliseconds(&timeevent_real_time, delta);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0) {
         if (!sub_45B300()) {
             if (dword_5E8628 < 1000 * (sub_4A38A0() + 16)) {
-                datetime_add_milliseconds(&stru_5E8600, 8 * delta);
-                datetime_add_milliseconds(&stru_5E8608, 8 * delta);
+                datetime_add_milliseconds(&timeevent_game_time, 8 * delta);
+                datetime_add_milliseconds(&timeevent_anim_time, 8 * delta);
                 dword_5E8628 += 8 * delta;
             }
         }
     } else {
         if (!sub_45B300()) {
             if (!combat_turn_based_is_active()) {
-                datetime_add_milliseconds(&stru_5E8600, 8 * delta);
+                datetime_add_milliseconds(&timeevent_game_time, 8 * delta);
             }
-            datetime_add_milliseconds(&stru_5E8608, 8 * delta);
+            datetime_add_milliseconds(&timeevent_anim_time, 8 * delta);
         }
     }
 
     for (time_type = 0; time_type < 3; time_type++) {
         switch (time_type) {
         case 0:
-            datetime = &stru_5E85F8;
+            datetime = &timeevent_real_time;
             break;
         case 1:
-            datetime = &stru_5E8600;
+            datetime = &timeevent_game_time;
             break;
         case 2:
-            datetime = &stru_5E8608;
+            datetime = &timeevent_anim_time;
             break;
         default:
             // Unreachable.
@@ -906,8 +904,8 @@ void timeevent_ping(tig_timestamp_t timestamp)
         dword_5E8624 = timestamp;
 
         pkt.type = 3;
-        pkt.field_8 = stru_5E8600.value;
-        pkt.field_10 = stru_5E8608.value;
+        pkt.field_8 = timeevent_game_time.value;
+        pkt.field_10 = timeevent_anim_time.value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
@@ -1117,7 +1115,7 @@ TimeEventNode* timeevent_node_create()
 // 0x45BA30
 bool sub_45BA30(TimeEvent* timeevent, DateTime* datetime, DateTime* a3, DateTime* a4)
 {
-    DateTime v1;
+    DateTime time;
 
     if (timeevent == NULL) {
         return false;
@@ -1128,24 +1126,24 @@ bool sub_45BA30(TimeEvent* timeevent, DateTime* datetime, DateTime* a3, DateTime
     }
 
     if (a3 != NULL && (a3->days != 0 || a3->milliseconds != 0)) {
-        v1 = *a3;
+        time = *a3;
     } else {
         switch (stru_5B2188[timeevent->type].time_type) {
         case TIME_TYPE_REAL_TIME:
-            v1 = stru_5E85F8;
+            time = timeevent_real_time;
             break;
         case TIME_TYPE_GAME_TIME:
-            v1 = stru_5E8600;
+            time = timeevent_game_time;
             break;
         default:
             // FIXME: Use `TIME_TYPE_ANIMATIONS` explicitly.
-            v1 = stru_5E8608;
+            time = timeevent_anim_time;
             break;
         }
     }
 
-    datetime_add_datetime(&v1, datetime);
-    return timeevent_add_base_offset_at_func(timeevent, &v1, a4);
+    datetime_add_datetime(&time, datetime);
+    return timeevent_add_base_offset_at_func(timeevent, &time, a4);
 }
 
 // 0x45BAF0
@@ -1528,8 +1526,8 @@ bool sub_45C1C0(unsigned int milliseconds)
 // 0x45C200
 bool sub_45C200(DateTime* datetime)
 {
-    datetime_add_datetime(&stru_5E8600, datetime);
-    datetime_add_datetime(&stru_5E8608, datetime);
+    datetime_add_datetime(&timeevent_game_time, datetime);
+    datetime_add_datetime(&timeevent_anim_time, datetime);
 
     return true;
 }
@@ -1539,12 +1537,12 @@ void sub_45C230(DateTime* datetime1, DateTime* datetime2)
 {
     dword_5E8628 = 0;
 
-    if (datetime_compare(datetime1, &stru_5E8600) > 0) {
-        stru_5E8600 = *datetime1;
+    if (datetime_compare(datetime1, &timeevent_game_time) > 0) {
+        timeevent_game_time = *datetime1;
     }
 
-    if (datetime_compare(datetime2, &stru_5E8608) > 0) {
-        stru_5E8608 = *datetime2;
+    if (datetime_compare(datetime2, &timeevent_anim_time) > 0) {
+        timeevent_anim_time = *datetime2;
     }
 }
 
@@ -1903,18 +1901,18 @@ void timeevent_debug_lists()
     for (index = 0; index < TIME_TYPE_COUNT; index++) {
         switch (index) {
         case TIME_TYPE_REAL_TIME:
-            time = stru_5E85F8;
+            time = timeevent_real_time;
             break;
         case TIME_TYPE_GAME_TIME:
-            time = stru_5E8600;
+            time = timeevent_game_time;
             break;
         case TIME_TYPE_ANIMATIONS:
-            time = stru_5E8608;
+            time = timeevent_anim_time;
             break;
         default:
             // NOTE: Unreachable, switch is exhaustive.
             tig_debug_printf("TimeEvent: timeevent_debug_lists: ERROR: Out-of-Bounds Time Type!\n");
-            time = stru_5E8600;
+            time = timeevent_game_time;
             break;
         }
 
