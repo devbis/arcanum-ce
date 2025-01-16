@@ -468,7 +468,7 @@ void main_loop()
                         if (gamelib_cheat_level_get() >= 3) {
                             switch (message.data.keyboard.key) {
                             case DIK_H:
-                                sub_45C1C0(3600000);
+                                timeevent_inc_milliseconds(3600000);
                                 break;
                             case DIK_N:
                                 object_hp_damage_set(pc_obj, 0);

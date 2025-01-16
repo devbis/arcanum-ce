@@ -1515,7 +1515,7 @@ bool sub_45C140(int list, TimeEventEnumerateFunc* callback)
 }
 
 // 0x45C1C0
-bool sub_45C1C0(unsigned int milliseconds)
+bool timeevent_inc_milliseconds(unsigned int milliseconds)
 {
     DateTime datetime;
 

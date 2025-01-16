@@ -166,7 +166,7 @@ bool timeevent_clear_all_ex(int list, TimeEventEnumerateFunc* callback);
 bool timeevent_clear_one_ex(int list, TimeEventEnumerateFunc* callback);
 bool sub_45C0E0(int list);
 bool sub_45C140(int list, TimeEventEnumerateFunc* callback);
-bool sub_45C1C0(unsigned int milliseconds);
+bool timeevent_inc_milliseconds(unsigned int milliseconds);
 bool timeevent_inc_datetime(DateTime* datetime);
 void sub_45C580();
 void sub_45C720(int map);
