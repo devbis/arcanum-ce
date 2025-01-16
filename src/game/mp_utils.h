@@ -19,13 +19,13 @@ typedef struct Packet2 {
 
 static_assert(sizeof(Packet2) == 0xC8, "wrong size");
 
-typedef struct Packet3 {
+typedef struct PacketGameTime {
     /* 0000 */ int type;
-    /* 0008 */ uint64_t field_8;
-    /* 0010 */ uint64_t field_10;
-} Packet3;
+    /* 0008 */ uint64_t game_time;
+    /* 0010 */ uint64_t anim_time;
+} PacketGameTime;
 
-static_assert(sizeof(Packet3) == 0x18, "wrong size");
+static_assert(sizeof(PacketGameTime) == 0x18, "wrong size");
 
 typedef struct Packet4 {
     /* 0000 */ int type;

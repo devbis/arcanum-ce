@@ -899,13 +899,13 @@ void timeevent_ping(tig_timestamp_t timestamp)
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) != 0
         && tig_timer_between(dword_5E8624, timestamp) > 950) {
-        Packet3 pkt;
+        PacketGameTime pkt;
 
         dword_5E8624 = timestamp;
 
         pkt.type = 3;
-        pkt.field_8 = timeevent_game_time.value;
-        pkt.field_10 = timeevent_anim_time.value;
+        pkt.game_time = timeevent_game_time.value;
+        pkt.anim_time = timeevent_anim_time.value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
     }
 }
