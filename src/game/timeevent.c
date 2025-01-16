@@ -1534,16 +1534,16 @@ bool timeevent_inc_datetime(DateTime* datetime)
 }
 
 // 0x45C230
-void sub_45C230(DateTime* datetime1, DateTime* datetime2)
+void timeevent_sync(DateTime* game_time, DateTime* anim_time)
 {
     dword_5E8628 = 0;
 
-    if (datetime_compare(datetime1, &timeevent_game_time) > 0) {
-        timeevent_game_time = *datetime1;
+    if (datetime_compare(game_time, &timeevent_game_time) > 0) {
+        timeevent_game_time = *game_time;
     }
 
-    if (datetime_compare(datetime2, &timeevent_anim_time) > 0) {
-        timeevent_anim_time = *datetime2;
+    if (datetime_compare(anim_time, &timeevent_anim_time) > 0) {
+        timeevent_anim_time = *anim_time;
     }
 }
 

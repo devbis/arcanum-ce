@@ -168,6 +168,7 @@ bool sub_45C0E0(int list);
 bool sub_45C140(int list, TimeEventEnumerateFunc* callback);
 bool timeevent_inc_milliseconds(unsigned int milliseconds);
 bool timeevent_inc_datetime(DateTime* datetime);
+void timeevent_sync(DateTime* game_time, DateTime* anim_time);
 void sub_45C580();
 void sub_45C720(int map);
 void timeevent_debug_lists();
