@@ -98,6 +98,5 @@ int stat_get_min_value(object_id_t object_id, int stat);
 int stat_get_max_value(object_id_t object_id, int stat);
 bool sub_4B10A0(int64_t obj, int stat, int value);
 bool stat_poison_timeevent_process(TimeEvent* timeevent);
-int sub_4B0FC0(int a1, int a2, int a3);
 
 #endif /* ARCANUM_GAME_STAT_H_ */
