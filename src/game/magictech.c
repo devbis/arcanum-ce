@@ -3701,7 +3701,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                     if (obj_type == OBJ_TYPE_NPC) {
                         if (sub_40DA20(a6)
                             && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_SUMMONED) == 0) {
-                            sub_4C0DE0(obj, a6, -50);
+                            reaction_adj(obj, a6, -50);
                         }
 
                         obj_field_int32_set(obj, OBJ_F_SPELL_FLAGS, flags);
@@ -3719,7 +3719,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                     if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_ANIMAL) != 0) {
                         sub_4AA300(obj, a6);
                     } else if (sub_40DA20(a6)) {
-                        sub_4C0DE0(obj, a6, 30);
+                        reaction_adj(obj, a6, 30);
                     }
 
                     obj_field_int32_set(obj,
@@ -3799,7 +3799,7 @@ void magictech_component_obj_flag(int64_t obj, int64_t a2, int fld, int a4, int 
                 }
             } else if ((a4 & OSF_CHARMED) != 0) {
                 if (obj_type == OBJ_TYPE_NPC) {
-                    sub_4C0DE0(obj, a6, -30);
+                    reaction_adj(obj, a6, -30);
                 }
             }
             break;

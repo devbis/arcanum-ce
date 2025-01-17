@@ -2255,7 +2255,7 @@ void sub_4B58C0(CombatContext* combat)
         && obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         int reaction_level = sub_4C0CC0(combat->target_obj, combat->attacker_obj);
         if (reaction_level > 0 && reaction_level < 70) {
-            sub_4C0DE0(combat->target_obj, combat->attacker_obj, 70 - reaction_level);
+            reaction_adj(combat->target_obj, combat->attacker_obj, 70 - reaction_level);
         }
     }
 

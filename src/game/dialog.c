@@ -1934,17 +1934,17 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             }
 
             if (*pch == '+' || *pch == '-') {
-                sub_4C0DE0(a1->npc_obj, a1->pc_obj, value);
+                reaction_adj(a1->npc_obj, a1->pc_obj, value);
             } else if (*pch == '>') {
                 if (reaction < value) {
-                    sub_4C0DE0(a1->npc_obj, a1->pc_obj, value - reaction);
+                    reaction_adj(a1->npc_obj, a1->pc_obj, value - reaction);
                 }
             } else if (*pch == '<') {
                 if (reaction > value) {
-                    sub_4C0DE0(a1->npc_obj, a1->pc_obj, value - reaction);
+                    reaction_adj(a1->npc_obj, a1->pc_obj, value - reaction);
                 }
             } else {
-                sub_4C0DE0(a1->npc_obj, a1->pc_obj, value - reaction);
+                reaction_adj(a1->npc_obj, a1->pc_obj, value - reaction);
             }
 
             break;
@@ -3469,7 +3469,7 @@ void sub_419190(int a1, int a2, int a3, DialogEntryNode* a4)
 // 0x4191E0
 void sub_4191E0(int a1, int a2, DialogEntryNode* a3)
 {
-    sub_4C0DE0(a3->npc_obj, a3->pc_obj, -10);
+    reaction_adj(a3->npc_obj, a3->pc_obj, -10);
     if (sub_4C0CC0(a3->npc_obj, a3->pc_obj) > 20) {
         sub_414810(a1, a2, 0, 0, a3);
     } else {

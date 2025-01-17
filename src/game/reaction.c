@@ -235,7 +235,7 @@ int sub_4C0D00(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
 }
 
 // 0x4C0DE0
-void sub_4C0DE0(int64_t npc_obj, int64_t pc_obj, int value)
+void reaction_adj(int64_t npc_obj, int64_t pc_obj, int value)
 {
     int64_t mind_controlled_by_obj;
     int base;
@@ -426,7 +426,7 @@ void sub_4C11D0(int64_t a1, int64_t a2, int a3)
     }
 
     if (v1 != 0) {
-        sub_4C0DE0(a1, a2, v1);
+        reaction_adj(a1, a2, v1);
     }
 }
 

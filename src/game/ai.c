@@ -1004,7 +1004,7 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned i
                     sub_4AAA60(target_obj, &ai_params);
                     if (leader_obj == source_obj) {
                         if ((flags & 0x01) == 0) {
-                            sub_4C0DE0(target_obj, source_obj, ai_params.field_24);
+                            reaction_adj(target_obj, source_obj, ai_params.field_24);
                         }
 
                         rc = sub_4AD950(target_obj, source_obj, true);
@@ -1031,11 +1031,11 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned i
                         }
                     } else {
                         if ((flags & 0x01) != 0) {
-                            sub_4C0DE0(target_obj, source_obj, -10);
+                            reaction_adj(target_obj, source_obj, -10);
                         } else {
                             v3 = sub_4C0CE0(target_obj, source_obj);
                             if (v3 > ai_params.field_28) {
-                                sub_4C0DE0(target_obj, source_obj, ai_params.field_28 - v3);
+                                reaction_adj(target_obj, source_obj, ai_params.field_28 - v3);
                             }
                         }
                     }
@@ -1128,7 +1128,7 @@ void sub_4A9C00(int64_t source_obj, int64_t a2, int64_t target_obj, int a4, int 
                     dword_5F8488(source_obj, a2, str, v1);
                 }
 
-                sub_4C0DE0(source_obj, a2, -5);
+                reaction_adj(source_obj, a2, -5);
             }
             return;
         }
@@ -1301,7 +1301,7 @@ void sub_4AA300(int64_t a1, int64_t a2)
     if (obj_type == OBJ_TYPE_PC) {
         reaction = sub_4C0CC0(a1, v1);
         if (reaction < 50) {
-            sub_4C0DE0(a1, v1, 50 - reaction);
+            reaction_adj(a1, v1, 50 - reaction);
         }
     }
 
@@ -1545,7 +1545,7 @@ bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent)
 
             max_charisma = stat_get_max_value(leader_obj, STAT_CHARISMA);
             charisma = stat_level(leader_obj, STAT_CHARISMA);
-            sub_4C0DE0(obj, leader_obj, 2 * (charisma - max_charisma));
+            reaction_adj(obj, leader_obj, 2 * (charisma - max_charisma));
             critter_leader_set(obj, OBJ_HANDLE_NULL);
         }
     }
@@ -1704,7 +1704,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
                 v1 = sub_4C0CE0(source_obj, target_obj);
                 sub_4AAA60(source_obj, &ai_params);
                 if (v1 > ai_params.field_28) {
-                    sub_4C0DE0(source_obj, target_obj, ai_params.field_28 - v1);
+                    reaction_adj(source_obj, target_obj, ai_params.field_28 - v1);
                 }
             }
 
@@ -3959,7 +3959,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
                 || !sub_4AF470(node->obj, critter_obj, loudness))) {
             if (sub_441980(critter_obj, node->obj, target_obj, SAP_CATCHING_THIEF_PC, 0) == 1) {
                 if (a3 && !critter_is_sleeping(node->obj)) {
-                    sub_4C0DE0(node->obj, pc_obj, -20);
+                    reaction_adj(node->obj, pc_obj, -20);
                     sub_4AAA60(node->obj, &ai_params);
                     if (sub_4C0CC0(node->obj, pc_obj) <= ai_params.field_28) {
                         sub_4A9650(critter_obj, node->obj, loudness, 0);

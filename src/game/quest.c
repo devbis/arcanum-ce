@@ -366,10 +366,10 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
         if (state == QUEST_STATE_ACCEPTED) {
             reaction = sub_4C0CC0(a4, obj);
             if (reaction < 41) {
-                sub_4C0DE0(a4, obj, 41 - reaction);
+                reaction_adj(a4, obj, 41 - reaction);
             }
         } else if (state == QUEST_STATE_COMPLETED) {
-            sub_4C0DE0(a4, obj, 10);
+            reaction_adj(a4, obj, 10);
         }
     }
 
