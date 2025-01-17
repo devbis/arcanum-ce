@@ -5,12 +5,14 @@
 #include "game/obj.h"
 #include "game/timeevent.h"
 
+#define MAX_RUMORS 2000
+
 // FIXME: Waste memory due to alignment (current size is 24 bytes, but could
-// be reduced to 16 just by rearranging `timestamp`).
+// be reduced to 16 just by rearranging `datetime`).
 typedef struct RumorInfo {
     /* 0000 */ int num;
     /* 0004 */ DateTime datetime;
-    /* 0010 */ int known;
+    /* 0010 */ bool quelled;
 } RumorInfo;
 
 static_assert(sizeof(RumorInfo) == 0x18, "wrong size");
@@ -22,16 +24,15 @@ bool rumor_mod_load();
 void rumor_mod_unload();
 bool rumor_load(GameLoadInfo* load_info);
 bool rumor_save(TigFile* stream);
-bool rumor_is_known(int rumor);
-void rumor_set_known(int rumor);
-void sub_4C5700(object_id_t pc_object_id, object_id_t npc_object_id, int rumor, char* buffer);
-void sub_4C57E0(int64_t obj, int rumor);
-void sub_4C58A0(object_id_t obj, int rumor, int64_t timestamp);
-bool sub_4C58D0(object_id_t object_id, int rumor);
-void sub_4C5920(object_id_t object_id, int rumor, char* buffer);
-void sub_4C5960(int rumor, char* buffer);
-void sub_4C59D0(int rumor, char* buffer);
+bool rumor_qstate_get(int rumor);
+void rumor_qstate_set(int rumor);
+void rumor_copy_interaction_str(int64_t pc_obj, int64_t npc_obj, int rumor, char* buffer);
+void rumor_known_set(int64_t obj, int rumor);
+bool rumor_known_get(int64_t obj, int rumor);
+void rumor_copy_logbook_str(int64_t obj, int rumor, char* buffer);
+void rumor_copy_logbook_normal_str(int rumor, char* buffer);
+void rumor_copy_logbook_dumb_str(int rumor, char* buffer);
 int rumor_copy_state(int64_t obj, RumorInfo* rumors);
-bool sub_4C5B10(int64_t a1, int64_t a2);
+bool rumor_copy_known(int64_t src_obj, int64_t dst_obj);
 
 #endif /* ARCANUM_GAME_RUMOR_H_ */

@@ -1610,22 +1610,22 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_RU:
             if (value < 0) {
-                if (sub_4C58D0(a1->pc_obj, -value)) {
+                if (rumor_known_get(a1->pc_obj, -value)) {
                     return false;
                 }
             } else {
-                if (!sub_4C58D0(a1->pc_obj, value)) {
+                if (!rumor_known_get(a1->pc_obj, value)) {
                     return false;
                 }
             }
             break;
         case DIALOG_COND_RQ:
             if (value < 0) {
-                if (rumor_is_known(-value)) {
+                if (rumor_qstate_get(-value)) {
                     return false;
                 }
             } else {
-                if (!rumor_is_known(value)) {
+                if (!rumor_qstate_get(value)) {
                     return false;
                 }
             }
@@ -2067,10 +2067,10 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             break;
         }
         case DIALOG_ACTION_RU:
-            sub_4C57E0(a1->pc_obj, value);
+            rumor_known_set(a1->pc_obj, value);
             break;
         case DIALOG_ACTION_RQ:
-            rumor_set_known(value);
+            rumor_qstate_set(value);
             break;
         case DIALOG_ACTION_JO: {
             int v41;
@@ -3416,8 +3416,8 @@ void sub_418FC0(int a1, int* rumors, int num_rumors, int a4, DialogEntryNode* a5
     int v2;
 
     for (index = 0; index < num_rumors; index++) {
-        if (!rumor_is_known(rumors[index])
-            && !sub_4C58D0(a5->pc_obj, rumors[index])) {
+        if (!rumor_qstate_get(rumors[index])
+            && !rumor_known_get(a5->pc_obj, rumors[index])) {
             rumors[num_known_rumors++] = rumors[index];
         }
     }
@@ -3446,10 +3446,10 @@ void sub_4190E0(int a1, int a2, int a3, DialogEntryNode* a4)
 {
     char buffer[1000];
 
-    sub_4C5700(a4->pc_obj, a4->npc_obj, a1, buffer);
+    rumor_copy_interaction_str(a4->pc_obj, a4->npc_obj, a1, buffer);
     sub_416B00(a4->field_70, buffer, a4);
     a4->field_458 = -1;
-    sub_4C57E0(a4->pc_obj, a1);
+    rumor_known_set(a4->pc_obj, a1);
     a4->field_45C = 1;
     sub_418390(a4->field_460[0], a4, 1000);
     a4->field_17F0[0] = a2;

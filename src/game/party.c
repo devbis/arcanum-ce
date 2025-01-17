@@ -209,8 +209,8 @@ bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
             if (party_member_obj != a2) {
                 sub_4C5400(party_member_obj, a2);
                 sub_4C5400(a2, party_member_obj);
-                sub_4C5B10(party_member_obj, a2);
-                sub_4C5B10(a2, party_member_obj);
+                rumor_copy_known(party_member_obj, a2);
+                rumor_copy_known(a2, party_member_obj);
             }
             party_member_obj = party_find_next(&iter);
         } while (party_member_obj != OBJ_HANDLE_NULL);

@@ -297,21 +297,21 @@ typedef struct PacketFateStateSet {
 
 static_assert(sizeof(PacketFateStateSet) == 0x40, "wrong size");
 
-typedef struct Packet37 {
+typedef struct PacketRumorQStateSet {
     int type;
     int rumor;
-} Packet37;
+} PacketRumorQStateSet;
 
-static_assert(sizeof(Packet37) == 0x8, "wrong size");
+static_assert(sizeof(PacketRumorQStateSet) == 0x8, "wrong size");
 
-typedef struct Packet38 {
+typedef struct PacketRumorKnownSet {
     /* 0000 */ int type;
     /* 0004 */ int rumor;
-    /* 0008 */ ObjectID field_8;
+    /* 0008 */ ObjectID oid;
     /* 0020 */ DateTime datetime;
-} Packet38;
+} PacketRumorKnownSet;
 
-static_assert(sizeof(Packet38) == 0x28, "wrong size");
+static_assert(sizeof(PacketRumorKnownSet) == 0x28, "wrong size");
 
 typedef struct Packet39 {
     /* 0000 */ int type;

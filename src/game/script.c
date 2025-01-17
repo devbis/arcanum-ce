@@ -1333,7 +1333,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
 
         obj = script_get_obj(condition->op_type[0], condition->op_value[0], state);
         rumor = script_get_value(condition->op_type[1], condition->op_value[1], state);
-        if (sub_4C58D0(obj, rumor)) {
+        if (rumor_known_get(obj, rumor)) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
@@ -1346,7 +1346,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         int rumor;
 
         rumor = script_get_value(condition->op_type[0], condition->op_value[0], state);
-        if (rumor_is_known(rumor)) {
+        if (rumor_qstate_get(rumor)) {
             rc = script_execute_action(&(condition->action), line, state);
         } else {
             rc = script_execute_action(&(condition->els), line, state);
@@ -1978,14 +1978,14 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_SET_RUMOR: {
         int rumor = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        sub_4C57E0(obj, rumor);
+        rumor_known_set(obj, rumor);
         return NEXT;
     }
     case SAT_QUELL_RUMOR: {
         int rumor = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
         if (obj == player_get_pc_obj()) {
-            rumor_set_known(rumor);
+            rumor_qstate_set(rumor);
         }
         return NEXT;
     }

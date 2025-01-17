@@ -816,7 +816,7 @@ void sub_53FBB0()
     int index;
 
     if (logbook_ui_tab == LOGBOOK_UI_TAB_RUMORS_AND_NOTES) {
-        RumorInfo rumors[2000]; // NOTE: Forces `alloca(72000)`.
+        RumorInfo rumors[MAX_RUMORS]; // NOTE: Forces `alloca(72000)`.
 
         dword_648938 = rumor_copy_state(logbook_ui_obj, rumors);
 
@@ -829,7 +829,7 @@ void sub_53FBB0()
             for (index = 0; index < dword_648938; index++) {
                 dword_63FAE4[index] = rumors[index].num;
                 stru_6429D8[index] = rumors[index].datetime;
-                if (rumors[index].known) {
+                if (rumors[index].quelled) {
                     dword_648988[index] = dword_6429C4;
                 } else {
                     dword_648988[index] = dword_648934;
@@ -1081,7 +1081,7 @@ void sub_540310(char* buffer, int index)
         pos = strlen(buffer);
         buffer[pos] = '\n';
 
-        sub_4C5920(logbook_ui_obj, dword_63FAE4[index], &(buffer[pos + 1]));
+        rumor_copy_logbook_str(logbook_ui_obj, dword_63FAE4[index], &(buffer[pos + 1]));
     }
 }
 
@@ -1284,7 +1284,7 @@ void logbook_check()
         pos = strlen(buffer);
         buffer[pos] = '\n';
 
-        sub_4C5960(index, &(buffer[pos + 1]));
+        rumor_copy_logbook_normal_str(index, &(buffer[pos + 1]));
         if (buffer[pos + 1] != '\0') {
             tig_debug_printf("Checking rumor %d\n", index);
             sub_53FAD0(buffer, dword_648934, &rect, 1, 1, 1);
@@ -1295,7 +1295,7 @@ void logbook_check()
         sub_5403C0(buffer, 0);
         pos = strlen(buffer);
         buffer[pos] = '\n';
-        sub_4C59D0(index, &(buffer[pos + 1]));
+        rumor_copy_logbook_dumb_str(index, &(buffer[pos + 1]));
         if (buffer[pos + 1] != '\0') {
             tig_debug_printf("Checking dumb rumor %d\n", index);
             sub_53FAD0(buffer, dword_648934, &rect, 1, 1, 1);
