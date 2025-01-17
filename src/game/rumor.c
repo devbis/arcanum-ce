@@ -258,7 +258,7 @@ int rumor_copy_state(int64_t obj, RumorInfo* rumors)
     uint64_t timestamps[2000];
     int cnt;
 
-    sub_407BA0(obj, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
+    obj_arrayfield_pc_rumor_copy_to_flat(obj, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
 
     cnt = 0;
     for (index = 0; index < 2000; index++) {
@@ -292,7 +292,7 @@ bool sub_4C5B10(int64_t a1, int64_t a2)
         return false;
     }
 
-    sub_407BA0(a1, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
+    obj_arrayfield_pc_rumor_copy_to_flat(a1, OBJ_F_PC_RUMOR_IDX, 1999, timestamps);
 
     for (index = 0; index < 2000; index++) {
         if (timestamps[index] != 0) {

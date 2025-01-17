@@ -496,7 +496,7 @@ int quest_copy_state(int64_t obj, QuestInfo* quests1)
         return 0;
     }
 
-    sub_407C30(obj, OBJ_F_PC_QUEST_IDX, 1999, pc_quest_state);
+    obj_arrayfield_pc_quest_copy_to_flat(obj, OBJ_F_PC_QUEST_IDX, 1999, pc_quest_state);
 
     cnt = 0;
     for (index = 0; index < 2000; index++) {
@@ -551,7 +551,7 @@ bool sub_4C5400(int64_t a1, int64_t a2)
         return false;
     }
 
-    sub_407C30(a1, OBJ_F_PC_QUEST_IDX, 1999, pc_quests);
+    obj_arrayfield_pc_quest_copy_to_flat(a1, OBJ_F_PC_QUEST_IDX, 1999, pc_quests);
 
     for (index = 0; index < 2000; index++) {
         state = sub_4C4CB0(a2, index);

@@ -31,6 +31,7 @@ static void sub_408760(Object* object, int fld, void* value_ptr);
 static void sub_4088B0(Object* object, int fld, int index, void* value_ptr);
 static void sub_408A20(Object* object, int fld, void* value_ptr);
 static void sub_408BB0(Object* object, int fld, int index, void* value);
+static bool sub_408F40(Object* object, int fld, SizeableArray*** ptr, int64_t* proto_handle_ptr);
 static void sub_409000(int64_t obj);
 static void sub_409640(int64_t obj, int subtype);
 static bool sub_4096B0(TigFile* stream, int64_t obj);
@@ -1981,7 +1982,7 @@ void obj_arrayfield_length_set(int64_t obj_handle, int fld, int length)
 }
 
 // 0x407BA0
-void sub_407BA0(int64_t obj, int fld, int cnt, void* data)
+void obj_arrayfield_pc_rumor_copy_to_flat(int64_t obj, int fld, int cnt, void* data)
 {
     Object* object;
     SizeableArray** sa_ptr;
@@ -1991,7 +1992,7 @@ void sub_407BA0(int64_t obj, int fld, int cnt, void* data)
     object = obj_lock(obj);
     if (sub_40C260(object->type, fld)) {
         prototype_locked = sub_408F40(object, fld, &sa_ptr, &prototype_obj);
-        sa_array_copy_to_flat(data, sa_ptr, cnt, 8);
+        sa_array_copy_to_flat(data, sa_ptr, cnt, sizeof(uint64_t));
         if (prototype_locked) {
             obj_unlock(prototype_obj);
         }
@@ -2002,7 +2003,7 @@ void sub_407BA0(int64_t obj, int fld, int cnt, void* data)
 }
 
 // 0x407C30
-void sub_407C30(int64_t obj, int fld, int cnt, void* data)
+void obj_arrayfield_pc_quest_copy_to_flat(int64_t obj, int fld, int cnt, void* data)
 {
     Object* object;
     SizeableArray** sa_ptr;
@@ -2012,7 +2013,7 @@ void sub_407C30(int64_t obj, int fld, int cnt, void* data)
     object = obj_lock(obj);
     if (sub_40C260(object->type, fld)) {
         prototype_locked = sub_408F40(object, fld, &sa_ptr, &prototype_obj);
-        sa_array_copy_to_flat(data, sa_ptr, cnt, 16);
+        sa_array_copy_to_flat(data, sa_ptr, cnt, sizeof(PcQuestState));
         if (prototype_locked) {
             obj_unlock(prototype_obj);
         }
@@ -2584,29 +2585,29 @@ void sub_408E70(Object* object, int fld, int value)
 }
 
 // 0x408F40
-bool sub_408F40(Object* object, int fld, int* a3, int64_t* proto_handle_ptr)
+bool sub_408F40(Object* object, int fld, SizeableArray*** ptr, int64_t* proto_handle_ptr)
 {
     Object* proto;
 
     if (object->field_20.type == OID_TYPE_BLOCKED) {
-        *a3 = &(object->field_50[sub_40CB40(object, fld)]);
+        *ptr = (SizeableArray**)(&(object->field_50[sub_40CB40(object, fld)]));
         return false;
     }
 
     if (fld > OBJ_F_TRANSIENT_BEGIN && fld <= OBJ_F_TRANSIENT_END) {
-        *a3 = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
+        *ptr = (SizeableArray**)(&(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]));
         return false;
     }
 
     if (sub_40D320(object, fld)) {
-        *a3 = &(object->field_50[sub_40D230(object, fld)]);
+        *ptr = (SizeableArray**)(&(object->field_50[sub_40D230(object, fld)]));
         return false;
     }
 
     *proto_handle_ptr = obj_get_prototype_handle(object);
 
     proto = obj_lock(*proto_handle_ptr);
-    *a3 = &(proto->field_50[sub_40CB40(proto, fld)]);
+    *ptr = (SizeableArray**)(&(proto->field_50[sub_40CB40(proto, fld)]));
 
     return true;
 }
