@@ -15,6 +15,34 @@ typedef enum AiDangerSourceType {
     AI_DANGER_SOURCE_TYPE_SURRENDER,
 } AiDangerSourceType;
 
+typedef enum AiFollow {
+    AI_FOLLOW_OK,
+
+    // The NPC will not follow the PC because the PC is too good.
+    AI_FOLLOW_TOO_GOOD,
+
+    // The NPC will not follow the PC because the PC is too evil.
+    AI_FOLLOW_TOO_BAD,
+
+    // The NPC will not follow the PC because the NPC dislikes the PC.
+    AI_FOLLOW_DISLIKE,
+
+    // The NPC will not follow the PC because the NPC is already grouped with
+    // another PC who is at least as charismatic.
+    AI_FOLLOW_ALREADY_IN_GROUP,
+
+    // The NPC will not follow the PC because the PC is at his charisma limit
+    // (which is greater zero).
+    AI_FOLLOW_LIMIT_REACHED,
+
+    // The NPC will not follow the PC because the PC's charisma does not allow
+    // for followers.
+    AI_FOLLOW_NOT_ALLOWED,
+
+    // The NPC is too high level for the PC to be a follower.
+    AI_FOLLOW_LOW_LEVEL,
+} AiFollow;
+
 typedef enum AiAttemptOpenPortal {
     AI_ATTEMPT_OPEN_PORTAL_OK,
     AI_ATTEMPT_OPEN_PORTAL_LOCKED,
@@ -65,7 +93,7 @@ bool ai_timeevent_process(TimeEvent* timeevent);
 void sub_4AD6E0(int64_t obj);
 void sub_4AD7D0(int64_t obj);
 int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3);
-int sub_4AD950(int64_t npc_obj, int64_t pc_obj, bool a3);
+int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits);
 void sub_4AD790(int64_t obj, int a2);
 int sub_4ADE00(int64_t source_obj, int64_t target_loc, int64_t* block_obj_ptr);
 void sub_4ADFF0(int64_t obj);

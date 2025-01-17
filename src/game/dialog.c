@@ -745,7 +745,7 @@ void sub_413A30(DialogEntryNode* a1, bool a2)
 }
 
 // 0x413A90
-void sub_413A90(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
+void sub_413A90(int64_t a1, int64_t a2, int rc, char* a4, int* a5)
 {
     DialogEntryNode v1;
     int start;
@@ -754,32 +754,32 @@ void sub_413A90(int64_t a1, int64_t a2, int a3, char* a4, int* a5)
     if (sub_4AD800(a1, a2, 1) == 0) {
         sub_413360(a1, a2, &v1);
 
-        switch (a3) {
-        case 1:
+        switch (rc) {
+        case AI_FOLLOW_TOO_GOOD:
             start = 1600;
             end = 1699;
             break;
-        case 2:
+        case AI_FOLLOW_TOO_BAD:
             start = 1700;
             end = 1799;
             break;
-        case 3:
+        case AI_FOLLOW_DISLIKE:
             start = 1800;
             end = 1899;
             break;
-        case 4:
+        case AI_FOLLOW_ALREADY_IN_GROUP:
             start = 2600;
             end = 2699;
             break;
-        case 5:
+        case AI_FOLLOW_LIMIT_REACHED:
             start = 2700;
             end = 2799;
             break;
-        case 6:
+        case AI_FOLLOW_NOT_ALLOWED:
             start = 2800;
             end = 2899;
             break;
-        case 7:
+        case AI_FOLLOW_LOW_LEVEL:
             start = 2900;
             end = 2999;
             break;
@@ -2077,8 +2077,8 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             int rc;
 
             v41 = sub_4167C0(pch);
-            rc = sub_4AD950(a1->npc_obj, a1->pc_obj, value);
-            if (rc == 0) {
+            rc = ai_check_follow(a1->npc_obj, a1->pc_obj, value);
+            if (rc == AI_FOLLOW_OK) {
                 critter_follow(a1->npc_obj, a1->pc_obj, value);
                 a1->field_17EC = v41;
                 a1->field_17E8 = 0;
@@ -2115,8 +2115,8 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             int rc;
 
             v43 = sub_4167C0(pch);
-            rc = sub_4AD950(a1->npc_obj, a1->pc_obj, value);
-            if (rc == 0) {
+            rc = ai_check_follow(a1->npc_obj, a1->pc_obj, value);
+            if (rc == AI_FOLLOW_OK) {
                 sub_4AA8C0(a1->npc_obj, value);
                 a1->field_17EC = v43;
                 a1->field_17E8 = 0;

@@ -701,7 +701,7 @@ bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force)
         }
 
         if (!force) {
-            if (sub_4AD950(follower_obj, leader_obj, false) != 0) {
+            if (ai_check_follow(follower_obj, leader_obj, false) != AI_FOLLOW_OK) {
                 return false;
             }
         }

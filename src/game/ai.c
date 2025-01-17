@@ -138,7 +138,7 @@ static int sub_4AD610(int64_t obj);
 static bool sub_4AD6B0(TimeEvent* timeevent);
 static void sub_4AD700(int64_t obj, int millis);
 static void sub_4AD730(int64_t obj, DateTime* datetime);
-static int sub_4ADB50(int64_t npc_obj, int64_t pc_obj);
+static int ai_check_leader(int64_t npc_obj, int64_t pc_obj);
 static int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr);
 static int sub_4AE3A0(int64_t a1, int64_t a2);
@@ -1007,8 +1007,8 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned i
                             reaction_adj(target_obj, source_obj, ai_params.field_24);
                         }
 
-                        rc = sub_4AD950(target_obj, source_obj, true);
-                        if (rc != 0
+                        rc = ai_check_follow(target_obj, source_obj, true);
+                        if (rc != AI_FOLLOW_OK
                             && critter_disband(target_obj, false)) {
                             npc_flags = obj_field_int32_get(target_obj, OBJ_F_NPC_FLAGS);
                             npc_flags |= ONF_JILTED;
@@ -1509,7 +1509,7 @@ void sub_4AA8C0(int64_t obj, bool force)
         leader_obj = critter_leader_get(obj);
         if (leader_obj != OBJ_HANDLE_NULL
             && (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0
-            && (force || !sub_4AD950(obj, leader_obj, false))) {
+            && (force || ai_check_follow(obj, leader_obj, false) == AI_FOLLOW_OK)) {
             flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
             flags &= ~ONF_AI_WAIT_HERE;
             obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
@@ -2402,8 +2402,7 @@ void sub_4AC350(Ai* ai)
 void sub_4AC380(Ai* ai)
 {
     unsigned int npc_flags;
-    int v1;
-    int v2;
+    int rc;
     char str[1000];
     int v3;
 
@@ -2418,14 +2417,14 @@ void sub_4AC380(Ai* ai)
         anim_goal_follow_obj(ai->obj, ai->leader_obj);
 
         if (!sub_423300(ai->obj, NULL)) {
-            v1 = sub_4AD950(ai->obj, ai->leader_obj, true);
-            if (v1 != 0 && critter_disband(ai->obj, false)) {
+            rc = ai_check_follow(ai->obj, ai->leader_obj, true);
+            if (rc != AI_FOLLOW_OK && critter_disband(ai->obj, false)) {
                 npc_flags = obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS);
                 npc_flags |= ONF_JILTED;
                 obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
                 if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
-                    sub_414290(ai->obj, ai->leader_obj, v1, str, &v3);
+                    sub_414290(ai->obj, ai->leader_obj, rc, str, &v3);
                     dword_5F8488(ai->obj, ai->leader_obj, str, v3);
                 }
             } else if ((npc_flags & ONF_CHECK_LEADER) != 0) {
@@ -2433,10 +2432,10 @@ void sub_4AC380(Ai* ai)
                 npc_flags &= ~ONF_CHECK_LEADER;
                 obj_field_int32_set(ai->obj, OBJ_F_NPC_FLAGS, npc_flags);
 
-                v2 = sub_4ADB50(ai->obj, ai->leader_obj);
-                if (v2 != 0) {
+                rc = ai_check_leader(ai->obj, ai->leader_obj);
+                if (rc != AI_FOLLOW_OK) {
                     if (dword_5F8488 != NULL && critter_is_active(ai->obj)) {
-                        sub_414290(ai->obj, ai->leader_obj, v2, str, &v3);
+                        sub_414290(ai->obj, ai->leader_obj, rc, str, &v3);
                         dword_5F8488(ai->obj, ai->leader_obj, str, v3);
                     }
                 }
@@ -3170,7 +3169,7 @@ int sub_4AD800(int64_t npc_obj, int64_t pc_obj, bool a3)
 }
 
 // 0x4AD950
-int sub_4AD950(int64_t npc_obj, int64_t pc_obj, bool a3)
+int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits)
 {
     int64_t mind_controlled_by_obj;
     int64_t leader_obj;
@@ -3182,67 +3181,67 @@ int sub_4AD950(int64_t npc_obj, int64_t pc_obj, bool a3)
     if ((obj_field_int32_get(npc_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
         if (sub_459040(npc_obj, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)) {
             if (mind_controlled_by_obj == pc_obj) {
-                return 0;
+                return AI_FOLLOW_OK;
             }
         } else {
             if (critter_pc_leader_get(npc_obj) != OBJ_HANDLE_NULL) {
-                return 0;
+                return AI_FOLLOW_OK;
             }
         }
     }
 
     if (basic_skill_get_training(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
-        return 0;
+        return AI_FOLLOW_OK;
     }
 
     leader_obj = critter_leader_get(npc_obj);
     if (leader_obj != OBJ_HANDLE_NULL && leader_obj != pc_obj) {
         if (stat_level(pc_obj, STAT_CHARISMA) <= stat_level(leader_obj, STAT_CHARISMA)) {
-            return 4;
+            return AI_FOLLOW_ALREADY_IN_GROUP;
         }
     }
 
     if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS) & ONF_FORCED_FOLLOWER) != 0) {
-        return 0;
+        return AI_FOLLOW_OK;
     }
 
     sub_4AAA60(npc_obj, &params);
 
     if (reaction_get(npc_obj, pc_obj) <= params.field_14) {
-        return 3;
+        return AI_FOLLOW_DISLIKE;
     }
 
     npc_alignment = stat_level(npc_obj, STAT_ALIGNMENT);
     pc_alignment = stat_level(pc_obj, STAT_ALIGNMENT);
     if (pc_alignment > npc_alignment) {
         if (pc_alignment - npc_alignment > params.field_18) {
-            return 1;
+            return AI_FOLLOW_TOO_GOOD;
         }
     } else {
         if (npc_alignment - pc_alignment > params.field_1C) {
-            return 2;
+            return AI_FOLLOW_TOO_BAD;
         }
     }
 
     if (stat_level(npc_obj, STAT_LEVEL) >= stat_level(pc_obj, STAT_LEVEL) + params.field_20) {
-        return 7;
+        return AI_FOLLOW_LOW_LEVEL;
     }
 
-    if (!a3) {
+    if (!ignore_charisma_limits) {
         pc_max_followers = stat_level(pc_obj, STAT_MAX_FOLLOWERS);
         if (pc_max_followers == 0) {
-            return 6;
+            return AI_FOLLOW_NOT_ALLOWED;
         }
         if (sub_45E3F0(pc_obj, true) >= pc_max_followers) {
-            return 5;
+            return AI_FOLLOW_LIMIT_REACHED;
         }
     }
 
-    return 0;
+    return AI_FOLLOW_OK;
 }
 
 // 0x4ADB50
-int sub_4ADB50(int64_t npc_obj, int64_t pc_obj)
+int ai_check_leader(int64_t npc_obj, int64_t pc_obj)
 {
     unsigned int critter_flags2;
     int64_t mind_controlled_by_obj;
@@ -3256,28 +3255,28 @@ int sub_4ADB50(int64_t npc_obj, int64_t pc_obj)
     if ((obj_field_int32_get(npc_obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) != 0) {
         if (sub_459040(npc_obj, OSF_MIND_CONTROLLED, &mind_controlled_by_obj)) {
             if (mind_controlled_by_obj == pc_obj) {
-                return 0;
+                return AI_FOLLOW_OK;
             }
         } else {
             if (critter_pc_leader_get(npc_obj) != OBJ_HANDLE_NULL) {
-                return 0;
+                return AI_FOLLOW_OK;
             }
         }
     }
 
     if (basic_skill_get_training(pc_obj, BASIC_SKILL_PERSUATION) >= TRAINING_MASTER) {
-        return 0;
+        return AI_FOLLOW_OK;
     }
 
     if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS) & ONF_FORCED_FOLLOWER) != 0) {
-        return 0;
+        return AI_FOLLOW_OK;
     }
 
     sub_4AAA60(npc_obj, &params);
 
     if ((critter_flags2 & OCF2_CHECK_REACTION_BAD) != 0
         && reaction_get(npc_obj, pc_obj) <= params.field_14 + 20) {
-        return 3;
+        return AI_FOLLOW_DISLIKE;
     }
 
     npc_alignment = stat_level(npc_obj, STAT_ALIGNMENT);
@@ -3285,16 +3284,16 @@ int sub_4ADB50(int64_t npc_obj, int64_t pc_obj)
     if (pc_alignment > npc_alignment) {
         if ((critter_flags2 & OCF2_CHECK_ALIGN_GOOD) != 0
             && pc_alignment - npc_alignment > params.field_18 - 100) {
-            return 1;
+            return AI_FOLLOW_TOO_GOOD;
         }
     } else {
         if ((critter_flags2 & OCF2_CHECK_ALIGN_BAD) != 0
             && npc_alignment - pc_alignment > params.field_1C - 100) {
-            return 2;
+            return AI_FOLLOW_TOO_BAD;
         }
     }
 
-    return 0;
+    return AI_FOLLOW_OK;
 }
 
 // 0x4ADCC0
