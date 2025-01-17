@@ -208,7 +208,7 @@ int sub_4C0D00(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
     int value;
     int64_t mind_controlled_by_obj;
 
-    if (sub_4AFB30(npc_obj, pc_obj)) {
+    if (ai_shitlist_has(npc_obj, pc_obj)) {
         return 0;
     }
 

@@ -149,8 +149,8 @@ static int sub_4AF240(int value);
 static int sub_4AF640(int64_t source_obj, int64_t target_obj);
 static bool sub_4AF800(int64_t obj, int64_t a2);
 static void sub_4AF8C0(int64_t a1, int64_t a2);
-static void sub_4AF930(int64_t a1, int64_t a2);
-static void sub_4AF9D0(int64_t a1, int64_t a2);
+static void ai_shitlist_add(int64_t npc_obj, int64_t shit_obj);
+static void ai_shitlist_remove(int64_t npc_obj, int64_t shit_obj);
 static int64_t sub_4AFA90(int64_t obj);
 
 // 0x5B5088
@@ -1295,7 +1295,7 @@ void sub_4AA300(int64_t a1, int64_t a2)
 
     obj_field_handle_set(a1, OBJ_F_NPC_COMBAT_FOCUS, OBJ_HANDLE_NULL);
     obj_field_handle_set(a1, OBJ_F_NPC_WHO_HIT_ME_LAST, OBJ_HANDLE_NULL);
-    sub_4AF9D0(a1, v1);
+    ai_shitlist_remove(a1, v1);
 
     obj_type = obj_field_int32_get(v1, OBJ_F_TYPE);
     if (obj_type == OBJ_TYPE_PC) {
@@ -1316,7 +1316,7 @@ void sub_4AA300(int64_t a1, int64_t a2)
         node = objects.head;
         while (node != NULL) {
             sub_4AA420(node->obj, a1);
-            sub_4AF9D0(a1, node->obj);
+            ai_shitlist_remove(a1, node->obj);
             sub_44E0E0(node->obj, a1);
             node = node->next;
         }
@@ -1333,7 +1333,7 @@ void sub_4AA420(int64_t obj, int64_t a2)
     if (obj_field_handle_get(obj, OBJ_F_NPC_WHO_HIT_ME_LAST) == a2) {
         obj_field_handle_set(obj, OBJ_F_NPC_WHO_HIT_ME_LAST, OBJ_HANDLE_NULL);
     }
-    sub_4AF9D0(obj, a2);
+    ai_shitlist_remove(obj, a2);
 }
 
 // 0x4AA4A0
@@ -4270,7 +4270,7 @@ void sub_4AF8C0(int64_t a1, int64_t a2)
 
     node = objects.head;
     while (node != NULL) {
-        sub_4AF930(a1, node->obj);
+        ai_shitlist_add(a1, node->obj);
         node = node->next;
     }
 
@@ -4278,43 +4278,43 @@ void sub_4AF8C0(int64_t a1, int64_t a2)
 }
 
 // 0x4AF930
-void sub_4AF930(int64_t a1, int64_t a2)
+void ai_shitlist_add(int64_t npc_obj, int64_t shit_obj)
 {
-    int64_t v1;
-    int index;
+    int idx;
+    int64_t obj;
 
-    if (obj_field_int32_get(a2, OBJ_F_TYPE) != OBJ_TYPE_PC) {
-        v1 = critter_pc_leader_get(a2);
+    if (obj_field_int32_get(shit_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+        obj = critter_pc_leader_get(shit_obj);
     } else {
-        v1 = a2;
+        obj = shit_obj;
     }
 
-    if ((v1 == OBJ_HANDLE_NULL || v1 != critter_pc_leader_get(a1))
-        && !sub_4AFB30(a1, a2)) {
-        index = obj_arrayfield_length_get(a1, OBJ_F_NPC_SHIT_LIST_IDX);
-        obj_arrayfield_obj_set(a1, OBJ_F_NPC_SHIT_LIST_IDX, index, a2);
-        sub_4B80E0(a1);
+    if ((obj == OBJ_HANDLE_NULL || obj != critter_pc_leader_get(npc_obj))
+        && !ai_shitlist_has(npc_obj, shit_obj)) {
+        idx = obj_arrayfield_length_get(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX);
+        obj_arrayfield_obj_set(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX, idx, shit_obj);
+        sub_4B80E0(npc_obj);
     }
 }
 
 // 0x4AF9D0
-void sub_4AF9D0(int64_t a1, int64_t a2)
+void ai_shitlist_remove(int64_t npc_obj, int64_t shit_obj)
 {
     int cnt;
-    int index;
-    int64_t other_obj;
+    int idx;
+    int64_t obj;
 
-    cnt = obj_arrayfield_length_get(a1, OBJ_F_NPC_SHIT_LIST_IDX);
-    for (index = 0; index < cnt; index++) {
-        obj_arrayfield_obj_get(a1, OBJ_F_NPC_SHIT_LIST_IDX, index, &other_obj);
-        if (other_obj == a2 || other_obj == OBJ_HANDLE_NULL) {
-            if (index < cnt - 1) {
-                obj_arrayfield_obj_get(a1, OBJ_F_NPC_SHIT_LIST_IDX, cnt - 1, &other_obj);
-                obj_arrayfield_obj_set(a1, OBJ_F_NPC_SHIT_LIST_IDX, index, other_obj);
+    cnt = obj_arrayfield_length_get(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX);
+    for (idx = 0; idx < cnt; idx++) {
+        obj_arrayfield_obj_get(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX, idx, &obj);
+        if (obj == shit_obj || obj == OBJ_HANDLE_NULL) {
+            if (idx < cnt - 1) {
+                obj_arrayfield_obj_get(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX, cnt - 1, &obj);
+                obj_arrayfield_obj_set(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX, idx, obj);
             }
-            obj_arrayfield_length_set(a1, OBJ_F_NPC_SHIT_LIST_IDX, cnt - 1);
+            obj_arrayfield_length_set(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX, cnt - 1);
             cnt--;
-            index--;
+            idx--;
         }
     }
 }
@@ -4327,7 +4327,7 @@ int64_t sub_4AFA90(int64_t obj)
     int index;
     int64_t shit_obj;
 
-    sub_4AF9D0(obj, OBJ_HANDLE_NULL);
+    ai_shitlist_remove(obj, OBJ_HANDLE_NULL);
 
     cnt = obj_arrayfield_length_get(obj, OBJ_F_NPC_SHIT_LIST_IDX);
     start = random_between(0, cnt - 1);
@@ -4343,18 +4343,18 @@ int64_t sub_4AFA90(int64_t obj)
 }
 
 // 0x4AFB30
-bool sub_4AFB30(int64_t obj, int64_t a2)
+bool ai_shitlist_has(int64_t npc_obj, int64_t shit_obj)
 {
     int cnt;
-    int index;
-    int64_t v1;
+    int idx;
+    int64_t obj;
 
-    if (obj != OBJ_HANDLE_NULL
-        && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        cnt = obj_arrayfield_length_get(obj, OBJ_F_NPC_SHIT_LIST_IDX);
-        for (index = 0; index < cnt; index++) {
-            obj_arrayfield_obj_get(obj, OBJ_F_NPC_SHIT_LIST_IDX, index, &v1);
-            if (v1 == a2) {
+    if (npc_obj != OBJ_HANDLE_NULL
+        && obj_field_int32_get(npc_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
+        cnt = obj_arrayfield_length_get(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX);
+        for (idx = 0; idx < cnt; idx++) {
+            obj_arrayfield_obj_get(npc_obj, OBJ_F_NPC_SHIT_LIST_IDX, idx, &obj);
+            if (obj == shit_obj) {
                 return true;
             }
         }
