@@ -427,7 +427,7 @@ int sub_4C1F80(int64_t pc_obj, int64_t npc_obj)
 
     origin = critter_origin_get(npc_obj);
     faction = critter_origin_get(pc_obj);
-    reaction_level = sub_4C0CC0(npc_obj, pc_obj);
+    reaction_level = reaction_get(npc_obj, pc_obj);
     reaction_type = reaction_translate(reaction_level);
 
     selected = 0;

@@ -2253,7 +2253,7 @@ void sub_4B58C0(CombatContext* combat)
 
     if (combat->attacker_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(combat->attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        int reaction_level = sub_4C0CC0(combat->target_obj, combat->attacker_obj);
+        int reaction_level = reaction_get(combat->target_obj, combat->attacker_obj);
         if (reaction_level > 0 && reaction_level < 70) {
             reaction_adj(combat->target_obj, combat->attacker_obj, 70 - reaction_level);
         }
@@ -3884,7 +3884,7 @@ void sub_4B80E0(int64_t obj)
 
     if (combat_turn_based_active) {
         pc_obj = player_get_pc_obj();
-        reaction_level = sub_4C0CC0(obj, pc_obj);
+        reaction_level = reaction_get(obj, pc_obj);
         reaction_type = reaction_translate(reaction_level);
 
         flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);

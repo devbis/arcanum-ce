@@ -191,7 +191,7 @@ bool sub_4C0C40(int64_t npc_obj, int64_t pc_obj)
 }
 
 // 0x4C0CC0
-int sub_4C0CC0(int64_t npc_obj, int64_t pc_obj)
+int reaction_get(int64_t npc_obj, int64_t pc_obj)
 {
     return sub_4C0D00(npc_obj, pc_obj, 0);
 }
@@ -381,7 +381,7 @@ int sub_4C1150(int64_t a1, int64_t a2, int a3)
     int v1;
     int v2;
 
-    v1 = sub_4C0CC0(a1, a2);
+    v1 = reaction_get(a1, a2);
     if (v1 > 100) {
         v1 = 100;
     } else {
@@ -413,7 +413,7 @@ void sub_4C11D0(int64_t a1, int64_t a2, int a3)
             v1 = -30;
         }
     } else if (a3 > 50
-        && reaction_translate(sub_4C0CC0(a1, a2)) < REACTION_AMIABLE) {
+        && reaction_translate(reaction_get(a1, a2)) < REACTION_AMIABLE) {
         if (a3 < 200) {
             v1 = a3 / 40;
         } else if (a3 < 1000) {

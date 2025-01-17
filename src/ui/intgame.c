@@ -6216,7 +6216,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
                 mes_get_msg(intgame_mes_file, &mes_file_entry);
                 sprintf(str, "%s: %d", mes_file_entry.str, alignment / 10);
             } else {
-                int reaction_value = sub_4C0CC0(critter_obj, a1);
+                int reaction_value = reaction_get(critter_obj, a1);
                 int reaction_level = reaction_translate(reaction_value);
                 const char* reaction_name = reaction_get_name(reaction_level);
 

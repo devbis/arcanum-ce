@@ -1299,7 +1299,7 @@ void sub_4AA300(int64_t a1, int64_t a2)
 
     obj_type = obj_field_int32_get(v1, OBJ_F_TYPE);
     if (obj_type == OBJ_TYPE_PC) {
-        reaction = sub_4C0CC0(a1, v1);
+        reaction = reaction_get(a1, v1);
         if (reaction < 50) {
             reaction_adj(a1, v1, 50 - reaction);
         }
@@ -3208,7 +3208,7 @@ int sub_4AD950(int64_t npc_obj, int64_t pc_obj, bool a3)
 
     sub_4AAA60(npc_obj, &params);
 
-    if (sub_4C0CC0(npc_obj, pc_obj) <= params.field_14) {
+    if (reaction_get(npc_obj, pc_obj) <= params.field_14) {
         return 3;
     }
 
@@ -3276,7 +3276,7 @@ int sub_4ADB50(int64_t npc_obj, int64_t pc_obj)
     sub_4AAA60(npc_obj, &params);
 
     if ((critter_flags2 & OCF2_CHECK_REACTION_BAD) != 0
-        && sub_4C0CC0(npc_obj, pc_obj) <= params.field_14 + 20) {
+        && reaction_get(npc_obj, pc_obj) <= params.field_14 + 20) {
         return 3;
     }
 
@@ -3961,7 +3961,7 @@ void sub_4AEE50(int64_t critter_obj, int64_t target_obj, int a3, int loudness)
                 if (a3 && !critter_is_sleeping(node->obj)) {
                     reaction_adj(node->obj, pc_obj, -20);
                     sub_4AAA60(node->obj, &ai_params);
-                    if (sub_4C0CC0(node->obj, pc_obj) <= ai_params.field_28) {
+                    if (reaction_get(node->obj, pc_obj) <= ai_params.field_28) {
                         sub_4A9650(critter_obj, node->obj, loudness, 0);
                     }
                     if (critter_is_active(node->obj)) {

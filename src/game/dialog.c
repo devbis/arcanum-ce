@@ -587,7 +587,7 @@ void sub_4133B0(int64_t a1, int64_t a2, char* buffer, int* a4)
     if (sub_4AD800(a1, a2, 0) == 0) {
         sub_413360(a1, a2, &v1);
 
-        reaction_level = sub_4C0CC0(a1, a2);
+        reaction_level = reaction_get(a1, a2);
         reaction_type = reaction_translate(reaction_level);
         if (reaction_type < REACTION_SUSPICIOUS) {
             sub_418780(buffer, &v1, 2000, 2099);
@@ -1482,11 +1482,11 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_RE:
             if (value < 0) {
-                if (sub_4C0CC0(a1->npc_obj, a1->pc_obj) > -value) {
+                if (reaction_get(a1->npc_obj, a1->pc_obj) > -value) {
                     return false;
                 }
             } else {
-                if (sub_4C0CC0(a1->npc_obj, a1->pc_obj) < value) {
+                if (reaction_get(a1->npc_obj, a1->pc_obj) < value) {
                     return false;
                 }
             }
@@ -1927,7 +1927,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
         case DIALOG_ACTION_RE: {
             int reaction;
 
-            reaction = sub_4C0CC0(a1->npc_obj, a1->pc_obj);
+            reaction = reaction_get(a1->npc_obj, a1->pc_obj);
 
             while (isspace(*pch)) {
                 pch++;
@@ -3470,7 +3470,7 @@ void sub_419190(int a1, int a2, int a3, DialogEntryNode* a4)
 void sub_4191E0(int a1, int a2, DialogEntryNode* a3)
 {
     reaction_adj(a3->npc_obj, a3->pc_obj, -10);
-    if (sub_4C0CC0(a3->npc_obj, a3->pc_obj) > 20) {
+    if (reaction_get(a3->npc_obj, a3->pc_obj) > 20) {
         sub_414810(a1, a2, 0, 0, a3);
     } else {
         sub_4185F0(a3->field_70, a3, 1000);
@@ -3630,7 +3630,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
                 }
             }
 
-            reaction_level = reaction_translate(sub_4C0CC0(a1->npc_obj, a1->pc_obj));
+            reaction_level = reaction_translate(reaction_get(a1->npc_obj, a1->pc_obj));
             if (sub_4C0C40(a1->npc_obj, a1->pc_obj)) {
                 switch (reaction_level) {
                 case REACTION_LOVE:

@@ -947,7 +947,7 @@ void sub_43C270(int64_t obj)
                     dword_5E2E94 = true;
 
                     if (type == OBJ_TYPE_NPC) {
-                        reaction_level = sub_4C0CC0(object_hover_obj, pc_obj);
+                        reaction_level = reaction_get(object_hover_obj, pc_obj);
                         reaction_type = reaction_translate(reaction_level);
                         object_hover_color = object_reaction_colors[reaction_type];
 

@@ -227,7 +227,7 @@ int sub_4C4C00(int64_t a1, int64_t a2, int num)
         return quests[num].dumb_dialog[state];
     }
 
-    if (sub_4C0CC0(a2, a1) < 20) {
+    if (reaction_get(a2, a1) < 20) {
         return quests[num].bad_reaction_dialog[state];
     }
 
@@ -364,7 +364,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
 
     if (a4 != OBJ_HANDLE_NULL) {
         if (state == QUEST_STATE_ACCEPTED) {
-            reaction = sub_4C0CC0(a4, obj);
+            reaction = reaction_get(a4, obj);
             if (reaction < 41) {
                 reaction_adj(a4, obj, 41 - reaction);
             }
