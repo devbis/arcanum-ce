@@ -16,6 +16,7 @@ typedef enum TextFloaterLevel {
     TF_LEVEL_NEVER,
     TF_LEVEL_MINIMAL,
     TF_LEVEL_VERBOSE,
+    TF_LEVEL_COUNT,
 } TextFloaterLevel;
 
 bool tf_init(GameInitInfo* init_info);
@@ -29,7 +30,7 @@ int tf_level_get();
 void tf_ping(tig_timestamp_t timestamp);
 void tf_render(UnknownContext *render_info);
 void tf_add(int64_t obj, int type, const char* str);
-void tf_move(int64_t obj, int64_t loc, int offset_x, int offset_y);
+void tf_notify_moved(int64_t obj, int64_t loc, int offset_x, int offset_y);
 void tf_notify_killed(int64_t obj);
 void tf_remove(int64_t obj);
 

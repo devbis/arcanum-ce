@@ -2066,7 +2066,7 @@ void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y)
     }
 
     if ((flags & OF_TEXT_FLOATER) != 0) {
-        tf_move(obj, loc, offset_x, offset_y);
+        tf_notify_moved(obj, loc, offset_x, offset_y);
     }
 
     object_get_rect(obj, 0x7, &obj_rect);
@@ -4212,7 +4212,7 @@ void sub_4423E0(int64_t obj, int offset_x, int offset_y)
     }
 
     if ((flags & OF_TEXT_FLOATER) != 0) {
-        tf_move(obj, loc, offset_x, offset_y);
+        tf_notify_moved(obj, loc, offset_x, offset_y);
     }
 
     sector_id = sector_id_from_loc(loc);

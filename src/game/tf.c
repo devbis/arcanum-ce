@@ -6,21 +6,21 @@
 #define TEXT_FLOATERS_KEY "text floaters"
 #define FLOAT_SPEED_KEY "float speed"
 
-typedef struct TextFloaterNode {
-    /* 0000 */ int field_0;
+typedef struct TextFloaterEntry {
+    /* 0000 */ int offset;
     /* 0004 */ TigVideoBuffer* video_buffer;
     /* 0008 */ TigRect rect;
     /* 0018 */ uint8_t opacity;
-    /* 001C */ struct TextFloaterNode* next;
-} TextFloaterNode;
+    /* 001C */ struct TextFloaterEntry* next;
+} TextFloaterEntry;
 
 // See 0x4D5950.
-static_assert(sizeof(TextFloaterNode) == 0x20, "wrong size");
+static_assert(sizeof(TextFloaterEntry) == 0x20, "wrong size");
 
 typedef struct TextFloaterList {
-    int64_t obj;
-    TextFloaterNode* head;
-    struct TextFloaterList* next;
+    /* 0000 */ int64_t obj;
+    /* 0008 */ TextFloaterEntry* head;
+    /* 000C */ struct TextFloaterList* next;
 } TextFloaterList;
 
 // See 0x4D57E0.
@@ -29,18 +29,18 @@ static_assert(sizeof(TextFloaterList) == 0x10, "wrong size");
 static void tf_clear();
 static TextFloaterList* tf_list_create();
 static void tf_list_destroy(TextFloaterList *list);
-static void sub_4D5850(TextFloaterList* node);
-static void sub_4D5870(TextFloaterList* node, TigRect* rect);
-static void sub_4D58C0(int64_t loc, int offset_x, int offset_y, TigRect* rect);
-static TextFloaterNode* tf_node_create();
-static void tf_node_destroy(TextFloaterNode* node);
-static void sub_4D59F0(TextFloaterList *list, TextFloaterNode *node);
-static void sub_4D5A30(TextFloaterList *list, TextFloaterNode *node, TigRect *a3);
-static void sub_4D5A60(TigRect* a1, TextFloaterNode *node, TigRect *a3);
-static void sub_4D5AA0(TextFloaterNode *node);
-static void text_floaters_set_internal(int value);
-static void text_floaters_changed();
-static void float_speed_changed();
+static void tf_list_free(TextFloaterList* node);
+static void tf_list_get_rect(TextFloaterList* node, TigRect* rect);
+static void tf_get_rect_at_loc(int64_t loc, int offset_x, int offset_y, TigRect* rect);
+static TextFloaterEntry* tf_entry_create();
+static void tf_entry_free(TextFloaterEntry* entry);
+static void tf_entry_destroy(TextFloaterList *list, TextFloaterEntry* entry);
+static void tf_entry_get_rect(TextFloaterList *list, TextFloaterEntry* entry, TigRect* entry_rect);
+static void tf_entry_get_rect_constrained_to(TigRect* list_rect, TextFloaterEntry* entry, TigRect* entry_rect);
+static void tf_entry_recalc_opacity(TextFloaterEntry* entry);
+static void tf_level_set_internal(int value);
+static void tf_level_changed();
+static void tf_float_speed_changed();
 
 // 0x5B8E6C
 static uint8_t tf_colors[TF_TYPE_COUNT][3] = {
@@ -52,10 +52,10 @@ static uint8_t tf_colors[TF_TYPE_COUNT][3] = {
 };
 
 // 0x602898
-static int dword_602898;
+static int tf_line_height;
 
 // 0x60289C
-static TextFloaterList* tf_free_list_head;
+static TextFloaterList* tf_free_lists_head;
 
 // 0x6028A0
 static int float_speed;
@@ -73,16 +73,16 @@ static tig_color_t dword_6028C0;
 static IsoInvalidateRectFunc* tf_iso_invalidate_rect;
 
 // 0x6028C8
-static tig_color_t dword_6028C8;
+static tig_color_t tf_background_color;
 
 // 0x6028D0
-static TigRect stru_6028D0;
+static TigRect tf_entry_content_rect;
 
 // 0x6028E0
 TextFloaterList *tf_list_head;
 
 // 0x6028E4
-tig_timestamp_t  dword_6028E4;
+tig_timestamp_t  tf_ping_timestamp;
 
 // 0x6028E8
 static tig_window_handle_t tf_iso_window_handle;
@@ -91,10 +91,10 @@ static tig_window_handle_t tf_iso_window_handle;
 static int tf_level;
 
 // 0x6028F0
-static TextFloaterNode* tf_free_node_head;
+static TextFloaterEntry* tf_free_entries_head;
 
 // 0x6028F8
-static TigRect stru_6028F8;
+static TigRect tf_list_content_rect;
 
 // 0x602908
 static tig_font_handle_t tf_fonts[TF_TYPE_COUNT];
@@ -121,35 +121,35 @@ bool tf_init(GameInitInfo* init_info)
     text_floater_view_options.type = VIEW_TYPE_ISOMETRIC;
     tf_iso_invalidate_rect = init_info->invalidate_rect_func;
 
-    dword_6028C8 = tig_color_make(0, 0, 255);
+    tf_background_color = tig_color_make(0, 0, 255);
     dword_6028C0 = tig_color_make(0, 0, 0);
 
     font_desc.flags = TIG_FONT_NO_ALPHA_BLEND | TIG_FONT_SHADOW;
     tig_art_interface_id_create(229, 0, 0, 0, &(font_desc.art_id));
 
     tig_art_frame_data(font_desc.art_id, &art_frame_data);
-    dword_602898 = art_frame_data.height + 2;
+    tf_line_height = art_frame_data.height + 2;
 
     for (index = 0; index < TF_TYPE_COUNT; index++) {
         font_desc.color = tig_color_make(tf_colors[index][0], tf_colors[index][1], tf_colors[index][2]);
         tig_font_create(&font_desc, &(tf_fonts[index]));
     }
 
-    stru_6028F8.x = 0;
-    stru_6028F8.y = 0;
-    stru_6028F8.width = 200;
-    stru_6028F8.height = 5 * dword_602898;
+    tf_list_content_rect.x = 0;
+    tf_list_content_rect.y = 0;
+    tf_list_content_rect.width = 200;
+    tf_list_content_rect.height = 5 * tf_line_height;
 
-    stru_6028D0.x = 0;
-    stru_6028D0.y = 0;
-    stru_6028D0.width = 200;
-    stru_6028D0.height = dword_602898;
+    tf_entry_content_rect.x = 0;
+    tf_entry_content_rect.y = 0;
+    tf_entry_content_rect.width = 200;
+    tf_entry_content_rect.height = tf_line_height;
 
-    settings_add(&settings, TEXT_FLOATERS_KEY, "1", text_floaters_changed);
-    text_floaters_changed();
+    settings_add(&settings, TEXT_FLOATERS_KEY, "1", tf_level_changed);
+    tf_level_changed();
 
-    settings_add(&settings, FLOAT_SPEED_KEY, "2", float_speed_changed);
-    float_speed_changed();
+    settings_add(&settings, FLOAT_SPEED_KEY, "2", tf_float_speed_changed);
+    tf_float_speed_changed();
 
     return true;
 }
@@ -171,7 +171,7 @@ void tf_reset()
 void tf_exit()
 {
     int index;
-    TextFloaterNode* next_node;
+    TextFloaterEntry* next_node;
     TextFloaterList* next_list;
 
     // Clear active floaters.
@@ -183,22 +183,22 @@ void tf_exit()
     }
 
     // Clear free node objects.
-    while (tf_free_node_head != NULL) {
-        next_node = tf_free_node_head->next;
-        tig_video_buffer_destroy(tf_free_node_head->video_buffer);
-        FREE(tf_free_node_head);
-        tf_free_node_head = next_node;
+    while (tf_free_entries_head != NULL) {
+        next_node = tf_free_entries_head->next;
+        tig_video_buffer_destroy(tf_free_entries_head->video_buffer);
+        FREE(tf_free_entries_head);
+        tf_free_entries_head = next_node;
     }
 
     // Clear free list objects.
-    while (tf_free_list_head != NULL) {
-        next_list = tf_free_list_head->next;
-        FREE(tf_free_list_head);
-        tf_free_list_head = next_list;
+    while (tf_free_lists_head != NULL) {
+        next_list = tf_free_lists_head->next;
+        FREE(tf_free_lists_head);
+        tf_free_lists_head = next_list;
     }
 
     tf_iso_window_handle = TIG_WINDOW_HANDLE_INVALID;
-    tf_iso_invalidate_rect = 0;
+    tf_iso_invalidate_rect = NULL;
 }
 
 // 0x4D5130
@@ -217,7 +217,7 @@ void tf_map_close()
 // 0x4D5160
 int tf_level_set(int value)
 {
-    text_floaters_set_internal(value);
+    tf_level_set_internal(value);
     return tf_level;
 }
 
@@ -230,73 +230,75 @@ int tf_level_get()
 // 0x4D5190
 void tf_ping(tig_timestamp_t timestamp)
 {
-    TextFloaterList* cur_list;
+    TextFloaterList* list;
     TextFloaterList* prev_list;
-    TextFloaterNode* cur_node;
-    TextFloaterNode* prev_node;
-    TigRect v3;
-    TigRect v4;
+    TextFloaterEntry* entry;
+    TextFloaterEntry* prev_entry;
+    TigRect list_rect;
+    TigRect entry_rect;
     unsigned int flags;
 
-    if (tig_timer_between(dword_6028E4, timestamp) >= 50) {
-        dword_6028E4 = timestamp;
+    if (tig_timer_between(tf_ping_timestamp, timestamp) < 50) {
+        return;
+    }
 
-        prev_list = NULL;
-        cur_list = tf_list_head;
-        while (cur_list != NULL) {
-            sub_4D5870(cur_list, &v3);
+    tf_ping_timestamp = timestamp;
 
-            prev_node = NULL;
-            cur_node = cur_list->head;
-            while (cur_node != NULL) {
-                sub_4D5A60(&v3, cur_node, &v4);
-                if (tig_rect_intersection(&v4, &v3, &v4) == TIG_OK) {
-                    tf_iso_invalidate_rect(&v4);
-                }
+    prev_list = NULL;
+    list = tf_list_head;
+    while (list != NULL) {
+        tf_list_get_rect(list, &list_rect);
 
-                cur_node->field_0 -= float_speed;
-                if (cur_node->field_0 < 0) {
-                    if (prev_node != NULL) {
-                        prev_node->next = cur_node->next;
-                    } else {
-                        cur_list->head = cur_node->next;
-                    }
-
-                    tf_node_destroy(cur_node);
-
-                    if (prev_node != NULL) {
-                        cur_node = prev_node->next;
-                    } else {
-                        cur_node = cur_list->head;
-                    }
-                } else {
-                    sub_4D5A60(&v3, cur_node, &v4);
-                    if (tig_rect_intersection(&v4, &v3, &v4) == TIG_OK) {
-                        sub_4D5AA0(cur_node);
-                        tf_iso_invalidate_rect(&v4);
-                    }
-                    prev_node = cur_node;
-                    cur_node = cur_node->next;
-                }
+        prev_entry = NULL;
+        entry = list->head;
+        while (entry != NULL) {
+            tf_entry_get_rect_constrained_to(&list_rect, entry, &entry_rect);
+            if (tig_rect_intersection(&entry_rect, &list_rect, &entry_rect) == TIG_OK) {
+                tf_iso_invalidate_rect(&entry_rect);
             }
 
-            if (cur_list->head != NULL) {
-                prev_list = cur_list;
-                cur_list = cur_list->next;
-            } else {
-                if (prev_list != NULL) {
-                    prev_list->next = cur_list->next;
-                    tf_list_destroy(cur_list);
-                    cur_list = prev_list->next;
+            entry->offset -= float_speed;
+            if (entry->offset < 0) {
+                if (prev_entry != NULL) {
+                    prev_entry->next = entry->next;
                 } else {
-                    tf_list_head = cur_list->next;
-                    flags = obj_field_int32_get(cur_list->obj, OBJ_F_FLAGS);
-                    flags &= ~OF_TEXT_FLOATER;
-                    obj_field_int32_set(cur_list->obj, OBJ_F_FLAGS, flags);
-
-                    tf_list_destroy(cur_list);
-                    cur_list = tf_list_head;
+                    list->head = entry->next;
                 }
+
+                tf_entry_free(entry);
+
+                if (prev_entry != NULL) {
+                    entry = prev_entry->next;
+                } else {
+                    entry = list->head;
+                }
+            } else {
+                tf_entry_get_rect_constrained_to(&list_rect, entry, &entry_rect);
+                if (tig_rect_intersection(&entry_rect, &list_rect, &entry_rect) == TIG_OK) {
+                    tf_entry_recalc_opacity(entry);
+                    tf_iso_invalidate_rect(&entry_rect);
+                }
+                prev_entry = entry;
+                entry = entry->next;
+            }
+        }
+
+        if (list->head != NULL) {
+            prev_list = list;
+            list = list->next;
+        } else {
+            if (prev_list != NULL) {
+                prev_list->next = list->next;
+                tf_list_destroy(list);
+                list = prev_list->next;
+            } else {
+                tf_list_head = list->next;
+                flags = obj_field_int32_get(list->obj, OBJ_F_FLAGS);
+                flags &= ~OF_TEXT_FLOATER;
+                obj_field_int32_set(list->obj, OBJ_F_FLAGS, flags);
+
+                tf_list_destroy(list);
+                list = tf_list_head;
             }
         }
     }
@@ -306,14 +308,14 @@ void tf_ping(tig_timestamp_t timestamp)
 void tf_render(UnknownContext *render_info)
 {
     TextFloaterList* list;
-    TextFloaterNode* node;
+    TextFloaterEntry* entry;
     TigWindowBlitInfo window_blit_info;
     TigRect src_rect;
     TigRect dst_rect;
-    TigRect tf_rect;
-    TigRect v2;
+    TigRect list_rect;
+    TigRect entry_rect;
     TigRectListNode* rect_node;
-    TigRect rect;
+    TigRect dirty_list_rect;
 
     if (tf_level == TF_LEVEL_NEVER) {
         return;
@@ -329,103 +331,104 @@ void tf_render(UnknownContext *render_info)
     window_blit_info.dst_rect = &dst_rect;
     window_blit_info.dst_window_handle = tf_iso_window_handle;
 
-    list = tf_list_head;
-    while (list != NULL) {
-        sub_4D5870(list, &tf_rect);
+    for (list = tf_list_head; list != NULL; list = list->next) {
+        tf_list_get_rect(list, &list_rect);
 
-        rect_node = *render_info->rects;
-        while (rect_node != NULL) {
-            if (tig_rect_intersection(&(rect_node->rect), &tf_rect, &rect) == TIG_OK) {
-                node = list->head;
-                while (node != NULL) {
-                    sub_4D5A60(&tf_rect, node, &v2);
-                    if (tig_rect_intersection(&v2, &rect, &dst_rect) == TIG_OK) {
-                        src_rect.x = dst_rect.x - v2.x;
-                        src_rect.y = dst_rect.y - v2.y;
-                        src_rect.width = dst_rect.width;
-                        src_rect.height = dst_rect.height;
-                        window_blit_info.src_video_buffer = node->video_buffer;
-                        window_blit_info.alpha[0] = node->opacity;
-                        tig_window_blit(&window_blit_info);
-                    }
-                    node = node->next;
-                }
+        for (rect_node = *render_info->rects; rect_node != NULL; rect_node = rect_node->next) {
+            if (tig_rect_intersection(&(rect_node->rect), &list_rect, &dirty_list_rect) != TIG_OK) {
+                continue;
             }
-            rect_node = rect_node->next;
+
+            for (entry = list->head; entry != NULL; entry = entry->next) {
+                tf_entry_get_rect_constrained_to(&list_rect, entry, &entry_rect);
+
+                if (tig_rect_intersection(&entry_rect, &dirty_list_rect, &dst_rect) != TIG_OK) {
+                    continue;
+                }
+
+                src_rect.x = dst_rect.x - entry_rect.x;
+                src_rect.y = dst_rect.y - entry_rect.y;
+                src_rect.width = dst_rect.width;
+                src_rect.height = dst_rect.height;
+
+                window_blit_info.src_video_buffer = entry->video_buffer;
+                window_blit_info.alpha[0] = entry->opacity;
+
+                tig_window_blit(&window_blit_info);
+            }
         }
-        list = list->next;
     }
 }
 
 // 0x4D5450
 void tf_add(int64_t obj, int type, const char* str)
 {
-    TextFloaterList* cur_list;
+    TextFloaterList* list;
     TextFloaterList* prev_list;
-    TextFloaterNode* cur_node;
-    TextFloaterNode* prev_node;
+    TextFloaterEntry* entry;
+    TextFloaterEntry* prev_entry;
     TigRect rect;
 
     prev_list = NULL;
-    cur_list = tf_list_head;
-    while (cur_list != NULL) {
-        if (cur_list->obj == obj) {
+    list = tf_list_head;
+    while (list != NULL) {
+        if (list->obj == obj) {
             break;
         }
-        prev_list = cur_list;
-        cur_list = cur_list->next;
+        prev_list = list;
+        list = list->next;
     }
 
-    if (cur_list == NULL) {
-        cur_list = tf_list_create();
-        cur_list->obj = obj;
+    if (list == NULL) {
+        list = tf_list_create();
+        list->obj = obj;
     }
 
     if (prev_list != NULL) {
-        prev_list->next = cur_list;
+        prev_list->next = list;
     } else {
-        tf_list_head = cur_list;
+        tf_list_head = list;
     }
 
-    prev_node = NULL;
-    cur_node = cur_list->head;
-    while (cur_node != NULL) {
-        prev_node = cur_node;
-        cur_node = cur_node->next;
+    prev_entry = NULL;
+    entry = list->head;
+    while (entry != NULL) {
+        prev_entry = entry;
+        entry = entry->next;
     }
 
-    cur_node = tf_node_create();
-    cur_node->field_0 = 4 * dword_602898;
+    entry = tf_entry_create();
+    entry->offset = 4 * tf_line_height;
 
-    if (prev_node != NULL) {
-        prev_node->next = cur_node;
-        if (prev_node->field_0 > 3 * dword_602898) {
-            cur_node->field_0 = prev_node->field_0 + dword_602898;
+    if (prev_entry != NULL) {
+        prev_entry->next = entry;
+        if (prev_entry->offset > 3 * tf_line_height) {
+            entry->offset = prev_entry->offset + tf_line_height;
         }
     } else {
-        cur_list->head = cur_node;
+        list->head = entry;
     }
 
-    tig_video_buffer_fill(cur_node->video_buffer, &stru_6028D0, dword_6028C8);
+    tig_video_buffer_fill(entry->video_buffer, &tf_entry_content_rect, tf_background_color);
     tig_font_push(tf_fonts[type]);
-    tig_font_write(cur_node->video_buffer, str, &stru_6028D0, &(cur_node->rect));
+    tig_font_write(entry->video_buffer, str, &tf_entry_content_rect, &(entry->rect));
     tig_font_pop();
 
     object_flags_set(obj, OF_TEXT_FLOATER);
-    sub_4D5AA0(cur_node);
+    tf_entry_recalc_opacity(entry);
 
-    sub_4D5A30(cur_list, cur_node, &rect);
+    tf_entry_get_rect(list, entry, &rect);
     tf_iso_invalidate_rect(&rect);
 }
 
 // 0x4D5570
-void tf_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
+void tf_notify_moved(int64_t obj, int64_t loc, int offset_x, int offset_y)
 {
     TextFloaterList* list;
-    TextFloaterNode* node;
-    TigRect v2;
-    TigRect v3;
-    TigRect v5;
+    TextFloaterEntry* entry;
+    TigRect old_list_rect;
+    TigRect new_list_rect;
+    TigRect entry_rect;
 
     list = tf_list_head;
     while (list != NULL) {
@@ -436,18 +439,18 @@ void tf_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
     }
 
     if (list != NULL) {
-        sub_4D5870(list, &v2);
-        sub_4D58C0(loc, offset_x, offset_y, &v3);
+        tf_list_get_rect(list, &old_list_rect);
+        tf_get_rect_at_loc(loc, offset_x, offset_y, &new_list_rect);
 
-        node = list->head;
-        while (node != NULL) {
-            sub_4D5A60(&v2, node, &v5);
-            tf_iso_invalidate_rect(&v5);
+        entry = list->head;
+        while (entry != NULL) {
+            tf_entry_get_rect_constrained_to(&old_list_rect, entry, &entry_rect);
+            tf_iso_invalidate_rect(&entry_rect);
 
-            sub_4D5A60(&v3, node, &v5);
-            tf_iso_invalidate_rect(&v5);
+            tf_entry_get_rect_constrained_to(&new_list_rect, entry, &entry_rect);
+            tf_iso_invalidate_rect(&entry_rect);
 
-            node = node->next;
+            entry = entry->next;
         }
     }
 }
@@ -456,41 +459,43 @@ void tf_move(int64_t obj, int64_t loc, int offset_x, int offset_y)
 void tf_notify_killed(int64_t obj)
 {
     TextFloaterList* list;
-    TextFloaterNode* node;
-    TextFloaterNode* prev;
-    TextFloaterNode* next;
+    TextFloaterEntry* entry;
+    TextFloaterEntry* prev_entry;
+    TextFloaterEntry* next_entry;
 
-    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_TEXT_FLOATER) != 0) {
-        list = tf_list_head;
-        while (list != NULL) {
-            if (list->obj == obj) {
+    if ((obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_TEXT_FLOATER) == 0) {
+        return;
+    }
+
+    list = tf_list_head;
+    while (list != NULL) {
+        if (list->obj == obj) {
+            break;
+        }
+        list = list->next;
+    }
+
+    if (list != NULL) {
+        prev_entry = NULL;
+        entry = list->head;
+        while (entry != NULL) {
+            if (entry->offset >= tf_list_content_rect.height) {
                 break;
             }
-            list = list->next;
+            prev_entry = entry;
+            entry = entry->next;
         }
 
-        if (list != NULL) {
-            prev = NULL;
-            node = list->head;
-            while (node != NULL) {
-                if (node->field_0 >= stru_6028F8.height) {
-                    break;
+        if (entry != NULL) {
+            if (prev_entry != NULL) {
+                prev_entry->next = NULL;
+                while (entry != NULL) {
+                    next_entry = entry->next;
+                    tf_entry_free(entry);
+                    entry = next_entry;
                 }
-                prev = node;
-                node = node->next;
-            }
-
-            if (node != NULL) {
-                if (prev != NULL) {
-                    prev->next = NULL;
-                    while (node != NULL) {
-                        next = node->next;
-                        tf_node_destroy(node);
-                        node = next;
-                    }
-                } else {
-                    tf_list_destroy(list);
-                }
+            } else {
+                tf_list_destroy(list);
             }
         }
     }
@@ -505,31 +510,33 @@ void tf_remove(int64_t obj)
     TigRect rect;
 
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
-    if ((flags & OF_TEXT_FLOATER) != 0) {
-        flags &= ~OF_TEXT_FLOATER;
-        obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+    if ((flags & OF_TEXT_FLOATER) == 0) {
+        return;
+    }
 
-        prev = NULL;
-        node = tf_list_head;
-        while (node != NULL) {
-            if (node->obj == obj) {
-                break;
-            }
-            prev = node;
-            node = node->next;
+    flags &= ~OF_TEXT_FLOATER;
+    obj_field_int32_set(obj, OBJ_F_FLAGS, flags);
+
+    prev = NULL;
+    node = tf_list_head;
+    while (node != NULL) {
+        if (node->obj == obj) {
+            break;
         }
+        prev = node;
+        node = node->next;
+    }
 
-        if (node != NULL) {
-            sub_4D5870(node, &rect);
-            tf_iso_invalidate_rect(&rect);
+    if (node != NULL) {
+        tf_list_get_rect(node, &rect);
+        tf_iso_invalidate_rect(&rect);
 
-            if (prev != NULL) {
-                prev->next = node->next;
-            } else {
-                tf_list_head = node->next;
-            }
-            tf_list_destroy(node);
+        if (prev != NULL) {
+            prev->next = node->next;
+        } else {
+            tf_list_head = node->next;
         }
+        tf_list_destroy(node);
     }
 }
 
@@ -544,7 +551,7 @@ void tf_clear()
     while (list != NULL) {
         next = list->next;
 
-        sub_4D5870(list, &rect);
+        tf_list_get_rect(list, &rect);
         tf_iso_invalidate_rect(&rect);
 
         tf_list_destroy(list);
@@ -558,15 +565,15 @@ TextFloaterList* tf_list_create()
 {
     TextFloaterList* list;
 
-    list = tf_free_list_head;
-    if (list != NULL) {
-        tf_free_list_head = list->next;
+    if (tf_free_lists_head != NULL) {
+        list = tf_free_lists_head;
+        tf_free_lists_head = list->next;
     } else {
         list = (TextFloaterList*)MALLOC(sizeof(*list));
     }
 
-    list->obj = 0;
-    list->head = 0;
+    list->obj = OBJ_HANDLE_NULL;
+    list->head = NULL;
     list->next = NULL;
 
     return list;
@@ -575,28 +582,28 @@ TextFloaterList* tf_list_create()
 // 0x4D5820
 void tf_list_destroy(TextFloaterList *list)
 {
-    TextFloaterNode* node;
-    TextFloaterNode* next;
+    TextFloaterEntry* curr;
+    TextFloaterEntry* next;
 
-    node = list->head;
-    while (node != NULL) {
-        next = node->next;
-        sub_4D59F0(list, node);
-        node = next;
+    curr = list->head;
+    while (curr != NULL) {
+        next = curr->next;
+        tf_entry_destroy(list, curr);
+        curr = next;
     }
 
-    sub_4D5850(list);
+    tf_list_free(list);
 }
 
 // 0x4D5850
-void sub_4D5850(TextFloaterList* node)
+void tf_list_free(TextFloaterList* node)
 {
-    node->next = tf_free_list_head;
-    tf_free_list_head = node;
+    node->next = tf_free_lists_head;
+    tf_free_lists_head = node;
 }
 
 // 0x4D5870
-void sub_4D5870(TextFloaterList* node, TigRect* rect)
+void tf_list_get_rect(TextFloaterList* node, TigRect* rect)
 {
     int64_t loc;
     int offset_x;
@@ -605,121 +612,126 @@ void sub_4D5870(TextFloaterList* node, TigRect* rect)
     loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
     offset_x = obj_field_int32_get(node->obj, OBJ_F_OFFSET_X);
     offset_y = obj_field_int32_get(node->obj, OBJ_F_OFFSET_Y);
-    sub_4D58C0(loc, offset_x, offset_y, rect);
+    tf_get_rect_at_loc(loc, offset_x, offset_y, rect);
 }
 
 // 0x4D58C0
-void sub_4D58C0(int64_t loc, int offset_x, int offset_y, TigRect* rect)
+void tf_get_rect_at_loc(int64_t loc, int offset_x, int offset_y, TigRect* rect)
 {
-    int64_t x;
-    int64_t y;
+    int64_t sx;
+    int64_t sy;
 
-    location_xy(loc, &x, &y);
+    location_xy(loc, &sx, &sy);
 
-    rect->x = (int)x + offset_x - 60;
-    rect->y = (int)y + offset_y + 20 - 5 * dword_602898 - 90;
-    rect->width = stru_6028F8.width;
-    rect->height = stru_6028F8.height;
+    rect->x = (int)sx + offset_x - 60;
+    rect->y = (int)sy + offset_y + 20 - 5 * tf_line_height - 90;
+    rect->width = tf_list_content_rect.width;
+    rect->height = tf_list_content_rect.height;
 }
 
 // 0x4D5950
-TextFloaterNode* tf_node_create()
+TextFloaterEntry* tf_entry_create()
 {
-    TextFloaterNode* node;
+    TextFloaterEntry* entry;
     TigVideoBufferCreateInfo vb_create_info;
 
-    node = tf_free_node_head;
-    if (node != NULL) {
-        tf_free_node_head = tf_free_node_head->next;
-        node->next = NULL;
-    } else {
-        node = (TextFloaterNode*)MALLOC(sizeof(*node));
-        node->next = NULL;
+    if (tf_free_entries_head != NULL) {
+        entry = tf_free_entries_head;
+        tf_free_entries_head = entry->next;
 
-        vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
-        vb_create_info.width = 200;
-        vb_create_info.height = dword_602898;
-        vb_create_info.background_color = dword_6028C8;
-        vb_create_info.color_key = dword_6028C8;
-        tig_video_buffer_create(&vb_create_info, &(node->video_buffer));
+        entry->next = NULL;
+
+        return entry;
     }
 
-    return node;
+    entry = (TextFloaterEntry*)MALLOC(sizeof(*entry));
+    entry->next = NULL;
+
+    vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_VIDEO_MEMORY;
+    vb_create_info.width = 200;
+    vb_create_info.height = tf_line_height;
+    vb_create_info.background_color = tf_background_color;
+    vb_create_info.color_key = tf_background_color;
+    tig_video_buffer_create(&vb_create_info, &(entry->video_buffer));
+
+    return entry;
 }
 
 // 0x4D59D0
-void tf_node_destroy(TextFloaterNode* node)
+void tf_entry_free(TextFloaterEntry* entry)
 {
-    node->next = tf_free_node_head;
-    tf_free_node_head = node;
+    entry->next = tf_free_entries_head;
+    tf_free_entries_head = entry;
 }
 
 // 0x4D59F0
-void sub_4D59F0(TextFloaterList *list, TextFloaterNode *node)
+void tf_entry_destroy(TextFloaterList *list, TextFloaterEntry* entry)
 {
     TigRect rect;
 
-    sub_4D5A30(list, node, &rect);
+    tf_entry_get_rect(list, entry, &rect);
     tf_iso_invalidate_rect(&rect);
 
-    tf_node_destroy(node);
+    tf_entry_free(entry);
 }
 
 // 0x4D5A30
-void sub_4D5A30(TextFloaterList *list, TextFloaterNode *node, TigRect *a3)
+void tf_entry_get_rect(TextFloaterList *list, TextFloaterEntry* entry, TigRect* entry_rect)
 {
     TigRect rect;
 
-    sub_4D5870(list, &rect);
-    sub_4D5A60(&rect, node, a3);
+    tf_list_get_rect(list, &rect);
+    tf_entry_get_rect_constrained_to(&rect, entry, entry_rect);
 }
 
 // 0x4D5A60
-void sub_4D5A60(TigRect* a1, TextFloaterNode *node, TigRect *a3)
+void tf_entry_get_rect_constrained_to(TigRect* list_rect, TextFloaterEntry* entry, TigRect* entry_rect)
 {
-    a3->x = a1->x + (a1->width - node->rect.width) / 2;
-    a3->y = a1->y + node->field_0;
-    a3->width = node->rect.width;
-    a3->height = node->rect.height;
+    entry_rect->x = list_rect->x + (list_rect->width - entry->rect.width) / 2;
+    entry_rect->y = list_rect->y + entry->offset;
+    entry_rect->width = entry->rect.width;
+    entry_rect->height = entry->rect.height;
 }
 
 // 0x4D5AA0
-void sub_4D5AA0(TextFloaterNode *node)
+void tf_entry_recalc_opacity(TextFloaterEntry* entry)
 {
-    int v1;
-    int v2;
+    int mid;
+    int pos;
 
-    v1 = dword_602898 / 2;
-    v2 = node->field_0 + v1;
-    if (v2 > 3 * dword_602898) {
-        v2 = 5 * dword_602898 - v2;
+    mid = tf_line_height / 2;
+    pos = entry->offset + mid;
+    if (pos > 3 * tf_line_height) {
+        pos = 5 * tf_line_height - pos;
     }
 
-    if (v2 > 2 * dword_602898) {
-        node->opacity = 255;
-    } else if (v2 > v1) {
-        node->opacity = (uint8_t)((float)(v2 - v1) / (2 * dword_602898 - v1) * 255.0f);
+    if (pos > 2 * tf_line_height) {
+        entry->opacity = 255;
+    } else if (pos > mid) {
+        entry->opacity = (uint8_t)((float)(pos - mid) / (2 * tf_line_height - mid) * 255.0f);
     } else {
-        node->opacity = 0;
+        entry->opacity = 0;
     }
 }
 
 // 0x4D5B10
-void text_floaters_set_internal(int value)
+void tf_level_set_internal(int value)
 {
-    if (value >= 0 && value <= 2) {
-        settings_set_value(&settings, TEXT_FLOATERS_KEY, value);
+    if (!(value >= 0 && value < TF_LEVEL_COUNT)) {
+        return;
     }
+
+    settings_set_value(&settings, TEXT_FLOATERS_KEY, value);
 }
 
 // 0x4D5B40
-void text_floaters_changed()
+void tf_level_changed()
 {
     tf_level = settings_get_value(&settings, TEXT_FLOATERS_KEY);
 }
 
 // 0x4D5B60
-void float_speed_changed()
+void tf_float_speed_changed()
 {
     float_speed = settings_get_value(&settings, FLOAT_SPEED_KEY) + 1;
 }
