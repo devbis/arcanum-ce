@@ -1311,7 +1311,7 @@ tig_art_id_t sub_4EC670(tig_art_id_t art_id, ObjectID* oid)
 // 0x4EC830
 tig_art_id_t sub_4EC830(tig_art_id_t aid)
 {
-    if (sub_504260(aid)) {
+    if (tig_art_portal_id_type_get(aid) != TIG_ART_PORTAL_TYPE_WINDOW) {
         return TIG_ART_ID_INVALID;
     }
 
@@ -1329,7 +1329,7 @@ char* sub_4EC8F0(tig_art_id_t aid)
     MesFileEntry mes_file_entry;
 
     mes_file_entry.num = tig_art_num_get(aid);
-    if (!sub_504260(aid)) {
+    if (tig_art_portal_id_type_get(aid) == TIG_ART_PORTAL_TYPE_WINDOW) {
         mes_file_entry.num += 1001;
     }
 

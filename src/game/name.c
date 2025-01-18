@@ -1247,25 +1247,25 @@ tig_art_id_t sub_41E200(tig_art_id_t art_id)
         }
         case TIG_ART_TYPE_PORTAL: {
             int palette = tig_art_id_palette_get(art_id);
-            int v1 = sub_504260(art_id);
+            int type = tig_art_portal_id_type_get(art_id);
             int num = tig_art_num_get(art_id);
             int damaged = tig_art_id_damaged_get(art_id);
 
             if (damaged == 0) {
-                if (tig_art_portal_id_create(num, v1, 512, 0, 0, palette, &art_id) == TIG_OK) {
+                if (tig_art_portal_id_create(num, type, 512, 0, 0, palette, &art_id) == TIG_OK) {
                     break;
                 }
             }
 
-            if (tig_art_portal_id_create(num, v1, 0, 0, 0, palette + 1, &art_id) == TIG_OK) {
+            if (tig_art_portal_id_create(num, type, 0, 0, 0, palette + 1, &art_id) == TIG_OK) {
                 break;
             }
 
-            if (tig_art_portal_id_create(num, v1, 0, 0, 0, 0, &art_id) == TIG_OK) {
+            if (tig_art_portal_id_create(num, type, 0, 0, 0, 0, &art_id) == TIG_OK) {
                 break;
             }
 
-            if (tig_art_portal_id_create(num, v1 + 1, 0, 0, 0, 0, &art_id) == TIG_OK) {
+            if (tig_art_portal_id_create(num, type + 1, 0, 0, 0, 0, &art_id) == TIG_OK) {
                 break;
             }
 

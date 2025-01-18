@@ -6015,9 +6015,9 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
 
     switch (obj_field_int32_get(a2, OBJ_F_TYPE)) {
     case OBJ_TYPE_PORTAL:
-        *portrait_ptr = sub_504260(obj_field_int32_get(a2, OBJ_F_CURRENT_AID)) != 0
-            ? 436
-            : 786;
+        *portrait_ptr = tig_art_portal_id_type_get(obj_field_int32_get(a2, OBJ_F_CURRENT_AID)) == TIG_ART_PORTAL_TYPE_WINDOW
+            ? 786 // iconwindow.art
+            : 436; // door_icon.art
         return false;
     case OBJ_TYPE_CONTAINER:
         switch (sub_49B290(a2)) {
