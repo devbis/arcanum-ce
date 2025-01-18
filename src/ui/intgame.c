@@ -7205,7 +7205,7 @@ void sub_555EC0(int64_t a1, int64_t portal_obj, char* a3)
         mes_file_entry.num = 26; // "Jammed"
     } else if ((portal_flags & OPF_MAGICALLY_HELD) != 0) {
         mes_file_entry.num = 27; // "Magically held"
-    } else if (object_is_locked(portal_obj)) {
+    } else if (object_locked_get(portal_obj)) {
         mes_file_entry.num = 9; // "Locked"
     } else {
         mes_file_entry.num = 10; // "Unlocked"
@@ -7247,7 +7247,7 @@ void sub_556040(int64_t a1, int64_t container_obj, char* a3)
         mes_file_entry.num = 26; // "Jammed"
     } else if ((container_flags & OCOF_MAGICALLY_HELD) != 0) {
         mes_file_entry.num = 27; // "Magically held"
-    } else if (object_is_locked(container_obj)) {
+    } else if (object_locked_get(container_obj)) {
         mes_file_entry.num = 9; // "Locked"
     } else {
         mes_file_entry.num = 10; // "Unlocked"

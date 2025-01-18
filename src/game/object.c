@@ -3911,7 +3911,7 @@ void sub_441C70(object_id_t obj, int a2, int gender, int race)
 }
 
 // 0x441CF0
-bool object_is_lockable(object_id_t obj)
+bool object_is_lockable(int64_t obj)
 {
     int type;
 
@@ -3924,7 +3924,7 @@ bool object_is_lockable(object_id_t obj)
 }
 
 // 0x441D40
-bool object_is_locked(object_id_t obj)
+bool object_locked_get(int64_t obj)
 {
     int type;
     unsigned int flags;
@@ -3960,7 +3960,7 @@ bool object_is_locked(object_id_t obj)
 }
 
 // 0x441DD0
-bool sub_441DD0(object_id_t obj, bool a2)
+bool object_locked_set(int64_t obj, bool locked)
 {
     int type;
     unsigned int flags;
@@ -3973,31 +3973,35 @@ bool sub_441DD0(object_id_t obj, bool a2)
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
     flags = obj_field_int32_get(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
-    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED)) != 0 && !a2) {
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED)) != 0 && !locked) {
         timeevent.type = TIMEEVENT_TYPE_LOCK;
         timeevent.params[0].object_value = obj;
         sub_45A950(&datetime, 3600000);
         sub_45B800(&timeevent, &datetime);
     }
 
-    flags &= ~(type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED);
-    if (a2) {
+    if (locked) {
         flags |= (type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED);
+    } else {
+        flags &= ~(type == OBJ_TYPE_PORTAL ? OPF_LOCKED : OCOF_LOCKED);
     }
-    obj_field_int32_set(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
 
-    return object_is_locked(obj);
+    obj_field_int32_set(obj,
+        type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS,
+        flags);
+
+    return object_locked_get(obj);
 }
 
 // 0x441E90
 bool object_lock_timeevent_process(TimeEvent* timeevent)
 {
-    object_id_t obj;
+    int64_t obj;
     tig_art_id_t aid;
 
     obj = timeevent->params[0].object_value;
-    sub_441DD0(obj, true);
-    sub_441F10(obj, false);
+    object_locked_set(obj, true);
+    object_jammed_set(obj, false);
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PORTAL) {
         if (sub_4F08C0(obj)) {
             sub_4F08F0(obj);
@@ -4013,7 +4017,7 @@ bool object_lock_timeevent_process(TimeEvent* timeevent)
 }
 
 // 0x441F10
-bool sub_441F10(object_id_t obj, bool a2)
+bool object_jammed_set(int64_t obj, bool jammed)
 {
     int type;
     unsigned int flags;
@@ -4026,18 +4030,22 @@ bool sub_441F10(object_id_t obj, bool a2)
 
     type = obj_field_int32_get(obj, OBJ_F_TYPE);
     flags = obj_field_int32_get(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS);
-    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED)) == 0 && a2) {
+    if ((flags & (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED)) == 0 && jammed) {
         timeevent.type = TIMEEVENT_TYPE_LOCK;
         timeevent.params[0].object_value = obj;
         sub_45A950(&datetime, 86400000);
         sub_45B800(&timeevent, &datetime);
     }
 
-    flags &= ~(type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED);
-    if (a2) {
+    if (jammed) {
         flags |= (type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED);
+    } else {
+        flags &= ~(type == OBJ_TYPE_PORTAL ? OPF_JAMMED : OCOF_JAMMED);
     }
-    obj_field_int32_set(obj, type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS, flags);
+
+    obj_field_int32_set(obj,
+        type == OBJ_TYPE_PORTAL ? OBJ_F_PORTAL_FLAGS : OBJ_F_CONTAINER_FLAGS,
+        flags);
 
     return true;
 }

@@ -754,7 +754,7 @@ void sub_4EEC10(int64_t obj, int a2)
 {
     Packet103 pkt;
 
-    sub_441DD0(obj, a2);
+    object_locked_set(obj, a2);
 
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
         pkt.type = 103;
@@ -767,7 +767,7 @@ void sub_4EEC10(int64_t obj, int a2)
 // 0x4EEC80
 void sub_4EEC80(Packet103* pkt)
 {
-    sub_441DD0(objp_perm_lookup(pkt->oid), pkt->field_20);
+    object_locked_set(objp_perm_lookup(pkt->oid), pkt->field_20);
 }
 
 // 0x4EECB0

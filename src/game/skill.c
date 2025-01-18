@@ -1500,15 +1500,15 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
         pkt.target_oid = sub_407EF0(target_obj);
         pkt.field_38 = is_success;
 
-        if (object_is_locked(target_obj)) {
+        if (object_locked_get(target_obj)) {
             if (is_success) {
                 pkt.field_4 |= 0x04;
-                sub_441DD0(target_obj, false);
+                object_locked_set(target_obj, false);
                 sub_4AEE50(source_obj, target_obj, 0, 0);
             } else {
                 if (is_critical) {
                     pkt.field_4 |= 0x02;
-                    sub_441F10(target_obj, true);
+                    object_jammed_set(target_obj, true);
                 }
 
                 sub_4AEE50(source_obj, target_obj, 1, 0);
@@ -1523,7 +1523,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
         } else {
             if (is_success) {
                 pkt.field_4 |= 0x01;
-                sub_441DD0(target_obj, true);
+                object_locked_set(target_obj, true);
 
                 pkt.field_4 |= 0x08;
 
