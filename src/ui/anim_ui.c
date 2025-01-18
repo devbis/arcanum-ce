@@ -166,7 +166,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
                 sub_5412D0();
                 sub_57D370(10, -1, 300);
             } else {
-                sub_569600(1);
+                slide_ui_run(SLIDE_UI_TYPE_DEATH);
 
                 tig_debug_printf("DEATH: Resetting game!\n");
                 gamelib_reset();
@@ -188,7 +188,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
             sub_5412D0();
             sub_57D370(11, -1, 300);
         } else {
-            sub_569600(0);
+            slide_ui_run(SLIDE_UI_TYPE_END_GAME);
             if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
                 fade_data.flags = FADE_IN;
                 fade_data.duration = 2.0f;

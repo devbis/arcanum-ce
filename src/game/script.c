@@ -2730,7 +2730,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     }
     case SAT_QUEUE_SLIDE: {
         int slide = script_get_value(action->op_type[0], action->op_value[0], state);
-        sub_460B80(slide);
+        ui_queue_slide(slide);
         return NEXT;
     }
     case SAT_END_GAME_AND_PLAY_SLIDES: {

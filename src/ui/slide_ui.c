@@ -8,24 +8,26 @@
 #include "game/mes.h"
 #include "game/script.h"
 
-static void sub_569720(int type);
-static bool sub_569770(tig_window_handle_t window_handle, int num);
-static bool sub_569930(int num, char* slide_path, char* speech_path);
-static void sub_5699F0();
-static void sub_569A60();
-static void sub_569A90();
+#define MAX_QUEUE_SIZE 100
+
+static void slide_ui_prepare(int type);
+static bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide);
+static bool slide_ui_get_assets(int slide, char* bmp_path, char* speech_path);
+static void slide_ui_fade_out();
+static void slide_ui_fade_in();
+static void slide_ui_queue_clear();
 
 // 0x67B970
-static int dword_67B970;
+static int slide_ui_queue_size;
 
 // 0x67B974
 static mes_file_handle_t slide_ui_slide_mes_file;
 
 // 0x67B978
-static int dword_67B978[100];
+static int slide_ui_queue[MAX_QUEUE_SIZE];
 
 // 0x67BB08
-static bool dword_67BB08;
+static bool slide_ui_active;
 
 // 0x5695B0
 bool slide_ui_mod_load()
@@ -42,32 +44,33 @@ void slide_ui_mod_unload()
 }
 
 // 0x5695F0
-bool sub_5695F0()
+bool slide_ui_is_active()
 {
-    return dword_67BB08;
+    return slide_ui_active;
 }
 
 // 0x569600
-void sub_569600(int a1)
+void slide_ui_run(int type)
 {
     TigWindowData window_data;
     tig_window_handle_t window_handle;
     tig_sound_handle_t sound_handle;
     int index;
 
-    dword_67BB08 = true;
-    sub_569A90();
-    sub_569720(a1);
+    slide_ui_active = true;
 
-    if (a1 == 1) {
-        if (dword_67B970 == 0 && slide_ui_slide_mes_file != -1) {
-            sub_569AA0(0);
-        }
+    slide_ui_queue_clear();
+    slide_ui_prepare(type);
+
+    if (type == SLIDE_UI_TYPE_DEATH
+        && slide_ui_queue_size == 0
+        && slide_ui_slide_mes_file != MES_FILE_HANDLE_INVALID) {
+        slide_ui_queue_slide(0);
     }
 
-    sub_5699F0();
+    slide_ui_fade_out();
 
-    if (dword_67B970 > 0) {
+    if (slide_ui_queue_size > 0) {
         window_data.flags = TIG_WINDOW_FLAG_0x08;
         window_data.rect.x = 0;
         window_data.rect.y = 0;
@@ -79,8 +82,8 @@ void sub_569600(int a1)
             tig_mouse_hide();
             sound_handle = gsound_play_music_indefinitely("sound\\music\\DwarvenMusic.mp3", 25);
 
-            for (index = 0; index < dword_67B970; index++) {
-                if (!sub_569770(window_handle, dword_67B978[index])) {
+            for (index = 0; index < slide_ui_queue_size; index++) {
+                if (!slide_ui_do_slide(window_handle, slide_ui_queue[index])) {
                     break;
                 }
             }
@@ -92,15 +95,15 @@ void sub_569600(int a1)
         }
     }
 
-    if (a1 == 2) {
-        sub_569A60();
+    if (type == SLIDE_UI_TYPE_CREDITS) {
+        slide_ui_fade_in();
     }
 
-    dword_67BB08 = false;
+    slide_ui_active = false;
 }
 
 // 0x569720
-void sub_569720(int type)
+void slide_ui_prepare(int type)
 {
     Script scr;
     ScriptInvocation invocation;
@@ -117,7 +120,7 @@ void sub_569720(int type)
 }
 
 // 0x569770
-bool sub_569770(tig_window_handle_t window_handle, int num)
+bool slide_ui_do_slide(tig_window_handle_t window_handle, int slide)
 {
     TigMessage msg;
     TigRect rect;
@@ -132,7 +135,7 @@ bool sub_569770(tig_window_handle_t window_handle, int num)
     rect.width = 800;
     rect.height = 600;
 
-    if (sub_569930(num, bmp.name, speech_path)) {
+    if (slide_ui_get_assets(slide, bmp.name, speech_path)) {
         if (tig_bmp_create(&bmp) == TIG_OK) {
             tig_bmp_copy_to_window(&bmp, &rect, window_handle, &rect);
             tig_bmp_destroy(&bmp);
@@ -140,7 +143,7 @@ bool sub_569770(tig_window_handle_t window_handle, int num)
             sub_51E850(window_handle);
             tig_window_display();
 
-            sub_569A60();
+            slide_ui_fade_in();
 
             speech_handle = gsound_play_voice(speech_path, 0);
             while (tig_message_dequeue(&msg) == TIG_OK) {
@@ -186,20 +189,20 @@ bool sub_569770(tig_window_handle_t window_handle, int num)
             }
         }
 
-        sub_5699F0();
+        slide_ui_fade_out();
     }
 
     return success;
 }
 
 // 0x569930
-bool sub_569930(int num, char* slide_path, char* speech_path)
+bool slide_ui_get_assets(int slide, char* bmp_path, char* speech_path)
 {
     MesFileEntry mes_file_entry;
     char buffer[2000];
     char* tok;
 
-    mes_file_entry.num = num;
+    mes_file_entry.num = slide;
     if (!mes_search(slide_ui_slide_mes_file, &mes_file_entry)) {
         return false;
     }
@@ -211,7 +214,7 @@ bool sub_569930(int num, char* slide_path, char* speech_path)
         return false;
     }
 
-    sprintf(slide_path, "slide\\%s", tok);
+    sprintf(bmp_path, "slide\\%s", tok);
 
     tok = strtok(NULL, " \t\n");
     if (tok == NULL) {
@@ -224,7 +227,7 @@ bool sub_569930(int num, char* slide_path, char* speech_path)
 }
 
 // 0x5699F0
-void sub_5699F0()
+void slide_ui_fade_out()
 {
     FadeData fade_data;
 
@@ -237,7 +240,7 @@ void sub_5699F0()
 }
 
 // 0x569A60
-void sub_569A60()
+void slide_ui_fade_in()
 {
     FadeData fade_data;
 
@@ -248,15 +251,15 @@ void sub_569A60()
 }
 
 // 0x569A90
-void sub_569A90()
+void slide_ui_queue_clear()
 {
-    dword_67B970 = 0;
+    slide_ui_queue_size = 0;
 }
 
 // 0x569AA0
-void sub_569AA0(int a1)
+void slide_ui_queue_slide(int slide)
 {
-    if (dword_67B970 < 100) {
-        dword_67B978[dword_67B970++] = a1;
+    if (slide_ui_queue_size < MAX_QUEUE_SIZE) {
+        slide_ui_queue[slide_ui_queue_size++] = slide;
     }
 }

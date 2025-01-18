@@ -583,10 +583,10 @@ void sub_460B50(int64_t a1, int64_t a2)
 }
 
 // 0x460B80
-void sub_460B80(int a1)
+void ui_queue_slide(int slide)
 {
-    if (ui_callbacks.field_114 != NULL) {
-        ui_callbacks.field_114(a1);
+    if (ui_callbacks.queue_slide != NULL) {
+        ui_callbacks.queue_slide(slide);
     }
 }
 

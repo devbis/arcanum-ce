@@ -4404,7 +4404,7 @@ void sub_544640()
     dword_64C414 = 2;
     sub_541740();
     dword_64C38C = true;
-    sub_569600(2);
+    slide_ui_run(SLIDE_UI_TYPE_CREDITS);
 
     if (dword_64C384) {
         if (main_menu_window_info[dword_64C414]->refresh_func != NULL) {
@@ -5890,7 +5890,7 @@ bool sub_546EE0(TigMessage* msg)
         }
     }
 
-    if (sub_5695F0()) {
+    if (slide_ui_is_active()) {
         return false;
     }
 
