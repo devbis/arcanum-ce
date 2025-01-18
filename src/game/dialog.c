@@ -3486,7 +3486,7 @@ void sub_419260(DialogEntryNode* a1, const char* str)
     int values[10];
     unsigned int spell_flags;
     tig_art_id_t aid;
-    int v3;
+    int armor_type;
 
     memset(flags, 0, sizeof(flags));
 
@@ -3598,16 +3598,18 @@ void sub_419260(DialogEntryNode* a1, const char* str)
     }
 
     aid = obj_field_int32_get(a1->pc_obj, OBJ_F_CURRENT_AID);
-    v3 = sub_504030(aid);
+    armor_type = tig_art_critter_id_armor_get(aid);
 
-    if ((flags[7] & 0x2) == 0 && v3 == 0) {
+    if ((flags[7] & 0x2) == 0
+        && armor_type == TIG_ART_ARMOR_TYPE_UNDERWEAR) {
         if (!sub_4197D0(flags[7], values[7], a1)) {
             sub_418480(a1->field_70, a1, 16000);
         }
         return;
     }
 
-    if ((flags[8] & 0x2) == 0 && v3 == 7) {
+    if ((flags[8] & 0x2) == 0
+        && armor_type == TIG_ART_ARMOR_TYPE_BARBARIAN) {
         if (!sub_4197D0(flags[8], values[8], a1)) {
             sub_418480(a1->field_70, a1, 17000);
         }

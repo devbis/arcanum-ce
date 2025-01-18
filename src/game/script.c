@@ -1780,7 +1780,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     }
     case SAT_GET_ARMOR: {
         int64_t item_obj = script_get_obj(action->op_type[0], action->op_value[0], state);
-        int armor = sub_504030(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID));
+        int armor = tig_art_critter_id_armor_get(obj_field_int32_get(item_obj, OBJ_F_CURRENT_AID));
         script_set_value(action->op_type[1], action->op_value[1], state, armor);
         return NEXT;
     }

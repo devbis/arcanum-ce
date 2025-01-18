@@ -576,8 +576,8 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
     }
 
     art_id = obj_field_int32_get(victim_obj, OBJ_F_CURRENT_AID);
-    if (sub_5040D0(art_id)) {
-        art_id = sub_504100(art_id, 0);
+    if (tig_art_critter_id_weapon_get(art_id) != TIG_ART_WEAPON_TYPE_NO_WEAPON) {
+        art_id = tig_art_critter_id_weapon_set(art_id, TIG_ART_WEAPON_TYPE_NO_WEAPON);
         object_set_current_aid(victim_obj, art_id);
     }
 

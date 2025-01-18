@@ -1932,7 +1932,7 @@ int sub_4F0ED0(int64_t obj, int a2)
 {
     int64_t pc_obj;
     tig_art_id_t art_id;
-    int v1;
+    int armor_type;
     int base;
     int64_t loc;
     tig_art_id_t tile_art_id;
@@ -1960,15 +1960,16 @@ int sub_4F0ED0(int64_t obj, int a2)
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    v1 = sub_504030(art_id);
-    if (v1 == 4 || v1 == 6) {
+    armor_type = tig_art_critter_id_armor_get(art_id);
+    if (armor_type == TIG_ART_ARMOR_TYPE_PLATE
+        || armor_type == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
         base = 2900;
     } else {
         loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
         tile_art_id = tile_art_id_at(loc);
         tile_sound_type = a_name_tile_sound(tile_art_id);
         base = dword_5BB998[tile_sound_type];
-        if (v1 == 3
+        if (armor_type == TIG_ART_ARMOR_TYPE_CHAIN
             && (tile_sound_type == 5
                 || tile_sound_type == 3
                 || tile_sound_type == 0)) {

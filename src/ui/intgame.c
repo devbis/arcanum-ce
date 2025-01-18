@@ -5879,7 +5879,7 @@ void sub_553990()
     pc_obj = player_get_pc_obj();
     if (pc_obj != OBJ_HANDLE_NULL) {
         art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
-        if (sub_5040D0(art_id) != 0) {
+        if (tig_art_critter_id_weapon_get(art_id) != TIG_ART_WEAPON_TYPE_NO_WEAPON) {
             v1 = true;
         }
     }

@@ -2680,8 +2680,8 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
 
         item_subtype = tig_art_item_id_subtype_get(obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
         art_id = sub_4650D0(critter_obj);
-        art_id = sub_504100(art_id, item_subtype);
-        if (sub_5040D0(art_id) != item_subtype) {
+        art_id = tig_art_critter_id_weapon_set(art_id, item_subtype);
+        if (tig_art_critter_id_weapon_get(art_id) != item_subtype) {
             return ITEM_CANNOT_NOT_WIELDABLE;
         }
 
@@ -2704,7 +2704,7 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
 
         if (item_obj_type == OBJ_TYPE_ARMOR) {
             art_id = sub_4650D0(critter_obj);
-            art_id = sub_504180(art_id, 1);
+            art_id = tig_art_critter_id_shield_set(art_id, 1);
             if (tig_art_exists(art_id) != TIG_OK) {
                 return ITEM_CANNOT_NOT_WIELDABLE;
             }
@@ -2755,7 +2755,7 @@ tig_art_id_t sub_465020(int64_t obj)
     int64_t weapon_obj;
     int64_t armor_obj;
     int weapon_type;
-    int v1;
+    int shield_type;
     tig_art_id_t art_id;
 
     if (combat_critter_is_combat_mode_active(obj)) {
@@ -2773,18 +2773,18 @@ tig_art_id_t sub_465020(int64_t obj)
         armor_obj = item_wield_get(obj, ITEM_INV_LOC_SHIELD);
         if (armor_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(armor_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
-            v1 = 1;
+            shield_type = 1;
         } else {
-            v1 = 0;
+            shield_type = 0;
         }
     } else {
         weapon_type = TIG_ART_WEAPON_TYPE_NO_WEAPON;
-        v1 = 0;
+        shield_type = 0;
     }
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    art_id = sub_504100(art_id, weapon_type);
-    art_id = sub_504180(art_id, v1);
+    art_id = tig_art_critter_id_weapon_set(art_id, weapon_type);
+    art_id = tig_art_critter_id_shield_set(art_id, shield_type);
 
     return art_id;
 }
@@ -2793,29 +2793,29 @@ tig_art_id_t sub_465020(int64_t obj)
 tig_art_id_t sub_4650D0(int64_t critter_obj)
 {
     int64_t item_obj;
-    int v1;
-    int v2;
+    int weapon_type;
+    int shield_type;
     tig_art_id_t art_id;
 
     item_obj = item_wield_get(critter_obj, ITEM_INV_LOC_WEAPON);
     if (item_obj != OBJ_HANDLE_NULL) {
-        v1 = tig_art_item_id_subtype_get(obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
+        weapon_type = tig_art_item_id_subtype_get(obj_field_int32_get(item_obj, OBJ_F_ITEM_USE_AID_FRAGMENT));
     } else {
-        v1 = 1;
+        weapon_type = TIG_ART_WEAPON_TYPE_UNARMED;
     }
 
     item_obj = item_wield_get(critter_obj, ITEM_INV_LOC_SHIELD);
     if (item_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(item_obj, OBJ_F_TYPE) == OBJ_TYPE_ARMOR) {
-        v2 = 1;
+        shield_type = 1;
     } else {
-        v2 = 0;
+        shield_type = 0;
     }
 
     art_id = obj_field_int32_get(critter_obj, OBJ_F_CURRENT_AID);
     art_id = tig_art_id_anim_set(art_id, 20);
-    art_id = sub_504100(art_id, v1);
-    art_id = sub_504180(art_id, v2);
+    art_id = tig_art_critter_id_weapon_set(art_id, weapon_type);
+    art_id = tig_art_critter_id_shield_set(art_id, shield_type);
 
     return art_id;
 }
@@ -3176,8 +3176,8 @@ bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr)
         current_aid = obj_field_int32_get(a2, OBJ_F_CURRENT_AID);
         use_aid_fragment = obj_field_int32_get(a1, OBJ_F_ITEM_USE_AID_FRAGMENT);
         subtype = tig_art_item_id_subtype_get(use_aid_fragment);
-        aid = sub_504060(current_aid, subtype);
-        if (sub_504030(aid) != subtype) {
+        aid = tig_art_critter_id_armor_set(current_aid, subtype);
+        if (tig_art_critter_id_armor_get(aid) != subtype) {
             return false;
         }
 
@@ -3187,7 +3187,7 @@ bool sub_465AE0(int64_t a1, int64_t a2, tig_art_id_t* art_id_ptr)
 
     current_aid = obj_field_int32_get(a2, OBJ_F_CURRENT_AID);
     use_aid_fragment = obj_field_int32_get(a2, OBJ_F_AID);
-    aid = sub_504060(current_aid, 0);
+    aid = tig_art_critter_id_armor_set(current_aid, TIG_ART_ARMOR_TYPE_UNDERWEAR);
     *art_id_ptr = tig_art_id_palette_set(aid, tig_art_id_palette_get(use_aid_fragment));
     return true;
 }

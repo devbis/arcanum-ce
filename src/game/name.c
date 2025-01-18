@@ -647,55 +647,57 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
         aid = sub_502D30(aid, 0);
         break;
     case TIG_ART_TYPE_CRITTER: {
-        int v1;
-        int v2;
-        int v3;
-        int v4;
+        int armor;
+        int race;
+        int gender;
+        int shield;
         int anim;
-        int v6;
+        int weapon;
 
-        v1 = sub_504030(aid);
-        v2 = sub_503EA0(aid);
-        v3 = sub_503FB0(aid);
-        v4 = sub_504150(aid);
+        armor = tig_art_critter_id_armor_get(aid);
+        race = tig_art_critter_id_race_get(aid);
+        gender = tig_art_critter_id_gender_get(aid);
+        shield = tig_art_critter_id_shield_get(aid);
         anim = tig_art_id_anim_get(aid);
-        v6 = sub_5040D0(aid);
+        weapon = tig_art_critter_id_weapon_get(aid);
 
-        if (v2 == 4 && v3 == 0) {
-            v2 = 0;
+        if (race == TIG_ART_CRITTER_RACE_ELF
+            && gender == TIG_ART_CRITTER_GENDER_FEMALE) {
+            race = TIG_ART_CRITTER_RACE_HUMAN;
         }
 
-        if (v1 == 4 || v1 == 6) {
-            v3 = 1;
-            if (v2 == 4) {
-                v2 = 0;
-            } else if (v2 == 2) {
-                v2 = 1;
+        if (armor == TIG_ART_ARMOR_TYPE_PLATE
+            || armor == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
+            gender = TIG_ART_CRITTER_GENDER_MALE;
+            if (race == TIG_ART_CRITTER_RACE_ELF) {
+                race = TIG_ART_CRITTER_RACE_HUMAN;
+            } else if (race == TIG_ART_CRITTER_RACE_HALFLING) {
+                race = TIG_ART_CRITTER_RACE_DWARF;
             }
         }
 
-        sub_41DA40(v3 + 2 * v2, dword_5D55F0, dword_5D560C, &anim, &v6);
+        sub_41DA40(gender + 2 * race, dword_5D55F0, dword_5D560C, &anim, &weapon);
 
         if (anim == 24) {
-            v1 = 0;
-            v4 = 0;
-            v6 = 0;
-            v3 = 0;
+            armor = 0;
+            shield = 0;
+            weapon = 0;
+            gender = 0;
         } else if (anim == 23) {
-            v6 = 1;
-            v4 = 0;
+            weapon = 1;
+            shield = 0;
         } else {
-            if (v6 == 1 && (anim == 3 || anim == 5)) {
-                v6 = 0;
+            if (weapon == 1 && (anim == 3 || anim == 5)) {
+                weapon = 0;
             } else if (anim >= 6 && anim <= 19) {
-                v6 = 0;
-                v4 = 0;
+                weapon = 0;
+                shield = 0;
             } else if (anim == 1) {
-                v4 = 0;
+                shield = 0;
             }
         }
 
-        tig_art_critter_id_create(v3, v2, v1, v4, 0, 0, anim, v6, 0, &aid);
+        tig_art_critter_id_create(gender, race, armor, shield, 0, 0, anim, weapon, 0, &aid);
         break;
     }
     case TIG_ART_TYPE_PORTAL:
@@ -738,68 +740,68 @@ tig_art_id_t sub_41D510(tig_art_id_t aid)
         tig_art_facade_id_create(tig_art_facade_id_num_get(aid), 0, tig_art_tile_id_type_get(aid), 0, 0, 0, &aid);
         break;
     case TIG_ART_TYPE_MONSTER: {
-        int v1;
-        int num;
-        int v2;
+        int armor;
+        int specie;
+        int shield;
         int anim;
-        int v4;
+        int weapon;
 
-        v1 = sub_504030(aid);
-        num = tig_art_monster_id_specie_get(aid);
-        v2 = sub_504150(aid);
+        armor = tig_art_critter_id_armor_get(aid);
+        specie = tig_art_monster_id_specie_get(aid);
+        shield = tig_art_critter_id_shield_get(aid);
         anim = tig_art_id_anim_get(aid);
-        v4 = sub_5040D0(aid);
-        sub_41DA40(num, dword_5D5618, dword_5D5608, &anim, &v4);
+        weapon = tig_art_critter_id_weapon_get(aid);
+        sub_41DA40(specie, dword_5D5618, dword_5D5608, &anim, &weapon);
 
         if (anim == 24) {
-            v1 = 0;
-            v2 = 0;
-            v4 = 0;
+            armor = 0;
+            shield = 0;
+            weapon = 0;
         } else if (anim == 23) {
-            v4 = 1;
-            v2 = 0;
+            weapon = 1;
+            shield = 0;
         } else {
-            if (v4 == 1 && (anim == 3 || anim == 5)) {
-                v4 = 0;
+            if (weapon == 1 && (anim == 3 || anim == 5)) {
+                weapon = 0;
             } else if (anim >= 6 && anim <= 19) {
-                v4 = 0;
-                v2 = 0;
+                weapon = 0;
+                shield = 0;
             } else if (anim == 1) {
-                v2 = 0;
+                shield = 0;
             }
         }
 
-        tig_art_monster_id_create(num, v1, v2, 0, 0, anim, v4, 0, &aid);
+        tig_art_monster_id_create(specie, armor, shield, 0, 0, anim, weapon, 0, &aid);
         break;
     }
     case TIG_ART_TYPE_UNIQUE_NPC: {
         int num;
-        int v1;
+        int shield;
         int anim;
-        int v3;
+        int weapon;
 
         num = tig_art_num_get(aid);
-        v1 = sub_504150(aid);
+        shield = tig_art_critter_id_shield_get(aid);
         anim = tig_art_id_anim_get(aid);
-        v3 = sub_5040D0(aid);
-        sub_41DA40(num, dword_5D5600, dword_5D5610, &anim, &v3);
+        weapon = tig_art_critter_id_weapon_get(aid);
+        sub_41DA40(num, dword_5D5600, dword_5D5610, &anim, &weapon);
         if (anim == 24) {
-            v1 = 0;
-            v3 = 0;
+            shield = 0;
+            weapon = 0;
         } else if (anim == 23) {
-            v1 = 0;
-            v3 = 1;
+            shield = 0;
+            weapon = 1;
         } else {
-            if (v3 == 1 && (anim == 3 || anim == 5)) {
-                v3 = 0;
+            if (weapon == 1 && (anim == 3 || anim == 5)) {
+                weapon = 0;
             } else if (anim >= 6 && anim <= 19) {
-                v3 = 0;
-                v1 = 0;
+                weapon = 0;
+                shield = 0;
             } else if (anim == 1) {
-                v1 = 0;
+                shield = 0;
             }
         }
-        tig_art_unique_npc_id_create(num, v1, 0, 0, anim, v3, 0, &aid);
+        tig_art_unique_npc_id_create(num, shield, 0, 0, anim, weapon, 0, &aid);
         break;
     }
     case TIG_ART_TYPE_EYE_CANDY:
@@ -865,43 +867,45 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         }
         return TIG_OK;
     case TIG_ART_TYPE_CRITTER: {
-        int v1;
-        int v2;
+        int armor;
+        int race;
         char v3;
         int anim;
         const char* v5;
         const char* v6;
-        int v7;
+        int shield;
         char v8;
-        int v9;
+        int weapon;
         char v10;
 
-        v1 = sub_504030(aid);
-        if (v1 >= 9) {
+        armor = tig_art_critter_id_armor_get(aid);
+        if (armor >= TIG_ART_ARMOR_TYPE_COUNT) {
             return TIG_ERR_16;
         }
 
-        v2 = sub_503EA0(aid);
-        if (v1 == 4 || v1 == 6) {
+        race = tig_art_critter_id_race_get(aid);
+        if (armor == TIG_ART_ARMOR_TYPE_PLATE
+            || armor == TIG_ART_ARMOR_TYPE_PLATE_CLASSIC) {
             v3 = byte_5A11A0[2];
         } else {
-            v3 = byte_5A11A0[sub_503FB0(aid)];
+            v3 = byte_5A11A0[tig_art_critter_id_gender_get(aid)];
         }
         anim = tig_art_id_anim_get(aid);
-        v5 = off_5A11A4[v2];
+        v5 = off_5A11A4[race];
         if (anim == 24) {
             v6 = "XX";
             v3 = byte_5A11A0[2];
         } else {
-            v6 = off_5A11B8[v1];
+            v6 = off_5A11B8[armor];
         }
-        v7 = sub_504150(aid);
-        v8 = byte_5A119C[v7];
-        v9 = sub_5040D0(aid);
-        if (v9 == 7 && v7 == 1) {
+        shield = tig_art_critter_id_shield_get(aid);
+        v8 = byte_5A119C[shield];
+        weapon = tig_art_critter_id_weapon_get(aid);
+        if (weapon == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD
+            && shield == 1) {
             v10 = byte_5A11DC[3];
         } else {
-            v10 = byte_5A11DC[v9];
+            v10 = byte_5A11DC[weapon];
         }
 
         sprintf(path,
@@ -964,11 +968,11 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         return TIG_OK;
     case TIG_ART_TYPE_MONSTER: {
         int anim;
-        int v2;
+        int armor;
         const char* v3;
-        int v4;
+        int shield;
         char v5;
-        int v6;
+        int weapon;
         char v7;
 
         mes_file_entry.num = tig_art_num_get(aid);
@@ -977,15 +981,16 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         }
 
         anim = tig_art_id_anim_get(aid);
-        v2 = sub_504030(aid);
-        v3 = anim != 24 ? off_5A11B8[v2] : "XX";
-        v4 = sub_504150(aid);
-        v5 = byte_5A119C[v4];
-        v6 = sub_5040D0(aid);
-        if (v6 == 7 && v4 == 1) {
+        armor = tig_art_critter_id_armor_get(aid);
+        v3 = anim != 24 ? off_5A11B8[armor] : "XX";
+        shield = tig_art_critter_id_shield_get(aid);
+        v5 = byte_5A119C[shield];
+        weapon = tig_art_critter_id_weapon_get(aid);
+        if (weapon == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD
+            && shield == 1) {
             v7 = byte_5A11DC[3];
         } else {
-            v7 = byte_5A11DC[v6];
+            v7 = byte_5A11DC[weapon];
         }
 
         sprintf(path,
@@ -1000,9 +1005,9 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
     }
     case TIG_ART_TYPE_UNIQUE_NPC: {
         int anim;
-        int v2;
+        int shield;
         char v3;
-        int v4;
+        int weapon;
         char v5;
 
         mes_file_entry.num = tig_art_num_get(aid);
@@ -1011,13 +1016,14 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
         }
 
         anim = tig_art_id_anim_get(aid);
-        v2 = sub_504150(aid);
-        v3 = byte_5A119C[v2];
-        v4 = sub_5040D0(aid);
-        if (v4 == 7 && v2 == 1) {
+        shield = tig_art_critter_id_shield_get(aid);
+        v3 = byte_5A119C[shield];
+        weapon = tig_art_critter_id_weapon_get(aid);
+        if (weapon == TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD
+            && shield == 1) {
             v5 = byte_5A11DC[3];
         } else {
-            v5 = byte_5A11DC[v4];
+            v5 = byte_5A11DC[weapon];
         }
 
         sprintf(path,
@@ -1223,23 +1229,23 @@ tig_art_id_t sub_41E200(tig_art_id_t art_id)
         }
         case TIG_ART_TYPE_CRITTER: {
             int palette = tig_art_id_palette_get(art_id);
-            int v1 = sub_503FB0(art_id);
-            int v2 = sub_503EA0(art_id);
-            int v3 = sub_504030(art_id);
+            int gender = tig_art_critter_id_gender_get(art_id);
+            int race = tig_art_critter_id_race_get(art_id);
+            int armor = tig_art_critter_id_armor_get(art_id);
 
-            if (tig_art_critter_id_create(v1, v2, v3, 0, 0, 3, 0, 0, palette + 1, &art_id) == TIG_OK) {
+            if (tig_art_critter_id_create(gender, race, armor, 0, 0, 3, 0, 0, palette + 1, &art_id) == TIG_OK) {
                 break;
             }
 
-            if (tig_art_critter_id_create(v1 + 1, v2, v3, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
+            if (tig_art_critter_id_create(gender + 1, race, armor, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
                 break;
             }
 
-            if (tig_art_critter_id_create(0, v2 + 1, v3, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
+            if (tig_art_critter_id_create(0, race + 1, armor, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
                 break;
             }
 
-            if (tig_art_critter_id_create(0, 0, v3 + 1, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
+            if (tig_art_critter_id_create(0, 0, armor + 1, 0, 0, 3, 0, 0, 0, &art_id) == TIG_OK) {
                 break;
             }
 

@@ -1600,17 +1600,17 @@ static int dword_5C5130[] = {
 
 // 0x5C5170
 static struct {
-    int field_0;
+    int racial_type;
     bool available_for_female;
 } stru_5C5170[] = {
-    { 0, true },
-    { 1, false },
-    { 4, true },
-    { 0, true },
-    { 2, false },
-    { 2, false },
-    { 0, true },
-    { 3, false },
+    /*     RACE_HUMAN */ { TIG_ART_CRITTER_RACE_HUMAN, true },
+    /*     RACE_DWARF */ { TIG_ART_CRITTER_RACE_DWARF, false },
+    /*       RACE_ELF */ { TIG_ART_CRITTER_RACE_ELF, true },
+    /*  RACE_HALF_ELF */ { TIG_ART_CRITTER_RACE_HUMAN, true },
+    /*     RACE_GNOME */ { TIG_ART_CRITTER_RACE_HALFLING, false },
+    /*  RACE_HALFLING */ { TIG_ART_CRITTER_RACE_HALFLING, false },
+    /*  RACE_HALF_ORC */ { TIG_ART_CRITTER_RACE_HUMAN, true },
+    /* RACE_HALF_OGRE */ { TIG_ART_CRITTER_RACE_HALF_OGRE, false },
 };
 
 // 0x5C51B0
@@ -4798,7 +4798,7 @@ bool sub_5453A0(int64_t obj, int gender)
         return false;
     }
 
-    sub_441C70(obj, stru_5C5170[race].field_0, gender, race);
+    sub_441C70(obj, stru_5C5170[race].racial_type, gender, race);
     object_set_current_aid(obj, obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
 
     if (portrait_find_first(obj, &portrait)) {
@@ -4882,7 +4882,7 @@ void sub_545550(int64_t obj, int race)
             : GENDER_FEMALE;
     }
 
-    sub_441C70(obj, stru_5C5170[race].field_0, gender, race);
+    sub_441C70(obj, stru_5C5170[race].racial_type, gender, race);
     object_set_current_aid(obj, obj_field_int32_get(obj, OBJ_F_CURRENT_AID));
 
     if (portrait_find_first(obj, &portrait)) {

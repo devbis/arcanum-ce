@@ -3895,7 +3895,7 @@ void sub_441B60(int64_t a1, int64_t a2, char* buffer)
 }
 
 // 0x441C70
-void sub_441C70(object_id_t obj, int a2, int gender, int race)
+void sub_441C70(object_id_t obj, int racial_type, int gender, int race)
 {
     tig_art_id_t aid;
 
@@ -3903,8 +3903,8 @@ void sub_441C70(object_id_t obj, int a2, int gender, int race)
     stat_set_base(obj, STAT_GENDER, gender);
 
     aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
-    aid = sub_503ED0(aid, a2);
-    aid = sub_503FE0(aid, gender);
+    aid = tig_art_critter_id_race_set(aid, racial_type);
+    aid = tig_art_critter_id_gender_set(aid, gender);
     obj_field_int32_set(obj, OBJ_F_AID, aid);
     obj_field_int32_set(obj, OBJ_F_CURRENT_AID, aid);
     obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 10 * (gender + 2 * race + 1));

@@ -1322,8 +1322,8 @@ void combat_critter_toggle_combat_mode(int64_t obj)
             art_id = tig_art_id_anim_set(art_id, 0);
         }
 
-        art_id = sub_504100(art_id, 0);
-        art_id = sub_504180(art_id, 0);
+        art_id = tig_art_critter_id_weapon_set(art_id, TIG_ART_WEAPON_TYPE_NO_WEAPON);
+        art_id = tig_art_critter_id_shield_set(art_id, 0);
 
         if (is_pc) {
             if (is_tb) {
@@ -1340,7 +1340,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
     } else {
         obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, critter_flags | OCF_COMBAT_MODE_ACTIVE);
 
-        art_id = sub_504100(art_id, 1);
+        art_id = tig_art_critter_id_weapon_set(art_id, TIG_ART_WEAPON_TYPE_UNARMED);
 
         if (is_pc && is_tb) {
             sub_40FED0();

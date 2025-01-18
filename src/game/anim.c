@@ -8695,7 +8695,7 @@ bool sub_42B9C0(AnimRunInfo* run_info)
             tig_art_num_get(art_id),
             tig_art_id_anim_get(art_id));
         tig_debug_printf(" Weapon: %d, Specie: %d!\n",
-            sub_5040D0(art_id),
+            tig_art_critter_id_weapon_get(art_id),
             tig_art_monster_id_specie_get(art_id));
 
         return false;
@@ -12969,7 +12969,7 @@ bool sub_432990(AnimRunInfo* run_info)
     TigArtAnimData art_anim_data;
     int frame;
     int64_t target_obj;
-    int v1;
+    int weapon_type;
     int64_t weapon_obj;
     int delay;
 
@@ -13015,34 +13015,30 @@ bool sub_432990(AnimRunInfo* run_info)
     target_obj = run_info->cur_stack_data->params[AGDATA_TARGET_OBJ].obj;
 
     if (!combat_turn_based_is_active() && obj_type_is_critter(obj_type)) {
-        v1 = sub_5040D0(art_id);
-        if (v1 == 6 || v1 == 10) {
-            if (frame == art_anim_data.action_frame + 2
-                && sub_432CF0(obj)
-                && (obj_type == OBJ_TYPE_PC
-                    || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
-                && !sub_4294F0(obj, target_obj)) {
-                art_id = tig_art_id_frame_set(art_id, v1 - 3);
-                art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
-                object_set_current_aid(obj, art_id);
-                run_info->flags &= ~0x0C;
-            } else {
-                object_inc_current_aid(obj);
-            }
+        weapon_type = tig_art_critter_id_weapon_get(art_id);
+        if ((weapon_type == TIG_ART_WEAPON_TYPE_PISTOL
+                || weapon_type == TIG_ART_WEAPON_TYPE_RIFLE)
+            && frame == art_anim_data.action_frame + 2
+            && sub_432CF0(obj)
+            && (obj_type == OBJ_TYPE_PC
+                || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
+            && !sub_4294F0(obj, target_obj)) {
+            art_id = tig_art_id_frame_set(art_id, frame - 3);
+            art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
+            object_set_current_aid(obj, art_id);
+            run_info->flags &= ~0x0C;
+        } else if (weapon_type == TIG_ART_WEAPON_TYPE_BOW
+            && frame == art_anim_data.action_frame
+            && sub_432CF0(obj)
+            && (obj_type == OBJ_TYPE_PC
+                || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
+            && sub_4294F0(obj, target_obj)) {
+            art_id = tig_art_id_frame_set(art_id, frame - 3);
+            art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
+            object_set_current_aid(obj, art_id);
+            run_info->flags &= ~0x0C;
         } else {
-            if (v1 == 8
-                && frame == art_anim_data.action_frame
-                && sub_432CF0(obj)
-                && (obj_type == OBJ_TYPE_PC
-                    || (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) == 0)
-                && sub_4294F0(obj, target_obj)) {
-                art_id = tig_art_id_frame_set(art_id, v1 - 3);
-                art_id = tig_art_id_rotation_set(art_id, object_rot(obj, target_obj));
-                object_set_current_aid(obj, art_id);
-                run_info->flags &= ~0x0C;
-            } else {
-                object_inc_current_aid(obj);
-            }
+            object_inc_current_aid(obj);
         }
     } else {
         object_inc_current_aid(obj);
@@ -15389,9 +15385,9 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
     int fps;
     int art_type;
     int v1;
-    int v2;
+    int race;
     int anim;
-    int v3;
+    int weapon_type;
     int v12;
     int v13;
     int v14;
@@ -15415,14 +15411,15 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
 
     v1 = 0;
     if (art_type == TIG_ART_TYPE_CRITTER) {
-        v2 = sub_503EA0(art_id);
-        if (v2 == 1 || v2 == 2) {
+        race = tig_art_critter_id_race_get(art_id);
+        if (race == TIG_ART_CRITTER_RACE_DWARF
+            || race == TIG_ART_CRITTER_RACE_HALFLING) {
             v1 = 4;
         }
     }
 
     anim = tig_art_id_anim_get(art_id);
-    v3 = sub_5040D0(art_id);
+    weapon_type = tig_art_critter_id_weapon_get(art_id);
     switch (anim) {
     case 1:
         v12 = v1 + 17;
@@ -15440,37 +15437,37 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
         v14 = v1 + 30;
         break;
     case 20:
-        switch (v3) {
-        case 1:
-        case 3:
+        switch (weapon_type) {
+        case TIG_ART_WEAPON_TYPE_UNARMED:
+        case TIG_ART_WEAPON_TYPE_SWORD:
             v12 = 15;
             v13 = 7;
             v14 = 23;
             break;
-        case 2:
-        case 8:
+        case TIG_ART_WEAPON_TYPE_DAGGER:
+        case TIG_ART_WEAPON_TYPE_BOW:
             v12 = 10;
             v13 = 6;
             v14 = 14;
             break;
-        case 4:
-        case 5:
-        case 7:
+        case TIG_ART_WEAPON_TYPE_AXE:
+        case TIG_ART_WEAPON_TYPE_MACE:
+        case TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD:
             v12 = 14;
             v13 = 8;
             v14 = 20;
             break;
-        case 6:
+        case TIG_ART_WEAPON_TYPE_PISTOL:
             v12 = 8;
             v13 = 3;
             v14 = 12;
             break;
-        case 10:
+        case TIG_ART_WEAPON_TYPE_RIFLE:
             v12 = 6;
             v13 = 3;
             v14 = 10;
             break;
-        case 13:
+        case TIG_ART_WEAPON_TYPE_STAFF:
             v12 = 12;
             v13 = 8;
             v14 = 16;
@@ -15481,37 +15478,37 @@ int sub_437990(int64_t obj, tig_art_id_t art_id, int speed)
         }
         break;
     case 21:
-        switch (v3) {
-        case 1:
+        switch (weapon_type) {
+        case TIG_ART_WEAPON_TYPE_UNARMED:
             v12 = 13;
             v13 = 8;
             v14 = 18;
             break;
-        case 2:
-        case 8:
-        case 13:
+        case TIG_ART_WEAPON_TYPE_DAGGER:
+        case TIG_ART_WEAPON_TYPE_BOW:
+        case TIG_ART_WEAPON_TYPE_STAFF:
             v12 = 10;
             v13 = 6;
             v14 = 14;
             break;
-        case 3:
+        case TIG_ART_WEAPON_TYPE_SWORD:
             v12 = 14;
             v13 = 8;
             v14 = 20;
             break;
-        case 4:
-        case 5:
+        case TIG_ART_WEAPON_TYPE_AXE:
+        case TIG_ART_WEAPON_TYPE_MACE:
             v12 = 11;
             v13 = 7;
             v14 = 15;
             break;
-        case 6:
-        case 10:
+        case TIG_ART_WEAPON_TYPE_PISTOL:
+        case TIG_ART_WEAPON_TYPE_RIFLE:
             v12 = 6;
             v13 = 3;
             v14 = 10;
             break;
-        case 7:
+        case TIG_ART_WEAPON_TYPE_TWO_HANDED_SWORD:
             v12 = 13;
             v13 = 9;
             v14 = 17;
