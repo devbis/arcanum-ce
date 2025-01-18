@@ -178,7 +178,7 @@ bool tile_is_blocking(int64_t loc, bool a2)
 
     art_id = tile_art_id_at(loc);
     if (tig_art_type(art_id) == TIG_ART_TYPE_FACADE) {
-        return sub_504AC0(art_id) == 0;
+        return !tig_art_facade_id_walkable_get(art_id);
     }
 
     v1 = a_name_tile_is_blocking(art_id);

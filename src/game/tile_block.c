@@ -125,7 +125,7 @@ void tileblock_render(UnknownContext* render_info)
 
                 aid = sector->tiles.art_ids[tile];
                 if ((tig_art_type(aid) == TIG_ART_TYPE_FACADE
-                        && !sub_504AC0(aid))
+                        && !tig_art_facade_id_walkable_get(aid))
                     || a_name_tile_is_blocking(aid)) {
                     occupied = true;
                 } else {
