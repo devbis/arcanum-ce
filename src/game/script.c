@@ -2429,12 +2429,12 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
             TeleportData teleport_data;
             teleport_data.flags = TELEPORT_FADE_IN | TELEPORT_FADE_OUT;
-            teleport_data.fade_out.field_0 = 0;
+            teleport_data.fade_out.flags = 0;
             teleport_data.fade_out.field_10 = 0;
             teleport_data.fade_out.duration = 2.0f;
             teleport_data.fade_out.color = tig_color_make(0, 0, 0);
             teleport_data.fade_out.steps = 48;
-            teleport_data.fade_in.field_0 = 1;
+            teleport_data.fade_in.flags = FADE_IN;
             teleport_data.fade_in.steps = 48;
             teleport_data.fade_in.duration = 2.0f;
 
@@ -2469,12 +2469,12 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
             TeleportData teleport_data;
             teleport_data.flags = 0;
-            teleport_data.fade_out.field_0 = 0;
+            teleport_data.fade_out.flags = 0;
             teleport_data.fade_out.field_10 = 0;
             teleport_data.fade_out.duration = 2.0f;
             teleport_data.fade_out.color = tig_color_make(0, 0, 0);
             teleport_data.fade_out.steps = 48;
-            sub_4BDFA0(&(teleport_data.fade_out));
+            gfade_run(&(teleport_data.fade_out));
             tb_clear();
 
             teleport_data.time = script_get_value(action->op_type[0], action->op_value[0], state);
@@ -2519,13 +2519,13 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
                 sub_45A950(&datetime, 1000 * delay);
                 sub_45B800(&timeevent, &datetime);
             } else {
-                teleport_data.fade_in.field_0 = 1;
+                teleport_data.fade_in.flags = FADE_IN;
                 teleport_data.fade_in.duration = 2.0f;
                 teleport_data.fade_in.steps = 48;
                 script_iso_invalidate_rect(NULL);
                 script_iso_window_redraw();
                 tig_window_display();
-                sub_4BDFA0(&(teleport_data.fade_in));
+                gfade_run(&(teleport_data.fade_in));
             }
         }
         return NEXT;

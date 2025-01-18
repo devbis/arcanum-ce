@@ -470,12 +470,12 @@ void sub_57B9E0()
         return;
     }
 
-    fade_data.field_0 = 0;
+    fade_data.flags = 0;
     fade_data.field_10 = 0;
     fade_data.duration = 2.0f;
     fade_data.steps = 48;
     fade_data.color = tig_color_make(0, 0, 0);
-    sub_4BDFA0(&fade_data);
+    gfade_run(&fade_data);
     sub_57D640();
     dword_6834E0 = true;
 }
@@ -491,10 +491,10 @@ void sub_57BA70()
 
     sub_57D620();
 
-    fade_data.field_0 = 1;
+    fade_data.flags = FADE_IN;
     fade_data.duration = 2.0f;
     fade_data.steps = 48;
-    sub_4BDFA0(&fade_data);
+    gfade_run(&fade_data);
 
     dword_6834E0 = false;
     sub_57B450();

@@ -228,12 +228,12 @@ void sub_5699F0()
 {
     FadeData fade_data;
 
-    fade_data.field_0 = 0;
+    fade_data.flags = 0;
     fade_data.field_10 = 0;
     fade_data.duration = 2.0f;
     fade_data.steps = 48;
     fade_data.color = tig_color_make(0, 0, 0);
-    sub_4BDFA0(&fade_data);
+    gfade_run(&fade_data);
 }
 
 // 0x569A60
@@ -241,10 +241,10 @@ void sub_569A60()
 {
     FadeData fade_data;
 
-    fade_data.field_0 = 1;
+    fade_data.flags = FADE_IN;
     fade_data.duration = 2.0f;
     fade_data.steps = 48;
-    sub_4BDFA0(&fade_data);
+    gfade_run(&fade_data);
 }
 
 // 0x569A90

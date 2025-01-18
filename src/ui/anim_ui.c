@@ -173,10 +173,10 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
                 gameuilib_reset();
                 mainmenu_ui_start(0);
 
-                fade_data.field_0 = 1;
+                fade_data.flags = FADE_IN;
                 fade_data.duration = 2.0f;
                 fade_data.steps = 48;
-                sub_4BDFA0(&fade_data);
+                gfade_run(&fade_data);
             }
         }
         break;
@@ -190,10 +190,10 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
         } else {
             sub_569600(0);
             if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-                fade_data.field_0 = 1;
+                fade_data.flags = FADE_IN;
                 fade_data.duration = 2.0f;
                 fade_data.steps = 48;
-                sub_4BDFA0(&fade_data);
+                gfade_run(&fade_data);
 
                 if (sub_460BB0()) {
                     sub_4A4320();
@@ -205,10 +205,10 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
             gameuilib_reset();
             mainmenu_ui_start(0);
 
-            fade_data.field_0 = 1;
+            fade_data.flags = FADE_IN;
             fade_data.duration = 2.0f;
             fade_data.steps = 48;
-            sub_4BDFA0(&fade_data);
+            gfade_run(&fade_data);
         }
         break;
     case 12:

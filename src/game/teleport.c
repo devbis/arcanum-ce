@@ -126,7 +126,7 @@ bool teleport_do(TeleportData* teleport_data)
         current_teleport_data.flags |= TELEPORT_0x80000000;
 
         if ((current_teleport_data.flags & TELEPORT_FADE_OUT) != 0) {
-            sub_4BDFA0(&(current_teleport_data.fade_out));
+            gfade_run(&(current_teleport_data.fade_out));
         }
 
         if ((current_teleport_data.flags & TELEPORT_0x0020) != 0) {
@@ -167,7 +167,7 @@ bool teleport_process(TeleportData* teleport_data)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
         if ((teleport_data->flags & TELEPORT_FADE_OUT) != 0) {
-            sub_4BDFA0(&(teleport_data->fade_out));
+            gfade_run(&(teleport_data->fade_out));
         }
     }
 
@@ -274,7 +274,7 @@ bool teleport_process(TeleportData* teleport_data)
             teleport_iso_window_invalidate_rect(NULL);
             teleport_iso_window_redraw();
             tig_window_display();
-            sub_4BDFA0(&(teleport_data->fade_in));
+            gfade_run(&(teleport_data->fade_in));
         }
     }
 

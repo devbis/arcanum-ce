@@ -2526,12 +2526,12 @@ void sub_5412E0(bool a1)
                     exit(EXIT_FAILURE);
                 }
 
-                fade_data.field_0 = 0;
+                fade_data.flags = 0;
                 fade_data.color = 0;
                 fade_data.steps = 64;
                 fade_data.duration = 3.0f;
                 fade_data.field_10 = 0;
-                sub_4BDFA0(&fade_data);
+                gfade_run(&fade_data);
 
                 teleport_data.flags = TELEPORT_MOVIE1 | TELEPORT_MOVIE2 | TELEPORT_FADE_IN;
                 teleport_data.obj = pc_obj;
@@ -2541,7 +2541,7 @@ void sub_5412E0(bool a1)
                 teleport_data.movie_flags1 = 0;
                 teleport_data.movie2 = 7;
                 teleport_data.movie_flags2 = 0;
-                teleport_data.fade_in.field_0 = 1;
+                teleport_data.fade_in.flags = FADE_IN;
                 teleport_data.fade_in.steps = 64;
                 teleport_data.fade_in.duration = 3.0f;
                 teleport_data.fade_in.color = tig_color_make(0, 0, 0);
