@@ -21,11 +21,11 @@ void tb_resize(GameResizeInfo* resize_info);
 bool tb_update_view(ViewOptions* view_options);
 void tb_close();
 void tb_toggle();
-void tb_ping(unsigned int time);
+void tb_ping(tig_timestamp_t time);
 void tb_render(UnknownContext* render_info);
 void tb_add(int64_t obj, int type, const char* str);
 void tb_expire_in(int64_t obj, int seconds);
-void tb_move(int64_t obj, int64_t loc, int offset_x, int offset_y);
+void tb_notify_moved(int64_t obj, int64_t loc, int offset_x, int offset_y);
 void tb_remove(int64_t obj);
 void tb_clear();
 

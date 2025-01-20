@@ -2062,7 +2062,7 @@ void sub_43E770(int64_t obj, int64_t loc, int offset_x, int offset_y)
     }
 
     if ((flags & OF_TEXT) != 0) {
-        tb_move(obj, loc, offset_x, offset_y);
+        tb_notify_moved(obj, loc, offset_x, offset_y);
     }
 
     if ((flags & OF_TEXT_FLOATER) != 0) {
@@ -4216,7 +4216,7 @@ void sub_4423E0(int64_t obj, int offset_x, int offset_y)
     flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
 
     if ((flags & OF_TEXT) != 0) {
-        tb_move(obj, loc, offset_x, offset_y);
+        tb_notify_moved(obj, loc, offset_x, offset_y);
     }
 
     if ((flags & OF_TEXT_FLOATER) != 0) {
