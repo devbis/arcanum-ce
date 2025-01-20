@@ -1370,7 +1370,7 @@ int item_count_items_matching_prototype(int64_t obj, int64_t a2)
     for (index = 0; index < cnt; index++) {
         item_obj = obj_arrayfield_handle_get(obj, inventory_list_fld, index);
         if (item_obj != a2
-            && obj_field_int32_get(item_obj, OBJ_F_PROTOTYPE_HANDLE) == prototype_obj) {
+            && obj_field_handle_get(item_obj, OBJ_F_PROTOTYPE_HANDLE) == prototype_obj) {
             ret++;
         }
     }
