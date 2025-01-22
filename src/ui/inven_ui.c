@@ -365,7 +365,7 @@ static tig_font_handle_t dword_68345C;
 static tig_button_handle_t dword_683460;
 
 // 0x683464
-static int dword_683464;
+static int inven_ui_type;
 
 // 0x68346C
 static bool dword_68346C;
@@ -451,7 +451,7 @@ void inven_ui_reset()
 }
 
 // 0x572240
-bool sub_572240(int64_t a1, int64_t a2, int a3)
+bool sub_572240(int64_t a1, int64_t a2, int type)
 {
     Packet100 pkt;
 
@@ -465,23 +465,23 @@ bool sub_572240(int64_t a1, int64_t a2, int a3)
         pkt.subtype = 12;
         sub_4F0640(a1, &(pkt.d.z.field_8));
         sub_4F0640(a2, &(pkt.d.z.field_20));
-        pkt.d.z.field_38 = a3;
+        pkt.d.z.field_38 = type;
         pkt.d.z.field_3C = 0;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
         return true;
     }
 
-    if (!sub_572370(a1, a2, a3)) {
+    if (!sub_572370(a1, a2, type)) {
         return false;
     }
 
-    if (!sub_572510(a1, a2, a3)) {
+    if (!sub_572510(a1, a2, type)) {
         return false;
     }
 
-    sub_572640(a1, a2, a3);
-    return inven_ui_create(a1, a2, a3);
+    sub_572640(a1, a2, type);
+    return inven_ui_create(a1, a2, type);
 }
 
 // 0x572340
@@ -501,7 +501,7 @@ bool sub_572340()
 }
 
 // 0x572370
-bool sub_572370(int64_t a1, int64_t a2, int a3)
+bool sub_572370(int64_t a1, int64_t a2, int type)
 {
     int rot;
     tig_art_id_t art_id;
@@ -521,7 +521,7 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
         return false;
     }
 
-    if (a3 == 2 || a3 == 3) {
+    if (type == 2 || type == 3) {
         rot = object_rot(a1, a2);
         art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
         art_id = tig_art_id_rotation_set(art_id, rot);
@@ -531,9 +531,9 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
         }
     }
 
-    if (a2 != OBJ_HANDLE_NULL && (a3 == 2 || a3 == 4)) {
+    if (a2 != OBJ_HANDLE_NULL && (type == 2 || type == 4)) {
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-            if (a3 == 2) {
+            if (type == 2) {
                 err = ai_attempt_open_container(a1, a2);
                 if (err != AI_ATTEMPT_OPEN_CONTAINER_OK) {
                     mes_file_entry.num = err;
@@ -553,7 +553,7 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
                 }
             }
         } else {
-            if (a3 == 2) {
+            if (type == 2) {
                 if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_USE, 0)) {
                     return false;
                 }
@@ -565,13 +565,13 @@ bool sub_572370(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x572510
-bool sub_572510(int64_t a1, int64_t a2, int a3)
+bool sub_572510(int64_t a1, int64_t a2, int type)
 {
     if (!sub_551A80(0)) {
         return false;
     }
 
-    switch (a3) {
+    switch (type) {
     case 0:
         if (!sub_551A80(8)) {
             return false;
@@ -624,7 +624,7 @@ bool sub_572510(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x572640
-void sub_572640(int64_t a1, int64_t a2, int a3)
+void sub_572640(int64_t a1, int64_t a2, int type)
 {
     int64_t substitute_inventory_obj;
     int64_t v2;
@@ -635,7 +635,7 @@ void sub_572640(int64_t a1, int64_t a2, int a3)
         return;
     }
 
-    if (a3 == 1) {
+    if (type == 1) {
         substitute_inventory_obj = critter_substitute_inventory_get(a2);
         if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
             v2 = sub_468570(8);
@@ -651,9 +651,9 @@ void sub_572640(int64_t a1, int64_t a2, int a3)
             item_identify_all(a2);
             item_identify_all(substitute_inventory_obj);
         }
-    } else if (a3 == 2 || a3 == 4) {
+    } else if (type == 2 || type == 4) {
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-            if (a3 == 2) {
+            if (type == 2) {
                 if (tig_art_id_frame_get(obj_field_int32_get(a2, OBJ_F_CURRENT_AID)) == 0) {
                     sub_4EEF20(a2);
                     gsound_play_sfx_id(sub_4F0FD0(a2, 0), 1);
@@ -663,7 +663,7 @@ void sub_572640(int64_t a1, int64_t a2, int a3)
                 sub_463E20(a2);
             }
         } else {
-            if (a3 == 2) {
+            if (type == 2) {
                 gsound_play_sfx_id(3007, 1);
             }
         }
@@ -671,7 +671,7 @@ void sub_572640(int64_t a1, int64_t a2, int a3)
 }
 
 // 0x5727B0
-bool inven_ui_create(int64_t a1, int64_t a2, int a3)
+bool inven_ui_create(int64_t a1, int64_t a2, int type)
 {
     TigRect rect;
     TigButtonData button_data;
@@ -682,7 +682,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     tig_button_handle_t button_group[2];
     unsigned int critter_flags2;
 
-    dword_683464 = a3;
+    inven_ui_type = type;
     qword_6813A8 = a2;
     qword_682C78 = a2;
     dword_681514 = false;
@@ -722,9 +722,9 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     dword_681100 = TIG_BUTTON_HANDLE_INVALID;
     dword_681398 = TIG_BUTTON_HANDLE_INVALID;
 
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         button_data.mouse_down_snd_id = -1;
         button_data.mouse_up_snd_id = -1;
         tig_art_interface_id_create(676, 0, 0, 0, &(button_data.art_id));
@@ -816,7 +816,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
         button_data.flags = TIG_BUTTON_FLAG_0x01;
         button_data.mouse_down_snd_id = 3000;
         button_data.mouse_up_snd_id = 3001;
-        if ( dword_683464 == 2 )
+        if ( inven_ui_type == 2 )
         {
             tig_art_interface_id_create(808, 0, 0, 0, &(button_data.art_id));
             button_data.x = 301;
@@ -854,7 +854,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
         if (obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) != OBJ_TYPE_CONTAINER) {
             button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
             tig_art_interface_id_create(338, 0, 0, 0, &button_data.art_id);
-            if (dword_683464 == 1) {
+            if (inven_ui_type == 1) {
                 button_data.x = 8;
                 button_data.y = 123;
             } else {
@@ -868,7 +868,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
             }
 
             tig_art_interface_id_create(339, 0, 0, 0, &button_data.art_id);
-            if (dword_683464 == 1) {
+            if (inven_ui_type == 1) {
                 button_data.x = 46;
                 button_data.y = 123;
             } else {
@@ -915,9 +915,9 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     qword_6814F8 = a1;
     sub_466260(qword_6814F8, dword_68111C);
 
-    if (dword_683464 == 4
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 4
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         dword_681394 = 0;
         dword_681118 = 0;
     } else {
@@ -931,7 +931,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
         stru_681380.y = 331;
     }
 
-    if (dword_683464 == 1) {
+    if (inven_ui_type == 1) {
         dword_681448 = 1;
         dword_682C70 = 345;
         stru_681108.x = 703;
@@ -945,7 +945,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     if (qword_6813A8 != OBJ_HANDLE_NULL) {
         sub_441B60(qword_682C78, qword_6814F8, byte_682C8C);
         dword_681510 = 4;
-        if (dword_683464 == 1) {
+        if (inven_ui_type == 1) {
             dword_681510 = 5;
             qword_6813A8 = critter_substitute_inventory_get(qword_682C78);
             if (qword_6813A8 != OBJ_HANDLE_NULL) {
@@ -953,7 +953,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
             } else {
                 qword_6813A8 = qword_682C78;
             }
-        } else if ((dword_683464 == 2 || dword_683464 == 4)
+        } else if ((inven_ui_type == 2 || inven_ui_type == 4)
             && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             dword_681510 = 88;
             sub_468190();
@@ -965,7 +965,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     byte_68241C[0] = '\0';
     dword_681440 = -1;
 
-    if (dword_683464 == 1 && critter_leader_get(qword_682C78) == a1) {
+    if (inven_ui_type == 1 && critter_leader_get(qword_682C78) == a1) {
         dword_6810FC = 1;
         if (critter_follower_next(qword_682C78) != qword_682C78) {
             button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -1013,16 +1013,16 @@ bool inven_ui_create(int64_t a1, int64_t a2, int a3)
     location_origin_set(obj_field_int64_get(qword_6814F8, OBJ_F_LOCATION));
 
     v2.window_handle = inven_ui_window_handle;
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         rect.x = 11;
         rect.y = 9;
         art_id = 233;
     } else {
         rect.x = 16;
         rect.y = 17;
-        art_id = dword_683464 == 1 ? 231 : 232;
+        art_id = inven_ui_type == 1 ? 231 : 232;
     }
 
     rect.width = 89;
@@ -1076,9 +1076,9 @@ void inven_ui_destroy()
     inven_ui_created = false;
     sub_4A53B0(qword_6814F8, 0);
 
-    if ((dword_683464 == 2 || dword_683464 == 4)
+    if ((inven_ui_type == 2 || inven_ui_type == 4)
         && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-        if (dword_683464 == 2) {
+        if (inven_ui_type == 2) {
             art_id = obj_field_int32_get(qword_6813A8, OBJ_F_CURRENT_AID);
             if (tig_art_id_frame_get(art_id) == 1
                 && (obj_field_int32_get(qword_6813A8, OBJ_F_CONTAINER_FLAGS) & OCOF_STICKY) == 0) {
@@ -1365,7 +1365,7 @@ static inline void inven_ui_message_filter_handle_mouse_idle(TigMessage* msg)
             qword_681458 = v1;
             if (qword_681458 != OBJ_HANDLE_NULL) {
                 sub_57CCF0(qword_6814F8, qword_681458);
-                switch (dword_683464) {
+                switch (inven_ui_type) {
                 case 1:
                     sub_578330(qword_681458, v2);
                     break;
@@ -1399,7 +1399,7 @@ static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
                 && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
                 if (dword_6813A4 == 224) {
                     if (qword_681450 == qword_6813A8) {
-                        switch (dword_683464) {
+                        switch (inven_ui_type) {
                         case 1:
                             if (dword_6810FC) {
                                 dword_6813A4 = 225;
@@ -1456,9 +1456,9 @@ static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
                 && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
                 if (dword_681504 == 342) {
                     if ((qword_681450 == qword_6813A8
-                            && (dword_683464 == 1
-                                || dword_683464 == 2
-                                || dword_683464 == 3))
+                            && (inven_ui_type == 1
+                                || inven_ui_type == 2
+                                || inven_ui_type == 3))
                         || sub_462C30(qword_6814F8, qword_6810E0)) {
                         dword_681504 = 347;
                     } else {
@@ -1551,7 +1551,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         && msg->data.mouse.y >= stru_6813B0.y
         && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
         if (qword_681450 == qword_6813A8) {
-            switch (dword_683464) {
+            switch (inven_ui_type) {
             case 1:
                 if (dword_6810FC) {
                     sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 2);
@@ -1597,9 +1597,9 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         && msg->data.mouse.y >= stru_681380.y
         && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
         if ((qword_681450 == qword_6813A8
-                && (dword_683464 == 1
-                    || dword_683464 == 2
-                    || dword_683464 == 3)
+                && (inven_ui_type == 1
+                    || inven_ui_type == 2
+                    || inven_ui_type == 3)
             || sub_462C30(qword_6814F8, qword_6810E0))) {
             sub_575770();
             qword_6810E0 = OBJ_HANDLE_NULL;
@@ -1609,7 +1609,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         }
 
         if ((obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) == 0
-            || dword_683464) {
+            || inven_ui_type) {
             v3 = qword_6810E0;
             sub_575770();
             if (!combat_turn_based_is_active()
@@ -1646,13 +1646,13 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
     }
 
     if (IS_WEAR_INV_LOC(inventory_location)) {
-        if (dword_683464 == 1) {
+        if (inven_ui_type == 1) {
             if (qword_681450 != qword_6814F8 && v2 != qword_6814F8 && !dword_6810FC) {
                 sub_575770();
                 return false;
             }
         } else {
-            if (dword_683464 == 3 && qword_681450 != qword_6814F8 && v2 != qword_6814F8) {
+            if (inven_ui_type == 3 && qword_681450 != qword_6814F8 && v2 != qword_6814F8) {
                 sub_575770();
                 return false;
             }
@@ -1694,7 +1694,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             return false;
         }
 
-        if ((dword_683464 == 1 || dword_683464 == 3) && qword_681450 != v2) {
+        if ((inven_ui_type == 1 || inven_ui_type == 3) && qword_681450 != v2) {
             sub_575770();
             return false;
         }
@@ -1753,7 +1753,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
     if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
         if (!sub_541680()) {
             if (qword_6810E0 != OBJ_HANDLE_NULL) {
-                if (!dword_683464) {
+                if (!inven_ui_type) {
                     sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 4);
                     redraw_inven(false);
                     sub_466260(qword_6814F8, dword_68111C);
@@ -1778,7 +1778,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
             return false;
         }
 
-        switch (dword_683464) {
+        switch (inven_ui_type) {
         case 5:
             sub_5786C0(v1);
             if (dword_681440 > 0
@@ -1842,7 +1842,7 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
         return false;
     }
 
-    if (dword_683464 == 0) {
+    if (inven_ui_type == 0) {
         inventory_location = item_inventory_location_get(v1);
         if (!IS_WEAR_INV_LOC(inventory_location)) {
             inventory_location = item_location_get(v1);
@@ -1858,7 +1858,7 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
                 }
             }
         }
-    } else if (dword_683464 > 0 && dword_683464 <= 3) {
+    } else if (inven_ui_type > 0 && inven_ui_type <= 3) {
         v3 = qword_6814F8;
         if (v2 == qword_6814F8) {
             v3 = qword_6813A8;
@@ -1959,9 +1959,9 @@ bool inven_ui_message_filter(TigMessage* msg)
             }
         } else if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN
             && !dword_68346C
-            && dword_683464 != 4
-            && dword_683464 != 5
-            && dword_683464 != 6) {
+            && inven_ui_type != 4
+            && inven_ui_type != 5
+            && inven_ui_type != 6) {
             // 0x574080
             if (inven_ui_message_filter_handle_mouse_lbutton_down(msg)) {
                 return true;
@@ -1974,10 +1974,10 @@ bool inven_ui_message_filter(TigMessage* msg)
             }
         } else if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP
             && qword_6810E0 == OBJ_HANDLE_NULL
-            && (dword_683464 == 0
-                || dword_683464 == 1
-                || dword_683464 == 2
-                || dword_683464 == 3)) {
+            && (inven_ui_type == 0
+                || inven_ui_type == 1
+                || inven_ui_type == 2
+                || inven_ui_type == 3)) {
             // 0x5742A4
             if (inven_ui_message_filter_handle_mouse_rbutton_up(msg, &v45)) {
                 return true;
@@ -1986,7 +1986,7 @@ bool inven_ui_message_filter(TigMessage* msg)
         break;
     }
 
-    if (dword_683464 == 1
+    if (inven_ui_type == 1
         && qword_6810E0 == OBJ_HANDLE_NULL
         && sub_551A00() != 13
         && (critter_is_sleeping(qword_682C78) || !critter_is_active(qword_682C78))) {
@@ -2006,7 +2006,7 @@ void sub_574FD0(bool a1)
 {
     int64_t v1;
     int64_t v2;
-    int v3;
+    int type;
 
     sub_575770();
 
@@ -2024,9 +2024,9 @@ void sub_574FD0(bool a1)
 
     if (v1 != qword_6813A8) {
         v2 = qword_6814F8;
-        v3 = dword_683464;
+        type = inven_ui_type;
         inven_ui_destroy();
-        sub_572240(v2, v1, v3);
+        sub_572240(v2, v1, type);
     }
 }
 
@@ -2057,7 +2057,7 @@ bool sub_575100(bool* a1)
 {
     int64_t v1;
 
-    if (dword_683464 != 3 || qword_681450 != qword_6814F8) {
+    if (inven_ui_type != 3 || qword_681450 != qword_6814F8) {
         return false;
     }
 
@@ -2076,7 +2076,7 @@ bool sub_575180(bool* a1)
 {
     int64_t v1;
 
-    if (dword_683464 != 3 || qword_681450 == qword_6814F8) {
+    if (inven_ui_type != 3 || qword_681450 == qword_6814F8) {
         return false;
     }
 
@@ -2093,7 +2093,7 @@ bool sub_575180(bool* a1)
 // 0x575200
 void sub_575200(int a1)
 {
-    if (dword_683464 == 1 && qword_681450 != qword_6814F8) {
+    if (inven_ui_type == 1 && qword_681450 != qword_6814F8) {
         if (dword_681440 == -1 || qword_6810E0 != qword_681458) {
             sub_578330(qword_6810E0, qword_682C78);
         }
@@ -2121,7 +2121,7 @@ void sub_575360(int a1)
 {
     int cost;
 
-    if (dword_683464 != 1) {
+    if (inven_ui_type != 1) {
         sub_5788C0(qword_6810E0, qword_6813A8, a1, 1);
         qword_681458 = OBJ_HANDLE_NULL;
         return;
@@ -2168,7 +2168,7 @@ void sub_5754C0(int x, int y)
     entry->field_8 = qword_6810E0;
     entry->field_10 = qword_681450;
     entry->field_18 = qword_6814F8;
-    entry->field_20 = dword_683464;
+    entry->field_20 = inven_ui_type;
     entry->field_24 = dword_6810E8;
     entry->field_28 = dword_681508;
 
@@ -2359,7 +2359,7 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
     int col;
     int row;
 
-    switch (dword_683464) {
+    switch (inven_ui_type) {
     case 0:
     case 5:
     case 6:
@@ -2592,7 +2592,7 @@ void redraw_inven(bool a1)
     tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
     // 0x5765A5
-    switch (dword_683464) {
+    switch (inven_ui_type) {
     case 1:
         if (sub_553D10(qword_6814F8, qword_682C78, &portrait)) {
             portrait_draw_native(qword_682C78, portrait, inven_ui_window_handle, 183, 33);
@@ -2775,7 +2775,7 @@ void redraw_inven(bool a1)
     }
 
     // 0x576C38
-    if (dword_683464 == 0) {
+    if (inven_ui_type == 0) {
         text_rects = stru_5CAE98;
     } else {
         if (dword_68150C) {
@@ -2830,9 +2830,9 @@ void redraw_inven(bool a1)
     }
 
     // 0x576DFE
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         text_rects = stru_5CAEF8;
     } else {
         if (dword_68150C) {
@@ -2963,9 +2963,9 @@ void redraw_inven(bool a1)
     }
 
     // 0x5771C8
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         text_rects = stru_5CAC58;
         memset(v1, 0, sizeof(v1));
     } else {
@@ -3005,10 +3005,10 @@ void redraw_inven(bool a1)
 
         // 0x57730A
         if (IS_WEAR_INV_LOC(inventory_location)) {
-            if (dword_683464 == 0
+            if (inven_ui_type == 0
                 || dword_68150C == 1
-                || dword_683464 == 5
-                || dword_683464 == 6) {
+                || inven_ui_type == 5
+                || inven_ui_type == 6) {
                 weapon_too_heavy = false;
                 if (inventory_location == ITEM_INV_LOC_WEAPON) {
                     weapon_min_str = item_weapon_min_strength(item_obj, qword_6814F8);
@@ -3151,8 +3151,8 @@ void redraw_inven(bool a1)
 
     // 0x5778D8
     if (qword_6813A8 != OBJ_HANDLE_NULL
-        && dword_683464 != 5
-        && dword_683464 != 6) {
+        && inven_ui_type != 5
+        && inven_ui_type != 6) {
         int64_t target_obj;
         int v102;
         int v109;
@@ -3163,7 +3163,7 @@ void redraw_inven(bool a1)
             target_obj = qword_682C78;
             memset(v1, 9, sizeof(v1));
 
-            if (dword_683464 == 1) {
+            if (inven_ui_type == 1) {
                 tig_art_interface_id_create(337, 0, 0, 0, &(art_blit_info.art_id));
             } else {
                 tig_art_interface_id_create(349, 0, 0, 0, &(art_blit_info.art_id));
@@ -3182,7 +3182,7 @@ void redraw_inven(bool a1)
             dst_rect.width = art_frame_data.width;
             dst_rect.height = art_frame_data.width;
 
-            if (dword_683464 == 1) {
+            if (inven_ui_type == 1) {
                 dst_rect.y = 157;
                 text_rects = stru_5CAD78;
             } else {
@@ -3211,7 +3211,7 @@ void redraw_inven(bool a1)
         } else {
             target_obj = qword_6813A8;
             v112 = 8;
-            if (dword_683464 == 1) {
+            if (inven_ui_type == 1) {
                 v102 = 168;
                 v109 = 224;
             } else {
@@ -3412,9 +3412,9 @@ tig_art_id_t sub_5782D0()
     tig_art_id_t art_id;
     int num;
 
-    if (dword_683464 == 0 || dword_683464 == 5 || dword_683464 == 6) {
+    if (inven_ui_type == 0 || inven_ui_type == 5 || inven_ui_type == 6) {
         num = 223;
-    } else if (dword_683464 == 1) {
+    } else if (inven_ui_type == 1) {
         num = dword_681100 != -1 ? 825 : 235;
     } else {
         num = 234;
@@ -3618,7 +3618,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
             sub_462410(item_obj, &qty_fld);
             qty = obj_field_int32_get(item_obj, qty_fld);
             if (qty != 1) {
-                if (dword_683464 == 2
+                if (inven_ui_type == 2
                     && (a4 & 0x01) != 0
                     && target_obj == qword_6814F8
                     || (a4 & 0x20) != 0) {
@@ -3910,9 +3910,9 @@ void sub_579C40()
 
     sub_5811B0();
 
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         return;
     }
 
@@ -3922,7 +3922,7 @@ void sub_579C40()
     info.field_24 = dword_681510;
     info.field_28 = 0;
 
-    if (dword_683464 == 1) {
+    if (inven_ui_type == 1) {
         info.field_4 = stru_5CAF90;
         info.rect.x = 8;
         info.rect.y = 168;
@@ -3945,9 +3945,9 @@ void sub_579C40()
 // 0x579D70
 void sub_579D70()
 {
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         return;
     }
 
@@ -3958,9 +3958,9 @@ void sub_579D70()
 // 0x579DA0
 void sub_579DA0()
 {
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         return;
     }
 
@@ -3970,9 +3970,9 @@ void sub_579DA0()
 // 0x579DD0
 void sub_579DD0()
 {
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         return;
     }
 
@@ -3982,9 +3982,9 @@ void sub_579DD0()
 // 0x579E00
 void sub_579E00(int a1)
 {
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         return;
     }
 
@@ -3997,9 +3997,9 @@ void sub_579E30(TigRect* rect)
 {
     TigArtBlitInfo blit_info;
 
-    if (dword_683464 == 0
-        || dword_683464 == 5
-        || dword_683464 == 6) {
+    if (inven_ui_type == 0
+        || inven_ui_type == 5
+        || inven_ui_type == 6) {
         return;
     }
 

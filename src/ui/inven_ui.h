@@ -7,11 +7,11 @@
 bool inven_ui_init(GameInitInfo* init_info);
 void inven_ui_exit();
 void inven_ui_reset();
-bool sub_572370(int64_t a1, int64_t a2, int a3);
-bool sub_572510(int64_t a1, int64_t a2, int a3);
-bool sub_572240(int64_t a1, int64_t a2, int a3);
-void sub_572640(int64_t a1, int64_t a2, int a3);
-bool inven_ui_create(int64_t a1, int64_t a2, int a3);
+bool sub_572370(int64_t a1, int64_t a2, int type);
+bool sub_572510(int64_t a1, int64_t a2, int type);
+bool sub_572240(int64_t a1, int64_t a2, int type);
+void sub_572640(int64_t a1, int64_t a2, int type);
+bool inven_ui_create(int64_t a1, int64_t a2, int type);
 void inven_ui_destroy();
 void sub_573590(int64_t obj);
 int inven_ui_is_created();
