@@ -35,6 +35,17 @@ typedef enum InvenUiPanel {
     INVEN_UI_PANEL_PAPERDOLL,
 } InvenUiPanel;
 
+typedef enum InvenUiSummary {
+    INVEN_UI_SUMMARY_WEIGHT,
+    INVEN_UI_SUMMARY_ENCUMBRANCE,
+    INVEN_UI_SUMMARY_INFO_SPEED,
+} InvenUiSummary;
+
+typedef enum InvenUiTotalStat {
+    INVEN_UI_TOTAL_ATTACK,
+    INVEN_UI_TOTAL_DEFENSE,
+} InvenUiTotalStat;
+
 typedef struct S5754C0 {
     /* 0000 */ int x;
     /* 0004 */ int y;
@@ -81,116 +92,116 @@ static void sub_579E00(int a1);
 static void sub_579E30(TigRect* rect);
 
 // 0x5CAC58
-static TigRect stru_5CAC58[9] = {
-    { 151, 107, 64, 64 },
-    { 247, 107, 32, 32 },
-    { 279, 107, 32, 32 },
-    { 247, 139, 64, 32 },
-    { 23, 170, 96, 128 },
-    { 247, 171, 96, 128 },
-    { 119, 171, 128, 160 },
-    { 55, 107, 64, 64 },
-    { 150, 331, 64, 64 },
+static TigRect inven_ui_inventory_paperdoll_inv_slot_rects[9] = {
+    /*    HELMET */ { 151, 107, 64, 64 },
+    /*     RING1 */ { 247, 107, 32, 32 },
+    /*     RING2 */ { 279, 107, 32, 32 },
+    /* MEDALLION */ { 247, 139, 64, 32 },
+    /*    WEAPON */ { 23, 170, 96, 128 },
+    /*    SHIELD */ { 247, 171, 96, 128 },
+    /*     ARMOR */ { 119, 171, 128, 160 },
+    /*  GAUNTLET */ { 55, 107, 64, 64 },
+    /*     BOOTS */ { 150, 331, 64, 64 },
 };
 
 // 0x5CACE8
-static TigRect stru_5CACE8[9] = {
-    { 499, 107, 64, 64 },
-    { 595, 107, 32, 32 },
-    { 627, 107, 32, 32 },
-    { 595, 139, 64, 32 },
-    { 371, 170, 96, 128 },
-    { 595, 171, 96, 128 },
-    { 467, 171, 128, 160 },
-    { 403, 107, 64, 64 },
-    { 498, 331, 64, 64 },
+static TigRect inven_ui_barter_pc_paperdoll_inv_slot_rects[9] = {
+    /*    HELMET */ { 499, 107, 64, 64 },
+    /*     RING1 */ { 595, 107, 32, 32 },
+    /*     RING2 */ { 627, 107, 32, 32 },
+    /* MEDALLION */ { 595, 139, 64, 32 },
+    /*    WEAPON */ { 371, 170, 96, 128 },
+    /*    SHIELD */ { 595, 171, 96, 128 },
+    /*     ARMOR */ { 467, 171, 128, 160 },
+    /*  GAUNTLET */ { 403, 107, 64, 64 },
+    /*     BOOTS */ { 498, 331, 64, 64 },
 };
 
 // 0x5CAD78
-static TigRect stru_5CAD78[9] = {
-    { 157, 182, 42, 42 },
-    { 220, 182, 21, 21 },
-    { 241, 182, 21, 21 },
-    { 220, 203, 42, 21 },
-    { 73, 223, 63, 85 },
-    { 220, 224, 63, 85 },
-    { 136, 224, 84, 106 },
-    { 94, 182, 42, 42 },
-    { 156, 330, 42, 42 },
+static TigRect inven_ui_barter_npc_paperdoll_inv_slot_rects[9] = {
+    /*    HELMET */ { 157, 182, 42, 42 },
+    /*     RING1 */ { 220, 182, 21, 21 },
+    /*     RING2 */ { 241, 182, 21, 21 },
+    /* MEDALLION */ { 220, 203, 42, 21 },
+    /*    WEAPON */ { 73, 223, 63, 85 },
+    /*    SHIELD */ { 220, 224, 63, 85 },
+    /*     ARMOR */ { 136, 224, 84, 106 },
+    /*  GAUNTLET */ { 94, 182, 42, 42 },
+    /*     BOOTS */ { 156, 330, 42, 42 },
 };
 
 // 0x5CAE08
-static TigRect stru_5CAE08[9] = {
-    { 157, 182, 42, 42 },
-    { 220, 182, 21, 21 },
-    { 241, 182, 21, 21 },
-    { 220, 203, 42, 21 },
-    { 73, 223, 63, 85 },
-    { 220, 224, 63, 85 },
-    { 136, 224, 84, 106 },
-    { 94, 182, 42, 42 },
-    { 156, 330, 42, 42 },
+static TigRect inven_ui_loot_npc_paperdoll_inv_slot_rects[9] = {
+    /*    HELMET */ { 157, 182, 42, 42 },
+    /*     RING1 */ { 220, 182, 21, 21 },
+    /*     RING2 */ { 241, 182, 21, 21 },
+    /* MEDALLION */ { 220, 203, 42, 21 },
+    /*    WEAPON */ { 73, 223, 63, 85 },
+    /*    SHIELD */ { 220, 224, 63, 85 },
+    /*     ARMOR */ { 136, 224, 84, 106 },
+    /*  GAUNTLET */ { 94, 182, 42, 42 },
+    /*     BOOTS */ { 156, 330, 42, 42 },
 };
 
 // 0x5CAE98
-static TigRect stru_5CAE98[3] = {
-    { 145, 29, 185, 15 },
-    { 145, 44, 185, 15 },
-    { 145, 59, 185, 15 },
+static TigRect inven_ui_inventory_summary_rects[] = {
+    /*      WEIGHT */ { 145, 29, 185, 15 },
+    /* ENCUMBRANCE */ { 145, 44, 185, 15 },
+    /*  INFO_SPEED */ { 145, 59, 185, 15 },
 };
 
 // 0x5CAEC8
-static TigRect stru_5CAEC8[3] = {
-    { 431, 32, 185, 15 },
-    { 431, 47, 185, 15 },
-    { 431, 62, 185, 15 },
+static TigRect inven_ui_barter_pc_summary_rects[] = {
+    /*      WEIGHT */ { 431, 32, 185, 15 },
+    /* ENCUMBRANCE */ { 431, 47, 185, 15 },
+    /*  INFO_SPEED */ { 431, 62, 185, 15 },
 };
 
 // 0x5CAEF8
-static TigRect stru_5CAEF8[2] = {
-    { 80, 358, 23, 35 },
-    { 261, 358, 23, 35 },
+static TigRect inven_ui_inventory_total_stat_rects[] = {
+    /*  ATTACK */ { 80, 358, 23, 35 },
+    /* DEFENSE */ { 261, 358, 23, 35 },
 };
 
 // 0x5CAF18
-static TigRect stru_5CAF18[2] = {
-    { 425, 358, 23, 35 },
-    { 609, 358, 23, 35 },
+static TigRect inven_ui_barter_pc_total_stat_rects[] = {
+    /*  ATTACK */ { 425, 358, 23, 35 },
+    /* DEFENSE */ { 609, 358, 23, 35 },
 };
 
 // 0x5CAF38
-static TigRect stru_5CAF38 = { 105, 354, 22, 16 };
-
-// 0x5CAF48
-static TigRect stru_5CAF48 = { 227, 354, 22, 16 };
+static TigRect inven_ui_barter_npc_total_stat_rects[] = {
+    /*  ATTACK */ { 105, 354, 22, 16 },
+    /* DEFENSE */ { 227, 354, 22, 16 },
+};
 
 // 0x5CAF58
-static int dword_5CAF58[] = {
-    241,
-    246,
-    247,
-    245,
-    249,
-    248,
-    244,
-    243,
-    242,
+static int item_ui_item_silhouette_nums[] = {
+    /*    HELMET */ 241, // cvr_helmet.art
+    /*     RING1 */ 246, // cvr_ring1.art
+    /*     RING2 */ 247, // cvr_ring2.art
+    /* MEDALLION */ 245, // cvr_medalion.art
+    /*    WEAPON */ 249, // cvr_weapon.art
+    /*    SHIELD */ 248, // cvr_shield.art
+    /*     ARMOR */ 244, // cvr_armor.art
+    /*  GAUNTLET */ 243, // cvr_gauntlet.art
+    /*     BOOTS */ 242, // cvr_boot.art
 };
 
 // 0x5CAF80
-static TigRect stru_5CAF80 = { 183, 33, 100, 78 };
+static TigRect inven_ui_loot_target_portrait_rect = { 183, 33, 100, 78 };
 
 // 0x5CAF90
-static TigRect stru_5CAF90 = { 330, 168, 17, 224 };
+static TigRect inven_ui_barter_scrollbar_rect = { 330, 168, 17, 224 };
 
 // 0x5CAFA0
-static TigRect stru_5CAFA0 = { 330, 136, 17, 256 };
+static TigRect inven_ui_loot_scrollbar_rect = { 330, 136, 17, 256 };
 
 // 0x5CAFB0
-static TigRect stru_5CAFB0 = { 180, 29, 155, 65 };
+static TigRect inven_ui_npc_action_rect = { 180, 29, 155, 65 };
 
 // 0x5CAFC0
-static int dword_5CAFC0[5] = {
+static int inven_ui_gold_ammo_type_x[5] = {
     729,
     729,
     729,
@@ -199,7 +210,7 @@ static int dword_5CAFC0[5] = {
 };
 
 // 0x5CAFD4
-static int dword_5CAFD4[5] = {
+static int inven_ui_gold_ammo_type_y[5] = {
     70,
     93,
     116,
@@ -750,22 +761,22 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             return false;
         }
 
-        button_data.y = stru_5CAEF8[0].y;
-        button_data.x = stru_5CAEF8[0].x;
+        button_data.y = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_ATTACK].y;
+        button_data.x = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_ATTACK].x;
         button_data.art_id = TIG_ART_ID_INVALID;
-        button_data.width = stru_5CAEF8[0].width;
-        button_data.height = stru_5CAEF8[0].height;
+        button_data.width = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_ATTACK].width;
+        button_data.height = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_ATTACK].height;
         if (tig_button_create(&button_data, &inven_ui_total_attack_value_btn)) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
         }
 
-        button_data.x = stru_5CAEF8[1].x;
-        button_data.y = stru_5CAEF8[1].y;
+        button_data.x = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].x;
+        button_data.y = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].y;
         button_data.art_id = TIG_ART_ID_INVALID;
-        button_data.width = stru_5CAEF8[1].width;
-        button_data.height = stru_5CAEF8[1].height;
+        button_data.width = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].width;
+        button_data.height = inven_ui_inventory_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].height;
         if (tig_button_create(&button_data, &inven_ui_total_defence_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
@@ -796,22 +807,22 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             return false;
         }
 
-        button_data.y = stru_5CAF18[0].y;
-        button_data.x = stru_5CAF18[0].x;
+        button_data.y = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].y;
+        button_data.x = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].x;
         button_data.art_id = TIG_ART_ID_INVALID;
-        button_data.width = stru_5CAF18[0].width;
-        button_data.height = stru_5CAF18[0].height;
+        button_data.width = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].width;
+        button_data.height = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].height;
         if (tig_button_create(&button_data, &inven_ui_total_attack_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
         }
 
-        button_data.x = stru_5CAF18[1].x;
-        button_data.y = stru_5CAF18[1].y;
+        button_data.x = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].x;
+        button_data.y = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].y;
         button_data.art_id = TIG_ART_ID_INVALID;
-        button_data.width = stru_5CAF18[1].width;
-        button_data.height = stru_5CAF18[1].height;
+        button_data.width = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].width;
+        button_data.height = inven_ui_barter_pc_total_stat_rects[INVEN_UI_TOTAL_DEFENSE].height;
         if (tig_button_create(&button_data, &inven_ui_total_defence_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
@@ -2372,10 +2383,10 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
         *parent_obj_ptr = qword_6814F8;
 
         for (idx = 0; idx < 9; idx++) {
-            if (x >= stru_5CAC58[idx].x
-                && y - 41 >= stru_5CAC58[idx].y
-                && x < stru_5CAC58[idx].x + stru_5CAC58[idx].width
-                && y - 41 < stru_5CAC58[idx].y + stru_5CAC58[idx].height) {
+            if (x >= inven_ui_inventory_paperdoll_inv_slot_rects[idx].x
+                && y - 41 >= inven_ui_inventory_paperdoll_inv_slot_rects[idx].y
+                && x < inven_ui_inventory_paperdoll_inv_slot_rects[idx].x + inven_ui_inventory_paperdoll_inv_slot_rects[idx].width
+                && y - 41 < inven_ui_inventory_paperdoll_inv_slot_rects[idx].y + inven_ui_inventory_paperdoll_inv_slot_rects[idx].height) {
                 return idx + 1000;
             }
         }
@@ -2386,10 +2397,10 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
             *parent_obj_ptr = qword_682C78;
 
             for (idx = 0; idx < 9; idx++) {
-                if (x >= stru_5CAD78[idx].x
-                    && y - 41 >= stru_5CAD78[idx].y
-                    && x < stru_5CAD78[idx].x + stru_5CAD78[idx].width
-                    && y - 41 < stru_5CAD78[idx].y + stru_5CAD78[idx].height) {
+                if (x >= inven_ui_barter_npc_paperdoll_inv_slot_rects[idx].x
+                    && y - 41 >= inven_ui_barter_npc_paperdoll_inv_slot_rects[idx].y
+                    && x < inven_ui_barter_npc_paperdoll_inv_slot_rects[idx].x + inven_ui_barter_npc_paperdoll_inv_slot_rects[idx].width
+                    && y - 41 < inven_ui_barter_npc_paperdoll_inv_slot_rects[idx].y + inven_ui_barter_npc_paperdoll_inv_slot_rects[idx].height) {
                     return idx + 1000;
                 }
             }
@@ -2411,10 +2422,10 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
             *parent_obj_ptr = qword_682C78;
 
             for (idx = 0; idx < 9; idx++) {
-                if (x >= stru_5CAE08[idx].x
-                    && y - 41 >= stru_5CAE08[idx].y
-                    && x < stru_5CAE08[idx].x + stru_5CAE08[idx].width
-                    && y - 41 < stru_5CAE08[idx].y + stru_5CAE08[idx].height) {
+                if (x >= inven_ui_loot_npc_paperdoll_inv_slot_rects[idx].x
+                    && y - 41 >= inven_ui_loot_npc_paperdoll_inv_slot_rects[idx].y
+                    && x < inven_ui_loot_npc_paperdoll_inv_slot_rects[idx].x + inven_ui_loot_npc_paperdoll_inv_slot_rects[idx].width
+                    && y - 41 < inven_ui_loot_npc_paperdoll_inv_slot_rects[idx].y + inven_ui_loot_npc_paperdoll_inv_slot_rects[idx].height) {
                     return idx + 1000;
                 }
             }
@@ -2437,10 +2448,10 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
 
     if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
         for (idx = 0; idx < 9; idx++) {
-            if (x >= stru_5CACE8[idx].x
-                && y - 41 >= stru_5CACE8[idx].y
-                && x < stru_5CACE8[idx].x + stru_5CACE8[idx].width
-                && y - 41 < stru_5CACE8[idx].y + stru_5CACE8[idx].height) {
+            if (x >= inven_ui_barter_pc_paperdoll_inv_slot_rects[idx].x
+                && y - 41 >= inven_ui_barter_pc_paperdoll_inv_slot_rects[idx].y
+                && x < inven_ui_barter_pc_paperdoll_inv_slot_rects[idx].x + inven_ui_barter_pc_paperdoll_inv_slot_rects[idx].width
+                && y - 41 < inven_ui_barter_pc_paperdoll_inv_slot_rects[idx].y + inven_ui_barter_pc_paperdoll_inv_slot_rects[idx].height) {
                 return idx + 1000;
             }
         }
@@ -2685,7 +2696,7 @@ void redraw_inven(bool a1)
     case 3:
     case 4:
         if (sub_553D10(qword_6814F8, qword_682C78, &portrait)) {
-            portrait_draw_native(qword_682C78, portrait, inven_ui_window_handle, stru_5CAF80.x, stru_5CAF80.y);
+            portrait_draw_native(qword_682C78, portrait, inven_ui_window_handle, inven_ui_loot_target_portrait_rect.x, inven_ui_loot_target_portrait_rect.y);
         } else {
             tig_art_interface_id_create(portrait, 0, 0, 0, &(art_blit_info.art_id));
             tig_art_frame_data(art_blit_info.art_id, &art_frame_data);
@@ -2695,8 +2706,8 @@ void redraw_inven(bool a1)
             src_rect.width = art_frame_data.width;
             src_rect.height = art_frame_data.width;
 
-            dst_rect.x = stru_5CAF80.x;
-            dst_rect.y = stru_5CAF80.y;
+            dst_rect.x = inven_ui_loot_target_portrait_rect.x;
+            dst_rect.y = inven_ui_loot_target_portrait_rect.y;
             dst_rect.width = art_frame_data.width;
             dst_rect.height = art_frame_data.width;
 
@@ -2731,7 +2742,7 @@ void redraw_inven(bool a1)
         }
 
         tig_font_push(dword_682C74);
-        src_rect = stru_5CAFB0;
+        src_rect = inven_ui_npc_action_rect;
         tig_window_text_write(inven_ui_window_handle, byte_68241C, &src_rect);
         tig_font_pop();
         break;
@@ -2782,10 +2793,10 @@ void redraw_inven(bool a1)
 
     // 0x576C38
     if (inven_ui_type == 0) {
-        text_rects = stru_5CAE98;
+        text_rects = inven_ui_inventory_summary_rects;
     } else {
         if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
-            text_rects = stru_5CAEC8;
+            text_rects = inven_ui_barter_pc_summary_rects;
         } else {
             text_rects = NULL;
         }
@@ -2808,7 +2819,7 @@ void redraw_inven(bool a1)
             mes_file_entry1.str,
             item_total_weight(qword_6814F8),
             mes_file_entry2.str);
-        tig_window_text_write(inven_ui_window_handle, str, &(text_rects[0]));
+        tig_window_text_write(inven_ui_window_handle, str, &(text_rects[INVEN_UI_SUMMARY_WEIGHT]));
 
         mes_file_entry1.num = 10;
         mes_get_msg(inven_ui_mes_file, &mes_file_entry1);
@@ -2821,7 +2832,7 @@ void redraw_inven(bool a1)
             mes_file_entry1.str,
             critter_encumbrance_level_name(encumbrance_level),
             critter_encumbrance_level_ratio(encumbrance_level) * carry_weight / 100);
-        tig_window_text_write(inven_ui_window_handle, str, &(text_rects[1]));
+        tig_window_text_write(inven_ui_window_handle, str, &(text_rects[INVEN_UI_SUMMARY_ENCUMBRANCE]));
 
         mes_file_entry1.num = 11;
         mes_get_msg(inven_ui_mes_file, &mes_file_entry1);
@@ -2830,7 +2841,7 @@ void redraw_inven(bool a1)
             "%s: %d",
             mes_file_entry1.str,
             stat_level(qword_6814F8, STAT_SPEED));
-        tig_window_text_write(inven_ui_window_handle, str, &(text_rects[2]));
+        tig_window_text_write(inven_ui_window_handle, str, &(text_rects[INVEN_UI_SUMMARY_INFO_SPEED]));
 
         tig_font_pop();
     }
@@ -2839,10 +2850,10 @@ void redraw_inven(bool a1)
     if (inven_ui_type == 0
         || inven_ui_type == 5
         || inven_ui_type == 6) {
-        text_rects = stru_5CAEF8;
+        text_rects = inven_ui_inventory_total_stat_rects;
     } else {
         if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
-            text_rects = stru_5CAF18;
+            text_rects = inven_ui_barter_pc_total_stat_rects;
         } else {
             text_rects = NULL;
         }
@@ -2880,8 +2891,8 @@ void redraw_inven(bool a1)
             value = item_ammo_quantity_get(qword_6814F8, index - 1);
         }
 
-        src_rect.x = dword_5CAFC0[index];
-        src_rect.y = dword_5CAFD4[index];
+        src_rect.x = inven_ui_gold_ammo_type_x[index];
+        src_rect.y = inven_ui_gold_ammo_type_y[index];
         src_rect.width = 58;
         src_rect.height = 20;
 
@@ -2972,11 +2983,11 @@ void redraw_inven(bool a1)
     if (inven_ui_type == 0
         || inven_ui_type == 5
         || inven_ui_type == 6) {
-        text_rects = stru_5CAC58;
+        text_rects = inven_ui_inventory_paperdoll_inv_slot_rects;
         memset(v1, 0, sizeof(v1));
     } else {
         if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
-            text_rects = stru_5CACE8;
+            text_rects = inven_ui_barter_pc_paperdoll_inv_slot_rects;
             memset(v1, 0, sizeof(v1));
         } else {
             text_rects = NULL;
@@ -3140,15 +3151,15 @@ void redraw_inven(bool a1)
     if (text_rects != NULL) {
         for (index = 0; index < 9; index++) {
             if (!v1[index]) {
-                tig_art_interface_id_create(dword_5CAF58[index], 0, 0, 0, &(art_blit_info.art_id));
+                tig_art_interface_id_create(item_ui_item_silhouette_nums[index], 0, 0, 0, &(art_blit_info.art_id));
 
                 dst_rect.x = text_rects[index].x;
                 dst_rect.y = text_rects[index].y;
                 dst_rect.width = text_rects[index].width;
                 dst_rect.height = text_rects[index].height;
 
-                src_rect.width = stru_5CAC58[index].width;
-                src_rect.height = stru_5CAC58[index].height;
+                src_rect.width = inven_ui_inventory_paperdoll_inv_slot_rects[index].width;
+                src_rect.height = inven_ui_inventory_paperdoll_inv_slot_rects[index].height;
 
                 tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
             }
@@ -3190,10 +3201,10 @@ void redraw_inven(bool a1)
 
             if (inven_ui_type == 1) {
                 dst_rect.y = 157;
-                text_rects = stru_5CAD78;
+                text_rects = inven_ui_barter_npc_paperdoll_inv_slot_rects;
             } else {
                 dst_rect.y = 134;
-                text_rects = stru_5CAE08;
+                text_rects = inven_ui_loot_npc_paperdoll_inv_slot_rects;
             }
 
             art_blit_info.flags = 0;
@@ -3206,13 +3217,13 @@ void redraw_inven(bool a1)
             font_desc.str = str;
             font_desc.width = 0;
             sub_535390(&font_desc);
-            src_rect.x = stru_5CAF38.x + stru_5CAF38.width - font_desc.width;
-            src_rect.y = stru_5CAF38.y;
-            src_rect.width = stru_5CAF38.width;
-            src_rect.height = stru_5CAF38.height;
+            src_rect.x = inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].x + inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].width - font_desc.width;
+            src_rect.y = inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].y;
+            src_rect.width = inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].width;
+            src_rect.height = inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].height;
             tig_window_text_write(inven_ui_window_handle, str, &src_rect);
             sprintf(str, "%d", item_total_defence(qword_682C78));
-            tig_window_text_write(inven_ui_window_handle, str, &src_rect);
+            tig_window_text_write(inven_ui_window_handle, str, &(inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_DEFENSE]));
             tig_font_pop();
         } else {
             target_obj = qword_6813A8;
@@ -3392,15 +3403,15 @@ void redraw_inven(bool a1)
         if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             for (index = 0; index < 9; index++) {
                 if (!v1[index]) {
-                    tig_art_interface_id_create(dword_5CAF58[index], 0, 0, 0, &(art_blit_info.art_id));
+                    tig_art_interface_id_create(item_ui_item_silhouette_nums[index], 0, 0, 0, &(art_blit_info.art_id));
 
                     dst_rect.x = text_rects[index].x;
                     dst_rect.y = text_rects[index].y;
                     dst_rect.width = text_rects[index].width;
                     dst_rect.height = text_rects[index].height;
 
-                    src_rect.width = stru_5CAC58[index].width;
-                    src_rect.height = stru_5CAC58[index].height;
+                    src_rect.width = inven_ui_inventory_paperdoll_inv_slot_rects[index].width;
+                    src_rect.height = inven_ui_inventory_paperdoll_inv_slot_rects[index].height;
 
                     tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
                 }
@@ -3929,16 +3940,16 @@ void inven_ui_target_inventory_scrollbar_create()
     info.field_28 = 0;
 
     if (inven_ui_type == 1) {
-        info.scrollbar_rect = stru_5CAF90;
+        info.scrollbar_rect = inven_ui_barter_scrollbar_rect;
         info.content_rect.x = 8;
         info.content_rect.y = 168;
-        info.content_rect.width = stru_5CAF90.width + 320;
+        info.content_rect.width = inven_ui_barter_scrollbar_rect.width + 320;
         info.content_rect.height = 224;
     } else {
-        info.scrollbar_rect = stru_5CAFA0;
+        info.scrollbar_rect = inven_ui_loot_scrollbar_rect;
         info.content_rect.x = 8;
         info.content_rect.y = 136;
-        info.content_rect.width = stru_5CAFA0.width + 320;
+        info.content_rect.width = inven_ui_loot_scrollbar_rect.width + 320;
         info.content_rect.height = 256;
     }
 
