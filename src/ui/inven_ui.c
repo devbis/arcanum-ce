@@ -322,7 +322,7 @@ static InvenUiPanel inven_ui_panel;
 static int dword_681510;
 
 // 0x681514
-static bool dword_681514;
+static InvenUiPanel inven_ui_target_panel;
 
 // 0x681518
 static int dword_681518[960];
@@ -690,7 +690,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     inven_ui_type = type;
     qword_6813A8 = a2;
     qword_682C78 = a2;
-    dword_681514 = false;
+    inven_ui_target_panel = INVEN_UI_PANEL_INVENTORY;
     inven_ui_panel = INVEN_UI_PANEL_INVENTORY;
 
     if (!intgame_big_window_lock(inven_ui_message_filter, &inven_ui_window_handle)) {
@@ -1253,7 +1253,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
     }
 
     if (msg->data.button.button_handle == inven_ui_target_inventory_btn) {
-        dword_681514 = false;
+        inven_ui_target_panel = INVEN_UI_PANEL_INVENTORY;
         sub_579DA0();
         tig_button_hide(inven_ui_target_total_attack_btn);
         tig_button_hide(inven_ui_target_total_defence_btn);
@@ -1263,7 +1263,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
     }
 
     if (msg->data.button.button_handle == inven_ui_target_paperdoll_btn) {
-        dword_681514 = true;
+        inven_ui_target_panel = INVEN_UI_PANEL_PAPERDOLL;
         sub_579DD0();
         tig_button_show(inven_ui_target_total_attack_btn);
         tig_button_show(inven_ui_target_total_defence_btn);
@@ -2382,7 +2382,7 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
 
         break;
     case 1:
-        if (dword_681514) {
+        if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             *parent_obj_ptr = qword_682C78;
 
             for (idx = 0; idx < 9; idx++) {
@@ -2407,7 +2407,7 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
 
         break;
     default:
-        if (dword_681514) {
+        if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             *parent_obj_ptr = qword_682C78;
 
             for (idx = 0; idx < 9; idx++) {
@@ -3165,7 +3165,7 @@ void redraw_inven(bool a1)
         int v112;
         int inventory_list_fld;
 
-        if (dword_681514) {
+        if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             target_obj = qword_682C78;
             memset(v1, 9, sizeof(v1));
 
@@ -3265,7 +3265,7 @@ void redraw_inven(bool a1)
 
             if (IS_WEAR_INV_LOC(inventory_location)) {
                 // 0x577CA0
-                if (dword_681514) {
+                if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
                     weapon_too_heavy = false;
                     if (inventory_location == ITEM_INV_LOC_WEAPON) {
                         weapon_min_str = item_weapon_min_strength(item_obj, target_obj);
@@ -3320,7 +3320,7 @@ void redraw_inven(bool a1)
             }
 
             // 0x577F41
-            if (!dword_681514) {
+            if (inven_ui_target_panel == INVEN_UI_PANEL_INVENTORY) {
                 int x;
                 int y;
                 int width;
@@ -3389,7 +3389,7 @@ void redraw_inven(bool a1)
         }
 
         art_blit_info.flags = 0;
-        if (dword_681514) {
+        if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             for (index = 0; index < 9; index++) {
                 if (!v1[index]) {
                     tig_art_interface_id_create(dword_5CAF58[index], 0, 0, 0, &(art_blit_info.art_id));
