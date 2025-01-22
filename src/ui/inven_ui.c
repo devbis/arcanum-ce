@@ -73,10 +73,10 @@ static void sub_5788C0(int64_t a1, int64_t a2, int a3, int a4);
 static void sub_579770(int64_t from_obj, int64_t to_obj);
 static bool sub_579840(int64_t obj, bool a2);
 static void sub_579B60(int64_t obj);
-static void sub_579C40();
-static void sub_579D70();
-static void sub_579DA0();
-static void sub_579DD0();
+static void inven_ui_target_inventory_scrollbar_create();
+static void inven_ui_target_inventory_scrollbar_destroy();
+static void inven_ui_target_inventory_scrollbar_show();
+static void inven_ui_target_inventory_scrollbar_hide();
 static void sub_579E00(int a1);
 static void sub_579E30(TigRect* rect);
 
@@ -214,7 +214,7 @@ static int64_t qword_6810E0;
 static int dword_6810E8;
 
 // 0x6810F0
-static ScrollbarId stru_6810F0;
+static ScrollbarId inven_ui_target_inventory_scrollbar;
 
 // 0x6810F8
 static mes_file_handle_t inven_ui_mes_file;
@@ -1011,7 +1011,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         sub_466260(qword_6813A8, dword_681518);
     }
 
-    sub_579C40();
+    inven_ui_target_inventory_scrollbar_create();
     redraw_inven(true);
     qword_6810E0 = OBJ_HANDLE_NULL;
     location_origin_set(obj_field_int64_get(qword_6814F8, OBJ_F_LOCATION));
@@ -1097,7 +1097,7 @@ void inven_ui_destroy()
     }
 
     sub_550DA0(0, 0);
-    sub_579D70();
+    inven_ui_target_inventory_scrollbar_destroy();
     intgame_big_window_unlock();
     sub_551160();
     v2 = sub_551A00();
@@ -1254,7 +1254,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
 
     if (msg->data.button.button_handle == inven_ui_target_inventory_btn) {
         inven_ui_target_panel = INVEN_UI_PANEL_INVENTORY;
-        sub_579DA0();
+        inven_ui_target_inventory_scrollbar_show();
         tig_button_hide(inven_ui_target_total_attack_btn);
         tig_button_hide(inven_ui_target_total_defence_btn);
         redraw_inven(false);
@@ -1264,7 +1264,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
 
     if (msg->data.button.button_handle == inven_ui_target_paperdoll_btn) {
         inven_ui_target_panel = INVEN_UI_PANEL_PAPERDOLL;
-        sub_579DD0();
+        inven_ui_target_inventory_scrollbar_hide();
         tig_button_show(inven_ui_target_total_attack_btn);
         tig_button_show(inven_ui_target_total_defence_btn);
         redraw_inven(false);
@@ -3409,7 +3409,7 @@ void redraw_inven(bool a1)
     }
 
     sub_551080();
-    sub_5806F0(stru_6810F0);
+    sub_5806F0(inven_ui_target_inventory_scrollbar);
 }
 
 // 0x5782D0
@@ -3910,7 +3910,7 @@ void sub_579B60(int64_t obj)
 }
 
 // 0x579C40
-void sub_579C40()
+void inven_ui_target_inventory_scrollbar_create()
 {
     ScrollbarUiControlInfo info;
 
@@ -3944,12 +3944,12 @@ void sub_579C40()
 
     info.field_40 = sub_579E30;
     info.field_2C = 1;
-    scrollbar_ui_control_create(&stru_6810F0, &info, inven_ui_window_handle);
-    sub_5806F0(stru_6810F0);
+    scrollbar_ui_control_create(&inven_ui_target_inventory_scrollbar, &info, inven_ui_window_handle);
+    sub_5806F0(inven_ui_target_inventory_scrollbar);
 }
 
 // 0x579D70
-void sub_579D70()
+void inven_ui_target_inventory_scrollbar_destroy()
 {
     if (inven_ui_type == 0
         || inven_ui_type == 5
@@ -3957,12 +3957,12 @@ void sub_579D70()
         return;
     }
 
-    scrollbar_ui_control_destroy(stru_6810F0);
+    scrollbar_ui_control_destroy(inven_ui_target_inventory_scrollbar);
     sub_5811B0();
 }
 
 // 0x579DA0
-void sub_579DA0()
+void inven_ui_target_inventory_scrollbar_show()
 {
     if (inven_ui_type == 0
         || inven_ui_type == 5
@@ -3970,11 +3970,11 @@ void sub_579DA0()
         return;
     }
 
-    scrollbar_ui_control_show(stru_6810F0);
+    scrollbar_ui_control_show(inven_ui_target_inventory_scrollbar);
 }
 
 // 0x579DD0
-void sub_579DD0()
+void inven_ui_target_inventory_scrollbar_hide()
 {
     if (inven_ui_type == 0
         || inven_ui_type == 5
@@ -3982,7 +3982,7 @@ void sub_579DD0()
         return;
     }
 
-    scrollbar_ui_control_hide(stru_6810F0);
+    scrollbar_ui_control_hide(inven_ui_target_inventory_scrollbar);
 }
 
 // 0x579E00
