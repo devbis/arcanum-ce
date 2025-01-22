@@ -399,14 +399,14 @@ void multiplayer_hub_ui_init()
     sub_581F30();
 
     sb_create_info.flags = 0xFFFF;
-    sb_create_info.field_4.x = 288;
-    sb_create_info.field_4.y = 182;
-    sb_create_info.field_4.width = 13;
-    sb_create_info.field_4.height = 389;
-    sb_create_info.rect.x = 37;
-    sb_create_info.rect.y = 188;
-    sb_create_info.rect.width = 259;
-    sb_create_info.rect.height = 368;
+    sb_create_info.scrollbar_rect.x = 288;
+    sb_create_info.scrollbar_rect.y = 182;
+    sb_create_info.scrollbar_rect.width = 13;
+    sb_create_info.scrollbar_rect.height = 389;
+    sb_create_info.content_rect.x = 37;
+    sb_create_info.content_rect.y = 188;
+    sb_create_info.content_rect.width = 259;
+    sb_create_info.content_rect.height = 368;
     sb_create_info.field_24 = 0;
     sb_create_info.field_28 = 0;
     sb_create_info.field_2C = 1;
@@ -417,14 +417,14 @@ void multiplayer_hub_ui_init()
     sb_create_info.field_40 = sub_582E50;
     scrollbar_ui_control_create(&stru_686248, &sb_create_info, sub_549820());
 
-    sb_create_info.field_4.x = 771;
-    sb_create_info.field_4.y = 95;
-    sb_create_info.field_4.width = 13;
-    sb_create_info.field_4.height = 408;
-    sb_create_info.rect.x = 336;
-    sb_create_info.rect.y = 99;
-    sb_create_info.rect.width = 440;
-    sb_create_info.rect.height = 1170;
+    sb_create_info.scrollbar_rect.x = 771;
+    sb_create_info.scrollbar_rect.y = 95;
+    sb_create_info.scrollbar_rect.width = 13;
+    sb_create_info.scrollbar_rect.height = 408;
+    sb_create_info.content_rect.x = 336;
+    sb_create_info.content_rect.y = 99;
+    sb_create_info.content_rect.width = 440;
+    sb_create_info.content_rect.height = 1170;
     sb_create_info.field_24 = 52;
     sb_create_info.field_38 = 52;
     sb_create_info.field_3C = sub_581F90;
@@ -1300,8 +1300,8 @@ void mainmenu_ui_create_multiplayer_hub()
     stru_686318.num = 3002; // "Checking for Arcanum updates."
     mes_get_msg(dword_686528, &stru_686318);
 
-    sb_create_info.field_4 = stru_5CC258;
-    sb_create_info.rect = stru_5CC268;
+    sb_create_info.scrollbar_rect = stru_5CC258;
+    sb_create_info.content_rect = stru_5CC268;
     sb_create_info.flags = 0xFFFF;
     sb_create_info.field_38 = 0;
     sb_create_info.field_24 = 0;

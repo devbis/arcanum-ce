@@ -172,8 +172,8 @@ bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, 
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
     button_data.window_handle = ctrl->window_handle;
-    button_data.x = ctrl->info.field_4.x + (ctrl->info.field_4.width - art_frame_data.width) / 2;
-    button_data.y = ctrl->info.field_4.y;
+    button_data.x = ctrl->info.scrollbar_rect.x + (ctrl->info.scrollbar_rect.width - art_frame_data.width) / 2;
+    button_data.y = ctrl->info.scrollbar_rect.y;
     button_data.mouse_enter_snd_id = -1;
     button_data.mouse_exit_snd_id = -1;
     button_data.mouse_down_snd_id = 3014;
@@ -188,7 +188,7 @@ bool scrollbar_ui_control_create(ScrollbarId* id, ScrollbarUiControlInfo* info, 
     scrollbar_ui_button_down_height = art_frame_data.height;
     scrollbar_ui_button_down_width = art_frame_data.width;
 
-    button_data.y = ctrl->info.field_4.y + ctrl->info.field_4.height - art_frame_data.height;
+    button_data.y = ctrl->info.scrollbar_rect.y + ctrl->info.scrollbar_rect.height - art_frame_data.height;
     tig_button_create(&button_data, &(ctrl->button_down));
 
     if (ctrl->info.field_3C != NULL) {
@@ -270,7 +270,7 @@ bool scrollbar_ui_control_hide(ScrollbarId id)
     tig_button_hide(ctrl->button_up);
 
     if (ctrl->info.field_40 != NULL) {
-        ctrl->info.field_40(&(ctrl->info.field_4));
+        ctrl->info.field_40(&(ctrl->info.scrollbar_rect));
     }
 
     return true;
@@ -301,25 +301,25 @@ void sub_5807F0(int index, int a2)
     }
 
     if (ctrl->info.field_40 != NULL) {
-        ctrl->info.field_40(&(ctrl->info.field_4));
+        ctrl->info.field_40(&(ctrl->info.scrollbar_rect));
     }
 
     v1 = sub_581550(ctrl->id.index);
 
-    dst_rect.x = ctrl->info.field_4.x;
+    dst_rect.x = ctrl->info.scrollbar_rect.x;
     if (ctrl->info.field_38 != ctrl->info.field_24 || a2 != 0) {
         dst_rect.y = sub_5815D0(ctrl->id.index) + a2;
     } else {
-        dst_rect.y = ctrl->info.field_4.y + ctrl->info.field_4.height - scrollbar_ui_button_down_height - sub_5815A0(index);
+        dst_rect.y = ctrl->info.scrollbar_rect.y + ctrl->info.scrollbar_rect.height - scrollbar_ui_button_down_height - sub_5815A0(index);
     }
 
-    if (dst_rect.y < ctrl->info.field_4.y + scrollbar_ui_button_up_height) {
-        dst_rect.y = ctrl->info.field_4.y + scrollbar_ui_button_up_height;
-    } else if (dst_rect.y > ctrl->info.field_4.y + ctrl->info.field_4.height - scrollbar_ui_button_down_height - sub_5815A0(index)) {
-        dst_rect.y = ctrl->info.field_4.y + ctrl->info.field_4.height - scrollbar_ui_button_down_height - sub_5815A0(index);
+    if (dst_rect.y < ctrl->info.scrollbar_rect.y + scrollbar_ui_button_up_height) {
+        dst_rect.y = ctrl->info.scrollbar_rect.y + scrollbar_ui_button_up_height;
+    } else if (dst_rect.y > ctrl->info.scrollbar_rect.y + ctrl->info.scrollbar_rect.height - scrollbar_ui_button_down_height - sub_5815A0(index)) {
+        dst_rect.y = ctrl->info.scrollbar_rect.y + ctrl->info.scrollbar_rect.height - scrollbar_ui_button_down_height - sub_5815A0(index);
     }
 
-    dst_rect.width = ctrl->info.field_4.width;
+    dst_rect.width = ctrl->info.scrollbar_rect.width;
     dst_rect.height = 5;
 
     art_blit_info.flags = 0;
@@ -331,7 +331,7 @@ void sub_5807F0(int index, int a2)
     v1 -= 5.0f;
 
     dst_rect.y += 5;
-    dst_rect.width = ctrl->info.field_4.width;
+    dst_rect.width = ctrl->info.scrollbar_rect.width;
     dst_rect.height = 1;
 
     art_blit_info.flags = 0;
@@ -345,7 +345,7 @@ void sub_5807F0(int index, int a2)
         v1 -= 7.0f;
     }
 
-    dst_rect.width = ctrl->info.field_4.width;
+    dst_rect.width = ctrl->info.scrollbar_rect.width;
     dst_rect.height = 7;
 
     art_blit_info.art_id = scrollbar_ui_bottom_art_id;
@@ -356,8 +356,8 @@ void sub_5807F0(int index, int a2)
 
     tig_button_is_hidden(ctrl->button_up, &hidden);
     if (hidden) {
-        dst_rect.x = ctrl->info.field_4.x + (ctrl->info.field_4.width - scrollbar_ui_button_up_width) / 2;
-        dst_rect.y = ctrl->info.field_4.y;
+        dst_rect.x = ctrl->info.scrollbar_rect.x + (ctrl->info.scrollbar_rect.width - scrollbar_ui_button_up_width) / 2;
+        dst_rect.y = ctrl->info.scrollbar_rect.y;
         dst_rect.width = scrollbar_ui_button_up_width;
         dst_rect.height = scrollbar_ui_button_up_height;
 
@@ -372,8 +372,8 @@ void sub_5807F0(int index, int a2)
 
     tig_button_is_hidden(ctrl->button_down, &hidden);
     if (hidden) {
-        dst_rect.x = ctrl->info.field_4.x + (ctrl->info.field_4.width - scrollbar_ui_button_up_width) / 2;
-        dst_rect.y = ctrl->info.field_4.y + ctrl->info.field_4.height - scrollbar_ui_button_down_height;
+        dst_rect.x = ctrl->info.scrollbar_rect.x + (ctrl->info.scrollbar_rect.width - scrollbar_ui_button_up_width) / 2;
+        dst_rect.y = ctrl->info.scrollbar_rect.y + ctrl->info.scrollbar_rect.height - scrollbar_ui_button_down_height;
         dst_rect.width = scrollbar_ui_button_down_width;
         dst_rect.height = scrollbar_ui_button_down_height;
 
@@ -489,7 +489,7 @@ bool sub_580B10(TigMessage* msg)
                     } else {
                         if (ctrl->info.field_38 + dword_684680 > ctrl->info.field_24) {
                             ctrl->info.field_3C(ctrl->info.field_24);
-                            sub_5807F0(dword_5CBF78, ctrl->info.field_4.height - ((int)v3 * (ctrl->info.field_38 + 1)));
+                            sub_5807F0(dword_5CBF78, ctrl->info.scrollbar_rect.height - ((int)v3 * (ctrl->info.field_38 + 1)));
                             return true;
                         }
 
@@ -668,10 +668,10 @@ void sub_5811F0(ScrollbarUiControl* ctrl, ScrollbarUiControlInfo* info)
     ctrl->info = *info;
 
     if ((ctrl->info.flags & 0x2) == 0) {
-        ctrl->info.rect.x = 0;
-        ctrl->info.rect.y = 0;
-        ctrl->info.rect.width = 0;
-        ctrl->info.rect.height = 0;
+        ctrl->info.content_rect.x = 0;
+        ctrl->info.content_rect.y = 0;
+        ctrl->info.content_rect.width = 0;
+        ctrl->info.content_rect.height = 0;
     }
 
     if ((ctrl->info.flags & 0x4) == 0) {
@@ -757,8 +757,8 @@ bool sub_581360(int id, int x, int y)
     ctrl = &(scrollbar_ui_controls[id]);
     tig_window_data(ctrl->window_handle, &window_data);
 
-    return x - window_data.rect.x >= ctrl->info.field_4.x
-        && x - window_data.rect.x <= ctrl->info.field_4.x + ctrl->info.field_4.width
+    return x - window_data.rect.x >= ctrl->info.scrollbar_rect.x
+        && x - window_data.rect.x <= ctrl->info.scrollbar_rect.x + ctrl->info.scrollbar_rect.width
         && y - window_data.rect.y >= sub_5815D0(id)
         && y - window_data.rect.y <= sub_581660(id);
 }
@@ -772,9 +772,9 @@ bool sub_5813E0(int id, int x, int y)
     ctrl = &(scrollbar_ui_controls[id]);
     tig_window_data(ctrl->window_handle, &window_data);
 
-    return x - window_data.rect.x >= ctrl->info.field_4.x
-        && x - window_data.rect.x <= ctrl->info.field_4.x + ctrl->info.field_4.width
-        && y - window_data.rect.y >= ctrl->info.rect.y + scrollbar_ui_button_up_height
+    return x - window_data.rect.x >= ctrl->info.scrollbar_rect.x
+        && x - window_data.rect.x <= ctrl->info.scrollbar_rect.x + ctrl->info.scrollbar_rect.width
+        && y - window_data.rect.y >= ctrl->info.content_rect.y + scrollbar_ui_button_up_height
         && y - window_data.rect.y <= sub_5815D0(id);
 }
 
@@ -787,10 +787,10 @@ bool sub_581460(int id, int x, int y)
     ctrl = &(scrollbar_ui_controls[id]);
     tig_window_data(ctrl->window_handle, &window_data);
 
-    return x - window_data.rect.x >= ctrl->info.field_4.x
-        && x - window_data.rect.x <= ctrl->info.field_4.x + ctrl->info.field_4.width
+    return x - window_data.rect.x >= ctrl->info.scrollbar_rect.x
+        && x - window_data.rect.x <= ctrl->info.scrollbar_rect.x + ctrl->info.scrollbar_rect.width
         && y - window_data.rect.y >= sub_581660(id)
-        && y - window_data.rect.y <= ctrl->info.rect.y + ctrl->info.rect.height - scrollbar_ui_button_down_height;
+        && y - window_data.rect.y <= ctrl->info.content_rect.y + ctrl->info.content_rect.height - scrollbar_ui_button_down_height;
 }
 
 // 0x5814E0
@@ -802,10 +802,10 @@ bool sub_5814E0(int id, int x, int y)
     ctrl = &(scrollbar_ui_controls[id]);
     tig_window_data(ctrl->window_handle, &window_data);
 
-    return x - window_data.rect.x >= ctrl->info.rect.x
-        && x - window_data.rect.x <= ctrl->info.rect.x + ctrl->info.rect.width
-        && y - window_data.rect.y >= ctrl->info.rect.y
-        && y - window_data.rect.y <= ctrl->info.rect.y + ctrl->info.rect.height;
+    return x - window_data.rect.x >= ctrl->info.content_rect.x
+        && x - window_data.rect.x <= ctrl->info.content_rect.x + ctrl->info.content_rect.width
+        && y - window_data.rect.y >= ctrl->info.content_rect.y
+        && y - window_data.rect.y <= ctrl->info.content_rect.y + ctrl->info.content_rect.height;
 }
 
 // 0x581550
@@ -814,7 +814,7 @@ float sub_581550(int id)
     ScrollbarUiControl* ctrl;
 
     ctrl = &(scrollbar_ui_controls[id]);
-    return (float)(ctrl->info.field_4.height - scrollbar_ui_button_down_height - scrollbar_ui_button_up_height)
+    return (float)(ctrl->info.scrollbar_rect.height - scrollbar_ui_button_down_height - scrollbar_ui_button_up_height)
         / (float)(ctrl->info.field_2C + ctrl->info.field_24 - ctrl->info.field_28)
         * (float)ctrl->info.field_2C;
 }
@@ -835,7 +835,7 @@ int sub_5815A0(int id)
 int sub_5815D0(int id)
 {
     return scrollbar_ui_button_up_height
-        + scrollbar_ui_controls[id].info.field_4.y
+        + scrollbar_ui_controls[id].info.scrollbar_rect.y
         + (int)(sub_581550(id)
             * (float)(scrollbar_ui_controls[id].info.field_38 - scrollbar_ui_controls[id].info.field_28)
             / (float)(scrollbar_ui_controls[id].info.field_2C));

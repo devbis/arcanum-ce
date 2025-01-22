@@ -3798,12 +3798,12 @@ void sub_55EFF0()
         } else {
             sb.field_24 = 0;
         }
-        sb.field_4 = stru_5C8F40;
+        sb.scrollbar_rect = stru_5C8F40;
         sb.field_28 = 0;
-        sb.rect.width = stru_5C8F40.width + 160;
-        sb.rect.x = 23;
-        sb.rect.y = 66;
-        sb.rect.height = 240;
+        sb.content_rect.width = stru_5C8F40.width + 160;
+        sb.content_rect.x = 23;
+        sb.content_rect.y = 66;
+        sb.content_rect.height = 240;
         sb.field_40 = sub_55F110;
         sb.field_2C = 1;
         scrollbar_ui_control_create(&stru_64C7A8, &sb, dword_64CA60);

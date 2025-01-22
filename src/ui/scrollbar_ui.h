@@ -15,8 +15,8 @@ typedef void(ScrollbarUiControlRefresh)(TigRect* rect);
 
 typedef struct ScrollbarUiControlInfo {
     /* 0000 */ unsigned int flags;
-    /* 0004 */ TigRect field_4;
-    /* 0014 */ TigRect rect;
+    /* 0004 */ TigRect scrollbar_rect;
+    /* 0014 */ TigRect content_rect;
     /* 0024 */ int field_24;
     /* 0028 */ int field_28;
     /* 002C */ int field_2C;

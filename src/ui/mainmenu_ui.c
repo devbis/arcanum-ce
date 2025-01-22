@@ -3103,7 +3103,7 @@ void mainmenu_ui_create_load_game()
         exit(EXIT_FAILURE);
     }
 
-    stru_64C260.field_4 = stru_5C4798;
+    stru_64C260.scrollbar_rect = stru_5C4798;
     stru_64C260.flags = 0x39F;
     stru_64C260.field_28 = 0;
     stru_64C260.field_24 = window->field_88 + 1;
@@ -3114,10 +3114,10 @@ void mainmenu_ui_create_load_game()
     stru_64C260.field_2C = 1;
     stru_64C260.field_3C = sub_542280;
     stru_64C260.field_40 = sub_5422A0;
-    stru_64C260.rect.x = 34;
-    stru_64C260.rect.y = 110;
-    stru_64C260.rect.width = 195;
-    stru_64C260.rect.height = 232;
+    stru_64C260.content_rect.x = 34;
+    stru_64C260.content_rect.y = 110;
+    stru_64C260.content_rect.width = 195;
+    stru_64C260.content_rect.height = 232;
     scrollbar_ui_control_create(&stru_64C220, &stru_64C260, dword_5C3624);
 
     dword_64C450 = false;
@@ -3786,7 +3786,7 @@ void mainmenu_ui_create_save_game()
         exit(EXIT_FAILURE);
     }
 
-    stru_64C260.field_4 = stru_5C4798;
+    stru_64C260.scrollbar_rect = stru_5C4798;
     stru_64C260.flags = 0x39F;
     stru_64C260.field_28 = 0;
     stru_64C260.field_24 = window->field_88 + 1;
@@ -3797,10 +3797,10 @@ void mainmenu_ui_create_save_game()
     stru_64C260.field_2C = 1;
     stru_64C260.field_3C = sub_542280;
     stru_64C260.field_40 = sub_5422A0;
-    stru_64C260.rect.x = 34;
-    stru_64C260.rect.y = 110;
-    stru_64C260.rect.width = 195;
-    stru_64C260.rect.height = 232;
+    stru_64C260.content_rect.x = 34;
+    stru_64C260.content_rect.y = 110;
+    stru_64C260.content_rect.width = 195;
+    stru_64C260.content_rect.height = 232;
     scrollbar_ui_control_create(&stru_64C220, &stru_64C260, dword_5C3624);
 
     pc_obj = player_get_pc_obj();
@@ -5342,10 +5342,10 @@ void mainmenu_ui_create_multiplayer_select_char()
     dword_64C414 = 22;
 
     stru_64C2B0.flags = 781;
-    stru_64C2B0.field_4.x = 287;
-    stru_64C2B0.field_4.y = 204;
-    stru_64C2B0.field_4.width = 16;
-    stru_64C2B0.field_4.height = 344;
+    stru_64C2B0.scrollbar_rect.x = 287;
+    stru_64C2B0.scrollbar_rect.y = 204;
+    stru_64C2B0.scrollbar_rect.width = 16;
+    stru_64C2B0.scrollbar_rect.height = 344;
     stru_64C2B0.field_24 = dword_64C420 > 17 ? dword_64C420 - 17 : 0;
     stru_64C2B0.field_28 = 0;
     stru_64C2B0.field_40 = sub_548B60;
@@ -7007,10 +7007,10 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
     sub_5482A0(rect);
 
     if (rect == NULL
-        || (rect->x < stru_64C2B0.field_4.x + stru_64C2B0.field_4.width
-            && rect->y < stru_64C2B0.field_4.y + stru_64C2B0.field_4.height
-            && stru_64C2B0.field_4.x < rect->x + rect->width
-            && stru_64C2B0.field_4.y < rect->y + rect->height)) {
+        || (rect->x < stru_64C2B0.scrollbar_rect.x + stru_64C2B0.scrollbar_rect.width
+            && rect->y < stru_64C2B0.scrollbar_rect.y + stru_64C2B0.scrollbar_rect.height
+            && stru_64C2B0.scrollbar_rect.x < rect->x + rect->width
+            && stru_64C2B0.scrollbar_rect.y < rect->y + rect->height)) {
         sub_5806F0(stru_64C2A8);
     }
 }

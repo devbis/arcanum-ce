@@ -248,14 +248,14 @@ void sub_585E40()
     ScrollbarUiControlInfo sb_create_info;
 
     sb_create_info.flags = 927;
-    sb_create_info.field_4.x = 771;
-    sb_create_info.field_4.y = 135;
-    sb_create_info.field_4.width = 13;
-    sb_create_info.field_4.height = 420;
-    sb_create_info.rect.x = 0;
-    sb_create_info.rect.y = 0;
-    sb_create_info.rect.width = 800;
-    sb_create_info.rect.height = 600;
+    sb_create_info.scrollbar_rect.x = 771;
+    sb_create_info.scrollbar_rect.y = 135;
+    sb_create_info.scrollbar_rect.width = 13;
+    sb_create_info.scrollbar_rect.height = 420;
+    sb_create_info.content_rect.x = 0;
+    sb_create_info.content_rect.y = 0;
+    sb_create_info.content_rect.width = 800;
+    sb_create_info.content_rect.height = 600;
     sb_create_info.field_24 = 0;
     sb_create_info.field_28 = 0;
     sb_create_info.field_2C = 1;

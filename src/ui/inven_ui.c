@@ -3929,17 +3929,17 @@ void sub_579C40()
     info.field_28 = 0;
 
     if (inven_ui_type == 1) {
-        info.field_4 = stru_5CAF90;
-        info.rect.x = 8;
-        info.rect.y = 168;
-        info.rect.width = stru_5CAF90.width + 320;
-        info.rect.height = 224;
+        info.scrollbar_rect = stru_5CAF90;
+        info.content_rect.x = 8;
+        info.content_rect.y = 168;
+        info.content_rect.width = stru_5CAF90.width + 320;
+        info.content_rect.height = 224;
     } else {
-        info.field_4 = stru_5CAFA0;
-        info.rect.x = 8;
-        info.rect.y = 136;
-        info.rect.width = stru_5CAFA0.width + 320;
-        info.rect.height = 256;
+        info.scrollbar_rect = stru_5CAFA0;
+        info.content_rect.x = 8;
+        info.content_rect.y = 136;
+        info.content_rect.width = stru_5CAFA0.width + 320;
+        info.content_rect.height = 256;
     }
 
     info.field_40 = sub_579E30;
