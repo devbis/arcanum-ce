@@ -30,6 +30,11 @@
 #include "ui/spell_ui.h"
 #include "ui/tb_ui.h"
 
+typedef enum InvenUiPanel {
+    INVEN_UI_PANEL_INVENTORY,
+    INVEN_UI_PANEL_PAPERDOLL,
+} InvenUiPanel;
+
 typedef struct S5754C0 {
     /* 0000 */ int x;
     /* 0004 */ int y;
@@ -311,7 +316,7 @@ static int dword_681504;
 static int dword_681508;
 
 // 0x68150C
-static bool dword_68150C;
+static InvenUiPanel inven_ui_panel;
 
 // 0x681510
 static int dword_681510;
@@ -686,7 +691,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     qword_6813A8 = a2;
     qword_682C78 = a2;
     dword_681514 = false;
-    dword_68150C = 0;
+    inven_ui_panel = INVEN_UI_PANEL_INVENTORY;
 
     if (!intgame_big_window_lock(inven_ui_message_filter, &inven_ui_window_handle)) {
         sub_551A80(0);
@@ -1228,7 +1233,7 @@ void sub_573840()
 static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg)
 {
     if (msg->data.button.button_handle == inven_ui_inventory_btn) {
-        dword_68150C = false;
+        inven_ui_panel = INVEN_UI_PANEL_INVENTORY;
         tig_button_hide(inven_ui_total_attack_image_btn);
         tig_button_hide(inven_ui_total_defence_image_btn);
         tig_button_hide(inven_ui_total_attack_value_btn);
@@ -1238,7 +1243,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
     }
 
     if (msg->data.button.button_handle == inven_ui_paperdoll_btn) {
-        dword_68150C = true;
+        inven_ui_panel = INVEN_UI_PANEL_PAPERDOLL;
         tig_button_show(inven_ui_total_attack_image_btn);
         tig_button_show(inven_ui_total_defence_image_btn);
         tig_button_show(inven_ui_total_attack_value_btn);
@@ -2430,7 +2435,7 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
 
     *parent_obj_ptr = qword_6814F8;
 
-    if (dword_68150C) {
+    if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
         for (idx = 0; idx < 9; idx++) {
             if (x >= stru_5CACE8[idx].x
                 && y - 41 >= stru_5CACE8[idx].y
@@ -2753,7 +2758,7 @@ void redraw_inven(bool a1)
     art_blit_info.dst_rect = &dst_rect;
     tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
-    if (dword_68150C) {
+    if (inven_ui_panel) {
         tig_art_interface_id_create(341, 0, 0, 0, &(art_blit_info.art_id));
         if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
             return;
@@ -2779,7 +2784,7 @@ void redraw_inven(bool a1)
     if (inven_ui_type == 0) {
         text_rects = stru_5CAE98;
     } else {
-        if (dword_68150C) {
+        if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
             text_rects = stru_5CAEC8;
         } else {
             text_rects = NULL;
@@ -2836,7 +2841,7 @@ void redraw_inven(bool a1)
         || inven_ui_type == 6) {
         text_rects = stru_5CAEF8;
     } else {
-        if (dword_68150C) {
+        if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
             text_rects = stru_5CAF18;
         } else {
             text_rects = NULL;
@@ -2970,7 +2975,7 @@ void redraw_inven(bool a1)
         text_rects = stru_5CAC58;
         memset(v1, 0, sizeof(v1));
     } else {
-        if (dword_68150C) {
+        if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
             text_rects = stru_5CACE8;
             memset(v1, 0, sizeof(v1));
         } else {
@@ -3007,7 +3012,7 @@ void redraw_inven(bool a1)
         // 0x57730A
         if (IS_WEAR_INV_LOC(inventory_location)) {
             if (inven_ui_type == 0
-                || dword_68150C == 1
+                || inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL
                 || inven_ui_type == 5
                 || inven_ui_type == 6) {
                 weapon_too_heavy = false;
@@ -3071,7 +3076,7 @@ void redraw_inven(bool a1)
         }
 
         // 0x5775A7
-        if (!dword_68150C) {
+        if (inven_ui_panel == INVEN_UI_PANEL_INVENTORY) {
             int x;
             int y;
             int width;
