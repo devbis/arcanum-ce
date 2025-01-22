@@ -52,7 +52,7 @@ typedef struct S5754C0 {
     /* 0008 */ int64_t field_8;
     /* 0010 */ int64_t field_10;
     /* 0018 */ int64_t field_18;
-    /* 0020 */ int field_20;
+    /* 0020 */ int mode;
     /* 0024 */ int field_24;
     /* 0028 */ int field_28;
     /* 002C */ int field_2C;
@@ -381,7 +381,7 @@ static tig_font_handle_t dword_68345C;
 static tig_button_handle_t inven_ui_target_inventory_btn;
 
 // 0x683464
-static int inven_ui_type;
+static InvenUiMode inven_ui_mode;
 
 // 0x68346C
 static bool dword_68346C;
@@ -517,7 +517,7 @@ bool sub_572340()
 }
 
 // 0x572370
-bool sub_572370(int64_t a1, int64_t a2, int type)
+bool sub_572370(int64_t a1, int64_t a2, int mode)
 {
     int rot;
     tig_art_id_t art_id;
@@ -537,7 +537,8 @@ bool sub_572370(int64_t a1, int64_t a2, int type)
         return false;
     }
 
-    if (type == 2 || type == 3) {
+    if (mode == INVEN_UI_MODE_LOOT
+        || mode == INVEN_UI_MODE_STEAL) {
         rot = object_rot(a1, a2);
         art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
         art_id = tig_art_id_rotation_set(art_id, rot);
@@ -547,9 +548,11 @@ bool sub_572370(int64_t a1, int64_t a2, int type)
         }
     }
 
-    if (a2 != OBJ_HANDLE_NULL && (type == 2 || type == 4)) {
+    if (a2 != OBJ_HANDLE_NULL
+        && (mode == INVEN_UI_MODE_LOOT
+            || mode == INVEN_UI_MODE_IDENTIFY)) {
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-            if (type == 2) {
+            if (mode == INVEN_UI_MODE_LOOT) {
                 err = ai_attempt_open_container(a1, a2);
                 if (err != AI_ATTEMPT_OPEN_CONTAINER_OK) {
                     mes_file_entry.num = err;
@@ -569,7 +572,7 @@ bool sub_572370(int64_t a1, int64_t a2, int type)
                 }
             }
         } else {
-            if (type == 2) {
+            if (mode == INVEN_UI_MODE_LOOT) {
                 if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_USE, 0)) {
                     return false;
                 }
@@ -581,19 +584,19 @@ bool sub_572370(int64_t a1, int64_t a2, int type)
 }
 
 // 0x572510
-bool sub_572510(int64_t a1, int64_t a2, int type)
+bool sub_572510(int64_t a1, int64_t a2, int mode)
 {
     if (!sub_551A80(0)) {
         return false;
     }
 
-    switch (type) {
-    case 0:
+    switch (mode) {
+    case INVEN_UI_MODE_INVENTORY:
         if (!sub_551A80(8)) {
             return false;
         }
         return true;
-    case 1:
+    case INVEN_UI_MODE_BARTER:
         if (!sub_551A80(4)) {
             return false;
         }
@@ -601,8 +604,8 @@ bool sub_572510(int64_t a1, int64_t a2, int type)
             return false;
         }
         return true;
-    case 2:
-    case 4:
+    case INVEN_UI_MODE_LOOT:
+    case INVEN_UI_MODE_IDENTIFY:
         if (!sub_551A80(10)) {
             return false;
         }
@@ -610,7 +613,7 @@ bool sub_572510(int64_t a1, int64_t a2, int type)
             return false;
         }
         return true;
-    case 3:
+    case INVEN_UI_MODE_STEAL:
         if (!sub_551A80(11)) {
             return false;
         }
@@ -618,7 +621,7 @@ bool sub_572510(int64_t a1, int64_t a2, int type)
             return false;
         }
         return true;
-    case 5:
+    case INVEN_UI_MODE_NPC_IDENTIFY:
         if (!sub_551A80(19)) {
             return false;
         }
@@ -626,7 +629,7 @@ bool sub_572510(int64_t a1, int64_t a2, int type)
             return false;
         }
         return true;
-    case 6:
+    case INVEN_UI_MODE_NPC_REPAIR:
         if (!sub_551A80(20)) {
             return false;
         }
@@ -640,7 +643,7 @@ bool sub_572510(int64_t a1, int64_t a2, int type)
 }
 
 // 0x572640
-void sub_572640(int64_t a1, int64_t a2, int type)
+void sub_572640(int64_t a1, int64_t a2, int mode)
 {
     int64_t substitute_inventory_obj;
     int64_t v2;
@@ -651,7 +654,7 @@ void sub_572640(int64_t a1, int64_t a2, int type)
         return;
     }
 
-    if (type == 1) {
+    if (mode == INVEN_UI_MODE_BARTER) {
         substitute_inventory_obj = critter_substitute_inventory_get(a2);
         if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
             v2 = sub_468570(8);
@@ -667,9 +670,9 @@ void sub_572640(int64_t a1, int64_t a2, int type)
             item_identify_all(a2);
             item_identify_all(substitute_inventory_obj);
         }
-    } else if (type == 2 || type == 4) {
+    } else if (mode == INVEN_UI_MODE_LOOT || mode == INVEN_UI_MODE_IDENTIFY) {
         if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-            if (type == 2) {
+            if (mode == INVEN_UI_MODE_LOOT) {
                 if (tig_art_id_frame_get(obj_field_int32_get(a2, OBJ_F_CURRENT_AID)) == 0) {
                     sub_4EEF20(a2);
                     gsound_play_sfx_id(sub_4F0FD0(a2, 0), 1);
@@ -679,7 +682,7 @@ void sub_572640(int64_t a1, int64_t a2, int type)
                 sub_463E20(a2);
             }
         } else {
-            if (type == 2) {
+            if (mode == INVEN_UI_MODE_LOOT) {
                 gsound_play_sfx_id(3007, 1);
             }
         }
@@ -687,7 +690,7 @@ void sub_572640(int64_t a1, int64_t a2, int type)
 }
 
 // 0x5727B0
-bool inven_ui_create(int64_t a1, int64_t a2, int type)
+bool inven_ui_create(int64_t a1, int64_t a2, int mode)
 {
     TigRect rect;
     TigButtonData button_data;
@@ -698,7 +701,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     tig_button_handle_t button_group[2];
     unsigned int critter_flags2;
 
-    inven_ui_type = type;
+    inven_ui_mode = mode;
     qword_6813A8 = a2;
     qword_682C78 = a2;
     inven_ui_target_panel = INVEN_UI_PANEL_INVENTORY;
@@ -738,9 +741,9 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     inven_ui_cycle_left_btn = TIG_BUTTON_HANDLE_INVALID;
     inven_ui_cycle_right_btn = TIG_BUTTON_HANDLE_INVALID;
 
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         button_data.mouse_down_snd_id = -1;
         button_data.mouse_up_snd_id = -1;
         tig_art_interface_id_create(676, 0, 0, 0, &(button_data.art_id));
@@ -832,7 +835,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         button_data.flags = TIG_BUTTON_FLAG_0x01;
         button_data.mouse_down_snd_id = 3000;
         button_data.mouse_up_snd_id = 3001;
-        if (inven_ui_type == 2) {
+        if (inven_ui_mode == INVEN_UI_MODE_LOOT) {
             tig_art_interface_id_create(808, 0, 0, 0, &(button_data.art_id));
             button_data.x = 301;
             button_data.y = 47;
@@ -869,7 +872,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         if (obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) != OBJ_TYPE_CONTAINER) {
             button_data.flags = TIG_BUTTON_FLAG_0x02 | TIG_BUTTON_FLAG_0x04;
             tig_art_interface_id_create(338, 0, 0, 0, &button_data.art_id);
-            if (inven_ui_type == 1) {
+            if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
                 button_data.x = 8;
                 button_data.y = 123;
             } else {
@@ -883,7 +886,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             }
 
             tig_art_interface_id_create(339, 0, 0, 0, &button_data.art_id);
-            if (inven_ui_type == 1) {
+            if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
                 button_data.x = 46;
                 button_data.y = 123;
             } else {
@@ -930,9 +933,9 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     qword_6814F8 = a1;
     sub_466260(qword_6814F8, dword_68111C);
 
-    if (inven_ui_type == 4
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         dword_681394 = 0;
         dword_681118 = 0;
     } else {
@@ -946,7 +949,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         stru_681380.y = 331;
     }
 
-    if (inven_ui_type == 1) {
+    if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
         dword_681448 = 1;
         dword_682C70 = 345;
         stru_681108.x = 703;
@@ -960,7 +963,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     if (qword_6813A8 != OBJ_HANDLE_NULL) {
         sub_441B60(qword_682C78, qword_6814F8, byte_682C8C);
         dword_681510 = 4;
-        if (inven_ui_type == 1) {
+        if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
             dword_681510 = 5;
             qword_6813A8 = critter_substitute_inventory_get(qword_682C78);
             if (qword_6813A8 != OBJ_HANDLE_NULL) {
@@ -968,7 +971,8 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             } else {
                 qword_6813A8 = qword_682C78;
             }
-        } else if ((inven_ui_type == 2 || inven_ui_type == 4)
+        } else if ((inven_ui_mode == INVEN_UI_MODE_LOOT
+            || inven_ui_mode == INVEN_UI_MODE_IDENTIFY)
             && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             dword_681510 = 88;
             sub_468190();
@@ -980,7 +984,8 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     byte_68241C[0] = '\0';
     dword_681440 = -1;
 
-    if (inven_ui_type == 1 && critter_leader_get(qword_682C78) == a1) {
+    if (inven_ui_mode == INVEN_UI_MODE_BARTER
+        && critter_leader_get(qword_682C78) == a1) {
         dword_6810FC = 1;
         if (critter_follower_next(qword_682C78) != qword_682C78) {
             button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -1028,16 +1033,16 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     location_origin_set(obj_field_int64_get(qword_6814F8, OBJ_F_LOCATION));
 
     v2.window_handle = inven_ui_window_handle;
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         rect.x = 11;
         rect.y = 9;
         art_id = 233;
     } else {
         rect.x = 16;
         rect.y = 17;
-        art_id = inven_ui_type == 1 ? 231 : 232;
+        art_id = inven_ui_mode == INVEN_UI_MODE_BARTER ? 231 : 232;
     }
 
     rect.width = 89;
@@ -1091,9 +1096,10 @@ void inven_ui_destroy()
     inven_ui_created = false;
     sub_4A53B0(qword_6814F8, 0);
 
-    if ((inven_ui_type == 2 || inven_ui_type == 4)
+    if ((inven_ui_mode == INVEN_UI_MODE_LOOT
+        || inven_ui_mode == INVEN_UI_MODE_IDENTIFY)
         && obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
-        if (inven_ui_type == 2) {
+        if (inven_ui_mode == INVEN_UI_MODE_LOOT) {
             art_id = obj_field_int32_get(qword_6813A8, OBJ_F_CURRENT_AID);
             if (tig_art_id_frame_get(art_id) == 1
                 && (obj_field_int32_get(qword_6813A8, OBJ_F_CONTAINER_FLAGS) & OCOF_STICKY) == 0) {
@@ -1382,14 +1388,14 @@ static inline void inven_ui_message_filter_handle_mouse_idle(TigMessage* msg)
             qword_681458 = v1;
             if (qword_681458 != OBJ_HANDLE_NULL) {
                 sub_57CCF0(qword_6814F8, qword_681458);
-                switch (inven_ui_type) {
-                case 1:
+                switch (inven_ui_mode) {
+                case INVEN_UI_MODE_BARTER:
                     sub_578330(qword_681458, v2);
                     break;
-                case 5:
+                case INVEN_UI_MODE_NPC_IDENTIFY:
                     sub_5786C0(qword_681458);
                     break;
-                case 6:
+                case INVEN_UI_MODE_NPC_REPAIR:
                     sub_578760(qword_681458);
                     break;
                 default:
@@ -1416,16 +1422,16 @@ static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
                 && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
                 if (dword_6813A4 == 224) {
                     if (qword_681450 == qword_6813A8) {
-                        switch (inven_ui_type) {
-                        case 1:
+                        switch (inven_ui_mode) {
+                        case INVEN_UI_MODE_BARTER:
                             if (dword_6810FC) {
                                 dword_6813A4 = 225;
                             } else {
                                 dword_6813A4 = 348;
                             }
                             break;
-                        case 2:
-                        case 3:
+                        case INVEN_UI_MODE_LOOT:
+                        case INVEN_UI_MODE_STEAL:
                             dword_6813A4 = 348;
                             break;
                         default:
@@ -1473,9 +1479,9 @@ static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
                 && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
                 if (dword_681504 == 342) {
                     if ((qword_681450 == qword_6813A8
-                            && (inven_ui_type == 1
-                                || inven_ui_type == 2
-                                || inven_ui_type == 3))
+                            && (inven_ui_mode == INVEN_UI_MODE_BARTER
+                                || inven_ui_mode == INVEN_UI_MODE_LOOT
+                                || inven_ui_mode == INVEN_UI_MODE_STEAL))
                         || sub_462C30(qword_6814F8, qword_6810E0)) {
                         dword_681504 = 347;
                     } else {
@@ -1568,16 +1574,16 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         && msg->data.mouse.y >= stru_6813B0.y
         && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
         if (qword_681450 == qword_6813A8) {
-            switch (inven_ui_type) {
-            case 1:
+            switch (inven_ui_mode) {
+            case INVEN_UI_MODE_BARTER:
                 if (dword_6810FC) {
                     sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 2);
                 } else {
                     sub_575770();
                 }
                 break;
-            case 2:
-            case 3:
+            case INVEN_UI_MODE_LOOT:
+            case INVEN_UI_MODE_STEAL:
                 sub_575770();
                 break;
             default:
@@ -1614,9 +1620,9 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         && msg->data.mouse.y >= stru_681380.y
         && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
         if ((qword_681450 == qword_6813A8
-                && (inven_ui_type == 1
-                    || inven_ui_type == 2
-                    || inven_ui_type == 3)
+                && (inven_ui_mode == INVEN_UI_MODE_BARTER
+                    || inven_ui_mode == INVEN_UI_MODE_LOOT
+                    || inven_ui_mode == INVEN_UI_MODE_STEAL)
             || sub_462C30(qword_6814F8, qword_6810E0))) {
             sub_575770();
             qword_6810E0 = OBJ_HANDLE_NULL;
@@ -1626,7 +1632,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         }
 
         if ((obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) == 0
-            || inven_ui_type) {
+            || inven_ui_mode != INVEN_UI_MODE_INVENTORY) {
             v3 = qword_6810E0;
             sub_575770();
             if (!combat_turn_based_is_active()
@@ -1663,13 +1669,13 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
     }
 
     if (IS_WEAR_INV_LOC(inventory_location)) {
-        if (inven_ui_type == 1) {
+        if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
             if (qword_681450 != qword_6814F8 && v2 != qword_6814F8 && !dword_6810FC) {
                 sub_575770();
                 return false;
             }
         } else {
-            if (inven_ui_type == 3 && qword_681450 != qword_6814F8 && v2 != qword_6814F8) {
+            if (inven_ui_mode == INVEN_UI_MODE_STEAL && qword_681450 != qword_6814F8 && v2 != qword_6814F8) {
                 sub_575770();
                 return false;
             }
@@ -1711,7 +1717,9 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             return false;
         }
 
-        if ((inven_ui_type == 1 || inven_ui_type == 3) && qword_681450 != v2) {
+        if ((inven_ui_mode == INVEN_UI_MODE_BARTER
+                || inven_ui_mode == INVEN_UI_MODE_STEAL)
+            && qword_681450 != v2) {
             sub_575770();
             return false;
         }
@@ -1770,7 +1778,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
     if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
         if (!sub_541680()) {
             if (qword_6810E0 != OBJ_HANDLE_NULL) {
-                if (!inven_ui_type) {
+                if (inven_ui_mode == INVEN_UI_MODE_INVENTORY) {
                     sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 4);
                     redraw_inven(false);
                     sub_466260(qword_6814F8, dword_68111C);
@@ -1795,8 +1803,8 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
             return false;
         }
 
-        switch (inven_ui_type) {
-        case 5:
+        switch (inven_ui_mode) {
+        case INVEN_UI_MODE_NPC_IDENTIFY:
             sub_5786C0(v1);
             if (dword_681440 > 0
                 && item_gold_get(qword_6814F8) >= dword_681440) {
@@ -1805,7 +1813,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
                 sub_413910(qword_682C78, qword_6814F8, byte_68241C);
             }
             break;
-        case 6:
+        case INVEN_UI_MODE_NPC_REPAIR:
             sub_578760(v1);
             if (dword_681440 > 0
                 && item_gold_get(qword_6814F8) >= dword_681440) {
@@ -1859,7 +1867,7 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
         return false;
     }
 
-    if (inven_ui_type == 0) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY) {
         inventory_location = item_inventory_location_get(v1);
         if (!IS_WEAR_INV_LOC(inventory_location)) {
             inventory_location = item_location_get(v1);
@@ -1875,7 +1883,9 @@ static inline bool inven_ui_message_filter_handle_mouse_rbutton_up(TigMessage* m
                 }
             }
         }
-    } else if (inven_ui_type > 0 && inven_ui_type <= 3) {
+    } else if (inven_ui_mode == INVEN_UI_MODE_BARTER
+        || inven_ui_mode == INVEN_UI_MODE_LOOT
+        || inven_ui_mode == INVEN_UI_MODE_STEAL) {
         v3 = qword_6814F8;
         if (v2 == qword_6814F8) {
             v3 = qword_6813A8;
@@ -1976,9 +1986,9 @@ bool inven_ui_message_filter(TigMessage* msg)
             }
         } else if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_DOWN
             && !dword_68346C
-            && inven_ui_type != 4
-            && inven_ui_type != 5
-            && inven_ui_type != 6) {
+            && inven_ui_mode != INVEN_UI_MODE_IDENTIFY
+            && inven_ui_mode != INVEN_UI_MODE_NPC_IDENTIFY
+            && inven_ui_mode != INVEN_UI_MODE_NPC_REPAIR) {
             // 0x574080
             if (inven_ui_message_filter_handle_mouse_lbutton_down(msg)) {
                 return true;
@@ -1991,10 +2001,10 @@ bool inven_ui_message_filter(TigMessage* msg)
             }
         } else if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_RIGHT_BUTTON_UP
             && qword_6810E0 == OBJ_HANDLE_NULL
-            && (inven_ui_type == 0
-                || inven_ui_type == 1
-                || inven_ui_type == 2
-                || inven_ui_type == 3)) {
+            && (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+                || inven_ui_mode == INVEN_UI_MODE_BARTER
+                || inven_ui_mode == INVEN_UI_MODE_LOOT
+                || inven_ui_mode == INVEN_UI_MODE_STEAL)) {
             // 0x5742A4
             if (inven_ui_message_filter_handle_mouse_rbutton_up(msg, &v45)) {
                 return true;
@@ -2003,7 +2013,7 @@ bool inven_ui_message_filter(TigMessage* msg)
         break;
     }
 
-    if (inven_ui_type == 1
+    if (inven_ui_mode == INVEN_UI_MODE_BARTER
         && qword_6810E0 == OBJ_HANDLE_NULL
         && sub_551A00() != 13
         && (critter_is_sleeping(qword_682C78) || !critter_is_active(qword_682C78))) {
@@ -2023,7 +2033,7 @@ void sub_574FD0(bool a1)
 {
     int64_t v1;
     int64_t v2;
-    int type;
+    int mode;
 
     sub_575770();
 
@@ -2041,9 +2051,9 @@ void sub_574FD0(bool a1)
 
     if (v1 != qword_6813A8) {
         v2 = qword_6814F8;
-        type = inven_ui_type;
+        mode = inven_ui_mode;
         inven_ui_destroy();
-        sub_572240(v2, v1, type);
+        sub_572240(v2, v1, mode);
     }
 }
 
@@ -2074,7 +2084,7 @@ bool sub_575100(bool* a1)
 {
     int64_t v1;
 
-    if (inven_ui_type != 3 || qword_681450 != qword_6814F8) {
+    if (inven_ui_mode != INVEN_UI_MODE_STEAL || qword_681450 != qword_6814F8) {
         return false;
     }
 
@@ -2093,7 +2103,7 @@ bool sub_575180(bool* a1)
 {
     int64_t v1;
 
-    if (inven_ui_type != 3 || qword_681450 == qword_6814F8) {
+    if (inven_ui_mode != INVEN_UI_MODE_STEAL || qword_681450 == qword_6814F8) {
         return false;
     }
 
@@ -2110,7 +2120,7 @@ bool sub_575180(bool* a1)
 // 0x575200
 void sub_575200(int a1)
 {
-    if (inven_ui_type == 1 && qword_681450 != qword_6814F8) {
+    if (inven_ui_mode == INVEN_UI_MODE_BARTER && qword_681450 != qword_6814F8) {
         if (dword_681440 == -1 || qword_6810E0 != qword_681458) {
             sub_578330(qword_6810E0, qword_682C78);
         }
@@ -2138,7 +2148,7 @@ void sub_575360(int a1)
 {
     int cost;
 
-    if (inven_ui_type != 1) {
+    if (inven_ui_mode != INVEN_UI_MODE_BARTER) {
         sub_5788C0(qword_6810E0, qword_6813A8, a1, 1);
         qword_681458 = OBJ_HANDLE_NULL;
         return;
@@ -2185,7 +2195,7 @@ void sub_5754C0(int x, int y)
     entry->field_8 = qword_6810E0;
     entry->field_10 = qword_681450;
     entry->field_18 = qword_6814F8;
-    entry->field_20 = inven_ui_type;
+    entry->mode = inven_ui_mode;
     entry->field_24 = dword_6810E8;
     entry->field_28 = dword_681508;
 
@@ -2221,7 +2231,7 @@ bool sub_5755A0(S5754C0* entry)
         if (entry->field_10 == entry->field_18) {
             entry->x -= 368 + 32 * (entry->field_24 % 10);
             entry->y -= 49 + 32 * (entry->field_24 / 10);
-        } else if (entry->field_20 == 1) {
+        } else if (entry->mode == 1) {
             entry->x -= 8 + 32 * (entry->field_24 % 10);
             entry->y -= 209 + 32 * (entry->field_28 - entry->field_24 / 10);
         } else {
@@ -2376,10 +2386,10 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
     int col;
     int row;
 
-    switch (inven_ui_type) {
-    case 0:
-    case 5:
-    case 6:
+    switch (inven_ui_mode) {
+    case INVEN_UI_MODE_INVENTORY:
+    case INVEN_UI_MODE_NPC_IDENTIFY:
+    case INVEN_UI_MODE_NPC_REPAIR:
         *parent_obj_ptr = qword_6814F8;
 
         for (idx = 0; idx < 9; idx++) {
@@ -2392,7 +2402,7 @@ int sub_575CB0(int x, int y, int64_t* parent_obj_ptr)
         }
 
         break;
-    case 1:
+    case INVEN_UI_MODE_BARTER:
         if (inven_ui_target_panel == INVEN_UI_PANEL_PAPERDOLL) {
             *parent_obj_ptr = qword_682C78;
 
@@ -2609,8 +2619,8 @@ void redraw_inven(bool a1)
     tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
     // 0x5765A5
-    switch (inven_ui_type) {
-    case 1:
+    switch (inven_ui_mode) {
+    case INVEN_UI_MODE_BARTER:
         if (sub_553D10(qword_6814F8, qword_682C78, &portrait)) {
             portrait_draw_native(qword_682C78, portrait, inven_ui_window_handle, 183, 33);
         } else {
@@ -2692,9 +2702,9 @@ void redraw_inven(bool a1)
         }
         tig_font_pop();
         break;
-    case 2:
-    case 3:
-    case 4:
+    case INVEN_UI_MODE_LOOT:
+    case INVEN_UI_MODE_STEAL:
+    case INVEN_UI_MODE_IDENTIFY:
         if (sub_553D10(qword_6814F8, qword_682C78, &portrait)) {
             portrait_draw_native(qword_682C78, portrait, inven_ui_window_handle, inven_ui_loot_target_portrait_rect.x, inven_ui_loot_target_portrait_rect.y);
         } else {
@@ -2717,8 +2727,8 @@ void redraw_inven(bool a1)
             tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
         }
         break;
-    case 5:
-    case 6:
+    case INVEN_UI_MODE_NPC_IDENTIFY:
+    case INVEN_UI_MODE_NPC_REPAIR:
         if (sub_553D10(qword_6814F8, qword_682C78, &portrait)) {
             portrait_draw_32x32(qword_682C78, portrait, inven_ui_window_handle, 141, 36);
         } else {
@@ -2792,7 +2802,7 @@ void redraw_inven(bool a1)
     }
 
     // 0x576C38
-    if (inven_ui_type == 0) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY) {
         text_rects = inven_ui_inventory_summary_rects;
     } else {
         if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
@@ -2847,9 +2857,9 @@ void redraw_inven(bool a1)
     }
 
     // 0x576DFE
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         text_rects = inven_ui_inventory_total_stat_rects;
     } else {
         if (inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL) {
@@ -2980,9 +2990,9 @@ void redraw_inven(bool a1)
     }
 
     // 0x5771C8
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         text_rects = inven_ui_inventory_paperdoll_inv_slot_rects;
         memset(v1, 0, sizeof(v1));
     } else {
@@ -3022,10 +3032,10 @@ void redraw_inven(bool a1)
 
         // 0x57730A
         if (IS_WEAR_INV_LOC(inventory_location)) {
-            if (inven_ui_type == 0
+            if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
                 || inven_ui_panel == INVEN_UI_PANEL_PAPERDOLL
-                || inven_ui_type == 5
-                || inven_ui_type == 6) {
+                || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+                || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
                 weapon_too_heavy = false;
                 if (inventory_location == ITEM_INV_LOC_WEAPON) {
                     weapon_min_str = item_weapon_min_strength(item_obj, qword_6814F8);
@@ -3168,8 +3178,8 @@ void redraw_inven(bool a1)
 
     // 0x5778D8
     if (qword_6813A8 != OBJ_HANDLE_NULL
-        && inven_ui_type != 5
-        && inven_ui_type != 6) {
+        && inven_ui_mode != INVEN_UI_MODE_NPC_IDENTIFY
+        && inven_ui_mode != INVEN_UI_MODE_NPC_REPAIR) {
         int64_t target_obj;
         int v102;
         int v109;
@@ -3180,7 +3190,7 @@ void redraw_inven(bool a1)
             target_obj = qword_682C78;
             memset(v1, 9, sizeof(v1));
 
-            if (inven_ui_type == 1) {
+            if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
                 tig_art_interface_id_create(337, 0, 0, 0, &(art_blit_info.art_id));
             } else {
                 tig_art_interface_id_create(349, 0, 0, 0, &(art_blit_info.art_id));
@@ -3199,7 +3209,7 @@ void redraw_inven(bool a1)
             dst_rect.width = art_frame_data.width;
             dst_rect.height = art_frame_data.width;
 
-            if (inven_ui_type == 1) {
+            if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
                 dst_rect.y = 157;
                 text_rects = inven_ui_barter_npc_paperdoll_inv_slot_rects;
             } else {
@@ -3228,7 +3238,7 @@ void redraw_inven(bool a1)
         } else {
             target_obj = qword_6813A8;
             v112 = 8;
-            if (inven_ui_type == 1) {
+            if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
                 v102 = 168;
                 v109 = 224;
             } else {
@@ -3429,9 +3439,11 @@ tig_art_id_t sub_5782D0()
     tig_art_id_t art_id;
     int num;
 
-    if (inven_ui_type == 0 || inven_ui_type == 5 || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         num = 223;
-    } else if (inven_ui_type == 1) {
+    } else if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
         num = inven_ui_cycle_left_btn != -1 ? 825 : 235;
     } else {
         num = 234;
@@ -3635,7 +3647,7 @@ void sub_5788C0(int64_t item_obj, int64_t target_obj, int new_inventory_location
             sub_462410(item_obj, &qty_fld);
             qty = obj_field_int32_get(item_obj, qty_fld);
             if (qty != 1) {
-                if (inven_ui_type == 2
+                if (inven_ui_mode == INVEN_UI_MODE_LOOT
                     && (a4 & 0x01) != 0
                     && target_obj == qword_6814F8
                     || (a4 & 0x20) != 0) {
@@ -3927,9 +3939,9 @@ void inven_ui_target_inventory_scrollbar_create()
 
     sub_5811B0();
 
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         return;
     }
 
@@ -3939,7 +3951,7 @@ void inven_ui_target_inventory_scrollbar_create()
     info.field_24 = dword_681510;
     info.field_28 = 0;
 
-    if (inven_ui_type == 1) {
+    if (inven_ui_mode == 1) {
         info.scrollbar_rect = inven_ui_barter_scrollbar_rect;
         info.content_rect.x = 8;
         info.content_rect.y = 168;
@@ -3962,9 +3974,9 @@ void inven_ui_target_inventory_scrollbar_create()
 // 0x579D70
 void inven_ui_target_inventory_scrollbar_destroy()
 {
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         return;
     }
 
@@ -3975,9 +3987,9 @@ void inven_ui_target_inventory_scrollbar_destroy()
 // 0x579DA0
 void inven_ui_target_inventory_scrollbar_show()
 {
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         return;
     }
 
@@ -3987,9 +3999,9 @@ void inven_ui_target_inventory_scrollbar_show()
 // 0x579DD0
 void inven_ui_target_inventory_scrollbar_hide()
 {
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         return;
     }
 
@@ -3999,9 +4011,9 @@ void inven_ui_target_inventory_scrollbar_hide()
 // 0x579E00
 void sub_579E00(int a1)
 {
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         return;
     }
 
@@ -4014,9 +4026,9 @@ void sub_579E30(TigRect* rect)
 {
     TigArtBlitInfo blit_info;
 
-    if (inven_ui_type == 0
-        || inven_ui_type == 5
-        || inven_ui_type == 6) {
+    if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
+        || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         return;
     }
 

@@ -4,14 +4,24 @@
 #include "game/context.h"
 #include "game/mp_utils.h"
 
+typedef enum InvenUiMode {
+    INVEN_UI_MODE_INVENTORY,
+    INVEN_UI_MODE_BARTER,
+    INVEN_UI_MODE_LOOT,
+    INVEN_UI_MODE_STEAL,
+    INVEN_UI_MODE_IDENTIFY,
+    INVEN_UI_MODE_NPC_IDENTIFY,
+    INVEN_UI_MODE_NPC_REPAIR,
+} InvenUiMode;
+
 bool inven_ui_init(GameInitInfo* init_info);
 void inven_ui_exit();
 void inven_ui_reset();
-bool sub_572370(int64_t a1, int64_t a2, int type);
-bool sub_572510(int64_t a1, int64_t a2, int type);
-bool sub_572240(int64_t a1, int64_t a2, int type);
-void sub_572640(int64_t a1, int64_t a2, int type);
-bool inven_ui_create(int64_t a1, int64_t a2, int type);
+bool sub_572370(int64_t a1, int64_t a2, int mode);
+bool sub_572510(int64_t a1, int64_t a2, int mode);
+bool sub_572240(int64_t a1, int64_t a2, int mode);
+void sub_572640(int64_t a1, int64_t a2, int mode);
+bool inven_ui_create(int64_t a1, int64_t a2, int mode);
 void inven_ui_destroy();
 void sub_573590(int64_t obj);
 int inven_ui_is_created();
