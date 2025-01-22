@@ -850,7 +850,7 @@ int sub_41DAE0(tig_art_id_t aid, char* path)
     MesFileEntry mes_file_entry;
 
     if (!name_initialized) {
-        return TIG_ERR_13;
+        return TIG_ERR_IO;
     }
 
     aid = sub_41D510(aid);
