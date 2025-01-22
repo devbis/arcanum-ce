@@ -218,7 +218,7 @@ static mes_file_handle_t inven_ui_mes_file;
 static bool dword_6810FC;
 
 // 0x681100
-static tig_button_handle_t dword_681100;
+static tig_button_handle_t inven_ui_cycle_left_btn;
 
 // 0x681108
 static TigRect stru_681108;
@@ -245,13 +245,13 @@ static TigRect stru_681380;
 static int dword_681394;
 
 // 0x681398
-static tig_button_handle_t dword_681398;
+static tig_button_handle_t inven_ui_cycle_right_btn;
 
 // 0x68139C
 static bool inven_ui_created;
 
 // 0x6813A0
-static tig_button_handle_t dword_6813A0;
+static tig_button_handle_t inven_ui_target_total_attack_btn;
 
 // 0x6813A4
 static int dword_6813A4;
@@ -269,7 +269,7 @@ static char byte_6813C0[128];
 static int dword_681440;
 
 // 0x681444
-static tig_button_handle_t dword_681444;
+static tig_button_handle_t inven_ui_arrange_items_btn;
 
 // 0x681448
 static int dword_681448;
@@ -281,19 +281,19 @@ static int64_t qword_681450;
 static int64_t qword_681458;
 
 // 0x681460
-static tig_button_handle_t dword_681460;
+static tig_button_handle_t inven_ui_total_attack_value_btn;
 
 // 0x681464
-static tig_button_handle_t dword_681464;
+static tig_button_handle_t inven_ui_take_all_btn;
 
 // 0x681468
 static char byte_681468[128];
 
 // 0x6814E8
-static tig_button_handle_t dword_6814E8;
+static tig_button_handle_t inven_ui_total_defence_image_btn;
 
 // 0x6814EC
-static tig_button_handle_t dword_6814EC;
+static tig_button_handle_t inven_ui_inventory_btn;
 
 // 0x6814F0
 static int dword_6814F0;
@@ -302,7 +302,7 @@ static int dword_6814F0;
 static int64_t qword_6814F8;
 
 // 0x681500
-static tig_button_handle_t dword_681500;
+static tig_button_handle_t inven_ui_target_paperdoll_btn;
 
 // 0x681504
 static int dword_681504;
@@ -335,7 +335,7 @@ static char byte_682804[1000];
 static char byte_682BEC[128];
 
 // 0x682C6C
-static tig_button_handle_t dword_682C6C;
+static tig_button_handle_t inven_ui_total_attack_image_btn;
 
 // 0x682C70
 static int dword_682C70;
@@ -347,13 +347,13 @@ static tig_font_handle_t dword_682C74;
 static int64_t qword_682C78;
 
 // 0x682C80
-static tig_button_handle_t dword_682C80;
+static tig_button_handle_t inven_ui_paperdoll_btn;
 
 // 0x682C84
-static tig_button_handle_t dword_682C84;
+static tig_button_handle_t inven_ui_target_total_defence_btn;
 
 // 0x682C88
-static tig_button_handle_t dword_682C88;
+static tig_button_handle_t inven_ui_total_defence_value_btn;
 
 // 0x682C8C
 static char byte_682C8C[MAX_STRING];
@@ -362,7 +362,7 @@ static char byte_682C8C[MAX_STRING];
 static tig_font_handle_t dword_68345C;
 
 // 0x683460
-static tig_button_handle_t dword_683460;
+static tig_button_handle_t inven_ui_target_inventory_btn;
 
 // 0x683464
 static int inven_ui_type;
@@ -702,25 +702,25 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
     button_data.mouse_exit_snd_id = -1;
     button_data.x = 763;
     button_data.y = 197;
-    if (tig_button_create(&button_data, &dword_681444) != TIG_OK) {
+    if (tig_button_create(&button_data, &inven_ui_arrange_items_btn) != TIG_OK) {
         intgame_big_window_unlock();
         sub_551A80(0);
         return false;
     }
 
-    dword_682C80 = TIG_BUTTON_HANDLE_INVALID;
-    dword_6814EC = TIG_BUTTON_HANDLE_INVALID;
-    dword_681500 = TIG_BUTTON_HANDLE_INVALID;
-    dword_683460 = TIG_BUTTON_HANDLE_INVALID;
-    dword_682C6C = TIG_BUTTON_HANDLE_INVALID;
-    dword_6814E8 = TIG_BUTTON_HANDLE_INVALID;
-    dword_681460 = TIG_BUTTON_HANDLE_INVALID;
-    dword_682C88 = TIG_BUTTON_HANDLE_INVALID;
-    dword_6813A0 = TIG_BUTTON_HANDLE_INVALID;
-    dword_682C84 = TIG_BUTTON_HANDLE_INVALID;
-    dword_681464 = TIG_BUTTON_HANDLE_INVALID;
-    dword_681100 = TIG_BUTTON_HANDLE_INVALID;
-    dword_681398 = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_paperdoll_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_inventory_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_target_paperdoll_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_target_inventory_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_total_attack_image_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_total_defence_image_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_total_attack_value_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_total_defence_value_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_target_total_attack_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_target_total_defence_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_take_all_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_cycle_left_btn = TIG_BUTTON_HANDLE_INVALID;
+    inven_ui_cycle_right_btn = TIG_BUTTON_HANDLE_INVALID;
 
     if (inven_ui_type == 0
         || inven_ui_type == 5
@@ -730,7 +730,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         tig_art_interface_id_create(676, 0, 0, 0, &(button_data.art_id));
         button_data.x = 29;
         button_data.y = 318;
-        if (tig_button_create(&button_data, &dword_682C6C) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_total_attack_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -739,7 +739,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         tig_art_interface_id_create(677, 0, 0, 0, &(button_data.art_id));
         button_data.x = 254;
         button_data.y = 319;
-        if (tig_button_create(&button_data, &dword_6814E8) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_total_defence_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -750,7 +750,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         button_data.art_id = TIG_ART_ID_INVALID;
         button_data.width = stru_5CAEF8[0].width;
         button_data.height = stru_5CAEF8[0].height;
-        if (tig_button_create(&button_data, &dword_681460)) {
+        if (tig_button_create(&button_data, &inven_ui_total_attack_value_btn)) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -761,7 +761,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         button_data.art_id = TIG_ART_ID_INVALID;
         button_data.width = stru_5CAEF8[1].width;
         button_data.height = stru_5CAEF8[1].height;
-        if (tig_button_create(&button_data, &dword_682C88) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_total_defence_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -776,7 +776,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         tig_art_interface_id_create(676, 0, 0, 0, &(button_data.art_id));
         button_data.x = 374;
         button_data.y = 318;
-        if (tig_button_create(&button_data, &dword_682C6C) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_total_attack_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -785,7 +785,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         tig_art_interface_id_create(677, 0, 0, 0, &(button_data.art_id));
         button_data.x = 599;
         button_data.y = 319;
-        if (tig_button_create(&button_data, &dword_6814E8) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_total_defence_image_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -796,7 +796,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         button_data.art_id = TIG_ART_ID_INVALID;
         button_data.width = stru_5CAF18[0].width;
         button_data.height = stru_5CAF18[0].height;
-        if (tig_button_create(&button_data, &dword_681460) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_total_attack_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -807,7 +807,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         button_data.art_id = TIG_ART_ID_INVALID;
         button_data.width = stru_5CAF18[1].width;
         button_data.height = stru_5CAF18[1].height;
-        if (tig_button_create(&button_data, &dword_682C88) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_total_defence_value_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -816,12 +816,11 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         button_data.flags = TIG_BUTTON_FLAG_0x01;
         button_data.mouse_down_snd_id = 3000;
         button_data.mouse_up_snd_id = 3001;
-        if ( inven_ui_type == 2 )
-        {
+        if (inven_ui_type == 2) {
             tig_art_interface_id_create(808, 0, 0, 0, &(button_data.art_id));
             button_data.x = 301;
             button_data.y = 47;
-            if (tig_button_create(&button_data, &dword_681464) != TIG_OK) {
+            if (tig_button_create(&button_data, &inven_ui_take_all_btn) != TIG_OK) {
                 intgame_big_window_unlock();
                 sub_551A80(0);
                 return false;
@@ -832,7 +831,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         tig_art_interface_id_create(338, 0, 0, 0, &(button_data.art_id));
         button_data.x = 713;
         button_data.y = 37;
-        if (tig_button_create(&button_data, &dword_682C80) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_paperdoll_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
@@ -841,14 +840,14 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
         tig_art_interface_id_create(339, 0, 0, 0, &(button_data.art_id));
         button_data.x = 751;
         button_data.y = 37;
-        if (tig_button_create(&button_data, &dword_6814EC) != TIG_OK) {
+        if (tig_button_create(&button_data, &inven_ui_inventory_btn) != TIG_OK) {
             intgame_big_window_unlock();
             sub_551A80(0);
             return false;
         }
 
-        button_group[0] = dword_682C80;
-        button_group[1] = dword_6814EC;
+        button_group[0] = inven_ui_paperdoll_btn;
+        button_group[1] = inven_ui_inventory_btn;
         tig_button_radio_group_create(2, button_group, 0);
 
         if (obj_field_int32_get(qword_6813A8, OBJ_F_TYPE) != OBJ_TYPE_CONTAINER) {
@@ -861,7 +860,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
                 button_data.x = 23;
                 button_data.y = 108;
             }
-            if (tig_button_create(&button_data, &dword_681500) != TIG_OK) {
+            if (tig_button_create(&button_data, &inven_ui_target_paperdoll_btn) != TIG_OK) {
                 intgame_big_window_unlock();
                 sub_551A80(0);
                 return false;
@@ -875,14 +874,14 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
                 button_data.x = 74;
                 button_data.y = 108;
             }
-            if (tig_button_create(&button_data, &dword_683460) != TIG_OK) {
+            if (tig_button_create(&button_data, &inven_ui_target_inventory_btn) != TIG_OK) {
                 intgame_big_window_unlock();
                 sub_551A80(0);
                 return false;
             }
 
-            button_group[0] = dword_681500;
-            button_group[1] = dword_683460;
+            button_group[0] = inven_ui_target_paperdoll_btn;
+            button_group[1] = inven_ui_target_inventory_btn;
             tig_button_radio_group_create(2, button_group, 0);
 
             button_data.flags = TIG_BUTTON_FLAG_HIDDEN;
@@ -893,7 +892,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             button_data.y = 329;
             button_data.width = 55;
             button_data.height = 40;
-            if (tig_button_create(&button_data, &dword_6813A0) != TIG_OK) {
+            if (tig_button_create(&button_data, &inven_ui_target_total_attack_btn) != TIG_OK) {
                 intgame_big_window_unlock();
                 sub_551A80(0);
                 return false;
@@ -904,7 +903,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             button_data.y = 329;
             button_data.width = 55;
             button_data.height = 40;
-            if (tig_button_create(&button_data, &dword_682C84) != TIG_OK) {
+            if (tig_button_create(&button_data, &inven_ui_target_total_defence_btn) != TIG_OK) {
                 intgame_big_window_unlock();
                 sub_551A80(0);
                 return false;
@@ -973,7 +972,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             tig_art_interface_id_create(757, 0, 0, 0, &(button_data.art_id));
             button_data.x = 155;
             button_data.y = 55;
-            if (tig_button_create(&button_data, &dword_681100) != TIG_OK) {
+            if (tig_button_create(&button_data, &inven_ui_cycle_left_btn) != TIG_OK) {
                 intgame_big_window_unlock();
                 sub_551A80(0);
                 return false;
@@ -982,7 +981,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int type)
             tig_art_interface_id_create(758, 0, 0, 0, &(button_data.art_id));
             button_data.x = 253;
             button_data.y = 55;
-            if (tig_button_create(&button_data, &dword_681398) != TIG_OK) {
+            if (tig_button_create(&button_data, &inven_ui_cycle_right_btn) != TIG_OK) {
                 intgame_big_window_unlock();
                 sub_551A80(0);
                 return false;
@@ -1228,64 +1227,66 @@ void sub_573840()
 // 0x573897
 static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg)
 {
-    if (msg->data.button.button_handle == dword_6814EC) {
+    if (msg->data.button.button_handle == inven_ui_inventory_btn) {
         dword_68150C = false;
-        tig_button_hide(dword_682C6C);
-        tig_button_hide(dword_6814E8);
-        tig_button_hide(dword_681460);
-        tig_button_hide(dword_682C88);
+        tig_button_hide(inven_ui_total_attack_image_btn);
+        tig_button_hide(inven_ui_total_defence_image_btn);
+        tig_button_hide(inven_ui_total_attack_value_btn);
+        tig_button_hide(inven_ui_total_defence_value_btn);
         redraw_inven(false);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_682C80) {
+    if (msg->data.button.button_handle == inven_ui_paperdoll_btn) {
         dword_68150C = true;
-        tig_button_show(dword_682C6C);
-        tig_button_show(dword_6814E8);
-        tig_button_show(dword_681460);
-        tig_button_show(dword_682C88);
+        tig_button_show(inven_ui_total_attack_image_btn);
+        tig_button_show(inven_ui_total_defence_image_btn);
+        tig_button_show(inven_ui_total_attack_value_btn);
+        tig_button_show(inven_ui_total_defence_value_btn);
         redraw_inven(false);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_683460) {
+    if (msg->data.button.button_handle == inven_ui_target_inventory_btn) {
         dword_681514 = false;
         sub_579DA0();
-        tig_button_hide(dword_6813A0);
-        tig_button_hide(dword_682C84);
+        tig_button_hide(inven_ui_target_total_attack_btn);
+        tig_button_hide(inven_ui_target_total_defence_btn);
         redraw_inven(false);
         redraw_inven(false);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_681500) {
+    if (msg->data.button.button_handle == inven_ui_target_paperdoll_btn) {
         dword_681514 = true;
         sub_579DD0();
-        tig_button_show(dword_6813A0);
-        tig_button_show(dword_682C84);
+        tig_button_show(inven_ui_target_total_attack_btn);
+        tig_button_show(inven_ui_target_total_defence_btn);
         redraw_inven(false);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_682C6C || msg->data.button.button_handle == dword_681460) {
+    if (msg->data.button.button_handle == inven_ui_total_attack_image_btn
+        || msg->data.button.button_handle == inven_ui_total_attack_value_btn) {
         sub_5506C0(0);
         sub_556220(qword_6814F8);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_6814E8 || msg->data.button.button_handle == dword_682C88) {
+    if (msg->data.button.button_handle == inven_ui_total_defence_image_btn
+        || msg->data.button.button_handle == inven_ui_total_defence_value_btn) {
         sub_5506C0(0);
         sub_5566B0(qword_6814F8);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_6813A0) {
+    if (msg->data.button.button_handle == inven_ui_target_total_attack_btn) {
         sub_5506C0(0);
         sub_556220(qword_682C78);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_682C84) {
+    if (msg->data.button.button_handle == inven_ui_target_total_defence_btn) {
         sub_5506C0(0);
         sub_5566B0(qword_682C78);
         return true;
@@ -1297,7 +1298,7 @@ static inline bool inven_ui_message_filter_handle_button_pressed(TigMessage* msg
 // 0x573A95
 static inline bool inven_ui_message_filter_handle_button_released(TigMessage* msg)
 {
-    if (msg->data.button.button_handle == dword_681444) {
+    if (msg->data.button.button_handle == inven_ui_arrange_items_btn) {
         sub_4670A0(qword_6814F8, dword_6814F0);
         sub_466260(qword_6814F8, dword_68111C);
         if (dword_6810FC) {
@@ -1309,17 +1310,17 @@ static inline bool inven_ui_message_filter_handle_button_released(TigMessage* ms
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_681464) {
+    if (msg->data.button.button_handle == inven_ui_take_all_btn) {
         sub_579770(qword_6813A8, qword_6814F8);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_681100) {
+    if (msg->data.button.button_handle == inven_ui_cycle_left_btn) {
         sub_574FD0(0);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_681398) {
+    if (msg->data.button.button_handle == inven_ui_cycle_right_btn) {
         sub_574FD0(1);
         return true;
     }
@@ -1330,22 +1331,22 @@ static inline bool inven_ui_message_filter_handle_button_released(TigMessage* ms
 // 0x573BAF
 static inline bool inven_ui_mssage_filter_handle_button_hovered(TigMessage* msg)
 {
-    if (msg->data.button.button_handle == dword_682C6C || msg->data.button.button_handle == dword_681460) {
+    if (msg->data.button.button_handle == inven_ui_total_attack_image_btn || msg->data.button.button_handle == inven_ui_total_attack_value_btn) {
         sub_556220(qword_6814F8);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_6814E8 || msg->data.button.button_handle == dword_682C88) {
+    if (msg->data.button.button_handle == inven_ui_total_defence_image_btn || msg->data.button.button_handle == inven_ui_total_defence_value_btn) {
         sub_5566B0(qword_6814F8);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_6813A0) {
+    if (msg->data.button.button_handle == inven_ui_target_total_attack_btn) {
         sub_556220(qword_682C78);
         return true;
     }
 
-    if (msg->data.button.button_handle == dword_682C84) {
+    if (msg->data.button.button_handle == inven_ui_target_total_defence_btn) {
         sub_5566B0(qword_682C78);
         return true;
     }
@@ -3415,7 +3416,7 @@ tig_art_id_t sub_5782D0()
     if (inven_ui_type == 0 || inven_ui_type == 5 || inven_ui_type == 6) {
         num = 223;
     } else if (inven_ui_type == 1) {
-        num = dword_681100 != -1 ? 825 : 235;
+        num = inven_ui_cycle_left_btn != -1 ? 825 : 235;
     } else {
         num = 234;
     }
