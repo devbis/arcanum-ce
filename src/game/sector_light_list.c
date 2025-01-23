@@ -34,7 +34,7 @@ bool sector_light_list_reset(SectorLightList* list)
         } else {
             light_stop_animating(node->data);
         }
-        sector_block_list_node_create(node);
+        sector_block_list_node_destroy(node);
 
         node = next;
     }
