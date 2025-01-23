@@ -6067,11 +6067,11 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
         *portrait_ptr = sub_554C20(a2);
         return false;
     case OBJ_TYPE_PC:
-        *portrait_ptr = sub_4CEB80(a2);
+        *portrait_ptr = portrait_get(a2);
         return true;
     case OBJ_TYPE_NPC:
         if (critter_pc_leader_get(a2) == a1) {
-            int portrait = sub_4CEB80(a2);
+            int portrait = portrait_get(a2);
             if (portrait != 0) {
                 *portrait_ptr = portrait;
                 return true;

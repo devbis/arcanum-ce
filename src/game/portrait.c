@@ -354,7 +354,7 @@ bool sub_4CEAC0(int64_t obj, const char* str)
 }
 
 // 0x4CEB80
-int sub_4CEB80(int64_t obj)
+int portrait_get(int64_t obj)
 {
     int type;
     int portrait;
@@ -365,7 +365,7 @@ int sub_4CEB80(int64_t obj)
     portrait = obj_field_int32_get(obj, OBJ_F_CRITTER_PORTRAIT);
 
     if (portrait != 0 && type == OBJ_TYPE_NPC) {
-        if (portrait == sub_4CEB80(player_get_pc_obj())) {
+        if (portrait == portrait_get(player_get_pc_obj())) {
             if (portrait_find_next(obj, &next)) {
                 portrait = next;
             } else if (portrait_find_prev(obj, &prev)) {

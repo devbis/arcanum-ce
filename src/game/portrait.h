@@ -13,6 +13,6 @@ bool portrait_find_first(int64_t obj, int* portrait_ptr);
 bool portrait_find_next(int64_t obj, int* portrait_ptr);
 bool portrait_find_last(int64_t obj, int* portrait_ptr);
 bool portrait_find_prev(int64_t obj, int* portrait_ptr);
-int sub_4CEB80(int64_t obj);
+int portrait_get(int64_t obj);
 
 #endif /* ARCANUM_GAME_PORTRAIT_H_ */

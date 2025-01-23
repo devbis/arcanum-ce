@@ -569,7 +569,7 @@ bool sub_570A40(tig_window_handle_t window_handle)
     if (dword_5CABF0 != -1) {
         obj = sub_4A2B60(dword_5CABF0);
         if (obj != OBJ_HANDLE_NULL) {
-            portrait = sub_4CEB80(obj);
+            portrait = portrait_get(obj);
             if (portrait != 0) {
                 portrait_draw_native(obj, portrait, window_handle, 219, 69);
             }
@@ -746,7 +746,7 @@ void sub_570EF0()
             obj = sub_4A2B60(dword_680FA4[index]);
             if (obj != OBJ_HANDLE_NULL
                 && (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
-                portrait = sub_4CEB80(obj);
+                portrait = portrait_get(obj);
                 if (portrait != 0) {
                     portrait_draw_32x32(obj, portrait, dword_5CABE8, 4, index * stru_680FD0[index % 2].height + 4);
                     if (index == dword_5CABF0) {

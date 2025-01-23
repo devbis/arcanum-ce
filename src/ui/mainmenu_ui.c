@@ -4517,7 +4517,7 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
             && stru_5C5060.y < rect->y + rect->height
             && rect->x < stru_5C5060.x + stru_5C5060.width
             && rect->y < stru_5C5060.y + stru_5C5060.height)) {
-        portrait = sub_4CEB80(obj);
+        portrait = portrait_get(obj);
         if (tig_window_fill(dword_5C3624, &stru_5C5060, tig_color_make(0, 0, 0)) != TIG_OK) {
             tig_debug_printf("MainMenu-UI: mmUINewCharRefreshFunc: ERROR: Window Fill #0 Failed.\n");
         }
@@ -4687,7 +4687,7 @@ bool sub_544FF0(tig_button_handle_t button_handle)
         sub_5417A0(1);
         return true;
     case 2:
-        portrait = sub_4CEB80(pc_obj);
+        portrait = portrait_get(pc_obj);
         if (!portrait_find_prev(pc_obj, &portrait)) {
             portrait_find_last(pc_obj, &portrait);
         }
@@ -4695,7 +4695,7 @@ bool sub_544FF0(tig_button_handle_t button_handle)
         window->refresh_func(&stru_5C5060);
         return true;
     case 3:
-        portrait = sub_4CEB80(pc_obj);
+        portrait = portrait_get(pc_obj);
         if (!portrait_find_next(pc_obj, &portrait)) {
             portrait_find_first(pc_obj, &portrait);
         }
@@ -6712,7 +6712,7 @@ void sub_5482A0(TigRect* rect)
 
     obj = dword_64C41C[dword_5C3618];
 
-    portrait = sub_4CEB80(obj);
+    portrait = portrait_get(obj);
     if (portrait) {
         portrait_draw_native(obj, portrait, dword_5C3624, 530, 117);
     }

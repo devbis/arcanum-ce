@@ -1617,13 +1617,13 @@ bool sub_4A39F0(const char* path, int64_t obj)
 
     objid_id_to_str(oidstr, sub_407EF0(obj));
 
-    portrait_path(sub_4CEB80(obj), src_path, 32);
+    portrait_path(portrait_get(obj), src_path, 32);
     if (src_path[0] != '\0') {
         snprintf(dst_path, sizeof(dst_path), "Players\\%s.bmp", oidstr);
         tig_file_copy(src_path, dst_path);
     }
 
-    portrait_path(sub_4CEB80(obj), src_path, 128);
+    portrait_path(portrait_get(obj), src_path, 128);
     if (src_path[0] != '\0') {
         snprintf(dst_path, sizeof(dst_path), "Players\\%s_b.bmp", oidstr);
         tig_file_copy(src_path, dst_path);
