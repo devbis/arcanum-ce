@@ -67,8 +67,8 @@ typedef struct IntgameIsoWindowTypeInfo {
 
 static_assert(sizeof(IntgameIsoWindowTypeInfo) == 0x14, "wrong size");
 
-static bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags);
-static bool sub_54ABD0(UiButtonInfo* button_info, int width, int height);
+static bool button_create_flags(UiButtonInfo* button_info, unsigned int flags);
+static bool button_create_no_art(UiButtonInfo* button_info, int width, int height);
 static void sub_54AD00(int type, int value, int digits);
 static void sub_54AF10(TigRect* rect);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
@@ -1167,23 +1167,23 @@ void iso_interface_create(tig_window_handle_t window_handle)
     sub_569F20(dword_64C4F8[0]);
 
     for (index = 0; index < 5; index++) {
-        sub_54AAE0(&(stru_5C6E40[index]));
+        intgame_button_create(&(stru_5C6E40[index]));
         tig_button_hide(stru_5C6E40[index].button_handle);
     }
 
     for (index = 0; index < 4; index++) {
         if (index == 0 || index == 1) {
-            sub_54AB20(&(stru_5C6480[index]), 0x2);
+            button_create_flags(&(stru_5C6480[index]), 0x2);
         } else {
-            sub_54AAE0(&(stru_5C6480[index]));
+            intgame_button_create(&(stru_5C6480[index]));
         }
     }
 
     for (index = 0; index < 5; index++) {
-        sub_54AAE0(&(stru_5C64C0[index]));
+        intgame_button_create(&(stru_5C64C0[index]));
     }
 
-    sub_54AAE0(&stru_5C6538);
+    intgame_button_create(&stru_5C6538);
     sub_5501C0();
 
     dword_64C6B4 = true;
@@ -1214,8 +1214,8 @@ void iso_interface_create(tig_window_handle_t window_handle)
     }
 
     hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
-    sub_54AAE0(&stru_5C6F30);
-    sub_54AAE0(&intgame_mt_button_info);
+    intgame_button_create(&stru_5C6F30);
+    intgame_button_create(&intgame_mt_button_info);
     intgame_mt_button_disable();
 
     dword_64C6B8 = 0;
@@ -1230,7 +1230,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
 
     stru_5C6F90.x = stru_5C6F80.x;
     stru_5C6F90.y = stru_5C6F80.y;
-    sub_54ABD0(&stru_5C6F90, stru_5C6F80.width, stru_5C6F80.height);
+    button_create_no_art(&stru_5C6F90, stru_5C6F80.width, stru_5C6F80.height);
 
     if (tig_art_interface_id_create(207, 0, 0, 0, &art_id) != TIG_OK
         || tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
@@ -1290,7 +1290,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
     }
 
     for (index = 0; index < 5; index++) {
-        sub_54AA60(dword_5C6378[index],
+        intgame_button_create_ex(dword_5C6378[index],
             &(stru_5C6EE0[index]),
             &(stru_5C6E90[index]),
             true);
@@ -1336,7 +1336,7 @@ void sub_54AA30()
 }
 
 // 0x54AA60
-bool sub_54AA60(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* button_info, unsigned int flags)
+bool intgame_button_create_ex(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* button_info, unsigned int flags)
 {
     TigButtonData button_data;
 
@@ -1353,7 +1353,7 @@ bool sub_54AA60(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* 
 }
 
 // 0x54AAE0
-bool sub_54AAE0(UiButtonInfo* button_info)
+bool intgame_button_create(UiButtonInfo* button_info)
 {
     int index;
 
@@ -1362,11 +1362,11 @@ bool sub_54AAE0(UiButtonInfo* button_info)
         return false;
     }
 
-    return sub_54AA60(dword_64C4F8[index], &(stru_5C6390[index]), button_info, TIG_BUTTON_FLAG_0x01);
+    return intgame_button_create_ex(dword_64C4F8[index], &(stru_5C6390[index]), button_info, TIG_BUTTON_FLAG_0x01);
 }
 
 // 0x54AB20
-bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags)
+bool button_create_flags(UiButtonInfo* button_info, unsigned int flags)
 {
     int index;
 
@@ -1375,11 +1375,11 @@ bool sub_54AB20(UiButtonInfo* button_info, unsigned int flags)
         return false;
     }
 
-    return sub_54AA60(dword_64C4F8[index], &(stru_5C6390[index]), button_info, flags);
+    return intgame_button_create_ex(dword_64C4F8[index], &(stru_5C6390[index]), button_info, flags);
 }
 
 // 0x54ABD0
-bool sub_54ABD0(UiButtonInfo* button_info, int width, int height)
+bool button_create_no_art(UiButtonInfo* button_info, int width, int height)
 {
     int index;
     TigButtonData button_data;
@@ -1404,7 +1404,7 @@ bool sub_54ABD0(UiButtonInfo* button_info, int width, int height)
 }
 
 // 0x54AC70
-void sub_54AC70(UiButtonInfo* button_info)
+void intgame_button_destroy(UiButtonInfo* button_info)
 {
     tig_button_destroy(button_info->button_handle);
     button_info->button_handle = TIG_BUTTON_HANDLE_INVALID;
@@ -3710,13 +3710,13 @@ bool sub_5501C0()
     tig_button_handle_t group[3];
 
     for (index = 0; index < 2; index++) {
-        sub_54ABD0(&(stru_5C65F8[index]), 382, 41);
+        button_create_no_art(&(stru_5C65F8[index]), 382, 41);
     }
 
     for (index = 0; index < COLLEGE_COUNT; index++) {
         intgame_college_buttons[index].art_num = spell_college_small_icon(index);
         if (intgame_college_buttons[index].art_num != -1) {
-            sub_54AAE0(&(intgame_college_buttons[index]));
+            intgame_button_create(&(intgame_college_buttons[index]));
             college_radio_group[college_radio_group_size] = intgame_college_buttons[index].button_handle;
 
             if (index == dword_64C530) {
@@ -3730,7 +3730,7 @@ bool sub_5501C0()
     for (index = 0; index < 4; index++) {
         stru_5C6C68[index].art_num = sub_579F50(index);
         if (stru_5C6C68[index].art_num != -1) {
-            sub_54AAE0(&(stru_5C6C68[index]));
+            intgame_button_create(&(stru_5C6C68[index]));
         }
     }
 
@@ -3742,7 +3742,7 @@ bool sub_5501C0()
         stru_64C4A8[index].y = stru_5C6D60[5].rect.y + stru_5C6D60[5].rect.y / 5;
         stru_64C4A8[index].art_num = -1;
         stru_64C4A8[index].button_handle = TIG_BUTTON_HANDLE_INVALID;
-        sub_54ABD0(&(stru_64C4A8[index]), stru_5C6D60[5].rect.width, stru_5C6D60[5].rect.y / 5);
+        button_create_no_art(&(stru_64C4A8[index]), stru_5C6D60[5].rect.width, stru_5C6D60[5].rect.y / 5);
     }
 
     index = sub_551740(574, 506);
@@ -3756,7 +3756,7 @@ bool sub_5501C0()
     }
 
     for (index = 0; index < 6; index++) {
-        sub_54AAE0(&(stru_5C6CA8[index]));
+        intgame_button_create(&(stru_5C6CA8[index]));
     }
 
     for (index = 3; index < 6; index++) {
@@ -3765,7 +3765,7 @@ bool sub_5501C0()
     tig_button_radio_group_create(3, group, 0);
 
     for (index = 0; index < 5; index++) {
-        sub_54AAE0(&(stru_5C6D08[index]));
+        intgame_button_create(&(stru_5C6D08[index]));
     }
 
     for (index = 1; index < 11; index++) {
@@ -4119,7 +4119,7 @@ bool intgame_spells_init()
             spl = clg * 5 + lvl;
             intgame_spell_buttons[spl].art_num = spell_get_icon(spl);
             if (intgame_spell_buttons[spl].art_num != -1
-                && !sub_54AAE0(&(intgame_spell_buttons[spl]))) {
+                && !intgame_button_create(&(intgame_spell_buttons[spl]))) {
                 return false;
             }
         }
@@ -4176,7 +4176,7 @@ bool sub_550D20()
     for (index = 0; index < 5; index++) {
         stru_5C6C18[index].art_num = spell_get_icon(0);
         if (stru_5C6C18[index].art_num != -1) {
-            if (!sub_54AAE0(&(stru_5C6C18[index]))) {
+            if (!intgame_button_create(&(stru_5C6C18[index]))) {
                 return false;
             }
         }

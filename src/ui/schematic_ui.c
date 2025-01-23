@@ -380,11 +380,11 @@ void schematic_ui_create()
     }
 
     for (index = 0; index < 5; index++) {
-        sub_54AA60(schematic_ui_window, &stru_5CA820, &(stru_5CA850[index]), 1);
+        intgame_button_create_ex(schematic_ui_window, &stru_5CA820, &(stru_5CA850[index]), 1);
     }
 
     for (index = 0; index < TECH_COUNT; index++) {
-        sub_54AA60(schematic_ui_window, &stru_5CA820, &(stru_5CA8A0[index]), 1);
+        intgame_button_create_ex(schematic_ui_window, &stru_5CA820, &(stru_5CA8A0[index]), 1);
         buttons[index] = stru_5CA8A0[index].button_handle;
     }
 

@@ -329,7 +329,7 @@ void written_ui_create()
     switch (dword_680DCC) {
     case 0:
         for (index = 0; index < TWO; index++) {
-            sub_54AA60(written_ui_window, &stru_5CA480, &(stru_5CA4D8[index]), 9);
+            intgame_button_create_ex(written_ui_window, &stru_5CA480, &(stru_5CA4D8[index]), 9);
         }
         dword_680DD0 = 0;
         dword_680DD4 = 0;

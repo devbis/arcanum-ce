@@ -173,7 +173,7 @@ void fate_ui_create()
     tig_font_pop();
 
     for (int fate = 0; fate < FATE_COUNT; fate++) {
-        sub_54AA60(fate_ui_window,
+        intgame_button_create_ex(fate_ui_window,
             &window_rect,
             &(fate_ui_buttons[fate]),
             fate_is_activated(fate_ui_obj, fate)

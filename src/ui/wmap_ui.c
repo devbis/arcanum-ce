@@ -1391,7 +1391,7 @@ void sub_560F40()
         sub_5615D0(0);
         sub_550DA0(0, NULL);
         sub_57D620();
-        sub_54AC70(&stru_5C9B70);
+        intgame_button_destroy(&stru_5C9B70);
         intgame_big_window_unlock();
 
         wmap_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -1530,11 +1530,11 @@ bool wmap_ui_create()
     }
 
     for (index = 0; index < 2; index++) {
-        sub_54AA60(wmap_ui_window, &stru_5C9B08, &(stru_5C9B50[index]), 0x1);
+        intgame_button_create_ex(wmap_ui_window, &stru_5C9B08, &(stru_5C9B50[index]), 0x1);
     }
 
-    sub_54AA60(wmap_ui_window, &stru_5C9B08, &stru_5C9B70, 4);
-    sub_54AA60(wmap_ui_window, &stru_5C9B08, &stru_5C9B80, dword_5C9B90 | 8);
+    intgame_button_create_ex(wmap_ui_window, &stru_5C9B08, &stru_5C9B70, 4);
+    intgame_button_create_ex(wmap_ui_window, &stru_5C9B08, &stru_5C9B80, dword_5C9B90 | 8);
 
     vb_create_info.flags = TIG_VIDEO_BUFFER_CREATE_COLOR_KEY | TIG_VIDEO_BUFFER_CREATE_SYSTEM_MEMORY;
     vb_create_info.width = dword_66D890 + 203;

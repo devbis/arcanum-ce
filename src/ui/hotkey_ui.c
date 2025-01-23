@@ -180,7 +180,7 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
             sub_557B20(index)->art_num = v1->field_8 == 2 || v1->field_8 != 3
                 ? sub_579F70(v1->field_C)
                 : spell_get_icon(v1->field_C);
-            sub_54AA60(dword_683510, &stru_6835C8, sub_557B20(index), 0x1);
+            intgame_button_create_ex(dword_683510, &stru_6835C8, sub_557B20(index), 0x1);
         }
     }
 

@@ -247,7 +247,7 @@ void combat_ui_create()
     blit_info.dst_rect = &rect;
     tig_window_blit_art(dword_5CAA18, &blit_info);
 
-    if (!sub_54AA60(dword_5CAA18, &rect, &stru_5CAA38, TIG_BUTTON_FLAG_0x01)) {
+    if (!intgame_button_create_ex(dword_5CAA18, &rect, &stru_5CAA38, TIG_BUTTON_FLAG_0x01)) {
         return;
     }
 

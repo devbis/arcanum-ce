@@ -349,7 +349,7 @@ bool sleep_ui_create()
     tig_font_pop();
 
     for (index = 0; index < cnt; index++) {
-        sub_54AA60(sleep_ui_window, &rect, &(stru_5CB2C0[index]), true);
+        intgame_button_create_ex(sleep_ui_window, &rect, &(stru_5CB2C0[index]), true);
     }
 
     sleep_ui_created = true;

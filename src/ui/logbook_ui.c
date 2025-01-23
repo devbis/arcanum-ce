@@ -399,14 +399,14 @@ void logbook_ui_create()
     tig_window_blit_art(logbook_ui_window, &blit_info);
 
     for (index = 0; index < LOGBOOK_UI_BUTTON_COUNT; index++) {
-        sub_54AA60(logbook_ui_window,
+        intgame_button_create_ex(logbook_ui_window,
             &(stru_5C33F8[0]),
             &(stru_5C3428[index]),
             TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
     }
 
     for (index = 0; index < LOGBOOK_UI_TAB_COUNT; index++) {
-        sub_54AA60(logbook_ui_window,
+        intgame_button_create_ex(logbook_ui_window,
             &(stru_5C33F8[0]),
             &(stru_5C3448[index]),
             TIG_BUTTON_FLAG_HIDDEN | TIG_BUTTON_FLAG_0x01);
