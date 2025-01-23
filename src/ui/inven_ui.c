@@ -258,7 +258,7 @@ static tig_window_handle_t inven_ui_window_handle;
 static TigRect stru_681380;
 
 // 0x681394
-static int dword_681394;
+static bool inven_ui_have_drop_box;
 
 // 0x681398
 static tig_button_handle_t inven_ui_cycle_right_btn;
@@ -270,13 +270,13 @@ static bool inven_ui_created;
 static tig_button_handle_t inven_ui_target_total_attack_btn;
 
 // 0x6813A4
-static int dword_6813A4;
+static int inven_ui_drop_box_image;
 
 // 0x6813A8
 static int64_t qword_6813A8;
 
 // 0x6813B0
-static TigRect stru_6813B0;
+static TigRect inven_ui_drop_box_frame;
 
 // 0x6813C0
 static char byte_6813C0[128];
@@ -936,13 +936,14 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     if (inven_ui_mode == INVEN_UI_MODE_IDENTIFY
         || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
         || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
-        dword_681394 = 0;
+        inven_ui_have_drop_box = false;
         dword_681118 = 0;
     } else {
-        dword_6813A4 = 224;
-        dword_681394 = 1;
-        stru_6813B0.x = 703;
-        stru_6813B0.y = 385;
+        inven_ui_have_drop_box = true;
+        inven_ui_drop_box_image = 224;
+        inven_ui_drop_box_frame.x = 703;
+        inven_ui_drop_box_frame.y = 385;
+
         dword_681118 = 1;
         dword_681504 = 342;
         stru_681380.x = 703;
@@ -1415,39 +1416,39 @@ static inline void inven_ui_message_filter_handle_mouse_idle(TigMessage* msg)
 static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
 {
     if (qword_6810E0 != OBJ_HANDLE_NULL) {
-        if (dword_681394) {
-            if (msg->data.mouse.x >= stru_6813B0.x
-                && msg->data.mouse.x < stru_6813B0.x + stru_6813B0.width
-                && msg->data.mouse.y >= stru_6813B0.y
-                && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
-                if (dword_6813A4 == 224) {
+        if (inven_ui_have_drop_box) {
+            if (msg->data.mouse.x >= inven_ui_drop_box_frame.x
+                && msg->data.mouse.x < inven_ui_drop_box_frame.x + inven_ui_drop_box_frame.width
+                && msg->data.mouse.y >= inven_ui_drop_box_frame.y
+                && msg->data.mouse.y < inven_ui_drop_box_frame.y + inven_ui_drop_box_frame.height) {
+                if (inven_ui_drop_box_image == 224) {
                     if (qword_681450 == qword_6813A8) {
                         switch (inven_ui_mode) {
                         case INVEN_UI_MODE_BARTER:
                             if (dword_6810FC) {
-                                dword_6813A4 = 225;
+                                inven_ui_drop_box_image = 225;
                             } else {
-                                dword_6813A4 = 348;
+                                inven_ui_drop_box_image = 348;
                             }
                             break;
                         case INVEN_UI_MODE_LOOT:
                         case INVEN_UI_MODE_STEAL:
-                            dword_6813A4 = 348;
+                            inven_ui_drop_box_image = 348;
                             break;
                         default:
-                            dword_6813A4 = 225;
+                            inven_ui_drop_box_image = 225;
                             break;
                         }
                     } else {
-                        dword_6813A4 = 225;
+                        inven_ui_drop_box_image = 225;
                     }
 
                     redraw_inven(false);
                     return true;
                 }
             } else {
-                if (dword_6813A4 != 224) {
-                    dword_6813A4 = 224;
+                if (inven_ui_drop_box_image != 224) {
+                    inven_ui_drop_box_image = 224;
                     redraw_inven(false);
                     return true;
                 }
@@ -1568,11 +1569,11 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
     int64_t old_item_obj;
     int v5;
 
-    if (dword_681394
-        && msg->data.mouse.x >= stru_6813B0.x
-        && msg->data.mouse.x < stru_6813B0.x + stru_6813B0.width
-        && msg->data.mouse.y >= stru_6813B0.y
-        && msg->data.mouse.y < stru_6813B0.y + stru_6813B0.height) {
+    if (inven_ui_have_drop_box
+        && msg->data.mouse.x >= inven_ui_drop_box_frame.x
+        && msg->data.mouse.x < inven_ui_drop_box_frame.x + inven_ui_drop_box_frame.width
+        && msg->data.mouse.y >= inven_ui_drop_box_frame.y
+        && msg->data.mouse.y < inven_ui_drop_box_frame.y + inven_ui_drop_box_frame.height) {
         if (qword_681450 == qword_6813A8) {
             switch (inven_ui_mode) {
             case INVEN_UI_MODE_BARTER:
@@ -1595,7 +1596,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         }
 
         qword_6810E0 = OBJ_HANDLE_NULL;
-        dword_6813A4 = 224;
+        inven_ui_drop_box_image = 224;
 
         return false;
     }
@@ -2912,8 +2913,8 @@ void redraw_inven(bool a1)
     tig_font_pop();
 
     // 0x576FBE
-    if (dword_681394) {
-        tig_art_interface_id_create(dword_6813A4, 0, 0, 0, &(art_blit_info.art_id));
+    if (inven_ui_have_drop_box) {
+        tig_art_interface_id_create(inven_ui_drop_box_image, 0, 0, 0, &(art_blit_info.art_id));
         if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
             return;
         }
@@ -2933,8 +2934,8 @@ void redraw_inven(bool a1)
         art_blit_info.dst_rect = &dst_rect;
         tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
-        stru_6813B0.width = art_frame_data.width;
-        stru_6813B0.height = art_frame_data.height;
+        inven_ui_drop_box_frame.width = art_frame_data.width;
+        inven_ui_drop_box_frame.height = art_frame_data.height;
     }
 
     // 0x577070
