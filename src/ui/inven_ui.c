@@ -240,7 +240,7 @@ static tig_button_handle_t inven_ui_cycle_left_btn;
 static TigRect stru_681108;
 
 // 0x681118
-static int dword_681118;
+static bool inven_ui_have_use_box;
 
 // 0x68111C
 static int dword_68111C[120];
@@ -255,7 +255,7 @@ static tig_font_handle_t dword_681390;
 static tig_window_handle_t inven_ui_window_handle;
 
 // 0x681380
-static TigRect stru_681380;
+static TigRect inven_ui_use_box_frame;
 
 // 0x681394
 static bool inven_ui_have_drop_box;
@@ -321,7 +321,7 @@ static int64_t inven_ui_pc_obj;
 static tig_button_handle_t inven_ui_target_paperdoll_btn;
 
 // 0x681504
-static int dword_681504;
+static int inven_ui_use_box_image;
 
 // 0x681508
 static int dword_681508;
@@ -937,17 +937,17 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
         || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
         || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
         inven_ui_have_drop_box = false;
-        dword_681118 = 0;
+        inven_ui_have_use_box = false;
     } else {
         inven_ui_have_drop_box = true;
         inven_ui_drop_box_image = 224;
         inven_ui_drop_box_frame.x = 703;
         inven_ui_drop_box_frame.y = 385;
 
-        dword_681118 = 1;
-        dword_681504 = 342;
-        stru_681380.x = 703;
-        stru_681380.y = 331;
+        inven_ui_have_use_box = true;
+        inven_ui_use_box_image = 342;
+        inven_ui_use_box_frame.x = 703;
+        inven_ui_use_box_frame.y = 331;
     }
 
     if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
@@ -1473,27 +1473,27 @@ static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
             }
         }
 
-        if (dword_681118) {
-            if (msg->data.mouse.x >= stru_681380.x
-                && msg->data.mouse.x < stru_681380.x + stru_681380.width
-                && msg->data.mouse.y >= stru_681380.y
-                && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
-                if (dword_681504 == 342) {
+        if (inven_ui_have_use_box) {
+            if (msg->data.mouse.x >= inven_ui_use_box_frame.x
+                && msg->data.mouse.x < inven_ui_use_box_frame.x + inven_ui_use_box_frame.width
+                && msg->data.mouse.y >= inven_ui_use_box_frame.y
+                && msg->data.mouse.y < inven_ui_use_box_frame.y + inven_ui_use_box_frame.height) {
+                if (inven_ui_use_box_image == 342) {
                     if ((qword_681450 == qword_6813A8
                             && (inven_ui_mode == INVEN_UI_MODE_BARTER
                                 || inven_ui_mode == INVEN_UI_MODE_LOOT
                                 || inven_ui_mode == INVEN_UI_MODE_STEAL))
                         || sub_462C30(inven_ui_pc_obj, qword_6810E0)) {
-                        dword_681504 = 347;
+                        inven_ui_use_box_image = 347;
                     } else {
-                        dword_681504 = 343;
+                        inven_ui_use_box_image = 343;
                     }
                     redraw_inven(false);
                     return true;
                 }
             } else {
-                if (dword_681504 != 342) {
-                    dword_681504 = 342;
+                if (inven_ui_use_box_image != 342) {
+                    inven_ui_use_box_image = 342;
                     redraw_inven(false);
                     return true;
                 }
@@ -1615,11 +1615,11 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         return false;
     }
 
-    if (dword_681118
-        && msg->data.mouse.x >= stru_681380.x
-        && msg->data.mouse.x < stru_681380.x + stru_681380.width
-        && msg->data.mouse.y >= stru_681380.y
-        && msg->data.mouse.y < stru_681380.y + stru_681380.height) {
+    if (inven_ui_have_use_box
+        && msg->data.mouse.x >= inven_ui_use_box_frame.x
+        && msg->data.mouse.x < inven_ui_use_box_frame.x + inven_ui_use_box_frame.width
+        && msg->data.mouse.y >= inven_ui_use_box_frame.y
+        && msg->data.mouse.y < inven_ui_use_box_frame.y + inven_ui_use_box_frame.height) {
         if ((qword_681450 == qword_6813A8
                 && (inven_ui_mode == INVEN_UI_MODE_BARTER
                     || inven_ui_mode == INVEN_UI_MODE_LOOT
@@ -1627,7 +1627,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             || sub_462C30(inven_ui_pc_obj, qword_6810E0))) {
             sub_575770();
             qword_6810E0 = OBJ_HANDLE_NULL;
-            dword_681504 = 342;
+            inven_ui_use_box_image = 342;
 
             return false;
         }
@@ -1651,7 +1651,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
             }
 
             qword_6810E0 = OBJ_HANDLE_NULL;
-            dword_681504 = 342;
+            inven_ui_use_box_image = 342;
         } else {
             sub_5788C0(qword_6810E0, OBJ_HANDLE_NULL, -1, 4);
             redraw_inven(false);
@@ -2965,8 +2965,8 @@ void redraw_inven(bool a1)
     }
 
     // 0x57711C
-    if (dword_681118) {
-        tig_art_interface_id_create(dword_681504, 0, 0, 0, &(art_blit_info.art_id));
+    if (inven_ui_have_use_box) {
+        tig_art_interface_id_create(inven_ui_use_box_image, 0, 0, 0, &(art_blit_info.art_id));
         if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
             return;
         }
@@ -2986,8 +2986,8 @@ void redraw_inven(bool a1)
         art_blit_info.dst_rect = &dst_rect;
         tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
-        stru_681380.width = art_frame_data.width;
-        stru_681380.height = art_frame_data.height;
+        inven_ui_use_box_frame.width = art_frame_data.width;
+        inven_ui_use_box_frame.height = art_frame_data.height;
     }
 
     // 0x5771C8
