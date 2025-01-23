@@ -5467,9 +5467,9 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
             0x1);
 
         if (ui_message->field_C != 0) {
-            mes_file_entry1.num = 28 + IS_TECH_SKILL(ui_message->field_8)
+            mes_file_entry1.num = 28 + (IS_TECH_SKILL(ui_message->field_8)
                 ? tech_skill_get_stat(GET_TECH_SKILL(ui_message->field_8))
-                : basic_skill_get_stat(GET_BASIC_SKILL(ui_message->field_8));
+                : basic_skill_get_stat(GET_BASIC_SKILL(ui_message->field_8)));
             mes_get_msg(intgame_mes_file, &mes_file_entry1);
             sprintf(str, "%s: %d", mes_file_entry1.str, ui_message->field_C);
             sub_550A10(window_handle, str, &stru_5C70C8, dword_64C49C, 0x2);
