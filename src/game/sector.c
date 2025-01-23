@@ -727,11 +727,14 @@ Sector601808* sub_4D02E0(LocRect* loc_rect)
 // 0x4D0400
 void sub_4D0400(Sector601808* node)
 {
-    while (node->next != NULL) {
-        node = node->next;
+    Sector601808* tail;
+
+    tail = node;
+    while (tail->next != NULL) {
+        tail = tail->next;
     }
 
-    node->next = dword_601808;
+    tail->next = dword_601808;
     dword_601808 = node;
 }
 
