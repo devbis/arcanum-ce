@@ -65,7 +65,7 @@ void portrait_exit()
 }
 
 // 0x4CE3C0
-void sub_4CE3C0(int num, char* path, int size)
+void portrait_path(int num, char* path, int size)
 {
     mes_file_handle_t mes_file;
     MesFileEntry mes_file_entry;
@@ -119,7 +119,7 @@ void sub_4CE4A0(int64_t obj, int num, tig_window_handle_t window_handle, int x, 
             return;
         }
     } else {
-        sub_4CE3C0(num, bmp.name, width);
+        portrait_path(num, bmp.name, width);
     }
 
     rc = tig_bmp_create(&bmp);
