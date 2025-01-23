@@ -467,7 +467,7 @@ void inven_ui_reset()
 }
 
 // 0x572240
-bool sub_572240(int64_t a1, int64_t a2, int type)
+bool sub_572240(int64_t pc_obj, int64_t target_obj, int mode)
 {
     Packet100 pkt;
 
@@ -479,25 +479,25 @@ bool sub_572240(int64_t a1, int64_t a2, int type)
         && (tig_net_flags & TIG_NET_HOST) == 0) {
         pkt.type = 100;
         pkt.subtype = 12;
-        sub_4F0640(a1, &(pkt.d.z.field_8));
-        sub_4F0640(a2, &(pkt.d.z.field_20));
-        pkt.d.z.field_38 = type;
+        sub_4F0640(pc_obj, &(pkt.d.z.field_8));
+        sub_4F0640(target_obj, &(pkt.d.z.field_20));
+        pkt.d.z.field_38 = mode;
         pkt.d.z.field_3C = 0;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
         return true;
     }
 
-    if (!sub_572370(a1, a2, type)) {
+    if (!sub_572370(pc_obj, target_obj, mode)) {
         return false;
     }
 
-    if (!sub_572510(a1, a2, type)) {
+    if (!sub_572510(pc_obj, target_obj, mode)) {
         return false;
     }
 
-    sub_572640(a1, a2, type);
-    return inven_ui_create(a1, a2, type);
+    sub_572640(pc_obj, target_obj, mode);
+    return inven_ui_create(pc_obj, target_obj, mode);
 }
 
 // 0x572340
@@ -517,7 +517,7 @@ bool sub_572340()
 }
 
 // 0x572370
-bool sub_572370(int64_t a1, int64_t a2, int mode)
+bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode)
 {
     int rot;
     tig_art_id_t art_id;
@@ -525,35 +525,35 @@ bool sub_572370(int64_t a1, int64_t a2, int mode)
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
 
-    if (a1 == OBJ_HANDLE_NULL) {
+    if (pc_obj == OBJ_HANDLE_NULL) {
         return false;
     }
 
-    if (critter_is_dead(a1)) {
+    if (critter_is_dead(pc_obj)) {
         return false;
     }
 
-    if (obj_field_int32_get(a1, OBJ_F_TYPE) != OBJ_TYPE_PC) {
+    if (obj_field_int32_get(pc_obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return false;
     }
 
     if (mode == INVEN_UI_MODE_LOOT
         || mode == INVEN_UI_MODE_STEAL) {
-        rot = object_rot(a1, a2);
-        art_id = obj_field_int32_get(a1, OBJ_F_CURRENT_AID);
+        rot = object_rot(pc_obj, target_obj);
+        art_id = obj_field_int32_get(pc_obj, OBJ_F_CURRENT_AID);
         art_id = tig_art_id_rotation_set(art_id, rot);
-        object_set_current_aid(a1, art_id);
-        if (sub_4AF260(a1, a2) != 0) {
+        object_set_current_aid(pc_obj, art_id);
+        if (sub_4AF260(pc_obj, target_obj) != 0) {
             return false;
         }
     }
 
-    if (a2 != OBJ_HANDLE_NULL
+    if (target_obj != OBJ_HANDLE_NULL
         && (mode == INVEN_UI_MODE_LOOT
             || mode == INVEN_UI_MODE_IDENTIFY)) {
-        if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        if (obj_field_int32_get(target_obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             if (mode == INVEN_UI_MODE_LOOT) {
-                err = ai_attempt_open_container(a1, a2);
+                err = ai_attempt_open_container(pc_obj, target_obj);
                 if (err != AI_ATTEMPT_OPEN_CONTAINER_OK) {
                     mes_file_entry.num = err;
                     mes_get_msg(inven_ui_mes_file, &mes_file_entry);
@@ -562,18 +562,18 @@ bool sub_572370(int64_t a1, int64_t a2, int mode)
                     ui_message.str = mes_file_entry.str;
                     sub_550750(&ui_message);
 
-                    gsound_play_sfx_id(sub_4F0FD0(a2, 2), 1);
+                    gsound_play_sfx_id(sub_4F0FD0(target_obj, 2), 1);
                     return false;
                 }
 
-                if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_USE, 0)) {
-                    gsound_play_sfx_id(sub_4F0FD0(a2, 2), 1);
+                if (!sub_441980(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
+                    gsound_play_sfx_id(sub_4F0FD0(target_obj, 2), 1);
                     return false;
                 }
             }
         } else {
             if (mode == INVEN_UI_MODE_LOOT) {
-                if (!sub_441980(a1, a2, OBJ_HANDLE_NULL, SAP_USE, 0)) {
+                if (!sub_441980(pc_obj, target_obj, OBJ_HANDLE_NULL, SAP_USE, 0)) {
                     return false;
                 }
             }
@@ -584,7 +584,7 @@ bool sub_572370(int64_t a1, int64_t a2, int mode)
 }
 
 // 0x572510
-bool sub_572510(int64_t a1, int64_t a2, int mode)
+bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode)
 {
     if (!sub_551A80(0)) {
         return false;
@@ -600,7 +600,7 @@ bool sub_572510(int64_t a1, int64_t a2, int mode)
         if (!sub_551A80(4)) {
             return false;
         }
-        if (a1 == a2) {
+        if (pc_obj == target_obj) {
             return false;
         }
         return true;
@@ -609,7 +609,7 @@ bool sub_572510(int64_t a1, int64_t a2, int mode)
         if (!sub_551A80(10)) {
             return false;
         }
-        if (a1 == a2) {
+        if (pc_obj == target_obj) {
             return false;
         }
         return true;
@@ -617,7 +617,7 @@ bool sub_572510(int64_t a1, int64_t a2, int mode)
         if (!sub_551A80(11)) {
             return false;
         }
-        if (a1 == a2) {
+        if (pc_obj == target_obj) {
             return false;
         }
         return true;
@@ -625,7 +625,7 @@ bool sub_572510(int64_t a1, int64_t a2, int mode)
         if (!sub_551A80(19)) {
             return false;
         }
-        if (a1 == a2) {
+        if (pc_obj == target_obj) {
             return false;
         }
         return true;
@@ -633,7 +633,7 @@ bool sub_572510(int64_t a1, int64_t a2, int mode)
         if (!sub_551A80(20)) {
             return false;
         }
-        if (a1 == a2) {
+        if (pc_obj == target_obj) {
             return false;
         }
         return true;
@@ -643,19 +643,19 @@ bool sub_572510(int64_t a1, int64_t a2, int mode)
 }
 
 // 0x572640
-void sub_572640(int64_t a1, int64_t a2, int mode)
+void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
 {
     int64_t substitute_inventory_obj;
     int64_t v2;
     int64_t v3;
     int amt;
 
-    if (a2 == OBJ_HANDLE_NULL) {
+    if (target_obj == OBJ_HANDLE_NULL) {
         return;
     }
 
     if (mode == INVEN_UI_MODE_BARTER) {
-        substitute_inventory_obj = critter_substitute_inventory_get(a2);
+        substitute_inventory_obj = critter_substitute_inventory_get(target_obj);
         if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
             v2 = sub_468570(8);
             v3 = sub_462540(substitute_inventory_obj, v2, 0);
@@ -666,20 +666,20 @@ void sub_572640(int64_t a1, int64_t a2, int mode)
             }
         }
 
-        if (critter_pc_leader_get(a2) == OBJ_HANDLE_NULL) {
-            item_identify_all(a2);
+        if (critter_pc_leader_get(target_obj) == OBJ_HANDLE_NULL) {
+            item_identify_all(target_obj);
             item_identify_all(substitute_inventory_obj);
         }
     } else if (mode == INVEN_UI_MODE_LOOT || mode == INVEN_UI_MODE_IDENTIFY) {
-        if (obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
+        if (obj_field_int32_get(target_obj, OBJ_F_TYPE) == OBJ_TYPE_CONTAINER) {
             if (mode == INVEN_UI_MODE_LOOT) {
-                if (tig_art_id_frame_get(obj_field_int32_get(a2, OBJ_F_CURRENT_AID)) == 0) {
-                    sub_4EEF20(a2);
-                    gsound_play_sfx_id(sub_4F0FD0(a2, 0), 1);
+                if (tig_art_id_frame_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == 0) {
+                    sub_4EEF20(target_obj);
+                    gsound_play_sfx_id(sub_4F0FD0(target_obj, 0), 1);
                 }
             }
-            if ((obj_field_int32_get(a2, OBJ_F_CONTAINER_FLAGS) & 0x200) != 0) {
-                sub_463E20(a2);
+            if ((obj_field_int32_get(target_obj, OBJ_F_CONTAINER_FLAGS) & 0x200) != 0) {
+                sub_463E20(target_obj);
             }
         } else {
             if (mode == INVEN_UI_MODE_LOOT) {
@@ -690,7 +690,7 @@ void sub_572640(int64_t a1, int64_t a2, int mode)
 }
 
 // 0x5727B0
-bool inven_ui_create(int64_t a1, int64_t a2, int mode)
+bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
 {
     TigRect rect;
     TigButtonData button_data;
@@ -702,8 +702,8 @@ bool inven_ui_create(int64_t a1, int64_t a2, int mode)
     unsigned int critter_flags2;
 
     inven_ui_mode = mode;
-    qword_6813A8 = a2;
-    qword_682C78 = a2;
+    qword_6813A8 = target_obj;
+    qword_682C78 = target_obj;
     inven_ui_target_panel = INVEN_UI_PANEL_INVENTORY;
     inven_ui_panel = INVEN_UI_PANEL_INVENTORY;
 
@@ -930,7 +930,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int mode)
         }
     }
 
-    qword_6814F8 = a1;
+    qword_6814F8 = pc_obj;
     sub_466260(qword_6814F8, dword_68111C);
 
     if (inven_ui_mode == INVEN_UI_MODE_IDENTIFY
@@ -985,7 +985,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int mode)
     dword_681440 = -1;
 
     if (inven_ui_mode == INVEN_UI_MODE_BARTER
-        && critter_leader_get(qword_682C78) == a1) {
+        && critter_leader_get(qword_682C78) == pc_obj) {
         dword_6810FC = 1;
         if (critter_follower_next(qword_682C78) != qword_682C78) {
             button_data.flags = TIG_BUTTON_FLAG_0x01;
@@ -1055,7 +1055,7 @@ bool inven_ui_create(int64_t a1, int64_t a2, int mode)
 
     dword_739F58 = 0;
 
-    if (player_is_pc_obj(a1)) {
+    if (player_is_pc_obj(pc_obj)) {
         sub_460790(4, 0);
     }
 

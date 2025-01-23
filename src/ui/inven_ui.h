@@ -17,11 +17,11 @@ typedef enum InvenUiMode {
 bool inven_ui_init(GameInitInfo* init_info);
 void inven_ui_exit();
 void inven_ui_reset();
-bool sub_572370(int64_t a1, int64_t a2, int mode);
-bool sub_572510(int64_t a1, int64_t a2, int mode);
-bool sub_572240(int64_t a1, int64_t a2, int mode);
-void sub_572640(int64_t a1, int64_t a2, int mode);
-bool inven_ui_create(int64_t a1, int64_t a2, int mode);
+bool sub_572370(int64_t pc_obj, int64_t target_obj, int mode);
+bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode);
+bool sub_572240(int64_t pc_obj, int64_t target_obj, int mode);
+void sub_572640(int64_t pc_obj, int64_t target_obj, int mode);
+bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode);
 void inven_ui_destroy();
 void sub_573590(int64_t obj);
 int inven_ui_is_created();
