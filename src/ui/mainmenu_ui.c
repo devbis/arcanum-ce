@@ -2780,7 +2780,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
             font_desc.height = 0;
             font_desc.str = chunk;
             font_desc.flags = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             if (font_desc.width > rect->width) {
                 pos = strlen(str);
@@ -2790,7 +2790,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
                     font_desc.height = 0;
                     font_desc.str = chunk;
                     font_desc.flags = 0;
-                    sub_535390(&font_desc);
+                    tig_font_measure(&font_desc);
                 }
             }
         } else if ((flags & 0x02) != 0) {
@@ -2798,7 +2798,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
             font_desc.height = 0;
             font_desc.str = chunk;
             font_desc.flags = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             if (font_desc.width > rect->width) {
                 pos = strlen(str);
@@ -2809,7 +2809,7 @@ void sub_5418A0(char* str, TigRect* rect, tig_font_handle_t font, unsigned int f
                     font_desc.height = 0;
                     font_desc.str = chunk;
                     font_desc.flags = 0;
-                    sub_535390(&font_desc);
+                    tig_font_measure(&font_desc);
                 }
             }
         }
@@ -3533,7 +3533,7 @@ void sub_542D00(char* str, TigRect* rect, tig_font_handle_t font)
     font_desc.height = 0;
     font_desc.str = str;
     font_desc.flags = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect = *rect;
 
@@ -3546,7 +3546,7 @@ void sub_542D00(char* str, TigRect* rect, tig_font_handle_t font)
     font_desc.height = 0;
     font_desc.str = off_5C407C;
     font_desc.flags = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect.width -= font_desc.width;
     sub_5418A0(str, &text_rect, font, 1);
@@ -3566,7 +3566,7 @@ void sub_542DF0(char* str, TigRect* rect, tig_font_handle_t font)
     font_desc.height = 0;
     font_desc.str = str;
     font_desc.flags = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect = *rect;
     if (font_desc.width < rect->width) {
@@ -3587,7 +3587,7 @@ void sub_542EA0(char* str, TigRect* rect, tig_font_handle_t font)
     font_desc.height = 0;
     font_desc.str = str;
     font_desc.flags = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect = *rect;
     if (font_desc.width < rect->width) {
@@ -4222,7 +4222,7 @@ void sub_544100(const char* str, TigRect* rect, tig_font_handle_t font)
     font_desc.height = 0;
     font_desc.str = mutable_str;
     font_desc.flags = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect = *rect;
 
@@ -5675,7 +5675,7 @@ void mainmenu_ui_create_window_func(bool should_display)
             font_desc.width = 0;
             font_desc.height = 0;
             font_desc.flags = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
             tig_font_pop();
 
             if ((window->refresh_text_flags & 0x20) == 0) {
@@ -5752,7 +5752,7 @@ void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str
             font_desc.height = 0;
             font_desc.str = str;
             font_desc.flags = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
             tig_font_pop();
 
             text_rect.width = font_desc.width;
@@ -5780,7 +5780,7 @@ void mainmenu_ui_refresh_text(tig_window_handle_t window_handle, const char* str
             font_desc.height = 0;
             font_desc.str = str;
             font_desc.flags = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
             tig_font_pop();
 
             text_rect.width = font_desc.width;
@@ -6727,7 +6727,7 @@ void sub_5482A0(TigRect* rect)
         copy[pos] = '\0';
         font_desc.width = 0;
         font_desc.str = copy;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         if (font_desc.width <= 259) {
             break;
         }
@@ -6811,7 +6811,7 @@ void sub_5482A0(TigRect* rect)
     sprintf(str, mes_file_entry1.str, stat_level(obj, 17));
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect.width = font_desc.width;
     text_rect.height = font_desc.height;
@@ -6824,7 +6824,7 @@ void sub_5482A0(TigRect* rect)
     sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_ALIGNMENT) / 10);
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect.width = font_desc.width;
     text_rect.y += 16;
@@ -6849,7 +6849,7 @@ void sub_5482A0(TigRect* rect)
     sprintf(str, mes_file_entry1.str, mes_file_entry2.str, aptitude);
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect.width = font_desc.width;
     text_rect.x = (260 - font_desc.width) / 2 + 432;
@@ -6862,7 +6862,7 @@ void sub_5482A0(TigRect* rect)
     sprintf(str, mes_file_entry1.str, item_total_attack(obj));
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect.width = font_desc.width;
     text_rect.y += 16;
@@ -6875,7 +6875,7 @@ void sub_5482A0(TigRect* rect)
     sprintf(str, mes_file_entry1.str, item_total_defence(obj));
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect.width = font_desc.width;
     text_rect.x = (260 - font_desc.width) / 2 + 432;
@@ -6950,7 +6950,7 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
                 copy[pos] = '\0';
                 font_desc.width = 0;
                 font_desc.str = copy;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 if (font_desc.width <= 192) {
                     break;
                 }
@@ -6973,7 +6973,7 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
                 copy[pos] = '\0';
                 font_desc.width = 0;
                 font_desc.str = copy;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 if (font_desc.width <= 35) {
                     break;
                 }
@@ -6990,7 +6990,7 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
             sprintf(str, "%d", stat_level(dword_64C41C[index], STAT_LEVEL));
             font_desc.width = 0;
             font_desc.str = str;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             text_rect.x = 277 - font_desc.width;
             text_rect.y = y;

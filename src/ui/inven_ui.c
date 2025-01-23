@@ -2651,7 +2651,7 @@ void redraw_inven(bool a1)
 
         font_desc.str = byte_682C8C;
         font_desc.width = 0;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
 
         src_rect.x -= font_desc.width / 2;
         tig_window_text_write(inven_ui_window_handle, font_desc.str, &src_rect);
@@ -2876,7 +2876,7 @@ void redraw_inven(bool a1)
 
         font_desc.str = str;
         font_desc.width = 0;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
 
         src_rect.x = text_rects[0].x + text_rects[0].width - font_desc.width;
         src_rect.y = text_rects[0].y;
@@ -3082,7 +3082,7 @@ void redraw_inven(bool a1)
                         tig_font_push(dword_682C74);
                         font_desc.str = str;
                         font_desc.width = 0;
-                        sub_535390(&font_desc);
+                        tig_font_measure(&font_desc);
                         dst_rect.height = font_desc.height;
                         dst_rect.y += dst_rect.height - font_desc.height;
                         tig_window_text_write(inven_ui_window_handle, str, &dst_rect);
@@ -3226,7 +3226,7 @@ void redraw_inven(bool a1)
             sprintf(str, "%d", item_total_attack(qword_682C78));
             font_desc.str = str;
             font_desc.width = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
             src_rect.x = inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].x + inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].width - font_desc.width;
             src_rect.y = inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].y;
             src_rect.width = inven_ui_barter_npc_total_stat_rects[INVEN_UI_TOTAL_ATTACK].width;
@@ -3326,7 +3326,7 @@ void redraw_inven(bool a1)
                             tig_font_push(dword_682C74);
                             font_desc.str = str;
                             font_desc.width = 0;
-                            sub_535390(&font_desc);
+                            tig_font_measure(&font_desc);
                             dst_rect.y += dst_rect.height - font_desc.height;
                             dst_rect.height = font_desc.height;
                             tig_window_text_write(inven_ui_window_handle, str, &dst_rect);

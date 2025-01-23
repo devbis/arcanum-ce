@@ -53,12 +53,12 @@ bool roller_ui_init(GameInitInfo* init_info)
 
     font_desc.str = "+";
     font_desc.width = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     dword_67BB1C = font_desc.width;
 
     font_desc.str = "0";
     font_desc.width = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     dword_67BB2C = font_desc.width;
     dword_67BB30 = font_desc.height;
 

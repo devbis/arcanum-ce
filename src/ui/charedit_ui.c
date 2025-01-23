@@ -1235,7 +1235,7 @@ void sub_55A240()
     do {
         *pch-- = '\0';
         font_desc.width = 0;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
     } while (font_desc.width > 243);
     tig_font_pop();
 
@@ -1954,7 +1954,7 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
         if (a5 == -1) {
             font_desc.str = a3[index].str;
             font_desc.width = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             x = a3[index].x;
             if (x < 0) {
@@ -1974,14 +1974,14 @@ void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C81
                 }
             } else if (a5 < 0) {
                 font_desc.width = 0;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 rect.x = -window_data.rect.x - font_desc.width / 2 - a5;
             } else {
                 rect.x = a5 - window_data.rect.x;
             }
 
             font_desc.width = 0;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             if (a5 == -1 && a3[index].str == NULL) {
                 x = a3[index].x;

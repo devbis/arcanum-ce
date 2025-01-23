@@ -256,7 +256,7 @@ bool logbook_ui_init(GameInitInfo* init_info)
     tig_font_push(dword_648934);
     font_info.str = "test";
     font_info.width = 0;
-    sub_535390(&font_info);
+    tig_font_measure(&font_info);
     dword_63CBF0 = font_info.height;
     tig_font_pop();
 
@@ -779,7 +779,7 @@ int sub_53FAD0(char* buffer, tig_font_handle_t font, TigRect* rect, bool a4, boo
     font_info.width = rect->width;
 
     while (true) {
-        sub_535390(&font_info);
+        tig_font_measure(&font_info);
         if (font_info.height <= rect->height) {
             break;
         }
@@ -1008,7 +1008,7 @@ void sub_53FBB0()
         tig_font_push(dword_648988[0]);
         font_desc.str = str;
         font_desc.width = stru_5C34B8.width;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
 
         prev_truncate_pos = 0;
         curr = str;
@@ -1019,7 +1019,7 @@ void sub_53FBB0()
                 ch = curr[pos];
                 if (ch == ' ' || ch == '\n') {
                     curr[pos] = '\0';
-                    sub_535390(&font_desc);
+                    tig_font_measure(&font_desc);
                     curr[pos] = ch;
 
                     if (font_desc.height > stru_5C34B8.height) {
@@ -1042,7 +1042,7 @@ void sub_53FBB0()
 
             end -= truncate_pos;
             font_desc.str = &(curr[truncate_pos]);
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
         }
 
         dword_63FAE4[dword_648938] = prev_truncate_pos + end;

@@ -105,7 +105,7 @@ void sub_557FD0(const char* str)
 
         font.width = 0;
         font.str = str;
-        sub_535390(&font);
+        tig_font_measure(&font);
 
         rect.x = (rect.width - font.width) / 2;
         rect.y = (rect.height - font.height) / 2;

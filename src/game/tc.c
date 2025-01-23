@@ -379,7 +379,7 @@ int tc_check_size(const char* str)
     font.str = str;
 
     tig_font_push(tc_white_font);
-    sub_535390(&font);
+    tig_font_measure(&font);
     tig_font_pop();
 
     width = font.width - tc_intermediate_video_buffer_rect.width + 12;

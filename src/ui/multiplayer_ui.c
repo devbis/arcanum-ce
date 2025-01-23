@@ -243,7 +243,7 @@ bool sub_570260(tig_window_handle_t window_handle)
     mes_get_msg(mes_file, &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     rect.x = (163 - font_desc.width) / 2 + 235;
     rect.y = 54;
     rect.width = font_desc.width;
@@ -257,7 +257,7 @@ bool sub_570260(tig_window_handle_t window_handle)
     mes_get_msg(mes_file, &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     rect.x = (163 - font_desc.width) / 2 + 402;
     rect.y = 54;
     rect.width = font_desc.width;
@@ -582,7 +582,7 @@ bool sub_570A40(tig_window_handle_t window_handle)
         font_desc.str = off_681000[index].field_0;
         font_desc.width = frame_rect.width;
         font_desc.height = 0;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
 
         text_rect.x = frame_rect.x;
         text_rect.y = frame_rect.y + frame_rect.height;
@@ -783,7 +783,7 @@ void sub_571100()
         tig_font_push(sub_549940(MM_FONT_2, MM_COLOR_WHITE));
         font_desc.width = 0;
         font_desc.str = tig_net_client_info_get_name(dword_680FA4[index]);
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         rect.x = 40;
         rect.y = stru_680FD0[index % 2].height * index + 3;
         rect.width = font_desc.width;
@@ -800,7 +800,7 @@ void sub_571100()
                 sprintf(str, " %c", sub_571610(v1));
                 font_desc.width = 0;
                 font_desc.str = str;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 rect.width = font_desc.width;
                 rect.height = font_desc.height;
                 rect.y += 3;
@@ -821,7 +821,7 @@ void sub_571100()
         mes_get_msg(multiplayer_ui_mes_file, &mes_file_entry);
         font_desc.str = mes_file_entry.str;
         font_desc.width = 0;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         rect.x = 40;
         rect.y = stru_680FD0[index % 2].height * index + 22;
         rect.width = font_desc.width;
@@ -846,7 +846,7 @@ void sub_571100()
             snprintf(str, sizeof(str), "(%d)", ping);
             font_desc.width = 0;
             font_desc.str = str;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
             rect.width = font_desc.width;
             rect.height = font_desc.height;
             tig_window_text_write(dword_5CABE8, font_desc.str, &rect);

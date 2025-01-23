@@ -615,7 +615,7 @@ void sub_56C630(const char* str, int num, int x, int y, int alignment)
 
     font_info.str = str;
     font_info.width = 0;
-    sub_535390(&font_info);
+    tig_font_measure(&font_info);
 
     switch (alignment) {
     case 0:
@@ -677,7 +677,7 @@ bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* heigh
 
     font_desc.str = str;
     font_desc.width = rect->width;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     if (font_desc.height > rect->height) {
         size_t truncate_pos = 0;
@@ -689,7 +689,7 @@ bool sub_56C800(char* str, int font_num, int centered, TigRect* rect, int* heigh
             ch = str[pos];
             if (ch == ' ' || ch == '\n') {
                 str[pos] = '\0';
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 str[pos] = ch;
 
                 if (font_desc.height > rect->height) {

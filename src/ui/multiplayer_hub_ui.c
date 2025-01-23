@@ -585,7 +585,7 @@ void multiplayer_hub_ui_refresh_chat(TigRect* rect)
 
         font_desc.width = 0;
         font_desc.str = mes_file_entry.str;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         text_rect.x = (214 - font_desc.width) / 2 + 55;
         text_rect.y = 247;
         text_rect.width = font_desc.width;
@@ -599,7 +599,7 @@ void multiplayer_hub_ui_refresh_chat(TigRect* rect)
         }
         font_desc.width = 0;
         font_desc.str = str;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         text_rect.x = (183 - font_desc.width) / 2 + 69;
         text_rect.y = 274;
         text_rect.width = font_desc.width;
@@ -610,7 +610,7 @@ void multiplayer_hub_ui_refresh_chat(TigRect* rect)
         mes_get_msg(sub_549840(), &mes_file_entry);
         font_desc.width = 0;
         font_desc.str = mes_file_entry.str;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         text_rect.x = (214 - font_desc.width) / 2 + 55;
         text_rect.y = 337;
         text_rect.width = font_desc.width;
@@ -629,7 +629,7 @@ void multiplayer_hub_ui_refresh_chat(TigRect* rect)
         }
         font_desc.str = str;
         font_desc.width = 0;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         text_rect.x = (183 - font_desc.width) / 2 + 69;
         text_rect.y = 365;
         text_rect.width = font_desc.width;
@@ -1026,7 +1026,7 @@ void sub_582860(TigRect* rect)
                     (dword_6862DC[index].flags & 1) != 0 ? '\x7F' : ' ');
                 font_desc.width = 0;
                 font_desc.str = str;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 text_rect.x = 37;
                 text_rect.y = y;
                 text_rect.width = font_desc.width;
@@ -1059,7 +1059,7 @@ void sub_5829D0(TigRect* rect)
 
         font.str = mes_file_entry.str;
         font.width = 0;
-        sub_535390(&font);
+        tig_font_measure(&font);
 
         text_rect.x = (166 - font.width) / 2 + 77;
         text_rect.y = 562;
@@ -1142,7 +1142,7 @@ void sub_582AD0(TigRect* rect)
                     }
                     font_desc.str = str;
                     font_desc.width = 0;
-                    sub_535390(&font_desc);
+                    tig_font_measure(&font_desc);
                     text_rect.width = font_desc.width;
                     text_rect.y = 15 * (index - dword_5CBF80) + 99;
                     tig_window_text_write(sub_549820(), font_desc.str, &text_rect);
@@ -1156,7 +1156,7 @@ void sub_582AD0(TigRect* rect)
                 tig_font_push(sub_583140(stru_684708[dword_5CBF80].type));
                 font_desc.str = stru_684708[dword_5CBF80].field_8;
                 font_desc.width = 0;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 text_rect.width = font_desc.width;
                 text_rect.y = 15 * (index - dword_5CBF80) + 99;
                 tig_window_text_write(sub_549820(), font_desc.str, &text_rect);
@@ -1212,7 +1212,7 @@ void sub_582D60(TigRect* rect)
         snprintf(str, sizeof(str), "%s|", byte_6861F8);
         font.str = str;
         font.width = 0;
-        sub_535390(&font);
+        tig_font_measure(&font);
 
         text_rect.width = font.width;
         text_rect.height = font.height;
@@ -1520,7 +1520,7 @@ void sub_583830(TigRect* dirty_rect)
             tig_font_push(sub_549940(0, 3));
             font_desc.width = 0;
             font_desc.str = mes_file_entry.str;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             rect.x = (172 - font_desc.width) / 2 + 83;
             rect.y = 373;
@@ -1710,7 +1710,7 @@ void sub_583D90(TigRect* rect)
     mes_get_msg(sub_549840(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     dst_rect.x = (165 - font_desc.width) / 2 + 327;
     dst_rect.y = 94;
@@ -1734,7 +1734,7 @@ void sub_583D90(TigRect* rect)
     mes_get_msg(sub_549840(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     dst_rect.x = (196 - font_desc.width) / 2 + 312;
     dst_rect.y = 149;
@@ -1758,7 +1758,7 @@ void sub_583D90(TigRect* rect)
 
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     dst_rect.x = 327;
     dst_rect.y = 175;
@@ -1781,7 +1781,7 @@ void sub_583D90(TigRect* rect)
     mes_get_msg(sub_549840(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     dst_rect.x = (164 - font_desc.width) / 2 + 327;
     dst_rect.y = 310;
@@ -1832,7 +1832,7 @@ void sub_584150(TigRect* rect)
     mes_get_msg(sub_549840(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     dst_rect.x = (165 - font_desc.width) / 2 + 327;
     dst_rect.y = 94;
@@ -1856,7 +1856,7 @@ void sub_584150(TigRect* rect)
     mes_get_msg(sub_549840(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     dst_rect.x = (196 - font_desc.width) / 2 + 312;
     dst_rect.y = 149;
@@ -1888,7 +1888,7 @@ void sub_584150(TigRect* rect)
     mes_get_msg(sub_549840(), &mes_file_entry);
     font_desc.width = 0;
     font_desc.str = mes_file_entry.str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     dst_rect.x = (181 - font_desc.width) / 2 + 327;
     dst_rect.y = 204;
@@ -2248,14 +2248,14 @@ void sub_584CB0(TigRect* rect)
 
             font_desc.width = 0;
             font_desc.str = copy;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             while (font_desc.width > 204) {
                 pos = strlen(copy);
                 copy[pos - 1] = '\0';
                 font_desc.width = 0;
                 font_desc.str = copy;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 pos--;
             }
 
@@ -2287,14 +2287,14 @@ void sub_584CB0(TigRect* rect)
 
             font_desc.width = 0;
             font_desc.str = copy;
-            sub_535390(&font_desc);
+            tig_font_measure(&font_desc);
 
             while (font_desc.width > 172) {
                 pos = strlen(copy);
                 copy[pos - 1] = '\0';
                 font_desc.width = 0;
                 font_desc.str = copy;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
                 pos--;
             }
 
@@ -2322,7 +2322,7 @@ void sub_584CB0(TigRect* rect)
         tig_font_push(sub_549940(0, 5));
         font_desc.width = 0;
         font_desc.str = byte_6868F8;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         text_rect.x = (163 - font_desc.width) / 2 + 530;
         text_rect.y = 522;
         text_rect.width = font_desc.width;

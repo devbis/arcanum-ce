@@ -817,7 +817,7 @@ void sub_56DDC0()
     tig_font_push(schematic_ui_name_font);
     font.str = mes_file_entry.str;
     font.width = 0;
-    sub_535390(&font);
+    tig_font_measure(&font);
 
     src_rect.x = 261;
     src_rect.y = 30;
@@ -834,7 +834,7 @@ void sub_56DDC0()
     tig_font_push(schematic_ui_description_font);
     font.str = mes_file_entry.str;
     font.width = 0;
-    sub_535390(&font);
+    tig_font_measure(&font);
 
     src_rect.x = 219;
     src_rect.y = 71;

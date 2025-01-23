@@ -1224,7 +1224,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
     dword_64C6BC = 0;
 
     font_desc.str = NULL;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     tig_art_interface_id_create(171, 0, 0, 0, &(font_desc.art_id));
     tig_font_create(&font_desc, &dword_64C670);
 
@@ -1252,7 +1252,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
 
     // NOTE: Looks meaningless.
     font_desc.str = NULL;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     font_desc.flags = ~TIG_FONT_SHADOW;
     tig_art_interface_id_create(230, 0, 0, 0, &(font_desc.art_id));
 
@@ -1459,7 +1459,7 @@ void sub_54AD00(int type, int value, int digits)
 
     font_desc.str = str;
     font_desc.width = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     if (font_desc.width < info->rect.width) {
         rect.x = info->rect.x + (info->rect.width - font_desc.width) / 2;
@@ -1468,7 +1468,7 @@ void sub_54AD00(int type, int value, int digits)
         rect.height = font_desc.height;
     } else {
         font_desc.width = info->rect.width;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
 
         if (font_desc.height > info->rect.height) {
             tig_font_pop();
@@ -4035,7 +4035,7 @@ bool sub_550A10(tig_window_handle_t window_handle, char* str, TigRect* rect, tig
 
     font_desc.str = str;
     font_desc.width = 0;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
 
     text_rect.x = rect->x;
     text_rect.y = rect->y;
@@ -4053,7 +4053,7 @@ bool sub_550A10(tig_window_handle_t window_handle, char* str, TigRect* rect, tig
 
     if (font_desc.width >= width) {
         font_desc.width = width;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         if (font_desc.height > rect->height) {
             font_desc.height = rect->height;
         }
@@ -5034,14 +5034,14 @@ void intgame_text_edit_refresh_color(const char* str, tig_font_handle_t font, ti
         tig_font_push(font);
         font_desc.width = 0;
         font_desc.str = str;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
 
         // NOTE: Many jumps, check.
         if (font_desc.width > rect.width && a4) {
             while (font_desc.width > rect.width && *str != '\0') {
                 font_desc.width = 0;
                 font_desc.str = str++;
-                sub_535390(&font_desc);
+                tig_font_measure(&font_desc);
             }
 
             if (*str == '\0') {
@@ -5062,7 +5062,7 @@ void intgame_text_edit_refresh_color(const char* str, tig_font_handle_t font, ti
     tig_font_push(font);
     font_desc.width = 0;
     font_desc.str = "*";
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     rect.x += rect.width + 3;
     rect.width = font_desc.width;
     if (tig_window_text_write(window_handle, "*", &rect) != TIG_OK) {
@@ -5102,7 +5102,7 @@ void intgame_clock_refresh()
 
         font_desc.str = str;
         font_desc.width = 0;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
 
         if (tig_window_fill(dword_64C4F8[0], &rect, tig_color_make(0, 0, 0)) == TIG_OK) {
             tig_window_text_write(dword_64C4F8[0], str, &rect);

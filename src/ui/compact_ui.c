@@ -367,7 +367,7 @@ void compact_ui_health_bar_draw(int a1)
         tig_font_push(sub_549940(0, 0));
         font_desc.width = 0;
         font_desc.str = str;
-        sub_535390(&font_desc);
+        tig_font_measure(&font_desc);
         rect1.x += (23 - font_desc.width) / 2;
         rect1.y += 40;
         rect1.width = font_desc.width;
@@ -385,7 +385,7 @@ void compact_ui_health_bar_draw(int a1)
     tig_font_push(sub_549940(0, 0));
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     rect1.x += (23 - font_desc.width) / 2;
     rect1.width = font_desc.width;
     rect1.height = font_desc.height;
@@ -407,7 +407,7 @@ void compact_ui_health_bar_draw(int a1)
     tig_font_push(sub_549940(0, 0));
     font_desc.width = 0;
     font_desc.str = str;
-    sub_535390(&font_desc);
+    tig_font_measure(&font_desc);
     rect1.x += (23 - font_desc.width) / 2;
     rect1.width = font_desc.width;
     rect1.height = font_desc.height;
