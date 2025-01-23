@@ -5643,15 +5643,15 @@ void sub_553370()
 }
 
 // 0x553380
-void sub_553380(int a1, const char* str)
+void sub_553380(int index, const char* str)
 {
-    sub_4C9810(a1, str);
+    tc_set_option(index, str);
 }
 
 // 0x5533A0
 int sub_5533A0(TigMessage* msg)
 {
-    return sub_4C9A10(msg);
+    return tc_handle_message(msg);
 }
 
 // 0x5533B0

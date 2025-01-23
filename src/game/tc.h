@@ -11,8 +11,8 @@ void tc_scroll(int dx, int dy);
 void tc_show();
 void tc_hide();
 void tc_clear();
-void sub_4C9810(int index, const char* str);
-int sub_4C9A10(TigMessage* msg);
+void tc_set_option(int index, const char* str);
+int tc_handle_message(TigMessage* msg);
 int tc_check_size(const char* str);
 
 #endif /* ARCANUM_GAME_TC_H_ */
