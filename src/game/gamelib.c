@@ -205,7 +205,7 @@ static char arcanum1[260] = "Arcanum";
 static char arcanum2[260] = "Arcanum";
 
 // 0x5CFF08
-static char byte_5CFF08[MAX_PATH];
+static char byte_5CFF08[TIG_MAX_PATH];
 
 // 0x5D000C
 static TigRectListNode* gamelib_pending_dirty_rects_head;
@@ -217,7 +217,7 @@ static bool gamelib_dirty;
 static TigRect gamelib_iso_content_rect;
 
 // 0x5D0028
-static char byte_5D0028[TEN][MAX_PATH];
+static char byte_5D0028[TEN][TIG_MAX_PATH];
 
 // FIXME: Should be of TIG_MAX_PATH (260), not 256.
 //
@@ -228,10 +228,10 @@ static char byte_5D0A50[256];
 static ViewOptions gamelib_view_options;
 
 // 0x5D0B58
-static char byte_5D0B58[MAX_PATH];
+static char byte_5D0B58[TIG_MAX_PATH];
 
 // 0x5D0C5C
-static char byte_5D0C5C[MAX_PATH];
+static char byte_5D0C5C[TIG_MAX_PATH];
 
 // 0x5D0D60
 static TigRect stru_5D0D60;
@@ -264,10 +264,10 @@ static int gamelib_game_difficulty;
 static bool gamelib_mod_loaded;
 
 // 0x5D0EA4
-static char byte_5D0EA4[MAX_PATH];
+static char byte_5D0EA4[TIG_MAX_PATH];
 
 // 0x5D0FA8
-static char byte_5D0FA8[MAX_PATH];
+static char byte_5D0FA8[TIG_MAX_PATH];
 
 // 0x5D10AC
 static void(*gamelib_render_func)(UnknownContext* render_info);
@@ -1200,7 +1200,7 @@ bool gamelib_load(const char* name)
 // 0x403790
 bool sub_403790(const char* name)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
 
     if (_strcmpi(name, "SlotAutoAuto-Save") == 0) {
         return false;
@@ -1854,8 +1854,8 @@ void sub_404A20()
 // 0x404C10
 bool sub_404C10(const char* module_name)
 {
-    char path1[MAX_PATH];
-    char path2[MAX_PATH];
+    char path1[TIG_MAX_PATH];
+    char path2[TIG_MAX_PATH];
     size_t end;
     int index;
 
@@ -1879,7 +1879,7 @@ bool sub_404C10(const char* module_name)
         path1[end] = '\0';
 
         for (index = 0; index < TEN; index++) {
-            _snprintf(path2, MAX_PATH, "%s.patch%d", path1, index);
+            _snprintf(path2, TIG_MAX_PATH, "%s.patch%d", path1, index);
             if (tig_file_exists(path2, NULL)) {
                 if (!tig_file_repository_add(path2)) {
                     return false;

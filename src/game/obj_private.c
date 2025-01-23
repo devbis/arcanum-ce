@@ -2489,7 +2489,7 @@ bool objf_solitary_read(int64_t* handle_ptr, const char* path)
 // 0x4E6D10
 void objf_solitary_delete(int64_t handle, const char* dir, const char* ext)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     int length;
     char* dot;
     TigFile* stream;
@@ -2504,7 +2504,7 @@ void objf_solitary_delete(int64_t handle, const char* dir, const char* ext)
     strcat(path, ext);
 
     length = (int)strlen(path);
-    if (length > MAX_PATH) {
+    if (length > TIG_MAX_PATH) {
         tig_debug_println("Filename too long in ObjFile, objf_solitary_delete.");
         return;
     }
@@ -2566,7 +2566,7 @@ bool sub_4E7050(int64_t handle, char* path)
 // 0x4E70C0
 TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ext)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     int length;
     TigFile* stream;
 
@@ -2579,7 +2579,7 @@ TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ex
     strcat(path, ext);
 
     length = (int)strlen(path);
-    if (length > MAX_PATH) {
+    if (length > TIG_MAX_PATH) {
         tig_debug_println("Filename too long in ObjFile, open_solitary_for_write.");
         return NULL;
     }
@@ -2596,7 +2596,7 @@ TigFile* open_solitary_for_write(int64_t handle, const char* dir, const char* ex
 // 0x4E71B0
 bool handle_from_fname(int64_t* handle_ptr, const char* path)
 {
-    char fname[MAX_PATH];
+    char fname[TIG_MAX_PATH];
     ObjectID object_id;
 
     _splitpath(path, NULL, NULL, fname, NULL);

@@ -135,7 +135,7 @@ int light_scheme_get_map_default()
 bool light_scheme_set(int light_scheme, int hour)
 {
     MesFileEntry mes_file_entry;
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     mes_file_handle_t mes_file;
 
     if (light_schemes_msg_file == -1) {

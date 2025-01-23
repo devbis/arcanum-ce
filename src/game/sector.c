@@ -749,7 +749,7 @@ bool sector_map_name_set(const char* base_map_name, const char* current_map_name
 // 0x4D04A0
 bool sub_4D04A0(uint64_t a1)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     sprintf(path, "%s\\%I64u.sec", sector_base_map_name, a1);
     return tig_file_exists(path, NULL);
 }
@@ -2245,7 +2245,7 @@ bool sector_block_save_internal()
 // 0x4D31C0
 bool sector_block_load_internal(const char* base_map_name, const char* current_map_name)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     TigFile* stream;
 
     sprintf(path, "%s\\map.sbf", current_map_name);

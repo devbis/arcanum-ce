@@ -598,7 +598,7 @@ int sub_41D390()
     int cnt = 0;
     TigFileList dir_list;
     TigFileList file_list;
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     unsigned int index;
 
     tig_file_list_create(&dir_list, "art\\critter\\*.*");

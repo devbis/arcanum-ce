@@ -31,7 +31,7 @@ void gmovie_mod_unload()
 void gmovie_play(int movie, unsigned int flags, int sound_track)
 {
     MesFileEntry mes_file_entry;
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
 
     if (movies_mes_file != MES_FILE_HANDLE_INVALID) {
         mes_file_entry.num = movie;
@@ -45,7 +45,7 @@ void gmovie_play(int movie, unsigned int flags, int sound_track)
 // 0x40DEE0
 void gmovie_play_path(const char* path, unsigned int flags, int sound_track)
 {
-    char temp_path[MAX_PATH];
+    char temp_path[TIG_MAX_PATH];
     unsigned int movie_flags;
 
     if (tig_file_extract(path, temp_path)) {

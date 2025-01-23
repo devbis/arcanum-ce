@@ -192,8 +192,8 @@ bool map_init(GameInitInfo* init_info)
         return true;
     }
 
-    map_name = (char*)calloc(MAX_PATH, sizeof(*map_name));
-    map_folder = (char*)calloc(MAX_PATH, sizeof(*map_folder));
+    map_name = (char*)calloc(TIG_MAX_PATH, sizeof(*map_name));
+    map_folder = (char*)calloc(TIG_MAX_PATH, sizeof(*map_folder));
     map_list_info = (MapListInfo*)calloc(MAP_LIST_CAPACITY, sizeof(*map_list_info));
 
     for (int index = 0; index < MAP_MODULE_COUNT; index++) {
@@ -440,7 +440,7 @@ bool map_load(GameLoadInfo* load_info)
     tig_debug_printf("map_load: retrieving map names...");
     tig_timer_now(&start);
 
-    char name[MAX_PATH];
+    char name[TIG_MAX_PATH];
     if (tig_file_fgets(name, sizeof(name), load_info->stream) == NULL) {
         map_close();
         return false;
@@ -451,7 +451,7 @@ bool map_load(GameLoadInfo* load_info)
         name[name_length - 1] = '\0';
     }
 
-    char folder[MAX_PATH];
+    char folder[TIG_MAX_PATH];
     if (tig_file_fgets(folder, sizeof(folder), load_info->stream) == NULL) {
         map_close();
         return false;
@@ -1518,7 +1518,7 @@ void map_clear_objects()
 // 0x4115D0
 void sub_4115D0(const char* name)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     strcpy(path, name);
     strcat(path, "\\mapinfo.txt");
 

@@ -72,7 +72,7 @@ void rumor_exit()
 bool rumor_mod_load()
 {
     int index;
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
 
     for (index = 0; index < RUMOR_INTERACTION_TYPE_COUNT; index++) {
         sprintf(path, "mes\\%s.mes", rumor_mes_file_names[index]);

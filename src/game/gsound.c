@@ -23,7 +23,7 @@ typedef struct SoundScheme {
     /* 0018 */ int volume_min;
     /* 001C */ int volume_max;
     /* 0020 */ tig_sound_handle_t sound_handle;
-    /* 0024 */ char path[MAX_PATH];
+    /* 0024 */ char path[TIG_MAX_PATH];
 } SoundScheme;
 
 // See 0x41BF70.
@@ -342,7 +342,7 @@ bool gsound_init(GameInitInfo* init_info)
 const char* gsound_build_sound_path(const char* name)
 {
     // 0x5D5490
-    static char path[MAX_PATH];
+    static char path[TIG_MAX_PATH];
 
     sprintf(path, "%s%s", gsound_base_sound_path, name);
 
@@ -611,7 +611,7 @@ void sub_41B420(int64_t x, int64_t y, int* volume_ptr, int* extra_volume_ptr, Ti
 // 0x41B720
 tig_sound_handle_t gsound_play_sfx_id_ex(int id, int loops, int volume, int extra_volume)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
 
     if (!gsound_initialized) {
         return TIG_SOUND_HANDLE_INVALID;
@@ -1199,7 +1199,7 @@ tig_sound_handle_t gsound_play_music_indefinitely(const char* path, int fade_dur
 // 0x41C4D0
 void gsound_start_combat_music(int64_t obj)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     int index;
 
     if (!gsound_combat_music_active) {

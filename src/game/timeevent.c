@@ -1550,7 +1550,7 @@ void timeevent_sync(DateTime* game_time, DateTime* anim_time)
 // 0x45C2F0
 void timeevent_save_nodes_to_map(const char* name)
 {
-    char path[MAX_PATH];
+    char path[TIG_MAX_PATH];
     TigFile* stream;
     bool exists = false;
     int count;

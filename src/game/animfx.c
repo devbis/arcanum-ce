@@ -1114,7 +1114,7 @@ void animfx_build_eye_candy_effect(int index, char* str)
                     if (base_sound != -1) {
                         entry->sound = dword_601738->field_24[base_index] + base_sound;
 
-                        char path[MAX_PATH];
+                        char path[TIG_MAX_PATH];
                         if (gsound_resolve_path(entry->sound, path) != TIG_OK) {
                             entry->sound = -1;
                         }
