@@ -80,7 +80,7 @@ static_assert(sizeof(IntgameIsoWindowTypeInfo) == 0x14, "wrong size");
 static bool button_create_flags(UiButtonInfo* button_info, unsigned int flags);
 static bool button_create_no_art(UiButtonInfo* button_info, int width, int height);
 static void intgame_draw_counter(int counter, int value, int digits);
-static void sub_54AF10(TigRect* rect);
+static void intgame_draw_bar_rect(TigRect* rect);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static bool iso_interface_message_filter(TigMessage* msg);
 static void sub_54DBF0(int btn, int window_type);
@@ -171,10 +171,10 @@ static TigRect stru_5C63C0 = { 311, 196, 178, 178 };
 static int dword_5C63D0 = -1;
 
 // 0x5C63D8
-static TigRect stru_5C63D8 = { 14, 472, 28, 88 };
+static TigRect intgame_health_bar_frame = { 14, 472, 28, 88 };
 
 // 0x5C63E8
-static TigRect stru_5C63E8 = { 754, 473, 28, 88 };
+static TigRect intgame_fatigue_bar_frame = { 754, 473, 28, 88 };
 
 // 0x5C63F8
 static IntgameIsoWindowTypeInfo intgame_number_boxes[INTGAME_COUNTER_COUNT] = {
@@ -1135,8 +1135,8 @@ void iso_interface_create(tig_window_handle_t window_handle)
     tig_window_data(window_handle, &window_data);
 
     vb_create_info.flags = 0;
-    vb_create_info.width = stru_5C63D8.width / 2;
-    vb_create_info.height = stru_5C63D8.height;
+    vb_create_info.width = intgame_health_bar_frame.width / 2;
+    vb_create_info.height = intgame_health_bar_frame.height;
     vb_create_info.background_color = 0;
     if (tig_video_buffer_create(&vb_create_info, &dword_64C474) != TIG_OK) {
         tig_debug_printf("iso_interface_create: ERROR: couldn't create video buffer!\n");
@@ -1259,8 +1259,8 @@ void iso_interface_create(tig_window_handle_t window_handle)
     dword_64C47C[1] = art_frame_data.width;
 
     intgame_clock_process_callback(NULL);
-    sub_54AEE0(0);
-    sub_54AEE0(1);
+    intgame_draw_bar(INTGAME_BAR_HEALTH);
+    intgame_draw_bar(INTGAME_BAR_FATIGUE);
 
     // NOTE: Looks meaningless.
     font_desc.str = NULL;
@@ -1498,26 +1498,26 @@ void intgame_draw_counter(int counter, int value, int digits)
 }
 
 // 0x54AEE0
-void sub_54AEE0(int a1)
+void intgame_draw_bar(int bar)
 {
-    switch (a1) {
-    case 0:
-        sub_54AF10(&stru_5C63D8);
+    switch (bar) {
+    case INTGAME_BAR_HEALTH:
+        intgame_draw_bar_rect(&intgame_health_bar_frame);
         break;
-    case 1:
-        sub_54AF10(&stru_5C63E8);
+    case INTGAME_BAR_FATIGUE:
+        intgame_draw_bar_rect(&intgame_fatigue_bar_frame);
         break;
     }
 }
 
 // 0x54AF10
-void sub_54AF10(TigRect* rect)
+void intgame_draw_bar_rect(TigRect* rect)
 {
     int64_t pc_obj;
-    TigRect rects[2];
-    int nums[2];
+    TigRect rects[INTGAME_BAR_COUNT];
+    int nums[INTGAME_BAR_COUNT];
     int poison;
-    int idx;
+    int bar;
     TigArtBlitInfo art_blit_info;
     TigRect blit_rect;
     TigRect tmp_rect;
@@ -1536,15 +1536,15 @@ void sub_54AF10(TigRect* rect)
         return;
     }
 
-    rects[0] = stru_5C63D8;
-    rects[1] = stru_5C63E8;
+    rects[INTGAME_BAR_HEALTH] = intgame_health_bar_frame;
+    rects[INTGAME_BAR_FATIGUE] = intgame_fatigue_bar_frame;
 
     poison = stat_level_get(pc_obj, STAT_POISON_LEVEL);
-    nums[0] = poison > 0 ? 17 : 18;
-    nums[1] = 19;
+    nums[INTGAME_BAR_HEALTH] = poison > 0 ? 17 : 18;
+    nums[INTGAME_BAR_FATIGUE] = 19;
 
-    for (idx = 0; idx < 2; idx++) {
-        tmp_rect = rects[idx];
+    for (bar = 0; bar < INTGAME_BAR_COUNT; bar++) {
+        tmp_rect = rects[bar];
         if (tig_rect_intersection(&tmp_rect, rect, &blit_rect) == TIG_OK) {
             blit_rect.x -= stru_5C6390[1].x;
             blit_rect.y -= stru_5C6390[1].y;
@@ -1556,7 +1556,7 @@ void sub_54AF10(TigRect* rect)
             tig_window_blit_art(dword_64C4F8[1], &art_blit_info);
         }
 
-        if (idx == 0) {
+        if (bar == INTGAME_BAR_HEALTH) {
             value = object_hp_max(pc_obj);
             if (value != 0) {
                 fullness = 100 * object_hp_current(pc_obj) / value;
@@ -1575,9 +1575,9 @@ void sub_54AF10(TigRect* rect)
         filled_height = fullness * tmp_rect.height / 100;
         empty_height = tmp_rect.height - filled_height;
         if (empty_height > 0) {
-            tmp_rect.x = rects[idx].x;
-            tmp_rect.y = rects[idx].y;
-            tmp_rect.width = rects[idx].width;
+            tmp_rect.x = rects[bar].x;
+            tmp_rect.y = rects[bar].y;
+            tmp_rect.width = rects[bar].width;
             tmp_rect.height = empty_height;
 
             if (tig_rect_intersection(&tmp_rect, rect, &blit_rect) == TIG_OK) {
@@ -1604,18 +1604,18 @@ void sub_54AF10(TigRect* rect)
             int v15;
             int v16;
 
-            tmp_rect.x = rects[idx].x;
-            tmp_rect.y = rects[idx].y;
-            tmp_rect.width = rects[idx].width;
+            tmp_rect.x = rects[bar].x;
+            tmp_rect.y = rects[bar].y;
+            tmp_rect.width = rects[bar].width;
 
             v14 = 8;
             v15 = filled_height + 8;
             v16 = empty_height - 8;
-            if ( v15 > rects[idx].height )
+            if ( v15 > rects[bar].height )
             {
-                v14 += rects[idx].height - v15;
-                v16 += v15 - rects[idx].height;
-                v15 = rects[idx].height;
+                v14 += rects[bar].height - v15;
+                v16 += v15 - rects[bar].height;
+                v15 = rects[bar].height;
             }
             tmp_rect.y += v16;
             tmp_rect.height = v15;
@@ -1625,7 +1625,7 @@ void sub_54AF10(TigRect* rect)
                 tmp_rect.y = blit_rect.y - v14 - tmp_rect.y + 8;
                 tmp_rect.width = blit_rect.width;
                 tmp_rect.height = blit_rect.height;
-                tig_art_interface_id_create(nums[idx], 0, 0, 0, &(art_blit_info.art_id));
+                tig_art_interface_id_create(nums[bar], 0, 0, 0, &(art_blit_info.art_id));
 
                 dst_rect.x = blit_rect.x - stru_5C6390[1].x;
                 dst_rect.width = tmp_rect.width;
@@ -1639,7 +1639,7 @@ void sub_54AF10(TigRect* rect)
             }
         }
 
-        if (idx == 0) {
+        if (bar == INTGAME_BAR_HEALTH) {
             intgame_draw_counter(INTGAME_COUNTER_HEALTH, object_hp_current(pc_obj), 3);
             if (poison > 0) {
                 intgame_draw_counter(INTGAME_COUNTER_POISON, poison, 3);
@@ -1653,10 +1653,10 @@ void sub_54AF10(TigRect* rect)
 }
 
 // 0x54B3A0
-void sub_54B3A0()
+void intgame_draw_bars()
 {
-    sub_54AEE0(0);
-    sub_54AEE0(1);
+    intgame_draw_bar(INTGAME_BAR_HEALTH);
+    intgame_draw_bar(INTGAME_BAR_FATIGUE);
 }
 
 // 0x54B3C0

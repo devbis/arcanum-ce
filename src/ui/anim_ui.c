@@ -142,10 +142,10 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
 
     switch (timeevent->params[0].integer_value) {
     case 0:
-        sub_54AEE0(0);
+        intgame_draw_bar(INTGAME_BAR_HEALTH);
         break;
     case 1:
-        sub_54AEE0(1);
+        intgame_draw_bar(INTGAME_BAR_FATIGUE);
         break;
     case 2:
     case 3:

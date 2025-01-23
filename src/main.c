@@ -324,8 +324,8 @@ void main_loop()
     object_flags_unset(pc_obj, OF_OFF);
     sub_430460();
     sub_551160();
-    sub_54AEE0(0);
-    sub_54AEE0(1);
+    intgame_draw_bar(INTGAME_BAR_HEALTH);
+    intgame_draw_bar(INTGAME_BAR_FATIGUE);
 
     while (1) {
         if (enable_profiler) {
@@ -453,8 +453,8 @@ void main_loop()
                             sub_44FE20();
                             critter_fatigue_damage_set(pc_obj, 0);
                             sub_551160();
-                            sub_54AEE0(0);
-                            sub_54AEE0(1);
+                            intgame_draw_bar(INTGAME_BAR_HEALTH);
+                            intgame_draw_bar(INTGAME_BAR_FATIGUE);
                         }
                         break;
                     case DIK_J:

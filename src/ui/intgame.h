@@ -8,6 +8,12 @@
 #include "game/ui.h"
 #include "ui/types.h"
 
+typedef enum IntgameBar {
+    INTGAME_BAR_HEALTH,
+    INTGAME_BAR_FATIGUE,
+    INTGAME_BAR_COUNT,
+} IntgameBar;
+
 extern tig_font_handle_t dword_739F88;
 
 bool intgame_init(GameInitInfo* init_info);
@@ -22,8 +28,8 @@ void sub_54AA30();
 bool intgame_button_create_ex(tig_window_handle_t window_handle, TigRect* rect, UiButtonInfo* button_info, unsigned int flags);
 bool intgame_button_create(UiButtonInfo* button_info);
 void intgame_button_destroy(UiButtonInfo* button_info);
-void sub_54AEE0(int a1);
-void sub_54B3A0();
+void intgame_draw_bar(int bar);
+void intgame_draw_bars();
 void sub_54B3C0();
 bool sub_54B5D0(TigMessage* msg);
 bool sub_54DC80(TigMessage* msg);

@@ -1685,8 +1685,8 @@ void sub_55B150()
     sub_55EC90();
     sub_55A240();
     sub_551160();
-    sub_54AEE0(0);
-    sub_54AEE0(1);
+    intgame_draw_bar(INTGAME_BAR_HEALTH);
+    intgame_draw_bar(INTGAME_BAR_FATIGUE);
 }
 
 // 0x55B1B0

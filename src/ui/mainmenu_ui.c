@@ -2567,7 +2567,7 @@ void sub_5412E0(bool a1)
     sub_553990();
     sub_5507D0(0);
     if (!a1) {
-        sub_54B3A0();
+        intgame_draw_bars();
 
         if (mainmenu_ui_was_compact_interface) {
             intgame_toggle_interface();
