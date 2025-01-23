@@ -1862,11 +1862,11 @@ void sub_4B4390(CombatContext* combat)
             tf_add(combat->target_obj, tf_type, str);
         }
 
-        int poison = stat_get_base(combat->target_obj, STAT_POISON_LEVEL) + combat->dam[DAMAGE_TYPE_POISON];
+        int poison = stat_base_get(combat->target_obj, STAT_POISON_LEVEL) + combat->dam[DAMAGE_TYPE_POISON];
         if (poison < 0) {
             poison = 0;
         }
-        stat_set_base(combat->target_obj, STAT_POISON_LEVEL, poison);
+        stat_base_set(combat->target_obj, STAT_POISON_LEVEL, poison);
 
 
         if (combat->dam[DAMAGE_TYPE_POISON] > 0 && tf_level_get() == TF_LEVEL_VERBOSE) {
@@ -2352,13 +2352,13 @@ void sub_4B58C0(CombatContext* combat)
         int new_dam;
         int cur_dam;
 
-        cur_dam = stat_get_base(combat->target_obj, STAT_POISON_LEVEL);
+        cur_dam = stat_base_get(combat->target_obj, STAT_POISON_LEVEL);
         if (cur_dam != 0) {
             new_dam = cur_dam - combat->dam[DAMAGE_TYPE_POISON];
             if (new_dam < 0) {
                 new_dam = 0;
             }
-            stat_set_base(combat->target_obj, STAT_POISON_LEVEL, new_dam);
+            stat_base_set(combat->target_obj, STAT_POISON_LEVEL, new_dam);
         }
     }
 
@@ -3085,7 +3085,7 @@ void combat_turn_based_whos_turn_set(int64_t obj)
         }
     }
 
-    combat_action_points = stat_level(obj, STAT_SPEED);
+    combat_action_points = stat_level_get(obj, STAT_SPEED);
     if (combat_action_points < 5) {
         combat_action_points = 5;
     }
@@ -3244,7 +3244,7 @@ bool combat_turn_based_start()
 // 0x4B7300
 void sub_4B7300()
 {
-    dword_5B57B8 = stat_level(player_get_pc_obj(), STAT_PERCEPTION) / 2 + 5;
+    dword_5B57B8 = stat_level_get(player_get_pc_obj(), STAT_PERCEPTION) / 2 + 5;
     if (dword_5B57B8 < 10) {
         dword_5B57B8 = 10;
     }

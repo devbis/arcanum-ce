@@ -2684,7 +2684,7 @@ void redraw_inven(bool a1)
             mes_get_msg(inven_ui_mes_file, &mes_file_entry1);
 
             encumbrance_level = critter_encumbrance_level_get(qword_682C78);
-            carry_weight = stat_level(qword_682C78, STAT_CARRY_WEIGHT);
+            carry_weight = stat_level_get(qword_682C78, STAT_CARRY_WEIGHT);
 
             sprintf(&(byte_68241C[pos]),
                 "%s: %s (%d)\n",
@@ -2835,7 +2835,7 @@ void redraw_inven(bool a1)
         mes_get_msg(inven_ui_mes_file, &mes_file_entry1);
 
         encumbrance_level = critter_encumbrance_level_get(qword_6814F8);
-        carry_weight = stat_level(qword_6814F8, STAT_CARRY_WEIGHT);
+        carry_weight = stat_level_get(qword_6814F8, STAT_CARRY_WEIGHT);
 
         sprintf(str,
             "%s: %s (%d)",
@@ -2850,7 +2850,7 @@ void redraw_inven(bool a1)
         sprintf(str,
             "%s: %d",
             mes_file_entry1.str,
-            stat_level(qword_6814F8, STAT_SPEED));
+            stat_level_get(qword_6814F8, STAT_SPEED));
         tig_window_text_write(inven_ui_window_handle, str, &(text_rects[INVEN_UI_SUMMARY_INFO_SPEED]));
 
         tig_font_pop();
@@ -3039,7 +3039,7 @@ void redraw_inven(bool a1)
                 weapon_too_heavy = false;
                 if (inventory_location == ITEM_INV_LOC_WEAPON) {
                     weapon_min_str = item_weapon_min_strength(item_obj, qword_6814F8);
-                    if (stat_level(qword_6814F8, STAT_STRENGTH) < weapon_min_str) {
+                    if (stat_level_get(qword_6814F8, STAT_STRENGTH) < weapon_min_str) {
                         dst_rect = text_rects[4];
                         tig_window_tint(inven_ui_window_handle,
                             &dst_rect,
@@ -3290,7 +3290,7 @@ void redraw_inven(bool a1)
                     weapon_too_heavy = false;
                     if (inventory_location == ITEM_INV_LOC_WEAPON) {
                         weapon_min_str = item_weapon_min_strength(item_obj, target_obj);
-                        if (stat_level(target_obj, STAT_STRENGTH) < weapon_min_str) {
+                        if (stat_level_get(target_obj, STAT_STRENGTH) < weapon_min_str) {
                             dst_rect = text_rects[4];
                             tig_window_tint(inven_ui_window_handle,
                                 &dst_rect,

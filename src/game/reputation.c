@@ -469,12 +469,12 @@ void sub_4C2100(int64_t pc_obj, int64_t npc_obj, int reputation, char* buffer)
         return;
     }
 
-    if (stat_level(npc_obj, STAT_GENDER) == GENDER_MALE) {
-        rp = stat_level(pc_obj, STAT_GENDER) == GENDER_MALE
+    if (stat_level_get(npc_obj, STAT_GENDER) == GENDER_MALE) {
+        rp = stat_level_get(pc_obj, STAT_GENDER) == GENDER_MALE
             ? GAME_RP_NPC_M2M
             : GAME_RP_NPC_M2F;
     } else {
-        rp = stat_level(pc_obj, STAT_GENDER) == GENDER_MALE
+        rp = stat_level_get(pc_obj, STAT_GENDER) == GENDER_MALE
             ? GAME_RP_NPC_F2M
             : GAME_RP_NPC_F2F;
     }

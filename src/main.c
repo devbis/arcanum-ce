@@ -443,8 +443,8 @@ void main_loop()
                                 spell_add(pc_obj, index, true);
                             }
 
-                            stat_set_base(pc_obj, STAT_INTELLIGENCE, 20);
-                            stat_set_base(pc_obj, STAT_WILLPOWER, 20);
+                            stat_base_set(pc_obj, STAT_INTELLIGENCE, 20);
+                            stat_base_set(pc_obj, STAT_WILLPOWER, 20);
 
                             for (index = 0; index < SPELL_COUNT; index++) {
                                 spell_add(pc_obj, index, true);
@@ -477,7 +477,7 @@ void main_loop()
                                 critter_decay_cancel(pc_obj);
                                 break;
                             case DIK_GRAVE:
-                                stat_set_base(pc_obj, STAT_INTELLIGENCE, 20);
+                                stat_base_set(pc_obj, STAT_INTELLIGENCE, 20);
                                 for (index = 0; index < 8; index++) {
                                     tech_inc_degree(pc_obj, index);
                                 }

@@ -387,9 +387,9 @@ int critter_fatigue_max(long long obj)
 
     fatigue_pts = critter_fatigue_pts_get(obj);
     fatigue_adj = critter_fatigue_adj_get(obj);
-    level = stat_level(obj, STAT_LEVEL);
-    constitution = stat_level(obj, STAT_CONSTITUTION);
-    willpower = stat_level(obj, STAT_WILLPOWER);
+    level = stat_level_get(obj, STAT_LEVEL);
+    constitution = stat_level_get(obj, STAT_CONSTITUTION);
+    willpower = stat_level_get(obj, STAT_WILLPOWER);
 
     return effect_adjust_max_fatigue(obj, fatigue_pts * 4
         + fatigue_adj
@@ -605,9 +605,9 @@ void sub_45DC90(int64_t a1, int64_t a2, bool a3)
     int alignment;
 
     if (!sub_459040(a2, OSF_SUMMONED, &summoner_obj) || summoner_obj != a1) {
-        alignment2 = stat_level(a2, STAT_ALIGNMENT);
+        alignment2 = stat_level_get(a2, STAT_ALIGNMENT);
         if (alignment2 < 0) {
-            alignment1 = stat_level(a1, STAT_ALIGNMENT);
+            alignment1 = stat_level_get(a1, STAT_ALIGNMENT);
             if (alignment1 > alignment2) {
                 alignment2 = -alignment2;
                 adj = 100 - alignment2;
@@ -626,26 +626,26 @@ void sub_45DC90(int64_t a1, int64_t a2, bool a3)
 
         // TODO: Check.
         if (v1 < 0) {
-            alignment = stat_get_base(a1, STAT_ALIGNMENT);
+            alignment = stat_base_get(a1, STAT_ALIGNMENT);
             if (adj >= 0) {
                 if (alignment + v1 > adj) {
                     if (alignment > adj) {
-                        stat_set_base(a1, STAT_ALIGNMENT, alignment);
+                        stat_base_set(a1, STAT_ALIGNMENT, alignment);
                     } else {
-                        stat_set_base(a1, STAT_ALIGNMENT, adj);
+                        stat_base_set(a1, STAT_ALIGNMENT, adj);
                     }
                 } else {
-                    stat_set_base(a1, STAT_ALIGNMENT, alignment + v1);
+                    stat_base_set(a1, STAT_ALIGNMENT, alignment + v1);
                 }
             } else {
                 if (alignment + v1 < adj) {
                     if (alignment < adj) {
-                        stat_set_base(a1, STAT_ALIGNMENT, alignment);
+                        stat_base_set(a1, STAT_ALIGNMENT, alignment);
                     } else {
-                        stat_set_base(a1, STAT_ALIGNMENT, adj);
+                        stat_base_set(a1, STAT_ALIGNMENT, adj);
                     }
                 } else {
-                    stat_set_base(a1, STAT_ALIGNMENT, alignment + v1);
+                    stat_base_set(a1, STAT_ALIGNMENT, alignment + v1);
                 }
             }
         }
@@ -746,7 +746,7 @@ bool critter_disband(int64_t obj, bool force)
     leader_obj = critter_leader_get(obj);
     if (leader_obj != OBJ_HANDLE_NULL) {
         if (!force) {
-            if (stat_is_maximized(leader_obj, STAT_CHARISMA)) {
+            if (stat_atmax(leader_obj, STAT_CHARISMA)) {
                 return false;
             }
             if (sub_459040(obj, OSF_MIND_CONTROLLED, &v1)) {
@@ -1084,7 +1084,7 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
     case 0:
         if (dam > 0) {
             // TODO: Figure out math.
-            dam -= v3 * stat_level(critter_obj, STAT_HEAL_RATE);
+            dam -= v3 * stat_level_get(critter_obj, STAT_HEAL_RATE);
             fatigue = critter_fatigue_current(critter_obj);
             if (dam < 0) {
                 dam = 0;
@@ -1199,7 +1199,7 @@ void sub_45E910(int64_t critter_obj, int hours)
     }
 
     dam = object_hp_damage_get(critter_obj);
-    heal_rate = stat_level(critter_obj, STAT_HEAL_RATE);
+    heal_rate = stat_level_get(critter_obj, STAT_HEAL_RATE);
     if (dam > 0) {
         dam -= heal_rate * hours;
         if (dam < 0) {
@@ -1517,9 +1517,9 @@ bool sub_45F060(int64_t obj, int stat, int mod)
     int lower;
     int upper;
 
-    value = stat_level(obj, stat) + mod;
-    upper = stat_get_max_value(obj, stat);
-    lower = stat_get_min_value(obj, stat);
+    value = stat_level_get(obj, stat) + mod;
+    upper = stat_level_max(obj, stat);
+    lower = stat_level_min(obj, stat);
 
     return random_between(lower, upper) <= value;
 }
@@ -1533,7 +1533,7 @@ int sub_45F0B0(int64_t obj)
         return 0;
     }
 
-    mes_file_entry.num = stat_level(obj, STAT_LEVEL);
+    mes_file_entry.num = stat_level_get(obj, STAT_LEVEL);
     if (!mes_search(xp_mes_file, &mes_file_entry)) {
         return 0;
     }
@@ -1600,9 +1600,9 @@ void critter_give_xp(int64_t obj, int xp_gain)
             if (!critter_is_dead(node->obj)
                 && node->obj != OBJ_HANDLE_NULL
                 && sub_4BA020(node->obj) == player) {
-                xp = stat_get_base(node->obj, STAT_EXPERIENCE_POINTS);
+                xp = stat_base_get(node->obj, STAT_EXPERIENCE_POINTS);
                 xp += effect_adjust_xp_gain(node->obj, xp_gain);
-                stat_set_base(node->obj, STAT_EXPERIENCE_POINTS, xp);
+                stat_base_set(node->obj, STAT_EXPERIENCE_POINTS, xp);
             }
             node = node->next;
         }
@@ -1611,9 +1611,9 @@ void critter_give_xp(int64_t obj, int xp_gain)
         sub_4EDDE0(OBJ_HANDLE_NULL);
     } else {
         if (!critter_is_dead(obj)) {
-            xp = stat_get_base(obj, STAT_EXPERIENCE_POINTS);
+            xp = stat_base_get(obj, STAT_EXPERIENCE_POINTS);
             xp += effect_adjust_xp_gain(obj, xp_gain);
-            stat_set_base(obj, STAT_EXPERIENCE_POINTS, xp);
+            stat_base_set(obj, STAT_EXPERIENCE_POINTS, xp);
             sub_4EDDE0(OBJ_HANDLE_NULL);
         }
     }
@@ -1839,7 +1839,7 @@ int critter_encumbrance_level_get(long long obj)
     }
 
     current_weight = item_total_weight(obj);
-    max_weight = stat_level(obj, STAT_CARRY_WEIGHT);
+    max_weight = stat_level_get(obj, STAT_CARRY_WEIGHT);
 
     for (encumbrance_level = 0; encumbrance_level < MAX_ENCUMBRANCE_LEVEL; encumbrance_level++) {
         if (current_weight < max_weight * critter_encumbrance_level_ratio(encumbrance_level) / 100) {
@@ -2024,7 +2024,7 @@ bool critter_is_dumb(int64_t critter_obj)
         return false;
     }
 
-    if (stat_level(critter_obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
+    if (stat_level_get(critter_obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
         return true;
     }
 
@@ -2052,10 +2052,10 @@ void critter_debug_obj(object_id_t obj)
             tig_debug_println("Stats:  Level (Base)");
 
             for (int stat = 0; stat < STAT_COUNT; stat++) {
-                int level = stat_level(obj, stat);
-                int base = stat_get_base(obj, stat);
+                int level = stat_level_get(obj, stat);
+                int base = stat_base_get(obj, stat);
                 tig_debug_printf("\t[%s]:\t%d (%d)\n",
-                    stat_get_name(stat),
+                    stat_name(stat),
                     level,
                     base);
             }

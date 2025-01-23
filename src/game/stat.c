@@ -13,6 +13,7 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/obj.h"
 #include "game/object.h"
 #include "game/player.h"
 #include "game/sector.h"
@@ -274,17 +275,17 @@ void stat_exit()
 }
 
 // 0x4B0450
-void stat_set_defaults(object_id_t object_id)
+void stat_set_defaults(int64_t obj)
 {
     int index;
 
     for (index = 0; index < STAT_COUNT; index++) {
-        obj_arrayfield_int32_set(object_id, OBJ_F_CRITTER_STAT_BASE_IDX, index, stat_default_values[index]);
+        obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, index, stat_default_values[index]);
     }
 }
 
 // 0x4B0490
-int stat_level(object_id_t obj, int stat)
+int stat_level_get(int64_t obj, int stat)
 {
     int value;
     location_t location;
@@ -302,7 +303,7 @@ int stat_level(object_id_t obj, int stat)
         return 0;
     }
 
-    value = stat_get_base(obj, stat);
+    value = stat_base_get(obj, stat);
 
     switch (stat) {
     case STAT_SPEED:
@@ -341,7 +342,7 @@ int stat_level(object_id_t obj, int stat)
             // - Strength +2
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = tile_art_id_at(location);
-            if (tig_art_tile_id_type_get(art_id) == 0) {
+            if (tig_art_tile_id_type_get(art_id) == TIG_ART_TILE_TYPE_INDOOR) {
                 if (stat == STAT_INTELLIGENCE) {
                     value += 2;
                 }
@@ -396,7 +397,7 @@ int stat_level(object_id_t obj, int stat)
         }
 
         if (stat == STAT_STRENGTH || stat == STAT_DEXTERITY) {
-            poison = stat_level(obj, STAT_POISON_LEVEL) / 100;
+            poison = stat_level_get(obj, STAT_POISON_LEVEL) / 100;
             if (poison > 3) {
                 value -= 3;
             } else if (poison > 0) {
@@ -424,7 +425,7 @@ int stat_level(object_id_t obj, int stat)
         case BACKGROUND_SKY_MAGE:
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             art_id = tile_art_id_at(location);
-            if (tig_art_tile_id_type_get(art_id) == 0) {
+            if (tig_art_tile_id_type_get(art_id) == TIG_ART_TILE_TYPE_INDOOR) {
                 value -= 4;
             } else {
                 value += 4;
@@ -444,8 +445,8 @@ int stat_level(object_id_t obj, int stat)
     }
 
     value = effect_adjust_stat_level(obj, stat, value);
-    min_value = stat_get_min_value(obj, stat);
-    max_value = stat_get_max_value(obj, stat);
+    min_value = stat_level_min(obj, stat);
+    max_value = stat_level_max(obj, stat);
 
     if (value < min_value) {
         return min_value;
@@ -459,7 +460,7 @@ int stat_level(object_id_t obj, int stat)
 }
 
 // 0x4B0740
-int stat_get_base(object_id_t obj, int stat)
+int stat_base_get(int64_t obj, int stat)
 {
     int value;
     int bonus;
@@ -476,50 +477,50 @@ int stat_get_base(object_id_t obj, int stat)
     if (stat >= FIRST_DERIVED_STAT && stat <= LAST_DERIVED_STAT) {
         switch (stat) {
         case STAT_CARRY_WEIGHT:
-            value = 500 * stat_level(obj, STAT_STRENGTH);
+            value = 500 * stat_level_get(obj, STAT_STRENGTH);
             break;
         case STAT_DAMAGE_BONUS:
-            value = stat_level(obj, STAT_STRENGTH) - 10;
+            value = stat_level_get(obj, STAT_STRENGTH) - 10;
             if (value < 0) {
                 value /= 2;
             }
 
-            if (stat_is_maximized(obj, STAT_STRENGTH)) {
+            if (stat_atmax(obj, STAT_STRENGTH)) {
                 value *= 2;
             }
 
             break;
         case STAT_AC_ADJUSTMENT:
-            value = stat_level(obj, STAT_DEXTERITY) - 10;
+            value = stat_level_get(obj, STAT_DEXTERITY) - 10;
             break;
         case STAT_SPEED:
-            value = stat_level(obj, STAT_DEXTERITY);
+            value = stat_level_get(obj, STAT_DEXTERITY);
 
-            if (stat_is_maximized(obj, STAT_DEXTERITY)) {
+            if (stat_atmax(obj, STAT_DEXTERITY)) {
                 value += 5;
             }
 
             break;
         case STAT_HEAL_RATE:
-            value = stat_level(obj, STAT_CONSTITUTION) + 1;
+            value = stat_level_get(obj, STAT_CONSTITUTION) + 1;
             value /= 3;
             break;
         case STAT_POISON_RECOVERY:
-            value = stat_level(obj, STAT_CONSTITUTION);
+            value = stat_level_get(obj, STAT_CONSTITUTION);
             break;
         case STAT_REACTION_MODIFIER:
-            value = stat_level(obj, STAT_BEAUTY);
-            if (stat_is_maximized(obj, STAT_BEAUTY)) {
+            value = stat_level_get(obj, STAT_BEAUTY);
+            if (stat_atmax(obj, STAT_BEAUTY)) {
                 value = 2 * (5 * value - 50);
             } else {
                 value = dword_5B5334[value - 1];
             }
             break;
         case STAT_MAX_FOLLOWERS:
-            value = stat_level(obj, STAT_CHARISMA) / 4;
+            value = stat_level_get(obj, STAT_CHARISMA) / 4;
             break;
         case STAT_MAGICK_TECH_APTITUDE:
-            bonus = (50 * stat_level(obj, STAT_MAGICK_POINTS) - 55 * stat_level(obj, STAT_TECH_POINTS)) / 10;
+            bonus = (50 * stat_level_get(obj, STAT_MAGICK_POINTS) - 55 * stat_level_get(obj, STAT_TECH_POINTS)) / 10;
             location = obj_field_int64_get(obj, OBJ_F_LOCATION);
             value = magictech_get_aptitude_adj(sector_id_from_loc(location)) + bonus;
             break;
@@ -535,7 +536,7 @@ int stat_get_base(object_id_t obj, int stat)
 }
 
 // 0x4B0980
-int stat_set_base(object_id_t obj, int stat, int value)
+int stat_base_set(int64_t obj, int stat, int value)
 {
     int obj_type;
     int min_value;
@@ -567,7 +568,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             if (player_is_pc_obj(obj)
                 && stat <= LAST_PRIMARY_STAT
-                && abs(stat_get_base(obj, stat) - value) == 1) {
+                && abs(stat_base_get(obj, stat) - value) == 1) {
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             }
             return true;
@@ -579,21 +580,21 @@ int stat_set_base(object_id_t obj, int stat, int value)
     // We cannot modify derived stats for obvious reasons. If we're trying to do
     // it silently ignore this request and simply return it's current value.
     if (stat >= FIRST_DERIVED_STAT && stat <= LAST_DERIVED_STAT) {
-        return stat_get_base(obj, stat);
+        return stat_base_get(obj, stat);
     }
 
     // Grab valid range for given stat and clamp value to that range.
-    min_value = stat_get_min_value(obj, stat);
-    max_value = stat_get_max_value(obj, stat);
+    min_value = stat_level_min(obj, stat);
+    max_value = stat_level_max(obj, stat);
     if (value < min_value) {
         value = min_value;
     } else if (value > max_value) {
         value = max_value;
     }
 
-    before = stat_get_base(obj, stat);
+    before = stat_base_get(obj, stat);
     obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, value);
-    after = stat_level(obj, stat);
+    after = stat_level_get(obj, stat);
     obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, before);
 
     if (value < before) {
@@ -624,7 +625,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
         break;
     case STAT_POISON_LEVEL:
         // Maximized constitution grants poison immunity.
-        if (stat_is_maximized(obj, STAT_CONSTITUTION)) {
+        if (stat_atmax(obj, STAT_CONSTITUTION)) {
             value = 0;
         }
         break;
@@ -705,7 +706,7 @@ int stat_set_base(object_id_t obj, int stat, int value)
 }
 
 // 0x4B0EE0
-bool stat_is_maximized(object_id_t obj, int stat)
+bool stat_atmax(int64_t obj, int stat)
 {
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
         && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
@@ -720,7 +721,7 @@ bool stat_is_maximized(object_id_t obj, int stat)
         return false;
     }
 
-    if (stat_level(obj, stat) < 20) {
+    if (stat_level_get(obj, stat) < 20) {
         return false;
     }
 
@@ -728,7 +729,7 @@ bool stat_is_maximized(object_id_t obj, int stat)
 }
 
 // 0x4B0F50
-int sub_4B0F50(int value)
+int stat_cost(int value)
 {
     if (value < 1) {
         value = 1;
@@ -740,31 +741,31 @@ int sub_4B0F50(int value)
 }
 
 // 0x4B0F80
-const char* stat_get_name(int stat)
+const char* stat_name(int stat)
 {
     return stat_names[stat];
 }
 
 // 0x4B0F90
-const char* stat_get_short_name(int stat)
+const char* stat_short_name(int stat)
 {
     return stat_short_names[stat];
 }
 
 // 0x4B0FA0
-const char* gender_get_name(int gender)
+const char* gender_name(int gender)
 {
     return gender_names[gender];
 }
 
 // 0x4B0FB0
-const char* race_get_name(int race)
+const char* race_name(int race)
 {
     return race_names[race];
 }
 
 // 0x4B0FC0
-int stat_get_min_value(object_id_t obj, int stat)
+int stat_level_min(int64_t obj, int stat)
 {
     (void)obj;
 
@@ -772,12 +773,12 @@ int stat_get_min_value(object_id_t obj, int stat)
 }
 
 // 0x4B0FD0
-int stat_get_max_value(object_id_t obj, int stat)
+int stat_level_max(int64_t obj, int stat)
 {
     int race;
 
     if (obj != OBJ_HANDLE_NULL) {
-        race = stat_get_base(obj, STAT_RACE);
+        race = stat_base_get(obj, STAT_RACE);
     } else {
         race = RACE_HUMAN;
     }
@@ -831,23 +832,23 @@ int stat_get_max_value(object_id_t obj, int stat)
 }
 
 // 0x4B10A0
-bool sub_4B10A0(int64_t obj, int stat, int value)
+bool stat_level_set(int64_t obj, int stat, int value)
 {
     int max_value;
     int base_value;
     int iter = 1;
 
-    max_value = stat_get_max_value(obj, stat);
+    max_value = stat_level_max(obj, stat);
 
-    base_value = stat_get_base(obj, stat);
-    stat_set_base(obj, stat, base_value + 1);
+    base_value = stat_base_get(obj, stat);
+    stat_base_set(obj, stat, base_value + 1);
 
-    while (value > stat_level(obj, stat)) {
-        if (stat_get_base(obj, stat) == base_value) {
+    while (value > stat_level_get(obj, stat)) {
+        if (stat_base_get(obj, stat) == base_value) {
             break;
         }
 
-        if (stat_level(obj, stat) >= max_value) {
+        if (stat_level_get(obj, stat) >= max_value) {
             break;
         }
 
@@ -857,11 +858,11 @@ bool sub_4B10A0(int64_t obj, int stat, int value)
 
         iter++;
 
-        base_value = stat_get_base(obj, stat);
-        stat_set_base(obj, stat, base_value + 1);
+        base_value = stat_base_get(obj, stat);
+        stat_base_set(obj, stat, base_value + 1);
     }
 
-    return value <= stat_level(obj, stat);
+    return value <= stat_level_get(obj, stat);
 }
 
 // 0x4B1170
@@ -878,7 +879,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
     type = timeevent->params[0].integer_value;
     obj = timeevent->params[1].object_value;
 
-    poison = stat_get_base(obj, STAT_POISON_LEVEL);
+    poison = stat_base_get(obj, STAT_POISON_LEVEL);
     switch (type) {
     case 0:
         if (poison > 0) {
@@ -913,11 +914,11 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
         if (poison > 0) {
             if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
-                poison -= stat_level(obj, STAT_POISON_RECOVERY);
+                poison -= stat_level_get(obj, STAT_POISON_RECOVERY);
                 if (poison < 0) {
                     poison = 0;
                 }
-                stat_set_base(obj, STAT_POISON_LEVEL, poison);
+                stat_base_set(obj, STAT_POISON_LEVEL, poison);
             }
 
             if (poison > 0) {

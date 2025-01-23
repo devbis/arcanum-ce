@@ -206,7 +206,7 @@ bool sub_4BBE40(int64_t pc_obj, int64_t trap_obj)
         if (item_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(item_obj, OBJ_F_NAME) == 2866
             && item_ammo_quantity_get(pc_obj, 2) > 0) {
-            skill_invocation.modifier = stat_level(pc_obj, STAT_MAGICK_TECH_APTITUDE);
+            skill_invocation.modifier = stat_level_get(pc_obj, STAT_MAGICK_TECH_APTITUDE);
             if (skill_invocation.modifier > 0) {
                 skill_invocation.modifier = 0;
             }

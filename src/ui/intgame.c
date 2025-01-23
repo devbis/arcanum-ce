@@ -1096,7 +1096,7 @@ bool intgame_load(GameLoadInfo* load_info)
     obj = player_get_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
         sub_556C20(obj);
-        sub_54AD00(2, stat_level(obj, STAT_FATE_POINTS), 2);
+        sub_54AD00(2, stat_level_get(obj, STAT_FATE_POINTS), 2);
     }
 
     return true;
@@ -1527,7 +1527,7 @@ void sub_54AF10(TigRect* rect)
     rects[0] = stru_5C63D8;
     rects[1] = stru_5C63E8;
 
-    poison = stat_level(pc_obj, STAT_POISON_LEVEL);
+    poison = stat_level_get(pc_obj, STAT_POISON_LEVEL);
     nums[0] = poison > 0 ? 17 : 18;
     nums[1] = 19;
 
@@ -4367,7 +4367,7 @@ void sub_551160()
         }
 
         if (pc_obj != OBJ_HANDLE_NULL) {
-            sub_54AD00(2, stat_level(pc_obj, STAT_FATE_POINTS), 2);
+            sub_54AD00(2, stat_level_get(pc_obj, STAT_FATE_POINTS), 2);
             sub_556C20(pc_obj);
         }
     }
@@ -5677,7 +5677,7 @@ void sub_5533C0(UiButtonInfo* button, int index, tig_art_id_t art_id, tig_window
     if (art_id == TIG_ART_ID_INVALID) {
         pc_obj = player_get_pc_obj();
         if (pc_obj != OBJ_HANDLE_NULL) {
-            score = stat_level(pc_obj, STAT_INTELLIGENCE) / 4;
+            score = stat_level_get(pc_obj, STAT_INTELLIGENCE) / 4;
         } else {
             score = 5;
         }
@@ -6100,7 +6100,7 @@ bool sub_553D10(int64_t a1, int64_t a2, int* portrait_ptr)
         }
 
         // Generic race-specific icon.
-        *portrait_ptr = dword_5C6FA0[stat_level(a2, STAT_RACE)];
+        *portrait_ptr = dword_5C6FA0[stat_level_get(a2, STAT_RACE)];
         return false;
     default:
         return false;
@@ -6126,7 +6126,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     is_detecting_alignment = (obj_field_int32_get(a1, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_ALIGNMENT) != 0;
 
     if (is_detecting_alignment) {
-        alignment = stat_level(critter_obj, STAT_ALIGNMENT);
+        alignment = stat_level_get(critter_obj, STAT_ALIGNMENT);
     }
 
     if (a1 != critter_obj
@@ -6135,8 +6135,8 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
         sub_554830(a1, critter_obj);
     } else {
         if (is_detecting_alignment) {
-            int v1 = (stat_get_max_value(critter_obj, STAT_ALIGNMENT) - stat_get_min_value(critter_obj, STAT_ALIGNMENT)) / 6;
-            int v2 = (alignment - stat_get_min_value(critter_obj, STAT_ALIGNMENT)) / v1;
+            int v1 = (stat_level_max(critter_obj, STAT_ALIGNMENT) - stat_level_min(critter_obj, STAT_ALIGNMENT)) / 6;
+            int v2 = (alignment - stat_level_min(critter_obj, STAT_ALIGNMENT)) / v1;
             if (v2 > 5) {
                 v2 = 5;
             }
@@ -6241,7 +6241,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     mes_file_entry.num = 0; // "Level"
     mes_get_msg(intgame_mes_file, &mes_file_entry);
 
-    sprintf(str, "%s: %d", mes_file_entry.str, stat_level(critter_obj, STAT_LEVEL));
+    sprintf(str, "%s: %d", mes_file_entry.str, stat_level_get(critter_obj, STAT_LEVEL));
     sub_550A10(stru_5C6D60[intgame_iso_window_type].window_handle,
         str,
         &stru_5C70D8,
@@ -6251,7 +6251,7 @@ void sub_553F70(int64_t a1, int64_t critter_obj, char* a3)
     int cur_hp = object_hp_current(critter_obj);
     int max_hp = object_hp_max(critter_obj);
     int hp_ratio = 100 * cur_hp / max_hp;
-    if (stat_level(critter_obj, STAT_POISON_LEVEL) > 0) {
+    if (stat_level_get(critter_obj, STAT_POISON_LEVEL) > 0) {
         sub_554640(665, 666, &stru_5C70E8, hp_ratio);
     } else {
         sub_554640(463, 464, &stru_5C70E8, hp_ratio);

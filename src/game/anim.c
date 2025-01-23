@@ -4991,7 +4991,7 @@ bool sub_425BF0(PathCreateInfo* path_create_info, bool a2)
         }
 
         if (sub_43D6D0(path_create_info->obj, 1, false) < 45
-            && stat_level(path_create_info->obj, STAT_STRENGTH) != 0) {
+            && stat_level_get(path_create_info->obj, STAT_STRENGTH) != 0) {
             path_create_info->flags |= 0x0400;
         }
 
@@ -7907,7 +7907,7 @@ bool sub_42A720(AnimRunInfo* run_info)
         }
 
         if (v1 != OBJ_HANDLE_NULL) {
-            aptitude = stat_level(v1, STAT_MAGICK_TECH_APTITUDE);
+            aptitude = stat_level_get(v1, STAT_MAGICK_TECH_APTITUDE);
             if (aptitude > 0) {
                 dam += 5 * aptitude / 100 - 1;
             }
@@ -10685,7 +10685,7 @@ void sub_42EE90(int64_t obj, DateTime* pause_time)
     ASSERT(obj != OBJ_HANDLE_NULL); // 11052, "obj != OBJ_HANDLE_NULL"
     ASSERT(pause_time != NULL); // 11053, "pPauseTime != NULL"
 
-    speed = stat_level(obj, STAT_SPEED);
+    speed = stat_level_get(obj, STAT_SPEED);
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     ms = 1000 / sub_437990(obj, art_id, speed);
     if (ms < 30) {
@@ -11666,7 +11666,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                     && (spell_flags & (OSF_FLOATING | OSF_BODY_OF_AIR)) == 0
                     && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_SLIP) == 0) {
                     if (tile_is_slippery(new_loc)) {
-                        int dexterity = stat_level(obj, STAT_DEXTERITY);
+                        int dexterity = stat_level_get(obj, STAT_DEXTERITY);
                         if (dexterity < 20 && random_between(1, 20) > dexterity + 6) {
                             v3 = true;
                             run_info->path.curr = run_info->path.max;
@@ -14504,7 +14504,7 @@ bool anim_goal_animate_stunned(int64_t obj)
     combat_critter_activate_combat_mode(obj);
     sub_4B7C90(obj);
 
-    goal_data.params[AGDATA_SCRATCH_VAL5].data = (20 - stat_level(obj, STAT_CONSTITUTION)) / 2;
+    goal_data.params[AGDATA_SCRATCH_VAL5].data = (20 - stat_level_get(obj, STAT_CONSTITUTION)) / 2;
 
     if (!sub_44D520(&goal_data, &stru_5A1908)) {
         return false;

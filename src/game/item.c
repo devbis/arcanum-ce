@@ -245,8 +245,8 @@ void sub_460FF0(int64_t critter_obj)
     }
 
     if (idx == cnt) {
-        race = stat_level(critter_obj, STAT_RACE);
-        gender = stat_level(critter_obj, STAT_GENDER);
+        race = stat_level_get(critter_obj, STAT_RACE);
+        gender = stat_level_get(critter_obj, STAT_GENDER);
         if (gender == GENDER_FEMALE) {
             switch (sub_465C90(race)) {
             case 1:
@@ -432,7 +432,7 @@ int sub_4614A0(object_id_t item_id, object_id_t owner_id)
         return complexity;
     }
 
-    adjusted_complexity = (complexity + stat_level(owner_id, STAT_MAGICK_TECH_APTITUDE)) / 2;
+    adjusted_complexity = (complexity + stat_level_get(owner_id, STAT_MAGICK_TECH_APTITUDE)) / 2;
     if (complexity < 0) {
         if (adjusted_complexity > 0) {
             return 0;
@@ -500,12 +500,12 @@ int sub_461620(int64_t item_obj, int64_t owner_obj, int64_t a3)
     if (!obj_type_is_critter(obj_field_int32_get(owner_obj, OBJ_F_TYPE))) {
         return 0;
     }
-    aptitude1 = stat_level(owner_obj, STAT_MAGICK_TECH_APTITUDE);
+    aptitude1 = stat_level_get(owner_obj, STAT_MAGICK_TECH_APTITUDE);
 
     if (!obj_type_is_critter(obj_field_int32_get(a3, OBJ_F_TYPE))) {
         return 0;
     }
-    aptitude2 = stat_level(a3, STAT_MAGICK_TECH_APTITUDE);
+    aptitude2 = stat_level_get(a3, STAT_MAGICK_TECH_APTITUDE);
 
     if (complexity > 0) {
         if (aptitude2 < 0) {
@@ -543,7 +543,7 @@ int sub_461700(int64_t item_obj, int64_t owner_obj)
         return 0;
     }
 
-    aptitude = stat_level(owner_obj, STAT_MAGICK_TECH_APTITUDE);
+    aptitude = stat_level_get(owner_obj, STAT_MAGICK_TECH_APTITUDE);
     if (aptitude <= 0) {
         return 0;
     }
@@ -964,7 +964,7 @@ int item_throwing_distance(int64_t item_obj, int64_t critter_obj)
     int distance;
     int weight;
 
-    distance = 50 * stat_level(critter_obj, STAT_STRENGTH);
+    distance = 50 * stat_level_get(critter_obj, STAT_STRENGTH);
     if (basic_skill_get_training(critter_obj, BASIC_SKILL_THROWING) >= TRAINING_EXPERT) {
         distance += distance / 2;
     }
@@ -1414,7 +1414,7 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
     if (item_type == OBJ_TYPE_SCROLL) {
         int spell = obj_field_int32_get(item_obj, OBJ_F_ITEM_SPELL_1);
         int min_intelligence = spell_min_intelligence(spell);
-        if (min_intelligence > stat_level(source_obj, STAT_INTELLIGENCE)) {
+        if (min_intelligence > stat_level_get(source_obj, STAT_INTELLIGENCE)) {
             if (obj_field_int32_get(source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                 sub_4673F0(source_obj, ITEM_CANNOT_DUMB);
             }
@@ -2102,8 +2102,8 @@ void sub_463E20(int64_t obj)
         if (v1) {
             pc_obj = player_get_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL) {
-                gender = stat_level(pc_obj, STAT_GENDER);
-                race = stat_level(pc_obj, STAT_RACE);
+                gender = stat_level_get(pc_obj, STAT_GENDER);
+                race = stat_level_get(pc_obj, STAT_RACE);
                 background = background_obj_get_background(pc_obj);
 
             }
@@ -2712,15 +2712,15 @@ int sub_464D20(int64_t item_obj, int inventory_location, int64_t critter_obj)
         break;
     case ITEM_INV_LOC_ARMOR:
         armor_flags = obj_field_int32_get(item_obj, OBJ_F_ARMOR_FLAGS);
-        if ((sub_465C90(stat_level(critter_obj, STAT_RACE)) & armor_flags) == 0) {
+        if ((sub_465C90(stat_level_get(critter_obj, STAT_RACE)) & armor_flags) == 0) {
             return ITEM_CANNOT_WRONG_WEARABLE_SIZE;
         }
         if ((armor_flags & OARF_MALE_ONLY) != 0) {
-            if (stat_level(critter_obj, STAT_GENDER) != GENDER_MALE) {
+            if (stat_level_get(critter_obj, STAT_GENDER) != GENDER_MALE) {
                 return ITEM_CANNOT_WRONG_WEARABLE_GENDER;
             }
         } else if ((armor_flags & OARF_FEMALE_ONLY)) {
-            if (stat_level(critter_obj, STAT_GENDER) != GENDER_FEMALE) {
+            if (stat_level_get(critter_obj, STAT_GENDER) != GENDER_FEMALE) {
                 return ITEM_CANNOT_WRONG_WEARABLE_GENDER;
             }
         }
@@ -3381,7 +3381,7 @@ void item_weapon_damage(int64_t weapon_obj, int64_t critter_obj, int damage_type
     int unarmed_dam;
 
     if (skill == SKILL_MELEE) {
-        bonus_dam = stat_level(critter_obj, STAT_DAMAGE_BONUS);
+        bonus_dam = stat_level_get(critter_obj, STAT_DAMAGE_BONUS);
         v1 = sub_4C6510(critter_obj);
     }
 
@@ -3621,7 +3621,7 @@ bool sub_466510(int64_t item_obj, int64_t parent_obj, int* inventory_location_pt
             && item_find_key_ring(parent_obj) != OBJ_HANDLE_NULL) {
             inventory_location = 0;
         } else {
-            if (item_total_weight(parent_obj) + item_weight(item_obj, parent_obj) > stat_level(parent_obj, STAT_CARRY_WEIGHT)) {
+            if (item_total_weight(parent_obj) + item_weight(item_obj, parent_obj) > stat_level_get(parent_obj, STAT_CARRY_WEIGHT)) {
                 return ITEM_CANNOT_TOO_HEAVY;
             }
         }

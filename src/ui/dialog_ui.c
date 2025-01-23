@@ -830,7 +830,7 @@ void sub_5688D0(int64_t a1, long long obj, int a4)
     sub_5689B0();
     sub_418A00(a4, &v1, &v2);
 
-    gender = stat_level(obj, STAT_GENDER) != 0 ? 'm' : 'f';
+    gender = stat_level_get(obj, STAT_GENDER) != 0 ? 'm' : 'f';
     sprintf(path, "sound\\speech\\%.5d\\v%d_%c.mp3", v1, v2, gender);
     if (gender == 'f' && !tig_file_exists(path, NULL)) {
         sprintf(path, "sound\\speech\\%.5d\\v%d_%c.mp3", v1, v2, 'm');

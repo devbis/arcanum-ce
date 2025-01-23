@@ -376,8 +376,8 @@ bool sub_4C2B50(int64_t obj, char* str)
     char buffer[4];
 
     if (str != NULL && *str != '\0') {
-        race = stat_get_base(obj, STAT_RACE);
-        gender = stat_get_base(obj, STAT_GENDER);
+        race = stat_base_get(obj, STAT_RACE);
+        gender = stat_base_get(obj, STAT_GENDER);
         sprintf(buffer, "%s%c", off_5B6AEC[race], off_5B6B0C[gender]);
         str = strupr(str);
         if (strstr(str, buffer) == NULL

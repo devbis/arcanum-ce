@@ -1311,8 +1311,8 @@ int sub_414F50(DialogEntryNode* a1, int* a2)
     int cnt;
 
     key.field_0 = a1->field_17EC;
-    gender = stat_level(a1->pc_obj, STAT_GENDER);
-    intelligence = stat_level(a1->pc_obj, STAT_INTELLIGENCE);
+    gender = stat_level_get(a1->pc_obj, STAT_GENDER);
+    intelligence = stat_level_get(a1->pc_obj, STAT_INTELLIGENCE);
 
     if (intelligence > LOW_INTELLIGENCE
         && critter_is_dumb(a1->pc_obj)) {
@@ -1412,55 +1412,55 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_CH:
             if (value < 0) {
-                if (stat_level(a1->pc_obj, STAT_CHARISMA) > -value) {
+                if (stat_level_get(a1->pc_obj, STAT_CHARISMA) > -value) {
                     return false;
                 }
             } else {
-                if (stat_level(a1->pc_obj, STAT_CHARISMA) < value) {
+                if (stat_level_get(a1->pc_obj, STAT_CHARISMA) < value) {
                     return false;
                 }
             }
             break;
         case DIALOG_COND_PE:
             if (value < 0) {
-                if (stat_level(a1->pc_obj, STAT_PERCEPTION) > -value) {
+                if (stat_level_get(a1->pc_obj, STAT_PERCEPTION) > -value) {
                     return false;
                 }
             } else {
-                if (stat_level(a1->pc_obj, STAT_PERCEPTION) < value) {
+                if (stat_level_get(a1->pc_obj, STAT_PERCEPTION) < value) {
                     return false;
                 }
             }
             break;
         case DIALOG_COND_AL:
             if (value < 0) {
-                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) > -value) {
+                if (stat_level_get(a1->pc_obj, STAT_ALIGNMENT) > -value) {
                     return false;
                 }
             } else {
-                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) < value) {
+                if (stat_level_get(a1->pc_obj, STAT_ALIGNMENT) < value) {
                     return false;
                 }
             }
             break;
         case DIALOG_COND_MA:
             if (value < 0) {
-                if (stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) > -value) {
+                if (stat_level_get(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) > -value) {
                     return false;
                 }
             } else {
-                if (stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) < value) {
+                if (stat_level_get(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) < value) {
                     return false;
                 }
             }
             break;
         case DIALOG_COND_TA:
             if (value < 0) {
-                if (-stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) > -value) {
+                if (-stat_level_get(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) > -value) {
                     return false;
                 }
             } else {
-                if (-stat_level(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) < value) {
+                if (-stat_level_get(a1->pc_obj, STAT_MAGICK_TECH_APTITUDE) < value) {
                     return false;
                 }
             }
@@ -1643,11 +1643,11 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_LE:
             if (value < 0) {
-                if (-stat_level(a1->pc_obj, STAT_LEVEL) > -value) {
+                if (-stat_level_get(a1->pc_obj, STAT_LEVEL) > -value) {
                     return false;
                 }
             } else {
-                if (-stat_level(a1->pc_obj, STAT_LEVEL) < value) {
+                if (-stat_level_get(a1->pc_obj, STAT_LEVEL) < value) {
                     return false;
                 }
             }
@@ -1707,11 +1707,11 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_RA:
             if (value > 0) {
-                if (stat_level(a1->pc_obj, STAT_RACE) + 1 != value) {
+                if (stat_level_get(a1->pc_obj, STAT_RACE) + 1 != value) {
                     return false;
                 }
             } else {
-                if (stat_level(a1->pc_obj, STAT_RACE) + 1 == -value) {
+                if (stat_level_get(a1->pc_obj, STAT_RACE) + 1 == -value) {
                     return false;
                 }
             }
@@ -1788,11 +1788,11 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_NA:
             if (value < 0) {
-                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) > value) {
+                if (stat_level_get(a1->pc_obj, STAT_ALIGNMENT) > value) {
                     return false;
                 }
             } else {
-                if (stat_level(a1->pc_obj, STAT_ALIGNMENT) < -value) {
+                if (stat_level_get(a1->pc_obj, STAT_ALIGNMENT) < -value) {
                     return false;
                 }
             }
@@ -1973,24 +1973,24 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
         case DIALOG_ACTION_AL: {
             int alignment;
 
-            alignment = stat_get_base(a1->pc_obj, STAT_ALIGNMENT);
+            alignment = stat_base_get(a1->pc_obj, STAT_ALIGNMENT);
 
             while (isspace(*pch)) {
                 pch++;
             }
 
             if (*pch == '+' || *pch == '-') {
-                stat_set_base(a1->pc_obj, STAT_ALIGNMENT, alignment + value);
+                stat_base_set(a1->pc_obj, STAT_ALIGNMENT, alignment + value);
             } else if (*pch == '>') {
                 if (alignment < value) {
-                    stat_set_base(a1->pc_obj, STAT_ALIGNMENT, value);
+                    stat_base_set(a1->pc_obj, STAT_ALIGNMENT, value);
                 }
             } else if (*pch == '<') {
                 if (alignment > value) {
-                    stat_set_base(a1->pc_obj, STAT_ALIGNMENT, value);
+                    stat_base_set(a1->pc_obj, STAT_ALIGNMENT, value);
                 }
             } else {
-                stat_set_base(a1->pc_obj, STAT_ALIGNMENT, value);
+                stat_base_set(a1->pc_obj, STAT_ALIGNMENT, value);
             }
 
             break;
@@ -2161,9 +2161,9 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             v57 = false;
             break;
         case DIALOG_ACTION_FP:
-            stat_set_base(a1->pc_obj,
+            stat_base_set(a1->pc_obj,
                 STAT_FATE_POINTS,
-                stat_get_base(a1->pc_obj, STAT_FATE_POINTS) + 1);
+                stat_base_get(a1->pc_obj, STAT_FATE_POINTS) + 1);
             break;
         case DIALOG_ACTION_SU:
             sub_413BE0(a1->npc_obj, a1->pc_obj, a1->field_70, &(a1->field_458));
@@ -2324,7 +2324,7 @@ bool sub_416840(DialogEntryNode* a1, bool a2)
     }
 
     if (obj_type_is_critter(obj_field_int32_get(a1->pc_obj, OBJ_F_TYPE))
-        && stat_level(a1->pc_obj, STAT_GENDER) != GENDER_MALE) {
+        && stat_level_get(a1->pc_obj, STAT_GENDER) != GENDER_MALE) {
         sub_416B00(a1->field_70, v1.data.field_8, a1);
     } else {
         sub_416B00(a1->field_70, v1.field_4, a1);
@@ -3034,11 +3034,11 @@ void sub_4182D0(char* str, DialogEntryNode* a2, int start, int end)
     MesFileEntry mes_file_entry;
 
     if (critter_is_dumb(a2->pc_obj)) {
-        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_DUMB_PC2M
             : GD_DUMB_PC2F;
     } else {
-        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_PC2M
             : GD_PC2F;
     }
@@ -3060,11 +3060,11 @@ void sub_418390(char* str, DialogEntryNode* a2, int start)
     MesFileEntry mes_file_entry;
 
     if (critter_is_dumb(a2->pc_obj)) {
-        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_CLS_DUMB_PC2M
             : GD_CLS_DUMB_PC2F;
     } else {
-        gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
             ? GD_CLS_PC2M
             : GD_CLS_PC2F;
     }
@@ -3094,22 +3094,22 @@ void sub_418480(char* str, DialogEntryNode* a2, int start)
 
     if (!sub_418870(str, a2, start / 1000 + 9999)) {
         if (critter_is_dumb(a2->npc_obj)) {
-            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_CLS_DUMB_M2M
                     : GD_CLS_DUMB_M2F;
             } else {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_CLS_DUMB_F2M
                     : GD_CLS_DUMB_F2F;
             }
         } else {
-            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_CLS_M2M
                     : GD_CLS_M2F;
             } else {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_CLS_F2M
                     : GD_CLS_F2F;
             }
@@ -3138,28 +3138,28 @@ void sub_4185F0(char* str, DialogEntryNode* a2, int start)
 
     if (!sub_418870(str, a2, start / 1000 + 10999)) {
         if (critter_is_dumb(a2->npc_obj)) {
-            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_RCE_DUMB_M2M
                     : GD_RCE_DUMB_M2F;
             } else {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_RCE_DUMB_F2M
                     : GD_RCE_DUMB_F2F;
             }
         } else {
-            if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_RCE_M2M
                     : GD_RCE_M2F;
             } else {
-                gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+                gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                     ? GD_RCE_F2M
                     : GD_RCE_F2F;
             }
 
-            race = stat_level(a2->pc_obj, STAT_RACE);
-            if (race != stat_level(a2->npc_obj, STAT_RACE)) {
+            race = stat_level_get(a2->pc_obj, STAT_RACE);
+            if (race != stat_level_get(a2->npc_obj, STAT_RACE)) {
                 start += 50 * (race + 1);
             }
         }
@@ -3184,12 +3184,12 @@ void sub_418780(char* str, DialogEntryNode* a2, int start, int end)
 
     if (!sub_418870(str, a2, start / 100 + 11999)) {
 
-        if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                 ? GD_NPC_M2M
                 : GD_NPC_M2F;
         } else {
-            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                 ? GD_NPC_F2M
                 : GD_NPC_F2F;
         }
@@ -3238,7 +3238,7 @@ bool sub_418870(char* str, DialogEntryNode* a2, int a3)
 
     if (a2->pc_obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(obj_field_int32_get(a2->pc_obj, OBJ_F_TYPE))
-        && stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE) {
+        && stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE) {
         strcpy(str, entry.field_4);
     } else {
         strcpy(str, entry.data.field_8);
@@ -4057,19 +4057,19 @@ void sub_41A440(char* buffer, DialogEntryNode* a2)
 
     v1 = sub_445090();
     if (!sub_418870(buffer, a2, v1 + 10000)) {
-        if (stat_level(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
-            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+        if (stat_level_get(a2->npc_obj, STAT_GENDER) == GENDER_MALE) {
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                 ? GD_STO_M2F
                 : GD_STO_M2M;
         } else {
-            gd = stat_level(a2->pc_obj, STAT_GENDER) == GENDER_MALE
+            gd = stat_level_get(a2->pc_obj, STAT_GENDER) == GENDER_MALE
                 ? GD_STO_F2M
                 : GD_STO_F2F;
         }
 
         dialog_load_generated(gd);
 
-        mes_file_entry.num = stat_level(a2->npc_obj, STAT_RACE) + 100 * v1;
+        mes_file_entry.num = stat_level_get(a2->npc_obj, STAT_RACE) + 100 * v1;
         mes_get_msg(dword_5D19F4[gd], &mes_file_entry);
         sub_416B00(buffer, mes_file_entry.str, a2);
         a2->field_458 = -1;

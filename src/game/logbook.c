@@ -18,7 +18,7 @@ void logbook_add_kill(int64_t pc_obj, int64_t npc_obj)
     value = obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_TOTAL_KILLS);
     obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_TOTAL_KILLS, value + 1);
 
-    value = stat_level(npc_obj, STAT_LEVEL);
+    value = stat_level_get(npc_obj, STAT_LEVEL);
     if (value >= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_LEVEL)
         || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_NAME) == 0) {
         obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_POWERFUL_LEVEL, value);
@@ -30,7 +30,7 @@ void logbook_add_kill(int64_t pc_obj, int64_t npc_obj)
         obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_LEAST_POWERFUL_NAME, desc);
     }
 
-    value = stat_level(npc_obj, STAT_ALIGNMENT);
+    value = stat_level_get(npc_obj, STAT_ALIGNMENT);
     if (value > 0
         && (value >= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_VALUE)
             || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_GOOD_NAME) == 0)) {
@@ -44,7 +44,7 @@ void logbook_add_kill(int64_t pc_obj, int64_t npc_obj)
         obj_arrayfield_uint32_set(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_EVIL_NAME, desc);
     }
 
-    value = stat_level(npc_obj, STAT_MAGICK_TECH_APTITUDE);
+    value = stat_level_get(npc_obj, STAT_MAGICK_TECH_APTITUDE);
     if (value > 0
         && (value >= (int)obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_VALUE)
             || obj_arrayfield_uint32_get(pc_obj, OBJ_F_PC_LOGBOOK_EGO_IDX, LBK_MOST_MAGICAL_NAME) == 0)) {

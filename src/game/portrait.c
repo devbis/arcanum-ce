@@ -330,8 +330,8 @@ bool sub_4CEAC0(int64_t obj, const char* str)
     char buffer[4];
 
     if (str != NULL) {
-        race = stat_get_base(obj, STAT_RACE);
-        gender = stat_get_base(obj, STAT_GENDER);
+        race = stat_base_get(obj, STAT_RACE);
+        gender = stat_base_get(obj, STAT_GENDER);
         sprintf(buffer, "%s%c",
             portrait_race_specifiers[race],
             portrait_gender_specifiers[gender]);

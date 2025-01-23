@@ -828,9 +828,9 @@ void multiplayer_start_play(PlayerCreateInfo* player_create_info)
         object_hp_damage_set(player_create_info->obj, 0);
         object_flags_unset(player_create_info->obj, OF_OFF);
 
-        poison = stat_get_base(player_create_info->obj, STAT_POISON_LEVEL);
+        poison = stat_base_get(player_create_info->obj, STAT_POISON_LEVEL);
         if (poison != 0) {
-            stat_set_base(player_create_info->obj, STAT_POISON_LEVEL, poison);
+            stat_base_set(player_create_info->obj, STAT_POISON_LEVEL, poison);
         }
     } else {
         mes_file_entry.num = 903;
@@ -2726,7 +2726,7 @@ int sub_4A5710(int64_t obj, mes_file_handle_t mes_file)
     int64_t money_obj;
 
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-    level = stat_level(obj, STAT_LEVEL);
+    level = stat_level_get(obj, STAT_LEVEL);
 
     mes_file_entry.num = (level + 9) / 10;
     if (!mes_search(mes_file, &mes_file_entry)) {
@@ -2761,7 +2761,7 @@ int sub_4A5840(int64_t obj, mes_file_handle_t mes_file)
     int level;
     int value;
 
-    level = stat_level(obj, STAT_LEVEL);
+    level = stat_level_get(obj, STAT_LEVEL);
 
     value = tech_skill_level(obj, TECH_SKILL_PICK_LOCKS);
     if (value > 0) {
@@ -2813,7 +2813,7 @@ int sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
     int value;
     MesFileEntry mes_file_entry;
 
-    level = stat_level(obj, STAT_LEVEL);
+    level = stat_level_get(obj, STAT_LEVEL);
 
     // Melee Weapons
     value = basic_skill_level(obj, BASIC_SKILL_MELEE);
@@ -2869,13 +2869,13 @@ int sub_4A59F0(int64_t obj, mes_file_handle_t mes_file)
         // {6029} Dagger
         mes_file_entry.num = 1001;
     } else {
-        if (stat_level(obj, STAT_MAGICK_POINTS) >= 75) {
+        if (stat_level_get(obj, STAT_MAGICK_POINTS) >= 75) {
             // {6163} Mage's Staff
             mes_file_entry.num = 1002;
-        } else if (stat_level(obj, STAT_MAGICK_POINTS) >= 20) {
+        } else if (stat_level_get(obj, STAT_MAGICK_POINTS) >= 20) {
             // {6054} Magic Dagger
             mes_file_entry.num = 1003;
-        } else if (stat_level(obj, STAT_TECH_POINTS) >= 75) {
+        } else if (stat_level_get(obj, STAT_TECH_POINTS) >= 75) {
             // {6053} Mechanical Dagger
             mes_file_entry.num = 1004;
         } else {
@@ -2937,9 +2937,9 @@ void sub_4A6010(int64_t obj)
         combat_critter_deactivate_combat_mode(obj);
     }
 
-    poison = stat_get_base(obj, STAT_POISON_LEVEL);
+    poison = stat_base_get(obj, STAT_POISON_LEVEL);
     if (poison != 0) {
-        stat_set_base(obj, STAT_POISON_LEVEL, poison);
+        stat_base_set(obj, STAT_POISON_LEVEL, poison);
     }
 
     for (index = 0; index < 10; index++) {

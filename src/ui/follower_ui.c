@@ -636,7 +636,7 @@ void sub_56B290()
         }
 
         hp = 100 * object_hp_current(follower_obj) / object_hp_max(follower_obj);
-        if (stat_level(follower_obj, STAT_POISON_LEVEL) > 20) {
+        if (stat_level_get(follower_obj, STAT_POISON_LEVEL) > 20) {
             sub_56B510(dword_67BB60[index], 616, 3, 39, hp, 100);
         } else {
             sub_56B510(dword_67BB60[index], 505, 3, 39, hp, 100);

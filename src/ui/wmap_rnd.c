@@ -843,7 +843,7 @@ bool wmap_rnd_encounter_entry_check(WmapRndEncounterTableEntry* entry)
         return false;
     }
 
-    level = stat_level(pc_obj, STAT_LEVEL);
+    level = stat_level_get(pc_obj, STAT_LEVEL);
     if (level < entry->min_level
         || level > entry->max_level) {
         return false;

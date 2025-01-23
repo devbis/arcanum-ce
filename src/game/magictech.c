@@ -1947,7 +1947,7 @@ bool sub_4507D0(object_id_t obj, int magictech)
 
     if ((obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
             || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-        && stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        && stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
@@ -1971,7 +1971,7 @@ bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech)
 
     if ((obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
             || obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-        && stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        && stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
@@ -2006,7 +2006,7 @@ bool sub_450940(int magictech)
 
     if ((obj_field_int32_get(v1->source_obj.obj, OBJ_F_TYPE) == OBJ_TYPE_PC
             || obj_field_int32_get(v1->source_obj.obj, OBJ_F_TYPE) == OBJ_TYPE_NPC)
-        && stat_level(v1->source_obj.obj, STAT_RACE) == RACE_DWARF) {
+        && stat_level_get(v1->source_obj.obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
@@ -2071,7 +2071,7 @@ int sub_450B40(int64_t obj)
 // 0x450B90
 int sub_450B90(object_id_t obj)
 {
-    return stat_level(obj, STAT_INTELLIGENCE) / 4;
+    return stat_level_get(obj, STAT_INTELLIGENCE) / 4;
 }
 
 // 0x450C10
@@ -2160,9 +2160,9 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
             if (((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0)
                 && dword_5E75F0->parent_obj.obj != OBJ_HANDLE_NULL) {
-                stat_set_base(obj,
+                stat_base_set(obj,
                     STAT_ALIGNMENT,
-                    stat_level(dword_5E75F0->parent_obj.obj, STAT_ALIGNMENT));
+                    stat_level_get(dword_5E75F0->parent_obj.obj, STAT_ALIGNMENT));
             }
 
             if (summon_info->field_0.obj != OBJ_HANDLE_NULL
@@ -3022,7 +3022,7 @@ void MTComponentTraitIdx_ProcFunc()
 
     if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL && obj_type_is_critter(dword_5E75AC)) {
         if (dword_5E761C->data.trait_idx.field_44 == OBJ_F_CRITTER_STAT_BASE_IDX) {
-            value = stat_get_base(stru_5E6D28.field_20,
+            value = stat_base_get(stru_5E6D28.field_20,
                 dword_5E761C->data.trait_idx.field_40);
         } else {
             value = obj_arrayfield_int32_get(stru_5E6D28.field_20,
@@ -3033,7 +3033,7 @@ void MTComponentTraitIdx_ProcFunc()
         if (dword_5E761C->data.trait_idx.field_48 == 0) {
             value = value * dword_5E761C->data.trait_idx.field_4C / dword_5E761C->data.trait_idx.field_50 + dword_5E761C->data.trait_idx.field_54;
             if (dword_5E761C->data.trait_idx.field_44 == OBJ_F_CRITTER_STAT_BASE_IDX) {
-                stat_set_base(stru_5E6D28.field_20,
+                stat_base_set(stru_5E6D28.field_20,
                     dword_5E761C->data.trait_idx.field_40,
                     value);
             } else {
@@ -3101,7 +3101,7 @@ bool sub_4532F0(int64_t obj, int magictech)
 
     cost = magictech_get_maintenance(magictech)->cost;
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        && stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        && stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
@@ -3126,7 +3126,7 @@ bool sub_453370(int64_t obj, int magictech, int a3)
     cost += v1;
 
     if (obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))
-        && stat_level(obj, STAT_RACE) == RACE_DWARF) {
+        && stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
@@ -3262,7 +3262,7 @@ bool sub_4537B0()
         } else {
             int resistance = obj_arrayfield_int32_get(stru_5E6D28.field_20, OBJ_F_RESISTANCE_IDX, RESISTANCE_TYPE_MAGIC);
             if (!dword_5E75A8) {
-                int aptitude = stat_level(stru_5E6D28.field_20, STAT_MAGICK_TECH_APTITUDE);
+                int aptitude = stat_level_get(stru_5E6D28.field_20, STAT_MAGICK_TECH_APTITUDE);
                 if (aptitude < 0) {
                     resistance = 100 - (100 - resistance) * (aptitude + 100) / 100;
                 }
@@ -3296,7 +3296,7 @@ bool sub_4537B0()
     }
 
     if (dword_5E7620->stat == STAT_WILLPOWER
-        && stat_is_maximized(stru_5E6D28.field_20, STAT_WILLPOWER)) {
+        && stat_atmax(stru_5E6D28.field_20, STAT_WILLPOWER)) {
         if ((dword_5E7598->flags & 2) != 0
             && dword_5E75F0->action != 2) {
             sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
@@ -3304,7 +3304,7 @@ bool sub_4537B0()
         return false;
     }
 
-    int v2 = dword_5E7620->value + stat_level(stru_5E6D28.field_20, dword_5E7620->stat) - v1;
+    int v2 = dword_5E7620->value + stat_level_get(stru_5E6D28.field_20, dword_5E7620->stat) - v1;
     if (v2 > 0) {
         int v3 = random_between(1, 20);
         if (v3 <= v2) {
@@ -3346,7 +3346,7 @@ int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell)
         if (attacker_obj != target_obj) {
             resistance = obj_arrayfield_int32_get(target_obj, OBJ_F_RESISTANCE_IDX, RESISTANCE_TYPE_MAGIC);
             if (!dword_5E75A8) {
-                int aptitude = stat_level(target_obj, STAT_MAGICK_TECH_APTITUDE);
+                int aptitude = stat_level_get(target_obj, STAT_MAGICK_TECH_APTITUDE);
                 if (aptitude < 0) {
                     resistance = 100 - (100 - resistance) * (aptitude + 100) / 100;
                 }
@@ -3368,11 +3368,11 @@ int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell)
             if (info->resistance.stat != -1
                 && obj_type_is_critter(obj_type)) {
                 if (info->resistance.stat == STAT_WILLPOWER
-                    && stat_is_maximized(target_obj, STAT_WILLPOWER)) {
+                    && stat_atmax(target_obj, STAT_WILLPOWER)) {
                     return 100;
                 }
 
-                int v3 = info->resistance.value + stat_level(target_obj, info->resistance.stat) - v2;
+                int v3 = info->resistance.value + stat_level_get(target_obj, info->resistance.stat) - v2;
                 if (v3 > 0 && random_between(1, 20) <= v3) {
                     if ((info->flags & 0x80) == 0) {
                         if (info->maintenance.period == 0) {
@@ -3954,8 +3954,8 @@ void sub_455250(MagicTechLock* a1, DateTime* datetime)
 
     if (a1->target_obj.obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(a1->target_obj.type)) {
-        source_aptitude = stat_level(a1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE);
-        target_aptitude = stat_level(a1->target_obj.obj, STAT_MAGICK_TECH_APTITUDE);
+        source_aptitude = stat_level_get(a1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE);
+        target_aptitude = stat_level_get(a1->target_obj.obj, STAT_MAGICK_TECH_APTITUDE);
 
         if (millis != 0) {
             if (source_aptitude > target_aptitude) {
@@ -4028,7 +4028,7 @@ void sub_4554B0(MagicTechLock* a1, int64_t obj)
         a1->summoned_obj->obj = obj;
         a1->summoned_obj->type = obj_field_int32_get(obj, OBJ_F_TYPE);
         if (obj_type_is_critter(a1->summoned_obj->type)) {
-            a1->summoned_obj->aptitude = stat_level(obj, STAT_MAGICK_TECH_APTITUDE);
+            a1->summoned_obj->aptitude = stat_level_get(obj, STAT_MAGICK_TECH_APTITUDE);
         }
         sub_443EB0(obj, &(a1->summoned_obj->field_8));
     }
@@ -4326,7 +4326,7 @@ void sub_455C30(MagicTechSerializedData* a1)
     if (v1->source_obj.obj != OBJ_HANDLE_NULL) {
         v1->source_obj.type = obj_field_int32_get(v1->source_obj.obj, OBJ_F_TYPE);
         if (obj_type_is_critter(v1->source_obj.type)) {
-            v1->source_obj.aptitude = stat_level(v1->source_obj.obj, STAT_MAGICK_TECH_APTITUDE);
+            v1->source_obj.aptitude = stat_level_get(v1->source_obj.obj, STAT_MAGICK_TECH_APTITUDE);
         }
     } else {
         v1->source_obj.type = -1;
@@ -4338,7 +4338,7 @@ void sub_455C30(MagicTechSerializedData* a1)
     if (v1->parent_obj.obj != OBJ_HANDLE_NULL) {
         v1->parent_obj.type = obj_field_int32_get(v1->parent_obj.obj, OBJ_F_TYPE);
         if (obj_type_is_critter(v1->parent_obj.type)) {
-            v1->parent_obj.aptitude = stat_level(v1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE);
+            v1->parent_obj.aptitude = stat_level_get(v1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE);
         }
     } else {
         v1->parent_obj.type = -1;
@@ -4350,7 +4350,7 @@ void sub_455C30(MagicTechSerializedData* a1)
     if (v1->target_obj.obj != OBJ_HANDLE_NULL) {
         v1->target_obj.type = obj_field_int32_get(v1->target_obj.obj, OBJ_F_TYPE);
         if (obj_type_is_critter(v1->target_obj.type)) {
-            v1->target_obj.aptitude = stat_level(v1->target_obj.obj, STAT_MAGICK_TECH_APTITUDE);
+            v1->target_obj.aptitude = stat_level_get(v1->target_obj.obj, STAT_MAGICK_TECH_APTITUDE);
         }
     } else {
         v1->target_obj.type = -1;
@@ -4362,7 +4362,7 @@ void sub_455C30(MagicTechSerializedData* a1)
     if (v1->field_E8.obj != OBJ_HANDLE_NULL) {
         v1->field_E8.type = obj_field_int32_get(v1->field_E8.obj, OBJ_F_TYPE);
         if (obj_type_is_critter(v1->field_E8.type)) {
-            v1->field_E8.aptitude = stat_level(v1->field_E8.obj, STAT_MAGICK_TECH_APTITUDE);
+            v1->field_E8.aptitude = stat_level_get(v1->field_E8.obj, STAT_MAGICK_TECH_APTITUDE);
         }
     } else {
         v1->field_E8.type = -1;
@@ -4627,10 +4627,10 @@ bool sub_4564E0(MagicTechSerializedData* a1)
 
     if ((a1->flags & 0x04) == 0) {
         int source_aptitude = a1->parent_obj.obj != OBJ_HANDLE_NULL
-            ? stat_level(a1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE)
+            ? stat_level_get(a1->parent_obj.obj, STAT_MAGICK_TECH_APTITUDE)
             : 0;
         int target_aptitude = a1->target_obj.obj != OBJ_HANDLE_NULL
-            ? stat_level(a1->target_obj.obj, STAT_MAGICK_TECH_APTITUDE)
+            ? stat_level_get(a1->target_obj.obj, STAT_MAGICK_TECH_APTITUDE)
             : 0;
 
         if (a1->source_obj.obj != OBJ_HANDLE_NULL
@@ -4655,7 +4655,7 @@ bool sub_4564E0(MagicTechSerializedData* a1)
     if (a1->parent_obj.obj != OBJ_HANDLE_NULL
         && obj_type_is_critter(obj_field_int32_get(a1->parent_obj.obj, OBJ_F_TYPE))
         && a1->parent_obj.obj == a1->source_obj.obj
-        && stat_level(a1->parent_obj.obj, STAT_INTELLIGENCE) < sub_4502E0(a1->spell)) {
+        && stat_level_get(a1->parent_obj.obj, STAT_INTELLIGENCE) < sub_4502E0(a1->spell)) {
         return false;
     }
 
@@ -4686,11 +4686,11 @@ bool sub_456A10(int64_t a1, int64_t a2, int64_t a3)
         return true;
     }
 
-    aptitude = stat_level(a1, STAT_MAGICK_TECH_APTITUDE);
+    aptitude = stat_level_get(a1, STAT_MAGICK_TECH_APTITUDE);
 
     // FIXME: Useless.
     if (a2 != OBJ_HANDLE_NULL) {
-        stat_level(a2, STAT_MAGICK_TECH_APTITUDE);
+        stat_level_get(a2, STAT_MAGICK_TECH_APTITUDE);
     }
 
     if (aptitude > 0) {
@@ -5735,7 +5735,7 @@ bool sub_458A80(unsigned int flags)
     }
 
     if (flags == OSF_DETECTING_INVISIBLE
-        && stat_is_maximized(pc_obj, STAT_PERCEPTION)) {
+        && stat_atmax(pc_obj, STAT_PERCEPTION)) {
         return true;
     }
 
@@ -6450,7 +6450,7 @@ bool sub_459C10(int64_t obj, int magictech)
             || !fate_resolve(obj, FATE_SAVE_AGAINST_MAGICK))) {
         resistance = obj_arrayfield_int32_get(obj, OBJ_F_RESISTANCE_IDX, RESISTANCE_TYPE_MAGIC);
         if (!dword_5E75A8) {
-            int aptitude = stat_level(obj, STAT_MAGICK_TECH_APTITUDE);
+            int aptitude = stat_level_get(obj, STAT_MAGICK_TECH_APTITUDE);
             if (aptitude < 0) {
                 resistance = 100 - (aptitude + 100) * (100 - resistance) / 100;
             }
@@ -6476,14 +6476,14 @@ bool sub_459C10(int64_t obj, int magictech)
     if (info->resistance.stat != -1
         && obj_type_is_critter(dword_5E75AC)) {
         if (info->resistance.stat == STAT_WILLPOWER
-            && stat_is_maximized(obj, STAT_WILLPOWER)) {
+            && stat_atmax(obj, STAT_WILLPOWER)) {
             if ((dword_5E7598->flags & 2) != 0
                 && v1->action != 2) {
                 sub_453F20(dword_5E75F0->parent_obj.obj, obj);
             }
             return false;
         } else {
-            v4 = info->resistance.value + stat_level(obj, info->resistance.stat) - v3;
+            v4 = info->resistance.value + stat_level_get(obj, info->resistance.stat) - v3;
             return v4 <= 0 || random_between(1, 20) > v4;
         }
     }

@@ -1019,7 +1019,7 @@ int script_execute_condition(ScriptCondition* condition, int line, ScriptState* 
         matched = 0;
         for (index = 0; index < cnt; index++) {
             if (critter_is_pc(objs[index])) {
-                max_followers = stat_level(objs[index], STAT_MAX_FOLLOWERS);
+                max_followers = stat_level_get(objs[index], STAT_MAX_FOLLOWERS);
                 if (max_followers == 0 || sub_45E3F0(objs[index], true) >= max_followers) {
                     matched++;
                 }
@@ -1787,7 +1787,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_GET_STAT: {
         int stat = script_get_value(action->op_type[0], action->op_value[0], state);
         int64_t critter_obj = script_get_obj(action->op_type[1], action->op_value[1], state);
-        int value = stat_level(critter_obj, stat);
+        int value = stat_level_get(critter_obj, stat);
         if (stat == STAT_INTELLIGENCE
             && value > LOW_INTELLIGENCE
             && critter_is_dumb(critter_obj)) {
@@ -2622,8 +2622,8 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_GRANT_ONE_FATE_POINT: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            int fate_points = stat_get_base(obj, STAT_FATE_POINTS);
-            stat_set_base(obj, STAT_FATE_POINTS, fate_points + 1);
+            int fate_points = stat_base_get(obj, STAT_FATE_POINTS);
+            stat_base_set(obj, STAT_FATE_POINTS, fate_points + 1);
         }
         return NEXT;
     }
@@ -2697,11 +2697,11 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int cnt = script_resolve_focus_obj(action->op_type[0], action->op_value[0], state, handles, &objects);
         int value = script_get_value(action->op_type[1], action->op_value[1], state);
         for (int idx = 0; idx < cnt; idx++) {
-            int new_value = stat_get_base(handles[idx], STAT_POISON_LEVEL) - value;
+            int new_value = stat_base_get(handles[idx], STAT_POISON_LEVEL) - value;
             if (new_value < 0) {
                 new_value = 0;
             }
-            stat_set_base(handles[idx], STAT_POISON_LEVEL, new_value);
+            stat_base_set(handles[idx], STAT_POISON_LEVEL, new_value);
         }
         sub_44B8F0(action->op_type[0], &objects);
         return NEXT;
@@ -2773,7 +2773,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t obj = script_get_obj(action->op_type[1], action->op_value[1], state);
         int value = script_get_value(action->op_type[2], action->op_value[2], state);
         if (obj != OBJ_HANDLE_NULL) {
-            stat_set_base(obj, stat, stat_get_base(obj, stat) + value);
+            stat_base_set(obj, stat, stat_base_get(obj, stat) + value);
         }
         return NEXT;
     }

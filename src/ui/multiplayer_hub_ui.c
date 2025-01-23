@@ -1465,7 +1465,7 @@ void sub_5836A0()
 
         sub_4A40F0(0,
             sub_407EF0(dword_64C41C[dword_5C3618]),
-            stat_level(dword_64C41C[dword_5C3618], STAT_LEVEL),
+            stat_level_get(dword_64C41C[dword_5C3618], STAT_LEVEL),
             data,
             size);
         FREE(data);

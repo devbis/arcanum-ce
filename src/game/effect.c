@@ -406,7 +406,7 @@ void effect_add(int64_t obj, int effect, int cause)
         return;
     }
 
-    strength = stat_level(obj, STAT_STRENGTH);
+    strength = stat_level_get(obj, STAT_STRENGTH);
     encumbrance_level = critter_encumbrance_level_get(obj);
     v1 = object_hp_max(obj);
     v2 = critter_fatigue_max(obj);
@@ -420,7 +420,7 @@ void effect_add(int64_t obj, int effect, int cause)
         obj_arrayfield_length_get(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX),
         cause);
 
-    if (strength != stat_level(obj, STAT_STRENGTH)) {
+    if (strength != stat_level_get(obj, STAT_STRENGTH)) {
         critter_encumbrance_level_recalc(obj, encumbrance_level);
     }
 
@@ -616,7 +616,7 @@ void sub_4EA520(int64_t obj, int start)
         return;
     }
 
-    strength = stat_level(obj, STAT_STRENGTH);
+    strength = stat_level_get(obj, STAT_STRENGTH);
     encumbrance_level = critter_encumbrance_level_get(obj);
     v1 = object_hp_max(obj);
     v2 = critter_fatigue_max(obj);
@@ -633,7 +633,7 @@ void sub_4EA520(int64_t obj, int start)
     obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECTS_IDX, end);
     obj_arrayfield_length_set(obj, OBJ_F_CRITTER_EFFECT_CAUSE_IDX, end);
 
-    if (strength != stat_level(obj, STAT_STRENGTH)) {
+    if (strength != stat_level_get(obj, STAT_STRENGTH)) {
         critter_encumbrance_level_recalc(obj, encumbrance_level);
     }
 

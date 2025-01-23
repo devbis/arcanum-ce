@@ -357,7 +357,7 @@ void compact_ui_health_bar_draw(int a1)
     }
     rect1.height = 100 - rect1.y;
 
-    poison = stat_level(pc_obj, STAT_POISON_LEVEL);
+    poison = stat_level_get(pc_obj, STAT_POISON_LEVEL);
     if (poison > 0) {
         sub_569550(compact_ui_components[0].window_handle,
             &rect1,

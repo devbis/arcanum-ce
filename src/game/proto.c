@@ -16079,8 +16079,8 @@ void sub_49B340(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_LIGHT_COLOR, rgb);
 
         if (type == 0) {
-            gender = stat_get_base(obj, STAT_GENDER);
-            race = stat_get_base(obj, STAT_RACE);
+            gender = stat_base_get(obj, STAT_GENDER);
+            race = stat_base_get(obj, STAT_RACE);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 10 * (gender + 2 * race + 1));
             if (race == RACE_ORC) {
                 tig_art_monster_id_create(2, 0, 0, 0, 4, 0, 0, 0, &art_id);
@@ -16135,7 +16135,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                     obj_field_int32_set(obj, OBJ_F_NAME, v2);
                     break;
                 case PROTO_F_LEVEL:
-                    stat_set_base(obj, STAT_LEVEL, v2);
+                    stat_base_set(obj, STAT_LEVEL, v2);
                     break;
                 case PROTO_F_ART_NUMBER_AND_PALETTE:
                     switch (type) {
@@ -16155,7 +16155,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                     obj_field_int32_set(obj, OBJ_F_BLIT_SCALE, v2);
                     break;
                 case PROTO_F_ALIGNMENT:
-                    stat_set_base(obj, STAT_ALIGNMENT, v2);
+                    stat_base_set(obj, STAT_ALIGNMENT, v2);
                     break;
                 case PROTO_F_CRITTER_FLAG:
                     obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) | v2);
@@ -16176,7 +16176,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
                     obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, v2);
                     break;
                 case PROTO_F_BASIC_STAT:
-                    stat_set_base(obj, v2, v3);
+                    stat_base_set(obj, v2, v3);
                     break;
                 case PROTO_F_SPELL:
                     spell_add(obj, v2, true);
@@ -16330,7 +16330,7 @@ bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
         return true;
     case PROTO_F_BASIC_STAT:
         for (stat = STAT_STRENGTH; stat <= STAT_CHARISMA; stat++) {
-            name = stat_get_name(stat);
+            name = stat_name(stat);
             pos = strlen(name);
             if (strnicmp(str, name, pos) == 0) {
                 *a3 = stat;
@@ -16339,7 +16339,7 @@ bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
             }
         }
         for (stat = STAT_MAGICK_POINTS; stat <= STAT_RACE; stat++) {
-            name = stat_get_name(stat);
+            name = stat_name(stat);
             pos = strlen(name);
             if (strnicmp(str, name, pos) == 0) {
                 *a3 = stat;
@@ -16419,7 +16419,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
 
     tig_file_fprintf(stream, "%s: %d\n",
         off_5B38C8[PROTO_F_LEVEL],
-        stat_level(obj, STAT_LEVEL));
+        stat_level_get(obj, STAT_LEVEL));
 
     art_id = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     switch (type) {
@@ -16438,12 +16438,12 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     default:
         tig_file_fprintf(stream, "%s: %s %d\n",
             off_5B38C8[PROTO_F_BASIC_STAT],
-            stat_get_name(STAT_GENDER),
-            stat_get_base(obj, STAT_GENDER));
+            stat_name(STAT_GENDER),
+            stat_base_get(obj, STAT_GENDER));
         tig_file_fprintf(stream, "%s: %s %d\n",
             off_5B38C8[PROTO_F_BASIC_STAT],
-            stat_get_name(STAT_RACE),
-            stat_get_base(obj, STAT_RACE));
+            stat_name(STAT_RACE),
+            stat_base_get(obj, STAT_RACE));
         break;
     }
 
@@ -16454,7 +16454,7 @@ void sub_49C060(long long obj, TigFile* stream, int type)
             value);
     }
 
-    value = stat_level(obj, STAT_ALIGNMENT);
+    value = stat_level_get(obj, STAT_ALIGNMENT);
     if (value != 0) {
         tig_file_fprintf(stream, "%s: %d\n",
             off_5B38C8[PROTO_F_ALIGNMENT],
@@ -16499,11 +16499,11 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     }
 
     for (stat = STAT_STRENGTH; stat <= STAT_CHARISMA; stat++) {
-        value = stat_get_base(obj, stat);
+        value = stat_base_get(obj, stat);
         if (value != 8) {
             tig_file_fprintf(stream, "%s: %s %d\n",
                 off_5B38C8[PROTO_F_BASIC_STAT],
-                stat_get_name(stat),
+                stat_name(stat),
                 value);
         }
     }

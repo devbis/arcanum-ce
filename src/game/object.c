@@ -1634,8 +1634,8 @@ int sub_43D630(object_id_t obj)
 
     obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
     if (obj_type_is_critter(obj_type)) {
-        return stat_level(obj, STAT_WILLPOWER)
-            + 2 * (stat_level(obj, STAT_STRENGTH) + stat_level(obj, STAT_LEVEL))
+        return stat_level_get(obj, STAT_WILLPOWER)
+            + 2 * (stat_level_get(obj, STAT_STRENGTH) + stat_level_get(obj, STAT_LEVEL))
             + 4;
     }
 
@@ -1685,7 +1685,7 @@ int sub_43D6D0(int64_t obj, int resistance_type, bool a2)
         }
 
         if (resistance_type == RESISTANCE_TYPE_POISON) {
-            adj = 5 * (stat_level(obj, STAT_CONSTITUTION) - 4);
+            adj = 5 * (stat_level_get(obj, STAT_CONSTITUTION) - 4);
             if (adj > 0) {
                 value += adj;
             }
@@ -1727,7 +1727,7 @@ int object_get_ac(object_id_t obj, bool a2)
         }
 
         ac = effect_adjust_stat_level(obj, STAT_AC_ADJUSTMENT, ac);
-        ac += stat_level(obj, STAT_AC_ADJUSTMENT);
+        ac += stat_level_get(obj, STAT_AC_ADJUSTMENT);
     } else if (obj_type == OBJ_TYPE_ARMOR) {
         ac += item_armor_ac_adj(obj, OBJ_HANDLE_NULL, a2);
     }
@@ -3899,8 +3899,8 @@ void sub_441C70(object_id_t obj, int racial_type, int gender, int race)
 {
     tig_art_id_t aid;
 
-    stat_set_base(obj, STAT_RACE, race);
-    stat_set_base(obj, STAT_GENDER, gender);
+    stat_base_set(obj, STAT_RACE, race);
+    stat_base_set(obj, STAT_GENDER, gender);
 
     aid = obj_field_int32_get(obj, OBJ_F_CURRENT_AID);
     aid = tig_art_critter_id_race_set(aid, racial_type);

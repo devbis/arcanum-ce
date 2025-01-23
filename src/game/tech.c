@@ -191,13 +191,13 @@ int tech_inc_degree(int64_t obj, int tech)
         return degree;
     }
 
-    if (tech_get_min_intelligence_for_degree(degree + 1) > stat_level(obj, STAT_INTELLIGENCE)) {
+    if (tech_get_min_intelligence_for_degree(degree + 1) > stat_level_get(obj, STAT_INTELLIGENCE)) {
         return degree;
     }
 
     cost = tech_get_cost_for_degree(degree + 1);
-    tech_points = stat_get_base(obj, STAT_TECH_POINTS);
-    stat_set_base(obj, STAT_TECH_POINTS, tech_points + cost);
+    tech_points = stat_base_get(obj, STAT_TECH_POINTS);
+    stat_base_set(obj, STAT_TECH_POINTS, tech_points + cost);
 
     return tech_set_degree(obj, tech, degree + 1);
 }
@@ -239,8 +239,8 @@ int tech_dec_degree(int64_t obj, int tech)
     }
 
     cost = tech_get_cost_for_degree(degree);
-    tech_points = stat_get_base(obj, STAT_TECH_POINTS);
-    stat_set_base(obj, STAT_TECH_POINTS, tech_points - cost);
+    tech_points = stat_base_get(obj, STAT_TECH_POINTS);
+    stat_base_set(obj, STAT_TECH_POINTS, tech_points - cost);
 
     return tech_set_degree(obj, tech, degree - 1);
 }
@@ -258,7 +258,7 @@ int sub_4B00B0(object_id_t obj, int tech)
     int intelligence;
 
     degree = tech_get_degree(obj, tech);
-    intelligence = stat_level(obj, STAT_INTELLIGENCE);
+    intelligence = stat_level_get(obj, STAT_INTELLIGENCE);
     while (intelligence < tech_get_min_intelligence_for_degree(degree)) {
         degree--;
     }

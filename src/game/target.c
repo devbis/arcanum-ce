@@ -514,11 +514,11 @@ bool sub_4F2D20(S603CB8* a1)
                 }
 
                 if ((tgt & 0x1000) != 0) {
-                    if (stat_level(a1->field_20, STAT_ALIGNMENT) < 0) {
+                    if (stat_level_get(a1->field_20, STAT_ALIGNMENT) < 0) {
                         return false;
                     }
                 } else if ((tgt & 0x2000) != 0) {
-                    if (stat_level(a1->field_20, STAT_ALIGNMENT) >= 0) {
+                    if (stat_level_get(a1->field_20, STAT_ALIGNMENT) >= 0) {
                         return false;
                     }
                 }
@@ -549,11 +549,11 @@ bool sub_4F2D20(S603CB8* a1)
                 }
 
                 if ((tgt & 0x800000000) != 0) {
-                    if (stat_level(a1->field_20, STAT_ALIGNMENT) >= 0) {
+                    if (stat_level_get(a1->field_20, STAT_ALIGNMENT) >= 0) {
                         return false;
                     }
                 } else if ((tgt & 0x1000000000) != 0) {
-                    if (stat_level(a1->field_20, STAT_ALIGNMENT) < 0) {
+                    if (stat_level_get(a1->field_20, STAT_ALIGNMENT) < 0) {
                         return false;
                     }
                 }
@@ -569,7 +569,7 @@ bool sub_4F2D20(S603CB8* a1)
                 }
 
                 if ((tgt & 0x400000) != 0) {
-                    if (stat_level(a1->field_20, STAT_POISON_LEVEL) <= 0) {
+                    if (stat_level_get(a1->field_20, STAT_POISON_LEVEL) <= 0) {
                         return false;
                     }
                 }
@@ -797,7 +797,7 @@ bool sub_4F2D20(S603CB8* a1)
                 if (!obj_type_is_critter(obj_type)) {
                     return false;
                 }
-                if (stat_level(a1->field_20, STAT_POISON_LEVEL) <= 0) {
+                if (stat_level_get(a1->field_20, STAT_POISON_LEVEL) <= 0) {
                     return false;
                 }
             }
@@ -1418,7 +1418,7 @@ void sub_4F40B0(S603CB8* a1)
                     if (mt_obj_node->obj != OBJ_HANDLE_NULL) {
                         mt_obj_node->type = obj_field_int32_get(mt_obj_node->obj, OBJ_F_TYPE);
                         if (obj_type_is_critter(mt_obj_node->type)) {
-                            mt_obj_node->aptitude = stat_level(mt_obj_node->obj, STAT_MAGICK_TECH_APTITUDE);
+                            mt_obj_node->aptitude = stat_level_get(mt_obj_node->obj, STAT_MAGICK_TECH_APTITUDE);
                         }
                     }
                     *a1->field_54 = mt_obj_node;

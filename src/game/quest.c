@@ -223,7 +223,7 @@ int sub_4C4C00(int64_t a1, int64_t a2, int num)
     }
 
     state = sub_4C4CB0(a1, num);
-    if (stat_level(a1, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
+    if (stat_level_get(a1, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
         return quests[num].dumb_dialog[state];
     }
 
@@ -356,9 +356,9 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
     obj_arrayfield_pc_quest_set(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
 
     if (state == QUEST_STATE_COMPLETED) {
-        stat_set_base(obj,
+        stat_base_set(obj,
             STAT_ALIGNMENT,
-            stat_get_base(obj, STAT_ALIGNMENT) + quests[num].alignment_adjustment);
+            stat_base_get(obj, STAT_ALIGNMENT) + quests[num].alignment_adjustment);
         tig_sound_quick_play(3028);
     }
 
@@ -476,7 +476,7 @@ int quest_set_state(int num, int state)
 void quest_copy_description(object_id_t obj, int num, char* buffer)
 {
     if (quests[num - 1000].dumb_description != NULL
-        && stat_level(obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
+        && stat_level_get(obj, STAT_INTELLIGENCE) <= LOW_INTELLIGENCE) {
         strcpy(buffer, quests[num - 1000].dumb_description);
     } else if (quests[num - 1000].normal_description != NULL) {
         strcpy(buffer, quests[num - 1000].normal_description);

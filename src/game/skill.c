@@ -371,7 +371,7 @@ int basic_skill_level(int64_t obj, int skill)
         skill_level = 20;
     }
 
-    key_stat_level = stat_level(obj, basic_skill_get_stat(skill));
+    key_stat_level = stat_level_get(obj, basic_skill_get_stat(skill));
     if (skill_level > sub_4C5F70(key_stat_level)) {
         skill_level = sub_4C5F70(key_stat_level);
     }
@@ -416,7 +416,7 @@ int basic_skill_set_base(int64_t obj, int skill, int value)
         return 0;
     }
 
-    key_stat_level = stat_level(obj, basic_skill_get_stat(skill));
+    key_stat_level = stat_level_get(obj, basic_skill_get_stat(skill));
     current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_BASIC_SKILL_IDX, skill);
 
     if (4 * value > sub_4C5F70(key_stat_level)) {
@@ -443,7 +443,7 @@ int basic_skill_get_training(int64_t obj, int skill)
 
     if (skill == BASIC_SKILL_MELEE && critter_is_monstrous(obj)) {
         melee = basic_skill_level(obj, BASIC_SKILL_MELEE);
-        level = stat_level(obj, STAT_LEVEL);
+        level = stat_level_get(obj, STAT_LEVEL);
 
         for (index = 0; index < 3; index++) {
             if (melee < dword_5B6F48[index]) {
@@ -580,7 +580,7 @@ int sub_4C62E0(int64_t obj, int skill, int64_t other_obj)
         }
     }
 
-    if (stat_is_maximized(obj, STAT_INTELLIGENCE)) {
+    if (stat_atmax(obj, STAT_INTELLIGENCE)) {
         value += 10;
     }
 
@@ -623,9 +623,9 @@ int sub_4C6410(int64_t obj, int skill, int64_t other_obj)
     skill_level = basic_skill_level(obj, skill);
 
     if ((skill_flags[skill] & 0x10) != 0) {
-        difficulty = stat_level(other_obj, STAT_PERCEPTION);
+        difficulty = stat_level_get(other_obj, STAT_PERCEPTION);
     } else if ((skill_flags[skill] & 0x20) != 0) {
-        difficulty = stat_level(other_obj, STAT_INTELLIGENCE);
+        difficulty = stat_level_get(other_obj, STAT_INTELLIGENCE);
     } else {
         difficulty = basic_skill_level(other_obj, skill);
     }
@@ -748,7 +748,7 @@ int tech_skill_level(int64_t obj, int skill)
         skill_level = 20;
     }
 
-    key_stat_level = stat_level(obj, tech_skill_get_stat(skill));
+    key_stat_level = stat_level_get(obj, tech_skill_get_stat(skill));
     if (skill_level > sub_4C5F70(key_stat_level)) {
         skill_level = sub_4C5F70(key_stat_level);
     }
@@ -793,7 +793,7 @@ int tech_skill_set_base(int64_t obj, int skill, int value)
         return 0;
     }
 
-    key_stat_level = stat_level(obj, tech_skill_get_stat(skill));
+    key_stat_level = stat_level_get(obj, tech_skill_get_stat(skill));
     current_value = obj_arrayfield_int32_get(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill);
 
     if (4 * value > sub_4C5F70(key_stat_level)) {
@@ -802,9 +802,9 @@ int tech_skill_set_base(int64_t obj, int skill, int value)
 
     mp_obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_TECH_SKILL_IDX, skill, value | current_value & ~63);
 
-    tech_points = stat_get_base(obj, STAT_TECH_POINTS);
+    tech_points = stat_base_get(obj, STAT_TECH_POINTS);
     tech_points += value - (current_value & 63);
-    stat_set_base(obj, STAT_TECH_POINTS, tech_points);
+    stat_base_set(obj, STAT_TECH_POINTS, tech_points);
 
     return value;
 }
@@ -940,7 +940,7 @@ int sub_4C69F0(int64_t obj, int skill, int64_t other_obj)
         break;
     }
 
-    if (stat_is_maximized(obj, STAT_INTELLIGENCE)) {
+    if (stat_atmax(obj, STAT_INTELLIGENCE)) {
         value += 10;
     }
 
@@ -1619,7 +1619,7 @@ bool skill_invocation_check_crit_hit(int roll, int effectiveness, SkillInvocatio
 
     if ((skill_invocation->flags & 0x8000) != 0) {
         chance += 2 * basic_skill_level(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB);
-        chance -= stat_level(skill_invocation->target.obj, STAT_LEVEL);
+        chance -= stat_level_get(skill_invocation->target.obj, STAT_LEVEL);
 
         if (basic_skill_get_training(skill_invocation->source.obj, BASIC_SKILL_BACKSTAB) == TRAINING_MASTER) {
             chance += 20;
@@ -1726,7 +1726,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
 
         difficulty -= to_hit;
 
-        int strength = stat_level(source_obj, STAT_STRENGTH) - item_weapon_min_strength(item_obj, source_obj);
+        int strength = stat_level_get(source_obj, STAT_STRENGTH) - item_weapon_min_strength(item_obj, source_obj);
         if (strength < 0) {
             difficulty += -strength * 5;
             skill_invocation->flags |= 0x40;
@@ -1801,7 +1801,7 @@ int sub_4C8430(SkillInvocation* skill_invocation)
         if (basic_skill != BASIC_SKILL_BOW
             && basic_skill != BASIC_SKILL_THROWING
             && (tech_skill != TECH_SKILL_FIREARMS || training < TRAINING_MASTER)) {
-            int extra_dist = (int)dist - stat_level(source_obj, STAT_PERCEPTION) / 2;
+            int extra_dist = (int)dist - stat_level_get(source_obj, STAT_PERCEPTION) / 2;
             if (extra_dist > 0) {
                 difficulty += 5 * extra_dist;
                 skill_invocation->flags |= 0x100;

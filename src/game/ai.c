@@ -583,7 +583,7 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
         sub_4CCBF0(&v2);
     }
 
-    if (stat_level(obj, STAT_POISON_LEVEL) > 0) {
+    if (stat_level_get(obj, STAT_POISON_LEVEL) > 0) {
         sub_4CCA90(&v2, ai->obj, 7);
         v1.flags = 0x8;
         v1.entries = v2.field_30[7].entries;
@@ -682,7 +682,7 @@ bool sub_4A8F90(int64_t obj, unsigned int flags)
         return false;
     }
 
-    radius = sub_4AF240(stat_level(obj, STAT_PERCEPTION) - 5);
+    radius = sub_4AF240(stat_level_get(obj, STAT_PERCEPTION) - 5);
     sub_4AE4E0(obj, radius, &objects, flags);
     node = objects.head;
     while (node != NULL) {
@@ -882,7 +882,7 @@ void sub_4A9560(AiRedirect* ai_redirect)
             && node->obj != ai_redirect->field_0
             && node->obj != ai_redirect->field_8
             && (ai_redirect->min_iq <= 0
-                || stat_level(ai_redirect->min_iq, STAT_INTELLIGENCE) <= ai_redirect->min_iq)
+                || stat_level_get(ai_redirect->min_iq, STAT_INTELLIGENCE) <= ai_redirect->min_iq)
             && (ai_redirect->critter_flags == 0
                 || (obj_field_int32_get(node->obj, OBJ_F_CRITTER_FLAGS) & ai_redirect->critter_flags) != 0)) {
             sub_4A94C0(ai_redirect->field_0, node->obj);
@@ -1477,7 +1477,7 @@ void sub_4AA7A0(int64_t obj)
 
     wait = obj_field_int32_get(obj, OBJ_F_NPC_WAIT);
     leader_obj = critter_leader_get(obj);
-    if (stat_is_maximized(leader_obj, STAT_CHARISMA)
+    if (stat_atmax(leader_obj, STAT_CHARISMA)
         && (obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0) {
         if (basic_skill_get_training(leader_obj, BASIC_SKILL_PERSUATION) != TRAINING_NONE) {
             wait++;
@@ -1543,8 +1543,8 @@ bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent)
             flags |= ONF_JILTED;
             obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
 
-            max_charisma = stat_get_max_value(leader_obj, STAT_CHARISMA);
-            charisma = stat_level(leader_obj, STAT_CHARISMA);
+            max_charisma = stat_level_max(leader_obj, STAT_CHARISMA);
+            charisma = stat_level_get(leader_obj, STAT_CHARISMA);
             reaction_adj(obj, leader_obj, 2 * (charisma - max_charisma));
             critter_leader_set(obj, OBJ_HANDLE_NULL);
         }
@@ -1641,7 +1641,7 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
         || danger_type == AI_DANGER_SOURCE_TYPE_SURRENDER) {
         leader_obj = critter_leader_get(source_obj);
         if (leader_obj != OBJ_HANDLE_NULL
-            && stat_is_maximized(leader_obj, STAT_CHARISMA)) {
+            && stat_atmax(leader_obj, STAT_CHARISMA)) {
             danger_type = AI_DANGER_SOURCE_TYPE_COMBAT_FOCUS;
 
             if (!dword_5B50CC
@@ -1828,8 +1828,8 @@ int64_t sub_4AB0B0(int64_t a1, int64_t a2, int64_t a3)
         score1 = -((int)dist1);
         score2 = -((int)dist2);
     } else {
-        score1 = stat_level(a3, STAT_LEVEL) - (int)dist1;
-        score2 = stat_level(a3, STAT_LEVEL) - (int)dist2;
+        score1 = stat_level_get(a3, STAT_LEVEL) - (int)dist1;
+        score2 = stat_level_get(a3, STAT_LEVEL) - (int)dist2;
     }
 
     if (score1 > score2) {
@@ -1938,7 +1938,7 @@ int64_t sub_4AB460(int64_t critter_obj)
 
     dword_5F8498 = true;
 
-    radius = sub_4AF240(stat_level(critter_obj, STAT_PERCEPTION));
+    radius = sub_4AF240(stat_level_get(critter_obj, STAT_PERCEPTION));
 
     cnt = 0;
     sub_4AE4E0(critter_obj, radius, &objects, OBJ_TM_CRITTER);
@@ -2103,7 +2103,7 @@ bool sub_4AB990(int64_t source_obj, int64_t target_obj)
             return false;
         }
 
-        if (stat_level(source_obj, STAT_INTELLIGENCE) > LOW_INTELLIGENCE
+        if (stat_level_get(source_obj, STAT_INTELLIGENCE) > LOW_INTELLIGENCE
             && obj_field_int32_get(target_obj, OBJ_F_NAME) == 6719) {
             return false;
         }
@@ -2240,8 +2240,8 @@ bool sub_4ABEB0(int64_t obj, int64_t tgt)
     int obj_level;
     int tgt_level;
 
-    tgt_level = stat_level(tgt, STAT_LEVEL);
-    obj_level = stat_level(obj, STAT_LEVEL);
+    tgt_level = stat_level_get(tgt, STAT_LEVEL);
+    obj_level = stat_level_get(obj, STAT_LEVEL);
 
     if (tgt_level < 20 && tgt_level >= obj_level + 10) {
         return true;
@@ -3196,7 +3196,7 @@ int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits
 
     leader_obj = critter_leader_get(npc_obj);
     if (leader_obj != OBJ_HANDLE_NULL && leader_obj != pc_obj) {
-        if (stat_level(pc_obj, STAT_CHARISMA) <= stat_level(leader_obj, STAT_CHARISMA)) {
+        if (stat_level_get(pc_obj, STAT_CHARISMA) <= stat_level_get(leader_obj, STAT_CHARISMA)) {
             return AI_FOLLOW_ALREADY_IN_GROUP;
         }
     }
@@ -3211,8 +3211,8 @@ int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits
         return AI_FOLLOW_DISLIKE;
     }
 
-    npc_alignment = stat_level(npc_obj, STAT_ALIGNMENT);
-    pc_alignment = stat_level(pc_obj, STAT_ALIGNMENT);
+    npc_alignment = stat_level_get(npc_obj, STAT_ALIGNMENT);
+    pc_alignment = stat_level_get(pc_obj, STAT_ALIGNMENT);
     if (pc_alignment > npc_alignment) {
         if (pc_alignment - npc_alignment > params.field_18) {
             return AI_FOLLOW_TOO_GOOD;
@@ -3223,12 +3223,12 @@ int ai_check_follow(int64_t npc_obj, int64_t pc_obj, bool ignore_charisma_limits
         }
     }
 
-    if (stat_level(npc_obj, STAT_LEVEL) >= stat_level(pc_obj, STAT_LEVEL) + params.field_20) {
+    if (stat_level_get(npc_obj, STAT_LEVEL) >= stat_level_get(pc_obj, STAT_LEVEL) + params.field_20) {
         return AI_FOLLOW_LOW_LEVEL;
     }
 
     if (!ignore_charisma_limits) {
-        pc_max_followers = stat_level(pc_obj, STAT_MAX_FOLLOWERS);
+        pc_max_followers = stat_level_get(pc_obj, STAT_MAX_FOLLOWERS);
         if (pc_max_followers == 0) {
             return AI_FOLLOW_NOT_ALLOWED;
         }
@@ -3279,8 +3279,8 @@ int ai_check_leader(int64_t npc_obj, int64_t pc_obj)
         return AI_FOLLOW_DISLIKE;
     }
 
-    npc_alignment = stat_level(npc_obj, STAT_ALIGNMENT);
-    pc_alignment = stat_level(pc_obj, STAT_ALIGNMENT);
+    npc_alignment = stat_level_get(npc_obj, STAT_ALIGNMENT);
+    pc_alignment = stat_level_get(pc_obj, STAT_ALIGNMENT);
     if (pc_alignment > npc_alignment) {
         if ((critter_flags2 & OCF2_CHECK_ALIGN_GOOD) != 0
             && pc_alignment - npc_alignment > params.field_18 - 100) {
@@ -3323,9 +3323,9 @@ int sub_4ADCC0(int64_t a1, int64_t a2, int64_t a3)
     }
 
     if (a3 != OBJ_HANDLE_NULL) {
-        if (stat_level(a1, STAT_ALIGNMENT) > 0) {
+        if (stat_level_get(a1, STAT_ALIGNMENT) > 0) {
             sub_4AAA60(a1, &params);
-            if (stat_level(a2, STAT_ALIGNMENT) >= params.field_30) {
+            if (stat_level_get(a2, STAT_ALIGNMENT) >= params.field_30) {
                 return 1;
             }
         }
@@ -3437,7 +3437,7 @@ void sub_4AE020(int64_t obj, int* cnt_ptr, int* lvl_ptr)
     }
 
     *cnt_ptr = 1;
-    *lvl_ptr = stat_level(obj, STAT_LEVEL);
+    *lvl_ptr = stat_level_get(obj, STAT_LEVEL);
 }
 
 // 0x4AE0A0
@@ -3447,13 +3447,13 @@ void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr)
     ObjectNode* node;
 
     *cnt_ptr = 1;
-    *lvl_ptr = stat_level(obj, STAT_LEVEL);
+    *lvl_ptr = stat_level_get(obj, STAT_LEVEL);
 
     sub_441260(obj, &objects);
     node = objects.head;
     while (node != NULL) {
         *cnt_ptr += 1;
-        *lvl_ptr += stat_level(obj, STAT_LEVEL);
+        *lvl_ptr += stat_level_get(obj, STAT_LEVEL);
         node = node->next;
     }
 
@@ -3503,7 +3503,7 @@ int sub_4AE120(int64_t a1, int64_t a2)
                         return 2;
                     }
 
-                    if (abs(stat_level(a1, STAT_ALIGNMENT) - stat_level(a2, STAT_ALIGNMENT)) >= ai_params.field_2C) {
+                    if (abs(stat_level_get(a1, STAT_ALIGNMENT) - stat_level_get(a2, STAT_ALIGNMENT)) >= ai_params.field_2C) {
                         return 3;
                     }
 
@@ -3686,11 +3686,11 @@ int sub_4AE720(int64_t a1, int64_t item_obj, int64_t a3, int magictech)
             return 2;
         }
 
-        if (spell_min_intelligence(magictech) > stat_level(a1, STAT_INTELLIGENCE)) {
+        if (spell_min_intelligence(magictech) > stat_level_get(a1, STAT_INTELLIGENCE)) {
             return 3;
         }
 
-        if (spell_min_willpower(magictech) > stat_level(a1, STAT_WILLPOWER)) {
+        if (spell_min_willpower(magictech) > stat_level_get(a1, STAT_WILLPOWER)) {
             return 7;
         }
 
@@ -4055,7 +4055,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
 
     if (((obj_field_int32_get(target_obj, OBJ_F_FLAGS) & OF_INVISIBLE) != 0
             || (obj_field_int32_get(target_obj, OBJ_F_SPELL_FLAGS) & OSF_INVISIBLE) != 0)
-        && !stat_is_maximized(source_obj, STAT_PERCEPTION)
+        && !stat_atmax(source_obj, STAT_PERCEPTION)
         && (obj_field_int32_get(source_obj, OBJ_F_SPELL_FLAGS) & OSF_DETECTING_INVISIBLE) == 0) {
         return 1000;
     }
@@ -4064,7 +4064,7 @@ int sub_4AF260(int64_t source_obj, int64_t target_obj)
         return 1000;
     }
 
-    perception = stat_level(source_obj, STAT_PERCEPTION);
+    perception = stat_level_get(source_obj, STAT_PERCEPTION);
 
     if (critter_is_concealed(target_obj)) {
         int prowling;
@@ -4131,7 +4131,7 @@ int sub_4AF470(int64_t a1, int64_t a2, int loudness)
         return 1000;
     }
 
-    perception = stat_level(a1, STAT_PERCEPTION);
+    perception = stat_level_get(a1, STAT_PERCEPTION);
     if ((critter_flags & OCF_SLEEPING) != 0) {
         perception /= 2;
     }
@@ -4233,7 +4233,7 @@ int sub_4AF640(int64_t source_obj, int64_t target_obj)
 bool sub_4AF800(int64_t obj, int64_t a2)
 {
     return !critter_is_dead(a2)
-        && stat_level(obj, STAT_INTELLIGENCE) < 5
+        && stat_level_get(obj, STAT_INTELLIGENCE) < 5
         && obj_field_int32_get(a2, OBJ_F_NAME) == CLOCKWORK_DECOY;
 }
 

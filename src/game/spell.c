@@ -324,7 +324,7 @@ int spell_cast_cost(int spell, int64_t obj)
     int cost;
 
     cost = magictech_get_cost(spell);
-    if (stat_level(obj, STAT_RACE) == RACE_DWARF) {
+    if (stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
@@ -344,7 +344,7 @@ int spell_maintain_cost(int spell, int64_t obj, int* period_ptr)
     maintenance = magictech_get_maintenance(spell);
 
     cost = maintenance->cost;
-    if (stat_level(obj, STAT_RACE) == RACE_DWARF) {
+    if (stat_level_get(obj, STAT_RACE) == RACE_DWARF) {
         cost *= 2;
     }
 
@@ -422,15 +422,15 @@ bool spell_add(int64_t obj, int spell, bool force)
             return false;
         }
 
-        if (spell_min_level(spell) > stat_level(obj, STAT_LEVEL)) {
+        if (spell_min_level(spell) > stat_level_get(obj, STAT_LEVEL)) {
             return false;
         }
 
-        if (spell_min_intelligence(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
+        if (spell_min_intelligence(spell) > stat_level_get(obj, STAT_INTELLIGENCE)) {
             return false;
         }
 
-        if (spell_min_willpower(spell) > stat_level(obj, STAT_WILLPOWER)) {
+        if (spell_min_willpower(spell) > stat_level_get(obj, STAT_WILLPOWER)) {
             return false;
         }
 
@@ -442,9 +442,9 @@ bool spell_add(int64_t obj, int spell, bool force)
         }
     }
 
-    magic_points = stat_get_base(obj, STAT_MAGICK_POINTS);
+    magic_points = stat_base_get(obj, STAT_MAGICK_POINTS);
     magic_points += cost;
-    stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
+    stat_base_set(obj, STAT_MAGICK_POINTS, magic_points);
 
     spell_college_level_set(obj, college, new_spell_level);
 
@@ -478,9 +478,9 @@ bool spell_remove(int64_t obj, int spell)
     }
 
     cost = spell_cost(spell);
-    magic_points = stat_get_base(obj, STAT_MAGICK_POINTS);
+    magic_points = stat_base_get(obj, STAT_MAGICK_POINTS);
     magic_points -= cost;
-    stat_set_base(obj, STAT_MAGICK_POINTS, magic_points);
+    stat_base_set(obj, STAT_MAGICK_POINTS, magic_points);
 
     spell_college_level_set(obj, college, spell_level);
 

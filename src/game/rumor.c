@@ -147,14 +147,14 @@ void rumor_copy_interaction_str(int64_t pc_obj, int64_t npc_obj, int rumor, char
     int interaction_type;
     MesFileEntry mes_file_entry;
 
-    if (stat_level(npc_obj, STAT_GENDER) == GENDER_MALE) {
-        if (stat_level(pc_obj, STAT_GENDER) == GENDER_MALE) {
+    if (stat_level_get(npc_obj, STAT_GENDER) == GENDER_MALE) {
+        if (stat_level_get(pc_obj, STAT_GENDER) == GENDER_MALE) {
             interaction_type = RUMOR_INTERACTION_TYPE_MALE_TO_MALE;
         } else {
             interaction_type = RUMOR_INTERACTION_TYPE_MALE_TO_FEMALE;
         }
     } else {
-        if (stat_level(pc_obj, STAT_GENDER) == GENDER_MALE) {
+        if (stat_level_get(pc_obj, STAT_GENDER) == GENDER_MALE) {
             interaction_type = RUMOR_INTERACTION_TYPE_FEMALE_TO_MALE;
         } else {
             interaction_type = RUMOR_INTERACTION_TYPE_FEMALE_TO_FEMALE;
@@ -226,7 +226,7 @@ bool rumor_known_get(int64_t obj, int rumor)
 // 0x4C5920
 void rumor_copy_logbook_str(int64_t obj, int rumor, char* buffer)
 {
-    if (stat_level(obj, STAT_INTELLIGENCE) > LOW_INTELLIGENCE) {
+    if (stat_level_get(obj, STAT_INTELLIGENCE) > LOW_INTELLIGENCE) {
         rumor_copy_logbook_normal_str(rumor, buffer);
     } else {
         rumor_copy_logbook_dumb_str(rumor, buffer);

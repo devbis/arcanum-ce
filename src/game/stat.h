@@ -2,7 +2,6 @@
 #define ARCANUM_GAME_STAT_H_
 
 #include "game/context.h"
-#include "game/obj.h"
 #include "game/timeevent.h"
 
 #define LOW_INTELLIGENCE 4
@@ -84,19 +83,19 @@ extern const char* off_5B5384[];
 
 bool stat_init(GameInitInfo* init_info);
 void stat_exit();
-void stat_set_defaults(object_id_t object_id);
-int stat_level(object_id_t obj, int stat);
-int stat_get_base(object_id_t obj, int stat);
-int stat_set_base(object_id_t obj, int stat, int value);
-bool stat_is_maximized(object_id_t obj, int stat);
-int sub_4B0F50(int value);
-const char* stat_get_name(int stat);
-const char* stat_get_short_name(int stat);
-const char* gender_get_name(int gender);
-const char* race_get_name(int race);
-int stat_get_min_value(object_id_t object_id, int stat);
-int stat_get_max_value(object_id_t object_id, int stat);
-bool sub_4B10A0(int64_t obj, int stat, int value);
+void stat_set_defaults(int64_t obj);
+int stat_level_get(int64_t obj, int stat);
+int stat_base_get(int64_t obj, int stat);
+int stat_base_set(int64_t obj, int stat, int value);
+bool stat_atmax(int64_t obj, int stat);
+int stat_cost(int value);
+const char* stat_name(int stat);
+const char* stat_short_name(int stat);
+const char* gender_name(int gender);
+const char* race_name(int race);
+int stat_level_min(int64_t obj, int stat);
+int stat_level_max(int64_t obj, int stat);
+bool stat_level_set(int64_t obj, int stat, int value);
 bool stat_poison_timeevent_process(TimeEvent* timeevent);
 
 #endif /* ARCANUM_GAME_STAT_H_ */

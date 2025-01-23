@@ -20,7 +20,7 @@ void tech_ui_inc_degree(int64_t obj, int tech)
         || multiplayer_is_locked()) {
         degree = tech_get_degree(obj, tech);
         cost = tech_get_cost_for_degree(degree + 1);
-        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         is_pc = player_is_pc_obj(obj);
 
         if (cost > points) {
@@ -29,7 +29,7 @@ void tech_ui_inc_degree(int64_t obj, int tech)
             }
         } else {
             if (tech_inc_degree(obj, tech) > degree) {
-                stat_set_base(obj, STAT_UNSPENT_POINTS, points - cost);
+                stat_base_set(obj, STAT_UNSPENT_POINTS, points - cost);
                 if (is_pc) {
                     sub_55A230();
                     sub_550720();
@@ -56,11 +56,11 @@ void tech_ui_dec_degree(int64_t obj, int tech)
         || multiplayer_is_locked()) {
         degree = tech_get_degree(obj, tech);
         cost = tech_get_cost_for_degree(degree);
-        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         is_pc = player_is_pc_obj(obj);
 
         if (tech_dec_degree(obj, tech) < degree) {
-            stat_set_base(obj, STAT_UNSPENT_POINTS, points + cost);
+            stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);
             if (is_pc) {
                 sub_55A230();
                 sub_550720();

@@ -250,12 +250,12 @@ int level_get_experience_points_to_next_level(int64_t obj)
 {
     int level;
 
-    level = stat_level(obj, STAT_LEVEL);
+    level = stat_level_get(obj, STAT_LEVEL);
     if (level >= LEVEL_MAX) {
         return 999999;
     }
 
-    return dword_5F5C94[level] - stat_level(obj, STAT_EXPERIENCE_POINTS);
+    return dword_5F5C94[level] - stat_level_get(obj, STAT_EXPERIENCE_POINTS);
 }
 
 // 0x4A6900
@@ -264,7 +264,7 @@ int level_get_experience_points_to_next_level_in_percent(int64_t obj)
     int level;
     int xp;
 
-    level = stat_level(obj, STAT_LEVEL);
+    level = stat_level_get(obj, STAT_LEVEL);
     if (level >= LEVEL_MAX) {
         return 0;
     }
@@ -316,8 +316,8 @@ void sub_4A69C0(int64_t pc_obj)
         return;
     }
 
-    cur_level = stat_get_base(pc_obj, STAT_LEVEL);
-    max_level = stat_get_max_value(pc_obj, STAT_LEVEL);
+    cur_level = stat_base_get(pc_obj, STAT_LEVEL);
+    max_level = stat_level_max(pc_obj, STAT_LEVEL);
     if (cur_level >= max_level) {
         return;
     }
@@ -335,13 +335,13 @@ void sub_4A69C0(int64_t pc_obj)
     do {
         cur_level++;
         if (cur_level == max_level) {
-            stat_set_base(pc_obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[cur_level - 1]);
+            stat_base_set(pc_obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[cur_level - 1]);
         } else {
-            stat_set_base(pc_obj, STAT_LEVEL, cur_level);
+            stat_base_set(pc_obj, STAT_LEVEL, cur_level);
 
-            unspent_points = stat_get_base(pc_obj, STAT_UNSPENT_POINTS);
+            unspent_points = stat_base_get(pc_obj, STAT_UNSPENT_POINTS);
             unspent_points += sub_4A6980(cur_level - 1, cur_level);
-            stat_set_base(pc_obj, STAT_UNSPENT_POINTS, unspent_points);
+            stat_base_set(pc_obj, STAT_UNSPENT_POINTS, unspent_points);
 
             ui_message.field_8 = cur_level;
 
@@ -401,8 +401,8 @@ void sub_4A6CB0(int64_t obj, int a3, int a4)
     int bonus_points;
     int curr_points;
 
-    curr_level = stat_get_base(obj, STAT_LEVEL);
-    max_level = stat_get_max_value(obj, STAT_LEVEL);
+    curr_level = stat_base_get(obj, STAT_LEVEL);
+    max_level = stat_level_max(obj, STAT_LEVEL);
     if (curr_level < max_level) {
         if (curr_level <= a3) {
             new_level = a4 + curr_level - a3;
@@ -415,11 +415,11 @@ void sub_4A6CB0(int64_t obj, int a3, int a4)
         }
 
         if (new_level > curr_level) {
-            stat_set_base(obj, STAT_LEVEL, new_level);
+            stat_base_set(obj, STAT_LEVEL, new_level);
 
             bonus_points = sub_4A6980(curr_level, new_level);
-            curr_points = stat_get_base(obj, STAT_UNSPENT_POINTS);
-            stat_set_base(obj, STAT_UNSPENT_POINTS, bonus_points + curr_points);
+            curr_points = stat_base_get(obj, STAT_UNSPENT_POINTS);
+            stat_base_set(obj, STAT_UNSPENT_POINTS, bonus_points + curr_points);
             sub_4A7030(obj, NULL);
         }
     }
@@ -531,31 +531,31 @@ void level_set_level(int64_t obj, int level)
         level = LEVEL_MAX;
     }
 
-    gender = stat_get_base(obj, STAT_GENDER);
-    race = stat_get_base(obj, STAT_RACE);
-    alignment = stat_get_base(obj, STAT_ALIGNMENT);
-    age = stat_get_base(obj, STAT_AGE);
+    gender = stat_base_get(obj, STAT_GENDER);
+    race = stat_base_get(obj, STAT_RACE);
+    alignment = stat_base_get(obj, STAT_ALIGNMENT);
+    age = stat_base_get(obj, STAT_AGE);
 
     stat_set_defaults(obj);
     skill_set_defaults(obj);
     spell_set_defaults(obj);
     tech_set_defaults(obj);
 
-    stat_set_base(obj, STAT_GENDER, gender);
-    stat_set_base(obj, STAT_RACE, race);
-    stat_set_base(obj, STAT_ALIGNMENT, alignment);
-    stat_set_base(obj, STAT_AGE, age);
-    stat_set_base(obj, STAT_LEVEL, level);
+    stat_base_set(obj, STAT_GENDER, gender);
+    stat_base_set(obj, STAT_RACE, race);
+    stat_base_set(obj, STAT_ALIGNMENT, alignment);
+    stat_base_set(obj, STAT_AGE, age);
+    stat_base_set(obj, STAT_LEVEL, level);
 
     object_hp_pts_set(obj, 0);
     critter_fatigue_pts_set(obj, 0);
 
     if (level >= 1) {
-        stat_set_base(obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[level - 1]);
+        stat_base_set(obj, STAT_EXPERIENCE_POINTS, dword_5F5C94[level - 1]);
 
-        unspent_points = stat_get_base(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_base_get(obj, STAT_UNSPENT_POINTS);
         bonus = sub_4A6980(1, level);
-        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + bonus);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points + bonus);
     }
 
     sub_4A7030(obj, NULL);
@@ -731,24 +731,24 @@ int sub_4A75E0(int64_t obj, int stat, int value)
     int unspent_points;
     int new_value;
 
-    current_value = stat_get_base(obj, stat);
+    current_value = stat_base_get(obj, stat);
     while (current_value < value) {
-        cost = sub_4B0F50(current_value + 1);
-        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        cost = stat_cost(current_value + 1);
+        unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
-        stat_set_base(obj, stat, current_value + 1);
-        new_value = stat_get_base(obj, stat);
+        stat_base_set(obj, stat, current_value + 1);
+        new_value = stat_base_get(obj, stat);
         if (new_value < current_value + 1) {
             return 2;
         }
 
-        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
 
-        current_value = stat_level(obj, stat);
-        sub_4A7B90(stat_get_name(stat), stat_level(obj, stat));
+        current_value = stat_level_get(obj, stat);
+        sub_4A7B90(stat_name(stat), stat_level_get(obj, stat));
     }
 
     return 0;
@@ -767,20 +767,20 @@ int sub_4A76B0(int64_t obj, int skill, int value)
     current_value = basic_skill_level(obj, skill);
     while (current_value < value) {
         cost = sub_4C64B0(obj, skill);
-        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
         new_value = basic_skill_get_base(obj, skill) + cost;
         if (basic_skill_set_base(obj, skill, new_value) == new_value) {
-            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_value = basic_skill_level(obj, skill);
             sub_4A7B90(basic_skill_get_name(skill), new_value);
         } else {
             stat = basic_skill_get_stat(skill);
 
-            rc = sub_4A75E0(obj, stat, stat_get_base(obj, stat) + 1);
+            rc = sub_4A75E0(obj, stat, stat_base_get(obj, stat) + 1);
             if (rc != 0) {
                 return rc;
             }
@@ -802,19 +802,19 @@ int sub_4A77A0(int64_t obj, int skill, int score)
     level = tech_skill_level(obj, skill);
     while (level < score) {
         cost = sub_4C6AF0(obj, skill);
-        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
         new_level = tech_skill_get_base(obj, skill) + cost;
         if (tech_skill_set_base(obj, skill, new_level) == new_level) {
-            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             level = tech_skill_level(obj, skill);
             sub_4A7B90(tech_skill_get_name(skill), new_level);
         } else {
             stat = tech_skill_get_stat(skill);
-            if (sub_4A75E0(obj, stat, stat_get_base(obj, stat) + 1)) {
+            if (sub_4A75E0(obj, stat, stat_base_get(obj, stat) + 1)) {
                 return 1;
             }
         }
@@ -838,25 +838,25 @@ int sub_4A7890(int64_t obj, int college, int score)
     while (current_value < score) {
         spl = current_value + 5 * college;
         cost = spell_cost(spl);
-        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
         if (spell_add(obj, spl, 0)) {
-            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_value++;
             spl++;
         } else {
-            if (spell_min_level(spl) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_min_level(spl) > stat_level_get(obj, STAT_LEVEL)) {
                 return 2;
             }
 
-            if (spell_min_intelligence(spl) > stat_level(obj, STAT_INTELLIGENCE)) {
-                intelligence = stat_get_base(obj, STAT_INTELLIGENCE);
+            if (spell_min_intelligence(spl) > stat_level_get(obj, STAT_INTELLIGENCE)) {
+                intelligence = stat_base_get(obj, STAT_INTELLIGENCE);
                 rc = sub_4A75E0(obj, STAT_INTELLIGENCE, intelligence + 1);
             } else {
-                willpower = stat_get_base(obj, STAT_WILLPOWER);
+                willpower = stat_base_get(obj, STAT_WILLPOWER);
                 rc = sub_4A75E0(obj, STAT_WILLPOWER, willpower + 1);
             }
 
@@ -882,20 +882,20 @@ int sub_4A79C0(int64_t obj, int tech, int degree)
     current_degree = tech_get_degree(obj, tech);
     while (current_degree < degree) {
         cost = tech_get_cost_for_degree(current_degree + 1);
-        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
         new_degree = tech_inc_degree(obj, tech);
         if (new_degree == current_degree) {
-            intelligence = stat_get_base(obj, STAT_INTELLIGENCE);
+            intelligence = stat_base_get(obj, STAT_INTELLIGENCE);
             rc = sub_4A75E0(obj, STAT_INTELLIGENCE, intelligence + 1);
             if (rc != 0) {
                 return rc;
             }
         } else {
-            stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+            stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_degree = new_degree;
             sub_4A7B90(tech_get_name(tech), -new_degree);
         }
@@ -914,7 +914,7 @@ int sub_4A7AA0(int64_t obj, int type, int score)
 
     current_value = off_4A7ABE[type](obj);
     while (current_value < score) {
-        unspent_points = stat_get_base(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_base_get(obj, STAT_UNSPENT_POINTS);
         if (unspent_points < 1) {
             return 1;
         }
@@ -925,7 +925,7 @@ int sub_4A7AA0(int64_t obj, int type, int score)
             return 2;
         }
 
-        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - 1);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - 1);
 
         mes_file_entry.num = 5 + type;
         mes_get_msg(level_mes_file, &mes_file_entry);

@@ -270,7 +270,7 @@ void reaction_adj(int64_t npc_obj, int64_t pc_obj, int value)
     }
 
     if (value < 0
-        && stat_is_maximized(pc_obj, STAT_CHARISMA)
+        && stat_atmax(pc_obj, STAT_CHARISMA)
         && critter_pc_leader_get(npc_obj) == pc_obj) {
         return;
     }
@@ -543,9 +543,9 @@ int sub_4C1500(int64_t npc_obj, int64_t pc_obj, unsigned int flags)
 
     if ((obj_field_int32_get(npc_obj, OBJ_F_NPC_FLAGS) & ONF_ALOOF) == 0
         && !critter_is_monstrous(npc_obj)) {
-        modifier = stat_level(pc_obj, STAT_REACTION_MODIFIER);
-        npc_race = stat_level(npc_obj, STAT_RACE);
-        pc_race = stat_level(pc_obj, STAT_RACE);
+        modifier = stat_level_get(pc_obj, STAT_REACTION_MODIFIER);
+        npc_race = stat_level_get(npc_obj, STAT_RACE);
+        pc_race = stat_level_get(pc_obj, STAT_RACE);
 
         v1 = dword_5B684C[npc_race][pc_race] + modifier;
         if ((flags & 0x1) != 0) {

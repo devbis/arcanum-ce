@@ -406,7 +406,7 @@ int scroll_get_distance()
         return 0;
     }
 
-    return stat_level(pc, STAT_PERCEPTION) / 2 + 3;
+    return stat_level_get(pc, STAT_PERCEPTION) / 2 + 3;
 }
 
 // 0x40E8E0

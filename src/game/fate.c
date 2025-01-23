@@ -58,12 +58,12 @@ bool fate_activate(int64_t obj, int fate)
         return false;
     }
 
-    fate_points = stat_get_base(obj, STAT_FATE_POINTS);
+    fate_points = stat_base_get(obj, STAT_FATE_POINTS);
     if (fate_points <= 0) {
         return false;
     }
 
-    stat_set_base(obj, STAT_FATE_POINTS, fate_points - 1);
+    stat_base_set(obj, STAT_FATE_POINTS, fate_points - 1);
 
     if (fate_flags[fate] != 0) {
         obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags | fate_flags[fate]);
@@ -101,8 +101,8 @@ bool fate_deactivate(int64_t obj, int fate)
 
     obj_field_int32_set(obj, OBJ_F_PC_FLAGS_FATE, flags & ~fate_flags[fate]);
 
-    fate_points = stat_get_base(obj, STAT_FATE_POINTS);
-    stat_set_base(obj, STAT_FATE_POINTS, fate_points + 1);
+    fate_points = stat_base_get(obj, STAT_FATE_POINTS);
+    stat_base_set(obj, STAT_FATE_POINTS, fate_points + 1);
 
     return true;
 }
@@ -132,7 +132,7 @@ void fate_apply(int64_t obj, int fate)
 {
     if (fate == FATE_FULL_HEAL) {
         object_hp_damage_set(obj, 0);
-        stat_set_base(obj, STAT_POISON_LEVEL, 0);
+        stat_base_set(obj, STAT_POISON_LEVEL, 0);
         critter_fatigue_damage_set(obj, 0);
     }
 

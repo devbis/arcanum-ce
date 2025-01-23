@@ -1242,9 +1242,9 @@ void sub_55A240()
     sprintf(v1[0],  ": %d  ", sub_55B4D0(qword_64E010, 0));
     sprintf(v1[1],  ": %d  ", sub_55B4D0(qword_64E010, 1));
     sprintf(v1[2],  ": %d  ", sub_55B4D0(qword_64E010, 2));
-    sprintf(v1[4],  ": %s", race_get_name(stat_level(qword_64E010, STAT_RACE)));
-    sprintf(v1[5],  ": %s", gender_get_name(stat_level(qword_64E010, STAT_GENDER)));
-    sprintf(v1[6],  ": %d ", stat_level(qword_64E010, STAT_AGE));
+    sprintf(v1[4],  ": %s", race_name(stat_level_get(qword_64E010, STAT_RACE)));
+    sprintf(v1[5],  ": %s", gender_name(stat_level_get(qword_64E010, STAT_GENDER)));
+    sprintf(v1[6],  ": %d ", stat_level_get(qword_64E010, STAT_AGE));
 
     for (index = 0; index < 7; index++) {
         v2[index] = v1[index];
@@ -1363,15 +1363,15 @@ bool sub_55A5C0(TigMessage* msg)
                         cost = 1;
                     } else {
                         stat = sub_55B410(param);
-                        if (stat_level(qword_64E010, stat) >= stat_get_max_value(qword_64E010, stat)) {
+                        if (stat_level_get(qword_64E010, stat) >= stat_level_max(qword_64E010, stat)) {
                             stru_5C8990.str = dword_64D3C4[0];
                             sub_550750(&stru_5C8990);
                             return true;
                         }
-                        cost = sub_4B0F50(value);
+                        cost = stat_cost(value);
                     }
 
-                    unspent_points = stat_level(qword_64E010, STAT_UNSPENT_POINTS);
+                    unspent_points = stat_level_get(qword_64E010, STAT_UNSPENT_POINTS);
                     if (cost > unspent_points) {
                         stru_5C8990.str = dword_64D3C4[1];
                         sub_550750(&stru_5C8990);
@@ -1400,7 +1400,7 @@ bool sub_55A5C0(TigMessage* msg)
                         return true;
                     }
 
-                    stat_set_base(qword_64E010, STAT_UNSPENT_POINTS, unspent_points - cost);
+                    stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points - cost);
                     sub_55B150();
                     sub_550720();
                     return true;
@@ -1418,7 +1418,7 @@ bool sub_55A5C0(TigMessage* msg)
                     if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
                         cost = 1;
                     } else {
-                        cost = sub_4B0F50(value);
+                        cost = stat_cost(value);
                     }
 
                     value--;
@@ -1478,8 +1478,8 @@ bool sub_55A5C0(TigMessage* msg)
                         return true;
                     }
 
-                    unspent_points = stat_level(qword_64E010, STAT_UNSPENT_POINTS);
-                    stat_set_base(qword_64E010, STAT_UNSPENT_POINTS, unspent_points + cost);
+                    unspent_points = stat_level_get(qword_64E010, STAT_UNSPENT_POINTS);
+                    stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points + cost);
                     sub_55B150();
                     sub_550720();
                     return true;
@@ -1527,21 +1527,21 @@ bool sub_55A5C0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == dword_64D428) {
-                value = stat_get_base(qword_64E010, STAT_LEVEL) + 1;
-                if (stat_set_base(qword_64E010, STAT_LEVEL, value) == value) {
-                    unspent_points = stat_get_base(qword_64E010, STAT_UNSPENT_POINTS);
-                    stat_set_base(qword_64E010, STAT_UNSPENT_POINTS, unspent_points + 1);
+                value = stat_base_get(qword_64E010, STAT_LEVEL) + 1;
+                if (stat_base_set(qword_64E010, STAT_LEVEL, value) == value) {
+                    unspent_points = stat_base_get(qword_64E010, STAT_UNSPENT_POINTS);
+                    stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points + 1);
                     sub_55B150();
                 }
                 return true;
             }
 
             if (msg->data.button.button_handle == dword_64CFDC) {
-                unspent_points = stat_get_base(qword_64E010, STAT_UNSPENT_POINTS);
+                unspent_points = stat_base_get(qword_64E010, STAT_UNSPENT_POINTS);
                 if (unspent_points >= 1) {
-                    value = stat_get_base(qword_64E010, STAT_LEVEL) - 1;
-                    if (stat_set_base(qword_64E010, STAT_LEVEL, value) == value) {
-                        stat_set_base(qword_64E010, STAT_UNSPENT_POINTS, unspent_points - 1);
+                    value = stat_base_get(qword_64E010, STAT_LEVEL) - 1;
+                    if (stat_base_set(qword_64E010, STAT_LEVEL, value) == value) {
+                        stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points - 1);
                     }
                     sub_55B150();
                 }
@@ -1599,9 +1599,9 @@ void sub_55AE70(int a1)
     if (a1 >= 109 && a1 <= 116) {
         ui_message.type = UI_MSG_TYPE_STAT;
         ui_message.field_8 = dword_5C8124[a1 - 109];
-        value = stat_get_base(qword_64E010, ui_message.field_8);
-        if (value < stat_get_max_value(qword_64E010, ui_message.field_8)) {
-            ui_message.field_C = sub_4B0F50(value + 1);
+        value = stat_base_get(qword_64E010, ui_message.field_8);
+        if (value < stat_level_max(qword_64E010, ui_message.field_8)) {
+            ui_message.field_C = stat_cost(value + 1);
         } else {
             ui_message.field_C = 0;
         }
@@ -1707,7 +1707,7 @@ void sub_55B1B0()
     for (index = 0; index < 8; index++) {
         sprintf(v1[index],
             ": %d  ",
-            stat_level(qword_64E010, stru_5C81E0[index].value));
+            stat_level_get(qword_64E010, stru_5C81E0[index].value));
     }
 
     for (index = 8; index < 13; index++) {
@@ -1828,9 +1828,9 @@ int sub_55B4D0(int64_t obj, int stat)
 {
     switch (stat) {
     case CHAREDIT_STAT_UNSPENT_POINTS:
-        return stat_get_base(obj, STAT_UNSPENT_POINTS);
+        return stat_base_get(obj, STAT_UNSPENT_POINTS);
     case CHAREDIT_STAT_LEVEL:
-        return stat_level(obj, STAT_LEVEL);
+        return stat_level_get(obj, STAT_LEVEL);
     case CHAREDIT_STAT_XP_TO_NEXT_LEVEL:
         return level_get_experience_points_to_next_level(obj);
     case CHAREDIT_STAT_3:
@@ -1842,37 +1842,37 @@ int sub_55B4D0(int64_t obj, int stat)
     case CHAREDIT_STAT_FATIGUE_PTS:
         return critter_fatigue_pts_get(obj);
     case CHAREDIT_STAT_STRENGTH_BASE:
-        return stat_get_base(obj, STAT_STRENGTH);
+        return stat_base_get(obj, STAT_STRENGTH);
     case CHAREDIT_STAT_STRENGTH_CURRENT:
-        return stat_level(obj, STAT_STRENGTH);
+        return stat_level_get(obj, STAT_STRENGTH);
     case CHAREDIT_STAT_CONSTITUTION_BASE:
-        return stat_get_base(obj, STAT_CONSTITUTION);
+        return stat_base_get(obj, STAT_CONSTITUTION);
     case CHAREDIT_STAT_CONSTITUTION_CURRENT:
-        return stat_level(obj, STAT_CONSTITUTION);
+        return stat_level_get(obj, STAT_CONSTITUTION);
     case CHAREDIT_STAT_DEXTERITY_BASE:
-        return stat_get_base(obj, STAT_DEXTERITY);
+        return stat_base_get(obj, STAT_DEXTERITY);
     case CHAREDIT_STAT_DEXTERITY_CURRENT:
-        return stat_level(obj, STAT_DEXTERITY);
+        return stat_level_get(obj, STAT_DEXTERITY);
     case CHAREDIT_STAT_BEAUTY_BASE:
-        return stat_get_base(obj, STAT_BEAUTY);
+        return stat_base_get(obj, STAT_BEAUTY);
     case CHAREDIT_STAT_BEAUTY_CURRENT:
-        return stat_level(obj, STAT_BEAUTY);
+        return stat_level_get(obj, STAT_BEAUTY);
     case CHAREDIT_STAT_INTELLIGENCE_BASE:
-        return stat_get_base(obj, STAT_INTELLIGENCE);
+        return stat_base_get(obj, STAT_INTELLIGENCE);
     case CHAREDIT_STAT_INTELLIGENCE_CURRENT:
-        return stat_level(obj, STAT_INTELLIGENCE);
+        return stat_level_get(obj, STAT_INTELLIGENCE);
     case CHAREDIT_STAT_WILLPOWER_BASE:
-        return stat_get_base(obj, STAT_WILLPOWER);
+        return stat_base_get(obj, STAT_WILLPOWER);
     case CHAREDIT_STAT_WILLPOWER_CURRENT:
-        return stat_level(obj, STAT_WILLPOWER);
+        return stat_level_get(obj, STAT_WILLPOWER);
     case CHAREDIT_STAT_PERCEPTION_BASE:
-        return stat_get_base(obj, STAT_PERCEPTION);
+        return stat_base_get(obj, STAT_PERCEPTION);
     case CHAREDIT_STAT_PERCEPTION_CURRENT:
-        return stat_level(obj, STAT_PERCEPTION);
+        return stat_level_get(obj, STAT_PERCEPTION);
     case CHAREDIT_STAT_CHARISMA_BASE:
-        return stat_get_base(obj, STAT_CHARISMA);
+        return stat_base_get(obj, STAT_CHARISMA);
     case CHAREDIT_STAT_CHARISMA_CURRENT:
-        return stat_level(obj, STAT_CHARISMA);
+        return stat_level_get(obj, STAT_CHARISMA);
     default:
         return 0;
     }
@@ -1889,28 +1889,28 @@ void sub_55B720(int64_t obj, int stat, int value)
         critter_fatigue_pts_set(obj, value);
         break;
     case CHAREDIT_STAT_STRENGTH_BASE:
-        stat_set_base(obj, STAT_STRENGTH, value);
+        stat_base_set(obj, STAT_STRENGTH, value);
         break;
     case CHAREDIT_STAT_CONSTITUTION_BASE:
-        stat_set_base(obj, STAT_CONSTITUTION, value);
+        stat_base_set(obj, STAT_CONSTITUTION, value);
         break;
     case CHAREDIT_STAT_DEXTERITY_BASE:
-        stat_set_base(obj, STAT_DEXTERITY, value);
+        stat_base_set(obj, STAT_DEXTERITY, value);
         break;
     case CHAREDIT_STAT_BEAUTY_BASE:
-        stat_set_base(obj, STAT_BEAUTY, value);
+        stat_base_set(obj, STAT_BEAUTY, value);
         break;
     case CHAREDIT_STAT_INTELLIGENCE_BASE:
-        stat_set_base(obj, STAT_INTELLIGENCE, value);
+        stat_base_set(obj, STAT_INTELLIGENCE, value);
         break;
     case CHAREDIT_STAT_WILLPOWER_BASE:
-        stat_set_base(obj, STAT_WILLPOWER, value);
+        stat_base_set(obj, STAT_WILLPOWER, value);
         break;
     case CHAREDIT_STAT_PERCEPTION_BASE:
-        stat_set_base(obj, STAT_PERCEPTION, value);
+        stat_base_set(obj, STAT_PERCEPTION, value);
         break;
     case CHAREDIT_STAT_CHARISMA_BASE:
-        stat_set_base(obj, STAT_CHARISMA, value);
+        stat_base_set(obj, STAT_CHARISMA, value);
         break;
     }
 }
@@ -3476,7 +3476,7 @@ bool sub_55E110()
 
     for (index = 0; index < 13; index++) {
         if (index < 8) {
-            stru_5C81E0[index].str = stat_get_name(stru_5C81E0[index].value);
+            stru_5C81E0[index].str = stat_name(stru_5C81E0[index].value);
         } else {
             mes_file_entry.num = num++;
             mes_get_msg(charedit_mes_file, &mes_file_entry);
@@ -3684,7 +3684,7 @@ void sub_55EC90()
         tmp[index] = buffer[index];
     }
 
-    value = stat_level(qword_64E010, STAT_ALIGNMENT) / 10;
+    value = stat_level_get(qword_64E010, STAT_ALIGNMENT) / 10;
     sprintf(buffer[0], "%d", value);
 
     tig_art_interface_id_create(254, value / 10 + 10, 0, 0, &(art_blit_info.art_id));
@@ -3729,7 +3729,7 @@ void sub_55EC90()
     art_blit_info.dst_rect = &dst_rect;
     tig_window_blit_art(dword_64CA64, &art_blit_info);
 
-    value = stat_level(qword_64E010, STAT_MAGICK_TECH_APTITUDE);
+    value = stat_level_get(qword_64E010, STAT_MAGICK_TECH_APTITUDE);
     if (value < 0) {
         sprintf(buffer[2], "%d", -value);
         strcpy(buffer[1], "0");
@@ -3996,16 +3996,16 @@ void sub_55F450(int player, int type, int param)
             int stat;
 
             stat = sub_55B410(param);
-            if (stat_level(obj, stat) > stat_get_max_value(obj, stat)) {
+            if (stat_level_get(obj, stat) > stat_level_max(obj, stat)) {
                 stru_5C8990.str = dword_64D3C4[0];
                 sub_4EDA60(&stru_5C8990, player, 0);
                 return;
             }
 
-            cost = sub_4B0F50(value);
+            cost = stat_cost(value);
         }
 
-        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+        unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             stru_5C8990.str = dword_64D3C4[1];
             sub_4EDA60(&stru_5C8990, player, 0);
@@ -4020,7 +4020,7 @@ void sub_55F450(int player, int type, int param)
             return;
         }
 
-        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
         break;
     case 1:
     case 2:
@@ -4060,7 +4060,7 @@ void sub_55F5F0(int player, int type, int param)
         if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
             cost = 1;
         } else {
-            cost = sub_4B0F50(value);
+            cost = stat_cost(value);
         }
 
         value--;
@@ -4105,8 +4105,8 @@ void sub_55F5F0(int player, int type, int param)
             return;
         }
 
-        unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
-        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
+        unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
         break;
     case 1:
         if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C84C[player][param]) {

@@ -716,7 +716,7 @@ void skill_ui_inc_skill(int64_t obj, int skill)
         base = tech_skill_get_base(obj, skill);
         level = tech_skill_level(obj, skill);
         cost = sub_4C6AF0(obj, skill);
-        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > points) {
             if (is_pc && charedit_is_created()) {
                 sub_55F160();
@@ -737,7 +737,7 @@ void skill_ui_inc_skill(int64_t obj, int skill)
             return;
         }
 
-        stat_set_base(obj, STAT_UNSPENT_POINTS, points - cost);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, points - cost);
         if (is_pc && charedit_is_created()) {
             sub_55A230();
             sub_550720();
@@ -747,7 +747,7 @@ void skill_ui_inc_skill(int64_t obj, int skill)
         base = basic_skill_get_base(obj, skill);
         level = basic_skill_level(obj, skill);
         cost = sub_4C64B0(obj, skill);
-        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > points) {
             if (is_pc && charedit_is_created()) {
                 sub_55F160();
@@ -768,7 +768,7 @@ void skill_ui_inc_skill(int64_t obj, int skill)
             return;
         }
 
-        stat_set_base(obj, STAT_UNSPENT_POINTS, points - cost);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, points - cost);
         if (is_pc && charedit_is_created()) {
             sub_55A230();
             sub_550720();
@@ -791,7 +791,7 @@ void skill_ui_dec_skill(int64_t obj, int skill)
         base = tech_skill_get_base(obj, skill);
         level = tech_skill_level(obj, skill); // FIXME: Unused.
         cost = sub_4C6B00(obj, skill);
-        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
 
         if (tech_skill_set_base(obj, skill, base - cost) != base - cost) {
             if (tech_skill_get_base(obj, skill) != 0) {
@@ -806,7 +806,7 @@ void skill_ui_dec_skill(int64_t obj, int skill)
             return;
         }
 
-        stat_set_base(obj, STAT_UNSPENT_POINTS, points + cost);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);
         if (is_pc && charedit_is_created()) {
             sub_55A230();
             sub_550720();
@@ -816,7 +816,7 @@ void skill_ui_dec_skill(int64_t obj, int skill)
         base = basic_skill_get_base(obj, skill);
         level = basic_skill_level(obj, skill);
         cost = sub_4C64C0(obj, skill);
-        points = stat_level(obj, STAT_UNSPENT_POINTS);
+        points = stat_level_get(obj, STAT_UNSPENT_POINTS);
 
         // NOTE: This code is different from tech skills code path above.
         while (level == basic_skill_level(obj, skill)) {
@@ -831,7 +831,7 @@ void skill_ui_dec_skill(int64_t obj, int skill)
                 return;
             }
 
-            points = stat_set_base(obj, STAT_UNSPENT_POINTS, points + cost);
+            points = stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);
             if (is_pc && charedit_is_created()) {
                 sub_55A230();
                 sub_550720();

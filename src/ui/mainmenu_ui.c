@@ -4509,8 +4509,8 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
     int index;
     char str[32];
 
-    race = stat_level(obj, STAT_RACE);
-    gender = stat_level(obj, STAT_GENDER);
+    race = stat_level_get(obj, STAT_RACE);
+    gender = stat_level_get(obj, STAT_GENDER);
 
     if (rect == NULL
         || (stru_5C5060.x < rect->x + rect->width
@@ -4635,8 +4635,8 @@ void mmUINewCharRefreshFunc(int64_t obj, TigRect* rect)
             if (tig_window_fill(dword_5C3624, &(stru_5C4F50[index]), tig_color_make(0, 0, 0)) == TIG_OK) {
                 sprintf(str,
                     "%s: %d",
-                    stat_get_short_name(dword_5C5130[index]),
-                    stat_level(obj, dword_5C5130[index]));
+                    stat_short_name(dword_5C5130[index]),
+                    stat_level_get(obj, dword_5C5130[index]));
                 sub_5418A0(str, &(stru_5C4F50[index]), font, 0);
             }
         }
@@ -4773,7 +4773,7 @@ bool sub_545300(int64_t obj, int* background_ptr)
 // 0x545350
 bool sub_545350(int64_t obj)
 {
-    if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+    if (stat_level_get(obj, STAT_GENDER) == GENDER_FEMALE) {
         background_obj_clear(obj);
         return sub_5453A0(obj, GENDER_MALE);
     } else {
@@ -4788,11 +4788,11 @@ bool sub_5453A0(int64_t obj, int gender)
     int race;
     int portrait;
 
-    if (stat_level(obj, STAT_GENDER) == gender) {
+    if (stat_level_get(obj, STAT_GENDER) == gender) {
         return false;
     }
 
-    race = stat_level(obj, STAT_RACE);
+    race = stat_level_get(obj, STAT_RACE);
     if (gender == GENDER_FEMALE
         && !stru_5C5170[race].available_for_female) {
         return false;
@@ -4811,7 +4811,7 @@ bool sub_5453A0(int64_t obj, int gender)
 // 0x545440
 bool sub_545440(int64_t obj)
 {
-    if (stat_level(obj, STAT_GENDER) == GENDER_MALE) {
+    if (stat_level_get(obj, STAT_GENDER) == GENDER_MALE) {
         background_obj_clear(obj);
         return sub_5453A0(obj, GENDER_FEMALE);
     } else {
@@ -4825,9 +4825,9 @@ bool sub_545490(int64_t obj)
 {
     int race;
 
-    race = stat_level(obj, STAT_RACE);
+    race = stat_level_get(obj, STAT_RACE);
     if (race > 0) {
-        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+        if (stat_level_get(obj, STAT_GENDER) == GENDER_FEMALE) {
             do {
                 race--;
             } while (race >= 0 && !stru_5C5170[race].available_for_female);
@@ -4848,7 +4848,7 @@ bool sub_545490(int64_t obj)
         }
     } else {
         race = 7;
-        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+        if (stat_level_get(obj, STAT_GENDER) == GENDER_FEMALE) {
             while (race >= 0 && !stru_5C5170[race].available_for_female) {
                 race--;
             }
@@ -4875,7 +4875,7 @@ void sub_545550(int64_t obj, int race)
     int gender;
     int portrait;
 
-    gender = stat_level(obj, STAT_GENDER);
+    gender = stat_level_get(obj, STAT_GENDER);
     if (gender == GENDER_FEMALE) {
         gender = !stru_5C5170[race].available_for_female
             ? GENDER_MALE
@@ -4895,9 +4895,9 @@ bool sub_5455D0(int64_t obj)
 {
     int race;
 
-    race = stat_level(obj, STAT_RACE);
+    race = stat_level_get(obj, STAT_RACE);
     if (race < 7) {
-        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+        if (stat_level_get(obj, STAT_GENDER) == GENDER_FEMALE) {
             do {
                 race++;
             } while (race < 7 && !stru_5C5170[race].available_for_female);
@@ -4915,7 +4915,7 @@ bool sub_5455D0(int64_t obj)
         }
     } else {
         race = RACE_HUMAN;
-        if (stat_level(obj, STAT_GENDER) == GENDER_FEMALE) {
+        if (stat_level_get(obj, STAT_GENDER) == GENDER_FEMALE) {
             while (!stru_5C5170[race].available_for_female) {
                 race++;
             }
@@ -5172,7 +5172,7 @@ bool sub_545C70(tig_button_handle_t button_handle)
             sub_442050(&v1, &v2, player_get_pc_obj());
             sub_4A40F0(0,
                 sub_407EF0(player_get_pc_obj()),
-                stat_level(player_get_pc_obj(), STAT_LEVEL),
+                stat_level_get(player_get_pc_obj(), STAT_LEVEL),
                 v1,
                 v2);
             FREE(v1);
@@ -6749,7 +6749,7 @@ void sub_5482A0(TigRect* rect)
 
     mes_file_entry1.num = 2020; // "ST: %02d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_STRENGTH));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_STRENGTH));
     text_rect.x = 475;
     text_rect.y = 117;
     text_rect.width = 54;
@@ -6759,24 +6759,24 @@ void sub_5482A0(TigRect* rect)
     mes_file_entry1.num = 2021; // "DX: %02d"
     text_rect.y += 16;
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_DEXTERITY));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_DEXTERITY));
     tig_window_text_write(dword_5C3624, str, &text_rect);
 
     mes_file_entry1.num = 2022; // "CN: %02d"
     text_rect.y += 16;
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_CONSTITUTION));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_CONSTITUTION));
     tig_window_text_write(dword_5C3624, str, &text_rect);
 
     mes_file_entry1.num = 2023; // "BE: %02d"
     text_rect.y += 16;
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_BEAUTY));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_BEAUTY));
     tig_window_text_write(dword_5C3624, str, &text_rect);
 
     mes_file_entry1.num = 2024; // "IN: %02d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_INTELLIGENCE));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_INTELLIGENCE));
     text_rect.x = 610;
     text_rect.y = 117;
     text_rect.width = 54;
@@ -6786,19 +6786,19 @@ void sub_5482A0(TigRect* rect)
     mes_file_entry1.num = 2025; // "PE: %02d"
     text_rect.y += 16;
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_PERCEPTION));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_PERCEPTION));
     tig_window_text_write(dword_5C3624, str, &text_rect);
 
     mes_file_entry1.num = 2026; // "WP: %02d"
     text_rect.y += 16;
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_WILLPOWER));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_WILLPOWER));
     tig_window_text_write(dword_5C3624, str, &text_rect);
 
     mes_file_entry1.num = 2027; // "CH: %02d"
     text_rect.y += 16;
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_CHARISMA));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_CHARISMA));
     tig_window_text_write(dword_5C3624, str, &text_rect);
 
     tig_font_pop();
@@ -6808,7 +6808,7 @@ void sub_5482A0(TigRect* rect)
 
     mes_file_entry1.num = 2028; // "Level: %d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, 17));
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, 17));
     font_desc.width = 0;
     font_desc.str = str;
     tig_font_measure(&font_desc);
@@ -6821,7 +6821,7 @@ void sub_5482A0(TigRect* rect)
 
     mes_file_entry1.num = 2029; // "Alignment: %d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
-    sprintf(str, mes_file_entry1.str, stat_level(obj, STAT_ALIGNMENT) / 10);
+    sprintf(str, mes_file_entry1.str, stat_level_get(obj, STAT_ALIGNMENT) / 10);
     font_desc.width = 0;
     font_desc.str = str;
     tig_font_measure(&font_desc);
@@ -6835,7 +6835,7 @@ void sub_5482A0(TigRect* rect)
     mes_file_entry1.num = 2030; // "Aptitude: %s %d"
     mes_get_msg(mainmenu_ui_mainmenu_mes_file, &mes_file_entry1);
 
-    aptitude = stat_level(obj, STAT_MAGICK_TECH_APTITUDE);
+    aptitude = stat_level_get(obj, STAT_MAGICK_TECH_APTITUDE);
     if (aptitude > 0) {
         mes_file_entry2.num = 2033; // "Magick"
     } else if (aptitude < 0) {
@@ -6987,7 +6987,7 @@ void mainmenu_ui_refresh_multiplayer_select_char(TigRect* rect)
             tig_window_text_write(dword_5C3624, copy, &text_rect);
             FREE(copy);
 
-            sprintf(str, "%d", stat_level(dword_64C41C[index], STAT_LEVEL));
+            sprintf(str, "%d", stat_level_get(dword_64C41C[index], STAT_LEVEL));
             font_desc.width = 0;
             font_desc.str = str;
             tig_font_measure(&font_desc);

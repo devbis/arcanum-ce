@@ -355,7 +355,7 @@ bool sub_57C290(int magictech)
     }
 
     pc_obj = player_get_pc_obj();
-    cnt = stat_level(pc_obj, STAT_INTELLIGENCE) / 4;
+    cnt = stat_level_get(pc_obj, STAT_INTELLIGENCE) / 4;
 
     for (index = 0; index < cnt; index++) {
         if (stru_5CB3A8[index].field_4 == 1 && stru_5CB3A8[index].magictech == magictech) {
@@ -475,7 +475,7 @@ void sub_57C4B0()
 
     obj = player_get_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
-        v1 = stat_level(obj, STAT_INTELLIGENCE) / 4;
+        v1 = stat_level_get(obj, STAT_INTELLIGENCE) / 4;
         if (v1 != dword_5CB3D0) {
             v2 = 0;
             while (v2 < v1) {
@@ -503,7 +503,7 @@ void spell_ui_add(int64_t obj, int spell)
     int unspent_points;
 
     cost = spell_cost(spell);
-    unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+    unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
 
     if (cost > unspent_points) {
         sub_55F160();
@@ -512,12 +512,12 @@ void spell_ui_add(int64_t obj, int spell)
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
         if (!spell_add(obj, spell, false)) {
-            if (spell_min_level(spell) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_min_level(spell) > stat_level_get(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }
 
-            if (spell_min_intelligence(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
+            if (spell_min_intelligence(spell) > stat_level_get(obj, STAT_INTELLIGENCE)) {
                 sub_55F1A0();
             } else {
                 sub_55F200(6);
@@ -532,12 +532,12 @@ void spell_ui_add(int64_t obj, int spell)
         }
 
         if (!spell_add(obj, spell, false)) {
-            if (spell_min_level(spell) > stat_level(obj, STAT_LEVEL)) {
+            if (spell_min_level(spell) > stat_level_get(obj, STAT_LEVEL)) {
                 sub_55F180();
                 return;
             }
 
-            if (spell_min_intelligence(spell) > stat_level(obj, STAT_INTELLIGENCE)) {
+            if (spell_min_intelligence(spell) > stat_level_get(obj, STAT_INTELLIGENCE)) {
                 sub_55F1A0();
             } else {
                 sub_55F200(6);
@@ -547,7 +547,7 @@ void spell_ui_add(int64_t obj, int spell)
         }
     }
 
-    stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
+    stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
     if (charedit_is_created()) {
         sub_55A230();
         sub_550720();
@@ -561,10 +561,10 @@ void spell_ui_remove(int64_t obj, int spell)
     int unspent_points;
 
     cost = spell_cost(spell);
-    unspent_points = stat_level(obj, STAT_UNSPENT_POINTS);
+    unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
     if (spell_remove(obj, spell)) {
         sub_57F340(spell);
-        stat_set_base(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
+        stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points + cost);
 
         if (charedit_is_created()) {
             sub_55A230();
