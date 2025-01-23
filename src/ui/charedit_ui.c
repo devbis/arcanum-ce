@@ -1594,7 +1594,7 @@ void sub_55AE70(int a1)
 
     if (a1 >= 109 && a1 <= 116) {
         ui_message.type = UI_MSG_TYPE_STAT;
-        ui_message.field_8 = dword_5C8124[a1 - 109];
+        ui_message.field_8 = dword_5C8124[a1 - 109 + 2];
         value = stat_base_get(qword_64E010, ui_message.field_8);
         if (value < stat_level_max(qword_64E010, ui_message.field_8)) {
             ui_message.field_C = stat_cost(value + 1);
