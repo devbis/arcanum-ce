@@ -1,6 +1,7 @@
 #include "game/target.h"
 
 #include "game/critter.h"
+#include "game/material.h"
 #include "game/obj.h"
 #include "game/object.h"
 #include "game/path.h"
@@ -803,7 +804,7 @@ bool sub_4F2D20(S603CB8* a1)
             }
 
             if ((tgt & 0x1000000) != 0
-                && obj_field_int32_get(a1->field_20, OBJ_F_MATERIAL) != 4) {
+                && obj_field_int32_get(a1->field_20, OBJ_F_MATERIAL) != MATERIAL_FLESH) {
                 return false;
             }
 

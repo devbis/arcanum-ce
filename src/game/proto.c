@@ -6,6 +6,7 @@
 #include "game/level.h"
 #include "game/light.h"
 #include "game/magictech.h"
+#include "game/material.h"
 #include "game/obj_private.h"
 #include "game/object.h"
 #include "game/oname.h"
@@ -487,34 +488,34 @@ void sub_468930(long long obj, int description)
         switch (description) {
         case 1000:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 1);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_BRICK);
             break;
         case 1001:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 1);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_BRICK);
             break;
         case 1002:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             break;
         case 1003:
             sub_49B240(obj, OBJ_F_HP_PTS, -50);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             break;
         case 1004:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             break;
         case 1005:
             sub_49B240(obj, OBJ_F_HP_PTS, -60);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             break;
         case 1006:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             break;
         case 1007:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_WALL_FLAGS, obj_field_int32_get(obj, OBJ_F_WALL_FLAGS) | 0x1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x800);
             break;
@@ -525,49 +526,49 @@ void sub_468930(long long obj, int description)
         switch (description) {
         case 2008:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8060);
             break;
         case 2009:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8065);
             break;
         case 2010:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8055);
             break;
         case 2011:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8075);
             break;
         case 2012:
             sub_49B240(obj, OBJ_F_HP_PTS, -70);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x10);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8060);
             break;
         case 2013:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8070);
             break;
         case 2014:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8070);
             break;
         case 2015:
             sub_49B240(obj, OBJ_F_HP_PTS, -70);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x10);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
         case 2016:
             sub_49B240(obj, OBJ_F_HP_PTS, -70);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x10);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
@@ -575,13 +576,13 @@ void sub_468930(long long obj, int description)
             break;
         case 2017:
             sub_49B240(obj, OBJ_F_HP_PTS, -90);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x420);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
         case 2018:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x30);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
@@ -589,21 +590,21 @@ void sub_468930(long long obj, int description)
             break;
         case 2019:
             sub_49B240(obj, OBJ_F_HP_PTS, -30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8110);
             break;
         case 2020:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8105);
             break;
         case 2021:
             sub_49B240(obj, OBJ_F_HP_PTS, -50);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8100);
             break;
         case 2022:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_PORTAL_FLAGS, 2);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8110);
             break;
@@ -615,7 +616,7 @@ void sub_468930(long long obj, int description)
             tig_art_container_id_create(0, 0, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400400);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8025);
             break;
@@ -625,7 +626,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -633,7 +634,7 @@ void sub_468930(long long obj, int description)
             tig_art_container_id_create(0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8015);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
@@ -643,7 +644,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xBu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
         case 3027:
@@ -652,7 +653,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(3, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
         case 3028:
@@ -661,7 +662,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(5, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
         case 3029:
@@ -670,7 +671,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(7, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
         case 3030:
@@ -679,7 +680,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(9, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
         case 3031:
@@ -688,7 +689,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
         case 3032:
@@ -697,7 +698,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xFu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             break;
         case 3033:
@@ -706,7 +707,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(2, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8020);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -716,7 +717,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(4, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8020);
             break;
         case 3035:
@@ -725,7 +726,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(7, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 69);
@@ -737,7 +738,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(7, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 70);
@@ -749,7 +750,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(7, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 71);
@@ -761,7 +762,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(9, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 69);
@@ -772,7 +773,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(9, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 70);
@@ -783,7 +784,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(9, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8005);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 71);
@@ -794,7 +795,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 56);
@@ -806,7 +807,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 57);
@@ -818,7 +819,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 58);
@@ -830,7 +831,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 59);
@@ -842,7 +843,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 60);
@@ -854,7 +855,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
@@ -866,7 +867,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 56);
@@ -877,7 +878,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 57);
@@ -888,7 +889,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 58);
@@ -899,7 +900,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8010);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 59);
@@ -910,7 +911,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 60);
@@ -921,7 +922,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8030);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
@@ -932,7 +933,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xAu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 102);
@@ -943,7 +944,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8000);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x200);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 102);
@@ -954,7 +955,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8020);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x400);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_INVENTORY_SOURCE, 64);
@@ -966,7 +967,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8025);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 14);
             break;
@@ -976,7 +977,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8035);
             break;
         case 3058:
@@ -985,7 +986,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8040);
             break;
         case 3059:
@@ -994,7 +995,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8045);
             break;
         case 3060:
@@ -1003,7 +1004,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_container_id_create(0xDu, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_DESTROYED_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_CONTAINER_FLAGS, obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) | 0x600);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8025);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 15);
@@ -1016,7 +1017,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 1, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1031,7 +1032,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 2, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1046,7 +1047,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 3, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1059,7 +1060,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 4, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1071,7 +1072,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 5, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 3, 100);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x400C00);
@@ -1081,7 +1082,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 6, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
@@ -1094,7 +1095,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 7, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
@@ -1106,7 +1107,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 8, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
@@ -1119,7 +1120,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 9, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
@@ -1132,7 +1133,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 10, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
@@ -1145,7 +1146,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 11, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 400);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 75);
@@ -1158,7 +1159,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 12, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1170,7 +1171,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 13, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1182,7 +1183,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 14, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 150);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1194,7 +1195,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
@@ -1204,7 +1205,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 16, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 16);
@@ -1213,7 +1214,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 17, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~4030);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400000);
@@ -1223,7 +1224,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 18, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
@@ -1238,7 +1239,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 19, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 250);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
@@ -1252,7 +1253,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 22, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 2, 20);
@@ -1265,7 +1266,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x4);
@@ -1275,7 +1276,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0, 20, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30000);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 100);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 100);
@@ -1291,7 +1292,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400C34);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x201);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000);
             break;
@@ -1301,14 +1302,14 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400C30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 10);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GAS);
             break;
         case 4030:
             tig_art_scenery_id_create(0x66, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400010);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 11);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FORCE);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             break;
         case 4031:
@@ -1316,7 +1317,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400420);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 12);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FIRE);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) | 0x10);
             break;
@@ -1324,20 +1325,20 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0x64, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             break;
         case 4033:
             tig_art_scenery_id_create(0xBu, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400C20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 10);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GAS);
             break;
         case 4035:
             tig_art_scenery_id_create(0, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1351,7 +1352,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(4, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1365,7 +1366,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(4, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1379,7 +1380,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(1, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1393,7 +1394,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1407,7 +1408,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1421,7 +1422,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1435,7 +1436,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(6, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1449,7 +1450,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(4, 16, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 250);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 0, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_RESISTANCE_IDX, 1, 10);
@@ -1464,7 +1465,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(7, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1478,7 +1479,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(8, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1492,7 +1493,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(9, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100400);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
@@ -1506,7 +1507,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0x4Bu, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 250);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8521);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400);
@@ -1516,7 +1517,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0x1Du, 21, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) & ~0x4000 | 0x100C00);
             obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 64);
@@ -1525,7 +1526,7 @@ void sub_468930(long long obj, int description)
             tig_art_scenery_id_create(0x61, 15, 0, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 250);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 8521);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400);
@@ -1536,7 +1537,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x400420);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 12);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FIRE);
             break;
         }
         break;
@@ -1544,7 +1545,7 @@ void sub_468930(long long obj, int description)
         tig_art_scenery_id_create(0, 0, 0, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_AID, art_id);
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
         break;
     case OBJ_TYPE_WEAPON:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
@@ -1575,7 +1576,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -1603,7 +1604,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             break;
@@ -1631,7 +1632,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -1659,7 +1660,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
@@ -1688,7 +1689,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -1719,7 +1720,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -1749,7 +1750,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -1778,7 +1779,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -1809,7 +1810,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
@@ -1840,7 +1841,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 35);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
@@ -1870,7 +1871,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -1900,7 +1901,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 40);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 45);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -1930,7 +1931,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 30);
             obj_field_int32_set(obj, OBJ_F_SOUND_EFFECT, 5070);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -1960,7 +1961,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -1989,7 +1990,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 16);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             scr.num = 29006;
@@ -2022,7 +2023,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -35);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -2053,7 +2054,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -2085,7 +2086,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -2114,7 +2115,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -2145,7 +2146,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -2178,7 +2179,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -2207,7 +2208,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -2236,7 +2237,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -2266,7 +2267,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 536);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -2295,7 +2296,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 24);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -33);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -2326,7 +2327,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -2358,7 +2359,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -2390,7 +2391,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -2419,7 +2420,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -2473,7 +2474,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -2502,7 +2503,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 65);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -2531,7 +2532,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -2560,7 +2561,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -2590,7 +2591,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
     LABEL_252:
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -2619,7 +2620,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -2654,7 +2655,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -2687,7 +2688,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -2715,7 +2716,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             break;
@@ -2743,7 +2744,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 18);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -2773,7 +2774,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -2803,7 +2804,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
@@ -2836,7 +2837,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29723);
@@ -2870,7 +2871,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
@@ -2898,7 +2899,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
@@ -2926,7 +2927,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 85);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -2954,7 +2955,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -2982,7 +2983,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 7);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -3010,7 +3011,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
@@ -3040,7 +3041,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 10);
@@ -3073,7 +3074,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29691);
@@ -3105,7 +3106,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -3137,7 +3138,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, -5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -3167,7 +3168,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -3198,7 +3199,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -3228,7 +3229,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -3260,7 +3261,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -3291,7 +3292,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -3322,7 +3323,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -3352,7 +3353,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -3383,7 +3384,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 280);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -3412,7 +3413,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -3441,7 +3442,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -3470,7 +3471,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -3499,7 +3500,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
             break;
@@ -3528,7 +3529,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -80);
@@ -3562,7 +3563,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29689);
@@ -3594,7 +3595,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
@@ -3626,7 +3627,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -3656,7 +3657,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -3686,7 +3687,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             scr.num = 28007;
@@ -3719,7 +3720,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
             scr.num = 28006;
@@ -3752,7 +3753,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -3782,7 +3783,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_NAME, 5678);
@@ -3813,7 +3814,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_NAME, 5678);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
@@ -3844,7 +3845,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
@@ -3875,7 +3876,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -3907,7 +3908,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -52);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -3938,7 +3939,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
@@ -3969,7 +3970,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -4000,7 +4001,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_WEAPON_BONUS_TO_HIT, -5);
@@ -4031,7 +4032,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -4064,7 +4065,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 6);
             break;
@@ -4093,7 +4094,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 62);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 20);
@@ -4126,7 +4127,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 62);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_2, 50);
@@ -4161,7 +4162,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 65);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_2, 42);
@@ -4195,7 +4196,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -4227,7 +4228,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 18);
@@ -4257,7 +4258,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
@@ -4286,7 +4287,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -4316,7 +4317,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -4351,7 +4352,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_EFFECT, 50);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_MISS_CHANCE, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -4383,7 +4384,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 70);
@@ -4415,7 +4416,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -4449,7 +4450,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -4483,7 +4484,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -4517,7 +4518,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -4552,7 +4553,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -45);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
@@ -4581,7 +4582,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -4612,7 +4613,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 4);
@@ -4645,7 +4646,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 8);
@@ -4678,7 +4679,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 16);
@@ -4714,7 +4715,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 40);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
@@ -4746,7 +4747,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
@@ -4778,7 +4779,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 30);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 50);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -75);
@@ -4807,7 +4808,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
@@ -4839,7 +4840,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
@@ -4872,7 +4873,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 13);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
@@ -4906,7 +4907,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 9);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
@@ -4940,7 +4941,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
@@ -4974,7 +4975,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 9);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
@@ -5008,7 +5009,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
@@ -5041,7 +5042,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
@@ -5076,7 +5077,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
@@ -5111,7 +5112,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
@@ -5146,7 +5147,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
@@ -5181,7 +5182,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 11);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 16);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
@@ -5219,7 +5220,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5253,7 +5254,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 1, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 1, 30);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5285,7 +5286,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5318,7 +5319,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5351,7 +5352,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5384,7 +5385,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 14);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5416,7 +5417,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 141);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -5447,7 +5448,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 269);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -48);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -5477,7 +5478,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 80);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 44);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
@@ -5507,7 +5508,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 45);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 800);
@@ -5542,7 +5543,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 2, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -48);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -5574,7 +5575,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -75);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
@@ -5607,7 +5608,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 3, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 3, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -95);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -5636,7 +5637,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
@@ -5669,7 +5670,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 20);
@@ -5702,7 +5703,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 40);
@@ -5735,7 +5736,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 18);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 60);
@@ -5768,7 +5769,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 12);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 12);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 4, 24);
             obj_field_int32_set(obj, OBJ_F_ITEM_MANA_STORE, 80);
@@ -5799,7 +5800,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -5831,7 +5832,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 2);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5863,7 +5864,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
@@ -5896,7 +5897,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29695);
@@ -5928,7 +5929,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5961,7 +5962,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 7);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 82);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -5995,7 +5996,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_MAGIC_DAMAGE_ADJ_IDX, 0, 20);
             obj_field_int32_set(obj, OBJ_F_WEAPON_MAGIC_CRIT_HIT_CHANCE, 50);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 82);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -6024,7 +6025,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_WEAPON_CRIT_MISS_CHART, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 40);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
@@ -6057,7 +6058,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 15);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             break;
@@ -6088,7 +6089,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -6117,7 +6118,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 7);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 13);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
@@ -6147,7 +6148,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 4, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 4, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 4);
             break;
@@ -6174,7 +6175,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -6203,7 +6204,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 1);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -6233,7 +6234,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_LOWER_IDX, 0, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_WEAPON_DAMAGE_UPPER_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_WEAPON_FLAGS, 26);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
@@ -6259,7 +6260,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AMMO_QUANTITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -6273,7 +6274,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AMMO_QUANTITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
@@ -6289,7 +6290,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AMMO_QUANTITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
@@ -6305,7 +6306,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_AMMO_QUANTITY, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 6);
@@ -6335,7 +6336,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -6379,7 +6380,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
@@ -6426,7 +6427,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
@@ -6449,7 +6450,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -90);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 600);
@@ -6499,7 +6500,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, -15);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
@@ -6543,7 +6544,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 950);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 5);
@@ -6596,7 +6597,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             scr.hdr.counters &= ~0xFF;
@@ -6629,7 +6630,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -6671,7 +6672,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -6690,7 +6691,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 125);
             scr.num = 30291;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -6714,7 +6715,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 3);
             scr.hdr.counters &= ~0xFF;
@@ -6738,7 +6739,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -6756,7 +6757,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -6774,7 +6775,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -6790,7 +6791,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
@@ -6807,7 +6808,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -6838,7 +6839,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
@@ -6863,7 +6864,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -6906,7 +6907,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 9);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
             scr.num = 28008;
@@ -6963,7 +6964,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -350);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
@@ -7010,7 +7011,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 3, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -90);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 600);
@@ -7073,7 +7074,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
@@ -7116,7 +7117,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
@@ -7165,7 +7166,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 70);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 40);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 40);
@@ -7202,7 +7203,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             scr.num = 30020;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -7252,7 +7253,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 800);
@@ -7277,7 +7278,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 340);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -7321,7 +7322,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
@@ -7368,7 +7369,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 680);
@@ -7392,7 +7393,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
@@ -7429,7 +7430,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, -5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
@@ -7464,7 +7465,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 30);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 930);
@@ -7512,7 +7513,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 11);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x05;
@@ -7544,7 +7545,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_NAME, 2805);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
@@ -7591,7 +7592,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 700);
@@ -7616,7 +7617,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -7660,7 +7661,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 18);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 540);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 3);
             switch (description) {
@@ -7708,7 +7709,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 670);
@@ -7746,7 +7747,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 900);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
@@ -7787,7 +7788,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 12);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 8);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29715);
@@ -7824,7 +7825,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 40);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -35);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
@@ -7874,7 +7875,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             scr.hdr.counters &= ~0xFF;
             scr.hdr.counters |= 0x05;
@@ -7906,7 +7907,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -7954,7 +7955,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
@@ -8001,7 +8002,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -8026,7 +8027,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -8060,7 +8061,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             scr.num = 30020;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -8098,7 +8099,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -8132,7 +8133,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             switch (description) {
@@ -8168,7 +8169,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 140);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29701);
@@ -8216,7 +8217,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
@@ -8263,7 +8264,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 60);
@@ -8315,7 +8316,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 14);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
@@ -8344,7 +8345,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 735);
@@ -8366,7 +8367,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 800);
@@ -8390,7 +8391,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -150);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
@@ -8416,7 +8417,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 10);
@@ -8439,7 +8440,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 2807);
             scr.num = 1341;
@@ -8458,7 +8459,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29708);
             obj_field_int32_set(obj, OBJ_F_NAME, 2827);
@@ -8486,7 +8487,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 4, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 80);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29708);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
@@ -8503,7 +8504,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -8519,7 +8520,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -8536,7 +8537,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -8554,7 +8555,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             scr.hdr.counters &= 0xFF8701FF;
@@ -8580,7 +8581,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -8597,7 +8598,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 8);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 130);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -8614,7 +8615,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -8631,7 +8632,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 40);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -8648,7 +8649,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 40);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
             break;
@@ -8665,7 +8666,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 16);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
@@ -8683,7 +8684,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 40);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
             obj_field_int32_set(obj, OBJ_F_ARMOR_FLAGS, 16);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
@@ -8703,7 +8704,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29711);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 11);
@@ -8723,7 +8724,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 6);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29711);
             scr.hdr.counters &= 0xFF8805FF;
@@ -8750,7 +8751,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 145);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 7);
             scr.hdr.counters &= ~0xFF;
@@ -8777,7 +8778,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 15);
             scr.hdr.counters &= ~0xFF;
@@ -8804,7 +8805,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 260);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 10);
             scr.hdr.counters &= ~0xFF;
@@ -8831,7 +8832,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 183);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 2);
             scr.hdr.counters &= ~0xFF;
@@ -8856,7 +8857,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             scr.hdr.counters &= 0xFF8A01FF;
@@ -8881,7 +8882,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             scr.hdr.counters &= 0xFF8B02FF;
@@ -8907,7 +8908,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             scr.num = 30291;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -8930,7 +8931,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
             scr.num = 30291;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -8953,7 +8954,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             scr.hdr.counters &= 0xFF8C02FF;
             scr.hdr.counters |= 0x8C0200;
@@ -8978,7 +8979,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             scr.num = 28017;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -9000,7 +9001,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -9020,7 +9021,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 8);
             break;
@@ -9040,7 +9041,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 182);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, -1);
@@ -9061,7 +9062,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 2048);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
@@ -9087,7 +9088,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.num = 30291;
@@ -9109,7 +9110,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 220);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -9126,7 +9127,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 18);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -9143,7 +9144,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 550);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -9160,7 +9161,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 360);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 13);
             break;
@@ -9177,7 +9178,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
@@ -9198,7 +9199,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 60);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
@@ -9219,7 +9220,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29712);
@@ -9242,7 +9243,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1000);
@@ -9269,7 +9270,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 7);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 850);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29716);
@@ -9297,7 +9298,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1);
             scr.num = 30291;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -9320,7 +9321,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 1);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             scr.num = 30020;
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_WIELD_ON, &scr);
@@ -9345,7 +9346,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 275);
             obj_field_int32_set(obj, OBJ_F_NAME, 2849);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
@@ -9376,7 +9377,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29707);
@@ -9404,7 +9405,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 9);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
             scr.hdr.counters &= 0xFFD804FF;
@@ -9430,7 +9431,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             scr.hdr.counters &= 0xFFD702FF;
@@ -9456,7 +9457,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 0);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 40);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29709);
@@ -9484,7 +9485,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 2806);
             scr.num = 30291;
@@ -9510,7 +9511,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
@@ -9569,7 +9570,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
@@ -9628,7 +9629,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
@@ -9687,7 +9688,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 16);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 470);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 20);
@@ -9745,7 +9746,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, -150);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
@@ -9771,7 +9772,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
@@ -9817,7 +9818,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
@@ -9863,7 +9864,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
@@ -9909,7 +9910,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, -10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -25);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 870);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 20);
@@ -9956,7 +9957,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 2, 65);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, -80);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_WEIGHT_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, -10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, -15);
@@ -10014,7 +10015,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
@@ -10057,7 +10058,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
@@ -10100,7 +10101,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
@@ -10143,7 +10144,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 0);
@@ -10186,7 +10187,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
@@ -10229,7 +10230,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
@@ -10272,7 +10273,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 15);
@@ -10315,7 +10316,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 20);
@@ -10358,7 +10359,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 7);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 3);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 2);
             switch (description) {
@@ -10399,7 +10400,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
@@ -10445,7 +10446,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
@@ -10491,7 +10492,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
@@ -10537,7 +10538,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_SILENT_MOVE_ADJ, 15);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29696);
@@ -10571,7 +10572,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 30);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
@@ -10593,7 +10594,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
@@ -10615,7 +10616,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
@@ -10637,7 +10638,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
@@ -10659,7 +10660,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 180);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 1, 2);
@@ -10683,7 +10684,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 125);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 1024);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29702);
@@ -10705,7 +10706,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
@@ -10731,7 +10732,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 6);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
@@ -10756,7 +10757,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 8);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
@@ -10781,7 +10782,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_RESISTANCE_ADJ_IDX, 0, 12);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
@@ -10809,7 +10810,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 25);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 2);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 2);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
@@ -10831,7 +10832,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 3);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 3);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
@@ -10853,7 +10854,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 75);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 4);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
@@ -10875,7 +10876,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 100);
             obj_field_int32_set(obj, OBJ_F_ARMOR_MAGIC_AC_ADJ, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 0, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29705);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 12);
@@ -10896,7 +10897,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 5);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -10917,7 +10918,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 10);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -10938,7 +10939,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 15);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 15);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -10959,7 +10960,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 1, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 3, 20);
             obj_arrayfield_int32_set(obj, OBJ_F_ARMOR_MAGIC_RESISTANCE_ADJ_IDX, 2, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, 29706);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -10976,7 +10977,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ARMOR_AC_ADJ, 4);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 2);
             break;
@@ -10995,7 +10996,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             obj_field_int32_set(obj, OBJ_F_ARMOR_UNARMED_BONUS_DAMAGE, 15);
             scr.hdr.counters &= ~0xFF;
@@ -11016,7 +11017,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_NAME, 2857);
             break;
@@ -11031,7 +11032,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -11046,7 +11047,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
@@ -11062,7 +11063,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 350);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -11077,7 +11078,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -11092,7 +11093,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -11107,7 +11108,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -11122,7 +11123,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 9);
             break;
@@ -11137,7 +11138,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 600);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -11152,7 +11153,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 900);
             obj_field_int32_set(obj, OBJ_F_NAME, 5684);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
@@ -11168,7 +11169,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1200);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -11183,7 +11184,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_USE_AID_FRAGMENT, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1500);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 10);
             break;
@@ -11203,7 +11204,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ARMOR_SILENT_MOVE_ADJ, 0);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
             scr.hdr.counters &= 0xFFE703FF;
             scr.hdr.counters |= 0xE70300;
@@ -11224,7 +11225,7 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
         tig_art_item_id_create(0, 1, 0, 0, 0, 3, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
         break;
     case OBJ_TYPE_FOOD:
@@ -11238,7 +11239,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(88, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
             break;
@@ -11248,7 +11249,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(51, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
@@ -11260,7 +11261,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(11, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -65);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
@@ -11276,7 +11277,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(9, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -11292,7 +11293,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(12, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
@@ -11306,7 +11307,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(13, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -6);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
@@ -11320,7 +11321,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(5, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -11334,7 +11335,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(17, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -3);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11348,7 +11349,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(4, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
@@ -11364,7 +11365,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(25, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11378,7 +11379,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(32, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -11394,7 +11395,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(27, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -7);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11410,7 +11411,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(42, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -56);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -11426,7 +11427,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(49, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -78);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -11442,7 +11443,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(48, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -11456,7 +11457,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(36, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
@@ -11470,7 +11471,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(43, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11484,7 +11485,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(79, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -11503,7 +11504,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(29, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -75);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -11519,7 +11520,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(6, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -11535,7 +11536,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(7, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
@@ -11551,7 +11552,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(8, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -11567,7 +11568,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(10, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 45);
@@ -11583,7 +11584,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(14, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -11597,7 +11598,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(15, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 3);
@@ -11611,7 +11612,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(16, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11625,7 +11626,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(18, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -11641,7 +11642,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(19, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -11657,7 +11658,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(20, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -11674,7 +11675,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(21, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
@@ -11690,7 +11691,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(22, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -11706,7 +11707,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(23, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 7);
@@ -11720,7 +11721,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(24, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -45);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -11734,7 +11735,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(26, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
@@ -11751,7 +11752,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(28, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
@@ -11765,7 +11766,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(30, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -11779,7 +11780,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(31, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -11796,7 +11797,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(33, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11810,7 +11811,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(34, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11824,7 +11825,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(35, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11838,7 +11839,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(37, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -11854,7 +11855,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(38, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 70);
@@ -11870,7 +11871,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(39, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -11886,7 +11887,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(40, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -92);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 90);
@@ -11902,7 +11903,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(41, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -32);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -11916,7 +11917,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(44, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -11930,7 +11931,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(45, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -11946,7 +11947,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(46, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -11960,7 +11961,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(47, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -11974,7 +11975,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(50, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -11988,7 +11989,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(52, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -46);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -12002,7 +12003,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(53, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -12016,7 +12017,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(54, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -35);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -12030,7 +12031,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(55, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -12044,7 +12045,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(64, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -93);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12060,7 +12061,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(65, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -83);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12076,7 +12077,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(66, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -83);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12092,7 +12093,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(56, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12108,7 +12109,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(57, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -95);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12124,7 +12125,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(58, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -95);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12140,7 +12141,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(59, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -74);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12156,7 +12157,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(60, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -64);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -12172,7 +12173,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(61, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12188,7 +12189,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(62, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -75);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
@@ -12203,7 +12204,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(63, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -12219,7 +12220,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(68, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
@@ -12233,7 +12234,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(69, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
@@ -12247,7 +12248,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(70, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
@@ -12263,7 +12264,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(67, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -12276,7 +12277,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(71, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
@@ -12289,7 +12290,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(72, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -12302,7 +12303,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(73, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
@@ -12315,7 +12316,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(74, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 4);
@@ -12328,7 +12329,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(75, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 25);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 3);
@@ -12341,7 +12342,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(76, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 3);
@@ -12354,7 +12355,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(77, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 70);
@@ -12369,7 +12370,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(78, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -99);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
@@ -12384,7 +12385,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(80, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12403,7 +12404,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(81, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12422,7 +12423,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(82, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12441,7 +12442,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(83, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12460,7 +12461,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(84, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12479,7 +12480,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(86, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12495,7 +12496,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(2, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12511,7 +12512,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(1, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12527,7 +12528,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(87, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12543,7 +12544,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(85, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -12559,7 +12560,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(57, 1, 0, 0, 0, 4, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -95);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1000);
@@ -12580,7 +12581,7 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
         tig_art_item_id_create(0, 1, 0, 0, 0, 5, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
         obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, 1);
         obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
@@ -12626,7 +12627,7 @@ void sub_468930(long long obj, int description)
     case OBJ_TYPE_KEY:
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
         obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
         obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
         obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
@@ -12668,7 +12669,7 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
         tig_art_item_id_create(1, 1, 0, 0, 0, 7, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
         obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
         obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
         obj_field_int32_set(obj, OBJ_F_HP_PTS, 200);
@@ -12679,7 +12680,7 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_UNKNOWN, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_DESCRIPTION_EFFECTS, description);
         obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 128);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
         switch (description) {
         case 14062:
             obj_field_int32_set(obj, OBJ_F_WRITTEN_SUBTYPE, 0);
@@ -13567,7 +13568,7 @@ void sub_468930(long long obj, int description)
         obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
         tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
         obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
         obj_field_int32_set(obj, OBJ_F_CATEGORY, 1);
         switch (description) {
         case 15066:
@@ -13581,7 +13582,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 4000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
@@ -13596,7 +13597,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(69, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_NAME, 5609);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS) | 0x80000);
@@ -13608,7 +13609,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(70, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_NAME, 5610);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -13621,7 +13622,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(28, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -13634,7 +13635,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(31, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -13649,7 +13650,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(32, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -13662,7 +13663,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(52, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -13677,7 +13678,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(29, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -13690,7 +13691,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(0, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -13703,7 +13704,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(93, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 1);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_BRICK);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -13716,7 +13717,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(43, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
@@ -13729,7 +13730,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(54, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
@@ -13742,7 +13743,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(45, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -13755,7 +13756,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(46, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -13768,7 +13769,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(15, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -13787,7 +13788,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(192, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -35);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
@@ -13803,7 +13804,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(9, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -13816,7 +13817,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(13, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -13829,7 +13830,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(10, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -13845,7 +13846,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(63, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -13859,7 +13860,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(61, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 12);
@@ -13872,7 +13873,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(65, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -13885,7 +13886,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(59, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1);
@@ -13898,7 +13899,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(66, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 7);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 1);
@@ -13911,7 +13912,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(7, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2500);
@@ -13924,7 +13925,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(8, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
@@ -13942,7 +13943,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 4000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
@@ -13956,7 +13957,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(92, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
@@ -13969,7 +13970,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(58, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -13983,7 +13984,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(89, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -13999,7 +14000,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(87, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -14015,7 +14016,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(0, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
@@ -14029,7 +14030,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(2, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
@@ -14041,7 +14042,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(4, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 6000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 6000);
@@ -14053,7 +14054,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(5, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14072,7 +14073,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(6, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -65);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
@@ -14085,7 +14086,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(19, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 120);
@@ -14101,7 +14102,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(20, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -35);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -14114,7 +14115,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(21, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
@@ -14126,7 +14127,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(22, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -14139,7 +14140,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(23, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 15);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 60);
@@ -14151,7 +14152,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(27, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
@@ -14164,7 +14165,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(30, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
@@ -14177,7 +14178,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(35, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -14190,7 +14191,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(38, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
@@ -14203,7 +14204,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(41, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -55);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14216,7 +14217,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(42, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -14232,7 +14233,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(44, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
@@ -14245,7 +14246,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(47, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
@@ -14258,7 +14259,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(48, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -14271,7 +14272,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(49, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
@@ -14289,7 +14290,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(50, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -14302,7 +14303,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(112, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14315,7 +14316,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(53, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -14328,7 +14329,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(55, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14341,7 +14342,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(56, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14354,7 +14355,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(57, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -25);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -14367,7 +14368,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(60, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14380,7 +14381,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(62, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14393,7 +14394,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(64, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14406,7 +14407,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(73, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14423,7 +14424,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(82, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 2);
@@ -14438,7 +14439,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(83, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
@@ -14450,7 +14451,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(84, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
@@ -14462,7 +14463,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(85, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
@@ -14474,7 +14475,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(86, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 65);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
@@ -14491,7 +14492,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -60);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 175);
@@ -14510,7 +14511,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 4000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 300);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2000);
@@ -14527,7 +14528,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_2, 176);
@@ -14540,7 +14541,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(98, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -35);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14553,7 +14554,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(99, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -45);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14566,7 +14567,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(55, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14579,7 +14580,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(101, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14592,7 +14593,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(103, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
@@ -14605,7 +14606,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(104, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -53);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14618,7 +14619,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(106, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14631,7 +14632,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(108, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -14644,7 +14645,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(109, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14657,7 +14658,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(111, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 1);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_BRICK);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -2);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
@@ -14670,7 +14671,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(114, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -23);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14683,7 +14684,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(115, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -38);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14696,7 +14697,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(116, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -14709,7 +14710,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(117, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -8);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -14722,7 +14723,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(113, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 2);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 0);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -14738,7 +14739,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 30);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 177);
@@ -14755,7 +14756,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 178);
@@ -14772,7 +14773,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 60);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 179);
@@ -14789,7 +14790,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -45);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 20);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 80);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 180);
@@ -14803,7 +14804,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(117, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 4);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -15);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
@@ -14816,7 +14817,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(64, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 6);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
@@ -14829,7 +14830,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(0, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, 384);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -50);
@@ -14843,7 +14844,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(128, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
@@ -14854,7 +14855,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(129, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1);
             obj_field_int32_set(obj, OBJ_F_CATEGORY, 0);
@@ -14865,7 +14866,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(2, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
@@ -14882,7 +14883,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(130, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
             obj_field_int32_set(obj, OBJ_F_NAME, 5693);
@@ -14897,7 +14898,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 70);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 198);
@@ -14914,7 +14915,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -37);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 70);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 148);
@@ -14931,7 +14932,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 199);
@@ -14948,7 +14949,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -40);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 201);
@@ -14965,7 +14966,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -45);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 40);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 202);
@@ -14982,7 +14983,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -35);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 30);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 35);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_1, 200);
@@ -14996,7 +14997,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(147, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -22);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -15009,7 +15010,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(135, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
@@ -15022,7 +15023,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(49, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -15036,7 +15037,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(49, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -70);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 300);
@@ -15050,7 +15051,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(96, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 4500);
@@ -15069,7 +15070,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(139, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -87);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
@@ -15085,7 +15086,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(143, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 3);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PLANT);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 75);
@@ -15099,7 +15100,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(144, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 3);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
@@ -15115,7 +15116,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(14, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 4200);
@@ -15129,7 +15130,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(148, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -85);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
@@ -15142,7 +15143,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(10, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -20);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
@@ -15158,7 +15159,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(176, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
@@ -15173,7 +15174,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(156, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15189,7 +15190,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(158, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 5682);
@@ -15201,7 +15202,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(151, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 500);
             obj_field_int32_set(obj, OBJ_F_NAME, 5683);
@@ -15213,7 +15214,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(157, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_NAME, 5691);
@@ -15225,7 +15226,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(152, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 2);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_NAME, 5685);
@@ -15237,7 +15238,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(153, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 2);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_WOOD);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 8);
             obj_field_int32_set(obj, OBJ_F_NAME, 5686);
@@ -15249,7 +15250,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(150, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 25);
             obj_field_int32_set(obj, OBJ_F_NAME, 5688);
@@ -15261,7 +15262,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(149, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 0);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_STONE);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 500);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 20);
             obj_field_int32_set(obj, OBJ_F_NAME, 5687);
@@ -15273,7 +15274,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(159, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15293,7 +15294,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(160, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15313,7 +15314,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(162, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15333,7 +15334,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(166, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15353,7 +15354,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(161, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15373,7 +15374,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(165, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15393,7 +15394,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(163, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15413,7 +15414,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(164, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 9);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_PAPER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 750);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 50);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 200);
@@ -15433,7 +15434,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(169, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 90);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 300);
@@ -15446,7 +15447,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(170, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 13);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_POWDER);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 20);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15459,7 +15460,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(191, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 5);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 100);
@@ -15473,7 +15474,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(71, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 50);
@@ -15485,7 +15486,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(179, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 100);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15496,7 +15497,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(180, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 150);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15508,7 +15509,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(181, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15519,7 +15520,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(178, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 250);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15530,7 +15531,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(182, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 350);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15542,7 +15543,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(183, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 400);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15553,7 +15554,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(177, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 200);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 90);
@@ -15568,7 +15569,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(185, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 10);
@@ -15581,7 +15582,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(OBJ_F_KEY_KEY_ID, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 7);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_CLOTH);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 1);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
@@ -15592,7 +15593,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(184, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 6);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_GLASS);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 0);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 30);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 5);
@@ -15608,7 +15609,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(188, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 10);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15623,7 +15624,7 @@ void sub_468930(long long obj, int description)
             obj_field_int32_set(obj, OBJ_F_CURRENT_AID, art_id);
             tig_art_item_id_create(187, 1, 0, 0, 0, 9, 0, 0, &art_id);
             obj_field_int32_set(obj, OBJ_F_ITEM_INV_AID, art_id);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 8);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_LIQUID);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 50);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 10);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 2);
@@ -15643,7 +15644,7 @@ void sub_468930(long long obj, int description)
             obj_arrayfield_script_set(obj, OBJ_F_SCRIPTS_IDX, SAP_MISS, &scr);
             obj_field_int32_set(obj, OBJ_F_ITEM_DISCIPLINE, 5);
             obj_field_int32_set(obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY, -100);
-            obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+            obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
             obj_field_int32_set(obj, OBJ_F_ITEM_WORTH, 4000);
             obj_field_int32_set(obj, OBJ_F_HP_PTS, 80);
             obj_field_int32_set(obj, OBJ_F_ITEM_WEIGHT, 1000);
@@ -15654,7 +15655,7 @@ void sub_468930(long long obj, int description)
         }
         break;
     case OBJ_TYPE_PC:
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
         obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
         tig_art_light_id_create(6, 0, 0, 1, &rgb);
         obj_field_int32_set(obj, OBJ_F_SHADOW, rgb);
@@ -15836,7 +15837,7 @@ void sub_468930(long long obj, int description)
         }
         break;
     case OBJ_TYPE_TRAP:
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 5);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_METAL);
         obj_field_int32_set(obj, OBJ_F_HP_PTS, 100);
         obj_field_int32_set(obj, OBJ_F_BLIT_FLAGS, 16);
         obj_field_int32_set(obj, OBJ_F_FLAGS, obj_field_int32_get(obj, OBJ_F_FLAGS) | 0x100);
@@ -16115,7 +16116,7 @@ int sub_49B5A0(TigFile* stream, long long obj, int type)
 
     if (obj != 0) {
         obj_field_int32_set(obj, OBJ_F_CRITTER_CRIT_HIT_CHART, 0);
-        obj_field_int32_set(obj, OBJ_F_MATERIAL, 4);
+        obj_field_int32_set(obj, OBJ_F_MATERIAL, MATERIAL_FLESH);
         obj_field_int32_set(obj, OBJ_F_NPC_REACTION_BASE, 50);
         obj_field_int32_set(obj, OBJ_F_NPC_WAIT, 2);
         tig_art_light_id_create(6, 0, 0, 1, &art_id);

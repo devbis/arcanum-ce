@@ -6,6 +6,7 @@
 #include "game/gsound.h"
 #include "game/item.h"
 #include "game/map.h"
+#include "game/material.h"
 #include "game/multiplayer.h"
 #include "game/obj_private.h"
 #include "game/obj.h"
@@ -23,39 +24,39 @@
 #include "game/wall.h"
 
 // 0x5BB928
-static int dword_5BB928[14] = {
-    3,
-    3,
-    4,
-    4,
-    0,
-    2,
-    1,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
+static int dword_5BB928[MATERIAL_COUNT] = {
+    /*  STONE */ 3,
+    /*  BRICK */ 3,
+    /*   WOOD */ 4,
+    /*  PLANT */ 4,
+    /*  FLESH */ 0,
+    /*  METAL */ 2,
+    /*  GLASS */ 1,
+    /*  CLOTH */ 0,
+    /* LIQUID */ 0,
+    /*  PAPER */ 0,
+    /*    GAS */ 0,
+    /*  FORCE */ 1,
+    /*   FIRE */ 0,
+    /* POWDER */ 0,
 };
 
 // 0x5BB960
-static int dword_5BB960[14] = {
-    3,
-    3,
-    4,
-    4,
-    0,
-    2,
-    5,
-    6,
-    0,
-    7,
-    0,
-    1,
-    0,
-    0,
+static int dword_5BB960[MATERIAL_COUNT] = {
+    /*  STONE */ 3,
+    /*  BRICK */ 3,
+    /*   WOOD */ 4,
+    /*  PLANT */ 4,
+    /*  FLESH */ 0,
+    /*  METAL */ 2,
+    /*  GLASS */ 5,
+    /*  CLOTH */ 6,
+    /* LIQUID */ 0,
+    /*  PAPER */ 7,
+    /*    GAS */ 0,
+    /*  FORCE */ 1,
+    /*   FIRE */ 0,
+    /* POWDER */ 0,
 };
 
 // 0x5BB998

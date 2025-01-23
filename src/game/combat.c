@@ -17,6 +17,7 @@
 #include "game/logbook.h"
 #include "game/magictech.h"
 #include "game/map.h"
+#include "game/material.h"
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/mt_item.h"
@@ -97,21 +98,21 @@ static int dword_5B57A8[TRAINING_COUNT] = {
 static int dword_5B57B8 = 15;
 
 // 0x5B57BC
-static int dword_5B57BC[14] = {
-    10,
-    10,
-    5,
-    0,
-    0,
-    10,
-    0,
-    0,
-    0,
-    0,
-    0,
-    10,
-    0,
-    0,
+static int combat_material_damage_reduction_tbl[MATERIAL_COUNT] = {
+    /*  STONE */ 10,
+    /*  BRICK */ 10,
+    /*   WOOD */ 5,
+    /*  PLANT */ 0,
+    /*  FLESH */ 0,
+    /*  METAL */ 10,
+    /*  GLASS */ 0,
+    /*  CLOTH */ 0,
+    /* LIQUID */ 0,
+    /*  PAPER */ 0,
+    /*    GAS */ 0,
+    /*  FORCE */ 10,
+    /*   FIRE */ 0,
+    /* POWDER */ 0,
 };
 
 // 0x5B57FC
@@ -1941,7 +1942,7 @@ void sub_4B4390(CombatContext* combat)
         if (obj_type == OBJ_TYPE_PORTAL
             || obj_type == OBJ_TYPE_CONTAINER) {
             int material = obj_field_int32_get(combat->target_obj, OBJ_F_MATERIAL);
-            dam -= dword_5B57BC[material];
+            dam -= combat_material_damage_reduction_tbl[material];
         }
 
         if (dam < 0) {
@@ -2058,25 +2059,25 @@ void sub_4B5580(CombatContext* combat)
     }
 
     switch (obj_field_int32_get(combat->target_obj, OBJ_F_MATERIAL)) {
-    case 0:
+    case MATERIAL_STONE:
         dam = 4;
         break;
-    case 1:
+    case MATERIAL_BRICK:
         dam = 3;
         break;
-    case 2:
+    case MATERIAL_WOOD:
         dam = 2;
         break;
-    case 3:
+    case MATERIAL_PLANT:
         dam = 1;
         break;
-    case 5:
+    case MATERIAL_METAL:
         dam = 5;
         break;
-    case 6:
+    case MATERIAL_GLASS:
         dam = combat->weapon_obj != OBJ_HANDLE_NULL ? 0 : 5;
         break;
-    case 12:
+    case MATERIAL_FIRE:
         dam = 5;
         break;
     default:

@@ -94,6 +94,7 @@ set(SRCS
     "src/game/map.h"
     "src/game/matchmaker.c"
     "src/game/matchmaker.h"
+    "src/game/material.h"
     "src/game/mes.c"
     "src/game/mes.h"
     "src/game/monstergen.c"
