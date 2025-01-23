@@ -646,8 +646,8 @@ bool sub_572510(int64_t pc_obj, int64_t target_obj, int mode)
 void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
 {
     int64_t substitute_inventory_obj;
-    int64_t v2;
-    int64_t v3;
+    int64_t prototype_obj;
+    int64_t gold_obj;
     int amt;
 
     if (target_obj == OBJ_HANDLE_NULL) {
@@ -657,12 +657,12 @@ void sub_572640(int64_t pc_obj, int64_t target_obj, int mode)
     if (mode == INVEN_UI_MODE_BARTER) {
         substitute_inventory_obj = critter_substitute_inventory_get(target_obj);
         if (substitute_inventory_obj != OBJ_HANDLE_NULL) {
-            v2 = sub_468570(8);
-            v3 = sub_462540(substitute_inventory_obj, v2, 0);
-            while (v3 != OBJ_HANDLE_NULL) {
-                amt = item_gold_get(v3);
-                item_gold_transfer(substitute_inventory_obj, v2, amt, v3);
-                v3 = sub_462540(substitute_inventory_obj, v2, 0);
+            prototype_obj = sub_468570(8);
+            gold_obj = sub_462540(substitute_inventory_obj, prototype_obj, 0);
+            while (gold_obj != OBJ_HANDLE_NULL) {
+                amt = item_gold_get(gold_obj);
+                item_gold_transfer(substitute_inventory_obj, prototype_obj, amt, gold_obj);
+                gold_obj = sub_462540(substitute_inventory_obj, prototype_obj, 0);
             }
         }
 
