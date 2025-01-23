@@ -249,7 +249,7 @@ static S5C87D0 charedit_skill_group_buttons[CHAREDIT_SKILL_GROUP_COUNT] = {
 };
 
 // 0x5C82F0
-static S5C8150 stru_5C82F0[BASIC_SKILL_COUNT] = {
+static S5C8150 stru_5C82F0[SKILL_COUNT] = {
     { NULL, 520, 167, BASIC_SKILL_BOW },
     { NULL, 520, 233, BASIC_SKILL_DODGE },
     { NULL, 520, 299, BASIC_SKILL_MELEE },
@@ -262,10 +262,6 @@ static S5C8150 stru_5C82F0[BASIC_SKILL_COUNT] = {
     { NULL, 520, 233, BASIC_SKILL_HAGGLE },
     { NULL, 520, 299, BASIC_SKILL_HEAL },
     { NULL, 520, 365, BASIC_SKILL_PERSUATION },
-};
-
-// 0x5C83B0
-static S5C8150 stru_5C83B0[TECH_SKILL_COUNT] = {
     { NULL, 520, 167, TECH_SKILL_REPAIR },
     { NULL, 520, 233, TECH_SKILL_FIREARMS },
     { NULL, 520, 299, TECH_SKILL_PICK_LOCKS },
@@ -3515,7 +3511,7 @@ bool sub_55E110()
     }
 
     for (index = 0; index < TECH_SKILL_COUNT; index++) {
-        stru_5C83B0[index].str = tech_skill_get_name(index);
+        stru_5C82F0[BASIC_SKILL_COUNT + index].str = tech_skill_get_name(index);
     }
 
     for (index = 0; index < TRAINING_COUNT; index++) {
