@@ -758,10 +758,9 @@ static_assert(sizeof(ObjectID) == 0x18, "wrong size");
 
 typedef struct Object {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ ObjectID field_8;
-    /* 0020 */ ObjectID field_20;
-    /* 0038 */ int64_t prototype_handle;
+    /* 0008 */ ObjectID oid;
+    /* 0020 */ ObjectID prototype_oid;
+    /* 0038 */ int64_t prototype_obj;
     /* 0040 */ int field_40;
     /* 0044 */ int16_t modified;
     /* 0046 */ int16_t num_fields;

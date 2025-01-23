@@ -556,7 +556,7 @@ bool obj_init(GameInitInfo* init_info)
     sub_40A400();
     sub_40BAC0();
 
-    object.field_20.type = OID_TYPE_BLOCKED;
+    object.prototype_oid.type = OID_TYPE_BLOCKED;
     for (index = 0; index < 18; index++) {
         object.type = index;
         word_5D10FC = 0;
@@ -618,8 +618,8 @@ bool obj_validate_system(unsigned int flags)
             }
 
             object = obj_lock(obj);
-            if (object->field_8.type != OID_TYPE_BLOCKED
-                && !objid_is_valid(object->field_8)) {
+            if (object->oid.type != OID_TYPE_BLOCKED
+                && !objid_is_valid(object->oid)) {
                 tig_debug_printf("!VS  Permanent id invalid: %i64x\n", obj);
                 obj_unlock(obj);
                 return false;
@@ -784,10 +784,10 @@ void sub_405800(int type, int64_t* obj_ptr)
 
     object = sub_408710(&handle);
     object->type = type;
-    sub_4E62A0(&(object->field_8));
-    sub_4E4FD0(object->field_8, handle);
-    object->field_20.type = OID_TYPE_BLOCKED;
-    object->prototype_handle = OBJ_HANDLE_NULL;
+    sub_4E62A0(&(object->oid));
+    sub_4E4FD0(object->oid, handle);
+    object->prototype_oid.type = OID_TYPE_BLOCKED;
+    object->prototype_obj = OBJ_HANDLE_NULL;
     object->field_40 = 0;
     sub_40C610(object);
 
@@ -818,10 +818,10 @@ void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
     unsigned int flags;
 
     object = sub_408710(&obj);
-    object->prototype_handle = OBJ_HANDLE_NULL;
+    object->prototype_obj = OBJ_HANDLE_NULL;
 
     prototype = obj_lock(proto_obj);
-    object->field_20 = prototype->field_8;
+    object->prototype_oid = prototype->oid;
     object->type = prototype->type;
     object->field_40 = 0;
     obj_unlock(proto_obj);
@@ -838,10 +838,10 @@ void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
         || obj_type_is_critter(object->type)
         || obj_type_is_item(object->type)
         || !obj_editor) {
-        sub_4E62A0(&(object->field_8));
-        sub_4E4FD0(object->field_8, obj);
+        sub_4E62A0(&(object->oid));
+        sub_4E4FD0(object->oid, obj);
     } else {
-        object->field_8.type = OID_TYPE_NULL;
+        object->oid.type = OID_TYPE_NULL;
     }
 
     obj_unlock(obj);
@@ -871,11 +871,11 @@ void sub_405B30(int64_t proto_obj, int64_t loc, ObjectID oid, int64_t* obj_ptr)
     sub_4058E0(proto_obj, loc, obj_ptr);
 
     object = obj_lock(*obj_ptr);
-    if (object->field_8.type != OID_TYPE_NULL) {
-        sub_4E52F0(object->field_8);
+    if (object->oid.type != OID_TYPE_NULL) {
+        sub_4E52F0(object->oid);
     }
 
-    object->field_8 = oid;
+    object->oid = oid;
 
     sub_4E4FD0(oid, *obj_ptr);
     obj_unlock(*obj_ptr);
@@ -888,7 +888,7 @@ bool sub_405BC0(int64_t obj)
     bool ret;
 
     object = obj_lock(obj);
-    ret = object->field_20.type == OID_TYPE_BLOCKED;
+    ret = object->prototype_oid.type == OID_TYPE_BLOCKED;
     obj_unlock(obj);
 
     return ret;
@@ -901,15 +901,15 @@ void sub_405BF0(int64_t obj)
     int fld;
 
     object = obj_lock(obj);
-    if (object->field_20.type != OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type != OID_TYPE_BLOCKED) {
         obj_find_remove(obj);
     }
 
-    if (object->field_8.type != OID_TYPE_NULL) {
-        sub_4E52F0(object->field_8);
+    if (object->oid.type != OID_TYPE_NULL) {
+        sub_4E52F0(object->oid);
     }
 
-    if (object->field_20.type != OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type != OID_TYPE_BLOCKED) {
         sub_40CBA0(object, sub_40CB60);
         sub_40C5B0(object);
 
@@ -937,7 +937,7 @@ void sub_405CC0(int64_t obj)
     int fld;
 
     object = obj_lock(obj);
-    if (object->field_20.type != OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type != OID_TYPE_BLOCKED) {
         sub_40CBA0(object, sub_40CB60);
         sub_40C5B0(object);
 
@@ -970,13 +970,13 @@ void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
     new_object = sub_408710(&new_obj_handle);
 
     new_object->type = object->type;
-    new_object->field_8 = object->field_8;
-    new_object->field_20 = object->field_20;
+    new_object->oid = object->oid;
+    new_object->prototype_oid = object->prototype_oid;
     new_object->modified = object->modified;
     new_object->num_fields = object->num_fields;
     new_object->field_50 = (int*)CALLOC(4 * object->num_fields, 1);
 
-    if (object->field_20.type != OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type != OID_TYPE_BLOCKED) {
         sub_40C5C0(new_object, object);
 
         dword_5D1108 = object;
@@ -1017,23 +1017,23 @@ void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj)
 
     copy_object = sub_408710(&copy_obj);
     copy_object->type = existing_object->type;
-    copy_object->field_8 = existing_object->field_8;
+    copy_object->oid = existing_object->oid;
 
-    if (copy_object->field_8.type != OID_TYPE_NULL) {
-        switch (copy_object->field_8.type) {
+    if (copy_object->oid.type != OID_TYPE_NULL) {
+        switch (copy_object->oid.type) {
         case OID_TYPE_GUID:
         case OID_TYPE_P:
-            sub_4E62A0(&(copy_object->field_8));
-            sub_4E4FD0(copy_object->field_8, copy_obj);
+            sub_4E62A0(&(copy_object->oid));
+            sub_4E4FD0(copy_object->oid, copy_obj);
             break;
         default:
             tig_debug_println("ERROR: Unallowed ID type in obj_perm_dup");
-            copy_object->field_8.type = OID_TYPE_NULL;
+            copy_object->oid.type = OID_TYPE_NULL;
             break;
         }
     }
 
-    copy_object->field_20 = existing_object->field_20;
+    copy_object->prototype_oid = existing_object->prototype_oid;
     copy_object->field_40 = 0;
     copy_object->num_fields = existing_object->num_fields;
     copy_object->modified = false;
@@ -1088,8 +1088,8 @@ void sub_406210(int64_t* copy, int64_t obj, ObjectID* oids)
     obj_perm_dup(copy, obj);
 
     object = obj_lock(*copy);
-    if (object->field_8.type != OID_TYPE_NULL) {
-        sub_4E52F0(object->field_8);
+    if (object->oid.type != OID_TYPE_NULL) {
+        sub_4E52F0(object->oid);
     }
 
     sub_4E4FD0(*oids++, *copy);
@@ -1100,8 +1100,8 @@ void sub_406210(int64_t* copy, int64_t obj, ObjectID* oids)
         for (idx = cnt - 1; idx >= 0; idx--) {
             item_obj = obj_arrayfield_handle_get(*copy, inventory_list_fld, idx);
             object = obj_lock(item_obj);
-            if (object->field_8.type != OID_TYPE_NULL) {
-                sub_4E52F0(object->field_8);
+            if (object->oid.type != OID_TYPE_NULL) {
+                sub_4E52F0(object->oid);
             }
             sub_4E4FD0(*oids++, item_obj);
             obj_unlock(item_obj);
@@ -1184,7 +1184,7 @@ bool obj_write(TigFile* stream, int64_t obj_handle)
         return false;
     }
 
-    v1 = object->field_20.type == OID_TYPE_BLOCKED;
+    v1 = object->prototype_oid.type == OID_TYPE_BLOCKED;
     obj_unlock(obj_handle);
 
     if (v1) {
@@ -1227,7 +1227,7 @@ void sub_4066B0(uint8_t** a1, int* a2, int64_t obj)
     object = obj_lock(obj);
     sub_4E4BD0(&v1);
     sub_40D5D0(&v1);
-    is_empty = object->field_20.type == OID_TYPE_BLOCKED;
+    is_empty = object->prototype_oid.type == OID_TYPE_BLOCKED;
     obj_unlock(obj);
 
     if (is_empty) {
@@ -1305,7 +1305,7 @@ bool obj_dif_write(TigFile* stream, int64_t obj_handle)
         return false;
     }
 
-    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+    if (!obj_write_raw(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj_handle);
         return false;
     }
@@ -1370,8 +1370,8 @@ bool obj_dif_read(TigFile* stream, int64_t obj)
         return false;
     }
 
-    if (object->field_8.type != OID_TYPE_NULL) {
-        if (!objid_is_equal(object->field_8, oid)) {
+    if (object->oid.type != OID_TYPE_NULL) {
+        if (!objid_is_equal(object->oid, oid)) {
             tig_debug_println("Error in obj_dif_read:\n  Object in memory already has an id, and dif would change the id.");
             obj_unlock(obj);
             return false;
@@ -1638,7 +1638,7 @@ ObjectID sub_407100(int64_t obj_handle, int fld)
 
     if (fld == OBJ_F_PROTOTYPE_HANDLE) {
         // FIXME: Object not unlocked.
-        return object->field_20;
+        return object->prototype_oid;
     }
 
     sub_408A20(object, fld, &oid);
@@ -2030,7 +2030,7 @@ void sub_407D50(int64_t obj, int fld)
 
     object = obj_lock(obj);
     if (sub_40C260(object->type, fld)) {
-        if (object->field_20.type == OID_TYPE_BLOCKED) {
+        if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
             sub_40C6E0(object, fld);
             sub_40D400(object, fld, true);
             obj_unlock(obj);
@@ -2063,20 +2063,20 @@ ObjectID sub_407EF0(int64_t obj)
 
     if (sub_4E5470(obj)) {
         object = obj_lock(obj);
-        if (object->field_8.type == OID_TYPE_NULL) {
+        if (object->oid.type == OID_TYPE_NULL) {
             if (!obj_editor
                 && sub_43D940(obj)
                 && sub_43D990(obj)) {
-                objid_id_perm_by_load_order(&(object->field_8), obj);
+                objid_id_perm_by_load_order(&(object->oid), obj);
             } else {
-                sub_4E62A0(&(object->field_8));
+                sub_4E62A0(&(object->oid));
             }
 
-            sub_4E4FD0(object->field_8, obj);
-            object->field_8.type = OID_TYPE_A;
+            sub_4E4FD0(object->oid, obj);
+            object->oid.type = OID_TYPE_A;
         }
 
-        oid = object->field_8;
+        oid = object->oid;
         obj_unlock(obj);
 
         if (!objid_is_valid(oid)) {
@@ -2265,16 +2265,16 @@ ObjectID sub_408020(int64_t obj, int a2)
     Object* object;
 
     object = obj_lock(obj);
-    if (objid_is_valid(object->field_8) && object->field_8.type != OID_TYPE_NULL) {
-        sub_4E52F0(object->field_8);
+    if (objid_is_valid(object->oid) && object->oid.type != OID_TYPE_NULL) {
+        sub_4E52F0(object->oid);
     }
 
-    object->field_8 = sub_4E6540(a2);
-    sub_4E4FD0(object->field_8, obj);
+    object->oid = sub_4E6540(a2);
+    sub_4E4FD0(object->oid, obj);
 
     obj_unlock(obj);
 
-    return object->field_8;
+    return object->oid;
 }
 
 // 0x4082C0
@@ -2288,7 +2288,7 @@ bool sub_4082C0(int64_t* obj_ptr, int* iter_ptr)
     if (sub_4E53C0(&obj, &iter)) {
         do {
             object = obj_lock(obj);
-            v1 = object->field_20.type == OID_TYPE_BLOCKED;
+            v1 = object->prototype_oid.type == OID_TYPE_BLOCKED;
             obj_unlock(obj);
 
             if (!v1) {
@@ -2313,7 +2313,7 @@ bool sub_408390(int64_t* obj_ptr, int* iter_ptr)
     iter = *iter_ptr;
     while (sub_4E5420(&obj, &iter)) {
         object = obj_lock(obj);
-        v1 = object->field_20.type == OID_TYPE_BLOCKED;
+        v1 = object->prototype_oid.type == OID_TYPE_BLOCKED;
         obj_unlock(obj);
 
         if (!v1) {
@@ -2343,7 +2343,7 @@ void sub_408760(Object* object, int fld, void* value_ptr)
 {
     ObjSa v1;
 
-    if (object->field_20.type == OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
         sub_40D400(object, fld, true);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
@@ -2385,7 +2385,7 @@ void sub_4088B0(Object* object, int fld, int index, void* value_ptr)
 {
     ObjSa v1;
 
-    if (object->field_20.type == OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
         sub_40D400(object, fld, true);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
@@ -2439,7 +2439,7 @@ void sub_408A20(Object* object, int fld, void* value_ptr)
     }
 
     v1.type = object_fields[fld].type;
-    if (object->field_20.type == OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         index = sub_40CB40(object, fld);
         v1.ptr = &(object->field_50[index]);
         sub_4E4180(&v1);
@@ -2488,7 +2488,7 @@ void sub_408BB0(Object* object, int fld, int index, void* value)
     v1.idx = index;
     v1.type = object_fields[fld].type;
 
-    if (object->field_20.type == OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
         sub_4E4180(&v1);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
@@ -2535,7 +2535,7 @@ void sub_408D60(Object* object, int fld, int* value_ptr)
 
     v1.type = object_fields[fld].type;
 
-    if (object->field_20.type == OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
         *value_ptr = sub_4E4BA0(&v1);
     } else {
@@ -2562,7 +2562,7 @@ void sub_408E70(Object* object, int fld, int value)
 {
     ObjSa v1;
 
-    if (object->field_20.type == OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
         sub_40D400(object, fld, true);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
@@ -2589,7 +2589,7 @@ bool sub_408F40(Object* object, int fld, SizeableArray*** ptr, int64_t* proto_ha
 {
     Object* proto;
 
-    if (object->field_20.type == OID_TYPE_BLOCKED) {
+    if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         *ptr = (SizeableArray**)(&(object->field_50[sub_40CB40(object, fld)]));
         return false;
     }
@@ -2830,12 +2830,12 @@ bool sub_4096B0(TigFile* stream, int64_t obj)
 
     object = obj_lock(obj);
 
-    if (!obj_write_raw(&(object->field_20), sizeof(object->field_20), stream)) {
+    if (!obj_write_raw(&(object->prototype_oid), sizeof(object->prototype_oid), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+    if (!obj_write_raw(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         return false;
     }
@@ -2870,10 +2870,10 @@ bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     int size;
 
     object = sub_408710(&obj);
-    object->field_20 = oid;
-    object->prototype_handle = OBJ_HANDLE_NULL;
+    object->prototype_oid = oid;
+    object->prototype_obj = OBJ_HANDLE_NULL;
 
-    if (!obj_read_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+    if (!obj_read_raw(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -2908,8 +2908,8 @@ bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     memset(object->transient_properties, -1, sizeof(object->transient_properties));
 
-    if (object->field_8.type != OID_TYPE_NULL) {
-        sub_4E4FD0(object->field_8, obj);
+    if (object->oid.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->oid, obj);
     }
 
     obj_unlock(obj);
@@ -2926,12 +2926,12 @@ bool sub_409980(TigFile* stream, int64_t obj)
 
     object = obj_lock(obj);
 
-    if (!obj_write_raw(&(object->field_20), sizeof(object->field_20), stream)) {
+    if (!obj_write_raw(&(object->prototype_oid), sizeof(object->prototype_oid), stream)) {
         obj_unlock(obj);
         return false;
     }
 
-    if (!obj_write_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+    if (!obj_write_raw(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         return false;
     }
@@ -2969,10 +2969,10 @@ bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     Object* object;
 
     object = sub_408710(&obj);
-    object->field_20 = oid;
-    object->prototype_handle = OBJ_HANDLE_NULL;
+    object->prototype_oid = oid;
+    object->prototype_obj = OBJ_HANDLE_NULL;
 
-    if (!obj_read_raw(&(object->field_8), sizeof(object->field_8), stream)) {
+    if (!obj_read_raw(&(object->oid), sizeof(object->oid), stream)) {
         obj_unlock(obj);
         sub_4E4FB0(obj);
         return false;
@@ -3011,8 +3011,8 @@ bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
 
     memset(object->transient_properties, 0, sizeof(object->transient_properties));
 
-    if (object->field_8.type != OID_TYPE_NULL) {
-        sub_4E4FD0(object->field_8, obj);
+    if (object->oid.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->oid, obj);
     }
 
     obj_unlock(obj);
@@ -3032,8 +3032,8 @@ void sub_409CB0(S4E4BD0* mem, int64_t obj)
     int cnt;
 
     object = obj_lock(obj);
-    sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
-    sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
+    sub_4E4C00(&(object->prototype_oid), sizeof(object->prototype_oid), mem);
+    sub_4E4C00(&(object->oid), sizeof(object->oid), mem);
     sub_4E4C00(&(object->type), sizeof(object->type), mem);
     cnt = sub_40C030(object->type);
     sub_4E4C00(object->field_4C, sizeof(object->field_4C[0]) * cnt, mem);
@@ -3051,9 +3051,9 @@ bool sub_409D30(uint8_t* data, int64_t* obj_ptr)
     int size;
 
     object = sub_408710(&obj);
-    sub_4E4C50(&(object->field_20), sizeof(object->field_20), &data);
-    object->prototype_handle = OBJ_HANDLE_NULL;
-    sub_4E4C50(&(object->field_8), sizeof(object->field_8), &data);
+    sub_4E4C50(&(object->prototype_oid), sizeof(object->prototype_oid), &data);
+    object->prototype_obj = OBJ_HANDLE_NULL;
+    sub_4E4C50(&(object->oid), sizeof(object->oid), &data);
     sub_4E4C50(&(object->type), sizeof(object->type), &data);
 
     size = sizeof(*object->field_4C) * sub_40C030(object->type);
@@ -3075,8 +3075,8 @@ bool sub_409D30(uint8_t* data, int64_t* obj_ptr)
 
     memset(object->transient_properties, -1, sizeof(object->transient_properties));
 
-    if (object->field_8.type != OID_TYPE_NULL) {
-        sub_4E4FD0(object->field_8, obj);
+    if (object->oid.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->oid, obj);
     }
 
     obj_unlock(obj);
@@ -3092,8 +3092,8 @@ void sub_409E80(S4E4BD0* mem, int64_t obj)
     int cnt;
 
     object = obj_lock(obj);
-    sub_4E4C00(&(object->field_20), sizeof(object->field_20), mem);
-    sub_4E4C00(&(object->field_8), sizeof(object->field_8), mem);
+    sub_4E4C00(&(object->prototype_oid), sizeof(object->prototype_oid), mem);
+    sub_4E4C00(&(object->oid), sizeof(object->oid), mem);
     sub_4E4C00(&(object->type), sizeof(object->type), mem);
     sub_4E4C00(&(object->num_fields), sizeof(object->num_fields), mem);
     cnt = sub_40C030(object->type);
@@ -3111,9 +3111,9 @@ bool sub_409F10(uint8_t* data, int64_t* obj_ptr)
     int64_t obj;
 
     object = sub_408710(&obj);
-    sub_4E4C50(&(object->field_20), sizeof(object->field_20), &data);
-    object->prototype_handle = OBJ_HANDLE_NULL;
-    sub_4E4C50(&(object->field_8), sizeof(object->field_8), &data);
+    sub_4E4C50(&(object->prototype_oid), sizeof(object->prototype_oid), &data);
+    object->prototype_obj = OBJ_HANDLE_NULL;
+    sub_4E4C50(&(object->oid), sizeof(object->oid), &data);
     sub_4E4C50(&(object->type), sizeof(object->type), &data);
     sub_4E4C50(&(object->num_fields), sizeof(object->num_fields), &data);
 
@@ -3133,8 +3133,8 @@ bool sub_409F10(uint8_t* data, int64_t* obj_ptr)
 
     memset(object->transient_properties, 0, sizeof(object->transient_properties));
 
-    if (object->field_8.type != OID_TYPE_NULL) {
-        sub_4E4FD0(object->field_8, obj);
+    if (object->oid.type != OID_TYPE_NULL) {
+        sub_4E4FD0(object->oid, obj);
     }
 
     obj_unlock(obj);
@@ -5053,11 +5053,11 @@ bool obj_check_version_memory(uint8_t** data)
 // 0x40D630
 int64_t obj_get_prototype_handle(Object* object)
 {
-    if (object->prototype_handle == OBJ_HANDLE_NULL) {
-        object->prototype_handle = objp_perm_lookup(object->field_20);
+    if (object->prototype_obj == OBJ_HANDLE_NULL) {
+        object->prototype_obj = objp_perm_lookup(object->prototype_oid);
     }
 
-    return object->prototype_handle;
+    return object->prototype_obj;
 }
 
 // 0x40D670
