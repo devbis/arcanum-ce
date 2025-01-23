@@ -237,7 +237,7 @@ static bool dword_6810FC;
 static tig_button_handle_t inven_ui_cycle_left_btn;
 
 // 0x681108
-static TigRect stru_681108;
+static TigRect inven_ui_gamble_box_frame;
 
 // 0x681118
 static bool inven_ui_have_use_box;
@@ -288,7 +288,7 @@ static int dword_681440;
 static tig_button_handle_t inven_ui_arrange_items_btn;
 
 // 0x681448
-static int dword_681448;
+static bool inven_ui_have_gamble_box;
 
 // 0x681450
 static int64_t qword_681450;
@@ -354,7 +354,7 @@ static char byte_682BEC[128];
 static tig_button_handle_t inven_ui_total_attack_image_btn;
 
 // 0x682C70
-static int dword_682C70;
+static int inven_ui_gamble_box_image;
 
 // 0x682C74
 static tig_font_handle_t dword_682C74;
@@ -951,12 +951,12 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     }
 
     if (inven_ui_mode == INVEN_UI_MODE_BARTER) {
-        dword_681448 = 1;
-        dword_682C70 = 345;
-        stru_681108.x = 703;
-        stru_681108.y = 277;
+        inven_ui_have_gamble_box = true;
+        inven_ui_gamble_box_image = 345;
+        inven_ui_gamble_box_frame.x = 703;
+        inven_ui_gamble_box_frame.y = 277;
     } else {
-        dword_681448 = 0;
+        inven_ui_have_gamble_box = false;
     }
 
     dword_681510 = 5;
@@ -1455,18 +1455,19 @@ static inline bool inven_ui_message_filter_handle_mouse_move(TigMessage* msg)
             }
         }
 
-        if (dword_681448) {
-            if (msg->data.mouse.x >= stru_681108.x
-                && msg->data.mouse.x < stru_681108.x + stru_681108.width
-                && msg->data.mouse.y >= stru_681108.y
-                && msg->data.mouse.y < stru_681108.y + stru_681108.height) {
-                if (dword_682C70 == 345) {
-                    // TODO: Wrong.
-                    dword_682C70 = sub_579840(qword_6810E0, 0) ? 346 : 347;
+        if (inven_ui_have_gamble_box) {
+            if (msg->data.mouse.x >= inven_ui_gamble_box_frame.x
+                && msg->data.mouse.x < inven_ui_gamble_box_frame.x + inven_ui_gamble_box_frame.width
+                && msg->data.mouse.y >= inven_ui_gamble_box_frame.y
+                && msg->data.mouse.y < inven_ui_gamble_box_frame.y + inven_ui_gamble_box_frame.height) {
+                if (inven_ui_gamble_box_image == 345) {
+                    inven_ui_gamble_box_image = sub_579840(qword_6810E0, 0) ? 344 : 346;
+                    redraw_inven(false);
+                    return true;
                 }
             } else {
-                if (dword_682C70 != 345) {
-                    dword_682C70 = 345;
+                if (inven_ui_gamble_box_image != 345) {
+                    inven_ui_gamble_box_image = 345;
                     redraw_inven(false);
                     return true;
                 }
@@ -1601,16 +1602,16 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up_accept_drop(T
         return false;
     }
 
-    if (dword_681448
-        && msg->data.mouse.x >= stru_681108.x
-        && msg->data.mouse.x < stru_681108.x + stru_681108.width
-        && msg->data.mouse.y >= stru_681108.y
-        && msg->data.mouse.y < stru_681108.y + stru_681108.height) {
+    if (inven_ui_have_gamble_box
+        && msg->data.mouse.x >= inven_ui_gamble_box_frame.x
+        && msg->data.mouse.x < inven_ui_gamble_box_frame.x + inven_ui_gamble_box_frame.width
+        && msg->data.mouse.y >= inven_ui_gamble_box_frame.y
+        && msg->data.mouse.y < inven_ui_gamble_box_frame.y + inven_ui_gamble_box_frame.height) {
         v3 = qword_6810E0;
         sub_575770();
         sub_579B60(v3);
         qword_6810E0 = OBJ_HANDLE_NULL;
-        dword_682C70 = 345;
+        inven_ui_gamble_box_image = 345;
 
         return false;
     }
@@ -2939,8 +2940,8 @@ void redraw_inven(bool a1)
     }
 
     // 0x577070
-    if (dword_681448) {
-        tig_art_interface_id_create(dword_682C70, 0, 0, 0, &(art_blit_info.art_id));
+    if (inven_ui_have_gamble_box) {
+        tig_art_interface_id_create(inven_ui_gamble_box_image, 0, 0, 0, &(art_blit_info.art_id));
         if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
             return;
         }
@@ -2960,8 +2961,8 @@ void redraw_inven(bool a1)
         art_blit_info.dst_rect = &dst_rect;
         tig_window_blit_art(inven_ui_window_handle, &art_blit_info);
 
-        stru_681108.width = art_frame_data.width;
-        stru_681108.height = art_frame_data.height;
+        inven_ui_gamble_box_frame.width = art_frame_data.width;
+        inven_ui_gamble_box_frame.height = art_frame_data.height;
     }
 
     // 0x57711C
