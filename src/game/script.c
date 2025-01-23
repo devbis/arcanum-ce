@@ -2965,8 +2965,8 @@ void sub_44B390(ScriptAction* action, ScriptState* state)
 
     v1.npc_obj = state->invocation->attachee_obj;
     v1.pc_obj = state->invocation->triggerer_obj;
-    v1.field_68 = script_get_value(action->op_type[0], action->op_value[1], state);
-    v1.field_68 = state->invocation->script->num;
+    v1.field_68 = script_get_value(action->op_type[0], action->op_value[0], state);
+    v1.field_6C = state->invocation->script->num;
     sub_413A30(&v1, true);
 
     ui_message.type = script_get_value(action->op_type[1], action->op_value[1], state);
