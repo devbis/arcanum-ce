@@ -60,6 +60,16 @@
 #include "ui/wmap_ui.h"
 #include "ui/written_ui.h"
 
+typedef enum IntgameCounter {
+    INTGAME_COUNTER_HEALTH,
+    INTGAME_COUNTER_FATIGUE,
+    INTGAME_COUNTER_FATE,
+    INTGAME_COUNTER_MONEY,
+    INTGAME_COUNTER_MANA,
+    INTGAME_COUNTER_POISON,
+    INTGAME_COUNTER_COUNT,
+} IntgameCounter;
+
 typedef struct IntgameIsoWindowTypeInfo {
     /* 0000 */ TigRect rect;
     /* 0010 */ tig_window_handle_t window_handle;
@@ -69,7 +79,7 @@ static_assert(sizeof(IntgameIsoWindowTypeInfo) == 0x14, "wrong size");
 
 static bool button_create_flags(UiButtonInfo* button_info, unsigned int flags);
 static bool button_create_no_art(UiButtonInfo* button_info, int width, int height);
-static void sub_54AD00(int type, int value, int digits);
+static void intgame_draw_counter(int counter, int value, int digits);
 static void sub_54AF10(TigRect* rect);
 static void intgame_ammo_icon_refresh(tig_art_id_t art_id);
 static bool iso_interface_message_filter(TigMessage* msg);
@@ -167,13 +177,13 @@ static TigRect stru_5C63D8 = { 14, 472, 28, 88 };
 static TigRect stru_5C63E8 = { 754, 473, 28, 88 };
 
 // 0x5C63F8
-static IntgameIsoWindowTypeInfo stru_5C63F8[6] = {
-    { { 15, 578, 29, 12 }, TIG_WINDOW_HANDLE_INVALID },
-    { { 755, 578, 27, 12 }, TIG_WINDOW_HANDLE_INVALID },
-    { { 190, 17, 24, 12 }, TIG_WINDOW_HANDLE_INVALID },
-    { { 104, 512, 50, 20 }, TIG_WINDOW_HANDLE_INVALID },
-    { { 264, 562, 50, 20 }, TIG_WINDOW_HANDLE_INVALID },
-    { { 15, 500, 29, 12 }, TIG_WINDOW_HANDLE_INVALID },
+static IntgameIsoWindowTypeInfo intgame_number_boxes[INTGAME_COUNTER_COUNT] = {
+    /*  HEALTH */ { { 15, 578, 29, 12 }, TIG_WINDOW_HANDLE_INVALID },
+    /* FATIGUE */ { { 755, 578, 27, 12 }, TIG_WINDOW_HANDLE_INVALID },
+    /*    FATE */ { { 190, 17, 24, 12 }, TIG_WINDOW_HANDLE_INVALID },
+    /*   MONEY */ { { 104, 512, 50, 20 }, TIG_WINDOW_HANDLE_INVALID },
+    /*    MANA */ { { 264, 562, 50, 20 }, TIG_WINDOW_HANDLE_INVALID },
+    /*  POISON */ { { 15, 500, 29, 12 }, TIG_WINDOW_HANDLE_INVALID },
 };
 
 // 0x5C6470
@@ -1096,7 +1106,9 @@ bool intgame_load(GameLoadInfo* load_info)
     obj = player_get_pc_obj();
     if (obj != OBJ_HANDLE_NULL) {
         sub_556C20(obj);
-        sub_54AD00(2, stat_level_get(obj, STAT_FATE_POINTS), 2);
+        intgame_draw_counter(INTGAME_COUNTER_FATE,
+            stat_level_get(obj, STAT_FATE_POINTS),
+            2);
     }
 
     return true;
@@ -1201,16 +1213,16 @@ void iso_interface_create(tig_window_handle_t window_handle)
         stru_5C6D60[index].window_handle = dword_64C4F8[iwid];
     }
 
-    for (index = 0; index < 6; index++) {
-        iwid = sub_551740(stru_5C63F8[index].rect.x, stru_5C63F8[index].rect.y);
+    for (index = 0; index < INTGAME_COUNTER_COUNT; index++) {
+        iwid = sub_551740(intgame_number_boxes[index].rect.x, intgame_number_boxes[index].rect.y);
         if (iwid == -1) {
             tig_debug_printf("iso_interface_create: ERROR: find iwid match!\n");
             exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
         }
 
-        stru_5C63F8[index].rect.x -= stru_5C6390[iwid].x;
-        stru_5C63F8[index].rect.y -= stru_5C6390[iwid].y;
-        stru_5C63F8[index].window_handle = dword_64C4F8[iwid];
+        intgame_number_boxes[index].rect.x -= stru_5C6390[iwid].x;
+        intgame_number_boxes[index].rect.y -= stru_5C6390[iwid].y;
+        intgame_number_boxes[index].window_handle = dword_64C4F8[iwid];
     }
 
     hotkey_ui_start(dword_64C4F8[1], &(stru_5C6390[1]), dword_64C4F8[1], false);
@@ -1411,7 +1423,7 @@ void intgame_button_destroy(UiButtonInfo* button_info)
 }
 
 // 0x54AD00
-void sub_54AD00(int type, int value, int digits)
+void intgame_draw_counter(int counter, int value, int digits)
 {
     IntgameIsoWindowTypeInfo* info;
     TigRect rect;
@@ -1424,15 +1436,15 @@ void sub_54AD00(int type, int value, int digits)
         return;
     }
 
-    if (type == 4 && intgame_iso_window_type != 8) {
+    if (counter == INTGAME_COUNTER_MANA && intgame_iso_window_type != 8) {
         return;
     }
 
-    info = &(stru_5C63F8[type]);
+    info = &(intgame_number_boxes[counter]);
 
     tig_font_push(dword_64C670);
 
-    if (type != 5) {
+    if (counter != INTGAME_COUNTER_POISON) {
         info->rect.height++;
         tig_window_fill(info->window_handle,
             &(info->rect),
@@ -1440,7 +1452,7 @@ void sub_54AD00(int type, int value, int digits)
         info->rect.height--;
     }
 
-    if (value < 0 && (type == 4 || type == 3)) {
+    if (value < 0 && (counter == INTGAME_COUNTER_MANA || counter == INTGAME_COUNTER_MONEY)) {
         if (value == -1) {
             for (pos = 0; pos < digits; pos++) {
                 str[pos] = '-';
@@ -1628,12 +1640,12 @@ void sub_54AF10(TigRect* rect)
         }
 
         if (idx == 0) {
-            sub_54AD00(0, object_hp_current(pc_obj), 3);
+            intgame_draw_counter(INTGAME_COUNTER_HEALTH, object_hp_current(pc_obj), 3);
             if (poison > 0) {
-                sub_54AD00(5, poison, 3);
+                intgame_draw_counter(INTGAME_COUNTER_POISON, poison, 3);
             }
         } else {
-            sub_54AD00(1, critter_fatigue_current(pc_obj), 3);
+            intgame_draw_counter(INTGAME_COUNTER_FATIGUE, critter_fatigue_current(pc_obj), 3);
         }
     }
 
@@ -1682,7 +1694,7 @@ void sub_54B3C0()
         }
     }
 
-    sub_54AD00(3, qty, 6);
+    intgame_draw_counter(INTGAME_COUNTER_MONEY, qty, 6);
     tig_art_interface_id_create(art_num, 0, 0, 0, &art_id);
     intgame_ammo_icon_refresh(art_id);
 
@@ -1691,12 +1703,12 @@ void sub_54B3C0()
         if ((obj_field_int32_get(qword_64C688, OBJ_F_ITEM_FLAGS) & OIF_IDENTIFIED) != 0) {
             mana = obj_field_int32_get(qword_64C688, OBJ_F_ITEM_SPELL_MANA_STORE);
             if (mana >= 0) {
-                sub_54AD00(4, mana, 3);
+                intgame_draw_counter(INTGAME_COUNTER_MANA, mana, 3);
             } else {
-                sub_54AD00(4, -1, 3);
+                intgame_draw_counter(INTGAME_COUNTER_MANA, -1, 3);
             }
         } else {
-            sub_54AD00(4, -2, 3);
+            intgame_draw_counter(INTGAME_COUNTER_MANA, -2, 3);
         }
     }
 }
@@ -4367,7 +4379,9 @@ void sub_551160()
         }
 
         if (pc_obj != OBJ_HANDLE_NULL) {
-            sub_54AD00(2, stat_level_get(pc_obj, STAT_FATE_POINTS), 2);
+            intgame_draw_counter(INTGAME_COUNTER_FATE,
+                stat_level_get(pc_obj, STAT_FATE_POINTS),
+                2);
             sub_556C20(pc_obj);
         }
     }
