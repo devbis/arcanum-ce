@@ -30,26 +30,26 @@ typedef enum ChareditStat {
     CHAREDIT_STAT_UNSPENT_POINTS,
     CHAREDIT_STAT_LEVEL,
     CHAREDIT_STAT_XP_TO_NEXT_LEVEL,
-    CHAREDIT_STAT_3,
-    CHAREDIT_STAT_HP_PTS,
-    CHAREDIT_STAT_5,
-    CHAREDIT_STAT_FATIGUE_PTS,
+    CHAREDIT_STAT_HP_PTS_CURRENT,
+    CHAREDIT_STAT_HP_PTS_MAXIMUM,
+    CHAREDIT_STAT_FATIGUE_PTS_CURRENT,
+    CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM,
     CHAREDIT_STAT_STRENGTH_BASE,
-    CHAREDIT_STAT_STRENGTH_CURRENT,
+    CHAREDIT_STAT_STRENGTH_LEVEL,
     CHAREDIT_STAT_CONSTITUTION_BASE,
-    CHAREDIT_STAT_CONSTITUTION_CURRENT,
+    CHAREDIT_STAT_CONSTITUTION_LEVEL,
     CHAREDIT_STAT_DEXTERITY_BASE,
-    CHAREDIT_STAT_DEXTERITY_CURRENT,
+    CHAREDIT_STAT_DEXTERITY_LEVEL,
     CHAREDIT_STAT_BEAUTY_BASE,
-    CHAREDIT_STAT_BEAUTY_CURRENT,
+    CHAREDIT_STAT_BEAUTY_LEVEL,
     CHAREDIT_STAT_INTELLIGENCE_BASE,
-    CHAREDIT_STAT_INTELLIGENCE_CURRENT,
+    CHAREDIT_STAT_INTELLIGENCE_LEVEL,
     CHAREDIT_STAT_WILLPOWER_BASE,
-    CHAREDIT_STAT_WILLPOWER_CURRENT,
+    CHAREDIT_STAT_WILLPOWER_LEVEL,
     CHAREDIT_STAT_PERCEPTION_BASE,
-    CHAREDIT_STAT_PERCEPTION_CURRENT,
+    CHAREDIT_STAT_PERCEPTION_LEVEL,
     CHAREDIT_STAT_CHARISMA_BASE,
-    CHAREDIT_STAT_CHARISMA_CURRENT,
+    CHAREDIT_STAT_CHARISMA_LEVEL,
     CHAREDIT_STAT_COUNT,
 } ChareditStat;
 
@@ -91,11 +91,11 @@ static bool sub_55A5C0(TigMessage* msg);
 static void sub_55AE70(int a1);
 static void charedit_refresh();
 static void sub_55B1B0();
-static void sub_55B280();
-static void sub_55B2A0(int stat);
-static int sub_55B410(int stat);
-static int sub_55B4D0(int64_t obj, int stat);
-static void sub_55B720(int64_t obj, int stat, int value);
+static void charedit_refresh_stats();
+static void charedit_refresh_stat(int stat);
+static int charedit_stat_map_to_critter_stat(int stat);
+static int charedit_stat_value_get(int64_t obj, int stat);
+static void charedit_stat_value_set(int64_t obj, int stat, int value);
 static void sub_55B880(tig_window_handle_t window_handle, tig_font_handle_t font, S5C8150* a3, const char** list, int a5, int a6);
 static bool charedit_create_skills_win();
 static void sub_55BD10(int group);
@@ -156,8 +156,8 @@ static struct {
 
 // 0x5C7F88
 static S5C87D0 stru_5C7F88[10] = {
-    { 465, 144, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_HP_PTS },
-    { 465, 214, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_FATIGUE_PTS },
+    { 465, 144, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_HP_PTS_MAXIMUM },
+    { 465, 214, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM },
     { 224, 117, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_STRENGTH_BASE },
     { 224, 157, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_CONSTITUTION_BASE },
     { 224, 197, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_DEXTERITY_BASE },
@@ -170,8 +170,8 @@ static S5C87D0 stru_5C7F88[10] = {
 
 // 0x5C8028
 static S5C87D0 stru_5C8028[10] = {
-    { 409, 144, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_HP_PTS },
-    { 409, 214, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_FATIGUE_PTS },
+    { 409, 144, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_HP_PTS_MAXIMUM },
+    { 409, 214, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM },
     { 170, 117, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_STRENGTH_BASE },
     { 170, 157, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_CONSTITUTION_BASE },
     { 170, 197, TIG_BUTTON_HANDLE_INVALID, CHAREDIT_STAT_DEXTERITY_BASE },
@@ -1077,7 +1077,7 @@ bool charedit_create(int64_t obj, int mode)
             || (tig_net_flags & TIG_NET_HOST) != 0
             || multiplayer_is_locked()) {
             for (index = 0; index < 23; index++) {
-                dword_64D304[index] = sub_55B4D0(charedit_obj, index);
+                dword_64D304[index] = charedit_stat_value_get(charedit_obj, index);
             }
 
             for (index = 0; index < TECH_COUNT; index++) {
@@ -1235,9 +1235,9 @@ void sub_55A240()
     } while (font_desc.width > 243);
     tig_font_pop();
 
-    sprintf(v1[0],  ": %d  ", sub_55B4D0(charedit_obj, 0));
-    sprintf(v1[1],  ": %d  ", sub_55B4D0(charedit_obj, 1));
-    sprintf(v1[2],  ": %d  ", sub_55B4D0(charedit_obj, 2));
+    sprintf(v1[0],  ": %d  ", charedit_stat_value_get(charedit_obj, 0));
+    sprintf(v1[1],  ": %d  ", charedit_stat_value_get(charedit_obj, 1));
+    sprintf(v1[2],  ": %d  ", charedit_stat_value_get(charedit_obj, 2));
     sprintf(v1[4],  ": %s", race_name(stat_level_get(charedit_obj, STAT_RACE)));
     sprintf(v1[5],  ": %s", gender_name(stat_level_get(charedit_obj, STAT_GENDER)));
     sprintf(v1[6],  ": %d ", stat_level_get(charedit_obj, STAT_AGE));
@@ -1354,11 +1354,11 @@ bool sub_55A5C0(TigMessage* msg)
             for (index = 0; index < 10; index++) {
                 if (msg->data.button.button_handle == stru_5C7F88[index].button_handle) {
                     param = stru_5C7F88[index].art_num;
-                    value = sub_55B4D0(charedit_obj, param) + 1;
-                    if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
+                    value = charedit_stat_value_get(charedit_obj, param) + 1;
+                    if (param == CHAREDIT_STAT_HP_PTS_MAXIMUM || param == CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM) {
                         cost = 1;
                     } else {
-                        stat = sub_55B410(param);
+                        stat = charedit_stat_map_to_critter_stat(param);
                         if (stat_level_get(charedit_obj, stat) >= stat_level_max(charedit_obj, stat)) {
                             stru_5C8990.str = dword_64D3C4[0];
                             sub_550750(&stru_5C8990);
@@ -1388,9 +1388,9 @@ bool sub_55A5C0(TigMessage* msg)
                         return true;
                     }
 
-                    sub_55B720(charedit_obj, param, value);
+                    charedit_stat_value_set(charedit_obj, param, value);
 
-                    if (sub_55B4D0(charedit_obj, param) < value) {
+                    if (charedit_stat_value_get(charedit_obj, param) < value) {
                         stru_5C8990.str = dword_64D3C4[0];
                         sub_550750(&stru_5C8990);
                         return true;
@@ -1404,14 +1404,14 @@ bool sub_55A5C0(TigMessage* msg)
 
                 if (msg->data.button.button_handle == stru_5C8028[index].button_handle) {
                     param = stru_5C8028[index].art_num;
-                    value = sub_55B4D0(charedit_obj, param);
+                    value = charedit_stat_value_get(charedit_obj, param);
                     if (value == dword_64D304[param]) {
                         stru_5C8990.str = dword_64D3C4[2];
                         sub_550750(&stru_5C8990);
                         return true;
                     }
 
-                    if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
+                    if (param == CHAREDIT_STAT_HP_PTS_MAXIMUM || param == CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM) {
                         cost = 1;
                     } else {
                         cost = stat_cost(value);
@@ -1433,9 +1433,9 @@ bool sub_55A5C0(TigMessage* msg)
                         return true;
                     }
 
-                    sub_55B720(charedit_obj, param, value);
+                    charedit_stat_value_set(charedit_obj, param, value);
 
-                    if (sub_55B4D0(charedit_obj, param) > value) {
+                    if (charedit_stat_value_get(charedit_obj, param) > value) {
                         if (value == 0) {
                             stru_5C8990.str = dword_64D3C4[3];
                             sub_550750(&stru_5C8990);
@@ -1666,7 +1666,7 @@ void sub_55B0E0(bool a1)
 // 0x55B150
 void charedit_refresh()
 {
-    sub_55B280();
+    charedit_refresh_stats();
     sub_55B1B0();
     switch (dword_64E01C) {
     case 0:
@@ -1716,17 +1716,17 @@ void sub_55B1B0()
 }
 
 // 0x55B280
-void sub_55B280()
+void charedit_refresh_stats()
 {
     int stat;
 
     for (stat = 0; stat < CHAREDIT_STAT_COUNT; stat++) {
-        sub_55B2A0(stat);
+        charedit_refresh_stat(stat);
     }
 }
 
 // 0x55B2A0
-void sub_55B2A0(int stat)
+void charedit_refresh_stat(int stat)
 {
     tig_font_handle_t font;
     int value;
@@ -1751,16 +1751,16 @@ void sub_55B2A0(int stat)
 
     font = dword_64D3A8;
     switch (stat) {
-    case CHAREDIT_STAT_HP_PTS:
+    case CHAREDIT_STAT_HP_PTS_MAXIMUM:
         value = object_hp_max(charedit_obj);
         break;
-    case CHAREDIT_STAT_FATIGUE_PTS:
+    case CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM:
         value = critter_fatigue_max(charedit_obj);
         break;
     default:
-        value = sub_55B4D0(charedit_obj, stat);
-        base_value = sub_55B4D0(charedit_obj, stat - 1);
-        effective_value = sub_4EA930(charedit_obj, sub_55B410(stat), base_value);
+        value = charedit_stat_value_get(charedit_obj, stat);
+        base_value = charedit_stat_value_get(charedit_obj, stat - 1);
+        effective_value = sub_4EA930(charedit_obj, charedit_stat_map_to_critter_stat(stat), base_value);
         if (effective_value > base_value) {
             font = dword_64C7A0;
         } else if (effective_value < base_value) {
@@ -1776,42 +1776,42 @@ void sub_55B2A0(int stat)
 }
 
 // 0x55B410
-int sub_55B410(int stat)
+int charedit_stat_map_to_critter_stat(int stat)
 {
     switch (stat) {
     case CHAREDIT_STAT_UNSPENT_POINTS:
         return STAT_UNSPENT_POINTS;
     case CHAREDIT_STAT_LEVEL:
         return STAT_LEVEL;
-    case CHAREDIT_STAT_3:
-    case CHAREDIT_STAT_HP_PTS:
+    case CHAREDIT_STAT_HP_PTS_CURRENT:
+    case CHAREDIT_STAT_HP_PTS_MAXIMUM:
         return -3;
-    case CHAREDIT_STAT_5:
-    case CHAREDIT_STAT_FATIGUE_PTS:
+    case CHAREDIT_STAT_FATIGUE_PTS_CURRENT:
+    case CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM:
         return -2;
     case CHAREDIT_STAT_STRENGTH_BASE:
-    case CHAREDIT_STAT_STRENGTH_CURRENT:
+    case CHAREDIT_STAT_STRENGTH_LEVEL:
         return STAT_STRENGTH;
     case CHAREDIT_STAT_CONSTITUTION_BASE:
-    case CHAREDIT_STAT_CONSTITUTION_CURRENT:
+    case CHAREDIT_STAT_CONSTITUTION_LEVEL:
         return STAT_CONSTITUTION;
     case CHAREDIT_STAT_DEXTERITY_BASE:
-    case CHAREDIT_STAT_DEXTERITY_CURRENT:
+    case CHAREDIT_STAT_DEXTERITY_LEVEL:
         return STAT_DEXTERITY;
     case CHAREDIT_STAT_BEAUTY_BASE:
-    case CHAREDIT_STAT_BEAUTY_CURRENT:
+    case CHAREDIT_STAT_BEAUTY_LEVEL:
         return STAT_BEAUTY;
     case CHAREDIT_STAT_INTELLIGENCE_BASE:
-    case CHAREDIT_STAT_INTELLIGENCE_CURRENT:
+    case CHAREDIT_STAT_INTELLIGENCE_LEVEL:
         return STAT_INTELLIGENCE;
     case CHAREDIT_STAT_WILLPOWER_BASE:
-    case CHAREDIT_STAT_WILLPOWER_CURRENT:
+    case CHAREDIT_STAT_WILLPOWER_LEVEL:
         return STAT_WILLPOWER;
     case CHAREDIT_STAT_PERCEPTION_BASE:
-    case CHAREDIT_STAT_PERCEPTION_CURRENT:
+    case CHAREDIT_STAT_PERCEPTION_LEVEL:
         return STAT_PERCEPTION;
     case CHAREDIT_STAT_CHARISMA_BASE:
-    case CHAREDIT_STAT_CHARISMA_CURRENT:
+    case CHAREDIT_STAT_CHARISMA_LEVEL:
         return STAT_CHARISMA;
     default:
         // FIXME: Ideally should return something else to denote error.
@@ -1820,7 +1820,7 @@ int sub_55B410(int stat)
 }
 
 // 0x55B4D0
-int sub_55B4D0(int64_t obj, int stat)
+int charedit_stat_value_get(int64_t obj, int stat)
 {
     switch (stat) {
     case CHAREDIT_STAT_UNSPENT_POINTS:
@@ -1829,45 +1829,45 @@ int sub_55B4D0(int64_t obj, int stat)
         return stat_level_get(obj, STAT_LEVEL);
     case CHAREDIT_STAT_XP_TO_NEXT_LEVEL:
         return level_get_experience_points_to_next_level(obj);
-    case CHAREDIT_STAT_3:
+    case CHAREDIT_STAT_HP_PTS_CURRENT:
         return object_hp_current(obj);
-    case CHAREDIT_STAT_HP_PTS:
+    case CHAREDIT_STAT_HP_PTS_MAXIMUM:
         return object_hp_pts_get(obj);
-    case CHAREDIT_STAT_5:
+    case CHAREDIT_STAT_FATIGUE_PTS_CURRENT:
         return critter_fatigue_current(obj);
-    case CHAREDIT_STAT_FATIGUE_PTS:
+    case CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM:
         return critter_fatigue_pts_get(obj);
     case CHAREDIT_STAT_STRENGTH_BASE:
         return stat_base_get(obj, STAT_STRENGTH);
-    case CHAREDIT_STAT_STRENGTH_CURRENT:
+    case CHAREDIT_STAT_STRENGTH_LEVEL:
         return stat_level_get(obj, STAT_STRENGTH);
     case CHAREDIT_STAT_CONSTITUTION_BASE:
         return stat_base_get(obj, STAT_CONSTITUTION);
-    case CHAREDIT_STAT_CONSTITUTION_CURRENT:
+    case CHAREDIT_STAT_CONSTITUTION_LEVEL:
         return stat_level_get(obj, STAT_CONSTITUTION);
     case CHAREDIT_STAT_DEXTERITY_BASE:
         return stat_base_get(obj, STAT_DEXTERITY);
-    case CHAREDIT_STAT_DEXTERITY_CURRENT:
+    case CHAREDIT_STAT_DEXTERITY_LEVEL:
         return stat_level_get(obj, STAT_DEXTERITY);
     case CHAREDIT_STAT_BEAUTY_BASE:
         return stat_base_get(obj, STAT_BEAUTY);
-    case CHAREDIT_STAT_BEAUTY_CURRENT:
+    case CHAREDIT_STAT_BEAUTY_LEVEL:
         return stat_level_get(obj, STAT_BEAUTY);
     case CHAREDIT_STAT_INTELLIGENCE_BASE:
         return stat_base_get(obj, STAT_INTELLIGENCE);
-    case CHAREDIT_STAT_INTELLIGENCE_CURRENT:
+    case CHAREDIT_STAT_INTELLIGENCE_LEVEL:
         return stat_level_get(obj, STAT_INTELLIGENCE);
     case CHAREDIT_STAT_WILLPOWER_BASE:
         return stat_base_get(obj, STAT_WILLPOWER);
-    case CHAREDIT_STAT_WILLPOWER_CURRENT:
+    case CHAREDIT_STAT_WILLPOWER_LEVEL:
         return stat_level_get(obj, STAT_WILLPOWER);
     case CHAREDIT_STAT_PERCEPTION_BASE:
         return stat_base_get(obj, STAT_PERCEPTION);
-    case CHAREDIT_STAT_PERCEPTION_CURRENT:
+    case CHAREDIT_STAT_PERCEPTION_LEVEL:
         return stat_level_get(obj, STAT_PERCEPTION);
     case CHAREDIT_STAT_CHARISMA_BASE:
         return stat_base_get(obj, STAT_CHARISMA);
-    case CHAREDIT_STAT_CHARISMA_CURRENT:
+    case CHAREDIT_STAT_CHARISMA_LEVEL:
         return stat_level_get(obj, STAT_CHARISMA);
     default:
         return 0;
@@ -1875,13 +1875,13 @@ int sub_55B4D0(int64_t obj, int stat)
 }
 
 // 0x55B720
-void sub_55B720(int64_t obj, int stat, int value)
+void charedit_stat_value_set(int64_t obj, int stat, int value)
 {
     switch (stat) {
-    case CHAREDIT_STAT_HP_PTS:
+    case CHAREDIT_STAT_HP_PTS_MAXIMUM:
         object_hp_pts_set(obj, value);
         break;
-    case CHAREDIT_STAT_FATIGUE_PTS:
+    case CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM:
         critter_fatigue_pts_set(obj, value);
         break;
     case CHAREDIT_STAT_STRENGTH_BASE:
@@ -3950,7 +3950,7 @@ void sub_55F360(int player)
     }
 
     for (index = 0; index < CHAREDIT_STAT_COUNT; index++) {
-        dword_64D434[player][index] = sub_55B4D0(obj, index);
+        dword_64D434[player][index] = charedit_stat_value_get(obj, index);
     }
 
     for (index = 0; index < TECH_COUNT; index++) {
@@ -3985,13 +3985,13 @@ void sub_55F450(int player, int type, int param)
 
     switch (type) {
     case 0:
-        value = sub_55B4D0(obj, param) + 1;
-        if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
+        value = charedit_stat_value_get(obj, param) + 1;
+        if (param == CHAREDIT_STAT_HP_PTS_MAXIMUM || param == CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM) {
             cost = 1;
         } else {
             int stat;
 
-            stat = sub_55B410(param);
+            stat = charedit_stat_map_to_critter_stat(param);
             if (stat_level_get(obj, stat) > stat_level_max(obj, stat)) {
                 stru_5C8990.str = dword_64D3C4[0];
                 sub_4EDA60(&stru_5C8990, player, 0);
@@ -4008,9 +4008,9 @@ void sub_55F450(int player, int type, int param)
             return;
         }
 
-        sub_55B720(obj, param, value);
+        charedit_stat_value_set(obj, param, value);
 
-        if (sub_55B4D0(obj, param) < value) {
+        if (charedit_stat_value_get(obj, param) < value) {
             stru_5C8990.str = dword_64D3C4[0];
             sub_4EDA60(&stru_5C8990, player, 0);
             return;
@@ -4046,14 +4046,14 @@ void sub_55F5F0(int player, int type, int param)
 
     switch (type) {
     case 0:
-        value = sub_55B4D0(obj, param);
+        value = charedit_stat_value_get(obj, param);
         if (value == dword_64D434[player][param]) {
             stru_5C8990.str = dword_64D3C4[2];
             sub_4EDA60(&stru_5C8990, player, 0);
             return;
         }
 
-        if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
+        if (param == CHAREDIT_STAT_HP_PTS_MAXIMUM || param == CHAREDIT_STAT_FATIGUE_PTS_MAXIMUM) {
             cost = 1;
         } else {
             cost = stat_cost(value);
@@ -4061,8 +4061,8 @@ void sub_55F5F0(int player, int type, int param)
 
         value--;
 
-        sub_55B720(obj, param, value);
-        if (sub_55B4D0(obj, param) > value) {
+        charedit_stat_value_set(obj, param, value);
+        if (charedit_stat_value_get(obj, param) > value) {
             if (value == 0) {
                 stru_5C8990.str = dword_64D3C4[3];
                 sub_4EDA60(&stru_5C8990, player, 0);
