@@ -91,7 +91,7 @@ static bool sub_55A5C0(TigMessage* msg);
 static void sub_55AE70(int a1);
 static void charedit_cycle_obj(bool next);
 static void charedit_refresh();
-static void sub_55B1B0();
+static void charedit_refresh_secondary_stats();
 static void charedit_refresh_stats();
 static void charedit_refresh_stat(int stat);
 static int charedit_stat_map_to_critter_stat(int stat);
@@ -1668,7 +1668,7 @@ void charedit_cycle_obj(bool next)
 void charedit_refresh()
 {
     charedit_refresh_stats();
-    sub_55B1B0();
+    charedit_refresh_secondary_stats();
     switch (dword_64E01C) {
     case 0:
         charedit_refresh_skills_win();
@@ -1691,29 +1691,29 @@ void charedit_refresh()
 }
 
 // 0x55B1B0
-void sub_55B1B0()
+void charedit_refresh_secondary_stats()
 {
-    char v1[13][10];
-    const char* v2[13];
+    char buffers[13][10];
+    const char* labels[13];
     int index;
 
     for (index = 0; index < 13; index++) {
-        v2[index] = v1[index];
+        labels[index] = buffers[index];
     }
 
     for (index = 0; index < 8; index++) {
-        sprintf(v1[index],
+        sprintf(buffers[index],
             ": %d  ",
             stat_level_get(charedit_obj, stru_5C81E0[index].value));
     }
 
     for (index = 8; index < 13; index++) {
-        sprintf(v1[index],
+        sprintf(buffers[index],
             ": %d  ",
             sub_43D6D0(charedit_obj, stru_5C81E0[index].value, true));
     }
 
-    sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, v2, -1, 13);
+    sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, labels, -1, 13);
 }
 
 // 0x55B280
