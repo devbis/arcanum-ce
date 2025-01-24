@@ -2410,7 +2410,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
             int scenery_respawn_delay;
 
             sub_441980(triggerer_obj, obj, OBJ_HANDLE_NULL, SAP_BUST, 0);
-            scenery_flags |= 0x400;
+            scenery_flags |= OSCF_RESPAWNING;
             obj_field_int32_set(obj, OBJ_F_SCENERY_FLAGS, scenery_flags);
             object_flags_set(obj, OF_OFF);
 
@@ -2524,10 +2524,9 @@ bool object_scenery_respawn_timeevent_process(TimeEvent* timeevent)
     object_id_t obj;
 
     obj = timeevent->params[0].object_value;
-    // TODO: 0x400 is not in OSCF enum.
     obj_field_int32_set(obj,
         OBJ_F_SCENERY_FLAGS,
-        obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & ~0x400);
+        obj_field_int32_get(obj, OBJ_F_SCENERY_FLAGS) & ~OSCF_RESPAWNING);
     object_flags_unset(obj, OF_OFF);
 
     return true;

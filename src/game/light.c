@@ -1930,7 +1930,7 @@ bool sub_4DDD90(Sector* sector)
 
             if (obj_field_int32_get(node->obj, OBJ_F_TYPE) == OBJ_TYPE_SCENERY) {
                 scenery_flags = obj_field_int32_get(node->obj, OBJ_F_SCENERY_FLAGS);
-                if ((scenery_flags & 0x400) == 0
+                if ((scenery_flags & OSCF_RESPAWNING) == 0
                     && (scenery_flags & OSCF_NOCTURNAL) != 0) {
                     update = false;
                     if (tig_art_tile_id_type_get(sector->tiles.art_ids[tile]) != 0) {
