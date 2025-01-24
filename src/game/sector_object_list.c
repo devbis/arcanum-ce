@@ -584,7 +584,7 @@ void sub_4F20A0(SectorObjectList* list, ObjectNode* new_node)
             }
 
             if (new_obj_type == OBJ_TYPE_SCENERY
-                && (obj_field_int32_get(new_node->obj, OBJ_F_SCENERY_FLAGS) & 0x200) != 0) {
+                && (obj_field_int32_get(new_node->obj, OBJ_F_SCENERY_FLAGS) & OSCF_UNDER_ALL) != 0) {
                 new_node->next = *node_ptr;
                 *node_ptr = new_node;
                 return;

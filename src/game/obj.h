@@ -493,6 +493,7 @@ typedef enum ObjectSceneryFlags {
     OSCF_SOUND_SMALL       = 0x0040,
     OSCF_SOUND_MEDIUM      = 0x0080,
     OSCF_SOUND_EXTRA_LARGE = 0x0100,
+    OSCF_UNDER_ALL         = 0x0200,
 // clang-format on
 } ObjectSceneryFlags;
 
