@@ -772,7 +772,7 @@ static tig_font_handle_t dword_64DF0C;
 static int dword_64DF10[8][TECH_COUNT];
 
 // 0x64E010
-static int64_t qword_64E010;
+static int64_t charedit_obj;
 
 // 0x64E018
 bool charedit_created;
@@ -879,22 +879,22 @@ bool charedit_create(int64_t obj, int a2)
         return false;
     }
 
-    qword_64E010 = obj;
+    charedit_obj = obj;
     dword_64CDCC = a2;
 
     if (dword_64CDCC == 0) {
-        object_hp_damage_set(obj, 0);
-        critter_fatigue_damage_set(obj, 0);
+        object_hp_damage_set(charedit_obj, 0);
+        critter_fatigue_damage_set(charedit_obj, 0);
     }
 
     tig_art_interface_id_create(22, 0, 0, 0, &art_id);
     if (tig_art_frame_data(art_id, &art_frame_data) != TIG_OK) {
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
     if (!intgame_big_window_lock(sub_55A5C0, &dword_64CA64)) {
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
@@ -914,7 +914,7 @@ bool charedit_create(int64_t obj, int a2)
     art_blit_info.dst_rect = &dst_rect;
     if (tig_window_blit_art(dword_64CA64, &art_blit_info) != TIG_OK) {
         intgame_big_window_unlock();
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
@@ -934,7 +934,7 @@ bool charedit_create(int64_t obj, int a2)
             button_data.y = stru_5C7F88[index].y;
             if (tig_button_create(&button_data, &(stru_5C7F88[index].button_handle))) {
                 intgame_big_window_unlock();
-                qword_64E010 = OBJ_HANDLE_NULL;
+                charedit_obj = OBJ_HANDLE_NULL;
                 return false;
             }
         }
@@ -949,7 +949,7 @@ bool charedit_create(int64_t obj, int a2)
             button_data.y = stru_5C8028[index].y;
             if (tig_button_create(&button_data, &(stru_5C8028[index].button_handle))) {
                 intgame_big_window_unlock();
-                qword_64E010 = OBJ_HANDLE_NULL;
+                charedit_obj = OBJ_HANDLE_NULL;
                 return false;
             }
         }
@@ -957,8 +957,8 @@ bool charedit_create(int64_t obj, int a2)
 
     sub_55A240();
 
-    if (sub_553D10(pc_obj, qword_64E010, &portrait)) {
-        portrait_draw_native(qword_64E010, portrait, dword_64CA64, stru_5C89A8[0].x, stru_5C89A8[0].y);
+    if (sub_553D10(pc_obj, charedit_obj, &portrait)) {
+        portrait_draw_native(charedit_obj, portrait, dword_64CA64, stru_5C89A8[0].x, stru_5C89A8[0].y);
     } else {
         tig_art_interface_id_create(portrait, 0, 0, 0, &art_id);
         tig_art_frame_data(art_id, &art_frame_data);
@@ -992,7 +992,7 @@ bool charedit_create(int64_t obj, int a2)
     button_data.y = 11;
     if (tig_button_create(&button_data, &dword_64C7B4) != TIG_OK) {
         intgame_big_window_unlock();
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
@@ -1000,7 +1000,7 @@ bool charedit_create(int64_t obj, int a2)
     tig_art_interface_id_create(35, 0, 0, 0, &(button_data.art_id));
     if (tig_button_create(&button_data, &dword_64C83C) != TIG_OK) {
         intgame_big_window_unlock();
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
@@ -1008,7 +1008,7 @@ bool charedit_create(int64_t obj, int a2)
     tig_art_interface_id_create(36, 0, 0, 0, &(button_data.art_id));
     if (tig_button_create(&button_data, &dword_64D3B8) != TIG_OK) {
         intgame_big_window_unlock();
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
@@ -1017,7 +1017,7 @@ bool charedit_create(int64_t obj, int a2)
     tig_art_interface_id_create(568, 0, 0, 0, &(button_data.art_id));
     if (tig_button_create(&button_data, &dword_64CA54) != TIG_OK) {
         intgame_big_window_unlock();
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
@@ -1040,7 +1040,7 @@ bool charedit_create(int64_t obj, int a2)
     dword_64E01C = 0;
     sub_55BD10(dword_64E020);
 
-    if (qword_64E010 != OBJ_HANDLE_NULL) {
+    if (charedit_obj != OBJ_HANDLE_NULL) {
         dword_64D428 = TIG_BUTTON_HANDLE_INVALID;
         dword_64CFDC = TIG_BUTTON_HANDLE_INVALID;
     } else {
@@ -1062,7 +1062,7 @@ bool charedit_create(int64_t obj, int a2)
     }
 
     sub_55B150();
-    location_origin_set(obj_field_int64_get(qword_64E010, OBJ_F_LOCATION));
+    location_origin_set(obj_field_int64_get(charedit_obj, OBJ_F_LOCATION));
 
     v1.window_handle = dword_64CA64;
     v1.rect = &stru_5C8930;
@@ -1077,23 +1077,23 @@ bool charedit_create(int64_t obj, int a2)
             || (tig_net_flags & TIG_NET_HOST) != 0
             || multiplayer_is_locked()) {
             for (index = 0; index < 23; index++) {
-                dword_64D304[index] = sub_55B4D0(qword_64E010, index);
+                dword_64D304[index] = sub_55B4D0(charedit_obj, index);
             }
 
             for (index = 0; index < TECH_COUNT; index++) {
-                dword_64DEEC[index] = tech_get_degree(qword_64E010, index);
+                dword_64DEEC[index] = tech_get_degree(charedit_obj, index);
             }
 
             for (index = 0; index < COLLEGE_COUNT; index++) {
-                dword_64D364[index] = spell_college_level_get(qword_64E010, index);
+                dword_64D364[index] = spell_college_level_get(charedit_obj, index);
             }
 
             for (index = 0; index < BASIC_SKILL_COUNT; index++) {
-                dword_64C7B8[index] = basic_skill_get_base(qword_64E010, index);
+                dword_64C7B8[index] = basic_skill_get_base(charedit_obj, index);
             }
 
             for (index = 0; index < TECH_SKILL_COUNT; index++) {
-                dword_64C82C[index] = tech_skill_get_base(qword_64E010, index);
+                dword_64C82C[index] = tech_skill_get_base(charedit_obj, index);
             }
         } else {
             pkt.type = 127;
@@ -1122,8 +1122,8 @@ bool charedit_create(int64_t obj, int a2)
     dword_64CA5C = TIG_BUTTON_HANDLE_INVALID;
 
     if (dword_64CDCC == 2
-        && critter_leader_get(qword_64E010) == pc_obj
-        && critter_follower_next(qword_64E010) != qword_64E010) {
+        && critter_leader_get(charedit_obj) == pc_obj
+        && critter_follower_next(charedit_obj) != charedit_obj) {
         button_data.flags = TIG_BUTTON_FLAG_0x01;
         button_data.window_handle = dword_64CA64;
 
@@ -1168,15 +1168,15 @@ void charedit_destroy()
             sub_550DA0(0, 0);
         }
         if (dword_64CDCC == 0) {
-            object_hp_damage_set(qword_64E010, 0);
-            critter_fatigue_damage_set(qword_64E010, 0);
+            object_hp_damage_set(charedit_obj, 0);
+            critter_fatigue_damage_set(charedit_obj, 0);
         }
         intgame_big_window_unlock();
         tig_window_hide(charedit_skills_win);
         tig_window_hide(charedit_spells_win);
         tig_window_hide(charedit_tech_win);
         tig_window_hide(dword_64CA60);
-        qword_64E010 = OBJ_HANDLE_NULL;
+        charedit_obj = OBJ_HANDLE_NULL;
         sub_551160();
         sub_551A80(0);
         sub_55EFB0();
@@ -1213,9 +1213,9 @@ void sub_55A240()
     sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[0]), 0, -1, 3);
     sub_55B880(dword_64CA64, dword_64CDD0, &(stru_5C8150[3]), 0, -1, 1);
 
-    if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 5);
-    } else if (critter_is_monstrous(qword_64E010)) {
+    } else if (critter_is_monstrous(charedit_obj)) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
     } else {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 2);
@@ -1224,7 +1224,7 @@ void sub_55A240()
 
     sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, 0, -1, 13);
 
-    sub_441B60(qword_64E010, qword_64E010, v1[3]);
+    sub_441B60(charedit_obj, charedit_obj, v1[3]);
     tig_font_push(dword_64CDD0);
     font_desc.str = v1[3];
     pch = &(v1[3][strlen(v1[3])]);
@@ -1235,12 +1235,12 @@ void sub_55A240()
     } while (font_desc.width > 243);
     tig_font_pop();
 
-    sprintf(v1[0],  ": %d  ", sub_55B4D0(qword_64E010, 0));
-    sprintf(v1[1],  ": %d  ", sub_55B4D0(qword_64E010, 1));
-    sprintf(v1[2],  ": %d  ", sub_55B4D0(qword_64E010, 2));
-    sprintf(v1[4],  ": %s", race_name(stat_level_get(qword_64E010, STAT_RACE)));
-    sprintf(v1[5],  ": %s", gender_name(stat_level_get(qword_64E010, STAT_GENDER)));
-    sprintf(v1[6],  ": %d ", stat_level_get(qword_64E010, STAT_AGE));
+    sprintf(v1[0],  ": %d  ", sub_55B4D0(charedit_obj, 0));
+    sprintf(v1[1],  ": %d  ", sub_55B4D0(charedit_obj, 1));
+    sprintf(v1[2],  ": %d  ", sub_55B4D0(charedit_obj, 2));
+    sprintf(v1[4],  ": %s", race_name(stat_level_get(charedit_obj, STAT_RACE)));
+    sprintf(v1[5],  ": %s", gender_name(stat_level_get(charedit_obj, STAT_GENDER)));
+    sprintf(v1[6],  ": %d ", stat_level_get(charedit_obj, STAT_AGE));
 
     for (index = 0; index < 7; index++) {
         v2[index] = v1[index];
@@ -1249,9 +1249,9 @@ void sub_55A240()
     sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[0]), &(v2[0]), -1, 3);
     sub_55B880(dword_64CA64, dword_64CDD0, &(stru_5C8150[3]), &(v2[3]), -1, 1);
 
-    if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC) {
+    if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 3);
-    } else if (!critter_is_monstrous(qword_64E010)) {
+    } else if (!critter_is_monstrous(charedit_obj)) {
         sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 2);
     }
 }
@@ -1354,12 +1354,12 @@ bool sub_55A5C0(TigMessage* msg)
             for (index = 0; index < 10; index++) {
                 if (msg->data.button.button_handle == stru_5C7F88[index].button_handle) {
                     param = stru_5C7F88[index].art_num;
-                    value = sub_55B4D0(qword_64E010, param) + 1;
+                    value = sub_55B4D0(charedit_obj, param) + 1;
                     if (param == CHAREDIT_STAT_HP_PTS || param == CHAREDIT_STAT_FATIGUE_PTS) {
                         cost = 1;
                     } else {
                         stat = sub_55B410(param);
-                        if (stat_level_get(qword_64E010, stat) >= stat_level_max(qword_64E010, stat)) {
+                        if (stat_level_get(charedit_obj, stat) >= stat_level_max(charedit_obj, stat)) {
                             stru_5C8990.str = dword_64D3C4[0];
                             sub_550750(&stru_5C8990);
                             return true;
@@ -1367,7 +1367,7 @@ bool sub_55A5C0(TigMessage* msg)
                         cost = stat_cost(value);
                     }
 
-                    unspent_points = stat_level_get(qword_64E010, STAT_UNSPENT_POINTS);
+                    unspent_points = stat_level_get(charedit_obj, STAT_UNSPENT_POINTS);
                     if (cost > unspent_points) {
                         stru_5C8990.str = dword_64D3C4[1];
                         sub_550750(&stru_5C8990);
@@ -1388,15 +1388,15 @@ bool sub_55A5C0(TigMessage* msg)
                         return true;
                     }
 
-                    sub_55B720(qword_64E010, param, value);
+                    sub_55B720(charedit_obj, param, value);
 
-                    if (sub_55B4D0(qword_64E010, param) < value) {
+                    if (sub_55B4D0(charedit_obj, param) < value) {
                         stru_5C8990.str = dword_64D3C4[0];
                         sub_550750(&stru_5C8990);
                         return true;
                     }
 
-                    stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points - cost);
+                    stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points - cost);
                     sub_55B150();
                     sub_550720();
                     return true;
@@ -1404,7 +1404,7 @@ bool sub_55A5C0(TigMessage* msg)
 
                 if (msg->data.button.button_handle == stru_5C8028[index].button_handle) {
                     param = stru_5C8028[index].art_num;
-                    value = sub_55B4D0(qword_64E010, param);
+                    value = sub_55B4D0(charedit_obj, param);
                     if (value == dword_64D304[param]) {
                         stru_5C8990.str = dword_64D3C4[2];
                         sub_550750(&stru_5C8990);
@@ -1433,9 +1433,9 @@ bool sub_55A5C0(TigMessage* msg)
                         return true;
                     }
 
-                    sub_55B720(qword_64E010, param, value);
+                    sub_55B720(charedit_obj, param, value);
 
-                    if (sub_55B4D0(qword_64E010, param) > value) {
+                    if (sub_55B4D0(charedit_obj, param) > value) {
                         if (value == 0) {
                             stru_5C8990.str = dword_64D3C4[3];
                             sub_550750(&stru_5C8990);
@@ -1443,28 +1443,28 @@ bool sub_55A5C0(TigMessage* msg)
                         }
 
                         if (dword_5C8124[index] != -1
-                            && !skill_check_stat(qword_64E010, dword_5C8124[index], value - 1)) {
+                            && !skill_check_stat(charedit_obj, dword_5C8124[index], value - 1)) {
                             stru_5C8990.str = dword_64D3C4[11];
                             sub_550750(&stru_5C8990);
                             return true;
                         }
 
                         if (param == CHAREDIT_STAT_INTELLIGENCE_BASE
-                            && !spell_check_intelligence(qword_64E010, value - 1)) {
+                            && !spell_check_intelligence(charedit_obj, value - 1)) {
                             stru_5C8990.str = dword_64D3C4[12];
                             sub_550750(&stru_5C8990);
                             return true;
                         }
 
                         if (param == CHAREDIT_STAT_INTELLIGENCE_BASE
-                            && !tech_check_intelligence(qword_64E010, value - 1)) {
+                            && !tech_check_intelligence(charedit_obj, value - 1)) {
                             stru_5C8990.str = dword_64D3C4[14];
                             sub_550750(&stru_5C8990);
                             return true;
                         }
 
                         if (param == CHAREDIT_STAT_WILLPOWER_BASE
-                            && !spell_check_willpower(qword_64E010, value - 1)) {
+                            && !spell_check_willpower(charedit_obj, value - 1)) {
                             stru_5C8990.str = dword_64D3C4[22];
                             sub_550750(&stru_5C8990);
                             return true;
@@ -1474,8 +1474,8 @@ bool sub_55A5C0(TigMessage* msg)
                         return true;
                     }
 
-                    unspent_points = stat_level_get(qword_64E010, STAT_UNSPENT_POINTS);
-                    stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points + cost);
+                    unspent_points = stat_level_get(charedit_obj, STAT_UNSPENT_POINTS);
+                    stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points + cost);
                     sub_55B150();
                     sub_550720();
                     return true;
@@ -1523,21 +1523,21 @@ bool sub_55A5C0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == dword_64D428) {
-                value = stat_base_get(qword_64E010, STAT_LEVEL) + 1;
-                if (stat_base_set(qword_64E010, STAT_LEVEL, value) == value) {
-                    unspent_points = stat_base_get(qword_64E010, STAT_UNSPENT_POINTS);
-                    stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points + 1);
+                value = stat_base_get(charedit_obj, STAT_LEVEL) + 1;
+                if (stat_base_set(charedit_obj, STAT_LEVEL, value) == value) {
+                    unspent_points = stat_base_get(charedit_obj, STAT_UNSPENT_POINTS);
+                    stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points + 1);
                     sub_55B150();
                 }
                 return true;
             }
 
             if (msg->data.button.button_handle == dword_64CFDC) {
-                unspent_points = stat_base_get(qword_64E010, STAT_UNSPENT_POINTS);
+                unspent_points = stat_base_get(charedit_obj, STAT_UNSPENT_POINTS);
                 if (unspent_points >= 1) {
-                    value = stat_base_get(qword_64E010, STAT_LEVEL) - 1;
-                    if (stat_base_set(qword_64E010, STAT_LEVEL, value) == value) {
-                        stat_base_set(qword_64E010, STAT_UNSPENT_POINTS, unspent_points - 1);
+                    value = stat_base_get(charedit_obj, STAT_LEVEL) - 1;
+                    if (stat_base_set(charedit_obj, STAT_LEVEL, value) == value) {
+                        stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points - 1);
                     }
                     sub_55B150();
                 }
@@ -1595,8 +1595,8 @@ void sub_55AE70(int a1)
     if (a1 >= 109 && a1 <= 116) {
         ui_message.type = UI_MSG_TYPE_STAT;
         ui_message.field_8 = dword_5C8124[a1 - 109 + 2];
-        value = stat_base_get(qword_64E010, ui_message.field_8);
-        if (value < stat_level_max(qword_64E010, ui_message.field_8)) {
+        value = stat_base_get(charedit_obj, ui_message.field_8);
+        if (value < stat_level_max(charedit_obj, ui_message.field_8)) {
             ui_message.field_C = stat_cost(value + 1);
         } else {
             ui_message.field_C = 0;
@@ -1610,16 +1610,16 @@ void sub_55AE70(int a1)
         ui_message.type = UI_MSG_TYPE_SKILL;
         ui_message.field_8 = a1 - 1000;
         if (IS_TECH_SKILL(ui_message.field_8)) {
-            ui_message.field_C = sub_4C6B20(sub_4C6580(qword_64E010, GET_TECH_SKILL(ui_message.field_8)) + 4);
+            ui_message.field_C = sub_4C6B20(sub_4C6580(charedit_obj, GET_TECH_SKILL(ui_message.field_8)) + 4);
         } else {
-            ui_message.field_C = sub_4C64E0(sub_4C5E50(qword_64E010, GET_BASIC_SKILL(ui_message.field_8)) + 4);
+            ui_message.field_C = sub_4C64E0(sub_4C5E50(charedit_obj, GET_BASIC_SKILL(ui_message.field_8)) + 4);
         }
         sub_550750(&ui_message);
     } else if (a1 >= 2000 && a1 < 2999) {
         ui_message.type = UI_MSG_TYPE_SPELL;
         ui_message.field_8 = a1 - 2000;
         ui_message.field_C = spell_cost(a1 - 2000);
-        ui_message.field_10 = qword_64E010;
+        ui_message.field_10 = charedit_obj;
         sub_550750(&ui_message);
     } else if (a1 >= 3000 && a1 < 3999) {
         ui_message.type = UI_MSG_TYPE_COLLEGE;
@@ -1651,12 +1651,12 @@ void sub_55B0E0(bool a1)
     int v2;
 
     if (a1) {
-        v1 = critter_follower_next(qword_64E010);
+        v1 = critter_follower_next(charedit_obj);
     } else {
-        v1 = critter_follower_prev(qword_64E010);
+        v1 = critter_follower_prev(charedit_obj);
     }
 
-    if (v1 != qword_64E010) {
+    if (v1 != charedit_obj) {
         v2 = dword_64CDCC;
         charedit_destroy();
         charedit_create(v1, v2);
@@ -1703,13 +1703,13 @@ void sub_55B1B0()
     for (index = 0; index < 8; index++) {
         sprintf(v1[index],
             ": %d  ",
-            stat_level_get(qword_64E010, stru_5C81E0[index].value));
+            stat_level_get(charedit_obj, stru_5C81E0[index].value));
     }
 
     for (index = 8; index < 13; index++) {
         sprintf(v1[index],
             ": %d  ",
-            sub_43D6D0(qword_64E010, stru_5C81E0[index].value, true));
+            sub_43D6D0(charedit_obj, stru_5C81E0[index].value, true));
     }
 
     sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, v2, -1, 13);
@@ -1752,15 +1752,15 @@ void sub_55B2A0(int stat)
     font = dword_64D3A8;
     switch (stat) {
     case CHAREDIT_STAT_HP_PTS:
-        value = object_hp_max(qword_64E010);
+        value = object_hp_max(charedit_obj);
         break;
     case CHAREDIT_STAT_FATIGUE_PTS:
-        value = critter_fatigue_max(qword_64E010);
+        value = critter_fatigue_max(charedit_obj);
         break;
     default:
-        value = sub_55B4D0(qword_64E010, stat);
-        base_value = sub_55B4D0(qword_64E010, stat - 1);
-        effective_value = sub_4EA930(qword_64E010, sub_55B410(stat), base_value);
+        value = sub_55B4D0(charedit_obj, stat);
+        base_value = sub_55B4D0(charedit_obj, stat - 1);
+        effective_value = sub_4EA930(charedit_obj, sub_55B410(stat), base_value);
         if (effective_value > base_value) {
             font = dword_64C7A0;
         } else if (effective_value < base_value) {
@@ -2132,10 +2132,10 @@ void sub_55BD10(int group)
 
     for (index = 0; index < 4; index++) {
         if (dword_64E020 < 3) {
-            training = basic_skill_get_training(qword_64E010,
+            training = basic_skill_get_training(charedit_obj,
                 stru_5C82F0[4 * dword_64E020 + index].value);
         } else {
-            training = tech_skill_get_training(qword_64E010,
+            training = tech_skill_get_training(charedit_obj,
                 stru_5C82F0[4 * dword_64E020 + index].value);
         }
 
@@ -2191,14 +2191,14 @@ void charedit_refresh_skills_win()
     index = 0;
     for (y = 87; y < 351; y += 66) {
         if (dword_64E020 < 3) {
-            skill_level = basic_skill_level(qword_64E010,
+            skill_level = basic_skill_level(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
-            sub_4C64B0(qword_64E010,
+            sub_4C64B0(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
         } else {
-            skill_level = tech_skill_level(qword_64E010,
+            skill_level = tech_skill_level(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
-            sub_4C6AF0(qword_64E010,
+            sub_4C6AF0(charedit_obj,
                 stru_5C82F0[dword_64E020 * 4 + index].value);
         }
 
@@ -2391,13 +2391,13 @@ void charedit_refresh_tech_win()
     sprintf(str[0],
         "%s %s",
         tech_get_name(charedit_selected_tech),
-        degree_get_name(tech_get_degree(qword_64E010, charedit_selected_tech)));
+        degree_get_name(tech_get_degree(charedit_obj, charedit_selected_tech)));
     sub_55B880(charedit_tech_win, dword_64CFE0, &(stru_5C8FC8[1]), 0, -1, 1);
 
-    sprintf(str[0], "%d", sub_4B00B0(qword_64E010, charedit_selected_tech));
+    sprintf(str[0], "%d", sub_4B00B0(charedit_obj, charedit_selected_tech));
     sub_55B880(charedit_tech_win, dword_64CA68, &(stru_5C8FC8[2]), 0, -1, 1);
 
-    degree = tech_get_degree(qword_64E010, charedit_selected_tech);
+    degree = tech_get_degree(charedit_obj, charedit_selected_tech);
     next_degree = degree < 7 ? degree + 1 : degree;
 
     for (index = 0; index < degree; index++) {
@@ -2645,7 +2645,7 @@ void charedit_refresh_spells_win()
 
     tig_window_blit_art(charedit_spells_win, &art_blit_info);
 
-    cnt = spell_college_level_get(qword_64E010, dword_64E024);
+    cnt = spell_college_level_get(charedit_obj, dword_64E024);
 
     // TODO: Refactor v1.
     v1 = cnt;
@@ -2848,14 +2848,14 @@ void sub_55D210()
     art_blit_info.dst_rect = &rect;
     tig_window_blit_art(dword_64CA60, &art_blit_info);
 
-    if (obj_field_int32_get(qword_64E010, OBJ_F_TYPE) == OBJ_TYPE_PC
-        && (obj_field_int32_get(qword_64E010, OBJ_F_PC_FLAGS) & OPCF_USE_ALT_DATA) != 0) {
-        if (!sub_4A49E0(qword_64E010, byte_64D714)) {
+    if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+        && (obj_field_int32_get(charedit_obj, OBJ_F_PC_FLAGS) & OPCF_USE_ALT_DATA) != 0) {
+        if (!sub_4A49E0(charedit_obj, byte_64D714)) {
             byte_64D714[0] = '\0';
         }
         stru_5C8E40.str = byte_64D714;
     } else {
-        stru_5C8E40.str = level_advancement_scheme_get_name(level_auto_level_scheme_get(qword_64E010));
+        stru_5C8E40.str = level_advancement_scheme_get_name(level_auto_level_scheme_get(charedit_obj));
     }
 
     cnt = dword_64CDC8;
@@ -2961,7 +2961,7 @@ bool sub_55D3A0(TigMessage* msg)
                         return true;
                     }
 
-                    skill_ui_inc_skill(qword_64E010, charedit_skills_plus_buttons[index].art_num);
+                    skill_ui_inc_skill(charedit_obj, charedit_skills_plus_buttons[index].art_num);
                     return true;
                 }
 
@@ -2983,11 +2983,11 @@ bool sub_55D3A0(TigMessage* msg)
                         return true;
                     }
 
-                    if (basic_skill_get_base(qword_64E010, charedit_skills_minus_buttons[index].art_num) == dword_64C7B8[charedit_skills_minus_buttons[index].art_num]) {
+                    if (basic_skill_get_base(charedit_obj, charedit_skills_minus_buttons[index].art_num) == dword_64C7B8[charedit_skills_minus_buttons[index].art_num]) {
                         stru_5C8990.str = dword_64D3C4[6];
                         sub_550750(&stru_5C8990);
                     } else {
-                        skill_ui_dec_skill(qword_64E010, charedit_skills_minus_buttons[index].art_num);
+                        skill_ui_dec_skill(charedit_obj, charedit_skills_minus_buttons[index].art_num);
                     }
 
                     return true;
@@ -3056,7 +3056,7 @@ bool sub_55D6F0(TigMessage* msg)
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
                         || multiplayer_is_locked()) {
-                        skill_ui_inc_skill(qword_64E010, charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
+                        skill_ui_inc_skill(charedit_obj, charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                     } else {
                         pkt.type = 127;
                         pkt.field_4 = 1;
@@ -3072,11 +3072,11 @@ bool sub_55D6F0(TigMessage* msg)
                     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                         || (tig_net_flags & TIG_NET_HOST) != 0
                         || multiplayer_is_locked()) {
-                        if (tech_skill_get_base(qword_64E010, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num) == dword_64C82C[charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num]) {
+                        if (tech_skill_get_base(charedit_obj, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num) == dword_64C82C[charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num]) {
                             stru_5C8990.str = dword_64D3C4[6];
                             sub_550750(&stru_5C8990);
                         } else {
-                            skill_ui_dec_skill(qword_64E010, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
+                            skill_ui_dec_skill(charedit_obj, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                         }
                     } else {
                         pkt.type = 127;
@@ -3135,13 +3135,13 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
-                v1 = tech_get_degree(qword_64E010, charedit_selected_tech);
+                v1 = tech_get_degree(charedit_obj, charedit_selected_tech);
                 dword_64CDB4 = 5001 + 8 * charedit_selected_tech + v1;
                 return true;
             }
 
             if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
-                v1 = tech_get_degree(qword_64E010, charedit_selected_tech);
+                v1 = tech_get_degree(charedit_obj, charedit_selected_tech);
                 dword_64CDB4 = 5000 + 8 * charedit_selected_tech + v1;
                 return true;
             }
@@ -3197,7 +3197,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || multiplayer_is_locked()) {
-                    tech_ui_inc_degree(qword_64E010, charedit_selected_tech);
+                    tech_ui_inc_degree(charedit_obj, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
                     pkt.field_4 = 1;
@@ -3213,7 +3213,7 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || multiplayer_is_locked()) {
-                    tech_ui_dec_degree(qword_64E010, charedit_selected_tech);
+                    tech_ui_dec_degree(charedit_obj, charedit_selected_tech);
                 } else {
                     pkt.type = 127;
                     pkt.field_4 = 2;
@@ -3262,12 +3262,12 @@ bool sub_55DC60(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == spell_plus_bid) {
-                dword_64D360 = spell_college_level_get(qword_64E010, dword_64E024) + 5 * (dword_64E024 + 400);
+                dword_64D360 = spell_college_level_get(charedit_obj, dword_64E024) + 5 * (dword_64E024 + 400);
                 return true;
             }
 
             if (msg->data.button.button_handle == spell_minus_bid) {
-                dword_64D360 = spell_college_level_get(qword_64E010, dword_64E024) - 1 + 5 * (dword_64E024 + 400);
+                dword_64D360 = spell_college_level_get(charedit_obj, dword_64E024) - 1 + 5 * (dword_64E024 + 400);
                 return true;
             }
 
@@ -3322,8 +3322,8 @@ bool sub_55DC60(TigMessage* msg)
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || multiplayer_is_locked()) {
-                    v1 = spell_college_level_get(qword_64E010, dword_64E024);
-                    spell_ui_add(qword_64E010, 5 * dword_64E024 + v1);
+                    v1 = spell_college_level_get(charedit_obj, dword_64E024);
+                    spell_ui_add(charedit_obj, 5 * dword_64E024 + v1);
                 } else {
                     pkt.type = 127;
                     pkt.field_4 = 1;
@@ -3339,12 +3339,12 @@ bool sub_55DC60(TigMessage* msg)
                 if ((tig_net_flags & TIG_NET_CONNECTED) == 0
                     || (tig_net_flags & TIG_NET_HOST) != 0
                     || multiplayer_is_locked()) {
-                    v1 = spell_college_level_get(qword_64E010, dword_64E024);
+                    v1 = spell_college_level_get(charedit_obj, dword_64E024);
                     if (v1 == dword_64D364[dword_64E024]) {
                         stru_5C8990.str = dword_64D3C4[10];
                         sub_550750(&stru_5C8990);
                     } else {
-                        spell_ui_remove(qword_64E010, 5 * dword_64E024 + v1 - 1);
+                        spell_ui_remove(charedit_obj, 5 * dword_64E024 + v1 - 1);
                     }
                 } else {
                     pkt.type = 127;
@@ -3404,7 +3404,7 @@ bool sub_55DF90(TigMessage* msg)
             for (index = 0; index < 15; index++) {
                 if (msg->data.button.button_handle == dword_64C7E8[index]) {
                     if (index < dword_64CDC8) {
-                        level_auto_level_scheme_set(qword_64E010, dword_64CFE4[index + dword_64D424]);
+                        level_auto_level_scheme_set(charedit_obj, dword_64CFE4[index + dword_64D424]);
                         if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
                             sub_4A45B0(player_get_pc_obj());
                         }
@@ -3680,7 +3680,7 @@ void sub_55EC90()
         tmp[index] = buffer[index];
     }
 
-    value = stat_level_get(qword_64E010, STAT_ALIGNMENT) / 10;
+    value = stat_level_get(charedit_obj, STAT_ALIGNMENT) / 10;
     sprintf(buffer[0], "%d", value);
 
     tig_art_interface_id_create(254, value / 10 + 10, 0, 0, &(art_blit_info.art_id));
@@ -3725,7 +3725,7 @@ void sub_55EC90()
     art_blit_info.dst_rect = &dst_rect;
     tig_window_blit_art(dword_64CA64, &art_blit_info);
 
-    value = stat_level_get(qword_64E010, STAT_MAGICK_TECH_APTITUDE);
+    value = stat_level_get(charedit_obj, STAT_MAGICK_TECH_APTITUDE);
     if (value < 0) {
         sprintf(buffer[2], "%d", -value);
         strcpy(buffer[1], "0");
