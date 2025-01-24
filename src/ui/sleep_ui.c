@@ -114,7 +114,7 @@ void sleep_ui_exit()
 void sleep_ui_reset()
 {
     if (sleep_ui_created) {
-        sub_57B450();
+        sleep_ui_close();
     }
 }
 
@@ -140,7 +140,7 @@ void sub_57B180(int64_t bed_obj)
     }
 
     if (sleep_ui_created) {
-        sub_57B450();
+        sleep_ui_close();
         return;
     }
 
@@ -253,9 +253,9 @@ void sub_57B180(int64_t bed_obj)
 }
 
 // 0x57B450
-void sub_57B450()
+void sleep_ui_close()
 {
-    long long obj;
+    int64_t bed_obj;
 
     if (!sleep_ui_created) {
         return;
@@ -267,8 +267,8 @@ void sub_57B450()
         sleep_ui_destroy();
 
         if (dword_6834E8) {
-            if (sub_443F80(&obj, &stru_6834B8) && obj != OBJ_HANDLE_NULL) {
-                critter_leave_bed(qword_6834A8, obj);
+            if (sub_443F80(&bed_obj, &stru_6834B8) && bed_obj != OBJ_HANDLE_NULL) {
+                critter_leave_bed(qword_6834A8, bed_obj);
             }
         }
 
@@ -497,7 +497,7 @@ void sub_57BA70()
     gfade_run(&fade_data);
 
     dword_6834E0 = false;
-    sub_57B450();
+    sleep_ui_close();
 }
 
 // 0x57BAC0

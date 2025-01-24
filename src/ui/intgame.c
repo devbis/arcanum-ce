@@ -4764,7 +4764,7 @@ bool sub_551A80(int a1)
             break;
         case 6:
             v1 = true;
-            sub_57B450();
+            sleep_ui_close();
             break;
         case 7:
             v1 = true;

@@ -2667,7 +2667,7 @@ void sub_541710()
 {
     inven_ui_destroy();
     charedit_destroy();
-    sub_57B450();
+    sleep_ui_close();
     wmap_ui_close();
     logbook_ui_close();
     fate_ui_close();
@@ -2976,7 +2976,7 @@ void sub_541D40()
 {
     inven_ui_destroy();
     charedit_destroy();
-    sub_57B450();
+    sleep_ui_close();
     wmap_ui_close();
     logbook_ui_close();
     fate_ui_close();
@@ -3148,7 +3148,7 @@ void sub_542200()
 {
     inven_ui_destroy();
     charedit_destroy();
-    sub_57B450();
+    sleep_ui_close();
     wmap_ui_close();
     logbook_ui_close();
     fate_ui_close();

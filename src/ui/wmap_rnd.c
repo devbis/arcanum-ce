@@ -1016,7 +1016,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
                 wmap_ui_close();
                 sub_560720();
             } else if (sleep_ui_is_created()) {
-                sub_57B450();
+                sleep_ui_close();
             }
         }
     }
