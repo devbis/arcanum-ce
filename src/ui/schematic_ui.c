@@ -303,7 +303,7 @@ void sub_56D130(long long a1, long long a2)
     int index;
 
     if (schematic_ui_created) {
-        sub_56D2D0();
+        schematic_ui_close();
         return;
     }
 
@@ -353,7 +353,7 @@ void sub_56D130(long long a1, long long a2)
 }
 
 // 0x56D2D0
-void sub_56D2D0()
+void schematic_ui_close()
 {
     if (schematic_ui_created && sub_551A80(0)) {
         schematic_ui_destroy();
@@ -450,7 +450,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
     case TIG_MESSAGE_MOUSE:
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
             && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
-                sub_56D2D0();
+                schematic_ui_close();
             return true;
         }
 

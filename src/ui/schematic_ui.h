@@ -19,7 +19,7 @@ bool schematic_ui_init(GameInitInfo* init_info);
 void schematic_ui_exit();
 void schematic_ui_reset();
 void sub_56D130(long long a1, long long a2);
-void sub_56D2D0();
+void schematic_ui_close();
 void sub_56DBD0(int schematic, SchematicInfo* schematic_info);
 bool sub_56E720(int schematic, int64_t a2, int64_t a3);
 bool sub_56E950(int a1, int64_t a2, long long obj);

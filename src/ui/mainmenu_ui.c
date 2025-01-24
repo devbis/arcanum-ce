@@ -2671,7 +2671,7 @@ void sub_541710()
     sub_560F40();
     logbook_ui_close();
     fate_ui_close();
-    sub_56D2D0();
+    schematic_ui_close();
     gamelib_reset();
     gameuilib_reset();
 }
@@ -2980,7 +2980,7 @@ void sub_541D40()
     sub_560F40();
     logbook_ui_close();
     fate_ui_close();
-    sub_56D2D0();
+    schematic_ui_close();
 }
 
 // 0x541D70
@@ -3152,7 +3152,7 @@ void sub_542200()
     sub_560F40();
     logbook_ui_close();
     fate_ui_close();
-    sub_56D2D0();
+    schematic_ui_close();
 }
 
 // 0x542230

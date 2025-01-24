@@ -4827,7 +4827,7 @@ bool sub_551A80(int a1)
             break;
         case 14:
             v1 = true;
-            sub_56D2D0();
+            schematic_ui_close();
             sub_551F40();
             break;
         case 15:
