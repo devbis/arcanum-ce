@@ -139,7 +139,7 @@ bool sub_57F6D0(tig_button_handle_t button_handle)
 }
 
 // 0x57F720
-void sub_57F720(CyclicUiControlInfo* info)
+void cyclic_ui_control_init(CyclicUiControlInfo* info)
 {
     info->x = 0;
     info->y = 0;

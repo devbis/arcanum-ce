@@ -163,7 +163,7 @@ void options_ui_init(int type, tig_window_handle_t window_handle, bool a3)
             continue;
         }
 
-        sub_57F720(&control_info);
+        cyclic_ui_control_init(&control_info);
 
         if (type == 0 && index == 0) {
             if (dword_687260) {
