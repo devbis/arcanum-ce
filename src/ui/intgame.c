@@ -5024,7 +5024,7 @@ void sub_552130(int window_type)
 }
 
 // 0x552160
-void sub_552160(const char* str, tig_font_handle_t font)
+void intgame_text_edit_refresh(const char* str, tig_font_handle_t font)
 {
     intgame_text_edit_refresh_color(str,
         font,

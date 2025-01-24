@@ -3318,7 +3318,7 @@ void sub_564030(WmapNote* note)
     stru_5C9B20.buffer = note->str;
     textedit_ui_focus(&stru_5C9B20);
     dword_66D898 = 1;
-    sub_552160(note->str, stru_5C9160[0].font);
+    intgame_text_edit_refresh(note->str, stru_5C9160[0].font);
 }
 
 // 0x564070
@@ -3331,7 +3331,7 @@ void sub_564070(bool a1)
     textedit_ui_unfocus(&stru_5C9B20);
     stru_5C9B20.buffer = NULL;
     if (a1) {
-        sub_552160(" ", stru_5C9160[0].font);
+        intgame_text_edit_refresh(" ", stru_5C9160[0].font);
     }
 }
 
@@ -3448,9 +3448,9 @@ void sub_5642F0(WmapNote* note)
 void sub_564320(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
-        sub_552160(textedit->buffer, stru_5C9160[0].font);
+        intgame_text_edit_refresh(textedit->buffer, stru_5C9160[0].font);
     } else {
-        sub_552160(" ", stru_5C9160[0].font);
+        intgame_text_edit_refresh(" ", stru_5C9160[0].font);
     }
 }
 

@@ -58,7 +58,7 @@ bool sub_551A80(int a1);
 int sub_551F70(int a1);
 int sub_552070();
 void sub_552080(int window_type);
-void sub_552160(const char* str, tig_font_handle_t font);
+void intgame_text_edit_refresh(const char* str, tig_font_handle_t font);
 void intgame_text_edit_refresh_color(const char* str, tig_font_handle_t font, tig_color_t color, bool a4);
 bool intgame_clock_process_callback(TimeEvent* timeevent);
 bool sub_553320(bool(*func)(TigMessage* msg));

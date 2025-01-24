@@ -72,7 +72,7 @@ void sub_5718A0()
     sub_5506C0(7);
     textedit_ui_focus(&stru_5CAC28);
     dword_6810CC = 1;
-    sub_552160(stru_5CAC28.buffer, dword_6810C8);
+    intgame_text_edit_refresh(stru_5CAC28.buffer, dword_6810C8);
     dword_6810D0 = 1;
 }
 
@@ -102,8 +102,8 @@ void sub_571950(TextEdit* textedit)
 void sub_571990(TextEdit* textedit)
 {
     if (*textedit->buffer != '\0') {
-        sub_552160(textedit->buffer, dword_6810C8);
+        intgame_text_edit_refresh(textedit->buffer, dword_6810C8);
     } else {
-        sub_552160(" ", dword_6810C8);
+        intgame_text_edit_refresh(" ", dword_6810C8);
     }
 }
