@@ -89,6 +89,7 @@ typedef struct S5C8CA8 {
 static void sub_55A240();
 static bool sub_55A5C0(TigMessage* msg);
 static void sub_55AE70(int a1);
+static void charedit_cycle_obj(bool next);
 static void charedit_refresh();
 static void sub_55B1B0();
 static void charedit_refresh_stats();
@@ -1340,12 +1341,12 @@ bool sub_55A5C0(TigMessage* msg)
             return false;
         case TIG_BUTTON_STATE_RELEASED:
             if (msg->data.button.button_handle == dword_64C824) {
-                sub_55B0E0(0);
+                charedit_cycle_obj(false);
                 return true;
             }
 
             if (msg->data.button.button_handle == dword_64CA5C) {
-                sub_55B0E0(1);
+                charedit_cycle_obj(true);
                 return true;
             }
 
@@ -1645,21 +1646,21 @@ void sub_55AE70(int a1)
 }
 
 // 0x55B0E0
-void sub_55B0E0(bool a1)
+void charedit_cycle_obj(bool next)
 {
-    int64_t v1;
-    int v2;
+    int64_t obj;
+    int mode;
 
-    if (a1) {
-        v1 = critter_follower_next(charedit_obj);
+    if (next) {
+        obj = critter_follower_next(charedit_obj);
     } else {
-        v1 = critter_follower_prev(charedit_obj);
+        obj = critter_follower_prev(charedit_obj);
     }
 
-    if (v1 != charedit_obj) {
-        v2 = charedit_mode;
+    if (obj != charedit_obj) {
+        mode = charedit_mode;
         charedit_destroy();
-        charedit_create(v1, v2);
+        charedit_create(obj, mode);
     }
 }
 
