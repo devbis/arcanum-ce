@@ -89,7 +89,7 @@ typedef struct S5C8CA8 {
 static void sub_55A240();
 static bool sub_55A5C0(TigMessage* msg);
 static void sub_55AE70(int a1);
-static void sub_55B150();
+static void charedit_refresh();
 static void sub_55B1B0();
 static void sub_55B280();
 static void sub_55B2A0(int stat);
@@ -1061,7 +1061,7 @@ bool charedit_create(int64_t obj, int mode)
         tig_button_create(&button_data, &dword_64CFDC);
     }
 
-    sub_55B150();
+    charedit_refresh();
     location_origin_set(obj_field_int64_get(charedit_obj, OBJ_F_LOCATION));
 
     v1.window_handle = dword_64CA64;
@@ -1197,7 +1197,7 @@ bool charedit_is_created()
 void sub_55A230()
 {
     if (charedit_created) {
-        sub_55B150();
+        charedit_refresh();
     }
 }
 
@@ -1397,7 +1397,7 @@ bool sub_55A5C0(TigMessage* msg)
                     }
 
                     stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points - cost);
-                    sub_55B150();
+                    charedit_refresh();
                     sub_550720();
                     return true;
                 }
@@ -1476,7 +1476,7 @@ bool sub_55A5C0(TigMessage* msg)
 
                     unspent_points = stat_level_get(charedit_obj, STAT_UNSPENT_POINTS);
                     stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points + cost);
-                    sub_55B150();
+                    charedit_refresh();
                     sub_550720();
                     return true;
                 }
@@ -1488,7 +1488,7 @@ bool sub_55A5C0(TigMessage* msg)
                 }
                 sub_51E850(charedit_skills_win);
                 dword_64E01C = 0;
-                sub_55B150();
+                charedit_refresh();
                 return true;
             }
 
@@ -1498,7 +1498,7 @@ bool sub_55A5C0(TigMessage* msg)
                 }
                 sub_51E850(charedit_tech_win);
                 dword_64E01C = 1;
-                sub_55B150();
+                charedit_refresh();
                 return true;
             }
 
@@ -1508,7 +1508,7 @@ bool sub_55A5C0(TigMessage* msg)
                 }
                 sub_51E850(charedit_spells_win);
                 dword_64E01C = 2;
-                sub_55B150();
+                charedit_refresh();
                 return true;
             }
 
@@ -1518,7 +1518,7 @@ bool sub_55A5C0(TigMessage* msg)
                     sub_55EFE0();
                 }
                 dword_64E01C = 3;
-                sub_55B150();
+                charedit_refresh();
                 return true;
             }
 
@@ -1527,7 +1527,7 @@ bool sub_55A5C0(TigMessage* msg)
                 if (stat_base_set(charedit_obj, STAT_LEVEL, value) == value) {
                     unspent_points = stat_base_get(charedit_obj, STAT_UNSPENT_POINTS);
                     stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points + 1);
-                    sub_55B150();
+                    charedit_refresh();
                 }
                 return true;
             }
@@ -1539,7 +1539,7 @@ bool sub_55A5C0(TigMessage* msg)
                     if (stat_base_set(charedit_obj, STAT_LEVEL, value) == value) {
                         stat_base_set(charedit_obj, STAT_UNSPENT_POINTS, unspent_points - 1);
                     }
-                    sub_55B150();
+                    charedit_refresh();
                 }
                 return true;
             }
@@ -1664,7 +1664,7 @@ void sub_55B0E0(bool a1)
 }
 
 // 0x55B150
-void sub_55B150()
+void charedit_refresh()
 {
     sub_55B280();
     sub_55B1B0();
