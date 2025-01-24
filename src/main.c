@@ -410,7 +410,7 @@ void main_loop()
                     case DIK_F7:
                         if (!critter_is_dead(player_get_pc_obj())) {
                             if (wmap_ui_is_created()) {
-                                sub_560F40();
+                                wmap_ui_close();
                                 tig_ping();
                                 gamelib_ping();
                                 iso_redraw();

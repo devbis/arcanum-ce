@@ -881,7 +881,7 @@ void wmap_ui_reset()
     int index;
 
     if (wmap_ui_initialized) {
-        sub_560F40();
+        wmap_ui_close();
 
         for (index = 0; index < 3; index++) {
             if (stru_5C9228[index].num_notes != NULL) {
@@ -1112,7 +1112,7 @@ void sub_5607E0()
     UiMessage ui_message;
 
     if (wmap_ui_created) {
-        sub_560F40();
+        wmap_ui_close();
         return;
     }
 
@@ -1185,7 +1185,7 @@ void sub_5607E0()
     }
 
     if (wmap_ui_created) {
-        sub_560F40();
+        wmap_ui_close();
         return;
     }
 
@@ -1200,7 +1200,7 @@ void sub_5607E0()
     sub_424070(player_get_pc_obj(), 4, false, true);
 
     if (!wmap_ui_create()) {
-        sub_560F40();
+        wmap_ui_close();
         sub_551A80(0);
 
         if (dword_66D9C8) {
@@ -1221,7 +1221,7 @@ void sub_5607E0()
     if (dword_66D874 != 0) {
         sub_562B70(2);
     } else if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        sub_560F40();
+        wmap_ui_close();
     }
 
     stru_5C9228[dword_66D868].field_48();
@@ -1370,7 +1370,7 @@ void sub_560EF0()
 }
 
 // 0x560F40
-void sub_560F40()
+void wmap_ui_close()
 {
     int64_t pc_obj;
     int index;
@@ -1813,7 +1813,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                         }
 
                         sub_561860(loc);
-                        sub_560F40();
+                        wmap_ui_close();
                     } else {
                         mes_file_entry.num = 640;
                         mes_get_msg(wmap_ui_worldmap_mes_file, &mes_file_entry);
@@ -1907,7 +1907,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
             }
 
             if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
-                sub_560F40();
+                wmap_ui_close();
                 return true;
             }
 
@@ -2130,7 +2130,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                             }
 
                             sub_436D20(0x80000, 0);
-                            sub_560F40();
+                            wmap_ui_close();
                         }
                     }
                     return true;
@@ -3762,14 +3762,14 @@ bool wmap_ui_bkg_process_callback(TimeEvent* timeevent)
 
     if (v1) {
         sub_5615D0(0);
-        sub_560F40();
+        wmap_ui_close();
         return true;
     }
 
     if (stru_64E048[0].field_3C0 <= 0
         || dword_65E968 >= stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
         sub_5615D0(0);
-        sub_560F40();
+        wmap_ui_close();
         dword_65E968 = 0;
         stru_64E048[0].field_3C0 = 0;
         return true;

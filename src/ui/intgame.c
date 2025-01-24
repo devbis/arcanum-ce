@@ -4755,7 +4755,7 @@ bool sub_551A80(int a1)
             break;
         case 5:
             v1 = true;
-            sub_560F40();
+            wmap_ui_close();
             if (intgame_iso_window_type == 6) {
                 sub_5506C0(0);
             }

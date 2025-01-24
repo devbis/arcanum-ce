@@ -187,7 +187,7 @@ void sub_56ECE0(int a1)
 {
     sub_553990();
     if (a1) {
-        sub_560F40();
+        wmap_ui_close();
     }
 }
 

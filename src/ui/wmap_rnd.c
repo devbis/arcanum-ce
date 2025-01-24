@@ -1013,7 +1013,7 @@ bool wmap_rnd_timeevent_process(TimeEvent* timeevent)
         sub_566CC0(&loc);
         if (sub_558DE0(loc)) {
             if (wmap_ui_is_created()) {
-                sub_560F40();
+                wmap_ui_close();
                 sub_560720();
             } else if (sleep_ui_is_created()) {
                 sub_57B450();
