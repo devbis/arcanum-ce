@@ -796,7 +796,7 @@ void sub_405800(int type, int64_t* obj_ptr)
     }
 
     object->num_fields = object_fields_count_per_type[type];
-    object->field_50 = MALLOC(4 * object->num_fields);
+    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
 
     dword_5D10F4 = 0;
     obj_enumerate_fields(object, sub_40C6B0);
@@ -830,7 +830,7 @@ void sub_4058E0(int64_t proto_obj, int64_t loc, int64_t* obj_ptr)
     object->modified = false;
     sub_40C580(object);
 
-    object->field_50 = NULL;
+    object->data = NULL;
     memset(object->transient_properties, 0, sizeof(object->transient_properties));
 
     if (object->type == OBJ_TYPE_PROJECTILE
@@ -922,8 +922,8 @@ void sub_405BF0(int64_t obj)
         sub_40C640(object);
     }
 
-    if (object->field_50 != NULL) {
-        FREE(object->field_50);
+    if (object->data != NULL) {
+        FREE(object->data);
     }
 
     obj_unlock(obj);
@@ -950,8 +950,8 @@ void sub_405CC0(int64_t obj)
         sub_40C640(object);
     }
 
-    if (object->field_50 != NULL) {
-        FREE(object->field_50);
+    if (object->data != NULL) {
+        FREE(object->data);
     }
 
     obj_unlock(obj);
@@ -974,7 +974,7 @@ void sub_405D60(int64_t* new_obj_handle_ptr, int64_t obj_handle)
     new_object->prototype_oid = object->prototype_oid;
     new_object->modified = object->modified;
     new_object->num_fields = object->num_fields;
-    new_object->field_50 = (int*)CALLOC(4 * object->num_fields, 1);
+    new_object->data = (int*)CALLOC(4 * object->num_fields, 1);
 
     if (object->prototype_oid.type != OID_TYPE_BLOCKED) {
         sub_40C5C0(new_object, object);
@@ -1037,7 +1037,7 @@ void obj_perm_dup(int64_t* copy_obj_ptr, int64_t existing_obj)
     copy_object->field_40 = 0;
     copy_object->num_fields = existing_object->num_fields;
     copy_object->modified = false;
-    copy_object->field_50 = CALLOC(sizeof(intptr_t) * copy_object->num_fields, 1);
+    copy_object->data = (int*)CALLOC(copy_object->num_fields, sizeof(*copy_object->data));
     sub_40C5C0(copy_object, existing_object);
     memset(copy_object->field_4C, 0, 4 * sub_40C030(copy_object->type));
 
@@ -2344,18 +2344,18 @@ void sub_408760(Object* object, int fld, void* value_ptr)
     ObjSa v1;
 
     if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
-        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        v1.ptr = &(object->data[sub_40CB40(object, fld)]);
         sub_40D400(object, fld, true);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
         v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
     } else {
         if (sub_40D320(object, fld)) {
-            v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+            v1.ptr = &(object->data[sub_40D230(object, fld)]);
             sub_40D400(object, fld, true);
         } else {
             sub_40D450(object, fld);
             sub_40D370(object, fld, true);
-            v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+            v1.ptr = &(object->data[sub_40D230(object, fld)]);
             sub_40D400(object, fld, true);
         }
         object->modified = true;
@@ -2386,7 +2386,7 @@ void sub_4088B0(Object* object, int fld, int index, void* value_ptr)
     ObjSa v1;
 
     if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
-        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        v1.ptr = &(object->data[sub_40CB40(object, fld)]);
         sub_40D400(object, fld, true);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
         v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
@@ -2396,7 +2396,7 @@ void sub_4088B0(Object* object, int fld, int index, void* value_ptr)
                 sub_40D2A0(object, fld);
             }
         }
-        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        v1.ptr = &(object->data[sub_40D230(object, fld)]);
         sub_40D400(object, fld, true);
         object->modified = true;
     }
@@ -2441,14 +2441,14 @@ void sub_408A20(Object* object, int fld, void* value_ptr)
     v1.type = object_fields[fld].type;
     if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
         index = sub_40CB40(object, fld);
-        v1.ptr = &(object->field_50[index]);
+        v1.ptr = &(object->data[index]);
         sub_4E4180(&v1);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
         v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
         sub_4E4180(&v1);
     } else if (sub_40D320(object, fld)) {
         index = sub_40D230(object, fld);
-        v1.ptr = &(object->field_50[index]);
+        v1.ptr = &(object->data[index]);
         sub_4E4180(&v1);
     } else {
         int64_t proto_handle;
@@ -2457,7 +2457,7 @@ void sub_408A20(Object* object, int fld, void* value_ptr)
         proto_handle = obj_get_prototype_handle(object);
         proto = obj_lock(proto_handle);
         index = sub_40CB40(proto, fld);
-        v1.ptr = &(proto->field_50[index]);
+        v1.ptr = &(proto->data[index]);
         sub_4E4180(&v1);
         obj_unlock(proto_handle);
     }
@@ -2489,18 +2489,18 @@ void sub_408BB0(Object* object, int fld, int index, void* value)
     v1.type = object_fields[fld].type;
 
     if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
-        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        v1.ptr = &(object->data[sub_40CB40(object, fld)]);
         sub_4E4180(&v1);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
         v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
         sub_4E4180(&v1);
     } else if (sub_40D350(object, fld)) {
-        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        v1.ptr = &(object->data[sub_40D230(object, fld)]);
         sub_4E4180(&v1);
     } else {
         proto_handle = obj_get_prototype_handle(object);
         proto = obj_lock(proto_handle);
-        v1.ptr = &(proto->field_50[sub_40CB40(proto, fld)]);
+        v1.ptr = &(proto->data[sub_40CB40(proto, fld)]);
         sub_4E4180(&v1);
         obj_unlock(proto_handle);
     }
@@ -2536,7 +2536,7 @@ void sub_408D60(Object* object, int fld, int* value_ptr)
     v1.type = object_fields[fld].type;
 
     if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
-        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        v1.ptr = &(object->data[sub_40CB40(object, fld)]);
         *value_ptr = sub_4E4BA0(&v1);
     } else {
         if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
@@ -2545,12 +2545,12 @@ void sub_408D60(Object* object, int fld, int* value_ptr)
         }
 
         if (sub_40D320(object, fld)) {
-            v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+            v1.ptr = &(object->data[sub_40D230(object, fld)]);
             *value_ptr = sub_4E4BA0(&v1);
         } else {
             proto_handle = obj_get_prototype_handle(object);
             proto = obj_lock(proto_handle);
-            v1.ptr = &(proto->field_50[sub_40CB40(proto, fld)]);
+            v1.ptr = &(proto->data[sub_40CB40(proto, fld)]);
             *value_ptr = sub_4E4BA0(&v1);
             obj_unlock(proto_handle);
         }
@@ -2563,7 +2563,7 @@ void sub_408E70(Object* object, int fld, int value)
     ObjSa v1;
 
     if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
-        v1.ptr = &(object->field_50[sub_40CB40(object, fld)]);
+        v1.ptr = &(object->data[sub_40CB40(object, fld)]);
         sub_40D400(object, fld, true);
     } else if (fld > OBJ_F_TRANSIENT_BEGIN && fld < OBJ_F_TRANSIENT_END) {
         v1.ptr = &(object->transient_properties[fld - OBJ_F_TRANSIENT_BEGIN - 1]);
@@ -2574,7 +2574,7 @@ void sub_408E70(Object* object, int fld, int value)
             }
         }
 
-        v1.ptr = &(object->field_50[sub_40D230(object, fld)]);
+        v1.ptr = &(object->data[sub_40D230(object, fld)]);
         sub_40D400(object, fld, true);
         object->modified = true;
     }
@@ -2590,7 +2590,7 @@ bool sub_408F40(Object* object, int fld, SizeableArray*** ptr, int64_t* proto_ha
     Object* proto;
 
     if (object->prototype_oid.type == OID_TYPE_BLOCKED) {
-        *ptr = (SizeableArray**)(&(object->field_50[sub_40CB40(object, fld)]));
+        *ptr = (SizeableArray**)(&(object->data[sub_40CB40(object, fld)]));
         return false;
     }
 
@@ -2600,14 +2600,14 @@ bool sub_408F40(Object* object, int fld, SizeableArray*** ptr, int64_t* proto_ha
     }
 
     if (sub_40D320(object, fld)) {
-        *ptr = (SizeableArray**)(&(object->field_50[sub_40D230(object, fld)]));
+        *ptr = (SizeableArray**)(&(object->data[sub_40D230(object, fld)]));
         return false;
     }
 
     *proto_handle_ptr = obj_get_prototype_handle(object);
 
     proto = obj_lock(*proto_handle_ptr);
-    *ptr = (SizeableArray**)(&(proto->field_50[sub_40CB40(proto, fld)]));
+    *ptr = (SizeableArray**)(&(proto->data[sub_40CB40(proto, fld)]));
 
     return true;
 }
@@ -2896,7 +2896,7 @@ bool sub_4097B0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     object->field_40 = 0;
     object->modified = false;
     object->num_fields = object_fields_count_per_type[object->type];
-    object->field_50 = CALLOC(4 * object->num_fields, 1);
+    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
 
     dword_5D10F4 = 0;
     dword_5D110C = stream;
@@ -2994,7 +2994,7 @@ bool sub_409AA0(TigFile* stream, int64_t* obj_ptr, ObjectID oid)
     object->modified = false;
     sub_40C580(object);
 
-    object->field_50 = MALLOC(sizeof(*object->field_50) * object->num_fields);
+    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
 
     if (!obj_read_raw(object->field_48, sizeof(object->field_48) * sub_40C030(object->type), stream)) {
         obj_unlock(obj);
@@ -3063,7 +3063,7 @@ bool sub_409D30(uint8_t* data, int64_t* obj_ptr)
     object->field_40 = 0;
     object->modified = false;
     object->num_fields = object_fields_count_per_type[object->type];
-    object->field_50 = CALLOC(sizeof(intptr_t) * object->num_fields, 1);
+    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
 
     dword_5D10F4 = 0;
     dword_5D111C = data;
@@ -3121,7 +3121,7 @@ bool sub_409F10(uint8_t* data, int64_t* obj_ptr)
     object->modified = false;
     sub_40C580(object);
 
-    object->field_50 = CALLOC(sizeof(intptr_t) * object->num_fields, 1);
+    object->data = (int*)CALLOC(object->num_fields, sizeof(*object->data));
     sub_4E4C50(object->field_48, 4 * sub_40C030(object->type), &data);
 
     dword_5D111C = data;
@@ -3153,7 +3153,7 @@ bool sub_40A070(Object* object, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(object->field_50[dword_5D10F4]);
+    v1.ptr = &(object->data[dword_5D10F4]);
     if (!sub_4E47E0(&v1, dword_5D110C)) {
         return false;
     }
@@ -3169,7 +3169,7 @@ bool sub_40A0E0(Object* object, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(object->field_50[dword_5D10F4]);
+    v1.ptr = &(object->data[dword_5D10F4]);
     sub_4E4990(&v1, dword_5D1118);
     dword_5D10F4++;
 
@@ -3182,7 +3182,7 @@ bool sub_40A140(Object* object, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(object->field_50[dword_5D10F4]);
+    v1.ptr = &(object->data[dword_5D10F4]);
     if (!sub_4E4360(&v1, dword_5D110C)) {
         return false;
     }
@@ -3198,7 +3198,7 @@ bool sub_40A1B0(Object* object, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(object->field_50[dword_5D10F4]);
+    v1.ptr = &(object->data[dword_5D10F4]);
     sub_4E4660(&v1, &dword_5D111C);
     dword_5D10F4++;
 
@@ -3211,7 +3211,7 @@ bool object_field_write(Object* object, int fld, ObjectFieldInfo* info)
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->field_50[fld]);
+    v1.ptr = &(object->data[fld]);
     if (!sub_4E47E0(&v1, dword_5D110C)) {
         return false;
     }
@@ -3225,7 +3225,7 @@ bool sub_40A250(Object* object, int fld, ObjectFieldInfo* info)
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->field_50[fld]);
+    v1.ptr = &(object->data[fld]);
     sub_4E4990(&v1, dword_5D1118);
 
     return true;
@@ -3237,7 +3237,7 @@ bool object_field_read(Object* object, int fld, ObjectFieldInfo* info)
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->field_50[fld]);
+    v1.ptr = &(object->data[fld]);
     if (!sub_4E44F0(&v1, dword_5D110C)) {
         return false;
     }
@@ -3251,7 +3251,7 @@ bool sub_40A2D0(Object* object, int fld, ObjectFieldInfo* info)
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->field_50[fld]);
+    v1.ptr = &(object->data[fld]);
     sub_4E4660(&v1, &dword_5D111C);
 
     return true;
@@ -4319,7 +4319,7 @@ bool sub_40C6B0(Object* object, int fld)
 {
     (void)fld;
 
-    object->field_50[dword_5D10F4++] = 0;
+    object->data[dword_5D10F4++] = 0;
 
     return true;
 }
@@ -4330,7 +4330,7 @@ bool sub_40C6E0(Object* object, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(object->field_50[dword_5D10F4]);
+    v1.ptr = &(object->data[dword_5D10F4]);
     sub_4E3FA0(&v1);
     dword_5D10F4++;
 
@@ -4343,8 +4343,8 @@ bool sub_40C730(Object* object, int fld)
     ObjSa v1;
 
     v1.type = object_fields[fld].type;
-    v1.ptr = &(dword_5D1110->field_50[dword_5D10F4]);
-    sub_4E4280(&v1, &(object->field_50[dword_5D10F4]));
+    v1.ptr = &(dword_5D1110->data[dword_5D10F4]);
+    sub_4E4280(&v1, &(object->data[dword_5D10F4]));
     dword_5D10F4++;
 
     return true;
@@ -4356,8 +4356,8 @@ bool sub_40C7A0(Object* object, int fld, ObjectFieldInfo* info)
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(dword_5D1108->field_50[fld]);
-    sub_4E4280(&v1, &(object->field_50[fld]));
+    v1.ptr = &(dword_5D1108->data[fld]);
+    sub_4E4280(&v1, &(object->data[fld]));
 
     return true;
 }
@@ -4550,7 +4550,7 @@ bool sub_40CB60(Object* object, int fld, ObjectFieldInfo* info)
     ObjSa v1;
 
     v1.type = info->type;
-    v1.ptr = &(object->field_50[fld]);
+    v1.ptr = &(object->data[fld]);
     sub_4E3FA0(&v1);
     return true;
 }
@@ -4916,9 +4916,9 @@ void sub_40D2A0(Object* object, int fld)
     prototype = obj_lock(obj_get_prototype_handle(object));
     v2 = sub_40CB40(prototype, fld);
     v1.type = object_fields[fld].type;
-    v1.ptr = &(prototype->field_50[v2]);
+    v1.ptr = &(prototype->data[v2]);
     v3 = sub_40D230(object, fld);
-    sub_4E4280(&v1, &(object->field_50[v3]));
+    sub_4E4280(&v1, &(object->data[v3]));
 }
 
 // 0x40D320
@@ -4977,13 +4977,13 @@ void sub_40D470(Object* object, int fld)
     int index;
 
     object->num_fields++;
-    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->num_fields);
+    object->data = (int*)REALLOC(object->data, sizeof(int) * object->num_fields);
 
     for (index = object->num_fields - 1; index > fld; index--) {
-        object->field_50[index] = object->field_50[index - 1];
+        object->data[index] = object->data[index - 1];
     }
 
-    object->field_50[fld] = 0;
+    object->data[fld] = 0;
 }
 
 // 0x40D4D0
@@ -4995,15 +4995,15 @@ void sub_40D4D0(Object* object, int fld)
 
     v1 = sub_40D230(object, fld);
     v2.type = object_fields[fld].type;
-    v2.ptr = &(object->field_50[v1]);
+    v2.ptr = &(object->data[v1]);
     sub_4E3FA0(&v2);
 
     for (index = v1; index < object->num_fields - 1; index++) {
-        object->field_50[index] = object->field_50[index + 1];
+        object->data[index] = object->data[index + 1];
     }
 
     object->num_fields--;
-    object->field_50 = (int*)REALLOC(object->field_50, sizeof(int) * object->num_fields);
+    object->data = (int*)REALLOC(object->data, sizeof(int) * object->num_fields);
 }
 
 // 0x40D560

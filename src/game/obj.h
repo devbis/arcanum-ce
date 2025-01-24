@@ -766,7 +766,7 @@ typedef struct Object {
     /* 0046 */ int16_t num_fields;
     /* 0048 */ int* field_48;
     /* 004C */ int* field_4C;
-    /* 0050 */ int* field_50;
+    /* 0050 */ int* data;
     /* 0054 */ int transient_properties[19];
 } Object;
 
