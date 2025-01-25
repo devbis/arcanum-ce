@@ -719,7 +719,7 @@ void skill_ui_inc_skill(int64_t obj, int skill)
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > points) {
             if (is_pc && charedit_is_created()) {
-                sub_55F160();
+                charedit_error_not_enough_character_points();
             }
             return;
         }
@@ -727,11 +727,11 @@ void skill_ui_inc_skill(int64_t obj, int skill)
         if (tech_skill_set_base(obj, skill, base + cost) != base + cost) {
             if (level == 20) {
                 if (is_pc && charedit_is_created()) {
-                    sub_55F1E0();
+                    charedit_error_skill_at_max();
                 }
             } else {
                 if (is_pc && charedit_is_created()) {
-                    sub_55F200(tech_skill_get_stat(skill));
+                    charedit_error_not_enough_stat(tech_skill_get_stat(skill));
                 }
             }
             return;
@@ -750,7 +750,7 @@ void skill_ui_inc_skill(int64_t obj, int skill)
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > points) {
             if (is_pc && charedit_is_created()) {
-                sub_55F160();
+                charedit_error_not_enough_character_points();
             }
             return;
         }
@@ -758,11 +758,11 @@ void skill_ui_inc_skill(int64_t obj, int skill)
         if (basic_skill_set_base(obj, skill, base + cost) != base + cost) {
             if (level == 20) {
                 if (is_pc && charedit_is_created()) {
-                    sub_55F1E0();
+                    charedit_error_skill_at_max();
                 }
             } else {
                 if (is_pc && charedit_is_created()) {
-                    sub_55F200(basic_skill_get_stat(skill));
+                    charedit_error_not_enough_stat(basic_skill_get_stat(skill));
                 }
             }
             return;
@@ -796,11 +796,11 @@ void skill_ui_dec_skill(int64_t obj, int skill)
         if (tech_skill_set_base(obj, skill, base - cost) != base - cost) {
             if (tech_skill_get_base(obj, skill) != 0) {
                 if (is_pc && charedit_is_created()) {
-                    sub_55F340();
+                    charedit_error_skill_at_min();
                 }
             } else {
                 if (is_pc && charedit_is_created()) {
-                    sub_55F320();
+                    charedit_error_skill_is_zero();
                 }
             }
             return;
@@ -823,10 +823,10 @@ void skill_ui_dec_skill(int64_t obj, int skill)
             if (basic_skill_set_base(obj, skill, base - cost) != base - cost) {
                 if (basic_skill_get_base(obj, skill) != 0) {
                     // FIXME: No check for pc/charedit.
-                    sub_55F340();
+                    charedit_error_skill_at_min();
                 } else {
                     // FIXME: No check for pc/charedit.
-                    sub_55F320();
+                    charedit_error_skill_is_zero();
                 }
                 return;
             }

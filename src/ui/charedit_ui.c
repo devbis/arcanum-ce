@@ -63,6 +63,33 @@ typedef enum ChareditSkillGroup {
 
 #define CHAREDIT_SKILLS_PER_GROUP 4
 
+typedef enum ChareditError {
+    CHAREDIT_ERR_STAT_AT_MAX, // "Stat has reached its maximum value."
+    CHAREDIT_ERR_NOT_ENOUGH_CHARACTER_POINTS, // "You haven't enough character points."
+    CHAREDIT_ERR_STAT_AT_ACCEPTED_LEVEL, // "You cannot reduce this stat below its last accepted level."
+    CHAREDIT_ERR_STAT_AT_MIN, // "Stat has reached its minimum value."
+    CHAREDIT_ERR_SKILL_AT_MAX, // "Skill has reached its maximum value."
+    CHAREDIT_ERR_NOT_ENOUGH_STATS, // "You must raise your stats first."
+    CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL, // "You cannot reduce this skill below its last accepted level."
+    CHAREDIT_ERR_NO_POINTS_IN_SKILL, // "You have no points in this skill."
+    CHAREDIT_ERR_SKILL_AT_MIN, // "Skill has reached its minimum value."
+    CHAREDIT_ERR_NOT_ENOUGH_INTELLIGENCE, // "You must raise your Intelligence first."
+    CHAREDIT_ERR_SPELL_AT_ACCEPTED_LEVEL, // "You cannot sell back an accepted spell."
+    CHAREDIT_ERR_STAT_SKILL_PREREQUISITE, // "The stat cannot be lowered because the current level is a prerequisite for a skill."
+    CHAREDIT_ERR_INTELLIGENCE_SPELL_PREREQUISITE, // "Your Intelligence cannot be lowered because the current level is a prerequisite for a spell."
+    CHAREDIT_ERR_NOT_ENOUGH_LEVEL, // "You are not high enough level to buy this spell."
+    CHAREDIT_ERR_INTELLIGENCE_TECH_PREREQUISITE, // "Your Intelligence cannot be lowered because the current level is a prerequisite for a tech discipline."
+    CHAREDIT_ERR_NOT_ENOUGH_STRENGTH, // "You must raise your Strength first."
+    CHAREDIT_ERR_NOT_ENOUGH_DEXTERITY, // "You must raise your Dexterity first."
+    CHAREDIT_ERR_NOT_ENOUGH_CONSTITUTION, // "You must raise your Constitution first."
+    CHAREDIT_ERR_NOT_ENOUGH_BEAUTY, // "You must raise your Beauty first."
+    CHAREDIT_ERR_NOT_ENOUGH_WILLPOWER, // "You must raise your Willpower first."
+    CHAREDIT_ERR_NOT_ENOUGH_PERCEPTION, // "You must raise your Perception first."
+    CHAREDIT_ERR_NOT_ENOUGH_CHARISMA, // "You must raise your Charisma first."
+    CHAREDIT_ERR_WILLPOWER_SPELL_PREREQUISITE, // "Your Willpower cannot be lowered because the current level is a prerequisite for a spell."
+    CHAREDIT_ERR_COUNT,
+} ChareditError;
+
 typedef struct S5C8150 {
     const char* str;
     int x;
@@ -428,7 +455,7 @@ static S5C8150 stru_5C8E50[15] = {
 };
 
 // 0x5C8990
-UiMessage stru_5C8990 = { 4, 0, 0, 0, 0 };
+static UiMessage charedit_error_msg = { UI_MSG_TYPE_EXCLAMATION, 0, 0, 0, 0 };
 
 static S5C8CA8 stru_5C89A8[32] = {
     { 141, 21, 66, 66, 0x64, TIG_BUTTON_HANDLE_INVALID },
@@ -734,7 +761,7 @@ static tig_font_handle_t dword_64D3BC;
 static const char* charedit_quest_str;
 
 // 0x64D3C4
-char* dword_64D3C4[23];
+static char* charedit_errors[CHAREDIT_ERR_COUNT];
 
 // 0x64D420
 static tig_font_handle_t dword_64D420;
@@ -776,7 +803,7 @@ static int dword_64DF10[8][TECH_COUNT];
 static int64_t charedit_obj;
 
 // 0x64E018
-bool charedit_created;
+static bool charedit_created;
 
 // 0x64E01C
 static int dword_64E01C;
@@ -1361,8 +1388,8 @@ bool sub_55A5C0(TigMessage* msg)
                     } else {
                         stat = charedit_stat_map_to_critter_stat(param);
                         if (stat_level_get(charedit_obj, stat) >= stat_level_max(charedit_obj, stat)) {
-                            stru_5C8990.str = dword_64D3C4[0];
-                            sub_550750(&stru_5C8990);
+                            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_MAX];
+                            sub_550750(&charedit_error_msg);
                             return true;
                         }
                         cost = stat_cost(value);
@@ -1370,8 +1397,8 @@ bool sub_55A5C0(TigMessage* msg)
 
                     unspent_points = stat_level_get(charedit_obj, STAT_UNSPENT_POINTS);
                     if (cost > unspent_points) {
-                        stru_5C8990.str = dword_64D3C4[1];
-                        sub_550750(&stru_5C8990);
+                        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_CHARACTER_POINTS];
+                        sub_550750(&charedit_error_msg);
                         return true;
                     }
 
@@ -1392,8 +1419,8 @@ bool sub_55A5C0(TigMessage* msg)
                     charedit_stat_value_set(charedit_obj, param, value);
 
                     if (charedit_stat_value_get(charedit_obj, param) < value) {
-                        stru_5C8990.str = dword_64D3C4[0];
-                        sub_550750(&stru_5C8990);
+                        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_MAX];
+                        sub_550750(&charedit_error_msg);
                         return true;
                     }
 
@@ -1407,8 +1434,8 @@ bool sub_55A5C0(TigMessage* msg)
                     param = stru_5C8028[index].art_num;
                     value = charedit_stat_value_get(charedit_obj, param);
                     if (value == dword_64D304[param]) {
-                        stru_5C8990.str = dword_64D3C4[2];
-                        sub_550750(&stru_5C8990);
+                        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_ACCEPTED_LEVEL];
+                        sub_550750(&charedit_error_msg);
                         return true;
                     }
 
@@ -1438,36 +1465,36 @@ bool sub_55A5C0(TigMessage* msg)
 
                     if (charedit_stat_value_get(charedit_obj, param) > value) {
                         if (value == 0) {
-                            stru_5C8990.str = dword_64D3C4[3];
-                            sub_550750(&stru_5C8990);
+                            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_MIN];
+                            sub_550750(&charedit_error_msg);
                             return true;
                         }
 
                         if (dword_5C8124[index] != -1
                             && !skill_check_stat(charedit_obj, dword_5C8124[index], value - 1)) {
-                            stru_5C8990.str = dword_64D3C4[11];
-                            sub_550750(&stru_5C8990);
+                            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_SKILL_PREREQUISITE];
+                            sub_550750(&charedit_error_msg);
                             return true;
                         }
 
                         if (param == CHAREDIT_STAT_INTELLIGENCE_BASE
                             && !spell_check_intelligence(charedit_obj, value - 1)) {
-                            stru_5C8990.str = dword_64D3C4[12];
-                            sub_550750(&stru_5C8990);
+                            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_INTELLIGENCE_SPELL_PREREQUISITE];
+                            sub_550750(&charedit_error_msg);
                             return true;
                         }
 
                         if (param == CHAREDIT_STAT_INTELLIGENCE_BASE
                             && !tech_check_intelligence(charedit_obj, value - 1)) {
-                            stru_5C8990.str = dword_64D3C4[14];
-                            sub_550750(&stru_5C8990);
+                            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_INTELLIGENCE_TECH_PREREQUISITE];
+                            sub_550750(&charedit_error_msg);
                             return true;
                         }
 
                         if (param == CHAREDIT_STAT_WILLPOWER_BASE
                             && !spell_check_willpower(charedit_obj, value - 1)) {
-                            stru_5C8990.str = dword_64D3C4[22];
-                            sub_550750(&stru_5C8990);
+                            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_WILLPOWER_SPELL_PREREQUISITE];
+                            sub_550750(&charedit_error_msg);
                             return true;
                         }
 
@@ -2985,8 +3012,8 @@ bool sub_55D3A0(TigMessage* msg)
                     }
 
                     if (basic_skill_get_base(charedit_obj, charedit_skills_minus_buttons[index].art_num) == dword_64C7B8[charedit_skills_minus_buttons[index].art_num]) {
-                        stru_5C8990.str = dword_64D3C4[6];
-                        sub_550750(&stru_5C8990);
+                        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
+                        sub_550750(&charedit_error_msg);
                     } else {
                         skill_ui_dec_skill(charedit_obj, charedit_skills_minus_buttons[index].art_num);
                     }
@@ -3074,8 +3101,8 @@ bool sub_55D6F0(TigMessage* msg)
                         || (tig_net_flags & TIG_NET_HOST) != 0
                         || multiplayer_is_locked()) {
                         if (tech_skill_get_base(charedit_obj, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num) == dword_64C82C[charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num]) {
-                            stru_5C8990.str = dword_64D3C4[6];
-                            sub_550750(&stru_5C8990);
+                            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
+                            sub_550750(&charedit_error_msg);
                         } else {
                             skill_ui_dec_skill(charedit_obj, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                         }
@@ -3342,8 +3369,8 @@ bool sub_55DC60(TigMessage* msg)
                     || multiplayer_is_locked()) {
                     v1 = spell_college_level_get(charedit_obj, dword_64E024);
                     if (v1 == dword_64D364[dword_64E024]) {
-                        stru_5C8990.str = dword_64D3C4[10];
-                        sub_550750(&stru_5C8990);
+                        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SPELL_AT_ACCEPTED_LEVEL];
+                        sub_550750(&charedit_error_msg);
                     } else {
                         spell_ui_remove(charedit_obj, 5 * dword_64E024 + v1 - 1);
                     }
@@ -3481,10 +3508,10 @@ bool sub_55E110()
         }
     }
 
-    for (index = 0; index < 23; index++) {
+    for (index = 0; index < CHAREDIT_ERR_COUNT; index++) {
         mes_file_entry.num = num++;
         mes_get_msg(charedit_mes_file, &mes_file_entry);
-        dword_64D3C4[index] = mes_file_entry.str;
+        charedit_errors[index] = mes_file_entry.str;
     }
 
     mes_file_entry.num = num++;
@@ -3841,102 +3868,127 @@ void sub_55F110(TigRect* rect)
 }
 
 // 0x55F160
-void sub_55F160()
+void charedit_error_not_enough_character_points()
 {
-    if (charedit_created) {
-        stru_5C8990.str = dword_64D3C4[1];
-        sub_550750(&stru_5C8990);
+    if (!charedit_created) {
+        return;
     }
+
+    charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_CHARACTER_POINTS];
+    sub_550750(&charedit_error_msg);
 }
 
 // 0x55F180
-void sub_55F180()
+void charedit_error_not_enough_level()
 {
-    if (charedit_created) {
-        stru_5C8990.str = dword_64D3C4[13];
-        sub_550750(&stru_5C8990);
+    if (!charedit_created) {
+        return;
     }
+
+    charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_LEVEL];
+    sub_550750(&charedit_error_msg);
 }
 
 // 0x55F1A0
-void sub_55F1A0()
+void charedit_error_not_enough_intelligence()
 {
-    if (charedit_created) {
-        stru_5C8990.str = dword_64D3C4[9];
-        sub_550750(&stru_5C8990);
+    if (!charedit_created) {
+        return;
     }
+
+    charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_INTELLIGENCE];
+    sub_550750(&charedit_error_msg);
+}
+
+// 0x55F1C0
+void charedit_error_not_enough_willpower()
+{
+    if (!charedit_created) {
+        return;
+    }
+
+    charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_WILLPOWER];
+    sub_550750(&charedit_error_msg);
 }
 
 // 0x55F1E0
-void sub_55F1E0()
+void charedit_error_skill_at_max()
 {
-    if (charedit_created) {
-        stru_5C8990.str = dword_64D3C4[4];
-        sub_550750(&stru_5C8990);
+    if (!charedit_created) {
+        return;
     }
+
+    charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_MAX];
+    sub_550750(&charedit_error_msg);
 }
 
 // 0x55F200
-void sub_55F200(int stat)
+void charedit_error_not_enough_stat(int stat)
 {
-    if (charedit_created) {
-        switch (stat) {
-        case STAT_STRENGTH:
-            stru_5C8990.str = dword_64D3C4[15];
-            sub_550750(&stru_5C8990);
-            break;
-        case STAT_DEXTERITY:
-            stru_5C8990.str = dword_64D3C4[16];
-            sub_550750(&stru_5C8990);
-            break;
-        case STAT_CONSTITUTION:
-            stru_5C8990.str = dword_64D3C4[17];
-            sub_550750(&stru_5C8990);
-            break;
-        case STAT_BEAUTY:
-            stru_5C8990.str = dword_64D3C4[18];
-            sub_550750(&stru_5C8990);
-            break;
-        case STAT_INTELLIGENCE:
-            stru_5C8990.str = dword_64D3C4[9];
-            sub_550750(&stru_5C8990);
-            break;
-        case STAT_PERCEPTION:
-            stru_5C8990.str = dword_64D3C4[20];
-            sub_550750(&stru_5C8990);
-            break;
-        case STAT_WILLPOWER:
-            stru_5C8990.str = dword_64D3C4[19];
-            sub_550750(&stru_5C8990);
-            break;
-        case STAT_CHARISMA:
-            stru_5C8990.str = dword_64D3C4[21];
-            sub_550750(&stru_5C8990);
-            break;
-        default:
-            stru_5C8990.str = dword_64D3C4[5];
-            sub_550750(&stru_5C8990);
-            break;
-        }
+    if (!charedit_created) {
+        return;
+    }
+
+    switch (stat) {
+    case STAT_STRENGTH:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_STRENGTH];
+        sub_550750(&charedit_error_msg);
+        break;
+    case STAT_DEXTERITY:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_DEXTERITY];
+        sub_550750(&charedit_error_msg);
+        break;
+    case STAT_CONSTITUTION:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_CONSTITUTION];
+        sub_550750(&charedit_error_msg);
+        break;
+    case STAT_BEAUTY:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_BEAUTY];
+        sub_550750(&charedit_error_msg);
+        break;
+    case STAT_INTELLIGENCE:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_INTELLIGENCE];
+        sub_550750(&charedit_error_msg);
+        break;
+    case STAT_PERCEPTION:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_PERCEPTION];
+        sub_550750(&charedit_error_msg);
+        break;
+    case STAT_WILLPOWER:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_WILLPOWER];
+        sub_550750(&charedit_error_msg);
+        break;
+    case STAT_CHARISMA:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_CHARISMA];
+        sub_550750(&charedit_error_msg);
+        break;
+    default:
+        charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_STATS];
+        sub_550750(&charedit_error_msg);
+        break;
     }
 }
 
 // 0x55F320
-void sub_55F320()
+void charedit_error_skill_is_zero()
 {
-    if (charedit_created) {
-        stru_5C8990.str = dword_64D3C4[7];
-        sub_550750(&stru_5C8990);
+    if (!charedit_created) {
+        return;
     }
+
+    charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NO_POINTS_IN_SKILL];
+    sub_550750(&charedit_error_msg);
 }
 
 // 0x55F340
-void sub_55F340()
+void charedit_error_skill_at_min()
 {
     if (charedit_created) {
-        stru_5C8990.str = dword_64D3C4[8];
-        sub_550750(&stru_5C8990);
+        return;
     }
+
+    charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_MIN];
+    sub_550750(&charedit_error_msg);
 }
 
 // 0x55F360
@@ -3994,8 +4046,8 @@ void sub_55F450(int player, int type, int param)
 
             stat = charedit_stat_map_to_critter_stat(param);
             if (stat_level_get(obj, stat) > stat_level_max(obj, stat)) {
-                stru_5C8990.str = dword_64D3C4[0];
-                sub_4EDA60(&stru_5C8990, player, 0);
+                charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_MAX];
+                sub_4EDA60(&charedit_error_msg, player, 0);
                 return;
             }
 
@@ -4004,16 +4056,16 @@ void sub_55F450(int player, int type, int param)
 
         unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
-            stru_5C8990.str = dword_64D3C4[1];
-            sub_4EDA60(&stru_5C8990, player, 0);
+            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_NOT_ENOUGH_CHARACTER_POINTS];
+            sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
 
         charedit_stat_value_set(obj, param, value);
 
         if (charedit_stat_value_get(obj, param) < value) {
-            stru_5C8990.str = dword_64D3C4[0];
-            sub_4EDA60(&stru_5C8990, player, 0);
+            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_MAX];
+            sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
 
@@ -4049,8 +4101,8 @@ void sub_55F5F0(int player, int type, int param)
     case 0:
         value = charedit_stat_value_get(obj, param);
         if (value == dword_64D434[player][param]) {
-            stru_5C8990.str = dword_64D3C4[2];
-            sub_4EDA60(&stru_5C8990, player, 0);
+            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_ACCEPTED_LEVEL];
+            sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
 
@@ -4065,36 +4117,36 @@ void sub_55F5F0(int player, int type, int param)
         charedit_stat_value_set(obj, param, value);
         if (charedit_stat_value_get(obj, param) > value) {
             if (value == 0) {
-                stru_5C8990.str = dword_64D3C4[3];
-                sub_4EDA60(&stru_5C8990, player, 0);
+                charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_AT_MIN];
+                sub_4EDA60(&charedit_error_msg, player, 0);
                 return;
             }
 
             if (dword_5C8124[param] != -1
                 && !skill_check_stat(obj, dword_5C8124[param], value - 1)) {
-                stru_5C8990.str = dword_64D3C4[11];
-                sub_4EDA60(&stru_5C8990, player, 0);
+                charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_STAT_SKILL_PREREQUISITE];
+                sub_4EDA60(&charedit_error_msg, player, 0);
                 return;
             }
 
             if (stru_5C8028[param].art_num == CHAREDIT_STAT_INTELLIGENCE_BASE
                 && !spell_check_intelligence(obj, value - 1)) {
-                stru_5C8990.str = dword_64D3C4[12];
-                sub_4EDA60(&stru_5C8990, player, 0);
+                charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_INTELLIGENCE_SPELL_PREREQUISITE];
+                sub_4EDA60(&charedit_error_msg, player, 0);
                 return;
             }
 
             if (stru_5C8028[param].art_num == CHAREDIT_STAT_INTELLIGENCE_BASE
                 && !tech_check_intelligence(obj, value - 1)) {
-                stru_5C8990.str = dword_64D3C4[14];
-                sub_4EDA60(&stru_5C8990, player, 0);
+                charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_INTELLIGENCE_TECH_PREREQUISITE];
+                sub_4EDA60(&charedit_error_msg, player, 0);
                 return;
             }
 
             if (stru_5C8028[param].art_num == CHAREDIT_STAT_WILLPOWER_BASE
                 && !spell_check_willpower(obj, value - 1)) {
-                stru_5C8990.str = dword_64D3C4[22];
-                sub_4EDA60(&stru_5C8990, player, 0);
+                charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_WILLPOWER_SPELL_PREREQUISITE];
+                sub_4EDA60(&charedit_error_msg, player, 0);
                 return;
             }
 
@@ -4107,16 +4159,16 @@ void sub_55F5F0(int player, int type, int param)
         break;
     case 1:
         if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C84C[player][param]) {
-            stru_5C8990.str = dword_64D3C4[6];
-            sub_4EDA60(&stru_5C8990, player, 0);
+            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
+            sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
         skill_ui_dec_skill(obj, param);
         break;
     case 2:
         if (tech_skill_get_base(obj, GET_TECH_SKILL(param)) == dword_64C9D4[player][param]) {
-            stru_5C8990.str = dword_64D3C4[6];
-            sub_4EDA60(&stru_5C8990, player, 0);
+            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
+            sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
         skill_ui_dec_skill(obj, param);
@@ -4127,8 +4179,8 @@ void sub_55F5F0(int player, int type, int param)
     case 4:
         value = spell_college_level_get(obj, param);
         if (value == dword_64CDDC[player][param]) {
-            stru_5C8990.str = dword_64D3C4[10];
-            sub_4EDA60(&stru_5C8990, player, 0);
+            charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SPELL_AT_ACCEPTED_LEVEL];
+            sub_4EDA60(&charedit_error_msg, player, 0);
             return;
         }
 

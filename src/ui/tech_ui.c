@@ -25,7 +25,7 @@ void tech_ui_inc_degree(int64_t obj, int tech)
 
         if (cost > points) {
             if (is_pc) {
-                sub_55F160();
+                charedit_error_not_enough_character_points();
             }
         } else {
             if (tech_inc_degree(obj, tech) > degree) {
@@ -36,7 +36,7 @@ void tech_ui_inc_degree(int64_t obj, int tech)
                 }
             } else {
                 if (is_pc) {
-                    sub_55F1A0();
+                    charedit_error_not_enough_intelligence();
                 }
             }
         }

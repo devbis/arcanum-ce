@@ -366,31 +366,28 @@ void ui_charedit_error_msg(int type, int a2)
 {
     switch (type) {
     case 0:
-        sub_55F160();
+        charedit_error_not_enough_character_points();
         break;
     case 1:
-        sub_55F180();
+        charedit_error_not_enough_level();
         break;
     case 2:
-        sub_55F1A0();
+        charedit_error_not_enough_intelligence();
         break;
     case 3:
-        if (charedit_created) {
-            stru_5C8990.str = dword_64D3C4[19];
-            sub_550750(&stru_5C8990);
-        }
+        charedit_error_not_enough_willpower();
         break;
     case 4:
-        sub_55F1E0();
+        charedit_error_skill_at_max();
         break;
     case 5:
-        sub_55F200(a2);
+        charedit_error_not_enough_stat(a2);
         break;
     case 6:
-        sub_55F320();
+        charedit_error_skill_is_zero();
         break;
     case 7:
-        sub_55F340();
+        charedit_error_skill_at_min();
         break;
     case 8:
         if (charedit_is_created()) {

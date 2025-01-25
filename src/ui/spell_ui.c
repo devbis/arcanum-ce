@@ -506,21 +506,21 @@ void spell_ui_add(int64_t obj, int spell)
     unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
 
     if (cost > unspent_points) {
-        sub_55F160();
+        charedit_error_not_enough_character_points();
         return;
     }
 
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
         if (!spell_add(obj, spell, false)) {
             if (spell_min_level(spell) > stat_level_get(obj, STAT_LEVEL)) {
-                sub_55F180();
+                charedit_error_not_enough_level();
                 return;
             }
 
             if (spell_min_intelligence(spell) > stat_level_get(obj, STAT_INTELLIGENCE)) {
-                sub_55F1A0();
+                charedit_error_not_enough_intelligence();
             } else {
-                sub_55F200(6);
+                charedit_error_not_enough_stat(6);
             }
 
             return;
@@ -533,14 +533,14 @@ void spell_ui_add(int64_t obj, int spell)
 
         if (!spell_add(obj, spell, false)) {
             if (spell_min_level(spell) > stat_level_get(obj, STAT_LEVEL)) {
-                sub_55F180();
+                charedit_error_not_enough_level();
                 return;
             }
 
             if (spell_min_intelligence(spell) > stat_level_get(obj, STAT_INTELLIGENCE)) {
-                sub_55F1A0();
+                charedit_error_not_enough_intelligence();
             } else {
-                sub_55F200(6);
+                charedit_error_not_enough_stat(6);
             }
 
             return;
