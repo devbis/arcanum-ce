@@ -114,7 +114,7 @@ typedef struct S5C8CA8 {
 } S5C8CA8;
 
 static void sub_55A240();
-static bool sub_55A5C0(TigMessage* msg);
+static bool charedit_window_message_filter(TigMessage* msg);
 static void sub_55AE70(int a1);
 static void charedit_cycle_obj(bool next);
 static void charedit_refresh();
@@ -656,7 +656,7 @@ static tig_button_handle_t dword_64CA5C;
 static tig_window_handle_t dword_64CA60;
 
 // 0x64CA64
-static tig_window_handle_t dword_64CA64;
+static tig_window_handle_t charedit_window_handle;
 
 // 0x64CA68
 static tig_font_handle_t dword_64CA68;
@@ -921,12 +921,12 @@ bool charedit_create(int64_t obj, int mode)
         return false;
     }
 
-    if (!intgame_big_window_lock(sub_55A5C0, &dword_64CA64)) {
+    if (!intgame_big_window_lock(charedit_window_message_filter, &charedit_window_handle)) {
         charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
-    tig_window_data(dword_64CA64, &window_data);
+    tig_window_data(charedit_window_handle, &window_data);
 
     window_data.rect.x = 0;
     window_data.rect.y = 0;
@@ -940,14 +940,14 @@ bool charedit_create(int64_t obj, int mode)
     art_blit_info.art_id = art_id;
     art_blit_info.src_rect = &(window_data.rect);
     art_blit_info.dst_rect = &dst_rect;
-    if (tig_window_blit_art(dword_64CA64, &art_blit_info) != TIG_OK) {
+    if (tig_window_blit_art(charedit_window_handle, &art_blit_info) != TIG_OK) {
         intgame_big_window_unlock();
         charedit_obj = OBJ_HANDLE_NULL;
         return false;
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.window_handle = dword_64CA64;
+    button_data.window_handle = charedit_window_handle;
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
     button_data.mouse_enter_snd_id = -1;
@@ -986,7 +986,7 @@ bool charedit_create(int64_t obj, int mode)
     sub_55A240();
 
     if (sub_553D10(pc_obj, charedit_obj, &portrait)) {
-        portrait_draw_native(charedit_obj, portrait, dword_64CA64, stru_5C89A8[0].x, stru_5C89A8[0].y);
+        portrait_draw_native(charedit_obj, portrait, charedit_window_handle, stru_5C89A8[0].x, stru_5C89A8[0].y);
     } else {
         tig_art_interface_id_create(portrait, 0, 0, 0, &art_id);
         tig_art_frame_data(art_id, &art_frame_data);
@@ -1005,11 +1005,11 @@ bool charedit_create(int64_t obj, int mode)
         art_blit_info.art_id = art_id;
         art_blit_info.src_rect = &src_rect;
         art_blit_info.dst_rect = &dst_rect;
-        tig_window_blit_art(dword_64CA64, &art_blit_info);
+        tig_window_blit_art(charedit_window_handle, &art_blit_info);
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.window_handle = dword_64CA64;
+    button_data.window_handle = charedit_window_handle;
     tig_art_interface_id_create(34, 0, 0, 0, &(button_data.art_id));
     button_data.mouse_down_snd_id = 3000;
     button_data.mouse_up_snd_id = 3001;
@@ -1073,7 +1073,7 @@ bool charedit_create(int64_t obj, int mode)
         dword_64CFDC = TIG_BUTTON_HANDLE_INVALID;
     } else {
         button_data.flags = 1;
-        button_data.window_handle = dword_64CA64;
+        button_data.window_handle = charedit_window_handle;
         button_data.mouse_down_snd_id = 3000;
         button_data.mouse_up_snd_id = 3001;
         button_data.mouse_enter_snd_id = -1;
@@ -1092,7 +1092,7 @@ bool charedit_create(int64_t obj, int mode)
     charedit_refresh();
     location_origin_set(obj_field_int64_get(charedit_obj, OBJ_F_LOCATION));
 
-    v1.window_handle = dword_64CA64;
+    v1.window_handle = charedit_window_handle;
     v1.rect = &stru_5C8930;
     tig_art_interface_id_create(198, 0, 0, 0, &v1.art_id);
 
@@ -1131,7 +1131,7 @@ bool charedit_create(int64_t obj, int mode)
     }
 
     button_data.flags = TIG_BUTTON_FLAG_0x01;
-    button_data.window_handle = dword_64CA64;
+    button_data.window_handle = charedit_window_handle;
     button_data.mouse_down_snd_id = -1;
     button_data.mouse_up_snd_id = -1;
     button_data.mouse_enter_snd_id = -1;
@@ -1153,7 +1153,7 @@ bool charedit_create(int64_t obj, int mode)
         && critter_leader_get(charedit_obj) == pc_obj
         && critter_follower_next(charedit_obj) != charedit_obj) {
         button_data.flags = TIG_BUTTON_FLAG_0x01;
-        button_data.window_handle = dword_64CA64;
+        button_data.window_handle = charedit_window_handle;
 
         tig_art_interface_id_create(827, 0, 0, 0, &(button_data.art_id));
         button_data.x = 126;
@@ -1238,19 +1238,19 @@ void sub_55A240()
     const char* v2[7];
     int index;
 
-    sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[0]), 0, -1, 3);
-    sub_55B880(dword_64CA64, dword_64CDD0, &(stru_5C8150[3]), 0, -1, 1);
+    sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[0]), 0, -1, 3);
+    sub_55B880(charedit_window_handle, dword_64CDD0, &(stru_5C8150[3]), 0, -1, 1);
 
     if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 5);
+        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 5);
     } else if (critter_is_monstrous(charedit_obj)) {
-        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
+        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
     } else {
-        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 2);
-        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
+        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), 0, -1, 2);
+        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[7]), 0, -1, 2);
     }
 
-    sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, 0, -1, 13);
+    sub_55B880(charedit_window_handle, dword_64C9D0, stru_5C81E0, 0, -1, 13);
 
     sub_441B60(charedit_obj, charedit_obj, v1[3]);
     tig_font_push(dword_64CDD0);
@@ -1274,18 +1274,18 @@ void sub_55A240()
         v2[index] = v1[index];
     }
 
-    sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[0]), &(v2[0]), -1, 3);
-    sub_55B880(dword_64CA64, dword_64CDD0, &(stru_5C8150[3]), &(v2[3]), -1, 1);
+    sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[0]), &(v2[0]), -1, 3);
+    sub_55B880(charedit_window_handle, dword_64CDD0, &(stru_5C8150[3]), &(v2[3]), -1, 1);
 
     if (obj_field_int32_get(charedit_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 3);
+        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 3);
     } else if (!critter_is_monstrous(charedit_obj)) {
-        sub_55B880(dword_64CA64, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 2);
+        sub_55B880(charedit_window_handle, dword_64D3A8, &(stru_5C8150[4]), &(v2[4]), -1, 2);
     }
 }
 
 // 0x55A5C0
-bool sub_55A5C0(TigMessage* msg)
+bool charedit_window_message_filter(TigMessage* msg)
 {
     int index;
     int param;
@@ -1740,7 +1740,7 @@ void charedit_refresh_secondary_stats()
             sub_43D6D0(charedit_obj, stru_5C81E0[index].value, true));
     }
 
-    sub_55B880(dword_64CA64, dword_64C9D0, stru_5C81E0, labels, -1, 13);
+    sub_55B880(charedit_window_handle, dword_64C9D0, stru_5C81E0, labels, -1, 13);
 }
 
 // 0x55B280
@@ -1800,7 +1800,7 @@ void charedit_refresh_stat(int stat)
     stru_5C8F50.str = str;
     stru_5C8F50.x = stru_5C7E70[stat].x;
     stru_5C8F50.y = stru_5C7E70[stat].y;
-    sub_55B880(dword_64CA64, font, &stru_5C8F50, NULL, -1, 1);
+    sub_55B880(charedit_window_handle, font, &stru_5C8F50, NULL, -1, 1);
 }
 
 // 0x55B410
@@ -3729,7 +3729,7 @@ void sub_55EC90()
     art_blit_info.flags = 0;
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
-    tig_window_blit_art(dword_64CA64, &art_blit_info);
+    tig_window_blit_art(charedit_window_handle, &art_blit_info);
 
     tig_art_interface_id_create(255, 0, 0, 0, &(art_blit_info.art_id));
     if (tig_art_frame_data(art_blit_info.art_id, &art_frame_data) != TIG_OK) {
@@ -3751,7 +3751,7 @@ void sub_55EC90()
     art_blit_info.flags = 0;
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
-    tig_window_blit_art(dword_64CA64, &art_blit_info);
+    tig_window_blit_art(charedit_window_handle, &art_blit_info);
 
     value = stat_level_get(charedit_obj, STAT_MAGICK_TECH_APTITUDE);
     if (value < 0) {
@@ -3777,20 +3777,20 @@ void sub_55EC90()
     art_blit_info.flags = 0;
     art_blit_info.src_rect = &src_rect;
     art_blit_info.dst_rect = &dst_rect;
-    tig_window_blit_art(dword_64CA64, &art_blit_info);
+    tig_window_blit_art(charedit_window_handle, &art_blit_info);
 
     tig_art_interface_id_create(22, 0, 0, 0, &(art_blit_info.art_id));
 
     art_blit_info.src_rect = &stru_5C8970;
     art_blit_info.dst_rect = &stru_5C8970;
     art_blit_info.flags = 0;
-    tig_window_blit_art(dword_64CA64, &art_blit_info);
+    tig_window_blit_art(charedit_window_handle, &art_blit_info);
 
     art_blit_info.src_rect = &stru_5C8980;
     art_blit_info.dst_rect = &stru_5C8980;
-    tig_window_blit_art(dword_64CA64, &art_blit_info);
+    tig_window_blit_art(charedit_window_handle, &art_blit_info);
 
-    sub_55B880(dword_64CA64, dword_64C848, stru_5C8940, tmp, -1, 3);
+    sub_55B880(charedit_window_handle, dword_64C848, stru_5C8940, tmp, -1, 3);
 }
 
 // 0x55EFB0
