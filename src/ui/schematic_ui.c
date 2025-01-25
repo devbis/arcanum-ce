@@ -368,7 +368,7 @@ void schematic_ui_create()
     int index;
     tig_button_handle_t buttons[TECH_COUNT];
     TigButtonData button_data;
-    S550DA0 v1;
+    PcLens pc_lens;
 
     if (schematic_ui_created) {
         return;
@@ -414,10 +414,10 @@ void schematic_ui_create()
 
     location_origin_set(obj_field_int64_get(qword_680E70, OBJ_F_LOCATION));
 
-    v1.window_handle = schematic_ui_window;
-    v1.rect = &stru_5CA840;
-    tig_art_interface_id_create(231, 0, 0, 0, &(v1.art_id));
-    sub_550DA0(1, &v1);
+    pc_lens.window_handle = schematic_ui_window;
+    pc_lens.rect = &stru_5CA840;
+    tig_art_interface_id_create(231, 0, 0, 0, &(pc_lens.art_id));
+    intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
 
     gsound_play_sfx_id(3008, 1);
     schematic_ui_created = true;
@@ -427,7 +427,7 @@ void schematic_ui_create()
 void schematic_ui_destroy()
 {
     if (schematic_ui_created) {
-        sub_550DA0(0, NULL);
+        intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
         intgame_big_window_unlock();
         schematic_ui_window = TIG_WINDOW_HANDLE_INVALID;
         if (schematic_ui_num_found_schematics > 0) {
@@ -449,7 +449,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
-            && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+            && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                 schematic_ui_close();
             return true;
         }

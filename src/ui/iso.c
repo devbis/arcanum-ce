@@ -121,7 +121,7 @@ void sub_557FD0(const char* str)
 bool iso_redraw()
 {
     bool ret = gamelib_redraw();
-    sub_551080();
+    intgame_pc_lens_redraw();
     return ret;
 }
 

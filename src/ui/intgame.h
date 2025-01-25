@@ -8,6 +8,18 @@
 #include "game/ui.h"
 #include "ui/types.h"
 
+typedef enum PcLensMode {
+    PC_LENS_MODE_NONE,
+    PC_LENS_MODE_PASSTHROUGH,
+    PC_LENS_MODE_BLACKOUT,
+} PcLensMode;
+
+typedef struct PcLens {
+    tig_window_handle_t window_handle;
+    TigRect* rect;
+    tig_art_id_t art_id;
+} PcLens;
+
 typedef enum IntgameBar {
     INTGAME_BAR_HEALTH,
     INTGAME_BAR_FATIGUE,
@@ -47,9 +59,9 @@ void sub_5507E0(int spl);
 void sub_550860(int college);
 void sub_5508C0(int value);
 void sub_550930();
-void sub_550DA0(int a1, S550DA0* a2);
-bool sub_551000(int x, int y);
-void sub_551080();
+void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens);
+bool intgame_pc_lens_check_pt(int x, int y);
+void intgame_pc_lens_redraw();
 void sub_551160();
 bool sub_5517A0(TigMessage* msg);
 bool intgame_get_location_under_cursor(int64_t* loc_ptr);

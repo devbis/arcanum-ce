@@ -894,7 +894,7 @@ bool charedit_create(int64_t obj, int mode)
     TigButtonData button_data;
     int index;
     int portrait;
-    S550DA0 v1;
+    PcLens pc_lens;
     Packet127 pkt;
 
     if (charedit_created) {
@@ -1092,12 +1092,12 @@ bool charedit_create(int64_t obj, int mode)
     charedit_refresh();
     location_origin_set(obj_field_int64_get(charedit_obj, OBJ_F_LOCATION));
 
-    v1.window_handle = charedit_window_handle;
-    v1.rect = &stru_5C8930;
-    tig_art_interface_id_create(198, 0, 0, 0, &v1.art_id);
+    pc_lens.window_handle = charedit_window_handle;
+    pc_lens.rect = &stru_5C8930;
+    tig_art_interface_id_create(198, 0, 0, 0, &pc_lens.art_id);
 
     if (charedit_mode == 1 || charedit_mode == 2) {
-        sub_550DA0(1, &v1);
+        intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     }
 
     if (charedit_mode != 3) {
@@ -1193,7 +1193,7 @@ void charedit_destroy()
     if (charedit_created) {
         charedit_created = false;
         if (charedit_mode == 1 || charedit_mode == 2) {
-            sub_550DA0(0, 0);
+            intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
         }
         if (charedit_mode == 0) {
             object_hp_damage_set(charedit_obj, 0);
@@ -1583,7 +1583,7 @@ bool charedit_window_message_filter(TigMessage* msg)
         case TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP:
             if (charedit_mode != 0
                 && charedit_mode != 3
-                && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                 charedit_destroy();
                 return true;
             }

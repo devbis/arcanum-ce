@@ -13,12 +13,6 @@ typedef struct UiButtonInfo {
     tig_button_handle_t button_handle;
 } UiButtonInfo;
 
-typedef struct S550DA0 {
-    tig_window_handle_t window_handle;
-    TigRect* rect;
-    tig_art_id_t art_id;
-} S550DA0;
-
 typedef struct MainMenuButtonInfo {
     /* 0000 */ int x;
     /* 0004 */ int y;

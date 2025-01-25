@@ -364,7 +364,7 @@ void logbook_ui_create()
     TigRect dst_rect;
     int index;
     tig_button_handle_t button_handles[LOGBOOK_UI_TAB_COUNT];
-    S550DA0 v1;
+    PcLens pc_lens;
 
     if (logbook_ui_created) {
         return;
@@ -416,10 +416,10 @@ void logbook_ui_create()
 
     location_origin_set(obj_field_int64_get(logbook_ui_obj, OBJ_F_LOCATION));
 
-    v1.window_handle = logbook_ui_window;
-    v1.rect = &stru_5C3418;
-    tig_art_interface_id_create(198, 0, 0, 0, &(v1.art_id));
-    sub_550DA0(1, &v1);
+    pc_lens.window_handle = logbook_ui_window;
+    pc_lens.rect = &stru_5C3418;
+    tig_art_interface_id_create(198, 0, 0, 0, &(pc_lens.art_id));
+    intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     sub_53F490(261, 1);
     sub_460790(1, 0);
     gsound_play_sfx_id(3008, 1);
@@ -434,7 +434,7 @@ void logbook_ui_destroy()
         return;
     }
 
-    sub_550DA0(0, 0);
+    intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
     intgame_big_window_unlock();
     logbook_ui_window = TIG_WINDOW_HANDLE_INVALID;
     gsound_play_sfx_id(3009, 1);
@@ -455,7 +455,7 @@ bool logbook_ui_message_filter(TigMessage* msg)
 
     if (msg->type == TIG_MESSAGE_MOUSE) {
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
-            && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+            && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
             logbook_ui_close();
             return true;
         }

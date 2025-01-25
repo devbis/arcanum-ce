@@ -800,13 +800,7 @@ static tig_window_handle_t intgame_big_window_handle;
 static TigRect stru_64C510;
 
 // 0x64C520
-static tig_window_handle_t dword_64C520;
-
-// 0x64C524
-static TigRect* dword_64C524;
-
-// 0x64C528
-static tig_art_id_t dword_64C528;
+static PcLens intgame_pc_lens;
 
 // 0x64C52C
 static tig_window_handle_t dword_64C52C;
@@ -830,7 +824,7 @@ static bool intgame_big_window_locked;
 static int dword_64C634[11];
 
 // 0x64C660
-static TigRect stru_64C660;
+static TigRect intgame_pc_lens_rect;
 
 // 0x64C670
 static tig_font_handle_t dword_64C670;
@@ -872,7 +866,7 @@ static bool dword_64C6B4;
 static int dword_64C6B8;
 
 // 0x64C6BC
-static int dword_64C6BC;
+static int intgame_pc_lens_mode;
 
 // 0x64C6C0
 static int dword_64C6C0;
@@ -902,7 +896,7 @@ static bool dword_64C6DC;
 static bool dword_64C6E0;
 
 // 0x64C6E4
-static TigVideoBuffer* dword_64C6E4;
+static TigVideoBuffer* intgame_pc_lens_video_buffer;
 
 // 0x64C6E8
 static bool dword_64C6E8;
@@ -1233,7 +1227,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
     dword_64C6B8 = 0;
     dword_64C634[0] = 0;
     sub_4F25B0(Tgt_Obj_No_T_Wall | Tgt_Tile);
-    dword_64C6BC = 0;
+    intgame_pc_lens_mode = 0;
 
     font_desc.str = NULL;
     tig_font_measure(&font_desc);
@@ -4213,141 +4207,152 @@ void sub_550D60()
 }
 
 // 0x550DA0
-void sub_550DA0(int a1, S550DA0* a2)
+void intgame_pc_lens_do(PcLensMode mode, PcLens* pc_lens)
 {
     TigVideoBufferCreateInfo vb_create_info;
     TigRect src_rect;
     TigRect dst_rect;
     TigArtBlitInfo blit_info;
 
-    if (dword_64C6BC == a1) {
+    if (intgame_pc_lens_mode == mode) {
         return;
     }
 
-    switch (dword_64C6BC) {
-    case 1:
-        if (tig_video_buffer_destroy(dword_64C6E4) == TIG_OK) {
-            dword_64C6E4 = NULL;
+    switch (intgame_pc_lens_mode) {
+    case PC_LENS_MODE_PASSTHROUGH:
+        if (tig_video_buffer_destroy(intgame_pc_lens_video_buffer) == TIG_OK) {
+            intgame_pc_lens_video_buffer = NULL;
         }
         break;
-    case 2:
+    case PC_LENS_MODE_BLACKOUT:
         sub_4D81F0();
         break;
     }
 
-    switch (a1) {
-    case 0:
-        dword_64C520 = TIG_WINDOW_HANDLE_INVALID;
+    switch (mode) {
+    case PC_LENS_MODE_NONE:
+        intgame_pc_lens.window_handle = TIG_WINDOW_HANDLE_INVALID;
         sub_558130(NULL);
         iso_redraw();
+
+        if (dword_5C72B0 < 1) {
+            gamelib_renderlock_release();
+            dword_5C72B0++;
+        }
         break;
-    case 1:
+    case PC_LENS_MODE_PASSTHROUGH:
         sub_551A10(player_get_pc_obj());
+
+        intgame_pc_lens.window_handle = pc_lens->window_handle;
+        intgame_pc_lens.art_id = pc_lens->art_id;
+        intgame_pc_lens.rect = &intgame_pc_lens_rect;
+        intgame_pc_lens_rect = *pc_lens->rect;
+
         vb_create_info.width = stru_64C510.width;
         vb_create_info.height = stru_64C510.height;
         vb_create_info.flags = 0;
         vb_create_info.background_color = 0;
-        dword_64C520 = a2->window_handle;
-        dword_64C528 = a2->art_id;
-        dword_64C524 = &stru_64C660;
-        stru_64C660 = *a2->rect;
-        if (tig_video_buffer_create(&vb_create_info, &dword_64C6E4) == TIG_OK) {
-            sub_551080();
-        }
-        sub_558130(&stru_64C510);
-        break;
-    case 2:
-        sub_4D81F0();
-        dword_64C520 = a2->window_handle;
-        dword_64C528 = a2->art_id;
-        dword_64C524 = &stru_64C660;
-        stru_64C660 = *a2->rect;
 
-        tig_window_fill(dword_64C520,
-            &stru_64C660,
+        if (tig_video_buffer_create(&vb_create_info, &intgame_pc_lens_video_buffer) == TIG_OK) {
+            intgame_pc_lens_redraw();
+        }
+
+        sub_558130(&stru_64C510);
+
+        if (dword_5C72B0 < 1) {
+            gamelib_renderlock_release();
+            dword_5C72B0++;
+        }
+        break;
+    case PC_LENS_MODE_BLACKOUT:
+        sub_4D81F0();
+
+        intgame_pc_lens.window_handle = pc_lens->window_handle;
+        intgame_pc_lens.art_id = pc_lens->art_id;
+        intgame_pc_lens.rect = &intgame_pc_lens_rect;
+        intgame_pc_lens_rect = *pc_lens->rect;
+
+        tig_window_fill(intgame_pc_lens.window_handle,
+            &intgame_pc_lens_rect,
             tig_color_make(0, 0, 0));
 
         src_rect.x = 0;
         src_rect.y = 0;
-        src_rect.width = stru_64C660.width;
-        src_rect.height = stru_64C660.height;
+        src_rect.width = intgame_pc_lens_rect.width;
+        src_rect.height = intgame_pc_lens_rect.height;
 
-        dst_rect.x = dword_64C524->x;
-        dst_rect.y = dword_64C524->y;
-        dst_rect.width = stru_64C660.width;
-        dst_rect.height = stru_64C660.height;
+        dst_rect.x = intgame_pc_lens.rect->x;
+        dst_rect.y = intgame_pc_lens.rect->y;
+        dst_rect.width = intgame_pc_lens_rect.width;
+        dst_rect.height = intgame_pc_lens_rect.height;
 
         blit_info.flags = 0;
-        blit_info.art_id = dword_64C528;
+        blit_info.art_id = intgame_pc_lens.art_id;
         blit_info.src_rect = &src_rect;
         blit_info.dst_rect = &dst_rect;
-        tig_window_blit_art(dword_64C520, &blit_info);
+        tig_window_blit_art(intgame_pc_lens.window_handle, &blit_info);
 
         sub_558130(&stru_64C698);
+
         gamelib_renderlock_acquire();
-        dword_64C6BC = 2;
         dword_5C72B0--;
-        return;
+        break;
     }
 
-    if (dword_5C72B0 < 1) {
-        gamelib_renderlock_release();
-        dword_5C72B0++;
-    }
-
-    dword_64C6BC = a1;
+    intgame_pc_lens_mode = mode;
 }
 
 // 0x551000
-bool sub_551000(int x, int y)
+bool intgame_pc_lens_check_pt(int x, int y)
 {
     TigWindowData window_data;
 
-    if (dword_64C520 == TIG_WINDOW_HANDLE_INVALID) {
+    if (intgame_pc_lens.window_handle == TIG_WINDOW_HANDLE_INVALID) {
         return false;
     }
 
-    if (tig_window_data(dword_64C520, &window_data) != TIG_OK) {
+    if (tig_window_data(intgame_pc_lens.window_handle, &window_data) != TIG_OK) {
         return false;
     }
 
-    if (dword_64C524 == NULL) {
+    if (intgame_pc_lens.rect == NULL) {
         return false;
     }
 
-    return x >= window_data.rect.x + dword_64C524->x
-        && x < window_data.rect.x + dword_64C524->x + dword_64C524->width
-        && y >= window_data.rect.y + dword_64C524->y
-        && y < window_data.rect.y + dword_64C524->y + dword_64C524->height;
+    return x >= window_data.rect.x + intgame_pc_lens.rect->x
+        && x < window_data.rect.x + intgame_pc_lens.rect->x + intgame_pc_lens.rect->width
+        && y >= window_data.rect.y + intgame_pc_lens.rect->y
+        && y < window_data.rect.y + intgame_pc_lens.rect->y + intgame_pc_lens.rect->height;
 }
 
 // 0x551080
-void sub_551080()
+void intgame_pc_lens_redraw()
 {
     TigArtBlitInfo blit_info;
     TigRect src_rect;
     TigRect dst_rect;
 
-    if (dword_64C6E4 != NULL) {
-        tig_window_copy(dword_64C520,
-            dword_64C524, dword_64C52C,
+    if (intgame_pc_lens_video_buffer != NULL) {
+        tig_window_copy(intgame_pc_lens.window_handle,
+            intgame_pc_lens.rect,
+            dword_64C52C,
             &stru_64C510);
 
         src_rect.x = 0;
         src_rect.y = 0;
-        src_rect.width = dword_64C524->width;
-        src_rect.height = dword_64C524->height;
+        src_rect.width = intgame_pc_lens.rect->width;
+        src_rect.height = intgame_pc_lens.rect->height;
 
-        if (tig_window_copy_to_vbuffer(dword_64C52C, &stru_64C510, dword_64C6E4, &src_rect) == TIG_OK) {
+        if (tig_window_copy_to_vbuffer(dword_64C52C, &stru_64C510, intgame_pc_lens_video_buffer, &src_rect) == TIG_OK) {
             dst_rect = src_rect;
-            dst_rect.x = dword_64C524->x;
-            dst_rect.y = dword_64C524->y;
+            dst_rect.x = intgame_pc_lens.rect->x;
+            dst_rect.y = intgame_pc_lens.rect->y;
 
-            blit_info.art_id = dword_64C528;
+            blit_info.art_id = intgame_pc_lens.art_id;
             blit_info.flags = 0;
             blit_info.src_rect = &src_rect;
             blit_info.dst_rect = &dst_rect;
-            tig_window_blit_art(dword_64C520, &blit_info);
+            tig_window_blit_art(intgame_pc_lens.window_handle, &blit_info);
         }
     }
 }

@@ -296,7 +296,7 @@ void written_ui_create()
 {
     TigWindowData window_data;
     MesFileEntry mes_file_entry;
-    S550DA0 v1;
+    PcLens pc_lens;
     long long obj;
     long long location;
     int index;
@@ -321,10 +321,10 @@ void written_ui_create()
     location = obj_field_int64_get(obj, OBJ_F_LOCATION);
     location_origin_set(location);
 
-    v1.window_handle = written_ui_window;
-    v1.rect = &stru_5CA4A8;
-    tig_art_interface_id_create(231, 0, 0, 0, &(v1.art_id));
-    sub_550DA0(1, &v1);
+    pc_lens.window_handle = written_ui_window;
+    pc_lens.rect = &stru_5CA4A8;
+    tig_art_interface_id_create(231, 0, 0, 0, &(pc_lens.art_id));
+    intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
 
     switch (dword_680DCC) {
     case 0:
@@ -373,7 +373,7 @@ void written_ui_destroy()
         return;
     }
 
-    sub_550DA0(0, 0);
+    intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
 
     if (tig_window_destroy(written_ui_window) == TIG_OK) {
         written_ui_window = TIG_WINDOW_HANDLE_INVALID;
@@ -389,7 +389,7 @@ bool written_ui_message_filter(TigMessage* msg)
     switch (msg->type) {
     case TIG_MESSAGE_MOUSE:
         if (msg->data.mouse.event == TIG_MESSAGE_MOUSE_LEFT_BUTTON_UP
-            && sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+            && intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
             sub_56BC90();
             return true;
         }

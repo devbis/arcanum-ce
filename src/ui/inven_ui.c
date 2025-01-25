@@ -696,7 +696,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     TigButtonData button_data;
     MesFileEntry mes_file_entry;
     UiMessage ui_message;
-    S550DA0 v2;
+    PcLens pc_lens;
     tig_art_id_t art_id;
     tig_button_handle_t button_group[2];
     unsigned int critter_flags2;
@@ -1033,7 +1033,7 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
     qword_6810E0 = OBJ_HANDLE_NULL;
     location_origin_set(obj_field_int64_get(inven_ui_pc_obj, OBJ_F_LOCATION));
 
-    v2.window_handle = inven_ui_window_handle;
+    pc_lens.window_handle = inven_ui_window_handle;
     if (inven_ui_mode == INVEN_UI_MODE_INVENTORY
         || inven_ui_mode == INVEN_UI_MODE_NPC_IDENTIFY
         || inven_ui_mode == INVEN_UI_MODE_NPC_REPAIR) {
@@ -1048,10 +1048,10 @@ bool inven_ui_create(int64_t pc_obj, int64_t target_obj, int mode)
 
     rect.width = 89;
     rect.height = 89;
-    v2.rect = &rect;
-    tig_art_interface_id_create(art_id, 0, 0, 0, &(v2.art_id));
+    pc_lens.rect = &rect;
+    tig_art_interface_id_create(art_id, 0, 0, 0, &(pc_lens.art_id));
     if (!sub_541680()) {
-        sub_550DA0(1, &v2);
+        intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     }
 
     dword_739F58 = 0;
@@ -1114,7 +1114,7 @@ void inven_ui_destroy()
         sub_4ED6C0(qword_6813A8);
     }
 
-    sub_550DA0(0, 0);
+    intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
     inven_ui_target_inventory_scrollbar_destroy();
     intgame_big_window_unlock();
     sub_551160();
@@ -1777,7 +1777,7 @@ static inline bool inven_ui_message_filter_handle_mouse_lbutton_up(TigMessage* m
     int64_t v2;
 
     dword_68346C = 0;
-    if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+    if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
         if (!sub_541680()) {
             if (qword_6810E0 != OBJ_HANDLE_NULL) {
                 if (inven_ui_mode == INVEN_UI_MODE_INVENTORY) {
@@ -3431,7 +3431,7 @@ void redraw_inven(bool a1)
         }
     }
 
-    sub_551080();
+    intgame_pc_lens_redraw();
     sub_5806F0(inven_ui_target_inventory_scrollbar);
 }
 

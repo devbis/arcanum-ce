@@ -2945,7 +2945,7 @@ bool sub_541BE0(tig_button_handle_t button_handle)
 // 0x541C70
 void mainmenu_ui_create_options()
 {
-    S550DA0 v1;
+    PcLens pc_lens;
     int64_t pc_obj;
     int64_t loc;
 
@@ -2956,16 +2956,16 @@ void mainmenu_ui_create_options()
     options_ui_init(0, dword_5C3624, stru_5C36B0[dword_64C244][1] == 0);
     sub_541AC0();
 
-    v1.window_handle = dword_5C3624;
-    v1.rect = &stru_5C4490;
-    tig_art_interface_id_create(670, 0, 0, 0, &v1.art_id);
+    pc_lens.window_handle = dword_5C3624;
+    pc_lens.rect = &stru_5C4490;
+    tig_art_interface_id_create(670, 0, 0, 0, &pc_lens.art_id);
     if (stru_5C36B0[dword_64C244][0]) {
         pc_obj = player_get_pc_obj();
         loc = obj_field_int64_get(pc_obj, OBJ_F_LOCATION);
         location_origin_set(loc);
-        sub_550DA0(1, &v1);
+        intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     } else {
-        sub_550DA0(2, &v1);
+        intgame_pc_lens_do(PC_LENS_MODE_BLACKOUT, &pc_lens);
     }
 
     tig_window_display();
@@ -2987,7 +2987,7 @@ void sub_541D40()
 void mainmenu_ui_destroy_options()
 {
     options_ui_exit();
-    sub_550DA0(0, 0);
+    intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
 }
 
 // 0x541D90
@@ -3054,7 +3054,7 @@ void mainmenu_ui_create_load_game()
 {
     MainMenuWindowInfo* window;
     int64_t pc_obj;
-    S550DA0 v1;
+    PcLens pc_lens;
 
     dword_64C414 = 7;
     window = main_menu_window_info[dword_64C414];
@@ -3124,18 +3124,18 @@ void mainmenu_ui_create_load_game()
 
     pc_obj = player_get_pc_obj();
 
-    v1.window_handle = dword_5C3624;
-    v1.rect = &stru_5C4780;
-    tig_art_interface_id_create(746, 0, 0, 0, &(v1.art_id));
+    pc_lens.window_handle = dword_5C3624;
+    pc_lens.rect = &stru_5C4780;
+    tig_art_interface_id_create(746, 0, 0, 0, &(pc_lens.art_id));
 
     if (pc_obj != OBJ_HANDLE_NULL) {
         location_origin_set(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
     }
 
     if (sub_40FF50(2) == sub_40FF40()) {
-        sub_550DA0(2, &v1);
+        intgame_pc_lens_do(PC_LENS_MODE_BLACKOUT, &pc_lens);
     } else {
-        sub_550DA0(1, &v1);
+        intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
         dword_64C450 = true;
     }
 
@@ -3166,7 +3166,7 @@ void mainmenu_ui_destroy_load_game()
 
     gamelib_savlist_destroy(&stru_64BBF8);
 
-    sub_550DA0(0, 0);
+    intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
     if (dword_64C37C != NULL)
         FREE(dword_64C37C);
     dword_64C37C = NULL;
@@ -3757,7 +3757,7 @@ void mainmenu_ui_create_save_game()
 {
     MainMenuWindowInfo* window;
     int64_t pc_obj;
-    S550DA0 v1;
+    PcLens pc_lens;
 
     dword_64C414 = 8;
     window = main_menu_window_info[dword_64C414];
@@ -3805,15 +3805,15 @@ void mainmenu_ui_create_save_game()
 
     pc_obj = player_get_pc_obj();
 
-    v1.window_handle = dword_5C3624;
-    v1.rect = &stru_5C4780;
-    tig_art_interface_id_create(746, 0, 0, 0, &(v1.art_id));
+    pc_lens.window_handle = dword_5C3624;
+    pc_lens.rect = &stru_5C4780;
+    tig_art_interface_id_create(746, 0, 0, 0, &(pc_lens.art_id));
 
     if (pc_obj != OBJ_HANDLE_NULL) {
         location_origin_set(obj_field_int64_get(pc_obj, OBJ_F_LOCATION));
     }
 
-    sub_550DA0(1, &v1);
+    intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &pc_lens);
     sub_5806F0(stru_64C220);
 
     tig_window_display();
@@ -3830,7 +3830,7 @@ void mainmenu_ui_destroy_save_game()
     }
 
     gamelib_savlist_destroy(&stru_64BBF8);
-    sub_550DA0(0, 0);
+    intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
 }
 
 // 0x5435D0
@@ -5926,7 +5926,7 @@ bool sub_546EE0(TigMessage* msg)
                 sub_541740();
                 return true;
             case 6:
-                if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     if (stru_5C36B0[dword_64C244][0]) {
                         if (!sub_589430()) {
                             sub_5412D0();
@@ -5939,7 +5939,7 @@ bool sub_546EE0(TigMessage* msg)
                 }
                 break;
             case 7:
-                if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     if (dword_64C450) {
                         sub_5412D0();
                     } else {
@@ -5949,7 +5949,7 @@ bool sub_546EE0(TigMessage* msg)
                 }
                 break;
             case 8:
-                if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+                if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                     sub_5412D0();
                     return true;
                 }

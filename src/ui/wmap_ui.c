@@ -350,7 +350,7 @@ static uint8_t byte_64E828[5000];
 static TigRect stru_64FBB0;
 
 // 0x64FBC8
-static S550DA0 stru_64FBC8;
+static PcLens wmap_ui_pc_lens;
 
 // 0x64FBD8
 static WmapNote stru_64FBD8[200];
@@ -1389,7 +1389,7 @@ void wmap_ui_close()
     if (sub_551A80(false) && wmap_ui_created) {
         sub_564070(false);
         sub_5615D0(0);
-        sub_550DA0(0, NULL);
+        intgame_pc_lens_do(PC_LENS_MODE_NONE, NULL);
         sub_57D620();
         intgame_button_destroy(&stru_5C9B70);
         intgame_big_window_unlock();
@@ -1547,10 +1547,10 @@ bool wmap_ui_create()
         exit(EXIT_SUCCESS); // FIXME: Should be `EXIT_FAILURE`.
     }
 
-    stru_64FBC8.window_handle = wmap_ui_window;
-    stru_64FBC8.rect = &stru_5C9AB8;
-    tig_art_interface_id_create(198, 0, 0, 0, &(stru_64FBC8.art_id));
-    sub_550DA0(1, &stru_64FBC8);
+    wmap_ui_pc_lens.window_handle = wmap_ui_window;
+    wmap_ui_pc_lens.rect = &stru_5C9AB8;
+    tig_art_interface_id_create(198, 0, 0, 0, &(wmap_ui_pc_lens.art_id));
+    intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
 
     for (index = area_get_count() - 1; index > 0; index--) {
         if (area_is_known(player_get_pc_obj(), index)) {
@@ -1643,7 +1643,7 @@ bool sub_5615D0(int a1)
                 return false;
             }
 
-            sub_550DA0(2, &stru_64FBC8);
+            intgame_pc_lens_do(PC_LENS_MODE_BLACKOUT, &wmap_ui_pc_lens);
             sub_57D640();
             pc_obj = player_get_pc_obj();
             if (pc_obj != OBJ_HANDLE_NULL
@@ -1677,7 +1677,7 @@ bool sub_5615D0(int a1)
             }
             timeevent_clear_all_typed(TIMEEVENT_TYPE_WORLDMAP);
             dword_66D8AC = a1;
-            sub_550DA0(1, &stru_64FBC8);
+            intgame_pc_lens_do(PC_LENS_MODE_PASSTHROUGH, &wmap_ui_pc_lens);
             sub_561800(&(v2->field_3C), &loc);
             sub_561860(loc);
             sub_5649F0(loc);
@@ -1906,7 +1906,7 @@ bool wmap_ui_message_filter(TigMessage* msg)
                 break;
             }
 
-            if (sub_551000(msg->data.mouse.x, msg->data.mouse.y)) {
+            if (intgame_pc_lens_check_pt(msg->data.mouse.x, msg->data.mouse.y)) {
                 wmap_ui_close();
                 return true;
             }
