@@ -9,6 +9,13 @@
 #include "ui/textedit_ui.h"
 #include "ui/wmap_ui.h"
 
+typedef enum ApColor {
+    AP_COLOR_GREEN,
+    AP_COLOR_ORANGE,
+    AP_COLOR_RED,
+    AP_COLOR_COUNT,
+} ApColor;
+
 #define THREE 3
 #define TWENTY 20
 
@@ -25,13 +32,13 @@ static void sub_56F990(int64_t obj);
 static bool combat_ui_message_filter(TigMessage* msg);
 
 // 0x5CAA20
-static TigRect stru_5CAA20 = { 617, 577, 124, 14 };
+static TigRect combat_ui_compact_ap_bar_frame = { 617, 577, 124, 14 };
 
 // 0x5CAA30
-static tig_art_id_t dword_5CAA30 = TIG_ART_ID_INVALID;
+static tig_art_id_t combat_ui_ap_bar_loading_indicator_art_id = TIG_ART_ID_INVALID;
 
 // 0x5CAA38
-static UiButtonInfo stru_5CAA38 = { 320, 9, 297, TIG_BUTTON_HANDLE_INVALID };
+static UiButtonInfo combat_ui_end_turn_button_info = { 320, 9, 297, TIG_BUTTON_HANDLE_INVALID };
 
 // 0x5CAA48
 static int dword_5CAA48[TWENTY] = {
@@ -58,20 +65,20 @@ static int dword_5CAA48[TWENTY] = {
 };
 
 // 0x5CAA18
-static tig_window_handle_t dword_5CAA18 = TIG_WINDOW_HANDLE_INVALID;
+static tig_window_handle_t combat_ui_ap_bar_window_handle = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5CAA1C
-static tig_window_handle_t dword_5CAA1C = TIG_WINDOW_HANDLE_INVALID;
+static tig_window_handle_t combat_ui_compact_ap_bar_window_handle = TIG_WINDOW_HANDLE_INVALID;
 
 // 0x5CAA98
-static int dword_5CAA98[THREE] = {
-    295, // ap_green.art
-    296, // ap_orange.art
-    315, // ap_red.art
+static int combat_ui_ap_icon_nums[AP_COLOR_COUNT] = {
+    /*  GREEN */ 295, // ap_green.art
+    /* ORANGE */ 296, // ap_orange.art
+    /*    RED */ 315, // ap_red.art
 };
 
 // 0x680EA8
-static tig_art_id_t dword_680EA8[THREE];
+static tig_art_id_t combat_ui_ap_icon_art_ids[AP_COLOR_COUNT];
 
 // 0x680EB4
 static int dword_680EB4;
@@ -83,7 +90,7 @@ static bool combat_ui_initialized;
 static bool combat_ui_created;
 
 // 0x680EC0
-static TigRect stru_680EC0;
+static TigRect combat_ui_ap_bar_loading_indicator_frame;
 
 // 0x56EA90
 bool combat_ui_init(GameInitInfo* init_info)
@@ -105,7 +112,7 @@ bool combat_ui_init(GameInitInfo* init_info)
     }
 
     for (index = 0; index < THREE; index++) {
-        if (tig_art_interface_id_create(dword_5CAA98[index], 0, 0, 0, &(dword_680EA8[index])) != TIG_OK) {
+        if (tig_art_interface_id_create(combat_ui_ap_icon_nums[index], 0, 0, 0, &(combat_ui_ap_icon_art_ids[index])) != TIG_OK) {
             return false;
         }
     }
@@ -120,17 +127,17 @@ bool combat_ui_init(GameInitInfo* init_info)
         return false;
     }
 
-    stru_680EC0.x = window_data.rect.x + window_data.rect.width - art_frame_data.width - 2;
-    stru_680EC0.y = window_data.rect.y + art_frame_data.height + 2;
+    combat_ui_ap_bar_loading_indicator_frame.x = window_data.rect.x + window_data.rect.width - art_frame_data.width - 2;
+    combat_ui_ap_bar_loading_indicator_frame.y = window_data.rect.y + art_frame_data.height + 2;
 
-    tig_art_interface_id_create(601, 0, 0, 0, &dword_5CAA30);
+    tig_art_interface_id_create(601, 0, 0, 0, &combat_ui_ap_bar_loading_indicator_art_id);
 
-    if (tig_art_frame_data(dword_5CAA30, &art_frame_data) != TIG_OK) {
+    if (tig_art_frame_data(combat_ui_ap_bar_loading_indicator_art_id, &art_frame_data) != TIG_OK) {
         return false;
     }
 
-    stru_680EC0.width = art_frame_data.width;
-    stru_680EC0.height = art_frame_data.height;
+    combat_ui_ap_bar_loading_indicator_frame.width = art_frame_data.width;
+    combat_ui_ap_bar_loading_indicator_frame.height = art_frame_data.height;
 
     combat_ui_initialized = true;
 
@@ -162,21 +169,21 @@ void combat_ui_resize(GameResizeInfo* resize_info)
         return;
     }
 
-    stru_680EC0.x = resize_info->window_rect.x + resize_info->window_rect.width - art_frame_data.width - 2;
-    stru_680EC0.y = resize_info->window_rect.y + art_frame_data.height + 4;
+    combat_ui_ap_bar_loading_indicator_frame.x = resize_info->window_rect.x + resize_info->window_rect.width - art_frame_data.width - 2;
+    combat_ui_ap_bar_loading_indicator_frame.y = resize_info->window_rect.y + art_frame_data.height + 4;
 
     if (combat_ui_created) {
         if (intgame_is_compact_interface()) {
-            tig_window_hide(dword_5CAA18);
+            tig_window_hide(combat_ui_ap_bar_window_handle);
         } else {
-            tig_window_show(dword_5CAA18);
+            tig_window_show(combat_ui_ap_bar_window_handle);
         }
 
         if (combat_ui_created) {
             if (intgame_is_compact_interface()) {
-                tig_window_show(dword_5CAA1C);
+                tig_window_show(combat_ui_compact_ap_bar_window_handle);
             } else {
-                tig_window_hide(dword_5CAA1C);
+                tig_window_hide(combat_ui_compact_ap_bar_window_handle);
             }
         }
     }
@@ -211,7 +218,7 @@ void combat_ui_create()
     TigWindowData window_data;
     TigArtBlitInfo blit_info;
 
-    if (tig_art_interface_id_create(294u, 0, 0, 0, &art_id) != TIG_OK) {
+    if (tig_art_interface_id_create(294, 0, 0, 0, &art_id) != TIG_OK) {
         return;
     }
 
@@ -234,7 +241,7 @@ void combat_ui_create()
     window_data.color_key = art_anim_data.color_key;
     window_data.message_filter = combat_ui_message_filter;
 
-    if (tig_window_create(&window_data, &dword_5CAA18) != TIG_OK) {
+    if (tig_window_create(&window_data, &combat_ui_ap_bar_window_handle) != TIG_OK) {
         return;
     }
 
@@ -245,36 +252,36 @@ void combat_ui_create()
     blit_info.art_id = art_id;
     blit_info.src_rect = &rect;
     blit_info.dst_rect = &rect;
-    tig_window_blit_art(dword_5CAA18, &blit_info);
+    tig_window_blit_art(combat_ui_ap_bar_window_handle, &blit_info);
 
-    if (!intgame_button_create_ex(dword_5CAA18, &rect, &stru_5CAA38, TIG_BUTTON_FLAG_0x01)) {
+    if (!intgame_button_create_ex(combat_ui_ap_bar_window_handle, &rect, &combat_ui_end_turn_button_info, TIG_BUTTON_FLAG_0x01)) {
         return;
     }
 
     combat_ui_created = true;
     dword_680EB4 = 0;
 
-    sub_56F660();
+    combat_ui_refresh();
     sub_56F430(0);
 
     if (intgame_is_compact_interface()) {
-        tig_window_hide(dword_5CAA18);
+        tig_window_hide(combat_ui_ap_bar_window_handle);
     }
 
     window_data.flags = TIG_WINDOW_HAVE_TRANSPARENCY | TIG_WINDOW_FLAG_0x02;
-    window_data.rect = stru_5CAA20;
+    window_data.rect = combat_ui_compact_ap_bar_frame;
     window_data.background_color = art_anim_data.color_key;
     window_data.color_key = tig_color_make(0, 0, 255);
     window_data.message_filter = combat_ui_message_filter;
 
-    if (tig_window_create(&window_data, &dword_5CAA1C) != TIG_OK) {
+    if (tig_window_create(&window_data, &combat_ui_compact_ap_bar_window_handle) != TIG_OK) {
         return;
     }
 
     sub_56EFA0(0);
 
     if (!intgame_is_compact_interface()) {
-        tig_window_hide(dword_5CAA1C);
+        tig_window_hide(combat_ui_compact_ap_bar_window_handle);
     }
 }
 
@@ -291,13 +298,13 @@ void combat_ui_destroy()
         return;
     }
 
-    if (tig_window_destroy(dword_5CAA18) == TIG_OK) {
-        dword_5CAA18 = TIG_WINDOW_HANDLE_INVALID;
+    if (tig_window_destroy(combat_ui_ap_bar_window_handle) == TIG_OK) {
+        combat_ui_ap_bar_window_handle = TIG_WINDOW_HANDLE_INVALID;
     }
 
-    if (dword_5CAA1C != TIG_WINDOW_HANDLE_INVALID) {
-        tig_window_destroy(dword_5CAA1C);
-        dword_5CAA1C = TIG_WINDOW_HANDLE_INVALID;
+    if (combat_ui_compact_ap_bar_window_handle != TIG_WINDOW_HANDLE_INVALID) {
+        tig_window_destroy(combat_ui_compact_ap_bar_window_handle);
+        combat_ui_compact_ap_bar_window_handle = TIG_WINDOW_HANDLE_INVALID;
     }
 
     combat_ui_created = false;
@@ -311,7 +318,7 @@ void sub_56EFA0(int a1)
     int v4;
     TigRect rect;
 
-    if (dword_5CAA1C == TIG_WINDOW_HANDLE_INVALID) {
+    if (combat_ui_compact_ap_bar_window_handle == TIG_WINDOW_HANDLE_INVALID) {
         return;
     }
 
@@ -321,9 +328,9 @@ void sub_56EFA0(int a1)
 
     rect.x = 0;
     rect.y = 0;
-    rect.width = stru_5CAA20.width;
-    rect.height = stru_5CAA20.height;
-    tig_window_fill(dword_5CAA1C,
+    rect.width = combat_ui_compact_ap_bar_frame.width;
+    rect.height = combat_ui_compact_ap_bar_frame.height;
+    tig_window_fill(combat_ui_compact_ap_bar_window_handle,
         &rect,
         tig_color_make(0, 0, 0));
 
@@ -331,14 +338,14 @@ void sub_56EFA0(int a1)
     rect.y += 1;
     rect.width -= 2;
     rect.height -= 2;
-    tig_window_box(dword_5CAA1C,
+    tig_window_box(combat_ui_compact_ap_bar_window_handle,
         &rect,
         tig_color_make(0, 0, 255));
 
     rect.x = 0;
     rect.y = 0;
-    rect.width = stru_5CAA20.width;
-    rect.height = stru_5CAA20.height;
+    rect.width = combat_ui_compact_ap_bar_frame.width;
+    rect.height = combat_ui_compact_ap_bar_frame.height;
 
     action_points = sub_4B7C20();
     v4 = a1 - action_points;
@@ -363,7 +370,7 @@ void sub_56EFA0(int a1)
     rect.x = 2;
     rect.width = 120 * v4 / 25;
     if (rect.width > 0) {
-        sub_56F2F0(dword_5CAA1C,
+        sub_56F2F0(combat_ui_compact_ap_bar_window_handle,
             &rect,
             tig_color_make(0, 255, 0));
     }
@@ -371,7 +378,7 @@ void sub_56EFA0(int a1)
     rect.x += rect.width;
     rect.width = 120 * action_points / 25;
     if (rect.width > 0) {
-        sub_56F2F0(dword_5CAA1C,
+        sub_56F2F0(combat_ui_compact_ap_bar_window_handle,
             &rect,
             tig_color_make(255, 128, 0));
     }
@@ -379,7 +386,7 @@ void sub_56EFA0(int a1)
     rect.x += rect.width;
     rect.width = 120 * v1 / 25;
     if (rect.width > 0) {
-        sub_56F2F0(dword_5CAA1C,
+        sub_56F2F0(combat_ui_compact_ap_bar_window_handle,
             &rect,
             tig_color_make(255, 0, 0));
     }
@@ -409,7 +416,7 @@ void sub_56F2F0(tig_window_handle_t window_handle, TigRect* rect, tig_color_t co
         color1 = color;
         color2 = tig_color_make(0, 0, 0);
     } else {
-        color1 = tig_color_make(0, 0, 0);;
+        color1 = tig_color_make(0, 0, 0);
         color2 = color;
     }
 
@@ -461,7 +468,7 @@ void sub_56F430(int a1)
         art_blit_info.art_id = art_id;
         art_blit_info.src_rect = &src_rect;
         art_blit_info.dst_rect = &src_rect;
-        tig_window_blit_art(dword_5CAA18, &art_blit_info);
+        tig_window_blit_art(combat_ui_ap_bar_window_handle, &art_blit_info);
     }
 
     if (a1 != 0) {
@@ -502,26 +509,26 @@ void sub_56F430(int a1)
         art_blit_info.src_rect = &src_rect;
         art_blit_info.dst_rect = &dst_rect;
 
-        art_blit_info.art_id = dword_680EA8[0];
+        art_blit_info.art_id = combat_ui_ap_icon_art_ids[AP_COLOR_GREEN];
         while (green > 0) {
             dst_rect.x = dword_5CAA48[knob];
-            tig_window_blit_art(dword_5CAA18, &art_blit_info);
+            tig_window_blit_art(combat_ui_ap_bar_window_handle, &art_blit_info);
             green--;
             knob++;
         }
 
-        art_blit_info.art_id = dword_680EA8[1];
+        art_blit_info.art_id = combat_ui_ap_icon_art_ids[AP_COLOR_ORANGE];
         while (orange > 0) {
             dst_rect.x = dword_5CAA48[knob];
-            tig_window_blit_art(dword_5CAA18, &art_blit_info);
+            tig_window_blit_art(combat_ui_ap_bar_window_handle, &art_blit_info);
             orange--;
             knob++;
         }
 
-        art_blit_info.art_id = dword_680EA8[2];
+        art_blit_info.art_id = combat_ui_ap_icon_art_ids[AP_COLOR_RED];
         while (red > 0) {
-            dst_rect.x = dword_5CAA48[knob++];
-            tig_window_blit_art(dword_5CAA18, &art_blit_info);
+            dst_rect.x = dword_5CAA48[knob];
+            tig_window_blit_art(combat_ui_ap_bar_window_handle, &art_blit_info);
             red--;
             knob++;
         }
@@ -529,9 +536,9 @@ void sub_56F430(int a1)
 }
 
 // 0x56F660
-void sub_56F660()
+void combat_ui_refresh()
 {
-    long long obj;
+    int64_t obj;
     tig_art_id_t art_id;
     TigArtFrameData art_frame_data;
     TigArtAnimData art_anim_data;
@@ -564,7 +571,7 @@ void sub_56F660()
             blit_info.art_id = art_id;
             blit_info.src_rect = &rect;
             blit_info.dst_rect = &rect;
-            tig_window_blit_art(dword_5CAA18, &blit_info);
+            tig_window_blit_art(combat_ui_ap_bar_window_handle, &blit_info);
         }
 
         if (tig_art_frame_data(art_id, &art_frame_data)) {
@@ -579,16 +586,16 @@ void sub_56F660()
             dst_rect.height = art_frame_data.height;
 
             blit_info.flags = 0;
-            blit_info.art_id = dword_680EA8[0];
+            blit_info.art_id = combat_ui_ap_icon_art_ids[AP_COLOR_GREEN];
             blit_info.src_rect = &src_rect;
             blit_info.dst_rect = &dst_rect;
-            tig_window_blit_art(dword_5CAA18, &blit_info);
+            tig_window_blit_art(combat_ui_ap_bar_window_handle, &blit_info);
 
             dst_rect.x = dword_5CAA48[dword_680EB4 - 7 < 0 ? dword_680EB4 + TWENTY - 7 : dword_680EB4 - 7];
-            tig_window_blit_art(dword_5CAA18, &blit_info);
+            tig_window_blit_art(combat_ui_ap_bar_window_handle, &blit_info);
 
             dst_rect.x = dword_5CAA48[dword_680EB4 + 7 >= TWENTY ? dword_680EB4 - TWENTY + 7 : dword_680EB4 + 7];
-            tig_window_blit_art(dword_5CAA18, &blit_info);
+            tig_window_blit_art(combat_ui_ap_bar_window_handle, &blit_info);
         }
 
         dword_680EB4++;
@@ -602,10 +609,10 @@ void sub_56F660()
 // 0x56F840
 void sub_56F840()
 {
-    long long obj;
+    int64_t obj;
     TigRect rect;
 
-    if (dword_5CAA1C == TIG_WINDOW_HANDLE_INVALID) {
+    if (combat_ui_compact_ap_bar_window_handle == TIG_WINDOW_HANDLE_INVALID) {
         return;
     }
 
@@ -616,14 +623,14 @@ void sub_56F840()
 
     rect.x = 2;
     rect.y = 2;
-    rect.width = stru_5CAA20.width - 4;
-    rect.height = stru_5CAA20.height - 4;
-    tig_window_fill(dword_5CAA1C, &rect, tig_color_make(0, 0, 0));
+    rect.width = combat_ui_compact_ap_bar_frame.width - 4;
+    rect.height = combat_ui_compact_ap_bar_frame.height - 4;
+    tig_window_fill(combat_ui_compact_ap_bar_window_handle, &rect, tig_color_make(0, 0, 0));
 
     rect.x = 120 * dword_680EB4 / 25;
     rect.width = 4;
     rect.height += 4;
-    sub_56F2F0(dword_5CAA1C, &rect, tig_color_make(0, 255, 0));
+    sub_56F2F0(combat_ui_compact_ap_bar_window_handle, &rect, tig_color_make(0, 255, 0));
 }
 
 // 0x56F990
@@ -638,19 +645,19 @@ void sub_56F990(int64_t obj)
 bool combat_ui_message_filter(TigMessage* msg)
 {
     int64_t obj;
-    AnimID anim_id_1;
-    AnimID anim_id_2;
+    AnimID curr_anim_id;
+    AnimID fidget_anim_id;
 
     switch (msg->type) {
     case TIG_MESSAGE_BUTTON:
         if (msg->data.button.state == TIG_BUTTON_STATE_RELEASED
-            && msg->data.button.button_handle == stru_5CAA38.button_handle) {
+            && msg->data.button.button_handle == combat_ui_end_turn_button_info.button_handle) {
             obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL
                 && player_is_pc_obj(obj)
-                && (!sub_423300(obj, &anim_id_1)
-                    || sub_44E830(obj, 2, &anim_id_2)
-                    && sub_421D60(&anim_id_1, &anim_id_2))) {
+                && (!sub_423300(obj, &curr_anim_id)
+                    || (sub_44E830(obj, AG_ANIM_FIDGET, &fidget_anim_id)
+                        && sub_421D60(&curr_anim_id, &fidget_anim_id)))) {
                 combat_turn_based_next_subturn();
             }
             return true;
@@ -663,9 +670,9 @@ bool combat_ui_message_filter(TigMessage* msg)
             obj = combat_turn_based_whos_turn_get();
             if (obj != OBJ_HANDLE_NULL
                 && player_is_pc_obj(obj)
-                && (!sub_423300(obj, &anim_id_1)
-                    || sub_44E830(obj, 2, &anim_id_2)
-                    && sub_421D60(&anim_id_1, &anim_id_2))) {
+                && (!sub_423300(obj, &curr_anim_id)
+                    || (sub_44E830(obj, AG_ANIM_FIDGET, &fidget_anim_id)
+                        && sub_421D60(&curr_anim_id, &fidget_anim_id)))) {
                 combat_turn_based_next_subturn();
             }
             return true;

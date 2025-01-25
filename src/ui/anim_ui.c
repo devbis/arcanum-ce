@@ -212,7 +212,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
         }
         break;
     case 12:
-        sub_56F660();
+        combat_ui_refresh();
         break;
     case 13:
         sub_560750();
