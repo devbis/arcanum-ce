@@ -1664,7 +1664,7 @@ void obj_field_string_get(int64_t obj_handle, int fld, char** value_ptr)
 
     if (fld == OBJ_F_NAME) {
         sub_408A20(object, OBJ_F_NAME, &name_num);
-        name_str = sub_4E7400(name_num);
+        name_str = o_name_get(name_num);
         *value_ptr = (char*)MALLOC(strlen(name_str) + 1);
         strcpy(*value_ptr, name_str);
     } else {

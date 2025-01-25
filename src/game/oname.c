@@ -72,17 +72,17 @@ void o_name_mod_unload()
 }
 
 // 0x4E73F0
-int sub_4E73F0()
+int o_name_count()
 {
     return mes_entries_count(o_name_oname_mes_file);
 }
 
 // 0x4E7400
-const char* sub_4E7400(int num)
+const char* o_name_get(int oname)
 {
     MesFileEntry mes_file_entry;
 
-    mes_file_entry.num = num;
+    mes_file_entry.num = oname;
     mes_get_msg(o_name_oname_mes_file, &mes_file_entry);
 
     return mes_file_entry.str;
