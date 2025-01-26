@@ -65,9 +65,9 @@ typedef struct Ai {
     /* 0008 */ int64_t danger_source;
     /* 0010 */ int danger_type;
     /* 0014 */ int field_14;
-    /* 0018 */ int field_18;
+    /* 0018 */ int spell;
     /* 001C */ int field_1C;
-    /* 0020 */ int64_t field_20;
+    /* 0020 */ int64_t item_obj;
     /* 0028 */ int64_t leader_obj;
     /* 0030 */ int field_30;
     /* 0034 */ int field_34;
@@ -77,7 +77,7 @@ static_assert(sizeof(Ai) == 0x38, "wrong size");
 
 typedef struct S4ABF10 {
     /* 0000 */ unsigned int flags;
-    /* 0004 */ S600A20_Entry* entries;
+    /* 0004 */ AiActionListEntry* entries;
     /* 0008 */ int cnt;
     /* 0010 */ int64_t obj;
 } S4ABF10;
@@ -427,9 +427,9 @@ void sub_4A88D0(Ai* ai, int64_t obj)
     ai->danger_source = OBJ_HANDLE_NULL;
     ai->danger_type = AI_DANGER_SOURCE_TYPE_NONE;
     ai->field_14 = 0;
-    ai->field_18 = 10000;
+    ai->spell = 10000;
     ai->field_1C = -1;
-    ai->field_20 = 0;
+    ai->item_obj = OBJ_HANDLE_NULL;
     ai->leader_obj = critter_leader_get(obj);
     ai_danger_source(obj, &(ai->danger_type), &(ai->danger_source));
     ai->field_30 = -1;
@@ -500,8 +500,8 @@ bool sub_4A8940(Ai* ai)
 bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
 {
     S4ABF10 v1;
-    S5FF620 v2;
-    int v3;
+    AiActionList ai_action_list;
+    int hp_ratio;
     int64_t item_obj;
 
     if ((obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & ONF_NO_ATTACK) != 0) {
@@ -509,45 +509,45 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
     }
 
     if (critter_is_dead(obj)) {
-        sub_4CCA90(&v2, ai->obj, 9);
+        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_RESURRECT);
         v1.flags = 0x8;
-        v1.entries = v2.field_30[9].entries;
-        v1.cnt = v2.field_30[9].cnt;
+        v1.entries = ai_action_list.actions[AI_ACTION_RESURRECT].entries;
+        v1.cnt = ai_action_list.actions[AI_ACTION_RESURRECT].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            sub_4CCBF0(&v2);
+            mt_ai_action_list_destroy(&ai_action_list);
             return true;
         } else {
-            sub_4CCBF0(&v2);
+            mt_ai_action_list_destroy(&ai_action_list);
             return false;
         }
     }
 
-    v3 = ai_object_hp_ratio(obj);
-    if (v3 > 30 && !a3) {
+    hp_ratio = ai_object_hp_ratio(obj);
+    if (hp_ratio > 30 && !a3) {
         return false;
     }
 
     if (ai->danger_type != AI_DANGER_SOURCE_TYPE_NONE) {
         if (ai_critter_fatigue_ratio(ai->obj) < 20) {
-            sub_4CCA90(&v2, ai->obj, 8);
+            mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_FATIGUE_RECOVER);
             v1.flags = 0x8;
-            v1.entries = v2.field_30[8].entries;
-            v1.cnt = v2.field_30[8].cnt;
+            v1.entries = ai_action_list.actions[AI_ACTION_FATIGUE_RECOVER].entries;
+            v1.cnt = ai_action_list.actions[AI_ACTION_FATIGUE_RECOVER].cnt;
             v1.obj = obj;
             if (sub_4ABF10(ai, &v1)) {
-                sub_4CCBF0(&v2);
+                mt_ai_action_list_destroy(&ai_action_list);
                 return true;
             }
 
-            sub_4CCBF0(&v2);
+            mt_ai_action_list_destroy(&ai_action_list);
         }
     } else {
-        if (v3 < 90) {
+        if (hp_ratio < 90) {
             item_obj = sub_4C91F0(ai->obj, BASIC_SKILL_HEAL);
             if (!sub_4AE570(ai->obj, obj, item_obj, BASIC_SKILL_HEAL)) {
                 ai->danger_source = obj;
-                ai->field_20 = item_obj;
+                ai->item_obj = item_obj;
                 ai->field_14 = 3;
                 ai->field_1C = 10;
                 return true;
@@ -555,62 +555,62 @@ bool sub_4A8AA0(Ai* ai, int64_t obj, bool a3)
         }
     }
 
-    if (v3 < 40) {
-        sub_4CCA90(&v2, ai->obj, 6);
+    if (hp_ratio < 40) {
+        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_HEAL_HEAVY);
         v1.flags = 0x8;
-        v1.entries = v2.field_30[6].entries;
-        v1.cnt = v2.field_30[6].cnt;
+        v1.entries = ai_action_list.actions[AI_ACTION_HEAL_HEAVY].entries;
+        v1.cnt = ai_action_list.actions[AI_ACTION_HEAL_HEAVY].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            sub_4CCBF0(&v2);
+            mt_ai_action_list_destroy(&ai_action_list);
             return true;
         }
 
-        sub_4CCBF0(&v2);
+        mt_ai_action_list_destroy(&ai_action_list);
     }
 
-    if (v3 < 55) {
-        sub_4CCA90(&v2, ai->obj, 5);
+    if (hp_ratio < 55) {
+        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_HEAL_MEDIUM);
         v1.flags = 0x8;
-        v1.entries = v2.field_30[5].entries;
-        v1.cnt = v2.field_30[5].cnt;
+        v1.entries = ai_action_list.actions[AI_ACTION_HEAL_MEDIUM].entries;
+        v1.cnt = ai_action_list.actions[AI_ACTION_HEAL_MEDIUM].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            sub_4CCBF0(&v2);
+            mt_ai_action_list_destroy(&ai_action_list);
             return true;
         }
 
-        sub_4CCBF0(&v2);
+        mt_ai_action_list_destroy(&ai_action_list);
     }
 
     if (stat_level_get(obj, STAT_POISON_LEVEL) > 0) {
-        sub_4CCA90(&v2, ai->obj, 7);
+        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_CURE_POISON);
         v1.flags = 0x8;
-        v1.entries = v2.field_30[7].entries;
-        v1.cnt = v2.field_30[7].cnt;
+        v1.entries = ai_action_list.actions[AI_ACTION_CURE_POISON].entries;
+        v1.cnt = ai_action_list.actions[AI_ACTION_CURE_POISON].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            sub_4CCBF0(&v2);
+            mt_ai_action_list_destroy(&ai_action_list);
             return true;
         }
 
-        sub_4CCBF0(&v2);
+        mt_ai_action_list_destroy(&ai_action_list);
     }
 
-    if (v3 < 70
+    if (hp_ratio < 70
         || (ai->danger_type == AI_DANGER_SOURCE_TYPE_NONE
-                && v3 < 90)) {
-        sub_4CCA90(&v2, ai->obj, 4);
+                && hp_ratio < 90)) {
+        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_HEAL_LIGHT);
         v1.flags = 0x8;
-        v1.entries = v2.field_30[4].entries;
-        v1.cnt = v2.field_30[4].cnt;
+        v1.entries = ai_action_list.actions[AI_ACTION_HEAL_LIGHT].entries;
+        v1.cnt = ai_action_list.actions[AI_ACTION_HEAL_LIGHT].cnt;
         v1.obj = obj;
         if (sub_4ABF10(ai, &v1)) {
-            sub_4CCBF0(&v2);
+            mt_ai_action_list_destroy(&ai_action_list);
             return true;
         }
 
-        sub_4CCBF0(&v2);
+        mt_ai_action_list_destroy(&ai_action_list);
     }
 
     return false;
@@ -1737,7 +1737,7 @@ bool sub_4AAF50(Ai* ai)
 {
     unsigned int critter_flags;
     S4ABF10 v1;
-    S5FF620 v2;
+    AiActionList ai_action_list;
 
     critter_flags = obj_field_int32_get(ai->obj, OBJ_F_CRITTER_FLAGS);
     if ((critter_flags & OCF_SPELL_FLEE) != 0) {
@@ -1745,17 +1745,18 @@ bool sub_4AAF50(Ai* ai)
         return false;
     }
 
-    sub_4CCA90(&v2, ai->obj, 0);
+    mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_FLEE);
     v1.flags = 0x1;
-    v1.entries = v2.field_30[0].entries;
-    v1.cnt = v2.field_30[0].cnt;
+    v1.entries = ai_action_list.actions[AI_ACTION_FLEE].entries;
+    v1.cnt = ai_action_list.actions[AI_ACTION_FLEE].cnt;
     if (!sub_4ABF10(ai, &v1)) {
-        sub_4CCBF0(&v2);
+        mt_ai_action_list_destroy(&ai_action_list);
         return false;
     }
 
-    obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags | OCF_SPELL_FLEE);
-    sub_4CCBF0(&v2);
+    critter_flags |= OCF_SPELL_FLEE;
+    obj_field_int32_set(ai->obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+    mt_ai_action_list_destroy(&ai_action_list);
 
     return true;
 }
@@ -2164,7 +2165,7 @@ void sub_4ABC20(Ai* ai)
 // 0x4ABC70
 bool sub_4ABC70(Ai* ai)
 {
-    S5FF620 v1;
+    AiActionList ai_action_list;
     S4ABF10 v3;
     AiParams ai_params;
 
@@ -2177,43 +2178,43 @@ bool sub_4ABC70(Ai* ai)
     }
 
     if (!sub_45E3F0(ai->obj, false) == 0) {
-        sub_4CCA90(&v1, ai->obj, 1);
+        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_SUMMON);
         v3.flags = 0x1;
-        v3.entries = v1.field_30[1].entries;
-        v3.cnt = v1.field_30[1].cnt;
+        v3.entries = ai_action_list.actions[AI_ACTION_SUMMON].entries;
+        v3.cnt = ai_action_list.actions[AI_ACTION_SUMMON].cnt;
         if (sub_4ABF10(ai, &v3)) {
-            sub_4CCBF0(&v1);
+            mt_ai_action_list_destroy(&ai_action_list);
             return true;
         }
 
-        sub_4CCBF0(&v1);
+        mt_ai_action_list_destroy(&ai_action_list);
     }
 
     sub_4AAA60(ai->obj, &ai_params);
 
     if (ai_params.field_34 < random_between(1, 100)) {
-        sub_4CCA90(&v1, ai->obj, 2);
+        mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_DEFENSIVE);
         v3.flags = 0x4;
-        v3.entries = v1.field_30[2].entries;
-        v3.cnt = v1.field_30[2].cnt;
+        v3.entries = ai_action_list.actions[AI_ACTION_DEFENSIVE].entries;
+        v3.cnt = ai_action_list.actions[AI_ACTION_DEFENSIVE].cnt;
         if (sub_4ABF10(ai, &v3)) {
-            sub_4CCBF0(&v1);
+            mt_ai_action_list_destroy(&ai_action_list);
             return true;
         }
 
-        sub_4CCBF0(&v1);
+        mt_ai_action_list_destroy(&ai_action_list);
     }
 
-    sub_4CCA90(&v1, ai->obj, 3);
+    mt_ai_action_list_create(&ai_action_list, ai->obj, AI_ACTION_OFFENSIVE);
     v3.flags = 0x2;
-    v3.entries = v1.field_30[3].entries;
-    v3.cnt = v1.field_30[3].cnt;
+    v3.entries = ai_action_list.actions[AI_ACTION_OFFENSIVE].entries;
+    v3.cnt = ai_action_list.actions[AI_ACTION_OFFENSIVE].cnt;
     if (sub_4ABF10(ai, &v3)) {
-        sub_4CCBF0(&v1);
+        mt_ai_action_list_destroy(&ai_action_list);
         return true;
     }
 
-    sub_4CCBF0(&v1);
+    mt_ai_action_list_destroy(&ai_action_list);
     return false;
 }
 
@@ -2260,7 +2261,7 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
     int64_t obj;
     int base;
     int idx;
-    S600A20_Entry* entry;
+    AiActionListEntry* entry;
 
     if (a2->cnt <= 0) {
         return false;
@@ -2287,23 +2288,23 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
         }
 
         if (entry->spell == -1) {
-            sub_462CC0(ai->obj, entry->obj, obj);
+            sub_462CC0(ai->obj, entry->item_obj, obj);
             return true;
         }
 
         if (!sub_459380(obj, entry->spell)
-            && !sub_4AE720(ai->obj, entry->obj, obj, entry->spell)) {
-            if (entry->obj != OBJ_HANDLE_NULL
-                && sub_4CC160(entry->obj)) {
+            && !sub_4AE720(ai->obj, entry->item_obj, obj, entry->spell)) {
+            if (entry->item_obj != OBJ_HANDLE_NULL
+                && sub_4CC160(entry->item_obj)) {
                 ai->field_14 = 2;
-                ai->field_18 = entry->spell;
-                ai->field_20 = entry->obj;
+                ai->spell = entry->spell;
+                ai->item_obj = entry->item_obj;
                 ai->danger_source = obj;
             } else {
                 ai->field_14 = 1;
-                ai->field_18 = entry->spell;
+                ai->spell = entry->spell;
                 ai->danger_source = obj;
-                ai->field_20 = entry->obj;
+                ai->item_obj = entry->item_obj;
             }
             return true;
         }
@@ -2355,10 +2356,10 @@ void sub_4AC250(Ai* ai)
 {
     MagicTechSerializedData v1;
 
-    if (ai->field_20 != OBJ_HANDLE_NULL) {
-        sub_455A20(&v1, ai->field_20, ai->field_18);
+    if (ai->item_obj != OBJ_HANDLE_NULL) {
+        sub_455A20(&v1, ai->item_obj, ai->spell);
     } else {
-        sub_455A20(&v1, ai->obj, ai->field_18);
+        sub_455A20(&v1, ai->obj, ai->spell);
     }
 
     sub_4440E0(ai->danger_source, &(v1.target_obj));
@@ -2366,13 +2367,13 @@ void sub_4AC250(Ai* ai)
     if (sub_4564E0(&v1)) {
         sub_455AC0(&v1);
 
-        if (ai->field_20 != OBJ_HANDLE_NULL) {
-            sub_4574D0(ai->field_20);
+        if (ai->item_obj != OBJ_HANDLE_NULL) {
+            sub_4574D0(ai->item_obj);
 
-            switch (obj_field_int32_get(ai->field_20, OBJ_F_TYPE)) {
+            switch (obj_field_int32_get(ai->item_obj, OBJ_F_TYPE)) {
             case OBJ_TYPE_FOOD:
             case OBJ_TYPE_SCROLL:
-                object_destroy(ai->field_20);
+                object_destroy(ai->item_obj);
                 break;
             }
         }
@@ -2384,7 +2385,7 @@ void sub_4AC320(Ai* ai)
 {
     anim_goal_use_item_on_obj(ai->obj,
         ai->danger_source,
-        ai->field_20,
+        ai->item_obj,
         0);
 }
 
@@ -2393,7 +2394,7 @@ void sub_4AC350(Ai* ai)
 {
     anim_goal_use_skill_on(ai->obj,
         ai->danger_source,
-        ai->field_20,
+        ai->item_obj,
         ai->field_1C,
         0);
 }

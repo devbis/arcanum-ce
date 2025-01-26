@@ -3760,7 +3760,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
 
     sub_466D60(parent_obj);
     sub_441980(parent_obj, item_obj, OBJ_HANDLE_NULL, SAP_INSERT_ITEM, 0);
-    sub_4CCC00(parent_obj);
+    mt_ai_notify_inventory_changed(parent_obj);
 
     if (player_is_pc_obj(parent_obj)) {
         sub_460790(4, 1);
@@ -4435,7 +4435,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
         sub_4602A0(item_obj, 1, inventory_location);
     }
 
-    sub_4CCC00(parent_obj);
+    mt_ai_notify_inventory_changed(parent_obj);
     mt_item_notify_drop(item_obj, parent_obj);
 
     if (parent_type == OBJ_TYPE_CONTAINER) {
