@@ -1,6 +1,7 @@
 #include "game/newspaper.h"
 
 #include "game/mes.h"
+#include "game/obj.h"
 #include "game/object.h"
 #include "game/proto.h"
 #include "game/random.h"
@@ -113,11 +114,13 @@ int sub_4BF200(int index)
 }
 
 // 0x4BF210
-object_id_t sub_4BF210(int start, int64_t a2)
+int64_t newspaper_create(int start, int64_t loc)
 {
-    object_id_t obj;
+    int64_t prototype_obj;
+    int64_t obj;
 
-    if (!object_create(sub_4685A0(14064), a2, &obj)) {
+    prototype_obj = sub_4685A0(14064);
+    if (!object_create(prototype_obj, loc, &obj)) {
         return OBJ_HANDLE_NULL;
     }
 
