@@ -5562,12 +5562,12 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
     case UI_MSG_TYPE_TECH:
         sub_554560(window_handle, dword_5C708C[6]);
         sub_550A10(window_handle,
-            tech_get_name(ui_message->field_8),
+            tech_discipline_name_get(ui_message->field_8),
             &stru_5C70C8,
             dword_739F88,
             1);
         sub_550A10(window_handle,
-            tech_get_description(ui_message->field_8),
+            tech_discipline_description_get(ui_message->field_8),
             &stru_5C7138,
             dword_64C498,
             1);
@@ -5575,7 +5575,7 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
     case UI_MSG_TYPE_DEGREE:
         sub_554560(window_handle, dword_5C708C[6]);
         sub_550A10(window_handle,
-            degree_get_name(ui_message->field_8 % 8),
+            tech_degree_name_get(ui_message->field_8 % 8),
             &stru_5C70C8,
             dword_739F88,
             1);
@@ -5585,11 +5585,11 @@ void sub_5529C0(tig_window_handle_t window_handle, UiMessage* ui_message, bool p
         sprintf(str,
             "%s: %d",
             mes_file_entry1.str,
-            tech_get_min_intelligence_for_degree(ui_message->field_8 % 8));
+            tech_degree_min_intelligence_get(ui_message->field_8 % 8));
         sub_550A10(window_handle, str, &stru_5C70C8, dword_64C498, 2);
 
         sub_550A10(window_handle,
-            degree_get_description(ui_message->field_8 % 8, ui_message->field_8 / 8),
+            tech_degree_description_get(ui_message->field_8 % 8, ui_message->field_8 / 8),
             &stru_5C7138,
             dword_64C498, 1);
         break;

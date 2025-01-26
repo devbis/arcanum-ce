@@ -626,7 +626,7 @@ bool sub_4A7030(int64_t obj, char* str)
             } else if (dword_5F5C80[index] < 0) {
                 // Special case - negative value indicates degree level.
                 strcat(str, " ");
-                strcat(str, degree_get_name(-dword_5F5C80[index]));
+                strcat(str, tech_degree_name_get(-dword_5F5C80[index]));
             }
             strcat(str, ", ");
         }
@@ -879,15 +879,15 @@ int sub_4A79C0(int64_t obj, int tech, int degree)
     int intelligence;
     int rc;
 
-    current_degree = tech_get_degree(obj, tech);
+    current_degree = tech_degree_get(obj, tech);
     while (current_degree < degree) {
-        cost = tech_get_cost_for_degree(current_degree + 1);
+        cost = tech_degree_cost_get(current_degree + 1);
         unspent_points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         if (cost > unspent_points) {
             return 1;
         }
 
-        new_degree = tech_inc_degree(obj, tech);
+        new_degree = tech_degree_inc(obj, tech);
         if (new_degree == current_degree) {
             intelligence = stat_base_get(obj, STAT_INTELLIGENCE);
             rc = sub_4A75E0(obj, STAT_INTELLIGENCE, intelligence + 1);
@@ -897,7 +897,7 @@ int sub_4A79C0(int64_t obj, int tech, int degree)
         } else {
             stat_base_set(obj, STAT_UNSPENT_POINTS, unspent_points - cost);
             current_degree = new_degree;
-            sub_4A7B90(tech_get_name(tech), -new_degree);
+            sub_4A7B90(tech_discipline_name_get(tech), -new_degree);
         }
     }
 

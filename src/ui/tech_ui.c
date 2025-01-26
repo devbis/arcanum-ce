@@ -18,8 +18,8 @@ void tech_ui_inc_degree(int64_t obj, int tech)
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0
         || multiplayer_is_locked()) {
-        degree = tech_get_degree(obj, tech);
-        cost = tech_get_cost_for_degree(degree + 1);
+        degree = tech_degree_get(obj, tech);
+        cost = tech_degree_cost_get(degree + 1);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         is_pc = player_is_pc_obj(obj);
 
@@ -28,7 +28,7 @@ void tech_ui_inc_degree(int64_t obj, int tech)
                 charedit_error_not_enough_character_points();
             }
         } else {
-            if (tech_inc_degree(obj, tech) > degree) {
+            if (tech_degree_inc(obj, tech) > degree) {
                 stat_base_set(obj, STAT_UNSPENT_POINTS, points - cost);
                 if (is_pc) {
                     sub_55A230();
@@ -54,12 +54,12 @@ void tech_ui_dec_degree(int64_t obj, int tech)
     if ((tig_net_flags & TIG_NET_CONNECTED) == 0
         || (tig_net_flags & TIG_NET_HOST) != 0
         || multiplayer_is_locked()) {
-        degree = tech_get_degree(obj, tech);
-        cost = tech_get_cost_for_degree(degree);
+        degree = tech_degree_get(obj, tech);
+        cost = tech_degree_cost_get(degree);
         points = stat_level_get(obj, STAT_UNSPENT_POINTS);
         is_pc = player_is_pc_obj(obj);
 
-        if (tech_dec_degree(obj, tech) < degree) {
+        if (tech_degree_dec(obj, tech) < degree) {
             stat_base_set(obj, STAT_UNSPENT_POINTS, points + cost);
             if (is_pc) {
                 sub_55A230();

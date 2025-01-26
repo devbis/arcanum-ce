@@ -479,7 +479,7 @@ void main_loop()
                             case DIK_GRAVE:
                                 stat_base_set(pc_obj, STAT_INTELLIGENCE, 20);
                                 for (index = 0; index < 8; index++) {
-                                    tech_inc_degree(pc_obj, index);
+                                    tech_degree_inc(pc_obj, index);
                                 }
                                 sub_55A230();
                                 break;

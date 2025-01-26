@@ -13,7 +13,7 @@
 // TODO: Refactor.
 #define SEVENTEEN 17
 
-static int tech_set_degree(long long object_id, int tech, int value);
+static int tech_degree_set(int64_t obj, int tech, int value);
 
 // 0x5B5124
 int dword_5B5124[DEGREE_COUNT] = {
@@ -56,19 +56,19 @@ int tech_min_intelligence[DEGREE_COUNT] = {
 static_assert(sizeof(tech_min_intelligence) / sizeof(tech_min_intelligence[0]) == DEGREE_COUNT, "wrong size");
 
 // 0x5F84A8
-static char* degree_names[DEGREE_COUNT];
+static char* tech_degree_names[DEGREE_COUNT];
 
 // 0x5F84C8
-static char* degree_descriptions[TECH_COUNT][DEGREE_COUNT];
+static char* tech_degree_descriptions[TECH_COUNT][DEGREE_COUNT];
 
 // 0x5F85C8
 static mes_file_handle_t tech_mes_file;
 
 // 0x5F85CC
-static char* tech_descriptions[TECH_COUNT];
+static char* tech_discipline_descriptions[TECH_COUNT];
 
 // 0x5F85EC
-static char* tech_names[TECH_COUNT];
+static char* tech_discipline_names[TECH_COUNT];
 
 // 0x4AFCD0
 bool tech_init(GameInitInfo* init_info)
@@ -86,30 +86,30 @@ bool tech_init(GameInitInfo* init_info)
     for (tech = 0; tech < TECH_COUNT; tech++) {
         mes_file_entry.num = tech;
         mes_get_msg(tech_mes_file, &mes_file_entry);
-        tech_names[tech] = mes_file_entry.str;
+        tech_discipline_names[tech] = mes_file_entry.str;
     }
 
     for (degree = 0; degree < DEGREE_COUNT; degree++) {
-        mes_file_entry.num = degree + 8;
+        mes_file_entry.num = degree + TECH_COUNT;
         mes_get_msg(tech_mes_file, &mes_file_entry);
-        degree_names[degree] = mes_file_entry.str;
+        tech_degree_names[degree] = mes_file_entry.str;
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        mes_file_entry.num = tech + 16;
+        mes_file_entry.num = tech + TECH_COUNT + DEGREE_COUNT;
         mes_get_msg(tech_mes_file, &mes_file_entry);
-        tech_descriptions[tech] = mes_file_entry.str;
+        tech_discipline_descriptions[tech] = mes_file_entry.str;
     }
 
     // NOTE: Original code is slightly different. It does not use nested loop,
-    // instead it simply runs 64 iterations, implying `degree_descriptions`
+    // instead it simply runs 64 iterations, implying `tech_degree_descriptions`
     // is one-dimensional array. Making it two-dimensional slightly increase
     // code readability.
     for (tech = 0; tech < TECH_COUNT; tech++) {
         for (degree = 0; degree < DEGREE_COUNT; degree++) {
             mes_file_entry.num = tech * DEGREE_COUNT + degree + 24;
             mes_get_msg(tech_mes_file, &mes_file_entry);
-            degree_descriptions[tech][degree] = mes_file_entry.str;
+            tech_degree_descriptions[tech][degree] = mes_file_entry.str;
         }
     }
 
@@ -123,64 +123,61 @@ void tech_exit()
 }
 
 // 0x4AFDE0
-void tech_set_defaults(object_id_t obj)
+void tech_set_defaults(int64_t obj)
 {
-    int index;
+    int tech;
 
-    // TODO: Use enum.
-    for (index = 17; index < 25; index++) {
-        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, index, 0);
+    for (tech = 0; tech < TECH_COUNT; tech++) {
+        obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, 0);
     }
 }
 
 // 0x4AFE10
-char* tech_get_name(int tech)
+char* tech_discipline_name_get(int tech)
 {
-    return tech_names[tech];
+    return tech_discipline_names[tech];
 }
 
 // 0x4AFE20
-char* tech_get_description(int tech)
+char* tech_discipline_description_get(int tech)
 {
-    return tech_descriptions[tech];
+    return tech_discipline_descriptions[tech];
 }
 
 // 0x4AFE30
-char* degree_get_name(int degree)
+char* tech_degree_name_get(int degree)
 {
-    return degree_names[degree];
+    return tech_degree_names[degree];
 }
 
 // 0x4AFE40
-char* degree_get_description(int degree, int tech)
+char* tech_degree_description_get(int degree, int tech)
 {
-    return degree_descriptions[tech][degree];
+    return tech_degree_descriptions[tech][degree];
 }
 
 // 0x4AFE60
-int tech_get_degree(long long object_id, int tech)
+int tech_degree_get(int64_t obj, int tech)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
-    return obj_arrayfield_uint32_get(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
+    return obj_arrayfield_uint32_get(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN);
 }
 
 // 0x4AFEC0
-int tech_inc_degree(int64_t obj, int tech)
+int tech_degree_inc(int64_t obj, int tech)
 {
     int degree;
     int cost;
     int tech_points;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
-    degree = tech_get_degree(obj, tech);
+    degree = tech_degree_get(obj, tech);
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
         && !multiplayer_is_locked()) {
@@ -191,43 +188,41 @@ int tech_inc_degree(int64_t obj, int tech)
         return degree;
     }
 
-    if (tech_get_min_intelligence_for_degree(degree + 1) > stat_level_get(obj, STAT_INTELLIGENCE)) {
+    if (tech_degree_min_intelligence_get(degree + 1) > stat_level_get(obj, STAT_INTELLIGENCE)) {
         return degree;
     }
 
-    cost = tech_get_cost_for_degree(degree + 1);
+    cost = tech_degree_cost_get(degree + 1);
     tech_points = stat_base_get(obj, STAT_TECH_POINTS);
     stat_base_set(obj, STAT_TECH_POINTS, tech_points + cost);
 
-    return tech_set_degree(obj, tech, degree + 1);
+    return tech_degree_set(obj, tech, degree + 1);
 }
 
 // 0x4AFF90
-int tech_set_degree(long long object_id, int tech, int value)
+int tech_degree_set(int64_t obj, int tech, int value)
 {
-    if (obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(object_id, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
-    mp_obj_arrayfield_uint32_set(object_id, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
+    mp_obj_arrayfield_uint32_set(obj, OBJ_F_CRITTER_SPELL_TECH_IDX, tech + SEVENTEEN, value);
 
     return value;
 }
 
 // 0x4AFFF0
-int tech_dec_degree(int64_t obj, int tech)
+int tech_degree_dec(int64_t obj, int tech)
 {
     int degree;
     int cost;
     int tech_points;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
-    degree = tech_get_degree(obj, tech);
+    degree = tech_degree_get(obj, tech);
     if ((tig_net_flags & TIG_NET_CONNECTED) != 0
         && (tig_net_flags & TIG_NET_HOST) == 0
         && !multiplayer_is_locked()) {
@@ -238,28 +233,28 @@ int tech_dec_degree(int64_t obj, int tech)
         return degree;
     }
 
-    cost = tech_get_cost_for_degree(degree);
+    cost = tech_degree_cost_get(degree);
     tech_points = stat_base_get(obj, STAT_TECH_POINTS);
     stat_base_set(obj, STAT_TECH_POINTS, tech_points - cost);
 
-    return tech_set_degree(obj, tech, degree - 1);
+    return tech_degree_set(obj, tech, degree - 1);
 }
 
 // 0x4B00A0
-int tech_get_cost_for_degree(int degree)
+int tech_degree_cost_get(int degree)
 {
     return dword_5B5124[degree];
 }
 
 // 0x4B00B0
-int sub_4B00B0(object_id_t obj, int tech)
+int tech_degree_level_get(int64_t obj, int tech)
 {
     int degree;
     int intelligence;
 
-    degree = tech_get_degree(obj, tech);
+    degree = tech_degree_get(obj, tech);
     intelligence = stat_level_get(obj, STAT_INTELLIGENCE);
-    while (intelligence < tech_get_min_intelligence_for_degree(degree)) {
+    while (intelligence < tech_degree_min_intelligence_get(degree)) {
         degree--;
     }
 
@@ -267,7 +262,7 @@ int sub_4B00B0(object_id_t obj, int tech)
 }
 
 // 0x4B0110
-int tech_get_min_intelligence_for_degree(int degree)
+int tech_degree_min_intelligence_get(int degree)
 {
     return tech_min_intelligence[degree];
 }
@@ -348,8 +343,8 @@ bool tech_check_intelligence(int64_t obj, int intelligence)
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        degree = tech_get_degree(obj, tech);
-        if (tech_get_min_intelligence_for_degree(degree) > intelligence) {
+        degree = tech_degree_get(obj, tech);
+        if (tech_degree_min_intelligence_get(degree) > intelligence) {
             return false;
         }
     }
@@ -358,7 +353,7 @@ bool tech_check_intelligence(int64_t obj, int intelligence)
 }
 
 // 0x4B0320
-int sub_4B0320(int a1, int a2)
+int tech_schematic_base_lineno(int tech, int schematic)
 {
-    return 10 * (a2 + 20 * a1 + 199);
+    return 10 * schematic + 200 * tech + 1990;
 }

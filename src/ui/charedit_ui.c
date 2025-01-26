@@ -1109,7 +1109,7 @@ bool charedit_create(int64_t obj, int mode)
             }
 
             for (index = 0; index < TECH_COUNT; index++) {
-                dword_64DEEC[index] = tech_get_degree(charedit_obj, index);
+                dword_64DEEC[index] = tech_degree_get(charedit_obj, index);
             }
 
             for (index = 0; index < COLLEGE_COUNT; index++) {
@@ -1660,7 +1660,7 @@ void sub_55AE70(int a1)
     } else if (a1 >= 5000 && a1 < 5999) {
         ui_message.type = UI_MSG_TYPE_DEGREE;
         ui_message.field_8 = a1 - 5000;
-        ui_message.field_C = tech_get_cost_for_degree(ui_message.field_8 % DEGREE_COUNT);
+        ui_message.field_C = tech_degree_cost_get(ui_message.field_8 % DEGREE_COUNT);
         sub_550750(&ui_message);
     } else {
         ui_message.type = UI_MSG_TYPE_FEEDBACK;
@@ -2418,14 +2418,14 @@ void charedit_refresh_tech_win()
 
     sprintf(str[0],
         "%s %s",
-        tech_get_name(charedit_selected_tech),
-        degree_get_name(tech_get_degree(charedit_obj, charedit_selected_tech)));
+        tech_discipline_name_get(charedit_selected_tech),
+        tech_degree_name_get(tech_degree_get(charedit_obj, charedit_selected_tech)));
     sub_55B880(charedit_tech_win, dword_64CFE0, &(stru_5C8FC8[1]), 0, -1, 1);
 
-    sprintf(str[0], "%d", sub_4B00B0(charedit_obj, charedit_selected_tech));
+    sprintf(str[0], "%d", tech_degree_level_get(charedit_obj, charedit_selected_tech));
     sub_55B880(charedit_tech_win, dword_64CA68, &(stru_5C8FC8[2]), 0, -1, 1);
 
-    degree = tech_get_degree(charedit_obj, charedit_selected_tech);
+    degree = tech_degree_get(charedit_obj, charedit_selected_tech);
     next_degree = degree < 7 ? degree + 1 : degree;
 
     for (index = 0; index < degree; index++) {
@@ -3163,13 +3163,13 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
-                v1 = tech_get_degree(charedit_obj, charedit_selected_tech);
+                v1 = tech_degree_get(charedit_obj, charedit_selected_tech);
                 dword_64CDB4 = 5001 + 8 * charedit_selected_tech + v1;
                 return true;
             }
 
             if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
-                v1 = tech_get_degree(charedit_obj, charedit_selected_tech);
+                v1 = tech_degree_get(charedit_obj, charedit_selected_tech);
                 dword_64CDB4 = 5000 + 8 * charedit_selected_tech + v1;
                 return true;
             }
@@ -4007,7 +4007,7 @@ void sub_55F360(int player)
     }
 
     for (index = 0; index < TECH_COUNT; index++) {
-        dword_64DF10[player][index] = tech_get_degree(obj, index);
+        dword_64DF10[player][index] = tech_degree_get(obj, index);
     }
 
     for (index = 0; index < COLLEGE_COUNT; index++) {

@@ -2,7 +2,6 @@
 #define ARCANUM_GAME_TECH_H_
 
 #include "game/context.h"
-#include "game/obj.h"
 
 typedef enum Tech {
     TECH_HERBOLOGY,
@@ -34,19 +33,19 @@ static_assert(DEGREE_COUNT == 8, "wrong size");
 
 bool tech_init(GameInitInfo* init_info);
 void tech_exit();
-void tech_set_defaults(object_id_t obj);
-char* tech_get_name(int tech);
-char* tech_get_description(int tech);
-char* degree_get_name(int degree);
-char* degree_get_description(int degree, int tech);
-int tech_get_degree(long long object_id, int tech);
-int tech_inc_degree(int64_t obj, int tech);
-int tech_dec_degree(int64_t obj, int tech);
-int tech_get_cost_for_degree(int a1);
-int sub_4B00B0(object_id_t obj, int tech);
-int tech_get_min_intelligence_for_degree(int degree);
+void tech_set_defaults(int64_t obj);
+char* tech_discipline_name_get(int tech);
+char* tech_discipline_description_get(int tech);
+char* tech_degree_name_get(int degree);
+char* tech_degree_description_get(int degree, int tech);
+int tech_degree_get(int64_t object_id, int tech);
+int tech_degree_inc(int64_t obj, int tech);
+int tech_degree_dec(int64_t obj, int tech);
+int tech_degree_cost_get(int degree);
+int tech_degree_level_get(int64_t obj, int tech);
+int tech_degree_min_intelligence_get(int degree);
 void tech_learn_schematic(int64_t pc_obj, int64_t written_obj);
 bool tech_check_intelligence(int64_t obj, int intelligence);
-int sub_4B0320(int a1, int a2);
+int tech_schematic_base_lineno(int tech, int schematic);
 
 #endif /* ARCANUM_GAME_TECH_H_ */

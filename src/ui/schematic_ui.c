@@ -324,7 +324,7 @@ void sub_56D130(long long a1, long long a2)
     }
 
     for (tech = 0; tech < TECH_COUNT; tech++) {
-        dword_680DE4[tech] = tech_get_degree(a1, tech);
+        dword_680DE4[tech] = tech_degree_get(a1, tech);
         schematic_ui_num_found_schematics_by_tech[tech] = 0;
     }
 
@@ -945,7 +945,7 @@ void sub_56E190(int ingr, SchematicInfo* schematic_info, bool* a3, bool* a4)
 
     discipline = obj_field_int32_get(item_obj, OBJ_F_ITEM_DISCIPLINE);
     complexity = -obj_field_int32_get(item_obj, OBJ_F_ITEM_MAGIC_TECH_COMPLEXITY);
-    *a4 = sub_4B00B0(qword_680E70, discipline) >= complexity;
+    *a4 = tech_degree_level_get(qword_680E70, discipline) >= complexity;
 
     if (*a4) {
         if (*a3) {
@@ -1195,7 +1195,7 @@ char* sub_56E9D0(int schematic)
 // 0x56EA10
 char* sub_56EA10(int a1, int a2)
 {
-    return sub_56E9D0(sub_4B0320(a1, a2));
+    return sub_56E9D0(tech_schematic_base_lineno(a1, a2));
 }
 
 // 0x56EA30
@@ -1204,7 +1204,7 @@ void sub_56EA30(int a1, int a2, char* a3, char* a4)
     SchematicInfo schematic_info;
     long long obj;
 
-    sub_56DBD0(sub_4B0320(a1, a2), &schematic_info);
+    sub_56DBD0(tech_schematic_base_lineno(a1, a2), &schematic_info);
 
     obj = sub_4685A0(schematic_info.item1[0]);
     sub_441B60(obj, obj, a3);
