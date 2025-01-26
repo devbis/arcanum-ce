@@ -553,66 +553,6 @@ static MagicTechSummonTable stru_5B0ED8[6] = {
 // 0x5B0F20
 static int dword_5B0F20 = -1;
 
-// 0x5B72AC
-static const char* off_5B72AC[] = {
-    "None",
-    "User_Activate",
-    "Wear",
-    "Unwear",
-    "Pickup",
-    "Drop",
-    "Parent_Hit",
-    "Parent_Stunned",
-    "Parent_Going_Unconscious",
-    "Parent_Dying",
-    "Parent_Hit_By_Atk_Spell",
-    "Parent_Atks_Opponent",
-    "Parent_Atks_Location",
-    "Parent_Dmgs_Opponent",
-    "Parent_Dmgs_Opponent_W_Item",
-    "Target_Hit",
-    "Target_Going_Unconscious",
-    "Item_Used",
-    "Target_Attacker",
-    "Target_Attacker_Weapon",
-    "Target_Attacker_Armor",
-    "Target_Attacker_Weapon_Melee",
-    "Random_Chance_Rare",
-    "Random_Chance_Uncommon",
-    "Random_Chance_Common",
-    "Random_Chance_Frequent",
-};
-
-// 0x5B7314
-static unsigned int dword_5B7314[] = {
-    0x0,
-    0x10000000,
-    0x20000000,
-    0x40000000,
-    0x80000000,
-    0x1000000,
-    0x2000000,
-    0x4000000,
-    0x8000000,
-    0x100000,
-    0x200000,
-    0x400000,
-    0x800000,
-    0x10000,
-    0x20000,
-    0x40000,
-    0x80000,
-    0x3000,
-    0x2000,
-    0x4000,
-    0x8000,
-    0x100,
-    0x200,
-    0x400,
-    0x800,
-    0x10,
-};
-
 // 0x5B9FBC
 static const char* off_5B9FBC[] = {
     "obj_f_flags",
@@ -5401,7 +5341,7 @@ void sub_457D00(MagicTechInfo* info, char* str)
         info->disallowed_tcf = flags;
     }
 
-    if (tig_str_parse_named_flag_list(&curr, "ItemTriggers:", off_5B72AC, dword_5B7314, 26, &flags)) {
+    if (tig_str_parse_named_flag_list(&curr, "ItemTriggers:", mt_item_trig_keys, mt_item_trig_values, MT_ITEM_TRIG_COUNT, &flags)) {
         info->item_triggers = flags;
     }
 }
@@ -5525,7 +5465,7 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
 
     tig_str_parse_named_flag_list_64(&str, "Apply_AoE:", off_5BBD70, qword_596140, 65, &(effect_info->apply_aoe));
 
-    if (tig_str_parse_named_flag_list(&str, "ItemTriggers:", off_5B72AC, dword_5B7314, 26, &flags)) {
+    if (tig_str_parse_named_flag_list(&str, "ItemTriggers:", mt_item_trig_keys, mt_item_trig_values, 26, &flags)) {
         effect_info->item_triggers = flags;
     } else {
         effect_info->item_triggers = 0;
