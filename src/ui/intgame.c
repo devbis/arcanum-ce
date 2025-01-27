@@ -1014,7 +1014,7 @@ void intgame_resize(GameResizeInfo* resize_info)
             tig_window_hide(dword_5C6378[index]);
         }
     } else {
-        window_data.flags = TIG_WINDOW_FLAG_0x08;
+        window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP;
         window_data.rect.x = 196;
         window_data.rect.y = 563;
         window_data.rect.width = 411;
@@ -1137,7 +1137,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE
     }
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.message_filter = iso_interface_message_filter;
 
     art_blit_info.flags = 0;
@@ -1281,7 +1281,7 @@ void iso_interface_create(tig_window_handle_t window_handle)
     }
 
     for (index = 0; index < 5; index++) {
-        window_data.flags = TIG_WINDOW_FLAG_0x08;
+        window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP;
         window_data.rect = stru_5C6EE0[index];
         window_data.color_key = tig_color_make(5, 5, 5);
         if (tig_window_create(&window_data, &(dword_5C6378[index])) != TIG_OK) {
@@ -7872,7 +7872,7 @@ bool intgame_big_window_create()
 {
     TigWindowData window_data;
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect.x = 0;
     window_data.rect.y = 41;
     window_data.rect.width = 800;
@@ -8111,7 +8111,7 @@ bool intgame_create_iso_window(tig_window_handle_t* window_handle_ptr)
 {
     TigWindowData window_data;
 
-    window_data.flags = intgame_iso_window_flags | TIG_WINDOW_FLAG_0x80 | TIG_WINDOW_VIDEO_MEMORY;
+    window_data.flags = intgame_iso_window_flags | TIG_WINDOW_ALWAYS_ON_BOTTOM | TIG_WINDOW_VIDEO_MEMORY;
     window_data.rect.x = 0;
     window_data.rect.width = intgame_iso_window_width;
 

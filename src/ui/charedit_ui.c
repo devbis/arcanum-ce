@@ -2042,7 +2042,7 @@ bool charedit_create_skills_win()
         return false;
     }
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect.x = 503;
     window_data.rect.y = 104;
     window_data.rect.width = art_frame_data.width;
@@ -2278,7 +2278,7 @@ bool charedit_create_tech_win()
         return false;
     }
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect.x = 503;
     window_data.rect.y = 104;
     window_data.rect.width = art_frame_data.width;
@@ -2514,7 +2514,7 @@ bool charedit_create_spells_win()
         return false;
     }
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect.x = 503;
     window_data.rect.y = 104;
     window_data.rect.width = art_frame_data.width;
@@ -2799,7 +2799,7 @@ bool sub_55D060()
         return false;
     }
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect.x = 503;
     window_data.rect.y = 104;
     window_data.rect.width = art_frame_data.width;

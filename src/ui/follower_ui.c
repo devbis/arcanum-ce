@@ -185,7 +185,7 @@ void sub_56A6E0(int index)
     window_data.flags = TIG_WINDOW_HIDDEN;
     if (index == 6) {
         window_data.message_filter = sub_56A9D0;
-        window_data.flags |= TIG_WINDOW_FLAG_0x02;
+        window_data.flags |= TIG_WINDOW_MESSAGE_FILTER;
     } else {
         window_data.message_filter = NULL;
     }

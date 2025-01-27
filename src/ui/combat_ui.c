@@ -235,7 +235,7 @@ void combat_ui_create()
     rect.width = art_frame_data.width;
     rect.height = art_frame_data.height;
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect = rect;
     window_data.background_color = art_anim_data.color_key;
     window_data.color_key = art_anim_data.color_key;
@@ -268,7 +268,7 @@ void combat_ui_create()
         tig_window_hide(combat_ui_ap_bar_window_handle);
     }
 
-    window_data.flags = TIG_WINDOW_HAVE_TRANSPARENCY | TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_TRANSPARENT | TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect = combat_ui_compact_ap_bar_frame;
     window_data.background_color = art_anim_data.color_key;
     window_data.color_key = tig_color_make(0, 0, 255);

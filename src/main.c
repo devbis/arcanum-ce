@@ -178,7 +178,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     tig_video_screenshot_set_settings(&screenshotter);
 
     if ((init_info.flags & TIG_INITIALIZE_ANY_3D) != 0) {
-        intgame_set_iso_window_flags(intgame_get_iso_window_flags() | TIG_WINDOW_HAVE_FLUSH);
+        intgame_set_iso_window_flags(intgame_get_iso_window_flags() | TIG_WINDOW_RENDER_TARGET);
     }
 
     intgame_set_iso_window_width(init_info.width);

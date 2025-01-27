@@ -314,7 +314,7 @@ bool sleep_ui_create()
     rect.width = art_frame_data.width;
     rect.height = art_frame_data.height;
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.message_filter = sleep_ui_message_filter;
     window_data.rect = rect;
     if (tig_window_create(&window_data, &sleep_ui_window) != TIG_OK) {

@@ -80,7 +80,7 @@ bool matchmaker_ui_create()
             return false;
         }
 
-        window_data.flags = TIG_WINDOW_FLAG_0x02;
+        window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
         window_data.rect.x = stru_5CA310.x + 1;
         window_data.rect.y = stru_5CA310.y + 1;
         window_data.rect.width = stru_5CA310.width - 1;

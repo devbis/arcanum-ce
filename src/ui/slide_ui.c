@@ -71,7 +71,7 @@ void slide_ui_run(int type)
     slide_ui_fade_out();
 
     if (slide_ui_queue_size > 0) {
-        window_data.flags = TIG_WINDOW_FLAG_0x08;
+        window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP;
         window_data.rect.x = 0;
         window_data.rect.y = 0;
         window_data.rect.width = 800;

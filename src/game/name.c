@@ -1445,7 +1445,7 @@ bool sub_41F090(int a1, int* a2, int* a3)
     window_data.rect.y = 40;
     window_data.rect.width = 100;
     window_data.rect.height = 100;
-    window_data.flags = TIG_WINDOW_FLAG_0x08 | TIG_WINDOW_FLAG_0x04 | TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP | TIG_WINDOW_MODAL | TIG_WINDOW_MESSAGE_FILTER;
     window_data.message_filter = sub_41F190;
     window_data.background_color = tig_color_make(30, 30, 30);
 

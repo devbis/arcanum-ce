@@ -142,7 +142,7 @@ bool compact_ui_create()
     for (index = 0; index < MAX_COMPONENTS; index++) {
         comp = &(compact_ui_components[index]);
 
-        window_data.flags = TIG_WINDOW_FLAG_0x02 | TIG_WINDOW_HAVE_TRANSPARENCY;
+        window_data.flags = TIG_WINDOW_MESSAGE_FILTER | TIG_WINDOW_TRANSPARENT;
         window_data.rect = comp->rect;
         window_data.background_color = tig_color_make(0, 0, 0);
         window_data.color_key = tig_color_make(comp->r, comp->g, comp->b);

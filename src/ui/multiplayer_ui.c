@@ -422,7 +422,7 @@ void sub_5706D0()
     }
 
     if (dword_68103C != 0) {
-        window_data.flags = TIG_WINDOW_FLAG_0x02;
+        window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
         window_data.rect.x = 566;
         window_data.rect.y = 41;
         window_data.rect.width = stru_680FD0[0].width;

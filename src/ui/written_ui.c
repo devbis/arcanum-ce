@@ -306,7 +306,7 @@ void written_ui_create()
         return;
     }
 
-    window_data.flags = TIG_WINDOW_FLAG_0x02;
+    window_data.flags = TIG_WINDOW_MESSAGE_FILTER;
     window_data.rect = stru_5CA480;
     window_data.message_filter = written_ui_message_filter;
 

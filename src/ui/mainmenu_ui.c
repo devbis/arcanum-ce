@@ -5481,7 +5481,7 @@ void mainmenu_ui_create_window_func(bool should_display)
         }
 
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-            window_data.flags = TIG_WINDOW_FLAG_0x08 | TIG_WINDOW_FLAG_0x02;
+            window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP | TIG_WINDOW_MESSAGE_FILTER;
             window_data.rect = stru_5C3628;
             window_data.background_color = art_anim_data.color_key;
             window_data.color_key = art_anim_data.color_key;
@@ -5518,7 +5518,7 @@ void mainmenu_ui_create_window_func(bool should_display)
 
         tig_art_interface_id_create(335, 0, 0, 0, &art_id);
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-            window_data.flags = TIG_WINDOW_FLAG_0x08 | TIG_WINDOW_FLAG_0x02;
+            window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP | TIG_WINDOW_MESSAGE_FILTER;
             window_data.background_color = art_anim_data.color_key;
             window_data.color_key = art_anim_data.color_key;
             window_data.message_filter = sub_546EE0;
@@ -5558,7 +5558,7 @@ void mainmenu_ui_create_window_func(bool should_display)
 
         tig_art_interface_id_create(336, 0, 0, 0, &art_id);
         if (tig_art_anim_data(art_id, &art_anim_data) == TIG_OK) {
-            window_data.flags = TIG_WINDOW_FLAG_0x08 | TIG_WINDOW_FLAG_0x02;
+            window_data.flags = TIG_WINDOW_ALWAYS_ON_TOP | TIG_WINDOW_MESSAGE_FILTER;
             window_data.rect = stru_5C3660;
             window_data.background_color = art_anim_data.color_key;
             window_data.color_key = art_anim_data.color_key;
