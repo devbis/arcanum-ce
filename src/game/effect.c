@@ -5,6 +5,7 @@
 #include "game/mes.h"
 #include "game/mp_utils.h"
 #include "game/multiplayer.h"
+#include "game/resistance.h"
 #include "game/skill.h"
 #include "game/stat.h"
 #include "game/tech.h"

@@ -15,15 +15,6 @@ static void sub_4F3F10(S603CB8_F50* a1, int64_t obj);
 static void sub_4F3FD0(S603CB8_F50* a1, int64_t obj);
 static void sub_4F4050(S603CB8_F50* a1, int64_t loc);
 
-// 0x5BC428
-const char* off_5BC428[] = {
-    "resist_damage",
-    "resist_fire",
-    "resist_electrical",
-    "resist_poison",
-    "resist_magic",
-};
-
 // 0x603B88
 static PathCreateInfo stru_603B88;
 

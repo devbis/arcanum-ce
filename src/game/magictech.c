@@ -28,6 +28,7 @@
 #include "game/proto.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/resistance.h"
 #include "game/script.h"
 #include "game/sector.h"
 #include "game/spell.h"
@@ -372,13 +373,13 @@ static int dword_5B0CD4[] = {
 // 0x5B0CDC
 static const char** off_5B0CDC[] = {
     stat_lookup_keys_tbl,
-    off_5BC428,
+    resistance_lookup_keys_tbl,
 };
 
 // 0x5B0CE4
 static int dword_5B0CE4[] = {
     STAT_COUNT,
-    5,
+    RESISTANCE_TYPE_COUNT,
 };
 
 // 0x5B0CF8

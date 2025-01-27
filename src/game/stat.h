@@ -65,17 +65,6 @@ typedef enum Race {
 
 static_assert(RACE_COUNT == 11, "wrong size");
 
-typedef enum ResistanceType {
-    RESISTANCE_TYPE_NORMAL,
-    RESISTANCE_TYPE_FIRE,
-    RESISTANCE_TYPE_ELECTRICAL,
-    RESISTANCE_TYPE_POISON,
-    RESISTANCE_TYPE_MAGIC,
-    RESISTANCE_TYPE_COUNT,
-} ResistanceType;
-
-static_assert(RESISTANCE_TYPE_COUNT == 5, "wrong size");
-
 extern const char* stat_lookup_keys_tbl[STAT_COUNT];
 
 bool stat_init(GameInitInfo* init_info);

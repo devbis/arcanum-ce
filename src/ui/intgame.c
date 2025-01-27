@@ -25,6 +25,7 @@
 #include "game/portrait.h"
 #include "game/proto.h"
 #include "game/reaction.h"
+#include "game/resistance.h"
 #include "game/scroll.h"
 #include "game/skill.h"
 #include "game/spell.h"

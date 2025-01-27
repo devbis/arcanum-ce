@@ -14,6 +14,7 @@
 #include "game/object.h"
 #include "game/player.h"
 #include "game/portrait.h"
+#include "game/resistance.h"
 #include "game/skill.h"
 #include "game/spell.h"
 #include "game/stat.h"

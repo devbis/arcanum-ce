@@ -141,6 +141,8 @@ set(SRCS
     "src/game/reaction.h"
     "src/game/reputation.c"
     "src/game/reputation.h"
+    "src/game/resistance.c"
+    "src/game/resistance.h"
     "src/game/roof.c"
     "src/game/roof.h"
     "src/game/rumor.c"

@@ -29,6 +29,7 @@
 #include "game/player.h"
 #include "game/random.h"
 #include "game/reaction.h"
+#include "game/resistance.h"
 #include "game/script.h"
 #include "game/skill.h"
 #include "game/stat.h"

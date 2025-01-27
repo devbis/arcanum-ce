@@ -159,8 +159,6 @@ static_assert(sizeof(S4F2680) == 0x18, "wrong size");
 #define Tgt_Attacker_Obj 0x4000000000000004
 #define Tgt_List 0x8000000000000000
 
-extern const char* off_5BC428[];
-
 bool target_init(GameInitInfo* init_info);
 void target_exit();
 void target_reset();
