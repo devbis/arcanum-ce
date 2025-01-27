@@ -3928,14 +3928,14 @@ bool sub_565140()
 void sub_565170(WmapCoords* coords)
 {
     int64_t loc;
-    int64_t v1;
+    int64_t adjacent_sec;
 
     sub_561800(coords, &loc);
-    sub_4CFFA0(sector_id_from_loc(loc), byte_64E828[dword_65E968], &v1);
+    sector_in_dir(sector_id_from_loc(loc), byte_64E828[dword_65E968], &adjacent_sec);
 
     dword_65E968++;
     if (dword_65E968 < stru_64E048[0].field_0[0].field_18 + stru_64E048[0].field_0[0].field_1C) {
-        sub_561490(sector_loc_from_id(v1), coords);
+        sub_561490(sector_loc_from_id(adjacent_sec), coords);
     } else {
         sub_561490(stru_64E048[0].field_0[0].loc, coords);
     }

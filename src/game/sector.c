@@ -596,15 +596,15 @@ void sub_4CFCD0()
 }
 
 // 0x4CFFA0
-bool sub_4CFFA0(int64_t sec, int rot, int64_t* new_sec_ptr)
+bool sector_in_dir(int64_t sec, int dir, int64_t* new_sec_ptr)
 {
     int64_t x;
     int64_t y;
 
-    // TODO: Check, probably wrong.
     x = SECTOR_X(sec);
     y = SECTOR_Y(sec);
-    switch (rot) {
+
+    switch (dir) {
     case 0:
         x--;
         y--;
