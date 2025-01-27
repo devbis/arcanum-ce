@@ -24,189 +24,188 @@
 #include "game/timeevent.h"
 #include "game/ui.h"
 
+#define STAT_IS_VALID(stat) ((stat) >= 0 && (stat) < STAT_COUNT)
+#define STAT_IS_PRIMARY(stat) ((stat) >= 0 && (stat) <= STAT_CHARISMA)
+#define STAT_IS_DERIVED(stat) ((stat) >= STAT_CARRY_WEIGHT && (stat) <= STAT_MAGICK_TECH_APTITUDE)
+
 static bool sub_4B1310(TimeEvent* timeevent);
 static bool sub_4B1350(int64_t obj, int value, bool a3);
 
 // 0x5B5194
 static int stat_min_values[STAT_COUNT] = {
-    /*             STRENGTH */ 1,
-    /*            DEXTERITY */ 1,
-    /*         CONSTITUTION */ 1,
-    /*               BEAUTY */ 1,
-    /*         INTELLIGENCE */ 1,
-    /*           PERCEPTION */ 1,
-    /*            WILLPOWER */ 1,
-    /*             CHARISMA */ 1,
-    /*         CARRY_WEIGHT */ 300,
-    /*         DAMAGE_BONUS */ -50,
-    /*        AC_ADJUSTMENT */ -9,
-    /*                SPEED */ 1,
-    /*            HEAL_RATE */ 0,
-    /*      POISON_RECOVERY */ 1,
-    /*    REACTION_MODIFIER */ -65,
-    /*        MAX_FOLLOWERS */ 1,
-    /* MAGICK_TECH_APTITUDE */ -100,
-    /*                LEVEL */ 0,
-    /*    EXPERIENCE_POINTS */ 0,
-    /*            ALIGNMENT */ -1000,
-    /*          FATE_POINTS */ 0,
-    /*       UNSPENT_POINTS */ 0,
-    /*        MAGICK_POINTS */ 0,
-    /*          TECH_POINTS */ 0,
-    /*         POISON_LEVEL */ 0,
-    /*                  AGE */ 20,
-    /*               GENDER */ 0,
-    /*                 RACE */ 0,
+    /*             STAT_STRENGTH */ 1,
+    /*            STAT_DEXTERITY */ 1,
+    /*         STAT_CONSTITUTION */ 1,
+    /*               STAT_BEAUTY */ 1,
+    /*         STAT_INTELLIGENCE */ 1,
+    /*           STAT_PERCEPTION */ 1,
+    /*            STAT_WILLPOWER */ 1,
+    /*             STAT_CHARISMA */ 1,
+    /*         STAT_CARRY_WEIGHT */ 300,
+    /*         STAT_DAMAGE_BONUS */ -50,
+    /*        STAT_AC_ADJUSTMENT */ -9,
+    /*                STAT_SPEED */ 1,
+    /*            STAT_HEAL_RATE */ 0,
+    /*      STAT_POISON_RECOVERY */ 1,
+    /*    STAT_REACTION_MODIFIER */ -65,
+    /*        STAT_MAX_FOLLOWERS */ 1,
+    /* STAT_MAGICK_TECH_APTITUDE */ -100,
+    /*                STAT_LEVEL */ 0,
+    /*    STAT_EXPERIENCE_POINTS */ 0,
+    /*            STAT_ALIGNMENT */ -1000,
+    /*          STAT_FATE_POINTS */ 0,
+    /*       STAT_UNSPENT_POINTS */ 0,
+    /*        STAT_MAGICK_POINTS */ 0,
+    /*          STAT_TECH_POINTS */ 0,
+    /*         STAT_POISON_LEVEL */ 0,
+    /*                  STAT_AGE */ 20,
+    /*               STAT_GENDER */ 0,
+    /*                 STAT_RACE */ 0,
 };
 
 // 0x5B5204
 static int stat_max_values[STAT_COUNT] = {
-    /*             STRENGTH */ 20,
-    /*            DEXTERITY */ 20,
-    /*         CONSTITUTION */ 20,
-    /*               BEAUTY */ 20,
-    /*         INTELLIGENCE */ 20,
-    /*           PERCEPTION */ 20,
-    /*            WILLPOWER */ 20,
-    /*             CHARISMA */ 20,
-    /*         CARRY_WEIGHT */ 10000,
-    /*         DAMAGE_BONUS */ 50,
-    /*        AC_ADJUSTMENT */ 95,
-    /*                SPEED */ 100,
-    /*            HEAL_RATE */ 6,
-    /*      POISON_RECOVERY */ 20,
-    /*    REACTION_MODIFIER */ 200,
-    /*        MAX_FOLLOWERS */ 7,
-    /* MAGICK_TECH_APTITUDE */ 100,
-    /*                LEVEL */ 51,
-    /*    EXPERIENCE_POINTS */ 2000000000,
-    /*            ALIGNMENT */ 1000,
-    /*          FATE_POINTS */ 100,
-    /*       UNSPENT_POINTS */ 56,
-    /*        MAGICK_POINTS */ 210,
-    /*          TECH_POINTS */ 210,
-    /*         POISON_LEVEL */ 1000,
-    /*                  AGE */ 1000,
-    /*               GENDER */ 1,
-    /*                 RACE */ 11,
+    /*             STAT_STRENGTH */ 20,
+    /*            STAT_DEXTERITY */ 20,
+    /*         STAT_CONSTITUTION */ 20,
+    /*               STAT_BEAUTY */ 20,
+    /*         STAT_INTELLIGENCE */ 20,
+    /*           STAT_PERCEPTION */ 20,
+    /*            STAT_WILLPOWER */ 20,
+    /*             STAT_CHARISMA */ 20,
+    /*         STAT_CARRY_WEIGHT */ 10000,
+    /*         STAT_DAMAGE_BONUS */ 50,
+    /*        STAT_AC_ADJUSTMENT */ 95,
+    /*                STAT_SPEED */ 100,
+    /*            STAT_HEAL_RATE */ 6,
+    /*      STAT_POISON_RECOVERY */ 20,
+    /*    STAT_REACTION_MODIFIER */ 200,
+    /*        STAT_MAX_FOLLOWERS */ 7,
+    /* STAT_MAGICK_TECH_APTITUDE */ 100,
+    /*                STAT_LEVEL */ 51,
+    /*    STAT_EXPERIENCE_POINTS */ 2000000000,
+    /*            STAT_ALIGNMENT */ 1000,
+    /*          STAT_FATE_POINTS */ 100,
+    /*       STAT_UNSPENT_POINTS */ 56,
+    /*        STAT_MAGICK_POINTS */ 210,
+    /*          STAT_TECH_POINTS */ 210,
+    /*         STAT_POISON_LEVEL */ 1000,
+    /*                  STAT_AGE */ 1000,
+    /*               STAT_GENDER */ 1,
+    /*                 STAT_RACE */ 11,
 };
 
 // 0x5B5274
 static int stat_default_values[STAT_COUNT] = {
-    /*             STRENGTH */ 8,
-    /*            DEXTERITY */ 8,
-    /*         CONSTITUTION */ 8,
-    /*               BEAUTY */ 8,
-    /*         INTELLIGENCE */ 8,
-    /*           PERCEPTION */ 8,
-    /*            WILLPOWER */ 8,
-    /*             CHARISMA */ 8,
-    /*         CARRY_WEIGHT */ 0,
-    /*         DAMAGE_BONUS */ 0,
-    /*        AC_ADJUSTMENT */ 0,
-    /*                SPEED */ 0,
-    /*            HEAL_RATE */ 0,
-    /*      POISON_RECOVERY */ 0,
-    /*    REACTION_MODIFIER */ 0,
-    /*        MAX_FOLLOWERS */ 0,
-    /* MAGICK_TECH_APTITUDE */ 0,
-    /*                LEVEL */ 1,
-    /*    EXPERIENCE_POINTS */ 0,
-    /*            ALIGNMENT */ 0,
-    /*          FATE_POINTS */ 0,
-    /*       UNSPENT_POINTS */ 5,
-    /*        MAGICK_POINTS */ 0,
-    /*          TECH_POINTS */ 0,
-    /*         POISON_LEVEL */ 0,
-    /*                  AGE */ 20,
-    /*               GENDER */ 1,
-    /*                 RACE */ 0,
+    /*             STAT_STRENGTH */ 8,
+    /*            STAT_DEXTERITY */ 8,
+    /*         STAT_CONSTITUTION */ 8,
+    /*               STAT_BEAUTY */ 8,
+    /*         STAT_INTELLIGENCE */ 8,
+    /*           STAT_PERCEPTION */ 8,
+    /*            STAT_WILLPOWER */ 8,
+    /*             STAT_CHARISMA */ 8,
+    /*         STAT_CARRY_WEIGHT */ 0,
+    /*         STAT_DAMAGE_BONUS */ 0,
+    /*        STAT_AC_ADJUSTMENT */ 0,
+    /*                STAT_SPEED */ 0,
+    /*            STAT_HEAL_RATE */ 0,
+    /*      STAT_POISON_RECOVERY */ 0,
+    /*    STAT_REACTION_MODIFIER */ 0,
+    /*        STAT_MAX_FOLLOWERS */ 0,
+    /* STAT_MAGICK_TECH_APTITUDE */ 0,
+    /*                STAT_LEVEL */ 1,
+    /*    STAT_EXPERIENCE_POINTS */ 0,
+    /*            STAT_ALIGNMENT */ 0,
+    /*          STAT_FATE_POINTS */ 0,
+    /*       STAT_UNSPENT_POINTS */ 5,
+    /*        STAT_MAGICK_POINTS */ 0,
+    /*          STAT_TECH_POINTS */ 0,
+    /*         STAT_POISON_LEVEL */ 0,
+    /*                  STAT_AGE */ 20,
+    /*               STAT_GENDER */ 1,
+    /*                 STAT_RACE */ 0,
 };
 
 // 0x5B52E4
-static int dword_5B52E4[20] = {
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
+static int stat_cost_tbl[20] = {
+    /*  0 */ 0,
+    /*  1 */ 1,
+    /*  2 */ 1,
+    /*  3 */ 1,
+    /*  4 */ 1,
+    /*  5 */ 1,
+    /*  6 */ 1,
+    /*  7 */ 1,
+    /*  8 */ 1,
+    /*  9 */ 1,
+    /* 10 */ 1,
+    /* 11 */ 1,
+    /* 12 */ 1,
+    /* 13 */ 1,
+    /* 14 */ 1,
+    /* 15 */ 1,
+    /* 16 */ 1,
+    /* 17 */ 1,
+    /* 18 */ 1,
+    /* 19 */ 1,
 };
 
 // 0x5B5334
-static int dword_5B5334[20] = {
-    -65,
-    -52,
-    -42,
-    -33,
-    -25,
-    -18,
-    -12,
-    -7,
-    -3,
-    0,
-    3,
-    7,
-    12,
-    18,
-    25,
-    33,
-    42,
-    52,
-    65,
-    75,
+static int stat_reaction_tbl[20] = {
+    /*  0 */ -65,
+    /*  1 */ -52,
+    /*  2 */ -42,
+    /*  3 */ -33,
+    /*  4 */ -25,
+    /*  5 */ -18,
+    /*  6 */ -12,
+    /*  7 */ -7,
+    /*  8 */ -3,
+    /*  9 */ 0,
+    /* 10 */ 3,
+    /* 11 */ 7,
+    /* 12 */ 12,
+    /* 13 */ 18,
+    /* 14 */ 25,
+    /* 15 */ 33,
+    /* 16 */ 42,
+    /* 17 */ 52,
+    /* 18 */ 65,
+    /* 19 */ 75,
 };
 
-// NOTE: This is definitely part of `stat.c` due it's order. However the only
-// place where it is used is `magictech.c`, implying public access.
-//
 // 0x5B5384
-const char* off_5B5384[] = {
-    "stat_strength",
-    "stat_dexterity",
-    "stat_constitution",
-    "stat_beauty",
-    "stat_intelligence",
-    "stat_perception",
-    "stat_willpower",
-    "stat_charisma",
-    "stat_carry_weight",
-    "stat_damage_bonus",
-    "stat_ac_adjustment",
-    "stat_speed",
-    "stat_heal_rate",
-    "stat_poison_recovery_rate",
-    "stat_reaction_modifier",
-    "stat_max_followers",
-    "stat_magic_tech_aptitude",
-    "stat_level",
-    "stat_experience_points",
-    "stat_alignment",
-    "stat_fate_points",
-    "stat_poison_level",
-    "stat_age",
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
+const char* stat_lookup_keys_tbl[STAT_COUNT] = {
+    /*             STAT_STRENGTH */ "stat_strength",
+    /*            STAT_DEXTERITY */ "stat_dexterity",
+    /*         STAT_CONSTITUTION */ "stat_constitution",
+    /*               STAT_BEAUTY */ "stat_beauty",
+    /*         STAT_INTELLIGENCE */ "stat_intelligence",
+    /*           STAT_PERCEPTION */ "stat_perception",
+    /*            STAT_WILLPOWER */ "stat_willpower",
+    /*             STAT_CHARISMA */ "stat_charisma",
+    /*         STAT_CARRY_WEIGHT */ "stat_carry_weight",
+    /*         STAT_DAMAGE_BONUS */ "stat_damage_bonus",
+    /*        STAT_AC_ADJUSTMENT */ "stat_ac_adjustment",
+    /*                STAT_SPEED */ "stat_speed",
+    /*            STAT_HEAL_RATE */ "stat_heal_rate",
+    /*      STAT_POISON_RECOVERY */ "stat_poison_recovery_rate",
+    /*    STAT_REACTION_MODIFIER */ "stat_reaction_modifier",
+    /*        STAT_MAX_FOLLOWERS */ "stat_max_followers",
+    /* STAT_MAGICK_TECH_APTITUDE */ "stat_magic_tech_aptitude",
+    /*                STAT_LEVEL */ "stat_level",
+    /*    STAT_EXPERIENCE_POINTS */ "stat_experience_points",
+    /*            STAT_ALIGNMENT */ "stat_alignment",
+    /*          STAT_FATE_POINTS */ "stat_fate_points",
+    /*       STAT_UNSPENT_POINTS */ "stat_poison_level", // FIXME: Does not match stat.
+    /*        STAT_MAGICK_POINTS */ "stat_age", // FIXME: Does not match stat.
+    /*          STAT_TECH_POINTS */ NULL,
+    /*         STAT_POISON_LEVEL */ NULL,
+    /*                  STAT_AGE */ NULL,
+    /*               STAT_GENDER */ NULL,
+    /*                 STAT_RACE */ NULL,
 };
-
-static_assert(sizeof(off_5B5384) / sizeof(off_5B5384[0]) == STAT_COUNT, "wrong size");
 
 // 0x5B53F4
 static int dword_5B53F4 = -1;
@@ -277,10 +276,10 @@ void stat_exit()
 // 0x4B0450
 void stat_set_defaults(int64_t obj)
 {
-    int index;
+    int stat;
 
-    for (index = 0; index < STAT_COUNT; index++) {
-        obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, index, stat_default_values[index]);
+    for (stat = 0; stat < STAT_COUNT; stat++) {
+        obj_arrayfield_int32_set(obj, OBJ_F_CRITTER_STAT_BASE_IDX, stat, stat_default_values[stat]);
     }
 }
 
@@ -288,18 +287,16 @@ void stat_set_defaults(int64_t obj)
 int stat_level_get(int64_t obj, int stat)
 {
     int value;
-    location_t location;
+    int64_t loc;
     tig_art_id_t art_id;
-    int poison;
     int min_value;
     int max_value;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
-    if (stat < 0 || stat >= STAT_COUNT) {
+    if (!STAT_IS_VALID(stat)) {
         return 0;
     }
 
@@ -307,7 +304,7 @@ int stat_level_get(int64_t obj, int stat)
 
     switch (stat) {
     case STAT_SPEED:
-        if (sub_458A80(0x4000000)) {
+        if (sub_458A80(OSF_TEMPUS_FUGIT)) {
             if ((obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS) & OSF_TEMPUS_FUGIT) != 0) {
                 value += 10;
             } else {
@@ -340,8 +337,8 @@ int stat_level_get(int64_t obj, int stat)
             // - Intelligence -2
             // - Willpower -2
             // - Strength +2
-            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = tile_art_id_at(location);
+            loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = tile_art_id_at(loc);
             if (tig_art_tile_id_type_get(art_id) == TIG_ART_TILE_TYPE_INDOOR) {
                 if (stat == STAT_INTELLIGENCE) {
                     value += 2;
@@ -365,8 +362,8 @@ int stat_level_get(int64_t obj, int stat)
             // - Strength +2
             //
             // NOTE: Persuation bonus is applied via effects.
-            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = tile_art_id_at(location);
+            loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = tile_art_id_at(loc);
             if (a_name_tile_is_sinkable(art_id)) {
                 if (stat == STAT_STRENGTH) {
                     value += 2;
@@ -397,11 +394,12 @@ int stat_level_get(int64_t obj, int stat)
         }
 
         if (stat == STAT_STRENGTH || stat == STAT_DEXTERITY) {
-            poison = stat_level_get(obj, STAT_POISON_LEVEL) / 100;
-            if (poison > 3) {
-                value -= 3;
-            } else if (poison > 0) {
-                value -= poison;
+            int poison_penalty = stat_level_get(obj, STAT_POISON_LEVEL) / 100;
+            if (poison_penalty > 3) {
+                poison_penalty = 3;
+            }
+            if (poison_penalty > 0) {
+                value -= poison_penalty;
             }
         }
 
@@ -423,8 +421,8 @@ int stat_level_get(int64_t obj, int stat)
             }
             break;
         case BACKGROUND_SKY_MAGE:
-            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = tile_art_id_at(location);
+            loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = tile_art_id_at(loc);
             if (tig_art_tile_id_type_get(art_id) == TIG_ART_TILE_TYPE_INDOOR) {
                 value -= 4;
             } else {
@@ -432,8 +430,8 @@ int stat_level_get(int64_t obj, int stat)
             }
             break;
         case BACKGROUND_NATURE_MAGE:
-            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            art_id = tile_art_id_at(location);
+            loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
+            art_id = tile_art_id_at(loc);
             if (!a_name_tile_is_natural(art_id)) {
                 value -= 4;
             } else {
@@ -449,11 +447,9 @@ int stat_level_get(int64_t obj, int stat)
     max_value = stat_level_max(obj, stat);
 
     if (value < min_value) {
-        return min_value;
-    }
-
-    if (value > max_value) {
-        return max_value;
+        value = min_value;
+    } else if (value > max_value) {
+        value = max_value;
     }
 
     return value;
@@ -463,18 +459,16 @@ int stat_level_get(int64_t obj, int stat)
 int stat_base_get(int64_t obj, int stat)
 {
     int value;
-    int bonus;
-    location_t location;
 
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return 0;
     }
 
-    if (stat < 0 || stat >= STAT_COUNT) {
+    if (!STAT_IS_VALID(stat)) {
         return 0;
     }
 
-    if (stat >= FIRST_DERIVED_STAT && stat <= LAST_DERIVED_STAT) {
+    if (STAT_IS_DERIVED(stat)) {
         switch (stat) {
         case STAT_CARRY_WEIGHT:
             value = 500 * stat_level_get(obj, STAT_STRENGTH);
@@ -502,8 +496,7 @@ int stat_base_get(int64_t obj, int stat)
 
             break;
         case STAT_HEAL_RATE:
-            value = stat_level_get(obj, STAT_CONSTITUTION) + 1;
-            value /= 3;
+            value = (stat_level_get(obj, STAT_CONSTITUTION) + 1) / 3;
             break;
         case STAT_POISON_RECOVERY:
             value = stat_level_get(obj, STAT_CONSTITUTION);
@@ -513,16 +506,15 @@ int stat_base_get(int64_t obj, int stat)
             if (stat_atmax(obj, STAT_BEAUTY)) {
                 value = 2 * (5 * value - 50);
             } else {
-                value = dword_5B5334[value - 1];
+                value = stat_reaction_tbl[value - 1];
             }
             break;
         case STAT_MAX_FOLLOWERS:
             value = stat_level_get(obj, STAT_CHARISMA) / 4;
             break;
         case STAT_MAGICK_TECH_APTITUDE:
-            bonus = (50 * stat_level_get(obj, STAT_MAGICK_POINTS) - 55 * stat_level_get(obj, STAT_TECH_POINTS)) / 10;
-            location = obj_field_int64_get(obj, OBJ_F_LOCATION);
-            value = magictech_get_aptitude_adj(sector_id_from_loc(location)) + bonus;
+            value = (50 * stat_level_get(obj, STAT_MAGICK_POINTS) - 55 * stat_level_get(obj, STAT_TECH_POINTS)) / 10;
+            value += magictech_get_aptitude_adj(sector_id_from_loc(obj_field_int64_get(obj, OBJ_F_LOCATION)));
             break;
         default:
             // Unreachable.
@@ -552,7 +544,7 @@ int stat_base_set(int64_t obj, int stat, int value)
     }
 
     // Make sure stat is valid.
-    if (stat < 0 || stat >= STAT_COUNT) {
+    if (!STAT_IS_VALID(stat)) {
         return false;
     }
 
@@ -567,7 +559,7 @@ int stat_base_set(int64_t obj, int stat, int value)
 
         if ((tig_net_flags & TIG_NET_HOST) == 0) {
             if (player_is_pc_obj(obj)
-                && stat <= LAST_PRIMARY_STAT
+                && STAT_IS_PRIMARY(stat)
                 && abs(stat_base_get(obj, stat) - value) == 1) {
                 tig_net_send_app_all(&pkt, sizeof(pkt));
             }
@@ -579,7 +571,7 @@ int stat_base_set(int64_t obj, int stat, int value)
 
     // We cannot modify derived stats for obvious reasons. If we're trying to do
     // it silently ignore this request and simply return it's current value.
-    if (stat >= FIRST_DERIVED_STAT && stat <= LAST_DERIVED_STAT) {
+    if (STAT_IS_DERIVED(stat)) {
         return stat_base_get(obj, stat);
     }
 
@@ -708,16 +700,15 @@ int stat_base_set(int64_t obj, int stat, int value)
 // 0x4B0EE0
 bool stat_atmax(int64_t obj, int stat)
 {
-    if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC
-        && obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
+    if (!obj_type_is_critter(obj_field_int32_get(obj, OBJ_F_TYPE))) {
         return false;
     }
 
-    if (stat < 0 || stat >= STAT_COUNT) {
+    if (!STAT_IS_VALID(stat)) {
         return false;
     }
 
-    if (stat > LAST_PRIMARY_STAT) {
+    if (!STAT_IS_PRIMARY(stat)) {
         return false;
     }
 
@@ -737,7 +728,7 @@ int stat_cost(int value)
         value = 20;
     }
 
-    return dword_5B52E4[value - 1];
+    return stat_cost_tbl[value - 1];
 }
 
 // 0x4B0F80

@@ -371,13 +371,13 @@ static int dword_5B0CD4[] = {
 
 // 0x5B0CDC
 static const char** off_5B0CDC[] = {
-    off_5B5384,
+    stat_lookup_keys_tbl,
     off_5BC428,
 };
 
 // 0x5B0CE4
 static int dword_5B0CE4[] = {
-    28,
+    STAT_COUNT,
     5,
 };
 
@@ -5215,7 +5215,7 @@ void sub_4578F0(MagicTechInfo* info, char* str)
         info->duration_trigger_count = value1;
     }
 
-    if (tig_str_parse_named_complex_str_value(&curr, "Resist:", '@', off_5B5384, STAT_COUNT, &value1, &value2)) {
+    if (tig_str_parse_named_complex_str_value(&curr, "Resist:", '@', stat_lookup_keys_tbl, STAT_COUNT, &value1, &value2)) {
         info->resistance.stat = value1;
         info->resistance.value = value2;
     }

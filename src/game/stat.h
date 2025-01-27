@@ -36,9 +36,6 @@ typedef enum Stat {
     STAT_GENDER,
     STAT_RACE,
     STAT_COUNT,
-    LAST_PRIMARY_STAT = STAT_CHARISMA,
-    FIRST_DERIVED_STAT = STAT_CARRY_WEIGHT,
-    LAST_DERIVED_STAT = STAT_MAGICK_TECH_APTITUDE,
 } Stat;
 
 static_assert(STAT_COUNT == 28, "wrong size");
@@ -79,7 +76,7 @@ typedef enum ResistanceType {
 
 static_assert(RESISTANCE_TYPE_COUNT == 5, "wrong size");
 
-extern const char* off_5B5384[];
+extern const char* stat_lookup_keys_tbl[STAT_COUNT];
 
 bool stat_init(GameInitInfo* init_info);
 void stat_exit();
