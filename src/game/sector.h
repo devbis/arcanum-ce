@@ -48,6 +48,7 @@ bool sector_limits_set(int64_t x, int64_t y);
 void sector_limits_get(int64_t* x, int64_t* y);
 int64_t sector_id_from_loc(int64_t loc);
 int64_t sector_loc_from_id(int64_t sector_id);
+int sector_rot(int64_t a, int64_t b);
 bool sector_in_dir(int64_t sec, int dir, int64_t* new_sec_ptr);
 bool sub_4D0090(LocRect* rect, SomeSectorStuff* a2);
 Sector601808* sub_4D02E0(LocRect* loc_rect);

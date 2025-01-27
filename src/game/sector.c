@@ -590,9 +590,75 @@ int64_t sector_loc_from_id(int64_t sector_id)
 }
 
 // 0x4CFCD0
-void sub_4CFCD0()
+int sector_rot(int64_t a, int64_t b)
 {
-    // TODO: Incomplete.
+    int dx;
+    int dy;
+    int sx;
+    int sy;
+    int ddx;
+    int ddy;
+    int rot;
+
+    dx = (int)SECTOR_X(b) - (int)SECTOR_X(a);
+    dy = (int)SECTOR_Y(b) - (int)SECTOR_Y(a);
+
+    ddx = 2 * abs(dx);
+    ddy = 2 * abs(dy);
+
+    if (dx < 0) {
+        sx = -1;
+    } else if (dx > 0) {
+        sx = 1;
+    } else {
+        sx = 0;
+    }
+
+    if (dy < 0) {
+        sy = -1;
+    } else if (dy > 0) {
+        sy = 1;
+    } else {
+        sy = 0;
+    }
+
+    if (ddx > ddy) {
+        if (ddy - ddx / 2 < 0) {
+            sy = 0;
+        }
+    } else {
+        if (ddx - ddy / 2 < 0) {
+            sx = 0;
+        }
+    }
+
+    if (sy >= 0) {
+        if (sx >= 0) {
+            if (sy > 0) {
+                if (sx > 0) {
+                    rot = 4;
+                } else {
+                    rot = 3;
+                }
+            } else {
+                rot = 5;
+            }
+        } else if (sy > 0) {
+            rot = 2;
+        } else {
+            rot = 1;
+        }
+    } else if (sx > -1) {
+        if (sx > 0) {
+            rot = 6;
+        } else {
+            rot = 7;
+        }
+    } else {
+        rot = 0;
+    }
+
+    return rot;
 }
 
 // 0x4CFFA0
