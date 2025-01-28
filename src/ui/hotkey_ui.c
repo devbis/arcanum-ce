@@ -69,19 +69,7 @@ static tig_window_handle_t dword_6835D8;
 static Hotkey stru_6835E0[10];
 
 // 0x683950
-static int dword_683950;
-
-// 0x683958
-static HotkeyType dword_683958;
-
-// 0x68395C
-static int dword_68395C;
-
-// 0x683960
-static FollowerInfo stru_683960;
-
-// 0x6839A0
-static int dword_6839A0;
+static Hotkey stru_683950;
 
 // 0x6839A8
 static int dword_6839A8;
@@ -313,9 +301,9 @@ bool sub_57DBA0(GameLoadInfo* load_info)
 // 0x57DC20
 void sub_57DC20()
 {
-    dword_683950 = -1;
-    dword_683958 = HOTKEY_ITEM;
-    sub_4440E0(sub_573620(), &stru_683960);
+    stru_683950.slot = -1;
+    stru_683950.type = HOTKEY_ITEM;
+    sub_4440E0(sub_573620(), &(stru_683950.item_obj));
     dword_6839B0 = true;
 }
 
@@ -713,8 +701,8 @@ bool sub_57E5D0()
         return false;
     }
 
-    stru_683960.obj = OBJ_HANDLE_NULL;
-    stru_683960.field_8.objid.type = OID_TYPE_NULL;
+    stru_683950.item_obj.obj = OBJ_HANDLE_NULL;
+    stru_683950.item_obj.field_8.objid.type = OID_TYPE_NULL;
 
     index = sub_57E460();
     if (index < 10) {
@@ -726,34 +714,34 @@ bool sub_57E5D0()
         dword_5CB4E4 = index;
         switch (hotkey->type) {
         case HOTKEY_ITEM:
-            dword_683958 = hotkey->type;
-            stru_683960 = hotkey->item_obj;
-            sub_573630(stru_683960.obj);
+            stru_683950.type = hotkey->type;
+            stru_683950.item_obj = hotkey->item_obj;
+            sub_573630(stru_683950.item_obj.obj);
             art_id = TIG_ART_ID_INVALID;
             v1 = false;
             break;
         case HOTKEY_SKILL:
-            dword_683958 = hotkey->type;
-            dword_68395C = hotkey->data;
-            tig_art_interface_id_create(sub_579F70(dword_68395C), 0, 0, 0, &art_id);
+            stru_683950.type = hotkey->type;
+            stru_683950.data = hotkey->data;
+            tig_art_interface_id_create(sub_579F70(stru_683950.data), 0, 0, 0, &art_id);
             break;
         case HOTKEY_SPELL:
-            dword_683958 = hotkey->type;
-            dword_68395C = hotkey->data;
-            tig_art_interface_id_create(spell_get_icon(dword_68395C), 0, 0, 0, &art_id);
+            stru_683950.type = hotkey->type;
+            stru_683950.data = hotkey->data;
+            tig_art_interface_id_create(spell_get_icon(stru_683950.data), 0, 0, 0, &art_id);
             break;
         case HOTKEY_ITEM_SPELL:
-            dword_683958 = hotkey->type;
-            stru_683960 = hotkey->item_obj;
-            dword_68395C = hotkey->data;
-            tig_art_interface_id_create(spell_get_icon(dword_68395C), 0, 0, 0, &art_id);
+            stru_683950.type = hotkey->type;
+            stru_683950.item_obj = hotkey->item_obj;
+            stru_683950.data = hotkey->data;
+            tig_art_interface_id_create(spell_get_icon(stru_683950.data), 0, 0, 0, &art_id);
             break;
         default:
             // Should be unreachable.
             __assume(0);
         }
 
-        dword_683950 = index;
+        stru_683950.slot = index;
         hotkey->flags |= HOTKEY_DRAGGED;
         intgame_hotkey_refresh(index);
         intgame_hotkey_mouse_load(art_id, v1);
@@ -764,8 +752,8 @@ bool sub_57E5D0()
     if (!intgame_is_compact_interface()) {
         index = sub_557CF0();
         if (index < 5) {
-            dword_683958 = HOTKEY_SPELL;
-            dword_68395C = index + 5 * sub_557AB0();
+            stru_683950.type = HOTKEY_SPELL;
+            stru_683950.data = index + 5 * sub_557AB0();
             sub_557AC0(sub_557AB0(), index, &button_info);
             tig_art_interface_id_create(button_info.art_num, 0, 0, 0, &art_id);
             intgame_hotkey_mouse_load(art_id, true);
@@ -775,8 +763,8 @@ bool sub_57E5D0()
 
         index = sub_557B60();
         if (index < 4) {
-            dword_683958 = HOTKEY_SKILL;
-            dword_68395C = index;
+            stru_683950.type = HOTKEY_SKILL;
+            stru_683950.data = index;
             tig_art_interface_id_create(sub_579F70(index), 0, 0, 0, &art_id);
             intgame_hotkey_mouse_load(art_id, true);
             dword_6839B0 = true;
@@ -786,11 +774,11 @@ bool sub_57E5D0()
         index = sub_557C00();
         if (index < 5) {
             spl = mt_item_spell(sub_557B00(), index);
-            dword_683958 = HOTKEY_ITEM_SPELL;
-            sub_4440E0(sub_557B00(), &stru_683960);
-            dword_68395C = spl;
-            dword_6839A0 = spell_get_icon(spl);
-            tig_art_interface_id_create(dword_6839A0, 0, 0, 0, &art_id);
+            stru_683950.type = HOTKEY_ITEM_SPELL;
+            sub_4440E0(sub_557B00(), &(stru_683950.item_obj));
+            stru_683950.data = spl;
+            stru_683950.info.art_num = spell_get_icon(spl);
+            tig_art_interface_id_create(stru_683950.info.art_num, 0, 0, 0, &art_id);
             intgame_hotkey_mouse_load(art_id, true);
             dword_6839B0 = true;
             return true;
@@ -834,8 +822,8 @@ bool sub_57E8D0(int a1)
 
     sub_573730();
 
-    if (stru_683960.obj != OBJ_HANDLE_NULL) {
-        if (item_parent(stru_683960.obj, &parent_obj)
+    if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
+        if (item_parent(stru_683950.item_obj.obj, &parent_obj)
             && !player_is_pc_obj(parent_obj)) {
             dword_6839B0 = false;
             sub_575770();
@@ -844,7 +832,7 @@ bool sub_57E8D0(int a1)
             return false;
         }
 
-        obj_type = obj_field_int32_get(stru_683960.obj, OBJ_F_TYPE);
+        obj_type = obj_field_int32_get(stru_683950.item_obj.obj, OBJ_F_TYPE);
         if (obj_type == OBJ_TYPE_AMMO
             || obj_type == OBJ_TYPE_GOLD) {
             dword_6839B0 = false;
@@ -854,7 +842,7 @@ bool sub_57E8D0(int a1)
             return false;
         }
 
-        if (sub_462A30(parent_obj, stru_683960.obj)) {
+        if (sub_462A30(parent_obj, stru_683950.item_obj.obj)) {
             mes_file_entry.num = 4000;
             mes_get_msg(sub_557B10(), &mes_file_entry);
 
@@ -917,34 +905,34 @@ bool sub_57E8D0(int a1)
             sub_57F210(index);
         }
 
-        hotkey->type = dword_683958;
+        hotkey->type = stru_683950.type;
 
-        switch (dword_683958) {
+        switch (stru_683950.type) {
         case HOTKEY_ITEM:
             sub_573840();
-            item_inventory_location_get(stru_683960.obj); // FIXME: Useless.
-            flags = obj_field_int32_get(stru_683960.obj, OBJ_F_ITEM_FLAGS);
+            item_inventory_location_get(stru_683950.item_obj.obj); // FIXME: Useless.
+            flags = obj_field_int32_get(stru_683950.item_obj.obj, OBJ_F_ITEM_FLAGS);
             flags &= ~OIF_NO_DISPLAY;
-            obj_field_int32_set(stru_683960.obj, OBJ_F_ITEM_FLAGS, flags);
-            item_location_set(stru_683960.obj, hotkey->slot + 2000);
+            obj_field_int32_set(stru_683950.item_obj.obj, OBJ_F_ITEM_FLAGS, flags);
+            item_location_set(stru_683950.item_obj.obj, hotkey->slot + 2000);
             sub_576100(player_get_pc_obj());
-            hotkey->item_obj = stru_683960;
-            hotkey->art_id = sub_554BE0(stru_683960.obj);
+            hotkey->item_obj = stru_683950.item_obj;
+            hotkey->art_id = sub_554BE0(stru_683950.item_obj.obj);
             hotkey->count = item_count_items_matching_prototype(player_get_pc_obj(), hotkey->item_obj.obj);
             break;
         case HOTKEY_SKILL:
-            hotkey->data = dword_68395C;
-            hotkey->info.art_num = sub_579F70(dword_68395C);
+            hotkey->data = stru_683950.data;
+            hotkey->info.art_num = sub_579F70(stru_683950.data);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
         case HOTKEY_SPELL:
-            hotkey->data = dword_68395C;
-            hotkey->info.art_num = spell_get_icon(dword_68395C);
+            hotkey->data = stru_683950.data;
+            hotkey->info.art_num = spell_get_icon(stru_683950.data);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
             break;
         case HOTKEY_ITEM_SPELL:
-            hotkey->item_obj = stru_683960;
-            hotkey->data = dword_68395C;
-            hotkey->info.art_num = spell_get_icon(dword_68395C);
+            hotkey->item_obj = stru_683950.item_obj;
+            hotkey->data = stru_683950.data;
+            hotkey->info.art_num = spell_get_icon(stru_683950.data);
             tig_art_interface_id_create(hotkey->info.art_num, 0, 0, 0, &(hotkey->art_id));
             break;
         }
@@ -953,14 +941,14 @@ bool sub_57E8D0(int a1)
             item_transfer(v2, v3);
         }
 
-        hotkey->type = dword_683958;
+        hotkey->type = stru_683950.type;
         hotkey->flags = 0;
         intgame_hotkey_refresh(index);
     }
 
-    if (dword_683958 != HOTKEY_ITEM) {
-        if (stru_683960.obj != OBJ_HANDLE_NULL) {
-            sound_id = sub_4F0BF0(stru_683960.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
+    if (stru_683950.type != HOTKEY_ITEM) {
+        if (stru_683950.item_obj.obj != OBJ_HANDLE_NULL) {
+            sound_id = sub_4F0BF0(stru_683950.item_obj.obj, player_get_pc_obj(), OBJ_HANDLE_NULL, 1);
             if (sound_id != -1) {
                 gsound_play_sfx_id(sound_id, 1);
             }
@@ -993,9 +981,9 @@ void sub_57ED60(Hotkey* hotkey, int a2)
 bool sub_57EDA0(int a1)
 {
     if (sub_573620() != OBJ_HANDLE_NULL) {
-        dword_683950 = -1;
-        dword_683958 = HOTKEY_ITEM;
-        sub_4440E0(sub_573620(), &stru_683960);
+        stru_683950.slot = -1;
+        stru_683950.type = HOTKEY_ITEM;
+        sub_4440E0(sub_573620(), &(stru_683950.item_obj));
         dword_6839B0 = true;
     }
 
