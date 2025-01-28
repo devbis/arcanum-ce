@@ -114,19 +114,19 @@ static bool sub_4ABC70(Ai* ai);
 static int sub_4ABE20(Ai* ai);
 static bool sub_4ABEB0(int64_t obj, int64_t tgt);
 static bool sub_4ABF10(Ai* ai, S4ABF10* a2);
-static void sub_4AC180(Ai* ai);
-static void sub_4AC250(Ai* ai);
-static void sub_4AC320(Ai* ai);
-static void sub_4AC350(Ai* ai);
-static void sub_4AC380(Ai* ai);
-static void sub_4AC620(Ai* ai);
-static void sub_4AC660(Ai* ai);
-static void sub_4AC6E0(Ai* ai);
-static void sub_4AC7B0(Ai* ai);
+static void ai_action_perform(Ai* ai);
+static void ai_action_perform_cast(Ai* ai);
+static void ai_action_perform_item(Ai* ai);
+static void ai_action_perform_skill(Ai* ai);
+static void ai_action_perform_non_combat(Ai* ai);
+static void ai_action_perform_fleeing(Ai* ai);
+static void ai_action_perform_surrender(Ai* ai);
+static void ai_action_perform_combat(Ai* ai);
+static void ai_action_perform_baking_off(Ai* ai);
 static bool sub_4AC910(Ai* ai, int64_t a2);
-static bool sub_4ACBB0(int64_t obj, bool a2);
+static bool ai_waypoints_process(int64_t obj, bool a2);
 static bool ai_is_day();
-static bool sub_4ACDB0(int64_t obj, bool a2);
+static bool ai_standpoints_process(int64_t obj, bool a2);
 static bool ai_get_standpoint(int64_t obj, int64_t* standpoint_ptr);
 static void sub_4AD0B0(int64_t npc_obj);
 static int64_t ai_find_nearest_bed(int64_t obj);
@@ -290,7 +290,7 @@ void sub_4A84D0(Func5F848C* a1, Func5F8488* a2)
 }
 
 // 0x4A84F0
-void sub_4A84F0(int64_t obj)
+void ai_process(int64_t obj)
 {
     Ai ai;
 
@@ -302,7 +302,7 @@ void sub_4A84F0(int64_t obj)
             if (!sub_4A8940(&ai) && !sub_4A8E70(&ai)) {
                 sub_4A92D0(&ai);
             }
-            sub_4AC180(&ai);
+            ai_action_perform(&ai);
         }
     }
 }
@@ -2314,45 +2314,45 @@ bool sub_4ABF10(Ai* ai, S4ABF10* a2)
 }
 
 // 0x4AC180
-void sub_4AC180(Ai* ai)
+void ai_action_perform(Ai* ai)
 {
     if (!combat_turn_based_is_active() || combat_turn_based_whos_turn_get() == ai->obj) {
         if ((obj_field_int32_get(ai->obj, OBJ_F_NPC_FLAGS) & ONF_BACKING_OFF) != 0) {
-             sub_4AC7B0(ai);
-             return;
+            ai_action_perform_baking_off(ai);
+            return;
         }
 
         switch (ai->field_14) {
         case 1:
-            sub_4AC250(ai);
-            return;
+            ai_action_perform_cast(ai);
+            break;
         case 2:
-            sub_4AC320(ai);
-            return;
+            ai_action_perform_item(ai);
+            break;
         case 3:
-            sub_4AC350(ai);
-            return;
-        }
-
-        switch (ai->danger_type) {
-        case 0:
-            sub_4AC380(ai);
-            return;
-        case 1:
-            sub_4AC6E0(ai);
-            return;
-        case 2:
-            sub_4AC620(ai);
-            return;
-        case 3:
-            sub_4AC660(ai);
-            return;
+            ai_action_perform_skill(ai);
+            break;
+        default:
+            switch (ai->danger_type) {
+            case 0:
+                ai_action_perform_non_combat(ai);
+                break;
+            case 1:
+                ai_action_perform_combat(ai);
+                break;
+            case 2:
+                ai_action_perform_fleeing(ai);
+                break;
+            case 3:
+                ai_action_perform_surrender(ai);
+                break;
+            }
         }
     }
 }
 
 // 0x4AC250
-void sub_4AC250(Ai* ai)
+void ai_action_perform_cast(Ai* ai)
 {
     MagicTechSerializedData v1;
 
@@ -2381,7 +2381,7 @@ void sub_4AC250(Ai* ai)
 }
 
 // 0x4AC320
-void sub_4AC320(Ai* ai)
+void ai_action_perform_item(Ai* ai)
 {
     anim_goal_use_item_on_obj(ai->obj,
         ai->danger_source,
@@ -2390,7 +2390,7 @@ void sub_4AC320(Ai* ai)
 }
 
 // 0x4AC350
-void sub_4AC350(Ai* ai)
+void ai_action_perform_skill(Ai* ai)
 {
     anim_goal_use_skill_on(ai->obj,
         ai->danger_source,
@@ -2400,7 +2400,7 @@ void sub_4AC350(Ai* ai)
 }
 
 // 0x4AC380
-void sub_4AC380(Ai* ai)
+void ai_action_perform_non_combat(Ai* ai)
 {
     unsigned int npc_flags;
     int rc;
@@ -2442,7 +2442,7 @@ void sub_4AC380(Ai* ai)
                 }
             }
         }
-    } else if (!sub_4ACBB0(ai->obj, false) && !sub_4ACDB0(ai->obj, false)) {
+    } else if (!ai_waypoints_process(ai->obj, false) && !ai_standpoints_process(ai->obj, false)) {
         sub_435CE0(ai->obj);
         sub_4364D0(ai->obj);
     }
@@ -2455,14 +2455,14 @@ void sub_4AC380(Ai* ai)
 }
 
 // 0x4AC620
-void sub_4AC620(Ai* ai)
+void ai_action_perform_fleeing(Ai* ai)
 {
     sub_4AABE0(ai->obj, AI_DANGER_SOURCE_TYPE_SURRENDER, ai->danger_source, 0);
     anim_goal_flee(ai->obj, ai->danger_source);
 }
 
 // 0x4AC660
-void sub_4AC660(Ai* ai)
+void ai_action_perform_surrender(Ai* ai)
 {
     int64_t fleeing_from_obj;
 
@@ -2476,7 +2476,7 @@ void sub_4AC660(Ai* ai)
 }
 
 // 0x4AC6E0
-void sub_4AC6E0(Ai* ai)
+void ai_action_perform_combat(Ai* ai)
 {
     AiParams params;
     unsigned int npc_flags;
@@ -2495,7 +2495,7 @@ void sub_4AC6E0(Ai* ai)
 }
 
 // 0x4AC7B0
-void sub_4AC7B0(Ai* ai)
+void ai_action_perform_baking_off(Ai* ai)
 {
     AiParams ai_params;
     unsigned int npc_flags;
@@ -2596,7 +2596,7 @@ bool sub_4AC910(Ai* ai, int64_t a2)
 }
 
 // 0x4ACBB0
-bool sub_4ACBB0(int64_t obj, bool a2)
+bool ai_waypoints_process(int64_t obj, bool a2)
 {
     bool is_sleeping;
     int map;
@@ -2679,7 +2679,7 @@ bool ai_is_day()
 }
 
 // 0x4ACDB0
-bool sub_4ACDB0(int64_t obj, bool a2)
+bool ai_standpoints_process(int64_t obj, bool a2)
 {
     bool is_sleeping;
     int64_t standpoint_loc;
@@ -2886,8 +2886,8 @@ bool ai_timeevent_process(TimeEvent* timeevent)
 
         if (critter_leader_get(obj) == OBJ_HANDLE_NULL
             && !combat_critter_is_combat_mode_active(obj)
-            && !sub_4ACBB0(obj, true)) {
-            sub_4ACDB0(obj, true);
+            && !ai_waypoints_process(obj, true)) {
+            ai_standpoints_process(obj, true);
         }
 
         if (!sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_FIRST_HEARTBEAT, 0)) {
@@ -2910,7 +2910,7 @@ bool ai_timeevent_process(TimeEvent* timeevent)
 
                 return true;
             }
-            sub_4A84F0(obj);
+            ai_process(obj);
         }
     } else {
         if (!combat_turn_based_is_active() && !critter_is_dead(obj)) {

@@ -782,7 +782,7 @@ void sub_4B2F60(CombatContext* combat)
 
         if (combat->target_obj != OBJ_HANDLE_NULL
             && obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            sub_4A84F0(combat->target_obj);
+            ai_process(combat->target_obj);
         }
 
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
@@ -1051,7 +1051,7 @@ void sub_4B3770(CombatContext* combat)
         sub_41B930(sound_id, 1, combat->attacker_obj);
 
         if (obj_field_int32_get(combat->target_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            sub_4A84F0(combat->target_obj);
+            ai_process(combat->target_obj);
         }
 
         if (combat->weapon_obj != OBJ_HANDLE_NULL) {
@@ -1916,7 +1916,7 @@ void sub_4B4390(CombatContext* combat)
                 sub_460780();
             }
         } else if (obj_type == OBJ_TYPE_NPC) {
-            sub_4A84F0(combat->target_obj);
+            ai_process(combat->target_obj);
 
             if (critter_pc_leader_get(combat->target_obj) == player_get_pc_obj()) {
                 sub_460780();
@@ -3124,7 +3124,7 @@ void sub_4B7010(int64_t obj)
         && !sub_40DA20(obj)
         && !gamelib_in_load()) {
         if (sub_441980(obj, obj, OBJ_HANDLE_NULL, SAP_HEARTBEAT, 0) == 1) {
-            sub_4A84F0(obj);
+            ai_process(obj);
         }
 
         if (!sub_423300(obj, NULL)) {

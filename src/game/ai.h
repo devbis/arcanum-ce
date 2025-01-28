@@ -72,7 +72,7 @@ void ai_exit();
 bool ai_mod_load();
 void ai_mod_unload();
 void sub_4A84D0(Func5F848C* a1, Func5F8488* a2);
-void sub_4A84F0(int64_t obj);
+void ai_process(int64_t obj);
 void sub_4A9530(AiRedirect* redirect, int64_t a2, int64_t a3);
 void sub_4A9560(AiRedirect* redirect);
 void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned int flags);
