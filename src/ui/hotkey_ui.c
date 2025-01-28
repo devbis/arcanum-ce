@@ -255,7 +255,7 @@ void sub_57DAB0()
 }
 
 // 0x57DB40
-bool sub_57DB40(TigFile* stream)
+bool hotkey_ui_save(TigFile* stream)
 {
     int index;
 

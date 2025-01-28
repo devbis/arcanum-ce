@@ -14,7 +14,7 @@ void hotkey_ui_resize(GameResizeInfo* resize_info);
 bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t a3, bool a4);
 void sub_57DA50();
 void sub_57DAB0();
-bool sub_57DB40(TigFile* stream);
+bool hotkey_ui_save(TigFile* stream);
 bool sub_57DBA0(GameLoadInfo* load_info);
 void sub_57DC20();
 bool sub_57DC60(TigMessage* msg);

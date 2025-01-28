@@ -1064,7 +1064,7 @@ bool intgame_save(TigFile* stream)
     if (stream == NULL) return false;
     if (tig_file_fwrite(&intgame_iso_window_type, sizeof(intgame_iso_window_type), 1, stream) != 1) return false;
     if (tig_file_fwrite(&dword_64C530, sizeof(dword_64C530), 1, stream) != 1) return false;
-    if (!sub_57DB40(stream)) return false;
+    if (!hotkey_ui_save(stream)) return false;
     if (tig_file_fwrite(dword_64C484, sizeof(*dword_64C484), 5, stream) != 5) return false;
     if (tig_file_fwrite(&dword_64C534, sizeof(dword_64C534), 1, stream) != 1) return false;
 
