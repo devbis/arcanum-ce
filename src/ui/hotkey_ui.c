@@ -276,7 +276,7 @@ bool hotkey_ui_save(TigFile* stream)
 }
 
 // 0x57DBA0
-bool sub_57DBA0(GameLoadInfo* load_info)
+bool hotkey_ui_load(GameLoadInfo* load_info)
 {
     int index;
     Hotkey hotkey;

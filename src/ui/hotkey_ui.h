@@ -15,7 +15,7 @@ bool hotkey_ui_start(tig_window_handle_t a1, TigRect* rect, tig_window_handle_t 
 void sub_57DA50();
 void sub_57DAB0();
 bool hotkey_ui_save(TigFile* stream);
-bool sub_57DBA0(GameLoadInfo* load_info);
+bool hotkey_ui_load(GameLoadInfo* load_info);
 void sub_57DC20();
 bool sub_57DC60(TigMessage* msg);
 bool sub_57DE00();

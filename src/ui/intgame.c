@@ -1086,7 +1086,7 @@ bool intgame_load(GameLoadInfo* load_info)
         tig_button_state_change(intgame_college_buttons[dword_64C530].button_handle, TIG_BUTTON_STATE_PRESSED);
     }
 
-    if (!sub_57DBA0(load_info)) return false;
+    if (!hotkey_ui_load(load_info)) return false;
     if (tig_file_fread(dword_64C484, sizeof(*dword_64C484), 5, load_info->stream) != 5) return false;
     if (tig_file_fread(&dword_64C534, sizeof(dword_64C534), 1, load_info->stream) != 1) return false;
 
