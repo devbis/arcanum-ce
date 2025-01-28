@@ -396,7 +396,7 @@ bool spell_add(int64_t obj, int spell, bool force)
     if (!multiplayer_is_locked() && sub_40DA20(obj)) {
         PlayerBuySpellPacket pkt;
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
 
             pkt.type = 48;
             pkt.player = sub_4A2B10(obj);

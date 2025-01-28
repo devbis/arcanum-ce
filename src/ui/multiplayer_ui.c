@@ -613,7 +613,7 @@ bool sub_570BC0(TigMessage* msg)
     if (msg->type == TIG_MESSAGE_BUTTON
         && msg->data.button.state == TIG_BUTTON_STATE_RELEASED
         && dword_5CABF0 != -1
-        && (tig_net_flags & TIG_NET_HOST) != 0
+        && tig_net_is_host()
         && dword_5CABF0 != 0) {
         if (msg->data.button.button_handle == multiplayer_ui_kick_btn) {
             if (tig_net_client_is_waiting(dword_680FA4[dword_5CABF0])
@@ -829,9 +829,9 @@ void sub_571100()
         tig_window_text_write(dword_5CABE8, font_desc.str, &rect);
         tig_font_pop();
 
-        if (((tig_net_flags & TIG_NET_HOST) != 0
+        if ((tig_net_is_host()
                 && dword_680FA4[index] != 0)
-            || ((tig_net_flags & TIG_NET_HOST) == 0
+            || (!tig_net_is_host()
                 && dword_680FA4[index] == 0)) {
             ping = sub_526D60(dword_680FA4[index]);
             if (ping < 251) {
@@ -898,7 +898,7 @@ bool sub_5713F0(TigMessage* msg)
         }
         return false;
     case TIG_MESSAGE_BUTTON:
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             switch (msg->data.button.state) {
             case TIG_BUTTON_STATE_RELEASED:
                 for (index = 0; index < dword_68103C; index++) {
@@ -1000,7 +1000,7 @@ void sub_571730(TextEdit* textedit)
         strncpy(pkt.field_C, textedit->buffer, 128);
 
         if (pkt.field_8 != pkt.field_4) {
-            if ((tig_net_flags & TIG_NET_HOST) != 0 && pkt.field_8 != 0) {
+            if (tig_net_is_host() && pkt.field_8 != 0) {
                 tig_net_send_app(&pkt, sizeof(pkt), pkt.field_8);
             } else {
                 tig_net_send_app_all(&pkt, sizeof(pkt));

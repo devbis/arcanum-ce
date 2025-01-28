@@ -380,7 +380,7 @@ void main_loop()
                     case DIK_ESCAPE:
                         if (sub_567A10()
                             || wmap_ui_is_created()
-                            || (tig_net_flags & TIG_NET_CONNECTED) != 0
+                            || tig_net_is_active()
                             || combat_turn_based_is_active()
                             && player_get_pc_obj() != combat_turn_based_whos_turn_get()) {
                             mainmenu_ui_start(3);
@@ -418,7 +418,7 @@ void main_loop()
                             }
 
                             if (!combat_turn_based_is_active() || player_get_pc_obj() == combat_turn_based_whos_turn_get()) {
-                                if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                                if (!tig_net_is_active()) {
                                     sub_551A80(0);
                                     sub_551A80(0);
                                     sub_5496E0();
@@ -431,7 +431,7 @@ void main_loop()
                         }
                         break;
                     case DIK_F8:
-                        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                        if (!tig_net_is_active()) {
                             sub_549770();
                             sub_543220();
                             sub_549780();
@@ -500,9 +500,9 @@ void main_loop()
                                 }
                                 break;
                             case DIK_Y:
-                                if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                                if (!tig_net_is_active()) {
                                     critter_give_xp(pc_obj, level_get_experience_points_to_next_level(pc_obj));
-                                } else if ((tig_net_flags & TIG_NET_HOST) != 0) {
+                                } else if (tig_net_is_host()) {
                                     party_member_obj = multiplayer_find_first_player_obj();
                                     while (party_member_obj != OBJ_HANDLE_NULL) {
                                         critter_give_xp(party_member_obj, level_get_experience_points_to_next_level(party_member_obj));

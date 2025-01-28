@@ -424,7 +424,7 @@ void turn_based_changed()
     int value;
 
     value = settings_get_value(&settings, "turn-based");
-    if (value && (tig_net_flags & 0x1) != 0) {
+    if (value && tig_net_is_active()) {
         settings_set_value(&settings, "turn-based", 0);
     } else {
         sub_4B6C90(value);
@@ -497,8 +497,8 @@ void sub_4B2690(int64_t proj_obj, int64_t a2, int64_t a3, CombatContext* combat,
     int64_t loc;
     unsigned int critter_flags2;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return;
     }
 
@@ -1112,7 +1112,7 @@ void sub_4B39B0(CombatContext* combat)
         combat->flags |= 0x20;
     }
 
-    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || tig_net_is_host()) {
         // FIXME: Unused.
         rotation = tig_art_id_rotation_get(obj_field_int32_get(combat->attacker_obj, OBJ_F_CURRENT_AID));
 
@@ -1287,7 +1287,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
     }
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0 || is_pc) {
+        if (tig_net_is_host() || is_pc) {
             PacketCombatModeSet pkt;
 
             pkt.type = 19;
@@ -1296,7 +1296,7 @@ void combat_critter_toggle_combat_mode(int64_t obj)
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
     }
@@ -1422,7 +1422,7 @@ void sub_4B4390(CombatContext* combat)
     bool weapon_dropped = false;
 
     if (!multiplayer_is_locked()) {
-        if (sub_4B5520(combat) || (tig_net_flags & TIG_NET_HOST) == 0) {
+        if (sub_4B5520(combat) || !tig_net_is_host()) {
             return;
         }
     }
@@ -1505,8 +1505,8 @@ void sub_4B4390(CombatContext* combat)
     }
 
     if (sub_40DA20(combat->attacker_obj)) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!tig_net_is_active()
+            || tig_net_is_host()) {
             combat->game_difficulty = gamelib_get_game_difficulty();
         }
 
@@ -1532,8 +1532,8 @@ void sub_4B4390(CombatContext* combat)
         // 0x4B475F
         if ((combat->flags & CF_TRAP) != 0) {
             combat->flags |= CF_HIT;
-            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                || (tig_net_flags & TIG_NET_HOST) != 0) {
+            if (!tig_net_is_active()
+                || tig_net_is_host()) {
                 sub_4B6930(combat);
             }
         }
@@ -1596,8 +1596,8 @@ void sub_4B4390(CombatContext* combat)
             mt_item_notify_parent_stunned(combat->attacker_obj, combat->target_obj);
             critter_flags |= OCF_STUNNED;
 
-            if (((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0)
+            if ((!tig_net_is_active()
+                    || tig_net_is_host())
                 && !anim_goal_animate_stunned(combat->target_obj)) {
                 critter_flags &= ~OCF_STUNNED;
             }
@@ -1618,8 +1618,8 @@ void sub_4B4390(CombatContext* combat)
                 if (!critter_is_unconscious(combat->target_obj)) {
                     int max_fatigue = critter_fatigue_max(combat->target_obj);
 
-                    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                        || (tig_net_flags & TIG_NET_HOST) != 0) {
+                    if (!tig_net_is_active()
+                        || tig_net_is_host()) {
                         combat->field_64 = random_between(10, 20);
                     }
 
@@ -1680,8 +1680,8 @@ void sub_4B4390(CombatContext* combat)
             int64_t weapon_obj = item_wield_get(combat->target_obj, ITEM_INV_LOC_WEAPON);
             if (weapon_obj != OBJ_HANDLE_NULL
                 && sub_464D20(weapon_obj, ITEM_INV_LOC_WEAPON, combat->target_obj)) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                if (!tig_net_is_active()
+                    || tig_net_is_host()) {
                     item_drop_nearby(weapon_obj);
                 }
 
@@ -1695,8 +1695,8 @@ void sub_4B4390(CombatContext* combat)
             int64_t shield_obj = item_wield_get(combat->target_obj, ITEM_INV_LOC_SHIELD);
             if (shield_obj != OBJ_HANDLE_NULL
                 && sub_464D20(shield_obj, ITEM_INV_LOC_SHIELD, combat->target_obj)) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                if (!tig_net_is_active()
+                    || tig_net_is_host()) {
                     item_drop_nearby(weapon_obj);
                 }
 
@@ -1987,7 +1987,7 @@ void sub_4B4390(CombatContext* combat)
         }
     }
 
-    if (!multiplayer_is_locked() && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!multiplayer_is_locked() && tig_net_is_host()) {
         Packet20 pkt;
 
         pkt.type = 20;
@@ -2183,7 +2183,7 @@ void sub_4B58C0(CombatContext* combat)
     tig_art_id_t art_id;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -2423,8 +2423,8 @@ void sub_4B5F40(CombatContext* combat)
     int64_t helmet_obj;
     int difficulty;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return;
     }
 
@@ -2772,8 +2772,8 @@ void sub_4B6860(CombatContext* combat)
     int idx;
     int resistance;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return;
     }
 
@@ -2951,7 +2951,7 @@ bool sub_4B6C90(bool turn_based)
 {
     int64_t pc;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0 && turn_based) {
+    if (tig_net_is_active() && turn_based) {
         return false;
     }
 
@@ -3940,7 +3940,7 @@ bool combat_auto_attack_get(int64_t obj)
         return false;
     }
 
-    if ((tig_net_flags & 0x1) == 0) {
+    if (!tig_net_is_active()) {
         return settings_get_value(&settings, "auto attack");
     }
 
@@ -3959,7 +3959,7 @@ void combat_auto_attack_set(bool value)
 
     settings_set_value(&settings, "auto attack", value);
 
-    if ((tig_net_flags & 0x1) != 0) {
+    if (tig_net_is_active()) {
         player = sub_4A2B10(player_get_pc_obj());
         if (player != -1) {
             if (value) {
@@ -3974,7 +3974,7 @@ void combat_auto_attack_set(bool value)
 // 0x4B82E0
 bool combat_taunts_get()
 {
-    if ((tig_net_flags & 0x1) == 0) {
+    if (!tig_net_is_active()) {
         return settings_get_value(&settings, "combat taunts");
     } else {
         return false;
@@ -3984,7 +3984,7 @@ bool combat_taunts_get()
 // 0x4B8300
 void combat_taunts_set(bool value)
 {
-    if ((tig_net_flags & 0x1) == 0) {
+    if (!tig_net_is_active()) {
         settings_set_value(&settings, "combat taunts", value);
     }
 }
@@ -3994,7 +3994,7 @@ bool combat_auto_switch_weapons_get(int64_t obj)
 {
     int player;
 
-    if ((tig_net_flags & 0x1) == 0) {
+    if (!tig_net_is_active()) {
         return settings_get_value(&settings, "auto switch");
     }
 
@@ -4013,7 +4013,7 @@ void combat_auto_switch_weapons_set(bool value)
 
     settings_set_value(&settings, "auto switch", value);
 
-    if ((tig_net_flags & 0x1) != 0) {
+    if (tig_net_is_active()) {
         player = sub_4A2B10(player_get_pc_obj());
         if (player != -1) {
             if (value) {
@@ -4029,8 +4029,8 @@ void combat_auto_switch_weapons_set(bool value)
 void sub_4B83E0(int64_t obj, int64_t a2)
 {
     if (obj != OBJ_HANDLE_NULL
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)
+        && (!tig_net_is_active()
+            || tig_net_is_host())
         && obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC
         && combat_auto_switch_weapons_get(obj)) {
         sub_465170(obj, ITEM_INV_LOC_WEAPON, a2);

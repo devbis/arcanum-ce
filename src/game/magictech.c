@@ -2029,8 +2029,8 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
 
     proto_obj = objp_perm_lookup(summon_info->field_60);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             Packet73 pkt;
 
             if (!object_create(proto_obj, summon_info->loc, &obj)) {
@@ -2098,8 +2098,8 @@ void magictech_effect_summon(MagicTechSummonInfo* summon_info)
         if (summon_info->field_C8) {
             obj_field_int32_set(obj, OBJ_F_NPC_FACTION, 0);
         } else {
-            if (((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0)
+            if ((!tig_net_is_active()
+                    || tig_net_is_host())
                 && dword_5E75F0->parent_obj.obj != OBJ_HANDLE_NULL) {
                 stat_base_set(obj,
                     STAT_ALIGNMENT,
@@ -2351,8 +2351,8 @@ void MTComponentDestroy_ProcFunc()
     if (!dword_5E75F0->field_144 || (spell_flags & OSF_SUMMONED) != 0) {
         object_destroy(stru_5E6D28.field_20);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             Packet72 pkt;
 
             pkt.type = 72;
@@ -2374,7 +2374,7 @@ void sub_451BB0(int64_t obj, int magictech)
     if (!multiplayer_is_locked()) {
         Packet74 pkt;
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -2535,8 +2535,8 @@ void MTComponentEyeCandy_ProcFunc()
     }
 
     if (dword_5E761C->data.eye_candy.add_remove == 0) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!tig_net_is_active()
+            || tig_net_is_host()) {
             v1 = (dword_5E761C->data.eye_candy.flags & 0x100) == 0
                 ? dword_5E75F0->field_0
                 : -1;
@@ -2545,7 +2545,7 @@ void MTComponentEyeCandy_ProcFunc()
                 dword_5E761C->data.eye_candy.num + 6 * dword_5E75F0->spell,
                 v1);
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (tig_net_is_active()) {
                 Packet77 pkt;
 
                 pkt.type = 77;
@@ -2672,8 +2672,8 @@ void MTComponentObjFlag_ProcFunc()
         dword_5E75F0->parent_obj.obj,
         dword_5E75F0->source_obj.obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         Packet75 pkt;
 
         sub_4F0640(stru_5E6D28.field_20, &(pkt.field_8));
@@ -2704,7 +2704,7 @@ void MTComponentMovement_ProcFunc()
             break;
         case 2:
             if (antiteleport_check_can_teleport(dword_5E75F0->parent_obj.obj, 0)) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                if (tig_net_is_active()) {
                     TeleportData teleport_data;
 
                     sub_410280(&loc);
@@ -2754,7 +2754,7 @@ void sub_452650(int64_t obj)
     if (cur_map == start_map) {
         area = sub_4CB4D0(obj_field_int64_get(obj, OBJ_F_LOCATION), true);
     } else {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if (!tig_net_is_active()) {
             map_get_area(cur_map, &area);
         }
     }
@@ -2762,7 +2762,7 @@ void sub_452650(int64_t obj)
     if (area > 0 && antiteleport_check_can_teleport(stru_5E6D28.field_20, 0)) {
         loc = area_get_location(area);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             sector_flush(0);
 
             teleport_data.loc = loc;
@@ -3558,7 +3558,7 @@ bool sub_454920(int64_t obj, int num, int max)
     int spell_mana_store;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return false;
         }
 
@@ -4134,8 +4134,8 @@ void magictech_id_free_lock(int slot)
         sub_455960(lock);
         dword_6876DC--;
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             pkt.type = 54;
             pkt.field_4 = slot;
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -4212,8 +4212,8 @@ void sub_455AC0(MagicTechSerializedData* a1)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             Packet58 pkt;
 
             pkt.type = 58;
@@ -4364,8 +4364,8 @@ void sub_455C30(MagicTechSerializedData* a1)
                 goal_data.params[AGDATA_TARGET_OBJ].obj = v1->target_obj.obj;
                 goal_data.params[AGDATA_TARGET_TILE].obj = v1->target_obj.loc;
                 goal_data.params[AGDATA_ANIM_ID].data = TIG_ART_ID_INVALID;
-                if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                    && (tig_net_flags & TIG_NET_HOST) == 0) {
+                if (tig_net_is_active()
+                    && !tig_net_is_host()) {
                     return;
                 }
 
@@ -4394,8 +4394,8 @@ void sub_455C30(MagicTechSerializedData* a1)
                     goal_data.params[AGDATA_ANIM_ID].data = art_id;
                 }
 
-                if (((tig_net_flags & TIG_NET_CONNECTED) == 0
-                        || (tig_net_flags & TIG_NET_HOST) != 0)
+                if ((!tig_net_is_active()
+                        || tig_net_is_host())
                     && !sub_44DBE0(anim_id, &goal_data)) {
                     magictech_id_free_lock(v1->field_0);
                 }
@@ -4413,8 +4413,8 @@ void sub_455C30(MagicTechSerializedData* a1)
                 goal_data.params[AGDATA_ANIM_ID].data = art_id;
             }
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                && (tig_net_flags & TIG_NET_HOST) == 0) {
+            if (tig_net_is_active()
+                && !tig_net_is_host()) {
                 return;
             }
 
@@ -4655,8 +4655,8 @@ bool sub_456A90(int magictech)
     S4F2680 v3;
     bool rc;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return true;
     }
 
@@ -4797,11 +4797,11 @@ void sub_456E60(int64_t obj, int a2)
 // 0x456EC0
 void sub_456EC0(int64_t obj, int spell)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         animfx_remove(&stru_5E7568, obj, spell % 10 + 6 * (spell / 10), -1);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             Packet77 pkt;
 
             pkt.type = 77;
@@ -4829,8 +4829,8 @@ void sub_456F70(int magictech)
 void sub_456FA0(int magictech, unsigned int flags)
 {
     if (magictech != -1
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        && (!tig_net_is_active()
+            || tig_net_is_host())) {
         if ((flags & 0x1) != 0) {
             sub_4507D0(magictech_locks[magictech].source_obj.obj,
                 magictech_locks[magictech].spell);

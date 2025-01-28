@@ -502,7 +502,7 @@ bool multiplayer_save(TigFile* stream)
     S5F0DEC* node;
     int cnt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return true;
     }
 
@@ -550,7 +550,7 @@ bool mutliplayer_load(GameLoadInfo* load_info)
     int cnt;
     ObjectID oid;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return true;
     }
 
@@ -1013,7 +1013,7 @@ void sub_4A1FC0()
     int cnt;
     int index;
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         pkt.type = 2;
 
         cnt = tig_net_local_server_get_max_players();
@@ -1068,7 +1068,7 @@ void sub_4A2A40(int64_t obj)
     if (obj != OBJ_HANDLE_NULL) {
         sub_433170(obj);
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             pkt.type = 68;
             sub_4440E0(obj, &(pkt.field_8));
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -1084,7 +1084,7 @@ void sub_4A2A90(int64_t obj)
     if (obj != OBJ_HANDLE_NULL) {
         sub_433220(obj);
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             pkt.type = 69;
             sub_4440E0(obj, &(pkt.field_8));
             tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -1137,7 +1137,7 @@ int64_t sub_4A2B60(int player)
 // 0x4A2BA0
 bool multiplayer_is_locked()
 {
-    return (tig_net_flags & TIG_NET_CONNECTED) != 0 ? multiplayer_lock_cnt > 0 : true;
+    return tig_net_is_active() ? multiplayer_lock_cnt > 0 : true;
 }
 
 // 0x4A2BC0
@@ -1161,7 +1161,7 @@ int64_t multiplayer_find_first_player_obj()
 
     dword_5B40D8 = -1;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return player_get_pc_obj();
     }
 
@@ -1181,7 +1181,7 @@ int64_t multiplayer_find_next_player_obj()
 {
     int64_t obj;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return OBJ_HANDLE_NULL;
     }
 
@@ -1348,7 +1348,7 @@ void sub_4A3170(ObjectID oid)
 // 0x4A3230
 void sub_4A3230(ObjectID oid, bool(*success_func)(void*), void* success_info, bool(*failure_func)(void*), void* failure_info)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         int64_t item_obj;
         int64_t parent_obj;
         ObjectID parent_oid;
@@ -1356,7 +1356,7 @@ void sub_4A3230(ObjectID oid, bool(*success_func)(void*), void* success_info, bo
         sub_4F0690(oid, &item_obj);
         item_parent(item_obj, &parent_obj);
         sub_4F0640(parent_obj, &parent_oid);
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             if (sub_4A2EC0(oid, parent_oid, 0)) {
                 if (success_func != NULL) {
                     success_func(success_info);
@@ -1526,7 +1526,7 @@ int sub_4A38A0()
 // 0x4A38B0
 bool sub_4A38B0(void(*func)(tig_button_handle_t), tig_button_handle_t button_handle)
 {
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         char oidstr[40];
         char path[TIG_MAX_PATH];
 
@@ -2444,7 +2444,7 @@ bool sub_4A50D0(int64_t pc_obj, int64_t item_obj)
     unsigned int flags;
 
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         int client_id;
         Packet93 pkt;
         int64_t parent_obj;
@@ -2483,7 +2483,7 @@ bool sub_4A51C0(int64_t pc_obj, int64_t item_obj)
 {
     unsigned int flags;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         int client_id;
         Packet93 pkt;
 

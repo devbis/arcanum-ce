@@ -548,7 +548,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+    if (tig_net_is_active()
         && !multiplayer_is_locked()) {
         SetBaseStatPacket pkt;
 
@@ -557,7 +557,7 @@ int stat_base_set(int64_t obj, int stat, int value)
         pkt.value = value;
         pkt.oid = sub_407EF0(obj);
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             if (player_is_pc_obj(obj)
                 && STAT_IS_PRIMARY(stat)
                 && abs(stat_base_get(obj, stat) - value) == 1) {
@@ -874,7 +874,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
     switch (type) {
     case 0:
         if (poison > 0) {
-            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            if (!tig_net_is_active()
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
                 sub_4B2210(OBJ_HANDLE_NULL, obj, &combat);
                 if (poison >= 550) {
@@ -895,7 +895,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
 
             sub_4B1350(obj, poison, 0);
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            if (!tig_net_is_active()
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
                 sub_460240(obj);
             }
@@ -903,7 +903,7 @@ bool stat_poison_timeevent_process(TimeEvent* timeevent)
         break;
     case 1:
         if (poison > 0) {
-            if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+            if (!tig_net_is_active()
                 || (obj_field_int32_get(obj, OBJ_F_FLAGS) & OF_OFF) == 0) {
                 poison -= stat_level_get(obj, STAT_POISON_RECOVERY);
                 if (poison < 0) {

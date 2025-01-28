@@ -15,8 +15,8 @@ void tech_ui_inc_degree(int64_t obj, int tech)
     int points;
     bool is_pc;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0
+    if (!tig_net_is_active()
+        || tig_net_is_host()
         || multiplayer_is_locked()) {
         degree = tech_degree_get(obj, tech);
         cost = tech_degree_cost_get(degree + 1);
@@ -51,8 +51,8 @@ void tech_ui_dec_degree(int64_t obj, int tech)
     int points;
     bool is_pc;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0
+    if (!tig_net_is_active()
+        || tig_net_is_host()
         || multiplayer_is_locked()) {
         degree = tech_degree_get(obj, tech);
         cost = tech_degree_cost_get(degree);

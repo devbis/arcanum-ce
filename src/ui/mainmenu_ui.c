@@ -2422,7 +2422,7 @@ void mainmenu_ui_start(int window_type)
     if (!dword_64C384) {
         dword_64C390 = 0;
 
-        if (window_type != 4 && (tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if (window_type != 4 && !tig_net_is_active()) {
             sub_45B320();
         }
 
@@ -2508,7 +2508,7 @@ void sub_5412E0(bool a1)
         }
 
         if (dword_64C414 || !stru_5C36B0[dword_64C244][1]) {
-            if (!dword_64C418 || (tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (!dword_64C418 || tig_net_is_active()) {
                 if (dword_5C4004) {
                     sub_40FED0();
                 }
@@ -2875,7 +2875,7 @@ bool sub_541B50(tig_button_handle_t button_handle)
 
         tig_button_hide(button_handle);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             sub_4A38B0(sub_549310, button_handle);
             return false;
         }
@@ -2915,7 +2915,7 @@ bool sub_541BE0(tig_button_handle_t button_handle)
 
         tig_button_hide(button_handle);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             sub_4A38B0(sub_549310, button_handle);
             return false;
         }
@@ -4425,7 +4425,7 @@ void sub_5446A0()
     dword_64C414 = 5;
     sub_546330();
     sub_541AC0();
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         sub_49CC20();
         sub_5280F0();
     }
@@ -5148,7 +5148,7 @@ void sub_545C60()
 bool sub_545C70(tig_button_handle_t button_handle)
 {
     if (button_handle == stru_5C5310[0].button_handle) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             uint8_t* v1;
             int v2;
 
@@ -5300,7 +5300,7 @@ void sub_545F60()
     dword_64C414 = 16;
     sub_546330();
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         if (dword_64C41C != NULL) {
             FREE(dword_64C41C);
             dword_64C420 = 0;
@@ -6406,7 +6406,7 @@ bool sub_546EE0(TigMessage* msg)
                         // FIXME: Looks wrong.
                         tig_button_hide(3);
 
-                        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                        if (!tig_net_is_active()) {
                             // FIXME: Looks wrong.
                             return sub_549310(3);
                         }
@@ -6434,7 +6434,7 @@ bool sub_546EE0(TigMessage* msg)
                         // FIXME: Looks wrong.
                         tig_button_hide(1);
 
-                        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                        if (!tig_net_is_active()) {
                             // FIXME: Looks wrong.
                             return sub_549310(1);
                         }
@@ -7212,7 +7212,7 @@ bool sub_549310(tig_button_handle_t button_handle)
         exit(EXIT_SUCCESS); // FIXME: Should be EXIT_FAILURE.
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         tig_net_flags |= TIG_NET_RESET;
     }
 

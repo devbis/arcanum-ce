@@ -91,7 +91,7 @@ int64_t party_find_first(int64_t obj, int* index_ptr)
 {
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return obj;
     }
 
@@ -119,7 +119,7 @@ int64_t party_find_next(int* index_ptr)
 {
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return OBJ_HANDLE_NULL;
     }
 
@@ -148,7 +148,7 @@ int sub_4BA020(int64_t obj)
 {
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return -1;
     }
 
@@ -172,7 +172,7 @@ bool sub_4BA080(int64_t a1, int64_t a2, int* a3)
     int iter;
     int64_t party_member_obj;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         player1 = sub_4A2B10(a1);
         if (player1 == -1) {
             sub_4BA320(a1, a2, 1);
@@ -224,7 +224,7 @@ bool sub_4BA1E0(int64_t obj)
 {
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         index = sub_4A2B10(obj);
         if (index == -1) {
             sub_4BA320(obj, obj, 5);
@@ -270,8 +270,8 @@ bool sub_4BA290()
 
     static_assert(sizeof(packet) == 0x24, "wrong size");
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (!tig_net_is_active()
+        || !tig_net_is_host()) {
         return true;
     }
 
@@ -286,8 +286,8 @@ bool sub_4BA290()
 // 0x4BA2E0
 bool sub_4BA2E0(int* party, int cnt)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         return true;
     }
 

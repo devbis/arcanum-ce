@@ -276,7 +276,7 @@ bool area_is_known(int64_t pc_obj, int area)
 
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             player = sub_4A2B10(pc_obj);
             if (player != -1) {
                 return (area_flags_per_player[player][area] & 1) != 0;
@@ -301,9 +301,9 @@ bool area_set_known(int64_t pc_obj, int area)
 
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             if (!multiplayer_is_locked()) {
-                if ((tig_net_flags & TIG_NET_HOST) != 0) {
+                if (tig_net_is_host()) {
                     pkt.type = 101;
                     pkt.oid = sub_407EF0(pc_obj);
                     pkt.area = area;
@@ -338,7 +338,7 @@ int area_get_last_known_area(int64_t pc_obj)
 
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if ((tig_net_flags & 0x1) != 0) {
+        if (tig_net_is_active()) {
             player = sub_4A2B10(pc_obj);
             if (player != -1) {
                 return area_last_known_area_per_player[player];
@@ -361,9 +361,9 @@ void area_reset_last_known_area(int64_t pc_obj)
 
     if (pc_obj != OBJ_HANDLE_NULL
         && obj_field_int32_get(pc_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             if (!multiplayer_is_locked()) {
-                if ((tig_net_flags & TIG_NET_HOST) == 0) {
+                if (!tig_net_is_host()) {
                     return;
                 }
 

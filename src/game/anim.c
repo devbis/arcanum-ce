@@ -2968,7 +2968,7 @@ bool sub_421CE0(AnimID* anim_id, AnimRunInfo* run_info)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         if (run_info->id.slot_num != anim_id->slot_num) {
             return false;
         }
@@ -2987,7 +2987,7 @@ bool sub_421D60(AnimID* a, AnimID* b)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         if (a->slot_num != b->slot_num) {
             return false;
         }
@@ -3882,8 +3882,8 @@ bool anim_timeevent_process(TimeEvent* timeevent)
                 break;
             }
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                && (tig_net_flags & TIG_NET_HOST) == 0) {
+            if (tig_net_is_active()
+                && !tig_net_is_host()) {
                 delay = 0;
                 break;
             }
@@ -4093,11 +4093,11 @@ bool sub_424070(int64_t obj, int priority_level, bool a3, bool a4)
     ASSERT(priority_level >= PRIORITY_NONE && priority_level < PRIORITY_HIGHEST); // (priorityLevel >= priorityNone)&&(priorityLevel <= priorityHighest)
 
     if (!a4) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0 && sub_40DA20(obj)) {
+        if (tig_net_is_active() && sub_40DA20(obj)) {
             pkt.type = 9;
             pkt.field_4 = 0;
 
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_host()) {
                 sub_4440E0(obj, &(pkt.field_18));
                 pkt.priority_level = priority_level;
                 pkt.field_48 = a3;
@@ -4299,8 +4299,8 @@ bool sub_4246E0(AnimRunInfo* run_info)
     AnimID anim_id;
     int idx;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0
+    if (tig_net_is_active()
+        && !tig_net_is_host()
         && !multiplayer_is_locked()) {
         return true;
     }
@@ -4357,11 +4357,11 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
 
     ASSERT(obj_ptr != NULL); // 3074, "obj != NULL"
 
-    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || tig_net_is_host()) {
         proto_obj = sub_4685A0(5028);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) == 0) {
+        if (tig_net_is_active()
+            && !tig_net_is_host()) {
             if (!sub_43CBF0(proto_obj, loc, oid, obj_ptr)) {
                 ASSERT(0); // 3085, "0"
                 exit(EXIT_FAILURE);
@@ -4373,8 +4373,8 @@ bool sub_4248A0(tig_art_id_t art_id, int64_t self_obj, int64_t target_obj, int64
             }
         }
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             Packet6 pkt;
 
             pkt.type = 6;
@@ -4713,8 +4713,8 @@ bool sub_425430(AnimRunInfo* run_info)
     run_info->flags &= ~0x30;
 
     if ((run_info->path.flags & 0x8) != 0
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        && (!tig_net_is_active()
+            || tig_net_is_host())) {
         run_info->flags |= 0x2;
     }
 
@@ -4745,8 +4745,8 @@ bool sub_4254C0(AnimRunInfo* run_info)
     run_info->flags &= ~0x30;
 
     if ((run_info->path.flags & 0x8) != 0
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        && (!tig_net_is_active()
+            || tig_net_is_host())) {
         run_info->flags |= 0x2;
     }
 
@@ -4809,8 +4809,8 @@ bool sub_425590(AnimRunInfo* run_info)
     run_info->path.flags &= ~0x30;
 
     if ((run_info->path.flags & 0x08) != 0
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        && (!tig_net_is_active()
+            || tig_net_is_host())) {
         run_info->flags |= 0x02;
     }
 
@@ -4901,8 +4901,8 @@ bool sub_425930(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 4075, "obj != OBJ_HANDLE_NULL"
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         run_info->path.flags = 0x01;
         return true;
     }
@@ -4959,7 +4959,7 @@ bool sub_425930(AnimRunInfo* run_info)
     run_info->path.curr = 0;
     run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = target_loc;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         run_info->path.flags |= 0x01;
     }
 
@@ -5022,8 +5022,8 @@ bool sub_425D60(AnimRunInfo* run_info)
 
     ASSERT(obj != OBJ_HANDLE_NULL); // 4173, "obj != OBJ_HANDLE_NULL"
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         run_info->path.flags = 0x01;
         return true;
     }
@@ -5084,7 +5084,7 @@ bool sub_425D60(AnimRunInfo* run_info)
     run_info->path.curr = 0;
     run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc = target_loc;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         run_info->path.flags |= 0x01;
     }
 
@@ -5108,8 +5108,8 @@ bool sub_426040(AnimRunInfo* run_info)
 
     run_info->field_14 = run_info->current_goal;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         sub_44EBF0(run_info);
         return true;
     }
@@ -5123,7 +5123,7 @@ bool sub_426040(AnimRunInfo* run_info)
     }
 
     if (sub_426500(obj, run_info->params[1].loc, &(run_info->path), flags)) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             sub_4ED510(run_info->id, run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc, run_info);
         }
         return true;
@@ -5137,7 +5137,7 @@ bool sub_426040(AnimRunInfo* run_info)
 
     rc = sub_426500(obj, run_info->params[1].loc, &(run_info->path), flags | 0x78);
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         sub_4ED510(run_info->id, run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc, run_info);
     }
 
@@ -5486,8 +5486,8 @@ bool sub_426A80(AnimRunInfo* run_info)
     ASSERT(source_obj != OBJ_HANDLE_NULL); // 4782, "sourceObj != OBJ_HANLDE_NULL"
     ASSERT(target_obj != OBJ_HANDLE_NULL); // 4783, "targetObj != OBJ_HANLDE_NULL"
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         sub_44EBF0(run_info);
         return true;
     }
@@ -5589,7 +5589,7 @@ bool sub_426A80(AnimRunInfo* run_info)
         }
     }
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         sub_4ED510(run_info->id,
             run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
             run_info);
@@ -5656,8 +5656,8 @@ bool sub_426F60(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        || (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        || !tig_net_is_host()) {
         return false;
     }
 
@@ -5992,8 +5992,8 @@ bool sub_427730(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         sub_44EBF0(run_info);
         return true;
     }
@@ -6045,7 +6045,7 @@ bool sub_427730(AnimRunInfo* run_info)
     run_info->path.curr = 0;
     run_info->path.flags &= ~0x03;
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         sub_4ED510(run_info->id,
             run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
             run_info);
@@ -6080,8 +6080,8 @@ bool sub_427990(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         sub_44EBF0(run_info);
         return true;
     }
@@ -6147,7 +6147,7 @@ bool sub_427990(AnimRunInfo* run_info)
             run_info->path.max--;
         }
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             sub_4ED510(run_info->id,
                 run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
                 run_info);
@@ -6191,7 +6191,7 @@ bool sub_427990(AnimRunInfo* run_info)
             run_info->path.max--;
         }
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             sub_4ED510(run_info->id,
                 run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
                 run_info);
@@ -6231,7 +6231,7 @@ bool sub_427990(AnimRunInfo* run_info)
         run_info->path.curr = 0;
         run_info->path.flags &= ~0x03;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             sub_4ED510(run_info->id,
                 run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
                 run_info);
@@ -6277,7 +6277,7 @@ bool sub_427990(AnimRunInfo* run_info)
         }
     }
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         sub_4ED510(run_info->id,
             run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
             run_info);
@@ -6309,8 +6309,8 @@ bool sub_4280D0(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         sub_44EBF0(run_info);
         return true;
     }
@@ -6357,7 +6357,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
         run_info->path.curr = 0;
         run_info->path.flags &= ~0x03;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             sub_4ED510(run_info->id,
                 run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
                 run_info);
@@ -6406,7 +6406,7 @@ bool sub_4280D0(AnimRunInfo* run_info)
         }
     }
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         sub_4ED510(run_info->id,
             run_info->cur_stack_data->params[AGDATA_TARGET_TILE].loc,
             run_info);
@@ -6722,8 +6722,8 @@ bool sub_428A10(AnimRunInfo* run_info)
     rot = location_rot(source_loc, target_loc);
 
     if ( sub_425840(source_obj, source_loc, target_loc, rot, target_obj)) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             sub_424070(source_obj, 2, false, false);
         }
         return false;
@@ -6737,18 +6737,18 @@ bool sub_428A10(AnimRunInfo* run_info)
         }
         return true;
     case OBJ_TYPE_CONTAINER:
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!tig_net_is_active()
+            || tig_net_is_host()) {
             sub_4EE310(source_obj, target_obj);
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (tig_net_is_active()) {
                 sub_424070(source_obj, 2, false, false);
             }
         }
         return true;
     case OBJ_TYPE_SCENERY:
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             sub_424070(source_obj, 2, false, false);
         }
         if (tig_art_scenery_id_type_get(obj_field_int32_get(target_obj, OBJ_F_CURRENT_AID)) == TIG_ART_SCENERY_TYPE_BEDS) {
@@ -6765,18 +6765,18 @@ bool sub_428A10(AnimRunInfo* run_info)
             || sub_423300(target_obj, NULL)) {
             return false;
         }
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!tig_net_is_active()
+            || tig_net_is_host()) {
             sub_4EE310(source_obj, target_obj);
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (tig_net_is_active()) {
                 sub_424070(source_obj, 2, false, false);
             }
         }
         return true;
     default:
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             sub_424070(source_obj, 2, false, false);
         }
         if (!sub_441980(source_obj, target_obj, source_obj, SAP_USE, 0)) {
@@ -7481,8 +7481,8 @@ bool sub_429CD0(AnimRunInfo* run_info)
     }
 
     if ((run_info->flags & 0x08) == 0 && spell != -1) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!tig_net_is_active()
+            || tig_net_is_host()) {
             sub_456FA0(spell, 1);
         }
 
@@ -8034,8 +8034,8 @@ bool sub_42AA70(int64_t source_obj, int64_t target_obj)
         sub_41B930(sound_id, 1, source_obj);
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         return item_transfer(target_obj, source_obj);
     }
 
@@ -8193,8 +8193,8 @@ bool sub_42AF00(AnimRunInfo* run_info)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         sub_460410(source_obj, target_obj);
     }
 
@@ -8256,8 +8256,8 @@ bool sub_42B090(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return true;
     }
 
@@ -8286,8 +8286,8 @@ bool sub_42B090(AnimRunInfo* run_info)
         sub_430490(obj, 0, 0);
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         Packet10 pkt;
 
         pkt.type = 10;
@@ -8316,8 +8316,8 @@ bool sub_42B250(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return true;
     }
 
@@ -8346,8 +8346,8 @@ bool sub_42B250(AnimRunInfo* run_info)
 
         sub_430490(obj, 0, 0);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!tig_net_is_active()
+            || tig_net_is_host()) {
             critter_flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
             if ((critter_flags & OCF_STUNNED) != 0) {
                 critter_flags &= ~OCF_STUNNED;
@@ -8356,8 +8356,8 @@ bool sub_42B250(AnimRunInfo* run_info)
         }
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         Packet10 pkt;
 
         pkt.type = 10;
@@ -8387,8 +8387,8 @@ bool sub_42B440(AnimRunInfo* run_info)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return true;
     }
 
@@ -8420,8 +8420,8 @@ bool sub_42B440(AnimRunInfo* run_info)
         if (obj_type == OBJ_TYPE_PC) {
             item_obj = run_info->cur_stack_data->params[AGDATA_SCRATCH_OBJ].obj;
             if (item_obj != OBJ_HANDLE_NULL) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                if (!tig_net_is_active()
+                    || tig_net_is_host()) {
                     inventory_location = sub_4664C0(item_obj, obj);
                     if (inventory_location != -1) {
                         item_insert(item_obj, obj, inventory_location);
@@ -8433,8 +8433,8 @@ bool sub_42B440(AnimRunInfo* run_info)
         }
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         Packet10 pkt;
 
         pkt.type = 10;
@@ -9960,7 +9960,7 @@ bool sub_42DA50(AnimRunInfo* run_info)
     ASSERT(run_info->cur_stack_data != NULL); // 10074, "pRunInfo->pCurStackData != NULL"
 
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 1;
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = object_dist(obj, player_get_pc_obj()) < 30;
     }
 
@@ -10021,7 +10021,7 @@ bool sub_42DCF0(AnimRunInfo* run_info)
 
     run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL5].data = 0;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         if (object_dist(obj, player_get_pc_obj()) >= 30) {
             run_info->cur_stack_data->params[AGDATA_SCRATCH_VAL4].data = 0;
             return false;
@@ -11257,7 +11257,7 @@ bool sub_42FF40(AnimRunInfo* run_info)
     if ((run_info->flags & 0x200) == 0 && critter_is_dead(obj)) {
         object_flags_set(obj, OF_FLAT | OF_NO_BLOCK);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if (!tig_net_is_active()) {
             if (player_is_pc_obj(obj)) {
                 sub_460520();
             }
@@ -11325,7 +11325,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         return true;
     }
 
@@ -11462,7 +11462,7 @@ bool get_always_run(int64_t obj)
     int client_id;
     bool always_run;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         client_id = sub_4A2B10(obj);
         if (client_id != -1) {
             return (sub_4A55D0(client_id) & 0x100) != 0;
@@ -11495,7 +11495,7 @@ void set_always_run(bool value)
 {
     int client_id;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         client_id = sub_4A2B10(player_get_pc_obj());
         if (client_id != -1) {
             if (value) {
@@ -11553,8 +11553,8 @@ bool sub_4305D0(AnimRunInfo* run_info)
     rot = run_info->path.rotations[run_info->path.curr];
     run_info->flags |= 0x10;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         if (run_info->path.field_E8 != 0
             && run_info->path.curr > 0) {
             int64_t distance;
@@ -11661,8 +11661,8 @@ bool sub_4305D0(AnimRunInfo* run_info)
                     object_list_destroy(&traps);
                 }
 
-                if (((tig_net_flags & TIG_NET_CONNECTED) == 0
-                        || (tig_net_flags & TIG_NET_HOST) != 0)
+                if ((!tig_net_is_active()
+                        || tig_net_is_host())
                     && (spell_flags & (OSF_FLOATING | OSF_BODY_OF_AIR)) == 0
                     && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2) & OCF2_NO_SLIP) == 0) {
                     if (tile_is_slippery(new_loc)) {
@@ -11725,8 +11725,8 @@ bool sub_4305D0(AnimRunInfo* run_info)
             sub_43E770(obj, new_loc, offset_x, offset_y);
             run_info->path.flags |= 0x02;
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                && (tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_active()
+                && tig_net_is_host()) {
                 // TODO: Incomplete.
             }
 
@@ -13148,8 +13148,8 @@ void sub_432D90(int64_t obj)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0
+    if (tig_net_is_active()
+        && !tig_net_is_host()
         && !anim_editor) {
         return;
     }
@@ -13172,7 +13172,7 @@ void sub_432D90(int64_t obj)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         Packet70 pkt;
 
         pkt.type = 70;
@@ -13213,8 +13213,8 @@ void sub_433020(int64_t obj, int a2, int a3, CombatContext* combat)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return;
     }
 
@@ -13449,8 +13449,8 @@ bool sub_433640(int64_t obj, int64_t loc)
     AnimRunInfo* run_info;
     AnimGoalData goal_data;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         Packet4 pkt;
 
         if (!sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)) {
@@ -13504,7 +13504,7 @@ bool sub_433640(int64_t obj, int64_t loc)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         Packet8 pkt;
         int64_t self_obj;
 
@@ -13512,7 +13512,7 @@ bool sub_433640(int64_t obj, int64_t loc)
 
         run_info->path.flags |= 0x04;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
             sub_44D0C0(run_info);
         }
@@ -13531,7 +13531,7 @@ bool sub_433640(int64_t obj, int64_t loc)
         pkt.offset_x = obj_field_int32_get(self_obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(self_obj, OBJ_F_OFFSET_Y);
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->id.field_8++;
         }
 
@@ -13561,8 +13561,8 @@ bool sub_433A00(int64_t obj, int64_t loc, bool a3)
     AnimGoalData goal_data;
     AnimRunInfo* run_info;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         if (sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)
             && anim_id_to_run_info(&anim_id, &run_info)
             && run_info->goals[run_info->current_goal].params[AGDATA_TARGET_TILE].loc == loc) {
@@ -13625,8 +13625,8 @@ bool sub_433C80(int64_t obj, int64_t loc)
     AnimRunInfo* run_info;
     AnimGoalData goal_data;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         if (sub_44E830(obj, AG_RUN_TO_TILE, &anim_id)
             && anim_id_to_run_info(&anim_id, &run_info)
             && run_info->goals[run_info->current_goal].params[AGDATA_TARGET_TILE].loc == loc) {
@@ -13677,7 +13677,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         int64_t self_obj;
         Packet8 pkt;
 
@@ -13685,7 +13685,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
 
         run_info->path.flags |= 0x04;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->goals[0].params[AGDATA_TARGET_TILE].loc = loc;
             run_info->flags |= 0x40;
 
@@ -13711,7 +13711,7 @@ bool sub_433C80(int64_t obj, int64_t loc)
         pkt.offset_x = obj_field_int32_get(self_obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(self_obj, OBJ_F_OFFSET_Y);
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->id.field_8++;
         }
 
@@ -13795,7 +13795,7 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         int64_t obj;
         Packet8 pkt;
 
@@ -13803,7 +13803,7 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range)
 
         run_info->path.flags |= 0x04;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->goals[0].params[AGDATA_TARGET_TILE].loc = target_loc;
             sub_44D0C0(run_info);
         }
@@ -13823,7 +13823,7 @@ bool sub_4341C0(int64_t source_obj, int64_t target_loc, int range)
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->id.field_8++;
         }
 
@@ -13874,7 +13874,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         int64_t obj;
         Packet8 pkt;
 
@@ -13882,7 +13882,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
 
         run_info->path.flags |= 0x04;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->goals[0].params[AGDATA_TARGET_TILE].loc = target_loc;
             sub_44D0C0(run_info);
         }
@@ -13902,7 +13902,7 @@ bool sub_434400(int64_t source_obj, int64_t target_loc, int range)
         pkt.offset_x = obj_field_int32_get(obj, OBJ_F_OFFSET_X);
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->id.field_8++;
         }
 
@@ -14148,7 +14148,7 @@ bool anim_goal_attack_ex(int64_t attacker_obj, int64_t target_obj, int sound_id)
     }
 
     if (obj_field_int32_get(attacker_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        if (!tig_net_is_active()
             && critter_fatigue_current(attacker_obj) > 8) {
             turn_on_running(stru_5A1908);
         }
@@ -14311,7 +14311,7 @@ bool anim_goal_use_skill_on(int64_t obj, int64_t target_obj, int64_t item_obj, i
     sub_436ED0(stru_5A1908);
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        if (!tig_net_is_active()
             && critter_fatigue_current(obj) > 8) {
             turn_on_running(stru_5A1908);
         }
@@ -14353,7 +14353,7 @@ bool anim_goal_use_item_on_obj_with_skill(int64_t obj, int64_t item_obj, int64_t
     sub_436ED0(stru_5A1908);
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        if (!tig_net_is_active()
             && critter_fatigue_current(obj) > 8) {
             turn_on_running(stru_5A1908);
         }
@@ -14398,7 +14398,7 @@ bool anim_goal_use_item_on_obj(int64_t obj, int64_t target_obj, int64_t item_obj
     sub_436ED0(stru_5A1908);
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+        if (!tig_net_is_active()
             && critter_fatigue_current(obj) > 8) {
             turn_on_running(stru_5A1908);
         }
@@ -14657,7 +14657,7 @@ bool anim_goal_fidget(int64_t critter_obj)
     tig_art_id_t art_id;
     AnimGoalData goal_data;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         return true;
     }
 
@@ -15076,8 +15076,8 @@ void turn_on_running(AnimID anim_id)
 
     obj = run_info->goals[0].params[AGDATA_SELF_OBJ].obj;
     if (critter_encumbrance_level_get(obj) < ENCUMBRANCE_LEVEL_SIGNIFICANT) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()) {
+            if (tig_net_is_host()) {
                 run_info->flags |= 0x40;
                 sub_44D0C0(run_info);
             }
@@ -15095,7 +15095,7 @@ void turn_on_running(AnimID anim_id)
             pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
             pkt.field_40 = run_info->field_28;
 
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_host()) {
                 run_info->id.field_8++;
             }
 
@@ -15131,7 +15131,7 @@ void sub_436C80()
 // 0x436CB0
 void sub_436CB0(AnimID anim_id)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         turn_on_flags(anim_id, 0x400, 0);
     }
 }
@@ -15164,10 +15164,10 @@ void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         obj = run_info->goals[0].params[AGDATA_SELF_OBJ].obj;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->flags |= flags1;
             sub_44D0C0(run_info);
         }
@@ -15185,7 +15185,7 @@ void turn_on_flags(AnimID anim_id, unsigned int flags1, unsigned int flags2)
         pkt.offset_y = obj_field_int32_get(obj, OBJ_F_OFFSET_Y);
         pkt.field_40 = run_info->field_28;
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             run_info->id.field_8++;
         }
 

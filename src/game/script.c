@@ -291,8 +291,8 @@ bool sub_4449B0(ScriptInvocation* invocation)
     ScriptCondition statement;
     bool run_default;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         // NOTE: Script at index 1 is not being checked, probably a bug.
         if (invocation->script->num != dword_5A5700[0]
             && invocation->script->num != dword_5A5700[2]) {
@@ -412,7 +412,7 @@ void script_gl_var_set(int index, int value)
     Packet124 pkt;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & 0x2) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -438,7 +438,7 @@ void script_gl_flag_set(int index, int value)
     Packet124 pkt;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & 0x2) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -562,7 +562,7 @@ void sub_4450A0(int value)
     Packet124 pkt;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -2426,7 +2426,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         return NEXT;
     }
     case SAT_FADE_AND_TELEPORT: {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if (!tig_net_is_active()) {
             TeleportData teleport_data;
             teleport_data.flags = TELEPORT_FADE_IN | TELEPORT_FADE_OUT;
             teleport_data.fade_out.flags = 0;
@@ -2466,7 +2466,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         return NEXT;
     }
     case SAT_FADE: {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if (!tig_net_is_active()) {
             TeleportData teleport_data;
             teleport_data.flags = 0;
             teleport_data.fade_out.flags = 0;
@@ -2735,8 +2735,8 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     }
     case SAT_END_GAME_AND_PLAY_SLIDES: {
         sub_460530();
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             Packet124 pkt;
             pkt.type = 124;
             pkt.subtype = 3;
@@ -2974,7 +2974,7 @@ void sub_44B390(ScriptAction* action, ScriptState* state)
     ui_message.field_8 = 0;
 
     // TODO: Refactor.
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         player = sub_4A2B10(state->invocation->triggerer_obj);
         if (player == -1) {
             sub_412F40(v1.field_0);

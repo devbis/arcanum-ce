@@ -593,8 +593,8 @@ bool item_transfer_ex(int64_t item_obj, int64_t critter_obj, int inventory_locat
     int new_inventory_location;
     int slots[960];
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         Packet28 pkt;
 
         pkt.type = 28;
@@ -688,8 +688,8 @@ bool item_drop_ex(int64_t item_obj, int distance)
     int attempt;
     unsigned int flags;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         Packet26 pkt;
 
         pkt.type = 26;
@@ -1400,8 +1400,8 @@ void sub_462CC0(int64_t source_obj, int64_t item_obj, int64_t target_obj)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         if (player_is_pc_obj(source_obj)) {
             sub_4EF6F0(source_obj, item_obj, target_obj);
         }
@@ -1692,7 +1692,7 @@ bool sub_463370(int64_t obj, int key_id)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+    if (tig_net_is_active()
         && (tig_net_local_server_get_options() & TIG_NET_SERVER_KEY_SHARING) != 0) {
         if (sub_40DA20(obj)) {
             party_member_obj = party_find_first(obj, &iter);
@@ -1741,7 +1741,7 @@ bool sub_463540(int64_t container_obj)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+    if (tig_net_is_active()
         && sub_4A5460(container_obj)) {
         return false;
     }
@@ -2069,8 +2069,8 @@ void sub_463E20(int64_t obj)
     int idx;
     int64_t item_obj;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         sub_4EFBA0(obj);
         return;
     }
@@ -2153,7 +2153,7 @@ void sub_4640C0(int64_t obj)
         timeevent.params[0].object_value = obj;
 
         ms = random_between(43200000, 86400000);
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             ms /= 4;
         }
 
@@ -2441,8 +2441,8 @@ bool item_gold_transfer(int64_t from_obj, int64_t to_obj, int qty, int64_t gold_
     int64_t loc;
 
     if (qty != 0) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) == 0) {
+        if (tig_net_is_active()
+            && !tig_net_is_host()) {
             return false;
         }
 
@@ -3093,8 +3093,8 @@ bool item_ammo_transfer(int64_t from_obj, int64_t to_obj, int qty, int ammo_type
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return false;
     }
 
@@ -3669,7 +3669,7 @@ void item_insert(int64_t item_obj, int64_t parent_obj, int inventory_location)
     int qty;
     int cnt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_MP_INSERTED) != 0) {
             sub_441B60(item_obj, item_obj, name);
             tig_debug_printf("MP: Item: cannot item_insert( %s ) it is already flagged OIF_MP_INSERTED.\n", name);
@@ -3947,8 +3947,8 @@ void item_remove(int64_t item_obj)
 // 0x466E50
 void sub_466E50(int64_t obj, int64_t loc)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         Packet27 pkt;
 
         pkt.type = 27;
@@ -3995,8 +3995,8 @@ bool sub_466EF0(int64_t obj, int64_t loc)
     while (node != NULL) {
         if (new_container_obj == OBJ_HANDLE_NULL) {
             if (!mp_object_create(3023, loc, &new_container_obj)) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0) {
+                if (!tig_net_is_active()
+                    || tig_net_is_host()) {
                     rc = false;
                 } else {
                     rc = true;
@@ -4035,8 +4035,8 @@ void sub_4670A0(int64_t parent_obj, int a2)
     int inventory_locations[960];
     int inventory_location;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         sub_4EDE80(parent_obj, a2);
         return;
     }
@@ -4147,8 +4147,8 @@ void sub_467440(int64_t a1, int64_t a2, int64_t a3, int a4)
     unsigned int flags;
     Packet125 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         flags = obj_field_int32_get(a1, OBJ_F_ITEM_FLAGS);
         flags |= OIF_IDENTIFIED;
         obj_field_int32_set(a1, OBJ_F_ITEM_FLAGS, flags);
@@ -4172,7 +4172,7 @@ void sub_467520(int64_t obj)
     int64_t item_obj;
     int inventory_location;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         cnt = obj_field_int32_get(obj, OBJ_F_CRITTER_INVENTORY_NUM);
         for (index = cnt - 1; index >= 0; index--) {
             item_obj = obj_arrayfield_handle_get(obj, OBJ_F_CRITTER_INVENTORY_LIST_IDX, index);
@@ -4330,7 +4330,7 @@ void item_force_remove(int64_t item_obj, int64_t parent_obj)
 
     dword_5E8820 = false;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         if ((obj_field_int32_get(item_obj, OBJ_F_ITEM_FLAGS) & OIF_MP_INSERTED) == 0) {
             if ((obj_field_int32_get(item_obj, OBJ_F_FLAGS) & OF_INVENTORY) == 0) {
                 sub_441B60(item_obj, item_obj, name);

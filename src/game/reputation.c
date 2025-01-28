@@ -320,7 +320,7 @@ void reputation_add(int64_t pc_obj, int reputation)
     }
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -354,7 +354,7 @@ void reputation_remove(int64_t pc_obj, int reputation)
     }
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 

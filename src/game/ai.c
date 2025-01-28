@@ -295,8 +295,8 @@ void ai_process(int64_t obj)
     Ai ai;
 
     if (!map_is_clearing_objects()
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        && (!tig_net_is_active()
+            || tig_net_is_host())) {
         sub_4A88D0(&ai, obj);
         if (sub_4A8570(&ai)) {
             if (!sub_4A8940(&ai) && !sub_4A8E70(&ai)) {
@@ -939,8 +939,8 @@ void sub_4A9650(int64_t source_obj, int64_t target_obj, int loudness, unsigned i
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return;
     }
 
@@ -1466,8 +1466,8 @@ void sub_4AA7A0(int64_t obj)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return;
     }
 
@@ -1504,8 +1504,8 @@ void sub_4AA8C0(int64_t obj, bool force)
     unsigned int flags;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC
-        && ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)) {
+        && (!tig_net_is_active()
+            || tig_net_is_host())) {
         leader_obj = critter_leader_get(obj);
         if (leader_obj != OBJ_HANDLE_NULL
             && (obj_field_int32_get(obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) != 0
@@ -1533,8 +1533,8 @@ bool ai_npc_wait_here_timeevent_process(TimeEvent* timeevent)
     int max_charisma;
     int charisma;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         obj = timeevent->params[0].object_value;
         leader_obj = critter_leader_get(obj);
         if (leader_obj != OBJ_HANDLE_NULL) {
@@ -1618,8 +1618,8 @@ int sub_4AABE0(int64_t source_obj, int danger_type, int64_t target_obj, int* a4)
     char str[1000];
     int v2;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return danger_type;
     }
 
@@ -2867,8 +2867,8 @@ bool ai_timeevent_process(TimeEvent* timeevent)
     bool v1;
     unsigned int millis;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return true;
     }
 
@@ -2954,7 +2954,7 @@ bool sub_4AD420(int64_t obj)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pc_obj = multiplayer_find_first_player_obj();
         while (pc_obj != OBJ_HANDLE_NULL) {
             if (object_dist(pc_obj, obj) <= 30) {
@@ -3008,7 +3008,7 @@ bool sub_4AD4D0(int64_t obj)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         v1 = sub_4C1110(obj);
         if (v1 != OBJ_HANDLE_NULL) {
             sub_460A20(v1, 0);
@@ -3034,7 +3034,7 @@ int sub_4AD610(int64_t obj)
     int64_t dist;
     int64_t nearest_dist;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         nearest_dist = -1;
         pc_obj = multiplayer_find_first_player_obj();
         while (pc_obj != OBJ_HANDLE_NULL) {
@@ -3077,8 +3077,8 @@ void sub_4AD730(int64_t obj, DateTime* datetime)
 {
     TimeEvent timeevent;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         sub_4AD7D0(obj);
 
         timeevent.type = TIMEEVENT_TYPE_AI;
@@ -3728,8 +3728,8 @@ void sub_4AE9E0(int64_t a1, bool a2)
     char str[1000];
     int v1;
 
-    if (((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0)
+    if ((!tig_net_is_active()
+            || tig_net_is_host())
         && random_between(1, 2) != 1) {
         if (dword_5F8488 != NULL) {
             cnt = sub_45E3F0(a1, false);

@@ -128,7 +128,7 @@ DialogUiEntry* sub_567420(long long obj)
 {
     int index = 0;
 
-    if ((tig_net_flags & 0x1) != 0) {
+    if (tig_net_is_active()) {
         index = sub_4A2B10(obj);
     }
 
@@ -167,7 +167,7 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
     }
 
     entry = sub_567420(a1);
-    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || tig_net_is_host()) {
         if (a3 != 0 && script_name_build_dlg_name(a3, path)) {
             if (!sub_412E10(path, &(entry->field_4))) {
                 return;
@@ -226,8 +226,8 @@ void sub_567460(int64_t a1, int64_t a2, int a3, int a4, int a5)
             entry->field_1858 = a4;
             entry->field_1850 = 1;
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                && (tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_active()
+                && tig_net_is_host()) {
                 pkt.type = 44;
                 pkt.subtype = 0;
                 pkt.d.d.field_8 = sub_407EF0(a1);
@@ -282,20 +282,20 @@ void sub_5678D0(long long obj, int a2)
         dword_67B964 = 0;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         sub_412F40(entry->field_4);
     }
 
     tb_expire_in(entry->field_8.npc_obj, TB_EXPIRE_DEFAULT);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         sub_413280(&(entry->field_8));
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 44;
         pkt.subtype = 1;
         pkt.d.b.field_8 = sub_407EF0(obj);
@@ -312,11 +312,11 @@ void sub_5679C0(DialogUiEntry* entry)
 
     entry->field_1850 = false;
 
-    if ((tig_net_flags & 0x1) == 0 || (tig_net_flags & 0x2) != 0) {
+    if (!tig_net_is_active() || tig_net_is_host()) {
         sub_412F40(entry->field_4);
     }
 
-    if ((tig_net_flags & 0x1) == 0 || (tig_net_flags & 0x2) != 0) {
+    if (!tig_net_is_active() || tig_net_is_host()) {
         sub_413280(&(entry->field_8));
     }
 }
@@ -428,8 +428,8 @@ void sub_567D60(DialogUiEntry* entry)
     int size;
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         stru_679DC0.pkt.type = 44;
         stru_679DC0.pkt.subtype = 3;
         stru_679DC0.pkt.d.e.field_8 = entry->field_0;
@@ -486,7 +486,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
             sub_553370();
             sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 1);
         }
-        if ((tig_net_flags & 0x1) != 0) {
+        if (tig_net_is_active()) {
             sub_5678D0(entry->field_8.pc_obj, 0);
         }
         break;
@@ -522,7 +522,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
             sub_553370();
             sub_4EE550(entry->field_8.pc_obj, entry->field_8.npc_obj);
         }
-        if ((tig_net_flags & 0x1) != 0) {
+        if (tig_net_is_active()) {
             sub_5678D0(entry->field_8.pc_obj, 0);
         }
         break;
@@ -531,7 +531,7 @@ bool sub_567E30(DialogUiEntry* entry, int a2)
             sub_553370();
             sub_572240(entry->field_8.pc_obj, entry->field_8.npc_obj, 6);
         }
-        if ((tig_net_flags & 0x1) != 0) {
+        if (tig_net_is_active()) {
             sub_5678D0(entry->field_8.pc_obj, 0);
         }
         break;
@@ -559,7 +559,7 @@ bool sub_5680A0(TigMessage* msg)
         return true;
     }
 
-    if (multiplayer_is_locked() || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (multiplayer_is_locked() || tig_net_is_host()) {
         if (!sub_567E30(entry, v1)) {
             sub_5517A0(msg);
         }
@@ -619,7 +619,7 @@ bool sub_568280(DialogUiEntry *a1)
 
     is_pc = player_is_pc_obj(a1->field_8.pc_obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0 && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active() && !tig_net_is_host()) {
         byte_679DB8[sub_4A2B10(player_get_pc_obj())] = 0;
     }
 
@@ -720,7 +720,7 @@ void sub_568540(int64_t obj, int64_t a2, int type, int expires_in, const char* s
     Packet44 pkt;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -754,7 +754,7 @@ void sub_5686C0(int64_t obj, int64_t a2, int type, int expires_in, const char* s
     Packet44 pkt;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 

@@ -116,7 +116,7 @@ void curse_add(object_id_t obj, int curse)
     if (!multiplayer_is_locked()) {
         ChangeCursePacket pkt;
 
-        if (!(tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!!tig_net_is_host()) {
             return;
         }
 
@@ -170,7 +170,7 @@ void curse_remove(object_id_t obj, int curse)
     if (!multiplayer_is_locked()) {
         ChangeCursePacket pkt;
 
-        if (!(tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!!tig_net_is_host()) {
             return;
         }
 

@@ -142,8 +142,8 @@ void sub_4CB830(int64_t a1, int64_t a2, int64_t a3, int64_t a4, unsigned int fla
     unsigned int trig;
     MagicTechSerializedData v1;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         qword_5FF618 = OBJ_HANDLE_NULL;
         return;
     }
@@ -421,8 +421,8 @@ void sub_4CBFF0(int64_t a1, int64_t a2, unsigned int flags)
     int spl;
     MagicTechSerializedData v1;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return;
     }
 

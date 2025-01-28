@@ -593,7 +593,7 @@ bool schematic_ui_message_filter(TigMessage* msg)
             if (msg->data.button.button_handle == stru_5CA850[2].button_handle) {
                 switch (dword_680E7C) {
                 case 0:
-                    if ((tig_net_flags & 0x1) != 0 && (tig_net_flags & 0x2) == 0) {
+                    if (tig_net_is_active() && !tig_net_is_host()) {
                         pkt.type = 79;
                         pkt.field_4 = sub_56DB60();
                         pkt.field_8 = sub_407EF0(qword_680E70);
@@ -1082,8 +1082,8 @@ bool sub_56E720(int schematic, int64_t a2, int64_t a3)
     int qty;
     int64_t prod_obj;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0
+    if (tig_net_is_active()
+        && !tig_net_is_host()
         && !multiplayer_is_locked()) {
         return true;
     }

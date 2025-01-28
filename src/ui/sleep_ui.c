@@ -135,7 +135,7 @@ void sub_57B180(int64_t bed_obj)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         return;
     }
 

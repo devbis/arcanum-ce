@@ -1932,7 +1932,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == stru_5C6538.button_handle) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                if (tig_net_is_active()) {
                     sub_5700C0();
                 } else {
                     sub_57B180(OBJ_HANDLE_NULL);
@@ -2178,7 +2178,7 @@ bool sub_54B5D0(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == stru_5C6538.button_handle) {
-                dword_64C674 = ((tig_net_flags & TIG_NET_CONNECTED) != 0) ? 1010 : 1009;
+                dword_64C674 = (tig_net_is_active()) ? 1010 : 1009;
             }
 
             switch (intgame_iso_window_type) {
@@ -3386,7 +3386,7 @@ void sub_54ED30(S4F2810* a1)
         }
 
         unsigned int flags = 0;
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
                 flags |= 0x100;
             } else if (tig_kb_is_key_pressed(DIK_LCONTROL)
@@ -3406,7 +3406,7 @@ void sub_54ED30(S4F2810* a1)
             return;
         }
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             return;
         }
     } else if (sub_423300(pc_obj, &anim_id)) {
@@ -3470,7 +3470,7 @@ void sub_54ED30(S4F2810* a1)
                 }
             }
         } else if (sub_424070(pc_obj, 3, false, false)) {
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            if (tig_net_is_active()
                 && !tig_kb_is_key_pressed(DIK_LSHIFT)
                 && !tig_kb_is_key_pressed(DIK_RSHIFT)
                 && !tig_kb_is_key_pressed(DIK_LCONTROL)
@@ -3479,7 +3479,7 @@ void sub_54ED30(S4F2810* a1)
             }
 
             if (sub_44D520(&goal_data, &anim_id)
-                && (tig_net_flags & TIG_NET_CONNECTED) == 0) {
+                && !tig_net_is_active()) {
                 if (tig_kb_is_key_pressed(DIK_LSHIFT) || tig_kb_is_key_pressed(DIK_RSHIFT)) {
                     sub_436C50(anim_id);
                 } else if (tig_kb_is_key_pressed(DIK_LCONTROL) || tig_kb_is_key_pressed(DIK_RCONTROL)) {

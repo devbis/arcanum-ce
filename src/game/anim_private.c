@@ -718,13 +718,13 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, unsigned int flags)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return sub_44D730(anim_data, anim_id, true, flags);
     }
 
     if (sub_45B300()
-        || ((tig_net_flags & TIG_NET_HOST) == 0 && !player_is_pc_obj(anim_data->params[AGDATA_SELF_OBJ].obj))
-        || ((tig_net_flags & TIG_NET_HOST) == 0 && anim_data->type == AG_DYING)) {
+        || (!tig_net_is_host() && !player_is_pc_obj(anim_data->params[AGDATA_SELF_OBJ].obj))
+        || (!tig_net_is_host() && anim_data->type == AG_DYING)) {
         return true;
     }
 
@@ -741,7 +741,7 @@ bool sub_44D540(AnimGoalData* anim_data, AnimID* anim_id, unsigned int flags)
 
     pkt.field_10 = *anim_data;
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         if (!sub_44D730(anim_data, &v1, true, flags)) {
             return false;
         }
@@ -851,8 +851,8 @@ bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
     ASSERT(goal_data->type < ANIM_GOAL_MAX); // 3656, "pGoalRegData->goal_type < anim_goal_max"
 
     if (anim_id.slot_num == -1) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (!tig_net_is_active()
+            || tig_net_is_host()) {
             return false;
         }
 
@@ -865,7 +865,7 @@ bool anim_subgoal_add_func(AnimID anim_id, AnimGoalData* goal_data)
         return false;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         if (run_info->current_goal >= 7) {
             return false;
         }
@@ -902,11 +902,11 @@ bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
     int64_t obj;
     int idx;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return anim_subgoal_add_func(anim_id, goal_data);
     }
 
-    if ((tig_net_flags & TIG_NET_HOST) == 0
+    if (!tig_net_is_host()
         && !player_is_pc_obj(goal_data->params[AGDATA_SELF_OBJ].obj)) {
         return true;
     }
@@ -925,7 +925,7 @@ bool sub_44DBE0(AnimID anim_id, AnimGoalData* goal_data)
 
     pkt.goal_data = *goal_data;
 
-    if ((tig_net_flags & TIG_NET_HOST) == 0) {
+    if (!tig_net_is_host()) {
         tig_net_send_app_all(&pkt, sizeof(pkt));
         return false;
     }
@@ -1489,7 +1489,7 @@ bool sub_44E940(int64_t obj, AnimID* anim_id, int64_t a2)
                 return true;
             }
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+            if (tig_net_is_active()
                 && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                 sub_441310(a2, &objects);
                 node = objects.head;

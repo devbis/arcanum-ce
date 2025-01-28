@@ -409,12 +409,12 @@ void sub_57C370(int index)
     if (stru_5CB3A8[index].magictech != -1 && stru_5CB3A8[index].field_4 == 1) {
         stru_5CB3A8[index].field_4 = 2;
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             pkt.type = 59;
             pkt.field_4 = index;
             tig_net_send_app_all(&pkt, sizeof(pkt));
 
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_host()) {
                 sub_457110(stru_5CB3A8[index].magictech);
             }
         } else {
@@ -510,7 +510,7 @@ void spell_ui_add(int64_t obj, int spell)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
+    if (!tig_net_is_active() || multiplayer_is_locked()) {
         if (!spell_add(obj, spell, false)) {
             if (spell_min_level(spell) > stat_level_get(obj, STAT_LEVEL)) {
                 charedit_error_not_enough_level();
@@ -526,7 +526,7 @@ void spell_ui_add(int64_t obj, int spell)
             return;
         }
     } else {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             spell_add(obj, spell, false);
             return;
         }

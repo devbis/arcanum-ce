@@ -127,7 +127,7 @@ void rumor_qstate_set(int rumor)
     PacketRumorQStateSet pkt;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -181,7 +181,7 @@ void rumor_known_set(int64_t obj, int rumor)
 
     datetime = sub_45A7C0();
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 

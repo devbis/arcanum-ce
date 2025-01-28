@@ -178,8 +178,8 @@ int tech_degree_inc(int64_t obj, int tech)
     }
 
     degree = tech_degree_get(obj, tech);
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0
+    if (tig_net_is_active()
+        && !tig_net_is_host()
         && !multiplayer_is_locked()) {
         return degree;
     }
@@ -223,8 +223,8 @@ int tech_degree_dec(int64_t obj, int tech)
     }
 
     degree = tech_degree_get(obj, tech);
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0
+    if (tig_net_is_active()
+        && !tig_net_is_host()
         && !multiplayer_is_locked()) {
             return degree;
     }
@@ -297,7 +297,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
         ui_message.str = mes_file_entry.str;
         ui_message.field_8 = schematic;
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             player = sub_4A2B10(pc_obj);
             if (player == -1) {
                 return;
@@ -316,7 +316,7 @@ void tech_learn_schematic(int64_t pc_obj, int64_t written_obj)
         ui_message.str = mes_file_entry.str;
         ui_message.field_8 = schematic;
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             player = sub_4A2B10(pc_obj);
             if (player == -1) {
                 return;

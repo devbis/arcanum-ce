@@ -249,7 +249,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
             node = node->next;
         }
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             sub_441310(pc_obj, &mp_party_members);
             node = mp_party_members.head;
             while (node != NULL) {
@@ -315,7 +315,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
             node = node->next;
         }
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             node = mp_party_members.head;
             while (node != NULL) {
                 object_flags_unset(node->obj, OF_CANCEL);
@@ -586,7 +586,7 @@ bool sub_4F2D20(S603CB8* a1)
                             return false;
                         }
 
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                        if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                             sub_441310(a1->self_obj, &objects);
                             node = objects.head;
@@ -617,7 +617,7 @@ bool sub_4F2D20(S603CB8* a1)
                             return false;
                         }
 
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                        if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                             sub_441310(a1->field_40, &objects);
                             node = objects.head;
@@ -682,7 +682,7 @@ bool sub_4F2D20(S603CB8* a1)
                             return false;
                         }
 
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                        if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                             sub_441310(a1->self_obj, &objects);
                             node = objects.head;
@@ -713,7 +713,7 @@ bool sub_4F2D20(S603CB8* a1)
                             return false;
                         }
 
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+                        if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
                             sub_441310(a1->field_40, &objects);
                             node = objects.head;
@@ -1428,7 +1428,7 @@ void sub_4F40B0(S603CB8* a1)
         }
         object_list_destroy(&objects);
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
+        if (tig_net_is_active()
             && obj_field_int32_get(a1->source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
             sub_441310(a1->source_obj, &objects);
             obj_node = objects.head;

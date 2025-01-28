@@ -164,7 +164,7 @@ bool sub_569F40(int num)
     TigRect dst_rect;
     TigArtBlitInfo blit_info;
 
-    if ((tig_net_flags & 0x1) == 0) {
+    if (!tig_net_is_active()) {
         return false;
     }
 

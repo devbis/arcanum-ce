@@ -3305,8 +3305,8 @@ void sub_418B30(int a1, DialogEntryNode* a2)
     if (item_gold_get(a2->pc_obj) < a1) {
         sub_418C40(2000, a2->field_17F0[1], a2->field_1804[1], a2);
     } else {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             pkt.type = 82;
             pkt.field_8 = sub_407EF0(a2->pc_obj);
             pkt.field_20 = sub_407EF0(a2->npc_obj);

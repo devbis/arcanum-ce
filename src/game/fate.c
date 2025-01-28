@@ -48,7 +48,7 @@ bool fate_activate(int64_t obj, int fate)
         pkt.action = 1;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return false;
         }
     }
@@ -89,7 +89,7 @@ bool fate_deactivate(int64_t obj, int fate)
         pkt.action = 0;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return false;
         }
     }

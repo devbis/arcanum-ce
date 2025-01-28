@@ -475,8 +475,8 @@ bool sub_572240(int64_t pc_obj, int64_t target_obj, int mode)
         return true;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 12;
         sub_4F0640(pc_obj, &(pkt.d.z.field_8));
@@ -2297,7 +2297,7 @@ void sub_575770()
 
     if (item_parent(qword_6810E0, &parent_obj)
         && obj_field_int32_get(qword_6810E0, OBJ_F_ITEM_INV_LOCATION) != -1) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || !multiplayer_is_locked()) {
+        if (!tig_net_is_active() || !multiplayer_is_locked()) {
             sub_4A51C0(player_get_pc_obj(), qword_6810E0);
         }
 
@@ -3719,7 +3719,7 @@ void sub_578B80(int a1)
     pkt->field_60 = a1;
     pkt->field_68 = sub_529520();
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         sub_441B60(objp_perm_lookup(pkt->field_10),
             objp_perm_lookup(pkt->field_10),
             byte_682BEC);
@@ -3784,8 +3784,8 @@ bool sub_578EA0(Packet81* pkt)
     v5 = objp_perm_lookup(pkt->field_88);
     v6 = objp_perm_lookup(pkt->field_A0);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         tig_net_send_app_all(pkt, sizeof(*pkt));
     }
 

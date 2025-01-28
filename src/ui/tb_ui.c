@@ -349,7 +349,7 @@ void sub_57CE30(int64_t obj, void* a2, int a3)
 void sub_57CE70(int64_t a1, int64_t a2)
 {
     if (a2 != OBJ_HANDLE_NULL) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             if (sub_4A2B10(a2) != -1) {
                 sub_564F60(a2, a1);
             }

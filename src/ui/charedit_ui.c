@@ -1102,8 +1102,8 @@ bool charedit_create(int64_t obj, int mode)
     }
 
     if (charedit_mode != 3) {
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-            || (tig_net_flags & TIG_NET_HOST) != 0
+        if (!tig_net_is_active()
+            || tig_net_is_host()
             || multiplayer_is_locked()) {
             for (index = 0; index < 23; index++) {
                 dword_64D304[index] = charedit_stat_value_get(charedit_obj, index);
@@ -1403,8 +1403,8 @@ bool charedit_window_message_filter(TigMessage* msg)
                         return true;
                     }
 
-                    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                        && (tig_net_flags & TIG_NET_HOST) == 0
+                    if (tig_net_is_active()
+                        && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
@@ -1448,8 +1448,8 @@ bool charedit_window_message_filter(TigMessage* msg)
 
                     value--;
 
-                    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                        && (tig_net_flags & TIG_NET_HOST) == 0
+                    if (tig_net_is_active()
+                        && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
@@ -1594,7 +1594,7 @@ bool charedit_window_message_filter(TigMessage* msg)
         }
     case TIG_MESSAGE_CHAR:
         if (toupper(msg->data.character.ch) == 'X'
-            && (tig_net_flags & TIG_NET_CONNECTED) == 0
+            && !tig_net_is_active()
             && charedit_mode == 1
             && (!combat_turn_based_is_active()
                 || combat_turn_based_whos_turn_get() == player_get_pc_obj())) {
@@ -2976,8 +2976,8 @@ bool sub_55D3A0(TigMessage* msg)
         case TIG_BUTTON_STATE_PRESSED:
             for (index = 0; index < BASIC_SKILL_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skills_plus_buttons[index].button_handle) {
-                    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                        && (tig_net_flags & TIG_NET_HOST) == 0
+                    if (tig_net_is_active()
+                        && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
@@ -2998,8 +2998,8 @@ bool sub_55D3A0(TigMessage* msg)
                     // FIX: Original code has mess with plus/minus buttons, but
                     // it does not affect outcome as both plus/minus buttons
                     // refer to the same skills.
-                    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                        && (tig_net_flags & TIG_NET_HOST) == 0
+                    if (tig_net_is_active()
+                        && !tig_net_is_host()
                         && !multiplayer_is_locked()) {
                         Packet127 pkt;
 
@@ -3082,8 +3082,8 @@ bool sub_55D6F0(TigMessage* msg)
         if (msg->data.button.state == TIG_BUTTON_STATE_PRESSED) {
             for (index = 0; index < TECH_SKILL_COUNT; index++) {
                 if (msg->data.button.button_handle == charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
-                    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                        || (tig_net_flags & TIG_NET_HOST) != 0
+                    if (!tig_net_is_active()
+                        || tig_net_is_host()
                         || multiplayer_is_locked()) {
                         skill_ui_inc_skill(charedit_obj, charedit_skills_plus_buttons[BASIC_SKILL_COUNT + index].art_num + 12);
                     } else {
@@ -3098,8 +3098,8 @@ bool sub_55D6F0(TigMessage* msg)
                 }
 
                 if (msg->data.button.button_handle == charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].button_handle) {
-                    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                        || (tig_net_flags & TIG_NET_HOST) != 0
+                    if (!tig_net_is_active()
+                        || tig_net_is_host()
                         || multiplayer_is_locked()) {
                         if (tech_skill_get_base(charedit_obj, charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num) == dword_64C82C[charedit_skills_minus_buttons[BASIC_SKILL_COUNT + index].art_num]) {
                             charedit_error_msg.str = charedit_errors[CHAREDIT_ERR_SKILL_AT_ACCEPTED_LEVEL];
@@ -3223,8 +3223,8 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == charedit_inc_tech_degree_btn) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0
+                if (!tig_net_is_active()
+                    || tig_net_is_host()
                     || multiplayer_is_locked()) {
                     tech_ui_inc_degree(charedit_obj, charedit_selected_tech);
                 } else {
@@ -3239,8 +3239,8 @@ bool charedit_tech_win_message_filter(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == charedit_dec_tech_degree_btn) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0
+                if (!tig_net_is_active()
+                    || tig_net_is_host()
                     || multiplayer_is_locked()) {
                     tech_ui_dec_degree(charedit_obj, charedit_selected_tech);
                 } else {
@@ -3348,8 +3348,8 @@ bool sub_55DC60(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == spell_plus_bid) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0
+                if (!tig_net_is_active()
+                    || tig_net_is_host()
                     || multiplayer_is_locked()) {
                     v1 = spell_college_level_get(charedit_obj, dword_64E024);
                     spell_ui_add(charedit_obj, 5 * dword_64E024 + v1);
@@ -3365,8 +3365,8 @@ bool sub_55DC60(TigMessage* msg)
             }
 
             if (msg->data.button.button_handle == spell_minus_bid) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-                    || (tig_net_flags & TIG_NET_HOST) != 0
+                if (!tig_net_is_active()
+                    || tig_net_is_host()
                     || multiplayer_is_locked()) {
                     v1 = spell_college_level_get(charedit_obj, dword_64E024);
                     if (v1 == dword_64D364[dword_64E024]) {
@@ -3434,7 +3434,7 @@ bool sub_55DF90(TigMessage* msg)
                 if (msg->data.button.button_handle == dword_64C7E8[index]) {
                     if (index < dword_64CDC8) {
                         level_auto_level_scheme_set(charedit_obj, dword_64CFE4[index + dword_64D424]);
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                        if (tig_net_is_active()) {
                             sub_4A45B0(player_get_pc_obj());
                         }
                         sub_55D210();

@@ -1249,7 +1249,7 @@ void object_destroy(int64_t obj)
         return;
     }
 
-    if (!multiplayer_is_locked() && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!multiplayer_is_locked() && tig_net_is_host()) {
         sub_4ED9E0(obj);
     }
 
@@ -1546,7 +1546,7 @@ int object_hp_pts_set(int64_t obj, int value)
         pkt.field_20 = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return value;
         }
     }
@@ -1586,7 +1586,7 @@ int object_hp_damage_set(object_id_t obj, int value)
 {
     int obj_type;
 
-    if ((tig_net_flags & 0x1) != 0 && (tig_net_flags & 0x2) == 0) {
+    if (tig_net_is_active() && !tig_net_is_host()) {
         return 0;
     }
 
@@ -3526,7 +3526,7 @@ int sub_441310(int64_t obj, ObjectList* objects)
     objects->head = NULL;
     parent_ptr = &(objects->head);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         party_member_obj = party_find_first(obj, &party_member_index);
         do {
             node = object_node_create();
@@ -3644,7 +3644,7 @@ int sub_441540(int64_t obj)
 // 0x4415C0
 void sub_4415C0(int64_t obj, int64_t loc)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || multiplayer_is_locked()) {
+    if (!tig_net_is_active() || multiplayer_is_locked()) {
         unsigned int flags;
         int64_t sector_id;
         Sector* sector;
@@ -3713,7 +3713,7 @@ bool sub_441780(S4415C0* entry)
 // 0x4417A0
 void sub_4417A0(int64_t item_obj, int64_t parent_obj)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
+    if (!tig_net_is_active()
         || multiplayer_is_locked()) {
         unsigned int flags;
         TigRect rect;
@@ -5236,8 +5236,8 @@ void sub_4445A0(int64_t a1, int64_t a2)
                 sub_4606C0(0);
             }
         } else {
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-                if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_active()) {
+                if (tig_net_is_host()) {
                     loc = obj_field_int64_get(a1, OBJ_F_LOCATION);
                     sub_4EDF20(a2, loc, 0, 0, false);
                 } else {

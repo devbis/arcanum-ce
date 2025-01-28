@@ -306,7 +306,7 @@ void options_ui_violence_filter_set(int value)
 // 0x589610
 void options_ui_combat_mode_get(int* value_ptr, unsigned char* enabled_ptr)
 {
-    if ((tig_net_flags & 0x1) != 0) {
+    if (tig_net_is_active()) {
         if (combat_is_turn_based()) {
             settings_set_value(&settings, "turn-based", 0);
             settings_set_value(&settings, "fast turn-based", 0);
@@ -327,7 +327,7 @@ void options_ui_combat_mode_get(int* value_ptr, unsigned char* enabled_ptr)
 // 0x5896A0
 void options_ui_combat_mode_set(int value)
 {
-    if ((tig_net_flags & 0x1) == 0) {
+    if (!tig_net_is_active()) {
         switch (value) {
         case 0:
             settings_set_value(&settings, "turn-based", 0);

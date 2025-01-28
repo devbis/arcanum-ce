@@ -243,7 +243,7 @@ void reaction_adj(int64_t npc_obj, int64_t pc_obj, int value)
     unsigned int flags;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 

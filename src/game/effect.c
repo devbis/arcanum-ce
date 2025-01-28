@@ -386,8 +386,8 @@ void effect_add(int64_t obj, int effect, int cause)
     int v2;
     int diff;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             Packet86 pkt;
 
             pkt.type = 86;
@@ -444,8 +444,8 @@ void effect_remove_one_typed(int64_t obj, int effect)
     int cnt;
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             Packet86 pkt;
 
             pkt.type = 86;
@@ -481,8 +481,8 @@ void effect_remove_all_typed(int64_t obj, int effect)
     int cnt;
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             Packet86 pkt;
 
             pkt.type = 86;
@@ -517,8 +517,8 @@ void effect_remove_one_caused_by(int64_t obj, int cause)
     int cnt;
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             Packet86 pkt;
 
             pkt.type = 86;
@@ -552,8 +552,8 @@ void effect_remove_all_caused_by(int64_t obj, int cause)
     int cnt;
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             Packet86 pkt;
 
             pkt.type = 86;

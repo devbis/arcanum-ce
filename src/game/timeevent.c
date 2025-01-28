@@ -819,8 +819,8 @@ void timeevent_ping(tig_timestamp_t timestamp)
     timeevent_in_ping = true;
     datetime_add_milliseconds(&timeevent_real_time, delta);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         if (!sub_45B300()) {
             if (dword_5E8628 < 1000 * (sub_4A38A0() + 16)) {
                 datetime_add_milliseconds(&timeevent_game_time, 8 * delta);
@@ -897,8 +897,8 @@ void timeevent_ping(tig_timestamp_t timestamp)
 
     sub_45B750();
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0
+    if (tig_net_is_active()
+        && tig_net_is_host()
         && tig_timer_between(dword_5E8624, timestamp) > 950) {
         PacketGameTime pkt;
 

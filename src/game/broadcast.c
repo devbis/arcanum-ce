@@ -185,7 +185,7 @@ void sub_4C2F00(int64_t obj, Broadcast* bcast)
 
     static_assert(sizeof(packet) == 0xA8, "wrong size");
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0 || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active() || tig_net_is_host()) {
         broadcast_msg_client(obj, bcast);
     } else {
         packet.type = 18;

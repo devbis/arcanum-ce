@@ -245,7 +245,7 @@ bool sub_4BBFE0(int64_t pc_obj, int64_t trap_obj)
         return (flags & OF_TRAP_PC) == 0;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         return sub_4BD430(pc_obj, trap_obj);
     }
 
@@ -266,7 +266,7 @@ void sub_4BC090(int64_t pc_obj, int64_t trap_obj, int a3)
     UiMessage ui_message;
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -322,7 +322,7 @@ void sub_4BC220(int64_t trap_obj)
 {
     Script scr;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         sub_4BD340(trap_obj);
     }
 
@@ -525,8 +525,8 @@ void sub_4BC7B0(int64_t pc_obj, int64_t trap_obj, bool* is_success_ptr, bool* is
             prototype_handle = sub_4685A0(disarm_item_name);
             loc = obj_field_int32_get(pc_obj, OBJ_F_LOCATION);
             if (object_create(prototype_handle, loc, &disarm_item_obj)) {
-                if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                    && (tig_net_flags & TIG_NET_HOST) != 0) {
+                if (tig_net_is_active()
+                    && tig_net_is_host()) {
                     pkt.type = 70;
                     pkt.subtype = 0;
                     pkt.s0.name = disarm_item_name;

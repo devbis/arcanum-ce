@@ -290,7 +290,7 @@ int critter_fatigue_pts_set(long long obj, int value)
         pkt.field_20 = value;
         tig_net_send_app_all(&pkt, sizeof(pkt));
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return value;
         }
     }
@@ -474,7 +474,7 @@ void critter_kill(int64_t obj)
     if (!multiplayer_is_locked()) {
         Packet104 pkt;
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+        if (!tig_net_is_active()) {
             return;
         }
 
@@ -694,8 +694,8 @@ bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force)
 {
     unsigned int flags;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         if (obj_field_int32_get(follower_obj, OBJ_F_TYPE) != OBJ_TYPE_NPC) {
             return false;
         }
@@ -1054,8 +1054,8 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
     int dam;
     int encumbrance_level;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()) {
+        if (!tig_net_is_host()) {
             return true;
         }
     }
@@ -1091,8 +1091,8 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
             }
             critter_fatigue_damage_set(critter_obj, dam);
 
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-                && (tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_active()
+                && tig_net_is_host()) {
                 PacketCritterFatigueDamageSet pkt;
 
                 pkt.type = 35;
@@ -1117,8 +1117,8 @@ bool critter_fatigue_timeevent_process(TimeEvent* timeevent)
             critter_fatigue_damage_set(critter_obj, dam);
         }
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-            && (tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_active()
+            && tig_net_is_host()) {
             PacketCritterFatigueDamageSet pkt;
 
             pkt.type = 35;
@@ -1143,8 +1143,8 @@ bool sub_45E820(int64_t obj, int a2, int a3)
     TimeEvent timeevent;
     DateTime datetime;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return true;
     }
 
@@ -1184,8 +1184,8 @@ void sub_45E910(int64_t critter_obj, int hours)
     int dam;
     int heal_rate;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()) {
+        if (!tig_net_is_host()) {
             return;
         }
     }
@@ -1217,7 +1217,7 @@ void sub_45E910(int64_t critter_obj, int hours)
         critter_fatigue_damage_set(critter_obj, dam);
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         Packet34 pkt;
 
         pkt.type = 34;
@@ -1267,8 +1267,8 @@ bool sub_45EAB0(int64_t obj)
     TimeEvent timeevent;
     DateTime datetime;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return true;
     }
 
@@ -1434,7 +1434,7 @@ void critter_set_concealed_internal(int64_t obj, bool concealed)
     if (!multiplayer_is_locked()) {
         PacketCritterConcealSet pkt;
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
 
@@ -1567,8 +1567,8 @@ void critter_give_xp(int64_t obj, int xp_gain)
         break;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()) {
+        if (!tig_net_is_host()) {
             return;
         }
 

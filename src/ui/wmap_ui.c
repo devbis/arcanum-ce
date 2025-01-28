@@ -1220,7 +1220,7 @@ void sub_5607E0()
 
     if (dword_66D874 != 0) {
         sub_562B70(2);
-    } else if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    } else if (tig_net_is_active()) {
         wmap_ui_close();
     }
 
@@ -2125,8 +2125,8 @@ bool wmap_ui_message_filter(TigMessage* msg)
                             for (int idx = 1; idx < stru_64E048[1].field_3C0; idx++) {
                                 sub_433A00(player_get_pc_obj(),
                                     stru_64E048[1].field_0[idx].loc,
-                                    (tig_net_flags & TIG_NET_CONNECTED) != 0
-                                        && (tig_net_flags & TIG_NET_HOST) == 0);
+                                    tig_net_is_active()
+                                        && !tig_net_is_host());
                             }
 
                             sub_436D20(0x80000, 0);
@@ -4628,7 +4628,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     }
     object_list_destroy(&objects);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         sub_441310(player_get_pc_obj(), &objects);
         node = objects.head;
         while (node != NULL) {

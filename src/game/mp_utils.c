@@ -122,8 +122,8 @@ bool sub_4ED6C0(int64_t obj)
 {
     Packet29 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         return sub_463540(obj);
     }
 
@@ -141,7 +141,7 @@ void sub_4ED720(int64_t obj, int damage)
 
     critter_fatigue_damage_set(obj, damage);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 35;
         sub_4F0640(obj, &(pkt.oid));
         pkt.dam = damage;
@@ -182,8 +182,8 @@ bool sub_4ED780(int64_t obj, int quest, int state, int64_t a4)
 // 0x4ED8B0
 bool mp_object_create(int name, int64_t loc, int64_t* obj_ptr)
 {
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()
             && object_create(sub_4685A0(name), loc, obj_ptr)) {
             Packet70 pkt;
 
@@ -277,11 +277,11 @@ void sub_4EDCE0(int64_t obj, tig_art_id_t art_id)
 {
     Packet92 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         object_set_current_aid(obj, art_id);
 
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+        if (tig_net_is_host()) {
             pkt.type = 92;
             pkt.oid = sub_407EF0(obj);
             pkt.art_id = art_id;
@@ -297,8 +297,8 @@ void sub_4EDD50(int64_t obj)
 
     sub_4601F0(obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 94;
         pkt.oid = sub_407EF0(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -325,8 +325,8 @@ void sub_4EDDE0(int64_t obj)
         sub_4601C0();
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 95;
         pkt.oid.type = OID_TYPE_NULL;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -347,8 +347,8 @@ void sub_4EDE80(int64_t obj, int a2)
 {
     Packet96 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         pkt.type = 96;
         pkt.oid = sub_407EF0(obj);
         pkt.field_20 = a2;
@@ -361,7 +361,7 @@ void sub_4EDEE0(Packet96* pkt)
 {
     int64_t obj;
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         obj = objp_perm_lookup(pkt->oid);
         if (obj != OBJ_HANDLE_NULL) {
             sub_4670A0(obj, pkt->field_20);
@@ -374,16 +374,16 @@ void sub_4EDF20(int64_t obj, int64_t location, int dx, int dy, bool a7)
 {
     Packet99 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         if (a7 && player_is_pc_obj(obj)) {
             location_origin_set(location);
         }
         sub_43E770(obj, location, dx, dy);
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 99;
         pkt.oid = sub_407EF0(obj);
         pkt.location = location;
@@ -399,7 +399,7 @@ void sub_4EDFF0(Packet99* pkt)
 {
     int64_t obj;
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         obj = objp_perm_lookup(pkt->oid);
         sub_43E770(obj, pkt->location, pkt->dx, pkt->dy);
 
@@ -419,8 +419,8 @@ void sub_4EE060(int64_t a1, int64_t a2)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 5;
         sub_4F0640(a1, &(pkt.d.s.field_8));
@@ -436,8 +436,8 @@ void sub_4EE0F0(int a1, int64_t a2, int64_t a3)
 
     sub_460900(a1, a2, a3);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 4;
         pkt.d.c.field_8 = a1;
@@ -454,7 +454,7 @@ void sub_4EE190()
 
     sub_460770();
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 100;
         pkt.subtype = 0;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -468,7 +468,7 @@ void sub_4EE1D0(int64_t obj)
 
     sub_460240(obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 100;
         pkt.subtype = 1;
         pkt.d.b.field_8 = sub_407EF0(obj);
@@ -524,8 +524,8 @@ void sub_4EE310(int64_t obj, int64_t a2)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 6;
         sub_4F0640(obj, &(pkt.d.s.field_8));
@@ -544,8 +544,8 @@ void sub_4EE3A0(int64_t obj, int64_t a2)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 7;
         sub_4F0640(obj, &(pkt.d.s.field_8));
@@ -564,8 +564,8 @@ void sub_4EE430(int64_t obj, int64_t a2)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 8;
         sub_4F0640(obj, &(pkt.d.s.field_8));
@@ -584,8 +584,8 @@ void sub_4EE4C0(int64_t obj, int64_t a2)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 10;
         sub_4F0640(obj, &(pkt.d.s.field_8));
@@ -604,8 +604,8 @@ void sub_4EE550(int64_t obj, int64_t a2)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 100;
         pkt.subtype = 9;
         sub_4F0640(obj, &(pkt.d.s.field_8));
@@ -692,7 +692,7 @@ void sub_4EE5E0(Packet100* pkt)
         sub_4F0690(pkt->d.z.field_20, &v2);
         switch (pkt->d.z.field_3C) {
         case 0:
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_host()) {
                 if (sub_460C50(v1, v2, pkt->d.z.field_38)) {
                     new_pkt = *pkt;
                     new_pkt.d.z.field_3C = 1;
@@ -701,7 +701,7 @@ void sub_4EE5E0(Packet100* pkt)
             }
             break;
         case 1:
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_host()) {
                 if (sub_460C80(v1, v2, pkt->d.z.field_38)) {
                     new_pkt = *pkt;
                     new_pkt.d.z.field_3C = 2;
@@ -710,7 +710,7 @@ void sub_4EE5E0(Packet100* pkt)
             }
             break;
         case 2:
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_host()) {
                 sub_460CB0(v1, v2, pkt->d.z.field_38);
 
                 new_pkt = *pkt;
@@ -719,7 +719,7 @@ void sub_4EE5E0(Packet100* pkt)
             }
             break;
         case 3:
-            if ((tig_net_flags & TIG_NET_HOST) != 0) {
+            if (tig_net_is_host()) {
                 sub_460CE0(v1, v2, pkt->d.z.field_38);
             }
             break;
@@ -757,7 +757,7 @@ void sub_4EEC10(int64_t obj, int a2)
 
     object_locked_set(obj, a2);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 103;
         pkt.oid = sub_407EF0(obj);
         pkt.field_20 = a2;
@@ -778,7 +778,7 @@ void sub_4EECB0(int sound_id)
 
     gsound_play_sfx_id(sound_id, 1);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 106;
         pkt.subtype = 0;
         pkt.field_8 = sound_id;
@@ -801,8 +801,8 @@ void sub_4EED00(int64_t obj, int sound_id)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         client_id = sub_4A2B10(obj);
         if (client_id != -1) {
             pkt.type = 106;
@@ -820,7 +820,7 @@ void sub_4EED80(int sound_id, int loops, int64_t obj)
 
     sub_41B930(sound_id, loops, obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 106;
         pkt.subtype = 1;
         pkt.field_8 = sound_id;
@@ -837,7 +837,7 @@ void sub_4EEE00(int a1, int a2)
 
     sub_41BD50(a1, a2);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 106;
         pkt.subtype = 2;
         pkt.field_8 = a1;
@@ -869,7 +869,7 @@ void sub_4EEEC0(int64_t obj)
 
     object_dec_current_aid(obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 11;
         pkt.oid = sub_407EF0(obj);
@@ -884,7 +884,7 @@ void sub_4EEF20(int64_t obj)
 
     object_inc_current_aid(obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 10;
         pkt.oid = sub_407EF0(obj);
@@ -899,7 +899,7 @@ void sub_4EEF80(int64_t obj)
 
     sub_4F08F0(obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 107;
         pkt.oid = sub_407EF0(obj);
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -919,7 +919,7 @@ void mp_sector_block_set(int64_t sec, bool blocked)
 
     sector_block_set(sec, blocked);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 108;
         pkt.sec = sec;
         pkt.blocked = blocked;
@@ -940,7 +940,7 @@ void mp_spell_mastery_set(int64_t obj, int college)
 
     spell_mastery_set(obj, college);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 109;
         pkt.oid = sub_407EF0(obj);
         pkt.college = college;
@@ -961,7 +961,7 @@ void sub_4EF120(int map, int a2)
 
     sub_4BEAB0(map, a2);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 110;
         pkt.map = map;
         pkt.field_8 = a2;
@@ -982,7 +982,7 @@ void sub_4EF190(tig_art_id_t art_id)
 
     sub_502290(art_id);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 111;
         pkt.art_id = art_id;
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -1005,7 +1005,7 @@ void sub_4EF1E0(int64_t a1, int64_t obj)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 112;
         pkt.oid = sub_407EF0(obj);
         pkt.field_8 = a1;
@@ -1049,7 +1049,7 @@ void mp_tf_remove(int64_t obj)
 
     tf_remove(obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 116;
         pkt.subtype = 1;
         pkt.action = 0;
@@ -1065,7 +1065,7 @@ void mp_tb_remove(int64_t obj)
 
     tb_remove(obj);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 116;
         pkt.subtype = 0;
         pkt.action = 0;
@@ -1094,8 +1094,8 @@ void sub_4EF6F0(int64_t a1, int64_t a2, int64_t a3)
 {
     Packet117 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         sub_462CC0(a1, a2, a3);
         return;
     }
@@ -1118,7 +1118,7 @@ void sub_4EF790(Packet117* pkt)
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         sub_4F0690(pkt->field_8, &v1);
         sub_4F0690(pkt->field_20, &v2);
         sub_4F0690(pkt->field_38, &v3);
@@ -1131,8 +1131,8 @@ void sub_4EF830(int64_t a1, int64_t a2)
 {
     Packet118 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         sub_4445A0(a1, a2);
         return;
     }
@@ -1149,7 +1149,7 @@ void sub_4EF8B0(Packet118* pkt)
     int64_t v1;
     int64_t v2;
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         sub_4F0690(pkt->field_8, &v1);
         sub_4F0690(pkt->field_20, &v2);
         sub_4445A0(v1, v2);
@@ -1165,13 +1165,13 @@ bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr)
     Packet119* pkt;
     int size;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         ret = sub_43CC30(obj, loc, obj_ptr);
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         sub_4063A0(*obj_ptr, &oids, &cnt);
         size = sizeof(*pkt) + sizeof(*oids) * cnt;
         pkt = (Packet119*)MALLOC(size);
@@ -1180,8 +1180,8 @@ bool sub_4EF920(int64_t obj, int64_t loc, int64_t* obj_ptr)
     }
 
     // NOTE: Same condition?
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt->type = 119;
         sub_4F0640(obj, &(pkt->oid));
         pkt->loc = loc;
@@ -1213,7 +1213,7 @@ void sub_4EFAB0(Packet120* pkt)
 {
     sub_44E2C0(&(pkt->anim_id), 6);
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         tig_net_send_app_all(pkt, sizeof(*pkt));
     }
 }
@@ -1223,13 +1223,13 @@ void sub_4EFAE0(int64_t obj, int a2)
 {
     Packet121 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         sub_463B30(obj, a2);
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         if (!multiplayer_is_locked()) {
             pkt.type = 121;
             sub_4F0640(obj, &(pkt.oid));
@@ -1255,8 +1255,8 @@ void sub_4EFBA0(int64_t obj)
 {
     Packet122 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         pkt.type = 122;
         sub_4F0640(obj, &(pkt.oid));
         tig_net_send_app_all(&pkt, sizeof(pkt));
@@ -1291,7 +1291,7 @@ void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3)
 // 0x4EFCD0
 void sub_4EFCD0(Packet124* pkt)
 {
-    if ((tig_net_flags & TIG_NET_HOST) == 0) {
+    if (!tig_net_is_host()) {
         multiplayer_lock();
         switch (pkt->subtype) {
         case 0:
@@ -1318,7 +1318,7 @@ void sub_4EFDD0(int64_t obj, int fld, int value)
 
     obj_field_int32_set(obj, fld, value);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 0;
         pkt.oid = sub_407EF0(obj);
@@ -1334,7 +1334,7 @@ void sub_4EFE50(int64_t obj, int fld, int64_t value)
 
     obj_field_int64_set(obj, fld, value);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 1;
         pkt.oid = sub_407EF0(obj);
@@ -1350,7 +1350,7 @@ void mp_object_flags_unset(int64_t obj, unsigned int flags)
 
     object_flags_unset(obj, flags);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 2;
         pkt.oid = sub_407EF0(obj);
@@ -1366,7 +1366,7 @@ void mp_object_flags_set(int64_t obj, unsigned int flags)
 
     object_flags_set(obj, flags);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 3;
         pkt.oid = sub_407EF0(obj);
@@ -1382,7 +1382,7 @@ void mp_obj_field_obj_set(int64_t obj, int fld, int64_t value)
 
     obj_field_handle_set(obj, fld, value);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 4;
         pkt.oid = sub_407EF0(obj);
@@ -1401,13 +1401,13 @@ void sub_4F0070(int64_t obj, int fld, int index, int64_t value)
 {
     Packet129 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         obj_arrayfield_obj_set(obj, fld, index, value);
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 129;
         pkt.subtype = 5;
         pkt.oid = sub_407EF0(obj);
@@ -1429,8 +1429,8 @@ void mp_obj_arrayfield_int32_set(int64_t obj, int fld, int index, int value)
 
     obj_arrayfield_int32_set(obj, fld, index, value);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 129;
         pkt.subtype = 8;
         sub_4F0640(obj, &(pkt.oid));
@@ -1448,7 +1448,7 @@ void mp_obj_arrayfield_script_set(int64_t obj, int fld, int index, Script* value
 
     obj_arrayfield_script_set(obj, fld, index, value);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = P129_SUBTYPE_SCRIPT;
         pkt.oid = sub_407EF0(obj);
@@ -1466,8 +1466,8 @@ void mp_obj_arrayfield_uint32_set(int64_t obj, int fld, int index, int value)
 
     obj_arrayfield_uint32_set(obj, fld, index, value);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()
+        && tig_net_is_host()) {
         pkt.type = 129;
         pkt.subtype = P129_SUBTYPE_INT32_ARRAY;
         sub_4F0640(obj, &(pkt.oid));
@@ -1485,7 +1485,7 @@ void mp_object_set_current_aid(int64_t obj, tig_art_id_t art_id)
 
     object_set_current_aid(obj, art_id);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 9;
         pkt.oid = sub_407EF0(obj);
@@ -1501,7 +1501,7 @@ void sub_4F0360(int64_t obj, int fld, int index, int value)
 
     sub_43ECF0(obj, fld, index, value);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 129;
         pkt.subtype = 12;
         sub_4F0640(obj, &(pkt.oid));
@@ -1522,8 +1522,8 @@ void sub_4F03E0(int64_t obj, unsigned int flags_to_add)
     flags |= flags_to_add;
     obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, flags);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             sub_4EFDD0(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS));
         } else {
             pkt.type = 129;
@@ -1545,8 +1545,8 @@ void sub_4F0470(int64_t obj, unsigned int flags_to_remove)
     flags &= ~flags_to_remove;
     obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, flags);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
-        if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_active()) {
+        if (tig_net_is_host()) {
             sub_4EFDD0(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS));
         } else {
             pkt.type = 129;
@@ -1565,7 +1565,7 @@ void sub_4F0500(int64_t obj, int fld)
 
     sub_407D50(obj, fld);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 130;
         pkt.field_4 = 0;
         pkt.fld = fld;
@@ -1581,7 +1581,7 @@ void sub_4F0570(int64_t obj, int fld, int length)
 
     obj_arrayfield_length_set(obj, fld, length);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         pkt.type = 130;
         pkt.field_4 = 1;
         pkt.fld = fld;

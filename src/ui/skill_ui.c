@@ -175,7 +175,7 @@ void sub_579FA0(int64_t obj, int type)
             sub_4440E0(pc_obj, &(pkt.field_8));
             pkt.field_38 = type;
             tig_net_send_app_all(&pkt, sizeof(pkt));
-            if ((tig_net_flags & TIG_NET_HOST) == 0) {
+            if (!tig_net_is_host()) {
                 return;
             }
         }
@@ -250,7 +250,7 @@ void sub_57A1F0(S4F2810* a1)
             pkt.field_50 = sub_407EF0(a1->obj);
         }
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return;
         }
     }
@@ -473,7 +473,7 @@ bool sub_57A7F0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 
     tf_add(obj, tf_type, mes_file_entry.str);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         sub_4EDB70(obj, tf_type, mes_file_entry.str);
     }
 
@@ -519,7 +519,7 @@ bool sub_57A8C0(int64_t obj, int a2, int a3, int a4, int a5, bool a6)
 
     tf_add(obj, tf_type, mes_file_entry.str);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         sub_4EDB70(obj, tf_type, mes_file_entry.str);
     }
 

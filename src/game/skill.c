@@ -485,7 +485,7 @@ int basic_skill_set_training(int64_t obj, int skill, int training)
     if (!multiplayer_is_locked()) {
         SetSkillTrainingPacket pkt;
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return current_training;
         }
 
@@ -779,8 +779,8 @@ int tech_skill_set_base(int64_t obj, int skill, int value)
         return 0;
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0
+    if (tig_net_is_active()
+        && !tig_net_is_host()
         && !multiplayer_is_locked()) {
         return 0;
     }
@@ -845,7 +845,7 @@ int tech_skill_set_training(int64_t obj, int skill, int training)
     if (!multiplayer_is_locked()) {
         SetSkillTrainingPacket pkt;
 
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return current_training;
         }
 
@@ -1092,8 +1092,8 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
     bool is_critical;
     bool is_fate = false;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return false;
     }
 
@@ -1201,7 +1201,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                     }
                     default:
                         moved = item_transfer(item_obj, source_obj);
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                        if (tig_net_is_active()) {
                             sub_407EF0(source_obj);
                             sub_407EF0(item_obj);
                         }
@@ -1215,7 +1215,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                         critter_flags2 |= OCF2_ITEM_STOLEN;
                         obj_field_int32_set(target_obj, OBJ_F_CRITTER_FLAGS2, critter_flags2);
 
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                        if (tig_net_is_active()) {
                             Packet129 pkt;
 
                             pkt.type = 129;
@@ -1276,7 +1276,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
                     }
                     default:
                         moved = item_transfer(item_obj, target_obj);
-                        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+                        if (tig_net_is_active()) {
                             Packet128 pkt;
 
                             pkt.type = 128;
@@ -1482,7 +1482,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             }
         }
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
         break;
@@ -1531,7 +1531,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             }
         }
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
         break;
@@ -1572,7 +1572,7 @@ bool skill_invocation_run(SkillInvocation* skill_invocation)
             }
         }
 
-        if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+        if (tig_net_is_active()) {
             tig_net_send_app_all(&pkt, sizeof(pkt));
         }
         break;
@@ -1993,8 +1993,8 @@ void sub_4C8E60(int64_t a1, int64_t a2, int64_t a3, int a4)
     SkillInvocation skill_invocation;
     Packet126 pkt;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0
-        || (tig_net_flags & TIG_NET_HOST) != 0) {
+    if (!tig_net_is_active()
+        || tig_net_is_host()) {
         skill_invocation_init(&skill_invocation);
         skill_invocation.flags |= 0x1000;
         skill_invocation.skill = SKILL_REPAIR;
@@ -2018,7 +2018,7 @@ bool get_follower_skills(int64_t obj)
 {
     int player;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         return settings_get_value(&settings, "follower skills");
     }
 
@@ -2037,7 +2037,7 @@ void set_follower_skills(bool enabled)
 
     settings_set_value(&settings, "follower skills", enabled);
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+    if (tig_net_is_active()) {
         player = sub_4A2B10(player_get_pc_obj());
         if (player != -1) {
             if (enabled) {

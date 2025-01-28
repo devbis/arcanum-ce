@@ -189,7 +189,7 @@ bool anim_ui_bkg_process_callback(TimeEvent* timeevent)
             sub_57D370(11, -1, 300);
         } else {
             slide_ui_run(SLIDE_UI_TYPE_END_GAME);
-            if ((tig_net_flags & TIG_NET_CONNECTED) != 0) {
+            if (tig_net_is_active()) {
                 fade_data.flags = FADE_IN;
                 fade_data.duration = 2.0f;
                 fade_data.steps = 48;

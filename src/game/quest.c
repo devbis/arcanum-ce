@@ -278,12 +278,12 @@ void sub_4C4D20(int64_t obj, int num, int state, int64_t a4)
         critter_give_xp(obj, quest_get_xp(quests[num].experience_level));
     }
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) == 0) {
+    if (!tig_net_is_active()) {
         sub_4C4E60(obj, num, state, a4);
         return;
     }
 
-    if ((tig_net_flags & TIG_NET_HOST) != 0) {
+    if (tig_net_is_host()) {
         if (state == QUEST_STATE_ACCEPTED || state == QUEST_STATE_COMPLETED) {
             party_member_obj = party_find_first(obj, &party_member_index);
             do {
@@ -319,7 +319,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
 
     old_state = sub_4C4CB0(obj, num);
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return old_state;
         }
 
@@ -399,7 +399,7 @@ int sub_4C5070(int64_t obj, int num)
     }
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             obj_arrayfield_pc_quest_get(obj, OBJ_F_PC_QUEST_IDX, num, &pc_quest_state);
             return pc_quest_state.state;
         }
@@ -454,7 +454,7 @@ int quest_set_state(int num, int state)
     }
 
     if (!multiplayer_is_locked()) {
-        if ((tig_net_flags & TIG_NET_HOST) == 0) {
+        if (!tig_net_is_host()) {
             return state;
         }
 

@@ -646,8 +646,8 @@ bool sub_4A7340(int64_t obj, const char* str)
     int score;
     int index;
 
-    if ((tig_net_flags & TIG_NET_CONNECTED) != 0
-        && (tig_net_flags & TIG_NET_HOST) == 0) {
+    if (tig_net_is_active()
+        && !tig_net_is_host()) {
         return false;
     }
 
