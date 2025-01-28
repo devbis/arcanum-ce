@@ -89,7 +89,7 @@ static void sub_54EB60();
 static void sub_54EBF0();
 static void sub_54ECD0();
 static void sub_54ED30(S4F2810* a1);
-static void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location);
+static void sub_550000(int64_t critter_obj, Hotkey* a2, int inventory_location);
 static bool sub_5501C0();
 static bool sub_5503F0(int a1, int a2);
 static void iso_interface_window_disable(int window_type);
@@ -3538,14 +3538,14 @@ void sub_54ED30(S4F2810* a1)
 }
 
 // 0x54FCF0
-void sub_54FCF0(S683518* a1)
+void sub_54FCF0(Hotkey* hotkey)
 {
     int64_t pc_obj;
     int64_t weapon_obj;
     int64_t v1;
     int64_t v2;
 
-    if ((a1->field_4 & 0x1) != 0) {
+    if ((hotkey->flags & HOTKEY_DRAGGED) != 0) {
         return;
     }
 
@@ -3566,12 +3566,12 @@ void sub_54FCF0(S683518* a1)
         return;
     }
 
-    switch (a1->field_8) {
-    case 1:
+    switch (hotkey->type) {
+    case HOTKEY_ITEM:
         sub_551A80(0);
-        sub_444130(&(a1->field_10));
-        if (obj_field_handle_get(a1->field_10.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
-            v2 = a1->field_10.obj;
+        sub_444130(&(hotkey->item_obj));
+        if (obj_field_handle_get(hotkey->item_obj.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
+            v2 = hotkey->item_obj.obj;
             if (obj_field_int32_get(v2, OBJ_F_TYPE) != OBJ_TYPE_WRITTEN
                 || (sub_462C30(pc_obj, v2)
                     && (obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) == 0)) {
@@ -3585,13 +3585,13 @@ void sub_54FCF0(S683518* a1)
                 || (obj_field_int32_get(v2, OBJ_F_ITEM_FLAGS) & OIF_USE_IS_THROW) != 0) {
                 switch (obj_field_int32_get(v2, OBJ_F_TYPE)) {
                 case OBJ_TYPE_WEAPON:
-                    sub_550000(pc_obj, a1, ITEM_INV_LOC_WEAPON);
+                    sub_550000(pc_obj, hotkey, ITEM_INV_LOC_WEAPON);
                     break;
                 case OBJ_TYPE_AMMO:
                 case OBJ_TYPE_GOLD:
                     break;
                 case OBJ_TYPE_ARMOR:
-                    sub_550000(pc_obj, a1, item_location_get(v2));
+                    sub_550000(pc_obj, hotkey, item_location_get(v2));
                     break;
                 default:
                     v1 = sub_573620();
@@ -3611,22 +3611,22 @@ void sub_54FCF0(S683518* a1)
             }
         }
         break;
-    case 2:
-        sub_579FA0(pc_obj, a1->field_C);
+    case HOTKEY_SKILL:
+        sub_579FA0(pc_obj, hotkey->data);
         break;
-    case 3:
-        sub_579FA0(pc_obj, a1->field_C);
+    case HOTKEY_SPELL:
+        sub_57BC70(pc_obj, hotkey->data);
         break;
-    case 4:
-        sub_444130(&(a1->field_10));
+    case HOTKEY_ITEM_SPELL:
+        sub_444130(&(hotkey->item_obj));
 
         weapon_obj = item_wield_get(pc_obj, ITEM_INV_LOC_WEAPON);
-        if (obj_field_handle_get(a1->field_10.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
-            if (weapon_obj == a1->field_10.obj) {
-                sub_57C080(a1->field_10.obj, a1->field_C);
+        if (obj_field_handle_get(hotkey->item_obj.obj, OBJ_F_ITEM_PARENT) == pc_obj) {
+            if (weapon_obj == hotkey->item_obj.obj) {
+                sub_57C080(hotkey->item_obj.obj, hotkey->data);
             } else if (weapon_obj == OBJ_HANDLE_NULL || sub_464C80(weapon_obj)) {
-                if (item_wield_set(a1->field_10.obj, ITEM_INV_LOC_WEAPON)) {
-                    sub_57C080(a1->field_10.obj, a1->field_C);
+                if (item_wield_set(hotkey->item_obj.obj, ITEM_INV_LOC_WEAPON)) {
+                    sub_57C080(hotkey->item_obj.obj, hotkey->data);
                 }
             }
         }
@@ -3635,19 +3635,19 @@ void sub_54FCF0(S683518* a1)
 }
 
 // 0x550000
-void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location)
+void sub_550000(int64_t critter_obj, Hotkey* hotkey, int inventory_location)
 {
     int64_t item_obj;
     int v1;
     int sound_id;
 
     item_obj = item_wield_get(critter_obj, inventory_location);
-    if (item_obj == a2->field_10.obj) {
+    if (item_obj == hotkey->item_obj.obj) {
         return;
     }
 
     if (item_obj != OBJ_HANDLE_NULL) {
-        v1 = sub_464D20(a2->field_10.obj, inventory_location, critter_obj);
+        v1 = sub_464D20(hotkey->item_obj.obj, inventory_location, critter_obj);
         if (v1 != 0 && v1 != 4) {
             sub_4673F0(critter_obj, v1);
             return;
@@ -3658,7 +3658,7 @@ void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location)
         }
     }
 
-    v1 = sub_464D20(a2->field_10.obj, inventory_location, critter_obj);
+    v1 = sub_464D20(hotkey->item_obj.obj, inventory_location, critter_obj);
     if (v1 != 0) {
         sub_4673F0(critter_obj, v1);
         if (item_obj != OBJ_HANDLE_NULL) {
@@ -3667,7 +3667,7 @@ void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location)
         return;
     }
 
-    if (!item_wield_set(a2->field_10.obj, inventory_location)) {
+    if (!item_wield_set(hotkey->item_obj.obj, inventory_location)) {
         sub_4673F0(critter_obj, 0);
         if (item_obj != OBJ_HANDLE_NULL) {
             item_wield_set(item_obj, inventory_location);
@@ -3685,25 +3685,27 @@ void sub_550000(int64_t critter_obj, S683518* a2, int inventory_location)
         gsound_play_sfx_id(sound_id, 1);
     }
 
-    sub_57E5A0(a2);
+    sub_57E5A0(hotkey);
 }
 
 // 0x550150
-void sub_550150(S683518* a1)
+void sub_550150(Hotkey* hotkey)
 {
-    if ((a1->field_4 & 0x1) == 0) {
-        switch (a1->field_8) {
-        case 1:
-            sub_57CCF0(player_get_pc_obj(), a1->field_10.obj);
-            break;
-        case 2:
-            sub_5508C0(a1->field_C);
-            break;
-        case 3:
-        case 4:
-            sub_5507E0(a1->field_C);
-            break;
-        }
+    if ((hotkey->flags & HOTKEY_DRAGGED) != 0) {
+        return;
+    }
+
+    switch (hotkey->type) {
+    case HOTKEY_ITEM:
+        sub_57CCF0(player_get_pc_obj(), hotkey->item_obj.obj);
+        break;
+    case HOTKEY_SKILL:
+        sub_5508C0(hotkey->data);
+        break;
+    case HOTKEY_SPELL:
+    case HOTKEY_ITEM_SPELL:
+        sub_5507E0(hotkey->data);
+        break;
     }
 }
 
@@ -7819,16 +7821,16 @@ void sub_5570A0(int64_t obj)
 void sub_5570D0(int64_t obj, bool a2, int a3)
 {
     int index;
-    S683518* v1;
+    Hotkey* v1;
 
     for (index = 0; index < 10; index++) {
         v1 = sub_57F240(index);
-        if (a2 && v1->field_10.obj == obj) {
+        if (a2 && v1->item_obj.obj == obj) {
             sub_57EF90(index);
         }
 
-        if (v1->field_8 == 1 && v1->field_10.obj != OBJ_HANDLE_NULL) {
-            v1->field_40 = item_count_items_matching_prototype(player_get_pc_obj(), v1->field_10.obj);
+        if (v1->type == 1 && v1->item_obj.obj != OBJ_HANDLE_NULL) {
+            v1->count = item_count_items_matching_prototype(player_get_pc_obj(), v1->item_obj.obj);
             intgame_hotkey_refresh(index);
         }
     }

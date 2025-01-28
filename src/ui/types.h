@@ -70,17 +70,29 @@ typedef struct MainMenuWindowInfo {
 
 static_assert(sizeof(MainMenuWindowInfo) == 0x98, "wrong size");
 
-typedef struct S683518 {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
-    /* 0010 */ FollowerInfo field_10;
-    /* 0040 */ int field_40;
-    /* 0044 */ tig_art_id_t field_44;
-    /* 0048 */ UiButtonInfo info;
-} S683518;
+typedef uint32_t HotkeyFlags;
 
-static_assert(sizeof(S683518) == 0x58, "wrong size");
+#define HOTKEY_DRAGGED 0x0001u
+
+typedef enum HotkeyType {
+    HOTKEY_NONE,
+    HOTKEY_ITEM,
+    HOTKEY_SKILL,
+    HOTKEY_SPELL,
+    HOTKEY_ITEM_SPELL,
+} HotkeyType;
+
+typedef struct Hotkey {
+    /* 0000 */ int slot;
+    /* 0004 */ HotkeyFlags flags;
+    /* 0008 */ HotkeyType type;
+    /* 000C */ int data;
+    /* 0010 */ FollowerInfo item_obj;
+    /* 0040 */ int count;
+    /* 0044 */ tig_art_id_t art_id;
+    /* 0048 */ UiButtonInfo info;
+} Hotkey;
+
+static_assert(sizeof(Hotkey) == 0x58, "wrong size");
 
 #endif /* ARCANUM_UI_TYPES_H_ */
