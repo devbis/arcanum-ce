@@ -5242,7 +5242,7 @@ void sub_4578F0(MagicTechInfo* info, char* str)
     }
 
     if (!tig_str_parse_named_value(&curr, "Disabled:", &value1) || value1 == 0) {
-        info->flags |= 0x08;
+        info->flags |= MAGICTECH_IS_ENABLED;
     }
 }
 
@@ -6471,9 +6471,9 @@ void sub_459F50()
 }
 
 // 0x459F60
-bool sub_459F60(int magictech)
+bool magictech_is_enabled(int magictech)
 {
-    return (magictech_spells[magictech].flags & 8) != 0;
+    return (magictech_spells[magictech].flags & MAGICTECH_IS_ENABLED) != 0;
 }
 
 // 0x459F90

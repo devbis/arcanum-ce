@@ -164,7 +164,7 @@ bool sub_57BC70(int64_t obj, int spl)
         sub_57BFF0();
     }
 
-    if (!sub_459F60(spl)) {
+    if (!magictech_is_enabled(spl)) {
         dword_683508 = false;
         return true;
     }
