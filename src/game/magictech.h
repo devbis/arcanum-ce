@@ -219,6 +219,11 @@ typedef struct MagicTechCasterTargetPair {
     int target;
 } MagicTechCasterTargetPair;
 
+typedef uint32_t MagicTechFlags;
+
+#define MAGICTECH_FRIENDLY 0x0001u
+#define MAGICTECH_AGGRESSIVE 0x0002u
+
 typedef struct MagicTechInfo {
     /* 0000 */ const char* field_0;
     /* 0004 */ int iq;
@@ -231,7 +236,7 @@ typedef struct MagicTechInfo {
     /* 0028 */ int duration_stat_value;
     /* 002C */ int duration_trigger_count;
     /* 0030 */ int range;
-    /* 0034 */ unsigned int flags;
+    /* 0034 */ MagicTechFlags flags;
     /* 0038 */ unsigned int item_triggers;
     /* 003C */ MagicTechCasterTargetPair pairs[5];
     /* 0064 */ int missile;
@@ -347,7 +352,7 @@ int sub_4502B0(int magictech);
 int sub_4502E0(int a1);
 int magictech_get_iq(int magictech);
 int magictech_get_cost(int magictech);
-bool sub_450370(int magictech);
+bool magictech_is_aggressive(int magictech);
 bool sub_4503A0(int magictech);
 MagicTechMaintenanceInfo* magictech_get_maintenance(int magictech);
 int magictech_get_duration1(int magictech);

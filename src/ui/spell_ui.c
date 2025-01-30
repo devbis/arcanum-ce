@@ -175,7 +175,7 @@ bool sub_57BC70(int64_t obj, int spl)
     sub_459F20(spl, &tgt_ptr);
     tgt = *tgt_ptr;
 
-    if (sub_450370(dword_5CB3A0)
+    if (magictech_is_aggressive(dword_5CB3A0)
         && !tig_kb_is_key_pressed(DIK_LALT)
         && !tig_kb_is_key_pressed(DIK_RALT)) {
         // FIXME: Looks odd.
@@ -284,24 +284,24 @@ void sub_57C080(int64_t obj, int spl)
 // 0x57C0B0
 void sub_57C0B0()
 {
-    int64_t v1;
+    uint64_t tgt;
 
-    if (sub_450370(dword_5CB3A0)) {
-        v1 = sub_4F25D0();
-        v1 &= ~0x1000000000000000;
-        sub_4F25B0(v1);
+    if (magictech_is_aggressive(dword_5CB3A0)) {
+        tgt = sub_4F25D0();
+        tgt &= ~Tgt_Non_Party;
+        sub_4F25B0(tgt);
     }
 }
 
 // 0x57C0E0
 void sub_57C0E0()
 {
-    int64_t v1;
+    uint64_t tgt;
 
-    if (sub_450370(dword_5CB3A0)) {
-        v1 = sub_4F25D0();
-        v1 |= 0x1000000000000000;
-        sub_4F25B0(v1);
+    if (magictech_is_aggressive(dword_5CB3A0)) {
+        tgt = sub_4F25D0();
+        tgt |= Tgt_Non_Party;
+        sub_4F25B0(tgt);
     }
 }
 

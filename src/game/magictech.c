@@ -284,11 +284,11 @@ static const char* off_5B0C20[] = {
 };
 
 // 0x5B0C30
-static int dword_5B0C30[] = {
+static MagicTechFlags dword_5B0C30[] = {
     0,
-    1,
-    2,
-    3,
+    MAGICTECH_FRIENDLY,
+    MAGICTECH_AGGRESSIVE,
+    MAGICTECH_FRIENDLY | MAGICTECH_AGGRESSIVE,
 };
 
 // 0x5B0C40
@@ -1821,10 +1821,10 @@ int magictech_get_cost(int magictech)
 }
 
 // 0x450370
-bool sub_450370(int magictech)
+bool magictech_is_aggressive(int magictech)
 {
     if (magictech_initialized) {
-        return (magictech_spells[magictech].flags & 0x2) != 0;
+        return (magictech_spells[magictech].flags & MAGICTECH_AGGRESSIVE) != 0;
     } else {
         return false;
     }
@@ -3238,7 +3238,7 @@ bool sub_4537B0()
 
     if (dword_5E7620->stat == STAT_WILLPOWER
         && stat_atmax(stru_5E6D28.field_20, STAT_WILLPOWER)) {
-        if ((dword_5E7598->flags & 2) != 0
+        if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
             && dword_5E75F0->action != 2) {
             sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
         }
@@ -3406,7 +3406,7 @@ void sub_453D40()
 // 0x453EE0
 void sub_453EE0()
 {
-    if ((dword_5E7598->flags & 2) != 0
+    if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
         && stru_5E6D28.field_20 != OBJ_HANDLE_NULL
         && dword_5E75F0->action != 2) {
         sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
@@ -6418,7 +6418,7 @@ bool sub_459C10(int64_t obj, int magictech)
         && obj_type_is_critter(dword_5E75AC)) {
         if (info->resistance.stat == STAT_WILLPOWER
             && stat_atmax(obj, STAT_WILLPOWER)) {
-            if ((dword_5E7598->flags & 2) != 0
+            if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
                 && v1->action != 2) {
                 sub_453F20(dword_5E75F0->parent_obj.obj, obj);
             }
