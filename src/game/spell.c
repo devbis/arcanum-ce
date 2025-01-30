@@ -277,7 +277,7 @@ int spell_get_icon(int spell)
         return spell_icons[spell];
     }
 
-    return sub_459F90(spell) ? 36 : 35;
+    return magictech_is_magic(spell) ? 36 : 35;
 }
 
 // 0x4B15A0

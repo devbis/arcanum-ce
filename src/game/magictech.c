@@ -1645,7 +1645,7 @@ bool sub_44FE30(int a1, const char* path, int a3)
 
     while (magictech < MT_SPELL_COUNT) {
         sub_450090(dword_5E6D20, &(magictech_spells[magictech]), a3 + 2000, magictech);
-        magictech_spells[magictech].flags |= 0x04;
+        magictech_spells[magictech].flags |= MAGICTECH_IS_TECH;
         magictech_spells[magictech].iq = 0;
         magictech++;
     }
@@ -1681,7 +1681,7 @@ bool sub_44FFA0(int a1, const char* a2, int a3)
 
     while (magictech < MT_SPELL_COUNT) {
         sub_4501D0(dword_5E6D20, &(magictech_spells[magictech]), a3 + 2000, magictech);
-        magictech_spells[magictech].flags |= 0x04;
+        magictech_spells[magictech].flags |= MAGICTECH_IS_TECH;
         magictech_spells[magictech].iq = 0;
         magictech++;
     }
@@ -2417,7 +2417,7 @@ void sub_451C40(int magictech, int64_t obj)
         v1 = &(magictech_locks[index]);
         if (v1->source_obj.obj == obj
             && v1->field_0 != magictech
-            && (magictech_spells[v1->spell].flags & 0x4) == 0) {
+            && (magictech_spells[v1->spell].flags & MAGICTECH_IS_TECH) == 0) {
             magictech_interrupt_delayed(v1->field_0);
         }
     }
@@ -2427,7 +2427,7 @@ void sub_451C40(int magictech, int64_t obj)
         if ((v1->field_13C & 0x1) != 0) {
             if (v1->target_obj.obj == obj
                 && index != magictech
-                && (magictech_spells[v1->spell].flags & 0x4) == 0) {
+                && (magictech_spells[v1->spell].flags & MAGICTECH_IS_TECH) == 0) {
                 magictech_interrupt_delayed(v1->field_0);
             }
 
@@ -2435,7 +2435,7 @@ void sub_451C40(int magictech, int64_t obj)
             while (node != NULL) {
                 if (node->obj == obj
                     && index != magictech
-                    && (magictech_spells[v1->spell].flags & 0x4) == 0) {
+                    && (magictech_spells[v1->spell].flags & MAGICTECH_IS_TECH) == 0) {
                     magictech_interrupt_delayed(v1->field_0);
                 }
                 node = node->next;
@@ -2445,7 +2445,7 @@ void sub_451C40(int magictech, int64_t obj)
             while (node != NULL) {
                 if (node->obj == obj
                     && index != magictech
-                    && (magictech_spells[v1->spell].flags & 0x4) == 0) {
+                    && (magictech_spells[v1->spell].flags & MAGICTECH_IS_TECH) == 0) {
                     magictech_interrupt_delayed(v1->field_0);
                 }
                 node = node->next;
@@ -3174,7 +3174,7 @@ bool sub_4537B0()
         return true;
     }
 
-    if ((dword_5E7598->flags & 0x04) != 0) {
+    if ((dword_5E7598->flags & MAGICTECH_IS_TECH) != 0) {
         return true;
     }
 
@@ -3283,7 +3283,7 @@ int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell)
     obj_type = obj_field_int32_get(target_obj, OBJ_F_TYPE);
     info = &(magictech_spells[spell]);
 
-    if ((info->flags & 0x04) != 0) {
+    if ((info->flags & MAGICTECH_IS_TECH) != 0) {
         if (attacker_obj != target_obj) {
             resistance = obj_arrayfield_int32_get(target_obj, OBJ_F_RESISTANCE_IDX, RESISTANCE_TYPE_MAGIC);
             if (!dword_5E75A8) {
@@ -3457,7 +3457,7 @@ bool sub_4545E0(MagicTechLock* a1)
 
     for (idx = 0; idx < 512; idx++) {
         if ((magictech_locks[idx].field_13C & 0x01) != 0
-            && (magictech_spells[magictech_locks[idx].spell].flags & 0x04) == 0
+            && (magictech_spells[magictech_locks[idx].spell].flags & MAGICTECH_IS_TECH) == 0
             && magictech_locks[idx].parent_obj.obj == a1->parent_obj.obj
             && (magictech_locks[idx].field_13C & 0x04) != 0
             && magictech_spells[magictech_locks[idx].spell].maintenance.period > 0) {
@@ -3516,7 +3516,7 @@ bool sub_4547F0(TimeEvent* timeevent, DateTime* datetime)
     }
 
     if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
-        if ((magictech_spells[dword_5E75F0->spell].flags & 0x04) == 0
+        if ((magictech_spells[dword_5E75F0->spell].flags & MAGICTECH_IS_TECH) == 0
             && !sub_4604A0(dword_5E75F0->field_0)) {
             dword_5E75F0->action = 2;
         }
@@ -5012,7 +5012,7 @@ void sub_457450(int64_t obj)
     for (index = 0; index < 512; index++) {
         if (magictech_locks[index].source_obj.obj == obj) {
             info = &(magictech_spells[magictech_locks[index].spell]);
-            if ((info->flags & 0x4) == 0
+            if ((info->flags & MAGICTECH_IS_TECH) == 0
                 && (info->item_triggers == 0 || info->maintenance.period > 0)) {
                 magictech_interrupt_delayed(magictech_locks[index].field_0);
             }
@@ -5304,7 +5304,7 @@ void sub_457B20(MagicTechInfo* info, char* str)
 
     if (tig_str_parse_named_value(&curr, "Is_Tech:", &value)) {
         if (value != 0) {
-            info->flags |= 0x04;
+            info->flags |= MAGICTECH_IS_TECH;
         }
     }
 }
@@ -6374,7 +6374,7 @@ bool sub_459C10(int64_t obj, int magictech)
 
     info = &(magictech_spells[v1->spell]);
     maintenance = magictech_get_maintenance(v1->spell);
-    if ((info->flags & 0x04) != 0
+    if ((info->flags & MAGICTECH_IS_TECH) != 0
         || (v1->field_13C & 0x10) != 0
         || obj == OBJ_HANDLE_NULL) {
         return true;
@@ -6477,15 +6477,15 @@ bool sub_459F60(int magictech)
 }
 
 // 0x459F90
-bool sub_459F90(int magictech)
+bool magictech_is_magic(int magictech)
 {
-    return (magictech_spells[magictech].flags & 4) == 0;
+    return (magictech_spells[magictech].flags & MAGICTECH_IS_TECH) == 0;
 }
 
 // 0x459FC0
-bool sub_459FC0(int magictech)
+bool magictech_is_tech(int magictech)
 {
-    return (magictech_spells[magictech].flags & 4) != 0;
+    return (magictech_spells[magictech].flags & MAGICTECH_IS_TECH) != 0;
 }
 
 // 0x459FF0

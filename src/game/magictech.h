@@ -223,6 +223,7 @@ typedef uint32_t MagicTechFlags;
 
 #define MAGICTECH_FRIENDLY 0x0001u
 #define MAGICTECH_AGGRESSIVE 0x0002u
+#define MAGICTECH_IS_TECH 0x0004u
 
 typedef struct MagicTechInfo {
     /* 0000 */ const char* field_0;
@@ -413,8 +414,8 @@ void sub_459EA0(int64_t obj);
 bool sub_459F20(int magictech, uint64_t** a2);
 void sub_459F50();
 bool sub_459F60(int magictech);
-bool sub_459F90(int magictech);
-bool sub_459FC0(int magictech);
+bool magictech_is_magic(int magictech);
+bool magictech_is_tech(int magictech);
 bool sub_459FF0(int magictech);
 bool sub_45A030(int magictech);
 int magictech_get_aptitude_adj(int64_t sector_id);

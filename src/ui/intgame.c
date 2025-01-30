@@ -4544,7 +4544,7 @@ void sub_551660()
         for (index = 0; index < 5; index++) {
             spl = mt_item_spell(qword_64C688, index);
             if (spl != -1
-                && !sub_459FC0(spl)
+                && !magictech_is_tech(spl)
                 && stru_5C6C18[index].art_num != -1) {
                 stru_5C6C18[index].art_num = spell_get_icon(spl);
                 tig_art_interface_id_create(stru_5C6C18[index].art_num, 0, 0, 0, &art_id);
