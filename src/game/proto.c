@@ -57,7 +57,7 @@ typedef enum ProtoField {
 
 static ObjectType sub_4685D0(int description);
 static int sub_468600(ObjectType object_type);
-static void sub_468660(bool* error_ptr);
+static void sub_468660(bool* rescan_ptr);
 static int sub_468720(ObjectType object_type);
 static void sub_468800();
 static bool proto_save(long long obj);
@@ -76,6 +76,10 @@ static bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
 static int sub_49BF10(const char* str, const char** identifiers, int size);
 static void sub_49C060(long long obj, TigFile* stream, int type);
 static void sub_49C610(TigFile* stream, const char* name, int value, const char** identifiers, int size);
+static void proto_id_list_create(int** proto_ids_ptr, int* cnt_ptr);
+static int proto_id_list_sort(const int* a, const int* b);
+static bool proto_id_list_check(int* proto_ids, int cnt, int id);
+static void proto_id_list_destroy(int* proto_ids);
 
 // 0x5B37FC
 static int dword_5B37FC[OBJ_TYPE_COUNT] = {
@@ -220,7 +224,7 @@ static bool initialized;
 bool proto_init(GameInitInfo* init_info)
 {
     unsigned int index;
-    bool error;
+    bool rescan;
     TigFileList file_list;
     char path[TIG_MAX_PATH];
     TigFile* stream;
@@ -238,10 +242,10 @@ bool proto_init(GameInitInfo* init_info)
         dword_5E882C[index] = sub_468860(sub_468600(index));
     }
 
-    error = false;
-    sub_468660(&error);
+    rescan = false;
+    sub_468660(&rescan);
 
-    if (error) {
+    if (rescan) {
         obj_exit();
         if (!obj_init(init_info)) {
             FREE(dword_5E882C);
@@ -361,24 +365,42 @@ bool sub_468610(int description)
 }
 
 // 0x468660
-void sub_468660(bool* error_ptr)
+void sub_468660(bool* rescan_ptr)
 {
-    int object_type;
-    int description;
-    ObjectID object_id;
-    const char* name;
-    char path[TIG_MAX_PATH];
+    int type;
+    int oname;
+    ObjectID oid;
+    int* proto_ids;
+    int proto_ids_cnt;
 
     tig_debug_printf("Reading prototypes...\n");
 
-    for (object_type = 0; object_type < 20; object_type++) {
-        for (description = dword_5B37FC[object_type]; description < dword_5B384C[object_type]; description++) {
-            object_id = sub_468860(description);
-            name = o_name_get(sub_468720(object_type));
-            sprintf(path, "proto\\%06d - %s.pro", object_id.d.a, name);
-            if (!tig_file_exists(path, NULL)) {
-                sub_468890(description);
-                *error_ptr = true;
+    // FIX: Refactor scanning protos.
+    //
+    // There is a bug in the original code between this function and
+    // `proto_save`. The latter attempts to build proto path by using a
+    // different approach - instead of querying the name from the `o_name`
+    // module (which simply returns the category name, i.e., "Wall", "Weapon",
+    // etc.), it queries the object's name via the `OBJ_F_NAME` field. This
+    // leads to some discrepancies because the prototype properties
+    // initialization routine overrides `OBJ_F_NAME` on some objects. For
+    // example, this function checks for the existence of `010144 - Food.pro`,
+    // but `proto_save` writes it as `010144 - 3619 Dragon Pool Blood.pro`. On
+    // startup, this leads to recreation of some protos, and reinitialization
+    // of obj system.
+    //
+    // Instead of scanning entire folder for every prototype, we scan it once,
+    // parse proto ids and store them in the sorted array. This way we're
+    // covering both cases from `proto_save`.
+
+    proto_id_list_create(&proto_ids, &proto_ids_cnt);
+
+    for (type = 0; type < 20; type++) {
+        for (oname = dword_5B37FC[type]; oname < dword_5B384C[type]; oname++) {
+            oid = sub_468860(oname);
+            if (!proto_id_list_check(proto_ids, proto_ids_cnt, oid.d.a)) {
+                sub_468890(oname);
+                *rescan_ptr = true;
             }
         }
     }
@@ -16629,4 +16651,73 @@ void sub_49C610(TigFile* stream, const char* name, int value, const char** ident
             tig_file_fprintf(stream, "%s: %s\n", name, identifiers[index]);
         }
     }
+}
+
+int proto_id_list_sort(const int* a, const int* b)
+{
+    return *a - *b;
+}
+
+void proto_id_list_create(int** proto_ids_ptr, int* cnt_ptr)
+{
+    TigFileList file_list;
+    int* proto_ids;
+    int cnt;
+    unsigned int idx;
+    int id;
+
+    tig_file_list_create(&file_list, "proto\\*.pro");
+
+    if (file_list.count != 0) {
+        cnt = 0;
+        proto_ids = (int*)MALLOC(sizeof(int) * file_list.count);
+        for (idx = 0; idx < file_list.count; idx++) {
+            id = atoi(file_list.entries[idx].path);
+            if (id != 0) {
+                proto_ids[cnt++] = id;
+            }
+        }
+
+        if (cnt != 0) {
+            qsort(proto_ids, cnt, sizeof(*proto_ids), proto_id_list_sort);
+        }
+    } else {
+        proto_ids = NULL;
+        cnt = 0;
+    }
+
+    tig_file_list_destroy(&file_list);
+
+    *proto_ids_ptr = proto_ids;
+    *cnt_ptr = cnt;
+}
+
+bool proto_id_list_check(int* proto_ids, int cnt, int id)
+{
+    int l;
+    int r;
+    int m;
+
+    l = 0;
+    r = cnt - 1;
+    while (l <= r) {
+        m = (l + r) / 2;
+
+        if (proto_ids[m] == id) {
+            return true;
+        }
+
+        if (proto_ids[m] < id) {
+            l = m + 1;
+        } else {
+            r = m - 1;
+        }
+    }
+
+    return false;
+}
+
+void proto_id_list_destroy(int* proto_ids)
+{
+    FREE(proto_ids);
 }
