@@ -25,10 +25,8 @@ typedef struct QuestInfo {
 static_assert(sizeof(QuestInfo) == 0x18, "wrong size");
 
 typedef struct PcQuestState {
-    /* 0000 */ int field_0;
-    /* 0004 */ int field_4;
-    /* 0008 */ int field_8;
-    /* 000C */ int field_C;
+    /* 0000 */ DateTime datetime;
+    /* 0008 */ int state;
 } PcQuestState;
 
 static_assert(sizeof(PcQuestState) == 0x10, "wrong size");

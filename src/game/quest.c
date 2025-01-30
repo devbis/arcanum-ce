@@ -25,13 +25,6 @@ typedef struct Quest {
 
 static_assert(sizeof(Quest) == 0x64, "wrong size");
 
-typedef struct PcQuestStateInfo {
-    /* 0000 */ DateTime datetime;
-    /* 0008 */ int state;
-} PcQuestStateInfo;
-
-static_assert(sizeof(PcQuestStateInfo) == 0x10, "wrong size");
-
 static bool quest_parse(const char* path, int start, int end);
 static int quest_compare(const QuestInfo* a, const QuestInfo* b);
 
@@ -237,7 +230,7 @@ int sub_4C4C00(int64_t a1, int64_t a2, int num)
 // 0x4C4CB0
 int sub_4C4CB0(int64_t obj, int num)
 {
-    PcQuestStateInfo pc_quest_state;
+    PcQuestState pc_quest_state;
     int state;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
@@ -310,7 +303,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
 {
     int old_state;
     Packet39 pkt;
-    PcQuestStateInfo pc_quest_state;
+    PcQuestState pc_quest_state;
     int reaction;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
@@ -386,7 +379,7 @@ int sub_4C4E60(int64_t obj, int num, int state, int64_t a4)
 int sub_4C5070(int64_t obj, int num)
 {
     int state;
-    PcQuestStateInfo pc_quest_state;
+    PcQuestState pc_quest_state;
     Packet40 pkt;
 
     state = quest_get_state(num);
@@ -489,24 +482,24 @@ void quest_copy_description(object_id_t obj, int num, char* buffer)
 int quest_copy_state(int64_t obj, QuestInfo* quests1)
 {
     int index;
-    PcQuestStateInfo pc_quest_state[2000];
+    PcQuestState pc_quests[2000];
     int cnt;
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) != OBJ_TYPE_PC) {
         return 0;
     }
 
-    obj_arrayfield_pc_quest_copy_to_flat(obj, OBJ_F_PC_QUEST_IDX, 1999, pc_quest_state);
+    obj_arrayfield_pc_quest_copy_to_flat(obj, OBJ_F_PC_QUEST_IDX, 1999, pc_quests);
 
     cnt = 0;
     for (index = 0; index < 2000; index++) {
-        if ((pc_quest_state[index].state & ~0x100) != QUEST_STATE_UNKNOWN) {
+        if ((pc_quests[index].state & ~0x100) != QUEST_STATE_UNKNOWN) {
             quests1[cnt].num = index;
-            quests1[cnt].datetime = pc_quest_state[index].datetime;
-            if ((pc_quest_state[index].state & 0x100) != 0) {
+            quests1[cnt].datetime = pc_quests[index].datetime;
+            if ((pc_quests[index].state & 0x100) != 0) {
                 quests1[cnt].state = QUEST_STATE_BOTCHED;
             } else {
-                quests1[cnt].state = pc_quest_state[index].state;
+                quests1[cnt].state = pc_quests[index].state;
             }
         }
     }
@@ -538,7 +531,7 @@ int quest_get_xp(int xp_level)
 // 0x4C5400
 bool sub_4C5400(int64_t a1, int64_t a2)
 {
-    PcQuestStateInfo pc_quests[2000];
+    PcQuestState pc_quests[2000];
     int index;
     int state;
     int other_state;
