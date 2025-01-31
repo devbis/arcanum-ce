@@ -4472,7 +4472,7 @@ void sub_442F10(object_id_t obj, const tig_color_t* colors)
     TigArtFrameData art_frame_data;
     tig_color_t color;
 
-    render_colors = (int)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
+    render_colors = (tig_color_t*)obj_field_int32_get(obj, OBJ_F_RENDER_COLORS); // TODO: x64
     if (render_colors == NULL) {
         render_colors = sub_442FE0();
         obj_field_int32_set(obj, OBJ_F_RENDER_COLORS, (int)render_colors); // TODO: x64
