@@ -158,6 +158,7 @@ static bool sub_458D90(int64_t a1, int* a2);
 static bool sub_459290(int64_t obj, int spell, int* index_ptr);
 static void sub_459490(int magictech);
 static bool sub_4594D0(TimeEvent* timeevent);
+static bool sub_459590(object_id_t obj, int a2, bool a3);
 static bool sub_459640(TimeEvent* timeevent);
 static void sub_45A480(MagicTechLock* a1);
 static void sub_45A760(object_id_t obj, const char* msg);
@@ -1976,7 +1977,157 @@ int magictech_get_duration1(int magictech)
 // 0x450420
 bool sub_450420(int64_t obj, int cost, bool a3, int magictech)
 {
-    // TODO: Incomplete.
+    MagicTechInfo* info;
+    bool charges_from_cells = false;
+    int obj_type;
+    int64_t parent_obj;
+
+    if (tig_net_is_active() && !multiplayer_is_locked()) {
+        Packet76 pkt;
+
+        if (!tig_net_is_host()) {
+            return true;
+        }
+
+        pkt.type = 76;
+        pkt.oid = sub_407EF0(obj);
+        pkt.cost = cost;
+        pkt.field_24 = a3;
+        pkt.magictech = magictech;
+        tig_net_send_app_all(&pkt, sizeof(pkt));
+    }
+
+    if (magictech != 10000) {
+        info = &(magictech_spells[magictech]);
+        if (magictech >= 0
+            && magictech < MT_SPELL_COUNT
+            && info != NULL
+            && (info->flags & 0x20) != 0) {
+            charges_from_cells = true;
+        }
+    } else {
+        info = NULL;
+    }
+
+    if (cost <= 0) {
+        return true;
+    }
+
+    dword_5E762C = cost;
+
+    if (obj == OBJ_HANDLE_NULL) {
+        return true;
+    }
+
+    obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);
+
+    if (charges_from_cells) {
+        if (obj_type_is_item(obj_type)) {
+            parent_obj = obj_field_handle_get(obj, OBJ_F_ITEM_PARENT);
+            cost = 2 * cost - sub_461590(obj, parent_obj, cost);
+        } else {
+            parent_obj = obj;
+        }
+
+        if (item_ammo_quantity_get(parent_obj, TIG_ART_AMMO_TYPE_CHARGE) < cost) {
+            return false;
+        }
+
+        if (!item_ammo_transfer(parent_obj, OBJ_HANDLE_NULL, cost, TIG_ART_AMMO_TYPE_CHARGE, OBJ_HANDLE_NULL)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    if (obj_type_is_critter(obj_type)
+        && (obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS) & OCF_FATIGUE_LIMITING) != 0) {
+        cost /= 2;
+        if (cost == 0) {
+            cost = 1;
+        }
+    }
+
+    if (obj_type_is_critter(obj_type)) {
+        int inventory_location;
+        int64_t item_obj;
+        int mana_store;
+        int new_mana_store;
+        int item_mana_cost;
+
+        for (inventory_location = FIRST_WEAR_INV_LOC; inventory_location <= LAST_WEAR_INV_LOC; inventory_location++) {
+            item_obj = item_wield_get(obj, inventory_location);
+            if (item_obj != OBJ_HANDLE_NULL) {
+                mana_store = obj_field_int32_get(item_obj, OBJ_F_ITEM_MANA_STORE);
+                if (mana_store != 0) {
+                    if (mana_store >= cost) {
+                        item_mana_cost = cost;
+                        new_mana_store = mana_store - cost;
+                        cost = 0;
+                    } else {
+                        item_mana_cost = mana_store;
+                        new_mana_store = 0;
+                        cost -= mana_store;
+                    }
+
+                    if (a3) {
+                        obj_field_int32_set(item_obj, OBJ_F_ITEM_MANA_STORE, new_mana_store);
+                        sub_459590(item_obj, item_mana_cost, true);
+                        sub_4605D0();
+
+                        if (new_mana_store == 0) {
+                            mt_ai_notify_item_exhausted(obj, item_obj);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (cost != 0) {
+            if (critter_fatigue_current(obj) - cost <= -15) {
+                return false;
+            }
+
+            if (a3) {
+                int fatigue_dam = critter_fatigue_damage_get(obj);
+                if (critter_fatigue_damage_set(obj, fatigue_dam + cost) == 0) {
+                    return false;
+                }
+
+                if (info != NULL
+                    && (info->maintenance.period != 0 || info->duration1 == 0)
+                    && critter_fatigue_current(obj) < 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    if (obj_type_is_item(obj_type)) {
+        int mana_store;
+        unsigned int item_flags;
+
+        mana_store = obj_field_int32_get(obj, OBJ_F_ITEM_SPELL_MANA_STORE);
+        if (mana_store == 0) {
+            return false;
+        }
+        if (mana_store > 0) {
+            item_flags = obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS);
+            item_flags |= OIF_IS_MAGICAL;
+            obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, item_flags);
+
+            if (a3) {
+                obj_field_int32_set(obj, OBJ_F_ITEM_SPELL_MANA_STORE, mana_store - 1);
+                sub_4605D0();
+            }
+        }
+
+        return true;
+    }
+
+    return true;
 }
 
 // 0x4507B0

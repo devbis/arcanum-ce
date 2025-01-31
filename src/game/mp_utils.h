@@ -582,6 +582,16 @@ typedef struct Packet75 {
 
 static_assert(sizeof(Packet75) == 0x78, "wrong size");
 
+typedef struct Packet76 {
+    /* 0000 */ int type;
+    /* 0008 */ ObjectID oid;
+    /* 0020 */ int cost;
+    /* 0024 */ bool field_24;
+    /* 0028 */ int magictech;
+} Packet76;
+
+static_assert(sizeof(Packet76) == 0x30, "wrong size");
+
 typedef struct Packet77 {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
