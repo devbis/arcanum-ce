@@ -1450,25 +1450,20 @@ bool sub_44F620(MagicTechLock* lock, TigFile* stream)
 // 0x44F7A0
 void magictech_break_nodes_to_map(const char* map)
 {
-    // TODO: Incomplete.
-}
-
-// 0x44FA70
-void magictech_save_nodes_to_map(const char* map)
-{
     char path[TIG_MAX_PATH];
     TigFile* stream;
     bool append;
     int cnt;
-    int index;
+    int idx;
+    MagicTechObjectNode* node;
 
     sprintf(path, "save\\current\\maps\\%s\\MT.dat", map);
 
-    append = false;
     if (tig_file_exists(path, NULL)) {
         append = true;
         stream = tig_file_fopen(path, "r+b");
     } else {
+        append = false;
         stream = tig_file_fopen(path, "wb");
     }
 
@@ -1505,16 +1500,63 @@ void magictech_save_nodes_to_map(const char* map)
         }
     }
 
-    for (index = 0; index < 512; index++) {
-        if ((magictech_locks[index].field_13C & 0x1) != 0) {
-            if (!sub_44F3C0(&(magictech_locks[index]), stream)) {
+    for (idx = 0; idx < 512; idx++) {
+        if ((magictech_locks[idx].field_13C & 0x01) != 0) {
+            if (magictech_locks[idx].source_obj.obj != OBJ_HANDLE_NULL
+                && !teleport_is_teleporting_obj(magictech_locks[idx].source_obj.obj)) {
+                sub_457270(idx);
+                continue;
+            }
+
+            if (magictech_locks[idx].parent_obj.obj != magictech_locks[idx].source_obj.obj
+                && magictech_locks[idx].parent_obj.obj != OBJ_HANDLE_NULL
+                && !teleport_is_teleporting_obj(magictech_locks[idx].parent_obj.obj)) {
+                sub_457270(idx);
+                continue;
+            }
+
+            if (magictech_locks[idx].target_obj.obj != OBJ_HANDLE_NULL
+                && !teleport_is_teleporting_obj(magictech_locks[idx].target_obj.obj)) {
+                sub_457270(idx);
+                continue;
+            }
+
+            node = magictech_locks[idx].objlist;
+            while (node != NULL) {
+                if (node->obj != OBJ_HANDLE_NULL
+                    && !teleport_is_teleporting_obj(node->obj)) {
+                    sub_457270(idx);
+                    break;
+                }
+                node = node->next;
+            }
+            if (node != NULL) {
+                continue;
+            }
+
+            node = magictech_locks[idx].summoned_obj;
+            while (node != NULL) {
+                if (node->obj != OBJ_HANDLE_NULL
+                    && !teleport_is_teleporting_obj(node->obj)) {
+                    sub_457270(idx);
+                    break;
+                }
+                node = node->next;
+            }
+            if (node != NULL) {
+                continue;
+            }
+
+            if (!sub_44F3C0(&(magictech_locks[idx]), stream)) {
                 break;
             }
+
+            magictech_id_free_lock(idx);
             cnt++;
         }
     }
 
-    if (index < 512) {
+    if (idx < 512) {
         tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Failed to save out nodes!\n");
         tig_file_fclose(stream);
         return;
@@ -1523,6 +1565,85 @@ void magictech_save_nodes_to_map(const char* map)
     if (tig_file_fseek(stream, 0, SEEK_SET) != 0
         || tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
         tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    tig_file_fclose(stream);
+}
+
+// 0x44FA70
+void magictech_save_nodes_to_map(const char* map)
+{
+    char path[TIG_MAX_PATH];
+    TigFile* stream;
+    bool append;
+    int cnt;
+    int idx;
+
+    sprintf(path, "save\\current\\maps\\%s\\MT.dat", map);
+
+    if (tig_file_exists(path, NULL)) {
+        append = true;
+        stream = tig_file_fopen(path, "r+b");
+    } else {
+        append = false;
+        stream = tig_file_fopen(path, "wb");
+    }
+
+    if (stream == NULL) {
+        // FIXME: Message is misleading, informs about TimeEvent, not magictech.
+        tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Couldn't create TimeEvent data file for map!\n");
+        return;
+    }
+
+    cnt = 0;
+    if (!append) {
+        if (tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+            tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+    } else {
+        if (tig_file_fseek(stream, 0, SEEK_SET) != 0) {
+            tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Seeking to start of data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+
+        if (tig_file_fread(&cnt, sizeof(cnt), 1, stream) != 1) {
+            tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Reading Header to data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+
+        if (tig_file_fseek(stream, 0, SEEK_END) != 0) {
+            tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Seeking to end of data file for map!\n");
+            tig_file_fclose(stream);
+            return;
+        }
+    }
+
+    for (idx = 0; idx < 512; idx++) {
+        if ((magictech_locks[idx].field_13C & 0x1) != 0) {
+            if (!sub_44F3C0(&(magictech_locks[idx]), stream)) {
+                break;
+            }
+            cnt++;
+        }
+    }
+
+    if (idx < 512) {
+        tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Failed to save out nodes!\n");
+        tig_file_fclose(stream);
+        return;
+    }
+
+    if (tig_file_fseek(stream, 0, SEEK_SET) != 0
+        || tig_file_fwrite(&cnt, sizeof(cnt), 1, stream) != 1) {
+        tig_debug_printf("MagicTech: magictech_save_nodes_to_map: ERROR: Writing Header to data file for map!\n");
+        tig_file_fclose(stream);
+        return;
     }
 
     tig_file_fclose(stream);
