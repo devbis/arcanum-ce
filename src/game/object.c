@@ -1071,7 +1071,7 @@ void sub_43C690(UnknownContext* render_info)
         is_detecting_invisible = sub_458A80(OSF_DETECTING_INVISIBLE);
         flags = obj_field_int32_get(object_hover_obj, OBJ_F_FLAGS);
         if (!is_detecting_invisible
-            || (object_hover_obj & (OF_DONTDRAW | OF_INVISIBLE)) != 0) {
+            && (flags & (OF_DONTDRAW | OF_INVISIBLE)) != 0) {
             return;
         }
 
