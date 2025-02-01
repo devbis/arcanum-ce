@@ -251,7 +251,7 @@ typedef struct MagicTechInfo {
 
 static_assert(sizeof(MagicTechInfo) == 0x158, "wrong size");
 
-typedef struct MagicTechLock {
+typedef struct MagicTechRunInfo {
     /* 0000 */ int id;
     /* 0004 */ int spell;
     /* 0008 */ MagicTechAction action;
@@ -269,9 +269,9 @@ typedef struct MagicTechLock {
     /* 0148 */ DateTime field_148;
     /* 0150 */ int field_150;
     /* 0154 */ int field_154;
-} MagicTechLock;
+} MagicTechRunInfo;
 
-static_assert(sizeof(MagicTechLock) == 0x158, "wrong size");
+static_assert(sizeof(MagicTechRunInfo) == 0x158, "wrong size");
 
 typedef struct MagicTechSerializedData {
     /* 0000 */ int spell;
@@ -328,7 +328,7 @@ extern const char* off_5BA434[6];
 extern const char* off_5BA44C[31];
 extern const char* off_5BA4C8[1];
 extern MagicTechInfo* magictech_spells;
-extern MagicTechLock* magictech_locks;
+extern MagicTechRunInfo* magictech_run_info;
 
 bool magictech_init(GameInitInfo* init_info);
 void magictech_reset();
@@ -357,7 +357,7 @@ bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech);
 bool sub_450940(int mt_id);
 int sub_450B40(int64_t obj);
 void magictech_effect_summon(MagicTechSummonInfo* summon_info);
-void sub_451070(MagicTechLock* a1);
+void sub_451070(MagicTechRunInfo* a1);
 void sub_451BB0(int64_t obj, int mt_id);
 void sub_452650(int64_t obj);
 void magictech_process(int64_t obj, void* a2, int a3);
@@ -365,7 +365,7 @@ int sub_453B20(int64_t attacker_obj, int64_t target_obj, int spell);
 int sub_453CC0(int64_t a1, int64_t item_obj, int64_t a3);
 bool sub_454920(int64_t obj, int num, int max);
 void magictech_component_obj_flag(int64_t a1, int64_t a2, int a3, int a4, int a5, int64_t a6, int64_t a7);
-bool sub_4557C0(int mt_id, MagicTechLock** lock_ptr);
+bool magictech_id_to_run_info(int mt_id, MagicTechRunInfo** lock_ptr);
 void sub_455A20(MagicTechSerializedData* a1, int64_t obj, int a3);
 void sub_455AC0(MagicTechSerializedData* a1);
 bool sub_4564E0(MagicTechSerializedData* a1);
@@ -379,7 +379,7 @@ void sub_456EC0(int64_t obj, int spell);
 void sub_456F70(int mt_id);
 void sub_456FA0(int mt_id, unsigned int flags);
 void sub_457000(int mt_id, int action);
-void sub_457060(MagicTechLock* a1);
+void sub_457060(MagicTechRunInfo* a1);
 void sub_457100();
 void sub_457110(int mt_id);
 void magictech_interrupt_delayed(int mt_id);

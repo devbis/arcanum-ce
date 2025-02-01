@@ -426,25 +426,25 @@ void sub_57C370(int index)
 // 0x57C3F0
 void sub_57C3F0(int index)
 {
-    MagicTechLock* lock;
+    MagicTechRunInfo* run_info;
     int64_t obj;
 
     // FIXME: Unused.
     player_get_pc_obj();
 
     if (stru_5CB3A8[index].field_4 == 1
-        && sub_4557C0(stru_5CB3A8[index].mt_id, &lock)) {
-        obj = lock->target_obj.obj;
+        && magictech_id_to_run_info(stru_5CB3A8[index].mt_id, &run_info)) {
+        obj = run_info->target_obj.obj;
         if (obj == OBJ_HANDLE_NULL) {
-            if (lock->summoned_obj != NULL) {
-                obj = lock->summoned_obj->obj;
+            if (run_info->summoned_obj != NULL) {
+                obj = run_info->summoned_obj->obj;
             }
             if (obj == OBJ_HANDLE_NULL) {
-                obj = lock->parent_obj.obj;
+                obj = run_info->parent_obj.obj;
             }
         }
 
-        sub_5507E0(lock->spell);
+        sub_5507E0(run_info->spell);
 
         if (obj != OBJ_HANDLE_NULL) {
             sub_43C270(obj);
