@@ -1684,16 +1684,16 @@ void map_apply_obj_patch(int64_t obj, char* str)
             flags = obj_field_int32_get(obj, OBJ_F_FLAGS);
             sub_411880(&str, value);
             if (value[0] == '!') {
-                for (index = 0; index < 31; index++) {
-                    if (strcmpi(value + 1, off_5BA10C[index]) == 0) {
+                for (index = 0; index < OF_COUNT; index++) {
+                    if (strcmpi(&(value[1]), obj_flags_of[index]) == 0) {
                         flags &= ~(1 << index);
                         break;
                     }
                 }
             } else {
-                for (index = 0; index < 31; index++) {
-                    if (strcmpi(value + 1, off_5BA10C[index]) == 0) {
-                        flags &= 1 << index;
+                for (index = 0; index < OF_COUNT; index++) {
+                    if (strcmpi(value, obj_flags_of[index]) == 0) {
+                        flags |= 1 << index;
                         break;
                     }
                 }
@@ -1703,16 +1703,16 @@ void map_apply_obj_patch(int64_t obj, char* str)
             flags = obj_field_int32_get(obj, OBJ_F_PORTAL_FLAGS);
             sub_411880(&str, value);
             if (value[0] == '!') {
-                for (index = 0; index < 9; index++) {
-                    if (strcmpi(value + 1, off_5BA218[index]) == 0) {
+                for (index = 0; index < OPF_COUNT; index++) {
+                    if (strcmpi(&(value[1]), obj_flags_opf[index]) == 0) {
                         flags &= ~(1 << index);
                         break;
                     }
                 }
             } else {
-                for (index = 0; index < 9; index++) {
-                    if (strcmpi(value + 1, off_5BA218[index]) == 0) {
-                        flags &= 1 << index;
+                for (index = 0; index < OPF_COUNT; index++) {
+                    if (strcmpi(value, obj_flags_opf[index]) == 0) {
+                        flags |= 1 << index;
                         break;
                     }
                 }
@@ -1722,16 +1722,16 @@ void map_apply_obj_patch(int64_t obj, char* str)
             flags = obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS);
             sub_411880(&str, value);
             if (value[0] == '!') {
-                for (index = 0; index < 23; index++) {
-                    if (strcmpi(value + 1, off_5BA284[index]) == 0) {
+                for (index = 0; index < OIF_COUNT; index++) {
+                    if (strcmpi(&(value[1]), obj_flags_oif[index]) == 0) {
                         flags &= ~(1 << index);
                         break;
                     }
                 }
             } else {
-                for (index = 0; index < 23; index++) {
-                    if (strcmpi(value + 1, off_5BA284[index]) == 0) {
-                        flags &= 1 << index;
+                for (index = 0; index < OIF_COUNT; index++) {
+                    if (strcmpi(value, obj_flags_oif[index]) == 0) {
+                        flags |= 1 << index;
                         break;
                     }
                 }
@@ -1741,16 +1741,16 @@ void map_apply_obj_patch(int64_t obj, char* str)
             flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
             sub_411880(&str, value);
             if (value[0] == '!') {
-                for (index = 0; index < 32; index++) {
-                    if (strcmpi(value + 1, off_5BA348[index]) == 0) {
+                for (index = 0; index < OCF_COUNT; index++) {
+                    if (strcmpi(&(value[1]), obj_flags_ocf[index]) == 0) {
                         flags &= ~(1 << index);
                         break;
                     }
                 }
             } else {
-                for (index = 0; index < 32; index++) {
-                    if (strcmpi(value + 1, off_5BA348[index]) == 0) {
-                        flags &= 1 << index;
+                for (index = 0; index < OCF_COUNT; index++) {
+                    if (strcmpi(value, obj_flags_ocf[index]) == 0) {
+                        flags |= 1 << index;
                         break;
                     }
                 }
@@ -1760,16 +1760,16 @@ void map_apply_obj_patch(int64_t obj, char* str)
             flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
             sub_411880(&str, value);
             if (value[0] == '!') {
-                for (index = 0; index < 31; index++) {
-                    if (strcmpi(value + 1, off_5BA44C[index]) == 0) {
+                for (index = 0; index < ONF_COUNT; index++) {
+                    if (strcmpi(&(value[1]), obj_flags_onf[index]) == 0) {
                         flags &= ~(1 << index);
                         break;
                     }
                 }
             } else {
-                for (index = 0; index < 31; index++) {
-                    if (strcmpi(value + 1, off_5BA44C[index]) == 0) {
-                        flags &= 1 << index;
+                for (index = 0; index < ONF_COUNT; index++) {
+                    if (strcmpi(value, obj_flags_onf[index]) == 0) {
+                        flags |= 1 << index;
                         break;
                     }
                 }

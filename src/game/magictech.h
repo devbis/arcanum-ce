@@ -306,27 +306,6 @@ typedef struct MagicTechSummonInfo {
 
 static_assert(sizeof(MagicTechSummonInfo) == 0xD0, "wrong size");
 
-extern const char* off_5BA10C[31];
-extern const char* off_5BA188[32];
-extern const char* off_5BA208[4];
-extern const char* off_5BA218[9];
-extern const char* off_5BA23C[9];
-extern const char* off_5BA260[9];
-extern const char* off_5BA284[23];
-extern const char* off_5BA2E0[10];
-extern const char* off_5BA308[1];
-extern const char* off_5BA30C[5];
-extern const char* off_5BA320[1];
-extern const char* off_5BA324[1];
-extern const char* off_5BA328[1];
-extern const char* off_5BA32C[1];
-extern const char* off_5BA330[1];
-extern const char* off_5BA334[5];
-extern const char* off_5BA348[32];
-extern const char* off_5BA3C8[27];
-extern const char* off_5BA434[6];
-extern const char* off_5BA44C[31];
-extern const char* off_5BA4C8[1];
 extern MagicTechInfo* magictech_spells;
 extern MagicTechRunInfo* magictech_run_info;
 

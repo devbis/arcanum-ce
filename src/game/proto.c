@@ -16340,13 +16340,13 @@ bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
         sscanf(str, "%d %d", a3, a4);
         return true;
     case PROTO_F_CRITTER_FLAG:
-        *a3 = sub_49BF10(str, off_5BA348, 32);
+        *a3 = sub_49BF10(str, obj_flags_ocf, OCF_COUNT);
         return true;
     case PROTO_F_CRITTER2_FLAG:
-        *a3 = sub_49BF10(str, off_5BA3C8, 27);
+        *a3 = sub_49BF10(str, obj_flags_ocf2, OCF2_COUNT);
         return true;
     case PROTO_F_NPC_FLAG:
-        *a3 = sub_49BF10(str, off_5BA44C, 31);
+        *a3 = sub_49BF10(str, obj_flags_onf, ONF_COUNT);
         return true;
     case PROTO_F_BLIT_FLAG:
         *a3 = sub_49BF10(str, off_5B395C, sizeof(off_5B395C) / sizeof(off_5B395C[0]));
@@ -16389,7 +16389,7 @@ bool sub_49BB70(const char* str, int* fld_ptr, int* a3, int* a4, int* a5)
         *a5 = v1 | (v2 << 8) | (v3 << 16) | (v4 << 24);
         return true;
     case PROTO_F_OBJECT_FLAG:
-        *a3 = sub_49BF10(str, off_5BA10C, 31);
+        *a3 = sub_49BF10(str, obj_flags_of, OF_COUNT);
         return true;
     default:
         *a3 = atoi(str);
@@ -16487,20 +16487,20 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     sub_49C610(stream,
         off_5B38C8[PROTO_F_CRITTER_FLAG],
         obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS),
-        off_5BA348,
-        sizeof(off_5BA348) / sizeof(off_5BA348[0]));
+        obj_flags_ocf,
+        OCF_COUNT);
 
     sub_49C610(stream,
         off_5B38C8[PROTO_F_CRITTER2_FLAG],
         obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2),
-        off_5BA3C8,
-        sizeof(off_5BA3C8) / sizeof(off_5BA3C8[0]));
+        obj_flags_ocf2,
+        OCF2_COUNT);
 
     sub_49C610(stream,
         off_5B38C8[PROTO_F_NPC_FLAG],
         obj_field_int32_get(obj, OBJ_F_NPC_FLAGS),
-        off_5BA44C,
-        sizeof(off_5BA44C) / sizeof(off_5BA44C[0]));
+        obj_flags_onf,
+        ONF_COUNT);
 
     sub_49C610(stream,
         off_5B38C8[PROTO_F_BLIT_FLAG],
@@ -16511,8 +16511,8 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     sub_49C610(stream,
         off_5B38C8[PROTO_F_SPELL_FLAG],
         obj_field_int32_get(obj, OBJ_F_SPELL_FLAGS),
-        off_5BA188,
-        sizeof(off_5BA188) / sizeof(off_5BA188[0]));
+        obj_flags_ofs,
+        OFS_COUNT);
 
     value = obj_field_int32_get(obj, OBJ_F_CRITTER_CRIT_HIT_CHART);
     if (value != 0) {
@@ -16619,8 +16619,8 @@ void sub_49C060(long long obj, TigFile* stream, int type)
     sub_49C610(stream,
         off_5B38C8[PROTO_F_OBJECT_FLAG],
         obj_field_int32_get(obj, OBJ_F_FLAGS),
-        off_5BA10C,
-        sizeof(off_5BA10C) / sizeof(off_5BA10C[0]));
+        obj_flags_of,
+        OF_COUNT);
 
     value = obj_field_int32_get(obj, OBJ_F_CRITTER_AUTO_LEVEL_SCHEME);
     if (value != 0) {

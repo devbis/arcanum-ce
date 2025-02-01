@@ -113,6 +113,8 @@ set(SRCS
     "src/game/name.h"
     "src/game/newspaper.c"
     "src/game/newspaper.h"
+    "src/game/obj_flags.c"
+    "src/game/obj_flags.h"
     "src/game/obj_private.c"
     "src/game/obj_private.h"
     "src/game/obj.c"
