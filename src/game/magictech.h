@@ -50,7 +50,7 @@ typedef enum MagicTechComponent {
     MTC_USE,
 } MagicTechComponent;
 
-typedef struct MagicTechEffectInfo {
+typedef struct MagicTechComponentInfo {
     /* 0000 */ int type;
     /* 0004 */ int field_4;
     /* 0008 */ uint64_t aoe;
@@ -161,15 +161,15 @@ typedef struct MagicTechEffectInfo {
             /* 0044 */ int field_44;
         } trait64;
     } data;
-} MagicTechEffectInfo;
+} MagicTechComponentInfo;
 
 // See 0x4580C6.
-static_assert(sizeof(MagicTechEffectInfo) == 0x68, "wrong size");
+static_assert(sizeof(MagicTechComponentInfo) == 0x68, "wrong size");
 
-typedef struct MagicTechE8 {
-    int field_0;
-    MagicTechEffectInfo* field_4;
-} MagicTechE8;
+typedef struct MagicTechComponentList {
+    int cnt;
+    MagicTechComponentInfo* entries;
+} MagicTechComponentList;
 
 // NOTE: Usage in 0x4CC310 implies array-like access.
 typedef union MagicTechInfoAI {
@@ -248,7 +248,7 @@ typedef struct MagicTechInfo {
     /* 0068 */ int casting_anim;
     /* 006C */ int field_6C;
     /* 0070 */ MagicTechAoe field_70[MAGICTECH_ACTION_COUNT];
-    /* 00E8 */ MagicTechE8 field_E8[MAGICTECH_ACTION_COUNT];
+    /* 00E8 */ MagicTechComponentList components[MAGICTECH_ACTION_COUNT];
     /* 0110 */ int no_stack;
     /* 0114 */ int field_114;
     /* 0118 */ unsigned int cancels_sf;
