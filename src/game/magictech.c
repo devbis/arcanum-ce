@@ -92,13 +92,17 @@ static void MTComponentTrait64_ProcFunc();
 static void MTComponentUse_ProcFunc();
 static void MTComponentNoop_ProcFunc();
 static void MTComponentEnvFlag_ProcFunc();
+static bool sub_452F20();
 static bool sub_4532F0(int64_t obj, int magictech);
 static bool sub_453370(int64_t obj, int magictech, int a3);
 static void sub_4534E0(MagicTechRunInfo* run_info);
 static void sub_453630();
 static bool sub_453710();
+static bool sub_4537B0();
+static void sub_453D40();
 static void sub_453EE0();
 static void sub_453F20(int64_t a1, int64_t a2);
+static void sub_453FA0();
 static bool sub_4545E0(MagicTechRunInfo* run_info);
 static bool sub_454700(int64_t source_loc, int64_t target_loc, int64_t target_obj, int spell);
 static void sub_454790(TimeEvent* timeevent, int a2, int a3, DateTime* datetime);
@@ -108,6 +112,7 @@ static bool sub_4551C0(int64_t a1, int64_t a2, int64_t a3);
 static void sub_455250(MagicTechRunInfo* run_info, DateTime* datetime);
 static void sub_455350(int64_t obj, int64_t target_loc);
 static void sub_4554B0(MagicTechRunInfo* run_info, int64_t obj);
+static bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info);
 static void sub_455710();
 static void magictech_id_new_lock(MagicTechRunInfo** lock_ptr);
 static bool sub_455820(MagicTechRunInfo* run_info);
@@ -1967,7 +1972,120 @@ void sub_451070(MagicTechRunInfo* run_info)
 // 0x4510F0
 void sub_4510F0()
 {
-    // TODO: Incomplete.
+    int idx;
+    int comp;
+
+    if (dword_5E75F0->id == -1) {
+        return;
+    }
+
+    if (tig_net_is_active() && !tig_net_is_host()) {
+        return;
+    }
+
+    dword_5E7598 = &(magictech_spells[dword_5E75F0->spell]);
+    dword_5E7620 = &(dword_5E7598->resistance);
+    dword_5E759C = &(dword_5E7598->components[dword_5E75F0->action]);
+    dword_5E75F0->field_13C |= 0x04;
+    dword_5B0BA4 = dword_5E75F0->id;
+
+    if (dword_5E75F0->action == MAGICTECH_ACTION_BEGIN
+        && !sub_456430(dword_5E75F0->parent_obj.obj, dword_5E75F0->target_obj.obj, dword_5E7598)) {
+        dword_5B0BA4 = -1;
+        if (dword_5E75F0->action < MAGICTECH_ACTION_END) {
+            magictech_interrupt_delayed(dword_5E75F0->id);
+        }
+        return;
+    }
+
+    if (!sub_452F20()) {
+        dword_5B0BA4 = -1;
+        if (dword_5E75F0->action < MAGICTECH_ACTION_END) {
+            magictech_interrupt_delayed(dword_5E75F0->id);
+        }
+        return;
+    }
+
+    sub_453630();
+
+    if (!sub_453710()) {
+        dword_5B0BA4 = -1;
+        if (dword_5E75F0->action < MAGICTECH_ACTION_END) {
+            magictech_interrupt_delayed(dword_5E75F0->id);
+        }
+        return;
+    }
+
+    if (dword_5E759C->cnt > 0) {
+        stru_5E6D28.field_0 = &(dword_5E7598->field_70[dword_5E75F0->action]);
+        sub_4F40B0(&stru_5E6D28);
+
+        if (dword_5E75F0->source_obj.obj != OBJ_HANDLE_NULL
+            && obj_field_int32_get(dword_5E75F0->source_obj.obj, OBJ_F_TYPE) == OBJ_TYPE_PC
+            && fate_resolve(dword_5E75F0->source_obj.obj, FATE_SPELL_AT_MAXIMUM)) {
+            dword_5E75F0->source_obj.aptitude = 100;
+            dword_5E75F0->parent_obj.aptitude = 100;
+            dword_5E75A8 = true;
+        } else {
+            dword_5E75A8 = false;
+        }
+
+        if (stru_5E3518.cnt == 0) {
+            dword_5E75DC = 1;
+        }
+
+        for (idx = 0; idx < stru_5E3518.cnt; idx++) {
+            stru_5E6D28.field_20 = stru_5E3518.entries[idx].obj;
+            stru_5E6D28.field_28 = stru_5E3518.entries[idx].loc;
+            if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
+                dword_5E75AC = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_TYPE);
+            }
+
+            if (sub_455550(&stru_5E6D28, dword_5E75F0)) {
+                if (sub_4537B0()) {
+                    for (comp = 0; comp < dword_5E759C->cnt; comp++) {
+                        dword_5E761C = &(dword_5E759C->entries[comp]);
+                        stru_5E6D28.field_0 = &(dword_5E761C->aoe);
+
+                        if (sub_4F2D20(&stru_5E6D28)) {
+                            sub_453D40();
+
+                            if (dword_5E7598->item_triggers == 0
+                                || dword_5E761C->item_triggers == 0
+                                || ((dword_5E75F0->field_140 & dword_5E761C->item_triggers) != 0
+                                    && ((dword_5E761C->item_triggers & 0x100) == 0
+                                        || (dword_5E75F0->field_140 & 0x100) != 0))) {
+                                dword_5E75DC = 1;
+                                sub_453EE0();
+                                magictech_procs[dword_5E761C->type]();
+
+                                if (dword_5E7624) {
+                                    comp = dword_5E6D90;
+                                    dword_5E7624 = false;
+                                }
+                            }
+                        }
+
+                        if (dword_5E75F0->source_obj.obj != qword_5E75B0) {
+                            qword_5E75B8 = dword_5E75F0->source_obj.obj;
+                            dword_5E75F0->source_obj.obj = stru_5E6D28.field_20;
+                            stru_5E6D28.field_20 = qword_5E75B8;
+                            if (qword_5E75B8 != OBJ_HANDLE_NULL) {
+                                dword_5E75AC = obj_field_int32_get(qword_5E75B8, OBJ_F_TYPE);
+                            }
+                        }
+                    }
+                } else {
+                    sub_45A520(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
+                }
+            }
+        }
+    } else {
+        dword_5E75DC = 1;
+    }
+
+    dword_5B0BA4 = -1;
+    sub_453FA0();
 }
 
 // 0x4514E0
@@ -2849,7 +2967,7 @@ void MTComponentEnvFlag_ProcFunc()
 }
 
 // 0x452F20
-void sub_452F20()
+bool sub_452F20()
 {
     // TODO: Incomplete.
 }
