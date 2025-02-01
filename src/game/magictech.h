@@ -13,11 +13,14 @@
 #define MT_140 140
 #define MT_SPELL_COUNT 223
 
-#define MAGICTECH_BEGIN 0
-#define MAGICTECH_MAINTAIN 1
-#define MAGICTECH_END 2
-#define MAGICTECH_CALLBACK 3
-#define MAGICTECH_END_CALLBACK 4
+typedef enum MagicTechAction {
+    MAGICTECH_ACTION_BEGIN,
+    MAGICTECH_ACTION_MAINTAIN,
+    MAGICTECH_ACTION_END,
+    MAGICTECH_ACTION_CALLBACK,
+    MAGICTECH_ACTION_END_CALLBACK,
+    MAGICTECH_ACTION_COUNT,
+} MagicTechAction;
 
 typedef enum MagicTechComponent {
     MTC_NOOP,
@@ -240,12 +243,12 @@ typedef struct MagicTechInfo {
     /* 0030 */ int range;
     /* 0034 */ MagicTechFlags flags;
     /* 0038 */ unsigned int item_triggers;
-    /* 003C */ MagicTechCasterTargetPair pairs[5];
+    /* 003C */ MagicTechCasterTargetPair pairs[MAGICTECH_ACTION_COUNT];
     /* 0064 */ int missile;
     /* 0068 */ int casting_anim;
     /* 006C */ int field_6C;
-    /* 0070 */ MagicTechAoe field_70[5];
-    /* 00E8 */ MagicTechE8 field_E8[5];
+    /* 0070 */ MagicTechAoe field_70[MAGICTECH_ACTION_COUNT];
+    /* 00E8 */ MagicTechE8 field_E8[MAGICTECH_ACTION_COUNT];
     /* 0110 */ int no_stack;
     /* 0114 */ int field_114;
     /* 0118 */ unsigned int cancels_sf;
@@ -261,7 +264,7 @@ static_assert(sizeof(MagicTechInfo) == 0x158, "wrong size");
 typedef struct MagicTechLock {
     /* 0000 */ int id;
     /* 0004 */ int spell;
-    /* 0008 */ int action;
+    /* 0008 */ MagicTechAction action;
     /* 000C */ int field_C;
     /* 0010 */ MagicTechObjectNode source_obj;
     /* 0058 */ MagicTechObjectNode parent_obj;

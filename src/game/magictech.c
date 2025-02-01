@@ -1739,7 +1739,7 @@ void sub_44FE20()
 bool sub_44FE30(int a1, const char* path, int a3)
 {
     int magictech = 0;
-    int v1;
+    int action;
 
     (void)a1;
 
@@ -1748,9 +1748,9 @@ bool sub_44FE30(int a1, const char* path, int a3)
     }
 
     for (magictech = 0; magictech < MT_SPELL_COUNT; magictech++) {
-        for (v1 = 0; v1 < 5; v1++) {
-            magictech_spells[magictech].field_E8[v1].field_0 = 0;
-            magictech_spells[magictech].field_E8[v1].field_4 = NULL;
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            magictech_spells[magictech].field_E8[action].field_0 = 0;
+            magictech_spells[magictech].field_E8[action].field_4 = NULL;
         }
     }
 
@@ -1879,12 +1879,12 @@ void sub_4501D0(mes_file_handle_t msg_file, MagicTechInfo* info, int num, int ma
 void sub_450240()
 {
     int index;
-    int v1;
+    int action;
 
     for (index = 0; index < MT_SPELL_COUNT; index++) {
-        for (v1 = 0; v1 < 5; v1++) {
-            if (magictech_spells[index].field_E8[v1].field_4 != NULL) {
-                FREE(magictech_spells[index].field_E8[v1].field_4);
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            if (magictech_spells[index].field_E8[action].field_4 != NULL) {
+                FREE(magictech_spells[index].field_E8[action].field_4);
             }
         }
     }
@@ -2207,7 +2207,7 @@ bool sub_450940(int mt_id)
         return true;
     }
 
-    if (v1->action == 0) {
+    if (v1->action == MAGICTECH_ACTION_BEGIN) {
         cost = magictech_spells[mt_id].cost;
     } else {
         cost = magictech_get_maintenance(mt_id)->cost;
@@ -3417,7 +3417,7 @@ bool sub_453710()
         return true;
     }
 
-    if (dword_5E75F0->action >= 2) {
+    if (dword_5E75F0->action >= MAGICTECH_ACTION_END) {
         return true;
     }
 
@@ -3442,7 +3442,7 @@ bool sub_4537B0()
 {
     int v1 = 0;
 
-    if (dword_5E75F0->action != 0) {
+    if (dword_5E75F0->action != MAGICTECH_ACTION_BEGIN) {
         return true;
     }
 
@@ -3511,7 +3511,7 @@ bool sub_4537B0()
     if (dword_5E7620->stat == STAT_WILLPOWER
         && stat_atmax(stru_5E6D28.field_20, STAT_WILLPOWER)) {
         if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
-            && dword_5E75F0->action != 2) {
+            && dword_5E75F0->action != MAGICTECH_ACTION_END) {
             sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
         }
         return false;
@@ -3680,7 +3680,7 @@ void sub_453EE0()
 {
     if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
         && stru_5E6D28.field_20 != OBJ_HANDLE_NULL
-        && dword_5E75F0->action != 2) {
+        && dword_5E75F0->action != MAGICTECH_ACTION_END) {
         sub_453F20(dword_5E75F0->parent_obj.obj, stru_5E6D28.field_20);
     }
 }
@@ -3772,7 +3772,7 @@ void sub_454790(TimeEvent* timeevent, int a2, int a3, DateTime* datetime)
     timeevent->type = TIMEEVENT_TYPE_MAGICTECH;
     timeevent->params[0].integer_value = a2;
     timeevent->params[2].integer_value = 1;
-    dword_5E75F0->action = 1;
+    dword_5E75F0->action = MAGICTECH_ACTION_MAINTAIN;
     sub_45A950(datetime, 1000 * a3);
     sub_455250(dword_5E75F0, datetime);
     datetime->milliseconds *= 8;
@@ -3790,7 +3790,7 @@ bool sub_4547F0(TimeEvent* timeevent, DateTime* datetime)
     if (player_is_pc_obj(dword_5E75F0->parent_obj.obj)) {
         if ((magictech_spells[dword_5E75F0->spell].flags & MAGICTECH_IS_TECH) == 0
             && !sub_4604A0(dword_5E75F0->id)) {
-            dword_5E75F0->action = 2;
+            dword_5E75F0->action = MAGICTECH_ACTION_END;
         }
     } else {
         player = sub_4A2B10(dword_5E75F0->parent_obj.obj);
@@ -4333,7 +4333,7 @@ void magictech_id_new_lock(MagicTechLock** lock_ptr)
         if (magictech_locks[index].id == -1) {
             magictech_locks[index].id = index;
             magictech_locks[index].field_13C = 0x1;
-            magictech_locks[index].action = 0;
+            magictech_locks[index].action = MAGICTECH_ACTION_BEGIN;
             *lock_ptr = &(magictech_locks[index]);
             dword_6876DC++;
             return;
@@ -4582,7 +4582,7 @@ void sub_455C30(MagicTechSerializedData* a1)
     }
 
     v1->spell = a1->spell;
-    v1->action = 0;
+    v1->action = MAGICTECH_ACTION_BEGIN;
     v1->objlist = NULL;
     v1->summoned_obj = NULL;
 
@@ -5092,7 +5092,7 @@ void sub_456F70(int mt_id)
     MagicTechLock* v1;
 
     if (sub_4557C0(mt_id, &v1)) {
-        v1->action = 0;
+        v1->action = MAGICTECH_ACTION_BEGIN;
         sub_451070(v1);
     }
 }
@@ -5178,21 +5178,21 @@ void sub_457110(int mt_id)
 
     info = &(magictech_spells[v1->spell]);
 
-    if (v1->action == 1) {
-        if (info->field_E8[4].field_0 > 0) {
-            v1->action = 2;
-        } else if (info->field_E8[3].field_0 > 0) {
-            v1->action = 3;
+    if (v1->action == MAGICTECH_ACTION_MAINTAIN) {
+        if (info->field_E8[MAGICTECH_ACTION_END_CALLBACK].field_0 > 0) {
+            v1->action = MAGICTECH_ACTION_END;
+        } else if (info->field_E8[MAGICTECH_ACTION_CALLBACK].field_0 > 0) {
+            v1->action = MAGICTECH_ACTION_CALLBACK;
         } else {
-            v1->action = 2;
+            v1->action = MAGICTECH_ACTION_END;
         }
     } else {
-        if (info->field_E8[4].field_0 > 0) {
-            v1->action = 4;
-        } else if (info->field_E8[3].field_0 > 0) {
-            v1->action = 3;
+        if (info->field_E8[MAGICTECH_ACTION_END_CALLBACK].field_0 > 0) {
+            v1->action = MAGICTECH_ACTION_END_CALLBACK;
+        } else if (info->field_E8[MAGICTECH_ACTION_CALLBACK].field_0 > 0) {
+            v1->action = MAGICTECH_ACTION_CALLBACK;
         } else {
-            v1->action = 2;
+            v1->action = MAGICTECH_ACTION_END;
         }
     }
 
@@ -5217,7 +5217,7 @@ void magictech_interrupt_delayed(int mt_id)
     sub_4604C0(mt_id);
 
     if (sub_4557C0(mt_id, &v1)
-        && v1->action == 0
+        && v1->action == MAGICTECH_ACTION_BEGIN
         && (v1->field_13C & 0x04) == 0) {
         sub_456FA0(mt_id, 1);
         return;
@@ -5239,7 +5239,7 @@ void sub_457270(int mt_id)
     MagicTechLock* v1;
 
     if (sub_4557C0(mt_id, &v1)) {
-        v1->action = 2;
+        v1->action = MAGICTECH_ACTION_END;
         stru_5E3518.cnt = 0;
         if (!dword_5E7604) {
             dword_5E7604 = true;
@@ -5355,7 +5355,7 @@ void sub_457580(MagicTechInfo* info, int magictech)
     info->disallowed_tcf = 0;
     info->cancels_envsf = 0;
 
-    for (index = 0; index < 5; index++) {
+    for (index = 0; index < MAGICTECH_ACTION_COUNT; index++) {
         info->pairs[index].caster = -1;
         info->pairs[index].target = -1;
 
@@ -5374,7 +5374,7 @@ void sub_457580(MagicTechInfo* info, int magictech)
 void magictech_build_aoe_info(MagicTechInfo* info, char* str)
 {
     uint64_t aoe_flags;
-    int idx;
+    int action;
     unsigned int flags;
     int value;
 
@@ -5384,68 +5384,68 @@ void magictech_build_aoe_info(MagicTechInfo* info, char* str)
         tig_debug_printf("magictech_build_aoe_info: Error: failed match target AoE strings!\n");
     }
 
-    for (idx = 0; idx < 5; idx++) {
+    for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
         if (dword_5E7628 == 2
             || dword_5E7628 == 9
             || dword_5E7628 == 1) {
-            info->field_70[idx].aoe_flags = aoe_flags;
+            info->field_70[action].aoe_flags = aoe_flags;
         } else {
-            info->field_70[idx].aoe_flags = aoe_flags;
-            info->field_70[idx].aoe_flags |= 0x200000000000;
+            info->field_70[action].aoe_flags = aoe_flags;
+            info->field_70[action].aoe_flags |= 0x200000000000;
         }
     }
 
     if (tig_str_parse_named_flag_list_direct(&str, "AoE_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-        for (idx = 0; idx < 5; idx++) {
-            info->field_70[idx].aoe_spell_flags = flags;
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            info->field_70[action].aoe_spell_flags = flags;
         }
     } else {
-        for (idx = 0; idx < 5; idx++) {
-            info->field_70[idx].aoe_spell_flags = 0;
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            info->field_70[action].aoe_spell_flags = 0;
         }
     }
 
     if (tig_str_parse_named_flag_list_direct(&str, "AoE_NO_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-        for (idx = 0; idx < 5; idx++) {
-            info->field_70[idx].aoe_no_spell_flags = flags;
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            info->field_70[action].aoe_no_spell_flags = flags;
         }
     } else {
-        for (idx = 0; idx < 5; idx++) {
-            info->field_70[idx].aoe_no_spell_flags = 0;
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            info->field_70[action].aoe_no_spell_flags = 0;
         }
     }
 
     if (tig_str_parse_named_value(&str, "Radius:", &value)) {
-        for (idx = 0; idx < 5; idx++) {
-            info->field_70[idx].radius = value;
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            info->field_70[action].radius = value;
         }
     }
 
     if (tig_str_parse_named_value(&str, "Count:", &value)) {
-        for (idx = 0; idx < 5; idx++) {
-            info->field_70[idx].count = value;
+        for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+            info->field_70[action].count = value;
         }
     }
 
-    for (idx = 0; idx < 5; idx++) {
-        if (tig_str_parse_named_flag_list_64(&str, off_5B0D64[idx].aoe, off_5BBD70, qword_596140, 65, &aoe_flags)) {
-            info->field_70[idx].aoe_flags |= aoe_flags;
+    for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
+        if (tig_str_parse_named_flag_list_64(&str, off_5B0D64[action].aoe, off_5BBD70, qword_596140, 65, &aoe_flags)) {
+            info->field_70[action].aoe_flags |= aoe_flags;
         }
 
-        if (tig_str_parse_named_flag_list_direct(&str, off_5B0D64[idx].aoe_sf, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-            info->field_70[idx].aoe_spell_flags |= flags;
+        if (tig_str_parse_named_flag_list_direct(&str, off_5B0D64[action].aoe_sf, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
+            info->field_70[action].aoe_spell_flags |= flags;
         }
 
-        if (tig_str_parse_named_flag_list_direct(&str, off_5B0D64[idx].aoe_no_sf, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-            info->field_70[idx].aoe_no_spell_flags |= flags;
+        if (tig_str_parse_named_flag_list_direct(&str, off_5B0D64[action].aoe_no_sf, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
+            info->field_70[action].aoe_no_spell_flags |= flags;
         }
 
         if (tig_str_parse_named_value(&str, "Radius:", &value)) {
-            info->field_70[idx].radius = value;
+            info->field_70[action].radius = value;
         }
 
         if (tig_str_parse_named_value(&str, "Count:", &value)) {
-            info->field_70[idx].count = value;
+            info->field_70[action].count = value;
         }
     }
 }
@@ -5535,43 +5535,43 @@ void sub_457B20(MagicTechInfo* info, char* str)
     }
 
     if (tig_str_parse_named_value(&curr, "[Begin]Caster:", &value)) {
-        info->pairs[MAGICTECH_BEGIN].caster = value;
+        info->pairs[MAGICTECH_ACTION_BEGIN].caster = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[Begin]Target:", &value)) {
-        info->pairs[MAGICTECH_BEGIN].target = value;
+        info->pairs[MAGICTECH_ACTION_BEGIN].target = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[Maintain]Caster:", &value)) {
-        info->pairs[MAGICTECH_MAINTAIN].caster = value;
+        info->pairs[MAGICTECH_ACTION_MAINTAIN].caster = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[Maintain]Target:", &value)) {
-        info->pairs[MAGICTECH_MAINTAIN].target = value;
+        info->pairs[MAGICTECH_ACTION_MAINTAIN].target = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[End]Caster:", &value)) {
-        info->pairs[MAGICTECH_END].caster = value;
+        info->pairs[MAGICTECH_ACTION_END].caster = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[End]Target:", &value)) {
-        info->pairs[MAGICTECH_END].target = value;
+        info->pairs[MAGICTECH_ACTION_END].target = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[Callback]Caster:", &value)) {
-        info->pairs[MAGICTECH_CALLBACK].caster = value;
+        info->pairs[MAGICTECH_ACTION_CALLBACK].caster = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[Callback]Target:", &value)) {
-        info->pairs[MAGICTECH_CALLBACK].target = value;
+        info->pairs[MAGICTECH_ACTION_CALLBACK].target = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[EndCallback]Caster:", &value)) {
-        info->pairs[MAGICTECH_END_CALLBACK].caster = value;
+        info->pairs[MAGICTECH_ACTION_END_CALLBACK].caster = value;
     }
 
     if (tig_str_parse_named_value(&curr, "[EndCallback]Target:", &value)) {
-        info->pairs[MAGICTECH_END_CALLBACK].target = value;
+        info->pairs[MAGICTECH_ACTION_END_CALLBACK].target = value;
     }
 
     if (tig_str_parse_named_value(&curr, "Is_Tech:", &value)) {
@@ -5681,7 +5681,7 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
 // 0x458060
 void magictech_build_effect_info(MagicTechInfo* info, char* str)
 {
-    int type;
+    int action;
     MagicTechE8* v1;
     MagicTechEffectInfo* effect_info;
     uint64_t aoe;
@@ -5690,9 +5690,9 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
 
     tig_str_parse_set_separator(',');
 
-    tig_str_match_str_to_list(&str, off_5B0C0C, 5, &type);
+    tig_str_match_str_to_list(&str, off_5B0C0C, MAGICTECH_ACTION_COUNT, &action);
 
-    v1 = &(info->field_E8[type]);
+    v1 = &(info->field_E8[action]);
     if (v1->field_4 != NULL) {
         v1->field_4 = REALLOC(v1->field_4, sizeof(*v1->field_4) * (v1->field_0 + 1));
         if (v1->field_4 == NULL) {
@@ -6342,8 +6342,8 @@ void sub_459490(int mt_id)
     MagicTechLock* v1;
 
     if (sub_4557C0(mt_id, &v1)) {
-        if (v1->action == 0) {
-            v1->action = 1;
+        if (v1->action == MAGICTECH_ACTION_BEGIN) {
+            v1->action = MAGICTECH_ACTION_MAINTAIN;
         }
         sub_451070(v1);
     }
@@ -6691,7 +6691,7 @@ bool sub_459C10(int64_t obj, int mt_id)
         if (info->resistance.stat == STAT_WILLPOWER
             && stat_atmax(obj, STAT_WILLPOWER)) {
             if ((dword_5E7598->flags & MAGICTECH_AGGRESSIVE) != 0
-                && v1->action != 2) {
+                && v1->action != MAGICTECH_ACTION_END) {
                 sub_453F20(dword_5E75F0->parent_obj.obj, obj);
             }
             return false;

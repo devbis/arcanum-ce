@@ -7679,7 +7679,7 @@ bool sub_42A200(AnimRunInfo* run_info)
 // 0x42A260
 bool sub_42A260(AnimRunInfo* run_info)
 {
-    sub_457000(run_info->params[0].data, 3);
+    sub_457000(run_info->params[0].data, MAGICTECH_ACTION_CALLBACK);
 
     return true;
 }
@@ -7687,7 +7687,7 @@ bool sub_42A260(AnimRunInfo* run_info)
 // 0x42A280
 bool sub_42A280(AnimRunInfo* run_info)
 {
-    sub_457000(run_info->params[0].data, 4);
+    sub_457000(run_info->params[0].data, MAGICTECH_ACTION_END_CALLBACK);
 
     return true;
 }
