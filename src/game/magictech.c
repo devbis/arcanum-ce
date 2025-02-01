@@ -3635,33 +3635,33 @@ int sub_453CC0(int64_t a1, int64_t item_obj, int64_t a3)
 // 0x453D40
 void sub_453D40()
 {
-    if (dword_5E761C->apply_aoe == 0) {
+    if (dword_5E761C->apply_aoe.flags == 0) {
         return;
     }
 
-    if ((dword_5E761C->apply_aoe & Tgt_Self) != 0) {
+    if ((dword_5E761C->apply_aoe.flags & Tgt_Self) != 0) {
         stru_5E6D28.field_20 = dword_5E75F0->parent_obj.obj;
         if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
             dword_5E75AC = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_TYPE);
         }
     }
 
-    if ((dword_5E761C->apply_aoe & Tgt_Source) != 0) {
+    if ((dword_5E761C->apply_aoe.flags & Tgt_Source) != 0) {
         stru_5E6D28.field_20 = dword_5E75F0->source_obj.obj;
         if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
             dword_5E75AC = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_TYPE);
         }
     }
 
-    if ((dword_5E761C->apply_aoe & 0x400000000000) != 0) {
+    if ((dword_5E761C->apply_aoe.flags & 0x400000000000) != 0) {
         stru_5E6D28.field_20 = stru_5E6D28.field_48;
         if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
             dword_5E75AC = obj_field_int32_get(stru_5E6D28.field_20, OBJ_F_TYPE);
         }
     }
 
-    if ((dword_5E761C->apply_aoe & 0x800000000000) != 0) {
-        if ((dword_5E761C->apply_aoe & 0x80000000000000) != 0) {
+    if ((dword_5E761C->apply_aoe.flags & 0x800000000000) != 0) {
+        if ((dword_5E761C->apply_aoe.flags & 0x80000000000000) != 0) {
             if (stru_5E6D28.field_20 != OBJ_HANDLE_NULL) {
                 stru_5E6D28.field_28 = obj_field_int64_get(stru_5E6D28.field_20, OBJ_F_LOCATION);
             }
@@ -5359,9 +5359,9 @@ void sub_457580(MagicTechInfo* info, int magictech)
         info->pairs[index].caster = -1;
         info->pairs[index].target = -1;
 
-        info->field_70[index].aoe_flags = 0;
-        info->field_70[index].aoe_spell_flags = 0;
-        info->field_70[index].aoe_no_spell_flags = 0;
+        info->field_70[index].flags = 0;
+        info->field_70[index].spell_flags = 0;
+        info->field_70[index].no_spell_flags = 0;
         info->field_70[index].radius = 0;
         info->field_70[index].count = -1;
 
@@ -5388,30 +5388,30 @@ void magictech_build_aoe_info(MagicTechInfo* info, char* str)
         if (dword_5E7628 == 2
             || dword_5E7628 == 9
             || dword_5E7628 == 1) {
-            info->field_70[action].aoe_flags = aoe_flags;
+            info->field_70[action].flags = aoe_flags;
         } else {
-            info->field_70[action].aoe_flags = aoe_flags;
-            info->field_70[action].aoe_flags |= 0x200000000000;
+            info->field_70[action].flags = aoe_flags;
+            info->field_70[action].flags |= 0x200000000000;
         }
     }
 
     if (tig_str_parse_named_flag_list_direct(&str, "AoE_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
         for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
-            info->field_70[action].aoe_spell_flags = flags;
+            info->field_70[action].spell_flags = flags;
         }
     } else {
         for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
-            info->field_70[action].aoe_spell_flags = 0;
+            info->field_70[action].spell_flags = 0;
         }
     }
 
     if (tig_str_parse_named_flag_list_direct(&str, "AoE_NO_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
         for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
-            info->field_70[action].aoe_no_spell_flags = flags;
+            info->field_70[action].no_spell_flags = flags;
         }
     } else {
         for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
-            info->field_70[action].aoe_no_spell_flags = 0;
+            info->field_70[action].no_spell_flags = 0;
         }
     }
 
@@ -5429,15 +5429,15 @@ void magictech_build_aoe_info(MagicTechInfo* info, char* str)
 
     for (action = 0; action < MAGICTECH_ACTION_COUNT; action++) {
         if (tig_str_parse_named_flag_list_64(&str, off_5B0D64[action].aoe, off_5BBD70, qword_596140, 65, &aoe_flags)) {
-            info->field_70[action].aoe_flags |= aoe_flags;
+            info->field_70[action].flags |= aoe_flags;
         }
 
         if (tig_str_parse_named_flag_list_direct(&str, off_5B0D64[action].aoe_sf, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-            info->field_70[action].aoe_spell_flags |= flags;
+            info->field_70[action].spell_flags |= flags;
         }
 
         if (tig_str_parse_named_flag_list_direct(&str, off_5B0D64[action].aoe_no_sf, off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-            info->field_70[action].aoe_no_spell_flags |= flags;
+            info->field_70[action].no_spell_flags |= flags;
         }
 
         if (tig_str_parse_named_value(&str, "Radius:", &value)) {
@@ -5704,39 +5704,39 @@ void magictech_build_effect_info(MagicTechInfo* info, char* str)
     }
 
     component_info = &(component_list->entries[component_list->cnt++]);
-    component_info->aoe = 0;
-    component_info->aoe_spell_flags = 0;
-    component_info->aoe_no_spell_flags = 0;
-    component_info->radius = 0;
-    component_info->count = -1;
+    component_info->aoe.flags = 0;
+    component_info->aoe.spell_flags = 0;
+    component_info->aoe.no_spell_flags = 0;
+    component_info->aoe.radius = 0;
+    component_info->aoe.count = -1;
 
     if (tig_str_parse_named_flag_list_64(&str, "AoE:", off_5BBD70, qword_596140, 65, &aoe)) {
-        component_info->aoe = aoe;
+        component_info->aoe.flags = aoe;
     }
 
     if (tig_str_parse_named_flag_list_direct(&str, "AoE_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-        component_info->aoe_spell_flags |= flags;
+        component_info->aoe.spell_flags |= flags;
     }
 
     if (tig_str_parse_named_flag_list_direct(&str, "AoE_NO_SF:", off_5BA064[MTFC_SPELL_FLAGS], dword_5BA0B8[MTFC_SPELL_FLAGS], &flags)) {
-        component_info->aoe_no_spell_flags |= flags;
+        component_info->aoe.no_spell_flags |= flags;
     }
 
     if (tig_str_parse_named_value(&str, "Radius:", &value)) {
-        component_info->radius = value;
+        component_info->aoe.radius = value;
     }
 
     if (tig_str_parse_named_value(&str, "Count:", &value)) {
-        component_info->count = value;
+        component_info->aoe.count = value;
     }
 
-    component_info->apply_aoe = 0;
-    component_info->field_28 = 0;
-    component_info->field_2C = 0;
-    component_info->field_30 = 0;
-    component_info->field_34 = -1;
+    component_info->apply_aoe.flags = 0;
+    component_info->apply_aoe.spell_flags = 0;
+    component_info->apply_aoe.no_spell_flags = 0;
+    component_info->apply_aoe.radius = 0;
+    component_info->apply_aoe.count = -1;
 
-    tig_str_parse_named_flag_list_64(&str, "Apply_AoE:", off_5BBD70, qword_596140, 65, &(component_info->apply_aoe));
+    tig_str_parse_named_flag_list_64(&str, "Apply_AoE:", off_5BBD70, qword_596140, 65, &(component_info->apply_aoe.flags));
 
     if (tig_str_parse_named_flag_list(&str, "ItemTriggers:", mt_item_trig_keys, mt_item_trig_values, 26, &flags)) {
         component_info->item_triggers = flags;
@@ -6732,7 +6732,7 @@ void sub_459EA0(int64_t obj)
 bool sub_459F20(int magictech, uint64_t** a2)
 {
     // TODO: Unclear.
-    *a2 = &(magictech_spells[magictech].field_70[0].aoe_flags);
+    *a2 = &(magictech_spells[magictech].field_70[0].flags);
     return true;
 }
 

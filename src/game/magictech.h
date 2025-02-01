@@ -50,19 +50,20 @@ typedef enum MagicTechComponent {
     MTC_USE,
 } MagicTechComponent;
 
+typedef struct MagicTechAoe {
+    /* 0000 */ uint64_t flags;
+    /* 0008 */ unsigned int spell_flags;
+    /* 000C */ unsigned int no_spell_flags;
+    /* 0010 */ int radius;
+    /* 0014 */ int count;
+} MagicTechAoe;
+
+static_assert(sizeof(MagicTechAoe) == 0x18, "wrong size");
+
 typedef struct MagicTechComponentInfo {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
-    /* 0008 */ uint64_t aoe;
-    /* 0010 */ unsigned int aoe_spell_flags;
-    /* 0014 */ unsigned int aoe_no_spell_flags;
-    /* 0018 */ int radius;
-    /* 001C */ int count;
-    /* 0020 */ uint64_t apply_aoe;
-    /* 0028 */ int field_28;
-    /* 002C */ int field_2C;
-    /* 0030 */ int field_30;
-    /* 0034 */ int field_34;
+    /* 0008 */ MagicTechAoe aoe;
+    /* 0020 */ MagicTechAoe apply_aoe;
     /* 0038 */ unsigned int item_triggers;
     /* 003C */ int field_3C;
     union {
@@ -205,17 +206,6 @@ typedef struct MagicTechMaintenanceInfo {
 } MagicTechMaintenanceInfo;
 
 static_assert(sizeof(MagicTechMaintenanceInfo) == 0x8, "wrong size");
-
-
-typedef struct MagicTechAoe {
-    /* 0000 */ uint64_t aoe_flags;
-    /* 0008 */ unsigned int aoe_spell_flags;
-    /* 000C */ unsigned int aoe_no_spell_flags;
-    /* 0010 */ int radius;
-    /* 0014 */ int count;
-} MagicTechAoe;
-
-static_assert(sizeof(MagicTechAoe) == 0x18, "wrong size");
 
 typedef struct MagicTechCasterTargetPair {
     int caster;
