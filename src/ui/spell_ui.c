@@ -20,7 +20,7 @@
 #define FIVE 5
 
 typedef struct S5CB3A8 {
-    int magictech;
+    int mt_id;
     int field_4;
 } S5CB3A8;
 
@@ -78,7 +78,7 @@ bool spell_ui_save(TigFile* stream)
     int index;
 
     for (index = 0; index < FIVE; index++) {
-        if (tig_file_fwrite(&(stru_5CB3A8[index].magictech), sizeof(stru_5CB3A8[index].magictech), 1, stream) != 1) return false;
+        if (tig_file_fwrite(&(stru_5CB3A8[index].mt_id), sizeof(stru_5CB3A8[index].mt_id), 1, stream) != 1) return false;
         if (tig_file_fwrite(&(stru_5CB3A8[index].field_4), sizeof(stru_5CB3A8[index].field_4), 1, stream) != 1) return false;
     }
 
@@ -91,11 +91,11 @@ bool spell_ui_load(GameLoadInfo* load_info)
     int index;
 
     for (index = 0; index < FIVE; index++) {
-        if (tig_file_fread(&(stru_5CB3A8[index].magictech), sizeof(stru_5CB3A8[index].magictech), 1, load_info->stream) != 1) return false;
+        if (tig_file_fread(&(stru_5CB3A8[index].mt_id), sizeof(stru_5CB3A8[index].mt_id), 1, load_info->stream) != 1) return false;
         if (tig_file_fread(&(stru_5CB3A8[index].field_4), sizeof(stru_5CB3A8[index].field_4), 1, load_info->stream) != 1) return false;
 
         if (stru_5CB3A8[index].field_4) {
-            sub_553620(index, sub_458AE0(stru_5CB3A8[index].magictech));
+            sub_553620(index, sub_458AE0(stru_5CB3A8[index].mt_id));
         }
     }
 
@@ -343,14 +343,14 @@ void sub_57C110(S4F2810* a1)
 }
 
 // 0x57C290
-bool sub_57C290(int magictech)
+bool sub_57C290(int mt_id)
 {
     int candidate = -1;
     int64_t pc_obj;
     int cnt;
     int index;
 
-    if (!sub_459FF0(magictech)) {
+    if (!sub_459FF0(mt_id)) {
         return false;
     }
 
@@ -358,11 +358,11 @@ bool sub_57C290(int magictech)
     cnt = stat_level_get(pc_obj, STAT_INTELLIGENCE) / 4;
 
     for (index = 0; index < cnt; index++) {
-        if (stru_5CB3A8[index].field_4 == 1 && stru_5CB3A8[index].magictech == magictech) {
+        if (stru_5CB3A8[index].field_4 == 1 && stru_5CB3A8[index].mt_id == mt_id) {
             return true;
         }
 
-        if (stru_5CB3A8[index].magictech == -1 && candidate == -1) {
+        if (stru_5CB3A8[index].mt_id == -1 && candidate == -1) {
             candidate = index;
         }
     }
@@ -371,31 +371,31 @@ bool sub_57C290(int magictech)
         return false;
     }
 
-    stru_5CB3A8[candidate].magictech = magictech;
+    stru_5CB3A8[candidate].mt_id = mt_id;
     stru_5CB3A8[candidate].field_4 = 1;
-    sub_553620(candidate, sub_458AE0(magictech));
+    sub_553620(candidate, sub_458AE0(mt_id));
 
     return true;
 }
 
 // 0x57C320
-void sub_57C320(int magictech)
+void sub_57C320(int mt_id)
 {
     int index;
 
-    if (magictech == -1) {
+    if (mt_id == -1) {
         return;
     }
 
     for (index = 0; index < FIVE; index++) {
-        if (stru_5CB3A8[index].magictech == magictech
+        if (stru_5CB3A8[index].mt_id == mt_id
             && stru_5CB3A8[index].field_4 >= 1) {
             break;
         }
     }
 
     if (index < FIVE) {
-        stru_5CB3A8[index].magictech = -1;
+        stru_5CB3A8[index].mt_id = -1;
         stru_5CB3A8[index].field_4 = 0;
         sub_553620(index, TIG_ART_ID_INVALID);
     }
@@ -406,19 +406,19 @@ void sub_57C370(int index)
 {
     Packet59 pkt;
 
-    if (stru_5CB3A8[index].magictech != -1 && stru_5CB3A8[index].field_4 == 1) {
+    if (stru_5CB3A8[index].mt_id != -1 && stru_5CB3A8[index].field_4 == 1) {
         stru_5CB3A8[index].field_4 = 2;
 
         if (tig_net_is_active()) {
             pkt.type = 59;
-            pkt.field_4 = index;
+            pkt.field_4 = stru_5CB3A8[index].mt_id;
             tig_net_send_app_all(&pkt, sizeof(pkt));
 
             if (tig_net_is_host()) {
-                sub_457110(stru_5CB3A8[index].magictech);
+                sub_457110(stru_5CB3A8[index].mt_id);
             }
         } else {
-            sub_457110(stru_5CB3A8[index].magictech);
+            sub_457110(stru_5CB3A8[index].mt_id);
         }
     }
 }
@@ -433,7 +433,7 @@ void sub_57C3F0(int index)
     player_get_pc_obj();
 
     if (stru_5CB3A8[index].field_4 == 1
-        && sub_4557C0(stru_5CB3A8[index].magictech, &lock)) {
+        && sub_4557C0(stru_5CB3A8[index].mt_id, &lock)) {
         obj = lock->target_obj.obj;
         if (obj == OBJ_HANDLE_NULL) {
             if (lock->summoned_obj != NULL) {
@@ -458,7 +458,7 @@ void sub_57C470()
     int index;
 
     for (index = 0; index < FIVE; index++) {
-        stru_5CB3A8[index].magictech = -1;
+        stru_5CB3A8[index].mt_id = -1;
         stru_5CB3A8[index].field_4 = 0;
         sub_553620(index, TIG_ART_ID_INVALID);
     }

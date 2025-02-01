@@ -181,20 +181,20 @@ int sub_460460(int64_t obj)
 }
 
 // 0x4604A0
-int sub_4604A0(int a1)
+int sub_4604A0(int mt_id)
 {
     if (ui_callbacks.field_4C != NULL) {
-        return ui_callbacks.field_4C(a1);
+        return ui_callbacks.field_4C(mt_id);
     } else {
         return 0;
     }
 }
 
 // 0x4604C0
-void sub_4604C0(int a1)
+void sub_4604C0(int mt_id)
 {
     if (ui_callbacks.field_50 != NULL) {
-        ui_callbacks.field_50(a1);
+        ui_callbacks.field_50(mt_id);
     }
 }
 

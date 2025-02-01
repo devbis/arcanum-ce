@@ -437,7 +437,7 @@ static_assert(sizeof(SetSkillTrainingPacket) == 0x40, "wrong size");
 
 typedef struct Packet54 {
     /* 0000 */ int type;
-    /* 0004 */ int field_4;
+    /* 0004 */ int magictech_id;
 } Packet54;
 
 static_assert(sizeof(Packet54) == 0x08, "wrong size");
@@ -555,7 +555,7 @@ typedef struct Packet74 {
     /* 0000 */ int type;
     /* 0004 */ int subtype;
     /* 0008 */ ObjectID oid;
-    /* 0020 */ int magictech;
+    /* 0020 */ int mt_id;
     /* 0024 */ int field_24;
     /* 0028 */ int field_28;
     /* 002C */ int field_2C;
