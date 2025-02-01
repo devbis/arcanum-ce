@@ -1678,7 +1678,7 @@ bool sub_463370(int64_t obj, int key_id)
         return true;
     }
 
-    sub_441260(leader_obj, &objects);
+    object_list_all_followers(leader_obj, &objects);
     node = objects.head;
     while (node != NULL) {
         if (sub_463240(node->obj, key_id)) {
@@ -1705,7 +1705,7 @@ bool sub_463370(int64_t obj, int key_id)
         } else {
             player = sub_4BA020(obj);
             if (player != -1) {
-                sub_440FC0(obj, OBJ_TM_PC, &objects);
+                object_list_vicinity(obj, OBJ_TM_PC, &objects);
                 node = objects.head;
                 while (node != NULL) {
                     if (sub_4BA020(node->obj) == player
@@ -2027,7 +2027,7 @@ void sub_463C60(int64_t obj)
             || item_iso_content_rect.x >= obj_rect.x + obj_rect.width
             || item_iso_content_rect.y >= obj_rect.y + obj_rect.height) {
             v1 = true;
-            sub_440FC0(obj, OBJ_TM_NPC, &objects);
+            object_list_vicinity(obj, OBJ_TM_NPC, &objects);
             node = objects.head;
             while (node != NULL) {
                 if (critter_substitute_inventory_get(node->obj) == obj) {
@@ -3974,7 +3974,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
     int64_t new_container_obj;
     bool rc = false;
 
-    sub_4407C0(loc, OBJ_TM_CONTAINER, &objects);
+    object_list_location(loc, OBJ_TM_CONTAINER, &objects);
     node = objects.head;
     while (node != NULL) {
         if (sub_49B290(node->obj) == 3023) {
@@ -3990,7 +3990,7 @@ bool sub_466EF0(int64_t obj, int64_t loc)
     object_list_destroy(&objects);
 
     new_container_obj = OBJ_HANDLE_NULL;
-    sub_4407C0(loc, OBJ_TM_ITEM, &objects);
+    object_list_location(loc, OBJ_TM_ITEM, &objects);
     node = objects.head;
     while (node != NULL) {
         if (new_container_obj == OBJ_HANDLE_NULL) {

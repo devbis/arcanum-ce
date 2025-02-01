@@ -653,7 +653,7 @@ int stat_base_set(int64_t obj, int stat, int value)
             ObjectNode* node;
             unsigned int flags;
 
-            object_get_followers(obj, &followers);
+            object_list_followers(obj, &followers);
             node = followers.head;
             while (node != NULL) {
                 flags = obj_field_int32_get(node->obj, OBJ_F_NPC_FLAGS);

@@ -943,7 +943,7 @@ void sub_559260(WmapRndEncounterTableEntry* entry)
                 }
             }
 
-            sub_4407C0(loc, OBJ_TM_PC | OBJ_TM_NPC, &objects);
+            object_list_location(loc, OBJ_TM_PC | OBJ_TM_NPC, &objects);
             node = objects.head;
             while (node != NULL) {
                 if (node->obj != obj) {

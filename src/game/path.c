@@ -68,7 +68,7 @@ int sub_41F3C0(PathCreateInfo* path_create_info)
             return 0;
         }
 
-        sub_4407C0(path_create_info->to, OBJ_TM_CRITTER | OBJ_TM_SCENERY | OBJ_TM_CONTAINER, &objects);
+        object_list_location(path_create_info->to, OBJ_TM_CRITTER | OBJ_TM_SCENERY | OBJ_TM_CONTAINER, &objects);
         node = objects.head;
         while (node != NULL) {
             if ((obj_field_int32_get(node->obj, OBJ_F_FLAGS) & OF_NO_BLOCK) == 0) {

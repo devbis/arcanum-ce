@@ -431,7 +431,7 @@ bool sleep_ui_process_callback(TimeEvent* timeevent)
         hours = dword_6834E8 ? 2 : 1;
         sub_45E910(qword_6834A8, hours);
 
-        sub_441260(qword_6834A8, &objects);
+        object_list_all_followers(qword_6834A8, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_45E910(node->obj, hours);
@@ -506,7 +506,7 @@ void sub_57BAC0()
     ObjectList objects;
     ObjectNode* node;
 
-    object_get_followers(qword_6834A8, &objects);
+    object_list_followers(qword_6834A8, &objects);
 
     node = objects.head;
     while (node != NULL) {

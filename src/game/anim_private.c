@@ -1491,7 +1491,7 @@ bool sub_44E940(int64_t obj, AnimID* anim_id, int64_t a2)
 
             if (tig_net_is_active()
                 && obj_field_int32_get(a2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                sub_441310(a2, &objects);
+                object_list_party(a2, &objects);
                 node = objects.head;
                 while (node != NULL) {
                     if (node->obj == run_info->goals[0].params[AGDATA_TARGET_OBJ].obj) {

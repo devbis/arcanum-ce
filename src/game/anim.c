@@ -5742,7 +5742,7 @@ bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
     }
 
     if (run_info->path.curr > run_info->path.max - 2) {
-        sub_4407C0(adjacent_loc, OBJ_TM_CRITTER, &objects);
+        object_list_location(adjacent_loc, OBJ_TM_CRITTER, &objects);
         node = objects.head;
         while (node != NULL) {
             if (!critter_is_dead(node->obj)) {
@@ -5760,7 +5760,7 @@ bool sub_427110(AnimRunInfo* run_info, int64_t obj, int64_t loc)
     }
 
     if (run_info->path.curr < run_info->path.max) {
-        sub_4407C0(adjacent_loc, OBJ_TM_TRAP, &objects);
+        object_list_location(adjacent_loc, OBJ_TM_TRAP, &objects);
         node = objects.head;
         while (node != NULL) {
             if (!sub_4BBFE0(obj, node->obj)
@@ -5832,7 +5832,7 @@ bool sub_4273B0(int64_t obj, int64_t loc, int rotation, int a4, int64_t* obj_ptr
         *obj_ptr = OBJ_HANDLE_NULL;
     }
 
-    sub_4407C0(loc, OBJ_TM_WALL, &objects);
+    object_list_location(loc, OBJ_TM_WALL, &objects);
     node = objects.head;
     while (node != NULL) {
         art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
@@ -5865,7 +5865,7 @@ bool sub_4273B0(int64_t obj, int64_t loc, int rotation, int a4, int64_t* obj_ptr
     object_list_destroy(&objects);
 
     if (v1) {
-        sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+        object_list_location(loc, OBJ_TM_PORTAL, &objects);
         if (objects.head != NULL) {
             if (obj_ptr != NULL) {
                 *obj_ptr = objects.head->obj;
@@ -5879,7 +5879,7 @@ bool sub_4273B0(int64_t obj, int64_t loc, int rotation, int a4, int64_t* obj_ptr
         return false;
     }
 
-    sub_4407C0(loc, OBJ_TM_WALL, &objects);
+    object_list_location(loc, OBJ_TM_WALL, &objects);
     node = objects.head;
     while (node != NULL) {
         art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
@@ -5912,7 +5912,7 @@ bool sub_4273B0(int64_t obj, int64_t loc, int rotation, int a4, int64_t* obj_ptr
     object_list_destroy(&objects);
 
     if (v1) {
-        sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+        object_list_location(loc, OBJ_TM_PORTAL, &objects);
         if (objects.head != NULL) {
             if (obj_ptr != NULL) {
                 *obj_ptr = objects.head->obj;
@@ -7893,7 +7893,7 @@ bool sub_42A720(AnimRunInfo* run_info)
     }
 
     source_loc = obj_field_int64_get(source_obj, OBJ_F_LOCATION);
-    sub_4407C0(source_loc, 0x1FFE0, &objects);
+    object_list_location(source_loc, 0x1FFE0, &objects);
     node = objects.head;
     while (node != NULL) {
         sub_4B2210(source_obj, node->obj, &combat);
@@ -8564,7 +8564,7 @@ bool sub_42B7F0(AnimRunInfo* run_info)
         return false;
     }
 
-    sub_4407C0(obj_field_int64_get(door_obj, OBJ_F_LOCATION),
+    object_list_location(obj_field_int64_get(door_obj, OBJ_F_LOCATION),
         OBJ_TM_NPC | OBJ_TM_PC,
         &objects);
     node = objects.head;
@@ -11171,7 +11171,7 @@ bool sub_42FD70(AnimRunInfo* run_info, int64_t obj, AnimPath* path, int64_t from
         }
 
         if (path->curr > path->max - 2) {
-            sub_4407C0(to, OBJ_TM_CRITTER, &objects);
+            object_list_location(to, OBJ_TM_CRITTER, &objects);
             node = objects.head;
             while (node != NULL) {
                 if (!critter_is_dead(node->obj)) {
@@ -11344,7 +11344,7 @@ bool anim_fidget_timeevent_process(TimeEvent* timeevent)
         cnt = sub_4302D0(&loc_rect, &objects);
         if (cnt != 0) {
             if (cnt > 1) {
-                if (sub_441140(&objects, qword_5DE6D8)) {
+                if (object_list_remove(&objects, qword_5DE6D8)) {
                     cnt--;
                 }
             }
@@ -11400,7 +11400,7 @@ int sub_4302D0(LocRect* loc_rect, ObjectList* objects)
     ASSERT(loc_rect != NULL); // 11919, "pLocRect != NULL"
     ASSERT(objects != NULL); // 11920, "pObjList != NULL"
 
-    sub_440B40(loc_rect, OBJ_TM_PC | OBJ_TM_NPC, objects);
+    object_list_rect(loc_rect, OBJ_TM_PC | OBJ_TM_NPC, objects);
     node = objects->head;
     while (node != NULL) {
         if (sub_4303D0(node->obj)) {
@@ -11409,7 +11409,7 @@ int sub_4302D0(LocRect* loc_rect, ObjectList* objects)
             continue;
         }
 
-        if (!sub_441140(objects, node->obj)) {
+        if (!object_list_remove(objects, node->obj)) {
             ASSERT(0); // 11939, "0"
             object_list_destroy(objects);
             return false;
@@ -11652,7 +11652,7 @@ bool sub_4305D0(AnimRunInfo* run_info)
                 if ((spell_flags & (OSF_FLOATING | OSF_BODY_OF_AIR)) == 0) {
                     ObjectList traps;
 
-                    sub_4407C0(new_loc, OBJ_TM_TRAP, &traps);
+                    object_list_location(new_loc, OBJ_TM_TRAP, &traps);
                     if (traps.head != NULL) {
                         sub_441980(obj, traps.head->obj, traps.head->obj, 1, 0);
                         run_info->path.flags |= 0x08;
@@ -14960,7 +14960,7 @@ bool sub_436720(int64_t* source_obj_ptr, int64_t* block_obj_ptr)
 
     cnt = 0;
     loc = obj_field_int64_get(*source_obj_ptr, OBJ_F_LOCATION);
-    sub_4407C0(loc, OBJ_TM_CRITTER, &objects);
+    object_list_location(loc, OBJ_TM_CRITTER, &objects);
     node = objects.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)

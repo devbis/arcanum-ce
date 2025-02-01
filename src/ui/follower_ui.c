@@ -752,7 +752,7 @@ void sub_56B6F0()
 
     dword_67BC58 = 0;
     pc_obj = player_get_pc_obj();
-    object_get_followers(pc_obj, &followers);
+    object_list_followers(pc_obj, &followers);
     node = followers.head;
     while (node != NULL) {
         dword_67BC58++;

@@ -1493,7 +1493,7 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             break;
         case DIALOG_COND_GOLD:
             gold = item_gold_get(a1->pc_obj);
-            object_get_followers(a1->pc_obj, &followers);
+            object_list_followers(a1->pc_obj, &followers);
             node = followers.head;
             while (node != NULL) {
                 gold += item_gold_get(node->obj);
@@ -1524,7 +1524,7 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
                 }
             } else {
                 if (!item_find_by_name(a1->pc_obj, value)) {
-                    object_get_followers(a1->pc_obj, &followers);
+                    object_list_followers(a1->pc_obj, &followers);
                     node = followers.head;
                     while (node != NULL) {
                         if (item_find_by_name(node->obj, value) == OBJ_HANDLE_NULL) {
@@ -1686,7 +1686,7 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
                     return false;
                 }
 
-                object_get_followers(a1->pc_obj, &followers);
+                object_list_followers(a1->pc_obj, &followers);
                 node = followers.head;
                 while (node != NULL) {
                     if (item_find_by_name(node->obj, value)) {
@@ -1723,7 +1723,7 @@ bool sub_4150D0(DialogEntryNode* a1, char* a2)
             } else {
                 inverse = false;
             }
-            object_get_followers(a1->pc_obj, &followers);
+            object_list_followers(a1->pc_obj, &followers);
             node = followers.head;
             while (node != NULL) {
                 if ((obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_MIND_CONTROLLED) == 0
@@ -1908,7 +1908,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
 
                 value -= total_gold;
                 if (value > 0) {
-                    object_get_followers(a1->pc_obj, &followers);
+                    object_list_followers(a1->pc_obj, &followers);
                     node = followers.head;
                     while (node != NULL) {
                         if (value <= 0) {
@@ -2022,7 +2022,7 @@ bool sub_415BA0(DialogEntryNode* a1, char* a2, int a3)
             } else {
                 item_obj = item_find_by_name(a1->pc_obj, value);
                 if (item_obj == OBJ_HANDLE_NULL) {
-                    object_get_followers(a1->pc_obj, &followers);
+                    object_list_followers(a1->pc_obj, &followers);
                     node = followers.head;
                     while (node != NULL) {
                         item_obj = item_find_by_name(node->obj, value);

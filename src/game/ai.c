@@ -478,7 +478,7 @@ bool sub_4A8940(Ai* ai)
         v2 = ai->obj;
     }
 
-    sub_441260(v2, &objects);
+    object_list_all_followers(v2, &objects);
     node = objects.head;
     while (node != NULL) {
         if (node->obj != ai->obj
@@ -875,7 +875,7 @@ void sub_4A9560(AiRedirect* ai_redirect)
         return;
     }
 
-    sub_440FC0(ai_redirect->field_8, OBJ_TM_PC | OBJ_TM_NPC, &objects);
+    object_list_vicinity(ai_redirect->field_8, OBJ_TM_PC | OBJ_TM_NPC, &objects);
     node = objects.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)
@@ -1089,7 +1089,7 @@ void sub_4A9B80(int64_t a1, int64_t a2, int a3, int a4)
     ObjectNode* node;
 
     if (a1 != a2) {
-        object_get_followers(a1, &followers);
+        object_list_followers(a1, &followers);
         node = followers.head;
         while (node != NULL) {
             sub_4A9C00(node->obj, a1, a2, a3, a4, 0);
@@ -1312,7 +1312,7 @@ void sub_4AA300(int64_t a1, int64_t a2)
         ObjectList objects;
         ObjectNode* node;
 
-        sub_441260(v1, &objects);
+        object_list_all_followers(v1, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_4AA420(node->obj, a1);
@@ -1362,7 +1362,7 @@ void sub_4AA4A0(int64_t obj)
         ai_target_unlock(obj);
         break;
     case OBJ_TYPE_PC:
-        sub_441260(obj, &objects);
+        object_list_all_followers(obj, &objects);
 
         node = objects.head;
         while (node != NULL) {
@@ -1393,7 +1393,7 @@ void sub_4AA580(int64_t obj)
         }
         break;
     case OBJ_TYPE_PC:
-        sub_441260(obj, &objects);
+        object_list_all_followers(obj, &objects);
 
         node = objects.head;
         while (node != NULL) {
@@ -2827,7 +2827,7 @@ int64_t ai_find_nearest_bed(int64_t loc)
     ObjectNode* node;
     tig_art_id_t art_id;
 
-    sub_4407C0(loc, OBJ_TM_SCENERY, &objects);
+    object_list_location(loc, OBJ_TM_SCENERY, &objects);
 
     node = objects.head;
     while (node != NULL) {
@@ -3450,7 +3450,7 @@ void sub_4AE0A0(int64_t obj, int* cnt_ptr, int* lvl_ptr)
     *cnt_ptr = 1;
     *lvl_ptr = stat_level_get(obj, STAT_LEVEL);
 
-    sub_441260(obj, &objects);
+    object_list_all_followers(obj, &objects);
     node = objects.head;
     while (node != NULL) {
         *cnt_ptr += 1;
@@ -3589,7 +3589,7 @@ void sub_4AE4E0(int64_t obj, int radius, ObjectList* objects, unsigned int flags
     loc_rect.y1 = LOCATION_GET_Y(loc) - radius;
     loc_rect.x2 = LOCATION_GET_X(loc) + radius;
     loc_rect.y2 = LOCATION_GET_Y(loc) + radius;
-    sub_440B40(&loc_rect, flags, objects);
+    object_list_rect(&loc_rect, flags, objects);
 }
 
 // 0x4AE570
@@ -4266,7 +4266,7 @@ void sub_4AF8C0(int64_t a1, int64_t a2)
         v1 = a2;
     }
 
-    sub_4413E0(v1, &objects);
+    object_list_team(v1, &objects);
 
     node = objects.head;
     while (node != NULL) {

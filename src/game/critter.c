@@ -555,7 +555,7 @@ void critter_notify_killed(int64_t victim_obj, int64_t killer_obj, int anim)
                 sub_45DC90(pc_killer_obj, victim_obj, true);
                 logbook_add_kill(pc_killer_obj, victim_obj);
 
-                object_get_followers(pc_killer_obj, &followers);
+                object_list_followers(pc_killer_obj, &followers);
                 node = followers.head;
                 while (node != NULL) {
                     sub_441980(victim_obj, node->obj, pc_killer_obj, SAP_LEADER_KILLING, 0);
@@ -859,7 +859,7 @@ void sub_45E1E0(int64_t obj)
     }
     obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, critter_flags2);
 
-    sub_441260(obj, &objects);
+    object_list_all_followers(obj, &objects);
     node = objects.head;
     while (node != NULL) {
         spell_flags = obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS);
@@ -980,7 +980,7 @@ int64_t critter_follower_prev(int64_t critter_obj)
     if (leader_obj != OBJ_HANDLE_NULL) {
         prev_candidate_obj = OBJ_HANDLE_NULL;
 
-        object_get_followers(leader_obj, &followers);
+        object_list_followers(leader_obj, &followers);
         node = followers.head;
         while (node != NULL) {
             if (node->obj == critter_obj) {
@@ -1020,7 +1020,7 @@ int64_t critter_follower_next(int64_t critter_obj)
 
     leader_obj = critter_leader_get(critter_obj);
     if (leader_obj != OBJ_HANDLE_NULL) {
-        object_get_followers(leader_obj, &followers);
+        object_list_followers(leader_obj, &followers);
         node = followers.head;
         while (node != NULL) {
             if (node->obj == critter_obj) {
@@ -1415,7 +1415,7 @@ void critter_set_concealed(int64_t obj, bool concealed)
 
     critter_set_concealed_internal(obj, concealed);
 
-    sub_441260(obj, &objects);
+    object_list_all_followers(obj, &objects);
     node = objects.head;
     while (node != NULL) {
         critter_set_concealed_internal(node->obj, concealed);
@@ -1579,7 +1579,7 @@ void critter_give_xp(int64_t obj, int xp_gain)
 
     if (player != -1) {
         cnt = 0;
-        sub_440FC0(obj, OBJ_TM_PC, &objects);
+        object_list_vicinity(obj, OBJ_TM_PC, &objects);
         node = objects.head;
         while (node != NULL) {
             if (!critter_is_dead(node->obj)
@@ -1690,7 +1690,7 @@ bool critter_has_bad_associates(int64_t obj)
         }
     }
 
-    sub_441260(obj, &objects);
+    object_list_all_followers(obj, &objects);
     node = objects.head;
     while (node != NULL) {
         if ((obj_field_int32_get(node->obj, OBJ_F_SPELL_FLAGS) & OSF_SUMMONED) != 0

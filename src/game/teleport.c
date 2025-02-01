@@ -211,7 +211,7 @@ bool teleport_process(TeleportData* teleport_data)
         ObjectList objects;
         ObjectNode* node;
 
-        object_get_followers(teleport_data->obj, &objects);
+        object_list_followers(teleport_data->obj, &objects);
         node = objects.head;
         while (node != NULL) {
             if (critter_is_unconscious(node->obj)) {
@@ -306,7 +306,7 @@ bool schedule_teleport_obj_recursively(int64_t obj, int64_t loc)
         ObjectNode* obj_node;
         int64_t v1;
 
-        object_get_followers(obj, &objects);
+        object_list_followers(obj, &objects);
         obj_node = objects.head;
         while (obj_node != NULL) {
             if ((obj_field_int32_get(obj_node->obj, OBJ_F_NPC_FLAGS) & ONF_AI_WAIT_HERE) == 0) {

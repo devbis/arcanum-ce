@@ -1654,7 +1654,7 @@ void sub_4F0790(int64_t obj, bool a2)
 
     loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
 
-    sub_4407C0(loc, OBJ_TM_WALL, &objects);
+    object_list_location(loc, OBJ_TM_WALL, &objects);
     node = objects.head;
     while (node != NULL) {
         sub_4E18F0(node->obj, a2);
@@ -1662,7 +1662,7 @@ void sub_4F0790(int64_t obj, bool a2)
     }
     object_list_destroy(&objects);
 
-    sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+    object_list_location(loc, OBJ_TM_PORTAL, &objects);
     node = objects.head;
     while (node != NULL) {
         sub_43CF70(node->obj);

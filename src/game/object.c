@@ -89,7 +89,7 @@ static void sub_43CEA0(int64_t obj, unsigned int flags, const char* path);
 static int sub_43D690(object_id_t obj);
 static int sub_43D630(object_id_t obj);
 static int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64_t* a6, int* a7, int* a8);
-static void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects);
+static void object_list_vicinity_loc(int64_t loc, unsigned int flags, ObjectList* objects);
 static bool sub_441710(S4415C0* entry);
 static bool sub_441780(S4415C0* entry);
 static bool sub_4418E0(S4417A0* entry);
@@ -1288,7 +1288,7 @@ void object_destroy(int64_t obj)
 
     if (obj_type == OBJ_TYPE_WALL) {
         loc = obj_field_int64_get(obj, OBJ_F_LOCATION);
-        sub_4407C0(loc, OBJ_TM_PORTAL, &objects);
+        object_list_location(loc, OBJ_TM_PORTAL, &objects);
         node = objects.head;
         while (node != NULL) {
             object_destroy(node->obj);
@@ -2398,7 +2398,7 @@ void sub_43F1C0(int64_t obj, int64_t triggerer_obj)
 
             loc = obj_field_int32_get(obj, OBJ_F_LOCATION);
             object_destroy(obj);
-            sub_4407C0(loc, 32740, &objects);
+            object_list_location(loc, 32740, &objects);
             if (objects.head != NULL) {
                 sub_456E60(objects.head->obj, 1203);
             }
@@ -2853,7 +2853,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
         return cost;
     }
 
-    sub_4407C0(a2, OBJ_TM_WALL | OBJ_TM_PORTAL, &objects);
+    object_list_location(a2, OBJ_TM_WALL | OBJ_TM_PORTAL, &objects);
     node = objects.head;
     while (node != NULL) {
         bool v1 = false;
@@ -2976,7 +2976,7 @@ int sub_43FE00(int64_t a1, int64_t a2, int a3, int a4, unsigned int flags, int64
         }
     }
 
-    sub_4407C0(tmp_loc, 0x3801F, &objects);
+    object_list_location(tmp_loc, 0x3801F, &objects);
     node = objects.head;
     while (node != NULL) {
         bool v2 = false;
@@ -3128,7 +3128,7 @@ bool sub_440700(int64_t obj, int64_t loc, int rot, unsigned int flags, int64_t* 
 }
 
 // 0x4407C0
-void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
+void object_list_location(int64_t loc, unsigned int flags, ObjectList* objects)
 {
     bool types[18];
     int64_t sector_id;
@@ -3221,7 +3221,7 @@ void sub_4407C0(int64_t loc, unsigned int flags, ObjectList* objects)
 }
 
 // 0x440B40
-void sub_440B40(LocRect* loc_rect, unsigned int flags, ObjectList* objects)
+void object_list_rect(LocRect* loc_rect, unsigned int flags, ObjectList* objects)
 {
     bool types[18];
     SomeSectorStuff v1;
@@ -3342,13 +3342,13 @@ void sub_440B40(LocRect* loc_rect, unsigned int flags, ObjectList* objects)
 }
 
 // 0x440FC0
-void sub_440FC0(int64_t obj, unsigned int flags, ObjectList* objects)
+void object_list_vicinity(int64_t obj, unsigned int flags, ObjectList* objects)
 {
-    sub_440FF0(obj_field_int64_get(obj, OBJ_F_LOCATION), flags, objects);
+    object_list_vicinity_loc(obj_field_int64_get(obj, OBJ_F_LOCATION), flags, objects);
 }
 
 // 0x440FF0
-void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects)
+void object_list_vicinity_loc(int64_t loc, unsigned int flags, ObjectList* objects)
 {
     TigWindowData window_data;
     TigRect screen_rect;
@@ -3370,7 +3370,7 @@ void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects)
     screen_rect.y = (int)(y - center_y);
 
     if (sub_4B9130(&screen_rect, &loc_rect)) {
-        sub_440B40(&loc_rect, flags, objects);
+        object_list_rect(&loc_rect, flags, objects);
     } else {
         objects->num_sectors = 0;
         objects->head = NULL;
@@ -3378,7 +3378,7 @@ void sub_440FF0(int64_t loc, unsigned int flags, ObjectList* objects)
 }
 
 // 0x4410E0
-int object_list_destroy(ObjectList* objects)
+void object_list_destroy(ObjectList* objects)
 {
     ObjectNode* node;
     ObjectNode* next;
@@ -3395,11 +3395,11 @@ int object_list_destroy(ObjectList* objects)
         sector_unlock(objects->sectors[index]);
     }
 
-    return --dword_5E2F98;
+    --dword_5E2F98;
 }
 
 // 0x441140
-bool sub_441140(ObjectList* objects, int64_t obj)
+bool object_list_remove(ObjectList* objects, int64_t obj)
 {
     ObjectNode* node;
     ObjectNode* prev;
@@ -3442,7 +3442,7 @@ bool sub_441140(ObjectList* objects, int64_t obj)
 }
 
 // 0x4411C0
-int object_get_followers(int64_t obj, ObjectList* objects)
+void object_list_followers(int64_t obj, ObjectList* objects)
 {
     int cnt;
     int index;
@@ -3466,11 +3466,11 @@ int object_get_followers(int64_t obj, ObjectList* objects)
         parent_ptr = &((*parent_ptr)->next);
     }
 
-    return ++dword_5E2F98;
+    ++dword_5E2F98;
 }
 
 // 0x441260
-void sub_441260(int64_t obj, ObjectList* objects)
+void object_list_all_followers(int64_t obj, ObjectList* objects)
 {
     ObjectNode** parent_ptr;
     ObjectNode* node;
@@ -3483,7 +3483,7 @@ void sub_441260(int64_t obj, ObjectList* objects)
     objects->head = NULL;
     parent_ptr = &(objects->head);
 
-    object_get_followers(obj, objects);
+    object_list_followers(obj, objects);
 
     cnt = 0;
     node = objects->head;
@@ -3495,7 +3495,7 @@ void sub_441260(int64_t obj, ObjectList* objects)
 
     node = objects->head;
     while (node != NULL && cnt > 0) {
-        sub_441260(node->obj, &tmp_list);
+        object_list_all_followers(node->obj, &tmp_list);
 
         tmp_node = tmp_list.head;
         while (tmp_node != NULL) {
@@ -3515,7 +3515,7 @@ void sub_441260(int64_t obj, ObjectList* objects)
 }
 
 // 0x441310
-int sub_441310(int64_t obj, ObjectList* objects)
+void object_list_party(int64_t obj, ObjectList* objects)
 {
     ObjectNode* node;
     int64_t party_member_obj;
@@ -3544,11 +3544,11 @@ int sub_441310(int64_t obj, ObjectList* objects)
         objects->head = node;
     }
 
-    return ++dword_5E2F98;
+    ++dword_5E2F98;
 }
 
 // 0x4413E0
-void sub_4413E0(int64_t obj, ObjectList* objects)
+void object_list_team(int64_t obj, ObjectList* objects)
 {
     ObjectNode** parent_ptr;
     ObjectNode* node;
@@ -3562,7 +3562,7 @@ void sub_4413E0(int64_t obj, ObjectList* objects)
     parent_ptr = &(objects->head);
 
     if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-        sub_441310(obj, objects);
+        object_list_party(obj, objects);
 
         cnt = 0;
         node = objects->head;
@@ -3574,7 +3574,7 @@ void sub_4413E0(int64_t obj, ObjectList* objects)
 
         node = objects->head;
         while (node != NULL && cnt > 0) {
-            sub_441260(node->obj, &tmp_list);
+            object_list_all_followers(node->obj, &tmp_list);
 
             tmp_node = tmp_list.head;
             while (tmp_node != NULL) {
@@ -3601,7 +3601,7 @@ void sub_4413E0(int64_t obj, ObjectList* objects)
 }
 
 // 0x4414E0
-void sub_4414E0(ObjectList* dst, ObjectList* src)
+void object_list_copy(ObjectList* dst, ObjectList* src)
 {
     ObjectNode* dst_node;
     ObjectNode* src_node;
@@ -4939,7 +4939,7 @@ bool sub_443AD0(int64_t* obj_ptr, Ryan* a2, TigFile* stream)
 
     if (oid.type != OID_TYPE_NULL) {
         if (loc != 0) {
-            sub_4407C0(loc, 0x3FFFF, &objects);
+            object_list_location(loc, 0x3FFFF, &objects);
             object_list_destroy(&objects);
         }
 
@@ -5016,7 +5016,7 @@ bool sub_443F80(int64_t* obj_ptr, Ryan* a2)
             return false;
         }
 
-        sub_4407C0(a2->location, 0x3FFFF, &objects);
+        object_list_location(a2->location, 0x3FFFF, &objects);
         object_list_destroy(&objects);
     }
 
@@ -5205,7 +5205,7 @@ int64_t sub_444500(int64_t loc)
     ObjectNode* node;
     int64_t obj = OBJ_HANDLE_NULL;
 
-    sub_4407C0(loc, OBJ_TM_SCENERY, &objects);
+    object_list_location(loc, OBJ_TM_SCENERY, &objects);
 
     node = objects.head;
     while (node != NULL) {

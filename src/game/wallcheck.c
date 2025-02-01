@@ -741,7 +741,7 @@ void wallcheck_recalc(int64_t loc)
     v2 = (int)((LOCATION_GET_Y(loc) - 2) % 4);
 
     if (v1 == 0) {
-        sub_4407C0(loc, OBJ_TM_WALL, &walls);
+        object_list_location(loc, OBJ_TM_WALL, &walls);
         node = walls.head;
         while (node != NULL) {
             art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
@@ -757,7 +757,7 @@ void wallcheck_recalc(int64_t loc)
         }
         object_list_destroy(&walls);
     } else if (v2 == 0) {
-        sub_4407C0(loc, OBJ_TM_WALL, &walls);
+        object_list_location(loc, OBJ_TM_WALL, &walls);
         node = walls.head;
         while (node != NULL) {
             art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);
@@ -806,7 +806,7 @@ void wallcheck_recalc(int64_t loc)
                 + stru_5A3EA8[stru_5A3FF0[i].field_4].offset_y;
 
             for (int j = 0; j < 3; j++) {
-                sub_4407C0(LOCATION_MAKE(tmp_x, tmp_y), OBJ_TM_WALL, &(stru_5DE6F0[i][j]));
+                object_list_location(LOCATION_MAKE(tmp_x, tmp_y), OBJ_TM_WALL, &(stru_5DE6F0[i][j]));
                 if (stru_5DE6F0[i][j].head == NULL) {
                     stru_5A3FF0[i].field_0 |= 0x20000;
                     if ((stru_5A3FF0[i].field_0 & 0x01) == 0) {
@@ -851,7 +851,7 @@ void wallcheck_recalc(int64_t loc)
                 + stru_5A3EA8[stru_5A3FF0[i].field_4].offset_y;
 
             for (int j = 0; j < 3; j++) {
-                sub_4407C0(LOCATION_MAKE(tmp_x, tmp_y), OBJ_TM_WALL, &(stru_5DE6F0[i][j]));
+                object_list_location(LOCATION_MAKE(tmp_x, tmp_y), OBJ_TM_WALL, &(stru_5DE6F0[i][j]));
                 tmp_x += dword_5A5310[stru_5A3FF0[i].field_14];
                 tmp_y += dword_5A5330[stru_5A3FF0[i].field_14];
             }
@@ -890,7 +890,7 @@ void wallcheck_recalc(int64_t loc)
 
     for (int i = 0; i < 27; i++) {
         if (stru_5A3EA8[i].flags != 0) {
-            sub_4407C0(LOCATION_MAKE(x + stru_5A3EA8[i].offset_x, y + stru_5A3EA8[i].offset_y), OBJ_TM_WALL, &walls);
+            object_list_location(LOCATION_MAKE(x + stru_5A3EA8[i].offset_x, y + stru_5A3EA8[i].offset_y), OBJ_TM_WALL, &walls);
             node = walls.head;
             while (node != NULL) {
                 art_id = obj_field_int32_get(node->obj, OBJ_F_CURRENT_AID);

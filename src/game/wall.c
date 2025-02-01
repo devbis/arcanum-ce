@@ -154,7 +154,7 @@ void sub_4E1C00(UnknownContext* render_info)
     for (y = loc_rect->y1; y <= loc_rect->y2; y++) {
         for (x = loc_rect->x1; x <= loc_rect->x2; x++) {
             loc = location_make(x, y);
-            sub_4407C0(loc, OBJ_TM_WALL, &walls);
+            object_list_location(loc, OBJ_TM_WALL, &walls);
             node = walls.head;
             while (node != NULL) {
                 location_xy(loc, &loc_x, &loc_y);
@@ -392,7 +392,7 @@ void sub_4E2C50(int64_t obj)
     adjacent_loc = loc;
     while (cw_size > 0) {
         location_in_dir(adjacent_loc, cw_rot, &adjacent_loc);
-        sub_4407C0(adjacent_loc, OBJ_TM_WALL, &walls);
+        object_list_location(adjacent_loc, OBJ_TM_WALL, &walls);
         node = walls.head;
         while (node != NULL) {
             if (obj_field_int32_get(node->obj, OBJ_F_TYPE) == OBJ_TYPE_WALL) {
@@ -416,7 +416,7 @@ void sub_4E2C50(int64_t obj)
     adjacent_loc = loc;
     while (ccw_size > 0) {
         location_in_dir(adjacent_loc, ccw_rot, &adjacent_loc);
-        sub_4407C0(adjacent_loc, OBJ_TM_WALL, &walls);
+        object_list_location(adjacent_loc, OBJ_TM_WALL, &walls);
         node = walls.head;
         while (node != NULL) {
             if (obj_field_int32_get(node->obj, OBJ_F_TYPE) == OBJ_TYPE_WALL) {

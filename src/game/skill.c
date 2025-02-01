@@ -2069,7 +2069,7 @@ void sub_4C9050(SkillInvocation* skill_invocation)
     if (IS_TECH_SKILL(skill_invocation->skill)) {
         skill_level = sub_4C69F0(skill_invocation->source.obj, GET_TECH_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
         v2 = skill_invocation->source.obj;
-        sub_441260(v2, &objects);
+        object_list_all_followers(v2, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_4440E0(node->obj, &(skill_invocation->source));
@@ -2084,7 +2084,7 @@ void sub_4C9050(SkillInvocation* skill_invocation)
     } else {
         skill_level = sub_4C62E0(skill_invocation->source.obj, GET_BASIC_SKILL(skill_invocation->skill), skill_invocation->target.obj) - sub_4C8430(skill_invocation);
         v2 = skill_invocation->source.obj;
-        sub_441260(v2, &objects);
+        object_list_all_followers(v2, &objects);
         node = objects.head;
         while (node != NULL) {
             sub_4440E0(node->obj, &(skill_invocation->source));

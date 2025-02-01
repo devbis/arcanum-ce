@@ -369,7 +369,7 @@ void sub_4A69C0(int64_t pc_obj)
         }
     } while (cur_level < max_level && exp_to_next_level <= 0);
 
-    sub_441260(pc_obj, &objects);
+    object_list_all_followers(pc_obj, &objects);
     node = objects.head;
     while (node != NULL) {
         sub_4A6CB0(node->obj, old_level, cur_level);
@@ -377,7 +377,7 @@ void sub_4A69C0(int64_t pc_obj)
     }
     object_list_destroy(&objects);
 
-    sub_440FC0(pc_obj, OBJ_TM_NPC, &objects);
+    object_list_vicinity(pc_obj, OBJ_TM_NPC, &objects);
     node = objects.head;
     while (node != NULL) {
         if (!critter_is_dead(node->obj)

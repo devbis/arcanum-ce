@@ -1371,7 +1371,7 @@ int64_t objp_perm_lookup(ObjectID oid)
         return OBJ_HANDLE_NULL;
     }
 
-    sub_4407C0(oid.d.p.location, OBJ_TM_TRAP | OBJ_TM_WALL | OBJ_TM_PORTAL | OBJ_TM_SCENERY, &objects);
+    object_list_location(oid.d.p.location, OBJ_TM_TRAP | OBJ_TM_WALL | OBJ_TM_PORTAL | OBJ_TM_SCENERY, &objects);
 
     if (objects.num_sectors != 1) {
         tig_debug_println("Warning: objp_perm_lookup found sectors != 1");

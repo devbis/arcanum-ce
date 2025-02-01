@@ -242,7 +242,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
     }
 
     if ((stru_603D20.aoe_flags & Tgt_Non_Party) != 0) {
-        sub_441260(pc_obj, &party_members);
+        object_list_all_followers(pc_obj, &party_members);
         node = party_members.head;
         while (node != NULL) {
             object_flags_set(node->obj, OF_CANCEL);
@@ -250,7 +250,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
         }
 
         if (tig_net_is_host()) {
-            sub_441310(pc_obj, &mp_party_members);
+            object_list_party(pc_obj, &mp_party_members);
             node = mp_party_members.head;
             while (node != NULL) {
                 object_flags_set(node->obj, OF_CANCEL);
@@ -260,7 +260,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
     }
 
     if ((stru_603D20.aoe_flags & Tgt_No_ST_Critter_Dead) != 0) {
-        sub_440FC0(pc_obj, OBJ_TM_PC | OBJ_TM_NPC, &dead_critters);
+        object_list_vicinity(pc_obj, OBJ_TM_PC | OBJ_TM_NPC, &dead_critters);
         node = mp_party_members.head;
         while (node != NULL) {
             if (critter_is_dead(node->obj)) {
@@ -280,7 +280,7 @@ bool sub_4F28A0(int x, int y, S4F2810* a3)
 
     if (!ret) {
         if (location_at(x, y, &loc)) {
-            sub_4407C0(loc, OBJ_TM_ALL & ~OBJ_TM_PROJECTILE, &objects);
+            object_list_location(loc, OBJ_TM_ALL & ~OBJ_TM_PROJECTILE, &objects);
             node = objects.head;
             while (node != NULL) {
                 v2 = node->obj;
@@ -588,7 +588,7 @@ bool sub_4F2D20(S603CB8* a1)
 
                         if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                            sub_441310(a1->self_obj, &objects);
+                            object_list_party(a1->self_obj, &objects);
                             node = objects.head;
                             while (node != NULL) {
                                 if (node->obj == v1
@@ -619,7 +619,7 @@ bool sub_4F2D20(S603CB8* a1)
 
                         if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                            sub_441310(a1->field_40, &objects);
+                            object_list_party(a1->field_40, &objects);
                             node = objects.head;
                             while (node != NULL) {
                                 if (node->obj == v1
@@ -684,7 +684,7 @@ bool sub_4F2D20(S603CB8* a1)
 
                         if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                            sub_441310(a1->self_obj, &objects);
+                            object_list_party(a1->self_obj, &objects);
                             node = objects.head;
                             while (node != NULL) {
                                 if (node->obj == v1
@@ -715,7 +715,7 @@ bool sub_4F2D20(S603CB8* a1)
 
                         if (tig_net_is_active()
                             && obj_field_int32_get(v2, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-                            sub_441310(a1->field_40, &objects);
+                            object_list_party(a1->field_40, &objects);
                             node = objects.head;
                             while (node != NULL) {
                                 if (node->obj == v1
@@ -895,7 +895,7 @@ bool sub_4F2D20(S603CB8* a1)
             return false;
         }
 
-        sub_4407C0(a1->field_28, OBJ_TM_ALL & ~OBJ_TM_PROJECTILE, &objects);
+        object_list_location(a1->field_28, OBJ_TM_ALL & ~OBJ_TM_PROJECTILE, &objects);
         node = objects.head;
         while (node != NULL) {
             if (node->obj != OBJ_HANDLE_NULL) {
@@ -921,7 +921,7 @@ bool sub_4F2D20(S603CB8* a1)
             return false;
         }
 
-        sub_4407C0(a1->field_28, OBJ_TM_TRAP | OBJ_TM_SCENERY | OBJ_TM_PORTAL | OBJ_TM_WALL, &objects);
+        object_list_location(a1->field_28, OBJ_TM_TRAP | OBJ_TM_SCENERY | OBJ_TM_PORTAL | OBJ_TM_WALL, &objects);
         node = objects.head;
         while (node != NULL) {
             if (node->obj != OBJ_HANDLE_NULL) {
@@ -1134,7 +1134,7 @@ void sub_4F40B0(S603CB8* a1)
             all = true;
         }
 
-        sub_440B40(&loc_rect, obj_type_mask, &objects);
+        object_list_rect(&loc_rect, obj_type_mask, &objects);
         obj_node = objects.head;
         while (obj_node != NULL) {
             int64_t tmp_obj = obj_node->obj;
@@ -1345,7 +1345,7 @@ void sub_4F40B0(S603CB8* a1)
                 for (y = -v2->radius; y <= v2->radius; y++) {
                     for (x = -v2->radius; x <= v2->radius; x++) {
                         loc = location_make(location_get_x(origin) + x, location_get_y(origin) + y);
-                        sub_4407C0(loc, obj_type_mask, &objects);
+                        object_list_location(loc, obj_type_mask, &objects);
                         obj_node = objects.head;
                         while (obj_node != NULL) {
                             int64_t tmp_obj = obj_node->obj;
@@ -1420,7 +1420,7 @@ void sub_4F40B0(S603CB8* a1)
     }
 
     if ((v2->aoe_flags & Tgt_All_Party_Critters_Naked) != 0 && a1->source_obj != OBJ_HANDLE_NULL) {
-        sub_4413E0(a1->source_obj, &objects);
+        object_list_team(a1->source_obj, &objects);
         obj_node = objects.head;
         while (obj_node != NULL) {
             sub_4F3FD0(v1, obj_node->obj);
@@ -1430,7 +1430,7 @@ void sub_4F40B0(S603CB8* a1)
 
         if (tig_net_is_active()
             && obj_field_int32_get(a1->source_obj, OBJ_F_TYPE) == OBJ_TYPE_PC) {
-            sub_441310(a1->source_obj, &objects);
+            object_list_party(a1->source_obj, &objects);
             obj_node = objects.head;
             while (obj_node != NULL) {
                 sub_4F3FD0(v1, obj_node->obj);
@@ -1494,7 +1494,7 @@ bool sub_4F4E40(int64_t obj, int distance, int64_t* loc_ptr)
         dword_603C94 = 0;
         while (dword_603C94 < stru_603B88.field_24) {
             if (obj_type_is_critter(obj_type)) {
-                sub_4407C0(to, OBJ_TM_CRITTER, &critters);
+                object_list_location(to, OBJ_TM_CRITTER, &critters);
                 node = critters.head;
                 object_list_destroy(&critters);
                 if (node == NULL) {

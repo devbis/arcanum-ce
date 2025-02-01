@@ -718,7 +718,7 @@ void sub_4F2330(int64_t sector_id, int64_t obj)
         }
     }
 
-    object_get_followers(obj, &objects);
+    object_list_followers(obj, &objects);
     node = objects.head;
     while (node != NULL) {
         sub_441980(obj, node->obj, OBJ_HANDLE_NULL, SAP_NEW_SECTOR, 0);

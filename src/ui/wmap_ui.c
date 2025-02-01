@@ -4598,7 +4598,7 @@ void wmap_town_refresh_rect(TigRect* rect)
         tig_window_blit_art(wmap_ui_window, &art_blit_info);
     }
 
-    sub_441260(player_get_pc_obj(), &objects);
+    object_list_all_followers(player_get_pc_obj(), &objects);
     node = objects.head;
     while (node != NULL) {
         loc = obj_field_int64_get(node->obj, OBJ_F_LOCATION);
@@ -4629,7 +4629,7 @@ void wmap_town_refresh_rect(TigRect* rect)
     object_list_destroy(&objects);
 
     if (tig_net_is_active()) {
-        sub_441310(player_get_pc_obj(), &objects);
+        object_list_party(player_get_pc_obj(), &objects);
         node = objects.head;
         while (node != NULL) {
             if (!player_is_pc_obj(node->obj)) {

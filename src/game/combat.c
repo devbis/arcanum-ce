@@ -661,7 +661,7 @@ bool sub_4B2870(int64_t attacker_obj, int64_t target_obj, int64_t target_loc, in
             ObjectList objects;
             ObjectNode* node;
 
-            sub_4407C0(proj_loc, OBJ_TM_CRITTER, &objects);
+            object_list_location(proj_loc, OBJ_TM_CRITTER, &objects);
             node = objects.head;
             while (node != NULL) {
                 if (!critter_is_dead(node->obj)
@@ -1200,8 +1200,8 @@ bool sub_4B3D90(int64_t obj)
         return false;
     }
 
-    sub_441260(obj, &pcs);
-    sub_440FC0(obj, OBJ_TM_NPC, &npcs);
+    object_list_all_followers(obj, &pcs);
+    object_list_vicinity(obj, OBJ_TM_NPC, &npcs);
 
     npc_node = npcs.head;
     while (npc_node != NULL && ret) {
@@ -2385,7 +2385,7 @@ void sub_4B5E90(int64_t loc)
     tig_art_id_t art_id;
     int64_t obj;
 
-    sub_4407C0(loc, OBJ_TM_SCENERY, &objects);
+    object_list_location(loc, OBJ_TM_SCENERY, &objects);
 
     node = objects.head;
     while (node != NULL) {
@@ -3229,7 +3229,7 @@ bool combat_turn_based_start()
     loc_rect.x2 = LOCATION_GET_X(loc) + dword_5B57B8;
     loc_rect.y1 = LOCATION_GET_Y(loc) - dword_5B57B8;
     loc_rect.y2 = LOCATION_GET_Y(loc) + dword_5B57B8;
-    sub_440B40(&loc_rect, OBJ_TM_NPC | OBJ_TM_PC, &stru_5FC180);
+    object_list_rect(&loc_rect, OBJ_TM_NPC | OBJ_TM_PC, &stru_5FC180);
     sub_4B7EB0();
 
     node = stru_5FC180.head;
@@ -3295,8 +3295,8 @@ bool combat_turn_based_begin_turn()
     loc_rect.y1 = LOCATION_GET_Y(pc_loc) - dword_5B57B8;
     loc_rect.x2 = LOCATION_GET_X(pc_loc) + dword_5B57B8;
     loc_rect.y2 = LOCATION_GET_Y(pc_loc) + dword_5B57B8;
-    sub_440B40(&loc_rect, OBJ_TM_PC | OBJ_TM_NPC, &objects);
-    sub_4414E0(&stru_5FC180, &objects);
+    object_list_rect(&loc_rect, OBJ_TM_PC | OBJ_TM_NPC, &objects);
+    object_list_copy(&stru_5FC180, &objects);
     object_list_destroy(&objects);
 
     sub_4B7EB0();

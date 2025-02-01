@@ -587,7 +587,7 @@ int64_t sub_4BCAB0(int64_t loc)
     ObjectList traps;
     int64_t first_trap;
 
-    sub_4407C0(loc, OBJ_TM_TRAP, &traps);
+    object_list_location(loc, OBJ_TM_TRAP, &traps);
     if (traps.head != NULL) {
         first_trap = traps.head->obj;
     } else {
@@ -791,7 +791,7 @@ int64_t find_trap_source(int64_t obj, uint8_t id)
     ObjectNode* node;
 
     trap_source_obj = OBJ_HANDLE_NULL;
-    sub_440FC0(obj, OBJ_TM_TRAP | OBJ_TM_SCENERY | OBJ_TM_PORTAL | OBJ_TM_WALL, &objects);
+    object_list_vicinity(obj, OBJ_TM_TRAP | OBJ_TM_SCENERY | OBJ_TM_PORTAL | OBJ_TM_WALL, &objects);
 
     node = objects.head;
     while (node != NULL) {

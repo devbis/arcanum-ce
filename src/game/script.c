@@ -2916,7 +2916,7 @@ void sub_44B1F0(ScriptAction* action, ScriptState* state)
         return;
     }
 
-    sub_440FC0(state->invocation->triggerer_obj, OBJ_TM_PC, &objects);
+    object_list_vicinity(state->invocation->triggerer_obj, OBJ_TM_PC, &objects);
 
     if (objects.head == NULL) {
         object_list_destroy(&objects);
@@ -3008,7 +3008,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERY_FOLLOWER:
     case SFO_ANY_FOLLOWER:
-        object_get_followers(state->invocation->triggerer_obj, l);
+        object_list_followers(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -3018,7 +3018,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERYONE_IN_PARTY:
     case SFO_ANYONE_IN_PARTY:
-        sub_441310(state->invocation->triggerer_obj, l);
+        object_list_party(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -3028,7 +3028,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERYONE_IN_TEAM:
     case SFO_ANYONE_IN_TEAM:
-        sub_4413E0(state->invocation->triggerer_obj, l);
+        object_list_team(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -3039,7 +3039,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
     case SFO_EVERYONE_IN_VICINITY:
     case SFO_ANYONE_IN_VICINITY:
         if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
-            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_PC | OBJ_TM_NPC, l);
+            object_list_vicinity(state->invocation->attachee_obj, OBJ_TM_PC | OBJ_TM_NPC, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -3064,7 +3064,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
         break;
     case SFO_EVERYONE_IN_GROUP:
     case SFO_ANYONE_IN_GROUP:
-        object_get_followers(state->invocation->triggerer_obj, l);
+        object_list_followers(state->invocation->triggerer_obj, l);
 
         node = l->head;
         while (node != NULL && cnt < 100) {
@@ -3078,7 +3078,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
     case SFO_EVERY_SCENERY_IN_VICINITY:
     case SFO_ANY_SCENERY_IN_VICINITY:
         if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
-            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_SCENERY, l);
+            object_list_vicinity(state->invocation->attachee_obj, OBJ_TM_SCENERY, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -3095,7 +3095,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
     case SFO_EVERY_CONTAINER_IN_VICINITY:
     case SFO_ANY_CONTAINER_IN_VICINITY:
         if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
-            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_CONTAINER, l);
+            object_list_vicinity(state->invocation->attachee_obj, OBJ_TM_CONTAINER, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -3112,7 +3112,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
     case SFO_EVERY_PORTAL_IN_VICINITY:
     case SFO_ANY_PORTAL_IN_VICINITY:
         if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
-            sub_440FC0(state->invocation->attachee_obj, OBJ_TM_PORTAL, l);
+            object_list_vicinity(state->invocation->attachee_obj, OBJ_TM_PORTAL, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {
@@ -3132,7 +3132,7 @@ int script_resolve_focus_obj(ScriptFocusObject type, int index, ScriptState* sta
     case SFO_EVERY_ITEM_IN_VICINITY:
     case SFO_ANY_ITEM_IN_VICINITY:
         if (state->invocation->attachee_obj != OBJ_HANDLE_NULL) {
-            sub_440FC0(state->invocation->attachee_obj, 0x7FE0, l);
+            object_list_vicinity(state->invocation->attachee_obj, 0x7FE0, l);
 
             node = l->head;
             while (node != NULL && cnt < 100) {

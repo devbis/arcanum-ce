@@ -300,7 +300,7 @@ void sub_4C2950(int64_t obj)
         return;
     }
 
-    object_get_followers(obj, &followers);
+    object_list_followers(obj, &followers);
 
     for (skill = 0; skill < BASIC_SKILL_COUNT; skill++) {
         educator_training = basic_skill_get_training(obj, skill);
