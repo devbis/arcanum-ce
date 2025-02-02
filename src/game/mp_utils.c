@@ -1513,7 +1513,7 @@ void mp_object_overlay_set(int64_t obj, int fld, int index, tig_art_id_t aid)
 }
 
 // 0x4F03E0
-void sub_4F03E0(int64_t obj, unsigned int flags_to_add)
+void mp_item_flags_set(int64_t obj, unsigned int flags_to_add)
 {
     unsigned int flags;
     Packet129 pkt;
@@ -1536,7 +1536,7 @@ void sub_4F03E0(int64_t obj, unsigned int flags_to_add)
 }
 
 // 0x4F0470
-void sub_4F0470(int64_t obj, unsigned int flags_to_remove)
+void mp_item_flags_unset(int64_t obj, unsigned int flags_to_remove)
 {
     unsigned int flags;
     Packet129 pkt;

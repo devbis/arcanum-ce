@@ -4822,7 +4822,7 @@ bool sub_551A80(int a1)
             sub_5506C0(0);
             obj = sub_579760();
             if (tig_net_is_active()) {
-                sub_4F0470(obj, OIF_NO_DISPLAY);
+                mp_item_flags_unset(obj, OIF_NO_DISPLAY);
             } else {
                 unsigned int flags;
 
@@ -4891,7 +4891,7 @@ bool sub_551A80(int a1)
         case 13:
             obj = sub_579760();
             if (tig_net_is_active()) {
-                sub_4F03E0(obj, OIF_NO_DISPLAY);
+                mp_item_flags_set(obj, OIF_NO_DISPLAY);
             } else {
                 unsigned int flags;
 
