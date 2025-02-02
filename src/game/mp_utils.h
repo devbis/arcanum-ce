@@ -1184,7 +1184,7 @@ void sub_4EFC30(int64_t pc_obj, const char* a2, const char* a3);
 void sub_4EED80(int sound_id, int loops, int64_t obj);
 void sub_4EEE00(int a1, int a2);
 void mp_obj_field_int32_set(int64_t obj, int fld, int value);
-void sub_4EFE50(int64_t obj, int fld, int64_t value);
+void mp_obj_field_int64_set(int64_t obj, int fld, int64_t value);
 void mp_object_flags_unset(int64_t obj, unsigned int flags);
 void mp_object_flags_set(int64_t obj, unsigned int flags);
 void mp_obj_field_obj_set(int64_t obj, int fld, int64_t value);

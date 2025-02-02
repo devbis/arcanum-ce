@@ -1328,7 +1328,7 @@ void mp_obj_field_int32_set(int64_t obj, int fld, int value)
 }
 
 // 0x4EFE50
-void sub_4EFE50(int64_t obj, int fld, int64_t value)
+void mp_obj_field_int64_set(int64_t obj, int fld, int64_t value)
 {
     Packet129 pkt;
 

@@ -1934,7 +1934,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int y = script_get_value(action->op_type[2], action->op_value[2], state);
 
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_DAY, location_make(x, y));
+            mp_obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_DAY, location_make(x, y));
         }
 
         return NEXT;
@@ -1945,7 +1945,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int y = script_get_value(action->op_type[2], action->op_value[2], state);
 
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_NIGHT, location_make(x, y));
+            mp_obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_NIGHT, location_make(x, y));
         }
 
         return NEXT;
@@ -2806,7 +2806,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int map = script_get_value(action->op_type[3], action->op_value[3], state) - 4999;
         int64_t loc = location_make(x, y);
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_DAY, loc);
+            mp_obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_DAY, loc);
             mp_obj_field_int32_set(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
         }
         return NEXT;
@@ -2818,7 +2818,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int map = script_get_value(action->op_type[3], action->op_value[3], state) - 4999;
         int64_t loc = location_make(x, y);
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
-            sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_NIGHT, loc);
+            mp_obj_field_int64_set(obj, OBJ_F_NPC_STANDPOINT_NIGHT, loc);
             mp_obj_field_int32_set(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
         }
         return NEXT;
