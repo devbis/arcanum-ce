@@ -227,6 +227,7 @@ typedef uint32_t MagicTechFlags;
 #define MAGICTECH_AGGRESSIVE 0x0002u
 #define MAGICTECH_IS_TECH 0x0004u
 #define MAGICTECH_IS_ENABLED 0x0008u
+#define MAGICTECH_NO_RESIST 0x0200u
 
 typedef struct MagicTechInfo {
     /* 0000 */ const char* field_0;

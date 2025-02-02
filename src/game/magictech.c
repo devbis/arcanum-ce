@@ -4422,7 +4422,7 @@ void sub_455C30(MagicTechSerializedData* a1)
     run_info->field_144 = 0;
     run_info->field_150 = info->duration_trigger_count;
 
-    if ((info->flags & 0x200) != 0) {
+    if ((info->flags & MAGICTECH_NO_RESIST) != 0) {
         run_info->field_13C |= 0x10;
     }
 
@@ -5505,7 +5505,7 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
     }
 
     if (tig_str_parse_named_value(&curr, "No_Resist:", &value1)) {
-        info->flags |= 0x200;
+        info->flags |= MAGICTECH_NO_RESIST;
     }
 
     if (tig_str_parse_named_value(&curr, "No_Reflect:", &value1)) {
