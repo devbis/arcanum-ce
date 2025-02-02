@@ -1594,7 +1594,7 @@ int object_hp_damage_set(object_id_t obj, int value)
         value = 0;
     }
 
-    sub_4EFDD0(obj, OBJ_F_HP_DAMAGE, value);
+    mp_obj_field_int32_set(obj, OBJ_F_HP_DAMAGE, value);
 
     if (value > 0) {
         obj_type = obj_field_int32_get(obj, OBJ_F_TYPE);

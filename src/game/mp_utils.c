@@ -1312,7 +1312,7 @@ void sub_4EFCD0(Packet124* pkt)
 }
 
 // 0x4EFDD0
-void sub_4EFDD0(int64_t obj, int fld, int value)
+void mp_obj_field_int32_set(int64_t obj, int fld, int value)
 {
     Packet129 pkt;
 
@@ -1524,7 +1524,7 @@ void sub_4F03E0(int64_t obj, unsigned int flags_to_add)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            sub_4EFDD0(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS));
+            mp_obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS));
         } else {
             pkt.type = 129;
             pkt.subtype = 13;
@@ -1547,7 +1547,7 @@ void sub_4F0470(int64_t obj, unsigned int flags_to_remove)
 
     if (tig_net_is_active()) {
         if (tig_net_is_host()) {
-            sub_4EFDD0(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS));
+            mp_obj_field_int32_set(obj, OBJ_F_ITEM_FLAGS, obj_field_int32_get(obj, OBJ_F_ITEM_FLAGS));
         } else {
             pkt.type = 129;
             pkt.subtype = 14;

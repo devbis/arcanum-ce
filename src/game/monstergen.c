@@ -184,7 +184,7 @@ bool sub_4BA720(int64_t obj)
     }
 
     flags &= ~ONF_GENERATOR;
-    sub_4EFDD0(obj, OBJ_F_NPC_FLAGS, flags);
+    mp_obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
     mp_object_flags_unset(obj, OF_INVULNERABLE | OF_OFF);
 
     return true;
@@ -337,7 +337,7 @@ int sub_4BA910(GeneratorInfo* generator_info, int cnt)
 
         flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
         flags |= ONF_GENERATED;
-        sub_4EFDD0(obj, OBJ_F_NPC_FLAGS, flags);
+        mp_obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
 
         gen_cnt++;
     }

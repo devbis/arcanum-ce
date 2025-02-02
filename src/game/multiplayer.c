@@ -2738,7 +2738,7 @@ int sub_4A5710(int64_t obj, mes_file_handle_t mes_file)
     money_amt = background_adjust_money(money_amt, background_obj_get_background(obj));
     if (money_amt > 0) {
         mp_object_create(9056, location, &money_obj);
-        sub_4EFDD0(money_obj, OBJ_F_GOLD_QUANTITY, money_amt);
+        mp_obj_field_int32_set(money_obj, OBJ_F_GOLD_QUANTITY, money_amt);
         item_transfer(money_obj, obj);
     }
     return money_amt;
@@ -2927,11 +2927,11 @@ void sub_4A6010(int64_t obj)
 
     flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS);
     flags &= ~0xFC03D0FF;
-    sub_4EFDD0(obj, OBJ_F_CRITTER_FLAGS, flags);
+    mp_obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS, flags);
 
     flags = obj_field_int32_get(obj, OBJ_F_CRITTER_FLAGS2);
     flags &= ~0x3FFFFF;
-    sub_4EFDD0(obj, OBJ_F_CRITTER_FLAGS2, flags);
+    mp_obj_field_int32_set(obj, OBJ_F_CRITTER_FLAGS2, flags);
 
     if (combat_critter_is_combat_mode_active(obj)) {
         combat_critter_deactivate_combat_mode(obj);

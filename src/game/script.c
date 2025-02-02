@@ -2008,7 +2008,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         if (obj_field_int32_get(new_obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
             unsigned int critter_flags = obj_field_int32_get(new_obj, OBJ_F_CRITTER_FLAGS);
             critter_flags |= OCF_ENCOUNTER;
-            sub_4EFDD0(new_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
+            mp_obj_field_int32_set(new_obj, OBJ_F_CRITTER_FLAGS, critter_flags);
         }
 
         return NEXT;
@@ -2353,7 +2353,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
     case SAT_RENAME: {
         int64_t obj = script_get_obj(action->op_type[0], action->op_value[0], state);
         int name = script_get_value(action->op_type[1], action->op_value[1], state);
-        sub_4EFDD0(obj, OBJ_F_NAME, name);
+        mp_obj_field_int32_set(obj, OBJ_F_NAME, name);
         return NEXT;
     }
     case SAT_ACTION_BECOME_PRONE: {
@@ -2369,7 +2369,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int start = script_get_value(action->op_type[1], action->op_value[1], state);
 
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_WRITTEN) {
-            sub_4EFDD0(obj, OBJ_F_WRITTEN_TEXT_START_LINE, start);
+            mp_obj_field_int32_set(obj, OBJ_F_WRITTEN_TEXT_START_LINE, start);
         }
 
         return NEXT;
@@ -2689,7 +2689,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
             } else {
                 flags |= OIF_NO_DISPLAY;
             }
-            sub_4EFDD0(item_obj, OBJ_F_ITEM_FLAGS, flags);
+            mp_obj_field_int32_set(item_obj, OBJ_F_ITEM_FLAGS, flags);
         }
         return NEXT;
     }
@@ -2807,7 +2807,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t loc = location_make(x, y);
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
             sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_DAY, loc);
-            sub_4EFDD0(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
+            mp_obj_field_int32_set(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
         }
         return NEXT;
     }
@@ -2819,7 +2819,7 @@ int script_execute_action(ScriptAction* action, int a2, ScriptState* state)
         int64_t loc = location_make(x, y);
         if (obj_field_int32_get(obj, OBJ_F_TYPE) == OBJ_TYPE_NPC) {
             sub_4EFE50(obj, OBJ_F_NPC_STANDPOINT_NIGHT, loc);
-            sub_4EFDD0(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
+            mp_obj_field_int32_set(obj, OBJ_F_CRITTER_TELEPORT_MAP, map);
         }
         return NEXT;
     }

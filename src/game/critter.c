@@ -721,7 +721,7 @@ bool critter_follow(int64_t follower_obj, int64_t leader_obj, bool force)
         if (force) {
             flags |= ONF_FORCED_FOLLOWER;
         }
-        sub_4EFDD0(follower_obj, OBJ_F_NPC_FLAGS, flags);
+        mp_obj_field_int32_set(follower_obj, OBJ_F_NPC_FLAGS, flags);
 
         sub_436FA0(follower_obj);
         sub_4EE190();
@@ -807,7 +807,7 @@ void sub_45E040(int64_t obj)
     flags = obj_field_int32_get(obj, OBJ_F_NPC_FLAGS);
     if ((flags & ONF_FORCED_FOLLOWER) != 0) {
         flags &= ~ONF_FORCED_FOLLOWER;
-        sub_4EFDD0(obj, OBJ_F_NPC_FLAGS, flags);
+        mp_obj_field_int32_set(obj, OBJ_F_NPC_FLAGS, flags);
     }
 
     sub_4EE190();
