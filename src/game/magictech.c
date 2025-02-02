@@ -4097,7 +4097,7 @@ bool sub_455550(S603CB8* a1, MagicTechRunInfo* run_info)
 
     if (((a1->field_60 & OSF_FULL_REFLECTION) == 0
             && (run_info->field_13C & 0x08) == 0)
-        || (dword_5E7598->flags & 0x400) != 0) {
+        || (dword_5E7598->flags & MAGICTECH_NO_REFLECT) != 0) {
         return true;
     }
 
@@ -5509,7 +5509,7 @@ void magictech_build_ai_info(MagicTechInfo* info, char* str)
     }
 
     if (tig_str_parse_named_value(&curr, "No_Reflect:", &value1)) {
-        info->flags |= 0x400;
+        info->flags |= MAGICTECH_NO_REFLECT;
     }
 }
 
