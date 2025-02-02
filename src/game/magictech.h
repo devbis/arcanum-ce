@@ -207,6 +207,15 @@ typedef struct MagicTechMaintenanceInfo {
 
 static_assert(sizeof(MagicTechMaintenanceInfo) == 0x8, "wrong size");
 
+typedef struct MagicTechDurationInfo {
+    /* 0000 */ int period;
+    /* 0004 */ int stat;
+    /* 0008 */ int level;
+    /* 000C */ int modifier;
+} MagicTechDurationInfo;
+
+static_assert(sizeof(MagicTechDurationInfo) == 0x10, "wrong size");
+
 typedef struct MagicTechCasterTargetPair {
     int caster;
     int target;
@@ -225,10 +234,7 @@ typedef struct MagicTechInfo {
     /* 0008 */ int cost;
     /* 000C */ MagicTechResistance resistance;
     /* 0014 */ MagicTechMaintenanceInfo maintenance;
-    /* 001C */ int duration1;
-    /* 0020 */ int duration2;
-    /* 0024 */ int duration_stat;
-    /* 0028 */ int duration_stat_value;
+    /* 001C */ MagicTechDurationInfo duration;
     /* 002C */ int duration_trigger_count;
     /* 0030 */ int range;
     /* 0034 */ MagicTechFlags flags;
@@ -329,7 +335,7 @@ int magictech_get_cost(int magictech);
 bool magictech_is_aggressive(int magictech);
 bool sub_4503A0(int magictech);
 MagicTechMaintenanceInfo* magictech_get_maintenance(int magictech);
-int magictech_get_duration1(int magictech);
+MagicTechDurationInfo* magictech_get_duration(int magictech);
 bool sub_450420(int64_t obj, int cost, bool a3, int magictech);
 void sub_4507B0(object_id_t obj, int magictech);
 bool magictech_can_charge_spell_fatigue(object_id_t obj, int magictech);

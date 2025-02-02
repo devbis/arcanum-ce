@@ -1526,9 +1526,9 @@ MagicTechMaintenanceInfo* magictech_get_maintenance(int magictech)
 }
 
 // 0x450400
-int magictech_get_duration1(int magictech)
+MagicTechDurationInfo* magictech_get_duration(int magictech)
 {
-    return magictech_spells[magictech].duration1;
+    return &(magictech_spells[magictech].duration);
 }
 
 // 0x450420
@@ -1652,7 +1652,7 @@ bool sub_450420(int64_t obj, int cost, bool a3, int magictech)
                 }
 
                 if (info != NULL
-                    && (info->maintenance.period != 0 || info->duration1 == 0)
+                    && (info->maintenance.period != 0 || info->duration.period == 0)
                     && critter_fatigue_current(obj) < 0) {
                     return false;
                 }
@@ -5172,10 +5172,10 @@ void sub_457580(MagicTechInfo* info, int magictech)
     info->item_triggers = 0;
     info->maintenance.cost = 0;
     info->maintenance.period = 0;
-    info->duration1 = 0;
-    info->duration2 = -1;
-    info->duration_stat = 0;
-    info->duration_stat_value = 1;
+    info->duration.period = 0;
+    info->duration.stat = -1;
+    info->duration.level = 0;
+    info->duration.modifier = 1;
     info->duration_trigger_count = 0;
     info->range = 99;
     info->resistance.stat = -1;
@@ -5308,13 +5308,13 @@ void sub_4578F0(MagicTechInfo* info, char* str)
     }
 
     if (tig_str_parse_named_complex_value(&curr, "Duration:", '@', &value1, &value2)) {
-        info->duration1 = value1;
-        info->duration2 = value2;
+        info->duration.period = value1;
+        info->duration.stat = value2;
 
-        if (info->duration2 != -1) {
+        if (info->duration.stat != -1) {
             if (tig_str_parse_named_complex_value(&curr, "DurationStatInfo:", '@', &value1, &value2)) {
-                info->duration_stat = value1;
-                info->duration_stat_value = value2;
+                info->duration.level = value1;
+                info->duration.modifier = value2;
             }
         }
     }
