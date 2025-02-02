@@ -2015,7 +2015,7 @@ void sub_463C60(int64_t obj)
     }
 
     if (obj_type == OBJ_TYPE_CONTAINER) {
-        if ((obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & 0x400) != 0) {
+        if ((obj_field_int32_get(obj, OBJ_F_CONTAINER_FLAGS) & OCOF_INVEN_SPAWN_INDEPENDENT) != 0) {
             sub_463E20(obj);
             return;
         }

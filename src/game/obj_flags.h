@@ -112,16 +112,17 @@ typedef uint32_t ObjectContainerFlags;
 #define OCOF_COUNT 9
 
 // clang-format off
-#define OCOF_LOCKED           0x0001u
-#define OCOF_JAMMED           0x0002u
-#define OCOF_MAGICALLY_HELD   0x0004u
-#define OCOF_NEVER_LOCKED     0x0008u
-#define OCOF_ALWAYS_LOCKED    0x0010u
-#define OCOF_LOCKED_DAY       0x0020u
-#define OCOF_LOCKED_NIGHT     0x0040u
-#define OCOF_BUSTED           0x0080u
-#define OCOF_STICKY           0x0100u
-#define OCOF_INVEN_SPAWN_ONCE 0x0200u
+#define OCOF_LOCKED                  0x0001u
+#define OCOF_JAMMED                  0x0002u
+#define OCOF_MAGICALLY_HELD          0x0004u
+#define OCOF_NEVER_LOCKED            0x0008u
+#define OCOF_ALWAYS_LOCKED           0x0010u
+#define OCOF_LOCKED_DAY              0x0020u
+#define OCOF_LOCKED_NIGHT            0x0040u
+#define OCOF_BUSTED                  0x0080u
+#define OCOF_STICKY                  0x0100u
+#define OCOF_INVEN_SPAWN_ONCE        0x0200u
+#define OCOF_INVEN_SPAWN_INDEPENDENT 0x0400u
 // clang-format on
 
 typedef uint32_t ObjectSceneryFlags;
